@@ -2,16 +2,39 @@
 
 module Resources
   class ApplicationController < DashboardController
+    before_action :prepare_data_for_js
+
     def release_state
       'beta'
     end
 
-    def show
-      @limes_endpoint = current_user.service_url('resources')
-      @flavor_data = fetch_baremetal_flavor_data
+    def project
+      @js_data[:project_id] = params[:override_project_id] || @scoped_project_id
+      @js_data[:domain_id]  = params[:override_domain_id]  || @scoped_domain_id
+      @js_data[:cluster_id] = params[:cluster_id]          || 'current'
+      render action: 'show'
+    end
+
+    def domain
+      @js_data[:domain_id]  = params[:override_domain_id]  || @scoped_domain_id
+      @js_data[:cluster_id] = params[:cluster_id]          || 'current'
+      render action: 'show'
+    end
+
+    def cluster
+      @js_data[:cluster_id] = params[:cluster_id] || 'current'
+      render action: 'show'
     end
 
     private
+
+    def prepare_data_for_js
+      @js_data = {
+        token:       current_user.token,
+        limes_api:   current_user.service_url('resources'),
+        flavor_data: fetch_baremetal_flavor_data,
+      }
+    end
 
     def fetch_baremetal_flavor_data
       mib = Core::DataType.new(:bytes, :mega)

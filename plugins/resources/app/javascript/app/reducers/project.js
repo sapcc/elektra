@@ -1,14 +1,12 @@
 import * as constants from '../constants';
 
-const emptyData = {
+const initialState = {
+  //data from Limes
   metadata: null,
   overview: null,
   services: null,
   resources: null,
-}
-const initialState = {
-  id: null,
-  ...emptyData,
+  //UI state
   receivedAt: null,
   isFetching: false,
   syncStatus: null,
@@ -19,10 +17,7 @@ const initialState = {
 
 const request = (state, {projectID, requestedAt}) => ({
   ...state,
-  id: projectID,
-  ...emptyData,
   isFetching: true,
-  syncStatus: null,
   requestedAt,
 });
 
@@ -82,7 +77,6 @@ const receive = (state, {projectData, receivedAt}) => {
 
   return {
     ...state,
-    id: projectData.id,
     metadata: metadata,
     overview: overview,
     services: services,
@@ -96,32 +90,9 @@ const receive = (state, {projectData, receivedAt}) => {
 ////////////////////////////////////////////////////////////////////////////////
 // sync project
 
-const mustMatchProjectID = (state, action, reducer) => {
-  // ignore actions when the view has switched to a different project in the meantime
-  if (action.projectID !== undefined && action.projectID !== state.id) {
-    return state;
-  }
-  return reducer(state, action);
-};
-
-const syncProjectFailure = (state, action) => ({
+const setSyncStatus = (state, action, syncStatus) => ({
   ...state,
-  syncStatus: null,
-});
-
-const syncProjectRequested = (state, action) => ({
-  ...state,
-  syncStatus: 'requested',
-});
-
-const syncProjectStarted = (state, action) => ({
-  ...state,
-  syncStatus: 'started',
-});
-
-const syncProjectFinished = (state, action) => ({
-  ...state,
-  syncStatus: 'reloading',
+  syncStatus: syncStatus,
 });
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -136,10 +107,10 @@ export const project = (state, action) => {
     case constants.REQUEST_PROJECT:         return request(state, action);
     case constants.REQUEST_PROJECT_FAILURE: return requestFailure(state, action);
     case constants.RECEIVE_PROJECT:         return receive(state, action);
-    case constants.SYNC_PROJECT_REQUESTED:  return mustMatchProjectID(state, action, syncProjectRequested);
-    case constants.SYNC_PROJECT_FAILURE:    return mustMatchProjectID(state, action, syncProjectFailure);
-    case constants.SYNC_PROJECT_STARTED:    return mustMatchProjectID(state, action, syncProjectStarted);
-    case constants.SYNC_PROJECT_FINISHED:   return mustMatchProjectID(state, action, syncProjectFinished);
+    case constants.SYNC_PROJECT_REQUESTED:  return setSyncStatus(state, action, 'requested');
+    case constants.SYNC_PROJECT_FAILURE:    return setSyncStatus(state, action, null);
+    case constants.SYNC_PROJECT_STARTED:    return setSyncStatus(state, action, 'started');
+    case constants.SYNC_PROJECT_FINISHED:   return setSyncStatus(state, action, 'reloading');
     default: return state;
   }
 };

@@ -56,6 +56,9 @@ export default class ProjectOverview extends React.Component {
     if (props.isFetching) {
       return <p><span className='spinner'/> Loading project...</p>;
     }
+    if (!props.overview) {
+      return <p className='text-danger'>Failed to load project</p>;
+    }
 
     const { areas, scrapedAt } = props.overview;
     const currentArea = this.state.currentArea || Object.keys(areas).sort()[0];

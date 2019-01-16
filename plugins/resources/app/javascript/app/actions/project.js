@@ -57,10 +57,8 @@ export const fetchProject = ({domainID, projectID}) => function(dispatch, getSta
 
 export const fetchProjectIfNeeded = ({domainID, projectID}) => function(dispatch, getState) {
   const state = getState();
-  if (state.project.id == projectID) {
-    if (state.project.isFetching || state.project.requestedAt) {
-      return;
-    }
+  if (state.project.isFetching || state.project.requestedAt) {
+    return;
   }
   return dispatch(fetchProject({domainID, projectID}));
 };

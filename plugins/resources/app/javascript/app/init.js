@@ -3,12 +3,19 @@ import * as reducers from './reducers';
 import App from './components/application';
 
 createWidget(__dirname).then((widget) => {
+  const limesHeaders = { 'X-Auth-Token': widget.config.scriptParams.token }
+  if (widget.config.scriptParams.clusterId != 'current') {
+    limesHeaders['X-Limes-Cluster-Id'] = widget.config.scriptParams.clusterId
+  }
   widget.configureAjaxHelper({
     baseURL: widget.config.scriptParams.limesApi,
-    headers: {'X-Auth-Token': widget.config.scriptParams.token}
+    headers: limesHeaders,
   })
+
   delete(widget.config.scriptParams.limesApi)
   delete(widget.config.scriptParams.token)
+  delete(widget.config.scriptParams.clusterId)
+
   widget.config.scriptParams.flavorData = JSON.parse(widget.config.scriptParams.flavorData)
   widget.setPolicy()
   widget.createStore(reducers)

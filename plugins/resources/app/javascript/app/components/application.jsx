@@ -3,22 +3,24 @@ import { HashRouter, Route, Redirect } from 'react-router-dom'
 
 import ProjectOverview from '../containers/project/overview';
 
-// render all components inside a hash router
-export default (props) => {
-  const { scopedDomainId, scopedProjectId, flavorData } = props
+const routesForProjectLevel = (props) => {
+  const { domainId, projectId, flavorData } = props;
   return (
-    <HashRouter /*hashType="noslash"*/ >
+    <HashRouter>
       <div>
-        <Route exact path="/" render={ () => <Redirect to="/project"/> }/>
-
-        {/* routes for project level */}
-        <Route exact path="/project" render={(props) =>
-          <ProjectOverview domainID={scopedDomainId} projectID={scopedProjectId} flavorData={flavorData} {...props} />
-        }/>
-        <Route exact path="/project/:domain_id/:project_id" render={(props) =>
-          <ProjectOverview domainID={props.match.params.domain_id} projectID={props.match.params.project_id} flavorData={flavorData} {...props} />
+        <Route exact path="/" render={(props) =>
+          <ProjectOverview domainID={domainId} projectID={projectId} flavorData={flavorData} {...props} />
         }/>
       </div>
     </HashRouter>
   )
+}
+
+const routesForDomainLevel = (props) => (<p>TODO: domain level</p>);
+const routesForClusterLevel = (props) => (<p>TODO: cluster level</p>);
+
+export default (props) => {
+  return props.projectId ? routesForProjectLevel(props)
+       : props.domainId  ? routesForDomainLevel(props)
+       :                   routesForClusterLevel(props);
 }
