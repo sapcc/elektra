@@ -56,6 +56,7 @@ module ApplicationHelper
 
     # delegate all methods to the plugin_helper. 
     # Clean the scope parameters before delegation!
+    # DEPRECTAED!!! But still nedeed for controller tests :(
     def method_missing(method, *args, &block)
       if method.to_s.ends_with?('_path') || method.to_s.ends_with?('_url')
         # extract options (last args hash member)
@@ -63,14 +64,14 @@ module ApplicationHelper
 
         # build the scope (delete scope values from options)
         @scope[:domain_id] = options.delete(:domain_id) if options.key?(:domain_id)
-        @scope[:project_id] = options.delete(:project_id) if options.key?(:project_id)
-        @scope.delete_if { |_, value| value.nil? }
-
+        @scope[:project_id] = options.delete(:project_id) if options.key?(:project_id) 
         # add prefix to the path
         options[:script_name] = @main_app.send("#{@plugin_name}_plugin_path", @scope)
-
+ 
         # add scope to args to avoid failing tests for redirects.
         # The behavior of tests has changed since rails 5.1.3
+        # Redirections in tests lose the scope parameters 
+        # (domain_id and project_id).
         args << options.merge(@scope)
 
         # build the path
