@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+import { Link } from 'react-router-dom';
+
 import { byUIString, t } from '../../utils';
 import ProjectService from '../../containers/project/service';
 import ProjectSyncAction from '../../components/project/sync_action';
@@ -30,7 +32,7 @@ export default class ProjectOverview extends React.Component {
     this.setState({...this.state, currentArea: area});
   }
 
-  renderNavbar(currentArea) {
+  renderNavbar(currentArea, canEdit) {
     return (
       <nav className='nav-with-buttons'>
         <ul className='nav nav-tabs'>
@@ -42,6 +44,9 @@ export default class ProjectOverview extends React.Component {
             </li>
           ))}
         </ul>
+        {canEdit && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
+          <Link to={`/settings`} className='btn btn-primary btn-sm'>Settings</Link>
+        </div>}
       </nav>
     );
   }
@@ -70,8 +75,6 @@ export default class ProjectOverview extends React.Component {
     const ageDisplay = minScrapedStr == maxScrapedStr ? minScrapedStr : `between ${minScrapedStr} and ${maxScrapedStr}`;
 
     // TODO: overview page with critical resources?
-    // TODO: Settings dialog for enabling/disabling bursting
-    // TODO: info message: bursting is active/enabled/disabled
     // TODO: button: Request Quota Package
 
     const syncActionProps = {
@@ -84,7 +87,7 @@ export default class ProjectOverview extends React.Component {
 
     return (
       <React.Fragment>
-        {this.renderNavbar(currentArea)}
+        {this.renderNavbar(currentArea, canEdit)}
         {currentServices.sort(byUIString).map(serviceType => (
           <ProjectService key={serviceType} serviceType={serviceType} flavorData={this.props.flavorData} />
         ))}
