@@ -78,6 +78,8 @@ module Compute
           tenant_id: @scoped_project_id, id: sg.id
         ).first
       end.values
+
+      @log = services.compute.console_log(params[:id])
     end
 
     def new
