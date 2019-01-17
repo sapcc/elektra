@@ -9,8 +9,7 @@ module Networking
     # investigate the rule name.
     authorization_required only: %i[index create delete widget]
 
-    def widget
-    end
+    def widget; end
 
     def index
       per_page = params[:per_page] || 30
@@ -19,14 +18,7 @@ module Networking
         services.networking.ports({ sort_key: 'id' }.merge(pagination_options))
       end
 
-      # this is relevant in case an ajax paginate call is made.
-      # in this case we don't render the layout, only the list!
-      if request.xhr?
-        render json: { ports: ports, has_next: @pagination_has_next }
-      else
-        # common case, render index page with layout
-        render action: :index
-      end
+      render json: { ports: ports, has_next: @pagination_has_next }
     end
 
     def show
@@ -46,7 +38,7 @@ module Networking
       port.fixed_ips = [
         {
           subnet_id: params[:port][:subnet_id],
-          ip_address:  params[:port][:ip_address]
+          ip_address: params[:port][:ip_address]
         }
       ]
       port.security_groups = params[:port][:security_groups] unless params[:port][:security_groups].blank?
@@ -85,15 +77,15 @@ module Networking
     end
 
     def networks
-      render json: { networks: services.networking.networks('router:external' => false)}
+      render json: { networks: services.networking.networks('router:external' => false) }
     end
 
     def subnets
-      render json: { subnets: services.networking.subnets}
+      render json: { subnets: services.networking.subnets }
     end
 
     def security_groups
-      render json: { security_groups: services.networking.security_groups}
+      render json: { security_groups: services.networking.security_groups }
     end
   end
 end
