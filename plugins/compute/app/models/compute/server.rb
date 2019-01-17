@@ -222,11 +222,6 @@ module Compute
       ips.empty? ? manual : ips
     end
 
-    def flavor_object
-      return nil unless flavor['id']
-      @flavor_object ||= @service.find_flavor(flavor['id'], true)
-    end
-
     def image_object
       return nil unless image['id']
       @image_object ||= @service.find_image(image['id'], true)

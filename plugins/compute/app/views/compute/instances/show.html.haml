@@ -60,24 +60,21 @@
             %code= @log
 
       .tab-pane{role:"tabpanel", id:"specs"}
-        - if @instance.flavor_object
+        - if @instance.flavor
           %table.table.datatable
             %tbody
               %tr
                 %th Flavor
-                %td= @instance.flavor_object.name
-              %tr
-                %th Flavor ID
-                %td= @instance.flavor_object.id
+                %td= @instance.flavor['original_name']
               %tr
                 %th RAM
-                %td= "#{@instance.flavor_object.ram}MB"
+                %td= "#{@instance.flavor['ram']}MB"
               %tr
                 %th VCPUs
-                %td= "#{@instance.flavor_object.vcpus} VCPU"
+                %td= "#{@instance.flavor['vcpus']} VCPU"
               %tr
                 %th Disk
-                %td= "#{@instance.flavor_object.disk}GB"
+                %td= "#{@instance.flavor['disk']}GB"
         - else
           No instance specifications
 

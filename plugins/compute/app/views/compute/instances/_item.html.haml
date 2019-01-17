@@ -48,8 +48,7 @@
   %td
     = instance.metadata.image_name || instance.image_object.try(:name) || '-'
     %br
-    = instance.flavor_object.try(:name) || '-'
-  -# %td= instance.flavor_object.name if instance.flavor_object
+    = instance.flavor['original_name'] || '-'
 
   %td= instance.power_state_string
   %td
