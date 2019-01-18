@@ -6,7 +6,7 @@ export default class ProjectSettingsModal extends React.Component {
   state = { show: true }
 
   validate = (values) => {
-    true
+    return true;
   }
 
   close = (e) => {
@@ -16,8 +16,17 @@ export default class ProjectSettingsModal extends React.Component {
   }
 
   handleSubmit = (values) => {
-    // return this.TODO(values).then(() => this.close());
-    this.close();
+    const oldHasBursting = this.props.metadata.bursting.enabled;
+    const newHasBursting = values.has_bursting === 'yes';
+    if (oldHasBursting == newHasBursting) {
+      this.close();
+    }
+
+    return this.props.setProjectHasBursting({
+      domainID:    this.props.domainID,
+      projectID:   this.props.projectID,
+      hasBursting: newHasBursting,
+    }).then(() => this.close());
   }
 
   render() {

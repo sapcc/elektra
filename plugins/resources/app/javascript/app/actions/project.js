@@ -128,3 +128,17 @@ export const pollRunningSyncProject = ({domainID, projectID}) => function(dispat
       }
     });
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// enable/disable bursting
+
+export const setProjectHasBursting = ({domainID, projectID, hasBursting}) => function(dispatch) {
+  var requestBody = { "project": { "bursting": { "enabled": hasBursting ? true : false }}};
+  return new Promise((resolve, reject) =>
+    ajaxHelper.put(`/v1/domains/${domainID}/projects/${projectID}`, requestBody)
+      .then((response) => {
+        dispatch(fetchProject({ domainID, projectID }));
+        resolve();
+      }).catch(error => reject({ errors: limesErrorMessage(error) }))
+  )
+}
