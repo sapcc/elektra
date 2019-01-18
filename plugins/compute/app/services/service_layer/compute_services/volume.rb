@@ -8,17 +8,17 @@ module ServiceLayer
         @volume_map ||= class_map_proc(Compute::OsVolume)
       end
 
-      def volumes(server_id, filter = {})
-        volumes = elektron_compute.get('os-volumes', filter).body['volumes']
+      # DEPRECATED: please use the volumes method from block_storage plugin!
+      def volumes(server_id, _filter = {})
+        # volumes = elektron_compute.get('os-volumes', filter).body['volumes']
+        volumes = service_manager.block_storage.volumes_detail
 
         server_volumes = volumes.select do |vol|
-          vol['attachments'].find do |attachment|
+          vol.attachments.find do |attachment|
             attachment['serverId'] == server_id ||
               attachment['server_id'] == server_id
           end
         end
-
-        server_volumes.collect { |data| volume_map.call(data) }
       end
 
       def attach_volume(volume_id, server_id, device)

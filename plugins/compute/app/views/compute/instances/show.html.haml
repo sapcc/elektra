@@ -138,7 +138,7 @@
               - else
                 - attached_volumes.each do |vol|
                   %tr
-                    %td= vol.displayName || vol.name
+                    %td= vol.name
                     %td= vol.attachments.first['device']
             - else
               %tr
