@@ -17,13 +17,19 @@
 = resource_bar( fill: 100, maximum: 100, threshold: 200 )
 %h3 Overcommit
 = resource_bar( fill:   0, maximum: 100, threshold:  50 )
-= resource_bar( fill:   4, maximum: 100, threshold:  50 )
+= resource_bar( fill:   4, maximum: 100, threshold:  50)
 = resource_bar( fill:  40, maximum: 100, threshold:  50 )
 = resource_bar( fill:  50, maximum: 100, threshold:  50 )
 = resource_bar( fill:  80, maximum: 100, threshold:  50 )
 = resource_bar( fill: 100, maximum: 100, threshold:  50 )
+%h3 Overcommit with second marker
+= resource_bar( fill:   0, maximum: 100, threshold:  80, marker: { value: 40, related_to_threshold: true , label: "real capa" } )
+= resource_bar( fill:   4, maximum: 100, threshold:  80, marker: { value: 40, related_to_threshold: true , label: "real capa" } )
+= resource_bar( fill:  40, maximum: 100, threshold:  80, marker: { value: 40, related_to_threshold: true , label: "real capa" } )
+= resource_bar( fill:  50, maximum: 100, threshold:  80, marker: { value: 40, related_to_threshold: true , label: "real capa" } )
+= resource_bar( fill:  80, maximum: 100, threshold:  80, marker: { value: 40, related_to_threshold: true , label: "real capa" } )
+= resource_bar( fill: 100, maximum: 100, threshold:  80, marker: { value: 80, related_to_threshold: true , label: "real capa" } )
 %h3 Infinite maximum with threshold
-= resource_bar( fill:   0, maximum: -1, threshold: 100 )
 = resource_bar( fill:   4, maximum: -1, threshold: 100 )
 = resource_bar( fill:  40, maximum: -1, threshold: 100 )
 = resource_bar( fill:  50, maximum: -1, threshold: 100 )
