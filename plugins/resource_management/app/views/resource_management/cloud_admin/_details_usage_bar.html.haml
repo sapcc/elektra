@@ -2,7 +2,7 @@
   - oc_factor = @combined_resource.capacity.to_f / @combined_resource.raw_capacity.to_f
   .row
     .col-md-11.text-right
-      .label.label-info Note: the overcommit factor is #{oc_factor.round(1)}X
+      .label.label-info Note: overcommit factor is #{oc_factor.round(1)}X
 .row
   .col-md-2.quota-label.text-muted Quota usage
   .col-md-9= render partial: 'bar', locals: { resource: @combined_resource, render_raw_capa: true }
