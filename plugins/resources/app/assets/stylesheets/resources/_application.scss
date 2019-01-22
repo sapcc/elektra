@@ -51,3 +51,9 @@ div.flavor-data {
   /* ensure that flavor data text appears grouped with its resource */
   margin-bottom: 1em;
 }
+
+h3 > .btn.btn-edit-quota {
+  margin-right: 1em;
+  position: relative;
+  top: -0.2em;
+}

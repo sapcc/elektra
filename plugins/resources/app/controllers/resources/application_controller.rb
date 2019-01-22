@@ -9,6 +9,9 @@ module Resources
     end
 
     def project
+      @scope = 'project'
+      @edit_role = current_user.is_allowed?('project:edit') ? nil : 'resource_admin'
+
       @js_data[:project_id] = params[:override_project_id] || @scoped_project_id
       @js_data[:domain_id]  = params[:override_domain_id]  || @scoped_domain_id
       @js_data[:cluster_id] = params[:cluster_id]          || 'current'
@@ -16,12 +19,18 @@ module Resources
     end
 
     def domain
+      @scope = 'domain'
+      @edit_role = current_user.is_allowed?('domain:edit') ? nil : 'resource_admin'
+
       @js_data[:domain_id]  = params[:override_domain_id]  || @scoped_domain_id
       @js_data[:cluster_id] = params[:cluster_id]          || 'current'
       render action: 'show'
     end
 
     def cluster
+      @scope = 'cluster'
+      @edit_role = current_user.is_allowed?('cluster:edit') ? nil : 'cloud_resource_admin'
+
       @js_data[:cluster_id] = params[:cluster_id] || 'current'
       render action: 'show'
     end

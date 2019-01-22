@@ -1,5 +1,6 @@
-import { byUIString, t } from '../../utils';
+import { Link } from 'react-router-dom';
 
+import { byUIString, t } from '../../utils';
 import ProjectResource from '../../components/project/resource';
 
 export default class ProjectCategory extends React.Component {
@@ -17,7 +18,12 @@ export default class ProjectCategory extends React.Component {
 
     return (
       <React.Fragment>
-        <h3>{t(categoryName)}</h3>
+        <h3>
+          {policy.isAllowed('project:edit') && (
+            <Link to={`/edit/${categoryName}`} className='btn btn-primary btn-sm btn-edit-quota'>Edit</Link>
+          )}
+          {t(categoryName)}
+        </h3>
         {resources.sort(byUIString).map(res => (
           <ProjectResource key={res.name} resource={res} {...forwardProps} />
         ))}

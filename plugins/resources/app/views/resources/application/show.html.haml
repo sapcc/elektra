@@ -1,3 +1,12 @@
 = content_for :main_toolbar do
-  Resource Management
+  Manage
+  = @scope.titleize
+  Resources
+
+- unless @edit_role.nil?
+  .bs-callout.bs-callout-info.bs-callout-emphasize
+    This view is read-only. To edit quotas, you need the
+    %code= @edit_role
+    role.
+
 = javascript_pack_tag "resources_app", data: @js_data

@@ -2,6 +2,7 @@
 import { HashRouter, Route, Redirect } from 'react-router-dom'
 
 import ProjectOverview from '../containers/project/overview';
+import ProjectEditModal from '../containers/project/edit';
 import ProjectSettingsModal from '../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
@@ -13,6 +14,9 @@ const routesForProjectLevel = (props) => {
       <div>
         <Route path="/" render={(props) => <ProjectOverview {...rootProps} {...props} /> }/>
 
+        { policy.isAllowed("project:edit") &&
+          <Route exact path="/edit/:categoryName" render={(props) => <ProjectEditModal {...rootProps} {...props} /> }/>
+        }
         { policy.isAllowed("project:edit") &&
           <Route exact path="/settings" render={(props) => <ProjectSettingsModal {...rootProps} {...props} docsUrl={docsUrl} /> }/>
         }
