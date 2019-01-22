@@ -10,12 +10,12 @@
   - if resource.burst_usage > 0 && render_usage
     - usage_without_burst = resource.usage - resource.burst_usage
     - if resource.raw_capacity && resource.raw_capacity < resource.capacity
-      = resource_bar(fill: { value: fill, label: "#{data_type.format(usage_without_burst)} + #{data_type.format(resource.burst_usage)} burst"}, maximum: resource.capacity, marker: { value: resource.raw_capacity, label: "Raw capacity #{data_type.format(resource.raw_capacity)}", related_to_threshold: true }, data_type: resource.data_type)
+      = resource_bar(fill: { value: fill, label: "#{data_type.format(usage_without_burst)} + #{data_type.format(resource.burst_usage)} burst"}, maximum: resource.capacity, marker: { value: resource.raw_capacity, label: "Raw capacity: #{data_type.format(resource.raw_capacity)}", related_to_threshold: true }, data_type: resource.data_type)
     - else
       = resource_bar(fill: { value: fill, label: "#{data_type.format(usage_without_burst)} + #{data_type.format(resource.burst_usage)} burst"}, maximum: resource.capacity, data_type: resource.data_type)
   -else
     -# show raw capa if available
     - if resource.raw_capacity && resource.raw_capacity < resource.capacity
-      = resource_bar(fill: fill, maximum: [fill, resource.capacity].max, threshold: { value: resource.capacity, label: "Capacity: $VALUE" }, marker: {value: resource.raw_capacity, label: "Raw capacity #{data_type.format(resource.raw_capacity)}", related_to_threshold: true}, data_type: resource.data_type)
+      = resource_bar(fill: fill, maximum: [fill, resource.capacity].max, threshold: { value: resource.capacity, label: "Capacity: $VALUE" }, marker: {value: resource.raw_capacity, label: "Raw capacity: #{data_type.format(resource.raw_capacity)}", related_to_threshold: true}, data_type: resource.data_type)
     - else
       = resource_bar(fill: fill, maximum: [fill, resource.capacity].max, threshold: { value: resource.capacity, label: "Capacity: $VALUE" }, data_type: resource.data_type)
