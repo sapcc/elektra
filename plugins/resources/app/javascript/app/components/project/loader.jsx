@@ -20,14 +20,13 @@ export default class ProjectLoader extends React.Component {
     if (!policy.isAllowed('project:show')) {
       return <p>You are not allowed to see this page</p>;
     }
+    if (this.props.receivedAt) {
+      return this.props.children;
+    }
     if (this.props.isFetching) {
       return <p><span className='spinner'/> Loading project...</p>;
     }
-    if (!this.props.receivedAt) {
-      return <p className='text-danger'>Failed to load project</p>;
-    }
-
-    return this.props.children;
+    return <p className='text-danger'>Failed to load project</p>;
   }
 
 }
