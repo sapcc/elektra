@@ -25,8 +25,8 @@ module ResourceManagement
       options.delete(:threshold) if options[:threshold] == 0
       options.delete(:threshold) if options[:threshold].is_a?(Hash) &&  options[:threshold][:value] == 0
 
-      fill, maximum, threshold, marker, upper_bound, warning_level, danger_level = resbar_prepare_options(options)
-      bars = resbar_compile_bars(fill, maximum, threshold, marker, warning_level, danger_level)
+      fill, maximum, threshold, upper_bound, warning_level, danger_level, marker = resbar_prepare_options(options)
+      bars = resbar_compile_bars(fill, maximum, threshold, warning_level, danger_level, marker)
 
       return render('resource_bar_helper',
         bars:        bars,
@@ -121,13 +121,12 @@ module ResourceManagement
           marker[:percent] = value.round(1)
         end
       end
-
-      return [ fill, maximum, threshold, marker, upper_bound, warning_level, danger_level ]
+      return [ fill, maximum, threshold, upper_bound, warning_level, danger_level, marker ]
     end
 
     # This prepares a list of all the progress bars that we're placing in the
     # resource bar (i.e. all the <div class="progress-bar">).
-    def resbar_compile_bars(fill, maximum, threshold, marker, warning_level,danger_level)
+    def resbar_compile_bars(fill, maximum, threshold, warning_level, danger_level, marker)
       bars = []
 
       if fill[:value] > 0
