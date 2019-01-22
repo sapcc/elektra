@@ -10,23 +10,6 @@ export default class ProjectOverview extends React.Component {
     currentArea: null,
   }
 
-  componentWillReceiveProps(nextProps) {
-    // load dependencies unless already loaded
-    this.loadDependencies(nextProps)
-  }
-
-  componentDidMount() {
-    // load dependencies unless already loaded
-    this.loadDependencies(this.props)
-  }
-
-  loadDependencies = (props) => {
-    props.loadProjectOnce({
-      domainID: props.domainID,
-      projectID: props.projectID,
-    })
-  }
-
   changeArea = (area) => {
     this.setState({...this.state, currentArea: area});
   }
@@ -51,18 +34,8 @@ export default class ProjectOverview extends React.Component {
   }
 
   render() {
-    if (!policy.isAllowed('project:show')) {
-      return <p>You are not allowed to see this page</p>;
-    }
-    const canEdit = policy.isAllowed('project:edit');
-
     const props = this.props;
-    if (props.isFetching) {
-      return <p><span className='spinner'/> Loading project...</p>;
-    }
-    if (!props.overview) {
-      return <p className='text-danger'>Failed to load project</p>;
-    }
+    const canEdit = policy.isAllowed('project:edit');
 
     const { areas, categories, scrapedAt } = props.overview;
     const currentArea = this.state.currentArea || Object.keys(areas).sort()[0];

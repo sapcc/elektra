@@ -14,7 +14,6 @@ export default connect(
     syncStatus: state.project.syncStatus,
   }),
   dispatch => ({
-    loadProjectOnce:        (args) => dispatch(fetchProjectIfNeeded(args)),
     syncProject:            (args) => dispatch(syncProject(args)),
     pollRunningSyncProject: (args) => dispatch(pollRunningSyncProject(args)),
   }),
