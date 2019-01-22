@@ -4,8 +4,7 @@ const initialState = {
   //data from Limes
   metadata: null,
   overview: null,
-  services: null,
-  resources: null,
+  categories: null,
   //UI state
   receivedAt: null,
   isFetching: false,
@@ -35,52 +34,50 @@ const receive = (state, {projectData, receivedAt}) => {
   // `metadata` is what multiple levels need (e.g. bursting multiplier).
   var {services: serviceList, ...metadata} = projectData;
 
+  // `categories` is what the ProjectCategory component needs.
+  const categories = {};
+  for (let srv of serviceList) {
+    var {resources: resourceList, type: serviceType, ...serviceData} = srv;
+
+    for (let res of resourceList) {
+      categories[res.category || serviceType] = {
+        serviceType,
+        ...serviceData,
+        resources: [],
+      };
+    }
+    for (let res of resourceList) {
+      categories[res.category || serviceType].resources.push(res);
+    }
+  }
+
+  // helper function: groupKeys transforms a list of key-value pairs into an
+  // object just like Object.fromEntries(), but allows duplicate keys by
+  // producing arrays of values
+  // 
+  // e.g. groupKeys(["foo", 1], ["foo", 2], ["foo", 3])
+  //      = { foo: [1, 3], bar: 2 }
+  const groupKeys = (entries) => {
+    const result = {};
+    for (let [k, v] of entries) { result[k] = []; }
+    for (let [k, v] of entries) { result[k].push(v); }
+    return result;
+  };
+
   // `overview` is what the ProjectOverview component needs.
   const overview = {
     scrapedAt: Object.fromEntries(
       serviceList.map(srv => [ srv.type, srv.scraped_at ]),
     ),
+    areas: groupKeys(serviceList.map((srv) => [ srv.area || srv.type, srv.type ])),
+    categories: groupKeys(Object.entries(categories).map(([ catName, cat ]) => [ cat.serviceType, catName ])),
   };
-  const areas = {};
-  for (let srv of serviceList) {
-    areas[srv.area || srv.type] = [];
-  }
-  for (let srv of serviceList) {
-    areas[srv.area || srv.type].push(srv.type);
-  }
-  overview.areas = areas;
-
-  // `services` is what the ProjectService component needs.
-  const services = {};
-  for (let srv of serviceList) {
-    var {resources: resourceList, ...serviceData} = srv;
-
-    const categories = {};
-    for (let res of resourceList) {
-      categories[res.category || srv.type] = [];
-    }
-    for (let res of resourceList) {
-      categories[res.category || srv.type].push(res.name);
-    }
-    serviceData.categories = categories;
-
-    services[serviceData.type] = serviceData;
-  }
-
-  // `resources` is what the ProjectResource component needs.
-  const resources = {};
-  for (let srv of serviceList) {
-    for (let res of srv.resources) {
-      resources[`${srv.type}/${res.name}`] = res;
-    }
-  }
 
   return {
     ...state,
     metadata: metadata,
     overview: overview,
-    services: services,
-    resources: resources,
+    categories: categories,
     isFetching: false,
     syncStatus: null,
     receivedAt,

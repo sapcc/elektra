@@ -1,10 +1,10 @@
 import { connect } from  'react-redux';
-import ProjectService from '../../components/project/service';
+import ProjectCategory from '../../components/project/category';
 
 export default connect(
   (state, props) => ({
     metadata: state.project.metadata,
-    service:  state.project.services[props.serviceType],
+    category: state.project.categories[props.categoryName],
   }),
   dispatch => ({}),
-)(ProjectService);
+)(ProjectCategory);

@@ -1,9 +1,8 @@
 import moment from 'moment';
-
 import { Link } from 'react-router-dom';
 
 import { byUIString, t } from '../../utils';
-import ProjectService from '../../containers/project/service';
+import ProjectCategory from '../../containers/project/category';
 import ProjectSyncAction from '../../components/project/sync_action';
 
 export default class ProjectOverview extends React.Component {
@@ -65,7 +64,7 @@ export default class ProjectOverview extends React.Component {
       return <p className='text-danger'>Failed to load project</p>;
     }
 
-    const { areas, scrapedAt } = props.overview;
+    const { areas, categories, scrapedAt } = props.overview;
     const currentArea = this.state.currentArea || Object.keys(areas).sort()[0];
     const currentServices = areas[currentArea];
 
@@ -73,6 +72,14 @@ export default class ProjectOverview extends React.Component {
     const minScrapedStr = moment.unix(Math.min(...currScrapedAt)).fromNow(true);
     const maxScrapedStr = moment.unix(Math.max(...currScrapedAt)).fromNow(true);
     const ageDisplay = minScrapedStr == maxScrapedStr ? minScrapedStr : `between ${minScrapedStr} and ${maxScrapedStr}`;
+
+    //sorting predicate for categories: sort by translated name, but categories
+    //named after their service come first
+    const byNameIn = serviceType => (a, b) => {
+      if (t(serviceType) == t(a)) { return -1; }
+      if (t(serviceType) == t(b)) { return +1; }
+      return byUIString(a, b);
+    };
 
     // TODO: overview page with critical resources?
     // TODO: button: Request Quota Package
@@ -89,7 +96,11 @@ export default class ProjectOverview extends React.Component {
       <React.Fragment>
         {this.renderNavbar(currentArea, canEdit)}
         {currentServices.sort(byUIString).map(serviceType => (
-          <ProjectService key={serviceType} serviceType={serviceType} flavorData={this.props.flavorData} />
+          <React.Fragment key={serviceType}>
+            {categories[serviceType].sort(byNameIn(serviceType)).map(categoryName => (
+              <ProjectCategory key={categoryName} categoryName={categoryName} flavorData={this.props.flavorData} />
+            ))}
+          </React.Fragment>
         ))}
         <div className='row'>
           <div className='col-md-6 col-md-offset-2'>
