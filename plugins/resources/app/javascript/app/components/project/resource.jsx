@@ -92,11 +92,41 @@ export default class ProjectResource extends React.Component {
     }
   }
 
+  renderInfo(quota, usage, desiredBackendQuota, actualBackendQuota, unit) {
+    let msg = null;
+    if (usage > desiredBackendQuota) {
+      msg = 'Usage exceeds backend quota. Please request more quota to fix.';
+    } else if (desiredBackendQuota != actualBackendQuota) {
+      msg = `Expected backend quota to be ${unit.format(desiredBackendQuota)}, but is ${unit.format(actualBackendQuota)}.`;
+    } else {
+      return this.renderBurstInfo(quota, usage, desiredBackendQuota, unit);
+    }
+
+    return (
+      <p className='resource-error text-danger'>
+        <i className='fa fa-lg fa-warning' />{' '}{msg}
+      </p>
+    );
+  }
+
+  renderEditControls() {
+    const { editQuotaText, resource } = this.props;
+    const { name: resourceName } = resource;
+
+    return (
+      <React.Fragment>
+        <div className='col-md-2 edit-quota-input'>
+          <input className='form-control input-sm' type='text' value={editQuotaText} onChange={(e) => this.props.handleInput(resourceName, e.target.value)} />
+        </div>
+      </React.Fragment>
+    );
+  }
+
   render() {
     const displayName = t(this.props.resource.name);
     const flavorData = this.props.flavorData[displayName] || {};
 
-    const { quota, usage, backendQuota, unit: unitName } = this.props.resource || {};
+    const { quota, usage, backendQuota, unit: unitName } = this.props.resource;
     const { enabled: hasBursting, multiplier: burstMultiplier } =
       this.props.metadata.bursting || {};
 
@@ -115,15 +145,12 @@ export default class ProjectResource extends React.Component {
             {this.renderBarContents(quota, usage, unit, isDanger)}
           </div>
         </div>
-        <div className='col-md-5'>
-          {!isDanger && this.renderBurstInfo(quota, usage, desiredBackendQuota, unit)}
-          {usage > desiredBackendQuota && <ResourceError>
-            Usage exceeds backend quota. Please request more quota to fix.
-          </ResourceError>}
-          {desiredBackendQuota != actualBackendQuota && <ResourceError>
-            Expected backend quota to be {unit.format(desiredBackendQuota)}, but is {unit.format(actualBackendQuota)}.
-          </ResourceError>}
-        </div>
+        {this.props.editQuotaValue
+          ? this.renderEditControls()
+          : <div className='col-md-5'>
+              {this.renderInfo(quota, usage, desiredBackendQuota, actualBackendQuota, unit)}
+            </div>
+        }
       </div>
     );
   }
