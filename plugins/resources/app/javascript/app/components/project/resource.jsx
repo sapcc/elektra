@@ -1,7 +1,7 @@
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import { Unit } from '../../unit';
-import { byUIString, t, formatLargeInteger } from '../../utils';
+import { byUIString, t } from '../../utils';
 
 const ResourceName = ({name, flavorData}) => {
   if (!flavorData.primary || !flavorData.secondary) {
@@ -25,14 +25,9 @@ const ResourceError = (props) => (
   </p>
 );
 
-// TODO not used here, but may be useful for the Details modals in domain/cloud level
-const UnitValue = ({ unit, value }) => {
-  if (unit === '' || !unit) {
-    return <span className='value-with-unit'>{formatLargeInteger(value)}</span>;
-  }
-
-  const formattedValue = (new Unit(unit)).format(value);
-  return <span className='value-with-unit' title={`${value} ${unit}`}>{formattedValue}</span>;
+const valueWithUnit = (value, unit) => {
+  const title = unit.name !== '' ? `${value} ${unit.name}` : undefined;
+  return <span className='value-with-unit' title={title}>{unit.format(value)}</span>;
 };
 
 export default class ProjectResource extends React.Component {
@@ -65,8 +60,13 @@ export default class ProjectResource extends React.Component {
     }
 
     //when the label does not fit in the bar itself, place it next to it
-    const label = `${unit.format(usage)}/${unit.format(quota)}`;
-    if (widthPerc > (2 * label.length)) {
+    const label = (
+      <React.Fragment>
+        {valueWithUnit(usage, unit)}/{valueWithUnit(quota, unit)}
+      </React.Fragment>
+    );
+    const labelText = `${unit.format(usage)}/${unit.format(quota)}`;
+    if (widthPerc > (2 * labelText.length)) {
       return (
         <div className={`${className} has-label`} style={{width:widthPerc+'%'}}>{label}</div>
       );

@@ -1,3 +1,5 @@
+import { objectFromEntries } from './polyfill';
+
 const bases = {
   '':  { scale: 'none' }, // countable things
   'B': { scale: 'iec'  }, // bytes (B, KiB, MiB, etc.)
@@ -13,7 +15,7 @@ const scales = {
   },
 };
 
-const units = Object.fromEntries(
+const units = objectFromEntries(
   Object.entries(bases).flatMap(([base, props]) =>
     scales[props.scale].prefixes.map((prefix, idx) => [
       prefix + base,
@@ -21,6 +23,24 @@ const units = Object.fromEntries(
     ])
   )
 );
+
+const synonyms = {
+  'K': 'Ki',
+  'M': 'Mi',
+  'G': 'Gi',
+  'T': 'Ti',
+  'P': 'Pi',
+  'E': 'Ei',
+};
+const resolveSynonym = (str) => {
+  //`resolveSynonym(str)` is like `synonyms[str]`, but with case-insensitive matching
+  for (var synonym in synonyms) {
+    if (synonym.toLowerCase() == str.toLowerCase()) {
+      return synonyms[synonym];
+    }
+  }
+  return str;
+};
 
 export class Unit {
   constructor(name) {
@@ -39,26 +59,78 @@ export class Unit {
   format(value) {
     //convert value into bigger units if available
     let steps = this.unitData.steps;
-    while (value > this.scaleData.step && steps + 1 < this.scaleData.prefixes.length) {
+    while (value >= this.scaleData.step && steps + 1 < this.scaleData.prefixes.length) {
       value /= this.scaleData.step;
       steps += 1;
     }
     const displayUnit = this.scaleData.prefixes[steps] + this.unitData.base;
 
-    //round value down to 3 digits if we have a fractional value
-    if (value > 100) {
-      value = Math.round(value);
-    } else if (value > 10) {
-      value = Math.round(value * 10) / 10;
-    } else {
-      value = Math.round(value * 100) / 100;
-    }
+    //round value down like printf("%.2f")
+    value = Math.round(value * 100) / 100;
 
     if (displayUnit == '') {
       return value.toString();
     } else {
-      //join with no-break space instead of regular space
-      return `${value}\u00A0${displayUnit}`;
+      //join with narrow no-break space instead of regular space
+      return `${value}\u202F${displayUnit}`;
     }
+  }
+
+  //Parses a string representation of a value in this unit. The unit may be
+  //omitted, and unit prefixes may be replaced with their `synonyms`. Case is
+  //ignored when matching prefix and unit names. For example:
+  //
+  //    Unit('MiB').parse('10')          => 10
+  //    Unit('MiB').parse('10 MiB')      => 10
+  //    Unit('MiB').parse('10 gib')      => 10240
+  //    Unit('MiB').parse('10g')         => 10240
+  //    Unit('MiB').parse('10 whatever') => { error: 'syntax' }
+  //    Unit('MiB').parse('10 KiB')      => { error: 'fractional-value' }
+  //    Unit('MiB').parse('1024 KiB')    => 1
+  parse(input) {
+    //check overall syntax "<value> [<unit>]"
+    const baseMatch = (/^\s*([0-9.,]+)\s*([a-zA-Z]*)\s*$/).exec(input);
+    if (baseMatch === null) {
+      return { error: 'syntax' };
+    }
+
+    //strip base unit if provided (e.g. "KiB" -> "Ki", e.g. "B" => "")
+    const unitMatch = (new RegExp(`^(.*)${this.unitData.base}$`, 'i')).exec(baseMatch[2]);
+    const givenPrefix = unitMatch === null ? baseMatch[2] : unitMatch[1];
+
+    //recognize prefix (or synonym)
+    const prefix = resolveSynonym(givenPrefix).toLowerCase();
+    let steps = this.scaleData.prefixes.findIndex(val => val.toLowerCase() == prefix);
+    if (steps === -1) {
+      // unknown unit or prefix
+      return { error: 'syntax' };
+    }
+
+    //convert given integer value into the requested unit
+    let value = parseFloat(baseMatch[1].replace(/,/g, '.'));
+    if (isNaN(value)) {
+      // illegal formatting, e.g. multiple decimal dots
+      return { error: 'syntax' };
+    }
+
+    //convert larger into smaller units (e.g. GiB into MiB), thus resolving
+    //fractional values
+    const step = this.scaleData.step;
+    const targetSteps = this.unitData.steps;
+    while (steps > targetSteps) {
+      value = value * step;
+      steps--;
+    }
+    value = Math.floor(value);
+
+    //convert smaller into larger units, unless doing so would reintroduce
+    //fractional values
+    while (steps < targetSteps) {
+      if (value % step != 0) return { error: 'fractional-value' };
+      value = value / step;
+      steps++;
+    }
+
+    return value;
   }
 }

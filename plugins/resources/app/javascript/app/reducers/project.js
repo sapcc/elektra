@@ -1,4 +1,5 @@
 import * as constants from '../constants';
+import { objectFromEntries } from '../polyfill';
 
 const initialState = {
   //data from Limes
@@ -66,7 +67,7 @@ const receive = (state, {projectData, receivedAt}) => {
 
   // `overview` is what the ProjectOverview component needs.
   const overview = {
-    scrapedAt: Object.fromEntries(
+    scrapedAt: objectFromEntries(
       serviceList.map(srv => [ srv.type, srv.scraped_at ]),
     ),
     areas: groupKeys(serviceList.map((srv) => [ srv.area || srv.type, srv.type ])),
