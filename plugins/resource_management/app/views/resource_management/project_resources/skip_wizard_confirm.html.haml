@@ -1,0 +1,28 @@
+= content_for(:title, "Skip Resource Request for project #{@project.name}")
+
+=simple_form_for @project, url: plugin('resource_management').resources_skip_wizard_path(), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+
+    - unless @project.errors.empty?
+      %p.alert.alert-error= @project.errors.full_messages.to_sentence
+    .row
+      .col-sm-3
+        = f.input :skip_wizard,
+          label: 'Skip Resource Request',
+          as: :boolean,
+          icon_hint:  "",
+          wrapper_html: { style: "padding-left:20px" }
+      .col-sm-9
+        .bs-callout.bs-callout-primary
+          %p
+            Are you sure to proceed without quota? This means you cannot build up anything in this project. This is only usefull if you use a project as organisational unit. Like a master project with sub projects.
+          %p
+            If you skip the step you can request resources afterwards at any time in the Resource Management.
+
+  .buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
+    - else
+      = link_to "Cancel", data: {dismiss:"modal"}, class: 'btn btn-default'
+    %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Save

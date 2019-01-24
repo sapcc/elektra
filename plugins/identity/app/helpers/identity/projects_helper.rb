@@ -54,11 +54,12 @@ module Identity
       end
 
       if skip_button_options
-        label = skip_button_options[:label] || 'Do this later'
-        url = skip_button_options[:url]
+        label     = skip_button_options[:label] || 'Do this later'
+        url       = skip_button_options[:url]
         css_class = 'btn btn-default btn-xs pull-right'
+        data      = skip_button_options[:data] || {}
         if url
-          skip_button = link_to(label,url, class: css_class)
+          skip_button = link_to(label,url, class: css_class, data: data)
         else
           skip_button = link_to(label,'javascript:void(0)')
         end

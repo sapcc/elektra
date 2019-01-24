@@ -72,12 +72,12 @@ Identity::Engine.routes.draw do
     # end
   end
 
-  get 'project/home' => 'projects#show', as: :project
-  get 'project/view' => 'projects#view', as: :project_view
-  get 'project/wizard' => 'projects#show_wizard', as: :project_wizard
-  get 'project/edit' => 'projects#edit', as: :edit_project
-  put 'project' => 'projects#update', as: :update_project
-  get 'home' => 'domains#show', as: :domain
+  get 'project/home'        => 'projects#show', as: :project
+  get 'project/view'        => 'projects#view', as: :project_view
+  get 'project/wizard'      => 'projects#show_wizard', as: :project_wizard
+  get 'project/edit'        => 'projects#edit', as: :edit_project
+  put 'project'             => 'projects#update', as: :update_project
+  get 'home'                => 'domains#show', as: :domain
 
   resources :credentials
 

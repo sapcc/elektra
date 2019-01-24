@@ -90,6 +90,7 @@
       = wizard_step({title: 'Request Resource Quotas',
         mandatory: true,
         action_button: action_button,
+        skip_button:( { label: 'Skip Step', url: plugin('resource_management').resources_skip_wizard_path(), data: {modal: true, wizard_action_button: true}} ),
         status: nil}) do
         %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
 
