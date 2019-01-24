@@ -65,7 +65,7 @@ module Automation
       end
     rescue Exception => e
       Rails.logger.error e
-      flash.now[:error] = I18n.t('automation.errors.automation_creation_error')
+      flash.now[:error] = "#{I18n.t('automation.errors.automation_creation_error')} #{e.message}"
       render action: 'new'
     end
 
