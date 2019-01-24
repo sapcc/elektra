@@ -110,14 +110,33 @@ export default class ProjectResource extends React.Component {
   }
 
   renderEditControls() {
-    const { editQuotaText, resource } = this.props;
-    const { name: resourceName } = resource;
+    const { editQuotaText, editError, resource } = this.props;
+    const { name: resourceName, unit: unitName } = resource;
+
+    let errorMessage = undefined;
+    switch (editError) {
+      case 'syntax':
+        errorMessage = unitName ?
+          'Syntax error. Enter a value like "1.2 TiB" or "50g".' :
+          "Syntax error. Enter an integer number.";
+        break;
+      case 'fractional-value':
+        errorMessage = `Need an integer number of ${unitName}.`;
+        break;
+      case 'overspent':
+        errorMessage = 'Must be more than current usage.';
+        break;
+    }
+    if (errorMessage) {
+      errorMessage = <div className='col-md-3 text-danger'>{errorMessage}</div>;
+    }
 
     return (
       <React.Fragment>
         <div className='col-md-2 edit-quota-input'>
           <input className='form-control input-sm' type='text' value={editQuotaText} onChange={(e) => this.props.handleInput(resourceName, e.target.value)} />
         </div>
+        {errorMessage}
       </React.Fragment>
     );
   }
@@ -126,9 +145,13 @@ export default class ProjectResource extends React.Component {
     const displayName = t(this.props.resource.name);
     const flavorData = this.props.flavorData[displayName] || {};
 
-    const { quota, usage, backendQuota, unit: unitName } = this.props.resource;
+    const { quota: originalQuota, usage, backendQuota, unit: unitName } = this.props.resource;
     const { enabled: hasBursting, multiplier: burstMultiplier } =
       this.props.metadata.bursting || {};
+
+    //during editing, allow the parent form to override the displayed quota value
+    const isEditing = this.props.editQuotaValue !== undefined;
+    const quota = isEditing ? this.props.editQuotaValue : originalQuota;
 
     const desiredBackendQuota =
       hasBursting ? Math.floor(quota * (1 + burstMultiplier)) : quota;
@@ -138,14 +161,14 @@ export default class ProjectResource extends React.Component {
     const unit = new Unit(unitName || "");
 
     return (
-      <div className='row'>
+      <div className={this.props.editError ? 'row has-error' : 'row'}>
         <ResourceName name={displayName} flavorData={flavorData} />
         <div className='col-md-5'>
           <div className='progress'>
             {this.renderBarContents(quota, usage, unit, isDanger)}
           </div>
         </div>
-        {this.props.editQuotaValue
+        {isEditing
           ? this.renderEditControls()
           : <div className='col-md-5'>
               {this.renderInfo(quota, usage, desiredBackendQuota, actualBackendQuota, unit)}
