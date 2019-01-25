@@ -135,8 +135,7 @@ export default class ProjectEditModal extends React.Component {
 
         <Modal.Body>
           <div className='row edit-quota-form-header'>
-            <div className='col-md-offset-2 col-md-5'><strong>Live Preview</strong></div>
-            <div className='col-md-5'><strong>New Quota</strong></div>
+            <div className='col-md-offset-7 col-md-5'><strong>New Quota</strong></div>
           </div>
           {this.state.inputValues && category.resources.sort(byUIString).map(res => (
             <ProjectResource
