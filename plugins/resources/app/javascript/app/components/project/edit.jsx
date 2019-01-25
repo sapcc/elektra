@@ -69,12 +69,14 @@ export default class ProjectEditModal extends React.Component {
     if (this.asyncParseInputsTimer) {
       window.clearTimeout(this.asyncParseInputsTimer);
     }
-    this.asyncParseInputsTimer = setTimeout(this.asyncParseInputs, 500);
+    this.asyncParseInputsTimer = setTimeout(this.triggerParseInputs, 2000);
   };
 
-  //This gets called asynchronously by handleInput(), to parse the user's quota
-  //inputs.
-  asyncParseInputs = () => {
+  //Parses the user's quota inputs. This gets called asynchronously by
+  //handleInput() after the user has stopped typing, but is also triggered
+  //eagerly by events on the input field (e.g. Tab/Enter keys or mouse-out)
+  //following a "do what I mean" strategy.
+  triggerParseInputs = () => {
     const newState = { ...this.state, inputValues: {}, inputErrors: {} };
     for (let res of this.props.category.resources) {
       const unit = new Unit(res.unit);
@@ -144,6 +146,7 @@ export default class ProjectEditModal extends React.Component {
               editQuotaText={this.state.inputTexts[res.name]}
               editError={this.state.inputErrors[res.name]}
               handleInput={this.handleInput}
+              triggerParseInputs={this.triggerParseInputs}
             />
           ))}
         </Modal.Body>

@@ -33,6 +33,14 @@ const valueWithUnit = (value, unit) => {
 export default class ProjectResource extends React.Component {
   state = {}
 
+  onInputKeyPress(e) {
+    if (e.key == 'Enter') {
+      this.props.triggerParseInputs();
+    }
+    //continue handling the key-press event in the regular manner
+    return true;
+  }
+
   renderBarContents(quota, usage, unit, isDanger) {
     //get some edge cases out of the way first
     if (quota == 0 && usage == 0) {
@@ -134,7 +142,13 @@ export default class ProjectResource extends React.Component {
     return (
       <React.Fragment>
         <div className='col-md-2 edit-quota-input'>
-          <input className='form-control input-sm' type='text' value={editQuotaText} onChange={(e) => this.props.handleInput(resourceName, e.target.value)} />
+          <input
+            className='form-control input-sm' type='text' value={editQuotaText}
+            onChange={(e) => this.props.handleInput(resourceName, e.target.value)}
+            onBlur={(e) => { this.props.triggerParseInputs(); return true; }}
+            onMouseOut={(e) => { this.props.triggerParseInputs(); return true; }}
+            onKeyPress={(e) => this.onInputKeyPress(e)}
+          />
         </div>
         {errorMessage}
       </React.Fragment>
