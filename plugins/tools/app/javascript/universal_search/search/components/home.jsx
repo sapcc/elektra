@@ -14,10 +14,13 @@ export default class Search extends React.Component {
     }
     this.props.loadTypesOnce()
 
-    // try to find init search term in url
+    // try to find init search term and type in url
     const searchTermMatch = this.props.location.search.match(/[\?|\&]searchTerm=([^\&]+)/)
+    const searchTypeMatch = this.props.location.search.match(/[\?|\&]type=([^\&]+)/)
+
     this.searchTerm = searchTermMatch && searchTermMatch[1]
-    if(this.searchTerm) this.props.search({term: this.searchTerm})
+    this.objectType = searchTypeMatch && searchTypeMatch[1] 
+    if(this.searchTerm || this.objectType) this.props.search({term: this.searchTerm, objectType: this.objectType})
   }
 
   highlightSearchTerm = (string) => {
@@ -58,7 +61,7 @@ export default class Search extends React.Component {
           :
             <select
               onChange={(e) => this.props.search({objectType: e.target.value})}
-              value={this.props.objects.objectType}
+              value={this.props.objects.searchType}
             >
               <option value="">All</option>
               { availableTypes.map((type,index) =>
