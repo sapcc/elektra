@@ -79,7 +79,11 @@ module Compute
         ).first
       end.values
 
-      @log = services.compute.console_log(params[:id])
+      @log = begin 
+        services.compute.console_log(params[:id])
+      rescue 
+        nil
+      end  
     end
 
     def new

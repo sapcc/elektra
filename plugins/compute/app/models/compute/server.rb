@@ -225,6 +225,8 @@ module Compute
     def image_object
       return nil unless image['id']
       @image_object ||= @service.find_image(image['id'], true)
+    rescue 
+      nil
     end
 
     def metadata
