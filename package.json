@@ -32,7 +32,7 @@
     "react-transition-group": "*",
     "react-virtualized": "^9.20.1",
     "redux": "^3.7.2",
-    "redux-devtools-extension": "*",
+    "redux-devtools-extension": "^2.13.5",
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
