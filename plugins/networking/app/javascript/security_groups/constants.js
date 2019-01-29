@@ -126,6 +126,12 @@ export const SECURITY_GROUP_RULE_PREDEFINED_TYPES = [
     direction: 'ingress'
   },
   {
+    label: 'NTP',
+    protocol: 'udp',
+    portRange: 123,
+    direction: 'ingress'
+  },
+  {
     label: 'POP3',
     protocol: 'tcp',
     portRange: 110,
