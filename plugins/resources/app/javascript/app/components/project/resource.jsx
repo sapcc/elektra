@@ -61,9 +61,10 @@ export default class ProjectResource extends React.Component {
     let className = 'progress-bar';
     if (isDanger) {
       className = 'progress-bar progress-bar-danger progress-bar-striped';
-      widthPerc = 100;
     } else if (usage >= quota) {
       className = 'progress-bar progress-bar-warning';
+    }
+    if (widthPerc > 100) {
       widthPerc = 100;
     }
 
@@ -100,14 +101,14 @@ export default class ProjectResource extends React.Component {
     }
   }
 
-  renderInfo(quota, usage, desiredBackendQuota, actualBackendQuota, unit) {
+  renderInfo(quota, usage, usableQuota, actualBackendQuota, unit) {
     let msg = null;
-    if (usage > desiredBackendQuota) {
+    if (usage > usableQuota) {
       msg = 'Usage exceeds backend quota. Please request more quota to fix.';
-    } else if (desiredBackendQuota != actualBackendQuota) {
-      msg = `Expected backend quota to be ${unit.format(desiredBackendQuota)}, but is ${unit.format(actualBackendQuota)}.`;
+    } else if (usableQuota != actualBackendQuota) {
+      msg = `Expected backend quota to be ${unit.format(usableQuota)}, but is ${unit.format(actualBackendQuota)}.`;
     } else {
-      return this.renderBurstInfo(quota, usage, desiredBackendQuota, unit);
+      return this.renderBurstInfo(quota, usage, usableQuota, unit);
     }
 
     return (
@@ -159,7 +160,7 @@ export default class ProjectResource extends React.Component {
     const displayName = t(this.props.resource.name);
     const flavorData = this.props.flavorData[displayName] || {};
 
-    const { quota: originalQuota, usage, backendQuota, unit: unitName } = this.props.resource;
+    const { quota: originalQuota, usage, usable_quota: usableQuota, backend_quota: backendQuota, unit: unitName } = this.props.resource;
     const { enabled: hasBursting, multiplier: burstMultiplier } =
       this.props.metadata.bursting || {};
 
@@ -167,10 +168,8 @@ export default class ProjectResource extends React.Component {
     const isEditing = this.props.editQuotaValue !== undefined;
     const quota = isEditing ? this.props.editQuotaValue : originalQuota;
 
-    const desiredBackendQuota =
-      hasBursting ? Math.floor(quota * (1 + burstMultiplier)) : quota;
-    const actualBackendQuota = backendQuota == null ? desiredBackendQuota : backendQuota;
-    const isDanger = usage > desiredBackendQuota || desiredBackendQuota != actualBackendQuota;
+    const actualBackendQuota = backendQuota == null ? usableQuota : backendQuota;
+    const isDanger = usage > usableQuota || usableQuota != actualBackendQuota;
 
     const unit = new Unit(unitName || "");
 
@@ -185,7 +184,7 @@ export default class ProjectResource extends React.Component {
         {isEditing
           ? this.renderEditControls()
           : <div className='col-md-5'>
-              {this.renderInfo(quota, usage, desiredBackendQuota, actualBackendQuota, unit)}
+              {this.renderInfo(quota, usage, usableQuota, actualBackendQuota, unit)}
             </div>
         }
       </div>
