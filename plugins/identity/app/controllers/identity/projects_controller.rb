@@ -95,6 +95,30 @@ module Identity
       )
     end
 
+    def download_openrc_ps1
+      @token = current_user.token
+      @webcli_endpoint = current_user.service_url('webcli')
+      @identity_url = current_user.service_url('identity')
+
+      out_data = "$env:OS_AUTH_URL=\"#{@identity_url}\"\r\n" \
+        "$env:OS_IDENTITY_API_VERSION=\"3\"\r\n" \
+        "$env:OS_PROJECT_NAME=\"#{@scoped_project_name}\"\r\n" \
+        "$env:OS_PROJECT_DOMAIN_NAME=\"#{@scoped_domain_name}\"\r\n" \
+        "$env:OS_USERNAME=\"#{current_user.name}\"\r\n" \
+        "$env:OS_USER_DOMAIN_NAME=\"#{@scoped_domain_name}\"\r\n" \
+        "$Password = Read-Host -Prompt \"Please enter your OpenStack Password\" -AsSecureString\r\n" \
+        "$env:OS_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))\r\n" \
+        "$env:OS_REGION_NAME=\"#{current_region}\"\r\n" \
+
+      send_data(
+        out_data,
+        type: 'text/plain',
+        filename: "openrc-#{@scoped_domain_name}-#{@scoped_project_name}.ps1",
+        dispostion: 'inline',
+        status: :ok
+      )
+    end
+
     private
 
     def get_project_id

@@ -46,6 +46,7 @@ Identity::Engine.routes.draw do
     get 'web-console'
     get 'api-endpoints'
     get 'download-openrc'
+    get 'download-openrc-ps1'
 
     scope :wizard do
       get 'request_project' => 'request_wizard#new'
