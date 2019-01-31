@@ -18,7 +18,14 @@ module Networking
         services.networking.ports({ sort_key: 'id' }.merge(pagination_options))
       end
 
-      render json: { ports: ports, has_next: @pagination_has_next }
+      # render json: { ports: ports, has_next: @pagination_has_next }
+
+      if request.xhr?
+        render json: { ports: ports, has_next: @pagination_has_next }
+      else
+        # common case, render index page with layout
+        render action: :index
+      end
     end
 
     def show
