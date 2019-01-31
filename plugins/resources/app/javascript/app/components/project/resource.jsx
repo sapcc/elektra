@@ -41,7 +41,7 @@ export default class ProjectResource extends React.Component {
     return true;
   }
 
-  renderBarContents(quota, usage, unit, isDanger) {
+  renderBarContents(quota, usage, unit, isDanger, isEditing) {
     //get some edge cases out of the way first
     if (quota == 0 && usage == 0) {
       return (
@@ -68,14 +68,15 @@ export default class ProjectResource extends React.Component {
       widthPerc = 100;
     }
 
-    //when the label does not fit in the bar itself, place it next to it
+    //when the label does not fit in the bar itself, place it next to it (we take `isEditing` into account here because then the bar's length is only 60% of the original)
     const label = (
       <React.Fragment>
         {valueWithUnit(usage, unit)}/{valueWithUnit(quota, unit)}
       </React.Fragment>
     );
     const labelText = `${unit.format(usage)}/${unit.format(quota)}`;
-    if (widthPerc > (2 * labelText.length)) {
+    const lengthMultiplier = isEditing ? 3.5 : 2;
+    if (widthPerc > (lengthMultiplier * labelText.length)) {
       return (
         <div className={`${className} has-label`} style={{width:widthPerc+'%'}}>{label}</div>
       );
@@ -119,8 +120,8 @@ export default class ProjectResource extends React.Component {
   }
 
   renderEditControls() {
-    const { editQuotaText, editError, resource } = this.props;
-    const { name: resourceName, unit: unitName } = resource;
+    const { text: editQuotaText, error: editError } = this.props.edit;
+    const { name: resourceName, unit: unitName } = this.props.resource;
 
     let errorMessage = undefined;
     switch (editError) {
@@ -165,8 +166,8 @@ export default class ProjectResource extends React.Component {
       this.props.metadata.bursting || {};
 
     //during editing, allow the parent form to override the displayed quota value
-    const isEditing = this.props.editQuotaValue !== undefined;
-    const quota = isEditing ? this.props.editQuotaValue : originalQuota;
+    const isEditing = this.props.edit ? true : false;
+    const quota = isEditing ? this.props.edit.value : originalQuota;
 
     const actualBackendQuota = backendQuota == null ? usableQuota : backendQuota;
     const isDanger = usage > usableQuota || usableQuota != actualBackendQuota;
@@ -174,11 +175,11 @@ export default class ProjectResource extends React.Component {
     const unit = new Unit(unitName || "");
 
     return (
-      <div className={this.props.editError ? 'row has-error' : 'row'}>
+      <div className={isEditing && this.props.edit.error ? 'row has-error' : 'row'}>
         <ResourceName name={displayName} flavorData={flavorData} />
-        <div className='col-md-5'>
+        <div className={isEditing ? 'col-md-4' : 'col-md-5'}>
           <div className='progress'>
-            {this.renderBarContents(quota, usage, unit, isDanger)}
+            {this.renderBarContents(quota, usage, unit, isDanger, isEditing)}
           </div>
         </div>
         {isEditing

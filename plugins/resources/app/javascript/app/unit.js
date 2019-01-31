@@ -56,7 +56,11 @@ export class Unit {
   //    Unit('MiB').format(10)    => '10 MiB'
   //    Unit('MiB').format(10240) => '10 GiB'
   //
-  format(value) {
+  //The option `ascii: true` restricts the generated string to ASCII, e.g.
+  //replacing fancy non-breaking spaces with regular old ASCII spaces. This is
+  //useful for input fields since the user is likely to type regular spaces.
+  //
+  format(value, options={}) {
     //convert value into bigger units if available
     let steps = this.unitData.steps;
     while (value >= this.scaleData.step && steps + 1 < this.scaleData.prefixes.length) {
@@ -71,8 +75,9 @@ export class Unit {
     if (displayUnit == '') {
       return value.toString();
     } else {
-      //join with narrow no-break space instead of regular space
-      return `${value}\u202F${displayUnit}`;
+      //if possible, join with narrow no-break space instead of regular space
+      const space = options.ascii ? ' ' : "\u202F";
+      return value + space + displayUnit;
     }
   }
 

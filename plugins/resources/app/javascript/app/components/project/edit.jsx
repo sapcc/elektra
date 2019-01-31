@@ -8,17 +8,9 @@ export default class ProjectEditModal extends React.Component {
   state = {
     //This will be set to false by this.close().
     show: true,
-    //The `inputTexts` object contains the current contents of all input fields
-    //in this form.
-    inputTexts: null,
-    //The `inputValues` object contains the parsed numerical quota values for
-    //all input fields in this form. This is different from `inputTexts`
-    //because an input text may temporarily not parse correctly while the user
-    //is still entering it.
-    inputValues: null,
-    //The `inputErrors` object contains the error messages returned by
-    //Unit.parse() for any resource whose `inputText` fails to parse.
-    inputErrors: null,
+    //The `inputs` object contains the editing state for each input field. The
+    //key is the resource name.
+    inputs: null,
   }
 
   //NOTE: These fields hold active timers (as started by setTimeout()). This is
@@ -36,7 +28,7 @@ export default class ProjectEditModal extends React.Component {
 
   initializeValuesIfNecessary = (props) => {
     //do this only once
-    if (this.state.inputValues) {
+    if (this.state.inputs) {
       return;
     }
     //do this only when we have project data
@@ -46,26 +38,29 @@ export default class ProjectEditModal extends React.Component {
     }
 
     //initialize the state of the input form
-    const inputValues = {};
-    const inputTexts = {};
+    const inputs = {};
     for (let res of resources) {
       const unit = new Unit(res.unit);
-      inputValues[res.name] = res.quota;
-      inputTexts[res.name] = unit.format(res.quota);
+      inputs[res.name] = {
+        value: res.quota,
+        text: unit.format(res.quota, { ascii: true }),
+      };
     }
-    this.setState({...this.state, inputValues, inputTexts, inputErrors: {} });
+
+    this.setState({...this.state, inputs });
   }
 
   //This gets called by the input fields' onChange event.
   handleInput = (resourceName, inputText) => {
     //update inputTexts immediately
     const newState = { ...this.state };
-    newState.inputTexts = { ...this.state.inputTexts };
-    newState.inputTexts[resourceName] = inputText;
+    newState.inputs = { ...this.state.inputs };
+    const oldInputState = this.state.inputs[resourceName];
+    newState.inputs[resourceName] = { ...oldInputState, text: inputText };
     this.setState(newState);
 
-    //do not attempt to update inputValues immediately; wait until the user has
-    //stopped typing
+    //do not attempt to update inputs[].value etc. immediately; wait until the
+    //user has stopped typing
     if (this.asyncParseInputsTimer) {
       window.clearTimeout(this.asyncParseInputsTimer);
     }
@@ -77,30 +72,32 @@ export default class ProjectEditModal extends React.Component {
   //eagerly by events on the input field (e.g. Tab/Enter keys or mouse-out)
   //following a "do what I mean" strategy.
   triggerParseInputs = () => {
-    const newState = { ...this.state, inputValues: {}, inputErrors: {} };
+    const newState = { ...this.state, inputs: {} };
     for (let res of this.props.category.resources) {
       const unit = new Unit(res.unit);
+      const oldInput = this.state.inputs[res.name];
+      const input = { text: oldInput.text };
+      newState.inputs[res.name] = input;
 
       //if the user has not modified the input text, always use the original
       //value (this may be different from `unit.parse(inputText)` if the
       //formatting removed some decimal places)
-      const originalText = unit.format(res.quota);
-      const inputText = this.state.inputTexts[res.name];
-      if (originalText == inputText) {
-        newState.inputValues[res.name] = res.quota;
+      const originalText = unit.format(res.quota, { ascii: true });
+      if (originalText == input.text) {
+        input.value = res.quota;
         continue;
       }
 
       //attempt to parse the user's input
-      const parsedValue = unit.parse(inputText);
+      const parsedValue = unit.parse(input.text);
       if (parsedValue.error) {
         //parse error -> continue to show the previous value on the bar
-        newState.inputValues[res.name] = this.state.inputValues[res.name];
-        newState.inputErrors[res.name] = parsedValue.error;
+        input.value = oldInput.value;
+        input.error = parsedValue.error;
       } else {
-        newState.inputValues[res.name] = parsedValue;
+        input.value = parsedValue;
         if (parsedValue < res.usage) {
-          newState.inputErrors[res.name] = 'overspent';
+          input.error = 'overspent';
         }
       }
     }
@@ -137,14 +134,12 @@ export default class ProjectEditModal extends React.Component {
 
         <Modal.Body>
           <div className='row edit-quota-form-header'>
-            <div className='col-md-offset-7 col-md-5'><strong>New Quota</strong></div>
+            <div className='col-md-offset-6 col-md-6'><strong>New Quota</strong></div>
           </div>
-          {this.state.inputValues && category.resources.sort(byUIString).map(res => (
+          {this.state.inputs && category.resources.sort(byUIString).map(res => (
             <ProjectResource
               key={res.name} resource={res} {...forwardProps}
-              editQuotaValue={this.state.inputValues[res.name]}
-              editQuotaText={this.state.inputTexts[res.name]}
-              editError={this.state.inputErrors[res.name]}
+              edit={this.state.inputs[res.name]}
               handleInput={this.handleInput}
               triggerParseInputs={this.triggerParseInputs}
             />
