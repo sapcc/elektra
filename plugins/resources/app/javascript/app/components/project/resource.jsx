@@ -120,8 +120,9 @@ export default class ProjectResource extends React.Component {
   }
 
   renderEditControls() {
+    const { isFollowing } = this.props;
     const { text: editQuotaText, error: editError } = this.props.edit;
-    const { name: resourceName, unit: unitName } = this.props.resource;
+    const { name: resourceName, unit: unitName, scales_with: scalesWith } = this.props.resource;
 
     let errorMessage = undefined;
     switch (editError) {
@@ -139,8 +140,12 @@ export default class ProjectResource extends React.Component {
         errorMessage = 'Must be more than current usage.';
         break;
     }
+
+    let message = undefined;
     if (errorMessage) {
-      errorMessage = <div className='col-md-4 text-danger'>{errorMessage}</div>;
+      message = <div className='col-md-4 text-danger'>{errorMessage}</div>;
+    } else if (isFollowing) {
+      message = <div className='col-md-4'>Adds {scalesWith.factor} per extra {t(scalesWith.resource_name+'_single')}</div>;
     }
 
     return (
@@ -152,9 +157,10 @@ export default class ProjectResource extends React.Component {
             onBlur={(e) => { this.props.triggerParseInputs(); return true; }}
             onMouseOut={(e) => { this.props.triggerParseInputs(); return true; }}
             onKeyPress={(e) => this.onInputKeyPress(e)}
+            disabled={isFollowing}
           />
         </div>
-        {errorMessage}
+        {message}
       </React.Fragment>
     );
   }
