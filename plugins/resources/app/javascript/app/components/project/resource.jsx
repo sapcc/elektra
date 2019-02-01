@@ -127,18 +127,20 @@ export default class ProjectResource extends React.Component {
     switch (editError) {
       case 'syntax':
         errorMessage = unitName ?
-          'Syntax error. Enter a value like "1.2 TiB" or "50g".' :
-          "Syntax error. Enter an integer number.";
+          'Need a value like "1.2 TiB" or "50g".' :
+          "Need an integer number.";
         break;
       case 'fractional-value':
-        errorMessage = `Need an integer number of ${unitName}.`;
+        errorMessage = unitName ?
+          `Need an integer number of ${unitName}.` :
+          "Need an integer number.";
         break;
       case 'overspent':
         errorMessage = 'Must be more than current usage.';
         break;
     }
     if (errorMessage) {
-      errorMessage = <div className='col-md-3 text-danger'>{errorMessage}</div>;
+      errorMessage = <div className='col-md-4 text-danger'>{errorMessage}</div>;
     }
 
     return (

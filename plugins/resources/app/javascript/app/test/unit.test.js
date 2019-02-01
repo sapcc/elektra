@@ -57,6 +57,8 @@ describe('Unit', () => {
 
       expect(u.parse("    0004  ")).toEqual(4)
 
+      expect(u.parse("4.2")).toEqual(errFractional)
+      expect(u.parse("4,2")).toEqual(errFractional)
       expect(u.parse("foo")).toEqual(errSyntax)
       expect(u.parse("4 things")).toEqual(errSyntax)
       expect(u.parse("4 GiB")).toEqual(errSyntax)

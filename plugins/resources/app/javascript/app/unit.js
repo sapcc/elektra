@@ -122,11 +122,16 @@ export class Unit {
     //fractional values
     const step = this.scaleData.step;
     const targetSteps = this.unitData.steps;
-    while (steps > targetSteps) {
-      value = value * step;
-      steps--;
+    if (steps > targetSteps) {
+      while (steps > targetSteps) {
+        value = value * step;
+        steps--;
+      }
+      value = Math.floor(value);
     }
-    value = Math.floor(value);
+    if (value != Math.floor(value)) {
+      return { error: 'fractional-value' };
+    }
 
     //convert smaller into larger units, unless doing so would reintroduce
     //fractional values
