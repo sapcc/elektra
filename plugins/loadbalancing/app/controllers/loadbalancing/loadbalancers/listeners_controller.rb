@@ -42,7 +42,7 @@ module Loadbalancing
         @pools = services.loadbalancing.pools(
           loadbalancer_id: @loadbalancer.id
         )
-        containers = services.key_manager.containers()
+        containers = services.key_manager.containers(limit: 100)
 
         return unless containers
         @containers = containers[:items].map { |c| [c.name, c.container_ref] }
@@ -66,7 +66,7 @@ module Loadbalancing
 
       def edit
         @listener = services.loadbalancing.find_listener(params[:id])
-        containers = services.key_manager.containers()
+        containers = services.key_manager.containers(limit: 100)
         if containers
           @containers = containers[:items].map { |c| [c.name, c.container_ref] }
         end

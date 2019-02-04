@@ -49,7 +49,7 @@ module KeyManager
 
     def containers
       page = params[:page] || 1
-      per_page = 10
+      per_page = params[:limit] || 10
       offset = (page.to_i - 1) * per_page
       result = services.key_manager.containers(
         sort: 'created:desc', limit: per_page, offset: offset
