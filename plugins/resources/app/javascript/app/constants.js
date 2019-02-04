@@ -39,6 +39,8 @@ export const STRINGS = {
     "per_flavor":                  "Restricted Flavors",
     "pools":                       "Pools",
     "pools_single":                "Pool",
+    "pool_members":                "Pool Members",
+    "pool_members_single":         "Pool Member",
     "ports":                       "Ports",
     "ports_single":                "Port",
     "ram":                         "RAM",
