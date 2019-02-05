@@ -29,7 +29,6 @@
 -# subtree
 %div{data: {react_auth_projects: true, root: @scoped_project_id, title: 'false' } }
 
-
 - unless @project_resource.nil?
   - if @project_resource.bursting && !@project_resource.burst_usage.empty? && @active_project.name != "cloud_admin"
     .bs-callout.bs-callout-warning.bs-callout-emphasize.u-margin-top-normal

@@ -227,7 +227,7 @@ module ResourceManagement
       skip_wizard = params[:project][:skip_wizard] == "1" || false
       project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
       if skip_wizard
-        project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
+        project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_SKIPPED)
       end
     end
 
