@@ -1,6 +1,6 @@
 import { Modal, Button } from 'react-bootstrap';
 
-import { byUIString, t } from '../../utils';
+import { byLeaderAndName, t } from '../../utils';
 import ProjectResource from '../../components/project/resource';
 import { Unit } from '../../unit';
 
@@ -11,11 +11,6 @@ export default class ProjectEditModal extends React.Component {
     //The `inputs` object contains the editing state for each input field. The
     //key is the resource name.
     inputs: null,
-    //The `isFollowing` field is a boolean that indicates whether resources
-    //with scaling relation currently follow their leader, or `null` if
-    //there are no resources with scaling relation.
-    isFollowing: null,
-    //The `canFollow` field tracks which resources have usable scaling relations.
   }
 
   //NOTE: These fields hold active timers (as started by setTimeout()). This is
@@ -45,8 +40,6 @@ export default class ProjectEditModal extends React.Component {
     //initialize the state of the input form
     const inputs = {};
     const hasResource = {};
-    const canFollow = {};
-    let isFollowing = undefined;
     for (let res of resources) {
       const unit = new Unit(res.unit);
       inputs[res.name] = {
@@ -59,13 +52,12 @@ export default class ProjectEditModal extends React.Component {
       //can only use scaling relations between resources in the same service+category
       if (res.scales_with && res.scales_with.service_type == props.category.serviceType) {
         if (hasResource[res.scales_with.resource_name]) {
-          canFollow[res.name] = true;
-          isFollowing = true;
+          inputs[res.name].isFollowing = true;
         }
       }
     }
 
-    this.setState({...this.state, inputs, isFollowing, canFollow });
+    this.setState({...this.state, inputs });
   }
 
   //This gets called by the input fields' onChange event.
@@ -74,7 +66,11 @@ export default class ProjectEditModal extends React.Component {
     const newState = { ...this.state };
     newState.inputs = { ...this.state.inputs };
     const oldInputState = this.state.inputs[resourceName];
-    newState.inputs[resourceName] = { ...oldInputState, text: inputText };
+    newState.inputs[resourceName] = { ...oldInputState,
+      text: inputText,
+      isFollowing: false, //editing a quota breaks the followership
+    };
+
     this.setState(newState);
 
     //do not attempt to update inputs[].value etc. immediately; wait until the
@@ -82,19 +78,31 @@ export default class ProjectEditModal extends React.Component {
     if (this.asyncParseInputsTimer) {
       window.clearTimeout(this.asyncParseInputsTimer);
     }
-    this.asyncParseInputsTimer = setTimeout(this.triggerParseInputs, 2000);
+    this.asyncParseInputsTimer = setTimeout(this.parseInputs, 1000);
+  };
+
+  handleResetFollower = (resourceName) => {
+    this.parseInputs((state) => {
+      state.inputs[resourceName].isFollowing = true;
+    });
   };
 
   //Parses the user's quota inputs. This gets called asynchronously by
   //handleInput() after the user has stopped typing, but is also triggered
   //eagerly by events on the input field (e.g. Tab/Enter keys or mouse-out)
   //following a "do what I mean" strategy.
-  triggerParseInputs = (additionalStateChanges={}) => {
-    const newState = { ...this.state, ...additionalStateChanges, inputs: {} };
+  parseInputs = (additionalStateChanger=null) => {
+    //do not auto-trigger this again unless desired
+    if (this.asyncParseInputsTimer) {
+      window.clearTimeout(this.asyncParseInputsTimer);
+      this.asyncParseInputsTimer = null;
+    }
+
+    const newState = { ...this.state, inputs: {} };
     for (let res of this.props.category.resources) {
       const unit = new Unit(res.unit);
       const oldInput = this.state.inputs[res.name];
-      const input = { text: oldInput.text };
+      const input = { text: oldInput.text, isFollowing: oldInput.isFollowing };
       newState.inputs[res.name] = input;
 
       //if the user has not modified the input text, always use the original
@@ -120,39 +128,35 @@ export default class ProjectEditModal extends React.Component {
       }
     }
 
+    //this hook is used by handleResetFollower() to reset the isFollowing flag
+    //on a resource
+    if (additionalStateChanger) {
+      additionalStateChanger(newState);
+    }
+
     //follower resources have their values computed automatically
-    if (newState.isFollowing) {
-      for (let res of this.props.category.resources) {
-        if (!this.state.canFollow[res.name]) {
-          continue;
-        }
-        const baseResName = res.scales_with.resource_name;
-        const baseRes = this.props.category.resources.find(res => res.name == baseResName);
-        const baseInput = newState.inputs[baseResName];
-
-        //do not auto-derive values while the base resource has an input error
-        if (baseInput.error) {
-          continue;
-        }
-        const delta = res.scales_with.factor * (baseInput.value - baseRes.quota);
-        const value = Math.max(res.usage, res.quota + delta); //`delta` may be negative!
-        newState.inputs[res.name] = {
-          value: value,
-          text: (new Unit(res.unit)).format(value, { ascii: true }),
-        };
-
+    for (let res of this.props.category.resources) {
+      if (!newState.inputs[res.name].isFollowing) {
+        continue;
       }
+      const baseResName = res.scales_with.resource_name;
+      const baseRes = this.props.category.resources.find(res => res.name == baseResName);
+      const baseInput = newState.inputs[baseResName];
+
+      //do not auto-derive values while the base resource has an input error
+      if (baseInput.error) {
+        continue;
+      }
+      const delta = res.scales_with.factor * (baseInput.value - baseRes.quota);
+      const value = Math.max(res.usage, res.quota + delta); //`delta` may be negative!
+      newState.inputs[res.name] = {
+        value: value,
+        text: (new Unit(res.unit)).format(value, { ascii: true }),
+        isFollowing: true,
+      };
     }
 
     this.setState(newState);
-  };
-
-  toggleFollowing = () => {
-    //We call triggerParseInputs() to reset follower resources to their
-    //automatic values, and delegate our own state change to it as well because
-    //our state update would not be seen (and thus overwritten) by
-    //triggerParseInputs() otherwise.
-    this.triggerParseInputs({ isFollowing: !this.state.isFollowing });
   };
 
   close = (e) => {
@@ -189,23 +193,17 @@ export default class ProjectEditModal extends React.Component {
           <div className='row edit-quota-form-header'>
             <div className='col-md-offset-6 col-md-6'><strong>New Quota</strong></div>
           </div>
-          {this.state.inputs && category.resources.sort(byUIString).map(res => (
+          {this.state.inputs && category.resources.sort(byLeaderAndName).map(res => (
             <ProjectResource
               key={res.name} resource={res} {...forwardProps}
               edit={this.state.inputs[res.name]}
-              isFollowing={this.state.isFollowing && this.state.canFollow[res.name]}
               handleInput={this.handleInput}
-              triggerParseInputs={this.triggerParseInputs}
+              handleResetFollower={this.handleResetFollower}
+              triggerParseInputs={this.parseInputs}
             />
           ))}
         </Modal.Body>
         <Modal.Footer>
-          { this.state.isFollowing !== null && <Button
-            onClick={this.toggleFollowing}>
-              <i className={this.state.isFollowing ? 'fa fa-lg fa-unlink' : 'fa fa-lg fa-link' } />
-              {this.state.isFollowing ? ' Unlink' : ' Link' }
-            </Button>
-          }
           <Button bsStyle='primary' onClick={this.submit} disabled={hasErrors}>Check</Button>
           <Button onClick={this.close}>Cancel</Button>
         </Modal.Footer>

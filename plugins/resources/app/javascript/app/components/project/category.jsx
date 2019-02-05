@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { byUIString, t } from '../../utils';
+import { byLeaderAndName, t } from '../../utils';
 import ProjectResource from '../../components/project/resource';
 
 export default class ProjectCategory extends React.Component {
@@ -24,7 +24,7 @@ export default class ProjectCategory extends React.Component {
           )}
           {t(categoryName)}
         </h3>
-        {resources.sort(byUIString).map(res => (
+        {resources.sort(byLeaderAndName).map(res => (
           <ProjectResource key={res.name} resource={res} {...forwardProps} />
         ))}
       </React.Fragment>

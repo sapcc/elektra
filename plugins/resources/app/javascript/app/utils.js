@@ -23,6 +23,13 @@ export const byUIString = (a, b) => {
   return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
 };
 
+//A sorting predicate for resources in a category.
+export const byLeaderAndName = (resA, resB) => {
+  const keyA = (resA.scales_with ? t(resA.scales_with.resource_name) + '/' : '') + t(resA.name);
+  const keyB = (resB.scales_with ? t(resB.scales_with.resource_name) + '/' : '') + t(resB.name);
+  return (keyA < keyB) ? -1 : (keyA > keyB) ? 1 : 0;
+};
+
 //Formats large integer numbers for display by adding digit group separators.
 export const formatLargeInteger = (value) => {
   //The SI/ISO 31-0 standard recommends to separate each block of three

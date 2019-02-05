@@ -120,8 +120,7 @@ export default class ProjectResource extends React.Component {
   }
 
   renderEditControls() {
-    const { isFollowing } = this.props;
-    const { text: editQuotaText, error: editError } = this.props.edit;
+    const { text: editQuotaText, error: editError, isFollowing } = this.props.edit;
     const { name: resourceName, unit: unitName, scales_with: scalesWith } = this.props.resource;
 
     let errorMessage = undefined;
@@ -146,6 +145,8 @@ export default class ProjectResource extends React.Component {
       message = <div className='col-md-4 text-danger'>{errorMessage}</div>;
     } else if (isFollowing) {
       message = <div className='col-md-4'>Adds {scalesWith.factor} per extra {t(scalesWith.resource_name+'_single')}</div>;
+    } else if (scalesWith) {
+      message = <div className='col-md-4'><a href="#" onClick={(e) => { e.preventDefault(); this.props.handleResetFollower(resourceName); }}>Reset</a></div>;
     }
 
     return (
@@ -157,7 +158,6 @@ export default class ProjectResource extends React.Component {
             onBlur={(e) => { this.props.triggerParseInputs(); return true; }}
             onMouseOut={(e) => { this.props.triggerParseInputs(); return true; }}
             onKeyPress={(e) => this.onInputKeyPress(e)}
-            disabled={isFollowing}
           />
         </div>
         {message}
