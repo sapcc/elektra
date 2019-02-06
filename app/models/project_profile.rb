@@ -40,8 +40,15 @@ class ProjectProfile < ApplicationRecord
 
     service_names.each do |service_name|
       status &= (wizard_payload[service_name] and
-      wizard_payload[service_name]["status"]==STATUS_DONE)
+        ( wizard_payload[service_name]["status"]==STATUS_DONE or wizard_payload[service_name]["status"]==STATUS_SKIPPED )
+      )
     end
+    status
+  end
+
+  def wizard_skipped?(service_name)
+    status = true
+    status &= (wizard_payload[service_name] and wizard_payload[service_name]["status"]==STATUS_SKIPPED)
     status
   end
 

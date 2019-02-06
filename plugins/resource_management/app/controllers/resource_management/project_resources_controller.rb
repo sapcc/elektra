@@ -3,7 +3,7 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
 
-    before_action :load_project,          only: [:new_package_request, :settings, :save_settings]
+    before_action :load_project,          only: [:new_package_request, :settings, :save_settings, :skip_wizard_confirm, :skip_wizard]
     before_action :load_project_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota]
     before_action :check_first_visit,     only: [:index, :show_area, :create_package_request]
 
@@ -217,6 +217,18 @@ module ResourceManagement
         @scoped_domain_id, @scoped_project_id
       )
       @start_time = Time.now.to_i
+    end
+
+    def skip_wizard_confirm
+      # placeholder
+    end
+
+    def skip_wizard
+      skip_wizard = params[:project][:skip_wizard] || false
+      project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+      if skip_wizard
+        project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_SKIPPED)
+      end
     end
 
     private

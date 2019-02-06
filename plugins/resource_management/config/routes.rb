@@ -12,6 +12,8 @@ ResourceManagement::Engine.routes.draw do
     post 'request-package/:package' => 'project_resources#create_package_request', as: 'create_package_request'
     post  'save_settings' => 'project_resources#save_settings'
     get  'settings' => 'project_resources#settings'
+    get  'skip_wizard' => 'project_resources#skip_wizard_confirm'
+    post 'skip_wizard' => 'project_resources#skip_wizard'
   end
 
   scope 'admin', as: 'admin' do

@@ -130,6 +130,7 @@ module Identity
     end
 
     def check_wizard_status
+      # disable wizard for cloud_admin project
       return if %w[ccadmin cloud_admin].include?(@scoped_domain_name)
 
       # for all services that implements a wizard integration do
@@ -138,12 +139,16 @@ module Identity
         services.available?(name.to_sym)
       end
 
+      # ProjectProfile /elektra/app/models
       project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
+      # check the status in the project_profiles database
+      # if all is done do not show the wizard
       return if project_profile.wizard_finished?(service_names)
       redirect_to plugin('identity').project_wizard_url
     end
 
+    # show the status of all implented wizard steps
     def load_and_update_wizard_status
       @wizard_finished = true
       @project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
@@ -156,8 +161,11 @@ module Identity
         # set instance variable service available to true
         instance_variable_set("@#{service_name}_service_available", true)
 
-        next if @project_profile.wizard_finished?(service_name)
-        # update wizard status for current service
+        # check database for finished wizard step otherwise check update_SERVICE_wizard_status()
+        # Note: if the wizard done state is set disable this for debugging
+        #       or just delete the entry in the database "DELETE from project_profiles WHERE project_id=''"
+        next if @project_profile.wizard_finished?(service_name) || @project_profile.wizard_skipped?(service_name)
+        # check wizard status for service_name
         @wizard_finished &= begin
           send("update_#{service_name}_wizard_status")
         rescue => _e
@@ -168,7 +176,10 @@ module Identity
     end
 
     ################### HELPER METHODS #########################
+    # this functions are called from load_and_update_wizard_status()
+    # RESOURCE MANAGEMENT
     def update_resource_management_wizard_status
+
       if services.resource_management.has_project_quotas?(@scoped_domain_id, @scoped_project_id)
         @project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
       else
@@ -204,6 +215,7 @@ module Identity
       @project_profile.wizard_finished?('resource_management')
     end
 
+    # MASTERDATA
     def update_masterdata_cockpit_wizard_status
       project_masterdata = nil
       @project_masterda_is_complete = false
@@ -236,6 +248,7 @@ module Identity
       @project_profile.wizard_finished?('masterdata_cockpit')
     end
 
+    # NETWORKING
     def update_networking_wizard_status
       # ensure current user has the network admin role (UNTREATED EDGE CASE: current user isn't admin. Might have to add some stuff for this)
       if current_user.has_role?('admin') && !current_user.has_role?('network_admin')
