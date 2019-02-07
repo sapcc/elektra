@@ -32,7 +32,7 @@ export const pluginAjaxHelper = (pluginName, options = {}) => {
     const domain = options.domain == false ? null : options.domain || scope.domain
     let project = options.project == false ?  null : options.project || scope.project
     if(project == 'cc-tools') project = null
-    
+
     delete(options.domain)
     delete(options.project)
 
@@ -68,7 +68,7 @@ export const createAjaxHelper = (options = {}) => {
   const axiosInstance = axios.create(instanceOptions)
   // overwrite default Accept Header to use json only
   axiosInstance.defaults.headers.common['Accept'] = 'application/json';
-  axiosInstance.defaults.headers.common['Accept-Charset'] = 'utf-8';
+  // axiosInstance.defaults.headers.common['Accept-Charset'] = 'utf-8';
 
   // use request interceptor to merge globalOptions.
   // The global options are available only after the entire JS

@@ -23,6 +23,7 @@ export default ({event, toggleDetails}) => {
           // event.initiator.name
           // else
         }
+        <div>{event.initiator.name}</div>
         <span className='resource-id'>{event.initiator.id}</span>
       </td>
     </tr>

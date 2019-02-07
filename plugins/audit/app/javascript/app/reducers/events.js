@@ -14,7 +14,8 @@ const initialEventState = {
   filterType: '',
   filterTerm: '',
   attributeValues: '',
-  isFetchingAttributeValues: false
+  isFetchingAttributeValues: false,
+  activeFilters: []
 }
 
 const updateItemInList = (state, idKey, idValue, newValues) => {
@@ -41,6 +42,24 @@ const updateFilterType = (state,{filterType}) =>
 
 const updateFilterTerm = (state,{filterTerm}) =>
   Object.assign({},state,{filterTerm})
+
+
+
+const addFilter = (state) => {
+  let newState = {...state}
+  let foundFilter = newState.activeFilters.find((filter) => filter[0] == newState.filterType)
+  // only add if a filter for this type doesn't exist yet
+  !foundFilter && Object.assign(newState.activeFilters, [...newState.activeFilters, [newState.filterType,newState.filterTerm] ] )
+
+  return newState
+}
+
+const deleteFilter = (state, {filterType}) =>
+  Object.assign(state,{activeFilters: state.activeFilters.filter((filter) => filter[0] != filterType)})
+
+const clearAllFilters = (state, {}) =>
+  Object.assign(state, {activeFilters: []})
+
 
 const updateOffset = (state,{offset}) =>
   Object.assign({},state,{offset})
@@ -127,6 +146,9 @@ export const events = function(state, action) {
     case constants.UPDATE_FILTER_END_TIME:             return updateFilterEndTime(state,action)
     case constants.UPDATE_FILTER_TYPE:                 return updateFilterType(state,action)
     case constants.UPDATE_FILTER_TERM:                 return updateFilterTerm(state,action)
+    case constants.ADD_FILTER:                         return addFilter(state,action)
+    case constants.DELETE_FILTER:                      return deleteFilter(state,action)
+    case constants.CLEAR_ALL_FILTERS:                  return clearAllFilters(state,action)
     case constants.UPDATE_OFFSET:                      return updateOffset(state,action)
     case constants.UPDATE_CURRENT_PAGE:                return updateCurrentPage(state,action)
     case constants.TOGGLE_EVENT_DETAILS_VISIBLE:       return toggleEventDetailsVisible(state,action)

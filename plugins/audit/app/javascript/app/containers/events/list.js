@@ -3,8 +3,10 @@ import EventList from '../../components/events/list'
 import {
   filterEventsStartTime,
   filterEventsEndTime,
-  filterEventsFilterType,
-  filterEventsFilterTerm,
+  changeFilterType,
+  changeFilterTerm,
+  addNewFilter,
+  removeFilter,
   clearFilters } from '../../actions/events'
 
 export default connect(
@@ -14,6 +16,7 @@ export default connect(
       filterEndTime:              state.events.filterEndTime,
       filterType:                 state.events.filterType,
       filterTerm:                 state.events.filterTerm,
+      activeFilters:              state.events.activeFilters,
       attributeValues:            state.events.attributeValues,
       isFetchingAttributeValues:  state.events.isFetchingAttributeValues,
       offset:                     state.events.offset,
@@ -24,11 +27,15 @@ export default connect(
   ),
   (dispatch) =>(
     {
-      handleStartTimeChange:  (filterStartTime)     => dispatch(filterEventsStartTime(filterStartTime)),
-      handleEndTimeChange:    (filterEndTime)       => dispatch(filterEventsEndTime(filterEndTime)),
-      handleFilterTypeChange: (filterType)          => dispatch(filterEventsFilterType(filterType)),
-      handleFilterTermChange: (filterTerm, timeout) => dispatch(filterEventsFilterTerm(filterTerm, timeout)),
-      handleClearFilters:     ()                    => dispatch(clearFilters())
+      handleStartTimeChange:  (filterStartTime)         => dispatch(filterEventsStartTime(filterStartTime)),
+      handleEndTimeChange:    (filterEndTime)           => dispatch(filterEventsEndTime(filterEndTime)),
+      handleFilterTypeChange: (filterType)              => dispatch(changeFilterType(filterType)),
+      handleFilterTermChange: (filterTerm, withFetch)   => dispatch(changeFilterTerm(filterTerm, withFetch)),
+      handleClearFilters:     ()                        => dispatch(clearFilters()),
+      addNewFilter:           ()                        => dispatch(addNewFilter()),
+      handleRemoveFilter:     (filterType)              => dispatch(removeFilter(filterType))
+
+
     }
   )
 )(EventList)

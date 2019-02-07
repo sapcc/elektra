@@ -48,6 +48,7 @@ const loadEvents = () =>
     const isFetching      = events.isFetching
     const filterType      = events.filterType
     const filterTerm      = events.filterTerm
+    const activeFilters   = events.activeFilters
     const filterStartTime = events.filterStartTime
     const filterEndTime   = events.filterEndTime
 
@@ -55,7 +56,9 @@ const loadEvents = () =>
     if (isFetching) return
     dispatch(requestEvents())
     let params = {limit, offset, time: buildTimeFilter(filterStartTime, filterEndTime) || ''}
-    params[filterType] = filterTerm
+    // add all filters
+    activeFilters.forEach((filter) => params[filter[0]] = filter[1])
+
 
     return ajaxHelper.get('/events', {params: params }).then( (response) => {
       if (response.data.errors) {
@@ -141,11 +144,11 @@ export function updateFilterType(filterType) {
   return {type: constants.UPDATE_FILTER_TYPE,filterType}
 }
 
-export function filterEventsFilterType(filterType) {
+export function changeFilterType(filterType) {
   return (dispatch) => {
     dispatch(updateFilterType(filterType))
     // reset filter term on filter type change
-    dispatch(filterEventsFilterTerm('', 0))
+    dispatch(changeFilterTerm('', false))
     if(!isEmpty(filterType)) dispatch(fetchAttributeValues(filterType))
     // if filterType empty, loadEvents with empty filter
     // else
@@ -156,22 +159,51 @@ const updateFilterTerm = (filterTerm) => (
   {type: constants.UPDATE_FILTER_TERM,filterTerm}
 )
 
-// initialize timeout for term filter
-let filterTermTimeout = null
-
-export function filterEventsFilterTerm(filterTerm, timeout) {
-  clearTimeout(filterTermTimeout) // reset timeout
+export function changeFilterTerm(filterTerm, withFetch) {
   return (dispatch) => {
     dispatch(updateFilterTerm(filterTerm))
-    // load events only if no new user input has happened during the specified timout window
-    filterTermTimeout = setTimeout((() => dispatch(fetchEvents(0))), timeout)
+    if (withFetch) {
+      dispatch(addNewFilter())
+    }
   }
 }
+
+
+const addFilter = () => (
+  {type: constants.ADD_FILTER}
+)
+
+export function addNewFilter() {
+  return (dispatch) => {
+    dispatch(addFilter())
+    // empty inputs after add
+    dispatch(updateFilterType(''))
+    dispatch(updateFilterTerm(''))
+    dispatch(fetchEvents(0))
+  }
+}
+
+
+const deleteFilter = (filterType) => (
+  {type: constants.DELETE_FILTER, filterType}
+)
+
+export function removeFilter(filterType) {
+  return (dispatch) => {
+    dispatch(deleteFilter(filterType))
+    dispatch(fetchEvents(0))
+  }
+}
+
+const clearAllFilters = () => (
+  {type: constants.CLEAR_ALL_FILTERS}
+)
 
 export const clearFilters = () =>
   (dispatch) => {
     dispatch(updateFilterType(''))
     dispatch(updateFilterTerm(''))
+    dispatch(clearAllFilters())
     dispatch(updateFilterStartTime(''))
     dispatch(updateFilterEndTime(''))
     dispatch(fetchEvents(0))
