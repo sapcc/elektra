@@ -179,6 +179,11 @@ module BlockStorage
       render json: { errors: e.message }, status: e.code
     end
 
+
+    def available_servers
+      render json: services.compute.servers
+    end
+
     protected
     # this method extends volumes with data from cache
     def extend_volume_data(volumes)

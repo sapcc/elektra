@@ -2,6 +2,7 @@ BlockStorage::Engine.routes.draw do
   root to: 'application#widget'
   resources :volumes do
     collection do
+      get 'available-servers' => 'volumes#available_servers'
       get 'availability-zones' => 'volumes#availability_zones'
       get 'images' => 'volumes#images'
     end
