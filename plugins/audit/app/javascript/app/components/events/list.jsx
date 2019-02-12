@@ -146,7 +146,7 @@ export default ({
           <th>Source</th>
           <th>Action</th>
           <th>Target Resource</th>
-          <th className='user-cell'>Initiator/User</th>
+          <th>Initiator/User</th>
         </tr>
       </thead>
 

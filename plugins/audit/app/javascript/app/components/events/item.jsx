@@ -17,14 +17,14 @@ export default ({event, toggleDetails}) => {
         <br/>
         <span className='resource-id'>{event.target.id}</span>
       </td>
-      <td className='big-data-cell'>
+      <td className='big-data-cell user-cell'>
         { // in case we decide enrich the events with names in the hermes backend (not implemented)
           // if event.initiator.name && event.initiator.name.length > 0
           // event.initiator.name
           // else
         }
         <div>{event.initiator.name}</div>
-        <span className='resource-id'>{event.initiator.id}</span>
+        <div className='resource-id'>{event.initiator.id}</div>
       </td>
     </tr>
   )
