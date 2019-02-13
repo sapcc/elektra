@@ -2,9 +2,9 @@ import { Modal, Button } from 'react-bootstrap';
 import Deferred from 'lib/tools/deferred';
 
 export class ModalDialog extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-
+  constructor(props) {
+    super(props);
+    
     this.state = {show:false}
     this.abort = this.abort.bind(this);
     this.confirm = this.confirm.bind(this);

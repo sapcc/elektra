@@ -5,9 +5,7 @@ import ipRangeCheck from 'ip-range-check';
 
 // import PropTypes from 'prop-types';
 
-const FormBody = ({values, networks, subnets, securityGroups},context) => {
-  // console.log('values',values)
-  // console.log('context',context)
+const FormBody = ({values, networks, subnets, securityGroups}) => {
   const network = networks && networks.items.find(n => n.id == values.network_id)
 
   const renderIp = (ip) => {
@@ -55,13 +53,6 @@ const FormBody = ({values, networks, subnets, securityGroups},context) => {
     </Modal.Body>
   )
 }
-
-// FormBody.contextTypes = {
-//   formName: PropTypes.string,
-//   formValues: PropTypes.object,
-//   onChange: PropTypes.func,
-//   formErrors: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array])
-// };
 
 export default class NewPortForm extends React.Component {
   state = {show: true}
