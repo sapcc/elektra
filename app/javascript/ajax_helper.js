@@ -68,7 +68,7 @@ export const createAjaxHelper = (options = {}) => {
   const axiosInstance = axios.create(instanceOptions)
   // overwrite default Accept Header to use json only
 
-  // no reason to devide the header on this place. Designate is the one service which needs 
+  // no reason to devide the header on this place. Designate is the one service which needs
   // the Accept-Charset Header. But Elektra speaks to designate via elektron and not via CORS.
   // So, not needed yet here!!!
   // axiosInstance.defaults.headers.common['Accept'] = 'application/json';

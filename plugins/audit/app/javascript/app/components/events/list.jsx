@@ -11,6 +11,17 @@ const isValidDate = (date) =>
   // do not allow dates that are in the future
   !moment(date).isAfter()
 
+const ATTRIBUTES = [
+  {key: 'observer_type',  name: 'Source'},
+  {key: 'action',         name: 'Action' },
+  {key: 'target_type',    name: 'Resource Type' },
+  {key: 'target_id',      name: 'Resource ID' },
+  {key: 'initiator_id',   name: 'Initiator/User ID' },
+  {key: 'initiator_name', name: 'User Name' },
+  {key: 'initiator_type', name: 'Initiator Type' },
+  {key: 'outcome',        name: 'Result' }
+]
+
 export default ({
   events,
   isFetching,
@@ -19,11 +30,14 @@ export default ({
   handleEndTimeChange,
   handleFilterTypeChange,
   handleFilterTermChange,
+  addNewFilter,
+  handleRemoveFilter,
   handleClearFilters,
   filterStartTime,
   filterEndTime,
   filterType,
   filterTerm,
+  activeFilters,
   attributeValues,
   isFetchingAttributeValues,
   offset,
@@ -43,13 +57,12 @@ export default ({
           onChange={(e) => handleFilterTypeChange(e.target.value)}>
 
           <option value=''>Select attribute</option>
-          <option value='observer_type'>Source</option>
-          <option value='action'>Action</option>
-          <option value='target_type'>Resource Type</option>
-          <option value='target_id'>Resource ID</option>
-          <option value='initiator_id'>Initiator/User ID</option>
-          <option value='initiator_type'>Initiator Type</option>
-          <option value='outcome'>Result</option>
+          { // filter attributes list. Show only those that haven't already been selected as a filter type
+            ATTRIBUTES.filter((att) =>
+              activeFilters.findIndex((filter) => filter[0] == att.key)
+              < 0).map((att) =>
+            <option value={att.key} key={att.key}>{att.name}</option>
+          )}
         </select>
       </div>
       <div className='inputwrapper'>
@@ -58,9 +71,9 @@ export default ({
             name='filterTerm'
             className='form-control filter-term'
             value={filterTerm}
-            onChange={(e) => handleFilterTermChange(e.target.value, 0)}>
+            onChange={(e) => handleFilterTermChange(e.target.value, true)}>
             <option value=''>Select</option>
-            {attributeValues[filterType].map((attribute) =>
+            {attributeValues[filterType].sort().map((attribute) =>
               <option value={attribute} key={`filterTerm_${attribute}`}>
                 {attribute}
               </option>
@@ -73,9 +86,19 @@ export default ({
             value={filterTerm}
             placeholder='Enter lookup value'
             disabled={isEmpty(filterType) || isFetchingAttributeValues}
-            onChange={(e) => handleFilterTermChange(e.target.value, 500)}/>
+            onChange={(e) => handleFilterTermChange(e.target.value, false)}/>
+        }
+
+        { /target_id|initiator_id/.test(filterType) &&
+          <button
+            className="btn btn-primary btn-xs"
+            onClick={(e) => {e.preventDefault(); addNewFilter()}}
+            >
+            Add
+          </button>
         }
       </div>
+
       <span className='toolbar-input-divider'/>
 
       <label>Time range:</label>
@@ -91,12 +114,29 @@ export default ({
         isValidDate={isValidDate}
         onChange={(e) => handleEndTimeChange(e)}/>
 
-      { (filterTerm || filterEndTime || filterStartTime) &&
+      { (activeFilters.length > 0 || filterEndTime || filterStartTime) &&
         <a className='clear-all' href='#' onClick={(e) => {e.preventDefault(); handleClearFilters()}}>
           <i className='fa fa-times-circle'></i>Clear filters
         </a>
       }
     </div>
+
+    { activeFilters.length > 0 &&
+        <div className="toolbar-secondary wrapable">
+          { activeFilters.map((filter) =>
+              <div
+                className="active-filter"
+                key={filter[0]}
+                onClick={(e) => {handleRemoveFilter(filter[0])}}>
+
+                {ATTRIBUTES.find((att) => att.key == filter[0]).name} = {filter[1]}
+                <i className="fa fa-times-circle"></i>
+              </div>
+            )
+          }
+        </div>
+    }
+
 
     <table className='table'>
       <thead>
@@ -106,7 +146,7 @@ export default ({
           <th>Source</th>
           <th>Action</th>
           <th>Target Resource</th>
-          <th className='user-cell'>Initiator/User</th>
+          <th>Initiator/User</th>
         </tr>
       </thead>
 

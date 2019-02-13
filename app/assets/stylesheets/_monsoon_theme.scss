@@ -711,6 +711,7 @@ section {
   }
 
   .inputwrapper {
+    display: flex;
     margin: 0 10px 0 0;
   }
 
@@ -772,8 +773,16 @@ section {
 }
 
 .toolbar-secondary {
+  background: #fdfdfd;
   border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+  display: flex;
+  padding: 8px;
+  margin-bottom: 10px;
+
+  &.wrapable {
+    flex-wrap: wrap;
+    padding-bottom: 0;
+  }
 
   &.searchable-input {
     display: none;
@@ -782,6 +791,29 @@ section {
       display: block;
     }
   }
+}
+
+.active-filter {
+  @include border-radius(14px);
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #666;
+  cursor: pointer;
+  padding: 2px 8px;
+  margin: 0 8px 8px 0;
+
+  &:hover {
+    text-decoration: line-through;
+    
+    i {
+      color: #000;
+    }
+  }
+
+  i {
+    margin-left: 8px;
+  }
+
 }
 
 // ---------------------------------------------------------------------------------

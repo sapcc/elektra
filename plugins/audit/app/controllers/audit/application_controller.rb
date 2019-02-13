@@ -4,9 +4,6 @@ module Audit
     authorization_context 'audit'
     authorization_required
 
-    def release_state
-      'beta'
-    end
 
     def index
       enforce_permissions('audit:application_list')
