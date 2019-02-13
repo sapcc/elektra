@@ -1,17 +1,19 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import {
   SECURITY_GROUP_RULE_DESCRIPTIONS,
   SECURITY_GROUP_RULE_PREDEFINED_TYPES,
   SECURITY_GROUP_RULE_PROTOCOLS
 } from '../../constants'
+import { useContext } from 'react'
 
-
-const FormBody = ({values,securityGroups},context) => {
+const FormBody = ({values,securityGroups}) => {
+  const context = useContext(Form.Context)
+  
   const changeType = (type) => {
     const predefinedType = SECURITY_GROUP_RULE_PREDEFINED_TYPES.find(t => t.label==type)
+
 
     if(predefinedType) {
       context.onChange({
@@ -165,10 +167,6 @@ const FormBody = ({values,securityGroups},context) => {
     </Modal.Body>
   )
 }
-
-FormBody.contextTypes = {
-  onChange: PropTypes.func
-};
 
 export default class NewRuleForm extends React.Component {
   state = { show: true }

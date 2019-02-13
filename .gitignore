@@ -27,7 +27,6 @@ pickle-email-*.html
 features/screenshots
 */.DS_Store
 .DS_Store
-
 config/settings.local.yml
 config/settings/*.local.yml
 config/environments/*.local.yml
@@ -50,3 +49,8 @@ vendor_4.2.4/
 /node_modules
 
 .vscode
+
+*~
+*.swp
+*.swo
+

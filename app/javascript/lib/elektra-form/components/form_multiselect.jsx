@@ -1,5 +1,5 @@
 //import React from 'react';
-import PropTypes from 'prop-types';
+import { FormContext } from './form_context'
 
 export class FormMultiselect extends React.Component {
   state = {
@@ -83,9 +83,4 @@ export class FormMultiselect extends React.Component {
     )
   }
 }
-FormMultiselect.contextTypes = {
-  formName: PropTypes.string,
-  formValues: PropTypes.object,
-  onChange: PropTypes.func,
-  formErrors: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array])
-};
+FormMultiselect.contextType = FormContext
