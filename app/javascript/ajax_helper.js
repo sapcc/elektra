@@ -28,22 +28,22 @@ export const configureAjaxHelper = (options) => {
 export const pluginAjaxHelper = (pluginName, options = {}) => {
   // console.log('pluginAjaxHelper options before',options,scope)
 
-  if(!options.baseURL) {
+  if (!options.baseURL) {
     const domain = options.domain == false ? null : options.domain || scope.domain
-    let project = options.project == false ?  null : options.project || scope.project
-    if(project == 'cc-tools') project = null
+    let project = options.project == false ? null : options.project || scope.project
+    if (project == 'cc-tools') project = null
 
-    delete(options.domain)
-    delete(options.project)
+    delete (options.domain)
+    delete (options.project)
 
-    if(domain) options.baseURL = `/${domain}`
-    if(options.baseURL && project) options.baseURL += `/${project}`
+    if (domain) options.baseURL = `/${domain}`
+    if (options.baseURL && project) options.baseURL += `/${project}`
 
-    if(pluginName) {
-      if(options.baseURL) options.baseURL += `/${pluginName}`
+    if (pluginName) {
+      if (options.baseURL) options.baseURL += `/${pluginName}`
       else options.baseURL = pluginName
     }
-    if(options.baseURL) options.baseURL += '/'
+    if (options.baseURL) options.baseURL += '/'
   }
 
   return createAjaxHelper(options)
@@ -53,22 +53,28 @@ export const pluginAjaxHelper = (pluginName, options = {}) => {
 // an options parameter can be provided to overwrite config
 // parameters like headers or baseURL
 export const createAjaxHelper = (options = {}) => {
-  const instanceOptions = Object.assign({ timeout: 60000 },options)
+  const instanceOptions = Object.assign({ timeout: 60000 }, options)
   // create a copy of options headers
-  instanceOptions.headers = Object.assign({},options.headers)
+  instanceOptions.headers = Object.assign({}, options.headers)
 
-  if(!instanceOptions.headers['X-Auth-Token'] && !instanceOptions.headers['x-auth-token']) {
+  if (!instanceOptions.headers['X-Auth-Token'] && !instanceOptions.headers['x-auth-token']) {
     // search for csrf token in meta tags.
     const metaTags = [].slice.call(document.getElementsByTagName('meta'))
-    const csrfToken = metaTags.find((tag) => tag.getAttribute('name') == 'csrf-token' )
-    if(csrfToken) instanceOptions.headers['x-csrf-token'] = csrfToken.getAttribute('content')
+    const csrfToken = metaTags.find((tag) => tag.getAttribute('name') == 'csrf-token')
+    if (csrfToken) instanceOptions.headers['x-csrf-token'] = csrfToken.getAttribute('content')
   }
 
   // console.log('instanceOptions',instanceOptions)
   const axiosInstance = axios.create(instanceOptions)
   // overwrite default Accept Header to use json only
-  axiosInstance.defaults.headers.common['Accept'] = 'application/json';
+
+  // no reason to devide the header on this place. Designate is the one service which needs
+  // the Accept-Charset Header. But Elektra speaks to designate via elektron and not via CORS.
+  // So, not needed yet here!!!
+  // axiosInstance.defaults.headers.common['Accept'] = 'application/json';
   // axiosInstance.defaults.headers.common['Accept-Charset'] = 'utf-8';
+
+  axiosInstance.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
 
   // use request interceptor to merge globalOptions.
   // The global options are available only after the entire JS
@@ -80,8 +86,8 @@ export const createAjaxHelper = (options = {}) => {
     // console.log('globalOptions',JSON.stringify(globalOptions))
     let newConfig = mergeDeep(JSON.parse(JSON.stringify(globalOptions)), config)
     // remove x-csrf-token if x-auth-token is presented
-    if(newConfig.headers['X-Auth-Token'] || newConfig.headers['x-auth-token']) {
-      delete(newConfig.headers['x-csrf-token'])
+    if (newConfig.headers['X-Auth-Token'] || newConfig.headers['x-auth-token']) {
+      delete (newConfig.headers['x-csrf-token'])
     }
     // console.log('config',config)
     // console.log('newConfig',newConfig)
@@ -103,12 +109,12 @@ export const createAjaxHelper = (options = {}) => {
 
       let redirectToUrl = response.headers.location
 
-      if(redirectToUrl.match(/after_login=(.*)/i)) {
+      if (redirectToUrl.match(/after_login=(.*)/i)) {
         redirectToUrl = redirectToUrl.replace(
           /after_login=(.*)/g, `after_login=${currentUrl}`
         )
       }
-      else if(redirectToUrl.match(/\/auth\/login/i)) {
+      else if (redirectToUrl.match(/\/auth\/login/i)) {
         redirectToUrl = `${redirectToUrl}?after_login=${currentUrl}`
       }
 

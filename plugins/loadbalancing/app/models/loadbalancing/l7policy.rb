@@ -8,7 +8,7 @@ module Loadbalancing
     PREDEFINED_POLICIES = [
       {
         protocols: %w[TCP],
-        ids: %w[proxy_protocol_2edF_v1_0 standard_tcp_a3de_v1_0]
+        ids: %w[proxy_protocol_2edF_v1_0 proxy_protocol_V2_e8f6_v1_0 standard_tcp_a3de_v1_0]
       },
       {
         protocols: %w[HTTP HTTPS TERMINATED_HTTPS],

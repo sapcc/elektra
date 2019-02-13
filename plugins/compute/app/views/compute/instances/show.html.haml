@@ -57,7 +57,7 @@
       .tab-pane{role:"tabpanel", id:"serial"}
         .pre-scrollable
           %pre
-            %code= @log
+            %code= @log || ''
 
       .tab-pane{role:"tabpanel", id:"specs"}
         - if @instance.flavor

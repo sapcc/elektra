@@ -53,7 +53,16 @@
   - required_roles = current_user.required_roles('resource_management:project_resource_new_package_request')
   - required_roles = required_roles && required_roles.join(', ')
 
-  - if @project_profile.wizard_finished?('resource_management')
+  - if @project_profile.wizard_skipped?('resource_management')
+    -# SKIPPED
+    = wizard_step({title: 'Request Resource Quotas',
+      mandatory: true,
+      status: 'skipped'}) do
+      %p
+        This project skipped quota request. To manage your quota please use the
+        =link_to 'Resource Management',plugin('resource_management').resources_path()
+  - elsif @project_profile.wizard_finished?('resource_management')
+    -# DONE
     = wizard_step({title: 'Request Resource Quotas',
       mandatory: true,
       status: 'done'}) do
@@ -64,8 +73,8 @@
             %tr
               %th{width:"30%"} Package
               %td= quota_data["package"]
-
   - else
+    -# IN PROCESS
     - if quota_data
       - if quota_data['aasm_state']=='open'
         = wizard_step({title: 'Request Resource Quotas',
@@ -90,6 +99,7 @@
       = wizard_step({title: 'Request Resource Quotas',
         mandatory: true,
         action_button: action_button,
+        skip_button:( { label: 'Skip Step', url: plugin('resource_management').resources_skip_wizard_path(), data: {modal: true, wizard_action_button: true}} if can_setup_quota ),
         status: nil}) do
         %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
 

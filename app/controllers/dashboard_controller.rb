@@ -50,21 +50,16 @@ class DashboardController < ::ScopeController
   before_action :set_mailer_host
 
 
-  # TODO: this lines of code are obsolete. Remove them after March 31.
-  # # even if token is not expired yet we get sometimes the error
-  # # "token not found"
-  # # so we try to catch this error here and redirect user to login screen
-  # rescue_from 'Excon::Error::NotFound' do |error|
-  #   if error.message.match(/Could not find token/i) ||
-  #      error.message.match(/Failed to validate token/i)
-  #     redirect_to monsoon_openstack_auth.login_path(
-  #       domain_fid: @scoped_domain_fid,
-  #       domain_name: @scoped_domain_name, after_login: params[:after_login]
-  #     )
-  #   else
-  #     render_exception_page(error, title: 'Backend Service Error')
-  #   end
-  # end
+
+  rescue_from 'ActionView::MissingTemplate' do |exception|
+    options = {
+      warning: true, sentry: true,
+      title: 'Page not Found',
+      description: "The page you are looking for doesn't exist. Please verify the url"
+
+    }
+    render_exception_page(exception, options.merge(sentry: true))
+  end
 
   rescue_from 'Elektron::Errors::TokenExpired',
               'MonsoonOpenstackAuth::Authentication::NotAuthorized',

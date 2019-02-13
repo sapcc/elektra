@@ -30,7 +30,7 @@
     %br
     = instance.availability_zone
     - hypervisor = instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
-    - if hypervisor == 'nova-compute-ironic'
+    - if hypervisor.to_s.include?('nova-compute-ironic')
       %span.badge
         %smal.text-lowercase Bare Metal
 

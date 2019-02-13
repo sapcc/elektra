@@ -17,6 +17,7 @@
 
   "identity:project_api_endpoints": "not(project_id:nil)",
   "identity:project_download_openrc": "not(project_id:nil)",
+  "identity:project_download_openrc_ps1": "not(project_id:nil)",
   "identity:project_web_console": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
 
   "identity:domain_list": "rule:cloud_admin or rule:cloud_viewer",

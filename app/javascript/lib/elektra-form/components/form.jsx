@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import makeCancelable from 'lib/tools/cancelable_promise';
 import Deferred from 'lib/tools/deferred';
+import { FormContext } from './form_context'
 
 export default class Form extends React.Component {
   static initialState = {
@@ -22,8 +23,8 @@ export default class Form extends React.Component {
     resetForm: PropTypes.bool
   }
 
-  constructor(props, context) {
-    super(props, context);
+  constructor(props) {
+    super(props);
     let initialValues = props.initialValues || {}
 
     this.state = Object.assign({},Form.initialState,{
@@ -50,24 +51,6 @@ export default class Form extends React.Component {
   componentWillUnmount() {
     // cancel submit promis if already created
     if(this.submitPromise) this.submitPromise.cancel();
-  }
-
-  static childContextTypes = {
-    formValues: PropTypes.object,
-    onChange: PropTypes.func,
-    isFormSubmitting: PropTypes.bool,
-    isFormValid: PropTypes.bool,
-    formErrors: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array])
-  };
-
-  getChildContext() {
-    return {
-      formValues: this.state.values,
-      onChange: this.updateValue,
-      isFormSubmitting: this.state.isSubmitting,
-      isFormValid: this.state.isValid,
-      formErrors: this.state.errors
-    };
   }
 
   resetForm(){
@@ -116,15 +99,25 @@ export default class Form extends React.Component {
 
   render() {
     let elementProps = {values: this.state.values}
+    const contextValue = {
+      formValues: this.state.values,
+      onChange: this.updateValue,
+      isFormSubmitting: this.state.isSubmitting,
+      isFormValid: this.state.isValid,
+      formErrors: this.state.errors
+    }
+
     return (
       <form className={this.props.className} onSubmit={this.onSubmit}>
         {this.state.isSubmitting}
-        {
-          React.Children.map(this.props.children, (formElement) => {
-            if (!formElement) return null
-            return React.cloneElement(formElement,elementProps) // should be ok
-          })
-        }
+          <FormContext.Provider value={contextValue}>
+            {
+              React.Children.map(this.props.children, (formElement) => {
+                if (!formElement) return null
+                return React.cloneElement(formElement,elementProps) // should be ok
+              })
+            }
+          </FormContext.Provider>
       </form>
     )
   }

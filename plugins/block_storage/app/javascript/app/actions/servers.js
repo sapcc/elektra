@@ -44,9 +44,10 @@ const fetchNextServers= () =>
 
     dispatch(requestServers());
 
-    ajaxHelper.get(`/cache`, {params}).then( (response) => {
+    ajaxHelper.get(`volumes/available-servers`, {params}).then( (response) => {
       if(response.data) {
-        dispatch(receiveServers(response.data.items.map(s => s.payload), response.data.has_next))
+        //dispatch(receiveServers(response.data.items.map(s => s.payload), response.data.has_next))
+        dispatch(receiveServers(response.data, false))
       }
     }).catch(error => dispatch(requestServersFailure(errorMessage(error))))
   }
