@@ -18,9 +18,13 @@ module ObjectStorage
 
     def download
       headers['Content-Type'] = @object.content_type
-      disposition = params[:inline] == '1' ? 'inline' : 'attachment'
-      headers['Content-Disposition'] = "#{disposition}; filename=\"#{@object.basename}\""
-      render html: @object.file_contents
+      if params[:inline] == '1'
+        headers['Content-Disposition'] = "inline"
+        render html: @object.file_contents
+      else
+        headers['Content-Disposition'] = "attachment; filename=\"#{@object.basename}\""
+        render body: @object.file_contents
+      end
     end
 
     def move
