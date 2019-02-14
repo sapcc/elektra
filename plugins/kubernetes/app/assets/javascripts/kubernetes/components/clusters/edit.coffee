@@ -167,9 +167,9 @@ EditCluster = React.createClass
               button
                 className: 'btn btn-default',
                 "data-index": index,
-                disabled: 'disabled' if nodePool.size > 0 || poolStatusSize > 0,
+                disabled: 'disabled' if !nodePool.new && (nodePool.size > 0 || poolStatusSize > 0),
                 onClick: ((e) -> e.preventDefault(); handleNodePoolRemove(e.currentTarget.dataset.index)),
-                  span className: "fa #{if (nodePool.size == 0 && poolStatusSize == 0) then 'fa-trash' else 'fa-lock'}"
+                  span className: "fa #{if nodePool.new || (nodePool.size == 0 && poolStatusSize == 0) then 'fa-trash' else 'fa-lock'}"
 
 
 
