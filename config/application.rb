@@ -35,6 +35,9 @@ module MonsoonDashboard
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
+
+    config.action_cable.mount_path = '/:domain_id/cable'
+
     config.middleware.insert_before Rack::Sendfile, DebugHeadersMiddleware
 
     # build a map from the plugins
