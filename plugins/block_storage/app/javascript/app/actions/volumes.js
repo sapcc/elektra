@@ -139,7 +139,6 @@ const listenToVolumes = () =>
   (dispatch) => {
   
     if(App && App.cable) {
-      console.log('volumes subscriber')
       App.cable.subscriptions.create(
         {channel: 'VolumesChannel', project_id: window.scopedProjectId},
         {
@@ -147,7 +146,8 @@ const listenToVolumes = () =>
             data.created && dispatch(receiveVolume(JSON.parse(data.created)))
             data.updated && dispatch(receiveVolume(JSON.parse(data.updated)))
             data.deleted && dispatch(removeVolume(data.deleted))
-            console.log("listenToVolumes",Object.keys(data),data)
+            data.detached && dispatch(requestVolumeDetach(data.detached))
+            data.attached && dispatch(requestVolumeAttach(data.attached))
           }
         }
       ) 
