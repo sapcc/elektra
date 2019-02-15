@@ -134,6 +134,26 @@ const removeVolume= (id) => (
   }
 )
 
+
+const listenToVolumes = () => 
+  (dispatch) => {
+  
+    if(App && App.cable) {
+      console.log('volumes subscriber')
+      App.cable.subscriptions.create(
+        {channel: 'VolumesChannel', project_id: window.scopedProjectId},
+        {
+          received: (data) => {
+            data.created && dispatch(receiveVolume(JSON.parse(data.created)))
+            data.updated && dispatch(receiveVolume(JSON.parse(data.updated)))
+            data.deleted && dispatch(removeVolume(data.deleted))
+            console.log("listenToVolumes",Object.keys(data),data)
+          }
+        }
+      ) 
+    } 
+  }
+
 const fetchVolume= (id) =>
   (dispatch) => {
     return new Promise((handleSuccess,handleError) =>
@@ -395,5 +415,6 @@ export {
   submitExtendVolumeSizeForm,
   submitCloneVolumeForm,
   submitVolumeToImageForm,
-  loadNext
+  loadNext,
+  listenToVolumes
 }

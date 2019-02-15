@@ -25,6 +25,7 @@ export default class List extends React.Component {
   }
 
   componentDidMount() {
+    this.props.listenToVolumes()
     // load dependencies unless already loaded
     this.loadDependencies(this.props)
   }

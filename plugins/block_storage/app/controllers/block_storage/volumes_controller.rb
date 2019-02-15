@@ -43,6 +43,9 @@ module BlockStorage
       if volume.save
         audit_logger.info(current_user, 'has created', volume)
         extend_volume_data(volume)
+        
+        ActionCable.server.broadcast "projects:#{@scoped_project_id}:volumes", {created: volume.to_json}
+
         render json: volume
       else
         render json: { errors: volume.errors }, status: 422
@@ -57,6 +60,9 @@ module BlockStorage
       if volume.update(params[:volume])
         audit_logger.info(current_user, 'has updated', volume)
         extend_volume_data(volume)
+        
+        ActionCable.server.broadcast "projects:#{@scoped_project_id}:volumes", {updated: volume.to_json}
+        
         render json: volume
       else
         render json: { errors: volume.errors }, status: 422
@@ -72,6 +78,9 @@ module BlockStorage
 
       if volume.destroy
         audit_logger.info(current_user, 'has deleted', volume)
+        
+        ActionCable.server.broadcast "projects:#{@scoped_project_id}:volumes", {deleted: params[:id]}
+        
         head 202
       else
         render json: { errors: volume.errors }, status: 422

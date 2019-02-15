@@ -36,7 +36,7 @@ module MonsoonDashboard
     # config.i18n.default_locale = :de
 
 
-    config.action_cable.mount_path = '/:domain_id/cable'
+    config.action_cable.mount_path = '/:domain_id/(:project_id)/cable'
 
     config.middleware.insert_before Rack::Sendfile, DebugHeadersMiddleware
 

@@ -50,17 +50,6 @@ class DashboardController < ::ScopeController
   before_action :set_mailer_host
 
 
-
-  before_action do
-    Thread.new {
-      sleep 10
-      ActionCable.server.broadcast 'channel_2', 'Hallo'
-      return false
-    }
-  end
-
-
-
   rescue_from 'ActionView::MissingTemplate' do |exception|
     options = {
       warning: true, sentry: true,
