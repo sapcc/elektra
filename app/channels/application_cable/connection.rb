@@ -1,6 +1,5 @@
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
-    include CurrentUserWrapper
     identified_by :current_user
 
     def connect
@@ -10,8 +9,10 @@ module ApplicationCable
     private
 
     def find_verified_user
-      return rejectnunauthorized_connection unless request.params[:domain_id]
+      # return if no domain provided
+      return reject_unauthorized_connectio unless request.params[:domain_id]
 
+      # access auth gem directly to get current user_id
       token_store = MonsoonOpenstackAuth::Authentication::TokenStore.new(
         request.session
       )

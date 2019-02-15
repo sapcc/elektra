@@ -8,7 +8,8 @@ import {
   fetchVolume,
   deleteVolume,
   forceDeleteVolume,
-  detachVolume
+  detachVolume,
+  listenToVolumes
 } from '../../actions/volumes'
 
 export default connect(
@@ -22,6 +23,7 @@ export default connect(
     reloadVolume: (id) => dispatch(fetchVolume(id)),
     deleteVolume: (id) => dispatch(deleteVolume(id)),
     forceDeleteVolume: (id) => dispatch(forceDeleteVolume(id)),
-    detachVolume: (id, attachmentId) => dispatch(detachVolume(id, attachmentId))
+    detachVolume: (id, attachmentId) => dispatch(detachVolume(id, attachmentId)),
+    listenToVolumes: () => dispatch(listenToVolumes())
   })
 )(VolumeList);
