@@ -29,6 +29,7 @@ NewCluster = ({
 
   cluster = clusterForm.data
   spec    = cluster.spec
+  defaultAZName = metaData.availabilityZones[0].name if metaData.loaded
 
   div null,
     div className: 'modal-body',
@@ -102,11 +103,19 @@ NewCluster = ({
 
 
 
-      div className: 'toolbar toolbar-controlcenter',
+      # ------- NODEPOOLS --------
+
+
+      div className: 'toolbar',
         h4 null, "Nodepools"
-        div className: 'main-control-buttons',
-          button className: 'btn btn-primary', onClick: ((e) => e.preventDefault(); handleNodePoolAdd()),
-            'Add Pool'
+        div className: 'main-buttons',
+          if !metaData.loaded || (metaData.error? && metaData.errorCount <= 20)
+            button className: 'btn btn-default', disabled: 'disabled',
+              span className: 'spinner'
+          else
+            button className: 'btn btn-primary', onClick: ((e) => e.preventDefault(); handleNodePoolAdd(defaultAZName)),
+              'Add Pool'
+
 
       for nodePool, i in cluster.spec.nodePools
 
@@ -125,12 +134,12 @@ NewCluster = ({
                 "data-index": i,
                 type: "text",
                 name: "name",
-                placeholder: "lower case letters and numbers",
+                placeholder: "a-z + 0-9",
                 value: nodePool.name || '',
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value))
 
             # Nodepool size
-            div className: "form-group" ,
+            div className: "form-group form-group-size" ,
               label className: "string control-label", htmlFor: "size",
                 'Size '
                 abbr title: "required", '*'
@@ -140,7 +149,7 @@ NewCluster = ({
                 "data-index": i,
                 type: "number",
                 name: "size",
-                placeholder: "Number of nodes",
+                placeholder: "# of nodes",
                 value: (if isNaN(nodePool.size) then '' else nodePool.size),
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
 
@@ -166,13 +175,34 @@ NewCluster = ({
                         option value: flavor.name, key: flavor.name, "#{flavor.name} #{flavorMetaData}"
 
 
+            # Nodepool Availability Zone
+            div className: "form-group string" ,
+              label className: "string control-label", htmlFor: "az",
+                'Availability Zone '
+                abbr title: "required", '*'
+
+
+              select
+                name: "availabilityZone",
+                "data-index": i,
+                className: "string form-control",
+                disabled: 'disabled' if nodePool.availabilityZone && !nodePool.new,
+                value: (nodePool.availabilityZone || defaultAZName),
+                onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value)),
+
+                  if !metaData.loaded || (metaData.error? && metaData.errorCount <= 20)
+                    option value: '', 'Loading...'
+                  else
+                    if metaData.availabilityZones?
+                      for az in metaData.availabilityZones
+                        option value: az.name, key: az.name, "#{az.name}"
+
 
             button
               className: 'btn btn-default',
               "data-index": i,
-              disabled: 'disabled' unless nodePool.new,
               onClick: ((e) => e.preventDefault(); handleNodePoolRemove(e.currentTarget.dataset.index)),
-                span className: "fa #{if nodePool.new then 'fa-trash' else 'fa-lock'}"
+                span className: "fa fa-trash"
 
 
 
@@ -194,7 +224,7 @@ NewCluster = connect(
     handleChange:             (name, value)         -> dispatch(updateClusterForm(name, value))
     handleAdvancedOptionsToggle:()                  -> dispatch(toggleAdvancedOptions())
     handleNodePoolChange:     (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
-    handleNodePoolAdd:        ()                    -> dispatch(addNodePool())
+    handleNodePoolAdd:        (defaultAZ)           -> dispatch(addNodePool(defaultAZ))
     handleNodePoolRemove:     (index)               -> dispatch(deleteNodePool(index))
     handleSubmit:             (callback)            -> dispatch(submitClusterForm(callback))
     handleSSHKeyChange:       (value)               -> dispatch(updateSSHKey(value))

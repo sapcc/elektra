@@ -36,6 +36,10 @@ Cluster = React.createClass
     cluster.status.phase == 'Running'
 
   nodePoolsReady: (cluster) ->
+    # not ready if number of nodepools in spec and status don't match
+    if cluster.status.nodePools.count != cluster.spec.nodePools.count
+      return false
+
     # return ready only if all state values of all nodepools match the configured size
     ready = true
     for nodePool in cluster.status.nodePools
@@ -79,6 +83,7 @@ Cluster = React.createClass
             div className: 'nodepool-info', key: nodePool.name,
               div null,
                 strong null, nodePool.name
+              # div null, nodePool.availabilityZone
               div null,
                 span className: 'info-text', nodePool.flavor
               div null,
