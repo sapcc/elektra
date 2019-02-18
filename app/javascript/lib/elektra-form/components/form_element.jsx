@@ -13,7 +13,7 @@ export const FormElement = ({
 }) => {
   
   const context = useContext(FormContext)
-  console.log("FormElement->context",context)
+  //console.log("FormElement->context",context)
 
   let id = context.formName ? context.formName + '_' + name : name;
   let isValid = true;
