@@ -37,13 +37,13 @@ Cluster = React.createClass
 
   nodePoolsReady: (cluster) ->
     # not ready if number of nodepools in spec and status don't match
-    if cluster.status.nodePools.count != cluster.spec.nodePools.count
+    if cluster.status.nodePools.length != cluster.spec.nodePools.length
       return false
 
     # return ready only if all state values of all nodepools match the configured size
     ready = true
     for nodePool in cluster.spec.nodePools
-      ready = ready && @nodePoolReady(nodePool, cluster)
+      ready = @nodePoolReady(nodePool, cluster)
       if !ready
         break
     ready
@@ -51,10 +51,11 @@ Cluster = React.createClass
 
   nodePoolReady: (nodePool, cluster) ->
     ready = true
-    statusSize = @nodePoolStatus(cluster, nodePool.name).size
-    for k,v of nodePool
-      unless k == 'name' || k == 'size'
-        if v != statusSize
+    nodePoolStatus = @nodePoolStatus(cluster, nodePool.name)
+
+    for k,v of nodePoolStatus
+      if /healthy|running|schedulable/.test(k)
+        if v != nodePoolStatus.size
           ready = false
           break
     ready

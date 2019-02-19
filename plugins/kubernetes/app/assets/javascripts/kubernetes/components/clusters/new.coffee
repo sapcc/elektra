@@ -149,7 +149,7 @@ NewCluster = ({
                 "data-index": i,
                 type: "number",
                 name: "size",
-                placeholder: "# of nodes",
+                placeholder: "0",
                 value: (if isNaN(nodePool.size) then '' else nodePool.size),
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
 
