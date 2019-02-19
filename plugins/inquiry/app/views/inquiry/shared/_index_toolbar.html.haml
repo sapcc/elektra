@@ -1,7 +1,12 @@
 .toolbar
-  %form.form-inline#inquiry-filter-form
-    .form-group
-      %label(for="inquiry-kind-filter") Filter
-      = select_tag "filter[kind]", options_for_select(@kinds_of_inquiries, (params[:filter][:kind] if params[:filter])), class: "form-control", id: "inquiry-kind-filter", data: {container_id: container_id}
-      = text_field_tag "show_only", params[:show_only], hidden: true
-      .inquiries-filter.spinner
+  .row{style: "width:100%"}
+    .col-md-10
+      %form.form-inline#inquiry-filter-form
+        .form-group
+          %label(for="inquiry-kind-filter") Filter
+          = select_tag "filter[kind]", options_for_select(@kinds_of_inquiries, (params[:filter][:kind] if params[:filter])), class: "form-control", id: "inquiry-kind-filter", data: {container_id: container_id}
+          - state = params[:show_only] == "processed" ? ['closed','approved','rejected'] : ['open']
+          = text_field_tag "show_only", params[:show_only], hidden: true
+          .inquiries-filter.spinner
+    .col-md-2.text-right
+      = link_to "Export CSV", plugin('inquiry').inquiries_path(format: 'csv', export: true ,filter: {domain_id: current_user.user_domain_id, requester_id: current_user.id, state: state}), class: 'btn btn-primary btn-sm'

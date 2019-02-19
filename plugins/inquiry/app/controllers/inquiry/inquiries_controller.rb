@@ -18,20 +18,24 @@ module Inquiry
           format.html {
             render partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: true}, layout: false
           }
+          format.csv {
+            send_data @inquiries.to_csv,
+            filename: "inquiries-#{Date.today}.csv"
+          }
           format.js
         end
-      elsif params[:csv]
+      elsif params[:export]
         filter = params[:filter] ? params[:filter] : {}
         @inquiries = ::Inquiry::Inquiry.filter(filter).order(created_at: :desc)
+
         respond_to do |format|
           format.csv {
             send_data @inquiries.to_csv,
             filename: "inquiries-#{Date.today}.csv"
-        }
+          }
         end
       else
         # This case is the initial page load
-
         # get all different types of inquiries from the database
         @kinds_of_inquiries = [['All','']] + ::Inquiry::Inquiry.pluck(:kind).uniq.sort
 
