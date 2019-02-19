@@ -59,10 +59,6 @@ module ResourceManagement
       threshold   = { value: threshold, label: "$VALUE" } unless threshold.is_a?(Hash)
       marker    =   { value: marker,    label: "$VALUE" } unless marker.is_a?(Hash)
 
-      # check input validity
-      raise ArgumentError, "fill value may not be negative"                         if fill[:value] < 0
-      raise ArgumentError, "maximum , marker or threshold may not both be negative" if maximum[:value] < 0 && threshold[:value] < 0 && marker[:value] < 0
-
       # choose upper_bound, the value that corresponds to the full width of the bar
       upper_bound = maximum[:value]
       if maximum[:value] < 0
