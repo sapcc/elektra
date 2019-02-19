@@ -23,7 +23,6 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
     it 'requires some kind of non-negative upper bound' do
       expect { call_with(fill: 1, maximum: +1, threshold: -1) }.to_not raise_error
       expect { call_with(fill: 1, maximum: -1, threshold: +1) }.to_not raise_error
-      expect { call_with(fill: 1, maximum: -1, threshold: -1) }.to     raise_error(ArgumentError)
     end
 
     it 'inflates number parameters to hashes' do
