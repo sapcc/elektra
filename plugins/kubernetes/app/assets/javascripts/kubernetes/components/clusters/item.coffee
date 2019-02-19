@@ -42,17 +42,19 @@ Cluster = React.createClass
 
     # return ready only if all state values of all nodepools match the configured size
     ready = true
-    for nodePool in cluster.status.nodePools
-      ready = @nodePoolReady(nodePool, cluster)
+    for nodePool in cluster.spec.nodePools
+      ready = ready && @nodePoolReady(nodePool, cluster)
+      if !ready
+        break
     ready
 
 
   nodePoolReady: (nodePool, cluster) ->
     ready = true
-    specSize = @nodePoolSpecSize(cluster, nodePool.name)
+    statusSize = @nodePoolStatus(cluster, nodePool.name).size
     for k,v of nodePool
       unless k == 'name' || k == 'size'
-        if v != specSize
+        if v != statusSize
           ready = false
           break
     ready
@@ -61,6 +63,10 @@ Cluster = React.createClass
   nodePoolSpecSize: (cluster, poolName) ->
     pool = (cluster.spec.nodePools.filter (i) -> i.name is poolName)[0]
     pool.size
+
+  # find status for pool with given name
+  nodePoolStatus: (cluster, poolName) ->
+    pool = (cluster.status.nodePools.filter (i) -> i.name is poolName)[0]
 
 
 
@@ -80,31 +86,32 @@ Cluster = React.createClass
           span className: 'info-text', cluster.status.message
         td className: 'nodepool-spec',
           for nodePool in cluster.spec.nodePools
-            div className: 'nodepool-info', key: nodePool.name,
-              div null,
-                strong null, nodePool.name
-              # div null, nodePool.availabilityZone
-              div null,
-                span className: 'info-text', nodePool.flavor
-              div null,
-                "size: #{nodePool.size}"
-        td className: 'nodepool-status',
-          for nodePoolStatus in cluster.status.nodePools
-            specSize = @nodePoolSpecSize(cluster, nodePoolStatus.name)
-            div className: 'nodepool-info', key: "status-#{nodePoolStatus.name}",
-              statusAvailable = false
-              for k,v of nodePoolStatus
-                unless k == 'name' || k == 'size'
-                  statusAvailable = true
-                  div key: k,
-                    strong null, "#{k}: "
-                    "#{v}/#{specSize}"
-                    if v != specSize
-                      span className: 'spinner'
+            nodePoolStatus = @nodePoolStatus(cluster, nodePool.name)
 
-              unless statusAvailable
-                span className: 'spinner'
+            div className: 'nodepool', key: nodePool.name,
+              div className: 'nodepool-info',
+                div null,
+                  strong null, nodePool.name
+                div null, nodePool.availabilityZone
+                div null,
+                  span className: 'info-text', nodePool.flavor
+                div null,
+                  "size: #{nodePool.size}"
 
+              div className: 'nodepool-info',
+                if nodePoolStatus?
+                  for k,v of nodePoolStatus
+                    unless k == 'name' || k == 'size'
+                      div key: "status-#{k}",
+                        strong null, "#{k}: "
+                        "#{v}/#{nodePool.size}"
+                        if v != nodePool.size
+                          span className: 'spinner'
+
+                else
+                  div null,
+                    'Loading '
+                    span className: 'spinner'
 
 
 
