@@ -51,26 +51,30 @@ i.warning {
   }
 }
 
+.form-group-size {
+  width: 100px;
+}
+
 .pool-info-column {
   white-space: nowrap;
 }
 
 .nodepool-spec {
-  width: 15%;
+  width: 40%;
   padding: 0;
 }
 
-.nodepool-status {
-  width: 20%;
-  padding: 0 8px 0 0;
-}
-
-.nodepool-info {
-  padding: $line-height-computed/2 8px;
+.nodepool {
+  display: flex;
 
   &:nth-child(even) {
     background: #f9f9f9;
   }
+}
+
+.nodepool-info {
+  flex: 0 0 50%;
+  padding: $line-height-computed/2 8px;
 }
 
 .vertical-buttons {
