@@ -1,0 +1,6 @@
+- if resource.burst_usage > 0
+  - dt = resource.data_type
+  - maximum = (resource.quota + (resource.quota * @project.bursting_multiplier)).to_i
+  = resource_bar(fill: { value: resource.usage, label: "#{dt.format(resource.quota)}+#{dt.format(resource.burst_usage)}" }, maximum: { value: maximum, label: 'max burst: $VALUE'}, data_type: resource.data_type, threshold: { value: resource.quota, label:'quota: $VALUE' })
+- else
+  = resource_bar(fill: resource.usage, maximum: resource.quota, data_type: resource.data_type)
