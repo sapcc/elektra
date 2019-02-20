@@ -18,10 +18,6 @@ module Inquiry
           format.html {
             render partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: true}, layout: false
           }
-          format.csv {
-            send_data @inquiries.to_csv,
-            filename: "inquiries-#{Date.today}.csv"
-          }
           format.js
         end
       elsif params[:export]
