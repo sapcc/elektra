@@ -9,4 +9,7 @@
           = text_field_tag "show_only", params[:show_only], hidden: true
           .inquiries-filter.spinner
     .col-md-2.text-right
-      = link_to "Export CSV", plugin('inquiry').inquiries_path(format: 'csv', export: true ,filter: {domain_id: current_user.user_domain_id, requester_id: current_user.id, state: state}), class: 'btn btn-primary btn-sm'
+      - if admin_view
+        = link_to "Export CSV", plugin('inquiry').inquiries_path(format: 'csv', export: true ,filter: {approver_domain_id: current_user.user_domain_id,  processor_id: current_user.id, state: state}), class: 'btn btn-primary btn-sm'
+      - else
+        = link_to "Export CSV", plugin('inquiry').inquiries_path(format: 'csv', export: true ,filter: {domain_id: current_user.user_domain_id, requester_id: current_user.id, state: state}), class: 'btn btn-primary btn-sm'
