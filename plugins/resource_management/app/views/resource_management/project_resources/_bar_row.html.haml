@@ -5,7 +5,7 @@
     .col-md-6
       = render partial: 'bar', locals: { resource: resource }
   - else
-    .col-md-10
+    .col-md-9
       = render partial: 'bar', locals: { resource: resource }
 
   - if current_user.is_allowed?('context_is_project_resource_admin')
