@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Inquiry
   # Implements Requests
   class InquiriesController < DashboardController
@@ -10,7 +9,6 @@ module Inquiry
 
     def index
       @domain_id = current_user.is_allowed?('cloud_admin') ? nil : current_user.user_domain_id
-
       # This is true if an update is made via the PollingService
       if params[:partial]
         filter = params[:filter] ? params[:filter] : {}
@@ -22,9 +20,18 @@ module Inquiry
           }
           format.js
         end
+      elsif params[:export]
+        filter = params[:filter] ? params[:filter] : {}
+        @inquiries = ::Inquiry::Inquiry.filter(filter).order(created_at: :desc)
+
+        respond_to do |format|
+          format.csv {
+            send_data @inquiries.to_csv,
+            filename: "inquiries-#{Date.today}.csv"
+          }
+        end
       else
         # This case is the initial page load
-
         # get all different types of inquiries from the database
         @kinds_of_inquiries = [['All','']] + ::Inquiry::Inquiry.pluck(:kind).uniq.sort
 

@@ -5,9 +5,9 @@
 = render partial: "inquiry/shared/tabs", locals: {admin_view: false}
 
 - container_id = SecureRandom.hex
-= render partial: 'inquiry/shared/index_toolbar', locals: {container_id: container_id}
+- state = params[:show_only] == "processed" ? ['closed','approved','rejected'] : ['open']
+= render partial: 'inquiry/shared/index_toolbar', locals: {container_id: container_id, admin_view: false, state: state}
 
 .inquiries.spinner
 
-- state = params[:show_only] == "processed" ? ['closed','approved','rejected'] : ['open']
 = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {domain_id: current_user.user_domain_id, requester_id: current_user.id, state: state}, container_id: container_id)
