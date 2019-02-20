@@ -5,7 +5,6 @@
         .form-group
           %label(for="inquiry-kind-filter") Filter
           = select_tag "filter[kind]", options_for_select(@kinds_of_inquiries, (params[:filter][:kind] if params[:filter])), class: "form-control", id: "inquiry-kind-filter", data: {container_id: container_id}
-          - state = params[:show_only] == "processed" ? ['closed','approved','rejected'] : ['open']
           = text_field_tag "show_only", params[:show_only], hidden: true
           .inquiries-filter.spinner
     .col-md-2.text-right
