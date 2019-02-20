@@ -8,11 +8,6 @@
     .col-md-10
       = render partial: 'bar', locals: { resource: resource }
 
-    - if resource.backend_quota != nil
-      %p.text-danger.quota-warning
-        %i.fa.fa-lg.fa-warning
-        Backend quota (#{resource.data_type.format(resource.backend_quota)}) deviates from approved quota (#{resource.data_type.format(resource.quota)})!
-
   - if current_user.is_allowed?('context_is_project_resource_admin')
     .col-md-4
       - if current_user.is_allowed?('resource_management:project_resource_new_request')
