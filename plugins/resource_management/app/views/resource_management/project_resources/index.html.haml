@@ -16,11 +16,11 @@
         No signs of critical resource usage found.
 
     - @critical_resources.sort_by { |r| [ r.name, r.service_type ] }.each do |res|
-      = render partial: 'bar', locals: { resource: res, overview: true }
+      = render partial: 'bar_row', locals: { resource: res, overview: true }
     - unless @nearly_full_resources.empty?
       %h3 Current quota nearly used up
       - @nearly_full_resources.sort_by { |r| [ r.name, r.service_type ] }.each do |res|
-        = render partial: 'bar', locals: { resource: res, overview: true }
+        = render partial: 'bar_row', locals: { resource: res, overview: true }
 
     - if current_user.is_allowed?('resource_management:project_resource_sync_now') && @view_services && @view_services.map(&:updated_at).select{|timestamp| !timestamp.blank?}.min < 1.minute.ago
       = render layout: 'data_age' do
