@@ -1,29 +1,30 @@
 module Automation
   class ApplicationController < DashboardController
     rescue_from 'ArcClient::ApiError' do |exception|
-      options = {
-        title: :title,
-        description: :detail,
-        warning: true, sentry: true
-      }
+      if exception.respond_to?(:code) && (exception.code == 401 || exception.code == 403)
+        options = {
+          title: 'Unauthorized',
+          sentry: false,
+          warning: true,
+          status: exception.code,
+          description: "You are not authorized to view this page. #{exception.detail}"
+        }
+      else
+        options = {
+          title: :title,
+          description: :detail,
+          warning: true,
+          sentry: true,
+          status: exception.code
+        }
+      end
 
       if params[:polling_service]
-        head status: 500
+        head options[:status]
       else
         render_exception_page(exception, options)
       end
     end
-
-    # rescue_and_render_exception_page [
-    #   {
-    #     "ArcClient::ApiError" => {
-    #       header_title: "Monsoon Automation",
-    #       details: -> e, c { e.json_hash.empty? ? e.inspect : e.json_hash},
-    #       description: :title,
-    #       title: :status
-    #     }
-    #   }
-    # ]
 
     rescue_from 'MonsoonOpenstackAuth::Authorization::SecurityViolation' do |exception|
       if exception.resource[:action] == 'index' && exception.resource[:controller] == 'automation/nodes'
