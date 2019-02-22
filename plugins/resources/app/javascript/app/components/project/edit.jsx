@@ -1,4 +1,5 @@
 import { Modal, Button } from 'react-bootstrap';
+import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
 import { byLeaderAndName, t } from '../../utils';
 import ProjectResource from '../../components/project/resource';
@@ -11,6 +12,14 @@ export default class ProjectEditModal extends React.Component {
     //The `inputs` object contains the editing state for each input field. The
     //key is the resource name.
     inputs: null,
+    //Indicates whether new values have been entered, but not yet parsed by
+    //parseInputs().
+    hasNewInputs: false,
+    //Indicates whether a "Check" or "Submit" is in progress.
+    isChecking: false,
+    isSubmitting: false,
+    //Unexpected errors returned from the Limes API, if any.
+    limesErrors: null,
   }
 
   //NOTE: These fields hold active timers (as started by setTimeout()). This is
@@ -62,14 +71,27 @@ export default class ProjectEditModal extends React.Component {
 
   //This gets called by the input fields' onChange event.
   handleInput = (resourceName, inputText) => {
+    if (this.state.isChecking || this.state.isSubmitting) {
+      return;
+    }
+
     //update inputTexts immediately
-    const newState = { ...this.state };
+    const newState = { ...this.state, hasNewInputs: true };
     newState.inputs = { ...this.state.inputs };
     const oldInputState = this.state.inputs[resourceName];
     newState.inputs[resourceName] = { ...oldInputState,
       text: inputText,
       isFollowing: false, //editing a quota breaks the followership
     };
+
+    //also, clear away all check results to convert the "Submit" button back to
+    //"Check"
+    for (let res of this.props.category.resources) {
+      if (newState.inputs[res.name].checkResult) {
+        newState.inputs[res.name] = { ...newState.inputs[res.name] };
+        delete newState.inputs[res.name].checkResult;
+      }
+    }
 
     this.setState(newState);
 
@@ -81,7 +103,12 @@ export default class ProjectEditModal extends React.Component {
     this.asyncParseInputsTimer = setTimeout(this.parseInputs, 1000);
   };
 
+  //This gets called by the "Reset" button that may appear alongside an input field.
   handleResetFollower = (resourceName) => {
+    if (this.state.isChecking || this.state.isSubmitting) {
+      return;
+    }
+
     this.parseInputs((state) => {
       state.inputs[resourceName].isFollowing = true;
     });
@@ -97,8 +124,11 @@ export default class ProjectEditModal extends React.Component {
       window.clearTimeout(this.asyncParseInputsTimer);
       this.asyncParseInputsTimer = null;
     }
+    if (!this.state.hasNewInputs && !additionalStateChanger) {
+      return;
+    }
 
-    const newState = { ...this.state, inputs: {} };
+    const newState = { ...this.state, inputs: {}, hasNewInputs: false };
     for (let res of this.props.category.resources) {
       const unit = new Unit(res.unit);
       const oldInput = this.state.inputs[res.name];
@@ -165,9 +195,111 @@ export default class ProjectEditModal extends React.Component {
     setTimeout(() => this.props.history.replace('/'), 300);
   }
 
-  handleSubmit = (values) => {
-    this.close();
+  //Collects all input values into a request body for Limes' PUT endpoint.
+  //Returns null in case of input errors.
+  makeRequestBody = ({ onlyAcceptable }) => {
+    const resourcesForRequest = [];
+    for (let res of this.props.category.resources) {
+      const input = this.state.inputs[res.name];
+      if (input.error) {
+        return null;
+      }
+      if (onlyAcceptable && (input.checkResult && !input.checkResult.success)) {
+        continue;
+      }
+      resourcesForRequest.push({
+        name:  res.name,
+        quota: input.value,
+      });
+    }
+
+    return {
+      project: {
+        services: [{
+          type: this.props.category.serviceType,
+          resources: resourcesForRequest,
+        }],
+      },
+    };
   }
+
+  //This gets called by the "Check" button in the footer.
+  handleCheck = () => {
+    if (this.state.isChecking || this.state.isSubmitting) {
+      return;
+    }
+
+    const requestBody = this.makeRequestBody({ onlyAcceptable: false });
+    if (!requestBody) {
+      return;
+    }
+    const { domainID, projectID } = this.props;
+    this.setState({
+      ...this.state,
+      isChecking: true,
+      limesErrors: null,
+    });
+    this.props.simulateSetQuota({ domainID, projectID, requestBody })
+      .then(this.handleCheckResponse)
+      .catch(response => this.handleAPIErrors(response.errors));
+  };
+
+  //This gets called with the response from the POST /simulate-put request.
+  handleCheckResponse = (response) => {
+    let { success, unacceptable_resources: unacceptableResources } = response.data;
+    if (success) {
+      unacceptableResources = [];
+    }
+
+    const newInputs = { ...this.state.inputs };
+    const resUnitByName = {};
+    for (let res of this.props.category.resources) {
+      newInputs[res.name].checkResult = { success: true };
+      resUnitByName[res.name] = new Unit(res.unit);
+    }
+    for (let error of unacceptableResources) {
+      const input = newInputs[error.resource_name];
+      switch (error.status) {
+        case 403:
+          const limit = resUnitByName[error.resource_name].format(error.max_acceptable_quota);
+          const msg = `Raising beyond ${limit} requires approval`;
+          input.checkResult = { requestRequired: msg };
+          break;
+        case 409:
+          if (error.max_acceptable_quota != null) {
+            //This case happens when we could raise project quota with
+            //auto-approval, but the domain quota is too low. We don't show a
+            //limit number because the concrete limit depends on the domain
+            //quota which the current user cannot interact with, so showing it
+            //would be unnecessarily confusing.
+            input.checkResult = { requestRequired: `Requires approval by domain admin` };
+          } else {
+            input.checkResult = { unacceptable: error.message };
+          }
+          break;
+        default:
+          input.checkResult = { unacceptable: error.message };
+          break;
+      }
+    }
+
+    this.setState({
+      ...this.state,
+      inputs: newInputs,
+      isChecking: false,
+      limesErrors: null,
+    });
+  };
+
+  //This gets called when a PUT request to Limes fails.
+  handleAPIErrors = (errors) => {
+    this.setState({
+      ...this.state,
+      isChecking: false,
+      isSubmitting: false,
+      limesErrors: errors,
+    });
+  };
 
   render() {
     //these props are passed on to the ProjectResource children verbatim
@@ -178,7 +310,30 @@ export default class ProjectEditModal extends React.Component {
 
     const { category, categoryName } = this.props;
 
-    const hasErrors = Object.entries(this.state.inputs || {}).some(([_, v]) => v.error);
+    let hasInputErrors = false;
+    let canSubmit = true;
+    let hasCheckErrors = false;
+    for (let res of category.resources) {
+      const input = (this.state.inputs || {})[res.name] || {};
+      if (input.error) {
+        hasInputErrors = true;
+      }
+      if (!input.checkResult) {
+        canSubmit = false;
+      }
+      const checkResult = input.checkResult || {};
+      if (checkResult.unacceptable) {
+        hasCheckErrors = true;
+      }
+    }
+    const showSubmitButton = canSubmit && !hasCheckErrors;
+    const ajaxInProgress = this.state.isChecking || this.state.isSubmitting;
+
+    const buttonCaption = (verb) => (
+      ajaxInProgress ? (
+          <React.Fragment><span className='spinner'/> {verb}ing...</React.Fragment>
+      ) : verb
+    );
 
     //NOTE: className='resources' on Modal ensures that plugin-specific CSS rules get applied
     return (
@@ -190,6 +345,7 @@ export default class ProjectEditModal extends React.Component {
         </Modal.Header>
 
         <Modal.Body>
+          {this.state.limesErrors && <FormErrors errors={this.state.limesErrors}/>}
           <div className='row edit-quota-form-header'>
             <div className='col-md-offset-6 col-md-6'><strong>New Quota</strong></div>
           </div>
@@ -197,6 +353,7 @@ export default class ProjectEditModal extends React.Component {
             <ProjectResource
               key={res.name} resource={res} {...forwardProps}
               edit={this.state.inputs[res.name]}
+              disabled={ajaxInProgress}
               handleInput={this.handleInput}
               handleResetFollower={this.handleResetFollower}
               triggerParseInputs={this.parseInputs}
@@ -204,7 +361,21 @@ export default class ProjectEditModal extends React.Component {
           ))}
         </Modal.Body>
         <Modal.Footer>
-          <Button bsStyle='primary' onClick={this.submit} disabled={hasErrors}>Check</Button>
+          { showSubmitButton ? (
+            <Button
+              bsStyle='primary'
+              onClick={this.handleSubmit}
+              disabled={ajaxInProgress}>
+                {buttonCaption('Submit')}
+            </Button>
+          ) : (
+            <Button
+              bsStyle='primary'
+              onClick={this.handleCheck}
+              disabled={hasInputErrors || ajaxInProgress}>
+                {buttonCaption('Check')}
+            </Button>
+          )}
           <Button onClick={this.close}>Cancel</Button>
         </Modal.Footer>
       </Modal>

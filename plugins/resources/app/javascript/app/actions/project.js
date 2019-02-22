@@ -144,3 +144,24 @@ export const setProjectHasBursting = ({domainID, projectID, hasBursting}) => fun
       }).catch(error => reject({ errors: limesErrorMessage(error) }))
   )
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// edit project quota
+
+export const setQuota = ({ domainID, projectID, requestBody }) => function(dispatch) {
+  return new Promise((resolve, reject) =>
+    ajaxHelper.put(`/v1/domains/${domainID}/projects/${projectID}`, requestBody)
+      .then((response) => {
+        dispatch(fetchProject({ domainID, projectID }));
+        resolve(response);
+      }).catch(error => reject({ errors: limesErrorMessage(error) }))
+  );
+};
+
+export const simulateSetQuota = ({ domainID, projectID, requestBody }) => function(dispatch) {
+  return new Promise((resolve, reject) =>
+    ajaxHelper.post(`/v1/domains/${domainID}/projects/${projectID}/simulate-put`, requestBody)
+      .then(resolve)
+      .catch(error => reject({ errors: limesErrorMessage(error) }))
+  );
+};
