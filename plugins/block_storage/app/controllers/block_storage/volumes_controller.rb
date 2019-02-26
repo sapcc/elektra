@@ -43,6 +43,9 @@ module BlockStorage
       if volume.save
         audit_logger.info(current_user, 'has created', volume)
         extend_volume_data(volume)
+        
+        ActionCable.server.broadcast "projects:#{@scoped_project_id}:volumes", {created: volume.to_json}
+
         render json: volume
       else
         render json: { errors: volume.errors }, status: 422
@@ -57,6 +60,9 @@ module BlockStorage
       if volume.update(params[:volume])
         audit_logger.info(current_user, 'has updated', volume)
         extend_volume_data(volume)
+        
+        ActionCable.server.broadcast "projects:#{@scoped_project_id}:volumes", {updated: volume.to_json}
+        
         render json: volume
       else
         render json: { errors: volume.errors }, status: 422
@@ -72,6 +78,9 @@ module BlockStorage
 
       if volume.destroy
         audit_logger.info(current_user, 'has deleted', volume)
+        
+        ActionCable.server.broadcast "projects:#{@scoped_project_id}:volumes", {deleted: params[:id]}
+        
         head 202
       else
         render json: { errors: volume.errors }, status: 422
@@ -86,6 +95,9 @@ module BlockStorage
 
       if volume.attach_to_server(params[:server_id], params[:device])
         audit_logger.info(current_user, "has attached #{volume.id} to #{params[:server_id]}")
+        
+        ActionCable.server.broadcast "projects:#{@scoped_project_id}:volumes", {attached: params[:id]}
+        
         head 202
       else
         render json: { errors: volume.errors }, status: 422
@@ -100,6 +112,9 @@ module BlockStorage
 
       if volume.detach(attachment['server_id'])
         audit_logger.info(current_user, "has detached #{volume.id} #{attachment['server_id']}")
+        
+        ActionCable.server.broadcast "projects:#{@scoped_project_id}:volumes", {detached: params[:id]}
+        
         head 202
       else
         render json: { errors: volume.errors }, status: 422
@@ -159,6 +174,9 @@ module BlockStorage
 
       if volume.force_delete
         audit_logger.info(current_user, 'has deleted (force-delete)', volume.id)
+        
+        ActionCable.server.broadcast "projects:#{@scoped_project_id}:volumes", {deleted: params[:id]}
+        
         head 202
       else
         render json: { errors: volume.errors }, status: 422

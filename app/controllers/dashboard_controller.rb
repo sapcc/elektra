@@ -50,7 +50,6 @@ class DashboardController < ::ScopeController
   before_action :set_mailer_host
 
 
-
   rescue_from 'ActionView::MissingTemplate' do |exception|
     options = {
       warning: true, sentry: true,
@@ -98,6 +97,11 @@ class DashboardController < ::ScopeController
       options[:title] = 'Permission Denied'
       options[:description] = exception.message ||
                               'You are not authorized to request this page.'
+      render_exception_page(exception, options.merge(sentry: true))
+    when 429 # too many requests
+      options[:title] = 'Too Many Requests'
+      options[:description] = exception.message ||
+                              'You have made too many requests to identity. Please try again later.'
       render_exception_page(exception, options.merge(sentry: true))
     end
   end
