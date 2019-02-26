@@ -1,6 +1,4 @@
 //= require action_cable
-//= require_self
-//= require_tree ./cable/subscriptions
 
 (function() {
   console.log("Cable init")
