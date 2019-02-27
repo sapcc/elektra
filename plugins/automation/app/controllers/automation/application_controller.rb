@@ -1,5 +1,6 @@
 module Automation
   class ApplicationController < DashboardController
+    # when comming from arc api
     rescue_from 'ArcClient::ApiError' do |exception|
       if exception.respond_to?(:code) && (exception.code == 401 || exception.code == 403)
         options = {
@@ -7,7 +8,7 @@ module Automation
           sentry: false,
           warning: true,
           status: exception.code,
-          description: "You are not authorized to view this page. #{exception.detail}"
+          description: "You are not authorized to view this page. Arc couldn't authenticate your request, please try again later."
         }
       else
         options = {
@@ -26,6 +27,24 @@ module Automation
       end
     end
 
+    # when comming from lyra api
+    rescue_from 'Excon::Error::Unauthorized' do |exception|
+      options = {
+        title: 'Unauthorized',
+        sentry: false,
+        warning: true,
+        status: 401,
+        description: "You are not authorized to view this page. Lyra couldn't authenticate your request, please try again later."
+      }
+
+      if params[:polling_service]
+        head options[:status]
+      else
+        render_exception_page(exception, options)
+      end
+    end
+
+    # when comming from elektra itself
     rescue_from 'MonsoonOpenstackAuth::Authorization::SecurityViolation' do |exception|
       if exception.resource[:action] == 'index' && exception.resource[:controller] == 'automation/nodes'
         @title = 'Unauthorized'
