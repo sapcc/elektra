@@ -99,18 +99,17 @@ jQuery.fn.ajaxPaginate= ( options ) ->
             if $container.data('completed')
               hideLoading() unless loading
             else
-              loadAllOnSearch()
+              setTimeout(loadAllOnSearch,500)
         else
           hideLoading() unless loading
 
 
+      # get all entries once
       $(searchInputSelector).keyup (e) ->
-        clearTimeout(timer) if timer
-        timer = setTimeout(loadAllOnSearch,200)
-
-      $(searchInputSelector).keyup (e) ->
-        clearTimeout(timer) if timer
-        timer = setTimeout(loadAllOnSearch,1000)
+        unless loadAllMode
+          loadAllMode = true
+          clearTimeout(timer) if timer
+          loadAllOnSearch()
 
 
     # add load next items button
