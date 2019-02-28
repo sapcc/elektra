@@ -28,9 +28,9 @@ Feature: Authentication
   Scenario: User is redirected to the requested url after login
     Given Test user has accepted terms of use
     Given I am not logged in
-    When I visit domain path "identity/credentials"
+    When I visit domain path "identity/home"
      And I log in as test_user
-    Then I am redirected to domain path "identity/credentials"
+    Then I am redirected to domain path "identity/home"
 
   @wip
   Scenario: User is not logged in has not accepted terms of use
