@@ -5,9 +5,9 @@ module Automation
     authorization_context 'automation'
     authorization_required
 
-    before_action :search_options, only: %i[index index_update]
-    before_action :nodes_with_jobs, only: %i[index index_update]
-    before_action :automations, only: %i[index index_update]
+    before_action :search_options, only: %i[index]
+    before_action :nodes_with_jobs, only: %i[index]
+    before_action :automations, only: %i[index]
 
     def index
       if request.xhr?
@@ -126,9 +126,9 @@ module Automation
       node_id = params[:id]
       node = begin
         services.automation.node(node_id, ['all'])
-      rescue StandardError => exception
-        Rails.logger.error exception.message
-        nil
+             rescue StandardError => exception
+               Rails.logger.error exception.message
+               nil
       end
       name = node.nil? ? node_id : node.name
       services.automation.node_delete(node_id)
