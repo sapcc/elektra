@@ -19,7 +19,7 @@ export default class ProjectEditModal extends React.Component {
     isChecking: false,
     isSubmitting: false,
     //Unexpected errors returned from the Limes API, if any.
-    limesErrors: null,
+    apiErrors: null,
   }
 
   //NOTE: These fields hold active timers (as started by setTimeout()). This is
@@ -190,37 +190,10 @@ export default class ProjectEditModal extends React.Component {
   };
 
   close = (e) => {
+    console.log("HALLO");
     if (e) { e.stopPropagation(); }
     this.setState({show: false});
     setTimeout(() => this.props.history.replace('/'), 300);
-  }
-
-  //Collects all input values into a request body for Limes' PUT endpoint.
-  //Returns null in case of input errors.
-  makeRequestBody = ({ onlyAcceptable }) => {
-    const resourcesForRequest = [];
-    for (let res of this.props.category.resources) {
-      const input = this.state.inputs[res.name];
-      if (input.error) {
-        return null;
-      }
-      if (onlyAcceptable && (input.checkResult && !input.checkResult.success)) {
-        continue;
-      }
-      resourcesForRequest.push({
-        name:  res.name,
-        quota: input.value,
-      });
-    }
-
-    return {
-      project: {
-        services: [{
-          type: this.props.category.serviceType,
-          resources: resourcesForRequest,
-        }],
-      },
-    };
   }
 
   //This gets called by the "Check" button in the footer.
@@ -229,15 +202,28 @@ export default class ProjectEditModal extends React.Component {
       return;
     }
 
-    const requestBody = this.makeRequestBody({ onlyAcceptable: false });
-    if (!requestBody) {
-      return;
+    const resourcesForRequest = [];
+    for (let res of this.props.category.resources) {
+      const input = this.state.inputs[res.name];
+      if (input.error) {
+        return;
+      }
+      resourcesForRequest.push({ name: res.name, quota: input.value });
     }
+    const requestBody = {
+      project: {
+        services: [{
+          type: this.props.category.serviceType,
+          resources: resourcesForRequest,
+        }],
+      },
+    };
+
     const { domainID, projectID } = this.props;
     this.setState({
       ...this.state,
       isChecking: true,
-      limesErrors: null,
+      apiErrors: null,
     });
     this.props.simulateSetQuota({ domainID, projectID, requestBody })
       .then(this.handleCheckResponse)
@@ -287,17 +273,69 @@ export default class ProjectEditModal extends React.Component {
       ...this.state,
       inputs: newInputs,
       isChecking: false,
-      limesErrors: null,
+      apiErrors: null,
     });
   };
 
-  //This gets called when a PUT request to Limes fails.
+  //This gets called by the "Check" button in the footer.
+  handleSubmit = () => {
+    if (this.state.isChecking || this.state.isSubmitting) {
+      return;
+    }
+
+    const resourcesForLimes = [];
+    const resourcesForElektra = [];
+    for (let res of this.props.category.resources) {
+      const input = this.state.inputs[res.name];
+      if (input.error) {
+        return;
+      }
+      const cr = input.checkResult;
+      if (!cr || cr.unacceptable) {
+        return;
+      }
+      if (cr.requestRequired) {
+        resourcesForElektra.push({ name: res.name, quota: input.value });
+      } else {
+        resourcesForLimes.push({ name: res.name, quota: input.value });
+      }
+    }
+
+    const elektraRequestBody = {
+      project: {
+        services: [{
+          type: this.props.category.serviceType,
+          resources: resourcesForElektra,
+        }],
+      },
+    };
+    const limesRequestBody = {
+      project: {
+        services: [{
+          type: this.props.category.serviceType,
+          resources: resourcesForLimes,
+        }],
+      },
+    };
+
+    const { domainID, projectID } = this.props;
+    this.setState({
+      ...this.state,
+      isSubmitting: true,
+      apiErrors: null,
+    });
+    this.props.setQuota({ domainID, projectID, limesRequestBody, elektraRequestBody })
+      .then(() => this.close())
+      .catch(response => this.handleAPIErrors(response.errors));
+  };
+
+  //This gets called when a PUT request to Limes or Elektra fails.
   handleAPIErrors = (errors) => {
     this.setState({
       ...this.state,
       isChecking: false,
       isSubmitting: false,
-      limesErrors: errors,
+      apiErrors: errors,
     });
   };
 
@@ -329,9 +367,10 @@ export default class ProjectEditModal extends React.Component {
     const showSubmitButton = canSubmit && !hasCheckErrors;
     const ajaxInProgress = this.state.isChecking || this.state.isSubmitting;
 
+    const participles = { Check: "Checking", Submit: "Submitting" };
     const buttonCaption = (verb) => (
       ajaxInProgress ? (
-          <React.Fragment><span className='spinner'/> {verb}ing...</React.Fragment>
+          <React.Fragment><span className='spinner'/> {participles[verb]}...</React.Fragment>
       ) : verb
     );
 
@@ -345,7 +384,7 @@ export default class ProjectEditModal extends React.Component {
         </Modal.Header>
 
         <Modal.Body>
-          {this.state.limesErrors && <FormErrors errors={this.state.limesErrors}/>}
+          {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
           <div className='row edit-quota-form-header'>
             <div className='col-md-offset-6 col-md-6'><strong>New Quota</strong></div>
           </div>

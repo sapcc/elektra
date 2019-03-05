@@ -148,9 +148,11 @@ export const setProjectHasBursting = ({domainID, projectID, hasBursting}) => fun
 ////////////////////////////////////////////////////////////////////////////////
 // edit project quota
 
-export const setQuota = ({ domainID, projectID, requestBody }) => function(dispatch) {
+export const setQuota = ({ domainID, projectID, limesRequestBody, elektraRequestBody }) => function(dispatch) {
+  //TODO: send elektraRequestBody if required
+  //TODO: only send limesRequestBody if required
   return new Promise((resolve, reject) =>
-    ajaxHelper.put(`/v1/domains/${domainID}/projects/${projectID}`, requestBody)
+    ajaxHelper.put(`/v1/domains/${domainID}/projects/${projectID}`, limesRequestBody)
       .then((response) => {
         dispatch(fetchProject({ domainID, projectID }));
         resolve(response);
