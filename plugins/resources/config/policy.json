@@ -1,10 +1,24 @@
 {
-  "context_is_cloud_resource_admin": "role:cloud_resource_admin",
-  "context_is_domain_resource_admin": "(role:resource_admin or role:cloud_resource_admin) and not domain_id:nil",
-  "context_is_domain_resource_viewer": "(role:resource_admin or role:resource_viewer or role:cloud_resource_admin) and not domain_id:nil",
-  "context_is_project_resource_admin": "role:resource_admin and not project_id:nil",
-  "context_is_project_resource_viewer": "(role:resource_admin or role:resource_viewer or role:member) and not project_id:nil",
+  /*****************************************************************************
+   * All these rules expect a hash in auth_params[:selected] containing a
+   * cluster_id and potentially domain_id and project_id. If you don't know
+   * what to give for cluster_id, give "current".
+   */
 
-  "project:show": "rule:context_is_project_resource_viewer",
-  "project:edit": "rule:context_is_project_resource_admin"
+  "limes_project_scope": "%(selected.cluster_id)s == \"current\" and project_domain_id:%(selected.domain_id)s and project_id:%(selected.project_id)s",
+  "limes_domain_scope": "%(selected.cluster_id)s == \"current\" and domain_id:%(selected.domain_id)s",
+
+  "limes_cluster_editor": "role:cloud_resource_admin",
+  "limes_cluster_viewer": "(role:cloud_resource_admin or role:cloud_resource_viewer)",
+  "limes_domain_editor":  "rule:limes_cluster_editor or (rule:limes_domain_scope and role:resource_admin)",
+  "limes_domain_viewer":  "rule:limes_cluster_viewer or (rule:limes_domain_scope and role:resource_viewer) or rule:limes_domain_editor",
+  "limes_project_editor": "rule:limes_domain_editor or (rule:limes_project_scope and role:resource_admin)",
+  "limes_project_viewer": "rule:limes_domain_viewer or (rule:limes_project_scope and (role:member or role:_member_ or role:Member or role:resource_viewer)) or rule:limes_project_editor",
+
+  "project:show": "rule:limes_project_viewer",
+  "project:edit": "rule:limes_project_editor",
+  "domain:show": "rule:limes_domain_viewer",
+  "domain:edit": "rule:limes_domain_editor",
+  "cluster:show": "rule:limes_cluster_viewer",
+  "cluster:edit": "rule:limes_cluster_editor"
 }

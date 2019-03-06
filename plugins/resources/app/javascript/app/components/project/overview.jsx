@@ -35,7 +35,6 @@ export default class ProjectOverview extends React.Component {
 
   render() {
     const props = this.props;
-    const canEdit = policy.isAllowed('project:edit');
 
     const { areas, categories, scrapedAt } = props.overview;
     const currentArea = this.state.currentArea || Object.keys(areas).sort()[0];
@@ -67,18 +66,18 @@ export default class ProjectOverview extends React.Component {
 
     return (
       <React.Fragment>
-        {this.renderNavbar(currentArea, canEdit)}
+        {this.renderNavbar(currentArea, props.canEdit)}
         {currentServices.sort(byUIString).map(serviceType => (
           <React.Fragment key={serviceType}>
             {categories[serviceType].sort(byNameIn(serviceType)).map(categoryName => (
-              <ProjectCategory key={categoryName} categoryName={categoryName} flavorData={this.props.flavorData} />
+              <ProjectCategory key={categoryName} categoryName={categoryName} flavorData={this.props.flavorData} canEdit={this.props.canEdit} />
             ))}
           </React.Fragment>
         ))}
         <div className='row'>
           <div className='col-md-6 col-md-offset-2'>
             Usage data last updated {ageDisplay} ago{' '}
-            {canEdit && <ProjectSyncAction {...syncActionProps} />}
+            {props.canEdit && <ProjectSyncAction {...syncActionProps} />}
           </div>
         </div>
       </React.Fragment>

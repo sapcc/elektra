@@ -7,18 +7,18 @@ import ProjectEditModal from '../containers/project/edit';
 import ProjectSettingsModal from '../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
-  const { domainId, projectId, flavorData, docsUrl } = props;
+  const { domainId, projectId, flavorData, docsUrl, canEdit } = props;
   const rootProps = { domainID: domainId, projectID: projectId, flavorData };
 
   return <ProjectLoader domainID={domainId} projectID={projectId}>
     <HashRouter>
       <div>
-        <Route path="/" render={(props) => <ProjectOverview {...rootProps} {...props} /> }/>
+        <Route path="/" render={(props) => <ProjectOverview {...rootProps} {...props} canEdit={canEdit} /> }/>
 
-        { policy.isAllowed("project:edit") &&
+        { canEdit &&
           <Route exact path="/edit/:categoryName" render={(props) => <ProjectEditModal {...rootProps} {...props} /> }/>
         }
-        { policy.isAllowed("project:edit") &&
+        { canEdit &&
           <Route exact path="/settings" render={(props) => <ProjectSettingsModal {...rootProps} {...props} docsUrl={docsUrl} /> }/>
         }
       </div>

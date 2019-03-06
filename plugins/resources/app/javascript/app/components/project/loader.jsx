@@ -17,9 +17,6 @@ export default class ProjectLoader extends React.Component {
   }
 
   render() {
-    if (!policy.isAllowed('project:show')) {
-      return <p>You are not allowed to see this page</p>;
-    }
     if (this.props.receivedAt) {
       return this.props.children;
     }

@@ -13,13 +13,13 @@ export default class ProjectCategory extends React.Component {
       metadata:   this.props.metadata,
     };
 
-    const { categoryName, category: categoryData } = this.props;
+    const { categoryName, category: categoryData, canEdit } = this.props;
     const { serviceType, resources } = categoryData;
 
     return (
       <React.Fragment>
         <h3>
-          {policy.isAllowed('project:edit') && (
+          {canEdit && (
             <Link to={`/edit/${categoryName}`} className='btn btn-primary btn-sm btn-edit-quota'>Edit</Link>
           )}
           {t(categoryName)}
