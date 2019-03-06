@@ -1,17 +1,16 @@
 import { connect } from  'react-redux';
 import ProjectOverview from '../../components/project/overview';
 import {
-  fetchProjectIfNeeded,
   syncProject,
   pollRunningSyncProject,
-} from '../../actions/project';
+} from '../../actions/limes';
 
 export default connect(
   (state, props) => ({
-    isFetching: state.project.isFetching || state.project.receivedAt == null,
-    metadata:   state.project.metadata,
-    overview:   state.project.overview,
-    syncStatus: state.project.syncStatus,
+    isFetching: state.limes.isFetching || state.limes.receivedAt == null,
+    metadata:   state.limes.metadata,
+    overview:   state.limes.overview,
+    syncStatus: state.limes.syncStatus,
   }),
   dispatch => ({
     syncProject:            (args) => dispatch(syncProject(args)),

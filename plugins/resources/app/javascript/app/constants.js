@@ -1,6 +1,7 @@
-export const REQUEST_PROJECT         = 'resources/project/REQUEST_PROJECT';
-export const REQUEST_PROJECT_FAILURE = 'resources/project/REQUEST_PROJECT_FAILURE';
-export const RECEIVE_PROJECT         = 'resources/project/RECEIVE_PROJECT';
+export const REQUEST_DATA         = 'resources/project/REQUEST_DATA';
+export const REQUEST_DATA_FAILURE = 'resources/project/REQUEST_DATA_FAILURE';
+export const RECEIVE_DATA         = 'resources/project/RECEIVE_DATA';
+
 export const SYNC_PROJECT_REQUESTED  = 'resources/project/SYNC_PROJECT_REQUESTED';
 export const SYNC_PROJECT_FAILURE    = 'resources/project/SYNC_PROJECT_FAILURE';
 export const SYNC_PROJECT_STARTED    = 'resources/project/SYNC_PROJECT_STARTED';

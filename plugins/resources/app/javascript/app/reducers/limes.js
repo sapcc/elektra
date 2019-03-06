@@ -13,9 +13,9 @@ const initialState = {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// get project
+// get quota/usage data
 
-const request = (state, {projectID, requestedAt}) => ({
+const request = (state, {requestedAt}) => ({
   ...state,
   isFetching: true,
   requestedAt,
@@ -27,15 +27,15 @@ const requestFailure = (state, action) => ({
   syncStatus: null,
 });
 
-const receive = (state, {projectData, receivedAt}) => {
-  // This reducer takes the `projectData` returned by Limes and flattens it
+const receive = (state, {data, receivedAt}) => {
+  // This reducer takes the `data` returned by Limes and flattens it
   // into several structures that reflect the different levels of React
   // components.
 
   // `metadata` is what multiple levels need (e.g. bursting multiplier).
-  var {services: serviceList, ...metadata} = projectData;
+  var {services: serviceList, ...metadata} = data;
 
-  // `categories` is what the ProjectCategory component needs.
+  // `categories` is what the Category component needs.
   const categories = {};
   for (let srv of serviceList) {
     var {resources: resourceList, type: serviceType, ...serviceData} = srv;
@@ -65,7 +65,7 @@ const receive = (state, {projectData, receivedAt}) => {
     return result;
   };
 
-  // `overview` is what the ProjectOverview component needs.
+  // `overview` is what the Overview component needs.
   const overview = {
     scrapedAt: objectFromEntries(
       serviceList.map(srv => [ srv.type, srv.scraped_at ]),
@@ -88,7 +88,7 @@ const receive = (state, {projectData, receivedAt}) => {
 ////////////////////////////////////////////////////////////////////////////////
 // sync project
 
-const setSyncStatus = (state, action, syncStatus) => ({
+const setSyncStatus = (state, syncStatus) => ({
   ...state,
   syncStatus: syncStatus,
 });
@@ -96,19 +96,19 @@ const setSyncStatus = (state, action, syncStatus) => ({
 ////////////////////////////////////////////////////////////////////////////////
 // entrypoint
 
-export const project = (state, action) => {
+export const limes = (state, action) => {
   if (state == null) {
     state = initialState;
   }
 
   switch (action.type) {
-    case constants.REQUEST_PROJECT:         return request(state, action);
-    case constants.REQUEST_PROJECT_FAILURE: return requestFailure(state, action);
-    case constants.RECEIVE_PROJECT:         return receive(state, action);
-    case constants.SYNC_PROJECT_REQUESTED:  return setSyncStatus(state, action, 'requested');
-    case constants.SYNC_PROJECT_FAILURE:    return setSyncStatus(state, action, null);
-    case constants.SYNC_PROJECT_STARTED:    return setSyncStatus(state, action, 'started');
-    case constants.SYNC_PROJECT_FINISHED:   return setSyncStatus(state, action, 'reloading');
+    case constants.REQUEST_DATA:         return request(state, action);
+    case constants.REQUEST_DATA_FAILURE: return requestFailure(state, action);
+    case constants.RECEIVE_DATA:         return receive(state, action);
+    case constants.SYNC_PROJECT_REQUESTED:  return setSyncStatus(state, 'requested');
+    case constants.SYNC_PROJECT_FAILURE:    return setSyncStatus(state, null);
+    case constants.SYNC_PROJECT_STARTED:    return setSyncStatus(state, 'started');
+    case constants.SYNC_PROJECT_FINISHED:   return setSyncStatus(state, 'reloading');
     default: return state;
   }
 };

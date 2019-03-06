@@ -1,7 +1,7 @@
 /* eslint no-console:0 */
 import { HashRouter, Route, Redirect } from 'react-router-dom'
 
-import ProjectLoader from '../containers/project/loader';
+import Loader from '../containers/loader';
 import ProjectOverview from '../containers/project/overview';
 import ProjectEditModal from '../containers/project/edit';
 import ProjectSettingsModal from '../containers/project/settings';
@@ -11,7 +11,7 @@ const routesForProjectLevel = (props) => {
   const scopeData = { domainID: domainId, projectID: projectId };
   const rootProps = { flavorData, scopeData };
 
-  return <ProjectLoader scopeData={scopeData}>
+  return <Loader scopeData={scopeData}>
     <HashRouter>
       <div>
         <Route path="/" render={(props) => <ProjectOverview {...rootProps} {...props} canEdit={canEdit} /> }/>
@@ -24,7 +24,7 @@ const routesForProjectLevel = (props) => {
         }
       </div>
     </HashRouter>
-  </ProjectLoader>;
+  </Loader>;
 }
 
 const routesForDomainLevel = (props) => (<p>TODO: domain level</p>);

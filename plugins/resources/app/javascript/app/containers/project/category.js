@@ -3,8 +3,8 @@ import ProjectCategory from '../../components/project/category';
 
 export default connect(
   (state, props) => ({
-    metadata: state.project.metadata,
-    category: state.project.categories[props.categoryName],
+    metadata: state.limes.metadata,
+    category: state.limes.categories[props.categoryName],
   }),
   dispatch => ({}),
 )(ProjectCategory);
