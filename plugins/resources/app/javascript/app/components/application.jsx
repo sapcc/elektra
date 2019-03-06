@@ -8,9 +8,10 @@ import ProjectSettingsModal from '../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
   const { domainId, projectId, flavorData, docsUrl, canEdit } = props;
-  const rootProps = { domainID: domainId, projectID: projectId, flavorData };
+  const scopeData = { domainID: domainId, projectID: projectId };
+  const rootProps = { flavorData, scopeData };
 
-  return <ProjectLoader domainID={domainId} projectID={projectId}>
+  return <ProjectLoader scopeData={scopeData}>
     <HashRouter>
       <div>
         <Route path="/" render={(props) => <ProjectOverview {...rootProps} {...props} canEdit={canEdit} /> }/>

@@ -15,10 +15,7 @@ export default class ProjectSyncAction extends React.Component {
     // start polling when entering 'started' state, stop polling when leaving it
     if (syncStatus == 'started') {
       if (!this.polling) {
-        const pollAction = () => this.props.pollRunningSyncProject({
-          domainID: this.props.domainID,
-          projectID: this.props.projectID,
-        });
+        const pollAction = () => this.props.pollRunningSyncProject(this.props.scopeData);
         this.polling = setInterval(pollAction, 3000);
       }
     } else {
@@ -31,10 +28,7 @@ export default class ProjectSyncAction extends React.Component {
 
   handleStartSync = (e) => {
     e.preventDefault();
-    this.props.syncProject({
-      domainID: this.props.domainID,
-      projectID: this.props.projectID,
-    });
+    this.props.syncProject(this.props.scopeData);
   }
 
   render() {

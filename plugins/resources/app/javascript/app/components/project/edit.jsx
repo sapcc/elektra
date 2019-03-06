@@ -190,7 +190,6 @@ export default class ProjectEditModal extends React.Component {
   };
 
   close = (e) => {
-    console.log("HALLO");
     if (e) { e.stopPropagation(); }
     this.setState({show: false});
     setTimeout(() => this.props.history.replace('/'), 300);
@@ -219,13 +218,12 @@ export default class ProjectEditModal extends React.Component {
       },
     };
 
-    const { domainID, projectID } = this.props;
     this.setState({
       ...this.state,
       isChecking: true,
       apiErrors: null,
     });
-    this.props.simulateSetQuota({ domainID, projectID, requestBody })
+    this.props.simulateSetQuota({ ...this.props.scopeData, requestBody })
       .then(this.handleCheckResponse)
       .catch(response => this.handleAPIErrors(response.errors));
   };
@@ -318,13 +316,12 @@ export default class ProjectEditModal extends React.Component {
       },
     };
 
-    const { domainID, projectID } = this.props;
     this.setState({
       ...this.state,
       isSubmitting: true,
       apiErrors: null,
     });
-    this.props.setQuota({ domainID, projectID, limesRequestBody, elektraRequestBody })
+    this.props.setQuota({ ...this.props.scopeData, limesRequestBody, elektraRequestBody })
       .then(() => this.close())
       .catch(response => this.handleAPIErrors(response.errors));
   };
@@ -343,6 +340,7 @@ export default class ProjectEditModal extends React.Component {
     //these props are passed on to the ProjectResource children verbatim
     const forwardProps = {
       flavorData: this.props.flavorData,
+      scopeData:  this.props.scopeData,
       metadata:   this.props.metadata,
     };
 

@@ -10,6 +10,7 @@ export default class ProjectCategory extends React.Component {
     //these props are passed on to the ProjectResource children verbatim
     const forwardProps = {
       flavorData: this.props.flavorData,
+      scopeData:  this.props.scopeData,
       metadata:   this.props.metadata,
     };
 

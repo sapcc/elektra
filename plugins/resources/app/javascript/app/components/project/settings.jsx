@@ -23,8 +23,7 @@ export default class ProjectSettingsModal extends React.Component {
     }
 
     return this.props.setProjectHasBursting({
-      domainID:    this.props.domainID,
-      projectID:   this.props.projectID,
+      ...this.props.scopeData,
       hasBursting: newHasBursting,
     }).then(() => this.close());
   }

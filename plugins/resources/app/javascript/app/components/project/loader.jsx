@@ -10,10 +10,7 @@ export default class ProjectLoader extends React.Component {
   }
 
   loadDependencies = (props) => {
-    props.loadProjectOnce({
-      domainID: props.domainID,
-      projectID: props.projectID,
-    })
+    props.loadProjectOnce(props.scopeData);
   }
 
   render() {

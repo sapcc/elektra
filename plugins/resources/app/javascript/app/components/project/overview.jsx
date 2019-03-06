@@ -57,8 +57,7 @@ export default class ProjectOverview extends React.Component {
     // TODO: button: Request Quota Package
 
     const syncActionProps = {
-      domainID: props.domainID,
-      projectID: props.projectID,
+      scopeData: props.scopeData,
       syncStatus: props.syncStatus,
       syncProject: props.syncProject,
       pollRunningSyncProject: props.pollRunningSyncProject,
@@ -70,7 +69,7 @@ export default class ProjectOverview extends React.Component {
         {currentServices.sort(byUIString).map(serviceType => (
           <React.Fragment key={serviceType}>
             {categories[serviceType].sort(byNameIn(serviceType)).map(categoryName => (
-              <ProjectCategory key={categoryName} categoryName={categoryName} flavorData={this.props.flavorData} canEdit={this.props.canEdit} />
+              <ProjectCategory key={categoryName} categoryName={categoryName} flavorData={this.props.flavorData} scopeData={this.props.scopeData} canEdit={this.props.canEdit} />
             ))}
           </React.Fragment>
         ))}

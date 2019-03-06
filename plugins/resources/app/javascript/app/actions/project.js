@@ -113,9 +113,7 @@ export const pollRunningSyncProject = ({domainID, projectID}) => function(dispat
       for (const srv of newServices) {
         const oldScrapedAt = oldServices[srv.type] || 0;
         const newScrapedAt = srv.scraped_at || 0;
-        console.log({serviceType: srv.type, oldScrapedAt, newScrapedAt});
         if (newScrapedAt <= oldScrapedAt) {
-          console.log("still old");
           allUpdated = false;
         }
       }
