@@ -26,6 +26,7 @@ en:
       compute_viewer: Nova Read-Only
       dns_viewer: Designate Read-Only
       dns_admin: Designate Administrator
+      image_admin: Glance Administrator
       image_viewer: Glance Read-Only
       keymanager_admin: Barbican Administrator
       keymanager_viewer: Barbican Read-Only
