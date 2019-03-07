@@ -11,8 +11,12 @@
       - if @backup_network
         Assign the backup network <b>#{@backup_network.name}</b> to my project <b>#{@scoped_project_name}</b>.
       - else
-        No backup network found for this domain.  
+        The backup network cannot be automatically assigned in this domain. Please open a support ticket so our support staff can take care of this for you.
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
-    %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
-    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Assign Network
+    - if @backup_network
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+      %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Assign Network
+    - else
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Close' } } Close
+
