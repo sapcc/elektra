@@ -1,69 +1,11 @@
 import { Unit } from '../../unit';
-import { byUIString, t } from '../../utils';
+import { t } from '../../utils';
+import ResourceBar from '../../components/resource_bar';
+import ResourceEditor from '../../components/resource_editor';
 import ResourceName from '../../components/resource_name';
-
-const valueWithUnit = (value, unit) => {
-  const title = unit.name !== '' ? `${value} ${unit.name}` : undefined;
-  return <span className='value-with-unit' title={title}>{unit.format(value)}</span>;
-};
 
 export default class ProjectResource extends React.Component {
   state = {}
-
-  onInputKeyPress(e) {
-    if (e.key == 'Enter') {
-      this.props.triggerParseInputs();
-    }
-    //continue handling the key-press event in the regular manner
-    return true;
-  }
-
-  renderBarContents(quota, usage, unit, isDanger, isEditing) {
-    //get some edge cases out of the way first
-    if (quota == 0 && usage == 0) {
-      return (
-        <div className='progress-bar progress-bar-disabled has-label' style={{width:'100%'}}>
-          No quota
-        </div>
-      );
-    }
-
-    let widthPerc = Math.round(1000 * (usage / quota)) / 10;
-    //ensure that a non-zero-wide bar is at least somewhat visible
-    if (usage > 0 && widthPerc < 0.5) {
-      widthPerc = 0.5;
-    }
-
-    //special cases: yellow and red bars
-    let className = 'progress-bar';
-    if (isDanger) {
-      className = 'progress-bar progress-bar-danger progress-bar-striped';
-    } else if (usage >= quota) {
-      className = 'progress-bar progress-bar-warning';
-    }
-    if (widthPerc > 100) {
-      widthPerc = 100;
-    }
-
-    //when the label does not fit in the bar itself, place it next to it (we take `isEditing` into account here because then the bar's length is only 60% of the original)
-    const label = (
-      <React.Fragment>
-        {valueWithUnit(usage, unit)}/{valueWithUnit(quota, unit)}
-      </React.Fragment>
-    );
-    const labelText = `${unit.format(usage)}/${unit.format(quota)}`;
-    const lengthMultiplier = isEditing ? 3.5 : 2;
-    if (widthPerc > (lengthMultiplier * labelText.length)) {
-      return (
-        <div className={`${className} has-label`} style={{width:widthPerc+'%'}}>{label}</div>
-      );
-    } else {
-      return <React.Fragment>
-        <div className={className} style={{width:widthPerc+'%'}} />
-        <div className='progress-bar progress-bar-empty has-label'>{label}</div>
-      </React.Fragment>;
-    }
-  }
 
   renderBurstInfo(quota, usage, backendQuota, unit) {
     if (backendQuota <= quota) {
@@ -96,67 +38,6 @@ export default class ProjectResource extends React.Component {
     );
   }
 
-  renderEditControls() {
-    const { text: editQuotaText, value: newQuota, error: editError, isFollowing, checkResult: cr } = this.props.edit;
-    const { name: resourceName, unit: unitName, quota: oldQuota, scales_with: scalesWith } = this.props.resource;
-
-    let errorMessage = undefined;
-    switch (editError) {
-      case 'syntax':
-        errorMessage = unitName ?
-          'Need a value like "1.2 TiB" or "50g".' :
-          "Need an integer number.";
-        break;
-      case 'fractional-value':
-        errorMessage = unitName ?
-          `Need an integer number of ${unitName}.` :
-          "Need an integer number.";
-        break;
-      case 'overspent':
-        errorMessage = 'Must be more than current usage.';
-        break;
-    }
-
-    let message = undefined;
-    if (errorMessage) {
-      message = <div className='col-md-4 text-danger'>{errorMessage}</div>;
-    } else if (cr) {
-      if (cr.unacceptable) {
-        message = <div className='col-md-4 text-danger'>{cr.unacceptable}</div>;
-      } else if (cr.requestRequired) {
-        message = <div className='col-md-4 text-warning'>{cr.requestRequired}</div>;
-      } else if (cr.success) {
-        if (newQuota > oldQuota) {
-          message = <div className='col-md-4 text-success'>Quota can be raised without approval</div>;
-        } else if (newQuota < oldQuota) {
-          message = <div className='col-md-4 text-success'>Quota can be reduced without approval</div>;
-        } else {
-          message = <div className='col-md-4 text-muted'>Unchanged</div>;
-        }
-      }
-    } else if (isFollowing) {
-      message = <div className='col-md-4'>Adds {scalesWith.factor} per extra {t(scalesWith.resource_name+'_single')}</div>;
-    } else if (scalesWith) {
-      message = <div className='col-md-4'><a href="#" onClick={(e) => { e.preventDefault(); this.props.handleResetFollower(resourceName); }}>Reset</a></div>;
-    }
-
-    return (
-      <React.Fragment>
-        <div className='col-md-2 edit-quota-input'>
-          <input
-            className='form-control input-sm' type='text' value={editQuotaText}
-            disabled={this.props.disabled ? true : false}
-            onChange={(e) => this.props.handleInput(resourceName, e.target.value)}
-            onBlur={(e) => { this.props.triggerParseInputs(); return true; }}
-            onMouseOut={(e) => { this.props.triggerParseInputs(); return true; }}
-            onKeyPress={(e) => this.onInputKeyPress(e)}
-          />
-        </div>
-        {message}
-      </React.Fragment>
-    );
-  }
-
   render() {
     const displayName = t(this.props.resource.name);
     const flavorData = this.props.flavorData[displayName] || {};
@@ -174,16 +55,26 @@ export default class ProjectResource extends React.Component {
 
     const unit = new Unit(unitName || "");
 
+    //The <ResourceEditor/> gets most of our props forwarded verbatim.
+    const editorProps = {
+      edit:     this.props.edit,
+      resource: this.props.resource,
+      disabled: this.props.disabled,
+      handleInput:         this.props.handleInput,
+      handleResetFollower: this.props.handleResetFollower,
+      triggerParseInputs:  this.props.triggerParseInputs,
+    };
+
     return (
       <div className={isEditing && this.props.edit.error ? 'row has-error' : 'row'}>
         <ResourceName name={displayName} flavorData={flavorData} />
         <div className={isEditing ? 'col-md-4' : 'col-md-5'}>
-          <div className='progress'>
-            {this.renderBarContents(quota, usage, unit, isDanger, isEditing)}
-          </div>
+          <ResourceBar
+            capacity={quota} fill={usage} unitName={unitName}
+            isDanger={isDanger} isEditing={isEditing} scopeData={this.props.scopeData} />
         </div>
         {isEditing
-          ? this.renderEditControls()
+          ? <ResourceEditor {...editorProps} />
           : <div className='col-md-5'>
               {this.renderInfo(quota, usage, usableQuota, actualBackendQuota, unit)}
             </div>
