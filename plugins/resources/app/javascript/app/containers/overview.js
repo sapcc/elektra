@@ -1,9 +1,9 @@
 import { connect } from  'react-redux';
-import ProjectOverview from '../../components/project/overview';
+import Overview from '../components/overview';
 import {
   syncProject,
   pollRunningSyncProject,
-} from '../../actions/limes';
+} from '../actions/limes';
 
 export default connect(
   (state, props) => ({
@@ -16,4 +16,4 @@ export default connect(
     syncProject:            (args) => dispatch(syncProject(args)),
     pollRunningSyncProject: (args) => dispatch(pollRunningSyncProject(args)),
   }),
-)(ProjectOverview);
+)(Overview);

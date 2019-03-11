@@ -25,4 +25,14 @@ export class Scope {
     if (this.domainID)  return 'domain';
     return 'cluster';
   }
+
+  isProject() {
+    return this.projectID ? true : false;
+  }
+  isDomain() {
+    return this.domainID && !this.projectID;
+  }
+  isCluster() {
+    return !this.domainID;
+  }
 }

@@ -1,11 +1,12 @@
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 
-import { byUIString, t } from '../../utils';
-import ProjectCategory from '../../containers/project/category';
-import ProjectSyncAction from '../../components/project/sync_action';
+import { Scope } from '../scope';
+import { byUIString, t } from '../utils';
+import ProjectCategory from '../containers/project/category';
+import ProjectSyncAction from '../components/project/sync_action';
 
-export default class ProjectOverview extends React.Component {
+export default class Overview extends React.Component {
   state = {
     currentArea: null,
   }
@@ -14,7 +15,7 @@ export default class ProjectOverview extends React.Component {
     this.setState({...this.state, currentArea: area});
   }
 
-  renderNavbar(currentArea, canEdit) {
+  renderNavbar(currentArea, canEdit, scope) {
     return (
       <nav className='nav-with-buttons'>
         <ul className='nav nav-tabs'>
@@ -26,7 +27,7 @@ export default class ProjectOverview extends React.Component {
             </li>
           ))}
         </ul>
-        {canEdit && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
+        {canEdit && scope.isCluster() && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
           <Link to={`/settings`} className='btn btn-primary btn-sm'>Settings</Link>
         </div>}
       </nav>
@@ -35,6 +36,7 @@ export default class ProjectOverview extends React.Component {
 
   render() {
     const props = this.props;
+    const scope = new Scope(props.scopeData);
 
     const { areas, categories, scrapedAt } = props.overview;
     const currentArea = this.state.currentArea || Object.keys(areas).sort()[0];
@@ -53,9 +55,6 @@ export default class ProjectOverview extends React.Component {
       return byUIString(a, b);
     };
 
-    // TODO: overview page with critical resources?
-    // TODO: button: Request Quota Package
-
     const syncActionProps = {
       scopeData: props.scopeData,
       syncStatus: props.syncStatus,
@@ -63,9 +62,10 @@ export default class ProjectOverview extends React.Component {
       pollRunningSyncProject: props.pollRunningSyncProject,
     };
 
+    // TODO: button: Request Quota Package
     return (
       <React.Fragment>
-        {this.renderNavbar(currentArea, props.canEdit)}
+        {this.renderNavbar(currentArea, props.canEdit, scope)}
         {currentServices.sort(byUIString).map(serviceType => (
           <React.Fragment key={serviceType}>
             {categories[serviceType].sort(byNameIn(serviceType)).map(categoryName => (
@@ -76,7 +76,8 @@ export default class ProjectOverview extends React.Component {
         <div className='row'>
           <div className='col-md-6 col-md-offset-2'>
             Usage data last updated {ageDisplay} ago{' '}
-            {props.canEdit && <ProjectSyncAction {...syncActionProps} />}
+            {props.canEdit && scope.isProject() &&
+              <ProjectSyncAction {...syncActionProps} />}
           </div>
         </div>
       </React.Fragment>
