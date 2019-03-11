@@ -50,6 +50,14 @@
 div.flavor-data {
   /* ensure that flavor data text appears grouped with its resource */
   margin-bottom: 1em;
+
+  span {
+    white-space: nowrap;
+  }
+  span:not(:last-child):after {
+    content: ", ";
+    white-space: normal;
+  }
 }
 
 h3 > .btn.btn-edit-quota {

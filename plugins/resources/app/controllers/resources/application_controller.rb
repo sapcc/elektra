@@ -99,7 +99,7 @@ module Resources
         primary << "#{mib.format(f.ram.to_i)} RAM" if f.ram
         primary << "#{gib.format(f.disk.to_i)} disk" if f.disk
         result[f.name] = {
-          primary: primary.join(', '),
+          primary: primary,
           secondary: m.attributes['catalog:description'] || '',
         }
       end

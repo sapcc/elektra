@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { byLeaderAndName, t } from '../utils';
 import ProjectResource from '../components/project/resource';
+import { Scope } from '../scope';
 
 export default class Category extends React.Component {
   state = {}
