@@ -1,5 +1,5 @@
 import { connect } from  'react-redux';
-import ProjectCategory from '../../components/project/category';
+import Category from '../components/category';
 
 export default connect(
   (state, props) => ({
@@ -7,4 +7,4 @@ export default connect(
     category: state.limes.categories[props.categoryName],
   }),
   dispatch => ({}),
-)(ProjectCategory);
+)(Category);

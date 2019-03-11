@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { Scope } from '../scope';
 import { byUIString, t } from '../utils';
-import ProjectCategory from '../containers/project/category';
+import Category from '../containers/category';
 import ProjectSyncAction from '../components/project/sync_action';
 
 export default class Overview extends React.Component {
@@ -69,7 +69,7 @@ export default class Overview extends React.Component {
         {currentServices.sort(byUIString).map(serviceType => (
           <React.Fragment key={serviceType}>
             {categories[serviceType].sort(byNameIn(serviceType)).map(categoryName => (
-              <ProjectCategory key={categoryName} categoryName={categoryName} flavorData={this.props.flavorData} scopeData={this.props.scopeData} canEdit={this.props.canEdit} />
+              <Category key={categoryName} categoryName={categoryName} flavorData={this.props.flavorData} scopeData={this.props.scopeData} canEdit={this.props.canEdit} />
             ))}
           </React.Fragment>
         ))}
