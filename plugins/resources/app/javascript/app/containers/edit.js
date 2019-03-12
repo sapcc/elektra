@@ -1,6 +1,6 @@
 import { connect } from  'react-redux';
-import { simulateSetQuota, setQuota } from '../../actions/limes';
-import ProjectEditModal from '../../components/project/edit';
+import { simulateSetQuota, setQuota } from '../actions/limes';
+import EditModal from '../components/edit';
 
 export default connect(
   (state, props) => ({
@@ -12,4 +12,4 @@ export default connect(
     setQuota:         (args) => dispatch(setQuota(args)),
     simulateSetQuota: (args) => dispatch(simulateSetQuota(args)),
   }),
-)(ProjectEditModal);
+)(EditModal);

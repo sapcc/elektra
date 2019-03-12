@@ -3,7 +3,7 @@ import { HashRouter, Route, Redirect } from 'react-router-dom'
 
 import Loader from '../containers/loader';
 import Overview from '../containers/overview';
-import ProjectEditModal from '../containers/project/edit';
+import EditModal from '../containers/edit';
 import ProjectSettingsModal from '../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
@@ -17,7 +17,7 @@ const routesForProjectLevel = (props) => {
         <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} /> }/>
 
         { canEdit &&
-          <Route exact path="/edit/:categoryName" render={(props) => <ProjectEditModal {...rootProps} {...props} /> }/>
+          <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} /> }/>
         }
         { canEdit &&
           <Route exact path="/settings" render={(props) => <ProjectSettingsModal {...rootProps} {...props} docsUrl={docsUrl} /> }/>

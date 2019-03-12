@@ -1,11 +1,12 @@
 import { Modal, Button } from 'react-bootstrap';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
-import { byLeaderAndName, t } from '../../utils';
-import ProjectResource from '../../components/project/resource';
-import { Unit } from '../../unit';
+import { byLeaderAndName, t } from '../utils';
+import ProjectResource from '../components/project/resource';
+import { Scope } from '../scope';
+import { Unit } from '../unit';
 
-export default class ProjectEditModal extends React.Component {
+export default class EditModal extends React.Component {
   state = {
     //This will be set to false by this.close().
     show: true,
@@ -40,7 +41,7 @@ export default class ProjectEditModal extends React.Component {
     if (this.state.inputs) {
       return;
     }
-    //do this only when we have project data
+    //do this only when we have resource data
     const { resources } = props.category || {};
     if (!resources) {
       return;
@@ -200,6 +201,7 @@ export default class ProjectEditModal extends React.Component {
     if (this.state.isChecking || this.state.isSubmitting) {
       return;
     }
+    const scope = new Scope(this.props.scopeData);
 
     const resourcesForRequest = [];
     for (let res of this.props.category.resources) {
@@ -209,13 +211,12 @@ export default class ProjectEditModal extends React.Component {
       }
       resourcesForRequest.push({ name: res.name, quota: input.value });
     }
-    const requestBody = {
-      project: {
-        services: [{
-          type: this.props.category.serviceType,
-          resources: resourcesForRequest,
-        }],
-      },
+    const requestBody = {};
+    requestBody[scope.level()] = {
+      services: [{
+        type: this.props.category.serviceType,
+        resources: resourcesForRequest,
+      }],
     };
 
     this.setState({
@@ -280,6 +281,7 @@ export default class ProjectEditModal extends React.Component {
     if (this.state.isChecking || this.state.isSubmitting) {
       return;
     }
+    const scope = new Scope(this.props.scopeData);
 
     const resourcesForLimes = [];
     const resourcesForElektra = [];
@@ -299,21 +301,19 @@ export default class ProjectEditModal extends React.Component {
       }
     }
 
-    const elektraRequestBody = {
-      project: {
-        services: [{
-          type: this.props.category.serviceType,
-          resources: resourcesForElektra,
-        }],
-      },
+    const elektraRequestBody = {};
+    elektraRequestBody[scope.level()] = {
+      services: [{
+        type: this.props.category.serviceType,
+        resources: resourcesForElektra,
+      }],
     };
-    const limesRequestBody = {
-      project: {
-        services: [{
-          type: this.props.category.serviceType,
-          resources: resourcesForLimes,
-        }],
-      },
+    const limesRequestBody = {};
+    limesRequestBody[scope.level()] = {
+      services: [{
+        type: this.props.category.serviceType,
+        resources: resourcesForLimes,
+      }],
     };
 
     this.setState({
@@ -345,6 +345,7 @@ export default class ProjectEditModal extends React.Component {
     };
 
     const { category, categoryName } = this.props;
+    const scope = new Scope(this.props.scopeData);
 
     let hasInputErrors = false;
     let canSubmit = true;
@@ -377,7 +378,7 @@ export default class ProjectEditModal extends React.Component {
       <Modal className='resources' backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
-            Edit Project Quota: {t(categoryName)}
+            Edit {scope.level()} Quota: {t(categoryName)}
           </Modal.Title>
         </Modal.Header>
 
