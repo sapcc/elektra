@@ -3,6 +3,8 @@ import { ajaxHelper, pluginAjaxHelper } from 'ajax_helper';
 import { addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
+import { Scope } from '../scope';
+
 const limesErrorMessage = (error) =>
   error.response && error.response.data ||
   error.message
@@ -32,11 +34,12 @@ const receiveData = (json) => ({
 
 export const fetchData = (scopeData) => function(dispatch, getState) {
   dispatch(requestData());
+  const scope = new Scope(scopeData);
 
   //TODO domain level, cluster level
-  return ajaxHelper.get(`/v1/domains/${scopeData.domainID}/projects/${scopeData.projectID}`)
+  return ajaxHelper.get(scope.urlPath())
     .then((response) => {
-      dispatch(receiveData(response.data.project));
+      dispatch(receiveData(response.data[scope.level()]));
     })
     .catch((error) => {
       dispatch(requestDataFailure());
@@ -131,11 +134,13 @@ export const setProjectHasBursting = ({domainID, projectID, hasBursting}) => fun
 ////////////////////////////////////////////////////////////////////////////////
 // edit project quota
 
-export const setQuota = ({ domainID, projectID, limesRequestBody, elektraRequestBody }) => function(dispatch) {
+export const setQuota = (scopeData, limesRequestBody, elektraRequestBody) => function(dispatch) {
+  const scope = new Scope(scopeData);
+
   //TODO: send elektraRequestBody if required
   //TODO: only send limesRequestBody if required
   return new Promise((resolve, reject) =>
-    ajaxHelper.put(`/v1/domains/${domainID}/projects/${projectID}`, limesRequestBody)
+    ajaxHelper.put(scope.urlPath(), limesRequestBody)
       .then((response) => {
         dispatch(fetchData({ domainID, projectID }));
         resolve(response);
@@ -143,9 +148,11 @@ export const setQuota = ({ domainID, projectID, limesRequestBody, elektraRequest
   );
 };
 
-export const simulateSetQuota = ({ domainID, projectID, requestBody }) => function(dispatch) {
+export const simulateSetQuota = (scopeData, requestBody) => function(dispatch) {
+  const scope = new Scope(scopeData);
+
   return new Promise((resolve, reject) =>
-    ajaxHelper.post(`/v1/domains/${domainID}/projects/${projectID}/simulate-put`, requestBody)
+    ajaxHelper.post(scope.urlPath() + '/simulate-put', requestBody)
       .then(resolve)
       .catch(error => reject({ errors: limesErrorMessage(error) }))
   );

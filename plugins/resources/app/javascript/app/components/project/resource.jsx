@@ -43,8 +43,6 @@ export default class ProjectResource extends React.Component {
     const flavorData = this.props.flavorData[displayName] || {};
 
     const { quota: originalQuota, usage, usable_quota: usableQuota, backend_quota: backendQuota, unit: unitName } = this.props.resource;
-    const { enabled: hasBursting, multiplier: burstMultiplier } =
-      this.props.metadata.bursting || {};
 
     //during editing, allow the parent form to override the displayed quota value
     const isEditing = this.props.edit ? true : false;

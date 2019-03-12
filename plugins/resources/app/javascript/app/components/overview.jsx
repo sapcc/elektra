@@ -38,13 +38,21 @@ export default class Overview extends React.Component {
     const props = this.props;
     const scope = new Scope(props.scopeData);
 
-    const { areas, categories, scrapedAt } = props.overview;
+    const { areas, categories, scrapedAt, minScrapedAt, maxScrapedAt } = props.overview;
     const currentArea = this.state.currentArea || Object.keys(areas).sort()[0];
     const currentServices = areas[currentArea];
 
-    const currScrapedAt = currentServices.map(serviceType => scrapedAt[serviceType]);
-    const minScrapedStr = moment.unix(Math.min(...currScrapedAt)).fromNow(true);
-    const maxScrapedStr = moment.unix(Math.max(...currScrapedAt)).fromNow(true);
+    const currMinScrapedAt = currentServices
+      .map(serviceType => minScrapedAt[serviceType])
+      .filter(x => x !== undefined);
+    const currMaxScrapedAt = currentServices
+      .map(serviceType => maxScrapedAt[serviceType])
+      .filter(x => x !== undefined);
+    const currScrapedAt = currentServices
+      .map(serviceType => scrapedAt[serviceType])
+      .filter(x => x !== undefined);
+    const minScrapedStr = moment.unix(Math.min(...currMinScrapedAt, ...currScrapedAt)).fromNow(true);
+    const maxScrapedStr = moment.unix(Math.max(...currMaxScrapedAt, ...currScrapedAt)).fromNow(true);
     const ageDisplay = minScrapedStr == maxScrapedStr ? minScrapedStr : `between ${minScrapedStr} and ${maxScrapedStr}`;
 
     //sorting predicate for categories: sort by translated name, but categories

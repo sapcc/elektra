@@ -67,8 +67,16 @@ const receive = (state, {data, receivedAt}) => {
 
   // `overview` is what the Overview component needs.
   const overview = {
+    //This field is only filled for project scope, and {} otherwise.
     scrapedAt: objectFromEntries(
       serviceList.map(srv => [ srv.type, srv.scraped_at ]),
+    ),
+    //These two fields are only filled for cluster/domain scope, and {} otherwise.
+    minScrapedAt: objectFromEntries(
+      serviceList.map(srv => [ srv.type, srv.min_scraped_at ]),
+    ),
+    maxScrapedAt: objectFromEntries(
+      serviceList.map(srv => [ srv.type, srv.max_scraped_at ]),
     ),
     areas: groupKeys(serviceList.map((srv) => [ srv.area || srv.type, srv.type ])),
     categories: groupKeys(Object.entries(categories).map(([ catName, cat ]) => [ cat.serviceType, catName ])),

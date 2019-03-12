@@ -14,7 +14,6 @@ createWidget(__dirname).then((widget) => {
 
   delete(widget.config.scriptParams.limesApi)
   delete(widget.config.scriptParams.token)
-  delete(widget.config.scriptParams.clusterId)
 
   widget.config.scriptParams.flavorData = JSON.parse(widget.config.scriptParams.flavorData)
   widget.config.scriptParams.canEdit = widget.config.scriptParams.canEdit == 'true';

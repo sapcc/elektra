@@ -224,7 +224,7 @@ export default class EditModal extends React.Component {
       isChecking: true,
       apiErrors: null,
     });
-    this.props.simulateSetQuota({ ...this.props.scopeData, requestBody })
+    this.props.simulateSetQuota(this.props.scopeData, requestBody)
       .then(this.handleCheckResponse)
       .catch(response => this.handleAPIErrors(response.errors));
   };
@@ -321,7 +321,7 @@ export default class EditModal extends React.Component {
       isSubmitting: true,
       apiErrors: null,
     });
-    this.props.setQuota({ ...this.props.scopeData, limesRequestBody, elektraRequestBody })
+    this.props.setQuota(this.props.scopeData, limesRequestBody, elektraRequestBody)
       .then(() => this.close())
       .catch(response => this.handleAPIErrors(response.errors));
   };
@@ -378,7 +378,7 @@ export default class EditModal extends React.Component {
       <Modal className='resources' backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
-            Edit {scope.level()} Quota: {t(categoryName)}
+            Edit {scope.level()} quota: {t(categoryName)}
           </Modal.Title>
         </Modal.Header>
 

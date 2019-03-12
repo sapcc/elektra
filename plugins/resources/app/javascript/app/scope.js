@@ -1,3 +1,6 @@
+import DomainResource from './components/domain/resource';
+import ProjectResource from './components/project/resource';
+
 /*
  * Most of the actions, reducers and components get reduced on multiple levels
  * (with the levels being one of "cluster", "domain" or "project"). Therefore,
@@ -34,5 +37,17 @@ export class Scope {
   }
   isCluster() {
     return !this.domainID;
+  }
+
+  urlPath() {
+    if (this.projectID) return `/v1/domains/${this.domainID}/projects/${this.projectID}`;
+    if (this.domainID)  return `/v1/domains/${this.domainID}`;
+    return `/v1/clusters/${scopeData.clusterID}`;
+  }
+
+  resourceComponent() {
+    if (this.projectID) return ProjectResource;
+    if (this.domainID)  return DomainResource;
+    return null; //TODO ClusterResource
   }
 }

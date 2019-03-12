@@ -7,8 +7,8 @@ import EditModal from '../containers/edit';
 import ProjectSettingsModal from '../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
-  const { domainId, projectId, flavorData, docsUrl, canEdit } = props;
-  const scopeData = { domainID: domainId, projectID: projectId };
+  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit } = props;
+  const scopeData = { clusterID: clusterId, domainID: domainId, projectID: projectId };
   const rootProps = { flavorData, scopeData };
 
   return <Loader scopeData={scopeData}>
@@ -27,7 +27,24 @@ const routesForProjectLevel = (props) => {
   </Loader>;
 }
 
-const routesForDomainLevel = (props) => (<p>TODO: domain level</p>);
+const routesForDomainLevel = (props) => {
+  const { clusterId, domainId, flavorData, docsUrl, canEdit } = props;
+  const scopeData = { clusterID: clusterId, domainID: domainId };
+  const rootProps = { flavorData, scopeData };
+
+  return <Loader scopeData={scopeData}>
+    <HashRouter>
+      <div>
+        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} /> }/>
+
+        { canEdit &&
+          <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} /> }/>
+        }
+      </div>
+    </HashRouter>
+  </Loader>;
+}
+
 const routesForClusterLevel = (props) => (<p>TODO: cluster level</p>);
 
 export default (props) => {
