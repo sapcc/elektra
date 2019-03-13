@@ -59,14 +59,14 @@ SimpleNavigation::Configuration.run do |navigation|
 
   primary.item :ccadmin, 'Cloud Administration', nil,
     html: { class: 'fancy-nav-header', 'data-icon': 'cloud-admin-icon' },
-    if: -> { current_user and current_user.is_allowed?('cloud_admin') || current_user and current_user.is_allowed?('context_is_cloud_compute_admin')} do |ccadmin_nav|
+    if: -> { current_user and current_user.is_allowed?('cloud_admin') || current_user and current_user.is_allowed?('context_is_cloud_compute_admin') || current_user and current_user.is_allowed?('context_is_cloud_sharedfilesystem_viewer')} do |ccadmin_nav|
     ccadmin_nav.item :requests, 'Manage Requests', plugin('inquiry').admin_inquiries_path
     ccadmin_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').cloud_admin_path}, if: -> { services.available?(:resource_management,:resources) }
     ccadmin_nav.item :flavors, 'Manage Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
     ccadmin_nav.item :hypervisors, 'Compute Host Aggregates & Hypervisors', -> { plugin('compute').host_aggregates_path }, if: -> { plugin_available?(:compute) || current_user and current_user.is_allowed?('context_is_cloud_compute_admin') }, highlights_on: -> { params[:controller][%r{host_aggregates/?.*}] }
     ccadmin_nav.item :network_stats, 'Share Aggregates', lambda {
       plugin('shared_filesystem_storage').cloud_admin_pools_path
-    }, highlights_on: -> { params[:controller][%r{pools/?.*}] }
+    }, highlights_on: -> { params[:controller][%r{pools/?.*}] }, if: -> { current_user.is_allowed?('context_is_cloud_sharedfilesystem_viewer') }
     ccadmin_nav.item :lookup, 'OpenStack Object Lookup', -> { plugin('lookup').root_path }, highlights_on: -> { params[:controller][%r{lookup/?.*}] }
   end
 
