@@ -132,7 +132,7 @@ export const setProjectHasBursting = ({domainID, projectID, hasBursting}) => fun
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// edit project quota
+// edit quota
 
 export const setQuota = (scopeData, limesRequestBody, elektraRequestBody) => function(dispatch) {
   const scope = new Scope(scopeData);
@@ -142,7 +142,7 @@ export const setQuota = (scopeData, limesRequestBody, elektraRequestBody) => fun
   return new Promise((resolve, reject) =>
     ajaxHelper.put(scope.urlPath(), limesRequestBody)
       .then((response) => {
-        dispatch(fetchData({ domainID, projectID }));
+        dispatch(fetchData(scopeData));
         resolve(response);
       }).catch(error => reject({ errors: limesErrorMessage(error) }))
   );

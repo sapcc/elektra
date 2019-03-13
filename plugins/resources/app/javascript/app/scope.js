@@ -28,7 +28,6 @@ export class Scope {
     if (this.domainID)  return 'domain';
     return 'cluster';
   }
-
   isProject() {
     return this.projectID ? true : false;
   }
@@ -45,9 +44,34 @@ export class Scope {
     return `/v1/clusters/${scopeData.clusterID}`;
   }
 
+  //Level-specific component for resource bars inside a <Category/>.
   resourceComponent() {
     if (this.projectID) return ProjectResource;
     if (this.domainID)  return DomainResource;
     return null; //TODO ClusterResource
+  }
+
+  //Level-specific validations for quota values entered into <EditModal />.
+  validateQuotaInput(newQuota, res) {
+    if (this.projectID) {
+      if (newQuota < res.usage) {
+        return 'overspent';
+      }
+      return null;
+    }
+    else if (this.domainID) {
+      if (newQuota < res.projects_quota) {
+        return 'overspent';
+      }
+      return null;
+    }
+    else {
+      return null;
+    }
+  }
+  overspentMessage() {
+    if (this.projectID) return 'Must be more than current usage.';
+    if (this.domainID)  return 'Must be more than quota of projects.';
+    return null;
   }
 }

@@ -9,7 +9,7 @@ export default connect(
     categoryName: props.match.params.categoryName,
   }),
   dispatch => ({
-    setQuota:         (args) => dispatch(setQuota(args)),
-    simulateSetQuota: (args) => dispatch(simulateSetQuota(args)),
+    setQuota:         (...args) => dispatch(setQuota(...args)),
+    simulateSetQuota: (...args) => dispatch(simulateSetQuota(...args)),
   }),
 )(EditModal);

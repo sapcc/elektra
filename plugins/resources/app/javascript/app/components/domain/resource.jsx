@@ -20,9 +20,10 @@ export default (props) => {
 
   //The <ResourceEditor/> gets most of our props forwarded verbatim.
   const editorProps = {
-    edit:     props.edit,
-    resource: props.resource,
-    disabled: props.disabled,
+    edit:      props.edit,
+    resource:  props.resource,
+    disabled:  props.disabled,
+    scopeData: props.scopeData,
     handleInput:         props.handleInput,
     handleResetFollower: props.handleResetFollower,
     triggerParseInputs:  props.triggerParseInputs,
@@ -39,7 +40,7 @@ export default (props) => {
       {isEditing
         ? <ResourceEditor {...editorProps} />
         : <div className='col-md-5'>
-            { props.canEdit && <Link to={`/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Details</Link> }
+            { props.canEdit && <Link to={`/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Show projects</Link> }
           </div>
       }
     </div>

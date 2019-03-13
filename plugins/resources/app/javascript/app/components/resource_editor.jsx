@@ -1,8 +1,10 @@
+import { Scope } from '../scope';
 import { t } from '../utils';
 
 const ResourceEditor = (props) => {
   const { text: editQuotaText, value: newQuota, error: editError, isFollowing, checkResult: cr } = props.edit;
   const { name: resourceName, unit: unitName, quota: oldQuota, scales_with: scalesWith } = props.resource;
+  const scope = new Scope(props.scopeData);
 
   let errorMessage = undefined;
   switch (editError) {
@@ -17,7 +19,7 @@ const ResourceEditor = (props) => {
         "Need an integer number.";
       break;
     case 'overspent':
-      errorMessage = 'Must be more than current usage.';
+      errorMessage = scope.overspentMessage();
       break;
   }
 

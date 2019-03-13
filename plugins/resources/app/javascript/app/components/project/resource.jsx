@@ -55,9 +55,10 @@ export default class ProjectResource extends React.Component {
 
     //The <ResourceEditor/> gets most of our props forwarded verbatim.
     const editorProps = {
-      edit:     this.props.edit,
-      resource: this.props.resource,
-      disabled: this.props.disabled,
+      edit:      this.props.edit,
+      resource:  this.props.resource,
+      disabled:  this.props.disabled,
+      scopeData: this.props.scopeData,
       handleInput:         this.props.handleInput,
       handleResetFollower: this.props.handleResetFollower,
       triggerParseInputs:  this.props.triggerParseInputs,

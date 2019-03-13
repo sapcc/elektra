@@ -13,7 +13,7 @@ export default class Category extends React.Component {
     const scope = new Scope(this.props.scopeData);
     const Resource = scope.resourceComponent();
 
-    //these props are passed on to the ProjectResource children verbatim
+    //these props are passed on to the Resource children verbatim
     const forwardProps = {
       flavorData:   this.props.flavorData,
       scopeData:    this.props.scopeData,

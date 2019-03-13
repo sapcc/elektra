@@ -2,7 +2,6 @@ import { Modal, Button } from 'react-bootstrap';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
 import { byLeaderAndName, t } from '../utils';
-import ProjectResource from '../components/project/resource';
 import { Scope } from '../scope';
 import { Unit } from '../unit';
 
@@ -130,6 +129,7 @@ export default class EditModal extends React.Component {
     }
 
     const newState = { ...this.state, inputs: {}, hasNewInputs: false };
+    const scope = new Scope(this.props.scopeData);
     for (let res of this.props.category.resources) {
       const unit = new Unit(res.unit);
       const oldInput = this.state.inputs[res.name];
@@ -153,9 +153,7 @@ export default class EditModal extends React.Component {
         input.error = parsedValue.error;
       } else {
         input.value = parsedValue;
-        if (parsedValue < res.usage) {
-          input.error = 'overspent';
-        }
+        input.error = scope.validateQuotaInput(parsedValue, res);
       }
     }
 
@@ -246,9 +244,13 @@ export default class EditModal extends React.Component {
       const input = newInputs[error.resource_name];
       switch (error.status) {
         case 403:
-          const limit = resUnitByName[error.resource_name].format(error.max_acceptable_quota);
-          const msg = `Raising beyond ${limit} requires approval`;
-          input.checkResult = { requestRequired: msg };
+          if (error.max_acceptable_quota) {
+            const limit = resUnitByName[error.resource_name].format(error.max_acceptable_quota);
+            const msg = `Raising beyond ${limit} requires approval`;
+            input.checkResult = { requestRequired: msg };
+          } else {
+            input.checkResult = { requestRequired: `Raising quotas requires approval` };
+          }
           break;
         case 409:
           if (error.max_acceptable_quota != null) {
@@ -337,15 +339,18 @@ export default class EditModal extends React.Component {
   };
 
   render() {
-    //these props are passed on to the ProjectResource children verbatim
+    //these props are passed on to the Resource children verbatim
     const forwardProps = {
-      flavorData: this.props.flavorData,
-      scopeData:  this.props.scopeData,
-      metadata:   this.props.metadata,
+      flavorData:   this.props.flavorData,
+      scopeData:    this.props.scopeData,
+      metadata:     this.props.metadata,
+      categoryName: this.props.categoryName,
+      canEdit:      this.props.canEdit,
     };
 
     const { category, categoryName } = this.props;
     const scope = new Scope(this.props.scopeData);
+    const Resource = scope.resourceComponent();
 
     let hasInputErrors = false;
     let canSubmit = true;
@@ -388,7 +393,7 @@ export default class EditModal extends React.Component {
             <div className='col-md-offset-6 col-md-6'><strong>New Quota</strong></div>
           </div>
           {this.state.inputs && category.resources.sort(byLeaderAndName).map(res => (
-            <ProjectResource
+            <Resource
               key={res.name} resource={res} {...forwardProps}
               edit={this.state.inputs[res.name]}
               disabled={ajaxInProgress}
