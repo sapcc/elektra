@@ -8,10 +8,10 @@ import DataTable from '../../components/details/datatable';
 import DetailsResource from '../../components/details/resource';
 
 const domainDataTableColumns = [
-  { key: 'id', label: 'Project', sortable: true },
-  { key: 'quota', label: 'Quota', sortable: true },
-  { key: 'usage', label: 'Usage', sortable: true },
-  { key: 'burst_usage', label: 'Thereof burst', sortable: true },
+  { key: 'id', label: 'Project', sort: 'text' },
+  { key: 'quota', label: 'Quota', sort: 'numeric' },
+  { key: 'usage', label: 'Usage', sort: 'numeric' },
+  { key: 'burst_usage', label: 'Thereof burst', sort: 'numeric' },
   { key: 'actions', label: 'Actions' },
 ];
 
