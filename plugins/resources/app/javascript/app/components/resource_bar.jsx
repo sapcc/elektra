@@ -1,14 +1,9 @@
 import { Scope } from '../scope';
-import { Unit } from '../unit';
-
-const valueWithUnit = (value, unit) => {
-  const title = unit.name !== '' ? `${value} ${unit.name}` : undefined;
-  return <span className='value-with-unit' title={title}>{unit.format(value)}</span>;
-};
+import { Unit, valueWithUnit } from '../unit';
 
 //NOTE: `capacity` and `fill` are generic names. What they actually stand for is
 //defined where this component gets used.
-const ResourceBar = ({capacity, fill, unitName, isDanger, isEditing, scopeData}) => {
+const ResourceBar = ({capacity, fill, unitName, isDanger, isEditing, scopeData, labelOverride}) => {
   const scope = new Scope(scopeData);
   const unit = new Unit(unitName || "");
 
@@ -41,7 +36,7 @@ const ResourceBar = ({capacity, fill, unitName, isDanger, isEditing, scopeData})
   }
 
   //when the label does not fit in the bar itself, place it next to it (we take `isEditing` into account here because then the bar's length is only 60% of the original)
-  const label = (
+  const label = labelOverride || (
     <React.Fragment>
       {valueWithUnit(fill, unit)}/{valueWithUnit(capacity, unit)}
     </React.Fragment>

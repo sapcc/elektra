@@ -2,11 +2,11 @@ import DomainResource from './components/domain/resource';
 import ProjectResource from './components/project/resource';
 
 /*
- * Most of the actions, reducers and components get reduced on multiple levels
+ * Most of the actions, reducers and components get reused on multiple levels
  * (with the levels being one of "cluster", "domain" or "project"). Therefore,
  * they're written fairly generically and the variance between different levels
- * is encapsulated in the Scope class defined here. A Scope can be constructed
- * in one of three ways:
+ * is mostly encapsulated in the Scope class defined here. A Scope can be
+ * constructed in one of three ways:
  *
  *     const projectScope = new Scope({ domainID, projectID });
  *     const domainScope  = new Scope({ domainID });
@@ -28,6 +28,11 @@ export class Scope {
     if (this.domainID)  return 'domain';
     return 'cluster';
   }
+  sublevel() {
+    if (this.projectID) return null; //there is nothing below projects
+    if (this.domainID)  return 'project';
+    return 'domain';
+  }
   isProject() {
     return this.projectID ? true : false;
   }
@@ -42,6 +47,11 @@ export class Scope {
     if (this.projectID) return `/v1/domains/${this.domainID}/projects/${this.projectID}`;
     if (this.domainID)  return `/v1/domains/${this.domainID}`;
     return `/v1/clusters/${scopeData.clusterID}`;
+  }
+  subscopesUrlPath() {
+    if (this.projectID) return null; //there is nothing below projects
+    if (this.domainID)  return `/v1/domains/${this.domainID}/projects`;
+    return `/v1/clusters/${scopeData.clusterID}/domains`;
   }
 
   //Level-specific component for resource bars inside a <Category/>.
@@ -66,12 +76,12 @@ export class Scope {
       return null;
     }
     else {
-      return null;
+      return null; //there is no quota for clusters
     }
   }
   overspentMessage() {
     if (this.projectID) return 'Must be more than current usage.';
     if (this.domainID)  return 'Must be more than quota of projects.';
-    return null;
+    return null; //there is no quota for clusters
   }
 }

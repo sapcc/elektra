@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { Unit } from '../../unit';
+import { Unit, valueWithUnit } from '../../unit';
 import { t } from '../../utils';
 import ResourceBar from '../../components/resource_bar';
 import ResourceEditor from '../../components/resource_editor';
@@ -10,7 +10,7 @@ export default (props) => {
   const displayName = t(props.resource.name);
   const flavorData = props.flavorData[displayName] || {};
 
-  const { name: resourceName, quota: originalQuota, projects_quota: projectsQuota, backend_quota: backendQuota, unit: unitName } = props.resource;
+  const { name: resourceName, quota: originalQuota, projects_quota: projectsQuota, backend_quota: backendQuota, usage, burst_usage: burstUsage, unit: unitName } = props.resource;
 
   //during editing, allow the parent form to override the displayed quota value
   const isEditing = props.edit ? true : false;
@@ -29,12 +29,31 @@ export default (props) => {
     triggerParseInputs:  props.triggerParseInputs,
   };
 
+  //inside <DetailsModal/>, the resource name is replaced with a caption
+  //depending on which fill is shown
+  const caption = props.captionOverride
+    ? <div className='col-md-2'>{props.captionOverride}</div>
+    : <ResourceName name={displayName} flavorData={flavorData} />;
+  //inside <DetailsModal/>, the "Resource usage" bar indicates the actual
+  //resource usage rather than the quota usage of projects
+  const fillProps = { fill: projectsQuota };
+  if (props.showUsage) {
+    fillProps.fill = usage;
+    if (burstUsage > 0) {
+      fillProps.labelOverride = (
+        <React.Fragment>
+          {valueWithUnit(usage - burstUsage, unit)} + {valueWithUnit(burstUsage, unit)} burst
+        </React.Fragment>
+      );
+    }
+  }
+
   return (
     <div className={isEditing && props.edit.error ? 'row has-error' : 'row'}>
-      <ResourceName name={displayName} flavorData={flavorData} />
+      {caption}
       <div className={isEditing ? 'col-md-4' : 'col-md-5'}>
         <ResourceBar
-          capacity={quota} fill={projectsQuota} unitName={unitName}
+          capacity={quota} {...fillProps} unitName={unitName}
           isDanger={false} isEditing={isEditing} scopeData={props.scopeData} />
       </div>
       {isEditing

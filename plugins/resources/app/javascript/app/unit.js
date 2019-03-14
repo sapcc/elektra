@@ -144,3 +144,9 @@ export class Unit {
     return value;
   }
 }
+
+//Renders a value for display on the UI.
+export const valueWithUnit = (value, unit) => {
+  const title = unit.name !== '' ? `${value} ${unit.name}` : undefined;
+  return <span className='value-with-unit' title={title}>{unit.format(value)}</span>;
+};

@@ -56,6 +56,22 @@ export const fetchDataIfNeeded = (scopeData) => function(dispatch, getState) {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// get quota/usage data for projects (in domain scope) or domains (in cluster scope)
+
+export const listSubscopes = (scopeData, serviceType, resourceName) => function(dispatch, getState) {
+  const scope = new Scope(scopeData);
+  const url = scope.subscopesUrlPath();
+  const resultKey = url.split('/').pop();
+  const queryString = `?service=${serviceType}&resource=${resourceName}`;
+
+  return new Promise((resolve, reject) =>
+    ajaxHelper.get(url + queryString)
+      .then(response => resolve(response.data[resultKey]))
+      .catch(error => reject({ errors: limesErrorMessage(error) }))
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // sync project
 
 const syncProjectFailure = () => ({
