@@ -4,6 +4,16 @@ import { FormErrors } from 'lib/elektra-form/components/form_errors';
 import { t } from '../../utils';
 import { Scope } from '../../scope';
 import { Unit } from '../../unit';
+import DataTable from '../../components/details/datatable';
+import DetailsResource from '../../components/details/resource';
+
+const domainDataTableColumns = [
+  { key: 'id', label: 'Project', sortable: true },
+  { key: 'quota', label: 'Quota', sortable: true },
+  { key: 'usage', label: 'Usage', sortable: true },
+  { key: 'burst_usage', label: 'Thereof burst', sortable: true },
+  { key: 'actions', label: 'Actions' },
+];
 
 export default class DetailsModal extends React.Component {
   state = {
@@ -42,7 +52,20 @@ export default class DetailsModal extends React.Component {
   }
 
   //This gets called by fetchSubscopes() on success.
-  receiveSubscopes = (subscopes) => {
+  receiveSubscopes = (data) => {
+    const subscopes = [];
+    for (let subscopeData of data) {
+      //transform the nested structure of Limes' JSON into something flatter,
+      //similar to app/reducers/limes.js
+      const { services: serviceList, ...metadata } = subscopeData;
+      const { resources: resourceList, ...serviceData } = serviceList[0];
+      subscopes.push({
+        metadata: metadata,
+        service: serviceData,
+        resource: resourceList[0],
+      });
+    }
+
     this.setState({
       ...this.state,
       subscopes,
@@ -91,13 +114,16 @@ export default class DetailsModal extends React.Component {
         </Modal.Header>
 
         <Modal.Body>
-          <Resource captionOverride='Quota usage' {...forwardProps} />
-          <Resource captionOverride='Resource usage' showUsage={true} {...forwardProps} />
+          <Resource wide={true} captionOverride='Quota usage' {...forwardProps} />
+          <Resource wide={true} captionOverride='Resource usage' showUsage={true} {...forwardProps} />
 
           {isFetching ? <p>
             <span className='spinner'/> Loading {scope.sublevel()}s...
-          </p> : <React.Fragment>
-          </React.Fragment>}
+          </p> : <DataTable columns={domainDataTableColumns}>
+            {(this.state.subscopes || []).map(subscopeProps =>
+              <DetailsResource key={subscopeProps.metadata.id} {...subscopeProps} scopeData={this.props.scopeData} />
+            )}
+          </DataTable>}
         </Modal.Body>
 
         <Modal.Footer>

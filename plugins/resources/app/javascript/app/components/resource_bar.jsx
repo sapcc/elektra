@@ -77,7 +77,9 @@ export default class ResourceBar extends React.Component {
       widthPerc = 100;
     }
 
-    const label = labelOverride || (
+    const label = labelOverride ? (
+      <span className='progress-bar-label'>{labelOverride}</span>
+    ) : (
       <span className='progress-bar-label'>
         {valueWithUnit(fill, unit)}/{valueWithUnit(capacity, unit)}
       </span>
