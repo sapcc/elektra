@@ -21,7 +21,6 @@
 //    }
 //
 //To enable pagination, give the maximum number of rows as props.pageSize.
-//(TODO not implemented yet)
 //
 //Columns can be declared as sortable by setting `sortStrategy` to either
 //`numeric` or `text`. In either case, `sortKey` must be a function that
@@ -39,10 +38,72 @@ const sorters = {
   numeric: (a, b) => a[1] - b[1],
 };
 
+const DataTablePaginationControls = ({ curr, count, set }) => {
+  const btns  = [];
+  const spread = 3; // how many absolute pages are shown around the current one
+
+  if (curr == 1) {
+    btns.push(<li key='first' className='first disabled'>
+      <a onClick={(e) => false}>« First</a>
+    </li>);
+    btns.push(<li key='prev' className='prev disabled'>
+      <a onClick={(e) => false}>‹ Prev</a>
+    </li>);
+  } else {
+    btns.push(<li key='first' className='first'>
+      <a onClick={(e) => set(1)}>« First</a>
+    </li>);
+    btns.push(<li key='prev' className='prev'>
+      <a onClick={(e) => set(curr - 1)}>‹ Prev</a>
+    </li>);
+  }
+
+  if (curr > spread + 1) {
+    btns.push(<li key='gap-left' className='page gap disabled'>
+      <a href='#' onClick={(e) => false}>…</a>
+    </li>);
+  }
+
+  for (let idx = curr - spread; idx <= curr + spread; idx++) {
+    if (idx < 1 || idx > count) {
+      continue;
+    }
+    const idx2 = idx; // duplicate variable for use in lambda
+    btns.push(<li key={`page${idx}`} className={idx == curr ? 'page active' : 'page'}>
+      <a onClick={(e) => set(idx2)}>{idx}</a>
+    </li>);
+  }
+
+  if (curr < count - spread) {
+    btns.push(<li key='gap-right' className='page gap disabled'>
+      <a href='#' onClick={() => false}>…</a>
+    </li>);
+  }
+
+  if (curr == count) {
+    btns.push(<li key='next' className='next_page disabled'>
+      <a onClick={(e) => false}>Next ›</a>
+    </li>);
+    btns.push(<li key='last' className='last next disabled'>
+      <a onClick={(e) => false}>Last »</a>
+    </li>);
+  } else {
+    btns.push(<li key='next' className='next_page'>
+      <a onClick={(e) => set(curr + 1)}>Next ›</a>
+    </li>);
+    btns.push(<li key='last' className='last next'>
+      <a onClick={(e) => set(count)}>Last »</a>
+    </li>);
+  }
+
+  return <ul className='pagination'>{btns}</ul>;
+};
+
 export default class DataTable extends React.Component {
   state = {
     sortColumnIdx: null,  //index into this.props.columns
     sortDirection: null,  //'asc' or 'desc'
+    currentPage: 1,       //numbering starts at 1
   }
 
   setSortColumnIdx(columnIdx) {
@@ -57,6 +118,26 @@ export default class DataTable extends React.Component {
         ...this.state,
         sortColumnIdx: columnIdx,
         sortDirection: 'asc',
+      });
+    }
+  }
+
+  pageCount() {
+    const { pageSize, children } = this.props;
+    if (pageSize > 0) {
+      return Math.ceil(children.length / pageSize);
+    }
+    return 1; //when pagination is disabled, there is only one page
+  }
+
+  setCurrentPage(page) {
+    page = Math.max(page, 1);
+    page = Math.min(page, this.pageCount());
+
+    if (this.state.currentPage != page) {
+      this.setState({
+        ...this.state,
+        currentPage: page,
       });
     }
   }
@@ -90,7 +171,6 @@ export default class DataTable extends React.Component {
   }
 
   render() {
-    //sort rows if requested
     let rows = this.props.children;
 
     //if requested, sort rows using a classic Schwartzian transform
@@ -107,13 +187,29 @@ export default class DataTable extends React.Component {
       }
     }
 
+    //show pagination controls only if there is more than one page
+    const pageCount = this.pageCount();
+    const isPaginated = pageCount > 1;
+    if (isPaginated) {
+      const size = this.props.pageSize;
+      const curr = this.state.currentPage;
+      rows = rows.slice((curr - 1) * size, curr * size);
+    }
+
     return (
-      <table className='table elektraDataTable'>
-        <thead>
-          <tr>{this.props.columns.map((column, idx) => this.renderColumnHeader(column, idx))}</tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
+      <React.Fragment>
+        <table className='table elektraDataTable'>
+          <thead>
+            <tr>{this.props.columns.map((column, idx) => this.renderColumnHeader(column, idx))}</tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+        {isPaginated && <DataTablePaginationControls
+          curr={this.state.currentPage}
+          count={pageCount}
+          set={page => this.setCurrentPage(page)}
+        />}
+      </React.Fragment>
     );
   }
 

@@ -120,13 +120,13 @@ export default class DetailsModal extends React.Component {
           </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body>
+        <Modal.Body className='clearfix'>
           <Resource wide={true} captionOverride='Quota usage' {...forwardProps} />
           <Resource wide={true} captionOverride='Resource usage' showUsage={true} {...forwardProps} />
 
           {isFetching ? <p>
             <span className='spinner'/> Loading {scope.sublevel()}s...
-          </p> : <DataTable columns={domainDataTableColumns}>
+          </p> : <DataTable columns={domainDataTableColumns} pageSize={8}>
             {(this.state.subscopes || []).map(subscopeProps =>
               <DetailsResource key={subscopeProps.metadata.id} {...subscopeProps} scopeData={this.props.scopeData} />
             )}
