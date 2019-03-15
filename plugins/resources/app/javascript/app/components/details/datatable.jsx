@@ -1,41 +1,48 @@
 //A <table> with pagination and sorting. Give the individual table rows as
 //children, and specify column attributes in props.columns like this:
 //
-//    columns = [
+//    //NOTE: Place this on the package level, not in render(), so that the
+//    //same array gets reused across render() calls.
+//    const columns = [
 //      { key: 'id', label: 'Volume ID' },
-//      { key: 'size', label: 'Volume Size', sort: 'numeric' },
-//      { key: 'status', label: 'Status', sort: 'text' },
-//    ]
+//      { key: 'size', label: 'Volume Size',
+//        sortStrategy: 'numeric', sortKey: props => props.volume.size || 0 },
+//      { key: 'status', label: 'Status',
+//        sortStrategy: 'text', sortKey: props => props.volume.status || '' },
+//    ];
+//
+//    render() {
+//      ...
+//      return (
+//        <DataTable columns={columns} ...>
+//          {entries.map(entry => <MyRowComponent key={entry.id} data={entry} ... />)}
+//        </DataTable>
+//      ;
+//    }
 //
 //To enable pagination, give the maximum number of rows as props.pageSize.
 //(TODO not implemented yet)
 //
-//For columns that are declared as sortable, sorting happens by calling the
-//`sort_key_${column_key}` method on each child, so the children need to be
-//class-based components and should have member methods like this:
+//Columns can be declared as sortable by setting `sortStrategy` to either
+//`numeric` or `text`. In either case, `sortKey` must be a function that
+//extracts the sorting key for a given row from its props. For the `numeric`
+//sorting strategy, this must return a number. For the `text` sorting strategy,
+//this must return a string.
 //
-//    sort_key_size() {
-//      return this.props.volume.size;
-//    }
-//    sort_key_status() {
-//      return this.props.volume.status;
-//    }
-//
-//Besides that, the children also need to have a `key` method that returns a
-//key that's unique within the set of children in the DataTable:
-//
-//    key() {
-//      return this.props.volume.id;
-//    }
-//
-//Other than that, the children should just render one <tr> each with the same
+//Each child element should render exactly one <tr> each with the same
 //column layout as defined in props.columns of the DataTable.
 //
 //TODO: move this into app/javascript/lib/ in the repo root
+
+const sorters = {
+  text:    (a, b) => a[1].localeCompare(b[1]),
+  numeric: (a, b) => a[1] - b[1],
+};
+
 export default class DataTable extends React.Component {
   state = {
     sortColumnIdx: null,  //index into this.props.columns
-    sortDirection: null, //'asc' or 'desc'
+    sortDirection: null,  //'asc' or 'desc'
   }
 
   setSortColumnIdx(columnIdx) {
@@ -56,7 +63,7 @@ export default class DataTable extends React.Component {
 
   renderColumnHeader(column, columnIdx) {
     const isSorted = (this.state.sortColumnIdx == columnIdx);
-    const isSortable = (column.sort != null);
+    const isSortable = (column.sortStrategy != null);
 
     const extraProps = {};
     if (isSortable) {
@@ -71,7 +78,7 @@ export default class DataTable extends React.Component {
         : 'Click to sort in ascending order';
     }
 
-    const sortIconType = column.sort == 'text' ? 'alpha' : 'amount';
+    const sortIconType = column.sortStrategy == 'text' ? 'alpha' : 'amount';
     return (
       <th key={column.key} {...extraProps}>
         {column.label}
@@ -83,14 +90,29 @@ export default class DataTable extends React.Component {
   }
 
   render() {
+    //sort rows if requested
+    let rows = this.props.children;
+
+    //if requested, sort rows using a classic Schwartzian transform
+    if (this.state.sortColumnIdx != null) {
+      const column = this.props.columns[this.state.sortColumnIdx];
+      const sorter = sorters[column.sortStrategy];
+
+      rows = rows
+        .map(row => [ row, column.sortKey(row.props) ])
+        .sort(sorter)
+        .map(pair => pair[0]);
+      if (this.state.sortDirection == 'desc') {
+        rows.reverse();
+      }
+    }
+
     return (
       <table className='table elektraDataTable'>
         <thead>
           <tr>{this.props.columns.map((column, idx) => this.renderColumnHeader(column, idx))}</tr>
         </thead>
-        <tbody>
-          {this.props.children}
-        </tbody>
+        <tbody>{rows}</tbody>
       </table>
     );
   }

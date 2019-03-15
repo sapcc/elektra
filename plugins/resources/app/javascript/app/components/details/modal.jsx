@@ -8,10 +8,14 @@ import DataTable from '../../components/details/datatable';
 import DetailsResource from '../../components/details/resource';
 
 const domainDataTableColumns = [
-  { key: 'id', label: 'Project', sort: 'text' },
-  { key: 'quota', label: 'Quota', sort: 'numeric' },
-  { key: 'usage', label: 'Usage', sort: 'numeric' },
-  { key: 'burst_usage', label: 'Thereof burst', sort: 'numeric' },
+  { key: 'id', label: 'Project', sortStrategy: 'text',
+    sortKey: props => props.metadata.name || '' },
+  { key: 'quota', label: 'Quota', sortStrategy: 'numeric',
+    sortKey: props => props.resource.quota || 0 },
+  { key: 'usage', label: 'Usage', sortStrategy: 'numeric',
+    sortKey: props => props.resource.usage || 0 },
+  { key: 'burst_usage', label: 'Thereof burst', sortStrategy: 'numeric',
+    sortKey: props => props.resource.burst_usage || 0 },
   { key: 'actions', label: 'Actions' },
 ];
 
@@ -65,6 +69,9 @@ export default class DetailsModal extends React.Component {
         resource: resourceList[0],
       });
     }
+
+    //initially sort by project name
+    subscopes.sort((a, b) => (a.metadata.name).localeCompare(b.metadata.name));
 
     this.setState({
       ...this.state,
