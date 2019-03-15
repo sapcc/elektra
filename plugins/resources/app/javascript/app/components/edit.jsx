@@ -1,7 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
-import { byLeaderAndName, t } from '../utils';
+import { byLeaderAndName, t, buttonCaption } from '../utils';
 import { Scope } from '../scope';
 import { Unit } from '../unit';
 
@@ -324,8 +324,10 @@ export default class EditModal extends React.Component {
       apiErrors: null,
     });
     this.props.setQuota(this.props.scopeData, limesRequestBody, elektraRequestBody)
-      .then(() => this.close())
-      .catch(response => this.handleAPIErrors(response.errors));
+      .then(() => {
+        this.fetchData(this.props.scopeData); // update main view to show new quota values
+        this.close();
+      }).catch(response => this.handleAPIErrors(response.errors));
   };
 
   //This gets called when a PUT request to Limes or Elektra fails.
@@ -371,13 +373,6 @@ export default class EditModal extends React.Component {
     const showSubmitButton = canSubmit && !hasCheckErrors;
     const ajaxInProgress = this.state.isChecking || this.state.isSubmitting;
 
-    const participles = { Check: "Checking", Submit: "Submitting" };
-    const buttonCaption = (verb) => (
-      ajaxInProgress ? (
-          <React.Fragment><span className='spinner'/> {participles[verb]}...</React.Fragment>
-      ) : verb
-    );
-
     //NOTE: className='resources' on Modal ensures that plugin-specific CSS rules get applied
     return (
       <Modal className='resources' backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
@@ -409,14 +404,14 @@ export default class EditModal extends React.Component {
               bsStyle='primary'
               onClick={this.handleSubmit}
               disabled={ajaxInProgress}>
-                {buttonCaption('Submit')}
+                {buttonCaption('Submit', ajaxInProgress)}
             </Button>
           ) : (
             <Button
               bsStyle='primary'
               onClick={this.handleCheck}
               disabled={hasInputErrors || ajaxInProgress}>
-                {buttonCaption('Check')}
+                {buttonCaption('Check', ajaxInProgress)}
             </Button>
           )}
           <Button onClick={this.close}>Cancel</Button>

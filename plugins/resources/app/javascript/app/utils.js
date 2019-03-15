@@ -38,3 +38,17 @@ export const formatLargeInteger = (value) => {
   return Math.round(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u202F");
   //^ This beautiful regex courtesy of <https://stackoverflow.com/a/2901298/334761>.
 };
+
+const participles = {
+  Check: "Checking",
+  Submit: "Submitting",
+  Save: "Saving",
+};
+
+//Formats a button caption that can change from infinitive to participle (e.g.
+//"Save" -> "Saving...") while an AJAX request is in progress.
+export const buttonCaption = (verb, ajaxInProgress) => (
+  ajaxInProgress ? (
+      <React.Fragment><span className='spinner'/> {participles[verb]}...</React.Fragment>
+  ) : verb
+);

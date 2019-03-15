@@ -1,13 +1,83 @@
+import { Scope } from '../../scope';
 import { Unit, valueWithUnit } from '../../unit';
+import { buttonCaption } from '../../utils';
 
 export default class DetailsResource extends React.Component {
-  //TODO support cluster-level details screen
+  state = {
+    //This is `null` while not editing, and contains the content of the <input> while editing.
+    editText: null,
+    isSubmitting: false,
+  }
+
+  constructor(props) {
+    super(props);
+    this.inputRef = React.createRef();
+  }
+  componentDidUpdate() {
+    const input = this.inputRef.current;
+    if (input) input.focus();
+  }
+
+  handleKeyPress(e) {
+    if (e.key == 'Enter') {
+      this.submit();
+      e.stopPropagation();
+    }
+    return true;
+  }
+
+  handleInput(e) {
+    this.setState({
+      ...this.state,
+      editText: e.target.value,
+    });
+  }
+
+  startEditing() {
+    const { quota, unit: unitName } = this.props.resource;
+    const unit = new Unit(unitName);
+    this.setState({
+      ...this.state,
+      editText: unit.format(quota, { ascii: true }),
+      isSubmitting: false,
+    });
+  }
+
+  stopEditing() {
+    this.setState({
+      ...this.state,
+      editText: null,
+      isSubmitting: false,
+    });
+  }
+
+  submit() {
+    //validate input
+    const unit = new Unit(this.props.resource.unitName);
+    const parsedValue = unit.parse(this.state.editText);
+    if (parsedValue.error) {
+      this.props.handleAPIErrors({ errors: parsedValue.error });
+      return;
+    }
+
+    this.setState({
+      ...this.state,
+      isSubmitting: true,
+    });
+    this.props.setQuota(this.props.metadata.id, parsedValue)
+      .then(() => this.stopEditing());
+  }
+
+  //TODO show correct columns for cluster-level details screen
 
   render() {
     const { name: scopeName, id: scopeID } = this.props.metadata;
-    const { quota, usage, burst_usage: burstUsage, unit: unitName } = this.props.resource;
 
+    const { quota, usage, burst_usage: burstUsage, unit: unitName } = this.props.resource;
     const unit = new Unit(unitName);
+
+    const { editText, isSubmitting } = this.state;
+    const isEditing = editText != null;
 
     return (
       <tr>
@@ -15,10 +85,32 @@ export default class DetailsResource extends React.Component {
           {scopeName}
           <div className='small text-muted'>{scopeID}</div>
         </td>
-        <td className='col-md-2'>{valueWithUnit(quota, unit)}</td>
+        <td className='col-md-2'>
+          {isEditing
+            ? (
+              <div className='input-group'>
+                <input type='text' value={editText} disabled={isSubmitting}
+                  className='form-control' ref={this.inputRef}
+                  onKeyPress={e => this.handleKeyPress(e)}
+                  onChange={e => this.handleInput(e)}
+                />
+              </div>
+            ) : valueWithUnit(quota, unit)}
+        </td>
         <td className='col-md-2'>{valueWithUnit(usage, unit)}</td>
         <td className='col-md-2'>{valueWithUnit(burstUsage || 0, unit)}</td>
-        <td className='col-md-3'>TODO</td>
+        <td className='col-md-3'>
+          {isEditing
+            ? (
+              <React.Fragment>
+                <a onClick={() => this.submit()} disabled={isSubmitting} className='btn btn-primary btn-sm'>{buttonCaption('Save', isSubmitting)}</a>
+                <a onClick={() => this.stopEditing()} disabled={isSubmitting} className='btn btn-sm'>Cancel</a>
+              </React.Fragment>
+            ) : (
+              <a onClick={() => this.startEditing()} className='btn btn-default btn-sm'>Edit</a>
+            )
+          }
+        </td>
       </tr>
     );
   }

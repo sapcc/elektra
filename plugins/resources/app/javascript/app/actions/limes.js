@@ -36,7 +36,6 @@ export const fetchData = (scopeData) => function(dispatch, getState) {
   dispatch(requestData());
   const scope = new Scope(scopeData);
 
-  //TODO domain level, cluster level
   return ajaxHelper.get(scope.urlPath())
     .then((response) => {
       dispatch(receiveData(response.data[scope.level()]));
@@ -157,10 +156,8 @@ export const setQuota = (scopeData, limesRequestBody, elektraRequestBody) => fun
   //TODO: only send limesRequestBody if required
   return new Promise((resolve, reject) =>
     ajaxHelper.put(scope.urlPath(), limesRequestBody)
-      .then((response) => {
-        dispatch(fetchData(scopeData));
-        resolve(response);
-      }).catch(error => reject({ errors: limesErrorMessage(error) }))
+      .then(resolve)
+      .catch(error => reject({ errors: limesErrorMessage(error) }))
   );
 };
 

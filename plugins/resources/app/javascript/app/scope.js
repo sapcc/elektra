@@ -54,6 +54,14 @@ export class Scope {
     return `/v1/clusters/${scopeData.clusterID}/domains`;
   }
 
+  descendIntoSubscope(id) {
+    if (this.projectID) return null; //there is nothing below projects
+    if (this.domainID) {
+      return { clusterID: this.clusterID, domainID: this.domainID, projectID: id };
+    }
+    return { clusterID: this.clusterID, domainID: id };
+  }
+
   //Level-specific component for resource bars inside a <Category/>.
   resourceComponent() {
     if (this.projectID) return ProjectResource;

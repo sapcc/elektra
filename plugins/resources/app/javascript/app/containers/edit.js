@@ -9,6 +9,7 @@ export default connect(
     categoryName: props.match.params.categoryName,
   }),
   dispatch => ({
+    fetchData:        (...args) => dispatch(fetchData(...args)),
     setQuota:         (...args) => dispatch(setQuota(...args)),
     simulateSetQuota: (...args) => dispatch(simulateSetQuota(...args)),
   }),

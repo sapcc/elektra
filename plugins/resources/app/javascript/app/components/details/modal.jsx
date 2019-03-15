@@ -80,6 +80,56 @@ export default class DetailsModal extends React.Component {
     });
   };
 
+  setSubscopeQuota = (subscopeID, newQuota) => {
+    //assemble scopeData for the subscope described by this <DetailsResource/>
+    const scope = new Scope(this.props.scopeData);
+    const subscopeData = scope.descendIntoSubscope(subscopeID);
+    const subscope = new Scope(subscopeData);
+
+    //assemble request body for Limes
+    const limesRequestBody = {};
+    limesRequestBody[subscope.level()] = {
+      services: [{
+        type: this.props.category.serviceType,
+        resources: [{
+          name: this.props.resource.name,
+          quota: newQuota,
+        }],
+      }],
+    };
+
+    return new Promise((resolve, _) =>
+      this.props.setQuota(subscopeData, limesRequestBody, {})
+        .then(() => { this.handleSubscopeQuotaUpdated(subscopeID, newQuota); resolve(); })
+        .catch(response => this.handleAPIErrors(response.errors))
+    );
+  };
+
+  handleSubscopeQuotaUpdated = (subscopeID, newQuota) => {
+    //reload quota/usage data for the main scope asynchronously (this updates
+    //the bars at the top of this modal)
+    this.props.fetchData(this.props.scopeData);
+
+    //update `this.state.subscopes` to reflect the changed subscope quota
+    const subscopes = [];
+    for (const subscope of this.state.subscopes) {
+      //do not change subscopes other than the one we're interested in
+      if (subscope.metadata.id != subscopeID) {
+        subscopes.push(subscope);
+        continue;
+      }
+
+      const newSubscope = {...subscope};
+      newSubscope.resource = {...subscope.resource};
+      newSubscope.resource.quota = newQuota;
+      subscopes.push(newSubscope);
+    }
+    this.setState({
+      ...this.state,
+      subscopes,
+    });
+  };
+
   close = (e) => {
     if (e) { e.stopPropagation(); }
     this.setState({show: false});
@@ -128,7 +178,12 @@ export default class DetailsModal extends React.Component {
             <span className='spinner'/> Loading {scope.sublevel()}s...
           </p> : <DataTable columns={domainDataTableColumns} pageSize={8}>
             {(this.state.subscopes || []).map(subscopeProps =>
-              <DetailsResource key={subscopeProps.metadata.id} {...subscopeProps} scopeData={this.props.scopeData} />
+              <DetailsResource
+                key={subscopeProps.metadata.id} {...subscopeProps}
+                scopeData={this.props.scopeData}
+                setQuota={this.setSubscopeQuota}
+                handleAPIErrors={this.handleAPIErrors}
+              />
             )}
           </DataTable>}
         </Modal.Body>
