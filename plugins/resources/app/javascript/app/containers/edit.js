@@ -1,5 +1,5 @@
 import { connect } from  'react-redux';
-import { simulateSetQuota, setQuota } from '../actions/limes';
+import { fetchData, simulateSetQuota, setQuota } from '../actions/limes';
 import EditModal from '../components/edit';
 
 export default connect(

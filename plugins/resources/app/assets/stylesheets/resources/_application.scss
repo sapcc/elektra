@@ -106,3 +106,41 @@ div.edit-quota-input input.form-control {
     }
   }
 }
+
+.block-on-reload {
+  position: relative;
+
+  /* a semi-transparent rectangle that blocks out the view while it's reloading */
+  &:after {
+    content: ' ';
+    display: block;
+    z-index: -1000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.0);
+    transition: background-color 0.5s;
+  }
+  &.is-reloading:after {
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  /* contains an additional spinner and "Reloading..." text, centered on the
+   * blocked-out view */
+  .reload-message {
+    display: none;
+  }
+  &.is-reloading .reload-message {
+    display: block;
+    z-index: 1001;
+    position: absolute;
+    top: 50%;
+    margin-top: -10px;
+    line-height: 20px;
+    width: 100%;
+    text-align: center;
+  }
+}

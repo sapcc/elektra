@@ -8,7 +8,8 @@ export default connect(
     const category = state.limes.categories[categoryName];
     const resource = category.resources.find(res => res.name == resourceName);
     return {
-      metadata: state.limes.metadata,
+      isFetching: state.limes.isFetching,
+      metadata:   state.limes.metadata,
       categoryName, resourceName,
       category, resource,
     };

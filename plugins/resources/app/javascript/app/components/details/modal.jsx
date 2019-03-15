@@ -6,6 +6,7 @@ import { Scope } from '../../scope';
 import { Unit } from '../../unit';
 import DataTable from '../../components/details/datatable';
 import DetailsResource from '../../components/details/resource';
+import ReloadIndicator from '../../components/reload_indicator';
 
 const domainDataTableColumns = [
   { key: 'id', label: 'Project', sortStrategy: 'text',
@@ -171,8 +172,10 @@ export default class DetailsModal extends React.Component {
         </Modal.Header>
 
         <Modal.Body className='clearfix'>
-          <Resource wide={true} captionOverride='Quota usage' {...forwardProps} />
-          <Resource wide={true} captionOverride='Resource usage' showUsage={true} {...forwardProps} />
+          <ReloadIndicator isReloading={this.props.isFetching}>
+            <Resource wide={true} captionOverride='Quota usage' {...forwardProps} />
+            <Resource wide={true} captionOverride='Resource usage' showUsage={true} {...forwardProps} />
+          </ReloadIndicator>
 
           {isFetching ? <p>
             <span className='spinner'/> Loading {scope.sublevel()}s...

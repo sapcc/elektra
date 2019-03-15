@@ -325,7 +325,7 @@ export default class EditModal extends React.Component {
     });
     this.props.setQuota(this.props.scopeData, limesRequestBody, elektraRequestBody)
       .then(() => {
-        this.fetchData(this.props.scopeData); // update main view to show new quota values
+        this.props.fetchData(this.props.scopeData); // update main view to show new quota values
         this.close();
       }).catch(response => this.handleAPIErrors(response.errors));
   };

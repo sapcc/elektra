@@ -1,5 +1,7 @@
 import { Scope } from '../scope';
 
+import ReloadIndicator from '../components/reload_indicator';
+
 export default class Loader extends React.Component {
   componentWillReceiveProps(nextProps) {
     // load dependencies unless already loaded
@@ -17,7 +19,9 @@ export default class Loader extends React.Component {
 
   render() {
     if (this.props.receivedAt) {
-      return this.props.children;
+      return <ReloadIndicator
+        children={this.props.children}
+        isReloading={this.props.isFetching} />;
     }
     const scope = new Scope(this.props.scopeData);
     if (this.props.isFetching) {
