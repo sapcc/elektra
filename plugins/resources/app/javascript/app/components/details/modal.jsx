@@ -128,6 +128,7 @@ export default class DetailsModal extends React.Component {
     this.setState({
       ...this.state,
       subscopes,
+      apiErrors: null, //clear errors from previous attempts
     });
   };
 
@@ -142,6 +143,7 @@ export default class DetailsModal extends React.Component {
     this.setState({
       ...this.state,
       isFetching: false,
+      isSubmitting: false,
       apiErrors: errors,
     });
   };
@@ -172,6 +174,7 @@ export default class DetailsModal extends React.Component {
         </Modal.Header>
 
         <Modal.Body className='clearfix'>
+          {apiErrors && <FormErrors errors={apiErrors}/>}
           <ReloadIndicator isReloading={this.props.isFetching}>
             <Resource wide={true} captionOverride='Quota usage' {...forwardProps} />
             <Resource wide={true} captionOverride='Resource usage' showUsage={true} {...forwardProps} />
@@ -192,7 +195,6 @@ export default class DetailsModal extends React.Component {
         </Modal.Body>
 
         <Modal.Footer>
-          {apiErrors && <FormErrors errors={apiErrors}/>}
           <Button onClick={this.close}>Done</Button>
         </Modal.Footer>
       </Modal>
