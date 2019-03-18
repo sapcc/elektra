@@ -2,7 +2,7 @@
 
 module Resources
   class ApplicationController < DashboardController
-    before_action :prepare_data_for_js
+    before_action :prepare_data_for_view
 
     def release_state
       'beta'
@@ -70,7 +70,7 @@ module Resources
 
     private
 
-    def prepare_data_for_js
+    def prepare_data_for_view
       @js_data = {
         token:       current_user.token,
         limes_api:   current_user.service_url('resources'),
@@ -78,6 +78,25 @@ module Resources
         docs_url:    sap_url_for('documentation'),
         cluster_id:  params[:cluster_id] || 'current',
       }
+
+      # these variables (@XXX_override) trigger an infobox at the top of the
+      # view informing that the user that they're viewing a foreign scope
+      if @js_data[:cluster_id] == 'current'
+        if params[:override_project_id]
+          @project_override = services.identity.find_project!(params[:override_project_id])
+        end
+        if params[:override_domain_id]
+          @domain_override = services.identity.find_domain!(params[:override_domain_id])
+        end
+      else
+        @cluster_override = @js_data[:cluster_id]
+        if params[:override_project_id]
+          @project_override = Identity::Project.new(nil, { name: params[:override_project_id] })
+        end
+        if params[:override_domain_id]
+          @domain_override = Identity::Domain.new(nil, { name: params[:override_domain_id] })
+        end
+      end
     end
 
     def fetch_baremetal_flavor_data
