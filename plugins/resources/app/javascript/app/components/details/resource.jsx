@@ -53,10 +53,12 @@ export default class DetailsResource extends React.Component {
 
   submit() {
     //validate input
-    const unit = new Unit(this.props.resource.unitName);
+    const { unit: unitName } = this.props.resource;
+    const unit = new Unit(unitName);
     const parsedValue = unit.parse(this.state.editText);
     if (parsedValue.error) {
-      this.props.handleAPIErrors({ errors: parsedValue.error });
+      const scope = new Scope(this.props.scopeData);
+      this.props.handleAPIErrors(scope.formatInputError(parsedValue.error, unitName));
       return;
     }
 

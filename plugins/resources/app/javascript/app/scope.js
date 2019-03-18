@@ -87,9 +87,22 @@ export class Scope {
       return null; //there is no quota for clusters
     }
   }
-  overspentMessage() {
-    if (this.projectID) return 'Must be more than current usage.';
-    if (this.domainID)  return 'Must be more than quota of projects.';
-    return null; //there is no quota for clusters
+  formatInputError(error, unitName) {
+    switch (error) {
+      case 'syntax':
+        return unitName ?
+          'Need a value like "1.2 TiB" or "50g".' :
+          "Need an integer number.";
+      case 'fractional-value':
+        return unitName ?
+          `Need an integer number of ${unitName}.` :
+          "Need an integer number.";
+      case 'overspent':
+        if (this.projectID) return 'Must be more than current usage.';
+        if (this.domainID)  return 'Must be more than quota of projects.';
+        return null; //there is no quota for clusters
+      default:
+        return null;
+    }
   }
 }

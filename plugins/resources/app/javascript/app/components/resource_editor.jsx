@@ -6,23 +6,7 @@ const ResourceEditor = (props) => {
   const { name: resourceName, unit: unitName, quota: oldQuota, scales_with: scalesWith } = props.resource;
   const scope = new Scope(props.scopeData);
 
-  let errorMessage = undefined;
-  switch (editError) {
-    case 'syntax':
-      errorMessage = unitName ?
-        'Need a value like "1.2 TiB" or "50g".' :
-        "Need an integer number.";
-      break;
-    case 'fractional-value':
-      errorMessage = unitName ?
-        `Need an integer number of ${unitName}.` :
-        "Need an integer number.";
-      break;
-    case 'overspent':
-      errorMessage = scope.overspentMessage();
-      break;
-  }
-
+  let errorMessage = scope.formatInputError(editError, unitName);
   let message = undefined;
   if (errorMessage) {
     message = <div className='col-md-4 text-danger'>{errorMessage}</div>;
