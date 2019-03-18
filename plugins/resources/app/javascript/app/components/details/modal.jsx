@@ -99,10 +99,10 @@ export default class DetailsModal extends React.Component {
       }],
     };
 
-    return new Promise((resolve, _) =>
+    return new Promise((resolve, reject) =>
       this.props.setQuota(subscopeData, limesRequestBody, {})
         .then(() => { this.handleSubscopeQuotaUpdated(subscopeID, newQuota); resolve(); })
-        .catch(response => this.handleAPIErrors(response.errors))
+        .catch(response => { this.handleAPIErrors(response.errors); reject(); })
     );
   };
 

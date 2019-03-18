@@ -67,7 +67,8 @@ export default class DetailsResource extends React.Component {
       isSubmitting: true,
     });
     this.props.setQuota(this.props.metadata.id, parsedValue)
-      .then(() => this.stopEditing());
+      .then(() => this.stopEditing())
+      .catch(() => this.setState({ ... this.state, isSubmitting: false }));
   }
 
   //TODO show correct columns for cluster-level details screen
