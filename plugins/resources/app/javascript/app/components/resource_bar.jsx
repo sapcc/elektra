@@ -19,8 +19,11 @@ export default class ResourceBar extends React.Component {
   componentDidUpdate() {
     this.checkIfLabelFits();
   }
-  checkIfLabelFits() {
+  checkIfLabelFits(opts = {}) {
     const bar = this.outerDivRef.current; //this is the <div class="progress"/>
+    if (!bar) {
+      return;
+    }
 
     //measure the width of the filled portion of the bar
     const filledBar = bar.querySelector('.has-label-if-fits');
@@ -38,6 +41,11 @@ export default class ResourceBar extends React.Component {
     //require some extra wiggle room (20px) around the label to account for UI
     //margins, and because labels that fit too tightly look dumb
     bar.classList.toggle('label-fits', labelWidth + 20 < barWidth);
+
+    //re-run this method after animations have completed
+    if (!opts.delayed) {
+      window.setTimeout(() => this.checkIfLabelFits({ delayed: true }), 500);
+    }
   }
 
   render() {
@@ -51,7 +59,7 @@ export default class ResourceBar extends React.Component {
     if (capacity == 0 && fill == 0) {
       return (
         <div className='progress' ref={this.outerDivRef}>
-          <div className='progress-bar progress-bar-disabled has-label' style={{width:'100%'}}>
+          <div key='filled' className='progress-bar progress-bar-disabled has-label' style={{width:'100%'}}>
             <span className='progress-bar-label'>
               {scope.isCluster() ? "No capacity" : "No quota" }
             </span>
@@ -85,8 +93,8 @@ export default class ResourceBar extends React.Component {
       </span>
     );
     return <div className='progress' ref={this.outerDivRef}>
-      <div className={`${className} has-label-if-fits`} style={{width:widthPerc+'%'}}>{label}</div>
-      <div className='progress-bar progress-bar-empty has-label-unless-fits'>{label}</div>
+      <div key='filled' className={`${className} has-label-if-fits`} style={{width:widthPerc+'%'}}>{label}</div>
+      <div key='empty' className='progress-bar progress-bar-empty has-label-unless-fits'>{label}</div>
     </div>;
   }
 
