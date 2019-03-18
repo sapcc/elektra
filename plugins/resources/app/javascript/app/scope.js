@@ -1,6 +1,16 @@
 import DomainResource from './components/domain/resource';
 import ProjectResource from './components/project/resource';
 
+//matches the part of the URL path for any scope's main view up to the plugin name, e.g.
+//
+//     /domainname/projectname/resources/project
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//
+//     /domainname/resources/domain/othercluster/otherdomain
+//     ^^^^^^^^^^^^^^^^^^^^^^
+//
+const urlBaseRx = new RegExp(".*?\/resources\/");
+
 /*
  * Most of the actions, reducers and components get reused on multiple levels
  * (with the levels being one of "cluster", "domain" or "project"). Therefore,
@@ -19,6 +29,7 @@ import ProjectResource from './components/project/resource';
  */
 export class Scope {
   constructor(scopeData) {
+    this.clusterID = scopeData.clusterID;
     this.domainID = scopeData.domainID;
     this.projectID = scopeData.projectID;
   }
@@ -104,5 +115,13 @@ export class Scope {
       default:
         return null;
     }
+  }
+
+  //Generates an URL to the main view for this scope.
+  elektraUrlPath() {
+    const base = urlBaseRx.exec(window.location.pathname)[0];
+    if (this.projectID) return `${base}project/${this.clusterID}/${this.domainID}/${this.projectID}`;
+    if (this.domainID)  return  `${base}domain/${this.clusterID}/${this.domainID}`;
+                        return `${base}cluster/${this.clusterID}`;
   }
 }

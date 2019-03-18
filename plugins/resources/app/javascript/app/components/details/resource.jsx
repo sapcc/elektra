@@ -82,6 +82,11 @@ export default class DetailsResource extends React.Component {
     const { editText, isSubmitting } = this.state;
     const isEditing = editText != null;
 
+    //assemble scopeData for the subscope described by this <DetailsResource/>
+    const parentScope = new Scope(this.props.scopeData);
+    const scopeData = parentScope.descendIntoSubscope(scopeID);
+    const scope = new Scope(scopeData);
+
     return (
       <tr>
         <td className='col-md-3'>
@@ -107,10 +112,15 @@ export default class DetailsResource extends React.Component {
             ? (
               <React.Fragment>
                 <a onClick={() => this.submit()} disabled={isSubmitting} className='btn btn-primary btn-sm'>{buttonCaption('Save', isSubmitting)}</a>
+                {' '}
                 <a onClick={() => this.stopEditing()} disabled={isSubmitting} className='btn btn-sm'>Cancel</a>
               </React.Fragment>
             ) : (
-              <a onClick={() => this.startEditing()} className='btn btn-default btn-sm'>Edit</a>
+              <React.Fragment>
+                <a onClick={() => this.startEditing()} className='btn btn-default btn-sm'>Edit</a>
+                {' '}
+                <a href={scope.elektraUrlPath()} target='_blank' className='btn btn-default btn-sm' title={`Go to Resource Management for this ${scope.level()} in a new tab`}>Jump</a>
+              </React.Fragment>
             )
           }
         </td>
