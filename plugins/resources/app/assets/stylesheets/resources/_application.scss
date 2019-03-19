@@ -23,7 +23,14 @@
 
 .progress {
   position: relative; /* required for position:absolute on children */
-  overflow: visible;
+
+  .progress-bar-overcommit {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.5);
+  }
 
   .progress-bar {
     &.progress-bar-empty {
@@ -48,21 +55,13 @@
     }
   }
 
-  .progress-bar-mark {
-    position: absolute;
-    top: -3px;
-    bottom: -3px;
-    width: 4px;
-    background: rgba(0, 0, 0, 0.7);
+  &.label-fits .has-label-unless-fits .progress-bar-label {
+    display: none;
+  }
+  &:not(.label-fits) .has-label-if-fits .progress-bar-label {
+    display: none;
   }
 
-}
-
-.progress.label-fits .has-label-unless-fits .progress-bar-label {
-  display: none;
-}
-.progress:not(.label-fits) .has-label-if-fits .progress-bar-label {
-  display: none;
 }
 
 div.flavor-data {

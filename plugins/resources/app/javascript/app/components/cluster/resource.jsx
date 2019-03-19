@@ -49,7 +49,7 @@ export default (props) => {
       {caption}
       <div className={props.wide ? 'col-md-9' : 'col-md-5'}>
         <ResourceBar
-          capacity={capacity} {...fillProps} unitName={unitName} mark={rawCapacity}
+          capacity={capacity} {...fillProps} unitName={unitName} overcommitAfter={rawCapacity}
           isDanger={domainsQuota > capacity} scopeData={props.scopeData} />
       </div>
       {!props.wide && (

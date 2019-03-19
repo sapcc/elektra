@@ -51,16 +51,15 @@ export default class ResourceBar extends React.Component {
   render() {
     //NOTE: `capacity` and `fill` are generic names. What they actually stand for is
     //defined where this component gets used.
-    const {capacity, fill, mark: markLevel, unitName, isDanger, labelOverride} = this.props;
+    const {capacity, fill, overcommitAfter, unitName, isDanger, labelOverride} = this.props;
     const scope = new Scope(this.props.scopeData);
     const unit = new Unit(this.props.unitName || "");
 
-    //do we have to draw a mark?
-    let mark = undefined;
-    if (markLevel && markLevel < capacity) {
-      const markPosPerc = Math.round(1000 * (markLevel / capacity)) / 10;
-      // TODO: figure out a style for the mark that does not obscure the bar label
-      mark = <div key='mark' className='progress-bar-mark' style={{left: `${markPosPerc}%`}} />;
+    //indicate overcommit if necessary
+    let ocMark = undefined;
+    if (overcommitAfter && overcommitAfter < capacity) {
+      const ocStartPerc = Math.round(1000 * (overcommitAfter / capacity)) / 10;
+      ocMark = <div key='ocmark' className='progress-bar-overcommit' style={{left: `${ocStartPerc}%`}} />;
     }
 
     //get some edge cases out of the way first
@@ -72,7 +71,7 @@ export default class ResourceBar extends React.Component {
               {scope.isCluster() ? "No capacity" : "No quota" }
             </span>
           </div>
-          {mark}
+          {ocMark}
         </div>
       );
     }
@@ -104,7 +103,7 @@ export default class ResourceBar extends React.Component {
     return <div className='progress' ref={this.outerDivRef}>
       <div key='filled' className={`${className} has-label-if-fits`} style={{width:widthPerc+'%'}}>{label}</div>
       <div key='empty' className='progress-bar progress-bar-empty has-label-unless-fits'>{label}</div>
-      {mark}
+      {ocMark}
     </div>;
   }
 
