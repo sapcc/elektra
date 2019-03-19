@@ -27,7 +27,7 @@ export default class Overview extends React.Component {
             </li>
           ))}
         </ul>
-        {canEdit && scope.isCluster() && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
+        {canEdit && scope.isProject() && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
           <Link to={`/settings`} className='btn btn-primary btn-sm'>Settings</Link>
         </div>}
       </nav>

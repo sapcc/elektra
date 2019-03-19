@@ -29,7 +29,7 @@ const routesForProjectLevel = (props) => {
 }
 
 const routesForDomainLevel = (props) => {
-  const { clusterId, domainId, flavorData, docsUrl, canEdit } = props;
+  const { clusterId, domainId, flavorData, canEdit } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId };
   const rootProps = { flavorData, scopeData };
 
@@ -47,7 +47,21 @@ const routesForDomainLevel = (props) => {
   </Loader>;
 }
 
-const routesForClusterLevel = (props) => (<p>TODO: cluster level</p>);
+const routesForClusterLevel = (props) => {
+  const { clusterId, flavorData, canEdit } = props;
+  const scopeData = { clusterID: clusterId };
+  const rootProps = { flavorData, scopeData };
+
+  return <Loader scopeData={scopeData}>
+    <HashRouter>
+      <div>
+        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} /> }/>
+
+        <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} /> }/>
+      </div>
+    </HashRouter>
+  </Loader>;
+};
 
 export default (props) => {
   return props.projectId ? routesForProjectLevel(props)

@@ -71,12 +71,11 @@ export default class DetailsResource extends React.Component {
       .catch(() => this.setState({ ... this.state, isSubmitting: false }));
   }
 
-  //TODO show correct columns for cluster-level details screen
-
   render() {
+    console.log(this.props);
     const { name: scopeName, id: scopeID } = this.props.metadata;
 
-    const { quota, usage, burst_usage: burstUsage, unit: unitName } = this.props.resource;
+    const { quota, projects_quota: projectsQuota, usage, burst_usage: burstUsage, unit: unitName } = this.props.resource;
     const unit = new Unit(unitName);
 
     const { editText, isSubmitting } = this.state;
@@ -87,6 +86,10 @@ export default class DetailsResource extends React.Component {
     const scopeData = parentScope.descendIntoSubscope(scopeID);
     const scope = new Scope(scopeData);
 
+    //NOTE: The buttons in the last column have key attributes on them to
+    //ensure that the DOM nodes get replaced when flipping back and forth
+    //between Edit/Jump and Save/Cancel. Otherwise, a click on "Cancel" would
+    //cause a Jump since the button flips back to "Jump" while being clicked.
     return (
       <tr>
         <td className='col-md-3'>
@@ -105,21 +108,22 @@ export default class DetailsResource extends React.Component {
               </div>
             ) : valueWithUnit(quota, unit)}
         </td>
-        <td className='col-md-2'>{valueWithUnit(usage, unit)}</td>
-        <td className='col-md-2'>{valueWithUnit(burstUsage || 0, unit)}</td>
+        {scope.isDomain() && <td className='col-md-2'>{valueWithUnit(projectsQuota, unit)}</td>}
+        <td className={scope.isDomain() ? 'col-md-1' : 'col-md-2'}>{valueWithUnit(usage, unit)}</td>
+        <td className={scope.isDomain() ? 'col-md-1' : 'col-md-2'}>{valueWithUnit(burstUsage || 0, unit)}</td>
         <td className='col-md-3'>
           {isEditing
             ? (
               <React.Fragment>
-                <a onClick={() => this.submit()} disabled={isSubmitting} className='btn btn-primary btn-sm'>{buttonCaption('Save', isSubmitting)}</a>
+                <a key='save' onClick={() => this.submit()} disabled={isSubmitting} className='btn btn-primary btn-sm'>{buttonCaption('Save', isSubmitting)}</a>
                 {' '}
-                <a onClick={() => this.stopEditing()} disabled={isSubmitting} className='btn btn-sm'>Cancel</a>
+                <a key='cancel' onClick={() => this.stopEditing()} disabled={isSubmitting} className='btn btn-sm'>Cancel</a>
               </React.Fragment>
             ) : (
               <React.Fragment>
-                <a onClick={() => this.startEditing()} className='btn btn-default btn-sm'>Edit</a>
+                <a key='edit' onClick={() => this.startEditing()} className='btn btn-default btn-sm'>Edit</a>
                 {' '}
-                <a href={scope.elektraUrlPath()} target='_blank' className='btn btn-default btn-sm' title={`Go to Resource Management for this ${scope.level()} in a new tab`}>Jump</a>
+                <a key='jump' href={scope.elektraUrlPath()} target='_blank' className='btn btn-default btn-sm' title={`Go to Resource Management for this ${scope.level()} in a new tab`}>Jump</a>
               </React.Fragment>
             )
           }

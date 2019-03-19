@@ -8,6 +8,20 @@ import DataTable from '../../components/details/datatable';
 import DetailsResource from '../../components/details/resource';
 import ReloadIndicator from '../../components/reload_indicator';
 
+const clusterDataTableColumns = [
+  { key: 'id', label: 'Project', sortStrategy: 'text',
+    sortKey: props => props.metadata.name || '' },
+  { key: 'quota', label: 'Quota', sortStrategy: 'numeric',
+    sortKey: props => props.resource.quota || 0 },
+  { key: 'projects_quota', label: 'Granted to projects', sortStrategy: 'numeric',
+    sortKey: props => props.resource.projects_quota || 0 },
+  { key: 'usage', label: 'Usage', sortStrategy: 'numeric',
+    sortKey: props => props.resource.usage || 0 },
+  { key: 'burst_usage', label: 'Thereof burst', sortStrategy: 'numeric',
+    sortKey: props => props.resource.burst_usage || 0 },
+  { key: 'actions', label: 'Actions' },
+];
+
 const domainDataTableColumns = [
   { key: 'id', label: 'Project', sortStrategy: 'text',
     sortKey: props => props.metadata.name || '' },
@@ -63,7 +77,13 @@ export default class DetailsModal extends React.Component {
       //transform the nested structure of Limes' JSON into something flatter,
       //similar to app/reducers/limes.js
       const { services: serviceList, ...metadata } = subscopeData;
+      if (serviceList.length == 0) {
+        continue;
+      }
       const { resources: resourceList, ...serviceData } = serviceList[0];
+      if (resourceList.length == 0) {
+        continue;
+      }
       subscopes.push({
         metadata: metadata,
         service: serviceData,
@@ -154,6 +174,7 @@ export default class DetailsModal extends React.Component {
 
     const scope = new Scope(this.props.scopeData);
     const Resource = scope.resourceComponent();
+    const columns = scope.isCluster() ? clusterDataTableColumns : domainDataTableColumns;
 
     //these props are passed on to the Resource children verbatim
     const forwardProps = {
@@ -164,6 +185,7 @@ export default class DetailsModal extends React.Component {
       resource:     this.props.resource,
     };
 
+    //TODO: foreign cluster selection for cluster level
     //NOTE: className='resources' on Modal ensures that plugin-specific CSS rules get applied
     return (
       <Modal className='resources' backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
@@ -182,7 +204,7 @@ export default class DetailsModal extends React.Component {
 
           {isFetching ? <p>
             <span className='spinner'/> Loading {scope.sublevel()}s...
-          </p> : <DataTable columns={domainDataTableColumns} pageSize={8}>
+          </p> : <DataTable columns={columns} pageSize={8}>
             {(this.state.subscopes || []).map(subscopeProps =>
               <DetailsResource
                 key={subscopeProps.metadata.id} {...subscopeProps}

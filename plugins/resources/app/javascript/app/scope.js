@@ -1,3 +1,4 @@
+import ClusterResource from './components/cluster/resource';
 import DomainResource from './components/domain/resource';
 import ProjectResource from './components/project/resource';
 
@@ -57,12 +58,12 @@ export class Scope {
   urlPath() {
     if (this.projectID) return `/v1/domains/${this.domainID}/projects/${this.projectID}`;
     if (this.domainID)  return `/v1/domains/${this.domainID}`;
-    return `/v1/clusters/${scopeData.clusterID}`;
+    return `/v1/clusters/${this.clusterID}`;
   }
   subscopesUrlPath() {
     if (this.projectID) return null; //there is nothing below projects
     if (this.domainID)  return `/v1/domains/${this.domainID}/projects`;
-    return `/v1/clusters/${scopeData.clusterID}/domains`;
+    return `/v1/domains`;
   }
 
   descendIntoSubscope(id) {
@@ -77,7 +78,7 @@ export class Scope {
   resourceComponent() {
     if (this.projectID) return ProjectResource;
     if (this.domainID)  return DomainResource;
-    return null; //TODO ClusterResource
+    return ClusterResource;
   }
 
   //Level-specific validations for quota values entered into <EditModal />.

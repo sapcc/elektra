@@ -21,27 +21,39 @@
 
 */
 
-.progress-bar {
+.progress {
+  position: relative; /* required for position:absolute on children */
+  overflow: visible;
 
-  &.progress-bar-empty {
-    background: none;
-    box-shadow: none;
-    color: black;
-    white-space: nowrap;
-    overflow-x: visible;
-  }
-
-  &.progress-bar-disabled {
-    @include background(repeating-linear-gradient(-55deg, transparent, transparent 3px, #DCDCDC 3px, #DCDCDC 5px));
-    box-shadow: none;
-    color: black;
-  }
-
-  &.has-label, &.has-label-if-fits, &.has-label-unless-fits {
-    text-align: left;
-    .progress-bar-label {
-      padding-left: 0.5em;
+  .progress-bar {
+    &.progress-bar-empty {
+      background: none;
+      box-shadow: none;
+      color: black;
+      white-space: nowrap;
+      overflow-x: visible;
     }
+
+    &.progress-bar-disabled {
+      @include background(repeating-linear-gradient(-55deg, transparent, transparent 3px, #DCDCDC 3px, #DCDCDC 5px));
+      box-shadow: none;
+      color: black;
+    }
+
+    &.has-label, &.has-label-if-fits, &.has-label-unless-fits {
+      text-align: left;
+      .progress-bar-label {
+        padding-left: 0.5em;
+      }
+    }
+  }
+
+  .progress-bar-mark {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 4px;
+    background: rgba(0, 0, 0, 0.7);
   }
 
 }
@@ -87,6 +99,8 @@ div.edit-quota-input input.form-control {
   line-height: 16px;
   position: relative;
   top: -2px;
+  /* some margin for when messages are shown after the button */
+  margin-right: 8px;
 }
 
 /* TODO move this into the global CSS when <DataTable/> moves into top-level app/javascript/lib/ */
