@@ -25,10 +25,14 @@ export default class Category extends React.Component {
     return (
       <React.Fragment>
         <h3>
-          {canEdit && !scope.isCluster() && (
-            <Link to={`/edit/${categoryName}`} className='btn btn-primary btn-sm btn-edit-quota'>Edit</Link>
-          )}
-          {t(categoryName)}
+          <div className='row'>
+            <div className='col-md-6'>{t(categoryName)}</div>
+            {canEdit && !scope.isCluster() && (
+              <div className='col-md-1 text-right'>
+                <Link to={`/edit/${categoryName}`} className='btn btn-primary btn-sm btn-edit-quota'>Edit</Link>
+              </div>
+            )}
+          </div>
         </h3>
         {resources.sort(byLeaderAndName).map(res => (
           <Resource key={res.name} resource={res} {...forwardProps} />
