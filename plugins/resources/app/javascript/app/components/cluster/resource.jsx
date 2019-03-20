@@ -22,11 +22,11 @@ export default (props) => {
     : <ResourceName name={displayName} flavorData={flavorData} />;
   //inside <DetailsModal/>, the "Resource usage" bar indicates the actual
   //resource usage rather than the quota usage of projects
-  const fillProps = { fill: domainsQuota };
+  const barProps = { fill: domainsQuota };
   if (props.showUsage) {
-    fillProps.fill = usage;
+    barProps.fill = usage;
     if (burstUsage > 0) {
-      fillProps.labelOverride = (
+      barProps.labelOverride = (
         <React.Fragment>
           {valueWithUnit(usage - burstUsage, unit)} + {valueWithUnit(burstUsage, unit)} burst
         </React.Fragment>
@@ -35,11 +35,18 @@ export default (props) => {
   }
 
   let infoMessage = undefined;
-  if (rawCapacity != capacity) {
+  if (rawCapacity > 0 && rawCapacity < capacity) {
+    barProps.overcommitAfter = rawCapacity;
+    barProps.beforeOvercommitTooltip = `Raw capacity = ${unit.format(rawCapacity)}`;
+    barProps.afterOvercommitTooltip = `${capacity / rawCapacity}x overcommit`;
+    infoMessage = `${capacity / rawCapacity}x overcommit`;
+  }
+
+  if (domainsQuota > capacity) {
     infoMessage = (
-      <span>
-        {`${capacity / rawCapacity}x overcommit: Raw capacity = `}
-        {valueWithUnit(rawCapacity, unit)}
+      <span className='resource-error text-danger'>
+        <i className='fa fa-lg fa-warning' />{' '}
+        Quota assignments exceed measured capacity
       </span>
     );
   }
@@ -49,7 +56,7 @@ export default (props) => {
       {caption}
       <div className={props.wide ? 'col-md-9' : 'col-md-5'}>
         <ResourceBar
-          capacity={capacity} {...fillProps} unitName={unitName} overcommitAfter={rawCapacity}
+          capacity={capacity} {...barProps} unitName={unitName}
           isDanger={domainsQuota > capacity} scopeData={props.scopeData} />
       </div>
       {!props.wide && (

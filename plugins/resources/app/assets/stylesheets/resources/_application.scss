@@ -24,7 +24,15 @@
 .progress {
   position: relative; /* required for position:absolute on children */
 
-  .progress-bar-overcommit {
+  .progress-bar-before-overcommit {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: transparent;
+  }
+
+  .progress-bar-after-overcommit {
     position: absolute;
     top: 0;
     bottom: 0;
