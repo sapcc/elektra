@@ -54,7 +54,7 @@ export default (props) => {
       </div>
       {!props.wide && (
         <div className='col-md-5'>
-          { props.canEdit && <Link to={`/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Show projects</Link> }
+          { props.canEdit && <Link to={`/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Show domains</Link> }
           {infoMessage}
         </div>
       )}
