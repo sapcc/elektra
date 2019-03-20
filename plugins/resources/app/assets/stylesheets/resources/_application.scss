@@ -95,9 +95,27 @@ div.edit-quota-form-header {
   margin-bottom: 10px;
 }
 
-div.edit-quota-input input.form-control {
-  position: relative;
-  top: -4px;
+div.edit-quota-input {
+  input.form-control {
+    position: relative;
+    top: -4px;
+  }
+
+  &.edit-quota-input-is-flashing input.form-control {
+    animation-name: edit-quota-flash;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes edit-quota-flash {
+    0% {
+      background-color: $hover-orange;
+    }
+    100% {
+      background-color: white;
+    }
+  }
+
 }
 
 .btn.btn-sm.btn-quota-details {

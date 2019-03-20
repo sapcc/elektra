@@ -2,7 +2,7 @@ import { Scope } from '../scope';
 import { t } from '../utils';
 
 const ResourceEditor = (props) => {
-  const { text: editQuotaText, value: newQuota, error: editError, isFollowing, checkResult: cr } = props.edit;
+  const { text: editQuotaText, value: newQuota, error: editError, isFlashing, isFollowing, checkResult: cr } = props.edit;
   const { name: resourceName, unit: unitName, quota: oldQuota, scales_with: scalesWith } = props.resource;
   const scope = new Scope(props.scopeData);
 
@@ -32,7 +32,7 @@ const ResourceEditor = (props) => {
 
   return (
     <React.Fragment>
-      <div className='col-md-2 edit-quota-input'>
+      <div className={`col-md-2 edit-quota-input ${isFlashing ? 'edit-quota-input-is-flashing' : ''}`}>
         <input
           className='form-control input-sm' type='text' value={editQuotaText}
           disabled={props.disabled ? true : false}

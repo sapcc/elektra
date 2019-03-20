@@ -84,12 +84,16 @@ export default class EditModal extends React.Component {
       isFollowing: false, //editing a quota breaks the followership
     };
 
-    //also, clear away all check results to convert the "Submit" button back to
-    //"Check"
+    //also, clear away:
+    //- all check results (to convert the "Submit" button back to "Check")
+    //- the animation attributes
     for (let res of this.props.category.resources) {
       if (newState.inputs[res.name].checkResult) {
         newState.inputs[res.name] = { ...newState.inputs[res.name] };
         delete newState.inputs[res.name].checkResult;
+      }
+      if (newState.inputs[res.name].isFlashing) {
+        newState.inputs[res.name] = { ...newState.inputs[res.name], isFlashing: false };
       }
     }
 
@@ -182,6 +186,7 @@ export default class EditModal extends React.Component {
         value: value,
         text: (new Unit(res.unit)).format(value, { ascii: true }),
         isFollowing: true,
+        isFlashing: true,
       };
     }
 
