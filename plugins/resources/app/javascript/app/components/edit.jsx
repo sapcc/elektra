@@ -357,6 +357,7 @@ export default class EditModal extends React.Component {
     let hasInputErrors = false;
     let canSubmit = true;
     let hasCheckErrors = false;
+    let requestRequiredCount = 0;
     for (let res of category.resources) {
       const input = (this.state.inputs || {})[res.name] || {};
       if (input.error) {
@@ -369,9 +370,21 @@ export default class EditModal extends React.Component {
       if (checkResult.unacceptable) {
         hasCheckErrors = true;
       }
+      if (checkResult.requestRequired) {
+        requestRequiredCount++;
+      }
     }
     const showSubmitButton = canSubmit && !hasCheckErrors;
     const ajaxInProgress = this.state.isChecking || this.state.isSubmitting;
+
+    let footerMessage = undefined;
+    if (showSubmitButton && requestRequiredCount > 0) {
+      const countStr = requestRequiredCount == 1 ? '1 request' : `${requestRequiredCount} requests`;
+      const nextScope = scope.isProject() ? 'domain' : 'cloud';
+      footerMessage = <span className='request-explanation'>
+        When you click "Submit", {countStr} will be sent to the {nextScope} resource admins for approval.
+      </span>;
+    }
 
     //NOTE: className='resources' on Modal ensures that plugin-specific CSS rules get applied
     return (
@@ -399,6 +412,7 @@ export default class EditModal extends React.Component {
           ))}
         </Modal.Body>
         <Modal.Footer>
+          { footerMessage }
           { showSubmitButton ? (
             <Button
               bsStyle='primary'
