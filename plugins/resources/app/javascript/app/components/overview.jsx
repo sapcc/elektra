@@ -70,7 +70,6 @@ export default class Overview extends React.Component {
       pollRunningSyncProject: props.pollRunningSyncProject,
     };
 
-    // TODO: button: Request Quota Package
     return (
       <React.Fragment>
         {this.renderNavbar(currentArea, props.canEdit, scope)}

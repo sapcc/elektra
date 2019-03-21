@@ -5,6 +5,7 @@ import { t } from '../../utils';
 import { Scope } from '../../scope';
 import { Unit } from '../../unit';
 import DataTable from '../../components/details/datatable';
+import DetailsClusters from '../../components/details/clusters';
 import DetailsResource from '../../components/details/resource';
 import ReloadIndicator from '../../components/reload_indicator';
 
@@ -170,6 +171,7 @@ export default class DetailsModal extends React.Component {
 
   render() {
     const { categoryName, resourceName } = this.props;
+    const { shared: isShared } = this.props.category;
     const { isFetching, apiErrors } = this.state;
 
     const scope = new Scope(this.props.scopeData);
@@ -185,7 +187,6 @@ export default class DetailsModal extends React.Component {
       resource:     this.props.resource,
     };
 
-    //TODO: foreign cluster selection for cluster level
     //NOTE: className='resources' on Modal ensures that plugin-specific CSS rules get applied
     return (
       <Modal className='resources' backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
@@ -201,6 +202,14 @@ export default class DetailsModal extends React.Component {
             <Resource wide={true} captionOverride='Quota usage' {...forwardProps} />
             <Resource wide={true} captionOverride='Resource usage' showUsage={true} {...forwardProps} />
           </ReloadIndicator>
+
+          {scope.isCluster() && isShared && !isFetching && (
+            <DetailsClusters {...forwardProps}
+              category={this.props.category}
+              listClusters={this.props.listClusters}
+              handleAPIErrors={this.handleAPIErrors}
+            />
+          )}
 
           {isFetching ? <p>
             <span className='spinner'/> Loading {scope.sublevel()}s...

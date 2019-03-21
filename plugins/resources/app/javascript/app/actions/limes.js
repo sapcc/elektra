@@ -71,6 +71,19 @@ export const listSubscopes = (scopeData, serviceType, resourceName) => function(
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// get quota/usage data for all clusters
+
+export const listClusters = (serviceType, resourceName) => function(dispatch, getState) {
+  const url = `/v1/clusters?local&service=${serviceType}&resource=${resourceName}`;
+
+  return new Promise((resolve, reject) =>
+    ajaxHelper.get(url)
+      .then(response => resolve(response.data))
+      .catch(error => reject({ errors: limesErrorMessage(error) }))
+  );
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // sync project
 
 const syncProjectFailure = () => ({
