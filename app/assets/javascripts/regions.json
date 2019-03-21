@@ -33,7 +33,7 @@
     "lat":        38.87,
     "lon":        -104.77,
     "available":  false,
-    "date":       "2018"
+    "date":       "2019"
   },
   {
     "country":    "USA",
@@ -111,8 +111,8 @@
     "country":    "Japan",
     "regionkey":  "ap-jp-1",
     "regionname": "AP-JP-1",
-    "lat":        34.68,
-    "lon":        135.50,
+    "lat":        35.66,
+    "lon":        139.77,
     "available":  true,
     "date":       "2017"
   },
@@ -120,8 +120,8 @@
     "country":    "Japan",
     "regionkey":  "ap-jp-2",
     "regionname": "AP-JP-2",
-    "lat":        35.66,
-    "lon":        139.77,
+    "lat":        34.68,
+    "lon":        135.50,
     "available":  true,
     "date":       "2018"
   },

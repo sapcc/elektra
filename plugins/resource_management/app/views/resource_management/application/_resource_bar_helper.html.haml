@@ -5,6 +5,12 @@
         %span.text-nowrap= threshold[:label]
     - else
       .label-threshold-missing.text-nowrap.text-danger= threshold[:label]
+  - if marker[:value] < upper_bound && marker[:value] != threshold[:value]
+    - if marker[:value] > 0
+      .label-threshold{ style:"left:#{marker[:percent]}%"}
+        %span.text-nowrap= marker[:label]
+    - else
+      .label-threshold-missing.text-nowrap.text-danger= threshold[:label]
   - if maximum[:value] >= 0
     -# upper_bound is maximum
     .label-maximum.text-nowrap.text-muted= maximum[:label]

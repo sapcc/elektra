@@ -1,5 +1,6 @@
 {
   "context_is_cloud_sharedfilesystem_admin": "role:cloud_sharedfilesystem_admin",
+  "context_is_cloud_sharedfilesystem_viewer": "role:cloud_sharedfilesystem_viewer or rule:context_is_cloud_sharedfilesystem_admin",
   "member": "role:member or role:Member",
   "share_viewer": "role:sharedfilesystem_viewer",
   "share_admin": "role:sharedfilesystem_admin",
@@ -19,6 +20,8 @@
   "shared_filesystem_storage:share_extend": "rule:context_is_share_editor",
   "shared_filesystem_storage:share_access_control": "rule:context_is_share_viewer",
 
+  "shared_filesystem_storage:error_message_list": "rule:context_is_share_viewer",
+
   "shared_filesystem_storage:rule_create": "rule:context_is_share_editor",
   "shared_filesystem_storage:rule_list": "rule:context_is_share_viewer",
   "shared_filesystem_storage:rule_get": "rule:context_is_share_viewer",
@@ -28,8 +31,8 @@
   "shared_filesystem_storage:share_type_list": "rule:context_is_share_viewer",
   "shared_filesystem_storage:share_availability_zones": "rule:context_is_share_viewer",
 
-  "shared_filesystem_storage:pool_list": "rule:context_is_cloud_sharedfilesystem_admin",
-  "shared_filesystem_storage:pool_get": "rule:context_is_cloud_sharedfilesystem_admin",
+  "shared_filesystem_storage:pool_list": "rule:context_is_cloud_sharedfilesystem_viewer",
+  "shared_filesystem_storage:pool_get": "rule:context_is_cloud_sharedfilesystem_viewer",
 
   "shared_filesystem_storage:snapshot_create": "rule:context_is_share_editor",
   "shared_filesystem_storage:snapshot_delete": "rule:context_is_share_editor",
@@ -51,7 +54,7 @@
   "shared_filesystem_storage:security_service_list": "rule:context_is_share_viewer",
   "shared_filesystem_storage:security_service_get": "rule:context_is_sharedfilesystem_admin",
 
-  "shared_filesystem_storage:share_server_get": "rule:context_is_cloud_sharedfilesystem_admin",
+  "shared_filesystem_storage:share_server_get": "rule:context_is_cloud_sharedfilesystem_viewer",
 
   "shared_filesystem_storage:application_get": "rule:shared_filesystem_storage:share_list or rule:shared_filesystem_storage:share_network_list or rule:shared_filesystem_storage:snapshot_list"
 }

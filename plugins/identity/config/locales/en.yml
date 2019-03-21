@@ -21,11 +21,13 @@ en:
       cloud_resource_admin: Limes Cloud Administrator
       cloud_resource_viewer: Limes Cloud Read-Only
       cloud_sharedfilesystem_admin: Manila Cloud Administrator
+      cloud_sharedfilesystem_viewer: Manila Cloud Read-Only
       cloud_volume_admin: Cinder Cloud Administrator
       compute_admin: Nova Administrator
       compute_viewer: Nova Read-Only
       dns_viewer: Designate Read-Only
       dns_admin: Designate Administrator
+      image_admin: Glance Administrator
       image_viewer: Glance Read-Only
       keymanager_admin: Barbican Administrator
       keymanager_viewer: Barbican Read-Only

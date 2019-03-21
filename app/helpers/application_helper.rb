@@ -47,48 +47,48 @@ module ApplicationHelper
   # This class is used to create scoped urls for plugin url helpers
   class PluginUrlHelper
     # helper is ApplicationHelper, scope is a hash ({domain_id: DOMAIN_ID, project_id: PROJECT_ID})
-    def initialize(helper,plugin_name,scope)
+    def initialize(helper, plugin_name, scope)
       @plugin_name     = plugin_name
       @plugin          = helper.send("#{plugin_name}_plugin")
       @main_app        = helper.main_app
       @scope           = scope
     end
 
-    # def root_path
-    #   @root_path ||= method_missing(:root_path) rescue @main_app.send("#{@plugin_name}_plugin_path",{})
-    # end
-    #
-    # def root_url
-    #   @root_url ||= method_missing(:root_path) rescue @main_app.send("#{@plugin_name}_plugin_url",{})
-    # end
-
-    # delegate all methods to the plugin_helper. Clean the scope parameters before delegation!
-    def method_missing(method,*args,&block)
-      if method.to_s.ends_with?('_path') or method.to_s.ends_with?('_url')
+    # delegate all methods to the plugin_helper. 
+    # Clean the scope parameters before delegation!
+    # DEPRECTAED!!! But still nedeed for controller tests :(
+    def method_missing(method, *args, &block)
+      if method.to_s.ends_with?('_path') || method.to_s.ends_with?('_url')
         # extract options (last args hash member)
         options = args.extract_options!
 
         # build the scope (delete scope values from options)
-        @scope[:domain_id] = options.delete(:domain_id) if options.has_key?(:domain_id)
-        @scope[:project_id] = options.delete(:project_id) if options.has_key?(:project_id)
-        @scope.delete_if{|key, value| value.nil? }
-
+        @scope[:domain_id] = options.delete(:domain_id) if options.key?(:domain_id)
+        @scope[:project_id] = options.delete(:project_id) if options.key?(:project_id) 
         # add prefix to the path
-        options[:script_name] = @main_app.send("#{@plugin_name}_plugin_path",@scope)
-        args << options
+        options[:script_name] = @main_app.send("#{@plugin_name}_plugin_path", @scope)
+ 
+        # add scope to args to avoid failing tests for redirects.
+        # The behavior of tests has changed since rails 5.1.3
+        # Redirections in tests lose the scope parameters 
+        # (domain_id and project_id).
+        args << options.merge(@scope)
 
         # build the path
-        @plugin.send(method,*args)
+        @plugin.send(method, *args)
       else
-        @plugin.send(method,*args,&block)
+        @plugin.send(method, *args, &block)
       end
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      @plugin.respond_to? method_name
     end
   end
 
   def plugin(name)
-    if plugin_available?(name)
-      PluginUrlHelper.new(self,name,{domain_id: @scoped_domain_fid, project_id: @scoped_project_fid})
-    end
+    raise "Plugin #{name} not available!" unless plugin_available?(name)
+    PluginUrlHelper.new(self, name, domain_id: @scoped_domain_fid, project_id: @scoped_project_fid)
   end
 
   def plugin_available?(name)

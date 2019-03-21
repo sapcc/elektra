@@ -1,0 +1,21 @@
+- if @auto_approve_success
+  .alert.alert-info
+    %p
+      Your quota request for
+      %strong=@resource.name
+      was auto approved. New value is
+      %strong=@resource.data_type.format(@resource.quota)
+- if @send_resource_request
+  .alert.alert-info
+    %p
+      Your quota request for
+      %strong=@resource.name
+      was successfully send. You can review your request
+      = link_to 'here', plugin('inquiry').inquiry_path(id: @inquiry.id), data: {modal: true}
+- if @reduce_resource_success
+  .alert.alert-info
+    %p
+      Your quota for
+      %strong=@resource.name
+      was successfully reduced to
+      %strong=@resource.data_type.format(@resource.quota)

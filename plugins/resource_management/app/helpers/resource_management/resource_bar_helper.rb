@@ -4,9 +4,12 @@ module ResourceManagement
     # GUI component for a resource usage bar.
     #
     # Accepts the following options:
-    #     fill:      { value: NUMBER, label: STRING }   - Size value and label for the usage display (required).
-    #     maximum:   { value: NUMBER, label: STRING }   - Maximum value (determines scale), and label for the right edge.
-    #     threshold: { value: NUMBER, label: STRING }   - Value and label for threshold mark.
+    #     fill:      { value: NUMBER, label: STRING }                                - Size value and label for the usage display (required).
+    #     maximum:   { value: NUMBER, label: STRING }                                - Maximum value (determines scale), and label for the right edge.
+    #     threshold: { value: NUMBER, label: STRING }                                - Value and label for threshold mark.
+    #     marker:    { value: NUMBER, label: STRING, related_to_threshold: BOOLEAN } - Value and label for a second mark.
+    #                                                                                  related_to_threshold scale to the threshold value (default it's upper_bound)
+
     #     data_type:     Core::DataType                 - If given, render values with its format() method.
     #     warning_level: NUMBER                         - A number between 0 and 1. Beyond this ratio, fill levels will be rendered in warning color (default 0.8).
     #     danger_level: NUMBER                          - A number from 1 to N. Beyond this number, fill levels will be rendered in danger color (default 1.0).
@@ -22,14 +25,15 @@ module ResourceManagement
       options.delete(:threshold) if options[:threshold] == 0
       options.delete(:threshold) if options[:threshold].is_a?(Hash) &&  options[:threshold][:value] == 0
 
-      fill, maximum, threshold, upper_bound, warning_level, danger_level = resbar_prepare_options(options)
-      bars = resbar_compile_bars(fill, maximum, threshold, warning_level, danger_level)
+      fill, maximum, threshold, upper_bound, warning_level, danger_level, marker = resbar_prepare_options(options)
+      bars = resbar_compile_bars(fill, maximum, threshold, warning_level, danger_level, marker)
 
       return render('resource_bar_helper',
         bars:        bars,
         maximum:     maximum,
         threshold:   threshold,
         upper_bound: upper_bound,
+        marker:      marker,
       )
     end
 
@@ -46,16 +50,14 @@ module ResourceManagement
       threshold     = options.fetch(:threshold,     maximum)
       data_type     = options.fetch(:data_type,     nil) || Core::DataType.new(:number)
       warning_level = options.fetch(:warning_level, 0.8)
-      danger_level  = options.fetch(:danger_level, 1.0)
+      danger_level  = options.fetch(:danger_level,  1.0)
+      marker        = options.fetch(:marker,        maximum)
 
       # when only a number is given for some parameter, use the default label "$VALUE
       fill        = { value: fill,      label: "$VALUE" } unless fill.is_a?(Hash)
       maximum     = { value: maximum,   label: "$VALUE" } unless maximum.is_a?(Hash)
       threshold   = { value: threshold, label: "$VALUE" } unless threshold.is_a?(Hash)
-
-      # check input validity
-      raise ArgumentError, "fill value may not be negative"                if fill[:value] < 0
-      raise ArgumentError, "maximum or threshold may not both be negative" if maximum[:value] < 0 && threshold[:value] < 0
+      marker    =   { value: marker,    label: "$VALUE" } unless marker.is_a?(Hash)
 
       # choose upper_bound, the value that corresponds to the full width of the bar
       upper_bound = maximum[:value]
@@ -64,13 +66,16 @@ module ResourceManagement
       end
 
       # prepare labels
-      [ fill, maximum, threshold ].each do |param|
+      #[ fill, maximum, threshold ].each do |param|
+      [ fill, maximum, threshold, marker ].each do |param|
         display_value = data_type.format(param[:value])
         param[:label] = (param[:label] || '$VALUE').gsub("$VALUE", display_value)
       end
 
       # calculate percentages relative to maximum (for CSS)
-      [ fill, threshold ].each do |param|
+      # percentages are calculated in relation to "maximum"
+      # "maximum" can be the fill or the maximum level
+      [ fill, threshold, marker].each do |param|
         if upper_bound == 0
           param[:percent] = param[:value] <= 0 ? 0 : (param[:value].to_i << 10) # avoid division by zero, just scale very large
         else
@@ -78,12 +83,46 @@ module ResourceManagement
         end
       end
 
-      return [ fill, maximum, threshold, upper_bound, warning_level, danger_level ]
+      # special case the marker is not related to maximum but to threshold
+      # |-----------|-----------------------|---------------------------------|
+      # | fill |    |                       |                                 |
+      # |-----------|-----------------------|---------------------------------|
+      # |<---30%--->| marker                | threshold                       | max
+      # |<-----------------100%------------>| related_to_threshold            | upper_bound
+      # |<---------------------------------200%-------------------------------| related to threshold
+      # |<---------------------------------100%-------------------------------| related to max (upper bound)
+
+      # related_to_threshold means threshold is 100% for the scale of the marker
+      # default it's upper_bound
+      if marker[:related_to_threshold]
+        if marker[:value] < threshold[:value]
+          one_percent = threshold[:value].to_f / 100
+
+          # calculate the factor percentage
+          # for instance: threshold = 100 and upper_bound = 200 the factor 2
+          factor = 1
+          if threshold[:value] < upper_bound
+            factor = upper_bound.to_f / threshold[:value].to_f
+          end
+          value = (marker[:value].to_f / one_percent).to_f / factor
+
+          # debug
+          # puts "threshold #{threshold[:value]}"
+          # puts "marker #{marker[:value]}"
+          # puts "upper_bound #{upper_bound}"
+          # puts "one_percent #{one_percent}"
+          # puts "factor #{factor}"
+          # puts "value #{value}"
+
+          marker[:percent] = value.round(1)
+        end
+      end
+      return [ fill, maximum, threshold, upper_bound, warning_level, danger_level, marker ]
     end
 
     # This prepares a list of all the progress bars that we're placing in the
     # resource bar (i.e. all the <div class="progress-bar">).
-    def resbar_compile_bars(fill, maximum, threshold, warning_level,danger_level)
+    def resbar_compile_bars(fill, maximum, threshold, warning_level, danger_level, marker)
       bars = []
 
       if fill[:value] > 0
@@ -118,6 +157,7 @@ module ResourceManagement
         else
           bars << { type: 'empty', percent: 100 - fill[:percent] }
         end
+
       else
         # for infinite maximum, mark all empty area as "overcommit"
         bars << { type: 'empty-overcommit', percent: 100 - fill[:percent] }

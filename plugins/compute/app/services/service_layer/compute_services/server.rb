@@ -60,34 +60,22 @@ module ServiceLayer
         nil
       end
 
-      def vnc_console(server_id, console_type = 'novnc')
-        response = elektron_compute.post("servers/#{server_id}/action") do
-          { 'os-getVNCConsole': { 'type': console_type } }
+      def remote_console(server_id, console_protocol = 'mks', console_type = 'webmks')
+        response = elektron_compute.post("servers/#{server_id}/remote-consoles") do
+          { 'remote_console': { 'protocol': console_protocol, 'type': console_type } }
         end
 
-        response.map_to('body.console') do |data|
-          Compute::VncConsole.new(self, data)
+        response.map_to('body.remote_console') do |data|
+          Compute::RemoteConsole.new(self, data)
         end
-
-        # TODO: since 2.5 remote-console should be available but for
-        # some reason it is not working
-        #       got a 404 not available
-        # api.compute.create_remote_console(
-        #  id,
-        #  "remote_console" => {
-        #    'protocol'=>'vnc',
-        #    'type' => console_type
-        # }
       end
 
-      def shellinabox_console(server_id, console_type = 'shellinabox')
+      def console_log(server_id, length=500)
         response = elektron_compute.post("servers/#{server_id}/action") do
-          { 'os-getSerialConsole': { 'type': console_type } }
+          { 'os-getConsoleOutput': { 'length': length } }
         end
-
-        response.map_to('body.console') do |data|
-          Compute::ShellinaboxConsole.new(self, data)
-        end
+        
+        response.map_to('body.output')
       end
 
       def rebuild_server(server_id, image_ref, name, admin_pass = nil,

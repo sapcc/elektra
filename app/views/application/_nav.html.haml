@@ -25,7 +25,7 @@
         - else
           %li.dropdown
             %a.navbar-identity.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-              %img.avatar{src: url_for_avatar}
+              %img.avatar{src: url_for_avatar, async: true}
               = current_user.full_name
               %span.caret
             %ul.dropdown-menu{:role => "menu"}

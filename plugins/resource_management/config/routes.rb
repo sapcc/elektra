@@ -4,14 +4,16 @@ ResourceManagement::Engine.routes.draw do
     get  '/' => 'project_resources#index'
     get  'area/:area',  to: 'project_resources#show_area', as: 'area'
     get  'request'  => 'project_resources#new_request', as: 'new_request'
+    post 'request'  => 'project_resources#create_request', as: 'create_request'
     get  'confirm_reduce_quota' => 'project_resources#confirm_reduce_quota'
     post 'reduce_quota' => 'project_resources#reduce_quota'
-    post 'request'  => 'project_resources#create_request', as: 'create_request'
     get  'sync_now' => 'project_resources#sync_now'
     get  'request-package'          => 'project_resources#new_package_request', as: 'new_package_request'
     post 'request-package/:package' => 'project_resources#create_package_request', as: 'create_package_request'
     post  'save_settings' => 'project_resources#save_settings'
     get  'settings' => 'project_resources#settings'
+    get  'skip_wizard' => 'project_resources#skip_wizard_confirm'
+    post 'skip_wizard' => 'project_resources#skip_wizard'
   end
 
   scope 'admin', as: 'admin' do

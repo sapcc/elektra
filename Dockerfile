@@ -12,7 +12,7 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
       && gem install nio4r -v 2.3.1 \
-      && gem install nokogiri -v 1.8.5 \
+      && gem install nokogiri -v 1.10.0 \
       && gem install pg -v 0.21.0 \
       && gem install puma -v 3.9.1  \
       && gem install redcarpet -v 3.4.0 \
@@ -71,9 +71,6 @@ RUN if [ -z ${http_proxy} ]; then \
 
 ADD . /home/app/webapp
 
-RUN bundle binstubs bundler --force
-# create webpacker binstubs
-RUN bundle binstubs webpacker --force --path ./bin
 # precompile assets including webpacker packs
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 

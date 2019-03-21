@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+import { useContext } from 'react'
+import { FormContext } from './form_context'
 
 export const FormElement = ({
   label,
@@ -9,7 +10,11 @@ export const FormElement = ({
   labelWidth=4, //columns, maximum 12
   labelClass='control-label',
   children
-},context) => {
+}) => {
+  
+  const context = useContext(FormContext)
+  //console.log("FormElement->context",context)
+
   let id = context.formName ? context.formName + '_' + name : name;
   let isValid = true;
   if (context.formErrors &&
@@ -52,10 +57,6 @@ export const FormElement = ({
   )
 };
 
-FormElement.contextTypes = {
-  formName: PropTypes.string,
-  formErrors: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array])
-};
 export const FormElementHorizontal = (props) =>
   <FormElement horizontal={true} {...props}/>
 ;

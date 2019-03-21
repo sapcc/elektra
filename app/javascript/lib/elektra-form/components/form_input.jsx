@@ -1,5 +1,6 @@
 //import React from 'react';
-import PropTypes from 'prop-types';
+import { useContext } from 'react' 
+import { FormContext } from './form_context'
 
 export const FormInput = ({
   elementType,
@@ -9,7 +10,10 @@ export const FormInput = ({
   name,
   children,
   ...otherProps
-},context) => {
+}) => {
+
+  const context = useContext(FormContext)
+
   let values = context.formValues || {}
   let isValid = true;
   if (context.formErrors &&
@@ -30,11 +34,4 @@ export const FormInput = ({
   return (
     <React.Fragment>{React.createElement(elementType, inputProps, children)}</React.Fragment>
   )
-};
-
-FormInput.contextTypes = {
-  formName: PropTypes.string,
-  formValues: PropTypes.object,
-  onChange: PropTypes.func,
-  formErrors: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array])
 };

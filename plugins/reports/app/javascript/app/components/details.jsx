@@ -36,7 +36,7 @@ class Details extends React.Component {
 
   renderTableService = (service, clickService) => {
     if (clickService == this.props.serviceMap[service.service] || clickService == "all") {
-      return (<DetailsViewFadeTransition key={service.service+service.measure}>
+      return (<DetailsViewFadeTransition key={service.service+service.measure+service.allocation_type}>
                 <ServiceDetail service={service} getColor={this.getColor}/>
               </DetailsViewFadeTransition>)
     }

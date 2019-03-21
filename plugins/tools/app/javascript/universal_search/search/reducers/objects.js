@@ -4,7 +4,7 @@ import * as constants from '../constants';
 const initialState = {
   items: [],
   searchTerm: null,
-  searchType: null,
+  searchType: "",
   receivedAt: null,
   updatedAt: null,
   isFetching: false,

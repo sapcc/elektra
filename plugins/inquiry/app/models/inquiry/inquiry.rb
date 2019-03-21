@@ -1,3 +1,4 @@
+require 'csv'
 module Inquiry
   class Inquiry < ApplicationRecord
     include Filterable
@@ -27,7 +28,7 @@ module Inquiry
 
     after_create :transition_to_open
 
-    # scopes manually written becasue of distinct issue with json column
+    # scopes manually written because of distinct issue with json column
     def self.processor_idx(processor_id)
       Inquiry.find_by_sql("SELECT DISTINCT ON (inquiry_inquiries.id) inquiry_inquiries.* FROM inquiry_inquiries INNER JOIN inquiry_inquiries_processors ON inquiry_inquiries_processors.inquiry_id = inquiry_inquiries.id INNER JOIN inquiry_processors ON inquiry_processors.id = inquiry_inquiries_processors.processor_id WHERE inquiry_processors.uid = '#{processor_id}'")
     end
@@ -45,6 +46,25 @@ module Inquiry
     def self.requestor_open_requests(domain_id, user_id)
       where(aasm_state: 'open', domain_id: domain_id).to_a.keep_if do |r|
         r.requester.uid == user_id
+      end
+    end
+
+    def self.to_csv
+      attributes = %w{Kind Description Requestor Updated Status}
+      # https://www.ablebits.com/office-addins-blog/2014/05/01/convert-csv-excel/#csv-not-parsed
+      # In North America and some other countries, the default List Separator is a comma.
+      # While in European countries the comma (,) is reserved as the Decimal Symbol and the List Separator is set to semicolon (;)
+      CSV.generate(headers: true, col_sep: ";") do |csv|
+        csv << attributes
+        all.each do |inquiry|
+            csv << [
+              inquiry.kind,
+              inquiry.description,
+              "#{inquiry.requester.full_name} (#{inquiry.requester.name})",
+              inquiry.updated_at.getlocal.strftime("%F %T"),
+              inquiry.aasm.human_state
+            ]
+        end
       end
     end
 

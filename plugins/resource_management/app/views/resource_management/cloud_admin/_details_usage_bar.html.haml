@@ -1,6 +1,11 @@
+- if @combined_resource.raw_capacity && @combined_resource.raw_capacity < @combined_resource.capacity
+  - oc_factor = @combined_resource.capacity.to_f / @combined_resource.raw_capacity.to_f
+  .row
+    .col-md-11.text-right
+      .label.label-info Overcommit factor is #{oc_factor.round(1)}
 .row
   .col-md-2.quota-label.text-muted Quota usage
-  .col-md-9= render partial: 'bar', locals: { resource: @combined_resource }
+  .col-md-9= render partial: 'bar', locals: { resource: @combined_resource, render_raw_capa: true }
 .row
   .col-md-2.quota-label.text-muted Resource usage
-  .col-md-9= render partial: 'bar', locals: { resource: @combined_resource, render_usage: true }
+  .col-md-9= render partial: 'bar', locals: { resource: @combined_resource, render_usage: true, render_raw_capa: true }

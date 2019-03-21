@@ -57,9 +57,9 @@ module Compute
       @instance = services.compute.find_server(params[:id])
       hypervisor = @instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
       if hypervisor == 'nova-compute-ironic'
-        @console = services.compute.shellinabox_console(params[:id])
+        @console = services.compute.remote_console(params[:id], "serial", "shellinabox")
       else
-        @console = services.compute.vnc_console(params[:id])
+        @console = services.compute.remote_console(params[:id])
       end
       respond_to do |format|
         format.html { render action: :console, layout: 'compute/console'}
@@ -78,6 +78,12 @@ module Compute
           tenant_id: @scoped_project_id, id: sg.id
         ).first
       end.values
+
+      @log = begin 
+        services.compute.console_log(params[:id])
+      rescue 
+        nil
+      end  
     end
 
     def new

@@ -14,6 +14,4 @@
 
     %pre.snippet
       %code
-        = preserve do
-          :escaped
-            #{@script}
+        #{CGI.escapeHTML(@script).gsub("&#39;", "'")}

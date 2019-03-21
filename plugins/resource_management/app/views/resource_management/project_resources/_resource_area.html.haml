@@ -1,3 +1,5 @@
+= render partial: 'message'
+
 - @view_services.sort_by { |srv| t("resource_management.#{srv.type}") }.each do |service|
   - if service.type.to_s != @area.to_s
     -# show service type if not equal to area name
@@ -12,7 +14,7 @@
       - if category != :""
         %h3= t("resource_management.#{category.to_s}")
       - resources.select { |res| res.category == category }.each do |res|
-        = render partial: 'bar', locals: { resource: res, overview: false }
+        = render partial: 'bar_row', locals: { resource: res, overview: false }
 
 - if current_user.is_allowed?('resource_management:project_resource_sync_now') and @view_services.map(&:updated_at).min < 1.minute.ago
   = render layout: 'data_age' do

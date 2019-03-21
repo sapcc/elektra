@@ -1,10 +1,10 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { Typeahead, Highlighter } from 'react-bootstrap-typeahead'
+import { useContext } from 'react'
 
-const FormBody = ({values,loadNextServers,servers},context) => {
+const FormBody = ({values,loadNextServers,servers}) => {
   const options = () => {
     if(!servers || !servers.items) return []
     return servers.items.filter(item =>
@@ -13,6 +13,8 @@ const FormBody = ({values,loadNextServers,servers},context) => {
   }
   let maxResults = (servers && servers.perPage || 100)
   if (servers && servers.hasNext) maxResults = maxResults - 1;
+
+  const context = useContext(Form.Context)
 
   return (<Modal.Body>
     <Form.Errors/>
@@ -51,10 +53,6 @@ const FormBody = ({values,loadNextServers,servers},context) => {
     </Form.ElementHorizontal>
   </Modal.Body>)
 }
-FormBody.contextTypes = {
-  onChange: PropTypes.func
-};
-
 
 export default class AttachVolumeForm extends React.Component {
   state = { show: true }

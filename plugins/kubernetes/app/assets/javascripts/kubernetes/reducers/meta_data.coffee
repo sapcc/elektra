@@ -31,6 +31,7 @@
         name: "x1.2xmemory"
       }
     ]
+    availabilityZones: []
     loaded: false
     error: null
     isFetching: false
@@ -51,6 +52,7 @@
     })
 
   receiveMetaData = (state, {metaData}) ->
+    metaData.availabilityZones.sort((a, b) => b.name.localeCompare(a.name))
     ReactHelpers.mergeObjects({},metaData,{
       isFetching: false
       error: null

@@ -15,12 +15,18 @@ module ServiceLayer
     include ComputeServices::Volume
     include ComputeServices::OsServerGroup
 
+    MICROVERSION = '2.60'
+
     def available?(_action_name_sym = nil)
       elektron.service?('compute')
     end
 
     def elektron_compute
-      @elektron_identity ||= elektron.service('compute', http_client: { read_timeout: 180 })
+      @elektron_identity ||= elektron.service(
+        'compute', 
+        http_client: { read_timeout: 180 },
+        headers: { 'X-OpenStack-Nova-API-Version' => MICROVERSION }
+      )
     end
 
     def usage(filter = {})

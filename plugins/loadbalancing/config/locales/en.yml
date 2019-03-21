@@ -2,6 +2,7 @@ en:
   loadbalancing:
     policies:
       proxy_protocol_2edF_v1_0: 'Set Proxy Protocol'
+      proxy_protocol_V2_e8f6_v1_0: 'Set Proxy Protocol V2'
       standard_tcp_a3de_v1_0: 'Use Standard Profile'
       x_forward_5b6e_v1_0: 'Set X-Forwarded Headers'
       one_connect_dd5c_v1_0: 'Enable OneConnect'

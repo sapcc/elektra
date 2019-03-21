@@ -11,6 +11,7 @@
     %ul.nav.nav-tabs
       %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
       %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}
+      %li{role: "presentation"}= link_to 'Serial Console', '#serial', aria: {controls:"serial"}, role: "tab", data: {toggle:"tab"}
       %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}
       %li{role: "presentation"}= link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
       %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
@@ -52,26 +53,28 @@
                   - project_id_and_name(@instance.tenant_id)
                 - else
                   = project_name(@instance.tenant_id)
+      
+      .tab-pane{role:"tabpanel", id:"serial"}
+        .pre-scrollable
+          %pre
+            %code= @log || ''
 
       .tab-pane{role:"tabpanel", id:"specs"}
-        - if @instance.flavor_object
+        - if @instance.flavor
           %table.table.datatable
             %tbody
               %tr
                 %th Flavor
-                %td= @instance.flavor_object.name
-              %tr
-                %th Flavor ID
-                %td= @instance.flavor_object.id
+                %td= @instance.flavor['original_name']
               %tr
                 %th RAM
-                %td= "#{@instance.flavor_object.ram}MB"
+                %td= "#{@instance.flavor['ram']}MB"
               %tr
                 %th VCPUs
-                %td= "#{@instance.flavor_object.vcpus} VCPU"
+                %td= "#{@instance.flavor['vcpus']} VCPU"
               %tr
                 %th Disk
-                %td= "#{@instance.flavor_object.disk}GB"
+                %td= "#{@instance.flavor['disk']}GB"
         - else
           No instance specifications
 
@@ -135,7 +138,7 @@
               - else
                 - attached_volumes.each do |vol|
                   %tr
-                    %td= vol.displayName || vol.name
+                    %td= vol.name
                     %td= vol.attachments.first['device']
             - else
               %tr

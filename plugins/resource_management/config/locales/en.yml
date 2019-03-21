@@ -38,6 +38,7 @@ en:
     loadbalancers: Load Balancers
     listeners: Listeners
     pools: Pools
+    pool_members: Pool Members
     healthmonitors: Health Monitors
     l7policies: L7 Policies
     share_networks: Share Networks

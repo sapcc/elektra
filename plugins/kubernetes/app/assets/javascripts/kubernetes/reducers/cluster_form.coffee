@@ -13,6 +13,8 @@
             image: ''
             name: ''
             size: ''
+            availabilityZone: ''
+            new: true
           }
         ]
         openstack: {}
@@ -75,7 +77,7 @@
     if index>=0 then nodePoolsClone[index] = nodePool else nodePoolsClone.push nodePool
     stateClone = state
     stateClone.data.spec.nodePools = nodePoolsClone
-    poolValidity = nodePool.name.length > 0 && nodePool.size >= 0 && nodePool.flavor.length > 0
+    poolValidity = nodePool.name.length > 0 && nodePool.size >= 0 && nodePool.flavor.length > 0 && nodePool.availabilityZone.length > 0
 
     ReactHelpers.mergeObjects(state, stateClone, {
       nodePoolsValid: poolValidity
@@ -84,13 +86,14 @@
     })
 
 
-  addNodePool = (state, {}) ->
+  addNodePool = (state, {defaultAZ}) ->
     # TODO: remove hardcoded flavor selection
     newPool = {
                 flavor: 'm1.small'
                 image: ''
                 name: ''
                 size: ''
+                availabilityZone: defaultAZ
                 new: true
               }
 
@@ -98,17 +101,22 @@
     nodePoolsClone.push newPool
     stateClone = state
     stateClone.data.spec.nodePools = nodePoolsClone
+    stateClone.updatePending = true
+    stateClone.isValid = false
+    stateClone.nodePoolsValid = false
     ReactHelpers.mergeObjects({}, state, stateClone)
 
 
 
   deleteNodePool = (state, {index}) ->
     # remove pool with given index
-    nodePoolsFiltered = state.data.spec.nodePools.filter((pool, i) -> parseInt(i,10) != parseInt(index, 10) )
+    deletedPool = state.data.spec.nodePools[index]
+    updateNeeded = if deletedPool.new then false else true
+    nodePoolsFiltered = state.data.spec.nodePools.filter((pool) -> pool != deletedPool )
     stateClone = state
     stateClone.data.spec.nodePools = nodePoolsFiltered
     ReactHelpers.mergeObjects({}, state, stateClone)
-    ReactHelpers.mergeObjects({}, state, {updatePending: true})
+    ReactHelpers.mergeObjects({}, state, {updatePending: updateNeeded})
 
 
 
@@ -131,7 +139,7 @@
     if data
       nodePoolsValid = true
       for nodePool in data.spec.nodePools
-        unless nodePool.name.length > 0 && nodePool.size >= 0 && nodePool.flavor.length > 0
+        unless nodePool.name.length > 0 && nodePool.size >= 0 && nodePool.flavor.length > 0 && nodePool.availabilityZone && nodePool.availabilityZone.length > 0
           nodePoolsValid = false
 
       values['isValid'] = data.name.length > 0 && nodePoolsValid && state.advancedOptionsValid
@@ -188,10 +196,20 @@
           keyPair = 'other'
 
 
+    # nodepools set default AZ
+    nodePoolsClone = []
+    if metaData.availabilityZones?
+      defaultAZName = metaData.availabilityZones[0].name
+      nodePoolsClone = state.data.spec.nodePools
+      for pool in nodePoolsClone
+        unless pool.availabilityZone && pool.availabilityZone.length > 0
+          pool.availabilityZone = defaultAZName
+
 
     stateClone = state
     stateClone.data.spec.openstack = dataMerged
     stateClone.data.spec.keyPair = keyPair
+    stateClone.data.spec.nodePools = nodePoolsClone
     ReactHelpers.mergeObjects({},state,stateClone)
 
 

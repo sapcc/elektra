@@ -344,8 +344,9 @@
     name: name
     value: value
 
-  addNodePool = () ->
+  addNodePool = (defaultAZ) ->
     type: app.ADD_NODE_POOL
+    defaultAZ: defaultAZ
 
   deleteNodePool = (index) ->
     type: app.DELETE_NODE_POOL

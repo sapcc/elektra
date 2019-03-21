@@ -38,6 +38,7 @@
   "loadbalancing:l7policy_get": "rule:context_is_network_viewer",
   "loadbalancing:l7policy_list": "rule:context_is_network_viewer",
   "loadbalancing:l7policy_create": "rule:context_is_network_editor",
+  "loadbalancing:l7policy_new_pre": "rule:context_is_network_editor",
   "loadbalancing:l7policy_update": "rule:context_is_network_editor",
   "loadbalancing:l7policy_delete": "rule:context_is_network_editor",
 

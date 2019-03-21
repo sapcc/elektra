@@ -8,8 +8,8 @@
       .alert.alert-error
         = render_errors(@instance.errors)
 
-    = f.input :old_flavor, input_html: {value: @instance.flavor_object.name, disabled: true},
-      icon_hint: @instance.flavor_object.to_s
+    = f.input :old_flavor, input_html: {value: @instance.flavor['original_name'], disabled: true},
+      icon_hint: @instance.flavor['original_name']
       
     = f.input :flavor_id, label: 'New flavor', as: :select, collection: @flavors.delete_if{|fl| fl.id==@instance.flavor["id"]}, 
       input_html: {data: { flavors: @flavors.inject({}){|hash,flavor| hash[flavor.id] = flavor.to_s; hash }}},

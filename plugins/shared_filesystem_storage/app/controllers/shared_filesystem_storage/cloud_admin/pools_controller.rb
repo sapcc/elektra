@@ -15,10 +15,12 @@ module SharedFilesystemStorage
           map[host] = service.zone
         end
 
-        # @pools = services.shared_filesystem_storage.pools.uniq(&:aggregate)
+        productive_pools = services.shared_filesystem_storage.pools(
+          share_type: 'default'
+        )
         # load pools and add availability_zone to each pool based on host using
-        # the host_az_map. 
-        @pools = services.shared_filesystem_storage.pools.map do |pool|
+        # the host_az_map.
+        @pools = productive_pools.map do |pool|
           if pool.host && !pool.host.blank?
             pool.availability_zone = host_az_map[pool.host]
           end

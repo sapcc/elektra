@@ -22,13 +22,15 @@ module Identity
       t("roles.#{role_name}", default: role_name.try(:titleize)) + " (#{role_name})"
     end
 
+    # render the wizard step for each service that implements the wizard
+    # see also _wizard_steps partial
     def wizard_step(options={},&block)
-      title = options[:title]
-      description = options[:description]
-      mandatory = options[:mandatory] || false
-      status = options[:status]
+      title                 = options[:title]
+      description           = options[:description]
+      mandatory             = options[:mandatory] || false
+      status                = options[:status]
       action_button_options = options[:action_button]
-      skip_button_options = options[:skip_button]
+      skip_button_options   = options[:skip_button]
 
       tooltip = action_button_options && action_button_options[:tooltip]
       tooltip_data = tooltip ? { toggle: 'tooltip', title: sanitize(tooltip), html: true } : {}
@@ -54,11 +56,12 @@ module Identity
       end
 
       if skip_button_options
-        label = skip_button_options[:label] || 'Do this later'
-        url = skip_button_options[:url]
+        label     = skip_button_options[:label] || 'Do this later'
+        url       = skip_button_options[:url]
         css_class = 'btn btn-default btn-xs pull-right'
+        data      = skip_button_options[:data] || {}
         if url
-          skip_button = link_to(label,url, class: css_class)
+          skip_button = link_to(label,url, class: css_class, data: data)
         else
           skip_button = link_to(label,'javascript:void(0)')
         end
@@ -71,7 +74,6 @@ module Identity
       else 'info'
       end
 
-      #byebug
       content_tag :div, class: "wizard-step bs-callout bs-callout-emphasize bs-callout-#{css_class}" do
         content_tag :div, class: 'row' do
           concat(content_tag(:div, class: 'col-md-10') do

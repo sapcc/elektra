@@ -5,7 +5,9 @@
   #graph
 
   :javascript
-    new networking.Topology("#graph",#{sanitize(@topology_graph.to_json)}, {details_url: "#{plugin('networking').router_node_details_path(@router.id)}"});                 
+    try {
+      new networking.Topology("#graph",#{sanitize(@topology_graph.to_json)}, {details_url: "#{plugin('networking').router_node_details_path(@router.id)}"});                 
+    } catch(e) {console.log('Error in Topology',e)}
 
 - if modal?
   .modal-footer

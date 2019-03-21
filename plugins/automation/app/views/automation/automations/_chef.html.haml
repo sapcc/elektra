@@ -7,7 +7,7 @@
 
   = f.input :chef_attributes, as: :hidden, input_html: { data: { chef_attributes_field_reference: true} }
 
-  - form_horizontal_json_editor("chef_attributes", "forms_chef_automation_chef_attributes_json_editor", "Attributes", "optional", "$('*[data-chef-attributes-field-reference=\"true\"]').val()", "$('*[data-chef-attributes-field-reference=\"true\"]')", @automation)
+  - form_horizontal_json_editor("chef_attributes", "forms_chef_automation_chef_attributes_json_editor", "Attributes", "optional", "$('*[data-chef-attributes-field-reference=\"true\"]').val()", t('automation.icon_hint.chef_attributes'), "$('*[data-chef-attributes-field-reference=\"true\"]')", @automation)
 
   = f.input :chef_version,
       as: :grouped_select,

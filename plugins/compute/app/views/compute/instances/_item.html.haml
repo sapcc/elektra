@@ -30,7 +30,7 @@
     %br
     = instance.availability_zone
     - hypervisor = instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
-    - if hypervisor == 'nova-compute-ironic'
+    - if hypervisor.to_s.include?('nova-compute-ironic')
       %span.badge
         %smal.text-lowercase Bare Metal
 
@@ -48,8 +48,7 @@
   %td
     = instance.metadata.image_name || instance.image_object.try(:name) || '-'
     %br
-    = instance.flavor_object.try(:name) || '-'
-  -# %td= instance.flavor_object.name if instance.flavor_object
+    = instance.flavor['original_name'] || '-'
 
   %td= instance.power_state_string
   %td
