@@ -253,14 +253,21 @@ export default class EditModal extends React.Component {
         case 403:
           if (error.max_acceptable_quota) {
             const limit = resUnitByName[error.resource_name].format(error.max_acceptable_quota);
-            const msg = `Raising beyond ${limit} requires approval`;
-            input.checkResult = { requestRequired: msg };
+            if (this.props.isForeignScope) {
+              input.checkResult = { unacceptable: `Raising beyond ${limit} not allowed` };
+            } else {
+              input.checkResult = { requestRequired: `Raising beyond ${limit} requires approval` };
+            }
           } else {
-            input.checkResult = { requestRequired: `Raising quotas requires approval` };
+            if (this.props.isForeignScope) {
+              input.checkResult = { unacceptable: `Raising quotas not allowed` };
+            } else {
+              input.checkResult = { requestRequired: `Raising quotas requires approval` };
+            }
           }
           break;
         case 409:
-          if (error.max_acceptable_quota != null) {
+          if (error.max_acceptable_quota != null && !this.props.isForeignScope) {
             //This case happens when we could raise project quota with
             //auto-approval, but the domain quota is too low. We don't show a
             //limit number because the concrete limit depends on the domain

@@ -8,7 +8,7 @@ import EditModal from '../containers/edit';
 import ProjectSettingsModal from '../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
-  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit } = props;
+  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId, projectID: projectId };
   const rootProps = { flavorData, scopeData };
 
@@ -18,7 +18,7 @@ const routesForProjectLevel = (props) => {
         <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} /> }/>
 
         { canEdit &&
-          <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} /> }/>
+          <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} isForeignScope={isForeignScope} /> }/>
         }
         { canEdit &&
           <Route exact path="/settings" render={(props) => <ProjectSettingsModal {...rootProps} {...props} docsUrl={docsUrl} /> }/>
@@ -29,7 +29,7 @@ const routesForProjectLevel = (props) => {
 }
 
 const routesForDomainLevel = (props) => {
-  const { clusterId, domainId, flavorData, canEdit } = props;
+  const { clusterId, domainId, flavorData, canEdit, isForeignScope } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId };
   const rootProps = { flavorData, scopeData };
 
@@ -40,7 +40,7 @@ const routesForDomainLevel = (props) => {
 
         <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} /> }/>
         { canEdit &&
-          <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} /> }/>
+          <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} isForeignScope={isForeignScope} /> }/>
         }
       </div>
     </HashRouter>

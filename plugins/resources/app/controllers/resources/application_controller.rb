@@ -79,6 +79,9 @@ module Resources
         cluster_id:  params[:cluster_id] || 'current',
       }
 
+      # when this is true, the frontend will never try to generate quota requests
+      @js_data[:is_foreign_scope] = (params[:override_project_id] || params[:override_domain_id] || (@js_data[:cluster_id] != 'current')) ? true : false
+
       # these variables (@XXX_override) trigger an infobox at the top of the
       # view informing that the user that they're viewing a foreign scope
       if @js_data[:cluster_id] == 'current'
