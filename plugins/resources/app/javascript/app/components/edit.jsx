@@ -1,6 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
+import { sendQuotaRequest } from '../actions/elektra';
 import { byLeaderAndName, t, buttonCaption } from '../utils';
 import { Scope } from '../scope';
 import { Unit } from '../unit';
@@ -312,36 +313,45 @@ export default class EditModal extends React.Component {
       }
       if (cr.requestRequired) {
         resourcesForElektra.push({ name: res.name, quota: input.value });
-      } else {
+      } else if (input.value != res.quota) {
         resourcesForLimes.push({ name: res.name, quota: input.value });
       }
     }
 
-    const elektraRequestBody = {};
-    elektraRequestBody[scope.level()] = {
-      services: [{
-        type: this.props.category.serviceType,
-        resources: resourcesForElektra,
-      }],
-    };
-    const limesRequestBody = {};
-    limesRequestBody[scope.level()] = {
-      services: [{
-        type: this.props.category.serviceType,
-        resources: resourcesForLimes,
-      }],
-    };
+    const promises = [];
+
+    if (resourcesForElektra.length > 0) {
+      const elektraRequestBody = {};
+      elektraRequestBody[scope.level()] = {
+        services: [{
+          type: this.props.category.serviceType,
+          resources: resourcesForElektra,
+        }],
+      };
+      promises.push(sendQuotaRequest(this.props.scopeData, elektraRequestBody));
+    }
+
+    if (resourcesForLimes.length > 0) {
+      const limesRequestBody = {};
+      limesRequestBody[scope.level()] = {
+        services: [{
+          type: this.props.category.serviceType,
+          resources: resourcesForLimes,
+        }],
+      };
+      promises.push(this.props.setQuota(this.props.scopeData, limesRequestBody));
+    }
 
     this.setState({
       ...this.state,
       isSubmitting: true,
       apiErrors: null,
     });
-    this.props.setQuota(this.props.scopeData, limesRequestBody, elektraRequestBody)
-      .then(() => {
-        this.props.fetchData(this.props.scopeData); // update main view to show new quota values
-        this.close();
-      }).catch(response => this.handleAPIErrors(response.errors));
+    Promise.all(promises).then(() => {
+      // update main view to show new quota values
+      this.props.fetchData(this.props.scopeData);
+      this.close();
+    }).catch(response => this.handleAPIErrors(response.errors));
   };
 
   //This gets called when a PUT request to Limes or Elektra fails.

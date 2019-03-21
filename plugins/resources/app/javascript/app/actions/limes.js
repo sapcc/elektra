@@ -162,13 +162,11 @@ export const setProjectHasBursting = ({domainID, projectID, hasBursting}) => fun
 ////////////////////////////////////////////////////////////////////////////////
 // edit quota
 
-export const setQuota = (scopeData, limesRequestBody, elektraRequestBody) => function(dispatch) {
+export const setQuota = (scopeData, requestBody) => function(dispatch) {
   const scope = new Scope(scopeData);
 
-  //TODO: send elektraRequestBody if required
-  //TODO: only send limesRequestBody if required
   return new Promise((resolve, reject) =>
-    ajaxHelper.put(scope.urlPath(), limesRequestBody)
+    ajaxHelper.put(scope.urlPath(), requestBody)
       .then(resolve)
       .catch(error => reject({ errors: limesErrorMessage(error) }))
   );
