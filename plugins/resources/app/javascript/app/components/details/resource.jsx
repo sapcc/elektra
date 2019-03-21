@@ -72,7 +72,6 @@ export default class DetailsResource extends React.Component {
   }
 
   render() {
-    console.log(this.props);
     const { name: scopeName, id: scopeID } = this.props.metadata;
 
     const { quota, projects_quota: projectsQuota, usage, burst_usage: burstUsage, unit: unitName } = this.props.resource;

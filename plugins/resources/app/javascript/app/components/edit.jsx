@@ -176,6 +176,8 @@ export default class EditModal extends React.Component {
       const baseRes = this.props.category.resources.find(res => res.name == baseResName);
       const baseInput = newState.inputs[baseResName];
 
+      const previousValue = newState.inputs[res.name].value;
+
       //do not auto-derive values while the base resource has an input error
       if (baseInput.error) {
         continue;
@@ -186,7 +188,7 @@ export default class EditModal extends React.Component {
         value: value,
         text: (new Unit(res.unit)).format(value, { ascii: true }),
         isFollowing: true,
-        isFlashing: true,
+        isFlashing: value != previousValue,
       };
     }
 
