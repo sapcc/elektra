@@ -5,7 +5,11 @@ import { Scope } from '../scope';
 // the global `ajaxHelper` is set up in init.js to talk to the Limes API, so we
 // need a separate AJAX helper for talking to Elektra
 const ajaxHelper = pluginAjaxHelper('resources', {
-  headers: {'X-Requested-With': 'XMLHttpRequest'},
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    //TODO FIXME: not sure why this is necessary, pluginAjaxHelper() should insert it automagically
+    'X-CSRF-Token': [...document.querySelectorAll('meta')].find(n => n.name.toLowerCase() == 'csrf-token').content,
+  },
 });
 
 const elektraErrorMessage = (error) =>
