@@ -41,5 +41,8 @@
   "resource_management:project_resource_reduce_quota": "rule:context_is_project_resource_admin",
   "resource_management:project_resource_confirm_reduce_quota": "rule:context_is_project_resource_admin",
 
-  "resource_management:automation_dump_data": "rule:context_is_cloud_resource_admin"
+  "resource_management:automation_dump_data": "rule:context_is_cloud_resource_admin",
+
+  "comment by stefan regarding the line below": "do not delete this; it's apparently used by other controllers because f*#k isolation",
+  "access_to_project": "not project_id:nil and (role:admin or role:member or role:resource_viewer)"
 }
