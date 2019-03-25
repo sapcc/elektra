@@ -135,6 +135,10 @@ module ServiceLayer
     ############################################################################
 
     def quota_data(domain_id,project_id,options=[])
+      # TODO: When moving this into plugins/resources/, refactor as follows.
+      #
+      # 1. Use the Elektra service user to make the request.
+      # 2. Remove the policy check for "access_to_project" from all callsites.
       return [] if options.empty?
 
       project = find_project(
