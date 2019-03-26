@@ -39,7 +39,8 @@
       as:                 :select,
       collection:         @security_groups.collect{|sg| [sg.name,sg.id]},
       selected:           (@os_interface.security_groups || []).collect{|sg| sg},
-      required:           false}
+      required:           false,
+      icon_hint:          "Please note that by default no security groups are selected. It is possible to create the new interface without security group. In this case no security rules will be enforced for this particular interface."}
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
