@@ -103,6 +103,11 @@ class DashboardController < ::ScopeController
       options[:description] = exception.message ||
                               'You have made too many requests to identity. Please try again later.'
       render_exception_page(exception, options.merge(sentry: true))
+    when 501 # Not implemented
+      options[:title] = 'Not Implemented'
+      options[:description] = exception.message ||
+                              'The requested functionality is not supported.'
+      render_exception_page(exception, options.merge(sentry: true))
     end
   end
 
