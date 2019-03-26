@@ -1,10 +1,12 @@
 import { Scope } from '../scope';
+import { Unit, valueWithUnit } from '../unit';
 import { t } from '../utils';
 
 const ResourceEditor = (props) => {
   const { text: editQuotaText, value: newQuota, error: editError, isFlashing, isFollowing, checkResult: cr } = props.edit;
   const { name: resourceName, unit: unitName, quota: oldQuota, scales_with: scalesWith } = props.resource;
   const scope = new Scope(props.scopeData);
+  const unit = new Unit(unitName);
 
   let errorMessage = scope.formatInputError(editError, unitName);
   let message = undefined;
@@ -25,7 +27,7 @@ const ResourceEditor = (props) => {
       }
     }
   } else if (isFollowing) {
-    message = <div className='col-md-4'>Adds {scalesWith.factor} per extra {t(scalesWith.resource_name+'_single')}</div>;
+    message = <div className='col-md-4'>Adds {valueWithUnit(scalesWith.factor, unit)} per extra {t(scalesWith.resource_name+'_single')}</div>;
   } else if (scalesWith) {
     message = <div className='col-md-4'><a href="#" onClick={(e) => { e.preventDefault(); props.handleResetFollower(resourceName); }}>Reset</a></div>;
   }

@@ -5,14 +5,15 @@ const perFlavorRx = /^instances_(.+)$/;
 // Translates API-level strings into user-readable UI strings,
 // e.g. "volumev2" -> "Block Storage".
 export const t = (str) => {
+  const translated = STRINGS[str];
+  if (translated) {
+    return translated;
+  }
+
   //for baremetal flavor resources like "instances_zh2vic1.medium",
   //return the flavor name, e.g. "zh2vic1.medium"
   const match = perFlavorRx.exec(str);
-  if (match) {
-    return match[1];
-  }
-
-  return STRINGS[str] || str;
+  return match ? match[1] : str;
 }
 
 // This can be used as a sorting predicate:
