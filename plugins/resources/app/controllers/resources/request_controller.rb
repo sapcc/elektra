@@ -51,13 +51,69 @@ module Resources
           render json: { errors: inquiry.errors.full_messages.join("\n") }
           return
         end
+
       end
 
       head :no_content
     end
 
     def domain
-      # TODO
+      cloud_admin_domain = cloud_admin.identity.domains(
+          name: Rails.configuration.cloud_admin_domain
+      ).first
+      cloud_admin_domain_id =  cloud_admin_domain.blank? ? Rails.configuration.cloud_admin_domain : cloud_admin_domain.id
+
+      limes_data = services.resources.get_domain(@scoped_domain_id)
+      foreach_resource_in(params['domain'] || {}, limes_data) do |srv, res, new_quota|
+
+        srv_type = srv['type']
+        area     = srv['area'] || srv_type
+
+        res_name  = res['name']
+        old_quota = res['quota']
+        data_type = Core::DataType.from_unit_name(res['unit'] || '')
+
+        base_url = plugin('resource_management').cloud_admin_area_path(
+          area:       area,
+          domain_id:  Rails.configuration.cloud_admin_domain,
+          project_id: Rails.configuration.cloud_admin_project,
+        )
+        overlay_url = plugin('resource_management').cloud_admin_review_request_path(
+          domain_id:  Rails.configuration.cloud_admin_domain,
+          project_id: Rails.configuration.cloud_admin_project,
+        )
+
+        inquiry = services.inquiry.create_inquiry(
+          'domain_quota',
+          "domain #{@scoped_domain_name}: add #{data_type.format(new_quota - old_quota)} #{srv_type}/#{res_name}",
+          current_user,
+          {
+            service: srv_type,
+            resource: res_name,
+            desired_quota: new_quota,
+          },
+          cloud_admin.identity.list_cloud_resource_admins,
+          {
+            "approved": {
+              "name": "Approve",
+              "action": "#{base_url}?overlay=#{overlay_url}",
+            },
+          },
+          nil, #requester domain id
+          {
+              domain_name: @scoped_domain_name,
+              region: current_region,
+          },
+          cloud_admin_domain_id, #approver domain id
+        )
+        if inquiry.errors?
+          render json: { errors: inquiry.errors.full_messages.join("\n") }
+          return
+        end
+
+      end
+
+      head :no_content
     end
 
     private
@@ -86,7 +142,7 @@ module Resources
         project_id: @scoped_project_id,
         domain_id:  @scoped_domain_id,
         cluster_id: 'current',
-      }
+      }.reject { |k,v| v.nil? }
       scope = @scoped_project_id ? 'project' : 'domain'
       enforce_permissions("::#{scope}:edit", { selected: auth_params })
     end

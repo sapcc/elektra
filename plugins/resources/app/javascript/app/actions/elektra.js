@@ -1,10 +1,12 @@
 import { pluginAjaxHelper } from 'ajax_helper';
 
-import { Scope } from '../scope';
+import { Scope, getBaseURL } from '../scope';
 
 // the global `ajaxHelper` is set up in init.js to talk to the Limes API, so we
 // need a separate AJAX helper for talking to Elektra
 const ajaxHelper = pluginAjaxHelper('resources', {
+  //TODO FIXME: pluginAjaxHelper() does not recognize domain scope correctly
+  baseURL: getBaseURL(),
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
     //TODO FIXME: not sure why this is necessary, pluginAjaxHelper() should insert it automagically

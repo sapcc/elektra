@@ -12,6 +12,10 @@ import ProjectResource from './components/project/resource';
 //
 const urlBaseRx = new RegExp(".*?\/resources\/");
 
+export const getBaseURL = () => {
+  return urlBaseRx.exec(window.location.pathname)[0];
+};
+
 /*
  * Most of the actions, reducers and components get reused on multiple levels
  * (with the levels being one of "cluster", "domain" or "project"). Therefore,
@@ -120,7 +124,7 @@ export class Scope {
 
   //Generates an URL to the main view for this scope.
   elektraUrlPath() {
-    const base = urlBaseRx.exec(window.location.pathname)[0];
+    const base = getBaseURL();
     if (this.projectID) return `${base}project/${this.clusterID}/${this.domainID}/${this.projectID}`;
     if (this.domainID)  return  `${base}domain/${this.clusterID}/${this.domainID}`;
                         return `${base}cluster/${this.clusterID}`;

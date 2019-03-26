@@ -13,6 +13,11 @@ module ServiceLayer
       )
     end
 
+    def get_domain(domain_id)
+      resp = elektron_resources.get("domains/#{domain_id}")
+      return resp.body['domain'] || { services: [] }
+    end
+
     def get_project(domain_id, project_id)
       resp = elektron_resources.get("domains/#{domain_id}/projects/#{project_id}")
       return resp.body['project'] || { services: [] }
