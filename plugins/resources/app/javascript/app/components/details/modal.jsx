@@ -1,10 +1,10 @@
 import { Modal, Button } from 'react-bootstrap';
+import { DataTable } from 'lib/components/datatable';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
 import { t } from '../../utils';
 import { Scope } from '../../scope';
 import { Unit } from '../../unit';
-import DataTable from '../../components/details/datatable';
 import DetailsClusters from '../../components/details/clusters';
 import DetailsResource from '../../components/details/resource';
 import ReloadIndicator from '../../components/reload_indicator';

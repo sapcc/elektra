@@ -128,24 +128,6 @@ div.edit-quota-input {
   margin-right: 8px;
 }
 
-/* TODO move this into the global CSS when <DataTable/> moves into top-level app/javascript/lib/ */
-.elektraDataTable {
-  th.sortable {
-    cursor: pointer;
-
-    i.sortable-hint {
-      display: none;
-      opacity: 0.5;
-    }
-
-    &:active, &:hover, &:focus {
-      i.sortable-hint {
-        display: inline-block;
-      }
-    }
-  }
-}
-
 .block-on-reload {
   position: relative;
 

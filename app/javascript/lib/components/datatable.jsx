@@ -30,14 +30,14 @@
 //
 //Each child element should render exactly one <tr> each with the same
 //column layout as defined in props.columns of the DataTable.
-//
-//TODO: move this into app/javascript/lib/ in the repo root
 
 const sorters = {
   text:    (a, b) => a[1].localeCompare(b[1]),
   numeric: (a, b) => a[1] - b[1],
 };
 
+//TODO: replace <Pagination/> in ./pagination.js with this (while retaining the
+//original API of <Pagination/> -- this one is much nicer)
 const DataTablePaginationControls = ({ curr, count, set }) => {
   const btns  = [];
   const spread = 3; // how many absolute pages are shown around the current one
@@ -99,7 +99,7 @@ const DataTablePaginationControls = ({ curr, count, set }) => {
   return <ul className='pagination'>{btns}</ul>;
 };
 
-export default class DataTable extends React.Component {
+export class DataTable extends React.Component {
   state = {
     sortColumnIdx: null,  //index into this.props.columns
     sortDirection: null,  //'asc' or 'desc'

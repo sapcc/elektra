@@ -1,0 +1,16 @@
+.elektraDataTable {
+  th.sortable {
+    cursor: pointer;
+
+    i.sortable-hint {
+      display: none;
+      opacity: 0.5;
+    }
+
+    &:active, &:hover, &:focus {
+      i.sortable-hint {
+        display: inline-block;
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import DataTable from '../../components/details/datatable';
+import { DataTable } from 'lib/components/datatable';
 
 import { Scope } from '../../scope';
 import { Unit, valueWithUnit } from '../../unit';
