@@ -25,7 +25,7 @@
     .form-group.string.required.project_masterdata_cost_object_name
       %label.control-label.string.required
         %abbr{title:"", "data-original-title": "required"} *
-        Name
+        Name/Number
         = render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }
       %input.form-control.string.required{readonly: true, required:"required", "aria-required":"true",value: co_name, name:"project_masterdata[cost_object_name]", id:"project_masterdata_cost_object_name", type:"text"}
 

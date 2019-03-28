@@ -54,7 +54,7 @@
                 disabled: co_readonly
           .col-md-3
             = f.input :cost_object_name, 
-                label: raw("Name #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
+                label: raw("Name/Number #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
                 required:true, 
                 readonly: co_readonly
   %label.control-label Responsibility

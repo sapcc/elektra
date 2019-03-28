@@ -27,7 +27,7 @@
             required:true
       .col-sm-6
         = f.input :cost_object_name,
-          label: raw("Name #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
+          label: raw("Name/Number #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
           required:true
 %label.control-label Responsibility
 .panel.panel-default
