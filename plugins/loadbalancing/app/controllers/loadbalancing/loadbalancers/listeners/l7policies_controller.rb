@@ -12,7 +12,11 @@ module Loadbalancing
         authorization_required except: [:update_item]
 
         def index
-          @l7policies = paginatable(per_page: 20) do |pagination_options|
+          per_page = params[:per_page] || 9999
+          per_page = per_page.to_i
+
+          @l7policies = []
+          @l7policies = paginatable(per_page: per_page) do |pagination_options|
             services.loadbalancing.l7policies({loadbalancer_id: params[:loadbalancer_id], listener_id: params[:listener_id],
                                                sort_key: 'position', sort_dir: 'asc'}.merge(pagination_options))
           end

@@ -12,10 +12,15 @@ module Loadbalancing
       authorization_required except: %i[show_all show_details]
 
       def index
-        # get all pools for project and calc. quota
-        @pools = services.loadbalancing.pools(
-          loadbalancer_id: @loadbalancer.id
-        )
+        per_page = params[:per_page] || ENTRIES_PER_PAGE
+        per_page = per_page.to_i
+        @pools = []
+        loadbalancer_id = params[:loadbalancer_id]
+
+        @pools = paginatable(per_page: per_page) do |pagination_options|
+          services.loadbalancing.pools({loadbalancer_id: loadbalancer_id, sort_key: 'id', fields: 'id'}.merge(pagination_options))
+        end
+
         @quota_data = []
         return unless current_user.is_allowed?('access_to_project')
 
@@ -29,6 +34,15 @@ module Loadbalancing
             }
           ]
         )
+        # this is relevant in case an ajax paginate call is made.
+        # in this case we don't render the layout, only the list!
+        if request.xhr?
+          render partial: 'list', locals: { loadbalancer: @loadbalancer, pools: @pools }
+        else
+          # comon case, render index page with layout
+          render action: :index
+        end
+
       end
 
       def show_all

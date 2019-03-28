@@ -47,9 +47,9 @@
         .toolbar
           %h4
             Servers
-            
-        = form_tag plugin('loadbalancing').add_loadbalancer_pool_members_path(pool_id: @pool.id, loadbalancer_id: @loadbalancer.id), method: :post, remote: true do
-          %table.table.table-condensed#ips
+
+        = form_tag plugin('loadbalancing').add_loadbalancer_pool_members_path(pool_id: @pool.id, loadbalancer_id: @loadbalancer.id), method: :post, remote: true, id: 'servers' do
+          %table.table.condensed#ips
             %thead
               %tr
                 %th
@@ -61,32 +61,12 @@
                 %tr{data:{empty:true}}
                   %td{colspa: 3} No Servers available
               - else
-                - @ips.each do | ip |
-                  = render partial: 'loadbalancing/loadbalancers/pools/members/ip_item', locals: {ip: ip}
-
+                = render partial: 'loadbalancing/loadbalancers/pools/members/list', locals: {ips: @ips}
           %div.buttons{class: 'modal-footer'}
             - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
               = link_to 'Add External', plugin('loadbalancing').add_external_loadbalancer_pool_members_path(pool_id: @pool.id, loadbalancer_id: @loadbalancer.id ), class: 'btn btn-default', remote: true
               = button_tag "Add", { class: 'btn btn-primary pull-right submit', data: { disable_with: "Please wait..." } }
-
       .col-md-1
 
-  -#
-    .col-sm-4
-      .bs-callout.bs-callout-primary.small
-        %h3= 'Address'
-        %p=  'Members IP address'
-        %h3= 'Protocol Port'
-        %p=  'The network port used to access the member'
-        %h4= 'Weight'
-        %p
-          A weight greater than 1 will switch the Pool Load Balancing Algorithm on the F5 device to the corresponding weighted Algorithm.
-          'Round Robin' will become 'Ratio (member)' and 'Least Connection' will be changed to 'Ratio Least Connections (member)' on the device.
-          %br
-            ADVICE: The name of the Algorithm will not change on Openstack side, so neither in UI nor when the pool is shown via Cli.
-          %br
-            Ratio (member): The number of connections that each machine receives over time is proportionate to a ratio weight you define for each machine within the pool.
-          %br
-            Ratio Least Connections (member): The system selects the pool member according to the ratio of the number of connections each pool member has active.
 .row
   %br

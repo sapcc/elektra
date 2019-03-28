@@ -6,9 +6,15 @@ module Loadbalancing
     authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip, :update_item, :get_item]
 
     def index
-      @loadbalancers = services.loadbalancing.loadbalancers(
-        tenant_id: @scoped_project_id
-      )
+
+      per_page = params[:per_page] || ENTRIES_PER_PAGE
+      per_page = per_page.to_i
+      @loadbalancers = []
+
+      @loadbalancers = paginatable(per_page: per_page) do |pagination_options|
+        services.loadbalancing.loadbalancers({tenant_id: @scoped_project_id, sort_key: 'id', fields: 'id'}.merge(pagination_options))
+      end
+
       @fips = services.networking.project_floating_ips(@scoped_project_id)
 
       @subnets = {}
@@ -28,6 +34,7 @@ module Loadbalancing
       @quota_data = []
 
       return unless current_user.is_allowed?('access_to_project')
+      usage = @loadbalancers.length >= per_page ? nil : @loadbalancers.length
       @quota_data = services.resource_management.quota_data(
         current_user.domain_id || current_user.project_domain_id,
         current_user.project_id,
@@ -35,10 +42,20 @@ module Loadbalancing
           {
             service_type: :network,
             resource_name: :loadbalancers,
-            usage: @loadbalancers.length
+            usage: usage
           }
         ]
       )
+
+      # this is relevant in case an ajax paginate call is made.
+      # in this case we don't render the layout, only the list!
+      if request.xhr?
+        render partial: 'list', locals: { loadbalancers: @loadbalancers }
+      else
+        # comon case, render index page with layout
+        render action: :index
+      end
+
     end
 
     def show

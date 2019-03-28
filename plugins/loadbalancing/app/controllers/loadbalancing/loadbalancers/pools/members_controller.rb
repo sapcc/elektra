@@ -133,7 +133,16 @@ module Loadbalancing
         def load_members
           @members = services.loadbalancing.pool_members(@pool.id) if @pool
           @ips = []
-          @servers = services.compute.servers
+
+          per_page = params[:per_page] || 9999
+          per_page = per_page.to_i
+
+          @servers = paginatable(per_page: per_page) do |pagination_options|
+            services.compute.servers(pagination_options)
+          end
+
+
+#          @servers = services.compute.servers
           @servers.each do |server|
             server.addresses.each do |network_name, ip_values|
               if ip_values and ip_values.length>0
@@ -142,6 +151,7 @@ module Loadbalancing
                     ip = Ip.new nil
                     ip.ip = value['addr']
                     ip.name = server.name
+                    ip.id = server.id
                     @ips << ip
                   end
                 end

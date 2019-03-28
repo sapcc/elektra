@@ -2,6 +2,6 @@
 
 module Loadbalancing
   class Ip < Core::ServiceLayer::Model
-    attr_accessor :selected, :ip, :name
+    attr_accessor :selected, :ip, :name, :id
   end
 end

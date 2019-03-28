@@ -1,11 +1,10 @@
-- data = {search_name: "#{loadbalancer.id} #{loadbalancer.name} #{loadbalancer.description} #{loadbalancer.floating_ip.floating_ip_address if loadbalancer.floating_ip}", marker_id: loadbalancer.id}
+- data = {search_name: "#{loadbalancer.id} #{loadbalancer.name} #{loadbalancer.description} #{loadbalancer.vip_address} #{loadbalancer.floating_ip.floating_ip_address if loadbalancer.floating_ip}", marker_id: loadbalancer.id}
 - if loadbalancer.in_transition?
   - data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_path(id:loadbalancer.id)
   - data[:update_interval]=60
   - data[:update_immediately]='true'
 
-%tr{id: "loadbalancer_#{loadbalancer.id}", data: data }
-
+%tr{id: "#{loadbalancer.id}", data: data}
   %td
     - if loadbalancer.in_transition?
       %span{class: 'spinner'}
