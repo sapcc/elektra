@@ -11,9 +11,9 @@ module MasterdataCockpit
     #    "name": "myIO",
     #    "projects_can_inherit": false
     #}
-    
+
     validates_presence_of :cost_object_type, :cost_object_name
-    
+
     validates_presence_of :responsible_controller_id, unless: lambda { self.responsible_controller_email.blank? }, message: "can't be blank if controller email is defined"
     validates_presence_of :responsible_controller_email, unless: lambda { self.responsible_controller_id.blank? }, message: "can't be blank if controller is defined"
 
@@ -27,6 +27,8 @@ module MasterdataCockpit
       allow_nil: true,
       allow_blank: true
 
+    validate :validate_inheritance
+
     def cost_object_name
       if read('cost_object_name')
         read('cost_object_name')
@@ -36,7 +38,7 @@ module MasterdataCockpit
         nil
       end
     end
- 
+
     def cost_object_type
       if read('cost_object_type')
         read('cost_object_type')
@@ -65,7 +67,7 @@ module MasterdataCockpit
         'responsible_controller_id'     => read('responsible_controller_id'),
         'responsible_controller_email'  => read('responsible_controller_email'),
       }.delete_if { |_k, v| v.blank? }
-      
+
       if read('projects_can_inherit') == "true"
         params['cost_object'] = {'cost_object_projects_can_inherit' => true}
       else
@@ -75,8 +77,21 @@ module MasterdataCockpit
           'projects_can_inherit' => read('cost_object_projects_can_inherit') == "true"
         }
       end
-      
+
       params
+    end
+
+    def validate_inheritance
+      return unless cost_object_projects_can_inherit
+
+      # respect the configured domain blacklist (this blacklist includes
+      # domains with a diverse set of customers and project cost objects, where
+      # we definitely don't want cost objects to be inherited to projects)
+      @@blacklisted_domains ||= ENV.fetch('DOMAIN_MASTERDATA_INHERITANCE_BLACKLIST', '').split(',')
+      domain_name = read('domain_name')
+      if @@blacklisted_domains.include?(domain_name)
+        errors.add(:cost_object_projects_can_inherit, "is not allowed for domain #{domain_name}")
+      end
     end
 
   end
