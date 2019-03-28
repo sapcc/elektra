@@ -56,7 +56,7 @@ module Compute
     def console
       @instance = services.compute.find_server(params[:id])
       hypervisor = @instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
-      if hypervisor == 'nova-compute-ironic'
+      if hypervisor.to_s.include?('nova-compute-ironic')
         @console = services.compute.remote_console(params[:id], "serial", "shellinabox")
       else
         @console = services.compute.remote_console(params[:id])
