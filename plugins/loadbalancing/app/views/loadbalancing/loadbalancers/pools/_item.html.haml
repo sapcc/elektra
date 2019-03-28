@@ -1,4 +1,6 @@
-%tr{id: "loadbalancer_pool_#{pool.id}"}
+- data = {search_name: "#{pool.id} #{pool.name} #{pool.description} #{pool.protocol}", marker_id: pool.id}
+
+%tr{id: "#{pool.id}", data: data }
   %td
     = link_to name_or_id(pool.name, pool.id,15), plugin('loadbalancing').show_details_loadbalancer_pool_path(id: pool.id, loadbalancer_id: loadbalancer.id)
   %td= description(pool.description,25)

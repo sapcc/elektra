@@ -1,9 +1,9 @@
-- data = {}
+- data = {search_name: "#{listener.id} #{listener.name} #{listener.description} #{listener.protocol_port} #{listener.protocol}", marker_id: listener.id}
 - if listener.in_transition?
   - data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_listener_path(loadbalancer_id:loadbalancer.id, id: listener.id)
   - data[:update_interval]=15
 
-%tr{id: "loadbalancer_listener_#{listener.id}", data: data }
+%tr{id: "#{listener.id}", data: data }
   %td
     - if listener.in_transition?
       %span{class: 'spinner'}

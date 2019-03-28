@@ -1,4 +1,7 @@
 module Loadbalancing
+
+  ENTRIES_PER_PAGE = 20
+
   module ApplicationHelper
 
     def name_or_id(name, id, length=36)

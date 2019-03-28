@@ -12,9 +12,16 @@ module Loadbalancing
       authorization_required except: [:update_item]
 
       def index
-        @listeners = services.loadbalancing.listeners(
-          loadbalancer_id: params[:loadbalancer_id]
-        )
+
+        per_page = params[:per_page] || ENTRIES_PER_PAGE
+        per_page = per_page.to_i
+        @listeners = []
+        loadbalancer_id = params[:loadbalancer_id]
+
+        @listeners = paginatable(per_page: per_page) do |pagination_options|
+          services.loadbalancing.listeners({loadbalancer_id: loadbalancer_id, sort_key: 'id', fields: 'id'}.merge(pagination_options))
+        end
+
         @quota_data = []
         return unless current_user.is_allowed?('access_to_project')
         @quota_data = services.resource_management.quota_data(
@@ -29,6 +36,16 @@ module Loadbalancing
             }
           ]
         )
+
+        # this is relevant in case an ajax paginate call is made.
+        # in this case we don't render the layout, only the list!
+        if request.xhr?
+          render partial: 'list', locals: { loadbalancer: @loadbalancer, listeners: @listeners }
+        else
+          # comon case, render index page with layout
+          render action: :index
+        end
+
       end
 
       def show
