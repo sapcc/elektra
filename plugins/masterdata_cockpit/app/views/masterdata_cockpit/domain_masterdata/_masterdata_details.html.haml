@@ -2,7 +2,7 @@
   .toolbar.toolbar-aligntop
     %h4 Masterdata
 
-    - if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
+    - if current_user.is_allowed?('masterdata_cockpit:domain_masterdatum_update')
       .main-buttons
         = link_to 'Edit', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
 
