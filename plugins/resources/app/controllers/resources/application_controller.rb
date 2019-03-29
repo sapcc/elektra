@@ -4,10 +4,6 @@ module Resources
   class ApplicationController < DashboardController
     before_action :prepare_data_for_view
 
-    def release_state
-      'beta'
-    end
-
     # Most of the machinery in this controller is there to make cross-scope
     # jumping work. For example, as a cloud resource admin, you can open the
     # view for a random domain or project (e.g. from CloudOps) by navigating to
@@ -39,8 +35,8 @@ module Resources
       @js_data[:domain_id]  = params[:override_domain_id]  || @scoped_domain_id
 
       auth_params = { selected: @js_data }
-      enforce_permissions('::project:show', auth_params)
-      @js_data[:can_edit] = current_user.is_allowed?('project:edit', auth_params)
+      enforce_permissions('::resources:project:show', auth_params)
+      @js_data[:can_edit] = current_user.is_allowed?('resources:project:edit', auth_params)
 
       render action: 'show'
     end
@@ -51,8 +47,8 @@ module Resources
       @js_data[:domain_id] = params[:override_domain_id] || @scoped_domain_id
 
       auth_params = { selected: @js_data }
-      enforce_permissions('::domain:show', auth_params)
-      @js_data[:can_edit] = current_user.is_allowed?('domain:edit', auth_params)
+      enforce_permissions('::resources:domain:show', auth_params)
+      @js_data[:can_edit] = current_user.is_allowed?('resources:domain:edit', auth_params)
 
       render action: 'show'
     end
@@ -62,8 +58,8 @@ module Resources
       @edit_role = 'cloud_resource_admin'
 
       auth_params = { selected: @js_data }
-      enforce_permissions('::cluster:show', auth_params)
-      @js_data[:can_edit] = current_user.is_allowed?('cluster:edit', auth_params)
+      enforce_permissions('::resources:cluster:show', auth_params)
+      @js_data[:can_edit] = current_user.is_allowed?('resources:cluster:edit', auth_params)
 
       render action: 'show'
     end

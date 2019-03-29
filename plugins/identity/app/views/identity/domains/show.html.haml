@@ -14,7 +14,7 @@
     - if current_user and current_user.admin?
       %h4.heading-whitespace Domain Administration
 
-      - if plugin_available?('resource_management') || plugin_available?('cost_control')
+      - if plugin_available?('resources') || plugin_available?('cost_control')
         %h5
           %i.monitoring-icon
           Resources & Masterdata
@@ -24,13 +24,9 @@
             %li
               = link_to "Masterdata", plugin('masterdata_cockpit').domain_masterdata_path
 
-          - if plugin_available?('resource_management') && current_user.is_allowed?('resource_management:cloud_admin_list')
+          - if plugin_available?('resources') && current_user.is_allowed?('resources:domain:access')
             %li
-              = link_to "Cloud Capacity and Resources", plugin('resource_management').cloud_admin_path
-
-          - if plugin_available?('resource_management') && current_user.is_allowed?('resource_management:domain_admin_list')
-            %li
-              = link_to "Domain Resources Administration", plugin('resource_management').admin_path
+              = link_to "Domain Resources Administration", plugin('resources').domain_path
 
           - if plugin_available?('reports') && current_user.is_allowed?('reports:cost_domain')
             %li
