@@ -185,7 +185,6 @@ export default class DetailsModal extends React.Component {
       metadata:     this.props.metadata,
       categoryName: this.props.categoryName,
       resource:     this.props.resource,
-      canEdit:      this.props.canEdit,
     };
 
     //NOTE: className='resources' on Modal ensures that plugin-specific CSS rules get applied
@@ -218,6 +217,7 @@ export default class DetailsModal extends React.Component {
             {(this.state.subscopes || []).map(subscopeProps =>
               <DetailsResource
                 key={subscopeProps.metadata.id} {...subscopeProps}
+                canEdit={this.props.canEdit}
                 scopeData={this.props.scopeData}
                 setQuota={this.setSubscopeQuota}
                 handleAPIErrors={this.handleAPIErrors}
