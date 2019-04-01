@@ -144,7 +144,7 @@ module Resources
         cluster_id: 'current',
       }.reject { |k,v| v.nil? }
       scope = @scoped_project_id ? 'project' : 'domain'
-      enforce_permissions("::#{scope}:edit", { selected: auth_params })
+      enforce_permissions("::resources:#{scope}:edit", { selected: auth_params })
     end
 
   end
