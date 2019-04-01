@@ -1,13 +1,13 @@
 =content_for :title do
   Maintain new masterdata for project: #{@scoped_project_name}
 
-= simple_modal_form_for @project_masterdata, submit_action: 'Create', url: plugin('masterdata_cockpit').project_masterdata_create_path(),method: :post, cancel_url: plugin('masterdata_cockpit').project_masterdata_path do |f|
+- unless current_user.is_allowed?('masterdata_cockpit:project_masterdatum_create')
+  .alert.alert-warning
+    = icon('exclamation-circle')
+    You are not allowed to maintain masterdata for this project.
+- else
   .alert.alert-info
     = render partial: "what_is_masterdata"
-  - unless current_user.is_allowed?('masterdata_cockpit:masterdata_create')
-    .alert.alert-warning
-      = icon('exclamation-circle')
-      You are not allowed to maintain masterdata for this project.
-  - else
+  = simple_modal_form_for @project_masterdata,submit_action: 'Create', url: plugin('masterdata_cockpit').project_masterdata_create_path(),method: :post, cancel_url: plugin('masterdata_cockpit').project_masterdata_path  do |f|
     = render partial: 'maintain_masterdata',  locals: {f:f}
-  = render partial: 'edit_create_js'
+    = render partial: 'edit_create_js'
