@@ -185,6 +185,7 @@ export default class DetailsModal extends React.Component {
       metadata:     this.props.metadata,
       categoryName: this.props.categoryName,
       resource:     this.props.resource,
+      canEdit:      this.props.canEdit,
     };
 
     //NOTE: className='resources' on Modal ensures that plugin-specific CSS rules get applied

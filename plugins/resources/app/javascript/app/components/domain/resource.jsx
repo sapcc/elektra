@@ -60,7 +60,7 @@ export default (props) => {
         isEditing
           ? <ResourceEditor {...editorProps} />
           : <div className='col-md-5'>
-              { props.canEdit && <Link to={`/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Show projects</Link> }
+              <Link to={`/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Show projects</Link>
             </div>
       )}
     </div>

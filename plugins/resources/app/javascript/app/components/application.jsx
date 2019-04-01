@@ -38,7 +38,7 @@ const routesForDomainLevel = (props) => {
       <div>
         <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} /> }/>
 
-        <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} /> }/>
+        <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} canEdit={canEdit} /> }/>
         { canEdit &&
           <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} isForeignScope={isForeignScope} /> }/>
         }
@@ -57,7 +57,7 @@ const routesForClusterLevel = (props) => {
       <div>
         <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} /> }/>
 
-        <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} /> }/>
+        <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} canEdit={canEdit} /> }/>
       </div>
     </HashRouter>
   </Loader>;

@@ -77,6 +77,7 @@ export default class DetailsResource extends React.Component {
     const { quota, projects_quota: projectsQuota, usage, burst_usage: burstUsage, unit: unitName } = this.props.resource;
     const unit = new Unit(unitName);
 
+    const { canEdit } = this.props;
     const { editText, isSubmitting } = this.state;
     const isEditing = editText != null;
 
@@ -120,8 +121,8 @@ export default class DetailsResource extends React.Component {
               </React.Fragment>
             ) : (
               <React.Fragment>
-                <a key='edit' onClick={() => this.startEditing()} className='btn btn-default btn-sm'>Edit</a>
-                {' '}
+                {canEdit && <a key='edit' onClick={() => this.startEditing()} className='btn btn-default btn-sm'>Edit</a>}
+                {canEdit && ' '}
                 <a key='jump' href={scope.elektraUrlPath()} target='_blank' className='btn btn-default btn-sm' title={`Go to Resource Management for this ${scope.level()} in a new tab`}>Jump</a>
               </React.Fragment>
             )
