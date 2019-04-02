@@ -100,9 +100,7 @@ describe('Unit', () => {
 
     it('parses byte values correctly', () => {
       let cases = [
-        [ "0",        0 ],
         [ "0 B",      0 ],
-        [ "00042",    42 ],
         [ "42 B",     42 ],
         [ "1000 B",   1000 ],
         [ "1 KiB",    1024 ],
@@ -123,7 +121,6 @@ describe('Unit', () => {
 
     it('parses mega-byte values correctly', () => {
       let cases = [
-        [ "0",          0 ],
         [ "0 MiB",      0 ],
         [ "1048576 B",  1 ],
         [ "1.21 GiB",   1239 ],
@@ -139,6 +136,14 @@ describe('Unit', () => {
       expect(u.parse('16 mk')).toEqual(errSyntax);
       expect(u.parse('8 k')).toEqual(errFractional);
       expect(u.parse('4 b')).toEqual(errFractional);
+    })
+
+    it('rejects byte values without explicit unit', () => {
+      const units = [ new Unit("B"), new Unit("MiB") ];
+      for (const u of units) {
+        expect(u.parse("0")).toEqual(errSyntax);
+        expect(u.parse("42")).toEqual(errSyntax);
+      }
     })
 
   })

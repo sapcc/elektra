@@ -85,7 +85,10 @@ export class Unit {
   //omitted, and unit prefixes may be replaced with their `synonyms`. Case is
   //ignored when matching prefix and unit names. For example:
   //
-  //    Unit('MiB').parse('10')          => 10
+  //    Unit('').parse('10')             => 10
+  //    Unit('').parse('10 things')      => { error: 'syntax' }
+  //    Unit('').parse('10.2')           => { error: 'fractional-value' }
+  //
   //    Unit('MiB').parse('10 MiB')      => 10
   //    Unit('MiB').parse('10 gib')      => 10240
   //    Unit('MiB').parse('10g')         => 10240
@@ -96,6 +99,11 @@ export class Unit {
     //check overall syntax "<value> [<unit>]"
     const baseMatch = (/^\s*([0-9.,]+)\s*([a-zA-Z]*)\s*$/).exec(input);
     if (baseMatch === null) {
+      return { error: 'syntax' };
+    }
+
+    //for values with unit, an explicit unit must be given
+    if (this.name != '' && baseMatch[2] == '') {
       return { error: 'syntax' };
     }
 
