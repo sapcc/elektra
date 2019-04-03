@@ -57,7 +57,7 @@ export default (props) => {
       <div className={props.wide ? 'col-md-9' : 'col-md-5'}>
         <ResourceBar
           capacity={capacity} {...barProps} unitName={unitName}
-          isDanger={domainsQuota > capacity} scopeData={props.scopeData} />
+          isDanger={barProps.fill > capacity} scopeData={props.scopeData} />
       </div>
       {!props.wide && (
         <div className='col-md-5'>
