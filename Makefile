@@ -12,7 +12,7 @@ endif
 .PHONY: build CHANGELOG.md
 
 build:
-	docker build $(BUILD_ARGS) -t $(IMAGE) .
+	docker build $(BUILD_ARGS) -f docker/Dockerfile -t $(IMAGE) .
 
 #
 # Creates a changelog file
