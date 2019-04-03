@@ -112,12 +112,14 @@ export class DataTable extends React.Component {
       this.setState({
         ...this.state,
         sortDirection: this.state.sortDirection == 'asc' ? 'desc' : 'asc',
+        currentPage: 1, //go back to the first page
       });
     } else {
       this.setState({
         ...this.state,
         sortColumnIdx: columnIdx,
         sortDirection: 'asc',
+        currentPage: 1, //go back to the first page
       });
     }
   }
