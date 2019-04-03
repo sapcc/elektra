@@ -1,6 +1,6 @@
 FROM ruby:2.4-alpine3.7 AS elektra
 
-ENV OVERLAY=sucks2
+ENV OVERLAY=sucks3
 
 RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
 
