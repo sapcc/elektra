@@ -158,7 +158,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :resource_management, 'Capacity, Masterdata & Metrics', nil,
       html: {class: "fancy-nav-header", 'data-icon': "monitoring-icon" },
-      if: -> {services.available?(:resources) or services.available?(:masterdata_cockpit)} do |monitoring_nav|
+      if: -> {services.available?(:resources) or services.available?(:masterdata_cockpit) or plugin_available?(:metrics) or plugin_available?(:audit) or plugin_available?(:reports)} do |monitoring_nav|
       monitoring_nav.item :resources, 'Resource Management ', -> {plugin('resources').project_path}, if: -> { services.available?(:resources) }, highlights_on: Proc.new { params[:controller][/resources\/.*/] }
       monitoring_nav.item :masterdata_cockpit,  'Masterdata',  -> {plugin('masterdata_cockpit').project_masterdata_path}, if: -> { services.available?(:masterdata_cockpit) }, highlights_on: Proc.new { params[:controller][/masterdata_cockpit\/.*/] }
       monitoring_nav.item :metrics, 'Metrics', -> { plugin('metrics').index_path }, if: -> { plugin_available?(:metrics)}, highlights_on: Proc.new { params[:controller][/metrics\/.*/] }

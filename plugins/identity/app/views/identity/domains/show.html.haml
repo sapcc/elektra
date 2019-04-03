@@ -14,7 +14,7 @@
     - if current_user and current_user.admin?
       %h4.heading-whitespace Domain Administration
 
-      - if plugin_available?('resources') || plugin_available?('cost_control')
+      - if plugin_available?('resources') || plugin_available?('reports') || plugin_available?('masterdata_cockpit')
         %h5
           %i.monitoring-icon
           Resources & Masterdata
