@@ -1,0 +1,30 @@
+= content_for :main_toolbar do
+  Manage
+  = @scope.titleize
+  Resources
+
+- if @project_override || @domain_override || @cluster_override
+  .bs-callout.bs-callout-info.bs-callout-emphasize
+    This view is for the
+    = succeed '.' do
+      - if @project_override
+        %strong= "project #{@project_override.name}"
+        - if @project_override.id
+          %span.text-muted= "(#{@project_override.id})"
+        in
+      - if @domain_override
+        %strong= "domain #{@domain_override.name}"
+        - if @domain_override.id
+          %span.text-muted= "(#{@domain_override.id})"
+        - if @cluster_override
+          in
+      - if @cluster_override
+        %strong= "cluster #{@cluster_override}"
+- else
+  - unless @js_data[:can_edit]
+    .bs-callout.bs-callout-info.bs-callout-emphasize
+      This view is read-only. To edit quotas, you need the
+      %code= @edit_role
+      role.
+
+= javascript_pack_tag "resources_app", data: @js_data

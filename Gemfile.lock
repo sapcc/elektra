@@ -28,7 +28,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 164b2633780d5372104138b219e5632456bf2cb1
+  revision: 4467cbc0720dcf617855e5778c577d272ab07028
   specs:
     monsoon-openstack-auth (2.0.4)
       excon
@@ -134,6 +134,11 @@ PATH
   remote: plugins/resource_management
   specs:
     resource_management (0.0.1)
+
+PATH
+  remote: plugins/resources
+  specs:
+    resources (0.0.1)
 
 PATH
   remote: plugins/shared_filesystem_storage
@@ -614,6 +619,7 @@ DEPENDENCIES
   redcarpet
   reports!
   resource_management!
+  resources!
   responders
   rspec
   rspec-rails

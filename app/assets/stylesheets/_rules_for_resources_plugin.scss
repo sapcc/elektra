@@ -1,0 +1,12 @@
+/* The "tooltip-no-break" class can be given to tooltips to avoid line breaks
+ * in the tooltip text. */
+.tooltip-no-break > .tooltip-inner {
+  white-space: nowrap;
+  max-width: 600px;
+}
+
+/* ^ This should be in plugins/resources/app/assets/stylesheets/, but
+ * then the selector would get prefixed with .resources by application.scss.erb.
+ * That would break the rule because react-bootstrap mounts tooltips directly below
+ * <body>, outside of <div class="content resources">.
+ */

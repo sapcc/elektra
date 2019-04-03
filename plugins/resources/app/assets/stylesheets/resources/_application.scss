@@ -1,0 +1,171 @@
+/****************************************************
+  We are using SASS!
+  DO NOT USE require, require_tree, and require_self.
+  ***************************************************
+
+  Instead require further sass files by calling the "@import" directive.
+  e.g. @import "mixins";
+  FYI:
+  The core app automatically namespaces a plugin's css with the plugin name. I.e. it encapsulates a plugin's css in a class with the same name as plugin (e.g. a plugin with name "myplugin" gets surrounded with css class ".myplugin").
+  This means that in the compiled css e.g. .test { color: #f00; } becomes .myplugin .test { color: #f00; }
+  The core app also ensures that the content div surrounding the plugin views gets a css class with the name of current plugin.
+  This way we ensure that your styles take effect only inside the content of your plugin and don't accidentally overwrite styles defined elsewhere (either in the core or in another plugin).
+
+  ***************************************************
+  IMPORTANT
+  ---------------------------------------------------
+  1) The namespacing happens automatically. There is no special action required from the plugin author. The only thing you need to pay attention to is that you write styles only for elements in the context of your plugin's views.
+
+  2) Make sure all your scss files are partials (i.e. the file name starts with an underscore, e.g. "_application.scss"). Otherwise the base imports in the main stylesheet won't be available in your engine stylesheets!
+  ***************************************************
+
+*/
+
+.progress {
+  position: relative; /* required for position:absolute on children */
+
+  .progress-bar-before-overcommit {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: transparent;
+  }
+
+  .progress-bar-after-overcommit {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .progress-bar {
+    &.progress-bar-empty {
+      background: none;
+      box-shadow: none;
+      color: black;
+      white-space: nowrap;
+      overflow-x: visible;
+    }
+
+    &.progress-bar-disabled {
+      @include background(repeating-linear-gradient(-55deg, transparent, transparent 3px, #DCDCDC 3px, #DCDCDC 5px));
+      box-shadow: none;
+      color: black;
+    }
+
+    &.has-label, &.has-label-if-fits, &.has-label-unless-fits {
+      text-align: left;
+      .progress-bar-label {
+        padding-left: 0.5em;
+      }
+    }
+  }
+
+  &.label-fits .has-label-unless-fits .progress-bar-label {
+    display: none;
+  }
+  &:not(.label-fits) .has-label-if-fits .progress-bar-label {
+    display: none;
+  }
+
+}
+
+div.flavor-data {
+  /* ensure that flavor data text appears grouped with its resource */
+  margin-bottom: 1em;
+
+  span {
+    white-space: nowrap;
+  }
+  span:not(:last-child):after {
+    content: ", ";
+    white-space: normal;
+  }
+}
+
+h3 > .btn.btn-edit-quota {
+  margin-right: 1em;
+  position: relative;
+  top: -0.2em;
+}
+
+div.edit-quota-form-header {
+  margin-bottom: 10px;
+}
+
+div.edit-quota-input {
+  input.form-control {
+    position: relative;
+    top: -4px;
+  }
+
+  &.edit-quota-input-is-flashing input.form-control {
+    animation-name: edit-quota-flash;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes edit-quota-flash {
+    0% {
+      background-color: $hover-orange;
+    }
+    100% {
+      background-color: white;
+    }
+  }
+
+}
+
+.btn.btn-sm.btn-quota-details {
+  /* align with the height profile of the div.progress next to the button */
+  padding: 4px 8px;
+  line-height: 16px;
+  position: relative;
+  top: -2px;
+  /* some margin for when messages are shown after the button */
+  margin-right: 8px;
+}
+
+.block-on-reload {
+  position: relative;
+
+  /* a semi-transparent rectangle that blocks out the view while it's reloading */
+  &:after {
+    content: ' ';
+    display: block;
+    z-index: -1000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.0);
+    transition: background-color 0.5s;
+  }
+  &.is-reloading:after {
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  /* contains an additional spinner and "Reloading..." text, centered on the
+   * blocked-out view */
+  .reload-message {
+    display: none;
+  }
+  &.is-reloading .reload-message {
+    display: block;
+    z-index: 1001;
+    position: absolute;
+    top: 50%;
+    margin-top: -10px;
+    line-height: 20px;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.request-explanation {
+  margin-right: 2rem;
+}
