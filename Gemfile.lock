@@ -1,12 +1,4 @@
 GIT
-  remote: git://github.wdf.sap.corp/monsoon/elektra-extension.git
-  revision: 18365dfb583f57acc2dcf26e69f537d331f35549
-  branch: master
-  specs:
-    elektra-extension (0.0.1)
-      config
-
-GIT
   remote: https://github.com/sapcc/arc-client.git
   revision: 5d9b922d3c19d02f0cd87c7cc93f80802a960b50
   specs:
@@ -35,6 +27,14 @@ GIT
       hashie
       rails
       uglifier (>= 1.3.0)
+
+GIT
+  remote: https://github.wdf.sap.corp/monsoon/elektra-extension.git
+  revision: 18365dfb583f57acc2dcf26e69f537d331f35549
+  branch: master
+  specs:
+    elektra-extension (0.0.1)
+      config
 
 PATH
   remote: plugins/audit
