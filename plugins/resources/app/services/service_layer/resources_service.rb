@@ -9,7 +9,7 @@ module ServiceLayer
 
     def elektron_resources
       @elektron_resources ||= elektron.service(
-        'resources', path_prefix: '/v1'
+        'resources', path_prefix: '/v1', interface: 'public'
       )
     end
 
