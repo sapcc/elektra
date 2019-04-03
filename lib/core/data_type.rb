@@ -71,7 +71,7 @@ module Core
     end
 
     def format(value, options = {delimiter: true})
-      return 'Unlimited' if value < 0
+      return '-' + format(-value, options) if value < 0
       formated_value = send("format_#{@type}", value)
       unless options[:delimiter]
         formated_value.gsub!(/\u202F/,'')
