@@ -17,7 +17,7 @@ describe SharedFilesystemStorage::ApplicationController, type: :controller do
   describe "GET 'show'" do
     it "returns http success" do
       get :show, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 end

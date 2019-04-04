@@ -42,7 +42,7 @@ describe Lookup::ReverseLookupController, type: :controller do
           )
 
         post :search, params: default_params.merge(searchValue: '10.47.43.95')
-        expect(response).to be_success
+        expect(response).to be_successful
         body = JSON.parse(response.body)
         expect(body['searchValue']).to eq('10.47.43.95')
         expect(body['searchBy']).to eq('ip')
@@ -57,7 +57,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             []
           )
         post :search, params: default_params.merge(searchValue: '10.47.43.95')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
         expect(response.status).to eq(404)
         body = JSON.parse(response.body)
         expect(body['searchValue']).to eq('10.47.43.95')
@@ -77,7 +77,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             @instance_obj
           )
         post :search, params: default_params.merge(searchValue: '852588dd-3f7a-4d8a-a3f3-8f2792fbcd14')
-        expect(response).to be_success
+        expect(response).to be_successful
         body = JSON.parse(response.body)
         expect(body['searchValue']).to eq('852588dd-3f7a-4d8a-a3f3-8f2792fbcd14')
         expect(body['searchBy']).to eq('instance')
@@ -91,7 +91,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             nil
           )
         post :search, params: default_params.merge(searchValue: '852588dd-3f7a-4d8a-a3f3-8f2792fbcd14')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
         expect(response.status).to eq(404)
         body = JSON.parse(response.body)
         expect(body['searchValue']).to eq('852588dd-3f7a-4d8a-a3f3-8f2792fbcd14')
@@ -111,7 +111,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             items: [@dns_obj]
           )
         post :search, params: default_params.merge(searchValue: 'bh11.c.eu-nl-1.cloud.sap.')
-        expect(response).to be_success
+        expect(response).to be_successful
         body = JSON.parse(response.body)
         expect(body['searchValue']).to eq('bh11.c.eu-nl-1.cloud.sap.')
         expect(body['searchBy']).to eq('dns')
@@ -125,7 +125,7 @@ describe Lookup::ReverseLookupController, type: :controller do
   describe "GET 'index'" do
     it 'returns http success' do
       get :index, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template('index')
     end
   end
@@ -150,7 +150,7 @@ describe Lookup::ReverseLookupController, type: :controller do
           @domain_obj
         )
       get :domain, params: default_params.merge(reverseLookupProjectId: '123456789')
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response.body).to_not be_nil
     end
 
@@ -160,7 +160,7 @@ describe Lookup::ReverseLookupController, type: :controller do
           nil
         )
       get :domain, params: default_params.merge(reverseLookupProjectId: '123456789')
-      expect(response).to_not be_success
+      expect(response).to_not be_successful
       expect(response.status).to eq(404)
       body = JSON.parse(response.body)
       expect(body['projectId']).to eq('123456789')
@@ -180,7 +180,7 @@ describe Lookup::ReverseLookupController, type: :controller do
                             project_id:  'domain_test_tenant_id',
                             'blank?' => false)
       get :parents, params: default_params.merge(reverseLookupProjectId: '123456789')
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response.body).to_not be_nil
     end
 
@@ -190,7 +190,7 @@ describe Lookup::ReverseLookupController, type: :controller do
           nil
         )
       get :parents, params: default_params.merge(reverseLookupProjectId: '123456789')
-      expect(response).to_not be_success
+      expect(response).to_not be_successful
       expect(response.status).to eq(404)
       body = JSON.parse(response.body)
       expect(body['projectId']).to eq('123456789')
@@ -208,7 +208,7 @@ describe Lookup::ReverseLookupController, type: :controller do
           [double('assigment', user: { 'id' => 'bceceac0b63358198e9daa85bf82c215dec4d960423497f9e780326d48c316d7', 'name' => 'I318336' })]
         )
       get :users, params: default_params.merge(reverseLookupProjectId: '123456789')
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response.body).to_not be_nil
     end
   end
@@ -224,7 +224,7 @@ describe Lookup::ReverseLookupController, type: :controller do
           [double('assigment', group: { 'id' => 'bceceac0b63358198e9daa85bf82c215dec4d960423497f9e780326d48c316d7', 'name' => 'ADMIN' })]
         )
       get :groups, params: default_params.merge(reverseLookupProjectId: '123456789')
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response.body).to_not be_nil
     end
   end
@@ -236,7 +236,7 @@ describe Lookup::ReverseLookupController, type: :controller do
           [double('group_member', id: 'test_id', name: 'test_name', description: 'test_description')]
         )
       get :group_members, params: default_params.merge(reverseLookupGrouptId: '123456789')
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response.body).to_not be_nil
     end
 
@@ -246,7 +246,7 @@ describe Lookup::ReverseLookupController, type: :controller do
           nil
         )
       get :parents, params: default_params.merge(reverseLookupProjectId: '123456789')
-      expect(response).to_not be_success
+      expect(response).to_not be_successful
       expect(response.status).to eq(404)
       body = JSON.parse(response.body)
       expect(body['projectId']).to eq('123456789')
@@ -271,7 +271,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             @port_obj
           )
         get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:ip])
-        expect(response).to be_success
+        expect(response).to be_successful
         body = JSON.parse(response.body)
         expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:ip])
         expect(body['searchObjectId']).to eq('123456789')
@@ -284,7 +284,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             nil
           )
         get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:ip])
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
         body = JSON.parse(response.body)
         expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:ip])
         expect(body['searchObjectId']).to eq('123456789')
@@ -299,7 +299,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             items: [@recordsets_obj]
           )
         get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:dns])
-        expect(response).to be_success
+        expect(response).to be_successful
         body = JSON.parse(response.body)
         expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:dns])
         expect(body['searchObjectId']).to eq('123456789')
@@ -312,7 +312,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             items: []
           )
         get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:dns])
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
         expect(response.status).to eq(404)
         body = JSON.parse(response.body)
         expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:dns])
@@ -331,7 +331,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             @instance_obj
           )
         get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:instance])
-        expect(response).to be_success
+        expect(response).to be_successful
         body = JSON.parse(response.body)
         expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:instance])
         expect(body['searchObjectId']).to eq('123456789')
@@ -344,7 +344,7 @@ describe Lookup::ReverseLookupController, type: :controller do
             nil
           )
         get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:instance])
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
         expect(response.status).to eq(404)
         body = JSON.parse(response.body)
         expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:instance])

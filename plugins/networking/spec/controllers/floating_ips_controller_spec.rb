@@ -34,7 +34,7 @@ describe Networking::FloatingIpsController, type: :controller do
 
     it "returns http success" do
       get :index, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 end

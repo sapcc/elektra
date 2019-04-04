@@ -32,7 +32,7 @@ describe ScopeController, type: :controller do
     describe 'GET index' do
       it 'returns http success' do
         get :index, params: { domain_id: @domain_friendly_id.slug }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
 
       it 'redirects to the same action with friendly ids for domain' do
@@ -58,7 +58,7 @@ describe ScopeController, type: :controller do
           domain_id: @domain_friendly_id.slug,
           project_id: @project_friendly_id.slug
         }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end

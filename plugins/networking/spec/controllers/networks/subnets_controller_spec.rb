@@ -39,7 +39,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
 
     it 'returns success' do
       get :index, params: default_params.merge(network_id: '123')
-      expect(response).to be_success
+      expect(response).to be_successful
     end
 
     it 'returns an json' do

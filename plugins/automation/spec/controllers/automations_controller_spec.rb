@@ -42,7 +42,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'returns http success' do
         get :index, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:index)
       end
     end
@@ -56,7 +56,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'returns http success' do
         get :index, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:index)
       end
     end
@@ -69,7 +69,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'not allowed' do
         get :index, params: default_params
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
 
@@ -114,7 +114,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'returns http success' do
         get :new, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:new)
       end
     end
@@ -128,7 +128,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'not allowed' do
         get :new, params: default_params
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
     context 'other roles' do
@@ -140,7 +140,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'not allowed' do
         get :new, params: default_params
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -161,7 +161,7 @@ describe Automation::AutomationsController, type: :controller do
 
       it 'return success and render new when automation invalid' do
         post :create, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:new)
         expect(flash.now[:error]).to_not be_nil
       end
@@ -176,7 +176,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'not allowed' do
         post :create, params: default_params
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
     context 'other roles' do
@@ -188,7 +188,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'not allowed' do
         post :create, params: default_params
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -206,7 +206,7 @@ describe Automation::AutomationsController, type: :controller do
         allow(@automation_service).to receive(:attributes_to_form).and_return({})
 
         get :show, params: default_params.merge(id: 'automation_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:show)
       end
     end
@@ -221,7 +221,7 @@ describe Automation::AutomationsController, type: :controller do
       it 'returns http success' do
         allow(@automation_service).to receive(:attributes_to_form).and_return({})
         get :show, params: default_params.merge(id: 'automation_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:show)
       end
     end
@@ -235,7 +235,7 @@ describe Automation::AutomationsController, type: :controller do
       it 'not allowed' do
         allow(@automation_service).to receive(:attributes_to_form).and_return({})
         get :show, params: default_params.merge(id: 'automation_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -253,7 +253,7 @@ describe Automation::AutomationsController, type: :controller do
         allow(@automation_service).to receive(:attributes_to_form).and_return({})
 
         get :edit, params: default_params.merge(id: 'automation_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:edit)
       end
     end
@@ -268,7 +268,7 @@ describe Automation::AutomationsController, type: :controller do
       it 'not allowed' do
         allow(@automation_service).to receive(:attributes_to_form).and_return({})
         get :edit, params: default_params.merge(id: 'automation_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
     context 'other roles' do
@@ -281,7 +281,7 @@ describe Automation::AutomationsController, type: :controller do
       it 'not allowed' do
         allow(@automation_service).to receive(:attributes_to_form).and_return({})
         get :edit, params: default_params.merge(id: 'automation_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -300,7 +300,7 @@ describe Automation::AutomationsController, type: :controller do
         allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_return(automation)
 
         get :update, params: default_params.merge(id: 'automation_id', forms_chef_automation: automation.attributes.merge(type: 'other_type'))
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:edit)
         expect(flash.now[:error]).to_not be_nil
       end
@@ -309,7 +309,7 @@ describe Automation::AutomationsController, type: :controller do
         allow(@automation_service).to receive(:attributes_to_form).and_return({})
 
         get :update, params: default_params.merge(id: 'automation_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:edit)
       end
 
@@ -323,7 +323,7 @@ describe Automation::AutomationsController, type: :controller do
       it 'something wrong happens show a flash error' do
         allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_raise('boom')
         get :update, params: default_params.merge(id: 'automation_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:edit)
         expect(flash.now[:error]).to_not be_nil
       end
@@ -340,7 +340,7 @@ describe Automation::AutomationsController, type: :controller do
         allow(@automation_service).to receive(:attributes_to_form).and_return({})
 
         get :update, params: default_params.merge(id: 'automation_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
     context 'other roles' do
@@ -354,7 +354,7 @@ describe Automation::AutomationsController, type: :controller do
         allow(@automation_service).to receive(:attributes_to_form).and_return({})
 
         get :update, params: default_params.merge(id: 'automation_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -370,14 +370,14 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'returns http success and renders view' do
         delete :destroy, params: default_params.merge(id: 'automation_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template('automation/automations/update_item.js')
       end
 
       it 'something wrong happens show a flash error' do
         allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_raise('boom')
         delete :destroy, params: default_params.merge(id: 'automation_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template('automation/automations/update_item.js')
         expect(flash.now[:error]).to_not be_nil
       end
@@ -392,7 +392,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'not allowed' do
         delete :destroy, params: default_params.merge(id: 'automation_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
     context 'other roles' do
@@ -404,7 +404,7 @@ describe Automation::AutomationsController, type: :controller do
       end
       it 'not allowed' do
         delete :destroy, params: default_params.merge(id: 'automation_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end

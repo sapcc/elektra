@@ -21,7 +21,7 @@ describe DashboardController, type: :controller do
   describe "GET 'index'" do
     it "returns http success" do
       get :index, params: {domain_id: AuthenticationStub.domain_id}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
