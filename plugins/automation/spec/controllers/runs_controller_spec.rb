@@ -36,7 +36,7 @@ describe Automation::RunsController, type: :controller do
       end
       it 'returns http success' do
         get :show, params: default_params.merge(id: 'run_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:show)
       end
     end
@@ -50,7 +50,7 @@ describe Automation::RunsController, type: :controller do
       end
       it 'returns http success' do
         get :show, params: default_params.merge(id: 'run_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:show)
       end
     end
@@ -63,7 +63,7 @@ describe Automation::RunsController, type: :controller do
       end
       it 'not allowed' do
         get :show, params: default_params.merge(id: 'run_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -79,7 +79,7 @@ describe Automation::RunsController, type: :controller do
       end
       it 'returns http success' do
         get :show_log, params: default_params.merge(id: 'run_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:show_log)
       end
     end
@@ -93,7 +93,7 @@ describe Automation::RunsController, type: :controller do
       end
       it 'returns http success' do
         get :show_log, params: default_params.merge(id: 'run_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:show_log)
       end
     end
@@ -106,7 +106,7 @@ describe Automation::RunsController, type: :controller do
       end
       it 'not allowed' do
         get :show_log, params: default_params.merge(id: 'run_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end

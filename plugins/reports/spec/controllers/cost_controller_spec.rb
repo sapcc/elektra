@@ -44,7 +44,7 @@ describe Reports::CostController, type: :controller do
     context 'html' do
       it 'returns http success' do
         get :project, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
     context 'json' do
@@ -55,7 +55,7 @@ describe Reports::CostController, type: :controller do
       it 'returns http success' do
         allow_any_instance_of(ServiceLayer::MasterdataCockpitService).to receive(:get_project_costing).and_return(test: 'test')
         get :project, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
         body = JSON.parse(response.body)
         expect(body['test']).to eq('test')
       end
@@ -87,7 +87,7 @@ describe Reports::CostController, type: :controller do
     context 'html' do
       it 'returns http success' do
         get :domain, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
     context 'json' do
@@ -98,7 +98,7 @@ describe Reports::CostController, type: :controller do
       it 'returns http success' do
         allow_any_instance_of(ServiceLayer::MasterdataCockpitService).to receive(:get_domain_costing).and_return(test: 'test')
         get :domain, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
         body = JSON.parse(response.body)
         expect(body['test']).to eq('test')
       end

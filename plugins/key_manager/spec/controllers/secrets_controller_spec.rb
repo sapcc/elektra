@@ -41,7 +41,7 @@ describe KeyManager::SecretsController, type: :controller do
 
     it 'returns http success and renders the right template' do
       get :index, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:index)
     end
   end
@@ -58,7 +58,7 @@ describe KeyManager::SecretsController, type: :controller do
 
     it 'returns http success and renders the right template' do
       get :show, params: default_params.merge(id: @secret.uuid)
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:show)
     end
   end
@@ -66,7 +66,7 @@ describe KeyManager::SecretsController, type: :controller do
   describe "GET 'new'" do
     it 'returns http success and renders the right template' do
       get :new, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:new)
     end
   end
@@ -74,7 +74,7 @@ describe KeyManager::SecretsController, type: :controller do
   describe "GET xhr 'type_update'" do
     it 'returns http success' do
       get :type_update, params: default_params, xhr: true
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:type_update)
     end
   end
@@ -92,7 +92,7 @@ describe KeyManager::SecretsController, type: :controller do
 
     it 'returns http success' do
       get :payload, params: default_params.merge(id: @secret.uuid)
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(layout: false)
       expect(response).to render_template(partial: false)
     end
@@ -101,7 +101,7 @@ describe KeyManager::SecretsController, type: :controller do
   describe "GET 'create'" do
     it 'returns http success and renders the new template if validation fails' do
       post :create, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:new)
     end
 

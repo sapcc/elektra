@@ -47,7 +47,7 @@ describe KeyManager::ContainersController, type: :controller do
 
     it 'returns http success and renders the right template' do
       get :index, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:index)
     end
   end
@@ -64,7 +64,7 @@ describe KeyManager::ContainersController, type: :controller do
 
     it 'returns http success and renders the right template' do
       get :show, params: default_params.merge(id: @container.uuid)
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:show)
     end
   end
@@ -74,7 +74,7 @@ describe KeyManager::ContainersController, type: :controller do
 
     it 'returns http success and renders the right template' do
       get :new, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:new)
     end
   end
@@ -82,7 +82,7 @@ describe KeyManager::ContainersController, type: :controller do
   describe "GET 'create'" do
     it 'returns http success and renders the new template if validation fails' do
       post :create, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:new)
     end
 
@@ -100,7 +100,7 @@ describe KeyManager::ContainersController, type: :controller do
   describe "GET 'destroy'" do
     it 'returns http success and renders view' do
       delete :destroy, params: default_params.merge(id: 'container_id')
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(response).to render_template(:index)
     end
   end

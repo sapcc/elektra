@@ -23,7 +23,7 @@ describe Networking::Networks::PrivateController, type: :controller do
   describe "GET 'index'" do
     it "returns http success" do
       get :index, params: default_params
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 end

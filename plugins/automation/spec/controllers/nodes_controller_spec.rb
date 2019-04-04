@@ -46,7 +46,7 @@ describe Automation::NodesController, type: :controller do
 
       it 'returns http success' do
         get :index, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:index)
       end
 
@@ -67,7 +67,7 @@ describe Automation::NodesController, type: :controller do
 
       it 'returns http success' do
         get :index, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:index)
       end
     end
@@ -80,7 +80,7 @@ describe Automation::NodesController, type: :controller do
 
       it 'not allowed' do
         get :index, params: default_params
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -97,7 +97,7 @@ describe Automation::NodesController, type: :controller do
 
       it 'returns http success' do
         get :show, params: default_params.merge(id: 'node_id')
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:show)
       end
 
@@ -123,7 +123,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'returns http success' do
         get :show, params: default_params.merge(id: 'node_id')
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
     context 'other roles' do
@@ -134,7 +134,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'not allowed' do
         get :show, params: default_params.merge(id: 'node_id')
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -154,7 +154,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'returns http success' do
         get :install, params: default_params
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:install)
       end
 
@@ -179,7 +179,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'not allowed' do
         get :install, params: default_params
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
     context 'other roles' do
@@ -190,7 +190,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'not allowed' do
         get :install, params: default_params
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -206,7 +206,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'returns http success' do
         get :show_instructions, params: default_params.merge(id: 'instance_id', type: 'external'), xhr: true
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:show_instructions)
       end
     end
@@ -220,7 +220,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'not allowed' do
         get :show_instructions, params: default_params.merge(id: 'instance_id', type: 'external'), xhr: true
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
     context 'other roles' do
@@ -231,7 +231,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'not allowed' do
         get :show_instructions, params: default_params.merge(id: 'instance_id', type: 'external'), xhr: true
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -247,7 +247,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'returns http success' do
         put :update, params: default_params.merge(id: 'node_id'), xhr: true
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:update)
       end
 
@@ -270,7 +270,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'not allowed' do
         put :update, params: default_params.merge(id: 'node_id'), xhr: true
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
     context 'other roles' do
@@ -281,7 +281,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'not allowed' do
         put :update, params: default_params.merge(id: 'node_id'), xhr: true
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -297,7 +297,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'returns http success' do
         get :run_automation, params: default_params.merge(id: 'node_id'), xhr: true
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(response).to render_template(:run_automation)
       end
       it 'returns a warning if the node is offline' do
@@ -305,7 +305,7 @@ describe Automation::NodesController, type: :controller do
         node.facts[:online] = false
         allow_any_instance_of(ServiceLayer::AutomationService).to receive(:node).and_return(node)
         get :run_automation, params: default_params.merge(id: 'node_id'), xhr: true
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(flash.now[:warning]).to_not be_nil
       end
     end
@@ -319,7 +319,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'not allowed' do
         get :run_automation, params: default_params.merge(id: 'node_id'), xhr: true
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
     context 'other roles' do
@@ -330,7 +330,7 @@ describe Automation::NodesController, type: :controller do
       end
       it 'not allowed' do
         get :run_automation, params: default_params.merge(id: 'node_id'), xhr: true
-        expect(response).to_not be_success
+        expect(response).to_not be_successful
       end
     end
   end
@@ -357,7 +357,7 @@ describe Automation::NodesController, type: :controller do
         end
       end
       it 'not allowed' do
-        expect(delete(:destroy, params: default_params.merge(id: 'node_id'))).to_not be_success
+        expect(delete(:destroy, params: default_params.merge(id: 'node_id'))).to_not be_successful
       end
     end
     context 'other roles' do
@@ -367,7 +367,7 @@ describe Automation::NodesController, type: :controller do
         end
       end
       it 'not allowed' do
-        expect(delete(:destroy, params: default_params.merge(id: 'node_id'))).to_not be_success
+        expect(delete(:destroy, params: default_params.merge(id: 'node_id'))).to_not be_successful
       end
     end
   end
