@@ -13,8 +13,12 @@ Bundler.require(*Rails.groups)
 
 module MonsoonDashboard
   class Application < Rails::Application
-    config.load_defaults 5.1
+    config.load_defaults 5.2
     config.react.addons = true
+
+    # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
+    # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
+    config.require_master_key = false
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

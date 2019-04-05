@@ -626,7 +626,7 @@ DEPENDENCIES
   prometheus-client
   pry-rails
   puma
-  rails (~> 5.2.0)
+  rails (~> 5.2.3)
   rails-controller-testing
   rails_stdout_logging
   react-rails
