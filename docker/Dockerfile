@@ -69,6 +69,8 @@ RUN if [ -z ${http_proxy} ]; then \
 
 ADD . /home/app/webapp
 
+ENV RAILS_ENV=test
+
 # precompile assets including webpacker packs
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
@@ -77,7 +79,6 @@ CMD ["script/start.sh"]
 
 FROM elektra AS tests
 RUN apk add --no-cache postgresql bash
-ENV RAILS_ENV=test
 RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/pg start' \
       && rake db:create db:migrate \
       && bundle exec rspec \
