@@ -20,7 +20,7 @@ module MonsoonDashboard
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
-    #config.autoload_paths += %W(#{config.root}/plugins)
+    # config.autoload_paths += %W(#{config.root}/plugins)
     config.autoload_paths << Rails.root.join('lib')
 
     # Use memory for caching, file cache needs some work for working with docker
@@ -35,38 +35,36 @@ module MonsoonDashboard
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-
     config.action_cable.mount_path = '/:domain_id/(:project_id)/cable'
 
     config.middleware.insert_before Rack::Sendfile, DebugHeadersMiddleware
 
     # build a map from the plugins
     plugin_mount_points = {}
-    Core::PluginsManager.available_plugins.each{|plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point}
+    Core::PluginsManager.available_plugins.each { |plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point }
 
     require 'prometheus/middleware/collector'
-    config.middleware.insert_after(ActionDispatch::DebugExceptions, Prometheus::Middleware::Collector, {
-      counter_label_builder: proc do |env, code|
-        controller_name = env.fetch("action_dispatch.request.path_parameters",{}).fetch(:controller, '')
-        {
-          code: code,
-          method: env['REQUEST_METHOD'].downcase,
-          host:   env['HTTP_HOST'].to_s,
-          # just take the first component of the path as a label
-          path:   ['health'].include?(controller_name) ? env['REQUEST_PATH'] : env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/', 1) || 20],
-          controller: controller_name,
-          action: env.fetch("action_dispatch.request.path_parameters",{}).fetch(:action, ''),
-          plugin: ['health'].include?(controller_name) ? controller_name : controller_name[%r{^([^/]+)/},1]
-        }
-      end,
-      duration_label_builder: proc do |env, code|
-        controller_name = env.fetch("action_dispatch.request.path_parameters",{}).fetch(:controller, '')
-        {
-          method: env['REQUEST_METHOD'].downcase,
-          plugin: ['health'].include?(controller_name) ? controller_name : controller_name[%r{^([^/]+)/},1],
-        }
-      end
-    })
+    config.middleware.insert_after(ActionDispatch::DebugExceptions, Prometheus::Middleware::Collector,
+                                   counter_label_builder: proc do |env, code|
+                                     controller_name = env.fetch('action_dispatch.request.path_parameters', {}).fetch(:controller, '')
+                                     {
+                                       code: code,
+                                       method: env['REQUEST_METHOD'].downcase,
+                                       host: env['HTTP_HOST'].to_s,
+                                       # just take the first component of the path as a label
+                                       path: ['health'].include?(controller_name) ? env['REQUEST_PATH'] : env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/', 1) || 20],
+                                       controller: controller_name,
+                                       action: env.fetch('action_dispatch.request.path_parameters', {}).fetch(:action, ''),
+                                       plugin: ['health'].include?(controller_name) ? controller_name : controller_name[%r{^([^/]+)/}, 1]
+                                     }
+                                   end,
+                                   duration_label_builder: proc do |env, _code|
+                                                             controller_name = env.fetch('action_dispatch.request.path_parameters', {}).fetch(:controller, '')
+                                                             {
+                                                               method: env['REQUEST_METHOD'].downcase,
+                                                               plugin: ['health'].include?(controller_name) ? controller_name : controller_name[%r{^([^/]+)/}, 1]
+                                                             }
+                                                           end)
 
     config.middleware.insert_after Prometheus::Middleware::Collector, InquiryMetricsMiddleware
 
@@ -76,26 +74,24 @@ module MonsoonDashboard
     config.middleware.use RevisionMiddleware
 
     ############# ENSURE EDGE MODE FOR IE ###############
-    config.action_dispatch.default_headers["X-UA-Compatible"]="IE=edge,chrome=1"
-
+    config.action_dispatch.default_headers['X-UA-Compatible'] = 'IE=edge,chrome=1'
 
     ############# KEYSTONE ENDPOINT ##############
     config.keystone_endpoint = if ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']
-            proto = ENV['AUTHORITY_SERVICE_PROTO'] || 'http'
-            host  = ENV['AUTHORITY_SERVICE_HOST']
-            port  = ENV['AUTHORITY_SERVICE_PORT']
-            "#{proto}://#{host}:#{port}/v3"
-          else
-            ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
+                                 proto = ENV['AUTHORITY_SERVICE_PROTO'] || 'http'
+                                 host  = ENV['AUTHORITY_SERVICE_HOST']
+                                 port  = ENV['AUTHORITY_SERVICE_PORT']
+                                 "#{proto}://#{host}:#{port}/v3"
+                               else
+                                 ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
           end
 
-    config.debug_api_calls = ENV.has_key?('DEBUG_API_CALLS')
-    config.debug_policy_engine = ENV.has_key?('DEBUG_POLICY_ENGINE')
-
+    config.debug_api_calls = ENV.key?('DEBUG_API_CALLS')
+    config.debug_policy_engine = ENV.key?('DEBUG_POLICY_ENGINE')
 
     config.ssl_verify_peer = true
     Excon.defaults[:ssl_verify_peer] = true
-    if ENV.has_key?('ELEKTRA_SSL_VERIFY_PEER') and ENV['ELEKTRA_SSL_VERIFY_PEER'] == 'false'
+    if ENV.key?('ELEKTRA_SSL_VERIFY_PEER') && (ENV['ELEKTRA_SSL_VERIFY_PEER'] == 'false')
       config.ssl_verify_peer = false
       # set ssl_verify_peer for Excon that is used in FOG to talk with openstack services
       Excon.defaults[:ssl_verify_peer] = false
@@ -103,7 +99,7 @@ module MonsoonDashboard
     puts "=> SSL verify: #{config.ssl_verify_peer}"
 
     ############## REGION ###############
-    config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || ['eu-de-1','staging','europe']
+    config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || ['eu-de-1', 'staging', 'europe']
 
     ############## CLOUD ADMIN ###############
     config.cloud_admin_domain = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN', 'ccadmin')
@@ -119,12 +115,12 @@ module MonsoonDashboard
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
-        address:              ENV['MONSOON_DASHBOARD_MAIL_SERVER'],
-        port:                 ENV['MONSOON_DASHBOARD_MAIL_SERVER_PORT'] || 25,
-        enable_starttls_auto: false
+      address: ENV['MONSOON_DASHBOARD_MAIL_SERVER'],
+      port: ENV['MONSOON_DASHBOARD_MAIL_SERVER_PORT'] || 25,
+      enable_starttls_auto: false
     }
     config.action_mailer.default_options = {
-        from: 'Converged Cloud <noreply+ConvergedCloud@sap.corp>'
+      from: 'Converged Cloud <noreply+ConvergedCloud@sap.corp>'
     }
 
     config.middleware.use SessionCookiePathMiddleware
