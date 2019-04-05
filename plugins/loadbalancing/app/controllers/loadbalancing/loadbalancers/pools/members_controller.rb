@@ -23,7 +23,7 @@ module Loadbalancing
           @new_members = []
           ips.each do |ip|
             member = services.loadbalancing.new_pool_member(id: SecureRandom.hex)
-            member.attributes = {pool_id: params[:pool_id], address: ip, weight: 1}
+            member.attributes = { pool_id: params[:pool_id], address: ip, weight: 1 }
             @new_members << member
           end
           render 'loadbalancing/loadbalancers/pools/members/add_members.js'
@@ -49,8 +49,8 @@ module Loadbalancing
           new_servers.each do |new_member|
             begin
               member = services.loadbalancing.new_pool_member
-              member.attributes = {pool_id: params[:pool_id], address: new_member['address'], protocol_port: new_member['protocol_port'],
-                                   weight: new_member['weight'], subnet_id: vip_subnet_id}
+              member.attributes = { pool_id: params[:pool_id], address: new_member['address'], protocol_port: new_member['protocol_port'],
+                                    weight: new_member['weight'], subnet_id: vip_subnet_id }
 
               msuccess = services.loadbalancing.execute(@loadbalancer.id) { member.save }
               unless msuccess
@@ -58,7 +58,7 @@ module Loadbalancing
                 member.id = SecureRandom.hex
                 @error_members << member
               end
-            rescue
+            rescue StandardError
               success = false
               member.id = SecureRandom.hex
               @error_members << member
@@ -74,29 +74,26 @@ module Loadbalancing
           end
         end
 
-
         def destroy
           pool_id = params[:pool_id]
           member_id = params[:id]
           @member = services.loadbalancing.find_pool_member(pool_id, member_id)
           services.loadbalancing.execute(@loadbalancer.id) { services.loadbalancing.delete_pool_member(pool_id, member_id) }
-          audit_logger.info(current_user, "has deleted", @member)
+          audit_logger.info(current_user, 'has deleted', @member)
           render template: 'loadbalancing/loadbalancers/pools/members/destroy_item.js'
         end
 
         # update instance table row (ajax call)
         def update_item
-          begin
-            @member = services.loadbalancing.find_pool_member(@pool.id, member_id)
-            @member.in_transition = true
-            respond_to do |format|
-              format.js do
-                @member if @member
-              end
+          @member = services.loadbalancing.find_pool_member(@pool.id, member_id)
+          @member.in_transition = true
+          respond_to do |format|
+            format.js do
+              @member
             end
-          rescue => e
-            return nil
           end
+        rescue StandardError => e
+          nil
         end
 
         def edit
@@ -122,7 +119,7 @@ module Loadbalancing
 
         def member_params
           p = params[:pool_member].to_unsafe_hash.symbolize_keys if params[:pool_member]
-          return p
+          p
         end
 
         def load_objects
@@ -141,25 +138,23 @@ module Loadbalancing
             services.compute.servers(pagination_options)
           end
 
-
-#          @servers = services.compute.servers
+          #          @servers = services.compute.servers
           @servers.each do |server|
-            server.addresses.each do |network_name, ip_values|
-              if ip_values and ip_values.length>0
-                ip_values.each do |value|
-                  if value["OS-EXT-IPS:type"]=='fixed'
-                    ip = Ip.new nil
-                    ip.ip = value['addr']
-                    ip.name = server.name
-                    ip.id = server.id
-                    @ips << ip
-                  end
-                end
+            server.addresses.each do |_network_name, ip_values|
+              next unless ip_values && !ip_values.empty?
+
+              ip_values.each do |value|
+                next unless value['OS-EXT-IPS:type'] == 'fixed'
+
+                ip = Ip.new nil
+                ip.ip = value['addr']
+                ip.name = server.name
+                ip.id = server.id
+                @ips << ip
               end
             end
           end
         end
-
       end
     end
   end
