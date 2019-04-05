@@ -36,6 +36,7 @@ RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/dow
 
 WORKDIR /home/app/webapp
 ENV RAILS_ENV=production
+ARG MONSOON_RAILS_SECRET_TOKEN
 ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
 LABEL quay.expires-after=26w
 
