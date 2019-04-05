@@ -21,7 +21,7 @@ module Loadbalancing
 
           ips = params['ips'] || []
           @new_members = []
-          ips.each do |ip|
+          ips.keys.each do |ip|
             member = services.loadbalancing.new_pool_member(id: SecureRandom.hex)
             member.attributes = { pool_id: params[:pool_id], address: ip, weight: 1 }
             @new_members << member
