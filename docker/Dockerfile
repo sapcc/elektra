@@ -36,9 +36,8 @@ RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/dow
 
 WORKDIR /home/app/webapp
 ENV RAILS_ENV=production
+ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
 LABEL quay.expires-after=26w
-
-# RUN gem install bundler 1.16.0
 
 # add Gemfile and Gemfile.lock to /home/app/webapp/
 ADD Gemfile Gemfile.lock ./
@@ -69,8 +68,6 @@ RUN if [ -z ${http_proxy} ]; then \
 
 ADD . /home/app/webapp
 
-ENV RAILS_ENV=test
-
 # precompile assets including webpacker packs
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
@@ -79,6 +76,8 @@ CMD ["script/start.sh"]
 
 FROM elektra AS tests
 RUN apk add --no-cache postgresql bash
+RUN unset MONSOON_RAILS_SECRET_TOKEN
+ENV RAILS_ENV=test
 RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/pg start' \
       && rake db:create db:migrate \
       && bundle exec rspec \
