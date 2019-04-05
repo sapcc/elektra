@@ -14,7 +14,7 @@ module Loadbalancing
     validates :default_tls_container_ref, presence: {
       message: 'A certificate container is needed for ' \
                'TERMINATED_HTTPS Listeners'
-    }, if: "protocol == 'TERMINATED_HTTPS'"
+    }, if: :protocol == 'TERMINATED_HTTPS'
 
     attr_accessor :in_transition
 
@@ -24,31 +24,31 @@ module Loadbalancing
 
     def attributes_for_create
       {
-        'loadbalancer_id'           => read('loadbalancer_id'),
-        'name'                      => read('name'),
-        'description'               => read('description'),
-        'admin_state_up'            => read('admin_state_up'),
-        'connection_limit'          => read('connection_limit'),
-        'default_pool_id'           => read('default_pool_id'),
+        'loadbalancer_id' => read('loadbalancer_id'),
+        'name' => read('name'),
+        'description' => read('description'),
+        'admin_state_up' => read('admin_state_up'),
+        'connection_limit' => read('connection_limit'),
+        'default_pool_id' => read('default_pool_id'),
         'default_tls_container_ref' => read('default_tls_container_ref'),
-        'protocol'                  => read('protocol'),
-        'protocol_port'             => read('protocol_port'),
-        'sni_container_refs'        => read('sni_container_refs'),
-        'project_id'                => read('project_id'),
-        'tenant_id'                 => read('tenant_id')
+        'protocol' => read('protocol'),
+        'protocol_port' => read('protocol_port'),
+        'sni_container_refs' => read('sni_container_refs'),
+        'project_id' => read('project_id'),
+        'tenant_id' => read('tenant_id')
       }.delete_if { |_k, v| v.blank? }
     end
 
     def attributes_for_update
       {
-        'name'                      => read('name'),
-        'description'               => read('description'),
-        'admin_state_up'            => read('admin_state_up'),
-        'connection_limit'          => read('connection_limit'),
-        'default_pool_id'           => read('default_pool_id'),
+        'name' => read('name'),
+        'description' => read('description'),
+        'admin_state_up' => read('admin_state_up'),
+        'connection_limit' => read('connection_limit'),
+        'default_pool_id' => read('default_pool_id'),
         'default_tls_container_ref' => read('default_tls_container_ref'),
-        'sni_container_refs'        => read('sni_container_refs')
-      }.delete_if { |k, v| v.blank? and !%w[name description default_pool_id sni_container_refs connection_limit].include?(k) }
+        'sni_container_refs' => read('sni_container_refs')
+      }.delete_if { |k, v| v.blank? && !%w[name description default_pool_id sni_container_refs connection_limit].include?(k) }
     end
   end
 end
