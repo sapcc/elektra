@@ -97,12 +97,8 @@ group :production do
   gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
 end
 
-group :development do
-  # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 3.0'
-
-  # gem 'quiet_assets' #can be removed once we upgraded to sprockets >=3.1.0
-end
+# Access an IRB console on exception pages or by using <%= console %> in views
+gem 'web-console', '~> 3.0'
 
 group :development, :test do
   # load .env.bak needed for cucumber tests!
