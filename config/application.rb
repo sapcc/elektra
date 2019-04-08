@@ -16,6 +16,8 @@ module MonsoonDashboard
     config.load_defaults 5.2
     config.react.addons = true
 
+    config.web_console.development_only = false
+
     # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
     # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
     config.require_master_key = false
