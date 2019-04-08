@@ -11,10 +11,8 @@ module Loadbalancing
       in: '1'..'65535',
       message: 'Choose a port between 1 and 65535'
     }
-    validates :default_tls_container_ref, presence: {
-      message: 'A certificate container is needed for ' \
-               'TERMINATED_HTTPS Listeners'
-    }, if: :protocol == 'TERMINATED_HTTPS'
+    validates_presence_of :default_tls_container_ref, message: 'A certificate container is needed for TERMINATED_HTTPS Listeners',
+                                                      if: -> { protocol == 'TERMINATED_HTTPS' }
 
     attr_accessor :in_transition
 
