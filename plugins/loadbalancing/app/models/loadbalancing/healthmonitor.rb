@@ -15,46 +15,47 @@ module Loadbalancing
     validate :timeoutvalue
 
     def timeoutvalue
-      if self.timeout.to_i <= 0
-        errors.add(:timeout, 'Please enter a timeout greater 0')
-      elsif self.timeout.to_i >= delay.to_i
-        errors.add(:timeout, 'Please enter a timeout less than the "Delays" value')
+      if timeout_value.to_i <= 0
+        errors.add(:timeout_value, 'Please enter a timeout greater 0')
+      elsif timeout_value.to_i >= delay.to_i
+        errors.add(:timeout_value, 'Please enter a timeout less than the "Delays" value')
       end
     end
 
     def http_type?
       return true if type && type.start_with?('HTTP')
+
       false
     end
 
     def attributes_for_create
       {
-        'name'            => read('name'), 
-        'admin_state_up'  => read('admin_state_up'),
-        'delay'           => read('delay'),
-        'expected_codes'  => read('expected_codes'),
-        'http_method'     => read('http_method'),
-        'max_retries'     => read('max_retries'),
-        'pool_id'         => read('pool_id'),
-        'project_id'      => read('project_id'),
-        'tenant_id'       => read('tenant_id'),
-        'timeout'         => read('timeout'),
-        'type'            => read('type'),
-        'url_path'        => read('url_path')
+        'name' => read('name'),
+        'admin_state_up' => read('admin_state_up'),
+        'delay' => read('delay'),
+        'expected_codes' => read('expected_codes'),
+        'http_method' => read('http_method'),
+        'max_retries' => read('max_retries'),
+        'pool_id' => read('pool_id'),
+        'project_id' => read('project_id'),
+        'tenant_id' => read('tenant_id'),
+        'timeout' => read('timeout_value'),
+        'type' => read('type'),
+        'url_path' => read('url_path')
       }.delete_if { |_k, v| v.blank? }
     end
 
     def attributes_for_update
       {
-        'name'            => read('name'),
-        'admin_state_up'  => read('admin_state_up'),
-        'delay'           => read('delay'),
-        'expected_codes'  => read('expected_codes'),
-        'http_method'     => read('http_method'),
-        'max_retries'     => read('max_retries'),
-        'timeout'         => read('timeout'),
-        'url_path'        => read('url_path')
-      }.delete_if { |k, v| v.blank? and !%w[name].include?(k) }
+        'name' => read('name'),
+        'admin_state_up' => read('admin_state_up'),
+        'delay' => read('delay'),
+        'expected_codes' => read('expected_codes'),
+        'http_method' => read('http_method'),
+        'max_retries' => read('max_retries'),
+        'timeout' => read('timeout_value'),
+        'url_path' => read('url_path')
+      }.delete_if { |k, v| v.blank? && !%w[name].include?(k) }
     end
   end
 end
