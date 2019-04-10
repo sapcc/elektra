@@ -183,34 +183,7 @@ module Identity
       if services.resource_management.has_project_quotas?(@scoped_domain_id, @scoped_project_id)
         @project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
       else
-        # try to find a quota inquiry and get status of it
-        quota_inquiries = services.inquiry.get_inquiries({
-          kind: 'project_quota_package',
-          project_id: @scoped_project_id,
-          domain_id: @scoped_domain_id
-        })
-
-        quota_inquiries = quota_inquiries.select{|quota_inquiry| quota_inquiry.aasm_state!='closed'}
-
-        if quota_inquiries.length.positive?
-          approved_inquiries = quota_inquiries.select do |quota_inquiry|
-            quota_inquiry.aasm_state == 'approved'
-          end
-          status = approved_inquiries.length.positive? ? ProjectProfile::STATUS_DONE : ProjectProfile::STATUS_PENDING
-          inquiry = if approved_inquiries.length.positive?
-                      approved_inquiries.first
-                    else
-                      quota_inquiries.first
-                    end
-
-          @project_profile.update_wizard_status(
-            'resource_management',
-            status,
-            {inquiry_id: inquiry.id, aasm_state: inquiry.aasm_state, package: inquiry.payload["package"]}
-          )
-        else
-          @project_profile.update_wizard_status('resource_management', nil)
-        end
+        @project_profile.update_wizard_status('resource_management', nil)
       end
       @project_profile.wizard_finished?('resource_management')
     end

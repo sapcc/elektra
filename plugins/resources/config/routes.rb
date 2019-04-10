@@ -20,4 +20,6 @@ Resources::Engine.routes.draw do
   post '/request/project' => 'request#project'
   post '/request/domain'  => 'request#domain'
 
+  get '/project/init' => 'application#init_project', as: 'init_project'
+
 end

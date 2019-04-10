@@ -77,3 +77,22 @@ export const STRINGS = {
     "zones":                       "Zones",
     "zones_single":                "Zone",
 };
+
+export const WIZARD_RESOURCES = {
+    "compute": {
+        "resources": { "instances": 5 },
+    },
+    "networking": {
+        "show": [ "floating_ips", "networks" ],
+        "resources": { "floating_ips": 2, "networks": 1, "ports": 100, "rbac_policies": 5, "security_groups": 20, "security_group_rules": 100 },
+    },
+    "loadbalancing": {
+        "resources": { "loadbalancers": 1 },
+    },
+    "object-store": {
+        "resources": { "capacity": 1 << 30 }, // 1 GiB
+    },
+    "volumev2": {
+        "resources": { "volumes": 2 },
+    },
+};

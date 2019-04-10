@@ -48,9 +48,9 @@
 
 -# RESOURCE MANAGEMENT
 - if @resource_management_service_available
-  - can_setup_quota = current_user.is_allowed?("resource_management:project_resource_new_package_request")
+  - can_setup_quota = current_user.is_allowed?("resources:project:write_access")
   - quota_data = @project_profile.wizard_data('resource_management')
-  - required_roles = current_user.required_roles('resource_management:project_resource_new_package_request')
+  - required_roles = current_user.required_roles('resources:project:write_access')
   - required_roles = required_roles && required_roles.join(', ')
 
   - if @project_profile.wizard_skipped?('resource_management')
@@ -67,41 +67,17 @@
       mandatory: true,
       status: 'done'}) do
       %p This project already has quota.
-      - if quota_data and quota_data['aasm_state']=='approved'
-        %table.table.no-borders
-          %tbody
-            %tr
-              %th{width:"30%"} Package
-              %td= quota_data["package"]
   - else
-    -# IN PROCESS
-    - if quota_data
-      - if quota_data['aasm_state']=='open'
-        = wizard_step({title: 'Request Resource Quotas',
-          mandatory: true,
-          status: 'pending'}) do
-          %p
-            Your request is being checked. Please have some patience.
-            = link_to 'Show request', plugin('inquiry').inquiry_path(id: quota_data[:inquiry_id]), data: {modal: true}
+    - action_button = { label: 'Request Quotas',
+      url: can_setup_quota ? plugin('resources').init_project_path : nil,
+      tooltip: can_setup_quota ? nil : "You don't have permissions to request quotas. Please check if you have one of the following roles: <b>#{required_roles}</b>"}
 
-      - elsif quota_data['aasm_state']=='rejected'
-        = wizard_step({title: 'Request Resource Quotas',
-          mandatory: true,
-          action_button: ({label: 'Edit Request', url: plugin('inquiry').edit_inquiry_path(id: quota_data[:inquiry_id], state: 'open')} if can_setup_quota),
-          status: 'pending'}) do
-          %p Your request has been rejected. Please check the reason and reopen the request.
-
-    - else
-      - action_button = { label: 'Request Quotas',
-        url: can_setup_quota ? plugin('resource_management').resources_new_package_request_path : nil,
-        tooltip: can_setup_quota ? nil : "You don't have permissions to request quotas. Please check if you have one of the following roles: <b>#{required_roles}</b>"}
-
-      = wizard_step({title: 'Request Resource Quotas',
-        mandatory: true,
-        action_button: action_button,
-        skip_button:( { label: 'Skip Step', url: plugin('resource_management').resources_skip_wizard_path(), data: {modal: true, wizard_action_button: true}} if can_setup_quota ),
-        status: nil}) do
-        %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
+    = wizard_step({title: 'Request Resource Quotas',
+      mandatory: true,
+      action_button: action_button,
+      skip_button:( { label: 'Skip Step', url: plugin('resource_management').resources_skip_wizard_path(), data: {modal: true, wizard_action_button: true}} if can_setup_quota ),
+      status: nil}) do
+      %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
 
 - else
   = wizard_step({title: 'Request Resource Quotas',

@@ -41,6 +41,19 @@ module Resources
       render action: 'show'
     end
 
+    def init_project
+      # This is the entrypoint for the "Initialize Project Resources" step in
+      # the project setup wizard. Note that it can only be used with
+      # `resources:project:edit` permissions.
+      @js_data[:project_id] = @scoped_project_id
+      @js_data[:domain_id]  = @scoped_domain_id
+      auth_params = { selected: @js_data }
+      enforce_permissions('::resources:project:edit', auth_params)
+      @js_data[:can_edit] = true
+
+      render action: 'init_project'
+    end
+
     def domain
       @scope = 'domain'
       @edit_role = 'resource_admin'

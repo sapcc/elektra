@@ -10,10 +10,13 @@ import ProjectResource from './components/project/resource';
 //     /domainname/resources/domain/othercluster/otherdomain
 //     ^^^^^^^^^^^^^^^^^^^^^^
 //
-const urlBaseRx = new RegExp(".*?\/resources\/");
+//Instead of "resources", we can also match "identity", to support the
+//"Initialize Project Resources" modal that is triggered from the project
+//wizard.
+const urlBaseRx = new RegExp("(.*?)\/(?:resources|identity)\/");
 
 export const getBaseURL = () => {
-  return urlBaseRx.exec(window.location.pathname)[0];
+  return urlBaseRx.exec(window.location.pathname)[1] + '/resources/';
 };
 
 /*
