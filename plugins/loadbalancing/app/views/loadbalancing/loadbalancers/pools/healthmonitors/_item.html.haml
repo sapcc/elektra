@@ -22,7 +22,7 @@
         %td= healthmonitor.type
       %tr
         %th Retries/Timeout/Delay
-        %td= "#{healthmonitor.max_retries} / #{healthmonitor.timeout} / #{healthmonitor.delay}"
+        %td= "#{healthmonitor.max_retries} / #{healthmonitor.timeout_value} / #{healthmonitor.delay}"
       - if healthmonitor.http_type?
         %tr
           %th HTTP Method
