@@ -83,7 +83,7 @@ export const WIZARD_RESOURCES = {
         "resources": { "instances": 5 },
     },
     "networking": {
-        "show": [ "floating_ips", "networks" ],
+        "highlight": [ "floating_ips", "networks" ],
         "resources": { "floating_ips": 2, "networks": 1, "ports": 100, "rbac_policies": 5, "security_groups": 20, "security_group_rules": 100 },
     },
     "loadbalancing": {

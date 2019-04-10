@@ -55,7 +55,7 @@
 
   - if @project_profile.wizard_skipped?('resource_management')
     -# SKIPPED
-    = wizard_step({title: 'Request Resource Quotas',
+    = wizard_step({title: 'Resource Quotas',
       mandatory: true,
       status: 'skipped'}) do
       %p
@@ -63,24 +63,24 @@
         =link_to 'Resource Management',plugin('resource_management').resources_path()
   - elsif @project_profile.wizard_finished?('resource_management')
     -# DONE
-    = wizard_step({title: 'Request Resource Quotas',
+    = wizard_step({title: 'Resource Quotas',
       mandatory: true,
       status: 'done'}) do
       %p This project already has quota.
   - else
-    - action_button = { label: 'Request Quotas',
+    - action_button = { label: 'Initialize Quotas',
       url: can_setup_quota ? plugin('resources').init_project_path : nil,
       tooltip: can_setup_quota ? nil : "You don't have permissions to request quotas. Please check if you have one of the following roles: <b>#{required_roles}</b>"}
 
-    = wizard_step({title: 'Request Resource Quotas',
+    = wizard_step({title: 'Resource Quotas',
       mandatory: true,
       action_button: action_button,
       skip_button:( { label: 'Skip Step', url: plugin('resource_management').resources_skip_wizard_path(), data: {modal: true, wizard_action_button: true}} if can_setup_quota ),
       status: nil}) do
-      %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
+      %p Please select an initial allotment of compute, network and storage resources to get started with your project. If you realize at a later stage that you need more of something, you can request more then.
 
 - else
-  = wizard_step({title: 'Request Resource Quotas',
+  = wizard_step({title: 'Resource Quotas',
     mandatory: true,
     status: 'pending'}) do
     %p The Resource Management service is currently unavailable.
