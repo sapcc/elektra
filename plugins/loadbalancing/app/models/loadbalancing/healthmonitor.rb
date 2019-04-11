@@ -15,9 +15,10 @@ module Loadbalancing
     validate :timeoutvalue
 
     def timeoutvalue
-      if timeout_value.to_i <= 0
+      new_timeout = read('timeout_value')
+      if new_timeout.to_i <= 0
         errors.add(:timeout_value, 'Please enter a timeout greater 0')
-      elsif timeout_value.to_i >= delay.to_i
+      elsif new_timeout.to_i >= delay.to_i
         errors.add(:timeout_value, 'Please enter a timeout less than the "Delays" value')
       end
     end
@@ -26,6 +27,10 @@ module Loadbalancing
       return true if type && type.start_with?('HTTP')
 
       false
+    end
+
+    def timeout_value
+      read('timeout')
     end
 
     def attributes_for_create
