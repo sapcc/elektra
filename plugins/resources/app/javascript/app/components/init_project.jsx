@@ -1,6 +1,6 @@
 import { WIZARD_RESOURCES } from '../constants';
 import { Unit } from '../unit';
-import { t, byUIString } from '../utils';
+import { t, byUIString, byNameIn } from '../utils';
 
 export default class InitProjectModal extends React.Component {
   constructor(props) {
@@ -89,6 +89,26 @@ export default class InitProjectModal extends React.Component {
       return null;
     }
 
+    //sorting predicate for categories: sort by area, then like on the main view
+    const infoForCategory = {};
+    for (const area of Object.keys(this.props.overview.areas)) {
+      const serviceTypes = this.props.overview.areas[area];
+      for (const serviceType of serviceTypes) {
+        for (const categoryName of this.props.overview.categories[serviceType]) {
+          infoForCategory[categoryName] = { serviceType, area };
+        }
+      }
+    }
+    const byAreaThenByName = (categoryNameA, categoryNameB) => {
+      const infoA = infoForCategory[categoryNameA];
+      const infoB = infoForCategory[categoryNameB];
+      if (infoA.area != infoB.area)
+        return byUIString(infoA.area, infoB.area);
+      if (infoA.serviceType != infoB.serviceType)
+        return byUIString(infoA.serviceType, infoB.serviceType);
+      return byNameIn(infoA.serviceType)(categoryNameA, categoryNameB);
+    };
+
     return (
       //NOTE: class='resources' is needed for CSS rules from plugins/resources/ to apply
       <React.Fragment>
@@ -105,7 +125,7 @@ export default class InitProjectModal extends React.Component {
               <a href={`${docsUrl}docs/quota/#auto-approval`}>subject to approval</a>.</li>
           </ul>
           <div id='package-selection'>
-            { Object.keys(resourceValues).sort(byUIString).map(categoryName => this.renderPackage(categoryName, resourceValues[categoryName])) }
+            { Object.keys(resourceValues).sort(byAreaThenByName).map(categoryName => this.renderPackage(categoryName, resourceValues[categoryName])) }
           </div>
         </div>
         <div className='buttons modal-footer'>
@@ -138,7 +158,7 @@ export default class InitProjectModal extends React.Component {
     return (
       <div className={isSelected ? 'package is-selected' : 'package'} key={categoryName} onClick={(e) => { e.preventDefault(); this.toggleCategory(categoryName); return false; }}>
         <h3>
-          <i class={isSelected ? 'fa fa-check-square' : 'fa fa-square-o'} />
+          <i className={isSelected ? 'fa fa-check-square' : 'fa fa-square-o'} />
           {' ' + t(categoryName)}
         </h3>
         <div className='highlighted-resources'>{highlightedResources}</div>

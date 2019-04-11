@@ -2,7 +2,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 
 import { Scope } from '../scope';
-import { byUIString, t } from '../utils';
+import { byUIString, byNameIn, t } from '../utils';
 import Category from '../containers/category';
 import ProjectSyncAction from '../components/project/sync_action';
 
@@ -55,13 +55,6 @@ export default class Overview extends React.Component {
     const maxScrapedStr = moment.unix(Math.max(...currMaxScrapedAt, ...currScrapedAt)).fromNow(true);
     const ageDisplay = minScrapedStr == maxScrapedStr ? minScrapedStr : `between ${minScrapedStr} and ${maxScrapedStr}`;
 
-    //sorting predicate for categories: sort by translated name, but categories
-    //named after their service come first
-    const byNameIn = serviceType => (a, b) => {
-      if (t(serviceType) == t(a)) { return -1; }
-      if (t(serviceType) == t(b)) { return +1; }
-      return byUIString(a, b);
-    };
 
     const syncActionProps = {
       scopeData: props.scopeData,

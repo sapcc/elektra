@@ -31,6 +31,14 @@ export const byLeaderAndName = (resA, resB) => {
   return (keyA < keyB) ? -1 : (keyA > keyB) ? 1 : 0;
 };
 
+//A sorting predicate for categories: Sort by translated name, but categories
+//named after their service come first.
+export const byNameIn = serviceType => (a, b) => {
+  if (t(serviceType) == t(a)) { return -1; }
+  if (t(serviceType) == t(b)) { return +1; }
+  return byUIString(a, b);
+};
+
 //Formats large integer numbers for display by adding digit group separators.
 export const formatLargeInteger = (value) => {
   //The SI/ISO 31-0 standard recommends to separate each block of three
