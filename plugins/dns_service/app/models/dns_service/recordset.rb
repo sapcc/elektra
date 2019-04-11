@@ -52,10 +52,17 @@ module DnsService
       }.delete_if { |_k, v| v.blank? }
     end
 
+    # cname: foo.bla.sap.
+    # mx:    10 smtpdem02.bla.sap.
+    # ptr:   1.0.0.10.in-addr.arpa.
+    # srv:   _service._proto.name. TTL class SRV priority weight port target.
     def end_with_dot
-      if type == 'cname' or type == 'mx'
+      if type == 'cname' or
+         type == 'mx' or
+         type == 'ptr' or
+         type == 'srv'
         records.each do |value|
-          unless /\A.+\.\z/.match?(value)
+          unless value.end_with?('.')
             errors.add('records', "#{CONTENT_LABELS[type.to_sym][:label]} should end with a dot.")
           end
         end
