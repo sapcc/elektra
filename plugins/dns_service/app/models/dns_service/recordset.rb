@@ -3,7 +3,7 @@
 module DnsService
   # represents the openstack dns recordset
   class Recordset < Core::ServiceLayer::Model
-    validate :is_cname
+    validate :end_with_dot
 
     TYPE_LABELS = {
       'A - Address record' => 'a',
@@ -52,11 +52,18 @@ module DnsService
       }.delete_if { |_k, v| v.blank? }
     end
 
-    def is_cname
-      if type == 'cname'
+    # cname: foo.bla.sap.
+    # mx:    10 smtpdem02.bla.sap.
+    # ptr:   1.0.0.10.in-addr.arpa.
+    # srv:   _service._proto.name. TTL class SRV priority weight port target.
+    def end_with_dot
+      if type == 'cname' or
+         type == 'mx' or
+         type == 'ptr' or
+         type == 'srv'
         records.each do |value|
-          unless /\A.+\.\z/.match?(value)
-            errors.add('records', 'The Canonical Name should end with a dot.')
+          unless value.end_with?('.')
+            errors.add('records', "#{CONTENT_LABELS[type.to_sym][:label]} should end with a dot.")
           end
         end
       end
