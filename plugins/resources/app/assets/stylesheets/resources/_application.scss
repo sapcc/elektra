@@ -169,3 +169,55 @@ div.edit-quota-input {
 .request-explanation {
   margin-right: 2rem;
 }
+
+#package-selection {
+  display: flex;
+  align-items: start;
+
+  .package {
+    flex: 1;
+    flex-basis: 0;
+    cursor: pointer;
+
+    /* look similar to .bs-callout.bs-callout-emphasize.bs-callout-info, but
+     * with different spacings and with the border at the top instead of at the
+     * left */
+    border: 1px solid #EEE;
+    border-top: 5px solid #00B3FF;
+    border-radius: 3px;
+    margin: 10px 0;
+    padding: 10px;
+
+    &.is-selected {
+      border-color: #E2E8EA;
+      border-top-color: #008FCC;
+      background: #EEF7FB;
+    }
+
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
+
+    h3 {
+      margin: 0 0 14px 0;
+      font-size: 18px;
+      line-height: 18px;
+      font-weight: bold;
+
+      i.fa {
+        /* different icons apparently have inconsistent widths */
+        width: 16px;
+      }
+    }
+
+    .muted-resources {
+      font-size: 12px;
+
+      &::before {
+        display: block;
+        content: "Also includes:";
+        margin-top: 10px;
+      }
+    }
+  }
+}

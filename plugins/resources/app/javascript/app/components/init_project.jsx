@@ -3,6 +3,16 @@ import { Unit } from '../unit';
 import { t, byUIString } from '../utils';
 
 export default class InitProjectModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    const isSelected = {};
+    for (const categoryName in WIZARD_RESOURCES) {
+      isSelected[categoryName] = WIZARD_RESOURCES[categoryName].preselect ? true : false;
+    }
+    this.state = { isSelected };
+  }
+
   //Computes the resource packages offered by this modal. Result looks like:
   //
   //    {
@@ -60,6 +70,12 @@ export default class InitProjectModal extends React.Component {
     return result;
   }
 
+  toggleCategory(categoryName) {
+    const isSelected = { ...this.state.isSelected };
+    isSelected[categoryName] = !isSelected[categoryName];
+    this.setState({ ...this.state, isSelected });
+  }
+
   // close() {
   //   Dashboard.hideModal();
   //   document.location.reload();
@@ -72,7 +88,6 @@ export default class InitProjectModal extends React.Component {
       //data from Limes is not yet loaded
       return null;
     }
-    console.log(resourceValues);
 
     return (
       //NOTE: class='resources' is needed for CSS rules from plugins/resources/ to apply
@@ -89,25 +104,9 @@ export default class InitProjectModal extends React.Component {
               {" "}
               <a href={`${docsUrl}docs/quota/#auto-approval`}>subject to approval</a>.</li>
           </ul>
-          <table className='table initial-packages'>
-            <thead><tr>
-              { Object.keys(resourceValues).map(categoryName => (
-                <th key={categoryName}>{t(categoryName)}</th>
-              ))}
-            </tr></thead>
-            <tbody>
-              <tr>
-                { Object.keys(resourceValues).map(categoryName => (
-                  <td key={categoryName}>{this.renderResourceList(resourceValues[categoryName], true)}</td>
-                ))}
-              </tr>
-              <tr className='text-muted'>
-                { Object.keys(resourceValues).map(categoryName => (
-                  <td key={categoryName}>{this.renderResourceList(resourceValues[categoryName], false)}</td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
+          <div id='package-selection'>
+            { Object.keys(resourceValues).sort(byUIString).map(categoryName => this.renderPackage(categoryName, resourceValues[categoryName])) }
+          </div>
         </div>
         <div className='buttons modal-footer'>
           <div className='btn btn-primary'>Submit</div>
@@ -117,22 +116,34 @@ export default class InitProjectModal extends React.Component {
     );
   }
 
-  renderResourceList(resources, isHighlighted) {
-    const rows = [];
+  renderPackage(categoryName, resources) {
+    const highlightedResources = [];
+    const mutedResources = [];
     const resourceNames = Object.keys(resources).sort(byUIString);
 
     for (let resourceName of resourceNames) {
       const resource = resources[resourceName];
-      if (resource.isHighlighted != isHighlighted) {
-        continue;
-      }
-
       const typeText = resource.quotaText == '1'
         ? t(resourceName + '_single')
         : t(resourceName);
-      rows.push(<div key={resourceName}>{resource.quotaText} {typeText}</div>);
+
+      if (resource.isHighlighted) {
+        highlightedResources.push(<div key={resourceName}>{resource.quotaText} {typeText}</div>);
+      } else {
+        mutedResources.push(<div key={resourceName}>{resource.quotaText} {typeText}</div>);
+      }
     }
 
-    return rows;
+    const isSelected = this.state.isSelected[categoryName];
+    return (
+      <div className={isSelected ? 'package is-selected' : 'package'} key={categoryName} onClick={(e) => { e.preventDefault(); this.toggleCategory(categoryName); return false; }}>
+        <h3>
+          <i class={isSelected ? 'fa fa-check-square' : 'fa fa-square-o'} />
+          {' ' + t(categoryName)}
+        </h3>
+        <div className='highlighted-resources'>{highlightedResources}</div>
+        {mutedResources.length > 0 && <div className='muted-resources'>{mutedResources}</div>}
+      </div>
+    );
   }
 }
