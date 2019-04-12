@@ -170,6 +170,11 @@ div.edit-quota-input {
   margin-right: 2rem;
 }
 
+.alert + #package-selection {
+  /* compensate for the overly large margin-bottom of .alert */
+  margin-top: -10px;
+}
+
 #package-selection {
   display: flex;
 
@@ -191,6 +196,17 @@ div.edit-quota-input {
       border-color: #E2E8EA;
       border-top-color: #008FCC;
       background: #EEF7FB;
+    }
+
+    &.is-unavailable {
+      border-top-color: #CCC;
+      color: #888;
+      background: #FCFCFC;
+      cursor: not-allowed;
+
+      h3 {
+        color: #AAA;
+      }
     }
 
     &:not(:first-child) {

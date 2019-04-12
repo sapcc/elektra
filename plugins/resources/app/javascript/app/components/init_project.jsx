@@ -1,16 +1,23 @@
+import { FormErrors } from 'lib/elektra-form/components/form_errors';
+
 import { WIZARD_RESOURCES } from '../constants';
 import { Unit } from '../unit';
 import { t, byUIString, byNameIn } from '../utils';
 
 export default class InitProjectModal extends React.Component {
-  constructor(props) {
-    super(props);
+  state = {
+    isAvailable: null,
+    isSelected: null,
+    isChecking: false,
+    isSubmitting: false,
+    apiErrors: null,
+  };
 
-    const isSelected = {};
-    for (const categoryName in WIZARD_RESOURCES) {
-      isSelected[categoryName] = WIZARD_RESOURCES[categoryName].preselect ? true : false;
-    }
-    this.state = { isSelected };
+  componentDidMount() {
+    this.checkAvailabilityOnce(this.props);
+  }
+  componentWillReceiveProps(nextProps) {
+    this.checkAvailabilityOnce(nextProps);
   }
 
   //Computes the resource packages offered by this modal. Result looks like:
@@ -70,9 +77,92 @@ export default class InitProjectModal extends React.Component {
     return result;
   }
 
+  makeRequestBody(props, isSelected) {
+    const values = this.resourceValues();
+
+    const services = [];
+    for (const categoryName in values) {
+      if (!isSelected[categoryName]) {
+        continue;
+      }
+
+      const serviceType = props.categories[categoryName].serviceType;
+      let serviceIdx = services.findIndex(srv => srv.type == serviceType);
+      if (serviceIdx < 0) {
+        serviceIdx = services.length;
+        services.push({ type: serviceType, resources: [] });
+      }
+
+      for (const resourceName in values[categoryName]) {
+        const quota = values[categoryName][resourceName].quota;
+        services[serviceIdx].resources.push({ name: resourceName, quota });
+      }
+    }
+    return { project: { services } };
+  }
+
+  checkAvailabilityOnce(props) {
+    //can only do this once we have quota data for the project
+    const { categories } = this.props;
+    if (!categories) {
+      return;
+    }
+
+    //initialize state.isSelected -> this also ensures that this function runs only once
+    if (this.state.isSelected) {
+      return;
+    }
+    const isSelected = {};
+    const isAvailable = {};
+    for (const categoryName in WIZARD_RESOURCES) {
+      isSelected[categoryName] = WIZARD_RESOURCES[categoryName].preselect ? true : false;
+      isAvailable[categoryName] = true; //until disproven
+    }
+    this.setState({
+      ...this.state,
+      isSelected,
+      isAvailable,
+      isChecking: true,
+    });
+
+    //simulate a PUT request for each package to determine if it really is available
+    const promises = [];
+    for (const categoryName in WIZARD_RESOURCES) {
+      const onlyOneSelected = {};
+      onlyOneSelected[categoryName] = true;
+
+      promises.push(new Promise((resolve, _) => {
+        props.simulateSetQuota(
+          props.scopeData,
+          this.makeRequestBody(props, onlyOneSelected),
+        ).catch(response => {
+          this.handleAPIErrors(response.errors);
+          resolve();
+        }).then(response => {
+          if (!response.data.success) {
+            const isSelected = { ...this.state.isSelected };
+            const isAvailable = { ...this.state.isAvailable };
+            isSelected[categoryName] = false;
+            isAvailable[categoryName] = false;
+            this.setState({ ...this.state, isSelected, isAvailable });
+          }
+          resolve();
+        });
+      }));
+    }
+
+    //uncover the UI once all those checks are done
+    Promise.all(promises).then(() => {
+      this.setState({ ...this.state, isChecking: false });
+    });
+  }
+
   toggleCategory(categoryName) {
     const isSelected = { ...this.state.isSelected };
     isSelected[categoryName] = !isSelected[categoryName];
+    if (!this.state.isAvailable[categoryName]) {
+      isSelected[categoryName] = false;
+    }
     this.setState({ ...this.state, isSelected });
   }
 
@@ -81,12 +171,28 @@ export default class InitProjectModal extends React.Component {
   //   document.location.reload();
   // }
 
+  //This gets called when a PUT request to Limes or Elektra fails.
+  handleAPIErrors(errors) {
+    this.setState({
+      ...this.state,
+      isSubmitting: false,
+      apiErrors: errors,
+    });
+  };
+
+
   render() {
     const { scopeData, docsUrl } = this.props;
     const resourceValues = this.resourceValues();
     if (!resourceValues) {
       //data from Limes is not yet loaded
       return null;
+    }
+    if (this.state.isChecking) { 
+      //availability checks are not yet done
+      return <div className='modal-body'>
+        <p><span className='spinner'/> Checking package availability...</p>
+      </div>;
     }
 
     //sorting predicate for categories: sort by area, then like on the main view
@@ -109,10 +215,20 @@ export default class InitProjectModal extends React.Component {
       return byNameIn(infoA.serviceType)(categoryNameA, categoryNameB);
     };
 
+    const unavailablePackages = [];
+    if (this.state.isAvailable) {
+      for (const categoryName in this.state.isAvailable) {
+        if (!this.state.isAvailable[categoryName]) {
+          unavailablePackages.push(t(categoryName));
+        }
+      }
+    }
+
     return (
       //NOTE: class='resources' is needed for CSS rules from plugins/resources/ to apply
       <React.Fragment>
         <div className='modal-body resources'>
+          {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
           <p>
             Please select an initial allotment of resources for your project. Note that:
           </p>
@@ -124,6 +240,9 @@ export default class InitProjectModal extends React.Component {
               {" "}
               <a href={`${docsUrl}docs/quota/#auto-approval`}>subject to approval</a>.</li>
           </ul>
+          {unavailablePackages.length > 0 && (
+            <p className='alert alert-warning'>Some packages ({unavailablePackages.sort().join(', ')}) are not available right now, most likely because of missing domain quota. If you cannot proceed without these packages, please get in touch with your domain resource admin.</p>
+          )}
           <div id='package-selection'>
             { Object.keys(resourceValues).sort(byAreaThenByName).map(categoryName => this.renderPackage(categoryName, resourceValues[categoryName])) }
           </div>
@@ -154,9 +273,18 @@ export default class InitProjectModal extends React.Component {
       }
     }
 
-    const isSelected = this.state.isSelected[categoryName];
+    const isSelected  = (this.state.isSelected  || {})[categoryName];
+    const isAvailable = (this.state.isAvailable || {})[categoryName];
+    let classes = 'package';
+    if (isSelected) {
+      classes += ' is-selected';
+    }
+    if (!isAvailable) {
+      classes += ' is-unavailable';
+    }
+
     return (
-      <div className={isSelected ? 'package is-selected' : 'package'} key={categoryName} onClick={(e) => { e.preventDefault(); this.toggleCategory(categoryName); return false; }}>
+      <div className={classes} title={isAvailable ? '' : 'Not available at this time'} key={categoryName} onClick={(e) => { e.preventDefault(); this.toggleCategory(categoryName); return false; }}>
         <h3>
           <i className={isSelected ? 'fa fa-check-square' : 'fa fa-square-o'} />
           {' ' + t(categoryName)}
