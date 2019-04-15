@@ -136,7 +136,11 @@ module Identity
       # for all services that implements a wizard integration do
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
       service_names = %w[masterdata_cockpit networking resource_management].keep_if do |name|
-        services.available?(name.to_sym)
+        if name == 'resource_management'
+          services.available?(:resources)
+        else
+          services.available?(name.to_sym)
+        end
       end
 
       # ProjectProfile /elektra/app/models
