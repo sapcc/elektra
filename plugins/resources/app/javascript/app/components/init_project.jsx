@@ -3,7 +3,7 @@ import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
 import { WIZARD_RESOURCES } from '../constants';
 import { Unit } from '../unit';
-import { t, byUIString, byNameIn } from '../utils';
+import { t, byUIString, byNameIn, buttonCaption } from '../utils';
 
 export default class InitProjectModal extends React.Component {
   state = {
@@ -167,6 +167,19 @@ export default class InitProjectModal extends React.Component {
     this.setState({ ...this.state, isSelected });
   }
 
+  submit() {
+    if (this.state.isSubmitting) {
+      return;
+    }
+    this.setState({ ...this.state, isSubmitting: true });
+
+    const requestBody = this.makeRequestBody(this.props, this.state.isSelected);
+    this.props.setQuota(this.props.scopeData, requestBody)
+      .then(() => Dashboard.hideModal())
+      .catch(response => this.handleAPIErrors(response.errors));
+    console.log();
+  }
+
   // close() {
   //   Dashboard.hideModal();
   //   document.location.reload();
@@ -181,7 +194,6 @@ export default class InitProjectModal extends React.Component {
     });
   };
 
-
   render() {
     const { scopeData, docsUrl } = this.props;
     const resourceValues = this.resourceValues();
@@ -189,7 +201,9 @@ export default class InitProjectModal extends React.Component {
       //data from Limes is not yet loaded
       return null;
     }
-    if (this.state.isChecking) { 
+
+    const { isChecking, isSubmitting } = this.state;
+    if (isChecking) {
       //availability checks are not yet done
       return <div className='modal-body'>
         <p><span className='spinner'/> Checking package availability...</p>
@@ -225,7 +239,7 @@ export default class InitProjectModal extends React.Component {
             Please select an initial allotment of resources for your project. Note that:
           </p>
           <ul>
-            <li>Quota assignments for some resources incur costs according to our
+            <li>Quota assignments incur costs according to our
               {" "}
               <a href={`${docsUrl}docs/start/pricing.html`}>price list</a>.</li>
             <li>You can always change your quotas later on. Large quota requests may be
@@ -237,7 +251,7 @@ export default class InitProjectModal extends React.Component {
           </div>
         </div>
         <div className='buttons modal-footer'>
-          <div className='btn btn-primary'>Submit</div>
+          <div className='btn btn-primary' onClick={() => this.submit()} disabled={isSubmitting}>{buttonCaption('Submit', isSubmitting)}</div>
           <div className='btn btn-default' onClick={() => Dashboard.hideModal()}>Cancel</div>
         </div>
       </React.Fragment>
