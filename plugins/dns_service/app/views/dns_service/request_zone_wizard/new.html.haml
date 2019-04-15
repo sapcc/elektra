@@ -107,6 +107,25 @@
   }
 
   $(document).ready(function(){
+    // handle the domain name field/s
+    // this is a little complex case because we use two domain name fields. One of them is vissible the other
+    // hidden and disabled but in error case (for instance fqdn was wrong) it reloads the form and only the second
+    // domain name field is filled with the old value. The first one is empty. If the user tries to enter a new
+    // name to the first (in this case empty) domain name field the value for of the second hidden domain name field will
+    // be send and this causes an maximum on confusion :-/
+    // 1) in any case we will have the same value in the vissible and hidden input fields
+    $("[name='zone_request[name]']").change(function(){ $("[name='zone_request[name]']").val(this.value) });
+    // 2) in error case we find out the old value that was written in the last domain name input field
+    var name = "";
+    $("[name='zone_request[name]']").each(function(){
+      if (this.value != "") {
+        name = this.value;
+        return false
+      }
+    });
+    // 3) and set the name value for all domain name fields
+    $("[name='zone_request[name]']").val(name);
+
     // select domain poll
     $('select[name="zone_request[domain_pool]"]').change(function(){
       // empty subnets

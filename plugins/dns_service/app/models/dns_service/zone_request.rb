@@ -9,7 +9,7 @@ module DnsService
     validates :email,
       presence: { message: 'Please provide an email' },
       format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "Please use a valid email address" }
-    validate :simple_name_check
+    validate :fqdn_check
 
     def subdomain?
       domain_type == 'subdomain'
@@ -26,7 +26,7 @@ module DnsService
       fq_name
     end
 
-    def simple_name_check
+    def fqdn_check
       # https://stackoverflow.com/questions/11809631/fully-qualified-domain-name-validation
       # Hostnames are composed of a series of labels concatenated with dots. Each label is 1 to 63 characters long, and may contain:
       # the ASCII letters a-z and A-Z, the digits 0-9, and the hyphen ('-'). Additionally: labels cannot start or end with hyphens (RFC 952)
