@@ -157,7 +157,12 @@ module Identity
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
       %w[resource_management masterdata_cockpit networking].each do |service_name|
 
-        next unless services.available?(service_name.to_sym)
+        if service_name == 'resource_management'
+          next unless services.available?(:resources)
+        else
+          next unless services.available?(service_name.to_sym)
+        end
+
         # set instance variable service available to true
         instance_variable_set("@#{service_name}_service_available", true)
 
@@ -180,7 +185,7 @@ module Identity
     # RESOURCE MANAGEMENT
     def update_resource_management_wizard_status
 
-      if services.resource_management.has_project_quotas?(@scoped_domain_id, @scoped_project_id)
+      if services.resources.has_project_quotas?(@scoped_domain_id, @scoped_project_id)
         @project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
       else
         @project_profile.update_wizard_status('resource_management', nil)

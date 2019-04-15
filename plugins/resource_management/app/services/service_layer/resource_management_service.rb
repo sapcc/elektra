@@ -91,21 +91,6 @@ module ServiceLayer
       end
     end
 
-    def has_project_quotas?(domain_id, project_id, project_domain_id = nil)
-      project = find_project(
-        domain_id || project_domain_id,
-        project_id,
-        service:  %w[compute network object-store],
-        resource: %w[instances ram cores networks capacity]
-      )
-      # return true if approved_quota of the resource networking:networks
-      # is greater than 0 OR
-      # return true if the sum of approved_quota of the resources
-      # compute:instances, compute:ram, compute:cores and
-      # object_storage:capacity is greater than 0
-      project.resources.any? { |r| r.quota.positive? }
-    end
-
     def list_projects(domain_id, query = {})
       # give the domain_id to enrich the Project object with domain_id
       elektron_limes.get("domains/#{domain_id}/projects", query).map_to(

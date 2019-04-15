@@ -34,7 +34,7 @@ describe Identity::ProjectsController, type: :controller do
       allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
         .to receive(:available?).with(:networking).and_return(true)
       allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
-        .to receive(:available?).with(:resource_management).and_return(true)
+        .to receive(:available?).with(:resources).and_return(true)
     end
 
     context 'unfinshed wizard state' do
@@ -86,7 +86,7 @@ describe Identity::ProjectsController, type: :controller do
       allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
         .to receive(:available?).with(:networking).and_return(true)
       allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
-        .to receive(:available?).with(:resource_management).and_return(true)
+        .to receive(:available?).with(:resources).and_return(true)
     end
 
     it 'should set wizard_finished to true' do
@@ -125,7 +125,7 @@ describe Identity::ProjectsController, type: :controller do
         allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
           .to receive(:available?).with(:networking).and_return(true)
         allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
-          .to receive(:available?).with(:resource_management).and_return(true)
+          .to receive(:available?).with(:resources).and_return(true)
       end
 
       it 'should set resource_management_service_available to enabled' do
@@ -156,7 +156,7 @@ describe Identity::ProjectsController, type: :controller do
         allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
           .to receive(:available?).with(:networking).and_return(false)
         allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
-          .to receive(:available?).with(:resource_management).and_return(true)
+          .to receive(:available?).with(:resources).and_return(true)
       end
 
       it 'should set resource_management_service_available to enabled' do
@@ -187,7 +187,7 @@ describe Identity::ProjectsController, type: :controller do
         allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
           .to receive(:available?).with(:networking).and_return(false)
         allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
-          .to receive(:available?).with(:resource_management).and_return(false)
+          .to receive(:available?).with(:resources).and_return(false)
       end
 
       it 'should no set resource_management_service_available' do
