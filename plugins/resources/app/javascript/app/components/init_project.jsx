@@ -286,8 +286,8 @@ export default class InitProjectModal extends React.Component {
     if (isAvailable) {
       return box;
     } else {
-      const tooltip = <Tooltip>This package is not available right now, most likely because of missing domain quota. If you cannot proceed without it, please get in touch with your domain resource admin.</Tooltip>;
-      return <OverlayTrigger overlay={tooltip} placement='top'>{box}</OverlayTrigger>;
+      const tooltip = <Tooltip id={`package-unavailable-${categoryName}`}>This package is not available right now, most likely because of missing domain quota. If you cannot proceed without it, please get in touch with your domain resource admin.</Tooltip>;
+      return <OverlayTrigger overlay={tooltip} placement='top' key={categoryName}>{box}</OverlayTrigger>;
     }
   }
 }
