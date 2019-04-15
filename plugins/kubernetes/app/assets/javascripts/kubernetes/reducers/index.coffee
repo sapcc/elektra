@@ -7,7 +7,8 @@
     modals:        ReactModal.Reducer,
     clusters:      app.clusters,
     clusterForm:   app.clusterForm,
-    metaData:      app.metaData
+    metaData:      app.metaData,
+    info:          app.info
 
   })
 )(kubernetes)

@@ -4,7 +4,7 @@
 
 { div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,optgroup,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, requestDeleteCluster, AdvancedOptions, toggleAdvancedOptions, updateSSHKey, updateKeyPair } = kubernetes
+{ updateClusterForm, closeClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, requestDeleteCluster, AdvancedOptions, toggleAdvancedOptions, updateSSHKey, updateKeyPair } = kubernetes
 
 EditCluster = React.createClass
 
@@ -20,7 +20,7 @@ EditCluster = React.createClass
 
 
   render: ->
-    {close, clusterForm, metaData, handleSubmit, handleChange, handleNodePoolChange, handleNodePoolAdd, handleNodePoolRemove, handleClusterDelete, handleAdvancedOptionsToggle, handleSSHKeyChange, handleKeyPairChange} = @props
+    {close, clusterForm, metaData, info, handleSubmit, handleFormClose, handleChange, handleNodePoolChange, handleNodePoolAdd, handleNodePoolRemove, handleClusterDelete, handleAdvancedOptionsToggle, handleSSHKeyChange, handleKeyPairChange} = @props
     cluster = clusterForm.data
     spec    = cluster.spec
 
@@ -92,7 +92,7 @@ EditCluster = React.createClass
               "#{if clusterForm.advancedOptionsVisible then 'Hide ' else ''}Advanced Options"
 
           if clusterForm.advancedOptionsVisible
-              React.createElement AdvancedOptions, clusterForm: clusterForm, metaData: metaData, edit: true
+              React.createElement AdvancedOptions, clusterForm: clusterForm, metaData: metaData, info: info, edit: true
 
 
         # ------- NODEPOOLS --------
@@ -209,7 +209,7 @@ EditCluster = React.createClass
           i className: 'fa fa-fw fa-trash-o'
           'Delete Cluster'
 
-        button role: 'close', type: 'button', className: 'btn btn-default', onClick: close, 'Close'
+        button role: 'close', type: 'button', className: 'btn btn-default', onClick: ((e) -> e.preventDefault(); close(); handleFormClose()), 'Close'
         React.createElement ReactFormHelpers.SubmitButton,
           label: 'Update',
           loading: clusterForm.isSubmitting,
@@ -228,6 +228,7 @@ EditCluster = connect(
     handleNodePoolChange:       (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
     handleNodePoolAdd:          (defaultAZ)           -> dispatch(addNodePool(defaultAZ))
     handleNodePoolRemove:       (index)               -> dispatch(deleteNodePool(index))
+    handleFormClose:            ()                    -> dispatch(closeClusterForm())
     handleSubmit:               (callback)            -> dispatch(submitClusterForm(callback))
     handleClusterDelete:        (clusterName)         -> dispatch(requestDeleteCluster(clusterName))
     handleSSHKeyChange:         (value)               -> dispatch(updateSSHKey(value))

@@ -11,6 +11,7 @@ NewCluster = ({
   close,
   clusterForm,
   metaData,
+  info,
   handleSubmit,
   handleChange,
   handleNodePoolChange,
@@ -99,7 +100,7 @@ NewCluster = ({
             "#{if clusterForm.advancedOptionsVisible then 'Hide ' else ''}Advanced Options"
 
         if clusterForm.advancedOptionsVisible
-            React.createElement AdvancedOptions, clusterForm: clusterForm, metaData: metaData
+            React.createElement AdvancedOptions, clusterForm: clusterForm, metaData: metaData, info: info,
 
 
 
@@ -221,14 +222,14 @@ NewCluster = connect(
     metaData:     state.metaData
 
   (dispatch) ->
-    handleChange:             (name, value)         -> dispatch(updateClusterForm(name, value))
-    handleAdvancedOptionsToggle:()                  -> dispatch(toggleAdvancedOptions())
-    handleNodePoolChange:     (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
-    handleNodePoolAdd:        (defaultAZ)           -> dispatch(addNodePool(defaultAZ))
-    handleNodePoolRemove:     (index)               -> dispatch(deleteNodePool(index))
-    handleSubmit:             (callback)            -> dispatch(submitClusterForm(callback))
-    handleSSHKeyChange:       (value)               -> dispatch(updateSSHKey(value))
-    handleKeyPairChange:      (value)               -> dispatch(updateKeyPair(value))
+    handleChange:                 (name, value)         -> dispatch(updateClusterForm(name, value))
+    handleAdvancedOptionsToggle:  ()                    -> dispatch(toggleAdvancedOptions())
+    handleNodePoolChange:         (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
+    handleNodePoolAdd:            (defaultAZ)           -> dispatch(addNodePool(defaultAZ))
+    handleNodePoolRemove:         (index)               -> dispatch(deleteNodePool(index))
+    handleSubmit:                 (callback)            -> dispatch(submitClusterForm(callback))
+    handleSSHKeyChange:           (value)               -> dispatch(updateSSHKey(value))
+    handleKeyPairChange:          (value)               -> dispatch(updateKeyPair(value))
 
 )(NewCluster)
 

@@ -137,6 +137,7 @@
   openNewClusterDialog = () ->
     (dispatch) ->
       dispatch(app.loadMetaData())
+      dispatch(app.loadInfo(workflow: 'new'))
       dispatch(clusterFormForCreate())
       dispatch(newClusterModal())
 
@@ -153,6 +154,7 @@
   openEditClusterDialog = (cluster) ->
     (dispatch) ->
       dispatch(app.loadMetaData())
+      dispatch(app.loadInfo({}))
       dispatch(clusterFormForUpdate(cluster))
       dispatch(editClusterModal())
 
@@ -267,6 +269,10 @@
   resetClusterForm = () ->
     type: app.RESET_CLUSTER_FORM
 
+  closeClusterForm = () ->
+    (dispatch) ->
+      dispatch(resetClusterForm())
+
   clusterFormForUpdate = (cluster) ->
     type: app.PREPARE_CLUSTER_FORM
     data: cluster
@@ -288,6 +294,10 @@
         when 'routerID'  then dispatch(setDefaultsForRouter(value))
         when 'networkID' then dispatch(setDefaultsForNetwork(value))
         else dispatch(updateAdvancedValue(name, value))
+
+  changeVersion = (value) ->
+    type: app.FORM_CHANGE_VERSION
+    value: value
 
   setDefaultsForRouter = (value) ->
     (dispatch, getState) ->
@@ -382,6 +392,7 @@
   app.openEditClusterDialog      = openEditClusterDialog
   app.toggleAdvancedOptions      = toggleAdvancedOptions
   app.updateAdvancedOptions      = updateAdvancedOptions
+  app.changeVersion              = changeVersion
   app.updateSSHKey               = updateSSHKey
   app.updateKeyPair              = updateKeyPair
   app.loadCluster                = loadCluster
@@ -391,6 +402,7 @@
   app.clusterFormForCreate       = clusterFormForCreate
   app.clusterFormForUpdate       = clusterFormForUpdate
   app.submitClusterForm          = submitClusterForm
+  app.closeClusterForm           = closeClusterForm
   app.updateClusterForm          = updateClusterForm
   app.updateNodePoolForm         = updateNodePoolForm
   app.addNodePool                = addNodePool
