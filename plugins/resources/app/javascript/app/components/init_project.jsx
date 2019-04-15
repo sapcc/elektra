@@ -1,3 +1,4 @@
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
 import { WIZARD_RESOURCES } from '../constants';
@@ -215,15 +216,6 @@ export default class InitProjectModal extends React.Component {
       return byNameIn(infoA.serviceType)(categoryNameA, categoryNameB);
     };
 
-    const unavailablePackages = [];
-    if (this.state.isAvailable) {
-      for (const categoryName in this.state.isAvailable) {
-        if (!this.state.isAvailable[categoryName]) {
-          unavailablePackages.push(t(categoryName));
-        }
-      }
-    }
-
     return (
       //NOTE: class='resources' is needed for CSS rules from plugins/resources/ to apply
       <React.Fragment>
@@ -240,9 +232,6 @@ export default class InitProjectModal extends React.Component {
               {" "}
               <a href={`${docsUrl}docs/quota/#auto-approval`}>subject to approval</a>.</li>
           </ul>
-          {unavailablePackages.length > 0 && (
-            <p className='alert alert-warning'>Some packages ({unavailablePackages.sort().join(', ')}) are not available right now, most likely because of missing domain quota. If you cannot proceed without these packages, please get in touch with your domain resource admin.</p>
-          )}
           <div id='package-selection'>
             { Object.keys(resourceValues).sort(byAreaThenByName).map(categoryName => this.renderPackage(categoryName, resourceValues[categoryName])) }
           </div>
@@ -283,8 +272,8 @@ export default class InitProjectModal extends React.Component {
       classes += ' is-unavailable';
     }
 
-    return (
-      <div className={classes} title={isAvailable ? '' : 'Not available at this time'} key={categoryName} onClick={(e) => { e.preventDefault(); this.toggleCategory(categoryName); return false; }}>
+    const box = (
+      <div className={classes} key={categoryName} onClick={(e) => { e.preventDefault(); this.toggleCategory(categoryName); return false; }}>
         <h3>
           <i className={isSelected ? 'fa fa-check-square' : 'fa fa-square-o'} />
           {' ' + t(categoryName)}
@@ -293,5 +282,12 @@ export default class InitProjectModal extends React.Component {
         {mutedResources.length > 0 && <div className='muted-resources'>{mutedResources}</div>}
       </div>
     );
+
+    if (isAvailable) {
+      return box;
+    } else {
+      const tooltip = <Tooltip>This package is not available right now, most likely because of missing domain quota. If you cannot proceed without it, please get in touch with your domain resource admin.</Tooltip>;
+      return <OverlayTrigger overlay={tooltip} placement='top'>{box}</OverlayTrigger>;
+    }
   }
 }
