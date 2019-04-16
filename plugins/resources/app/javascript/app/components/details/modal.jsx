@@ -10,7 +10,7 @@ import DetailsResource from '../../components/details/resource';
 import ReloadIndicator from '../../components/reload_indicator';
 
 const clusterDataTableColumns = [
-  { key: 'id', label: 'Project', sortStrategy: 'text',
+  { key: 'id', label: 'Domain', sortStrategy: 'text',
     sortKey: props => props.metadata.name || '' },
   { key: 'quota', label: 'Quota', sortStrategy: 'numeric',
     sortKey: props => props.resource.quota || 0 },
