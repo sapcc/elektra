@@ -218,6 +218,13 @@ div.edit-quota-input {
       font-size: 18px;
       line-height: 18px;
       font-weight: bold;
+
+      /* the default width of .fa-fw is just slightly too large, and causes the
+       * heading "Object Storage" to break the line; so choose a narrower width
+       */
+      i.fa-fw {
+        width: 16px;
+      }
     }
 
     .muted-resources {
