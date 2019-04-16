@@ -251,7 +251,7 @@ module ResourceManagement
       enforce_permissions("resource_management:project_resource_list")
       # if no quota has been approved yet, the user may request an initial
       # package of quotas
-      @show_package_request_banner = ! services.resource_management.has_project_quotas?(current_user.domain_id,current_user.project_id,current_user.project_domain_id)
+      @show_package_request_banner = false
       @has_requested_package = Inquiry::Inquiry.
         where(domain_id: @scoped_domain_id, project_id: @scoped_project_id, kind: 'project_quota_package', aasm_state: 'open').
         count > 0
