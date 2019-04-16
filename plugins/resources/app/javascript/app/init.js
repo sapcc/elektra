@@ -1,6 +1,7 @@
 import { createWidget } from 'widget';
 import * as reducers from './reducers';
-import App from './components/application';
+import MainApp from './components/applications/main';
+import InitProjectApp from './components/applications/init_project';
 
 createWidget(__dirname).then((widget) => {
   const limesHeaders = { 'X-Auth-Token': widget.config.scriptParams.token }
@@ -15,6 +16,18 @@ createWidget(__dirname).then((widget) => {
   delete(widget.config.scriptParams.limesApi)
   delete(widget.config.scriptParams.token)
 
+  //the script parameter "app" decides which entrypoint we're going to use
+  let app = MainApp;
+  switch (widget.config.scriptParams.app) {
+    case "main":
+      app = MainApp;
+      break;
+    case "init_project":
+      app = InitProjectApp;
+      break;
+  }
+  delete(widget.config.scriptParams.app)
+
   //convert params from strings into the respective types
   widget.config.scriptParams.flavorData = JSON.parse(widget.config.scriptParams.flavorData)
   widget.config.scriptParams.canEdit = widget.config.scriptParams.canEdit == 'true';
@@ -22,5 +35,5 @@ createWidget(__dirname).then((widget) => {
 
   widget.setPolicy()
   widget.createStore(reducers)
-  widget.render(App)
+  widget.render(app)
 })

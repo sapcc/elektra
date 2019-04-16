@@ -1,11 +1,11 @@
 /* eslint no-console:0 */
 import { HashRouter, Route, Redirect } from 'react-router-dom'
 
-import Loader from '../containers/loader';
-import Overview from '../containers/overview';
-import DetailsModal from '../containers/details/modal';
-import EditModal from '../containers/edit';
-import ProjectSettingsModal from '../containers/project/settings';
+import Loader from '../../containers/loader';
+import Overview from '../../containers/overview';
+import DetailsModal from '../../containers/details/modal';
+import EditModal from '../../containers/edit';
+import ProjectSettingsModal from '../../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
   const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope } = props;

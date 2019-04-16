@@ -169,3 +169,72 @@ div.edit-quota-input {
 .request-explanation {
   margin-right: 2rem;
 }
+
+.alert + #package-selection {
+  /* compensate for the overly large margin-bottom of .alert */
+  margin-top: -10px;
+}
+
+#package-selection {
+  display: flex;
+
+  .package {
+    flex: 1;
+    flex-basis: 0;
+    cursor: pointer;
+
+    /* look similar to .bs-callout.bs-callout-emphasize.bs-callout-info, but
+     * with different spacings and with the border at the top instead of at the
+     * left */
+    border: 1px solid #EEE;
+    border-top: 5px solid #00B3FF;
+    border-radius: 3px;
+    margin: 10px 0;
+    padding: 10px;
+
+    &.is-selected {
+      border-color: #E2E8EA;
+      border-top-color: #008FCC;
+      background: #EEF7FB;
+    }
+
+    &.is-unavailable {
+      border-top-color: #CCC;
+      color: #888;
+      background: #FCFCFC;
+      cursor: not-allowed;
+
+      h3 {
+        color: #AAA;
+      }
+    }
+
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
+
+    h3 {
+      margin: 0 0 14px 0;
+      font-size: 18px;
+      line-height: 18px;
+      font-weight: bold;
+
+      /* the default width of .fa-fw is just slightly too large, and causes the
+       * heading "Object Storage" to break the line; so choose a narrower width
+       */
+      i.fa-fw {
+        width: 16px;
+      }
+    }
+
+    .muted-resources {
+      font-size: 12px;
+
+      &::before {
+        display: block;
+        content: "Also includes:";
+        margin-top: 10px;
+      }
+    }
+  }
+}

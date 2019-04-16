@@ -24,10 +24,12 @@ export default class Loader extends React.Component {
         isReloading={this.props.isFetching} />;
     }
     const scope = new Scope(this.props.scopeData);
-    if (this.props.isFetching) {
-      return <p><span className='spinner'/> Loading data for {scope.level()}...</p>;
-    }
-    return <p className='text-danger'>Failed to load data for {scope.level()}</p>;
+    const msg = this.props.isFetching
+      ? <p><span className='spinner'/> Loading data for {scope.level()}...</p>
+      : <p className='text-danger'>Failed to load data for {scope.level()}</p>;
+    return this.props.isModal
+      ? <div className='modal-body'>{msg}</div>
+      : msg;
   }
 
 }
