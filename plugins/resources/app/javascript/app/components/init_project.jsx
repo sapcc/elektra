@@ -289,7 +289,7 @@ export default class InitProjectModal extends React.Component {
     const box = (
       <div className={classes} key={categoryName} onClick={(e) => { e.preventDefault(); this.toggleCategory(categoryName); return false; }}>
         <h3>
-          <i className={isSelected ? 'fa fa-check-square' : 'fa fa-square-o'} />
+          <i className={isSelected ? 'fa fa-fw fa-check-square' : 'fa fa-fw fa-square-o'} />
           {' ' + t(categoryName)}
         </h3>
         <div className='highlighted-resources'>{highlightedResources}</div>
