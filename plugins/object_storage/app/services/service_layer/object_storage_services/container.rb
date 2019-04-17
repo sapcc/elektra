@@ -90,7 +90,19 @@ module ServiceLayer
 
       def update_container(container_name, params = {})
         # update container properties and access control
+
+        # remove web-listing meta so it is completly disabled
+        # if "x-container-meta-web-listings" is only set to false web-listing is
+        # not completly disabled. That means the web access returns a html site
+        # that informs you that web-listing was disabled.
+        # If (in that case) public read access is allowed it is not possible to get a listing in
+        # json or xml format because the middleware will return the html site that 
+        # web-listing was disabled.
         header_attrs = map_attribute_names(params, CONTAINER_WRITE_ATTRMAP)
+        unless header_attrs["x-container-meta-web-listings"]
+          header_attrs["x-remove-container-meta-web-listings"] = '1'
+          header_attrs.delete("x-container-meta-web-listings")
+        end
 
         # convert difference between old and new metadata into a set of changes
         old_metadata = params['original_metadata']
