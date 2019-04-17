@@ -9,6 +9,7 @@ const initialState = {
   //UI state
   receivedAt: null,
   isFetching: false,
+  isIncomplete: false,
   syncStatus: null,
 };
 
@@ -18,6 +19,7 @@ const initialState = {
 const request = (state, {requestedAt}) => ({
   ...state,
   isFetching: true,
+  isIncomplete: false,
   requestedAt,
 });
 
@@ -31,6 +33,18 @@ const receive = (state, {data, receivedAt}) => {
   // This reducer takes the `data` returned by Limes and flattens it
   // into several structures that reflect the different levels of React
   // components.
+
+  // validation: check that each service has resources (we might see missing
+  // resources immediately after project creation, before Limes has completed
+  // the initial scrape of all project services)
+  if (data.services.some(srv => (srv.resources || []).length == 0)) {
+    return {
+      ...state,
+      receivedAt,
+      isFetching: false,
+      isIncomplete: true,
+    };
+  }
 
   // `metadata` is what multiple levels need (e.g. bursting multiplier).
   var {services: serviceList, ...metadata} = data;
