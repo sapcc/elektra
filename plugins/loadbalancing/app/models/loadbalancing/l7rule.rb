@@ -5,11 +5,11 @@ module Loadbalancing
 
     validates :key, presence: {
       message: 'Please set a key name for Cookie and Header types'
-    }, if: :type == 'HEADER' || :type == 'COOKIE'
+    }, if: :type_header_cookie?
     validates :key, format: {
       with: /\A[a-zA-Z!#$%&'*+-.^_`|~]+\z/,
       message: 'Invalid characters in value. See RFCs 2616, 2965, 6265, 7230.'
-    }, if: :type == 'HEADER' || :type == 'COOKIE'
+    }, if: :type_header_cookie?
     validates :value, presence: true, format: {
       with: %r{\A[a-zA-Z\d!#$%&'()*+-\./:<=>?@\[\]^_`{|}~]+\z},
       message: 'Invalid characters in value. See RFCs 2616, 2965, 6265.'
@@ -27,6 +27,10 @@ module Loadbalancing
       s += "KEY[#{key}]=" if key
       s += value
       s
+    end
+
+    def type_header_cookie?
+      return type == 'HEADER' || type == 'COOKIE'
     end
 
     def in_transition?
