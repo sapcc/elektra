@@ -132,21 +132,6 @@ EditCluster = React.createClass
                   onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value))
 
 
-              # Nodepool size
-              div className: "form-group string form-group-size" ,
-                label className: "string control-label", htmlFor: "size",
-                  'Size '
-                  abbr title: "required", '*'
-
-                input
-                  className: "string form-control",
-                  "data-index": index,
-                  type: "number",
-                  name: "size",
-                  placeholder: "0",
-                  value: (if isNaN(nodePool.size) then '' else nodePool.size),
-                  onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
-
               # Nodepool flavor
               div className: "form-group string" ,
                 label className: "string control-label", htmlFor: "flavor",
@@ -192,6 +177,45 @@ EditCluster = React.createClass
                       if metaData.availabilityZones?
                         for az in metaData.availabilityZones
                           option value: az.name, key: az.name, "#{az.name}"
+
+              
+              # Nodepool size
+              div className: "form-group string form-group-size" ,
+                label className: "string control-label", htmlFor: "size",
+                  'Size '
+                  abbr title: "required", '*'
+
+                input
+                  className: "string form-control",
+                  "data-index": index,
+                  type: "number",
+                  name: "size",
+                  min: "0",
+                  placeholder: "0",
+                  value: (if isNaN(nodePool.size) then '' else nodePool.size),
+                  onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
+
+              
+              # Nodepool Allow Reboot
+              div className: "checkbox inline-checkbox form-group" ,
+                label className: "string control-label",
+                  input 
+                    type: "checkbox", 
+                    "data-index": index, 
+                    checked: (nodePool.config.allowReboot), 
+                    onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReboot", !nodePool.config.allowReboot))
+                  "Allow Reboot"
+
+              # Nodepool Allow Replace
+              div className: "checkbox inline-checkbox form-group" ,
+                label className: "string control-label",
+                  input 
+                    type: "checkbox", 
+                    "data-index": index, 
+                    checked: (nodePool.config.allowReplace),
+                    onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReplace", !nodePool.config.allowReplace))
+                  "Allow Replace"
+
 
               button
                 className: 'btn btn-default',
@@ -240,7 +264,7 @@ EditCluster = connect(
 )(EditCluster)
 
 kubernetes.EditClusterModal = ReactModal.Wrapper('Edit Cluster', EditCluster,
-  large: true,
+  xlarge: true,
   closeButton: false,
   static: true
 )

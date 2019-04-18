@@ -55,7 +55,7 @@ ReactModal.Wrapper = (title, WrappedComponent, options = {}) ->
           ref: 'modal',
           role: "dialog",
           "aria-labelledby": "myModalLabel",
-          div className: "modal-dialog #{'modal-lg' if options.large}", role: "document",
+          div className: "modal-dialog #{'modal-lg' if options.large} #{'modal-xl' if options.xlarge}", role: "document",
             div className: "modal-content",
               div className: "modal-header",
                 if options.closeButton

@@ -15,6 +15,10 @@
             size: ''
             availabilityZone: ''
             new: true
+            config: {
+              allowReboot: true
+              allowReplace: true
+            }
           }
         ]
         openstack: {}
@@ -83,7 +87,13 @@
     })
 
   updateNodePoolForm = (state, {index, name, value}) ->
-    nodePool = ReactHelpers.mergeObjects({}, state.data.spec.nodePools[index], {"#{name}":value})
+    nodePool = if /allowReboot|allowReplace/.test(name) 
+                configClone = JSON.parse(JSON.stringify(state.data.spec.nodePools[index].config))
+                configClone[name] = value
+                ReactHelpers.mergeObjects({}, state.data.spec.nodePools[index], {config: configClone})
+              else 
+                ReactHelpers.mergeObjects({}, state.data.spec.nodePools[index], {"#{name}":value})
+
     nodePoolsClone = state.data.spec.nodePools.slice(0)
     if index>=0 then nodePoolsClone[index] = nodePool else nodePoolsClone.push nodePool
     stateClone = JSON.parse(JSON.stringify(state))

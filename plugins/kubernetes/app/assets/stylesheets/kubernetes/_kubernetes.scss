@@ -36,6 +36,15 @@ i.warning {
 .nodepool-form {
   margin-top: $line-height-computed;
 
+  .form-inline-flex {
+    align-items: flex-end;
+  }
+
+  .checkbox {
+    padding-bottom: 8px;
+    white-space: nowrap;
+  }
+
   .form-control {
     width: 100%;
   }

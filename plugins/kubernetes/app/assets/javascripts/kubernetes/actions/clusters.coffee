@@ -353,6 +353,7 @@
     index: index
     name: name
     value: value
+    
 
   addNodePool = (defaultAZ) ->
     type: app.ADD_NODE_POOL

@@ -139,20 +139,6 @@ NewCluster = ({
                 value: nodePool.name || '',
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value))
 
-            # Nodepool size
-            div className: "form-group form-group-size" ,
-              label className: "string control-label", htmlFor: "size",
-                'Size '
-                abbr title: "required", '*'
-
-              input
-                className: "form-control",
-                "data-index": i,
-                type: "number",
-                name: "size",
-                placeholder: "0",
-                value: (if isNaN(nodePool.size) then '' else nodePool.size),
-                onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
 
             # Nodepool flavor
             div className: "form-group string" ,
@@ -199,6 +185,44 @@ NewCluster = ({
                         option value: az.name, key: az.name, "#{az.name}"
 
 
+            # Nodepool size
+            div className: "form-group form-group-size" ,
+              label className: "string control-label", htmlFor: "size",
+                'Size '
+                abbr title: "required", '*'
+
+              input
+                className: "form-control",
+                "data-index": i,
+                type: "number",
+                name: "size",
+                min: "0",
+                placeholder: "0",
+                value: (if isNaN(nodePool.size) then '' else nodePool.size),
+                onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
+
+
+            # Nodepool Allow Reboot
+            div className: "checkbox inline-checkbox form-group" ,
+              label className: "string control-label",
+                input 
+                  type: "checkbox", 
+                  "data-index": i, 
+                  checked: (nodePool.config.allowReboot), 
+                  onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReboot", !nodePool.config.allowReboot))
+                "Allow Reboot"
+
+            # Nodepool Allow Replace
+            div className: "checkbox inline-checkbox form-group" ,
+              label className: "string control-label",
+                input 
+                  type: "checkbox", 
+                  "data-index": i, 
+                  checked: (nodePool.config.allowReplace),
+                  onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReplace", !nodePool.config.allowReplace))
+                "Allow Replace"
+
+
             button
               className: 'btn btn-default',
               "data-index": i,
@@ -234,7 +258,7 @@ NewCluster = connect(
 )(NewCluster)
 
 kubernetes.NewClusterModal = ReactModal.Wrapper('Create Cluster', NewCluster,
-  large: true,
+  xlarge: true,
   closeButton: false,
   static: true
 )
