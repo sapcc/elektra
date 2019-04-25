@@ -50,7 +50,7 @@
     # })
     index = ReactHelpers.findIndexInArray(state.items,clusterName, 'name')
     return state if index < 0
-    items = state.items.slice() # clone array
+    items = state.items.slice(0) # clone array
     items[index].isTerminating = true
     ReactHelpers.mergeObjects({},state,{items})
 
@@ -85,14 +85,14 @@
   startPollingCluster = (state, {clusterName}) ->
     index = ReactHelpers.findIndexInArray(state.items,clusterName, 'name')
     return state if index < 0
-    items = state.items.slice() # clone array
+    items = state.items.slice(0) # clone array
     items[index].isPolling = true
     ReactHelpers.mergeObjects({},state,{items})
 
   stopPollingCluster = (state, {clusterName}) ->
     index = ReactHelpers.findIndexInArray(state.items,clusterName, 'name')
     return state if index < 0
-    items = state.items.slice() # clone array
+    items = state.items.slice(0) # clone array
     items[index].isPolling = false
     ReactHelpers.mergeObjects({},state,{items})
 
@@ -110,7 +110,7 @@
     # # update or add
     # if index>=0 then items[index]["events"] = events
     # ReactHelpers.mergeObjects({},state,{items})
-    allEvents = state.events
+    allEvents = JSON.parse(JSON.stringify(state.events))
     allEvents[clusterName] = events.reverse()
     ReactHelpers.mergeObjects({},state,{events: allEvents})
 

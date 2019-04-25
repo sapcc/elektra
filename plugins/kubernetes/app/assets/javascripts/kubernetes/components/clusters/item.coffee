@@ -33,7 +33,7 @@ Cluster = React.createClass
 
 
   clusterReady: (cluster) ->
-    cluster.status.phase == 'Running'
+    cluster.status.phase == 'Running' && cluster.spec.version == cluster.status.apiserverVersion
 
   nodePoolsReady: (cluster) ->
     # not ready if number of nodepools in spec and status don't match
@@ -84,7 +84,9 @@ Cluster = React.createClass
           unless @clusterReady(cluster)
             span className: 'spinner'
           br null
-          span className: 'info-text', cluster.status.message
+          "Version: #{cluster.status.apiserverVersion}"
+          br null
+          span className: 'info-text', cluster.status.message 
         td className: 'nodepool-spec',
           for nodePool in cluster.spec.nodePools
             nodePoolStatus = @nodePoolStatus(cluster, nodePool.name)

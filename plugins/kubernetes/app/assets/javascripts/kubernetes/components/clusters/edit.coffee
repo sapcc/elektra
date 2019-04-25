@@ -4,7 +4,7 @@
 
 { div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,optgroup,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, requestDeleteCluster, AdvancedOptions, toggleAdvancedOptions, updateSSHKey, updateKeyPair } = kubernetes
+{ updateClusterForm, closeClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, requestDeleteCluster, AdvancedOptions, toggleAdvancedOptions, updateSSHKey, updateKeyPair } = kubernetes
 
 EditCluster = React.createClass
 
@@ -20,7 +20,7 @@ EditCluster = React.createClass
 
 
   render: ->
-    {close, clusterForm, metaData, handleSubmit, handleChange, handleNodePoolChange, handleNodePoolAdd, handleNodePoolRemove, handleClusterDelete, handleAdvancedOptionsToggle, handleSSHKeyChange, handleKeyPairChange} = @props
+    {close, clusterForm, metaData, info, handleSubmit, handleFormClose, handleChange, handleNodePoolChange, handleNodePoolAdd, handleNodePoolRemove, handleClusterDelete, handleAdvancedOptionsToggle, handleSSHKeyChange, handleKeyPairChange} = @props
     cluster = clusterForm.data
     spec    = cluster.spec
 
@@ -92,7 +92,7 @@ EditCluster = React.createClass
               "#{if clusterForm.advancedOptionsVisible then 'Hide ' else ''}Advanced Options"
 
           if clusterForm.advancedOptionsVisible
-              React.createElement AdvancedOptions, clusterForm: clusterForm, metaData: metaData, edit: true
+              React.createElement AdvancedOptions, clusterForm: clusterForm, metaData: metaData, info: info, edit: true
 
 
         # ------- NODEPOOLS --------
@@ -131,21 +131,6 @@ EditCluster = React.createClass
                   value: nodePool.name || '',
                   onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value))
 
-
-              # Nodepool size
-              div className: "form-group string form-group-size" ,
-                label className: "string control-label", htmlFor: "size",
-                  'Size '
-                  abbr title: "required", '*'
-
-                input
-                  className: "string form-control",
-                  "data-index": index,
-                  type: "number",
-                  name: "size",
-                  placeholder: "0",
-                  value: (if isNaN(nodePool.size) then '' else nodePool.size),
-                  onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
 
               # Nodepool flavor
               div className: "form-group string" ,
@@ -193,6 +178,45 @@ EditCluster = React.createClass
                         for az in metaData.availabilityZones
                           option value: az.name, key: az.name, "#{az.name}"
 
+              
+              # Nodepool size
+              div className: "form-group string form-group-size" ,
+                label className: "string control-label", htmlFor: "size",
+                  'Size '
+                  abbr title: "required", '*'
+
+                input
+                  className: "string form-control",
+                  "data-index": index,
+                  type: "number",
+                  name: "size",
+                  min: "0",
+                  placeholder: "0",
+                  value: (if isNaN(nodePool.size) then '' else nodePool.size),
+                  onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
+
+              
+              # Nodepool Allow Reboot
+              div className: "checkbox inline-checkbox form-group" ,
+                label className: "string control-label",
+                  input 
+                    type: "checkbox", 
+                    "data-index": index, 
+                    checked: (nodePool.config.allowReboot), 
+                    onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReboot", !nodePool.config.allowReboot))
+                  "Allow Reboot"
+
+              # Nodepool Allow Replace
+              div className: "checkbox inline-checkbox form-group" ,
+                label className: "string control-label",
+                  input 
+                    type: "checkbox", 
+                    "data-index": index, 
+                    checked: (nodePool.config.allowReplace),
+                    onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReplace", !nodePool.config.allowReplace))
+                  "Allow Replace"
+
+
               button
                 className: 'btn btn-default',
                 "data-index": index,
@@ -209,7 +233,7 @@ EditCluster = React.createClass
           i className: 'fa fa-fw fa-trash-o'
           'Delete Cluster'
 
-        button role: 'close', type: 'button', className: 'btn btn-default', onClick: close, 'Close'
+        button role: 'close', type: 'button', className: 'btn btn-default', onClick: ((e) -> e.preventDefault(); close(); handleFormClose()), 'Close'
         React.createElement ReactFormHelpers.SubmitButton,
           label: 'Update',
           loading: clusterForm.isSubmitting,
@@ -228,6 +252,7 @@ EditCluster = connect(
     handleNodePoolChange:       (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
     handleNodePoolAdd:          (defaultAZ)           -> dispatch(addNodePool(defaultAZ))
     handleNodePoolRemove:       (index)               -> dispatch(deleteNodePool(index))
+    handleFormClose:            ()                    -> dispatch(closeClusterForm())
     handleSubmit:               (callback)            -> dispatch(submitClusterForm(callback))
     handleClusterDelete:        (clusterName)         -> dispatch(requestDeleteCluster(clusterName))
     handleSSHKeyChange:         (value)               -> dispatch(updateSSHKey(value))
@@ -239,7 +264,7 @@ EditCluster = connect(
 )(EditCluster)
 
 kubernetes.EditClusterModal = ReactModal.Wrapper('Edit Cluster', EditCluster,
-  large: true,
+  xlarge: true,
   closeButton: false,
   static: true
 )
