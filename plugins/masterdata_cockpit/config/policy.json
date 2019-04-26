@@ -5,6 +5,8 @@
   "masterdata_cockpit:project_masterdatum_list": "rule:masterdata_or_project_admin or role:masterdata_viewer",
   "masterdata_cockpit:project_masterdatum_update": "rule:masterdata_or_project_admin",
   "masterdata_cockpit:project_masterdatum_create": "rule:masterdata_or_project_admin",
+  "masterdata_cockpit:project_masterdatum_solution_revenue_relevances": "rule:masterdata_or_project_admin",
+  "masterdata_cockpit:project_masterdatum_revenue_relevance_cost_object": "rule:masterdata_or_project_admin",
 
   "masterdata_cockpit:domain_masterdatum_list": "rule:masterdata_or_domain_admin or role:masterdata_viewer",
   "masterdata_cockpit:domain_masterdatum_update": "rule:masterdata_or_domain_admin",
