@@ -20,5 +20,6 @@
   "block_storage:snapshot_create": "rule:context_is_volume_editor and (not rule:monsoon2_domain or rule:project_parent)",
   "block_storage:snapshot_update": "rule:context_is_volume_editor and (not rule:monsoon2_domain or rule:project_parent)",
   "block_storage:snapshot_delete": "rule:context_is_volume_editor and (not rule:monsoon2_domain or rule:project_parent)",
-  "block_storage:snapshot_reset_status": "rule:context_is_volume_admin"
+  "block_storage:snapshot_reset_status": "rule:context_is_volume_admin",
+  "block_storage:volume_available_servers": "rule:compute:instance_list"
 }
