@@ -4,17 +4,23 @@ module Webconsole
 
     def show
       @token = current_user.token
-      @webcli_endpoint = current_user.service_url("webcli")
+      @webcli_endpoint = "https://ccloudshell.eu-de-2.cloud.sap" # TODO: Replace endpoint url with catalog entry
       @identity_url = current_user.service_url("identity")
+      @region = current_region
+      @user_name = current_user.name
     end
 
     # returns current context
     def current_context
+      # TODO: Replace endpoint url with catalog entry
       result = {
         token: current_user.token,
-        webcli_endpoint: current_user.service_url("webcli"),
-        identity_url: current_user.service_url("identity")
+        webcli_endpoint: "https://ccloudshell.eu-de-2.cloud.sap",
+        identity_url: current_user.service_url("identity"),
+        region: current_region,
+        user_name: current_user.name
       }
+      
 
       # get plugin specific help content
       plugin_path = params[:plugin_path]
