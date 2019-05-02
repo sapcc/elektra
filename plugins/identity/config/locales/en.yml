@@ -43,3 +43,6 @@ en:
       swiftreseller: Object Store Cloud Administrator
       volume_admin: Cinder Administrator
       volume_viewer: Cinder Read-Only
+      securitygroup_viewer: Security Group Read-Only
+      securitygroup_admin: Security Group Administrator
+
