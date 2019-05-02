@@ -24,6 +24,8 @@ ALLOWED_ROLES = %w[
   swiftoperator
   volume_admin
   volume_viewer
+  securitygroup_viewer
+  securitygroup_admin
 ].freeze
 
 BETA_ROLES = %w[
