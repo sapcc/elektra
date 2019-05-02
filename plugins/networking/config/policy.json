@@ -9,6 +9,9 @@
 
   "context_is_compute_admin": "role:cloud_compute_admin or role:compute_admin",
 
+  "context_is_securitygroup_admin": "role:securitygroup_admin or rule:context_is_compute_admin or rule:context_is_network_admin",
+  "context_is_securitygroup_viewer": "role:securitygroup_viewer or rule:context_is_network_viewer or rule:context_is_securitygroup_admin",
+
   "networking:floating_ip_get": "rule:context_is_network_viewer",
   "networking:floating_ip_list": "rule:context_is_network_viewer",
   "networking:floating_ip_create": "rule:context_is_network_editor",
@@ -16,11 +19,11 @@
   "networking:floating_ip_delete": "rule:context_is_network_editor",
   "networking:floating_ip_associate": "rule:context_is_network_editor",
   "networking:floating_ip_disassociate": "rule:context_is_network_editor",
-  "networking:security_group_get": "rule:context_is_network_viewer",
-  "networking:security_group_list": "rule:context_is_network_viewer",
-  "networking:security_group_create": "rule:context_is_compute_admin or rule:context_is_network_admin",
-  "networking:security_group_update": "rule:context_is_compute_admin or rule:context_is_network_admin",
-  "networking:security_group_delete": "rule:context_is_compute_admin or rule:context_is_network_admin",
+  "networking:security_group_get": "rule:context_is_securitygroup_viewer",
+  "networking:security_group_list": "rule:context_is_securitygroup_viewer",
+  "networking:security_group_create": "rule:context_is_securitygroup_admin",
+  "networking:security_group_update": "rule:context_is_securitygroup_admin",
+  "networking:security_group_delete": "rule:context_is_securitygroup_admin",
   "networking:rule_get": "rule:context_is_network_viewer",
   "networking:rule_list": "rule:context_is_network_viewer",
   "networking:rule_create": "rule:context_is_compute_admin or rule:context_is_network_admin",
