@@ -242,20 +242,16 @@ class @WebconsoleContainer
               $cliContent = $("<iframe id='webcli-content' src='#{context.webcli_endpoint}/shell/#{context.user_name}/#{data.key}' height='100%' width='100%' />")
               
               self.$holder.append($cliContent)
+
+              if context.help_html
+                $helpContainer = addHelpContainer(self.$container, self.settings)
+                $helpContainer.html(context.help_html)
+
               $loadingHint.remove()
 
 
               self.loaded = true
             error: (xhr, bleep, error) -> console.log('error: ' + error)
 
-        # # check if lib is already loaded
-        # if(typeof lib=='undefined')
-        #   # lib is not loaded yet -> load lib
-        #   $.when(
-        #       cachedScript("#{context.webcli_endpoint}/js/hterm.js"),
-        #       cachedScript("#{context.webcli_endpoint}/js/gotty.js"),
-        #       $.Deferred ( deferred ) -> $( deferred.resolve )
-        #   ).done () -> loadConsole()
-        # else
-        #   # lib already loaded -> load console
+
         loadConsole()
