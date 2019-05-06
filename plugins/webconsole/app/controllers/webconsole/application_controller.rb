@@ -2,6 +2,11 @@ module Webconsole
   class ApplicationController < DashboardController
     include UrlHelper
 
+    authorization_context 'webconsole'
+    # enforce permission checks. This will automatically
+    # investigate the rule name.
+    authorization_required
+
     def show
       @token = current_user.token
       @webcli_endpoint = "https://ccloudshell.eu-de-2.cloud.sap" # TODO: Replace endpoint url with catalog entry

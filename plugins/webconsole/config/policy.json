@@ -1,0 +1,5 @@
+{
+    "is_cloud_admin_or_support": "rule:cloud_admin or role:cloud_support_tools_viewer",
+    "webconsole:application_get": "rule:is_cloud_admin_or_support",
+    "webconsole:application_current_context": "rule:is_cloud_admin_or_support"
+}

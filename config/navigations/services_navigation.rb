@@ -88,7 +88,7 @@ SimpleNavigation::Configuration.run do |navigation|
    end
 
     primary.item :api, 'API Access', nil, html: {class: "fancy-nav-header", 'data-icon': "api-icon"} do |api_nav|
-      api_nav.item :web_console, 'Web Shell', -> { plugin('webconsole').root_path}, if: -> { services.available?(:webconsole) && current_user.is_allowed?('tools:application_get') }, highlights_on: Proc.new { params[:controller][/webconsole\/.*/] }
+      api_nav.item :web_console, 'Web Shell', -> { plugin('webconsole').root_path}, if: -> { services.available?(:webconsole) && current_user.is_allowed?('webconsole:application_get') }, highlights_on: Proc.new { params[:controller][/webconsole\/.*/] }
       api_nav.item :api_endpoints, 'API Endpoints for Clients', -> { plugin('identity').projects_api_endpoints_path}
 
       # api_nav.dom_attributes = {class: 'content-list'}
