@@ -23,7 +23,7 @@
           = render_navigation(expand_all: true, renderer: :fancy_list, context: navigation_context(@scoped_domain_name, @scoped_project_name))
 
     .special-crumb
-      - if services.available?(:webconsole) && current_user.is_allowed?('webconsole:application_get') && plugin_name!='webconsole'
+      - if services.available?(:webconsole) && current_user.is_allowed?('webconsole:application_get') && @scoped_project_fid && plugin_name!='webconsole'
         = link_to 'javascript:void(0)', class: 'solo-icon-link', data: {trigger: 'webconsole:open'} do
           %span.fa-stack
             %i.fa.fa-square.fa-stack-2x

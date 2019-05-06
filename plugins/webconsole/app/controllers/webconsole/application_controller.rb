@@ -26,29 +26,7 @@ module Webconsole
         user_name: current_user.name
       }
       
-
-      # get plugin specific help content
-      plugin_path = params[:plugin_path]
-      # remove leading slash
-      plugin_path.sub!(/^\//, '')
-
-      # find plugin by mount point (plugin_path)
-      plugin = catch (:found)  do
-        Core::PluginsManager.available_plugins.each do |plugin|
-          throw :found, plugin if plugin_path.start_with?(plugin.mount_point)
-        end
-      end
-
-      # get name of the specific service inside the plugin
-      # remove plugin name from path
-      path = plugin_path.split('/')
-      path.shift
-      service_name = path.join('_')
-
-      # try to find the help file
-      help_file = File.join(plugin.path,"webconsole_#{service_name}_help.md")
-      help_file = File.join(plugin.path,"webconsole_help.md") unless File.exists?(help_file)
-      help_file = File.join(Rails.root,"plugins/webconsole/webconsole_help.md") unless File.exists?(help_file)
+      help_file = File.join(Rails.root,"plugins/webconsole/webconsole_help.md")
 
       if File.exists?(help_file)
         # load general help content

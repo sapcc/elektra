@@ -81,19 +81,6 @@ class @WebconsoleContainer
 
     $helpContent
 
-  # load js scripts and cache
-  # cachedScript= ( url, options ) ->
-  #   # Allow user to set any option except for dataType, cache, and url
-  #   options = $.extend( options || {}, {
-  #     dataType: "script",
-  #     cache: true,
-  #     url: url
-  #   })
-
-  #   # Use $.ajax() since it is more flexible than $.getScript
-  #   # Return the jqXHR object so we can chain callbacks
-  #   $.ajax( options )
-
   # load credentials for current user (token, identity and webcli endpoints)
   loadWebconsoleData= (settings ) ->
     # console.log 'loadWebconsoleData', settings
@@ -101,17 +88,14 @@ class @WebconsoleContainer
     path = path.substr(1) if path.charAt(0)=='/'
     arr = path.split('/')
     scope = "#{arr[0]}/#{arr[1]}"
-    pluginPath = path.substr(path.indexOf(scope)+scope.length)
     #
     # console.log 'path', path
     # console.log 'scope', scope
     # console.log "lastIndexOf('#{scope}')", path.lastIndexOf(scope)
-    # console.log 'pluginPath', pluginPath
     #
     options = {
       dataType: 'json',
       type: 'GET',
-      data: {plugin_path: pluginPath},
       cache: false,
       url: "/#{scope}/webconsole/current-context"
     }
@@ -178,7 +162,6 @@ class @WebconsoleContainer
 
   @close= (callback) ->
     @$container.parent().slideUp 'slow', () ->
-      console.log('Webconsole closed')
       callback() if callback
 
   @toogleFullscreen= (callback) ->
@@ -231,7 +214,6 @@ class @WebconsoleContainer
           # load webcli
           $.ajax
             url: "#{context.webcli_endpoint}/auth/#{context.user_name}"
-            xhrFields: { withCredentials: true }
             beforeSend: (request) -> 
               request.setRequestHeader('X-Auth-Token', context.token)
               request.setRequestHeader('X-OS-Region', context.region)
