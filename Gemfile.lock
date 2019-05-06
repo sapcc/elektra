@@ -150,6 +150,11 @@ PATH
   specs:
     tools (0.0.1)
 
+PATH
+  remote: plugins/webconsole
+  specs:
+    webconsole (0.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -651,6 +656,7 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 3.0)
+  webconsole!
   webpacker (~> 3.5)
 
 BUNDLED WITH
