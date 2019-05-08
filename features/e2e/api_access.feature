@@ -10,7 +10,7 @@ Feature: API Access
   Scenario: The Web Console page is reachable
     When I visit project path "webconsole"
     Then the page status code is successful
-    And I see "Web Console"
+    And I see "Web Shell"
 
   Scenario: The Api Endpoints page is reachable
     When I visit project path "identity/projects/api-endpoints"

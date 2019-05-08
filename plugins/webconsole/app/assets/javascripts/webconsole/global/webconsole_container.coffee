@@ -8,9 +8,9 @@ class @WebconsoleContainer
     buttonsCssClass:    'main-buttons'
     holderCssClass:     'webconsole-holder'
     helpCssClass:       'webconsole-help'
-    loadingText:        'Loading web console'
+    loadingText:        'Loading web shell'
     toolbar:            'on'
-    title:              'Web Console'
+    title:              'Web Shell'
     buttons:            null #['help','reload','close', 'fullscreen']
     effect:             'slide'
     height:             null #'viewport'
@@ -19,9 +19,9 @@ class @WebconsoleContainer
     reloadIcon:         'fa fa-refresh'
     fullscreenIcon:     'fa fa-expand'
     compressIcon:       'fa fa-compress'
-    closeText:          'Close web console'
+    closeText:          'Close web shell'
     helpText:           'Show help'
-    reloadText:         'Reload console'
+    reloadText:         'Reload shell'
     fullscreenText:     'Toggle full width'
 
   # create toolbar, buttons and console holder
@@ -221,7 +221,7 @@ class @WebconsoleContainer
             success: ( data ) ->
               $loadingHint.find('.status').text('80%')
               # success -> add terminal div to container
-              $cliContent = $("<iframe id='webcli-content' src='#{context.webcli_endpoint}/shell/#{context.user_name}/#{data.key}' height='100%' width='100%' />")
+              $cliContent = $("<iframe id='webcli-content' src='#{data.url}' height='100%' width='100%' />")
               
               self.$holder.append($cliContent)
 

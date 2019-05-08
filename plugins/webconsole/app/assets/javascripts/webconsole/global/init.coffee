@@ -15,7 +15,7 @@ $(document).ready ->
     $("<div class='webconsole popup'><div id='webconsole-container'/></div>").appendTo('body')
     WebconsoleContainer.init('#webconsole-container',{
       toolbar: 'on'
-      title: 'Web Console'
+      title: 'Web Shell'
       buttons: ['help','reload','close']
     })
 

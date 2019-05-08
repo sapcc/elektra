@@ -9,7 +9,7 @@ module Webconsole
 
     def show
       @token = current_user.token
-      @webcli_endpoint = "https://ccloudshell.eu-de-2.cloud.sap" # TODO: Replace endpoint url with catalog entry
+      @webcli_endpoint = current_user.service_url("webcli")
       @identity_url = current_user.service_url("identity")
       @region = current_region
       @user_name = current_user.name
@@ -20,7 +20,7 @@ module Webconsole
       # TODO: Replace endpoint url with catalog entry
       result = {
         token: current_user.token,
-        webcli_endpoint: "https://ccloudshell.eu-de-2.cloud.sap",
+        webcli_endpoint: current_user.service_url("webcli"),
         identity_url: current_user.service_url("identity"),
         region: current_region,
         user_name: current_user.name
