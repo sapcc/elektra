@@ -98,6 +98,10 @@ $help-content-width: 420px;
     }
   }
 
+  .loading-hint {
+    padding: 5px 0 0 8px;
+  }
+
   .webconsole-help {
     @include opacity(0.93);
     position: absolute;

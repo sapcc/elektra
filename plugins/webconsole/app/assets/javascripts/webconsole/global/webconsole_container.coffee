@@ -188,7 +188,7 @@ class @WebconsoleContainer
     # bind this to self
     self = this
     # create loading element
-    $loadingHint = $("<div><span class='info-text'>#{@settings.loadingText}</span><span class='spinner'></span></div>")
+    $loadingHint = $("<div class='loading-hint'><span class='info-text'>#{@settings.loadingText}</span><span class='spinner'></span></div>")
     # set holder's content to loading
     @$holder.html($loadingHint)
 
