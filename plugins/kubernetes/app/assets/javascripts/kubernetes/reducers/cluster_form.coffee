@@ -115,6 +115,10 @@
                 name: ''
                 size: ''
                 availabilityZone: defaultAZ
+                config: {
+                  allowReboot: true
+                  allowReplace: true
+                }
                 new: true
               }
 
@@ -136,8 +140,8 @@
     nodePoolsFiltered = state.data.spec.nodePools.filter((pool) -> pool != deletedPool )
     stateClone = JSON.parse(JSON.stringify(state))
     stateClone.data.spec.nodePools = nodePoolsFiltered
+    stateClone.updatePending = updateNeeded
     ReactHelpers.mergeObjects({}, state, stateClone)
-    ReactHelpers.mergeObjects({}, state, {updatePending: updateNeeded})
 
 
 

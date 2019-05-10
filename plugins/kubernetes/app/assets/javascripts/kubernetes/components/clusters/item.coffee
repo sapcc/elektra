@@ -80,13 +80,16 @@ Cluster = React.createClass
         td null,
           cluster.name
         td null,
-          strong null, cluster.status.phase
-          unless @clusterReady(cluster)
-            span className: 'spinner'
-          br null
-          "Version: #{cluster.status.apiserverVersion}"
-          br null
-          span className: 'info-text', cluster.status.message 
+          div null,
+            strong null, cluster.status.phase
+            unless @clusterReady(cluster)
+              span className: 'spinner'
+          
+          if cluster.status.apiserverVersion
+            div null,
+              "Version: #{cluster.status.apiserverVersion}"
+              
+          div className: 'info-text', cluster.status.message 
         td className: 'nodepool-spec',
           for nodePool in cluster.spec.nodePools
             nodePoolStatus = @nodePoolStatus(cluster, nodePool.name)
