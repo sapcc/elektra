@@ -36,9 +36,9 @@ $(document).ready(function(){
 
 // Get loadbalancer states for all rendered lb-ids
 function update_states(poll_url) {
-  var ids = $('table.loadbalancers tbody').find('tr').toArray().map(elem => elem.id).filter(id => id && id.length>0)
+  const ids = $('table.loadbalancers tbody').find('tr').toArray().map(elem => elem.id).filter(id => id && id.length>0)
   if (ids.length > 0) {
-    var data = {
+    const data = {
       state_ids: ids,
     }
     //console.log(ids)
