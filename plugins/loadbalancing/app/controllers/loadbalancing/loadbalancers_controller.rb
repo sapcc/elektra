@@ -77,13 +77,18 @@ module Loadbalancing
 
     # get statuses for all loadbalancers in project (for index)
     def update_all_status
-      @loadbalancers = services.loadbalancing.loadbalancers(
-        tenant_id: @scoped_project_id
-      )
+      state_ids = params[:state_ids] || nil
+      unless state_ids
+        @loadbalancers = services.loadbalancing.loadbalancers(
+          tenant_id: @scoped_project_id
+        )
+        state_ids = @loadbalancers.map(&:id)
+      end
 
-      @states = @loadbalancers.each_with_object([]) do |lb, states|
-        status = services.loadbalancing.loadbalancer_statuses(lb.id)
-        states << status if status
+      @states = []
+      state_ids.each do |id|
+        status = services.loadbalancing.loadbalancer_statuses(id)
+        @states << status if status
       end
     end
 

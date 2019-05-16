@@ -5,7 +5,7 @@
 %ul.nav.nav-tabs
   %li.active{role: "presentation"}= link_to 'Load Balancers', '#loadbalancers', aria: {controls:"loadbalancers"}, role: "tab", data: {toggle:"tab"}
 
-.tab-content{data: {update_path: plugin('loadbalancing').update_all_status_loadbalancers_path(format: :js), update_interval: Loadbalancing::STATE_UPDATE_INTERVAL*2, update_immediately: 'true'}}
+.tab-content
   #loadbalancers.tab-pane.active{role: "tabpanel"}
 
   .toolbar
@@ -43,3 +43,10 @@
     -# ajax paginate plugin (identified by data-ajax-paginate)
     - if @pagination_has_next
       .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.loadbalancers tbody', search_input_selector: '#search_loadbalancers_input'} }
+
+
+=content_for :javascripts do
+  :javascript
+    $(document).ready(function() {
+      loadbalancing.startStatesPolling('#{plugin('loadbalancing').update_all_status_loadbalancers_path(format: :js)}', '#{Loadbalancing::STATE_UPDATE_INTERVAL*2*1000}');
+    });

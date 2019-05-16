@@ -20,17 +20,39 @@
   
 // This function is visible only inside this file.
 function test() {
-  //...  
-}    
+  //...
+}
 
 // This function is available from everywhere by calling loadbalancing.name()
+// Call function from other files inside this plugin using the variable loadbalancing
+//loadbalancing.anyFunction()
 loadbalancing.name = function() {
   "loadbalancing"
-} 
+}
 
 // This is always executed on page load.
 $(document).ready(function(){
 });
-    
-// Call function from other files inside this plugin using the variable loadbalancing
-//loadbalancing.anyFunction()    
+
+// Get loadbalancer states for all rendered lb-ids
+function update_states(poll_url) {
+  const ids = $('table.loadbalancers tbody').find('tr').toArray().map(elem => elem.id).filter(id => id && id.length>0)
+  if (ids.length > 0) {
+    var data = {
+      state_ids: ids,
+    }
+    //console.log(ids)
+    $.ajax({
+      url: poll_url,
+      method: "GET",
+      data: data,
+      dataType: "script"
+    })
+  }
+}
+
+// Initiates first call immediately and interval based call on update_states
+loadbalancing.startStatesPolling = function(poll_url, poll_freq) {
+  update_states(poll_url);
+  setInterval(() => update_states(poll_url), poll_freq);
+}
