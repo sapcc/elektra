@@ -1,7 +1,8 @@
 <%if @loadbalancer%>
-  $("#loadbalancer_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/item', locals: {loadbalancer: @loadbalancer})) %>");
-  $("#loadbalancer_<%=params[:id]%>").update();
+  $("#<%=params[:id]%>").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/item', locals: {loadbalancer: @loadbalancer})) %>");
+  $("#<%=params[:id]%>").update();
 <%else%>
-  $("#loadbalancer_<%=params[:id]%>").remove();
+  $("#<%=params[:id]%>").remove();
 <%end%>
-PollingService.update('update_all_status')
+loadbalancing.update_state("<%= plugin('loadbalancing').update_status_loadbalancer_path(format: :js) %>", "<%=@loadbalancer.id%>");
+MoModal.close();

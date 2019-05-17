@@ -35,13 +35,29 @@ $(document).ready(function(){
 });
 
 // Get loadbalancer states for all rendered lb-ids
-function update_states(poll_url) {
-  const ids = $('table.loadbalancers tbody').find('tr').toArray().map(elem => elem.id).filter(id => id && id.length>0)
+loadbalancing.update_states = function(poll_url) {
+  var ids = $('table.loadbalancers tbody').find('tr').toArray().map(function(elem) {return elem.id}).filter(function(id) {return id  && id.length>0})
   if (ids.length > 0) {
-    const data = {
+    var data = {
       state_ids: ids,
     }
-    //console.log(ids)
+    //console.log(data)
+    $.ajax({
+      url: poll_url,
+      method: "POST",
+      data: data,
+      dataType: "script"
+    })
+  }
+}
+
+// Get loadbalancer states for one lb-id
+loadbalancing.update_state = function(poll_url, lb_id) {
+  if (lb_id != null) {
+    var data = {
+      id: lb_id,
+    }
+    console.log(data)
     $.ajax({
       url: poll_url,
       method: "GET",
@@ -53,6 +69,6 @@ function update_states(poll_url) {
 
 // Initiates first call immediately and interval based call on update_states
 loadbalancing.startStatesPolling = function(poll_url, poll_freq) {
-  update_states(poll_url);
-  setInterval(() => update_states(poll_url), poll_freq);
+  loadbalancing.update_states(poll_url);
+  setInterval(() => loadbalancing.update_states(poll_url), poll_freq);
 }

@@ -1,7 +1,6 @@
 <%if @loadbalancer && !@loadbalancer.errors.blank?%>
   InfoDialog.showError("<%=@loadbalancer.errors.full_messages[0]%>");
-  $("#loadbalancer_<%=params[:id]%>").removeClass('updating');
+  $("#<%=params[:id]%>").removeClass('updating');
 <%else%>
-  $("#loadbalancer_<%=params[:id]%>").remove();
-  PollingService.update('update_all_status')
+  $("#<%=params[:id]%>").remove();
 <%end%>

@@ -3,7 +3,7 @@ Loadbalancing::Engine.routes.draw do
   get 'listener_details/:id', to: 'loadbalancers/listeners#show', as: 'listener_details'
   resources :loadbalancers do
     collection do
-      get 'update_all_status'
+      post 'update_all_status'
     end
     member do
       get 'update_status'

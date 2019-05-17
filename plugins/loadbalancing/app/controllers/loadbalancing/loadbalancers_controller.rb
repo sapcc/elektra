@@ -138,8 +138,9 @@ module Loadbalancing
 
       if @loadbalancer.save
         audit_logger.info(current_user, 'has updated', @loadbalancer)
-        redirect_to loadbalancers_path, notice: 'Load Balancer was ' \
-                                                'successfully updated.'
+        render template: 'loadbalancing/loadbalancers/update_item.js'
+#        redirect_to loadbalancers_path, notice: 'Load Balancer was ' \
+#                                                'successfully updated.'
       else
         render :edit
       end

@@ -110,7 +110,7 @@ module Loadbalancing
       def destroy
         @listener = services.loadbalancing.find_listener(params[:id])
         @listener.destroy
-        audit_logger.info(current_user, 'has deleted', @listener)
+        audit_logger.info(current_user, 'has deleted', @listener) if @listener.errors.blank?
         render template: 'loadbalancing/loadbalancers/listeners/destroy_item.js'
       end
 
