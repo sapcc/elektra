@@ -13,7 +13,7 @@
   "block_storage:volume_update": "rule:context_is_volume_editor and (not rule:monsoon2_domain or rule:project_parent)",
   "block_storage:volume_delete": "rule:context_is_volume_editor and (not rule:monsoon2_domain or rule:project_parent)",
   "block_storage:volume_attach": "rule:context_is_volume_editor and (not rule:monsoon2_domain or rule:project_parent)",
-  "block_storage:volume_dettach": "rule:context_is_volume_editor and (not rule:monsoon2_domain or rule:project_parent)",
+  "block_storage:volume_detach": "rule:context_is_volume_editor and (not rule:monsoon2_domain or rule:project_parent)",
   "block_storage:volume_reset_status": "rule:context_is_volume_admin",
   "block_storage:volume_force_delete": "rule:context_is_volume_admin",
   "block_storage:volume_extend_size": "rule:context_is_volume_admin",
