@@ -70,5 +70,5 @@ loadbalancing.update_state = function(poll_url, lb_id) {
 // Initiates first call immediately and interval based call on update_states
 loadbalancing.startStatesPolling = function(poll_url, poll_freq) {
   loadbalancing.update_states(poll_url);
-  setInterval(() => loadbalancing.update_states(poll_url), poll_freq);
+  setInterval(function(){loadbalancing.update_states(poll_url)}, poll_freq);
 }
