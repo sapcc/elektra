@@ -21,20 +21,6 @@ module Loadbalancing
                                                sort_key: 'position', sort_dir: 'asc'}.merge(pagination_options))
           end
           @pre_polices = get_unused_predefined_policies
-          @quota_data = []
-          return unless current_user.is_allowed?('access_to_project')
-          @quota_data = services.resource_management.quota_data(
-              current_user.domain_id || current_user.project_domain_id,
-              current_user.project_id,
-              [
-                  {
-                      service_type: :network, resource_name: :l7policies,
-                      usage: services.loadbalancing.l7policies(
-                          tenant_id: @scoped_project_id
-                      ).length
-                  }
-              ]
-          )
         end
 
         def new

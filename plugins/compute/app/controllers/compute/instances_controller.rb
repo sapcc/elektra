@@ -25,22 +25,6 @@ module Compute
         end
 
         # get/calculate quota data for non-admin view
-        unless @all_projects
-          usage = services.compute.usage
-
-          @quota_data = []
-          if current_user.is_allowed?("access_to_project")
-            @quota_data = services.resource_management.quota_data(
-              current_user.domain_id || current_user.project_domain_id,
-              current_user.project_id,
-              [
-                { service_type: :compute, resource_name: :instances, usage: usage.instances },
-                { service_type: :compute, resource_name: :cores, usage: usage.cores },
-                { service_type: :compute, resource_name: :ram, usage: usage.ram }
-              ]
-            )
-          end
-        end
       end
 
       # this is relevant in case an ajax paginate call is made.

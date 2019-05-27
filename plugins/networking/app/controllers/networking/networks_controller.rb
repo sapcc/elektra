@@ -34,18 +34,6 @@ module Networking
         map[project.id] = project
       end
 
-      @quota_data = []
-      if current_user.is_allowed?("access_to_project")
-        @quota_data = services.resource_management.quota_data(
-          current_user.domain_id || current_user.project_domain_id,
-          current_user.project_id,
-          [
-            { service_type: :network, resource_name: :networks },
-            { service_type: :network, resource_name: :subnets }
-          ]
-        )
-      end
-
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?

@@ -22,4 +22,5 @@ Resources::Engine.routes.draw do
 
   get '/project/init' => 'application#init_project', as: 'init_project'
 
+  get  'quota-usage' => 'quota_usage#index'
 end

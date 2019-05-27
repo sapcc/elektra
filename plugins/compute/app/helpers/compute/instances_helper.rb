@@ -83,9 +83,17 @@ module Compute
     end
 
     def instance_ips(instance)
-      @project_floating_ips ||= services.networking.project_floating_ips(
-        @scoped_project_id
-      )
+      @project_floating_ips ||= ObjectCache.where(
+        project_id: @scoped_project_id, cached_object_type: 'floatingip'
+      ).map {|f| Networking::FloatingIp.new(nil,f[:payload])}
+
+      available_floating_ips = @project_floating_ips.collect(&:floating_ip_address)
+      instance_floating_ips = instance.floating_ips.collect {|f| f["addr"]}
+
+      if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
+        #p '::::::::::::::::::: REFRESH CACHE ::::::::::::::::::'
+        @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
+      end
       instance.ip_maps(@project_floating_ips)
     end
 
