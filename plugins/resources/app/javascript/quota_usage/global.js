@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createWidget } from 'widget'
 import { pluginAjaxHelper, scope } from 'ajax_helper';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { policy } from 'policy';
 
 const ajaxHelper = pluginAjaxHelper('resources', {timeout: 120000 })
 
@@ -31,11 +32,14 @@ const App = (props) => {
   const [loading, updateLoading] = useState(false)
   
   useEffect(() => {
-    updateLoading(true)
-    ajaxHelper.get('quota-usage', {params: {type: props['data-type']}}).then(response => {
-      updateLoading(false)
-      return response
-    }).then(response => updateUsage(response.data))
+    if (policy.isAllowed('resources:quota_usage_list')) {
+      updateLoading(true)
+      ajaxHelper.get('quota-usage', {params: {type: props['data-type']}}).then(response => {
+        updateLoading(false)
+        return response
+      }).then(response => updateUsage(response.data))
+        .catch(e => updateLoading(false))
+    }
   }, [])
 
 

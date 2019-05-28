@@ -3,6 +3,7 @@ require_dependency "resources/application_controller"
 module Resources
   class QuotaUsageController < ::Resources::ApplicationController
     authorization_required
+    authorization_context 'resources'
 
     QUOTA_RESOURCES = {
       compute: {service_type: :compute, resource_names: [:instances, :cores, :ram]},
