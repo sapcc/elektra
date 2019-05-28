@@ -59,12 +59,14 @@ const App = (props) => {
     //                = link_to "Remaining Quota: #{@quota_data.collect(&:available_as_display_string).join(', ')}", plugin('resources').project_path, data: {toggle: "tooltip", placement: "right"}, title: "Click to manage quotas"
 }
 
-createWidget(__dirname, {
-  html: {class: 'flex-body'},
-  params: {flashescontainer: 'custom'},
-  containers: [quotaInfos]
-}).then((widget) => {
-  widget.configureAjaxHelper()
-  widget.setPolicy()
-  widget.render(App)
-})
+if (scope.project && scope.project !== 'home') {
+  createWidget(__dirname, {
+    html: {class: 'flex-body'},
+    params: {flashescontainer: 'custom'},
+    containers: [quotaInfos]
+  }).then((widget) => {
+    widget.configureAjaxHelper()
+    widget.setPolicy()
+    widget.render(App)
+  })
+}
