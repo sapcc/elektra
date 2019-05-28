@@ -5,7 +5,7 @@ import { createWidget } from 'widget'
 import { pluginAjaxHelper, scope } from 'ajax_helper';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-const ajaxHelper = pluginAjaxHelper('resources')
+const ajaxHelper = pluginAjaxHelper('resources', {timeout: 120000 })
 
 const QuotaTooltip = (props) => {
   let tooltip = <Tooltip id='quotaTooltip'>
