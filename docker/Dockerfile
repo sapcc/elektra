@@ -71,7 +71,12 @@ RUN if [ -z ${http_proxy} ]; then \
 ADD . /home/app/webapp
 
 # precompile assets including webpacker packs
-RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
+# We use dummy master.key to workaround the fact that
+# assets:precompile needs them but we don't want the real master.key to be built
+# into the container. The RAILS_MASTER_KEY should be injected as env var when starting the
+# container.
+# https://github.com/rails/rails/issues/32947
+RUN MONSOON_RAILS_SECRET_TOKEN='monsoon_rails_build_secret_token' bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
