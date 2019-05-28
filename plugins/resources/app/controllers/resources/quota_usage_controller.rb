@@ -22,7 +22,6 @@ module Resources
     def usage(type)
       resources = QUOTA_RESOURCES[type.to_sym] if type
       return [] unless resources
-      usage = services.send(type).usage if services.respond_to?(type) && services.send(type).respond_to?(:usage)
 
       services.resource_management.quota_data(
         current_user.domain_id || current_user.project_domain_id,
