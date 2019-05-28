@@ -37,6 +37,6 @@
    "resources:project:access": "(rule:limes_project_view_roles or role:resource_admin) and not project_id:nil",
    "resources:project:write_access": "role:resource_admin and not project_id:nil",
    "resources:domain:access": "(role:resource_viewer or role:resource_admin) and not domain_id:nil",
-   "resources:cluster:access": "role:cloud_resource_viewer or role:cloud_resource_admin"
-
+   "resources:cluster:access": "role:cloud_resource_viewer or role:cloud_resource_admin",
+   "resources:quota_usage_list": "not project_id:nil and (role:admin or role:member or role:resource_viewer)"
 }

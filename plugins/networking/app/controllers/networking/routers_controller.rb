@@ -33,15 +33,6 @@ module Networking
         # NEW
         @routers.concat(shared_routers).uniq!(&:id)
 
-        usage = @routers.length
-
-        if current_user.is_allowed?('access_to_project')
-          @quota_data = services.resource_management.quota_data(
-            current_user.domain_id || current_user.project_domain_id,
-            current_user.project_id,
-            [{ service_type: :network, resource_name: :routers, usage: usage }]
-          )
-        end
       end
     end
 

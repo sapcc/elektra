@@ -31,22 +31,6 @@ module Loadbalancing
         lb.subnet = @subnets[lb.vip_subnet_id]
       end
 
-      @quota_data = []
-
-      return unless current_user.is_allowed?('access_to_project')
-      usage = @loadbalancers.length >= per_page ? nil : @loadbalancers.length
-      @quota_data = services.resource_management.quota_data(
-        current_user.domain_id || current_user.project_domain_id,
-        current_user.project_id,
-        [
-          {
-            service_type: :network,
-            resource_name: :loadbalancers,
-            usage: usage
-          }
-        ]
-      )
-
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?

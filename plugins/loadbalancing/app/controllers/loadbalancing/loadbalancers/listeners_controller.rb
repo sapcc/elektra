@@ -22,21 +22,6 @@ module Loadbalancing
           services.loadbalancing.listeners({loadbalancer_id: loadbalancer_id, sort_key: 'id', fields: 'id'}.merge(pagination_options))
         end
 
-        @quota_data = []
-        return unless current_user.is_allowed?('access_to_project')
-        @quota_data = services.resource_management.quota_data(
-          current_user.domain_id || current_user.project_domain_id,
-          current_user.project_id,
-          [
-            {
-              service_type: :network, resource_name: :listeners,
-              usage: services.loadbalancing.listeners(
-                tenant_id: @scoped_project_id
-              ).length
-            }
-          ]
-        )
-
         # this is relevant in case an ajax paginate call is made.
         # in this case we don't render the layout, only the list!
         if request.xhr?

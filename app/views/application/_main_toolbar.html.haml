@@ -23,11 +23,8 @@
                   Project ID:
                   = @active_project.id
 
-                - if @quota_data and @quota_data.length>0
-                  .info-text.info-clickable
-                    %i.monitoring-icon
-                    = link_to "Remaining Quota: #{@quota_data.collect(&:available_as_display_string).join(', ')}", plugin('resources').project_path, data: {toggle: "tooltip", placement: "right"}, title: "Click to manage quotas"
-
+                %div{data: {"react-quota-usage": true, type: plugin_name}} 
+                  
                 - if @plugin_help_text
                   %div
                     %a.help-link{href: "#", data: {toggle: "help"}}
