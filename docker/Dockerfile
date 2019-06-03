@@ -76,7 +76,7 @@ ADD . /home/app/webapp
 # into the container. The MONSOON_RAILS_SECRET_TOKEN should be injected as env var when starting the
 # container.
 # https://github.com/rails/rails/issues/32947
-ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_precompiling_change_it_in_production
+ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
