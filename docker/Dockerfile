@@ -71,6 +71,12 @@ RUN if [ -z ${http_proxy} ]; then \
 ADD . /home/app/webapp
 
 # precompile assets including webpacker packs
+# We use dummy master.key to workaround the fact that
+# assets:precompile needs them but we don't want the real master.key to be built
+# into the container. The MONSOON_RAILS_SECRET_TOKEN should be injected as env var when starting the
+# container.
+# https://github.com/rails/rails/issues/32947
+ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
@@ -78,7 +84,6 @@ CMD ["script/start.sh"]
 
 FROM elektra AS tests
 RUN apk add --no-cache postgresql bash
-RUN unset MONSOON_RAILS_SECRET_TOKEN
 ENV RAILS_ENV=test
 RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/pg start' \
       && rake db:create db:migrate \
