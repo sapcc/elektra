@@ -19,7 +19,7 @@
         .col-sm-4.details-label
           Description
         .col-sm-8.details-value
-          =# use active project here because at the moment the masterdata api supports at the moment max 255 chars
+          =# use active project here because at the moment masterdata api supports max. 255 chars
           %span.description
             = @active_project.description
 
@@ -32,7 +32,7 @@
   -# masterdata details
   .masterdata-group
     %h5.masterdata-heading
-      Cost Object
+      Cost Info
       %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
         = icon('question-circle')
 
@@ -48,21 +48,6 @@
             = icon('check-square-o')
           -else
             = icon('times')
-    .row
-      .col-sm-4.details-label
-        Solution
-      .col-sm-8.details-value
-        - unless @project_masterdata.solution
-          Other
-        = @project_masterdata.solution
-    .row
-      .col-sm-4.details-label
-        Revenue Relevance
-      .col-sm-8.details-value
-        - if @project_masterdata.revenue_relevance
-          = MasterdataCockpit::Config.revenue_relevances[@project_masterdata.revenue_relevance]
-        - else
-          \-
     .row
       .col-sm-4.details-label
         Type
@@ -81,63 +66,36 @@
           \-
 
   .masterdata-group
-    %h5.masterdata-heading Responsibility
-
+    %h5.masterdata-heading 
+      Contact
+      %a.help-link{data:{content: t('masterdata_cockpit.contact_info'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('question-circle')
     .row
       .col-sm-4.details-label
-        Operator
+        Primary Contact
       .col-sm-2.details-value
-        - unless @project_masterdata.responsible_operator_id
+        - unless @project_masterdata.responsible_primary_contact_id
           \Not defined
-        = @project_masterdata.responsible_operator_id
-      - if @project_masterdata.responsible_operator_email
+        = @project_masterdata.responsible_primary_contact_id
+      - if @project_masterdata.responsible_primary_contact_email
         .col-sm-1.details-label
           Contact
         .col-sm-4.details-value
           = icon('envelope-o')
-          = mail_to @project_masterdata.responsible_operator_email
+          = mail_to @project_masterdata.responsible_primary_contact_email
     .row
       .col-sm-4.details-label
-        Security Expert
-      .col-sm-2.details-value
-        - unless @project_masterdata.responsible_security_expert_id
+        Hotline/TicketQueue/Other
+      .col-sm-4.details-value
+        - unless @project_masterdata.additional_information
           \Not defined
-        = @project_masterdata.responsible_security_expert_id
-      - if @project_masterdata.responsible_security_expert_email
-        .col-sm-1.details-label
-          Contact
-        .col-sm-4.details-value
-          = icon('envelope-o')
-          = mail_to @project_masterdata.responsible_security_expert_email
-    .row
-      .col-sm-4.details-label
-        Product Owner
-      .col-sm-2.details-value
-        - unless @project_masterdata.responsible_product_owner_id
-          \Not defined
-        = @project_masterdata.responsible_product_owner_id
-      - if @project_masterdata.responsible_product_owner_email
-        .col-sm-1.details-label
-          Contact
-        .col-sm-4.details-value
-          = icon('envelope-o')
-          = mail_to @project_masterdata.responsible_product_owner_email
-    .row
-      .col-sm-4.details-label
-        Controller
-      .col-sm-2.details-value
-        - unless @project_masterdata.responsible_controller_id
-          \Not defined
-        = @project_masterdata.responsible_controller_id
-      - if @project_masterdata.responsible_controller_email
-        .col-sm-1.details-label
-          Contact
-        .col-sm-4.details-value
-          = icon('envelope-o')
-          = mail_to @project_masterdata.responsible_controller_email
+        = @project_masterdata.additional_information
 
   .masterdata-group
-    %h5.masterdata-heading Importance
+    %h5.masterdata-heading 
+      Significance
+      %a.help-link{data:{content: t('masterdata_cockpit.significance'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('question-circle')
 
     .row
       .col-sm-4.details-label
@@ -145,6 +103,14 @@
       .col-sm-8.details-value
         - if @project_masterdata.business_criticality
           = MasterdataCockpit::Config.business_criticalitys[@project_masterdata.business_criticality]
+        - else
+          \-
+    .row
+      .col-sm-4.details-label
+        Revenue Relevance
+      .col-sm-8.details-value
+        - if @project_masterdata.revenue_relevance
+          = MasterdataCockpit::Config.revenue_relevances[@project_masterdata.revenue_relevance]
         - else
           \-
     .row

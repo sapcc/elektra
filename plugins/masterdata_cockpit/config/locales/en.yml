@@ -2,6 +2,8 @@ en:
   masterdata_cockpit:
     co_help: 'If you do not know what specific cost object object you should use, ask the controller who is repsonsible for it.'
     co_info: 'The costcenter, internal order, WBS element or sales order where the costs should be charged to.'
+    contact_info: 'Important in case of incidents or questions related to the project.'
+    significance: 'Indicates the importance of the project.'
     projects_can_inherit_help: 'Projects in this domain can use this cost object'
     inherited_help: 'Inherit the cost object from next level (i.e. domain or parent project).'
     solution_help:  'Choose a solution here if the project is used for one of the strategic solutions of SAP.'
