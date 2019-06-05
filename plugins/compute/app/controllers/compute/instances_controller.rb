@@ -56,7 +56,7 @@ module Compute
       return if @instance.blank?
 
       @instance_security_groups = @instance.security_groups_details
-                                           .each_with_object({}) do |sg, map|
+        .each_with_object({}) do |sg, map|
         next if map[sg.id]
         map[sg.id] = services.networking.security_groups(
           tenant_id: @scoped_project_id, id: sg.id
@@ -64,11 +64,12 @@ module Compute
       end.values
 
       @log = begin 
-        services.compute.console_log(params[:id])
-      rescue 
-        nil
-      end  
+               services.compute.console_log(params[:id])
+             rescue 
+               nil
+             end  
     end
+
 
     def new
       # get usage from db
@@ -77,10 +78,10 @@ module Compute
         @quota_data = services.resource_management.quota_data(
           current_user.domain_id || current_user.project_domain_id,
           current_user.project_id,[
-          {service_type: :compute, resource_name: :instances},
-          {service_type: :compute, resource_name: :cores},
-          {service_type: :compute, resource_name: :ram}
-        ])
+            {service_type: :compute, resource_name: :instances},
+            {service_type: :compute, resource_name: :cores},
+            {service_type: :compute, resource_name: :ram}
+          ])
       end
 
       @instance       = services.compute.new_server
@@ -102,6 +103,12 @@ module Compute
       else
         @instance.errors.add :availability_zone, 'not available'
       end
+
+      # prefered_availability_zone
+      index = @availability_zones.index { |az| az.zoneName == prefered_availability_zone }
+      az = @availability_zones.delete_at(index)
+      @availability_zones.unshift(az) if az
+      # byebug
 
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       @private_networks = services.networking.project_networks(@scoped_project_id, "router:external"=>false) if services.networking.available?
@@ -159,7 +166,7 @@ module Compute
       end
 
       if @instance.valid? && @instance.network_ids &&
-        @instance.network_ids.length.positive?
+          @instance.network_ids.length.positive?
 
         if @instance.network_ids.first['port'].present?
           # port is presented -> pre-resereved fixed IP is selected
@@ -170,7 +177,7 @@ module Compute
           # set id
           @port.id = @instance.network_ids.first['port']
         elsif @instance.network_ids.first['id'].present? &&
-              @instance.network_ids.first['subnet_id'].present?
+          @instance.network_ids.first['subnet_id'].present?
           # port id isn't given but networkid and subnet id are provided.
           # -> create a port with network and subnet
           @port = services.networking.new_port(
@@ -352,7 +359,7 @@ module Compute
           )
           @port.id = @os_interface.port_id
         elsif @os_interface.net_id.present? &&
-              @os_interface.subnet_id.present?
+          @os_interface.subnet_id.present?
           @port = services.networking.new_port(
             network_id: @os_interface.net_id,
             fixed_ips: [{subnet_id: @os_interface.subnet_id}],
@@ -517,16 +524,16 @@ module Compute
 
     def automation_script
       accept_header = begin
-        body = JSON.parse(request.body.read)
-        os_type = body.fetch('vmwareOstype', '')
-        if os_type.include? "windows"
-          "text/x-powershellscript"
-        else
-          "text/cloud-config"
-        end
-      rescue => exception
-        Rails.logger.error "Compute-plugin: automation_script: error getting os_type: #{exception.message}"
-      end
+                        body = JSON.parse(request.body.read)
+                        os_type = body.fetch('vmwareOstype', '')
+                        if os_type.include? "windows"
+                          "text/x-powershellscript"
+                        else
+                          "text/cloud-config"
+                        end
+                      rescue => exception
+                        Rails.logger.error "Compute-plugin: automation_script: error getting os_type: #{exception.message}"
+                      end
       script = services.automation.node_install_script("", {"headers" => { "Accept" => accept_header }})
       render :json => {script: script}
     end
@@ -613,6 +620,37 @@ module Compute
     end
 
     private
+    # This method finds the availability zone with the most avalilable RAM.
+    # It use the elektra object cache.
+    def prefered_availability_zone
+      # load host aggregates from cache and build a map host -> availability_zone
+      aggregates = ObjectCache.where(cached_object_type: 'aggregate').pluck("payload")
+      host_az_map = aggregates.each_with_object({}) do |payload, map|
+        payload['hosts'].each { |host| map[host] = payload['availability_zone'] }
+      end
+
+      # load hypervisor data from elektra object cache
+      hypervisor_data = ObjectCache.where(cached_object_type: 'hypervisor').pluck(
+        "payload->'service'->'host'",
+        "payload->'memory_mb'",
+        "payload->'memory_mb_used'"
+      )
+
+      # build sums for used and available RAM per availability zone
+      az_capacities = hypervisor_data.each_with_object({}) do |(host,memory_mb,memory_mb_used), map|
+        az = host_az_map[host]
+        if !host.blank? && az
+          map[az] ||= {availability_zone: az, memory_mb: 0, memory_mb_used: 0}
+          map[az][:memory_mb] += (memory_mb || 0)
+          map[az][:memory_mb_used] += (memory_mb_used || 0)
+        end
+      end
+
+      # sort by most available RAM 
+      azs = az_capacities.values.sort_by! { |data| data[:memory_mb] - data[:memory_mb_used]}
+      # return last element
+      azs.last[:availability_zone]                                                                                                       end
+    ################################ END ####################################
 
     def collect_available_ips
       @grouped_fips = {}
