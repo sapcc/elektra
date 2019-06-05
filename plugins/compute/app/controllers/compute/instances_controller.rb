@@ -649,7 +649,10 @@ module Compute
       # sort by most available RAM 
       azs = az_capacities.values.sort_by! { |data| data[:memory_mb] - data[:memory_mb_used]}
       # return last element
-      azs.last[:availability_zone]                                                                                                       end
+      azs.last[:availability_zone]
+    rescue StandardError 
+      nil
+    end
     ################################ END ####################################
 
     def collect_available_ips
