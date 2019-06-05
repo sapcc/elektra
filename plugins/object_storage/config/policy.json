@@ -9,6 +9,7 @@
   "object_storage:container_update":                "rule:object_storage_admin",
   "object_storage:container_delete":                "rule:object_storage_admin",
   "object_storage:container_empty":                 "rule:object_storage_admin",
+  "object_storage:container_pre_empty":             "rule:object_storage_admin",
   "object_storage:container_confirm_deletion":      "rule:object_storage_admin",
   "object_storage:container_confirm_emptying":      "rule:object_storage_admin",
   "object_storage:container_show_access_control":   "rule:object_storage_admin",
