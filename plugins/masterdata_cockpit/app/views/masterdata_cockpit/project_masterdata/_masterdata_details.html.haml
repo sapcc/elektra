@@ -36,7 +36,7 @@
       %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
         = icon('question-circle')
 
-    - if @inheritance.co_inheritable
+    - if @inheritance && @inheritance.co_inheritable
       .row
         .col-sm-4.details-label
           - if @active_project.parent_id == @active_project.domain_id
