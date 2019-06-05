@@ -106,7 +106,7 @@ module Compute
 
       # prefered_availability_zone
       index = @availability_zones.index { |az| az.zoneName == prefered_availability_zone }
-      az = @availability_zones.delete_at(index)
+      az = @availability_zones.delete_at(index) if index
       @availability_zones.unshift(az) if az
       # byebug
 
