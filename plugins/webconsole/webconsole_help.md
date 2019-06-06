@@ -1,10 +1,10 @@
 ### Quick Help
 
-`openstack help`  
-Show the OpenStack CLI help
+`cchelp`  
+Show installed CLI tools
 
-`openstack help COMMAND`  
-Show help for a specific command
+`[CLI] help`  
+Show help for the respective CLI tool
 
-`openstack command list`  
-List recognized commands by group
+
+
