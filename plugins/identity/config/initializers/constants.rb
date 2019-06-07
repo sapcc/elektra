@@ -17,6 +17,8 @@ ALLOWED_ROLES = %w[
   monitoring_viewer
   network_admin
   network_viewer
+  role_admin
+  role_viewer
   resource_admin
   resource_viewer
   sharedfilesystem_admin

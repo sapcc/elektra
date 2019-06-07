@@ -29,13 +29,13 @@
   "identity:credential_update": "rule:admin_required",
   "identity:credential_delete": "rule:admin_required or user_id:%(target.credential.user_id)s",
 
-  "identity:project_member_list": "rule:cloud_admin or role:admin or role:member or role:Member or rule:cloud_viewer",
-  "identity:project_member_create": "rule:cloud_admin or role:admin",
-  "identity:project_member_update": "rule:cloud_admin or role:admin",
+  "identity:project_member_list": "rule:cloud_admin or role:admin or role:role_admin or role:role_viewer or role:member or role:Member or rule:cloud_viewer",
+  "identity:project_member_create": "rule:cloud_admin or role:admin or role:role_admin",
+  "identity:project_member_update": "rule:cloud_admin or role:admin or role:role_admin",
 
-  "identity:project_group_list": "rule:cloud_admin or role:admin or role:member or role:Member or rule:cloud_viewer",
-  "identity:project_group_create": "rule:cloud_admin or role:admin",
-  "identity:project_group_update": "rule:cloud_admin or role:admin",
+  "identity:project_group_list": "rule:cloud_admin or role:admin or role:role_admin or role:role_viewer or role:member or role:Member or rule:cloud_viewer",
+  "identity:project_group_create": "rule:cloud_admin or role:admin or role:role_admin",
+  "identity:project_group_update": "rule:cloud_admin or role:admin or role:role_admin",
 
   "identity:group_list": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s) or rule:cloud_viewer",
   "identity:group_create": "rule:cloud_admin",
