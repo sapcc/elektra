@@ -233,7 +233,9 @@ class @WebconsoleContainer
 
 
               self.loaded = true
-            error: (xhr, bleep, error) -> console.log('error: ' + error)
+            error: (xhr, bleep, error) -> 
+              $loadingHint.html("<div class='info-text'>An error has occurred while trying to load your shell. Please try again later. The error was: <br />#{xhr.status} - #{error}</div>")
+
 
 
         loadConsole()
