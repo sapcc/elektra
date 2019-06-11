@@ -44,16 +44,16 @@
   .panel.panel-default
     .panel-body
       .row
-        .col-md-6.primary-contact-id
+        .col-md-6.operator-id
           = f.input :responsible_primary_contact_id, 
             label: "Primary Contact", 
             placeholder: "C/D/I User",
             required: true, 
-            input_html: { class: 'primary-contact-id-input' }
-        .col-md-6.primary-contact-email
+            input_html: { class: 'operator-id-input' }
+        .col-md-6.operator-email
           = f.input :responsible_primary_contact_email, 
             placeholder: "Email", 
-            input_html: { class: 'primary-contact-email-input' }
+            input_html: { class: 'operator-email-input' }
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
