@@ -58,6 +58,13 @@
         .col-md-12.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.responsible_primary_contact_help') 
+      .row
+        .col-md-12
+          = f.input :additional_information,
+            label: "Hotline/TicketQueue/Other",
+            as: :text,
+            placeholder: "Phone Hotline:\nSPC Queue:\nTicket Categories for interaction:\nDistribution Lists:",
+            input_html: {:rows => 4}
   %label.control-label Significance
   .panel.panel-default
     .panel-body

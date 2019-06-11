@@ -12,7 +12,7 @@ en:
     responsible_controller_help: 'The person who is responsible for the given cost object and may decide which costs are billed on this cost object.'
     responsible_operator_help: 'The person who is responsible for the uptime of the systems in this project, and who can decide, for example, when an instance may be restarted. Used as emergency engineering contact by CCloud operations.'
     responsible_security_expert_help: 'The person who is responsible for requesting and validating firewall and other security settings. This person will be contacted by security, for example, if a vulnerability is found.'
-    responsible_primary_contact_help: 'The primary person in charge to help support in case of questions and incidents'
+    responsible_primary_contact_help: 'The primary person in charge to help the support team in case of questions and incidents'
     responsible_product_owner_help: 'The person who holds the vision for the product and is responsible for maintaining, prioritizing and updating the backlog.'
     business_criticality_help: 'Indicates how critical the system is for your ability to provide your service to your customer.'
     number_of_endusers_help: 'Rough estimate of the number of users this project provides services to. Always provide the lower end, or enter -1 to indicate an infinite number of users.'

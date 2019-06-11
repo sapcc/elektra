@@ -1,10 +1,12 @@
 module MasterdataCockpit
   class ProjectMasterdata < Core::ServiceLayer::Model
+    # https://billing.staging.cloud.sap:23000/masterdata/#api-Object_Types-OBJECTprojectMasterdata
     # the following attributes ar known
     # "project_id":"ABCD1234",
     # "project_name":"MyProject0815",
     # "description":"MyProject is about providing important things",
     # "parent_id":"DEF6789",
+    # "additional_information": null,
     # "responsible_controller_id":"D000000",
     # "responsible_operator_email":"DL1337@sap.com",
     # "responsible_security_expert_id":"D000000",
@@ -106,6 +108,7 @@ module MasterdataCockpit
         'responsible_product_owner_email'   => read('responsible_product_owner_email'),
         'responsible_controller_id'         => read('responsible_controller_id'),
         'responsible_controller_email'      => read('responsible_controller_email'),
+        'additional_information'            => read('additional_information'),
         'revenue_relevance'                 => read('revenue_relevance'),
         'business_criticality'              => read('business_criticality'),
         'number_of_endusers'                => read('number_of_endusers'),
