@@ -49,7 +49,7 @@
             label: "Primary Contact", 
             placeholder: "C/D/I User",
             required: true, 
-            input_html: { class: 'operator-id-input' }
+            input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
         .col-md-6.operator-email
           = f.input :responsible_primary_contact_email, 
             placeholder: "Email", 
@@ -70,14 +70,6 @@
     .panel-body
       .row
         .col-md-4
-          - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
-          = f.input :revenue_relevance, 
-            label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
-            as: :select, 
-            collection: revenue_relevances.keys,
-            label_method: -> (k) { revenue_relevances[k] },
-            required: true
-        .col-md-4
           - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
           = f.input :business_criticality, 
             label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"),
@@ -85,6 +77,14 @@
             collection: business_criticalitys.keys,
             label_method: -> (k) { business_criticalitys[k] },
             required:true
+        .col-md-4
+          - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
+          = f.input :revenue_relevance, 
+            label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
+            as: :select, 
+            collection: revenue_relevances.keys,
+            label_method: -> (k) { revenue_relevances[k] },
+            required: true
         .col-md-4
           = f.input :number_of_endusers ,
             label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
