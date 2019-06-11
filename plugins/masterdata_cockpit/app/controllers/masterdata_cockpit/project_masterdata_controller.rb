@@ -79,7 +79,7 @@ module MasterdataCockpit
     def prepare_params
       @project_masterdata = services.masterdata_cockpit.new_project_masterdata
       # to merge options into .merge(project_id: @scoped_project_id)
-      @project_masterdata.attributes =params.fetch(:project_masterdata,{})
+      @project_masterdata.attributes = params.fetch(:project_masterdata,{})
       inject_projectdata
     end
 

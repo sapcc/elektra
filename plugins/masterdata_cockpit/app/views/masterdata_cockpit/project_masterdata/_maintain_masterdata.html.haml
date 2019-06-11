@@ -40,7 +40,48 @@
           = f.input :cost_object_name, 
               label: raw("Name/Number #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
               required:true
-  %label.control-label Responsibility
+  %label.control-label Contact
+  .panel.panel-default
+    .panel-body
+      .row
+        .col-md-6.primary-contact-id
+          = f.input :responsible_primary_contact_id, 
+            label: "Primary Contact", 
+            placeholder: "C/D/I User",
+            required: true, 
+            input_html: { class: 'primary-contact-id-input' }
+        .col-md-6.primary-contact-email
+          = f.input :responsible_primary_contact_email, 
+            placeholder: "Email", 
+            input_html: { class: 'primary-contact-email-input' }
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.responsible_primary_contact_help') 
+  %label.control-label Significance
+  .panel.panel-default
+    .panel-body
+      .row
+        .col-md-4
+          - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
+          = f.input :revenue_relevance, 
+            label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
+            as: :select, 
+            collection: revenue_relevances.keys,
+            label_method: -> (k) { revenue_relevances[k] },
+            required: true
+        .col-md-4
+          - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
+          = f.input :business_criticality, 
+            label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"),
+            as: :select, 
+            collection: business_criticalitys.keys,
+            label_method: -> (k) { business_criticalitys[k] },
+            required:true
+        .col-md-4
+          = f.input :number_of_endusers ,
+            label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
+  %label.control-label Other Responsibility
   .panel.panel-default
     .panel-body
       .row
@@ -79,30 +120,6 @@
         .col-md-12.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.responsible_controller_help')
-  %label.control-label Significance
-  .panel.panel-default
-    .panel-body
-      .row
-        .col-md-4
-          - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
-          = f.input :revenue_relevance, 
-            label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
-            as: :select, 
-            collection: revenue_relevances.keys,
-            label_method: -> (k) { revenue_relevances[k] },
-            required: true
-        .col-md-4
-          - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
-          = f.input :business_criticality, 
-            label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"),
-            as: :select, 
-            collection: business_criticalitys.keys,
-            label_method: -> (k) { business_criticalitys[k] },
-            required:true
-        .col-md-4
-          = f.input :number_of_endusers ,
-            label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
-
 
 :javascript
   $(function(){
