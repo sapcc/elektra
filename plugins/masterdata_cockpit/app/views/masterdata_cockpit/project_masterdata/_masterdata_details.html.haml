@@ -124,3 +124,57 @@
             Unlimited
           - else
             = @project_masterdata.number_of_endusers
+  .masterdata-group
+    %h5.masterdata-heading Other Responsibility
+    .row
+      .col-sm-4.details-label
+        Operator
+      .col-sm-2.details-value
+        - unless @project_masterdata.responsible_operator_id
+          \Not defined
+        = @project_masterdata.responsible_operator_id
+      - if @project_masterdata.responsible_operator_email
+        .col-sm-1.details-label
+          Contact
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = mail_to @project_masterdata.responsible_operator_email
+    .row
+      .col-sm-4.details-label
+        Security Expert
+      .col-sm-2.details-value
+        - unless @project_masterdata.responsible_security_expert_id
+          \Not defined
+        = @project_masterdata.responsible_security_expert_id
+      - if @project_masterdata.responsible_security_expert_email
+        .col-sm-1.details-label
+          Contact
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = mail_to @project_masterdata.responsible_security_expert_email
+    .row
+      .col-sm-4.details-label
+        Product Owner
+      .col-sm-2.details-value
+        - unless @project_masterdata.responsible_product_owner_id
+          \Not defined
+        = @project_masterdata.responsible_product_owner_id
+      - if @project_masterdata.responsible_product_owner_email
+        .col-sm-1.details-label
+          Contact
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = mail_to @project_masterdata.responsible_product_owner_email
+    .row
+      .col-sm-4.details-label
+        Controller
+      .col-sm-2.details-value
+        - unless @project_masterdata.responsible_controller_id
+          \Not defined
+        = @project_masterdata.responsible_controller_id
+      - if @project_masterdata.responsible_controller_email
+        .col-sm-1.details-label
+          Contact
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = mail_to @project_masterdata.responsible_controller_email
