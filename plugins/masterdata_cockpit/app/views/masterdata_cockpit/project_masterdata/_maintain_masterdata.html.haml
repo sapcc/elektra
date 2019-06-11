@@ -8,62 +8,45 @@
   = f.input :revenue_relevance, :as => :hidden, :input_html => { :value => @project_masterdata.revenue_relevance }
   = f.input :cost_object_type, :as  => :hidden, :input_html => { :value => @project_masterdata.cost_object_type }
 
-  - co_readonly               = @project_masterdata.solution.nil? == false 
+  - co_inheritable            = @inheritance.co_inheritable == true
 
-  %label.control-label Cost Object
+  %label.control-label Cost Info
   %a.help-link{data:{content: t('masterdata_cockpit.co_help'), popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
   .loading-place.loading-right
   .panel.panel-default
     .panel-body
       .row
-        - if @inheritance.co_inheritable
-          .col-md-2
-            = f.input :cost_object_inherited, 
-               label: raw("Inherited #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.inherited_help') }}"),
-               as: :select, 
-               include_hidden: false, 
-               include_blank: false, 
-               required:false
-        %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
-          - unless @solutions.nil?
-            = f.input :solution, 
-              label: raw("Solution #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.solution_help') }}"),
+        .col-md-3
+          - help_text = "Disabled by domain"
+          - if co_inheritable
+            - help_text = "Enabled by domain"
+          = f.input :cost_object_inherited, 
+              label: raw("Inherited #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: help_text }}"),
               as: :select, 
-              collection: @solutions.map {|solution| solution.name}, 
-              include_blank: "Other",
+              include_hidden: false, 
+              include_blank: false, 
+              required:false,
+              disabled: !co_inheritable
+        .col-md-3
+          - types = MasterdataCockpit::Config.cost_object_types
+          = f.input :cost_object_type, 
+              label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_type_help') }}"),
+              as:           :select, 
+              collection:   types.keys, 
+              label_method: -> (k) { types[k] },
               required: true
-        #solution
-          .col-md-3
-            - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
-            = f.input :revenue_relevance, 
-              label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
-              as: :select, 
-              collection: revenue_relevances.keys,
-              label_method: -> (k) { revenue_relevances[k] },
-              required: true,
-              disabled: co_readonly
-          %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
-            - types = MasterdataCockpit::Config.cost_object_types
-            = f.input :cost_object_type, 
-                label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_type_help') }}"),
-                as:           :select, 
-                collection:   types.keys, 
-                label_method: -> (k) { types[k] },
-                required: true,
-                disabled: co_readonly
-          .col-md-3
-            = f.input :cost_object_name, 
-                label: raw("Name/Number #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
-                required:true, 
-                readonly: co_readonly
+        .col-md-6
+          = f.input :cost_object_name, 
+              label: raw("Name/Number #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
+              required:true
   %label.control-label Responsibility
   .panel.panel-default
     .panel-body
       .row
-        .col-sm-6.operator-id
+        .col-md-6.operator-id
           = f.input :responsible_operator_id, label: "Operator", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
-        .col-sm-6.operator-email
+        .col-md-6.operator-email
           = f.input :responsible_operator_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
       .row
         .col-md-12.op-help-block
@@ -96,11 +79,19 @@
         .col-md-12.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.responsible_controller_help')
-  %label.control-label Importance
+  %label.control-label Significance
   .panel.panel-default
     .panel-body
       .row
-        .col-sm-6
+        .col-md-4
+          - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
+          = f.input :revenue_relevance, 
+            label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
+            as: :select, 
+            collection: revenue_relevances.keys,
+            label_method: -> (k) { revenue_relevances[k] },
+            required: true
+        .col-md-4
           - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
           = f.input :business_criticality, 
             label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"),
@@ -108,7 +99,7 @@
             collection: business_criticalitys.keys,
             label_method: -> (k) { business_criticalitys[k] },
             required:true
-        .col-sm-6
+        .col-md-4
           = f.input :number_of_endusers ,
             label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
 

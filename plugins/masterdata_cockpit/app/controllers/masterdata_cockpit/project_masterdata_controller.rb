@@ -5,7 +5,6 @@ module MasterdataCockpit
 
     before_action :load_project_masterdata, only: [:index, :edit, :show]
     before_action :prepare_params, only: [:create, :update]
-    before_action :solutions, only: [:create, :update, :edit, :solution_revenue_relevances, :revenue_relevance_cost_object]
     before_action :inheritance
 
     authorization_context 'masterdata_cockpit'
@@ -20,7 +19,6 @@ module MasterdataCockpit
     end
 
     def new
-      solutions
       @project_masterdata = services.masterdata_cockpit.new_project_masterdata
       inject_projectdata
     end
@@ -60,34 +58,6 @@ module MasterdataCockpit
     def show;
     end
 
-    def solution_revenue_relevances
-      @solution_name = params[:solution]
-
-      @solutions.each do |solution_data|
-        if solution_data.name == @solution_name
-          # in any case revenue_relevance is uniqe so we can order the date related to revenue_relevance
-          @solution_revenue_relevances = solution_data.cost_objects.map {
-            |cost_object|
-            [cost_object['revenue_relevance'],{ "name" => cost_object['name'], "type" => cost_object['type']  }]}.to_h
-        end
-      end
-    end
-
-    def revenue_relevance_cost_object
-      solution_name     = params[:solution]
-      revenue_relevance = params[:revenue_relevance]
-
-      @solutions.each do |solution_data|
-        if solution_data.name == solution_name
-          solution_data.cost_objects.each do |cost_object|
-            if cost_object['revenue_relevance'] == revenue_relevance
-              @cost_object = { "name" => cost_object['name'], "type" => cost_object['type']  }
-            end
-          end
-        end
-      end
-    end
-
     private
 
     def load_project_masterdata
@@ -111,15 +81,6 @@ module MasterdataCockpit
       # to merge options into .merge(project_id: @scoped_project_id)
       @project_masterdata.attributes =params.fetch(:project_masterdata,{})
       inject_projectdata
-    end
-
-    def solutions
-      begin
-        @solutions = services.masterdata_cockpit.get_solutions
-      rescue
-        flash.now[:error] = "Could not load solutions."
-        @solutions = []
-      end
     end
 
     def inheritance

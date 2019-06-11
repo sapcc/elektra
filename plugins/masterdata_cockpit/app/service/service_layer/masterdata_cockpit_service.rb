@@ -50,12 +50,6 @@ module ServiceLayer
       elektron_billing.put("projects/#{id}") { masterdata }.body
     end
 
-    def get_solutions
-      elektron_billing.get('solutions').map_to('body') do |data|
-        MasterdataCockpit::CostControlSolution.new(self, data)
-      end
-    end
-
     def check_inheritance(domain_id, parent_id = '')
       elektron_billing.get(
         'inheritance', domain_id: domain_id, parent_id: parent_id

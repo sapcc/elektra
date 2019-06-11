@@ -5,7 +5,6 @@ en:
     contact_info: 'Important in case of incidents or questions related to the project.'
     significance: 'Indicates the importance of the project.'
     projects_can_inherit_help: 'Projects in this domain can use this cost object'
-    inherited_help: 'Inherit the cost object from next level (i.e. domain or parent project).'
     solution_help:  'Choose a solution here if the project is used for one of the strategic solutions of SAP.'
     revenue_relevances_help: 'Indicates if the project is directly or indirectly creating revenue.'
     co_type_help: 'If in doubt, please ask the responsible controller of the cost object for permission.'

@@ -15,7 +15,6 @@ module MasterdataCockpit
     # "responsible_controller_email": "myName@sap.com",
     # "revenue_relevance": "generating",
     # "business_criticality":"prod",
-    # "solution": "SAPCloud",
     # "number_of_endusers":100,
     # "cost_object": {
     #     "type": "IO",
@@ -80,14 +79,6 @@ module MasterdataCockpit
         cost_object['inherited']
       else
         false
-      end
-    end
-
-    def solution
-      if cost_object
-        cost_object['solution']
-      else
-        nil
       end
     end
 
