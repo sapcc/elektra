@@ -93,12 +93,12 @@ module MasterdataCockpit
     end
 
     def inject_projectdata
+      @current_project = services.identity.find_project(@scoped_project_id)
       @project_masterdata.project_id   = @scoped_project_id
       @project_masterdata.domain_id    = @scoped_domain_id
       @project_masterdata.project_name = @scoped_project_name
-      # need to cut the length because the masterdata api supports at the moment max 255 chars
-      @project_masterdata.description  = @active_project.description.truncate(255)
-      @project_masterdata.parent_id    = @active_project.parent_id
+      @project_masterdata.description  = @current_project.description
+      @project_masterdata.parent_id    = @current_project.parent_id
     end
 
   end
