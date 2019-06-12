@@ -7,6 +7,24 @@
 
 .row
   .col-sm-8
+    -# projectdata, only vissible in masterdata view
+    -# do not show the project infos in modal dialog (used in project wizard)
+    - unless modal?
+      .toolbar.toolbar-aligntop
+        %h4  Project
+        - if current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
+          .main-buttons
+            = link_to 'Edit', plugin('identity').edit_project_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
+      #project_details
+        = render partial: 'project_details'
+
+    -# do not show the edit button in modal dialog (used in project wizard)
+    - unless modal? 
+      .toolbar
+        %h4 Masterdata
+        - if current_user.is_allowed?('masterdata_cockpit:project_masterdatum_update', {target: {project: @active_project}})
+          .main-buttons
+            = link_to 'Edit', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
     #project_masterdata_details
       = render partial: 'masterdata_details'
   .col-md-4

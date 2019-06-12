@@ -29,9 +29,6 @@ module MasterdataCockpit
     def update
       unless @project_masterdata.update
         render action: :edit
-      else
-        flash[:notice] = "Masterdata successfully updated."
-        redirect_to plugin('masterdata_cockpit').project_masterdata_path
       end
     end
 
