@@ -34,31 +34,6 @@ module Identity
       load_and_update_wizard_status if request.xhr?
     end
 
-    def edit
-      @project = services.identity.find_project(@project_id)
-    end
-
-    def update
-      params[:project][:enabled] = params[:project][:enabled] == true ||
-                                   params[:project][:enabled] == 'true'
-                                   raise
-      @project = service_user.identity.new_project(params[:project])
-      @project.id = @project_id
-      @project.domain_id = @scoped_domain_id
-      if @project.save &&
-        # has updated project #{@project.name} (#{@project.id})")
-        # audit_logger.info(user: current_user, has: "updated",
-        #                   project: @project)
-        audit_logger.info(current_user, 'has updated', @project)
-
-        flash[:notice] = "Project #{@project.name} successfully updated."
-        redirect_to plugin('masterdata_cockpit').project_masterdata_path(project_id: @project.id)
-      else
-        flash.now[:error] = @project.errors.full_messages.to_sentence
-        render action: :edit
-      end
-    end
-
     def destroy
       flash.now[:error] = 'Deleting projects is currently not allowed because \
       it creates orphaned dependant objects in backend services.'
