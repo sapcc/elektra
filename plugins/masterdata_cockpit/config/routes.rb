@@ -5,8 +5,10 @@ MasterdataCockpit::Engine.routes.draw do
     get  '/new'    => 'project_masterdata#new'
     get  '/show'   => 'project_masterdata#show'
     get  '/edit'   => 'project_masterdata#edit'
+    get  '/edit_project' => 'project_masterdata#edit_project'
     post '/create' => 'project_masterdata#create'
     post '/update' => 'project_masterdata#update'
+    post '/update_project' => 'project_masterdata#update_project'
   end
 
   scope '/domain', as: 'domain_masterdata' do

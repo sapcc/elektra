@@ -41,6 +41,7 @@ module Identity
     def update
       params[:project][:enabled] = params[:project][:enabled] == true ||
                                    params[:project][:enabled] == 'true'
+                                   raise
       @project = service_user.identity.new_project(params[:project])
       @project.id = @project_id
       @project.domain_id = @scoped_domain_id

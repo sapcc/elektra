@@ -6,7 +6,7 @@ module MasterdataCockpit
     before_action :load_project_masterdata, only: [:index, :edit, :show]
     before_action :prepare_params, only: [:create, :update]
     before_action :inheritance
-
+  
     authorization_context 'masterdata_cockpit'
     authorization_required
 
@@ -55,6 +55,29 @@ module MasterdataCockpit
     def show;
     end
 
+    def edit_project
+      @project = services.identity.find_project(@scoped_project_id)
+    end
+
+    def update_project
+      params[:project][:enabled] = params[:project][:enabled] == true ||
+                                   params[:project][:enabled] == 'true'
+      
+      @project = service_user.identity.new_project(params[:project])
+
+      @project.id = @scoped_project_id
+      @project.domain_id = @scoped_domain_id
+      if @project.save &&
+        # has updated project #{@project.name} (#{@project.id})")
+        # audit_logger.info(user: current_user, has: "updated",
+        #                   project: @project)
+        audit_logger.info(current_user, 'has updated', @project)
+      else
+        flash.now[:error] = @project.errors.full_messages.to_sentence
+        render action: :edit_project
+      end
+    end
+
     private
 
     def load_project_masterdata
@@ -93,12 +116,13 @@ module MasterdataCockpit
     end
 
     def inject_projectdata
-      @current_project = services.identity.find_project(@scoped_project_id)
-      @project_masterdata.project_id   = @scoped_project_id
+      # get the latest values from project to update masterdata
+      @project = services.identity.find_project(@scoped_project_id)
+      @project_masterdata.project_id   = @project.id
       @project_masterdata.domain_id    = @scoped_domain_id
-      @project_masterdata.project_name = @scoped_project_name
-      @project_masterdata.description  = @current_project.description
-      @project_masterdata.parent_id    = @current_project.parent_id
+      @project_masterdata.project_name = @project.name
+      @project_masterdata.description  = @project.description
+      @project_masterdata.parent_id    = @project.parent_id
     end
 
   end
