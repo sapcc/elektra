@@ -4,10 +4,8 @@
     
     $(function() {
 
-        if ( $('#project_masterdata_additional_information').val() == '' && (
-             $('select#project_masterdata_business_criticality').val() == 'prod' ||
-             $('select#project_masterdata_revenue_relevance').val() == 'generating'
-            )
+        if ( $('#project_masterdata_additional_information').val() == '' && 
+             $('select#project_masterdata_business_criticality').val() == 'prod' 
           ) {
           $('#project_masterdata_additional_information').parent().addClass('has-error');
         }
@@ -50,9 +48,8 @@
         })
 
         $('textarea#project_masterdata_additional_information').on("change keydown", function(){
-           if ( $(this).val() == '' && (
-                $('select#project_masterdata_business_criticality').val() == 'prod' ||
-                $('select#project_masterdata_revenue_relevance').val() == 'generating' )
+           if ( $(this).val() == '' && 
+                $('select#project_masterdata_business_criticality').val() == 'prod' 
             ) {
               $(this).parent().addClass('has-error');
             }
@@ -68,23 +65,8 @@
             $('#project_masterdata_additional_information').parent().addClass('has-error');
           }
           else {
-            if ($('select#project_masterdata_revenue_relevance').val() != 'generating' ) {
-              $('#project_masterdata_additional_information').parent().removeClass('has-error')
-            }
+            $('#project_masterdata_additional_information').parent().removeClass('has-error')
           }
-        });
-
-        $('select#project_masterdata_revenue_relevance').change(function(){
-          if ( $(this).val() == 'generating' &&  
-               $('#project_masterdata_additional_information').val() == ''
-            ) {
-            $('#project_masterdata_additional_information').parent().addClass('has-error');
-          }
-          else {
-            if ($('select#project_masterdata_business_criticality').val() != 'prod' ) {
-              $('#project_masterdata_additional_information').parent().removeClass('has-error')
-            }
-          }         
         });
         
     });

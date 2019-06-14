@@ -63,7 +63,7 @@
           = f.input :additional_information,
             label: "Hotline/TicketQueue/Other",
             as: :text,
-            placeholder: "Phone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:",
+            placeholder: "SLA on your side to choose the following contact channels:\nPhone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:",
             input_html: {:rows => 4},
             hint:  t('masterdata_cockpit.additional_information') 
   %label.control-label Significance
@@ -76,16 +76,14 @@
             label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"),
             as: :select, 
             collection: business_criticalitys.keys,
-            label_method: -> (k) { business_criticalitys[k] },
-            required:true
+            label_method: -> (k) { business_criticalitys[k] }
         .col-md-4
           - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
           = f.input :revenue_relevance, 
             label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
             as: :select, 
             collection: revenue_relevances.keys,
-            label_method: -> (k) { revenue_relevances[k] },
-            required: true
+            label_method: -> (k) { revenue_relevances[k] }
         .col-md-4
           = f.input :number_of_endusers ,
             label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
