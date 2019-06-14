@@ -4,6 +4,14 @@
     
     $(function() {
 
+        if ( $('#project_masterdata_additional_information').val() == '' && (
+             $('select#project_masterdata_business_criticality').val() == 'prod' ||
+             $('select#project_masterdata_revenue_relevance').val() == 'generating'
+            )
+          ) {
+          $('#project_masterdata_additional_information').parent().addClass('has-warning');
+        }
+
         if (cost_object_inherited) {
           $('select#project_masterdata_cost_object_type').prop('disabled', function(i, v) { return !v; });
           $('input#project_masterdata_cost_object_name').prop('disabled', function(i, v) { return !v; });
@@ -40,5 +48,43 @@
           // enable revenue_relevance in any case
           $('select#project_masterdata_revenue_relevance').prop('disabled',false);
         })
+
+        $('textarea#project_masterdata_additional_information').on("change keydown", function(){
+           if ( $(this).val() == '' && (
+                $('select#project_masterdata_business_criticality').val() == 'prod' ||
+                $('select#project_masterdata_revenue_relevance').val() == 'generating' )
+            ) {
+              $(this).parent().addClass('has-warning');
+            }
+            else {
+              $(this).parent().removeClass('has-warning');
+            }
+        })
+
+        $('select#project_masterdata_business_criticality').change(function(){
+          if ( $(this).val() == 'prod' && 
+               $('#project_masterdata_additional_information').val() == ''
+            ) {
+            $('#project_masterdata_additional_information').parent().addClass('has-warning');
+          }
+          else {
+            if ($('select#project_masterdata_revenue_relevance').val() != 'generating' ) {
+              $('#project_masterdata_additional_information').parent().removeClass('has-warning')
+            }
+          }
+        });
+
+        $('select#project_masterdata_revenue_relevance').change(function(){
+          if ( $(this).val() == 'generating' &&  
+               $('#project_masterdata_additional_information').val() == ''
+            ) {
+            $('#project_masterdata_additional_information').parent().addClass('has-warning');
+          }
+          else {
+            if ($('select#project_masterdata_business_criticality').val() != 'prod' ) {
+              $('#project_masterdata_additional_information').parent().removeClass('has-warning')
+            }
+          }         
+        });
         
     });

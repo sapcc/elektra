@@ -1,5 +1,6 @@
 en:
   masterdata_cockpit:
+    additional_information: 'In case of Business Criticality = Production and/or Relevances = Generating it is recommended to provide additional information.'
     co_help: 'If you do not know what specific cost object object you should use, ask the controller who is repsonsible for it.'
     co_info: 'The costcenter, internal order, WBS element or sales order where the costs should be charged to.'
     contact_info: 'Important in case of incidents or questions related to the project.'

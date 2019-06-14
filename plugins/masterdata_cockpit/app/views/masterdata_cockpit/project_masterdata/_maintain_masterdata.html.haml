@@ -63,8 +63,9 @@
           = f.input :additional_information,
             label: "Hotline/TicketQueue/Other",
             as: :text,
-            placeholder: "Phone Hotline:\nSPC Queue:\nTicket Categories for interaction:\nDistribution Lists:",
-            input_html: {:rows => 4}
+            placeholder: "Phone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:",
+            input_html: {:rows => 4},
+            hint:  t('masterdata_cockpit.additional_information') 
   %label.control-label Significance
   .panel.panel-default
     .panel-body
