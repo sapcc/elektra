@@ -4,6 +4,8 @@ module MasterdataCockpit
     #"domain_id":"ABCD1234",
     #"domain_name":"MyDomain0815",
     #"description":"MyDomain is about providing important things",
+    #"responsible_primary_contact_id": "D000000",
+    #"responsible_primary_contact_email": "myDL@sap.com",
     #"responsible_controller_id": "D000000",
     #"responsible_controller_email": "myDL@sap.com",
     #"cost_object": {
@@ -16,6 +18,10 @@ module MasterdataCockpit
 
     validates_presence_of :responsible_controller_id, unless: lambda { self.responsible_controller_email.blank? }, message: "can't be blank if controller email is defined"
     validates_presence_of :responsible_controller_email, unless: lambda { self.responsible_controller_id.blank? }, message: "can't be blank if controller is defined"
+    
+    validates_presence_of :responsible_primary_contact_id, unless: lambda { self.responsible_primary_contact_email.blank? }, message: "can't be blank primary contact email is defined"
+    validates_presence_of :responsible_primary_contact_email, unless: lambda { self.responsible_primary_contact_id.blank? }, message: "can't be blank if primary contact is defined"
+
 
     validates :responsible_controller_email,
       format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "please use a valid email address" },
@@ -61,11 +67,13 @@ module MasterdataCockpit
 
     def attributes_for_create
       params = {
-        'domain_id'                     => read('domain_id'),
-        'domain_name'                   => read('domain_name'),
-        'description'                   => read('description'),
-        'responsible_controller_id'     => read('responsible_controller_id'),
-        'responsible_controller_email'  => read('responsible_controller_email'),
+        'domain_id'                         => read('domain_id'),
+        'domain_name'                       => read('domain_name'),
+        'description'                       => read('description'),
+        'responsible_controller_id'         => read('responsible_controller_id'),
+        'responsible_controller_email'      => read('responsible_controller_email'),
+        'responsible_primary_contact_id'    => read('responsible_primary_contact_id'),
+        'responsible_primary_contact_email' => read('responsible_primary_contact_email'),
       }.delete_if { |_k, v| v.blank? }
 
       if read('projects_can_inherit') == "true"
