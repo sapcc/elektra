@@ -30,6 +30,11 @@ module MasterdataCockpit
       unless @project_masterdata.update
         render action: :edit
       end
+      # if masterdata edit dialog was opened without modal window
+      unless params['modal']
+        flash[:notice] = "Masterdata successfully updated."
+        redirect_to plugin('masterdata_cockpit').project_masterdata_path
+      end
     end
 
     def create
@@ -72,6 +77,11 @@ module MasterdataCockpit
         # audit_logger.info(user: current_user, has: "updated",
         #                   project: @project)
         audit_logger.info(current_user, 'has updated', @project)
+        # if project edit dialog was opened without modal window
+        unless params['modal']
+          flash[:notice] = "Project successfully updated."
+          redirect_to plugin('masterdata_cockpit').project_masterdata_path
+        end
       else
         flash.now[:error] = @project.errors.full_messages.to_sentence
         render action: :edit_project
