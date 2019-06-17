@@ -53,7 +53,7 @@
         .col-md-6.operator-email
           = f.input :responsible_primary_contact_email, 
             placeholder: "Email", 
-            input_html: { class: 'operator-email-input' }
+            input_html: { class: 'operator-email-input',  value: f.object.responsible_primary_contact_email || current_user.email }
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
