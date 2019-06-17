@@ -2,6 +2,7 @@
   Edit masterdata for project: #{@scoped_project_name}
 
 = simple_modal_form_for @project_masterdata, submit_action: 'Update', url: plugin('masterdata_cockpit').project_masterdata_update_path(),method: :post, cancel_url: plugin('masterdata_cockpit').project_masterdata_path do |f|
+  .loading-place.loading-right
   = render partial: 'maintain_masterdata', locals: {f:f}
 
 = render partial: 'edit_create_js'

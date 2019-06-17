@@ -2,4 +2,5 @@
   Edit Project
 
 = simple_modal_form_for @project, submit_action: 'Update', url: plugin('masterdata_cockpit').project_masterdata_update_project_path(id: @project.id),method: :post, cancel_url: plugin('masterdata_cockpit').project_masterdata_path do |f|
+  .loading-place.loading-right
   = render partial: 'identity/projects/shared/form', locals: { form: f }
