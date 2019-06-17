@@ -7,8 +7,16 @@
 
 .row
   .col-sm-8
-    #domain_masterdata_details
-      = render partial: 'masterdata_details'
+    - if @domain_masterdata
+      .toolbar.toolbar-aligntop
+        %h4 Masterdata
+
+        - if current_user.is_allowed?('masterdata_cockpit:domain_masterdatum_update')
+          .main-buttons
+            = link_to 'Edit', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", id:"edit_masterdata_btn", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
+
+      #domain_masterdata_details
+        = render partial: 'masterdata_details'
   .col-md-4
     #domain_masterdata_additional_infos
       = render partial: 'masterdata_additional_infos'

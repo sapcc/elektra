@@ -37,8 +37,11 @@ module MasterdataCockpit
       unless @domain_masterdata.update
         render action: :edit
       else
+        # if masterdata edit dialog was opened without modal window
+        unless params['modal']
           flash[:notice] = "Masterdata successfully updated."
           redirect_to plugin('masterdata_cockpit').domain_masterdata_path
+        end
       end
     end
 
