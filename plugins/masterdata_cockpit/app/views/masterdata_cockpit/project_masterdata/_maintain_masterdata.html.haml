@@ -8,7 +8,7 @@
   = f.input :revenue_relevance, :as => :hidden, :input_html => { :value => @project_masterdata.revenue_relevance }
   = f.input :cost_object_type, :as  => :hidden, :input_html => { :value => @project_masterdata.cost_object_type }
 
-  - co_inheritable            = @inheritance.co_inheritable == true
+  - co_inheritable = @inheritance.co_inheritable == true
 
   %label.control-label Cost Info
   %a.help-link{data:{content: t('masterdata_cockpit.co_help'), popover: {type: "help-hint"}, toggle: "popover"}}
@@ -21,13 +21,15 @@
           - help_text = "Disabled by domain"
           - if co_inheritable
             - help_text = "Enabled by domain"
+            - co_inheritable = 0
           = f.input :cost_object_inherited, 
               label: raw("Inherited #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: help_text }}"),
               as: :select, 
               include_hidden: false, 
               include_blank: false, 
               required:false,
-              disabled: !co_inheritable
+              hint: help_text, 
+              disabled: co_inheritable
         .col-md-3
           - types = MasterdataCockpit::Config.cost_object_types
           = f.input :cost_object_type, 
