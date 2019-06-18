@@ -11,36 +11,38 @@
   - co_inheritable = @inheritance.co_inheritable == true
 
   %label.control-label Cost Info
-  %a.help-link{data:{content: t('masterdata_cockpit.co_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-    = icon('question-circle')
+  .loading-place.loading-right
   .panel.panel-default
     .panel-body
       .row
         .col-md-3
-          - help_text = "Disabled by domain"
           - if co_inheritable
-            - help_text = "Enabled by domain"
             - co_inheritable = 0
           = f.input :cost_object_inherited, 
-              label: raw("Inherited #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: help_text }}"),
+              label: "Inherited from domain",
               as: :select, 
               include_hidden: false, 
               include_blank: false, 
               required:false,
-              hint: help_text, 
               disabled: co_inheritable
         .col-md-3
           - types = MasterdataCockpit::Config.cost_object_types
           = f.input :cost_object_type, 
-              label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_type_help') }}"),
+              label: "Type",
               as:           :select, 
               collection:   types.keys, 
               label_method: -> (k) { types[k] },
               required: true
         .col-md-6
           = f.input :cost_object_name, 
-              label: raw("Name/Number #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
+              label: "Name/Number",
               required:true
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          If you are in doubt what to fill in your 
+          = link_to  "Infrastructure coordinator", "https://jam4.sapjam.com/blogs/show/tMu79H0QHEA3vNMGSkanxa", target: '_blank'
+          can give you the correct Cost Object
   %label.control-label Contact
   .panel.panel-default
     .panel-body
@@ -65,8 +67,8 @@
             label: "Hotline/TicketQueue/Other",
             as: :text,
             placeholder: "SLA on your side to choose the following contact channels:\nPhone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:",
-            input_html: {:rows => 4},
-            hint:  t('masterdata_cockpit.additional_information') 
+            input_html: {:rows => 6},
+            hint: raw("#{icon ('info-circle')} #{t('masterdata_cockpit.additional_information')}") 
   %label.control-label Significance
   .panel.panel-default
     .panel-body

@@ -5,8 +5,6 @@
 = f.input :description, label: "Description"
 
 %label.control-label Cost Object
-%a.help-link{data:{content: t('masterdata_cockpit.co_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-  = icon('question-circle')
 .panel.panel-default
   .panel-body
     .row
@@ -19,14 +17,14 @@
       .col-sm-3
         - types = MasterdataCockpit::Config.cost_object_types
         = f.input :cost_object_type, 
-            label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_type_help') }}"),
+            label: "Type",
             as:           :select, 
             collection:   types.keys, 
             label_method: -> (k) { types[k] },
             required:true
       .col-sm-6
         = f.input :cost_object_name,
-          label: raw("Name/Number #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
+          label: "Name/Number",
           required:true
 %label.control-label Responsibility
 .panel.panel-default

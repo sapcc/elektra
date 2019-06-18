@@ -1,15 +1,13 @@
 en:
   masterdata_cockpit:
     additional_information: 'In case of Business Criticality = Production it is recommended to provide additional information.'
-    co_help: 'If you do not know what specific cost object object you should use, ask the controller who is repsonsible for it.'
     co_info: 'The costcenter, internal order, WBS element or sales order where the costs should be charged to.'
-    contact_info: 'Important in case of incidents or questions related to the project.'
+    contact_info: 'Important for support! In case of incidents or questions related to the project.'
+    other_responsibility: 'The Who is Who of the project.'
     significance: 'Indicates the importance of the project.'
-    projects_can_inherit_help: 'Projects in this domain can use this cost object'
+    projects_can_inherit_help: 'Projects in this domain can use this cost object.'
     solution_help:  'Choose a solution here if the project is used for one of the strategic solutions of SAP.'
     revenue_relevances_help: 'Indicates if the project is directly or indirectly creating revenue.'
-    co_type_help: 'If in doubt, please ask the responsible controller of the cost object for permission.'
-    co_name_help: 'Name or ID of the cost object.'
     responsible_controller_help: 'The person who is responsible for the given cost object and may decide which costs are billed on this cost object.'
     responsible_operator_help: 'The person who is responsible for the uptime of the systems in this project, and who can decide, for example, when an instance may be restarted. Used as emergency engineering contact by CCloud operations.'
     responsible_security_expert_help: 'The person who is responsible for requesting and validating firewall and other security settings. This person will be contacted by security, for example, if a vulnerability is found.'

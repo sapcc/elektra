@@ -26,11 +26,9 @@
           if ($('#project_masterdata_cost_object_inherited').val() == "true") {
             $('select#project_masterdata_cost_object_type').data('old_value',$('select#project_masterdata_cost_object_type').val());
             $('input#project_masterdata_cost_object_name').data('old_value',$('input#project_masterdata_cost_object_name').val());
-            $('select#project_masterdata_revenue_relevance').data('old_value',$('select#project_masterdata_revenue_relevance').val());
             
             $('select#project_masterdata_cost_object_type').val("");
             $('input#project_masterdata_cost_object_name').val("");
-            $('select#project_masterdata_revenue_relevance').val("");
 
             $('select#project_masterdata_cost_object_type').prop('disabled', true);
             $('input#project_masterdata_cost_object_name').prop('disabled', true);
@@ -38,13 +36,10 @@
           else {
             $('select#project_masterdata_cost_object_type').val($('select#project_masterdata_cost_object_type').data('old_value'));
             $('input#project_masterdata_cost_object_name').val($('input#project_masterdata_cost_object_name').data('old_value'));
-            $('select#project_masterdata_revenue_relevance').val($('select#project_masterdata_revenue_relevance').data('old_value'));
 
             $('select#project_masterdata_cost_object_type').prop('disabled', false);
             $('input#project_masterdata_cost_object_name').prop('disabled',false);
           }
-          // enable revenue_relevance in any case
-          $('select#project_masterdata_revenue_relevance').prop('disabled',false);
         })
 
         $('textarea#project_masterdata_additional_information').on("change keydown", function(){
