@@ -36,19 +36,19 @@ module MasterdataCockpit
     validate :validate_inheritance
 
     def cost_object_name
-      if read('cost_object_name')
+      if read('cost_object_name') # from submit form
         read('cost_object_name')
-      elsif cost_object
+      elsif cost_object # from api
         cost_object['name']
       else
         nil
       end
     end
 
-    def cost_object_type
-      if read('cost_object_type')
+    def cost_object_type 
+      if read('cost_object_type') # from submit form
         read('cost_object_type')
-      elsif cost_object
+      elsif cost_object # from api
         cost_object['type']
       else
         nil
@@ -56,10 +56,10 @@ module MasterdataCockpit
     end
 
     def cost_object_projects_can_inherit
-      if read('cost_object_projects_can_inherit')
+      if read('cost_object_projects_can_inherit')  # from submit form
         read('cost_object_projects_can_inherit') == "true"
       elsif cost_object
-        cost_object['projects_can_inherit']
+        cost_object['projects_can_inherit']  # from api
       else
         false
       end
@@ -81,9 +81,9 @@ module MasterdataCockpit
         params['cost_object'] = {'cost_object_projects_can_inherit' => true}
       else
         params['cost_object'] = {
-          'name' => read('cost_object_name'),
-          'type' => read('cost_object_type'),
-          'projects_can_inherit' => read('cost_object_projects_can_inherit') == "true"
+          'name' => cost_object_name,
+          'type' => cost_object_type,
+          'projects_can_inherit' => cost_object_projects_can_inherit
         }
       end
 

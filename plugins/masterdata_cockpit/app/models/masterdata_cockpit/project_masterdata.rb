@@ -61,9 +61,9 @@ module MasterdataCockpit
       allow_blank: true
 
     def cost_object_name
-      if read('cost_object_name')
+      if read('cost_object_name') # from submit form
         read('cost_object_name')
-      elsif cost_object
+      elsif cost_object # from api
         cost_object['name']
       else
         nil
@@ -71,9 +71,9 @@ module MasterdataCockpit
     end
  
     def cost_object_type
-      if read('cost_object_type')
+      if read('cost_object_type') # from submit form
         read('cost_object_type')
-      elsif cost_object
+      elsif cost_object # from api
         cost_object['type']
       else
         nil
@@ -81,9 +81,9 @@ module MasterdataCockpit
     end
 
     def cost_object_inherited
-      if read('cost_object_inherited')
+      if read('cost_object_inherited') # from submit form
         read('cost_object_inherited') == "true"
-      elsif cost_object
+      elsif cost_object # from api
         cost_object['inherited']
       else
         false
@@ -113,13 +113,13 @@ module MasterdataCockpit
         'number_of_endusers'                => read('number_of_endusers'),
       }.delete_if { |_k, v| v.blank? }
       
-      if read('cost_object_inherited') == "true"
+      if cost_object_inherited
         params['cost_object'] = {'inherited' => true}
       else
         params['cost_object'] = {
-          'name' => read('cost_object_name'),
-          'type' => read('cost_object_type'),
-          'inherited' => read('cost_object_inherited') == "true"
+          'name' => cost_object_name,
+          'type' => cost_object_type,
+          'inherited' => cost_object_inherited
         }
       end
       

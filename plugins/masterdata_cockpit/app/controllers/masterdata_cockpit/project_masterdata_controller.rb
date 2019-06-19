@@ -68,10 +68,15 @@ module MasterdataCockpit
       params[:project][:enabled] = params[:project][:enabled] == true ||
                                    params[:project][:enabled] == 'true'
       
-      @project = service_user.identity.new_project(params[:project])
-
-      @project.id = @scoped_project_id
+      @project           = service_user.identity.new_project(params[:project])
+      @project.id        = @scoped_project_id
       @project.domain_id = @scoped_domain_id
+
+      @project_masterdata = services.masterdata_cockpit.get_project(@scoped_project_id)
+      @project_masterdata.project_name = @project.name
+      @project_masterdata.description  = @project.description
+      @project_masterdata.update
+   
       if @project.save &&
         # has updated project #{@project.name} (#{@project.id})")
         # audit_logger.info(user: current_user, has: "updated",
