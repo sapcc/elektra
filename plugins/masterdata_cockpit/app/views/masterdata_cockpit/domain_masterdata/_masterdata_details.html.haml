@@ -10,7 +10,10 @@
     .col-sm-8.details-value
       =# use active project here because at the moment masterdata api supports max. 255 chars
       %span.description
-        = @domain_masterdata.description
+        - if @domain_masterdata.description
+          = @domain_masterdata.description
+        - else
+          \-
 
 .masterdata-group
   %h5.masterdata-heading
@@ -53,11 +56,10 @@
       Primary Contact
     .col-sm-2.details-value
       - unless @domain_masterdata.responsible_primary_contact_id
-        Not defined
+        \-
       = @domain_masterdata.responsible_primary_contact_id
     - if @domain_masterdata.responsible_primary_contact_email
       .col-sm-1.details-label
-        Contact
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @domain_masterdata.responsible_primary_contact_email
@@ -67,11 +69,10 @@
       Controller
     .col-sm-2.details-value
       - unless @domain_masterdata.responsible_controller_id
-        Not defined
+        \-
       = @domain_masterdata.responsible_controller_id
     - if @domain_masterdata.responsible_controller_email
       .col-sm-1.details-label
-        Contact
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @domain_masterdata.responsible_controller_email

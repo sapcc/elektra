@@ -43,20 +43,19 @@
       Primary Contact
     .col-sm-2.details-value
       - unless @project_masterdata.responsible_primary_contact_id
-        \Not defined
+        \-
       = @project_masterdata.responsible_primary_contact_id
     - if @project_masterdata.responsible_primary_contact_email
       .col-sm-1.details-label
-        Contact
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_primary_contact_email
   .row
     .col-sm-4.details-label
-      Hotline/TicketQueue/Other
+      Hotline/Ticket Queue/Other
     .col-sm-8.details-value
       - unless @project_masterdata.additional_information
-        \Not defined
+        \-
       = @project_masterdata.additional_information
 
 .masterdata-group
@@ -94,7 +93,7 @@
           = @project_masterdata.number_of_endusers
 .masterdata-group
   %h5.masterdata-heading 
-    Other Responsibilitys
+    Other Responsibilities
     %a.help-link{data:{content: t('masterdata_cockpit.other_responsibilitys'), popover: {type: "help-hint"}, toggle: "popover"}}
       = icon('question-circle')
   .row
@@ -102,11 +101,10 @@
       Operator
     .col-sm-2.details-value
       - unless @project_masterdata.responsible_operator_id
-        \Not defined
+        \-
       = @project_masterdata.responsible_operator_id
     - if @project_masterdata.responsible_operator_email
       .col-sm-1.details-label
-        Contact
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_operator_email
@@ -115,11 +113,10 @@
       Security Expert
     .col-sm-2.details-value
       - unless @project_masterdata.responsible_security_expert_id
-        \Not defined
+        \-
       = @project_masterdata.responsible_security_expert_id
     - if @project_masterdata.responsible_security_expert_email
       .col-sm-1.details-label
-        Contact
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_security_expert_email
@@ -128,11 +125,10 @@
       Product Owner
     .col-sm-2.details-value
       - unless @project_masterdata.responsible_product_owner_id
-        \Not defined
+        \-
       = @project_masterdata.responsible_product_owner_id
     - if @project_masterdata.responsible_product_owner_email
       .col-sm-1.details-label
-        Contact
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_product_owner_email
@@ -141,11 +137,10 @@
       Controller
     .col-sm-2.details-value
       - unless @project_masterdata.responsible_controller_id
-        \Not defined
+        \-
       = @project_masterdata.responsible_controller_id
     - if @project_masterdata.responsible_controller_email
       .col-sm-1.details-label
-        Contact
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_controller_email

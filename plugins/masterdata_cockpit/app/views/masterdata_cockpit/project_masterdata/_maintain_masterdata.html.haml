@@ -40,9 +40,9 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          If you are in doubt what to fill in your 
-          = link_to  "Infrastructure coordinator", "https://jam4.sapjam.com/blogs/show/tMu79H0QHEA3vNMGSkanxa", target: '_blank'
-          can give you the correct Cost Object
+          Please contact your responsible
+          = link_to  "Infrastructure Coordinator", "https://jam4.sapjam.com/blogs/show/tMu79H0QHEA3vNMGSkanxa", target: '_blank'
+          for the correct Cost Object infromation.
   %label.control-label Contact
   .panel.panel-default
     .panel-body
@@ -61,12 +61,12 @@
         .col-md-12.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.responsible_primary_contact_help') 
-      .row
+      .row{style: "margin-top:10px"}
         .col-md-12
           = f.input :additional_information,
-            label: "Hotline/TicketQueue/Other",
+            label: "Hotline/Ticket Queue/Other",
             as: :text,
-            placeholder: "SLA on your side to choose the following contact channels:\nPhone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:",
+            placeholder: "Your SLA we can contact you on the following contact channels:\nPhone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:",
             input_html: {:rows => 6},
             hint: raw("#{icon ('info-circle')} #{t('masterdata_cockpit.additional_information')}") 
   %label.control-label Significance
@@ -90,7 +90,7 @@
         .col-md-4
           = f.input :number_of_endusers ,
             label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
-  %label.control-label Other Responsibilitys
+  %label.control-label Other Responsibilities
   .panel.panel-default
     .panel-body
       .row

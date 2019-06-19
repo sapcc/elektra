@@ -1,6 +1,6 @@
 en:
   masterdata_cockpit:
-    additional_information: 'In case of Business Criticality = Production it is recommended to provide additional information.'
+    additional_information: 'In case of Business Criticality Production please provide additional information.'
     co_info: 'The costcenter, internal order, WBS element or sales order where the costs should be charged to.'
     contact_info: 'Important for support! In case of incidents or questions related to the project.'
     other_responsibilitys: 'The Who is Who of the project.'
