@@ -64,6 +64,19 @@ module Networking
       end
     end
 
+    def skip_wizard_confirm
+      @project = "project"
+    end
+
+    def skip_wizard
+      skip_wizard = params[:project][:skip_wizard] || false
+      project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+      
+      if skip_wizard
+        project_profile.update_wizard_status('networking',ProjectProfile::STATUS_SKIPPED)
+      end
+    end
+
     protected
 
     def cloud_admin_networking
@@ -84,5 +97,6 @@ module Networking
         target_tenant: @scoped_project_id
       )
     end
+
   end
 end

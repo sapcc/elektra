@@ -28,6 +28,12 @@ Networking::Engine.routes.draw do
 
   resources :backup_networks, only: %i[index new create]
   resources :network_wizard, only: %i[new create]
+    
+  scope :network_wizard do
+    get  'skip_wizard' => 'network_wizard#skip_wizard_confirm'
+    post 'skip_wizard' => 'network_wizard#skip_wizard'
+  end
+
 
   resources :network_usage_stats, only: %i[index]
 
