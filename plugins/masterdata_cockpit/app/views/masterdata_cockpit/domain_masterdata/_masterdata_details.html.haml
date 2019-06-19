@@ -14,6 +14,13 @@
           = @domain_masterdata.description
         - else
           \-
+  .row
+    .col-sm-4.details-label
+      Additional Information
+    .col-sm-8.details-value
+      - unless @domain_masterdata.additional_information
+        \-
+      = @domain_masterdata.additional_information
 
 .masterdata-group
   %h5.masterdata-heading
@@ -50,7 +57,7 @@
 
 .masterdata-group
 
-  %h5.masterdata-heading Responsibility
+  %h5.masterdata-heading Responsibilities
   .row
     .col-sm-4.details-label
       Primary Contact

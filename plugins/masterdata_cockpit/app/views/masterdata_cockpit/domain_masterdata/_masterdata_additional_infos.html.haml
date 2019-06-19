@@ -2,21 +2,21 @@
 - if @domain_masterdata
   .infobox
     %h4.action-heading
-      Masterdata Info
+      Masterdata Status
     %table.table
       %tbody
         %tr
-          %th.snug-nowrap
-            Domain:
-          %td
-            = @scoped_domain_name
-        %tr
           %th
-            Description:
           %td
-            - unless @domain_masterdata.description
-              \-
-            = @domain_masterdata.description
+            - if @domain_masterdata.is_complete
+              = icon('thumbs-up')
+              Complete
+            - else
+              = icon('thumbs-down')
+              Incomplete
+              %br
+              %span.label.label-warning 
+                = @domain_masterdata.missing_attributes  
         %tr
           %th.snug-nowrap
             Last change:

@@ -10,4 +10,7 @@
     .col-sm-8.details-value
       =# use active project here because at the moment masterdata api supports max. 255 chars
       %span.description
-        = @project.description
+        - if @project.description
+          = @project.description
+        - else
+          \-

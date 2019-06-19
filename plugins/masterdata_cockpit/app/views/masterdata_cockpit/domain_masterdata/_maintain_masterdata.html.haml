@@ -4,6 +4,11 @@
 
 = f.input :description, label: "Description"
 
+= f.input :additional_information,
+  label: "Additional Information",
+  as: :text,
+  input_html: {:rows => 4}
+
 %label.control-label Cost Object
 .panel.panel-default
   .panel-body

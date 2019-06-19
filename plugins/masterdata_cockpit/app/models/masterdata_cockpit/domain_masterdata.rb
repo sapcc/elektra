@@ -70,6 +70,7 @@ module MasterdataCockpit
         'domain_id'                         => read('domain_id'),
         'domain_name'                       => read('domain_name'),
         'description'                       => read('description'),
+        'additional_information'            => read('additional_information'),
         'responsible_controller_id'         => read('responsible_controller_id'),
         'responsible_controller_email'      => read('responsible_controller_email'),
         'responsible_primary_contact_id'    => read('responsible_primary_contact_id'),
