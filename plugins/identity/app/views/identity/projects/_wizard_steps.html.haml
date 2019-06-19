@@ -92,6 +92,7 @@
   = wizard_step({title: 'Configure Your Network',
     mandatory: true,
     action_button: (action_button if can_setup_network),
+    skip_button:( { label: 'Skip Step', url: plugin('networking').skip_wizard_path(), data: {modal: true, wizard_action_button: true}} if can_setup_network ),
     status: @project_profile.wizard_status('networking')}) do
     - if @project_profile.wizard_finished?('networking')
       %p The network is set up.

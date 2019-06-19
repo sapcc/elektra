@@ -1,0 +1,25 @@
+= content_for(:title, "Skip Network Setup for Project #{}")
+
+=simple_form_for @project, url: plugin('networking').skip_wizard_path(), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
+
+    %div{class: modal? ? 'modal-body' : ''}
+        = f.input :skip_wizard,
+            as: :hidden,
+            input_html: { value: true }
+
+
+        .bs-callout.bs-callout-primary
+            %p
+                Are you sure you want to
+                %strong skip the network setup step
+                ? 
+            %p
+                This can make sense in certain custom setups. If this is the case for your project, feel free to skip this step.
+
+
+    .buttons{class: modal? ? 'modal-footer' : ''}
+        - if modal?
+            %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
+        - else
+            = link_to "Cancel", data: {dismiss:"modal"}, class: 'btn btn-default'
+        %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} I have a custom setup, please skip
