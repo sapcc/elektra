@@ -2,10 +2,12 @@
   .alert.alert-error
     = render_errors(@domain_masterdata.errors)
 
-= f.input :description, label: "Description"
+= f.input :description, label: "Description",
+    placeholder: "Short description about this domain"
 
 = f.input :additional_information,
   label: "Additional Information",
+  placeholder: "More detailed information about this domain",
   as: :text,
   input_html: {:rows => 4, :maxlength => 5000},
   hint: raw("<span style='width:170px' class='pull-right' id='additional_information_length'></span>")

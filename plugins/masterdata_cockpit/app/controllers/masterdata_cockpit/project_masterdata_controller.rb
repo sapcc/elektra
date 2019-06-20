@@ -67,7 +67,7 @@ module MasterdataCockpit
     def update_project
       params[:project][:enabled] = params[:project][:enabled] == true ||
                                    params[:project][:enabled] == 'true'
-      
+
       @project           = service_user.identity.new_project(params[:project])
       @project.id        = @scoped_project_id
       @project.domain_id = @scoped_domain_id
@@ -76,7 +76,7 @@ module MasterdataCockpit
       @project_masterdata.project_name = @project.name
       @project_masterdata.description  = @project.description
       @project_masterdata.update
-   
+
       if @project.save &&
         # has updated project #{@project.name} (#{@project.id})")
         # audit_logger.info(user: current_user, has: "updated",
@@ -86,6 +86,14 @@ module MasterdataCockpit
         unless params['modal']
           flash[:notice] = "Project successfully updated."
           redirect_to plugin('masterdata_cockpit').project_masterdata_path
+        end
+
+        # special case if project name was updated
+        if @scoped_project_name != @project.name
+          flash[:notice] = "Project name \"#{@scoped_project_name}\" was successfully renamed to \"#{@project.name}\"."
+          @scoped_project_name = @project.name
+          @active_project.name = @project.name
+          redirect_to plugin('identity').project_path({project_id: @project.id})
         end
       else
         flash.now[:error] = @project.errors.full_messages.to_sentence

@@ -21,7 +21,11 @@ module Identity
     )
 
     def show
-
+      # load @project instead the @active_project from the object cache
+      # we need that in case the description was changed that the user can see the changes
+      @project = services.identity.find_project(
+        @project_id, subtree_as_ids: true, parents_as_ids: true
+      )
     end
 
     def view

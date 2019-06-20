@@ -8,12 +8,12 @@
         %th.snug-nowrap
           Name:
         %td
-          = @active_project.name
+          = @project.name
       %tr
         %th.snug-nowrap
           Description:
         %td
-          = @active_project.description
+          = @project.description
 
 
 - if current_user.is_allowed?('identity:project_request')
