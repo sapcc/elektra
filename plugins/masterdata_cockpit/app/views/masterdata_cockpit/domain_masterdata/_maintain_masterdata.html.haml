@@ -7,7 +7,8 @@
 = f.input :additional_information,
   label: "Additional Information",
   as: :text,
-  input_html: {:rows => 4}
+  input_html: {:rows => 4, :maxlength => 5000},
+  hint: raw("<span style='width:170px' class='pull-right' id='additional_information_length'></span>")
 
 %label.control-label Cost Object
 .panel.panel-default
@@ -64,5 +65,14 @@
     $('[data-toggle="popover"]').popover('destroy');
     $('[data-toggle="popover"][data-popover-type="help-hint"]').attr("tabindex","0");
     $('[data-toggle="popover"]').popover( {placement: 'top', trigger: 'focus'});
+
+    $('textarea#domain_masterdata_additional_information').on("propertychange input", function(){
+        if (this.value.length > this.maxlength) {
+            this.value = this.value.substring(0, this.maxlength);
+        }
+        
+        chars_left = parseInt($(this).attr('maxlength')) - this.value.length;
+        $('span#additional_information_length').html("Remaining characters "+chars_left);
+    })
   });
 

@@ -67,8 +67,8 @@
             label: "Hotline/Ticket Queue/Other",
             as: :text,
             placeholder: "Your SLA we can contact you on the following contact channels:\nPhone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:",
-            input_html: {:rows => 6},
-            hint: raw("#{icon ('info-circle')} #{t('masterdata_cockpit.additional_information')}") 
+            input_html: {:rows => 6, :maxlength => 5000},
+            hint: raw("#{icon ('info-circle')} #{t('masterdata_cockpit.additional_information')} <span style='width:170px' class='pull-right' id='additional_information_length'></span>") 
   %label.control-label Significance
   .panel.panel-default
     .panel-body
