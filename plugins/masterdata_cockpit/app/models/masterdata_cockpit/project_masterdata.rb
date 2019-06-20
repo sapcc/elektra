@@ -42,6 +42,9 @@ module MasterdataCockpit
 
     validates :number_of_endusers, :numericality => { :greater_than_or_equal_to => -1 },allow_nil: true,allow_blank: true
 
+    validates :additional_information,
+      length: { maximum: 5000, too_long: "5000 characters is the maximum allowed" }
+
     validates :responsible_operator_email,
       :responsible_security_expert_email,
       :responsible_product_owner_email,

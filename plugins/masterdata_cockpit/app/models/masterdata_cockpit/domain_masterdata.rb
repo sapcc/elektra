@@ -22,6 +22,8 @@ module MasterdataCockpit
     validates_presence_of :responsible_primary_contact_id, unless: lambda { self.responsible_primary_contact_email.blank? }, message: "can't be blank primary contact email is defined"
     validates_presence_of :responsible_primary_contact_email, unless: lambda { self.responsible_primary_contact_id.blank? }, message: "can't be blank if primary contact is defined"
 
+    validates :additional_information,
+      length: { maximum: 5000, too_long: "5000 characters is the maximum allowed" }
 
     validates :responsible_controller_email,
       format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "please use a valid email address" },
