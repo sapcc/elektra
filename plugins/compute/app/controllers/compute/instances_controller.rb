@@ -62,14 +62,15 @@ module Compute
           tenant_id: @scoped_project_id, id: sg.id
         ).first
       end.values
-
-      @log = begin 
-               services.compute.console_log(params[:id])
-             rescue 
-               nil
-             end  
     end
 
+    def console_log
+      @log = begin 
+        services.compute.console_log(params[:id])
+      rescue
+        nil
+      end
+    end
 
     def new
       # get usage from db

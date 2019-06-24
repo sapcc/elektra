@@ -2,6 +2,7 @@ Compute::Engine.routes.draw do
   resources :instances do
     member do
       get 'console'
+      get 'console_log'
       get 'update_item'
       get 'new_size'
       get 'new_snapshot'
