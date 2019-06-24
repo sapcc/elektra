@@ -83,18 +83,18 @@ module MasterdataCockpit
         #                   project: @project)
         audit_logger.info(current_user, 'has updated', @project)
 
-        # special case if project name was updated
+        flash[:notice] = "Project name \"#{@scoped_project_name}\" was successfully renamed to \"#{@project.name}\"."
+        # special case if project name was updated we need to reload masterdata in the new project path
         if @scoped_project_name != @project.name
-          flash[:notice] = "Project name \"#{@scoped_project_name}\" was successfully renamed to \"#{@project.name}\"."
           @scoped_project_name = @project.name
           @active_project.name = @project.name
           redirect_to plugin('masterdata_cockpit').project_masterdata_path({project_id: @project.id})
+          return
         end
 
-        # if project edit dialog was opened without modal window
+        # if project edit dialog was opened without modal window we need to load masterdata
         unless params['modal']
-          flash[:notice] = "Project successfully updated."
-          redirect_to plugin('masterdata_cockpit').project_masterdata_path
+          redirect_to plugin('masterdata_cockpit').project_masterdata_path({project_id: @project.id})
         end
 
       else
