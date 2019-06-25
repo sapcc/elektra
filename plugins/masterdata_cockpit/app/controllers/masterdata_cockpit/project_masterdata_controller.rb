@@ -62,11 +62,14 @@ module MasterdataCockpit
 
     def edit_project
       @project = services.identity.find_project(@scoped_project_id)
+      @load_project_root = params[:load_project_root] == 'true'
     end
 
     def update_project
       params[:project][:enabled] = params[:project][:enabled] == true ||
                                    params[:project][:enabled] == 'true'
+
+      load_project_root = params[:project].delete(:load_project_root) == 'true'
 
       @project           = service_user.identity.new_project(params[:project])
       @project.id        = @scoped_project_id
@@ -88,7 +91,11 @@ module MasterdataCockpit
         if @scoped_project_name != @project.name
           @scoped_project_name = @project.name
           @active_project.name = @project.name
-          redirect_to plugin('masterdata_cockpit').project_masterdata_path({project_id: @project.id})
+          if load_project_root
+            redirect_to plugin('identity').project_path({project_id: @project.id})
+          else
+            redirect_to plugin('masterdata_cockpit').project_masterdata_path({project_id: @project.id})
+          end
           return
         end
 
