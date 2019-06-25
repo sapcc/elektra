@@ -14,7 +14,7 @@ export default class CastellumTabs extends React.Component {
   }
 
   componentDidMount() {
-    //TODO load resource configuration
+    this.props.loadResourceConfigOnce(this.props.projectId);
   }
 
   handleSelect(pageIdx, e) {
@@ -26,6 +26,13 @@ export default class CastellumTabs extends React.Component {
   }
 
   render() {
+    const { errorMessage, isFetching } = this.props.resourceConfig;
+    if (isFetching) {
+      return <p><span className='spinner' /> Loading...</p>;
+    }
+    if (errorMessage) {
+      return <p className='alert alert-danger'>Cannot load autoscaling configuration: {errorMessage}</p>;
+    }
     const CurrentComponent = pages[this.state.active].component;
 
     return (
@@ -41,6 +48,7 @@ export default class CastellumTabs extends React.Component {
         </div>
         <div className="col-sm-10">
           <CurrentComponent />
+          <pre>{JSON.stringify(this.props.resourceConfig, null, 2)}</pre>
         </div>
       </div>
     );

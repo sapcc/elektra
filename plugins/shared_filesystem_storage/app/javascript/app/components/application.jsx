@@ -28,7 +28,7 @@ import ShowSecurityServiceModal from '../containers/security_services/show';
 import NewSecurityServiceModal from '../containers/security_services/new';
 import EditSecurityServiceModal from '../containers/security_services/edit';
 
-import CastellumTabs from '../components/castellum/tabs';
+import CastellumTabs from '../containers/castellum/tabs';
 
 import ErrorMessagesModal from '../containers/error_messages/list';
 

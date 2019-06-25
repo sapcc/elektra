@@ -92,6 +92,11 @@ export const RECEIVE_ERROR_MESSAGES             = 'shared_filesystem_storage/err
 export const REQUEST_ERROR_MESSAGES_FAILURE     = 'shared_filesystem_storage/error_messages/REQUEST_ERROR_MESSAGES_FAILURE'
 export const SET_ERROR_MESSAGE_SEARCH_TERM      = 'shared_filesystem_storage/error_messages/SET_ERROR_MESSAGE_SEARCH_TERM'
 
+// Castellum
+export const REQUEST_CASTELLUM_RESOURCE_CONFIG         = 'shared_filesystem_storage/castellum/REQUEST_CASTELLUM_RESOURCE_CONFIG';
+export const RECEIVE_CASTELLUM_RESOURCE_CONFIG         = 'shared_filesystem_storage/castellum/RECEIVE_CASTELLUM_RESOURCE_CONFIG';
+export const REQUEST_CASTELLUM_RESOURCE_CONFIG_FAILURE = 'shared_filesystem_storage/castellum/REQUEST_CASTELLUM_RESOURCE_CONFIG_FAILURE';
+
 
 //####################### SHARE STATES ########################
 export const SHARE_STATE_CREATING         = 'creating' //The share is being created.
