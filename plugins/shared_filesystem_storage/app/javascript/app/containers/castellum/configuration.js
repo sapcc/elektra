@@ -3,7 +3,7 @@ import CastellumConfiguration from '../../components/castellum/configuration';
 
 export default connect(
   state => ({
-    resourceConfig: (state.castellum || {}).resourceConfig,
+    config: (state.castellum || {})['resources/nfs-shares'],
   }),
   dispatch => ({}),
 )(CastellumConfiguration);

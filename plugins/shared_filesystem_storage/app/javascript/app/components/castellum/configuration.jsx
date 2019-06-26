@@ -3,6 +3,7 @@ export default class CastellumConfiguration extends React.Component {
   }
 
   render() {
-    return <pre>{JSON.stringify(this.props.resourceConfig, null, 2)}</pre>;
+    const { data: config } = this.props.config;
+    return <pre>{JSON.stringify(config, null, 2)}</pre>;
   }
 }

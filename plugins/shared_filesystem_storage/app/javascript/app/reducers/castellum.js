@@ -1,38 +1,43 @@
 import * as constants from '../constants';
 
+const initialStateForPath = {
+  data: null,
+  errorMessage: null,
+  isFetching: false,
+  requestedAt: null,
+  receivedAt: null,
+};
 const initialCastellumState = {
-  resourceConfig: {
-    data: null,
-    errorMessage: null,
-    isFetching: false,
-    requestedAt: null,
-    receivedAt: null,
-  },
+  'assets/nfs-shares': initialStateForPath,
+  'resources/nfs-shares': initialStateForPath,
+  'resources/nfs-shares/operations/pending': initialStateForPath,
+  'resources/nfs-shares/operations/recently-succeeded': initialStateForPath,
+  'resources/nfs-shares/operations/recently-failed': initialStateForPath,
 };
 
-const requestResConf = (state, {requestedAt}) => ({
+const requestData = (state, {path, requestedAt}) => ({
   ...state,
-  resourceConfig: {
-    ...initialCastellumState.resourceConfig,
+  [path]: {
+    ...initialStateForPath,
     isFetching: true,
     requestedAt,
   },
 });
 
-const requestResConfFailure = (state, {message}) => ({
+const requestDataFailure = (state, {path, message}) => ({
   ...state,
-  resourceConfig: {
-    ...state.resourceConfig,
+  [path]: {
+    ...state[path],
     data: null,
     errorMessage: message,
     isFetching: false,
   },
 });
 
-const receiveResConf = (state, {data, receivedAt}) => ({
+const receiveData = (state, {path, data, receivedAt}) => ({
   ...state,
-  resourceConfig: {
-    ...state.resourceConfig,
+  [path]: {
+    ...state[path],
     data,
     errorMessage: null,
     isFetching: false,
@@ -45,9 +50,9 @@ export const castellum = (state, action) => {
     state = initialCastellumState;
   }
   switch (action.type) {
-    case constants.REQUEST_CASTELLUM_RESOURCE_CONFIG: return requestResConf(state, action);
-    case constants.RECEIVE_CASTELLUM_RESOURCE_CONFIG: return receiveResConf(state, action);
-    case constants.REQUEST_CASTELLUM_RESOURCE_CONFIG_FAILURE: return requestResConfFailure(state, action);
+    case constants.REQUEST_CASTELLUM_DATA: return requestData(state, action);
+    case constants.RECEIVE_CASTELLUM_DATA: return receiveData(state, action);
+    case constants.REQUEST_CASTELLUM_DATA_FAILURE: return requestDataFailure(state, action);
     default: return state;
   }
 };

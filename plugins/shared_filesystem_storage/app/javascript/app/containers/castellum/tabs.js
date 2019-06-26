@@ -1,14 +1,15 @@
 import { connect } from  'react-redux';
 import CastellumTabs from '../../components/castellum/tabs';
 import {
-  fetchCastellumResourceConfigIfNeeded,
+  fetchCastellumDataIfNeeded,
 } from '../../actions/castellum';
 
 export default connect(
   state => ({
-    resourceConfig: (state.castellum || {}).resourceConfig,
+    config: (state.castellum || {})['resources/nfs-shares'],
   }),
   dispatch => ({
-    loadResourceConfigOnce: (projectID) => dispatch(fetchCastellumResourceConfigIfNeeded(projectID)),
+    loadResourceConfigOnce: (projectID) =>
+      dispatch(fetchCastellumDataIfNeeded(projectID, 'resources/nfs-shares')),
   }),
 )(CastellumTabs);

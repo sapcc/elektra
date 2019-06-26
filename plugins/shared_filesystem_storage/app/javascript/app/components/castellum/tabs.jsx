@@ -1,13 +1,15 @@
 import CastellumConfiguration from '../../containers/castellum/configuration';
-
-//TODO remove
-const mockComponent = (text) => (props) => <p>{text}</p>;
+import CastellumPendingOps from '../../containers/castellum/pending';
+import CastellumFailedOps from '../../containers/castellum/recently_failed';
+import CastellumSucceededOps from '../../containers/castellum/recently_succeeded';
+import CastellumScrapingErrors from '../../containers/castellum/scraping_errors';
 
 const pages = [
   { label: "Configuration", component: CastellumConfiguration },
-  { label: "Recently succeeded", component: mockComponent("Hello recently succeeded") },
-  { label: "Recently failed", component: mockComponent("Hello recently failed") },
-  { label: "Scraping errors", component: mockComponent("Hello scraping errors") },
+  { label: "Pending operations", component: CastellumPendingOps },
+  { label: "Recently succeeded", component: CastellumSucceededOps },
+  { label: "Recently failed", component: CastellumFailedOps },
+  { label: "Scraping errors", component: CastellumScrapingErrors },
 ];
 
 export default class CastellumTabs extends React.Component {
@@ -28,7 +30,7 @@ export default class CastellumTabs extends React.Component {
   }
 
   render() {
-    const { errorMessage, isFetching, data: resourceConfig } = this.props.resourceConfig;
+    const { errorMessage, isFetching, data: config } = this.props.config;
     if (isFetching) {
       return <p><span className='spinner' /> Loading...</p>;
     }
@@ -38,7 +40,7 @@ export default class CastellumTabs extends React.Component {
 
     const forwardProps = { projectID: this.props.projectId };
     //when autoscaling is disabled, just show the configuration dialog
-    if (resourceConfig == null) {
+    if (config == null) {
       return <CastellumConfiguration {...forwardProps} />;
     }
 

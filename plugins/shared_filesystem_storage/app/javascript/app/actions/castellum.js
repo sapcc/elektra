@@ -8,27 +8,30 @@ export const configureCastellumAjaxHelper = (opts) => {
   ajaxHelper = createAjaxHelper(opts);
 };
 
-const fetchCastellumResourceConfig = (projectID) => (dispatch, getState) => {
+const fetchCastellumData = (projectID, path) => (dispatch, getState) => {
   dispatch({
-    type:        constants.REQUEST_CASTELLUM_RESOURCE_CONFIG,
+    type:        constants.REQUEST_CASTELLUM_DATA,
+    path,
     requestedAt: Date.now(),
   });
 
-  return ajaxHelper.get(`/v1/projects/${projectID}/resources/nfs-shares`)
+  return ajaxHelper.get(`/v1/projects/${projectID}/${path}`)
     .then(response => {
       dispatch({
-        type:       constants.RECEIVE_CASTELLUM_RESOURCE_CONFIG,
-        data:       response.data,
+        type: constants.RECEIVE_CASTELLUM_DATA,
+        path,
+        data: response.data,
         receivedAt: Date.now(),
       });
     })
     .catch(error => {
-      //404 is not an error, it just shows that autoscaling is disabled on this
-      //project resource
-      if (error.response && error.response.status && error.response.status == 404) {
+      //for the resource config, a 404 response is not an error; it just shows
+      //that autoscaling is disabled on this project resource
+      if (path == 'resources/nfs-shares' && error.response && error.response.status && error.response.status == 404) {
         dispatch({
-          type:       constants.RECEIVE_CASTELLUM_RESOURCE_CONFIG,
-          data:       null,
+          type: constants.RECEIVE_CASTELLUM_DATA,
+          path,
+          data: null,
           receivedAt: Date.now(),
         });
       } else {
@@ -37,17 +40,18 @@ const fetchCastellumResourceConfig = (projectID) => (dispatch, getState) => {
           msg = `${msg}: ${error.response.data}`;
         }
         dispatch({
-          type:    constants.REQUEST_CASTELLUM_RESOURCE_CONFIG_FAILURE,
+          type: constants.REQUEST_CASTELLUM_DATA_FAILURE,
+          path,
           message: msg,
         });
       }
     });
 };
 
-export const fetchCastellumResourceConfigIfNeeded = (projectID) => (dispatch, getState) => {
+export const fetchCastellumDataIfNeeded = (projectID, path) => (dispatch, getState) => {
   const castellumState = getState().castellum || {};
-  const { isFetching, requestedAt } = castellumState.resourceConfig || {};
+  const { isFetching, requestedAt } = castellumState[path] || {};
   if (!isFetching && !requestedAt) {
-    return dispatch(fetchCastellumResourceConfig(projectID));
+    return dispatch(fetchCastellumData(projectID, path));
   }
 };
