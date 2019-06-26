@@ -66,7 +66,7 @@
           = f.input :additional_information,
             label: "Hotline/Ticket Queue/Other",
             as: :text,
-            placeholder: "Please provide contact channels where we can reach you in case of technical questions and incidents\nPhone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:\n\nSLA with your costumer (if applicable):",
+            placeholder: "Please provide contact channels and corresponding availabilty (e.g. 24x7 for hotline) where we can reach you in case of technical questions and incidents\n\nPhone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:",
             input_html: {:rows => 7, :maxlength => 5000},
             hint: raw("#{icon ('info-circle')} #{t('masterdata_cockpit.additional_information')} <span style='width:170px' class='pull-right' id='additional_information_length'></span>") 
   %label.control-label Significance
