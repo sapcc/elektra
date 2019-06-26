@@ -86,8 +86,6 @@ module MasterdataCockpit
         #                   project: @project)
         audit_logger.info(current_user, 'has updated', @project)
 
-        
-
         # special case if project name was updated we need to reload masterdata in the new project path
         if @scoped_project_name != @project.name
           flash[:notice] = "Project name \"#{@scoped_project_name}\" was successfully renamed to \"#{@project.name}\"."
