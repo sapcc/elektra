@@ -5,9 +5,8 @@ module MasterdataCockpit
 
     before_action :load_project_masterdata, only: [:index, :edit, :show]
     before_action :prepare_params, only: [:create, :update]
-    before_action :solutions, only: [:create, :update, :edit, :solution_revenue_relevances, :revenue_relevance_cost_object]
     before_action :inheritance
-
+  
     authorization_context 'masterdata_cockpit'
     authorization_required
 
@@ -20,7 +19,6 @@ module MasterdataCockpit
     end
 
     def new
-      solutions
       @project_masterdata = services.masterdata_cockpit.new_project_masterdata
       inject_projectdata
     end
@@ -31,7 +29,9 @@ module MasterdataCockpit
     def update
       unless @project_masterdata.update
         render action: :edit
-      else
+      end
+      # if masterdata edit dialog was opened without modal window
+      unless params['modal']
         flash[:notice] = "Masterdata successfully updated."
         redirect_to plugin('masterdata_cockpit').project_masterdata_path
       end
@@ -60,31 +60,53 @@ module MasterdataCockpit
     def show;
     end
 
-    def solution_revenue_relevances
-      @solution_name = params[:solution]
-
-      @solutions.each do |solution_data|
-        if solution_data.name == @solution_name
-          # in any case revenue_relevance is uniqe so we can order the date related to revenue_relevance
-          @solution_revenue_relevances = solution_data.cost_objects.map {
-            |cost_object|
-            [cost_object['revenue_relevance'],{ "name" => cost_object['name'], "type" => cost_object['type']  }]}.to_h
-        end
-      end
+    def edit_project
+      @project = services.identity.find_project(@scoped_project_id)
+      @load_project_root = params[:load_project_root] == 'true'
     end
 
-    def revenue_relevance_cost_object
-      solution_name     = params[:solution]
-      revenue_relevance = params[:revenue_relevance]
+    def update_project
+      params[:project][:enabled] = params[:project][:enabled] == true ||
+                                   params[:project][:enabled] == 'true'
 
-      @solutions.each do |solution_data|
-        if solution_data.name == solution_name
-          solution_data.cost_objects.each do |cost_object|
-            if cost_object['revenue_relevance'] == revenue_relevance
-              @cost_object = { "name" => cost_object['name'], "type" => cost_object['type']  }
-            end
+      load_project_root = params[:project].delete(:load_project_root) == 'true'
+
+      @project           = service_user.identity.new_project(params[:project])
+      @project.id        = @scoped_project_id
+      @project.domain_id = @scoped_domain_id
+
+      @project_masterdata = services.masterdata_cockpit.get_project(@scoped_project_id)
+      @project_masterdata.project_name = @project.name
+      @project_masterdata.description  = @project.description
+      @project_masterdata.update
+
+      if @project.save &&
+        # has updated project #{@project.name} (#{@project.id})")
+        # audit_logger.info(user: current_user, has: "updated",
+        #                   project: @project)
+        audit_logger.info(current_user, 'has updated', @project)
+
+        flash[:notice] = "Project name \"#{@scoped_project_name}\" was successfully renamed to \"#{@project.name}\"."
+        # special case if project name was updated we need to reload masterdata in the new project path
+        if @scoped_project_name != @project.name
+          @scoped_project_name = @project.name
+          @active_project.name = @project.name
+          if load_project_root
+            redirect_to plugin('identity').project_path({project_id: @project.id})
+          else
+            redirect_to plugin('masterdata_cockpit').project_masterdata_path({project_id: @project.id})
           end
+          return
         end
+
+        # if project edit dialog was opened without modal window we need to load masterdata
+        unless params['modal']
+          redirect_to plugin('masterdata_cockpit').project_masterdata_path({project_id: @project.id})
+        end
+
+      else
+        flash.now[:error] = @project.errors.full_messages.to_sentence
+        render action: :edit_project
       end
     end
 
@@ -109,17 +131,8 @@ module MasterdataCockpit
     def prepare_params
       @project_masterdata = services.masterdata_cockpit.new_project_masterdata
       # to merge options into .merge(project_id: @scoped_project_id)
-      @project_masterdata.attributes =params.fetch(:project_masterdata,{})
+      @project_masterdata.attributes = params.fetch(:project_masterdata,{})
       inject_projectdata
-    end
-
-    def solutions
-      begin
-        @solutions = services.masterdata_cockpit.get_solutions
-      rescue
-        flash.now[:error] = "Could not load solutions."
-        @solutions = []
-      end
     end
 
     def inheritance
@@ -135,12 +148,13 @@ module MasterdataCockpit
     end
 
     def inject_projectdata
-      @project_masterdata.project_id   = @scoped_project_id
+      # get the latest values from project to update masterdata
+      @project = services.identity.find_project(@scoped_project_id)
+      @project_masterdata.project_id   = @project.id
       @project_masterdata.domain_id    = @scoped_domain_id
-      @project_masterdata.project_name = @scoped_project_name
-      # need to cut the length because the masterdata api supports at the moment max 255 chars
-      @project_masterdata.description  = @active_project.description.truncate(255)
-      @project_masterdata.parent_id    = @active_project.parent_id
+      @project_masterdata.project_name = @project.name
+      @project_masterdata.description  = @project.description
+      @project_masterdata.parent_id    = @project.parent_id
     end
 
   end

@@ -1,60 +1,85 @@
-- if @domain_masterdata
-  .toolbar.toolbar-aligntop
-    %h4 Masterdata
-
-    - if current_user.is_allowed?('masterdata_cockpit:domain_masterdatum_update')
-      .main-buttons
-        = link_to 'Edit', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
-
-
-  .masterdata-group
-
-    %h5.masterdata-heading
-      Cost Object
-      %a.help-link{data:{content:  t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
-        = icon('question-circle')
-
-    .row
-      .col-sm-4.details-label
-        Type
-      .col-sm-8.details-value
-        - if @domain_masterdata.cost_object_type
-          = MasterdataCockpit::Config.cost_object_types[@domain_masterdata.cost_object['type']]
+.masterdata-group
+  .row
+    .col-sm-4.details-label
+      Name
+    .col-sm-8.details-value
+      = @domain_masterdata.domain_name
+  .row
+    .col-sm-4.details-label
+      Description
+    .col-sm-8.details-value
+      =# use active project here because at the moment masterdata api supports max. 255 chars
+      %span.description
+        - if @domain_masterdata.description
+          = @domain_masterdata.description
         - else
           \-
-    .row
-      .col-sm-4.details-label
-        Name/Number
-      .col-sm-8.details-value
-        - if @domain_masterdata.cost_object_name
-          = @domain_masterdata.cost_object_name
-        - else
-          \-
-    .row
-      .col-sm-4.details-label
-        %strong
-          Projects can inherit
-      .col-sm-8.details-value
-        - if @domain_masterdata.cost_object_projects_can_inherit
-          = icon('check-square-o')
-        -else
-          = icon('times')
+  .row
+    .col-sm-4.details-label
+      Additional Information
+    .col-sm-8.details-value
+      - unless @domain_masterdata.additional_information
+        \-
+      = @domain_masterdata.additional_information
+
+.masterdata-group
+  %h5.masterdata-heading
+    Cost Object
+    %a.help-link{data:{content:  t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
+      = icon('question-circle')
+
+  .row
+    .col-sm-4.details-label
+      Type
+    .col-sm-8.details-value
+      - if @domain_masterdata.cost_object_type
+        = MasterdataCockpit::Config.cost_object_types[@domain_masterdata.cost_object['type']]
+      - else
+        \-
+  .row
+    .col-sm-4.details-label
+      Name/Number
+    .col-sm-8.details-value
+      - if @domain_masterdata.cost_object_name
+        = @domain_masterdata.cost_object_name
+      - else
+        \-
+  .row
+    .col-sm-4.details-label
+      %strong
+        Projects can inherit
+    .col-sm-8.details-value
+      - if @domain_masterdata.cost_object_projects_can_inherit
+        = icon('check-square-o')
+      -else
+        = icon('times')
 
 
-  .masterdata-group
+.masterdata-group
 
-    %h5.masterdata-heading Responsibility
+  %h5.masterdata-heading Responsibilities
+  .row
+    .col-sm-4.details-label
+      Primary Contact
+    .col-sm-2.details-value
+      - unless @domain_masterdata.responsible_primary_contact_id
+        \-
+      = @domain_masterdata.responsible_primary_contact_id
+    - if @domain_masterdata.responsible_primary_contact_email
+      .col-sm-1.details-label
+      .col-sm-4.details-value
+        = icon('envelope-o')
+        = mail_to @domain_masterdata.responsible_primary_contact_email
 
-    .row
-      .col-sm-4.details-label
-        Controller
-      .col-sm-2.details-value
-        - unless @domain_masterdata.responsible_controller_id
-          Not defined
-        = @domain_masterdata.responsible_controller_id
-      - if @domain_masterdata.responsible_controller_email
-        .col-sm-1.details-label
-          Contact
-        .col-sm-4.details-value
-          = icon('envelope-o')
-          = mail_to @domain_masterdata.responsible_controller_email
+  .row
+    .col-sm-4.details-label
+      Controller
+    .col-sm-2.details-value
+      - unless @domain_masterdata.responsible_controller_id
+        \-
+      = @domain_masterdata.responsible_controller_id
+    - if @domain_masterdata.responsible_controller_email
+      .col-sm-1.details-label
+      .col-sm-4.details-value
+        = icon('envelope-o')
+        = mail_to @domain_masterdata.responsible_controller_email

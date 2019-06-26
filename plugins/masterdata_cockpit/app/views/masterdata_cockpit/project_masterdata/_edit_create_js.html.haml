@@ -1,19 +1,22 @@
 = content_for :javascripts do
   :javascript
-    var solutions = #{@solutions.to_json.html_safe};
     var cost_object_inherited = #{@project_masterdata.cost_object_inherited};
     
     $(function() {
 
+        if ( $('#project_masterdata_additional_information').val() == '' && 
+             $('select#project_masterdata_business_criticality').val() == 'prod' 
+          ) {
+          $('#project_masterdata_additional_information').parent().addClass('has-error');
+        }
+
         if (cost_object_inherited) {
-          $('select#project_masterdata_solution').prop('disabled', function(i, v) { return !v; });
           $('select#project_masterdata_cost_object_type').prop('disabled', function(i, v) { return !v; });
           $('input#project_masterdata_cost_object_name').prop('disabled', function(i, v) { return !v; });
         }
         
         // empty fields if inherited is true
         if ($('#project_masterdata_cost_object_inherited').val() == "true") {
-          $('select#project_masterdata_solution').val("");
           $('select#project_masterdata_cost_object_type').val("");
           $('input#project_masterdata_cost_object_name').val("");
         }
@@ -21,36 +24,53 @@
         // handle inherited true or false
         $('#project_masterdata_cost_object_inherited').change(function(){
           if ($('#project_masterdata_cost_object_inherited').val() == "true") {
-            $('select#project_masterdata_solution').data('old_value', $('select#project_masterdata_solution').val());
             $('select#project_masterdata_cost_object_type').data('old_value',$('select#project_masterdata_cost_object_type').val());
             $('input#project_masterdata_cost_object_name').data('old_value',$('input#project_masterdata_cost_object_name').val());
-            $('select#project_masterdata_revenue_relevance').data('old_value',$('select#project_masterdata_revenue_relevance').val());
             
-            $('select#project_masterdata_solution').val("");
             $('select#project_masterdata_cost_object_type').val("");
             $('input#project_masterdata_cost_object_name').val("");
-            $('select#project_masterdata_revenue_relevance').val("");
 
-            $('select#project_masterdata_solution').prop('disabled', true);
             $('select#project_masterdata_cost_object_type').prop('disabled', true);
             $('input#project_masterdata_cost_object_name').prop('disabled', true);
           }
           else {
-            $('select#project_masterdata_solution').val($('select#project_masterdata_solution').data('old_value'));
             $('select#project_masterdata_cost_object_type').val($('select#project_masterdata_cost_object_type').data('old_value'));
             $('input#project_masterdata_cost_object_name').val($('input#project_masterdata_cost_object_name').data('old_value'));
-            $('select#project_masterdata_revenue_relevance').val($('select#project_masterdata_revenue_relevance').data('old_value'));
 
-            $('select#project_masterdata_solution').prop('disabled', false);
             $('select#project_masterdata_cost_object_type').prop('disabled', false);
             $('input#project_masterdata_cost_object_name').prop('disabled',false);
           }
-          // enable revenue_relevance in any case
-          $('select#project_masterdata_revenue_relevance').prop('disabled',false);
         })
-        
-        $('select#project_masterdata_solution').change(function(){
-          $.get("#{plugin('masterdata_cockpit').project_masterdata_revenue_relevances_path()}", { solution: $(this).val() } , function(data){});
+
+        $('textarea#project_masterdata_additional_information').on("propertychange input", function(){
+           if ( $(this).val() == '' && 
+                $('select#project_masterdata_business_criticality').val() == 'prod' 
+            ) {
+              $(this).parent().addClass('has-error');
+            }
+            else {
+              $(this).parent().removeClass('has-error');
+            }
+
+            if (this.value.length > this.maxlength) {
+               this.value = this.value.substring(0, this.maxlength);
+            }
+            
+            chars_left = parseInt($(this).attr('maxlength')) - this.value.length;
+            $('span#additional_information_length').html("Remaining characters "+chars_left);
         })
+
+
+
+        $('select#project_masterdata_business_criticality').change(function(){
+          if ( $(this).val() == 'prod' && 
+               $('#project_masterdata_additional_information').val() == ''
+            ) {
+            $('#project_masterdata_additional_information').parent().addClass('has-error');
+          }
+          else {
+            $('#project_masterdata_additional_information').parent().removeClass('has-error')
+          }
+        });
         
     });

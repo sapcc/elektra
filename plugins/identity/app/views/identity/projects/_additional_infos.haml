@@ -1,20 +1,27 @@
 .infobox
   %h4.action-heading
     Project Info
-    = render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: "If you need to edit name or description go to Capacity & Masterdata -> Masterdata" }
+    - can_edit = current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
+    - if can_edit
+      .dropdown.header-action
+        %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
+        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+          %li
+            = link_to plugin('masterdata_cockpit').project_masterdata_edit_project_path({load_project_root: true}), title: "Edit project info", data: {modal: true, toggle: "tooltip", placement: "left"} do
+              %i.fa.fa-edit.fa-fw
+              Edit Project
   %table.table
     %tbody
       %tr
         %th.snug-nowrap
           Name:
         %td
-          = @active_project.name
+          = @project.name
       %tr
         %th.snug-nowrap
           Description:
         %td
-          = @active_project.description
-
+          = @project.description
 
 - if current_user.is_allowed?('identity:project_request')
   %h4.action-heading

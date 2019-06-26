@@ -4,7 +4,11 @@ module Identity
   # This class implements project actions
   class ProjectsController < ::DashboardController
     before_action :project_id_required, except: %i[index create new]
-    before_action :get_project_id,  except: %i[index create new]
+    before_action :get_project_id,  except: %i[index create new show view show_wizard]
+
+    # load @project because we do not want to use the @active_project from the object cache
+    # in case the description was changed we want to show the user the changes immediately
+    before_action :get_project, only: [:show, :view, :show_wizard]
 
     # check wizard state and redirect unless finished
     before_action :check_wizard_status, only: [:show]
@@ -21,41 +25,13 @@ module Identity
     )
 
     def show
-
     end
 
     def view
-      @project = services.identity.find_project(
-        @project_id, subtree_as_ids: true, parents_as_ids: true
-      )
     end
 
     def show_wizard
       load_and_update_wizard_status if request.xhr?
-    end
-
-    def edit
-      @project = services.identity.find_project(@project_id)
-    end
-
-    def update
-      params[:project][:enabled] = params[:project][:enabled] == true ||
-                                   params[:project][:enabled] == 'true'
-      @project = service_user.identity.new_project(params[:project])
-      @project.id = @project_id
-      @project.domain_id = @scoped_domain_id
-      if @project.save &&
-        # has updated project #{@project.name} (#{@project.id})")
-        # audit_logger.info(user: current_user, has: "updated",
-        #                   project: @project)
-        audit_logger.info(current_user, 'has updated', @project)
-
-        flash[:notice] = "Project #{@project.name} successfully updated."
-        redirect_to plugin('masterdata_cockpit').project_masterdata_path(project_id: @project.id)
-      else
-        flash.now[:error] = @project.errors.full_messages.to_sentence
-        render action: :edit
-      end
     end
 
     def destroy
@@ -120,6 +96,13 @@ module Identity
     end
 
     private
+
+    def get_project
+      get_project_id
+      @project = services.identity.find_project(
+        @project_id, subtree_as_ids: true, parents_as_ids: true
+      )
+    end
 
     def get_project_id
       @project_id = params[:id] || params[:project_id]

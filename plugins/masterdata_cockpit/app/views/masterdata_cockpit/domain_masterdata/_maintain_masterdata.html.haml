@@ -2,12 +2,17 @@
   .alert.alert-error
     = render_errors(@domain_masterdata.errors)
 
-= f.input :description, label: "Description"
+= f.input :description, label: "Description",
+    placeholder: "Short description about this domain"
+
+= f.input :additional_information,
+  label: "Additional Information",
+  placeholder: "More detailed information about this domain",
+  as: :text,
+  input_html: {:rows => 4, :maxlength => 5000},
+  hint: raw("<span style='width:170px' class='pull-right' id='additional_information_length'></span>")
 
 %label.control-label Cost Object
-%a.help-link{data:{content: t('masterdata_cockpit.co_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-  = icon('question-circle')
-.loading-place.loading-right
 .panel.panel-default
   .panel-body
     .row
@@ -20,23 +25,32 @@
       .col-sm-3
         - types = MasterdataCockpit::Config.cost_object_types
         = f.input :cost_object_type, 
-            label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_type_help') }}"),
+            label: "Type",
             as:           :select, 
             collection:   types.keys, 
             label_method: -> (k) { types[k] },
             required:true
       .col-sm-6
         = f.input :cost_object_name,
-          label: raw("Name/Number #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
+          label: "Name/Number",
           required:true
 %label.control-label Responsibility
 .panel.panel-default
   .panel-body
     .row
       .col-sm-6.operator-id
-        = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
+        = f.input :responsible_primary_contact_id, label: "Primary Contact", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
       .col-sm-6.operator-email
-        = f.input :responsible_controller_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
+        = f.input :responsible_primary_contact_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
+    .row
+      .col-md-12.op-help-block
+        = icon ('info-circle')
+        = t('masterdata_cockpit.responsible_primary_contact_help')
+    .row
+      .col-sm-6.operator-id
+        = f.input :primary_contact_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
+      .col-sm-6.operator-email
+        = f.input :primary_contact_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
     .row
       .col-md-12.op-help-block
         = icon ('info-circle')
@@ -53,5 +67,14 @@
     $('[data-toggle="popover"]').popover('destroy');
     $('[data-toggle="popover"][data-popover-type="help-hint"]').attr("tabindex","0");
     $('[data-toggle="popover"]').popover( {placement: 'top', trigger: 'focus'});
+
+    $('textarea#domain_masterdata_additional_information').on("propertychange input", function(){
+        if (this.value.length > this.maxlength) {
+            this.value = this.value.substring(0, this.maxlength);
+        }
+        
+        chars_left = parseInt($(this).attr('maxlength')) - this.value.length;
+        $('span#additional_information_length').html("Remaining characters "+chars_left);
+    })
   });
 
