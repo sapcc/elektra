@@ -5,12 +5,9 @@ import {
 } from '../../actions/castellum';
 
 export default connect(
-  state => {
-    const castellumState = state.castellum || {};
-    return {
-      resourceConfig: castellumState.resourceConfig,
-    };
-  },
+  state => ({
+    resourceConfig: (state.castellum || {}).resourceConfig,
+  }),
   dispatch => ({
     loadResourceConfigOnce: (projectID) => dispatch(fetchCastellumResourceConfigIfNeeded(projectID)),
   }),

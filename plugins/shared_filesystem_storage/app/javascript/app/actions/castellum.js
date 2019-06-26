@@ -23,14 +23,24 @@ const fetchCastellumResourceConfig = (projectID) => (dispatch, getState) => {
       });
     })
     .catch(error => {
-      let msg = error.message;
-      if (error.response && error.response.data) {
-        msg = `${msg}: ${error.response.data}`;
+      //404 is not an error, it just shows that autoscaling is disabled on this
+      //project resource
+      if (error.response && error.response.status && error.response.status == 404) {
+        dispatch({
+          type:       constants.RECEIVE_CASTELLUM_RESOURCE_CONFIG,
+          data:       null,
+          receivedAt: Date.now(),
+        });
+      } else {
+        let msg = error.message;
+        if (error.response && error.response.data) {
+          msg = `${msg}: ${error.response.data}`;
+        }
+        dispatch({
+          type:    constants.REQUEST_CASTELLUM_RESOURCE_CONFIG_FAILURE,
+          message: msg,
+        });
       }
-      dispatch({
-        type:    constants.REQUEST_CASTELLUM_RESOURCE_CONFIG_FAILURE,
-        message: msg,
-      });
     });
 };
 

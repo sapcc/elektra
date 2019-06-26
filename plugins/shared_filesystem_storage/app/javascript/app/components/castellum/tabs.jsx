@@ -1,8 +1,10 @@
+import CastellumConfiguration from '../../containers/castellum/configuration';
+
 //TODO remove
 const mockComponent = (text) => (props) => <p>{text}</p>;
 
 const pages = [
-  { label: "Configuration", component: mockComponent("Hello config") },
+  { label: "Configuration", component: CastellumConfiguration },
   { label: "Recently succeeded", component: mockComponent("Hello recently succeeded") },
   { label: "Recently failed", component: mockComponent("Hello recently failed") },
   { label: "Scraping errors", component: mockComponent("Hello scraping errors") },
@@ -26,13 +28,20 @@ export default class CastellumTabs extends React.Component {
   }
 
   render() {
-    const { errorMessage, isFetching } = this.props.resourceConfig;
+    const { errorMessage, isFetching, data: resourceConfig } = this.props.resourceConfig;
     if (isFetching) {
       return <p><span className='spinner' /> Loading...</p>;
     }
     if (errorMessage) {
       return <p className='alert alert-danger'>Cannot load autoscaling configuration: {errorMessage}</p>;
     }
+
+    const forwardProps = { projectID: this.props.projectId };
+    //when autoscaling is disabled, just show the configuration dialog
+    if (resourceConfig == null) {
+      return <CastellumConfiguration {...forwardProps} />;
+    }
+
     const CurrentComponent = pages[this.state.active].component;
 
     return (
@@ -47,8 +56,7 @@ export default class CastellumTabs extends React.Component {
           </ul>
         </div>
         <div className="col-sm-10">
-          <CurrentComponent />
-          <pre>{JSON.stringify(this.props.resourceConfig, null, 2)}</pre>
+          <CurrentComponent {...forwardProps} />
         </div>
       </div>
     );
