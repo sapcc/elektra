@@ -1,0 +1,8 @@
+= content_for :title do
+  Error: cannot load Domain Masterdata
+%div{ class: modal? ? 'modal-body' : '' }
+  .bs-callout.bs-callout-danger
+    %p
+      Ups that should not happen! We are sorry but it was not possible to load Domain Masterdata.
+      Please try 
+      = link_to 'again', plugin('masterdata_cockpit').domain_masterdata_path()

@@ -1,0 +1,8 @@
+= content_for :title do
+  Error: cannot load Project Masterdata
+%div{ class: modal? ? 'modal-body' : '' }
+  .bs-callout.bs-callout-danger
+    %p
+      Ups that should not happen! We are sorry but it was not possible to load Project Masterdata.
+      Please try 
+      = link_to 'again', plugin('masterdata_cockpit').project_masterdata_path()

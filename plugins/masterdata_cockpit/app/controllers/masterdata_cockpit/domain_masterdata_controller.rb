@@ -50,6 +50,11 @@ module MasterdataCockpit
     def load_domain_masterdata
       begin
         @domain_masterdata = services.masterdata_cockpit.get_domain(@scoped_domain_id)
+        # special case if api returned with 200 but the data was corrupt 
+        if @domain_masterdata.nil?
+          render :no_masterdata_error
+          return
+        end
       rescue Exception => e
         # do nothing if no masterdata was found
         # the api will only return 404 if no masterdata for the domains was found

@@ -126,8 +126,12 @@ module MasterdataCockpit
     def load_project_masterdata
       begin
         @project_masterdata = services.masterdata_cockpit.get_project(@scoped_project_id)
+        # special case if api returned with 200 but the data was corrupt 
+        if @project_masterdata.nil?
+          render :no_masterdata_error
+          return
+        end
         inject_projectdata
-        # overide projectdata with current data from identity
       rescue Exception => e
         # do nothing if no masterdata was found
         # the api will only return 404 if no masterdata for the project was found
@@ -158,6 +162,7 @@ module MasterdataCockpit
       end
     end
 
+    # overide projectdata with current data from identity
     def inject_projectdata
       # get the latest values from project to update masterdata
       @project = services.identity.find_project(@scoped_project_id)
