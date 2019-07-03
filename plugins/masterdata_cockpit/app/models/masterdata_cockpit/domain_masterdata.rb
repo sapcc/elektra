@@ -14,7 +14,7 @@ module MasterdataCockpit
     #    "projects_can_inherit": false
     #}
 
-    validates_presence_of :cost_object_type, :cost_object_name
+    validates_presence_of :cost_object_type, :cost_object_name, :responsible_primary_contact_id
 
     validates_presence_of :responsible_controller_id, unless: lambda { self.responsible_controller_email.blank? }, message: "can't be blank if controller email is defined"
     validates_presence_of :responsible_controller_email, unless: lambda { self.responsible_controller_id.blank? }, message: "can't be blank if controller is defined"
