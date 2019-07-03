@@ -1,11 +1,11 @@
-import CastellumConfiguration from '../../containers/castellum/configuration';
+import CastellumConfigurationView from '../../containers/castellum/configuration/view';
 import CastellumPendingOps from '../../containers/castellum/pending';
 import CastellumFailedOps from '../../containers/castellum/recently_failed';
 import CastellumSucceededOps from '../../containers/castellum/recently_succeeded';
 import CastellumScrapingErrors from '../../containers/castellum/scraping_errors';
 
 const pages = [
-  { label: "Configuration", component: CastellumConfiguration },
+  { label: "Configuration", component: CastellumConfigurationView },
   { label: "Pending operations", component: CastellumPendingOps },
   { label: "Recently succeeded", component: CastellumSucceededOps },
   { label: "Recently failed", component: CastellumFailedOps },
@@ -41,7 +41,7 @@ export default class CastellumTabs extends React.Component {
     const forwardProps = { projectID: this.props.projectId };
     //when autoscaling is disabled, just show the configuration dialog
     if (config == null) {
-      return <CastellumConfiguration {...forwardProps} />;
+      return <CastellumConfigurationView {...forwardProps} />;
     }
 
     const CurrentComponent = pages[this.state.active].component;
