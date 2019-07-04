@@ -29,6 +29,7 @@ import NewSecurityServiceModal from '../containers/security_services/new';
 import EditSecurityServiceModal from '../containers/security_services/edit';
 
 import CastellumTabs from '../containers/castellum/tabs';
+import CastellumConfigurationEditModal from '../containers/castellum/configuration/edit';
 
 import ErrorMessagesModal from '../containers/error_messages/list';
 
@@ -116,6 +117,12 @@ export default (props) => {
         }
 
         <Route exact path="/:type/:id/error-log" component={ErrorMessagesModal}/>
+
+        { hasCastellum && policy.isAllowed("shared_filesystem_storage:share_update") &&
+          <Route exact path="/autoscaling/configure" render={(routeProps) =>
+            <CastellumConfigurationEditModal {...routeProps} projectID={props.projectId} />
+          } />
+        }
       </div>
     </HashRouter>
   )

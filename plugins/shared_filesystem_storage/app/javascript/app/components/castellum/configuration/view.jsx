@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const percent = (val) => {
   return `${val}\u{00A0}%`;
 };
@@ -26,7 +28,7 @@ export default class CastellumConfigurationView extends React.Component {
       return (
         <React.Fragment>
           <p>Autoscaling is not enabled for this project.</p>
-          <p><button className="btn btn-primary" onClick={() => this.TODO()}>Configure</button></p>
+          <p><Link to='/autoscaling/configure' className='btn btn-primary'>Configure</Link></p>
         </React.Fragment>
       );
     }
@@ -51,9 +53,9 @@ export default class CastellumConfigurationView extends React.Component {
           <p>Shares will be resized in steps of <strong>{percent(config.size_steps.percent)}</strong>.</p>
         )}
         <p>
-          <button className="btn btn-primary" onClick={() => this.TODO()}>Configure</button>
+          <Link to='/autoscaling/configure' className='btn btn-primary'>Configure</Link>
           {" "}
-          <button className="btn btn-default" onClick={() => this.TODO()}>Disable autoscaling</button>
+          <button className="btn btn-danger" onClick={() => this.props.disableAutoscaling(this.props.projectID)}>Disable autoscaling</button>
         </p>
       </React.Fragment>
     );

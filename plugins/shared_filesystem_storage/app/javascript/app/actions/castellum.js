@@ -1,12 +1,17 @@
 import * as constants from '../constants';
 import { createAjaxHelper } from 'ajax_helper';
-import { addNotice, addError } from 'lib/flashes';
+import { confirm } from 'lib/dialogs';
+import { addError } from 'lib/flashes';
 
-var ajaxHelper = null;
+let ajaxHelper = null;
 
 export const configureCastellumAjaxHelper = (opts) => {
   ajaxHelper = createAjaxHelper(opts);
 };
+
+const castellumErrorMessage = (error) =>
+  error.response && error.response.data ||
+  error.message
 
 const fetchCastellumData = (projectID, path) => (dispatch, getState) => {
   dispatch({
@@ -54,4 +59,33 @@ export const fetchCastellumDataIfNeeded = (projectID, path) => (dispatch, getSta
   if (!isFetching && !requestedAt) {
     return dispatch(fetchCastellumData(projectID, path));
   }
+};
+
+export const configureAutoscaling = (projectID, config) => (dispatch, getState) => {
+  return new Promise((resolve, reject) =>
+    ajaxHelper.put(`/v1/projects/${projectID}/resources/nfs-shares`, config)
+      .catch(error => {
+        console.log("CATCH");
+        reject(castellumErrorMessage(error));
+      })
+      .then(response => {
+        if (response) {
+          dispatch(fetchCastellumData(projectID, 'resources/nfs-shares'));
+          resolve();
+        }
+      })
+  );
+};
+
+export const disableAutoscaling = (projectID) => (dispatch, getState) => {
+  confirm('Do you really want to disable autoscaling on this project?')
+    .then(() =>
+      ajaxHelper.delete(`/v1/projects/${projectID}/resources/nfs-shares`)
+        .catch(error => addError(castellumErrorMessage(error)))
+        .then(response => {
+          if (response) {
+            dispatch(fetchCastellumData(projectID, 'resources/nfs-shares'));
+          }
+        })
+    );
 };
