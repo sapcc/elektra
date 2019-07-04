@@ -28,18 +28,28 @@ import ShowSecurityServiceModal from '../containers/security_services/show';
 import NewSecurityServiceModal from '../containers/security_services/new';
 import EditSecurityServiceModal from '../containers/security_services/edit';
 
+import CastellumTabs from '../containers/castellum/tabs';
+import CastellumConfigurationEditModal from '../containers/castellum/configuration/edit';
+
 import ErrorMessagesModal from '../containers/error_messages/list';
 
-const tabsConfig = [
+const tabsConfigDefault = [
   { to: '/shares', label: 'Shares', component: Shares },
   { to: '/snapshots', label: 'Snapshots', component: Snapshots },
   { to: '/share-networks', label: 'Share Networks', component: ShareNetworks },
-  { to: '/security-services', label: 'Security Services', component: SecurityServices}
+  { to: '/security-services', label: 'Security Services', component: SecurityServices},
+]
+
+const tabsConfigWithCastellum = [
+  ...tabsConfigDefault,
+  { to: '/autoscaling', label: 'Autoscaling', component: CastellumTabs },
 ]
 
 // render all components inside a hash router
 export default (props) => {
-  //console.log(props)
+  const { hasCastellum } = props;
+  const tabsConfig = hasCastellum ? tabsConfigWithCastellum : tabsConfigDefault;
+
   return (
     <HashRouter /*hashType="noslash"*/ >
       <div>
@@ -107,6 +117,12 @@ export default (props) => {
         }
 
         <Route exact path="/:type/:id/error-log" component={ErrorMessagesModal}/>
+
+        { hasCastellum && policy.isAllowed("shared_filesystem_storage:share_update") &&
+          <Route exact path="/autoscaling/configure" render={(routeProps) =>
+            <CastellumConfigurationEditModal {...routeProps} projectID={props.projectId} />
+          } />
+        }
       </div>
     </HashRouter>
   )
