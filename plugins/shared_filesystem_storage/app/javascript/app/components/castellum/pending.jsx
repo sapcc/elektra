@@ -1,3 +1,6 @@
+import { DataTable } from 'lib/components/datatable';
+import { columns, CastellumOperation } from './operation';
+
 export default class CastellumPendingOps extends React.Component {
   componentDidMount() {
     this.props.loadOpsOnce(this.props.projectID);
@@ -13,6 +16,12 @@ export default class CastellumPendingOps extends React.Component {
     }
 
     const operations = data.pending_operations || [];
-    return <pre>{JSON.stringify(operations, null, 2)}</pre>;
+    return (
+      <DataTable columns={columns} pageSize={8}>
+        {operations.map(operation =>
+          <CastellumOperation key={operation.asset_id} operation={operation} />
+        )}
+      </DataTable>
+    );
   }
 }
