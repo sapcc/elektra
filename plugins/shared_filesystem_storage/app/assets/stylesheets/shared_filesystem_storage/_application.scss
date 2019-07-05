@@ -30,5 +30,10 @@
   margin-right: 20px;
 }
 .control-label.secondary-label {
-    font-weight: normal;
+  font-weight: normal;
+}
+
+//rules for CastellumOperation
+tr.castellum-error-message td {
+  border-top: 0;
 }

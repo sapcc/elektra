@@ -1,7 +1,7 @@
 import { DataTable } from 'lib/components/datatable';
 import { columns, CastellumOperation } from './operation';
 
-export default class CastellumPendingOps extends React.Component {
+export default class CastellumOperationsList extends React.Component {
   componentDidMount() {
     this.props.loadOpsOnce(this.props.projectID);
   }
@@ -15,9 +15,9 @@ export default class CastellumPendingOps extends React.Component {
       return <p className='alert alert-danger'>Cannot load operations: {errorMessage}</p>;
     }
 
-    const operations = data.pending_operations || [];
+    const operations = data[this.props.jsonKey] || [];
     return (
-      <DataTable columns={columns} pageSize={8}>
+      <DataTable columns={columns} pageSize={6}>
         {operations.map(operation =>
           <CastellumOperation key={operation.asset_id} operation={operation} />
         )}

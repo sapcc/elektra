@@ -87,8 +87,8 @@ export const CastellumOperation = ({operation}) => {
           TODO
         </td>
       </tr>
-      {finished && finished.error && <tr>
-        <td colspan='5' className='text-danger' style={{'border-top': 0}}>
+      {finished && finished.error && <tr className='castellum-error-message'>
+        <td colspan='5' className='text-danger'>
           {finished.error}
         </td>
       </tr>}
