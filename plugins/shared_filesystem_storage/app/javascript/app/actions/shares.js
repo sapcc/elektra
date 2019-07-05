@@ -69,39 +69,53 @@ const fetchShares= (page=null) =>
   }
 ;
 
-const loadNext= () =>
-  function(dispatch, getState) {
-    let state = getState();
+const loadNext = () => (dispatch, getState) => {
+  const state = getState().shares;
 
-    if(!state.shares.isFetching && state.shares.hasNext) {
-      dispatch(fetchShares(state.shares.currentPage+1)).then(() => {
-        // load next if search modus (searchTerm is presented)
-        dispatch(loadNextOnSearch(state.shares.searchTerm))
-      })
-    }
+  if (!state.isFetching && state.hasNext) {
+    dispatch(fetchShares(state.currentPage + 1)).then(() => {
+      const state = getState().shares;
+
+      //always continue loading when a searchTerm is present
+      const hasSearchTerm = state.searchTerm && state.searchTerm.trim().length > 0;
+
+      //also continue loading when not all searched IDs have been found yet
+      const presentIDs = state.items.map(share => share.id);
+      const hasMissingIDs = state.searchShareIDs.some(shareID =>
+        !presentIDs.includes(shareID)
+      );
+
+      // load next if search modus (searchTerm is presented)
+      if (hasSearchTerm || hasMissingIDs) {
+        dispatch(loadNext());
+      };
+    })
   }
-;
+};
 
-const loadNextOnSearch=(searchTerm) =>
-  function(dispatch) {
-    if(searchTerm && searchTerm.trim().length>0) {
-      dispatch(loadNext());
-    }
+const loadNextOnSearch = (searchTerm) => (dispatch) => {
+  if(searchTerm && searchTerm.trim().length > 0) {
+    dispatch(loadNext());
   }
-;
+};
 
-const setSearchTerm= (searchTerm) =>
-  ({
+const searchShares = (searchTerm) => (dispatch) => {
+  dispatch({
     type: constants.SET_SEARCH_TERM,
-    searchTerm
+    searchTerm,
   })
-
-const searchShares= (searchTerm) =>
-  function(dispatch) {
-    dispatch(setSearchTerm(searchTerm))
-    dispatch(loadNextOnSearch(searchTerm))
+  if(searchTerm && searchTerm.trim().length > 0) {
+    dispatch(loadNext());
   }
-;
+};
+
+const searchShareIDs = (shareIDs) => (dispatch) => {
+  dispatch({
+    type: constants.SET_SEARCH_IDS,
+    shareIDs,
+  });
+  dispatch(loadNext());
+};
 
 const shouldFetchShares= function(state) {
   const { shares } = state;
@@ -386,5 +400,6 @@ export {
   submitResetShareStatusForm,
   submitRevertToSnapshotForm,
   searchShares,
-  loadNext
+  searchShareIDs,
+  loadNext,
 }

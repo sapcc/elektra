@@ -16,7 +16,7 @@ export default class EditShareSizeForm extends React.Component {
 
   restoreUrl = (e) => {
     if (!this.state.show)
-      this.props.history.replace('/shares')
+      this.props.history.replace(`/${this.props.match.params.parent}`)
   }
 
   hide = (e) => {
