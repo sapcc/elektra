@@ -6,6 +6,7 @@ const path = 'resources/nfs-shares/operations/pending';
 export default connect(
   state => ({
     operations: (state.castellum || {})[path],
+    shares:     (state.shares || {}).items,
   }),
   dispatch => ({
     loadOpsOnce: (projectID) =>

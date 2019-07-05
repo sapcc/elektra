@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 const isOrWas = {
   created: 'is',
@@ -23,6 +24,11 @@ const sortOrderForReasons = {
   critical: 3,
 };
 
+const sortKeyForNameOrID = props => {
+  const name = (props.share || {}).name || '';
+  const id = props.operation.asset_id;
+  return name + id;
+};
 const sortKeyForStateAndReason = props => {
   const { state, reason } = props.operation;
   return sortOrderForStates[state] * 10 + sortOrderForReasons[reason];
@@ -34,7 +40,7 @@ const sortKeyForSizeChange = props => {
 
 export const columns = [
   { key: 'id', label: 'Share name/ID', sortStrategy: 'text',
-    sortKey: props => props.operation.asset_id },
+    sortKey: sortKeyForNameOrID },
   { key: 'state', label: 'State/Reason', sortStrategy: 'numeric',
     sortKey: sortKeyForStateAndReason },
   { key: 'size', label: 'Size', sortStrategy: 'numeric',
@@ -54,7 +60,7 @@ const formatTime = (event) => {
   return <span title={label}>{txt}</span>;
 };
 
-export const CastellumOperation = ({operation}) => {
+export const CastellumOperation = ({operation, share}) => {
   const {
     asset_id: shareID, state, reason,
     old_size: oldSize, new_size: newSize,
@@ -64,7 +70,10 @@ export const CastellumOperation = ({operation}) => {
     <React.Fragment>
       <tr>
         <td className='col-md-4'>
-          TODO: name
+          {share
+            ? <Link to={`/autoscaling/${share.id}/show`}>{share.name || shareID}</Link>
+            : <div><span className='spinner' /> Loading share data...</div>
+          }
           <div className='small text-muted'>{shareID}</div>
         </td>
         <td className='col-md-2'>

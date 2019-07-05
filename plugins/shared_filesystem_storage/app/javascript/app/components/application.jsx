@@ -65,7 +65,7 @@ export default (props) => {
           <Route exact path="/shares/new" component={NewShareModal}/>
         }
         { policy.isAllowed("shared_filesystem_storage:share_get") &&
-          <Route exact path="/shares/:id/show" component={ShowShareModal}/>
+          <Route exact path="/:parent(shares|autoscaling)/:id/show" component={ShowShareModal}/>
         }
         { policy.isAllowed("shared_filesystem_storage:share_update") &&
           <React.Fragment>

@@ -6,6 +6,7 @@ const path = 'resources/nfs-shares/operations/recently-failed';
 export default connect(
   state => ({
     operations: (state.castellum || {})[path],
+    shares:     (state.shares || {}).items,
   }),
   dispatch => ({
     loadOpsOnce: (projectID) =>

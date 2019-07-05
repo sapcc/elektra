@@ -16,10 +16,16 @@ export default class CastellumOperationsList extends React.Component {
     }
 
     const operations = data || [];
+    const shares = this.props.shares || [];
+
     return (
       <DataTable columns={columns} pageSize={6}>
         {operations.map(operation =>
-          <CastellumOperation key={operation.asset_id} operation={operation} />
+          <CastellumOperation
+            key={operation.asset_id}
+            operation={operation}
+            share={shares.find(share => share.id == operation.asset_id)}
+          />
         )}
       </DataTable>
     );
