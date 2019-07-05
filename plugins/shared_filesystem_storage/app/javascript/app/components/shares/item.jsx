@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { policy } from 'policy';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import * as constants from '../../constants';
+import ShareActions from './actions';
 
 class RuleTooltip extends React.Component {
   render() {
@@ -33,12 +34,12 @@ export default class ShareItem extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // stop polling if status has changed from creating to something else
-    this.pendignState(nextProps) ? this.startPolling() : this.stopPolling()
+    this.pendingState(nextProps) ? this.startPolling() : this.stopPolling()
     nextProps.loadShareRulesOnce(nextProps.share.id)
   }
 
   componentDidMount() {
-    if (this.pendignState()) this.startPolling()
+    if (this.pendingState()) this.startPolling()
     this.props.loadShareRulesOnce(this.props.share.id)
   }
 
@@ -60,8 +61,8 @@ export default class ShareItem extends React.Component {
     this.polling = null
   }
 
-  pendignState = (props = this.props) => {
-    return constants.SHARE_PENDING_STATUS.indexOf(props.share.status) >= 0
+  pendingState = (props = this.props) => {
+    return constants.isShareStatusPending(props.share.status);
   }
 
   render(){
@@ -113,65 +114,11 @@ export default class ShareItem extends React.Component {
           )}
         </td>
         <td className="snug">
-          { (policy.isAllowed("shared_filesystem_storage:share_delete") ||
-             policy.isAllowed("shared_filesystem_storage:share_update")) &&
-
-            <div className='btn-group'>
-              <button
-                className="btn btn-default btn-sm dropdown-toggle"
-                type="button"
-                data-toggle="dropdown"
-                aria-expanded="true">
-                <i className='fa fa-cog'></i>
-              </button>
-              <ul className='dropdown-menu dropdown-menu-right' role="menu">
-                { policy.isAllowed("shared_filesystem_storage:snapshot_create") && share.status=='available' &&
-                  <li>
-                    <Link to={`/shares/${share.id}/snapshots/new`}>Create Snapshot</Link>
-                  </li>
-                }
-
-                { policy.isAllowed("shared_filesystem_storage:share_update") && !this.pendignState() &&
-                  <li><Link to={`/shares/${share.id}/edit`}>Edit</Link></li>
-                }
-
-                { policy.isAllowed("shared_filesystem_storage:share_delete") &&
-                  <li><a href='#' onClick={ (e) => { e.preventDefault(); handleDelete(share.id) } }>Delete</a></li>
-                }
-
-                <li className="divider"></li>
-
-                { policy.isAllowed("shared_filesystem_storage:share_extend") && !this.pendignState() &&
-                  <li><Link to={`/shares/${share.id}/edit-size`}>Extend / Shrink</Link></li>
-                }
-
-                { policy.isAllowed("shared_filesystem_storage:share_access_control") && share.status=='available' &&
-                  <li>
-                    <Link to={`/shares/${share.id}/access-control`}>Access Control</Link>
-                  </li>
-                }
-
-                { policy.isAllowed("shared_filesystem_storage:share_force_delete") &&
-                  <li><a href='#' onClick={ (e) => { e.preventDefault(); handleForceDelete(share.id) } }>Force Delete</a></li>
-                }
-
-                { policy.isAllowed("shared_filesystem_storage:share_reset_status") &&
-                  <li>
-                    <Link to={`/shares/${share.id}/reset-status`}>Reset Status</Link>
-                  </li>
-                }
-                { policy.isAllowed("shared_filesystem_storage:share_revert_to_snapshot") &&
-                  <li>
-                    <Link to={`/shares/${share.id}/revert-to-snapshot`}>Revert To Snapshot</Link>
-                  </li>
-                }
-                <li className="divider"></li>
-                <li>
-                  <Link to={`/shares/${share.id}/error-log`}>Error Log</Link>
-                </li>
-              </ul>
-            </div>
-          }
+          <ShareActions
+            share={share} isPending={this.pendingState()}
+            parentView='shares'
+            handleDelete={handleDelete} handleForceDelete={handleForceDelete}
+          />
         </td>
       </tr>
     )

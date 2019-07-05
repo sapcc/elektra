@@ -22,7 +22,7 @@ export default class AccessControlModal extends React.Component{
     if(e) e.stopPropagation()
     //this.props.history.goBack()
     this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/shares'),300)
+    setTimeout(() => this.props.history.replace(`/${this.props.match.params.parent}`),300)
   }
 
   toggleForm() {

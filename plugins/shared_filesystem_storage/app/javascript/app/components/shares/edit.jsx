@@ -20,7 +20,7 @@ export default class EditShareForm extends React.Component {
   close(e){
     if(e) e.preventDefault()
     this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/shares'), 300)
+    setTimeout(() => this.props.history.replace(`/${this.props.match.params.parent}`),300)
   }
 
   onSubmit(values) {

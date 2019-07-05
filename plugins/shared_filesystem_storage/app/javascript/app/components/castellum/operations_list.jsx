@@ -18,6 +18,11 @@ export default class CastellumOperationsList extends React.Component {
     const operations = data || [];
     const shares = this.props.shares || [];
 
+    const forwardProps = {
+      handleDelete:      this.props.handleDelete,
+      handleForceDelete: this.props.handleForceDelete,
+    };
+
     return (
       <DataTable columns={columns} pageSize={6}>
         {operations.map(operation =>
@@ -25,6 +30,7 @@ export default class CastellumOperationsList extends React.Component {
             key={operation.asset_id}
             operation={operation}
             share={shares.find(share => share.id == operation.asset_id)}
+            {...forwardProps}
           />
         )}
       </DataTable>

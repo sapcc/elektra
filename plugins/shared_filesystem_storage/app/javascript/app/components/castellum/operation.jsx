@@ -1,5 +1,7 @@
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import * as constants from '../../constants';
+import ShareActions from '../shares/actions';
 
 const isOrWas = {
   created: 'is',
@@ -60,7 +62,7 @@ const formatTime = (event) => {
   return <span title={label}>{txt}</span>;
 };
 
-export const CastellumOperation = ({operation, share}) => {
+export const CastellumOperation = ({operation, share, handleDelete, handleForceDelete}) => {
   const {
     asset_id: shareID, state, reason,
     old_size: oldSize, new_size: newSize,
@@ -92,8 +94,12 @@ export const CastellumOperation = ({operation, share}) => {
           {finished &&
             <div>{titleCase(state)}: {formatTime(finished)}</div>}
         </td>
-        <td className='col-md-1'>
-          TODO
+        <td className='col-md-1 text-right'>
+          {share && <ShareActions
+            share={share} isPending={constants.isShareStatusPending(share.status)}
+            parentView='autoscaling'
+            handleDelete={handleDelete} handleForceDelete={handleForceDelete}
+          />}
         </td>
       </tr>
       {finished && finished.error && <tr className='castellum-error-message'>

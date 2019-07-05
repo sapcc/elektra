@@ -15,7 +15,7 @@ export default class NewSnapshotForm extends React.Component {
   close(e){
     if(e) e.stopPropagation()
     this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/shares'),300)
+    setTimeout(() => this.props.history.replace(`/${this.props.match.params.parent}`),300)
   }
 
   onSubmit(values){

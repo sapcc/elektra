@@ -109,9 +109,10 @@ export const SHARE_STATE_ERROR_DELETING   = 'error_deleting' //A share deletion 
 export const SHARE_STATE_MIGRATING        = 'migrating' //A share deletion error occurred.
 export const SHARE_STATE_MIGRATING_TO     = 'migrating_to' //A share deletion error occurred.
 
-export const SHARE_PENDING_STATUS = [
+const SHARE_PENDING_STATUS = [
   SHARE_STATE_CREATING,SHARE_STATE_DELETING,SHARE_STATE_MIGRATING,SHARE_STATE_MIGRATING_TO
 ]
+export const isShareStatusPending = (statusString) => SHARE_PENDING_STATUS.includes(statusString);
 
 export const SHARE_RESET_STATUS = [
   SHARE_STATE_CREATING, SHARE_STATE_AVAILABLE, SHARE_STATE_ERROR,
