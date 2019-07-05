@@ -198,6 +198,14 @@ export class DataTable extends React.Component {
       rows = rows.slice((curr - 1) * size, curr * size);
     }
 
+    if (rows.length == 0) {
+      rows = [
+        <tr key='no-entries'>
+          <td colSpan={this.props.columns.length} className='text-muted text-center'>No entries</td>
+        </tr>
+      ];
+    }
+
     return (
       <React.Fragment>
         <table className='table elektraDataTable'>

@@ -15,7 +15,7 @@ export default class CastellumOperationsList extends React.Component {
       return <p className='alert alert-danger'>Cannot load operations: {errorMessage}</p>;
     }
 
-    const operations = data[this.props.jsonKey] || [];
+    const operations = data || [];
     return (
       <DataTable columns={columns} pageSize={6}>
         {operations.map(operation =>

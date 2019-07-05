@@ -88,7 +88,7 @@ export const CastellumOperation = ({operation}) => {
         </td>
       </tr>
       {finished && finished.error && <tr className='castellum-error-message'>
-        <td colspan='5' className='text-danger'>
+        <td colSpan='5' className='text-danger'>
           {finished.error}
         </td>
       </tr>}

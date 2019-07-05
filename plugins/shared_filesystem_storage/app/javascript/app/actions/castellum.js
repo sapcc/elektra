@@ -1,4 +1,5 @@
 import * as constants from '../constants';
+import { searchShareIDs } from './shares';
 import { createAjaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
 import { addError } from 'lib/flashes';
@@ -13,7 +14,7 @@ const castellumErrorMessage = (error) =>
   error.response && error.response.data ||
   error.message
 
-const fetchCastellumData = (projectID, path) => (dispatch, getState) => {
+const fetchCastellumData = (projectID, path, jsonKey = null) => (dispatch, getState) => {
   dispatch({
     type:        constants.REQUEST_CASTELLUM_DATA,
     path,
@@ -22,10 +23,17 @@ const fetchCastellumData = (projectID, path) => (dispatch, getState) => {
 
   return ajaxHelper.get(`/v1/projects/${projectID}/${path}`)
     .then(response => {
+      const data = jsonKey ? response.data[jsonKey] : response.data;
+      if (Array.isArray(data)) {
+        const shareIDs = data.map(elem => elem.asset_id)
+          .filter(elem => elem ? true : false);
+        if (shareIDs.length > 0) {
+          dispatch(searchShareIDs(shareIDs));
+        }
+      }
       dispatch({
         type: constants.RECEIVE_CASTELLUM_DATA,
-        path,
-        data: response.data,
+        path, data,
         receivedAt: Date.now(),
       });
     })
@@ -53,11 +61,11 @@ const fetchCastellumData = (projectID, path) => (dispatch, getState) => {
     });
 };
 
-export const fetchCastellumDataIfNeeded = (projectID, path) => (dispatch, getState) => {
+export const fetchCastellumDataIfNeeded = (projectID, path, jsonKey = null) => (dispatch, getState) => {
   const castellumState = getState().castellum || {};
   const { isFetching, requestedAt } = castellumState[path] || {};
   if (!isFetching && !requestedAt) {
-    return dispatch(fetchCastellumData(projectID, path));
+    return dispatch(fetchCastellumData(projectID, path, jsonKey));
   }
 };
 
@@ -65,7 +73,6 @@ export const configureAutoscaling = (projectID, config) => (dispatch, getState) 
   return new Promise((resolve, reject) =>
     ajaxHelper.put(`/v1/projects/${projectID}/resources/nfs-shares`, config)
       .catch(error => {
-        console.log("CATCH");
         reject(castellumErrorMessage(error));
       })
       .then(response => {

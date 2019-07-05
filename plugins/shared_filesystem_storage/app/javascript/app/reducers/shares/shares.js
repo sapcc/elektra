@@ -8,7 +8,8 @@ const initialSharesState = {
   isFetching: false,
   hasNext: true,
   currentPage: 0,
-  searchTerm: null
+  searchTerm: null,
+  searchShareIDs: [],
 };
 
 const requestShares=(state,{requestedAt})=>
@@ -90,6 +91,13 @@ const setSearchTerm= (state,{searchTerm}) => {
   return Object.assign({},state,{searchTerm});
 }
 
+const addSearchIDs = (state,{shareIDs}) => {
+  //do not introduce duplicates when appending `shareIDs` to `state.searchShareIDs`.
+  const allIDs = [ ...state.searchShareIDs, ...shareIDs ];
+  const uniqueIDs = allIDs.filter((elem, idx) => allIDs.indexOf(elem) == idx);
+  return { ...state, searchShareIDs: uniqueIDs };
+}
+
 const receiveShareExportLocations= function(state,{shareId,export_locations}){
   const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
@@ -105,6 +113,7 @@ export const shares = function(state, action) {
   if (state == null) { state = initialSharesState; }
   switch (action.type) {
     case constants.SET_SEARCH_TERM: return setSearchTerm(state,action);
+    case constants.SET_SEARCH_IDS: return addSearchIDs(state,action);
     case constants.RECEIVE_SHARES: return receiveShares(state,action);
     case constants.REQUEST_SHARES: return requestShares(state,action);
     case constants.REQUEST_SHARES_FAILURE: return requestSharesFailure(state,action);

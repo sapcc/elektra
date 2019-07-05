@@ -13,6 +13,7 @@ export const REQUEST_AVAILABLE_ZONES         = 'shared_filesystem_storage/shares
 export const RECEIVE_AVAILABLE_ZONES         = 'shared_filesystem_storage/shares/RECEIVE_AVAILABLE_ZONES';
 export const REQUEST_AVAILABLE_ZONES_FAILURE = 'shared_filesystem_storage/shares/REQUEST_AVAILABLE_ZONES_FAILURE';
 export const SET_SEARCH_TERM                 = 'shared_filesystem_storage/shares/SET_SEARCH_TERM';
+export const SET_SEARCH_IDS                  = 'shared_filesystem_storage/shares/SET_SEARCH_IDS';
 
 // SHARE RULES
 export const REQUEST_SHARE_RULES             = 'shared_filesystem_storage/shares/REQUEST_SHARE_RULES'
