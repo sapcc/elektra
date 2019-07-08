@@ -15,6 +15,46 @@ module ObjectStorage
       @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
     end
 
+    def check_acls
+      read_acl_string = params[:read_acl] || ""
+      write_acl_string = params[:write_acl] || ""
+
+      # https://docs.openstack.org/swift/latest/overview_acl.html#container-acls
+      # parse read_acl
+      read_acl_data = {}
+      read_acls = read_acl_string.split(',')
+      read_acls.each do |read_acl|
+        puts read_acl
+        case read_acl 
+        when ".rlistings"
+          read_acl_data[".rlistings"] = "Any user can perform a HEAD or GET operation on the container provided the user also has read access on objects."
+        when ".r:*"
+          read_acl_data[".r:*"] = "Any user has access to objects. No token is required in the request."
+        else
+          # all other special cases
+          read_acl_parts = read_acl.split(':')
+          case read_acl_parts[0]
+          when ".r" 
+            read_acl_data[".r"] = "The referrer #{read_acl_parts[1]} has granted access to objects. The referrer is identified by the Referer request header in the request. No token is required."
+          else
+            project_uuid = read_acl_parts[0]
+            referrer = read_acl_parts[1]
+            puts referrer
+            if referrer == "*"
+             read_acl_data[project_uuid] = "Any user for Project #{project_uuid} has access to objects. Token is required in the request."
+            else
+             read_acl_data[project_uuid] = "The referrer #{referrer} has granted access to objects. But only user for Project #{project_uuid} has access to objects. The referrer is identified by the Referer request header in the request. Token is required in the request."
+            end
+          end
+         end
+       end
+
+      render json: {
+        read_acl: read_acl_data,
+        write_acl: "foo"
+      }
+    end
+
     def confirm_deletion
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
       @empty = services.object_storage.empty?(@container.name)

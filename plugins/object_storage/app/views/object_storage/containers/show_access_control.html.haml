@@ -13,6 +13,7 @@
       - else
         = f.input :read_acl, as: :string, label: 'Read ACLs'
       = f.input :write_acl, as: :string, label: "Write ACLs"
+      = link_to 'Check ACLs' , '#', class: 'btn btn-default pull-right', id: 'check_acls'
     .col-md-6
       .bs-callout.bs-callout-info
         %p
@@ -28,6 +29,17 @@
           For more details, have a look at the
           = succeed '.' do
             = link_to "documentation", "https://docs.openstack.org/swift/latest/overview_acl.html#container-acls", target: "_blank"
+
+:javascript
+  $('#check_acls').click(
+    function() {
+      $.get("#{plugin('object_storage').check_acls_container_path()}", 
+        { 
+          read_acl: $('#container_read_acl').val(),
+          write_acl:  $('#container_write_acl').val()
+        } , function(data){});
+    }
+  )
 
 - if has_capability?('staticweb')
   :javascript
