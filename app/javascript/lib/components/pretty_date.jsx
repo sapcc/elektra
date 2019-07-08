@@ -1,8 +1,10 @@
-import { formatModificationTime } from 'lib/tools/date_formatter';
+import moment from 'moment';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 export const PrettyDate = ({date}) => {
-  let tooltip = <Tooltip id='dateTooltip'>{new Date(date).toLocaleDateString()}</Tooltip>;
+  const m = (typeof date == 'number') ? moment.unix(date) : moment(date);
+
+  let tooltip = <Tooltip id='dateTooltip'>{m.format('LLLL')}</Tooltip>;
 
   return (
     <OverlayTrigger
@@ -10,7 +12,7 @@ export const PrettyDate = ({date}) => {
       placement="top"
       delayShow={300}
       delayHide={150}>
-      <span>{formatModificationTime(date)}</span>
+      <span>{m.fromNow(true)} ago</span>
     </OverlayTrigger>
   )
 }

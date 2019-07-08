@@ -1,5 +1,6 @@
-import moment from 'moment';
 import { Link } from 'react-router-dom';
+import { PrettyDate } from 'lib/components/pretty_date';
+
 import * as constants from '../../constants';
 import ShareActions from '../shares/actions';
 
@@ -55,12 +56,6 @@ export const columns = [
 const titleCase = (str) => (
   str.charAt(0).toUpperCase() + str.substr(1).toLowerCase()
 );
-const formatTime = (event) => {
-  const m = moment.unix(event.at);
-  const txt = m.fromNow(true) + " ago";
-  const label = m.format("LLLL");
-  return <span title={label}>{txt}</span>;
-};
 
 export const CastellumOperation = ({operation, share, handleDelete, handleForceDelete}) => {
   const {
@@ -86,13 +81,13 @@ export const CastellumOperation = ({operation, share, handleDelete, handleForceD
           {oldSize} -> {newSize} GiB
         </td>
         <td className='col-md-3'>
-          <div>Created: {formatTime(created)}</div>
+          <div>Created: <PrettyDate date={created.at} /></div>
           {confirmed && confirmed.at != created.at &&
-            <div>Confirmed: {formatTime(confirmed)}</div>}
+            <div>Confirmed: <PrettyDate date={confirmed.at} /></div>}
           {greenlit && greenlit.at != confirmed.at &&
-            <div>Greenlit: {formatTime(greenlit)}</div>}
+            <div>Greenlit: <PrettyDate date={greenlit.at} /></div>}
           {finished &&
-            <div>{titleCase(state)}: {formatTime(finished)}</div>}
+            <div>{titleCase(state)}: <PrettyDate date={finished.at} /></div>}
         </td>
         <td className='col-md-1 text-right'>
           {share && <ShareActions
