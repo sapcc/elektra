@@ -24,30 +24,66 @@ module ObjectStorage
       read_acl_data = {}
       read_acls = read_acl_string.split(',')
       read_acls.each do |read_acl|
-        puts read_acl
         case read_acl 
         when ".rlistings"
-          read_acl_data[".rlistings"] = "Any user can perform a HEAD or GET operation on the container provided the user also has read access on objects."
+          read_acl_data[read_acl] = "Any user can perform a HEAD or GET operation on the container provided the user also has read access on objects."
         when ".r:*"
-          read_acl_data[".r:*"] = "Any user has access to objects. No token is required in the request."
+          read_acl_data[read_acl] = "Any user has access to objects. No token is required in the request."
         else
           # all other special cases
           read_acl_parts = read_acl.split(':')
-          case read_acl_parts[0]
-          when ".r" 
-            read_acl_data[".r"] = "The referrer #{read_acl_parts[1]} has granted access to objects. The referrer is identified by the Referer request header in the request. No token is required."
-          else
-            project_uuid = read_acl_parts[0]
-            referrer = read_acl_parts[1]
-            puts referrer
-            if referrer == "*"
-             read_acl_data[project_uuid] = "Any user for Project #{project_uuid} has access to objects. Token is required in the request."
+          if read_acl_parts.length == 2
+            case read_acl_parts[0]
+            when ".r" 
+              # .r:<referrer>
+              read_acl_data[read_acl] = "The referrer #{read_acl_parts[1]} has granted access to objects. No token is required."
             else
-             read_acl_data[project_uuid] = "The referrer #{referrer} has granted access to objects. But only user for Project #{project_uuid} has access to objects. The referrer is identified by the Referer request header in the request. Token is required in the request."
+              # *:*
+              if read_acl_parts[0] == '*' && read_acl_parts[1] == '*'
+                read_acl_data[read_acl] = "Any user has access. Note: The *:* element differs from the .r:* element because *:* requires that a valid token is included in the request whereas .r:* does not require a token. "
+              # <project-id>:<user-id>
+              elsif read_acl_parts[0] != '*' and read_acl_parts[1] != '*'
+                project = services.identity.find_project(read_acl_parts[0])
+                user = services.identity.find_user(read_acl_parts[1])
+                unless user.nil? || project.nil?
+                  domain = services.identity.find_domain(project.domain_id)
+                  read_acl_data[read_acl] = "The specified user #{user.description} (#{user.name}) with a token scoped to the project '#{project.name}' in domain '#{domain.name}' has granted access."
+                else
+                  if user.nil? && project.nil?
+                    read_acl_data[read_acl] = "ERROR: cannot found project with PROJECT_ID #{read_acl_parts[0]} and user with USER_ID #{read_acl_parts[1]}"
+                  elsif project.nil?
+                    read_acl_data[read_acl] = "ERROR: cannot found project with PROJECT_ID #{read_acl_parts[0]}"
+                  elsif user.nil?
+                    read_acl_data[read_acl] = "ERROR: cannot found user with USER_ID #{read_acl_parts[1]}"
+                  else
+                    read_acl_data[read_acl] = "ERROR: unkown parse error"
+                  end
+                end
+                  # <project-id>:*
+              elsif read_acl_parts[0] != '*' and read_acl_parts[1] == '*'
+                project = services.identity.find_project(read_acl_parts[0])
+                unless project.nil?
+                  domain = services.identity.find_domain(project.domain_id)
+                  read_acl_data[read_acl] = "Any user with a role in the project '#{project.name}' in domain '#{domain.name}' has access. A token scoped to the project must be included in the request."
+                else
+                  read_acl_data[read_acl] = "ERROR: cannot found project with PROJECT_ID #{read_acl_parts[0]}"
+                end
+                  # *:<user-id>
+              elsif read_acl_parts[0] == '*' and read_acl_parts[1] != '*'
+                user = services.identity.find_user(read_acl_parts[1])
+                unless user.nil?
+                  read_acl_data[read_acl] = "The specified user #{user.description} (#{user.name}) has access. A token for the user (scoped to any project) must be included in the request."
+                else
+                  read_acl_data[read_acl] = "ERROR: cannot found user with USER_ID #{read_acl_parts[1]}"
+                end
+              end
             end
-          end
-         end
-       end
+          else 
+            # <role_name>
+            read_acl_data[read_acl] = "A user with the specified role name '#{read_acl}' has access on the container."
+          end          
+        end
+      end
 
       render json: {
         read_acl: read_acl_data,

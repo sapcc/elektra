@@ -37,9 +37,11 @@
         { 
           read_acl: $('#container_read_acl').val(),
           write_acl:  $('#container_write_acl').val()
-        } , function(data){});
+        } , function(data){
+          console.log(data);
+        });
     }
-  )
+  );
 
 - if has_capability?('staticweb')
   :javascript
