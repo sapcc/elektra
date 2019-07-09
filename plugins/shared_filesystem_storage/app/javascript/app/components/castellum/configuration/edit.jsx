@@ -63,6 +63,9 @@ const FormBody = ({close, errors}) => {
         <Form.ElementHorizontal label='Never resize to more than (GiB):' name='size_maximum' labelWidth={5} labelClass='control-label secondary-label'>
           <Form.Input elementType='input' type='number' min='0' />
         </Form.ElementHorizontal>
+        <Form.ElementHorizontal label='Always leave this much free space (GiB):' name='free_minimum' labelWidth={5} labelClass='control-label secondary-label'>
+          <Form.Input elementType='input' type='number' min='0' />
+        </Form.ElementHorizontal>
       </Modal.Body>
       <Modal.Footer>
         <span className='not-valid-explanation'>{validationError}</span>
@@ -114,6 +117,7 @@ export default class CastellumConfigurationEditModal extends React.Component {
         size_step:                (cfg.size_steps         || {}).percent       || 10,
         size_minimum:             (cfg.size_constraints   || {}).minimum       || '',
         size_maximum:             (cfg.size_constraints   || {}).maximum       || '',
+        free_minimum:             (cfg.size_constraints   || {}).minimum_free  || '',
       },
     });
   }
@@ -161,6 +165,10 @@ export default class CastellumConfigurationEditModal extends React.Component {
     if (values.size_maximum != '') {
       config.size_constraints = config.size_constraints || {};
       config.size_constraints.maximum = parseInt(values.size_maximum, 10);
+    }
+    if (values.free_minimum != '') {
+      config.size_constraints = config.size_constraints || {};
+      config.size_constraints.minimum_free = parseInt(values.free_minimum, 10);
     }
 
     this.props.configureAutoscaling(this.props.projectID, config)

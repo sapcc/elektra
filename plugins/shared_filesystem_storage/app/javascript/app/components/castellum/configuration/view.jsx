@@ -47,6 +47,7 @@ export default class CastellumConfigurationView extends React.Component {
             <ul>
               {config.size_constraints.minimum && <li>...never below <strong>{config.size_constraints.minimum} GiB</strong>.</li>}
               {config.size_constraints.maximum && <li>...never above <strong>{config.size_constraints.maximum} GiB</strong>.</li>}
+              {config.size_constraints.minimum_free && <li>...shrinking will always leave at least <strong>{config.size_constraints.minimum_free} GiB</strong> of free space.</li>}
             </ul>
           </React.Fragment>
         ) : (
