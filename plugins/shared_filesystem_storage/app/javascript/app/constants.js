@@ -98,6 +98,10 @@ export const REQUEST_CASTELLUM_DATA         = 'shared_filesystem_storage/castell
 export const RECEIVE_CASTELLUM_DATA         = 'shared_filesystem_storage/castellum/RECEIVE_CASTELLUM_DATA';
 export const REQUEST_CASTELLUM_DATA_FAILURE = 'shared_filesystem_storage/castellum/REQUEST_CASTELLUM_DATA_FAILURE';
 
+// Maia
+export const REQUEST_SHARE_UTILIZATION         = 'shared_filesystem_storage/maia/REQUEST_SHARE_UTILIZATION';
+export const RECEIVE_SHARE_UTILIZATION         = 'shared_filesystem_storage/maia/RECEIVE_SHARE_UTILIZATION';
+export const REQUEST_SHARE_UTILIZATION_FAILURE = 'shared_filesystem_storage/maia/REQUEST_SHARE_UTILIZATION_FAILURE';
 
 //####################### SHARE STATES ########################
 export const SHARE_STATE_CREATING         = 'creating' //The share is being created.

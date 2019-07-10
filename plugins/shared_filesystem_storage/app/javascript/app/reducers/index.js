@@ -15,3 +15,4 @@ export { securityServices } from './security_services/security_services';
 export { errorMessages } from './error_messages';
 
 export { castellum } from './castellum';
+export { maia } from './maia';

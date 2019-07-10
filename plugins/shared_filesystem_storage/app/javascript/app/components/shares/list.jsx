@@ -83,6 +83,7 @@ export default class List extends React.Component {
     props.loadSharesOnce()
     props.loadShareNetworksOnce()
     props.loadAvailabilityZonesOnce()
+    props.loadShareUtilizationOnce()
   }
 
   shareNetwork(share) {

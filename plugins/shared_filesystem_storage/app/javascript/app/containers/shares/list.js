@@ -12,6 +12,7 @@ import {
 } from '../../actions/shares'
 import { fetchShareNetworksIfNeeded } from '../../actions/share_networks'
 import { fetchShareRulesIfNeeded } from '../../actions/share_rules'
+import { fetchShareUtilizationIfNeeded } from '../../actions/maia';
 
 export default connect(
   (state) => ({
@@ -21,7 +22,8 @@ export default connect(
     searchTerm: state.shares.searchTerm,
     shareNetworks: state.shareNetworks,
     shareRules: state.shareRules,
-    availabilityZones: state.availabilityZones
+    availabilityZones: state.availabilityZones,
+    shareUtilization: state.maia.utilization,
   }),
 
   dispatch => ({
@@ -33,6 +35,7 @@ export default connect(
     searchShares: (term) => dispatch(searchShares(term)),
     reloadShare: (shareId) => dispatch(reloadShare(shareId)),
     handleDelete: (shareId) => dispatch(deleteShare(shareId)),
-    handleForceDelete: (shareId) => dispatch(forceDeleteShare(shareId))
-  })
+    handleForceDelete: (shareId) => dispatch(forceDeleteShare(shareId)),
+    loadShareUtilizationOnce: () => dispatch(fetchShareUtilizationIfNeeded()),
+  }),
 )(ShareList);

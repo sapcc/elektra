@@ -60,6 +60,5 @@ export default class CastellumConfigurationView extends React.Component {
         </p>
       </React.Fragment>
     );
-    return <pre>{JSON.stringify(config, null, 2)}</pre>;
   }
 }
