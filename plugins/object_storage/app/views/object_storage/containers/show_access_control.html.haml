@@ -29,6 +29,7 @@
           For more details, have a look at the
           = succeed '.' do
             = link_to "documentation", "https://docs.openstack.org/swift/latest/overview_acl.html#container-acls", target: "_blank"
+  #acls
 
 :javascript
   $('#check_acls').click(
@@ -39,7 +40,9 @@
           write_acl:  $('#container_write_acl').val()
         } , function(data){
           console.log(data);
-        });
+          $('#acls').html(data);
+        },
+        "html");
     }
   );
 

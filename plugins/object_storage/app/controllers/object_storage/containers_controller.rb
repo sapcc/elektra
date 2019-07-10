@@ -19,76 +19,9 @@ module ObjectStorage
       read_acl_string = params[:read_acl] || ""
       write_acl_string = params[:write_acl] || ""
 
-      # https://docs.openstack.org/swift/latest/overview_acl.html#container-acls
-      # parse read_acl
-      read_acl_data = {}
-      read_acls = read_acl_string.split(',')
-      read_acls.each do |read_acl|
-        case read_acl 
-        when ".rlistings"
-          read_acl_data[read_acl] = "Any user can perform a HEAD or GET operation on the container provided the user also has read access on objects."
-        when ".r:*"
-          read_acl_data[read_acl] = "Any user has access to objects. No token is required in the request."
-        else
-          # all other special cases
-          read_acl_parts = read_acl.split(':')
-          if read_acl_parts.length == 2
-            case read_acl_parts[0]
-            when ".r" 
-              # .r:<referrer>
-              read_acl_data[read_acl] = "The referrer #{read_acl_parts[1]} has granted access to objects. No token is required."
-            else
-              # *:*
-              if read_acl_parts[0] == '*' && read_acl_parts[1] == '*'
-                read_acl_data[read_acl] = "Any user has access. Note: The *:* element differs from the .r:* element because *:* requires that a valid token is included in the request whereas .r:* does not require a token. "
-              # <project-id>:<user-id>
-              elsif read_acl_parts[0] != '*' and read_acl_parts[1] != '*'
-                project = services.identity.find_project(read_acl_parts[0])
-                user = services.identity.find_user(read_acl_parts[1])
-                unless user.nil? || project.nil?
-                  domain = services.identity.find_domain(project.domain_id)
-                  read_acl_data[read_acl] = "The specified user #{user.description} (#{user.name}) with a token scoped to the project '#{project.name}' in domain '#{domain.name}' has granted access."
-                else
-                  if user.nil? && project.nil?
-                    read_acl_data[read_acl] = "ERROR: cannot found project with PROJECT_ID #{read_acl_parts[0]} and user with USER_ID #{read_acl_parts[1]}"
-                  elsif project.nil?
-                    read_acl_data[read_acl] = "ERROR: cannot found project with PROJECT_ID #{read_acl_parts[0]}"
-                  elsif user.nil?
-                    read_acl_data[read_acl] = "ERROR: cannot found user with USER_ID #{read_acl_parts[1]}"
-                  else
-                    read_acl_data[read_acl] = "ERROR: unkown parse error"
-                  end
-                end
-                  # <project-id>:*
-              elsif read_acl_parts[0] != '*' and read_acl_parts[1] == '*'
-                project = services.identity.find_project(read_acl_parts[0])
-                unless project.nil?
-                  domain = services.identity.find_domain(project.domain_id)
-                  read_acl_data[read_acl] = "Any user with a role in the project '#{project.name}' in domain '#{domain.name}' has access. A token scoped to the project must be included in the request."
-                else
-                  read_acl_data[read_acl] = "ERROR: cannot found project with PROJECT_ID #{read_acl_parts[0]}"
-                end
-                  # *:<user-id>
-              elsif read_acl_parts[0] == '*' and read_acl_parts[1] != '*'
-                user = services.identity.find_user(read_acl_parts[1])
-                unless user.nil?
-                  read_acl_data[read_acl] = "The specified user #{user.description} (#{user.name}) has access. A token for the user (scoped to any project) must be included in the request."
-                else
-                  read_acl_data[read_acl] = "ERROR: cannot found user with USER_ID #{read_acl_parts[1]}"
-                end
-              end
-            end
-          else 
-            # <role_name>
-            read_acl_data[read_acl] = "A user with the specified role name '#{read_acl}' has access on the container."
-          end          
-        end
-      end
+      @read_acls = parse_acl(read_acl_string)
+      @write_acls = parse_acl(write_acl_string)
 
-      render json: {
-        read_acl: read_acl_data,
-        write_acl: "foo"
-      }
     end
 
     def confirm_deletion
@@ -183,6 +116,80 @@ module ObjectStorage
     end
 
     private
+
+    def parse_acl acl_string = ""
+      # https://docs.openstack.org/swift/latest/overview_acl.html#container-acls
+      acl_data = {}
+
+      acls = acl_string.split(',')
+      acls.each do |acl|
+        case acl 
+        when ".rlistings"
+          acl_data[acl] = "Any user can perform a HEAD or GET operation on the container provided the user also has read access on objects."
+        when ".r:*"
+          acl_data[acl] = "Any user has access to objects. No token is required in the request."
+        else
+          # all other special cases
+          acl_parts = acl.split(':')
+          if acl_parts.length == 2
+            case acl_parts[0]
+            when ".r" 
+              # .r:<referrer>
+              acl_data[acl] = "The referrer #{acl_parts[1]} has granted access to objects. No token is required."
+            else
+              # *:*
+              if acl_parts[0] == '*' && acl_parts[1] == '*'
+                acl_data[acl] = "Any user has access. Note: The *:* element differs from the .r:* element because *:* requires that a valid token is included in the request whereas .r:* does not require a token. "
+              # <project-id>:<user-id>
+              elsif acl_parts[0] != '*' and acl_parts[1] != '*'
+                project = services.identity.find_project(acl_parts[0])
+                user = services.identity.find_user(acl_parts[1])
+                unless user.nil? || project.nil?
+                  domain = services.identity.find_domain(project.domain_id)
+                  acl_data[acl] = "The specified user #{user.description} (#{user.name}) with a token scoped to the project '#{project.name}' in domain '#{domain.name}' has granted access."
+                else
+                  if user.nil? && project.nil?
+                    acl_data[acl] = "ERROR: cannot found project with PROJECT_ID #{acl_parts[0]} and user with USER_ID #{acl_parts[1]}"
+                  elsif project.nil?
+                    acl_data[acl] = "ERROR: cannot found project with PROJECT_ID #{acl_parts[0]}"
+                  elsif user.nil?
+                    acl_data[acl] = "ERROR: cannot found user with USER_ID #{acl_parts[1]}"
+                  else
+                    acl_data[acl] = "ERROR: unkown parse error"
+                  end
+                end
+                  # <project-id>:*
+              elsif acl_parts[0] != '*' and acl_parts[1] == '*'
+                project = services.identity.find_project(acl_parts[0])
+                unless project.nil?
+                  domain = services.identity.find_domain(project.domain_id)
+                  acl_data[acl] = "Any user with a role in the project '#{project.name}' in domain '#{domain.name}' has access. A token scoped to the project must be included in the request."
+                else
+                  acl_data[acl] = "ERROR: cannot found project with PROJECT_ID #{acl_parts[0]}"
+                end
+                  # *:<user-id>
+              elsif acl_parts[0] == '*' and acl_parts[1] != '*'
+                user = services.identity.find_user(acl_parts[1])
+                unless user.nil?
+                  acl_data[acl] = "The specified user #{user.description} (#{user.name}) has access. A token for the user (scoped to any project) must be included in the request."
+                else
+                  acl_data[acl] = "ERROR: cannot found user with USER_ID #{acl_parts[1]}"
+                end
+              end
+            end
+          else
+            unless acl.include? ":" or acl.include? "*"
+              # <role_name>
+              acl_data[acl] = "A user with the specified role name '#{acl}' has access on the container."
+            else
+              acl_data[acl] = "ERROR: cannot parse acl"
+            end
+          end          
+        end
+      end
+
+      return acl_data
+    end
 
     def load_container
       # to prevent problems with weird container names like "echo 1; rm -rf *)"

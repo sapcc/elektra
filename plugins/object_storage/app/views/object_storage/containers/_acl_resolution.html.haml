@@ -1,0 +1,27 @@
+%h5 Read ACLs
+.panel.panel-success
+  .panel-body
+    -if @read_acls.keys.length > 0
+      - @read_acls.each do |acl_name, acl_translation|
+        %dl{style: "margin-bottom:5px"}
+          %dt= acl_name
+          - unless  acl_translation.include? "ERROR"
+            %dd= acl_translation
+          - else
+            %dd.text-danger= acl_translation
+    - else
+      No Read ACLs found
+
+%h5 Write ACLs
+.panel.panel-danger
+  .panel-body
+    -if @write_acls.keys.length > 0
+      - @write_acls.each do |acl_name, acl_translation|
+        %dl{style: "margin-bottom:5px"}
+          %dt= acl_name
+          - unless  acl_translation.include? "ERROR"
+            %dd= acl_translation
+          - else
+            %dd.text-danger= acl_translation
+    - else
+      No Write ACLs found
