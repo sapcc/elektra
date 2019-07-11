@@ -18,10 +18,20 @@ const requestShareUtilizationFailure = (state, action) => ({
   utilization: { data: null, wasRequested: true, isFetching: false },
 });
 
-const receiveShareUtilization = (state, {data}) => ({
-  ...state,
-  utilization: { data, wasRequested: true, isFetching: false },
-});
+const receiveShareUtilization = (state, { data: prometheusResponse }) => {
+  const data = {};
+  for (const entry of prometheusResponse.result) {
+    const { metric, share_id } = entry.metric;
+    const value = parseFloat(entry.value[1]);
+    data[share_id] = data[share_id] || {};
+    data[share_id][metric] = value;
+  }
+
+  return {
+    ...state,
+    utilization: { data, wasRequested: true, isFetching: false },
+  };
+};
 
 export const maia = (state, action) => {
   if (state == null) {

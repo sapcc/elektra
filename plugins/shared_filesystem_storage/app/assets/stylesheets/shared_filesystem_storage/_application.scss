@@ -37,3 +37,26 @@
 tr.castellum-error-message td {
   border-top: 0;
 }
+
+//rules for ShareItem
+td.has-share-utilization {
+  white-space: nowrap;
+
+  & > div.progress {
+    display: inline-block;
+    width: 100px;
+    margin: 0;
+    margin-right: 10px;
+    vertical-align: middle;
+
+    & > div.progress-bar {
+      min-width: 3px;
+
+      &.progress-bar-empty {
+        width: 100%;
+        background: none;
+        color: black;
+      }
+    }
+  }
+}

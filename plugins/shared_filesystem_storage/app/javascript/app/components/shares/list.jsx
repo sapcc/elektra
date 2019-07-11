@@ -137,7 +137,8 @@ export default class List extends React.Component {
   }
 
   renderTable() {
-    let items = this.filterShares()
+    let items = this.filterShares();
+    const utilization = this.props.shareUtilization;
 
     return (
       <div>
@@ -171,7 +172,9 @@ export default class List extends React.Component {
                           handleForceDelete={this.props.handleForceDelete}
                           reloadShare={this.props.reloadShare}
                           loadShareRulesOnce={this.props.loadShareRulesOnce}
-                          policy={this.props.policy}/>
+                          policy={this.props.policy}
+                          utilization={{...utilization, data: utilization.data[share.id]}}
+                        />
                       </TableRowFadeTransition>
                   )
                 ) : (
