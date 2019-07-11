@@ -8,6 +8,9 @@
 - when ".r:<referer>"
   %span{title: "The referer #{acl_translation[:referer]} has granted access to objects. No token is required."}
     = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when ".r:-<referer>"
+  %span{title: "The referer #{acl_translation[:referer]} has no access to objects. However, it does not deny access if another element (e.g., .r:*) grants access."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
 - when ".*:*"
   %span{title: "Any user has access. Note: The *:* element differs from the .r:* element because *:* requires that a valid token is included in the request whereas .r:* does not require a token."}
     = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }

@@ -130,15 +130,15 @@ module ObjectStorage
             type: ".rlistings",
             operation: "listing access",
             user: "ANY", 
-            project: nil, 
+            project: "ANY", 
             token: false,
           }
         when ".r:*"
           acl_data[acl] = { 
             type: ".r:*", 
-            operation: "access",
+            operation: "access for any referer",
             user: "ANY",
-            project: nil,
+            project: "ANY",
             token: false,
           } 
         else
@@ -147,12 +147,19 @@ module ObjectStorage
           if acl_parts.length == 2
             case acl_parts[0]
             when ".r" 
-              # .r:<referer>
+              type = ".r:<referer>"
+              operation = "access for referer #{acl_parts[1]}"
+              if acl_parts[1].start_with? "-"
+                acl_parts[1].slice!(0)
+                type = ".r:-<referer>"
+                operation = "access for referer dinied #{acl_parts[1]}"
+              end
+
               acl_data[acl] = { 
-                type: ".r:<referer>", 
-                operation: "access for referer #{acl_parts[1]}",
-                user: nil,
-                project: nil,
+                type: type, 
+                operation: operation,
+                user: "ANY",
+                project: "ANY",
                 referer: acl_parts[1],
                 token: false,
               } 
@@ -163,7 +170,7 @@ module ObjectStorage
                   type: ".*:*", 
                   operation: "access",
                   user: "ANY",
-                  project: nil,
+                  project: "ANY",
                   token: true,
                 } 
               # <project-id>:<user-id>
@@ -215,7 +222,7 @@ module ObjectStorage
                     type: "*:<user-id>", 
                     operation: "access",
                     user: "#{user_domain.name}/#{user.description} - #{user.name}",
-                    project: nil,
+                    project: "ANY",
                     token: true,
                   }
                 else

@@ -2,11 +2,11 @@
   %strong
     =acl_translation[:operation] 
   - if acl_translation[:project]
-    to domain/project:
+    from domain/project:
     %strong
       =acl_translation[:project]
   - if acl_translation[:user]
-    for domain/user:
+    and domain/user:
     %strong
       =acl_translation[:user]
 -else
