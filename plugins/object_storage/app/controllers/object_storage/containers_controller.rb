@@ -124,38 +124,71 @@ module ObjectStorage
       acls = acl_string.split(',')
       acls.each do |acl|
         case acl 
+        # standard reading cases
         when ".rlistings"
-          acl_data[acl] = "Any user can perform a HEAD or GET operation on the container provided the user also has read access on objects."
+          acl_data[acl] = { 
+            type: ".rlistings",
+            operation: "listing access",
+            user: "ANY", 
+            project: nil, 
+            token: false,
+          }
         when ".r:*"
-          acl_data[acl] = "Any user has access to objects. No token is required in the request."
+          acl_data[acl] = { 
+            type: ".r:*", 
+            operation: "access",
+            user: "ANY",
+            project: nil,
+            token: false,
+          } 
         else
           # all other special cases
-          acl_parts = acl.split(':')
+          acl_parts = acl.split(':',2) # use split limit 2, this is needed because of "http://" in referer
           if acl_parts.length == 2
             case acl_parts[0]
             when ".r" 
-              # .r:<referrer>
-              acl_data[acl] = "The referrer #{acl_parts[1]} has granted access to objects. No token is required."
+              # .r:<referer>
+              acl_data[acl] = { 
+                type: ".r:<referer>", 
+                operation: "access for referer #{acl_parts[1]}",
+                user: nil,
+                project: nil,
+                referer: acl_parts[1],
+                token: false,
+              } 
             else
               # *:*
               if acl_parts[0] == '*' && acl_parts[1] == '*'
-                acl_data[acl] = "Any user has access. Note: The *:* element differs from the .r:* element because *:* requires that a valid token is included in the request whereas .r:* does not require a token. "
+                acl_data[acl] = { 
+                  type: ".*:*", 
+                  operation: "access",
+                  user: "ANY",
+                  project: nil,
+                  token: true,
+                } 
               # <project-id>:<user-id>
               elsif acl_parts[0] != '*' and acl_parts[1] != '*'
                 project = services.identity.find_project(acl_parts[0])
                 user = services.identity.find_user(acl_parts[1])
                 unless user.nil? || project.nil?
+                  user_domain =  services.identity.find_domain(user.domain_id)
                   domain = services.identity.find_domain(project.domain_id)
-                  acl_data[acl] = "The specified user #{user.description} (#{user.name}) with a token scoped to the project '#{project.name}' in domain '#{domain.name}' has granted access."
+                  acl_data[acl] = { 
+                    type: "<project-id>:<user-id>", 
+                    operation: "access",
+                    user: "#{user_domain.name}/#{user.description} - #{user.name}",
+                    project: "#{domain.name}/#{project.name}",
+                    token: true,
+                  } 
                 else
                   if user.nil? && project.nil?
-                    acl_data[acl] = "ERROR: cannot found project with PROJECT_ID #{acl_parts[0]} and user with USER_ID #{acl_parts[1]}"
+                    acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]} and user with USER_ID #{acl_parts[1]}" }
                   elsif project.nil?
-                    acl_data[acl] = "ERROR: cannot found project with PROJECT_ID #{acl_parts[0]}"
+                    acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]}"}
                   elsif user.nil?
-                    acl_data[acl] = "ERROR: cannot found user with USER_ID #{acl_parts[1]}"
+                    acl_data[acl] = { error: "cannot found user with USER_ID #{acl_parts[1]}"}
                   else
-                    acl_data[acl] = "ERROR: unkown parse error"
+                    acl_data[acl] = { error: "unkown parse error"}
                   end
                 end
                   # <project-id>:*
@@ -163,17 +196,30 @@ module ObjectStorage
                 project = services.identity.find_project(acl_parts[0])
                 unless project.nil?
                   domain = services.identity.find_domain(project.domain_id)
-                  acl_data[acl] = "Any user with a role in the project '#{project.name}' in domain '#{domain.name}' has access. A token scoped to the project must be included in the request."
+                  acl_data[acl] = { 
+                    type: "<project-id>:*", 
+                    operation: "access",
+                    user: "ANY",
+                    project: "#{domain.name}/#{project.name}",
+                    token: true,
+                  }
                 else
-                  acl_data[acl] = "ERROR: cannot found project with PROJECT_ID #{acl_parts[0]}"
+                  acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]}" }
                 end
                   # *:<user-id>
               elsif acl_parts[0] == '*' and acl_parts[1] != '*'
                 user = services.identity.find_user(acl_parts[1])
                 unless user.nil?
-                  acl_data[acl] = "The specified user #{user.description} (#{user.name}) has access. A token for the user (scoped to any project) must be included in the request."
+                  user_domain =  services.identity.find_domain(user.domain_id)
+                  acl_data[acl] = { 
+                    type: "*:<user-id>", 
+                    operation: "access",
+                    user: "#{user_domain.name}/#{user.description} - #{user.name}",
+                    project: nil,
+                    token: true,
+                  }
                 else
-                  acl_data[acl] = "ERROR: cannot found user with USER_ID #{acl_parts[1]}"
+                  acl_data[acl] = { error: "cannot found user with USER_ID #{acl_parts[1]}" }
                 end
               end
             end
@@ -182,12 +228,13 @@ module ObjectStorage
               # <role_name>
               acl_data[acl] = "A user with the specified role name '#{acl}' has access on the container."
             else
-              acl_data[acl] = "ERROR: cannot parse acl"
+              acl_data[acl] ={ error: "cannot parse acl" }
             end
           end          
         end
       end
 
+      pp acl_data
       return acl_data
     end
 

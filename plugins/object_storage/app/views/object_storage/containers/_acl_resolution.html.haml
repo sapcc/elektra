@@ -3,12 +3,19 @@
   .panel-body
     -if @read_acls.keys.length > 0
       - @read_acls.each do |acl_name, acl_translation|
-        %dl{style: "margin-bottom:5px"}
-          %dt= acl_name
-          - unless  acl_translation.include? "ERROR"
-            %dd= acl_translation
-          - else
-            %dd.text-danger= acl_translation
+
+        .row
+          .col-md-6.text-truncate
+            - unless acl_translation.is_a? Hash
+              - unless  acl_translation.include? "ERROR"
+                %dd= acl_translation
+              - else
+                %dd.text-danger= acl_translation
+            - else
+              = render partial: 'acl_translation', locals: { acl_translation: acl_translation } 
+          .col-md-6{style: "word-wrap: break-word;"}
+            =acl_name
+        %hr{style:"margin-top:5px; margin-bottom:5px;"}
     - else
       No Read ACLs found
 
