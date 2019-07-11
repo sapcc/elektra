@@ -131,7 +131,7 @@ module ObjectStorage
             operation: "listing access",
             user: "ANY", 
             project: "ANY", 
-            token: false,
+            token: "no token is required",
           }
         when ".r:*"
           acl_data[acl] = { 
@@ -139,7 +139,7 @@ module ObjectStorage
             operation: "access for any referer",
             user: "ANY",
             project: "ANY",
-            token: false,
+            token: "no token is require",
           } 
         else
           # all other special cases
@@ -161,7 +161,7 @@ module ObjectStorage
                 user: "ANY",
                 project: "ANY",
                 referer: acl_parts[1],
-                token: false,
+                token: "no token is require",
               } 
             else
               # *:*
@@ -171,7 +171,7 @@ module ObjectStorage
                   operation: "access",
                   user: "ANY",
                   project: "ANY",
-                  token: true,
+                  token: "a user token is required",
                 } 
               # <project-id>:<user-id>
               elsif acl_parts[0] != '*' and acl_parts[1] != '*'
@@ -185,7 +185,7 @@ module ObjectStorage
                     operation: "access",
                     user: "#{user_domain.name}/#{user.description} - #{user.name}",
                     project: "#{domain.name}/#{project.name}",
-                    token: true,
+                    token: "a user token, scoped to the project, is required",
                   } 
                 else
                   if user.nil? && project.nil?
@@ -208,7 +208,7 @@ module ObjectStorage
                     operation: "access",
                     user: "ANY",
                     project: "#{domain.name}/#{project.name}",
-                    token: true,
+                    token: "a token, scoped to the project, is required",
                   }
                 else
                   acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]}" }
@@ -223,7 +223,7 @@ module ObjectStorage
                     operation: "access",
                     user: "#{user_domain.name}/#{user.description} - #{user.name}",
                     project: "ANY",
-                    token: true,
+                    token: "a user token, scoped to any project, is required",
                   }
                 else
                   acl_data[acl] = { error: "cannot found user with USER_ID #{acl_parts[1]}" }
@@ -238,7 +238,7 @@ module ObjectStorage
                 operation: "access",
                 user: "with role #{acl}",
                 project: "#{@scoped_domain_name}/#{@scoped_project_name}",
-                token: true,
+                token: "a user token, scoped to the project, is required",
               }
             else
               acl_data[acl] ={ error: "cannot parse acl" }
