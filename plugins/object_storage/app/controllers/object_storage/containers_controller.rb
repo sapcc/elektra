@@ -233,7 +233,13 @@ module ObjectStorage
           else
             unless acl.include? ":" or acl.include? "*"
               # <role_name>
-              acl_data[acl] = "A user with the specified role name '#{acl}' has access on the container."
+              acl_data[acl] = { 
+                type: "<role_name>", 
+                operation: "access",
+                user: "with role #{acl}",
+                project: "#{@scoped_domain_name}/#{@scoped_project_name}",
+                token: true,
+              }
             else
               acl_data[acl] ={ error: "cannot parse acl" }
             end

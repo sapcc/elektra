@@ -23,6 +23,9 @@
 - when "*:<user-id>"
   %span{title: "The specified domain/user: #{acl_translation[:user]} has access. A token for the user (scoped to any project) must be included in the request."}
     = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when "<role_name>"
+  %span{title: "A user #{acl_translation[:user]} has access on the container. A user token scoped to the project #{@scoped_domain_name}/#{@scoped_project_name} must be included in the request."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
 - else
   - if acl_translation[:error]
     %strong
