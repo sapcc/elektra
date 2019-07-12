@@ -196,6 +196,7 @@ module ObjectStorage
                   else
                     acl_data[acl] = { error: "unkown parse error"}
                   end
+                  acl_data[:error_happened] = true
                   @acl_parse_error = true
                 end
                   # <project-id>:*
@@ -212,6 +213,7 @@ module ObjectStorage
                   }
                 else
                   acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]}" }
+                  acl_data[:error_happened] = true
                   @acl_parse_error = true
                 end
                   # *:<user-id>
@@ -228,6 +230,7 @@ module ObjectStorage
                   }
                 else
                   acl_data[acl] = { error: "cannot found user with USER_ID #{acl_parts[1]}" }
+                  acl_data[:error_happened] = true
                   @acl_parse_error = true
                 end
               end
@@ -243,7 +246,8 @@ module ObjectStorage
                 token: "a user token, scoped to the project, is required",
               }
             else
-              acl_data[acl] ={ error: "cannot parse acl" }
+              acl_data[acl] = { error: "cannot parse acl" }
+              acl_data[:error_happened] = true
               @acl_parse_error = true
             end
           end          
