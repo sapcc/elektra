@@ -21,7 +21,6 @@ module ObjectStorage
 
       @read_acls = parse_acl(read_acl_string)
       @write_acls = parse_acl(write_acl_string)
-
     end
 
     def confirm_deletion
@@ -119,8 +118,8 @@ module ObjectStorage
 
     def parse_acl acl_string = ""
       # https://docs.openstack.org/swift/latest/overview_acl.html#container-acls
+      @acl_parse_error = false
       acl_data = {}
-
       acls = acl_string.split(',')
       acls.each do |acl|
         case acl 
@@ -197,6 +196,7 @@ module ObjectStorage
                   else
                     acl_data[acl] = { error: "unkown parse error"}
                   end
+                  @acl_parse_error = true
                 end
                   # <project-id>:*
               elsif acl_parts[0] != '*' and acl_parts[1] == '*'
@@ -212,6 +212,7 @@ module ObjectStorage
                   }
                 else
                   acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]}" }
+                  @acl_parse_error = true
                 end
                   # *:<user-id>
               elsif acl_parts[0] == '*' and acl_parts[1] != '*'
@@ -227,6 +228,7 @@ module ObjectStorage
                   }
                 else
                   acl_data[acl] = { error: "cannot found user with USER_ID #{acl_parts[1]}" }
+                  @acl_parse_error = true
                 end
               end
             end
@@ -242,12 +244,12 @@ module ObjectStorage
               }
             else
               acl_data[acl] ={ error: "cannot parse acl" }
+              @acl_parse_error = true
             end
           end          
         end
       end
 
-      pp acl_data
       return acl_data
     end
 
