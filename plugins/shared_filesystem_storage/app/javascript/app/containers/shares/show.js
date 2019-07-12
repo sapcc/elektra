@@ -12,7 +12,7 @@ export default connect(
       if (shares) share = shares.find(item => item.id==match.params.id)
     }
 
-    return { share, shareTypes: state.shareTypes }
+    return { share, allUtilization: state.maia.utilization, shareTypes: state.shareTypes }
   },
   dispatch => ({
     loadExportLocationsOnce: (shareId) => dispatch(fetchShareExportLocationsIfNeeded(shareId)),

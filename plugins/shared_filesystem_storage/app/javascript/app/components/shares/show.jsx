@@ -1,5 +1,6 @@
 import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import ShareUtilization from './utilization';
 
 const Row = ({label,value,children}) => {
   return (
@@ -36,9 +37,9 @@ export default class ShowShareModal extends React.Component{
     }
   }
 
-  overview(share) {
+  overview(share, utilization) {
     return (
-      <table className='table no-borders'>
+      <table className='share-details table no-borders'>
         <tbody>
           <Row label='Name' value={share.name}/>
           <Row label='Description' value={share.description}/>
@@ -53,6 +54,12 @@ export default class ShowShareModal extends React.Component{
           </Row>
           <Row label='Availability zone' value={share.availability_zone}/>
           <Row label='Size' value={share.size+' GiB'}/>
+          {utilization && <Row label='Usage'>
+            <ShareUtilization
+              utilization={utilization}
+              shareID={share.id} compact={false}
+            />
+          </Row>}
           <Row label='Snapshot ID' value={share.snapshot_id}/>
           <Row label='Protocol' value={share.share_proto}/>
           <Row label='Share Type' value={share.share_type_name + ' ('+share.share_type+')'}/>
@@ -81,10 +88,15 @@ export default class ShowShareModal extends React.Component{
   }
 
   render(){
-    let { share, onHide } = this.props
+    let { share, allUtilization, onHide } = this.props
+    const utilization = {
+      ...allUtilization,
+      data: share && allUtilization.data ? allUtilization.data[share.id] : null,
+    };
 
+    //NOTE: className on Modal ensures that CSS rules for this plugin get applied
     return (
-      <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal className='shared_filesystem_storage' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Share {share ? share.name : ''}</Modal.Title>
         </Modal.Header>
@@ -92,11 +104,11 @@ export default class ShowShareModal extends React.Component{
           { share &&
             ( share.metadata && Object.keys(share.metadata).length>0 ? (
               <Tabs defaultActiveKey={1} id="share">
-                <Tab eventKey={1} title="Overview">{this.overview(share)}</Tab>
+                <Tab eventKey={1} title="Overview">{this.overview(share,utilization)}</Tab>
                 <Tab eventKey={2} title="Metadata">{this.metadata(share)}</Tab>
               </Tabs>
             ) : (
-              this.overview(share)
+              this.overview(share, utilization)
             ))
           }
         </Modal.Body>
