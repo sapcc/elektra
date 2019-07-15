@@ -4,6 +4,11 @@
 - pl = plugin('object_storage')
 
 = simple_modal_form_for @container, submit_action: 'Update Access', url: pl.update_access_control_container_path(URI.encode_www_form_component(@container_name)), method: :post, cancel_url: pl.containers_path do |f|
+  - if @container.errors.present?
+    .row
+      .col-md-12
+        .alert.alert-error
+          = render_errors(@container.errors)
   .row
     .col-md-6
       .loading-place.loading-right
@@ -52,16 +57,33 @@
   #acls
 
 :javascript
-  $('#check_acls').click(
-    function() {
-      $.get("#{plugin('object_storage').check_acls_container_path()}", 
-        { 
-          read_acl: $('#container_read_acl').val(),
-          write_acl:  $('#container_write_acl').val()
-        } , function(data){
-          $('#acls').html(data);
-        },
-        "html");
+  // handle auto \n for better reading on load
+  $(document).ready(
+    function(){
+      read_acl_with_newline = $('textarea#container_read_acl').val().replace(/,/g,',\n');
+      $('textarea#container_read_acl').val(read_acl_with_newline);
+      write_acl_with_newline = $('textarea#container_write_acl').val().replace(/,/g,',\n');
+      $('textarea#container_write_acl').val(write_acl_with_newline);
+
+      $('textarea').on("propertychange input", function(){
+        current_value = $(this).val();
+        if (current_value.slice(-1) == ',') {
+          $(this).val(current_value + '\n')
+        }
+      });
+
+      $('#check_acls').click(
+        function() {
+          $.get("#{plugin('object_storage').check_acls_container_path()}", 
+            { 
+              read_acl: $('#container_read_acl').val(),
+              write_acl:  $('#container_write_acl').val()
+            } , function(data){
+              $('#acls').html(data);
+            },
+            "html");
+        }
+      );
     }
   );
 
@@ -72,7 +94,7 @@
         var input = $('#container_read_acl');
         if ($(this).is(":checked")) {
           input.data('org', input.val());
-          input.val('.r:*,.rlistings');
+          input.val('.r:*,\n.rlistings');
           input.prop('readonly', true);
        }
          else {

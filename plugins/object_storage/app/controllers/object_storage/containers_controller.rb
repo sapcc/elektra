@@ -18,7 +18,7 @@ module ObjectStorage
     def check_acls
       read_acl_string = params[:read_acl] || ""
       write_acl_string = params[:write_acl] || ""
-
+      
       @read_acls = parse_acl(read_acl_string)
       @write_acls = parse_acl(write_acl_string)
     end
@@ -38,6 +38,8 @@ module ObjectStorage
 
     def update_access_control
       attrs = params.require(:container).permit(:read_acl, :write_acl)
+      attrs["read_acl"].delete!("\r\n")
+      attrs["write_acl"].delete!("\r\n")
       unless @container.update_attributes(attrs)
         render action: 'show_access_control'
         return
@@ -117,6 +119,8 @@ module ObjectStorage
     private
 
     def parse_acl acl_string = ""
+      # remove all \n
+      acl_string.delete!("\n")
       # https://docs.openstack.org/swift/latest/overview_acl.html#container-acls
       @acl_parse_error = false
       acl_data = {}
