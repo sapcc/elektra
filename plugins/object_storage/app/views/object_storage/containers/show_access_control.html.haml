@@ -6,6 +6,7 @@
 = simple_modal_form_for @container, submit_action: 'Update Access', url: pl.update_access_control_container_path(URI.encode_www_form_component(@container_name)), method: :post, cancel_url: pl.containers_path do |f|
   .row
     .col-md-6
+      .loading-place.loading-right
       - if has_capability?('staticweb')
         = f.input :read_acl, as: :string, label: "Read ACLs", readonly: @container.public_read_access?
         %p

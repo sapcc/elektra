@@ -21,6 +21,16 @@
 
 */
 
+.loading-place {
+  display: inline-block !important;
+  width:7px !important;
+}
+
+.loading-right {
+  margin-right:10px;
+  float:right;
+}
+
 #custom-metadata {
   .input-group {
     margin-bottom: 0.5rem;
