@@ -8,12 +8,22 @@
     .col-md-6
       .loading-place.loading-right
       - if has_capability?('staticweb')
-        = f.input :read_acl, as: :string, label: "Read ACLs", readonly: @container.public_read_access?
+        = f.input :read_acl, 
+            as: :text, 
+            label: "Read ACLs", 
+            input_html: {:rows => 4},
+            readonly: @container.public_read_access?
         %p
           = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
       - else
-        = f.input :read_acl, as: :string, label: 'Read ACLs'
-      = f.input :write_acl, as: :string, label: "Write ACLs"
+        = f.input :read_acl, 
+          as: :text, 
+          label: 'Read ACLs',
+          input_html: {:rows => 4}
+      = f.input :write_acl, 
+          as: :text,
+          label: "Write ACLs",
+          input_html: {:rows => 4}
       = link_to 'Check ACLs' , '#', class: 'btn btn-default pull-right', id: 'check_acls'
     .col-md-6
       .bs-callout.bs-callout-info
@@ -21,10 +31,19 @@
           Entries in ACLs are comma-separated. Examples:
         %dl
           %dt
+            %code .r:*
+          %dd  Any user has access to objects. No token is required in the request.
+          %dt
+            %code .rlistings
+          %dd Any user can perform a HEAD or GET operation on the container provided the user also has read access on objects.  No token is required.
+          %dt
             %code PROJECT_ID:USER_ID
           %dd Grant access to a user from a different project.
           %dt
             %code PROJECT_ID:*
+          %dd The specified user has access. A token for the user (scoped to any project) must be included in the request.
+          %dt
+            %code *:USER_ID
           %dd Grant access to all users from that project.
         %p
           For more details, have a look at the
