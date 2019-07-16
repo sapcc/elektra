@@ -6,6 +6,10 @@ module Identity
     validates :name, presence: { message: 'Name should not be empty' }
     validates :description, presence: { message: 'Please enter a description' }
 
+    # limit from billing api and keystone
+    validates :description,
+      length: { maximum: 255, too_long: "255 characters is the maximum allowed" }
+
     attr_accessor :inquiry_id # to close inquiry after creation
 
     def after_save

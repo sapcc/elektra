@@ -25,6 +25,10 @@ module MasterdataCockpit
     validates :additional_information,
       length: { maximum: 5000, too_long: "5000 characters is the maximum allowed" }
 
+    # limit from billing api
+    validates :description,
+      length: { maximum: 255, too_long: "255 characters is the maximum allowed" }
+
     validates :responsible_controller_email,
       format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "please use a valid email address" },
       allow_nil: true,
