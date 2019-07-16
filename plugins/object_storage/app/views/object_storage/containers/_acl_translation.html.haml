@@ -29,12 +29,15 @@
 - else
   - if acl_translation[:error]
     %strong
-      error:
+      Error:
     %span.text-danger
       = acl_translation[:error]
   - else
     Not supported
 
-%p{style:"margin: 0 0 0 0; "}
-  %small
-    =acl_translation[:token]
+- unless acl_translation[:error]
+  %p{style:"margin: 0 0 0 0; "}
+    %small
+      valid token required:
+      =acl_translation[:token]
+

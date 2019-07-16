@@ -131,18 +131,18 @@ module ObjectStorage
         when ".rlistings"
           acl_data[acl] = { 
             type: ".rlistings",
-            operation: "listing access",
-            user: "ANY", 
+            operation: "access",
+            user: "Listing", 
             project: "ANY", 
-            token: "no token is required",
+            token: false,
           }
         when ".r:*"
           acl_data[acl] = { 
             type: ".r:*", 
-            operation: "access for any referer",
+            operation: "referer",
             user: "ANY",
             project: "ANY",
-            token: "no token is require",
+            token: false,
           } 
         else
           # all other special cases
@@ -151,30 +151,32 @@ module ObjectStorage
             case acl_parts[0]
             when ".r" 
               type = ".r:<referer>"
-              operation = "access for referer #{acl_parts[1]}"
+              user = acl_parts[1]
+              operation = "referer"
               if acl_parts[1].start_with? "-"
                 acl_parts[1].slice!(0)
                 type = ".r:-<referer>"
-                operation = "access for referer dinied #{acl_parts[1]}"
+                user = acl_parts[1]
+                operation = "referer denied"
               end
 
               acl_data[acl] = { 
                 type: type, 
                 operation: operation,
-                user: "ANY",
+                user: user,
                 project: "ANY",
                 referer: acl_parts[1],
-                token: "no token is require",
+                token: false,
               } 
             else
               # *:*
               if acl_parts[0] == '*' && acl_parts[1] == '*'
                 acl_data[acl] = { 
                   type: ".*:*", 
-                  operation: "access",
-                  user: "ANY",
+                  operation: nil,
+                  user: "ANY user",
                   project: "ANY",
-                  token: "a user token is required",
+                  token: true,
                 } 
               # <project-id>:<user-id>
               elsif acl_parts[0] != '*' and acl_parts[1] != '*'
@@ -185,18 +187,18 @@ module ObjectStorage
                   domain = services.identity.find_domain(project.domain_id)
                   acl_data[acl] = { 
                     type: "<project-id>:<user-id>", 
-                    operation: "access",
-                    user: "#{user_domain.name}/#{user.description} - #{user.name}",
-                    project: "#{domain.name}/#{project.name}",
-                    token: "a user token, scoped to the project, is required",
+                    operation: nil,
+                    user: "#{user.description} (#{user_domain.name})",
+                    project: "#{project.name} (#{domain.name})",
+                    token: true,
                   } 
                 else
                   if user.nil? && project.nil?
-                    acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]} and user with USER_ID #{acl_parts[1]}" }
+                    acl_data[acl] = { error: "cannot find project with PROJECT_ID #{acl_parts[0]} and user with USER_ID #{acl_parts[1]}" }
                   elsif project.nil?
-                    acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]}"}
+                    acl_data[acl] = { error: "cannot find project with PROJECT_ID #{acl_parts[0]}"}
                   elsif user.nil?
-                    acl_data[acl] = { error: "cannot found user with USER_ID #{acl_parts[1]}"}
+                    acl_data[acl] = { error: "cannot find user with USER_ID #{acl_parts[1]}"}
                   else
                     acl_data[acl] = { error: "unkown parse error"}
                   end
@@ -210,10 +212,10 @@ module ObjectStorage
                   domain = services.identity.find_domain(project.domain_id)
                   acl_data[acl] = { 
                     type: "<project-id>:*", 
-                    operation: "access",
-                    user: "ANY",
-                    project: "#{domain.name}/#{project.name}",
-                    token: "a token, scoped to the project, is required",
+                    operation: nil,
+                    user: "ANY user",
+                    project: "#{project.name} (#{domain.name})",
+                    token: true,
                   }
                 else
                   acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]}" }
@@ -227,10 +229,10 @@ module ObjectStorage
                   user_domain =  services.identity.find_domain(user.domain_id)
                   acl_data[acl] = { 
                     type: "*:<user-id>", 
-                    operation: "access",
-                    user: "#{user_domain.name}/#{user.description} - #{user.name}",
+                    operation: nil,
+                    user: "#{user.description} (#{user_domain.name})",
                     project: "ANY",
-                    token: "a user token, scoped to any project, is required",
+                    token: true,
                   }
                 else
                   acl_data[acl] = { error: "cannot found user with USER_ID #{acl_parts[1]}" }
@@ -244,10 +246,10 @@ module ObjectStorage
               # <role_name>
               acl_data[acl] = { 
                 type: "<role_name>", 
-                operation: "access",
-                user: "with role #{acl}",
-                project: "#{@scoped_domain_name}/#{@scoped_project_name}",
-                token: "a user token, scoped to the project, is required",
+                operation: nil,
+                user: "ANY user with role #{acl}",
+                project: "#{@scoped_project_name} (#{@scoped_domain_name})",
+                token: true,
               }
             else
               acl_data[acl] = { error: "cannot parse acl" }
