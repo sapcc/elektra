@@ -1,0 +1,43 @@
+- case acl_translation[:type]
+- when ".rlistings"
+  %span{title: "Any user can perform a HEAD or GET operation on the container provided the user also has read access on objects."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when ".r:*"
+  %span{title: "Any user has access to objects. No token is required in the request."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when ".r:<referer>"
+  %span{title: "The referer #{acl_translation[:referer]} has granted access to objects. No token is required."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when ".r:-<referer>"
+  %span{title: "The referer #{acl_translation[:referer]} has no access to objects. However, it does not deny access if another element (e.g., .r:*) grants access."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when ".*:*"
+  %span{title: "Any user has access. Note: The *:* element differs from the .r:* element because *:* requires that a valid token is included in the request whereas .r:* does not require a token."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when "<project-id>:<user-id>"
+  %span{title: "The specified domain/user: #{acl_translation[:user]} with a token scoped to the domain/project: #{acl_translation[:project]} has granted access."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when "<project-id>:*"
+  %span{title: "Any user with a role in the domain/project: #{acl_translation[:project]} has access. A token scoped to the project must be included in the request."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when "*:<user-id>"
+  %span{title: "The specified domain/user: #{acl_translation[:user]} has access. A token for the user (scoped to any project) must be included in the request."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- when "<role_name>"
+  %span{title: "A user #{acl_translation[:user]} has access on the container. A user token scoped to the project #{@scoped_domain_name}/#{@scoped_project_name} must be included in the request."}
+    = render partial: 'acl_format_translation', locals: { acl_translation: acl_translation }
+- else
+  - if acl_translation[:error]
+    %strong
+      Error:
+    %span.text-danger
+      = acl_translation[:error]
+  - else
+    Not supported
+
+- unless acl_translation[:error]
+  %p{style:"margin: 0 0 0 0; "}
+    %small
+      valid token required:
+      =acl_translation[:token]
+

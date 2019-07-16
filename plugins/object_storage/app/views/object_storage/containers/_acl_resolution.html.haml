@@ -1,0 +1,31 @@
+%h5 Read ACLs
+- read_acl_parse_error = @read_acls.key?(:error_happened)
+%div{ class: "#{read_acl_parse_error ? 'panel panel-danger' : 'panel panel-success'  }" }
+  %div{class: "panel-body"}
+    -if @read_acls.keys.length > 0
+      - @read_acls.each do |acl_name, acl_translation|
+        - unless acl_name == :error_happened
+          .row
+            .col-md-6.text-truncate
+              = render partial: 'acl_translation', locals: { acl_translation: acl_translation } 
+            .col-md-6{style: "word-wrap: break-word;"}
+              =acl_name
+          %hr{style:"margin-top:5px; margin-bottom:5px;"}
+    - else
+      No Read ACLs found
+
+- write_acl_parse_error = @write_acls.key?(:error_happened)
+%h5 Write ACLs
+%div{ class: "#{write_acl_parse_error ? 'panel panel-danger' : 'panel panel-success'  }" }
+  %div{class: "panel-body"}
+    -if @write_acls.keys.length > 0
+      - @write_acls.each do |acl_name, acl_translation|
+        - unless acl_name == :error_happened
+          .row
+            .col-md-6.text-truncate
+              = render partial: 'acl_translation', locals: { acl_translation: acl_translation } 
+            .col-md-6{style: "word-wrap: break-word;"}
+              =acl_name
+          %hr{style:"margin-top:5px; margin-bottom:5px;"}
+    - else
+      No Write ACLs found

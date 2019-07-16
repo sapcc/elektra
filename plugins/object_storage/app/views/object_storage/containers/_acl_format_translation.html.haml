@@ -1,0 +1,16 @@
+-unless acl_translation[:error] 
+  - if acl_translation[:user]
+    %strong
+      =acl_translation[:user] 
+  - if acl_translation[:project] && acl_translation[:token]
+    for projectscope
+    %strong
+      =acl_translation[:project]
+  -if acl_translation[:operation]
+    %strong
+      =acl_translation[:operation]
+-else
+  %strong
+    Error:
+  %span.text-danger
+    = acl_translation[:error]

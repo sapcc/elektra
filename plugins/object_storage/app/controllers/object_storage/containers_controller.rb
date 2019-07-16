@@ -15,6 +15,14 @@ module ObjectStorage
       @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
     end
 
+    def check_acls
+      read_acl_string = params[:read_acl] || ""
+      write_acl_string = params[:write_acl] || ""
+      
+      @read_acls = parse_acl(read_acl_string)
+      @write_acls = parse_acl(write_acl_string)
+    end
+
     def confirm_deletion
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
       @empty = services.object_storage.empty?(@container.name)
@@ -30,6 +38,8 @@ module ObjectStorage
 
     def update_access_control
       attrs = params.require(:container).permit(:read_acl, :write_acl)
+      attrs["read_acl"].delete!("\r\n")
+      attrs["write_acl"].delete!("\r\n")
       unless @container.update_attributes(attrs)
         render action: 'show_access_control'
         return
@@ -107,6 +117,151 @@ module ObjectStorage
     end
 
     private
+
+    def parse_acl acl_string = ""
+      # remove all \n
+      acl_string.delete!("\n")
+      # https://docs.openstack.org/swift/latest/overview_acl.html#container-acls
+      @acl_parse_error = false
+      acl_data = {}
+      acls = acl_string.split(',')
+      acls.each do |acl|
+        case acl 
+        # standard reading cases
+        when ".rlistings"
+          acl_data[acl] = { 
+            type: ".rlistings",
+            operation: "access",
+            user: "Listing", 
+            project: "ANY", 
+            token: false,
+          }
+        when ".r:*"
+          acl_data[acl] = { 
+            type: ".r:*", 
+            operation: "referer",
+            user: "ANY",
+            project: "ANY",
+            token: false,
+          } 
+        else
+          # all other special cases
+          acl_parts = acl.split(':',2) # use split limit 2, this is needed because of "http://" in referer
+          if acl_parts.length == 2
+            case acl_parts[0]
+            when ".r" 
+              type = ".r:<referer>"
+              user = acl_parts[1]
+              operation = "referer"
+              if acl_parts[1].start_with? "-"
+                acl_parts[1].slice!(0)
+                type = ".r:-<referer>"
+                user = acl_parts[1]
+                operation = "referer denied"
+              end
+
+              acl_data[acl] = { 
+                type: type, 
+                operation: operation,
+                user: user,
+                project: "ANY",
+                referer: acl_parts[1],
+                token: false,
+              } 
+            else
+              # *:*
+              if acl_parts[0] == '*' && acl_parts[1] == '*'
+                acl_data[acl] = { 
+                  type: ".*:*", 
+                  operation: nil,
+                  user: "ANY user",
+                  project: "ANY",
+                  token: true,
+                } 
+              # <project-id>:<user-id>
+              elsif acl_parts[0] != '*' and acl_parts[1] != '*'
+                project = services.identity.find_project(acl_parts[0])
+                user = services.identity.find_user(acl_parts[1])
+                unless user.nil? || project.nil?
+                  user_domain =  services.identity.find_domain(user.domain_id)
+                  domain = services.identity.find_domain(project.domain_id)
+                  acl_data[acl] = { 
+                    type: "<project-id>:<user-id>", 
+                    operation: nil,
+                    user: "#{user.description} (#{user_domain.name})",
+                    project: "#{project.name} (#{domain.name})",
+                    token: true,
+                  } 
+                else
+                  if user.nil? && project.nil?
+                    acl_data[acl] = { error: "cannot find project with PROJECT_ID #{acl_parts[0]} and user with USER_ID #{acl_parts[1]}" }
+                  elsif project.nil?
+                    acl_data[acl] = { error: "cannot find project with PROJECT_ID #{acl_parts[0]}"}
+                  elsif user.nil?
+                    acl_data[acl] = { error: "cannot find user with USER_ID #{acl_parts[1]}"}
+                  else
+                    acl_data[acl] = { error: "unkown parse error"}
+                  end
+                  acl_data[:error_happened] = true
+                  @acl_parse_error = true
+                end
+                  # <project-id>:*
+              elsif acl_parts[0] != '*' and acl_parts[1] == '*'
+                project = services.identity.find_project(acl_parts[0])
+                unless project.nil?
+                  domain = services.identity.find_domain(project.domain_id)
+                  acl_data[acl] = { 
+                    type: "<project-id>:*", 
+                    operation: nil,
+                    user: "ANY user",
+                    project: "#{project.name} (#{domain.name})",
+                    token: true,
+                  }
+                else
+                  acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]}" }
+                  acl_data[:error_happened] = true
+                  @acl_parse_error = true
+                end
+                  # *:<user-id>
+              elsif acl_parts[0] == '*' and acl_parts[1] != '*'
+                user = services.identity.find_user(acl_parts[1])
+                unless user.nil?
+                  user_domain =  services.identity.find_domain(user.domain_id)
+                  acl_data[acl] = { 
+                    type: "*:<user-id>", 
+                    operation: nil,
+                    user: "#{user.description} (#{user_domain.name})",
+                    project: "ANY",
+                    token: true,
+                  }
+                else
+                  acl_data[acl] = { error: "cannot found user with USER_ID #{acl_parts[1]}" }
+                  acl_data[:error_happened] = true
+                  @acl_parse_error = true
+                end
+              end
+            end
+          else
+            unless acl.include? ":" or acl.include? "*"
+              # <role_name>
+              acl_data[acl] = { 
+                type: "<role_name>", 
+                operation: nil,
+                user: "ANY user with role #{acl}",
+                project: "#{@scoped_project_name} (#{@scoped_domain_name})",
+                token: true,
+              }
+            else
+              acl_data[acl] = { error: "cannot parse acl" }
+              acl_data[:error_happened] = true
+              @acl_parse_error = true
+            end
+          end          
+        end
+      end
+
+      return acl_data
+    end
 
     def load_container
       # to prevent problems with weird container names like "echo 1; rm -rf *)"

@@ -35,3 +35,14 @@
 
 // Call function from other files inside this plugin using the variable object_storage
 //object_storage.anyFunction()
+
+// This is always executed on page load.
+$(document).ready(function(){
+  // show small loading spinner on active tab during ajax calls 
+  $(document).ajaxStart( function() {
+    $('.loading-place').addClass('loading');
+  });
+  $(document).ajaxStop( function() {
+    $('.loading-place').removeClass('loading');
+  });
+});
