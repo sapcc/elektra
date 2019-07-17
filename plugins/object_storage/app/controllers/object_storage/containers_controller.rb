@@ -118,7 +118,7 @@ module ObjectStorage
 
     private
 
-    def parse_acl acl_string = ""
+    def parse_acl(acl_string = "")
       # remove all \n
       acl_string.delete!("\n")
       # https://docs.openstack.org/swift/latest/overview_acl.html#container-acls
@@ -180,11 +180,11 @@ module ObjectStorage
                 } 
               # <project-id>:<user-id>
               elsif acl_parts[0] != '*' and acl_parts[1] != '*'
-                project = services.identity.find_project(acl_parts[0])
-                user = services.identity.find_user(acl_parts[1])
+                project = cloud_admin.identity.find_project(acl_parts[0])
+                user = cloud_admin.identity.find_user(acl_parts[1])
                 unless user.nil? || project.nil?
-                  user_domain =  services.identity.find_domain(user.domain_id)
-                  domain = services.identity.find_domain(project.domain_id)
+                  user_domain =  cloud_admin.identity.find_domain(user.domain_id)
+                  domain = cloud_admin.identity.find_domain(project.domain_id)
                   acl_data[acl] = { 
                     type: "<project-id>:<user-id>", 
                     operation: nil,
@@ -194,22 +194,22 @@ module ObjectStorage
                   } 
                 else
                   if user.nil? && project.nil?
-                    acl_data[acl] = { error: "cannot find project with PROJECT_ID #{acl_parts[0]} and user with USER_ID #{acl_parts[1]}" }
+                    acl_data[acl] = { error: "cannot find project with ID #{acl_parts[0]} and user with ID #{acl_parts[1]}" }
                   elsif project.nil?
-                    acl_data[acl] = { error: "cannot find project with PROJECT_ID #{acl_parts[0]}"}
+                    acl_data[acl] = { error: "cannot find project with ID #{acl_parts[0]}"}
                   elsif user.nil?
-                    acl_data[acl] = { error: "cannot find user with USER_ID #{acl_parts[1]}"}
+                    acl_data[acl] = { error: "cannot find user with ID #{acl_parts[1]}"}
                   else
-                    acl_data[acl] = { error: "unkown parse error"}
+                    acl_data[acl] = { error: "unknown parse error"}
                   end
                   acl_data[:error_happened] = true
                   @acl_parse_error = true
                 end
                   # <project-id>:*
               elsif acl_parts[0] != '*' and acl_parts[1] == '*'
-                project = services.identity.find_project(acl_parts[0])
+                project = cloud_admin.identity.find_project(acl_parts[0])
                 unless project.nil?
-                  domain = services.identity.find_domain(project.domain_id)
+                  domain = cloud_admin.identity.find_domain(project.domain_id)
                   acl_data[acl] = { 
                     type: "<project-id>:*", 
                     operation: nil,
@@ -218,15 +218,15 @@ module ObjectStorage
                     token: true,
                   }
                 else
-                  acl_data[acl] = { error: "cannot found project with PROJECT_ID #{acl_parts[0]}" }
+                  acl_data[acl] = { error: "cannot find project with ID #{acl_parts[0]}" }
                   acl_data[:error_happened] = true
                   @acl_parse_error = true
                 end
                   # *:<user-id>
               elsif acl_parts[0] == '*' and acl_parts[1] != '*'
-                user = services.identity.find_user(acl_parts[1])
+                user = cloud_admin.identity.find_user(acl_parts[1])
                 unless user.nil?
-                  user_domain =  services.identity.find_domain(user.domain_id)
+                  user_domain =  cloud_admin.identity.find_domain(user.domain_id)
                   acl_data[acl] = { 
                     type: "*:<user-id>", 
                     operation: nil,
@@ -235,7 +235,7 @@ module ObjectStorage
                     token: true,
                   }
                 else
-                  acl_data[acl] = { error: "cannot found user with USER_ID #{acl_parts[1]}" }
+                  acl_data[acl] = { error: "cannot find user with ID #{acl_parts[1]}" }
                   acl_data[:error_happened] = true
                   @acl_parse_error = true
                 end
