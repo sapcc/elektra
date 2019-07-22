@@ -15,8 +15,9 @@ module KeyManager
 
     def show
       @container = services.key_manager.find_container(params[:id])
-      # get the user name from the openstack id
-      @user = service_user.identity.find_user(@container.creator_id).name
+      # get the user name from the openstack id if available
+      user = service_user.identity.find_user(@container.creator_id)
+      @user = user ? user.name : @container.creator_id
     end
 
     def new; end

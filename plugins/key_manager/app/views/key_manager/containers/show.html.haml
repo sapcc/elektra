@@ -39,13 +39,16 @@
               Created at:
           .col-md-10
             = date_humanize(@container.created)
-      -if @user
+      
         .row
           .col-md-2
             %b
               Owner:
           .col-md-10
-            = @user
+            -if @user
+              = @user
+            -else
+              unknown
 
       .attribute-group
         .row
