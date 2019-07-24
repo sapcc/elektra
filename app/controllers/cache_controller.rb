@@ -96,7 +96,8 @@ class CacheController < ::ScopeController
                                 .delete_if(&:blank?)
 
     types = (cached_types + ObjectCache::TYPE_SEARCH_LABEL_KEYS.keys).uniq
-   
+
+    # filter types by policy rule (see: APP_ROOT/config/policy.json)
     types.select! do |type|
       current_user.is_allowed?('can_see_cache_type', target: {type: type})
     end
