@@ -95,7 +95,13 @@ class CacheController < ::ScopeController
     cached_types = ::ObjectCache.distinct.pluck(:cached_object_type)
                                 .delete_if(&:blank?)
 
-    render json: (cached_types + ObjectCache::TYPE_SEARCH_LABEL_KEYS.keys).uniq
+    types = (cached_types + ObjectCache::TYPE_SEARCH_LABEL_KEYS.keys).uniq
+   
+    types.select! do |type|
+      current_user.is_allowed?('can_see_cache_type', target: {type: type})
+    end
+
+    render json: types 
   end
 
   def domain_projects

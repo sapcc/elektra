@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180530081339) do
+ActiveRecord::Schema.define(version: 2018_05_30_081339) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,8 +57,8 @@ ActiveRecord::Schema.define(version: 20180530081339) do
   end
 
   create_table "inquiry_inquiries_processors", id: false, force: :cascade do |t|
-    t.bigint "inquiry_id", null: false
-    t.bigint "processor_id", null: false
+    t.integer "inquiry_id", null: false
+    t.integer "processor_id", null: false
     t.index ["inquiry_id", "processor_id"], name: "index_inquiry_processor"
     t.index ["processor_id", "inquiry_id"], name: "index_processor_inquiry"
   end
