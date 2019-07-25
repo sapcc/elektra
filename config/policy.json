@@ -22,5 +22,5 @@
   "admin_or_token_subject": "rule:admin_required or rule:token_subject",
   "can_write": "(not domain_name:'monsoon2')",
 
-  "can_see_cache_type": "rule:cloud_admin_or_support or %(target.type)s=='floatingip' or %(target.type)s=='network' or %(target.type)s=='project' or %(target.type)s=='recordset' or %(target.type)s=='router' or %(target.type)s=='security_group' or %(target.type)s=='server' or %(target.type)s=='share' or %(target.type)s=='share_network' or %(target.type)s=='snapshot' or %(target.type)s=='subnet' or %(target.type)s=='volume' or %(target.type)s=='zone'"
+  "can_see_cache_type": "rule:cloud_admin_or_support or (role:domain_support_tools_viewer and (%(target.type)s=='floatingip' or %(target.type)s=='network' or %(target.type)s=='project' or %(target.type)s=='recordset' or %(target.type)s=='router' or %(target.type)s=='security_group' or %(target.type)s=='server' or %(target.type)s=='share' or %(target.type)s=='share_network' or %(target.type)s=='snapshot' or %(target.type)s=='subnet' or %(target.type)s=='volume' or %(target.type)s=='zone'))"
 }
