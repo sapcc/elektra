@@ -3,7 +3,8 @@
   "member": "role:member or role:Member",
   "compute_viewer": "role:compute_viewer",
   "compute_admin": "role:compute_admin",
-  "context_is_compute_admin": "rule:context_is_cloud_compute_admin or rule:compute_admin",
+  "compute_admin_wsg": "role:compute_admin_wsg",
+  "context_is_compute_admin": "rule:context_is_cloud_compute_admin or rule:compute_admin or rule:compute_admin_wsg",
   "context_is_compute_editor": "rule:context_is_compute_admin or rule:member",
   "context_is_compute_viewer":  "rule:context_is_compute_editor or rule:compute_viewer",
 

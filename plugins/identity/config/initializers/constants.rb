@@ -4,6 +4,7 @@ ALLOWED_ROLES = %w[
   automation_admin
   automation_viewer
   compute_admin
+  compute_admin_wsg
   compute_viewer
   dns_viewer
   dns_webmaster
