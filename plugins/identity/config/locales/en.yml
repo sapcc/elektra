@@ -24,6 +24,7 @@ en:
       cloud_sharedfilesystem_viewer: Manila Cloud Read-Only
       cloud_volume_admin: Cinder Cloud Administrator
       compute_admin: Nova Administrator
+      compute_admin_wsg: Nova Administrator without Securitygroup Management
       compute_viewer: Nova Read-Only
       dns_viewer: Designate Read-Only
       dns_admin: Designate Administrator
