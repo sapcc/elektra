@@ -9,7 +9,6 @@
   "context_is_compute_viewer":  "rule:context_is_compute_editor or rule:compute_viewer",
 
   "context_is_network_admin": "role:cloud_network_admin or role:network_admin",
-  "context_is_securitygroup_admin": "role:securitygroup_admin",
 
   "compute:all_projects": "rule:context_is_cloud_compute_admin and token.is_admin_project:true",
 
@@ -32,8 +31,8 @@
   "compute:instance_automation_data": "role:automation_admin",
   "compute:instance_update": "rule:instance_actions",
   "compute:instance_reset_status": "rule:context_is_compute_admin",
-  "compute:instance_edit_securitygroups": "rule:context_is_compute_admin or rule:context_is_network_admin or rule:context_is_securitygroup_admin",
-  "compute:instance_assign_securitygroups": "rule:context_is_compute_admin or rule:context_is_network_admin or rule:context_is_securitygroup_admin",
+  "compute:instance_edit_securitygroups": "rule:context_is_compute_admin or rule:context_is_network_admin or role:securitygroup_admin",
+  "compute:instance_assign_securitygroups": "rule:context_is_compute_admin or rule:context_is_network_admin or role:securitygroup_admin",
   "compute:instance_create_image": "rule:instance_actions",
   "compute:instance_delete": "rule:instance_actions",
   "compute:keypair_list": "rule:context_is_compute_viewer and (not rule:monsoon2_domain)",
