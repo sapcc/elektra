@@ -10,7 +10,7 @@
   "context_is_compute_admin_for_networking": "role:cloud_compute_admin or role:compute_admin",
 
   "context_is_securitygroup_admin": "role:securitygroup_admin or rule:context_is_compute_admin_for_networking or rule:context_is_network_admin",
-  "context_is_securitygroup_viewer": "role:securitygroup_viewer or rule:context_is_network_viewer or rule:context_is_securitygroup_admin",
+  "context_is_securitygroup_viewer": "role:securitygroup_viewer or rule:context_is_network_viewer or rule:context_is_securitygroup_admin or role:compute_admin_wsg",
 
   "networking:floating_ip_get": "rule:context_is_network_viewer",
   "networking:floating_ip_list": "rule:context_is_network_viewer",
