@@ -1,3 +1,4 @@
 {
-  "metrics:application_list": "not(project_id:nil)"
+  "metrics:application_list": "@",
+  "metrics:application_maia": "role: monitoring_viewer or role:monitoring_admin"
 }
