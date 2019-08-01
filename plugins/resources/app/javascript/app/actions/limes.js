@@ -181,3 +181,48 @@ export const simulateSetQuota = (scopeData, requestBody) => function(dispatch) {
       .catch(error => reject({ errors: limesErrorMessage(error) }))
   );
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// autoscaling
+
+const discoverAutoscalableSubscopes = (scopeData) => (dispatch) => {
+  const scope = new Scope(scopeData);
+  if (!scope.canAutoscaleSubscopes()) {
+    return;
+  }
+  const url = scope.subscopesUrlPath();
+  const resultKey = url.split('/').pop();
+
+  dispatch({
+    type: constants.REQUEST_AUTOSCALABLE_SUBSCOPES,
+    requestedAt: Date.now(),
+  });
+
+  return ajaxHelper.get(url)
+    .then((response) => {
+      dispatch({
+        type: constants.RECEIVE_AUTOSCALABLE_SUBSCOPES,
+        data: response.data[resultKey],
+        receivedAt: Date.now(),
+      });
+    })
+    .catch((error) => {
+      dispatch({
+        type: constants.REQUEST_AUTOSCALABLE_SUBSCOPES_FAILURE,
+      });
+      showLimesError(error);
+    });
+};
+
+export const discoverAutoscalableSubscopesIfNeeded = (scopeData) => (dispatch, getState) => {
+  const scope = new Scope(scopeData);
+  if (!scope.canAutoscaleSubscopes()) {
+    return;
+  }
+
+  const state = getState().limes.autoscalableSubscopes;
+  if (state.isFetching || state.requestedAt) {
+    return;
+  }
+  return dispatch(discoverAutoscalableSubscopes(scopeData));
+};

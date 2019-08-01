@@ -132,4 +132,8 @@ export class Scope {
     if (this.domainID)  return  `${base}domain/${this.clusterID}/${this.domainID}`;
                         return `${base}cluster/${this.clusterID}`;
   }
+
+  canAutoscaleSubscopes() {
+    return this.sublevel() == 'project';
+  }
 }

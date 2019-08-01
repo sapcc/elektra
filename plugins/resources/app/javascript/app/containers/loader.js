@@ -1,6 +1,9 @@
 import { connect } from  'react-redux';
 import Loader from '../components/loader';
-import { fetchDataIfNeeded } from '../actions/limes';
+import {
+  discoverAutoscalableSubscopesIfNeeded,
+  fetchDataIfNeeded,
+} from '../actions/limes';
 
 export default connect(
   (state, props) => ({
@@ -10,5 +13,6 @@ export default connect(
   }),
   dispatch => ({
     loadDataOnce: (args) => dispatch(fetchDataIfNeeded(args)),
+    discoverAutoscalableSubscopesOnce: (args) => dispatch(discoverAutoscalableSubscopesIfNeeded(args)),
   }),
 )(Loader);

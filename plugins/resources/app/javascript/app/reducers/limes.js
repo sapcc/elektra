@@ -7,10 +7,21 @@ const initialState = {
   overview: null,
   categories: null,
   //UI state
+  requestedAt: null,
   receivedAt: null,
   isFetching: false,
   isIncomplete: false,
   syncStatus: null,
+
+  autoscalableSubscopes: {
+    //data from Limes
+    bySrvAndRes: null,
+    isEmpty: true,
+    //UI state
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+  },
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,6 +119,62 @@ const receive = (state, {data, receivedAt}) => {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// discover autoscalable subscopes
+
+const requestAutoscalableSubscopes = (state, {requestedAt}) => ({
+  ...state,
+  autoscalableSubscopes: {
+    ...state.autoscalableSubscopes,
+    isFetching: true,
+    requestedAt,
+  },
+});
+
+const requestAutoscalableSubscopesFailure = (state, action) => ({
+  ...state,
+  autoscalableSubscopes: {
+    ...state.autoscalableSubscopes,
+    isFetching: false,
+  },
+});
+
+const receiveAutoscalableSubscopes = (state, {data, receivedAt}) => {
+  const result = {};
+  let isEmpty = true;
+
+  //reorder data from scope/service/resource into service/resource/scope
+  //for more convenient access
+  for (const scope of data) {
+    for (const srv of scope.services) {
+      result[srv.type] = result[srv.type] || {};
+
+      for (const res of srv.resources) {
+        result[srv.type][res.name] = result[srv.type][res.name] || [];
+
+        if ((res.annotations || {}).can_autoscale === 'true') {
+          isEmpty = false;
+          result[srv.type][res.name].push({
+            id: scope.id,
+            name: scope.name,
+          });
+        }
+      }
+    }
+  }
+
+  return {
+    ...state,
+    autoscalableSubscopes: {
+      ...state.autoscalableSubscopes,
+      bySrvAndRes: result,
+      isEmpty,
+      isFetching: false,
+      receivedAt,
+    },
+  };
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // sync project
 
 const setSyncStatus = (state, syncStatus) => ({
@@ -131,6 +198,9 @@ export const limes = (state, action) => {
     case constants.SYNC_PROJECT_FAILURE:    return setSyncStatus(state, null);
     case constants.SYNC_PROJECT_STARTED:    return setSyncStatus(state, 'started');
     case constants.SYNC_PROJECT_FINISHED:   return setSyncStatus(state, 'reloading');
+    case constants.REQUEST_AUTOSCALABLE_SUBSCOPES:         return requestAutoscalableSubscopes(state, action);
+    case constants.REQUEST_AUTOSCALABLE_SUBSCOPES_FAILURE: return requestAutoscalableSubscopesFailure(state, action);
+    case constants.RECEIVE_AUTOSCALABLE_SUBSCOPES:         return receiveAutoscalableSubscopes(state, action);
     default: return state;
   }
 };
