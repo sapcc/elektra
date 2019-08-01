@@ -11,6 +11,7 @@ export default connect(
     metadata:   state.limes.metadata,
     overview:   state.limes.overview,
     syncStatus: state.limes.syncStatus,
+    canAutoscale: !state.limes.autoscalableSubscopes.isEmpty,
   }),
   dispatch => ({
     syncProject:            (args) => dispatch(syncProject(args)),

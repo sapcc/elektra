@@ -13,6 +13,7 @@ export const RECEIVE_AUTOSCALABLE_SUBSCOPES = 'resources/app/RECEIVE_AUTOSCALABL
 
 // Please do not use this directly. Use t() from ./utils.js instead.
 export const STRINGS = {
+    "autoscaling":                 "Autoscaling",
     "block_storage":               "Block Storage",
     "capacity":                    "Capacity",
     "cfm_share_capacity":          "Share Capacity",
