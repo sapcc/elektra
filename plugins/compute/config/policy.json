@@ -13,8 +13,8 @@
   "compute:all_projects": "rule:context_is_cloud_compute_admin and token.is_admin_project:true",
 
   "instance_actions": "rule:context_is_compute_editor and (not rule:monsoon2_domain or rule:project_parent)",
-  "compute:instance_get": "rule:context_is_compute_viewer",
-  "compute:instance_list": "rule:context_is_compute_viewer",
+  "compute:instance_get": "rule:context_is_compute_viewer or role:network_viewer",
+  "compute:instance_list": "rule:context_is_compute_viewer or role:network_viewer",
   "compute:instance_create": "rule:instance_actions",
   "compute:instance_reboot": "rule:instance_actions",
   "compute:instance_pause": "rule:instance_actions",
@@ -43,7 +43,7 @@
 
   "compute:instance_console": "rule:context_is_compute_editor and (not rule:monsoon2_domain)",
 
-  "compute:server_list": "rule:context_is_compute_viewer",
+  "compute:server_list": "rule:context_is_compute_viewer or role:network_viewer",
   "compute:service_confirm_disable": "rule:context_is_cloud_compute_admin",
 
   "compute:attach_volume": "rule:instance_actions",
