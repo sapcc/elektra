@@ -124,7 +124,7 @@ const receive = (state, {data, receivedAt}) => {
 const requestAutoscalableSubscopes = (state, {requestedAt}) => ({
   ...state,
   autoscalableSubscopes: {
-    ...state.autoscalableSubscopes,
+    ...initialState.autoscalableSubscopes,
     isFetching: true,
     requestedAt,
   },
@@ -138,41 +138,16 @@ const requestAutoscalableSubscopesFailure = (state, action) => ({
   },
 });
 
-const receiveAutoscalableSubscopes = (state, {data, receivedAt}) => {
-  const result = {};
-  let isEmpty = true;
-
-  //reorder data from scope/service/resource into service/resource/scope
-  //for more convenient access
-  for (const scope of data) {
-    for (const srv of scope.services) {
-      result[srv.type] = result[srv.type] || {};
-
-      for (const res of srv.resources) {
-        result[srv.type][res.name] = result[srv.type][res.name] || [];
-
-        if ((res.annotations || {}).can_autoscale === 'true') {
-          isEmpty = false;
-          result[srv.type][res.name].push({
-            id: scope.id,
-            name: scope.name,
-          });
-        }
-      }
-    }
-  }
-
-  return {
-    ...state,
-    autoscalableSubscopes: {
-      ...state.autoscalableSubscopes,
-      bySrvAndRes: result,
-      isEmpty,
-      isFetching: false,
-      receivedAt,
-    },
-  };
-};
+const receiveAutoscalableSubscopes = (state, {bySrvAndRes, isEmpty, receivedAt}) => ({
+  ...state,
+  autoscalableSubscopes: {
+    ...state.autoscalableSubscopes,
+    bySrvAndRes,
+    isEmpty,
+    isFetching: false,
+    receivedAt,
+  },
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // sync project

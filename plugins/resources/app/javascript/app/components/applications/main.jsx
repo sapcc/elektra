@@ -8,14 +8,14 @@ import EditModal from '../../containers/edit';
 import ProjectSettingsModal from '../../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
-  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope } = props;
+  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId, projectID: projectId };
   const rootProps = { flavorData, scopeData };
 
-  return <Loader scopeData={scopeData}>
+  return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
       <div>
-        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} /> }/>
+        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
 
         { canEdit &&
           <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} isForeignScope={isForeignScope} /> }/>
@@ -29,14 +29,14 @@ const routesForProjectLevel = (props) => {
 }
 
 const routesForDomainLevel = (props) => {
-  const { clusterId, domainId, flavorData, canEdit, isForeignScope } = props;
+  const { clusterId, domainId, flavorData, canEdit, isForeignScope, hasCastellum } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId };
   const rootProps = { flavorData, scopeData };
 
-  return <Loader scopeData={scopeData}>
+  return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
       <div>
-        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} /> }/>
+        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
 
         <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} canEdit={canEdit} /> }/>
         { canEdit &&
@@ -48,14 +48,14 @@ const routesForDomainLevel = (props) => {
 }
 
 const routesForClusterLevel = (props) => {
-  const { clusterId, flavorData, canEdit } = props;
+  const { clusterId, flavorData, canEdit, hasCastellum } = props;
   const scopeData = { clusterID: clusterId };
   const rootProps = { flavorData, scopeData };
 
-  return <Loader scopeData={scopeData}>
+  return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
       <div>
-        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} /> }/>
+        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
 
         <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} canEdit={canEdit} /> }/>
       </div>

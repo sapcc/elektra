@@ -3,6 +3,7 @@ import { ajaxHelper, pluginAjaxHelper } from 'ajax_helper';
 import { addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
+import { fetchCastellumProjectConfig } from './castellum';
 import { Scope } from '../scope';
 
 const limesErrorMessage = (error) =>
@@ -200,10 +201,46 @@ const discoverAutoscalableSubscopes = (scopeData) => (dispatch) => {
 
   return ajaxHelper.get(url)
     .then((response) => {
+      const data = response.data[resultKey];
+
+      //process data right here, rather than in the reducer, because we need to
+      //trigger more actions based on the data
+      const result = {};
+      let isEmpty = true;
+      const projectsThatCanAutoscale = {};
+
+      //reorder data from scope/service/resource into service/resource/scope
+      //for more convenient access
+      for (const subscope of data) {
+        for (const srv of subscope.services) {
+          result[srv.type] = result[srv.type] || {};
+
+          for (const res of srv.resources) {
+            result[srv.type][res.name] = result[srv.type][res.name] || [];
+
+            if ((res.annotations || {}).can_autoscale === 'true') {
+              isEmpty = false;
+              result[srv.type][res.name].push({
+                id: subscope.id,
+                name: subscope.name,
+              });
+              if (scope.sublevel() == 'project') {
+                projectsThatCanAutoscale[subscope.id] = true;
+              }
+            }
+          }
+        }
+      }
+
+      for (const projectID in projectsThatCanAutoscale) {
+        dispatch(fetchCastellumProjectConfig(projectID));
+      }
+
       dispatch({
-        type: constants.RECEIVE_AUTOSCALABLE_SUBSCOPES,
-        data: response.data[resultKey],
-        receivedAt: Date.now(),
+        type:        constants.RECEIVE_AUTOSCALABLE_SUBSCOPES,
+        bySrvAndRes: result,
+        isEmpty,
+        receivedAt:  Date.now(),
       });
     })
     .catch((error) => {
@@ -213,6 +250,7 @@ const discoverAutoscalableSubscopes = (scopeData) => (dispatch) => {
       showLimesError(error);
     });
 };
+
 
 export const discoverAutoscalableSubscopesIfNeeded = (scopeData) => (dispatch, getState) => {
   const scope = new Scope(scopeData);

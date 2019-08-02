@@ -81,11 +81,12 @@ module Resources
 
     def prepare_data_for_view
       @js_data = {
-        token:       current_user.token,
-        limes_api:   current_user.service_url('resources'),
-        flavor_data: fetch_baremetal_flavor_data,
-        docs_url:    sap_url_for('documentation'),
-        cluster_id:  params[:cluster_id] || 'current',
+        token:         current_user.token,
+        limes_api:     current_user.service_url('resources'),
+        castellum_api: current_user.service_url('castellum'),
+        flavor_data:   fetch_baremetal_flavor_data,
+        docs_url:      sap_url_for('documentation'),
+        cluster_id:    params[:cluster_id] || 'current',
       }
 
       # when this is true, the frontend will never try to generate quota requests
