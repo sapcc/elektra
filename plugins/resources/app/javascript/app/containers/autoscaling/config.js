@@ -1,5 +1,5 @@
 import { connect } from  'react-redux';
-import AutoscalingView from '../../components/autoscaling/show';
+import AutoscalingConfig from '../../components/autoscaling/config';
 
 export default connect(
   (state, props) => ({
@@ -8,4 +8,4 @@ export default connect(
   }),
   dispatch => ({
   }),
-)(AutoscalingView);
+)(AutoscalingConfig);
