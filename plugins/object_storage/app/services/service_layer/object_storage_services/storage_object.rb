@@ -17,12 +17,14 @@ module ServiceLayer
       }
 
       OBJECT_ATTRMAP = {
-        'content-length' => 'size_bytes',
-        'content-type'   => 'content_type',
-        'etag'           => 'md5_hash',
-        'last-modified'  => 'last_modified_at',
-        'x-timestamp'    => 'created_at',
-        'x-delete-at'    => 'expires_at',
+        'content-length'        => 'size_bytes',
+        'content-type'          => 'content_type',
+        'etag'                  => 'md5_hash',
+        'last-modified'         => 'last_modified_at',
+        'x-timestamp'           => 'created_at',
+        'x-delete-at'           => 'expires_at',
+        'x-static-large-object' => 'slo',
+        'x-object-manifest'     => 'dlo_manifest',
       }
 
       OBJECT_WRITE_ATTRMAP = {

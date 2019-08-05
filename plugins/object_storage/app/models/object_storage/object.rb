@@ -13,6 +13,10 @@ module ObjectStorage
     #   - metadata (Hash)
     # The id() is identical to the path() if the object is persisted.
 
+    def dlo
+      return "True" if read(:dlo_manifest)
+    end
+
     def size_bytes
       read(:size_bytes).to_i
     end

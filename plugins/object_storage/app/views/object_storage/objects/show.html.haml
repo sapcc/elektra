@@ -10,9 +10,20 @@
 = simple_modal_form_for @object, submit_action: 'Update object', url: pl.update_object_path(encoded_container_name, encoded_object_path), method: :post, cancel_url: pl.list_objects_path(encoded_container_name, encoded_object_path) do |f|
 
   .row
-    .col-md-6= f.input :content_type, required: false
+    - if @object.slo || @object.dlo_manifest
+      .col-md-4= f.input :content_type, required: false
+      - if @object.slo
+        .col-md-2= f.input :slo, readonly: true, label: 'Static Large Object'
+      - if @object.dlo
+        .col-md-2= f.input :dlo, readonly: true, label: 'Dynamic Large Object'
+    - else
+      .col-md-6= f.input :content_type, required: false
+      
     .col-md-2= f.input :size_bytes, readonly: true, input_html: { value: Core::DataType.new(:bytes).format(@object.size_bytes) }, label: 'Size'
     .col-md-4= f.input :md5_hash, readonly: true, label: 'MD5 checksum'
+
+
+
 
   - if @container.allows_public_access?
     - label = capture_haml do
@@ -27,6 +38,10 @@
   - current_value = params.fetch(:object, {}).fetch(:expires_at, initial_value)
   - placeholder   = "Enter a timestamp like \"#{1.month.from_now.strftime('%F %T')}\" to schedule automatic deletion"
   = f.input :expires_at, as: :string, label: 'Expires at (UTC)', input_html: { value: current_value, placeholder: placeholder }
+
+  - if @object.dlo_manifest
+    .row
+      .col-md-12= f.input :dlo_manifest, readonly: true, label: 'Dynamic Large Object Manifest'
 
   .form-group
     %label Metadata
