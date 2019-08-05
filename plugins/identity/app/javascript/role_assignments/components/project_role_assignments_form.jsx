@@ -180,12 +180,6 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
               <React.Fragment>
                 <button
                   className='btn btn-default btn-sm'
-                  onClick={this.selectAllRoles}
-                  disabled={this.state.saving}>
-                  Select All
-                </button>
-                <button
-                  className='btn btn-default btn-sm'
                   onClick={this.selectAdminRoles}
                   disabled={this.state.saving}>
                   Select Admin Roles
