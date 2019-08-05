@@ -33,4 +33,5 @@
           %li.divider
           %li= link_to 'Copy', plugin('object_storage').new_copy_path(encoded_container_name, encoded_object_path), data: { modal: true }
           %li= link_to 'Move/Rename', plugin('object_storage').move_object_path(encoded_container_name, encoded_object_path), data: { modal: true }
-          %li= link_to 'Delete', plugin('object_storage').destroy_object_path(encoded_container_name, encoded_object_path), method: :delete, remote: true
+          %li= link_to 'Delete', plugin('object_storage').destroy_object_path(encoded_container_name, encoded_object_path, keep_segments: false), method: :delete, remote: true
+          %li= link_to 'Delete (keep segments)', plugin('object_storage').destroy_object_path(encoded_container_name, encoded_object_path, keep_segments: true ), method: :delete, remote: true

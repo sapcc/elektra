@@ -165,8 +165,12 @@ module ServiceLayer
         ) { contents.read }
       end
 
-      def delete_object(container_name, object_path)
-        elektron_object_storage.delete("#{container_name}/#{object_path}")
+      def delete_object(container_name, object_path, keep_segments)
+        if keep_segments
+          elektron_object_storage.delete("#{container_name}/#{object_path}")
+        else 
+          elektron_object_storage.delete("#{container_name}/#{object_path}?multipart-manifest=delete")
+        end
         # return nil because nothing usable is returned from the API
         return nil
       end
