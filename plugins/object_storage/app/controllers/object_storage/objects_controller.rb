@@ -68,7 +68,7 @@ module ObjectStorage
       # instead of @object.destroy we need to call the delete function directly
       # because we need to give more than one parameter
       keep_segments = params[:keep_segments] == "true"
-      services.object_storage.delete_object(@container_name,@object.path,keep_segments)
+      services.object_storage.delete_object(@container_name,@object,keep_segments)
       back_to_object_list
     end
 
