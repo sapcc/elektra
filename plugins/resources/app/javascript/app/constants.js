@@ -14,6 +14,7 @@ export const RECEIVE_AUTOSCALABLE_SUBSCOPES = 'resources/app/RECEIVE_AUTOSCALABL
 export const REQUEST_CASTELLUM_CONFIG = 'resources/app/REQUEST_CASTELLUM_CONFIG';
 export const REQUEST_CASTELLUM_CONFIG_FAILURE = 'resources/app/REQUEST_CASTELLUM_CONFIG_FAILURE';
 export const RECEIVE_CASTELLUM_CONFIG = 'resources/app/RECEIVE_CASTELLUM_CONFIG';
+export const RECEIVE_CASTELLUM_RESOURCE_CONFIG = 'resources/app/RECEIVE_CASTELLUM_RESOURCE_CONFIG';
 
 // Please do not use this directly. Use t() from ./utils.js instead.
 export const STRINGS = {

@@ -49,6 +49,22 @@ const receiveConfig = (state, {projectID, data, receivedAt}) => ({
   },
 });
 
+const receiveResourceConfig = (state, {projectID, assetType, data, receivedAt}) => ({
+  ...state,
+  projectConfigs: {
+    ...state.projectConfigs,
+    [projectID]: {
+      ...state.projectConfigs[projectID],
+      data: {
+        ...state.projectConfigs[projectID].data,
+        [assetType]: data,
+      },
+      isFetching: false,
+      receivedAt,
+    },
+  },
+});
+
 ////////////////////////////////////////////////////////////////////////////////
 // entrypoint
 
@@ -58,9 +74,10 @@ export const castellum = (state, action) => {
   }
 
   switch (action.type) {
-    case constants.REQUEST_CASTELLUM_CONFIG:         return requestConfig(state, action);
-    case constants.REQUEST_CASTELLUM_CONFIG_FAILURE: return requestConfigFailure(state, action);
-    case constants.RECEIVE_CASTELLUM_CONFIG:         return receiveConfig(state, action);
+    case constants.REQUEST_CASTELLUM_CONFIG:          return requestConfig(state, action);
+    case constants.REQUEST_CASTELLUM_CONFIG_FAILURE:  return requestConfigFailure(state, action);
+    case constants.RECEIVE_CASTELLUM_CONFIG:          return receiveConfig(state, action);
+    case constants.RECEIVE_CASTELLUM_RESOURCE_CONFIG: return receiveResourceConfig(state, action);
     default: return state;
   }
 };

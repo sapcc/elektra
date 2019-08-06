@@ -25,10 +25,17 @@ export const parseConfig = (config) => {
   return { custom: false, value: 100 - criticalPerc };
 };
 
+//Generate a Castellum resource configuration that parseConfig() recognizes.
+export const generateConfig = (value) => ({
+  low_threshold:      { usage_percent: 100 - value - 2, delay_seconds: 60 },
+  critical_threshold: { usage_percent: 100 - value },
+  size_steps:         { percent: 1 },
+});
+
 const renderConfigUI = ({ projectID, config, editValue, handleEditValue }) => {
   const parsed = parseConfig(config);
   if (parsed.custom) {
-    return <em>Custom configuration (configured via API)</em>;
+    return <em>Custom configuration (applied via API)</em>;
   }
   if (editValue === null) {
     if (parsed.value === null) {
@@ -45,7 +52,7 @@ const renderConfigUI = ({ projectID, config, editValue, handleEditValue }) => {
         value={editValue}
         onChange={(e) => handleEditValue(projectID, e.target.value)}
       />
-      {' '}% free quota
+      {' '}% free quota (leave empty to disable)
     </span>;
   }
 };

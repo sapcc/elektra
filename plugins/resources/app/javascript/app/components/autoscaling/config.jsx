@@ -1,5 +1,5 @@
 import { DataTable } from 'lib/components/datatable';
-import { AutoscalingConfigItem, parseConfig } from './config_item';
+import { AutoscalingConfigItem, generateConfig, parseConfig } from './config_item';
 
 import { t } from '../../utils';
 
@@ -14,6 +14,7 @@ export default class AutoscalingConfig extends React.Component {
   state = {
     currentFullResource: '',
     editValues: null,
+    isSubmitting: false,
   }
 
   handleSelect(fullResource) {
@@ -21,6 +22,7 @@ export default class AutoscalingConfig extends React.Component {
       ...this.state,
       currentFullResource: fullResource,
       editValues: null,
+      isSubmitting: false,
     });
   }
 
@@ -31,7 +33,7 @@ export default class AutoscalingConfig extends React.Component {
     const { projectConfigs } = this.props;
     const editValues = {};
     for (const projectID in projectConfigs) {
-      const parsed = parseConfig(projectConfigs[projectID][assetType]);
+      const parsed = parseConfig(projectConfigs[projectID].data[assetType]);
       if (!parsed.custom) {
         editValues[projectID] = parsed.value === null ? '' : parsed.value;
       }
@@ -58,7 +60,38 @@ export default class AutoscalingConfig extends React.Component {
   }
 
   save() {
-    //TODO
+    const [ srvType, resName ] = this.state.currentFullResource.split('/');
+    const assetType = `project-quota:${srvType}:${resName}`;
+
+    this.setState({
+      ...this.state,
+      isSubmitting: true,
+    });
+
+    const { projectConfigs } = this.props;
+    const { editValues } = this.state;
+    const promises = [];
+    for (const projectID in projectConfigs) {
+      //make sure we don't accidentally overwrite custom configs
+      const parsed = parseConfig(projectConfigs[projectID].data[assetType]);
+      if (parsed.custom || editValues[projectID] === undefined) {
+        continue;
+      }
+      if (editValues[projectID] == '') {
+        promises.push(this.props.deleteCastellumProjectResource(projectID, assetType));
+      } else {
+        const cfg = generateConfig(parseInt(editValues[projectID], 10));
+        promises.push(this.props.updateCastellumProjectResource(projectID, assetType, cfg));
+      }
+    }
+
+    Promise.all(promises).then(() => {
+      this.setState({
+        ...this.state,
+        editValues: null,
+        isSubmitting: false,
+      });
+    });
   }
 
   renderRows() {
@@ -70,9 +103,10 @@ export default class AutoscalingConfig extends React.Component {
     const projects = [ ...autoscalableSubscopes[srvType][resName] ];
     projects.sort((a,b) => a.name.localeCompare(b.name));
 
-    const { editValues } = this.state;
+    const { editValues, isSubmitting } = this.state;
     const editorProps = {
       handleEditValue: this.handleEditValue.bind(this),
+      isSubmitting,
     };
 
     return projects.map(project => (
@@ -88,8 +122,8 @@ export default class AutoscalingConfig extends React.Component {
   }
 
   render() {
-    const { autoscalableSubscopes, projectConfigs } = this.props;
-    const { currentFullResource, editValues } = this.state;
+    const { autoscalableSubscopes, projectConfigs, canEdit } = this.props;
+    const { currentFullResource, editValues, isSubmitting } = this.state;
 
     //assemble options for <select> box
     const options = [];
@@ -128,16 +162,20 @@ export default class AutoscalingConfig extends React.Component {
             ))}
           </select>
         </p>
-        {currentFullResource != "" && (
+        {(currentFullResource != "" && canEdit) && (
           editValues ? (
             <p>
-              <button className='btn btn-primary' onClick={() => this.save()}>Save</button>
+              <button className='btn btn-primary' disabled={isSubmitting} onClick={() => this.save()}>
+                {isSubmitting ? <React.Fragment>
+                  <span className='spinner' />{" Saving..."}
+                </React.Fragment> : 'Save'}
+              </button>
               {' '}
-              <button className='btn btn-link' onClick={() => this.stopEditing()}>Cancel</button>
+              <button className='btn btn-link' disabled={isSubmitting} onClick={() => this.stopEditing()}>Cancel</button>
             </p>
           ) : (
             <p>
-              <button className='btn btn-primary' onClick={() => this.startEditing()}>Edit this table</button>
+              <button className='btn btn-primary' disabled={isSubmitting} onClick={() => this.startEditing()}>Edit this table</button>
             </p>
           )
         )}
