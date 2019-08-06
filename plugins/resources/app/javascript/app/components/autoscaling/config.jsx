@@ -154,31 +154,33 @@ export default class AutoscalingConfig extends React.Component {
 
     return (
       <React.Fragment>
-        <p>
-          <select className='form-control' onChange={(e) => this.handleSelect(e.target.value)} value={currentFullResource}>
-            {currentFullResource == '' && <option value=''>-- Select a resource --</option>}
-            {options.map(opt => (
-              <option key={opt.key} value={opt.key}>{opt.label}</option>
-            ))}
-          </select>
+        <p className='row'>
+          <div className='col-md-8'>
+            <select className='form-control' onChange={(e) => this.handleSelect(e.target.value)} value={currentFullResource}>
+              {currentFullResource == '' && <option value=''>-- Select a resource --</option>}
+              {options.map(opt => (
+                <option key={opt.key} value={opt.key}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+          {(currentFullResource != "" && canEdit) && (
+            editValues ? (
+              <div className='col-md-4'>
+                <button className='btn btn-primary' disabled={isSubmitting} onClick={() => this.save()}>
+                  {isSubmitting ? <React.Fragment>
+                    <span className='spinner' />{" Saving..."}
+                  </React.Fragment> : 'Save'}
+                </button>
+                {' '}
+                <button className='btn btn-link' disabled={isSubmitting} onClick={() => this.stopEditing()}>Cancel</button>
+              </div>
+            ) : (
+              <div className='col-md-4'>
+                <button className='btn btn-primary' disabled={isSubmitting} onClick={() => this.startEditing()}>Edit this table</button>
+              </div>
+            )
+          )}
         </p>
-        {(currentFullResource != "" && canEdit) && (
-          editValues ? (
-            <p>
-              <button className='btn btn-primary' disabled={isSubmitting} onClick={() => this.save()}>
-                {isSubmitting ? <React.Fragment>
-                  <span className='spinner' />{" Saving..."}
-                </React.Fragment> : 'Save'}
-              </button>
-              {' '}
-              <button className='btn btn-link' disabled={isSubmitting} onClick={() => this.stopEditing()}>Cancel</button>
-            </p>
-          ) : (
-            <p>
-              <button className='btn btn-primary' disabled={isSubmitting} onClick={() => this.startEditing()}>Edit this table</button>
-            </p>
-          )
-        )}
         {currentFullResource != '' && (
           <DataTable columns={columns}>{this.renderRows()}</DataTable>
         )}
