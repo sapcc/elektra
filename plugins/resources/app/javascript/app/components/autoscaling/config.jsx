@@ -77,7 +77,7 @@ export default class AutoscalingConfig extends React.Component {
       if (parsed.custom || editValues[projectID] === undefined) {
         continue;
       }
-      if (editValues[projectID] == '') {
+      if (editValues[projectID] === '') {
         promises.push(this.props.deleteCastellumProjectResource(projectID, assetType));
       } else {
         const cfg = generateConfig(parseInt(editValues[projectID], 10));
