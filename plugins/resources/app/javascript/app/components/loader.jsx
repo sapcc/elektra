@@ -15,6 +15,9 @@ export default class Loader extends React.Component {
 
   loadDependencies = (props) => {
     props.loadDataOnce(props.scopeData);
+    if (props.hasCastellum) {
+      props.discoverAutoscalableSubscopesOnce(props.scopeData);
+    }
   }
 
   render() {

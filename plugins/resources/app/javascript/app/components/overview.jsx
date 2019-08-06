@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Scope } from '../scope';
 import { byUIString, byNameIn, t } from '../utils';
 import Category from '../containers/category';
+import AutoscalingConfig from '../containers/autoscaling/config';
 import ProjectSyncAction from '../components/project/sync_action';
 
 export default class Overview extends React.Component {
@@ -15,11 +16,15 @@ export default class Overview extends React.Component {
     this.setState({...this.state, currentArea: area});
   }
 
-  renderNavbar(currentArea, canEdit, scope) {
+  renderNavbar(currentArea, canEdit, canAutoscale, scope) {
+    const tabs = Object.keys(this.props.overview.areas).sort(byUIString);
+    if (canAutoscale) {
+      tabs.push('autoscaling');
+    }
     return (
       <nav className='nav-with-buttons'>
         <ul className='nav nav-tabs'>
-          { Object.keys(this.props.overview.areas).sort(byUIString).map(area => (
+          { tabs.map(area => (
             <li key={area} role="presentation" className={currentArea == area ? "active" : ""}>
               <a href="#" onClick={(e) => { e.preventDefault(); this.changeArea(area); }}>
                 {t(area)}
@@ -34,7 +39,7 @@ export default class Overview extends React.Component {
     );
   }
 
-  render() {
+  renderCurrentArea() {
     const props = this.props;
     const scope = new Scope(props.scopeData);
 
@@ -55,7 +60,6 @@ export default class Overview extends React.Component {
     const maxScrapedStr = moment.unix(Math.max(...currMaxScrapedAt, ...currScrapedAt)).fromNow(true);
     const ageDisplay = minScrapedStr == maxScrapedStr ? minScrapedStr : `between ${minScrapedStr} and ${maxScrapedStr}`;
 
-
     const syncActionProps = {
       scopeData: props.scopeData,
       syncStatus: props.syncStatus,
@@ -65,7 +69,7 @@ export default class Overview extends React.Component {
 
     return (
       <React.Fragment>
-        {this.renderNavbar(currentArea, props.canEdit, scope)}
+        {this.renderNavbar(currentArea, props.canEdit, props.canAutoscale, scope)}
         {currentServices.sort(byUIString).map(serviceType => (
           <React.Fragment key={serviceType}>
             {categories[serviceType].sort(byNameIn(serviceType)).map(categoryName => (
@@ -82,5 +86,25 @@ export default class Overview extends React.Component {
         </div>
       </React.Fragment>
     );
+  }
+
+  renderAutoscalingTab() {
+    const props = this.props;
+    const scope = new Scope(props.scopeData);
+    return (
+      <React.Fragment>
+        {this.renderNavbar('autoscaling', props.canEdit, props.canAutoscale, scope)}
+        <AutoscalingConfig scopeData={props.scopeData} canEdit={props.canEdit} />
+      </React.Fragment>
+    );
+  }
+
+  render() {
+    switch (this.state.currentArea) {
+      case 'autoscaling':
+        return this.renderAutoscalingTab();
+      default:
+        return this.renderCurrentArea();
+    }
   }
 }

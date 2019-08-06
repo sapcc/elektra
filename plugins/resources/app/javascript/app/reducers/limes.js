@@ -7,10 +7,21 @@ const initialState = {
   overview: null,
   categories: null,
   //UI state
+  requestedAt: null,
   receivedAt: null,
   isFetching: false,
   isIncomplete: false,
   syncStatus: null,
+
+  autoscalableSubscopes: {
+    //data from Limes
+    bySrvAndRes: null,
+    isEmpty: true,
+    //UI state
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+  },
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,6 +119,37 @@ const receive = (state, {data, receivedAt}) => {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// discover autoscalable subscopes
+
+const requestAutoscalableSubscopes = (state, {requestedAt}) => ({
+  ...state,
+  autoscalableSubscopes: {
+    ...initialState.autoscalableSubscopes,
+    isFetching: true,
+    requestedAt,
+  },
+});
+
+const requestAutoscalableSubscopesFailure = (state, action) => ({
+  ...state,
+  autoscalableSubscopes: {
+    ...state.autoscalableSubscopes,
+    isFetching: false,
+  },
+});
+
+const receiveAutoscalableSubscopes = (state, {bySrvAndRes, isEmpty, receivedAt}) => ({
+  ...state,
+  autoscalableSubscopes: {
+    ...state.autoscalableSubscopes,
+    bySrvAndRes,
+    isEmpty,
+    isFetching: false,
+    receivedAt,
+  },
+});
+
+////////////////////////////////////////////////////////////////////////////////
 // sync project
 
 const setSyncStatus = (state, syncStatus) => ({
@@ -131,6 +173,9 @@ export const limes = (state, action) => {
     case constants.SYNC_PROJECT_FAILURE:    return setSyncStatus(state, null);
     case constants.SYNC_PROJECT_STARTED:    return setSyncStatus(state, 'started');
     case constants.SYNC_PROJECT_FINISHED:   return setSyncStatus(state, 'reloading');
+    case constants.REQUEST_AUTOSCALABLE_SUBSCOPES:         return requestAutoscalableSubscopes(state, action);
+    case constants.REQUEST_AUTOSCALABLE_SUBSCOPES_FAILURE: return requestAutoscalableSubscopesFailure(state, action);
+    case constants.RECEIVE_AUTOSCALABLE_SUBSCOPES:         return receiveAutoscalableSubscopes(state, action);
     default: return state;
   }
 };

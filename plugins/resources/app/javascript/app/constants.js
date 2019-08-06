@@ -1,14 +1,24 @@
-export const REQUEST_DATA         = 'resources/project/REQUEST_DATA';
-export const REQUEST_DATA_FAILURE = 'resources/project/REQUEST_DATA_FAILURE';
-export const RECEIVE_DATA         = 'resources/project/RECEIVE_DATA';
+export const REQUEST_DATA         = 'resources/app/REQUEST_DATA';
+export const REQUEST_DATA_FAILURE = 'resources/app/REQUEST_DATA_FAILURE';
+export const RECEIVE_DATA         = 'resources/app/RECEIVE_DATA';
 
-export const SYNC_PROJECT_REQUESTED  = 'resources/project/SYNC_PROJECT_REQUESTED';
-export const SYNC_PROJECT_FAILURE    = 'resources/project/SYNC_PROJECT_FAILURE';
-export const SYNC_PROJECT_STARTED    = 'resources/project/SYNC_PROJECT_STARTED';
-export const SYNC_PROJECT_FINISHED   = 'resources/project/SYNC_PROJECT_FINISHED';
+export const SYNC_PROJECT_REQUESTED  = 'resources/app/SYNC_PROJECT_REQUESTED';
+export const SYNC_PROJECT_FAILURE    = 'resources/app/SYNC_PROJECT_FAILURE';
+export const SYNC_PROJECT_STARTED    = 'resources/app/SYNC_PROJECT_STARTED';
+export const SYNC_PROJECT_FINISHED   = 'resources/app/SYNC_PROJECT_FINISHED';
+
+export const REQUEST_AUTOSCALABLE_SUBSCOPES = 'resources/app/REQUEST_AUTOSCALABLE_SUBSCOPES';
+export const REQUEST_AUTOSCALABLE_SUBSCOPES_FAILURE = 'resources/app/REQUEST_AUTOSCALABLE_SUBSCOPES_FAILURE';
+export const RECEIVE_AUTOSCALABLE_SUBSCOPES = 'resources/app/RECEIVE_AUTOSCALABLE_SUBSCOPES';
+
+export const REQUEST_CASTELLUM_CONFIG = 'resources/app/REQUEST_CASTELLUM_CONFIG';
+export const REQUEST_CASTELLUM_CONFIG_FAILURE = 'resources/app/REQUEST_CASTELLUM_CONFIG_FAILURE';
+export const RECEIVE_CASTELLUM_CONFIG = 'resources/app/RECEIVE_CASTELLUM_CONFIG';
+export const RECEIVE_CASTELLUM_RESOURCE_CONFIG = 'resources/app/RECEIVE_CASTELLUM_RESOURCE_CONFIG';
 
 // Please do not use this directly. Use t() from ./utils.js instead.
 export const STRINGS = {
+    "autoscaling":                 "Autoscaling",
     "block_storage":               "Block Storage",
     "capacity":                    "Capacity",
     "cfm_share_capacity":          "Share Capacity",
