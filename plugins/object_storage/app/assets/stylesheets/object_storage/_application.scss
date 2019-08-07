@@ -44,10 +44,8 @@
 }
 
 .popover-capabilities {
+  width: 500px;
   max-width: none !important;
-  li {
-    white-space: nowrap;
-  }
 }
 
 li.missing-capability {

@@ -74,14 +74,13 @@
     Sharing of objects using
     %strong temporary URLs
 
-  - parsed_caps = [ 'swift', 'account_quotas', 'bulk_delete', 'bulk_upload', 'container_quotas', 'slo', 'container_sync', 'ratelimit', 'staticweb', 'tempurl' ]
+  - parsed_caps = [ 'id','swift', 'account_quotas', 'bulk_delete', 'bulk_upload', 'container_quotas', 'slo', 'container_sync', 'ratelimit', 'staticweb', 'tempurl' ]
   - if (additional_caps = @capabilities.attributes.keys - parsed_caps).size > 0
     %li
       %span.fa-li.fa.fa-ellipsis-v
       Additional capabilities:
-      -additional_caps.sort.each_slice(4) do |part|
-        %strong= part.to_sentence
-        %br
+      %strong
+        = additional_caps.to_sentence
 
 - if services.available?(:webconsole)
   %p.help-block
