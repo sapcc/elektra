@@ -3,6 +3,8 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/:domain_fid/auth'
 
+  get '/_jump/:project_id(/:service(/:resource(/:extra)))', to: 'jump#index'
+
   scope '/system' do
     # check without db connection
     get :liveliness, to: 'health#liveliness'
