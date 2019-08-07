@@ -17,12 +17,14 @@ module ServiceLayer
       }
 
       OBJECT_ATTRMAP = {
-        'content-length' => 'size_bytes',
-        'content-type'   => 'content_type',
-        'etag'           => 'md5_hash',
-        'last-modified'  => 'last_modified_at',
-        'x-timestamp'    => 'created_at',
-        'x-delete-at'    => 'expires_at',
+        'content-length'        => 'size_bytes',
+        'content-type'          => 'content_type',
+        'etag'                  => 'md5_hash',
+        'last-modified'         => 'last_modified_at',
+        'x-timestamp'           => 'created_at',
+        'x-delete-at'           => 'expires_at',
+        'x-static-large-object' => 'slo',
+        'x-object-manifest'     => 'dlo_manifest',
       }
 
       OBJECT_WRITE_ATTRMAP = {
@@ -55,13 +57,13 @@ module ServiceLayer
         body.to_json
       end
 
+      # NOTE: keep in mind there is a limit container_listing_limit
       def list_objects(container_name, options={})
         # prevent prefix and delimiter with slash, if this happens
         # an empty list is returned
         if options[:prefix] == '/' && options[:delimiter] == '/'
           options[:prefix] = ''
         end
-
         list = elektron_object_storage.get(container_name, options).body
         result = list.map! do |o|
           object = map_attribute_names(o, OBJECTS_ATTRMAP)
@@ -115,6 +117,15 @@ module ServiceLayer
         if capabilities.attributes.key?('bulk_delete')
           # https://docs.openstack.org/swift/latest/middleware.html#bulk-delete
           # assemble the request object_list containing the paths to all targets
+
+          # if targets more than the defined max deletes per request cut targest into half and try recursively
+          bulk_delete = capabilities.bulk_delete
+          if targets.length > bulk_delete['max_deletes_per_request']
+            left,right = targets.each_slice( (targets.size/2.0).round ).to_a
+            bulk_delete(left)
+            targets = right
+          end
+          
           object_list = ''
           targets.each do |target|
             unless target.key?(:container)
@@ -165,8 +176,17 @@ module ServiceLayer
         ) { contents.read }
       end
 
-      def delete_object(container_name, object_path)
-        elektron_object_storage.delete("#{container_name}/#{object_path}")
+      def delete_object(container_name, object, keep_segments)
+        if keep_segments
+          elektron_object_storage.delete("#{container_name}/#{object.path}")
+        else
+          if object.slo
+            elektron_object_storage.delete("#{container_name}/#{object.path}?multipart-manifest=delete")
+          else
+            delete_folder("#{container_name}_segments" , object.path)
+            elektron_object_storage.delete("#{container_name}/#{object.path}")
+          end
+        end
         # return nil because nothing usable is returned from the API
         return nil
       end

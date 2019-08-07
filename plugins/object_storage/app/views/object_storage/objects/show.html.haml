@@ -2,7 +2,11 @@
   - if @object.is_directory?
     Directory: #{@object.path}
   - else
-    File: #{@object.path}
+    - if @object.slo
+      File (SLO)
+    - if @object.dlo
+      File (DLO)
+    #{@object.path}
 
 - pl = plugin('object_storage')
 - encoded_container_name = URI.encode_www_form_component(@container_name)
@@ -28,6 +32,12 @@
   - placeholder   = "Enter a timestamp like \"#{1.month.from_now.strftime('%F %T')}\" to schedule automatic deletion"
   = f.input :expires_at, as: :string, label: 'Expires at (UTC)', input_html: { value: current_value, placeholder: placeholder }
 
+  - if @object.dlo_manifest
+    .row
+      .col-md-12= f.input :dlo_manifest, readonly: true, label: 'Dynamic Large Object Manifest'
+  - if @object.slo
+    .row
+      .col-md-4= f.input :slo, readonly: true, label: 'Static Large Object'
   .form-group
     %label Metadata
     = render partial: 'editable_metadata_display', locals: { metadata: @object.metadata }

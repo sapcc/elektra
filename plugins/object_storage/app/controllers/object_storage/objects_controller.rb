@@ -67,7 +67,8 @@ module ObjectStorage
     def destroy
       # instead of @object.destroy we need to call the delete function directly
       # because we need to give more than one parameter
-      services.object_storage.delete_object(@container_name,@object.path)
+      keep_segments = params[:keep_segments] == "true"
+      services.object_storage.delete_object(@container_name,@object,keep_segments)
       back_to_object_list
     end
 
@@ -99,7 +100,6 @@ module ObjectStorage
     private
 
     def load_params
-
       # to prevent problems with weird container names like "echo 1; rm -rf *)"
       # the name is form encoded and must be decoded here
       @container_name = URI.decode_www_form_component(params[:container])

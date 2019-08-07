@@ -1,3 +1,43 @@
+%h5 Limits
+%ul.fa-ul#limits
+  - if @capabilities.attributes.has_key?('swift')
+    %li
+      %span.fa-li.fa.fa-check
+      %strong Max file size:
+      =@capabilities.swift['max_file_size']/1024/1024/1024
+      GB
+    %li
+      %span.fa-li.fa.fa-check
+      %strong Max container name length:
+      =@capabilities.swift['max_container_name_length']
+    %li
+      %span.fa-li.fa.fa-check
+      %strong Max object name length:
+      =@capabilities.swift['max_object_name_length']
+    %li
+      %span.fa-li.fa.fa-check
+      %strong Container listing limit:
+      =@capabilities.swift['container_listing_limit']
+  - if @capabilities.attributes.has_key?('bulk_upload')
+    %li
+      %span.fa-li.fa.fa-check
+      %strong Max containers per extraction:
+      =@capabilities.bulk_upload['max_containers_per_extraction']
+      %small (bulk upload)
+  - if @capabilities.attributes.has_key?('bulk_delete')
+    %li
+      %span.fa-li.fa.fa-check
+      %Strong Max deletes per request:
+      =@capabilities.bulk_delete['max_deletes_per_request']
+      %small (bulk delete)
+  -if @capabilities.attributes.has_key?('slo')
+    %li
+      %span.fa-li.fa.fa-check
+      %strong Max segments: 
+      =@capabilities.slo['max_manifest_segments']
+      %small (static large object)
+
+%h5 Capabilities
 %ul.fa-ul#capabilities_list
   %li{ class: @capabilities.attributes.has_key?('account_quotas') ? '' : 'missing-capability' }
     %span.fa-li.fa.fa-area-chart
@@ -33,14 +73,16 @@
     %span.fa-li.fa.fa-clock-o
     Sharing of objects using
     %strong temporary URLs
-  - parsed_caps = [ 'swift', 'account_quotas', 'bulk_delete', 'bulk_upload', 'container_quotas', 'container_sync', 'ratelimit', 'slo', 'staticweb', 'tempurl' ]
+
+  - parsed_caps = [ 'id','swift', 'account_quotas', 'bulk_delete', 'bulk_upload', 'container_quotas', 'slo', 'container_sync', 'ratelimit', 'staticweb', 'tempurl' ]
   - if (additional_caps = @capabilities.attributes.keys - parsed_caps).size > 0
     %li
       %span.fa-li.fa.fa-ellipsis-v
       Additional capabilities:
-      %strong= additional_caps.sort.to_sentence
+      %strong
+        = additional_caps.to_sentence
 
-- if services.available?(:web_console)
+- if services.available?(:webconsole)
   %p.help-block
     For a more detailed report, use the
     %code swift info

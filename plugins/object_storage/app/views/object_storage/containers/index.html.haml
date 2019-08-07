@@ -3,7 +3,7 @@
 
 .toolbar
   .main-buttons
-    = link_to 'javascript:void(0)', id: 'capabilities_btn', title: 'Cluster capabilities', data: { content: render(partial: 'capabilities') } do
+    = link_to 'javascript:void(0)', id: 'capabilities_btn', title: 'Cluster limits and capabilities', data: { content: render(partial: 'capabilities') } do
       %i.fa.fa-info-circle
     = link_to 'Create container', plugin('object_storage').new_container_path(), class: 'btn btn-primary', data: {modal:true}
 
@@ -18,3 +18,4 @@
     var button = $('#capabilities_btn').popover({ html: true });
     //add custom class to div.popover
     button.data('bs.popover').tip().addClass('popover-capabilities');
+
