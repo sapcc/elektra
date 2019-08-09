@@ -17,6 +17,18 @@ module ObjectStorage
       return "True" if read(:dlo_manifest)
     end
 
+    def dlo_segments_container
+      return dlo_manifest.split('/').first if read(:dlo_manifest)
+    end
+
+    def dlo_segments_folder_path
+      if read(:dlo_manifest)
+        manifest = read(:dlo_manifest)
+        manifest.slice!(dlo_segments_container)
+        return manifest
+      end
+    end
+
     def size_bytes
       read(:size_bytes).to_i
     end

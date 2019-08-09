@@ -2,11 +2,7 @@
   - if @object.is_directory?
     Directory: #{@object.path}
   - else
-    - if @object.slo
-      File (SLO)
-    - if @object.dlo
-      File (DLO)
-    #{@object.path}
+    File: #{@object.path}
 
 - pl = plugin('object_storage')
 - encoded_container_name = URI.encode_www_form_component(@container_name)
