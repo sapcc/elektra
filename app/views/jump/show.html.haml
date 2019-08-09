@@ -1,0 +1,33 @@
+%h4 Found several objects
+
+%table.table
+  %thead
+    %tr
+      %th Type
+      %th Name
+      %th Domain
+      %th Project
+  %tbody
+    - @objects.each do |obj|
+      %tr
+        %td
+          - if obj.url
+            = link_to obj.url, target: '_blank' do 
+              %i.fa.fa-fw.fa-external-link
+              = obj.type  
+          - else
+            = obj.type
+        %td
+          = obj.name
+          %br
+          %span.info-text= obj.id
+        %td
+          = obj.domain_name || 'unknown'
+          %br
+          %span.info-text= obj.domain_id
+        %td
+          = obj.project_name || 'unknown'
+          %br
+          %span.info-text= obj.project_id
+
+

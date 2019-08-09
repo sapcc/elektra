@@ -191,7 +191,7 @@ class ObjectCache < ApplicationRecord
   end
 
   def self.object_attributes(data)
-    data['project_id'] = data['project_id'] || data['tenant_id']
+    data['project_id'] = data['project_id'] || data['tenant_id'] || data['os-vol-tenant-attr:tenant_id']
     data['search_label'] = search_label(data)
     data.select do |k, v|
       ATTRIBUTE_KEYS.include?(k) && !v.blank?

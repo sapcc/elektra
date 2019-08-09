@@ -22,6 +22,7 @@ module ElektronMiddlewares
                     # find objects to be cached
                     find_objects(response.body)
                   end
+
         ::ObjectCache.cache_objects(objects) if objects && !objects.empty?
       rescue StandardError => e
         Rails.logger.debug("ObjectCache ERROR: #{e}") if debug

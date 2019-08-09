@@ -3,7 +3,12 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/:domain_fid/auth'
 
-  get '/_jump/:project_id(/:service(/:resource(/:extra)))', to: 'jump#index'
+  # "jump to" routes
+  # if project_id is known then the domain name or id is unnecessary 
+  # the jump controller will try to redirect to the requested url 
+  get '/_/:project_id(/*rest)', to: 'jump#index'
+  # jump to a specific object like instance or network
+  get '/_jump_to/:object_id', to: 'jump#show'
 
   scope '/system' do
     # check without db connection
