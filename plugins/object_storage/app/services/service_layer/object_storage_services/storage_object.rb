@@ -183,10 +183,10 @@ module ServiceLayer
           if object.slo
             elektron_object_storage.delete("#{container_name}/#{object.path}?multipart-manifest=delete")
           elsif object.dlo
-            # delete segments container
-            delete_folder(object.dlo_segments_container,object.dlo_segments_folder_path)
             # delete dlo manifest
             elektron_object_storage.delete("#{container_name}/#{object.path}")
+            # delete segments container
+            delete_folder(object.dlo_segments_container,object.dlo_segments_folder_path)
           else
             elektron_object_storage.delete("#{container_name}/#{object.path}")
           end
