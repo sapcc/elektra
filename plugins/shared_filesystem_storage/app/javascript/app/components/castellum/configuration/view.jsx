@@ -41,17 +41,21 @@ export default class CastellumConfigurationView extends React.Component {
           {config.high_threshold && <li>Shares will be extended when usage exceeds <strong>{percent(config.high_threshold.usage_percent)}</strong> {config.size_constraints && config.size_constraints.minimum_free && <React.Fragment>(or when free space is below <strong>{config.size_constraints.minimum_free} GiB</strong>)</React.Fragment>} for <strong>{duration(config.high_threshold.delay_seconds)}</strong>.</li>}
           {config.critical_threshold && <li>Shares will be extended immediately when usage exceeds <strong>{percent(config.critical_threshold.usage_percent)}</strong>.</li>}
         </ul>
-        {config.size_constraints ? (
-          <React.Fragment>
-            <p>Shares will be resized in steps of <strong>{percent(config.size_steps.percent)}</strong>, but...</p>
-            <ul>
-              {config.size_constraints.minimum && <li>...never below <strong>{config.size_constraints.minimum} GiB</strong>.</li>}
-              {config.size_constraints.maximum && <li>...never above <strong>{config.size_constraints.maximum} GiB</strong>.</li>}
-              {config.size_constraints.minimum_free && <li>...never below <strong>{config.size_constraints.minimum_free} GiB</strong> of free space.</li>}
-            </ul>
-          </React.Fragment>
-        ) : (
-          <p>Shares will be resized in steps of <strong>{percent(config.size_steps.percent)}</strong>.</p>
+        <p>
+          Shares will be resized{" "}
+          {config.size_steps.single ? <React.Fragment>
+            using <a href="https://github.com/sapcc/castellum/blob/master/docs/api-spec.md#stepping-strategies" target="_blank">single-step resizing</a>
+          </React.Fragment> : <React.Fragment>
+            in steps of <strong>{percent(config.size_steps.percent)}</strong>
+          </React.Fragment>}
+          {config.size_constraints ? ", but..." : "."}
+        </p>
+        {config.size_constraints && (
+          <ul>
+            {config.size_constraints.minimum && <li>...never below <strong>{config.size_constraints.minimum} GiB</strong>.</li>}
+            {config.size_constraints.maximum && <li>...never above <strong>{config.size_constraints.maximum} GiB</strong>.</li>}
+            {config.size_constraints.minimum_free && <li>...never below <strong>{config.size_constraints.minimum_free} GiB</strong> of free space.</li>}
+          </ul>
         )}
         <p>
           <Link to='/autoscaling/configure' className='btn btn-primary'>Configure</Link>

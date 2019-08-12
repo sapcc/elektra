@@ -53,8 +53,19 @@ const FormBody = ({close, errors}) => {
           <Form.Input elementType='input' type='number' min='0' max='100' disabled={values.critical_enabled == 'false'}/>
         </Form.ElementHorizontal>
 
-        <Form.ElementHorizontal label='Each resize extends/shrinks by (%):' name='size_step' labelWidth={5} required>
-          <Form.Input elementType='input' type='number' min='1' max='100' />
+        <Form.ElementHorizontal label='Stepping strategy:' name='size_step_single' labelWidth={5}>
+          <Form.Input elementType='select'>
+            <option value='false'>Percentage-step resizing</option>
+            <option value='true'>Single-step resizing</option>
+          </Form.Input>
+          <p className='help-block' style={{"margin-bottom": 0}}>
+            <i className="fa fa-info-circle"/>The different choices are explained in {" "}
+            <a href="https://github.com/sapcc/castellum/blob/master/docs/api-spec.md#stepping-strategies" target="_blank">this section</a>
+            {" "}of the autoscaler documentation.
+          </p>
+        </Form.ElementHorizontal>
+        <Form.ElementHorizontal label='Each resize extends/shrinks by (%):' name='size_step_percent' labelWidth={5} required={values.size_step_single == 'false'} labelClass='control-label secondary-label'>
+          <Form.Input elementType='input' type='number' min='1' max='100' disabled={values.size_step_single == 'true'} />
         </Form.ElementHorizontal>
 
         <Form.ElementHorizontal label='Never resize to less than (GiB):' name='size_minimum' labelWidth={5} labelClass='control-label secondary-label'>
@@ -114,7 +125,8 @@ export default class CastellumConfigurationEditModal extends React.Component {
         high_delay:       sec2min((cfg.high_threshold     || {}).delay_seconds || 3600),
         critical_enabled:         (cfg.critical_threshold) ? 'true' : 'false',
         critical_usage:           (cfg.critical_threshold || {}).usage_percent || 95,
-        size_step:                (cfg.size_steps         || {}).percent       || 10,
+        size_step_single:         (cfg.size_steps         || {}).single ? 'true' : 'false',
+        size_step_percent:        (cfg.size_steps         || {}).percent       || 10,
         size_minimum:             (cfg.size_constraints   || {}).minimum       || '',
         size_maximum:             (cfg.size_constraints   || {}).maximum       || '',
         free_minimum:             (cfg.size_constraints   || {}).minimum_free  || '',
@@ -131,16 +143,17 @@ export default class CastellumConfigurationEditModal extends React.Component {
   }
 
   validate(values) {
-    return (values.low_enabled == 'true' || values.high_enabled == 'true' || values.critical_enabled == 'true') && (values.size_step != '');
+    return (values.low_enabled == 'true' || values.high_enabled == 'true' || values.critical_enabled == 'true') && (values.size_step_single == 'true' || values.size_step_percent != '');
   }
 
   onSubmit(values) {
     //convert the flat `values` back into the JSON format expected by the Castellum API
-    const config = {
-      size_steps: {
-        percent: parseInt(values.size_step, 10),
-      },
-    };
+    const config = {};
+    if (values.size_step_single == 'true') {
+      config.size_steps = { single: true };
+    } else {
+      config.size_steps = { percent: parseInt(values.size_step_percent, 10) };
+    }
     if (values.low_enabled == 'true') {
       config.low_threshold = {
         usage_percent: parseInt(values.low_usage, 10),
