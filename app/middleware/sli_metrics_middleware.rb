@@ -2,7 +2,7 @@
 
 require 'benchmark'
 
-# This middleware collects the inquiry (elektra request) metrics
+# This middleware collects the Service Level Indicator metrics
 class SLIMetricsMiddleware
   def initialize(app, options = {})
     @app = app
