@@ -7,6 +7,9 @@ require_relative File.expand_path('../lib/core', __dir__)
 # Require middlewares due to loading bug in Rails 5.1
 require_relative File.expand_path('../app/middleware/middlewares', __dir__)
 
+require 'prometheus/middleware/collector'
+require 'prometheus/middleware/exporter'
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -49,34 +52,11 @@ module MonsoonDashboard
     plugin_mount_points = {}
     Core::PluginsManager.available_plugins.each { |plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point }
 
-    require 'prometheus/middleware/collector'
-    config.middleware.insert_after(ActionDispatch::DebugExceptions, Prometheus::Middleware::Collector,
-                                   counter_label_builder: proc do |env, code|
-                                     controller_name = env.fetch('action_dispatch.request.path_parameters', {}).fetch(:controller, '')
-                                     {
-                                       code: code,
-                                       method: env['REQUEST_METHOD'].downcase,
-                                       host: env['HTTP_HOST'].to_s,
-                                       # just take the first component of the path as a label
-                                       path: ['health'].include?(controller_name) ? env['REQUEST_PATH'] : env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/', 1) || 20],
-                                       controller: controller_name,
-                                       action: env.fetch('action_dispatch.request.path_parameters', {}).fetch(:action, ''),
-                                       plugin: ['health'].include?(controller_name) ? controller_name : controller_name[%r{^([^/]+)/}, 1]
-                                     }
-                                   end,
-                                   duration_label_builder: proc do |env, _code|
-                                                             controller_name = env.fetch('action_dispatch.request.path_parameters', {}).fetch(:controller, '')
-                                                             {
-                                                               method: env['REQUEST_METHOD'].downcase,
-                                                               plugin: ['health'].include?(controller_name) ? controller_name : controller_name[%r{^([^/]+)/}, 1]
-                                                             }
-                                                           end)
-
-    config.middleware.insert_after Prometheus::Middleware::Collector, InquiryMetricsMiddleware
-
-    require 'prometheus/middleware/exporter'
-    config.middleware.insert_after InquiryMetricsMiddleware, Prometheus::Middleware::Exporter
-
+    # rack middlewares
+    config.middleware.use HttpMetricsMiddleware
+    config.middleware.use InquiryMetricsMiddleware
+    config.middleware.use SLIMetricsMiddleware
+    config.middleware.use Prometheus::Middleware::Exporter
     config.middleware.use RevisionMiddleware
 
     ############# ENSURE EDGE MODE FOR IE ###############
