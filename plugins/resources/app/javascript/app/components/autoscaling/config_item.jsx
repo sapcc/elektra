@@ -8,7 +8,7 @@ export const parseConfig = (config) => {
   if (!config) {
     return { custom: false, value: null };
   }
-  if (config.size_steps.percent != 1) {
+  if (!config.size_steps.single) {
     return { custom: true };
   }
   if (!config.low_threshold || !config.critical_threshold || config.high_threshold) {
@@ -19,7 +19,7 @@ export const parseConfig = (config) => {
   if (lowSecs != 60) {
     return { custom: true };
   }
-  if (lowPerc != criticalPerc - 2) {
+  if (lowPerc != criticalPerc - 0.1) {
     return { custom: true };
   }
   return { custom: false, value: 100 - criticalPerc };
@@ -27,9 +27,9 @@ export const parseConfig = (config) => {
 
 //Generate a Castellum resource configuration that parseConfig() recognizes.
 export const generateConfig = (value) => ({
-  low_threshold:      { usage_percent: 100 - value - 2, delay_seconds: 60 },
-  critical_threshold: { usage_percent: 100 - value },
-  size_steps:         { percent: 1 },
+  low_threshold:      { usage_percent: 99.9 - value, delay_seconds: 60 },
+  critical_threshold: { usage_percent: 100. - value },
+  size_steps:         { single: true },
 });
 
 const renderConfigUI = ({ projectID, config, editValue, handleEditValue }) => {
