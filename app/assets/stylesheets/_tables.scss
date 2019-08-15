@@ -1,0 +1,18 @@
+// In DataTables, sometimes a large explanation or message does not fit in an
+// individual column. In this case, place the message on its own row directly
+// below the original row, with the "explains-previous-line" class on it. For
+// example:
+//
+//   <tr>
+//     <td>Name: foo</td>
+//     <td>State: error</td>
+//     <td>Created: just now</td>
+//   </tr>
+//   <tr class="explains-previous-line">
+//     <td colspan="3" class="text-danger">
+//       Here goes the error message returned from OpenStack.
+//     </td>
+//   </tr>
+.table > tbody > tr.explains-previous-line td {
+  border-top: 0;
+}

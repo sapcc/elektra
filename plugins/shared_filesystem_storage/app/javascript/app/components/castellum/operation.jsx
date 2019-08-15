@@ -4,6 +4,9 @@ import { PrettyDate } from 'lib/components/pretty_date';
 import * as constants from '../../constants';
 import ShareActions from '../shares/actions';
 
+//TODO: many of these constants and predicates are duplicated in
+//plugins/resources/app/components/autoscaling/ops_report.jsx
+
 const isOrWas = {
   created: 'is',
   confirmed: 'is',
@@ -97,7 +100,7 @@ export const CastellumOperation = ({operation, share, handleDelete, handleForceD
           />}
         </td>
       </tr>
-      {finished && finished.error && <tr className='castellum-error-message'>
+      {finished && finished.error && <tr className='explains-previous-line'>
         <td colSpan='5' className='text-danger'>
           {finished.error}
         </td>

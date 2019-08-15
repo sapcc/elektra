@@ -9,9 +9,13 @@ export const configureCastellumAjaxHelper = (opts) => {
   ajaxHelper = createAjaxHelper(opts);
 };
 
-const castellumErrorMessage = (error) =>
-  error.response && error.response.data ||
-  error.message
+const castellumErrorMessage = (error) => {
+  let msg = error.message;
+  if (error.response && error.response.data) {
+    return `${msg}: ${error.response.data}`;
+  }
+  return msg;
+};
 
 const showCastellumError = (error) =>
   addError(React.createElement(ErrorsList, {
@@ -35,14 +39,10 @@ export const fetchCastellumProjectConfig = (projectID) => (dispatch, getState) =
       });
     })
     .catch(error => {
-      let msg = error.message;
-      if (error.response && error.response.data) {
-        msg = `${msg}: ${error.response.data}`;
-      }
       dispatch({
         type:      constants.REQUEST_CASTELLUM_CONFIG_FAILURE,
         projectID,
-        message:   msg,
+        message:   castellumErrorMessage(error),
       });
     });
 };
@@ -90,3 +90,43 @@ export const updateCastellumProjectResource = (projectID, assetType, config) => 
       });
   })
 );
+
+const operationsReportKeys = {
+  "pending":            "pending_operations",
+  "recently-failed":    "recently_failed_operations",
+  "recently-succeeded": "recently_succeeded_operations",
+};
+
+const fetchOperationsReport = (domainID, reportType) => dispatch => {
+  dispatch({
+    type:        constants.REQUEST_CASTELLUM_OPERATIONS_REPORT,
+    reportType,
+    requestedAt: Date.now(),
+  });
+
+  return ajaxHelper.get(`/v1/operations/${reportType}`, { domain: domainID })
+    .then(response => {
+      const data = response.data[operationsReportKeys[reportType]] || [];
+      dispatch({
+        type:        constants.RECEIVE_CASTELLUM_OPERATIONS_REPORT,
+        reportType,
+        data,
+        receivedAt: Date.now(),
+      });
+    })
+    .catch(error => {
+      dispatch({
+        type:        constants.REQUEST_CASTELLUM_OPERATIONS_REPORT_FAILURE,
+        reportType,
+        message:     castellumErrorMessage(error),
+        receivedAt: Date.now(),
+      });
+    });
+};
+
+export const fetchOperationsReportIfNeeded = (domainID, reportType) => (dispatch, getState) => {
+  const state = getState().castellum.operationsReports[reportType] || {};
+  if (!state.isFetching && !state.requestedAt) {
+    return dispatch(fetchOperationsReport(domainID, reportType));
+  }
+};

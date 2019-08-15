@@ -16,6 +16,10 @@ export const REQUEST_CASTELLUM_CONFIG_FAILURE = 'resources/app/REQUEST_CASTELLUM
 export const RECEIVE_CASTELLUM_CONFIG = 'resources/app/RECEIVE_CASTELLUM_CONFIG';
 export const RECEIVE_CASTELLUM_RESOURCE_CONFIG = 'resources/app/RECEIVE_CASTELLUM_RESOURCE_CONFIG';
 
+export const REQUEST_CASTELLUM_OPERATIONS_REPORT = 'resources/app/REQUEST_CASTELLUM_OPERATIONS_REPORT';
+export const REQUEST_CASTELLUM_OPERATIONS_REPORT_FAILURE = 'resources/app/REQUEST_CASTELLUM_OPERATIONS_REPORT_FAILURE';
+export const RECEIVE_CASTELLUM_OPERATIONS_REPORT = 'resources/app/RECEIVE_CASTELLUM_OPERATIONS_REPORT';
+
 // Please do not use this directly. Use t() from ./utils.js instead.
 export const STRINGS = {
     "autoscaling":                 "Autoscaling",

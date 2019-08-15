@@ -1,11 +1,11 @@
 import AutoscalingConfig from '../../containers/autoscaling/config';
+import AutoscalingOpsReport from '../../containers/autoscaling/ops_report';
 
 const pages = [
   { label: "Configuration", component: AutoscalingConfig },
-  // { label: "Pending operations", component: AutoscalingPendingOps },
-  // { label: "Recently succeeded", component: AutoscalingSucceededOps },
-  // { label: "Recently failed", component: AutoscalingFailedOps },
-  // { label: "Scraping errors", component: AutoscalingScrapingErrors },
+  { label: "Pending operations", component: AutoscalingOpsReport, props: { reportType: 'pending' } },
+  { label: "Recently succeeded", component: AutoscalingOpsReport, props: { reportType: 'recently-succeeded' } },
+  { label: "Recently failed", component: AutoscalingOpsReport, props: { reportType: 'recently-failed' } },
 ];
 
 export default class AutoscalingTabs extends React.Component {
@@ -22,12 +22,13 @@ export default class AutoscalingTabs extends React.Component {
   }
 
   render() {
-    const forwardProps = {
+    const CurrentPage = pages[this.state.active].component;
+    const pageProps = {
+      ...(pages[this.state.active].props || {}),
       scopeData: this.props.scopeData,
       canEdit: this.props.canEdit,
     };
 
-    const CurrentComponent = pages[this.state.active].component;
     return (
       <div>
         <div className="col-sm-2">
@@ -40,7 +41,7 @@ export default class AutoscalingTabs extends React.Component {
           </ul>
         </div>
         <div className="col-sm-10">
-          <CurrentComponent {...forwardProps} />
+          <CurrentPage key={this.state.active} {...pageProps} />
         </div>
       </div>
     );
