@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Scope } from '../scope';
 import { byUIString, byNameIn, t } from '../utils';
 import Category from '../containers/category';
-import AutoscalingConfig from '../containers/autoscaling/config';
+import AutoscalingTabs from './autoscaling/tabs';
 import ProjectSyncAction from '../components/project/sync_action';
 
 export default class Overview extends React.Component {
@@ -94,7 +94,7 @@ export default class Overview extends React.Component {
     return (
       <React.Fragment>
         {this.renderNavbar('autoscaling', props.canEdit, props.canAutoscale, scope)}
-        <AutoscalingConfig scopeData={props.scopeData} canEdit={props.canEdit} />
+        <AutoscalingTabs scopeData={props.scopeData} canEdit={props.canEdit} />
       </React.Fragment>
     );
   }
