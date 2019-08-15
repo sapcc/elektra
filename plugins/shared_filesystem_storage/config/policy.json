@@ -19,6 +19,7 @@
   "shared_filesystem_storage:share_revert_to_snapshot": "rule:context_is_share_editor",
   "shared_filesystem_storage:share_extend": "rule:context_is_share_editor",
   "shared_filesystem_storage:share_access_control": "rule:context_is_share_viewer",
+  "shared_filesystem_storage:share_update_size": "rule:context_is_share_editor",
 
   "shared_filesystem_storage:error_message_list": "rule:context_is_share_viewer",
 
