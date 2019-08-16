@@ -1,6 +1,7 @@
 import { DataTable } from 'lib/components/datatable';
 import { PrettyDate } from 'lib/components/pretty_date';
 
+import { Unit, valueWithUnit } from '../../unit';
 import { t } from '../../utils';
 
 //TODO: many of these constants and predicates are duplicated in
@@ -30,8 +31,7 @@ const sortOrderForReasons = {
 };
 
 const sortKeyForNameOrID = props => {
-  //TODO consider name
-  return props.operation.asset_id;
+  return (props.projectName || '') + props.operation.asset_id;
 };
 const sortKeyForAssetType = props => {
   const { serviceType, resourceName } = parseAssetType(props.operation.asset_type);
@@ -71,7 +71,8 @@ const titleCase = (str) => (
   str.charAt(0).toUpperCase() + str.substr(1).toLowerCase()
 );
 
-const AutoscalingOperation = ({operation}) => {
+const AutoscalingOperation = ({operation, projectName, unit: unitName}) => {
+  const unit = new Unit(unitName);
   const {
     asset_id: projectID, asset_type: assetType,
     state, reason,
@@ -83,8 +84,8 @@ const AutoscalingOperation = ({operation}) => {
     <React.Fragment>
       <tr>
         <td className='col-md-3'>
-          TODO: project name
-          <div className='small text-muted'>{projectID}</div>
+          {projectName || projectID}
+          {projectName && <div className='small text-muted'>{projectID}</div>}
         </td>
         <td className='col-md-2'>
           {t(resourceName)}
@@ -95,8 +96,7 @@ const AutoscalingOperation = ({operation}) => {
           <div className='small text-muted'>Usage {isOrWas[state]} {reason}</div>
         </td>
         <td className='col-md-2'>
-          {oldSize} -> {newSize}
-          <div className='small text-muted'>TODO: unit</div>
+          {valueWithUnit(oldSize, unit)} -> {valueWithUnit(newSize, unit)}
         </td>
         <td className='col-md-3'>
           <div>Created: <PrettyDate date={created.at} /></div>
@@ -145,7 +145,11 @@ export default class AutoscalingOpsReport extends React.Component {
     return (
       <DataTable columns={columns} pageSize={6}>
         {operations.map((operation, idx) =>
-          <AutoscalingOperation key={idx} operation={operation} />
+          <AutoscalingOperation key={idx}
+            operation={operation}
+            projectName={this.props.projectNames[operation.asset_id]}
+            unit={this.props.units[operation.asset_type]}
+          />
         )}
       </DataTable>
     );
