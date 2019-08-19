@@ -99,6 +99,7 @@ export default class AutoscalingConfig extends React.Component {
 
     const [ srvType, resName ] = this.state.currentFullResource.split('/');
     const assetType = `project-quota:${srvType}:${resName}`;
+    const unitName = this.props.units[assetType];
 
     const projects = [ ...autoscalableSubscopes[srvType][resName] ];
     projects.sort((a,b) => a.name.localeCompare(b.name));
@@ -115,6 +116,7 @@ export default class AutoscalingConfig extends React.Component {
         project={project}
         config={projectConfigs[project.id] || { isFetching: true }}
         assetType={assetType}
+        unitName={unitName}
         editValue={editValues ? editValues[project.id] : null}
         {...editorProps}
       />
