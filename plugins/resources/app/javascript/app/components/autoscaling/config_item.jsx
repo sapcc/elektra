@@ -25,7 +25,6 @@ export const parseConfig = (config) => {
   //`if (lowPerc != expectedLowPerc)` does not always work as expected because
   //of rounding errors in previous operations; e.g. 99.9 - 50 = 49.900000000006
   //instead of 49.9
-  console.log({lowPerc,expectedLowPerc});
   if (Math.abs(lowPerc - expectedLowPerc) > 0.000001) {
     return { custom: true };
   }
