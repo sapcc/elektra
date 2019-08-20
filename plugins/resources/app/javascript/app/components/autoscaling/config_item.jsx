@@ -21,7 +21,12 @@ export const parseConfig = (config) => {
   if (lowSecs != 60) {
     return { custom: true };
   }
-  if (lowPerc != criticalPerc - 0.1) {
+  const expectedLowPerc = criticalPerc - 0.1;
+  //`if (lowPerc != expectedLowPerc)` does not always work as expected because
+  //of rounding errors in previous operations; e.g. 99.9 - 50 = 49.900000000006
+  //instead of 49.9
+  console.log({lowPerc,expectedLowPerc});
+  if (Math.abs(lowPerc - expectedLowPerc) > 0.000001) {
     return { custom: true };
   }
   return { custom: false, value: 100 - criticalPerc };
