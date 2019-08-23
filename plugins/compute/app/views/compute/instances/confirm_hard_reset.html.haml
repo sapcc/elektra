@@ -1,0 +1,19 @@
+= content_for :title do
+  Hard reset instance: #{@instance.name}
+
+= simple_modal_form_for @form, submit_action: 'Hard Reset', url: plugin('compute').pre_hard_reset_instance_path(id: @instance.id), method: :post, cancel_url: plugin('compute').console_instance_path(id: @instance.id) do |f|
+  .bs-callout.bs-callout-danger
+    %span.fa.fa-exclamation-circle
+    If your operating system does not respond to a restart signal you need to hard reset your machine. 
+    That means the instance will be hard shutoff and afterwards switch on.
+    So if 
+    %strong you are sure?
+    The instance 
+    %strong
+      = @instance.name 
+    will be hard shutoff!
+  .row
+    .col-md-6
+      %fieldset
+        = f.input :name, label: "Type instance name to confirm", input_html: { autofocus: true }
+        = f.hidden_field :instance_name, value: @instance.name

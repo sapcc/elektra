@@ -1,0 +1,4 @@
+//close the create request window
+Dashboard.hideModal();Dashboard
+// hard reset instance
+$.post("<%=plugin('compute').hard_reset_instance_path({id:@instance.id})%>");
