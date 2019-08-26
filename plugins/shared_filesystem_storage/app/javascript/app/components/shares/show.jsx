@@ -47,7 +47,7 @@ export default class ShowShareModal extends React.Component{
           <Row label='Export Locations'>
             {share.export_locations ? (
               share.export_locations.map((location) =>
-                <div key={location.id}>{location.path}</div>)
+                location.preferred && <div key={location.id}>{location.path}</div>)
               ) : (<span className='spinner'></span>)
             }
           </Row>
