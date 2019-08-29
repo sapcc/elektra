@@ -21,12 +21,13 @@
         VNC Console
         %small (Click the blue bar to focus the console for keyboard input)
       .main-buttons
-        = link_to confirm_hard_reset_instance_path(id: @instance.id), class: 'btn btn-primary',data: {modal:true} do
-          %i.fa.fa-power-off
-          Hard Reset
-        = link_to 'javascript:location.reload();', class: 'btn btn-primary' do
+        .verticalLine
+          = link_to confirm_hard_reset_instance_path(id: @instance.id), class: 'btn btn-default hover-danger',data: {modal:true} do
+            %i.fa.fa-power-off
+            Hard Reset Instance
+        = link_to 'javascript:location.reload();', class: 'btn btn-primary ' do
           %i.fa.fa-refresh
-          Reload
+          Reload Console
 
         = link_to 'Close', 'javascript: window.close();', class: 'btn btn-default'
     .console{style: 'position: relative; height: 100%; width: 100%;'}
