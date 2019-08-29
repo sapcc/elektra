@@ -51,6 +51,20 @@ module Compute
       end
     end
 
+    def pre_hard_reset
+      @instance = services.compute.find_server(params[:id])
+      @form = Compute::Forms::ConfirmHardReset.new(params.require(:forms_confirm_hard_reset))
+      unless @form.validate
+        render action: 'confirm_hard_reset'
+        return
+      end
+    end
+
+    def confirm_hard_reset
+      @instance = services.compute.find_server(params[:id])
+      @form = Compute::Forms::ConfirmHardReset.new()
+    end
+
     def show
       @instance = services.compute.find_server(params[:id])
       return if @instance.blank?
@@ -69,7 +83,6 @@ module Compute
                nil
              end  
     end
-
 
     def new
       # get usage from db
@@ -520,6 +533,10 @@ module Compute
 
     def unlock
       execute_instance_action
+    end
+
+    def hard_reset
+      execute_instance_action('reboot', "HARD")
     end
 
     def automation_script

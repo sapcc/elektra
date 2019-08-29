@@ -4,24 +4,32 @@
     %meta(http-equiv="X-UA-Compatible" content="IE=edge")
     %meta(name="viewport" content="width=device-width, initial-scale=1")
 
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
     %title= "Console for #{@instance.name} (#{@instance.id})"
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+    = javascript_include_tag 'application', 'data-turbolinks-track' => true
 
     = favicon_png
     = favicon_ico
     = apple_touch_icon
-
     = csrf_meta_tags
 
+    #modal-holder
+
+  - hypervisor = @instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
   %body.vnc-console
     .toolbar.toolbar-with-h
       %h5
         VNC Console
         %small (Click the blue bar to focus the console for keyboard input)
       .main-buttons
-        = link_to 'javascript:location.reload();', class: 'btn btn-primary' do
+        - unless hypervisor.to_s.include?('nova-compute-ironic')
+          .verticalLine
+            = link_to confirm_hard_reset_instance_path(id: @instance.id), class: 'btn btn-default hover-danger',data: {modal:true} do
+              %i.fa.fa-power-off
+              Hard Reset Instance
+        = link_to 'javascript:location.reload();', class: 'btn btn-primary ' do
           %i.fa.fa-refresh
-          Reload
+          Reload Console
 
         = link_to 'Close', 'javascript: window.close();', class: 'btn btn-default'
     .console{style: 'position: relative; height: 100%; width: 100%;'}
