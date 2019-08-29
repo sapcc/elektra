@@ -18,5 +18,5 @@
   .row
     .col-md-6
       %fieldset
-        = f.input :name, label: "Please type the instance name that you want the hard-reset ", input_html: { autofocus: true }
+        = f.input :name, label: "Please type the instance name to confirm the hard-reset ", input_html: { autofocus: true }
         = f.hidden_field :instance_name, value: @instance.name

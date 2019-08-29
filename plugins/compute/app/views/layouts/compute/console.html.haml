@@ -15,16 +15,18 @@
 
     #modal-holder
 
+  - hypervisor = @instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
   %body.vnc-console
     .toolbar.toolbar-with-h
       %h5
         VNC Console
         %small (Click the blue bar to focus the console for keyboard input)
       .main-buttons
-        .verticalLine
-          = link_to confirm_hard_reset_instance_path(id: @instance.id), class: 'btn btn-default hover-danger',data: {modal:true} do
-            %i.fa.fa-power-off
-            Hard Reset Instance
+        - unless hypervisor.to_s.include?('nova-compute-ironic')
+          .verticalLine
+            = link_to confirm_hard_reset_instance_path(id: @instance.id), class: 'btn btn-default hover-danger',data: {modal:true} do
+              %i.fa.fa-power-off
+              Hard Reset Instance
         = link_to 'javascript:location.reload();', class: 'btn btn-primary ' do
           %i.fa.fa-refresh
           Reload Console

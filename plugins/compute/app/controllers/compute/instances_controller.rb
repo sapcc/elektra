@@ -84,7 +84,6 @@ module Compute
              end  
     end
 
-
     def new
       # get usage from db
       @quota_data = []
