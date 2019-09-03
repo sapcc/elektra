@@ -1,4 +1,23 @@
 //close the create request window
 Dashboard.hideModal();Dashboard
-// hard reset instance
+
+// trigger hard reset
 $.post("<%=plugin('compute').hard_reset_instance_path({id:@instance.id})%>");
+
+//close the create request window
+Dashboard.hideModal();Dashboard
+
+var cnt = 15;
+// show countdown for reload
+$('#console').html("<div class='countdown'/>");
+$('.countdown').html('Hard Reset in process<br>VNC Console will reload in '+cnt+'s');
+var x = setInterval(function() {
+  cnt--;
+  if (cnt == 0) {
+    clearInterval(x);
+    $('.countdown').html('reloading VNC Console');
+    window.location.replace("<%=plugin('compute').console_instance_path(id: @instance.id)%>");
+  } else {
+    $('.countdown').html('Hard Reset in process<br>VNC Console will reload in '+cnt+'s');
+  }
+}, 1000);
