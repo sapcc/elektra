@@ -15,6 +15,7 @@ ALLOWED_ROLES = %w[
   kubernetes_admin
   kubernetes_member
   member
+  masterdata_admin
   masterdata_viewer
   monitoring_viewer
   network_admin
