@@ -18,13 +18,37 @@ module Compute
       per_page = params[:per_page] || 20
       @instances = []
 
+      filter = {}
+      @search = nil
+      @searchfor = nil
 
-      if @scoped_project_id
-        @instances = paginatable(per_page: per_page) do |pagination_options|
-          services.compute.servers(@admin_option.merge(pagination_options))
+      if params.include?(:search)
+        if not params[:search].blank?
+          @search = params[:search]
+          @searchfor = "#{params[:searchfor]}"
+          filter = {@searchfor.downcase() => @search}
+        else
+          params.delete(:search)
+          params.delete(:searchfor)
         end
-
-        # get/calculate quota data for non-admin view
+      end
+      # search with filter or for all
+      if (@searchfor and @searchfor.downcase() != 'id') or filter.empty?
+        if @scoped_project_id
+          @instances = paginatable(per_page: per_page.to_i) do |pagination_options|
+            services.compute.servers(@admin_option.merge(pagination_options).merge(filter))
+          end
+          if @instances.nil?
+            @instances = []
+          end
+        end
+      # search with ID
+      elsif not @search.blank?
+        @instances = []
+        instance = services.compute.find_server(@search)
+        if instance
+          @instances << instance
+        end
       end
 
       # this is relevant in case an ajax paginate call is made.
@@ -757,5 +781,11 @@ module Compute
       @all_projects = current_user.is_allowed?('compute:all_projects')
       @admin_option = @all_projects ? { all_tenants: 1 } : {}
     end
+
+    def instance_params
+      params.require(:instance).permit(:q)
+    end
+
   end
+
 end

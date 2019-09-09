@@ -1,12 +1,24 @@
 = render "intro"
 
-.toolbar
-  .has-feedback.has-feedback-searchable
-    = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
 
-  .has-feedback-help
-    %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
-      %i.fa.fa-question-circle
+
+.toolbar
+  / / seach form
+  %form
+    .inputwrapper
+      = select_tag 'searchfor', options_for_select(['Name', 'ID', 'IP', 'Status'], @searchfor)
+      .toolbar-input-divider
+      .input-group
+        .has-feedback.has-feedback-searchable
+          %input.form-control{:id => "search", :name => 'search', :placeholder => "Name, ID, IP or Status", :type => "text", :size => 40, :value => @search }
+            .span.form-control-feedback.not-empty
+              %button.btn.btn-sm{:type => 'button', :onclick => "$('#search').val('');"}
+                %i.fa.fa-times-circle
+        .span.input-group-btn
+          %button.btn.btn-default{type: "submit"}
+            %i.fa.fa-search
+      %a.help-link.has-feedback-help{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: 'ID and Status (Active, Shutoff, ...) are searched exactly with the given term. A Name and Fixed IP search gives as result all Servers where the term is contained'}}
+        %i.fa.fa-question-circle
 
 
   - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
@@ -14,7 +26,7 @@
       = link_to 'Create new', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary'
 
 -# add searchable plugin to instances table (identified by css class searchable)
-%table.table.instances.searchable{data:{search_input: '#search_instances_input'}}
+%table.table.instances
   %thead
     %tr
       %th.snug
@@ -43,8 +55,8 @@
 
 -# if has next items (comes from paginate helper in controller) render the
 -# ajax paginate plugin (identified by data-ajax-paginate)
-- if @pagination_has_next
-  .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.instances tbody', search_input_selector: '#search_instances_input'} }
+-# if @pagination_has_next
+  .ajax-paginate{ data: { ajax_paginate: false, list_selector: 'table.instances tbody', search_input_selector: '#search_instances_input'} }
 
 
-=# render_paginatable(@instances)
+= render_paginatable(@instances, {searchfor: @searchfor, search: @search})

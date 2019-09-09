@@ -17,6 +17,8 @@ module ServiceLayer
         elektron_compute.get('servers/detail', filter).map_to(
           'body.servers', &server_map
         ) || []
+        rescue Elektron::Errors::ApiResponse
+          nil
       end
 
       def servers_batched(batch_size, filter = {})
