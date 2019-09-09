@@ -93,7 +93,10 @@
             - security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
             - (@instance_security_groups.compact || []).each do |sg|
               %tr
-                %th= sg.name
+                %th
+                  ="#{sg.name}"
+                  %p
+                  ="(#{sg.id})"
                 %td
                   - if sg.security_group_rules.empty?
                     No rules defined.
