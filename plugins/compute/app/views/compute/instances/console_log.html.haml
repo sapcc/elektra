@@ -1,0 +1,14 @@
+= content_for :title do
+  %i.fa.fa-terminal
+  Serial Log
+
+.pre-scrollable
+  %pre
+    %code= @log || "No Log available"
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", plugin('compute').instances_url, class: 'btn btn-default'
