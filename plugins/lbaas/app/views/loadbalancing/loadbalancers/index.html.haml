@@ -1,0 +1,52 @@
+= content_for :main_toolbar do
+  - if current_user.is_allowed?("loadbalancing:loadbalancer_create")
+    = link_to 'Load Balancers', plugin('loadbalancing').loadbalancers_path()
+
+%ul.nav.nav-tabs
+  %li.active{role: "presentation"}= link_to 'Load Balancers', '#loadbalancers', aria: {controls:"loadbalancers"}, role: "tab", data: {toggle:"tab"}
+
+.tab-content
+  #loadbalancers.tab-pane.active{role: "tabpanel"}
+
+  .toolbar
+    .has-feedback.has-feedback-searchable
+      = text_field_tag 'search_loadbalancers_input', '', class: "form-control", placeholder: 'name/id, desc., ip, fip'
+
+    .has-feedback-help
+      %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by loadbalancer name/id, description, internal IP and  assigned floating IP address in visible list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+        %i.fa.fa-question-circle
+
+    - if current_user.is_allowed?("loadbalancing:resource_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+      .main-buttons
+        = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_path, data: {modal: true}, class: 'btn btn-primary'
+
+  - if current_user.is_allowed?("loadbalancing:resource_list", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+    %table.table.loadbalancers.searchable{data:{search_input: '#search_loadbalancers_input'}}
+      %thead
+        %tr
+          %th Name/ID
+          %th Description
+          %th State
+          %th Prov. Status
+          %th IP Address
+          %th Listeners
+          %th Pools
+          %th.snug
+      %tbody
+        - if @loadbalancers.length==0
+          %tr{data:{empty:true}}
+            %td{colspa: 3} No Load Balancers available
+        - else
+          = render partial: 'list', locals: {loadbalancers: @loadbalancers}
+
+    -# if has next items (comes from paginate helper in controller) render the
+    -# ajax paginate plugin (identified by data-ajax-paginate)
+    - if @pagination_has_next
+      .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.loadbalancers tbody', search_input_selector: '#search_loadbalancers_input'} }
+
+
+=content_for :javascripts do
+  :javascript
+    $(document).ready(function() {
+      loadbalancing.startStatesPolling('#{plugin('loadbalancing').update_all_status_loadbalancers_path(format: :js)}', '#{Loadbalancing::STATE_UPDATE_INTERVAL*2*1000}');
+    });

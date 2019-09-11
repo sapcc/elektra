@@ -1,0 +1,18 @@
+- members.each do |member|
+  %tr{id: "member_#{member.id}"}
+    %td
+      - if member.address and !member.errors
+        %input{ name: "servers[][address]", value: "#{member.address}", readonly: true }
+      - else
+        %input{ id: 'ip', name: "servers[][address]", value: "#{member.address}", required: true }
+      - if member.errors.present?
+        .text-danger
+          = render_errors(member.errors)
+    %td
+      %input{ type: 'number',  min: 1, max: 65535, name: "servers[][protocol_port]", value: "#{member.protocol_port}", required: true }
+    %td
+      %input{ type: 'number', min: 1, max: 256, name: "servers[][weight]", value: "#{member.weight}", required: true }
+    %td.snug
+      - if current_user.is_allowed?('loadbalancing:resource_delete', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        = link_to "#", { class: 'btn btn-default btn-sm pool-member-remove', data: {target: "#member_#{member.id}"} } do
+          %i.fa.fa-minus

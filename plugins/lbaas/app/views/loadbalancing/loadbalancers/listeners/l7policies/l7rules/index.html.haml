@@ -1,0 +1,39 @@
+= content_for :main_toolbar do
+  = link_to 'Load Balancers', plugin('loadbalancing').loadbalancers_path()
+  = ' / '
+  = link_to "Listeners" , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
+  = ' / '
+  = link_to "Policies" , plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id)
+  = ' / '
+  = link_to "L7 Rules" , plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id, l7policy_id: @l7policy.id)
+
+%ul.nav.nav-tabs
+  %li.active{role: "presentation"}= link_to 'L7 Rules', '#l7rules', aria: {controls:"l7rules"}, role: "tab", data: {toggle:"tab"}
+
+.tab-content
+  #l7rules.tab-pane.active{role: "tabpanel"}
+  .row
+    .col-md-9
+      - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        .toolbar.toolbar-aligntop
+          .main-buttons
+            = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_listener_l7policy_l7rule_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id, l7policy_id: @l7policy.id), data: {modal: true}, class: 'btn btn-primary'
+
+      %table.table.listeners
+        %tr
+          %th Type
+          %th Compare Type
+          %th Key
+          %th Value
+          %th Invers
+          %th State
+        - unless @l7rules.blank?
+          - @l7rules.each do |l7rule|
+            = render partial: 'loadbalancing/loadbalancers/listeners/l7policies/l7rules/item', locals: {loadbalancer: @loadbalancer, listener: @listener, l7policy: @l7policy, l7rule: l7rule}
+        -else
+          %tr
+            %td{colspan:6} No L7 Rules defined
+      =# render_paginatable(@l7rules)
+
+    .col-md-3
+      = render :partial => 'loadbalancing/loadbalancers/listeners/l7policies/info', locals: {loadbalancer: @loadbalancer, listener: @listener, l7policy: @l7policy}

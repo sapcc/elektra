@@ -1,0 +1,21 @@
+%fieldset
+  = f.input :name, required: false
+  = f.input :description
+  = f.input :protocol_port, { readonly: update,
+                              label: 'Protocol Port',
+                              hint: 'A port number between 1 and 65535',
+                              input_html: { type: :number, min: 1, max: 65535 }}
+  = f.input :protocol, as: :select, collection: Loadbalancing::Listener::PROTOCOLS, disabled: update
+  = f.input :default_pool_id, as: :select, collection: @pools, label_method: -> p {name_or_id(p.name, p.id)}
+  = f.input :connection_limit, { label: 'Connection Limit',
+                                 hint: 'Value -1 means infinite connections are allowed.',
+                                 input_html: { type: :number, min: -1 , value: @listener.connection_limit || -1 }}
+  = f.input :default_tls_container_ref, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, label: 'Certificate Container', collection: @containers, include_blank: true }
+  %div
+    = f.input :sni_container_refs, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, label: 'SNI Containers ', collection: @containers, include_blank: false, input_html: { id: 'sni_container_refs', multiple: true} }
+
+=content_for :javascripts do
+  :javascript
+    $(document).ready(function() {
+      $('#sni_container_refs').multiselect();
+    });

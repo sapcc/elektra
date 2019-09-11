@@ -1,0 +1,35 @@
+= content_for :title do
+  Attach Floating IP
+
+- if @grouped_fips.length>0
+  = simple_form_for @floating_ip, url: plugin('loadbalancing').attach_floatingip_loadbalancer_path(id:params[:id]), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal', id: 'lb-floating-ip' }, wrapper: :horizontal_form do |f|
+
+    %div{class: modal? ? 'modal-body' : ''}
+
+      = render :partial => 'loadbalancing/application/errors', locals: {object: @floating_ip}
+
+      = f.input :ip_id,
+        prompt: "Select a Floating IP",
+        as: :grouped_select,
+        collection: @grouped_fips,
+        group_method: :last,
+        required: true,
+        label: 'Floating IP'
+
+    %div.buttons{class: modal? ? 'modal-footer' : ''}
+      - if modal?
+        %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+      - else
+        = link_to "Cancel", loadbalancers_url(), class: 'btn btn-default'
+      = button_tag "Attach", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+    
+- else
+  %div{class: modal? ? 'modal-body' : ''}
+    %p There is no floating IP available. Please allocate a new IP first (Note that it won't get attached automatically)
+    = link_to 'Allocate IP', plugin('networking').new_floating_ip_path, data: {modal: true}      
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", loadbalancers_url(), class: 'btn btn-default'  

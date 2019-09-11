@@ -1,0 +1,35 @@
+- if healthmonitor.blank?
+  %table.table
+    %thead
+    %tbody
+      %tr
+        %td
+          No Healthmonitor defined
+- else
+  %table.table
+    %thead
+    %tbody
+      %tr
+        %th Prov. State
+        %td
+          %label{class: 'spinner', data: {prov_status: "#{healthmonitor.id}"}}
+      %tr
+        %th Name/ID
+        %td
+          = name_or_id(healthmonitor.name, healthmonitor.id)
+      %tr
+        %th Type
+        %td= healthmonitor.type
+      %tr
+        %th Retries/Timeout/Delay
+        %td= "#{healthmonitor.max_retries} / #{healthmonitor.timeout_value} / #{healthmonitor.delay}"
+      - if healthmonitor.http_type?
+        %tr
+          %th HTTP Method
+          %td= healthmonitor.http_method
+        %tr
+          %th URL Path
+          %td= description(healthmonitor.url_path, 40)
+        %tr
+          %th Expected Codes
+          %td= healthmonitor.expected_codes

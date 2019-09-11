@@ -1,0 +1,49 @@
+/ = content_for :title do
+/   Show
+  
+.modal-body
+
+  %ul.nav.nav-tabs
+    %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"}
+    %li{role: "presentation"}
+      = link_to '#statuses', aria: {controls:"statuses"}, role: "tab", data: {toggle:"tab"} do
+        Statuses
+
+  .tab-content
+    .tab-pane.active{role:"tabpanel", id:"overview"}
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Name/ID
+            %td= name_or_id(@loadbalancer.name, @loadbalancer.id)
+          %tr
+            %th Description
+            %td= @loadbalancer.description
+          %tr
+            %th ID
+            %td= @loadbalancer.id
+          %tr
+            %th IP Address
+            %td= @loadbalancer.vip_address
+          %tr
+            %th Provider
+            - if @hosting_agent_name
+              %td= "#{@loadbalancer.provider} (#{@hosting_agent_name})"
+            - else
+              %td= @loadbalancer.provider
+          %tr
+            %th Operating Status
+            %td= @loadbalancer.operating_status
+          %tr
+            %th Provisioning Status
+            %td= @loadbalancer.provisioning_status
+
+    .tab-pane{role:"tabpanel", id:"statuses"}
+      = render partial: 'statuses', locals: {statuses: @statuses, loadbalancer: @loadbalancer}
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", plugin('block_storage').volumes_url, class: 'btn btn-default'

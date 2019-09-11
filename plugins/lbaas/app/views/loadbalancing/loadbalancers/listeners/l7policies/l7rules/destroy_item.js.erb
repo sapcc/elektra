@@ -1,0 +1,6 @@
+<%if @l7rule && !@l7rule.errors.blank?%>
+  InfoDialog.showError("<%=@l7rule.errors.full_messages[0]%>");
+  $("#loadbalancer_listener_l7policy_l7rule_<%=params[:id]%>").removeClass('updating');
+<%else%>
+  $("#loadbalancer_listener_l7policy_l7rule_<%=params[:id]%>").remove();
+<%end%>

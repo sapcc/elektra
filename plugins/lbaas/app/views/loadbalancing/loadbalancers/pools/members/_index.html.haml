@@ -1,0 +1,26 @@
+.row
+  .col-md-12
+    .toolbar
+      %h4
+        Pool Members
+
+      - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        .main-buttons
+          = link_to 'Add', plugin('loadbalancing').new_loadbalancer_pool_member_path(loadbalancer_id: loadbalancer.id, pool_id: pool.id ), data: {modal: true}, class: 'btn btn-primary'
+
+    %table.table#members
+      %thead
+        %tr
+          -#%th Name
+          %th IP Address
+          %th Protocol Port
+          %th Weight
+          %th States
+          %th.snug
+      %tbody
+        - if members.blank?
+          %tr{data:{empty:true}}
+            %td{colspa: 3} No Members available
+        - else
+          - members.each do | member |
+            = render partial: 'loadbalancing/loadbalancers/pools/members/item', locals: {loadbalancer: loadbalancer, pool: pool, member: member, statuses: statuses}

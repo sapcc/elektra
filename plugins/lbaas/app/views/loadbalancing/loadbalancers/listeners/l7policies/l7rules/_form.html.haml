@@ -1,0 +1,11 @@
+%fieldset
+  = f.input :type, required: true, as: :select, collection: Loadbalancing::L7rule::TYPES
+  = f.input :compare_type, required: true, as: :select, collection: Loadbalancing::L7rule::COMPARE_TYPES
+  = f.input :invert, as: :boolean, wrapper: :horizontal_boolean_4x8, label: 'Use inverse comparisation (NOT)'
+  = f.input :key, { required: true, wrapper_html: {class: ("hidden" unless @l7rule.type == 'HEADER' or @l7rule.type == 'COOKIE')}}
+  = f.input :value, required: true
+
+=content_for :javascripts do
+  :javascript
+    $(document).ready(function() {
+    });

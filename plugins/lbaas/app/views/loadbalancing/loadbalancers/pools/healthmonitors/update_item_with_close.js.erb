@@ -1,0 +1,11 @@
+// update partial with existing healthcheck and close modal or update with not existing healthcheck
+<%if @healthmonitor%>
+  $("#healthmonitor").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/healthmonitors/item_nav', locals: {loadbalancer: @loadbalancer, pool: @pool, healthmonitor: @healthmonitor })) %>");
+  $("#healthmonitor").update();
+  PollingService.update('<%=@loadbalancer.id%>/update_status')
+  MoModal.close();
+<%else%>
+  $("#healthmonitor").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/healthmonitors/item_nav', locals: {loadbalancer: @loadbalancer, pool: @pool, healthmonitor: @healthmonitor })) %>");
+  $("#healthmonitor").update();
+  PollingService.update('<%=@loadbalancer.id%>/update_status')
+<%end%>

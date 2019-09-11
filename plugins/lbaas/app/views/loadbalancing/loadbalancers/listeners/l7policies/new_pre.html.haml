@@ -1,0 +1,32 @@
+= content_for :title do
+  New Policy
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+= simple_form_for @l7policy, url: plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id), method: :post, remote: request.xhr?, html: {id: 'l7policy_form', data: {modal: true} } do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+
+    = render :partial => 'loadbalancing/application/errors', locals: {object: @l7policy}
+
+    .row
+      .col-sm-6
+        = render partial: 'form_pre', locals: {f: f, listener: @listener, update: false}
+
+      .col-sm-6
+        .bs-callout.bs-callout-primary.small
+          %h3= "Extended Policy"
+          %p= "Policies predefined by CCloud for special purpose"
+          %p= "The policy will apply specific settings on the load balancer objects. L7Rules are not applicable and the Policy will be applied always."
+          - Loadbalancing::L7policy.predefined(@listener.protocol).each do |p|
+            - p[:ids].each do |pre|
+              = render partial: "loadbalancing/loadbalancers/listeners/l7policies/esds/#{pre}", locals: {pre: pre}
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id), class: 'btn btn-default'
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Create

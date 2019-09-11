@@ -1,0 +1,8 @@
+<%if @healthmonitor && !@healthmonitor.errors.blank?%>
+  InfoDialog.showError("<%=@healthmonitor.errors.full_messages[0]%>");
+  $("#healthmonitor").removeClass('updating');
+<%else%>
+  $("#healthmonitor").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/healthmonitors/item_nav', locals: {loadbalancer: @loadbalancer, pool: @pool, healthmonitor: nil })) %>");
+  $("#healthmonitor").update();
+  PollingService.update('<%=@loadbalancer.id%>/update_status')
+<%end%>

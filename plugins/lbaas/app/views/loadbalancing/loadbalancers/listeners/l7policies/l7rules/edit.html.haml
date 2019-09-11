@@ -1,0 +1,40 @@
+= content_for :title do
+  Edit L7 Rule
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+= simple_form_for @l7rule, url: plugin('loadbalancing').loadbalancer_listener_l7policy_l7rule_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id, l7policy_id: @l7policy.id, id: @l7rule.id), method: :put, remote: request.xhr?, html: {id: 'l7rule_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+
+    = render :partial => 'loadbalancing/application/errors', locals: {object: @l7rule}
+
+    .row
+      .col-sm-6
+        = render partial: 'form', locals: {f: f, update: true}
+      .col-sm-6
+        .bs-callout.bs-callout-primary.small
+          %h3= "L7 Rule"
+          %p= "An L7 Rule is a single, simple logical test which returns either true or false. It is associated with an policy. The policy action will be executed when ALL L7 Rules are matched."
+          %h4= "Type"
+          %p
+            L7 rules have the following types:
+            %ul
+              %li="HOST_NAME: The rule does a comparison between the HTTP/1.1 hostname in the request against the value parameter in the rule."
+              %li="PATH: The rule compares the path portion of the HTTP URI against the value parameter in the rule."
+              %li="FILE_TYPE: The rule compares the last portion of the URI against the value parameter in the rule. (eg. txt, jpg)."
+              %li="HEADER: The rule looks for a header defined in the key parameter and compares it against the value parameter in the rule."
+              %li="COOKIE: The rule looks for a cookie named by the key parameter and compares it against the value parameter in the rule."
+          %h4= "Compare Type"
+          %p= "Defines how to compare the value field. A regex has to be a Perl type regular expression."
+          %h4= "Use inverse comparisation (NOT)"
+          %p= "The inverted rule result will be used for the policy evaluation."
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id, l7policy_id: @l7policy.id), class: 'btn btn-default'
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Change
