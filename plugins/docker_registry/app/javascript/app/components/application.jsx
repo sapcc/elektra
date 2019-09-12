@@ -1,7 +1,5 @@
 import { HashRouter, Route } from 'react-router-dom';
-
-//TODO
-const AccountList = (props) => <p>Hello World</p>;
+import AccountList from '../containers/accounts/list';
 
 export default (props) => {
   const { clusterId, canEdit, isAdmin } = props;
