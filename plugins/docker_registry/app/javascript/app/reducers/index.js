@@ -1,1 +1,1 @@
-export { entries } from './entries';
+export { keppel } from './keppel';

@@ -1,2 +1,10 @@
-= javascript_pack_tag "docker_registry_app",
-    data: { url: plugin("docker_registry").start_path }
+= content_for :main_toolbar do
+  Container Image Registry
+
+- unless @js_data[:can_edit]
+  .bs-callout.bs-callout-info.bs-callout-emphasize
+    This view is read-only. To edit quotas, you need the
+    %code= @edit_role
+    role.
+
+= javascript_pack_tag "docker_registry_app", data: @js_data

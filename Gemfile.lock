@@ -68,6 +68,12 @@ PATH
     dns_service (0.0.1)
 
 PATH
+  remote: plugins/docker_registry
+  specs:
+    docker_registry (0.0.1)
+      rails (~> 5.2.3)
+
+PATH
   remote: plugins/identity
   specs:
     identity (0.0.1)
@@ -546,6 +552,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    sqlite3 (1.4.1)
     temple (0.8.0)
     thor (0.19.4)
     thread_safe (0.3.6)
@@ -597,6 +604,7 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   dns_service!
+  docker_registry!
   dotenv-rails
   elektra-extension!
   elektron!
@@ -652,6 +660,7 @@ DEPENDENCIES
   simple_form
   spinners
   spring
+  sqlite3
   tools!
   uglifier
   unf (>= 0.2.0beta2)
