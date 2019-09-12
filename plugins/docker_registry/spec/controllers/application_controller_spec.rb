@@ -18,7 +18,10 @@ describe DockerRegistry::ApplicationController, type: :controller do
   end
 
   before :each do
-    stub_authentication
+    stub_authentication do |token|
+      token['roles'] << { 'id' => 'admin', 'name' => 'admin' }
+      return token
+    end
   end
 
   describe 'GET index' do
