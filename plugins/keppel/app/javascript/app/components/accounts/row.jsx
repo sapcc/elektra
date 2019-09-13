@@ -1,23 +1,34 @@
+import { Link } from 'react-router-dom';
+
 export default class AccountRow extends React.Component {
   render() {
-    const {
-      name:           accountName,
-      auth_tenant_id: projectID,
-      rbac_policies:  policies,
-    } = this.props.account;
-
+    const { name: accountName, auth_tenant_id: projectID } = this.props.account;
     const swiftContainerURL = `/_/${projectID}/object-storage/containers/${accountName}/list`;
 
+    //NOTE: This table is relatively empty at the moment. I'm considering adding stats like `N repositories, M tags, X GiB used` to the display, but that would require extending the Keppel API first.
+    //TODO: link from first column to some DetailsModal that lists RBAC policies and explains how to use `docker pull/push` with this account
     return (
       <tr>
-        <td className='col-md-3'>{accountName}</td>
-        <td className='col-md-3'>
+        <td className='col-md-6'>{accountName}</td>
+        <td className='col-md-6'>
           Swift container
           {' '}
-          <a href={swiftContainerURL}>keppel-{accountName}</a>
+          <a href={swiftContainerURL} target='_blank'>keppel-{accountName}</a>
         </td>
-        <td className='col-md-5'><pre>{JSON.stringify(policies, null, 2)}</pre></td>
-        <td className='col-md-1'>TODO</td>
+        <td className='snug'>
+          <div className='btn-group'>
+            <button
+              className='btn btn-default btn-sm dropdown-toggle'
+              type='button'
+              data-toggle='dropdown'
+              aria-expanded={true}>
+              <span className="fa fa-cog"></span>
+            </button>
+            <ul className="dropdown-menu dropdown-menu-right" role="menu">
+              <li><Link to={`/policies/${accountName}`}>Access policies</Link></li>
+            </ul>
+          </div>
+        </td>
       </tr>
     );
   }

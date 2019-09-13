@@ -1,4 +1,7 @@
+import { Link } from 'react-router-dom';
+
 import { DataTable } from 'lib/components/datatable';
+
 import AccountRow from './row';
 
 const columns = [
@@ -6,8 +9,7 @@ const columns = [
     sortKey: props => props.account.name || '' },
   { key: 'storage', label: 'Backing storage', sortStrategy: 'text',
     sortKey: props => props.account.name || '' },
-  { key: 'rbac_policies', label: 'Additional access rules' },
-  { key: 'actions', label: 'Actions' },
+  { key: 'actions', label: '' },
 ];
 
 export default class AccountList extends React.Component {
@@ -26,11 +28,29 @@ export default class AccountList extends React.Component {
       return <p><span className='spinner' /> Loading...</p>;
     }
     return (
-      <DataTable columns={columns}>
-        {this.props.accounts.map(account => (
-          <AccountRow account={account} />
-        ))}
-      </DataTable>
+      <React.Fragment>
+        {this.props.isAdmin && (
+          <div className='toolbar'>
+            <div className='main-buttons'>
+              <Link to='/accounts/new' className='btn btn-primary'>New Account</Link>
+            </div>
+          </div>
+        )}
+        <div className='row'>
+          <div className='col-md-9'>
+            <DataTable columns={columns}>
+              {this.props.accounts.map(account => (
+                <AccountRow key={account.name} account={account} />
+              ))}
+            </DataTable>
+          </div>
+          <div className='col-md-3'>
+            <div className='bs-callout bs-callout-primary' style={{marginTop:'1em'}}>
+              TODO explain Keppel
+            </div>
+          </div>
+        </div>
+      </React.Fragment>
     );
   }
 };
