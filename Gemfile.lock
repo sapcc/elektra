@@ -68,12 +68,6 @@ PATH
     dns_service (0.0.1)
 
 PATH
-  remote: plugins/docker_registry
-  specs:
-    docker_registry (0.0.1)
-      rails (~> 5.2.3)
-
-PATH
   remote: plugins/identity
   specs:
     identity (0.0.1)
@@ -90,6 +84,12 @@ PATH
       aasm
       bootstrap-kaminari-views
       kaminari
+
+PATH
+  remote: plugins/keppel
+  specs:
+    keppel (0.0.1)
+      rails (~> 5.2.3)
 
 PATH
   remote: plugins/key_manager
@@ -604,7 +604,6 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   dns_service!
-  docker_registry!
   dotenv-rails
   elektra-extension!
   elektron!
@@ -621,6 +620,7 @@ DEPENDENCIES
   inquiry!
   jquery-rails
   jquery-ui-rails
+  keppel!
   key_manager!
   kubernetes!
   loadbalancing!

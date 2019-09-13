@@ -1,0 +1,10 @@
+= content_for :main_toolbar do
+  Container Image Registry
+
+- unless @js_data[:can_edit]
+  .bs-callout.bs-callout-info.bs-callout-emphasize
+    This view is read-only. To edit quotas, you need the
+    %code= @edit_role
+    role.
+
+= javascript_pack_tag "keppel_app", data: @js_data
