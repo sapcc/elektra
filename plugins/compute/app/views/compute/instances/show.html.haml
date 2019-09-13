@@ -31,7 +31,15 @@
               %td= @instance.id
             %tr
               %th Status
-              %td= @instance.status
+              - state_text = @instance.status
+              - state_text += ": "+@instance.fault["message"] unless @instance.fault.nil?
+              - if @instance.status == "ERROR"
+                %td.text-danger
+                  %strong= state_text
+              - else 
+                %td
+                  = state_text
+              
             %tr
               %th Availability Zone
               %td= @instance.availability_zone
