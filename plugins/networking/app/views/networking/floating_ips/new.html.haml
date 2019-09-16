@@ -22,6 +22,16 @@
         as: :select,
         collection: @floating_networks
 
+    %fieldset
+      = f.input :dns_domain,
+        as: :select,
+        required: false,
+        collection: @dns_zones
+    
+    %fieldset
+      = f.input :dns_name
+
+    %fieldset
       = f.input :description
       - if current_user.is_allowed?("context_is_network_admin")
         = f.input :floating_ip_address,
