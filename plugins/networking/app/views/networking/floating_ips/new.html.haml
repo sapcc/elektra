@@ -22,15 +22,16 @@
         as: :select,
         collection: @floating_networks
 
-    %fieldset
-      = f.input :dns_domain_id,
-        as: :select,
-        required: false,
-        collection: @dns_zones
+    -unless @dns_zones.empty?
+      %fieldset
+        = f.input :dns_domain_id,
+          as: :select,
+          required: false,
+          collection: @dns_zones
     
-    %fieldset
-      = f.input :dns_name,
-        icon_hint: 'Specify a dns name that you want to use with the floating IP. The name must be a valid PQDN or FQDN and no longer than 63 characters.'
+      %fieldset
+        = f.input :dns_name,
+          icon_hint: 'Specify a dns name that you want to use with the floating IP. The name must be a valid PQDN or FQDN and no longer than 63 characters.'
 
     %fieldset
       = f.input :description
