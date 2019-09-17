@@ -58,7 +58,9 @@ module Networking
 
       # translate dns id into name because the api wants to have the fqdn
       dns_zone = services.dns_service.find_zone(params[:floating_ip][:dns_domain_id])
-      @floating_ip.dns_domain = dns_zone.name
+      unless dns_zone.empty?
+        @floating_ip.dns_domain = dns_zone.name
+      end
 
       # unset subnet_id if a specific address for floating ip is requested
       unless @floating_ip.floating_ip_address.blank?
