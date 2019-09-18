@@ -39,16 +39,27 @@ module Networking
       @floating_networks = services.networking.networks(
         'router:external' => true
       )
+
+      # get all available dns zones
+      @dns_zones = services.dns_service.zones[:items]
+
       @floating_ip = services.networking.new_floating_ip
       return unless @floating_networks.length == 1
       @floating_ip.floating_network_id = @floating_networks.first.id
     end
 
     def create
+
       @floating_networks = services.networking.networks(
         'router:external' => true
       )
       @floating_ip = services.networking.new_floating_ip(params[:floating_ip])
+
+      # translate dns id into name because the api wants to have the fqdn
+      dns_zone = services.dns_service.find_zone(params[:floating_ip][:dns_domain_id])
+      unless dns_zone.empty?
+        @floating_ip.dns_domain = dns_zone.name
+      end
 
       # unset subnet_id if a specific address for floating ip is requested
       unless @floating_ip.floating_ip_address.blank?
@@ -60,6 +71,7 @@ module Networking
         audit_logger.info(current_user, 'has created', @floating_ip)
         render action: :create
       else
+        @dns_zones = services.dns_service.zones[:items]
         render action: :new
       end
     end
