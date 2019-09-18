@@ -43,7 +43,6 @@ module Networking
       # get all available dns zones
       @dns_zones = services.dns_service.zones[:items]
 
-
       @floating_ip = services.networking.new_floating_ip
       return unless @floating_networks.length == 1
       @floating_ip.floating_network_id = @floating_networks.first.id
