@@ -6,9 +6,6 @@ module Networking
   # Represents the Openstack Floating IP
   class FloatingIp < Core::ServiceLayer::Model
 
-    validates_presence_of :dns_name, unless: lambda { self.dns_domain.blank? }, message: "can't be blank if domain is defined"
-    validates_presence_of :dns_domain_id, unless: lambda { self.dns_name.blank? }, message: "can't be blank if domain name is defined"
-
     def attributes_for_create
       {
         'floating_network_id' => read('floating_network_id'),
