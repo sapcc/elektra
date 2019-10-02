@@ -1,3 +1,3 @@
-= Loadbalancing
+= Lbaas
 
 This project rocks and uses MIT-LICENSE.

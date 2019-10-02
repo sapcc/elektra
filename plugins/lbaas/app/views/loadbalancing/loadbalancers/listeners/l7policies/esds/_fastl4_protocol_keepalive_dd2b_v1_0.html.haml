@@ -1,5 +1,0 @@
-%b
-  = "#{t("loadbalancing.policies.#{pre}")} (#{pre})"
-%p
-  Set's a keep alive timer on TCP/FastL4 listeners. Designed for LONG running requests > 300 seconds. Connections will
-  not be timed out after 300 seconds if the client still responds to keep alive requests from the listener.

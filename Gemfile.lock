@@ -96,6 +96,11 @@ PATH
     kubernetes (0.0.1)
 
 PATH
+  remote: plugins/lbaas
+  specs:
+    lbaas (0.0.1)
+
+PATH
   remote: plugins/loadbalancing
   specs:
     loadbalancing (0.0.1)
@@ -615,6 +620,7 @@ DEPENDENCIES
   jquery-ui-rails
   key_manager!
   kubernetes!
+  lbaas!
   loadbalancing!
   lookup!
   lyra-client!
@@ -660,4 +666,4 @@ DEPENDENCIES
   webpacker (~> 3.5)
 
 BUNDLED WITH
-   1.17.2
+   1.17.3

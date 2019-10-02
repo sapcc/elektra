@@ -1,4 +1,4 @@
-Loadbalancing::Engine.routes.draw do
+Lbaas::Engine.routes.draw do
   get '/' => 'loadbalancers#index', as: :entry
   get 'listener_details/:id', to: 'loadbalancers/listeners#show', as: 'listener_details'
   resources :loadbalancers do

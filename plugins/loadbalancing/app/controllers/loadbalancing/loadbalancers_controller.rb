@@ -52,6 +52,11 @@ module Loadbalancing
       )
 
       @hosting_agent_name = hosting_agent ? hosting_agent.host : nil
+
+      ports   = services.networking.ports(project_id: @scoped_project_id, device_owner: 'network:f5lbaasv2')
+      self_ip_ports = ports.map{|p| p if !p.name.blank? and p.name.start_with?('local')}.compact
+      @self_ips = self_ip_ports.map{|p| p.fixed_ips[0]['ip_address']}.join(' | ')
+
     end
 
     # Get statuses object for one loadbalancer

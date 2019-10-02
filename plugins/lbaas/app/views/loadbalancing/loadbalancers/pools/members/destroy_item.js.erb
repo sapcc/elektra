@@ -1,7 +1,0 @@
-<%if @member && !@member.errors.blank?%>
-  InfoDialog.showError("<%=@member.errors.full_messages[0]%>");
-  $("#member_<%=params[:id]%>").removeClass('updating');
-<%else%>
-  $("#member_<%=params[:id]%>").remove();
-<%end%>
-$('[data-update-loadbalancer-state]').loadbalancerState({enforce_state: 'PENDING_UPDATE'});

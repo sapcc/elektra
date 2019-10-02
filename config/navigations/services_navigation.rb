@@ -137,6 +137,11 @@ SimpleNavigation::Configuration.run do |navigation|
                                         -> { plugin('loadbalancing').loadbalancers_path },
                                         if: -> { plugin_available?(:loadbalancing) && services.available?(:loadbalancing) },
                                         highlights_on: -> { params[:controller][%r{loadbalancing/?.*}] }
+                    networking_nav.item :lbaas,
+                                        'LBaaS',
+                                        -> { plugin('lbaas').loadbalancers_path },
+                                        if: -> { plugin_available?(:lbaas) && services.available?(:lbaas) && current_user.is_allowed?("cloud_admin_or_support")},
+                                        highlights_on: -> { params[:controller][%r{lbaas/?.*}] }
                     networking_nav.item :dns_service,
                                         'DNS',
                                         -> { plugin('dns_service').zones_path },

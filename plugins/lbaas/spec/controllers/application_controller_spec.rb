@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Loadbalancing::ApplicationController, type: :controller do
+describe Lbaas::ApplicationController, type: :controller do
 =begin
-  routes { Loadbalancing::Engine.routes }
+  routes { Lbaas::Engine.routes }
   
   
   
