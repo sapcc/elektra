@@ -7,38 +7,36 @@ const initialState = {
   updatedAt: null,
   isFetching: false,
   hasNext: true,
-  marker: null,
+  searchType: null,
   searchTerm: null,
+  limit: 20,
+  page: 1,
+  sortKey: 'name', 
+  sortDir: 'asc',
   error: null
 };
 
-const requestVolumes = (state,{requestedAt})=> (
-  {...state, requestedAt, isFetching: true, error: null}
+const requestVolumes = (state,{searchTerm,searchType})=> (
+  {...state, isFetching: true, error: null,searchType,searchTerm}
 )
 
 const requestVolumesFailure = (state,{error}) => (
   {...state, isFetching: false, error}
 )
 
-const receiveVolumes = (state,{items,receivedAt,hasNext}) => {
-  let newItems = (state.items.slice() || []).concat(items);
-  // filter duplicated items
-  newItems = newItems.filter( (item, pos, arr) =>
-    arr.findIndex(i => i.id == item.id)==pos
-  );
-
+const receiveVolumes = (state,{items,receivedAt,hasNext,limit,page,sortKey,sortDir}) => {
   return {...state,
     receivedAt,
     isFetching: false,
-    items: newItems,
-    hasNext,
-    marker: items[items.length-1]
+    // filter duplicated items
+    items: items.filter( (item, pos, arr) => arr.findIndex(i => i.id == item.id)==pos),
+    limit,
+    page,
+    sortDir,
+    sortKey,
+    hasNext
   }
 }
-
-const setSearchTerm= (state,{searchTerm}) => (
-  {...state, searchTerm}
-);
 
 const receiveVolume= function(state,{volume}) {
   const index = state.items.findIndex((item) => item.id==volume.id);
@@ -95,7 +93,6 @@ export default(state=initialState, action) => {
     case constants.REQUEST_VOLUMES_FAILURE: return requestVolumesFailure(state,action);
     case constants.RECEIVE_VOLUMES: return receiveVolumes(state,action);
     case constants.RECEIVE_VOLUME: return receiveVolume(state,action);
-    case constants.SET_VOLUME_SEARCH_TERM: return setSearchTerm(state,action);
     case constants.REQUEST_VOLUME_DELETE: return requestVolumeDelete(state,action);
     case constants.REQUEST_VOLUME_EXTEND: return requestVolumeExtend(state,action);
     case constants.REQUEST_VOLUME_ATTACH: return requestVolumeAttach(state,action);

@@ -3,8 +3,7 @@ import VolumeList from '../../components/volumes/list';
 
 import {
   fetchVolumesIfNeeded,
-  loadNext,
-  searchVolumes,
+  fetchVolumes,
   fetchVolume,
   deleteVolume,
   forceDeleteVolume,
@@ -17,9 +16,8 @@ export default connect(
     volumes: state.volumes
   }),
   dispatch => ({
+    fetchVolumes: (params={}) => dispatch(fetchVolumes(params)),
     loadVolumesOnce: () => dispatch(fetchVolumesIfNeeded()),
-    loadNext: () => dispatch(loadNext()),
-    search: (term) => dispatch(searchVolumes(term)),
     reloadVolume: (id) => dispatch(fetchVolume(id)),
     deleteVolume: (id) => dispatch(deleteVolume(id)),
     forceDeleteVolume: (id) => dispatch(forceDeleteVolume(id)),

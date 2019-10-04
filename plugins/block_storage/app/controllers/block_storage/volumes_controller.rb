@@ -9,18 +9,29 @@ module BlockStorage
     authorization_required except: %i[availability_zones images]
 
     def index
-      per_page = (params[:per_page] || 30).to_i
+      limit = (params[:limit] || 2).to_i
+      sort_key = (params[:sort_key] || 'name')
+      sort_dir = (params[:sort_dir] || 'asc')
+      
+      if params[:search_type] == 'id'
+        volume = services.block_storage.find_volume!(params[:search_term]) rescue nil
+        extend_volume_data(volume) if volume
+        volumes = volume ? [volume] : []
+      else 
+        filters = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
+        filters[:marker] = params[:marker] if params[:marker]
+        filters[params[:search_type]] = params[:search_term] if params[:search_type] 
 
-      options = { sort_key: 'name', sort_dir: 'asc', limit: per_page + 1 }
-      options[:marker] = params[:marker] if params[:marker]
-      volumes = services.block_storage.volumes_detail(options)
-
-      extend_volume_data(volumes)
+        volumes = services.block_storage.volumes_detail(filters)
+        extend_volume_data(volumes)
+      end    
 
       # byebug
-      render json: {
-        volumes: volumes,
-        has_next: volumes.length > per_page
+      render json: { 
+        items: volumes[0...limit], 
+        has_next: volumes.length > limit,
+        page: (params[:page] || 1).to_i,
+        limit: limit, sort_dir: sort_dir, sort_key: sort_key
       }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
