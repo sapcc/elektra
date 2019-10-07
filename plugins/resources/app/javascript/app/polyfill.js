@@ -6,3 +6,12 @@ export const objectFromEntries = (entries) => {
   }
   return result;
 };
+
+//Array.flatMap() is not supported on some older browsers that customers use.
+export const arrayFlatMap = (inputs, callback) => {
+  const outputs = [];
+  for (let value of inputs) {
+    outputs.push(...callback(value));
+  }
+  return outputs;
+};
