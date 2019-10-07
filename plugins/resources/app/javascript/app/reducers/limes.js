@@ -39,7 +39,7 @@ const initialState = {
 // helper for reducers that need to restructure a Limes JSON into a triplet of
 // (metadata, overview, categories)
 
-const restructureReport = (data) => {
+const restructureReport = (data, resourceFilter = null) => {
   // This reducer helper takes the `data` returned by Limes under any GET
   // endpoint and flattens it into several structures that reflect the
   // different levels of React components.
@@ -47,14 +47,26 @@ const restructureReport = (data) => {
   // Note that the outermost level of the JSON (containing only the key
   // "cluster", "domain" or "project") has already been removed in the
   // fetchData/fetchCapacity action.
+  //
+  // If `resourceFilter` is given, only resources matching this attribute are
+  // included in the final result. (Services and categories without any
+  // matching resources are removed from the result.)
 
   // `metadata` is what multiple levels need (e.g. bursting multiplier).
   var {services: serviceList, ...metadata} = data;
 
+  //apply `resourceFilter`
+  if (resourceFilter !== null) {
+    serviceList = serviceList.map(srv => ({
+      ...srv,
+      resources: srv.resources.filter(resourceFilter),
+    })).filter(srv => srv.resources.length > 0);
+  }
+
   // `categories` is what the Category component needs.
   const categories = {};
   for (let srv of serviceList) {
-    var {resources: resourceList, type: serviceType, ...serviceData} = srv;
+    const {resources: resourceList, type: serviceType, ...serviceData} = srv;
 
     for (let res of resourceList) {
       categories[res.category || serviceType] = {
@@ -73,7 +85,7 @@ const restructureReport = (data) => {
   // producing arrays of values
   // 
   // e.g. groupKeys(["foo", 1], ["bar", 2], ["foo", 3])
-  //      = { foo: [1, 3], bar: 2 }
+  //      = { foo: [1, 3], bar: [2] }
   const groupKeys = (entries) => {
     const result = {};
     for (let [k, v] of entries) { result[k] = []; }
@@ -163,7 +175,7 @@ const receiveCapacity = (state, { data, receivedAt }) => ({
   ...state,
   capacityData: {
     ...state.capacityData,
-    ...restructureReport(data),
+    ...restructureReport(data, res => res.per_availability_zone !== undefined),
     isFetching: false,
     receivedAt,
   },

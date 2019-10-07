@@ -15,12 +15,7 @@ export default class Loader extends React.Component {
 
   loadDependencies = (props) => {
     props.loadDataOnce(props.scopeData);
-    const scope = new Scope(props.scopeData);
-    if (!scope.isCluster()) {
-      //only required for domain or project level - on cluster level,
-      //fetchCapacity() and fetchData() hit the same endpoint
-      props.loadCapacityOnce(props.scopeData);
-    }
+    props.loadCapacityOnce(props.scopeData);
     if (props.hasCastellum) {
       props.discoverAutoscalableSubscopesOnce(props.scopeData);
     }

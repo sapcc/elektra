@@ -27,6 +27,7 @@ export const RECEIVE_CASTELLUM_OPERATIONS_REPORT = 'resources/app/RECEIVE_CASTEL
 // Please do not use this directly. Use t() from ./utils.js instead.
 export const STRINGS = {
     "autoscaling":                 "Autoscaling",
+    "availability_zones":          "Availability Zones",
     "block_storage":               "Block Storage",
     "capacity":                    "Capacity",
     "cfm_share_capacity":          "Share Capacity",

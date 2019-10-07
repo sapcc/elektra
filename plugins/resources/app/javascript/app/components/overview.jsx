@@ -5,6 +5,7 @@ import { Scope } from '../scope';
 import { byUIString, byNameIn, t } from '../utils';
 import Category from '../containers/category';
 import AutoscalingTabs from './autoscaling/tabs';
+import AvailabilityZoneOverview from '../containers/availability_zones/overview';
 import ProjectSyncAction from '../components/project/sync_action';
 
 export default class Overview extends React.Component {
@@ -18,6 +19,7 @@ export default class Overview extends React.Component {
 
   renderNavbar(currentArea, canEdit, canAutoscale, scope) {
     const tabs = Object.keys(this.props.overview.areas).sort(byUIString);
+    tabs.push('availability_zones');
     if (canAutoscale) {
       tabs.push('autoscaling');
     }
@@ -88,6 +90,17 @@ export default class Overview extends React.Component {
     );
   }
 
+  renderAvailabilityZoneTab() {
+    const props = this.props;
+    const scope = new Scope(props.scopeData);
+    return (
+      <React.Fragment>
+        {this.renderNavbar('availability_zones', props.canEdit, props.canAutoscale, scope)}
+        <AvailabilityZoneOverview scopeData={props.scopeData} />
+      </React.Fragment>
+    );
+  }
+
   renderAutoscalingTab() {
     const props = this.props;
     const scope = new Scope(props.scopeData);
@@ -101,6 +114,8 @@ export default class Overview extends React.Component {
 
   render() {
     switch (this.state.currentArea) {
+      case 'availability_zones':
+        return this.renderAvailabilityZoneTab();
       case 'autoscaling':
         return this.renderAutoscalingTab();
       default:
