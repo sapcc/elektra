@@ -85,6 +85,40 @@ export const listClusters = (serviceType, resourceName) => function(dispatch, ge
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// get capacity data for the cluster level
+
+export const fetchCapacity = (scopeData) => function(dispatch, getState) {
+  dispatch({
+    type: constants.REQUEST_CAPACITY,
+    requestedAt: Date.now(),
+  });
+  const scope = new Scope(scopeData);
+
+  return ajaxHelper.get(scope.capacityUrlPath())
+    .then((response) => {
+      dispatch({
+        type: constants.RECEIVE_CAPACITY,
+        data: response.data.cluster,
+        receivedAt: Date.now(),
+      });
+    })
+    .catch((error) => {
+      dispatch({
+        type: constants.REQUEST_CAPACITY_FAILURE,
+      });
+      showLimesError(error);
+    });
+};
+
+export const fetchCapacityIfNeeded = (scopeData) => function(dispatch, getState) {
+  const state = getState();
+  if (state.limes.capacityData.isFetching || state.limes.capacityData.requestedAt) {
+    return;
+  }
+  return dispatch(fetchCapacity(scopeData));
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // sync project
 
 const syncProjectFailure = () => ({

@@ -2,6 +2,10 @@ export const REQUEST_DATA         = 'resources/app/REQUEST_DATA';
 export const REQUEST_DATA_FAILURE = 'resources/app/REQUEST_DATA_FAILURE';
 export const RECEIVE_DATA         = 'resources/app/RECEIVE_DATA';
 
+export const REQUEST_CAPACITY         = 'resources/app/REQUEST_CAPACITY';
+export const REQUEST_CAPACITY_FAILURE = 'resources/app/REQUEST_CAPACITY_FAILURE';
+export const RECEIVE_CAPACITY         = 'resources/app/RECEIVE_CAPACITY';
+
 export const SYNC_PROJECT_REQUESTED  = 'resources/app/SYNC_PROJECT_REQUESTED';
 export const SYNC_PROJECT_FAILURE    = 'resources/app/SYNC_PROJECT_FAILURE';
 export const SYNC_PROJECT_STARTED    = 'resources/app/SYNC_PROJECT_STARTED';

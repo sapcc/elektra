@@ -22,40 +22,31 @@ const initialState = {
     receivedAt: null,
     isFetching: false,
   },
+
+  capacityData: {
+    //data from Limes
+    metadata: null,
+    overview: null,
+    categories: null,
+    //UI state
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+  },
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// get quota/usage data
+// helper for reducers that need to restructure a Limes JSON into a triplet of
+// (metadata, overview, categories)
 
-const request = (state, {requestedAt}) => ({
-  ...state,
-  isFetching: true,
-  isIncomplete: false,
-  requestedAt,
-});
-
-const requestFailure = (state, action) => ({
-  ...state,
-  isFetching: false,
-  syncStatus: null,
-});
-
-const receive = (state, {data, receivedAt}) => {
-  // This reducer takes the `data` returned by Limes and flattens it
-  // into several structures that reflect the different levels of React
-  // components.
-
-  // validation: check that each service has resources (we might see missing
-  // resources immediately after project creation, before Limes has completed
-  // the initial scrape of all project services)
-  if (data.services.some(srv => (srv.resources || []).length == 0)) {
-    return {
-      ...state,
-      receivedAt,
-      isFetching: false,
-      isIncomplete: true,
-    };
-  }
+const restructureReport = (data) => {
+  // This reducer helper takes the `data` returned by Limes under any GET
+  // endpoint and flattens it into several structures that reflect the
+  // different levels of React components.
+  //
+  // Note that the outermost level of the JSON (containing only the key
+  // "cluster", "domain" or "project") has already been removed in the
+  // fetchData/fetchCapacity action.
 
   // `metadata` is what multiple levels need (e.g. bursting multiplier).
   var {services: serviceList, ...metadata} = data;
@@ -81,7 +72,7 @@ const receive = (state, {data, receivedAt}) => {
   // object just like Object.fromEntries(), but allows duplicate keys by
   // producing arrays of values
   // 
-  // e.g. groupKeys(["foo", 1], ["foo", 2], ["foo", 3])
+  // e.g. groupKeys(["foo", 1], ["bar", 2], ["foo", 3])
   //      = { foo: [1, 3], bar: 2 }
   const groupKeys = (entries) => {
     const result = {};
@@ -107,16 +98,76 @@ const receive = (state, {data, receivedAt}) => {
     categories: groupKeys(Object.entries(categories).map(([ catName, cat ]) => [ cat.serviceType, catName ])),
   };
 
+  return { metadata, categories, overview };
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// get quota/usage data
+
+const request = (state, {requestedAt}) => ({
+  ...state,
+  isFetching: true,
+  isIncomplete: false,
+  requestedAt,
+});
+
+const requestFailure = (state, action) => ({
+  ...state,
+  isFetching: false,
+  syncStatus: null,
+});
+
+const receive = (state, {data, receivedAt}) => {
+  // validation: check that each service has resources (we might see missing
+  // resources immediately after project creation, before Limes has completed
+  // the initial scrape of all project services)
+  if (data.services.some(srv => (srv.resources || []).length == 0)) {
+    return {
+      ...state,
+      receivedAt,
+      isFetching: false,
+      isIncomplete: true,
+    };
+  }
+
   return {
     ...state,
-    metadata: metadata,
-    overview: overview,
-    categories: categories,
+    ...restructureReport(data),
     isFetching: false,
     syncStatus: null,
     receivedAt,
   };
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// get capacity data for the cluster level
+
+const requestCapacity = (state, {requestedAt}) => ({
+  ...state,
+  capacityData: {
+    ...initialState.capacityData,
+    isFetching: true,
+    requestedAt,
+  },
+});
+
+const requestCapacityFailure = (state, action) => ({
+  ...state,
+  capacityData: {
+    ...state.capacityData,
+    isFetching: false,
+  },
+});
+
+const receiveCapacity = (state, { data, receivedAt }) => ({
+  ...state,
+  capacityData: {
+    ...state.capacityData,
+    ...restructureReport(data),
+    isFetching: false,
+    receivedAt,
+  },
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // discover autoscalable subscopes
@@ -169,6 +220,9 @@ export const limes = (state, action) => {
     case constants.REQUEST_DATA:         return request(state, action);
     case constants.REQUEST_DATA_FAILURE: return requestFailure(state, action);
     case constants.RECEIVE_DATA:         return receive(state, action);
+    case constants.REQUEST_CAPACITY:         return requestCapacity(state, action);
+    case constants.REQUEST_CAPACITY_FAILURE: return requestCapacityFailure(state, action);
+    case constants.RECEIVE_CAPACITY:         return receiveCapacity(state, action);
     case constants.SYNC_PROJECT_REQUESTED:  return setSyncStatus(state, 'requested');
     case constants.SYNC_PROJECT_FAILURE:    return setSyncStatus(state, null);
     case constants.SYNC_PROJECT_STARTED:    return setSyncStatus(state, 'started');
