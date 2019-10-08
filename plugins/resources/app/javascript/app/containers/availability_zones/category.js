@@ -3,8 +3,12 @@ import { Scope } from '../../scope';
 import AvailabilityZoneCategory from '../../components/availability_zones/category';
 
 export default connect(
-  (state, props) => ({
-    category: state.limes.capacityData.categories[props.categoryName],
-  }),
+  (state, props) => {
+    const data = state.limes.capacityData;
+    return {
+      category:          data.categories[props.categoryName],
+      availabilityZones: data.availabilityZones,
+    };
+  },
   dispatch => ({}),
 )(AvailabilityZoneCategory);

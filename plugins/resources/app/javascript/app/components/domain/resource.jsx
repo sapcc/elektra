@@ -54,7 +54,7 @@ export default (props) => {
       <div className={props.wide ? 'col-md-9' : isEditing ? 'col-md-4' : 'col-md-5'}>
         <ResourceBar
           capacity={quota} {...fillProps} unitName={unitName}
-          isDanger={fillProps.fill > quota} scopeData={props.scopeData} />
+          isDanger={fillProps.fill > quota} showsCapacity={false} />
       </div>
       {!props.wide && (
         isEditing

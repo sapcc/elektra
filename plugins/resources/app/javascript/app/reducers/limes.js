@@ -28,6 +28,7 @@ const initialState = {
     metadata: null,
     overview: null,
     categories: null,
+    availabilityZones: null,
     //UI state
     requestedAt: null,
     receivedAt: null,
@@ -171,15 +172,32 @@ const requestCapacityFailure = (state, action) => ({
   },
 });
 
-const receiveCapacity = (state, { data, receivedAt }) => ({
-  ...state,
-  capacityData: {
-    ...state.capacityData,
-    ...restructureReport(data, res => res.per_availability_zone !== undefined),
-    isFetching: false,
-    receivedAt,
-  },
-});
+const receiveCapacity = (state, { data, receivedAt }) => {
+  const resourceFilter = res => res.per_availability_zone !== undefined;
+  const { metadata, categories, overview } = restructureReport(data, resourceFilter);
+
+  //The AvailabilityZoneOverview component needs a list of all AZs to render the table header.
+  const availabilityZones = {};
+  for (const categoryName in categories) {
+    for (const resource of categories[categoryName].resources) {
+      for (const azCapacity of resource.per_availability_zone) {
+        availabilityZones[azCapacity.name] = true;
+      }
+    }
+  }
+
+  return {
+    ...state,
+    capacityData: {
+      ...state.capacityData,
+      metadata, categories, overview,
+      availabilityZones: Object.keys(availabilityZones).sort(),
+      isFetching: false,
+      receivedAt,
+    },
+  };
+
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // discover autoscalable subscopes
