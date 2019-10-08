@@ -1,15 +1,22 @@
-.toolbar.toolbar-aligntop
-  .has-feedback.has-feedback-searchable
-    = text_field_tag 'search_records_input', '', class: "form-control", placeholder: 'Record name, ID, or type'
-  .has-feedback-help
-    %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by record name, ID or type in visible record list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+%form
+  .toolbar.toolbar-aligntop
+    / / seach form
+    .inputwrapper
+      = select_tag 'searchfor', options_for_select(['Name', 'Type', 'Data', 'TTL', 'Status'], @searchfor), class: "form-control"
+    .inputwrapper
+      .input-group.has-feedback.has-feedback-searchable
+        %input.form-control{:id => "search", :name => 'search', :placeholder => "Enter search term", :type => "text", :size => 40, :value => @search }
+        .span.input-group-btn
+          %button.btn.btn-default{type: "submit"}
+            %i.fa.fa-search
+    %a.help-link.has-feedback-help{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: 'Search term can use wildcard "*".'}}
       %i.fa.fa-question-circle
 
-  - if current_user.is_allowed?("dns_service:recordset_create", zone: zone) && @scoped_project_id == zone.project_id
-    .main-buttons
-      = link_to 'Create New', plugin('dns_service').new_zone_recordset_path(zone_id: zone.id), data: {modal: true}, class: 'btn btn-primary'
+    - if current_user.is_allowed?("dns_service:recordset_create", zone: zone) && @scoped_project_id == zone.project_id
+      .main-buttons
+        = link_to 'Create New', plugin('dns_service').new_zone_recordset_path(zone_id: zone.id), data: {modal: true}, class: 'btn btn-primary'
 
-%table.table#recordsets.searchable{data:{search_input: '#search_records_input'}}
+%table.table#recordsets
   %thead
     %tr
       %th Name
@@ -24,8 +31,7 @@
     - else
       = render partial: 'dns_service/zones/recordsets/recordsets', locals: { recordsets: recordsets, zone: zone }
 
-- if @pagination_has_next
+-# if @pagination_has_next
   .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table#recordsets tbody', search_input_selector: '#search_records_input'} }
 
-
-=# render_paginatable(recordsets)
+= render_paginatable(recordsets, {searchfor: @searchfor, search: @search})
