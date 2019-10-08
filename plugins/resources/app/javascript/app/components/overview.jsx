@@ -98,7 +98,7 @@ export default class Overview extends React.Component {
     return (
       <React.Fragment>
         {this.renderNavbar('availability_zones', props.canEdit, props.canAutoscale, scope)}
-        <AvailabilityZoneOverview scopeData={props.scopeData} />
+        <AvailabilityZoneOverview flavorData={props.flavorData} />
       </React.Fragment>
     );
   }

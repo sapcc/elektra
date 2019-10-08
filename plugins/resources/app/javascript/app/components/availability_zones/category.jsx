@@ -1,7 +1,17 @@
-export default class AvailabilityZoneCategory extends React.Component {
-  render() {
-    return (
-      <pre>{JSON.stringify(this.props, null, 2)}</pre>
-    );
-  }
+import AvailabilityZoneResource from './resource';
+
+import { t } from '../../utils';
+
+const AvailabilityZoneCategory = ({ categoryName, category, flavorData }) => {
+  const { serviceType, resources } = category;
+  return (
+    <React.Fragment>
+      <h3>{t(categoryName)}</h3>
+      {resources.map(res => (
+        <AvailabilityZoneResource key={res.name} resource={res} flavorData={flavorData} />
+      ))}
+    </React.Fragment>
+  );
 }
+
+export default AvailabilityZoneCategory;
