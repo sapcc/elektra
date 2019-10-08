@@ -1,5 +1,7 @@
 import AvailabilityZoneCategory from '../../containers/availability_zones/category';
 
+import { byUIString, byNameIn } from '../../utils';
+
 const AvailabilityZoneOverview = ({ isFetching, overview, flavorData }) => {
   if (isFetching) {
     return <p><span className='spinner'/> Loading capacity data...</p>;
@@ -8,9 +10,9 @@ const AvailabilityZoneOverview = ({ isFetching, overview, flavorData }) => {
   const forwardProps = { flavorData };
   return (
     <React.Fragment>
-      {Object.keys(overview.areas).map(area => (
-        overview.areas[area].map(serviceType => (
-          overview.categories[serviceType].map(categoryName => (
+      {Object.keys(overview.areas).sort(byUIString).map(area => (
+        overview.areas[area].sort(byUIString).map(serviceType => (
+          overview.categories[serviceType].sort(byNameIn(serviceType)).map(categoryName => (
             <AvailabilityZoneCategory key={categoryName} categoryName={categoryName} {...forwardProps} />
           ))
         ))

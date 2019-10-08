@@ -1,6 +1,6 @@
 import AvailabilityZoneResource from './resource';
 
-import { t } from '../../utils';
+import { byUIString, t } from '../../utils';
 
 const AvailabilityZoneCategory = ({ categoryName, category, availabilityZones, flavorData }) => {
   const { serviceType, resources } = category;
@@ -19,7 +19,7 @@ const AvailabilityZoneCategory = ({ categoryName, category, availabilityZones, f
           <div key={az} className={`col-md-${azColumnWidth}`}><h4>{az}</h4></div>
         ))}
       </div>
-      {resources.map(res => (
+      {resources.sort(byUIString).map(res => (
         <AvailabilityZoneResource key={res.name} resource={res} {...forwardProps} />
       ))}
     </React.Fragment>
