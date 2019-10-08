@@ -19,7 +19,7 @@ export default class Overview extends React.Component {
 
   renderNavbar(currentArea, canEdit, canAutoscale, scope) {
     const tabs = Object.keys(this.props.overview.areas).sort(byUIString);
-    if (window.location.hostname === "localhost") { //TODO remove condition when this tab is ready to be released
+    if (scope.isCluster() || window.location.hostname === "localhost") { //TODO remove condition when this tab is ready to be released
       tabs.push('availability_zones');
     }
     if (canAutoscale) {
