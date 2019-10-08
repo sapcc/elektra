@@ -19,6 +19,7 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install unf -v 0.2.0.beta2 \
       && gem install websocket-driver -v 0.7.0 \
       && gem install bindex -v 0.6.0 \
+      && gem install sassc -v 2.2.1 \
       && runDeps="$( \
 		      scanelf --needed --nobanner --recursive /usr/local \
             | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
@@ -50,7 +51,7 @@ ADD package.json yarn.lock ./
 # copy all gemspec files from plugins folder into /home/app/webapp/tmp/plugins/
 ADD plugins/*/*.gemspec tmp/plugins/
 
-# copy organize_plugins_gemspecs script (see comments in docker/organize_plugins_gemspecs) and execute it
+# copy organize_plugins_gemspecs script (see comments in script/organize_plugins_gemspecs) and execute it
 ADD script/organize_plugins_gemspecs script/
 RUN script/organize_plugins_gemspecs
 
