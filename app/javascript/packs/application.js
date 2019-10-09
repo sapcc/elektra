@@ -1,4 +1,5 @@
-import "babel-polyfill";
+// https://babeljs.io/docs/en/babel-polyfill
+import "@babel/polyfill";
 
 function importAll (r) {
   r.keys().forEach(r);

@@ -1,4 +1,4 @@
-import 'babel-polyfill';
+import '@babel/polyfill';
 import { generateConfig, parseConfig } from '../components/autoscaling/config_item';
 
 describe('generate_config', () => {
