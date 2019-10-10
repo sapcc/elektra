@@ -33,12 +33,22 @@ development:
   <<: *default
   compile: true
 
-  dev_server:
+  # Verifies that correct packages and versions are installed by inspecting package.json, yarn.lock, and node_modules
+  check_yarn_integrity: true
+
+  # Reference: https://webpack.js.org/configuration/dev-server/
+  dev_server: 
     host: localhost
     port: 3035
     public: 0.0.0.0:3035
     hmr: false
     https: false
+    quiet: false
+    pretty: true
+    overlay:
+      warnings: true
+      errors: true
+    inline: true
     watch_options: 
       ignored: ['**/node_modules/**','**/*.rb']  
 
