@@ -6,6 +6,7 @@ import { byUIString, byNameIn, t } from '../utils';
 import Category from '../containers/category';
 import AutoscalingTabs from './autoscaling/tabs';
 import AvailabilityZoneOverview from '../containers/availability_zones/overview';
+import Inconsistencies from '../containers/inconsistencies';
 import ProjectSyncAction from '../components/project/sync_action';
 
 export default class Overview extends React.Component {
@@ -74,6 +75,10 @@ export default class Overview extends React.Component {
     return <AutoscalingTabs scopeData={scopeData} canEdit={canEdit} />;
   }
 
+  renderInconsistenciesTab() {
+    return <Inconsistencies/>;
+  }
+
   render() {
     const allAreas = Object.keys(this.props.overview.areas).sort(byUIString)
     const currentArea = this.state.currentArea || allAreas[0];
@@ -87,6 +92,9 @@ export default class Overview extends React.Component {
     if (canAutoscale) {
       tabs.push('autoscaling');
     }
+    if (scope.isCluster()) {
+      tabs.push('inconsistencies');
+    }
 
     let currentTab;
     switch (currentArea) {
@@ -95,6 +103,9 @@ export default class Overview extends React.Component {
         break;
       case 'autoscaling':
         currentTab = this.renderAutoscalingTab();
+        break;
+      case 'inconsistencies':
+        currentTab = this.renderInconsistenciesTab();
         break;
       default:
         currentTab = this.renderArea(currentArea);

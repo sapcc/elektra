@@ -6,6 +6,10 @@ export const REQUEST_CAPACITY         = 'resources/app/REQUEST_CAPACITY';
 export const REQUEST_CAPACITY_FAILURE = 'resources/app/REQUEST_CAPACITY_FAILURE';
 export const RECEIVE_CAPACITY         = 'resources/app/RECEIVE_CAPACITY';
 
+export const REQUEST_INCONSISTENCIES         = 'resources/app/REQUEST_INCONSISTENCIES';
+export const REQUEST_INCONSISTENCIES_FAILURE = 'resources/app/REQUEST_INCONSISTENCIES_FAILURE';
+export const RECEIVE_INCONSISTENCIES         = 'resources/app/RECEIVE_INCONSISTENCIES';
+
 export const SYNC_PROJECT_REQUESTED  = 'resources/app/SYNC_PROJECT_REQUESTED';
 export const SYNC_PROJECT_FAILURE    = 'resources/app/SYNC_PROJECT_FAILURE';
 export const SYNC_PROJECT_STARTED    = 'resources/app/SYNC_PROJECT_STARTED';
@@ -43,6 +47,7 @@ export const STRINGS = {
     "healthmonitors_single":       "Health Monitor",
     "instances":                   "Instances",
     "instances_single":            "Instance",
+    "inconsistencies":             "Inconsistencies",
     "l7policies":                  "L7 Policies",
     "l7policies_single":           "L7 Policy",
     "listeners":                   "Listeners",

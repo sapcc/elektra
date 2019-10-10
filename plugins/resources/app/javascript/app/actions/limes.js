@@ -144,6 +144,37 @@ export const fetchCapacityIfNeeded = (scopeData) => function(dispatch, getState)
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// list inconsistencies
+
+export const fetchInconsistencies = (scopeData) => dispatch => {
+  dispatch({
+    type:        constants.REQUEST_INCONSISTENCIES,
+    requestedAt: Date.now(),
+  });
+
+  return ajaxHelper.get("/v1/inconsistencies")
+    .then(response => {
+      dispatch({
+        type: constants.RECEIVE_INCONSISTENCIES,
+        data: response.data.inconsistencies,
+        receivedAt: Date.now(),
+      });
+    })
+    .catch((error) => {
+      dispatch({ type: constants.REQUEST_INCONSISTENCIES_FAILURE });
+      showLimesError(error);
+    });
+};
+
+export const fetchInconsistenciesIfNeeded = (scopeData) => (dispatch, getState) => {
+  const state = getState();
+  if (state.limes.inconsistencyData.isFetching || state.limes.inconsistencyData.requestedAt) {
+    return;
+  }
+  return dispatch(fetchInconsistencies(scopeData));
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // sync project
 
 const syncProjectFailure = () => ({

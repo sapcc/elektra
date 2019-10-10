@@ -34,6 +34,15 @@ const initialState = {
     receivedAt: null,
     isFetching: false,
   },
+
+  inconsistencyData: {
+    //data from Limes
+    data: null,
+    //UI state
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+  },
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -200,6 +209,36 @@ const receiveCapacity = (state, { data, receivedAt }) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// get inconsistency data
+
+const requestInconsistencies = (state, {requestedAt}) => ({
+  ...state,
+  inconsistencyData: {
+    ...initialState.inconsistencyData,
+    isFetching: true,
+    requestedAt,
+  },
+});
+
+const requestInconsistenciesFailure = (state, action) => ({
+  ...state,
+  inconsistencyData: {
+    ...state.inconsistencyData,
+    isFetching: false,
+  },
+});
+
+const receiveInconsistencies = (state, { data, receivedAt }) => ({
+  ...state,
+  inconsistencyData: {
+    ...state.inconsistencyData,
+    data,
+    isFetching: false,
+    receivedAt,
+  },
+});
+
+////////////////////////////////////////////////////////////////////////////////
 // discover autoscalable subscopes
 
 const requestAutoscalableSubscopes = (state, {requestedAt}) => ({
@@ -253,6 +292,9 @@ export const limes = (state, action) => {
     case constants.REQUEST_CAPACITY:         return requestCapacity(state, action);
     case constants.REQUEST_CAPACITY_FAILURE: return requestCapacityFailure(state, action);
     case constants.RECEIVE_CAPACITY:         return receiveCapacity(state, action);
+    case constants.REQUEST_INCONSISTENCIES:         return requestInconsistencies(state, action);
+    case constants.REQUEST_INCONSISTENCIES_FAILURE: return requestInconsistenciesFailure(state, action);
+    case constants.RECEIVE_INCONSISTENCIES:         return receiveInconsistencies(state, action);
     case constants.SYNC_PROJECT_REQUESTED:  return setSyncStatus(state, 'requested');
     case constants.SYNC_PROJECT_FAILURE:    return setSyncStatus(state, null);
     case constants.SYNC_PROJECT_STARTED:    return setSyncStatus(state, 'started');
