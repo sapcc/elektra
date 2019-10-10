@@ -17,38 +17,11 @@ export default class Overview extends React.Component {
     this.setState({...this.state, currentArea: area});
   }
 
-  renderNavbar(currentArea, canEdit, canAutoscale, scope) {
-    const tabs = Object.keys(this.props.overview.areas).sort(byUIString);
-    if (scope.isCluster() || window.location.hostname === "localhost") { //TODO remove condition when this tab is ready to be released
-      tabs.push('availability_zones');
-    }
-    if (canAutoscale) {
-      tabs.push('autoscaling');
-    }
-    return (
-      <nav className='nav-with-buttons'>
-        <ul className='nav nav-tabs'>
-          { tabs.map(area => (
-            <li key={area} role="presentation" className={currentArea == area ? "active" : ""}>
-              <a href="#" onClick={(e) => { e.preventDefault(); this.changeArea(area); }}>
-                {t(area)}
-              </a>
-            </li>
-          ))}
-        </ul>
-        {canEdit && scope.isProject() && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
-          <Link to={`/settings`} className='btn btn-primary btn-sm'>Settings</Link>
-        </div>}
-      </nav>
-    );
-  }
-
-  renderCurrentArea() {
+  renderArea(currentArea) {
     const props = this.props;
     const scope = new Scope(props.scopeData);
 
     const { areas, categories, scrapedAt, minScrapedAt, maxScrapedAt } = props.overview;
-    const currentArea = this.state.currentArea || Object.keys(areas).sort()[0];
     const currentServices = areas[currentArea];
 
     const currMinScrapedAt = currentServices
@@ -73,7 +46,6 @@ export default class Overview extends React.Component {
 
     return (
       <React.Fragment>
-        {this.renderNavbar(currentArea, props.canEdit, props.canAutoscale, scope)}
         {currentServices.sort(byUIString).map(serviceType => (
           <React.Fragment key={serviceType}>
             {categories[serviceType].sort(byNameIn(serviceType)).map(categoryName => (
@@ -93,35 +65,60 @@ export default class Overview extends React.Component {
   }
 
   renderAvailabilityZoneTab() {
-    const props = this.props;
-    const scope = new Scope(props.scopeData);
-    return (
-      <React.Fragment>
-        {this.renderNavbar('availability_zones', props.canEdit, props.canAutoscale, scope)}
-        <AvailabilityZoneOverview flavorData={props.flavorData} />
-      </React.Fragment>
-    );
+    const { flavorData } = this.props;
+    return <AvailabilityZoneOverview flavorData={flavorData} />;
   }
 
   renderAutoscalingTab() {
-    const props = this.props;
-    const scope = new Scope(props.scopeData);
-    return (
-      <React.Fragment>
-        {this.renderNavbar('autoscaling', props.canEdit, props.canAutoscale, scope)}
-        <AutoscalingTabs scopeData={props.scopeData} canEdit={props.canEdit} />
-      </React.Fragment>
-    );
+    const { scopeData, canEdit } = this.props;
+    return <AutoscalingTabs scopeData={scopeData} canEdit={canEdit} />;
   }
 
   render() {
-    switch (this.state.currentArea) {
-      case 'availability_zones':
-        return this.renderAvailabilityZoneTab();
-      case 'autoscaling':
-        return this.renderAutoscalingTab();
-      default:
-        return this.renderCurrentArea();
+    const allAreas = Object.keys(this.props.overview.areas).sort(byUIString)
+    const currentArea = this.state.currentArea || allAreas[0];
+    const { canEdit, canAutoscale, scopeData } = this.props;
+    const scope = new Scope(scopeData);
+
+    const tabs = [ ...allAreas ];
+    if (scope.isCluster() || window.location.hostname === "localhost") { //TODO remove condition when this tab is ready to be released
+      tabs.push('availability_zones');
     }
+    if (canAutoscale) {
+      tabs.push('autoscaling');
+    }
+
+    let currentTab;
+    switch (currentArea) {
+      case 'availability_zones':
+        currentTab = this.renderAvailabilityZoneTab();
+        break;
+      case 'autoscaling':
+        currentTab = this.renderAutoscalingTab();
+        break;
+      default:
+        currentTab = this.renderArea(currentArea);
+        break;
+    }
+
+    return (
+      <React.Fragment>
+        <nav className='nav-with-buttons'>
+          <ul className='nav nav-tabs'>
+            { tabs.map(area => (
+              <li key={area} role="presentation" className={currentArea == area ? "active" : ""}>
+                <a href="#" onClick={(e) => { e.preventDefault(); this.changeArea(area); }}>
+                  {t(area)}
+                </a>
+              </li>
+            ))}
+          </ul>
+          {canEdit && scope.isProject() && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
+            <Link to={`/settings`} className='btn btn-primary btn-sm'>Settings</Link>
+          </div>}
+        </nav>
+        {currentTab}
+      </React.Fragment>
+    );
   }
 }
