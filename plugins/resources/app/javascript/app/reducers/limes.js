@@ -182,7 +182,14 @@ const requestCapacityFailure = (state, action) => ({
 });
 
 const receiveCapacity = (state, { data, receivedAt }) => {
-  const resourceFilter = res => res.per_availability_zone !== undefined;
+  const resourceFilter = res => {
+    //skip sharev2/share_snapshots and sharev2/shares: Limes cannot
+    //report usage for those, which makes them useless for the AZ overview UI
+    if (res.name == 'shares' || res.name == 'share_snapshots') {
+      return false;
+    }
+    return res.per_availability_zone !== undefined;
+  };
   const { metadata, categories, overview } = restructureReport(data, resourceFilter);
 
   //The AvailabilityZoneOverview component needs a list of all AZs to render the table header.
