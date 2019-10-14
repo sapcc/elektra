@@ -7,9 +7,26 @@ module DnsService
     authorization_required
 
     def index
-      @zones = paginatable(per_page: 20) do |pagination_options|
+      per_page = params[:per_page] || 20
+
+      filter = {}
+      @search = nil
+      @searchfor = nil
+
+      if params.include?(:search)
+        if not params[:search].blank?
+          @search = params[:search]
+          @searchfor = "#{params[:searchfor]}"
+          filter = {@searchfor.downcase() => @search}
+        else
+          params.delete(:search)
+          params.delete(:searchfor)
+        end
+      end
+
+      @zones = paginatable(per_page: per_page.to_i) do |pagination_options|
         services.dns_service.zones(
-          @admin_option.merge(pagination_options)
+          @admin_option.merge(pagination_options).merge(filter)
         )[:items]
       end
 
@@ -35,14 +52,32 @@ module DnsService
     end
 
     def show
+
+      per_page = params[:per_page] || 20
+
+      filter = {}
+      @search = nil
+      @searchfor = nil
+
+      if params.include?(:search)
+        if not params[:search].blank?
+          @search = params[:search]
+          @searchfor = "#{params[:searchfor]}"
+          filter = {@searchfor.downcase() => @search}
+        else
+          params.delete(:search)
+          params.delete(:searchfor)
+        end
+      end
+
       @zone = services.dns_service.find_zone(params[:id], all_projects: @all_projects)
 
-      @recordsets = paginatable(per_page: 20) do |pagination_options|
+      @recordsets = paginatable(per_page: per_page.to_i) do |pagination_options|
         services.dns_service.recordsets(
           params[:id],
           {
             sort_key: 'name'
-          }.merge(@impersonate_option).merge(pagination_options)
+          }.merge(@impersonate_option).merge(pagination_options).merge(filter)
         )[:items]
       end
 
