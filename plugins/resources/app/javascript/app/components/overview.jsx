@@ -85,10 +85,7 @@ export default class Overview extends React.Component {
     const { canEdit, canAutoscale, scopeData } = this.props;
     const scope = new Scope(scopeData);
 
-    const tabs = [ ...allAreas ];
-    if (scope.isCluster() || window.location.hostname === "localhost") { //TODO remove condition when this tab is ready to be released
-      tabs.push('availability_zones');
-    }
+    const tabs = [ ...allAreas, 'availability_zones' ];
     if (canAutoscale) {
       tabs.push('autoscaling');
     }
