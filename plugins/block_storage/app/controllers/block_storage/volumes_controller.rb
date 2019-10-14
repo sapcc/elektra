@@ -9,7 +9,7 @@ module BlockStorage
     authorization_required except: %i[availability_zones images]
 
     def index
-      limit = (params[:limit] || 2).to_i
+      limit = (params[:limit] || 20).to_i
       sort_key = (params[:sort_key] || 'name')
       sort_dir = (params[:sort_dir] || 'asc')
       
