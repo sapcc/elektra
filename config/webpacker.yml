@@ -41,14 +41,17 @@ development:
     host: localhost
     port: 3035
     public: 0.0.0.0:3035
+    # https://webpack.js.org/concepts/hot-module-replacement/
     hmr: false
     https: false
     quiet: false
     pretty: true
+    # https://webpack.js.org/configuration/dev-server/#devserveroverlay
     overlay:
       warnings: true
       errors: true
     inline: true
+    # https://webpack.js.org/configuration/dev-server/#devserverinline
     watch_options: 
       ignored: ['**/node_modules/**','**/*.rb']  
 
