@@ -35,6 +35,17 @@ const recvAccts = (state, {data, receivedAt}) => ({
   },
 });
 
+const updateAcct = (state, {account}) => ({
+  ...state,
+  accounts: {
+    ...state.accounts,
+    data: [
+      ...(state.accounts.data.filter(a => a.name != account.name)),
+      account,
+    ],
+  },
+});
+
 export const keppel = (state, action) => {
   if (state == null) {
     state = initialState;
@@ -44,6 +55,7 @@ export const keppel = (state, action) => {
     case constants.REQUEST_ACCOUNTS:         return reqAccts(state, action);
     case constants.REQUEST_ACCOUNTS_FAILURE: return reqAcctsFail(state, action);
     case constants.RECEIVE_ACCOUNTS:         return recvAccts(state, action);
+    case constants.UPDATE_ACCOUNT:           return updateAcct(state, action);
     default: return state;
   }
 };

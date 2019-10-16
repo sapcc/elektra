@@ -1,5 +1,6 @@
 import { connect } from  'react-redux';
 import RBACPoliciesEditModal from '../../components/rbac_policies/edit';
+import { putAccount } from '../../actions/keppel';
 
 export default connect(
   (state, props) => {
@@ -10,5 +11,7 @@ export default connect(
       isFetching: accts.isFetching,
     };
   },
-  dispatch => ({}),
+  dispatch => ({
+    putAccount: (...args) => dispatch(putAccount(...args)),
+  }),
 )(RBACPoliciesEditModal);
