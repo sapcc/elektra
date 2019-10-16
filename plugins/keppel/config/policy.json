@@ -1,9 +1,9 @@
 {
-  "keppel_cloud_editor": "role:cloud_resource_admin",
-  "keppel_cloud_viewer": "role:cloud_resource_viewer or rule:keppel_cloud_editor",
+  "keppel_cloud_editor": "role:cloud_registry_admin",
+  "keppel_cloud_viewer": "role:cloud_registry_viewer or rule:keppel_cloud_editor",
   "keppel_project_admin": "role:admin and not project_id:nil",
-  "keppel_project_editor": "(role:resource_admin and not project_id:nil) or rule:keppel_project_admin",
-  "keppel_project_viewer": "(role:resource_viewer and not project_id:nil) or rule:keppel_project_editor",
+  "keppel_project_editor": "(role:registry_admin and not project_id:nil) or rule:keppel_project_admin",
+  "keppel_project_viewer": "(role:registry_viewer and not project_id:nil) or rule:keppel_project_editor",
 
   "keppel:account:show":  "rule:keppel_project_viewer or rule:keppel_cloud_viewer",
   "keppel:account:edit":  "rule:keppel_project_editor or rule:keppel_cloud_editor",
