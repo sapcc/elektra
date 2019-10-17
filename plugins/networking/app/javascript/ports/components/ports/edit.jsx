@@ -1,7 +1,6 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
-import ipRangeCheck from 'ip-range-check';
 
 // import PropTypes from 'prop-types';
 
