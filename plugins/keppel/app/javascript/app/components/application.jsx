@@ -4,15 +4,15 @@ import AccountCreateModal from '../containers/accounts/create';
 import RBACPoliciesEditModal from '../containers/rbac_policies/edit';
 
 export default (props) => {
-  const { clusterId, canEdit, isAdmin } = props;
-  const rootProps = { clusterID: clusterId, canEdit, isAdmin };
+  const { projectId, canEdit, isAdmin } = props;
+  const rootProps = { projectID: projectId, canEdit, isAdmin };
 
   return (
     <HashRouter>
       <div>
         <Route path="/" render={(props) => <AccountList {...rootProps} />} />
 
-        <Route exact path="/accounts/new" component={AccountCreateModal} />
+        {isAdmin && <Route exact path="/accounts/new" render={(props) => <AccountCreateModal {...props} {...rootProps} /> } />}
         <Route exact path="/policies/:account" render={(props) => <RBACPoliciesEditModal {...props} {...rootProps} />} />
       </div>
     </HashRouter>

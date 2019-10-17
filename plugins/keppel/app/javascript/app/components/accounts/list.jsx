@@ -36,20 +36,11 @@ export default class AccountList extends React.Component {
             </div>
           </div>
         )}
-        <div className='row'>
-          <div className='col-md-9'>
-            <DataTable columns={columns}>
-              {this.props.accounts.map(account => (
-                <AccountRow key={account.name} account={account} />
-              ))}
-            </DataTable>
-          </div>
-          <div className='col-md-3'>
-            <div className='bs-callout bs-callout-primary' style={{marginTop:'1em'}}>
-              TODO explain Keppel
-            </div>
-          </div>
-        </div>
+        <DataTable columns={columns}>
+          {this.props.accounts.map(account => (
+            <AccountRow key={account.name} account={account} />
+          ))}
+        </DataTable>
       </React.Fragment>
     );
   }
