@@ -15,13 +15,14 @@ const routesForProjectLevel = (props) => {
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
       <div>
-        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
+        <Route exact path="/"       render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
+        <Route path="/:currentArea" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
 
         { canEdit &&
-          <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} isForeignScope={isForeignScope} /> }/>
+          <Route exact path="/:currentArea/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} isForeignScope={isForeignScope} /> }/>
         }
         { canEdit &&
-          <Route exact path="/settings" render={(props) => <ProjectSettingsModal {...rootProps} {...props} docsUrl={docsUrl} /> }/>
+          <Route exact path="/:currentArea/settings" render={(props) => <ProjectSettingsModal {...rootProps} {...props} docsUrl={docsUrl} /> }/>
         }
       </div>
     </HashRouter>
@@ -36,11 +37,12 @@ const routesForDomainLevel = (props) => {
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
       <div>
-        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
+        <Route exact path="/"       render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
+        <Route path="/:currentArea" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
 
-        <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} canEdit={canEdit} /> }/>
+        <Route exact path="/:currentArea/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} canEdit={canEdit} /> }/>
         { canEdit &&
-          <Route exact path="/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} isForeignScope={isForeignScope} /> }/>
+          <Route exact path="/:currentArea/edit/:categoryName" render={(props) => <EditModal {...rootProps} {...props} isForeignScope={isForeignScope} /> }/>
         }
       </div>
     </HashRouter>
@@ -55,9 +57,10 @@ const routesForClusterLevel = (props) => {
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
       <div>
-        <Route path="/" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
+        <Route exact path="/"       render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
+        <Route path="/:currentArea" render={(props) => <Overview {...rootProps} {...props} canEdit={canEdit} hasCastellum={hasCastellum} /> }/>
 
-        <Route exact path="/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} canEdit={canEdit} /> }/>
+        <Route exact path="/:currentArea/details/:categoryName/:resourceName" render={(props) => <DetailsModal {...rootProps} {...props} canEdit={canEdit} /> }/>
       </div>
     </HashRouter>
   </Loader>;

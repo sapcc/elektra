@@ -61,7 +61,7 @@ export default (props) => {
       </div>
       {!props.wide && (
         <div className='col-md-5'>
-          <Link to={`/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Show domains</Link>
+          <Link to={`/${props.area}/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Show domains</Link>
           {infoMessage}
         </div>
       )}

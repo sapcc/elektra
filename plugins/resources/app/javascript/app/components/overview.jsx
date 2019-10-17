@@ -10,12 +10,34 @@ import Inconsistencies from '../containers/inconsistencies';
 import ProjectSyncAction from '../components/project/sync_action';
 
 export default class Overview extends React.Component {
-  state = {
-    currentArea: null,
+  componentDidMount() {
+    this.initCurrentArea(this.props);
+  }
+  componentWillReceiveProps(nextProps) {
+    this.initCurrentArea(nextProps);
+  }
+  initCurrentArea(props) {
+    //set hash route to first tab on startup
+    const { currentArea } = props.match.params;
+    const allAreas = this.getAllAreaNames(props);
+    if (!currentArea || !allAreas.includes(currentArea)) {
+      props.history.replace(`/${allAreas[0]}`);
+    }
   }
 
-  changeArea = (area) => {
-    this.setState({...this.state, currentArea: area});
+  getAllAreaNames(props) {
+    const areas = Object.keys(props.overview.areas).sort(byUIString);
+    areas.push('availability_zones');
+
+    const { canAutoscale, scopeData } = props;
+    if (canAutoscale) {
+      areas.push('autoscaling');
+    }
+    const scope = new Scope(scopeData);
+    if (scope.isCluster()) {
+      areas.push('inconsistencies');
+    }
+    return areas;
   }
 
   renderArea(currentArea) {
@@ -80,18 +102,14 @@ export default class Overview extends React.Component {
   }
 
   render() {
-    const allAreas = Object.keys(this.props.overview.areas).sort(byUIString)
-    const currentArea = this.state.currentArea || allAreas[0];
+    const allAreas = this.getAllAreaNames(this.props);
+    let currentArea = this.props.match.params.currentArea;
+    if (!currentArea || !allAreas.includes(currentArea)) {
+      currentArea = allAreas[0];
+    }
+
     const { canEdit, canAutoscale, scopeData } = this.props;
     const scope = new Scope(scopeData);
-
-    const tabs = [ ...allAreas, 'availability_zones' ];
-    if (canAutoscale) {
-      tabs.push('autoscaling');
-    }
-    if (scope.isCluster()) {
-      tabs.push('inconsistencies');
-    }
 
     let currentTab;
     switch (currentArea) {
@@ -113,16 +131,14 @@ export default class Overview extends React.Component {
       <React.Fragment>
         <nav className='nav-with-buttons'>
           <ul className='nav nav-tabs'>
-            { tabs.map(area => (
+            { allAreas.map(area => (
               <li key={area} role="presentation" className={currentArea == area ? "active" : ""}>
-                <a href="#" onClick={(e) => { e.preventDefault(); this.changeArea(area); }}>
-                  {t(area)}
-                </a>
+                <Link to={`/${area}`}>{t(area)}</Link>
               </li>
             ))}
           </ul>
           {canEdit && scope.isProject() && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
-            <Link to={`/settings`} className='btn btn-primary btn-sm'>Settings</Link>
+            <Link to={`/${currentArea}/settings`} className='btn btn-primary btn-sm'>Settings</Link>
           </div>}
         </nav>
         {currentTab}
