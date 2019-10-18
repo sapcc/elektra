@@ -29,7 +29,7 @@
     "react-dom": "^16.8.1",
     "react-json-view": "^1.16.6",
     "react-redux": "^7.0.0",
-    "react-router-dom": "*",
+    "react-router-dom": "^5.1.2",
     "react-transition-group": "*",
     "react-virtualized": "^9.20.1",
     "redux": "^4.0.0",
