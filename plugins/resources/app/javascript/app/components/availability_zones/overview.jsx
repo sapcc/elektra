@@ -11,7 +11,7 @@ const AvailabilityZoneOverview = ({ isFetching, overview, flavorData }) => {
   return (
     <React.Fragment>
       <div className='bs-callout bs-callout-info bs-callout-emphasize'>
-        This screen shows the available capacity in each availability zone.
+        This screen shows the available capacity (gray bar) and actual current resource usage (blue part) in each availability zone.
         Use this data to choose which availability zone to deploy your application to.
       </div>
       {Object.keys(overview.areas).sort(byUIString).map(area => (
