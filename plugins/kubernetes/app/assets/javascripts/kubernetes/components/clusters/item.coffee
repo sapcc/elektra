@@ -134,6 +134,11 @@ Cluster = React.createClass
             i className: 'fa fa-fw fa-wrench'
             'Setup'
 
+          cluster.status.dashboard && 
+            a className: 'btn btn-sm btn-default btn-icon-text', disabled: disabled, href: "#{cluster.status.dashboard}", target: "_blank",
+              i className: 'fa fa-fw fa-dashboard'
+              'Kubernetes Dashboard'
+
 
       React.createElement ClusterEvents, cluster: cluster
 
