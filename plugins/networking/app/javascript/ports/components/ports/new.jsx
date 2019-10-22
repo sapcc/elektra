@@ -90,7 +90,7 @@ export default class NewPortForm extends React.Component {
     this.loadDependencies(this.props)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.loadDependencies(nextProps)
   }
 

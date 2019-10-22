@@ -32,7 +32,7 @@ export default class ImageMembersModal extends React.Component{
     this.loadDependencies(this.props)
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.loadDependencies(props)
   }
 

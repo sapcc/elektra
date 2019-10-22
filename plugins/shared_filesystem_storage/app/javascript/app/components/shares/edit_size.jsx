@@ -10,7 +10,7 @@ export default class EditShareSizeForm extends React.Component {
     this.setState({show: this.props.share!=null})
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({show: nextProps.share!=null})
   }
 

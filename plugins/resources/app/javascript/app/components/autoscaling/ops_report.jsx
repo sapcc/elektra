@@ -121,7 +121,7 @@ export default class AutoscalingOpsReport extends React.Component {
   componentDidMount() {
     this.initializeData(this.props);
   }
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.initializeData(props);
   }
   initializeData(props) {

@@ -28,7 +28,7 @@ export default class ShowModal extends React.Component {
       show: this.props.image != null
     })
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
       show: nextProps.image != null
     })

@@ -17,7 +17,7 @@ export default class List extends React.Component {
     activeFilter: null
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // load dependencies unless already loaded
     this.loadDependencies(nextProps)
 

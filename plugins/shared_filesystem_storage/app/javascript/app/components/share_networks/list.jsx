@@ -40,7 +40,7 @@ export default class ShareNetworkList extends React.Component {
     this.loadDependencies(this.props)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.loadDependencies(nextProps)
   }
 

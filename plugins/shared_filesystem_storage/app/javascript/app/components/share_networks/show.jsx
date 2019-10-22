@@ -25,7 +25,7 @@ export default class ShowShareNetwork extends React.Component {
     setTimeout(() => this.props.history.replace('/share-networks'),300)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({show: nextProps.shareNetwork!=null})
   }
 

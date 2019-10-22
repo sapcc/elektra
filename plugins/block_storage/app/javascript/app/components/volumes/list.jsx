@@ -20,7 +20,7 @@ export default class List extends React.Component {
   state = {
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.loadDependencies(nextProps)
   }
 

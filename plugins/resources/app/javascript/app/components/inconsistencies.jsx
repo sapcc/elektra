@@ -105,7 +105,7 @@ export default class Inconsistencies extends React.Component {
     active: 0,
   };
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     nextProps.loadInconsistenciesOnce();
   }
   componentDidMount() {

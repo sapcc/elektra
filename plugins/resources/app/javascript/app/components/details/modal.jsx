@@ -47,7 +47,7 @@ export default class DetailsModal extends React.Component {
     apiErrors: null,
   };
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.fetchSubscopes(nextProps);
   }
 

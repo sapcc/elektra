@@ -28,7 +28,7 @@ export default class EditModal extends React.Component {
   //redraw, and `render()` does not need to mess with the timers.
   asyncParseInputsTimer = null;
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.initializeValuesIfNecessary(nextProps);
   }
 

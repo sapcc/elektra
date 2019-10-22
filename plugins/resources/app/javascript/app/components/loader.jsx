@@ -3,7 +3,7 @@ import { Scope } from '../scope';
 import ReloadIndicator from '../components/reload_indicator';
 
 export default class Loader extends React.Component {
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // load dependencies unless already loaded
     this.loadDependencies(nextProps)
   }

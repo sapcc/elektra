@@ -21,7 +21,7 @@ export default class List extends React.Component {
     activeFilter: null
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.items && nextProps.items.length > 0) {
 
       // build available filters array

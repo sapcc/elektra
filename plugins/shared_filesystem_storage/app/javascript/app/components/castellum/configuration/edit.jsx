@@ -99,7 +99,7 @@ export default class CastellumConfigurationEditModal extends React.Component {
   componentDidMount() {
     this.initializeFormOnce(this.props);
   }
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.initializeFormOnce(props);
   }
   initializeFormOnce(props) {

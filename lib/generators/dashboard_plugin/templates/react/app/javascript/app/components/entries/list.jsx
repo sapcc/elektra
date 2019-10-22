@@ -14,7 +14,7 @@ export default class Entries extends React.Component {
     this.renderTable = this.renderTable.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // load dependencies unless already loaded
     this.loadDependencies(nextProps)
   }
