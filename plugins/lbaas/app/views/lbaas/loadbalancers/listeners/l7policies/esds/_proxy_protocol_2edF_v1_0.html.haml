@@ -1,0 +1,12 @@
+%b
+  = "#{t("lbaas.policies.#{pre}")} (#{pre})"
+%p
+  Adds client IP/Port information to the TCP request
+  %strong in text format.
+  %br
+  Format:  PROXY TCP[VERSION] [REMOTE ADDR] [LOCAL ADDR] [REMOTE PORT] [LOCAL PORT]
+  %br
+  For more information please take a look at
+  %a(href='https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt' target='_blank') the Proxy Protocol Specification.
+  %br
+    All backend members have to have Proxy Protocol Version 1 support enabled.

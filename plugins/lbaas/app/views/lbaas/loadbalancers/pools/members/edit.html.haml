@@ -1,0 +1,40 @@
+= content_for :title do
+  Edit Pool Member
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+= simple_form_for @member, url: plugin('lbaas').loadbalancer_pool_member_path(loadbalancer_id: @loadbalancer.id, pool_id: @pool.id, id: @member.id), method: :put, remote: request.xhr?, html: {id: 'member_form', data: {modal: true} } do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+
+    = render :partial => 'lbaas/application/errors', locals: {object: @member}
+    .row
+      .col-sm-6
+        = render partial: 'form', locals: {f: f, update: true}
+
+      .col-sm-6
+        .bs-callout.bs-callout-primary.small
+          %h3= 'Address'
+          %p=  'Members IP address'
+          %h3= 'Protocol Port'
+          %p=  'The network port used to access the member'
+          %h4= 'Weight'
+          %p
+            A weight greater than 1 will switch the Pool Load Balancing Algorithm on the F5 device to the corresponding weighted Algorithm.
+            'Round Robin' will become 'Ratio (member)' and 'Least Connection' will be changed to 'Ratio Least Connections (member)' on the device.
+            %br
+              ADVICE: The name of the Algorithm will not change on Openstack side, so neither in UI nor when the pool is shown via Cli.
+            %br
+              Ratio (member): The number of connections that each machine receives over time is proportionate to a ratio weight you define for each machine within the pool.
+            %br
+              Ratio Least Connections (member): The system selects the pool member according to the ratio of the number of connections each pool member has active.
+
+
+    %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', plugin('lbaas').loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id), class: 'btn btn-default'
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Save

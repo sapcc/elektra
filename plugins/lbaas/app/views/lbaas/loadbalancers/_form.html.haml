@@ -1,0 +1,13 @@
+%fieldset
+  = f.input :name, required: false
+  = f.input :description
+  = f.input :vip_subnet_id, { label: "Private Network",
+                              wrapper_html:       { class: ('has-error' if @private_networks.blank?) },
+                              as:                 :select,
+                              collection:         @private_networks,
+                              selected:           @loadbalancer.vip_subnet_id,
+                              required:           true,
+                              value_method:       -> (net) { net.subnet_objects.map(&:id).first },
+                              label_method:       -> (network) { "#{network.name}  (#{network.subnet_objects.map(&:cidr).join(', ')})" },
+                              disabled: update }
+
