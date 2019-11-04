@@ -245,17 +245,33 @@ module Compute
     ####################### ACTIONS #####################
     def add_fixed_ip(network_id)
       requires :id
-      @service.add_fixed_ip(id,network_id)
+      rescue_api_errors do
+        @service.add_fixed_ip(id,network_id)
+      end
+      unless errors.blank? 
+        return false
+      end
+      true
     end
 
     def remove_fixed_ip(ip_address)
       requires :id
-      @service.remove_fixed_ip(id,ip_address)
+      rescue_api_errors do
+        @service.remove_fixed_ip(id,ip_address)
+      end
+      unless errors.blank? 
+        return false
+      end
     end
 
     def terminate
       requires :id
-      @service.delete_server id
+      rescue_api_errors do
+        @service.delete_server id
+      end
+      unless errors.blank? 
+        return false
+      end
     end
 
     def rebuild(image_ref, name, admin_pass = nil, metadata = nil, personality = nil)
@@ -283,47 +299,69 @@ module Compute
 
     def revert_resize
       requires :id
-      @service.revert_resize_server(id)
+      rescue_api_errors do
+        @service.revert_resize_server(id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def confirm_resize
       requires :id
-      @service.confirm_resize_server(id)
+      rescue_api_errors do
+        @service.confirm_resize_server(id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def reboot(type = 'SOFT')
       requires :id
-      @service.reboot_server(id, type)
+      rescue_api_errors do
+        @service.reboot_server(id, type)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def stop
       requires :id
-      @service.stop_server(id)
+      rescue_api_errors do
+        @service.stop_server(id)
+      end
     end
 
     def pause
       requires :id
-      @service.pause_server(id)
+      rescue_api_errors do
+        @service.pause_server(id)
+      end
     end
 
     def suspend
       requires :id
-      @service.suspend_server(id)
+      rescue_api_errors do
+        @service.suspend_server(id)
+      end
     end
 
     def start
       requires :id
-
-      case status.downcase
-      when 'paused'
-        @service.unpause_server(id)
-      when 'suspended'
-        @service.resume_server(id)
-      else
-        @service.start_server(id)
+      rescue_api_errors do
+        case status.downcase
+        when 'paused'
+          @service.unpause_server(id)
+        when 'suspended'
+          @service.resume_server(id)
+        else
+          @service.start_server(id)
+        end
       end
     end
 
@@ -367,37 +405,67 @@ module Compute
 
     def create_image(name, metadata = {})
       requires :id
-      @service.create_image(id, name, metadata)
+      rescue_api_errors do
+        @service.create_image(id, name, metadata)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def reset_vm_state(vm_state)
       requires :id
-      @service.reset_server_state id, vm_state
+      rescue_api_errors do
+        @service.reset_server_state id, vm_state
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def attach_volume(volume_id, device_name)
       requires :id
-      @service.attach_volume(volume_id, id, device_name)
+      rescue_api_errors do
+        @service.attach_volume(volume_id, id, device_name)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def detach_volume(volume_id)
       requires :id
-      @service.detach_volume(id, volume_id)
+      rescue_api_errors do
+        @service.detach_volume(id, volume_id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def assign_security_group(sg_id)
       requires :id
-      @service.add_security_group(id, sg_id)
+      rescue_api_errors do
+        @service.add_security_group(id, sg_id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def unassign_security_group(sg_id)
       requires :id
-      @service.remove_security_group(id, sg_id)
+      rescue_api_errors do
+        @service.remove_security_group(id, sg_id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
