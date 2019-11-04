@@ -246,7 +246,7 @@ module Core
         end
       end
 
-      # msp to service create method
+      # map to service create method
       def perform_service_create(create_attributes)
         @service.send("create_#{@class_name}", create_attributes)
       end
@@ -261,11 +261,13 @@ module Core
         @service.send("delete_#{@class_name}", id)
       end
 
+      # handle api errors
       def rescue_api_errors
         yield
         true
       rescue ::Elektron::Errors::ApiResponse => e
-        e.messages.each { |m| errors.add('api', m) unless m.blank?}
+        # "API Error happened :-(" 
+        e.messages.each { |m| errors.add(:api, m) unless m.blank?}
         false
       end
     end

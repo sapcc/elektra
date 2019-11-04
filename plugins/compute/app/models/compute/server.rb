@@ -266,8 +266,19 @@ module Compute
 
     def resize(flavor_ref)
       requires :id
-      @service.resize_server(id, flavor_ref)
-      true
+      rescue_api_errors do
+        @service.resize_server(id, flavor_ref)
+      end
+      # handle special errors
+      unless errors.blank?
+        if errors.full_messages.to_sentence == "Api No valid host was found. No valid host found for resize"
+          errors.delete(:api)
+          errors.add(:api, "Instance resize not possible at this time; there is not enough free capacity for an automatic resize. Please open an SPC Service Request.")
+        end
+        return false
+      else
+        return true
+      end
     end
 
     def revert_resize

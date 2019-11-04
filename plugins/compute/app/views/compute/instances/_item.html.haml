@@ -10,6 +10,10 @@
 - state_text = "Status: #{instance.task_state.nil? ? instance.status.humanize : instance.task_state.humanize}"
 - state_text += " (for more information see server details)" if instance.status == "ERROR"
 
+- unless instance.errors.blank?
+  - state_icon = "state-error-icon"
+  - state_text = instance.errors.full_messages.to_sentence
+
 - if instance.locked?
   - state_text = 'This instance is locked. Please note that |
     this status is only displayed correctly if you use the lock/unlock functions |
