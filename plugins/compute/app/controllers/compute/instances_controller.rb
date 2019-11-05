@@ -732,6 +732,7 @@ module Compute
 
       @target_state=nil
       if @instance and (@instance.task_state || '')!='deleting'
+        # trigger the instance action
         result = options.nil? ? @instance.send(action) : @instance.send(action,options)
         if result
           audit_logger.info(current_user, "has triggered action", action, "on", @instance)
@@ -744,7 +745,6 @@ module Compute
       end
 
       render template: 'compute/instances/update_item.js' if with_rendering
-      #redirect_to instances_url
     end
 
     def target_state_for_action(action)
