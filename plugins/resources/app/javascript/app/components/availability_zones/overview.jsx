@@ -13,6 +13,7 @@ const AvailabilityZoneOverview = ({ isFetching, overview, flavorData }) => {
       <div className='bs-callout bs-callout-info bs-callout-emphasize'>
         This screen shows the available capacity (gray bar) and actual current resource usage (blue part) in each availability zone.
         Use this data to choose which availability zone to deploy your application to.
+        Please note, it does not account for capacity that has already been assigned but not yet used and therefore may not reflect overall available capacity in the region.
       </div>
       {Object.keys(overview.areas).sort(byUIString).map(area => (
         overview.areas[area].sort(byUIString).map(serviceType => (
