@@ -81,6 +81,7 @@ export default class List extends React.Component {
         <table className='table volumes'>
           <thead>
             <tr>
+              <th></th>
               <th>Volume Name</th>
               <th>Availability Zone</th>
               <th>Description</th>

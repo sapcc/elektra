@@ -191,7 +191,7 @@ export default class ShowModal extends React.Component {
               </Tab>
             }
           </Tabs>
-          {/*<pre>{JSON.stringify(volume, null, 2)}</pre>*/}
+          {false && <pre>{JSON.stringify(volume, null, 2)}</pre>}
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.hide}>Close</Button>
