@@ -10,7 +10,7 @@ export default class SnapshotList extends React.Component {
     if(this.props.active) this.props.loadSnapshotsOnce()
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if(nextProps.active) this.props.loadSnapshotsOnce()
   }
 

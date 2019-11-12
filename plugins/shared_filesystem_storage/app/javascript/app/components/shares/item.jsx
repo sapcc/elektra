@@ -32,7 +32,7 @@ export default class ShareItem extends React.Component {
     this.stopPolling = this.stopPolling.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // stop polling if status has changed from creating to something else
     this.pendingState(nextProps) ? this.startPolling() : this.stopPolling()
     nextProps.loadShareRulesOnce(nextProps.share.id)

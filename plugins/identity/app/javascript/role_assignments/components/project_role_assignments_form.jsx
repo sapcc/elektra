@@ -41,7 +41,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
     if(this.submitPromise) this.submitPromise.cancel();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if(this.state.availableRoles.length==0 && nextProps.availableRoles) {
       this.setState({availableRoles: this.sortRoles(nextProps.availableRoles.items)})
     }

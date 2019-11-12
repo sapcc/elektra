@@ -8,7 +8,7 @@
 
 Cluster = React.createClass
 
-  componentWillReceiveProps: (nextProps) ->
+  UNSAFE_componentWillReceiveProps: (nextProps) ->
     # stop polling if both cluster and nodepool states are "ready"
     if @clusterReady(nextProps.cluster) && @nodePoolsReady(nextProps.cluster)
       @stopPolling()

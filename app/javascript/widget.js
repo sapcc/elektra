@@ -1,6 +1,9 @@
 /* eslint no-console:0 */
-// https://babeljs.io/docs/en/babel-polyfill
-import "@babel/polyfill";
+
+// `@babel/polyfill` is deprecated
+// https://github.com/zloirock/core-js/blob/master/docs/2019-03-19-core-js-3-babel-and-a-look-into-the-future.md#babel
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 
 
 import React from 'react';

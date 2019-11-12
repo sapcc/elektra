@@ -13,7 +13,7 @@ const columns = [
 ];
 
 export default class AccountList extends React.Component {
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.loadDependencies(nextProps);
   }
   componentDidMount() {
