@@ -11,8 +11,8 @@ Feature: Security Groups
     When I visit project path "networking/security-groups/widget"
     Then I see "Security Groups"
     And I see "New Security Group" button
-    # When I click on "New Security Group"
-    # Then I see "New Security Group"
+    When I click on "New Security Group"
+    Then I see "New Security Group"
 
   @member
   Scenario: Can not create a new Security Group
