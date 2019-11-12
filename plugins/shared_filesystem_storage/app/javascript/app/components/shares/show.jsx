@@ -29,7 +29,7 @@ export default class ShowShareModal extends React.Component{
     this.props.loadShareTypesOnce()
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({show: nextProps.share!=null})
     if(nextProps.share && !nextProps.share.export_locations) {
       this.props.loadExportLocationsOnce(nextProps.share.id)

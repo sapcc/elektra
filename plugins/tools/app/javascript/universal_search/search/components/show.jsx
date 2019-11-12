@@ -28,7 +28,7 @@ export default class ShowSearchObjectModal extends React.Component{
     }
   }
 
-  componentWillReceiveProps = (props) => {
+  UNSAFE_componentWillReceiveProps = (props) => {
     if(props.item) {
       this.setState({show: true, isFetching: false, error: null})
     }

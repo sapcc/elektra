@@ -7,7 +7,7 @@ import { AjaxPaginate } from 'lib/components/ajax_paginate';
 export default class List extends React.Component {
   state = {searchTerm: ''}
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // load dependencies unless already loaded
     this.loadDependencies(nextProps)
   }

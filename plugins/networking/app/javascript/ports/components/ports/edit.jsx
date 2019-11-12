@@ -1,7 +1,6 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
-import ipRangeCheck from 'ip-range-check';
 
 // import PropTypes from 'prop-types';
 
@@ -61,7 +60,7 @@ export default class NewPortForm extends React.Component {
     this.loadDependencies(this.props)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.loadDependencies(nextProps)
   }
 

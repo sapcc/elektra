@@ -24,7 +24,7 @@ export default class App extends React.Component {
     this.setState({filterCollapsed: true, selectedTypes: {}})
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (Object.keys(this.state.selectedTypes).length==0 && nextProps.objects) {
       this.setInitialSelectedTypes(nextProps.objects)
     }

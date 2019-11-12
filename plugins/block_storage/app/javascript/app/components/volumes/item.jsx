@@ -10,7 +10,7 @@ const MyHighlighter = ({search,children}) => {
 }
 
 export default class Volume extends React.Component {
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // stop polling if status has changed from creating to something else
     this.pendignState(nextProps) ? this.startPolling() : this.stopPolling()
   }

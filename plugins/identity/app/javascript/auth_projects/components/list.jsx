@@ -26,7 +26,7 @@ export default class List extends React.Component {
     })
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
     if(nextProps.items && nextProps.items.length > 0) {
       this.setState({hierarchicalProjects: this.buildHierarchy(nextProps.items)})
     }

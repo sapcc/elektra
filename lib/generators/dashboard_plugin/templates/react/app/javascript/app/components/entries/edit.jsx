@@ -8,7 +8,7 @@ export default class EditEntryForm extends React.Component {
     this.close = this.close.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({show: nextProps.entry!=null})
   }
 
