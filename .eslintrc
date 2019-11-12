@@ -1,0 +1,38 @@
+// https://eslint.org/docs/user-guide/getting-started
+// can be used in package.json with 
+// "eslintConfig": {}
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ] // enables rules
+  ,
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "jest": true
+  } // These environments have global variables this tells ESLint to ingore those globals
+  ,
+  "rules": {
+    "no-debugger": "off",
+    "no-console": "off",
+    "no-unused-vars": "warn",
+    "react/prop-types": "warn"
+  } // disable and enable some warnings
+  ,
+  "settings": {
+    "react": {
+      "version": "detect"
+    } // required by eslint-plugin-react
+  },
+  "root": true //this is the root ESLint config and local ESLint configs in the userfolder will not interfere
+}
