@@ -632,7 +632,7 @@ DEPENDENCIES
   metrics!
   monsoon-openstack-auth!
   net-ssh
-  netaddr
+  netaddr (= 1.5.1)
   networking!
   object_storage!
   pg
@@ -671,4 +671,4 @@ DEPENDENCIES
   webpacker (~> 4.0)
 
 BUNDLED WITH
-   1.17.3
+   2.0.2
