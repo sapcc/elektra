@@ -45,6 +45,37 @@ const FormBody = ({values, availabilityZones, images}) =>
       <Form.Input elementType='input' type='number' name='size'/>
     </Form.ElementHorizontal>
 
+    <Form.ElementHorizontal label='' name="bootable">
+      <label><Form.Input elementType='input' type='checkbox' name='bootable'/> bootable</label>
+    </Form.ElementHorizontal>
+
+    {values.bootable && 
+      <Form.ElementHorizontal label='Image ID' name="imageRef">
+        { images.isFetching ?
+          <span className='spinner'/>
+          :
+          images.error ?
+            <span className='text-danger'>Could not load images</span>
+            :
+            <Form.Input
+              elementType='select'
+              className="select required form-control"
+              name='imageRef'>
+              <option></option>
+              {images.items.map((image,index) =>
+                <option value={image.id} key={index}>
+                  {image.name}
+                </option>
+              )}
+            </Form.Input>
+        }
+        <span className="help-block">
+          The UUID of the image from which you want to create the volume.
+          Required to create a bootable volume.
+        </span>
+      </Form.ElementHorizontal>
+    }
+
     <Form.ElementHorizontal label='Availability Zone' required name="availability_zone">
       { availabilityZones.isFetching ?
         <span className='spinner'/>
@@ -83,8 +114,8 @@ export default class NewVolumeForm extends React.Component {
     props.loadImagesOnce()
   }
 
-  validate = (values) => {
-    return values.name && values.size && values.availability_zone && values.description && true
+  validate = ({name,size,availability_zone,description,bootable,imageRef}) => {
+    return name && size && availability_zone && description && (!bootable || imageRef) && true
   }
 
   close = (e) => {

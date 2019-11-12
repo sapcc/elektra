@@ -66,7 +66,7 @@ export default class Volume extends React.Component {
       <tr className={`state-${volume.status}`}>
         <td>
           {(volume.bootable === true || volume.bootable === 'true') && 
-            <OverlayTrigger overlay={<Tooltip id='bootable-volume'>Bootable Volume</Tooltip>}>
+            <OverlayTrigger placement='top' overlay={<Tooltip id='bootable-volume'>Bootable Volume</Tooltip>}>
               <i className="fa fa-hdd-o"></i>
             </OverlayTrigger>
           }  

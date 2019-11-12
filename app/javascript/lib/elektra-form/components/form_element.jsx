@@ -34,9 +34,13 @@ export const FormElement = ({
     )
   };
 
-  let renderChildren = () =>
+  const childName = (child) => child.props ? child.props.name : name
+
+  let renderChildren = () => 
     React.Children.map(children,
-     (child) => React.cloneElement(child, {name: child.props.name || name})
+     (child) => {
+       return typeof child === 'string' ? child : React.cloneElement(child, {name: childName(child)})
+     }
     );
   ;
 
