@@ -10,6 +10,7 @@ Feature: Security Groups
   Scenario: Can create a new Security Group
     When I visit project path "networking/security-groups/widget"
     Then I see "Security Groups"
+    And All AJAX calls are successful
     And I see "New Security Group" button
     When I click on "New Security Group"
     Then I see "New Security Group"
