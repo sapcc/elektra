@@ -41,7 +41,7 @@ gem 'activerecord-session_store'
 
 # Openstack
 gem 'net-ssh'
-gem 'netaddr', '1.5.1'
+gem 'netaddr', '2.0.4'
 
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 # gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
