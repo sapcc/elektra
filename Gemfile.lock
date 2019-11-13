@@ -632,7 +632,7 @@ DEPENDENCIES
   metrics!
   monsoon-openstack-auth!
   net-ssh
-  netaddr
+  netaddr (>= 2.0.4)
   networking!
   object_storage!
   pg

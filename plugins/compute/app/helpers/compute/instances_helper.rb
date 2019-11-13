@@ -1,7 +1,7 @@
 module Compute
   module InstancesHelper
 
-    def grouped_images(images)
+    def grouped_images(images,bootable_volumes=nil)
       if images.blank?
         [["Couldn't retrieve images. Please try again", []]]
       else
@@ -18,7 +18,7 @@ module Compute
         end.sort
 
         # build an array with labels
-        groupd_images_map.each_with_object([]) do |(visibility, hypervisors), container|
+        groups = groupd_images_map.each_with_object([]) do |(visibility, hypervisors), container|
           container << [visibility, []]
 
           hypervisors.each do |hypervisor_type, images|
@@ -34,6 +34,20 @@ module Compute
             container << ["--#{hypervisor_type}", items]
           end
         end
+
+        if bootable_volumes
+          volume_items = @bootable_volumes.collect do |v| 
+            infos = []
+            infos << "Size: #{v.size}" if v.size
+
+            format = (v.volume_image_metadata || {}).fetch('disk_format',nil)
+            infos << ", Format: #{format}" if format
+            infos_string = infos.length>0 ? "(#{infos.join(', ')})" : ''
+            ["#{v.name.present? ? v.name : v.id} #{infos_string}", v.id]
+          end
+          groups.unshift(["--bootable volumes", volume_items])
+        end
+        groups
       end
     end
 

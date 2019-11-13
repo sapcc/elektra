@@ -56,7 +56,7 @@
 
     = f.input :image_id, label: 'Image',
       as:            :grouped_select,
-      collection:    grouped_images(@images),
+      collection:    grouped_images(@images, @bootable_volumes),
       group_method:  :last,
       include_blank: "Choose image",
       required:      true

@@ -54,8 +54,13 @@ module Compute
         'availability_zone' => read('availability_zone_id'),
         'key_name'          => read('keypair_id'),
         'metadata'          => read('metadata'),
-        'user_data'         => Base64.encode64(read('user_data'))
+        'user_data'         => Base64.encode64(read('user_data')),
+        'block_device_mapping_v2' => read('block_device_mapping_v2')
       }.delete_if { |_k, v| v.blank? }
+
+      if params['block_device_mapping_v2'] 
+        params.delete('imageRef')
+      end
 
       security_group_names = read('security_groups')
       if security_group_names && security_group_names.is_a?(Array)
