@@ -106,11 +106,13 @@ export default ({
         value={filterStartTime}
         inputProps={{placeholder: 'Select start time'}}
         isValidDate={isValidDate}
+        timeFormat="HH:mm"
         onChange={(e) => handleStartTimeChange(e)}/>
       <span className='toolbar-input-divider'>&ndash;</span>
       <Datetime
         value={filterEndTime}
         inputProps={{placeholder: 'Select end time'}}
+        timeFormat="HH:mm"
         isValidDate={isValidDate}
         onChange={(e) => handleEndTimeChange(e)}/>
 
