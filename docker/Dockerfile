@@ -1,7 +1,10 @@
-FROM ruby:2.4-alpine3.7 AS elektra
+FROM ruby:2.4-alpine3.10 AS elektra
 
 ENV OVERLAY=sucks3
 
+# alpine3.10
+# nodejs (10.16.3-r0)
+# yarn (1.16.0-r0)
 RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
 
 # Install gems with native extensions before running bundle install
@@ -21,20 +24,20 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install bindex -v 0.6.0 \
       && gem install sassc -v 2.2.1 \
       && runDeps="$( \
-		      scanelf --needed --nobanner --recursive /usr/local \
-            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-            | sort -u \
-            | xargs -r apk info --installed \
-            | sort -u \
-          )" \
+      scanelf --needed --nobanner --recursive /usr/local \
+      | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+      | sort -u \
+      | xargs -r apk info --installed \
+      | sort -u \
+      )" \
       && apk add --virtual .rundeps $runDeps \
       && apk del .builddeps \
       && gem sources -c \
       && rm -f /usr/local/bundle/cache/*
 
 RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64 && \
-    chmod +x /usr/bin/dumb-init && \
-    dumb-init -V
+      chmod +x /usr/bin/dumb-init && \
+      dumb-init -V
 
 WORKDIR /home/app/webapp
 ENV RAILS_ENV=production
@@ -60,14 +63,12 @@ ENV ELEKTRA_EXTENSION=$ELEKTRA_EXTENSION
 # Install the SAP Global Root CA
 ADD docker/certs/*.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates \
-    && curl https://github.wdf.sap.corp
+      && curl https://github.wdf.sap.corp
 
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 # install js packages
-RUN if [ -z ${http_proxy} ]; then \
-      echo do not use proxy && yarn; \
-      else echo use proxy && yarn --proxy $http_proxy --https-proxy $https_proxy; fi
+RUN yarn install --production 
 
 ADD . /home/app/webapp
 
