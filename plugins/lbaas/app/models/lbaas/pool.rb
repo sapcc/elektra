@@ -53,7 +53,12 @@ module Lbaas
         'protocol'                  => read('protocol'),
         'subnet_id'                 => read('subnet_id'),
         'project_id'                => read('project_id'),
-        'project_id'                 => read('project_id')
+        'project_id'                => read('project_id'),
+        'tls_enabled'               => read('tls_enabled'),
+        'tls_container_ref'         => read('tls_container_ref'),
+        'ca_tls_container_ref'      => read('ca_tls_container_ref'),
+        'tags'                      => read('tags')
+
       }.delete_if { |_k, v| v.blank? }
     end
 
@@ -63,7 +68,11 @@ module Lbaas
         'description'               => read('description'),
         'admin_state_up'            => read('admin_state_up'),
         'session_persistence'       => read('session_persistence'),
-        'lb_algorithm'              => read('lb_algorithm')
+        'lb_algorithm'              => read('lb_algorithm'),
+        'tls_enabled'               => read('tls_enabled'),
+        'tls_container_ref'         => read('tls_container_ref'),
+        'ca_tls_container_ref'      => read('ca_tls_container_ref'),
+        'tags'                      => read('tags')
       }.delete_if { |k, v| v.blank? and !%w[name description session_persistence].include?(k) }
     end
   end

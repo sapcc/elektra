@@ -29,6 +29,10 @@
           %p= "The number of parallel connections allowed to access the load balancer."
           %h4= "Certificate Container"
           %p= "The container with the TLS secrets used for the listener"
+          %h4= "Insert Headers"
+          %p
+            Headers to insert into the request before it is sent to the backend member. See:
+            %a(href='https://docs.openstack.org/api-ref/load-balancer/v2/?expanded=create-listener-detail#header-insertions' target='_blank') (Octavia Documentation)
           %h4= "SNI Containers"
           %p= "A list of containers with alternative TLS secrets used for Server Name Indication (SNI)."
 

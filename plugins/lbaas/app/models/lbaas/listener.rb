@@ -3,7 +3,17 @@
 module Lbaas
   # represents openstack lb listener
   class Listener < Core::ServiceLayer::Model
-    PROTOCOLS = %w[HTTP TCP TERMINATED_HTTPS UDP].freeze
+
+    PROTOCOLS = %w[HTTP HTTPS TERMINATED_HTTPS TCP UDP].freeze
+
+    INSERT_HEADERS = {}
+    INSERT_HEADERS['HTTP'] = %w[X-Forwarded-For X-Forwarded-Port X-Forwarded-Proto].freeze
+    INSERT_HEADERS['HTTPS'] = INSERT_HEADERS['HTTP']
+    INSERT_HEADERS['TERMINATED_HTTPS'] = INSERT_HEADERS['HTTP'] + %w[X-SSL-Client-Verify X-SSL-Client-Has-Cert X-SSL-Client-DN X-SSL-Client-CN X-SSL-Issuer X-SSL-Client-SHA1 X-SSL-Client-Not-Before X-SSL-Client-Not-After].freeze
+    INSERT_HEADERS['TCP'] = %w[].freeze
+    INSERT_HEADERS['UDP'] = %w[].freeze
+
+    CLIENT_AUTHENTICATION = %w[NONE OPTIONAL MANDATORY]
 
     validates :name, presence: false
     validates :protocol, presence: true
@@ -33,7 +43,11 @@ module Lbaas
         'protocol_port' => read('protocol_port'),
         'sni_container_refs' => read('sni_container_refs'),
         'project_id' => read('project_id'),
-        'project_id' => read('project_id')
+        'project_id' => read('project_id'),
+        'insert_headers' => read('insert_headers'),
+        'client_authentication' => read('client_authentication'),
+        'client_ca_tls_container_ref' => read('client_ca_tls_container_ref'),
+        'tags'                      => read('tags')
       }.delete_if { |_k, v| v.blank? }
     end
 
@@ -45,8 +59,12 @@ module Lbaas
         'connection_limit' => read('connection_limit'),
         'default_pool_id' => read('default_pool_id'),
         'default_tls_container_ref' => read('default_tls_container_ref'),
-        'sni_container_refs' => read('sni_container_refs')
-      }.delete_if { |k, v| v.blank? && !%w[name description default_pool_id sni_container_refs connection_limit].include?(k) }
+        'sni_container_refs' => read('sni_container_refs'),
+        'insert_headers' => read('insert_headers'),
+        'client_authentication' => read('client_authentication'),
+        'client_ca_tls_container_ref' => read('client_ca_tls_container_ref'),
+        'tags'                      => read('tags')
+      }.delete_if { |k, v| v.blank? && !%w[name description default_pool_id sni_container_refs connection_limit insert_headers].include?(k) }
     end
   end
 end

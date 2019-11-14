@@ -21,8 +21,8 @@
           %p= "The Load Balancer object defines the internal IP address under which all associated listeners can be reached. For external access a Floating IP can be attached to the Load Balancer."
           %h4= "Private Network"
           %p= "The network which provides the internal IP of the load balancer."
-
-
+          %h4= "IP Address"
+          %p= "Specify an unused IP from the private network (optionally)"
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

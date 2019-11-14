@@ -23,6 +23,9 @@ $(document).on 'modal:contentUpdated', (e) ->
   $form.find('.form-group.pool_protocol select').change () ->
     changePersistenceType(this)
 
+  $form.find('.form-group.pool_tls_enabled').change () ->
+    changeTlsEnabled()
+
   # set persistence type on init (needed when default pool is created)
   changePersistenceType($form.find('.form-group.pool_protocol select'))
 
@@ -54,6 +57,21 @@ changeAppCookie=(persistence_type) ->
   else
     $form.find(".form-group.pool_session_persistence_cookie_name").addClass('hidden')
     $form.find(".form-group.pool_session_persistence_cookie_name").addClass('disabled')
+
+# disable app_cookie name
+changeTlsEnabled=() ->
+  $form = $('form[id=pool_form]')
+  checked = $('#pool_tls_enabled').is(':checked')
+  if checked == true
+    $form.find(".form-group.pool_tls_container_ref").removeClass('hidden')
+    $form.find(".form-group.pool_tls_container_ref").removeClass('disabled')
+    $form.find(".form-group.pool_ca_tls_container_ref").removeClass('hidden')
+    $form.find(".form-group.pool_ca_tls_container_ref").removeClass('disabled')
+  else
+    $form.find(".form-group.pool_tls_container_ref").addClass('hidden')
+    $form.find(".form-group.pool_tls_container_ref").addClass('disabled')
+    $form.find(".form-group.pool_ca_tls_container_ref").addClass('hidden')
+    $form.find(".form-group.pool_ca_tls_container_ref").addClass('disabled')
 
 $(document).on 'click', '.pool-member-remove', (e) ->
   e.preventDefault()

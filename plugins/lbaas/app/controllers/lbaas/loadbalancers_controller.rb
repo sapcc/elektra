@@ -108,6 +108,7 @@ module Lbaas
 
     def edit
       @loadbalancer = services.lbaas.find_loadbalancer(params[:id])
+
       return unless services.networking.available?
       @private_networks = services.networking.project_networks(
         @scoped_project_id
@@ -117,8 +118,10 @@ module Lbaas
     def update
       @loadbalancer = services.lbaas.new_loadbalancer
       @loadbalancer.id = params[:id]
-      @loadbalancer.name = loadbalancer_params[:name]
-      @loadbalancer.description = loadbalancer_params[:description]
+      p = loadbalancer_params
+      @loadbalancer.name = p[:name]
+      @loadbalancer.description = p[:description]
+      @loadbalancer.tags = p[:tags]
 
       if @loadbalancer.save
         audit_logger.info(current_user, 'has updated', @loadbalancer)
@@ -273,7 +276,10 @@ module Lbaas
     end
 
     def loadbalancer_params
-      params[:loadbalancer].merge(project_id: @scoped_project_id)
+      p = params[:loadbalancer].merge(project_id: @scoped_project_id)
+      p[:tags] = get_tags p[:tags]
+      return p
     end
+
   end
 end

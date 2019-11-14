@@ -37,7 +37,8 @@ module Lbaas
         'flavor'          => read('flavor'),
         'admin_state_up'  => read('admin_state_up'),
         'project_id'       => read('project_id'),
-        'project_id'      => read('project_id')
+        'project_id'      => read('project_id'),
+        'tags'                      => read('tags')
       }.delete_if { |_k, v| v.blank? }
     end
 
@@ -45,7 +46,8 @@ module Lbaas
       {
         'name'            => read('name'),
         'description'     => read('description'),
-        'admin_state_up'  => read('admin_state_up')
+        'admin_state_up'  => read('admin_state_up'),
+        'tags'                      => read('tags')
       }.delete_if { |k, v| v.blank? and !%w[name description].include?(k) }
     end
   end

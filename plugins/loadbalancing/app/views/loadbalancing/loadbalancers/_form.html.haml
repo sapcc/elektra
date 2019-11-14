@@ -10,4 +10,5 @@
                               value_method:       -> (net) { net.subnet_objects.map(&:id).first },
                               label_method:       -> (network) { "#{network.name}  (#{network.subnet_objects.map(&:cidr).join(', ')})" },
                               disabled: update }
+  = f.input :vip_address, { label: "IP Address", disabled: update, hint: 'You can specify an IP from the private network if you like. Otherwise an IP will be allocated automatically.' }
 

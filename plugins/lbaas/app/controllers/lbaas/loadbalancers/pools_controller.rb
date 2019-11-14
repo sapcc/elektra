@@ -63,6 +63,9 @@ module Lbaas
         @pool.protocol = params[:proto] if params[:proto] && params[:proto] != 'TERMINATED_HTTPS'
         @pool.protocol = 'HTTP' if params[:proto] && params[:proto] == 'TERMINATED_HTTPS'
         @protocols = @pool.protocol.blank? ? Lbaas::Pool::PROTOCOLS : [@pool.protocol]
+        containers = services.key_manager.containers(limit: 100)
+        return unless containers
+        @containers = containers[:items].map { |c| [c.name, c.container_ref] }
       end
 
       def create
@@ -84,6 +87,9 @@ module Lbaas
       def edit
         @listeners = services.lbaas.listeners({loadbalancer_id: params[:loadbalancer_id]})
         @protocols = @pool.listener_id.blank? ? Lbaas::Pool::PROTOCOLS : [@pool.protocol]
+        containers = services.key_manager.containers(limit: 100)
+        return unless containers
+        @containers = containers[:items].map { |c| [c.name, c.container_ref] }
       end
 
       def update
@@ -150,7 +156,9 @@ module Lbaas
       end
 
       def pool_params
-        params[:pool]
+        p = params[:pool]
+        p[:tags] = get_tags p[:tags]
+        return p
       end
 
       def session_persistence
