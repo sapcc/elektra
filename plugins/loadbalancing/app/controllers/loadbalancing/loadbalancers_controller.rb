@@ -258,9 +258,9 @@ module Loadbalancing
               subnets[subid] = services.networking.find_subnet(subid)
             end
             sub = subnets[subid]
-            cidr = NetAddr::CIDR.create(sub.cidr)
-
-            next unless cidr.contains?(fip.floating_ip_address)
+            cidr = NetAddr.parse_net(sub.cidr)
+            next unless cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
+            
             @grouped_fips[sub.name] ||= []
             @grouped_fips[sub.name] << [fip.floating_ip_address, fip.id]
             break
