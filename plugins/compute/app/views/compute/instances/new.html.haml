@@ -54,12 +54,39 @@
       include_blank:      "Choose flavor",
       label_method:       -> (flavor) { flavor_label_for_select(flavor) }}
 
+    = f.input :custom_root_disk, 
+      as: :boolean,
+      wrapper: :horizontal_boolean_4x8 
+    
+    #custom_root_disk_size_wrapper{class: params[:custom_root_disk] ? '' : 'hidden'}
+      = f.input :custom_root_disk_size, label: 'Custom Root Disk Size (GB)', 
+        as: :integer,
+        input_wrapper_html: { style: "width: 100px" }
+
     = f.input :image_id, label: 'Image',
       as:            :grouped_select,
       collection:    grouped_images(@images, @bootable_volumes),
       group_method:  :last,
       include_blank: "Choose image",
       required:      true
+    
+    :javascript
+      // Root Disk Toggle
+      var toggleRootDisk = function(show) {
+        if(show) {
+          $('#server_image_id').val('')
+          $('#server_image_id').find('optgroup[label="--bootable volumes"]').addClass('hidden')
+          $('#custom_root_disk_size_wrapper').removeClass('hidden')
+        } else {
+          $('#server_image_id').find('optgroup[label="--bootable volumes"]').removeClass('hidden')
+          $('#custom_root_disk_size_wrapper').addClass('hidden')
+        }
+      }
+      var showRootDisk = #{params[:server] && params[:server][:custom_root_disk]}
+      toggleRootDisk(showRootDisk)
+      $('#server_custom_root_disk').change(function(t) {
+        toggleRootDisk($('#server_custom_root_disk').is(':checked'))
+      })
 
 
     = f.input :network_ids, { label: "Private Network",

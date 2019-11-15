@@ -35,13 +35,13 @@ module Compute
           end
         end
 
-        if bootable_volumes
+        if bootable_volumes && bootable_volumes.length>0
           volume_items = @bootable_volumes.collect do |v| 
             infos = []
-            infos << "Size: #{v.size}" if v.size
+            infos << "Size: #{v.size}GB" if v.size
 
             format = (v.volume_image_metadata || {}).fetch('disk_format',nil)
-            infos << ", Format: #{format}" if format
+            infos << "Format: #{format}" if format
             infos_string = infos.length>0 ? "(#{infos.join(', ')})" : ''
             ["#{v.name.present? ? v.name : v.id} #{infos_string}", v.id]
           end

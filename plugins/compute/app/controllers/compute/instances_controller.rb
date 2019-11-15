@@ -194,13 +194,16 @@ module Compute
 
       @instance.attributes = params[@instance.model_name.param_key]
       @bootable_volumes = services.block_storage.volumes_detail(bootable:true).select {|v| ['available','downloading'].include?(v.status) } 
-      @images = services.image.images
+      @images = services.image.all_images
       
       if @instance.image_id
         # check if image id is a bootable volume
-        volume = @bootable_volumes.find { |v| v.id == @instance.image_id }
+        if !params[:server][:custom_root_disk] || params[:server][:custom_root_disk] == '0'
+          volume = @bootable_volumes.find { |v| v.id == @instance.image_id }
+        end
 
-        if(volume) 
+        # Bootable Volume as image source
+        if volume 
           # imageRef is a bootable volume!
           @instance.block_device_mapping_v2 = [
             {
@@ -211,20 +214,36 @@ module Compute
               "delete_on_termination": false
             }
           ]
+          @instance.metadata = volume.volume_image_metadata
         else
           image = @images.find { |i| i.id == @instance.image_id }
+
           if image
             @instance.metadata = {
               image_name: (image.name || '').truncate(255),
               image_buildnumber:  (image.buildnumber || '').truncate(255)
             }
+            
+            # Custom root disk -> let nova cretae a bootable volume on the fly
+            if params[:server][:custom_root_disk]
+              @instance.block_device_mapping_v2 = [
+                {
+                  "boot_index": 0,
+                  "uuid": image.id,
+                  "volume_size": params[:server][:custom_root_disk_size],
+                  "source_type": "image",
+                  "destination_type": "volume",
+                  "delete_on_termination": true
+                }
+              ]
+            end
           end
         end
       end
 
       if @instance.valid? && @instance.network_ids &&
           @instance.network_ids.length.positive?
-
+          
         if @instance.network_ids.first['port'].present?
           # port is presented -> pre-resereved fixed IP is selected
           # use provided port id and update security group on port
