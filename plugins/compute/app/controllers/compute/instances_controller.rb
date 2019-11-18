@@ -225,7 +225,7 @@ module Compute
             }
             
             # Custom root disk -> let nova cretae a bootable volume on the fly
-            if params[:server][:custom_root_disk]
+            if params[:server][:custom_root_disk] == '1'
               @instance.block_device_mapping_v2 = [
                 {
                   "boot_index": 0,
