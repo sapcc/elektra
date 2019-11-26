@@ -5,7 +5,7 @@
   %div{class: modal? ? 'modal-body' : ''}
 
 - else
-  = simple_form_for @floating_ip, url: plugin('compute').detach_floatingip_instance_path(id: @instance.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal', id: 'fixed_ip' }, wrapper: :horizontal_form do |f|
+  = simple_form_for @floating_ip, url: plugin('compute').detach_floatingip_instance_path(id: @instance.id, action_from_show:@action_from_show), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal', id: 'fixed_ip' }, wrapper: :horizontal_form do |f|
     %div{class: modal? ? 'modal-body' : ''}
       - if @floating_ip.errors.present?
         .alert.alert-error

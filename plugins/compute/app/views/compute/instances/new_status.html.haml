@@ -1,6 +1,8 @@
 = content_for :title do
   Reset Status
-= simple_form_for @instance, url: plugin('compute').reset_status_instance_path(id: @instance.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+= simple_form_for @instance, url: plugin('compute').reset_status_instance_path(id:@instance.id, action_from_show:@action_from_show), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+   
   %div{class: modal? ? 'modal-body' : ''}
     .alert.alert-warning
       %p

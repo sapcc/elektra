@@ -21,7 +21,8 @@
 
 */
 
-.flavor-details, .image-details {
+.flavor-details,
+.image-details {
   table {
     width: 100%;
   }
@@ -47,7 +48,7 @@
 .loading-spinner-button {
   margin-left: 5px;
   margin-right: 5px;
-  @include spinner(background rgba(0,0,0,0.2));
+  @include spinner(background rgba(0, 0, 0, 0.2));
 }
 
 .advanced-options {
@@ -59,11 +60,15 @@
 .verticalLine {
   display: inline-block;
   padding-right: 9px;
-  border-right: medium solid #ccc; 
+  border-right: medium solid #ccc;
 }
 
 .countdown {
   text-align: center;
   font-size: 30px;
   margin-top: 100px;
+}
+
+.loading-place {
+  display: inline-block !important;
 }

@@ -92,14 +92,7 @@ module Compute
     def show
       @instance = services.compute.find_server(params[:id])
       return if @instance.blank?
-
-      @instance_security_groups = @instance.security_groups_details
-        .each_with_object({}) do |sg, map|
-        next if map[sg.id]
-        map[sg.id] = services.networking.security_groups(
-          tenant_id: @scoped_project_id, id: sg.id
-        ).first
-      end.values
+      load_security_groups(@instance)
     end
 
     def console_log
@@ -167,7 +160,6 @@ module Compute
 
       @instance.max_count = 1
     end
-
 
     # update instance table row (ajax call)
     def update_item
@@ -280,7 +272,7 @@ module Compute
           end
         end
       end
-#byebug
+
       if @instance.errors.empty? && @instance.save 
         flash.now[:notice] = 'Instance successfully created.'
         audit_logger.info(current_user, "has created", @instance)
@@ -309,16 +301,22 @@ module Compute
 
     def edit
       @instance = services.compute.find_server(params[:id])
+      @action_from_show = params[:action_from_show] || false
       if @instance.blank?
         flash.now[:error] = "We couldn't retrieve the instance details. Please try again."
       end
     end
 
     def update
+      @action_from_show = params[:action_from_show] || false
       @instance = services.compute.new_server(params[:server])
       @instance.id = params[:id]
       if @instance.save
         flash.now[:notice] = 'Server successfully updated.'
+        if @action_from_show
+          @instance = services.compute.find_server(params[:id])
+          load_security_groups(@instance)
+        end
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js { render 'update.js' }
@@ -329,6 +327,7 @@ module Compute
     end
 
     def new_floatingip
+      @action_from_show = params[:action_from_show] || false
       enforce_permissions('::networking:floating_ip_associate')
       @instance = services.compute.find_server(params[:id])
       collect_available_ips
@@ -338,6 +337,7 @@ module Compute
 
     # attach existing floating ip to a server interface.
     def attach_floatingip
+      @action_from_show = params[:action_from_show] || false
       enforce_permissions('::networking:floating_ip_associate')
 
       # get instance
@@ -370,7 +370,7 @@ module Compute
       if @floating_ip.save
         respond_to do |format|
           format.html { redirect_to instances_url }
-          format.js {}
+          format.js
         end
       else
         collect_available_ips
@@ -379,12 +379,14 @@ module Compute
     end
 
     def remove_floatingip
+      @action_from_show = params[:action_from_show] || false
       enforce_permissions('::networking:floating_ip_disassociate')
       @instance = services.compute.find_server(params[:id])
       @floating_ip = services.networking.new_floating_ip
     end
 
     def detach_floatingip
+      @action_from_show = params[:action_from_show] || false
       enforce_permissions('::networking:floating_ip_disassociate')
 
       @floating_ip = services.networking.find_floating_ip(
@@ -392,11 +394,10 @@ module Compute
       )
 
       if @floating_ip && @floating_ip.detach
+        @instance = services.compute.find_server(params[:id])
         respond_to do |format|
           format.html { redirect_to instances_url }
-          format.js {
-            @instance = services.compute.find_server(params[:id])
-          }
+          format.js {}
         end
       else
         render action: :remove_floatingip
@@ -404,6 +405,7 @@ module Compute
     end
 
     def attach_interface
+      @action_from_show = params[:action_from_show] || false
       @instance = services.compute.find_server(params[:id])
       @os_interface = services.compute.new_os_interface(params[:id])
       @os_interface.fixed_ips = []
@@ -419,6 +421,7 @@ module Compute
     end
 
     def create_interface
+      @action_from_show = params[:action_from_show] || false
       if params[:os_interface][:security_groups].present?
         params[:os_interface][:security_groups] =
           params[:os_interface][:security_groups].delete_if(&:blank?)
@@ -471,6 +474,7 @@ module Compute
     end
 
     def remove_interface
+      @action_from_show = params[:action_from_show] || false
       @instance = services.compute.find_server(params[:id])
       @os_interface = services.compute.new_os_interface(params[:id])
       # keep only fixed ip
@@ -480,6 +484,7 @@ module Compute
     end
 
     def detach_interface
+      @action_from_show = params[:action_from_show] || false
       # create a new os_interface model based on params
       @os_interface = services.compute.new_os_interface(
         params[:id], params[:os_interface]
@@ -516,6 +521,7 @@ module Compute
           timeout -= sleep_time
           sleep(sleep_time)
         end
+
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js {}
@@ -528,6 +534,7 @@ module Compute
     end
 
     def new_size
+      @action_from_show = params[:action_from_show] || false
       @instance = services.compute.find_server(params[:id])
       @flavors  = services.compute.flavors
     end
@@ -547,6 +554,7 @@ module Compute
     end
 
     def new_snapshot
+      @action_from_show = params[:action_from_show] || false
     end
 
     def create_image
@@ -631,6 +639,7 @@ module Compute
     end
 
     def edit_securitygroups
+      @action_from_show = params[:action_from_show] || false
       @instance = services.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_keys = []
@@ -641,6 +650,7 @@ module Compute
     end
 
     def assign_securitygroups
+      @action_from_show = params[:action_from_show] || false
       @instance = services.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_ids = []
@@ -679,9 +689,15 @@ module Compute
             execute_instance_action('unassign_security_group',sg, false)
           end
 
-          respond_to do |format|
-            format.html{ redirect_to instances_url }
-          end
+          if @action_from_show
+            respond_to do |format|
+              format.html{ redirect_to plugin('compute').instance_path(id: @instance.id) }
+            end
+          else
+            respond_to do |format|
+              format.html{ redirect_to instances_url }
+            end
+          end 
 
         rescue => e
           @instance = services.compute.find_server(params[:id])
@@ -700,6 +716,16 @@ module Compute
     end
 
     private
+
+    def load_security_groups(instance)
+      @instance_security_groups = instance.security_groups_details
+        .each_with_object({}) do |sg, map|
+        next if map[sg.id]
+        map[sg.id] = services.networking.security_groups(
+          tenant_id: @scoped_project_id, id: sg.id
+        ).first
+      end.values
+    end
     # This method finds the availability zone with the most avalilable RAM.
     # It use the elektra object cache.
     def prefered_availability_zone
@@ -766,6 +792,8 @@ module Compute
     def execute_instance_action(action=action_name,options=nil, with_rendering=true)
       instance_id = params[:id]
       @instance = services.compute.find_server(instance_id) rescue nil
+      # reload view if action was trigered from instances show view
+      @action_from_show = params[:action_from_show] || false
 
       @target_state=nil
       if @instance and (@instance.task_state || '')!='deleting'
@@ -781,7 +809,12 @@ module Compute
         end
       end
 
+      if @action_from_show
+        @terminate = action == 'terminate'
+        load_security_groups(@instance)
+      end
       render template: 'compute/instances/update_item.js' if with_rendering
+
     end
 
     def target_state_for_action(action)

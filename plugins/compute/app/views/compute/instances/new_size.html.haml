@@ -1,8 +1,8 @@
 = content_for :title do
   Resize instance
   
-= simple_form_for @instance, url: plugin('compute').resize_instance_path(id:@instance.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
-
+= simple_form_for @instance, url: plugin('compute').resize_instance_path(id:@instance.id, action_from_show:@action_from_show), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  
   %div{class: modal? ? 'modal-body' : ''}
     - if @instance.errors.present?
       .alert.alert-error

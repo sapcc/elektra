@@ -11,7 +11,7 @@
 
   .row
     .col-md-12
-      = form_tag plugin('compute').assign_securitygroups_instance_path(id: @instance.id), method: :put, remote: true do
+      = form_tag plugin('compute').assign_securitygroups_instance_path(id: @instance.id, action_from_show:@action_from_show), method: :put, remote: true do
         - unless flash[:error].blank?
           .alert.alert-error=flash[:error]
         %table.table.datatable

@@ -1,7 +1,7 @@
 = content_for :title do
   Create Snapshot
 
-= simple_form_for :snapshot, url: plugin('compute').create_image_instance_path(id:params[:id]), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for :snapshot, url: plugin('compute').create_image_instance_path(id:params[:id], action_from_show:@action_from_show), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     = f.input :name, icon_hint: 'A snapshot is an image which preserves the disk state of a running instance.'
