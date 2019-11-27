@@ -1,167 +1,175 @@
-- if @instance.blank?
-  .alert.alert-info
-    = "Couldn't find instance #{params[:id]}. This can happen if the instance was just created. In this case please wait a bit and try again"
+- data = {}
+- if @instance.task_state
+  - data[:update_url]=plugin('compute').update_item_instance_path(id:@instance.id, target_state: @target_state, action_from_show:true)
+  - data[:interval]=10000
 
-- else
-  - content_for (:details) do
-    %ul.nav.nav-tabs
-      %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
-      %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}
-      %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}
-      %li{role: "presentation"}= link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
-      %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
-      %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
-      %li{role: "presentation"}= link_to 'Volumes Attached', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
-      - if current_user.is_allowed?("compute:all_projects")
-        %li{ role: 'presentation' }= link_to 'Actions', '#actions', aria: { controls: 'actions' }, role: 'tab', data: { toggle: 'tab' }
+#item_details{data:data}
+  - if @instance.blank?
+    .alert.alert-info
+      = "Couldn't find instance #{params[:id]}. This can happen if the instance was just created. In this case please wait a bit and try again"
 
-    .tab-content
-      .tab-pane.active{role:"tabpanel", id:"information"}
-        %table.table.datatable
-          %tbody
-            %tr
-              %th Name
-              %td= @instance.name
-            %tr
-              %th ID
-              %td= @instance.id
-            %tr
-              %th Status
-              - state_text = @instance.status
-              - state_text += ": "+@instance.fault["message"] unless @instance.fault.nil?
-              - if @instance.status == "ERROR"
-                %td.text-danger
-                  %strong= state_text
-              - else 
-                %td
-                  = state_text
-              
-            %tr
-              %th Availability Zone
-              %td= @instance.availability_zone
-            %tr
-              %th Created
-              %td= @instance.pretty_created_at
-            %tr
-              %th Updated
-              %td= @instance.pretty_updated_at
-            - if @instance.attr_host
-              %tr
-                %th Host
-                %td= @instance.attr_host
-            %tr
-              %th Project
-              %td
-                -if @instance.tenant_id != @scoped_project_id
-                  - project_id_and_name(@instance.tenant_id)
-                - else
-                  = project_name(@instance.tenant_id)
-      
-      .tab-pane{role:"tabpanel", id:"specs"}
-        - if @instance.flavor
+  - else
+    - content_for (:details) do
+      %ul.nav.nav-tabs
+        %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}= link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}= link_to 'Volumes Attached', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
+        - if current_user.is_allowed?("compute:all_projects")
+          %li{ role: 'presentation' }= link_to 'Actions', '#actions', aria: { controls: 'actions' }, role: 'tab', data: { toggle: 'tab' }
+
+      .tab-content
+        .tab-pane.active{role:"tabpanel", id:"information"}
           %table.table.datatable
             %tbody
               %tr
-                %th Flavor
-                %td= @instance.flavor['original_name']
+                %th Name
+                %td= @instance.name
               %tr
-                %th RAM
-                %td= "#{@instance.flavor['ram']}MB"
+                %th ID
+                %td= @instance.id
               %tr
-                %th VCPUs
-                %td= "#{@instance.flavor['vcpus']} VCPU"
-              %tr
-                %th Disk
-                %td= "#{@instance.flavor['disk']}GB"
-        - else
-          No instance specifications
+                %th Status
+                - state_text = @instance.status.humanize
+                - state_text += ": "+@instance.fault["message"] unless @instance.fault.nil?
+                - if @instance.status == "Error"
+                  %td.text-danger
+                    %strong= state_text
+                - else 
+                  %td
+                    - if @instance.task_state
+                      %span.spinner
+                    = @instance.task_state.nil? ? @instance.status.humanize : @instance.task_state.humanize
 
-      .tab-pane{role:"tabpanel", id:"ip_addresses"}
-        %table.table.datatable
-          %tbody
-            - network_ips = network_ips_map(instance_ips(@instance))
-            - network_ips.each do |network_name, ips|
               %tr
-                %th= network_name
-                %td= render_fixed_floating_ips(ips)
-
-      .tab-pane{role:"tabpanel", id:"sec_groups"}
-        %table.table.datatable
-          %tbody
-            - security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
-            - (@instance_security_groups.compact || []).each do |sg|
+                %th Availability Zone
+                %td= @instance.availability_zone
               %tr
-                %th
-                  ="#{sg.name}"
-                  %p
-                  ="(#{sg.id})"
-                %td
-                  - if sg.security_group_rules.empty?
-                    No rules defined.
-                  - else
-                    %ul
-                      - sg.rule_objects.each do |rule|
-                        %li= rule.to_s(security_groups)
-
-      .tab-pane{role:"tabpanel", id:"keypairs"}
-        %table.table.datatable
-          %tbody
-            %tr
-              %th Keypair
-              %td= @instance.key_name.blank? ? "No keypair" : @instance.key_name
-
-      .tab-pane{role:"tabpanel", id:"metadata"}
-        %table.table.datatable
-          %tbody
-            - unless @instance.metadata.image_name
+                %th Created
+                %td= @instance.pretty_created_at
               %tr
-                %th Image name
-                %td= render_image_name(@instance.image_object)
-            - @instance.metadata.attributes.each do |k,v|
-              - next if k.to_s == 'id'
-              %tr
-                %th= k.to_s.humanize
-                %td= v.blank? ? "N/A" : v
-
-      .tab-pane{role:"tabpanel", id:"volumes"}
-        %table.table.datatable
-          %thead
-            %tr
-              %th Volume Name
-              %th Device Name
-              %th.snug
-          %tbody
-            - if current_user.is_allowed?("block_storage:volume_list")
-              - attached_volumes = @instance.attached_volumes
-              - if attached_volumes && attached_volumes.empty?
+                %th Updated
+                %td= @instance.pretty_updated_at
+              - if @instance.attr_host
                 %tr
-                  %td{colspan: 2} No volumes attached.
-              - else
-                - attached_volumes.each do |vol|
-                  %tr
-                    %td= vol.name
-                    %td= vol.attachments.first['device']
-            - else
+                  %th Host
+                  %td= @instance.attr_host
               %tr
-                %td{colspan: 2}
-                  - involved_roles = policy.try(:involved_roles, "block_storage:volume_list")
-                  You are not authorized to view volumes.
-                  - if involved_roles
-                    Please check (role assignments) if you have one of the following roles:
-                    = involved_roles.join(', ')
+                %th Project
+                %td
+                  -if @instance.tenant_id != @scoped_project_id
+                    - project_id_and_name(@instance.tenant_id)
+                  - else
+                    = project_name(@instance.tenant_id)
+        
+        .tab-pane{role:"tabpanel", id:"specs"}
+          - if @instance.flavor
+            %table.table.datatable
+              %tbody
+                %tr
+                  %th Flavor
+                  %td= @instance.flavor['original_name']
+                %tr
+                  %th RAM
+                  %td= "#{@instance.flavor['ram']}MB"
+                %tr
+                  %th VCPUs
+                  %td= "#{@instance.flavor['vcpus']} VCPU"
+                %tr
+                  %th Disk
+                  %td= "#{@instance.flavor['disk']}GB"
+          - else
+            No instance specifications
 
-      - if current_user.is_allowed?("compute:all_projects")
-        .tab-pane{role: 'tabpanel', id: 'actions'}
-          %ul.plain-list.plain-list-widespaced
-            %li= link_to 'Terminate', plugin('compute').instance_path(id: @instance.id), class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: 'Yes, terminate it', confirmed: :loading_status}
+        .tab-pane{role:"tabpanel", id:"ip_addresses"}
+          %table.table.datatable
+            %tbody
+              - network_ips = network_ips_map(instance_ips(@instance))
+              - network_ips.each do |network_name, ips|
+                %tr
+                  %th= network_name
+                  %td= render_fixed_floating_ips(ips)
 
-  - if modal? && !@action_from_show
-    = yield :details
-  - else
-    .row
-      .col-md-11
-        = yield :details
-      .col-md-1
-        .loading-place
-        .btn-group
-          = render partial: 'item_actions', locals: {instance: @instance, show_view: true}
+        .tab-pane{role:"tabpanel", id:"sec_groups"}
+          %table.table.datatable
+            %tbody
+              - security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+              - (@instance_security_groups.compact || []).each do |sg|
+                %tr
+                  %th
+                    ="#{sg.name}"
+                    %p
+                    ="(#{sg.id})"
+                  %td
+                    - if sg.security_group_rules.empty?
+                      No rules defined.
+                    - else
+                      %ul
+                        - sg.rule_objects.each do |rule|
+                          %li= rule.to_s(security_groups)
+
+        .tab-pane{role:"tabpanel", id:"keypairs"}
+          %table.table.datatable
+            %tbody
+              %tr
+                %th Keypair
+                %td= @instance.key_name.blank? ? "No keypair" : @instance.key_name
+
+        .tab-pane{role:"tabpanel", id:"metadata"}
+          %table.table.datatable
+            %tbody
+              - unless @instance.metadata.image_name
+                %tr
+                  %th Image name
+                  %td= render_image_name(@instance.image_object)
+              - @instance.metadata.attributes.each do |k,v|
+                - next if k.to_s == 'id'
+                %tr
+                  %th= k.to_s.humanize
+                  %td= v.blank? ? "N/A" : v
+
+        .tab-pane{role:"tabpanel", id:"volumes"}
+          %table.table.datatable
+            %thead
+              %tr
+                %th Volume Name
+                %th Device Name
+                %th.snug
+            %tbody
+              - if current_user.is_allowed?("block_storage:volume_list")
+                - attached_volumes = @instance.attached_volumes
+                - if attached_volumes && attached_volumes.empty?
+                  %tr
+                    %td{colspan: 2} No volumes attached.
+                - else
+                  - attached_volumes.each do |vol|
+                    %tr
+                      %td= vol.name
+                      %td= vol.attachments.first['device']
+              - else
+                %tr
+                  %td{colspan: 2}
+                    - involved_roles = policy.try(:involved_roles, "block_storage:volume_list")
+                    You are not authorized to view volumes.
+                    - if involved_roles
+                      Please check (role assignments) if you have one of the following roles:
+                      = involved_roles.join(', ')
+
+        - if current_user.is_allowed?("compute:all_projects")
+          .tab-pane{role: 'tabpanel', id: 'actions'}
+            %ul.plain-list.plain-list-widespaced
+              %li= link_to 'Terminate', plugin('compute').instance_path(id: @instance.id), class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: 'Yes, terminate it', confirmed: :loading_status}
+
+    - if modal? && !@action_from_show
+      = yield :details
+    - else
+      .row
+        .col-md-11
+          = yield :details
+        .col-md-1
+          .loading-place
+          .btn-group
+            = render partial: 'item_actions', locals: {instance: @instance, show_view: true}

@@ -163,15 +163,17 @@ module Compute
 
     # update instance table row (ajax call)
     def update_item
+      @action_from_show = params[:action_from_show] == 'true' || false
       @instance = services.compute.find_server(params[:id]) rescue nil
       @target_state = params[:target_state]
 
-      respond_to do |format|
-        format.js do
-          if @instance and @instance.power_state.to_s!=@target_state
-            @instance.task_state||=task_state(@target_state)
-          end
-        end
+      if @action_from_show
+        load_security_groups(@instance)
+      end
+
+      if @instance.power_state.to_i != @target_state.to_i
+        # translate target_state number to human readable string
+        @instance.task_state||=task_state(@target_state)
       end
     end
 
@@ -301,14 +303,14 @@ module Compute
 
     def edit
       @instance = services.compute.find_server(params[:id])
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       if @instance.blank?
         flash.now[:error] = "We couldn't retrieve the instance details. Please try again."
       end
     end
 
     def update
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       @instance = services.compute.new_server(params[:server])
       @instance.id = params[:id]
       if @instance.save
@@ -327,7 +329,7 @@ module Compute
     end
 
     def new_floatingip
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       enforce_permissions('::networking:floating_ip_associate')
       @instance = services.compute.find_server(params[:id])
       collect_available_ips
@@ -337,7 +339,7 @@ module Compute
 
     # attach existing floating ip to a server interface.
     def attach_floatingip
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       enforce_permissions('::networking:floating_ip_associate')
 
       # get instance
@@ -379,14 +381,14 @@ module Compute
     end
 
     def remove_floatingip
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       enforce_permissions('::networking:floating_ip_disassociate')
       @instance = services.compute.find_server(params[:id])
       @floating_ip = services.networking.new_floating_ip
     end
 
     def detach_floatingip
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       enforce_permissions('::networking:floating_ip_disassociate')
 
       @floating_ip = services.networking.find_floating_ip(
@@ -405,7 +407,7 @@ module Compute
     end
 
     def attach_interface
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       @instance = services.compute.find_server(params[:id])
       @os_interface = services.compute.new_os_interface(params[:id])
       @os_interface.fixed_ips = []
@@ -421,7 +423,7 @@ module Compute
     end
 
     def create_interface
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       if params[:os_interface][:security_groups].present?
         params[:os_interface][:security_groups] =
           params[:os_interface][:security_groups].delete_if(&:blank?)
@@ -474,7 +476,7 @@ module Compute
     end
 
     def remove_interface
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       @instance = services.compute.find_server(params[:id])
       @os_interface = services.compute.new_os_interface(params[:id])
       # keep only fixed ip
@@ -484,7 +486,7 @@ module Compute
     end
 
     def detach_interface
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       # create a new os_interface model based on params
       @os_interface = services.compute.new_os_interface(
         params[:id], params[:os_interface]
@@ -534,7 +536,7 @@ module Compute
     end
 
     def new_size
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       @instance = services.compute.find_server(params[:id])
       @flavors  = services.compute.flavors
     end
@@ -554,7 +556,7 @@ module Compute
     end
 
     def new_snapshot
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
     end
 
     def create_image
@@ -639,7 +641,7 @@ module Compute
     end
 
     def edit_securitygroups
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       @instance = services.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_keys = []
@@ -650,7 +652,7 @@ module Compute
     end
 
     def assign_securitygroups
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
       @instance = services.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_ids = []
@@ -793,7 +795,7 @@ module Compute
       instance_id = params[:id]
       @instance = services.compute.find_server(instance_id) rescue nil
       # reload view if action was trigered from instances show view
-      @action_from_show = params[:action_from_show] || false
+      @action_from_show = params[:action_from_show] == 'true' || false
 
       @target_state=nil
       if @instance and (@instance.task_state || '')!='deleting'
@@ -801,9 +803,10 @@ module Compute
         result = options.nil? ? @instance.send(action) : @instance.send(action,options)
         if result
           audit_logger.info(current_user, "has triggered action", action, "on", @instance)
+          # cool down and wait a little ;-)
           sleep(2)
           @instance = services.compute.find_server(instance_id) rescue nil
-
+          # translate taget state
           @target_state = target_state_for_action(action)
           @instance.task_state ||= task_state(@target_state) if @instance
         end
@@ -828,6 +831,8 @@ module Compute
       end
     end
 
+    # translate taget state that is vissible during the action 
+    # is in progress
     def task_state(target_state)
       target_state = target_state.to_i if target_state.is_a?(String)
       case target_state
