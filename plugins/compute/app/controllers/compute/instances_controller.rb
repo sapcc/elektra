@@ -161,7 +161,7 @@ module Compute
       @instance.max_count = 1
     end
 
-    # update instance table row (ajax call)
+    # update instance table row and details view (ajax call)
     def update_item
       @action_from_show = params[:action_from_show] == 'true' || false
       @instance = services.compute.find_server(params[:id]) rescue nil
@@ -171,7 +171,7 @@ module Compute
         load_security_groups(@instance)
       end
 
-      if @instance.power_state.to_i != @target_state.to_i
+      if @instance and @instance.power_state.to_i != @target_state.to_i
         # translate target_state number to human readable string
         @instance.task_state||=task_state(@target_state)
       end
