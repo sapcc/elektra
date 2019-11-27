@@ -46,6 +46,13 @@ export default class AutoscalingConfig extends React.Component {
   }
 
   handleEditValue(projectID, newValue) {
+    //input sanitizing: only allow positive integer values
+    newValue = newValue.replace(/[^0-9]+/, '');
+    //input sanitizing: do not allow values above 90%
+    if (parseInt(newValue) > 90) {
+      newValue = '90';
+    }
+
     this.setState({
       ...this.state,
       editValues: { ...this.state.editValues, [projectID]: newValue },
