@@ -58,7 +58,7 @@ const FormBody = ({close, errors}) => {
             <option value='false'>Percentage-step resizing</option>
             <option value='true'>Single-step resizing</option>
           </Form.Input>
-          <p className='help-block' style={{"margin-bottom": 0}}>
+          <p className='help-block' style={{marginBottom: 0}}>
             <i className="fa fa-info-circle"/>The different choices are explained in {" "}
             <a href="https://github.com/sapcc/castellum/blob/master/docs/api-spec.md#stepping-strategies" target="_blank">this section</a>
             {" "}of the autoscaler documentation.
