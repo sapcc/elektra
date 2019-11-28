@@ -1,4 +1,6 @@
 <% if @action_from_show %>
+  // TODO: this is not working because of weird Error Handling?, got an 200 Error when the action is done????
+  //$("#item_details").replaceWith("<%= j(render(partial: 'compute/instances/item_details')) %>");"
   window.location = "<%= plugin('compute').instance_path(id: @instance.id) %>"
 <% else %>
   $("#instance_<%=@instance.id%>").replaceWith("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance })) %>");

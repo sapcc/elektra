@@ -370,9 +370,12 @@ module Compute
       @floating_ip.fixed_ip_address = params[:floating_ip][:fixed_ip_address]
 
       if @floating_ip.save
+        if @action_from_show
+          load_security_groups(@instance)
+        end
         respond_to do |format|
           format.html { redirect_to instances_url }
-          format.js
+          format.js {}
         end
       else
         collect_available_ips
@@ -397,6 +400,9 @@ module Compute
 
       if @floating_ip && @floating_ip.detach
         @instance = services.compute.find_server(params[:id])
+        if @action_from_show
+          load_security_groups(@instance)
+        end
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js {}
@@ -459,6 +465,9 @@ module Compute
 
       if @os_interface.errors.empty? && @os_interface.save
         @instance = services.compute.find_server(params[:id])
+        if @action_from_show
+          load_security_groups(@instance)
+        end
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js {}
@@ -522,6 +531,10 @@ module Compute
           break if timeout <= 0 || interfaces.length.zero?
           timeout -= sleep_time
           sleep(sleep_time)
+        end
+
+        if @action_from_show
+          load_security_groups(@instance)
         end
 
         respond_to do |format|

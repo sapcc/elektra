@@ -1,5 +1,5 @@
 <% if @action_from_show %>
-  window.location = "<%= plugin('compute').instance_path(id: @instance.id) %>"
+  $("#item_details").replaceWith("<%= j(render(partial: 'compute/instances/item_details')) %>");
 <% else %>
   $("#instance_<%=@instance.id%>").replaceWith("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance })) %>");
   $('#instance_<%=@instance.id%> [data-collapsable]').collapsable({collapsed: false});
