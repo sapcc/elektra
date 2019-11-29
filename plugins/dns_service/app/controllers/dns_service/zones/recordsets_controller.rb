@@ -39,12 +39,15 @@ module DnsService
       end
 
       def edit
+        @action_from_show = params[:action_from_show] || 'false'
+
         @recordset = services.dns_service.find_recordset(
           @zone.id, params[:id], @impersonate_option
         )
       end
 
       def update
+        @action_from_show = params[:recordset][:action_from_show] == 'true' || false
         @recordset = services.dns_service.find_recordset(
           @zone.id, params[:id], @impersonate_option
         )

@@ -1,2 +1,6 @@
-$('tr#recordset_<%=@recordset.id%>').replaceWith("<%= j(render(partial: 'dns_service/zones/recordsets/recordset_item', locals: {zone: @zone, recordset: @recordset} )) %>");
+<% if @action_from_show %>
+  $('#recordset').replaceWith("<%= j(render(partial: 'dns_service/zones/recordsets/item_details')) %>");
+<% else %>
+  $('tr#recordset_<%=@recordset.id%>').replaceWith("<%= j(render(partial: 'dns_service/zones/recordsets/recordset_item', locals: {zone: @zone, recordset: @recordset} )) %>");
+<% end %>
 MoModal.close();
