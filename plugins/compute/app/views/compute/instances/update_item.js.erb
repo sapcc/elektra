@@ -1,6 +1,6 @@
 <% if @action_from_show %>
   <% if @terminate %>
-    window.location = "<%= plugin('compute').instances_path() %>"
+    window.location = "<%= plugin('compute').instances_path() %>";
   <% else %>
     $("#item_details").replaceWith("<%= j(render(partial: 'compute/instances/item_details')) %>");
     // to trigger update_item in instance_controller
