@@ -2,6 +2,9 @@ const permsOptions = [
   { value: 'anonymous_pull', label: 'Pull anonymously' },
   { value: 'pull', label: 'Pull' },
   { value: 'pull,push', label: 'Pull & Push' },
+  { value: 'delete,pull,push', label: 'Pull & Push & Delete' },
+  { value: 'delete,pull', label: 'Pull & Delete' },
+  { value: 'delete', label: 'Delete' },
 ];
 
 const RBACPoliciesEditRow = ({ index, policy, isAdmin, setRepoRegex, setUserRegex, setPermissions, removePolicy }) => {
