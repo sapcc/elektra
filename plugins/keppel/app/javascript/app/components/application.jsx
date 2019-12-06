@@ -6,8 +6,8 @@ import RBACPoliciesEditModal from '../containers/rbac_policies/edit';
 import RepositoryList from '../containers/repositories/list';
 
 export default (props) => {
-  const { projectId, canEdit, isAdmin } = props;
-  const rootProps = { projectID: projectId, canEdit, isAdmin };
+  const { projectId, canEdit, isAdmin, dockerInfo } = props;
+  const rootProps = { projectID: projectId, canEdit, isAdmin, dockerInfo };
 
   return (
     <Loader>

@@ -20,3 +20,11 @@
   ***************************************************
 
 */
+
+ol.howto > li {
+  margin-bottom: 20px;
+
+  & > pre {
+    margin-top: 10px; // like margin-bottom
+  }
+}
