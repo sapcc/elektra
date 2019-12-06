@@ -18,7 +18,7 @@ const reqAccts = (state, {requestedAt}) => ({
   },
 });
 
-const reqAcctsFail = (state, {}) => ({
+const reqAcctsFail = state => ({
   ...state,
   accounts: {
     ...state.accounts,
@@ -53,7 +53,7 @@ export const keppel = (state, action) => {
 
   switch(action.type) {
     case constants.REQUEST_ACCOUNTS:         return reqAccts(state, action);
-    case constants.REQUEST_ACCOUNTS_FAILURE: return reqAcctsFail(state, action);
+    case constants.REQUEST_ACCOUNTS_FAILURE: return reqAcctsFail(state);
     case constants.RECEIVE_ACCOUNTS:         return recvAccts(state, action);
     case constants.UPDATE_ACCOUNT:           return updateAcct(state, action);
     default: return state;

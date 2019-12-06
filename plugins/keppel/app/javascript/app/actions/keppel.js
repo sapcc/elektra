@@ -8,6 +8,7 @@ const errorMessage = (error) => (
   error.response && error.response.data || error.message
 );
 
+/* global React */
 const showError = (error) => (
   addError(React.createElement(ErrorsList, {
     errors: errorMessage(error),

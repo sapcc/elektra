@@ -3,7 +3,7 @@ import AccountList from '../../components/accounts/list';
 import { fetchAccountsIfNeeded } from '../../actions/keppel';
 
 export default connect(
-  (state, props) => ({
+  state => ({
     accounts:   state.keppel.accounts.data || [],
     isFetching: state.keppel.accounts.isFetching,
   }),
