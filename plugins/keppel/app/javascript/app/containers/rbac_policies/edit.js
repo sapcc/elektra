@@ -5,10 +5,8 @@ import { putAccount } from '../../actions/keppel';
 export default connect(
   (state, props) => {
     const accountName = props.match.params.account;
-    const accts = state.keppel.accounts;
     return {
-      account: (accts.data || []).find(a => a.name == accountName),
-      isFetching: accts.isFetching,
+      account: (state.keppel.accounts.data || []).find(a => a.name == accountName),
     };
   },
   dispatch => ({

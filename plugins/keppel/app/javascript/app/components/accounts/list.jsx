@@ -13,20 +13,7 @@ const columns = [
 ];
 
 export default class AccountList extends React.Component {
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.loadDependencies(nextProps);
-  }
-  componentDidMount() {
-    this.loadDependencies(this.props);
-  }
-  loadDependencies(props) {
-    props.loadAccountsOnce();
-  }
-
   render() {
-    if (this.props.isFetching) {
-      return <p><span className='spinner' /> Loading...</p>;
-    }
     return (
       <React.Fragment>
         {this.props.isAdmin && (

@@ -12,17 +12,18 @@ export default class RBACPoliciesEditModal extends React.Component {
   };
 
   componentDidMount() {
-    this.initState(this.props);
+    this.initState();
   }
-  componentWillReceiveProps(nextProps) {
-    this.initState(nextProps);
+  componentDidUpdate() {
+    this.initState();
   }
-  initState(props) {
-    if (props.isFetching || !props.account) {
+  initState() {
+    if (!this.props.account) {
+      this.close();
       return;
     }
     if (this.state.policies == null) {
-      const { rbac_policies: policies } = props.account;
+      const { rbac_policies: policies } = this.props.account;
       this.setState({ ...this.state, policies });
     }
   }
@@ -83,8 +84,10 @@ export default class RBACPoliciesEditModal extends React.Component {
   };
 
   render() {
-    const isFetching = this.props.isFetching || !this.props.account;
     const { account, isAdmin } = this.props;
+    if (!account) {
+      return;
+    }
 
     const policies = this.state.policies || [];
     const { isSubmitting, errorMessage, apiErrors } = this.state;
@@ -96,51 +99,47 @@ export default class RBACPoliciesEditModal extends React.Component {
       <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
-            Access policies for account: {isFetching ? "Loading..." : account.name}
+            Access policies for account: {account.name}
           </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          {isFetching ? (
-            <p><span className='spinner' /> Loading...</p>
-          ) : (
-            <React.Fragment>
-              {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
-              <table className='table'>
-                <thead>
+          <React.Fragment>
+            {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
+            <table className='table'>
+              <thead>
+                <tr>
+                  <th className='col-md-4'>Repositories matching</th>
+                  <th className='col-md-4'>User names matching</th>
+                  <th className='col-md-3'>Permissions</th>
+                  <th className='col-md-1'>
+                    {isAdmin && (
+                      <button className='btn btn-sm btn-default' onClick={this.addPolicy}>
+                        Add policy
+                      </button>
+                    )}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {policies.map((policy, idx) => (
+                  <RBACPoliciesEditRow {...commonPropsForRow}
+                    key={idx} index={idx} policy={policy}
+                  />
+                ))}
+                { policies.length == 0 && (
                   <tr>
-                    <th className='col-md-4'>Repositories matching</th>
-                    <th className='col-md-4'>User names matching</th>
-                    <th className='col-md-3'>Permissions</th>
-                    <th className='col-md-1'>
-                      {isAdmin && (
-                        <button className='btn btn-sm btn-default' onClick={this.addPolicy}>
-                          Add policy
-                        </button>
-                      )}
-                    </th>
+                    <td colSpan='4' className='text-muted text-center'>No entries</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {policies.map((policy, idx) => (
-                    <RBACPoliciesEditRow {...commonPropsForRow}
-                      key={idx} index={idx} policy={policy}
-                    />
-                  ))}
-                  { policies.length == 0 && (
-                    <tr>
-                      <td colSpan='4' className='text-muted text-center'>No entries</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-              {policies.length > 0 && (
-                <p>
-                  Matches use the <a href='https://golang.org/pkg/regexp/syntax/'>Go regex syntax</a>. Leading <code>^</code> and trailing <code>$</code> anchors are always added automatically. User names are in the format <code>user@userdomain/project@projectdomain</code>.
-                </p>
-              )}
-            </React.Fragment>
-          )}
+                )}
+              </tbody>
+            </table>
+            {policies.length > 0 && (
+              <p>
+                Matches use the <a href='https://golang.org/pkg/regexp/syntax/'>Go regex syntax</a>. Leading <code>^</code> and trailing <code>$</code> anchors are always added automatically. User names are in the format <code>user@userdomain/project@projectdomain</code>.
+              </p>
+            )}
+          </React.Fragment>
         </Modal.Body>
 
         <Modal.Footer>
