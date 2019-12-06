@@ -10,7 +10,9 @@ export default class AccountRow extends React.Component {
     //TODO: link from first column to some DetailsModal that lists RBAC policies and explains how to use `docker pull/push` with this account
     return (
       <tr>
-        <td className='col-md-6'>{accountName}</td>
+        <td className='col-md-6'>
+          <Link to={`/account/${accountName}`}>{accountName}</Link>
+        </td>
         <td className='col-md-6'>
           Swift container
           {' '}

@@ -3,6 +3,7 @@ import Loader from '../containers/loader';
 import AccountList from '../containers/accounts/list';
 import AccountCreateModal from '../containers/accounts/create';
 import RBACPoliciesEditModal from '../containers/rbac_policies/edit';
+import RepositoryList from '../containers/repositories/list';
 
 export default (props) => {
   const { projectId, canEdit, isAdmin } = props;
@@ -17,10 +18,12 @@ export default (props) => {
 
           {/* account list */}
           <Route path="/accounts" render={(props) => <AccountList {...rootProps} />} />
-
           {/* modal dialogs that are reached from /accounts */}
           {isAdmin && <Route exact path="/accounts/new" render={(props) => <AccountCreateModal {...props} {...rootProps} /> } />}
           <Route exact path="/accounts/:account/policies" render={(props) => <RBACPoliciesEditModal {...props} {...rootProps} />} />
+
+          {/* repository list within account */}
+          <Route path="/account/:account" render={(props) => <RepositoryList {...props} {...rootProps} />} />
         </div>
       </HashRouter>
     </Loader>

@@ -15,6 +15,9 @@ const showError = (error) => (
   }))
 );
 
+////////////////////////////////////////////////////////////////////////////////
+// get/set accounts
+
 export const fetchAccounts = () => dispatch => {
   dispatch({
     type: constants.REQUEST_ACCOUNTS,
@@ -60,4 +63,53 @@ export const putAccount = account => dispatch => {
       })
       .catch(error => reject({ errors: errorMessage(error) }))
   );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// get repositories
+
+const fetchRepositoryPage = (accountName, marker) => dispatch => {
+  //send REQUEST_REPOSITORIES only once at the start of the operation
+  if (marker == null) {
+    dispatch({
+      type: constants.REQUEST_REPOSITORIES,
+      accountName,
+      requestedAt: Date.now(),
+    });
+  }
+
+  ajaxHelper.get(`/keppel/v1/accounts/${accountName}/repositories`)
+    .then(response => {
+      const repos = response.data.repositories;
+      dispatch({
+        type: constants.RECEIVE_REPOSITORIES,
+        accountName,
+        data: repos,
+        receivedAt: Date.now(),
+      });
+      if (response.data.truncated) {
+        fetchRepositoryPage(accountName, repos[repos.length-1].name);
+      } else {
+        dispatch({
+          type: constants.REQUEST_REPOSITORIES_FINISHED,
+          accountName,
+          receivedAt: Date.now(),
+        });
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: constants.REQUEST_REPOSITORIES_FAILURE,
+        accountName,
+      });
+      showError(error);
+    });
+};
+
+export const fetchRepositoriesIfNeeded = (accountName) => (dispatch, getState) => {
+  const state = getState().keppel.repositoriesFor[accountName] || {};
+  if (state.isFetching || state.requestedAt) {
+    return;
+  }
+  return dispatch(fetchRepositoryPage(accountName, null));
 };

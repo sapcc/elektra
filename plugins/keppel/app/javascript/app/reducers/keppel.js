@@ -7,6 +7,14 @@ const initialState = {
     receivedAt:  null,
     data:        null,
   },
+  repositoriesFor: {},
+};
+
+const initialRepositoriesState = {
+  isFetching:  false,
+  requestedAt: null,
+  receivedAt:  null,
+  data:        null,
 };
 
 const reqAccts = (state, {requestedAt}) => ({
@@ -46,6 +54,53 @@ const updateAcct = (state, {account}) => ({
   },
 });
 
+const reqRepos = (state, {accountName, requestedAt}) => ({
+  ...state,
+  repositoriesFor: {
+    ...state.repositoriesFor,
+    [accountName]: {
+      ...initialRepositoriesState,
+      isFetching: true,
+      requestedAt,
+    },
+  },
+});
+
+const reqReposFail = (state, {accountName}) => ({
+  ...state,
+  repositoriesFor: {
+    ...state.repositoriesFor,
+    [accountName]: {
+      ...state.repositoriesFor[accountName],
+      isFetching: false,
+      data: null,
+    },
+  },
+});
+
+const recvRepos = (state, {accountName, data}) => ({
+  ...state,
+  repositoriesFor: {
+    ...state.repositoriesFor,
+    [accountName]: {
+      ...state.repositoriesFor[accountName],
+      data: [ ...(state.repositoriesFor[accountName].data || []), ...data ],
+    },
+  },
+});
+
+const recvReposDone = (state, {accountName, receivedAt}) => ({
+  ...state,
+  repositoriesFor: {
+    ...state.repositoriesFor,
+    [accountName]: {
+      ...state.repositoriesFor[accountName],
+      isFetching: false,
+      receivedAt,
+    },
+  },
+});
+
 export const keppel = (state, action) => {
   if (state == null) {
     state = initialState;
@@ -56,6 +111,10 @@ export const keppel = (state, action) => {
     case constants.REQUEST_ACCOUNTS_FAILURE: return reqAcctsFail(state);
     case constants.RECEIVE_ACCOUNTS:         return recvAccts(state, action);
     case constants.UPDATE_ACCOUNT:           return updateAcct(state, action);
+    case constants.REQUEST_REPOSITORIES:          return reqRepos(state, action);
+    case constants.REQUEST_REPOSITORIES_FAILURE:  return reqReposFail(state, action);
+    case constants.RECEIVE_REPOSITORIES:          return recvRepos(state, action);
+    case constants.REQUEST_REPOSITORIES_FINISHED: return recvReposDone(state, action);
     default: return state;
   }
 };
