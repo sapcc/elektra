@@ -16,6 +16,10 @@ module DnsService
       zone_attributes[:attributes] = (read('attributes') || {}).keep_if do |k, _v|
         %w[external label].include?(k)
       end
+      # this is needed if a domain needs to be created directly in the given project
+      if read('project_id')
+        zone_attributes[:project_id] = read('project_id').strip
+      end
 
       zone_attributes.delete_if { |_k, v| v.blank? }
     end
