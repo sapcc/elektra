@@ -30,7 +30,7 @@ export default class RBACPoliciesEditModal extends React.Component {
   close = (e) => {
     if (e) { e.stopPropagation(); }
     this.setState({ ...this.state, show: false });
-    setTimeout(() => this.props.history.replace('/'), 300);
+    setTimeout(() => this.props.history.replace('/accounts'), 300);
   }
 
   setRepoRegex = (idx, input) => {
