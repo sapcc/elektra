@@ -1,5 +1,18 @@
 import { Link } from 'react-router-dom';
 
+import { DataTable } from 'lib/components/datatable';
+
+import RepositoryRow from './row';
+
+const columns = [
+  { key: 'name', label: 'Repository name', sortStrategy: 'text',
+    sortKey: props => props.repo.name || '' },
+  { key: 'manifest_count', label: 'Number of manifests', sortStrategy: 'numeric',
+    sortKey: props => props.repo.manifest_count || 0 },
+  { key: 'tag_count', label: 'Number of tags', sortStrategy: 'numeric',
+    sortKey: props => props.repo.tag_count || 0 },
+];
+
 export default class RepositoryList extends React.Component {
   state = {
     currentTab: 'repos',
@@ -27,6 +40,13 @@ export default class RepositoryList extends React.Component {
     if (isFetching) {
       return <p><span className='spinner' /> Loading repositories for account...</p>;
     }
+    return (
+      <DataTable columns={columns}>
+        {(repos || []).map(repo => (
+          <RepositoryRow key={repo.name} repo={repo} />
+        ))}
+      </DataTable>
+    );
     return <pre>{JSON.stringify(repos, null, 2)}</pre>;
   }
 
