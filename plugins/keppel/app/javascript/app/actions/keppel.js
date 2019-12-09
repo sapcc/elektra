@@ -78,7 +78,8 @@ const fetchRepositoryPage = (accountName, marker) => dispatch => {
     });
   }
 
-  ajaxHelper.get(`/keppel/v1/accounts/${accountName}/repositories`)
+  const opts = marker == null ? {} : { marker };
+  ajaxHelper.get(`/keppel/v1/accounts/${accountName}/repositories`, opts)
     .then(response => {
       const repos = response.data.repositories;
       dispatch({
@@ -112,4 +113,54 @@ export const fetchRepositoriesIfNeeded = (accountName) => (dispatch, getState) =
     return;
   }
   return dispatch(fetchRepositoryPage(accountName, null));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// get manifests
+
+const fetchManifestPage = (accountName, repoName, marker) => dispatch => {
+  //send REQUEST_MANIFESTS only once at the start of the operation
+  if (marker == null) {
+    dispatch({
+      type: constants.REQUEST_MANIFESTS,
+      accountName, repoName,
+      requestedAt: Date.now(),
+    });
+  }
+
+  const opts = marker == null ? {} : { marker };
+  ajaxHelper.get(`/keppel/v1/accounts/${accountName}/repositories/${repoName}/_manifests`, opts)
+    .then(response => {
+      const manifests = response.data.manifests;
+      dispatch({
+        type: constants.RECEIVE_MANIFESTS,
+        accountName, repoName,
+        data: manifests,
+        receivedAt: Date.now(),
+      });
+      if (response.data.truncated) {
+        fetchManifestPage(accountName, repoName, manifests[manifests.length-1].name);
+      } else {
+        dispatch({
+          type: constants.REQUEST_MANIFESTS_FINISHED,
+          accountName, repoName,
+          receivedAt: Date.now(),
+        });
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: constants.REQUEST_MANIFESTS_FAILURE,
+        accountName, repoName,
+      });
+      showError(error);
+    });
+};
+
+export const fetchManifestsIfNeeded = (accountName, repoName) => (dispatch, getState) => {
+  const state = (getState().keppel.manifestsFor[accountName] || {})[repoName] || {};
+  if (state.isFetching || state.requestedAt) {
+    return;
+  }
+  return dispatch(fetchManifestPage(accountName, repoName, null));
 };

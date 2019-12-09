@@ -8,6 +8,7 @@ const initialState = {
     data:        null,
   },
   repositoriesFor: {},
+  manifestsFor: {},
 };
 
 const initialRepositoriesState = {
@@ -16,6 +17,16 @@ const initialRepositoriesState = {
   receivedAt:  null,
   data:        null,
 };
+
+const initialManifestsState = {
+  isFetching:  false,
+  requestedAt: null,
+  receivedAt:  null,
+  data:        null,
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// accounts
 
 const reqAccts = (state, {requestedAt}) => ({
   ...state,
@@ -53,6 +64,9 @@ const updateAcct = (state, {account}) => ({
     ],
   },
 });
+
+////////////////////////////////////////////////////////////////////////////////
+// repositories
 
 const reqRepos = (state, {accountName, requestedAt}) => ({
   ...state,
@@ -101,6 +115,54 @@ const recvReposDone = (state, {accountName, receivedAt}) => ({
   },
 });
 
+const updateManifestsFor = (state, accountName, repoName, update) => {
+  const manifestsForAccount = state.manifestsFor[accountName] || {};
+  return {
+    ...state,
+    manifestsFor: {
+      ...state.manifestsFor,
+      [accountName]: {
+        ...manifestsForAccount,
+        [repoName]: update(manifestsForAccount[repoName] || {}),
+      },
+    },
+  };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// repositories
+
+const reqManifests = (state, {accountName, repoName, requestedAt}) => (
+  updateManifestsFor(state, accountName, repoName, oldState => ({
+    ...initialManifestsState,
+    isFetching: true,
+    requestedAt,
+  }))
+);
+
+const reqManifestsFail = (state, {accountName, repoName}) => (
+  updateManifestsFor(state, accountName, repoName, oldState => ({
+    ...oldState,
+    isFetching: false,
+    data: null,
+  }))
+);
+
+const recvManifests = (state, {accountName, repoName, data}) => (
+  updateManifestsFor(state, accountName, repoName, oldState => ({
+    ...oldState,
+    data: [ ...(oldState.data || []), ...data ],
+  }))
+);
+
+const recvManifestsDone = (state, {accountName, repoName, receivedAt}) => (
+  updateManifestsFor(state, accountName, repoName, oldState => ({
+    ...oldState,
+    isFetching: false,
+    receivedAt,
+  }))
+);
+
 export const keppel = (state, action) => {
   if (state == null) {
     state = initialState;
@@ -115,6 +177,10 @@ export const keppel = (state, action) => {
     case constants.REQUEST_REPOSITORIES_FAILURE:  return reqReposFail(state, action);
     case constants.RECEIVE_REPOSITORIES:          return recvRepos(state, action);
     case constants.REQUEST_REPOSITORIES_FINISHED: return recvReposDone(state, action);
+    case constants.REQUEST_MANIFESTS:          return reqManifests(state, action);
+    case constants.REQUEST_MANIFESTS_FAILURE:  return reqManifestsFail(state, action);
+    case constants.RECEIVE_MANIFESTS:          return recvManifests(state, action);
+    case constants.REQUEST_MANIFESTS_FINISHED: return recvManifestsDone(state, action);
     default: return state;
   }
 };
