@@ -48,7 +48,6 @@ export default class RepositoryList extends React.Component {
         ))}
       </DataTable>
     );
-    return <pre>{JSON.stringify(repos, null, 2)}</pre>;
   }
 
   render() {

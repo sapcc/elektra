@@ -3,7 +3,23 @@ import { Link } from 'react-router-dom';
 import { DataTable } from 'lib/components/datatable';
 
 import { makeTabBar, makeHowto } from '../utils';
-// import ManifestRow from './row';
+import ManifestRow from './row';
+
+const tagColumns = [
+  { key: 'name', label: 'Tag name / Canonical digest', sortStrategy: 'text',
+    sortKey: props => props.data.name || '' },
+  { key: 'media_type', label: 'Format' },
+  { key: 'size_bytes', label: 'Size', sortStrategy: 'numeric',
+    sortKey: props => props.data.size_bytes || 0 },
+  { key: 'pushed_at', label: 'Pushed at', sortStrategy: 'numeric',
+    sortKey: props => props.data.pushed_at || 0 },
+];
+
+const manifestColumns = [
+  { key: 'digest', label: 'Canonical digest', sortStrategy: 'text',
+    sortKey: props => props.data.digest || '' },
+  ...(tagColumns.slice(1)),
+];
 
 export default class RepositoryList extends React.Component {
   state = {
@@ -29,10 +45,43 @@ export default class RepositoryList extends React.Component {
   }
 
   renderTagsList() {
-    return <pre>{JSON.stringify(this.props.manifests, null, 2)}</pre>;
+    const { isFetching, data: manifests } = this.props.manifests;
+    if (isFetching) {
+      return <p><span className='spinner' /> Loading tags/manifests for repository...</p>;
+    }
+
+    const tags = [];
+    for (const manifest of manifests || []) {
+      for (const tag of manifest.tags || []) {
+        tags.push({ ...manifest, ...tag });
+      }
+    }
+    return (
+      <DataTable columns={tagColumns}>
+      {tags.map(tag => (
+        <ManifestRow key={tag.name} data={tag} />
+      ))}
+      </DataTable>
+    );
   }
+
   renderUntaggedManifestsList() {
-    return <p>TODO</p>;
+    const { isFetching, data: manifests } = this.props.manifests;
+    if (isFetching) {
+      return <p><span className='spinner' /> Loading tags/manifests for repository...</p>;
+    }
+
+    const untaggedManifests = (manifests || []).filter(
+      manifest => (manifest.tags || []).length == 0,
+    );
+
+    return (
+      <DataTable columns={manifestColumns}>
+        {untaggedManifests.map(manifest => (
+          <ManifestRow key={manifest.digest} data={manifest} />
+        ))}
+      </DataTable>
+    );
   }
 
   render() {
