@@ -144,7 +144,13 @@ export class DataTable extends React.Component {
     }
   }
 
-  renderColumnHeader(column, columnIdx) {
+  renderColumnHeader(column, columnIdx, isEmpty) {
+    //never show sorting controls when the table is empty, otherwise the
+    //appearing and disappearing sorting controls mess up the layouting
+    if (isEmpty) {
+      return <th key={column.key}>{column.label}</th>;
+    }
+
     const isSorted = (this.state.sortColumnIdx == columnIdx);
     const isSortable = (column.sortStrategy != null);
 
@@ -198,7 +204,8 @@ export class DataTable extends React.Component {
       rows = rows.slice((curr - 1) * size, curr * size);
     }
 
-    if (rows.length == 0) {
+    const isEmpty = rows.length == 0;
+    if (isEmpty) {
       rows = [
         <tr key='no-entries'>
           <td colSpan={this.props.columns.length} className='text-muted text-center'>No entries</td>
@@ -210,7 +217,7 @@ export class DataTable extends React.Component {
       <React.Fragment>
         <table className='table elektraDataTable'>
           <thead>
-            <tr>{this.props.columns.map((column, idx) => this.renderColumnHeader(column, idx))}</tr>
+            <tr>{this.props.columns.map((column, idx) => this.renderColumnHeader(column, idx, isEmpty))}</tr>
           </thead>
           <tbody>{rows}</tbody>
         </table>
