@@ -5,7 +5,7 @@
   "unicodeEmoji": true,
   "separateMinorPatch": false,
   "separateMajorMinor": true,
-  "prHourlyLimit": 0,
+  "prHourlyLimit": 15,
   "ruby-version":{"enabled": false},
   "ruby":{"enabled": false},
   "vulnerabilityAlerts": {
