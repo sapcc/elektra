@@ -10,9 +10,9 @@ const mediaTypeDescs = {
   'application/vnd.oci.image.index.v1+json':                   'OCI image index',
 };
 
-export default class ManifestRow extends React.Component {
+export default class ImageRow extends React.Component {
   render() {
-    //NOTE: `tagName == null` for untagged manifest, `tagName != null` for tag
+    //NOTE: `tagName == null` for untagged image, `tagName != null` for tagged image
     const { name: tagName, digest, media_type: mediaType, size_bytes: sizeBytes, pushed_at: pushedAtUnix } = this.props.data;
     const pushedAt = moment.unix(pushedAtUnix);
 

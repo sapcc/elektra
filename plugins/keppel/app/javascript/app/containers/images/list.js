@@ -1,5 +1,5 @@
 import { connect } from  'react-redux';
-import ManifestList from '../../components/manifests/list';
+import ImageList from '../../components/images/list';
 import { fetchManifestsIfNeeded } from '../../actions/keppel';
 
 export default connect(
@@ -15,4 +15,4 @@ export default connect(
   dispatch => ({
     loadManifestsOnce: (...args) => dispatch(fetchManifestsIfNeeded(...args)),
   }),
-)(ManifestList);
+)(ImageList);

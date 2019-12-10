@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { DataTable } from 'lib/components/datatable';
 
 import { makeTabBar, makeHowto } from '../utils';
-import ManifestRow from './row';
+import ImageRow from './row';
 
-const tagColumns = [
+const taggedColumns = [
   { key: 'name', label: 'Tag name / Canonical digest', sortStrategy: 'text',
     sortKey: props => props.data.name || '' },
   { key: 'media_type', label: 'Format' },
@@ -15,15 +15,15 @@ const tagColumns = [
     sortKey: props => props.data.pushed_at || 0 },
 ];
 
-const manifestColumns = [
+const untaggedColumns = [
   { key: 'digest', label: 'Canonical digest', sortStrategy: 'text',
     sortKey: props => props.data.digest || '' },
-  ...(tagColumns.slice(1)),
+  ...(taggedColumns.slice(1)),
 ];
 
 export default class RepositoryList extends React.Component {
   state = {
-    currentTab: 'tags',
+    currentTab: 'tagged',
   };
 
   componentDidMount() {
@@ -44,7 +44,7 @@ export default class RepositoryList extends React.Component {
     this.setState({ ...this.state, currentTab: tab });
   }
 
-  renderTagsList() {
+  renderTaggedImagesList() {
     const { isFetching, data: manifests } = this.props.manifests;
     if (isFetching) {
       return <p><span className='spinner' /> Loading tags/manifests for repository...</p>;
@@ -57,15 +57,15 @@ export default class RepositoryList extends React.Component {
       }
     }
     return (
-      <DataTable columns={tagColumns}>
+      <DataTable columns={taggedColumns}>
       {tags.map(tag => (
-        <ManifestRow key={tag.name} data={tag} />
+        <ImageRow key={tag.name} data={tag} />
       ))}
       </DataTable>
     );
   }
 
-  renderUntaggedManifestsList() {
+  renderUntaggedImagesList() {
     const { isFetching, data: manifests } = this.props.manifests;
     if (isFetching) {
       return <p><span className='spinner' /> Loading tags/manifests for repository...</p>;
@@ -76,9 +76,9 @@ export default class RepositoryList extends React.Component {
     );
 
     return (
-      <DataTable columns={manifestColumns}>
+      <DataTable columns={untaggedColumns}>
         {untaggedManifests.map(manifest => (
-          <ManifestRow key={manifest.digest} data={manifest} />
+          <ImageRow key={manifest.digest} data={manifest} />
         ))}
       </DataTable>
     );
@@ -94,11 +94,17 @@ export default class RepositoryList extends React.Component {
     }
 
     const { currentTab } = this.state;
-    const tabs = [
-      { label: 'Tags', key: 'tags' },
-      { label: 'Untagged manifests', key: 'untagged' },
+    let tabs = [
+      { label: 'Tags', key: 'tagged' },
+      { label: 'Untagged images', key: 'untagged' },
       { label: 'Instructions for Docker client', key: 'howto' },
     ];
+    const hasUntagged = (this.props.manifests.data || []).some(
+      manifest => (manifest.tags || []).length == 0,
+    );
+    if (!hasUntagged) {
+      tabs = tabs.filter(tab => tab.key != 'untagged');
+    }
 
     return (
       <React.Fragment>
@@ -108,8 +114,8 @@ export default class RepositoryList extends React.Component {
           <li className='active'>Repository: {repository.name}</li>
         </ol>
         {makeTabBar(tabs, currentTab, key => this.selectTab(key))}
-        {currentTab == 'tags' && this.renderTagsList()}
-        {currentTab == 'untagged' && this.renderUntaggedManifestsList()}
+        {currentTab == 'tagged' && this.renderTaggedImagesList()}
+        {currentTab == 'untagged' && this.renderUntaggedImagesList()}
         {currentTab == 'howto' && makeHowto(this.props.dockerInfo, account.name, repository.name)}
       </React.Fragment>
     );

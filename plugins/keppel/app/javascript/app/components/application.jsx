@@ -4,7 +4,7 @@ import AccountList from '../containers/accounts/list';
 import AccountCreateModal from '../containers/accounts/create';
 import RBACPoliciesEditModal from '../containers/rbac_policies/edit';
 import RepositoryList from '../containers/repositories/list';
-import ManifestList from '../containers/manifests/list';
+import ImageList from '../containers/images/list';
 
 export default (props) => {
   const { projectId, canEdit, isAdmin, dockerInfo } = props;
@@ -27,7 +27,7 @@ export default (props) => {
           <Route path="/account/:account" render={(props) => <RepositoryList {...props} {...rootProps} />} />
 
           {/* manifest list within repository */}
-          <Route path="/repo/:account/:repo+" render={(props) => <ManifestList {...props} {...rootProps} />} />
+          <Route path="/repo/:account/:repo+" render={(props) => <ImageList {...props} {...rootProps} />} />
         </div>
       </HashRouter>
     </Loader>

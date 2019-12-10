@@ -8,7 +8,7 @@ import RepositoryRow from './row';
 const columns = [
   { key: 'name', label: 'Repository name', sortStrategy: 'text',
     sortKey: props => props.repo.name || '' },
-  { key: 'manifest_count', label: 'Number of manifests', sortStrategy: 'numeric',
+  { key: 'manifest_count', label: 'Number of images', sortStrategy: 'numeric',
     sortKey: props => props.repo.manifest_count || 0 },
   { key: 'tag_count', label: 'Number of tags', sortStrategy: 'numeric',
     sortKey: props => props.repo.tag_count || 0 },
