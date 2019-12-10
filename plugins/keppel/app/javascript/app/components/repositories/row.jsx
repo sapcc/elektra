@@ -7,11 +7,15 @@ export default class RepositoryRow extends React.Component {
 
     return (
       <tr>
-        <td className='col-md-4'>
+        <td className='col-md-6'>
           <Link to={`/repo/${accountName}/${repoName}`}>{repoName}</Link>
         </td>
-        <td className='col-md-4'>{manifestCount}</td>
-        <td className='col-md-4'>{tagCount}</td>
+        <td className='col-md-6'>
+          {manifestCount == tagCount
+            ? `${tagCount} tagged`
+            : `${tagCount} tagged + ${manifestCount - tagCount} untagged`
+          }
+        </td>
       </tr>
     );
   }

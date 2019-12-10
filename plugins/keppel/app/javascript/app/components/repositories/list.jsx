@@ -8,10 +8,8 @@ import RepositoryRow from './row';
 const columns = [
   { key: 'name', label: 'Repository name', sortStrategy: 'text',
     sortKey: props => props.repo.name || '' },
-  { key: 'manifest_count', label: 'Number of images', sortStrategy: 'numeric',
-    sortKey: props => props.repo.manifest_count || 0 },
-  { key: 'tag_count', label: 'Number of tags', sortStrategy: 'numeric',
-    sortKey: props => props.repo.tag_count || 0 },
+  { key: 'image_counts', label: 'Number of images', sortStrategy: 'numeric',
+    sortKey: props => (props.repo.tag_count || 0) + 0.00001 * (props.repo.manifest_count || 0) },
 ];
 
 export default class RepositoryList extends React.Component {
