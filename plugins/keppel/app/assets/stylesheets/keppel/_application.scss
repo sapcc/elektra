@@ -32,6 +32,10 @@ ol.howto > li {
 .shortened-digest {
   position: relative;
 
+  //enforce predictable height (with display:inline, element may vary in height
+  //based on which chars appear in it)
+  display: inline-block;
+
   & > .full-digest {
     display: none;
   }

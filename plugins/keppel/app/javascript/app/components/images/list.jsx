@@ -11,7 +11,7 @@ const taggedColumns = [
   { key: 'media_type', label: 'Format' },
   { key: 'size_bytes', label: 'Size', sortStrategy: 'numeric',
     sortKey: props => props.data.size_bytes || 0 },
-  { key: 'pushed_at', label: 'Pushed at', sortStrategy: 'numeric',
+  { key: 'pushed_at', label: 'Pushed', sortStrategy: 'numeric',
     sortKey: props => props.data.pushed_at || 0 },
 ];
 
