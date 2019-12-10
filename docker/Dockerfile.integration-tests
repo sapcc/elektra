@@ -1,5 +1,5 @@
 # Pull base image.
-FROM ruby:2.4.1-slim-stretch
+FROM ruby:2.6.5-slim-stretch
 
 RUN apt update
 RUN apt -y install \

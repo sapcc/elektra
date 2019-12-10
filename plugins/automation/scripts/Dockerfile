@@ -1,4 +1,4 @@
-FROM ruby:2.3-alpine
+FROM ruby:2.6-alpine
 
 WORKDIR /omnitruck
 RUN apk add --no-cache git build-base linux-headers --virtual .builddeps \
