@@ -3,6 +3,7 @@
   "extends": [
     "config:base"
   ],
+  "rangeStrategy": "replace",
   "unicodeEmoji": true,
   "separateMinorPatch": false,
   "separateMajorMinor": true,
