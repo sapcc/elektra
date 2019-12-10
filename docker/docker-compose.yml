@@ -10,6 +10,6 @@ services:
     command: [script/wait-for-postgres.sh, script/start.sh]
      
   postgres:
-    image: postgres:9.5
+    image: postgres:9.6
 
     
