@@ -28,3 +28,21 @@ ol.howto > li {
     margin-top: 10px; // like margin-bottom
   }
 }
+
+.shortened-digest {
+  position: relative;
+
+  & > .full-digest {
+    display: none;
+  }
+
+  &:hover > .full-digest {
+    display: block;
+    position: absolute;
+    top: -4px;
+    left: -8px;
+    border-radius: 4px;
+    padding: 4px 8px;
+    background: #F5F5F5;
+  }
+}

@@ -2,6 +2,8 @@ import moment from 'moment';
 
 import { byteToHuman } from 'lib/tools/size_formatter';
 
+import Digest from '../digest';
+
 const mediaTypeDescs = {
   'application/vnd.docker.distribution.manifest.v1+prettyjws': 'Docker image (old format)',
   'application/vnd.docker.distribution.manifest.v2+json':      'Docker image',
@@ -18,23 +20,23 @@ export default class ImageRow extends React.Component {
 
     return (
       <tr>
-        <td className='col-md-6'>
+        <td className='col-md-4'>
           {tagName ? (
             <React.Fragment>
               <div>{tagName}</div>
-              <div className='small text-muted'>{digest}</div>
+              <div className='small text-muted'><Digest digest={digest} /></div>
             </React.Fragment>
           ) : (
-            digest
+            <Digest digest={digest} />
           )}
         </td>
-        <td className='col-md-2'>
+        <td className='col-md-3'>
           <span title={mediaType}>{mediaTypeDescs[mediaType] || mediaType}</span>
         </td>
         <td className='col-md-2'>
           {byteToHuman(sizeBytes)}
         </td>
-        <td className='col-md-2'>
+        <td className='col-md-3'>
           <span title={pushedAt.format('LLLL')}>{pushedAt.fromNow(true)} ago</span>
         </td>
       </tr>
