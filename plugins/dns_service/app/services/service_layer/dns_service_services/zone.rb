@@ -9,7 +9,13 @@ module ServiceLayer
       end
 
       def zones(filter = {})
-        response = elektron_dns.get('zones', filter)
+        project_id = ""
+        header_options = {}
+        if filter[:project_id]
+          project_id = filter.delete(:project_id)
+          header_options = {"x-auth-sudo-project-id": project_id}
+        end
+        response = elektron_dns.get('zones', filter, headers: header_options)
         {
           items: response.map_to('body.zones', &zone_map),
           total: response.body.fetch('metadata', {}).fetch('total_count', nil)
@@ -32,7 +38,17 @@ module ServiceLayer
 
       ################### MODEL INTERFACE ####################
       def create_zone(attributes = {})
-        elektron_dns.post('zones') do
+
+        project_id = ""
+        header_options = {}
+        # if project_id is given create the zone for this project
+        # this is the case if the domain a subdomain of existing domain in the project
+        if attributes[:project_id]
+          project_id = attributes.delete(:project_id)
+          header_options = {"x-auth-sudo-project-id": project_id}
+        end
+
+        elektron_dns.post('zones',  headers: header_options) do
           attributes
         end.body
       end
