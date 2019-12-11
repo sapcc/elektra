@@ -21,11 +21,26 @@
 
 */
 
-ol.howto > li {
-  margin-bottom: 20px;
+ol.breadcrumb > li.help-link {
+  float: right;
 
-  & > pre {
-    margin-top: 10px; // like margin-bottom
+  // do not use breadcrumb separator
+  &:before {
+    display: none;
+  }
+}
+
+ol.howto {
+  margin-bottom: 0;
+
+  & > li {
+    &:not(:last-child) {
+      margin-bottom: 20px;
+    }
+
+    & > pre {
+      margin-top: 10px; // like margin-bottom
+    }
   }
 }
 

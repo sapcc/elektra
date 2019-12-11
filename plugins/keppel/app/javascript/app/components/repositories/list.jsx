@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { DataTable } from 'lib/components/datatable';
 
-import { makeTabBar, makeHowto } from '../utils';
+import { makeTabBar, makeHowto, makeHowtoOpener } from '../utils';
 import RepositoryRow from './row';
 
 const columns = [
@@ -19,6 +19,7 @@ const columns = [
 export default class RepositoryList extends React.Component {
   state = {
     currentTab: 'repos',
+    howtoVisible: false,
   };
 
   componentDidMount() {
@@ -36,6 +37,9 @@ export default class RepositoryList extends React.Component {
 
   selectTab(tab) {
     this.setState({ ...this.state, currentTab: tab });
+  }
+  setHowtoVisible(howtoVisible) {
+    this.setState({ ...this.state, howtoVisible });
   }
 
   renderRepoList() {
@@ -58,21 +62,23 @@ export default class RepositoryList extends React.Component {
       return <p className='alert alert-error'>No such account</p>;
     }
 
-    const { currentTab } = this.state;
+    const { currentTab, howtoVisible } = this.state;
     const tabs = [
       { label: 'Repositories', key: 'repos' },
-      { label: 'Instructions for Docker client', key: 'howto' },
     ];
+    const showHowto = val => this.setHowtoVisible(true);
+    const hideHowto = val => this.setHowtoVisible(false);
 
     return (
       <React.Fragment>
         <ol className='breadcrumb'>
           <li><Link to='/accounts'>All accounts</Link></li>
           <li className='active'>Account: {account.name}</li>
+          {!howtoVisible && makeHowtoOpener(showHowto)}
         </ol>
+        {howtoVisible && makeHowto(this.props.dockerInfo, account.name, '<repo>', hideHowto)}
         {makeTabBar(tabs, currentTab, key => this.selectTab(key))}
         {currentTab == 'repos' && this.renderRepoList()}
-        {currentTab == 'howto' && makeHowto(this.props.dockerInfo, account.name, '<repo>')}
       </React.Fragment>
     );
   }
