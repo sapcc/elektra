@@ -1936,7 +1936,7 @@
 <g id="node139" class="node"><title>nokogiri</title>
 <ellipse fill="none" stroke="black" cx="3667.79" cy="-129.61" rx="46.8387" ry="26.7407"/>
 <text text-anchor="middle" x="3667.79" y="-133.41" font-family="Arial, Helvetica, SansSerif" font-size="14.00">nokogiri</text>
-<text text-anchor="middle" x="3667.79" y="-118.41" font-family="Arial, Helvetica, SansSerif" font-size="14.00">1.10.4</text>
+<text text-anchor="middle" x="3667.79" y="-118.41" font-family="Arial, Helvetica, SansSerif" font-size="14.00">1.10.7</text>
 </g>
 <!-- capybara&#45;&gt;nokogiri -->
 <g id="edge193" class="edge"><title>capybara&#45;&gt;nokogiri</title>
@@ -3074,7 +3074,7 @@
 <g id="node203" class="node"><title>loofah</title>
 <ellipse fill="none" stroke="black" cx="3623.79" cy="-232.35" rx="39.6962" ry="26.7407"/>
 <text text-anchor="middle" x="3623.79" y="-236.15" font-family="Arial, Helvetica, SansSerif" font-size="14.00">loofah</text>
-<text text-anchor="middle" x="3623.79" y="-221.15" font-family="Arial, Helvetica, SansSerif" font-size="14.00">2.3.0</text>
+<text text-anchor="middle" x="3623.79" y="-221.15" font-family="Arial, Helvetica, SansSerif" font-size="14.00">2.3.1</text>
 </g>
 <!-- rails&#45;html&#45;sanitizer&#45;&gt;loofah -->
 <g id="edge321" class="edge"><title>rails&#45;html&#45;sanitizer&#45;&gt;loofah</title>
@@ -3288,7 +3288,7 @@
 <g id="node211" class="node"><title>crass</title>
 <ellipse fill="none" stroke="black" cx="3809.79" cy="-129.61" rx="36.125" ry="26.7407"/>
 <text text-anchor="middle" x="3809.79" y="-133.41" font-family="Arial, Helvetica, SansSerif" font-size="14.00">crass</text>
-<text text-anchor="middle" x="3809.79" y="-118.41" font-family="Arial, Helvetica, SansSerif" font-size="14.00">1.0.4</text>
+<text text-anchor="middle" x="3809.79" y="-118.41" font-family="Arial, Helvetica, SansSerif" font-size="14.00">1.0.5</text>
 </g>
 <!-- loofah&#45;&gt;crass -->
 <g id="edge349" class="edge"><title>loofah&#45;&gt;crass</title>
