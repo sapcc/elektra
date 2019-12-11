@@ -60,7 +60,7 @@
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.10.2",
     "redux-mock-store": "1.5.3",
-    "webpack-cli": "3.3.9",
+    "webpack-cli": "3.3.10",
     "webpack-dev-server": "3.8.2"
   },
   "scripts": {
