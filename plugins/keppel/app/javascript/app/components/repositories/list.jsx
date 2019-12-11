@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { DataTable } from 'lib/components/datatable';
 
-import { makeTabBar, makeHowto, makeHowtoOpener } from '../utils';
+import { makeHowto, makeHowtoOpener } from '../utils';
 import RepositoryRow from './row';
 
 const columns = [
@@ -18,7 +18,6 @@ const columns = [
 
 export default class RepositoryList extends React.Component {
   state = {
-    currentTab: 'repos',
     howtoVisible: false,
   };
 
@@ -35,25 +34,8 @@ export default class RepositoryList extends React.Component {
     }
   }
 
-  selectTab(tab) {
-    this.setState({ ...this.state, currentTab: tab });
-  }
   setHowtoVisible(howtoVisible) {
     this.setState({ ...this.state, howtoVisible });
-  }
-
-  renderRepoList() {
-    const { isFetching, data: repos } = this.props.repos;
-    if (isFetching) {
-      return <p><span className='spinner' /> Loading repositories for account...</p>;
-    }
-    return (
-      <DataTable columns={columns}>
-        {(repos || []).map(repo => (
-          <RepositoryRow key={repo.name} repo={repo} account={this.props.account} />
-        ))}
-      </DataTable>
-    );
   }
 
   render() {
@@ -61,11 +43,9 @@ export default class RepositoryList extends React.Component {
     if (!account) {
       return <p className='alert alert-error'>No such account</p>;
     }
+    const { isFetching, data: repos } = this.props.repos;
 
-    const { currentTab, howtoVisible } = this.state;
-    const tabs = [
-      { label: 'Repositories', key: 'repos' },
-    ];
+    const { howtoVisible } = this.state;
     const showHowto = val => this.setHowtoVisible(true);
     const hideHowto = val => this.setHowtoVisible(false);
 
@@ -77,8 +57,15 @@ export default class RepositoryList extends React.Component {
           {!howtoVisible && makeHowtoOpener(showHowto)}
         </ol>
         {howtoVisible && makeHowto(this.props.dockerInfo, account.name, '<repo>', hideHowto)}
-        {makeTabBar(tabs, currentTab, key => this.selectTab(key))}
-        {currentTab == 'repos' && this.renderRepoList()}
+        {isFetching ? (
+          <p><span className='spinner' /> Loading repositories for account...</p>
+        ) : (
+          <DataTable columns={columns}>
+            {(repos || []).map(repo => (
+              <RepositoryRow key={repo.name} repo={repo} account={this.props.account} />
+            ))}
+          </DataTable>
+        )}
       </React.Fragment>
     );
   }
