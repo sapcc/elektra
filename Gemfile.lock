@@ -280,7 +280,7 @@ GEM
       activesupport (>= 3.0)
       deep_merge (~> 1.1.1)
     connection_pool (2.2.1)
-    crass (1.0.4)
+    crass (1.0.5)
     cucumber (3.1.2)
       builder (>= 2.1.2)
       cucumber-core (~> 3.2.0)
@@ -397,7 +397,7 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
-    loofah (2.3.0)
+    loofah (2.3.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.12)
@@ -421,7 +421,7 @@ GEM
     netaddr (2.0.4)
     netrc (0.11.0)
     nio4r (2.3.1)
-    nokogiri (1.10.4)
+    nokogiri (1.10.7)
       mini_portile2 (~> 2.4.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
@@ -441,7 +441,7 @@ GEM
     pry-rails (0.3.6)
       pry (>= 0.10.4)
     public_suffix (3.0.3)
-    puma (3.9.1)
+    puma (3.12.2)
     quantile (0.2.1)
     rack (2.0.7)
     rack-proxy (0.6.5)
@@ -640,7 +640,7 @@ DEPENDENCIES
   poltergeist
   prometheus-client
   pry-rails
-  puma
+  puma (= 3.12.2)
   rails (~> 5.2.3)
   rails-controller-testing
   rails_stdout_logging

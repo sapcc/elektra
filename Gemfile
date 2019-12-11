@@ -71,7 +71,7 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 1.0.0', group: :doc
 
-gem 'puma', require: false
+gem 'puma', "= 3.12.2" , require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
