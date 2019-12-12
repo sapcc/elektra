@@ -8,7 +8,7 @@ default: &default
 
   # Additional paths webpack should lookup modules
   # ['app/assets', 'engine/foo/app/assets']
-  resolved_paths: ['plugins']
+  resolved_paths: ["plugins"]
 
   # Reload manifest.json on all requests so we reload latest compiled packs
   cache_manifest: false
@@ -37,7 +37,7 @@ development:
   check_yarn_integrity: true
 
   # Reference: https://webpack.js.org/configuration/dev-server/
-  dev_server: 
+  dev_server:
     host: localhost
     port: 3035
     public: 0.0.0.0:3035
@@ -52,8 +52,8 @@ development:
       errors: true
     inline: true
     # https://webpack.js.org/configuration/dev-server/#devserverinline
-    watch_options: 
-      ignored: ['**/node_modules/**','**/*.rb']  
+    watch_options:
+      ignored: ["**/node_modules/**", "**/*.rb"]
 
 test:
   <<: *default
@@ -65,11 +65,11 @@ test:
 production:
   <<: *default
 
-  # To see more details in case something goes wrong, 
+  # To see more details in case something goes wrong,
   # otherwise you will see only "compilation error" without any details
   webpack_compile_output: true
-  # Production demands on precompilation of packs prior to booting for performance.
-  compile: false
+  # this is needed to create public/packs/manifest.json
+  compile: true
 
   # Cache manifest.json for performance
   cache_manifest: true
