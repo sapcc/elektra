@@ -1,7 +1,5 @@
 {
   "enabled": true,
-  "timezone": "Europe/Berlin",
-  "schedule": "before 5am every weekday",
   "extends": [
     "config:base"
   ],
