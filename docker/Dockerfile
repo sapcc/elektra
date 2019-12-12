@@ -67,8 +67,6 @@ RUN update-ca-certificates \
 
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
-# install js packages
-RUN yarn install --production 
 
 ADD . /home/app/webapp
 

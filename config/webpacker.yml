@@ -68,8 +68,8 @@ production:
   # To see more details in case something goes wrong,
   # otherwise you will see only "compilation error" without any details
   webpack_compile_output: true
-  # this is needed to create public/packs/manifest.json
-  compile: true
+  # Production demands on precompilation of packs prior to booting for performance.
+  compile: false
 
   # Cache manifest.json for performance
   cache_manifest: true

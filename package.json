@@ -2,6 +2,7 @@
   "dependencies": {
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@nivo/bar": "^0.59.2",
@@ -44,10 +45,8 @@
   },
   "devDependencies": {
     "@babel/cli": "7.6.4",
-    "@babel/plugin-proposal-class-properties": "7.5.5",
     "@types/jest": "24.0.22",
     "axios-mock-adapter": "1.17.0",
-    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.3",
     "babel-jest": "24.9.0",
     "enzyme": "3.10.0",
@@ -60,7 +59,6 @@
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.10.2",
     "redux-mock-store": "1.5.3",
-    "webpack-cli": "3.3.9",
     "webpack-dev-server": "3.8.2"
   },
   "scripts": {
