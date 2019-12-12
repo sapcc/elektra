@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@babel/cli": "7.6.4",
-    "@types/jest": "24.0.22",
+    "@types/jest": "24.0.23",
     "axios-mock-adapter": "1.17.0",
     "babel-eslint": "10.0.3",
     "babel-jest": "24.9.0",
