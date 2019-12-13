@@ -44,7 +44,7 @@
     "webpack": "^4.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "7.6.4",
+    "@babel/cli": "7.7.5",
     "@types/jest": "24.0.23",
     "axios-mock-adapter": "1.17.0",
     "babel-eslint": "10.0.3",
