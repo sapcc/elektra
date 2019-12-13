@@ -58,7 +58,7 @@
     "jest": "24.9.0",
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.10.2",
-    "redux-mock-store": "1.5.3",
+    "redux-mock-store": "1.5.4",
     "webpack-dev-server": "3.9.0"
   },
   "scripts": {
