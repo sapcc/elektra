@@ -1,6 +1,6 @@
 import { connect } from  'react-redux';
 import ImageList from '../../components/images/list';
-import { fetchManifestsIfNeeded } from '../../actions/keppel';
+import { deleteManifest, fetchManifestsIfNeeded } from '../../actions/keppel';
 
 export default connect(
   (state, props) => {
@@ -12,7 +12,11 @@ export default connect(
       manifests:  (state.keppel.manifestsFor[accountName] || {})[repoName] || {},
     };
   },
-  dispatch => ({
-    loadManifestsOnce: (...args) => dispatch(fetchManifestsIfNeeded(...args)),
-  }),
+  (dispatch, props) => {
+    const { account: accountName, repo: repoName } = props.match.params;
+    return {
+      loadManifestsOnce:     () => dispatch(fetchManifestsIfNeeded(accountName, repoName)),
+      deleteManifest: (...args) => dispatch(deleteManifest(accountName, repoName, ...args)),
+    };
+  },
 )(ImageList);

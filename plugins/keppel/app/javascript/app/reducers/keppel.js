@@ -115,6 +115,20 @@ const recvReposDone = (state, {accountName, receivedAt}) => ({
   },
 });
 
+const deleteRepo = (state, {accountName, repoName}) => ({
+  ...state,
+  repositoriesFor: {
+    ...state.repositoriesFor,
+    [accountName]: {
+      ...state.repositoriesFor[accountName],
+      data: (state.repositoriesFor[accountName].data || []).filter(r => r.name != repoName),
+    },
+  },
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// manifests
+
 const updateManifestsFor = (state, accountName, repoName, update) => {
   const manifestsForAccount = state.manifestsFor[accountName] || {};
   return {
@@ -128,9 +142,6 @@ const updateManifestsFor = (state, accountName, repoName, update) => {
     },
   };
 };
-
-////////////////////////////////////////////////////////////////////////////////
-// repositories
 
 const reqManifests = (state, {accountName, repoName, requestedAt}) => (
   updateManifestsFor(state, accountName, repoName, oldState => ({
@@ -163,6 +174,15 @@ const recvManifestsDone = (state, {accountName, repoName, receivedAt}) => (
   }))
 );
 
+const deleteManifest = (state, {accountName, repoName, digest}) => (
+  updateManifestsFor(state, accountName, repoName, oldState => ({
+    ...oldState,
+    data: (oldState.data || []).filter(m => m.digest != digest),
+  }))
+);
+
+////////////////////////////////////////////////////////////////////////////////
+
 export const keppel = (state, action) => {
   if (state == null) {
     state = initialState;
@@ -177,10 +197,12 @@ export const keppel = (state, action) => {
     case constants.REQUEST_REPOSITORIES_FAILURE:  return reqReposFail(state, action);
     case constants.RECEIVE_REPOSITORIES:          return recvRepos(state, action);
     case constants.REQUEST_REPOSITORIES_FINISHED: return recvReposDone(state, action);
+    case constants.DELETE_REPOSITORY:             return deleteRepo(state, action);
     case constants.REQUEST_MANIFESTS:          return reqManifests(state, action);
     case constants.REQUEST_MANIFESTS_FAILURE:  return reqManifestsFail(state, action);
     case constants.RECEIVE_MANIFESTS:          return recvManifests(state, action);
     case constants.REQUEST_MANIFESTS_FINISHED: return recvManifestsDone(state, action);
+    case constants.DELETE_MANIFEST:            return deleteManifest(state, action);
     default: return state;
   }
 };

@@ -13,6 +13,7 @@ const taggedColumns = [
     sortKey: props => props.data.size_bytes || 0 },
   { key: 'pushed_at', label: 'Pushed', sortStrategy: 'numeric',
     sortKey: props => props.data.pushed_at || 0 },
+  { key: 'actions', label: '' },
 ];
 
 const untaggedColumns = [
@@ -37,7 +38,7 @@ export default class RepositoryList extends React.Component {
     const { name: accountName } = this.props.account || {};
     const { name: repoName } = this.props.repository || {};
     if (accountName) {
-      this.props.loadManifestsOnce(accountName, repoName);
+      this.props.loadManifestsOnce();
     }
   }
 
@@ -48,7 +49,7 @@ export default class RepositoryList extends React.Component {
     this.setState({ ...this.state, howtoVisible });
   }
 
-  renderTaggedImagesList() {
+  renderTaggedImagesList(forwardProps) {
     const { isFetching, data: manifests } = this.props.manifests;
     if (isFetching) {
       return <p><span className='spinner' /> Loading tags/manifests for repository...</p>;
@@ -60,16 +61,17 @@ export default class RepositoryList extends React.Component {
         tags.push({ ...manifest, ...tag });
       }
     }
+    tags.sort((a, b) => (a.name || a.digest).localeCompare(b.name || b.digest));
     return (
       <DataTable columns={taggedColumns}>
       {tags.map(tag => (
-        <ImageRow key={tag.name} data={tag} />
+        <ImageRow key={tag.name} data={tag} {...forwardProps} />
       ))}
       </DataTable>
     );
   }
 
-  renderUntaggedImagesList() {
+  renderUntaggedImagesList(forwardProps) {
     const { isFetching, data: manifests } = this.props.manifests;
     if (isFetching) {
       return <p><span className='spinner' /> Loading tags/manifests for repository...</p>;
@@ -82,7 +84,7 @@ export default class RepositoryList extends React.Component {
     return (
       <DataTable columns={untaggedColumns}>
         {untaggedManifests.map(manifest => (
-          <ImageRow key={manifest.digest} data={manifest} />
+          <ImageRow key={manifest.digest} data={manifest} {...forwardProps} />
         ))}
       </DataTable>
     );
@@ -112,6 +114,11 @@ export default class RepositoryList extends React.Component {
     const showHowto = val => this.setHowtoVisible(true);
     const hideHowto = val => this.setHowtoVisible(false);
 
+    const forwardProps = {
+      canEdit:        this.props.canEdit,
+      deleteManifest: this.props.deleteManifest,
+    };
+
     return (
       <React.Fragment>
         <ol className='breadcrumb'>
@@ -123,8 +130,8 @@ export default class RepositoryList extends React.Component {
         {howtoVisible && makeHowto(this.props.dockerInfo, account.name, repository.name, hideHowto)}
         {/* when there is only the "Tags" tab, skip the tablist entirely */}
         {hasUntagged && makeTabBar(tabs, currentTab, key => this.selectTab(key))}
-        {(!hasUntagged || currentTab == 'tagged') && this.renderTaggedImagesList()}
-        {(hasUntagged && currentTab == 'untagged') && this.renderUntaggedImagesList()}
+        {(!hasUntagged || currentTab == 'tagged') && this.renderTaggedImagesList(forwardProps)}
+        {(hasUntagged && currentTab == 'untagged') && this.renderUntaggedImagesList(forwardProps)}
       </React.Fragment>
     );
   }

@@ -13,6 +13,23 @@ const mediaTypeDescs = {
 };
 
 export default class ImageRow extends React.Component {
+  state = {
+    isDeleting: false,
+  };
+
+  handleDelete(e) {
+    e.preventDefault();
+    if (this.state.isDeleting) {
+      return;
+    }
+
+    const { name: tagName, digest } = this.props.data;
+
+    this.setState({ ...this.state, isDeleting: true });
+    this.props.deleteManifest(digest, tagName)
+      .finally(() => this.setState({ ...this.state, isDeleting: false }));
+  }
+
   render() {
     //NOTE: `tagName == null` for untagged image, `tagName != null` for tagged image
     const { name: tagName, digest, media_type: mediaType, size_bytes: sizeBytes, pushed_at: pushedAtUnix } = this.props.data;
@@ -39,6 +56,29 @@ export default class ImageRow extends React.Component {
         <td className='col-md-3'>
           <span title={pushedAt.format('LLLL')}>{pushedAt.fromNow(true)} ago</span>
         </td>
+        {this.props.canEdit && (
+          <td className='snug text-right text-nobreak'>
+            {this.state.isDeleting ? (
+              <React.Fragment>
+                <span className='spinner' /> Deleting...
+              </React.Fragment>
+            ) : (
+              <div className='btn-group'>
+                <button
+                  className='btn btn-default btn-sm dropdown-toggle'
+                  disabled={false}
+                  type="button"
+                  data-toggle="dropdown"
+                  aria-expanded={true}>
+                  <span className="fa fa-cog"></span>
+                </button>
+                <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                  <li><a href="#" onClick={e => this.handleDelete(e)}>Delete</a></li>
+                </ul>
+              </div>
+            )}
+          </td>
+        )}
       </tr>
     );
   }

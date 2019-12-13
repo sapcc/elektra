@@ -1,4 +1,5 @@
 import { ajaxHelper } from 'ajax_helper';
+import { confirm } from 'lib/dialogs';
 import { addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
@@ -115,6 +116,22 @@ export const fetchRepositoriesIfNeeded = (accountName) => (dispatch, getState) =
   return dispatch(fetchRepositoryPage(accountName, null));
 };
 
+export const deleteRepository = (accountName, repoName) => dispatch => {
+  return new Promise((resolve, reject) =>
+    ajaxHelper.delete(`/keppel/v1/accounts/${accountName}/repositories/${repoName}`)
+      .then(() => {
+        dispatch({
+          type: constants.DELETE_REPOSITORY,
+          accountName, repoName,
+        });
+        resolve();
+      })
+      .catch(error => {
+        showError(error);
+        reject();
+      })
+  );
+};
 ////////////////////////////////////////////////////////////////////////////////
 // get manifests
 
@@ -163,4 +180,33 @@ export const fetchManifestsIfNeeded = (accountName, repoName) => (dispatch, getS
     return;
   }
   return dispatch(fetchManifestPage(accountName, repoName, null));
+};
+
+export const deleteManifest = (accountName, repoName, digest, tagName) => (dispatch, getState) => {
+  const manifestsForAccount = getState().keppel.manifestsFor[accountName] || {};
+  const manifestsForRepo = manifestsForAccount[repoName] || {};
+  const manifestInfo = (manifestsForRepo.data || []).find(m => m.digest === digest) || {};
+  const manifestTags = manifestInfo.tags || [];
+  const otherTagNames = manifestTags.map(t => t.name).filter(n => n != tagName);
+
+  return new Promise((resolve, reject) => {
+    const precondition = otherTagNames.length == 0
+      ? Promise.resolve(null)
+      : confirm(`Really delete this image? It is also tagged as ${otherTagNames.map(n => `"${n}"`).join(', ')} and those tags will be deleted as well.`);
+
+    precondition.then(() =>
+      ajaxHelper.delete(`/keppel/v1/accounts/${accountName}/repositories/${repoName}/_manifests/${digest}`)
+        .then(() => {
+          dispatch({
+            type: constants.DELETE_MANIFEST,
+            accountName, repoName, digest,
+          });
+          resolve();
+        })
+        .catch(error => {
+          showError(error);
+          reject();
+        })
+    ).catch(() => reject());
+  });
 };
