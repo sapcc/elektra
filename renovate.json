@@ -17,7 +17,7 @@
   "bundler":{"enabled": true},
   "docker": { "enabled": false },
 
-  "rangeStrategy": "bump",
+  "rangeStrategy": "update-lockfile",
   "packageRules": [
     {
       "depTypeList": [
