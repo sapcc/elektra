@@ -121,9 +121,10 @@ export default class RepositoryList extends React.Component {
           {!howtoVisible && makeHowtoOpener(showHowto)}
         </ol>
         {howtoVisible && makeHowto(this.props.dockerInfo, account.name, repository.name, hideHowto)}
-        {makeTabBar(tabs, currentTab, key => this.selectTab(key))}
-        {currentTab == 'tagged' && this.renderTaggedImagesList()}
-        {currentTab == 'untagged' && this.renderUntaggedImagesList()}
+        {/* when there is only the "Tags" tab, skip the tablist entirely */}
+        {hasUntagged && makeTabBar(tabs, currentTab, key => this.selectTab(key))}
+        {(!hasUntagged || currentTab == 'tagged') && this.renderTaggedImagesList()}
+        {(hasUntagged && currentTab == 'untagged') && this.renderUntaggedImagesList()}
       </React.Fragment>
     );
   }
