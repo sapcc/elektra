@@ -21,7 +21,7 @@
     "d3-svg-legend": "^2.25.6",
     "d3-timer": "^1.0.7",
     "d3-transition": "^1.1.1",
-    "d3-zoom": "^1.7.1",
+    "d3-zoom": "^1.8.3",
     "ip-range-check": "^0.2.0",
     "jsx-to-string": "^1.4.0",
     "moment": "^2.20.1",
