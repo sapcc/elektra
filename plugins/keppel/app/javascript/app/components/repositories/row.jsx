@@ -3,9 +3,32 @@ import { Link } from 'react-router-dom';
 
 import { byteToHuman } from 'lib/tools/size_formatter';
 
+import RepositoryDeleter from '../../containers/repositories/deleter';
+
+const numberOfThings = (number, word) => (
+  number == 1 ? `${number} ${word}` : `${number} ${word}s`
+);
+
 export default class RepositoryRow extends React.Component {
+  state = {
+    isDeleting: false,
+  };
+
+  handleDelete(e) {
+    e.preventDefault();
+    if (this.state.isDeleting) {
+      return;
+    }
+    //this causes <RepositoryDeleter/> to be mounted to perform the actual deletion
+    this.setState({ ...this.state, isDeleting: true });
+  }
+
+  handleDoneDeleting() {
+    this.setState({ ...this.state, isDeleting: false });
+  }
+
   render() {
-    const { name: accountName } = this.props.account;
+    const { accountName, canEdit } = this.props;
     const {
       name: repoName,
       manifest_count: manifestCount,
@@ -21,17 +44,44 @@ export default class RepositoryRow extends React.Component {
           <Link to={`/repo/${accountName}/${repoName}`}>{repoName}</Link>
         </td>
         <td className='col-md-3'>
-          {manifestCount == tagCount
-            ? `${tagCount} tags`
-            : `${tagCount} tags + ${manifestCount - tagCount} untagged images`
-          }
+          {numberOfThings(manifestCount, 'image')} with {numberOfThings(tagCount, 'tag')}
         </td>
         <td className='col-md-3'>
-          {byteToHuman(sizeBytes)}
+          {sizeBytes !== undefined ? byteToHuman(sizeBytes) : (
+            <span className='text-muted'>Empty</span>
+          )}
         </td>
         <td className='col-md-2'>
-          <span title={pushedAt.format('LLLL')}>{pushedAt.fromNow(true)} ago</span>
+          {pushedAtUnix !== undefined ? (
+            <span title={pushedAt.format('LLLL')}>{pushedAt.fromNow(true)} ago</span>
+          ) : (
+            <span className='text-muted'>Empty</span>
+          )}
         </td>
+        {this.props.canEdit && (
+          <td className='snug text-nobreak'>
+            {this.state.isDeleting ? (
+              <RepositoryDeleter
+                accountName={accountName} repoName={repoName}
+                handleDoneDeleting={() => this.handleDoneDeleting()}
+              />
+            ) : (
+              <div className='btn-group'>
+                <button
+                  className='btn btn-default btn-sm dropdown-toggle'
+                  disabled={false}
+                  type="button"
+                  data-toggle="dropdown"
+                  aria-expanded={true}>
+                  <span className="fa fa-cog"></span>
+                </button>
+                <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                  <li><a href="#" onClick={e => this.handleDelete(e)}>Delete</a></li>
+                </ul>
+              </div>
+            )}
+          </td>
+        )}
       </tr>
     );
   }

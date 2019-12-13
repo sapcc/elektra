@@ -183,11 +183,19 @@ export const fetchManifestsIfNeeded = (accountName, repoName) => (dispatch, getS
 };
 
 export const deleteManifest = (accountName, repoName, digest, tagName) => (dispatch, getState) => {
-  const manifestsForAccount = getState().keppel.manifestsFor[accountName] || {};
-  const manifestsForRepo = manifestsForAccount[repoName] || {};
-  const manifestInfo = (manifestsForRepo.data || []).find(m => m.digest === digest) || {};
-  const manifestTags = manifestInfo.tags || [];
-  const otherTagNames = manifestTags.map(t => t.name).filter(n => n != tagName);
+  //when `tagName` is non-empty, the user has selected this tag for deletion,
+  //and we should ask for confirmation before deleting the manifest if it is
+  //also referenced by other tags
+  const otherTagNames = (() => {
+    if (!tagName) {
+      return [];
+    }
+    const manifestsForAccount = getState().keppel.manifestsFor[accountName] || {};
+    const manifestsForRepo = manifestsForAccount[repoName] || {};
+    const manifestInfo = (manifestsForRepo.data || []).find(m => m.digest === digest) || {};
+    const manifestTags = manifestInfo.tags || [];
+    return manifestTags.map(t => t.name).filter(n => n != tagName);
+  })();
 
   return new Promise((resolve, reject) => {
     const precondition = otherTagNames.length == 0

@@ -14,6 +14,7 @@ const columns = [
     sortKey: props => props.repo.size_bytes || 0 },
   { key: 'pushed_at', label: 'Last pushed', sortStrategy: 'numeric',
     sortKey: props => props.repo.pushed_at || 0 },
+  { key: 'actions', label: '' },
 ];
 
 export default class RepositoryList extends React.Component {
@@ -22,16 +23,10 @@ export default class RepositoryList extends React.Component {
   };
 
   componentDidMount() {
-    this.loadData();
+    this.props.loadRepositoriesOnce();
   }
   componentDidUpdate() {
-    this.loadData();
-  }
-  loadData() {
-    const { name: accountName } = this.props.account || {};
-    if (accountName) {
-      this.props.loadRepositoriesOnce(accountName);
-    }
+    this.props.loadRepositoriesOnce();
   }
 
   setHowtoVisible(howtoVisible) {
@@ -49,6 +44,11 @@ export default class RepositoryList extends React.Component {
     const showHowto = val => this.setHowtoVisible(true);
     const hideHowto = val => this.setHowtoVisible(false);
 
+    const forwardProps = {
+      accountName: account.name,
+      canEdit:     this.props.canEdit,
+    };
+
     return (
       <React.Fragment>
         <ol className='breadcrumb'>
@@ -62,7 +62,7 @@ export default class RepositoryList extends React.Component {
         ) : (
           <DataTable columns={columns}>
             {(repos || []).map(repo => (
-              <RepositoryRow key={repo.name} repo={repo} account={this.props.account} />
+              <RepositoryRow key={repo.name} repo={repo} {...forwardProps} />
             ))}
           </DataTable>
         )}

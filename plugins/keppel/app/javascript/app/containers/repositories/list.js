@@ -11,7 +11,10 @@ export default connect(
       repos: state.keppel.repositoriesFor[accountName] || {},
     };
   },
-  dispatch => ({
-    loadRepositoriesOnce: (...args) => dispatch(fetchRepositoriesIfNeeded(...args)),
-  }),
+  (dispatch, props) => {
+    const accountName = props.match.params.account;
+    return {
+      loadRepositoriesOnce: () => dispatch(fetchRepositoriesIfNeeded(accountName)),
+    };
+  },
 )(RepositoryList);
