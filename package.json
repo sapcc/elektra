@@ -57,7 +57,7 @@
     "eslint-plugin-react": "7.17.0",
     "jest": "24.9.0",
     "react-autocomplete-cli": "0.0.3",
-    "react-test-renderer": "16.10.2",
+    "react-test-renderer": "16.12.0",
     "redux-mock-store": "1.5.4",
     "webpack-dev-server": "3.9.0"
   },
