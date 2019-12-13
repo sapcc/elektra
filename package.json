@@ -11,7 +11,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-react-require": "^3.1.1",
     "check-files": "^0.0.2",
-    "core-js": "^3.3.2",
+    "core-js": "^3.5.0",
     "d3-decompose": "^1.0.2",
     "d3-drag": "^1.2.1",
     "d3-force": "^2.0.1",
