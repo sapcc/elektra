@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 
+import { confirm } from 'lib/dialogs';
 import { byteToHuman } from 'lib/tools/size_formatter';
 
 import RepositoryDeleter from '../../containers/repositories/deleter';
@@ -19,8 +20,10 @@ export default class RepositoryRow extends React.Component {
     if (this.state.isDeleting) {
       return;
     }
-    //this causes <RepositoryDeleter/> to be mounted to perform the actual deletion
-    this.setState({ ...this.state, isDeleting: true });
+    const { name: repoName, manifest_count: manifestCount } = this.props.repo;
+    confirm(`Really delete the repository "${repoName}" and all ${manifestCount} images in it?`)
+      .then(() => this.setState({ ...this.state, isDeleting: true }));
+    //This causes <RepositoryDeleter/> to be mounted to perform the actual deletion.
   }
 
   handleDoneDeleting() {
