@@ -23,7 +23,7 @@ export default class AccountList extends React.Component {
             </div>
           </div>
         )}
-        <DataTable columns={columns}>
+        <DataTable columns={columns} pageSize={10}>
           {this.props.accounts.map(account => (
             <AccountRow key={account.name} account={account} />
           ))}

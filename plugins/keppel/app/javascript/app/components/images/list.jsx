@@ -63,7 +63,7 @@ export default class RepositoryList extends React.Component {
     }
     tags.sort((a, b) => (a.name || a.digest).localeCompare(b.name || b.digest));
     return (
-      <DataTable columns={taggedColumns}>
+      <DataTable columns={taggedColumns} pageSize={10}>
       {tags.map(tag => (
         <ImageRow key={tag.name} data={tag} {...forwardProps} />
       ))}

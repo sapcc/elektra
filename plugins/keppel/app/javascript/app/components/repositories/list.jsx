@@ -60,7 +60,7 @@ export default class RepositoryList extends React.Component {
         {isFetching ? (
           <p><span className='spinner' /> Loading repositories for account...</p>
         ) : (
-          <DataTable columns={columns}>
+          <DataTable columns={columns} pageSize={10}>
             {(repos || []).map(repo => (
               <RepositoryRow key={repo.name} repo={repo} {...forwardProps} />
             ))}
