@@ -60,7 +60,7 @@
     "react-test-renderer": "16.12.0",
     "redux-mock-store": "1.5.4",
     "webpack-dev-server": "3.9.0",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "3.3.10"
   },
   "scripts": {
     "test": "NODE_ENV=test jest --config jest.config.js"
