@@ -611,7 +611,7 @@ DEPENDENCIES
   elektron!
   factory_girl_rails (~> 4.0)
   font-awesome-sass
-  foreman
+  foreman (~> 0.84.0)
   friendly_id
   guard-rspec
   haml-rails
@@ -644,7 +644,7 @@ DEPENDENCIES
   rails (~> 5.2.3)
   rails-controller-testing
   rails_stdout_logging
-  react-rails
+  react-rails (~> 2.2.1)
   redcarpet
   reports!
   resource_management!
