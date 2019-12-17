@@ -11,7 +11,7 @@
                                  hint: 'Value -1 means infinite connections are allowed.',
                                  input_html: { type: :number, min: -1 , value: @listener.connection_limit || -1 }}
   = f.input :insert_headers, { wrapper_html: {class: ("hidden" if @listener.protocol == 'TCP' || @listener.protocol == 'UDP' || @listener.protocol == nil)}, as: :select, selected: @insert_headers, label: 'Insert Headers', collection: (Lbaas::Listener::INSERT_HEADERS[@listener.protocol] if @listener.protocol), input_html: { id: 'input_headers', multiple: true } }
-  = f.input :tags, { input_html: { value: @listener.tags.join(', ') }, hint: 'Enter a comma separated list of strings' }
+  = f.input :tags, { input_html: { value: ( @listener.tags.join(', ') if !@listener.tags.blank? ) }, hint: 'Enter a comma separated list of strings' }
   = f.input :default_tls_container_ref, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, label: 'Certificate Container', collection: @containers, include_blank: true }
   %div
     = f.input :sni_container_refs, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, label: 'SNI Containers ', collection: @containers, include_blank: false, input_html: { id: 'sni_container_refs', multiple: true} }

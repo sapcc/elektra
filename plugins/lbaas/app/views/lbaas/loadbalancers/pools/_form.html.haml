@@ -10,7 +10,7 @@
   = f.input :protocol, as: :select, collection: @protocols, required: true,  disabled: update
   = f.input :session_persistence_type, as: :select, collection: Lbaas::Pool::SESSION_PERSISTENCE_TYPES  #, disabled: update
   = f.input :session_persistence_cookie_name, label: 'Cookie Name', required: true, wrapper_html: {class: ("hidden" unless @pool.session_persistence_type == 'APP_COOKIE')} #, disabled: update
-  = f.input :tags, { input_html: { value: @loadbalancer.tags.join(', ') }, hint: 'Enter a comma separated list of strings' }
+  = f.input :tags, { input_html: { value: ( @pool.tags.join(', ') if !@pool.tags.blank? ) }, hint: 'Enter a comma separated list of strings' }
 
   - if @pool.listener_id
     = f.input :listener_id, as: :select, collection: @listeners, selected: @pool.listener_id, disabled: update, label: 'Default Pool for Listener'
