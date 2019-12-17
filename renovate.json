@@ -34,6 +34,11 @@
       "rangeStrategy": "pin"
     }
   ],
+
+  "ignoreDeps": [
+    "react-bootstrap", 
+    "@nivo/bar"
+  ], 
   
   "vulnerabilityAlerts": {
     "enabled": true,
