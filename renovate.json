@@ -1,5 +1,6 @@
 {
   "enabled": true,
+  "schedule": "before 3am on Monday",
   "extends": [
     "config:base"
   ],
