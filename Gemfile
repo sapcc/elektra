@@ -35,7 +35,7 @@ gem 'font-awesome-sass'
 gem 'responders'
 
 # make it fancy with react
-gem 'react-rails', '~> 2.2.1'
+gem 'react-rails', '~> 2.6.0'
 
 # Database
 gem 'pg'
