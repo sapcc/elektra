@@ -1,0 +1,44 @@
+/ = content_for :title do
+/   Show
+  
+.modal-body
+
+  %table.table.datatable
+    %tbody
+      %tr
+        %th Name/ID
+        %td= name_or_id(@pool.name, @pool.id)
+      %tr
+        %th Description
+        %td= @pool.description
+      %tr
+        %th ID
+        %td= @pool.id
+      %tr
+        %th Load Balancing Algorithm
+        %td= @pool.lb_algorithm
+      %tr
+        %th Protocol
+        %td= @pool.protocol
+      - unless @pool.session_persistence_type.blank?
+        %tr
+          %th Session Persistence Type
+          %td= @pool.session_persistence_type
+        - unless @pool.session_persistence_cookie_name.blank?
+          %tr
+            %th Session Persistence Cookie Name
+            %td= @pool.session_persistence_cookie_name
+      %tr
+        - if @pool.listener
+          %th Assigned to Listener
+          %td= @pool.listener.name
+        - elsif @pool.loadbalancer
+          %th Assigned to Loadbalancer
+          %td= @pool.loadbalancer.name
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", plugin('block_storage').volumes_url, class: 'btn btn-default'

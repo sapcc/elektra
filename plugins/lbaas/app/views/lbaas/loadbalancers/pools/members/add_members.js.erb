@@ -1,0 +1,4 @@
+var html="<%= j(render(partial: 'lbaas/loadbalancers/pools/members/add_members', locals: {members: @new_members})) %>"
+
+$("table#newmembers tbody tr#nomember").remove();
+$("table#newmembers tbody").append(html);

@@ -1,0 +1,9 @@
+// this can only be used for loadbalancer state updates (index page i.e.)
+// run through all states and grab first id (it's the lb.id) for replacement
+<% @states.each do |state| %>
+  <% id = state.state.deep_find("id") %>
+  <% unless id.blank? %>
+    $('*[data-prov-status="<%= id %>"]').updateState('<%= state.find_state(id).provisioning_status || 'UNKNOWN' %>');
+    $('*[data-op-status="<%= id %>"]').updateState('<%= state.find_state(id).operating_status || 'UNKNOWN' %>');
+  <% end %>
+<% end %>

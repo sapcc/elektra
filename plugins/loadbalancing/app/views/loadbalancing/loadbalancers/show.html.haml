@@ -31,6 +31,10 @@
               %td= "#{@loadbalancer.provider} (#{@hosting_agent_name})"
             - else
               %td= @loadbalancer.provider
+          - if current_user.is_allowed?("cloud_admin_or_support")
+            %tr
+              %th Healthcheck IP's used by Provider (Self-IP's)
+              %td= @self_ips
           %tr
             %th Operating Status
             %td= @loadbalancer.operating_status

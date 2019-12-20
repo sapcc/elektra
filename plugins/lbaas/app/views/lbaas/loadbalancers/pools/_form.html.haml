@@ -1,0 +1,26 @@
+- protos = {}
+- @listeners.each do |l|
+  - l.name = "#{name_or_id(l.name, l.id)} (#{l.protocol})"
+  - protos[l.id] = l.protocol == 'TERMINATED_HTTPS' ? 'HTTP' : l.protocol
+
+%fieldset
+  = f.input :name, required: false
+  = f.input :description
+  = f.input :lb_algorithm, as: :select, collection: Lbaas::Pool::ALGORITHMS, required: true
+  = f.input :protocol, as: :select, collection: @protocols, required: true,  disabled: update
+  = f.input :session_persistence_type, as: :select, collection: Lbaas::Pool::SESSION_PERSISTENCE_TYPES  #, disabled: update
+  = f.input :session_persistence_cookie_name, label: 'Cookie Name', required: true, wrapper_html: {class: ("hidden" unless @pool.session_persistence_type == 'APP_COOKIE')} #, disabled: update
+  = f.input :tags, { input_html: { value: ( @pool.tags.join(', ') if !@pool.tags.blank? ) }, hint: 'Enter a comma separated list of strings' }
+
+  - if @pool.listener_id
+    = f.input :listener_id, as: :select, collection: @listeners, selected: @pool.listener_id, disabled: update, label: 'Default Pool for Listener'
+  - else
+    = f.input :listener_id, as: :select, collection: @listeners, disabled: update, label: 'Default Pool for Listener'
+  = f.input :loadbalancer_id, readonly: true, label: 'Load Balancer', input_html: { value: name_or_id(@loadbalancer.name, @loadbalancer.id, 30) }
+  = f.input :tls_enabled, { wrapper: :horizontal_boolean_4x8, as: :boolean, label: 'Use TLS connection to backends', checked_value: 1, unchecked_value: 0 }
+  = f.input :tls_container_ref, { wrapper_html: {class: ("hidden" unless @pool.tls_enabled == true)}, as: :select, label: 'Cert. for pool members', collection: @containers, include_blank: true }
+  = f.input :ca_tls_container_ref, { wrapper_html: {class: ("hidden" unless @pool.tls_enabled == true)}, as: :select, label: 'CA cert. for pool', collection: @containers, include_blank: true }
+
+=content_for :javascripts do
+  :javascript
+    protodata = #{protos.to_json.html_safe};

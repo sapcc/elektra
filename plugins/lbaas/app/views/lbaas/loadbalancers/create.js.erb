@@ -1,0 +1,3 @@
+$("table.loadbalancers").prepend("<%= j(render(partial: 'lbaas/loadbalancers/item', locals: {loadbalancer: @loadbalancer})) %>");
+$("#<%=@loadbalancer.id%>").update()
+MoModal.close();

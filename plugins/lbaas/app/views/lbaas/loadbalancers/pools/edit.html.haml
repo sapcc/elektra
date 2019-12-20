@@ -1,0 +1,39 @@
+= content_for :title do
+  Edit Pool
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+= simple_form_for @pool, url: plugin('lbaas').loadbalancer_pool_path(id: @pool.id, loadbalancer_id: @loadbalancer.id), method: :put, remote: request.xhr?, html: {id: 'pool_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+
+    = render :partial => 'lbaas/application/errors', locals: {object: @pool}
+
+    .row
+      .col-sm-6
+        = render partial: 'form', locals: {f: f, update: true}
+
+      .col-sm-6
+        .bs-callout.bs-callout-primary.small
+          %h3= "Pool"
+          %p= "A Pool defines the members and the method used for lbaas."
+          %h4= "LB algorithm"
+          %p= "The method used for lbaas between members."
+          %h4= "Protocol"
+          %p= "The protocol used for routing the traffic to the members"
+          %h4= "Session persistence type"
+          %p= "Defines the method used for session stickiness. Traffic for a client will be send always to the same member after the session is established."
+          %h4= "Cookie Name"
+          %p= "The name of the HTTP cookie defined by your application. The cookie value will be used for session stickiness."
+          %h4= "Default Pool for Listener"
+          %p= "The listener for which this pool is set as the default one. If not set, the pool will be assigned to the load balancer and can be addressed by a L7 Policy."
+
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', plugin('lbaas').loadbalancer_listener_path(), class: 'btn btn-default'
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Save

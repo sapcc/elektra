@@ -1,0 +1,9 @@
+%fieldset
+  = f.input :name, required: false
+  = f.input :type, as: :select, collection: Lbaas::Healthmonitor::TYPES, required: true, disabled: update
+  = f.input :max_retries, as: :integer, input_html: { min: '1', max: 10 }, hint: 'A value between 1 and 10.'
+  = f.input :timeout_value, label: 'Timeout', as: :integer, required: true, input_html: { min: '1' }, hint: 'This value must be less than the delay value.'
+  = f.input :delay, as: :integer, label: 'Delays', input_html: { min: '1' }
+  = f.input :http_method, { wrapper_html: {class: ("hidden" unless @healthmonitor.http_type?)}, required: true, as: :select, collection: Lbaas::Healthmonitor::METHODS }
+  = f.input :expected_codes, { wrapper_html: {class: ("hidden" unless @healthmonitor.http_type?)} , required: true, hint: 'A single value: 200. A list: 200, 202. A range: 200-204'}
+  = f.input :url_path, { wrapper_html: {class: ("hidden" unless @healthmonitor.http_type?)}, required: true, hint: 'Starting with a /' }

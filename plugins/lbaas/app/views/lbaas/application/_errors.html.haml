@@ -1,0 +1,6 @@
+- unless object.errors.empty?
+  %p.alert.alert-error
+    - unless object.errors.messages[:api].blank?
+      = object.errors.messages[:api].first
+    - else
+      = object.errors.full_messages.to_sentence

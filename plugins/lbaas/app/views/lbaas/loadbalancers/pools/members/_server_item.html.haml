@@ -1,0 +1,18 @@
+- server.addresses.each do |network_name, ip_values|
+  - if ip_values and ip_values.length>0
+    - ip_values.each do |value|
+      - ip = value["addr"]
+
+      %tr{id: "ip_#{ip}"}
+        %td
+          %input{type: 'checkbox', name: "ips[#{ip}]", value: ip }
+        %td
+          %p.list-group-item-text
+            - if value["OS-EXT-IPS:type"]=='floating'
+              %i.fa.fa-globe.fa-fw
+            - elsif value["OS-EXT-IPS:type"]=='fixed'
+              %i.fa.fa-desktop.fa-fw
+            = ip
+            %span.info-text= value["OS-EXT-IPS:type"]
+        %td
+          = server.name
