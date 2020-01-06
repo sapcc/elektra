@@ -1,10 +1,8 @@
 {
   "enabled": true,
-  "schedule": [
-    "before 3am on Monday"
-  ],
   "extends": [
-    "config:base"
+    "config:base",
+    "schedule:earlyMondays"
   ],
   "unicodeEmoji": true,
   "prHourlyLimit": 15,
