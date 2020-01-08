@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "schedule": [
-    "weekly"
+    "every weekend"
   ],
   "extends": [
     "config:base"
