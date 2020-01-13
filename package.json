@@ -53,7 +53,7 @@
     "enzyme-adapter-react-16": "1.15.1",
     "eslint": "6.7.2",
     "eslint-loader": "3.0.3",
-    "eslint-plugin-import": "2.19.1",
+    "eslint-plugin-import": "2.20.0",
     "eslint-plugin-react": "7.17.0",
     "jest": "24.9.0",
     "react-autocomplete-cli": "0.0.3",
