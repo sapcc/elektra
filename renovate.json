@@ -16,8 +16,8 @@
   },
 
   "ruby-version":{"enabled": false},
-  "ruby":{"enabled": true},
-  "bundler":{"enabled": true},
+  "ruby":{"enabled": false},
+  "bundler":{"enabled": false},
   "docker": { "enabled": false },
 
   "rangeStrategy": "update-lockfile",
