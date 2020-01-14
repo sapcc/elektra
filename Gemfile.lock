@@ -6,6 +6,14 @@ GIT
       rest-client (~> 2.0.0.rc3)
 
 GIT
+  remote: https://github.wdf.sap.corp/monsoon/elektra-extension.git
+  revision: 18365dfb583f57acc2dcf26e69f537d331f35549
+  branch: master
+  specs:
+    elektra-extension (0.0.1)
+      config
+
+GIT
   remote: https://github.com/sapcc/elektron
   revision: c5b656f3ad7aa32cda2f3578e603700a7e037f93
   tag: v2.2.0
