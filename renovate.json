@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "schedule": [
-    "before 3am on Monday"
+    "before 3am on the first day of the month"
   ],
   "extends": [
     "config:base"
