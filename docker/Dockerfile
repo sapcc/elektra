@@ -58,9 +58,8 @@ ADD plugins/*/*.gemspec tmp/plugins/
 ADD script/organize_plugins_gemspecs script/
 RUN script/organize_plugins_gemspecs
 
-ARG ELEKTRA_EXTENSION=false
-ENV ELEKTRA_EXTENSION=$ELEKTRA_EXTENSION
 # Install the SAP Global Root CA
+# TODO: is this old stuff?
 ADD docker/certs/*.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates \
       && curl https://github.wdf.sap.corp

@@ -145,15 +145,3 @@ group :test do
   gem 'guard-rspec'
   gem 'rails-controller-testing'
 end
-
-# load dotenv to get ENV for extension retrieval if needed
-begin
-  require 'dotenv'
-  Dotenv.load
-rescue Exception => e
-end
-
-# load SAP specific extension for fonts, ....
-if ENV['ELEKTRA_EXTENSION'].to_s == 'true'
-  gem 'elektra-extension', git: 'https://github.wdf.sap.corp/monsoon/elektra-extension.git', branch: :master
-end
