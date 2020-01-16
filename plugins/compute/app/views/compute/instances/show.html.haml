@@ -8,6 +8,7 @@
 
 
   - else
+    - attached_volumes = @instance.attached_volumes
     %ul.nav.nav-tabs
       %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
       %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}
@@ -63,6 +64,11 @@
       
       .tab-pane{role:"tabpanel", id:"specs"}
         - if @instance.flavor
+          - root_disk_size = @instance.flavor['disk']
+          - unless attached_volumes.empty?
+            - attached_volumes.each do |vol|
+              - if vol.attachments.first['device'] == @instance.root_disk_device_name
+                - root_disk_size = vol.size
           %table.table.datatable
             %tbody
               %tr
@@ -75,8 +81,13 @@
                 %th VCPUs
                 %td= "#{@instance.flavor['vcpus']} VCPU"
               %tr
-                %th Disk
-                %td= "#{@instance.flavor['disk']}GB"
+                %th Root Disk
+                %td
+                  = root_disk_size
+                  GB
+                  %p
+                    %small 
+                      =@instance.root_disk_device_name
         - else
           No instance specifications
 
@@ -133,10 +144,9 @@
             %tr
               %th Volume Name
               %th Device Name
-              %th.snug
+              %th Size
           %tbody
             - if current_user.is_allowed?("block_storage:volume_list")
-              - attached_volumes = @instance.attached_volumes
               - if attached_volumes.empty?
                 %tr
                   %td{colspan: 2} No volumes attached.
@@ -145,6 +155,9 @@
                   %tr
                     %td= vol.name
                     %td= vol.attachments.first['device']
+                    %td
+                      =vol.size
+                      GB
             - else
               %tr
                 %td{colspan: 2}
