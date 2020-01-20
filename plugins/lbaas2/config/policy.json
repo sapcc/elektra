@@ -1,0 +1,10 @@
+{
+  "member": "role:member or role:Member",
+  "admin": "role:admin",
+
+  "lbaas2:entry_list": "rule:admin or rule:member",
+  "lbaas2:entry_get": "rule:admin or rule:member",
+  "lbaas2:entry_create": "rule:admin or rule:member",
+  "lbaas2:entry_delete": "rule:admin or rule:member",
+  "lbaas2:entry_update": "rule:admin or rule:member"
+}

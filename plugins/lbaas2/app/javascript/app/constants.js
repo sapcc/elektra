@@ -1,0 +1,10 @@
+export const REQUEST_ENTRIES                 = 'lbaas2/entries/REQUEST_ENTRIES';
+export const RECEIVE_ENTRIES                 = 'lbaas2/entries/RECEIVE_ENTRIES';
+export const REQUEST_ENTRY                   = 'lbaas2/entries/REQUEST_ENTRY';
+export const REQUEST_ENTRY_FAILURE           = 'lbaas2/entries/REQUEST_ENTRY_FAILURE';
+export const REQUEST_ENTRIES_FAILURE         = 'lbaas2/entries/REQUEST_ENTRIES_FAILURE';
+export const RECEIVE_ENTRY                   = 'lbaas2/entries/RECEIVE_ENTRY';
+export const REQUEST_DELETE_ENTRY            = 'lbaas2/entries/REQUEST_DELETE_ENTRY';
+export const DELETE_ENTRY_FAILURE            = 'lbaas2/entries/DELETE_ENTRY_FAILURE';
+export const DELETE_ENTRY_SUCCESS            = 'lbaas2/entries/DELETE_ENTRY_SUCCESS';
+export const FILTER_ENTRIES                  = 'lbaas2/entries/FILTER_ENTRIES';
