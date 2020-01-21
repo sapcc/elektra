@@ -110,7 +110,7 @@ export const STRINGS = {
 export const WIZARD_RESOURCES = {
     "compute": {
         "preselect": true,
-        "resources": { "instances": 5 },
+        "resources": { "instances": 5, "server_groups": 5, "server_group_members": 5 },
     },
     "networking": {
         "preselect": true,
