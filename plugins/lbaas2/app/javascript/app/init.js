@@ -1,14 +1,19 @@
-import { createWidget } from 'widget'
-import * as reducers from './reducers';
-import App from './components/application';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import { getWidgetName, getContainerFromCurrentScript } from 'widget'
+import { configureAjaxHelper } from 'ajax_helper';
+import { setPolicy } from 'policy';
 
-createWidget(__dirname).then((widget) => {
-  widget.configureAjaxHelper(
-    {
-      baseURL: widget.config.scriptParams.url
-    }
-  )
-  widget.setPolicy()
-  widget.createStore(reducers)
-  widget.render(App)
-})
+let widgetName = getWidgetName(__dirname)
+let scriptTagContainer = getContainerFromCurrentScript(widgetName)
+
+configureAjaxHelper(
+  {
+    baseURL: scriptTagContainer.scriptParams.url
+  }
+)
+
+setPolicy()
+
+ReactDOM.render(<App />, scriptTagContainer.reactContainer);
