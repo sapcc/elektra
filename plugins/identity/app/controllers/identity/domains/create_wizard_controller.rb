@@ -79,7 +79,7 @@ module Identity
         end
       end
 
-      protected
+      protected unless 'test' == Rails.env
 
       def calculate_highest_shards
         # 1. get all aggregates
