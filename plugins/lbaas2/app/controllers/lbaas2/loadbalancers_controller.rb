@@ -3,19 +3,18 @@
 module Lbaas2
   class LoadbalancersController < DashboardController
     def index
-      if request.format.json?
-        # get paginated loadbalancers
-        per_page = params[:per_page] || 20
-        per_page = per_page.to_i
-        loadbalancers = paginatable(per_page: per_page) do |pagination_options|
-          services.lbaas.loadbalancers({ project_id: @scoped_project_id, sort_key: 'id' }.merge(pagination_options))
-        end
-      end
+      # get paginated loadbalancers
+      per_page = (params[:per_page] || 20).to_i
+      pagination_options = { sort_key: 'name', sort_dir: 'asc', limit: per_page + 1 }
+      pagination_options[:marker] = params[:marker] if params[:marker]
+      loadbalancers = services.lbaas.loadbalancers({ project_id: @scoped_project_id}.merge(pagination_options))
 
-      respond_to do |format|
-        format.html
-        format.json { render json: loadbalancers }
-      end
+      render json: {
+        loadbalancers: loadbalancers,
+        has_next: loadbalancers.length > per_page
+      }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
     end
   end
 end
