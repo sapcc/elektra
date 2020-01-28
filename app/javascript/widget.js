@@ -116,6 +116,26 @@ const getCurrentScript = (widgetName) => {
   return scripts[ scripts.length - 1 ];
 }
 
+export const createConfig = (widgetName, params) => {
+  // get current url without params and bind it to baseURL
+  let origin = window.location.origin
+  if(!origin) {
+    const originMatch = window.location.href.match(/(http(s)?:\/\/[^\/]+).*/)
+    if (originMatch) origin = originMatch[1]
+  }
+
+  return {
+    params,
+    scriptParams: params,
+    devOptions: { name: widgetName },
+    ajaxHelper: {
+      baseURL: `${origin}${window.location.pathname}`,
+      headers: {}
+    },
+    policy: window.policy
+  }
+}
+
 export const createWidget = (dirname, options={}) => {
   const widgetName = getWidgetName(dirname)
   let reactContainers = options.containers
@@ -136,26 +156,6 @@ export const createWidget = (dirname, options={}) => {
     }
   }
 
-  const createConfig = () => {
-    // get current url without params and bind it to baseURL
-    let origin = window.location.origin
-    if(!origin) {
-      const originMatch = window.location.href.match(/(http(s)?:\/\/[^\/]+).*/)
-      if (originMatch) origin = originMatch[1]
-    }
-
-    return {
-      params,
-      scriptParams: params,
-      devOptions: { name: widgetName },
-      ajaxHelper: {
-        baseURL: `${origin}${window.location.pathname}`,
-        headers: {}
-      },
-      policy: window.policy
-    }
-  }
-
   // if document is already loaded then resolve Promise immediately
   // with a new widget object
   if (document.readyState === "complete")
@@ -165,7 +165,7 @@ export const createWidget = (dirname, options={}) => {
   // as document is loaded.
   return new Promise((resolve, reject) => {
     document.addEventListener('DOMContentLoaded', () => {
-      resolve(new Widget(reactContainers, createConfig()))
+      resolve(new Widget(reactContainers, createConfig(widgetName, params)))
     })
   })
 }
