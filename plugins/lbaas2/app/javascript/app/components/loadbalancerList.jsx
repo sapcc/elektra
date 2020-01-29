@@ -10,22 +10,22 @@ const LoadbalancerList = () => {
   const items = state.items
 
   useEffect(() => {
+    console.log('fetch loadbalancers')
     dispatch({type: 'REQUEST_LOADBALANCERS', requestedAt: Date.now()})
-    ajaxHelper.get(`/`).then((response) => {
+    ajaxHelper.get(`/loadbalancers`).then((response) => {
       if (response.data.errors) {
         dispatch({
           type: 'REQUEST_LOADBALANCERS_FAILURE', 
           error: {status: error.response.status, name: error.response.statusText, message: error.response.data}
           })
       }else {
-        dispatch({type: 'RECEIVE_LOADBALANCERS', items: response.data})        
+        dispatch({type: 'RECEIVE_LOADBALANCERS', items: response.data.loadbalancers, hasNext: response.data.has_next})        
       }
     }).catch(error => {
       dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: {message: error.message}})
     })
   }, []);
 
-  console.log('render list')
   return (    
     <table className="table loadbalancers">
       <thead>
@@ -34,7 +34,7 @@ const LoadbalancerList = () => {
               <th>Description</th>
               <th>State</th>
               <th>Prov. Status</th>
-              <th>IP Address</th>
+              <th className="snug-nowrap">Subnet <small>(associated from cache)</small>/IP Address</th>
               <th>Listeners</th>
               <th>Pools</th>
               <th className='snug'></th>

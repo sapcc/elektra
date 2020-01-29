@@ -9,6 +9,13 @@ module Lbaas2
       pagination_options[:marker] = params[:marker] if params[:marker]
       loadbalancers = services.lbaas.loadbalancers({ project_id: @scoped_project_id}.merge(pagination_options))
 
+      # add fips and subnets to the lb objects
+      fips = services.networking.project_floating_ips(@scoped_project_id)
+      loadbalancers.each do |lb|
+        lb.floating_ip = fips.select{|fip| fip.port_id == lb.vip_port_id}.first
+        lb.subnet = services.networking.cached_subnet(lb.vip_subnet_id)
+      end
+
       render json: {
         loadbalancers: loadbalancers,
         has_next: loadbalancers.length > per_page
