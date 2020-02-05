@@ -13,6 +13,14 @@ export default class Category extends React.Component {
     const scope = new Scope(this.props.scopeData);
     const Resource = scope.resourceComponent();
 
+    //special rule: for now, Keppel quotas remain hidden to domain/project
+    //users unless the scope has been assigned Keppel quota already
+    if (!scope.isCluster() && categoryName == 'keppel') {
+      if (resources.every(res => res.quota === 0)) {
+        return null;
+      }
+    }
+
     //these props are passed on to the Resource children verbatim
     const forwardProps = {
       flavorData:   this.props.flavorData,
