@@ -10,7 +10,7 @@ createWidget(__dirname).then((widget) => {
 
   //convert params from strings into the respective types
   widget.config.scriptParams.canEdit = widget.config.scriptParams.canEdit == 'true';
-  widget.config.scriptParams.isAdmin = widget.config.scriptParams.isAdmin == 'true';
+  widget.config.scriptParams.isAdmin = widget.config.scriptParams.canEdit; //this used to be a separate permission level
   widget.config.scriptParams.dockerInfo = {
     userName: widget.config.scriptParams.dockerCliUsername,
     registryDomain: (new URL(widget.config.scriptParams.keppelApi)).hostname,

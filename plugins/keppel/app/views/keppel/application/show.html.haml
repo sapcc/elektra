@@ -1,16 +1,10 @@
 = content_for :main_toolbar do
   Container Image Registry
 
-- unless @js_data[:is_admin]
+- unless @js_data[:can_edit]
   .bs-callout.bs-callout-info.bs-callout-emphasize
-    - if @js_data[:can_edit]
-      You can pull, push and delete images.
-    - else
-      This view is read-only. To push or delete images, you need the
-      %code resource_admin
-      role.
-    To create accounts and modify account settings, you need the
-    %code admin
+    This view is read-only. To push or delete images and to configure the image registry, you need the
+    %code resource_admin
     role.
 
 = javascript_pack_tag "keppel_app", data: @js_data
