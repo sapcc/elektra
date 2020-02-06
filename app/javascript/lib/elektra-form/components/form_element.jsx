@@ -34,7 +34,7 @@ export const FormElement = ({
     )
   };
 
-  const childName = (child) => child.props ? child.props.name : name
+  const childName = (child) => child.props && child.props.name ? child.props.name : name
 
   let renderChildren = () => 
     React.Children.map(children,

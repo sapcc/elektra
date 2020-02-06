@@ -29,7 +29,7 @@ export default class AccountCreateModal extends React.Component {
   close = (e) => {
     if (e) { e.stopPropagation(); }
     this.setState({show: false});
-    setTimeout(() => this.props.history.replace('/'), 300);
+    setTimeout(() => this.props.history.replace('/accounts'), 300);
   };
 
   validate = ({name}) => {

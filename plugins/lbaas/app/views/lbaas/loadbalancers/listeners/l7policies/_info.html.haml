@@ -1,0 +1,36 @@
+.infobox{data: {update_path: plugin('lbaas').update_status_loadbalancer_path(id: loadbalancer.id, format: :js), update_interval: 30, update_immediately: 'true'}}
+  %h4.action-heading
+    Policy Info
+  %table.table
+    %tbody
+      %tr
+        %th
+          Provisioning Status:
+        %td
+          %label{class: 'spinner', data: {prov_status: "#{l7policy.id}"}}
+        %tr
+        %th.snug-nowrap
+          Name:
+        %td
+          = name_or_id(l7policy.name, l7policy.id, 18)
+      %tr
+        %th.snug-nowrap
+          Description:
+        %td
+          = description(l7policy.description,18)
+      %tr
+        %th.snug-nowrap
+          ID:
+        %td.small
+          = l7policy.id
+      %tr
+        %th.snug-nowrap
+          Action:
+        %td
+          = l7policy.action
+      - if l7policy.redirect_url || l7policy.redirect_pool_id
+        %tr
+          %th.snug-nowrap
+            Redirect To:
+          %td
+            = l7policy.redirect_pool_id.blank? ? description(l7policy.redirect_url, 20) : l7policy.redirect_pool_id

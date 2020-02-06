@@ -3,7 +3,7 @@ import AccountCreateModal from '../../components/accounts/create';
 import { putAccount } from '../../actions/keppel';
 
 export default connect(
-  (state, props) => ({
+  state => ({
     existingAccountNames: (state.keppel.accounts.data || []).map(a => a.name),
   }),
   dispatch => ({

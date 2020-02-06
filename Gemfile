@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+# https://bundler.io/v1.5/gemfile.html
+# https://guides.rubygems.org/patterns/#semantic-versioning
 # Note: check Dockerfile for Version dependencies!
 #       Because we install gems with native extension before running bundle install
 #       This avoids recompiling them everytime the Gemfile.lock changes.
@@ -33,7 +35,7 @@ gem 'font-awesome-sass'
 gem 'responders'
 
 # make it fancy with react
-gem 'react-rails' # , "1.8.2"
+gem 'react-rails', '~> 2.2.1'
 
 # Database
 gem 'pg'
@@ -71,7 +73,7 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 1.0.0', group: :doc
 
-gem 'puma', require: false
+gem 'puma', "= 3.12.2" , require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
@@ -115,7 +117,7 @@ group :development, :test do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 
-  gem 'foreman'
+  gem 'foreman', '~> 0.87.0'
 
   # Testing
 
@@ -142,16 +144,4 @@ end
 group :test do
   gem 'guard-rspec'
   gem 'rails-controller-testing'
-end
-
-# load dotenv to get ENV for extension retrieval if needed
-begin
-  require 'dotenv'
-  Dotenv.load
-rescue Exception => e
-end
-
-# load SAP specific extension for fonts, ....
-if ENV['ELEKTRA_EXTENSION'].to_s == 'true'
-  gem 'elektra-extension', git: 'https://github.wdf.sap.corp/monsoon/elektra-extension.git', branch: :master
 end

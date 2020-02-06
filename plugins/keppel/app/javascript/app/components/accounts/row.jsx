@@ -7,10 +7,11 @@ export default class AccountRow extends React.Component {
     const swiftContainerURL = `/_/${projectID}/object-storage/containers/${containerName}/list`;
 
     //NOTE: This table is relatively empty at the moment. I'm considering adding stats like `N repositories, M tags, X GiB used` to the display, but that would require extending the Keppel API first.
-    //TODO: link from first column to some DetailsModal that lists RBAC policies and explains how to use `docker pull/push` with this account
     return (
       <tr>
-        <td className='col-md-6'>{accountName}</td>
+        <td className='col-md-6'>
+          <Link to={`/account/${accountName}`}>{accountName}</Link>
+        </td>
         <td className='col-md-6'>
           Swift container
           {' '}
@@ -26,7 +27,7 @@ export default class AccountRow extends React.Component {
               <span className="fa fa-cog"></span>
             </button>
             <ul className="dropdown-menu dropdown-menu-right" role="menu">
-              <li><Link to={`/policies/${accountName}`}>Access policies</Link></li>
+              <li><Link to={`/accounts/${accountName}/policies`}>Access policies</Link></li>
             </ul>
           </div>
         </td>

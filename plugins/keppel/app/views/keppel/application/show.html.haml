@@ -1,10 +1,16 @@
 = content_for :main_toolbar do
   Container Image Registry
 
-- unless @js_data[:can_edit]
+- unless @js_data[:is_admin]
   .bs-callout.bs-callout-info.bs-callout-emphasize
-    This view is read-only. To edit quotas, you need the
-    %code= @edit_role
+    - if @js_data[:can_edit]
+      You can pull, push and delete images.
+    - else
+      This view is read-only. To push or delete images, you need the
+      %code resource_admin
+      role.
+    To create accounts and modify account settings, you need the
+    %code admin
     role.
 
 = javascript_pack_tag "keppel_app", data: @js_data

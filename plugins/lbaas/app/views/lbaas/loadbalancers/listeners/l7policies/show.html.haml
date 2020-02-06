@@ -1,0 +1,38 @@
+= content_for :title do
+  Show Policy
+  
+.modal-body
+
+  %table.table.datatable
+    %tbody
+      %tr
+        %th Name/ID
+        %td= "#{t("lbaas.policies.#{@l7policy.name}", default: name_or_id(@l7policy.name, @l7policy.id))} (#{name_or_id(@l7policy.name, @l7policy.id)})"
+      %tr
+        %th Description
+        %td= @l7policy.description
+      %tr
+        %th ID
+        %td= @l7policy.id
+      %tr
+        %th Position
+        %td= @l7policy.predefined? ? 'n.a.' : @l7policy.position
+      %tr
+        %th Action
+        %td= @l7policy.predefined? ? 'n.a.' : @l7policy.action
+      - unless @l7policy.redirect_url.blank?
+        %tr
+          %th Redirect Url
+          %td= @l7policy.redirect_url
+      - unless @l7policy.redirect_pool_id.blank?
+        %tr
+          %th Redirect Pool ID
+          %td= @l7policy.redirect_pool_id
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", loadbalancer_listener_l7policies_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id), class: 'btn btn-default'
+    

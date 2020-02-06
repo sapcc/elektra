@@ -1,0 +1,6 @@
+<%if @l7policy%>
+$("#loadbalancer_listener_l7policy_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'lbaas/loadbalancers/listeners/l7policies/item', locals: {loadbalancer: @loadbalancer, listener: @listener, l7policy: @l7policy})) %>");
+$("#loadbalancer_listener_l7policy_<%=params[:id]%>").update();
+<%else%>
+$("#loadbalancer_listener_l7policy_<%=params[:id]%>").remove();
+<%end%>

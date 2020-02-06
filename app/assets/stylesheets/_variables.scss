@@ -54,9 +54,9 @@ $btn-outline-hover-color: #fff;
 // FONTS
 // --------------------------------------------------
 
-$font-family-sap-light: "BentonSansLight";
-$font-family-sap-regular: "BentonSans";
-$font-family-sap-medium: "BentonSansMedium";
+$font-family-sap-light: "BentonSans Light";
+$font-family-sap-regular: "BentonSans Regular";
+$font-family-sap-medium: "BentonSans Medium";
 
 
 // --------------------------------------------------
@@ -129,10 +129,10 @@ $btn-danger-border:   #e22;
 $btn-danger-bg:       #e22;
 
 // Fonts
-$font-family-sans-serif: $font-family-sap-regular, "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-sans-serif-medium: $font-family-sap-medium, "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-sans-serif-light: $font-family-sap-light, "Helvetica Neue", Helvetica, Arial, sans-serif;
-$headings-font-family: $font-family-sap-regular, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-sans-serif: $font-family-sap-regular, "Segoe UI",Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-sans-serif-medium: $font-family-sap-medium, "Segoe UI",Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-sans-serif-light: $font-family-sap-light, "Segoe UI",Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$headings-font-family: $font-family-sap-regular, "Segoe UI",Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 
 // List group

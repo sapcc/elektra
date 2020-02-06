@@ -1,0 +1,37 @@
+/ = content_for :title do
+/   Show
+  
+.modal-body
+
+  %table.table.datatable
+    %tbody
+      %tr
+        %th Name/ID
+        %td= name_or_id(@listener.name, @listener.id)
+      %tr
+        %th Description
+        %td= @listener.description
+      %tr
+        %th ID
+        %td= @listener.id
+      %tr
+        %th Protocol
+        %td= @listener.protocol
+      %tr
+        %th Protocol Port
+        %td= @listener.protocol_port
+      %tr
+        %th Connection Limit
+        %td= @listener.connection_limit
+      - if @pool
+        %tr
+          %th Default Pool
+          %td= "#{name_or_id(@pool.name, @pool.id)} ( #{@pool.id} )"
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", plugin('lbaas').loadbalancer_listeners_path(@loadbalancer.id), class: 'btn btn-default'
+

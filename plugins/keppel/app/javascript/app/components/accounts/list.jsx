@@ -13,20 +13,7 @@ const columns = [
 ];
 
 export default class AccountList extends React.Component {
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.loadDependencies(nextProps);
-  }
-  componentDidMount() {
-    this.loadDependencies(this.props);
-  }
-  loadDependencies(props) {
-    props.loadAccountsOnce();
-  }
-
   render() {
-    if (this.props.isFetching) {
-      return <p><span className='spinner' /> Loading...</p>;
-    }
     return (
       <React.Fragment>
         {this.props.isAdmin && (
@@ -36,7 +23,7 @@ export default class AccountList extends React.Component {
             </div>
           </div>
         )}
-        <DataTable columns={columns}>
+        <DataTable columns={columns} pageSize={10}>
           {this.props.accounts.map(account => (
             <AccountRow key={account.name} account={account} />
           ))}

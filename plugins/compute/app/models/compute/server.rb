@@ -122,6 +122,10 @@ module Compute
       read('os-extended-volumes:volumes_attached')
     end
 
+    def root_disk_device_name
+      read('OS-EXT-SRV-ATTR:root_device_name')
+    end
+
     def task_state
       task_state = read('OS-EXT-STS:task_state')
       return nil if task_state.blank? || task_state.casecmp('none').zero?

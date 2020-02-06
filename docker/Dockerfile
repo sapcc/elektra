@@ -15,9 +15,9 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
       && gem install nio4r -v 2.3.1 \
-      && gem install nokogiri -v 1.10.4 \
+      && gem install nokogiri -v 1.10.7 \
       && gem install pg -v 0.21.0 \
-      && gem install puma -v 3.9.1  \
+      && gem install puma -v 3.12.2  \
       && gem install redcarpet -v 3.4.0 \
       && gem install unf -v 0.2.0.beta2 \
       && gem install websocket-driver -v 0.7.0 \
@@ -58,17 +58,14 @@ ADD plugins/*/*.gemspec tmp/plugins/
 ADD script/organize_plugins_gemspecs script/
 RUN script/organize_plugins_gemspecs
 
-ARG ELEKTRA_EXTENSION=false
-ENV ELEKTRA_EXTENSION=$ELEKTRA_EXTENSION
 # Install the SAP Global Root CA
+# TODO: is this old stuff?
 ADD docker/certs/*.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates \
       && curl https://github.wdf.sap.corp
 
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
-# install js packages
-RUN yarn install --production 
 
 ADD . /home/app/webapp
 

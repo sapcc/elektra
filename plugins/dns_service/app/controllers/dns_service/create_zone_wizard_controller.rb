@@ -4,7 +4,6 @@ module DnsService
 
     def new
       @zone_request = ::DnsService::ZoneRequest.new(nil)
-
       return if @inquiry.nil?
       payload = @inquiry.payload
       @zone_request.attributes = payload
@@ -36,11 +35,37 @@ module DnsService
       @zone = services.dns_service.zones(name: @zone_request.zone_name)[:items].first
 
       # create new zone if it does not already exist
+      zone_transfer = true
       @zone ||= services.dns_service.new_zone(@zone_request.attributes)
       @zone.name = @zone_request.zone_name
       @pool = load_pool(@zone_request.domain_pool)
-      @zone.write('attributes', @pool.read('attributes'))
+      pool_attrs = @pool.read('attributes')
+      @zone.write('attributes', pool_attrs)
 
+      # find out that the new zone is not a subdomain from an existing zone in the destination project
+      pool_subdomains = []
+      if pool_attrs && pool_attrs["subdomains"]
+        pool_subdomains =  pool_attrs["subdomains"].delete(' ').split(',')
+      end
+      
+      # get all domains from destination project
+      project_zones =  services.dns_service.zones(project_id: @inquiry.project_id)[:items]
+      project_zones.each do |project_zone|
+        # search for existing parent domain
+        pool_subdomains.each do |pool_subdomain|
+          # 1. remove pool subdomains
+          requested_domain_name = @zone_request.zone_name.gsub("#{pool_subdomain}.","")
+          project_zone_name = project_zone.name.gsub("#{pool_subdomain}.","")
+          # 2. check for extisting parent domains
+          if requested_domain_name.include? project_zone_name
+            puts "requested zone is part of existing domain"
+            # we need to create the domain for in the destination project and not in ccadmin/master projekt
+            # because the requested zone is part of existing domain in the project
+            zone_transfer = false
+            @zone.project_id(@inquiry.project_id)
+          end
+        end 
+      end
 
       # get dns zones quota for target project
       dns_zone_resource = cloud_admin.resource_management.find_project(
@@ -66,20 +91,34 @@ module DnsService
       end
 
       if @zone.save
-        # try to find existing zone transfer request
-        @zone_transfer_request = services.dns_service.zone_transfer_requests(
-          status: 'ACTIVE'
-        ).select do |zone_transfer_request|
-          zone_transfer_request.target_project_id == @inquiry.project_id &&
-            zone_transfer_request.zone_id == @zone.id
-        end.first
+        # we need zone transfer if the domain was created in cloud-admin project
+        if zone_transfer
+          # try to find existing zone transfer request
+          @zone_transfer_request = services.dns_service.zone_transfer_requests(
+            status: 'ACTIVE'
+          ).select do |zone_transfer_request|
+            zone_transfer_request.target_project_id == @inquiry.project_id &&
+              zone_transfer_request.zone_id == @zone.id
+          end.first
 
-        # create a new zone transfer request if not exists
-        @zone_transfer_request ||= services.dns_service.new_zone_transfer_request(
-          @zone.id, target_project_id: @inquiry.project_id
-        )
+          # create a new zone transfer request if not exists
+          @zone_transfer_request ||= services.dns_service.new_zone_transfer_request(
+            @zone.id, target_project_id: @inquiry.project_id
+          )
 
-        if @zone_transfer_request.save && @zone_transfer_request.accept(@inquiry.project_id)
+          if @zone_transfer_request.save && @zone_transfer_request.accept(@inquiry.project_id)
+            if @inquiry
+              services.inquiry.set_inquiry_state(
+                @inquiry.id, :approved,
+                "Domain #{@zone.name} approved and created by #{current_user.full_name}",
+                current_user
+              )
+            end
+          else
+            # catch errors for transfer zone request
+            @zone_transfer_request.errors.each { |k, m| @zone_request.errors.add(k,m) }
+          end
+        else
           if @inquiry
             services.inquiry.set_inquiry_state(
               @inquiry.id, :approved,
@@ -87,9 +126,6 @@ module DnsService
               current_user
             )
           end
-        else
-          # catch errors for transfer zone request
-          @zone_transfer_request.errors.each { |k, m| @zone_request.errors.add(k,m) }
         end
 
       else

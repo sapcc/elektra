@@ -9,6 +9,7 @@
       = "Couldn't find instance #{params[:id]}. This can happen if the instance was just created. In this case please wait a bit and try again"
 
   - else
+    - attached_volumes = @instance.attached_volumes
     - content_for (:details) do
       %ul.nav.nav-tabs
         %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
@@ -67,20 +68,30 @@
         
         .tab-pane{role:"tabpanel", id:"specs"}
           - if @instance.flavor
-            %table.table.datatable
-              %tbody
-                %tr
-                  %th Flavor
-                  %td= @instance.flavor['original_name']
-                %tr
-                  %th RAM
-                  %td= "#{@instance.flavor['ram']}MB"
-                %tr
-                  %th VCPUs
-                  %td= "#{@instance.flavor['vcpus']} VCPU"
-                %tr
-                  %th Disk
-                  %td= "#{@instance.flavor['disk']}GB"
+            - root_disk_size = @instance.flavor['disk']
+            - unless attached_volumes.empty?
+              - attached_volumes.each do |vol|
+                - if vol.attachments.first['device'] == @instance.root_disk_device_name
+                  - root_disk_size = vol.size
+              %table.table.datatable
+                %tbody
+                  %tr
+                    %th Flavor
+                    %td= @instance.flavor['original_name']
+                  %tr
+                    %th RAM
+                    %td= "#{@instance.flavor['ram']}MB"
+                  %tr
+                    %th VCPUs
+                    %td= "#{@instance.flavor['vcpus']} VCPU"
+                  %tr
+                    %th Root Disk
+                    %td
+                      = root_disk_size
+                      GB
+                      %p
+                        %small 
+                          =@instance.root_disk_device_name
           - else
             No instance specifications
 
@@ -137,11 +148,10 @@
               %tr
                 %th Volume Name
                 %th Device Name
-                %th.snug
+                %th Size
             %tbody
               - if current_user.is_allowed?("block_storage:volume_list")
-                - attached_volumes = @instance.attached_volumes
-                - if attached_volumes && attached_volumes.empty?
+                - if attached_volumes.empty?
                   %tr
                     %td{colspan: 2} No volumes attached.
                 - else
@@ -149,6 +159,9 @@
                     %tr
                       %td= vol.name
                       %td= vol.attachments.first['device']
+                      %td
+                        =vol.size
+                        GB
               - else
                 %tr
                   %td{colspan: 2}

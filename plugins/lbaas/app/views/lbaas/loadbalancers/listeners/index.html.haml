@@ -1,0 +1,52 @@
+= content_for :main_toolbar do
+  = link_to 'Load Balancers', plugin('lbaas').loadbalancers_path()
+  = ' / '
+  = link_to "Listeners" , plugin('lbaas').loadbalancer_listeners_path(@loadbalancer.id)
+
+%ul.nav.nav-tabs
+  %li.active{role: "presentation"}= link_to 'Listeners', '#listeners', aria: {controls:"listeners"}, role: "tab", data: {toggle:"tab"}
+  %li{role: "presentation"}= link_to 'Pools', plugin('lbaas').send("loadbalancer_pools_path", loadbalancer_id: @loadbalancer.id)
+
+
+.row
+  .col-md-9
+    .tab-content
+      #listeners.tab-pane.active{role: "tabpanel"}
+      .toolbar.toolbar-aligntop
+        .has-feedback.has-feedback-searchable
+          = text_field_tag 'search_listeners_input', '', class: "form-control", placeholder: 'name/id, desc., protocol, port'
+        .has-feedback-help
+          %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by listener name/id, description, protocol and port. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+            %i.fa.fa-question-circle
+        - if current_user.is_allowed?('lbaas:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+          .main-buttons
+            - if true #@loadbalancer.active?
+              = link_to 'Create new', plugin('lbaas').new_loadbalancer_listener_path(@loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+            - else
+              = link_to 'Create new', '#', disabled: true, class: 'btn btn-primary btn-sm'
+
+    %table.table.listeners.searchable{data:{search_input: '#search_listeners_input'}}
+      %thead
+        %tr
+          %th Name/ID
+          %th Description
+          %th Protocol
+          %th Protocol Port
+          %th Default Pool
+          %th States
+          %th.snug
+      %tbody
+        -if @listeners.blank?
+          %tr{data:{empty:true}}
+            %td{colspan:7} No Listeners defined
+        - else
+          = render partial: 'lbaas/loadbalancers/listeners/list', locals: {loadbalancer: @loadbalancer, listeners: @listeners}
+
+    -# if has next items (comes from paginate helper in controller) render the
+    -# ajax paginate plugin (identified by data-ajax-paginate)
+    - if @pagination_has_next
+      .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.listeners tbody', search_input_selector: '#search_listeners_input'} }
+
+  .col-md-3
+    = render :partial => 'lbaas/loadbalancers/info', locals: {loadbalancer: @loadbalancer}
+

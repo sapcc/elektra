@@ -168,8 +168,9 @@ class DashboardController < ::ScopeController
       # @scoped_project_id is nil and @scoped_domain_id exists -> check if
       # user can access the requested domain.
 
-      # check if user has access to current domain
-      has_domain_access = services.identity.has_domain_access(@scoped_domain_id)
+      # check if user has access to current domain, add rescue nil for cases where the token scope inexplicably contains a deleted project
+      # without the rescue this call leads to an error message and the user can't see the domain page
+      has_domain_access = services.identity.has_domain_access(@scoped_domain_id) rescue nil
 
       unless has_domain_access
         # user has no permissions for the new domain -> rescope to
