@@ -20,3 +20,23 @@
   ***************************************************
 
 */
+
+.lb-popover.popover-content {
+  padding: 0;
+}
+
+.lb-popover {
+
+  .lb-content {
+    padding: 9px 14px;
+    overflow-y : scroll;
+    max-height: 250px;
+    
+  }
+
+  .lb-footer {
+    padding: 9px 14px;
+    background-color: #f7f7f7;
+  }
+
+}

@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useGlobalState } from './StateProvider'
 import { useEffect } from 'react'
 import { ajaxHelper } from 'ajax_helper';
-import LoadbalancerItem from './loadbalancerItem';
+import LoadbalancerItem from './LoadbalancerItem';
 
 const LoadbalancerList = () => {
   const dispatch = useDispatch()
@@ -34,7 +34,8 @@ const LoadbalancerList = () => {
               <th>Description</th>
               <th>State</th>
               <th>Prov. Status</th>
-              <th className="snug-nowrap">Subnet <small>(associated from cache)</small>/IP Address</th>
+              <th>Tags</th>
+              <th className="snug-nowrap">Subnet/IP Address</th>
               <th>Listeners</th>
               <th>Pools</th>
               <th className='snug'></th>
@@ -50,7 +51,7 @@ const LoadbalancerList = () => {
           )
           :
           <tr>
-            <td colSpan="7">
+            <td colSpan="8">
               { state.isLoading ? <span className='spinner'/> : 'No loadbalancers found.' }
             </td>
           </tr>  

@@ -1,6 +1,6 @@
 import React from 'react';
-import { HashRouter, Route, Redirect } from 'react-router-dom'
-import LoadbalancerList from './loadbalancerList';
+import { HashRouter, Route } from 'react-router-dom'
+import LoadbalancerList from './LoadbalancerList';
 
 const Router = () => {
 

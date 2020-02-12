@@ -1,9 +1,8 @@
 import React, {useMemo,useCallback} from 'react'
 import ReactDOM from 'react-dom'
-import {StateProvider, useGlobalState, useDispatch} from './components/StateProvider'
+import {StateProvider, useDispatch} from './components/StateProvider'
 import reducers from './reducers'
-// import LoadbalancerList from './components/loadbalancerList'
-import Router from './components/router'
+import Router from './components/Router'
 
 
 const PlusButton = () => {
