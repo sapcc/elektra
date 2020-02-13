@@ -5,7 +5,7 @@ import { DataTable } from 'lib/components/datatable';
 import AccountRow from './row';
 
 const columns = [
-  { key: 'name', label: 'Account name', sortStrategy: 'text',
+  { key: 'name', label: 'Global account name', sortStrategy: 'text',
     sortKey: props => props.account.name || '' },
   { key: 'config', label: 'Configuration' },
   { key: 'actions', label: '' },
