@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default class AccountRow extends React.Component {
   render() {
-    const { name: accountName, auth_tenant_id: projectID } = this.props.account;
+    const { name: accountName, auth_tenant_id: projectID, replication } = this.props.account;
     const containerName = `keppel-${accountName}`;
     const swiftContainerURL = `/_/${projectID}/object-storage/containers/${containerName}/list`;
 
@@ -13,9 +13,20 @@ export default class AccountRow extends React.Component {
           <Link to={`/account/${accountName}`}>{accountName}</Link>
         </td>
         <td className='col-md-6'>
-          Swift container
-          {' '}
-          <a href={swiftContainerURL} target='_blank'>{containerName}</a>
+          { replication ? (
+            <div>
+              Replica of <strong>{replication.upstream}/{accountName}</strong>
+            </div>
+          ) : (
+            <div>
+              Primary account
+            </div>
+          )}
+          <div>
+            Backed by Swift container
+            {' '}
+            <a href={swiftContainerURL} target='_blank'>{containerName}</a>
+          </div>
         </td>
         <td className='snug'>
           <div className='btn-group'>

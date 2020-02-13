@@ -1,9 +1,11 @@
 export default class Loader extends React.Component {
   componentDidMount() {
     this.props.loadAccountsOnce();
+    this.props.loadPeersOnce();
   }
   componentDidUpdate() {
     this.props.loadAccountsOnce();
+    this.props.loadPeersOnce();
   }
 
   render() {

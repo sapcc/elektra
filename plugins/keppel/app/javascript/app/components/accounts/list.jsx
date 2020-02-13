@@ -7,8 +7,7 @@ import AccountRow from './row';
 const columns = [
   { key: 'name', label: 'Account name', sortStrategy: 'text',
     sortKey: props => props.account.name || '' },
-  { key: 'storage', label: 'Backing storage', sortStrategy: 'text',
-    sortKey: props => props.account.name || '' },
+  { key: 'config', label: 'Configuration' },
   { key: 'actions', label: '' },
 ];
 

@@ -39,6 +39,7 @@ export const FormElement = ({
   let renderChildren = () => 
     React.Children.map(children,
      (child) => {
+       if (child === null) { return null; }
        return typeof child === 'string' ? child : React.cloneElement(child, {name: childName(child)})
      }
     );
