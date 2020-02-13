@@ -30,6 +30,7 @@ const RBACPoliciesEditRow = ({ index, policy, isAdmin, setRepoRegex, setUserRege
           <input type='text' value={userRegex || ''}
             className='form-control'
             onChange={e => setUserRegex(index, e.target.value)}
+            disabled={currentPerms == 'anonymous_pull'}
           />
         ) : userRegex ? (
           <code>{userRegex}</code>

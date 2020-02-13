@@ -47,6 +47,9 @@ export default class RBACPoliciesEditModal extends React.Component {
   setPermissions = (idx, input) => {
     const policies = [ ...this.state.policies ];
     policies[idx] = { ...policies[idx], permissions: input.split(',') };
+    if (input == 'anonymous_pull') {
+      policies[idx].match_username = '';
+    }
     this.setState({ ...this.state, policies });
   }
   removePolicy = (idx, input) => {
