@@ -38,7 +38,8 @@ export default class AccountRow extends React.Component {
               <span className="fa fa-cog"></span>
             </button>
             <ul className="dropdown-menu dropdown-menu-right" role="menu">
-              <li><Link to={`/accounts/${accountName}/policies`}>Access policies</Link></li>
+              <li><Link to={`/accounts/${accountName}/access_policies`}>Access policies</Link></li>
+              <li><Link to={`/accounts/${accountName}/validation_rules`}>Validation rules</Link></li>
             </ul>
           </div>
         </td>

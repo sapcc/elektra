@@ -11,6 +11,10 @@ const columns = [
   { key: 'actions', label: '' },
 ];
 
+const byName = (account1, account2) => {
+  return account1.name.localeCompare(account2.name);
+}
+
 export default class AccountList extends React.Component {
   render() {
     return (
@@ -23,7 +27,7 @@ export default class AccountList extends React.Component {
           </div>
         )}
         <DataTable columns={columns} pageSize={10}>
-          {this.props.accounts.map(account => (
+          {this.props.accounts.sort(byName).map(account => (
             <AccountRow key={account.name} account={account} />
           ))}
         </DataTable>
