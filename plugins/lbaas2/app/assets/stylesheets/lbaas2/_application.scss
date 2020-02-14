@@ -21,6 +21,10 @@
 
 */
 
+
+/*
+* lb-popover
+*/
 .lb-popover.popover-content {
   padding: 0;
 }
@@ -39,4 +43,28 @@
     background-color: #f7f7f7;
   }
 
+}
+
+/*
+* tags
+*/
+.static-tags {
+  .tag {
+    float: left;
+    margin-right: 10px;
+    border-radius: 2px 0 0 2px;
+    background-color: $hover-light-blue;
+    color: #46799b;
+    margin-bottom: 5px;
+    overflow: hidden;
+
+    .key, .value {
+      float: left;
+      padding: 0 4px;
+    }
+    .key {
+      background-color: #46799b;
+      color: white;
+    }
+  }
 }

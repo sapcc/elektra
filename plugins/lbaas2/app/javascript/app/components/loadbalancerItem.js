@@ -1,6 +1,8 @@
 import { Highlighter } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom';
 import LbPopover from './LbPoopover';
+import StaticTags from './StaticTags';
+import StateLabel from './StateLabel'
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
@@ -29,9 +31,11 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm}) => {
           }
       </td>
       <td>{loadbalancer.description}</td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td><StateLabel status={loadbalancer.operating_status} /></td>
+      <td><StateLabel status={loadbalancer.provisioning_status} /></td>
+      <td>
+        <StaticTags tags={loadbalancer.tags} />
+      </td>
       <td className="snug-nowrap">
         {loadbalancer.subnet && 
           <React.Fragment>
