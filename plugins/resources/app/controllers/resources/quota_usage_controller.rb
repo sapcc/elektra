@@ -11,7 +11,8 @@ module Resources
       loadbalancing: {service_type: :network, resource_names: [:loadbalancers, :listeners, :pools, :l7policies]},
       networking: {service_type: :network, resource_names: [:floating_ips, :networks, :subnets, :routers, :security_groups] },
       shared_filesystem_storage: { service_type: :sharev2, resource_names: [:gigabytes, :shares, :snapshots, :share_networks, :share_groups] },
-      dns_service: { service_type: :dns, resource_names: [:zones, :recordsets]}
+      dns_service: { service_type: :dns, resource_names: [:zones, :recordsets]},
+      keppel: { service_type: :keppel, resource_names: [:images] },
     }
 
     def index
