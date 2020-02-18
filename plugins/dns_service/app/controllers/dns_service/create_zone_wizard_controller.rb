@@ -47,24 +47,36 @@ module DnsService
       if pool_attrs && pool_attrs["subdomains"]
         pool_subdomains =  pool_attrs["subdomains"].delete(' ').split(',')
       end
-      
       # get all domains from destination project
       project_zones =  services.dns_service.zones(project_id: @inquiry.project_id)[:items]
+
       project_zones.each do |project_zone|
         # search for existing parent domain
-        pool_subdomains.each do |pool_subdomain|
-          # 1. remove pool subdomains
-          requested_domain_name = @zone_request.zone_name.gsub("#{pool_subdomain}.","")
-          project_zone_name = project_zone.name.gsub("#{pool_subdomain}.","")
-          # 2. check for extisting parent domains
-          if requested_domain_name.include? project_zone_name
-            puts "requested zone is part of existing domain"
-            # we need to create the domain for in the destination project and not in ccadmin/master projekt
+        unless pool_subdomains.empty?
+          pool_subdomains.each do |pool_subdomain|
+            # 1. remove pool subdomain from zone request
+            requested_domain_name = @zone_request.zone_name.gsub("#{pool_subdomain}.","")
+            project_zone_name = project_zone.name.gsub("#{pool_subdomain}.","")
+            # 2. check for extisting parent domains
+            if requested_domain_name.include? project_zone_name
+              puts "requested zone #{requested_domain_name} is part of existing domain #{project_zone_name}"
+              # we need to create the domain in the destination project and not in ccadmin/master projekt
+              # because the requested zone is part of existing domain in the project
+              zone_transfer = false
+              @zone.project_id(@inquiry.project_id)
+            end
+          end
+        else
+          # if no pool_supdomain was found, I have no idea that is possible but better save than sorry
+          # check for extisting parent domains 
+          if @zone_request.zone_name.include? project_zone.name
+            puts "requested zone #{@zone_request.zone_name} is part of existing domain #{project_zone.name}"
+            # we need to create the domain in the destination project and not in ccadmin/master projekt
             # because the requested zone is part of existing domain in the project
             zone_transfer = false
             @zone.project_id(@inquiry.project_id)
           end
-        end 
+        end
       end
 
       # get dns zones quota for target project
