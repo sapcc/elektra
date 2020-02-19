@@ -19,6 +19,13 @@ module Lbaas2
       render json: { errors: e.message }, status: e.code
     end
 
+    def status_tree
+      statuses = services.lbaas.loadbalancer_statuses(params[:id])
+      render json: {
+        statuses: statuses
+      }
+    end
+
     protected
 
     def extend_lb_data(lbs)

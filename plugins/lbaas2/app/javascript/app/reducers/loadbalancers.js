@@ -1,7 +1,6 @@
 const initialState = {
   items: [],
   isLoading: false,
-  hasNext: true,
   receivedAt: null,
   hasNext: true,
   marker: null,

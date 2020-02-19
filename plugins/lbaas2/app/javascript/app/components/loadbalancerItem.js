@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import LbPopover from './LbPoopover';
 import StaticTags from './StaticTags';
 import StateLabel from './StateLabel'
+import useStatusTree from '../../lib/hooks/useStatusTree'
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
@@ -10,10 +11,9 @@ const MyHighlighter = ({search,children}) => {
 }
 
 const LoadbalancerItem = React.memo(({loadbalancer, searchTerm}) => {
-  console.log('render item')
-  console.log("ooooo")
-  console.log(JSON.stringify(loadbalancer))
-  console.log("ooooo")  
+  console.log('render loadbalancer list item id-->', loadbalancer.id)
+  
+  useStatusTree({lbId: loadbalancer.id})
 
   const poolIds = loadbalancer.pools.map(p => p.id)
   const listenerIds = loadbalancer.listeners.map(l => l.id)
