@@ -140,28 +140,29 @@ module Resources
       return result
     end
 
+    # TODO build a map for host -> AZ, e.g. nova-compute-bb92: qa-de-1a
+    # TODO build a map for host -> VC, e.g. nova-compute-bb92: vc-a-0
     def fetch_big_vm_data
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
       resource_providers.each do |resource_provider|
-        #pp resource_provider
-        #puts resource_provider["name"]
+
         if resource_provider["name"].include? "bigvm-deployment-"
           big_vm_resources[resource_provider["name"]] = {}
+
+          parent_provider_uuid = resource_provider["parent_provider_uuid"]
+          resource_provider_uuid = resource_provider["uuid"]
           resource_links = resource_provider["links"]
-          #puts resource_links
+
           resource_links.each do |resource_link|
+            available = false
             if resource_link["rel"] == "inventories"
               # check that big vms are available
-              available = cloud_admin.resources.big_vm_available(resource_link["href"])
+              available = cloud_admin.resources.big_vm_available(resource_provider_uuid)
               big_vm_resources[resource_provider["name"]]["available"] = available
-            end
-            if resource_link["rel"] == "aggregates"
-              # get all aggregates for the resource provider 
-              aggregates = cloud_admin.resources.list_resource_aggregates(resource_link["href"])
-              aggregates.each do |aggregate|
-                inventroy_data = cloud_admin.resources.show_aggregates_inventories(aggregate)
-                big_vm_resources[resource_provider["name"]]["invetory"] = inventroy_data
+              if available == true
+                inventory_data = cloud_admin.resources.get_resource_provider_inventory(parent_provider_uuid)
+                big_vm_resources[resource_provider["name"]]["inventory"] = inventory_data
               end
             end
           end

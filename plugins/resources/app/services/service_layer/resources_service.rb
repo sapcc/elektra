@@ -32,15 +32,15 @@ module ServiceLayer
       return list
     end
 
-    def show_aggregates_inventories(aggregate)
-      aggregates = elektron_placement.get("resource_providers/#{aggregate}/inventories")
-      inventories = aggregates.body['inventories'] || {}
+    def get_resource_provider_inventory(uuid)
+      data = elektron_placement.get("resource_providers/#{uuid}/inventories")
+      inventories = data.body['inventories'] || {}
       return inventories
     end
 
-    def big_vm_available(path)
+    def big_vm_available(uuid)
       big_vms = {}
-      provider = elektron_placement.get(path)
+      provider = elektron_placement.get("resource_providers/#{uuid}/inventories")
       reserved = provider.body['inventories']['CUSTOM_BIGVM']['reserved']
       if reserved != 0
         return false 
