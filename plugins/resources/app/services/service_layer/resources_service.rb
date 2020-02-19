@@ -13,6 +13,49 @@ module ServiceLayer
       )
     end
 
+    def elektron_placement
+      @elektron_placement ||= elektron.service(
+        'placement', 
+        interface: 'public',
+        headers: { 'OpenStack-API-Version' => 'placement 1.17' }
+      )
+    end
+
+    def list_resource_providers
+      providers = elektron_placement.get('resource_providers')
+      return providers.body['resource_providers'] || { 'resource_providers' => [] }
+    end
+
+    def list_resource_aggregates(path)
+      aggregates = elektron_placement.get(path)
+      list = aggregates.body['aggregates'] || []
+      return list
+    end
+
+    def show_aggregates_inventories(aggregate)
+      aggregates = elektron_placement.get("resource_providers/#{aggregate}/inventories")
+      inventories = aggregates.body['inventories'] || {}
+      return inventories
+    end
+
+    def big_vm_available(path)
+      big_vms = {}
+      provider = elektron_placement.get(path)
+      reserved = provider.body['inventories']['CUSTOM_BIGVM']['reserved']
+      if reserved != 0
+        return false 
+      else 
+        return true
+      end
+    end
+
+    def big_vm_resources(path)
+      big_vms_resources = {}
+      provider = elektron_placement.get(path)
+      reserved = provider.body
+      return reserved
+    end
+
     def get_domain(domain_id)
       resp = elektron_resources.get("domains/#{domain_id}")
       return resp.body['domain'] || { 'services' => [] }

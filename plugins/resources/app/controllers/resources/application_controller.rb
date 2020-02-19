@@ -82,12 +82,14 @@ module Resources
     def prepare_data_for_view
       @js_data = {
         token:         current_user.token,
-        limes_api:     current_user.service_url('resources'),
-        castellum_api: current_user.service_url('castellum'),
+        limes_api:     current_user.service_url('resources'), # see also init.js -> configureAjaxHelper
+        castellum_api: current_user.service_url('castellum'), # see also init.js -> configureCastellumAjaxHelper
+        placement_api: current_user.service_url('placement'),
         flavor_data:   fetch_baremetal_flavor_data,
+        big_vm_resources: fetch_big_vm_data,
         docs_url:      sap_url_for('documentation'),
         cluster_id:    params[:cluster_id] || 'current',
-      }
+      } # this will end in widget.config.scriptParams on JS side
 
       # when this is true, the frontend will never try to generate quota requests
       @js_data[:is_foreign_scope] = (params[:override_project_id] || params[:override_domain_id] || (@js_data[:cluster_id] != 'current')) ? true : false
@@ -136,6 +138,36 @@ module Resources
         }
       end
       return result
+    end
+
+    def fetch_big_vm_data
+      big_vm_resources = {}
+      resource_providers = cloud_admin.resources.list_resource_providers
+      resource_providers.each do |resource_provider|
+        #pp resource_provider
+        #puts resource_provider["name"]
+        if resource_provider["name"].include? "bigvm-deployment-"
+          big_vm_resources[resource_provider["name"]] = {}
+          resource_links = resource_provider["links"]
+          #puts resource_links
+          resource_links.each do |resource_link|
+            if resource_link["rel"] == "inventories"
+              # check that big vms are available
+              available = cloud_admin.resources.big_vm_available(resource_link["href"])
+              big_vm_resources[resource_provider["name"]]["available"] = available
+            end
+            if resource_link["rel"] == "aggregates"
+              # get all aggregates for the resource provider 
+              aggregates = cloud_admin.resources.list_resource_aggregates(resource_link["href"])
+              aggregates.each do |aggregate|
+                inventroy_data = cloud_admin.resources.show_aggregates_inventories(aggregate)
+                big_vm_resources[resource_provider["name"]]["invetory"] = inventroy_data
+              end
+            end
+          end
+        end
+      end
+      return big_vm_resources
     end
 
   end

@@ -89,6 +89,8 @@ export default class Overview extends React.Component {
 
   renderAvailabilityZoneTab() {
     const { flavorData } = this.props;
+    const { bigVmResources } = this.props;
+    console.log(this.props);
     return <AvailabilityZoneOverview flavorData={flavorData} />;
   }
 
