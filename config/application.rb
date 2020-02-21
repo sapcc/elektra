@@ -110,5 +110,6 @@ module MonsoonDashboard
     }
 
     config.middleware.use SessionCookiePathMiddleware
+    config.middleware.insert_after ::Rack::Runtime, SameSiteCookieMiddleware
   end
 end
