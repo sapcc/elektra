@@ -1,36 +1,43 @@
 const initialState = {
-  trees:[]
+  trees:[],
+  unassignedTreeErrorCount:0,
+  unassignedTreeError: null
 }
 
 const request = (state) => {
+  console.log("statusTrees request")
   return state
 }
 
 const receive = (state, {lbId, tree}) => {
-
-  console.log("tree-->", tree)
-
+  console.log("statusTrees receive")
   const index = state.trees.findIndex((item) => item.id==tree.loadbalancer.id);
   const trees = state.trees.slice();
   const newTreeState = {...tree.loadbalancer, errorCount:0, error: null, updatedAt: Date.now()}
-  // update or add
   if (index>=0) { 
     trees[index]= newTreeState; 
   } else { 
     trees.push(newTreeState); 
   }
-
-  return {...state,
-    trees: trees
-  }
+  return {...state, trees: trees}
 }
 
 const requestFailure = (state, {lbId, error}) => {
+  console.log("statusTree request failure")
   const index = state.trees.findIndex((item) => item.id==lbId);
   const trees = state.trees.slice();
-  if (index>=0) { 
-    trees[index] = {...trees[index], coerrorCount: trees[index].count +1, error: error, updatedAt: Date.now()}
+  let unassignedTreeErrorCount = state.unassignedTreeErrorCount
+  let unassignedTreeError = state.unassignedTreeError
+  console.log("requestFailure index-->", index)
+  if (index>=0) {
+    const errorCount = trees[index].errorCount || 0
+    console.log("errorCount-->", errorCount)
+    trees[index] = {...trees[index], errorCount: errorCount +1, error: error, updatedAt: Date.now()}
+  } else {
+    unassignedTreeErrorCount = unassignedTreeErrorCount + 1
+    unassignedTreeError = error
   }
+  return {...state, trees: trees, unassignedTreeErrorCount: unassignedTreeError, unassignedTreeError: unassignedTreeError}
 }
 
 export default (state = initialState, action) => {

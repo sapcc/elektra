@@ -1,9 +1,43 @@
 import React from 'react';
+import { useMemo } from 'react'
+import { useGlobalState } from './StateProvider'
 import { Label, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
-const StateLabel = ({status}) => {
+const StateLabel = ({lbId, placeholder, path}) => {
+  const trees = useGlobalState().statusTrees.trees
+  const tree = trees.find(tree => tree.id === lbId)
+  
+  const treeState = (pathParts, structure) => {
+    const part = pathParts[0]
+    // console.log("pathParts-->", pathParts)
+    // console.log("part-->", part)
+    // console.log("structure", structure)
+    if (part) {
+      if (Array.isArray(structure)) {
+        // console.log("is an array")
+        const index = structure.findIndex((item) => {
+          // console.log("item.id-->", item.id)
+          return item.id==part
+        });
+        // console.log("index-->", index)
+        if (index >= 0) {
+          return treeState(pathParts.slice(1), structure[index])
+        }
+        return null
+      }
+      if (typeof structure == "object") {
+        // console.log("is an object: pathParts:", pathParts," part:", part, " structure: ", structure)
+        if (pathParts.length > 1) {
+          return treeState(pathParts.slice(1), structure[part])
+        } 
+        // console.log("returning end-->", structure[part])
+        return structure[part]
+      }
+    } 
+    return null
+  }
 
-  const labelParams = (status) => {
+  const labelAttributes = (status) => {
     switch (status) {
       case 'ONLINE':
         return {className: "label-success", title: "Entity is operating normally"}
@@ -35,15 +69,23 @@ const StateLabel = ({status}) => {
     }
   }
 
-  let params = labelParams(status)
+  let params = labelAttributes(placeholder)
+  let label = placeholder
+  if (tree) {
+    // const test = 'listeners/57c982fd-a43a-4caa-ac2e-6277f92f3402/pools/caaa477b-bc0e-4705-94e6-c51911956d2a/operating_status'
+    label = treeState(path.split("/"), tree)
+  }
 
-  return ( 
-    <React.Fragment>
-      <OverlayTrigger placement="top" overlay={<Tooltip id="static-label-tooltip">{params.title}</Tooltip>}>
-        <Label className={params.className}>{status}</Label>
-      </OverlayTrigger>      
-    </React.Fragment>
-   );
+  return useMemo(() => {
+    console.log("RENDER state label result-->",label)
+    return ( 
+      <React.Fragment>
+        <OverlayTrigger placement="top" overlay={<Tooltip id="static-label-tooltip">{params.title}</Tooltip>}>
+          <Label className={params.className}>{placeholder}</Label>
+        </OverlayTrigger>      
+      </React.Fragment>
+    );
+  }, [tree])
 }
  
 export default StateLabel;

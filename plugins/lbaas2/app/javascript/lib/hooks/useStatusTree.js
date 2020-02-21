@@ -19,7 +19,7 @@ const useStatusTree = ({lbId}) => {
     });
   
     const startPolling = () => {   
-      console.log("start polling for id -->", lbId, " polling:",polling)
+      console.log("start status tree polling for id -->", lbId, " polling:",polling)
       // do not create a new polling interval if already polling
       if(polling) return;
       polling = setInterval(() =>
@@ -28,18 +28,18 @@ const useStatusTree = ({lbId}) => {
     }
   
     const stopPolling = () => {
+      console.log("stop polling for id -->", lbId)
       clearInterval(polling)
       polling = null
     }
   
     const reloadStatus = () => {
-      console.log("reload status for id -->", lbId)
-      dispatch({type: 'REQUEST_LB_STATUS_TREE', lbId: lbId })
+      console.log("reload status tree for id -->", lbId)
       ajaxHelper.get(`/loadbalancers/` +lbId + `/status-tree`).then((response) => {
         dispatch({type: 'RECEIVE_LB_STATUS_TREE',  lbId: lbId, tree: response.data.statuses})
       })
       .catch( (error) => {
-        console.log("error loading status tree -->" + error.response.data.error)
+        console.log("error loading status tree -->" + errorMessage(error))
         dispatch({type: 'REQUEST_LB_STATUS_TREE_FAILURE', lbId: lbId, error: errorMessage(error)})
       })
     }
