@@ -1,7 +1,6 @@
 import React from 'react';
 import { HashRouter, Route, Redirect } from 'react-router-dom'
 import LoadbalancerList from './LoadbalancerList';
-import ListenerList from './ListenerList';
 import PoolList from './PoolList'
 import Tabs from './Tabs'
 

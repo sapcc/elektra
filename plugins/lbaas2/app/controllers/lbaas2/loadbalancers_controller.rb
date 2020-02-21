@@ -17,6 +17,8 @@ module Lbaas2
       }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
     end
 
     def status_tree

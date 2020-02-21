@@ -26,7 +26,10 @@ const receive = (state,{items,hasNext}) => {
     updatedAt: Date.now()}
 }
 
-const requestFailure = (state, {error}) => ({...state, isLoading: false, error})
+const requestFailure = (state, {error}) => { 
+  console.log("request failure -->", error.response)
+  return {...state, isLoading: false, error: error.response}
+}
 
 export default (state = initialState, action) => {
   switch (action.type) {

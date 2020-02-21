@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 
 const LbPopover = ({popoverId, buttonName, title, content}) => {
-  console.log("--> render LbPopover")
+  console.log("--> RENDER LbPopover")
 
   const [show, setShow] = useState(false)
   const [target, setTarget] = useState(null)

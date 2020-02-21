@@ -1,19 +1,9 @@
-import React, {useMemo,useCallback} from 'react'
-import ReactDOM from 'react-dom'
-import {StateProvider, useDispatch} from './components/StateProvider'
+import {StateProvider} from './components/StateProvider'
 import reducers from './reducers'
 import Router from './components/Router'
 
-
-const PlusButton = () => {
-  const dispatch = useDispatch()
-  const increment = useCallback(() => dispatch({type:"increment"}),[])
-  console.log('render PlusButton')
-  return <button onClick={increment}>+</button>
-}
-
 const App = () => {
-  console.log("render App")
+  console.log("RENDER App")
   return (
     <Router/>
   )

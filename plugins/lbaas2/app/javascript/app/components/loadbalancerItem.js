@@ -11,8 +11,9 @@ const MyHighlighter = ({search,children}) => {
 }
 
 const LoadbalancerItem = React.memo(({loadbalancer, searchTerm}) => {
-  console.log('render loadbalancer list item id-->', loadbalancer.id)
+  console.log('RENDER loadbalancer list item id-->', loadbalancer.id)
   
+  // poll the status tree for this lb
   useStatusTree({lbId: loadbalancer.id})
 
   const poolIds = loadbalancer.pools.map(p => p.id)
@@ -31,8 +32,8 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm}) => {
           }
       </td>
       <td>{loadbalancer.description}</td>
-      <td><StateLabel status={loadbalancer.operating_status} /></td>
-      <td><StateLabel status={loadbalancer.provisioning_status} /></td>
+      <td><StateLabel lbId={loadbalancer.id} placeholder={loadbalancer.operating_status} path="operating_status" /></td>
+      <td><StateLabel lbId={loadbalancer.id} placeholder={loadbalancer.provisioning_status} path="provisioning_status"/></td>
       <td>
         <StaticTags tags={loadbalancer.tags} />
       </td>
