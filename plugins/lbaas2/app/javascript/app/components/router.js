@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter, Route, Redirect } from 'react-router-dom'
-import LoadbalancerList from './LoadbalancerList';
-import PoolList from './PoolList'
+import LoadbalancerList from './loadbalancers/LoadbalancerList';
+import PoolList from './pools/PoolList'
 import Tabs from './Tabs'
 
 const Router = (props) => {

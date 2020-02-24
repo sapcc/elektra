@@ -1,9 +1,9 @@
 import { Highlighter } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom';
 import LbPopover from './LbPoopover';
-import StaticTags from './StaticTags';
-import StateLabel from './StateLabel'
-import useStatusTree from '../../lib/hooks/useStatusTree'
+import StaticTags from '../StaticTags';
+import StateLabel from '../StateLabel'
+import useStatusTree from '../../../lib/hooks/useStatusTree'
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
