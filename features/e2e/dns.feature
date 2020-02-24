@@ -33,9 +33,9 @@ Feature: DNS
     Then I see "Domain Name"
      And I see select "zone_request_dns_domain"
 
-  Scenario: Form for custom domain in Request Domain Dialog
+  Scenario: Form for custom domain in Request Zone Dialog
     When I visit project path "dns-service/zones"
-    And I click on "Request New Domain"
+    And I click on "Request New Zone"
     And I select "Internal SAP Hosted Zone" from "zone_request_domain_pool"
     And I choose "Custom Domain" radiobutton
     Then I see "Domain Name"
