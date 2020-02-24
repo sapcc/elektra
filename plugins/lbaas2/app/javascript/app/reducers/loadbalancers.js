@@ -27,8 +27,8 @@ const receive = (state,{items,hasNext}) => {
 }
 
 const requestFailure = (state, {error}) => { 
-  console.log("request failure -->", error.response)
-  return {...state, isLoading: false, error: error.response}
+  console.log("request failure -->", error)
+  return {...state, isLoading: false, error: error}
 }
 
 export default (state = initialState, action) => {

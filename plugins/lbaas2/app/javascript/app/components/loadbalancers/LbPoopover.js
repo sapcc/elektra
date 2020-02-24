@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Overlay, Button, Popover } from 'react-bootstrap'
-import { Link } from 'react-router-dom';
 
 
 const LbPopover = ({popoverId, buttonName, title, content}) => {

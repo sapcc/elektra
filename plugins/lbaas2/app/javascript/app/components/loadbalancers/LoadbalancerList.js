@@ -17,7 +17,7 @@ const LoadbalancerList = () => {
       dispatch({type: 'RECEIVE_LOADBALANCERS', items: response.data.loadbalancers, hasNext: response.data.has_next})
     })
     .catch( (error) => {
-      dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error})
+      dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error.response})
     })
   }, []);
 
@@ -26,7 +26,7 @@ const LoadbalancerList = () => {
     return (
       <React.Fragment>
         {state.error ?
-          <ErrorPage/>
+          <ErrorPage headTitle="Loadbalancers" error={state.error}/>
           :
           <table className="table loadbalancers">
             <thead>

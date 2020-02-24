@@ -1,24 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap'
 
-const ErrorPage = (error) => {
+const ErrorPage = ({error, headTitle}) => {
   console.log("RENDER error page")
 
-  // const errorMessage = (error) =>
-  //   error.data && (error.data.errors || error.data.error) ||
-  //   error.message
+  const [showDetails, setShowDetails] = useState(false)
+  const err = error.error || error
 
-  const errorCode = (error) => {
-    return JSON.stringify(error)
+  const httpStatus = () => {
+    return err && err.status || err.status
+  }
+
+  const title = () => {
+    return err.statusText
+  }
+
+  const description = () => {
+    switch (httpStatus(error)) {
+      case '500':
+        return "There was an error. Please try later again"
+      default:
+        return "There was an error. Please try again later"
+    }
+  }
+
+  const details = () => {
+    return err.data &&  (err.data.errors || err.data.error) || err.message
+  }
+
+  const handleDetails = (e) => {    
+    setShowDetails(!showDetails)
   }
 
   return ( 
     <React.Fragment>
-      <h1>
-        <span className="fa fa-bug fa-w-16 fa-lg"></span>
-        Oops!!
-      </h1>
-      <p>{errorCode(error)}</p>
-      
+      <div className="row">
+        <div className="col-md-10 col-md-offset-2">
+          <div className="row">
+            <div className="col-md-10">
+              <h1>LBaaS - {headTitle}</h1>
+              <p><b>{httpStatus()}</b> {title()}</p>
+              <p>{description()}</p>
+              <Button bsStyle="link" className="details-link" onClick={handleDetails} >Details</Button>
+              {showDetails &&
+                <pre>
+                  <code>{details()}</code>
+                </pre>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
     </React.Fragment>
    );
 }
