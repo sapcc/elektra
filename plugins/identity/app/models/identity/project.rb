@@ -18,6 +18,17 @@ module Identity
       true
     end
 
+    def shards
+      shards = []
+      read(:tags).each do |tag|
+        if tag.start_with?('vc-')
+          shards << tag
+        end
+      end
+      return shards
+    end
+
+
     def subprojects_ids
       return @subprojetcs_ids if @subprojetcs_ids
 

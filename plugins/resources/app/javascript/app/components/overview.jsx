@@ -8,6 +8,8 @@ import AutoscalingTabs from './autoscaling/tabs';
 import AvailabilityZoneOverview from '../containers/availability_zones/overview';
 import Inconsistencies from '../containers/inconsistencies';
 import ProjectSyncAction from '../components/project/sync_action';
+import ResourceBar from './resource_bar';
+
 
 export default class Overview extends React.Component {
   componentDidMount() {
@@ -93,7 +95,8 @@ export default class Overview extends React.Component {
     return <div>
       <AvailabilityZoneOverview flavorData={flavorData} />;
       <h3>Available BigVM Resources</h3>
-      {Object.keys(bigVmResources).sort().map( bigVmResourceName => 
+      <ResourceBar capacity={1 || 0} fill={0} showsCapacity={false} />
+      { Object.keys(bigVmResources).sort().map( bigVmResourceName => 
          <div style={{marginBottom:"10px"}} key={bigVmResourceName} className="row">
           <div className="col-md-2 text-right"><span>{bigVmResourceName}</span></div>
           <div className="col-md-3 text-left"> 

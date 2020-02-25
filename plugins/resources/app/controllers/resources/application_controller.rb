@@ -144,6 +144,8 @@ module Resources
     def fetch_big_vm_data
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
+      project =  services.identity.find_project!(@scoped_project_id) 
+      project_shards = project.shards
 
       host_aggregates = cloud_admin.compute.host_aggregates
       hosts_az = {}
@@ -151,8 +153,7 @@ module Resources
       unless host_aggregates.empty?
         host_aggregates.each do |host_aggregate|
           unless host_aggregate.hosts.empty?
-            host_aggregate.hosts.each do |hostname| 
-              puts host_aggregate.name
+            host_aggregate.hosts.each do |hostname|
               if host_aggregate.name.start_with?('vc-')
                 hosts_shard[hostname] = host_aggregate.name
               else
@@ -167,18 +168,24 @@ module Resources
         if resource_provider["name"].include? "bigvm-deployment-"
           resource_provider_name = resource_provider["name"].gsub("bigvm-deployment-","")
           big_vm_resources[resource_provider_name] = {}
+          # map the shards
+          hosts_shard.keys.each do |hostname|
+            shard = hosts_shard[hostname]
+            if resource_provider_name == hostname && project_shards.include?(shard)
+              big_vm_resources[resource_provider_name]["shard"] = shard
+            end
+          end
 
           # map the availability_zone
           hosts_az.keys.each do |hostname|
-            if resource_provider_name == hostname
+            if resource_provider_name == hostname && big_vm_resources[resource_provider_name]["shard"]
               big_vm_resources[resource_provider_name]["availability_zone"] = hosts_az[hostname]
             end
           end
-          # map the shards
-          hosts_shard.keys.each do |hostname|
-            if resource_provider_name == hostname
-              big_vm_resources[resource_provider_name]["shard"] = hosts_shard[hostname]
-            end
+
+          unless big_vm_resources[resource_provider_name]["availability_zone"] 
+            big_vm_resources.delete(resource_provider_name)
+            next
           end
 
           parent_provider_uuid = resource_provider["parent_provider_uuid"]
