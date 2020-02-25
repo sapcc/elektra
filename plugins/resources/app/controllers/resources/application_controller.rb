@@ -140,15 +140,46 @@ module Resources
       return result
     end
 
-    # TODO build a map for host -> AZ, e.g. nova-compute-bb92: qa-de-1a
-    # TODO build a map for host -> VC, e.g. nova-compute-bb92: vc-a-0
+
     def fetch_big_vm_data
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
-      resource_providers.each do |resource_provider|
 
+      host_aggregates = cloud_admin.compute.host_aggregates
+      hosts_az = {}
+      hosts_shard = {}
+      unless host_aggregates.empty?
+        host_aggregates.each do |host_aggregate|
+          unless host_aggregate.hosts.empty?
+            host_aggregate.hosts.each do |hostname| 
+              puts host_aggregate.name
+              if host_aggregate.name.start_with?('vc-')
+                hosts_shard[hostname] = host_aggregate.name
+              else
+                hosts_az[hostname] = host_aggregate.name
+              end
+            end
+          end
+        end
+      end
+    
+      resource_providers.each do |resource_provider|
         if resource_provider["name"].include? "bigvm-deployment-"
-          big_vm_resources[resource_provider["name"]] = {}
+          resource_provider_name = resource_provider["name"].gsub("bigvm-deployment-","")
+          big_vm_resources[resource_provider_name] = {}
+
+          # map the availability_zone
+          hosts_az.keys.each do |hostname|
+            if resource_provider_name == hostname
+              big_vm_resources[resource_provider_name]["availability_zone"] = hosts_az[hostname]
+            end
+          end
+          # map the shards
+          hosts_shard.keys.each do |hostname|
+            if resource_provider_name == hostname
+              big_vm_resources[resource_provider_name]["shard"] = hosts_shard[hostname]
+            end
+          end
 
           parent_provider_uuid = resource_provider["parent_provider_uuid"]
           resource_provider_uuid = resource_provider["uuid"]
@@ -159,10 +190,10 @@ module Resources
             if resource_link["rel"] == "inventories"
               # check that big vms are available
               available = cloud_admin.resources.big_vm_available(resource_provider_uuid)
-              big_vm_resources[resource_provider["name"]]["available"] = available
+              big_vm_resources[resource_provider_name]["available"] = available
               if available == true
                 inventory_data = cloud_admin.resources.get_resource_provider_inventory(parent_provider_uuid)
-                big_vm_resources[resource_provider["name"]]["inventory"] = inventory_data
+                big_vm_resources[resource_provider_name]["inventory"] = inventory_data
               end
             end
           end

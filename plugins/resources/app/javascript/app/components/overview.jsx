@@ -95,10 +95,11 @@ export default class Overview extends React.Component {
       <h3>Available BigVM Resources</h3>
       {Object.keys(bigVmResources).sort().map( bigVmResourceName => 
          <div style={{marginBottom:"10px"}} key={bigVmResourceName} className="row">
-          <div className="col-md-3 text-right"><strong>{bigVmResourceName}</strong></div>
-          <div className="col-md-2 text-left"> 
+          <div className="col-md-2 text-right"><span>{bigVmResourceName}</span></div>
+          <div className="col-md-3 text-left"> 
             <div style={{marginBottom:"3px"}}>Memory <i className="fa fa-arrow-right "></i> {(bigVmResources[bigVmResourceName]["inventory"]["MEMORY_MB"]["max_unit"]/1024/1024).toFixed(2)}TB</div>
             <div style={{marginBottom:"3px"}}>VCPUs <i className="fa fa-arrow-right "></i> {bigVmResources[bigVmResourceName]["inventory"]["VCPU"]["max_unit"]}</div>
+            <div style={{marginBottom:"3px"}}>Availability Zone <i className="fa fa-arrow-right "></i> {bigVmResources[bigVmResourceName]["availability_zone"]}</div>
           </div>
          </div>
       )}
