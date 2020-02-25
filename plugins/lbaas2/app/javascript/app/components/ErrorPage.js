@@ -29,6 +29,7 @@ const ErrorPage = ({error, headTitle}) => {
   }
 
   const handleDetails = (e) => {    
+    if(e) e.stopPropagation()
     setShowDetails(!showDetails)
   }
 

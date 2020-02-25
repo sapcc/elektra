@@ -4,6 +4,7 @@ import { useEffect, useMemo } from 'react'
 import { ajaxHelper } from 'ajax_helper';
 import LoadbalancerItem from './LoadbalancerItem';
 import ErrorPage from '../ErrorPage';
+import {DefeatableLink} from 'lib/components/defeatable_link';
 
 const LoadbalancerList = () => {
   const dispatch = useDispatch()
@@ -26,39 +27,51 @@ const LoadbalancerList = () => {
     return (
       <React.Fragment>
         {state.error ?
-          <ErrorPage headTitle="Loadbalancers" error={state.error}/>
+          <ErrorPage headTitle="Load Balancers" error={state.error}/>
           :
-          <table className="table loadbalancers">
-            <thead>
-                <tr>
-                    <th>Name/ID</th>
-                    <th>Description</th>
-                    <th>State</th>
-                    <th>Prov. Status</th>
-                    <th>Tags</th>
-                    <th className="snug-nowrap">Subnet/IP Address</th>
-                    <th>Listeners</th>
-                    <th>Pools</th>
-                    <th className='snug'></th>
-                </tr>
-            </thead>
-            <tbody>
-              {loadbalancers && loadbalancers.length>0 ?
-                loadbalancers.map( (loadbalancer, index) =>
-                  <LoadbalancerItem 
-                    loadbalancer={loadbalancer}
-                    key={index}
-                  />
-                )
-                :
-                <tr>
-                  <td colSpan="8">
-                    { state.isLoading ? <span className='spinner'/> : 'No loadbalancers found.' }
-                  </td>
-                </tr>  
-              }
-            </tbody>
-          </table>
+          <React.Fragment>
+            <div className='toolbar'>
+              <div className="main-buttons">
+                <DefeatableLink
+                  to='/loadbalancers/new'
+                  className='btn btn-primary'>
+                  Create New
+                </DefeatableLink>
+              </div>
+            </div>
+
+            <table className="table loadbalancers">
+              <thead>
+                  <tr>
+                      <th>Name/ID</th>
+                      <th>Description</th>
+                      <th>State</th>
+                      <th>Prov. Status</th>
+                      <th>Tags</th>
+                      <th className="snug-nowrap">Subnet/IP Address</th>
+                      <th>Listeners</th>
+                      <th>Pools</th>
+                      <th className='snug'></th>
+                  </tr>
+              </thead>
+              <tbody>
+                {loadbalancers && loadbalancers.length>0 ?
+                  loadbalancers.map( (loadbalancer, index) =>
+                    <LoadbalancerItem 
+                      loadbalancer={loadbalancer}
+                      key={index}
+                    />
+                  )
+                  :
+                  <tr>
+                    <td colSpan="8">
+                      { state.isLoading ? <span className='spinner'/> : 'No loadbalancers found.' }
+                    </td>
+                  </tr>  
+                }
+              </tbody>
+            </table>
+          </React.Fragment>
         }
 
       </React.Fragment>

@@ -3,11 +3,12 @@ import { HashRouter, Route, Redirect } from 'react-router-dom'
 import LoadbalancerList from './loadbalancers/LoadbalancerList';
 import PoolList from './pools/PoolList'
 import Tabs from './Tabs'
+import NewLoadbalancer from './loadbalancers/NewLoadbalancer'
 
 const Router = (props) => {
 
   const tabsConfig = [
-    { to: '/loadbalancers', label: 'Loadbalancers', component: LoadbalancerList },
+    { to: '/loadbalancers', label: 'Load Balancers', component: LoadbalancerList },
     { to: '/pools', label: 'Pools', component: PoolList }
   ]
 
@@ -18,6 +19,7 @@ const Router = (props) => {
           <Route path="/:activeTab" children={ ({match, location, history}) =>
             React.createElement(Tabs, Object.assign({}, {match, location, history, tabsConfig}, props))
           }/>
+          <Route exact path="/loadbalancers/new" component={NewLoadbalancer}/>
       </div>
     </HashRouter>
    );
