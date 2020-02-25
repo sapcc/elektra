@@ -111,5 +111,7 @@ module MonsoonDashboard
 
     config.middleware.use SessionCookiePathMiddleware
     config.middleware.insert_after ::Rack::Runtime, SameSiteCookieMiddleware
+    config.middleware.insert_after ::Rack::Runtime, SecureCookies
+
   end
 end
