@@ -8,6 +8,7 @@ import AutoscalingTabs from './autoscaling/tabs';
 import AvailabilityZoneOverview from '../containers/availability_zones/overview';
 import Inconsistencies from '../containers/inconsistencies';
 import ProjectSyncAction from '../components/project/sync_action';
+import AvailableBigVmResources from './availability_zones/big_vm_resources'
 import ResourceBar from './resource_bar';
 
 
@@ -92,20 +93,10 @@ export default class Overview extends React.Component {
   renderAvailabilityZoneTab() {
     const { flavorData } = this.props;
     const { bigVmResources } = this.props;
+    console.log(flavorData)
     return <div>
       <AvailabilityZoneOverview flavorData={flavorData} />;
-      <h3>Available BigVM Resources</h3>
-      <ResourceBar capacity={1 || 0} fill={0} showsCapacity={false} />
-      { Object.keys(bigVmResources).sort().map( bigVmResourceName => 
-         <div style={{marginBottom:"10px"}} key={bigVmResourceName} className="row">
-          <div className="col-md-2 text-right"><span>{bigVmResourceName}</span></div>
-          <div className="col-md-3 text-left"> 
-            <div style={{marginBottom:"3px"}}>Memory <i className="fa fa-arrow-right "></i> {(bigVmResources[bigVmResourceName]["inventory"]["MEMORY_MB"]["max_unit"]/1024/1024).toFixed(2)}TB</div>
-            <div style={{marginBottom:"3px"}}>VCPUs <i className="fa fa-arrow-right "></i> {bigVmResources[bigVmResourceName]["inventory"]["VCPU"]["max_unit"]}</div>
-            <div style={{marginBottom:"3px"}}>Availability Zone <i className="fa fa-arrow-right "></i> {bigVmResources[bigVmResourceName]["availability_zone"]}</div>
-          </div>
-         </div>
-      )}
+      <AvailableBigVmResources data={bigVmResources} />
     </div>
   }
 
