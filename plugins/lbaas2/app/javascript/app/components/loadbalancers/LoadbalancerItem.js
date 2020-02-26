@@ -20,7 +20,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm}) => {
   const listenerIds = loadbalancer.listeners.map(l => l.id)
   return(
     <tr>
-      <td>
+      <td className="snug-nowrap">
         <Link to={`loadbalancers/${loadbalancer.id}/show`}>
           <MyHighlighter search={searchTerm}>{loadbalancer.name || loadbalancer.id}</MyHighlighter>
         </Link>

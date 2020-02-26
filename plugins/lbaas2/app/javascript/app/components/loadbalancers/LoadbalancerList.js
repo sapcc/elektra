@@ -10,6 +10,8 @@ const LoadbalancerList = () => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
   const loadbalancers = state.items
+  const error = state.error
+  const isLoading = state.isLoading
 
   useEffect(() => {
     console.log('fetch initial loadbalancers')
@@ -26,8 +28,8 @@ const LoadbalancerList = () => {
     console.log("RENDER loadbalancer list")
     return (
       <React.Fragment>
-        {state.error ?
-          <ErrorPage headTitle="Load Balancers" error={state.error}/>
+        {error ?
+          <ErrorPage headTitle="Load Balancers" error={error}/>
           :
           <React.Fragment>
             <div className='toolbar'>
@@ -65,7 +67,7 @@ const LoadbalancerList = () => {
                   :
                   <tr>
                     <td colSpan="8">
-                      { state.isLoading ? <span className='spinner'/> : 'No loadbalancers found.' }
+                      { isLoading ? <span className='spinner'/> : 'No loadbalancers found.' }
                     </td>
                   </tr>  
                 }
@@ -76,7 +78,7 @@ const LoadbalancerList = () => {
 
       </React.Fragment>
     )
-  }, [state])
+  }, [loadbalancers, error, isLoading])
   
 }
 
