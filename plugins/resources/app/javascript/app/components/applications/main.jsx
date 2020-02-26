@@ -8,7 +8,6 @@ import EditModal from '../../containers/edit';
 import ProjectSettingsModal from '../../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
-  console.log(props.bigVmResources)
   const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum, bigVmResources } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId, projectID: projectId };
   const rootProps = { flavorData, scopeData, bigVmResources };

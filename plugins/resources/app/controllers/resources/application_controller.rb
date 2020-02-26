@@ -142,7 +142,7 @@ module Resources
 
 
     def fetch_big_vm_data
-      
+
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
       project =  services.identity.find_project!(@scoped_project_id) 
@@ -164,11 +164,34 @@ module Resources
           end
         end
       end
-    
+
+      # hosts_shard
+      #{
+      #  "nova-compute-bb95"=>"vc-a-1",
+      #  "nova-compute-bb93"=>"vc-b-0",
+      #  "nova-compute-bb94"=>"vc-b-0",
+      #  "nova-compute-bb91"=>"vc-a-0",
+      #  "nova-compute-bb92"=>"vc-a-0"
+      #}
+
+      # hosts_az
+      #{
+      #  "nova-compute-bb91"=>"qa-de-1a",
+      #  "nova-compute-bb92"=>"qa-de-1a",
+      #  "nova-compute-ironic-bm092"=>"qa-de-1a",
+      #  "nova-compute-bb95"=>"qa-de-1a",
+      #  "nova-compute-bb93"=>"qa-de-1b",
+      #  "nova-compute-bb94"=>"qa-de-1b",
+      #  "nova-compute-ironic-bm091"=>"qa-de-1b"
+      #}
+
       resource_providers.each do |resource_provider|
         if resource_provider["name"].include? "bigvm-deployment-"
           resource_provider_name = resource_provider["name"].gsub("bigvm-deployment-","")
+          
+          # create empty resource_provider config
           big_vm_resources[resource_provider_name] = {}
+
           # map the shards
           hosts_shard.keys.each do |hostname|
             shard = hosts_shard[hostname]
@@ -179,11 +202,14 @@ module Resources
 
           # map the availability_zone
           hosts_az.keys.each do |hostname|
+            # only availability_zones are allowed that are related to the shards that are available for the project
             if resource_provider_name == hostname && big_vm_resources[resource_provider_name]["shard"]
-              big_vm_resources[resource_provider_name]["availability_zone"] = hosts_az[hostname]
+              availability_zone = hosts_az[hostname]
+              big_vm_resources[resource_provider_name]["availability_zone"] = availability_zone
             end
           end
 
+          # delete resource_provider config if no availability_zone was found
           unless big_vm_resources[resource_provider_name]["availability_zone"] 
             big_vm_resources.delete(resource_provider_name)
             next
@@ -196,21 +222,34 @@ module Resources
           resource_links.each do |resource_link|
             available = false
             if resource_link["rel"] == "inventories"
-              # check that big vms are available
+              # check that hypervisors for big vms are available
               available = cloud_admin.resources.big_vm_available(resource_provider_uuid)
-              big_vm_resources[resource_provider_name]["available"] = available
               if available == true
                 inventory_data = cloud_admin.resources.get_resource_provider_inventory(parent_provider_uuid)
-                big_vm_resources[resource_provider_name]["memory"] = (inventory_data["MEMORY_MB"]["max_unit"].to_f / 1024 / 1024).round(2).to_s
-                #
+                if inventory_data && inventory_data.key?("MEMORY_MB")
+                  big_vm_resources[resource_provider_name]["memory"] = (inventory_data["MEMORY_MB"]["max_unit"].to_f / 1024 / 1024).round.to_s
+                else
+                  next
+                end
               end
             end
           end
         end
       end
 
-      pp big_vm_resources
+      # big_vm_resources
+      #{
+      #  "nova-compute-bb94"=>
+      #  {"shard"=>"vc-b-0",
+      #   "availability_zone"=>"qa-de-1b",
+      #   "memory"=>"1.9"},
+      # "nova-compute-bb92"=>
+      #  {"shard"=>"vc-a-0",
+      #   "availability_zone"=>"qa-de-1a",
+      #   "memory"=>"1.9"}
+      #}
 
+      # massage data for better use
       big_vms_by_az = {}
       big_vm_resources.each do |key,value|
         big_vms_by_az[value["availability_zone"]] ||= {} 
@@ -218,14 +257,20 @@ module Resources
         big_vms_by_az[value["availability_zone"]][value["memory"]] << key
       end
 
-      big_vms_by_az["qa-de-1b"]["1.9"] << "BB-bla"
-      big_vms_by_az["qa-de-1a"]["6"] = []
-      big_vms_by_az["qa-de-1a"]["6"] << "BB-bla"
-      big_vms_by_az["qa-de-1b"]["6"] = []
-      big_vms_by_az["qa-de-1b"]["6"] << "BB-bla"
-      big_vms_by_az["qa-de-1a"]["3"] = []
-      big_vms_by_az["qa-de-1a"]["3"] << "BB-bla"
+      # big_vms_by_az
+      #{
+      #  "qa-de-1b"=>{"1.9"=>["nova-compute-bb94"]},                                                                                                                                                                            
+      #  "qa-de-1a"=>{"1.9"=>["nova-compute-bb92"]}
+      #}
 
+      # fake data for debug
+      #big_vms_by_az["qa-de-1b"]["1.9"] << "BB-bla"
+      #big_vms_by_az["qa-de-1a"]["6"] = []
+      #big_vms_by_az["qa-de-1a"]["6"] << "BB-bla"
+      #big_vms_by_az["qa-de-1b"]["6"] = []
+      #big_vms_by_az["qa-de-1b"]["6"] << "BB-bla"
+      #big_vms_by_az["qa-de-1a"]["3"] = []
+      #big_vms_by_az["qa-de-1a"]["3"] << "BB-bla"
 
       return big_vms_by_az
     end

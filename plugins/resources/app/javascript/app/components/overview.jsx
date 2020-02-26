@@ -9,8 +9,6 @@ import AvailabilityZoneOverview from '../containers/availability_zones/overview'
 import Inconsistencies from '../containers/inconsistencies';
 import ProjectSyncAction from '../components/project/sync_action';
 import AvailableBigVmResources from './availability_zones/big_vm_resources'
-import ResourceBar from './resource_bar';
-
 
 export default class Overview extends React.Component {
   componentDidMount() {
@@ -93,7 +91,6 @@ export default class Overview extends React.Component {
   renderAvailabilityZoneTab() {
     const { flavorData } = this.props;
     const { bigVmResources } = this.props;
-    console.log(flavorData)
     return <div>
       <AvailabilityZoneOverview flavorData={flavorData} />;
       <AvailableBigVmResources data={bigVmResources} />
