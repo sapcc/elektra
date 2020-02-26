@@ -20,7 +20,7 @@ const LoadbalancerList = () => {
       dispatch({type: 'RECEIVE_LOADBALANCERS', items: response.data.loadbalancers, hasNext: response.data.has_next})
     })
     .catch( (error) => {
-      dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error.response})
+      dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error})
     })
   }, []);
 

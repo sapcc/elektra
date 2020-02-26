@@ -28,7 +28,6 @@ const requestFailure = (state, {lbId, error}) => {
   const trees = state.trees.slice();
   let unassignedTreeErrorCount = state.unassignedTreeErrorCount
   let unassignedTreeError = state.unassignedTreeError
-  console.log("requestFailure index-->", index)
   if (index>=0) {
     const errorCount = trees[index].errorCount || 0
     console.log("errorCount-->", errorCount)
