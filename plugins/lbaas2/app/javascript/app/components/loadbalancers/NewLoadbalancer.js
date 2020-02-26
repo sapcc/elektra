@@ -1,11 +1,32 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import CreatableSelect from 'react-select/creatable';
+import { ajaxHelper } from 'ajax_helper';
 
 
 const NewLoadbalancer = (props) => {
 
+  const [privateNetworks, setPrivateNetworks] = useState({
+    isLoading: false,
+    error: null,
+    items: []
+  })
+  useEffect(() => {
+    console.log('fetching private networks')
+    setPrivateNetworks({...privateNetworks, isLoading:true})
+    ajaxHelper.get(`/loadbalancers/private-networks`).then((response) => {
+      setPrivateNetworks({...privateNetworks, isLoading:false, items: response.data.private_networks, error: null})
+    })
+    .catch( (error) => {      
+      const errorMessage = error.response && error.response.data && error.response.data.errors || error.message
+      setPrivateNetworks({...privateNetworks, isLoading:false, error: errorMessage})
+    })
+  }, []);
+
+  /*
+  * Modal stuff
+  */
   const [show, setShow] = useState(true)
 
   const close = (e) => {
@@ -19,21 +40,30 @@ const NewLoadbalancer = (props) => {
     }
   }
 
-  const validate = ({name,size,availability_zone,description,bootable,imageRef}) => {
-    return name && size && availability_zone && description && (!bootable || imageRef) && true
+  /*
+  * Form stuff
+  */
+  const validate = ({name,description,vip_subnet_id,vip_address,tags}) => {
+    console.log("validating-->", name, "-", vip_subnet_id, "-", name && vip_subnet_id && true)
+    return true
   }
 
   const onSubmit = (values) =>{
-    return false
+    // collect data
+
+    console.group("New loadbalancer-->", values)
+
+    // ajaxHelper.post('/loadbalancers/', { volume: values }
+    // ).then((response) => {
+    //   dispatch(receiveVolume(response.data))
+    //   handleSuccess()
+    //   addNotice('Volume is being created.')
+    // }).catch(error => handleErrors({errors: errorMessage(error)}))
+
+      return false
   }
 
   const initialValues = {}
-
-  const privateNetworks = {
-    isLoading: true,
-    error: null,
-    items: []
-  }
 
   /*
   * Tag editor
@@ -97,32 +127,34 @@ const NewLoadbalancer = (props) => {
             <Form.ElementHorizontal label='Description' name="description">
               <Form.Input elementType='input' type='text' name='description'/>
             </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='Private Network' required name="private_network">
+            <Form.ElementHorizontal label='Private Network' required name="vip_subnet_id">
               { privateNetworks.isLoading ?
                 <span className='spinner'/>
                 :
                 privateNetworks.error ?
                   <span className='text-danger'>{privateNetworks.error}</span>
                   :
+                  <React.Fragment>
                   <Form.Input
                     elementType='select'
                     className="select required form-control"
-                    name='private_network'>
+                    name='vip_subnet_id'>
                     <option></option>
-                    {private_network.items.map((pn,index) =>
-                      <option value={pn.name} key={index}>
+                    {privateNetworks.items.map((pn,index) =>
+                      <option value={pn.id} key={index}>
                         {pn.name}
                       </option>
                     )}
                   </Form.Input>
+                  </React.Fragment>
               }
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
                 The network which provides the internal IP of the load balancer.
               </span>
             </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='IP Address' name="ip_address">
-              <Form.Input elementType='input' type='text' name='ip_address'/>
+            <Form.ElementHorizontal label='IP Address' name="vip_address">
+              <Form.Input elementType='input' type='text' name='vip_address'/>
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
                 You can specify an IP from the private network if you like. Otherwise an IP will be allocated automatically.
@@ -153,7 +185,7 @@ const NewLoadbalancer = (props) => {
 
         <Modal.Footer>  
           <Button onClick={close}>Cancel</Button>
-          {/* <Form.SubmitButton label='Save'/> */}
+          <Form.SubmitButton label='Save'/>
         </Modal.Footer>
       </Modal.Body>
     </Modal>

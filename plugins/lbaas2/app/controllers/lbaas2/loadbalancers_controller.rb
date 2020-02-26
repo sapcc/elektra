@@ -26,7 +26,24 @@ module Lbaas2
       render json: {
         statuses: statuses
       }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
     end
+
+    def private_networks
+      private_networks = services.networking.project_networks(
+        @scoped_project_id
+      ).delete_if { |n| n.attributes['router:external'] == true }
+      render json: {
+        private_networks: private_networks
+      }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end    
 
     protected
 
