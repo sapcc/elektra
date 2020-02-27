@@ -146,7 +146,7 @@ module Resources
       resource_providers = cloud_admin.resources.list_resource_providers
       project =  services.identity.find_project!(@scoped_project_id) 
       project_shards = project.shards
-
+ 
       # build mapping between AV(availability_zone) or VZ(shard) and host_aggregates.name
       host_aggregates = cloud_admin.compute.host_aggregates
       hosts_az = {}
@@ -188,34 +188,36 @@ module Resources
       #}
 
       resource_providers.each do |resource_provider|
+        # filter only for resource_providers with name "bigvm-deployment-"
         if resource_provider["name"].include? "bigvm-deployment-"
+          # get hostname like nova-compute-bb91
           resource_provider_name = resource_provider["name"].gsub("bigvm-deployment-","")
           
           # create empty resource_provider config
           big_vm_resources[resource_provider_name] = {}
 
-          # map and filter the shards to the resource_provider_name
+          # map the shards to the related resource_provider_name
+          # "nova-compute-bb91"=>"vc-a-0"
           hosts_shard.keys.each do |hostname|
             shard = hosts_shard[hostname]
-            if project_shards.empty? && resource_provider_name == hostname
-              # no shards on project found so we use all available resource providers
-              big_vm_resources[resource_provider_name]["shard"] = shard
-            elsif project_shards.include?(shard) && resource_provider_name == hostname
+            if project_shards.include?(shard) && resource_provider_name == hostname
               # shards for projects are defined so we filter only resource_provider that are related to the shard
               big_vm_resources[resource_provider_name]["shard"] = shard
             end
           end
 
-          # map the availability_zone to the resource_provider_name
+          # map and filter the availability_zone to the resource_provider_name
+          # "nova-compute-bb91"=>"qa-de-1a"
           hosts_az.keys.each do |hostname|
             # only availability_zones are allowed that are related to the shards that are available for the project
-            if resource_provider_name == hostname && big_vm_resources[resource_provider_name]["shard"]
+            # in case project_shards.empty? any resource_provider_name is allowed
+            if resource_provider_name == hostname && big_vm_resources[resource_provider_name]["shard"] || project_shards.empty? 
               availability_zone = hosts_az[hostname]
               big_vm_resources[resource_provider_name]["availability_zone"] = availability_zone
             end
           end
 
-          # delete resource_provider config if no availability_zone was found
+          # filter resource_provider config if no availability_zone was found
           # this should be the case if the availability_zone was filtered 
           unless big_vm_resources[resource_provider_name]["availability_zone"] 
             big_vm_resources.delete(resource_provider_name)
@@ -272,7 +274,7 @@ module Resources
       #big_vms_by_az["qa-de-1b"]["6"] << "BB-bla"
       #big_vms_by_az["qa-de-1a"]["3"] = []
       #big_vms_by_az["qa-de-1a"]["3"] << "BB-bla"
-      
+
       return big_vms_by_az
     end
 
