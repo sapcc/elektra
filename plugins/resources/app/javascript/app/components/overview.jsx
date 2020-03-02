@@ -8,6 +8,7 @@ import AutoscalingTabs from './autoscaling/tabs';
 import AvailabilityZoneOverview from '../containers/availability_zones/overview';
 import Inconsistencies from '../containers/inconsistencies';
 import ProjectSyncAction from '../components/project/sync_action';
+import AvailableBigVmResources from './availability_zones/big_vm_resources'
 
 export default class Overview extends React.Component {
   componentDidMount() {
@@ -89,7 +90,11 @@ export default class Overview extends React.Component {
 
   renderAvailabilityZoneTab() {
     const { flavorData } = this.props;
-    return <AvailabilityZoneOverview flavorData={flavorData} />;
+    const { bigVmResources } = this.props;
+    return <div>
+      <AvailabilityZoneOverview flavorData={flavorData} />;
+      <AvailableBigVmResources data={bigVmResources} />
+    </div>
   }
 
   renderAutoscalingTab() {

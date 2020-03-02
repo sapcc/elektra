@@ -82,12 +82,14 @@ module Resources
     def prepare_data_for_view
       @js_data = {
         token:         current_user.token,
-        limes_api:     current_user.service_url('resources'),
-        castellum_api: current_user.service_url('castellum'),
+        limes_api:     current_user.service_url('resources'), # see also init.js -> configureAjaxHelper
+        castellum_api: current_user.service_url('castellum'), # see also init.js -> configureCastellumAjaxHelper
+        placement_api: current_user.service_url('placement'),
         flavor_data:   fetch_baremetal_flavor_data,
+        big_vm_resources: fetch_big_vm_data,
         docs_url:      sap_url_for('documentation'),
         cluster_id:    params[:cluster_id] || 'current',
-      }
+      } # this will end in widget.config.scriptParams on JS side
 
       # when this is true, the frontend will never try to generate quota requests
       @js_data[:is_foreign_scope] = (params[:override_project_id] || params[:override_domain_id] || (@js_data[:cluster_id] != 'current')) ? true : false
@@ -136,6 +138,144 @@ module Resources
         }
       end
       return result
+    end
+
+    def fetch_big_vm_data
+
+      big_vm_resources = {}
+      resource_providers = cloud_admin.resources.list_resource_providers
+      project =  services.identity.find_project!(@scoped_project_id) 
+      project_shards = project.shards
+ 
+      # build mapping between AV(availability_zone) or VZ(shard) and host_aggregates.name
+      host_aggregates = cloud_admin.compute.host_aggregates
+      hosts_az = {}
+      hosts_shard = {}
+      unless host_aggregates.empty?
+        host_aggregates.each do |host_aggregate|
+          unless host_aggregate.hosts.empty?
+            host_aggregate.hosts.each do |hostname|
+              if host_aggregate.name.start_with?('vc-')
+                # this is a shard
+                hosts_shard[hostname] = host_aggregate.name
+              else
+                # this is a availability_zone
+                hosts_az[hostname] = host_aggregate.name
+              end
+            end
+          end
+        end
+      end
+
+      # hosts_shard
+      #{
+      #  "nova-compute-bb95"=>"vc-a-1",
+      #  "nova-compute-bb93"=>"vc-b-0",
+      #  "nova-compute-bb94"=>"vc-b-0",
+      #  "nova-compute-bb91"=>"vc-a-0",
+      #  "nova-compute-bb92"=>"vc-a-0"
+      #}
+
+      # hosts_az
+      #{
+      #  "nova-compute-bb91"=>"qa-de-1a",
+      #  "nova-compute-bb92"=>"qa-de-1a",
+      #  "nova-compute-ironic-bm092"=>"qa-de-1a",
+      #  "nova-compute-bb95"=>"qa-de-1a",
+      #  "nova-compute-bb93"=>"qa-de-1b",
+      #  "nova-compute-bb94"=>"qa-de-1b",
+      #  "nova-compute-ironic-bm091"=>"qa-de-1b"
+      #}
+
+      resource_providers.each do |resource_provider|
+        # filter only for resource_providers with name "bigvm-deployment-"
+        if resource_provider["name"].include? "bigvm-deployment-"
+          # get hostname like nova-compute-bb91
+          resource_provider_name = resource_provider["name"].gsub("bigvm-deployment-","")
+          
+          # create empty resource_provider config
+          big_vm_resources[resource_provider_name] = {}
+
+          # map the shards to the related resource_provider_name
+          # "nova-compute-bb91"=>"vc-a-0"
+          hosts_shard.keys.each do |hostname|
+            shard = hosts_shard[hostname]
+            if project_shards.include?(shard) && resource_provider_name == hostname
+              # shards for projects are defined so we filter only resource_provider that are related to the shard
+              big_vm_resources[resource_provider_name]["shard"] = shard
+            end
+          end
+
+          # map and filter the availability_zone to the resource_provider_name
+          # "nova-compute-bb91"=>"qa-de-1a"
+          hosts_az.keys.each do |hostname|
+            # only availability_zones are allowed that are related to the shards that are available for the project
+            # in case project_shards.empty? any resource_provider_name is allowed
+            if resource_provider_name == hostname && big_vm_resources[resource_provider_name]["shard"] || project_shards.empty? 
+              availability_zone = hosts_az[hostname]
+              big_vm_resources[resource_provider_name]["availability_zone"] = availability_zone
+            end
+          end
+
+          # filter resource_provider config if no availability_zone was found
+          # this should be the case if the availability_zone was filtered 
+          unless big_vm_resources[resource_provider_name]["availability_zone"] 
+            big_vm_resources.delete(resource_provider_name)
+            next
+          end
+
+          parent_provider_uuid   = resource_provider["parent_provider_uuid"]
+          resource_provider_uuid = resource_provider["uuid"]
+          resource_links         = resource_provider["links"]
+
+          resource_links.each do |resource_link|
+            available = false
+            if resource_link["rel"] == "inventories"
+              # check that hypervisors for big vms are available
+              available = cloud_admin.resources.big_vm_available(resource_provider_uuid)
+              if available == true
+                inventory_data = cloud_admin.resources.get_resource_provider_inventory(parent_provider_uuid)
+                if inventory_data && inventory_data.key?("MEMORY_MB")
+                  big_vm_resources[resource_provider_name]["memory"] = (inventory_data["MEMORY_MB"]["max_unit"].to_f / 1024 / 1024).round.to_s
+                else
+                  next
+                end
+              end
+            end
+          end
+        end
+      end
+
+      # big_vm_resources
+      #{
+      #  "nova-compute-bb94"=>
+      #  {"shard"=>"vc-b-0",
+      #   "availability_zone"=>"qa-de-1b",
+      #   "memory"=>"1.9"},
+      # "nova-compute-bb92"=>
+      #  {"shard"=>"vc-a-0",
+      #   "availability_zone"=>"qa-de-1a",
+      #   "memory"=>"1.9"}
+      #}
+
+      # massage data for better use
+      big_vms_by_az = {}
+      big_vm_resources.each do |key,value|
+        big_vms_by_az[value["availability_zone"]] ||= {} 
+        big_vms_by_az[value["availability_zone"]][value["memory"]] ||= [] 
+        big_vms_by_az[value["availability_zone"]][value["memory"]] << key
+      end
+
+      # fake data for debug
+      #big_vms_by_az["qa-de-1b"]["1.9"] << "BB-bla"
+      #big_vms_by_az["qa-de-1a"]["6"] = []
+      #big_vms_by_az["qa-de-1a"]["6"] << "BB-bla"
+      #big_vms_by_az["qa-de-1b"]["6"] = []
+      #big_vms_by_az["qa-de-1b"]["6"] << "BB-bla"
+      #big_vms_by_az["qa-de-1a"]["3"] = []
+      #big_vms_by_az["qa-de-1a"]["3"] << "BB-bla"
+
+      return big_vms_by_az
     end
 
   end
