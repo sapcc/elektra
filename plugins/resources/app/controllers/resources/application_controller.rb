@@ -86,10 +86,14 @@ module Resources
         castellum_api: current_user.service_url('castellum'), # see also init.js -> configureCastellumAjaxHelper
         placement_api: current_user.service_url('placement'),
         flavor_data:   fetch_baremetal_flavor_data,
-        big_vm_resources: fetch_big_vm_data,
         docs_url:      sap_url_for('documentation'),
         cluster_id:    params[:cluster_id] || 'current',
       } # this will end in widget.config.scriptParams on JS side
+
+      big_vm_resources = fetch_big_vm_data()
+      if big_vm_resources
+        @js_data[:big_vm_resources] = big_vm_resources
+      end
 
       # when this is true, the frontend will never try to generate quota requests
       @js_data[:is_foreign_scope] = (params[:override_project_id] || params[:override_domain_id] || (@js_data[:cluster_id] != 'current')) ? true : false
@@ -145,6 +149,11 @@ module Resources
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
       project =  services.identity.find_project!(@scoped_project_id) 
+      
+      # on domain level we have no project
+      if project.nil?
+        return nil
+      end
       project_shards = project.shards
  
       # build mapping between AV(availability_zone) or VZ(shard) and host_aggregates.name
