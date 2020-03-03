@@ -90,6 +90,7 @@ module Resources
         cluster_id:    params[:cluster_id] || 'current',
       } # this will end in widget.config.scriptParams on JS side
 
+      # bigvm resources only for project available 
       big_vm_resources = fetch_big_vm_data()
       if big_vm_resources
         @js_data[:big_vm_resources] = big_vm_resources
