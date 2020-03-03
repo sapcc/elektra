@@ -3,10 +3,12 @@ import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import CreatableSelect from 'react-select/creatable';
 import { ajaxHelper } from 'ajax_helper';
+import { useDispatch } from '../StateProvider'
 
 
 const NewLoadbalancer = (props) => {
-
+  const dispatch = useDispatch()
+  
   const [privateNetworks, setPrivateNetworks] = useState({
     isLoading: false,
     error: null,
@@ -50,31 +52,26 @@ const NewLoadbalancer = (props) => {
   /*
   * Form stuff
   */
- const [formSubmitting,setFormSubmitting] = useState(false)
- const [formErrors,setFormErrors] = useState(null)
- const [formSuccess,setFormSuccess] = useState(false)
-
+  const [formErrors,setFormErrors] = useState(null)
   const validate = ({name,description,vip_subnet_id,vip_address,tags}) => {
     return name && vip_subnet_id && true
   }
 
-  const onSubmit = (values) => {
-    // collect the tags extra
-    const tags = tagEditorValue.map( (value, index) => value.value )
-    // copy tags to the values of the form
-    values = {...values, tags: tags}    
-    setFormSubmitting(true)
-    setFormSuccess(false)
-    ajaxHelper.post('/loadbalancers/', { loadbalancer: values })
-    .then((response) => { 
-      dispatch(receiveVolume(response.data)) 
-      setFormSuccess(true)})
-    .catch((error) => {
-      setFormErrors(errorMessage(error))
-    })
-    .finally(() => {
-      setFormSubmitting(false)
-    })
+  const onSubmit = (values) => {    
+    return new Promise((handleSuccess,handleErrors) => {
+      // collect the tags extra
+      const tags = tagEditorValue.map( (value, index) => value.value )
+      // copy tags to the values of the form
+      values = {...values, tags: tags}    
+      setFormErrors(null)
+      ajaxHelper.post('/loadbalancers/', { loadbalancer: values }).then((response) => {
+        dispatch(receiveVolume(response.data))
+        handleSuccess()
+      }).catch(error => {
+        setFormErrors(errorMessage(error))
+        handleErrors(error)
+      })
+    }).then(() => close())
   }
 
   const initialValues = {}
@@ -152,9 +149,10 @@ const NewLoadbalancer = (props) => {
                       name='vip_subnet_id'>
                       <option></option>
                       {privateNetworks.items.map((pn,index) =>
-                        <option value={pn.id} key={index}>
-                          {pn.name}
-                        </option>
+                        pn.subnet[0] &&
+                          <option value={pn.subnet[0].id} key={index}>
+                            {pn.name} ({pn.subnet[0].cidr})
+                          </option>                        
                       )}
                     </Form.Input>
                   </React.Fragment>
@@ -172,7 +170,6 @@ const NewLoadbalancer = (props) => {
               </span>
             </Form.ElementHorizontal>
             <Form.ElementHorizontal label='Tags' name="tags">
-              {/* <Form.Input elementType='input' type='text' name='tags' className="js-node-input-tags" /> */}
               <CreatableSelect
                 components={components}
                 inputValue={tagEditorInputValue}
@@ -190,6 +187,7 @@ const NewLoadbalancer = (props) => {
                 Start a new tag typing a string and hitting the Enter or Tab key.
               </span>
             </Form.ElementHorizontal>
+
           </Modal.Body>
           <Modal.Footer>  
             <Button onClick={close}>Cancel</Button>

@@ -33,12 +33,16 @@ module Lbaas2
     end
 
     def private_networks
+      # get project networks
       private_networks = services.networking.project_networks(
         @scoped_project_id
       ).delete_if { |n| n.attributes['router:external'] == true }
-      render json: {
-        private_networks: private_networks
-      }
+
+      # collect subnet objects to display the subnets with ip range of the project
+      private_networks.each do |pn|
+        pn.subnet = pn.subnet_objects
+      end
+      render json: { private_networks: private_networks }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
@@ -79,7 +83,7 @@ module Lbaas2
       lbs.each do |lb|
         # fips
         lb.floating_ip = fips.select{|fip| fip.port_id == lb.vip_port_id}.first
-        # subnet
+        # get subnet from cache if exists
         unless lb.vip_subnet_id.blank?
           lb.subnet_from_cache true
           lb.subnet = services.networking.cached_subnet(lb.vip_subnet_id)
