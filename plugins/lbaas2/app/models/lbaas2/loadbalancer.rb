@@ -54,14 +54,13 @@ module Lbaas2
             keywords[w.to_s] = m
           end
         end
-
         if keywords.keys.count == 1
           # 1 key was found
           keywords.keys.each do |key|
             errors.add(key.to_s, keywords[key])                     
           end   
         else
-          # no key or more than 1 key was found
+          # no key or more than 1 key was found in the sentence
           errors.add(apiKey.to_s, m) unless m.blank?
           apiErrorCount += 1
         end
