@@ -251,29 +251,25 @@ module Resources
       #  "nova-compute-bb94"=>
       #  {"shard"=>"vc-b-0",
       #   "availability_zone"=>"qa-de-1b",
-      #   "memory"=>"1.9"},
+      #   "memory"=>"2"},
       # "nova-compute-bb92"=>
       #  {"shard"=>"vc-a-0",
       #   "availability_zone"=>"qa-de-1a",
-      #   "memory"=>"1.9"}
+      #   "memory"=>"2"}
       #}
 
       # massage data for better use
       big_vms_by_az = {}
       big_vm_resources.each do |key,value|
         big_vms_by_az[value["availability_zone"]] ||= {} 
-        big_vms_by_az[value["availability_zone"]][value["memory"]] ||= [] 
-        big_vms_by_az[value["availability_zone"]][value["memory"]] << key
+        # there is only one HV per az and memory size
+        big_vms_by_az[value["availability_zone"]][value["memory"]] = key
       end
 
       # fake data for debug
-      #big_vms_by_az["qa-de-1b"]["1.9"] << "BB-bla"
-      #big_vms_by_az["qa-de-1a"]["6"] = []
-      #big_vms_by_az["qa-de-1a"]["6"] << "BB-bla"
-      #big_vms_by_az["qa-de-1b"]["6"] = []
-      #big_vms_by_az["qa-de-1b"]["6"] << "BB-bla"
-      #big_vms_by_az["qa-de-1a"]["3"] = []
-      #big_vms_by_az["qa-de-1a"]["3"] << "BB-bla"
+      #big_vms_by_az["qa-de-1a"]["6"] = "BB-bla"
+      #big_vms_by_az["qa-de-1b"]["6"] = "BB-bla"
+      #big_vms_by_az["qa-de-1b"]["3"] = "BB-bla"
 
       return big_vms_by_az
     end
