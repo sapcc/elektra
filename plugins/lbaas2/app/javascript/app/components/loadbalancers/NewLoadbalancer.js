@@ -19,10 +19,17 @@ const NewLoadbalancer = (props) => {
       setPrivateNetworks({...privateNetworks, isLoading:false, items: response.data.private_networks, error: null})
     })
     .catch( (error) => {      
-      const errorMessage = error.response && error.response.data && error.response.data.errors || error.message
-      setPrivateNetworks({...privateNetworks, isLoading:false, error: errorMessage})
+      setPrivateNetworks({...privateNetworks, isLoading:false, error: errorMessage(error)})
     })
   }, []);
+
+  const errorMessage = (error) => {
+    if (error.response && error.response.data && error.response.data.errors && Object.keys(error.response.data.errors).length) {
+      return error.response.data.errors
+    } else {
+      return error.message
+    }
+  }
 
   /*
   * Modal stuff
@@ -43,24 +50,31 @@ const NewLoadbalancer = (props) => {
   /*
   * Form stuff
   */
+ const [formSubmitting,setFormSubmitting] = useState(false)
+ const [formErrors,setFormErrors] = useState(null)
+ const [formSuccess,setFormSuccess] = useState(false)
+
   const validate = ({name,description,vip_subnet_id,vip_address,tags}) => {
-    console.log("validating-->", name, "-", vip_subnet_id, "-", name && vip_subnet_id && true)
-    return true
+    return name && vip_subnet_id && true
   }
 
-  const onSubmit = (values) =>{
-    // collect data
-
-    console.group("New loadbalancer-->", values)
-
-    // ajaxHelper.post('/loadbalancers/', { volume: values }
-    // ).then((response) => {
-    //   dispatch(receiveVolume(response.data))
-    //   handleSuccess()
-    //   addNotice('Volume is being created.')
-    // }).catch(error => handleErrors({errors: errorMessage(error)}))
-
-      return false
+  const onSubmit = (values) => {
+    // collect the tags extra
+    const tags = tagEditorValue.map( (value, index) => value.value )
+    // copy tags to the values of the form
+    values = {...values, tags: tags}    
+    setFormSubmitting(true)
+    setFormSuccess(false)
+    ajaxHelper.post('/loadbalancers/', { loadbalancer: values })
+    .then((response) => { 
+      dispatch(receiveVolume(response.data)) 
+      setFormSuccess(true)})
+    .catch((error) => {
+      setFormErrors(errorMessage(error))
+    })
+    .finally(() => {
+      setFormSubmitting(false)
+    })
   }
 
   const initialValues = {}
@@ -72,9 +86,6 @@ const NewLoadbalancer = (props) => {
     DropdownIndicator: null,
   };
   const createOption = (label) => {
-    console.group('createOption');
-    console.log(label);
-    console.groupEnd();
     return {
       label,
       value: label,
@@ -108,19 +119,19 @@ const NewLoadbalancer = (props) => {
       backdrop='static'
       onExited={restoreUrl}
       aria-labelledby="contained-modal-title-lg">
-      <Modal.Body>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">New Load Balancer</Modal.Title>
         </Modal.Header>
-        
-        <Modal.Body>
-          <p>The Load Balancer object defines the internal IP address under which all associated listeners can be reached. For external access a Floating IP can be attached to the Load Balancer.</p>
-          <Form
-            className='form form-horizontal'
-            validate={validate}
-            onSubmit={onSubmit}
-            initialValues={initialValues}>
-            <Form.Errors/>
+
+        <Form
+          className='form form-horizontal'
+          validate={validate}
+          onSubmit={onSubmit}
+          initialValues={initialValues}>
+
+          <Modal.Body>
+            <p>The Load Balancer object defines the internal IP address under which all associated listeners can be reached. For external access a Floating IP can be attached to the Load Balancer.</p>
+            <Form.Errors errors={formErrors}/>
             <Form.ElementHorizontal label='Name' name="name" required>
               <Form.Input elementType='input' type='text' name='name'/>
             </Form.ElementHorizontal>
@@ -135,17 +146,17 @@ const NewLoadbalancer = (props) => {
                   <span className='text-danger'>{privateNetworks.error}</span>
                   :
                   <React.Fragment>
-                  <Form.Input
-                    elementType='select'
-                    className="select required form-control"
-                    name='vip_subnet_id'>
-                    <option></option>
-                    {privateNetworks.items.map((pn,index) =>
-                      <option value={pn.id} key={index}>
-                        {pn.name}
-                      </option>
-                    )}
-                  </Form.Input>
+                    <Form.Input
+                      elementType='select'
+                      className="select required form-control"
+                      name='vip_subnet_id'>
+                      <option></option>
+                      {privateNetworks.items.map((pn,index) =>
+                        <option value={pn.id} key={index}>
+                          {pn.name}
+                        </option>
+                      )}
+                    </Form.Input>
                   </React.Fragment>
               }
               <span className="help-block">
@@ -176,18 +187,16 @@ const NewLoadbalancer = (props) => {
               />
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
-                Start a new tag typing a string and hitting the Enter or Tab key. You can also copy and paste a string containing tags following this pattern: 'value1;value2...'
+                Start a new tag typing a string and hitting the Enter or Tab key.
               </span>
             </Form.ElementHorizontal>
-          </Form>
+          </Modal.Body>
+          <Modal.Footer>  
+            <Button onClick={close}>Cancel</Button>
+            <Form.SubmitButton label='Save'/>
+          </Modal.Footer>
 
-        </Modal.Body>        
-
-        <Modal.Footer>  
-          <Button onClick={close}>Cancel</Button>
-          <Form.SubmitButton label='Save'/>
-        </Modal.Footer>
-      </Modal.Body>
+        </Form>            
     </Modal>
    );
 }

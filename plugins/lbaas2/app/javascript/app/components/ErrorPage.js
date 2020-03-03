@@ -41,12 +41,14 @@ const ErrorPage = ({error, headTitle}) => {
             <div className="col-md-10">
               <h1>LBaaS - {headTitle}</h1>
               <p><b>{httpStatus()}</b> {title()}</p>
-              <p>{description()}</p>
-              <Button bsStyle="link" className="details-link" onClick={handleDetails} >Details</Button>
-              {showDetails &&
-                <pre>
-                  <code>{details()}</code>
-                </pre>
+              <p>{description()}</p>              
+              {showDetails && details() &&
+                <React.Fragment>
+                  <Button bsStyle="link" className="details-link" onClick={handleDetails} >Details</Button>
+                  <pre>
+                    <code>{details()}</code>
+                  </pre>
+                </React.Fragment>
               }
             </div>
           </div>

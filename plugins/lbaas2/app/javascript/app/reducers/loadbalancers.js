@@ -8,9 +8,9 @@ const initialState = {
   error: null
 }
 
-const request = (state) => ({...state, isLoading: true, error: null})
+const requestLoadbalancers = (state) => ({...state, isLoading: true, error: null})
 
-const receive = (state,{items,hasNext}) => {
+const receiveLoadbalancers = (state,{items,hasNext}) => {
   let newItems = (state.items.slice() || []).concat(items);
   // filter duplicated items
   newItems = newItems.filter( (item, pos, arr) =>
@@ -26,20 +26,30 @@ const receive = (state,{items,hasNext}) => {
     updatedAt: Date.now()}
 }
 
-const requestFailure = (state, {error}) => { 
+const requestLoadbalancersFailure = (state, {error}) => { 
   console.log("request failure -->", error)
   const err = error.response || error
   return {...state, isLoading: false, error: err}
 }
 
+const receiveLoadbalancer = (state, {loadbalancer}) => {
+  const index = state.items.findIndex((item) => item.id==loadbalancer.id);
+  const items = state.items.slice();
+  // update or add loadbalancer
+  if (index>=0) { items[index]=loadbalancer; } else { items.push(loadbalancer); }
+  return {... state, items: items}
+}
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case 'REQUEST_LOADBALANCERS':
-      return request(state,action)
+      return requestLoadbalancers(state,action)
     case 'RECEIVE_LOADBALANCERS':
-      return receive(state,action)      
+      return receiveLoadbalancers(state,action)      
     case 'REQUEST_LOADBALANCERS_FAILURE':
-      return requestFailure(state,action)
+      return requestLoadbalancersFailure(state,action)
+    case 'RECEIVE_LOADBALANCER':
+      return receiveLoadbalancer(state,action)  
     default:
       return state
   }

@@ -7,7 +7,7 @@ module Lbaas2
       per_page = (params[:per_page] || 20).to_i
       pagination_options = { sort_key: 'name', sort_dir: 'asc', limit: per_page + 1 }
       pagination_options[:marker] = params[:marker] if params[:marker]
-      loadbalancers = services.lbaas.loadbalancers({ project_id: @scoped_project_id}.merge(pagination_options))
+      loadbalancers = services.lbaas2.loadbalancers({ project_id: @scoped_project_id}.merge(pagination_options))
 
       extend_lb_data(loadbalancers)
 
@@ -20,9 +20,9 @@ module Lbaas2
     rescue Exception => e
       render json: { errors: e.message }, status: "500"
     end
-
+    
     def status_tree
-      statuses = services.lbaas.loadbalancer_statuses(params[:id])
+      statuses = services.lbaas2.loadbalancer_statuses(params[:id])
       render json: {
         statuses: statuses
       }
@@ -44,6 +44,30 @@ module Lbaas2
     rescue Exception => e
       render json: { errors: e.message }, status: "500"
     end    
+
+    def create
+      lbParams = params[:loadbalancer].merge(project_id: @scoped_project_id)
+
+      puts "------------------------------------------"
+      puts lbParams
+      puts "------------------------------------------"
+
+      loadbalancer = services.lbaas2.new_loadbalancer(lbParams)
+
+      if loadbalancer.save
+        audit_logger.info(current_user, 'has created', loadbalancer)
+        render json: loadbalancer
+      else        
+        puts "-------------loadbalancer.errors.inspect-----------------"
+        puts loadbalancer.errors.inspect
+        puts "------------------------------------------"
+        render json: {errors: loadbalancer.errors}, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
 
     protected
 

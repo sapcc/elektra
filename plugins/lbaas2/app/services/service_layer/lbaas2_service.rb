@@ -9,8 +9,8 @@ module ServiceLayer
       elektron.service?('octavia')
     end
 
-    def elektron_lb
-      @elektron_lb ||= elektron.service('octavia', path_prefix: '/v2.0/lbaas')
+    def elektron_lb2
+      @elektron_lb2 ||= elektron.service('octavia', path_prefix: '/v2.0/lbaas')
     end
   end
 end
