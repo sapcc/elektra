@@ -41,7 +41,9 @@ module Lbaas2
     private
 
     def persist!()
-      service.create_loadbalancer(attributes_for_create)
+      newLB = service.create_loadbalancer(attributes_for_create)
+      # update self with the new loadbalancer
+      self.update_attributes(newLB)
       true
     rescue ::Elektron::Errors::ApiResponse => e
       apiErrorCount = 0

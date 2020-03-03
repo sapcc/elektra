@@ -8,7 +8,7 @@ import { useDispatch } from '../StateProvider'
 
 const NewLoadbalancer = (props) => {
   const dispatch = useDispatch()
-  
+
   const [privateNetworks, setPrivateNetworks] = useState({
     isLoading: false,
     error: null,
@@ -65,7 +65,7 @@ const NewLoadbalancer = (props) => {
       values = {...values, tags: tags}    
       setFormErrors(null)
       ajaxHelper.post('/loadbalancers/', { loadbalancer: values }).then((response) => {
-        dispatch(receiveVolume(response.data))
+        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})
         handleSuccess()
       }).catch(error => {
         setFormErrors(errorMessage(error))

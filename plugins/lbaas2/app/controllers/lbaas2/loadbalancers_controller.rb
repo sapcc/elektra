@@ -51,20 +51,13 @@ module Lbaas2
 
     def create
       lbParams = params[:loadbalancer].merge(project_id: @scoped_project_id)
-
-      puts "------------------------------------------"
-      puts lbParams
-      puts "------------------------------------------"
-
       loadbalancer = services.lbaas2.new_loadbalancer(lbParams)
-
       if loadbalancer.save
         audit_logger.info(current_user, 'has created', loadbalancer)
+        # extend lb data with chached data
+        extend_lb_data([loadbalancer])
         render json: loadbalancer
-      else        
-        puts "-------------loadbalancer.errors.inspect-----------------"
-        puts loadbalancer.errors.inspect
-        puts "------------------------------------------"
+      else
         render json: {errors: loadbalancer.errors}, status: 422
       end
     rescue Elektron::Errors::ApiResponse => e
@@ -94,6 +87,7 @@ module Lbaas2
         end
 
         # get cached listeners
+        lb.listeners = [] if lb.listeners.blank?
         unless lb.listeners.blank?
           lb.cached_listeners = ObjectCache.where(id: lb.listeners.map{|l| l[:id]}).each_with_object({}) do |l,map|
             map[l[:id]] = l
@@ -101,6 +95,7 @@ module Lbaas2
         end
 
         # get cached pools
+        lb.pools = [] if lb.pools.blank?
         unless lb.pools.blank?
           lb.cached_pools = ObjectCache.where(id: lb.pools.map{|p| p[:id]}).each_with_object({}) do |p,map|
             map[p[:id]] = p

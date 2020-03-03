@@ -16,6 +16,10 @@ const receiveLoadbalancers = (state,{items,hasNext}) => {
   newItems = newItems.filter( (item, pos, arr) =>
     arr.findIndex(i => i.id == item.id)==pos
   );
+  // create marker before sorting just in case there is any difference
+  const marker = items[items.length-1]
+  // sort
+  newItems = newItems.sort((a, b) => a.name.localeCompare(b.name))
 
   return {...state, 
     isLoading: false, 
@@ -34,9 +38,11 @@ const requestLoadbalancersFailure = (state, {error}) => {
 
 const receiveLoadbalancer = (state, {loadbalancer}) => {
   const index = state.items.findIndex((item) => item.id==loadbalancer.id);
-  const items = state.items.slice();
+  let items = state.items.slice();
   // update or add loadbalancer
   if (index>=0) { items[index]=loadbalancer; } else { items.push(loadbalancer); }
+  // sort
+  items = items.sort((a, b) => a.name.localeCompare(b.name))
   return {... state, items: items}
 }
 
