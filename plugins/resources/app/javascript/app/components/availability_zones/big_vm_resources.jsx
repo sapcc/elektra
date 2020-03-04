@@ -1,11 +1,11 @@
 import ResourceName from "../resource_name";
 import ResourceBar from "../resource_bar";
 
-const AvailableBigVmResources = ({ data }) => {
-  const availabilityZones = Object.keys(data).sort();
+const AvailableBigVmResources = ({ bigVmResources }) => {
+  const availabilityZones = Object.keys(bigVmResources).sort();
   const hv_sizes = {};
-  Object.keys(data).map(az =>
-    Object.keys(data[az]).map(memory_size => (hv_sizes[memory_size] = "#"))
+  Object.keys(bigVmResources).map(az =>
+    Object.keys(bigVmResources[az]).map(memory_size => (hv_sizes[memory_size] = "#"))
   );
   const azColumnWidth = Math.floor(10 / availabilityZones.length);
 
@@ -45,7 +45,7 @@ const AvailableBigVmResources = ({ data }) => {
                   className={`col-md-${azColumnWidth}`}
                 >
                   <ResourceBar
-                    capacity={get_available_hvs(data[az][memory_size])}
+                    capacity={get_available_hvs(bigVmResources[az][memory_size])}
                     fill={0}
                     labelOverride="Available"
                     showsCapacity={true}
@@ -58,12 +58,7 @@ const AvailableBigVmResources = ({ data }) => {
     );
   } else {
     return (
-      <React.Fragment>
-        <h3>Available BigVM Resources</h3>
-        <div className="bs-callout bs-callout-info bs-callout-emphasize">
-          At the moment no resources for this project are available...
-        </div>
-      </React.Fragment>
+      <React.Fragment></React.Fragment>
     );
   }
 };
