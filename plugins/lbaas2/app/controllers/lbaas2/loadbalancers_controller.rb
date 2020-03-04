@@ -88,18 +88,14 @@ module Lbaas2
 
         # get cached listeners
         lb.listeners = [] if lb.listeners.blank?
-        unless lb.listeners.blank?
-          lb.cached_listeners = ObjectCache.where(id: lb.listeners.map{|l| l[:id]}).each_with_object({}) do |l,map|
-            map[l[:id]] = l
-          end
+        lb.cached_listeners = ObjectCache.where(id: lb.listeners.map{|l| l[:id]}).each_with_object({}) do |l,map|
+          map[l[:id]] = l
         end
 
         # get cached pools
         lb.pools = [] if lb.pools.blank?
-        unless lb.pools.blank?
-          lb.cached_pools = ObjectCache.where(id: lb.pools.map{|p| p[:id]}).each_with_object({}) do |p,map|
-            map[p[:id]] = p
-          end
+        lb.cached_pools = ObjectCache.where(id: lb.pools.map{|p| p[:id]}).each_with_object({}) do |p,map|
+          map[p[:id]] = p
         end
 
       end

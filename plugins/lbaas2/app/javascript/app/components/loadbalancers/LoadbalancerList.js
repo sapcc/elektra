@@ -12,17 +12,32 @@ const LoadbalancerList = () => {
   const loadbalancers = state.items
   const error = state.error
   const isLoading = state.isLoading
+  const hasNext = state.hasNext
 
   useEffect(() => {
-    console.log('fetch initial loadbalancers')
+    console.log('FETCH initial loadbalancers')
+    fetchLoadbalancers()
+  }, []);
+
+  const fetchLoadbalancers = () => {
+    const marker = state.marker
+    const params = {}
+    if(marker) params['marker'] = marker.id
+
     dispatch({type: 'REQUEST_LOADBALANCERS', requestedAt: Date.now()})
-    ajaxHelper.get(`/loadbalancers`).then((response) => {
+    ajaxHelper.get(`/loadbalancers`, {params: params }).then((response) => {
       dispatch({type: 'RECEIVE_LOADBALANCERS', items: response.data.loadbalancers, hasNext: response.data.has_next})
     })
     .catch( (error) => {
       dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error})
     })
-  }, []);
+  }
+
+  const loadNext = event => {
+    if(!isLoading && hasNext) {
+      fetchLoadbalancers()
+    }
+  }
 
   return useMemo(() => {
     console.log("RENDER loadbalancer list")
@@ -73,6 +88,20 @@ const LoadbalancerList = () => {
                 }
               </tbody>
             </table>
+            
+            {loadbalancers.length > 0 &&
+              <div className='ajax-paginate'>
+                { isLoading ?
+                  <div className='main-buttons'><span className="spinner"></span> Loading...</div>
+                  :
+                  (hasNext &&
+                    <div className='main-buttons'>
+                    <button className='btn btn-primary btn-sm' onClick={loadNext}>Load Next</button>
+                    </div>
+                  )
+                }
+              </div>
+            }
           </React.Fragment>
         }
 

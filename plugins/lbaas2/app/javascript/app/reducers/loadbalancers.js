@@ -26,7 +26,7 @@ const receiveLoadbalancers = (state,{items,hasNext}) => {
     items: newItems, 
     error: null,
     hasNext,
-    marker: items[items.length-1],
+    marker: marker,
     updatedAt: Date.now()}
 }
 
