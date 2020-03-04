@@ -47,6 +47,9 @@ export default class RBACPoliciesEditModal extends React.Component {
   setPermissions = (idx, input) => {
     const policies = [ ...this.state.policies ];
     policies[idx] = { ...policies[idx], permissions: input.split(',') };
+    if (input == 'anonymous_pull') {
+      policies[idx].match_username = '';
+    }
     this.setState({ ...this.state, policies });
   }
   removePolicy = (idx, input) => {
@@ -104,42 +107,45 @@ export default class RBACPoliciesEditModal extends React.Component {
         </Modal.Header>
 
         <Modal.Body>
-          <React.Fragment>
-            {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
-            <table className='table'>
-              <thead>
+          {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
+          <p className='bs-callout bs-callout-info bs-callout-emphasize'>
+            By default, all users with the <code>registry_admin</code> role can pull, push and delete images. And all users with the <code>registry_viewer</code> role can pull images.
+            <br/><br/>
+            Access policies are more granular: You can give specific users access to specific repositories within a single account if you want to. You can also use access policies to enable anonymous pulling, thereby making matching repositories publicly readable.
+          </p>
+          <table className='table'>
+            <thead>
+              <tr>
+                <th className='col-md-4'>Repositories matching</th>
+                <th className='col-md-4'>User names matching</th>
+                <th className='col-md-3'>Permissions</th>
+                <th className='col-md-1'>
+                  {isAdmin && (
+                    <button className='btn btn-sm btn-default' onClick={this.addPolicy}>
+                      Add policy
+                    </button>
+                  )}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {policies.map((policy, idx) => (
+                <RBACPoliciesEditRow {...commonPropsForRow}
+                  key={idx} index={idx} policy={policy}
+                />
+              ))}
+              { policies.length == 0 && (
                 <tr>
-                  <th className='col-md-4'>Repositories matching</th>
-                  <th className='col-md-4'>User names matching</th>
-                  <th className='col-md-3'>Permissions</th>
-                  <th className='col-md-1'>
-                    {isAdmin && (
-                      <button className='btn btn-sm btn-default' onClick={this.addPolicy}>
-                        Add policy
-                      </button>
-                    )}
-                  </th>
+                  <td colSpan='4' className='text-muted text-center'>No entries</td>
                 </tr>
-              </thead>
-              <tbody>
-                {policies.map((policy, idx) => (
-                  <RBACPoliciesEditRow {...commonPropsForRow}
-                    key={idx} index={idx} policy={policy}
-                  />
-                ))}
-                { policies.length == 0 && (
-                  <tr>
-                    <td colSpan='4' className='text-muted text-center'>No entries</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            {policies.length > 0 && (
-              <p>
-                Matches use the <a href='https://golang.org/pkg/regexp/syntax/'>Go regex syntax</a>. Leading <code>^</code> and trailing <code>$</code> anchors are always added automatically. User names are in the format <code>user@userdomain/project@projectdomain</code>.
-              </p>
-            )}
-          </React.Fragment>
+              )}
+            </tbody>
+          </table>
+          {policies.length > 0 && (
+            <p>
+              Matches use the <a href='https://golang.org/pkg/regexp/syntax/'>Go regex syntax</a>. Leading <code>^</code> and trailing <code>$</code> anchors are always added automatically. User names are in the format <code>user@userdomain/project@projectdomain</code>.
+            </p>
+          )}
         </Modal.Body>
 
         <Modal.Footer>

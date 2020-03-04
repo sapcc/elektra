@@ -49,8 +49,8 @@ export const fetchAccountsIfNeeded = () => (dispatch, getState) => {
 
 export const putAccount = account => dispatch => {
   //request body contains account minus name
-  const { name, auth_tenant_id, rbac_policies } = account;
-  const requestBody = { account: { auth_tenant_id, rbac_policies } };
+  const { name, ...accountConfig } = account;
+  const requestBody = { account: accountConfig };
 
   return new Promise((resolve, reject) =>
     ajaxHelper.put(`/keppel/v1/accounts/${name}`, requestBody)
@@ -64,6 +64,37 @@ export const putAccount = account => dispatch => {
       })
       .catch(error => reject({ errors: errorMessage(error) }))
   );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// get/set peers
+
+export const fetchPeers = () => dispatch => {
+  dispatch({
+    type: constants.REQUEST_PEERS,
+    requestedAt: Date.now(),
+  });
+
+  return ajaxHelper.get('/keppel/v1/peers')
+    .then(response => {
+      dispatch({
+        type: constants.RECEIVE_PEERS,
+        data: response.data.peers,
+        receivedAt: Date.now(),
+      });
+    })
+    .catch(error => {
+      dispatch({ type: constants.REQUEST_PEERS_FAILURE });
+      showError(error);
+    });
+};
+
+export const fetchPeersIfNeeded = () => (dispatch, getState) => {
+  const state = getState().keppel.peers;
+  if (state.isFetching || state.requestedAt) {
+    return;
+  }
+  return dispatch(fetchPeers());
 };
 
 ////////////////////////////////////////////////////////////////////////////////

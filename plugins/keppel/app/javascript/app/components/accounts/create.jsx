@@ -2,24 +2,67 @@ import { useContext } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 
-const initialValues = { name: '' };
+const initialValues = { name: '', role: 'primary', peer: '' };
 
-const BackingStoreInfo = (props) => {
-  const context = useContext(Form.Context);
-  const accountName = context.formValues.name || '';
-  if (!accountName) {
-    return <p className='form-control-static text-muted'>Depends on name</p>;
-  }
-
-  const containerName = `keppel-${accountName}`;
-  return (
-    <p className='form-control-static'>
-      Swift container <strong>{containerName}</strong><br/>
-      <span className='text-muted'>The container will be created if it does not exist yet. Please ensure that you have sufficient object storage quota.</span>
-    </p>
-  );
+const roleInfoTexts = {
+  'primary': "You can push images into this account, and accounts in other regions can replicate from this account.",
+  'replica': "This account replicates images from a primary account in a different region with the same name. You cannot push images into this account directly. Images are replicated on first use, when a client first tries to pull them.",
 };
 
+const FormBody = ({ values, peerHostNames }) => {
+  const accountName  = values.name || '';
+  const roleInfoText = roleInfoTexts[values.role || ''];
+
+  return (
+    <Modal.Body>
+      <Form.Errors/>
+
+      <Form.ElementHorizontal label='Name' name='name' required>
+        <Form.Input elementType='input' type='text' name='name' />
+      </Form.ElementHorizontal>
+
+      <Form.ElementHorizontal label='Backing storage' name='backing_storage'>
+        { accountName ? (
+          <p className='form-control-static'>
+            Swift container <strong>keppel-{accountName}</strong><br/>
+            <span className='text-muted'>The container will be created if it does not exist yet. Please ensure that you have sufficient object storage quota.</span>
+          </p>
+        ) : (
+          <p className='form-control-static text-muted'>Depends on name</p>
+        )}
+      </Form.ElementHorizontal>
+
+      <Form.ElementHorizontal label='Role' name='role' required>
+        <Form.Input elementType='select' name='role'>
+          <option value='primary'>Primary account</option>
+          <option value='replica'>Replica</option>
+        </Form.Input>
+        {roleInfoText && <p className='form-control-static'>{roleInfoText}</p>}
+      </Form.ElementHorizontal>
+
+      {values.role == "replica" && (
+        <Form.ElementHorizontal label='Upstream registry' name='peer' required>
+          <Form.Input elementType='select' name='peer'>
+            <option></option>
+            {peerHostNames.map(hostname => <option key={hostname} value={hostname}>{hostname}</option>)}
+          </Form.Input>
+          {values.peer && values.name && (
+            <p className='form-control-static'>
+              This account will replicate from <strong>{values.peer}/{values.name}</strong>.
+            </p>
+          )}
+        </Form.ElementHorizontal>
+      )}
+
+      <Form.ElementHorizontal label='Advanced' name='advanced'>
+        <p className='form-control-static text-muted'>
+          You can set up access policies and validation rules once the account has been created.
+        </p>
+      </Form.ElementHorizontal>
+
+    </Modal.Body>
+  );
+};
 
 export default class AccountCreateModal extends React.Component {
   state = {
@@ -32,11 +75,14 @@ export default class AccountCreateModal extends React.Component {
     setTimeout(() => this.props.history.replace('/accounts'), 300);
   };
 
-  validate = ({name}) => {
+  validate = ({name, role, peer}) => {
+    if (role == 'replica' && !peer) {
+      return false;
+    }
     return name && true;
   };
 
-  onSubmit = ({name}) => {
+  onSubmit = ({name, role, peer}) => {
     const invalidName = reason => Promise.reject({ errors: { name: reason } });
     if (/[^a-z0-9-]/.test(name)) {
       return invalidName("may only contain lowercase letters, digits and dashes");
@@ -49,6 +95,10 @@ export default class AccountCreateModal extends React.Component {
     }
 
     const newAccount = { name, auth_tenant_id: this.props.projectID };
+    if (role == 'replica') {
+      newAccount.replication = { strategy: 'on_first_use', upstream: peer };
+    }
+
     return this.props.putAccount(newAccount).then(() => this.close());
   };
 
@@ -66,16 +116,8 @@ export default class AccountCreateModal extends React.Component {
             validate={this.validate}
             onSubmit={this.onSubmit}
             initialValues={initialValues}>
-          <Modal.Body>
-            <Form.Errors/>
 
-            <Form.ElementHorizontal label='Name' name='name' required>
-              <Form.Input elementType='input' type='text' name='name' />
-            </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='Backing storage' name='backing_storage'>
-              <BackingStoreInfo/>
-            </Form.ElementHorizontal>
-          </Modal.Body>
+          <FormBody peerHostNames={this.props.peerHostNames} />
 
           <Modal.Footer>
             <Form.SubmitButton label='Create' />

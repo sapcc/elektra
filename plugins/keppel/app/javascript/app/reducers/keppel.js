@@ -7,6 +7,12 @@ const initialState = {
     receivedAt:  null,
     data:        null,
   },
+  peers: {
+    isFetching:  false,
+    requestedAt: null,
+    receivedAt:  null,
+    data:        null,
+  },
   repositoriesFor: {},
   manifestsFor: {},
 };
@@ -62,6 +68,35 @@ const updateAcct = (state, {account}) => ({
       ...(state.accounts.data.filter(a => a.name != account.name)),
       account,
     ],
+  },
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// peers
+
+const reqPeers = (state, {requestedAt}) => ({
+  ...state,
+  peers: {
+    ...initialState.peers,
+    isFetching: true,
+    requestedAt,
+  },
+});
+
+const reqPeersFail = state => ({
+  ...state,
+  peers: {
+    ...state.peers,
+    isFetching: false,
+  },
+});
+
+const recvPeers = (state, {data, receivedAt}) => ({
+  ...state,
+  peers: {
+    ...state.peers,
+    isFetching: false,
+    data, receivedAt,
   },
 });
 
@@ -193,6 +228,9 @@ export const keppel = (state, action) => {
     case constants.REQUEST_ACCOUNTS_FAILURE: return reqAcctsFail(state);
     case constants.RECEIVE_ACCOUNTS:         return recvAccts(state, action);
     case constants.UPDATE_ACCOUNT:           return updateAcct(state, action);
+    case constants.REQUEST_PEERS:         return reqPeers(state, action);
+    case constants.REQUEST_PEERS_FAILURE: return reqPeersFail(state);
+    case constants.RECEIVE_PEERS:         return recvPeers(state, action);
     case constants.REQUEST_REPOSITORIES:          return reqRepos(state, action);
     case constants.REQUEST_REPOSITORIES_FAILURE:  return reqReposFail(state, action);
     case constants.RECEIVE_REPOSITORIES:          return recvRepos(state, action);

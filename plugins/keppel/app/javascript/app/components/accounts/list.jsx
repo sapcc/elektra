@@ -5,12 +5,15 @@ import { DataTable } from 'lib/components/datatable';
 import AccountRow from './row';
 
 const columns = [
-  { key: 'name', label: 'Account name', sortStrategy: 'text',
+  { key: 'name', label: 'Global account name', sortStrategy: 'text',
     sortKey: props => props.account.name || '' },
-  { key: 'storage', label: 'Backing storage', sortStrategy: 'text',
-    sortKey: props => props.account.name || '' },
+  { key: 'config', label: 'Configuration' },
   { key: 'actions', label: '' },
 ];
+
+const byName = (account1, account2) => {
+  return account1.name.localeCompare(account2.name);
+}
 
 export default class AccountList extends React.Component {
   render() {
@@ -24,7 +27,7 @@ export default class AccountList extends React.Component {
           </div>
         )}
         <DataTable columns={columns} pageSize={10}>
-          {this.props.accounts.map(account => (
+          {this.props.accounts.sort(byName).map(account => (
             <AccountRow key={account.name} account={account} />
           ))}
         </DataTable>

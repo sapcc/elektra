@@ -19,7 +19,7 @@ describe Keppel::ApplicationController, type: :controller do
 
   before :each do
     stub_authentication do |token|
-      token['roles'] << { 'id' => 'admin', 'name' => 'admin' }
+      token['roles'] << { 'id' => 'registry_admin', 'name' => 'registry_admin' }
       token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
       return token
     end

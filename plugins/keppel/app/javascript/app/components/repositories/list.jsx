@@ -19,7 +19,8 @@ const columns = [
 
 export default class RepositoryList extends React.Component {
   state = {
-    howtoVisible: false,
+    //either `true` or `false` when set by user, or `null` to apply default visibility rule (see below)
+    howtoVisible: null,
   };
 
   componentDidMount() {
@@ -40,7 +41,13 @@ export default class RepositoryList extends React.Component {
     }
     const { isFetching, data: repos } = this.props.repos;
 
-    const { howtoVisible } = this.state;
+    let howtoVisible = this.state.howtoVisible;
+    if (howtoVisible === null) {
+      //by default, unfold the howto if the account is empty (to make sure that
+      //new users see it, without cluttering the view for experienced users)
+      howtoVisible = repos instanceof Array && repos.length == 0;
+    }
+
     const showHowto = val => this.setHowtoVisible(true);
     const hideHowto = val => this.setHowtoVisible(false);
 
