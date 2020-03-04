@@ -8,11 +8,9 @@ import EditModal from '../../containers/edit';
 import ProjectSettingsModal from '../../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
-  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum } = props;
-  //const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum, bigVmResources } = props;
+  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum, bigVmResources } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId, projectID: projectId };
-  const rootProps = { flavorData, scopeData };
-  //const rootProps = { flavorData, scopeData, bigVmResources };
+  const rootProps = { flavorData, scopeData, bigVmResources };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
@@ -32,9 +30,9 @@ const routesForProjectLevel = (props) => {
 }
 
 const routesForDomainLevel = (props) => {
-  const { clusterId, domainId, flavorData, canEdit, isForeignScope, hasCastellum } = props;
+  const { clusterId, domainId, flavorData, canEdit, isForeignScope, hasCastellum, bigVmResources } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId };
-  const rootProps = { flavorData, scopeData };
+  const rootProps = { flavorData, scopeData, bigVmResources };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
@@ -52,9 +50,9 @@ const routesForDomainLevel = (props) => {
 }
 
 const routesForClusterLevel = (props) => {
-  const { clusterId, flavorData, canEdit, hasCastellum } = props;
+  const { clusterId, flavorData, canEdit, hasCastellum, bigVmResources } = props;
   const scopeData = { clusterID: clusterId };
-  const rootProps = { flavorData, scopeData };
+  const rootProps = { flavorData, scopeData, bigVmResources };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>

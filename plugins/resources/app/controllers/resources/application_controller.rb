@@ -81,19 +81,15 @@ module Resources
 
     def prepare_data_for_view
       @js_data = {
-        token:         current_user.token,
-        limes_api:     current_user.service_url('resources'), # see also init.js -> configureAjaxHelper
-        castellum_api: current_user.service_url('castellum'), # see also init.js -> configureCastellumAjaxHelper
-        placement_api: current_user.service_url('placement'),
-        flavor_data:   fetch_baremetal_flavor_data,
-        docs_url:      sap_url_for('documentation'),
-        cluster_id:    params[:cluster_id] || 'current',
+        token:            current_user.token,
+        limes_api:        current_user.service_url('resources'), # see also init.js -> configureAjaxHelper
+        castellum_api:    current_user.service_url('castellum'), # see also init.js -> configureCastellumAjaxHelper
+        placement_api:    current_user.service_url('placement'),
+        flavor_data:      fetch_baremetal_flavor_data,
+        big_vm_resources: fetch_big_vm_data,
+        docs_url:         sap_url_for('documentation'),
+        cluster_id:       params[:cluster_id] || 'current',
       } # this will end in widget.config.scriptParams on JS side
-
-      big_vm_resources = fetch_big_vm_data()
-      if big_vm_resources
-        @js_data[:big_vm_resources] = big_vm_resources
-      end
 
       # when this is true, the frontend will never try to generate quota requests
       @js_data[:is_foreign_scope] = (params[:override_project_id] || params[:override_domain_id] || (@js_data[:cluster_id] != 'current')) ? true : false
@@ -150,9 +146,9 @@ module Resources
       resource_providers = cloud_admin.resources.list_resource_providers
       project =  services.identity.find_project!(@scoped_project_id) 
       
-      # on domain level we have no project
+      # domain level: we do not show bigVMresources
       if project.nil?
-        return nil
+        return {}
       end
       project_shards = project.shards
  
@@ -160,9 +156,9 @@ module Resources
       host_aggregates = cloud_admin.compute.host_aggregates
       hosts_az = {}
       hosts_shard = {}
-      unless host_aggregates.empty?
+      unless host_aggregates.nil?
         host_aggregates.each do |host_aggregate|
-          unless host_aggregate.hosts.empty?
+          unless host_aggregate.hosts.nil?
             host_aggregate.hosts.each do |hostname|
               if host_aggregate.name.start_with?('vc-')
                 # this is a shard
