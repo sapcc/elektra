@@ -6,40 +6,30 @@ import LbPopoverPoolContent from './LbPopoverPoolContent';
 import StaticTags from '../StaticTags';
 import StateLabel from '../StateLabel'
 import useStatusTree from '../../../lib/hooks/useStatusTree'
-import { confirm } from 'lib/dialogs';
-import { addNotice, addError } from 'lib/flashes';
-import { ajaxHelper } from 'ajax_helper';
-import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+import { useEffect } from 'react'
+import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
   return <Highlighter search={search}>{children+''}</Highlighter>
 }
 
-const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
-  console.log('RENDER loadbalancer list item id-->', loadbalancer.id)
-  
-  // poll the status tree for this lb
+const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {  
+  const {deleteLoadbalancer} = useLoadbalancer()
   useStatusTree({lbId: loadbalancer.id})
-
-  const errorMessage = (err) => {
-    return err.data &&  (err.data.errors || err.data.error) || err.message
-  }  
+  
+  useEffect(() => {
+    console.group('provisioning_status')
+    console.log(loadbalancer.provisioning_status)
+    console.groupEnd()
+  }, [loadbalancer.provisioning_status]);
 
   const handleDelete = (e) => {
     e.preventDefault()
-    confirm(`Do you really want to delete the loadbalancer ${loadbalancer.id}?`).then(() => {
-      return ajaxHelper.delete(`/loadbalancers/${loadbalancer.id}`)
-      .then( (response) => {
-        addNotice('test')
-      })
-      .catch( (error) => {     
-        addError(React.createElement(ErrorsList, {
-          errors: errorMessage(error)
-        }))
-      });
-    }).catch(cancel => true)
+    deleteLoadbalancer(loadbalancer.id)
   }
+
+  console.log('RENDER loadbalancer list item id-->', loadbalancer.id)
 
   const poolIds = loadbalancer.pools.map(p => p.id)
   const listenerIds = loadbalancer.listeners.map(l => l.id)
@@ -63,6 +53,8 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
       <td>{loadbalancer.description}</td>
       <td><StateLabel lbId={loadbalancer.id} placeholder={loadbalancer.operating_status} path="operating_status" /></td>
       <td><StateLabel lbId={loadbalancer.id} placeholder={loadbalancer.provisioning_status} path="provisioning_status"/></td>
+      {/* <td>{loadbalancer.operating_status}</td>
+      <td>{loadbalancer.provisioning_status}</td> */}
       <td>
         <StaticTags tags={loadbalancer.tags} />
       </td>

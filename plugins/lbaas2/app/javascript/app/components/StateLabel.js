@@ -74,6 +74,7 @@ const StateLabel = ({lbId, placeholder, path}) => {
   if (tree) {
     // const test = 'listeners/57c982fd-a43a-4caa-ac2e-6277f92f3402/pools/caaa477b-bc0e-4705-94e6-c51911956d2a/operating_status'
     label = treeState(path.split("/"), tree)
+    params = labelAttributes(label)
   }
 
   return useMemo(() => {
@@ -81,7 +82,7 @@ const StateLabel = ({lbId, placeholder, path}) => {
     return ( 
       <React.Fragment>
         <OverlayTrigger placement="top" overlay={<Tooltip id="static-label-tooltip">{params.title}</Tooltip>}>
-          <Label className={params.className}>{placeholder}</Label>
+          <Label className={params.className}>{label}</Label>
         </OverlayTrigger>      
       </React.Fragment>
     );
