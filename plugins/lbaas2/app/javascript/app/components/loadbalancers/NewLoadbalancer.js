@@ -68,7 +68,7 @@ const NewLoadbalancer = (props) => {
       ajaxHelper.post('/loadbalancers/', { loadbalancer: values }).then((response) => {
         dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})        
         handleSuccess()
-        addNotice('Loadbalancer is being created.')
+        addNotice('Loadbalancer ' + response.data.loadbalancer.id + " is being created.")
       }).catch(error => {
         setFormErrors(errorMessage(error))
         handleErrors(error)
