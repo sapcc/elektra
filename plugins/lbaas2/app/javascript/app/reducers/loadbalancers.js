@@ -64,6 +64,17 @@ const removeLoadbalancer = (state, {id}) => {
   return {...state, items: newItems}
 }
 
+const requestLoadbalancerDelete = (state, {id})=> {
+  console.group("requestLoadbalancerDelete")
+  console.log(id)
+  console.groupEnd()
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].provisioning_status = 'PENDING_DELETE'
+  return {...state, items: newItems}
+}
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case 'REQUEST_LOADBALANCERS':
@@ -72,8 +83,8 @@ export default (state = initialState, action) => {
       return receiveLoadbalancers(state,action)      
     case 'REQUEST_LOADBALANCERS_FAILURE':
       return requestLoadbalancersFailure(state,action)
-      case 'REQUEST_LOADBALANCER':
-        return requestLoadbalancer(state,action)
+    case 'REQUEST_LOADBALANCER':
+      return requestLoadbalancer(state,action)
     case 'RECEIVE_LOADBALANCER':
       return receiveLoadbalancer(state,action)
     case 'SELECT_LOADBALANCER':
@@ -82,6 +93,8 @@ export default (state = initialState, action) => {
       return setSearchTerm(state,action)
     case 'REMOVE_LOADBALANCER':
       return removeLoadbalancer(state,action)
+    case 'REQUEST_REMOVE_LOADBALANCER':
+      return requestLoadbalancerDelete(state,action)
     default:
       return state
   }

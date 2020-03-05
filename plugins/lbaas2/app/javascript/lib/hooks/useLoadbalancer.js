@@ -31,8 +31,8 @@ const useLoadbalancer = () => {
     confirm(`Do you really want to delete the loadbalancer ${id}?`).then(() => {
       return ajaxHelper.delete(`/loadbalancers/${id}`)
       .then( (response) => {
-        dispatch({type: 'REQUEST_REMOVE_LOADBALANCER', loadbalancer: id})
-        addNotice('Load Balancer will be deleted.')
+        dispatch({type: 'REQUEST_REMOVE_LOADBALANCER', id: id})
+        addNotice("Load Balancer " + id + " will be deleted.")
       })
       .catch( (error) => {     
         addError(React.createElement(ErrorsList, {
