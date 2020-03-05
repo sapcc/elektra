@@ -6,7 +6,7 @@ import ErrorPage from '../ErrorPage';
 const Details = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
-  const fetchLoadbalancer = useLoadbalancer()
+  const {fetchLoadbalancer} = useLoadbalancer()
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -28,14 +28,11 @@ const Details = (props) => {
 
       loadbalancer = state.items.find(item => item.id == id)
       if (loadbalancer) {
-        console.log("DETAILS loadbalancer found")
         dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: loadbalancer})
       } else {
-        console.log("DETAILS fetch loadbalancer")
         fetchLoadbalancer(id).then((response) => {
           dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: response})
         }).catch((error) => {
-          console.log("Error->", error)
           setError(error)
         })
       }
