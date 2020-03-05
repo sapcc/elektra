@@ -4,6 +4,7 @@ import { Form } from 'lib/elektra-form';
 import CreatableSelect from 'react-select/creatable';
 import { ajaxHelper } from 'ajax_helper';
 import { useDispatch } from '../StateProvider'
+import { addNotice } from 'lib/flashes';
 
 
 const NewLoadbalancer = (props) => {
@@ -65,8 +66,9 @@ const NewLoadbalancer = (props) => {
       values = {...values, tags: tags}    
       setFormErrors(null)
       ajaxHelper.post('/loadbalancers/', { loadbalancer: values }).then((response) => {
-        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})
+        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})        
         handleSuccess()
+        addNotice('Loadbalancer is being created.')
       }).catch(error => {
         setFormErrors(errorMessage(error))
         handleErrors(error)

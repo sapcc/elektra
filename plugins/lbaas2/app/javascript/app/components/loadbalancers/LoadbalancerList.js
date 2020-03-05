@@ -37,10 +37,9 @@ const LoadbalancerList = (props) => {
   }
 
   const search = (term) => {
-    if (term.length == 0 && selected) {
+    if (selected) {
       // redirect
       props.history.push('/loadbalancers')
-
     }
     console.group("search term set")
     console.log(term)
@@ -141,7 +140,7 @@ const LoadbalancerList = (props) => {
 
       </React.Fragment>
     )
-  }, [error, isLoading, searchTerm])
+  }, [items, error, isLoading, searchTerm])
   
 }
 export default LoadbalancerList;
