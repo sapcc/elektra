@@ -1,6 +1,8 @@
 import { Highlighter } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom';
 import LbPopover from './LbPoopover';
+import LbPopoverListenerContent from './LbPopoverListenerContent';
+import LbPopoverPoolContent from './LbPopoverPoolContent';
 import StaticTags from '../StaticTags';
 import StateLabel from '../StateLabel'
 import useStatusTree from '../../../lib/hooks/useStatusTree'
@@ -10,7 +12,7 @@ const MyHighlighter = ({search,children}) => {
   return <Highlighter search={search}>{children+''}</Highlighter>
 }
 
-const LoadbalancerItem = React.memo(({loadbalancer, searchTerm}) => {
+const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
   console.log('RENDER loadbalancer list item id-->', loadbalancer.id)
   
   // poll the status tree for this lb
@@ -19,11 +21,15 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm}) => {
   const poolIds = loadbalancer.pools.map(p => p.id)
   const listenerIds = loadbalancer.listeners.map(l => l.id)
   return(
-    <tr>
+    <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
-        <Link to={`loadbalancers/${loadbalancer.id}/show`}>
-          <MyHighlighter search={searchTerm}>{loadbalancer.name || loadbalancer.id}</MyHighlighter>
-        </Link>
+        {disabled ?
+            <span className="info-text"><MyHighlighter search={searchTerm}>{loadbalancer.name || loadbalancer.id}</MyHighlighter></span>
+         :
+          <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
+            <MyHighlighter search={searchTerm}>{loadbalancer.name || loadbalancer.id}</MyHighlighter>
+          </Link>
+         }
         {loadbalancer.name && 
             <React.Fragment>
               <br/>
@@ -61,116 +67,24 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm}) => {
         }
       </td>
       <td> 
+        {disabled ?
+          <span className="info-text">{listenerIds.length}</span>
+        :
         <LbPopover  popoverId={"listener-popover-"+loadbalancer.id} 
                     buttonName={listenerIds.length} 
                     title={<React.Fragment>Listeners<Link to={`/listeners/`} style={{float: 'right'}}>Show all</Link></React.Fragment>}
-                    content={
-          listenerIds.length>0 ?
-          listenerIds.map( (id, index) =>
-            <div key={id}>
-              { loadbalancer.cached_listeners[id] ?
-                <React.Fragment>
-                  <div className="row">
-                    <div className="col-md-12">
-                      <Link to={`/listeners/${id}/show`}>
-                        {loadbalancer.cached_listeners[id].name || id}
-                       </Link>
-                    </div>
-                  </div>
-                  {loadbalancer.cached_listeners[id].name && 
-                    <div className="row">
-                      <div className="col-md-12 text-nowrap">
-                      <small className="info-text">{id}</small>
-                      </div>                
-                    </div>
-                  }
-                  <div className="row">
-                    <div className="col-md-12">
-                      <b>Description:</b> {loadbalancer.cached_listeners[id].payload.description}
-                    </div>
-                  </div> 
-                  <div className="row">
-                    <div className="col-md-12">
-                      <b>Protocol:</b> {loadbalancer.cached_listeners[id].payload.protocol}
-                    </div>
-                  </div>              
-                  <div className="row">
-                    <div className="col-md-12">
-                      <b>Protocol Port:</b> {loadbalancer.cached_listeners[id].payload.protocol_port}
-                    </div>
-                  </div>
-                </React.Fragment>
-                :
-                <div className="row">
-                  <div className="col-md-12 text-nowrap">
-                    <Link to={`/listeners/${id}/show`}>
-                      <small>{id}</small>
-                    </Link>
-                  </div>                
-                </div>                
-              }
-              { index === listenerIds.length - 1 ? "" : <hr/> }
-            </div>
-          )
-          :
-          <p>No listeners found</p>
-        } />
+                    content={<LbPopoverListenerContent listenerIds={listenerIds} cachedListeners={loadbalancer.cached_listeners}/>} />
+        }
       </td>
       <td>
+      {disabled ?
+          <span className="info-text">{poolIds.length}</span>
+        :
         <LbPopover  popoverId={"pools-popover-"+loadbalancer.id} 
                     buttonName={poolIds.length} 
                     title={<React.Fragment>Pools<Link to={`/pools/`} style={{float: 'right'}}>Show all</Link></React.Fragment>}
-                    content={
-              poolIds.length>0 ?
-                poolIds.map( (id, index) =>
-                <div key={id}>
-                  { loadbalancer.cached_pools[id] ?
-                    <React.Fragment>
-                      <div className="row">
-                        <div className="col-md-12">
-                        <Link to={`/pools/${id}/show`}>
-                          {loadbalancer.cached_pools[id].name || id}
-                        </Link>
-                        </div>
-                      </div>
-                      {loadbalancer.cached_pools[id].name && 
-                        <div className="row">
-                          <div className="col-md-12 text-nowrap">
-                          <small className="info-text">{id}</small>
-                          </div>                
-                        </div>
-                      }
-                      <div className="row">
-                        <div className="col-md-12">
-                          <b>Description:</b> {loadbalancer.cached_pools[id].payload.description}
-                        </div>
-                      </div> 
-                      <div className="row">
-                        <div className="col-md-12">
-                          <b>Algorithm:</b> {loadbalancer.cached_pools[id].payload.lb_algorithm}
-                        </div>
-                      </div>  
-                      <div className="row">
-                        <div className="col-md-12">
-                          <b>Protocol:</b> {loadbalancer.cached_pools[id].payload.protocol}
-                        </div>
-                      </div>   
-                    </React.Fragment>
-                    :
-                    <div className="row">
-                      <div className="col-md-12 text-nowrap">
-                        <Link to={`/pools/${id}/show`}>
-                          <small>{id}</small>
-                        </Link> 
-                      </div>                
-                    </div> 
-                  }
-                  { index === poolIds.length - 1 ? "" : <hr/> }
-                </div>
-                )
-              :
-              <p>No pools found</p>
-            } />
+                    content={<LbPopoverPoolContent poolIds={poolIds} cachedPools={loadbalancer.cached_pools}/>} />
+      }
       </td>
     </tr>
   )

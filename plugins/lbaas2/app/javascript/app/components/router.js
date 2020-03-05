@@ -4,6 +4,7 @@ import LoadbalancerList from './loadbalancers/LoadbalancerList';
 import PoolList from './pools/PoolList'
 import Tabs from './Tabs'
 import NewLoadbalancer from './loadbalancers/NewLoadbalancer'
+import Details from './loadbalancers/Details'
 
 const Router = (props) => {
 
@@ -20,6 +21,7 @@ const Router = (props) => {
             React.createElement(Tabs, Object.assign({}, {match, location, history, tabsConfig}, props))
           }/>
           <Route exact path="/loadbalancers/new" component={NewLoadbalancer}/>
+          <Route exact path="/loadbalancers/:id/show" component={Details}/>
       </div>
     </HashRouter>
    );

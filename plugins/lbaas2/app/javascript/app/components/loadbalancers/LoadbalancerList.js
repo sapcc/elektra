@@ -5,14 +5,11 @@ import { ajaxHelper } from 'ajax_helper';
 import LoadbalancerItem from './LoadbalancerItem';
 import ErrorPage from '../ErrorPage';
 import {DefeatableLink} from 'lib/components/defeatable_link';
+import { SearchField } from 'lib/components/search_field';
 
-const LoadbalancerList = () => {
+const LoadbalancerList = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
-  const loadbalancers = state.items
-  const error = state.error
-  const isLoading = state.isLoading
-  const hasNext = state.hasNext
 
   useEffect(() => {
     console.log('FETCH initial loadbalancers')
@@ -34,13 +31,42 @@ const LoadbalancerList = () => {
   }
 
   const loadNext = event => {
-    if(!isLoading && hasNext) {
+    if(!state.isLoading && state.hasNext) {
       fetchLoadbalancers()
     }
   }
 
+  const search = (term) => {
+    if (term.length == 0 && selected) {
+      // redirect
+      props.history.push('/loadbalancers')
+
+    }
+    console.group("search term set")
+    console.log(term)
+    console.groupEnd()
+  }
+
+  const error = state.error
+  const isLoading = state.isLoading
+  const hasNext = state.hasNext
+  const searchTerm = state.searchTerm
+  const items = state.items
+  const selected = state.selected
+
   return useMemo(() => {
     console.log("RENDER loadbalancer list")
+
+    const filterItems = (searchTerm, items) => {
+      if(!searchTerm) return items;
+      // filter items
+      const regex = new RegExp(searchTerm.trim(), "i");
+      return items.filter((i) =>
+        `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
+      )
+    }
+    const loadbalancers =  filterItems(searchTerm, items)
+        
     return (
       <React.Fragment>
         {error ?
@@ -48,8 +74,15 @@ const LoadbalancerList = () => {
           :
           <React.Fragment>
             <div className='toolbar'>
+              {items.length > 0 &&
+                <SearchField
+                  value={searchTerm}
+                  onChange={(term) => search(term)}
+                  placeholder='name, ID, description' text='Searches by name, ID or description in visible loadbalancers list only.'/>                
+              }
               <div className="main-buttons">
                 <DefeatableLink
+                  disabled={selected || isLoading}
                   to='/loadbalancers/new'
                   className='btn btn-primary'>
                   Create New
@@ -76,6 +109,7 @@ const LoadbalancerList = () => {
                   loadbalancers.map( (loadbalancer, index) =>
                     <LoadbalancerItem 
                       loadbalancer={loadbalancer}
+                      disabled={selected ? true : false}
                       key={index}
                     />
                   )
@@ -89,7 +123,7 @@ const LoadbalancerList = () => {
               </tbody>
             </table>
             
-            {loadbalancers.length > 0 &&
+            {loadbalancers.length > 0 && !selected &&
               <div className='ajax-paginate'>
                 { isLoading ?
                   <div className='main-buttons'><span className="spinner"></span> Loading...</div>
@@ -107,8 +141,7 @@ const LoadbalancerList = () => {
 
       </React.Fragment>
     )
-  }, [loadbalancers, error, isLoading])
+  }, [error, isLoading, searchTerm])
   
 }
-
 export default LoadbalancerList;

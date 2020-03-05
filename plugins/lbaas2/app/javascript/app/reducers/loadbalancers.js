@@ -5,7 +5,8 @@ const initialState = {
   hasNext: true,
   marker: null,
   searchTerm: null,
-  error: null
+  error: null,
+  selected: null
 }
 
 const requestLoadbalancers = (state) => ({...state, isLoading: true, error: null})
@@ -36,6 +37,8 @@ const requestLoadbalancersFailure = (state, {error}) => {
   return {...state, isLoading: false, error: err}
 }
 
+const requestLoadbalancer = (state) => ({...state, isLoading: true, error: null})
+
 const receiveLoadbalancer = (state, {loadbalancer}) => {
   const index = state.items.findIndex((item) => item.id==loadbalancer.id);
   let items = state.items.slice();
@@ -46,6 +49,14 @@ const receiveLoadbalancer = (state, {loadbalancer}) => {
   return {... state, items: items}
 }
 
+const selectLoadbalancer = (state, {loadbalancer}) => {
+  return {... state, selected: loadbalancer}
+}
+
+const setSearchTerm= (state,{searchTerm}) => (
+  {...state, searchTerm}
+);
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case 'REQUEST_LOADBALANCERS':
@@ -54,8 +65,14 @@ export default (state = initialState, action) => {
       return receiveLoadbalancers(state,action)      
     case 'REQUEST_LOADBALANCERS_FAILURE':
       return requestLoadbalancersFailure(state,action)
+      case 'REQUEST_LOADBALANCER':
+        return requestLoadbalancer(state,action)
     case 'RECEIVE_LOADBALANCER':
-      return receiveLoadbalancer(state,action)  
+      return receiveLoadbalancer(state,action)
+    case 'SELECT_LOADBALANCER':
+      return selectLoadbalancer(state,action)
+    case 'SET_LOADBALANCER_SEARCH_TERM':
+      return setSearchTerm(state,action)
     default:
       return state
   }

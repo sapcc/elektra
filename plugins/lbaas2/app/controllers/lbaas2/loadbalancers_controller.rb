@@ -21,6 +21,19 @@ module Lbaas2
       render json: { errors: e.message }, status: "500"
     end
     
+    def show
+      loadbalancer = services.lbaas.find_loadbalancer(params[:id])
+      extend_lb_data([loadbalancer])
+
+      render json: {
+        loadbalancer: loadbalancer
+      }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
     def status_tree
       statuses = services.lbaas2.loadbalancer_statuses(params[:id])
       render json: {
