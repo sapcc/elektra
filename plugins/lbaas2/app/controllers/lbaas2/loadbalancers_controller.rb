@@ -22,12 +22,28 @@ module Lbaas2
     end
     
     def show
-      loadbalancer = services.lbaas.find_loadbalancer(params[:id])
+      loadbalancer = services.lbaas2.find_loadbalancer(params[:id])
       extend_lb_data([loadbalancer])
 
       render json: {
         loadbalancer: loadbalancer
       }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
+    def destroy
+      loadbalancer = services.lbaas2.new_loadbalancer
+      loadbalancer.id = params[:id]
+
+      if loadbalancer.destroy
+        audit_logger.info(current_user, 'has deleted', loadbalancer)
+        head 202
+      else  
+        render json: { errors: loadbalancer.errors }, status: 422
+      end
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e

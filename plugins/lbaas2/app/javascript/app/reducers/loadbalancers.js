@@ -32,7 +32,6 @@ const receiveLoadbalancers = (state,{items,hasNext}) => {
 }
 
 const requestLoadbalancersFailure = (state, {error}) => { 
-  console.log("request failure -->", error)
   const err = error.response || error
   return {...state, isLoading: false, error: err}
 }
@@ -57,6 +56,14 @@ const setSearchTerm= (state,{searchTerm}) => (
   {...state, searchTerm}
 );
 
+const removeLoadbalancer = (state, {id}) => {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems.splice(index,1)
+  return {...state, items: newItems}
+}
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case 'REQUEST_LOADBALANCERS':
@@ -73,6 +80,8 @@ export default (state = initialState, action) => {
       return selectLoadbalancer(state,action)
     case 'SET_LOADBALANCER_SEARCH_TERM':
       return setSearchTerm(state,action)
+    case 'REMOVE_LOADBALANCER':
+      return removeLoadbalancer(state,action)
     default:
       return state
   }

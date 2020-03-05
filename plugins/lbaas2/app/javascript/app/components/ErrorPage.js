@@ -16,9 +16,11 @@ const ErrorPage = ({error, headTitle}) => {
   }
 
   const description = () => {
-    switch (httpStatus(error)) {
-      case '500':
+    switch (httpStatus()) {
+      case 500:
         return "There was an error. Please try later again"
+      case 404:
+        return "That’s an error. The requested entity was not found"        
       default:
         return "There was an error. Please try again later"
     }

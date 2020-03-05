@@ -29,6 +29,12 @@ module ServiceLayer
         )
       end
 
+      def find_loadbalancer(id)
+        elektron_lb2.get("loadbalancers/#{id}").map_to(
+          'body.loadbalancer', &loadbalancer_map
+        )
+      end
+
       ################# INTERFACE METHODS ######################
       def create_loadbalancer(attributes)
         elektron_lb2.post('loadbalancers') do

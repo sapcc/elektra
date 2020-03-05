@@ -58,11 +58,17 @@ const LoadbalancerList = (props) => {
 
     const filterItems = (searchTerm, items) => {
       if(!searchTerm) return items;
-      // filter items
-      const regex = new RegExp(searchTerm.trim(), "i");
-      return items.filter((i) =>
+      // filter items      
+      if (selected) {
+        return items.filter((i) =>
+          i.id == searchTerm.trim()
+        )
+      } else {
+        const regex = new RegExp(searchTerm.trim(), "i");
+        return items.filter((i) =>
         `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
       )
+      }
     }
     const loadbalancers =  filterItems(searchTerm, items)
         

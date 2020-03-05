@@ -1,11 +1,13 @@
-import React from 'react';
-import { useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useGlobalState } from '../StateProvider'
-import { ajaxHelper } from 'ajax_helper';
+import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
+import ErrorPage from '../ErrorPage';
 
 const Details = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
+  const fetchLoadbalancer = useLoadbalancer()
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     console.log('FETCH details')
@@ -21,33 +23,35 @@ const Details = (props) => {
     let id = props.match && props.match.params && props.match.params.id
 
     if (id) {
-      dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: id})        
-      loadbalancer = state.items.find(item => item.id == id)
+      dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: id})
+      dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: id})
 
+      loadbalancer = state.items.find(item => item.id == id)
       if (loadbalancer) {
         console.log("DETAILS loadbalancer found")
         dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: loadbalancer})
       } else {
         console.log("DETAILS fetch loadbalancer")
-        fetchLoadbalancer(id)
+        fetchLoadbalancer(id).then((response) => {
+          dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: response})
+        }).catch((error) => {
+          console.log("Error->", error)
+          setError(error)
+        })
       }
     }
   }
 
-  const fetchLoadbalancer = (id) => {
-    dispatch({type: 'REQUEST_LOADBALANCER', requestedAt: Date.now()})
-    ajaxHelper.get(`/loadbalancers/${id}`).then((response) => {
-      dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data.loadbalancer})
-      dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: response.data.loadbalancer})
-    })
-    .catch( (error) => {
-      // dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error})
-    })
-  }
-
   return ( 
-    <React.Fragment>
-      <h3>Details</h3>
+    <React.Fragment>      
+      {error ?
+        <ErrorPage headTitle="Load Balancers Details" error={error}/>
+        :
+        <React.Fragment>
+          <h3>Details</h3>
+          <p>Something</p>
+        </React.Fragment>
+      }
     </React.Fragment>
    );
 }
