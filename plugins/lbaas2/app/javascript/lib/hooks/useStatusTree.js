@@ -23,7 +23,7 @@ const useStatusTree = ({lbId}) => {
       // do not create a new polling interval if already polling
       if(polling) return;
       polling = setInterval(() =>
-        reloadStatus(), 5000
+        reloadStatus(), 15000
       )
     }
   
