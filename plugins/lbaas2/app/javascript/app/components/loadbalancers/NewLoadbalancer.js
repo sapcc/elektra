@@ -5,10 +5,12 @@ import CreatableSelect from 'react-select/creatable';
 import { ajaxHelper } from 'ajax_helper';
 import { useDispatch } from '../StateProvider'
 import { addNotice } from 'lib/flashes';
+import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
 
 const NewLoadbalancer = (props) => {
   const dispatch = useDispatch()
+  const {createLoadbalancer} = useLoadbalancer()
 
   const [privateNetworks, setPrivateNetworks] = useState({
     isLoading: false,
@@ -59,21 +61,17 @@ const NewLoadbalancer = (props) => {
   }
 
   const onSubmit = (values) => {    
-    return new Promise((handleSuccess,handleErrors) => {
-      // collect the tags extra
-      const tags = tagEditorValue.map( (value, index) => value.value )
-      // copy tags to the values of the form
-      values = {...values, tags: tags}    
-      setFormErrors(null)
-      ajaxHelper.post('/loadbalancers/', { loadbalancer: values }).then((response) => {
-        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})        
-        handleSuccess()
-        addNotice('Loadbalancer ' + response.data.loadbalancer.id + " is being created.")
-      }).catch(error => {
-        setFormErrors(errorMessage(error))
-        handleErrors(error)
-      })
-    }).then(() => close())
+    // collect the tags extra
+    const tags = tagEditorValue.map( (value, index) => value.value )
+    // copy tags to the values of the form
+    values = {...values, tags: tags}
+    setFormErrors(null)
+    return createLoadbalancer(values).then((response) => {
+      addNotice('Loadbalancer ' + response.data.id + " is being created.")
+      close()
+    }).catch(error => {
+      setFormErrors(errorMessage(error))
+    })
   }
 
   const initialValues = {}

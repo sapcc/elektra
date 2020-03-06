@@ -17,18 +17,29 @@ const useLoadbalancer = () => {
       ajaxHelper.get(`/loadbalancers/${id}`).then((response) => {      
         dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data.loadbalancer})
         handleSuccess(response.data.loadbalancer)
-      }).catch( (error) => {        
-        if(error.response.status == 404) {
-          dispatch({type: 'REMOVE_LOADBALANCER', id: id})
-        } else {
-          handleError( error.response || error)
-        }
+      }).catch( (error) => {   
+        console.error(error)
+        if (!reason.isCanceled) { // promise is not canceled
+          if(error.response.status == 404) {
+            dispatch({type: 'REMOVE_LOADBALANCER', id: id})
+          } 
+        }  
+      })
+    })
+  }
+
+  const createLoadbalancer = (values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.post('/loadbalancers/', { loadbalancer: values }).then((response) => {
+        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})        
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
       })
     })
   }
 
   const deleteLoadbalancer = (id) => {
-    console.log("DELETE loadbalancer")
     confirm(`Do you really want to delete the loadbalancer ${id}?`).then(() => {
       return ajaxHelper.delete(`/loadbalancers/${id}`)
       .then( (response) => {
@@ -45,7 +56,8 @@ const useLoadbalancer = () => {
 
   return {
     fetchLoadbalancer,
-    deleteLoadbalancer
+    deleteLoadbalancer,
+    createLoadbalancer
   }
 
 }
