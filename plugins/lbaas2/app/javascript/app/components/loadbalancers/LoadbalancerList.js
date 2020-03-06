@@ -53,25 +53,23 @@ const LoadbalancerList = (props) => {
   const items = state.items
   const selected = state.selected
 
+  const filterItems = (searchTerm, items) => {
+    if(!searchTerm) return items;
+    // filter items      
+    if (selected) {
+      return items.filter((i) =>
+        i.id == searchTerm.trim()
+      )
+    } else {
+      const regex = new RegExp(searchTerm.trim(), "i");
+      return items.filter((i) =>
+      `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
+    )
+    }
+  }
+  const loadbalancers =  filterItems(searchTerm, items)
   return useMemo(() => {
     console.log("RENDER loadbalancer list")
-
-    const filterItems = (searchTerm, items) => {
-      if(!searchTerm) return items;
-      // filter items      
-      if (selected) {
-        return items.filter((i) =>
-          i.id == searchTerm.trim()
-        )
-      } else {
-        const regex = new RegExp(searchTerm.trim(), "i");
-        return items.filter((i) =>
-        `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
-      )
-      }
-    }
-    const loadbalancers =  filterItems(searchTerm, items)
-        
     return (
       <React.Fragment>
         {error ?
@@ -79,7 +77,7 @@ const LoadbalancerList = (props) => {
           :
           <React.Fragment>
             <div className='toolbar'>
-              {items.length > 0 &&
+              {loadbalancers.length > 0 &&
                 <SearchField
                   value={searchTerm}
                   onChange={(term) => search(term)}
@@ -146,7 +144,7 @@ const LoadbalancerList = (props) => {
 
       </React.Fragment>
     )
-  }, [items, error, isLoading, searchTerm])
-  
+  } , [ JSON.stringify(loadbalancers), error, isLoading, searchTerm])
+
 }
 export default LoadbalancerList;

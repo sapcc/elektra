@@ -13,21 +13,22 @@ const useLoadbalancer = () => {
   }  
   
   const fetchLoadbalancer = (id) => {    
-    dispatch({type: 'REQUEST_LOADBALANCER', requestedAt: Date.now()})
     return new Promise((handleSuccess,handleError) => {    
       ajaxHelper.get(`/loadbalancers/${id}`).then((response) => {      
         dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data.loadbalancer})
         handleSuccess(response.data.loadbalancer)
-      }).catch( (error) => {
+      }).catch( (error) => {        
         if(error.response.status == 404) {
           dispatch({type: 'REMOVE_LOADBALANCER', id: id})
+        } else {
+          handleError( error.response || error)
         }
-        handleError(error.response || error)
       })
     })
   }
 
   const deleteLoadbalancer = (id) => {
+    console.log("DELETE loadbalancer")
     confirm(`Do you really want to delete the loadbalancer ${id}?`).then(() => {
       return ajaxHelper.delete(`/loadbalancers/${id}`)
       .then( (response) => {

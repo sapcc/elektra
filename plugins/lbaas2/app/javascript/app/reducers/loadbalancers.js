@@ -36,8 +36,6 @@ const requestLoadbalancersFailure = (state, {error}) => {
   return {...state, isLoading: false, error: err}
 }
 
-const requestLoadbalancer = (state) => ({...state, isLoading: true, error: null})
-
 const receiveLoadbalancer = (state, {loadbalancer}) => {
   const index = state.items.findIndex((item) => item.id==loadbalancer.id);
   let items = state.items.slice();
@@ -45,7 +43,7 @@ const receiveLoadbalancer = (state, {loadbalancer}) => {
   if (index>=0) { items[index]=loadbalancer; } else { items.push(loadbalancer); }
   // sort
   items = items.sort((a, b) => a.name.localeCompare(b.name))
-  return {... state, items: items}
+  return {... state, items: items, isLoading: false, error: null}
 }
 
 const selectLoadbalancer = (state, {loadbalancer}) => {
@@ -83,8 +81,6 @@ export default (state = initialState, action) => {
       return receiveLoadbalancers(state,action)      
     case 'REQUEST_LOADBALANCERS_FAILURE':
       return requestLoadbalancersFailure(state,action)
-    case 'REQUEST_LOADBALANCER':
-      return requestLoadbalancer(state,action)
     case 'RECEIVE_LOADBALANCER':
       return receiveLoadbalancer(state,action)
     case 'SELECT_LOADBALANCER':

@@ -15,14 +15,40 @@ const MyHighlighter = ({search,children}) => {
 }
 
 const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {  
-  const {deleteLoadbalancer} = useLoadbalancer()
-  useStatusTree({lbId: loadbalancer.id})
-  
+  const {fetchLoadbalancer, deleteLoadbalancer} = useLoadbalancer()
+  let polling = null
+  // useStatusTree({lbId: loadbalancer.id})
+
   useEffect(() => {
     console.group('provisioning_status')
     console.log(loadbalancer.provisioning_status)
     console.groupEnd()
-  }, [loadbalancer.provisioning_status]);
+
+    if(loadbalancer.provisioning_status.includes('PENDING')) {
+      startPolling(5000)
+    } else {
+      startPolling(30000)
+    }
+
+    return function cleanup() {
+      stopPolling()
+    };
+  });
+
+  const startPolling = (interval) => {   
+    // do not create a new polling interval if already polling
+    if(polling) return;
+    console.log("Polling loadbalancer -->", loadbalancer.id, " with interval -->", interval)
+    polling = setInterval(() =>
+      fetchLoadbalancer(loadbalancer.id), interval
+    )
+  }
+
+  const stopPolling = () => {
+    console.log("stop polling for id -->", loadbalancer.id)
+    clearInterval(polling)
+    polling = null
+  }
 
   const handleDelete = (e) => {
     e.preventDefault()
@@ -51,10 +77,10 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
           }
       </td>
       <td>{loadbalancer.description}</td>
-      <td><StateLabel lbId={loadbalancer.id} placeholder={loadbalancer.operating_status} path="operating_status" /></td>
-      <td><StateLabel lbId={loadbalancer.id} placeholder={loadbalancer.provisioning_status} path="provisioning_status"/></td>
-      {/* <td>{loadbalancer.operating_status}</td>
-      <td>{loadbalancer.provisioning_status}</td> */}
+      <td><StateLabel placeholder={loadbalancer.operating_status} path="operating_status" /></td>
+      <td><StateLabel placeholder={loadbalancer.provisioning_status} path="provisioning_status"/></td>
+      {/* <td>{loadbalancer.operating_status}</td> */}
+      {/* <td>{loadbalancer.provisioning_status}</td> */}
       <td>
         <StaticTags tags={loadbalancer.tags} />
       </td>
@@ -118,7 +144,13 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
       </td>
     </tr>
   )
+},(oldProps,newProps) => {
+  const identical = JSON.stringify(oldProps.loadbalancer) === JSON.stringify(newProps.loadbalancer) && 
+                    oldProps.searchTerm === newProps.searchTerm && 
+                    oldProps.disabled === newProps.disabled
+  return identical                  
 })
+
 LoadbalancerItem.displayName = 'LoadbalancerItem';
 
 export default LoadbalancerItem;

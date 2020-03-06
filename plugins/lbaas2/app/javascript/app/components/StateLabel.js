@@ -86,7 +86,7 @@ const StateLabel = ({lbId, placeholder, path}) => {
         </OverlayTrigger>      
       </React.Fragment>
     );
-  }, [tree])
+  }, [tree, placeholder])
 }
  
 export default StateLabel;
