@@ -6,6 +6,15 @@ import LoadbalancerItem from './LoadbalancerItem';
 import ErrorPage from '../ErrorPage';
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import { SearchField } from 'lib/components/search_field';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
+const TableFadeTransition = ({
+  children,
+  ...props
+}) => (<CSSTransition {...props} timeout={200} unmountOnExit classNames="css-transition-fade">
+  {children}
+</CSSTransition>);
+
 
 const LoadbalancerList = (props) => {
   const dispatch = useDispatch()
@@ -92,40 +101,46 @@ const LoadbalancerList = (props) => {
                 </DefeatableLink>
               </div>
             </div>
-
-            <table className="table loadbalancers">
-              <thead>
-                  <tr>
-                      <th>Name/ID</th>
-                      <th>Description</th>
-                      <th>State</th>
-                      <th>Prov. Status</th>
-                      <th>Tags</th>
-                      <th className="snug-nowrap">Subnet/IP Address</th>
-                      <th>Listeners</th>
-                      <th>Pools</th>
-                      <th className='snug'></th>
-                  </tr>
-              </thead>
-              <tbody>
-                {loadbalancers && loadbalancers.length>0 ?
-                  loadbalancers.map( (loadbalancer, index) =>
-                    <LoadbalancerItem 
-                      loadbalancer={loadbalancer}
-                      disabled={selected ? true : false}
-                      key={index}
-                    />
-                  )
-                  :
-                  <tr>
-                    <td colSpan="8">
-                      { isLoading ? <span className='spinner'/> : 'No loadbalancers found.' }
-                    </td>
-                  </tr>  
-                }
-              </tbody>
-            </table>
             
+            <TransitionGroup>
+              <TableFadeTransition key={loadbalancers.length}>
+                <table className="table table-hover loadbalancers">
+                  <thead>
+                      <tr>
+                          <th>Name/ID</th>
+                          <th>Description</th>
+                          <th>State</th>
+                          <th>Prov. Status</th>
+                          <th>Tags</th>
+                          <th className="snug-nowrap">Subnet/IP Address</th>
+                          <th>Listeners</th>
+                          <th>Pools</th>
+                          <th className='snug'></th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {loadbalancers && loadbalancers.length>0 ?
+                      loadbalancers.map( (loadbalancer, index) =>
+                        <LoadbalancerItem 
+                          loadbalancer={loadbalancer}
+                          disabled={selected ? true : false}
+                          key={index}
+                        />
+                      )
+                      :
+                      <tr>
+                        <td colSpan="8">
+                          { isLoading ? <span className='spinner'/> : 'No loadbalancers found.' }
+                        </td>
+                      </tr>  
+                    }
+                  </tbody>
+                </table>
+                
+              </TableFadeTransition>
+            </TransitionGroup>
+            
+
             {loadbalancers.length > 0 && !selected &&
               <div className='ajax-paginate'>
                 { isLoading ?
