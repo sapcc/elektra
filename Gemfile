@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # https://bundler.io/v1.5/gemfile.html
 # https://guides.rubygems.org/patterns/#semantic-versioning
 # https://snyk.io/blog/differences-in-version-handling-gems-and-npm/
-# Note: check Dockerfile for Version dependencies!
+# Note: check Dockerfile and Dockerfile.integration-tests for Version dependencies!
 #       Because we install gems with native extension before running bundle install
 #       This avoids recompiling them everytime the Gemfile.lock changes.
 #       The versions need to be kept in sync with the Gemfile.lock
