@@ -39,8 +39,11 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
     // do not create a new polling interval if already polling
     if(polling) return;
     console.log("Polling loadbalancer -->", loadbalancer.id, " with interval -->", interval)
-    polling = setInterval(() =>
-      fetchLoadbalancer(loadbalancer.id), interval
+    polling = setInterval(() => {
+      fetchLoadbalancer(loadbalancer.id).catch( (error) => {
+        // console.log(JSON.stringify(error))
+      })
+    }, interval
     )
   }
 
@@ -52,7 +55,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
 
   const handleDelete = (e) => {
     e.preventDefault()
-    deleteLoadbalancer(loadbalancer.id)
+    deleteLoadbalancer(loadbalancer.name, loadbalancer.id)
   }
 
   console.log('RENDER loadbalancer list item id-->', loadbalancer.id)

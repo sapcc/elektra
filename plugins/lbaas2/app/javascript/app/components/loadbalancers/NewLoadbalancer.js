@@ -67,7 +67,8 @@ const NewLoadbalancer = (props) => {
     values = {...values, tags: tags}
     setFormErrors(null)
     return createLoadbalancer(values).then((response) => {
-      addNotice('Loadbalancer ' + response.data.id + " is being created.")
+      // 'Loadbalancer ' + response.data.id + " is being created."
+      addNotice(<React.Fragment>Loadbalancer <b>{response.data.id}</b> is being created.</React.Fragment>)
       close()
     }).catch(error => {
       setFormErrors(errorMessage(error))
