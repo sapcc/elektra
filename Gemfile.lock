@@ -585,34 +585,34 @@ DEPENDENCIES
   audit!
   automation!
   block_storage!
-  bootstrap-sass (= 3.4.1)
-  byebug (= 9.0.6)
-  capybara (= 2.18.0)
-  capybara-screenshot (= 1.0.21)
+  bootstrap-sass (~> 3.4.1)
+  byebug (~> 9.0.6)
+  capybara (~> 2.18.0)
+  capybara-screenshot (~> 1.0.21)
   cloudops!
-  coffee-rails (= 4.2.2)
-  colorize (= 0.8.1)
-  compass-rails (= 3.0.2)
+  coffee-rails (~> 4.2.2)
+  colorize (~> 0.8.1)
+  compass-rails (~> 3.0.2)
   compute!
-  config (= 1.4.0)
-  cucumber-rails (= 1.6.0)
-  database_cleaner (= 1.6.1)
+  config (~> 1.4.0)
+  cucumber-rails (~> 1.6.0)
+  database_cleaner (~> 1.6.1)
   dns_service!
-  dotenv-rails (= 2.6.0)
+  dotenv-rails (~> 2.6.0)
   elektron!
   factory_girl_rails (~> 4.0)
-  font-awesome-sass (= 4.7.0)
+  font-awesome-sass (~> 4.7.0)
   foreman (~> 0.87.0)
-  friendly_id (= 5.2.1)
-  guard-rspec (= 4.7.3)
-  haml-rails (= 1.0.0)
-  high_voltage (= 3.0.0)
-  httpclient (= 2.8.3)
+  friendly_id (~> 5.2.1)
+  guard-rspec (~> 4.7.3)
+  haml-rails (~> 1.0.0)
+  high_voltage (~> 3.0.0)
+  httpclient (~> 2.8.3)
   identity!
   image!
   inquiry!
-  jquery-rails (= 4.3.1)
-  jquery-ui-rails (= 6.0.1)
+  jquery-rails (~> 4.3.1)
+  jquery-ui-rails (~> 6.0.1)
   keppel!
   key_manager!
   kubernetes!
@@ -623,40 +623,40 @@ DEPENDENCIES
   masterdata_cockpit!
   metrics!
   monsoon-openstack-auth!
-  net-ssh (= 4.1.0)
-  netaddr (= 2.0.4)
+  net-ssh (~> 4.1.0)
+  netaddr (~> 2.0.4)
   networking!
   object_storage!
   pg (= 0.21.0)
-  phantomjs (= 2.1.1.0)
-  poltergeist (= 1.16.0)
-  prometheus-client (= 0.9.0)
-  pry-rails (= 0.3.6)
-  puma (= 3.12.4)
+  phantomjs (~> 2.1.1.0)
+  poltergeist (~> 1.16.0)
+  prometheus-client (~> 0.9.0)
+  pry-rails (~> 0.3.6)
+  puma (~> 3.12.4)
   rails (~> 5.2.3)
-  rails-controller-testing (= 1.0.2)
+  rails-controller-testing (~> 1.0.2)
   rails_stdout_logging
   react-rails (~> 2.2.1)
-  redcarpet (= 3.4.0)
+  redcarpet (~> 3.4.0)
   reports!
   resource_management!
   resources!
-  responders (= 2.4.0)
-  rspec (= 3.6.0)
-  rspec-rails (= 3.6.1)
-  ruby-radius (= 1.1)
-  sass-rails (= 5.0.6)
-  sass_inline_svg (= 0.0.7)
+  responders (~> 2.4.0)
+  rspec (~> 3.6.0)
+  rspec-rails (~> 3.6.1)
+  ruby-radius (~> 1.1)
+  sass-rails (~> 5.0.6)
+  sass_inline_svg (~> 0.0.7)
   sdoc (~> 1.0.0)
-  sentry-raven (= 2.6.3)
+  sentry-raven (~> 2.6.3)
   shared_filesystem_storage!
-  simple-navigation (= 4.0.5)
-  simple_form (= 5.0.1)
-  spinners (= 1.1.0)
-  spring (= 2.0.2)
+  simple-navigation (~> 4.0.5)
+  simple_form (~> 5.0.1)
+  spinners (~> 1.1.0)
+  spring (~> 2.0.2)
   sqlite3
   tools!
-  uglifier (= 4.1.19)
+  uglifier (~> 4.1.19)
   unf (= 0.2.0beta2)
   web-console (~> 3.0)
   webconsole!
