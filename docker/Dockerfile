@@ -1,6 +1,6 @@
 FROM ruby:2.4-alpine3.10 AS elektra
 
-# ENV OVERLAY=sucks
+ENV OVERLAY=sucks3
 
 # alpine3.10
 # nodejs (10.16.3-r0)
@@ -12,16 +12,16 @@ RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
 # The versions need to be kept in sync with the Gemfile.lock
 RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install byebug -v 9.0.6 \
-      && gem install ffi -v 1.12.2 \
+      && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
-      && gem install nio4r -v 2.5.2 \
-      && gem install nokogiri -v 1.10.9 \
+      && gem install nio4r -v 2.3.1 \
+      && gem install nokogiri -v 1.10.7 \
       && gem install pg -v 0.21.0 \
       && gem install puma -v 3.12.4  \
       && gem install redcarpet -v 3.4.0 \
       && gem install unf -v 0.2.0.beta2 \
-      && gem install websocket-driver -v 0.7.1 \
-      && gem install bindex -v 0.8.1 \
+      && gem install websocket-driver -v 0.7.0 \
+      && gem install bindex -v 0.6.0 \
       && gem install sassc -v 2.2.1 \
       && runDeps="$( \
       scanelf --needed --nobanner --recursive /usr/local \
@@ -63,13 +63,11 @@ ADD docker/certs/*.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates \
       && curl https://github.wdf.sap.corp
 
-# install latest bundler
-RUN gem install bundler
-# install gems
+# install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
-# copy app
+
 ADD . /home/app/webapp
-# and run rake tasks
+
 # precompile assets including webpacker packs
 # We use dummy master.key to workaround the fact that
 # assets:precompile needs them but we don't want the real master.key to be built
