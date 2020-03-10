@@ -47,6 +47,7 @@ module Resources
       # `resources:project:edit` permissions.
       @js_data[:project_id] = @scoped_project_id
       @js_data[:domain_id]  = @scoped_domain_id
+
       auth_params = { selected: @js_data }
       enforce_permissions('::resources:project:edit', auth_params)
       @js_data[:can_edit] = true
@@ -243,15 +244,19 @@ module Resources
                 if inventory_data && inventory_data.key?("MEMORY_MB")
                   big_vm_resources[resource_provider_name]["memory"] = (inventory_data["MEMORY_MB"]["max_unit"].to_f / 1024 / 1024).round.to_s
                 else
+                  big_vm_resources.delete(resource_provider_name)
                   next
                 end
+              else
+                big_vm_resources.delete(resource_provider_name)
+                next
               end
             end
           end
         end
       end
 
-      # big_vm_resources
+      # pp big_vm_resources
       #{
       #  "nova-compute-bb94"=>
       #  {"shard"=>"vc-b-0",
@@ -266,9 +271,11 @@ module Resources
       # massage data for better use
       big_vms_by_az = {}
       big_vm_resources.each do |key,value|
-        big_vms_by_az[value["availability_zone"]] ||= {} 
-        # there is only one HV per az and memory size
-        big_vms_by_az[value["availability_zone"]][value["memory"]] = key
+        if value.key? "memory"
+          big_vms_by_az[value["availability_zone"]] ||= {} 
+          # there is only one HV per az and memory size
+          big_vms_by_az[value["availability_zone"]][value["memory"]] = key
+        end
       end
 
       # fake data for debug

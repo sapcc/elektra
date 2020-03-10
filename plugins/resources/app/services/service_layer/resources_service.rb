@@ -41,11 +41,15 @@ module ServiceLayer
     def big_vm_available(uuid)
       big_vms = {}
       provider = elektron_placement.get("resource_providers/#{uuid}/inventories")
-      reserved = provider.body['inventories']['CUSTOM_BIGVM']['reserved']
-      if reserved != 0
-        return false 
-      else 
-        return true
+      unless provider.body['inventories'].empty?
+        reserved = provider.body['inventories']['CUSTOM_BIGVM']['reserved']
+        if reserved != 0
+          return false 
+        else 
+          return true
+        end
+      else
+        return false
       end
     end
 
