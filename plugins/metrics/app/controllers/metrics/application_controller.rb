@@ -43,7 +43,6 @@ module Metrics
       response = https.request(request)
       if response.code == '200' or response.code == '201'
         body = JSON[response.body]
-        print body['hostname']
         redirect_to "https://"+ body['hostname']
       end
     end
