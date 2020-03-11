@@ -28,8 +28,17 @@
         %p
           This is a Prometheus expression browser adapted to Maia. You can use it to discover metrics,
           series and perform ad-hoc queries leveraging all of PromQL's rich query syntax.
+      %li
+        %h4
+          = link_to 'Maia Grafana', 'https://documentation.global.cloud.sap/docs/metrics/scenarios.html', target:'_blank'
+        %p
+          This is a Grafana system to display Maia metrics and provides a pre-configured set of dashborads
 
 %p
   = link_to :maia, class: "btn btn-primary", target:'_blank' do
     %i.fa.fa-external-link
     Open Maia Dashboard
+
+  = link_to :gaas, class: "btn btn-primary", style: "margin-left: 5px", target:'_blank' do
+    %i.fa.fa-external-link
+    Open Grafana
