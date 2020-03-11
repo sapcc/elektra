@@ -4,6 +4,7 @@ Lbaas2::Engine.routes.draw do
     collection do
       get ':id/status-tree' => 'loadbalancers#status_tree', as: 'status-tree'
       get 'private-networks' => 'loadbalancers#private_networks'
+      get 'private-networks/:id/subnets' => 'loadbalancers#subnets'
     end
   end  
 end

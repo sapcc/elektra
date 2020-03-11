@@ -67,19 +67,33 @@ module Lbaas2
         @scoped_project_id
       ).delete_if { |n| n.attributes['router:external'] == true }
 
-      # collect subnet objects to display the subnets with ip range of the project
-      private_networks.each do |pn|
-        pn.subnet = pn.subnet_objects
-      end
-      render json: { private_networks: private_networks }
+      # transform data for a select input
+      select_private_networks = private_networks.map {|pn| {"label": pn.name, "value": pn.id}}
+
+      render json: { private_networks: select_private_networks }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
       render json: { errors: e.message }, status: "500"
     end    
 
+    def subnets
+      private_network = services.networking.find_network!(params[:id])
+      subnets = private_network.subnet_objects || []
+      select_subnets = subnets.map {|sb| {"label": "#{sb.name} (#{sb.cidr})", "value": sb.id}}
+
+      render json: { subnets: select_subnets }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
     def create
+      # add project id
       lbParams = params[:loadbalancer].merge(project_id: @scoped_project_id)
+      # add subnet if no one selected
+      lbParams[:vip_subnet_id] = select_subnet(lbParams)
       loadbalancer = services.lbaas2.new_loadbalancer(lbParams)
       if loadbalancer.save
         audit_logger.info(current_user, 'has created', loadbalancer)
@@ -96,6 +110,17 @@ module Lbaas2
     end
 
     protected
+
+    def select_subnet(params)
+      if params[:vip_subnet_id].blank?
+        private_network = services.networking.find_network!(params[:vip_netowrk_id])        
+        # get the first subnet found
+        subnet = private_network.subnet_objects.first unless private_network.blank?
+        return subnet.blank? ? null : subnet.id
+      else
+        return params[:vip_subnet_id]
+      end
+    end
 
     def extend_lb_data(lbs)
       # get project fips per api

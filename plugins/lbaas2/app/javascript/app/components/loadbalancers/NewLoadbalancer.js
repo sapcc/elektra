@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
-import CreatableSelect from 'react-select/creatable';
 import { ajaxHelper } from 'ajax_helper';
-import { useDispatch } from '../StateProvider'
 import { addNotice } from 'lib/flashes';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
+import SelectInput from './SelectInput'
+import TagsInput from './TagsInput'
 
 
 const NewLoadbalancer = (props) => {
-  const dispatch = useDispatch()
-  const {createLoadbalancer} = useLoadbalancer()
+  const {createLoadbalancer, fetchSubnets} = useLoadbalancer()
 
   const [privateNetworks, setPrivateNetworks] = useState({
     isLoading: false,
     error: null,
     items: []
   })
+
   useEffect(() => {
     console.log('fetching private networks')
     setPrivateNetworks({...privateNetworks, isLoading:true})
@@ -56,57 +56,53 @@ const NewLoadbalancer = (props) => {
   * Form stuff
   */
   const [formErrors,setFormErrors] = useState(null)
-  const validate = ({name,description,vip_subnet_id,vip_address,tags}) => {
-    return name && vip_subnet_id && true
+  const [initialValues, setInitialValues] = useState({})
+
+  const validate = ({name,description,vip_netowrk_id,vip_subnet_id,vip_address,tags}) => {
+    return name && vip_netowrk_id && true
   }
 
-  const onSubmit = (values) => {    
-    // collect the tags extra
-    const tags = tagEditorValue.map( (value, index) => value.value )
-    // copy tags to the values of the form
-    values = {...values, tags: tags}
+  const onSubmit = (values) => {
     setFormErrors(null)
     return createLoadbalancer(values).then((response) => {
-      // 'Loadbalancer ' + response.data.id + " is being created."
-      addNotice(<React.Fragment>Loadbalancer <b>{response.data.id}</b> is being created.</React.Fragment>)
+      addNotice(<React.Fragment>Loadbalancer <b>{response.data.name}</b>({response.data.id}) is being created.</React.Fragment>)
       close()
     }).catch(error => {
       setFormErrors(errorMessage(error))
     })
   }
 
-  const initialValues = {}
+  const [privateNetwork, setPrivateNetwork] = useState(null)
+  const [subnets, setSubnets] = useState({ isLoading: false, error: null, items: [] })
+  const [subnet, setSubnet] = useState(null)
 
-  /*
-  * Tag editor
-   */
-  const components = {
-    DropdownIndicator: null,
-  };
-  const createOption = (label) => {
-    return {
-      label,
-      value: label,
+  const onSelectPrivateNetworkChange = (props) => {
+    if (props) {
+      setPrivateNetwork(props)
+      setSubnets({...subnets, isLoading: true, error: null})
+      fetchSubnets(props.value)
+      .then( (response) => {
+        // new subnets loaded
+        setSubnets({...subnets, isLoading: false, error: null, items: response})
+        // reset selected subnet
+        setSubnet(null)
+      })
+      .catch( (error) => {     
+        setSubnets({...subnets, isLoading: false, error: errorMessage(error)})
+      })
     }
-  };
-  const [tagEditorInputValue, setTagEditorInputValue] = useState("")
-  const [tagEditorValue, setTagEditorValue] = useState([])
-  const onTagEditorChange = (value, actionMeta) => {
-    setTagEditorValue(value || [])
-  };
-  const onTagEditorInputChange = (inputValue) => {  
-    setTagEditorInputValue(inputValue)
-  };
-  const onTagEditorKeyDown = (event) => {
-    if (!tagEditorInputValue) return;
-    switch (event.key) {
-      case 'Enter':
-      case 'Tab':
-        setTagEditorValue([...tagEditorValue, createOption(tagEditorInputValue)])
-        setTagEditorInputValue("")        
-        event.preventDefault();
+  }
+
+  const onSelectSubnetChange = (props) => {
+    if (props) {
+      setSubnet(props)
     }
-  };
+  }
+
+  const [showAdvanceNetworkSettings, setShowAdvanceNetworkSettings] =  useState(false)
+  const handleAdvanceNetworkSettings = () => {
+    setShowAdvanceNetworkSettings(!showAdvanceNetworkSettings)
+  }
 
   console.log("RENDER new loadbalancer")
   return ( 
@@ -116,7 +112,8 @@ const NewLoadbalancer = (props) => {
       bsSize="large"
       backdrop='static'
       onExited={restoreUrl}
-      aria-labelledby="contained-modal-title-lg">
+      aria-labelledby="contained-modal-title-lg"
+      bsClass="lbaas2 modal">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">New Load Balancer</Modal.Title>
         </Modal.Header>
@@ -136,53 +133,47 @@ const NewLoadbalancer = (props) => {
             <Form.ElementHorizontal label='Description' name="description">
               <Form.Input elementType='input' type='text' name='description'/>
             </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='Private Network' required name="vip_subnet_id">
-              { privateNetworks.isLoading ?
-                <span className='spinner'/>
-                :
-                privateNetworks.error ?
-                  <span className='text-danger'>{privateNetworks.error}</span>
-                  :
-                  <React.Fragment>
-                    <Form.Input
-                      elementType='select'
-                      className="select required form-control"
-                      name='vip_subnet_id'>
-                      <option></option>
-                      {privateNetworks.items.map((pn,index) =>
-                        pn.subnet[0] &&
-                          <option value={pn.subnet[0].id} key={index}>
-                            {pn.name} ({pn.subnet[0].cidr})
-                          </option>                        
-                      )}
-                    </Form.Input>
-                  </React.Fragment>
-              }
+
+            <Form.ElementHorizontal label='Private Network' required name="vip_network_id">
+              <SelectInput name="vip_netowrk_id" isLoading={privateNetworks.isLoading} items={privateNetworks.items} onChange={onSelectPrivateNetworkChange} value={privateNetwork}/>
+              { privateNetworks.error ? <span className='text-danger'>{privateNetworks.error}</span>:""}
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
                 The network which provides the internal IP of the load balancer.
               </span>
             </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='IP Address' name="vip_address">
-              <Form.Input elementType='input' type='text' name='vip_address'/>
-              <span className="help-block">
-                <i className="fa fa-info-circle"></i>
-                You can specify an IP from the private network if you like. Otherwise an IP will be allocated automatically.
-              </span>
+
+            <Form.ElementHorizontal>
+              <span className="pull-right">
+                <Button bsStyle="link" onClick={handleAdvanceNetworkSettings} >Toggle advanced network options</Button>
+              </span>              
             </Form.ElementHorizontal>
+
+            {showAdvanceNetworkSettings &&
+              <div className="advanced-options">
+                <h5>Advanced Network Options</h5>
+                <p>These optional settings are for advanced usecases that require more control over the network configuration of the new loadbalancer.</p>
+                <Form.ElementHorizontal label='Subnet' name="vip_subnet_id">
+                  <SelectInput name="vip_subnet_id" isLoading={subnets.isLoading} items={subnets.items} onChange={onSelectSubnetChange} value={subnet} conditionalPlaceholderText="Please choose a network first." conditionalPlaceholderCondition={privateNetwork == null}/>
+                  { privateNetworks.error ? <span className='text-danger'>{privateNetworks.error}</span>:""}
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    You can specify a subnet from which the fixed IP is chosen. If empty any subnet is selected.
+                  </span>
+                </Form.ElementHorizontal>
+
+                <Form.ElementHorizontal label='IP Address' name="vip_address">
+                  <Form.Input elementType='input' type='text' name='vip_address'/>
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    You can specify an IP from the subnet if you like. Otherwise an IP will be allocated automatically.
+                  </span>
+                </Form.ElementHorizontal>
+              </div>
+            }
+
             <Form.ElementHorizontal label='Tags' name="tags">
-              <CreatableSelect
-                components={components}
-                inputValue={tagEditorInputValue}
-                isClearable
-                isMulti
-                menuIsOpen={false}
-                onChange={onTagEditorChange}
-                onInputChange={onTagEditorInputChange}
-                onKeyDown={onTagEditorKeyDown}
-                placeholder=""
-                value={tagEditorValue}
-              />
+              <TagsInput name="tags" />
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
                 Start a new tag typing a string and hitting the Enter or Tab key.

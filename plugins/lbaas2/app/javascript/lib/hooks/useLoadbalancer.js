@@ -46,8 +46,7 @@ const useLoadbalancer = () => {
       return ajaxHelper.delete(`/loadbalancers/${id}`)
       .then( (response) => {
         dispatch({type: 'REQUEST_REMOVE_LOADBALANCER', id: id})
-        // "Load Balancer " + id + " will be deleted."
-        addNotice(<React.Fragment><span>Load Balancer <b>{id}</b> will be deleted.</span></React.Fragment>)
+        addNotice(<React.Fragment><span>Load Balancer <b>{name}</b>({id}) will be deleted.</span></React.Fragment>)
       })
       .catch( (error) => {     
         addError(React.createElement(ErrorsList, {
@@ -57,10 +56,21 @@ const useLoadbalancer = () => {
     }).catch(cancel => true)
   }
 
+  const fetchSubnets = (id) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.get(`/loadbalancers/private-networks/${id}/subnets`).then((response) => {
+        handleSuccess(response.data.subnets)
+      }).catch(error => {
+        handleErrors(error.response)
+      })
+    })
+  }
+
   return {
     fetchLoadbalancer,
     deleteLoadbalancer,
-    createLoadbalancer
+    createLoadbalancer,
+    fetchSubnets
   }
 
 }

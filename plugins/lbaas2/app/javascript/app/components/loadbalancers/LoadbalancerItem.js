@@ -20,9 +20,9 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
   // useStatusTree({lbId: loadbalancer.id})
 
   useEffect(() => {
-    console.group('provisioning_status')
-    console.log(loadbalancer.provisioning_status)
-    console.groupEnd()
+    // console.group('provisioning_status')
+    // console.log(loadbalancer.provisioning_status)
+    // console.groupEnd()
 
     if(loadbalancer.provisioning_status.includes('PENDING')) {
       startPolling(5000)
