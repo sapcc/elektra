@@ -4,6 +4,7 @@ module Metrics
   class ApplicationController < DashboardController
     authorization_context 'metrics'
     authorization_required
+    extend ErrorRenderer
 
     def index
       enforce_permissions('metrics:application_list')
@@ -14,38 +15,62 @@ module Metrics
     end
 
     def gaas
+      options = {
+        title: "cannot open maia grafana",
+        warning: true, sentry: false
+      }
       grafana = {
         "config": {
-          "ingressHost": "%s.grafana-svc.qa-de-1.cloud.sap",
-          "logLevel": "info",
-          "basicAuth": false,
-          "disableLoginForm": true,
-          "orgName": "sapcc",
-          "includeRolesInGroups": true,
-          "grafanaGroupRoleMap": "admin:Admin network_admin:Editor",
+          "ingressHost": "%s.grafana-svc.#{current_region}.cloud.sap",
           "authProxy": {
             "enabled": true
           }
         }
       }
-      uri = URI.parse("https://api.grafana-svc.#{current_region}.cloud.sap/api/v1/grafana")
+      grafana_proxy = {
+        "config": {
+          "ingressHost": "%s.grafana-svc.#{current_region}.cloud.sap",
+          "connectors": ["keystone"]
+        }
+      }
+      uri_grafana = URI.parse("https://api.grafana-svc.#{current_region}.cloud.sap/api/v1/grafana")
+      uri_proxy = URI.parse("https://api.grafana-svc.#{current_region}.cloud.sap/api/v1/grafanaproxy")
 
+      begin
+        resp = _request(uri_proxy, grafana_proxy)
+      rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
+        Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError, OpenSSL::SSL::SSLError => e
+        render_exception_page(e, options)
+        return
+      end
+
+      begin
+        resp = _request(uri_grafana, grafana)
+      rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
+        Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError, OpenSSL::SSL::SSLError => e
+        render_exception_page(e, options)
+        return
+      end
+
+      if resp.code == '200' or resp.code == '201'
+        body = JSON[resp.body]
+        redirect_to "https://"+ body['hostname']
+      else
+        render_exception_page(e, options)
+      end
+    end
+
+    def _request(uri, body)
       header = {
         "Content-Type": "application/json",
         "x-auth-token": "#{current_user.token}"
       }
       https = Net::HTTP.new(uri.host, uri.port)
+      https.read_timeout = 60
       https.use_ssl = true
       request = Net::HTTP::Post.new(uri.request_uri, header)
-      request.body = grafana.to_json
-    
-      # Send the request
+      request.body = body.to_json
       response = https.request(request)
-      if response.code == '200' or response.code == '201'
-        body = JSON[response.body]
-        print body['hostname']
-        redirect_to "https://"+ body['hostname']
-      end
     end
 
   end
