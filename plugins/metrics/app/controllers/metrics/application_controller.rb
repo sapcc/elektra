@@ -15,6 +15,7 @@ module Metrics
     end
 
     def gaas
+      retries = 0
       options = {
         title: "cannot open maia grafana",
         warning: true, sentry: false
@@ -53,23 +54,43 @@ module Metrics
       end
 
       if resp.code == '200' or resp.code == '201'
-        body = JSON[resp.body]
-        redirect_to "https://"+ body['hostname']
+        grafanaHost = JSON[resp.body]['hostname']
+        grafanaHost = URI.parse("https://" + grafanaHost)
+        begin
+          resp = _request(grafanaHost)
+          if resp.code == '302'
+            redirect_to grafanaHost.to_s
+          else
+            raise 'grafana is not responding'
+          end
+        rescue StandardError => e
+            if (retries += 1) <= 5
+              puts "Timeout (#{e}), retrying in #{retries} second(s)..."
+              sleep(retries)
+              retry
+            else
+              render_exception_page(e, options)
+            end
+          end
       else
         render_exception_page(e, options)
       end
     end
 
-    def _request(uri, body)
+    def _request(uri, body = nil)
       header = {
         "Content-Type": "application/json",
         "x-auth-token": "#{current_user.token}"
       }
+      if body
+        request = Net::HTTP::Post.new(uri.request_uri, header)
+        request.body = body.to_json
+      else
+        request = Net::HTTP::Get.new(uri.request_uri)
+      end
       https = Net::HTTP.new(uri.host, uri.port)
-      https.read_timeout = 60
+      https.read_timeout = 120
       https.use_ssl = true
-      request = Net::HTTP::Post.new(uri.request_uri, header)
-      request.body = body.to_json
       response = https.request(request)
     end
 
