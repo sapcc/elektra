@@ -92,8 +92,6 @@ module Lbaas2
     def create
       # add project id
       lbParams = params[:loadbalancer].merge(project_id: @scoped_project_id)
-      # add subnet if no one selected
-      lbParams[:vip_subnet_id] = select_subnet(lbParams)
       loadbalancer = services.lbaas2.new_loadbalancer(lbParams)
       if loadbalancer.save
         audit_logger.info(current_user, 'has created', loadbalancer)
@@ -110,17 +108,6 @@ module Lbaas2
     end
 
     protected
-
-    def select_subnet(params)
-      if params[:vip_subnet_id].blank?
-        private_network = services.networking.find_network!(params[:vip_netowrk_id])        
-        # get the first subnet found
-        subnet = private_network.subnet_objects.first unless private_network.blank?
-        return subnet.blank? ? null : subnet.id
-      else
-        return params[:vip_subnet_id]
-      end
-    end
 
     def extend_lb_data(lbs)
       # get project fips per api

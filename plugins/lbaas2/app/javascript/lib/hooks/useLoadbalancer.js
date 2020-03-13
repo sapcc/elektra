@@ -18,7 +18,7 @@ const useLoadbalancer = () => {
         dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data.loadbalancer})
         handleSuccess(response.data.loadbalancer)
       }).catch( (error) => {
-        if(error.response.status == 404) {
+        if(error.response && error.response.status == 404) {
           dispatch({type: 'REMOVE_LOADBALANCER', id: id})
         }        
         handleError(error.response)
@@ -46,7 +46,7 @@ const useLoadbalancer = () => {
       return ajaxHelper.delete(`/loadbalancers/${id}`)
       .then( (response) => {
         dispatch({type: 'REQUEST_REMOVE_LOADBALANCER', id: id})
-        addNotice(<React.Fragment><span>Load Balancer <b>{name}</b>({id}) will be deleted.</span></React.Fragment>)
+        addNotice(<React.Fragment><span>Load Balancer <b>{name}</b> ({id}) will be deleted.</span></React.Fragment>)
       })
       .catch( (error) => {     
         addError(React.createElement(ErrorsList, {
