@@ -55,7 +55,9 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
 
   const handleDelete = (e) => {
     e.preventDefault()
-    deleteLoadbalancer(loadbalancer.name, loadbalancer.id)
+    deleteLoadbalancer(loadbalancer.name, loadbalancer.id).then(() => {
+      
+    })
   }
 
   console.log('RENDER loadbalancer list item id-->', loadbalancer.id)
@@ -79,7 +81,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
             </React.Fragment>
           }
       </td>
-      <td>{loadbalancer.description}</td>
+      <td><MyHighlighter search={searchTerm}>{loadbalancer.description}</MyHighlighter></td>
       <td><StateLabel placeholder={loadbalancer.operating_status} path="operating_status" /></td>
       <td><StateLabel placeholder={loadbalancer.provisioning_status} path="provisioning_status"/></td>
       {/* <td>{loadbalancer.operating_status}</td> */}
@@ -134,7 +136,6 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
         <div className='btn-group'>
           <button
             className='btn btn-default btn-sm dropdown-toggle'
-            disabled={disabled}
             type="button"
             data-toggle="dropdown"
             aria-expanded={true}>

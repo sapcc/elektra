@@ -66,13 +66,6 @@ const NewLoadbalancer = (props) => {
     setFormErrors(null)
     // save the entered values in case of error
     setInitialValues(values)
-
-    console.group("initialValues")
-    console.log(values)
-    console.log(JSON.stringify(initialValues))
-    console.log(privateNetwork)
-    console.groupEnd()
-
     return createLoadbalancer(values).then((response) => {
       addNotice(<React.Fragment>Loadbalancer <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       close()
