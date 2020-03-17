@@ -11,7 +11,20 @@ const useLoadbalancer = () => {
   const errorMessage = (err) => {
     return err.data &&  (err.data.errors || err.data.error) || err.message
   }  
-  
+ 
+  const fetchLoadbalancers = (marker) => {
+    const params = {}
+    if(marker) params['marker'] = marker.id
+
+    dispatch({type: 'REQUEST_LOADBALANCERS', requestedAt: Date.now()})
+    ajaxHelper.get(`/loadbalancers`, {params: params }).then((response) => {
+      dispatch({type: 'RECEIVE_LOADBALANCERS', items: response.data.loadbalancers, hasNext: response.data.has_next})
+    })
+    .catch( (error) => {
+      dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error})
+    })
+  }
+
   const fetchLoadbalancer = (id) => {    
     return new Promise((handleSuccess,handleError) => {    
       ajaxHelper.get(`/loadbalancers/${id}`).then((response) => {      
@@ -42,18 +55,22 @@ const useLoadbalancer = () => {
   }
   
   const deleteLoadbalancer = (name, id) => {
-    confirm(<React.Fragment><p>Do you really want to delete following loadbalancer?</p><p>{createNameTag(name)} <b>id:</b> {id}</p></React.Fragment>).then(() => {
-      return ajaxHelper.delete(`/loadbalancers/${id}`)
-      .then( (response) => {
-        dispatch({type: 'REQUEST_REMOVE_LOADBALANCER', id: id})
-        addNotice(<React.Fragment><span>Load Balancer <b>{name}</b> ({id}) will be deleted.</span></React.Fragment>)
-      })
-      .catch( (error) => {     
-        addError(React.createElement(ErrorsList, {
-          errors: errorMessage(error.response)
-        }))
-      });
-    }).catch(cancel => true)
+    return new Promise((handleSuccess,handleErrors) => {
+      confirm(<React.Fragment><p>Do you really want to delete following loadbalancer?</p><p>{createNameTag(name)} <b>id:</b> {id}</p></React.Fragment>).then(() => {
+        return ajaxHelper.delete(`/loadbalancers/${id}`)
+        .then( (response) => {
+          dispatch({type: 'REQUEST_REMOVE_LOADBALANCER', id: id})
+          addNotice(<React.Fragment><span>Load Balancer <b>{name}</b> ({id}) will be deleted.</span></React.Fragment>)
+          handleSuccess()
+        })
+        .catch( (error) => {     
+          addError(React.createElement(ErrorsList, {
+            errors: errorMessage(error.response)
+          }))
+          handleErrors()
+        });
+      }).catch(cancel => true)
+    })
   }
 
   const fetchSubnets = (id) => {
@@ -67,6 +84,7 @@ const useLoadbalancer = () => {
   }
 
   return {
+    fetchLoadbalancers,
     fetchLoadbalancer,
     deleteLoadbalancer,
     createLoadbalancer,

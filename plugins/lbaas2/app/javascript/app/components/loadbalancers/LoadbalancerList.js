@@ -7,6 +7,8 @@ import ErrorPage from '../ErrorPage';
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import { SearchField } from 'lib/components/search_field';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { Link } from 'react-router-dom';
+import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
 const TableFadeTransition = ({
   children,
@@ -19,40 +21,21 @@ const TableFadeTransition = ({
 const LoadbalancerList = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
+  const {fetchLoadbalancers} = useLoadbalancer()
 
   useEffect(() => {
     console.log('FETCH initial loadbalancers')
-    fetchLoadbalancers()
+    fetchLoadbalancers(state.marker)
   }, []);
-
-  const fetchLoadbalancers = () => {
-    const marker = state.marker
-    const params = {}
-    if(marker) params['marker'] = marker.id
-
-    dispatch({type: 'REQUEST_LOADBALANCERS', requestedAt: Date.now()})
-    ajaxHelper.get(`/loadbalancers`, {params: params }).then((response) => {
-      dispatch({type: 'RECEIVE_LOADBALANCERS', items: response.data.loadbalancers, hasNext: response.data.has_next})
-    })
-    .catch( (error) => {
-      dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error})
-    })
-  }
 
   const loadNext = event => {
     if(!state.isLoading && state.hasNext) {
-      fetchLoadbalancers()
+      fetchLoadbalancers(state.marker)
     }
   }
 
   const search = (term) => {
-    if (selected) {
-      // redirect
-      props.history.push('/loadbalancers')
-    }
-    console.group("search term set")
-    console.log(term)
-    console.groupEnd()
+    dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: term})
   }
 
   const error = state.error
@@ -70,6 +53,9 @@ const LoadbalancerList = (props) => {
         i.id == searchTerm.trim()
       )
     } else {
+      console.group("filtering with regex")
+      console.log(searchTerm)
+      console.groupEnd()
       const regex = new RegExp(searchTerm.trim(), "i");
       return items.filter((i) =>
       `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
@@ -86,11 +72,17 @@ const LoadbalancerList = (props) => {
           :
           <React.Fragment>
             <div className='toolbar'>
-              {loadbalancers.length > 0 &&
-                <SearchField
-                  value={searchTerm}
-                  onChange={(term) => search(term)}
-                  placeholder='name, ID, description' text='Searches by name, ID or description in visible loadbalancers list only.'/>                
+              { selected ?
+                <Link className="back-link" to={`/loadbalancers`}>
+                  <i className="fa fa-chevron-circle-left"></i>
+                  Back to list
+                </Link>
+                :
+                loadbalancers.length > 0 &&
+                  <SearchField
+                    value={searchTerm}
+                    onChange={(term) => search(term)}
+                    placeholder='name, ID, description' text='Searches by name, ID or description in visible loadbalancers list only.'/> 
               }
               <div className="main-buttons">
                 <DefeatableLink
@@ -125,6 +117,7 @@ const LoadbalancerList = (props) => {
                           loadbalancer={loadbalancer}
                           disabled={selected ? true : false}
                           key={index}
+                          searchTerm={searchTerm}
                         />
                       )
                       :
