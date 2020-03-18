@@ -159,21 +159,23 @@ module Resources
       hosts_shard = {}
       unless host_aggregates.nil?
         host_aggregates.each do |host_aggregate|
+          # pp host_aggregate
           unless host_aggregate.hosts.nil?
             host_aggregate.hosts.each do |hostname|
-              if host_aggregate.name.start_with?('vc-')
-                # this is a shard
-                hosts_shard[hostname] = host_aggregate.name
-              else
+              if host_aggregate.name == host_aggregate.availability_zone
                 # this is a availability_zone
                 hosts_az[hostname] = host_aggregate.name
+              else
+                # this is a shard
+                hosts_shard[hostname] = host_aggregate.name
               end
             end
           end
         end
       end
 
-      # hosts_shard
+      #puts "HOSTS_SHARDS"
+      #pp hosts_shard
       #{
       #  "nova-compute-bb95"=>"vc-a-1",
       #  "nova-compute-bb93"=>"vc-b-0",
@@ -182,7 +184,8 @@ module Resources
       #  "nova-compute-bb92"=>"vc-a-0"
       #}
 
-      # hosts_az
+      #puts "HOSTS_AZ"
+      #pp hosts_az
       #{
       #  "nova-compute-bb91"=>"qa-de-1a",
       #  "nova-compute-bb92"=>"qa-de-1a",
@@ -217,8 +220,12 @@ module Resources
           hosts_az.keys.each do |hostname|
             # only availability_zones are allowed that are related to the shards that are available for the project
             # in case project_shards.empty? any resource_provider_name is allowed
-            if resource_provider_name == hostname && big_vm_resources[resource_provider_name]["shard"] || project_shards.empty? 
+            if resource_provider_name == hostname && ( big_vm_resources[resource_provider_name]["shard"] || project_shards.empty? )
               availability_zone = hosts_az[hostname]
+              # puts "MAPPING"
+              # puts hostname
+              # puts resource_provider_name 
+              # puts availability_zone 
               big_vm_resources[resource_provider_name]["availability_zone"] = availability_zone
             end
           end
@@ -233,6 +240,9 @@ module Resources
           parent_provider_uuid   = resource_provider["parent_provider_uuid"]
           resource_provider_uuid = resource_provider["uuid"]
           resource_links         = resource_provider["links"]
+          
+          # puts "RESOURCE PROVIDER"
+          # pp resource_provider
 
           resource_links.each do |resource_link|
             available = false
@@ -242,7 +252,10 @@ module Resources
               if available == true
                 inventory_data = cloud_admin.resources.get_resource_provider_inventory(parent_provider_uuid)
                 if inventory_data && inventory_data.key?("MEMORY_MB")
-                  big_vm_resources[resource_provider_name]["memory"] = (inventory_data["MEMORY_MB"]["max_unit"].to_f / 1024 / 1024).round.to_s
+                  big_vm_resources[resource_provider_name]["memory"] = (inventory_data["MEMORY_MB"]["max_unit"].to_f / 1024 / 1024).to_f.round.to_s
+                  # puts "MEMORY_MB"
+                  # puts resource_provider_name
+                  # puts inventory_data["MEMORY_MB"]["max_unit"]
                 else
                   big_vm_resources.delete(resource_provider_name)
                   next
@@ -256,7 +269,8 @@ module Resources
         end
       end
 
-      # pp big_vm_resources
+      #puts "BIG_VM_RESOURCES"
+      #pp big_vm_resources
       #{
       #  "nova-compute-bb94"=>
       #  {"shard"=>"vc-b-0",
