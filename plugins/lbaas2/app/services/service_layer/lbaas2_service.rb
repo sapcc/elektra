@@ -4,6 +4,8 @@ module ServiceLayer
   # implements the LBAAS API
   class Lbaas2Service < Core::ServiceLayer::Service
     include Lbaas2Services::Loadbalancer
+    include Lbaas2Services::Listener
+    include Lbaas2Services::Pool
 
     def available?(_action_name_sym = nil)
       elektron.service?('octavia')

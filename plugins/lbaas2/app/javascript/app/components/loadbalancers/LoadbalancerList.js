@@ -53,9 +53,6 @@ const LoadbalancerList = (props) => {
         i.id == searchTerm.trim()
       )
     } else {
-      console.group("filtering with regex")
-      console.log(searchTerm)
-      console.groupEnd()
       const regex = new RegExp(searchTerm.trim(), "i");
       return items.filter((i) =>
       `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
@@ -75,7 +72,7 @@ const LoadbalancerList = (props) => {
               { selected ?
                 <Link className="back-link" to={`/loadbalancers`}>
                   <i className="fa fa-chevron-circle-left"></i>
-                  Back to list
+                  Back to load balancer list
                 </Link>
                 :
                 loadbalancers.length > 0 &&
@@ -85,18 +82,20 @@ const LoadbalancerList = (props) => {
                     placeholder='name, ID, description' text='Searches by name, ID or description in visible loadbalancers list only.'/> 
               }
               <div className="main-buttons">
-                <DefeatableLink
-                  disabled={selected || isLoading}
-                  to='/loadbalancers/new'
-                  className='btn btn-primary'>
-                  Create New
-                </DefeatableLink>
+                {!selected &&
+                  <DefeatableLink
+                    disabled={isLoading}
+                    to='/loadbalancers/new'
+                    className='btn btn-primary'>
+                    New Load Balancer
+                  </DefeatableLink> 
+                }
               </div>
             </div>
             
             <TransitionGroup>
               <TableFadeTransition key={loadbalancers.length}>
-                <table className="table table-hover loadbalancers">
+                <table className={selected ? "table loadbalancers" : "table table-hover loadbalancers"}>
                   <thead>
                       <tr>
                           <th>Name/ID</th>

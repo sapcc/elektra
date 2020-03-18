@@ -57,7 +57,7 @@ const Details = (props) => {
     } 
     if (loadbalancer) {
       if (loadbalancer.name) {
-        return <h3>Details for {loadbalancer.name} <small>({loadbalancer.id})</small></h3>
+        return <h3>Details for <b>{loadbalancer.name}</b> <small>({loadbalancer.id})</small></h3>
       } else {
         return <h3>Details for {loadbalancer.id}</h3>
       }
@@ -74,14 +74,18 @@ const Details = (props) => {
           { !loadbalancer && !loading && selected &&
             <Redirect to="/loadbalancers"/>
           }
-          {/* title */}
+
           {headerTitle(loading, loadbalancer)}
           
-          {/* listeners */}
-          <ListenerList/>
+          {loadbalancer &&        
+            <React.Fragment>
 
-          {/* pools */}
-          <PoolList />
+              <ListenerList loadbalancerID={loadbalancer.id}/>
+
+              <PoolList loadbalancerID={loadbalancer.id}/>
+              
+            </React.Fragment>
+          }
 
         </React.Fragment>
       }
