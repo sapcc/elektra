@@ -45,7 +45,7 @@ export const makeHowto = (dockerInfo, accountName, repoName, hide) => {
           <li>
             To pull an image, use this command:
             <pre><code>{`$ docker pull ${registryDomain}/${accountName}/${repoName}:<tag>`}</code></pre>
-            When the repository permits anonymous pulling, logging in is not required. Check <Link to={`/accounts/${accountName}/policies`}>the account's access policies</Link> for details.
+            When the repository permits anonymous pulling, logging in is not required. Check <Link to={`/accounts/${accountName}/access_policies`}>the account's access policies</Link> for details.
           </li>
         </ol>
       </div>
