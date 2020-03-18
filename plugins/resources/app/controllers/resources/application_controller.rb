@@ -243,7 +243,7 @@ module Resources
           
           #puts "RESOURCE PROVIDER"
           #pp resource_provider
-
+          big_vm_sizes = [1,1.5,2,3,4,6]
           resource_links.each do |resource_link|
             available = false
             if resource_link["rel"] == "inventories"
@@ -254,9 +254,20 @@ module Resources
                 if inventory_data && inventory_data.key?("MEMORY_MB")
                   memory_size_in_mb =  inventory_data["MEMORY_MB"]["max_unit"] || 0
                   big_vm_resources[resource_provider_name]["memory"] = sprintf("%.1f",memory_size_in_mb.to_f/1000/1000).to_s
+                  # calculate available bigvms
+                  big_vm_resources[resource_provider_name]["available_big_sizes"] = ""
+                  big_vm_sizes.each do |size|
+                    big_vm_count = big_vm_resources[resource_provider_name]["memory"].to_f / size
+                    if big_vm_count.to_i != 0
+                      big_vm_resources[resource_provider_name]["available_big_sizes"] += "#{big_vm_count.to_i}x#{size}TB, "
+                    end
+                  end 
+                  big_vm_resources[resource_provider_name]["available_big_sizes"].chomp!(", ")
+
                   # puts "MEMORY_MB"
                   # puts resource_provider_name
                   # puts inventory_data["MEMORY_MB"]["max_unit"]
+                  # puts big_vm_resources[resource_provider_name]
                 else
                   big_vm_resources.delete(resource_provider_name)
                   next
@@ -289,7 +300,7 @@ module Resources
         if value.key? "memory"
           big_vms_by_az[value["availability_zone"]] ||= {} 
           # there is only one HV per az and memory size
-          big_vms_by_az[value["availability_zone"]][value["memory"]] = key
+          big_vms_by_az[value["availability_zone"]][value["memory"]] = value["available_big_sizes"]
         end
       end
 

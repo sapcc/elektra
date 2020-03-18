@@ -5,13 +5,15 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
   const availabilityZones = Object.keys(bigVmResources).sort();
   const hv_sizes = {};
   Object.keys(bigVmResources).map(az =>
-    Object.keys(bigVmResources[az]).map(memory_size => (hv_sizes[memory_size] = "#"))
+    Object.keys(bigVmResources[az]).map(
+      memory_size => (hv_sizes[memory_size] = "#")
+    )
   );
   const azColumnWidth = Math.floor(10 / availabilityZones.length);
 
   // there is only one HV per az and memory size
-  function get_available_hvs(hypervisors) {
-    if (hypervisors) {
+  function get_available_capacity(capacity) {
+    if (capacity) {
       return 1;
     } else {
       return 0;
@@ -45,9 +47,9 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
                   className={`col-md-${azColumnWidth}`}
                 >
                   <ResourceBar
-                    capacity={get_available_hvs(bigVmResources[az][memory_size])}
+                    capacity={get_available_capacity(memory_size)}
                     fill={0}
-                    labelOverride="Available"
+                    labelOverride={bigVmResources[az][memory_size]}
                     showsCapacity={true}
                   />
                 </div>
@@ -57,9 +59,7 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
       </React.Fragment>
     );
   } else {
-    return (
-      <React.Fragment></React.Fragment>
-    );
+    return <React.Fragment></React.Fragment>;
   }
 };
 
