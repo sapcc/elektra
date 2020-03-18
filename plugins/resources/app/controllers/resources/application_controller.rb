@@ -159,7 +159,7 @@ module Resources
       hosts_shard = {}
       unless host_aggregates.nil?
         host_aggregates.each do |host_aggregate|
-          # pp host_aggregate
+          #pp host_aggregate
           unless host_aggregate.hosts.nil?
             host_aggregate.hosts.each do |hostname|
               if host_aggregate.name == host_aggregate.availability_zone
@@ -222,10 +222,10 @@ module Resources
             # in case project_shards.empty? any resource_provider_name is allowed
             if resource_provider_name == hostname && ( big_vm_resources[resource_provider_name]["shard"] || project_shards.empty? )
               availability_zone = hosts_az[hostname]
-              # puts "MAPPING"
-              # puts hostname
-              # puts resource_provider_name 
-              # puts availability_zone 
+              #puts "MAPPING"
+              #puts hostname
+              #puts resource_provider_name 
+              #puts availability_zone 
               big_vm_resources[resource_provider_name]["availability_zone"] = availability_zone
             end
           end
@@ -241,8 +241,8 @@ module Resources
           resource_provider_uuid = resource_provider["uuid"]
           resource_links         = resource_provider["links"]
           
-          # puts "RESOURCE PROVIDER"
-          # pp resource_provider
+          #puts "RESOURCE PROVIDER"
+          #pp resource_provider
 
           resource_links.each do |resource_link|
             available = false
@@ -252,7 +252,8 @@ module Resources
               if available == true
                 inventory_data = cloud_admin.resources.get_resource_provider_inventory(parent_provider_uuid)
                 if inventory_data && inventory_data.key?("MEMORY_MB")
-                  big_vm_resources[resource_provider_name]["memory"] = (inventory_data["MEMORY_MB"]["max_unit"].to_f / 1024 / 1024).to_f.round.to_s
+                  memory_size_in_mb =  inventory_data["MEMORY_MB"]["max_unit"] || 0
+                  big_vm_resources[resource_provider_name]["memory"] = sprintf("%.1f",memory_size_in_mb.to_f/1000/1000).to_s
                   # puts "MEMORY_MB"
                   # puts resource_provider_name
                   # puts inventory_data["MEMORY_MB"]["max_unit"]
@@ -292,7 +293,9 @@ module Resources
         end
       end
 
-      # fake data for debug
+      #fake data for debug
+      #puts "BIG_VM_BY_AZ"
+      #pp big_vms_by_az
       #big_vms_by_az["qa-de-1a"]["6"] = "BB-bla"
       #big_vms_by_az["qa-de-1b"]["6"] = "BB-bla"
       #big_vms_by_az["qa-de-1b"]["3"] = "BB-bla"
