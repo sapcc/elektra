@@ -6,7 +6,7 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
   const hv_sizes = {};
   Object.keys(bigVmResources).map(az =>
     Object.keys(bigVmResources[az]).map(
-      memory_size => (hv_sizes[memory_size] = "#")
+      memory_size => (hv_sizes[memory_size] = bigVmResources[az][memory_size] )
     )
   );
   const azColumnWidth = Math.floor(10 / availabilityZones.length);
@@ -38,8 +38,8 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
           .map(memory_size => (
             <div key={memory_size} className="row">
               <ResourceName
-                name={memory_size + "TB Hypervisor"}
-                flavorData={{ primary: true }}
+                name={memory_size + "TiB Hypervisor"}
+                flavorData={{ primary: ["Available BigVMs",hv_sizes[memory_size]] , secondary: true}}
               />
               {availabilityZones.map(az => (
                 <div
@@ -49,7 +49,7 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
                   <ResourceBar
                     capacity={get_available_capacity(memory_size)}
                     fill={0}
-                    labelOverride={bigVmResources[az][memory_size]}
+                    labelOverride={"Available"}
                     showsCapacity={true}
                   />
                 </div>

@@ -259,7 +259,7 @@ module Resources
                   big_vm_sizes.each do |size|
                     big_vm_count = big_vm_resources[resource_provider_name]["memory"].to_f / size
                     if big_vm_count.to_i != 0
-                      big_vm_resources[resource_provider_name]["available_big_sizes"] += "#{big_vm_count.to_i}x#{size}TB, "
+                      big_vm_resources[resource_provider_name]["available_big_sizes"] += "#{big_vm_count.to_i}x#{size}TiB, "
                     end
                   end 
                   big_vm_resources[resource_provider_name]["available_big_sizes"].chomp!(", ")
