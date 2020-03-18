@@ -9,7 +9,6 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
       memory_size => (hv_sizes[memory_size] = bigVmResources[az][memory_size] )
     )
   );
-  console.log(hv_sizes)
   const azColumnWidth = Math.floor(10 / availabilityZones.length);
 
   // there is only one HV per az and memory size
