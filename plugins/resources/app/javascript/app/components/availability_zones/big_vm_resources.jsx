@@ -39,7 +39,7 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
             <div key={memory_size} className="row">
               <ResourceName
                 name={memory_size + "TiB Hypervisor"}
-                flavorData={{ primary: ["Available BigVMs",hv_sizes[memory_size]] , secondary: true}}
+                flavorData={{ primary: true }}
               />
               {availabilityZones.map(az => (
                 <div
@@ -49,7 +49,7 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
                   <ResourceBar
                     capacity={get_available_capacity(memory_size)}
                     fill={0}
-                    labelOverride={"Available"}
+                    labelOverride={"Available VMs " + hv_sizes[memory_size]}
                     showsCapacity={true}
                   />
                 </div>
