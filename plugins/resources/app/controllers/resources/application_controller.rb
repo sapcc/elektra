@@ -283,16 +283,18 @@ module Resources
 
       #puts "BIG_VM_RESOURCES"
       #pp big_vm_resources
-      #{
-      #  "nova-compute-bb94"=>
-      #  {"shard"=>"vc-b-0",
-      #   "availability_zone"=>"qa-de-1b",
-      #   "memory"=>"2"},
-      # "nova-compute-bb92"=>
-      #  {"shard"=>"vc-a-0",
-      #   "availability_zone"=>"qa-de-1a",
-      #   "memory"=>"2"}
-      #}
+      #big_vm_resources = {"nova-compute-bb124"=>
+      #  {"availability_zone"=>"ap-au-1a",
+      #   "memory"=>"2.0",
+      #   "available_big_sizes"=>"2x1TiB, 1x1.5TiB, 1x2TiB"},
+      # "nova-compute-bb137"=>
+      #  {"availability_zone"=>"ap-au-1b",
+      #   "memory"=>"2.0",
+      #   "available_big_sizes"=>"2x1TiB, 1x1.5TiB, 1x2TiB"},
+      # "nova-compute-bb45"=>
+      #  {"availability_zone"=>"ap-au-1b",
+      #   "memory"=>"1.5",
+      #   "available_big_sizes"=>"1x1TiB, 1x1.5TiB"}}
 
       # massage data for better use
       big_vms_by_az = {}

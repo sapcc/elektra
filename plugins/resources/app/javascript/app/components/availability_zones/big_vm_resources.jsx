@@ -9,6 +9,7 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
       memory_size => (hv_sizes[memory_size] = bigVmResources[az][memory_size] )
     )
   );
+  console.log(hv_sizes)
   const azColumnWidth = Math.floor(10 / availabilityZones.length);
 
   // there is only one HV per az and memory size
@@ -47,7 +48,7 @@ const AvailableBigVmResources = ({ bigVmResources }) => {
                   className={`col-md-${azColumnWidth}`}
                 >
                   <ResourceBar
-                    capacity={get_available_capacity(memory_size)}
+                    capacity={get_available_capacity(bigVmResources[az][memory_size])}
                     fill={0}
                     labelOverride={"Available VMs " + hv_sizes[memory_size]}
                     showsCapacity={true}
