@@ -1,16 +1,26 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Highlighter } from 'react-bootstrap-typeahead'
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
   return <Highlighter search={search}>{children+''}</Highlighter>
 }
 
-const PoolItem = ({pool, searchTerm}) => {
+const PoolItem = ({pool, searchTerm, onSelectPool}) => {
+
+  const onClick = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    onSelectPool(pool.id)
+  }
+
   return ( 
     <tr>
       <td className="snug-nowrap">
-        <Link to={`/pools/${pool.id}/show`}>
+        <Link to="#" onClick={onClick}>
           <MyHighlighter search={searchTerm}>{pool.name || pool.id}</MyHighlighter>
         </Link>
         {pool.name && 

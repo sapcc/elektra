@@ -26,7 +26,7 @@ const Details = (props) => {
   }, []);
 
    const connect = () => {
-    let id = props.match && props.match.params && props.match.params.id
+    let id = props.match && props.match.params && props.match.params.loadbalancerID
     setLoadbalancerId(id)
 
     if (id) {
@@ -64,6 +64,8 @@ const Details = (props) => {
     }
   }
 
+  console.log("RENDER Details list")
+
   let loadbalancer = state.items.find(item => item.id == loadbalancerId) 
   return ( 
     <React.Fragment>      
@@ -71,18 +73,18 @@ const Details = (props) => {
         <ErrorPage headTitle="Load Balancers Details" error={error}/>
         :
         <React.Fragment>
-          { !loadbalancer && !loading && selected &&
+          {/* { !loadbalancer && !loading && selected &&
             <Redirect to="/loadbalancers"/>
-          }
+          } */}
 
           {headerTitle(loading, loadbalancer)}
           
           {loadbalancer &&        
             <React.Fragment>
 
-              <ListenerList loadbalancerID={loadbalancer.id}/>
+              <ListenerList props={props} loadbalancerID={loadbalancer.id}/>
 
-              <PoolList loadbalancerID={loadbalancer.id}/>
+              <PoolList props={props} loadbalancerID={loadbalancer.id}/>
               
             </React.Fragment>
           }

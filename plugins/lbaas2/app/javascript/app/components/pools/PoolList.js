@@ -1,20 +1,86 @@
 import React from 'react';
-import { useDispatch, useGlobalState } from '../StateProvider'
 import usePool from '../../../lib/hooks/usePool'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import PoolItem from './PoolItem'
+import queryString from 'query-string'
+import { Link } from 'react-router-dom';
 
-const PoolList = ({loadbalancerID}) => {
-  const dispatch = useDispatch()
-  const state = useGlobalState().pools
+const PoolList = ({props, loadbalancerID}) => {
   const {fetchPools} = usePool()
+  const [searchTerm, setSearchTerm] = useState(null)
+  const [selected, setSelected] = useState(null)
+  const [state, setState] = useState({
+    items: [],
+    isLoading: false,
+    receivedAt: null,
+    hasNext: false,
+    marker: null,
+    error: null
+  })
 
-  useEffect(() => {
-    console.log('FETCH initial pools')
-    dispatch({type: 'INIT_POOLS'})
-    fetchPools(loadbalancerID, state.marker)
-  }, []);
+  useEffect(() => {  
+    fetchPools(loadbalancerID, state.marker).then((data) => {
+      updateState(data)
+      selectPool()
+    }).catch( error => {
+      // TODO
+    })
+  }, [loadbalancerID]);
+
+  const selectPool = () => {
+    const values = queryString.parse(props.location.search)
+    const id = values.pool
+
+    if (id) {
+      // pool was selected
+      setSelected(id)
+      // filter the pool list to show just the one item
+      setSearchTerm(id)
+    } else {
+      // NOT FOUND
+    }
+  }
+
+  const updateState = (data) => {
+    let newItems = (state.items.slice() || []).concat(data.pools);
+    // filter duplicated items
+    newItems = newItems.filter( (item, pos, arr) => arr.findIndex(i => i.id == item.id)==pos );
+    // create marker before sorting just in case there is any difference
+    const marker = data.pools[data.pools.length-1]
+    // sort
+    newItems = newItems.sort((a, b) => a.name.localeCompare(b.name))
+    setState({...state, 
+      isLoading: false, 
+      items: newItems, 
+      error: null,
+      hasNext: data.has_next,
+      marker: marker,
+      updatedAt: Date.now()})
+  }
+
+  const onSelectPool = (poolID) => {
+    const id = poolID || ""
+    const pathname = props.location.pathname; 
+    const searchParams = new URLSearchParams(props.location.search); 
+    searchParams.set("pool", id);
+    props.history.push({
+      pathname: pathname,
+      search: searchParams.toString()
+    })
+    // pool was selected
+    setSelected(poolID)
+    // filter the pool list to show just the one item
+    setSearchTerm(poolID)
+  }
+
+  const restoreUrl = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    onSelectPool()
+  }
 
   const loadNext = event => {
     if(!state.isLoading && state.hasNext) {
@@ -25,9 +91,7 @@ const PoolList = ({loadbalancerID}) => {
   const error = state.error
   const isLoading = state.isLoading
   const hasNext = state.hasNext
-  const searchTerm = state.searchTerm
   const items = state.items
-  const selected = state.selected
 
   const filterItems = (searchTerm, items) => {
     if(!searchTerm) return items;
@@ -44,7 +108,9 @@ const PoolList = ({loadbalancerID}) => {
     }
   }
 
-  const pools =  filterItems(searchTerm, items)
+  console.log("RENDER pool list")
+
+  const pools = filterItems(searchTerm, items)
   return ( 
     <div className="details-section">
       <h4>Pools</h4>
@@ -53,6 +119,13 @@ const PoolList = ({loadbalancerID}) => {
         :
         <React.Fragment>
           <div className='toolbar'>
+          { selected &&
+              <Link className="back-link" to="#" onClick={restoreUrl}>
+                <i className="fa fa-chevron-circle-left"></i>
+                Back to pool list
+              </Link>
+            }
+
             <div className="main-buttons">
               <DefeatableLink
                 disabled={selected || isLoading}
@@ -63,7 +136,7 @@ const PoolList = ({loadbalancerID}) => {
             </div>
           </div>
 
-          <table className="table table-hover listeners">
+          <table className="table table-hover pools">
             <thead>
                 <tr>
                     <th>Name/ID</th>
@@ -79,7 +152,7 @@ const PoolList = ({loadbalancerID}) => {
             <tbody>
               {pools && pools.length>0 ?
                 pools.map( (pool, index) =>
-                  <PoolItem pool={pool} searchTerm={searchTerm} key={index}/>
+                  <PoolItem pool={pool} searchTerm={searchTerm} key={index} onSelectPool={onSelectPool}/>
                 )
                 :
                 <tr>
