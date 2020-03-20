@@ -192,7 +192,8 @@ const receiveCapacity = (state, { data, receivedAt }) => {
   };
   const { metadata, categories, overview } = restructureReport(data, resourceFilter);
 
-  //The AvailabilityZoneOverview component needs a list of all AZs to render the table header.
+  //The AvailabilityZoneCategory component needs a list of all AZs to render
+  //the AZ table consistently across all categories.
   const availabilityZones = {};
   for (const categoryName in categories) {
     for (const resource of categories[categoryName].resources) {

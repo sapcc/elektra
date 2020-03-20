@@ -2,12 +2,12 @@ import AvailabilityZoneCategory from '../../containers/availability_zones/catego
 
 import { byUIString, byNameIn } from '../../utils';
 
-const AvailabilityZoneOverview = ({ isFetching, overview, flavorData }) => {
+const AvailabilityZoneOverview = ({ isFetching, overview, flavorData, scopeData }) => {
   if (isFetching) {
     return <p><span className='spinner'/> Loading capacity data...</p>;
   }
 
-  const forwardProps = { flavorData };
+  const forwardProps = { flavorData, scopeData };
   return (
     <React.Fragment>
       <div className='bs-callout bs-callout-info bs-callout-emphasize'>
