@@ -1,11 +1,11 @@
 # frozen_string_literal: true
-
 module Metrics
   class ApplicationController < DashboardController
+    helper_method :grafana_available
     authorization_context 'metrics'
     authorization_required
     extend ErrorRenderer
-
+  
     def index
       enforce_permissions('metrics:application_list')
     end
@@ -14,11 +14,24 @@ module Metrics
       redirect_to "https://maia.#{current_region}.cloud.sap/#{@scoped_domain_name}?x-auth-token=#{current_user.token}"
     end
 
+    def grafana_available
+      require "resolv"
+      dns_resolver = Resolv::DNS.new()
+      begin
+        dns_resolver.getaddress("api.grafana-svc.#{current_region}.cloud.sap")
+        return true
+      rescue Resolv::ResolvError => e
+        return false
+      end
+    end
+
     def gaas
+      uri_grafana = URI.parse("https://api.grafana-svc.#{current_region}.cloud.sap/api/v1/grafana")
+      uri_proxy = URI.parse("https://api.grafana-svc.#{current_region}.cloud.sap/api/v1/grafanaproxy")
       retries = 0
       options = {
-        title: "cannot open maia grafana",
-        warning: true, sentry: false
+        title: "grafana as a service has not responded or is not available in this region",
+        warning: false, sentry: false
       }
       grafana = {
         "config": {
@@ -34,12 +47,16 @@ module Metrics
           "connectors": ["keystone"]
         }
       }
-      uri_grafana = URI.parse("https://api.grafana-svc.#{current_region}.cloud.sap/api/v1/grafana")
-      uri_proxy = URI.parse("https://api.grafana-svc.#{current_region}.cloud.sap/api/v1/grafanaproxy")
 
+     
+      begin
+        Resolv::DNS.new.getresources(uri_grafana.to_s, Resolv::DNS::Resource::IN::A)
+      rescue => e
+        print e
+      end
       begin
         resp = _request(uri_proxy, grafana_proxy)
-      rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
+      rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT,
         Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError, OpenSSL::SSL::SSLError => e
         render_exception_page(e, options)
         return
@@ -47,7 +64,7 @@ module Metrics
 
       begin
         resp = _request(uri_grafana, grafana)
-      rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
+      rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT,
         Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError, OpenSSL::SSL::SSLError => e
         render_exception_page(e, options)
         return
