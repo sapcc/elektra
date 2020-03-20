@@ -243,7 +243,17 @@ module Resources
           
           #puts "RESOURCE PROVIDER"
           #pp resource_provider
-          big_vm_sizes = [1,1.5,2,3,4,6]
+          # https://github.com/sapcc/helm-charts/blob/master/openstack/sap-seeds/templates/flavor-seed.yaml
+          # see host_fraction
+          # available HVs 1.5Tib, 2TiB, 3TiB, 6TiB
+          # bigvm-size : allowed_hv_size
+          big_vm_sizes = {
+            "1.5":[1.5,2,3],
+            "2":  [2,3],
+            "3":  [3,6],
+            "4":  [6],
+            "6":  [6],
+          }
           resource_links.each do |resource_link|
             available = false
             if resource_link["rel"] == "inventories"
@@ -254,15 +264,24 @@ module Resources
                 if inventory_data && inventory_data.key?("MEMORY_MB")
                   memory_size_in_mb =  inventory_data["MEMORY_MB"]["max_unit"] || 0
                   big_vm_resources[resource_provider_name]["memory"] = sprintf("%.1f",memory_size_in_mb.to_f/1000/1000).to_s
+                  # big_vm_resources[resource_provider_name]["memory"] = "6"
+                  
                   # calculate available bigvms
                   big_vm_resources[resource_provider_name]["available_big_sizes"] = ""
-                  big_vm_sizes.each do |size|
-                    big_vm_count = big_vm_resources[resource_provider_name]["memory"].to_f / size
-                    if big_vm_count.to_i != 0
-                      big_vm_resources[resource_provider_name]["available_big_sizes"] += "#{big_vm_count.to_i}x#{size}TiB, "
+                  big_vm_sizes.each do |size ,allowed_hv_size|
+                    allowed_hv_size.each do |hv_size|
+                      if hv_size.to_f == big_vm_resources[resource_provider_name]["memory"].to_f
+                        big_vm_resources[resource_provider_name]["available_big_sizes"] += "#{size}TiB, "
+                        break
+                      end
                     end
-                  end 
-                  big_vm_resources[resource_provider_name]["available_big_sizes"].chomp!(", ")
+                  end
+
+                  unless big_vm_resources[resource_provider_name]["available_big_sizes"].empty?
+                    big_vm_resources[resource_provider_name]["available_big_sizes"].chomp!(", ")
+                  else
+                    big_vm_resources[resource_provider_name]["available_big_sizes"] = "??? Unkown HV size ???"
+                  end
 
                   # puts "MEMORY_MB"
                   # puts resource_provider_name
