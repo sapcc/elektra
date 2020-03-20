@@ -1,19 +1,19 @@
 import React from 'react';
-import { useDispatch, useGlobalState } from '../StateProvider'
 import { useEffect, useState } from 'react'
 import useListener from '../../../lib/hooks/useListener'
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import ListenerItem from './ListenerItem'
 import queryString from 'query-string'
 import { Link } from 'react-router-dom';
+import Policies from './Policies'
 
 const ListenerList = ({props, loadbalancerID}) => {
   const {fetchListeners} = useListener()
   const [searchTerm, setSearchTerm] = useState(null)
   const [selected, setSelected] = useState(null)
+  const [isLoading, setIsLoading]= useState(false)
   const [state, setState] = useState({
     items: [],
-    isLoading: false,
     receivedAt: null,
     hasNext: false,
     marker: null,
@@ -21,7 +21,9 @@ const ListenerList = ({props, loadbalancerID}) => {
   })
 
   useEffect(() => {  
+    setIsLoading(true)
     fetchListeners(loadbalancerID, state.marker).then((data) => {
+      setIsLoading(false)
       updateState(data)
       selectListener()
     }).catch( error => {
@@ -66,8 +68,7 @@ const ListenerList = ({props, loadbalancerID}) => {
     const marker = data.listeners[data.listeners.length-1]
     // sort
     newItems = newItems.sort((a, b) => a.name.localeCompare(b.name))
-    setState({...state, 
-      isLoading: false, 
+    setState({...state,
       items: newItems, 
       error: null,
       hasNext: data.has_next,
@@ -90,7 +91,6 @@ const ListenerList = ({props, loadbalancerID}) => {
   }
 
   const error = state.error
-  const isLoading = state.isLoading
   const hasNext = state.hasNext
   const items = state.items
 
@@ -120,11 +120,13 @@ const ListenerList = ({props, loadbalancerID}) => {
         :
         <React.Fragment>
 
+          <p>Object representing the listening endpoint of a load balanced service. TCP / UDP port, as well as protocol information and other protocol- specific details are attributes of the listener. Notably, though, the IP address is not.</p>
+
           <div className='toolbar'>
             { selected &&
               <Link className="back-link" to="#" onClick={restoreUrl}>
                 <i className="fa fa-chevron-circle-left"></i>
-                Back to listener list
+                Back to Listeners
               </Link>
             }
             <div className="main-buttons">
@@ -136,24 +138,31 @@ const ListenerList = ({props, loadbalancerID}) => {
               </DefeatableLink>
             </div>
           </div>
-
-          <table className="table table-hover listeners">
+          
+          <table className={selected ? "table table-section listeners" : "table table-hover listeners"}>
             <thead>
                 <tr>
                     <th>Name/ID</th>
                     <th>Description</th>
+                    <th>State</th>
+                    <th>Prov. Status</th>
                     <th>Protocol</th>
                     <th>Protocol Port</th>
                     <th>Default Pool</th>
-                    <th>State</th>
-                    <th>Prov. Status</th>
+                    <th>Connection Limit</th>
                     <th className='snug'></th>
                 </tr>
             </thead>
             <tbody>
               {listeners && listeners.length>0 ?
                 listeners.map( (listener, index) =>
-                  <ListenerItem listener={listener} searchTerm={searchTerm} key={index} onSelectListener={onSelectListener}/>
+                  <ListenerItem 
+                  listener={listener} 
+                  searchTerm={searchTerm} 
+                  key={index} 
+                  onSelectListener={onSelectListener}
+                  disabled={selected ? true : false}
+                  />
                 )
                 :
                 <tr>
@@ -164,6 +173,10 @@ const ListenerList = ({props, loadbalancerID}) => {
               }
             </tbody>
           </table>
+
+          {selected &&
+            <Policies />
+          }
 
           </React.Fragment>
       }

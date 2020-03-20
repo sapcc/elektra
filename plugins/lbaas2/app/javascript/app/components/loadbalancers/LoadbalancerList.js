@@ -72,7 +72,7 @@ const LoadbalancerList = (props) => {
               { selected ?
                 <Link className="back-link" to={`/loadbalancers`}>
                   <i className="fa fa-chevron-circle-left"></i>
-                  Back to load balancer list
+                  Back to Load Balancers
                 </Link>
                 :
                 loadbalancers.length > 0 &&

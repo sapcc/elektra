@@ -10,6 +10,7 @@ const PoolList = ({props, loadbalancerID}) => {
   const {fetchPools} = usePool()
   const [searchTerm, setSearchTerm] = useState(null)
   const [selected, setSelected] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [state, setState] = useState({
     items: [],
     isLoading: false,
@@ -20,7 +21,9 @@ const PoolList = ({props, loadbalancerID}) => {
   })
 
   useEffect(() => {  
+    setIsLoading(true)
     fetchPools(loadbalancerID, state.marker).then((data) => {
+      setIsLoading(false)
       updateState(data)
       selectPool()
     }).catch( error => {
@@ -89,7 +92,6 @@ const PoolList = ({props, loadbalancerID}) => {
   }
 
   const error = state.error
-  const isLoading = state.isLoading
   const hasNext = state.hasNext
   const items = state.items
 
@@ -109,7 +111,6 @@ const PoolList = ({props, loadbalancerID}) => {
   }
 
   console.log("RENDER pool list")
-
   const pools = filterItems(searchTerm, items)
   return ( 
     <div className="details-section">
@@ -118,11 +119,14 @@ const PoolList = ({props, loadbalancerID}) => {
         <ErrorPage headTitle="Load Balancers Pools" error={error}/>
         :
         <React.Fragment>
+
+          <p>Object representing the grouping of members to which the listener forwards client requests. Note that a pool is associated with only one listener, but a listener might refer to several pools (and switch between them using layer 7 policies).</p>
+
           <div className='toolbar'>
-          { selected &&
+            { selected &&
               <Link className="back-link" to="#" onClick={restoreUrl}>
                 <i className="fa fa-chevron-circle-left"></i>
-                Back to pool list
+                Back to Pools
               </Link>
             }
 
@@ -135,24 +139,30 @@ const PoolList = ({props, loadbalancerID}) => {
               </DefeatableLink>
             </div>
           </div>
-
-          <table className="table table-hover pools">
+          
+          <table className={selected ? "table pools" : "table table-hover pools"}>
             <thead>
                 <tr>
                     <th>Name/ID</th>
                     <th>Description</th>
+                    <th>State</th>
+                    <th>Prov. Status</th>                    
                     <th>Protocol</th>
                     <th>Algorithm</th>
                     <th>#Members</th>
-                    <th>State</th>
-                    <th>Prov. Status</th>
                     <th className='snug'></th>
                 </tr>
             </thead>
             <tbody>
               {pools && pools.length>0 ?
                 pools.map( (pool, index) =>
-                  <PoolItem pool={pool} searchTerm={searchTerm} key={index} onSelectPool={onSelectPool}/>
+                  <PoolItem 
+                  pool={pool} 
+                  searchTerm={searchTerm} 
+                  key={index} 
+                  onSelectPool={onSelectPool}
+                  disabled={selected ? true : false}
+                  />
                 )
                 :
                 <tr>
