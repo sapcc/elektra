@@ -175,7 +175,7 @@ const ListenerList = ({props, loadbalancerID}) => {
           </table>
 
           {selected &&
-            <Policies />
+            <Policies props={props} loadbalancerID={loadbalancerID} listenerID={selected}/>
           }
 
           </React.Fragment>

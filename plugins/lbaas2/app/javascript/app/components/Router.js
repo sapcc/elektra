@@ -5,6 +5,7 @@ import SharedPoolList from './pools/SharedPoolList'
 import Tabs from './Tabs'
 import NewLoadbalancer from './loadbalancers/NewLoadbalancer'
 import Details from './loadbalancers/Details'
+import NewL7Policy from './listeners/NewL7Policy'
 
 const Router = (props) => {
 
@@ -21,8 +22,8 @@ const Router = (props) => {
             React.createElement(Tabs, Object.assign({}, {match, location, history, tabsConfig}, props))
           }/>
           <Route exact path="/loadbalancers/new" component={NewLoadbalancer}/>
-          {/* <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/show" component={Details}/> */}
-          <Route path="/loadbalancers/:loadbalancerID/show" component={Details}/>          
+          <Route path="/loadbalancers/:loadbalancerID" component={Details}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/l7policies/new" component={NewL7Policy}/>
       </div>
     </HashRouter>
    );

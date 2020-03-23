@@ -8,6 +8,10 @@ Lbaas2::Engine.routes.draw do
     end
 
     resources :listeners, module: :loadbalancers, only: [:index] do
+
+      resources :l7policies, module: :listeners, only: [:index] do
+      end
+
     end
 
     resources :pools, module: :loadbalancers, only: [:index] do

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { ajaxHelper } from 'ajax_helper';
