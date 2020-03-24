@@ -29,68 +29,51 @@ module DnsService
     end
 
     def create
+      zone_transfer = true
       @zone_request = ::DnsService::ZoneRequest.new(nil, params[:zone_request])
-
-      # try to find zone with given name
+      # try to find zone with given name, if nil create a new one
       @zone = services.dns_service.zones(name: @zone_request.zone_name)[:items].first
       # create new zone if it does not already exist
-      zone_transfer = true
       @zone ||= services.dns_service.new_zone(@zone_request.attributes)
       @zone.name = @zone_request.zone_name
       @pool = load_pool(@zone_request.domain_pool)
       pool_attrs = @pool.read('attributes')
       @zone.write('attributes', pool_attrs)
 
-      # find out that the new zone is not a subzone from an existing zone in the destination project
-      pool_subdomains = []
-      if pool_attrs && pool_attrs["subdomains"]
-        pool_subdomains =  pool_attrs["subdomains"].delete(' ').split(',')
-      end
+      dns_domain = @zone_request.dns_domain || ""
+      external = @zone_request.external || false
 
       # check that the requested zone is not a subzone from an existing zone in the destination project
       # get all zones from destination project
       project_zones =  services.dns_service.zones(project_id: @inquiry.project_id)[:items]
+
       project_zones.each do |project_zone|
-        # search for existing parent zone
-        unless pool_subdomains.empty?
-          pool_subdomains.each do |pool_subdomain|
-            # check only for dns_domain that comes with the zone_request
-            if @zone_request.dns_domain == pool_subdomain 
-              # 1. remove pool subdomain from zone request to filter only zone name
-              requested_zone_name = @zone_request.zone_name.gsub("#{pool_subdomain}.","")
-              project_zone_name = project_zone.name.gsub("#{pool_subdomain}.","")
-              # 2. check that the requested zone is not a subzone from an existing zone in the destination project
-              if requested_zone_name.include? project_zone_name
-                if requested_zone_name == project_zone_name
-                  @zone_request.errors.add('Error',"requested zone #{requested_zone_name}#{pool_subdomain} already exist")
-                  render action: :new
-                  return
-                else
-                  puts "requested zone #{requested_zone_name} is part of existing zone #{project_zone_name}"
-                  # we need to create the zone in the destination project and not in ccadmin/master projekt
-                  # because the requested zone is part of existing zone in the project
-                  zone_transfer = false
-                  @zone.project_id(@inquiry.project_id)
-                end
-              end
-            end
-          end
+        if dns_domain != ""
+          # filter dns_domain
+          requested_zone_name = @zone.name.gsub("#{dns_domain}.","")
+          project_zone_name = project_zone.name.gsub("#{dns_domain}.","")
         else
-          # if no pool_supdomain was found, this happened if the user choose external SAP hosted Zone
-          # check that the requested zone is not a subzone from an existing zone in the destination project
-          if @zone_request.zone_name.include? project_zone.name
-            if @zone_request.zone_name == project_zone.name
-              @zone_request.errors.add('Error',"requested zone #{@zone_request.zone_name} already exist")
-              render action: :new
-              return
-            else
-              puts "requested zone #{@zone_request.zone_name} is part of existing zone #{project_zone.name}"
-                # we need to create the zone in the destination project and not in ccadmin/master projekt
-                # because the requested zone is part of existing zone in the project
-              zone_transfer = false
-              @zone.project_id(@inquiry.project_id)
-            end
+          requested_zone_name = @zone.name
+          project_zone_name = project_zone.name
+        end
+        
+        if requested_zone_name == project_zone_name
+            @zone_request.errors.add('Error',"requested zone #{requested_zone_name} already exist")
+            render action: :new
+            return
+        end
+
+        # is the requested zone part of exsiting zone inside the project?
+        requested_parent_zone_name = requested_zone_name.partition('.').last
+        while requested_parent_zone_name != ""
+          if ( project_zone_name == requested_parent_zone_name ) && ( @inquiry.project_id == project_zone.project_id )
+            puts "requested zone #{requested_zone_name} is part of existing zone #{requested_parent_zone_name} inside the destination project #{project_zone.project_id}"
+            # zone will be created inside the project
+            @zone.project_id(@inquiry.project_id)
+            # no zone transfer is needed
+            zone_transfer = false
           end
+          requested_parent_zone_name = requested_parent_zone_name.partition('.').last
         end
       end
 
