@@ -40,23 +40,22 @@ module DnsService
       pool_attrs = @pool.read('attributes')
       @zone.write('attributes', pool_attrs)
 
-      dns_domain = @zone_request.dns_domain || ""
-      external = @zone_request.external || false
-
       # check that the requested zone is not a subzone from an existing zone in the destination project
       # get all zones from destination project
-      project_zones =  services.dns_service.zones(project_id: @inquiry.project_id)[:items]
+      project_zones =  services.dns_service.zones(project_id: @inquiry.project_id, limit: 1024)[:items]
 
+      # external            = @zone_request.external  || false
+      dns_domain          = @zone_request.dns_domain
       project_zones.each do |project_zone|
-        if dns_domain != ""
+        unless dns_domain.nil?
           # filter dns_domain
-          requested_zone_name = @zone.name.gsub("#{dns_domain}.","")
+          requested_zone_name = @zone_request.zone_name.gsub("#{dns_domain}.","")
           project_zone_name = project_zone.name.gsub("#{dns_domain}.","")
         else
-          requested_zone_name = @zone.name
+          requested_zone_name = @zone_request.zone_name
           project_zone_name = project_zone.name
         end
-        
+
         if requested_zone_name == project_zone_name
             @zone_request.errors.add('Error',"requested zone #{requested_zone_name} already exist")
             render action: :new
