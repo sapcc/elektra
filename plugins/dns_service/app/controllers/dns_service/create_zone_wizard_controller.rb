@@ -33,12 +33,19 @@ module DnsService
       @zone_request = ::DnsService::ZoneRequest.new(nil, params[:zone_request])
       # try to find zone with given name, if nil create a new one
       @zone = services.dns_service.zones(name: @zone_request.zone_name)[:items].first
-      # create new zone if it does not already exist
-      @zone ||= services.dns_service.new_zone(@zone_request.attributes)
-      @zone.name = @zone_request.zone_name
       @pool = load_pool(@zone_request.domain_pool)
-      pool_attrs = @pool.read('attributes')
-      @zone.write('attributes', pool_attrs)
+
+      if @zone
+        @zone_request.errors.add('Error',"requested zone #{@zone_request.zone_name} already exist")
+        render action: :new
+        return
+      else
+        # create new zone if it does not already exist
+        @zone ||= services.dns_service.new_zone(@zone_request.attributes)
+        @zone.name = @zone_request.zone_name
+        pool_attrs = @pool.read('attributes')
+        @zone.write('attributes', pool_attrs)
+      end
 
       # check that the requested zone is not a subzone from an existing zone in the destination project
       # get all zones from destination project
