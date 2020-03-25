@@ -224,7 +224,7 @@ module Compute
               image_buildnumber:  (image.buildnumber || '').truncate(255)
             }
             
-            # Custom root disk -> let nova cretae a bootable volume on the fly
+            # Custom root disk -> let nova create a bootable volume on the fly
             if params[:server][:custom_root_disk] == '1'
               @instance.block_device_mapping_v2 = [
                 {
@@ -236,6 +236,9 @@ module Compute
                   "delete_on_termination": true
                 }
               ]
+              # this is only for model check
+              @instance.custom_root_disk = 1
+              @instance.custom_root_disk_size = params[:server][:custom_root_disk_size]
             end
           end
         end
@@ -280,7 +283,7 @@ module Compute
           end
         end
       end
-#byebug
+
       if @instance.errors.empty? && @instance.save 
         flash.now[:notice] = 'Instance successfully created.'
         audit_logger.info(current_user, "has created", @instance)
