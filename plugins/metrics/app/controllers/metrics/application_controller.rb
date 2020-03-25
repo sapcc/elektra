@@ -5,7 +5,7 @@ module Metrics
     authorization_context 'metrics'
     authorization_required
     extend ErrorRenderer
-  
+    
     def index
       enforce_permissions('metrics:application_list')
     end
@@ -106,6 +106,9 @@ module Metrics
         request = Net::HTTP::Get.new(uri.request_uri)
       end
       https = Net::HTTP.new(uri.host, uri.port)
+      if ENV.key?('ELEKTRA_SSL_VERIFY_PEER') && (ENV['ELEKTRA_SSL_VERIFY_PEER'] == 'false')
+        https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       https.read_timeout = 120
       https.use_ssl = true
       response = https.request(request)
