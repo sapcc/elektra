@@ -53,7 +53,7 @@
       group_method:       :last,
       include_blank:      "Choose flavor",
       label_method:       -> (flavor) { flavor_label_for_select(flavor) }}
-
+    
     = f.input :custom_root_disk, 
       as: :boolean,
       wrapper: :horizontal_boolean_4x8 
@@ -61,7 +61,8 @@
     #custom_root_disk_size_wrapper{class: params[:custom_root_disk] ? '' : 'hidden'}
       = f.input :custom_root_disk_size, label: 'Custom Root Disk Size (GB)', 
         as: :integer,
-        input_wrapper_html: { style: "width: 100px" }
+        input_html: { min: '0', max:'12' },
+        icon_hint: "Please note that you can use root disk volumes with max size of 12GB"
 
     = f.input :image_id, label: 'Image',
       as:            :grouped_select,
@@ -72,14 +73,20 @@
     
     :javascript
       // Root Disk Toggle
+      var server_custom_root_disk_size = ''
       var toggleRootDisk = function(show) {
         if(show) {
           $('#server_image_id').val('')
           $('#server_image_id').find('optgroup[label="--bootable volumes"]').addClass('hidden')
           $('#custom_root_disk_size_wrapper').removeClass('hidden')
+          if (server_custom_root_disk_size != '' && server_custom_root_disk_size != '0') {
+            $('#server_custom_root_disk_size').val(server_custom_root_disk_size)
+          }
         } else {
           $('#server_image_id').find('optgroup[label="--bootable volumes"]').removeClass('hidden')
           $('#custom_root_disk_size_wrapper').addClass('hidden')
+          server_custom_root_disk_size = $('#server_custom_root_disk_size').val()
+          $('#server_custom_root_disk_size').val('')
         }
       }
       var showRootDisk = #{params[:server] && params[:server][:custom_root_disk]}
