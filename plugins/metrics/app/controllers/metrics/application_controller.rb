@@ -4,7 +4,6 @@ module Metrics
     helper_method :grafana_available
     authorization_context 'metrics'
     authorization_required
-    extend ErrorRenderer
     
     def index
       enforce_permissions('metrics:application_list')
