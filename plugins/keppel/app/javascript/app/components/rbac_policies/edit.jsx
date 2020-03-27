@@ -91,12 +91,13 @@ export default class RBACPoliciesEditModal extends React.Component {
     if (!account) {
       return;
     }
+    const isEditable = isAdmin && (account.metadata || {}).readonly_in_elektra != 'true';
 
     const policies = this.state.policies || [];
     const { isSubmitting, errorMessage, apiErrors } = this.state;
 
     const { setRepoRegex, setUserRegex, setPermissions, removePolicy } = this;
-    const commonPropsForRow = { isAdmin, setRepoRegex, setUserRegex, setPermissions, removePolicy };
+    const commonPropsForRow = { isEditable, setRepoRegex, setUserRegex, setPermissions, removePolicy };
 
     return (
       <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
@@ -113,6 +114,11 @@ export default class RBACPoliciesEditModal extends React.Component {
             <br/><br/>
             Access policies are more granular: You can give specific users access to specific repositories within a single account if you want to. You can also use access policies to enable anonymous pulling, thereby making matching repositories publicly readable.
           </p>
+          {isAdmin && !isEditable && (
+            <p className='bs-callout bs-callout-warning bs-callout-emphasize'>
+              The configuration for this account is read-only in this UI, probably because it was deployed by an automated process.
+            </p>
+          )}
           <table className='table'>
             <thead>
               <tr>
@@ -120,7 +126,7 @@ export default class RBACPoliciesEditModal extends React.Component {
                 <th className='col-md-4'>User names matching</th>
                 <th className='col-md-3'>Permissions</th>
                 <th className='col-md-1'>
-                  {isAdmin && (
+                  {isEditable && (
                     <button className='btn btn-sm btn-default' onClick={this.addPolicy}>
                       Add policy
                     </button>
@@ -149,10 +155,10 @@ export default class RBACPoliciesEditModal extends React.Component {
         </Modal.Body>
 
         <Modal.Footer>
-          {isAdmin ? (
+          {isEditable ? (
             <React.Fragment>
               <Button onClick={this.handleSubmit} bsStyle='primary'
-                  disabled={isSubmitting || !isAdmin}>
+                  disabled={isSubmitting || !isEditable}>
                 {isSubmitting ? 'Saving...' : 'Save'}
               </Button>
               <Button onClick={this.close}>Cancel</Button>

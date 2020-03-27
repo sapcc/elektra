@@ -31,6 +31,7 @@ export default class RBACPoliciesEditModal extends React.Component {
     if (!account) {
       return null;
     }
+    const isEditable = isAdmin && (account.metadata || {}).readonly_in_elektra != 'true';
 
     const initialValues = {
       required_labels: ((account.validation || {}).required_labels || []).join(', '),
@@ -51,9 +52,14 @@ export default class RBACPoliciesEditModal extends React.Component {
             initialValues={initialValues}>
 
           <Modal.Body>
+            {isAdmin && !isEditable && (
+              <p className='bs-callout bs-callout-warning bs-callout-emphasize'>
+                The configuration for this account is read-only in this UI, probably because it was deployed by an automated process.
+              </p>
+            )}
 
             <Form.ElementHorizontal label='Required labels' name='required_labels'>
-              <Form.Input elementType='input' type='text' name='required_labels' readOnly={!isAdmin} />
+              <Form.Input elementType='input' type='text' name='required_labels' readOnly={!isEditable} />
               <p className='form-control-static'>
                 When set, only images that have all these labels can be pushed into the account. Labels can be set on Docker images by adding <a href="https://docs.docker.com/engine/reference/builder/#label">LABEL commands</a> to the Dockerfile.
               </p>
@@ -61,7 +67,7 @@ export default class RBACPoliciesEditModal extends React.Component {
 
           </Modal.Body>
 
-          {isAdmin ? (
+          {isEditable ? (
             <Modal.Footer>
               <Form.SubmitButton label='Save' />
               <Button onClick={this.close}>Cancel</Button>
