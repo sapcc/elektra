@@ -62,7 +62,7 @@
       = f.input :custom_root_disk_size, label: 'Custom Root Disk Size (GB)', 
         as: :integer,
         input_html: { min: '0', max:'12' },
-        icon_hint: "Please note that you can use root disk volumes with max size of 12GB"
+        icon_hint: "Please note that the maximum size for a custom root disk is 12GB.<br><br>If you need a bigger root disk please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
 
     = f.input :image_id, label: 'Image',
       as:            :grouped_select,
