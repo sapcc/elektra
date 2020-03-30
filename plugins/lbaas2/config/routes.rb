@@ -7,9 +7,9 @@ Lbaas2::Engine.routes.draw do
       get 'private-networks/:id/subnets' => 'loadbalancers#subnets'
     end
 
-    resources :listeners, module: :loadbalancers, only: [:index] do
+    resources :listeners, module: :loadbalancers, only: [:index, :show, :destroy] do
 
-      resources :l7policies, module: :listeners, only: [:index] do
+      resources :l7policies, module: :listeners, only: [:index, :create] do
       end
 
     end

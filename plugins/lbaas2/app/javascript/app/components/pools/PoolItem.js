@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Highlighter } from 'react-bootstrap-typeahead'
 import StateLabel from '../StateLabel'
+import StaticTags from '../StaticTags';
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
@@ -41,6 +42,9 @@ const PoolItem = ({pool, searchTerm, onSelectPool, disabled}) => {
       <td><MyHighlighter search={searchTerm}>{pool.description}</MyHighlighter></td>
       <td><StateLabel placeholder={pool.operating_status} path="" /></td>
       <td><StateLabel placeholder={pool.provisioning_status} path=""/></td>
+      <td>
+        <StaticTags tags={pool.tags} />
+      </td>
       <td>{pool.protocol}</td>
       <td>{pool.lb_algorithm}</td>
       <td></td>

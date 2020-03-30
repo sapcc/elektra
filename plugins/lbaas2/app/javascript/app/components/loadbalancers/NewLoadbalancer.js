@@ -4,8 +4,8 @@ import { Form } from 'lib/elektra-form';
 import { ajaxHelper } from 'ajax_helper';
 import { addNotice } from 'lib/flashes';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
-import SelectInput from './SelectInput'
-import TagsInput from './TagsInput'
+import SelectInput from '../shared/SelectInput'
+import TagsInput from '../shared/TagsInput'
 
 
 const NewLoadbalancer = (props) => {

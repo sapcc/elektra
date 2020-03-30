@@ -43,6 +43,10 @@
 
 .table-section {
   margin-bottom: 0px;
+  thead {
+    background-color: #666;
+    color: #fff;
+  }
 }
 
 .highlight {
@@ -52,6 +56,21 @@
   border: 1px solid #e1e1e8;
   // border-top: 1px solid #e1e1e8;
   // border-bottom: 2px solid #e1e1e8;
+  table {
+    margin-top: 20px;
+  }
+}
+
+.display-flex {
+  display: flex;
+  .has-feedback-help {
+    padding-left: 8px;
+    font-size: 16px;
+    line-height: 34px;
+  }
+  .btn-right {
+    margin-left: auto;
+  }
 }
 
 /*

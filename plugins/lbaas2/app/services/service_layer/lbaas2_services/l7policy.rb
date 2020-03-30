@@ -12,6 +12,17 @@ module ServiceLayer
         )
       end
 
+      def new_l7policy(attributes = {})
+        l7policy_map.call(attributes)
+      end
+
+      ################# INTERFACE METHODS ######################
+      def create_l7policy(attributes)
+        elektron_lb2.post('l7policies') do
+          { l7policy: attributes }
+        end.body['l7policy']
+      end
+
     end
   end
 end

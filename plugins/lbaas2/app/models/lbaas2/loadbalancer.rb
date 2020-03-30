@@ -3,7 +3,6 @@
 module Lbaas2
   # represents openstack lb
   class Loadbalancer < Core::ServiceLayer::Model
-    # validates :vip_subnet_id, presence: true, if: -> { id.nil? }
     validates :vip_subnet_id, presence: true, unless: ->(lb){lb.vip_network_id.present?}
     validates :vip_network_id, presence: true, unless: ->(lb){lb.vip_subnet_id.present?}
     validates :name, presence: true

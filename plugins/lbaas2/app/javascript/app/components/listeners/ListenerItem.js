@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Highlighter } from 'react-bootstrap-typeahead'
 import StateLabel from '../StateLabel'
+import StaticTags from '../StaticTags';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const MyHighlighter = ({search,children}) => {
@@ -22,6 +23,7 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
   const handleDelete = () => {
   }
 
+  const l7PolicyIDs = listener.l7policies.map(l7p => l7p.id)
   return ( 
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
@@ -42,6 +44,9 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
       <td><MyHighlighter search={searchTerm}>{listener.description}</MyHighlighter></td>
       <td><StateLabel placeholder={listener.operating_status} path="" /></td>
       <td><StateLabel placeholder={listener.provisioning_status} path=""/></td>
+      <td>
+        <StaticTags tags={listener.tags} />
+      </td>
       <td>{listener.protocol}</td>
       <td>{listener.protocol_port}</td>
       <td>
@@ -54,6 +59,7 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
         }
       </td>
       <td>{listener.connection_limit}</td>
+      <td>{l7PolicyIDs.length}</td>
       <td>
         <div className='btn-group'>
           <button

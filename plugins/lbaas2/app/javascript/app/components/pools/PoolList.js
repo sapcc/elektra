@@ -5,6 +5,7 @@ import {DefeatableLink} from 'lib/components/defeatable_link';
 import PoolItem from './PoolItem'
 import queryString from 'query-string'
 import { Link } from 'react-router-dom';
+import HelpPopover from '../shared/HelpPopover'
 
 const PoolList = ({props, loadbalancerID}) => {
   const {fetchPools} = usePool()
@@ -114,13 +115,15 @@ const PoolList = ({props, loadbalancerID}) => {
   const pools = filterItems(searchTerm, items)
   return ( 
     <div className="details-section">
-      <h4>Pools</h4>
+      <div className="display-flex">
+        <h4>Pools</h4>
+        <HelpPopover text="Object representing the grouping of members to which the listener forwards client requests. Note that a pool is associated with only one listener, but a listener might refer to several pools (and switch between them using layer 7 policies)." />
+      </div>
+      
       {error ?
         <ErrorPage headTitle="Load Balancers Pools" error={error}/>
         :
         <React.Fragment>
-
-          <p>Object representing the grouping of members to which the listener forwards client requests. Note that a pool is associated with only one listener, but a listener might refer to several pools (and switch between them using layer 7 policies).</p>
 
           <div className='toolbar'>
             { selected &&
@@ -131,12 +134,14 @@ const PoolList = ({props, loadbalancerID}) => {
             }
 
             <div className="main-buttons">
-              <DefeatableLink
-                disabled={selected || isLoading}
-                to='/pools/new'
-                className='btn btn-primary'>
-                New Pool
-              </DefeatableLink>
+              {!selected &&
+                <DefeatableLink
+                  disabled={isLoading}
+                  to='/pools/new'
+                  className='btn btn-primary'>
+                  New Pool
+                </DefeatableLink>
+              }
             </div>
           </div>
           
@@ -146,7 +151,8 @@ const PoolList = ({props, loadbalancerID}) => {
                     <th>Name/ID</th>
                     <th>Description</th>
                     <th>State</th>
-                    <th>Prov. Status</th>                    
+                    <th>Prov. Status</th>
+                    <th>Tags</th>
                     <th>Protocol</th>
                     <th>Algorithm</th>
                     <th>#Members</th>
@@ -166,7 +172,7 @@ const PoolList = ({props, loadbalancerID}) => {
                 )
                 :
                 <tr>
-                  <td colSpan="8">
+                  <td colSpan="9">
                     { isLoading ? <span className='spinner'/> : 'No pools found.' }
                   </td>
                 </tr>  

@@ -20,6 +20,33 @@ module Lbaas2
         render json: { errors: e.message }, status: "500"
       end
 
+      def show
+        listener = services.lbaas2.find_listener(params[:id])
+        render json: {
+          listener: listener
+        }
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end   
+
+      def destroy
+        listener = services.lbaas2.new_listener
+        listener.id = params[:id]
+  
+        if listener.destroy
+          audit_logger.info(current_user, 'has deleted', listener)
+          head 202
+        else  
+          render json: { errors: listener.errors }, status: 422
+        end
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
     end
   end
 end

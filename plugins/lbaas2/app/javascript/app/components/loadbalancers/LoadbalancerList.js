@@ -104,8 +104,8 @@ const LoadbalancerList = (props) => {
                           <th>Prov. Status</th>
                           <th>Tags</th>
                           <th className="snug-nowrap">Subnet/IP Address</th>
-                          <th>Listeners</th>
-                          <th>Pools</th>
+                          <th>#Listeners</th>
+                          <th>#Pools</th>
                           <th className='snug'></th>
                       </tr>
                   </thead>

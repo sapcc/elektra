@@ -16,8 +16,19 @@ const useL7Policy = () => {
     })
   }
 
+  const createL7Policy = (lbID, listenerID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.post(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies`, { l7policy: values }).then((response) => {        
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
   return {
-    fetchL7Policies
+    fetchL7Policies,
+    createL7Policy
   }
 }
  

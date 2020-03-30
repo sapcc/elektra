@@ -11,7 +11,6 @@ module ServiceLayer
         @lb_status_map ||= class_map_proc(::Lbaas2::Statuses)
       end
 
-
       def loadbalancers(filter = {})
         elektron_lb2.get('loadbalancers', filter).map_to(
           'body.loadbalancers', &loadbalancer_map
@@ -21,7 +20,6 @@ module ServiceLayer
       def new_loadbalancer(attributes = {})
         loadbalancer_map.call(attributes)
       end
-
 
       def loadbalancer_statuses(id)
         elektron_lb2.get("loadbalancers/#{id}/statuses").map_to(

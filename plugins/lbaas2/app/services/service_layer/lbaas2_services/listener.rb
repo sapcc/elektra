@@ -12,6 +12,16 @@ module ServiceLayer
         )
       end
 
+      def find_listener(id)
+        elektron_lb2.get("listeners/#{id}").map_to(
+          'body.listener', &listener_map
+        )
+      end
+
+      def new_listener(attributes = {})
+        listener_map.call(attributes)
+      end
+
     end
   end
 end
