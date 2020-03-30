@@ -1,8 +1,10 @@
 import moment from 'moment';
 
+import { addSuccess } from 'lib/flashes';
 import { byteToHuman } from 'lib/tools/size_formatter';
 
 import Digest from '../digest';
+import { makeGCNotice } from '../utils';
 
 const mediaTypeDescs = {
   'application/vnd.docker.distribution.manifest.v1+prettyjws': 'Docker image (old format)',
@@ -27,6 +29,7 @@ export default class ImageRow extends React.Component {
 
     this.setState({ ...this.state, isDeleting: true });
     this.props.deleteManifest(digest, tagName)
+      .then(() => addSuccess(makeGCNotice('Image')))
       .finally(() => this.setState({ ...this.state, isDeleting: false }));
   }
 

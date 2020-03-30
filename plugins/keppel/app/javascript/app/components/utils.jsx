@@ -52,3 +52,7 @@ export const makeHowto = (dockerInfo, accountName, repoName, hide) => {
     </div>
   );
 };
+
+export const makeGCNotice = objectType => (
+  `${objectType} deleted. It may take a few hours for the image contents to be garbage-collected from the backing Swift container.`
+);
