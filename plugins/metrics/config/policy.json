@@ -1,4 +1,5 @@
 {
   "metrics:application_list": "@",
-  "metrics:application_maia": "role: monitoring_viewer or role:monitoring_admin"
+  "metrics:application_maia": "role: monitoring_viewer or role:monitoring_admin",
+  "metrics:application_gaas": "role:cloud_support_tools_viewer"
 }
