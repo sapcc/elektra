@@ -52,13 +52,21 @@
 .highlight {
   padding: 9px 14px;
   margin-bottom: 14px;
-  // background-color: #fbfbfb;
   border: 1px solid #e1e1e8;
-  // border-top: 1px solid #e1e1e8;
-  // border-bottom: 2px solid #e1e1e8;
-  table {
+
+  .table-responsive{
     margin-top: 20px;
+    max-height:400px;  
+    overflow:scroll;
+
+    thead tr:nth-child(1) th{
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
   }
+
 }
 
 .display-flex {

@@ -4,6 +4,7 @@ import useL7Policy from '../../../lib/hooks/useL7Policy'
 import useCommons from '../../../lib/hooks/useCommons'
 import HelpPopover from '../shared/HelpPopover'
 import L7PolicyListItem from './L7PolicyListItem'
+import { Table } from 'react-bootstrap'
 
 const Policies = ({props, loadbalancerID, listener}) => {
   const {fetchL7Policies} = useL7Policy()
@@ -37,8 +38,12 @@ const Policies = ({props, loadbalancerID, listener}) => {
     newItems = newItems.filter( (item, pos, arr) => arr.findIndex(i => i.id == item.id)==pos );
     // create marker before sorting just in case there is any difference
     const marker = data.l7policies[data.l7policies.length-1]
-    // sort
-    newItems = newItems.sort((a, b) => a.name.localeCompare(b.name))
+    // sort by position
+    const test = newItems.sort((a, b) => a.position - b.position)
+    console.group("SORT BY POSITION")
+    console.log(test)
+    console.groupEnd()
+    // newItems = newItems.sort((a, b) => a.position < b.position)
     setState({...state,
       items: newItems, 
       error: null,
@@ -98,7 +103,8 @@ const Policies = ({props, loadbalancerID, listener}) => {
           }
       </div> 
 
-      <table className={l7Policies.length>0 ? "table table-hover policies" : "table policies"}>
+      {/* <table className={l7Policies.length>0 ? "table table-hover policies" : "table policies"}> */}
+      <Table responsive>
         <thead>
             <tr>
                 <th>Name/ID</th>
@@ -126,7 +132,8 @@ const Policies = ({props, loadbalancerID, listener}) => {
             </tr>  
           }
         </tbody>
-      </table>
+      {/* </table> */}
+      </Table>
     </div>    
    );
 }
