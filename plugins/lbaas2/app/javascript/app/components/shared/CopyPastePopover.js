@@ -1,7 +1,6 @@
 import React from 'react';
 import uniqueId from 'lodash/uniqueId'
 import { OverlayTrigger, Popover } from 'react-bootstrap'
-import ClipboardJS from 'clipboard.min'
 
 const CopyPastePopover = ({text, size}) => {
 
