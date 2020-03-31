@@ -8,7 +8,7 @@ module Compute
     validates :name, presence: { message: 'Please provide a name' }
     validates :image_id, presence: { message: 'Please select an image' }, if: :new?
     validates :flavor_id, presence: { message: 'Please select a flavor' }, if: :new?
-    validates :custom_root_disk_size,  if: :custom_root_disk? ,numericality: { only_integer: true, less_than_or_equal_to: 12, greater_than: 0 }
+    validates :custom_root_disk_size,  if: :custom_root_disk? ,numericality: { only_integer: true }
     validate :validate_network, if: :new?
     validates :keypair_id, presence: {
       message: "Please choose a keypair for us to provision to the server.
@@ -89,7 +89,7 @@ module Compute
     end
 
     def custom_root_disk_size 
-      read('custom_root_disk_size').to_i
+      read('custom_root_disk_size')
     end
 
     def custom_root_disk? 
