@@ -1,0 +1,9 @@
+table.castellum-error-list {
+  // bring the two rows making up an error closer together to reenforce the visual hierarchy
+  tr:not(.explains-previous-line) td {
+    padding-bottom: 0;
+  }
+  tr.explains-previous-line td {
+    padding-top: 0;
+  }
+}
