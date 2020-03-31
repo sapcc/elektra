@@ -113,8 +113,7 @@ const Policies = ({props, loadbalancerID, listener}) => {
                 <th>Prov. Status</th>
                 <th>Tags</th>
                 <th>Position</th>
-                <th>Action</th>
-                <th>Redirect To</th>
+                <th>Action/Redirect</th>
                 <th>#Rules</th>
                 <th className='snug'></th>
             </tr>
@@ -126,7 +125,7 @@ const Policies = ({props, loadbalancerID, listener}) => {
             )
             :
             <tr>
-              <td colSpan="10">
+              <td colSpan="9">
                 { isLoading ? <span className='spinner'/> : 'No L7 policies found.' }
               </td>
             </tr>  

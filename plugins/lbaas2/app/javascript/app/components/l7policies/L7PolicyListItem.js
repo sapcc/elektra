@@ -3,9 +3,12 @@ import useCommons from '../../../lib/hooks/useCommons'
 import { Link } from 'react-router-dom';
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
+import useL7Policy from '../../../lib/hooks/useL7Policy'
+import CopyPastePopover from '../shared/CopyPastePopover'
 
 const L7PolicyListItem = ({l7Policy, searchTerm}) => {
   const {MyHighlighter} = useCommons()
+  const {actionRedirect} = useL7Policy()
 
   const onClick = (e) => {
     if (e) {
@@ -38,8 +41,19 @@ const L7PolicyListItem = ({l7Policy, searchTerm}) => {
         <StaticTags tags={l7Policy.tags} />
       </td>
       <td>{l7Policy.position}</td>
-      <td>{l7Policy.action}</td>
-      <td></td>
+      <td>
+        {l7Policy.action}
+        {actionRedirect(l7Policy.action).map( (redirect, index) =>
+          <React.Fragment>
+            <br/><b>{redirect.label}: </b>
+            {redirect.value === "redirect_prefix" || redirect.value === "redirect_url" ?
+              <CopyPastePopover text={l7Policy[redirect.value]} size={20} />
+            :
+              <span>{l7Policy[redirect.value]}</span>
+            }            
+          </React.Fragment>
+        )}
+      </td>
       <td></td>
       <td>
         <div className='btn-group'>
