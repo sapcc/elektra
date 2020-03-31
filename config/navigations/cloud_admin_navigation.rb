@@ -74,6 +74,7 @@ SimpleNavigation::Configuration.run do |navigation|
     html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon" },
     if: -> { true } do |cloudops_nav|
       cloudops_nav.item :user_role_assignments, 'Cloudops Tools', -> {plugin('cloudops').start_path}
+      cloudops_nav.item :castellum_error_log, 'Castellum Error Log', -> { plugin('cc_tools').castellum_error_log_path }, if: -> { services.tools.has_castellum? and current_user and current_user.is_allowed?('tools:castellum_error_log') }, highlights_on: -> { params[:controller][%r{cc-tools/castellum/?.*}] }
   end
 
 
