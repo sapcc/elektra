@@ -3,7 +3,7 @@
 module Tools
   class CastellumController < ::DashboardController
     def show
-      enforce_permissions('::tools:castellum_error_log')
+      enforce_permissions('::tools:show_castellum_errors')
       @js_data = {
         # data required to access the Castellum API
         token:         current_user.token,
