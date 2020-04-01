@@ -71,21 +71,36 @@
 
 .display-flex {
   display: flex;
+
   .has-feedback-help {
     padding-left: 8px;
     font-size: 16px;
     line-height: 34px;
   }
-  .dots-help {
+  .btn-right {
+    margin-left: auto;
+  }
+}
+
+.cp {
+  display: flex;
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+
+  .cp-dots-help {
     padding-left: 4px;
     font-size: 16px;
     line-height: 28px;
   }
-  .copy-paste-help {
-    padding-left: 4px;
+  .copy-paste-icon {
+    button {
+      padding: 0px 0px 0px 4px;
+    }
   }
-  .btn-right {
-    margin-left: auto;
+  .cp-text {
+
   }
 }
 
