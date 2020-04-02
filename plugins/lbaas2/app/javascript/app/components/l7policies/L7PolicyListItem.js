@@ -6,7 +6,7 @@ import StaticTags from '../StaticTags';
 import useL7Policy from '../../../lib/hooks/useL7Policy'
 import CopyPastePopover from '../shared/CopyPastePopover'
 
-const L7PolicyListItem = ({l7Policy, searchTerm}) => {
+const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
   const {MyHighlighter} = useCommons()
   const {actionRedirect} = useL7Policy()
 
@@ -18,8 +18,9 @@ const L7PolicyListItem = ({l7Policy, searchTerm}) => {
   }
 
   const handleDelete = () => {
-
   }
+
+  console.log("RENDER L7 Policy Item")
 
   return ( 
     <tr>
@@ -47,7 +48,7 @@ const L7PolicyListItem = ({l7Policy, searchTerm}) => {
           <React.Fragment>
             <br/><b>{redirect.label}: </b>
             {redirect.value === "redirect_prefix" || redirect.value === "redirect_url" ?
-              <CopyPastePopover text={l7Policy[redirect.value]} size={20} />
+              <CopyPastePopover text={l7Policy[redirect.value]} size={20} autoClose={tableScroll}/>
             :
               <span>{l7Policy[redirect.value]}</span>
             }            
@@ -71,6 +72,11 @@ const L7PolicyListItem = ({l7Policy, searchTerm}) => {
       </td>
     </tr>
    );
-}
+},(oldProps,newProps) => {
+  const identical = JSON.stringify(oldProps.l7Policy) === JSON.stringify(newProps.l7Policy) && 
+                    oldProps.searchTerm === newProps.searchTerm && 
+                    oldProps.tableScroll === newProps.tableScroll
+  return identical                  
+})
  
 export default L7PolicyListItem;

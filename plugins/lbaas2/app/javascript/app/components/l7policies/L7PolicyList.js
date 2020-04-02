@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import useL7Policy from '../../../lib/hooks/useL7Policy'
 import useCommons from '../../../lib/hooks/useCommons'
@@ -12,6 +12,7 @@ const Policies = ({props, loadbalancerID, listener}) => {
   const [isLoading, setIsLoading] = useState(false)
   const [selected, setSelected] = useState(null)
   const [searchTerm, setSearchTerm] = useState(null)
+  const [tableScroll, setTableScroll] = useState(false)
   const [state, setState] = useState({
     items: [],
     receivedAt: null,
@@ -19,6 +20,7 @@ const Policies = ({props, loadbalancerID, listener}) => {
     marker: null,
     error: null
   })
+  let timeout = null
 
   useEffect(() => {
     console.log("FETCH L7 POLICIES")
@@ -31,6 +33,16 @@ const Policies = ({props, loadbalancerID, listener}) => {
       // TODO show error
     })
   }, [listener.id, listener.l7policies]);
+
+  const container = useRef(null)
+  useEffect(() => {
+    const containerElement = container.current 
+    containerElement.querySelector('.table-responsive').addEventListener('scroll', handleScroll);
+    return () => {
+      containerElement.querySelector('.table-responsive').removeEventListener("scroll",handleScroll)
+      clearTimeout(timeout)
+    }
+  },[])
 
   const updateState = (data) => {
     let newItems = (state.items.slice() || []).concat(data.l7policies);
@@ -66,6 +78,16 @@ const Policies = ({props, loadbalancerID, listener}) => {
     }
   }
 
+  const handleScroll = () => {
+    //if there is already a timeout in process cancel it
+    if(timeout) return
+    setTableScroll(true)
+    timeout = setTimeout(() => {
+      timeout = null
+      setTableScroll(false)
+    }, 1000 )
+  }
+
   const error = state.error
   const hasNext = state.hasNext
   const items = state.items
@@ -86,10 +108,9 @@ const Policies = ({props, loadbalancerID, listener}) => {
   }
 
   console.log("RENDER L7 POLICIES")
-
   const l7Policies =  filterItems(searchTerm, items)
   return ( 
-    <div className="highlight">
+    <div className="highlight" ref={container}>
       <div className="display-flex">
         <h5>L7 Policies</h5>
         <HelpPopover text="Collection of L7 rules that get logically ANDed together as well as a routing policy for any given HTTP or terminated HTTPS client requests which match said rules. An L7 Policy is associated with exactly one HTTP or terminated HTTPS listener." />
@@ -103,8 +124,7 @@ const Policies = ({props, loadbalancerID, listener}) => {
           }
       </div> 
 
-      {/* <table className={l7Policies.length>0 ? "table table-hover policies" : "table policies"}> */}
-      <Table responsive>
+      <Table className={l7Policies.length>0 ? "table table-hover policies" : "table policies"} responsive>
         <thead>
             <tr>
                 <th>Name/ID</th>
@@ -121,7 +141,7 @@ const Policies = ({props, loadbalancerID, listener}) => {
         <tbody>
           {l7Policies && l7Policies.length>0 ?
             l7Policies.map( (l7Policy, index) =>
-              <L7PolicyListItem l7Policy={l7Policy} searchTerm={searchTerm} key={index}/>
+              <L7PolicyListItem l7Policy={l7Policy} searchTerm={searchTerm} key={index} tableScroll={tableScroll}/>
             )
             :
             <tr>

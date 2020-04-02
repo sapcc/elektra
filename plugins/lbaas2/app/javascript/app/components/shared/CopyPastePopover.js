@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import uniqueId from 'lodash/uniqueId'
-import { OverlayTrigger, Overlay, Popover, Tooltip, Button } from 'react-bootstrap'
+import { OverlayTrigger, Overlay, Popover, Tooltip } from 'react-bootstrap'
 import Clipboard from 'react-clipboard.js';
 
-const CopyPastePopover = ({text, size}) => {
+const CopyPastePopover = ({text, size, autoClose}) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [target, setTarget] = useState(null)
   const [showIcon, setShowIcon] = useState(false)
+  
+  const [showPopover, setShowPopover] = useState(false)
+  const [popoverTarget, setPopoverTarget] = useState(null)
 
-  const onCopySuccess = event => {
+
+  useEffect(() => {
+    if (autoClose && showPopover) setShowPopover(false)
+  },[autoClose])
+
+  const onCopySuccess = () => {
     setShowTooltip(true)
     setTimeout(() => setShowTooltip(false),500)
   }
@@ -17,8 +25,7 @@ const CopyPastePopover = ({text, size}) => {
       show={showTooltip}
       placement="top"
       container={this}
-      target={target}
-    >
+      target={target}>
       <Tooltip id={uniqueId("copy-paste-tooltip-")}>Copied!</Tooltip>
     </Overlay>
 
@@ -43,17 +50,30 @@ const CopyPastePopover = ({text, size}) => {
     setShowIcon(false)
   }
 
+  const handlePopoverClick = event => {
+    setShowPopover(!showPopover)
+    setPopoverTarget(event.target)
+  }
+  
   return ( 
     <React.Fragment>
       { text.length>size ?
         <div className="cp">
           <span>{text.slice(0,size)}</span>
           <div className="cp-dots-help">
-            <OverlayTrigger trigger="click" placement="top" rootClose overlay={popOver}>
-              <a className='help-link' href='javascript:void(0)'>
-                <i className="fa fa-ellipsis-h"></i>
-              </a>
-            </OverlayTrigger>
+            <a className='help-link' onClick={handlePopoverClick} href='javascript:void(0)'>
+              <i className="fa fa-ellipsis-h"></i>
+            </a>
+            <Overlay
+              rootClose
+              onHide={() => setShowPopover(false)}
+              show={showPopover}
+              target={popoverTarget}
+              placement="top"
+              container={this}
+              containerPadding={20}>
+                {popOver}
+              </Overlay>
           </div>
         </div>
       :
