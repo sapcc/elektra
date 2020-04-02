@@ -15,6 +15,10 @@ module ServiceLayer
           project_id = filter.delete(:project_id)
           header_options = {"x-auth-sudo-project-id": project_id}
         end
+        if filter[:all_projects]
+          filter.delete(:all_projects)
+          header_options = {"x-auth-all-projects": "true"}
+        end
         response = elektron_dns.get('zones', filter, headers: header_options)
         {
           items: response.map_to('body.zones', &zone_map),
