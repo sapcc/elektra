@@ -31,7 +31,11 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
         {l7Policy.name && 
             <React.Fragment>
               <br/>
-              <span className="info-text"><MyHighlighter search={searchTerm}>{l7Policy.id}</MyHighlighter></span>
+              <span className="info-text">
+                <MyHighlighter search={searchTerm}>
+                  <CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
+                </MyHighlighter>
+              </span>
             </React.Fragment>
           }
       </td>
@@ -48,7 +52,7 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
           <React.Fragment>
             <br/><b>{redirect.label}: </b>
             {redirect.value === "redirect_prefix" || redirect.value === "redirect_url" ?
-              <CopyPastePopover text={l7Policy[redirect.value]} size={20} autoClose={tableScroll}/>
+              <CopyPastePopover text={l7Policy[redirect.value]} size={20} shouldClose={tableScroll}/>
             :
               <span>{l7Policy[redirect.value]}</span>
             }            

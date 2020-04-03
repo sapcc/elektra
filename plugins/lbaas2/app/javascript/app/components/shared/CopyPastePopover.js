@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import uniqueId from 'lodash/uniqueId'
-import { OverlayTrigger, Overlay, Popover, Tooltip } from 'react-bootstrap'
+import { Overlay, Popover, Tooltip } from 'react-bootstrap'
 import Clipboard from 'react-clipboard.js';
 
-const CopyPastePopover = ({text, size, autoClose}) => {
+
+/**
+ * 
+ * text --> text to show
+ * size --> chars numbers to display
+ * sliceType --> text sliced from END OR MIDDLE (default: END)
+ * shouldClose --> Popover if displayed will be closed
+ */
+const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass}) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [target, setTarget] = useState(null)
   const [showIcon, setShowIcon] = useState(false)
-  
   const [showPopover, setShowPopover] = useState(false)
   const [popoverTarget, setPopoverTarget] = useState(null)
-
+  let ref = React.useRef(null);
+  const baseClass = bsClass || "cp"
 
   useEffect(() => {
-    if (autoClose && showPopover) setShowPopover(false)
-  },[autoClose])
+    if (shouldClose && showPopover) setShowPopover(false)
+  },[shouldClose])
 
   const onCopySuccess = () => {
     setShowTooltip(true)
@@ -54,30 +62,46 @@ const CopyPastePopover = ({text, size, autoClose}) => {
     setShowPopover(!showPopover)
     setPopoverTarget(event.target)
   }
-  
+
+  const textSliced = () => {
+    if (sliceType && sliceType == "MIDDLE") {
+      const first = size/2
+      const second = size-first
+      const firstPeace = text.slice(0,first)
+      const secondPeace = text.slice(text.length-second,text.length)
+      return [firstPeace, secondPeace]
+    } 
+    return [text.slice(0,size), ""]
+  }
+
+  const popoverOverlay = <React.Fragment>
+    <a className='help-link' onClick={handlePopoverClick} href='javascript:void(0)'>
+      <i className="fa fa-ellipsis-h"></i>
+    </a>
+    <Overlay
+      ref={r => (ref = r)} 
+      onHide={() => setShowPopover(false)}
+      show={showPopover}
+      target={popoverTarget}
+      placement="top"
+      container={this}
+      containerPadding={20}>
+        {popOver}
+    </Overlay>
+  </React.Fragment>
+
   return ( 
     <React.Fragment>
       { text.length>size ?
-        <div className="cp">
-          <span>{text.slice(0,size)}</span>
+        <div className={baseClass}>
+          <span>{textSliced()[0]}</span>
           <div className="cp-dots-help">
-            <a className='help-link' onClick={handlePopoverClick} href='javascript:void(0)'>
-              <i className="fa fa-ellipsis-h"></i>
-            </a>
-            <Overlay
-              rootClose
-              onHide={() => setShowPopover(false)}
-              show={showPopover}
-              target={popoverTarget}
-              placement="top"
-              container={this}
-              containerPadding={20}>
-                {popOver}
-              </Overlay>
+            {popoverOverlay}
           </div>
+          <span>{textSliced()[1]}</span>
         </div>
       :
-        <div className="cp" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+        <div className={baseClass} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
           <span>
             {text}
           </span>
