@@ -79,7 +79,6 @@ const Policies = ({props, loadbalancerID, listener}) => {
   }
 
   const handleScroll = () => {
-    //if there is already a timeout in process cancel it
     if(timeout) return
     setTableScroll(true)
     timeout = setTimeout(() => {

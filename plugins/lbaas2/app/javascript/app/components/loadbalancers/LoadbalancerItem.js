@@ -8,6 +8,7 @@ import StateLabel from '../StateLabel'
 import useStatusTree from '../../../lib/hooks/useStatusTree'
 import { useEffect } from 'react'
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
+import CopyPastePopover from '../shared/CopyPastePopover'
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
@@ -64,24 +65,58 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
 
   const poolIds = loadbalancer.pools.map(p => p.id)
   const listenerIds = loadbalancer.listeners.map(l => l.id)
+  const displayName = () => {
+    const name = loadbalancer.name || loadbalancer.id
+    const cutName = <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/>
+    if (disabled) {
+        return <span className="info-text">{cutName}</span>
+    } else {
+      if (searchTerm) {
+        return <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
+                <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
+              </Link>
+      } else {
+        return <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
+                <MyHighlighter search={searchTerm}>{cutName}</MyHighlighter>
+              </Link>
+      }
+    }
+  }
+  const displayID = () => {
+    const copyPasteId = <CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
+    const cutId = <CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/>
+    if (loadbalancer.name) {
+      if (disabled) {
+        return <span className="info-text">{cutId}</span>
+      } else {
+        if (searchTerm) {
+          return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{loadbalancer.id}</MyHighlighter></span></React.Fragment>
+        } else {
+          return copyPasteId
+        }        
+      }
+    }
+  }
+  const displayDescription = () => {
+    const description = <CopyPastePopover text={loadbalancer.description} size={20} shouldCopy={false} shouldPopover={false}/>
+    if (disabled) {
+      return description
+    } else {
+      if (searchTerm) {
+        return <MyHighlighter search={searchTerm}>{loadbalancer.description}</MyHighlighter>
+      } else {
+        return description
+      }
+    }
+  }
+
   return(
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
-        {disabled ?
-            <span className="info-text"><MyHighlighter search={searchTerm}>{loadbalancer.name || loadbalancer.id}</MyHighlighter></span>
-         :
-          <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
-            <MyHighlighter search={searchTerm}>{loadbalancer.name || loadbalancer.id}</MyHighlighter>
-          </Link>
-         }
-        {loadbalancer.name && 
-            <React.Fragment>
-              <br/>
-              <span className="info-text"><MyHighlighter search={searchTerm}>{loadbalancer.id}</MyHighlighter></span>
-            </React.Fragment>
-          }
+        {displayName()}
+        {displayID()}
       </td>
-      <td><MyHighlighter search={searchTerm}>{loadbalancer.description}</MyHighlighter></td>
+      <td>{displayDescription()}</td>
       <td><StateLabel placeholder={loadbalancer.operating_status} path="operating_status" /></td>
       <td><StateLabel placeholder={loadbalancer.provisioning_status} path="provisioning_status"/></td>
       {/* <td>{loadbalancer.operating_status}</td> */}
@@ -92,22 +127,24 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
       <td className="snug-nowrap">
         {loadbalancer.subnet && 
           <React.Fragment>
-            <p className="list-group-item-text" data-is-from-cache={loadbalancer.subnet_from_cache}>{loadbalancer.subnet.name}</p>
+            <p className="list-group-item-text list-group-item-text-copy" data-is-from-cache={loadbalancer.subnet_from_cache}>{loadbalancer.subnet.name}</p>
           </React.Fragment>
         }
         {loadbalancer.vip_address && 
           <React.Fragment>
-            <p className="list-group-item-text">
+            <p className="list-group-item-text list-group-item-text-copy display-flex">
               <i className="fa fa-desktop fa-fw"/>
-              {loadbalancer.vip_address}
+              <CopyPastePopover text={loadbalancer.vip_address} size={20}/>
+              {/* {loadbalancer.vip_address} */}
             </p>
           </React.Fragment>
         }
         {loadbalancer.floating_ip && 
           <React.Fragment>
-            <p className="list-group-item-text">
+            <p className="list-group-item-text list-group-item-text-copy display-flex">
               <i className="fa fa-globe fa-fw"/>
-              {loadbalancer.floating_ip.floating_ip_address}
+              {/* {loadbalancer.floating_ip.floating_ip_address} */}
+              <CopyPastePopover text={loadbalancer.floating_ip.floating_ip_address} size={20}/>
             </p>
           </React.Fragment>
         }
