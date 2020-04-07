@@ -38,6 +38,16 @@ const LbPopoverListenerContent = ({listenerIds, cachedListeners}) => {
                   <b>Protocol Port:</b> {cachedListeners[id].payload.protocol_port}
                 </div>
               </div>
+              <div className="row">
+                <div className="col-md-12">
+                  <b>Default Pool:</b> {cachedListeners[id].payload.default_pool_id ? <i className="fa fa-check" /> : <i className="fa fa-times" />}
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-12">
+                  <b>Connection Limit:</b> {cachedListeners[id].payload.connection_limit}
+                </div>
+              </div>
             </React.Fragment>
             :
             <div className="row">

@@ -111,14 +111,15 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
       target={popoverTarget}
       placement="top"
       container={this}
-      containerPadding={20}>
+      containerPadding={20}
+      rootClose>
         {popOver}
     </Overlay>
   </React.Fragment>
 
   return ( 
     <React.Fragment>
-      { text.length>size ?
+      { text && text.length>size ?
         <span className={baseClass}>
           {shouldPopoverText ?
             <React.Fragment>
@@ -129,13 +130,13 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
               <span className="cp-substring">{textSliced()[1]}</span>
             </React.Fragment>
           :
-          <span>{textSliced()[0]}...{textSliced()[1]}</span>
+          <span className="cp-string">{textSliced()[0]}...{textSliced()[1]}</span>
           }
         </span>
       :
         <span className={baseClass} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
           <span>
-            {text}
+            <span className="cp-string">{text}</span>
             {showIcon && shouldCopyText &&
               <span className="copy-paste-icon">
                 {clipboard}

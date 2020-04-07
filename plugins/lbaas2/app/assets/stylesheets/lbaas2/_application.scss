@@ -80,10 +80,13 @@
   .btn-right {
     margin-left: auto;
   }
+  .label-right {
+    padding-left:8px;
+  }
 }
 
 .copy-paste-ids {
-  span.cp-substring {
+  span.cp-substring, span.cp-string {
     filter: alpha(opacity=45);
     opacity: 0.45;
   }

@@ -30,11 +30,11 @@ const PoolItem = ({pool, searchTerm, onSelectPool, disabled}) => {
         return <span className="info-text">{cutName}</span>
     } else {
       if (searchTerm) {
-        return <Link to={`/loadbalancers/${pool.id}/show`}>
+        return <Link to="#" onClick={onClick}>
                 <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
               </Link>
       } else {
-        return <Link to={`/loadbalancers/${pool.id}/show`}>
+        return <Link to="#" onClick={onClick}>
                 <MyHighlighter search={searchTerm}>{cutName}</MyHighlighter>
               </Link>
       }

@@ -5,6 +5,8 @@ import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import CopyPastePopover from '../shared/CopyPastePopover'
+import CachedInfoPopover from '../shared/CachedInforPopover';
+import CachedInfoPopoverContent from './CachedInfoPopoverContent'
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
@@ -32,11 +34,11 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
         return <span className="info-text">{cutName}</span>
     } else {
       if (searchTerm) {
-        return <Link to={`/loadbalancers/${listener.id}/show`}>
+        return <Link to="#" onClick={onClick}>
                 <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
               </Link>
       } else {
-        return <Link to={`/loadbalancers/${listener.id}/show`}>
+        return <Link to="#" onClick={onClick}>
                 <MyHighlighter search={searchTerm}>{cutName}</MyHighlighter>
               </Link>
       }
@@ -95,7 +97,16 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
         }
       </td>
       <td>{listener.connection_limit}</td>
-      <td>{l7PolicyIDs.length}</td>
+      <td> 
+        {disabled ?
+          <span className="info-text">{l7PolicyIDs.length}</span>
+        :
+        <CachedInfoPopover  popoverId={"l7policies-popover-"+listener.id} 
+                    buttonName={l7PolicyIDs.length} 
+                    title={<React.Fragment>L7 Policies<Link to="#" onClick={onClick} style={{float: 'right'}}>Show all</Link></React.Fragment>}
+                    content={<CachedInfoPopoverContent l7PolicyIDs={l7PolicyIDs} cachedl7PolicyIDs={listener.cached_l7policies} onSelectListener={onSelectListener}/>} />
+        }
+      </td>
       <td>
         <div className='btn-group'>
           <button

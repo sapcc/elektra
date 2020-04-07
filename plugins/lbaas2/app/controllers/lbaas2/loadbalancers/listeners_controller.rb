@@ -9,6 +9,8 @@ module Lbaas2
         pagination_options = { sort_key: 'name', sort_dir: 'asc', limit: per_page + 1 }
         pagination_options[:marker] = params[:marker] if params[:marker]
         listeners = services.lbaas2.listeners({ loadbalancer_id: params[:loadbalancer_id]}.merge(pagination_options))
+        # extend listener data with chached data
+        extend_listener_data(listeners)
 
         render json: {
           listeners: listeners,
@@ -22,6 +24,8 @@ module Lbaas2
 
       def show
         listener = services.lbaas2.find_listener(params[:id])
+        # extend listener data with chached data
+        extend_listener_data([listener])
         render json: {
           listener: listener
         }
@@ -45,6 +49,19 @@ module Lbaas2
         render json: { errors: e.message }, status: e.code
       rescue Exception => e
         render json: { errors: e.message }, status: "500"
+      end
+
+      protected
+
+      def extend_listener_data(listeners)
+        listeners.each do |listener|
+          # get cached listeners
+          listener.l7policies = [] if listener.l7policies.blank?
+          listener.cached_l7policies = ObjectCache.where(id: listener.l7policies.map{|l| l[:id]}).each_with_object({}) do |l,map|
+            map[l[:id]] = l
+          end
+    
+        end
       end
 
     end

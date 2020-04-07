@@ -1,8 +1,8 @@
 import { Highlighter } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom';
-import LbPopover from './LbPoopover';
-import LbPopoverListenerContent from './LbPopoverListenerContent';
-import LbPopoverPoolContent from './LbPopoverPoolContent';
+import CachedInforPopover from '../shared/CachedInforPopover';
+import CachedInfoPopoverListenerContent from './CachedInfoPopoverListenerContent';
+import CachedInfoPopoverPoolContent from './CachedInfoPopoverPoolContent';
 import StaticTags from '../StaticTags';
 import StateLabel from '../StateLabel'
 import useStatusTree from '../../../lib/hooks/useStatusTree'
@@ -67,9 +67,8 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
   const listenerIds = loadbalancer.listeners.map(l => l.id)
   const displayName = () => {
     const name = loadbalancer.name || loadbalancer.id
-    const cutName = <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/>
     if (disabled) {
-        return <span className="info-text">{cutName}</span>
+        return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
     } else {
       if (searchTerm) {
         return <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
@@ -77,17 +76,16 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
               </Link>
       } else {
         return <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
-                <MyHighlighter search={searchTerm}>{cutName}</MyHighlighter>
+                <MyHighlighter search={searchTerm}><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/></MyHighlighter>
               </Link>
       }
     }
   }
   const displayID = () => {
     const copyPasteId = <CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
-    const cutId = <CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/>
     if (loadbalancer.name) {
       if (disabled) {
-        return <span className="info-text">{cutId}</span>
+        return <span className="info-text"><CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/></span>
       } else {
         if (searchTerm) {
           return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{loadbalancer.id}</MyHighlighter></span></React.Fragment>
@@ -153,20 +151,20 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
         {disabled ?
           <span className="info-text">{listenerIds.length}</span>
         :
-        <LbPopover  popoverId={"listener-popover-"+loadbalancer.id} 
+        <CachedInforPopover  popoverId={"listener-popover-"+loadbalancer.id} 
                     buttonName={listenerIds.length} 
                     title={<React.Fragment>Listeners<Link to={`/listeners/`} style={{float: 'right'}}>Show all</Link></React.Fragment>}
-                    content={<LbPopoverListenerContent listenerIds={listenerIds} cachedListeners={loadbalancer.cached_listeners}/>} />
+                    content={<CachedInfoPopoverListenerContent listenerIds={listenerIds} cachedListeners={loadbalancer.cached_listeners}/>} />
         }
       </td>
       <td>
       {disabled ?
           <span className="info-text">{poolIds.length}</span>
         :
-        <LbPopover  popoverId={"pools-popover-"+loadbalancer.id} 
+        <CachedInforPopover  popoverId={"pools-popover-"+loadbalancer.id} 
                     buttonName={poolIds.length} 
                     title={<React.Fragment>Pools<Link to={`/pools/`} style={{float: 'right'}}>Show all</Link></React.Fragment>}
-                    content={<LbPopoverPoolContent poolIds={poolIds} cachedPools={loadbalancer.cached_pools}/>} />
+                    content={<CachedInfoPopoverPoolContent poolIds={poolIds} cachedPools={loadbalancer.cached_pools}/>} />
       }
       </td>
       <td>
