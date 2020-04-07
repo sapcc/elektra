@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react'
 import useCommons from '../../../lib/hooks/useCommons'
 import { Link } from 'react-router-dom';
 import StateLabel from '../StateLabel'
@@ -9,6 +9,7 @@ import CopyPastePopover from '../shared/CopyPastePopover'
 const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
   const {MyHighlighter} = useCommons()
   const {actionRedirect} = useL7Policy()
+  const [disabled, setDisabled] = useState(false)
 
   const onClick = (e) => {
     if (e) {
@@ -20,24 +21,43 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
   const handleDelete = () => {
   }
 
-  console.log("RENDER L7 Policy Item")
+  const displayName = () => {
+    const name = l7Policy.name || l7Policy.id
+    if (disabled) {
+        return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
+    } else {
+      if (searchTerm) {
+        return <Link to="#" onClick={onClick}>
+                <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
+              </Link>
+      } else {
+        return <Link to="#" onClick={onClick}>
+                <MyHighlighter search={searchTerm}><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/></MyHighlighter>
+              </Link>
+      }
+    }
+  }
+  const displayID = () => {
+    const copyPasteId = <CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldClose={tableScroll}/>
+    if (l7Policy.name) {
+      if (disabled) {
+        return <span className="info-text"><CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/></span>
+      } else {
+        if (searchTerm) {
+          return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{l7Policy.id}</MyHighlighter></span></React.Fragment>
+        } else {
+          return copyPasteId
+        }        
+      }
+    }
+  }
 
+  console.log("RENDER L7 Policy Item")
   return ( 
     <tr>
       <td className="snug-nowrap">
-        <Link to="#" onClick={onClick}>
-          <MyHighlighter search={searchTerm}>{l7Policy.name || l7Policy.id}</MyHighlighter>
-        </Link>
-        {l7Policy.name && 
-            <React.Fragment>
-              <br/>
-              <span className="info-text">
-                <MyHighlighter search={searchTerm}>
-                  <CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
-                </MyHighlighter>
-              </span>
-            </React.Fragment>
-          }
+        {displayName()}
+        {displayID()}
       </td>
       <td><MyHighlighter search={searchTerm}>{l7Policy.description}</MyHighlighter></td>
       <td><StateLabel placeholder={l7Policy.operating_status} path="" /></td>
@@ -59,7 +79,7 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
           </span>
         )}
       </td>
-      <td></td>
+      <td>{l7Policy.rules.length}</td>
       <td>
         <div className='btn-group'>
           <button
