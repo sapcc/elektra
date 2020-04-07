@@ -102,7 +102,7 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
 
   const popoverOverlay = <React.Fragment>
     <a className='help-link' onClick={handlePopoverClick} href='javascript:void(0)'>
-      <i className="fa fa-ellipsis-h"></i>
+      <b>...</b>
     </a>    
     <Overlay
       ref={r => (ref = r)} 
@@ -119,19 +119,19 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
   return ( 
     <React.Fragment>
       { text.length>size ?
-        <div className={baseClass}>
+        <span className={baseClass}>
           {shouldPopoverText ?
             <React.Fragment>
-              <span>{textSliced()[0]}</span>
-              <div className="cp-dots-help">
-                {popoverOverlay}
-              </div>
-              <span>{textSliced()[1]}</span>
+              <span>
+                <span className="cp-substring">{textSliced()[0]}</span>
+                <span className="cp-dots-help">{popoverOverlay}</span>
+              </span>              
+              <span className="cp-substring">{textSliced()[1]}</span>
             </React.Fragment>
           :
           <span>{textSliced()[0]}...{textSliced()[1]}</span>
           }
-        </div>
+        </span>
       :
         <span className={baseClass} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
           <span>

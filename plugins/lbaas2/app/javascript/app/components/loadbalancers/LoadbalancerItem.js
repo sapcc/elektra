@@ -98,7 +98,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
     }
   }
   const displayDescription = () => {
-    const description = <CopyPastePopover text={loadbalancer.description} size={20} shouldCopy={false} shouldPopover={false}/>
+    const description = <CopyPastePopover text={loadbalancer.description} size={20} shouldCopy={false} shouldPopover={true}/>
     if (disabled) {
       return description
     } else {

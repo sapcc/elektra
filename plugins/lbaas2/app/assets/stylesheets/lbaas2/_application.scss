@@ -83,7 +83,7 @@
 }
 
 .copy-paste-ids {
-  span {
+  span.cp-substring {
     filter: alpha(opacity=45);
     opacity: 0.45;
   }
@@ -103,8 +103,7 @@
   .cp-dots-help {
     padding-left: 4px;
     padding-right: 4px;
-    font-size: 14px;
-    line-height: 28px;
+    font-size: 14px;  
   }
   .copy-paste-icon {
     button {
