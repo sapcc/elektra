@@ -1,11 +1,10 @@
 import React from 'react';
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import useListener from '../../../lib/hooks/useListener'
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import ListenerItem from './ListenerItem'
 import queryString from 'query-string'
 import { Link } from 'react-router-dom';
-import L7PolicyList from '../l7policies/L7PolicyList'
 import HelpPopover from '../shared/HelpPopover'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { useGlobalState } from '../StateProvider'
@@ -19,33 +18,32 @@ const TableFadeTransition = ({
 
 
 const ListenerList = ({props, loadbalancerID}) => {
-  const {persistListeners} = useListener()
+  const {persistListeners, setSearchTerm, setSelected} = useListener()
   const state = useGlobalState().listeners
-  const [searchTerm, setSearchTerm] = useState(null)
-  const [selectedID, setSelectedID] = useState(null)
 
   useEffect(() => { 
     console.log('LISTENER INITIAL FETCH')
     // no add marker so we get always the first ones on lading component
     persistListeners(loadbalancerID, null).then((data) => {
-      selectListener()
+      selectListener(data)
     }).catch( error => {
       // TODO
     })
   }, [loadbalancerID]);
 
-  const selectListener = () => {
+  const selectListener = (data) => {
     const values = queryString.parse(props.location.search)
     const id = values.listener
-
     if (id) {
-      // Listener was selected
-      setSelectedID(id)
-      // filter the listener list to show just the one item
-      setSearchTerm(id)
-    } else {
-      // NOT FOUND
-    }
+      // check if id belows to the lb object
+      const index = data.listeners.findIndex((item) => item.id==id);
+      if (index>=0) {
+        // Listener was selected
+        setSelected(id)
+        // filter the listener list to show just the one item
+        setSearchTerm(id)
+      }
+    } 
   }
 
   const onSelectListener = (listenerID) => {
@@ -58,7 +56,7 @@ const ListenerList = ({props, loadbalancerID}) => {
       search: searchParams.toString()
     })
     // Listener was selected
-    setSelectedID(listenerID)
+    setSelected(listenerID)
     // filter the listener list to show just the one item
     setSearchTerm(listenerID)
   }
@@ -75,16 +73,22 @@ const ListenerList = ({props, loadbalancerID}) => {
       e.preventDefault()
     }
     onSelectListener()
+
+    console.group("CHECKING!!")
+    console.log(selected)
+    console.groupEnd()
   }
 
   const error = state.error
   const hasNext = state.hasNext
   const items = state.items
+  const selected = state.selected
+  const searchTerm = state.searchTerm
 
   const filterItems = (searchTerm, items) => {
     if(!searchTerm) return items;
     // filter items      
-    if (selectedID) {
+    if (selected) {
       return items.filter((i) =>
         i.id == searchTerm.trim()
       )
@@ -96,100 +100,98 @@ const ListenerList = ({props, loadbalancerID}) => {
     }
   }
 
-  const getSelectedItem = (selectedID, items) => {
-    if (selectedID) {
-      const found =  filterItems(selectedID, items)
+  const getSelectedItem = (selectedListenerID, items) => {
+    if (selectedListenerID) {
+      const found =  filterItems(selectedListenerID, items)
       if (found.length == 1) {
         return found[0]
       }
     } 
     return null
   }
-
-  console.log("RENDER Listener list")
-
-  const selectedItem = getSelectedItem(selectedID, items)
+  const selectedListenerItem = getSelectedItem(selected, items)
   const listeners =  filterItems(searchTerm, items)
   const isLoading = state.isLoading
-  return ( 
-    <div className="details-section">
-      <div className="display-flex">
-        <h4>Listeners</h4>
-        <HelpPopover text="Object representing the listening endpoint of a load balanced service. TCP / UDP port, as well as protocol information and other protocol- specific details are attributes of the listener. Notably, though, the IP address is not." />
-      </div>
-      {error ?
-        <ErrorPage headTitle="Load Balancers Listeners" error={error}/>
-        :
-        <React.Fragment>
+  const selectedPolicyID = useGlobalState().l7policies.selected
+  
+  return useMemo(() => {
+    console.log("RENDER Listener list")
+    return ( 
+      <div className="details-section">
+        <div className="display-flex">
+          <h4>Listeners</h4>
+          <HelpPopover text="Object representing the listening endpoint of a load balanced service. TCP / UDP port, as well as protocol information and other protocol- specific details are attributes of the listener. Notably, though, the IP address is not." />
+        </div>
+        {error ?
+          <ErrorPage headTitle="Load Balancers Listeners" error={error}/>
+          :
+          <React.Fragment>
 
-          <div className='toolbar'>
-            { selectedID &&
-              <Link className="back-link" to="#" onClick={restoreUrl}>
-                <i className="fa fa-chevron-circle-left"></i>
-                Back to Listeners
-              </Link>
-            }
-            <div className="main-buttons">
-              {!selectedID &&
-                <DefeatableLink
-                  disabled={isLoading}
-                  to='/listeners/new'
-                  className='btn btn-primary'>
-                  New Listener
-                </DefeatableLink>
+            <div className='toolbar'>
+              { selected &&
+                <Link className="back-link" to="#" onClick={restoreUrl}>
+                  <i className="fa fa-chevron-circle-left"></i>
+                  Back to Listeners
+                </Link>
               }
+              <div className="main-buttons">
+                {!selected &&
+                  <DefeatableLink
+                    disabled={isLoading}
+                    to='/listeners/new'
+                    className='btn btn-primary'>
+                    New Listener
+                  </DefeatableLink>
+                }
+              </div>
             </div>
-          </div>
-          
-          <TransitionGroup>
-            <TableFadeTransition key={listeners.length}>
-              <table className={selectedID ? "table table-section listeners" : "table table-hover listeners"}>
-                <thead>
-                    <tr>
-                        <th>Name/ID</th>
-                        <th>Description</th>
-                        <th>State</th>
-                        <th>Prov. Status</th>
-                        <th>Tags</th>
-                        <th>Protocol</th>
-                        <th>Protocol Port</th>
-                        <th>Default Pool</th>
-                        <th>Connection Limit</th>
-                        <th>#L7 Policies</th>
-                        <th className='snug'></th>
-                    </tr>
-                </thead>
-                <tbody>
-                  {listeners && listeners.length>0 ?
-                    listeners.map( (listener, index) =>
-                      <ListenerItem 
-                      listener={listener} 
-                      searchTerm={searchTerm} 
-                      key={index} 
-                      onSelectListener={onSelectListener}
-                      disabled={selectedID ? true : false}
-                      />
-                    )
-                    :
-                    <tr>
-                      <td colSpan="11">
-                        { isLoading ? <span className='spinner'/> : 'No listeners found.' }
-                      </td>
-                    </tr>  
-                  }
-                </tbody>
-              </table>
-            </TableFadeTransition>
-          </TransitionGroup>
-
-          {selectedItem &&
-            <L7PolicyList props={props} loadbalancerID={loadbalancerID} listener={selectedItem}/>
-          }
+            
+            <TransitionGroup>
+              <TableFadeTransition key={listeners.length}>
+                <table className={selected ? "table table-section listeners" : "table table-hover listeners"}>
+                  <thead>
+                      <tr>
+                          <th>Name/ID</th>
+                          <th>Description</th>
+                          <th>State</th>
+                          <th>Prov. Status</th>
+                          <th>Tags</th>
+                          <th>Protocol</th>
+                          <th>Protocol Port</th>
+                          <th>Default Pool</th>
+                          <th>Connection Limit</th>
+                          <th>#L7 Policies</th>
+                          <th className='snug'></th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {listeners && listeners.length>0 ?
+                      listeners.map( (listener, index) =>
+                        <ListenerItem 
+                        listener={listener} 
+                        searchTerm={searchTerm} 
+                        key={index} 
+                        onSelectListener={onSelectListener}
+                        disabled={selected ? true : false}
+                        />
+                      )
+                      :
+                      <tr>
+                        <td colSpan="11">
+                          { isLoading ? <span className='spinner'/> : 'No listeners found.' }
+                        </td>
+                      </tr>  
+                    }
+                  </tbody>
+                </table>
+              </TableFadeTransition>
+            </TransitionGroup>
 
           </React.Fragment>
-      }
-    </div>
-   );
+        }
+      </div>
+    );
+  } , [ JSON.stringify(listeners), error, isLoading, searchTerm, selected])
 }
  
 export default ListenerList

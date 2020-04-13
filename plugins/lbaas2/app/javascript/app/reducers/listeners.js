@@ -28,6 +28,18 @@ const requestListenersFailure = (state, {error}) => {
   return {...state, isLoading: false, error: err}
 }
 
+const resetListeners = (state) => {
+  return {...state, 
+    items: [],
+    isLoading: false,
+    receivedAt: null,
+    hasNext: true,
+    marker: null,
+    searchTerm: null,
+    error: null,
+    selected: null}
+}
+
 const receiveListener = (state, {listener}) => {
   const index = state.items.findIndex((item) => item.id==listener.id);
   let items = state.items.slice();
@@ -46,6 +58,14 @@ const removeListener = (state, {id}) => {
   return {...state, items: newItems}
 }
 
+const setSearchTerm= (state,{searchTerm}) => (
+  {...state, searchTerm}
+);
+
+const setSelectedItem= (state,{selected}) => (
+  {...state, selected}
+);
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case 'REQUEST_LISTENERS':
@@ -54,10 +74,16 @@ export default (state = initialState, action) => {
       return receiveListeners(state,action)      
     case 'REQUEST_LISTENERS_FAILURE':
       return requestListenersFailure(state,action)
+    case 'RESET_LISTENERS':
+      return resetListeners(state,action)   
     case 'RECEIVE_LISTENER':
       return receiveListener(state,action)
     case 'REMOVE_LISTENER':
       return removeListener(state,action)
+    case 'SET_LISTENERS_SEARCH_TERM':
+      return setSearchTerm(state,action)
+    case 'SET_LISTENERS_SELECTED_ITEM':
+      return setSelectedItem(state,action)
     default:
       return state
   }

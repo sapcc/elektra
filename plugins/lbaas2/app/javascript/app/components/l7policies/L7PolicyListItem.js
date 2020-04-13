@@ -6,7 +6,7 @@ import StaticTags from '../StaticTags';
 import useL7Policy from '../../../lib/hooks/useL7Policy'
 import CopyPastePopover from '../shared/CopyPastePopover'
 
-const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
+const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll, onSelected}) => {
   const {MyHighlighter} = useCommons()
   const {actionRedirect} = useL7Policy()
   const [disabled, setDisabled] = useState(false)
@@ -16,6 +16,7 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
       e.stopPropagation()
       e.preventDefault()
     }
+    onSelected(l7Policy.id)
   }
 
   const handleDelete = () => {
@@ -51,6 +52,18 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
       }
     }
   }
+  const displayDescription = () => {
+    const description = <CopyPastePopover text={l7Policy.description} size={20} shouldCopy={false} shouldClose={tableScroll} shouldPopover={true}/>
+    if (disabled) {
+      return description
+    } else {
+      if (searchTerm) {
+        return <MyHighlighter search={searchTerm}>{l7Policy.description}</MyHighlighter>
+      } else {
+        return description
+      }
+    }
+  }
 
   console.log("RENDER L7 Policy Item")
   return ( 
@@ -59,7 +72,7 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll}) => {
         {displayName()}
         {displayID()}
       </td>
-      <td><MyHighlighter search={searchTerm}>{l7Policy.description}</MyHighlighter></td>
+      <td>{displayDescription()}</td>
       <td><StateLabel placeholder={l7Policy.operating_status} path="" /></td>
       <td><StateLabel placeholder={l7Policy.provisioning_status} path=""/></td>
       <td>

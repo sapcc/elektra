@@ -1,5 +1,6 @@
 import React from 'react';
 import queryString from 'query-string'
+import { Highlighter } from 'react-bootstrap-typeahead'
 
 const useCommons = () => {
 

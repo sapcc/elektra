@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useGlobalState } from '../StateProvider'
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import ErrorPage from '../ErrorPage';
-import { Redirect } from 'react-router-dom'
 import ListenerList from '../listeners/ListenerList'
 import PoolList from '../pools/PoolList'
+import L7PolicyList from '../l7policies/L7PolicyList'
+import L7ERuleList from '../l7Rules/L7RuleList'
 
 const Details = (props) => {
   const dispatch = useDispatch()
@@ -64,35 +65,40 @@ const Details = (props) => {
     }
   }
 
-  console.log("RENDER Details list")
-
   let loadbalancer = state.items.find(item => item.id == loadbalancerId) 
-  return ( 
-    <React.Fragment>      
-      {error ?
-        <ErrorPage headTitle="Load Balancers Details" error={error}/>
-        :
-        <React.Fragment>
-          {/* { !loadbalancer && !loading && selected &&
-            <Redirect to="/loadbalancers"/>
-          } */}
 
-          {headerTitle(loading, loadbalancer)}
-          
-          {loadbalancer &&        
-            <React.Fragment>
+  return useMemo(() => {
+    console.log("RENDER Details list")
+    return ( 
+      <React.Fragment>      
+        {error ?
+          <ErrorPage headTitle="Load Balancers Details" error={error}/>
+          :
+          <React.Fragment>
+  
+            {headerTitle(loading, loadbalancer)}
+            
+            {loadbalancer &&        
+              <React.Fragment>
+  
+                <ListenerList props={props} loadbalancerID={loadbalancer.id}/>
+  
+                <div className="multiple-subtable">
+                  <L7PolicyList props={props} loadbalancerID={loadbalancer.id} /> 
+                  <L7ERuleList props={props}  />
+                </div>
+  
+                <PoolList props={props} loadbalancerID={loadbalancer.id}/>              
+                
+              </React.Fragment>
+            }
+  
+          </React.Fragment>
+        }
+      </React.Fragment>
+     );
+  },[error, loading, loadbalancer, props])
 
-              <ListenerList props={props} loadbalancerID={loadbalancer.id}/>
-
-              <PoolList props={props} loadbalancerID={loadbalancer.id}/>
-              
-            </React.Fragment>
-          }
-
-        </React.Fragment>
-      }
-    </React.Fragment>
-   );
 }
  
 export default Details;

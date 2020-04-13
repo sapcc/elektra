@@ -29,6 +29,7 @@ const useListener = () => {
   }
 
   const persistListeners = (lbID, marker) => {
+    dispatch({type: 'RESET_LISTENERS'})
     dispatch({type: 'REQUEST_LISTENERS'})
     return new Promise((handleSuccess,handleError) => {
       fetchListeners(lbID, marker).then((data) => {
@@ -55,11 +56,27 @@ const useListener = () => {
     })
   }
 
+  const setSearchTerm = (searchTerm) => {
+    dispatch({type: 'SET_LISTENERS_SEARCH_TERM', searchTerm: searchTerm})
+  }
+
+  const setSelected = (item) => {
+    dispatch({type: 'SET_LISTENERS_SELECTED_ITEM', selected: item})
+  }
+
+  const reset = () => {
+    dispatch({type: 'SET_LISTENERS_SEARCH_TERM', searchTerm: null})
+    dispatch({type: 'SET_LISTENERS_SELECTED_ITEM', selected: null})
+  }
+
   return {
     fetchListeners,
     fetchListener,
     persistListeners,
-    persistListener
+    persistListener,
+    setSearchTerm,
+    setSelected,
+    reset
   }
 }
 
