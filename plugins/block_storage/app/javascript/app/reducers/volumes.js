@@ -3,6 +3,7 @@ import * as constants from '../constants';
 //########################## IMAGES ##############################
 const initialState = {
   items: [],
+  types: [],
   receivedAt: null,
   updatedAt: null,
   isFetching: false,
@@ -34,6 +35,22 @@ const receiveVolumes = (state,{items,receivedAt,hasNext}) => {
     hasNext,
     marker: items[items.length-1]
   }
+}
+
+//########################## TYPES ##############################
+
+const requestVolumeTypes = (state,{requestedAt})=> (
+  {...state, requestedAt, isFetching: true, error: null}
+)
+
+const requestVolumeTypesFailure = (state,{error}) => (
+  {...state, isFetching: false, error}
+)
+
+//########################## ACTIONS ##############################
+
+const receiveVolumeTypes = (state,{types,receivedAt}) => {
+  return {...state, receivedAt, isFetching: false, types: types}
 }
 
 const setSearchTerm= (state,{searchTerm}) => (
@@ -95,6 +112,9 @@ export default(state=initialState, action) => {
     case constants.REQUEST_VOLUMES_FAILURE: return requestVolumesFailure(state,action);
     case constants.RECEIVE_VOLUMES: return receiveVolumes(state,action);
     case constants.RECEIVE_VOLUME: return receiveVolume(state,action);
+    case constants.REQUEST_VOLUME_TYPES: return requestVolumeTypes(state,action);
+    case constants.REQUEST_VOLUME_TYPES_FAILURE: return requestVolumeTypesFailure(state,action);
+    case constants.RECEIVE_VOLUME_TYPES: return receiveVolumeTypes(state,action);
     case constants.SET_VOLUME_SEARCH_TERM: return setSearchTerm(state,action);
     case constants.REQUEST_VOLUME_DELETE: return requestVolumeDelete(state,action);
     case constants.REQUEST_VOLUME_EXTEND: return requestVolumeExtend(state,action);

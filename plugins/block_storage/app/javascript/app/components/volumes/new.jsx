@@ -5,34 +5,6 @@ import { Link } from 'react-router-dom';
 const FormBody = ({values, availabilityZones, images}) =>
   <Modal.Body>
     <Form.Errors/>
-
-    {/*
-    <Form.ElementHorizontal label='Image ID' name="imageRef">
-      { images.isFetching ?
-        <span className='spinner'/>
-        :
-        images.error ?
-          <span className='text-danger'>Could not load images</span>
-          :
-          <Form.Input
-            elementType='select'
-            className="select required form-control"
-            name='imageRef'>
-            <option></option>
-            {images.items.map((image,index) =>
-              <option value={image.id} key={index}>
-                {image.name}
-              </option>
-            )}
-          </Form.Input>
-      }
-      <span className="help-block">
-        The UUID of the image from which you want to create the volume.
-        Required to create a bootable volume.
-      </span>
-    </Form.ElementHorizontal>
-    */}
-
     <Form.ElementHorizontal label='Name' name="name" required>
       <Form.Input elementType='input' type='text' name='name'/>
     </Form.ElementHorizontal>
@@ -112,6 +84,7 @@ export default class NewVolumeForm extends React.Component {
   loadDependencies = (props) => {
     props.loadAvailabilityZonesOnce()
     props.loadImagesOnce()
+    props.loadVolumeTypesOnce()
   }
 
   validate = ({name,size,availability_zone,description,bootable,imageRef}) => {

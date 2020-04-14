@@ -112,6 +112,59 @@ const fetchImagesIfNeeded= () =>
   }
 ;
 
+//################### VOLUMES TYPES #########################
+
+const requestVolumeTypes= () => (
+  {
+    type: constants.REQUEST_VOLUME_TYPES,
+    requestedAt: Date.now()
+  }
+)
+
+const receiveVolumeTypes= (types) =>
+  ({
+    type: constants.RECEIVE_VOLUME_TYPES,
+    types
+  })
+;
+
+const requestVolumeTypesFailure= (error) => (
+  {
+    type: constants.REQUEST_VOLUME_TYPES_FAILURE,
+    error
+  }
+);
+
+const fetchVolumeTypes= () =>
+  (dispatch) => {
+    dispatch(requestVolumeTypes());
+
+    ajaxHelper.get(`/volumes/types`).then( (response) => {
+      dispatch(receiveVolumeTypes(response.data.images));
+    })
+    .catch( (error) => {
+      dispatch(requestVolumeTypesFailure(errorMessage(error)));
+    })
+  }
+;
+
+const shouldFetchVolumeTypes= (state) => {
+  return true
+  if (state.volumeTypes.isFetching || state.volumeTypes.requestedAt) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const fetchVolumeTypesIfNeeded= () =>
+  (dispatch, getState) => {
+    if (shouldFetchVolumeTypes(getState())) {
+      return dispatch(fetchVolumeTypes());
+    }
+  }
+;
+
 //################### VOLUMES #########################
 const receiveVolume= (volume) =>
   ({
@@ -404,6 +457,7 @@ export {
   fetchVolume,
   fetchAvailabilityZonesIfNeeded,
   fetchImagesIfNeeded,
+  fetchVolumeTypesIfNeeded,
   searchVolumes,
   deleteVolume,
   forceDeleteVolume,
