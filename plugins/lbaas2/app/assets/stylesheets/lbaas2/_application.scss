@@ -80,6 +80,7 @@
   padding: 9px 14px;
   margin-bottom: 14px;
   border: 1px solid #e1e1e8;
+  width: 100%;
 
   .table-responsive{
     margin-top: 20px;
@@ -104,10 +105,39 @@
   display: flex;
 
   .multiple-subtable-left {
-    width: 50%;
+    width: 30%;
+    padding: 0px;
+    height: 500px;
+
+    .multiple-subtable-title {
+      padding: 9px 14px;
+    }
+    .multiple-subtable-head {
+      margin-bottom: 10px;
+      padding: 9px 0px;
+      background-color: #f5f5f5;
+      border-top: 1px solid #e1e1e8;
+      border-bottom: 1px solid #e1e1e8;
+      .multiple-subtable-head-content {
+        padding: 0px 14px;  
+      }
+    }
+
+    .multiple-subtable-body {
+      padding: 0px 14px; 
+      max-height: 370px;
+      overflow-y: scroll;
+    }
+
+    .multiple-subtable-entry {
+      margin-bottom: 10px;
+    }
   }
+
   .multiple-subtable-right {
-    width: 50%;
+    width: 70%;
+    max-height:500px;
+    // overflow:scroll;
   }
 }
 

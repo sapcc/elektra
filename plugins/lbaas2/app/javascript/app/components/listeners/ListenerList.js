@@ -73,10 +73,6 @@ const ListenerList = ({props, loadbalancerID}) => {
       e.preventDefault()
     }
     onSelectListener()
-
-    console.group("CHECKING!!")
-    console.log(selected)
-    console.groupEnd()
   }
 
   const error = state.error
@@ -191,7 +187,7 @@ const ListenerList = ({props, loadbalancerID}) => {
         }
       </div>
     );
-  } , [ JSON.stringify(listeners), error, isLoading, searchTerm, selected])
+  } , [ JSON.stringify(listeners), error, isLoading, searchTerm, selected, props])
 }
  
 export default ListenerList

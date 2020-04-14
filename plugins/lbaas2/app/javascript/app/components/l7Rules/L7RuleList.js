@@ -19,11 +19,11 @@ const L7RulesList = ({onSelectedPolicy}) => {
     <React.Fragment>
       {policyID &&
         <div className="subtalbe multiple-subtable-right">
-          <div className="display-flex">
+          {/* <div className="display-flex">
             <Link to="#" className="close-link" onClick={onCloseClick}>
               <i className="fa fa-times fa-fw"></i>
             </Link>
-          </div>
+          </div> */}
           <div className="display-flex">
             <h5>L7 Rules</h5>
             <HelpPopover text="An L7 Rule is a single, simple logical test which returns either true or false. It consists of a rule type, a comparison type, a value, and an optional key that gets used depending on the rule type. An L7 rule must always be associated with an L7 policy." />

@@ -6,6 +6,8 @@ import HelpPopover from '../shared/HelpPopover'
 import L7PolicyListItem from './L7PolicyListItem'
 import { Table } from 'react-bootstrap'
 import { useGlobalState } from '../StateProvider'
+import L7PolicySelected from './L7PolicySelected'
+import queryString from 'query-string'
 
 const L7Policies = ({props, loadbalancerID }) => {
   const {persistL7Policies, setSearchTerm, setSelected, reset} = useL7Policy()
@@ -19,6 +21,7 @@ const L7Policies = ({props, loadbalancerID }) => {
     if (listenerID) {
       console.log("FETCH L7 POLICIES")
       persistL7Policies(loadbalancerID, listenerID, null).then((data) => {
+        selectL7Policy(data)
       }).catch( error => {
       })
     }
@@ -33,25 +36,38 @@ const L7Policies = ({props, loadbalancerID }) => {
       const containerElement = container.current 
       containerElement.querySelector('.table-responsive').addEventListener('scroll', handleScroll);
       return () => {      
-        containerElement.querySelector('.table-responsive').removeEventListener("scroll",handleScroll)
+        if (containerElement && containerElement.querySelector('.table-responsive')){
+          containerElement.querySelector('.table-responsive').removeEventListener("scroll",handleScroll)
+        }
         clearTimeout(timeout)
       } 
     }
   },[listenerID])
 
-  // const selectL7Policy = () => {
-  //   const values = queryString.parse(props.location.search)
-  //   const id = values.l7policy
+  const selectL7Policy = (data) => {
+    const values = queryString.parse(props.location.search)    
+    const id = values.l7policy
+    if (id) {
+      // check if id belows to the lb object
+      const index = data.l7policies.findIndex((item) => item.id==id);
+      if (index>=0) {
+        // policy was selected
+        setSelected(id)
+        // filter the policy list to show just the one item
+        setSearchTerm(id)
+      }
+    } else {
+      // NOT FOUND
+    }
+  }
 
-  //   if (id) {
-  //     // policy was selected
-  //     setSelected(id)
-  //     // filter the policy list to show just the one item
-  //     setSearchTerm(id)
-  //   } else {
-  //     // NOT FOUND
-  //   }
-  // }
+  const restoreUrl = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    onSelectL7Policy()
+  }
 
   const handleScroll = () => {
     if(timeout) return
@@ -68,9 +84,20 @@ const L7Policies = ({props, loadbalancerID }) => {
   const selected = state.selected
   const items = state.items
 
-  const onSelect = (policyID) => {
-    setSearchTerm(policyID)
-    setSelected(policyID)
+  const onSelectL7Policy = (l7PolicyID) => {  
+    const id = l7PolicyID || ""
+    const pathname = props.location.pathname; 
+    const searchParams = new URLSearchParams(props.location.search); 
+    searchParams.set("l7policy", id);
+    props.history.push({
+      pathname: pathname,
+      search: searchParams.toString()
+    })
+
+    // L7Policy was selected
+    setSelected(l7PolicyID)
+    // filter list in case we still show the list
+    setSearchTerm(l7PolicyID)    
   }
 
   const filterItems = (searchTerm, items) => {
@@ -95,7 +122,7 @@ const L7Policies = ({props, loadbalancerID }) => {
     <React.Fragment>
       {listenerID &&
         <div className={selected ? "subtalbe multiple-subtable-left": "subtalbe"} ref={container}>
-          <div className="display-flex">
+          <div className="display-flex multiple-subtable-title">
             <h5>L7 Policies</h5>
             <HelpPopover text="Collection of L7 rules that get logically ANDed together as well as a routing policy for any given HTTP or terminated HTTPS client requests which match said rules. An L7 Policy is associated with exactly one HTTP or terminated HTTPS listener." />
             {!selected &&
@@ -107,35 +134,41 @@ const L7Policies = ({props, loadbalancerID }) => {
                 </DefeatableLink>
               }
           </div> 
-
-          <Table className={l7Policies.length>0 ? "table table-hover policies" : "table policies"} responsive>
-            <thead>
-                <tr>
-                    <th>Name/ID</th>
-                    <th>Description</th>
-                    <th>State</th>
-                    <th>Prov. Status</th>
-                    <th>Tags</th>
-                    <th>Position</th>
-                    <th>Action/Redirect</th>
-                    <th>#Rules</th>
-                    <th className='snug'></th>
-                </tr>
-            </thead>
-            <tbody>
-              {l7Policies && l7Policies.length>0 ?
-                l7Policies.map( (l7Policy, index) =>
-                  <L7PolicyListItem l7Policy={l7Policy} searchTerm={searchTerm} key={index} tableScroll={tableScroll} onSelected={onSelect}/>
-                )
-                :
-                <tr>
-                  <td colSpan="9">
-                    { isLoading ? <span className='spinner'/> : 'No L7 policies found.' }
-                  </td>
-                </tr>  
-              }
-            </tbody>
-          </Table>
+          
+          {selected && l7Policies.length == 1 ?
+            l7Policies.map( (l7Policy, index) =>
+              <L7PolicySelected l7Policy={l7Policy} key={index} onBackLink={restoreUrl}/>
+            )
+          :
+            <Table className={l7Policies.length>0 ? "table table-hover policies" : "table policies"} responsive>
+              <thead>
+                  <tr>
+                      <th>Name/ID</th>
+                      <th>Description</th>
+                      <th>State</th>
+                      <th>Prov. Status</th>
+                      <th>Tags</th>
+                      <th>Position</th>
+                      <th>Action/Redirect</th>
+                      <th>#Rules</th>
+                      <th className='snug'></th>
+                  </tr>
+              </thead>
+              <tbody>
+                {l7Policies && l7Policies.length>0 ?
+                  l7Policies.map( (l7Policy, index) =>
+                    <L7PolicyListItem l7Policy={l7Policy} searchTerm={searchTerm} key={index} tableScroll={tableScroll} onSelected={onSelectL7Policy}/>
+                  )
+                  :
+                  <tr>
+                    <td colSpan="9">
+                      { isLoading ? <span className='spinner'/> : 'No L7 policies found.' }
+                    </td>
+                  </tr>  
+                }
+              </tbody>
+            </Table>
+          }
         </div>         
       } 
     </React.Fragment>    
