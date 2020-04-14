@@ -43,6 +43,11 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
 
       <div className="multiple-subtable-body">
         <div className="multiple-subtable-entry">
+        <div className="row">
+            <div className="col-md-12">
+              <b>Name/ID:</b>
+            </div>
+          </div>
           <div className="row">
             <div className="col-md-12">
               {l7Policy.name || l7Policy.id}

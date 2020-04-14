@@ -51,6 +51,10 @@ const ListenerList = ({props, loadbalancerID}) => {
     const pathname = props.location.pathname; 
     const searchParams = new URLSearchParams(props.location.search); 
     searchParams.set("listener", id);
+    if (id == "") {
+      // if listener was unselected then we remove the policy selection
+      searchParams.set("l7policy", "");
+    }
     props.history.push({
       pathname: pathname,
       search: searchParams.toString()

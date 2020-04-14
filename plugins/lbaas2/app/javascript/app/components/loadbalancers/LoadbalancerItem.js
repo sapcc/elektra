@@ -85,7 +85,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
     const copyPasteId = <CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
     if (loadbalancer.name) {
       if (disabled) {
-        return <span className="info-text"><CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/></span>
+        return <span className="info-text"><CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" /></span>
       } else {
         if (searchTerm) {
           return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{loadbalancer.id}</MyHighlighter></span></React.Fragment>

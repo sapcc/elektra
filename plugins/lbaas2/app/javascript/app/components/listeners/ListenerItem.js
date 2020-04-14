@@ -45,16 +45,14 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
     }
   }
   const displayID = () => {
-    const copyPasteId = <CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
-    const cutId = <CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/>
     if (listener.name) {
       if (disabled) {
-        return <span className="info-text">{cutId}</span>
+        return <span className="info-text"><CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/></span>
       } else {
         if (searchTerm) {
           return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{listener.id}</MyHighlighter></span></React.Fragment>
         } else {
-          return copyPasteId
+          return <CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
         }        
       }
     }
