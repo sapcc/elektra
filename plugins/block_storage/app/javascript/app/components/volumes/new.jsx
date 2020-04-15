@@ -1,7 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 
-const FormBody = ({values, availabilityZones, images, volumeTypes}) =>
+const FormBody = ({values, availabilityZones, images, volumes}) =>
   <Modal.Body>
     <Form.Errors/>
     <Form.ElementHorizontal label='Name' name="name" required>
@@ -48,18 +48,18 @@ const FormBody = ({values, availabilityZones, images, volumeTypes}) =>
     }
 
     <Form.ElementHorizontal label='Volume Type' required name="volume_type">
-      { volumeTypes.typesIsFetching ?
+      { volumes.typesIsFetching ?
         <span className='spinner'/>
         :
-        volumeTypes.error ?
-          <span className='text-danger'>{volumeTypes.error}</span>
+        volumes.error ?
+          <span className='text-danger'>{volumes.error}</span>
           :
           <Form.Input
             elementType='select'
             className="select required form-control"
             defaultValue="vmware"
             name='volume_type'>
-            { volumeTypes.types.map((vt,index) => {
+            { volumes.types.map((vt,index) => {
               return <option value={vt.name} key={index}> {vt.name} </option>;
             })}
           </Form.Input>
@@ -146,7 +146,7 @@ export default class NewVolumeForm extends React.Component {
           <FormBody
             availabilityZones={this.props.availabilityZones}
             images={this.props.images}
-            volumeTypes={this.props.volumeTypes}
+            volumes={this.props.volumes}
           />
 
           <Modal.Footer>
