@@ -1,8 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
-import { Link } from 'react-router-dom';
 
-const FormBody = ({values, availabilityZones, images}) =>
+const FormBody = ({values, availabilityZones, images, volumeTypes}) =>
   <Modal.Body>
     <Form.Errors/>
     <Form.ElementHorizontal label='Name' name="name" required>
@@ -47,6 +46,25 @@ const FormBody = ({values, availabilityZones, images}) =>
         </span>
       </Form.ElementHorizontal>
     }
+
+    <Form.ElementHorizontal label='Volume Type' required name="volume_type">
+      { volumeTypes.typesIsFetching ?
+        <span className='spinner'/>
+        :
+        volumeTypes.error ?
+          <span className='text-danger'>{volumeTypes.error}</span>
+          :
+          <Form.Input
+            elementType='select'
+            className="select required form-control"
+            defaultValue="vmware"
+            name='volume_type'>
+            { volumeTypes.types.map((vt,index) => {
+              return <option value={vt.name} key={index}> {vt.name} </option>;
+            })}
+          </Form.Input>
+      }
+    </Form.ElementHorizontal>
 
     <Form.ElementHorizontal label='Availability Zone' required name="availability_zone">
       { availabilityZones.isFetching ?
@@ -107,7 +125,6 @@ export default class NewVolumeForm extends React.Component {
 
   render(){
     const initialValues = {}
-
     return (
       <Modal
         show={this.state.show}
@@ -128,7 +145,9 @@ export default class NewVolumeForm extends React.Component {
 
           <FormBody
             availabilityZones={this.props.availabilityZones}
-            images={this.props.images}/>
+            images={this.props.images}
+            volumeTypes={this.props.volumeTypes}
+          />
 
           <Modal.Footer>
             <Button onClick={this.close}>Cancel</Button>

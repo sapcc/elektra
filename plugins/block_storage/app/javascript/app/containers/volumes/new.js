@@ -12,7 +12,7 @@ export default connect(
     {
       availabilityZones: state.availabilityZones,
       images: state.images,
-      volumeTypes: state.volumeTypes
+      volumeTypes: state.volumes
     }
   ),
   (dispatch) => (
