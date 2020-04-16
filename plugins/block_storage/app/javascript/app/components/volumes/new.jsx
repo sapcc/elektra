@@ -1,7 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 
-const defaultVolumeType="premium_ssd"
+const defaultVolumeType="vmware"
 
 const FormBody = ({values, availabilityZones, images, volumes, typeDescription}) =>
   <Modal.Body>
@@ -71,7 +71,7 @@ const FormBody = ({values, availabilityZones, images, volumes, typeDescription})
     <div className="row">
       <div className="col-md-4"></div>
       <div className="col-md-8">
-        { typeDescription != null ? 
+        { typeDescription != null && typeDescription != "" ? 
           <p className="help-block">
             <i className="fa fa-info-circle"></i>
             {typeDescription}
