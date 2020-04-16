@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import {DefeatableLink} from 'lib/components/defeatable_link';
+import useCommons from '../../../lib/hooks/useCommons'
 import HelpPopover from '../shared/HelpPopover'
 import useL7Rule from '../../../lib/hooks/useL7Rule';
 import { useGlobalState } from '../StateProvider'
@@ -7,6 +8,7 @@ import { Table } from 'react-bootstrap'
 import ErrorPage from '../ErrorPage';
 
 const L7RulesList = ({props, loadbalancerID}) => {
+  const {searchParamsToString} = useCommons()
   const {persistL7Rules} = useL7Rule()
   const listenerID = useGlobalState().listeners.selected
   const policyID = useGlobalState().l7policies.selected
@@ -45,14 +47,16 @@ const L7RulesList = ({props, loadbalancerID}) => {
               <div className="display-flex">
                 <h5>L7 Rules</h5>
                 <HelpPopover text="An L7 Rule is a single, simple logical test which returns either true or false. It consists of a rule type, a comparison type, a value, and an optional key that gets used depending on the rule type. An L7 rule must always be associated with an L7 policy." />
-                {!selected &&
+                <div className="btn-right">
+                  {!selected &&
                     <DefeatableLink
                       disabled={isLoading}
-                      to={`/loadbalancers/`}
-                      className='btn btn-link btn-right'>
+                      to={`/loadbalancers/${loadbalancerID}/l7rules/new?${searchParamsToString(props)}`}
+                      className='btn btn-primary btn-xs'>
                       New L7 Rule
                     </DefeatableLink>
                   }
+                </div>
               </div>
 
               <Table className={l7Rules.length>0 ? "table table-hover l7rules" : "table l7rules"} responsive>
