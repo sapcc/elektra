@@ -34,13 +34,15 @@ const L7Policies = ({props, loadbalancerID }) => {
   useEffect(() => {
     if (listenerID) {
       const containerElement = container.current 
-      containerElement.querySelector('.table-responsive').addEventListener('scroll', handleScroll);
-      return () => {      
-        if (containerElement && containerElement.querySelector('.table-responsive')){
-          containerElement.querySelector('.table-responsive').removeEventListener("scroll",handleScroll)
-        }
-        clearTimeout(timeout)
-      } 
+      if(containerElement){
+        containerElement.querySelector('.table-responsive').addEventListener('scroll', handleScroll);
+        return () => {      
+          if (containerElement && containerElement.querySelector('.table-responsive')){
+            containerElement.querySelector('.table-responsive').removeEventListener("scroll",handleScroll)
+          }
+          clearTimeout(timeout)
+        } 
+      }
     }
   },[listenerID])
 
