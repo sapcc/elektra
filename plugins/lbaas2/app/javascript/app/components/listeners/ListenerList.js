@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 import HelpPopover from '../shared/HelpPopover'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { useGlobalState } from '../StateProvider'
+import ErrorPage from '../ErrorPage';
+import useCommons from '../../../lib/hooks/useCommons'
 
 const TableFadeTransition = ({
   children,
@@ -20,6 +22,7 @@ const TableFadeTransition = ({
 const ListenerList = ({props, loadbalancerID}) => {
   const {persistListeners, setSearchTerm, setSelected} = useListener()
   const state = useGlobalState().listeners
+  const {searchParamsToString} = useCommons()
 
   useEffect(() => { 
     console.log('LISTENER INITIAL FETCH')
@@ -138,7 +141,7 @@ const ListenerList = ({props, loadbalancerID}) => {
                 {!selected &&
                   <DefeatableLink
                     disabled={isLoading}
-                    to='/listeners/new'
+                    to={`/loadbalancers/${loadbalancerID}/listeners/new?${searchParamsToString(props)}`}
                     className='btn btn-primary'>
                     New Listener
                   </DefeatableLink>
