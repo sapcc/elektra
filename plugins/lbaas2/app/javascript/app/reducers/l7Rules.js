@@ -9,11 +9,11 @@ const initialState = {
   selected: null
 }
 
-const requestL7Policies = (state) => ({...state, isLoading: true, error: null})
+const requestL7Rules = (state) => ({...state, isLoading: true, error: null})
 
-const receiveL7Policies = (state,{items,hasNext}) => {
+const receiveL7Rules = (state,{items,hasNext}) => {
   // sort
-  const newItems = items.sort((a, b) => a.position - b.position)
+  const newItems = items.sort((a, b) => a.type.localeCompare(b.type))
   return {...state, 
     isLoading: false, 
     items: newItems, 
@@ -23,12 +23,12 @@ const receiveL7Policies = (state,{items,hasNext}) => {
     receivedAt: Date.now()}
 }
 
-const requestL7PoliciesFailure = (state, {error}) => { 
+const requestL7RulesFailure = (state, {error}) => { 
   const err = error.response || error
   return {...state, isLoading: false, error: err}
 }
 
-const resetL7Policies = (state) => {
+const resetL7Rules = (state) => {
   return {...state, 
     items: [],
     isLoading: false,
@@ -40,17 +40,17 @@ const resetL7Policies = (state) => {
     selected: null}
 }
 
-const receiveL7Policy = (state, {l7Policy}) => {
-  const index = state.items.findIndex((item) => item.id==l7Policy.id);
+const receiveL7Rule = (state, {l7Rule}) => {
+  const index = state.items.findIndex((item) => item.id==l7Rule.id);
   let items = state.items.slice();
-  // update or add l7Policy
-  if (index>=0) { items[index]=l7Policy; } else { items.push(l7Policy); }
+  // update or add l7Rule
+  if (index>=0) { items[index]=l7Rule; } else { items.push(l7Rule); }
   // sort
-  const newItems = items.sort((a, b) => a.position - b.position)
+  const newItems = items.sort((a, b) => a.name.localeCompare(b.name))
   return {... state, items: newItems, isLoading: false, error: null}
 }
 
-const removeL7Policy = (state, {id}) => {
+const removeL7Rule = (state, {id}) => {
   const index = state.items.findIndex((item) => item.id==id);
   if (index<0) { return state; }
   let newItems = state.items.slice()
@@ -68,21 +68,21 @@ const setSelectedItem= (state,{selected}) => (
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case 'REQUEST_L7POLICIES':
-      return requestL7Policies(state,action)
-    case 'RECEIVE_L7POLICIES':
-      return receiveL7Policies(state,action)      
-    case 'REQUEST_L7POLICIES_FAILURE':
-      return requestL7PoliciesFailure(state,action)
-    case 'RESET_L7POLICIES':
-      return resetL7Policies(state,action)      
-    case 'RECEIVE_L7POLICY':
-      return receiveL7Policy(state,action)
-    case 'REMOVE_L7POLICY':
-      return removeL7Policy(state,action)
-    case 'SET_L7POLICIES_SEARCH_TERM':
+    case 'REQUEST_L7RULES':
+      return requestL7Rules(state,action)
+    case 'RECEIVE_L7RULES':
+      return receiveL7Rules(state,action)      
+    case 'REQUEST_L7RULES_FAILURE':
+      return requestL7RulesFailure(state,action)
+    case 'RESET_L7RULES':
+      return resetL7Rules(state,action)      
+    case 'RECEIVE_L7RULE':
+      return receiveL7Rule(state,action)
+    case 'REMOVE_L7RULE':
+      return removeL7Rule(state,action)
+    case 'SET_L7RULES_SEARCH_TERM':
       return setSearchTerm(state,action)
-    case 'SET_L7POLICIES_SELECTED_ITEM':
+    case 'SET_L7RULES_SELECTED_ITEM':
       return setSelectedItem(state,action)
     default:
       return state

@@ -162,7 +162,7 @@ const L7Policies = ({props, loadbalancerID }) => {
                   :
                   <tr>
                     <td colSpan="9">
-                      { isLoading ? <span className='spinner'/> : 'No L7 policies found.' }
+                      { isLoading ? <span className='spinner'/> : 'No L7 Policies found.' }
                     </td>
                   </tr>  
                 }

@@ -217,9 +217,18 @@
 /*
 * error page
 */
-.details-link {
-  padding-left: 0px;
-}
-.details-link.btn:focus {
-  outline: none;
+.error-page {
+  .error-page-reload {
+    font-size: 18px;
+  }
+  .ep-details-link {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .ep-details-link {
+    padding-left: 0px;
+  }
+  .ep-details-link.btn:focus {
+    outline: none;
+  }
 }

@@ -5,9 +5,9 @@ module Lbaas2
 
         def index
           per_page = (params[:per_page] || 9999).to_i
-          pagination_options = { sort_key: 'name', sort_dir: 'asc', limit: per_page + 1 }
+          pagination_options = { sort_key: 'position', sort_dir: 'asc', limit: per_page + 1 }
           pagination_options[:marker] = params[:marker] if params[:marker]
-          l7policies = services.lbaas2.l7policies({listener_id: params[:listener_id]}.merge(pagination_options)) # loadbalancer_id: params[:loadbalancer_id]
+          l7policies = services.lbaas2.l7policies({listener_id: params[:listener_id]}.merge(pagination_options))
 
           render json: {
             l7policies: l7policies,

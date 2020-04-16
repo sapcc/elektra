@@ -85,7 +85,7 @@ const Details = (props) => {
   
                 <div className="multiple-subtable">
                   <L7PolicyList props={props} loadbalancerID={loadbalancer.id} /> 
-                  <L7ERuleList props={props}  />
+                  <L7ERuleList props={props} loadbalancerID={loadbalancer.id}/>
                 </div>
   
                 <PoolList props={props} loadbalancerID={loadbalancer.id}/>              
