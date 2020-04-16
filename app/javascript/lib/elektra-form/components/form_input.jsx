@@ -8,7 +8,6 @@ export const FormInput = ({
   className='',
   required=false,
   name,
-  defaultValue,
   children,
   ...otherProps
 }) => {
@@ -45,7 +44,6 @@ export const FormInput = ({
     ...otherProps
   }
   if(type === 'checkbox') inputProps.checked = (values[name] === true)
-  else if (defaultValue) inputProps.defaultValue = defaultValue
   else inputProps.value = values[name] || ""
 
   return (
