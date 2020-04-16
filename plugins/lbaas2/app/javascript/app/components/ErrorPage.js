@@ -24,7 +24,9 @@ const ErrorPage = ({error, headTitle, onReload}) => {
       {onReload &&
         <React.Fragment>
           <span> or try reloading </span>
-          <Button bsStyle="btn btn-primary" onClick={onReload} >Reload <i className="fa fa-refresh"></i></Button>
+          <div className="ep-reload-button">
+            <Button bsStyle="btn btn-primary" onClick={onReload} >Reload <i className="fa fa-refresh"></i></Button>
+          </div>          
         </React.Fragment>
       }
       </p>  
@@ -58,12 +60,14 @@ const ErrorPage = ({error, headTitle, onReload}) => {
               <h1>LBaaS - {headTitle}</h1>
               <p><b>{httpStatus()}</b> {title()}</p>
               {description()}            
-              {showDetails && details() &&
+              {details() &&
                 <React.Fragment>
                   <Button bsStyle="link" className="ep-details-link" onClick={handleDetails} >Details</Button>
-                  <pre>
-                    <code>{details()}</code>
-                  </pre>
+                  {showDetails && 
+                    <pre>
+                      <code>{details()}</code>
+                    </pre>
+                  }
                 </React.Fragment>
               }
             </div>

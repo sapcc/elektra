@@ -217,18 +217,16 @@
 /*
 * error page
 */
-.error-page {
-  .error-page-reload {
-    font-size: 18px;
-  }
+.ep {
   .ep-details-link {
     padding-top: 10px;
     padding-bottom: 10px;
-  }
-  .ep-details-link {
     padding-left: 0px;
   }
   .ep-details-link.btn:focus {
     outline: none;
+  }
+  .ep-reload-button {
+    margin-top: 15px;
   }
 }
