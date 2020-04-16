@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap'
+import { Link } from 'react-router-dom';
 
-const ErrorPage = ({error, headTitle}) => {
+const ErrorPage = ({error, headTitle, onReload}) => {
   console.log("RENDER error page")
 
   const [showDetails, setShowDetails] = useState(false)
@@ -16,13 +17,26 @@ const ErrorPage = ({error, headTitle}) => {
   }
 
   const description = () => {
+    const generalError = <React.Fragment>
+      <p>There was an error. Don't worry, it's not you - it's us. Sorry about that.</p>
+      <p>
+      <span>Please try later again</span>
+      {onReload &&
+        <React.Fragment>
+          <span> or try reloading </span>
+          <Button bsStyle="btn btn-primary" onClick={onReload} >Reload <i className="fa fa-refresh"></i></Button>
+        </React.Fragment>
+      }
+      </p>  
+    </React.Fragment>
+
     switch (httpStatus()) {
       case 500:
-        return "There was an error. Please try later again"
+        return generalError
       case 404:
-        return "That’s an error. The requested entity was not found"        
+        return <p>That’s an error. The requested entity was not found</p>
       default:
-        return "There was an error. Please try again later"
+        return generalError
     }
   }
 
@@ -40,13 +54,13 @@ const ErrorPage = ({error, headTitle}) => {
       <div className="row">
         <div className="col-md-10 col-md-offset-2">
           <div className="row">
-            <div className="col-md-10">
+            <div className="col-md-10 ep">
               <h1>LBaaS - {headTitle}</h1>
               <p><b>{httpStatus()}</b> {title()}</p>
-              <p>{description()}</p>              
+              {description()}            
               {showDetails && details() &&
                 <React.Fragment>
-                  <Button bsStyle="link" className="details-link" onClick={handleDetails} >Details</Button>
+                  <Button bsStyle="link" className="ep-details-link" onClick={handleDetails} >Details</Button>
                   <pre>
                     <code>{details()}</code>
                   </pre>
