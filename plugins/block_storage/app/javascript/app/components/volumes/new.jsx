@@ -3,7 +3,7 @@ import { Form } from 'lib/elektra-form';
 
 const defaultVolumeType="premium_ssd"
 
-const FormBody = ({values, availabilityZones, images, volumes, typeDescription, setTypesDescription}) =>
+const FormBody = ({values, availabilityZones, images, volumes, typeDescription}) =>
   <Modal.Body>
     <Form.Errors/>
     <Form.ElementHorizontal label='Name' name="name" required>
@@ -49,7 +49,7 @@ const FormBody = ({values, availabilityZones, images, volumes, typeDescription, 
       </Form.ElementHorizontal>
     }
 
-    <Form.ElementHorizontal label='Volume Type' required name="volume_type">
+    <Form.ElementHorizontal label='Volume Type' name="volume_type" required>
       { volumes.typesIsFetching ?
         <span className='spinner'/>
         :
@@ -59,9 +59,8 @@ const FormBody = ({values, availabilityZones, images, volumes, typeDescription, 
           <Form.Input
             elementType='select'
             className="select required form-control"
-            defaultValue={defaultVolumeType}
-            onChange={() => setTypesDescription(event.target.value)}
             name='volume_type'>
+            <option></option>
             { volumes.types.map((vt,index) => {
               return <option value={vt.name} key={index}> {vt.name} </option>;
             })}
@@ -126,8 +125,9 @@ export default class NewVolumeForm extends React.Component {
     props.loadVolumeTypesOnce()
   }
 
-  validate = ({name,size,availability_zone,description,bootable,imageRef}) => {
-    return name && size && availability_zone && description && (!bootable || imageRef) && true
+  validate = ({name,size,volume_type,availability_zone,description,bootable,imageRef}) => {
+    this.setTypesDescription(volume_type)
+    return name && size && volume_type && availability_zone && description && (!bootable || imageRef) && true
   }
 
   close = (e) => {
@@ -148,7 +148,6 @@ export default class NewVolumeForm extends React.Component {
     if (name && this.props.volumes.types) {
       this.props.volumes.types.map((vt,index) => {
         if (vt.name === name) {
-          //console.log(vt.description)
           this.setState({typeDescription: vt.description})
         }
       })
@@ -156,7 +155,7 @@ export default class NewVolumeForm extends React.Component {
   }
 
   render(){
-    const initialValues = {}
+    const initialValues = { volume_type: defaultVolumeType }
     return (
       <Modal
         show={this.state.show}
@@ -180,7 +179,6 @@ export default class NewVolumeForm extends React.Component {
             images={this.props.images}
             volumes={this.props.volumes}
             typeDescription={this.state.typeDescription}
-            setTypesDescription={this.setTypesDescription}
           />
 
           <Modal.Footer>
