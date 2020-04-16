@@ -6,12 +6,14 @@ import PoolItem from './PoolItem'
 import queryString from 'query-string'
 import { Link } from 'react-router-dom';
 import HelpPopover from '../shared/HelpPopover'
+import useCommons from '../../../lib/hooks/useCommons'
 
 const PoolList = ({props, loadbalancerID}) => {
   const {fetchPools} = usePool()
   const [searchTerm, setSearchTerm] = useState(null)
   const [selected, setSelected] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const {searchParamsToString} = useCommons()
   const [state, setState] = useState({
     items: [],
     isLoading: false,
@@ -137,7 +139,7 @@ const PoolList = ({props, loadbalancerID}) => {
               {!selected &&
                 <DefeatableLink
                   disabled={isLoading}
-                  to='/pools/new'
+                  to={`/loadbalancers/${loadbalancerID}/pools/new?${searchParamsToString(props)}`}
                   className='btn btn-primary'>
                   New Pool
                 </DefeatableLink>

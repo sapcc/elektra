@@ -8,6 +8,7 @@ import Details from './loadbalancers/Details'
 import NewL7Policy from './l7policies/NewL7Policy'
 import NewL7Rule from './l7Rules/NewL7Rule'
 import NewListener from './listeners/NewListener'
+import NewPool from './pools/NewPool'
 
 const Router = (props) => {
 
@@ -25,10 +26,11 @@ const Router = (props) => {
           }/>
           <Route exact path="/loadbalancers/new" component={NewLoadbalancer}/>
           <Route 
-            path={["/loadbalancers/:loadbalancerID/show", "/loadbalancers/:loadbalancerID/l7policies", "/loadbalancers/:loadbalancerID/listeners"]}
+            path={["/loadbalancers/:loadbalancerID/show", "/loadbalancers/:loadbalancerID/l7policies", "/loadbalancers/:loadbalancerID/listeners", "/loadbalancers/:loadbalancerID/pools"]}
             component={Details}
           />
           <Route exact path="/loadbalancers/:loadbalancerID/listeners/new" component={NewListener}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/pools/new" component={NewPool}/>
           <Route exact path="/loadbalancers/:loadbalancerID/l7policies/new" component={NewL7Policy}/>
           <Route exact path="/loadbalancers/:loadbalancerID/l7policies/:l7policy/l7rules/new" component={NewL7Rule}/>
       </div>
