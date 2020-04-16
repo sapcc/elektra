@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import makeCancelable from 'lib/tools/cancelable_promise';
-import Deferred from 'lib/tools/deferred';
 import { FormContext } from './form_context'
 
 export default class Form extends React.Component {
