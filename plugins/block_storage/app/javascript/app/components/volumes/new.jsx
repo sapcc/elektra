@@ -1,7 +1,9 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 
-const FormBody = ({values, availabilityZones, images, volumes}) =>
+const defaultVolumeType="premium_ssd"
+
+const FormBody = ({values, availabilityZones, images, volumes, typeDescription, setTypesDescription}) =>
   <Modal.Body>
     <Form.Errors/>
     <Form.ElementHorizontal label='Name' name="name" required>
@@ -57,7 +59,8 @@ const FormBody = ({values, availabilityZones, images, volumes}) =>
           <Form.Input
             elementType='select'
             className="select required form-control"
-            defaultValue="vmware"
+            defaultValue={defaultVolumeType}
+            onChange={() => setTypesDescription(event.target.value)}
             name='volume_type'>
             { volumes.types.map((vt,index) => {
               return <option value={vt.name} key={index}> {vt.name} </option>;
@@ -65,6 +68,20 @@ const FormBody = ({values, availabilityZones, images, volumes}) =>
           </Form.Input>
       }
     </Form.ElementHorizontal>
+
+    <div className="row">
+      <div className="col-md-4"></div>
+      <div className="col-md-8">
+        { typeDescription != null ? 
+          <p className="help-block">
+            <i className="fa fa-info-circle"></i>
+            {typeDescription}
+          </p>
+          :
+          null
+        }
+      </div>
+    </div>
 
     <Form.ElementHorizontal label='Availability Zone' required name="availability_zone">
       { availabilityZones.isFetching ?
@@ -89,7 +106,10 @@ const FormBody = ({values, availabilityZones, images, volumes}) =>
   </Modal.Body>
 
 export default class NewVolumeForm extends React.Component {
-  state = { show: true }
+  state = { 
+    show: true, 
+    typeDescription: null 
+  }
 
   componentDidMount() {
     this.loadDependencies(this.props)
@@ -97,6 +117,7 @@ export default class NewVolumeForm extends React.Component {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     this.loadDependencies(nextProps)
+    this.setTypesDescription(defaultVolumeType)
   }
 
   loadDependencies = (props) => {
@@ -123,6 +144,17 @@ export default class NewVolumeForm extends React.Component {
     return this.props.handleSubmit(values).then(() => this.close());
   }
 
+  setTypesDescription = (name) => {
+    if (name && this.props.volumes.types) {
+      this.props.volumes.types.map((vt,index) => {
+        if (vt.name === name) {
+          //console.log(vt.description)
+          this.setState({typeDescription: vt.description})
+        }
+      })
+    }
+  }
+
   render(){
     const initialValues = {}
     return (
@@ -147,6 +179,8 @@ export default class NewVolumeForm extends React.Component {
             availabilityZones={this.props.availabilityZones}
             images={this.props.images}
             volumes={this.props.volumes}
+            typeDescription={this.state.typeDescription}
+            setTypesDescription={this.setTypesDescription}
           />
 
           <Modal.Footer>
