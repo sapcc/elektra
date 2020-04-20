@@ -40,12 +40,11 @@ export const FormInput = ({
     className: `${newClassName} ${className}`,
     name,
     id: id || (context.formName ? context.formName + '_' + name : name),
-    //value: values[name] || '',
     onChange: handleChange,
     ...otherProps
   }
   if(type === 'checkbox') inputProps.checked = (values[name] === true)
-  else inputProps.value = values[name] || ''
+  else inputProps.value = values[name] || ""
 
   return (
     React.createElement(elementType, inputProps, children)
