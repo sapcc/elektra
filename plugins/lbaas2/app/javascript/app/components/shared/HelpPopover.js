@@ -9,14 +9,14 @@ const HelpPopover = ({text}) => {
   </Popover>
 
   return ( 
-      <div className="has-feedback-help">
+      <span className="has-feedback-help">
         <OverlayTrigger trigger="click" placement="top" rootClose 
           overlay={popOver}>
           <a className='help-link' href='javascript:void(0)'>
             <i className="fa fa-question-circle"></i>
           </a>
         </OverlayTrigger>
-      </div>
+      </span>
    );
 }
  

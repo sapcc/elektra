@@ -12,6 +12,12 @@ module ServiceLayer
         )
       end
 
+      def find_l7policy(l7policy_id)
+        elektron_lb2.get("l7policies/#{l7policy_id}").map_to(
+          'body.l7policy', &l7policy_map
+        )
+      end
+      
       def new_l7policy(attributes = {})
         l7policy_map.call(attributes)
       end

@@ -20,7 +20,23 @@ module Lbaas2
             render json: { errors: e.message }, status: "500"
           end
 
-        end
+          def create
+            # add project id
+            l7RuleParams = params[:l7rule].merge(project_id: @scoped_project_id, l7policy_id: params[:l7policy_id]) #listener_id: params[:listener_id],
+            l7rule = services.lbaas2.new_l7rule(l7RuleParams)
+            if l7rule.save
+              audit_logger.info(current_user, 'has created', l7rule)
+              render json: l7rule
+            else
+              render json: {errors: l7rule.errors}, status: 422
+            end
+          rescue Elektron::Errors::ApiResponse => e
+            render json: { errors: e.message }, status: e.code
+          rescue Exception => e
+            render json: { errors: e.message }, status: "500"
+          end
+          
+        end        
       end
     end
   end

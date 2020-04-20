@@ -46,7 +46,7 @@ const receiveL7Rule = (state, {l7Rule}) => {
   // update or add l7Rule
   if (index>=0) { items[index]=l7Rule; } else { items.push(l7Rule); }
   // sort
-  const newItems = items.sort((a, b) => a.name.localeCompare(b.name))
+  const newItems = items.sort((a, b) => a.type.localeCompare(b.type))
   return {... state, items: newItems, isLoading: false, error: null}
 }
 

@@ -6,6 +6,7 @@ import useL7Rule from '../../../lib/hooks/useL7Rule';
 import { useGlobalState } from '../StateProvider'
 import { Table } from 'react-bootstrap'
 import ErrorPage from '../ErrorPage';
+import L7RuleListItem from './L7RuleListItem'
 
 const L7RulesList = ({props, loadbalancerID}) => {
   const {searchParamsToString} = useCommons()
@@ -63,21 +64,21 @@ const L7RulesList = ({props, loadbalancerID}) => {
                   <thead>
                       <tr>
                           <th>ID</th>
-                          <th>Type</th>
-                          <th>Compare Type</th>
                           <th>State</th>
                           <th>Prov. Status</th>
-                          <th>Tags</th>
+                          <th>Type</th>
+                          <th>Compare Type</th>
+                          <th>Invert</th>
                           <th>Key</th>
                           <th>Value</th>
-                          <th>Invers</th>
+                          <th>Tags</th>
                           <th className='snug'></th>
                       </tr>
                   </thead>
                   <tbody>
                     {l7Rules && l7Rules.length>0 ?
                       l7Rules.map( (l7Rule, index) =>
-                        <div></div>
+                        <L7RuleListItem l7Rule={l7Rule} key={index}/>
                       )
                       :
                       <tr>

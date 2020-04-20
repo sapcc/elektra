@@ -23,13 +23,14 @@ module Lbaas2
         'redirect_http_code'  => read('redirect_http_code'),
         'redirect_pool_id'    => read('redirect_pool_id'),
         'tags'                => read('tags'),
-        'listener_id'         => read('listener_id')
+        'listener_id'         => read('listener_id'),
+        'project_id'          => read('project_id')
       }.delete_if { |_k, v| v.blank? }
     end
 
     def persist!()
       newL7policy = service.create_l7policy(attributes_for_create)
-      # update self with the new loadbalancer
+      # update self with the new policy
       self.update_attributes(newL7policy)
       true
     rescue ::Elektron::Errors::ApiResponse => e

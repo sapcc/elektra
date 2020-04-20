@@ -140,7 +140,7 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
                 <span className="display-flex" key={index}>
                   <div>{redirect.label}: </div>
                   {redirect.value === "redirect_prefix" || redirect.value === "redirect_url" ?
-                    <CopyPastePopover text={l7Policy[redirect.value]} size={20} shouldClose={tableScroll} bsClass="cp label-right"/>
+                    <CopyPastePopover text={l7Policy[redirect.value]} shouldPopover={false} bsClass="cp label-right"/>
                   :
                   <span className="label-right">{l7Policy[redirect.value]}</span>              
                   }

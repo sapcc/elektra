@@ -9,9 +9,9 @@ Lbaas2::Engine.routes.draw do
 
     resources :listeners, module: :loadbalancers, only: [:index, :show, :destroy] do
 
-      resources :l7policies, module: :listeners, only: [:index, :create] do
+      resources :l7policies, module: :listeners, only: [:index, :show, :create] do
 
-        resources :l7rules, module: :l7policies, only: [:index] do
+        resources :l7rules, module: :l7policies, only: [:index, :create] do
         end
 
       end

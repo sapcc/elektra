@@ -18,6 +18,16 @@ const useL7Policy = () => {
     })
   }
 
+  const fetchL7Policy = (lbID, listenerID, l7PolicyID) => {
+    return new Promise((handleSuccess,handleError) => {    
+      ajaxHelper.get(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}`).then((response) => {      
+        handleSuccess(response.data)
+      }).catch( (error) => {     
+        handleError(error.response)
+      })      
+    })
+  }
+
   const persistL7Policies = (lbID, listenerID, marker) => {
     dispatch({type: 'RESET_L7POLICIES'})
     dispatch({type: 'REQUEST_L7POLICIES'})
@@ -27,6 +37,25 @@ const useL7Policy = () => {
         handleSuccess(data)
       }).catch( error => {
         dispatch({type: 'REQUEST_L7POLICIES_FAILURE', error: error})
+        handleError(error.response)
+      })
+    })
+  }
+
+  const persistL7Policy = (lbID, listenerID, l7PolicyID) => {
+    return new Promise((handleSuccess,handleError) => {
+      fetchL7Policy(lbID, listenerID, l7PolicyID).then((data) => {
+
+        console.group("fetchL7Policy")
+        console.log(data.l7policy)
+        console.groupEnd()
+
+        dispatch({type: 'RECEIVE_L7POLICY', l7Policy: data.l7policy})
+        handleSuccess(data)
+      }).catch( error => {
+        if(error && error.status == 404) {
+          dispatch({type: 'REMOVE_L7POLICY', id: id})
+        }   
         handleError(error.response)
       })
     })
@@ -71,9 +100,11 @@ const useL7Policy = () => {
 
   return {
     fetchL7Policies,
+    fetchL7Policy,
     createL7Policy,
     actionRedirect,
     persistL7Policies,
+    persistL7Policy,
     setSearchTerm,
     setSelected,
     reset

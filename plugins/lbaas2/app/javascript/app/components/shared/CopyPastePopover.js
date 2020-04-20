@@ -65,7 +65,7 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
 
   const popOver =  <Popover id={uniqueId("copy-paste-popover-")}>
     <div className="lbaas2">
-        <span>{text}</span>
+        <span className="cp-popover-text">{text}</span>
         {shouldCopyText &&
           <div className="text-right">
             {clipboard}
@@ -84,7 +84,9 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
     setShowIcon(false)
   }
 
-  const handlePopoverClick = event => {
+  const handlePopoverClick = e => {
+    if(e) e.preventDefault()
+    if(e) e.stopPropagation()
     setShowPopover(!showPopover)
     setPopoverTarget(event.target)
   }
@@ -101,7 +103,7 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
   }
 
   const popoverOverlay = <React.Fragment>
-    <a className='help-link' onClick={handlePopoverClick} href='javascript:void(0)'>
+    <a className='cp-help-link' onClick={handlePopoverClick}>
       <b>...</b>
     </a>    
     <Overlay
