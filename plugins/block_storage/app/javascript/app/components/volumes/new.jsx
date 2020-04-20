@@ -60,7 +60,6 @@ const FormBody = ({values, availabilityZones, images, volumes, typeDescription})
             elementType='select'
             className="select required form-control"
             name='volume_type'>
-            <option></option>
             { volumes.types.map((vt,index) => {
               return <option value={vt.name} key={index}> {vt.name} </option>;
             })}
