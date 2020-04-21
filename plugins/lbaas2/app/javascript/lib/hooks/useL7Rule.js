@@ -1,6 +1,9 @@
 import React from 'react';
 import { ajaxHelper } from 'ajax_helper';
 import { useDispatch } from '../../app/components/StateProvider'
+import { confirm } from 'lib/dialogs';
+import { addNotice, addError } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 const useL7Rule = () => {
   const dispatch = useDispatch()
@@ -43,6 +46,63 @@ const useL7Rule = () => {
     })
   }
 
+  const errorMessage = (err) => {
+    return err.data &&  (err.data.errors || err.data.error) || err.message
+  }  
+
+  const displayInvert = (invert) => {
+    if (invert) {
+      return <i className="fa fa-check-square-o" />
+    } else {
+      return <i className="fa fa-square-o" />
+    }
+  }
+
+  const confirmMessageOnDelete = (l7Rule) => {
+    return (
+      <React.Fragment>
+        <p>Do you really want to delete following L7 Rule?</p>
+        <p>
+          <b>ID:</b> {l7Rule.id}<br/>
+          <b>Type:</b> {l7Rule.type}<br/>
+          <b>Compare Type:</b> {l7Rule.compare_type}<br/>
+          <b>Invert:</b> {displayInvert(l7Rule.invert)}<br/>
+          <b>Key:</b> {l7Rule.key}<br/>
+          <b>Value:</b> {l7Rule.value && l7Rule.value.length > 50 ? `${l7Rule.value.slice(0,50)}...` : l7Rule.value}
+        </p>
+      </React.Fragment>
+    )
+  }
+
+  const deleteL7Rule = (lbID, listenerID, l7PolicyID, l7Rule) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      console.log("LETS DELETE THE RULE!!!!!!!!!!")
+
+      confirm(confirmMessageOnDelete(l7Rule)).then(() => {
+        return ajaxHelper.delete(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${id}`)
+        .then( (response) => {
+          dispatch({type: 'REQUEST_REMOVE_L7RULE', id: l7Rule.id})
+          addNotice(<React.Fragment><span>L7 Rule <b>{l7Rule.id}</b> will be deleted.</span></React.Fragment>)
+          handleSuccess()
+        })
+        .catch( (error) => {
+          addError(React.createElement(ErrorsList, {
+            errors: errorMessage(error.response)
+          }))
+          handleErrors()
+        });
+      }).catch( (cancel) => {
+        if (cancel !== true) {
+          addError(React.createElement(ErrorsList, {
+            errors: cancel.toString()
+          }))
+        }
+
+        return true
+      })
+    })
+  }
+
   const ruleTypes = () => {
     return [
       {label: "COOKIE", value: "COOKIE", description: "The rule looks for a cookie named by the key parameter and compares it against the value parameter in the rule."}, 
@@ -69,7 +129,9 @@ const useL7Rule = () => {
     persistL7Rules,
     createL7Rule,
     ruleTypes,
-    ruleCompareType
+    ruleCompareType,
+    deleteL7Rule,
+    displayInvert
   }
 }
  

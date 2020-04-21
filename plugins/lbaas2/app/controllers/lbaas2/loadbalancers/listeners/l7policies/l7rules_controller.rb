@@ -22,13 +22,30 @@ module Lbaas2
 
           def create
             # add project id
-            l7RuleParams = params[:l7rule].merge(project_id: @scoped_project_id, l7policy_id: params[:l7policy_id]) #listener_id: params[:listener_id],
-            l7rule = services.lbaas2.new_l7rule(l7RuleParams)
+            l7ruleParams = params[:l7rule].merge(project_id: @scoped_project_id, l7policy_id: params[:l7policy_id]) #listener_id: params[:listener_id],
+            l7rule = services.lbaas2.new_l7rule(l7ruleParams)
             if l7rule.save
               audit_logger.info(current_user, 'has created', l7rule)
               render json: l7rule
             else
               render json: {errors: l7rule.errors}, status: 422
+            end
+          rescue Elektron::Errors::ApiResponse => e
+            render json: { errors: e.message }, status: e.code
+          rescue Exception => e
+            render json: { errors: e.message }, status: "500"
+          end
+
+          def destroy
+            l7rule = services.lbaas2.new_l7rule
+            l7rule.l7policy_id = params[:l7policy_id]
+            l7rule.id = params[:id]
+      
+            if l7Rule.destroy
+              audit_logger.info(current_user, 'has deleted', l7rule)
+              head 202
+            else  
+              render json: { errors: l7rule.errors }, status: 422
             end
           rescue Elektron::Errors::ApiResponse => e
             render json: { errors: e.message }, status: e.code

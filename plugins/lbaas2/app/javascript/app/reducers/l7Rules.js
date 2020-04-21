@@ -50,6 +50,14 @@ const receiveL7Rule = (state, {l7Rule}) => {
   return {... state, items: newItems, isLoading: false, error: null}
 }
 
+const requestL7RuleDelete = (state, {id})=> {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].provisioning_status = 'PENDING_DELETE'
+  return {...state, items: newItems}
+}
+
 const removeL7Rule = (state, {id}) => {
   const index = state.items.findIndex((item) => item.id==id);
   if (index<0) { return state; }
@@ -78,6 +86,8 @@ export default (state = initialState, action) => {
       return resetL7Rules(state,action)      
     case 'RECEIVE_L7RULE':
       return receiveL7Rule(state,action)
+    case 'REQUEST_REMOVE_L7RULE':
+      return requestL7RuleDelete(state,action)
     case 'REMOVE_L7RULE':
       return removeL7Rule(state,action)
     case 'SET_L7RULES_SEARCH_TERM':

@@ -64,10 +64,8 @@ const L7RulesList = ({props, loadbalancerID}) => {
                   <thead>
                       <tr>
                           <th>ID</th>
-                          <th>State</th>
-                          <th>Prov. Status</th>
-                          <th>Type</th>
-                          <th>Compare Type</th>
+                          <th>State/Prov. Status</th>
+                          <th>Type/Compare Type</th>
                           <th>Invert</th>
                           <th>Key</th>
                           <th>Value</th>
@@ -78,7 +76,7 @@ const L7RulesList = ({props, loadbalancerID}) => {
                   <tbody>
                     {l7Rules && l7Rules.length>0 ?
                       l7Rules.map( (l7Rule, index) =>
-                        <L7RuleListItem l7Rule={l7Rule} key={index}/>
+                        <L7RuleListItem loadbalancerID={loadbalancerID} listenerID={listenerID} policyID={policyID} l7Rule={l7Rule} key={index}/>
                       )
                       :
                       <tr>

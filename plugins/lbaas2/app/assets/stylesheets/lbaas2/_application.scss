@@ -51,6 +51,7 @@
 
 .display-flex {
   display: flex;
+  align-items: center;
 
   .has-feedback-help {
     padding-left: 8px;
@@ -66,10 +67,30 @@
 }
 
 .copy-paste-ids {
-  span.cp-substring, span.cp-string {
+  span.cp-substring, span.cp-string, a.cp-help-link {
     filter: alpha(opacity=45);
     opacity: 0.45;
   }
+  &:hover {
+    .cp-help-link {
+      filter: alpha(opacity=100);
+      opacity: 1;
+    }
+  }
+}
+
+/*
+* help-block in a form
+*/
+
+.help-block {
+  .help-block-text {
+    margin-right: 5px;
+  }
+}
+.help-block-popover-scroll {
+  max-height: 150px;
+  overflow-y:scroll;
 }
 
 /*
@@ -83,9 +104,8 @@
   width: 100%;
 
   .table-responsive{
-    margin-top: 20px;
-    max-height:400px;  
-    overflow:scroll;
+    max-height:440px;  
+    overflow-y:scroll;
 
     thead tr:nth-child(1) th{
       background: white;
@@ -94,18 +114,13 @@
       z-index: 10;
     }
   }
-
-  .close-link {
-    margin-left: auto;
-    color: #333333;
-  }
 }
 
 .multiple-subtable {
   display: flex;
 
   .multiple-subtable-left {
-    width: 30%;
+    width: 25%;
     padding: 0px;
     height: 500px;
 
@@ -131,13 +146,20 @@
 
     .multiple-subtable-entry {
       margin-bottom: 10px;
+      word-break: break-all;
+      ul {
+        padding-left: 20px;
+      }
     }
   }
 
   .multiple-subtable-right {
-    width: 70%;
+    width: 75%;
     max-height:500px;
-    // overflow:scroll;
+    
+    .word-break-all {
+      word-break: break-word;
+    }
   }
 }
 
@@ -150,8 +172,13 @@
 
   &:hover {
     background-color: #f9f9f9;
+    .cp-help-link {
+      color:#337ab7;
+    }
   }
-
+  .cp-help-link {
+    color:inherit;
+  }
   .cp-dots-help {
     padding-left: 4px;
     padding-right: 4px;
@@ -162,6 +189,10 @@
       padding: 0px 0px 0px 4px;
     }
   }
+}
+// muss be outside of cp because the popover is rendered otside the lbaas content
+.cp-popover-text {
+  word-wrap:break-word;
 }
 
 .list-group-item-text-copy {
