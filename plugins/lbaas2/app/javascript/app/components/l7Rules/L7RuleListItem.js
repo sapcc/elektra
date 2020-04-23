@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React from 'react'
 import useCommons from '../../../lib/hooks/useCommons'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import StateLabel from '../StateLabel'
@@ -32,7 +32,7 @@ const L7RuleListItem = ({loadbalancerID, listenerID, policyID, l7Rule, searchTer
         <StateLabel placeholder={l7Rule.operating_status} path="" /><br/>
         <StateLabel placeholder={l7Rule.provisioning_status} path=""/>
       </td>
-      <td className="word-break-all">
+      <td className="word-break">
         {l7Rule.type}<br/>
         {l7Rule.compare_type}
       </td>

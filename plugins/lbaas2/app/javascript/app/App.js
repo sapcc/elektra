@@ -1,13 +1,15 @@
 import {StateProvider} from './components/StateProvider'
 import reducers from './reducers'
 import Router from './components/Router'
-import { FlashMessages } from 'lib/flashes';
+// import { FlashMessages } from 'lib/flashes';
+import FloatingFlashMessages from  './components/shared/FloatingFlashMessages'
 
 const App = () => {
   console.log("RENDER App")
   return (
     <React.Fragment>
-      <FlashMessages/>
+      {/* <FlashMessages/>*/}
+      <FloatingFlashMessages/>
       <Router/>
     </React.Fragment>
   )

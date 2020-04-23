@@ -79,6 +79,16 @@
   }
 }
 
+.sticky-flash {
+  position: fixed;
+  top: 110px;
+  z-index: 1029;
+  .container {
+    padding-left: 0px;
+    padding-right: 30px;
+  }
+}
+
 /*
 * help-block in a form
 */
@@ -157,7 +167,7 @@
     width: 75%;
     max-height:500px;
     
-    .word-break-all {
+    .word-break {
       word-break: break-word;
     }
   }
