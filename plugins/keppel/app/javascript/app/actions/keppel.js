@@ -47,13 +47,13 @@ export const fetchAccountsIfNeeded = () => (dispatch, getState) => {
   return dispatch(fetchAccounts());
 };
 
-export const putAccount = account => dispatch => {
+export const putAccount = (account, requestHeaders = {}) => dispatch => {
   //request body contains account minus name
   const { name, ...accountConfig } = account;
   const requestBody = { account: accountConfig };
 
   return new Promise((resolve, reject) =>
-    ajaxHelper.put(`/keppel/v1/accounts/${name}`, requestBody)
+    ajaxHelper.put(`/keppel/v1/accounts/${name}`, requestBody, { headers: requestHeaders })
       .then(response => {
         const newAccount = response.data.account;
         dispatch({
@@ -66,35 +66,12 @@ export const putAccount = account => dispatch => {
   );
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// get/set peers
-
-export const fetchPeers = () => dispatch => {
-  dispatch({
-    type: constants.REQUEST_PEERS,
-    requestedAt: Date.now(),
-  });
-
-  return ajaxHelper.get('/keppel/v1/peers')
-    .then(response => {
-      dispatch({
-        type: constants.RECEIVE_PEERS,
-        data: response.data.peers,
-        receivedAt: Date.now(),
-      });
-    })
-    .catch(error => {
-      dispatch({ type: constants.REQUEST_PEERS_FAILURE });
-      showError(error);
-    });
-};
-
-export const fetchPeersIfNeeded = () => (dispatch, getState) => {
-  const state = getState().keppel.peers;
-  if (state.isFetching || state.requestedAt) {
-    return;
-  }
-  return dispatch(fetchPeers());
+export const getAccountSubleaseToken = (accountName) => dispatch => {
+  return new Promise((resolve, reject) =>
+    ajaxHelper.post(`/keppel/v1/accounts/${accountName}/sublease`)
+      .then(response => resolve(response.data.sublease_token))
+      .catch(error => reject(errorMessage(error)))
+  );
 };
 
 ////////////////////////////////////////////////////////////////////////////////

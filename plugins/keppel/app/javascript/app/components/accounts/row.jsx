@@ -40,6 +40,12 @@ export default class AccountRow extends React.Component {
             <ul className="dropdown-menu dropdown-menu-right" role="menu">
               <li><Link to={`/accounts/${accountName}/access_policies`}>Access policies</Link></li>
               <li><Link to={`/accounts/${accountName}/validation_rules`}>Validation rules</Link></li>
+              {(this.props.isAdmin && !replication) && (
+                <React.Fragment>
+                  <li className="divider"></li>
+                  <li><Link to={`/accounts/${accountName}/sublease`}>Issue sublease token</Link></li>
+                </React.Fragment>
+              )}
             </ul>
           </div>
         </td>

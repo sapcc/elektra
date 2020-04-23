@@ -28,7 +28,7 @@ export default class AccountList extends React.Component {
         )}
         <DataTable columns={columns} pageSize={10}>
           {this.props.accounts.sort(byName).map(account => (
-            <AccountRow key={account.name} account={account} />
+            <AccountRow key={account.name} account={account} isAdmin={this.props.isAdmin} />
           ))}
         </DataTable>
       </React.Fragment>
