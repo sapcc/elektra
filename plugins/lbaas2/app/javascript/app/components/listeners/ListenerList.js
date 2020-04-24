@@ -112,10 +112,8 @@ const ListenerList = ({props, loadbalancerID}) => {
     } 
     return null
   }
-  const selectedListenerItem = getSelectedItem(selected, items)
   const listeners =  filterItems(searchTerm, items)
   const isLoading = state.isLoading
-  const selectedPolicyID = useGlobalState().l7policies.selected
   
   return useMemo(() => {
     console.log("RENDER Listener list")
@@ -129,7 +127,6 @@ const ListenerList = ({props, loadbalancerID}) => {
           <ErrorPage headTitle="Load Balancers Listeners" error={error}/>
           :
           <React.Fragment>
-
             <div className='toolbar'>
               { selected &&
                 <Link className="back-link" to="#" onClick={restoreUrl}>

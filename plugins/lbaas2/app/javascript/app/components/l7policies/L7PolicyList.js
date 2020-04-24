@@ -123,7 +123,7 @@ const L7Policies = ({props, loadbalancerID }) => {
   return ( 
     <React.Fragment>
       {listenerID &&
-        <div className={selected ? "subtalbe multiple-subtable-left": "subtalbe"} ref={container}>
+        <div className={selected ? "subtable multiple-subtable-left": "subtable"} ref={container}>
           <div className="display-flex multiple-subtable-title">
             <h5>L7 Policies</h5>
             <HelpPopover text="Collection of L7 rules that get logically ANDed together as well as a routing policy for any given HTTP or terminated HTTPS client requests which match said rules. An L7 Policy is associated with exactly one HTTP or terminated HTTPS listener." />
