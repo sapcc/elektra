@@ -7,62 +7,34 @@ import queryString from 'query-string'
 import { Link } from 'react-router-dom';
 import HelpPopover from '../shared/HelpPopover'
 import useCommons from '../../../lib/hooks/useCommons'
+import { useGlobalState } from '../StateProvider'
 
 const PoolList = ({props, loadbalancerID}) => {
-  const {fetchPools} = usePool()
-  const [searchTerm, setSearchTerm] = useState(null)
-  const [selected, setSelected] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const {persistPools, setSearchTerm, setSelected, reset} = usePool()
   const {searchParamsToString} = useCommons()
-  const [state, setState] = useState({
-    items: [],
-    isLoading: false,
-    receivedAt: null,
-    hasNext: false,
-    marker: null,
-    error: null
-  })
+  const state = useGlobalState().pools
 
   useEffect(() => {  
-    setIsLoading(true)
-    fetchPools(loadbalancerID, state.marker).then((data) => {
-      setIsLoading(false)
-      updateState(data)
-      selectPool()
+    persistPools(loadbalancerID, null).then((data) => {
+      selectPool(data)
     }).catch( error => {
       // TODO
     })
   }, [loadbalancerID]);
 
-  const selectPool = () => {
+  const selectPool = (data) => {
     const values = queryString.parse(props.location.search)
     const id = values.pool
-
     if (id) {
-      // pool was selected
-      setSelected(id)
-      // filter the pool list to show just the one item
-      setSearchTerm(id)
-    } else {
-      // NOT FOUND
+      // check if id belows to the lb object
+      const index = data.pools.findIndex((item) => item.id==id);
+      if (index>=0) {
+        // pool was selected
+        setSelected(id)
+        // filter the pool list to show just the one item
+        setSearchTerm(id)
+      }
     }
-  }
-
-  const updateState = (data) => {
-    let newItems = (state.items.slice() || []).concat(data.pools);
-    // filter duplicated items
-    newItems = newItems.filter( (item, pos, arr) => arr.findIndex(i => i.id == item.id)==pos );
-    // create marker before sorting just in case there is any difference
-    const marker = data.pools[data.pools.length-1]
-    // sort
-    newItems = newItems.sort((a, b) => a.name.localeCompare(b.name))
-    setState({...state, 
-      isLoading: false, 
-      items: newItems, 
-      error: null,
-      hasNext: data.has_next,
-      marker: marker,
-      updatedAt: Date.now()})
   }
 
   const onSelectPool = (poolID) => {
@@ -97,6 +69,8 @@ const PoolList = ({props, loadbalancerID}) => {
   const error = state.error
   const hasNext = state.hasNext
   const items = state.items
+  const selected = state.selected
+  const searchTerm = state.searchTerm
 
   const filterItems = (searchTerm, items) => {
     if(!searchTerm) return items;
@@ -113,8 +87,10 @@ const PoolList = ({props, loadbalancerID}) => {
     }
   }
 
-  console.log("RENDER pool list")
   const pools = filterItems(searchTerm, items)
+  const isLoading = state.isLoading
+
+  console.log("RENDER pool list")
   return ( 
     <div className="details-section">
       <div className="display-flex">
@@ -147,7 +123,7 @@ const PoolList = ({props, loadbalancerID}) => {
             </div>
           </div>
           
-          <table className={selected ? "table pools" : "table table-hover pools"}>
+          <table className={selected ? "table table-section pools" : "table table-hover pools"}>
             <thead>
                 <tr>
                     <th>Name/ID</th>
