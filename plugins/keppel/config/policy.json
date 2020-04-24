@@ -7,5 +7,6 @@
   "keppel_project_viewer": "(role:registry_viewer and not project_id:nil) or rule:keppel_project_editor",
 
   "keppel:account:show":  "(rule:keppel_project_viewer or rule:keppel_cloud_viewer) and rule:keppel_early_access",
-  "keppel:account:edit":  "(rule:keppel_project_editor or rule:keppel_cloud_editor) and rule:keppel_early_access"
+  "keppel:account:edit":  "(rule:keppel_project_editor or rule:keppel_cloud_editor) and rule:keppel_early_access",
+  "keppel:account:admin": "(rule:keppel_project_editor or rule:keppel_cloud_editor) and role:admin and rule:keppel_early_access"
 }
