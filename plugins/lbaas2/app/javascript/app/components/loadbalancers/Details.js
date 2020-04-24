@@ -6,6 +6,7 @@ import ListenerList from '../listeners/ListenerList'
 import PoolList from '../pools/PoolList'
 import L7PolicyList from '../l7policies/L7PolicyList'
 import L7ERuleList from '../l7Rules/L7RuleList'
+import MemberList from '../members/MemberList'
 
 const Details = (props) => {
   const dispatch = useDispatch()
@@ -88,7 +89,8 @@ const Details = (props) => {
                   <L7ERuleList props={props} loadbalancerID={loadbalancer.id}/>
                 </div>
   
-                <PoolList props={props} loadbalancerID={loadbalancer.id}/>              
+                <PoolList props={props} loadbalancerID={loadbalancer.id}/>
+                <MemberList props={props}/>
                 
               </React.Fragment>
             }
