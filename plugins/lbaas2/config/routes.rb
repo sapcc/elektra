@@ -19,6 +19,10 @@ Lbaas2::Engine.routes.draw do
     end
 
     resources :pools, module: :loadbalancers, only: [:index] do
+
+      resources :healthmonitors, module: :pools, only: [:show] do
+      end
+
     end
 
   end  

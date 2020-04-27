@@ -8,6 +8,7 @@ module ServiceLayer
     include Lbaas2Services::Pool
     include Lbaas2Services::L7policy
     include Lbaas2Services::L7rule
+    include Lbaas2Services::Healthmonitor
 
     def available?(_action_name_sym = nil)
       elektron.service?('octavia')

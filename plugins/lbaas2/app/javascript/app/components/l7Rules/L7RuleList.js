@@ -44,8 +44,8 @@ const L7RulesList = ({props, loadbalancerID}) => {
               <ErrorPage headTitle="L7 Rules" error={error} onReload={initialLoad}/>
             </div>
             :
-            <div className="subtalbe multiple-subtable-right">
-              <div className="display-flex">
+            <div className="subtable multiple-subtable-right">
+              <div className="display-flex multiple-subtable-title">
                 <h5>L7 Rules</h5>
                 <HelpPopover text="An L7 Rule is a single, simple logical test which returns either true or false. It consists of a rule type, a comparison type, a value, and an optional key that gets used depending on the rule type. An L7 rule must always be associated with an L7 policy." />
                 <div className="btn-right">
@@ -59,7 +59,7 @@ const L7RulesList = ({props, loadbalancerID}) => {
                   }
                 </div>
               </div>
-
+              
               <Table className={l7Rules.length>0 ? "table table-hover l7rules" : "table l7rules"} responsive>
                   <thead>
                       <tr>

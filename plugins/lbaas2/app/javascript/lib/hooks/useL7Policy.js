@@ -45,16 +45,11 @@ const useL7Policy = () => {
   const persistL7Policy = (lbID, listenerID, l7PolicyID) => {
     return new Promise((handleSuccess,handleError) => {
       fetchL7Policy(lbID, listenerID, l7PolicyID).then((data) => {
-
-        console.group("fetchL7Policy")
-        console.log(data.l7policy)
-        console.groupEnd()
-
         dispatch({type: 'RECEIVE_L7POLICY', l7Policy: data.l7policy})
         handleSuccess(data)
       }).catch( error => {
         if(error && error.status == 404) {
-          dispatch({type: 'REMOVE_L7POLICY', id: id})
+          dispatch({type: 'REMOVE_L7POLICY', id: l7PolicyID})
         }   
         handleError(error.response)
       })

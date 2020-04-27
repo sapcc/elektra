@@ -4,6 +4,7 @@ import listeners from './listeners'
 import l7policies from './l7Policies'
 import l7rules from './l7Rules'
 import pools from './pools'
+import healthmonitors from './healthmonitors'
 
 export default {
   loadbalancers,
@@ -11,5 +12,6 @@ export default {
   l7policies,
   statusTrees,
   l7rules,
-  pools
+  pools,
+  healthmonitors
 }

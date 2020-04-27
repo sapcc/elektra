@@ -14,8 +14,8 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
 
   return (
     <React.Fragment>
-      <div className="multiple-subtable-head">
-        <div className="row multiple-subtable-head-content">
+      <div className="selected-l7policy-head">
+        <div className="row selected-l7policy-head-content">
           <div className="col-md-12">
 
             <div className="display-flex">
@@ -41,8 +41,8 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
         </div>
       </div>
 
-      <div className="multiple-subtable-body">
-        <div className="multiple-subtable-entry">
+      <div className="selected-l7policy-body">
+        <div className="selected-l7policy-entry">
         <div className="row">
             <div className="col-md-12">
               <b>Name/ID:</b>
@@ -62,7 +62,7 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
           }
         </div>
 
-        <div className="multiple-subtable-entry">
+        <div className="selected-l7policy-entry">
           <div className="row">
             <div className="col-md-12">
               <b>Description:</b>
@@ -75,7 +75,7 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
           </div>
         </div>
 
-        <div className="multiple-subtable-entry">
+        <div className="selected-l7policy-entry">
           <div className="row">
             <div className="col-md-12">
               <b>State:</b>
@@ -88,7 +88,7 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
           </div>
         </div>
 
-        <div className="multiple-subtable-entry">
+        <div className="selected-l7policy-entry">
           <div className="row">
             <div className="col-md-12">
               <b>Prov. Status:</b>
@@ -101,7 +101,7 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
           </div>
         </div>
 
-        <div className="multiple-subtable-entry">
+        <div className="selected-l7policy-entry">
           <div className="row">
             <div className="col-md-12">
               <b>Tags:</b>
@@ -114,7 +114,7 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
           </div>
         </div>
 
-        <div className="multiple-subtable-entry">
+        <div className="selected-l7policy-entry">
           <div className="row">
             <div className="col-md-12">
               <b>Position:</b>
@@ -127,7 +127,7 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
           </div>
         </div>
 
-        <div className="multiple-subtable-entry">
+        <div className="selected-l7policy-entry">
           <div className="row">
             <div className="col-md-12">
               <b>Action/Redirect:</b>
@@ -152,7 +152,7 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
           </div>
         </div>
 
-        <div className="multiple-subtable-entry">
+        <div className="selected-l7policy-entry">
           <div className="row">
             <div className="col-md-12">
               <b>Rules:</b>

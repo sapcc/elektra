@@ -141,7 +141,9 @@ const L7Policies = ({props, loadbalancerID }) => {
           
           {selected && l7Policies.length == 1 ?
             l7Policies.map( (l7Policy, index) =>
-              <L7PolicySelected l7Policy={l7Policy} key={index} onBackLink={restoreUrl}/>
+              <div className="selected-l7policy">
+                <L7PolicySelected l7Policy={l7Policy} key={index} onBackLink={restoreUrl}/>
+              </div>
             )
           :
             <Table className={l7Policies.length>0 ? "table table-hover policies" : "table policies"} responsive>
