@@ -46,7 +46,7 @@ const L7RulesList = ({props, loadbalancerID}) => {
             :
             <div className="subtable multiple-subtable-right">
               <div className="display-flex multiple-subtable-title">
-                <h5>L7 Rules</h5>
+                <h4>L7 Rules</h4>
                 <HelpPopover text="An L7 Rule is a single, simple logical test which returns either true or false. It consists of a rule type, a comparison type, a value, and an optional key that gets used depending on the rule type. An L7 rule must always be associated with an L7 policy." />
                 <div className="btn-right">
                   {!selected &&
@@ -65,11 +65,11 @@ const L7RulesList = ({props, loadbalancerID}) => {
                       <tr>
                           <th>ID</th>
                           <th>State/Prov. Status</th>
+                          <th>Tags</th>
                           <th>Type/Compare Type</th>
                           <th>Invert</th>
                           <th>Key</th>
                           <th>Value</th>
-                          <th>Tags</th>
                           <th className='snug'></th>
                       </tr>
                   </thead>

@@ -32,6 +32,9 @@ const L7RuleListItem = ({loadbalancerID, listenerID, policyID, l7Rule, searchTer
         <StateLabel placeholder={l7Rule.operating_status} path="" /><br/>
         <StateLabel placeholder={l7Rule.provisioning_status} path=""/>
       </td>
+      <td>
+        <StaticTags tags={l7Rule.tags} shouldPopover={true}/>
+      </td>
       <td className="word-break">
         {l7Rule.type}<br/>
         {l7Rule.compare_type}
@@ -44,9 +47,6 @@ const L7RuleListItem = ({loadbalancerID, listenerID, policyID, l7Rule, searchTer
       </td>
       <td>
         <CopyPastePopover text={l7Rule.value} size={12} shouldClose={tableScroll}/>
-      </td>
-      <td>
-        <StaticTags tags={l7Rule.tags} shouldPopover={true}/>
       </td>
       <td>
         <div className='btn-group'>
