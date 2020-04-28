@@ -32,6 +32,9 @@ en:
     volumes: Volumes
     snapshots: Snapshots
     capacity: Capacity
+    volumes_standard_hdd: Volumes (Standard HDD)
+    snapshots_standard_hdd: Snapshots (Standard HDD)
+    capacity_standard_hdd: Capacity (Standard HDD)
     dns: DNS
     zones: Zones
     recordsets: Recordsets per Zone
