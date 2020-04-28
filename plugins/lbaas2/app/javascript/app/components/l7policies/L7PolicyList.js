@@ -9,7 +9,7 @@ import { useGlobalState } from '../StateProvider'
 import L7PolicySelected from './L7PolicySelected'
 import queryString from 'query-string'
 
-const L7Policies = ({props, loadbalancerID }) => {
+const L7PolicyList = ({props, loadbalancerID }) => {
   const {persistL7Policies, setSearchTerm, setSelected, reset} = useL7Policy()
   const {searchParamsToString} = useCommons()
   const [tableScroll, setTableScroll] = useState(false)
@@ -141,8 +141,8 @@ const L7Policies = ({props, loadbalancerID }) => {
           
           {selected && l7Policies.length == 1 ?
             l7Policies.map( (l7Policy, index) =>
-              <div className="selected-l7policy">
-                <L7PolicySelected l7Policy={l7Policy} key={index} onBackLink={restoreUrl}/>
+              <div className="selected-l7policy" key={index}>
+                <L7PolicySelected l7Policy={l7Policy} onBackLink={restoreUrl}/>
               </div>
             )
           :
@@ -181,4 +181,4 @@ const L7Policies = ({props, loadbalancerID }) => {
   );
 }
  
-export default L7Policies;
+export default L7PolicyList;

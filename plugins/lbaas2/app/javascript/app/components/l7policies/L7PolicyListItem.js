@@ -82,7 +82,7 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll, onSelec
       <td>
         {l7Policy.action}
         {actionRedirect(l7Policy.action).map( (redirect, index) =>
-          <span className="display-flex">
+          <span className="display-flex" key={index}>
             <br/><b>{redirect.label}: </b>
             {redirect.value === "redirect_prefix" || redirect.value === "redirect_url" ?
               <CopyPastePopover text={l7Policy[redirect.value]} size={20} shouldClose={tableScroll} bsClass="cp label-right"/>

@@ -20,16 +20,18 @@ const ErrorPage = ({error, headTitle, onReload}) => {
     const generalError = <React.Fragment>
       <p>There was an error. Don't worry, it's not you - it's us. Sorry about that.</p>
       <p>
-      <span>Please try later again</span>
-      {onReload &&
-        <React.Fragment>
-          <span> or try reloading </span>
-          <div className="ep-reload-button">
-            <Button bsStyle="btn btn-primary" onClick={onReload} >Reload <i className="fa fa-refresh"></i></Button>
-          </div>          
-        </React.Fragment>
+        Please try later again
+        {onReload &&
+          <React.Fragment>
+            <span> or try reloading</span>
+          </React.Fragment>
+        }
+      </p>
+      {onReload && 
+        <div className="ep-reload-button">
+          <Button bsStyle="primary" onClick={onReload} >Reload <i className="fa fa-refresh"></i></Button>
+        </div> 
       }
-      </p>  
     </React.Fragment>
 
     switch (httpStatus()) {
@@ -57,7 +59,7 @@ const ErrorPage = ({error, headTitle, onReload}) => {
         <div className="col-md-10 col-md-offset-2">
           <div className="row">
             <div className="col-md-10 ep">
-              <h1>LBaaS - {headTitle}</h1>
+              <h2>LBaaS - {headTitle}</h2>
               <p><b>{httpStatus()}</b> {title()}</p>
               {description()}            
               {details() &&

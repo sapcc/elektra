@@ -1,6 +1,6 @@
 import React from 'react';
 import usePool from '../../../lib/hooks/usePool'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import PoolItem from './PoolItem'
 import queryString from 'query-string'
