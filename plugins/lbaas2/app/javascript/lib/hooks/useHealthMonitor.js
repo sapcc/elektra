@@ -1,6 +1,9 @@
 import React from 'react';
+import { ajaxHelper } from 'ajax_helper';
+import { useDispatch } from '../../app/components/StateProvider'
 
 const useHealthMonitor = () => {
+  const dispatch = useDispatch()
 
   const fetchHealthMonitor = (lbID, poolID, healthmonitorID) => {   
     return new Promise((handleSuccess,handleError) => {    
@@ -29,10 +32,10 @@ const useHealthMonitor = () => {
     })
   }
 
-  return ( 
+  return {
     fetchHealthMonitor,
     persistHealthmonitor
-   );
+  }
 }
  
 export default useHealthMonitor;

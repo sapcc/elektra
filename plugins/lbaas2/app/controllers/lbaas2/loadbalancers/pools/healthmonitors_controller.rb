@@ -4,7 +4,11 @@ module Lbaas2
       class HealthmonitorsController < ApplicationController
 
         def show
-          healthmonitor = services.lbaas2.find_healthmonitor(@pool.healthmonitor_id)
+          puts "---------------"
+          puts "test1"
+          puts params[:id]
+          puts "---------------"
+          healthmonitor = services.lbaas2.find_healthmonitor(params[:id])
           render json: {
             healthmonitor: healthmonitor
           }

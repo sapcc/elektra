@@ -89,6 +89,16 @@
   }
 }
 
+.word-break {
+  word-break: break-word;
+}
+
+.subtable {
+  .members {
+    margin-top: 20px;
+  }
+}
+
 /*
 * help-block in a form
 */
@@ -101,6 +111,16 @@
 .help-block-popover-scroll {
   max-height: 150px;
   overflow-y:scroll;
+}
+
+/*
+* List
+*/
+
+.list {
+  .list-entry {
+    margin-bottom: 10px;
+  }
 }
 
 /*
@@ -125,6 +145,7 @@
     }
   }
 }
+
 .subtable:empty { 
   border: none;
 }
@@ -150,10 +171,6 @@
     .table-responsive {
       padding-left: 9px;
       padding-right: 9px;
-    }
-
-    .word-break {
-      word-break: break-word;
     }
   }
 }

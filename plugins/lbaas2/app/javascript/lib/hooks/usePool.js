@@ -32,6 +32,16 @@ const usePool = () => {
     })
   }
   
+  const findPool = (pools, poolID) => {
+    if (pools) {
+      const index = pools.findIndex((item) => item.id==poolID);
+      if (index>=0) { 
+        return pools[index]
+      } 
+    }
+    return null
+  }
+
   const setSearchTerm = (searchTerm) => {
     dispatch({type: 'SET_POOLS_SEARCH_TERM', searchTerm: searchTerm})
   }
@@ -50,7 +60,8 @@ const usePool = () => {
     persistPools,
     setSearchTerm,
     setSelected,
-    reset
+    reset,
+    findPool
   };
 }
  

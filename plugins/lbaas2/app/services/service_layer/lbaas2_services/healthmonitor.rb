@@ -12,7 +12,7 @@ module ServiceLayer
         )
       end
 
-      def find_healthmonitor!(id)
+      def find_healthmonitor(id)
         elektron_lb2.get("healthmonitors/#{id}").map_to(
           'body.healthmonitor', &healthmonitor_map
         )

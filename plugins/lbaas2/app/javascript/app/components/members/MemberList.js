@@ -8,9 +8,9 @@ const MemberList = () => {
   return (
     <React.Fragment>
       {poolID && 
-        <div className="">
+        <div className="members">
           <div className="display-flex">
-            <h5>Members</h5>
+            <h4>Members</h4>
             <HelpPopover text="Members are servers that serve traffic behind a load balancer. Each member is specified by the IP address and port that it uses to serve traffic." />
           </div>
         </div>
