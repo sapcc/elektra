@@ -8,6 +8,9 @@ Lbaas2::Engine.routes.draw do
     end
 
     resources :listeners, module: :loadbalancers, only: [:index, :show, :destroy] do
+      collection do
+        get 'pools' => 'listeners#pools'
+      end
 
       resources :l7policies, module: :listeners, only: [:index, :show, :create] do
 

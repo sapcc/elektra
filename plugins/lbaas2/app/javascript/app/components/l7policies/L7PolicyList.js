@@ -125,7 +125,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
       {listenerID &&
         <div className={selected ? "subtable multiple-subtable-left": "subtable"} ref={container}>
           <div className="display-flex multiple-subtable-title">
-            <h5>L7 Policies</h5>
+            <h4>L7 Policies</h4>
             <HelpPopover text="Collection of L7 rules that get logically ANDed together as well as a routing policy for any given HTTP or terminated HTTPS client requests which match said rules. An L7 Policy is associated with exactly one HTTP or terminated HTTPS listener." />
             <div className="btn-right">
               {!selected &&              

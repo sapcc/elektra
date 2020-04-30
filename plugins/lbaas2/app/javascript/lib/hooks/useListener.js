@@ -69,6 +69,50 @@ const useListener = () => {
     dispatch({type: 'SET_LISTENERS_SELECTED_ITEM', selected: null})
   }
 
+  const protocolTypes = () => {
+    return [
+      {label: "HTTP", value: "HTTP"},
+      {label: "HTTPS", value: "HTTPS"},
+      {label: "TCP", value: "TCP"},
+      {label: "TERMINATED_HTTPS", value: "TERMINATED_HTTPS"},
+      {label: "UDP", value: "UDP"}]
+  }
+  
+  const httpHeaderInsertions = () => {
+    return [
+      {label: "X-Forwarded-For", value: "X-Forwarded-For", description: "When selected a X-Forwarded-For header is inserted into the request to the backend member that specifies the client IP address."},
+      {label: "X-Forwarded-Port", value: "X-Forwarded-Port", description: "When selected a X-Forwarded-Port header is inserted into the request to the backend member that specifies the listener port."},
+      {label: "X-Forwarded-Proto", value: "X-Forwarded-Proto", description: "When selected a X-Forwarded-Proto header is inserted into the request to the backend member. HTTP for the HTTP listener protocol type, HTTPS for the TERMINATED_HTTPS listener protocol type."},
+      {label: "X-SSL-Client-Verify", value: "X-SSL-Client-Verify", description: "When selected a X-SSL-Client-Verify header is inserted into the request to the backend member that contains 0 if the client authentication was successful, or an result error number greater than 0 that align to the openssl veryify error codes."},
+      {label: "X-SSL-Client-Has-Cert", value: "X-SSL-Client-Has-Cert", description: "When selected a X-SSL-Client-Has-Cert header is inserted into the request to the backend member that is ‘’true’’ if a client authentication certificate was presented, and ‘’false’’ if not. Does not indicate validity."},
+      {label: "X-SSL-Client-DN", value: "X-SSL-Client-DN", description: "When selected a X-SSL-Client-DN header is inserted into the request to the backend member that contains the full Distinguished Name of the certificate presented by the client."},
+      {label: "X-SSL-Client-CN", value: "X-SSL-Client-CN", description: "When selected a X-SSL-Client-CN header is inserted into the request to the backend member that contains the Common Name from the full Distinguished Name of the certificate presented by the client."},
+      {label: "X-SSL-Issuer", value: "X-SSL-Issuer", description: "When selected a X-SSL-Issuer header is inserted into the request to the backend member that contains the full Distinguished Name of the client certificate issuer."},
+      {label: "X-SSL-Client-SHA1", value: "X-SSL-Client-SHA1", description: "When selected a X-SSL-Client-SHA1 header is inserted into the request to the backend member that contains the SHA-1 fingerprint of the certificate presented by the client in hex string format."},
+      // {label: "X-SSL-Client-Not-Before", value: "X-SSL-Client-Not-Before", description: "When selected a X-SSL-Client-Not-Before header is inserted into the request to the backend member that contains the start date presented by the client as a formatted string YYMMDDhhmmss[Z]."},
+      // {label: "X-SSL-Client-Not-After", value: "X-SSL-Client-Not-After", description: "When selected a X-SSL-Client-Not-After header is inserted into the request to the backend member that contains the end date presented by the client as a formatted string YYMMDDhhmmss[Z]."}
+    ]
+  }
+
+  const protocolHeaderInsertionRelation = () => {
+    return [
+      {protocol: "HTTP", headers: ["X-Forwarded-For", "X-Forwarded-Port", "X-Forwarded-Proto"]},
+      {protocol: "HTTPS", headers: ["X-Forwarded-For", "X-Forwarded-Port", "X-Forwarded-Proto"]},
+      {protocol: "TERMINATED_HTTPS", headers: ["X-Forwarded-For", "X-Forwarded-Port", "X-Forwarded-Proto"]}
+    ]
+  }
+
+  const fetchPools = (lbID) => {
+    return new Promise((handleSuccess,handleError) => {  
+      ajaxHelper.get(`/loadbalancers/${lbID}/listeners/pools`).then((response) => {
+        handleSuccess(response.data)
+      })
+      .catch( (error) => {
+        handleError(error.response)
+      })
+    })
+  }
+
   return {
     fetchListeners,
     fetchListener,
@@ -76,7 +120,9 @@ const useListener = () => {
     persistListener,
     setSearchTerm,
     setSelected,
-    reset
+    reset,
+    protocolTypes,
+    fetchPools
   }
 }
 
