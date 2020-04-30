@@ -48,7 +48,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
               <ErrorPage headTitle="Health Monitor" error={error} onReload={initialLoad}/>
             </div>
           :
-            <div className="healthmonitor">
+            <div className="healthmonitor subtable multiple-subtable-left">
               <div className="display-flex">
                 <h4>Health Monitor</h4>
                 <HelpPopover text="Checks the health of the pool members. Unhealthy members will be taken out of traffic schedule. Set's a load balancer to OFFLINE when all members are unhealthy." />

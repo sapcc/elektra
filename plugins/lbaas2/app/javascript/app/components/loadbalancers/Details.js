@@ -91,9 +91,9 @@ const Details = (props) => {
                 </div>
   
                 <PoolList props={props} loadbalancerID={loadbalancer.id}/>
-                <div className="subtable">
+                <div className="multiple-subtable">
                   <HealthMonitor props={props} loadbalancerID={loadbalancer.id}/>
-                  <MemberList props={props}/>
+                  <MemberList props={props} loadbalancerID={loadbalancer.id}/>
                 </div>
                 
               </React.Fragment>
