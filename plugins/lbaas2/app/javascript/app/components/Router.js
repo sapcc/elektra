@@ -14,7 +14,7 @@ const Router = (props) => {
 
   const tabsConfig = [
     { to: '/loadbalancers', label: 'Load Balancers', component: LoadbalancerList },
-    { to: '/pools', label: 'Project Pools', component: SharedPoolList }
+    // { to: '/pools', label: 'Project Pools', component: SharedPoolList }
   ]
 
   return ( 
