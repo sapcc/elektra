@@ -1,7 +1,6 @@
 import React from 'react'
 import { useDispatch, useGlobalState } from '../StateProvider'
 import { useEffect, useMemo } from 'react'
-import { ajaxHelper } from 'ajax_helper';
 import LoadbalancerItem from './LoadbalancerItem';
 import ErrorPage from '../ErrorPage';
 import {DefeatableLink} from 'lib/components/defeatable_link';

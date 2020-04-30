@@ -68,7 +68,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
   const displayName = () => {
     const name = loadbalancer.name || loadbalancer.id
     if (disabled) {
-        return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/></span>
+        return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
     } else {
       if (searchTerm) {
         return <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
