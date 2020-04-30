@@ -12,7 +12,7 @@ const HelpPopover = ({text}) => {
       <span className="has-feedback-help">
         <OverlayTrigger trigger="click" placement="top" rootClose 
           overlay={popOver}>
-          <a className='help-link' href='javascript:void(0)'>
+          <a className='help-link' href='#' onClick={e => e.preventDefault()}>
             <i className="fa fa-question-circle"></i>
           </a>
         </OverlayTrigger>
