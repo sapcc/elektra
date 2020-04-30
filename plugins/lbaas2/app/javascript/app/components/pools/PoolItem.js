@@ -4,6 +4,8 @@ import { Highlighter } from 'react-bootstrap-typeahead'
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 import CopyPastePopover from '../shared/CopyPastePopover'
+import CachedInfoPopover from '../shared/CachedInforPopover';
+import CachedInfoPopoverContent from './CachedInfoPopoverContent'
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
@@ -22,6 +24,10 @@ const PoolItem = ({pool, searchTerm, onSelectPool, disabled}) => {
 
   const handleDelete = () => {
   }
+
+  const onSelectMember = () => {}
+
+  const onShowAllClick = () => {}
 
   const displayName = () => {
     const name = pool.name || pool.id
@@ -68,6 +74,7 @@ const PoolItem = ({pool, searchTerm, onSelectPool, disabled}) => {
     }
   }
 
+  const memberIDs = pool.members.map(m => m.id)
   return ( 
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
@@ -82,7 +89,18 @@ const PoolItem = ({pool, searchTerm, onSelectPool, disabled}) => {
       </td>
       <td>{pool.protocol}</td>
       <td>{pool.lb_algorithm}</td>
-      <td></td>
+      
+      <td>
+        {disabled ?
+          <span className="info-text">{memberIDs.length}</span>
+        :
+        <CachedInfoPopover  popoverId={"member-popover-"+memberIDs.id} 
+                    buttonName={memberIDs.length} 
+                    title={<React.Fragment>Members<Link to="#" onClick={onShowAllClick} style={{float: 'right'}}>Show all</Link></React.Fragment>}
+                    content={<CachedInfoPopoverContent memberIDs={memberIDs} cachedMembers={pool.cached_members} onSelectMember={onSelectMember}/>} />
+        }
+      </td>
+
       <td>
         <div className='btn-group'>
           <button

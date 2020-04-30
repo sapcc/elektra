@@ -10,6 +10,9 @@ module Lbaas2
         pagination_options[:marker] = params[:marker] if params[:marker]
         pools = services.lbaas2.pools({ loadbalancer_id: params[:loadbalancer_id]}.merge(pagination_options))
 
+        # extend pool data with chached members
+        extend_pool_data(pools)
+
         render json: {
           pools: pools,
           has_next: pools.length > per_page
@@ -18,6 +21,19 @@ module Lbaas2
         render json: { errors: e.message }, status: e.code
       rescue Exception => e
         render json: { errors: e.message }, status: "500"
+      end
+
+      protected
+
+      def extend_pool_data(pools)
+        pools.each do |pool|
+          # get cached members
+          pool.members = [] if pool.members.blank?
+          pool.cached_members = ObjectCache.where(id: pool.members.map{|l| l[:id]}).each_with_object({}) do |l,map|
+            map[l[:id]] = l
+          end
+    
+        end
       end
 
     end
