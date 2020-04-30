@@ -63,6 +63,10 @@ ol.howto {
     border-radius: 4px;
     padding: 4px 8px;
     background: #F5F5F5;
+
+    & > span.digest-actions > button:disabled {
+      cursor: pointer !important;
+    }
   }
 }
 

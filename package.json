@@ -31,6 +31,7 @@
     "react": "^16.10.0",
     "react-bootstrap": "0.31.5",
     "react-bootstrap-typeahead": "^3.0.0-alpha.1",
+    "react-clipboard.js": "^2.0.16",
     "react-datetime": "*",
     "react-dom": "^16.8.1",
     "react-json-view": "^1.16.6",
