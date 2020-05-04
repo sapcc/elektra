@@ -31,6 +31,8 @@ ALLOWED_ROLES = %w[
   volume_viewer
   securitygroup_viewer
   securitygroup_admin
+  registry_viewer
+  registry_admin
 ].freeze
 
 BETA_ROLES = %w[
@@ -40,6 +42,8 @@ BETA_ROLES = %w[
 # restricted to a few technical users and CAM-managed groups (and those
 # assignments are maintained in helm-charts)
 BLACKLISTED_ROLES = %w[
+  cloud_registry_admin
+  cloud_registry_viewer
   cloud_resource_admin
   cloud_resource_viewer
   resource_service
