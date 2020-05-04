@@ -4,7 +4,6 @@ module Keppel
   class ApplicationController < DashboardController
     def show
       enforce_permissions('::keppel:account:show')
-      @edit_role = 'resource_admin'
       @js_data   = {
         # data required to access the Keppel API
         token:      current_user.token,
