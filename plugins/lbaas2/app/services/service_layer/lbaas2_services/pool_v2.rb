@@ -1,6 +1,6 @@
 module ServiceLayer
   module Lbaas2Services
-    module Pool
+    module PoolV2
 
       def pool_map
         @pool_map ||= class_map_proc(::Lbaas2::Pool)

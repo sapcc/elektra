@@ -1,6 +1,6 @@
 module ServiceLayer
   module Lbaas2Services
-    module L7rule
+    module L7ruleV2
 
       def l7rule_map
         @l7rule_map ||= class_map_proc(::Lbaas2::L7rule)

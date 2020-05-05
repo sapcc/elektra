@@ -1,6 +1,6 @@
 module ServiceLayer
   module Lbaas2Services
-    module Listener
+    module ListenerV2
 
       def listener_map
         @listener_map ||= class_map_proc(::Lbaas2::Listener)

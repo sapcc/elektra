@@ -1,6 +1,6 @@
 module ServiceLayer
   module Lbaas2Services
-    module Healthmonitor
+    module HealthmonitorV2
 
       def healthmonitor_map
         @healthmonitor_map ||= class_map_proc(::Lbaas2::Healthmonitor)

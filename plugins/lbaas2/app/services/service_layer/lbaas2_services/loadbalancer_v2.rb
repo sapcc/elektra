@@ -2,7 +2,8 @@
 
 module ServiceLayer
   module Lbaas2Services
-    module Loadbalancer
+    module LoadbalancerV2
+      
       def loadbalancer_map
         @loadbalancer_map ||= class_map_proc(::Lbaas2::Loadbalancer)
       end

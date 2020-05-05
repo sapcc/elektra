@@ -1,6 +1,6 @@
 module ServiceLayer
   module Lbaas2Services
-    module L7policy
+    module L7policyV2
 
       def l7policy_map
         @l7policy_map ||= class_map_proc(::Lbaas2::L7policy)
