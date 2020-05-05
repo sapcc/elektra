@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect} from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import useCommons from '../../../lib/hooks/useCommons'
@@ -9,9 +9,28 @@ import TagsInput from '../shared/TagsInput'
 import { addNotice } from 'lib/flashes';
 
 const NewL7Policy = (props) => {
-  const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
+  const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage, fetchPoolsForSelect} = useCommons()
   const {createL7Policy} = useL7Policy()
   const {persistListener} = useListener()
+  const [pools, setPools] = useState({
+    isLoading: false,
+    error: null,
+    items: []
+  })
+
+  useEffect(() => {
+    console.log('fetching pools')
+    const params = matchParams(props)
+    const lbID = params.loadbalancerID
+    // get pools for the select
+    setPools({...pools, isLoading:true})
+    fetchPoolsForSelect(lbID).then((data) => {
+      setPools({...pools, isLoading:false, items: data.pools, error: null})
+    })
+    .catch( (error) => {      
+      setPools({...pools, isLoading:false, error: error})
+    })
+  }, []);
 
   /**
    * Modal stuff
@@ -94,6 +113,7 @@ const NewL7Policy = (props) => {
   }
 
   const onSelectCode = () => {}
+  const onSelectPoolChange = () => {}
 
   console.log("RENDER new L7 Policy")
 
@@ -154,7 +174,8 @@ const NewL7Policy = (props) => {
             }
             {showRedirectPoolID &&
               <Form.ElementHorizontal label='Redirect Pool ID' name="redirect_pool_id">
-                <Form.Input elementType='input' type='text' name='redirect_pool_id'/>
+                <SelectInput name="redirect_pool_id" isLoading={pools.isLoading} items={pools.items} onChange={onSelectPoolChange} />
+                { pools.error ? <span className="text-danger">{pools.error}</span>:""}
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
                   Requests matching this policy will be redirected to the pool with this ID.
