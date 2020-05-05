@@ -1,6 +1,7 @@
 import React from 'react';
 import queryString from 'query-string'
 import { Highlighter } from 'react-bootstrap-typeahead'
+import { ajaxHelper } from 'ajax_helper';
 
 const useCommons = () => {
 
@@ -30,12 +31,24 @@ const useCommons = () => {
     }
   }
 
+  const fetchPoolsForSelect = (lbID) => {
+    return new Promise((handleSuccess,handleError) => {  
+      ajaxHelper.get(`/loadbalancers/${lbID}/pools/items_for_select`).then((response) => {
+        handleSuccess(response.data)
+      })
+      .catch( (error) => {
+        handleError(formErrorMessage(error))
+      })
+    })
+  }
+  
   return {
     MyHighlighter,
     searchParamsToString,
     queryStringSearchValues,
     matchParams,
-    formErrorMessage
+    formErrorMessage,
+    fetchPoolsForSelect
   }
 }
  

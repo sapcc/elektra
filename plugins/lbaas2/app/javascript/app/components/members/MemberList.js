@@ -43,9 +43,11 @@ const MemberList = (props) => {
                   </tr>
               </thead>
               <tbody>
-                <td colSpan="9">
-                  No Members found.
-                </td>
+                <tr>
+                  <td colSpan="9">
+                    No Members found.
+                  </td>
+                </tr>
               </tbody>
           </Table>
           </div>

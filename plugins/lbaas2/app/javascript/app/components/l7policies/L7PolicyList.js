@@ -131,7 +131,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
         <React.Fragment>
           { error ?
             <div className={selected ? "l7policies subtable multiple-subtable-left": "l7policies subtable"} ref={container}>
-              <ErrorPage headTitle="L7 Policy" error={error} onReload={initialLoad}/>
+              <ErrorPage headTitle="L7 Policies" error={error} onReload={initialLoad}/>
             </div>
           :
             <div className={selected ? "l7policies subtable multiple-subtable-left": "l7policies subtable"} ref={container}>

@@ -37,6 +37,9 @@ const requestLoadbalancersFailure = (state, {error}) => {
 }
 
 const receiveLoadbalancer = (state, {loadbalancer}) => {
+  // prevent ok responses without content
+  if (!loadbalancer) { return {...state}}
+
   const index = state.items.findIndex((item) => item.id==loadbalancer.id);
   let items = state.items.slice();
   // update or add loadbalancer

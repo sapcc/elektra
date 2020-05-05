@@ -23,6 +23,17 @@ module Lbaas2
         render json: { errors: e.message }, status: "500"
       end
 
+      def itemsForSelect
+        pools = services.lbaas2.pools({ loadbalancer_id: params[:loadbalancer_id], sort_key: 'name', sort_dir: 'asc'})
+        select_pools = pools.map {|pool| {"label": "#{pool.name} (#{pool.id})", "value": pool.id}}
+        
+        render json: { pools: select_pools }
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+      
       protected
 
       def extend_pool_data(pools)
