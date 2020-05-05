@@ -7,9 +7,10 @@ Lbaas2::Engine.routes.draw do
       get 'private-networks/:id/subnets' => 'loadbalancers#subnets'
     end
 
-    resources :listeners, module: :loadbalancers, only: [:index, :show, :destroy] do
+    resources :listeners, module: :loadbalancers, only: [:index, :show, :create, :destroy] do
+
       collection do
-        get 'pools' => 'listeners#pools'
+        get 'containers' => 'listeners#containers'
       end
 
       resources :l7policies, module: :listeners, only: [:index, :show, :create] do
@@ -22,6 +23,10 @@ Lbaas2::Engine.routes.draw do
     end
 
     resources :pools, module: :loadbalancers, only: [:index] do
+
+      collection do
+        get 'items_for_select' => 'pools#itemsForSelect'
+      end
 
       resources :healthmonitors, module: :pools, only: [:show] do
       end

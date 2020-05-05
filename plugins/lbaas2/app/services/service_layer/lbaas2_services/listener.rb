@@ -22,6 +22,13 @@ module ServiceLayer
         listener_map.call(attributes)
       end
 
+      ################# INTERFACE METHODS ######################
+      def create_listener(attributes)
+        elektron_lb2.post('listeners') do
+          { listener: attributes }
+        end.body['listener']
+      end
+
     end
   end
 end

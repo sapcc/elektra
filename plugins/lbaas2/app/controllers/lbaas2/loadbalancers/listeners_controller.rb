@@ -35,6 +35,22 @@ module Lbaas2
         render json: { errors: e.message }, status: "500"
       end   
 
+      def create
+        # add project id and filter params
+        newParams = parseListenerParams.merge(project_id: @scoped_project_id, loadbalancer_id: params[:loadbalancer_id])
+        listener = services.lbaas2.new_listener(newParams)
+        if listener.save
+          audit_logger.info(current_user, 'has created', listener)
+          render json: listener
+        else
+          render json: {errors: listener.errors}, status: 422
+        end
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
       def destroy
         listener = services.lbaas2.new_listener
         listener.id = params[:id]
@@ -51,13 +67,14 @@ module Lbaas2
         render json: { errors: e.message }, status: "500"
       end
 
-      def pools
-        pools = services.lbaas2.pools({ loadbalancer_id: params[:loadbalancer_id], sort_key: 'name', sort_dir: 'asc'})
-        select_pools = pools.map {|pool| {"label": "#{pool.name} (#{pool.id})", "value": pool.id}}
-
-        render json: { pools: select_pools }
-      rescue Elektron::Errors::ApiResponse => e
-        render json: { errors: e.message }, status: e.code
+      def containers
+        containers = services.key_manager.containers(limit: 100)
+        containers = {items: []} if containers.blank?
+        selectContainers = containers[:items].map { |c| {"label": c.name, "value": c.container_ref} }
+        
+        render json: {
+          containers: selectContainers
+        }
       rescue Exception => e
         render json: { errors: e.message }, status: "500"
       end
@@ -71,8 +88,21 @@ module Lbaas2
           listener.cached_l7policies = ObjectCache.where(id: listener.l7policies.map{|l| l[:id]}).each_with_object({}) do |l,map|
             map[l[:id]] = l
           end
-    
         end
+      end
+
+      def parseListenerParams()
+        listenerParams = params[:listener]
+        # clear array with empty objects because backend can't deal with it
+        listenerParams['sni_container_refs'].reject!(&:empty?) unless listenerParams['sni_container_refs'].blank?
+        # add boolean strings to the insert headers
+        insert_headers = listenerParams[:insert_headers] || []
+        octavia_headers = {}
+        insert_headers.each do |h|        
+          octavia_headers[h.to_sym] = "true"
+        end
+        listenerParams[:insert_headers] = octavia_headers
+        return listenerParams
       end
 
     end
