@@ -2,9 +2,11 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 
 import { confirm } from 'lib/dialogs';
+import { addSuccess } from 'lib/flashes';
 import { byteToHuman } from 'lib/tools/size_formatter';
 
 import RepositoryDeleter from '../../containers/repositories/deleter';
+import { makeGCNotice } from '../utils';
 
 const numberOfThings = (number, word) => (
   number == 1 ? `${number} ${word}` : `${number} ${word}s`
@@ -28,6 +30,7 @@ export default class RepositoryRow extends React.Component {
 
   handleDoneDeleting() {
     this.setState({ ...this.state, isDeleting: false });
+    addSuccess(makeGCNotice('Repository'));
   }
 
   render() {

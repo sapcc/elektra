@@ -27,6 +27,7 @@ createWidget(__dirname).then((widget) => {
     widget.config.scriptParams.hasCastellum = false;
   }
 
+  // cleanup 
   delete(widget.config.scriptParams.limesApi)
   delete(widget.config.scriptParams.castellumApi)
   delete(widget.config.scriptParams.token)
@@ -44,7 +45,8 @@ createWidget(__dirname).then((widget) => {
   delete(widget.config.scriptParams.app)
 
   //convert params from strings into the respective types
-  widget.config.scriptParams.flavorData = JSON.parse(widget.config.scriptParams.flavorData)
+  widget.config.scriptParams.flavorData = JSON.parse(widget.config.scriptParams.flavorData) 
+  widget.config.scriptParams.bigVmResources = JSON.parse(widget.config.scriptParams.bigVmResources)
   widget.config.scriptParams.canEdit = widget.config.scriptParams.canEdit == 'true';
   widget.config.scriptParams.isForeignScope = widget.config.scriptParams.isForeignScope == 'true';
 

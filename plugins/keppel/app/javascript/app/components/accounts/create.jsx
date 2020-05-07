@@ -1,25 +1,137 @@
 import { useContext } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
+import { Base64 } from 'js-base64';
 
-const initialValues = { name: '' };
+const initialValues = { role: '', name: '', token: '' };
 
-const BackingStoreInfo = (props) => {
-  const context = useContext(Form.Context);
-  const accountName = context.formValues.name || '';
-  if (!accountName) {
-    return <p className='form-control-static text-muted'>Depends on name</p>;
-  }
-
-  const containerName = `keppel-${accountName}`;
-  return (
-    <p className='form-control-static'>
-      Swift container <strong>{containerName}</strong><br/>
-      <span className='text-muted'>The container will be created if it does not exist yet. Please ensure that you have sufficient object storage quota.</span>
-    </p>
-  );
+const roleInfoTexts = {
+  'primary': "You can push images into this account. Accounts in other regions can replicate from this account.",
+  'replica': "This account replicates images from a primary account in a different region with the same name. You cannot push images into this account directly. Images are replicated on first use, when a client first tries to pull them.",
 };
 
+const decodeSubleaseToken = (token) => {
+  try {
+    const t = JSON.parse(Base64.decode(token));
+    if (t.account && t.primary && t.secret) {
+      return t;
+    } else {
+      return {}; //looks incomplete
+    }
+  } catch {
+    return {}; //looks broken
+  }
+};
+
+const isValidSubleaseToken = (token) => {
+  return (token.account && token.primary && token.secret) ? true : false;
+};
+
+const BackingStorageInfo = ({ accountName }) => (
+  <Form.ElementHorizontal label='Backing storage' name='backing_storage'>
+    <p className='form-control-static'>
+      Swift container <strong>keppel-{accountName}</strong><br/>
+      <span className='text-muted'>The container will be created if it does not exist yet. Please ensure that you have sufficient object storage quota.</span>
+    </p>
+  </Form.ElementHorizontal>
+);
+
+const FormBody = ({ values }) => {
+  const accountName  = values.name || '';
+  const roleInfoText = roleInfoTexts[values.role || ''];
+
+  const decodedToken = decodeSubleaseToken(values.token);
+  const {
+    account: accountNameFromToken,
+    primary: primaryHostNameFromToken,
+  } = decodedToken;
+  const isValidToken = isValidSubleaseToken(decodedToken);
+
+  return (
+    <Modal.Body>
+      <Form.Errors/>
+
+      <Form.ElementHorizontal label='Role' name='role' required>
+        <Form.Input elementType='select' name='role'>
+          {values.role ? null : <option value=''>-- Please select --</option>}
+          <option value='primary'>Primary account</option>
+          <option value='replica'>Replica account</option>
+        </Form.Input>
+        {roleInfoText && <p className='form-control-static'>{roleInfoText}</p>}
+      </Form.ElementHorizontal>
+
+      {values.role == 'primary' && (
+        <React.Fragment>
+
+          <Form.ElementHorizontal label='Name' name='name' required>
+            <Form.Input elementType='input' type='text' name='name' />
+          </Form.ElementHorizontal>
+
+          {accountName ? (
+            <React.Fragment>
+
+              <BackingStorageInfo accountName={accountName} />
+
+              <Form.ElementHorizontal label='Advanced' name='advanced'>
+                <p className='form-control-static text-muted'>
+                  You can set up access policies and validation rules after the account has been created.
+                </p>
+              </Form.ElementHorizontal>
+
+            </React.Fragment>
+          ) : null}
+
+        </React.Fragment>
+      )}
+
+      {values.role == 'replica' && (
+        <React.Fragment>
+
+          <Form.ElementHorizontal label='Sublease token' name='token' required>
+            <Form.Input elementType='input' type='text' name='token' />
+            {!isValidToken && <p className='form-control-static'>
+              If you do not have a sublease token yet, open the Converged
+              Cloud dashboard in the region hosting the primary account and
+              select "Issue Sublease Token" from the account's dropdown menu.
+            </p>}
+
+            {(values.token && !isValidToken) && <p className='form-control-static text-danger'>
+              This token does not look quite right. Try clearing the input field and pasting again.
+            </p>}
+          </Form.ElementHorizontal>
+
+          {isValidToken && (
+            <React.Fragment>
+
+              <Form.ElementHorizontal label='Name' name='name'>
+                <p className='form-control-static'>
+                  <strong>{accountNameFromToken}</strong>
+                </p>
+              </Form.ElementHorizontal>
+
+              <BackingStorageInfo accountName={accountNameFromToken} />
+
+              <Form.ElementHorizontal label='Primary account' name='primary'>
+                <p className='form-control-static'>
+                  This account will replicate from <strong>{primaryHostNameFromToken}/{accountNameFromToken}</strong>.
+                </p>
+              </Form.ElementHorizontal>
+
+              <Form.ElementHorizontal label='Advanced' name='advanced'>
+                <p className='form-control-static text-muted'>
+                  You can set up access policies after the account has been created.
+                </p>
+              </Form.ElementHorizontal>
+
+            </React.Fragment>
+          )}
+
+        </React.Fragment>
+      )}
+
+    </Modal.Body>
+  );
+};
 
 export default class AccountCreateModal extends React.Component {
   state = {
@@ -32,24 +144,53 @@ export default class AccountCreateModal extends React.Component {
     setTimeout(() => this.props.history.replace('/accounts'), 300);
   };
 
-  validate = ({name}) => {
-    return name && true;
+  validate = ({role, name, token}) => {
+    switch (role) {
+      case 'primary':
+        return name && true;
+      case 'replica':
+        return isValidSubleaseToken(decodeSubleaseToken(token));
+      default:
+        return false;
+    }
   };
 
-  onSubmit = ({name}) => {
-    const invalidName = reason => Promise.reject({ errors: { name: reason } });
-    if (/[^a-z0-9-]/.test(name)) {
-      return invalidName("may only contain lowercase letters, digits and dashes");
-    }
-    if (name.length > 48) {
-      return invalidName("must not be longer than 48 chars");
-    }
-    if (this.props.existingAccountNames.includes(name)) {
-      return invalidName("is already in use");
+  onSubmit = ({role, name, token}) => {
+    const invalid = (field, reason) => Promise.reject({ errors: { [field]: reason } });
+
+    const newAccount = { auth_tenant_id: this.props.projectID };
+    const reqHeaders = {};
+
+    switch (role) {
+      case 'primary':
+        newAccount.name = name;
+        break;
+
+      case 'replica':
+        const t = decodeSubleaseToken(token);
+        if (!isValidSubleaseToken(t)) {
+          return invalid("token", "is not valid");
+        }
+        newAccount.name = t.account;
+        newAccount.replication = { strategy: 'on_first_use', upstream: t.primary };
+        reqHeaders["X-Keppel-Sublease-Token"] = token;
+        break;
+
+      default:
+        return invalid("role", "is missing");
     }
 
-    const newAccount = { name, auth_tenant_id: this.props.projectID };
-    return this.props.putAccount(newAccount).then(() => this.close());
+    if (/[^a-z0-9-]/.test(newAccount.name)) {
+      return invalid("name", "may only contain lowercase letters, digits and dashes");
+    }
+    if (newAccount.name.length > 48) {
+      return invalid("name", "must not be longer than 48 chars");
+    }
+    if (this.props.existingAccountNames.includes(newAccount.name)) {
+      return invalid("name", "is already in use");
+    }
+
+    return this.props.putAccount(newAccount, reqHeaders).then(() => this.close());
   };
 
   render() {
@@ -66,16 +207,8 @@ export default class AccountCreateModal extends React.Component {
             validate={this.validate}
             onSubmit={this.onSubmit}
             initialValues={initialValues}>
-          <Modal.Body>
-            <Form.Errors/>
 
-            <Form.ElementHorizontal label='Name' name='name' required>
-              <Form.Input elementType='input' type='text' name='name' />
-            </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='Backing storage' name='backing_storage'>
-              <BackingStoreInfo/>
-            </Form.ElementHorizontal>
-          </Modal.Body>
+          <FormBody />
 
           <Modal.Footer>
             <Form.SubmitButton label='Create' />

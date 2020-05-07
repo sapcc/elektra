@@ -27,7 +27,7 @@
   "dns_service:recordset_update": "rule:context_is_master",
   "dns_service:recordset_delete": "rule:context_is_master",
 
-  "dns_service:pool_list": "rule:context_is_cloud_dns_admin",
+  "dns_service:pool_list": "rule:context_is_cloud_dns_admin or rule:context_is_dns_ops",
 
   "dns_service:transfer_request_create": "rule:context_is_zonemaster and project_id:%(zone.project_id)s",
   "dns_service:transfer_request_accept": "rule:context_is_master or project_id:%(request.project_id)s or %(request.project_id)s==nil",

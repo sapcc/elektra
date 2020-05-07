@@ -12,7 +12,7 @@ module Loadbalancing
       @loadbalancers = []
 
       @loadbalancers = paginatable(per_page: per_page) do |pagination_options|
-        services.loadbalancing.loadbalancers({tenant_id: @scoped_project_id, sort_key: 'id', fields: 'id'}.merge(pagination_options))
+        services.loadbalancing.loadbalancers({tenant_id: @scoped_project_id, sort_key: 'id'}.merge(pagination_options))
       end
 
       @fips = services.networking.project_floating_ips(@scoped_project_id)

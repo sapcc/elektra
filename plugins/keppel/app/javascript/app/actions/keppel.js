@@ -47,13 +47,13 @@ export const fetchAccountsIfNeeded = () => (dispatch, getState) => {
   return dispatch(fetchAccounts());
 };
 
-export const putAccount = account => dispatch => {
+export const putAccount = (account, requestHeaders = {}) => dispatch => {
   //request body contains account minus name
-  const { name, auth_tenant_id, rbac_policies } = account;
-  const requestBody = { account: { auth_tenant_id, rbac_policies } };
+  const { name, ...accountConfig } = account;
+  const requestBody = { account: accountConfig };
 
   return new Promise((resolve, reject) =>
-    ajaxHelper.put(`/keppel/v1/accounts/${name}`, requestBody)
+    ajaxHelper.put(`/keppel/v1/accounts/${name}`, requestBody, { headers: requestHeaders })
       .then(response => {
         const newAccount = response.data.account;
         dispatch({
@@ -63,6 +63,14 @@ export const putAccount = account => dispatch => {
         resolve(newAccount);
       })
       .catch(error => reject({ errors: errorMessage(error) }))
+  );
+};
+
+export const getAccountSubleaseToken = (accountName) => dispatch => {
+  return new Promise((resolve, reject) =>
+    ajaxHelper.post(`/keppel/v1/accounts/${accountName}/sublease`)
+      .then(response => resolve(response.data.sublease_token))
+      .catch(error => reject(errorMessage(error)))
   );
 };
 

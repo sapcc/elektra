@@ -277,7 +277,7 @@ class CacheController < ::ScopeController
   protected
 
   def where_current_token_scope(scope, enforce_scope = @enforce_scope)
-    return scope if !enforce_scope && current_user.is_allowed?('cloud_admin_or_support')
+    return scope if !enforce_scope && current_user.is_allowed?('cloud_admin_or_support_or_dns_ops')
 
     if current_user.project_id && params[:type] == 'project'
       scope = scope.where(id: current_user.project_id)

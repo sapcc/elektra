@@ -7,14 +7,14 @@ const permsOptions = [
   { value: 'delete', label: 'Delete' },
 ];
 
-const RBACPoliciesEditRow = ({ index, policy, isAdmin, setRepoRegex, setUserRegex, setPermissions, removePolicy }) => {
+const RBACPoliciesEditRow = ({ index, policy, isEditable, setRepoRegex, setUserRegex, setPermissions, removePolicy }) => {
   const { match_repository: repoRegex, match_username: userRegex } = policy;
   const currentPerms = policy.permissions.sort().join(',') || '';
   const currentPermsOption = permsOptions.find(o => o.value == currentPerms);
   return (
     <tr>
       <td>
-        {isAdmin ? (
+        {isEditable ? (
           <input type='text' value={repoRegex || ''}
             className='form-control'
             onChange={e => setRepoRegex(index, e.target.value)}
@@ -26,10 +26,11 @@ const RBACPoliciesEditRow = ({ index, policy, isAdmin, setRepoRegex, setUserRege
         )}
       </td>
       <td>
-        {isAdmin ? (
+        {isEditable ? (
           <input type='text' value={userRegex || ''}
             className='form-control'
             onChange={e => setUserRegex(index, e.target.value)}
+            disabled={currentPerms == 'anonymous_pull'}
           />
         ) : userRegex ? (
           <code>{userRegex}</code>
@@ -38,7 +39,7 @@ const RBACPoliciesEditRow = ({ index, policy, isAdmin, setRepoRegex, setUserRege
         )}
       </td>
       <td>
-        {isAdmin ? (
+        {isEditable ? (
           <select value={currentPerms} className='form-control select'
               onChange={e => setPermissions(index, e.target.value)}>
             {!currentPermsOption && (
@@ -53,7 +54,7 @@ const RBACPoliciesEditRow = ({ index, policy, isAdmin, setRepoRegex, setUserRege
         )}
       </td>
       <td>
-        {isAdmin && (
+        {isEditable && (
           <button className='btn btn-link' onClick={e => removePolicy(index)}>
             Remove
           </button>

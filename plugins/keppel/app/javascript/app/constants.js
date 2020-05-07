@@ -1,8 +1,11 @@
 export const REQUEST_ACCOUNTS         = 'keppel/REQUEST_ACCOUNTS';
 export const RECEIVE_ACCOUNTS         = 'keppel/RECEIVE_ACCOUNTS';
 export const REQUEST_ACCOUNTS_FAILURE = 'keppel/REQUEST_ACCOUNTS_FAILURE';
-
 export const UPDATE_ACCOUNT           = 'keppel/UPDATE_ACCOUNT';
+
+export const REQUEST_PEERS         = 'keppel/REQUEST_PEERS';
+export const RECEIVE_PEERS         = 'keppel/RECEIVE_PEERS';
+export const REQUEST_PEERS_FAILURE = 'keppel/REQUEST_PEERS_FAILURE';
 
 export const REQUEST_REPOSITORIES          = 'keppel/REQUEST_REPOSITORIES';
 export const RECEIVE_REPOSITORIES          = 'keppel/RECEIVE_REPOSITORIES';

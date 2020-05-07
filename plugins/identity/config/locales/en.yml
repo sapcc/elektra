@@ -48,4 +48,6 @@ en:
       volume_viewer: Cinder Read-Only
       securitygroup_viewer: Security Group Read-Only
       securitygroup_admin: Security Group Administrator
+      registry_viewer: Keppel Read-Only
+      registry_admin: Keppel Administrator
 

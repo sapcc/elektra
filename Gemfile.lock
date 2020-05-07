@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: c5b656f3ad7aa32cda2f3578e603700a7e037f93
-  tag: v2.2.0
+  revision: 01347fe32eb9b9680c9ec699fed17293aeed3d3b
+  tag: v2.2.1
   specs:
-    elektron (2.2.0)
+    elektron (2.2.1)
 
 GIT
   remote: https://github.com/sapcc/lyra-client.git
@@ -20,9 +20,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 4467cbc0720dcf617855e5778c577d272ab07028
+  revision: 94dd2678b729dbc0f03143e4bff732ab5897f7d2
   specs:
-    monsoon-openstack-auth (2.0.4)
+    monsoon-openstack-auth (2.0.5)
       excon
       hashie
       rails
@@ -314,7 +314,7 @@ GEM
     equalizer (0.0.11)
     erubi (1.9.0)
     erubis (2.7.0)
-    excon (0.62.0)
+    excon (0.72.0)
     execjs (2.7.0)
     factory_girl (4.8.0)
       activesupport (>= 3.0.0)
@@ -356,7 +356,7 @@ GEM
       haml (>= 4.0.6, < 6.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
-    hashie (3.6.0)
+    hashie (4.1.0)
     high_voltage (3.0.0)
     html2haml (2.2.0)
       erubis (~> 2.7.0)
@@ -437,7 +437,7 @@ GEM
     pry-rails (0.3.6)
       pry (>= 0.10.4)
     public_suffix (3.0.3)
-    puma (3.12.2)
+    puma (3.12.4)
     quantile (0.2.1)
     rack (2.0.7)
     rack-proxy (0.6.5)
@@ -636,7 +636,7 @@ DEPENDENCIES
   poltergeist
   prometheus-client
   pry-rails
-  puma (= 3.12.2)
+  puma (= 3.12.4)
   rails (~> 5.2.3)
   rails-controller-testing
   rails_stdout_logging

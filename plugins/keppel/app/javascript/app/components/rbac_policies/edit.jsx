@@ -47,6 +47,9 @@ export default class RBACPoliciesEditModal extends React.Component {
   setPermissions = (idx, input) => {
     const policies = [ ...this.state.policies ];
     policies[idx] = { ...policies[idx], permissions: input.split(',') };
+    if (input == 'anonymous_pull') {
+      policies[idx].match_username = '';
+    }
     this.setState({ ...this.state, policies });
   }
   removePolicy = (idx, input) => {
@@ -88,12 +91,13 @@ export default class RBACPoliciesEditModal extends React.Component {
     if (!account) {
       return;
     }
+    const isEditable = isAdmin && (account.metadata || {}).readonly_in_elektra != 'true';
 
     const policies = this.state.policies || [];
     const { isSubmitting, errorMessage, apiErrors } = this.state;
 
     const { setRepoRegex, setUserRegex, setPermissions, removePolicy } = this;
-    const commonPropsForRow = { isAdmin, setRepoRegex, setUserRegex, setPermissions, removePolicy };
+    const commonPropsForRow = { isEditable, setRepoRegex, setUserRegex, setPermissions, removePolicy };
 
     return (
       <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
@@ -104,49 +108,57 @@ export default class RBACPoliciesEditModal extends React.Component {
         </Modal.Header>
 
         <Modal.Body>
-          <React.Fragment>
-            {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
-            <table className='table'>
-              <thead>
+          {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
+          <p className='bs-callout bs-callout-info bs-callout-emphasize'>
+            By default, all users with the <code>registry_admin</code> role can pull, push and delete images. And all users with the <code>registry_viewer</code> role can pull images.
+            <br/><br/>
+            Access policies are more granular: You can give specific users access to specific repositories within a single account if you want to. You can also use access policies to enable anonymous pulling, thereby making matching repositories publicly readable.
+          </p>
+          {isAdmin && !isEditable && (
+            <p className='bs-callout bs-callout-warning bs-callout-emphasize'>
+              The configuration for this account is read-only in this UI, probably because it was deployed by an automated process.
+            </p>
+          )}
+          <table className='table'>
+            <thead>
+              <tr>
+                <th className='col-md-4'>Repositories matching</th>
+                <th className='col-md-4'>User names matching</th>
+                <th className='col-md-3'>Permissions</th>
+                <th className='col-md-1'>
+                  {isEditable && (
+                    <button className='btn btn-sm btn-default' onClick={this.addPolicy}>
+                      Add policy
+                    </button>
+                  )}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {policies.map((policy, idx) => (
+                <RBACPoliciesEditRow {...commonPropsForRow}
+                  key={idx} index={idx} policy={policy}
+                />
+              ))}
+              { policies.length == 0 && (
                 <tr>
-                  <th className='col-md-4'>Repositories matching</th>
-                  <th className='col-md-4'>User names matching</th>
-                  <th className='col-md-3'>Permissions</th>
-                  <th className='col-md-1'>
-                    {isAdmin && (
-                      <button className='btn btn-sm btn-default' onClick={this.addPolicy}>
-                        Add policy
-                      </button>
-                    )}
-                  </th>
+                  <td colSpan='4' className='text-muted text-center'>No entries</td>
                 </tr>
-              </thead>
-              <tbody>
-                {policies.map((policy, idx) => (
-                  <RBACPoliciesEditRow {...commonPropsForRow}
-                    key={idx} index={idx} policy={policy}
-                  />
-                ))}
-                { policies.length == 0 && (
-                  <tr>
-                    <td colSpan='4' className='text-muted text-center'>No entries</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            {policies.length > 0 && (
-              <p>
-                Matches use the <a href='https://golang.org/pkg/regexp/syntax/'>Go regex syntax</a>. Leading <code>^</code> and trailing <code>$</code> anchors are always added automatically. User names are in the format <code>user@userdomain/project@projectdomain</code>.
-              </p>
-            )}
-          </React.Fragment>
+              )}
+            </tbody>
+          </table>
+          {policies.length > 0 && (
+            <p>
+              Matches use the <a href='https://golang.org/pkg/regexp/syntax/'>Go regex syntax</a>. Leading <code>^</code> and trailing <code>$</code> anchors are always added automatically. User names are in the format <code>user@userdomain/project@projectdomain</code>.
+            </p>
+          )}
         </Modal.Body>
 
         <Modal.Footer>
-          {isAdmin ? (
+          {isEditable ? (
             <React.Fragment>
               <Button onClick={this.handleSubmit} bsStyle='primary'
-                  disabled={isSubmitting || !isAdmin}>
+                  disabled={isSubmitting || !isEditable}>
                 {isSubmitting ? 'Saving...' : 'Save'}
               </Button>
               <Button onClick={this.close}>Cancel</Button>

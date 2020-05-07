@@ -215,7 +215,7 @@ export class DataTable extends React.Component {
 
     return (
       <React.Fragment>
-        <table className='table elektraDataTable'>
+        <table className={`table elektraDataTable ${this.props.className || ''}`}>
           <thead>
             <tr>{this.props.columns.map((column, idx) => this.renderColumnHeader(column, idx, isEmpty))}</tr>
           </thead>

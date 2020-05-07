@@ -19,7 +19,7 @@ module Loadbalancing
         loadbalancer_id = params[:loadbalancer_id]
 
         @listeners = paginatable(per_page: per_page) do |pagination_options|
-          services.loadbalancing.listeners({loadbalancer_id: loadbalancer_id, sort_key: 'id', fields: 'id'}.merge(pagination_options))
+          services.loadbalancing.listeners({loadbalancer_id: loadbalancer_id, sort_key: 'id'}.merge(pagination_options))
         end
 
         # this is relevant in case an ajax paginate call is made.
