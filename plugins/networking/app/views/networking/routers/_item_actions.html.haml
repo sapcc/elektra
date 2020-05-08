@@ -5,11 +5,10 @@
 
   %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
     - if current_user.is_allowed?("networking:router_get", router: router)
-      %li= link_to 'Show', plugin('networking').router_path(id: router.id), data: { modal: true}
       %li= link_to 'Topology', plugin('networking').router_topology_path(router_id: router.id), data: { modal: true }
 
     - if current_user.is_allowed?("networking:router_update", router: router)
       %li.divider
-      %li= link_to 'Edit', plugin('networking').edit_router_path(id: router.id), data: { modal: true }
+      %li= link_to 'Edit', plugin('networking').edit_router_path(id: router.id, action_from_show: show_view), data: { modal: true }
     - if current_user.is_allowed?("networking:router_delete", router: router )
-      %li= link_to 'Delete', plugin('networking').router_path(id: router.id), method: :delete, data: { confirm: 'Are you sure you want to delete this router?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
+      %li= link_to 'Delete', plugin('networking').router_path(id: router.id, action_from_show: show_view), method: :delete, data: { confirm: 'Are you sure you want to delete this router?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true

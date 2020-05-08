@@ -5,6 +5,8 @@
       %p.alert.alert-error
         = @router.errors.full_messages.to_sentence + '.'
 
+    = f.input :action_from_show, :as => :hidden, :input_html => { :value => @action_from_show }
+    
     = f.input :name
 
     = f.simple_fields_for :external_gateway_info do |info|
