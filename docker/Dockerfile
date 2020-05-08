@@ -79,6 +79,7 @@ RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
+LABEL source_repository="https://github.com/sapcc/elektra"
 
 FROM elektra AS tests
 RUN apk add --no-cache postgresql bash
