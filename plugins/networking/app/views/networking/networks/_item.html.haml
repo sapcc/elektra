@@ -25,28 +25,4 @@
   %td= network.admin_state_up==true ? 'UP' : 'DOWN'
 
   %td.snug
-    - if current_user.is_allowed?("networking:network_#{@network_type}_delete", network: network) or current_user.is_allowed?("networking:network_#{@network_type}_update", network: network) or current_user.is_allowed?("networking:rbac_policy_list", network: network)
-      .btn-group
-        %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
-          %span.fa.fa-cog
-          -# %span.spinner
-
-        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - added = false
-          - if current_user.is_allowed?("networking:network_#{@network_type}_update", network: network)
-            %li= link_to 'Edit', plugin('networking').send("edit_networks_#{@network_type}_path", network.id), data: {modal: true}
-            %li= link_to 'Manage Subnets', plugin('networking').networks_manage_subnets_path(network.id), data: {modal: true}
-            - added = true
-          - if current_user.is_allowed?("networking:network_get:dhcp_agents", network: network)
-            %li= link_to 'Manage DHCP Agents', plugin('networking').send("networks_#{@network_type}_dhcp_agents_path", network.id), data: {modal: true}
-            - added = true
-          - if current_user.is_allowed?("networking:rbac_policy_list", network: network)
-            %li= link_to 'Access Control', plugin('networking').send("networks_#{@network_type}_access_index_path", network.id), data: {modal: true}
-            - added = true
-          - if current_user.is_allowed?("networking:network_#{@network_type}_delete", network: network)
-            %li.divider if added
-            %li= link_to 'Delete',
-            plugin('networking').send("networks_#{@network_type}_path", network.id),
-            method: :delete,
-            data: { confirm: 'Are you sure you want to delete this network?', ok: "Yes, delete it", confirmed: :loading_status},
-            remote: true
+    = render partial: 'item_actions', locals: {network:network,show_view:false}
