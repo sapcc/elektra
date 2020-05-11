@@ -9,8 +9,8 @@
   "image:image_is_shared": "'shared'==%(image.visibility)s",
   "image:image_is_community": "'community'==%(image.visibility)s",
 
-  "image:image_get": "role:admin or role:Member or role:member or rule:image_viewer or rule:image_admin",
-  "image:image_list": "role:admin or role:Member or role:member or rule:image_viewer or rule:image_admin",
+  "image:image_get": "role:admin or rule:image_viewer or rule:image_admin",
+  "image:image_list": "role:admin or rule:image_viewer or rule:image_admin",
   "image:image_create": "role:admin or rule:image_admin",
   "image:image_update": "role:admin or user_id:%(image.user_id)s or rule:image_admin",
   "image:image_delete": "project_id:%(image.owner)s or rule:image_admin",
