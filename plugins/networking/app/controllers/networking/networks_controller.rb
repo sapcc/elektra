@@ -102,14 +102,18 @@ module Networking
     end
 
     def update
-      @action_from_show = params[:router].delete(:action_from_show) == 'true' || false
+      @action_from_show = params[:network].delete(:action_from_show) == 'true' || false
       @network = services.networking.new_network(params[:network])
       @network.id = params[:id]
 
       if @network.save
         flash[:notice] = 'Network successfully updated.'
         audit_logger.info(current_user, 'has updated', @network)
-        redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
+        if @action_from_show
+          redirect_to plugin('networking').send("networks_#{@network_type}_path", @network.id)
+        else
+          redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
+        end
       else
         render action: :edit
       end

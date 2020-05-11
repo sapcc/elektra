@@ -8,6 +8,8 @@ html: { data: { modal: true } } do |f|
     - unless @network.errors["message"].blank?
       %p.alert.alert-error= @network.errors.full_messages.to_sentence
 
+    = f.input :action_from_show, :as => :hidden, :input_html => { :value => @action_from_show }
+
     %fieldset
       = f.input :name, { label: "Network Name" }
       = f.input :admin_state_up, { label: "Admin State",
