@@ -75,15 +75,14 @@ module DnsService
       end
 
       def destroy
-        @action_from_show = params[:action_from_show] || 'false'
+        @action_from_show = params[:action_from_show] == 'true' || false
+
         @deleted = services.dns_service.delete_recordset(
           params[:zone_id], params[:id], all_projects: @all_projects
         )
 
-        if @action_from_show
-          @zone_id = params[:zone_id]
-        end
-        
+        @zone_id = params[:zone_id] if @action_from_show
+
         respond_to do |format|
           format.js {}
           format.html do
