@@ -8,6 +8,7 @@ const columns = [
   { key: 'name', label: 'Global account name', sortStrategy: 'text',
     sortKey: props => props.account.name || '' },
   { key: 'config', label: 'Configuration' },
+  { key: 'status', label: 'Status' },
   { key: 'actions', label: '' },
 ];
 
