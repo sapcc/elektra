@@ -70,7 +70,7 @@ export default class ProjectResource extends React.Component {
         <div className={isEditing ? 'col-md-4' : 'col-md-5'}>
           <ResourceBar
             capacity={quota} fill={usage} unitName={unitName}
-            isDanger={isDanger} scopeData={this.props.scopeData} />
+            isDanger={isDanger} showsCapacity={false} />
         </div>
         {isEditing
           ? <ResourceEditor {...editorProps} />

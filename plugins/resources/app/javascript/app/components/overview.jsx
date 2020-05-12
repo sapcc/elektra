@@ -5,46 +5,47 @@ import { Scope } from '../scope';
 import { byUIString, byNameIn, t } from '../utils';
 import Category from '../containers/category';
 import AutoscalingTabs from './autoscaling/tabs';
+import AvailabilityZoneOverview from '../containers/availability_zones/overview';
+import Inconsistencies from '../containers/inconsistencies';
 import ProjectSyncAction from '../components/project/sync_action';
+import AvailableBigVmResources from './availability_zones/big_vm_resources'
 
 export default class Overview extends React.Component {
-  state = {
-    currentArea: null,
+  componentDidMount() {
+    this.initCurrentArea(this.props);
   }
-
-  changeArea = (area) => {
-    this.setState({...this.state, currentArea: area});
+  componentWillReceiveProps(nextProps) {
+    this.initCurrentArea(nextProps);
   }
-
-  renderNavbar(currentArea, canEdit, canAutoscale, scope) {
-    const tabs = Object.keys(this.props.overview.areas).sort(byUIString);
-    if (canAutoscale) {
-      tabs.push('autoscaling');
+  initCurrentArea(props) {
+    //set hash route to first tab on startup
+    const { currentArea } = props.match.params;
+    const allAreas = this.getAllAreaNames(props);
+    if (!currentArea || !allAreas.includes(currentArea)) {
+      props.history.replace(`/${allAreas[0]}`);
     }
-    return (
-      <nav className='nav-with-buttons'>
-        <ul className='nav nav-tabs'>
-          { tabs.map(area => (
-            <li key={area} role="presentation" className={currentArea == area ? "active" : ""}>
-              <a href="#" onClick={(e) => { e.preventDefault(); this.changeArea(area); }}>
-                {t(area)}
-              </a>
-            </li>
-          ))}
-        </ul>
-        {canEdit && scope.isProject() && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
-          <Link to={`/settings`} className='btn btn-primary btn-sm'>Settings</Link>
-        </div>}
-      </nav>
-    );
   }
 
-  renderCurrentArea() {
+  getAllAreaNames(props) {
+    const areas = Object.keys(props.overview.areas).sort(byUIString);
+    areas.push('availability_zones');
+
+    const { canAutoscale, scopeData } = props;
+    if (canAutoscale) {
+      areas.push('autoscaling');
+    }
+    const scope = new Scope(scopeData);
+    if (scope.isCluster()) {
+      areas.push('inconsistencies');
+    }
+    return areas;
+  }
+
+  renderArea(currentArea) {
     const props = this.props;
     const scope = new Scope(props.scopeData);
 
     const { areas, categories, scrapedAt, minScrapedAt, maxScrapedAt } = props.overview;
-    const currentArea = this.state.currentArea || Object.keys(areas).sort()[0];
     const currentServices = areas[currentArea];
 
     const currMinScrapedAt = currentServices
@@ -69,7 +70,6 @@ export default class Overview extends React.Component {
 
     return (
       <React.Fragment>
-        {this.renderNavbar(currentArea, props.canEdit, props.canAutoscale, scope)}
         {currentServices.sort(byUIString).map(serviceType => (
           <React.Fragment key={serviceType}>
             {categories[serviceType].sort(byNameIn(serviceType)).map(categoryName => (
@@ -88,23 +88,68 @@ export default class Overview extends React.Component {
     );
   }
 
-  renderAutoscalingTab() {
-    const props = this.props;
-    const scope = new Scope(props.scopeData);
+  renderAvailabilityZoneTab() {
+    const { scopeData, flavorData } = this.props;
+    const { bigVmResources } = this.props;
     return (
-      <React.Fragment>
-        {this.renderNavbar('autoscaling', props.canEdit, props.canAutoscale, scope)}
-        <AutoscalingTabs scopeData={props.scopeData} canEdit={props.canEdit} />
-      </React.Fragment>
+      <div>
+        <AvailabilityZoneOverview flavorData={flavorData} scopeData={scopeData} />
+        <AvailableBigVmResources bigVmResources={bigVmResources} />
+      </div>
     );
   }
 
+  renderAutoscalingTab() {
+    const { scopeData, canEdit } = this.props;
+    return <AutoscalingTabs scopeData={scopeData} canEdit={canEdit} />;
+  }
+
+  renderInconsistenciesTab() {
+    return <Inconsistencies/>;
+  }
+
   render() {
-    switch (this.state.currentArea) {
-      case 'autoscaling':
-        return this.renderAutoscalingTab();
-      default:
-        return this.renderCurrentArea();
+    const allAreas = this.getAllAreaNames(this.props);
+    let currentArea = this.props.match.params.currentArea;
+    if (!currentArea || !allAreas.includes(currentArea)) {
+      currentArea = allAreas[0];
     }
+
+    const { canEdit, canAutoscale, scopeData } = this.props;
+    const scope = new Scope(scopeData);
+
+    let currentTab;
+    switch (currentArea) {
+      case 'availability_zones':
+        currentTab = this.renderAvailabilityZoneTab();
+        break;
+      case 'autoscaling':
+        currentTab = this.renderAutoscalingTab();
+        break;
+      case 'inconsistencies':
+        currentTab = this.renderInconsistenciesTab();
+        break;
+      default:
+        currentTab = this.renderArea(currentArea);
+        break;
+    }
+
+    return (
+      <React.Fragment>
+        <nav className='nav-with-buttons'>
+          <ul className='nav nav-tabs'>
+            { allAreas.map(area => (
+              <li key={area} role="presentation" className={currentArea == area ? "active" : ""}>
+                <Link to={`/${area}`}>{t(area)}</Link>
+              </li>
+            ))}
+          </ul>
+          {canEdit && scope.isProject() && this.props.metadata.bursting !== null && <div className='nav-main-buttons'>
+            <Link to={`/${currentArea}/settings`} className='btn btn-primary btn-sm'>Settings</Link>
+          </div>}
+        </nav>
+        {currentTab}
+      </React.Fragment>
+    );
   }
 }

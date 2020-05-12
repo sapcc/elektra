@@ -33,7 +33,7 @@ export default class SecurityServiceList extends React.Component {
     if (this.props.active) { return this.props.loadSecurityServicesOnce(); }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.active) { return this.props.loadSecurityServicesOnce(); }
   }
 

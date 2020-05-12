@@ -22,48 +22,61 @@ const initialState = {
     receivedAt: null,
     isFetching: false,
   },
+
+  capacityData: {
+    //data from Limes
+    metadata: null,
+    overview: null,
+    categories: null,
+    availabilityZones: null,
+    //UI state
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+  },
+
+  inconsistencyData: {
+    //data from Limes
+    data: null,
+    //UI state
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+  },
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// get quota/usage data
+// helper for reducers that need to restructure a Limes JSON into a triplet of
+// (metadata, overview, categories)
 
-const request = (state, {requestedAt}) => ({
-  ...state,
-  isFetching: true,
-  isIncomplete: false,
-  requestedAt,
-});
-
-const requestFailure = (state, action) => ({
-  ...state,
-  isFetching: false,
-  syncStatus: null,
-});
-
-const receive = (state, {data, receivedAt}) => {
-  // This reducer takes the `data` returned by Limes and flattens it
-  // into several structures that reflect the different levels of React
-  // components.
-
-  // validation: check that each service has resources (we might see missing
-  // resources immediately after project creation, before Limes has completed
-  // the initial scrape of all project services)
-  if (data.services.some(srv => (srv.resources || []).length == 0)) {
-    return {
-      ...state,
-      receivedAt,
-      isFetching: false,
-      isIncomplete: true,
-    };
-  }
+const restructureReport = (data, resourceFilter = null) => {
+  // This reducer helper takes the `data` returned by Limes under any GET
+  // endpoint and flattens it into several structures that reflect the
+  // different levels of React components.
+  //
+  // Note that the outermost level of the JSON (containing only the key
+  // "cluster", "domain" or "project") has already been removed in the
+  // fetchData/fetchCapacity action.
+  //
+  // If `resourceFilter` is given, only resources matching this attribute are
+  // included in the final result. (Services and categories without any
+  // matching resources are removed from the result.)
 
   // `metadata` is what multiple levels need (e.g. bursting multiplier).
   var {services: serviceList, ...metadata} = data;
 
+  //apply `resourceFilter`
+  if (resourceFilter !== null) {
+    serviceList = serviceList.map(srv => ({
+      ...srv,
+      resources: srv.resources.filter(resourceFilter),
+    })).filter(srv => srv.resources.length > 0);
+  }
+
   // `categories` is what the Category component needs.
   const categories = {};
   for (let srv of serviceList) {
-    var {resources: resourceList, type: serviceType, ...serviceData} = srv;
+    const {resources: resourceList, type: serviceType, ...serviceData} = srv;
 
     for (let res of resourceList) {
       categories[res.category || serviceType] = {
@@ -81,8 +94,8 @@ const receive = (state, {data, receivedAt}) => {
   // object just like Object.fromEntries(), but allows duplicate keys by
   // producing arrays of values
   // 
-  // e.g. groupKeys(["foo", 1], ["foo", 2], ["foo", 3])
-  //      = { foo: [1, 3], bar: 2 }
+  // e.g. groupKeys(["foo", 1], ["bar", 2], ["foo", 3])
+  //      = { foo: [1, 3], bar: [2] }
   const groupKeys = (entries) => {
     const result = {};
     for (let [k, v] of entries) { result[k] = []; }
@@ -107,16 +120,131 @@ const receive = (state, {data, receivedAt}) => {
     categories: groupKeys(Object.entries(categories).map(([ catName, cat ]) => [ cat.serviceType, catName ])),
   };
 
+  return { metadata, categories, overview };
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// get quota/usage data
+
+const request = (state, {requestedAt}) => ({
+  ...state,
+  isFetching: true,
+  isIncomplete: false,
+  requestedAt,
+});
+
+const requestFailure = (state, action) => ({
+  ...state,
+  isFetching: false,
+  syncStatus: null,
+});
+
+const receive = (state, {data, receivedAt}) => {
+  // validation: check that each service has resources (we might see missing
+  // resources immediately after project creation, before Limes has completed
+  // the initial scrape of all project services)
+  if (data.services.some(srv => (srv.resources || []).length == 0)) {
+    return {
+      ...state,
+      receivedAt,
+      isFetching: false,
+      isIncomplete: true,
+    };
+  }
+
   return {
     ...state,
-    metadata: metadata,
-    overview: overview,
-    categories: categories,
+    ...restructureReport(data),
     isFetching: false,
     syncStatus: null,
     receivedAt,
   };
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// get capacity data for the cluster level
+
+const requestCapacity = (state, {requestedAt}) => ({
+  ...state,
+  capacityData: {
+    ...initialState.capacityData,
+    isFetching: true,
+    requestedAt,
+  },
+});
+
+const requestCapacityFailure = (state, action) => ({
+  ...state,
+  capacityData: {
+    ...state.capacityData,
+    isFetching: false,
+  },
+});
+
+const receiveCapacity = (state, { data, receivedAt }) => {
+  const resourceFilter = res => {
+    //skip sharev2/share_snapshots and sharev2/shares: Limes cannot
+    //report usage for those, which makes them useless for the AZ overview UI
+    if (res.name == 'shares' || res.name == 'share_snapshots') {
+      return false;
+    }
+    return res.per_availability_zone !== undefined;
+  };
+  const { metadata, categories, overview } = restructureReport(data, resourceFilter);
+
+  //The AvailabilityZoneCategory component needs a list of all AZs to render
+  //the AZ table consistently across all categories.
+  const availabilityZones = {};
+  for (const categoryName in categories) {
+    for (const resource of categories[categoryName].resources) {
+      for (const azCapacity of resource.per_availability_zone) {
+        availabilityZones[azCapacity.name] = true;
+      }
+    }
+  }
+
+  return {
+    ...state,
+    capacityData: {
+      ...state.capacityData,
+      metadata, categories, overview,
+      availabilityZones: Object.keys(availabilityZones).sort(),
+      isFetching: false,
+      receivedAt,
+    },
+  };
+
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// get inconsistency data
+
+const requestInconsistencies = (state, {requestedAt}) => ({
+  ...state,
+  inconsistencyData: {
+    ...initialState.inconsistencyData,
+    isFetching: true,
+    requestedAt,
+  },
+});
+
+const requestInconsistenciesFailure = (state, action) => ({
+  ...state,
+  inconsistencyData: {
+    ...state.inconsistencyData,
+    isFetching: false,
+  },
+});
+
+const receiveInconsistencies = (state, { data, receivedAt }) => ({
+  ...state,
+  inconsistencyData: {
+    ...state.inconsistencyData,
+    data,
+    isFetching: false,
+    receivedAt,
+  },
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // discover autoscalable subscopes
@@ -169,6 +297,12 @@ export const limes = (state, action) => {
     case constants.REQUEST_DATA:         return request(state, action);
     case constants.REQUEST_DATA_FAILURE: return requestFailure(state, action);
     case constants.RECEIVE_DATA:         return receive(state, action);
+    case constants.REQUEST_CAPACITY:         return requestCapacity(state, action);
+    case constants.REQUEST_CAPACITY_FAILURE: return requestCapacityFailure(state, action);
+    case constants.RECEIVE_CAPACITY:         return receiveCapacity(state, action);
+    case constants.REQUEST_INCONSISTENCIES:         return requestInconsistencies(state, action);
+    case constants.REQUEST_INCONSISTENCIES_FAILURE: return requestInconsistenciesFailure(state, action);
+    case constants.RECEIVE_INCONSISTENCIES:         return receiveInconsistencies(state, action);
     case constants.SYNC_PROJECT_REQUESTED:  return setSyncStatus(state, 'requested');
     case constants.SYNC_PROJECT_FAILURE:    return setSyncStatus(state, null);
     case constants.SYNC_PROJECT_STARTED:    return setSyncStatus(state, 'started');

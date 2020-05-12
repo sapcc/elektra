@@ -17,7 +17,7 @@ module Loadbalancing
 
           @l7policies = []
           @l7policies = paginatable(per_page: per_page) do |pagination_options|
-            services.loadbalancing.l7policies({loadbalancer_id: params[:loadbalancer_id], listener_id: params[:listener_id],
+            services.loadbalancing.l7policies({listener_id: params[:listener_id],
                                                sort_key: 'position', sort_dir: 'asc'}.merge(pagination_options))
           end
           @pre_polices = get_unused_predefined_policies
@@ -101,7 +101,7 @@ module Loadbalancing
 
         def get_unused_predefined_policies
           @policies = Loadbalancing::L7policy.predefined(@listener.protocol )
-          used = services.loadbalancing.l7policies({loadbalancer_id: @loadbalancer.id, listener_id: @listener.id})
+          used = services.loadbalancing.l7policies({listener_id: @listener.id})
           pre_polices = []
           @policies.each do |p|
             p[:ids].each do |id|

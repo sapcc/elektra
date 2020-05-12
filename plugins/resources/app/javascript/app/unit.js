@@ -1,4 +1,4 @@
-import { objectFromEntries } from './polyfill';
+import { arrayFlatMap, objectFromEntries } from './polyfill';
 
 const bases = {
   '':  { scale: 'none' }, // countable things
@@ -16,7 +16,7 @@ const scales = {
 };
 
 const units = objectFromEntries(
-  Object.entries(bases).flatMap(([base, props]) =>
+  arrayFlatMap(Object.entries(bases), ([base, props]) =>
     scales[props.scale].prefixes.map((prefix, idx) => [
       prefix + base,
       { base, steps: idx },

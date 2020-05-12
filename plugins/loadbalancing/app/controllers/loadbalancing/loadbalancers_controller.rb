@@ -12,7 +12,7 @@ module Loadbalancing
       @loadbalancers = []
 
       @loadbalancers = paginatable(per_page: per_page) do |pagination_options|
-        services.loadbalancing.loadbalancers({tenant_id: @scoped_project_id, sort_key: 'id', fields: 'id'}.merge(pagination_options))
+        services.loadbalancing.loadbalancers({tenant_id: @scoped_project_id, sort_key: 'id'}.merge(pagination_options))
       end
 
       @fips = services.networking.project_floating_ips(@scoped_project_id)
@@ -52,6 +52,11 @@ module Loadbalancing
       )
 
       @hosting_agent_name = hosting_agent ? hosting_agent.host : nil
+
+      ports   = services.networking.ports(project_id: @scoped_project_id, device_owner: 'network:f5lbaasv2')
+      self_ip_ports = ports.map{|p| p if !p.name.blank? and p.name.start_with?('local')}.compact
+      @self_ips = self_ip_ports.map{|p| p.fixed_ips[0]['ip_address']}.join(' | ')
+
     end
 
     # Get statuses object for one loadbalancer
@@ -258,9 +263,9 @@ module Loadbalancing
               subnets[subid] = services.networking.find_subnet(subid)
             end
             sub = subnets[subid]
-            cidr = NetAddr::CIDR.create(sub.cidr)
-
-            next unless cidr.contains?(fip.floating_ip_address)
+            cidr = NetAddr.parse_net(sub.cidr)
+            next unless cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
+            
             @grouped_fips[sub.name] ||= []
             @grouped_fips[sub.name] << [fip.floating_ip_address, fip.id]
             break

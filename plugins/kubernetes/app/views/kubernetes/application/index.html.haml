@@ -23,7 +23,11 @@
     = link_to 'Read more about Kubernetes as a Service in our documentation', "#{sap_url_for('documentation')}docs/containers/kubernetes/", target: '_blank'
 
 - if current_user.is_allowed?('kubernetes:application_list')
-  = react_component 'kubernetes.AppProvider', permissions: {}, token: current_user.token, kubernikusBaseUrl: @kubernikus_endpoint
+  - unless @kubernikus_endpoint.blank?
+    = react_component 'kubernetes.AppProvider', permissions: {}, token: current_user.token, kubernikusBaseUrl: @kubernikus_endpoint
+  - else
+    .alert.alert-warning
+      We seem to have misplaced the Kubernetes service connection at the moment. This might be a temporary issue but if it persists don't hesitate to contact us so we can send our minions out to find it again.
 - else
   %section
     .row

@@ -9,7 +9,8 @@ module DnsService
     validates :email,
       presence: { message: 'Please provide an email' },
       format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "Please use a valid email address" }
-    validate :fqdn_check
+    # disabled because it is not working correctly
+    # validate :fqdn_check
 
     def subdomain?
       domain_type == 'subdomain'

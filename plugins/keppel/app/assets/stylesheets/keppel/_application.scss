@@ -20,3 +20,56 @@
   ***************************************************
 
 */
+
+ol.breadcrumb > li.help-link {
+  float: right;
+
+  // do not use breadcrumb separator
+  &:before {
+    display: none;
+  }
+}
+
+ol.howto {
+  margin-bottom: 0;
+
+  & > li {
+    &:not(:last-child) {
+      margin-bottom: 20px;
+    }
+
+    & > pre {
+      margin-top: 10px; // like margin-bottom
+    }
+  }
+}
+
+.shortened-digest {
+  position: relative;
+
+  //enforce predictable height (with display:inline, element may vary in height
+  //based on which chars appear in it)
+  display: inline-block;
+
+  & > .full-digest {
+    display: none;
+  }
+
+  &:hover > .full-digest {
+    display: block;
+    position: absolute;
+    top: -4px;
+    left: -8px;
+    border-radius: 4px;
+    padding: 4px 8px;
+    background: #F5F5F5;
+
+    & > span.digest-actions > button:disabled {
+      cursor: pointer !important;
+    }
+  }
+}
+
+pre.sublease-token > code {
+  font-size: 150%;
+}

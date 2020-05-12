@@ -1,0 +1,31 @@
+.infobox{data: {update_path: plugin('lbaas').update_status_loadbalancer_path(id: loadbalancer.id, format: :js), update_interval: Lbaas::STATE_UPDATE_INTERVAL, update_immediately: 'true'}}
+  %h4.action-heading
+    Loadbalancer Info
+  %table.table
+    %tbody
+      %tr
+        %th
+          States:
+        %td
+          %label{class: 'spinner', data: {op_status: "#{loadbalancer.id}"}}
+          %label{class: 'spinner', data: {prov_status: "#{loadbalancer.id}"}}
+      %tr
+        %th.snug-nowrap
+          Name/ID:
+        %td
+          = name_or_id(loadbalancer.name,loadbalancer.id,18)
+      %tr
+        %th.snug-nowrap
+          Description:
+        %td
+          = description(loadbalancer.description,18)
+      %tr
+        %th.snug-nowrap
+          ID:
+        %td.small
+          = loadbalancer.id
+      %tr
+        %th.snug-nowrap
+          IP Address:
+        %td
+          = loadbalancer.vip_address

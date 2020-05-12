@@ -1,0 +1,7 @@
+%fieldset
+  = f.input :address, disabled: true
+  = f.input :protocol_port, readonly: true
+  = f.input :weight, { readonly: !update,
+                              label: 'Weight',
+                              hint: 'A weight value between 1 and 256',
+                              input_html: { type: :number, min: 1, max: 256 }}

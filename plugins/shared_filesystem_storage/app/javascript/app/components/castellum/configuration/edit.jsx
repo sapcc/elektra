@@ -58,7 +58,7 @@ const FormBody = ({close, errors}) => {
             <option value='false'>Percentage-step resizing</option>
             <option value='true'>Single-step resizing</option>
           </Form.Input>
-          <p className='help-block' style={{"margin-bottom": 0}}>
+          <p className='help-block' style={{marginBottom: 0}}>
             <i className="fa fa-info-circle"/>The different choices are explained in {" "}
             <a href="https://github.com/sapcc/castellum/blob/master/docs/api-spec.md#stepping-strategies" target="_blank">this section</a>
             {" "}of the autoscaler documentation.
@@ -90,48 +90,37 @@ const FormBody = ({close, errors}) => {
 export default class CastellumConfigurationEditModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state    = { show: true, initialValues: null, apiErrors: null };
+    this.state    = { show: true, apiErrors: null };
     this.close    = this.close.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.validate = this.validate.bind(this);
   }
 
-  componentDidMount() {
-    this.initializeFormOnce(this.props);
-  }
-  componentWillReceiveProps(props) {
-    this.initializeFormOnce(props);
-  }
-  initializeFormOnce(props) {
-    if (this.state.initialValues) {
-      return;
-    }
-    if (props.config.isFetching || props.config.receivedAt == null) {
+  getInitialValues() {
+    const { data, isFetching, receivedAt } = this.props.config;
+    if (isFetching || receivedAt == null) {
       //wait until config was loaded
-      return;
+      return null;
     }
 
-    const cfg = props.config.data || {};
+    const cfg = data || {};
     const sec2min = seconds => Math.round(seconds / 60);
-    this.setState({
-      ...this.state,
-      initialValues: {
-        //'true' and 'false' are strings here because form values are stringly typed anyway
-        low_enabled:              (cfg.low_threshold)      ? 'true' : 'false',
-        low_usage:                (cfg.low_threshold      || {}).usage_percent || 50,
-        low_delay:        sec2min((cfg.low_threshold      || {}).delay_seconds || 10800),
-        high_enabled:             (cfg.high_threshold)     ? 'true' : 'false',
-        high_usage:               (cfg.high_threshold     || {}).usage_percent || 80,
-        high_delay:       sec2min((cfg.high_threshold     || {}).delay_seconds || 3600),
-        critical_enabled:         (cfg.critical_threshold) ? 'true' : 'false',
-        critical_usage:           (cfg.critical_threshold || {}).usage_percent || 95,
-        size_step_single:         (cfg.size_steps         || {}).single ? 'true' : 'false',
-        size_step_percent:        (cfg.size_steps         || {}).percent       || 10,
-        size_minimum:             (cfg.size_constraints   || {}).minimum       || '',
-        size_maximum:             (cfg.size_constraints   || {}).maximum       || '',
-        free_minimum:             (cfg.size_constraints   || {}).minimum_free  || '',
-      },
-    });
+    return {
+      //'true' and 'false' are strings here because form values are stringly typed anyway
+      low_enabled:              (cfg.low_threshold)      ? 'true' : 'false',
+      low_usage:                (cfg.low_threshold      || {}).usage_percent || 50,
+      low_delay:        sec2min((cfg.low_threshold      || {}).delay_seconds || 10800),
+      high_enabled:             (cfg.high_threshold)     ? 'true' : 'false',
+      high_usage:               (cfg.high_threshold     || {}).usage_percent || 80,
+      high_delay:       sec2min((cfg.high_threshold     || {}).delay_seconds || 3600),
+      critical_enabled:         (cfg.critical_threshold) ? 'true' : 'false',
+      critical_usage:           (cfg.critical_threshold || {}).usage_percent || 95,
+      size_step_single:         (cfg.size_steps         || {}).single ? 'true' : 'false',
+      size_step_percent:        (cfg.size_steps         || {}).percent       || 10,
+      size_minimum:             (cfg.size_constraints   || {}).minimum       || '',
+      size_maximum:             (cfg.size_constraints   || {}).maximum       || '',
+      free_minimum:             (cfg.size_constraints   || {}).minimum_free  || '',
+    };
   }
 
   close(e) {
@@ -190,9 +179,10 @@ export default class CastellumConfigurationEditModal extends React.Component {
   }
 
   render() {
-    const config = this.props.config;
-    if (config.isFetching || config.receivedAt == null) {
-      //wait until config was loaded
+    const initialValues = this.getInitialValues();
+    if (initialValues == null) {
+      //cannot show <Form/> before config is loaded, otherwise it would
+      //initialize itself with empty inputs everywhere
       return null;
     }
 
@@ -207,7 +197,7 @@ export default class CastellumConfigurationEditModal extends React.Component {
           className='form form-horizontal'
           validate={this.validate}
           onSubmit={this.onSubmit}
-          initialValues={this.state.initialValues}>
+          initialValues={initialValues}>
 
           <FormBody close={this.close} errors={this.state.apiErrors} />
         </Form>

@@ -35,7 +35,7 @@ export default class ShowModal extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
       show: nextProps.id != null,
       loadError: nextProps.volume != null ? null : this.state.loadError
@@ -142,6 +142,23 @@ export default class ShowModal extends React.Component {
     )
   }
 
+  renderAboutBootable(volume){
+    if(!volume || !volume.volume_image_metadata) return null
+    const values = Object.keys(volume.volume_image_metadata).map(key => {
+      let tokens = key.split('_')
+      if(tokens[0]) tokens[0] = tokens[0].charAt(0).toUpperCase() + tokens[0].slice(1)
+      return {name: tokens.join(' '), value: volume.volume_image_metadata[key]}
+    })
+
+    return(
+      <table className='table no-borders'>
+        <tbody>
+          {values.map((data,index) => <Row label={data.name} key={index} value={data.value}/>)}
+        </tbody>
+      </table>    
+    )
+  }
+
   render() {
     let {volume} = this.props
 
@@ -165,12 +182,16 @@ export default class ShowModal extends React.Component {
             <Tab eventKey='overview' title="Overview">
               {this.renderOverview(volume)}
             </Tab>
+            {volume && volume.volume_image_metadata && 
+              <Tab eventKey='volume_image_metadata' title='About Bootable'>{this.renderAboutBootable(volume)}</Tab>
+            }
             {volume && volume.attachments && volume.attachments.length>0 &&
               <Tab eventKey='attachments' title="Attachments">
                 {this.renderAttachments(volume)}
               </Tab>
             }
           </Tabs>
+          {false && <pre>{JSON.stringify(volume, null, 2)}</pre>}
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.hide}>Close</Button>

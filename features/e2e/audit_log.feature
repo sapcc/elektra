@@ -11,4 +11,3 @@ Feature: Audit Log
     When I visit project path "audit/"
     Then the page status code is successful
     And I see "Audit Log"
-    And All AJAX calls are successful

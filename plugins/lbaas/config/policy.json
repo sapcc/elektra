@@ -1,0 +1,63 @@
+{
+  "context_is_cloud_network_admin":  "role:cloud_network_admin",
+  "network_admin":  "role:network_admin",
+  "network_viewer": "role:network_viewer",
+  "member": "role:member or role:Member",
+  "context_is_network_admin": "rule:context_is_cloud_network_admin or rule:network_admin",
+  "context_is_network_editor": "rule:context_is_network_admin or rule:member",
+  "context_is_network_viewer":  "rule:context_is_network_editor or rule:network_viewer",
+
+  "lbaas:loadbalancer_get": "rule:context_is_network_viewer",
+  "lbaas:loadbalancer_list": "rule:context_is_network_viewer",
+  "lbaas:loadbalancer_create": "rule:context_is_network_editor",
+  "lbaas:loadbalancer_update": "rule:context_is_network_editor",
+  "lbaas:loadbalancer_delete": "rule:context_is_network_editor",
+  "lbaas:loadbalancer_assign_ip": "rule:context_is_network_editor",
+  "lbaas:loadbalancer_update_status": "rule:context_is_network_viewer",
+  "lbaas:loadbalancer_update_all_status": "rule:context_is_network_viewer",
+  "lbaas:loadbalancer_refresh_state": "rule:context_is_network_viewer",
+
+  "lbaas:pool_get": "rule:context_is_network_viewer",
+  "lbaas:pool_list": "rule:context_is_network_viewer",
+  "lbaas:pool_create": "rule:context_is_network_editor",
+  "lbaas:pool_update": "rule:context_is_network_editor",
+  "lbaas:pool_delete": "rule:context_is_network_editor",
+
+  "lbaas:listener_get": "rule:context_is_network_viewer",
+  "lbaas:listener_list": "rule:context_is_network_viewer",
+  "lbaas:listener_create": "rule:context_is_network_editor",
+  "lbaas:listener_update": "rule:context_is_network_editor",
+  "lbaas:listener_delete": "rule:context_is_network_editor",
+
+  "lbaas:healthmonitor_get": "rule:context_is_network_viewer",
+  "lbaas:healthmonitor_list": "rule:context_is_network_viewer",
+  "lbaas:healthmonitor_create": "rule:context_is_network_editor",
+  "lbaas:healthmonitor_update": "rule:context_is_network_editor",
+  "lbaas:healthmonitor_delete": "rule:context_is_network_editor",
+
+  "lbaas:l7policy_get": "rule:context_is_network_viewer",
+  "lbaas:l7policy_list": "rule:context_is_network_viewer",
+  "lbaas:l7policy_create": "rule:context_is_network_editor",
+  "lbaas:l7policy_new_pre": "rule:context_is_network_editor",
+  "lbaas:l7policy_update": "rule:context_is_network_editor",
+  "lbaas:l7policy_delete": "rule:context_is_network_editor",
+
+  "lbaas:l7rule_get": "rule:context_is_network_viewer",
+  "lbaas:l7rule_list": "rule:context_is_network_viewer",
+  "lbaas:l7rule_create": "rule:context_is_network_editor",
+  "lbaas:l7rule_update": "rule:context_is_network_editor",
+  "lbaas:l7rule_delete": "rule:context_is_network_editor",
+
+  "lbaas:member_get": "rule:context_is_network_viewer",
+  "lbaas:member_list": "rule:context_is_network_viewer",
+  "lbaas:member_create": "rule:context_is_network_editor",
+  "lbaas:member_update": "rule:context_is_network_editor",
+  "lbaas:member_delete": "rule:context_is_network_editor",
+
+  "lbaas:resource_get": "rule:context_is_network_viewer",
+  "lbaas:resource_list": "rule:context_is_network_viewer",
+  "lbaas:resource_create": "rule:context_is_network_editor",
+  "lbaas:resource_update": "rule:context_is_network_editor",
+  "lbaas:resource_delete": "rule:context_is_network_editor"
+
+}

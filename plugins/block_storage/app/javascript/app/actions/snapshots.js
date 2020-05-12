@@ -192,7 +192,6 @@ const submitResetSnapshotStatusForm= (id,values) => (
 export {
   fetchSnapshotsIfNeeded,
   fetchSnapshot,
-  fetchAvailabilityZonesIfNeeded,
   searchSnapshots,
   deleteSnapshot,
   submitNewSnapshotForm,

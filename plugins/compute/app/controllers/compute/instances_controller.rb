@@ -128,6 +128,7 @@ module Compute
       @images         = services.image.all_images
       @fixed_ip_ports = services.networking.fixed_ip_ports
       @subnets        = services.networking.subnets
+      @bootable_volumes = services.block_storage.volumes_detail(bootable:true).select {|v| ['available','downloading'].include?(v.status) } 
 
       if params[:image_id]
         # preselect image_id
@@ -192,21 +193,60 @@ module Compute
       end
 
       @instance.attributes = params[@instance.model_name.param_key]
-
+      @bootable_volumes = services.block_storage.volumes_detail(bootable:true).select {|v| ['available','downloading'].include?(v.status) } 
+      @images = services.image.all_images
+      
       if @instance.image_id
-        @images = services.image.images
-        image = @images.find { |i| i.id == @instance.image_id }
-        if image
-          @instance.metadata = {
-            image_name: (image.name || '').truncate(255),
-            image_buildnumber:  (image.buildnumber || '').truncate(255)
-          }
+        # check if image id is a bootable volume
+        if !params[:server][:custom_root_disk] || params[:server][:custom_root_disk] == '0'
+          volume = @bootable_volumes.find { |v| v.id == @instance.image_id }
+        end
+
+        # Bootable Volume as image source
+        if volume 
+          # imageRef is a bootable volume!
+          @instance.block_device_mapping_v2 = [
+            {
+              "boot_index": 0,
+              "uuid": volume.id,
+              "source_type": "volume",
+              "destination_type": "volume",
+              "delete_on_termination": false
+            }
+          ]
+          @instance.metadata = volume.volume_image_metadata
+        else
+          image = @images.find { |i| i.id == @instance.image_id }
+
+          if image
+            @instance.metadata = {
+              image_name: (image.name || '').truncate(255),
+              image_buildnumber:  (image.buildnumber || '').truncate(255)
+            }
+            
+            # Custom root disk -> let nova create a bootable volume on the fly
+            if params[:server][:custom_root_disk] == '1'
+              @instance.block_device_mapping_v2 = [
+                {
+                  "boot_index": 0,
+                  "uuid": image.id,
+                  "volume_size": params[:server][:custom_root_disk_size],
+                  "source_type": "image",
+                  "destination_type": "volume",
+                  "delete_on_termination": true
+                }
+              ]
+              # this is only for model check
+              @instance.custom_root_disk = 1
+              @instance.custom_root_disk_size = params[:server][:custom_root_disk_size]
+            end
+          end
         end
       end
 
       if @instance.valid? && @instance.network_ids &&
           @instance.network_ids.length.positive?
-
+          
         if @instance.network_ids.first['port'].present?
           # port is presented -> pre-resereved fixed IP is selected
           # use provided port id and update security group on port
@@ -244,7 +284,7 @@ module Compute
         end
       end
 
-      if @instance.errors.empty? && @instance.save
+      if @instance.errors.empty? && @instance.save 
         flash.now[:notice] = 'Instance successfully created.'
         audit_logger.info(current_user, "has created", @instance)
         @instance = services.compute.find_server(@instance.id)
@@ -711,8 +751,8 @@ module Compute
             net.subnets.each do |subid|
               subnets[subid] = services.networking.find_subnet(subid) unless subnets[subid]
               sub = subnets[subid]
-              cidr = NetAddr::CIDR.create(sub.cidr)
-              if cidr.contains?(fip.floating_ip_address)
+              cidr = NetAddr.parse_net(sub.cidr)
+              if cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
                 @grouped_fips[sub.name] ||= []
                 @grouped_fips[sub.name] << fip#[fip.floating_ip_address, fip.id]
                 break
@@ -732,6 +772,7 @@ module Compute
 
       @target_state=nil
       if @instance and (@instance.task_state || '')!='deleting'
+        # trigger the instance action
         result = options.nil? ? @instance.send(action) : @instance.send(action,options)
         if result
           audit_logger.info(current_user, "has triggered action", action, "on", @instance)
@@ -744,7 +785,6 @@ module Compute
       end
 
       render template: 'compute/instances/update_item.js' if with_rendering
-      #redirect_to instances_url
     end
 
     def target_state_for_action(action)

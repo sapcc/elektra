@@ -1,11 +1,18 @@
 source 'https://rubygems.org'
 
+# https://bundler.io/v1.5/gemfile.html
+# https://guides.rubygems.org/patterns/#semantic-versioning
+# Note: check Dockerfile for Version dependencies!
+#       Because we install gems with native extension before running bundle install
+#       This avoids recompiling them everytime the Gemfile.lock changes.
+#       The versions need to be kept in sync with the Gemfile.lock
+
 # Avoid g++ dependency https://github.com/knu/ruby-domain_name/issues/3
 # # unf is pulled in by the ruby-arc-client
 gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '~> 5.2.3' # Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
-gem 'webpacker', '~> 3.5'
+gem 'webpacker', '~> 4.0'
 
 # Views and Assets
 gem 'compass-rails'
@@ -28,7 +35,7 @@ gem 'font-awesome-sass'
 gem 'responders'
 
 # make it fancy with react
-gem 'react-rails' # , "1.8.2"
+gem 'react-rails', '~> 2.2.1'
 
 # Database
 gem 'pg'
@@ -36,7 +43,7 @@ gem 'activerecord-session_store'
 
 # Openstack
 gem 'net-ssh'
-gem 'netaddr'
+gem 'netaddr', '2.0.4'
 
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 # gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
@@ -66,7 +73,7 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 1.0.0', group: :doc
 
-gem 'puma', require: false
+gem 'puma', '= 3.12.4', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
@@ -85,7 +92,7 @@ end
 ######################## END #######################
 
 group :api_client do
-  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.2.0'
+  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.2.1'
   # gem 'elektron', path: '../elektron'
 end
 
@@ -110,7 +117,7 @@ group :development, :test do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 
-  gem 'foreman'
+  gem 'foreman', '~> 0.87.0'
 
   # Testing
 
@@ -137,16 +144,4 @@ end
 group :test do
   gem 'guard-rspec'
   gem 'rails-controller-testing'
-end
-
-# load dotenv to get ENV for extension retrieval if needed
-begin
-  require 'dotenv'
-  Dotenv.load
-rescue Exception => e
-end
-
-# load SAP specific extension for fonts, ....
-if ENV['ELEKTRA_EXTENSION'].to_s == 'true'
-  gem 'elektra-extension', git: 'https://github.wdf.sap.corp/monsoon/elektra-extension.git', branch: :master
 end

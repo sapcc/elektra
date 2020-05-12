@@ -2,6 +2,14 @@ export const REQUEST_DATA         = 'resources/app/REQUEST_DATA';
 export const REQUEST_DATA_FAILURE = 'resources/app/REQUEST_DATA_FAILURE';
 export const RECEIVE_DATA         = 'resources/app/RECEIVE_DATA';
 
+export const REQUEST_CAPACITY         = 'resources/app/REQUEST_CAPACITY';
+export const REQUEST_CAPACITY_FAILURE = 'resources/app/REQUEST_CAPACITY_FAILURE';
+export const RECEIVE_CAPACITY         = 'resources/app/RECEIVE_CAPACITY';
+
+export const REQUEST_INCONSISTENCIES         = 'resources/app/REQUEST_INCONSISTENCIES';
+export const REQUEST_INCONSISTENCIES_FAILURE = 'resources/app/REQUEST_INCONSISTENCIES_FAILURE';
+export const RECEIVE_INCONSISTENCIES         = 'resources/app/RECEIVE_INCONSISTENCIES';
+
 export const SYNC_PROJECT_REQUESTED  = 'resources/app/SYNC_PROJECT_REQUESTED';
 export const SYNC_PROJECT_FAILURE    = 'resources/app/SYNC_PROJECT_FAILURE';
 export const SYNC_PROJECT_STARTED    = 'resources/app/SYNC_PROJECT_STARTED';
@@ -23,12 +31,13 @@ export const RECEIVE_CASTELLUM_OPERATIONS_REPORT = 'resources/app/RECEIVE_CASTEL
 // Please do not use this directly. Use t() from ./utils.js instead.
 export const STRINGS = {
     "autoscaling":                 "Autoscaling",
+    "availability_zones":          "Availability Zones",
     "block_storage":               "Block Storage",
     "capacity":                    "Capacity",
+    "capacity_standard_hdd":       "Capacity",
     "cfm_share_capacity":          "Share Capacity",
     "compute":                     "Compute",
     "cores":                       "Cores",
-    "cores_single":                "Core",
     "cores_single":                "Core",
     "database":                    "Cloud Frame Manager",
     "dns":                         "DNS",
@@ -36,8 +45,11 @@ export const STRINGS = {
     "floating_ips_single":         "Floating IP",
     "healthmonitors":              "Health Monitors",
     "healthmonitors_single":       "Health Monitor",
+    "images":                      "Images",
     "instances":                   "Instances",
     "instances_single":            "Instance",
+    "inconsistencies":             "Inconsistencies",
+    "keppel":                      "Container Image Registry",
     "l7policies":                  "L7 Policies",
     "l7policies_single":           "L7 Policy",
     "listeners":                   "Listeners",
@@ -68,18 +80,24 @@ export const STRINGS = {
     "security_group_rules_single": "Security Group Rule",
     "security_groups":             "Security Groups",
     "security_groups_single":      "Security Group",
+    "server_groups":               "Server Groups",
+    "server_groups_single":        "Server Group",
+    "server_group_members":        "Members per Server Group",
+    "server_group_members_single": "Member per Server Group",
     "share_capacity":              "Share Capacity",
-    "shared_filesystem_storage":   "Shared Filesystem Storage",
+    "shared_filesystem_storage":   "Shared Filesystem Storage (Premium SSD)",
     "share_networks":              "Share Networks",
     "share_networks_single":       "Share Network",
     "share_snapshots":             "Share Snapshots",
     "share_snapshots_single":      "Share Snapshot",
     "shares":                      "Shares",
     "shares_single":               "Share",
-    "sharev2":                     "Shared Filesystem Storage",
+    "sharev2":                     "Shared Filesystem Storage (Premium SSD)",
     "snapshot_capacity":           "Share Snapshot Capacity",
     "snapshots":                   "Snapshots",
     "snapshots_single":            "Snapshot",
+    "snapshots_standard_hdd":      "Snapshots",
+    "snapshots_standard_hdd_single": "Snapshot",
     "storage":                     "Storage",
     "subnet_pools":                "Subnet Pools",
     "subnet_pools_single":         "Subnet Pool",
@@ -87,7 +105,10 @@ export const STRINGS = {
     "subnets_single":              "Subnet",
     "volumes":                     "Volumes",
     "volumes_single":              "Volume",
-    "volumev2":                    "Block Storage",
+    "volumes_standard_hdd":        "Volumes",
+    "volumes_standard_hdd_single": "Volume",
+    "volumev2":                    "Block Storage (Premium SSD)",
+    "volumev2_standard_hdd":       "Block Storage (Standard HDD)",
     "zones":                       "Zones",
     "zones_single":                "Zone",
 };
@@ -95,7 +116,7 @@ export const STRINGS = {
 export const WIZARD_RESOURCES = {
     "compute": {
         "preselect": true,
-        "resources": { "instances": 5 },
+        "resources": { "instances": 5, "server_groups": 5, "server_group_members": 5 },
     },
     "networking": {
         "preselect": true,

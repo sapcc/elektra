@@ -28,7 +28,7 @@ export default class EditModal extends React.Component {
   //redraw, and `render()` does not need to mess with the timers.
   asyncParseInputsTimer = null;
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.initializeValuesIfNecessary(nextProps);
   }
 
@@ -199,7 +199,8 @@ export default class EditModal extends React.Component {
   close = (e) => {
     if (e) { e.stopPropagation(); }
     this.setState({show: false});
-    setTimeout(() => this.props.history.replace('/'), 300);
+    const { currentArea } = this.props.match.params;
+    setTimeout(() => this.props.history.replace(`/${currentArea}`), 300);
   }
 
   //This gets called by the "Check" button in the footer.

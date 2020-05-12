@@ -37,12 +37,25 @@ export const fetchData = (scopeData) => function(dispatch, getState) {
   dispatch(requestData());
   const scope = new Scope(scopeData);
 
+  //on cluster level, fetchData() and fetchCapacity() hit the same endpoint, so
+  //fetchCapacity() is skipped and fetchData() emits both sets of actions
+  if (scope.isCluster()) {
+    dispatch(requestCapacity());
+  }
+
   return ajaxHelper.get(scope.urlPath())
     .then((response) => {
-      dispatch(receiveData(response.data[scope.level()]));
+      const data = response.data[scope.level()];
+      dispatch(receiveData(data));
+      if (scope.isCluster()) {
+        dispatch(receiveCapacity(data));
+      }
     })
     .catch((error) => {
       dispatch(requestDataFailure());
+      if (scope.isCluster()) {
+        dispatch(requestCapacityFailure());
+      }
       showLimesError(error);
     });
 };
@@ -83,6 +96,83 @@ export const listClusters = (serviceType, resourceName) => function(dispatch, ge
       .catch(error => reject({ errors: limesErrorMessage(error) }))
   );
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// get capacity data for the cluster level
+
+const requestCapacity = () => ({
+  type: constants.REQUEST_CAPACITY,
+  requestedAt: Date.now(),
+});
+
+const requestCapacityFailure = () => ({
+  type: constants.REQUEST_CAPACITY_FAILURE,
+});
+
+const receiveCapacity = (json) => ({
+  type: constants.RECEIVE_CAPACITY,
+  data: json,
+  receivedAt: Date.now(),
+});
+
+export const fetchCapacity = (scopeData) => function(dispatch, getState) {
+  dispatch(requestCapacity());
+  const scope = new Scope(scopeData);
+
+  //on cluster level, fetchData() and fetchCapacity() hit the same endpoint, so
+  //we can skip this action; fetchData() will emit the capacity actions as well
+  if (scope.isCluster()) {
+    return;
+  }
+
+  return ajaxHelper.get(scope.capacityUrlPath())
+    .then((response) => {
+      dispatch(receiveCapacity(response.data.cluster));
+    })
+    .catch((error) => {
+      dispatch(requestCapacityFailure());
+      showLimesError(error);
+    });
+};
+
+export const fetchCapacityIfNeeded = (scopeData) => function(dispatch, getState) {
+  const state = getState();
+  if (state.limes.capacityData.isFetching || state.limes.capacityData.requestedAt) {
+    return;
+  }
+  return dispatch(fetchCapacity(scopeData));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// list inconsistencies
+
+export const fetchInconsistencies = (scopeData) => dispatch => {
+  dispatch({
+    type:        constants.REQUEST_INCONSISTENCIES,
+    requestedAt: Date.now(),
+  });
+
+  return ajaxHelper.get("/v1/inconsistencies")
+    .then(response => {
+      dispatch({
+        type: constants.RECEIVE_INCONSISTENCIES,
+        data: response.data.inconsistencies,
+        receivedAt: Date.now(),
+      });
+    })
+    .catch((error) => {
+      dispatch({ type: constants.REQUEST_INCONSISTENCIES_FAILURE });
+      showLimesError(error);
+    });
+};
+
+export const fetchInconsistenciesIfNeeded = (scopeData) => (dispatch, getState) => {
+  const state = getState();
+  if (state.limes.inconsistencyData.isFetching || state.limes.inconsistencyData.requestedAt) {
+    return;
+  }
+  return dispatch(fetchInconsistencies(scopeData));
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // sync project

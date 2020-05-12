@@ -54,13 +54,13 @@ export default (props) => {
       <div className={props.wide ? 'col-md-9' : isEditing ? 'col-md-4' : 'col-md-5'}>
         <ResourceBar
           capacity={quota} {...fillProps} unitName={unitName}
-          isDanger={fillProps.fill > quota} scopeData={props.scopeData} />
+          isDanger={fillProps.fill > quota} showsCapacity={false} />
       </div>
       {!props.wide && (
         isEditing
           ? <ResourceEditor {...editorProps} />
           : <div className='col-md-5'>
-              <Link to={`/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Show projects</Link>
+              <Link to={`/${props.area}/details/${props.categoryName}/${resourceName}`} className='btn btn-primary btn-sm btn-quota-details'>Show projects</Link>
             </div>
       )}
     </div>

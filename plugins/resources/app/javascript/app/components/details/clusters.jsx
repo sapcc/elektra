@@ -22,7 +22,7 @@ export default class DetailsClusters extends React.Component {
     isFetching: false,
   };
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.fetchClusters(nextProps);
   }
   componentDidMount() {

@@ -61,6 +61,7 @@ module Identity
         "read -sr OS_PASSWORD_INPUT\n" \
         "export OS_PASSWORD=$OS_PASSWORD_INPUT\n" \
         "export OS_REGION_NAME=#{current_region}\n" \
+        "export OS_COMPUTE_API_VERSION=2.60\n" \
 
       send_data(
         out_data,
@@ -85,6 +86,7 @@ module Identity
         "$Password = Read-Host -Prompt \"Please enter your OpenStack Password\" -AsSecureString\r\n" \
         "$env:OS_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))\r\n" \
         "$env:OS_REGION_NAME=\"#{current_region}\"\r\n" \
+        "$env:OS_COMPUTE_API_VERSION=\"2.60\"\r\n" \
 
       send_data(
         out_data,

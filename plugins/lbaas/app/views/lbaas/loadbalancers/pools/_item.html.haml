@@ -1,0 +1,34 @@
+- data = {search_name: "#{pool.id} #{pool.name} #{pool.description} #{pool.protocol}", marker_id: pool.id}
+
+%tr{id: "#{pool.id}", data: data }
+  %td
+    = link_to name_or_id(pool.name, pool.id,15), plugin('lbaas').show_details_loadbalancer_pool_path(id: pool.id, loadbalancer_id: loadbalancer.id)
+  %td= description(pool.description,25)
+  %td= pool.protocol
+  %td= pool.lb_algorithm
+  %td= pool.members ? pool.members.count : 0
+  %td
+    %label{class: 'spinner',data: {op_status: "#{pool.id}"}}
+    %label{class: 'spinner', data: {prov_status: "#{pool.id}"}}
+  %td.snug
+    .btn-group
+      %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+        %span.fa.fa-cog
+
+      %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+        - if current_user.is_allowed?('lbaas:resource_get', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+          %li= link_to 'Show', plugin('lbaas').loadbalancer_pool_path(id: pool.id, loadbalancer_id: loadbalancer.id), data: {modal: true}
+        - if current_user.is_allowed?('lbaas:resource_update', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+          %li= link_to 'Edit', plugin('lbaas').show_details_loadbalancer_pool_path(id: pool.id, loadbalancer_id: loadbalancer.id)
+        - if current_user.is_allowed?('lbaas:resource_get', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+          - if pool.listeners && pool.listeners.first
+            %li.divider
+            %li= link_to 'Show Listener', plugin('lbaas').listener_details_path(id: pool.listeners.first['id']), data: {modal: true}
+        - if current_user.is_allowed?('lbaas:resource_delete', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+          %li.divider
+          %li= link_to 'Delete',
+            plugin('lbaas').loadbalancer_pool_path(id: pool.id, loadbalancer_id: loadbalancer.id),
+            method: :delete,
+            data: { confirm: 'Are you sure you want to delete this pool?',
+              ok: "Yes, delete it",
+              confirmed: :loading_status}

@@ -26,9 +26,9 @@ export const getBaseURL = () => {
  * is mostly encapsulated in the Scope class defined here. A Scope can be
  * constructed in one of three ways:
  *
- *     const projectScope = new Scope({ domainID, projectID });
- *     const domainScope  = new Scope({ domainID });
- *     const clusterScope = new Scope({});
+ *     const projectScope = new Scope({ clusterID, domainID, projectID });
+ *     const domainScope  = new Scope({ clusterID, domainID });
+ *     const clusterScope = new Scope({ clusterID });
  *
  * In practice, the constructor argument is passed down the React foodchain in
  * the field `props.scopeData`:
@@ -71,6 +71,9 @@ export class Scope {
     if (this.projectID) return null; //there is nothing below projects
     if (this.domainID)  return `/v1/domains/${this.domainID}/projects`;
     return `/v1/domains`;
+  }
+  capacityUrlPath() {
+    return `/v1/clusters/${this.clusterID}`;
   }
 
   descendIntoSubscope(id) {

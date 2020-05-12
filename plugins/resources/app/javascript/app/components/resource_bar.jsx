@@ -53,8 +53,7 @@ export default class ResourceBar extends React.Component {
   render() {
     //NOTE: `capacity` and `fill` are generic names. What they actually stand for is
     //defined where this component gets used.
-    const {capacity, fill, unitName, isDanger, labelOverride, overcommitAfter, beforeOvercommitTooltip, afterOvercommitTooltip} = this.props;
-    const scope = new Scope(this.props.scopeData);
+    const {capacity, fill, unitName, isDanger, labelOverride, overcommitAfter, beforeOvercommitTooltip, afterOvercommitTooltip, showsCapacity} = this.props;
     const unit = new Unit(this.props.unitName || "");
 
     //indicate overcommit if necessary
@@ -81,7 +80,7 @@ export default class ResourceBar extends React.Component {
         <div className='progress' ref={this.outerDivRef}>
           <div key='filled' className='progress-bar progress-bar-disabled has-label' style={{width:'100%'}}>
             <span className='progress-bar-label'>
-              {scope.isCluster() ? "No capacity" : "No quota" }
+              {showsCapacity ? "No capacity" : "No quota" }
             </span>
           </div>
           {beforeOcMark}{afterOcMark}

@@ -10,10 +10,10 @@ const buildTimeFilter = (filterStartTime, filterEndTime) => {
   let timeFilter = ''
 
   if(filterStartTime != null && (moment.isMoment(filterStartTime) || !isEmpty(filterStartTime)))
-    timeFilter += `gte:${filterStartTime}`
+    timeFilter += `gte:${filterStartTime.format("YYYY-MM-DD[T]HH:mm:ss")}`
 
   if(filterEndTime != null && (moment.isMoment(filterEndTime) || !isEmpty(filterEndTime)))
-    timeFilter += `${timeFilter.length > 0 ? ',' : ''}lte:${filterEndTime}`
+    timeFilter += `${timeFilter.length > 0 ? ',' : ''}lte:${filterEndTime.format("YYYY-MM-DD[T]HH:mm:ss")}`
 
   return timeFilter
 }

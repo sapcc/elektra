@@ -8,6 +8,7 @@ module Compute
     validates :name, presence: { message: 'Please provide a name' }
     validates :image_id, presence: { message: 'Please select an image' }, if: :new?
     validates :flavor_id, presence: { message: 'Please select a flavor' }, if: :new?
+    validates :custom_root_disk_size,  if: :custom_root_disk? ,numericality: { only_integer: true }
     validate :validate_network, if: :new?
     validates :keypair_id, presence: {
       message: "Please choose a keypair for us to provision to the server.
@@ -54,8 +55,13 @@ module Compute
         'availability_zone' => read('availability_zone_id'),
         'key_name'          => read('keypair_id'),
         'metadata'          => read('metadata'),
-        'user_data'         => Base64.encode64(read('user_data'))
+        'user_data'         => Base64.encode64(read('user_data')),
+        'block_device_mapping_v2' => read('block_device_mapping_v2')
       }.delete_if { |_k, v| v.blank? }
+
+      if params['block_device_mapping_v2'] 
+        params.delete('imageRef')
+      end
 
       security_group_names = read('security_groups')
       if security_group_names && security_group_names.is_a?(Array)
@@ -79,8 +85,16 @@ module Compute
           network
         end
       end
-      # byebug
       params
+    end
+
+    def custom_root_disk_size 
+      read('custom_root_disk_size')
+    end
+
+    def custom_root_disk? 
+      return true if read('custom_root_disk').to_i == 1
+      return false
     end
 
     def attributes_for_update
@@ -115,6 +129,10 @@ module Compute
 
     def volumes_attached
       read('os-extended-volumes:volumes_attached')
+    end
+
+    def root_disk_device_name
+      read('OS-EXT-SRV-ATTR:root_device_name')
     end
 
     def task_state
@@ -245,17 +263,33 @@ module Compute
     ####################### ACTIONS #####################
     def add_fixed_ip(network_id)
       requires :id
-      @service.add_fixed_ip(id,network_id)
+      rescue_api_errors do
+        @service.add_fixed_ip(id,network_id)
+      end
+      unless errors.blank? 
+        return false
+      end
+      true
     end
 
     def remove_fixed_ip(ip_address)
       requires :id
-      @service.remove_fixed_ip(id,ip_address)
+      rescue_api_errors do
+        @service.remove_fixed_ip(id,ip_address)
+      end
+      unless errors.blank? 
+        return false
+      end
     end
 
     def terminate
       requires :id
-      @service.delete_server id
+      rescue_api_errors do
+        @service.delete_server id
+      end
+      unless errors.blank? 
+        return false
+      end
     end
 
     def rebuild(image_ref, name, admin_pass = nil, metadata = nil, personality = nil)
@@ -266,53 +300,86 @@ module Compute
 
     def resize(flavor_ref)
       requires :id
-      @service.resize_server(id, flavor_ref)
-      true
+      rescue_api_errors do
+        @service.resize_server(id, flavor_ref)
+      end
+      # handle special errors
+      unless errors.blank?
+        if errors.full_messages.to_sentence == "Api No valid host was found. No valid host found for resize"
+          errors.delete(:api)
+          errors.add(:api, "Instance resize not possible at this time; there is not enough free capacity for an automatic resize. Please open an SPC Service Request.")
+        end
+        return false
+      else
+        return true
+      end
     end
 
     def revert_resize
       requires :id
-      @service.revert_resize_server(id)
+      rescue_api_errors do
+        @service.revert_resize_server(id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def confirm_resize
       requires :id
-      @service.confirm_resize_server(id)
+      rescue_api_errors do
+        @service.confirm_resize_server(id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def reboot(type = 'SOFT')
       requires :id
-      @service.reboot_server(id, type)
+      rescue_api_errors do
+        @service.reboot_server(id, type)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def stop
       requires :id
-      @service.stop_server(id)
+      rescue_api_errors do
+        @service.stop_server(id)
+      end
     end
 
     def pause
       requires :id
-      @service.pause_server(id)
+      rescue_api_errors do
+        @service.pause_server(id)
+      end
     end
 
     def suspend
       requires :id
-      @service.suspend_server(id)
+      rescue_api_errors do
+        @service.suspend_server(id)
+      end
     end
 
     def start
       requires :id
-
-      case status.downcase
-      when 'paused'
-        @service.unpause_server(id)
-      when 'suspended'
-        @service.resume_server(id)
-      else
-        @service.start_server(id)
+      rescue_api_errors do
+        case status.downcase
+        when 'paused'
+          @service.unpause_server(id)
+        when 'suspended'
+          @service.resume_server(id)
+        else
+          @service.start_server(id)
+        end
       end
     end
 
@@ -356,37 +423,67 @@ module Compute
 
     def create_image(name, metadata = {})
       requires :id
-      @service.create_image(id, name, metadata)
+      rescue_api_errors do
+        @service.create_image(id, name, metadata)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def reset_vm_state(vm_state)
       requires :id
-      @service.reset_server_state id, vm_state
+      rescue_api_errors do
+        @service.reset_server_state id, vm_state
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def attach_volume(volume_id, device_name)
       requires :id
-      @service.attach_volume(volume_id, id, device_name)
+      rescue_api_errors do
+        @service.attach_volume(volume_id, id, device_name)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def detach_volume(volume_id)
       requires :id
-      @service.detach_volume(id, volume_id)
+      rescue_api_errors do
+        @service.detach_volume(id, volume_id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def assign_security_group(sg_id)
       requires :id
-      @service.add_security_group(id, sg_id)
+      rescue_api_errors do
+        @service.add_security_group(id, sg_id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 
     def unassign_security_group(sg_id)
       requires :id
-      @service.remove_security_group(id, sg_id)
+      rescue_api_errors do
+        @service.remove_security_group(id, sg_id)
+      end
+      unless errors.blank? 
+        return false
+      end
       true
     end
 

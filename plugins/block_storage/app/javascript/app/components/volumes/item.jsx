@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
 import { scope } from 'ajax_helper';
 import { Highlighter } from 'react-bootstrap-typeahead';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import * as constants from '../../constants';
 
 const MyHighlighter = ({search,children}) => {
@@ -9,7 +10,7 @@ const MyHighlighter = ({search,children}) => {
 }
 
 export default class Volume extends React.Component {
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // stop polling if status has changed from creating to something else
     this.pendignState(nextProps) ? this.startPolling() : this.stopPolling()
   }
@@ -64,15 +65,26 @@ export default class Volume extends React.Component {
     return(
       <tr className={`state-${volume.status}`}>
         <td>
+          {(volume.bootable === true || volume.bootable === 'true') && 
+            <OverlayTrigger placement='top' overlay={<Tooltip id='bootable-volume'>Bootable Volume</Tooltip>}>
+              <i className="fa fa-hdd-o"></i>
+            </OverlayTrigger>
+          }  
+        </td>
+        <td>
           {policy.isAllowed("block_storage:volume_get", {}) ?
             <Link to={`/volumes/${volume.id}/show`}>
-              <MyHighlighter search={searchTerm}>{volume.name}</MyHighlighter>
+              <MyHighlighter search={searchTerm}>{volume.name || volume.id}</MyHighlighter>
             </Link>
             :
             <MyHighlighter search={searchTerm}>{volume.name}</MyHighlighter>
           }
-          <br/>
-          <span className='info-text'><MyHighlighter search={searchTerm}>{volume.id}</MyHighlighter></span>
+          {volume.name && 
+            <React.Fragment>
+              <br/>
+              <span className='info-text'><MyHighlighter search={searchTerm}>{volume.id}</MyHighlighter></span>
+            </React.Fragment>
+          }  
         </td>
         <td>{volume.availability_zone}</td>
         <td>{volume.description}</td>

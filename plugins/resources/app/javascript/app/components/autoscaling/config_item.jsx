@@ -57,9 +57,8 @@ const renderConfigUI = ({ projectID, config, editValue, handleEditValue, unitNam
   } else {
     return <span>
       Target{' '}
-      <input type='number'
+      <input type='text'
         className='form-control' style={{width:'auto',display:'inline'}}
-        min='0' max='90'
         value={editValue}
         onChange={(e) => handleEditValue(projectID, e.target.value)}
       />

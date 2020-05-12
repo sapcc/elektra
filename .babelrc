@@ -1,55 +1,83 @@
+// corejs 3: https://github.com/zloirock/core-js/blob/master/docs/2019-03-19-core-js-3-babel-and-a-look-into-the-future.md#babelpreset-env
 {
   "env": {
     "development": {
       "presets": [
-        ["env", {
-          "modules": false,
-          "targets": {
-            "browsers": "> 0.1%",
-            "uglify": true,
-            "ie": "10"
-          },
-          "useBuiltIns": true,
-          /* "debug": true */
-        }],
-        "react"
+        [
+          "@babel/preset-env",
+          {
+            "corejs": "3",
+            "modules": false,
+            "targets": {
+              "browsers": "> 0.1%",
+              "ie": "10"
+            },
+            "forceAllTransforms": true,
+            "useBuiltIns": "entry"
+          }
+        ],
+        "@babel/preset-react"
       ],
-
       "plugins": [
         "react-require",
-        "transform-object-rest-spread",
-        ["transform-class-properties", { "spec": true }]
-      ],
+        "@babel/plugin-proposal-object-rest-spread",
+        [
+          "@babel/plugin-proposal-class-properties",
+          {
+            "spec": true
+          }
+        ]
+      ]
     },
     "production": {
       "presets": [
-        ["env", {
-          "modules": false,
-          "targets": {
-            "browsers": "> 0.1%",
-            "uglify": true,
-            "ie": "10"
-          },
-          "useBuiltIns": true
-        }],
-        "react"
+        [
+          "@babel/preset-env",
+          {
+            "corejs": "3",
+            "modules": false,
+            "targets": {
+              "browsers": "> 0.1%",
+              "ie": "10"
+            },
+            "forceAllTransforms": true,
+            "useBuiltIns": "entry"
+          }
+        ],
+        "@babel/preset-react"
       ],
-
       "plugins": [
         "react-require",
-        "transform-object-rest-spread",
-        ["transform-class-properties", { "spec": true }]
-      ],
+        "@babel/plugin-proposal-object-rest-spread",
+        [
+          "@babel/plugin-proposal-class-properties",
+          {
+            "spec": true
+          }
+        ]
+      ]
     },
     "test": {
       "presets": [
-        ["env"],
-        "react"
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "node": "current"
+            }
+          }
+        ],
+        "@babel/preset-react"
       ],
       "plugins": [
         "react-require",
-        "transform-object-rest-spread",
-        ["transform-class-properties", { "spec": true }]
+        "@babel/plugin-proposal-object-rest-spread",
+        [
+          "@babel/plugin-proposal-class-properties",
+          {
+            "spec": true
+          }
+        ]
       ]
     }
   }

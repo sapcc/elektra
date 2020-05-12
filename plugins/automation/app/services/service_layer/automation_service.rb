@@ -13,11 +13,12 @@ module ServiceLayer
     end
 
     def arc_service_endpoint
-      elektron.service_url('arc') || ''
+      
+      elektron.service_url('arc', region: ENV['MONSOON_DASHBOARD_REGION']) || ''
     end
 
     def automation_service_endpoint
-      elektron.service_url('automation') || ''
+      elektron.service_url('automation', region: ENV['MONSOON_DASHBOARD_REGION']) || ''
     end
 
     #

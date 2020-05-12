@@ -22,16 +22,31 @@ export const FormInput = ({
       isValid = false;
   }
 
-  let inputProps = {
-    className: `form-control ${required ? 'required' : 'optional'} ${isValid ? '' : 'is-invalid'} ${className}`,
-    name,
-    id: id || (context.formName ? context.formName + '_' + name : name),
-    value: values[name] || '',
-    onChange: (e) => { e.preventDefault(); context.onChange(e.target.name,e.target.value)},
-    ...otherProps
+  const {type} = (otherProps || {})
+  let newClassName = (type === 'checkbox' || type === 'radio') ? 'form-check-input' : 'form-control'
+  newClassName += ' '+(required ? 'required' : 'optional')
+  newClassName += ' '+(isValid ? '' : 'is-invalid')
+
+  const handleChange = (e) => {
+    //e.preventDefault()
+    const target = e.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+    context.onChange(name,value)
   }
 
+  let inputProps = {
+    className: `${newClassName} ${className}`,
+    name,
+    id: id || (context.formName ? context.formName + '_' + name : name),
+    onChange: handleChange,
+    ...otherProps
+  }
+  if(type === 'checkbox') inputProps.checked = (values[name] === true)
+  else inputProps.value = values[name] || ""
+
   return (
-    <React.Fragment>{React.createElement(elementType, inputProps, children)}</React.Fragment>
+    React.createElement(elementType, inputProps, children)
   )
 };

@@ -68,7 +68,7 @@ export default class List extends React.Component {
     this.filterShares = this.filterShares.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // load dependencies unless already loaded
     this.loadDependencies(nextProps)
   }

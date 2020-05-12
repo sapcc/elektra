@@ -26,8 +26,8 @@ export class SearchField extends React.Component {
     this.setState({searchTerm: ''}, () => this.props.onChange(''))
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    // console.log('componentWillReceiveProps',nextProps)
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
+    // console.log('UNSAFE_componentWillReceiveProps',nextProps)
     if (nextProps.value!=null) this.setState({searchTerm: nextProps.value})
   }
 

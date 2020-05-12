@@ -17,7 +17,7 @@ export default class InitProjectModal extends React.Component {
   componentDidMount() {
     this.checkAvailabilityOnce(this.props);
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.checkAvailabilityOnce(nextProps);
   }
 

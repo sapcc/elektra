@@ -47,7 +47,7 @@ export default class DetailsModal extends React.Component {
     apiErrors: null,
   };
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.fetchSubscopes(nextProps);
   }
 
@@ -156,7 +156,8 @@ export default class DetailsModal extends React.Component {
   close = (e) => {
     if (e) { e.stopPropagation(); }
     this.setState({show: false});
-    setTimeout(() => this.props.history.replace('/'), 300);
+    const { currentArea } = this.props.match.params;
+    setTimeout(() => this.props.history.replace(`/${currentArea}`), 300);
   }
 
   //This gets called when a PUT request to Limes fails.

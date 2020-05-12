@@ -2,6 +2,7 @@ import { connect } from  'react-redux';
 import Loader from '../components/loader';
 import {
   discoverAutoscalableSubscopesIfNeeded,
+  fetchCapacityIfNeeded,
   fetchDataIfNeeded,
 } from '../actions/limes';
 
@@ -12,7 +13,8 @@ export default connect(
     isIncomplete: state.limes.isIncomplete,
   }),
   dispatch => ({
-    loadDataOnce: (args) => dispatch(fetchDataIfNeeded(args)),
+    loadDataOnce:     (args) => dispatch(fetchDataIfNeeded(args)),
+    loadCapacityOnce: (args) => dispatch(fetchCapacityIfNeeded(args)),
     discoverAutoscalableSubscopesOnce: (args) => dispatch(discoverAutoscalableSubscopesIfNeeded(args)),
   }),
 )(Loader);

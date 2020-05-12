@@ -8,7 +8,7 @@
 
 Cluster = React.createClass
 
-  componentWillReceiveProps: (nextProps) ->
+  UNSAFE_componentWillReceiveProps: (nextProps) ->
     # stop polling if both cluster and nodepool states are "ready"
     if @clusterReady(nextProps.cluster) && @nodePoolsReady(nextProps.cluster)
       @stopPolling()
@@ -133,6 +133,11 @@ Cluster = React.createClass
           button className: 'btn btn-sm btn-default btn-icon-text', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name, kubernikusBaseUrl)),
             i className: 'fa fa-fw fa-wrench'
             'Setup'
+
+          cluster.status.dashboard && 
+            a className: 'btn btn-sm btn-default btn-icon-text', disabled: disabled, href: "#{cluster.status.dashboard}", target: "_blank",
+              i className: 'fa fa-fw fa-dashboard'
+              'Kubernetes Dashboard'
 
 
       React.createElement ClusterEvents, cluster: cluster

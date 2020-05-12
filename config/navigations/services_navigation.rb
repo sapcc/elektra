@@ -137,6 +137,11 @@ SimpleNavigation::Configuration.run do |navigation|
                                         -> { plugin('loadbalancing').loadbalancers_path },
                                         if: -> { plugin_available?(:loadbalancing) && services.available?(:loadbalancing) },
                                         highlights_on: -> { params[:controller][%r{loadbalancing/?.*}] }
+                    networking_nav.item :lbaas,
+                                        'LBaaS',
+                                        -> { plugin('lbaas').loadbalancers_path },
+                                        if: -> { plugin_available?(:lbaas) && services.available?(:lbaas) && current_user.is_allowed?("cloud_admin_or_support") && current_region == 'qa-de-1'},
+                                        highlights_on: -> { params[:controller][%r{lbaas/?.*}] }
                     networking_nav.item :dns_service,
                                         'DNS',
                                         -> { plugin('dns_service').zones_path },
@@ -150,9 +155,9 @@ SimpleNavigation::Configuration.run do |navigation|
       storage_nav.item :shared_filesystem_storage, 'Shared File System Storage', -> {plugin('shared_filesystem_storage').start_path('shares')},
         if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") },
         highlights_on: Proc.new { params[:controller][/shared_filesystem_storage\/.*/] }
-    #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
-    #   storage_nav.item :repositories, 'Repositories', '#'
-    #
+      storage_nav.item :container_image_registry, 'Container Image Registry', -> {plugin('keppel').start_path},
+        if: -> { services.available?(:keppel) },
+        highlights_on: Proc.new { params[:controller][/keppel\/.*/] }
     #   storage_nav.dom_attributes = {class: 'content-list'}
     end
 

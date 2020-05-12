@@ -20,6 +20,12 @@ module ServiceLayer
         )
       end
 
+      def volume_types()
+        elektron_volumes.get('types?is_public=None').body['volume_types']
+      rescue Elektron::Errors::ApiResponse => _e
+        nil
+      end
+
       def find_volume!(id)
         return nil if id.blank?
         elektron_volumes.get("volumes/#{id}").map_to('body.volume', &volume_map)

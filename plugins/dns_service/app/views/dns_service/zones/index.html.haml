@@ -9,22 +9,28 @@
     %p There are zone transfer requests available.
     = link_to 'show', transfer_requests_path, data: { modal: true }
 
-.toolbar
-  .has-feedback.has-feedback-searchable
-    = text_field_tag 'search_zones_input', '', class: "form-control", placeholder: 'Zone name or ID'
-
-  .has-feedback-help
-    %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by zone name or ID in visible zone list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+%form
+  .toolbar.toolbar-controlcenter
+    / / seach form
+    .inputwrapper
+      = select_tag 'searchfor', options_for_select(['Name', 'Email', 'TTL', 'Status'], @searchfor), class: "form-control"
+    .inputwrapper
+      .input-group.has-feedback.has-feedback-searchable
+        %input.form-control{:id => "search", :name => 'search', :placeholder => "Enter search term", :type => "text", :size => 40, :value => @search }
+        .span.input-group-btn
+          %button.btn.btn-default{type: "submit"}
+            %i.fa.fa-search
+    %a.help-link.has-feedback-help{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: 'Search term can use wildcard "*".'}}
       %i.fa.fa-question-circle
 
-  - if current_user.is_allowed?("dns_service:zone_create")
-    .main-buttons
-      = link_to 'Create New', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary'
-  - elsif current_user.is_allowed?("dns_service:request_zone")
-    .main-buttons
-      = link_to 'Request New Domain', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary'
+    - if current_user.is_allowed?("dns_service:zone_create")
+      .main-buttons
+        = link_to 'Create New Zone', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary'
+    - elsif current_user.is_allowed?("dns_service:request_zone")
+      .main-buttons
+        = link_to 'Request New Zone', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary'
 
-%table.table.zones.searchable{data:{search_input: '#search_zones_input'}}
+%table.table.zones
   %thead
     %tr
       %th Name
@@ -32,6 +38,7 @@
         %th Owning Project
         %th Pool
       %th Email
+      %th TTL
       %th Status
       %th Action
       %th.snug
@@ -47,6 +54,7 @@
     - else
       = render partial: 'list', locals: {zones: @zones, active_zone_transfer_requests: @active_zone_transfer_requests, pools: @pools}
 
-=# render_paginatable(@zones)
-- if @pagination_has_next
+-# if @pagination_has_next
   .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.zones tbody', search_input_selector: '#search_zones_input'} }
+
+= render_paginatable(@zones, {searchfor: @searchfor, search: @search})

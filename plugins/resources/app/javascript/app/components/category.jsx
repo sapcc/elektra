@@ -8,7 +8,7 @@ export default class Category extends React.Component {
 
   render() {
     const { categoryName, canEdit } = this.props;
-    const { serviceType, resources } = this.props.category;
+    const { area, serviceType, resources } = this.props.category;
 
     const scope = new Scope(this.props.scopeData);
     const Resource = scope.resourceComponent();
@@ -18,8 +18,7 @@ export default class Category extends React.Component {
       flavorData:   this.props.flavorData,
       scopeData:    this.props.scopeData,
       metadata:     this.props.metadata,
-      categoryName: this.props.categoryName,
-      canEdit:      this.props.canEdit,
+      categoryName, area, canEdit,
     };
 
     return (
@@ -29,7 +28,7 @@ export default class Category extends React.Component {
             <div className='col-md-6'>{t(categoryName)}</div>
             {canEdit && !scope.isCluster() && (
               <div className='col-md-1 text-right'>
-                <Link to={`/edit/${categoryName}`} className='btn btn-primary btn-sm btn-edit-quota'>Edit</Link>
+                <Link to={`/${area}/edit/${categoryName}`} className='btn btn-primary btn-sm btn-edit-quota'>Edit</Link>
               </div>
             )}
           </div>

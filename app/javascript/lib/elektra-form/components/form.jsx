@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import makeCancelable from 'lib/tools/cancelable_promise';
-import Deferred from 'lib/tools/deferred';
 import { FormContext } from './form_context'
 
 export default class Form extends React.Component {
@@ -38,7 +37,7 @@ export default class Form extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // set initialValues unless already set.
     if( nextProps.initialValues && Object.keys(this.state.values).length==0) {
       this.setState({
