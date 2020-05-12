@@ -12,6 +12,17 @@ module ServiceLayer
         )
       end
 
+      def new_pool(attributes = {})
+        pool_map.call(attributes)
+      end
+
+      ################# INTERFACE METHODS ######################
+      def create_pool(params)
+        elektron_lb2.post('pools') do
+          { pool: params }
+        end.body['pool']
+      end
+
     end
   end
 end

@@ -70,11 +70,22 @@ module Lbaas2
       def containers
         containers = services.key_manager.containers(limit: 100)
         containers = {items: []} if containers.blank?
-        selectContainers = containers[:items].map { |c| {"label": c.name, "value": c.container_ref} }
+        selectContainers = containers[:items].map { |c| {"label": "#{c.name} (#{c.id})", "value": c.container_ref} }
         
         render json: {
           containers: selectContainers
         }
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
+      def itemsWithoutDefaultPoolForSelect
+        listeners = services.lbaas2.listeners({loadbalancer_id: params[:loadbalancer_id]}).keep_if { |l| l.default_pool_id.blank? }
+        select_listeners = listeners.map {|listener| {"label": "#{listener.name || listener.id} (#{listener.protocol})", "value": listener.id, protocol: listener.protocol}}
+
+        render json: { listeners: select_listeners }
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
       rescue Exception => e
         render json: { errors: e.message }, status: "500"
       end
@@ -88,6 +99,10 @@ module Lbaas2
           listener.cached_l7policies = ObjectCache.where(id: listener.l7policies.map{|l| l[:id]}).each_with_object({}) do |l,map|
             map[l[:id]] = l
           end
+
+          # get insert headers with true value
+          listener.insert_headers = {} if  listener.insert_headers.blank?
+          listener.insert_headers_keys = listener.insert_headers.select{|key, value| value == "true"}.keys
         end
       end
 

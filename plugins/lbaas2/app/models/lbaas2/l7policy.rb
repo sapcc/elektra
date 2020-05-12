@@ -3,6 +3,7 @@
 module Lbaas2
   class L7policy < Core::ServiceLayer::Model
     validates :name, presence: true
+    validates :action, presence: true
 
     def save
       if valid?

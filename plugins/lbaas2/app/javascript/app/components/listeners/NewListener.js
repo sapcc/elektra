@@ -25,7 +25,7 @@ const NewListener = (props) => {
   })
 
   useEffect(() => {
-    console.log('fetching pools')
+    console.log('fetching pools and containers for select')
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     // get pools for the select
@@ -94,6 +94,7 @@ const NewListener = (props) => {
       fetchLoadbalancer(lbID).then(() => {
       }).catch(error => {
       })
+      // TODO: if the listener contains a pool then fetch the pool again so it gets updated
       close()
     }).catch(error => {
       setFormErrors(formErrorMessage(error))
@@ -154,106 +155,106 @@ const NewListener = (props) => {
         resetForm={false}>
 
         <Modal.Body>
-            <p>A Listener defines a protocol/port combination under which the load balancer can be called.</p>
-            <Form.Errors errors={formErrors}/>
+          <p>A Listener defines a protocol/port combination under which the load balancer can be called.</p>
+          <Form.Errors errors={formErrors}/>
 
-            <Form.ElementHorizontal label='Name' name="name" required>
-              <Form.Input elementType='input' type='text' name='name'/>
+          <Form.ElementHorizontal label='Name' name="name" required>
+            <Form.Input elementType='input' type='text' name='name'/>
+          </Form.ElementHorizontal>
+          <Form.ElementHorizontal label='Description' name="description">
+            <Form.Input elementType='input' type='text' name='description'/>
+          </Form.ElementHorizontal>
+          <Form.ElementHorizontal label='Protocol Port' name="protocol_port" required>
+            <Form.Input elementType='input' type='number' min="1" max="65535" name='protocol_port'/>
+            <span className="help-block">
+              <i className="fa fa-info-circle"></i>
+              The port under which the load balancer can be called. A port number between 1 and 65535.
+            </span>
+          </Form.ElementHorizontal>
+          <Form.ElementHorizontal label='Protocol' name="protocol" required>
+          <SelectInput name="protocol" items={protocolTypes()} onChange={onSelectProtocolType} />
+            <span className="help-block">
+              <i className="fa fa-info-circle"></i>
+              The protocol which can be used to access the load balancer port.
+            </span>
+          </Form.ElementHorizontal>
+          <Form.ElementHorizontal label='Default Pool' name="default_pool_id">
+            <SelectInput name="default_pool_id" isLoading={pools.isLoading} items={pools.items} onChange={onSelectPoolChange} />
+            { pools.error ? <span className="text-danger">{pools.error}</span>:""}
+            <span className="help-block">
+              <i className="fa fa-info-circle"></i>
+              The pool to which all traffic will be routed if no L7 Policy defines a different pool.
+            </span>
+          </Form.ElementHorizontal>
+          <Form.ElementHorizontal label='Connection Limit' name="connection_limit">
+            <Form.Input elementType='input' type='number' min="-1" name='connection_limit'/>
+            <span className="help-block">
+              <i className="fa fa-info-circle"></i>
+              The number of parallel connections allowed to access the load balancer. Value -1 means infinite connections are allowed.
+            </span>
+          </Form.ElementHorizontal>
+
+          {insetHeaderSelectItems.length > 0 &&
+            <Form.ElementHorizontal label='Insert Headers' name="insert_headers">
+              <SelectInput name="insert_headers" items={insetHeaderSelectItems} isMulti onChange={onSelectInsertHeadersChange} />
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  <span className="help-block-text">Headers to insert into the request before it is sent to the backend member.</span>
+                  <HelpPopover text={helpBlockTextInsertHeaders()} />
+                </span>
             </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='Description' name="description">
-              <Form.Input elementType='input' type='text' name='description'/>
+          }
+
+          {showCertificateContainer &&
+            <Form.ElementHorizontal label='Certificate Container' name="default_tls_container_ref">
+            { containers.error ? <span className="text-danger">{containers.error}</span>:""}
+              <SelectInput name="default_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCertificateContainer} />
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  The container with the TLS secrets used for the listener.
+                </span>
             </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='Protocol Port' name="protocol_port" required>
-              <Form.Input elementType='input' type='number' min="1" max="65535" name='protocol_port'/>
-              <span className="help-block">
-                <i className="fa fa-info-circle"></i>
-                The port under which the load balancer can be called. A port number between 1 and 65535.
-              </span>
+          }
+
+          {showSNIContainer &&
+            <Form.ElementHorizontal label='SNI Containers' name="sni_container_refs">
+            { containers.error ? <span className="text-danger">{containers.error}</span>:""}
+              <SelectInput name="sni_container_refs" isLoading={containers.isLoading} isMulti items={containers.items} onChange={onSelectSNIContainers} />
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  A list of containers with alternative TLS secrets used for Server Name Indication (SNI).
+                </span>
             </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='Protocol' name="protocol" required>
-            <SelectInput name="protocol" items={protocolTypes()} onChange={onSelectProtocolType} />
-              <span className="help-block">
-                <i className="fa fa-info-circle"></i>
-                The protocol which can be used to access the load balancer port.
-              </span>
+          }
+
+
+          {clientAuthenticationSelectItems.length > 0 &&
+            <Form.ElementHorizontal label='Client Authentication Mode' name="client_authentication">
+              <SelectInput name="client_authentication" items={clientAuthenticationSelectItems} onChange={onSelectClientAuthentication} />
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  The TLS client authentication mode.
+                </span>
             </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='Default Pool' name="default_pool_id">
-              <SelectInput name="default_pool_id" isLoading={pools.isLoading} items={pools.items} onChange={onSelectPoolChange} />
-              { pools.error ? <span className="text-danger">{pools.error}</span>:""}
-              <span className="help-block">
-                <i className="fa fa-info-circle"></i>
-                The pool to which all traffic will be routed if no L7 Policy defines a different pool.
-              </span>
+          }
+
+          {showCATLSContainer &&
+            <Form.ElementHorizontal label='Client Authentication Container' name="client_ca_tls_container_ref">
+              <SelectInput name="client_ca_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCATLSContainers}  />
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  The TLS client authentication certificate.
+                </span>
             </Form.ElementHorizontal>
-            <Form.ElementHorizontal label='Connection Limit' name="connection_limit">
-              <Form.Input elementType='input' type='number' min="-1" name='connection_limit'/>
-              <span className="help-block">
-                <i className="fa fa-info-circle"></i>
-                The number of parallel connections allowed to access the load balancer. Value -1 means infinite connections are allowed.
-              </span>
-            </Form.ElementHorizontal>
+          }
 
-            {insetHeaderSelectItems.length > 0 &&
-              <Form.ElementHorizontal label='Insert Headers' name="insert_headers">
-                <SelectInput name="insert_headers" items={insetHeaderSelectItems} isMulti onChange={onSelectInsertHeadersChange} />
-                  <span className="help-block">
-                    <i className="fa fa-info-circle"></i>
-                    <span className="help-block-text">Headers to insert into the request before it is sent to the backend member.</span>
-                    <HelpPopover text={helpBlockTextInsertHeaders()} />
-                  </span>
-              </Form.ElementHorizontal>
-            }
-
-            {showCertificateContainer &&
-              <Form.ElementHorizontal label='Certificate Container' name="default_tls_container_ref">
-              { containers.error ? <span className="text-danger">{containers.error}</span>:""}
-                <SelectInput name="default_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCertificateContainer} />
-                  <span className="help-block">
-                    <i className="fa fa-info-circle"></i>
-                    The container with the TLS secrets used for the listener.
-                  </span>
-              </Form.ElementHorizontal>
-            }
-
-            {showSNIContainer &&
-              <Form.ElementHorizontal label='SNI Containers' name="sni_container_refs">
-              { containers.error ? <span className="text-danger">{containers.error}</span>:""}
-                <SelectInput name="sni_container_refs" isLoading={containers.isLoading} isMulti items={containers.items} onChange={onSelectSNIContainers} />
-                  <span className="help-block">
-                    <i className="fa fa-info-circle"></i>
-                    A list of containers with alternative TLS secrets used for Server Name Indication (SNI).
-                  </span>
-              </Form.ElementHorizontal>
-            }
-
-
-            {clientAuthenticationSelectItems.length > 0 &&
-              <Form.ElementHorizontal label='Client Authentication Mode' name="client_authentication">
-                <SelectInput name="client_authentication" items={clientAuthenticationSelectItems} onChange={onSelectClientAuthentication} />
-                  <span className="help-block">
-                    <i className="fa fa-info-circle"></i>
-                    The TLS client authentication mode.
-                  </span>
-              </Form.ElementHorizontal>
-            }
-
-            {showCATLSContainer &&
-              <Form.ElementHorizontal label='Client Authentication Container' name="client_ca_tls_container_ref">
-                <SelectInput name="client_ca_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCATLSContainers}  />
-                  <span className="help-block">
-                    <i className="fa fa-info-circle"></i>
-                    The TLS client authentication certificate.
-                  </span>
-              </Form.ElementHorizontal>
-            }
-
-            <Form.ElementHorizontal label='Tags' name="tags">
-              <TagsInput name="tags" />
-              <span className="help-block">
-                <i className="fa fa-info-circle"></i>
-                Start a new tag typing a string and hitting the Enter or Tab key.
-              </span>
-            </Form.ElementHorizontal>
+          <Form.ElementHorizontal label='Tags' name="tags">
+            <TagsInput name="tags" />
+            <span className="help-block">
+              <i className="fa fa-info-circle"></i>
+              Start a new tag typing a string and hitting the Enter or Tab key.
+            </span>
+          </Form.ElementHorizontal>
         </Modal.Body>
         <Modal.Footer>  
           <Button onClick={close}>Cancel</Button>

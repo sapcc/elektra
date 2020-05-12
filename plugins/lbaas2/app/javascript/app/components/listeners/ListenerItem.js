@@ -7,6 +7,8 @@ import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import CopyPastePopover from '../shared/CopyPastePopover'
 import CachedInfoPopover from '../shared/CachedInforPopover';
 import CachedInfoPopoverContent from './CachedInfoPopoverContent'
+import CachedInfoPopoverContentContainers from '../shared/CachedInfoPopoverContentContainers'
+import useListener from '../../../lib/hooks/useListener'
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
@@ -14,6 +16,7 @@ const MyHighlighter = ({search,children}) => {
 }
 
 const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
+  const {certificateContainerRelation} = useListener()
 
   const onClick = (e) => {
     if (e) {
@@ -70,20 +73,67 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
     }
   }
 
+
+
+  const collectContainers = () => {
+    const containers = [
+      {name:"Certificate Container", ref: listener.default_tls_container_ref},
+      {name:"SNI Containers", refList: listener.sni_container_refs},
+      {name:"Client Authentication Container", ref: listener.client_ca_tls_container_ref}
+    ]
+    var filteredContainers = containers.reduce( (filteredContainers, item) => {
+      if(item.ref && item.ref.length > 0 || item.refList && item.refList.length > 0) {
+        filteredContainers.push(item)
+      }
+      return filteredContainers
+    },[])
+    return filteredContainers
+  }
+
+  const displayProtocol = () => {
+    const containers = collectContainers()
+    return (
+      <React.Fragment>
+        {listener.protocol}
+        {certificateContainerRelation(listener.protocol) &&
+          <div className="display-flex">
+            <span>Client Auth: </span>
+            <span className="label-right">{listener.client_authentication}</span>
+          </div>
+        }
+        {certificateContainerRelation(listener.protocol) && 
+          <div className="display-flex">
+            <span>Secrets: </span>
+            <div className="label-right">
+              <CachedInfoPopover  popoverId={"listeners-secrets-popover-"+listener.id} 
+                buttonName={containers.length} 
+                title={<React.Fragment>Secrets</React.Fragment>}
+                content={<CachedInfoPopoverContentContainers containers={containers} />} />
+            </div>
+          </div>
+        }
+      </React.Fragment>
+    )
+  }
+
   const l7PolicyIDs = listener.l7policies.map(l7p => l7p.id)
   return ( 
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
         {displayName()}
         {displayID()}
+        {displayDescription()}
       </td>
-      <td>{displayDescription()}</td>
-      <td><StateLabel placeholder={listener.operating_status} path="" /></td>
-      <td><StateLabel placeholder={listener.provisioning_status} path=""/></td>
+      <td>
+        <div><StateLabel placeholder={listener.operating_status} path="" /></div>
+        <div><StateLabel placeholder={listener.provisioning_status} path=""/></div>
+      </td>
       <td>
         <StaticTags tags={listener.tags} />
       </td>
-      <td>{listener.protocol}</td>
+      <td>
+        {displayProtocol()}
+      </td>
       <td>{listener.protocol_port}</td>
       <td>
         {listener.default_pool_id ?
@@ -95,6 +145,9 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
         }
       </td>
       <td>{listener.connection_limit}</td>
+      <td>
+        <StaticTags tags={listener.insert_headers_keys} />
+      </td>
       <td> 
         {disabled ?
           <span className="info-text">{l7PolicyIDs.length}</span>

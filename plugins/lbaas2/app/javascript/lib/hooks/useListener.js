@@ -204,6 +204,16 @@ const useListener = () => {
     })
   }
 
+  const fetchListnersNoDefaultPoolForSelect = (lbID) => {
+    return new Promise((handleSuccess,handleError) => {    
+      ajaxHelper.get(`/loadbalancers/${lbID}/listeners/items_no_def_pool_for_select`).then((response) => {      
+        handleSuccess(response.data)
+      }).catch( (error) => {     
+        handleError(error.response)
+      })      
+    })
+  }
+
   return {
     fetchListeners,
     fetchListener,
@@ -220,7 +230,8 @@ const useListener = () => {
     fetchContainersForSelect,
     certificateContainerRelation,
     SNIContainerRelation,
-    CATLSContainerRelation
+    CATLSContainerRelation,
+    fetchListnersNoDefaultPoolForSelect
   }
 }
 

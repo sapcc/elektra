@@ -126,13 +126,14 @@ const PoolList = ({props, loadbalancerID}) => {
           <table className={selected ? "table table-section pools" : "table table-hover pools"}>
             <thead>
                 <tr>
-                    <th>Name/ID</th>
-                    <th>Description</th>
-                    <th>State</th>
-                    <th>Prov. Status</th>
+                    <th>Name/ID/Description</th>
+                    <th>State/Prov. Status</th>
                     <th>Tags</th>
-                    <th>Protocol</th>
                     <th>Algorithm</th>
+                    <th>Protocol</th>
+                    <th>Session Persistence</th>
+                    <th>Assigned to</th>
+                    <th>TLS enabled</th>
                     <th>#Members</th>
                     <th className='snug'></th>
                 </tr>

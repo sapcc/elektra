@@ -6,7 +6,7 @@ const StaticTags = ({tags, shouldPopover}) => {
   return ( 
     <React.Fragment>
       <div className="static-tags clearfix">
-        {tags.map( (tag, index) =>
+        {tags && tags.map( (tag, index) =>
           <div key={index} className="tag">
             <div className="value">
               {shouldPopover && tag.length > 10 ?

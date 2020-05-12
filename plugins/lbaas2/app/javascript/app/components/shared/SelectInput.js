@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Select from 'react-select';
 import { FormContext } from 'lib/elektra-form/components/form_context'
 
-const SelectInput = ({name, isLoading, items, isMulti, onChange, value, conditionalPlaceholderText, conditionalPlaceholderCondition}) => {
+const SelectInput = ({name, isLoading, items, isMulti, onChange, value, conditionalPlaceholderText, isClearable, conditionalPlaceholderCondition}) => {
 
   const context = useContext(FormContext)
 
@@ -26,7 +26,7 @@ const SelectInput = ({name, isLoading, items, isMulti, onChange, value, conditio
     classNamePrefix="select"
     isDisabled={false}
     isLoading={isLoading}
-    // isClearable={true}
+    isClearable={isClearable}
     isRtl={false}
     isSearchable={true}
     name="vip_subnet"

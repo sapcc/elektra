@@ -11,6 +11,7 @@ Lbaas2::Engine.routes.draw do
 
       collection do
         get 'containers' => 'listeners#containers'
+        get 'items_no_def_pool_for_select' => 'listeners#itemsWithoutDefaultPoolForSelect'
       end
 
       resources :l7policies, module: :listeners, only: [:index, :show, :create] do
@@ -22,7 +23,7 @@ Lbaas2::Engine.routes.draw do
 
     end
 
-    resources :pools, module: :loadbalancers, only: [:index] do
+    resources :pools, module: :loadbalancers, only: [:index, :create] do
 
       collection do
         get 'items_for_select' => 'pools#itemsForSelect'

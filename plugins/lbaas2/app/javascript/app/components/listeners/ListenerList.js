@@ -151,15 +151,14 @@ const ListenerList = ({props, loadbalancerID}) => {
                 <table className={selected ? "table table-section listeners" : "table table-hover listeners"}>
                   <thead>
                       <tr>
-                          <th>Name/ID</th>
-                          <th>Description</th>
-                          <th>State</th>
-                          <th>Prov. Status</th>
+                          <th>Name/ID/Description</th>
+                          <th>State/Prov. Status</th>
                           <th>Tags</th>
-                          <th>Protocol</th>
+                          <th>Protocol/Client Auth/Secrets</th>
                           <th>Protocol Port</th>
                           <th>Default Pool</th>
                           <th>Connection Limit</th>
+                          <th>Insert Headers</th>
                           <th>#L7 Policies</th>
                           <th className='snug'></th>
                       </tr>

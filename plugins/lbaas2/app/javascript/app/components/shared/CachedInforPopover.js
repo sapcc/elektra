@@ -15,7 +15,7 @@ const LbPopover = ({popoverId, buttonName, title, content}) => {
 
   return (    
     <div>
-      <Button bsStyle="link" onClick={handleClick} >{buttonName}</Button>
+      <Button bsClass="cached-info-button btn btn-link" onClick={handleClick} >{buttonName}</Button>
       <Overlay
         rootClose
         onHide={() => setShow(false)}
@@ -25,11 +25,11 @@ const LbPopover = ({popoverId, buttonName, title, content}) => {
         container={this}
         containerPadding={20}
       >
-          <Popover bsClass="lbaas2 lb-popover popover" id={popoverId} title={title}>
-            <div className="lb-content">
+          <Popover bsClass="lbaas2 cached-info-popover popover" id={popoverId} title={title}>
+            <div className="cached-info-content">
               {content}
             </div>
-            <div className="lb-footer">
+            <div className="cached-info-footer">
               Preview from cache
             </div>
           </Popover>
