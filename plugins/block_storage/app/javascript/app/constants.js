@@ -7,7 +7,6 @@ export const REQUEST_VOLUME_TYPES =           'block_storage/app/REQUEST_VOLUME_
 export const RECEIVE_VOLUME_TYPES =           'block_storage/app/RECEIVE_VOLUME_TYPES'
 export const REQUEST_VOLUME_TYPES_FAILURE =   'block_storage/app/REQUEST_VOLUME_TYPES_FAILURE'
 
-export const SET_VOLUME_SEARCH_TERM =          'block_storage/app/SET_VOLUME_SEARCH_TERM'
 export const REQUEST_VOLUME_DELETE =           'block_storage/app/REQUEST_VOLUME_DELETE'
 export const REQUEST_VOLUME_EXTEND =           'block_storage/app/REQUEST_VOLUME_EXTEND'
 export const REMOVE_VOLUME =                   'block_storage/app/REMOVE_VOLUME'

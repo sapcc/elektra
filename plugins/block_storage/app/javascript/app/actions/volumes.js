@@ -219,66 +219,57 @@ const forceDeleteVolume = id => dispatch =>
 
 //################################
 
-const requestVolumes = () => ({
-  type: constants.REQUEST_VOLUMES,
-  requestedAt: Date.now()
-});
+const requestVolumes= () => (
+  {
+    type: constants.REQUEST_VOLUMES,
+    requestedAt: Date.now()
+  }
+)
 
-const requestVolumesFailure = error => ({
-  type: constants.REQUEST_VOLUMES_FAILURE,
-  error
-});
+const requestVolumesFailure= (error) => (
+  {
+    type: constants.REQUEST_VOLUMES_FAILURE,
+    error
+  }
+);
 
-const receiveVolumes = (items, hasNext) => ({
-  type: constants.RECEIVE_VOLUMES,
-  items,
-  hasNext,
-  receivedAt: Date.now()
-});
-const fetchVolumes = () =>
-  function(dispatch, getState) {
-    dispatch(requestVolumes());
+const receiveVolumes= ({items,has_next,page,limit,sort_key,sort_dir}) =>
+  ({
+    type: constants.RECEIVE_VOLUMES,
+    items,
+    hasNext: has_next,
+    page,limit,
+    sortKey: sort_key,
+    sortDir: sort_dir,
+    receivedAt: Date.now()
+  })
+;
 
-    const { marker } = getState().volumes;
-    const params = {};
-    if (marker) params["marker"] = marker.id;
 
-    return ajaxHelper
-      .get("/volumes", { params: params })
+const fetchVolumes= ({searchType,searchTerm,limit,page} = {}) =>
+  (dispatch,getState) => {
+  
+    dispatch(requestVolumes({searchType,searchTerm}))
+    const params = {page: page || 1}
+    if(searchType && searchTerm) {
+      params.search_type = searchType
+      params.search_term = searchTerm
+    }
+    if(limit) params.limit = limit
+    if(page>1) {
+      const volumes = getState().volumes 
+      if(volumes.items.length > 0) {
+        params.marker = volumes.items[volumes.items.length-1].id
+      }
+    }
+    
+    ajaxHelper.get('/volumes', {params})
       .then(response => {
-        dispatch(receiveVolumes(response.data.volumes, response.data.has_next));
+        dispatch(receiveVolumes(response.data))
       })
-      .catch(error => {
-        dispatch(requestVolumesFailure(errorMessage(error)));
-      });
+      .catch(error => dispatch(requestVolumesFailure(errorMessage(error))))
   };
-const loadNext = () =>
-  function(dispatch, getState) {
-    const { hasNext, isFetching, searchTerm } = getState().volumes;
 
-    if (!isFetching && hasNext) {
-      dispatch(fetchVolumes()).then(() =>
-        // load next if search modus (searchTerm is presented)
-        dispatch(loadNextOnSearch(searchTerm))
-      );
-    }
-  };
-const loadNextOnSearch = searchTerm =>
-  function(dispatch) {
-    if (searchTerm && searchTerm.trim().length > 0) {
-      dispatch(loadNext());
-    }
-  };
-const setSearchTerm = searchTerm => ({
-  type: constants.SET_VOLUME_SEARCH_TERM,
-  searchTerm
-});
-
-const searchVolumes = searchTerm =>
-  function(dispatch) {
-    dispatch(setSearchTerm(searchTerm));
-    dispatch(loadNextOnSearch(searchTerm));
-  };
 const shouldFetchVolumes = function(state) {
   if (state.volumes.isFetching || state.volumes.requestedAt) {
     return false;
@@ -405,12 +396,12 @@ const detachVolume = (id, attachmentId) => dispatch =>
     .catch(cancel => true);
 
 export {
+  fetchVolumes,
   fetchVolumesIfNeeded,
   fetchVolume,
   fetchAvailabilityZonesIfNeeded,
   fetchImagesIfNeeded,
   fetchVolumeTypesIfNeeded,
-  searchVolumes,
   deleteVolume,
   forceDeleteVolume,
   attachVolume,
@@ -421,6 +412,5 @@ export {
   submitExtendVolumeSizeForm,
   submitCloneVolumeForm,
   submitVolumeToImageForm,
-  loadNext,
   listenToVolumes
 };

@@ -11,16 +11,21 @@ const initialState = {
   isFetching: false,
   typesIsFetching: false,
   hasNext: true,
-  marker: null,
+  searchType: null,
   searchTerm: null,
+  limit: 20,
+  page: 1,
+  sortKey: "name",
+  sortDir: "asc",
   error: null
 };
 
-const requestVolumes = (state, { requestedAt }) => ({
+const requestVolumes = (state, { searchTerm, searchType }) => ({
   ...state,
-  requestedAt,
   isFetching: true,
-  error: null
+  error: null,
+  searchType,
+  searchTerm
 });
 
 const requestVolumesFailure = (state, { error }) => ({
@@ -29,21 +34,36 @@ const requestVolumesFailure = (state, { error }) => ({
   error
 });
 
-const receiveVolumes = (state, { items, receivedAt, hasNext }) => {
-  let newItems = (state.items.slice() || []).concat(items);
-  // filter duplicated items
-  newItems = newItems.filter(
-    (item, pos, arr) => arr.findIndex(i => i.id == item.id) == pos
-  );
-
+const receiveVolumes = (
+  state,
+  { items, receivedAt, hasNext, limit, page, sortKey, sortDir }
+) => {
   return {
     ...state,
     receivedAt,
     isFetching: false,
-    items: newItems,
-    hasNext,
-    marker: items[items.length - 1]
+    // filter duplicated items
+    items: items.filter(
+      (item, pos, arr) => arr.findIndex(i => i.id == item.id) == pos
+    ),
+    limit,
+    page,
+    sortDir,
+    sortKey,
+    hasNext
   };
+};
+
+const receiveVolume = function(state, { volume }) {
+  const index = state.items.findIndex(item => item.id == volume.id);
+  const items = state.items.slice();
+  // update or add
+  if (index >= 0) {
+    items[index] = volume;
+  } else {
+    items.push(volume);
+  }
+  return { ...state, items: items };
 };
 
 //########################## TYPES ##############################
@@ -71,20 +91,6 @@ const receiveVolumeTypes = (state, { types, receivedAt }) => {
 };
 
 //########################## ACTIONS ##############################
-
-const setSearchTerm = (state, { searchTerm }) => ({ ...state, searchTerm });
-
-const receiveVolume = function(state, { volume }) {
-  const index = state.items.findIndex(item => item.id == volume.id);
-  const items = state.items.slice();
-  // update or add
-  if (index >= 0) {
-    items[index] = volume;
-  } else {
-    items.push(volume);
-  }
-  return { ...state, items: items };
-};
 
 const requestVolumeDelete = (state, { id }) => {
   const index = state.items.findIndex(item => item.id == id);
@@ -153,8 +159,6 @@ export default (state = initialState, action) => {
       return requestVolumeTypesFailure(state, action);
     case constants.RECEIVE_VOLUME_TYPES:
       return receiveVolumeTypes(state, action);
-    case constants.SET_VOLUME_SEARCH_TERM:
-      return setSearchTerm(state, action);
     case constants.REQUEST_VOLUME_DELETE:
       return requestVolumeDelete(state, action);
     case constants.REQUEST_VOLUME_EXTEND:
