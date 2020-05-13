@@ -71,6 +71,7 @@ export default ({
       <table className="table volumes">
         <thead>
           <tr>
+            <th></th>
             <th>Volume Name</th>
             <th>Availability Zone</th>
             <th>Description</th>
