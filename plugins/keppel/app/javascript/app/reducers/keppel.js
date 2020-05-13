@@ -65,6 +65,16 @@ const updateAcct = (state, {account}) => ({
   },
 });
 
+const deleteAcct = (state, {accountName}) => ({
+  ...state,
+  accounts: {
+    ...state.accounts,
+    data: [
+      ...(state.accounts.data.filter(a => a.name != accountName)),
+    ],
+  },
+});
+
 ////////////////////////////////////////////////////////////////////////////////
 // repositories
 
@@ -193,6 +203,7 @@ export const keppel = (state, action) => {
     case constants.REQUEST_ACCOUNTS_FAILURE: return reqAcctsFail(state);
     case constants.RECEIVE_ACCOUNTS:         return recvAccts(state, action);
     case constants.UPDATE_ACCOUNT:           return updateAcct(state, action);
+    case constants.DELETE_ACCOUNT:           return deleteAcct(state, action);
     case constants.REQUEST_REPOSITORIES:          return reqRepos(state, action);
     case constants.REQUEST_REPOSITORIES_FAILURE:  return reqReposFail(state, action);
     case constants.RECEIVE_REPOSITORIES:          return recvRepos(state, action);

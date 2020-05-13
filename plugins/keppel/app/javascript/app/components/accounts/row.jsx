@@ -1,14 +1,50 @@
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
+import { confirm, showErrorModal } from 'lib/dialogs';
+import { addSuccess } from 'lib/flashes';
+
+import AccountDeleter from '../../containers/accounts/deleter';
+
 export default class AccountRow extends React.Component {
+  state = {
+    isDeleting: false,
+  };
+
+  handleDelete(e) {
+    e.preventDefault();
+    if (this.state.isDeleting) {
+      return;
+    }
+    const { name: accountName, in_maintenance: inMaintenance } = this.props.account;
+    if (!inMaintenance) {
+      showErrorModal('The account must be set in maintenance first.');
+      return;
+    }
+
+    confirm(`Really delete the account "${accountName}" and all images in it?`)
+      .then(() => this.setState({ ...this.state, isDeleting: true }));
+    //This causes <AccountDeleter/> to be mounted to perform the actual deletion.
+  }
+
+  handleDoneDeleting(success) {
+    this.setState({ ...this.state, isDeleting: false });
+    if (success) {
+      addSuccess('Account deleted.');
+    }
+  }
+
   render() {
     const { name: accountName, auth_tenant_id: projectID, in_maintenance: inMaintenance, replication } = this.props.account;
     const containerName = `keppel-${accountName}`;
     const swiftContainerURL = `/_/${projectID}/object-storage/containers/${containerName}/list`;
 
     let statusDisplay = 'Ready';
-    if (inMaintenance) {
+    if (this.state.isDeleting) {
+      statusDisplay = (
+        <AccountDeleter accountName={accountName} handleDoneDeleting={() => this.handleDoneDeleting()} />
+      );
+    } else if (inMaintenance) {
       const infoText = replication
         ? 'No new images will be replicated while the account is in maintenance. Replicated images can still be pulled.'
         : 'No new images may be pushed while the account is in maintenance. Existing images can still be pulled.';
@@ -66,6 +102,7 @@ export default class AccountRow extends React.Component {
                     <li><Link to={`/accounts/${accountName}/sublease`}>Issue sublease token</Link></li>
                   )}
                   <li><Link to={`/accounts/${accountName}/toggle_maintenance`}>{inMaintenance ? 'End maintenance' : 'Set in maintenance'}</Link></li>
+                  <li><a href='#' onClick={e => this.handleDelete(e)}>Delete</a></li>
                 </React.Fragment>
               )}
             </ul>
