@@ -78,7 +78,7 @@ export default (props) => {
       <td><PrettyDate date={image.created_at}/></td>
       <td>{image.status}</td>
       <td className="snug">
-        { (canCreateInstance || policy.isAllowed("image:image_unpublish") || policy.isAllowed("image:image_delete")) &&
+        { (canCreateInstance || policy.isAllowed("image:image_unpublish") || policy.isAllowed("image:image_delete", {image})) &&
           <div className='btn-group'>
             <button
               className='btn btn-default btn-sm dropdown-toggle'
