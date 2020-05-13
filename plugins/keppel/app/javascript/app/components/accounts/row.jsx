@@ -59,10 +59,12 @@ export default class AccountRow extends React.Component {
               {!replication && (
                 <li><Link to={`/accounts/${accountName}/validation_rules`}>Validation rules</Link></li>
               )}
-              {(this.props.isAdmin && !replication) && (
+              {this.props.isAdmin && (
                 <React.Fragment>
                   <li className="divider"></li>
-                  <li><Link to={`/accounts/${accountName}/sublease`}>Issue sublease token</Link></li>
+                  {!replication && (
+                    <li><Link to={`/accounts/${accountName}/sublease`}>Issue sublease token</Link></li>
+                  )}
                   <li><Link to={`/accounts/${accountName}/toggle_maintenance`}>{inMaintenance ? 'End maintenance' : 'Set in maintenance'}</Link></li>
                 </React.Fragment>
               )}
