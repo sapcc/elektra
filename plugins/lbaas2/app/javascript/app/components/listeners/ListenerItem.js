@@ -29,7 +29,6 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
   const handleDelete = () => {
   }
 
-
   const displayName = () => {
     const name = listener.name || listener.id
     const cutName = <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/>
@@ -47,6 +46,7 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
       }
     }
   }
+
   const displayID = () => {
     if (listener.name) {
       if (disabled) {
@@ -60,6 +60,7 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
       }
     }
   }
+  
   const displayDescription = () => {
     const description = <CopyPastePopover text={listener.description} size={20} shouldCopy={false} shouldPopover={true}/>
     if (disabled) {
@@ -72,8 +73,6 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
       }
     }
   }
-
-
 
   const collectContainers = () => {
     const containers = [

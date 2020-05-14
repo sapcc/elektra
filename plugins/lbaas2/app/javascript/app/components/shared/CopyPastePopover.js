@@ -32,19 +32,19 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
     if (windowScroll && showPopover) setShowPopover(false)
   },[shouldClose, windowScroll])
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  },[])
+  // useEffect(() => {
+  //   window.addEventListener('scroll', handleScroll)
+  //   return () => window.removeEventListener('scroll', handleScroll)
+  // },[])
 
-  const handleScroll = () => {
-    if(timeout) return
-    setWindowScroll(true)
-    timeout = setTimeout(() => {
-      timeout = null
-      setWindowScroll(false)
-    }, 1000 )
-  }
+  // const handleScroll = () => {
+  //   if(timeout) return
+  //   setWindowScroll(true)
+  //   timeout = setTimeout(() => {
+  //     timeout = null
+  //     setWindowScroll(false)
+  //   }, 1000 )
+  // }
 
   const onCopySuccess = () => {
     setShowTooltip(true)
