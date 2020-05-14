@@ -2,6 +2,7 @@
   "image_viewer": "role:image_viewer",
   "image_admin": "role:image_admin",
 
+  "image:image_owner": "project_id:%(image.owner)s",
   "image:image_creator": "user_id:%(image.user_id)s",
   "image:cloud_admin": "role:cloud_image_admin",
   "image:image_is_public": "'public'==%(image.visibility)s",
