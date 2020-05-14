@@ -32,6 +32,9 @@ Lbaas2::Engine.routes.draw do
       resources :healthmonitors, module: :pools, only: [:show] do
       end
 
+      resources :members, module: :pools, only: [:index] do
+      end
+
     end
 
   end  

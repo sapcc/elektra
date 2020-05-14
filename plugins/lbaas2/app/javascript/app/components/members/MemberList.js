@@ -1,56 +1,88 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import HelpPopover from '../shared/HelpPopover'
 import { useGlobalState } from '../StateProvider'
 import { Table } from 'react-bootstrap'
 import useCommons from '../../../lib/hooks/useCommons'
+import useMember from '../../../lib/hooks/useMember'
+import MemberListItem from './MemberListItem';
+import ErrorPage from '../ErrorPage';
 
-const MemberList = (props) => {
+const MemberList = ({props,loadbalancerID}) => {
   const poolID = useGlobalState().pools.selected
-  const [selected, setSelected] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const {searchParamsToString} = useCommons()
+  const {persistMembers} = useMember()
+  const state = useGlobalState().members
 
+  useEffect(() => {    
+    initialLoad()
+  }, [poolID]);
+
+  const initialLoad = () => {
+    if (poolID) {
+      console.log("FETCH MEMBERS")
+      persistMembers(loadbalancerID, poolID).then((data) => {
+      }).catch( error => {
+      })
+    }
+  }
+
+  const error = state.error
+  const isLoading = state.isLoading
+  const members = state.items
+
+  console.log("RENDER member list")
   return (
     <React.Fragment>
       {poolID && 
-
+        <React.Fragment>
+          {error ?
+            <div className="members subtalbe multiple-subtable-right">
+              <ErrorPage headTitle="Members" error={error} onReload={initialLoad}/>
+            </div>
+          :
           <div className="members subtable multiple-subtable-right">
             <div className="display-flex">
               <h4>Members</h4>
               <HelpPopover text="Members are servers that serve traffic behind a load balancer. Each member is specified by the IP address and port that it uses to serve traffic." />
-              <div className="btn-right">
-                {!selected &&              
-                    <DefeatableLink
-                      disabled={isLoading}
-                      to={`/loadbalancers/test`}
-                      className='btn btn-primary btn-xs'>
-                      New L7 Policy
-                    </DefeatableLink>
-                  }
+              <div className="btn-right">         
+                <DefeatableLink
+                  disabled={isLoading}
+                  to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/new?${searchParamsToString(props)}`}
+                  className='btn btn-primary btn-xs'>
+                  New Member
+                </DefeatableLink>
             </div>
             </div>
             <Table className="table policies" responsive>
               <thead>
                   <tr>
+                      <th>Name/ID</th>
                       <th>IP Address</th>
-                      <th>State</th>
-                      <th>Prov. Status</th>
+                      <th>State/Prov. Status</th>
+                      <th>Tags</th>
                       <th>Protocol Port</th>
                       <th>Weight</th>
-                      <th>Tags</th>
                       <th className='snug'></th>
                   </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colSpan="9">
-                    No Members found.
-                  </td>
-                </tr>
+                {members && members.length>0 ?
+                  members.map( (member, index) =>
+                    <MemberListItem loadbalancerID={loadbalancerID} poolID={poolID} member={member} key={index}/>
+                  )
+                :
+                  <tr>
+                    <td colSpan="7">
+                      No Members found.
+                    </td>
+                  </tr>
+                }
               </tbody>
           </Table>
           </div>
+        }
+        </React.Fragment>
       }
     </React.Fragment>
    );
