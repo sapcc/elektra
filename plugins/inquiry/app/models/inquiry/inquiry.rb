@@ -50,17 +50,26 @@ module Inquiry
     end
 
     def self.to_csv
-      attributes = %w{Kind Description Requestor Updated Status}
+      attributes = %w{Kind Description Requestor Approver Updated Status}
       # https://www.ablebits.com/office-addins-blog/2014/05/01/convert-csv-excel/#csv-not-parsed
       # In North America and some other countries, the default List Separator is a comma.
       # While in European countries the comma (,) is reserved as the Decimal Symbol and the List Separator is set to semicolon (;)
       CSV.generate(headers: true, col_sep: ";") do |csv|
         csv << attributes
         all.each do |inquiry|
+            steps = inquiry.process_steps
+            approver = "-"
+            steps.each do |step|
+              if step.event == "approved!"
+                approver = "#{step.processor.full_name} (#{step.processor.name})"
+              end
+            end
+
             csv << [
               inquiry.kind,
               inquiry.description,
               "#{inquiry.requester.full_name} (#{inquiry.requester.name})",
+              approver,
               inquiry.updated_at.getlocal.strftime("%F %T"),
               inquiry.aasm.human_state
             ]
