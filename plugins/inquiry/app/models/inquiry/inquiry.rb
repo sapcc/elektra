@@ -57,22 +57,23 @@ module Inquiry
       CSV.generate(headers: true, col_sep: ";") do |csv|
         csv << attributes
         all.each do |inquiry|
-            steps = inquiry.process_steps
-            approver = "-"
-            steps.each do |step|
-              if step.event == "approved!"
-                approver = "#{step.processor.full_name} (#{step.processor.name})"
-              end
+          approver = "-"
+          # get all steps and search for appover
+          steps = inquiry.process_steps
+          steps.each do |step|
+            if step.event == "approve!"
+              approver = "#{step.processor.full_name} (#{step.processor.name})"
             end
+          end
 
-            csv << [
-              inquiry.kind,
-              inquiry.description,
-              "#{inquiry.requester.full_name} (#{inquiry.requester.name})",
-              approver,
-              inquiry.updated_at.getlocal.strftime("%F %T"),
-              inquiry.aasm.human_state
-            ]
+          csv << [
+            inquiry.kind,
+            inquiry.description,
+            "#{inquiry.requester.full_name} (#{inquiry.requester.name})",
+            approver,
+            inquiry.updated_at.getlocal.strftime("%F %T"),
+            inquiry.aasm.human_state
+          ]
         end
       end
     end
