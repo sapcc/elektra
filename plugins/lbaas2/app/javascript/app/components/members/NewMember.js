@@ -6,6 +6,7 @@ import useMember from '../../../lib/hooks/useMember';
 import Select from 'react-select';
 import NewMemberList from './NewMemberList'
 import uniqueId from 'lodash/uniqueId'
+import { addNotice } from 'lib/flashes';
 
 const NewMember = (props) => {
   const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
@@ -96,11 +97,9 @@ const NewMember = (props) => {
       if(response && response.data) {
        const savedItems = response.data || []
        savedItems.forEach( item => {
-         console.log("item---->", item)
+         addNotice(<React.Fragment>Member <b>{item.name}</b> ({item.id}) is being created.</React.Fragment>)
        })
       }
-      // TODO: add notice
-      // addNotice(<React.Fragment>Member <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       // TODO: fetch the Members and the pool again
       close()
     }).catch(error => {
@@ -131,18 +130,27 @@ const NewMember = (props) => {
   }
 
   const addMembers = () => {
-    // create a unique id for the values
-    const newValues = (selectedServers || []).map((item, index) => {
-      return {id: uniqueId("member_"), name: item.name, address: item.address}
-    })
-    // concat items
-    let newMembers = (members.slice() || []).concat(newValues);
-    setMembers(newMembers)
+    // // create a unique id for the values
+    // const newValues = (selectedServers || []).map((item, index) => {
+    //   return {id: uniqueId("member_"), name: item.name, address: item.address}
+    // })
+    // // concat items
+    // let newMembers = (members.slice() || []).concat(newValues);
+    // setMembers(newMembers)
+    
+    // create a unique id for the value
+    const newValues =  [{id: uniqueId("member_"), name: selectedServers.name, address: selectedServers.address}]
+
+    //  replace items
+    setMembers(newValues)
     setSelectedServers([])
   }
 
   const addExternalMembers = () => {
-    let newExtMembers = (members.slice() || []).concat({id: uniqueId("member_"), type: "external"});
+    // const newExtMembers = (members.slice() || []).concat({id: uniqueId("member_"), type: "external"});
+
+    // replace values
+    const newExtMembers = [{id: uniqueId("member_"), type: "external"}]
     setMembers(newExtMembers)
   }
 
@@ -202,7 +210,7 @@ const NewMember = (props) => {
                 name="servers"
                 onChange={onChangeServers}
                 options={servers.items}
-                isMulti={true}
+                isMulti={false}
                 closeMenuOnSelect={false}
                 styles={styles}
                 value={selectedServers}
