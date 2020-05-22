@@ -24,8 +24,9 @@ const useCommons = () => {
   }
 
   const formErrorMessage = (error) => {
-    if (error.response && error.response.data && error.response.data.errors && Object.keys(error.response.data.errors).length) {
-      return error.response.data.errors
+    const err = error.response || error
+    if (err && err.data && err.data.errors && Object.keys(err.data.errors).length) {
+      return err.data.errors
     } else {
       return error.message
     }

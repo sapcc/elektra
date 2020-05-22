@@ -12,6 +12,17 @@ module ServiceLayer
         )
       end
 
+      def new_member(attributes = {})
+        member_map.call(attributes)
+      end
+
+      def create_member(pool_id, params)
+        elektron_lb2.post("pools/#{pool_id}/members") do
+          { member: params }
+        end.body['member']
+      end
+
+
     end
   end
 end

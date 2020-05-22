@@ -30,8 +30,31 @@ const useMember = () => {
     })
   }
 
+  const fetchServers = (lbID, poolID) => {
+    return new Promise((handleSuccess,handleError) => {  
+      ajaxHelper.get(`/loadbalancers/${lbID}/pools/${poolID}/members/servers_for_select`).then((response) => {
+        handleSuccess(response.data)
+      })
+      .catch( (error) => {
+        handleError(error.response)
+      })
+    })
+  }
+
+  const createMembers = (lbID, poolID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.post(`/loadbalancers/${lbID}/pools/${poolID}/members`, { members: values }).then((response) => {
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
   return ({
-    persistMembers
+    persistMembers,
+    fetchServers,
+    createMembers
   });
 }
  

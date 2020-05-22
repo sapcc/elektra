@@ -1,3 +1,5 @@
+require 'rack'
+
 module Lbaas2
   module Loadbalancers
     module Pools
@@ -12,6 +14,83 @@ module Lbaas2
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
           render json: { errors: e.message }, status: "500"
+        end
+
+        def create
+          membersParams = parseMemberParams()
+          # OS Bug, Subnet not optional, has to be set to VIP subnet          
+          loadbalancer = services.lbaas2.find_loadbalancer(params[:loadbalancer_id])
+          vip_subnet_id = loadbalancer.vip_subnet_id
+
+          success = true
+          errors = []
+          saved_members = []
+          results = {}
+          membersParams.each do |k,values|
+            newParams = values.merge(pool_id: params[:pool_id],  subnet_id: vip_subnet_id, project_id: @scoped_project_id)
+            member = services.lbaas2.new_member(newParams)
+
+            if member.save
+              results[member.identifier] = member.attributes.merge({saved: true})
+              saved_members << member
+              audit_logger.info(current_user, 'has created', member)
+            else
+              success = false
+              results[member.identifier] = member.attributes.merge({saved: false})
+              errors << {"row #{member.index}": member.errors}
+            end      
+          end
+
+          if success
+            render json: saved_members
+          else
+            sortedErrors = errors.sort_by { |hsh| hsh.keys.first }
+            render json: {errors: sortedErrors, results: results}, status: 422
+          end
+        rescue Elektron::Errors::ApiResponse => e
+          render json: { errors: e.message }, status: e.code
+        rescue Exception => e
+          render json: { errors: e.message }, status: "500"
+        end
+
+        def serversForSelect
+          # get all servers
+          per_page = params[:per_page] || 9999
+          per_page = per_page.to_i
+          servers = paginatable(per_page: per_page) do |pagination_options|
+            services.compute.servers(pagination_options)
+          end
+
+          # select all available floating ips attached to the servers
+          select_servers = []
+          servers.each do |server|
+            server.addresses.each do |_network_name, ip_values|
+              next unless ip_values && !ip_values.empty?
+              ip_values.each do |value|
+                next unless value['OS-EXT-IPS:type'] == 'fixed'                
+                select_servers << {"label": "#{value['addr']} - #{server.name} (#{server.id})", "value": value['addr'], "address": value['addr'], "name": server.name, "id": server.id}
+              end
+            end
+          end
+
+          render json: {
+            servers: select_servers
+          }
+        rescue Elektron::Errors::ApiResponse => e
+          render json: { errors: e.message }, status: e.code
+        rescue Exception => e
+          render json: { errors: e.message }, status: "500"
+        end
+
+        protected
+  
+        def parseMemberParams()
+          membersParams = params[:members]
+          newMemberParams = {}
+          membersParams.each do|k, v|
+            newMemberParams = newMemberParams.deep_merge(Rack::Utils.parse_nested_query("#{k}=#{v}")["member"])
+          end          
+          newMemberParams
         end
 
       end

@@ -61,8 +61,8 @@ const MemberList = ({props,loadbalancerID}) => {
                       <th>IP Address</th>
                       <th>State/Prov. Status</th>
                       <th>Tags</th>
-                      <th>Protocol Port</th>
-                      <th>Weight</th>
+                      <th style={{width:"10%"}}>Protocol Port</th>
+                      <th style={{width:"10%"}}>Weight</th>
                       <th className='snug'></th>
                   </tr>
               </thead>
@@ -74,7 +74,7 @@ const MemberList = ({props,loadbalancerID}) => {
                 :
                   <tr>
                     <td colSpan="7">
-                      No Members found.
+                      { isLoading ? <span className='spinner'/> : 'No Members found.' }
                     </td>
                   </tr>
                 }
