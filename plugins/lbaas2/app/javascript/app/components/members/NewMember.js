@@ -4,20 +4,26 @@ import useCommons from '../../../lib/hooks/useCommons'
 import { Form } from 'lib/elektra-form';
 import useMember from '../../../lib/hooks/useMember';
 import Select from 'react-select';
-import NewMemberList from './NewMemberList'
 import uniqueId from 'lodash/uniqueId'
 import { addNotice } from 'lib/flashes';
+import { Table } from 'react-bootstrap'
+import NewMemberListItem from './NewMemberListItem'
 
 const NewMember = (props) => {
   const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
-  const {fetchServers,createMembers} = useMember()
+  const {fetchServers,createMembers, fetchMembers} = useMember()
   const [servers, setServers] = useState({
     isLoading: false,
     error: null,
     items: []
   })
   const [selectedServers, setSelectedServers] = useState([])
-  const [members,setMembers] = useState([])
+  const [members, setMembers] = useState({
+    isLoading: false,
+    error: null,
+    items: []
+  })
+  const [newMembers,setNewMembers] = useState([])
 
   useEffect(() => {
     console.log('fetching servers for select')
@@ -32,6 +38,18 @@ const NewMember = (props) => {
     })
     .catch( (error) => {      
       setServers({...servers, isLoading:false, error: error})
+    })
+    // get the existing members
+    setMembers({...members, isLoading:true})
+    fetchMembers(lbID,poolID).then((data) => {
+      const newItems = data.members || []
+      for (let i = 0; i < newItems.length; i++) {
+        newItems[i] = {...newItems[i], ...{saved: true}}
+      }
+      setMembers({...members, isLoading:false, items: newItems, error: null})
+    })
+    .catch( (error) => {      
+      setMembers({...members, isLoading:false, error: error})
     })
   }, []);
 
@@ -61,7 +79,7 @@ const NewMember = (props) => {
   const [submitResults, setSubmitResults] = useState({})
 
   const validate = (values) => {
-    return members.length > 0
+    return newMembers.length > 0
   }
 
   const onSubmit = (values) => {
@@ -76,13 +94,13 @@ const NewMember = (props) => {
     const filtered = Object.keys(values)
     .filter(key => {
       let found = false
-      for (let i = 0; i < members.length; i++) {
+      for (let i = 0; i < newMembers.length; i++) {
         if(found){break}
         // if found means the key from the form context exists in the selected member list
         // the context contains all references of members added and removed from the list
         // don't send rows already saved successfully
-        if (!members[i].saved) {
-          found = key.includes(members[i].id)
+        if (!newMembers[i].saved) {
+          found = key.includes(newMembers[i].id)
         }
       }
       return found
@@ -113,20 +131,20 @@ const NewMember = (props) => {
   }
 
   const mergeSubmitResults = (results) => {
-    let newMembers = members.slice() || []
+    let newItems = newMembers.slice() || []
     Object.keys(results).forEach( key => {
-      for (let i = 0; i < newMembers.length; i++) {
-        if (newMembers[i].id  == key) {          
+      for (let i = 0; i < newItems.length; i++) {
+        if (newItems[i].id  == key) {          
           if (results[key].saved) {
-            newMembers[i] = {...newMembers[i], ...results[key]}
+            newItems[i] = {...newItems[i], ...results[key]}
           } else {
-            newMembers[i]['saved'] = results[key].saved
+            newItems[i]['saved'] = results[key].saved
           }
           break
         }
       }
     })
-    setMembers(newMembers)
+    setNewMembers(newItems)
   }
 
   const addMembers = () => {
@@ -135,14 +153,14 @@ const NewMember = (props) => {
     //   return {id: uniqueId("member_"), name: item.name, address: item.address}
     // })
     // // concat items
-    // let newMembers = (members.slice() || []).concat(newValues);
-    // setMembers(newMembers)
+    // let newItems = (members.slice() || []).concat(newValues);
+    // setMembers(newItems)
     
     // create a unique id for the value
     const newValues =  [{id: uniqueId("member_"), name: selectedServers.name, address: selectedServers.address}]
 
     //  replace items
-    setMembers(newValues)
+    setNewMembers(newValues)
     setSelectedServers([])
   }
 
@@ -151,7 +169,7 @@ const NewMember = (props) => {
 
     // replace values
     const newExtMembers = [{id: uniqueId("member_"), type: "external"}]
-    setMembers(newExtMembers)
+    setNewMembers(newExtMembers)
   }
 
   const onChangeServers = (values) => {
@@ -159,11 +177,11 @@ const NewMember = (props) => {
   }
 
   const onRemoveMember = (id) => {
-    const index = members.findIndex((item) => item.id==id);
+    const index = newMembers.findIndex((item) => item.id==id);
     if (index<0) { return }
-    let newItems = members.slice()
+    let newItems = newMembers.slice()
     newItems.splice(index,1)
-    setMembers(newItems)
+    setNewMembers(newItems)
   }
 
   const styles = {
@@ -173,6 +191,7 @@ const NewMember = (props) => {
     })
   };
 
+  const allMembers = [...newMembers,...members.items]
   return ( 
     <Modal
     show={show}
@@ -211,21 +230,48 @@ const NewMember = (props) => {
                 onChange={onChangeServers}
                 options={servers.items}
                 isMulti={false}
-                closeMenuOnSelect={false}
+                closeMenuOnSelect={true}
                 styles={styles}
                 value={selectedServers}
               />              
-              <Button bsStyle="primary" className="margin-left" onClick={addMembers}>Add</Button>  
+              <Button bsStyle="primary" disabled={members.isLoading} className="margin-left" onClick={addMembers}>Add</Button>  
             </div>
             { servers.error ? <span className="text-danger">{formErrorMessage(servers.error)}</span>:""}
           </Form.ElementInline>
 
           <div className='toolbar'>
             <div className="main-buttons">
-              <Button bsStyle="primary" onClick={addExternalMembers}>Add External</Button>  
+              <Button bsStyle="primary" disabled={members.isLoading} onClick={addExternalMembers}>Add External</Button>  
             </div>
           </div>
-          <NewMemberList members={members} onRemoveMember={onRemoveMember} results={submitResults}/>
+
+          <Table className="table new_members" responsive>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th><abbr title="required">*</abbr>Address</th>
+                    <th><abbr title="required">*</abbr>Protocol Port</th>
+                    <th style={{width:"10%"}}>Weight</th>
+                    <th style={{width:"20%"}}>Tags</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+              {allMembers.length>0 ?
+                allMembers.map( (member, index) =>
+                  <NewMemberListItem member={member} key={member.id} index={index} onRemoveMember={onRemoveMember} results={submitResults[member.id]}/>
+                )
+              :
+                <tr>
+                  <td colSpan="5">
+                  { members.isLoading ? <span className='spinner'/> : 'No Members added.' }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </Table>
+
         </Modal.Body>
         <Modal.Footer>  
           <Button onClick={close}>Cancel</Button>

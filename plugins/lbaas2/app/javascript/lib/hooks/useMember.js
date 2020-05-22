@@ -52,6 +52,7 @@ const useMember = () => {
   }
 
   return ({
+    fetchMembers,
     persistMembers,
     fetchServers,
     createMembers
