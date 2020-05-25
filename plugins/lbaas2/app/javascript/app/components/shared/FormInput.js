@@ -1,7 +1,7 @@
-import React, { useContext,useEffect, useState } from 'react';
+import React, { useContext,useEffect } from 'react';
 import { FormContext } from 'lib/elektra-form/components/form_context'
 
-const FormInput = ({type, number, name, placeholder, value}) => {
+const FormInput = ({type, name, placeholder, value}) => {
   const context = useContext(FormContext)
 
   const getRandomInt = (max) => {

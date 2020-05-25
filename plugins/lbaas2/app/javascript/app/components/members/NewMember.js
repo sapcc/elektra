@@ -271,6 +271,7 @@ const NewMember = (props) => {
               }
             </tbody>
           </Table>
+          { members.error ? <span className="text-danger">{formErrorMessage(members.error)}</span>:""}
 
         </Modal.Body>
         <Modal.Footer>  
