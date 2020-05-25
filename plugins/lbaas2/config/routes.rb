@@ -23,13 +23,13 @@ Lbaas2::Engine.routes.draw do
 
     end
 
-    resources :pools, module: :loadbalancers, only: [:index, :create] do
+    resources :pools, module: :loadbalancers, only: [:index, :show, :create] do
 
       collection do
         get 'items_for_select' => 'pools#itemsForSelect'
       end
 
-      resources :healthmonitors, module: :pools, only: [:show] do
+      resources :healthmonitors, module: :pools, only: [:show, :create] do
       end
 
       resources :members, module: :pools, only: [:index, :create] do

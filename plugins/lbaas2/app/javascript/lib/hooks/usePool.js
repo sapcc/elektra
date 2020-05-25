@@ -32,6 +32,20 @@ const usePool = () => {
     })
   }
   
+  const fetchPool = (lbID, poolID) => {
+    return new Promise((handleSuccess,handleError) => {    
+      ajaxHelper.get(`/loadbalancers/${lbID}/pools/${poolID}`).then((response) => {      
+        dispatch({type: 'RECEIVE_POOL', pool: response.data.pool})
+        handleSuccess(response.data.pool)
+      }).catch( (error) => {
+        if(error.response && error.response.status == 404) {
+          dispatch({type: 'REMOVE_POOL', id: poolID})
+        }        
+        handleError(error.response)
+      })      
+    })
+  }
+
   const createPool = (lbID, values) => {
     return new Promise((handleSuccess,handleErrors) => {
       ajaxHelper.post(`/loadbalancers/${lbID}/pools`, { pool: values }).then((response) => {
@@ -123,6 +137,7 @@ const usePool = () => {
   return {
     fetchPools,
     persistPools,
+    fetchPool,
     createPool,
     setSearchTerm,
     setSelected,

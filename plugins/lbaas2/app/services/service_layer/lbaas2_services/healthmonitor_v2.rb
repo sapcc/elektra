@@ -18,6 +18,17 @@ module ServiceLayer
         )
       end
 
+      def new_healthmonitor(attributes = {})
+        healthmonitor_map.call(attributes)
+      end
+
+      ################# INTERFACE METHODS ######################
+      def create_healthmonitor(params)
+        elektron_lb2.post('healthmonitors') do
+          { healthmonitor: params }
+        end.body['healthmonitor']
+      end
+
     end
   end
 end

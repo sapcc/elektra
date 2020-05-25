@@ -32,9 +32,91 @@ const useHealthMonitor = () => {
     })
   }
 
+  const createHealthMonitor = (lbID, poolID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.post(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors`, { healthmonitor: values }).then((response) => {
+        dispatch({type: 'RECEIVE_HEALTHMONITOR', healthmonitor: response.data}) 
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
+  // HTTP, HTTPS, PING, TCP, TLS-HELLO, or UDP-CONNECT
+  const healthMonitorTypes = () => {
+    return [
+      {label: "HTTP", value: "HTTP"},
+      {label: "HTTPS", value: "HTTPS"},
+      {label: "PING", value: "PING"},
+      {label: "TCP", value: "TCP"},
+      {label: "TLS-HELLO", value: "TLS-HELLO"},
+      {label: "UDP-CONNECT", value: "UDP-CONNECT"}
+    ]
+  }
+
+  const httpMethodRelation = (type) => {
+    switch (type) {
+      case 'HTTP':
+        return true
+      case 'HTTPS':
+        return true
+      default:
+        return false
+    } 
+  }
+
+  const expectedCodesRelation = (type) => {
+    switch (type) {
+      case 'HTTP':
+        return true
+      case 'HTTPS':
+        return true
+      default:
+        return false
+    } 
+  }
+
+  const urlPathRelation = (type) => {
+    switch (type) {
+      case 'HTTP':
+        return true
+      case 'HTTPS':
+        return true
+      default:
+        return false
+    } 
+  }
+
+  const httpMethods = () => {
+    return [
+      {label: "CONNECT", value: "CONNECT"},
+      {label: "DELETE", value: "DELETE"},
+      {label: "GET", value: "GET"},
+      {label: "HEAD", value: "HEAD"},
+      {label: "OPTIONS", value: "OPTIONS"},
+      {label: "PATCH", value: "PATCH"},
+      {label: "POST", value: "POST"},
+      {label: "PUT", value: "PUT"},
+      {label: "TRACE", value: "TRACE"}
+    ]
+  }
+
+  const expectedCodes = () => {
+    return [
+
+    ]
+  }
+    
   return {
     fetchHealthMonitor,
-    persistHealthmonitor
+    persistHealthmonitor,
+    createHealthMonitor,
+    healthMonitorTypes,
+    httpMethodRelation,
+    expectedCodesRelation,
+    urlPathRelation,
+    httpMethods
   }
 }
  

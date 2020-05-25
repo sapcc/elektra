@@ -10,7 +10,7 @@ import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 
 const HealthMonitor = ({props, loadbalancerID }) => {
-  const {persistHealthmonitor} = useHealthMonitor()
+  const {persistHealthmonitor, httpMethodRelation, expectedCodesRelation, urlPathRelation} = useHealthMonitor()
   const poolID = useGlobalState().pools.selected
   const pools = useGlobalState().pools.items
   const {findPool} = usePool()
@@ -63,7 +63,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
                   :
                     <DefeatableLink
                       disabled={isLoading}
-                      to={`/loadbalancers/${loadbalancerID}/healthmonitor/new?${searchParamsToString(props)}`}
+                      to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/new?${searchParamsToString(props)}`}
                       className='btn btn-primary btn-xs'>
                       New Health Monitor
                     </DefeatableLink>   
@@ -156,44 +156,50 @@ const HealthMonitor = ({props, loadbalancerID }) => {
                     </div>
                   </div>
 
-                  <div className="list-entry">
-                    <div className="row">
-                      <div className="col-md-12">
-                        <b>HTTP Method:</b>
+                  {httpMethodRelation(healthmonitor.type) &&
+                    <div className="list-entry">
+                      <div className="row">
+                        <div className="col-md-12">
+                          <b>HTTP Method:</b>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          {healthmonitor.http_method}
+                        </div>
                       </div>
                     </div>
-                    <div className="row">
-                      <div className="col-md-12">
-                        {healthmonitor.http_method}
-                      </div>
-                    </div>
-                  </div>
+                  }
 
-                  <div className="list-entry">
-                    <div className="row">
-                      <div className="col-md-12">
-                        <b>URL Path:</b>
+                  {expectedCodesRelation(healthmonitor.type) &&
+                    <div className="list-entry">
+                      <div className="row">
+                        <div className="col-md-12">
+                          <b>Expected Codes:</b>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          {healthmonitor.expected_codes}
+                        </div>
                       </div>
                     </div>
-                    <div className="row">
-                      <div className="col-md-12">
-                        {healthmonitor.url_path}
-                      </div>
-                    </div>
-                  </div>
+                  }
 
-                  <div className="list-entry">
-                    <div className="row">
-                      <div className="col-md-12">
-                        <b>Expected Codes:</b>
+                  {urlPathRelation(healthmonitor.type) &&
+                    <div className="list-entry">
+                      <div className="row">
+                        <div className="col-md-12">
+                          <b>URL Path:</b>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          {healthmonitor.url_path}
+                        </div>
                       </div>
                     </div>
-                    <div className="row">
-                      <div className="col-md-12">
-                        {healthmonitor.expected_codes}
-                      </div>
-                    </div>
-                  </div>
+                  }
 
                 </div>
               :

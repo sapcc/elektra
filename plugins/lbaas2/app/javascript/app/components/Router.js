@@ -10,6 +10,7 @@ import NewL7Rule from './l7Rules/NewL7Rule'
 import NewListener from './listeners/NewListener'
 import NewPool from './pools/NewPool'
 import NewMember from './members/NewMember'
+import NewHealthMonitor from './healthmonitor/NewHealthMonitor'
 
 const Router = (props) => {
 
@@ -33,6 +34,7 @@ const Router = (props) => {
           <Route exact path="/loadbalancers/:loadbalancerID/listeners/new" component={NewListener}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/new" component={NewPool}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:pool/members/new" component={NewMember}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/pools/:pool/healthmonitor/new" component={NewHealthMonitor}/>
           <Route exact path="/loadbalancers/:loadbalancerID/l7policies/new" component={NewL7Policy}/>
           <Route exact path="/loadbalancers/:loadbalancerID/l7policies/:l7policy/l7rules/new" component={NewL7Rule}/>
       </div>

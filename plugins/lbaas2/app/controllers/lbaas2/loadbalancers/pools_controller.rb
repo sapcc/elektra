@@ -23,6 +23,21 @@ module Lbaas2
         render json: { errors: e.message }, status: "500"
       end
 
+      def show
+        pool = services.lbaas2.find_pool(params[:id])
+
+        # extend pool data with chached members
+        extend_pool_data([pool])
+
+        render json: {
+          pool: pool
+        }
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
       def create
         poolParams = params[:pool]
         newParams = poolParams.merge(session_persistence: composeSessionPersistence(poolParams), project_id: @scoped_project_id, loadbalancer_id: params[:loadbalancer_id])

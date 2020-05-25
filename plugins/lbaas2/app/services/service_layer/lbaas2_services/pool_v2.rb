@@ -12,6 +12,10 @@ module ServiceLayer
         )
       end
 
+      def find_pool(id)
+        elektron_lb2.get("pools/#{id}").map_to('body.pool', &pool_map)
+      end
+
       def new_pool(attributes = {})
         pool_map.call(attributes)
       end
