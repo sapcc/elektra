@@ -1,9 +1,24 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState,useEffect } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { FormContext } from 'lib/elektra-form/components/form_context'
 
-const TagsInput = ({name}) => {
+const TagsInput = ({name, initValue}) => {
+  const [tagEditorInputValue, setTagEditorInputValue] = useState(initValue || "")
+  const [tagEditorValue, setTagEditorValue] = useState( [] )
   const context = useContext(FormContext)
+
+  useEffect(() => {
+    setTimeout(() => initTags(),200)
+  }, [initValue])
+
+  const initTags = () => {
+    let newValues = []
+    initValue.forEach(item => {
+      newValues.push(createOption(item))
+    })
+    setTagEditorValue(newValues)
+    setTagEditorInputValue("")   
+  }
 
   const components = {
     DropdownIndicator: null,
@@ -15,9 +30,6 @@ const TagsInput = ({name}) => {
       value: label,
     }
   }
-
-  const [tagEditorInputValue, setTagEditorInputValue] = useState("")
-  const [tagEditorValue, setTagEditorValue] = useState([])
 
   const onTagEditorChange = (value, actionMeta) => {
     setTagEditorValue(value || [])
@@ -36,7 +48,7 @@ const TagsInput = ({name}) => {
       case 'Enter':
       case 'Tab':
         setTagEditorValue([...tagEditorValue, createOption(tagEditorInputValue)])
-        setTagEditorInputValue("")  
+        setTagEditorInputValue("")
         event.preventDefault();
     }
   };

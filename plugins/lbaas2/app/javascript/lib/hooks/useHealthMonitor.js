@@ -5,7 +5,7 @@ import { useDispatch } from '../../app/components/StateProvider'
 const useHealthMonitor = () => {
   const dispatch = useDispatch()
 
-  const fetchHealthMonitor = (lbID, poolID, healthmonitorID) => {   
+  const fetchHealthmonitor = (lbID, poolID, healthmonitorID) => {   
     return new Promise((handleSuccess,handleError) => {    
       ajaxHelper.get(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`).then((response) => {      
         handleSuccess(response.data)
@@ -19,7 +19,7 @@ const useHealthMonitor = () => {
     dispatch({type: 'RESET_HEALTHMONITORS'})
     dispatch({type: 'REQUEST_HEALTHMONITOR'})
     return new Promise((handleSuccess,handleError) => {
-      fetchHealthMonitor(lbID, poolID, healthmonitorID).then((data) => {
+      fetchHealthmonitor(lbID, poolID, healthmonitorID).then((data) => {
         dispatch({type: 'RECEIVE_HEALTHMONITOR', healthmonitor: data.healthmonitor})
         handleSuccess(data)
       }).catch( error => {
@@ -35,6 +35,17 @@ const useHealthMonitor = () => {
   const createHealthMonitor = (lbID, poolID, values) => {
     return new Promise((handleSuccess,handleErrors) => {
       ajaxHelper.post(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors`, { healthmonitor: values }).then((response) => {
+        dispatch({type: 'RECEIVE_HEALTHMONITOR', healthmonitor: response.data}) 
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
+  const updateHealthmonitor = (lbID, poolID, healthmonitorID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.put(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`, { healthmonitor: values }).then((response) => {
         dispatch({type: 'RECEIVE_HEALTHMONITOR', healthmonitor: response.data}) 
         handleSuccess(response)
       }).catch(error => {
@@ -109,9 +120,10 @@ const useHealthMonitor = () => {
   }
     
   return {
-    fetchHealthMonitor,
+    fetchHealthmonitor,
     persistHealthmonitor,
     createHealthMonitor,
+    updateHealthmonitor,
     healthMonitorTypes,
     httpMethodRelation,
     expectedCodesRelation,

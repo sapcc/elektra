@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Select from 'react-select';
 import { FormContext } from 'lib/elektra-form/components/form_context'
 
-const SelectInput = ({name, isLoading, items, isMulti, onChange, value, conditionalPlaceholderText, isClearable, conditionalPlaceholderCondition}) => {
+const SelectInput = ({name, isLoading, items, isMulti, onChange, value, conditionalPlaceholderText, isClearable, conditionalPlaceholderCondition, isDisabled}) => {
 
   const context = useContext(FormContext)
 
@@ -36,6 +36,7 @@ const SelectInput = ({name, isLoading, items, isMulti, onChange, value, conditio
     isMulti={isMulti}
     closeMenuOnSelect={isMulti?false:true}
     placeholder={placeholder}
+    isDisabled={isDisabled}
   />
    );
 }

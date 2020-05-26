@@ -29,6 +29,12 @@ module ServiceLayer
         end.body['healthmonitor']
       end
 
+      def update_healthmonitor(id, params)
+        elektron_lb2.put("healthmonitors/#{id}") do
+          { healthmonitor: params }
+        end.body['healthmonitor']
+      end
+
     end
   end
 end

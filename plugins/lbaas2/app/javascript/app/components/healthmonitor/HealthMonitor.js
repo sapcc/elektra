@@ -44,7 +44,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
       {poolID &&
         <React.Fragment>
           {error ?
-            <div className="healthmonitor">
+            <div className="healthmonitor subtable multiple-subtable-left">
               <ErrorPage headTitle="Health Monitor" error={error} onReload={initialLoad}/>
             </div>
           :
@@ -56,7 +56,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
                   {healthmonitor ?
                     <DefeatableLink
                       disabled={isLoading}
-                      to={`/loadbalancers/${loadbalancerID}/healthmonitor/new?${searchParamsToString(props)}`}
+                      to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/${healthmonitor.id}/edit?${searchParamsToString(props)}`}
                       className='btn btn-primary btn-xs'>
                       Edit Health Monitor
                     </DefeatableLink>  

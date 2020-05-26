@@ -7,6 +7,7 @@ import { Form } from 'lib/elektra-form';
 import SelectInput from '../shared/SelectInput'
 import FormInput from '../shared/FormInput'
 import { addNotice } from 'lib/flashes';
+import TagsInput from '../shared/TagsInput'
 
 const NewHealthMonitor = (props) => {
   const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
@@ -61,7 +62,7 @@ const NewHealthMonitor = (props) => {
     return createHealthMonitor(lbID, poolID, values).then((response) => {
       addNotice(<React.Fragment>Health Monitor <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       // fetch the pool again containing the new healthmonitor so it gets updated fast
-      fetchPool(lbID).then(() => {
+      fetchPool(lbID,poolID).then(() => {
       }).catch(error => {
       })
       close()
@@ -150,7 +151,6 @@ const NewHealthMonitor = (props) => {
 
           {showExpectedCodes &&
             <Form.ElementHorizontal label='Expected codes' name="expected_codes">
-              {/* <Form.Input elementType='input' type='text' name='expected_codes'/> */}
               <FormInput type="text" name="expected_codes" value="200"/>
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
@@ -167,7 +167,6 @@ const NewHealthMonitor = (props) => {
 
           {showUrlPath &&
             <Form.ElementHorizontal label='Url path' name="url_path">
-              {/* <Form.Input elementType='input' type='text' name='url_path'/> */}
               <FormInput type="text" name="url_path" value="/"/>
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
