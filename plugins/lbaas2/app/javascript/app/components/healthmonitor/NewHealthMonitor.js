@@ -10,7 +10,7 @@ import { addNotice } from 'lib/flashes';
 import TagsInput from '../shared/TagsInput'
 
 const NewHealthMonitor = (props) => {
-  const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
+  const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
   const {createHealthMonitor, healthMonitorTypes, httpMethodRelation, expectedCodesRelation, urlPathRelation, httpMethods} = useHealthmonitor()
   const {fetchPool} = usePool()
 
@@ -50,14 +50,9 @@ const NewHealthMonitor = (props) => {
     // save the entered values in case of error
     setInitialValues(values)
     // get the lb id and poolId
-    const qValues = queryStringSearchValues(props)
-    const poolID = qValues.pool
     const params = matchParams(props)
     const lbID = params.loadbalancerID
-
-    console.group("onSubmit")
-    console.log(values)
-    console.groupEnd()
+    const poolID = params.poolID
 
     return createHealthMonitor(lbID, poolID, values).then((response) => {
       addNotice(<React.Fragment>Health Monitor <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)

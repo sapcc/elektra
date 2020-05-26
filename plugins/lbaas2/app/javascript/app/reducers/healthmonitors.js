@@ -16,7 +16,7 @@ const requestHealthmonitorFailure = (state, {error}) => {
   return {...state, isLoading: false, error: err}
 }
 
-const removeHealthmonitor = (state, {id}) => {
+const removeHealthmonitor = (state) => {
   return {...state, item: null}
 }
 

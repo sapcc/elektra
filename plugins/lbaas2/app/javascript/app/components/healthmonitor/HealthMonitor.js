@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import HelpPopover from '../shared/HelpPopover'
 import { useGlobalState } from '../StateProvider'
 import useCommons from '../../../lib/hooks/useCommons'
@@ -8,14 +8,17 @@ import usePool from '../../../lib/hooks/usePool'
 import ErrorPage from '../ErrorPage';
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
+import { addNotice, addError } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 const HealthMonitor = ({props, loadbalancerID }) => {
-  const {persistHealthmonitor, httpMethodRelation, expectedCodesRelation, urlPathRelation} = useHealthMonitor()
+  const {deleteHealthmonitor,persistHealthmonitor, httpMethodRelation, expectedCodesRelation, urlPathRelation} = useHealthMonitor()
   const poolID = useGlobalState().pools.selected
   const pools = useGlobalState().pools.items
   const {findPool} = usePool()
-  const {searchParamsToString} = useCommons()
+  const {searchParamsToString,matchParams,errorMessage} = useCommons()
   const state = useGlobalState().healthmonitors
+  const {isRemoving, setIsRemoving} = useState(false)
 
   useEffect(() => {   
     initialLoad()
@@ -33,6 +36,27 @@ const HealthMonitor = ({props, loadbalancerID }) => {
         })
       }
     }
+  }
+
+  const onRemoveClick = () => {
+    const params = matchParams(props)
+    const lbID = params.loadbalancerID
+    const healthmonitorID = healthmonitor.id.slice()
+    const healthmonitorName = healthmonitor.name.slice()
+    setIsRemoving(true)
+    return deleteHealthmonitor(lbID, poolID, healthmonitorID,healthmonitorName).then((response) => {
+      setIsRemoving(false)
+      addNotice(<React.Fragment>Health Monitor <b>{healthmonitorName}</b> ({healthmonitorID}) is being deleted.</React.Fragment>)
+      // fetch the pool again containing the new healthmonitor so it gets updated fast
+      fetchPool(lbID,poolID).then(() => {
+      }).catch(error => {
+      })
+    }).catch(error => {
+      setIsRemoving(false)
+      addError(React.createElement(ErrorsList, {
+        errors: errorMessage(error.response)
+      }))
+    })
   }
 
   const error = state.error
@@ -54,12 +78,21 @@ const HealthMonitor = ({props, loadbalancerID }) => {
                 <HelpPopover text="Checks the health of the pool members. Unhealthy members will be taken out of traffic schedule. Set's a load balancer to OFFLINE when all members are unhealthy." />
                 <div className="btn-right">
                   {healthmonitor ?
-                    <DefeatableLink
-                      disabled={isLoading}
-                      to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/${healthmonitor.id}/edit?${searchParamsToString(props)}`}
-                      className='btn btn-primary btn-xs'>
-                      Edit Health Monitor
-                    </DefeatableLink>  
+                    <React.Fragment>
+                      <DefeatableLink
+                        disabled={isLoading}
+                        to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/${healthmonitor.id}/edit?${searchParamsToString(props)}`}
+                        className='btn btn-primary btn-xs'>
+                        Edit Health Monitor
+                      </DefeatableLink>
+                      <button
+                        className='btn btn-default btn-xs margin-left'
+                        type="button"
+                        onClick={onRemoveClick}>
+                        <span className="fa fa-trash"></span>
+                        {isRemoving && <span className='spinner'/>}
+                      </button> 
+                    </React.Fragment>
                   :
                     <DefeatableLink
                       disabled={isLoading}

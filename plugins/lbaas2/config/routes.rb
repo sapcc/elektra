@@ -29,7 +29,7 @@ Lbaas2::Engine.routes.draw do
         get 'items_for_select' => 'pools#itemsForSelect'
       end
 
-      resources :healthmonitors, module: :pools, only: [:show, :create, :update] do
+      resources :healthmonitors, module: :pools, only: [:show, :create, :update, :destroy] do
       end
 
       resources :members, module: :pools, only: [:index, :create] do

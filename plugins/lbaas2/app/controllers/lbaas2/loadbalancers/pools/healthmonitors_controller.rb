@@ -18,7 +18,7 @@ module Lbaas2
           healthMonitorParams = healthmonitor_params()
           newParams = healthMonitorParams.merge(project_id: @scoped_project_id, pool_id: params[:pool_id])
           healthmonitor = services.lbaas2.new_healthmonitor()
-          healthmonitor.attributes = newParams.delete_if{ |_k, v| v.blank? }
+          healthmonitor.attributes = newParams
 
           if healthmonitor.save
             audit_logger.info(current_user, 'has created', healthmonitor)
@@ -50,10 +50,23 @@ module Lbaas2
           render json: { errors: e.message }, status: "500"
         end
 
+        def destroy
+          healthmonitor = services.lbaas2.find_healthmonitor(params[:id])
+          healthmonitor.destroy
+          audit_logger.info(current_user, 'has deleted', healthmonitor)
+        rescue Elektron::Errors::ApiResponse => e
+          render json: { errors: e.message }, status: e.code
+        rescue Exception => e
+          render json: { errors: e.message }, status: "500"
+        end
+
         private
 
         def healthmonitor_params
           hp = params[:healthmonitor].to_unsafe_hash.symbolize_keys if params[:healthmonitor]
+          hp[:max_retries] = hp[:max_retries].to_i unless hp[:max_retries].blank?
+          hp[:delay] = hp[:delay].to_i unless hp[:delay].blank?
+          hp[:timeout] = hp[:timeout].to_i unless hp[:timeout].blank?
           unless (hp[:type] == 'HTTP' || hp[:type] == 'HTTPS')
             hp.delete(:url_path)
             hp.delete(:http_method)

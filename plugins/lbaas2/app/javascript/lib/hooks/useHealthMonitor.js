@@ -1,6 +1,7 @@
 import React from 'react';
 import { ajaxHelper } from 'ajax_helper';
 import { useDispatch } from '../../app/components/StateProvider'
+import { confirm } from 'lib/dialogs';
 
 const useHealthMonitor = () => {
   const dispatch = useDispatch()
@@ -51,6 +52,23 @@ const useHealthMonitor = () => {
       }).catch(error => {
         handleErrors(error)
       })
+    })
+  }
+
+  const createNameTag = (name) => {
+    return name ? <React.Fragment><b>name:</b> {name} <br/></React.Fragment> : ""
+  }
+
+  const deleteHealthmonitor =  (lbID, poolID, healthmonitorID, healthmonitorName) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      confirm(<React.Fragment><p>Do you really want to delete following Health Monitor?</p><p>{createNameTag(healthmonitorName)} <b>id:</b> {healthmonitorID}</p></React.Fragment>).then(() => {
+        return ajaxHelper.delete(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`).then((response) => {
+          dispatch({type: 'REMOVE_HEALTHMONITOR'}) 
+          handleSuccess(response)
+        }).catch(error => {
+          handleErrors(error)
+        })
+      }).catch(cancel => true)
     })
   }
 
@@ -112,18 +130,13 @@ const useHealthMonitor = () => {
       {label: "TRACE", value: "TRACE"}
     ]
   }
-
-  const expectedCodes = () => {
-    return [
-
-    ]
-  }
     
   return {
     fetchHealthmonitor,
     persistHealthmonitor,
     createHealthMonitor,
     updateHealthmonitor,
+    deleteHealthmonitor,
     healthMonitorTypes,
     httpMethodRelation,
     expectedCodesRelation,

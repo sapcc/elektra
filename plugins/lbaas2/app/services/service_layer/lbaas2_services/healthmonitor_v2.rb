@@ -35,6 +35,10 @@ module ServiceLayer
         end.body['healthmonitor']
       end
 
+      def delete_healthmonitor(id)
+        elektron_lb2.delete("healthmonitors/#{id}")
+      end
+
     end
   end
 end
