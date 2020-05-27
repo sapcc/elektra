@@ -66,5 +66,7 @@
   "compute:flavor_access_create": "rule:context_is_cloud_compute_admin",
   "compute:flavor_access_list": "rule:context_is_cloud_compute_admin and not %(flavor.public?)s",
   "compute:flavor_access_delete": "rule:context_is_cloud_compute_admin",
-  "compute:flavor_manage_metadata": "rule:context_is_cloud_compute_admin"
+  "compute:flavor_manage_metadata": "rule:context_is_cloud_compute_admin",
+
+  "image_admin": "role:image_admin"
 }
