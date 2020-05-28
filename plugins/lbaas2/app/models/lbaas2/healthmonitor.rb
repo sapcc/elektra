@@ -8,9 +8,9 @@ module Lbaas2
       in: 1..10,
       message: 'You can have between 1 and 10 retries'
     }
-    validate :timeoutvalue
+    validate :timeout_check
 
-    def timeoutvalue
+    def timeout_check
       new_timeout = read('timeout')
       new_delay = read('delay')
       if new_timeout.to_i <= 0
