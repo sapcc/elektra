@@ -18,7 +18,5 @@
     .alert.alert-info
       %p 
         Create snapshots not allowed. To create snapshots, you need 
-        %code volume_admin
+        %code image_admin
         role. 
-  %div.buttons{class: modal? ? 'modal-footer' : ''}
-    = link_to "Cancel", instances_url(), class: 'btn btn-default'
