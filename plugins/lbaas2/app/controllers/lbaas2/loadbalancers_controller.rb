@@ -2,6 +2,9 @@
 
 module Lbaas2
   class LoadbalancersController < DashboardController
+    authorization_context 'lbaas2'
+    authorization_required
+
     def index
       # get paginated loadbalancers
       per_page = (params[:per_page] || 20).to_i
