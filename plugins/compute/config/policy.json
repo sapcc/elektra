@@ -1,12 +1,12 @@
 {
-  "context_is_cloud_compute_admin":  "role:cloud_compute_admin",
+  "context_is_cloud_compute_admin": "role:cloud_compute_admin",
   "member": "role:member or role:Member",
   "compute_viewer": "role:compute_viewer",
   "compute_admin": "role:compute_admin",
   "compute_admin_wsg": "role:compute_admin_wsg",
   "context_is_compute_admin": "rule:context_is_cloud_compute_admin or rule:compute_admin or rule:compute_admin_wsg",
   "context_is_compute_editor": "rule:context_is_compute_admin or rule:member",
-  "context_is_compute_viewer":  "rule:context_is_compute_editor or rule:compute_viewer",
+  "context_is_compute_viewer": "rule:context_is_compute_editor or rule:compute_viewer",
 
   "context_is_network_admin": "role:cloud_network_admin or role:network_admin",
 
@@ -68,5 +68,5 @@
   "compute:flavor_access_delete": "rule:context_is_cloud_compute_admin",
   "compute:flavor_manage_metadata": "rule:context_is_cloud_compute_admin",
 
-  "image_admin": "role:image_admin"
+  "compute:image_admin": "role:image_admin"
 }

@@ -1,7 +1,7 @@
 = content_for :title do
   Create Snapshot
 
-- if current_user.is_allowed?("image_admin")
+- if current_user.is_allowed?("compute:image_admin")
   = simple_form_for :snapshot, url: plugin('compute').create_image_instance_path(id:params[:id]), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
     %div{class: modal? ? 'modal-body' : ''}
