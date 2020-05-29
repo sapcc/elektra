@@ -9,7 +9,7 @@ import TagsInput from '../shared/TagsInput'
 import { addNotice } from 'lib/flashes';
 
 const NewL7Policy = (props) => {
-  const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage, fetchPoolsForSelect} = useCommons()
+  const {searchParamsToString, matchParams, formErrorMessage, fetchPoolsForSelect} = useCommons()
   const {createL7Policy} = useL7Policy()
   const {persistListener} = useListener()
   const [pools, setPools] = useState({
@@ -70,11 +70,10 @@ const NewL7Policy = (props) => {
     setFormErrors(null)
     // save the entered values in case of error
     setInitialValues(values)
-    // collect lb and listener id
-    const qValues = queryStringSearchValues(props)
-    const listenerID = qValues.listener
+    // collect lb and listener id  
     const params = matchParams(props)
     const lbID = params.loadbalancerID
+    const listenerID = params.listenerID
     return createL7Policy(lbID, listenerID, values).then((response) => {
       addNotice(<React.Fragment>L7 Policy <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       // load the listener again containing the new policy

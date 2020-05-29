@@ -10,7 +10,7 @@ import useL7Policy from '../../../lib/hooks/useL7Policy'
 import { addNotice } from 'lib/flashes';
 
 const NewL7Rule = (props) => {
-  const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
+  const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
   const {ruleTypes, ruleCompareType, createL7Rule} = useL7Rule()
   const {persistL7Policy} = useL7Policy()
 
@@ -47,11 +47,10 @@ const NewL7Rule = (props) => {
     // save the entered values in case of error
     setInitialValues(values)
     // collect lb and listener id
-    const qValues = queryStringSearchValues(props)
-    const listenerID = qValues.listener
-    const l7policyID = qValues.l7policy
     const params = matchParams(props)
     const lbID = params.loadbalancerID
+    const listenerID = params.listenerID
+    const l7policyID = params.l7policyID
     return createL7Rule(lbID, listenerID, l7policyID, values).then((response) => {
       addNotice(<React.Fragment>L7 Rule <b>{response.data.type}</b> ({response.data.id}) is being created.</React.Fragment>)
       // fetch the policy again containing the new l7rule
