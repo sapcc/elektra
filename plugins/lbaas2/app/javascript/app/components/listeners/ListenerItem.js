@@ -71,7 +71,7 @@ const ListenerItem = ({props, listener, searchTerm, onSelectListener, disabled})
     return deleteListener(loadbalancerID, listenerID, listenerName).then((response) => {
       addNotice(<React.Fragment>Listener <b>{listenerName}</b> ({listenerID}) is being deleted.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
-      fetchLoadbalancer(lbID).then(() => {
+      fetchLoadbalancer(loadbalancerID).then(() => {
       }).catch(error => {
       })
     }).catch(error => {

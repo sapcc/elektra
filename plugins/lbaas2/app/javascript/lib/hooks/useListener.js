@@ -76,7 +76,7 @@ const useListener = () => {
     return new Promise((handleSuccess,handleErrors) => {
       confirm(<React.Fragment><p>Do you really want to delete following Listener?</p><p>{createNameTag(listenerName)} <b>id:</b> {listenerID}</p></React.Fragment>).then(() => {
         return ajaxHelper.delete(`/loadbalancers/${lbID}/listeners/${listenerID}`).then((response) => {
-          dispatch({type: 'REMOVE_LISTENER'}) 
+          dispatch({type: 'REQUEST_REMOVE_LISTENER', id: listenerID}) 
           handleSuccess(response)
         }).catch(error => {
           handleErrors(error)

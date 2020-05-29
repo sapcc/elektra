@@ -58,6 +58,14 @@ const removeListener = (state, {id}) => {
   return {...state, items: newItems}
 }
 
+const requestListenerDelete = (state, {id})=> {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].provisioning_status = 'PENDING_DELETE'
+  return {...state, items: newItems}
+}
+
 const setSearchTerm= (state,{searchTerm}) => (
   {...state, searchTerm}
 );
@@ -80,6 +88,8 @@ export default (state = initialState, action) => {
       return receiveListener(state,action)
     case 'REMOVE_LISTENER':
       return removeListener(state,action)
+    case 'REQUEST_REMOVE_LISTENER':
+      return requestListenerDelete(state,action)
     case 'SET_LISTENERS_SEARCH_TERM':
       return setSearchTerm(state,action)
     case 'SET_LISTENERS_SELECTED_ITEM':

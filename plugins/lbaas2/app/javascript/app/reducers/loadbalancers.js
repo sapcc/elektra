@@ -66,9 +66,6 @@ const removeLoadbalancer = (state, {id}) => {
 }
 
 const requestLoadbalancerDelete = (state, {id})=> {
-  console.group("requestLoadbalancerDelete")
-  console.log(id)
-  console.groupEnd()
   const index = state.items.findIndex((item) => item.id==id);
   if (index<0) { return state; }
   let newItems = state.items.slice()

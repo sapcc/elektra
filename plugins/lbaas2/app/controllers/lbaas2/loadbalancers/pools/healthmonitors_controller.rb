@@ -52,8 +52,12 @@ module Lbaas2
 
         def destroy
           healthmonitor = services.lbaas2.find_healthmonitor(params[:id])
-          healthmonitor.destroy
-          audit_logger.info(current_user, 'has deleted', healthmonitor)
+          if healthmonitor.destroy
+            audit_logger.info(current_user, 'has deleted', healthmonitor)
+            head 202
+          else
+            render json: { errors: healthmonitor.errors }, status: 422
+          end
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
