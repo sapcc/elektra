@@ -41,9 +41,10 @@ const useMember = () => {
     })
   }
 
-  const createMembers = (lbID, poolID, values) => {
+  const createMember = (lbID, poolID, values) => {
     return new Promise((handleSuccess,handleErrors) => {
-      ajaxHelper.post(`/loadbalancers/${lbID}/pools/${poolID}/members`, { members: values }).then((response) => {
+      ajaxHelper.post(`/loadbalancers/${lbID}/pools/${poolID}/members`, { member: values }).then((response) => {
+        dispatch({type: 'RECEIVE_MEMBER', member: response.data}) 
         handleSuccess(response)
       }).catch(error => {
         handleErrors(error)
@@ -55,7 +56,7 @@ const useMember = () => {
     fetchMembers,
     persistMembers,
     fetchServers,
-    createMembers
+    createMember
   });
 }
  

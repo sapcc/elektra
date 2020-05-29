@@ -26,6 +26,19 @@ const requestMembersFailure = (state, {error}) => {
   return {...state, isLoading: false, error: err}
 }
 
+const receiveMember = (state, {member}) => {
+  if (!member) {
+    return {...state}
+  }
+  const index = state.items.findIndex((item) => item.id==member.id);
+  let items = state.items.slice();
+  // update or add member
+  if (index>=0) { items[index]=member; } else { items.push(member); }
+  // sort
+  items = items.sort((a, b) => a.name.localeCompare(b.name))
+  return {... state, items: items, isLoading: false, error: null}
+}
+
 const resetMembers = (state) => {
   return {...state, 
     items: [],
@@ -44,6 +57,8 @@ export default (state = initialState, action) => {
       return receiveMembers(state,action)      
     case 'REQUEST_MEMBERS_FAILURE':
       return requestMembersFailure(state,action)
+    case 'RECEIVE_MEMBER':
+      return receiveMember(state,action)
     case 'RESET_MEMBERS':
       return resetMembers(state,action)
     default:

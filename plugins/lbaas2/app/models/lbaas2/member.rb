@@ -18,7 +18,8 @@ module Lbaas2
         'protocol_port' => read('protocol_port'),
         'weight'         => read('weight'),
         'project_id'    => read('project_id'),        
-        'subnet_id'     => read('subnet_id')
+        'subnet_id'     => read('subnet_id'),
+        'tags'          => read('tags')
       }.delete_if { |_k, v| v.blank? }
     end
 

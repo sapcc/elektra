@@ -27,6 +27,10 @@ module Lbaas2
           saved_members = []
           results = {}
           membersParams.each do |k,values|
+            # convert tags to array do to parse_nested_query
+            unless values["tags"].blank?              
+              values["tags"] = JSON.parse(values["tags"])
+            end
             newParams = values.merge(pool_id: params[:pool_id],  subnet_id: vip_subnet_id, project_id: @scoped_project_id)
             member = services.lbaas2.new_member(newParams)
 
@@ -42,7 +46,7 @@ module Lbaas2
           end
 
           if success
-            render json: saved_members
+            render json: saved_members.first
           else
             sortedErrors = errors.sort_by { |hsh| hsh.keys.first }
             render json: {errors: sortedErrors, results: results}, status: 422
@@ -85,7 +89,7 @@ module Lbaas2
         protected
   
         def parseMemberParams()
-          membersParams = params[:members]
+          membersParams = params[:member]
           newMemberParams = {}
           membersParams.each do|k, v|
             newMemberParams = newMemberParams.deep_merge(Rack::Utils.parse_nested_query("#{k}=#{v}")["member"])

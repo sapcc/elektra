@@ -13,7 +13,7 @@ const TagsInput = ({name, initValue}) => {
 
   const initTags = () => {
     let newValues = []
-    initValue.forEach(item => {
+    initValue && initValue.forEach(item => {
       newValues.push(createOption(item))
     })
     setTagEditorValue(newValues)

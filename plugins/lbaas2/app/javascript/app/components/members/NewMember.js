@@ -8,10 +8,12 @@ import uniqueId from 'lodash/uniqueId'
 import { addNotice } from 'lib/flashes';
 import { Table } from 'react-bootstrap'
 import NewMemberListItem from './NewMemberListItem'
+import usePool from '../../../lib/hooks/usePool'
 
 const NewMember = (props) => {
-  const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
-  const {fetchServers,createMembers, fetchMembers} = useMember()
+  const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
+  const {fetchServers,createMember, fetchMembers} = useMember()
+  const {persistPool} = usePool()
   const [servers, setServers] = useState({
     isLoading: false,
     error: null,
@@ -27,10 +29,9 @@ const NewMember = (props) => {
 
   useEffect(() => {
     console.log('fetching servers for select')
-    const qValues = queryStringSearchValues(props)
-    const poolID = qValues.pool
     const params = matchParams(props)
     const lbID = params.loadbalancerID
+    const poolID = params.poolID
     // get servers for the select
     setServers({...servers, isLoading:true})
     fetchServers(lbID,poolID).then((data) => {
@@ -85,10 +86,9 @@ const NewMember = (props) => {
   const onSubmit = (values) => {
     setFormErrors(null)
     // get the lb id and poolId
-    const qValues = queryStringSearchValues(props)
-    const poolID = qValues.pool
     const params = matchParams(props)
     const lbID = params.loadbalancerID
+    const poolID = params.poolID
 
     //  filter items in context, which are removed from the list or already saved
     const filtered = Object.keys(values)
@@ -110,15 +110,14 @@ const NewMember = (props) => {
     }, {});
     // save the entered values in case of error
     setInitialValues(filtered)
-
-    return createMembers(lbID, poolID, filtered).then((response) => {
+    return createMember(lbID, poolID, filtered).then((response) => {
       if(response && response.data) {
-       const savedItems = response.data || []
-       savedItems.forEach( item => {
-         addNotice(<React.Fragment>Member <b>{item.name}</b> ({item.id}) is being created.</React.Fragment>)
-       })
+        addNotice(<React.Fragment>Member <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       }
       // TODO: fetch the Members and the pool again
+      persistPool(lbID,poolID).then(() => {
+      }).catch(error => {
+      })
       close()
     }).catch(error => {
       const results = error.response && error.response.data && error.response.data.results
