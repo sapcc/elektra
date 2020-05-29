@@ -142,7 +142,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                   {!selected &&              
                       <DefeatableLink
                         disabled={isLoading}
-                        to={`/loadbalancers/${loadbalancerID}/l7policies/new?${searchParamsToString(props)}`}
+                        to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/new?${searchParamsToString(props)}`}
                         className='btn btn-primary btn-xs'>
                         New L7 Policy
                       </DefeatableLink>

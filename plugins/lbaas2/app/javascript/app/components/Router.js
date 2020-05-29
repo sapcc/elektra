@@ -34,11 +34,12 @@ const Router = (props) => {
           />
           <Route exact path="/loadbalancers/:loadbalancerID/listeners/new" component={NewListener}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/new" component={NewPool}/>
+
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/members/new" component={NewMember}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/healthmonitor/new" component={NewHealthMonitor}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/healthmonitor/:healthmonitorID/edit" component={EditHealthMonitor}/>
-          <Route exact path="/loadbalancers/:loadbalancerID/l7policies/new" component={NewL7Policy}/>
-          <Route exact path="/loadbalancers/:loadbalancerID/l7policies/:l7policy/l7rules/new" component={NewL7Rule}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/l7policies/new" component={NewL7Policy}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/l7policies/:l7policy/l7rules/new" component={NewL7Rule}/>
       </div>
     </HashRouter>
    );
