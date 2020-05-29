@@ -35,14 +35,24 @@ const usePool = () => {
   const fetchPool = (lbID, poolID) => {
     return new Promise((handleSuccess,handleError) => {    
       ajaxHelper.get(`/loadbalancers/${lbID}/pools/${poolID}`).then((response) => {      
-        dispatch({type: 'RECEIVE_POOL', pool: response.data.pool})
-        handleSuccess(response.data.pool)
-      }).catch( (error) => {
-        if(error.response && error.response.status == 404) {
-          dispatch({type: 'REMOVE_POOL', id: poolID})
-        }        
+        handleSuccess(response.data)
+      }).catch( (error) => {       
         handleError(error.response)
       })      
+    })
+  }
+
+  const persistPool = (lbID, poolID) => {
+    return new Promise((handleSuccess,handleError) => {
+      fetchPool(lbID, poolID).then((data) => {
+        dispatch({type: 'RECEIVE_POOL', pool: data.pool})
+        handleSuccess(data)
+      }).catch( error => {
+        if(error && error.status == 404) {
+          dispatch({type: 'REMOVE_POOL', id: poolID})
+        }   
+        handleError(error.response)
+      })
     })
   }
 
@@ -138,6 +148,7 @@ const usePool = () => {
     fetchPools,
     persistPools,
     fetchPool,
+    persistPool,
     createPool,
     setSearchTerm,
     setSelected,

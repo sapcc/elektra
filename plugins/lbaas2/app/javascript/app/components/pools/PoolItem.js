@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import { Highlighter } from 'react-bootstrap-typeahead'
 import StateLabel from '../StateLabel'
@@ -8,13 +8,47 @@ import CachedInfoPopover from '../shared/CachedInforPopover';
 import CachedInfoPopoverContent from './CachedInfoPopoverContent'
 import CachedInfoPopoverContentListeners from './CachedInfoPopoverContentListeners'
 import CachedInfoPopoverContentContainers from '../shared/CachedInfoPopoverContentContainers'
+import usePool from '../../../lib/hooks/usePool'
+import useCommons from '../../../lib/hooks/useCommons'
 
-const MyHighlighter = ({search,children}) => {
-  if(!search || !children) return children
-  return <Highlighter search={search}>{children+''}</Highlighter>
-}
+const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
+  const {persistPool} = usePool()
+  const {MyHighlighter,matchParams,errorMessage} = useCommons()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
+  let polling = null
 
-const PoolItem = ({pool, searchTerm, onSelectPool, disabled}) => {
+  useEffect(() => {
+    const params = matchParams(props)
+    setLoadbalancerID(params.loadbalancerID)
+
+    if(pool.provisioning_status.includes('PENDING')) {
+      startPolling(5000)
+    } else {
+      startPolling(30000)
+    }
+
+    return function cleanup() {
+      stopPolling()
+    };
+  });
+
+  const startPolling = (interval) => {   
+    // do not create a new polling interval if already polling
+    if(polling) return;
+    polling = setInterval(() => {
+      console.log("Polling pool -->", pool.id, " with interval -->", interval)
+      persistPool(loadbalancerID,pool.id).catch( (error) => {
+        // console.log(JSON.stringify(error))
+      })
+    }, interval
+    )
+  }
+
+  const stopPolling = () => {
+    console.log("stop polling for pool id -->", pool.id)
+    clearInterval(polling)
+    polling = null
+  }
 
   const onClick = (e) => {
     if (e) {

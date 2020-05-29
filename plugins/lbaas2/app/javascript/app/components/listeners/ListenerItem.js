@@ -1,6 +1,5 @@
-import React from 'react';
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
-import { Highlighter } from 'react-bootstrap-typeahead'
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
@@ -14,15 +13,45 @@ import { addNotice, addError } from 'lib/flashes';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
-const MyHighlighter = ({search,children}) => {
-  if(!search || !children) return children
-  return <Highlighter search={search}>{children+''}</Highlighter>
-}
-
 const ListenerItem = ({props, listener, searchTerm, onSelectListener, disabled}) => {
-  const {certificateContainerRelation, deleteListener} = useListener()
-  const {matchParams,errorMessage} = useCommons()
+  const {persistListener,certificateContainerRelation, deleteListener} = useListener()
+  const {MyHighlighter,matchParams,errorMessage} = useCommons()
   const {fetchLoadbalancer} = useLoadbalancer()
+  let polling = null
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
+
+  useEffect(() => {
+    const params = matchParams(props)
+    setLoadbalancerID(params.loadbalancerID)
+
+    if(listener.provisioning_status.includes('PENDING')) {
+      startPolling(5000)
+    } else {
+      startPolling(30000)
+    }
+
+    return function cleanup() {
+      stopPolling()
+    };
+  });
+
+  const startPolling = (interval) => {   
+    // do not create a new polling interval if already polling
+    if(polling) return;
+    polling = setInterval(() => {
+      console.log("Polling listener -->", listener.id, " with interval -->", interval)
+      persistListener(loadbalancerID,listener.id).catch( (error) => {
+        // console.log(JSON.stringify(error))
+      })
+    }, interval
+    )
+  }
+
+  const stopPolling = () => {
+    console.log("stop polling for listener id -->", listener.id)
+    clearInterval(polling)
+    polling = null
+  }
 
   const onClick = (e) => {
     if (e) {
@@ -37,11 +66,9 @@ const ListenerItem = ({props, listener, searchTerm, onSelectListener, disabled})
       e.stopPropagation()
       e.preventDefault()
     }
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
     const listenerID = listener.id
     const listenerName = listener.name
-    return deleteListener(lbID, listenerID, listenerName).then((response) => {
+    return deleteListener(loadbalancerID, listenerID, listenerName).then((response) => {
       addNotice(<React.Fragment>Listener <b>{listenerName}</b> ({listenerID}) is being deleted.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
       fetchLoadbalancer(lbID).then(() => {

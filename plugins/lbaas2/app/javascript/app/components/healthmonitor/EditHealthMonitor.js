@@ -13,7 +13,7 @@ import ErrorPage from '../ErrorPage';
 const EditHealthMonitor = (props) => {
   const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
   const {fetchHealthmonitor,updateHealthmonitor, healthMonitorTypes, httpMethodRelation, expectedCodesRelation, urlPathRelation, httpMethods} = useHealthmonitor()
-  const {fetchPool} = usePool()
+  const {persistPool} = usePool()
   const [healthmonitor, setHealthmonitor] = useState({
     isLoading: false,
     error: null,
@@ -89,7 +89,7 @@ const EditHealthMonitor = (props) => {
     return updateHealthmonitor(lbID, poolID, healthmonitorID, values).then((response) => {
       addNotice(<React.Fragment>Health Monitor <b>{response.data.name}</b> ({response.data.id}) is being updated.</React.Fragment>)
       // fetch the pool again containing the new healthmonitor so it gets updated fast
-      fetchPool(lbID,poolID).then(() => {
+      persistPool(lbID,poolID).then(() => {
       }).catch(error => {
       })
       close()

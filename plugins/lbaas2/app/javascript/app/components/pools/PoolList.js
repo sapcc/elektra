@@ -1,6 +1,5 @@
-import React from 'react';
 import usePool from '../../../lib/hooks/usePool'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import PoolItem from './PoolItem'
 import queryString from 'query-string'
@@ -10,7 +9,7 @@ import useCommons from '../../../lib/hooks/useCommons'
 import { useGlobalState } from '../StateProvider'
 
 const PoolList = ({props, loadbalancerID}) => {
-  const {persistPools, setSearchTerm, setSelected, reset} = usePool()
+  const {persistPool, persistPools, setSearchTerm, setSelected, reset} = usePool()
   const {searchParamsToString} = useCommons()
   const state = useGlobalState().pools
 
@@ -62,7 +61,7 @@ const PoolList = ({props, loadbalancerID}) => {
 
   const loadNext = event => {
     if(!state.isLoading && state.hasNext) {
-      fetchPools(loadbalancerID, state.marker)
+      persistPools(loadbalancerID, state.marker)
     }
   }
 
@@ -90,79 +89,82 @@ const PoolList = ({props, loadbalancerID}) => {
   const pools = filterItems(searchTerm, items)
   const isLoading = state.isLoading
 
-  console.log("RENDER pool list")
-  return ( 
-    <div className="details-section">
-      <div className="display-flex">
-        <h4>Pools</h4>
-        <HelpPopover text="Object representing the grouping of members to which the listener forwards client requests. Note that a pool is associated with only one listener, but a listener might refer to several pools (and switch between them using layer 7 policies)." />
-      </div>
-      
-      {error ?
-        <ErrorPage headTitle="Load Balancers Pools" error={error}/>
-        :
-        <React.Fragment>
+  return useMemo(() => {
+    console.log("RENDER pool list")
+    return ( 
+      <div className="details-section">
+        <div className="display-flex">
+          <h4>Pools</h4>
+          <HelpPopover text="Object representing the grouping of members to which the listener forwards client requests. Note that a pool is associated with only one listener, but a listener might refer to several pools (and switch between them using layer 7 policies)." />
+        </div>
+        
+        {error ?
+          <ErrorPage headTitle="Load Balancers Pools" error={error}/>
+          :
+          <React.Fragment>
 
-          <div className='toolbar'>
-            { selected &&
-              <Link className="back-link" to="#" onClick={restoreUrl}>
-                <i className="fa fa-chevron-circle-left"></i>
-                Back to Pools
-              </Link>
-            }
-
-            <div className="main-buttons">
-              {!selected &&
-                <DefeatableLink
-                  disabled={isLoading}
-                  to={`/loadbalancers/${loadbalancerID}/pools/new?${searchParamsToString(props)}`}
-                  className='btn btn-primary'>
-                  New Pool
-                </DefeatableLink>
+            <div className='toolbar'>
+              { selected &&
+                <Link className="back-link" to="#" onClick={restoreUrl}>
+                  <i className="fa fa-chevron-circle-left"></i>
+                  Back to Pools
+                </Link>
               }
+
+              <div className="main-buttons">
+                {!selected &&
+                  <DefeatableLink
+                    disabled={isLoading}
+                    to={`/loadbalancers/${loadbalancerID}/pools/new?${searchParamsToString(props)}`}
+                    className='btn btn-primary'>
+                    New Pool
+                  </DefeatableLink>
+                }
+              </div>
             </div>
-          </div>
-          
-          <table className={selected ? "table table-section pools" : "table table-hover pools"}>
-            <thead>
-                <tr>
-                    <th>Name/ID/Description</th>
-                    <th>State/Prov. Status</th>
-                    <th>Tags</th>
-                    <th>Algorithm</th>
-                    <th>Protocol</th>
-                    <th>Session Persistence</th>
-                    <th>Assigned to</th>
-                    <th>TLS enabled/Secrets</th>
-                    <th>#Members</th>
-                    <th className='snug'></th>
-                </tr>
-            </thead>
-            <tbody>
-              {pools && pools.length>0 ?
-                pools.map( (pool, index) =>
-                  <PoolItem 
-                  pool={pool} 
-                  searchTerm={searchTerm} 
-                  key={index} 
-                  onSelectPool={onSelectPool}
-                  disabled={selected ? true : false}
-                  />
-                )
-                :
-                <tr>
-                  <td colSpan="9">
-                    { isLoading ? <span className='spinner'/> : 'No pools found.' }
-                  </td>
-                </tr>  
-              }
-            </tbody>
-          </table>  
+            
+            <table className={selected ? "table table-section pools" : "table table-hover pools"}>
+              <thead>
+                  <tr>
+                      <th>Name/ID/Description</th>
+                      <th>State/Prov. Status</th>
+                      <th>Tags</th>
+                      <th>Algorithm</th>
+                      <th>Protocol</th>
+                      <th>Session Persistence</th>
+                      <th>Assigned to</th>
+                      <th>TLS enabled/Secrets</th>
+                      <th>#Members</th>
+                      <th className='snug'></th>
+                  </tr>
+              </thead>
+              <tbody>
+                {pools && pools.length>0 ?
+                  pools.map( (pool, index) =>
+                    <PoolItem
+                    props={props} 
+                    pool={pool} 
+                    searchTerm={searchTerm} 
+                    key={index} 
+                    onSelectPool={onSelectPool}
+                    disabled={selected ? true : false}
+                    />
+                  )
+                  :
+                  <tr>
+                    <td colSpan="9">
+                      { isLoading ? <span className='spinner'/> : 'No pools found.' }
+                    </td>
+                  </tr>  
+                }
+              </tbody>
+            </table>  
 
-        </React.Fragment>
-      }
-    </div>
-   );
+          </React.Fragment>
+        }
+      </div>
+    );
+  } , [ JSON.stringify(pools), error, isLoading, searchTerm, selected, props])
 }
  
 export default PoolList

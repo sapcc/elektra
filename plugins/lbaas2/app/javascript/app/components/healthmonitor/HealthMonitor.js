@@ -15,7 +15,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
   const {deleteHealthmonitor,persistHealthmonitor, httpMethodRelation, expectedCodesRelation, urlPathRelation} = useHealthMonitor()
   const poolID = useGlobalState().pools.selected
   const pools = useGlobalState().pools.items
-  const {findPool} = usePool()
+  const {findPool,persistPool} = usePool()
   const {searchParamsToString,matchParams,errorMessage} = useCommons()
   const state = useGlobalState().healthmonitors
   const {isRemoving, setIsRemoving} = useState(false)
@@ -48,7 +48,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
       setIsRemoving(false)
       addNotice(<React.Fragment>Health Monitor <b>{healthmonitorName}</b> ({healthmonitorID}) is being deleted.</React.Fragment>)
       // fetch the pool again containing the new healthmonitor so it gets updated fast
-      fetchPool(lbID,poolID).then(() => {
+      persistPool(lbID,poolID).then(() => {
       }).catch(error => {
       })
     }).catch(error => {

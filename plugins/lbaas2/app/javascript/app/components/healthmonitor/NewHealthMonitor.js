@@ -12,7 +12,7 @@ import TagsInput from '../shared/TagsInput'
 const NewHealthMonitor = (props) => {
   const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
   const {createHealthMonitor, healthMonitorTypes, httpMethodRelation, expectedCodesRelation, urlPathRelation, httpMethods} = useHealthmonitor()
-  const {fetchPool} = usePool()
+  const {persistPool} = usePool()
 
  /**
    * Modal stuff
@@ -57,7 +57,7 @@ const NewHealthMonitor = (props) => {
     return createHealthMonitor(lbID, poolID, values).then((response) => {
       addNotice(<React.Fragment>Health Monitor <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       // fetch the pool again containing the new healthmonitor so it gets updated fast
-      fetchPool(lbID,poolID).then(() => {
+      persistPool(lbID,poolID).then(() => {
       }).catch(error => {
       })
       close()
