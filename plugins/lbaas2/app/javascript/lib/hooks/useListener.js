@@ -1,6 +1,7 @@
 import React from 'react';
 import { ajaxHelper } from 'ajax_helper';
 import { useDispatch } from '../../app/components/StateProvider'
+import { confirm } from 'lib/dialogs';
 
 const useListener = () => {
   const dispatch = useDispatch()
@@ -64,6 +65,23 @@ const useListener = () => {
       }).catch(error => {
         handleErrors(error)
       })
+    })
+  }
+
+  const createNameTag = (name) => {
+    return name ? <React.Fragment><b>name:</b> {name} <br/></React.Fragment> : ""
+  }
+
+  const deleteListener = (lbID, listenerID, listenerName) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      confirm(<React.Fragment><p>Do you really want to delete following Listener?</p><p>{createNameTag(listenerName)} <b>id:</b> {listenerID}</p></React.Fragment>).then(() => {
+        return ajaxHelper.delete(`/loadbalancers/${lbID}/listeners/${listenerID}`).then((response) => {
+          dispatch({type: 'REMOVE_LISTENER'}) 
+          handleSuccess(response)
+        }).catch(error => {
+          handleErrors(error)
+        })
+      }).catch(cancel => true)
     })
   }
 
@@ -220,6 +238,7 @@ const useListener = () => {
     persistListeners,
     persistListener,
     createListener,
+    deleteListener,
     setSearchTerm,
     setSelected,
     reset,

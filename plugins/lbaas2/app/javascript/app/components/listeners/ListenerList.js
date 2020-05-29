@@ -167,6 +167,7 @@ const ListenerList = ({props, loadbalancerID}) => {
                     {listeners && listeners.length>0 ?
                       listeners.map( (listener, index) =>
                         <ListenerItem 
+                        props={props}
                         listener={listener} 
                         searchTerm={searchTerm} 
                         key={index} 

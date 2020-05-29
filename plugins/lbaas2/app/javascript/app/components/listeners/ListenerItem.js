@@ -9,14 +9,20 @@ import CachedInfoPopover from '../shared/CachedInforPopover';
 import CachedInfoPopoverContent from './CachedInfoPopoverContent'
 import CachedInfoPopoverContentContainers from '../shared/CachedInfoPopoverContentContainers'
 import useListener from '../../../lib/hooks/useListener'
+import useCommons from '../../../lib/hooks/useCommons'
+import { addNotice, addError } from 'lib/flashes';
+import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
   return <Highlighter search={search}>{children+''}</Highlighter>
 }
 
-const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
-  const {certificateContainerRelation} = useListener()
+const ListenerItem = ({props, listener, searchTerm, onSelectListener, disabled}) => {
+  const {certificateContainerRelation, deleteListener} = useListener()
+  const {matchParams,errorMessage} = useCommons()
+  const {fetchLoadbalancer} = useLoadbalancer()
 
   const onClick = (e) => {
     if (e) {
@@ -26,7 +32,26 @@ const ListenerItem = ({listener, searchTerm, onSelectListener, disabled}) => {
     onSelectListener(listener.id)
   }
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    const params = matchParams(props)
+    const lbID = params.loadbalancerID
+    const listenerID = listener.id
+    const listenerName = listener.name
+    return deleteListener(lbID, listenerID, listenerName).then((response) => {
+      addNotice(<React.Fragment>Listener <b>{listenerName}</b> ({listenerID}) is being deleted.</React.Fragment>)
+      // fetch the lb again containing the new listener so it gets updated fast
+      fetchLoadbalancer(lbID).then(() => {
+      }).catch(error => {
+      })
+    }).catch(error => {
+      addError(React.createElement(ErrorsList, {
+        errors: errorMessage(error.response)
+      }))
+    })
   }
 
   const displayName = () => {

@@ -29,6 +29,16 @@ module ServiceLayer
         end.body['listener']
       end
 
+      def update_listener(id, attributes)
+        elektron_lb2.put("listeners/#{id}") do
+          { listener: attributes }
+        end.body['listener']
+      end
+
+      def delete_listener(id)
+        elektron_lb2.delete("listeners/#{id}")
+      end
+
     end
   end
 end
