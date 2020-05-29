@@ -27,6 +27,16 @@ module ServiceLayer
         end.body['pool']
       end
 
+      def update_pool(id, params)
+        elektron_lb2.put("pools/#{id}") do
+          { pool: params }
+        end.body['pool']
+      end
+
+      def delete_pool(id)
+        elektron_lb2.delete("pools/#{id}")
+      end
+
     end
   end
 end

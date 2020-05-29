@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
-import { Highlighter } from 'react-bootstrap-typeahead'
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 import CopyPastePopover from '../shared/CopyPastePopover'
@@ -10,11 +9,15 @@ import CachedInfoPopoverContentListeners from './CachedInfoPopoverContentListene
 import CachedInfoPopoverContentContainers from '../shared/CachedInfoPopoverContentContainers'
 import usePool from '../../../lib/hooks/usePool'
 import useCommons from '../../../lib/hooks/useCommons'
+import { addNotice, addError } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
 const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
-  const {persistPool} = usePool()
+  const {persistPool,deletePool} = usePool()
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
+  const {fetchLoadbalancer} = useLoadbalancer()
   let polling = null
 
   useEffect(() => {
@@ -58,7 +61,24 @@ const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
     onSelectPool(pool.id)
   }
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    const poolID = pool.id
+    const poolName = pool.name
+    return deletePool(loadbalancerID, poolID, poolName).then((response) => {
+      addNotice(<React.Fragment>Pool <b>{poolName}</b> ({poolID}) is being deleted.</React.Fragment>)
+      // fetch the lb again containing the new listener so it gets updated fast
+      fetchLoadbalancer(loadbalancerID).then(() => {
+      }).catch(error => {
+      })
+    }).catch(error => {
+      addError(React.createElement(ErrorsList, {
+        errors: errorMessage(error.response)
+      }))
+    })
   }
 
   const onSelectMember = () => {}

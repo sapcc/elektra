@@ -58,6 +58,14 @@ const removePool = (state, {id}) => {
   return {...state, items: newItems}
 }
 
+const requestPoolDelete = (state, {id})=> {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].provisioning_status = 'PENDING_DELETE'
+  return {...state, items: newItems}
+}
+
 const setSearchTerm= (state,{searchTerm}) => (
   {...state, searchTerm}
 );
@@ -80,6 +88,8 @@ export default (state = initialState, action) => {
       return receivePool(state,action)
     case 'REMOVE_POOL':
       return removePool(state,action)
+    case 'REQUEST_REMOVE_POOL':
+      return requestPoolDelete(state,action)
     case 'SET_POOLS_SEARCH_TERM':
       return setSearchTerm(state,action)
     case 'SET_POOLS_SELECTED_ITEM':

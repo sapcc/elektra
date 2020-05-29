@@ -23,7 +23,7 @@ Lbaas2::Engine.routes.draw do
 
     end
 
-    resources :pools, module: :loadbalancers, only: [:index, :show, :create] do
+    resources :pools, module: :loadbalancers, only: [:index, :show, :create, :destroy] do
 
       collection do
         get 'items_for_select' => 'pools#itemsForSelect'

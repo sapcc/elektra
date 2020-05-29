@@ -55,6 +55,20 @@ module Lbaas2
         render json: { errors: e.message }, status: "500"
       end
 
+      def destroy
+        pool = services.lbaas2.find_pool(params[:id])
+        if pool.destroy
+          audit_logger.info(current_user, 'has deleted', pool)
+          head 202
+        else
+          render json: { errors: pool.errors }, status: 422
+        end
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
       def itemsForSelect
         pools = services.lbaas2.pools({ loadbalancer_id: params[:loadbalancer_id], sort_key: 'name', sort_dir: 'asc'})
         select_pools = pools.map {|pool| {"label": "#{pool.name} (#{pool.id})", "value": pool.id}}

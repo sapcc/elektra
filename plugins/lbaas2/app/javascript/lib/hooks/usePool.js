@@ -1,6 +1,7 @@
 import React from 'react';
 import { ajaxHelper } from 'ajax_helper';
 import { useDispatch } from '../../app/components/StateProvider'
+import { confirm } from 'lib/dialogs';
 
 const usePool = () => {
   const dispatch = useDispatch()
@@ -77,6 +78,23 @@ const usePool = () => {
     return null
   }
 
+  const createNameTag = (name) => {
+    return name ? <React.Fragment><b>name:</b> {name} <br/></React.Fragment> : ""
+  }
+
+  const deletePool = (lbID, poolID, poolName) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      confirm(<React.Fragment><p>Do you really want to delete following Pool?</p><p>{createNameTag(poolName)} <b>id:</b> {poolID}</p></React.Fragment>).then(() => {
+        return ajaxHelper.delete(`/loadbalancers/${lbID}/pools/${poolID}`).then((response) => {
+          dispatch({type: 'REQUEST_REMOVE_POOL', id: poolID}) 
+          handleSuccess(response)
+        }).catch(error => {
+          handleErrors(error)
+        })
+      }).catch(cancel => true)
+    })
+  }
+
   const setSearchTerm = (searchTerm) => {
     dispatch({type: 'SET_POOLS_SEARCH_TERM', searchTerm: searchTerm})
   }
@@ -150,6 +168,7 @@ const usePool = () => {
     fetchPool,
     persistPool,
     createPool,
+    deletePool,
     setSearchTerm,
     setSelected,
     reset,
