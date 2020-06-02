@@ -28,7 +28,9 @@ module MasterdataCockpit
     # }
 
     validates_presence_of :cost_object_type, :cost_object_name, unless: :cost_object_inherited
-    validates_presence_of :responsible_primary_contact_id
+    validates_presence_of :business_criticality, message: 'please choose the level of business criticality for your project'
+    validates_presence_of :responsible_primary_contact_id, message: 'please provide the primary contact information for this project. This is needed in case of emergency'
+    validates_presence_of :responsible_security_expert_id, message: 'please provide the contact information for your security expert that is responsibly for the project'
 
     validates_presence_of :responsible_operator_id, unless: -> { responsible_operator_email.blank? }, message: "can't be blank if operator email is defined"
     validates_presence_of :responsible_security_expert_id, unless: -> { responsible_security_expert_email.blank? }, message: "can't be blank if security expert email is defined"
