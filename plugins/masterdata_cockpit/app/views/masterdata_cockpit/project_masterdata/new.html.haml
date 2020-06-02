@@ -6,16 +6,16 @@
     = icon('exclamation-circle')
     You are not allowed to maintain masterdata for this project.
 - else
-  .alert.alert-info
-    %h4 What is project masterdata?
-
-    A project’s masterdata contains different pieces of information about the project.
-    The information provided in the “Cost Object” section is necessary for billing purposes.
-    The information in the other sections helps CCloud operations and support find the correct
-    contact persons in case of incidents, problems or questions about the project and indicates
-    the importance of the project for your operations so that priorities can be set correctly
-    in case of larger incidents (where e.g. it is important to fix productive systems before
-    development systems).
   = simple_modal_form_for @project_masterdata,submit_action: 'Create', url: plugin('masterdata_cockpit').project_masterdata_create_path(),method: :post, cancel_url: plugin('masterdata_cockpit').project_masterdata_path  do |f|
+    .alert.alert-info
+      %h4 What is project masterdata?
+
+      A project’s masterdata contains different pieces of information about the project.
+      The information provided in the “Cost Object” section is necessary for billing purposes.
+      The information in the other sections helps CCloud operations and support find the correct
+      contact persons in case of incidents, problems or questions about the project and indicates
+      the importance of the project for your operations so that priorities can be set correctly
+      in case of larger incidents (where e.g. it is important to fix productive systems before
+      development systems).
     = render partial: 'maintain_masterdata',  locals: {f:f}
     = render partial: 'edit_create_js'
