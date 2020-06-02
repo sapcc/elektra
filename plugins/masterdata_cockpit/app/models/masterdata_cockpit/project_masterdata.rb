@@ -42,7 +42,6 @@ module MasterdataCockpit
     validates_presence_of :responsible_controller_email, unless: -> { responsible_controller_id.blank? }, message: "can't be blank if controller is defined"
     validates_presence_of :responsible_primary_contact_email, unless: -> { responsible_primary_contact_id.blank? }, message: "can't be blank if primary contact is defined"
 
-    validates_presence_of :additional_information, if: -> { business_criticality == 'prod' }, message: "can't be blank if business criticality is Productive"
     validates_presence_of :additional_information, if: -> { business_criticality == 'prod_tc' }, message: "can't be blank if business criticality is Productive Time Critical"
 
     validates :number_of_endusers, numericality: { greater_than_or_equal_to: -1 }, allow_nil: true, allow_blank: true
