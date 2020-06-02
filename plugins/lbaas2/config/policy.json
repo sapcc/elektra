@@ -9,6 +9,14 @@
   "lbaas2:loadbalancer_update": "rule:lbaas2_network_editor",
   "lbaas2:loadbalancer_delete": "rule:lbaas2_network_editor",
   "lbaas2:loadbalancer_status_tree": "rule:lbaas2_network_viewer",
-  "lbaas2:loadbalancer_private_networks": "rule:lbaas2_network_viewer",
-  "lbaas2:loadbalancer_subnets": "rule:lbaas2_network_viewer"
+  "lbaas2:loadbalancer_private_networks": "rule:lbaas2_network_editor",
+  "lbaas2:loadbalancer_subnets": "rule:lbaas2_network_editor",
+
+  "lbaas2:listener_list": "rule:lbaas2_network_viewer",
+  "lbaas2:listener_get": "rule:lbaas2_network_viewer",
+  "lbaas2:listener_create": "rule:lbaas2_network_editor",
+  "lbaas2:listener_update": "rule:lbaas2_network_editor",
+  "lbaas2:listener_delete": "rule:lbaas2_network_editor",
+  "lbaas2:listener_containers": "rule:lbaas2_network_editor",
+  "lbaas2:listener_itemsWithoutDefaultPoolForSelect": "rule:lbaas2_network_editor"
 }

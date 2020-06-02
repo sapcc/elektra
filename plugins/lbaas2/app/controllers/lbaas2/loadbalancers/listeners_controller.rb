@@ -3,6 +3,8 @@
 module Lbaas2
   module Loadbalancers
     class ListenersController < DashboardController
+      authorization_context 'lbaas2'
+      authorization_required
 
       def index
         per_page = (params[:per_page] || 20).to_i
