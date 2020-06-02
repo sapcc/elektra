@@ -18,5 +18,12 @@
   "lbaas2:listener_update": "rule:lbaas2_network_editor",
   "lbaas2:listener_delete": "rule:lbaas2_network_editor",
   "lbaas2:listener_containers": "rule:lbaas2_network_editor",
-  "lbaas2:listener_itemsWithoutDefaultPoolForSelect": "rule:lbaas2_network_editor"
+  "lbaas2:listener_itemsWithoutDefaultPoolForSelect": "rule:lbaas2_network_editor",
+
+  "lbaas2:pool_list": "rule:lbaas2_network_viewer",
+  "lbaas2:pool_get": "rule:lbaas2_network_viewer",
+  "lbaas2:pool_create": "rule:lbaas2_network_editor",
+  "lbaas2:pool_update": "rule:lbaas2_network_editor",
+  "lbaas2:pool_delete": "rule:lbaas2_network_editor",
+  "lbaas2:pool_itemsForSelect": "rule:lbaas2_network_editor"  
 }

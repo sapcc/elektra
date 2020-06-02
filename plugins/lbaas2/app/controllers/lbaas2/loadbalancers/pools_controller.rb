@@ -3,6 +3,8 @@
 module Lbaas2
   module Loadbalancers
     class PoolsController < DashboardController
+      authorization_context 'lbaas2'
+      authorization_required
 
       def index
         per_page = (params[:per_page] || 20).to_i
@@ -56,7 +58,8 @@ module Lbaas2
       end
 
       def destroy
-        pool = services.lbaas2.find_pool(params[:id])
+        pool = services.lbaas2.new_pool
+        pool.id = params[:id]
         if pool.destroy
           audit_logger.info(current_user, 'has deleted', pool)
           head 202

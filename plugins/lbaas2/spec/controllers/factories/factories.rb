@@ -10,5 +10,9 @@ module Lbaas2
       {name: "listener_test", protocol: "HTTP", protocol_port: "8080"}
     end
 
+    def pool(params={})
+      {name: "pool_test", lb_algorithm: "ROUND_ROBIN", protocol: "HTTP"}
+    end
+
   end
 end
