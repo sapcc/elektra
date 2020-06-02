@@ -46,10 +46,10 @@
     "webpack": "^4.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "7.7.5",
+    "@babel/cli": "7.10.1",
     "@types/jest": "24.9.1",
     "axios-mock-adapter": "1.18.1",
-    "babel-eslint": "10.0.3",
+    "babel-eslint": "10.1.0",
     "babel-jest": "24.9.0",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
