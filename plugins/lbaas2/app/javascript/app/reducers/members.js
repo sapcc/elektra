@@ -27,9 +27,7 @@ const requestMembersFailure = (state, {error}) => {
 }
 
 const receiveMember = (state, {member}) => {
-  if (!member) {
-    return {...state}
-  }
+  if (!member) {return {...state}}
   const index = state.items.findIndex((item) => item.id==member.id);
   let items = state.items.slice();
   // update or add member

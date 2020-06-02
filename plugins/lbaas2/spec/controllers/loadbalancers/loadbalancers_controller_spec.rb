@@ -19,12 +19,6 @@ describe Lbaas2::LoadbalancersController, type: :controller do
     )
   end
 
-  before :each do
-    @lbaas2_service = double('lbaas2_service').as_null_object
-    allow(UserProfile).to receive(:tou_accepted?).and_return(true)
-    allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:lbaas2_service).and_return(@lbaas2_service)
-  end
-
   describe "GET 'index'" do
     before :each do
       lbs = double('elektron', service: double("octavia", get: double("get", map_to: []) ))
@@ -65,8 +59,9 @@ describe Lbaas2::LoadbalancersController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'returns 401 error' do
         get :index, params: default_params
+        expect(response.code).to be == ("401")
         expect(response).to_not be_successful
       end
     end
@@ -112,8 +107,9 @@ describe Lbaas2::LoadbalancersController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'returns 401 error' do
         get :show, params: default_params.merge(id: 'lb_id')
+        expect(response.code).to be == ("401")
         expect(response).to_not be_successful
       end
     end
@@ -135,7 +131,7 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         end
       end
 
-      it 'return success' do
+      it 'return http success' do
         lb = ::Lbaas2::FakeFactory.new.loadbalancer
         post :create, params: default_params.merge({loadbalancer: lb})
         expect(response).to be_successful
@@ -151,9 +147,10 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         end
       end
 
-      it 'return success' do
+      it 'return 401 error' do
         lb = ::Lbaas2::FakeFactory.new.loadbalancer
         post :create, params: default_params.merge({loadbalancer: lb})
+        expect(response.code).to be == ("401")
         expect(response).to_not be_successful
       end
     end
@@ -166,9 +163,10 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         end
       end
 
-      it 'return success' do
+      it 'return 401 error' do
         lb = ::Lbaas2::FakeFactory.new.loadbalancer
         post :create, params: default_params.merge({loadbalancer: lb})
+        expect(response.code).to be == ("401")
         expect(response).to_not be_successful
       end
     end
@@ -179,7 +177,6 @@ describe Lbaas2::LoadbalancersController, type: :controller do
     before :each do
       lbs = double('elektron', service: double("octavia", delete: double("delete") ))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(lbs)
-      allow_any_instance_of(Lbaas2::LoadbalancersController).to receive(:extend_lb_data).and_return(double('lbaas').as_null_object)
     end
 
     context 'network_admin' do
@@ -191,7 +188,7 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         end
       end
 
-      it 'return success' do
+      it 'return http success' do
         delete :destroy, params: default_params.merge(id: 'lb_id')
         expect(response).to be_successful
       end
@@ -206,8 +203,9 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         end
       end
 
-      it 'return success' do
+      it 'return 401 error' do
         delete :destroy, params: default_params.merge(id: 'lb_id')
+        expect(response.code).to be == ("401")
         expect(response).to_not be_successful
       end
     end
@@ -220,8 +218,9 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         end
       end
 
-      it 'return success' do
+      it 'return 401 error' do
         delete :destroy, params: default_params.merge(id: 'lb_id')
+        expect(response.code).to be == ("401")
         expect(response).to_not be_successful
       end
     end
@@ -268,8 +267,9 @@ describe Lbaas2::LoadbalancersController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'returns 401 error' do
         get :status_tree, params: default_params.merge(id: 'lb_id')
+        expect(response.code).to be == ("401")
         expect(response).to_not be_successful
       end
     end
@@ -301,9 +301,10 @@ describe Lbaas2::LoadbalancersController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'returns 401 error' do
         get :private_networks, params: default_params.merge(id: 'lb_id')
-        expect(response).to be_successful
+        expect(response.code).to be == ("401")
+        expect(response).to_not be_successful
       end
     end
     context 'empty network roles' do
@@ -313,8 +314,9 @@ describe Lbaas2::LoadbalancersController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'returns 401 error' do
         get :private_networks, params: default_params.merge(id: 'lb_id')
+        expect(response.code).to be == ("401")
         expect(response).to_not be_successful
       end
     end
@@ -336,6 +338,33 @@ describe Lbaas2::LoadbalancersController, type: :controller do
       it 'returns http success' do
         get :subnets, params: default_params.merge(id: 'lb_id')
         expect(response).to be_successful
+      end
+    end
+    context 'network_viewer' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
+          token
+        end
+      end
+      it 'returns 401 error' do
+        get :subnets, params: default_params.merge(id: 'lb_id')
+        expect(response.code).to be == ("401")
+        expect(response).to_not be_successful
+      end
+    end
+    context 'empty network roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token
+        end
+      end
+      it 'returns 401 error' do
+        get :subnets, params: default_params.merge(id: 'lb_id')
+        expect(response.code).to be == ("401")
+        expect(response).to_not be_successful
       end
     end
   end
