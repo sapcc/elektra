@@ -8,11 +8,13 @@
   .row
     .col-sm-4.details-label
       Business Criticality
-      %a.help-link{data:{content: t('masterdata_cockpit.business_criticality_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+      %a.help-link{data:{content: t("masterdata_cockpit.business_criticality_help"), popover: {type: "help-hint"}, toggle: "popover"}}
         = icon('info-circle')
     .col-sm-8.details-value
       - if @project_masterdata.business_criticality
         = MasterdataCockpit::Config.business_criticalitys[@project_masterdata.business_criticality]
+        %a.help-link{data:{content: t("masterdata_cockpit.#{@project_masterdata.business_criticality}"), popover: {type: "help-hint"}, toggle: "popover"}}
+          = icon('question-circle-o')
       - else
         \-
   .row

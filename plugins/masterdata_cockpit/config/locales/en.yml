@@ -15,3 +15,7 @@ en:
     responsible_product_owner_help: "The person who holds the vision for the product and is responsible for maintaining, prioritizing and updating the backlog."
     business_criticality_help: "Indicates how critical the system is for your ability to provide your service to your customer."
     number_of_endusers_help: "Rough estimate of the number of users this project provides services to. Always provide the lower end, or enter -1 to indicate an infinite number of users."
+    prod_tc: "for heavy monetary or reputation impact, high effort to keep it running​"
+    prod: "monetary or reputation impact"
+    test: "system in test after development – incident handling via ticketing"
+    dev: "system in development – incident handling via ticketing"

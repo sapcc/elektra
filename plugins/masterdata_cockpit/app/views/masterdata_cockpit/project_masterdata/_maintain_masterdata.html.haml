@@ -30,7 +30,19 @@
         .col-md-4
           = f.input :number_of_endusers ,
             label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
-
+      .alert.alert-info{style: "margin:0"}
+        %p
+          %strong Production Time Critical:
+          = t('masterdata_cockpit.prod_tc')
+        %p
+          %strong Production:
+          = t('masterdata_cockpit.prod')
+        %p
+          %strong Testing:
+          = t('masterdata_cockpit.test')
+        %p
+          %strong Development:
+          = t('masterdata_cockpit.dev')
 
   %label.control-label Contact
   .panel.panel-default
