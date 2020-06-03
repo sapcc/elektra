@@ -1,64 +1,3 @@
-.masterdata-group
-  %h5.masterdata-heading
-    Cost Info
-    %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
-      = icon('question-circle-o')
-
-  - if @inheritance && @inheritance.co_inheritable
-    .row
-      .col-sm-4.details-label
-        - if @active_project.parent_id == @active_project.domain_id
-          Inherited from domain
-        - else
-          Inherited from parent project
-      .col-sm-8.details-value
-        - if @project_masterdata.cost_object_inherited
-          = icon('check-square-o')
-        -else
-          = icon('times')
-  .row
-    .col-sm-4.details-label
-      Type
-    .col-sm-8.details-value
-      - if @project_masterdata.cost_object_type
-        = MasterdataCockpit::Config.cost_object_types[@project_masterdata.cost_object['type']]
-      - else
-        \-
-  .row
-    .col-sm-4.details-label
-      Name/Number
-    .col-sm-8.details-value
-      - if @project_masterdata.cost_object_name
-        = @project_masterdata.cost_object_name
-      - else
-        \-
-
-.masterdata-group
-  %h5.masterdata-heading 
-    Contact
-    %a.help-link{data:{content: t('masterdata_cockpit.contact_info'), popover: {type: "help-hint"}, toggle: "popover"}}
-      = icon('question-circle-o')
-  .row
-    .col-sm-4.details-label
-      Primary Contact
-      %a.help-link{data:{content: t('masterdata_cockpit.responsible_primary_contact_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-        = icon('info-circle')
-    .col-sm-2.details-value
-      - unless @project_masterdata.responsible_primary_contact_id
-        \-
-      = @project_masterdata.responsible_primary_contact_id
-    - if @project_masterdata.responsible_primary_contact_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @project_masterdata.responsible_primary_contact_email
-  .row
-    .col-sm-4.details-label
-      Hotline/Ticket Queue/Other
-    .col-sm-8.details-value
-      - unless @project_masterdata.additional_information
-        \-
-      = @project_masterdata.additional_information
 
 .masterdata-group
   %h5.masterdata-heading 
@@ -99,25 +38,41 @@
           Unlimited
         - else
           = @project_masterdata.number_of_endusers
+
+
 .masterdata-group
   %h5.masterdata-heading 
-    Other Responsibilities
-    %a.help-link{data:{content: t('masterdata_cockpit.other_responsibilitys'), popover: {type: "help-hint"}, toggle: "popover"}}
+    Contact
+    %a.help-link{data:{content: t('masterdata_cockpit.contact_info'), popover: {type: "help-hint"}, toggle: "popover"}}
       = icon('question-circle-o')
   .row
     .col-sm-4.details-label
-      Operator
-      %a.help-link{data:{content: t('masterdata_cockpit.responsible_operator_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+      Hotline/Ticket Queue/Other
+    .col-sm-8.details-value
+      - unless @project_masterdata.additional_information
+        \-
+      = @project_masterdata.additional_information
+
+
+.masterdata-group
+  %h5.masterdata-heading 
+    Roles
+    %a.help-link{data:{content: t('masterdata_cockpit.roles'), popover: {type: "help-hint"}, toggle: "popover"}}
+      = icon('question-circle-o')
+  .row
+    .col-sm-4.details-label
+      Primary Contact
+      %a.help-link{data:{content: t('masterdata_cockpit.responsible_primary_contact_help'), popover: {type: "help-hint"}, toggle: "popover"}}
         = icon('info-circle')
     .col-sm-2.details-value
-      - unless @project_masterdata.responsible_operator_id
+      - unless @project_masterdata.responsible_primary_contact_id
         \-
-      = @project_masterdata.responsible_operator_id
-    - if @project_masterdata.responsible_operator_email
+      = @project_masterdata.responsible_primary_contact_id
+    - if @project_masterdata.responsible_primary_contact_email
       .col-sm-1.details-label
       .col-sm-4.details-value
         = icon('envelope-o')
-        = mail_to @project_masterdata.responsible_operator_email
+        = mail_to @project_masterdata.responsible_primary_contact_email
   .row
     .col-sm-4.details-label
       Security Expert
@@ -132,6 +87,20 @@
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_security_expert_email
+  .row
+    .col-sm-4.details-label
+      Operator
+      %a.help-link{data:{content: t('masterdata_cockpit.responsible_operator_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.responsible_operator_id
+        \-
+      = @project_masterdata.responsible_operator_id
+    - if @project_masterdata.responsible_operator_email
+      .col-sm-1.details-label
+      .col-sm-4.details-value
+        = icon('envelope-o')
+        = mail_to @project_masterdata.responsible_operator_email
   .row
     .col-sm-4.details-label
       Product Owner
@@ -160,3 +129,39 @@
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_controller_email
+
+
+.masterdata-group
+  %h5.masterdata-heading
+    Cost Info
+    %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
+      = icon('question-circle-o')
+
+  - if @inheritance && @inheritance.co_inheritable
+    .row
+      .col-sm-4.details-label
+        - if @active_project.parent_id == @active_project.domain_id
+          Inherited from domain
+        - else
+          Inherited from parent project
+      .col-sm-8.details-value
+        - if @project_masterdata.cost_object_inherited
+          = icon('check-square-o')
+        -else
+          = icon('times')
+  .row
+    .col-sm-4.details-label
+      Type
+    .col-sm-8.details-value
+      - if @project_masterdata.cost_object_type
+        = MasterdataCockpit::Config.cost_object_types[@project_masterdata.cost_object['type']]
+      - else
+        \-
+  .row
+    .col-sm-4.details-label
+      Name/Number
+    .col-sm-8.details-value
+      - if @project_masterdata.cost_object_name
+        = @project_masterdata.cost_object_name
+      - else
+        \-
