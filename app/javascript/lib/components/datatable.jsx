@@ -60,7 +60,7 @@ const DataTablePaginationControls = ({ curr, count, set }) => {
 
   if (curr > spread + 1) {
     btns.push(<li key='gap-left' className='page gap disabled'>
-      <a href='#' onClick={(e) => false}>…</a>
+      <a onClick={(e) => false}>…</a>
     </li>);
   }
 
@@ -76,7 +76,7 @@ const DataTablePaginationControls = ({ curr, count, set }) => {
 
   if (curr < count - spread) {
     btns.push(<li key='gap-right' className='page gap disabled'>
-      <a href='#' onClick={() => false}>…</a>
+      <a onClick={() => false}>…</a>
     </li>);
   }
 
