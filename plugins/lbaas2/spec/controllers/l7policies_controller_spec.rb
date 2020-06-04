@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../factories/factories.rb'
+require_relative './factories/factories.rb'
 
 describe Lbaas2::Loadbalancers::Listeners::L7policiesController, type: :controller do
   routes { Lbaas2::Engine.routes }

@@ -3,6 +3,8 @@ module Lbaas2
     module Listeners
       module L7policies
         class L7rulesController < ApplicationController
+          authorization_context 'lbaas2'
+          authorization_required
 
           def index
             per_page = (params[:per_page] || 9999).to_i
@@ -40,8 +42,8 @@ module Lbaas2
             l7rule = services.lbaas2.new_l7rule
             l7rule.l7policy_id = params[:l7policy_id]
             l7rule.id = params[:id]
-      
-            if l7Rule.destroy
+            
+            if l7rule.destroy
               audit_logger.info(current_user, 'has deleted', l7rule)
               head 202
             else  

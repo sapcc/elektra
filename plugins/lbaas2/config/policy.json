@@ -31,5 +31,12 @@
   "lbaas2:l7policy_get": "rule:lbaas2_network_viewer",
   "lbaas2:l7policy_create": "rule:lbaas2_network_editor",
   "lbaas2:l7policy_update": "rule:lbaas2_network_editor",
-  "lbaas2:l7policy_delete": "rule:lbaas2_network_editor"
+  "lbaas2:l7policy_delete": "rule:lbaas2_network_editor",
+
+  "lbaas2:l7rule_list": "rule:lbaas2_network_viewer",
+  "lbaas2:l7rule_get": "rule:lbaas2_network_viewer",
+  "lbaas2:l7rule_create": "rule:lbaas2_network_editor",
+  "lbaas2:l7rule_update": "rule:lbaas2_network_editor",
+  "lbaas2:l7rule_delete": "rule:lbaas2_network_editor"
+
 }

@@ -29,6 +29,10 @@ module Lbaas2
       end
     end
 
+    def destroy()
+      destroy!()
+    end
+
     def attributes_for_create
       {
         'type'                => read('type'),
@@ -41,12 +45,26 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
+  private
+
+    def destroy!()
+      service.delete_l7rule(attributes['l7policy_id'], id)
+    rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
+
     def persist!()
       newL7rule = service.create_l7rule(attributes['l7policy_id'], attributes_for_create)
       # update self with the new rule
       self.update_attributes(newL7rule)
       true
     rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
+
+    def rescue_eletron_errors(e)
       apiErrorCount = 0
       apiKey = "api_error_" + apiErrorCount.to_s
       e.messages.each do |m| 
@@ -68,7 +86,6 @@ module Lbaas2
           apiErrorCount += 1
         end
       end
-      false
     end
 
   end

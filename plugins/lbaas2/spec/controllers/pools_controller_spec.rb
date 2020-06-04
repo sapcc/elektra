@@ -1,6 +1,6 @@
 
 require 'spec_helper'
-require_relative '../factories/factories.rb'
+require_relative './factories/factories.rb'
 
 describe Lbaas2::Loadbalancers::PoolsController, type: :controller do
   routes { Lbaas2::Engine.routes }

@@ -29,6 +29,16 @@ module ServiceLayer
         end.body['rule']
       end
 
+      def update_l7rule(l7policy_id, id, attributes)
+        elektron_lb2.put("l7policies/#{l7policy_id}/rules/#{id}") do
+          { rule: attributes }
+        end.body['rule']
+      end
+
+      def delete_l7rule(l7policy_id, id)
+        elektron_lb2.delete("l7policies/#{l7policy_id}/rules/#{id}")
+      end
+
     end
   end
 end

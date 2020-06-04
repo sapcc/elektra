@@ -76,8 +76,6 @@ const useL7Rule = () => {
 
   const deleteL7Rule = (lbID, listenerID, l7PolicyID, l7Rule) => {
     return new Promise((handleSuccess,handleErrors) => {
-      console.log("LETS DELETE THE RULE!!!!!!!!!!")
-
       confirm(confirmMessageOnDelete(l7Rule)).then(() => {
         return ajaxHelper.delete(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${id}`)
         .then( (response) => {

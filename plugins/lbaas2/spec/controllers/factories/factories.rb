@@ -18,5 +18,9 @@ module Lbaas2
       {name: "lypolicy_test", action: "REDIRECT_PREFIX"}
     end
 
+    def l7rule(params={})
+      {type: "PATH", value: "test_value", compare_type: "CONTAINS"}
+    end
+
   end
 end

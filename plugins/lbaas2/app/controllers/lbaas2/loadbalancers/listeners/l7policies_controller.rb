@@ -48,6 +48,14 @@ module Lbaas2
           render json: { errors: e.message }, status: "500"
         end
 
+        def update
+          # TODO
+        end
+
+        def destroy
+          # TODO
+        end
+
         private
 
         def extend_l7policies_data
