@@ -14,5 +14,9 @@ module Lbaas2
       {name: "pool_test", lb_algorithm: "ROUND_ROBIN", protocol: "HTTP"}
     end
 
+    def l7policy(params={})
+      {name: "lypolicy_test", action: "REDIRECT_PREFIX"}
+    end
+
   end
 end

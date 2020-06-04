@@ -2,6 +2,8 @@ module Lbaas2
   module Loadbalancers
     module Listeners
       class L7policiesController < ApplicationController
+        authorization_context 'lbaas2'
+        authorization_required
 
         def index
           per_page = (params[:per_page] || 9999).to_i
@@ -44,6 +46,12 @@ module Lbaas2
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
           render json: { errors: e.message }, status: "500"
+        end
+
+        private
+
+        def extend_l7policies_data
+          # TODO
         end
 
       end
