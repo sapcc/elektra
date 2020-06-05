@@ -29,12 +29,19 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
+    private
+
     def persist!()
       newL7policy = service.create_l7policy(attributes_for_create)
       # update self with the new policy
       self.update_attributes(newL7policy)
       true
     rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
+
+    def rescue_eletron_errors(e)
       apiErrorCount = 0
       apiKey = "api_error_" + apiErrorCount.to_s
       e.messages.each do |m| 
@@ -56,7 +63,6 @@ module Lbaas2
           apiErrorCount += 1
         end
       end
-      false
     end
 
   end

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ajaxHelper } from 'ajax_helper';
 import { useDispatch } from '../../app/components/StateProvider'
+import { confirm } from 'lib/dialogs';
 
 const useL7Policy = () => {
   const dispatch = useDispatch()
@@ -67,6 +68,24 @@ const useL7Policy = () => {
     })
   }
 
+
+  const createNameTag = (name) => {
+    return name ? <React.Fragment><b>name:</b> {name} <br/></React.Fragment> : ""
+  }
+  
+  const deleteL7Policy = (lbID, listenerID, l7policyID, l7policyName) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      confirm(<React.Fragment><p>Do you really want to delete following L7 Policy?</p><p>{createNameTag(l7policyName)} <b>id:</b> {l7policyID}</p></React.Fragment>).then(() => {
+        return ajaxHelper.delete(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7policyID}`).then((response) => {
+          dispatch({type: 'REQUEST_REMOVE_L7POLICY', id: l7policyID})
+          handleSuccess(response)
+        }).catch(error => {
+          handleErrors(error)
+        })
+      }).catch(cancel => true)
+    })
+  }
+
   const actionRedirect = (action) => {
     switch (action) {
       case 'REDIRECT_PREFIX':
@@ -97,6 +116,7 @@ const useL7Policy = () => {
     fetchL7Policies,
     fetchL7Policy,
     createL7Policy,
+    deleteL7Policy,
     actionRedirect,
     persistL7Policies,
     persistL7Policy,

@@ -53,7 +53,18 @@ module Lbaas2
         end
 
         def destroy
-          # TODO
+          l7policy = services.lbaas2.new_l7policy
+          l7policy.id = params[:id]
+          if l7policy.destroy
+            audit_logger.info(current_user, 'has deleted', l7policy)
+            head 202
+          else
+            render json: { errors: l7policy.errors }, status: 422
+          end
+        rescue Elektron::Errors::ApiResponse => e
+          render json: { errors: e.message }, status: e.code
+        rescue Exception => e
+          render json: { errors: e.message }, status: "500"
         end
 
         private

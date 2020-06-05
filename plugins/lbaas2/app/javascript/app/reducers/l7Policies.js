@@ -58,6 +58,14 @@ const removeL7Policy = (state, {id}) => {
   return {...state, items: newItems}
 }
 
+const requestL7policyDelete = (state, {id}) => {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].provisioning_status = 'PENDING_DELETE'
+  return {...state, items: newItems}
+}
+
 const setSearchTerm= (state,{searchTerm}) => (
   {...state, searchTerm}
 );
@@ -80,6 +88,8 @@ export default (state = initialState, action) => {
       return receiveL7Policy(state,action)
     case 'REMOVE_L7POLICY':
       return removeL7Policy(state,action)
+    case 'REQUEST_REMOVE_L7POLICY':
+      return requestL7policyDelete(state,action)
     case 'SET_L7POLICIES_SEARCH_TERM':
       return setSearchTerm(state,action)
     case 'SET_L7POLICIES_SELECTED_ITEM':

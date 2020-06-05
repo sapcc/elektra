@@ -1,15 +1,53 @@
-import { useState } from 'react'
+import { useEffect,useState } from 'react'
 import useCommons from '../../../lib/hooks/useCommons'
 import { Link } from 'react-router-dom';
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 import useL7Policy from '../../../lib/hooks/useL7Policy'
 import CopyPastePopover from '../shared/CopyPastePopover'
+import useListener from '../../../lib/hooks/useListener'
+import { addNotice, addError } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
-const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll, onSelected}) => {
-  const {MyHighlighter} = useCommons()
-  const {actionRedirect} = useL7Policy()
-  const [disabled, setDisabled] = useState(false)
+const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, onSelected, listenerID, disabled}) => {
+  const {MyHighlighter,matchParams,errorMessage} = useCommons()
+  const {actionRedirect,deleteL7Policy,persistL7Policy} = useL7Policy()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
+  const {persistListener} = useListener()
+  let polling = null
+
+  useEffect(() => {
+    const params = matchParams(props)
+    setLoadbalancerID(params.loadbalancerID)
+
+    if(l7Policy.provisioning_status.includes('PENDING')) {
+      startPolling(5000)
+    } else {
+      startPolling(30000)
+    }
+
+    return function cleanup() {
+      stopPolling()
+    };
+  });
+
+  const startPolling = (interval) => {   
+    // do not create a new polling interval if already polling
+    if(polling) return;
+    polling = setInterval(() => {
+      console.log("Polling l7 policy -->", l7Policy.id, " with interval -->", interval)
+      persistL7Policy(loadbalancerID, listenerID, l7Policy.id).catch( (error) => {
+        // console.log(JSON.stringify(error))
+      })
+    }, interval
+    )
+  }
+
+  const stopPolling = () => {
+    console.log("stop polling for listener id -->", l7Policy.id)
+    clearInterval(polling)
+    polling = null
+  }
 
   const onClick = (e) => {
     if (e) {
@@ -19,7 +57,24 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll, onSelec
     onSelected(l7Policy.id)
   }
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    const l7policyID = l7Policy.id
+    const l7policyName = l7Policy.name
+    return deleteL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName).then((response) => {
+      addNotice(<React.Fragment>L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.</React.Fragment>)
+      // fetch the listener again containing the new policy so it gets updated fast
+      persistListener(loadbalancerID, listenerID).then(() => {
+      }).catch(error => {
+      })
+    }).catch(error => {
+      addError(React.createElement(ErrorsList, {
+        errors: errorMessage(error.response)
+      }))
+    })
   }
 
   const displayName = () => {
@@ -109,11 +164,6 @@ const L7PolicyListItem = React.memo(({l7Policy, searchTerm, tableScroll, onSelec
       </td>
     </tr>
    );
-},(oldProps,newProps) => {
-  const identical = JSON.stringify(oldProps.l7Policy) === JSON.stringify(newProps.l7Policy) && 
-                    oldProps.searchTerm === newProps.searchTerm && 
-                    oldProps.tableScroll === newProps.tableScroll
-  return identical                  
-})
+}
  
 export default L7PolicyListItem;

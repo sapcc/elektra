@@ -14,7 +14,7 @@ Lbaas2::Engine.routes.draw do
         get 'items_no_def_pool_for_select' => 'listeners#itemsWithoutDefaultPoolForSelect'
       end
 
-      resources :l7policies, module: :listeners, only: [:index, :show, :create] do
+      resources :l7policies, module: :listeners, only: [:index, :show, :create, :destroy] do
 
         resources :l7rules, module: :l7policies, only: [:index, :create, :destroy] do
         end
