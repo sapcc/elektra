@@ -10,6 +10,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { useGlobalState } from '../StateProvider'
 import ErrorPage from '../ErrorPage';
 import useCommons from '../../../lib/hooks/useCommons'
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const TableFadeTransition = ({
   children,
@@ -151,16 +152,26 @@ const ListenerList = ({props, loadbalancerID}) => {
                 <table className={selected ? "table table-section listeners" : "table table-hover listeners"}>
                   <thead>
                       <tr>
-                          <th>Name/ID/Description</th>
-                          <th>State/Prov. Status</th>
-                          <th>Tags</th>
-                          <th>Protocol/Client Auth/Secrets</th>
-                          <th>Protocol Port</th>
-                          <th>Default Pool</th>
-                          <th>Connection Limit</th>
-                          <th>Insert Headers</th>
-                          <th>#L7 Policies</th>
-                          <th className='snug'></th>
+                        <th>
+                          <div className="display-flex">
+                            Name
+                            <div className="margin-left">
+                            <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Name ASC</Tooltip>}>
+                              <i className="fa fa-sort-asc" />
+                            </OverlayTrigger>  
+                            </div>
+                            /ID/Description
+                          </div>
+                        </th>
+                        <th>State/Prov. Status</th>
+                        <th>Tags</th>
+                        <th>Protocol/Client Auth/Secrets</th>
+                        <th>Protocol Port</th>
+                        <th>Default Pool</th>
+                        <th>Connection Limit</th>
+                        <th>Insert Headers</th>
+                        <th>#L7 Policies</th>
+                        <th className='snug'></th>
                       </tr>
                   </thead>
                   <tbody>

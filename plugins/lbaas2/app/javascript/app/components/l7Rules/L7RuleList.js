@@ -7,6 +7,7 @@ import { useGlobalState } from '../StateProvider'
 import { Table } from 'react-bootstrap'
 import ErrorPage from '../ErrorPage';
 import L7RuleListItem from './L7RuleListItem'
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const L7RulesList = ({props, loadbalancerID}) => {
   const {searchParamsToString} = useCommons()
@@ -66,7 +67,17 @@ const L7RulesList = ({props, loadbalancerID}) => {
                           <th>ID</th>
                           <th>State/Prov. Status</th>
                           <th>Tags</th>
-                          <th>Type/Compare Type</th>
+                          <th>
+                            <div className="display-flex">
+                            Type
+                              <div className="margin-left">
+                              <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Type ASC</Tooltip>}>
+                                <i className="fa fa-sort-asc" />
+                              </OverlayTrigger>  
+                              </div>
+                              /Compare Type
+                            </div>
+                          </th>
                           <th>Invert</th>
                           <th>Key</th>
                           <th>Value</th>

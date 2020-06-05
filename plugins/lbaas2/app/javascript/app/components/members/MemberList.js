@@ -7,6 +7,7 @@ import useCommons from '../../../lib/hooks/useCommons'
 import useMember from '../../../lib/hooks/useMember'
 import MemberListItem from './MemberListItem';
 import ErrorPage from '../ErrorPage';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const MemberList = ({props,loadbalancerID}) => {
   const poolID = useGlobalState().pools.selected
@@ -57,13 +58,23 @@ const MemberList = ({props,loadbalancerID}) => {
             <Table className="table policies" responsive>
               <thead>
                   <tr>
-                      <th>Name/ID</th>
-                      <th>IP Address</th>
-                      <th>State/Prov. Status</th>
-                      <th>Tags</th>
-                      <th style={{width:"10%"}}>Protocol Port</th>
-                      <th style={{width:"10%"}}>Weight</th>
-                      <th className='snug'></th>
+                    <th>
+                      <div className="display-flex">
+                        Name
+                        <div className="margin-left">
+                        <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Name ASC</Tooltip>}>
+                          <i className="fa fa-sort-asc" />
+                        </OverlayTrigger>  
+                        </div>
+                        /ID
+                      </div>
+                    </th>
+                    <th>IP Address</th>
+                    <th>State/Prov. Status</th>
+                    <th>Tags</th>
+                    <th style={{width:"10%"}}>Protocol Port</th>
+                    <th style={{width:"10%"}}>Weight</th>
+                    <th className='snug'></th>
                   </tr>
               </thead>
               <tbody>

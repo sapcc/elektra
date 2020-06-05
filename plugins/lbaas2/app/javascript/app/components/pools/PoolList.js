@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import HelpPopover from '../shared/HelpPopover'
 import useCommons from '../../../lib/hooks/useCommons'
 import { useGlobalState } from '../StateProvider'
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const PoolList = ({props, loadbalancerID}) => {
   const {persistPool, persistPools, setSearchTerm, setSelected, reset} = usePool()
@@ -126,16 +127,26 @@ const PoolList = ({props, loadbalancerID}) => {
             <table className={selected ? "table table-section pools" : "table table-hover pools"}>
               <thead>
                   <tr>
-                      <th>Name/ID/Description</th>
-                      <th>State/Prov. Status</th>
-                      <th>Tags</th>
-                      <th>Algorithm</th>
-                      <th>Protocol</th>
-                      <th>Session Persistence</th>
-                      <th>Assigned to</th>
-                      <th>TLS enabled/Secrets</th>
-                      <th>#Members</th>
-                      <th className='snug'></th>
+                    <th>
+                      <div className="display-flex">
+                        Name
+                        <div className="margin-left">
+                        <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Name ASC</Tooltip>}>
+                          <i className="fa fa-sort-asc" />
+                        </OverlayTrigger>  
+                        </div>
+                        /ID/Description
+                      </div>
+                    </th>
+                    <th>State/Prov. Status</th>
+                    <th>Tags</th>
+                    <th>Algorithm</th>
+                    <th>Protocol</th>
+                    <th>Session Persistence</th>
+                    <th>Assigned to</th>
+                    <th>TLS enabled/Secrets</th>
+                    <th>#Members</th>
+                    <th className='snug'></th>
                   </tr>
               </thead>
               <tbody>
