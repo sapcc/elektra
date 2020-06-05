@@ -171,9 +171,9 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                               <div className="display-flex">
                                 Position
                                 <div className="margin-left">
-                                  <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Position ASC</Tooltip>}>
-                                    <i className="fa fa-sort-asc" />
-                                  </OverlayTrigger>  
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Position ASC</Tooltip>}>
+                                  <i className="fa fa-sort-asc" />
+                                </OverlayTrigger>  
                                 </div>
                               </div>
                             </th>
