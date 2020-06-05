@@ -18,7 +18,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
   const {findPool,persistPool} = usePool()
   const {searchParamsToString,matchParams,errorMessage} = useCommons()
   const state = useGlobalState().healthmonitors
-  const {isRemoving, setIsRemoving} = useState(false)
+  const [isRemoving, setIsRemoving] = useState(false)
 
   useEffect(() => {   
     initialLoad()

@@ -51,7 +51,9 @@ module Lbaas2
         end
 
         def destroy
-          healthmonitor = services.lbaas2.find_healthmonitor(params[:id])
+          healthmonitor = services.lbaas2.new_healthmonitor
+          healthmonitor.id = params[:id]
+
           if healthmonitor.destroy
             audit_logger.info(current_user, 'has deleted', healthmonitor)
             head 202
