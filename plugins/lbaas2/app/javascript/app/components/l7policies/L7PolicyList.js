@@ -9,6 +9,7 @@ import { useGlobalState } from '../StateProvider'
 import L7PolicySelected from './L7PolicySelected'
 import queryString from 'query-string'
 import ErrorPage from '../ErrorPage';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const L7PolicyList = ({props, loadbalancerID }) => {
   const {persistL7Policies, setSearchTerm, setSelected, reset} = useL7Policy()
@@ -154,7 +155,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                 {selected && l7Policies.length == 1 ?
                   l7Policies.map( (l7Policy, index) =>
                     <div className="selected-l7policy" key={index}>
-                      <L7PolicySelected l7Policy={l7Policy} onBackLink={restoreUrl}/>
+                      <L7PolicySelected props={props} listenerID={listenerID} l7Policy={l7Policy} onBackLink={restoreUrl}/>
                     </div>
                   )
                 :
@@ -166,7 +167,16 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                             <th>State</th>
                             <th>Prov. Status</th>
                             <th>Tags</th>
-                            <th>Position</th>
+                            <th>
+                              <div className="display-flex">
+                                Position
+                                <div className="margin-left">
+                                  <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Position ASC</Tooltip>}>
+                                    <i className="fa fa-sort-asc" />
+                                  </OverlayTrigger>  
+                                </div>
+                              </div>
+                            </th>
                             <th>Action/Redirect</th>
                             <th>#Rules</th>
                             <th className='snug'></th>

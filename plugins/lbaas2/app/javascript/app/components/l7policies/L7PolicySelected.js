@@ -1,16 +1,75 @@
-import React from 'react';
+import { useEffect,useState } from 'react'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 import useL7Policy from '../../../lib/hooks/useL7Policy'
 import { Link } from 'react-router-dom';
+import { addNotice, addError } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+import useCommons from '../../../lib/hooks/useCommons'
+import useListener from '../../../lib/hooks/useListener'
 
-const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
-  const {actionRedirect, reset} = useL7Policy()
+const L7PolicySelected = ({props, listenerID, l7Policy, onBackLink}) => {
+  const {actionRedirect,deleteL7Policy,persistL7Policy} = useL7Policy()
+  const {matchParams,errorMessage} = useCommons()
+  const {persistListener} = useListener()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
+  let polling = null
 
-  const handleDelete = () => {
+  useEffect(() => {
+    const params = matchParams(props)
+    setLoadbalancerID(params.loadbalancerID)
+
+    if(l7Policy.provisioning_status.includes('PENDING')) {
+      startPolling(5000)
+    } else {
+      startPolling(30000)
+    }
+
+    return function cleanup() {
+      stopPolling()
+    };
+  });
+
+  const startPolling = (interval) => {   
+    // do not create a new polling interval if already polling
+    if(polling) return;
+    polling = setInterval(() => {
+      console.log("Polling l7 policy selected -->", l7Policy.id, " with interval -->", interval)
+      persistL7Policy(loadbalancerID, listenerID, l7Policy.id).catch( (error) => {
+        // console.log(JSON.stringify(error))
+      })
+    }, interval
+    )
   }
 
+  const stopPolling = () => {
+    console.log("stop polling for listener id -->", l7Policy.id)
+    clearInterval(polling)
+    polling = null
+  }
+
+  const handleDelete = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    const l7policyID = l7Policy.id
+    const l7policyName = l7Policy.name
+    return deleteL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName).then((response) => {
+      addNotice(<React.Fragment>L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.</React.Fragment>)
+      // fetch the listener again containing the new policy so it gets updated fast
+      persistListener(loadbalancerID, listenerID).then(() => {
+      }).catch(error => {
+      })
+      // on remove go back to policy list
+      onBackLink()
+    }).catch(error => {
+      addError(React.createElement(ErrorsList, {
+        errors: errorMessage(error.response)
+      }))
+    })
+  }
 
   return (
     <React.Fragment>
@@ -56,7 +115,7 @@ const L7PolicySelected = ({l7Policy, tableScroll, onBackLink}) => {
           {l7Policy.name && 
             <div className="row">
               <div className="col-md-12 text-nowrap">
-              <small className="info-text">{<CopyPastePopover text={l7Policy.id} size={50} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldClose={tableScroll}/>}</small>
+              <small className="info-text">{<CopyPastePopover text={l7Policy.id} bsClass="cp copy-paste-ids"/>}</small>
               </div>                
             </div>
           }
