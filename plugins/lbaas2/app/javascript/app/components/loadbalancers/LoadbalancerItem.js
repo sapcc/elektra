@@ -68,7 +68,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
   const displayName = () => {
     const name = loadbalancer.name || loadbalancer.id
     if (disabled) {
-        return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
+        return <span className="info-text"><CopyPastePopover text={name} size={40} sliceType="MIDDLE" shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
     } else {
       if (searchTerm) {
         return <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
@@ -76,16 +76,16 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
               </Link>
       } else {
         return <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
-                <MyHighlighter search={searchTerm}><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/></MyHighlighter>
+                <MyHighlighter search={searchTerm}><CopyPastePopover text={name} size={40} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/></MyHighlighter>
               </Link>
       }
     }
   }
   const displayID = () => {
-    const copyPasteId = <CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
+    const copyPasteId = <CopyPastePopover text={loadbalancer.id} size={40} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
     if (loadbalancer.name) {
       if (disabled) {
-        return <span className="info-text"><CopyPastePopover text={loadbalancer.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" /></span>
+        return <span className="info-text"><CopyPastePopover text={loadbalancer.id} size={40} sliceType="MIDDLE" bsClass="cp copy-paste-ids" /></span>
       } else {
         if (searchTerm) {
           return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{loadbalancer.id}</MyHighlighter></span></React.Fragment>
@@ -96,7 +96,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
     }
   }
   const displayDescription = () => {
-    const description = <CopyPastePopover text={loadbalancer.description} size={20} shouldCopy={false} shouldPopover={true}/>
+    const description = <CopyPastePopover text={loadbalancer.description} size={40} shouldCopy={false} shouldPopover={true}/>
     if (disabled) {
       return description
     } else {
@@ -113,8 +113,8 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
       <td className="snug-nowrap">
         {displayName()}
         {displayID()}
+        {displayDescription()}
       </td>
-      <td>{displayDescription()}</td>
       <td><StateLabel placeholder={loadbalancer.operating_status} path="operating_status" /></td>
       <td><StateLabel placeholder={loadbalancer.provisioning_status} path="provisioning_status"/></td>
       {/* <td>{loadbalancer.operating_status}</td> */}

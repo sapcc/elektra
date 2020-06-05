@@ -8,6 +8,7 @@ import { SearchField } from 'lib/components/search_field';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Link } from 'react-router-dom';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const TableFadeTransition = ({
   children,
@@ -97,8 +98,17 @@ const LoadbalancerList = (props) => {
                 <table className={selected ? "table loadbalancers" : "table table-hover loadbalancers"}>
                   <thead>
                       <tr>
-                          <th>Name/ID</th>
-                          <th>Description</th>
+                          <th>
+                            <div className="display-flex">
+                              Name
+                              <div className="margin-left">
+                              <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Name ASC</Tooltip>}>
+                                <i className="fa fa-sort-asc" />
+                              </OverlayTrigger>  
+                              </div>
+                              /ID/Description
+                            </div>
+                          </th>
                           <th>State</th>
                           <th>Prov. Status</th>
                           <th>Tags</th>
