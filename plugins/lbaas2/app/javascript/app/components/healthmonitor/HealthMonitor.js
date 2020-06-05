@@ -10,6 +10,7 @@ import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+import CopyPastePopover from '../shared/CopyPastePopover'
 
 const HealthMonitor = ({props, loadbalancerID }) => {
   const {deleteHealthmonitor,persistHealthmonitor, httpMethodRelation, expectedCodesRelation, urlPathRelation} = useHealthMonitor()
@@ -62,6 +63,20 @@ const HealthMonitor = ({props, loadbalancerID }) => {
   const error = state.error
   const healthmonitor = state.item
   const isLoading = state.isLoading
+
+  const displayName = () => {
+    if (healthmonitor.name) {
+      return healthmonitor.name
+    } else {
+      return <CopyPastePopover text={healthmonitor.id} shouldPopover={false} />
+    }    
+  }
+
+  const displayID = () => {
+    if (healthmonitor.name) {
+      return  <span className="info-text"><CopyPastePopover text={healthmonitor.id} shouldPopover={false} bsClass="cp copy-paste-ids"/></span>
+    }  
+  }
 
   return ( 
     <React.Fragment>
@@ -123,7 +138,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
                     {healthmonitor.name && 
                       <div className="row">
                         <div className="col-md-12 text-nowrap">
-                          <small className="info-text">{healthmonitor.id}</small>
+                          {displayID()}
                         </div>
                       </div>
                     }
