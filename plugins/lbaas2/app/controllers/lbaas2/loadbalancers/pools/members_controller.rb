@@ -6,7 +6,11 @@ module Lbaas2
       class MembersController < ApplicationController
 
         def index
-          members = services.lbaas2.members(params[:pool_id])
+          per_page = (params[:per_page] || 9999).to_i
+          pagination_options = { sort_key: 'name', sort_dir: 'asc', limit: per_page + 1 }
+          pagination_options[:marker] = params[:marker] if params[:marker]
+
+          members = services.lbaas2.members(params[:pool_id], pagination_options)
           render json: {
             members: members
           }
