@@ -2,7 +2,9 @@ module Lbaas2
   module Loadbalancers
     module Pools
       class HealthmonitorsController < ApplicationController
-
+        authorization_context 'lbaas2'
+        authorization_required
+        
         def show
           healthmonitor = services.lbaas2.find_healthmonitor(params[:id])
           render json: {

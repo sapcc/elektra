@@ -22,5 +22,13 @@ module Lbaas2
       {type: "PATH", value: "test_value", compare_type: "CONTAINS"}
     end
 
+    def healthmonitor(params={})
+      {name: "healthmonitor_test", type: "HTTP", delay: "10", max_retries: "5", timeout: "5"}
+    end
+
+    def update_healthmonitor(params={})
+      {id: "update_test_healthmonitor", name: "healthmonitor_test", delay: "10", max_retries: "5", timeout: "5"}
+    end
+
   end
 end
