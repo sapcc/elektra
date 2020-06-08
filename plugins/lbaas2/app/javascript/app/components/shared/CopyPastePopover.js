@@ -139,8 +139,8 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
         <span className={baseClass} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
           <span>
             <span className="cp-string">{text}</span>
-            {showIcon && shouldCopyText &&
-              <span className="copy-paste-icon">
+            {shouldCopyText &&
+              <span className={showIcon ? "copy-paste-icon" : "copy-paste-icon transparent"}>
                 {clipboard}
                 {tooltip}
               </span>

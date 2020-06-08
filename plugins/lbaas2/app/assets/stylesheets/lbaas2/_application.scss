@@ -102,6 +102,11 @@
   }
 }
 
+.transparent {
+  filter: alpha(opacity=0);
+  opacity: 0;
+}
+
 /*
 * help-block in a form
 */
