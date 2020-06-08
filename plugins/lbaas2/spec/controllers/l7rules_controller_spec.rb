@@ -69,6 +69,53 @@ describe Lbaas2::Loadbalancers::Listeners::L7policies::L7rulesController, type: 
     end
   end
 
+  describe "GET 'show'" do
+    before :each do
+      l7rule = double('elektron', service: double("octavia", get: double("get", map_to: double("l7rule", to_json:{})) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(l7rule)
+    end
+
+    context 'network_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
+          token
+        end
+      end
+      it 'returns http success' do
+        get :show, params: default_params.merge(id: 'l7rule_id')
+        expect(response).to be_successful
+      end
+    end
+    context 'network_viewer' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
+          token
+        end
+      end
+      it 'returns http success' do
+        get :show, params: default_params.merge(id: 'l7rule_id')
+        expect(response).to be_successful
+      end
+    end
+    context 'empty network roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token
+        end
+      end
+      it 'returns 401 error' do
+        get :show, params: default_params.merge(id: 'l7rule_id')
+        expect(response.code).to be == ("401")
+        expect(response).to_not be_successful
+      end
+    end
+  end
+
   describe "POST 'create'" do
     before :each do
       l7rule = double('elektron', service: double("octavia", post: double("post", body: {}) ))
