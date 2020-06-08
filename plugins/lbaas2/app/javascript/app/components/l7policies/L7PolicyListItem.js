@@ -44,7 +44,7 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, onSelected,
   }
 
   const stopPolling = () => {
-    console.log("stop polling for listener id -->", l7Policy.id)
+    console.log("stop polling for l7policy id -->", l7Policy.id)
     clearInterval(polling)
     polling = null
   }

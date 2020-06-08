@@ -35,6 +35,30 @@ const useL7Rule = () => {
     })
   }
 
+  const fetchL7Rule = (lbID, listenerID, l7PolicyID, l7RuleID) => {
+    return new Promise((handleSuccess,handleError) => {    
+      ajaxHelper.get(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${l7RuleID}`).then((response) => {      
+        handleSuccess(response.data)
+      }).catch( (error) => {     
+        handleError(error.response)
+      })      
+    })
+  }
+
+  const persistL7Rule = (lbID, listenerID, l7PolicyID, l7RuleID) => {
+    return new Promise((handleSuccess,handleError) => {
+      fetchL7Rule(lbID, listenerID, l7PolicyID, l7RuleID).then((data) => {
+        dispatch({type: 'RECEIVE_L7RULE', l7Rule: data.l7rule})
+        handleSuccess(data)
+      }).catch( error => {
+        if(error && error.status == 404) {
+          dispatch({type: 'REMOVE_L7RULE', id: l7RuleID})
+        }   
+        handleError(error.response)
+      })
+    })
+  }
+
   const createL7Rule = (lbID, listenerID, l7PolicyID, values) => {
     return new Promise((handleSuccess,handleErrors) => {
       ajaxHelper.post(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules`, { l7rule: values }).then((response) => {
@@ -77,7 +101,7 @@ const useL7Rule = () => {
   const deleteL7Rule = (lbID, listenerID, l7PolicyID, l7Rule) => {
     return new Promise((handleSuccess,handleErrors) => {
       confirm(confirmMessageOnDelete(l7Rule)).then(() => {
-        return ajaxHelper.delete(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${id}`)
+        return ajaxHelper.delete(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${l7Rule.id}`)
         .then( (response) => {
           dispatch({type: 'REQUEST_REMOVE_L7RULE', id: l7Rule.id})
           addNotice(<React.Fragment><span>L7 Rule <b>{l7Rule.id}</b> will be deleted.</span></React.Fragment>)
@@ -125,6 +149,7 @@ const useL7Rule = () => {
   return {
     fetchL7Rules,
     persistL7Rules,
+    persistL7Rule,
     createL7Rule,
     ruleTypes,
     ruleCompareType,

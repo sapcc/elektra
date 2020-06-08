@@ -1,17 +1,57 @@
-import React from 'react'
+import { useEffect,useState } from 'react'
 import useCommons from '../../../lib/hooks/useCommons'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 import useL7Rule from '../../../lib/hooks/useL7Rule';
+import useL7Policy from '../../../lib/hooks/useL7Policy'
 
-const L7RuleListItem = ({loadbalancerID, listenerID, policyID, l7Rule, searchTerm, tableScroll}) => {
-  const {MyHighlighter} = useCommons()
-  const {deleteL7Rule, displayInvert} = useL7Rule()
+const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tableScroll}) => {
+  const {MyHighlighter,matchParams,errorMessage} = useCommons()
+  const {deleteL7Rule, displayInvert,persistL7Rule} = useL7Rule()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
+  const {persistL7Policy} = useL7Policy()
+  let polling = null
+
+  useEffect(() => {
+    const params = matchParams(props)
+    setLoadbalancerID(params.loadbalancerID)
+
+    if(l7Rule.provisioning_status.includes('PENDING')) {
+      startPolling(5000)
+    } else {
+      startPolling(30000)
+    }
+
+    return function cleanup() {
+      stopPolling()
+    };
+  })
+
+  const startPolling = (interval) => {   
+    // do not create a new polling interval if already polling
+    if(polling) return;
+    polling = setInterval(() => {
+      console.log("Polling l7 rule -->", l7Rule.id, " with interval -->", interval)
+      persistL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule.id).catch( (error) => {
+        // console.log(JSON.stringify(error))
+      })
+    }, interval
+    )
+  }
+
+  const stopPolling = () => {
+    console.log("stop polling for l7rule id -->", l7Rule.id)
+    clearInterval(polling)
+    polling = null
+  }
 
   const handleDelete = (e) => {
-    e.preventDefault()
-    deleteL7Rule(loadbalancerID, listenerID, policyID, l7Rule).then(() => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    deleteL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule).then(() => {
     })
   }
 

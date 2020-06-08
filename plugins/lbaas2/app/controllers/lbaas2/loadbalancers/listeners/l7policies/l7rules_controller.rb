@@ -22,6 +22,17 @@ module Lbaas2
             render json: { errors: e.message }, status: "500"
           end
 
+          def show
+            l7rule = services.lbaas2.find_l7rule(params[:l7policy_id], params[:id])
+            render json: {
+              l7rule: l7rule
+            }
+          rescue Elektron::Errors::ApiResponse => e
+            render json: { errors: e.message }, status: e.code
+          rescue Exception => e
+            render json: { errors: e.message }, status: "500"
+          end  
+          
           def create
             # add project id
             l7ruleParams = params[:l7rule].merge(project_id: @scoped_project_id, l7policy_id: params[:l7policy_id]) #listener_id: params[:listener_id],
