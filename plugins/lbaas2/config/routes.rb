@@ -32,7 +32,7 @@ Lbaas2::Engine.routes.draw do
       resources :healthmonitors, module: :pools, only: [:show, :create, :update, :destroy] do
       end
 
-      resources :members, module: :pools, only: [:index, :create] do
+      resources :members, module: :pools, only: [:index, :show, :create, :destroy] do
 
         collection do
           get 'servers_for_select' => 'members#serversForSelect'

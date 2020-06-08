@@ -42,6 +42,12 @@
   "lbaas2:healthmonitor_get": "rule:lbaas2_network_viewer",
   "lbaas2:healthmonitor_create": "rule:lbaas2_network_editor",
   "lbaas2:healthmonitor_update": "rule:lbaas2_network_editor",
-  "lbaas2:healthmonitor_delete": "rule:lbaas2_network_editor"
+  "lbaas2:healthmonitor_delete": "rule:lbaas2_network_editor",
 
+  "lbaas2:member_list": "rule:lbaas2_network_viewer",
+  "lbaas2:member_get": "rule:lbaas2_network_viewer",
+  "lbaas2:member_create": "rule:lbaas2_network_editor",
+  "lbaas2:member_update": "rule:lbaas2_network_editor",
+  "lbaas2:member_delete": "rule:lbaas2_network_editor",
+  "lbaas2:member_serversForSelect": "rule:lbaas2_network_editor"
 }

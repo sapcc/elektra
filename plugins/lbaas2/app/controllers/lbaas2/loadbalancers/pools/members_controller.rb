@@ -4,12 +4,14 @@ module Lbaas2
   module Loadbalancers
     module Pools
       class MembersController < ApplicationController
+        authorization_context 'lbaas2'
+        authorization_required
 
         def index
           per_page = (params[:per_page] || 9999).to_i
           pagination_options = { sort_key: 'name', sort_dir: 'asc', limit: per_page + 1 }
           pagination_options[:marker] = params[:marker] if params[:marker]
-
+          
           members = services.lbaas2.members(params[:pool_id], pagination_options)
           render json: {
             members: members
@@ -19,6 +21,17 @@ module Lbaas2
         rescue Exception => e
           render json: { errors: e.message }, status: "500"
         end
+
+        def show
+          member = services.lbaas2.find_member(params[:pool_id], params[:id])
+          render json: {
+            member: member
+          }
+        rescue Elektron::Errors::ApiResponse => e
+          render json: { errors: e.message }, status: e.code
+        rescue Exception => e
+          render json: { errors: e.message }, status: "500"
+        end  
 
         def create
           membersParams = parseMemberParams()
@@ -54,6 +67,22 @@ module Lbaas2
           else
             sortedErrors = errors.sort_by { |hsh| hsh.keys.first }
             render json: {errors: sortedErrors, results: results}, status: 422
+          end
+        rescue Elektron::Errors::ApiResponse => e
+          render json: { errors: e.message }, status: e.code
+        rescue Exception => e
+          render json: { errors: e.message }, status: "500"
+        end
+
+        def destroy
+          member = services.lbaas2.new_member
+          member.id = params[:id]
+
+          if member.destroy
+            audit_logger.info(current_user, 'has deleted', member)
+            head 202
+          else  
+            render json: { errors: listener.errors }, status: 422
           end
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code
