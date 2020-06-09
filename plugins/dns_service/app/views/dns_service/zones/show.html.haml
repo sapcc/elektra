@@ -48,7 +48,7 @@
                 %b ID
               = @zone.id
 
-          - @zone.attributes.select{|name,value| ['id','name','description', 'serial', 'email', 'ttl','created_at', 'updated_at','status', 'action', 'pool_id'].include?(name)}.each do |name,value|
+          - @zone.attributes.select{|name,value| ['name', 'description', 'serial', 'email', 'ttl','created_at', 'updated_at', 'status', 'action', 'shared', 'pool_id'].include?(name)}.each do |name,value|
             - next if value.blank?
             %tr
               %td.big-data-cell
