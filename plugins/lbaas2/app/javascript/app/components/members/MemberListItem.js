@@ -1,13 +1,72 @@
-import React from 'react';
+import { useEffect,useState } from 'react'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import useCommons from '../../../lib/hooks/useCommons'
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
+import useMember from '../../../lib/hooks/useMember'
+import usePool from '../../../lib/hooks/usePool'
+import { addNotice, addError } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
-const MemberListItem = ({loadbalancerID,poolID,member,searchTerm}) => {
-  const {MyHighlighter} = useCommons()
+const MemberListItem = ({props, poolID, member, searchTerm}) => {
+  const {MyHighlighter,matchParams,errorMessage} = useCommons()
+  const {persistPool} = usePool()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
+  const {persistMember,deleteMember} = useMember()
+  let polling = null
 
-  const handleDelete = () => {}
+  useEffect(() => {
+    const params = matchParams(props)
+    setLoadbalancerID(params.loadbalancerID)
+
+    if(member.provisioning_status.includes('PENDING')) {
+      startPolling(5000)
+    } else {
+      startPolling(30000)
+    }
+
+    return function cleanup() {
+      stopPolling()
+    };
+  })
+
+  const startPolling = (interval) => {   
+    // do not create a new polling interval if already polling
+    if(polling) return;
+    polling = setInterval(() => {
+      console.log("Polling member -->", member.id, " with interval -->", interval)
+      persistMember(loadbalancerID, poolID, member.id).catch( (error) => {
+        // console.log(JSON.stringify(error))
+      })
+    }, interval
+    )
+  }
+
+  const stopPolling = () => {
+    console.log("stop polling for member id -->", member.id)
+    clearInterval(polling)
+    polling = null
+  }
+
+  const handleDelete = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    const memberID = member.id
+    const memberName = member.name
+    return deleteMember(loadbalancerID, poolID, memberID, memberName).then((response) => {
+      addNotice(<React.Fragment>Member <b>{memberName}</b> ({memberID}) is being deleted.</React.Fragment>)
+      // fetch the listener again containing the new policy so it gets updated fast
+      persistPool(loadbalancerID, poolID).then(() => {
+      }).catch(error => {
+      })
+    }).catch(error => {
+      addError(React.createElement(ErrorsList, {
+        errors: errorMessage(error.response)
+      }))
+    })
+  }
 
   const displayName = () => {
     const name = member.name || member.id  

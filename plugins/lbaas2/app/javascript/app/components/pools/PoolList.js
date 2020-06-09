@@ -1,5 +1,5 @@
-import usePool from '../../../lib/hooks/usePool'
 import { useEffect, useMemo } from 'react'
+import usePool from '../../../lib/hooks/usePool'
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import PoolItem from './PoolItem'
 import queryString from 'query-string'

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch } from '../../app/components/StateProvider'
 import { ajaxHelper } from 'ajax_helper';
+import { confirm } from 'lib/dialogs';
 
 const useMember = () => {
   const dispatch = useDispatch()
@@ -16,6 +17,16 @@ const useMember = () => {
     })
   }
 
+  const fetchMember = (lbID, poolID, memberID) => {
+    return new Promise((handleSuccess,handleError) => {    
+      ajaxHelper.get(`/loadbalancers/${lbID}/pools/${poolID}/members/${memberID}`).then((response) => {
+        handleSuccess(response.data)
+      }).catch( (error) => {     
+        handleError(error.response)
+      })      
+    })
+  }
+
   const persistMembers = (lbID, poolID) => {
     dispatch({type: 'RESET_MEMBERS'})
     dispatch({type: 'REQUEST_MEMBERS'})
@@ -27,6 +38,37 @@ const useMember = () => {
         dispatch({type: 'REQUEST_MEMBERS_FAILURE', error: error})
         handleError(error.response)
       })
+    })
+  }
+
+  const persistMember = (lbID, poolID, memberID) => {
+    return new Promise((handleSuccess,handleError) => {
+      fetchMember (lbID, poolID, memberID).then((data) => {
+        dispatch({type: 'RECEIVE_MEMBER', member: data.member})
+        handleSuccess(data)
+      }).catch( error => {
+        if(error && error.status == 404) {
+          dispatch({type: 'REMOVE_MEMBER', id: memberID})
+        }   
+        handleError(error.response)
+      })
+    })
+  }
+
+  const createNameTag = (name) => {
+    return name ? <React.Fragment><b>name:</b> {name} <br/></React.Fragment> : ""
+  }
+  
+  const deleteMember = (lbID, poolID, memberID, memberName) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      confirm(<React.Fragment><p>Do you really want to delete following Member?</p><p>{createNameTag(memberName)} <b>id:</b> {memberID}</p></React.Fragment>).then(() => {
+        return ajaxHelper.delete(`/loadbalancers/${lbID}/pools/${poolID}/members/${memberID}`).then((response) => {
+          dispatch({type: 'REQUEST_REMOVE_MEMBER', id: memberID})
+          handleSuccess(response)
+        }).catch(error => {
+          handleErrors(error)
+        })
+      }).catch(cancel => true)
     })
   }
 
@@ -55,6 +97,8 @@ const useMember = () => {
   return ({
     fetchMembers,
     persistMembers,
+    persistMember,
+    deleteMember,
     fetchServers,
     createMember
   });

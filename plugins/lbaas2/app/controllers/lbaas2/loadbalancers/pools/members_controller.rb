@@ -76,13 +76,14 @@ module Lbaas2
 
         def destroy
           member = services.lbaas2.new_member
+          member.pool_id = params[:pool_id]
           member.id = params[:id]
 
           if member.destroy
             audit_logger.info(current_user, 'has deleted', member)
             head 202
           else  
-            render json: { errors: listener.errors }, status: 422
+            render json: { errors: member.errors }, status: 422
           end
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code

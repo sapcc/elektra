@@ -37,6 +37,22 @@ const receiveMember = (state, {member}) => {
   return {... state, items: items, isLoading: false, error: null}
 }
 
+const removeMember = (state, {id}) => {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems.splice(index,1)
+  return {...state, items: newItems}
+}
+
+const requestMemberDelete = (state, {id}) => {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].provisioning_status = 'PENDING_DELETE'
+  return {...state, items: newItems}
+}
+
 const resetMembers = (state) => {
   return {...state, 
     items: [],
@@ -57,6 +73,10 @@ export default (state = initialState, action) => {
       return requestMembersFailure(state,action)
     case 'RECEIVE_MEMBER':
       return receiveMember(state,action)
+    case 'REMOVE_MEMBER':
+      return removeMember(state,action)
+    case 'REQUEST_REMOVE_MEMBER':
+      return requestMemberDelete(state,action)
     case 'RESET_MEMBERS':
       return resetMembers(state,action)
     default:
