@@ -57,23 +57,32 @@
       = f.input :custom_root_disk_size, 
         label: 'Custom Root Disk Size (GB)'
 
-    #baremetal_image_id_wrapper{class:'hidden'}
-      = f.input :baremetal_image_id, label: 'Image',
+    #image_id_wrapper
+      = f.input :image_id, label: 'Image',
         as:            :grouped_select,
-        collection:    grouped_images(@images,@bootable_volumes,'bare metal'),
+        collection:    grouped_images(@images,@bootable_volumes,'all'),
         group_method:  :last,
         include_blank: "Choose image",
         required:      true,
         icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
 
-    #vmware_image_id_wrapper{class:'hidden'}
-      = f.input :vmware_image_id, label: 'Image',
-        as:            :grouped_select,
-        collection:    grouped_images(@images,@bootable_volumes,'vmware'),
-        group_method:  :last,
-        include_blank: "Choose image",
-        required:      true,
-        icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
+    =##baremetal_image_id_wrapper{class:'hidden'}
+    =#  = f.input :baremetal_image_id, label: 'Image',
+    =#    as:            :grouped_select,
+    =#    collection:    grouped_images(@images,@bootable_volumes,'bare metal'),
+    =#    group_method:  :last,
+    =#    include_blank: "Choose image",
+    =#    required:      true,
+    =#    icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
+
+    =##vmware_image_id_wrapper{class:'hidden'}
+    =#  = f.input :vmware_image_id, label: 'Image',
+    =#    as:            :grouped_select,
+    =#    collection:    grouped_images(@images,@bootable_volumes,'vmware'),
+    =#    group_method:  :last,
+    =#    include_blank: "Choose image",
+    =#    required:      true,
+    =#    icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
     
     :javascript
       $(document).ready(function(){

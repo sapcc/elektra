@@ -67,7 +67,7 @@ module Compute
               ]
             end
 
-            if hv_type == hypervisor_type
+            if hv_type == hypervisor_type || hv_type == 'all'
               container << ["--#{hypervisor_type}", items]
             end
           end
