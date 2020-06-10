@@ -226,7 +226,7 @@ module Compute
       instance.ip_maps(@project_floating_ips)
     end
 
-    def render_fixed_floating_ips(ips, _options = {})
+    def render_fixed_floating_ips(ips)
       capture_haml do
         ips.each do |ip_data|
           fixed = ip_data['fixed']
