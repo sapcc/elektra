@@ -31,6 +31,7 @@ gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
 gem 'font-awesome-sass'
+gem 'kaminari', '~> 1.2.1'
 
 gem 'responders'
 
@@ -131,7 +132,6 @@ end
 
 group :development, :test, :integration_tests do
   gem 'rspec'
-  gem 'colorize'
 end
 
 group :integration_tests do
