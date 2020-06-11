@@ -156,11 +156,8 @@ SimpleNavigation::Configuration.run do |navigation|
         if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") },
         highlights_on: Proc.new { params[:controller][/shared_filesystem_storage\/.*/] }
       storage_nav.item :container_image_registry, 'Container Image Registry', -> {plugin('keppel').start_path},
-        if: -> { services.available?(:keppel) and current_user.is_allowed?('keppel:account:show') },
+        if: -> { services.available?(:keppel) },
         highlights_on: Proc.new { params[:controller][/keppel\/.*/] }
-    #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
-    #   storage_nav.item :repositories, 'Repositories', '#'
-    #
     #   storage_nav.dom_attributes = {class: 'content-list'}
     end
 

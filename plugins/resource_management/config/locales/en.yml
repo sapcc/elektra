@@ -11,10 +11,11 @@ en:
     network: Network
     networking: Network
     block_storage: Block Storage
-    volumev2: Block Storage
+    volumev2: Block Storage (Premium SSD)
+    volumev2_standard_hdd: Block Storage (Standard HDD)
     object_storage: Object Storage
     object-store: Object Storage
-    shared_filesystem_storage: Shared Filesystem Storage
+    shared_filesystem_storage: Shared Filesystem Storage (Premium SSD)
     sharev2: Shared Filesystem Storage
     loadbalancing: Loadbalancing
     floating_ips: Floating IPs
@@ -32,6 +33,9 @@ en:
     volumes: Volumes
     snapshots: Snapshots
     capacity: Capacity
+    volumes_standard_hdd: Volumes
+    snapshots_standard_hdd: Snapshots
+    capacity_standard_hdd: Capacity
     dns: DNS
     zones: Zones
     recordsets: Recordsets per Zone

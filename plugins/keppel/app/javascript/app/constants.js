@@ -2,6 +2,7 @@ export const REQUEST_ACCOUNTS         = 'keppel/REQUEST_ACCOUNTS';
 export const RECEIVE_ACCOUNTS         = 'keppel/RECEIVE_ACCOUNTS';
 export const REQUEST_ACCOUNTS_FAILURE = 'keppel/REQUEST_ACCOUNTS_FAILURE';
 export const UPDATE_ACCOUNT           = 'keppel/UPDATE_ACCOUNT';
+export const DELETE_ACCOUNT           = 'keppel/DELETE_ACCOUNT';
 
 export const REQUEST_PEERS         = 'keppel/REQUEST_PEERS';
 export const RECEIVE_PEERS         = 'keppel/RECEIVE_PEERS';

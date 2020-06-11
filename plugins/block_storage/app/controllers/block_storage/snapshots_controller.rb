@@ -7,7 +7,7 @@ module BlockStorage
 
     # GET /snapshots
     def index
-      per_page = (params[:per_page] || 5).to_i
+      per_page = (params[:per_page] || 20).to_i
 
       options = { sort: 'id:asc', limit: per_page + 1 }
       options[:marker] = params[:marker] if params[:marker]

@@ -15,12 +15,12 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
       && gem install nio4r -v 2.3.1 \
-      && gem install nokogiri -v 1.10.7 \
+      && gem install nokogiri -v 1.10.9 \
       && gem install pg -v 0.21.0 \
-      && gem install puma -v 3.12.4  \
+      && gem install puma -v 3.12.6  \
       && gem install redcarpet -v 3.4.0 \
       && gem install unf -v 0.2.0.beta2 \
-      && gem install websocket-driver -v 0.7.0 \
+      && gem install websocket-driver -v 0.7.2 \
       && gem install bindex -v 0.6.0 \
       && gem install sassc -v 2.2.1 \
       && runDeps="$( \
@@ -79,6 +79,7 @@ RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
+LABEL source_repository="https://github.com/sapcc/elektra"
 
 FROM elektra AS tests
 RUN apk add --no-cache postgresql bash

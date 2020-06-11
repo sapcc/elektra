@@ -1,23 +1,16 @@
 import { connect } from  'react-redux';
 import Loader from '../components/loader';
-import { fetchAccountsIfNeeded, fetchPeersIfNeeded } from '../actions/keppel';
-
-const interpret = ({ requestedAt, isFetching, data }) => ({
-  isFetching: isFetching || requestedAt === null,
-  isLoaded:   data !== null,
-});
+import { fetchAccountsIfNeeded } from '../actions/keppel';
 
 export default connect(
   state => {
-    const accountsState = interpret(state.keppel.accounts);
-    const peersState = interpret(state.keppel.peers);
+    const { requestedAt, isFetching, data } = state.keppel.accounts;
     return {
-      isFetching: accountsState.isFetching || peersState.isFetching,
-      isLoaded:   accountsState.isLoaded   && peersState.isLoaded,
+      isFetching: isFetching || requestedAt === null,
+      isLoaded:   data !== null,
     };
   },
   dispatch => ({
     loadAccountsOnce: (...args) => dispatch(fetchAccountsIfNeeded(...args)),
-    loadPeersOnce:    (...args) => dispatch(fetchPeersIfNeeded(...args)),
   }),
 )(Loader);

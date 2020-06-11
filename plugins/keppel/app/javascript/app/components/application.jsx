@@ -2,6 +2,8 @@ import { HashRouter, Route, Redirect } from 'react-router-dom';
 import Loader from '../containers/loader';
 import AccountList from '../containers/accounts/list';
 import AccountCreateModal from '../containers/accounts/create';
+import AccountMaintenanceModal from '../containers/accounts/maintenance';
+import AccountSubleaseTokenModal from '../containers/accounts/sublease';
 import RBACPoliciesEditModal from '../containers/rbac_policies/edit';
 import ValidationRulesEditModal from '../containers/validation_rules/edit';
 import RepositoryList from '../containers/repositories/list';
@@ -23,6 +25,8 @@ export default (props) => {
           {/* modal dialogs that are reached from /accounts */}
           {isAdmin && <Route exact path="/accounts/new" render={(props) => <AccountCreateModal {...props} {...rootProps} /> } />}
           <Route exact path="/accounts/:account/access_policies" render={(props) => <RBACPoliciesEditModal {...props} {...rootProps} />} />
+          <Route exact path="/accounts/:account/sublease" render={(props) => <AccountSubleaseTokenModal {...props} {...rootProps} />} />
+          <Route exact path="/accounts/:account/toggle_maintenance" render={(props) => <AccountMaintenanceModal {...props} {...rootProps} />} />
           <Route exact path="/accounts/:account/validation_rules" render={(props) => <ValidationRulesEditModal {...props} {...rootProps} />} />
 
           {/* repository list within account */}

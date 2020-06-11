@@ -184,14 +184,24 @@ module Compute
     end
 
     def create
-      @instance = services.compute.new_server
-      #params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?} unless params[:server][:security_groups].blank?
 
+      # set image_id
+      #params[:server][:image_id] = if params[:server][:baremetal_image_id] != ''
+      #  params[:server][:baremetal_image_id]
+      #else
+      #  params[:server][:vmware_image_id]
+      #end
+      #params[:server].delete(:baremetal_image_id)
+      #params[:server].delete(:vmware_image_id)
+
+      @instance = services.compute.new_server
+     
       # remove empty security groups from params
       if params[:server] && !params[:server][:security_groups].blank?
         params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?}
       end
 
+      # add all attributes from create dialog to instance
       @instance.attributes = params[@instance.model_name.param_key]
       @bootable_volumes = services.block_storage.volumes_detail(bootable:true).select {|v| ['available','downloading'].include?(v.status) } 
       @images = services.image.all_images

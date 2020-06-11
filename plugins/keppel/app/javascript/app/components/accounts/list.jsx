@@ -8,6 +8,7 @@ const columns = [
   { key: 'name', label: 'Global account name', sortStrategy: 'text',
     sortKey: props => props.account.name || '' },
   { key: 'config', label: 'Configuration' },
+  { key: 'status', label: 'Status' },
   { key: 'actions', label: '' },
 ];
 
@@ -28,7 +29,7 @@ export default class AccountList extends React.Component {
         )}
         <DataTable columns={columns} pageSize={10}>
           {this.props.accounts.sort(byName).map(account => (
-            <AccountRow key={account.name} account={account} />
+            <AccountRow key={account.name} account={account} isAdmin={this.props.isAdmin} />
           ))}
         </DataTable>
       </React.Fragment>

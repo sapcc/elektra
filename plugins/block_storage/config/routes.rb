@@ -5,6 +5,7 @@ BlockStorage::Engine.routes.draw do
       get 'available-servers' => 'volumes#available_servers'
       get 'availability-zones' => 'volumes#availability_zones'
       get 'images' => 'volumes#images'
+      get 'types' => 'volumes#types'
     end
 
     member do

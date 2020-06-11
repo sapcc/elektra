@@ -52,7 +52,14 @@ module ServiceLayer
 
       ################## MODEL INTERFACE #####################
       def create_zone_transfer_request(zone_id, attributes = {})
-        elektron_dns.post("zones/#{zone_id}/tasks/transfer_requests") do
+        header_options = {}
+        if attributes[:source_project_id]
+          # this is needed! To be sure that the user can see the zone
+          source_project_id = attributes.delete(:source_project_id)
+          header_options = {"x-auth-sudo-project-id": source_project_id}
+        end
+
+        elektron_dns.post("zones/#{zone_id}/tasks/transfer_requests", headers: header_options) do
           attributes
         end.body
       end

@@ -4,7 +4,7 @@ import { addSuccess } from 'lib/flashes';
 import { byteToHuman } from 'lib/tools/size_formatter';
 
 import Digest from '../digest';
-import { makeGCNotice } from '../utils';
+import { makeGCNotice, mergeLastPulledAt } from '../utils';
 
 const mediaTypeDescs = {
   'application/vnd.docker.distribution.manifest.v1+prettyjws': 'Docker image (old format)',
@@ -35,8 +35,17 @@ export default class ImageRow extends React.Component {
 
   render() {
     //NOTE: `tagName == null` for untagged image, `tagName != null` for tagged image
-    const { name: tagName, digest, media_type: mediaType, size_bytes: sizeBytes, pushed_at: pushedAtUnix } = this.props.data;
+    const {
+      name: tagName,
+      digest,
+      media_type: mediaType,
+      size_bytes: sizeBytes,
+      pushed_at: pushedAtUnix,
+      last_pulled_at: lastPulledAtUnix,
+    } = this.props.data;
+
     const pushedAt = moment.unix(pushedAtUnix);
+    const lastPulledAt = lastPulledAtUnix ? moment.unix(lastPulledAtUnix) : null;
 
     return (
       <tr>
@@ -50,14 +59,21 @@ export default class ImageRow extends React.Component {
             <Digest digest={digest} />
           )}
         </td>
-        <td className='col-md-3'>
+        <td className='col-md-2'>
           <span title={mediaType}>{mediaTypeDescs[mediaType] || mediaType}</span>
         </td>
         <td className='col-md-2'>
           {byteToHuman(sizeBytes)}
         </td>
-        <td className='col-md-3'>
+        <td className='col-md-2'>
           <span title={pushedAt.format('LLLL')}>{pushedAt.fromNow(true)} ago</span>
+        </td>
+        <td className='col-md-2'>
+          {lastPulledAt ? (
+            <span title={lastPulledAt.format('LLLL')}>{lastPulledAt.fromNow(true)} ago</span>
+          ) : (
+            <span className='text-muted'>Never</span>
+          )}
         </td>
         {this.props.canEdit && (
           <td className='snug text-right text-nobreak'>
