@@ -132,6 +132,7 @@ end
 
 group :development, :test, :integration_tests do
   gem 'rspec'
+  gem 'colorize' #needs to be here otherwise the tests will break
 end
 
 group :integration_tests do
