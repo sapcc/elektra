@@ -25,7 +25,7 @@ RUN cd /usr/local/share \
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
 RUN  gem install nokogiri -v 1.10.9 \
-  && gem install websocket-driver -v 0.6.5 \
+  && gem install websocket-driver -v 0.7.2 \
   && gem sources -c \
   && rm -f /usr/local/bundle/cache/*
 
