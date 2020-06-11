@@ -3,7 +3,7 @@ require 'rack'
 module Lbaas2
   module Loadbalancers
     module Pools
-      class MembersController < ApplicationController
+      class MembersController < DashboardController
         authorization_context 'lbaas2'
         authorization_required
 

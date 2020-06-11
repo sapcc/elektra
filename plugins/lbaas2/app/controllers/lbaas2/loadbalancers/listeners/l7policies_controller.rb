@@ -1,7 +1,7 @@
 module Lbaas2
   module Loadbalancers
     module Listeners
-      class L7policiesController < ApplicationController
+      class L7policiesController < DashboardController
         authorization_context 'lbaas2'
         authorization_required
 

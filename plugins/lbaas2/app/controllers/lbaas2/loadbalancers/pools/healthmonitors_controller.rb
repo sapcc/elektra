@@ -1,7 +1,7 @@
 module Lbaas2
   module Loadbalancers
     module Pools
-      class HealthmonitorsController < ApplicationController
+      class HealthmonitorsController < DashboardController
         authorization_context 'lbaas2'
         authorization_required
         
