@@ -477,7 +477,7 @@ GEM
     rb-fsevent (0.10.2)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
-    rdoc (6.1.1)
+    rdoc (6.2.1)
     react-rails (2.2.1)
       babel-transpiler (>= 0.7.0)
       connection_pool
@@ -527,7 +527,7 @@ GEM
     sass_inline_svg (0.0.7)
     sassc (2.2.1)
       ffi (~> 1.9)
-    sdoc (1.0.0)
+    sdoc (1.1.0)
       rdoc (>= 5.0)
     sentry-raven (2.6.3)
       faraday (>= 0.7.6, < 1.0)
@@ -652,7 +652,7 @@ DEPENDENCIES
   ruby-radius
   sass-rails
   sass_inline_svg
-  sdoc (~> 1.0.0)
+  sdoc (~> 1.1.0)
   sentry-raven
   shared_filesystem_storage!
   simple-navigation
