@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require_relative './factories/factories.rb'
+require_relative 'shared'
 
 describe Lbaas2::Loadbalancers::Listeners::L7policiesController, type: :controller do
   routes { Lbaas2::Engine.routes }
@@ -27,45 +28,12 @@ describe Lbaas2::Loadbalancers::Listeners::L7policiesController, type: :controll
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(l7policies)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :index, params: default_params
-        expect(response).to be_successful
+    it_behaves_like 'index action' do
+      subject do
+        @default_params = default_params
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :index, params: default_params
-        expect(response).to be_successful
-      end
-    end
-    context 'empty network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-      it 'returns 401 error' do
-        get :index, params: default_params
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
+
   end
 
   describe "GET 'show'" do
@@ -74,45 +42,12 @@ describe Lbaas2::Loadbalancers::Listeners::L7policiesController, type: :controll
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(l7policy)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :show, params: default_params.merge(id: 'l7policy_id')
-        expect(response).to be_successful
+    it_behaves_like 'show action' do
+      subject do
+        @default_params = default_params
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :show, params: default_params.merge(id: 'l7policy_id')
-        expect(response).to be_successful
-      end
-    end
-    context 'empty network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-      it 'returns 401 error' do
-        get :show, params: default_params.merge(id: 'l7policy_id')
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
+
   end
 
   describe "POST 'create'" do
@@ -121,48 +56,29 @@ describe Lbaas2::Loadbalancers::Listeners::L7policiesController, type: :controll
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(l7policy)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'return http success' do
-        l7policy = ::Lbaas2::FakeFactory.new.l7policy
-        post :create, params: default_params.merge({l7policy: l7policy})
-        expect(response).to be_successful
+    it_behaves_like 'post action' do
+      subject do
+        @default_params = default_params
+        @extra_params = {l7policy: ::Lbaas2::FakeFactory.new.l7policy}
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
-      it 'return 401 error' do
-        l7policy = ::Lbaas2::FakeFactory.new.l7policy
-        post :create, params: default_params.merge({l7policy: l7policy})
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
-    context 'empty network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-      it 'return 401 error' do
-        l7policy = ::Lbaas2::FakeFactory.new.l7policy
-        post :create, params: default_params.merge({l7policy: l7policy})
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
+
   end
+
+  describe "DELETE 'destroy'" do
+    before :each do
+      policy = double('elektron', service: double("octavia", delete: double("delete") ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(policy)
+    end
+
+
+    it_behaves_like 'destroy action' do
+      subject do
+        @default_params = default_params
+        @extra_params = {id: 'policy_id'}
+      end
+    end
+
+  end
+
 end

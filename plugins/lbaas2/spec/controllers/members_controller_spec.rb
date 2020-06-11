@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require_relative './factories/factories.rb'
+require_relative 'shared'
 
 describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
   routes { Lbaas2::Engine.routes }
@@ -27,45 +28,12 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(members)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :index, params: default_params
-        expect(response).to be_successful
+    it_behaves_like 'index action' do
+      subject do
+        @default_params = default_params
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :index, params: default_params
-        expect(response).to be_successful
-      end
-    end
-    context 'empty network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-      it 'returns 401 error' do
-        get :index, params: default_params
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
+
   end
 
   describe "GET 'show'" do
@@ -74,45 +42,12 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(member)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :show, params: default_params.merge(id: 'member_id')
-        expect(response).to be_successful
+    it_behaves_like 'show action' do
+      subject do
+        @default_params = default_params
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :show, params: default_params.merge(id: 'member_id')
-        expect(response).to be_successful
-      end
-    end
-    context 'empty network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-      it 'returns 401 error' do
-        get :show, params: default_params.merge(id: 'member_id')
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
+
   end
 
   describe "POST 'create'" do
@@ -125,8 +60,64 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
     context 'network_admin' do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token['roles'] = []
           token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
+          token
+        end
+      end
+      it 'return http success' do
+        member = ::Lbaas2::FakeFactory.new.member
+        post :create, params: default_params.merge({member: member})
+        expect(response).to be_successful
+      end
+    end
+    context 'loadbalancer_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'loadbalancer_admin' }
+          token
+        end
+      end
+      it 'return http success' do
+        member = ::Lbaas2::FakeFactory.new.member
+        post :create, params: default_params.merge({member: member})
+        expect(response).to be_successful
+      end
+    end
+    context 'cloud_network_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'cloud_network_admin' }
+          token
+        end
+      end
+      it 'return http success' do
+        member = ::Lbaas2::FakeFactory.new.member
+        post :create, params: default_params.merge({member: member})
+        expect(response).to be_successful
+      end
+    end
+    context 'member' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'member' }
+          token
+        end
+      end
+      it 'return http success' do
+        member = ::Lbaas2::FakeFactory.new.member
+        post :create, params: default_params.merge({member: member})
+        expect(response).to be_successful
+      end
+    end
+    context 'loadbalancer_poolmemberadmin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'loadbalancer_poolmemberadmin' }
           token
         end
       end
@@ -139,8 +130,23 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
     context 'network_viewer' do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token['roles'] = []
           token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
+          token
+        end
+      end
+      it 'return 401 error' do
+        member = ::Lbaas2::FakeFactory.new.member
+        post :create, params: default_params.merge({member: member})
+        expect(response.code).to be == ("401")
+        expect(response).to_not be_successful
+      end
+    end
+    context 'loadbalancer_viewer' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'loadbalancer_viewer' }
           token
         end
       end
@@ -154,7 +160,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
     context 'empty network roles' do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token['roles'] = []
           token
         end
       end
@@ -176,12 +182,63 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
     context 'network_admin' do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token['roles'] = []
           token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
           token
         end
       end
-
+      it 'return http success' do
+        delete :destroy, params: default_params.merge(id: 'member_id')
+        expect(response).to be_successful
+      end
+    end
+    context 'loadbalancer_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'loadbalancer_admin' }
+          token
+        end
+      end
+      it 'return http success' do
+        delete :destroy, params: default_params.merge(id: 'member_id')
+        expect(response).to be_successful
+      end
+    end
+    context 'cloud_network_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'cloud_network_admin' }
+          token
+        end
+      end
+      it 'return http success' do
+        delete :destroy, params: default_params.merge(id: 'member_id')
+        expect(response).to be_successful
+      end
+    end
+    context 'member' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'member' }
+          token
+        end
+      end
+      it 'return http success' do
+        delete :destroy, params: default_params.merge(id: 'member_id')
+        expect(response).to be_successful
+      end
+    end
+    context 'loadbalancer_poolmemberadmin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'loadbalancer_poolmemberadmin' }
+          token
+        end
+      end
       it 'return http success' do
         delete :destroy, params: default_params.merge(id: 'member_id')
         expect(response).to be_successful
@@ -190,12 +247,25 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
     context 'network_viewer' do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token['roles'] = []
           token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
           token
         end
       end
-
+      it 'return 401 error' do
+        delete :destroy, params: default_params.merge(id: 'member_id')
+        expect(response.code).to be == ("401")
+        expect(response).to_not be_successful
+      end
+    end
+    context 'loadbalancer_viewer' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'loadbalancer_viewer' }
+          token
+        end
+      end
       it 'return 401 error' do
         delete :destroy, params: default_params.merge(id: 'member_id')
         expect(response.code).to be == ("401")
@@ -205,7 +275,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
     context 'no network roles' do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
+          token['roles'] = []
           token
         end
       end
@@ -224,48 +294,14 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       allow_any_instance_of(ServiceLayer::ComputeService).to receive(:servers).and_return([])
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :serversForSelect, params: default_params
-        expect(response).to be_successful
+    it_behaves_like 'GET action with editor context including loadbalancer_poolmemberadmin' do
+      subject do
+        @default_params = default_params
+        @extra_params = {}
+        @path = "serversForSelect"
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
 
-      it 'return 401 error' do
-        get :serversForSelect, params: default_params
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
-    context 'no network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-
-      it 'return 401 error' do
-        get :serversForSelect, params: default_params
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
   end
 
 end

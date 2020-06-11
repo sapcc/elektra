@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require_relative './factories/factories.rb'
+require_relative 'shared'
 
 describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
   routes { Lbaas2::Engine.routes }
@@ -27,45 +28,12 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
       allow_any_instance_of(Lbaas2::Loadbalancers::ListenersController).to receive(:extend_listener_data).and_return(double('cached_listeners').as_null_object)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :index, params: default_params
-        expect(response).to be_successful
+    it_behaves_like 'index action' do
+      subject do
+        @default_params = default_params
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :index, params: default_params
-        expect(response).to be_successful
-      end
-    end
-    context 'empty network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-      it 'returns 401 error' do
-        get :index, params: default_params
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
+
   end
 
   describe "GET 'show'" do
@@ -75,45 +43,12 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
       allow_any_instance_of(Lbaas2::Loadbalancers::ListenersController).to receive(:extend_listener_data).and_return(double('cahced_listeners').as_null_object)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :show, params: default_params.merge(id: 'listener_id')
-        expect(response).to be_successful
+    it_behaves_like 'show action' do
+      subject do
+        @default_params = default_params
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :show, params: default_params.merge(id: 'listener_id')
-        expect(response).to be_successful
-      end
-    end
-    context 'empty network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-      it 'returns 401 error' do
-        get :show, params: default_params.merge(id: 'listener_id')
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
+
   end
 
   describe "POST 'create'" do
@@ -123,49 +58,13 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
       allow_any_instance_of(Lbaas2::Loadbalancers::ListenersController).to receive(:extend_listener_data).and_return(double('cached_listeners').as_null_object)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'return http success' do
-        listener = ::Lbaas2::FakeFactory.new.listener
-        post :create, params: default_params.merge({listener: listener})
-        expect(response).to be_successful
+    it_behaves_like 'post action' do
+      subject do
+        @default_params = default_params
+        @extra_params = {listener: ::Lbaas2::FakeFactory.new.listener}
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
-      it 'return 401 error' do
-        listener = ::Lbaas2::FakeFactory.new.listener
-        post :create, params: default_params.merge({listener: listener})
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
-    context 'empty network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-      it 'return 401 error' do
-        listener = ::Lbaas2::FakeFactory.new.listener
-        post :create, params: default_params.merge({listener: listener})
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
+
   end
 
   describe "DELETE 'destroy'" do
@@ -174,49 +73,13 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(listener)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-
-      it 'return http success' do
-        delete :destroy, params: default_params.merge(id: 'listener_id')
-        expect(response).to be_successful
+    it_behaves_like 'destroy action' do
+      subject do
+        @default_params = default_params
+        @extra_params = {id: 'listener_id'}
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
 
-      it 'return 401 error' do
-        delete :destroy, params: default_params.merge(id: 'listener_id')
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
-    context 'no network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-
-      it 'return 401 error' do
-        delete :destroy, params: default_params.merge(id: 'listener_id')
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
   end
 
   describe "GET 'containers'" do
@@ -224,48 +87,14 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
       allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:containers).and_return([])
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :containers, params: default_params
-        expect(response).to be_successful
+    it_behaves_like 'GET action with editor context' do
+      subject do
+        @default_params = default_params
+        @extra_params = {}
+        @path = "containers"
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
 
-      it 'return 401 error' do
-        get :containers, params: default_params
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
-    context 'no network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-
-      it 'return 401 error' do
-        get :containers, params: default_params
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
   end
 
   describe "GET 'itemsWithoutDefaultPoolForSelect'" do
@@ -274,46 +103,14 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(listeners)
     end
 
-    context 'network_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
-          token
-        end
-      end
-      it 'returns http success' do
-        get :itemsWithoutDefaultPoolForSelect, params: default_params.merge(iloadbalancer_idd: 'lb_id')
-        expect(response).to be_successful
+    it_behaves_like 'GET action with editor context' do
+      subject do
+        @default_params = default_params
+        @extra_params = {loadbalancer_id: 'lb_id'}
+        @path = "itemsWithoutDefaultPoolForSelect"
       end
     end
-    context 'network_viewer' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
-          token
-        end
-      end
-      it 'returns 401 error' do
-        get :itemsWithoutDefaultPoolForSelect, params: default_params.merge(iloadbalancer_idd: 'lb_id')
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
-    context 'empty network roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'lbaas2_role' }
-          token
-        end
-      end
-      it 'returns 401 error' do
-        get :itemsWithoutDefaultPoolForSelect, params: default_params.merge(iloadbalancer_idd: 'lb_id')
-        expect(response.code).to be == ("401")
-        expect(response).to_not be_successful
-      end
-    end
+
   end
 end
 
