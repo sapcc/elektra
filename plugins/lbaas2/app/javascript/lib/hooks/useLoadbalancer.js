@@ -2,8 +2,6 @@ import React from 'react';
 import { useDispatch } from '../../app/components/StateProvider'
 import { ajaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
-import { addNotice, addError } from 'lib/flashes';
-import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 const useLoadbalancer = () => {
   const dispatch = useDispatch()
@@ -60,14 +58,10 @@ const useLoadbalancer = () => {
         return ajaxHelper.delete(`/loadbalancers/${id}`)
         .then( (response) => {
           dispatch({type: 'REQUEST_REMOVE_LOADBALANCER', id: id})
-          addNotice(<React.Fragment><span>Load Balancer <b>{name}</b> ({id}) will be deleted.</span></React.Fragment>)
-          handleSuccess()
+          handleSuccess(response)
         })
         .catch( (error) => {     
-          addError(React.createElement(ErrorsList, {
-            errors: errorMessage(error.response)
-          }))
-          handleErrors()
+          handleErrors(error)
         });
       }).catch(cancel => true)
     })

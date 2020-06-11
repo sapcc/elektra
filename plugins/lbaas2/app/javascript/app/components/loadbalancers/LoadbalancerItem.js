@@ -9,6 +9,8 @@ import useStatusTree from '../../../lib/hooks/useStatusTree'
 import { useEffect } from 'react'
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import CopyPastePopover from '../shared/CopyPastePopover'
+import { addNotice, addError } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 const MyHighlighter = ({search,children}) => {
   if(!search || !children) return children
@@ -55,13 +57,18 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
   }
 
   const handleDelete = (e) => {
-    e.preventDefault()
-    deleteLoadbalancer(loadbalancer.name, loadbalancer.id).then(() => {
-      
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    return deleteLoadbalancer(loadbalancer.name, loadbalancer.id).then((response) => {
+      addNotice(<React.Fragment>Listener <b>{listenerName}</b> ({listenerID}) is being deleted.</React.Fragment>)
+    }).catch(error => {
+      addError(React.createElement(ErrorsList, {
+        errors: errorMessage(error.response)
+      }))
     })
   }
-
-  console.log('RENDER loadbalancer list item id-->', loadbalancer.id)
 
   const poolIds = loadbalancer.pools.map(p => p.id)
   const listenerIds = loadbalancer.listeners.map(l => l.id)
@@ -108,6 +115,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
     }
   }
 
+  console.log('RENDER loadbalancer list item id-->', loadbalancer.id)
   return(
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">

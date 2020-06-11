@@ -74,6 +74,7 @@ const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
       fetchLoadbalancer(loadbalancerID).then(() => {
       }).catch(error => {
       })
+      // TODO: back to the poles      
     }).catch(error => {
       addError(React.createElement(ErrorsList, {
         errors: errorMessage(error.response)

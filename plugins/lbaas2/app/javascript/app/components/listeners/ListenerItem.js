@@ -9,8 +9,8 @@ import CachedInfoPopoverContent from './CachedInfoPopoverContent'
 import CachedInfoPopoverContentContainers from '../shared/CachedInfoPopoverContentContainers'
 import useListener from '../../../lib/hooks/useListener'
 import useCommons from '../../../lib/hooks/useCommons'
-import { addNotice, addError } from 'lib/flashes';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
+import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 const ListenerItem = ({props, listener, searchTerm, onSelectListener, disabled}) => {
