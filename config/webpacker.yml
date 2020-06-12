@@ -69,7 +69,7 @@ production:
   # otherwise you will see only "compilation error" without any details
   webpack_compile_output: true
   # Production demands on precompilation of packs prior to booting for performance.
-  compile: false
+  compile: true
 
   # Cache manifest.json for performance
   cache_manifest: true
