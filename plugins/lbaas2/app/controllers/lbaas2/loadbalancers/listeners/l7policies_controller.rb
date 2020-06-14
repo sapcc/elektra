@@ -11,6 +11,8 @@ module Lbaas2
           pagination_options[:marker] = params[:marker] if params[:marker]
           l7policies = services.lbaas2.l7policies({listener_id: params[:listener_id]}.merge(pagination_options))
 
+          extend_l7policies_data(l7policies)
+
           render json: {
             l7policies: l7policies,
             has_next: l7policies.length > per_page
@@ -23,9 +25,12 @@ module Lbaas2
 
         def show
           l7policy = services.lbaas2.find_l7policy(params[:id])
+          
+          extend_l7policies_data([l7policy])
+
           render json: {
             l7policy: l7policy
-          }
+          }          
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
@@ -69,8 +74,14 @@ module Lbaas2
 
         private
 
-        def extend_l7policies_data
-          # TODO
+        def extend_l7policies_data(l7policies)
+          l7policies.each do |l7policy|
+            # get cached listeners
+            l7policy.rules = [] if l7policy.rules.blank?
+            l7policy.cached_rules = ObjectCache.where(id: l7policy.rules.map{|l| l[:id]}).each_with_object({}) do |l,map|
+              map[l[:id]] = l
+            end
+          end
         end
 
       end

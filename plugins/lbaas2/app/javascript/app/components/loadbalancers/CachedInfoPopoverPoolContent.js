@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const LbPopoverPoolContent = ({poolIds, cachedPools}) => {
+const LbPopoverPoolContent = ({lbID, poolIds, cachedPools}) => {
   return ( 
     poolIds.length>0 ?
       poolIds.map( (id, index) =>
@@ -10,7 +10,7 @@ const LbPopoverPoolContent = ({poolIds, cachedPools}) => {
           <React.Fragment>
             <div className="row">
               <div className="col-md-12">
-              <Link to={`/pools/${id}/show`}>
+              <Link to={`/loadbalancers/${lbID}/show?pool=${id}`}>
                 {cachedPools[id].name || id}
               </Link>
               </div>

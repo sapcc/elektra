@@ -214,7 +214,7 @@ const L7PolicySelected = ({props, listenerID, l7Policy, onBackLink}) => {
         <div className="selected-l7policy-entry">
           <div className="row">
             <div className="col-md-12">
-              <b>Rules:</b>
+              <b>L7 Rules:</b>
             </div>
           </div>
           <div className="row">

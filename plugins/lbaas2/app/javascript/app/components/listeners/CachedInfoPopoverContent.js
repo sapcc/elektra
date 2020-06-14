@@ -1,10 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import useL7Policy from '../../../lib/hooks/useL7Policy'
 import CopyPastePopover from '../shared/CopyPastePopover'
+import useListener from '../../../lib/hooks/useListener'
 
-const CachedInfoPopoverContent = ({l7PolicyIDs, cachedl7PolicyIDs}) => {
+const CachedInfoPopoverContent = ({props, lbID, listenerID, l7PolicyIDs, cachedl7PolicyIDs}) => {
+  const listenerSetSelected = useListener().setSelected
+  const listenerSetSearchTerm = useListener().setSearchTerm
+  const l7policySetSelected = useL7Policy().setSelected
+  const l7policySetSearchTerm = useL7Policy().setSearchTerm
   const {actionRedirect} = useL7Policy()
+
+  const onClick = (e, id) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    onSelectPolicyWithListner(props, listenerID, id)
+  }
+
+  const onSelectPolicyWithListner = (props, listenerID, policyID) => {
+    const pathname = props.location.pathname; 
+    const searchParams = new URLSearchParams(props.location.search); 
+    searchParams.set("listener", listenerID);
+    searchParams.set("l7policy", policyID);
+    props.history.push({
+      pathname: pathname,
+      search: searchParams.toString()
+    })
+    // Listener was selected
+    listenerSetSelected(listenerID)
+    // filter the listener list to show just the one item
+    listenerSetSearchTerm(listenerID)
+    // L7Policy was selected
+    l7policySetSelected(l7PolicyID)
+    // filter list in case we still show the list
+    l7policySetSearchTerm(l7PolicyID) 
+  }
+
   return (
     l7PolicyIDs.length>0 ?
     l7PolicyIDs.map( (id, index) =>
@@ -13,7 +46,7 @@ const CachedInfoPopoverContent = ({l7PolicyIDs, cachedl7PolicyIDs}) => {
         <React.Fragment>
           <div className="row">
             <div className="col-md-12">
-            <Link to={`/listener/${id}/show`}>
+            <Link onClick={(e) => onClick(e,id)} to="#">
               {cachedl7PolicyIDs[id].name || id}
             </Link>
             </div>
@@ -55,7 +88,7 @@ const CachedInfoPopoverContent = ({l7PolicyIDs, cachedl7PolicyIDs}) => {
         :
         <div className="row">
           <div className="col-md-12 text-nowrap">
-            <Link to={`/listeners/${id}/show`}>
+            <Link  onClick={(e) => onClick(e,id)} to="#">
               <small>{id}</small>
             </Link> 
           </div>                

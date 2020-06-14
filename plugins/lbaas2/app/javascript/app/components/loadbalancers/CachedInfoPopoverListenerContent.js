@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const LbPopoverListenerContent = ({listenerIds, cachedListeners}) => {
+const LbPopoverListenerContent = ({lbID, listenerIds, cachedListeners}) => {
   console.log("RENDER lbPoopover CONTENT")
   return ( 
     listenerIds.length>0 ?
@@ -11,7 +11,7 @@ const LbPopoverListenerContent = ({listenerIds, cachedListeners}) => {
             <React.Fragment>
               <div className="row">
                 <div className="col-md-12">
-                  <Link to={`/listeners/${id}/show`}>
+                  <Link to={`/loadbalancers/${lbID}/show?listener=${id}`}>
                     {cachedListeners[id].name || id}
                   </Link>
                 </div>

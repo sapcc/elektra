@@ -13,8 +13,8 @@ import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
-const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
-  const {persistPool,deletePool} = usePool()
+const PoolItem = ({props, pool, searchTerm, disabled}) => {
+  const {persistPool,deletePool,onSelectPool} = usePool()
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const {fetchLoadbalancer} = useLoadbalancer()
@@ -53,14 +53,6 @@ const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
     polling = null
   }
 
-  const onClick = (e) => {
-    if (e) {
-      e.stopPropagation()
-      e.preventDefault()
-    }
-    onSelectPool(pool.id)
-  }
-
   const handleDelete = (e) => {
     if (e) {
       e.stopPropagation()
@@ -82,9 +74,13 @@ const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
     })
   }
 
-  const onSelectMember = () => {}
-
-  const onShowAllClick = () => {}
+  const onPoolClick = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    onSelectPool(props,pool.id)
+  }
 
   const displayName = () => {
     const name = pool.name || pool.id
@@ -92,11 +88,11 @@ const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
         return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldCopy={false}/></span>
     } else {
       if (searchTerm) {
-        return <Link to="#" onClick={onClick}>
+        return <Link to="#" onClick={onPoolClick}>
                 <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
               </Link>
       } else {
-        return <Link to="#" onClick={onClick}>
+        return <Link to="#" onClick={onPoolClick}>
                 <MyHighlighter search={searchTerm}><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/></MyHighlighter>
               </Link>
       }
@@ -140,7 +136,7 @@ const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
             <CachedInfoPopover  popoverId={"pool-listeners-popover-"+listenersIDs.id} 
               buttonName={listenersIDs.length} 
               title={<React.Fragment>Listeners</React.Fragment>}
-              content={<CachedInfoPopoverContentListeners listenerIDs={listenersIDs} cachedListeners={pool.cached_listeners} onSelectMember={onSelectMember}/>} />
+              content={<CachedInfoPopoverContentListeners props={props} listenerIDs={listenersIDs} cachedListeners={pool.cached_listeners} />} />
           </div>
         </div>
       )
@@ -226,8 +222,8 @@ const PoolItem = ({props, pool, searchTerm, onSelectPool, disabled}) => {
         :
         <CachedInfoPopover  popoverId={"member-popover-"+memberIDs.id} 
                     buttonName={memberIDs.length} 
-                    title={<React.Fragment>Members<Link to="#" onClick={onShowAllClick} style={{float: 'right'}}>Show all</Link></React.Fragment>}
-                    content={<CachedInfoPopoverContent memberIDs={memberIDs} cachedMembers={pool.cached_members} onSelectMember={onSelectMember}/>} />
+                    title={<React.Fragment>Members<Link to="#" onClick={onPoolClick} style={{float: 'right'}}>Show all</Link></React.Fragment>}
+                    content={<CachedInfoPopoverContent props={props} lbID={loadbalancerID} poolID={pool.id} memberIDs={memberIDs} cachedMembers={pool.cached_members}/>} />
         }
       </td>
 

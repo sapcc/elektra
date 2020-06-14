@@ -95,6 +95,21 @@ const usePool = () => {
     })
   }
 
+  const onSelectPool = (props, poolID) => {
+    const id = poolID || ""
+    const pathname = props.location.pathname; 
+    const searchParams = new URLSearchParams(props.location.search); 
+    searchParams.set("pool", id);
+    props.history.push({
+      pathname: pathname,
+      search: searchParams.toString()
+    })
+    // pool was selected
+    setSelected(poolID)
+    // filter the pool list to show just the one item
+    setSearchTerm(poolID)
+  }
+
   const setSearchTerm = (searchTerm) => {
     dispatch({type: 'SET_POOLS_SEARCH_TERM', searchTerm: searchTerm})
   }
@@ -169,6 +184,7 @@ const usePool = () => {
     persistPool,
     createPool,
     deletePool,
+    onSelectPool,
     setSearchTerm,
     setSelected,
     reset,

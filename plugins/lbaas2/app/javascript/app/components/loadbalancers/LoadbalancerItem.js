@@ -161,8 +161,8 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
         :
         <CachedInforPopover  popoverId={"listener-popover-"+loadbalancer.id} 
                     buttonName={listenerIds.length} 
-                    title={<React.Fragment>Listeners<Link to={`/listeners/`} style={{float: 'right'}}>Show all</Link></React.Fragment>}
-                    content={<CachedInfoPopoverListenerContent listenerIds={listenerIds} cachedListeners={loadbalancer.cached_listeners}/>} />
+                    title={<React.Fragment>Listeners<Link to={`/loadbalancers/${loadbalancer.id}/show`} style={{float: 'right'}}>Show all</Link></React.Fragment>}
+                    content={<CachedInfoPopoverListenerContent lbID={loadbalancer.id} listenerIds={listenerIds} cachedListeners={loadbalancer.cached_listeners}/>} />
         }
       </td>
       <td>
@@ -171,8 +171,8 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
         :
         <CachedInforPopover  popoverId={"pools-popover-"+loadbalancer.id} 
                     buttonName={poolIds.length} 
-                    title={<React.Fragment>Pools<Link to={`/pools/`} style={{float: 'right'}}>Show all</Link></React.Fragment>}
-                    content={<CachedInfoPopoverPoolContent poolIds={poolIds} cachedPools={loadbalancer.cached_pools}/>} />
+                    title={<React.Fragment>Pools<Link to={`/loadbalancers/${loadbalancer.id}/show`} style={{float: 'right'}}>Show all</Link></React.Fragment>}
+                    content={<CachedInfoPopoverPoolContent lbID={loadbalancer.id} poolIds={poolIds} cachedPools={loadbalancer.cached_pools}/>} />
       }
       </td>
       <td>

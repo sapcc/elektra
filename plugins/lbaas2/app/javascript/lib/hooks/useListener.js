@@ -98,6 +98,25 @@ const useListener = () => {
     dispatch({type: 'SET_LISTENERS_SELECTED_ITEM', selected: null})
   }
 
+  const onSelectListener = (props, listenerID) => {
+    const id = listenerID || ""
+    const pathname = props.location.pathname; 
+    const searchParams = new URLSearchParams(props.location.search); 
+    searchParams.set("listener", id);
+    if (id == "") {
+      // if listener was unselected then we remove the policy selection
+      searchParams.set("l7policy", "");
+    }
+    props.history.push({
+      pathname: pathname,
+      search: searchParams.toString()
+    })
+    // Listener was selected
+    setSelected(listenerID)
+    // filter the listener list to show just the one item
+    setSearchTerm(listenerID)
+  }
+
   const protocolTypes = () => {
     return [
       {label: "HTTP", value: "HTTP"},
@@ -239,6 +258,7 @@ const useListener = () => {
     persistListener,
     createListener,
     deleteListener,
+    onSelectListener,
     setSearchTerm,
     setSelected,
     reset,

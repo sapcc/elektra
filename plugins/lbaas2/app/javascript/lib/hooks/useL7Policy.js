@@ -2,6 +2,7 @@ import React from 'react';
 import { ajaxHelper } from 'ajax_helper';
 import { useDispatch } from '../../app/components/StateProvider'
 import { confirm } from 'lib/dialogs';
+import useListener from './useListener'
 
 const useL7Policy = () => {
   const dispatch = useDispatch()
@@ -68,7 +69,6 @@ const useL7Policy = () => {
     })
   }
 
-
   const createNameTag = (name) => {
     return name ? <React.Fragment><b>name:</b> {name} <br/></React.Fragment> : ""
   }
@@ -86,17 +86,20 @@ const useL7Policy = () => {
     })
   }
 
-  const actionRedirect = (action) => {
-    switch (action) {
-      case 'REDIRECT_PREFIX':
-        return [{value: "redirect_http_code", label: "HTTP Code"},{value: "redirect_prefix", label: "Prefix"}]
-      case 'REDIRECT_TO_POOL':
-        return [{value: "redirect_pool_id", label: "Pool ID"}]
-      case 'REDIRECT_TO_URL':
-        return [{value: "redirect_http_code", label: "HTTP Code"}, {value: "redirect_url", label: "URL"}]
-      default:
-        return []
-    }
+  const onSelectL7Policy = (props, l7PolicyID) => {  
+    const id = l7PolicyID || ""
+    const pathname = props.location.pathname; 
+    const searchParams = new URLSearchParams(props.location.search); 
+    searchParams.set("l7policy", id);
+    props.history.push({
+      pathname: pathname,
+      search: searchParams.toString()
+    })
+
+    // L7Policy was selected
+    setSelected(l7PolicyID)
+    // filter list in case we still show the list
+    setSearchTerm(l7PolicyID)    
   }
 
   const setSearchTerm = (searchTerm) => {
@@ -112,11 +115,25 @@ const useL7Policy = () => {
     dispatch({type: 'SET_L7POLICIES_SELECTED_ITEM', selected: null})
   }
 
+  const actionRedirect = (action) => {
+    switch (action) {
+      case 'REDIRECT_PREFIX':
+        return [{value: "redirect_http_code", label: "HTTP Code"},{value: "redirect_prefix", label: "Prefix"}]
+      case 'REDIRECT_TO_POOL':
+        return [{value: "redirect_pool_id", label: "Pool ID"}]
+      case 'REDIRECT_TO_URL':
+        return [{value: "redirect_http_code", label: "HTTP Code"}, {value: "redirect_url", label: "URL"}]
+      default:
+        return []
+    }
+  }
+
   return {
     fetchL7Policies,
     fetchL7Policy,
     createL7Policy,
     deleteL7Policy,
+    onSelectL7Policy,
     actionRedirect,
     persistL7Policies,
     persistL7Policy,

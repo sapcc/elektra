@@ -10,14 +10,19 @@ import L7PolicySelected from './L7PolicySelected'
 import queryString from 'query-string'
 import ErrorPage from '../ErrorPage';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { addError } from 'lib/flashes';
 
 const L7PolicyList = ({props, loadbalancerID }) => {
-  const {persistL7Policies, setSearchTerm, setSelected, reset} = useL7Policy()
+  const {persistL7Policies, setSearchTerm, setSelected, reset, onSelectL7Policy} = useL7Policy()
   const {searchParamsToString} = useCommons()
   const [tableScroll, setTableScroll] = useState(false)
   const state = useGlobalState().l7policies
   const listenerID = useGlobalState().listeners.selected
-  let timeout = null
+  // timeout for scroll event
+  let handleScrollTimeout = null
+  // timeout for the event handler
+  let eventHandlerTimeout = null
+  const [count, setCount] = useState(0)
 
   useEffect(() => {    
     initialLoad()
@@ -41,16 +46,42 @@ const L7PolicyList = ({props, loadbalancerID }) => {
     if (listenerID) {
       const containerElement = container.current 
       if(containerElement){
-        containerElement.querySelector('.table-responsive').addEventListener('scroll', handleScroll);
+        // wait until the responsive table is build
+        handleScrollListener(containerElement)
         return () => {      
           if (containerElement && containerElement.querySelector('.table-responsive')){
             containerElement.querySelector('.table-responsive').removeEventListener("scroll",handleScroll)
           }
-          clearTimeout(timeout)
+          clearTimeout(handleScrollTimeout)
+          clearTimeout(eventHandlerTimeout)
         } 
       }
     }
   },[listenerID])
+
+  const handleScrollListener = (containerElement) => {
+    if(eventHandlerTimeout) return
+    setCount(count + 1)
+    if ( containerElement && containerElement.querySelector('.table-responsive') ){
+      containerElement.querySelector('.table-responsive').addEventListener('scroll', handleScroll);
+    } else {
+      if (count < 5) {
+        eventHandlerTimeout = setTimeout(() => {
+          eventHandlerTimeout = null
+          handleScrollListener(containerElement)
+        }, 500)
+      }
+    }
+  }
+
+  const handleScroll = () => {
+    if(handleScrollTimeout) return
+    setTableScroll(true)
+    handleScrollTimeout = setTimeout(() => {
+      handleScrollTimeout = null
+      setTableScroll(false)
+    }, 1000 )
+  }
 
   const selectL7Policy = (data) => {
     const values = queryString.parse(props.location.search)    
@@ -63,10 +94,10 @@ const L7PolicyList = ({props, loadbalancerID }) => {
         setSelected(id)
         // filter the policy list to show just the one item
         setSearchTerm(id)
+      } else {
+        addError(<React.Fragment>L7 Policy <b>{id}</b> not found.</React.Fragment>)
       }
-    } else {
-      // NOT FOUND
-    }
+    } 
   }
 
   const restoreUrl = (e) => {
@@ -74,16 +105,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
       e.stopPropagation()
       e.preventDefault()
     }
-    onSelectL7Policy()
-  }
-
-  const handleScroll = () => {
-    if(timeout) return
-    setTableScroll(true)
-    timeout = setTimeout(() => {
-      timeout = null
-      setTableScroll(false)
-    }, 1000 )
+    onSelectL7Policy(props)
   }
 
   const error = state.error
@@ -91,22 +113,6 @@ const L7PolicyList = ({props, loadbalancerID }) => {
   const searchTerm = state.searchTerm
   const selected = state.selected
   const items = state.items
-
-  const onSelectL7Policy = (l7PolicyID) => {  
-    const id = l7PolicyID || ""
-    const pathname = props.location.pathname; 
-    const searchParams = new URLSearchParams(props.location.search); 
-    searchParams.set("l7policy", id);
-    props.history.push({
-      pathname: pathname,
-      search: searchParams.toString()
-    })
-
-    // L7Policy was selected
-    setSelected(l7PolicyID)
-    // filter list in case we still show the list
-    setSearchTerm(l7PolicyID)    
-  }
 
   const filterItems = (searchTerm, items) => {
     if(!searchTerm) return items;
@@ -178,7 +184,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                               </div>
                             </th>
                             <th>Action/Redirect</th>
-                            <th>#Rules</th>
+                            <th>#L7 Rules</th>
                             <th className='snug'></th>
                         </tr>
                     </thead>
@@ -191,7 +197,6 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                             searchTerm={searchTerm} 
                             key={index} 
                             tableScroll={tableScroll} 
-                            onSelected={onSelectL7Policy} 
                             listenerID={listenerID}
                             disabled={selected ? true : false}
                             />

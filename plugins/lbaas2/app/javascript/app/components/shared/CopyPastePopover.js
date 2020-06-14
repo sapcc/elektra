@@ -136,17 +136,21 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
           }
         </span>
       :
-        <span className={baseClass} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-          <span>
-            <span className="cp-string">{text}</span>
-            {shouldCopyText &&
-              <span className={showIcon ? "copy-paste-icon" : "copy-paste-icon transparent"}>
-                {clipboard}
-                {tooltip}
+        <React.Fragment>
+          { text && text.toString().length > 0 &&
+            <span className={baseClass} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+              <span>
+                <span className="cp-string">{text}</span>
+                {shouldCopyText &&
+                  <span className={showIcon ? "copy-paste-icon" : "copy-paste-icon transparent"}>
+                    {clipboard}
+                    {tooltip}
+                  </span>
+                }
               </span>
-            }
-          </span>
-        </span>
+            </span>
+          }
+        </React.Fragment>
       }
     </React.Fragment>
   );

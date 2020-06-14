@@ -45,7 +45,7 @@ const useCommons = () => {
   
   const errorMessage = (err) => {
     return err.data &&  (err.data.errors || err.data.error) || err.message
-  }  
+  }
 
   return {
     MyHighlighter,

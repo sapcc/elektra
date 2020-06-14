@@ -11,6 +11,7 @@ import { useGlobalState } from '../StateProvider'
 import ErrorPage from '../ErrorPage';
 import useCommons from '../../../lib/hooks/useCommons'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { addError } from 'lib/flashes';
 
 const TableFadeTransition = ({
   children,
@@ -21,7 +22,7 @@ const TableFadeTransition = ({
 
 
 const ListenerList = ({props, loadbalancerID}) => {
-  const {persistListeners, setSearchTerm, setSelected} = useListener()
+  const {persistListeners, setSelected, setSearchTerm, onSelectListener} = useListener()
   const state = useGlobalState().listeners
   const {searchParamsToString} = useCommons()
 
@@ -38,6 +39,7 @@ const ListenerList = ({props, loadbalancerID}) => {
   const selectListener = (data) => {
     const values = queryString.parse(props.location.search)
     const id = values.listener
+
     if (id) {
       // check if id belows to the lb object
       const index = data.listeners.findIndex((item) => item.id==id);
@@ -46,27 +48,10 @@ const ListenerList = ({props, loadbalancerID}) => {
         setSelected(id)
         // filter the listener list to show just the one item
         setSearchTerm(id)
+      } else {
+        addError(<React.Fragment>Listener <b>{id}</b> not found.</React.Fragment>)
       }
-    } 
-  }
-
-  const onSelectListener = (listenerID) => {
-    const id = listenerID || ""
-    const pathname = props.location.pathname; 
-    const searchParams = new URLSearchParams(props.location.search); 
-    searchParams.set("listener", id);
-    if (id == "") {
-      // if listener was unselected then we remove the policy selection
-      searchParams.set("l7policy", "");
     }
-    props.history.push({
-      pathname: pathname,
-      search: searchParams.toString()
-    })
-    // Listener was selected
-    setSelected(listenerID)
-    // filter the listener list to show just the one item
-    setSearchTerm(listenerID)
   }
 
   // const loadNext = event => {
@@ -80,7 +65,7 @@ const ListenerList = ({props, loadbalancerID}) => {
       e.stopPropagation()
       e.preventDefault()
     }
-    onSelectListener()
+    onSelectListener(props)
   }
 
   const error = state.error
@@ -149,7 +134,7 @@ const ListenerList = ({props, loadbalancerID}) => {
             
             <TransitionGroup>
               <TableFadeTransition key={listeners.length}>
-                <table className={selected ? "table table-section listeners" : "table table-hover listeners"}>
+                <table className={selected ? "table table-section listeners" : "table table-hover listeners"} >
                   <thead>
                       <tr>
                         <th>
@@ -182,7 +167,6 @@ const ListenerList = ({props, loadbalancerID}) => {
                         listener={listener} 
                         searchTerm={searchTerm} 
                         key={index} 
-                        onSelectListener={onSelectListener}
                         disabled={selected ? true : false}
                         />
                       )

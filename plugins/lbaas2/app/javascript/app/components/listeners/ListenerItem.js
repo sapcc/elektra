@@ -13,8 +13,8 @@ import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
-const ListenerItem = ({props, listener, searchTerm, onSelectListener, disabled}) => {
-  const {persistListener,certificateContainerRelation, deleteListener} = useListener()
+const ListenerItem = ({props, listener, searchTerm, disabled}) => {
+  const {persistListener,certificateContainerRelation, deleteListener, onSelectListener} = useListener()
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
   const {fetchLoadbalancer} = useLoadbalancer()
   let polling = null
@@ -53,12 +53,12 @@ const ListenerItem = ({props, listener, searchTerm, onSelectListener, disabled})
     polling = null
   }
 
-  const onClick = (e) => {
+  const onListenerClick = (e) => {
     if (e) {
       e.stopPropagation()
       e.preventDefault()
     }
-    onSelectListener(listener.id)
+    onSelectListener(props,listener.id)
   }
 
   const handleDelete = (e) => {
@@ -88,11 +88,11 @@ const ListenerItem = ({props, listener, searchTerm, onSelectListener, disabled})
         return <span className="info-text">{cutName}</span>
     } else {
       if (searchTerm) {
-        return <Link to="#" onClick={onClick}>
+        return <Link to="#" onClick={onListenerClick}>
                 <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
               </Link>
       } else {
-        return <Link to="#" onClick={onClick}>
+        return <Link to="#" onClick={onListenerClick}>
                 <MyHighlighter search={searchTerm}>{cutName}</MyHighlighter>
               </Link>
       }
@@ -205,8 +205,8 @@ const ListenerItem = ({props, listener, searchTerm, onSelectListener, disabled})
         :
         <CachedInfoPopover  popoverId={"l7policies-popover-"+listener.id} 
                     buttonName={l7PolicyIDs.length} 
-                    title={<React.Fragment>L7 Policies<Link to="#" onClick={onClick} style={{float: 'right'}}>Show all</Link></React.Fragment>}
-                    content={<CachedInfoPopoverContent l7PolicyIDs={l7PolicyIDs} cachedl7PolicyIDs={listener.cached_l7policies} onSelectListener={onSelectListener}/>} />
+                    title={<React.Fragment>L7 Policies<Link to="#" onClick={onListenerClick} style={{float: 'right'}}>Show all</Link></React.Fragment>}
+                    content={<CachedInfoPopoverContent props={props} lbID={loadbalancerID} listenerID={listener.id} l7PolicyIDs={l7PolicyIDs} cachedl7PolicyIDs={listener.cached_l7policies}/>} />
         }
       </td>
       <td>

@@ -8,9 +8,10 @@ import HelpPopover from '../shared/HelpPopover'
 import useCommons from '../../../lib/hooks/useCommons'
 import { useGlobalState } from '../StateProvider'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { addError } from 'lib/flashes';
 
 const PoolList = ({props, loadbalancerID}) => {
-  const {persistPool, persistPools, setSearchTerm, setSelected, reset} = usePool()
+  const {persistPool, persistPools, setSearchTerm, setSelected, onSelectPool} = usePool()
   const {searchParamsToString} = useCommons()
   const state = useGlobalState().pools
 
@@ -33,23 +34,10 @@ const PoolList = ({props, loadbalancerID}) => {
         setSelected(id)
         // filter the pool list to show just the one item
         setSearchTerm(id)
+      } else {
+        addError(<React.Fragment>Pool <b>{id}</b> not found.</React.Fragment>)
       }
     }
-  }
-
-  const onSelectPool = (poolID) => {
-    const id = poolID || ""
-    const pathname = props.location.pathname; 
-    const searchParams = new URLSearchParams(props.location.search); 
-    searchParams.set("pool", id);
-    props.history.push({
-      pathname: pathname,
-      search: searchParams.toString()
-    })
-    // pool was selected
-    setSelected(poolID)
-    // filter the pool list to show just the one item
-    setSearchTerm(poolID)
   }
 
   const restoreUrl = (e) => {
@@ -57,7 +45,7 @@ const PoolList = ({props, loadbalancerID}) => {
       e.stopPropagation()
       e.preventDefault()
     }
-    onSelectPool()
+    onSelectPool(props)
   }
 
   const loadNext = event => {
@@ -157,7 +145,6 @@ const PoolList = ({props, loadbalancerID}) => {
                     pool={pool} 
                     searchTerm={searchTerm} 
                     key={index} 
-                    onSelectPool={onSelectPool}
                     disabled={selected ? true : false}
                     />
                   )

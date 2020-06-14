@@ -8,10 +8,12 @@ import CopyPastePopover from '../shared/CopyPastePopover'
 import useListener from '../../../lib/hooks/useListener'
 import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+import CachedInfoPopover from '../shared/CachedInforPopover';
+import CachedInfoPopoverContent from './CachedInfoPopoverContent'
 
-const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, onSelected, listenerID, disabled}) => {
+const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID, disabled}) => {
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
-  const {actionRedirect,deleteL7Policy,persistL7Policy} = useL7Policy()
+  const {actionRedirect, deleteL7Policy, persistL7Policy, onSelectL7Policy} = useL7Policy()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const {persistListener} = useListener()
   let polling = null
@@ -49,12 +51,12 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, onSelected,
     polling = null
   }
 
-  const onClick = (e) => {
+  const onL7PolicyClick = (e) => {
     if (e) {
       e.stopPropagation()
       e.preventDefault()
     }
-    onSelected(l7Policy.id)
+    onSelectL7Policy(props, l7Policy.id)
   }
 
   const handleDelete = (e) => {
@@ -83,11 +85,11 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, onSelected,
         return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
     } else {
       if (searchTerm) {
-        return <Link to="#" onClick={onClick}>
+        return <Link to="#" onClick={onL7PolicyClick}>
                 <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
               </Link>
       } else {
-        return <Link to="#" onClick={onClick}>
+        return <Link to="#" onClick={onL7PolicyClick}>
                 <MyHighlighter search={searchTerm}><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/></MyHighlighter>
               </Link>
       }
@@ -120,6 +122,7 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, onSelected,
     }
   }
 
+  const l7RuleIDs = l7Policy.rules.map(l7rule => l7rule.id)
   console.log("RENDER L7 Policy Item")
   return ( 
     <tr>
@@ -147,7 +150,21 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, onSelected,
           </span>
         )}
       </td>
-      <td>{l7Policy.rules.length}</td>
+
+      <td>
+        
+        
+        {disabled ?
+          <span className="info-text">{l7Policy.rules.length}</span>
+        :
+        <CachedInfoPopover  popoverId={"l7rules-popover-"+l7Policy.id} 
+                    buttonName={l7RuleIDs.length} 
+                    title={<React.Fragment>L7 Rules<Link to="#" onClick={onL7PolicyClick} style={{float: 'right'}}>Show all</Link></React.Fragment>}
+                    content={<CachedInfoPopoverContent props={props} lbID={loadbalancerID} listenerID={listenerID} l7PolicyID={l7Policy.id} l7RuleIDs={l7RuleIDs} cachedl7RuleIDs={l7Policy.cached_rules}/>} />
+        }
+      
+      </td>
+
       <td>
         <div className='btn-group'>
           <button
