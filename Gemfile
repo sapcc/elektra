@@ -12,7 +12,7 @@ source 'https://rubygems.org'
 gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '~> 5.2.3' # Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
-gem 'webpacker', '~> 4.0'
+gem 'webpacker', '~> 4.0' # Check package.json -> "@rails/webpacker"
 
 # Views and Assets
 gem 'compass-rails'
@@ -31,6 +31,7 @@ gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
 gem 'font-awesome-sass'
+gem 'kaminari', '~> 1.2.1'
 
 gem 'responders'
 
@@ -71,9 +72,10 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 1.0.0', group: :doc
+gem 'sdoc', '~> 1.1.0', group: :doc
 
-gem 'puma', '= 3.12.4', require: false
+# if you update puma check Dockerfile for Version dependencies!
+gem 'puma', '= 3.12.6', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
@@ -130,7 +132,7 @@ end
 
 group :development, :test, :integration_tests do
   gem 'rspec'
-  gem 'colorize'
+  gem 'colorize' #needs to be here otherwise the tests will break
 end
 
 group :integration_tests do

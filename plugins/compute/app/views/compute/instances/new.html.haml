@@ -5,15 +5,12 @@
     - if @instance.errors.present?
       .alert.alert-error
         = render_errors(@instance.errors)
-      =# @instance.errors.full_messages.to_sentence + '.'
-
 
     - if @keypairs.blank?
       %p.alert.alert-warning
         There are no key pairs defined for your account. Without key pairs you can't access the server via ssh.
         You can define one
         = link_to 'here', keypairs_url()
-
 
     - if @private_networks.empty?
       - if current_user.is_allowed?("networking:network_private_create")
@@ -23,7 +20,6 @@
         = link_to 'about CC Networking.', "#{sap_url_for('documentation')}docs/learn/network/ccloud_networking.html", target: '_blank'
 
     = f.input :name, icon_hint: 'The name must not end with dot and number'
-    =# f.input :max_count, as: :integer #, input_wrapper_html: {class: 'col-sm-2'}
 
     = f.input :availability_zone_id, {label: "Availability zone",
       input_html:         {},
@@ -38,7 +34,6 @@
       collection:         @security_groups.collect{|sg| [sg.name,sg.id]},
       selected:           (@instance.security_groups || []).collect{|sg| sg},
       required:           true}
-
 
     = f.input :keypair_id, { label: "Key pair",
       input_html:         {},
@@ -59,17 +54,47 @@
       wrapper: :horizontal_boolean_4x8 
     
     #custom_root_disk_size_wrapper{class: params[:custom_root_disk] ? '' : 'hidden'}
-      = f.input :custom_root_disk_size, label: 'Custom Root Disk Size (GB)'
+      = f.input :custom_root_disk_size, 
+        label: 'Custom Root Disk Size (GB)'
 
-    = f.input :image_id, label: 'Image',
-      as:            :grouped_select,
-      collection:    grouped_images(@images, @bootable_volumes),
-      group_method:  :last,
-      include_blank: "Choose image",
-      required:      true,
-      icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
+    #image_id_wrapper
+      = f.input :image_id, label: 'Image',
+        as:            :grouped_select,
+        collection:    grouped_images(@images,@bootable_volumes,'all'),
+        group_method:  :last,
+        include_blank: "Choose image",
+        required:      true,
+        icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
+
+    =##baremetal_image_id_wrapper{class:'hidden'}
+    =#  = f.input :baremetal_image_id, label: 'Image',
+    =#    as:            :grouped_select,
+    =#    collection:    grouped_images(@images,@bootable_volumes,'bare metal'),
+    =#    group_method:  :last,
+    =#    include_blank: "Choose image",
+    =#    required:      true,
+    =#    icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
+
+    =##vmware_image_id_wrapper{class:'hidden'}
+    =#  = f.input :vmware_image_id, label: 'Image',
+    =#    as:            :grouped_select,
+    =#    collection:    grouped_images(@images,@bootable_volumes,'vmware'),
+    =#    group_method:  :last,
+    =#    include_blank: "Choose image",
+    =#    required:      true,
+    =#    icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
     
     :javascript
+      $(document).ready(function(){
+        if ($('#server_flavor_id option:selected').text() != "Choose flavor") {
+          if ($('#server_flavor_id option:selected').text().match(/^baremetal/)) {
+            $('#baremetal_image_id_wrapper').removeClass('hidden');
+          }
+          else {
+            $('#vmware_image_id_wrapper').removeClass('hidden');
+          }
+        }
+      })
       // Root Disk Toggle
       var server_custom_root_disk_size = ''
       var toggleRootDisk = function(show) {
@@ -93,6 +118,21 @@
         toggleRootDisk($('#server_custom_root_disk').is(':checked'))
       })
 
+      var flavors = "#{js_flavor_data(@flavors)}";
+      //flavors = JSON.parse(flavors.replace(/&quot;/g,'"'));
+      $('#server_flavor_id').change(function(){
+        //console.log($( this ).val())
+        if ($('#server_flavor_id option:selected').text().match(/^baremetal/)) {
+          $('#baremetal_image_id_wrapper').removeClass('hidden');
+          $('#vmware_image_id_wrapper').addClass('hidden');
+          $('#server_vmware_image_id').val("");
+        }
+        else {
+          $('#baremetal_image_id_wrapper').addClass('hidden');
+          $('#vmware_image_id_wrapper').removeClass('hidden');
+          $('#server_baremetal_image_id').val("");
+        }
+      })
 
     = f.input :network_ids, { label: "Private Network",
       wrapper_html:       { class: ('has-error' if @private_networks.empty?) },

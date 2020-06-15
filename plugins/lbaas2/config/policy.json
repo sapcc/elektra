@@ -1,0 +1,60 @@
+{
+
+  "lbaas2_member": "role:member or role:Member",
+  "lbaas2_viewer": "role:loadbalancer_viewer or role:network_viewer",
+  "lbaas2_admin": "role:loadbalancer_admin or role:network_admin",
+  "lbaas2_cloud_admin": "role:cloud_network_admin",
+  "lbaas2_poolmemberadmin": "role:loadbalancer_poolmemberadmin",
+  "lbaas2_context_is_loadbalancer_admin": "rule:lbaas2_cloud_admin or rule:lbaas2_admin",
+  "lbaas2_context_is_editor": "rule:lbaas2_context_is_loadbalancer_admin or rule:lbaas2_member",
+  "lbaas2_context_is_viewer": "rule:lbaas2_context_is_editor or rule:lbaas2_viewer or rule:lbaas2_poolmemberadmin",
+  "default": "rule:lbaas2_cloud_admin",
+
+  "lbaas2:loadbalancer_list": "rule:lbaas2_context_is_viewer",
+  "lbaas2:loadbalancer_get": "rule:lbaas2_context_is_viewer",
+  "lbaas2:loadbalancer_create": "rule:lbaas2_context_is_editor",
+  "lbaas2:loadbalancer_update": "rule:lbaas2_context_is_editor",
+  "lbaas2:loadbalancer_delete": "rule:lbaas2_context_is_editor",
+  "lbaas2:loadbalancer_status_tree": "rule:lbaas2_context_is_viewer",
+  "lbaas2:loadbalancer_private_networks": "rule:lbaas2_context_is_editor",
+  "lbaas2:loadbalancer_subnets": "rule:lbaas2_context_is_editor",
+
+  "lbaas2:listener_list": "rule:lbaas2_context_is_viewer",
+  "lbaas2:listener_get": "rule:lbaas2_context_is_viewer",
+  "lbaas2:listener_create": "rule:lbaas2_context_is_editor",
+  "lbaas2:listener_update": "rule:lbaas2_context_is_editor",
+  "lbaas2:listener_delete": "rule:lbaas2_context_is_editor",
+  "lbaas2:listener_containers": "rule:lbaas2_context_is_editor",
+  "lbaas2:listener_itemsWithoutDefaultPoolForSelect": "rule:lbaas2_context_is_editor",
+
+  "lbaas2:pool_list": "rule:lbaas2_context_is_viewer",
+  "lbaas2:pool_get": "rule:lbaas2_context_is_viewer",
+  "lbaas2:pool_create": "rule:lbaas2_context_is_editor",
+  "lbaas2:pool_update": "rule:lbaas2_context_is_editor",
+  "lbaas2:pool_delete": "rule:lbaas2_context_is_editor",
+  "lbaas2:pool_itemsForSelect": "rule:lbaas2_context_is_editor",
+
+  "lbaas2:l7policy_list": "rule:lbaas2_context_is_viewer",
+  "lbaas2:l7policy_get": "rule:lbaas2_context_is_viewer",
+  "lbaas2:l7policy_create": "rule:lbaas2_context_is_editor",
+  "lbaas2:l7policy_update": "rule:lbaas2_context_is_editor",
+  "lbaas2:l7policy_delete": "rule:lbaas2_context_is_editor",
+
+  "lbaas2:l7rule_list": "rule:lbaas2_context_is_viewer",
+  "lbaas2:l7rule_get": "rule:lbaas2_context_is_viewer",
+  "lbaas2:l7rule_create": "rule:lbaas2_context_is_editor",
+  "lbaas2:l7rule_update": "rule:lbaas2_context_is_editor",
+  "lbaas2:l7rule_delete": "rule:lbaas2_context_is_editor",
+
+  "lbaas2:healthmonitor_get": "rule:lbaas2_context_is_viewer",
+  "lbaas2:healthmonitor_create": "rule:lbaas2_context_is_editor",
+  "lbaas2:healthmonitor_update": "rule:lbaas2_context_is_editor",
+  "lbaas2:healthmonitor_delete": "rule:lbaas2_context_is_editor",
+
+  "lbaas2:member_list": "rule:lbaas2_context_is_viewer",
+  "lbaas2:member_get": "rule:lbaas2_context_is_viewer",
+  "lbaas2:member_create": "rule:lbaas2_context_is_editor or rule:lbaas2_poolmemberadmin",
+  "lbaas2:member_update": "rule:lbaas2_context_is_editor or rule:lbaas2_poolmemberadmin",
+  "lbaas2:member_delete": "rule:lbaas2_context_is_editor or rule:lbaas2_poolmemberadmin",
+  "lbaas2:member_serversForSelect": "rule:lbaas2_context_is_editor or rule:lbaas2_poolmemberadmin"
+}
