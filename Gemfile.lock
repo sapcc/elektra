@@ -94,6 +94,12 @@ PATH
     kubernetes (0.0.1)
 
 PATH
+  remote: plugins/lbaas2
+  specs:
+    lbaas2 (0.0.1)
+      rails (~> 5.2.3)
+
+PATH
   remote: plugins/lbaas
   specs:
     lbaas (0.0.1)
@@ -622,6 +628,7 @@ DEPENDENCIES
   key_manager!
   kubernetes!
   lbaas!
+  lbaas2!
   loadbalancing!
   lookup!
   lyra-client!
