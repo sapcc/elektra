@@ -43,8 +43,7 @@
     "redux": "^4.0.0",
     "redux-devtools-extension": "^2.13.5",
     "redux-thunk": "^2.2.0",
-    "regenerator-runtime": "^0.13.3",
-    "webpack": "^4.0.0"
+    "regenerator-runtime": "^0.13.3"
   },
   "devDependencies": {
     "@babel/cli": "7.10.1",
@@ -62,8 +61,7 @@
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.13.1",
     "redux-mock-store": "1.5.4",
-    "webpack-dev-server": "3.11.0",
-    "webpack-cli": "3.3.11"
+    "webpack-dev-server": "3.11.0"
   },
   "scripts": {
     "test": "NODE_ENV=test jest --config jest.config.js"
