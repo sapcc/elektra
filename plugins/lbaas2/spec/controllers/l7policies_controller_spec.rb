@@ -26,6 +26,7 @@ describe Lbaas2::Loadbalancers::Listeners::L7policiesController, type: :controll
     before :each do
       l7policies = double('elektron', service: double("octavia", get: double("get", map_to: []) ))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(l7policies)
+      allow_any_instance_of(Lbaas2::Loadbalancers::Listeners::L7policiesController).to receive(:extend_l7policies_data).and_return(double('l7policies_cache').as_null_object)
     end
 
     it_behaves_like 'index action' do
@@ -40,6 +41,7 @@ describe Lbaas2::Loadbalancers::Listeners::L7policiesController, type: :controll
     before :each do
       l7policy = double('elektron', service: double("octavia", get: double("get", map_to: double("l7policy", to_json:{})) ))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(l7policy)
+      allow_any_instance_of(Lbaas2::Loadbalancers::Listeners::L7policiesController).to receive(:extend_l7policies_data).and_return(double('l7policies_cache').as_null_object)
     end
 
     it_behaves_like 'show action' do
