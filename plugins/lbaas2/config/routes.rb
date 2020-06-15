@@ -1,5 +1,5 @@
 Lbaas2::Engine.routes.draw do
-  root to: 'application#index'
+  root to: 'application#lbaas2_widget'
   resources :loadbalancers, only: [:index, :create, :show, :destroy] do
     collection do
       get ':id/status-tree' => 'loadbalancers#status_tree', as: 'status-tree'
