@@ -186,13 +186,13 @@ module Compute
     def create
 
       # set image_id
-      #params[:server][:image_id] = if params[:server][:baremetal_image_id] != ''
-      #  params[:server][:baremetal_image_id]
-      #else
-      #  params[:server][:vmware_image_id]
-      #end
-      #params[:server].delete(:baremetal_image_id)
-      #params[:server].delete(:vmware_image_id)
+      params[:server][:image_id] = if params[:server][:baremetal_image_id] != ''
+        params[:server][:baremetal_image_id]
+      else
+        params[:server][:vmware_image_id]
+      end
+      params[:server].delete(:baremetal_image_id)
+      params[:server].delete(:vmware_image_id)
 
       @instance = services.compute.new_server
      

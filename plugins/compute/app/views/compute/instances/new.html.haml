@@ -57,40 +57,37 @@
       = f.input :custom_root_disk_size, 
         label: 'Custom Root Disk Size (GB)'
 
-    #image_id_wrapper
-      = f.input :image_id, label: 'Image',
+    #baremetal_image_id_wrapper{class:'hidden'}
+      = f.input :baremetal_image_id, label: 'BM Image',
         as:            :grouped_select,
-        collection:    grouped_images(@images,@bootable_volumes,'all'),
+        collection:    grouped_images(@images,@bootable_volumes,'bare metal'),
+        group_method:  :last,
+        include_blank: "Choose image",
+        required:      true
+        
+    #vmware_image_id_wrapper{class:'hidden'}
+      = f.input :vmware_image_id, label: 'VM Image',
+        as:            :grouped_select,
+        collection:    grouped_images(@images,@bootable_volumes,'vmware'),
         group_method:  :last,
         include_blank: "Choose image",
         required:      true,
         icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
-
-    =##baremetal_image_id_wrapper{class:'hidden'}
-    =#  = f.input :baremetal_image_id, label: 'Image',
-    =#    as:            :grouped_select,
-    =#    collection:    grouped_images(@images,@bootable_volumes,'bare metal'),
-    =#    group_method:  :last,
-    =#    include_blank: "Choose image",
-    =#    required:      true,
-    =#    icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
-
-    =##vmware_image_id_wrapper{class:'hidden'}
-    =#  = f.input :vmware_image_id, label: 'Image',
-    =#    as:            :grouped_select,
-    =#    collection:    grouped_images(@images,@bootable_volumes,'vmware'),
-    =#    group_method:  :last,
-    =#    include_blank: "Choose image",
-    =#    required:      true,
-    =#    icon_hint: "Please note that you only use images with a maximum size of 12GB. Otherwise the instance creation might fail.<br><br>If you need to use bigger images please go to <i>“Volumes & Snapshots -> Create New”</i> and create a bootable volume of the correct size.<br>Then you can create a new server and choose the bootable volume from the list of images."
     
     :javascript
       $(document).ready(function(){
         if ($('#server_flavor_id option:selected').text() != "Choose flavor") {
-          if ($('#server_flavor_id option:selected').text().match(/^baremetal/)) {
+          if ($('#server_flavor_id option:selected').text().match(/^baremetal/) || $('#server_flavor_id option:selected').text().match(/^zh/)) {
+          // baremetal
             $('#baremetal_image_id_wrapper').removeClass('hidden');
           }
+          else if ($('#server_flavor_id').val() == "") {
+            // hide if nothing is selected
+            $('#vmware_image_id_wrapper').addClass('hidden');
+            $('#baremetal_image_id_wrapper').addClass('hidden');
+          }
           else {
+            // vmware
             $('#vmware_image_id_wrapper').removeClass('hidden');
           }
         }
@@ -122,12 +119,21 @@
       //flavors = JSON.parse(flavors.replace(/&quot;/g,'"'));
       $('#server_flavor_id').change(function(){
         //console.log($( this ).val())
-        if ($('#server_flavor_id option:selected').text().match(/^baremetal/)) {
+        if ($('#server_flavor_id option:selected').text().match(/^baremetal/) || $('#server_flavor_id option:selected').text().match(/^zh/)) {
+          // baremetal
           $('#baremetal_image_id_wrapper').removeClass('hidden');
           $('#vmware_image_id_wrapper').addClass('hidden');
           $('#server_vmware_image_id').val("");
         }
+        else if ($('#server_flavor_id').val() == "") {
+          // hide if nothing is selected
+          $('#vmware_image_id_wrapper').addClass('hidden');
+          $('#baremetal_image_id_wrapper').addClass('hidden');
+          $('#server_baremetal_image_id').val("");
+          $('#server_vmware_image_id').val("");
+        }
         else {
+          // vmware
           $('#baremetal_image_id_wrapper').addClass('hidden');
           $('#vmware_image_id_wrapper').removeClass('hidden');
           $('#server_baremetal_image_id').val("");
