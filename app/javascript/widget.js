@@ -159,7 +159,7 @@ export const createWidget = (dirname, options={}) => {
   // if document is already loaded then resolve Promise immediately
   // with a new widget object
   if (document.readyState === "complete")
-    return Promise.resolve(new Widget(reactContainers, createConfig()))
+    return Promise.resolve(new Widget(reactContainers, createConfig(widgetName, params)))
 
   // document is not loaded yet -> create a new Promise and resolve it as soon
   // as document is loaded.
