@@ -16,7 +16,7 @@ const AvailabilityZoneCategory = ({ categoryName, category, availabilityZones, f
   //the resource names use 2 grid columns, so we have 10 grid columns for the
   //AZ bars - choose the column width accordingly
   const azColumnWidth = Math.floor(10 / visibleAvailabilityZones.length);
-  const forwardProps = { flavorData, availabilityZones: visibleAvailabilityZones, azColumnWidth };
+  const forwardProps = { flavorData, availabilityZones: visibleAvailabilityZones, azColumnWidth, serviceType };
 
   return (
     <React.Fragment>
