@@ -2,23 +2,28 @@ const initialState = {
   items: [],
   isLoading: false,
   receivedAt: null,
-  hasNext: true,
-  marker: null,
   searchTerm: null,
   error: null,
-  selected: null
+  selected: null,
+  marker: null,
+  hasNext: true,
+  page: 1,
+  limit: 20,
+  sortKey: "name",
+  sortDir: "asc"
 }
 
 const requestLoadbalancers = (state) => ({...state, isLoading: true, error: null})
 
-const receiveLoadbalancers = (state,{items,hasNext}) => {
-  let newItems = (state.items.slice() || []).concat(items);
+const receiveLoadbalancers = (state,{loadbalancers, has_next, limit, sort_key, sort_dir}) => {
+  let newItems = (state.items.slice() || []).concat(loadbalancers);
   // filter duplicated items
   newItems = newItems.filter( (item, pos, arr) =>
     arr.findIndex(i => i.id == item.id)==pos
   );
   // create marker before sorting just in case there is any difference
-  const marker = items[items.length-1]
+  const marker = loadbalancers.length > 0 ? loadbalancers[loadbalancers.length-1].id : null
+  const page = loadbalancers.length > 0 ? loadbalancers.length/limit : 1
   // sort
   newItems = newItems.sort((a, b) => a.name.localeCompare(b.name))
 
@@ -26,8 +31,12 @@ const receiveLoadbalancers = (state,{items,hasNext}) => {
     isLoading: false, 
     items: newItems, 
     error: null,
-    hasNext,
     marker: marker,
+    hasNext: has_next,
+    page: 1,
+    limit: limit,
+    sortKey: sort_key,
+    sortDir: sort_dir,
     updatedAt: Date.now()}
 }
 

@@ -10,13 +10,16 @@ const useLoadbalancer = () => {
     return err.data &&  (err.data.errors || err.data.error) || err.message
   }  
  
-  const fetchLoadbalancers = (marker) => {
-    const params = {}
-    if(marker) params['marker'] = marker.id
-
+  const fetchLoadbalancers = (options) => {
     dispatch({type: 'REQUEST_LOADBALANCERS', requestedAt: Date.now()})
-    ajaxHelper.get(`/loadbalancers`, {params: params }).then((response) => {
-      dispatch({type: 'RECEIVE_LOADBALANCERS', items: response.data.loadbalancers, hasNext: response.data.has_next})
+    ajaxHelper.get(`/loadbalancers`, {params: options }).then((response) => {
+      dispatch({type: 'RECEIVE_LOADBALANCERS',  
+        loadbalancers: response.data.loadbalancers, 
+        has_next: response.data.has_next,
+        limit: response.data.limit,
+        sort_key: response.data.sort_key,
+        sort_dir: response.data.sort_dir
+      })
     })
     .catch( (error) => {
       dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error})

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useGlobalState } from '../StateProvider'
 import { useEffect, useMemo } from 'react'
 import LoadbalancerItem from './LoadbalancerItem';
@@ -8,7 +8,8 @@ import { SearchField } from 'lib/components/search_field';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Link } from 'react-router-dom';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, ToggleButton, ToggleButtonGroup, ButtonToolbar } from 'react-bootstrap';
+import Pagination from '../shared/Pagination'
 
 const TableFadeTransition = ({
   children,
@@ -23,21 +24,35 @@ const LoadbalancerList = (props) => {
   const state = useGlobalState().loadbalancers
   const {fetchLoadbalancers} = useLoadbalancer()
 
+
   useEffect(() => {
     console.log('FETCH initial loadbalancers')
-    fetchLoadbalancers(state.marker)
+    fetchLoadbalancers({marker: state.marker})
   }, []);
 
   const loadNext = event => {
     if(!state.isLoading && state.hasNext) {
-      fetchLoadbalancers(state.marker)
+      fetchLoadbalancers({marker: state.marker})
     }
   }
 
+  const handlePaginateClick = (e,page) => {
+    e.preventDefault()
+    if (page === "all") {
+      fetchLoadbalancers({limit: 9999});
+    } else {
+      fetchLoadbalancers({marker: state.marker});
+    }
+  };
+
   const search = (term) => {
+    if(hasNext && !isLoading) {
+      fetchLoadbalancers({limit: 9999});
+    }
     dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: term})
   }
 
+    
   const error = state.error
   const isLoading = state.isLoading
   const hasNext = state.hasNext
@@ -68,18 +83,19 @@ const LoadbalancerList = (props) => {
           <ErrorPage headTitle="Load Balancers" error={error}/>
           :
           <React.Fragment>
-            <div className='toolbar'>
+            <div className='toolbar searchToolbar'>
               { selected ?
                 <Link className="back-link" to={`/loadbalancers`}>
                   <i className="fa fa-chevron-circle-left"></i>
                   Back to Load Balancers
                 </Link>
                 :
-                loadbalancers.length > 0 &&
+                <React.Fragment>
                   <SearchField
                     value={searchTerm}
                     onChange={(term) => search(term)}
-                    placeholder='name, ID, description' text='Searches by name, ID or description in visible loadbalancers list only.'/> 
+                    placeholder='name, ID or description' text='Searches by name, ID or description in visible loadbalancers list only.'/> 
+                </React.Fragment> 
               }
               <div className="main-buttons">
                 {!selected &&
@@ -143,24 +159,15 @@ const LoadbalancerList = (props) => {
             
 
             {loadbalancers.length > 0 && !selected &&
-              <div className='ajax-paginate'>
-                { isLoading ?
-                  <div className='main-buttons'><span className="spinner"></span> Loading...</div>
-                  :
-                  (hasNext &&
-                    <div className='main-buttons'>
-                    <button className='btn btn-primary btn-sm' onClick={loadNext}>Load Next</button>
-                    </div>
-                  )
-                }
-              </div>
+              <Pagination isLoading={isLoading} items={state.items} hasNext={hasNext} handleClick={handlePaginateClick}/>
             }
+
           </React.Fragment>
         }
 
       </React.Fragment>
     )
-  } , [ JSON.stringify(loadbalancers), error, isLoading, searchTerm])
+  } , [ JSON.stringify(loadbalancers), error, selected, isLoading, searchTerm, hasNext])
 
 }
 export default LoadbalancerList;

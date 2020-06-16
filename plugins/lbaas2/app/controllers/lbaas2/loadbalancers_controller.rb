@@ -7,8 +7,10 @@ module Lbaas2
 
     def index
       # get paginated loadbalancers
-      per_page = (params[:per_page] || 20).to_i
-      pagination_options = { sort_key: 'name', sort_dir: 'asc', limit: per_page + 1 }
+      limit = (params[:limit] || 20).to_i
+      sort_key = (params[:sort_key] || 'name')
+      sort_dir = (params[:sort_dir] || 'asc')
+      pagination_options = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
       pagination_options[:marker] = params[:marker] if params[:marker]
       loadbalancers = services.lbaas2.loadbalancers({ project_id: @scoped_project_id}.merge(pagination_options))
 
@@ -16,7 +18,8 @@ module Lbaas2
 
       render json: {
         loadbalancers: loadbalancers,
-        has_next: loadbalancers.length > per_page
+        has_next: loadbalancers.length > limit,
+        limit: limit, sort_key: sort_key, sort_dir: sort_dir
       }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
