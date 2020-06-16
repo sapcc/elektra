@@ -78,6 +78,8 @@ module Identity
         end
       end
 
+      protected 
+
       def assign_needed_roles(project_id, user_id)
         %w[admin member network_admin resource_admin].each do |role_name|
           services.identity.grant_project_user_role_by_role_name(
