@@ -66,6 +66,35 @@ export const putAccount = (account, requestHeaders = {}) => dispatch => {
   );
 };
 
+export const deleteAccount = (accountName) => dispatch => {
+  return new Promise((resolve, reject) =>
+    ajaxHelper.delete(`/keppel/v1/accounts/${accountName}`)
+      .then(() => {
+        dispatch({
+          type: constants.DELETE_ACCOUNT,
+          accountName,
+        });
+        resolve({ success: true });
+      })
+      .catch(error => {
+        if (error.response && error.response.status == 409) {
+          const body = error.response.data;
+          if (body.error) {
+            showError({ message: body.error });
+            reject();
+          } else {
+            //response contains instructions about how to proceed with
+            //remaining_manifests or remaining_blobs - inform caller
+            resolve({ success: false, body });
+          }
+        } else {
+          showError(error);
+          reject();
+        }
+      })
+  );
+};
+
 export const getAccountSubleaseToken = (accountName) => dispatch => {
   return new Promise((resolve, reject) =>
     ajaxHelper.post(`/keppel/v1/accounts/${accountName}/sublease`)

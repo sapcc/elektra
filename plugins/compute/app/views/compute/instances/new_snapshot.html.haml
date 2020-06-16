@@ -1,14 +1,21 @@
 = content_for :title do
   Create Snapshot
 
-= simple_form_for :snapshot, url: plugin('compute').create_image_instance_path(id:params[:id], action_from_show:@action_from_show), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= if current_user.is_allowed?("compute:image_admin")
+  = simple_form_for :snapshot, url: plugin('compute').create_image_instance_path(id:params[:id], action_from_show:@action_from_show), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+    %div{class: modal? ? 'modal-body' : ''}
+      = f.input :name, icon_hint: 'A snapshot is an image which preserves the disk state of a running instance.'
 
+    %div.buttons{class: modal? ? 'modal-footer' : ''}
+      - if modal?
+        %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+      - else
+        = link_to "Cancel", instances_url(), class: 'btn btn-default'
+      = button_tag "Create Snapshot", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+- else
   %div{class: modal? ? 'modal-body' : ''}
-    = f.input :name, icon_hint: 'A snapshot is an image which preserves the disk state of a running instance.'
-
-  %div.buttons{class: modal? ? 'modal-footer' : ''}
-    - if modal?
-      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
-    - else
-      = link_to "Cancel", instances_url(), class: 'btn btn-default'
-    = button_tag "Create Snapshot", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+    .alert.alert-info
+      %p 
+        Create snapshots not allowed. To create snapshots, you need 
+        %code image_admin
+        role. 

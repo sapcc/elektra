@@ -13,6 +13,8 @@ const taggedColumns = [
     sortKey: props => props.data.size_bytes || 0 },
   { key: 'pushed_at', label: 'Pushed', sortStrategy: 'numeric',
     sortKey: props => props.data.pushed_at || 0 },
+  { key: 'last_pulled_at', label: 'Last pulled', sortStrategy: 'numeric',
+    sortKey: props => props.data.last_pulled_at || 0 },
   { key: 'actions', label: '' },
 ];
 
@@ -21,6 +23,16 @@ const untaggedColumns = [
     sortKey: props => props.data.digest || '' },
   ...(taggedColumns.slice(1)),
 ];
+
+const maxTimestamp = (x, y) => {
+  if (x === null) {
+    return y;
+  }
+  if (y === null) {
+    return x;
+  }
+  return Math.max(x, y);
+};
 
 export default class RepositoryList extends React.Component {
   state = {
@@ -58,7 +70,11 @@ export default class RepositoryList extends React.Component {
     const tags = [];
     for (const manifest of manifests || []) {
       for (const tag of manifest.tags || []) {
-        tags.push({ ...manifest, ...tag });
+        tags.push({
+          ...manifest,
+          ...tag,
+          last_pulled_at: maxTimestamp(manifest.last_pulled_at, tag.last_pulled_at),
+        });
       }
     }
     tags.sort((a, b) => (a.name || a.digest).localeCompare(b.name || b.digest));

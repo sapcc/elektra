@@ -61,11 +61,18 @@ const FormBody = ({values, availabilityZones, images, volumes, typeDescription})
             className="select required form-control"
             name='volume_type'>
             { volumes.types.map((vt,index) => {
-              return <option value={vt.name} key={index}> {vt.name} </option>;
+              let name = vt.description
+              if (vt.description === null) {
+                name = vt.name
+              }
+              return <option value={vt.name} key={index}> {name} </option>;
             })}
           </Form.Input>
       }
     </Form.ElementHorizontal>
+
+    {/*
+    //NOTE: at the moment this is not used because description is used as name in the volume type dropdown
 
     <div className="row">
       <div className="col-md-4"></div>
@@ -80,6 +87,7 @@ const FormBody = ({values, availabilityZones, images, volumes, typeDescription})
         }
       </div>
     </div>
+    */}
 
     <Form.ElementHorizontal label='Availability Zone' required name="availability_zone">
       { availabilityZones.isFetching ?
@@ -143,6 +151,7 @@ export default class NewVolumeForm extends React.Component {
     return this.props.handleSubmit(values).then(() => this.close());
   }
 
+  //NOTE: at the moment this is not used because description is used as name in the volume type dropdown
   setTypesDescription = (name) => {
     if (name && this.props.volumes.types) {
       this.props.volumes.types.map((vt,index) => {
