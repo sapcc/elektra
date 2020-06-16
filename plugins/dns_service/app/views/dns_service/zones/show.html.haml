@@ -4,13 +4,18 @@
 
 .row
   .col-md-12
-    %h4 Nameservers
-    %ul
-      - @nameservers.each do |recordset|
-        - records = recordset.records
-        - records = [records] unless records.is_a?(Array)
-        - records.each do |record|
-          %li= record
+    - zone_shared = @zone.shared
+    - parent_project = @zone.project_id
+    - if zone_shared
+      %h5 Shared by project: #{parent_project} 
+    - else
+      %h4 Nameservers
+      %ul
+        - @nameservers.each do |recordset|
+          - records = recordset.records
+          - records = [records] unless records.is_a?(Array)
+          - records.each do |record|
+            %li= record
 .row
   .col-md-9
     = render partial: 'dns_service/zones/recordsets/list', locals: { zone: @zone, recordsets: @recordsets }
@@ -48,7 +53,7 @@
                 %b ID
               = @zone.id
 
-          - @zone.attributes.select{|name,value| ['name', 'description', 'serial', 'email', 'ttl','created_at', 'updated_at', 'status', 'action', 'shared', 'pool_id'].include?(name)}.each do |name,value|
+          - @zone.attributes.select{|name,value| ['name', 'description', 'serial', 'email', 'ttl', 'created_at', 'updated_at', 'status', 'action', 'shared', 'pool_id'].include?(name)}.each do |name,value|
             - next if value.blank?
             %tr
               %td.big-data-cell

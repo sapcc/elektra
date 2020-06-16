@@ -9,6 +9,8 @@
       %i.fa.fa-fw.fa-truck{ data: {toggle:"tooltip", placement:"bottom", title: "There is a transfer request for this zone."}}
     - if current_user.is_allowed?("dns_service:zone_get", zone: zone.attributes)
       = link_to zone.name, zone_path(zone.id)
+      - if zone.shared
+        %span.shared-label= "shared"
     - else
       = zone.name
     %br

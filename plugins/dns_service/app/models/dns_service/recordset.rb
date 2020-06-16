@@ -10,7 +10,7 @@ module DnsService
       'AAAA - IPv6 address record' => 'aaaa',
       'CAA - Certification Authority Authorization record' => 'caa',
       'CNAME - Canonical name record' => 'cname',
-      'MX - Mail exchangerecord' => 'mx',
+      'MX - Mail exchange record' => 'mx',
       'PTR - Pointer record' => 'ptr',
       'SPF - Sender Policy Framework' => 'spf',
       'SRV - Service locator' => 'srv',

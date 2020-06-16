@@ -1,8 +1,3 @@
-.alert.alert-info
-  %p Please check your DNS roles assignment as new roles were introduced.
-  = link_to "#{sap_url_for('documentation')}docs/dns/start/roles.html", class: "btn", title: "Open documentation in new window.", target: "_blank" do
-    %i.fa.fa-external-link
-    DNS roles
 
 - if @zone_transfer_requests.length>0
   .alert.alert-info
@@ -11,7 +6,7 @@
 
 %form
   .toolbar.toolbar-controlcenter
-    / / seach form
+    / / search form
     .inputwrapper
       = select_tag 'searchfor', options_for_select(['Name', 'Email', 'TTL', 'Status'], @searchfor), class: "form-control"
     .inputwrapper
