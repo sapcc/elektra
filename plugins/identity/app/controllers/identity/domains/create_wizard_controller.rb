@@ -15,7 +15,6 @@ module Identity
         project_params = params.fetch(:project, {})
                                .merge(domain_id: @scoped_domain_id)
         cost_params    = project_params.delete(:cost_control)
-        project_params["tags"] = calculate_highest_shards
 
         # user is not allowed to create a project (maybe)
         # so use admin identity for that!
@@ -79,36 +78,7 @@ module Identity
         end
       end
 
-      protected unless 'test' == Rails.env
-
-      def calculate_highest_shards
-        # 1. get all aggregates
-        aggregates = cloud_admin.compute.host_aggregates
-        shards = []
-        # 2. filter shards
-        aggregates.each do | agregate |
-          name = agregate.name
-          availability_zone = agregate.availability_zone
-          if name  =~ /^vc-[a-z]-[0-9]/
-            shards.push([name,availability_zone])
-          end
-        end
-        # shards = [["vc-a-1", "qa-de-1a"], ["vc-b-0", "qa-de-1b"], ["vc-a-2", "qa-de-1a"],["vc-a-0", "qa-de-1a"],["vc-b-1", "qa-de-1b"]]
-        # 3. calculate highest shards related to the availability_zone 
-        highest_shards = {}
-        shards.each do |shard|
-          shard_number = shard[0].scan(/\d+/)[0].to_i
-          shard_region = shard[1]
-          unless highest_shards.has_key?(shard_region)
-            highest_shards[shard_region] = shard[0]
-          else
-            if highest_shards[shard_region].scan(/\d+/)[0].to_i < shard_number
-              highest_shards[shard_region] = shard[0]
-            end
-          end
-        end 
-        highest_shards.values
-      end
+      protected 
 
       def assign_needed_roles(project_id, user_id)
         %w[admin member network_admin resource_admin].each do |role_name|
