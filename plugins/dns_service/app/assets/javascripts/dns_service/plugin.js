@@ -11,27 +11,27 @@
 // about supported directives.
 //
 // Every Plugin file is surrounded with a closure by dashboard.
-// It means that your plugin js code runs in own namespace and can't 
-// break any code of other plugins. If you want to make your code available 
-// outside this closure you should bind functions to dns_service. 
-//  
-//       
-//= require_tree .   
-  
+// It means that your plugin js code runs in own namespace and can't
+// break any code of other plugins. If you want to make your code available
+// outside this closure you should bind functions to dns_service.
+//
+//
+//= require_tree .
+
 // This function is visible only inside this file.
 function test() {
-  //...  
-}    
+  //...
+}
 
 // This function is available from everywhere by calling dns_service.name()
 dns_service.name = function() {
-  "dns_service"
-} 
+  "dns_service";
+};
 
 // This is always executed on page load.
-$(document).ready(function(){
+$(document).ready(function() {
   // ...
-}); 
-    
+});
+
 // Call function from other files inside this plugin using the variable dns_service
-//dns_service.anyFunction()    
+//dns_service.anyFunction()

@@ -1,3 +1,7 @@
-$("#instance_<%=@instance.id%>").replaceWith("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance })) %>");
-$('#instance_<%=@instance.id%> [data-collapsable]').collapsable({collapsed: false});
+<% if @action_from_show %>
+  $("#item_details").replaceWith("<%= j(render(partial: 'compute/instances/item_details')) %>");
+<% else %>
+  $("#instance_<%=@instance.id%>").replaceWith("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance })) %>");
+  $('#instance_<%=@instance.id%> [data-collapsable]').collapsable({collapsed: false});
+<% end %>
 MoModal.close();

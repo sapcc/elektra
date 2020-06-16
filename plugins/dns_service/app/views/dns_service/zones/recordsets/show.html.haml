@@ -6,46 +6,8 @@
     = render 'flashes'
 
 %div{class: modal? ? 'modal-body' : ''}
-  %h4 Overview
-  %table.table
-    %tbody
-      %tr
-        %th Name
-        %td= @recordset.name
-      %tr
-        %th ID
-        %td= @recordset.id
-      %tr
-        %th Type
-        %td= @recordset.type
-      %tr
-        %th Description
-        %td= @recordset.description
-      %tr
-        %th Record Data
-        %td= sanitize(@recordset.records.join(', '))
-      %tr
-        %th TTL
-        %td= @recordset.ttl
-      %tr
-        %th Priority
-        %td= @recordset.priority
-      %tr
-        %th Project
-        %td
-          - project_id_and_name(@recordset.project_id)
-
-      - if @recordset.created_at
-        %tr
-          %th Created at
-          %td= @recordset.pretty_created_at
-      - if @recordset.updated_at
-        %tr
-          %th Updated at
-          %td= @recordset.pretty_updated_at
+  = render partial: 'item_details'
 
 %div.buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Close
-  - else
-    = link_to 'Back', plugin('dns_service').zone_path(@recordset.zone_id), class: 'btn btn-default'

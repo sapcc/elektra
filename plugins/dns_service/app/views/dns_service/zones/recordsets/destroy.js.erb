@@ -1,3 +1,7 @@
 <% if @deleted %>
-  $('table tr#recordset_<%=params[:id]%>').remove();
+  <% if @action_from_show %>
+    window.location = "<%= plugin('dns_service').zone_path(@zone_id) %>";
+  <% else %>
+    $('table tr#recordset_<%=params[:id]%>').remove();
+  <% end %>
 <% end %> 

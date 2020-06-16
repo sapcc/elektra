@@ -5,6 +5,8 @@
       .alert.alert-error
         = render_errors(@recordset.errors)
 
+    = f.input :action_from_show, :as => :hidden, :input_html => { :value => @action_from_show }
+
     = f.input :name, input_html: {disabled: true}
     - record_type = @recordset.type ? @recordset.type.downcase.to_sym : nil
     - label_values = DnsService::Recordset::CONTENT_LABELS.fetch(record_type,{})

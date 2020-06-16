@@ -39,12 +39,15 @@ module DnsService
       end
 
       def edit
+        @action_from_show = params[:action_from_show] || 'false'
+
         @recordset = services.dns_service.find_recordset(
           @zone.id, params[:id], @impersonate_option
         )
       end
 
       def update
+        @action_from_show = params[:recordset][:action_from_show] == 'true' || false
         @recordset = services.dns_service.find_recordset(
           @zone.id, params[:id], @impersonate_option
         )
@@ -72,9 +75,14 @@ module DnsService
       end
 
       def destroy
+        @action_from_show = params[:action_from_show] == 'true' || false
+
         @deleted = services.dns_service.delete_recordset(
           params[:zone_id], params[:id], all_projects: @all_projects
         )
+
+        @zone_id = params[:zone_id] if @action_from_show
+
         respond_to do |format|
           format.js {}
           format.html do

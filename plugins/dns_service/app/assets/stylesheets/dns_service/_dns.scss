@@ -1,5 +1,4 @@
 .recordset_name {
-
   .input-group {
     width: 100%;
 
@@ -18,11 +17,13 @@
         display: table-cell;
       }
     }
-
   }
 
   .zone-name-addon {
     display: none;
   }
+}
 
+.loading-place {
+  display: inline-block !important;
 }

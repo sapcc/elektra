@@ -1,1 +1,5 @@
-$("#network_<%=params[:id]%>").remove();
+<% if @action_from_show %>
+  window.location = "<%= plugin('networking').send("networks_#{@network_type}_index_path") %>";
+<% else %>
+  $("#network_<%=params[:id]%>").remove();
+<% end %>

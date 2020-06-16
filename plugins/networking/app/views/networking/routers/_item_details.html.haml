@@ -1,0 +1,111 @@
+- content_for (:details) do
+  %ul.nav.nav-tabs
+    %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"}
+    - if @router.ha_enabled?
+      %li{role: "presentation"}= link_to 'Redundancy Routers', '#redundancy_routers', aria: {controls:"redundancy_routers"}, role: "tab", data: {toggle:"tab"}
+    %li{role: "presentation"}= link_to 'External Network', '#external_network', aria: {controls:"external_network"}, role: "tab", data: {toggle:"tab"}
+
+    %li{role: "presentation"}
+      = link_to '#internal_networks', aria: {controls:"internal_networks"}, role: "tab", data: {toggle:"tab"} do
+        Internal Networks
+        %span.badge= @router_interface_ports.length
+
+  .tab-content
+    .tab-pane.active{role:"tabpanel", id:"overview"}
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Name
+            %td= @router.name
+          %tr
+            %th ID
+            %td= @router.id
+          %tr
+            %th Project ID
+            %td= @router.tenant_id || @router.project_id
+          %tr
+            %th Status
+            %td= @router.status
+          %tr
+            %th Admin State
+            %td= @router.admin_state_up ? 'UP' : 'DOWN'
+          %tr
+            %th Hosting Device
+            %td= @router.hosting_device
+          - unless @router.role.nil?
+            %tr
+              %th Role
+              %td= @router.role
+
+    .tab-pane{role:"tabpanel", id:"redundancy_routers"}
+      %table.table.datatable
+        %thead
+          %tr
+            %th ID
+            %th Status
+
+        %tbody
+          - @router.redundancy_routers.each do |redundancy_router|
+            %tr
+              %td= redundancy_router['id']
+              %td= redundancy_router['state']
+
+    .tab-pane{role:"tabpanel", id:"external_network"}
+      %table.table.datatable
+        %tbody
+          - if @external_network
+            %tr
+              %th Network Name
+              %td= @external_network.name
+            %tr
+              %th Network ID
+              %td= @external_network.id
+            %tr
+              %th External Fixed IPs
+              %td
+                %ul
+                  - @router.external_gateway_info["external_fixed_ips"].each do |data|
+                    %li
+                      %b Subnet ID:
+                      = data['subnet_id']
+                    %li
+                      %b IP
+                      = data['ip_address']
+          - else
+            %tr
+              %td{colspa: 5} No external gateway set.
+
+
+    .tab-pane{role:"tabpanel", id:"internal_networks"}
+      %table.table.datatable
+        %thead
+          %tr
+            %th Name
+            %th Fixed IPs
+            -# %th Status
+            %th Type
+            %th Admin State
+
+        %tbody
+          - @router_interface_ports.each do |port|
+            %tr
+              %td= port.network_object.name
+              %td
+                - (port.fixed_ips || []).each do |fixed_ip|
+                  = fixed_ip["ip_address"]
+                  %br
+
+              -# %td= port.status
+              %td= port.device_owner
+              %td= port.admin_state_up ? 'UP' : 'DOWN'
+
+- if modal? && !@action_from_show
+  = yield :details
+- else
+  .row
+    .col-md-11
+      = yield :details
+    .col-md-1
+      .loading-place
+      .btn-group
+        = render partial: 'item_actions', locals: {router: @router, show_view: true}

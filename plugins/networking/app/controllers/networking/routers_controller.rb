@@ -144,6 +144,7 @@ module Networking
     end
 
     def edit
+      @action_from_show = params[:action_from_show] || 'false'
       @router = services.networking.find_router(params[:id])
       @external_network = services.networking.find_network(
         @router.external_gateway_info['network_id']
@@ -163,6 +164,7 @@ module Networking
     end
 
     def update
+      @action_from_show = params[:router].delete(:action_from_show) == 'true' || false
       # get selected subnets and remove them from params
       @selected_internal_subnet_ids = (
         params[:router].delete(:internal_subnets) || []
@@ -200,7 +202,12 @@ module Networking
         audit_logger.info(current_user, 'has updated', @router)
 
         flash.now[:notice] = 'Router successfully created.'
-        redirect_to plugin('networking').routers_path
+
+        if @action_from_show
+          redirect_to plugin('networking').router_path(@router.id)
+        else
+          redirect_to plugin('networking').routers_path
+        end
       else
         @external_network = services.networking.find_network(@router.external_gateway_info['network_id'])
 
@@ -209,13 +216,14 @@ module Networking
     end
 
     def destroy
+      @action_from_show = params[:action_from_show] == 'true' || false
       @router = services.networking.new_router
       @router.id = params[:id]
       ports = services.networking.ports(
         device_owner: 'network:router_interface', device_id: @router.id
       ) || []
 
-      @success = false
+      @success = true
 
       if @router
         attached_subnet_ids = ports.each_with_object([]) do |port, array|
@@ -263,7 +271,7 @@ module Networking
         # FIXME: shared networks are not permitted for non cloud admin
         # this is a neutron bug https://bugs.launchpad.net/neutron/+bug/1662477
         # should be just 'else'
-      else
+        else
           network.subnet_objects.each do |subnet|
             subnet.network_name = network.name
             @internal_subnets << subnet

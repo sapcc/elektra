@@ -1,14 +1,26 @@
-<%if @instance%>
-  $("#instance_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance, target_state: @target_state })) %>");
-  $("#instance_<%=params[:id]%>").update()
-  $('#instance_<%=params[:id]%> [data-collapsable]').collapsable({collapsed: false});
-<%else%>
-  $("#instance_<%=params[:id]%>").remove();
+<% if @action_from_show %>
+  <% if @terminate %>
+    window.location = "<%= plugin('compute').instances_path() %>";
+  <% else %>
+    $("#item_details").replaceWith("<%= j(render(partial: 'compute/instances/item_details')) %>");
+    // to trigger update_item in instance_controller
+    // see more _item_details partial and data[:update_url]
+    $("#item_details").update();
+  <% end %>
+<% else %>
+  <% if @instance %>
+    $("#instance_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance, target_state: @target_state })) %>");
+    // see more _item partial and data[:update_url
+    $("#instance_<%=params[:id]%>").update()
+    $('#instance_<%=params[:id]%> [data-collapsable]').collapsable({collapsed: false});
+  <% else %>
+    $("#instance_<%=params[:id]%>").remove();
 
-  if($("table.instances tbody tr").length==0){
-    $("table.instances tbody").prepend("<tr data-empty><td colspan=7>No instances available</td></tr>");
-  }
-<%end%>
+    if($("table.instances tbody tr").length==0){
+      $("table.instances tbody").prepend("<tr data-empty><td colspan=7>No instances available</td></tr>");
+    }
+  <% end %>
+<% end %>
 
 <% if @close_modal %>
   MoModal.close();

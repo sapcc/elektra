@@ -1,6 +1,10 @@
 <% if @success %>
-  $(".flashes p[data='router-error']").remove();
-  $("#router_<%=params[:id]%>").remove();
+  <% if @action_from_show %>
+    window.location = "<%= plugin('networking').routers_path %>";
+  <% else %>
+    $(".flashes p[data='router-error']").remove();
+    $("#router_<%=params[:id]%>").remove();
+  <% end %>
 <% else %>
   var html = '<p class="alert alert-error" data="router-error"><%=@router.errors.full_messages.to_sentence%></p>';
   if ($(".flashes p[data='router-error']").length>0)

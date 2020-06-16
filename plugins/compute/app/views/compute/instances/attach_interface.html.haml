@@ -1,7 +1,7 @@
 = content_for :title do
   Attach Interface
 
-= simple_form_for @os_interface, url: plugin('compute').create_interface_instance_path(id:params[:id]), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal', id: 'fixed_ip' }, wrapper: :horizontal_form do |f|
+= simple_form_for @os_interface, url: plugin('compute').create_interface_instance_path(id:params[:id], action_from_show:@action_from_show), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal', id: 'fixed_ip' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - if @os_interface.errors.present?

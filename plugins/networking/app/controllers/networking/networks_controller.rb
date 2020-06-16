@@ -3,7 +3,7 @@
 module Networking
   # Implements Network actions
   class NetworksController < DashboardController
-    before_action :load_type, except: [:ip_availability, :manage_subnets]
+    before_action :load_type, except: %i[ip_availability manage_subnets]
 
     def index
       filter_options = {
@@ -42,7 +42,6 @@ module Networking
         # comon case, render index page with layout
         render action: :index
       end
-
     end
 
     def manage_subnets
@@ -68,7 +67,7 @@ module Networking
       network_params = params[:network]
       subnets_params = network_params.delete(:subnets)
       @network = services.networking.new_network(network_params)
-      @errors = Array.new
+      @errors = []
 
       if @network.save
         if subnets_params.present?
@@ -98,23 +97,30 @@ module Networking
     end
 
     def edit
+      @action_from_show = params[:action_from_show] || 'false'
       @network = services.networking.find_network(params[:id])
     end
 
     def update
+      @action_from_show = params[:network].delete(:action_from_show) == 'true' || false
       @network = services.networking.new_network(params[:network])
       @network.id = params[:id]
 
       if @network.save
         flash[:notice] = 'Network successfully updated.'
         audit_logger.info(current_user, 'has updated', @network)
-        redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
+        if @action_from_show
+          redirect_to plugin('networking').send("networks_#{@network_type}_path", @network.id)
+        else
+          redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
+        end
       else
         render action: :edit
       end
     end
 
     def destroy
+      @action_from_show = params[:action_from_show] == 'true' || false
       @network = services.networking.new_network
       @network.id = params[:id]
 
@@ -138,7 +144,7 @@ module Networking
                        cloud_admin.networking.network_ip_availability(
                          params[:network_id]
                        )
-                     rescue
+                     rescue StandardError
                        nil
                      end
       render json: availability.nil? ? [] : availability.subnet_ip_availability
