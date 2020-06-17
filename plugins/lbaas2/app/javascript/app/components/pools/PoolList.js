@@ -9,6 +9,7 @@ import useCommons from '../../../lib/hooks/useCommons'
 import { useGlobalState } from '../StateProvider'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { addError } from 'lib/flashes';
+import Pagination from '../shared/Pagination'
 
 const PoolList = ({props, loadbalancerID}) => {
   const {persistPool, persistPools, setSearchTerm, setSelected, onSelectPool} = usePool()
@@ -16,7 +17,7 @@ const PoolList = ({props, loadbalancerID}) => {
   const state = useGlobalState().pools
 
   useEffect(() => {  
-    persistPools(loadbalancerID, null).then((data) => {
+    persistPools(loadbalancerID, true, null).then((data) => {
       selectPool(data)
     }).catch( error => {
       // TODO
@@ -40,18 +41,21 @@ const PoolList = ({props, loadbalancerID}) => {
     }
   }
 
+  const handlePaginateClick = (e,page) => {
+    e.preventDefault()
+    if (page === "all") {
+      persistPools(loadbalancerID, false, {limit: 9999})
+    } else {
+      persistPools(loadbalancerID, false, {marker: state.marker})
+    }
+  };
+
   const restoreUrl = (e) => {
     if (e) {
       e.stopPropagation()
       e.preventDefault()
     }
     onSelectPool(props)
-  }
-
-  const loadNext = event => {
-    if(!state.isLoading && state.hasNext) {
-      persistPools(loadbalancerID, state.marker)
-    }
   }
 
   const error = state.error
@@ -158,11 +162,15 @@ const PoolList = ({props, loadbalancerID}) => {
               </tbody>
             </table>  
 
+            {pools.length > 0 && !selected &&
+              <Pagination isLoading={isLoading} items={state.items} hasNext={hasNext} handleClick={handlePaginateClick}/>
+            }
+
           </React.Fragment>
         }
       </div>
     );
-  } , [ JSON.stringify(pools), error, isLoading, searchTerm, selected, props])
+  } , [ JSON.stringify(pools), error, isLoading, searchTerm, selected, props, hasNext])
 }
  
 export default PoolList
