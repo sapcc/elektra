@@ -12,7 +12,7 @@
     %a.help-link.has-feedback-help{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: 'Search term can use wildcard "*".'}}
       %i.fa.fa-question-circle
 
-    - if current_user.is_allowed?("dns_service:recordset_create", zone: zone) && @scoped_project_id == zone.project_id
+    - if current_user.is_allowed?("dns_service:recordset_create", zone: zone)
       .main-buttons
         = link_to 'Create New', plugin('dns_service').new_zone_recordset_path(zone_id: zone.id), data: {modal: true}, class: 'btn btn-primary'
 

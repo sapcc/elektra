@@ -27,3 +27,11 @@
 .loading-place {
   display: inline-block !important;
 }
+
+.shared-label {
+  color: white;
+  padding: 1px;
+  border: 1px solid $medium-blue;
+  border-radius: 6%;
+  background-color: $medium-blue;
+}
