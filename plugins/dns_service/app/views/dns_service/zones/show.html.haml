@@ -24,8 +24,8 @@
     .infobox
       %h4.action-heading
         Zone Info
-        - can_delete = current_user.is_allowed?("dns_service:zone_delete")
-        - can_edit = current_user.is_allowed?("dns_service:zone_update")
+        - can_delete = current_user.is_allowed?("dns_service:zone_delete", zone: @zone.attributes)
+        - can_edit = current_user.is_allowed?("dns_service:zone_update", zone: @zone.attributes)
         - if can_delete or can_edit
           .dropdown.header-action
             %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
