@@ -161,23 +161,31 @@ module Compute
     # }
     # handle flavor data
     def grouped_flavors(flavors)
-      public_flavors = []
+      public_flavors_vmware = []
+      public_flavors_baremetal = []
       private_flavors = []
       flavors.each do |flavor|
         if flavor.public?
-          public_flavors << flavor
+          if flavor.name =~ /^baremetal/ || flavor.name =~ /^zh/
+            public_flavors_baremetal << flavor
+          else
+            public_flavors_vmware << flavor
+          end
         else
           private_flavors << flavor
         end
       end
 
       # group to public and private
-      result = []
-      unless public_flavors.empty?
-        result << ['Public', public_flavors.sort_by { |a| [a.ram, a.vcpus] }]
+      result = [['public', []]]
+      unless public_flavors_baremetal.empty?
+        result << ['--bare metal',public_flavors_baremetal.sort_by { |a| [a.ram, a.vcpus] }]
+      end
+      unless public_flavors_vmware.empty?
+        result << ['--vmware',public_flavors_vmware.sort_by { |a| [a.ram, a.vcpus] }]
       end
       unless private_flavors.empty?
-        result << ['Private', private_flavors.sort_by { |a| [a.ram, a.vcpus] }]
+        result << ['private', private_flavors.sort_by { |a| [a.ram, a.vcpus] }]
       end
       result
     end
