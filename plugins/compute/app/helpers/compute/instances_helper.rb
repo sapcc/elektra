@@ -86,18 +86,20 @@ module Compute
         #    ]
         #  ]
         # ]
+     
+        if hv_type == "vmware"
+          if bootable_volumes && !bootable_volumes.empty?
+            volume_items = @bootable_volumes.collect do |v|
+              infos = []
+              infos << "Size: #{v.size}GB" if v.size
 
-        if bootable_volumes && !bootable_volumes.empty?
-          volume_items = @bootable_volumes.collect do |v|
-            infos = []
-            infos << "Size: #{v.size}GB" if v.size
-
-            format = (v.volume_image_metadata || {}).fetch('disk_format', nil)
-            infos << "Format: #{format}" if format
-            infos_string = !infos.empty? ? "(#{infos.join(', ')})" : ''
-            ["#{v.name.present? ? v.name : v.id} #{infos_string}", v.id]
+              format = (v.volume_image_metadata || {}).fetch('disk_format', nil)
+              infos << "Format: #{format}" if format
+              infos_string = !infos.empty? ? "(#{infos.join(', ')})" : ''
+              ["#{v.name.present? ? v.name : v.id} #{infos_string}", v.id]
+            end
+            groups.unshift(['--bootable volumes', volume_items])
           end
-          groups.unshift(['--bootable volumes', volume_items])
         end
         groups
       end
