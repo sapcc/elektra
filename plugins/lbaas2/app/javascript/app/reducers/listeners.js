@@ -1,25 +1,39 @@
 const initialState = {
   items: [],
   isLoading: false,
-  receivedAt: null,
-  hasNext: true,
-  marker: null,
+  updatedAt: null,
   searchTerm: null,
   error: null,
-  selected: null
+  selected: null,
+  marker: null,
+  hasNext: true,
+  limit: 10,
+  sortKey: "name",
+  sortDir: "asc"
 }
 
 const requestListeners = (state) => ({...state, isLoading: true, error: null})
 
-const receiveListeners = (state,{items,hasNext}) => {
+const receiveListeners = (state,{items, has_next, limit, sort_key, sort_dir}) => {
+  let newItems = (state.items.slice() || []).concat(items);
+  // filter duplicated items
+  newItems = newItems.filter( (item, pos, arr) =>
+    arr.findIndex(i => i.id == item.id)==pos
+  );
+
+  const marker = items.length > 0 ? items[items.length-1].id : null
   // sort
-  const newItems = items.sort((a, b) => a.name.localeCompare(b.name))
+  newItems = newItems.sort((a, b) => a.name.localeCompare(b.name))
+
   return {...state, 
     isLoading: false, 
     items: newItems, 
     error: null,
-    hasNext,
-    marker: items[items.length-1],
+    marker: marker,
+    hasNext: has_next,
+    limit: limit,
+    sortKey: sort_key,
+    sortDir: sort_dir,
     updatedAt: Date.now()}
 }
 

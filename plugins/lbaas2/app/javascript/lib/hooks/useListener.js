@@ -6,11 +6,9 @@ import { confirm } from 'lib/dialogs';
 const useListener = () => {
   const dispatch = useDispatch()
 
-  const fetchListeners = (lbID, marker) => {
+  const fetchListeners = (lbID, options) => {
     return new Promise((handleSuccess,handleError) => {  
-      const params = {}
-      if(marker) params['marker'] = marker.id
-      ajaxHelper.get(`/loadbalancers/${lbID}/listeners`, {params: params }).then((response) => {
+      ajaxHelper.get(`/loadbalancers/${lbID}/listeners`, {params: options }).then((response) => {
         handleSuccess(response.data)
       })
       .catch( (error) => {
@@ -29,12 +27,20 @@ const useListener = () => {
     })
   }
 
-  const persistListeners = (lbID, marker) => {
-    dispatch({type: 'RESET_LISTENERS'})
+  const persistListeners = (lbID, shouldReset, options) => {
+    if(shouldReset) {
+      dispatch({type: 'RESET_LISTENERS'})
+    }
     dispatch({type: 'REQUEST_LISTENERS'})
     return new Promise((handleSuccess,handleError) => {
-      fetchListeners(lbID, marker).then((data) => {
-        dispatch({type: 'RECEIVE_LISTENERS', items: data.listeners, hasNext: data.has_next})
+      fetchListeners(lbID, options).then((data) => {
+        dispatch({type: 'RECEIVE_LISTENERS', 
+          items: data.listeners, 
+          has_next: data.has_next,
+          limit: data.limit,
+          sort_key: data.sort_key,
+          sort_dir: data.sort_dir
+        })
         handleSuccess(data)
       }).catch( error => {
         dispatch({type: 'REQUEST_LISTENERS_FAILURE', error: error})

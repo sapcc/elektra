@@ -6,11 +6,9 @@ import { confirm } from 'lib/dialogs';
 const usePool = () => {
   const dispatch = useDispatch()
 
-  const fetchPools = (lbID, marker) => {
+  const fetchPools = (lbID, options) => {
     return new Promise((handleSuccess,handleError) => { 
-      const params = {}
-      if(marker) params['marker'] = marker.id
-      ajaxHelper.get(`/loadbalancers/${lbID}/pools`, {params: params }).then((response) => {
+      ajaxHelper.get(`/loadbalancers/${lbID}/pools`, {params: options }).then((response) => {
         handleSuccess(response.data)
       })
       .catch( (error) => {
@@ -19,12 +17,20 @@ const usePool = () => {
     })
   }
 
-  const persistPools = (lbID, marker) => {
-    dispatch({type: 'RESET_POOLS'})
+  const persistPools = (lbID, shouldReset, options) => {
+    if(shouldReset) {
+      dispatch({type: 'RESET_POOLS'})
+    }
     dispatch({type: 'REQUEST_POOLS'})
     return new Promise((handleSuccess,handleError) => {
-      fetchPools(lbID, marker).then((data) => {
-        dispatch({type: 'RECEIVE_POOLS', items: data.pools, hasNext: data.has_next})
+      fetchPools(lbID, options).then((data) => {
+        dispatch({type: 'RECEIVE_POOLS', 
+          items: data.pools, 
+          has_next: data.has_next,
+          limit: data.limit,
+          sort_key: data.sort_key,
+          sort_dir: data.sort_dir
+      })
         handleSuccess(data)
       }).catch( error => {
         dispatch({type: 'REQUEST_POOLS_FAILURE', error: error})

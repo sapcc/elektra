@@ -12,6 +12,7 @@ import ErrorPage from '../ErrorPage';
 import useCommons from '../../../lib/hooks/useCommons'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { addError } from 'lib/flashes';
+import Pagination from '../shared/Pagination'
 
 const TableFadeTransition = ({
   children,
@@ -29,7 +30,7 @@ const ListenerList = ({props, loadbalancerID}) => {
   useEffect(() => { 
     console.log('LISTENER INITIAL FETCH')
     // no add marker so we get always the first ones on lading component
-    persistListeners(loadbalancerID, null).then((data) => {
+    persistListeners(loadbalancerID, true, null).then((data) => {
       selectListener(data)
     }).catch( error => {
       // TODO
@@ -54,11 +55,14 @@ const ListenerList = ({props, loadbalancerID}) => {
     }
   }
 
-  // const loadNext = event => {
-  //   if(!state.isLoading && state.hasNext) {
-  //     fetchListeners(loadbalancerID, state.marker)
-  //   }
-  // }
+  const handlePaginateClick = (e,page) => {
+    e.preventDefault()
+    if (page === "all") {
+      persistListeners(loadbalancerID, false, {limit: 9999})
+    } else {
+      persistListeners(loadbalancerID, false, {marker: state.marker})
+    }
+  };
 
   const restoreUrl = (e) => {
     if (e) {
@@ -182,11 +186,15 @@ const ListenerList = ({props, loadbalancerID}) => {
               </TableFadeTransition>
             </TransitionGroup>
 
+            {listeners.length > 0 && !selected &&
+              <Pagination isLoading={isLoading} items={state.items} hasNext={hasNext} handleClick={handlePaginateClick}/>
+            }
+
           </React.Fragment>
         }
       </div>
     );
-  } , [ JSON.stringify(listeners), error, isLoading, searchTerm, selected, props])
+  } , [ JSON.stringify(listeners), error, isLoading, searchTerm, selected, props, hasNext])
 }
  
 export default ListenerList

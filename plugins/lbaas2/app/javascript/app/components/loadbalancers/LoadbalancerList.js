@@ -30,12 +30,6 @@ const LoadbalancerList = (props) => {
     fetchLoadbalancers({marker: state.marker})
   }, []);
 
-  const loadNext = event => {
-    if(!state.isLoading && state.hasNext) {
-      fetchLoadbalancers({marker: state.marker})
-    }
-  }
-
   const handlePaginateClick = (e,page) => {
     e.preventDefault()
     if (page === "all") {
@@ -155,8 +149,7 @@ const LoadbalancerList = (props) => {
                 </table>
                 
               </TableFadeTransition>
-            </TransitionGroup>
-            
+            </TransitionGroup>            
 
             {loadbalancers.length > 0 && !selected &&
               <Pagination isLoading={isLoading} items={state.items} hasNext={hasNext} handleClick={handlePaginateClick}/>
