@@ -155,8 +155,7 @@ const LoadbalancerList = (props) => {
                 </table>
                 
               </TableFadeTransition>
-            </TransitionGroup>
-            
+            </TransitionGroup>            
 
             {loadbalancers.length > 0 && !selected &&
               <Pagination isLoading={isLoading} items={state.items} hasNext={hasNext} handleClick={handlePaginateClick}/>

@@ -1,13 +1,12 @@
 const initialState = {
   items: [],
   isLoading: false,
-  receivedAt: null,
+  updatedAt: null,
   searchTerm: null,
   error: null,
   selected: null,
   marker: null,
   hasNext: true,
-  page: 1,
   limit: 20,
   sortKey: "name",
   sortDir: "asc"
@@ -23,7 +22,6 @@ const receiveLoadbalancers = (state,{loadbalancers, has_next, limit, sort_key, s
   );
   // create marker before sorting just in case there is any difference
   const marker = loadbalancers.length > 0 ? loadbalancers[loadbalancers.length-1].id : null
-  const page = loadbalancers.length > 0 ? loadbalancers.length/limit : 1
   // sort
   newItems = newItems.sort((a, b) => a.name.localeCompare(b.name))
 
@@ -33,7 +31,6 @@ const receiveLoadbalancers = (state,{loadbalancers, has_next, limit, sort_key, s
     error: null,
     marker: marker,
     hasNext: has_next,
-    page: 1,
     limit: limit,
     sortKey: sort_key,
     sortDir: sort_dir,

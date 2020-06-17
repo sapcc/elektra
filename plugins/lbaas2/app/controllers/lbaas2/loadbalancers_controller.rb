@@ -7,7 +7,7 @@ module Lbaas2
 
     def index
       # get paginated loadbalancers
-      limit = (params[:limit] || 20).to_i
+      limit = (params[:limit] || 19).to_i
       sort_key = (params[:sort_key] || 'name')
       sort_dir = (params[:sort_dir] || 'asc')
       pagination_options = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
