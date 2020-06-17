@@ -30,12 +30,6 @@ const LoadbalancerList = (props) => {
     fetchLoadbalancers({marker: state.marker})
   }, []);
 
-  const loadNext = event => {
-    if(!state.isLoading && state.hasNext) {
-      fetchLoadbalancers({marker: state.marker})
-    }
-  }
-
   const handlePaginateClick = (e,page) => {
     e.preventDefault()
     if (page === "all") {
