@@ -102,10 +102,10 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
   const displayID = () => {
     if (listener.name) {
       if (disabled) {
-        return <span className="info-text"><CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/></span>
+        return <div className="info-text"><CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/></div>
       } else {
         if (searchTerm) {
-          return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{listener.id}</MyHighlighter></span></React.Fragment>
+          return <React.Fragment><br/><div className="info-text"><MyHighlighter search={searchTerm}>{listener.id}</MyHighlighter></div></React.Fragment>
         } else {
           return <CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
         }        

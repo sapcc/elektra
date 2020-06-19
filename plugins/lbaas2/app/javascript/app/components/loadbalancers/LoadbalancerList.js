@@ -24,7 +24,6 @@ const LoadbalancerList = (props) => {
   const state = useGlobalState().loadbalancers
   const {fetchLoadbalancers} = useLoadbalancer()
 
-
   useEffect(() => {
     console.log('FETCH initial loadbalancers')
     fetchLoadbalancers({marker: state.marker})
@@ -45,7 +44,6 @@ const LoadbalancerList = (props) => {
     }
     dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: term})
   }
-
     
   const error = state.error
   const isLoading = state.isLoading
@@ -84,12 +82,10 @@ const LoadbalancerList = (props) => {
                   Back to Load Balancers
                 </Link>
                 :
-                <React.Fragment>
-                  <SearchField
-                    value={searchTerm}
-                    onChange={(term) => search(term)}
-                    placeholder='name, ID or description' text='Searches by name, ID or description in visible loadbalancers list only.'/> 
-                </React.Fragment> 
+                <SearchField
+                  value={searchTerm}
+                  onChange={(term) => search(term)}
+                  placeholder='name, ID or description' text='Searches by name, ID or description. All load balancers will be loaded.'/> 
               }
               <div className="main-buttons">
                 {!selected &&

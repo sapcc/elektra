@@ -55,8 +55,8 @@ const receiveLoadbalancer = (state, {loadbalancer}) => {
   return {... state, items: items, isLoading: false, error: null}
 }
 
-const selectLoadbalancer = (state, {loadbalancer}) => {
-  return {... state, selected: loadbalancer}
+const selectLoadbalancer = (state, {selected}) => {
+  return {... state, selected: selected}
 }
 
 const setSearchTerm= (state,{searchTerm}) => (
