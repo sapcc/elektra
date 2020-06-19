@@ -35,11 +35,23 @@
     }
   }
 
+  .input-group.rsa {
+    margin-bottom: 10px;
+    input[type="password"] {
+      @include border-radius(0 0 0 4px);
+      border-right: none;
+    }
+    .input-group-addon {
+      border-radius: 0 0 4px 0;
+      padding: 0;
+      border-left: none;
+    }
+  }
+
   .form-control:focus {
     z-index: 2;
   }
 
   input {
-
   }
 }
