@@ -133,12 +133,10 @@ const ListenerList = ({props, loadbalancerID}) => {
                   Back to Listeners
                 </Link>
                 :
-                <React.Fragment>
-                  <SearchField
-                    value={searchTerm}
-                    onChange={(term) => search(term)}
-                    placeholder='name, ID or description' text='Searches by name, ID or description in visible loadbalancers list only.'/> 
-                </React.Fragment> 
+                <SearchField
+                  value={searchTerm}
+                  onChange={(term) => search(term)}
+                  placeholder='name, ID or description' text='Searches by name, ID or description. All listeners will be loaded.'/> 
               }
               <div className="main-buttons">
                 {!selected &&

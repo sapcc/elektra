@@ -82,12 +82,10 @@ const LoadbalancerList = (props) => {
                   Back to Load Balancers
                 </Link>
                 :
-                <React.Fragment>
-                  <SearchField
-                    value={searchTerm}
-                    onChange={(term) => search(term)}
-                    placeholder='name, ID or description' text='Searches by name, ID or description in visible loadbalancers list only.'/> 
-                </React.Fragment> 
+                <SearchField
+                  value={searchTerm}
+                  onChange={(term) => search(term)}
+                  placeholder='name, ID or description' text='Searches by name, ID or description. All load balancers will be loaded.'/> 
               }
               <div className="main-buttons">
                 {!selected &&
