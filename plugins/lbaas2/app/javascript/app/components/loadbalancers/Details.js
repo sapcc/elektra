@@ -23,8 +23,12 @@ const Details = (props) => {
     console.log('FETCH details')
     connect()
     return function cleanup() {
+      // deselect the loadbalancer
       dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: ""})
-      dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: null})
+      dispatch({type: 'SELECT_LOADBALANCER', selected: null})
+      // deselect the listener
+      dispatch({type: 'SET_LISTENERS_SEARCH_TERM', searchTerm: ""})
+      dispatch({type: 'SET_LISTENERS_SELECTED_ITEM', selected: null})
     };
   }, []);
 
@@ -36,15 +40,15 @@ const Details = (props) => {
       // filter the loadbalancer list to show just the one item
       dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: id})
       // set to selected to disable elementes on the loadbalancer list
-      dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: id})
+      dispatch({type: 'SELECT_LOADBALANCER', selected: id})
 
       const loadbalancer = state.items.find(item => item.id == id)
       if (loadbalancer) {
-        dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: loadbalancer})
+        dispatch({type: 'SELECT_LOADBALANCER', selected: loadbalancer})
       } else {
         setLoading(true)
         fetchLoadbalancer(id).then((response) => {
-          dispatch({type: 'SELECT_LOADBALANCER', loadbalancer: response})
+          dispatch({type: 'SELECT_LOADBALANCER', selected: response})
           setLoading(false)
         }).catch((error) => {          
           setError(error)

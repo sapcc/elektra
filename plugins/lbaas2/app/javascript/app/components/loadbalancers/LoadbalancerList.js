@@ -24,7 +24,6 @@ const LoadbalancerList = (props) => {
   const state = useGlobalState().loadbalancers
   const {fetchLoadbalancers} = useLoadbalancer()
 
-
   useEffect(() => {
     console.log('FETCH initial loadbalancers')
     fetchLoadbalancers({marker: state.marker})
@@ -45,7 +44,6 @@ const LoadbalancerList = (props) => {
     }
     dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: term})
   }
-
     
   const error = state.error
   const isLoading = state.isLoading

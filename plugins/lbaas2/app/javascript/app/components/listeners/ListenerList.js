@@ -7,12 +7,13 @@ import queryString from 'query-string'
 import { Link } from 'react-router-dom';
 import HelpPopover from '../shared/HelpPopover'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { useGlobalState } from '../StateProvider'
+import { useDispatch, useGlobalState } from '../StateProvider'
 import ErrorPage from '../ErrorPage';
 import useCommons from '../../../lib/hooks/useCommons'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { addError } from 'lib/flashes';
 import Pagination from '../shared/Pagination'
+import { SearchField } from 'lib/components/search_field';
 
 const TableFadeTransition = ({
   children,
@@ -23,6 +24,7 @@ const TableFadeTransition = ({
 
 
 const ListenerList = ({props, loadbalancerID}) => {
+  const dispatch = useDispatch()
   const {persistListeners, setSelected, setSearchTerm, onSelectListener} = useListener()
   const state = useGlobalState().listeners
   const {searchParamsToString} = useCommons()
@@ -72,6 +74,13 @@ const ListenerList = ({props, loadbalancerID}) => {
     onSelectListener(props)
   }
 
+  const search = (term) => {
+    if(hasNext && !isLoading) {
+      persistListeners(loadbalancerID, false, {limit: 9999})
+    }
+    dispatch({type: 'SET_LISTENERS_SEARCH_TERM', searchTerm: term})
+  }
+
   const error = state.error
   const hasNext = state.hasNext
   const items = state.items
@@ -118,11 +127,18 @@ const ListenerList = ({props, loadbalancerID}) => {
           :
           <React.Fragment>
             <div className='toolbar'>
-              { selected &&
+              { selected ?
                 <Link className="back-link" to="#" onClick={restoreUrl}>
                   <i className="fa fa-chevron-circle-left"></i>
                   Back to Listeners
                 </Link>
+                :
+                <React.Fragment>
+                  <SearchField
+                    value={searchTerm}
+                    onChange={(term) => search(term)}
+                    placeholder='name, ID or description' text='Searches by name, ID or description in visible loadbalancers list only.'/> 
+                </React.Fragment> 
               }
               <div className="main-buttons">
                 {!selected &&
