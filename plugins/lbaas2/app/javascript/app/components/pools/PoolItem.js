@@ -103,10 +103,10 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
     const cutId = <CopyPastePopover text={pool.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/>
     if (pool.name) {
       if (disabled) {
-        return <span className="info-text">{cutId}</span>
+        return <div className="info-text">{cutId}</div>
       } else {
         if (searchTerm) {
-          return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{pool.id}</MyHighlighter></span></React.Fragment>
+          return <React.Fragment><br/><div className="info-text"><MyHighlighter search={searchTerm}>{pool.id}</MyHighlighter></div></React.Fragment>
         } else {
           return copyPasteId
         }        

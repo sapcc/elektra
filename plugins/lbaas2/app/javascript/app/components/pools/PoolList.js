@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import { useDispatch, useGlobalState } from '../StateProvider'
 import usePool from '../../../lib/hooks/usePool'
 import {DefeatableLink} from 'lib/components/defeatable_link';
 import PoolItem from './PoolItem'
@@ -6,13 +7,14 @@ import queryString from 'query-string'
 import { Link } from 'react-router-dom';
 import HelpPopover from '../shared/HelpPopover'
 import useCommons from '../../../lib/hooks/useCommons'
-import { useGlobalState } from '../StateProvider'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { addError } from 'lib/flashes';
 import Pagination from '../shared/Pagination'
+import { SearchField } from 'lib/components/search_field';
 
 const PoolList = ({props, loadbalancerID}) => {
-  const {persistPool, persistPools, setSearchTerm, setSelected, onSelectPool} = usePool()
+  const dispatch = useDispatch()
+  const {persistPools, setSearchTerm, setSelected, onSelectPool} = usePool()
   const {searchParamsToString} = useCommons()
   const state = useGlobalState().pools
 
@@ -58,6 +60,13 @@ const PoolList = ({props, loadbalancerID}) => {
     onSelectPool(props)
   }
 
+  const search = (term) => {
+    if(hasNext && !isLoading) {
+      persistPools(loadbalancerID, false, {limit: 9999})
+    }
+    dispatch({type: 'SET_POOLS_SEARCH_TERM', searchTerm: term})
+  }
+
   const error = state.error
   const hasNext = state.hasNext
   const items = state.items
@@ -97,11 +106,16 @@ const PoolList = ({props, loadbalancerID}) => {
           <React.Fragment>
 
             <div className='toolbar'>
-              { selected &&
+              { selected ?
                 <Link className="back-link" to="#" onClick={restoreUrl}>
                   <i className="fa fa-chevron-circle-left"></i>
                   Back to Pools
                 </Link>
+                :
+                <SearchField
+                  value={searchTerm}
+                  onChange={(term) => search(term)}
+                  placeholder='name, ID or description' text='Searches by name, ID or description. All pools will be loaded.'/> 
               }
 
               <div className="main-buttons">

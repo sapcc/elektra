@@ -12,7 +12,6 @@ import HealthMonitor from '../healthmonitor/HealthMonitor'
 const Details = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
-  const selected = state.selected
   const {fetchLoadbalancer} = useLoadbalancer()
 
   const [error, setError] = useState(null)
@@ -29,6 +28,9 @@ const Details = (props) => {
       // deselect the listener
       dispatch({type: 'SET_LISTENERS_SEARCH_TERM', searchTerm: ""})
       dispatch({type: 'SET_LISTENERS_SELECTED_ITEM', selected: null})
+      // deselect the pool
+      dispatch({type: 'SET_POOLS_SEARCH_TERM', searchTerm: ""})
+      dispatch({type: 'SET_POOLS_SELECTED_ITEM', selected: null})
     };
   }, []);
 
