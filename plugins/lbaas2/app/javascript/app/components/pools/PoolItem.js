@@ -85,43 +85,19 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
   const displayName = () => {
     const name = pool.name || pool.id
     if (disabled) {
-        return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldCopy={false}/></span>
+      return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
     } else {
-      if (searchTerm) {
-        return <Link to="#" onClick={onPoolClick}>
-                <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
-              </Link>
-      } else {
-        return <Link to="#" onClick={onPoolClick}>
-                <MyHighlighter search={searchTerm}><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/></MyHighlighter>
-              </Link>
-      }
+      return <Link to="#" onClick={onPoolClick}>
+              <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} searchTerm={searchTerm}/>
+            </Link>
     }
   }
   const displayID = () => {
-    const copyPasteId = <CopyPastePopover text={pool.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
-    const cutId = <CopyPastePopover text={pool.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/>
     if (pool.name) {
       if (disabled) {
-        return <div className="info-text">{cutId}</div>
+        return <div className="info-text"><CopyPastePopover text={pool.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/></div>
       } else {
-        if (searchTerm) {
-          return <React.Fragment><br/><div className="info-text"><MyHighlighter search={searchTerm}>{pool.id}</MyHighlighter></div></React.Fragment>
-        } else {
-          return copyPasteId
-        }        
-      }
-    }
-  }
-  const displayDescription = () => {
-    const description = <CopyPastePopover text={pool.description} size={20} shouldCopy={false} shouldPopover={true}/>
-    if (disabled) {
-      return description
-    } else {
-      if (searchTerm) {
-        return <MyHighlighter search={searchTerm}>{pool.description}</MyHighlighter>
-      } else {
-        return description
+        return <CopyPastePopover text={pool.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" searchTerm={searchTerm}/>
       }
     }
   }
@@ -192,7 +168,7 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
       <td className="snug-nowrap">
         {displayName()}
         {displayID()}
-        {displayDescription()}
+        <CopyPastePopover text={pool.description} size={20} shouldCopy={false} shouldPopover={true} searchTerm={searchTerm}/>
       </td>
       <td>
         <div><StateLabel placeholder={pool.operating_status} path="" /></div>
@@ -202,7 +178,7 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
         <StaticTags tags={pool.tags} />
       </td>
       <td>{pool.lb_algorithm}</td>
-      <td>{pool.protocol}</td>
+      <td><MyHighlighter search={searchTerm}>{pool.protocol}</MyHighlighter></td>
       <td>
         {pool.session_persistence &&
           <div>{pool.session_persistence.type}</div>

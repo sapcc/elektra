@@ -63,6 +63,10 @@ const resetMembers = (state) => {
     selected: null}
 }
 
+const setSearchTerm= (state,{searchTerm}) => (
+  {...state, searchTerm}
+);
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case 'REQUEST_MEMBERS':
@@ -79,6 +83,8 @@ export default (state = initialState, action) => {
       return requestMemberDelete(state,action)
     case 'RESET_MEMBERS':
       return resetMembers(state,action)
+    case 'SET_MEMBERS_SEARCH_TERM':
+      return setSearchTerm(state,action)
     default:
       return state
   }

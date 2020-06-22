@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import uniqueId from 'lodash/uniqueId'
 import { Overlay, Popover, Tooltip } from 'react-bootstrap'
 import Clipboard from 'react-clipboard.js';
+import { Highlighter } from 'react-bootstrap-typeahead'
 
+
+const MyHighlighter = ({search,children}) => {
+  if(!search || !children) return children
+  return <Highlighter search={search}>{children+''}</Highlighter>
+}
 
 /**
  * 
@@ -13,8 +19,9 @@ import Clipboard from 'react-clipboard.js';
  * bsClass --> overwrite base class
  * shouldCopy --> copy the given text. Default true
  * shouldPopover --> if text cut should show a popover with the original text. Default true
+ * searchTerm --> if search text given will Highlight the diplayed text
  */
-const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCopy, shouldPopover}) => {
+const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCopy, shouldPopover, searchTerm}) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [target, setTarget] = useState(null)
   const [showIcon, setShowIcon] = useState(false)
@@ -126,13 +133,13 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
           {shouldPopoverText ?
             <React.Fragment>
               <span>
-                <span className="cp-substring">{textSliced()[0]}</span>
+                <span className="cp-substring"><MyHighlighter search={searchTerm}>{textSliced()[0]}</MyHighlighter></span>
                 <span className="cp-dots-help">{popoverOverlay}</span>
               </span>              
-              <span className="cp-substring">{textSliced()[1]}</span>
+              <span className="cp-substring"><MyHighlighter search={searchTerm}>{textSliced()[1]}</MyHighlighter></span>
             </React.Fragment>
           :
-          <span className="cp-string">{textSliced()[0]}...{textSliced()[1]}</span>
+          <span className="cp-string"><MyHighlighter search={searchTerm}>{textSliced()[0]}</MyHighlighter>...<MyHighlighter search={searchTerm}>{textSliced()[1]}</MyHighlighter></span>
           }
         </span>
       :
@@ -140,7 +147,7 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
           { text && text.toString().length > 0 &&
             <span className={baseClass} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
               <span>
-                <span className="cp-string">{text}</span>
+                <span className="cp-string"><MyHighlighter search={searchTerm}>{text}</MyHighlighter></span>
                 {shouldCopyText &&
                   <span className={showIcon ? "copy-paste-icon" : "copy-paste-icon transparent"}>
                     {clipboard}

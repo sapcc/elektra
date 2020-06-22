@@ -11,6 +11,7 @@ import queryString from 'query-string'
 import ErrorPage from '../ErrorPage';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { addError } from 'lib/flashes';
+import { SearchField } from 'lib/components/search_field';
 
 const L7PolicyList = ({props, loadbalancerID }) => {
   const {persistL7Policies, setSearchTerm, setSelected, reset, onSelectL7Policy} = useL7Policy()
@@ -108,6 +109,13 @@ const L7PolicyList = ({props, loadbalancerID }) => {
     onSelectL7Policy(props)
   }
 
+  const search = (term) => {
+    if(hasNext && !isLoading) {
+      fetchLoadbalancers({limit: 9999});
+    }
+    setSearchTerm(term)
+  }
+
   const error = state.error
   const hasNext = state.hasNext
   const searchTerm = state.searchTerm
@@ -124,7 +132,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
     } else {
       const regex = new RegExp(searchTerm.trim(), "i");
       return items.filter((i) =>
-      `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
+      `${i.id} ${i.name} ${i.description} ${i.action}`.search(regex) >= 0
     )
     }
   }
@@ -146,16 +154,6 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                 <div className="display-flex multiple-subtable-padding-container">
                   <h4>L7 Policies</h4>
                   <HelpPopover text="Collection of L7 rules that get logically ANDed together as well as a routing policy for any given HTTP or terminated HTTPS client requests which match said rules. An L7 Policy is associated with exactly one HTTP or terminated HTTPS listener." />
-                  <div className="btn-right">
-                    {!selected &&              
-                        <DefeatableLink
-                          disabled={isLoading}
-                          to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/new?${searchParamsToString(props)}`}
-                          className='btn btn-primary btn-xs'>
-                          New L7 Policy
-                        </DefeatableLink>
-                      }
-                  </div>
                 </div> 
                 
                 {selected && l7Policies.length == 1 ?
@@ -165,51 +163,67 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                     </div>
                   )
                 :
-                  <Table className={l7Policies.length>0 ? "table table-hover policies" : "table policies"} responsive>
-                    <thead>
-                        <tr>
-                            <th>Name/ID</th>
-                            <th>Description</th>
-                            <th>State</th>
-                            <th>Prov. Status</th>
-                            <th>Tags</th>
-                            <th>
-                              <div className="display-flex">
-                                Position
-                                <div className="margin-left">
-                                <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Position ASC</Tooltip>}>
-                                  <i className="fa fa-sort-asc" />
-                                </OverlayTrigger>  
+                  <React.Fragment>
+                    <div className="toolbar searchToolbar">
+                      <SearchField
+                        value={searchTerm}
+                        onChange={(term) => search(term)}
+                        placeholder='name, ID, description or action' text='Searches by name, ID, description or action.'/> 
+                      <div className="main-buttons">
+                          <DefeatableLink
+                            disabled={isLoading}
+                            to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/new?${searchParamsToString(props)}`}
+                            className='btn btn-primary btn-xs'>
+                            New L7 Policy
+                          </DefeatableLink>
+                        </div>
+                    </div>
+
+                    <Table className={l7Policies.length>0 ? "table table-hover policies" : "table policies"} responsive>
+                      <thead>
+                          <tr>
+                              <th>Name/ID/Description</th>
+                              <th>State</th>
+                              <th>Prov. Status</th>
+                              <th>Tags</th>
+                              <th>
+                                <div className="display-flex">
+                                  Position
+                                  <div className="margin-left">
+                                  <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Position ASC</Tooltip>}>
+                                    <i className="fa fa-sort-asc" />
+                                  </OverlayTrigger>  
+                                  </div>
                                 </div>
-                              </div>
-                            </th>
-                            <th>Action/Redirect</th>
-                            <th>#L7 Rules</th>
-                            <th className='snug'></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {l7Policies && l7Policies.length>0 ?
-                        l7Policies.map( (l7Policy, index) =>
-                          <L7PolicyListItem 
-                            props={props} 
-                            l7Policy={l7Policy} 
-                            searchTerm={searchTerm} 
-                            key={index} 
-                            tableScroll={tableScroll} 
-                            listenerID={listenerID}
-                            disabled={selected ? true : false}
-                            />
-                        )
-                        :
-                        <tr>
-                          <td colSpan="9">
-                            { isLoading ? <span className='spinner'/> : 'No L7 Policies found.' }
-                          </td>
-                        </tr>  
-                      }
-                    </tbody>
-                  </Table>
+                              </th>
+                              <th>Action/Redirect</th>
+                              <th>#L7 Rules</th>
+                              <th className='snug'></th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        {l7Policies && l7Policies.length>0 ?
+                          l7Policies.map( (l7Policy, index) =>
+                            <L7PolicyListItem 
+                              props={props} 
+                              l7Policy={l7Policy} 
+                              searchTerm={searchTerm} 
+                              key={index} 
+                              tableScroll={tableScroll} 
+                              listenerID={listenerID}
+                              disabled={selected ? true : false}
+                              />
+                          )
+                          :
+                          <tr>
+                            <td colSpan="9">
+                              { isLoading ? <span className='spinner'/> : 'No L7 Policies found.' }
+                            </td>
+                          </tr>  
+                        }
+                      </tbody>
+                    </Table>
+                  </React.Fragment>
                 }
               </div> 
             }          

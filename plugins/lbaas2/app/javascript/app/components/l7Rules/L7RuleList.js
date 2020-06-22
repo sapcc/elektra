@@ -8,10 +8,11 @@ import { Table } from 'react-bootstrap'
 import ErrorPage from '../ErrorPage';
 import L7RuleListItem from './L7RuleListItem'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { SearchField } from 'lib/components/search_field';
 
 const L7RulesList = ({props, loadbalancerID}) => {
   const {searchParamsToString} = useCommons()
-  const {persistL7Rules} = useL7Rule()
+  const {persistL7Rules, setSearchTerm} = useL7Rule()
   const listenerID = useGlobalState().listeners.selected
   const l7PolicyID = useGlobalState().l7policies.selected
   const state = useGlobalState().l7rules
@@ -29,13 +30,32 @@ const L7RulesList = ({props, loadbalancerID}) => {
     }
   }
 
+  const search = (term) => {
+    setSearchTerm(term)
+  }
+
   const error = state.error
-  const hasNext = state.hasNext
   const searchTerm = state.searchTerm
   const selected = state.selected
   const isLoading = state.isLoading
-  const l7Rules = state.items
+  const items = state.items
 
+  const filterItems = (searchTerm, items) => {
+    if(!searchTerm) return items;
+    // filter items      
+    if (selected) {
+      return items.filter((i) =>
+        i.id == searchTerm.trim()
+      )
+    } else {
+      const regex = new RegExp(searchTerm.trim(), "i");
+      return items.filter((i) =>
+      `${i.id} ${i.type} ${i.value}`.search(regex) >= 0
+    )
+    }
+  }
+  
+  const l7Rules = filterItems(searchTerm, items)
   return useMemo(() => {
     return ( 
       <React.Fragment>
@@ -50,18 +70,28 @@ const L7RulesList = ({props, loadbalancerID}) => {
                 <div className="display-flex multiple-subtable-padding-container">
                   <h4>L7 Rules</h4>
                   <HelpPopover text="An L7 Rule is a single, simple logical test which returns either true or false. It consists of a rule type, a comparison type, a value, and an optional key that gets used depending on the rule type. An L7 rule must always be associated with an L7 policy." />
-                  <div className="btn-right">
-                    {!selected &&
-                      <DefeatableLink
-                        disabled={isLoading}
-                        to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/new?${searchParamsToString(props)}`}
-                        className='btn btn-primary btn-xs'>
-                        New L7 Rule
-                      </DefeatableLink>
-                    }
-                  </div>
                 </div>
-                
+
+                {!selected &&
+                  <React.Fragment>
+                    <div className="toolbar searchToolbar">
+                      <SearchField
+                        value={searchTerm}
+                        onChange={(term) => search(term)}
+                        placeholder='ID, type or value' text='Searches by ID, type or value.'/> 
+                      
+                      <div className="main-buttons">
+                        <DefeatableLink
+                          disabled={isLoading}
+                          to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/new?${searchParamsToString(props)}`}
+                          className='btn btn-primary btn-xs'>
+                          New L7 Rule
+                        </DefeatableLink>
+                      </div>
+                    </div>
+                  </React.Fragment>
+                }
+
                 <Table className={l7Rules.length>0 ? "table table-hover l7rules" : "table l7rules"} responsive>
                     <thead>
                         <tr>
@@ -88,7 +118,13 @@ const L7RulesList = ({props, loadbalancerID}) => {
                     <tbody>
                       {l7Rules && l7Rules.length>0 ?
                         l7Rules.map( (l7Rule, index) =>
-                          <L7RuleListItem props={props} listenerID={listenerID} l7PolicyID={l7PolicyID} l7Rule={l7Rule} key={index}/>
+                          <L7RuleListItem 
+                            props={props} 
+                            listenerID={listenerID} 
+                            l7PolicyID={l7PolicyID} 
+                            l7Rule={l7Rule} 
+                            key={index} 
+                            searchTerm={searchTerm}/>
                         )
                         :
                         <tr>

@@ -1,4 +1,3 @@
-import { Highlighter } from 'react-bootstrap-typeahead'
 import { Link } from 'react-router-dom';
 import CachedInforPopover from '../shared/CachedInforPopover';
 import CachedInfoPopoverListenerContent from './CachedInfoPopoverListenerContent';
@@ -11,11 +10,6 @@ import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
-
-const MyHighlighter = ({search,children}) => {
-  if(!search || !children) return children
-  return <Highlighter search={search}>{children+''}</Highlighter>
-}
 
 const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {  
   const {fetchLoadbalancer, deleteLoadbalancer} = useLoadbalancer()
@@ -77,40 +71,17 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
     if (disabled) {
         return <span className="info-text"><CopyPastePopover text={name} size={40} sliceType="MIDDLE" shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
     } else {
-      if (searchTerm) {
-        return <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
-                <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
+      return  <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
+                <CopyPastePopover text={name} size={40} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} searchTerm={searchTerm}/>
               </Link>
-      } else {
-        return <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
-                <MyHighlighter search={searchTerm}><CopyPastePopover text={name} size={40} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/></MyHighlighter>
-              </Link>
-      }
     }
   }
   const displayID = () => {
-    const copyPasteId = <CopyPastePopover text={loadbalancer.id} size={40} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
     if (loadbalancer.name) {
       if (disabled) {
         return <div className="info-text"><CopyPastePopover text={loadbalancer.id} size={40} sliceType="MIDDLE" bsClass="cp copy-paste-ids" /></div>
       } else {
-        if (searchTerm) {
-          return <React.Fragment><br/><div className="info-text"><MyHighlighter search={searchTerm}>{loadbalancer.id}</MyHighlighter></div></React.Fragment>
-        } else {
-          return copyPasteId
-        }        
-      }
-    }
-  }
-  const displayDescription = () => {
-    const description = <CopyPastePopover text={loadbalancer.description} size={40} shouldCopy={false} shouldPopover={true}/>
-    if (disabled) {
-      return description
-    } else {
-      if (searchTerm) {
-        return <MyHighlighter search={searchTerm}>{loadbalancer.description}</MyHighlighter>
-      } else {
-        return description
+        return <CopyPastePopover text={loadbalancer.id} size={40} sliceType="MIDDLE" bsClass="cp copy-paste-ids" searchTerm={searchTerm}/>      
       }
     }
   }
@@ -121,12 +92,10 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
       <td className="snug-nowrap">
         {displayName()}
         {displayID()}
-        {displayDescription()}
+        <CopyPastePopover text={loadbalancer.description} size={40} shouldCopy={false} shouldPopover={true} searchTerm={searchTerm}/>
       </td>
       <td><StateLabel placeholder={loadbalancer.operating_status} path="operating_status" /></td>
       <td><StateLabel placeholder={loadbalancer.provisioning_status} path="provisioning_status"/></td>
-      {/* <td>{loadbalancer.operating_status}</td> */}
-      {/* <td>{loadbalancer.provisioning_status}</td> */}
       <td>
         <StaticTags tags={loadbalancer.tags} />
       </td>
@@ -140,8 +109,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
           <React.Fragment>
             <p className="list-group-item-text list-group-item-text-copy display-flex">
               <i className="fa fa-desktop fa-fw"/>
-              <CopyPastePopover text={loadbalancer.vip_address} size={20}/>
-              {/* {loadbalancer.vip_address} */}
+              <CopyPastePopover text={loadbalancer.vip_address} size={20} searchTerm={searchTerm}/>
             </p>
           </React.Fragment>
         }
@@ -149,8 +117,7 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
           <React.Fragment>
             <p className="list-group-item-text list-group-item-text-copy display-flex">
               <i className="fa fa-globe fa-fw"/>
-              {/* {loadbalancer.floating_ip.floating_ip_address} */}
-              <CopyPastePopover text={loadbalancer.floating_ip.floating_ip_address} size={20}/>
+              <CopyPastePopover text={loadbalancer.floating_ip.floating_ip_address} size={20} searchTerm={searchTerm}/>
             </p>
           </React.Fragment>
         }

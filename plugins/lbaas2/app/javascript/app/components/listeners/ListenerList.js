@@ -97,7 +97,7 @@ const ListenerList = ({props, loadbalancerID}) => {
     } else {
       const regex = new RegExp(searchTerm.trim(), "i");
       return items.filter((i) =>
-      `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
+      `${i.id} ${i.name} ${i.description} ${i.protocol} ${i.protocol_port}`.search(regex) >= 0
     )
     }
   }
@@ -113,7 +113,6 @@ const ListenerList = ({props, loadbalancerID}) => {
   }
   const listeners =  filterItems(searchTerm, items)
   const isLoading = state.isLoading
-  
   return useMemo(() => {
     console.log("RENDER Listener list")
     return ( 
@@ -136,7 +135,7 @@ const ListenerList = ({props, loadbalancerID}) => {
                 <SearchField
                   value={searchTerm}
                   onChange={(term) => search(term)}
-                  placeholder='name, ID or description' text='Searches by name, ID or description. All listeners will be loaded.'/> 
+                  placeholder='name, ID, desc., protocol, port' text='Searches by name, ID, description, protocol or protocol port. All listeners will be loaded.'/> 
               }
               <div className="main-buttons">
                 {!selected &&

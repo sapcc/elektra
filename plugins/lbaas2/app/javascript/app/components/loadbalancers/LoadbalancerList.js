@@ -62,7 +62,7 @@ const LoadbalancerList = (props) => {
     } else {
       const regex = new RegExp(searchTerm.trim(), "i");
       return items.filter((i) =>
-      `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
+      `${i.id} ${i.name} ${i.description} ${i.vip_address} ${i.floating_ip && i.floating_ip.floating_ip_address}`.search(regex) >= 0
     )
     }
   }
@@ -85,7 +85,7 @@ const LoadbalancerList = (props) => {
                 <SearchField
                   value={searchTerm}
                   onChange={(term) => search(term)}
-                  placeholder='name, ID or description' text='Searches by name, ID or description. All load balancers will be loaded.'/> 
+                  placeholder='name, ID, description, ip or fip' text='Searches by name, ID, description, internal IP or assigned floating IP. All load balancers will be loaded.'/> 
               }
               <div className="main-buttons">
                 {!selected &&
