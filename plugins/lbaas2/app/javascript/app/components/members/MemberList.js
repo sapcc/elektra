@@ -8,11 +8,12 @@ import useMember from '../../../lib/hooks/useMember'
 import MemberListItem from './MemberListItem';
 import ErrorPage from '../ErrorPage';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { SearchField } from 'lib/components/search_field';
 
 const MemberList = ({props,loadbalancerID}) => {
   const poolID = useGlobalState().pools.selected
   const {searchParamsToString} = useCommons()
-  const {persistMembers} = useMember()
+  const {persistMembers, setSearchTerm} = useMember()
   const state = useGlobalState().members
 
   useEffect(() => {    
@@ -28,10 +29,32 @@ const MemberList = ({props,loadbalancerID}) => {
     }
   }
 
+  const search = (term) => {
+    setSearchTerm(term)
+  }
+
   const error = state.error
   const isLoading = state.isLoading
-  const members = state.items
+  const searchTerm = state.searchTerm
+  const selected = state.selected
+  const items = state.items
 
+  const filterItems = (searchTerm, items) => {
+    if(!searchTerm) return items;
+    // filter items      
+    if (selected) {
+      return items.filter((i) =>
+        i.id == searchTerm.trim()
+      )
+    } else {
+      const regex = new RegExp(searchTerm.trim(), "i");
+      return items.filter((i) =>
+      `${i.id} ${i.name} ${i.address} ${i.protocol_port}`.search(regex) >= 0
+    )
+    }
+  }
+
+  const members = filterItems(searchTerm, items)
   return useMemo(() => {
     console.log("RENDER member list")
     return (
@@ -47,15 +70,26 @@ const MemberList = ({props,loadbalancerID}) => {
               <div className="display-flex">
                 <h4>Members</h4>
                 <HelpPopover text="Members are servers that serve traffic behind a load balancer. Each member is specified by the IP address and port that it uses to serve traffic." />
-                <div className="btn-right">         
-                  <DefeatableLink
-                    disabled={isLoading}
-                    to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/new?${searchParamsToString(props)}`}
-                    className='btn btn-primary btn-xs'>
-                    New Member
-                  </DefeatableLink>
               </div>
-              </div>
+
+              <React.Fragment>
+                <div className="toolbar searchToolbar">
+                  <SearchField
+                    value={searchTerm}
+                    onChange={(term) => search(term)}
+                    placeholder='Name, ID, IP or port' text='Searches by Name, ID, IP address or protocol port.'/> 
+                  
+                  <div className="main-buttons">
+                    <DefeatableLink
+                      disabled={isLoading}
+                      to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/new?${searchParamsToString(props)}`}
+                      className='btn btn-primary btn-xs'>
+                      New Member
+                    </DefeatableLink>
+                  </div>
+                </div>
+              </React.Fragment>
+
               <Table className="table policies" responsive>
                 <thead>
                     <tr>
@@ -81,7 +115,13 @@ const MemberList = ({props,loadbalancerID}) => {
                 <tbody>
                   {members && members.length>0 ?
                     members.map( (member, index) =>
-                      <MemberListItem props={props} poolID={poolID} member={member} key={index}/>
+                      <MemberListItem 
+                        props={props} 
+                        poolID={poolID} 
+                        member={member} 
+                        key={index}
+                        searchTerm={searchTerm}
+                        />
                     )
                   :
                     <tr>
@@ -98,7 +138,7 @@ const MemberList = ({props,loadbalancerID}) => {
         }
       </React.Fragment>
     );
-  } , [poolID, JSON.stringify(members), error, isLoading, props])
+  } , [poolID, JSON.stringify(members), error, isLoading, searchTerm, props])
 }
  
 export default MemberList;

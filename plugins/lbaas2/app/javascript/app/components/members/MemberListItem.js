@@ -70,20 +70,12 @@ const MemberListItem = ({props, poolID, member, searchTerm}) => {
 
   const displayName = () => {
     const name = member.name || member.id  
-    if (searchTerm) {
-      return <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
-    } else {
-      return <CopyPastePopover text={name} size={20} sliceType="MIDDLE"/> 
-    }
+    return <CopyPastePopover text={name} size={20} sliceType="MIDDLE" searchTerm={searchTerm}/>
   }
 
   const displayID = () => {
     if (member.name) {
-      if (searchTerm) {
-        return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{member.id}</MyHighlighter></span></React.Fragment>
-      } else {
-        return <CopyPastePopover text={member.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
-      }        
+      return <CopyPastePopover text={member.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" searchTerm={searchTerm}/>        
     }
   }
 
@@ -94,7 +86,7 @@ const MemberListItem = ({props, poolID, member, searchTerm}) => {
         {displayID()}
       </td>
       <td>        
-        <CopyPastePopover text={member.address} size={12}/>
+        <CopyPastePopover text={member.address} size={12} searchTerm={searchTerm}/>
       </td>
       <td>
         <StateLabel placeholder={member.operating_status} path="" /><br/>
@@ -104,7 +96,7 @@ const MemberListItem = ({props, poolID, member, searchTerm}) => {
         <StaticTags tags={member.tags} shouldPopover={true}/>
       </td>
       <td>        
-        <CopyPastePopover text={member.protocol_port} size={12}/>
+        <CopyPastePopover text={member.protocol_port} size={12} searchTerm={searchTerm}/>
       </td>
       <td>{member.weight}</td>
       <td>

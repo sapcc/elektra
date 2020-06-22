@@ -82,20 +82,13 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
   }
 
   const displayName = () => {
-    const name = listener.name || listener.id
-    const cutName = <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/>
+    const name = listener.name || listener.id 
     if (disabled) {
-        return <span className="info-text">{cutName}</span>
+        return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
     } else {
-      if (searchTerm) {
-        return <Link to="#" onClick={onListenerClick}>
-                <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
-              </Link>
-      } else {
-        return <Link to="#" onClick={onListenerClick}>
-                <MyHighlighter search={searchTerm}>{cutName}</MyHighlighter>
-              </Link>
-      }
+      return <Link to="#" onClick={onListenerClick}>
+              <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} searchTerm={searchTerm}/>
+            </Link>
     }
   }
 
@@ -104,27 +97,11 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
       if (disabled) {
         return <div className="info-text"><CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/></div>
       } else {
-        if (searchTerm) {
-          return <React.Fragment><br/><div className="info-text"><MyHighlighter search={searchTerm}>{listener.id}</MyHighlighter></div></React.Fragment>
-        } else {
-          return <CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"/>
-        }        
+        return <CopyPastePopover text={listener.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" searchTerm={searchTerm}/>
       }
     }
   }
-  
-  const displayDescription = () => {
-    const description = <CopyPastePopover text={listener.description} size={20} shouldCopy={false} shouldPopover={true}/>
-    if (disabled) {
-      return description
-    } else {
-      if (searchTerm) {
-        return <MyHighlighter search={searchTerm}>{listener.description}</MyHighlighter>
-      } else {
-        return description
-      }
-    }
-  }
+
 
   const collectContainers = () => {
     const containers = [
@@ -145,7 +122,7 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
     const containers = collectContainers()
     return (
       <React.Fragment>
-        {listener.protocol}
+        <MyHighlighter search={searchTerm}>{listener.protocol}</MyHighlighter>
         {certificateContainerRelation(listener.protocol) &&
           <div className="display-flex">
             <span>Client Auth: </span>
@@ -173,7 +150,7 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
       <td className="snug-nowrap">
         {displayName()}
         {displayID()}
-        {displayDescription()}
+        <CopyPastePopover text={listener.description} size={20} shouldCopy={false} shouldPopover={true} searchTerm={searchTerm}/>
       </td>
       <td>
         <div><StateLabel placeholder={listener.operating_status} path="" /></div>
@@ -185,7 +162,7 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
       <td>
         {displayProtocol()}
       </td>
-      <td>{listener.protocol_port}</td>
+      <td><MyHighlighter search={searchTerm}>{listener.protocol_port}</MyHighlighter></td>
       <td>
         {listener.default_pool_id ?
           <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">{listener.default_pool_id}</Tooltip>}>

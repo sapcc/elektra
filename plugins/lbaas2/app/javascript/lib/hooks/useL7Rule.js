@@ -70,6 +70,10 @@ const useL7Rule = () => {
     })
   }
 
+  const setSearchTerm = (searchTerm) => {
+    dispatch({type: 'SET_L7RULES_SEARCH_TERM', searchTerm: searchTerm})
+  }
+
   const errorMessage = (err) => {
     return err.data &&  (err.data.errors || err.data.error) || err.message
   }  
@@ -154,6 +158,7 @@ const useL7Rule = () => {
     ruleTypes,
     ruleCompareType,
     deleteL7Rule,
+    setSearchTerm,
     displayInvert
   }
 }

@@ -84,40 +84,17 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
     if (disabled) {
         return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
     } else {
-      if (searchTerm) {
-        return <Link to="#" onClick={onL7PolicyClick}>
-                <MyHighlighter search={searchTerm}>{name}</MyHighlighter>
-              </Link>
-      } else {
-        return <Link to="#" onClick={onL7PolicyClick}>
-                <MyHighlighter search={searchTerm}><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false}/></MyHighlighter>
-              </Link>
-      }
+      return <Link to="#" onClick={onL7PolicyClick}>
+                <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} searchTerm={searchTerm}/>
+            </Link>
     }
   }
   const displayID = () => {
-    const copyPasteId = <CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldClose={tableScroll}/>
     if (l7Policy.name) {
       if (disabled) {
-        return <span className="info-text"><CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/></span>
+        return <div className="info-text"><CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/></div>
       } else {
-        if (searchTerm) {
-          return <React.Fragment><br/><span className="info-text"><MyHighlighter search={searchTerm}>{l7Policy.id}</MyHighlighter></span></React.Fragment>
-        } else {
-          return copyPasteId
-        }        
-      }
-    }
-  }
-  const displayDescription = () => {
-    const description = <CopyPastePopover text={l7Policy.description} size={20} shouldCopy={false} shouldClose={tableScroll} shouldPopover={true}/>
-    if (disabled) {
-      return description
-    } else {
-      if (searchTerm) {
-        return <MyHighlighter search={searchTerm}>{l7Policy.description}</MyHighlighter>
-      } else {
-        return description
+        return <CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldClose={tableScroll} searchTerm={searchTerm}/>
       }
     }
   }
@@ -129,8 +106,8 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
       <td className="snug-nowrap">
         {displayName()}
         {displayID()}
+        <CopyPastePopover text={l7Policy.description} size={20} shouldCopy={false} shouldClose={tableScroll} shouldPopover={true} searchTerm={searchTerm}/>
       </td>
-      <td>{displayDescription()}</td>
       <td><StateLabel placeholder={l7Policy.operating_status} path="" /></td>
       <td><StateLabel placeholder={l7Policy.provisioning_status} path=""/></td>
       <td>
@@ -138,7 +115,7 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
       </td>
       <td>{l7Policy.position}</td>
       <td>
-        {l7Policy.action}
+      <MyHighlighter search={searchTerm}>{l7Policy.action}</MyHighlighter>
         {actionRedirect(l7Policy.action).map( (redirect, index) =>
           <span className="display-flex" key={index}>
             <br/><b>{redirect.label}: </b>
@@ -152,8 +129,6 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
       </td>
 
       <td>
-        
-        
         {disabled ?
           <span className="info-text">{l7Policy.rules.length}</span>
         :
@@ -162,7 +137,6 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
                     title={<React.Fragment>L7 Rules<Link to="#" onClick={onL7PolicyClick} style={{float: 'right'}}>Show all</Link></React.Fragment>}
                     content={<CachedInfoPopoverContent props={props} lbID={loadbalancerID} listenerID={listenerID} l7PolicyID={l7Policy.id} l7RuleIDs={l7RuleIDs} cachedl7RuleIDs={l7Policy.cached_rules}/>} />
         }
-      
       </td>
 
       <td>

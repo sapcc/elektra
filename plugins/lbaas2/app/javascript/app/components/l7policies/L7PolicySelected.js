@@ -84,7 +84,7 @@ const L7PolicySelected = ({props, listenerID, l7Policy, onBackLink}) => {
               </Link>
               <div className='btn-group btn-right'>
                 <button
-                  className='btn btn-default btn-sm dropdown-toggle'
+                  className='btn btn-default btn-xs dropdown-toggle'
                   type="button"
                   data-toggle="dropdown"
                   aria-expanded={true}>

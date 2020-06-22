@@ -94,13 +94,18 @@ const useMember = () => {
     })
   }
 
+  const setSearchTerm = (searchTerm) => {
+    dispatch({type: 'SET_MEMBERS_SEARCH_TERM', searchTerm: searchTerm})
+  }
+
   return ({
     fetchMembers,
     persistMembers,
     persistMember,
     deleteMember,
     fetchServers,
-    createMember
+    createMember,
+    setSearchTerm
   });
 }
  

@@ -83,7 +83,7 @@ const PoolList = ({props, loadbalancerID}) => {
     } else {
       const regex = new RegExp(searchTerm.trim(), "i");
       return items.filter((i) =>
-      `${i.id} ${i.name} ${i.description}`.search(regex) >= 0
+      `${i.id} ${i.name} ${i.description} ${i.protocol}`.search(regex) >= 0
     )
     }
   }
@@ -115,7 +115,7 @@ const PoolList = ({props, loadbalancerID}) => {
                 <SearchField
                   value={searchTerm}
                   onChange={(term) => search(term)}
-                  placeholder='name, ID or description' text='Searches by name, ID or description. All pools will be loaded.'/> 
+                  placeholder='name, ID, desc. or protocol' text='Searches by name, ID,description or protocol. All pools will be loaded.'/> 
               }
 
               <div className="main-buttons">
