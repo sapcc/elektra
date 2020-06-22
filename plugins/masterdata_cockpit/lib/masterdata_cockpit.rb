@@ -7,9 +7,9 @@ module MasterdataCockpit
   class Config
     def self.cost_object_types
       {
-        'CC'  => 'Cost Center',
-        'IO'  => 'Internal Order',
-        'SO'  => 'Sales Order',
+        'CC' => 'Cost Center',
+        'IO' => 'Internal Order',
+        'SO' => 'Sales Order',
         'WBS' => 'WBS Element'
       }
     end
@@ -17,16 +17,17 @@ module MasterdataCockpit
     def self.revenue_relevances
       {
         'generating' => 'Generating',
-        'enabling'   => 'Enabling',
-        'other'      => 'Other'
+        'enabling' => 'Enabling',
+        'other' => 'Other'
       }
     end
 
     def self.business_criticalitys
       {
-        'dev'  => 'Development',
+        'dev' => 'Development',
         'test' => 'Testing',
-        'prod' => 'Production'
+        'prod' => 'Production',
+        'prod_tc' => 'Production Time Critical'
       }
     end
   end

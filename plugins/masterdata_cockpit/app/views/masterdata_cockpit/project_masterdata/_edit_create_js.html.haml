@@ -44,12 +44,14 @@
 
         $('textarea#project_masterdata_additional_information').on("propertychange input", function(){
            if ( $(this).val() == '' && 
-                $('select#project_masterdata_business_criticality').val() == 'prod' 
+                $('select#project_masterdata_business_criticality').val().match(/^prod/g) 
             ) {
               $(this).parent().addClass('has-error');
+              $('#project_masterdata_business_criticality').parent().addClass('has-error');
             }
             else {
               $(this).parent().removeClass('has-error');
+              $('#project_masterdata_business_criticality').parent().removeClass('has-error')
             }
 
             if (this.value.length > this.maxlength) {
@@ -63,13 +65,15 @@
 
 
         $('select#project_masterdata_business_criticality').change(function(){
-          if ( $(this).val() == 'prod' && 
+          if ( $(this).val().match(/^prod/g) && 
                $('#project_masterdata_additional_information').val() == ''
             ) {
             $('#project_masterdata_additional_information').parent().addClass('has-error');
+            $('#project_masterdata_business_criticality').parent().addClass('has-error');
           }
           else {
-            $('#project_masterdata_additional_information').parent().removeClass('has-error')
+            $('#project_masterdata_additional_information').parent().removeClass('has-error');
+            $('#project_masterdata_business_criticality').parent().removeClass('has-error');
           }
         });
         

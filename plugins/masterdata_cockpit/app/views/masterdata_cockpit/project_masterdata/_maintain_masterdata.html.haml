@@ -8,6 +8,130 @@
   = f.input :revenue_relevance, :as => :hidden, :input_html => { :value => @project_masterdata.revenue_relevance }
   = f.input :cost_object_type, :as  => :hidden, :input_html => { :value => @project_masterdata.cost_object_type }
 
+
+  %label.control-label Significance
+  .panel.panel-default
+    .panel-body
+      .row
+        .col-md-4
+          - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
+          = f.input :business_criticality, 
+            label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"),
+            as: :select, 
+            collection: business_criticalitys.keys,
+            label_method: -> (k) { business_criticalitys[k] }
+        .col-md-4
+          - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
+          = f.input :revenue_relevance, 
+            label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
+            as: :select, 
+            collection: revenue_relevances.keys,
+            label_method: -> (k) { revenue_relevances[k] }
+        .col-md-4
+          = f.input :number_of_endusers ,
+            label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
+      .alert.alert-info{style: "margin:0"}
+        %p
+          %strong Production Time Critical:
+          = t('masterdata_cockpit.prod_tc')
+        %p
+          %strong Production:
+          = t('masterdata_cockpit.prod')
+        %p
+          %strong Testing:
+          = t('masterdata_cockpit.test')
+        %p
+          %strong Development:
+          = t('masterdata_cockpit.dev')
+
+  %label.control-label Contact
+  .panel.panel-default
+    .panel-body
+      .row{style: "margin-top:10px"}
+        .col-md-12
+          = f.input :additional_information,
+            label: "Hotline/Ticket Queue/Other",
+            as: :text,
+            placeholder: "Please state, how to contact your support in case of a critical incident impacting your project.​\n\nA 24/7 contact is mandatory for Productive Time Critical:​\n - Phone Hotline\n - or equivalent System which is available for L1 to L4 services​\n\nInformation is recommended for Productive Projects:​\n - Ticket System Information​\n - Distributed Mail List​",
+            input_html: {:rows => 10, :maxlength => 5000},
+            hint: raw("#{icon ('info-circle')} #{t('masterdata_cockpit.additional_information')} <span style='width:170px' class='pull-right' id='additional_information_length'></span>") 
+
+
+  %label.control-label Roles
+  .panel.panel-default
+    .panel-body
+      .row
+        .col-md-6.operator-id
+          = f.input :responsible_primary_contact_id, 
+            label: "Primary Contact", 
+            placeholder: "C/D/I User",
+            required: true, 
+            input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
+        .col-md-6.operator-email
+          = f.input :responsible_primary_contact_email, 
+            placeholder: "Email/Distribution list", 
+            input_html: { class: 'operator-email-input',  value: f.object.responsible_primary_contact_email || current_user.email }
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.responsible_primary_contact_help')
+      .row
+        .col-sm-6.operator-id
+          = f.input :responsible_security_expert_id, 
+            label: "Security Expert", 
+            placeholder: "C/D/I User", 
+            :input_html => { class: 'operator-id-input' }
+        .col-sm-6.operator-email
+          = f.input :responsible_security_expert_email, 
+            placeholder: "Email/Distribution list", 
+            :input_html => { class: 'operator-email-input' }
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.responsible_security_expert_help') 
+      .row
+        .col-md-6.operator-id
+          = f.input :responsible_operator_id, 
+            label: "Operator", 
+            placeholder: "C/D/I User", 
+            :input_html => { class: 'operator-id-input' }
+        .col-md-6.operator-email
+          = f.input :responsible_operator_email, 
+            placeholder: "Email/Distribution list", 
+            :input_html => { class: 'operator-email-input' }
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.responsible_operator_help') 
+      .row
+        .col-sm-6.operator-id
+          = f.input :responsible_product_owner_id, 
+            label: "Product Owner", 
+            placeholder: "C/D/I User", 
+            :input_html => { class: 'operator-id-input' }
+        .col-sm-6.operator-email
+          = f.input :responsible_product_owner_email, 
+            placeholder: "Email/Distribution list", 
+            :input_html => { class: 'operator-email-input' }
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.responsible_product_owner_help') 
+      .row
+        .col-sm-6.operator-id
+          = f.input :responsible_controller_id, 
+            label: "Controller", 
+            placeholder: "C/D/I User", 
+            :input_html => { class: 'operator-id-input' }
+        .col-sm-6.operator-email
+          = f.input :responsible_controller_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.responsible_controller_help')
+
+
+
   %label.control-label Cost Info
   .loading-place.loading-right
   .panel.panel-default
@@ -42,93 +166,6 @@
           Please contact your responsible
           = link_to  "Infrastructure Coordinator", "https://jam4.sapjam.com/blogs/show/tMu79H0QHEA3vNMGSkanxa", target: '_blank'
           for the correct Cost Object infromation.
-  %label.control-label Contact
-  .panel.panel-default
-    .panel-body
-      .row
-        .col-md-6.operator-id
-          = f.input :responsible_primary_contact_id, 
-            label: "Primary Contact", 
-            placeholder: "C/D/I User",
-            required: true, 
-            input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
-        .col-md-6.operator-email
-          = f.input :responsible_primary_contact_email, 
-            placeholder: "Email/Distribution list", 
-            input_html: { class: 'operator-email-input',  value: f.object.responsible_primary_contact_email || current_user.email }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_primary_contact_help') 
-      .row{style: "margin-top:10px"}
-        .col-md-12
-          = f.input :additional_information,
-            label: "Hotline/Ticket Queue/Other",
-            as: :text,
-            placeholder: "Please provide contact channels and corresponding availabilty (e.g. 24x7 for hotline) where we can reach you in case of technical questions and incidents\n\nPhone Hotline:\nTicket Queue:\nTicket Categories:\nDistribution Lists:",
-            input_html: {:rows => 7, :maxlength => 5000},
-            hint: raw("#{icon ('info-circle')} #{t('masterdata_cockpit.additional_information')} <span style='width:170px' class='pull-right' id='additional_information_length'></span>") 
-  %label.control-label Significance
-  .panel.panel-default
-    .panel-body
-      .row
-        .col-md-4
-          - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
-          = f.input :business_criticality, 
-            label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"),
-            as: :select, 
-            collection: business_criticalitys.keys,
-            label_method: -> (k) { business_criticalitys[k] }
-        .col-md-4
-          - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
-          = f.input :revenue_relevance, 
-            label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
-            as: :select, 
-            collection: revenue_relevances.keys,
-            label_method: -> (k) { revenue_relevances[k] }
-        .col-md-4
-          = f.input :number_of_endusers ,
-            label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
-  %label.control-label Other Responsibilities
-  .panel.panel-default
-    .panel-body
-      .row
-        .col-md-6.operator-id
-          = f.input :responsible_operator_id, label: "Operator", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
-        .col-md-6.operator-email
-          = f.input :responsible_operator_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_operator_help') 
-      .row
-        .col-sm-6.operator-id
-          = f.input :responsible_security_expert_id, label: "Security Expert", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
-        .col-sm-6.operator-email
-          = f.input :responsible_security_expert_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_security_expert_help') 
-      .row
-        .col-sm-6.operator-id
-          = f.input :responsible_product_owner_id, label: "Product Owner", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
-        .col-sm-6.operator-email
-          = f.input :responsible_product_owner_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_product_owner_help') 
-      .row
-        .col-sm-6.operator-id
-          = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
-        .col-sm-6.operator-email
-          = f.input :responsible_controller_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_controller_help')
-
 :javascript
   $(function(){
     // to hide the label of the email input field
