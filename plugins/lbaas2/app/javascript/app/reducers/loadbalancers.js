@@ -44,7 +44,9 @@ const requestLoadbalancersFailure = (state, {error}) => {
 
 const receiveLoadbalancer = (state, {loadbalancer}) => {
   // prevent ok responses without content
-  if (!loadbalancer) { return {...state}}
+  if (!loadbalancer || !loadbalancer.id) { 
+    return state
+  }
 
   const index = state.items.findIndex((item) => item.id==loadbalancer.id);
   let items = state.items.slice();
@@ -59,9 +61,9 @@ const selectLoadbalancer = (state, {selected}) => {
   return {... state, selected: selected}
 }
 
-const setSearchTerm= (state,{searchTerm}) => (
-  {...state, searchTerm}
-);
+const setSearchTerm= (state,{searchTerm}) => {
+  return {...state, searchTerm}
+}
 
 const removeLoadbalancer = (state, {id}) => {
   const index = state.items.findIndex((item) => item.id==id);

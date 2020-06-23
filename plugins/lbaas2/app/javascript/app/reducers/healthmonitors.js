@@ -8,6 +8,9 @@ const initialState = {
 const requestHealthmonitor = (state) => ({...state, isLoading: true, error: null})
 
 const receiveHealthmonitor = (state, {healthmonitor}) => {
+  if(!healthmonitor || !healthmonitor.id){
+    return state
+  }
   return {... state, item: healthmonitor, isLoading: false, error: null}
 }
 
@@ -17,7 +20,7 @@ const requestHealthmonitorFailure = (state, {error}) => {
 }
 
 const removeHealthmonitor = (state) => {
-  return {...state, item: null}
+  return {...state, item: null, isLoading: false}
 }
 
 const resetHealthmonitors = (state) => {
