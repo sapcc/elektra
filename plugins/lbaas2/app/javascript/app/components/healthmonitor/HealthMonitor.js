@@ -18,7 +18,6 @@ const HealthMonitor = ({props, loadbalancerID }) => {
   const {findPool,persistPool} = usePool()
   const {searchParamsToString,matchParams,errorMessage} = useCommons()
   const state = useGlobalState().healthmonitors
-  const [isRemoving, setIsRemoving] = useState(false)
 
   useEffect(() => {   
     initialLoad()
@@ -27,32 +26,36 @@ const HealthMonitor = ({props, loadbalancerID }) => {
   const initialLoad = () => {
     // if pool selected
     if (poolID) {
-      // find the pool to get the health monitor id
+      // find the pool to get the health monitor id      
       const pool = findPool(pools, poolID)
       if (pool && pool.healthmonitor_id) {
         console.log("FETCH HEALTH MONITOR")
         persistHealthmonitor(loadbalancerID, poolID, pool.healthmonitor_id, null).then((data) => {                    
         }).catch( error => {
         })
+      } else {
+        // reset state
+        resetState()
       }
     }
   }
 
-  const onRemoveClick = () => {
+  const onRemoveClick = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     const healthmonitorID = healthmonitor.id.slice()
     const healthmonitorName = healthmonitor.name.slice()
-    setIsRemoving(true)
     return deleteHealthmonitor(lbID, poolID, healthmonitorID,healthmonitorName).then((response) => {
-      setIsRemoving(false)
       addNotice(<React.Fragment>Health Monitor <b>{healthmonitorName}</b> ({healthmonitorID}) is being deleted.</React.Fragment>)
       // fetch the pool again containing the new healthmonitor so it gets updated fast
       persistPool(lbID,poolID).then(() => {
       }).catch(error => {
       })
     }).catch(error => {
-      setIsRemoving(false)
       addError(React.createElement(ErrorsList, {
         errors: errorMessage(error.response)
       }))
@@ -109,9 +112,9 @@ const HealthMonitor = ({props, loadbalancerID }) => {
                     <div className="main-buttons">
                       <DefeatableLink
                         disabled={isLoading}
-                        to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/${healthmonitor.id}/edit?${searchParamsToString(props)}`}
+                        to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/new?${searchParamsToString(props)}`}
                         className='btn btn-primary btn-xs'>
-                        Edit Health Monitor
+                        New Health Monitor
                       </DefeatableLink>
                     </div>
                   }     

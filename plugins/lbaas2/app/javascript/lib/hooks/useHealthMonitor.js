@@ -17,7 +17,7 @@ const useHealthMonitor = () => {
   }
 
   const persistHealthmonitor = (lbID, poolID, healthmonitorID) => {
-    dispatch({type: 'RESET_HEALTHMONITORS'})
+    dispatch({type: 'RESET_HEALTHMONITOR'})
     dispatch({type: 'REQUEST_HEALTHMONITOR'})
     return new Promise((handleSuccess,handleError) => {
       fetchHealthmonitor(lbID, poolID, healthmonitorID).then((data) => {
@@ -87,6 +87,11 @@ const useHealthMonitor = () => {
       }).catch(cancel => true)
     })
   }
+
+  const resetState = () => {
+    dispatch({type: 'RESET_HEALTHMONITOR'})
+  }
+
 
   // HTTP, HTTPS, PING, TCP, TLS-HELLO, or UDP-CONNECT
   const healthMonitorTypes = () => {
@@ -158,7 +163,8 @@ const useHealthMonitor = () => {
     httpMethodRelation,
     expectedCodesRelation,
     urlPathRelation,
-    httpMethods
+    httpMethods,
+    resetState
   }
 }
  

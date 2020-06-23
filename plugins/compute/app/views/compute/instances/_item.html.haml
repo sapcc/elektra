@@ -26,11 +26,12 @@
         data: { toggle: 'tooltip', placement: 'top'},
         title: state_text}
   %td
-    - name = (instance.name || '').truncate(30)
-    - if current_user.is_allowed?("compute:instance_get", {})
-      = link_to name, plugin('compute').instance_path(id: instance.id), data: {modal: true}
-    - else
-      = name
+    %span{title: instance.name || ''}
+      - name = (instance.name || '').truncate(30)
+      - if current_user.is_allowed?("compute:instance_get", {})
+        = link_to name, plugin('compute').instance_path(id: instance.id), data: {modal: true}
+      - else
+        = name
     %br
     = instance.availability_zone
     - hypervisor = instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
