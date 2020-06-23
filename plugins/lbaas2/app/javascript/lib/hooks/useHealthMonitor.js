@@ -77,11 +77,7 @@ const useHealthMonitor = () => {
 
   const deleteHealthmonitor =  (lbID, poolID, healthmonitorID, healthmonitorName) => {
     return new Promise((handleSuccess,handleErrors) => {
-<<<<<<< Updated upstream
-      confirm(<React.Fragment><p>Do you really want to delete following Health Monitor?</p><p>{createNameTag(healthmonitorName)} <b>id:</b> {healthmonitorID}</p></React.Fragment>).then(() => {
-=======
       confirm(<React.Fragment><p>Do you really want to delete following Health Monitor?</p><p>{createNameTag(healthmonitorName)} <b>id:</b> {healthmonitorID}</p></React.Fragment>).then(() => {        
->>>>>>> Stashed changes
         return ajaxHelper.delete(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`).then((response) => {
           dispatch({type: 'REQUEST_REMOVE_HEALTHMONITOR'})
           handleSuccess(response)
