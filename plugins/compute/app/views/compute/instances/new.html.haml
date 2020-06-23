@@ -77,7 +77,9 @@
     :javascript
       $(document).ready(function(){
         if ($('#server_flavor_id option:selected').text() != "Choose flavor") {
-          if ($('#server_flavor_id option:selected').text().match(/^baremetal/) || $('#server_flavor_id option:selected').text().match(/^zh/)) {
+          if ($('#server_flavor_id option:selected').text().match(/^baremetal/) || 
+              $('#server_flavor_id option:selected').text().match(/^zh/) || 
+              $('#server_flavor_id option:selected').text().match(/^zg/)) {
           // baremetal
             $('#baremetal_image_id_wrapper').removeClass('hidden');
           }
@@ -119,7 +121,9 @@
       //flavors = JSON.parse(flavors.replace(/&quot;/g,'"'));
       $('#server_flavor_id').change(function(){
         //console.log($( this ).val())
-        if ($('#server_flavor_id option:selected').text().match(/^baremetal/) || $('#server_flavor_id option:selected').text().match(/^zh/)) {
+        if ($('#server_flavor_id option:selected').text().match(/^baremetal/) || 
+            $('#server_flavor_id option:selected').text().match(/^zh/) ||
+            $('#server_flavor_id option:selected').text().match(/^zg/)) {
           // baremetal
           $('#baremetal_image_id_wrapper').removeClass('hidden');
           $('#vmware_image_id_wrapper').addClass('hidden');

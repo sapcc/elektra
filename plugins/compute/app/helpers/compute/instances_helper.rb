@@ -67,9 +67,7 @@ module Compute
               ]
             end
 
-            if hv_type == hypervisor_type || hv_type == 'all'
-              container << ["--#{hypervisor_type}", items]
-            end
+            container << ["--#{hypervisor_type}", items] if hv_type == hypervisor_type || hv_type == 'all'
           end
         end
 
@@ -86,8 +84,8 @@ module Compute
         #    ]
         #  ]
         # ]
-     
-        if hv_type == "vmware"
+
+        if hv_type == 'vmware'
           if bootable_volumes && !bootable_volumes.empty?
             volume_items = @bootable_volumes.collect do |v|
               infos = []
@@ -166,7 +164,7 @@ module Compute
       private_flavors = []
       flavors.each do |flavor|
         if flavor.public?
-          if flavor.name =~ /^baremetal/ || flavor.name =~ /^zh/
+          if flavor.name =~ /^baremetal/ || flavor.name =~ /^zh/ || flavor.name =~ /^zg/
             public_flavors_baremetal << flavor
           else
             public_flavors_vmware << flavor
@@ -179,14 +177,10 @@ module Compute
       # group to public and private
       result = [['public', []]]
       unless public_flavors_baremetal.empty?
-        result << ['--bare metal',public_flavors_baremetal.sort_by { |a| [a.ram, a.vcpus] }]
+        result << ['--bare metal', public_flavors_baremetal.sort_by { |a| [a.ram, a.vcpus] }]
       end
-      unless public_flavors_vmware.empty?
-        result << ['--vmware',public_flavors_vmware.sort_by { |a| [a.ram, a.vcpus] }]
-      end
-      unless private_flavors.empty?
-        result << ['private', private_flavors.sort_by { |a| [a.ram, a.vcpus] }]
-      end
+      result << ['--vmware', public_flavors_vmware.sort_by { |a| [a.ram, a.vcpus] }] unless public_flavors_vmware.empty?
+      result << ['private', private_flavors.sort_by { |a| [a.ram, a.vcpus] }] unless private_flavors.empty?
       result
     end
 
