@@ -136,7 +136,7 @@
   width: 100%;
 
   .table-responsive{
-    max-height:390px;  
+    max-height:380px;  
     overflow-y:scroll;
 
     thead tr:nth-child(1) th{
@@ -170,41 +170,43 @@
   .multiple-subtable-left {
     width: 50%;
     height: 510px;
+    padding: 0px;
   }
 
   .multiple-subtable-right {
     width: 50%;
     height:510px;
+    padding: 0px;
     
     .table-responsive {
       padding-left: 9px;
       padding-right: 9px;
     }
   }
+
+  .multiple-subtable-header {
+    padding: 14px 14px 0px 14px;
+  }
+  
+  .multiple-subtable-scroll-body {
+    padding: 9px 14px; 
+    max-height: 370px;
+    overflow-y: scroll;
+  }
 }
 
 .l7policies.multiple-subtable-left{
   width: 25%;
-  padding: 0px;
-  .multiple-subtable-padding-container {
-    padding: 9px 14px;
-  }
 }
 .l7rules.multiple-subtable-right{
   width: 75%;
-  padding: 0px;
-  .multiple-subtable-padding-container {
-    padding: 9px 14px;
-  }
 }
 
 .healthmonitor.multiple-subtable-left{
   width: 35%;
-  padding: 9px 14px;
 }
 .members.multiple-subtable-right{
   width: 65%;
-  padding: 9px 14px;
 }
 
 /*
@@ -213,9 +215,8 @@
 
 .selected-l7policy {
   .selected-l7policy-head {
-    margin-bottom: 10px;
     padding: 9px 0px;
-    background-color: #f5f5f5;
+    background-color: #f9f9f9;
     border-top: 1px solid #e1e1e8;
     border-bottom: 1px solid #e1e1e8;
     margin-top: 20px;
@@ -230,12 +231,6 @@
     ul {
       padding-left: 20px;
     }
-  }
-
-  .selected-l7policy-body {
-    padding: 0px 14px; 
-    max-height: 370px;
-    overflow-y: scroll;
   }
 }
 

@@ -67,7 +67,7 @@ const MemberList = ({props,loadbalancerID}) => {
               </div>
             :
             <div className="members subtable multiple-subtable-right">
-              <div className="display-flex">
+              <div className="display-flex multiple-subtable-header">
                 <h4>Members</h4>
                 <HelpPopover text="Members are servers that serve traffic behind a load balancer. Each member is specified by the IP address and port that it uses to serve traffic." />
               </div>
