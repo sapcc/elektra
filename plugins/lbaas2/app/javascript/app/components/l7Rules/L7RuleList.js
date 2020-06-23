@@ -67,7 +67,7 @@ const L7RulesList = ({props, loadbalancerID}) => {
               </div>
               :
               <div className="l7rules subtable multiple-subtable-right">
-                <div className="display-flex multiple-subtable-padding-container">
+                <div className="display-flex multiple-subtable-header">
                   <h4>L7 Rules</h4>
                   <HelpPopover text="An L7 Rule is a single, simple logical test which returns either true or false. It consists of a rule type, a comparison type, a value, and an optional key that gets used depending on the rule type. An L7 rule must always be associated with an L7 policy." />
                 </div>

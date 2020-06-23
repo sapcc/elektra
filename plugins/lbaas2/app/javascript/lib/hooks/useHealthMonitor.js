@@ -17,7 +17,7 @@ const useHealthMonitor = () => {
   }
 
   const persistHealthmonitor = (lbID, poolID, healthmonitorID) => {
-    dispatch({type: 'RESET_HEALTHMONITORS'})
+    dispatch({type: 'RESET_HEALTHMONITOR'})
     dispatch({type: 'REQUEST_HEALTHMONITOR'})
     return new Promise((handleSuccess,handleError) => {
       fetchHealthmonitor(lbID, poolID, healthmonitorID).then((data) => {
@@ -61,7 +61,8 @@ const useHealthMonitor = () => {
 
   const deleteHealthmonitor =  (lbID, poolID, healthmonitorID, healthmonitorName) => {
     return new Promise((handleSuccess,handleErrors) => {
-      confirm(<React.Fragment><p>Do you really want to delete following Health Monitor?</p><p>{createNameTag(healthmonitorName)} <b>id:</b> {healthmonitorID}</p></React.Fragment>).then(() => {
+      confirm(<React.Fragment><p>Do you really want to delete following Health Monitor?</p><p>{createNameTag(healthmonitorName)} <b>id:</b> {healthmonitorID}</p></React.Fragment>).then(() => {        
+        dispatch({type: 'REQUEST_REMOVE_HEALTHMONITOR'}) 
         return ajaxHelper.delete(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`).then((response) => {
           dispatch({type: 'REMOVE_HEALTHMONITOR'}) 
           handleSuccess(response)
@@ -71,6 +72,11 @@ const useHealthMonitor = () => {
       }).catch(cancel => true)
     })
   }
+
+  const resetState = () => {
+    dispatch({type: 'RESET_HEALTHMONITOR'})
+  }
+
 
   // HTTP, HTTPS, PING, TCP, TLS-HELLO, or UDP-CONNECT
   const healthMonitorTypes = () => {
@@ -141,7 +147,8 @@ const useHealthMonitor = () => {
     httpMethodRelation,
     expectedCodesRelation,
     urlPathRelation,
-    httpMethods
+    httpMethods,
+    resetState
   }
 }
  

@@ -100,9 +100,9 @@ const L7PolicySelected = ({props, listenerID, l7Policy, onBackLink}) => {
         </div>
       </div>
 
-      <div className="selected-l7policy-body">
+      <div className="multiple-subtable-scroll-body">
         <div className="selected-l7policy-entry">
-        <div className="row">
+          <div className="row">
             <div className="col-md-12">
               <b>Name/ID:</b>
             </div>
