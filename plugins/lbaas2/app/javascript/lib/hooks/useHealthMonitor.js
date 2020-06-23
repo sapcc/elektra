@@ -33,6 +33,22 @@ const useHealthMonitor = () => {
     })
   }
 
+  const pollHealthmonitor = (lbID, poolID, healthmonitorID) => {
+    dispatch({type: 'REQUEST_HEALTHMONITOR'})
+    return new Promise((handleSuccess,handleError) => {
+      fetchHealthmonitor(lbID, poolID, healthmonitorID).then((data) => {
+        dispatch({type: 'RECEIVE_HEALTHMONITOR', healthmonitor: data.healthmonitor})
+        handleSuccess(data)
+      }).catch( error => {
+        if(error && error.status == 404) {
+          dispatch({type: 'REMOVE_HEALTHMONITOR', id: healthmonitorID})
+        }   
+        handleError(error.response)
+      })
+    })
+  }
+
+  
   const createHealthMonitor = (lbID, poolID, values) => {
     return new Promise((handleSuccess,handleErrors) => {
       ajaxHelper.post(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors`, { healthmonitor: values }).then((response) => {
@@ -62,9 +78,8 @@ const useHealthMonitor = () => {
   const deleteHealthmonitor =  (lbID, poolID, healthmonitorID, healthmonitorName) => {
     return new Promise((handleSuccess,handleErrors) => {
       confirm(<React.Fragment><p>Do you really want to delete following Health Monitor?</p><p>{createNameTag(healthmonitorName)} <b>id:</b> {healthmonitorID}</p></React.Fragment>).then(() => {        
-        dispatch({type: 'REQUEST_REMOVE_HEALTHMONITOR'}) 
         return ajaxHelper.delete(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`).then((response) => {
-          dispatch({type: 'REMOVE_HEALTHMONITOR'}) 
+          dispatch({type: 'REQUEST_REMOVE_HEALTHMONITOR'})
           handleSuccess(response)
         }).catch(error => {
           handleErrors(error)
@@ -140,6 +155,7 @@ const useHealthMonitor = () => {
   return {
     fetchHealthmonitor,
     persistHealthmonitor,
+    pollHealthmonitor,
     createHealthMonitor,
     updateHealthmonitor,
     deleteHealthmonitor,
