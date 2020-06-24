@@ -14,6 +14,9 @@ import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { addError } from 'lib/flashes';
 import Pagination from '../shared/Pagination'
 import { SearchField } from 'lib/components/search_field';
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink"
 
 const TableFadeTransition = ({
   children,
@@ -38,6 +41,14 @@ const ListenerList = ({props, loadbalancerID}) => {
       // TODO
     })
   }, [loadbalancerID]);
+
+  const canCreate = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:listener_create", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const selectListener = (data) => {
     const values = queryString.parse(props.location.search)
@@ -102,15 +113,6 @@ const ListenerList = ({props, loadbalancerID}) => {
     }
   }
 
-  const getSelectedItem = (selectedListenerID, items) => {
-    if (selectedListenerID) {
-      const found =  filterItems(selectedListenerID, items)
-      if (found.length == 1) {
-        return found[0]
-      }
-    } 
-    return null
-  }
   const listeners =  filterItems(searchTerm, items)
   const isLoading = state.isLoading
   return useMemo(() => {
@@ -139,12 +141,14 @@ const ListenerList = ({props, loadbalancerID}) => {
               }
               <div className="main-buttons">
                 {!selected &&
-                  <DefeatableLink
+                  <SmartLink
                     disabled={isLoading}
                     to={`/loadbalancers/${loadbalancerID}/listeners/new?${searchParamsToString(props)}`}
-                    className='btn btn-primary'>
+                    className='btn btn-primary'
+                    isAllowed={canCreate}
+                    notAllowedText="Not allowed to create. Please check with your administrator.">
                     New Listener
-                  </DefeatableLink>
+                  </SmartLink>
                 }
               </div>
             </div>

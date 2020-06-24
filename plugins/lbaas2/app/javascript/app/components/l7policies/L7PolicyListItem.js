@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import useCommons from '../../../lib/hooks/useCommons'
 import { Link } from 'react-router-dom';
 import StateLabel from '../StateLabel'
@@ -10,6 +10,9 @@ import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 import CachedInfoPopover from '../shared/CachedInforPopover';
 import CachedInfoPopoverContent from './CachedInfoPopoverContent'
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink"
 
 const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID, disabled}) => {
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
@@ -58,6 +61,14 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
     }
     onSelectL7Policy(props, l7Policy.id)
   }
+
+  const canDelete = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:l7policy_delete", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const handleDelete = (e) => {
     if (e) {
@@ -149,7 +160,14 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            <li><a href='#' onClick={handleDelete}>Delete</a></li>
+            <li>
+              <SmartLink 
+                onClick={handleDelete} 
+                isAllowed={canDelete} 
+                notAllowedText="Not allowed to delete. Please check with your administrator.">
+                  Delete
+              </SmartLink>
+            </li>
           </ul>
         </div>
       </td>

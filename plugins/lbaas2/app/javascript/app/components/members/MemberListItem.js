@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import useCommons from '../../../lib/hooks/useCommons'
 import StateLabel from '../StateLabel'
@@ -7,6 +7,9 @@ import useMember from '../../../lib/hooks/useMember'
 import usePool from '../../../lib/hooks/usePool'
 import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+import SmartLink from "../shared/SmartLink"
+import { policy } from "policy";
+import { scope } from "ajax_helper";
 
 const MemberListItem = ({props, poolID, member, searchTerm}) => {
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
@@ -47,6 +50,14 @@ const MemberListItem = ({props, poolID, member, searchTerm}) => {
     clearInterval(polling)
     polling = null
   }
+
+  const canDelete = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:member_delete", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const handleDelete = (e) => {
     if (e) {
@@ -109,7 +120,14 @@ const MemberListItem = ({props, poolID, member, searchTerm}) => {
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            <li><a href='#' onClick={handleDelete}>Delete</a></li>
+            <li>
+              <SmartLink 
+                onClick={handleDelete} 
+                isAllowed={canDelete} 
+                notAllowedText="Not allowed to delete. Please check with your administrator.">
+                  Delete
+              </SmartLink>
+            </li>
           </ul>
         </div>
       </td>

@@ -11,6 +11,9 @@ import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { addError } from 'lib/flashes';
 import Pagination from '../shared/Pagination'
 import { SearchField } from 'lib/components/search_field';
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink"
 
 const PoolList = ({props, loadbalancerID}) => {
   const dispatch = useDispatch()
@@ -25,6 +28,14 @@ const PoolList = ({props, loadbalancerID}) => {
       // TODO
     })
   }, [loadbalancerID]);
+
+  const canCreate = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:pool_create", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const selectPool = (data) => {
     const values = queryString.parse(props.location.search)
@@ -120,12 +131,14 @@ const PoolList = ({props, loadbalancerID}) => {
 
               <div className="main-buttons">
                 {!selected &&
-                  <DefeatableLink
+                  <SmartLink
                     disabled={isLoading}
                     to={`/loadbalancers/${loadbalancerID}/pools/new?${searchParamsToString(props)}`}
-                    className='btn btn-primary'>
+                    className='btn btn-primary'
+                    isAllowed={canCreate}
+                    notAllowedText="Not allowed to create. Please check with your administrator.">
                     New Pool
-                  </DefeatableLink>
+                  </SmartLink>
                 }
               </div>
             </div>

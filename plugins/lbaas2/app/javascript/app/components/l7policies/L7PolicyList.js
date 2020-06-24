@@ -12,6 +12,9 @@ import ErrorPage from '../ErrorPage';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { addError } from 'lib/flashes';
 import { SearchField } from 'lib/components/search_field';
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink"
 
 const L7PolicyList = ({props, loadbalancerID }) => {
   const {persistL7Policies, setSearchTerm, setSelected, reset, onSelectL7Policy} = useL7Policy()
@@ -31,6 +34,14 @@ const L7PolicyList = ({props, loadbalancerID }) => {
       reset()
     }
   }, [listenerID]);
+
+  const canCreate = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:l7policy_create", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const initialLoad = () => {
     if (listenerID) {
@@ -170,12 +181,14 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                         onChange={(term) => search(term)}
                         placeholder='name, ID, description or action' text='Searches by name, ID, description or action.'/> 
                       <div className="main-buttons">
-                          <DefeatableLink
+                          <SmartLink
                             disabled={isLoading}
                             to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/new?${searchParamsToString(props)}`}
-                            className='btn btn-primary btn-xs'>
+                            className='btn btn-primary btn-xs'
+                            isAllowed={canCreate}
+                            notAllowedText="Not allowed to create. Please check with your administrator.">
                             New L7 Policy
-                          </DefeatableLink>
+                          </SmartLink>
                         </div>
                     </div>
 

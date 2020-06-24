@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom';
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
@@ -12,6 +12,9 @@ import useCommons from '../../../lib/hooks/useCommons'
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink"
 
 const ListenerItem = ({props, listener, searchTerm, disabled}) => {
   const {persistListener,certificateContainerRelation, deleteListener, onSelectListener} = useListener()
@@ -60,6 +63,15 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
     }
     onSelectListener(props,listener.id)
   }
+
+
+  const canDelete = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:listener_delete", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const handleDelete = (e) => {
     if (e) {
@@ -196,7 +208,14 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            <li><a href='#' onClick={handleDelete}>Delete</a></li>
+            <li>
+              <SmartLink 
+                onClick={handleDelete} 
+                isAllowed={canDelete} 
+                notAllowedText="Not allowed to delete. Please check with your administrator.">
+                  Delete
+              </SmartLink>
+            </li>
           </ul>
         </div>
       </td>

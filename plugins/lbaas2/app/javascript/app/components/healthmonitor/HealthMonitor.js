@@ -10,6 +10,9 @@ import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 import { Link } from 'react-router-dom';
 import HealthmonitorDetails from './HealthmonitorDetails'
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink"
 
 const HealthMonitor = ({props, loadbalancerID }) => {
   const {deleteHealthmonitor,persistHealthmonitor, resetState} = useHealthMonitor()
@@ -39,6 +42,30 @@ const HealthMonitor = ({props, loadbalancerID }) => {
       }
     }
   }
+
+  const canCreate = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:healthmonitor_create", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
+
+  const canEdit = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:healthmonitor_update", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
+
+  const canDelete = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:healthmonitor_delete", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const onRemoveClick = (e) => {
     if (e) {
@@ -96,26 +123,34 @@ const HealthMonitor = ({props, loadbalancerID }) => {
                         </button>
                         <ul className="dropdown-menu dropdown-menu-right" role="menu">
                           <li>              
-                            <Link to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/${healthmonitor.id}/edit?${searchParamsToString(props)}`}>
-                              Edit
-                            </Link>
+                            <SmartLink 
+                              to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/${healthmonitor.id}/edit?${searchParamsToString(props)}`}
+                              isAllowed={canEdit} 
+                              notAllowedText="Not allowed to edit. Please check with your administrator.">
+                                Edit
+                            </SmartLink>
                           </li>
                           <li>
-                            <Link to="#" onClick={onRemoveClick}>
-                              Delete
-                            </Link>
+                            <SmartLink 
+                              onClick={onRemoveClick} 
+                              isAllowed={canDelete} 
+                              notAllowedText="Not allowed to delete. Please check with your administrator.">
+                                Delete
+                            </SmartLink>
                           </li>
                         </ul>
                       </div>
                     </div>
                   :
                     <div className="main-buttons">
-                      <DefeatableLink
+                      <SmartLink
                         disabled={isLoading}
                         to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/new?${searchParamsToString(props)}`}
-                        className='btn btn-primary btn-xs'>
+                        className='btn btn-primary btn-xs'
+                        isAllowed={canCreate}
+                        notAllowedText="Not allowed to create. Please check with your administrator.">
                         New Health Monitor
-                      </DefeatableLink>
+                      </SmartLink>
                     </div>
                   }     
                 </div> 
