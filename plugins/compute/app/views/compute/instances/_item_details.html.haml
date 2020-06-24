@@ -35,8 +35,11 @@
               %tr
                 %th Status
                 - state_text = @instance.status.humanize
-                - state_text += ": "+@instance.fault["message"] unless @instance.fault.nil?
-                - if @instance.status == "Error"
+                - if state_text == "Error"
+                  - unless @instance.fault.nil?
+                    - state_text += ": "+@instance.fault["message"] 
+                  - else
+                    - state_text += "Sorry but for some reason there was not error message found :-/"
                   %td.text-danger
                     %strong= state_text
                 - else 
