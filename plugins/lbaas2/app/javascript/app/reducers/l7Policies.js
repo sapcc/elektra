@@ -41,6 +41,9 @@ const resetL7Policies = (state) => {
 }
 
 const receiveL7Policy = (state, {l7Policy}) => {
+  if(!l7Policy || !l7Policy.id){
+    return state
+  }
   const index = state.items.findIndex((item) => item.id==l7Policy.id);
   let items = state.items.slice();
   // update or add l7Policy

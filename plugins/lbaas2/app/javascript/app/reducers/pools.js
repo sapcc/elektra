@@ -54,6 +54,9 @@ const resetPools = (state) => {
 }
 
 const receivePool = (state, {pool}) => {
+  if(!pool || !pool.id){
+    return state
+  }
   const index = state.items.findIndex((item) => item.id==pool.id);
   let items = state.items.slice();
   // update or add Pool

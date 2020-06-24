@@ -55,6 +55,9 @@ const resetListeners = (state) => {
 }
 
 const receiveListener = (state, {listener}) => {
+  if(!listener && !listener.id){
+    return state
+  }
   const index = state.items.findIndex((item) => item.id==listener.id);
   let items = state.items.slice();
   // update or add listener

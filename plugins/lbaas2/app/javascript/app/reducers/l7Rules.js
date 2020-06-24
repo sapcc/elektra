@@ -41,6 +41,9 @@ const resetL7Rules = (state) => {
 }
 
 const receiveL7Rule = (state, {l7Rule}) => {
+  if(!l7Rule || !l7Rule.id){
+    return state
+  }
   const index = state.items.findIndex((item) => item.id==l7Rule.id);
   let items = state.items.slice();
   // update or add l7Rule

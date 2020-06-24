@@ -1,16 +1,17 @@
-import { useEffect,useState } from 'react'
+import { useEffect,useState, useMemo } from 'react'
 import useCommons from '../../../lib/hooks/useCommons'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
 import useL7Rule from '../../../lib/hooks/useL7Rule';
-import useL7Policy from '../../../lib/hooks/useL7Policy'
+import SmartLink from "../shared/SmartLink"
+import { policy } from "policy";
+import { scope } from "ajax_helper";
 
 const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tableScroll}) => {
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
   const {deleteL7Rule, displayInvert,persistL7Rule} = useL7Rule()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
-  const {persistL7Policy} = useL7Policy()
   let polling = null
 
   useEffect(() => {
@@ -45,6 +46,14 @@ const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tabl
     clearInterval(polling)
     polling = null
   }
+
+  const canDelete = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:l7rule_delete", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const handleDelete = (e) => {
     if (e) {
@@ -90,7 +99,14 @@ const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tabl
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            <li><a href='#' onClick={handleDelete}>Delete</a></li>
+            <li>
+              <SmartLink 
+                onClick={handleDelete} 
+                isAllowed={canDelete} 
+                notAllowedText="Not allowed to delete. Please check with your administrator.">
+                  Delete
+              </SmartLink>
+            </li>
           </ul>
         </div>
       </td>

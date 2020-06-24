@@ -8,6 +8,9 @@ const initialState = {
 const requestHealthmonitor = (state) => ({...state, isLoading: true, error: null})
 
 const receiveHealthmonitor = (state, {healthmonitor}) => {
+  if(!healthmonitor || !healthmonitor.id){
+    return state
+  }
   return {... state, item: healthmonitor, isLoading: false, error: null}
 }
 
@@ -17,10 +20,18 @@ const requestHealthmonitorFailure = (state, {error}) => {
 }
 
 const removeHealthmonitor = (state) => {
-  return {...state, item: null}
+  return {...state, item: null, isLoading: false}
 }
 
-const resetHealthmonitors = (state) => {
+const requestHealthmonitorDelete = (state) => {
+  let newItem = state.item
+  if(newItem) {
+    newItem.provisioning_status = 'PENDING_DELETE'
+  }
+  return {...state, item: newItem}
+}
+
+const resetHealthmonitor = (state) => {
   return {...state, 
     item: null,
     isLoading: false,
@@ -38,8 +49,10 @@ export default (state = initialState, action) => {
       return requestHealthmonitorFailure(state,action)
     case 'REMOVE_HEALTHMONITOR':
       return removeHealthmonitor(state,action)
-    case 'RESET_HEALTHMONITORS':
-      return resetHealthmonitors(state,action)
+    case 'REQUEST_REMOVE_HEALTHMONITOR':
+      return requestHealthmonitorDelete(state,action)
+    case 'RESET_HEALTHMONITOR':
+      return resetHealthmonitor(state,action)
     default:
       return state
   }

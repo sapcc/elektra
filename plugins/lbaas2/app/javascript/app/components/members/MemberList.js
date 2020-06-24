@@ -9,6 +9,9 @@ import MemberListItem from './MemberListItem';
 import ErrorPage from '../ErrorPage';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { SearchField } from 'lib/components/search_field';
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink"
 
 const MemberList = ({props,loadbalancerID}) => {
   const poolID = useGlobalState().pools.selected
@@ -28,6 +31,14 @@ const MemberList = ({props,loadbalancerID}) => {
       })
     }
   }
+
+  const canCreate = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:member_create", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const search = (term) => {
     setSearchTerm(term)
@@ -67,7 +78,7 @@ const MemberList = ({props,loadbalancerID}) => {
               </div>
             :
             <div className="members subtable multiple-subtable-right">
-              <div className="display-flex">
+              <div className="display-flex multiple-subtable-header">
                 <h4>Members</h4>
                 <HelpPopover text="Members are servers that serve traffic behind a load balancer. Each member is specified by the IP address and port that it uses to serve traffic." />
               </div>
@@ -80,12 +91,14 @@ const MemberList = ({props,loadbalancerID}) => {
                     placeholder='Name, ID, IP or port' text='Searches by Name, ID, IP address or protocol port.'/> 
                   
                   <div className="main-buttons">
-                    <DefeatableLink
+                    <SmartLink
                       disabled={isLoading}
                       to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/new?${searchParamsToString(props)}`}
-                      className='btn btn-primary btn-xs'>
+                      className='btn btn-primary btn-xs'
+                      isAllowed={canCreate}
+                      notAllowedText="Not allowed to create. Please check with your administrator.">
                       New Member
-                    </DefeatableLink>
+                    </SmartLink>
                   </div>
                 </div>
               </React.Fragment>

@@ -9,6 +9,9 @@ import ErrorPage from '../ErrorPage';
 import L7RuleListItem from './L7RuleListItem'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { SearchField } from 'lib/components/search_field';
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink"
 
 const L7RulesList = ({props, loadbalancerID}) => {
   const {searchParamsToString} = useCommons()
@@ -29,6 +32,14 @@ const L7RulesList = ({props, loadbalancerID}) => {
       })
     }
   }
+
+  const canCreate = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:l7rule_create", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const search = (term) => {
     setSearchTerm(term)
@@ -67,7 +78,7 @@ const L7RulesList = ({props, loadbalancerID}) => {
               </div>
               :
               <div className="l7rules subtable multiple-subtable-right">
-                <div className="display-flex multiple-subtable-padding-container">
+                <div className="display-flex multiple-subtable-header">
                   <h4>L7 Rules</h4>
                   <HelpPopover text="An L7 Rule is a single, simple logical test which returns either true or false. It consists of a rule type, a comparison type, a value, and an optional key that gets used depending on the rule type. An L7 rule must always be associated with an L7 policy." />
                 </div>
@@ -81,12 +92,14 @@ const L7RulesList = ({props, loadbalancerID}) => {
                         placeholder='ID, type or value' text='Searches by ID, type or value.'/> 
                       
                       <div className="main-buttons">
-                        <DefeatableLink
+                        <SmartLink
                           disabled={isLoading}
                           to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/new?${searchParamsToString(props)}`}
-                          className='btn btn-primary btn-xs'>
+                          className='btn btn-primary btn-xs'
+                          isAllowed={canCreate}
+                          notAllowedText="Not allowed to create. Please check with your administrator.">
                           New L7 Rule
-                        </DefeatableLink>
+                        </SmartLink>
                       </div>
                     </div>
                   </React.Fragment>
