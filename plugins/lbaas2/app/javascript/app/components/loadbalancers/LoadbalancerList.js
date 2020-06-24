@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { useDispatch, useGlobalState } from '../StateProvider'
 import { useEffect, useMemo } from 'react'
 import LoadbalancerItem from './LoadbalancerItem';
@@ -10,6 +9,9 @@ import { Link } from 'react-router-dom';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import { Tooltip, OverlayTrigger, ToggleButton, ToggleButtonGroup, ButtonToolbar } from 'react-bootstrap';
 import Pagination from '../shared/Pagination'
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink"
 
 const TableFadeTransition = ({
   children,
@@ -28,6 +30,14 @@ const LoadbalancerList = (props) => {
     console.log('FETCH initial loadbalancers')
     fetchLoadbalancers({marker: state.marker})
   }, []);
+
+  const canCreate = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:loadbalancer_create", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const handlePaginateClick = (e,page) => {
     e.preventDefault()
@@ -89,12 +99,15 @@ const LoadbalancerList = (props) => {
               }
               <div className="main-buttons">
                 {!selected &&
-                  <DefeatableLink
+                  <SmartLink
+                    className='btn btn-primary'
                     disabled={isLoading}
                     to='/loadbalancers/new'
-                    className='btn btn-primary'>
+                    className='btn btn-primary'
+                    isAllowed={canCreate}
+                    notAllowedText="Not allowed to create. Please check with your administrator.">
                     New Load Balancer
-                  </DefeatableLink> 
+                  </SmartLink> 
                 }
               </div>
             </div>

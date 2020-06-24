@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import StateLabel from '../StateLabel'
 import StaticTags from '../StaticTags';
@@ -8,6 +8,9 @@ import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 import useCommons from '../../../lib/hooks/useCommons'
 import useListener from '../../../lib/hooks/useListener'
+import SmartLink from "../shared/SmartLink"
+import { policy } from "policy";
+import { scope } from "ajax_helper";
 
 const L7PolicySelected = ({props, listenerID, l7Policy, onBackLink}) => {
   const {actionRedirect,deleteL7Policy,persistL7Policy} = useL7Policy()
@@ -48,6 +51,14 @@ const L7PolicySelected = ({props, listenerID, l7Policy, onBackLink}) => {
     clearInterval(polling)
     polling = null
   }
+
+  const canDelete = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:l7policy_delete", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const handleDelete = (e) => {
     if (e) {
@@ -91,7 +102,14 @@ const L7PolicySelected = ({props, listenerID, l7Policy, onBackLink}) => {
                   <span className="fa fa-cog"></span>
                 </button>
                 <ul className="dropdown-menu dropdown-menu-right" role="menu">
-                  <li><a href='#' onClick={handleDelete}>Delete</a></li>
+                  <li>
+                    <SmartLink 
+                      onClick={handleDelete} 
+                      isAllowed={canDelete} 
+                      notAllowedText="Not allowed to delete. Please check with your administrator.">
+                        Delete
+                    </SmartLink>
+                  </li>
                 </ul>
               </div>
             </div>

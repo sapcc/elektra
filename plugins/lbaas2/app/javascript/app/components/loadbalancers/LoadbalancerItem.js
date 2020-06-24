@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom';
 import CachedInforPopover from '../shared/CachedInforPopover';
 import CachedInfoPopoverListenerContent from './CachedInfoPopoverListenerContent';
@@ -5,11 +6,13 @@ import CachedInfoPopoverPoolContent from './CachedInfoPopoverPoolContent';
 import StaticTags from '../StaticTags';
 import StateLabel from '../StateLabel'
 import useStatusTree from '../../../lib/hooks/useStatusTree'
-import { useEffect } from 'react'
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+import SmartLink from "../shared/SmartLink"
+import { policy } from "policy";
+import { scope } from "ajax_helper";
 
 const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {  
   const {fetchLoadbalancer, deleteLoadbalancer} = useLoadbalancer()
@@ -49,6 +52,14 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
     clearInterval(polling)
     polling = null
   }
+
+  const canDelete = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:loadbalancer_delete", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const handleDelete = (e) => {
     if (e) {
@@ -152,8 +163,15 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            <li><a href='#' onClick={handleDelete}>Delete</a></li>
-          </ul>
+            <li>
+              <SmartLink 
+                onClick={handleDelete} 
+                isAllowed={canDelete} 
+                notAllowedText="Not allowed to delete. Please check with your administrator.">
+                  Delete
+              </SmartLink>
+            </li>
+          </ul> 
         </div>
       </td>
     </tr>
