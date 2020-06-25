@@ -8,7 +8,7 @@
 - state_icon = 'state-locked-icon' if instance.locked?
 - state_icon = "state-#{instance.status.downcase}-icon" if state_icon.nil? && instance.status
 - state_text = "Status: #{instance.task_state.nil? ? instance.status.humanize : instance.task_state.humanize}"
-- state_text += " (for more information see server details)" if instance.status == "ERROR"
+- state_text += " (for more information see server details)" if instance.status.humanize == "Error"
 
 - unless instance.errors.blank?
   - state_icon = "state-error-icon"

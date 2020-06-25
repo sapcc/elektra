@@ -1,3 +1,12 @@
+- unless current_user.is_allowed?('key_manager:secret_create')
+  .alert.alert-info
+    %p 
+      Create new secrets is not allowed, you need to be a member of that project and the 
+      %code keymanager_admin
+      role. Take a look to your  
+      = link_to "Profile", '#', data: { toggle: "modal", target: "#profile"}
+      to find out which roles you have
+
 %ul.nav.nav-tabs
   %li{class: ('active' if pane == 'secrets'), role: "presentation"}= link_to 'Secrets', plugin('key_manager').secrets_path, aria: {controls:"secrets-pane"}, role: "tab"
   %li{class: ('active' if pane == 'containers'), role: "presentation"}= link_to 'Containers', plugin('key_manager').containers_path, aria: {controls:"containers-pane"}, role: "tab"
