@@ -9,7 +9,7 @@
   %td
     = container.status
   %td
-    - if current_user.is_allowed?('key_manager:container_delete')
+    - if current_user.is_allowed?('context_is_keymanager_editor')
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
           %span.fa.fa-cog

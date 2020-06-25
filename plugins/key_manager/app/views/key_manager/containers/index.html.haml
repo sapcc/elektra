@@ -10,7 +10,7 @@
 
       .col-sm-9
         .toolbar
-          - if current_user.is_allowed?('key_manager:container_create')
+          - if current_user.is_allowed?('context_is_keymanager_editor')
             .main-buttons
               = link_to "New Container", plugin('key_manager').new_container_path, data: {modal: true}, class: 'btn btn-primary'
 
