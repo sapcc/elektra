@@ -7,6 +7,15 @@
       = link_to "Profile", '#', data: { toggle: "modal", target: "#profile"}
       to find out which roles you have.
 
+- unless current_user.is_allowed?('context_is_keymanager_viewer')
+  .alert.alert-info
+    %p 
+      To access the secrets, you need at least the 
+      %code keymanager_viewer
+      role. Take a look to your  
+      = link_to "Profile", '#', data: { toggle: "modal", target: "#profile"}
+      to find out which roles you have.
+
 %ul.nav.nav-tabs
   %li{class: ('active' if pane == 'secrets'), role: "presentation"}= link_to 'Secrets', plugin('key_manager').secrets_path, aria: {controls:"secrets-pane"}, role: "tab"
   %li{class: ('active' if pane == 'containers'), role: "presentation"}= link_to 'Containers', plugin('key_manager').containers_path, aria: {controls:"containers-pane"}, role: "tab"
