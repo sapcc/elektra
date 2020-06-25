@@ -16,6 +16,8 @@
   %div{class: modal? ? 'modal-body' : ''}
     .alert.alert-info
       %p 
-        Create snapshots not allowed. To create snapshots, you need 
+        Create snapshots not allowed. To create snapshots, you need the
         %code image_admin
-        role. 
+        role. Take a look to your  
+        = link_to "Profile", '#', data: { toggle: "modal", target: "#profile"}
+        to find out which roles you have.

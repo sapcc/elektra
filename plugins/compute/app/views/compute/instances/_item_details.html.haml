@@ -39,7 +39,7 @@
                   - unless @instance.fault.nil?
                     - state_text += ": "+@instance.fault["message"] 
                   - else
-                    - state_text += "Sorry but for some reason there was not error message found :-/"
+                    - state_text += "Sorry but for some reason there was no error message found :-/"
                   %td.text-danger
                     %strong= state_text
                 - else 
