@@ -4,7 +4,7 @@
   "keymanager_viewer": "role:keymanager_viewer",
   "keymanager_admin": "role:keymanager_admin",
   "context_is_keymanager_admin": "rule:context_is_cloud_keymanager_admin or rule:keymanager_admin",
-  "context_is_keymanager_editor": "(rule:context_is_keymanager_admin and rule:member) and not project_id:nil",
+  "context_is_keymanager_editor": "(rule:context_is_keymanager_admin or rule:member) and not project_id:nil",
   "context_is_keymanager_viewer":  "(rule:context_is_keymanager_editor or rule:keymanager_viewer) and not project_id:nil",
 
   "key_manager:secret_list": "rule:context_is_keymanager_viewer",
