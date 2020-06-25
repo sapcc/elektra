@@ -73,7 +73,7 @@ const MemberList = ({props,loadbalancerID}) => {
         {poolID && 
           <React.Fragment>
             {error ?
-              <div className="members subtalbe multiple-subtable-right">
+              <div className="members subtable multiple-subtable-right">
                 <ErrorPage headTitle="Members" error={error} onReload={initialLoad}/>
               </div>
             :

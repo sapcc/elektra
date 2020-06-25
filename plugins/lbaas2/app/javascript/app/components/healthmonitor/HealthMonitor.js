@@ -168,7 +168,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
         }
       </React.Fragment>
     );
-  } , [ JSON.stringify(healthmonitor), error, isLoading, props])
+  } , [ poolID, JSON.stringify(healthmonitor), error, isLoading, props])
 }
  
 export default HealthMonitor;

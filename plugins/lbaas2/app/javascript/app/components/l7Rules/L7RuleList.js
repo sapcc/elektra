@@ -73,7 +73,7 @@ const L7RulesList = ({props, loadbalancerID}) => {
         {l7PolicyID &&
           <React.Fragment>
             {error ?
-              <div className="l7rules subtalbe multiple-subtable-right">
+              <div className="l7rules subtable multiple-subtable-right">
                 <ErrorPage headTitle="L7 Rules" error={error} onReload={initialLoad}/>
               </div>
               :
