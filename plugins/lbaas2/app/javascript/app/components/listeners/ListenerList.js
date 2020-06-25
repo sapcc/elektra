@@ -33,6 +33,10 @@ const ListenerList = ({props, loadbalancerID}) => {
   const {searchParamsToString} = useCommons()
 
   useEffect(() => { 
+    initialLoad()
+  }, [loadbalancerID]);
+
+  const initialLoad = () => {
     console.log('LISTENER INITIAL FETCH')
     // no add marker so we get always the first ones on lading component
     persistListeners(loadbalancerID, true, null).then((data) => {
@@ -40,7 +44,7 @@ const ListenerList = ({props, loadbalancerID}) => {
     }).catch( error => {
       // TODO
     })
-  }, [loadbalancerID]);
+  }
 
   const canCreate = useMemo(
     () => 
@@ -124,7 +128,7 @@ const ListenerList = ({props, loadbalancerID}) => {
           <HelpPopover text="Object representing the listening endpoint of a load balanced service. TCP / UDP port, as well as protocol information and other protocol- specific details are attributes of the listener. Notably, though, the IP address is not." />
         </div>
         {error ?
-          <ErrorPage headTitle="Load Balancers Listeners" error={error}/>
+          <ErrorPage headTitle="Load Balancers Listeners" error={error} onReload={initialLoad}/>
           :
           <React.Fragment>
             <div className='toolbar'>
