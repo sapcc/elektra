@@ -22,12 +22,17 @@ const PoolList = ({props, loadbalancerID}) => {
   const state = useGlobalState().pools
 
   useEffect(() => {  
+    initLoad()
+  }, [loadbalancerID]);
+
+  const initLoad = () => {
+    console.log("FETCH POOLS")
     persistPools(loadbalancerID, true, null).then((data) => {
       selectPool(data)
     }).catch( error => {
       // TODO
     })
-  }, [loadbalancerID]);
+  }
 
   const canCreate = useMemo(
     () => 
@@ -112,7 +117,7 @@ const PoolList = ({props, loadbalancerID}) => {
         </div>
         
         {error ?
-          <ErrorPage headTitle="Load Balancers Pools" error={error}/>
+          <ErrorPage headTitle="Load Balancers Pools" error={error} onReload={initLoad}/>
           :
           <React.Fragment>
 

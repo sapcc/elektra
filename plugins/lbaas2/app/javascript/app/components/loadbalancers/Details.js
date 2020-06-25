@@ -37,6 +37,7 @@ const Details = (props) => {
    const connect = () => {
     let id = props.match && props.match.params && props.match.params.loadbalancerID
     setLoadbalancerId(id)
+    setError(null)
 
     if (id) {
       // filter the loadbalancer list to show just the one item
@@ -74,13 +75,12 @@ const Details = (props) => {
   }
 
   let loadbalancer = state.items.find(item => item.id == loadbalancerId) 
-
   return useMemo(() => {
     console.log("RENDER Details list")
     return ( 
       <React.Fragment>      
         {error ?
-          <ErrorPage headTitle="Load Balancers Details" error={error}/>
+          <ErrorPage headTitle="Load Balancers Details" error={error} onReload={connect}/>
           :
           <React.Fragment>
   

@@ -17,7 +17,7 @@ const ErrorPage = ({error, headTitle, onReload}) => {
   }
 
   const description = () => {
-    const generalError = <React.Fragment>
+    const serverError = <React.Fragment>
       <p>There was an error. Don't worry, it's not you - it's us. Sorry about that.</p>
       <p>
         Please try later again
@@ -34,13 +34,14 @@ const ErrorPage = ({error, headTitle, onReload}) => {
       }
     </React.Fragment>
 
-    switch (httpStatus()) {
-      case 500:
-        return generalError
-      case 404:
-        return <p>That’s an error. The requested entity was not found</p>
-      default:
-        return generalError
+    if (httpStatus() >= 500) {
+      return serverError
+    } else if(httpStatus() >= 400 && httpStatus() < 500) {
+      return ""
+    } else if(httpStatus() == 404) {
+      return <p>That’s an error. The requested entity was not found</p>
+    }else {
+      return serverError
     }
   }
 

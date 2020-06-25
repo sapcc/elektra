@@ -27,9 +27,13 @@ const LoadbalancerList = (props) => {
   const {fetchLoadbalancers} = useLoadbalancer()
 
   useEffect(() => {
+    initLoad()
+  }, []);
+
+  const initLoad = () => {
     console.log('FETCH initial loadbalancers')
     fetchLoadbalancers({marker: state.marker})
-  }, []);
+  }
 
   const canCreate = useMemo(
     () => 
@@ -82,7 +86,7 @@ const LoadbalancerList = (props) => {
     return (
       <React.Fragment>
         {error ?
-          <ErrorPage headTitle="Load Balancers" error={error}/>
+          <ErrorPage headTitle="Load Balancers" error={error} onReload={initLoad}/>
           :
           <React.Fragment>
             <div className='toolbar searchToolbar'>
