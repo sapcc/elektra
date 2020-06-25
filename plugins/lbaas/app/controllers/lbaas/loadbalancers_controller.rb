@@ -171,22 +171,27 @@ module Lbaas
       @floating_ip.id = params[:floating_ip][:ip_id]
       @floating_ip.port_id = vip_port_id
 
-      if @floating_ip.save
-        audit_logger.info(
-          current_user, 'has attached', @floating_ip,
-          'to loadbalancer', params[:id]
-        )
+      puts "=============================================================="
+      puts params[:floating_ip]
+      puts params[:floating_ip][:ip_id]
+      puts "=============================================================="
 
-        respond_to do |format|
-          format.html { redirect_to loadbalancers_url }
-          format.js {
-            @loadbalancer.floating_ip = @floating_ip
-          }
-        end
-      else
-        collect_available_ips
-        render action: :new_floatingip
-      end
+      # if @floating_ip.save
+      #   audit_logger.info(
+      #     current_user, 'has attached', @floating_ip,
+      #     'to loadbalancer', params[:id]
+      #   )
+
+      #   respond_to do |format|
+      #     format.html { redirect_to loadbalancers_url }
+      #     format.js {
+      #       @loadbalancer.floating_ip = @floating_ip
+      #     }
+      #   end
+      # else
+      #   collect_available_ips
+      #   render action: :new_floatingip
+      # end
     end
 
     def detach_floatingip
@@ -261,9 +266,9 @@ module Lbaas
               subnets[subid] = services.networking.find_subnet(subid)
             end
             sub = subnets[subid]
-            cidr = NetAddr::CIDR.create(sub.cidr)
-
-            next unless cidr.contains?(fip.floating_ip_address)
+            cidr = NetAddr.parse_net(sub.cidr)
+            next unless cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
+            
             @grouped_fips[sub.name] ||= []
             @grouped_fips[sub.name] << [fip.floating_ip_address, fip.id]
             break

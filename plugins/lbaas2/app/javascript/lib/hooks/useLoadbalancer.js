@@ -43,7 +43,7 @@ const useLoadbalancer = () => {
   const createLoadbalancer = (values) => {
     return new Promise((handleSuccess,handleErrors) => {
       ajaxHelper.post('/loadbalancers/', { loadbalancer: values }).then((response) => {
-        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})        
+        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})
         handleSuccess(response)
       }).catch(error => {
         handleErrors(error)
@@ -80,12 +80,35 @@ const useLoadbalancer = () => {
     })
   }
 
+  const fetchFloatingIPs = () => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.get(`/loadbalancers/fips`).then((response) => {
+        handleSuccess(response.data.fips)
+      }).catch(error => {
+        handleErrors(error.response)
+      })
+    })
+  }
+
+  const attachFIP = (lbID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.post(`/loadbalancers/${lbID}/attach_fip`, values).then((response) => {
+        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
   return {
     fetchLoadbalancers,
     fetchLoadbalancer,
     deleteLoadbalancer,
     createLoadbalancer,
-    fetchSubnets
+    fetchSubnets,
+    fetchFloatingIPs,
+    attachFIP
   }
 
 }

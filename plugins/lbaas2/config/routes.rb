@@ -5,6 +5,8 @@ Lbaas2::Engine.routes.draw do
       get ':id/status-tree' => 'loadbalancers#status_tree', as: 'status-tree'
       get 'private-networks' => 'loadbalancers#private_networks'
       get 'private-networks/:id/subnets' => 'loadbalancers#subnets'
+      get 'fips' => 'loadbalancers#fips'
+      post ':id/attach_fip' => 'loadbalancers#attach_fip'
     end
 
     resources :listeners, module: :loadbalancers, only: [:index, :show, :create, :destroy] do

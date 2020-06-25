@@ -61,6 +61,14 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
     [scope.domain]
   );
 
+  const canAttachFIP = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:loadbalancer_attach_fip", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
+
   const handleDelete = (e) => {
     if (e) {
       e.stopPropagation()
@@ -169,6 +177,14 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
                 isAllowed={canDelete} 
                 notAllowedText="Not allowed to delete. Please check with your administrator.">
                   Delete
+              </SmartLink>
+            </li>
+            <li>
+            <SmartLink 
+                to={`/loadbalancers/${loadbalancer.id}/attach_fip`}
+                isAllowed={canAttachFIP} 
+                notAllowedText="Not allowed to attach Floating IP. Please check with your administrator.">
+                  Attach Floating IP
               </SmartLink>
             </li>
           </ul> 
