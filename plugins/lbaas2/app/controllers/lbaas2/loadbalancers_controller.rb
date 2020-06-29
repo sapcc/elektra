@@ -113,6 +113,95 @@ module Lbaas2
       render json: { errors: e.message }, status: "500"
     end
 
+    def attach_fip
+      # get loadbalancer
+      loadbalancer = services.lbaas2.find_loadbalancer(params[:id])
+      vip_port_id = loadbalancer.vip_port_id
+
+      # update floating ip with the new assigned interface ip
+      floating_ip = services.networking.new_floating_ip()
+      floating_ip.id = params[:floating_ip]
+      floating_ip.port_id = vip_port_id
+
+      if floating_ip.save
+        audit_logger.info(
+          current_user, 'has attached', floating_ip,
+          'to loadbalancer', params[:id]
+        )
+
+        loadbalancer.floating_ip = floating_ip
+        # extend lb data with chached data
+        extend_lb_data([loadbalancer])
+        render json: { loadbalancer: loadbalancer}
+      else
+        render json: {errors: floating_ip.errors}, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
+    def detach_fip
+      # get loadbalancer
+      loadbalancer = services.lbaas2.find_loadbalancer(params[:id])
+      floating_ip = services.networking.detach_floatingip(params[:floating_ip])
+
+      audit_logger.info(
+        current_user, 'has detached', floating_ip,
+        'from loadbalancer', params[:id]
+      )
+      # extend lb data with chached data
+      extend_lb_data([loadbalancer])
+      render json: { loadbalancer: loadbalancer}
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
+    def fips
+      grouped_fips = {}
+      networks = {}
+      subnets = {}
+      services.networking.project_floating_ips(@scoped_project_id).each do |fip|
+        next unless fip.fixed_ip_address.nil?
+
+        unless networks[fip.floating_network_id]
+          networks[fip.floating_network_id] = services.networking.find_network(fip.floating_network_id)
+        end
+        next if networks[fip.floating_network_id].nil?
+
+        net = networks[fip.floating_network_id]
+        if !net.subnets.blank?
+          net.subnets.each do |subid|
+            unless subnets[subid]
+              subnets[subid] = services.networking.find_subnet(subid)
+            end
+            sub = subnets[subid]
+            cidr = NetAddr.parse_net(sub.cidr)
+            next unless cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
+            
+            grouped_fips[sub.name] ||= []
+            grouped_fips[sub.name] << {label: fip.floating_ip_address, value: fip.id}
+            break
+          end
+        else
+          grouped_fips[net.name] ||= []
+          grouped_fips[net.name] << {label: fip.floating_ip_address, value: fip.id}
+        end
+      end
+
+      # transform to grouped select options
+      selectGroupedIPs = grouped_fips.sort.map {|k,v| {label: k, options: v}}
+
+      render json: { fips: selectGroupedIPs }      
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
     protected
 
     def extend_lb_data(lbs)
@@ -147,5 +236,6 @@ module Lbaas2
 
       end
     end
+
   end
 end

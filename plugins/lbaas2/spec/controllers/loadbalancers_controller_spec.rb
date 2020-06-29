@@ -98,6 +98,43 @@ describe Lbaas2::LoadbalancersController, type: :controller do
 
   end
 
+  describe "PUT 'attach_fip'" do
+    before :each do
+      lb = double("lb", to_json: {}, vip_port_id: "12345", :floating_ip= => true)
+      lbs = double('elektron', service: double("octavia", get: double("get", map_to: lb) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(lbs)
+      allow_any_instance_of(Lbaas2::LoadbalancersController).to receive(:extend_lb_data).and_return(double('lbaas').as_null_object)
+      allow_any_instance_of(ServiceLayer::NetworkingService).to receive(:new_floating_ip).and_return(double("floating_ip").as_null_object)
+    end
+
+    it_behaves_like 'PUT action' do
+      subject do
+        @action = "attach_fip"
+        @default_params = default_params
+        @extra_params = {id: "123456789", floating_ip: "qwertyuiop"}
+      end
+    end
+
+  end
+
+  describe "PUT 'detach_fip'" do
+    before :each do
+      lbs = double('elektron', service: double("octavia", get: double("get", map_to: double("lb", to_json: {})) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(lbs)
+      allow_any_instance_of(Lbaas2::LoadbalancersController).to receive(:extend_lb_data).and_return(double('lbaas').as_null_object)
+      allow_any_instance_of(ServiceLayer::NetworkingService).to receive(:detach_floatingip).and_return(double("floating_ip").as_null_object)
+    end
+
+    it_behaves_like 'PUT action' do
+      subject do
+        @action = "detach_fip"
+        @default_params = default_params
+        @extra_params = {id: "123456789", floating_ip: "qwertyuiop"}
+      end
+    end
+
+  end
+
   describe "GET 'private_networks'" do
     before :each do
       allow_any_instance_of(ServiceLayer::NetworkingService).to receive(:project_networks).and_return([])

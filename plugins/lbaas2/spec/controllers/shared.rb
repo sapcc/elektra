@@ -356,6 +356,7 @@ end
 RSpec.shared_examples 'PUT action' do
   before(:each) do
     subject
+    @put_action = @action || "update"
   end
 
   context 'network_admin' do
@@ -367,7 +368,7 @@ RSpec.shared_examples 'PUT action' do
       end
     end
     it 'returns http success' do
-      put :update, params: @default_params.merge(@extra_params)
+      put @put_action.to_s, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
     end
   end
@@ -380,7 +381,7 @@ RSpec.shared_examples 'PUT action' do
       end
     end
     it 'returns http success' do
-      put :update, params: @default_params.merge(@extra_params)
+      put @put_action.to_s, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
     end
   end
@@ -393,7 +394,7 @@ RSpec.shared_examples 'PUT action' do
       end
     end
     it 'returns http success' do
-      put :update, params: @default_params.merge(@extra_params)
+      put @put_action.to_s, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
     end
   end
@@ -406,7 +407,7 @@ RSpec.shared_examples 'PUT action' do
       end
     end
     it 'returns http success' do
-      put :update, params: @default_params.merge(@extra_params)
+      put @put_action.to_s, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
     end
   end
@@ -419,7 +420,7 @@ RSpec.shared_examples 'PUT action' do
       end
     end
     it 'returns 401 error' do
-      put :update, params: @default_params.merge(@extra_params)
+      put @put_action.to_s, params: @default_params.merge(@extra_params)
       expect(response.code).to be == ("401")
       expect(response).to_not be_successful
     end
@@ -433,7 +434,7 @@ RSpec.shared_examples 'PUT action' do
       end
     end
     it 'returns 401 error' do
-      put :update, params: @default_params.merge(@extra_params)
+      put @put_action.to_s, params: @default_params.merge(@extra_params)
       expect(response.code).to be == ("401")
       expect(response).to_not be_successful
     end
@@ -447,7 +448,7 @@ RSpec.shared_examples 'PUT action' do
       end
     end
     it 'returns 401 error' do
-      put :update, params: @default_params.merge(@extra_params)
+      put @put_action.to_s, params: @default_params.merge(@extra_params)
       expect(response.code).to be == ("401")
       expect(response).to_not be_successful
     end
@@ -462,7 +463,7 @@ RSpec.shared_examples 'PUT action' do
     end
 
     it 'return 401 error' do
-      put :update, params: @default_params.merge(@extra_params)
+      put @put_action.to_s, params: @default_params.merge(@extra_params)
       expect(response.code).to be == ("401")
       expect(response).to_not be_successful
     end

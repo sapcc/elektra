@@ -12,6 +12,7 @@ import NewPool from './pools/NewPool'
 import NewMember from './members/NewMember'
 import NewHealthMonitor from './healthmonitor/NewHealthMonitor'
 import EditHealthMonitor from './healthmonitor/EditHealthMonitor'
+import AttachFIP from './loadbalancers/AttachFIP'
 
 const Router = (props) => {
 
@@ -28,6 +29,7 @@ const Router = (props) => {
             React.createElement(Tabs, Object.assign({}, {match, location, history, tabsConfig}, props))
           }/>
           <Route exact path="/loadbalancers/new" component={NewLoadbalancer}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/attach_fip" component={AttachFIP}/>
           <Route 
             path={["/loadbalancers/:loadbalancerID/show", "/loadbalancers/:loadbalancerID/l7policies", "/loadbalancers/:loadbalancerID/listeners", "/loadbalancers/:loadbalancerID/pools"]}
             component={Details}

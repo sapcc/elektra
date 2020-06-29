@@ -13,9 +13,11 @@ import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 import SmartLink from "../shared/SmartLink"
 import { policy } from "policy";
 import { scope } from "ajax_helper";
+import useCommons from '../../../lib/hooks/useCommons'
 
-const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {  
-  const {fetchLoadbalancer, deleteLoadbalancer} = useLoadbalancer()
+const LoadbalancerItem = ({loadbalancer, searchTerm, disabled}) => {  
+  const {fetchLoadbalancer, deleteLoadbalancer, detachFIP} = useLoadbalancer()
+  const {errorMessage} = useCommons()
   let polling = null
   // useStatusTree({lbId: loadbalancer.id})
 
@@ -61,16 +63,51 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
     [scope.domain]
   );
 
+  const canAttachFIP = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:loadbalancer_attach_fip", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
+
+  const canDetachFIP = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:loadbalancer_detach_fip", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
+  
   const handleDelete = (e) => {
     if (e) {
       e.stopPropagation()
       e.preventDefault()
     }
-    return deleteLoadbalancer(loadbalancer.name, loadbalancer.id).then((response) => {
-      addNotice(<React.Fragment>Listener <b>{listenerName}</b> ({listenerID}) is being deleted.</React.Fragment>)
+    const ladbalancerID = loadbalancer.id
+    const loadbalancerName = loadbalancer.name
+    return deleteLoadbalancer(loadbalancerName, ladbalancerID).then((response) => {
+      addNotice(<React.Fragment>Load Balancer <b>{loadbalancerName}</b> ({ladbalancerID}) is being deleted.</React.Fragment>)
     }).catch(error => {
       addError(React.createElement(ErrorsList, {
         errors: errorMessage(error.response)
+      }))
+    })
+  }
+
+  const handleDetachFIP = (e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+
+    const ladbalancerID = loadbalancer.id
+    const floatingIP = loadbalancer.floating_ip.id
+    return detachFIP(ladbalancerID, {floating_ip: floatingIP}).then((response) => {
+      addNotice(<React.Fragment>Floating IP <b>{floatingIP}</b> is being detached.</React.Fragment>)
+    }).catch(error => {
+      addError(React.createElement(ErrorsList, {
+        errors: errorMessage(error)
       }))
     })
   }
@@ -171,17 +208,30 @@ const LoadbalancerItem = React.memo(({loadbalancer, searchTerm, disabled}) => {
                   Delete
               </SmartLink>
             </li>
+            <li className="divider"></li>
+            <li>
+              {loadbalancer.floating_ip ?
+                <SmartLink 
+                  onClick={handleDetachFIP}
+                  isAllowed={canDetachFIP} 
+                  notAllowedText="Not allowed to detach Floating IP. Please check with your administrator.">
+                    Detach Floating IP
+                </SmartLink>              
+              :
+                <SmartLink 
+                  to={`/loadbalancers/${loadbalancer.id}/attach_fip`}
+                  isAllowed={canAttachFIP} 
+                  notAllowedText="Not allowed to attach Floating IP. Please check with your administrator.">
+                    Attach Floating IP
+                </SmartLink>
+              }
+            </li>
           </ul> 
         </div>
       </td>
     </tr>
   )
-},(oldProps,newProps) => {
-  const identical = JSON.stringify(oldProps.loadbalancer) === JSON.stringify(newProps.loadbalancer) && 
-                    oldProps.searchTerm === newProps.searchTerm && 
-                    oldProps.disabled === newProps.disabled
-  return identical                  
-})
+}
 
 LoadbalancerItem.displayName = 'LoadbalancerItem';
 
