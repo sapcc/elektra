@@ -104,7 +104,7 @@ const LoadbalancerItem = ({loadbalancer, searchTerm, disabled}) => {
     const ladbalancerID = loadbalancer.id
     const floatingIP = loadbalancer.floating_ip.id
     return detachFIP(ladbalancerID, {floating_ip: floatingIP}).then((response) => {
-      addNotice(<React.Fragment>Floating IP <b>{floatingIP}</b> is being detached.</React.Fragment>)
+      addNotice(<React.Fragment>Floating IP <b>{loadbalancer.floating_ip.floating_ip_address}</b> ({floatingIP}) is being detached.</React.Fragment>)
     }).catch(error => {
       addError(React.createElement(ErrorsList, {
         errors: errorMessage(error)

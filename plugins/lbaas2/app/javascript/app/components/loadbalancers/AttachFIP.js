@@ -63,7 +63,7 @@ const AttachFIP = (props) => {
     setInitialValues(values)
     
     return attachFIP(loadbalancerID, values).then((response) => {
-      addNotice(<React.Fragment>Floating IP <b>{response.data.floating_ip}</b> is being attached.</React.Fragment>)
+      addNotice(<React.Fragment>Floating IP <b>{response.data.loadbalancer.floating_ip.floating_ip_address}</b> ({response.data.loadbalancer.floating_ip.id}) is being attached.</React.Fragment>)
       close()
     }).catch(error => {
       setFormErrors(errorMessage(error))
