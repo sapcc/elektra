@@ -6,7 +6,8 @@ Lbaas2::Engine.routes.draw do
       get 'private-networks' => 'loadbalancers#private_networks'
       get 'private-networks/:id/subnets' => 'loadbalancers#subnets'
       get 'fips' => 'loadbalancers#fips'
-      post ':id/attach_fip' => 'loadbalancers#attach_fip'
+      put ':id/attach_fip' => 'loadbalancers#attach_fip'
+      put ':id/detach_fip' => 'loadbalancers#detach_fip'
     end
 
     resources :listeners, module: :loadbalancers, only: [:index, :show, :create, :destroy] do

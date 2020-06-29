@@ -92,11 +92,24 @@ const useLoadbalancer = () => {
 
   const attachFIP = (lbID, values) => {
     return new Promise((handleSuccess,handleErrors) => {
-      ajaxHelper.post(`/loadbalancers/${lbID}/attach_fip`, values).then((response) => {
+      dispatch({type: 'REQUEST_FLOATINGIP_LOADBALANCER', id: lbID})
+      ajaxHelper.put(`/loadbalancers/${lbID}/attach_fip`, values).then((response) => {
         dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})
         handleSuccess(response)
       }).catch(error => {
-        handleErrors(error)
+        handleErrors(error.response)
+      })
+    })
+  }
+
+  const detachFIP = (lbID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      dispatch({type: 'REQUEST_FLOATINGIP_LOADBALANCER', id: lbID})
+      ajaxHelper.put(`/loadbalancers/${lbID}/detach_fip`, values).then((response) => {
+        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data})
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error.response)
       })
     })
   }
@@ -108,7 +121,8 @@ const useLoadbalancer = () => {
     createLoadbalancer,
     fetchSubnets,
     fetchFloatingIPs,
-    attachFIP
+    attachFIP,
+    detachFIP
   }
 
 }

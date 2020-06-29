@@ -4,10 +4,11 @@ import { Form } from 'lib/elektra-form';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import SelectInput from '../shared/SelectInput'
 import useCommons from '../../../lib/hooks/useCommons'
+import { addNotice } from 'lib/flashes';
 
 const AttachFIP = (props) => {
   const {fetchFloatingIPs,attachFIP} = useLoadbalancer()
-  const {matchParams} = useCommons()
+  const {matchParams,errorMessage} = useCommons()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
 
   const [floatingIPs, setFloatingIPs] = useState({
@@ -23,11 +24,6 @@ const AttachFIP = (props) => {
     console.log('fetching floating IPs')
     setFloatingIPs({...floatingIPs, isLoading:true})    
     fetchFloatingIPs().then((data) => {
-
-      console.group("FIPS")
-      console.log(data)
-      console.groupEnd()
-
       setFloatingIPs({...floatingIPs, isLoading:false, items: data, error: null})
     })
     .catch( (error) => {      
@@ -66,12 +62,12 @@ const AttachFIP = (props) => {
     // save the entered values in case of error
     setInitialValues(values)
     
-    // return createLoadbalancer(values).then((response) => {
-    //   addNotice(<React.Fragment>Loadbalancer <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
-    //   close()
-    // }).catch(error => {
-    //   setFormErrors(errorMessage(error))
-    // })
+    return attachFIP(loadbalancerID, values).then((response) => {
+      addNotice(<React.Fragment>Floating IP <b>{response.data.floating_ip}</b> is being attached.</React.Fragment>)
+      close()
+    }).catch(error => {
+      setFormErrors(errorMessage(error))
+    })
   }
 
   const onSelectfloatingIPChange = (values) => {}

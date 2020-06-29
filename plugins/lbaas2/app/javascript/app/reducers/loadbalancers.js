@@ -81,6 +81,14 @@ const requestLoadbalancerDelete = (state, {id})=> {
   return {...state, items: newItems}
 }
 
+const requestLoadbalancerFloatingIP = (state, {id})=> {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].provisioning_status = 'PENDING_UPDATE'
+  return {...state, items: newItems}
+}
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case 'REQUEST_LOADBALANCERS':
@@ -99,6 +107,8 @@ export default (state = initialState, action) => {
       return removeLoadbalancer(state,action)
     case 'REQUEST_REMOVE_LOADBALANCER':
       return requestLoadbalancerDelete(state,action)
+    case 'REQUEST_FLOATINGIP_LOADBALANCER':
+      return requestLoadbalancerFloatingIP(state,action)
     default:
       return state
   }

@@ -115,31 +115,45 @@ module Lbaas2
 
     def attach_fip
       # get loadbalancer
-      loadbalancer = services.lbaas.find_loadbalancer(params[:id])
+      loadbalancer = services.lbaas2.find_loadbalancer(params[:id])
       vip_port_id = loadbalancer.vip_port_id
-
-      puts "===================================="
-      puts params
-      puts "===================================="
 
       # update floating ip with the new assigned interface ip
       floating_ip = services.networking.new_floating_ip()
       floating_ip.id = params[:floating_ip]
       floating_ip.port_id = vip_port_id
 
-      # if floating_ip.save
-      #   audit_logger.info(
-      #     current_user, 'has attached', floating_ip,
-      #     'to loadbalancer', params[:id]
-      #   )
+      if floating_ip.save
+        audit_logger.info(
+          current_user, 'has attached', floating_ip,
+          'to loadbalancer', params[:id]
+        )
 
-      #   loadbalancer.floating_ip = floating_ip
-      #   # extend lb data with chached data
-      #   extend_lb_data([loadbalancer])
-      #   render json: { loadbalancer: loadbalancer}
-      # else
-      #   render json: {errors: floating_ip.errors}, status: 422
-      # end
+        loadbalancer.floating_ip = floating_ip
+        # extend lb data with chached data
+        extend_lb_data([loadbalancer])
+        render json: { loadbalancer: loadbalancer}
+      else
+        render json: {errors: floating_ip.errors}, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
+    def detach_fip
+      # get loadbalancer
+      loadbalancer = services.lbaas2.find_loadbalancer(params[:id])
+      floating_ip = services.networking.detach_floatingip(params[:floating_ip])
+
+      audit_logger.info(
+        current_user, 'has detached', floating_ip,
+        'from loadbalancer', params[:id]
+      )
+      # extend lb data with chached data
+      extend_lb_data([loadbalancer])
+      render json: { loadbalancer: loadbalancer}
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
