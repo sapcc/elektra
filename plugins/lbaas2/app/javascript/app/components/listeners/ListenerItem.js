@@ -96,7 +96,7 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
   const displayName = () => {
     const name = listener.name || listener.id 
     if (disabled) {
-        return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
+        return <div className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldCopy={false} bsClass="cp copy-paste-ids"/></div>
     } else {
       return <Link to="#" onClick={onListenerClick}>
               <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} searchTerm={searchTerm}/>

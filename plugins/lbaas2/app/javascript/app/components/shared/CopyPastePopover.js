@@ -129,7 +129,7 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
   return ( 
     <React.Fragment>
       { text && text.length>size ?
-        <span className={baseClass}>
+        <span className={baseClass} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
           {shouldPopoverText ?
             <React.Fragment>
               <span>
@@ -139,7 +139,15 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
               <span className="cp-substring"><MyHighlighter search={searchTerm}>{textSliced()[1]}</MyHighlighter></span>
             </React.Fragment>
           :
-          <span className="cp-string"><MyHighlighter search={searchTerm}>{textSliced()[0]}</MyHighlighter>...<MyHighlighter search={searchTerm}>{textSliced()[1]}</MyHighlighter></span>
+            <span className="cp-string">
+              <MyHighlighter search={searchTerm}>{textSliced()[0]}</MyHighlighter>...<MyHighlighter search={searchTerm}>{textSliced()[1]}</MyHighlighter>
+            </span>
+          }
+          {shouldCopyText &&
+            <span className={showIcon ? "copy-paste-icon" : "copy-paste-icon transparent"}>
+              {clipboard}
+              {tooltip}
+            </span>
           }
         </span>
       :
