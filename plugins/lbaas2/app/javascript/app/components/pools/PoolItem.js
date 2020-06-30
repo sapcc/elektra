@@ -96,7 +96,7 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
   const displayName = () => {
     const name = pool.name || pool.id
     if (disabled) {
-      return <span className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldCopy={false} bsClass="cp copy-paste-ids"/></span>
+      return <div className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldCopy={false} bsClass="cp copy-paste-ids"/></div>
     } else {
       return <Link to="#" onClick={onPoolClick}>
               <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} searchTerm={searchTerm}/>
