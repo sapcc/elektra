@@ -7,14 +7,17 @@ module Lbaas2
           authorization_required
 
           def index
-            per_page = (params[:per_page] || 9999).to_i
-            pagination_options = { sort_key: 'type', sort_dir: 'asc', limit: per_page + 1 }
+            limit = (params[:limit] || 9999).to_i
+            sort_key = (params[:sort_key] || 'type')
+            sort_dir = (params[:sort_dir] || 'asc')
+            pagination_options = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
             pagination_options[:marker] = params[:marker] if params[:marker]
 
             l7rules = services.lbaas2.l7rules(params[:l7policy_id], pagination_options) 
             render json: {
               l7rules: l7rules,
-              has_next: l7rules.length > per_page
+              has_next: l7rules.length > limit,
+              limit: limit, sort_key: sort_key, sort_dir: sort_dir
             }
           rescue Elektron::Errors::ApiResponse => e
             render json: { errors: e.message }, status: e.code

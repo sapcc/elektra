@@ -24,7 +24,7 @@ const TableFadeTransition = ({
 const LoadbalancerList = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
-  const {fetchLoadbalancers} = useLoadbalancer()
+  const {persistLoadbalancers} = useLoadbalancer()
 
   useEffect(() => {
     initLoad()
@@ -32,7 +32,8 @@ const LoadbalancerList = (props) => {
 
   const initLoad = () => {
     console.log('FETCH initial loadbalancers')
-    fetchLoadbalancers({marker: state.marker})
+    persistLoadbalancers({marker: state.marker}).catch( (error) => {
+    })
   }
 
   const canCreate = useMemo(
@@ -46,15 +47,18 @@ const LoadbalancerList = (props) => {
   const handlePaginateClick = (e,page) => {
     e.preventDefault()
     if (page === "all") {
-      fetchLoadbalancers({limit: 9999});
+      persistLoadbalancers({limit: 9999}).catch( (error) => {
+      })
     } else {
-      fetchLoadbalancers({marker: state.marker});
+      persistLoadbalancers({marker: state.marker}).catch( (error) => {
+      })
     }
   };
 
   const search = (term) => {
     if(hasNext && !isLoading) {
-      fetchLoadbalancers({limit: 9999});
+      persistLoadbalancers({limit: 9999}).catch( (error) => {
+      })
     }
     dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: term})
   }

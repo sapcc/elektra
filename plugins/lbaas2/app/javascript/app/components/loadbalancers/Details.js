@@ -12,7 +12,7 @@ import HealthMonitor from '../healthmonitor/HealthMonitor'
 const Details = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
-  const {fetchLoadbalancer} = useLoadbalancer()
+  const {persistLoadbalancer} = useLoadbalancer()
 
   const [error, setError] = useState(null)
   const [loadbalancerId, setLoadbalancerId] = useState(null)
@@ -50,8 +50,8 @@ const Details = (props) => {
         dispatch({type: 'SELECT_LOADBALANCER', selected: loadbalancer})
       } else {
         setLoading(true)
-        fetchLoadbalancer(id).then((response) => {
-          dispatch({type: 'SELECT_LOADBALANCER', selected: response})
+        persistLoadbalancer(id).then((response) => {
+          dispatch({type: 'SELECT_LOADBALANCER', selected: response.loadbalancer})
           setLoading(false)
         }).catch((error) => {          
           setError(error)

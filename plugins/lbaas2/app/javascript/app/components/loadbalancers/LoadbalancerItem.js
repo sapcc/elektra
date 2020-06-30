@@ -5,7 +5,6 @@ import CachedInfoPopoverListenerContent from './CachedInfoPopoverListenerContent
 import CachedInfoPopoverPoolContent from './CachedInfoPopoverPoolContent';
 import StaticTags from '../StaticTags';
 import StateLabel from '../StateLabel'
-import useStatusTree from '../../../lib/hooks/useStatusTree'
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import { addNotice, addError } from 'lib/flashes';
@@ -16,16 +15,11 @@ import { scope } from "ajax_helper";
 import useCommons from '../../../lib/hooks/useCommons'
 
 const LoadbalancerItem = ({loadbalancer, searchTerm, disabled}) => {  
-  const {fetchLoadbalancer, deleteLoadbalancer, detachFIP} = useLoadbalancer()
+  const {persistLoadbalancer, deleteLoadbalancer, detachFIP} = useLoadbalancer()
   const {errorMessage} = useCommons()
   let polling = null
-  // useStatusTree({lbId: loadbalancer.id})
 
   useEffect(() => {
-    // console.group('provisioning_status')
-    // console.log(loadbalancer.provisioning_status)
-    // console.groupEnd()
-
     if(loadbalancer.provisioning_status.includes('PENDING')) {
       startPolling(5000)
     } else {
@@ -42,8 +36,7 @@ const LoadbalancerItem = ({loadbalancer, searchTerm, disabled}) => {
     if(polling) return;
     console.log("Polling loadbalancer -->", loadbalancer.id, " with interval -->", interval)
     polling = setInterval(() => {
-      fetchLoadbalancer(loadbalancer.id).catch( (error) => {
-        // console.log(JSON.stringify(error))
+      persistLoadbalancer(loadbalancer.id).catch( (error) => {
       })
     }, interval
     )
@@ -58,6 +51,14 @@ const LoadbalancerItem = ({loadbalancer, searchTerm, disabled}) => {
   const canDelete = useMemo(
     () => 
       policy.isAllowed("lbaas2:loadbalancer_delete", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
+
+  const canEdit = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:loadbalancer_update", {
         target: { scoped_domain_name: scope.domain }
       }),
     [scope.domain]
@@ -206,6 +207,14 @@ const LoadbalancerItem = ({loadbalancer, searchTerm, disabled}) => {
                 isAllowed={canDelete} 
                 notAllowedText="Not allowed to delete. Please check with your administrator.">
                   Delete
+              </SmartLink>
+            </li>
+            <li>
+              <SmartLink 
+                to={disabled ? `/loadbalancers/${loadbalancer.id}/show/edit` : `/loadbalancers/${loadbalancer.id}/edit`}
+                isAllowed={canEdit} 
+                notAllowedText="Not allowed to edit. Please check with your administrator.">
+                  Edit
               </SmartLink>
             </li>
             <li className="divider"></li>

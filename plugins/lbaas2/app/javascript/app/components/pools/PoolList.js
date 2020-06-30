@@ -62,9 +62,11 @@ const PoolList = ({props, loadbalancerID}) => {
   const handlePaginateClick = (e,page) => {
     e.preventDefault()
     if (page === "all") {
-      persistPools(loadbalancerID, false, {limit: 9999})
+      persistPools(loadbalancerID, false, {limit: 9999}).catch( (error) => {
+      })
     } else {
-      persistPools(loadbalancerID, false, {marker: state.marker})
+      persistPools(loadbalancerID, false, {marker: state.marker}).catch( (error) => {
+      })
     }
   };
 
@@ -78,7 +80,8 @@ const PoolList = ({props, loadbalancerID}) => {
 
   const search = (term) => {
     if(hasNext && !isLoading) {
-      persistPools(loadbalancerID, false, {limit: 9999})
+      persistPools(loadbalancerID, false, {limit: 9999}).catch( (error) => {
+      })
     }
     dispatch({type: 'SET_POOLS_SEARCH_TERM', searchTerm: term})
   }

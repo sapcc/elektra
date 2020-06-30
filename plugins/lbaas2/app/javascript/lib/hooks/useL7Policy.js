@@ -7,15 +7,14 @@ import useListener from './useListener'
 const useL7Policy = () => {
   const dispatch = useDispatch()
 
-  const fetchL7Policies = (lbID, listenerID, marker) => {
+  const fetchL7Policies = (lbID, listenerID, options) => {
     return new Promise((handleSuccess,handleError) => {  
       const params = {}
-      if(marker) params['marker'] = marker.id
-      ajaxHelper.get(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies`, {params: params }).then((response) => {
+      ajaxHelper.get(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies`, {params: options }).then((response) => {
         handleSuccess(response.data)
       })
       .catch( (error) => {
-        handleError(error)
+        handleError(error.response)
       })
     })
   }
@@ -30,16 +29,16 @@ const useL7Policy = () => {
     })
   }
 
-  const persistL7Policies = (lbID, listenerID, marker) => {
+  const persistL7Policies = (lbID, listenerID, options) => {
     dispatch({type: 'RESET_L7POLICIES'})
     dispatch({type: 'REQUEST_L7POLICIES'})
     return new Promise((handleSuccess,handleError) => {
-      fetchL7Policies(lbID, listenerID, marker).then((data) => {
+      fetchL7Policies(lbID, listenerID, options).then((data) => {
         dispatch({type: 'RECEIVE_L7POLICIES', items: data.l7policies, hasNext: data.has_next})
         handleSuccess(data)
       }).catch( error => {
         dispatch({type: 'REQUEST_L7POLICIES_FAILURE', error: error})
-        handleError(error.response)
+        handleError(error)
       })
     })
   }
@@ -53,7 +52,7 @@ const useL7Policy = () => {
         if(error && error.status == 404) {
           dispatch({type: 'REMOVE_L7POLICY', id: l7PolicyID})
         }   
-        handleError(error.response)
+        handleError(error)
       })
     })
   }

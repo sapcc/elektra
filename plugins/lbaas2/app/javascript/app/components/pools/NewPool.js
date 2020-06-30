@@ -15,7 +15,7 @@ const NewPool = (props) => {
   const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
   const {lbAlgorithmTypes, protocolTypes,poolPersistenceTypes, protocolListenerPoolCombinations, createPool} = usePool()
   const {fetchListnersNoDefaultPoolForSelect, fetchContainersForSelect} = useListener()
-  const {fetchLoadbalancer} = useLoadbalancer()
+  const {persistLoadbalancer} = useLoadbalancer()
   const [listeners, setListeners] = useState({
     isLoading: false,
     error: null,
@@ -94,8 +94,7 @@ const NewPool = (props) => {
     return createPool(lbID, values).then((response) => {
       addNotice(<React.Fragment>Pool <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
-      fetchLoadbalancer(lbID).then(() => {
-      }).catch(error => {
+      persistLoadbalancer(lbID).catch(error => {
       })
       close()
     }).catch(error => {

@@ -20,7 +20,7 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
   const {persistPool,deletePool,onSelectPool} = usePool()
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
-  const {fetchLoadbalancer} = useLoadbalancer()
+  const {persistLoadbalancer} = useLoadbalancer()
   let polling = null
 
   useEffect(() => {
@@ -74,8 +74,7 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
     return deletePool(loadbalancerID, poolID, poolName).then((response) => {
       addNotice(<React.Fragment>Pool <b>{poolName}</b> ({poolID}) is being deleted.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
-      fetchLoadbalancer(loadbalancerID).then(() => {
-      }).catch(error => {
+      persistLoadbalancer(loadbalancerID).catch(error => {
       })
       // TODO: back to the poles      
     }).catch(error => {

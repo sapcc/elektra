@@ -12,7 +12,7 @@ import { addNotice } from 'lib/flashes';
 const NewListener = (props) => {
   const {searchParamsToString, matchParams,fetchPoolsForSelect,formErrorMessage} = useCommons()
   const {protocolTypes, protocolHeaderInsertionRelation, clientAuthenticationRelation, fetchContainersForSelect, certificateContainerRelation, SNIContainerRelation, CATLSContainerRelation, httpHeaderInsertions, createListener} = useListener()
-  const {fetchLoadbalancer} = useLoadbalancer()
+  const {persistLoadbalancer} = useLoadbalancer()
   const [pools, setPools] = useState({
     isLoading: false,
     error: null,
@@ -91,8 +91,7 @@ const NewListener = (props) => {
     return createListener(lbID, values).then((response) => {
       addNotice(<React.Fragment>Listener <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
-      fetchLoadbalancer(lbID).then(() => {
-      }).catch(error => {
+      persistLoadbalancer(lbID).catch(error => {
       })
       // TODO: if the listener contains a pool then fetch the pool again so it gets updated
       close()

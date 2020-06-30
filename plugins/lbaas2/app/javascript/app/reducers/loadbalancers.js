@@ -38,8 +38,7 @@ const receiveLoadbalancers = (state,{loadbalancers, has_next, limit, sort_key, s
 }
 
 const requestLoadbalancersFailure = (state, {error}) => { 
-  const err = error.response || error
-  return {...state, isLoading: false, error: err}
+  return {...state, isLoading: false, error: error}
 }
 
 const receiveLoadbalancer = (state, {loadbalancer}) => {

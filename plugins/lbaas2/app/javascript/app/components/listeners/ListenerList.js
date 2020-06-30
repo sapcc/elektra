@@ -75,9 +75,11 @@ const ListenerList = ({props, loadbalancerID}) => {
   const handlePaginateClick = (e,page) => {
     e.preventDefault()
     if (page === "all") {
-      persistListeners(loadbalancerID, false, {limit: 9999})
+      persistListeners(loadbalancerID, false, {limit: 9999}).catch( (error) => {
+      })
     } else {
-      persistListeners(loadbalancerID, false, {marker: state.marker})
+      persistListeners(loadbalancerID, false, {marker: state.marker}).catch( (error) => {
+      })
     }
   };
 
@@ -91,7 +93,8 @@ const ListenerList = ({props, loadbalancerID}) => {
 
   const search = (term) => {
     if(hasNext && !isLoading) {
-      persistListeners(loadbalancerID, false, {limit: 9999})
+      persistListeners(loadbalancerID, false, {limit: 9999}).catch( (error) => {
+      })
     }
     dispatch({type: 'SET_LISTENERS_SEARCH_TERM', searchTerm: term})
   }

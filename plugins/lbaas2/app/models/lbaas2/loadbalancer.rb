@@ -7,13 +7,17 @@ module Lbaas2
     validates :vip_network_id, presence: true, unless: ->(lb){lb.vip_subnet_id.present?}
     validates :name, presence: true
 
-    # def delete?
-    #   listeners.blank? && pools.blank?
-    # end
-
     def save
       if valid?
         persist!
+      else
+        false
+      end
+    end
+
+    def update()
+      if valid?
+        update!()
       else
         false
       end
@@ -42,12 +46,27 @@ module Lbaas2
 
     private
 
+    def update!()
+      newLB= service.update_loadbalancer(id, attributes_for_update)
+      self.update_attributes(newLB)
+      true
+    rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
+
     def persist!()
       newLB = service.create_loadbalancer(attributes_for_create)
       # update self with the new loadbalancer
       self.update_attributes(newLB)
       true
     rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
+
+
+    def rescue_eletron_errors(e)
       apiErrorCount = 0
       apiKey = "api_error_" + apiErrorCount.to_s
       e.messages.each do |m| 
@@ -69,7 +88,7 @@ module Lbaas2
           apiErrorCount += 1
         end
       end
-      false
     end
+
   end
 end
