@@ -64,7 +64,6 @@ describe Lbaas2::Loadbalancers::Pools::HealthmonitorsController, type: :controll
         @extra_params = {id: healthmonitor[:id], healthmonitor: healthmonitor}
       end
     end
-
   end
 
   describe "DELETE 'destroy'" do
@@ -79,7 +78,6 @@ describe Lbaas2::Loadbalancers::Pools::HealthmonitorsController, type: :controll
         @extra_params = {id: 'healthmonitor_id'}
       end
     end
-
   end
 
 end

@@ -66,6 +66,21 @@ describe Lbaas2::LoadbalancersController, type: :controller do
 
   end
 
+  describe "PUT 'update'" do
+    before :each do
+      loadbalancer = double('elektron', service: double("octavia", get: double("get", map_to: double("loadbalancer", to_json:{}, type: "HTTP", update_attributes: {}, update:{})),  put: double("put", body: {}) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(loadbalancer)
+    end
+
+    it_behaves_like 'PUT action' do
+      subject do
+        @default_params = default_params
+        loadbalancer = ::Lbaas2::FakeFactory.new.update_loadbalancer
+        @extra_params = {id: loadbalancer[:id], loadbalancer: loadbalancer}
+      end
+    end
+  end
+
   describe "DELETE 'destroy'" do
     before :each do
       lbs = double('elektron', service: double("octavia", delete: double("delete") ))
