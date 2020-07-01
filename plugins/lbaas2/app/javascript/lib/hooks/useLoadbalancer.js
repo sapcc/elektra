@@ -155,6 +155,11 @@ const useLoadbalancer = () => {
     })
   }
 
+  const reset = () => {
+    dispatch({type: 'SET_LOADBALANCER_SEARCH_TERM', searchTerm: null})
+    dispatch({type: 'SET_LOADBALANCERS_SELECTED_ITEM', selected: null})
+  }
+
   return {
     fetchLoadbalancers,
     fetchLoadbalancer,
@@ -167,7 +172,8 @@ const useLoadbalancer = () => {
     fetchSubnets,
     fetchFloatingIPs,
     attachFIP,
-    detachFIP
+    detachFIP,
+    reset
   }
 
 }

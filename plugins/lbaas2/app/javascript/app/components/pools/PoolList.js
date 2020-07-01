@@ -30,7 +30,6 @@ const PoolList = ({props, loadbalancerID}) => {
     persistPools(loadbalancerID, true, null).then((data) => {
       selectPool(data)
     }).catch( error => {
-      // TODO
     })
   }
 
