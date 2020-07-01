@@ -5,38 +5,56 @@ import { confirm } from 'lib/dialogs';
 
 const useLoadbalancer = () => {
   const dispatch = useDispatch()
-
-  const errorMessage = (err) => {
-    return err.data &&  (err.data.errors || err.data.error) || err.message
-  }  
  
   const fetchLoadbalancers = (options) => {
-    dispatch({type: 'REQUEST_LOADBALANCERS', requestedAt: Date.now()})
-    ajaxHelper.get(`/loadbalancers`, {params: options }).then((response) => {
-      dispatch({type: 'RECEIVE_LOADBALANCERS',  
-        loadbalancers: response.data.loadbalancers, 
-        has_next: response.data.has_next,
-        limit: response.data.limit,
-        sort_key: response.data.sort_key,
-        sort_dir: response.data.sort_dir
+    return new Promise((handleSuccess,handleError) => {
+      ajaxHelper.get(`/loadbalancers`, {params: options }).then((response) => {
+        handleSuccess(response.data)
+      }).catch( (error) => {
+        handleError(error.response)
       })
-    })
-    .catch( (error) => {
-      dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error})
     })
   }
 
   const fetchLoadbalancer = (id) => {    
     return new Promise((handleSuccess,handleError) => {    
       ajaxHelper.get(`/loadbalancers/${id}`).then((response) => {      
-        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data.loadbalancer})
-        handleSuccess(response.data.loadbalancer)
+        handleSuccess(response.data)
       }).catch( (error) => {
-        if(error.response && error.response.status == 404) {
-          dispatch({type: 'REMOVE_LOADBALANCER', id: id})
-        }        
         handleError(error.response)
       })      
+    })
+  }
+
+  const persistLoadbalancers = (options) => {
+    dispatch({type: 'REQUEST_LOADBALANCERS', requestedAt: Date.now()})
+    return new Promise((handleSuccess,handleError) => {
+      fetchLoadbalancers(options).then((data) => {
+        dispatch({type: 'RECEIVE_LOADBALANCERS',  
+          loadbalancers: data.loadbalancers, 
+          has_next: data.has_next,
+          limit: data.limit,
+          sort_key: data.sort_key,
+          sort_dir: data.sort_dir})
+        handleSuccess(data)
+      }).catch( error => {
+        dispatch({type: 'REQUEST_LOADBALANCERS_FAILURE', error: error})
+        handleError(error)
+      })
+    })
+  }
+
+  const persistLoadbalancer = (id) => {
+    return new Promise((handleSuccess,handleError) => {
+      fetchLoadbalancer(id).then((data) => {
+        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: data.loadbalancer})
+        handleSuccess(data)
+      }).catch( error => {
+        if(error && error.status == 404) {
+          dispatch({type: 'REMOVE_LOADBALANCER', id: id})
+        }        
+        handleError(error)
+      })
     })
   }
 
@@ -50,6 +68,18 @@ const useLoadbalancer = () => {
       })
     })
   }
+
+  const updateLoadbalancer = (lbID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.put(`/loadbalancers/${lbID}`, { loadbalancer: values }).then((response) => {
+        dispatch({type: 'RECEIVE_LOADBALANCER', loadbalancer: response.data}) 
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
 
   const createNameTag = (name) => {
     return name ? <React.Fragment><b>name:</b> {name} <br/></React.Fragment> : ""
@@ -67,6 +97,17 @@ const useLoadbalancer = () => {
           handleErrors(error)
         });
       }).catch(cancel => true)
+    })
+  }
+
+  const fetchPrivateNetworks = () => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.get(`/loadbalancers/private-networks`).then((response) => {
+        handleSuccess(response.data)
+      })
+      .catch( (error) => {      
+        handleErrors(error.response)
+      })      
     })
   }
 
@@ -117,8 +158,12 @@ const useLoadbalancer = () => {
   return {
     fetchLoadbalancers,
     fetchLoadbalancer,
+    persistLoadbalancers,
+    persistLoadbalancer,
     deleteLoadbalancer,
     createLoadbalancer,
+    updateLoadbalancer,
+    fetchPrivateNetworks,
     fetchSubnets,
     fetchFloatingIPs,
     attachFIP,

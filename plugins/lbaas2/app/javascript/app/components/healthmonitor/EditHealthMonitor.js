@@ -11,7 +11,7 @@ import TagsInput from '../shared/TagsInput'
 import ErrorPage from '../ErrorPage';
 
 const EditHealthMonitor = (props) => {
-  const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
+  const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
   const {fetchHealthmonitor,updateHealthmonitor, healthMonitorTypes, httpMethodRelation, expectedCodesRelation, urlPathRelation, httpMethods} = useHealthmonitor()
   const {persistPool} = usePool()
   const [healthmonitor, setHealthmonitor] = useState({
@@ -81,10 +81,6 @@ const EditHealthMonitor = (props) => {
     const lbID = params.loadbalancerID
     const poolID = params.poolID
     const healthmonitorID = params.healthmonitorID
-
-    console.group("onSubmit")
-    console.log(values)
-    console.groupEnd()
 
     return updateHealthmonitor(lbID, poolID, healthmonitorID, values).then((response) => {
       addNotice(<React.Fragment>Health Monitor <b>{response.data.name}</b> ({response.data.id}) is being updated.</React.Fragment>)

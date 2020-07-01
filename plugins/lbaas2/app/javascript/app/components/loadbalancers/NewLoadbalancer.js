@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
-import { ajaxHelper } from 'ajax_helper';
 import { addNotice } from 'lib/flashes';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import SelectInput from '../shared/SelectInput'
 import TagsInput from '../shared/TagsInput'
+import useCommons from '../../../lib/hooks/useCommons'
 
 
 const NewLoadbalancer = (props) => {
-  const {createLoadbalancer, fetchSubnets} = useLoadbalancer()
+  const {createLoadbalancer, fetchSubnets, fetchPrivateNetworks} = useLoadbalancer()
+  const {errorMessage} = useCommons()
 
   const [privateNetworks, setPrivateNetworks] = useState({
     isLoading: false,
@@ -20,21 +21,13 @@ const NewLoadbalancer = (props) => {
   useEffect(() => {
     console.log('fetching private networks')
     setPrivateNetworks({...privateNetworks, isLoading:true})
-    ajaxHelper.get(`/loadbalancers/private-networks`).then((response) => {
-      setPrivateNetworks({...privateNetworks, isLoading:false, items: response.data.private_networks, error: null})
+    fetchPrivateNetworks().then((data) => {
+      setPrivateNetworks({...privateNetworks, isLoading:false, items: data.private_networks, error: null})
     })
     .catch( (error) => {      
       setPrivateNetworks({...privateNetworks, isLoading:false, error: errorMessage(error)})
     })
   }, []);
-
-  const errorMessage = (error) => {
-    if (error.response && error.response.data && error.response.data.errors && Object.keys(error.response.data.errors).length) {
-      return error.response.data.errors
-    } else {
-      return error.message
-    }
-  }
 
   /*
   * Modal stuff

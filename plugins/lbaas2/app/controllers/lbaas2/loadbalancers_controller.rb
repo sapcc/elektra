@@ -113,6 +113,23 @@ module Lbaas2
       render json: { errors: e.message }, status: "500"
     end
 
+    def update
+      lbParams = params[:loadbalancer]
+      loadbalancer = services.lbaas2.find_loadbalancer(params[:id])
+
+      loadbalancer.update_attributes(lbParams)
+      if loadbalancer.update
+        audit_logger.info(current_user, 'has updated', loadbalancer)
+        render json: loadbalancer
+      else
+        render json: {errors: loadbalancer.errors}, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
     def attach_fip
       # get loadbalancer
       loadbalancer = services.lbaas2.find_loadbalancer(params[:id])

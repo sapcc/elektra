@@ -19,7 +19,7 @@ import SmartLink from "../shared/SmartLink"
 const ListenerItem = ({props, listener, searchTerm, disabled}) => {
   const {persistListener,certificateContainerRelation, deleteListener, onSelectListener} = useListener()
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
-  const {fetchLoadbalancer} = useLoadbalancer()
+  const {persistLoadbalancer} = useLoadbalancer()
   let polling = null
   const [loadbalancerID, setLoadbalancerID] = useState(null)
 
@@ -83,8 +83,7 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
     return deleteListener(loadbalancerID, listenerID, listenerName).then((response) => {
       addNotice(<React.Fragment>Listener <b>{listenerName}</b> ({listenerID}) is being deleted.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
-      fetchLoadbalancer(loadbalancerID).then(() => {
-      }).catch(error => {
+      persistLoadbalancer(loadbalancerID).catch(error => {
       })
     }).catch(error => {
       addError(React.createElement(ErrorsList, {

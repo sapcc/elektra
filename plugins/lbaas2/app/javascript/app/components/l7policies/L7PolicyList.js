@@ -122,7 +122,8 @@ const L7PolicyList = ({props, loadbalancerID }) => {
 
   const search = (term) => {
     if(hasNext && !isLoading) {
-      fetchLoadbalancers({limit: 9999});
+      persistL7Policies(loadbalancerID, listenerID, {limit: 9999}).catch( (error) => {
+      })
     }
     setSearchTerm(term)
   }
