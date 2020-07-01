@@ -12,7 +12,7 @@ const usePool = () => {
         handleSuccess(response.data)
       })
       .catch( (error) => {
-        handleError(error)
+        handleError(error.response)
       })
     })
   }
@@ -34,7 +34,7 @@ const usePool = () => {
         handleSuccess(data)
       }).catch( error => {
         dispatch({type: 'REQUEST_POOLS_FAILURE', error: error})
-        handleError(error.response)
+        handleError(error)
       })
     })
   }
@@ -58,7 +58,7 @@ const usePool = () => {
         if(error && error.status == 404) {
           dispatch({type: 'REMOVE_POOL', id: poolID})
         }   
-        handleError(error.response)
+        handleError(error)
       })
     })
   }

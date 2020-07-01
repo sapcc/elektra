@@ -17,7 +17,7 @@ import { scope } from "ajax_helper";
 import SmartLink from "../shared/SmartLink"
 
 const ListenerItem = ({props, listener, searchTerm, disabled}) => {
-  const {persistListener,certificateContainerRelation, deleteListener, onSelectListener} = useListener()
+  const {persistListener,certificateContainerRelation, deleteListener, onSelectListener, reset} = useListener()
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
   const {persistLoadbalancer} = useLoadbalancer()
   let polling = null
@@ -44,7 +44,12 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
     polling = setInterval(() => {
       console.log("Polling listener -->", listener.id, " with interval -->", interval)
       persistListener(loadbalancerID,listener.id).catch( (error) => {
-        // console.log(JSON.stringify(error))
+        if(error && error.status == 404) {
+          // check if listener selected and if yes deselect the item
+          if(disabled){
+            reset()
+          }
+        }   
       })
     }, interval
     )

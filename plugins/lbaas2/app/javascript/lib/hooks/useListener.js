@@ -12,7 +12,7 @@ const useListener = () => {
         handleSuccess(response.data)
       })
       .catch( (error) => {
-        handleError(error)
+        handleError(error.response)
       })
     })
   }
@@ -44,7 +44,7 @@ const useListener = () => {
         handleSuccess(data)
       }).catch( error => {
         dispatch({type: 'REQUEST_LISTENERS_FAILURE', error: error})
-        handleError(error.response)
+        handleError(error)
       })
     })
   }
@@ -58,7 +58,7 @@ const useListener = () => {
         if(error && error.status == 404) {
           dispatch({type: 'REMOVE_LISTENER', id: id})
         }   
-        handleError(error.response)
+        handleError(error)
       })
     })
   }

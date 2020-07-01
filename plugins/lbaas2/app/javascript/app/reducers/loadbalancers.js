@@ -98,7 +98,7 @@ export default (state = initialState, action) => {
       return requestLoadbalancersFailure(state,action)
     case 'RECEIVE_LOADBALANCER':
       return receiveLoadbalancer(state,action)
-    case 'SELECT_LOADBALANCER':
+    case 'SET_LOADBALANCERS_SELECTED_ITEM':
       return selectLoadbalancer(state,action)
     case 'SET_LOADBALANCER_SEARCH_TERM':
       return setSearchTerm(state,action)

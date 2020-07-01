@@ -15,9 +15,10 @@ import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import { policy } from "policy";
 import { scope } from "ajax_helper";
 import SmartLink from "../shared/SmartLink"
+import { reset } from 'numeral';
 
 const PoolItem = ({props, pool, searchTerm, disabled}) => {
-  const {persistPool,deletePool,onSelectPool} = usePool()
+  const {persistPool,deletePool,onSelectPool, reset} = usePool()
   const {MyHighlighter,matchParams,errorMessage} = useCommons()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const {persistLoadbalancer} = useLoadbalancer()
@@ -44,7 +45,12 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
     polling = setInterval(() => {
       console.log("Polling pool -->", pool.id, " with interval -->", interval)
       persistPool(loadbalancerID,pool.id).catch( (error) => {
-        // console.log(JSON.stringify(error))
+        if(error && error.status == 404) {
+          // check if the pool is selected and if yes deselect the item
+          if(disabled){
+            reset()
+          }
+        } 
       })
     }, interval
     )
