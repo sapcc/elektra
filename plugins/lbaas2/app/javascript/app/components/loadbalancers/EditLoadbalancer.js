@@ -25,11 +25,6 @@ const EditLoadbalancer = (props) => {
   const [privateNetwork, setPrivateNetwork] = useState(null)
   const [loadbalancerID, setLoadbalancerID] = useState(null)
 
-  /*
-  * Modal stuff
-  */
-  const [show, setShow] = useState(true)
-
   useEffect(() => {
     console.log('fetching loadbalancer to edit')
     loadLoadbalancer()
@@ -65,6 +60,11 @@ const EditLoadbalancer = (props) => {
     })
   }
 
+  /*
+  * Modal stuff
+  */
+ const [show, setShow] = useState(true)
+
   const close = (e) => {
     if(e) e.stopPropagation()
     setShow(false)
@@ -87,7 +87,6 @@ const EditLoadbalancer = (props) => {
   /**
    * Form stuff
    */
-  const [initialValues, setInitialValues] = useState({})
   const [formErrors,setFormErrors] = useState(null)
 
   const validate = ({name,description,tags}) => {
@@ -96,8 +95,6 @@ const EditLoadbalancer = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null)
-    // save the entered values in case of error
-    setInitialValues(values)
     
     return updateLoadbalancer(loadbalancerID, values).then((response) => {
       addNotice(<React.Fragment>Load Balancer <b>{response.data.name}</b> ({response.data.id}) is being updated.</React.Fragment>)

@@ -18,7 +18,7 @@ import SmartLink from "../shared/SmartLink"
 
 const ListenerItem = ({props, listener, searchTerm, disabled}) => {
   const {persistListener,certificateContainerRelation, deleteListener, onSelectListener, reset} = useListener()
-  const {MyHighlighter,matchParams,errorMessage} = useCommons()
+  const {MyHighlighter,matchParams,errorMessage,searchParamsToString} = useCommons()
   const {persistLoadbalancer} = useLoadbalancer()
   let polling = null
   const [loadbalancerID, setLoadbalancerID] = useState(null)
@@ -69,6 +69,13 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
     onSelectListener(props,listener.id)
   }
 
+  const canEdit = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:listener_update", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const canDelete = useMemo(
     () => 
@@ -212,6 +219,14 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
+            <li>
+              <SmartLink 
+                to={`/loadbalancers/${loadbalancerID}/listeners/${listener.id}/edit?${searchParamsToString(props)}`}
+                isAllowed={canEdit} 
+                notAllowedText="Not allowed to edit. Please check with your administrator.">
+                  Edit
+              </SmartLink>
+            </li>
             <li>
               <SmartLink 
                 onClick={handleDelete} 

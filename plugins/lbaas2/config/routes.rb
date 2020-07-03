@@ -10,7 +10,7 @@ Lbaas2::Engine.routes.draw do
       put ':id/detach_fip' => 'loadbalancers#detach_fip'
     end
 
-    resources :listeners, module: :loadbalancers, only: [:index, :show, :create, :destroy] do
+    resources :listeners, module: :loadbalancers, only: [:index, :show, :create, :update, :destroy] do
 
       collection do
         get 'containers' => 'listeners#containers'

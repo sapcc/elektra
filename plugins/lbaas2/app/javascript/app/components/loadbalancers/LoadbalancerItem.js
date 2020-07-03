@@ -203,18 +203,18 @@ const LoadbalancerItem = ({loadbalancer, searchTerm, disabled}) => {
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
             <li>
               <SmartLink 
-                onClick={handleDelete} 
-                isAllowed={canDelete} 
-                notAllowedText="Not allowed to delete. Please check with your administrator.">
-                  Delete
-              </SmartLink>
-            </li>
-            <li>
-              <SmartLink 
                 to={disabled ? `/loadbalancers/${loadbalancer.id}/show/edit` : `/loadbalancers/${loadbalancer.id}/edit`}
                 isAllowed={canEdit} 
                 notAllowedText="Not allowed to edit. Please check with your administrator.">
                   Edit
+              </SmartLink>
+            </li>
+            <li>
+              <SmartLink 
+                onClick={handleDelete} 
+                isAllowed={canDelete} 
+                notAllowedText="Not allowed to delete. Please check with your administrator.">
+                  Delete
               </SmartLink>
             </li>
             <li className="divider"></li>

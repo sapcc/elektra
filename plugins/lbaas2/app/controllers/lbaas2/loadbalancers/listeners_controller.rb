@@ -56,6 +56,23 @@ module Lbaas2
         render json: { errors: e.message }, status: "500"
       end
 
+      def update
+        newParams = parseListenerParams
+        listener = services.lbaas2.find_listener(params[:id])
+  
+        listener.update_attributes(newParams)
+        if listener.update
+          audit_logger.info(current_user, 'has updated', listener)
+          render json: listener
+        else
+          render json: {errors: listener.errors}, status: 422
+        end
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
       def destroy
         listener = services.lbaas2.new_listener
         listener.id = params[:id]
