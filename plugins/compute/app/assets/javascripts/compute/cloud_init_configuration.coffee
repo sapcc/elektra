@@ -43,8 +43,10 @@
   button.removeClass('disabled');
 
 @addEventListenerOnSelect= (button) ->
-  $( "#server_image_id" ).unbind "change.automtion"
-  $( "#server_image_id" ).bind "change.automtion", () -> removeOsTypeButtons()
+  $( "#server_vmware_image_id" ).unbind "change"
+  $( "#server_vmware_image_id" ).bind "change", () -> removeOsTypeButtons()
+  $( "#server_baremetal_image_id" ).unbind "change"
+  $( "#server_baremetal_image_id" ).bind "change", () -> removeOsTypeButtons()
 
 @checkOsType = (button, os_image_option, action_path) ->
 
@@ -59,6 +61,7 @@
     attachPopover(button, 'Warning', "Missing property 'vmware_ostype' on the image provided. Please follow the steps described in the documentation to upload a compatible image. <a href='https://documentation.global.cloud.sap/docs/image/start/customer.html'>See customer images documentation</a>. Please choose manually.")
     addEventListenerOnSelect(button)
     addOsTypeButtons(button, action_path)
+
     return
   # get script
   $('a[data-toggle="windowsAutomationScript"]').addClass('disabled')
