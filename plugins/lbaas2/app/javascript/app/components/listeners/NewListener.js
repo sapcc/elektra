@@ -11,7 +11,7 @@ import { addNotice } from 'lib/flashes';
 
 const NewListener = (props) => {
   const {searchParamsToString, matchParams,fetchPoolsForSelect,formErrorMessage} = useCommons()
-  const {protocolTypes, protocolHeaderInsertionRelation, clientAuthenticationRelation, fetchContainersForSelect, certificateContainerRelation, SNIContainerRelation, CATLSContainerRelation, httpHeaderInsertions, createListener} = useListener()
+  const {protocolTypes, protocolHeaderInsertionRelation, clientAuthenticationRelation, fetchContainersForSelect, certificateContainerRelation, SNIContainerRelation, CATLSContainerRelation, createListener, helpBlockTextInsertHeaders} = useListener()
   const {persistLoadbalancer} = useLoadbalancer()
   const [pools, setPools] = useState({
     isLoading: false,
@@ -70,10 +70,20 @@ const NewListener = (props) => {
   */
   const [formErrors,setFormErrors] = useState(null)
   const [initialValues, setInitialValues] = useState({connection_limit: -1})
+
   const [insetHeaderSelectItems, setInsertHeaderSelectItems] = useState([])
   const [clientAuthenticationSelectItems, setClientAuthenticationSelectItems] = useState([])
+
+  const [insertHeaders, setInsertHeaders] = useState(null)
+  const [clientAuthentication, setClientAuthentication] = useState(null)
+  const [certificateContainer, setCertificateContainer] = useState(null)
+  const [SNIContainers, setSNIContainers] = useState(null)
+  const [CATLSContainer, setCATLSContainer] = useState(null)
+
+  const [showInsertHeaders, setShowInsertHeaders] = useState(false)
+  const [showClientAuthentication, setShowClientAuthentication] = useState(false)
   const [showCertificateContainer, setShowCertificateContainer] = useState(false)
-  const [showSNIContainer, setShowSNIContainer] = useState(false)
+  const [showSNIContainers, setShowSNIContainers] = useState(false)
   const [showCATLSContainer, setShowCATLSContainer] = useState(false)
 
   const validate = ({name,description,protocol_port,protocol,default_pool_id,connection_limit,insert_headers,default_tls_container_ref, sni_container_refs,client_authentication,client_ca_tls_container_ref,tags}) => {
@@ -82,13 +92,20 @@ const NewListener = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null)
-    // save the entered values in case of error
-    setInitialValues(values)
+
+    const newValues = {... values}
+    // add optional attributes that not set per context
+    if(showInsertHeaders && insertHeaders) { newValues.insert_headers = insertHeaders.map( (item, index) => item.value)}
+    if(showClientAuthentication && clientAuthentication) { newValues.client_authentication = clientAuthentication.value}
+    if(showCertificateContainer && certificateContainer) { newValues.default_tls_container_ref = certificateContainer.value}
+    if(showSNIContainers && SNIContainers){ newValues.sni_container_refs = SNIContainers.map( (item, index) => item.value)}
+    if(showCATLSContainer && CATLSContainer){ newValues.client_ca_tls_container_ref = CATLSContainer.value}
+
     // get the lb id
     const params = matchParams(props)
     const lbID = params.loadbalancerID
 
-    return createListener(lbID, values).then((response) => {
+    return createListener(lbID, newValues).then((response) => {
       addNotice(<React.Fragment>Listener <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
       persistLoadbalancer(lbID).catch(error => {
@@ -100,37 +117,35 @@ const NewListener = (props) => {
     })
   }
 
+  const resetOptionalAttributes = () => {
+    setInsertHeaders(null)
+    setClientAuthentication(null)
+    setCertificateContainer(null)
+    setSNIContainers(null)
+    setCATLSContainer(null)
+  }
+
   const onSelectProtocolType = (props) => {
     if (props) {
+      // on change protocol reset optional attributes
+      resetOptionalAttributes()
+      // load new select options
       setInsertHeaderSelectItems(protocolHeaderInsertionRelation(props.value))
       setClientAuthenticationSelectItems(clientAuthenticationRelation(props.value))
+      // set options for display
+      setShowInsertHeaders( (protocolHeaderInsertionRelation(props.value) || []).length > 0 )
+      setShowClientAuthentication( (clientAuthenticationRelation(props.value) || []).length > 0 )
       setShowCertificateContainer(certificateContainerRelation(props.value))
-      setShowSNIContainer(SNIContainerRelation(props.value))
+      setShowSNIContainers(SNIContainerRelation(props.value))
       setShowCATLSContainer(CATLSContainerRelation(props.value))
-    } else {
-      setInsertHeaderSelectItems([])
-      setClientAuthenticationSelectItems([])
-      setShowCertificateContainer(false)
-      setShowSNIContainer(false)
-      setShowCATLSContainer(false)
     }
   }
-  const onSelectPoolChange = (props) => {}
-  const onSelectInsertHeadersChange = (props) => {}
-  const onSelectClientAuthentication = (props) => {}
-  const onSelectCertificateContainer = (props) => {}
-  const onSelectSNIContainers = (props) => {}
-  const onSelectCATLSContainers = (props) => {}
-
-  const helpBlockTextInsertHeaders = () => {
-    return (
-      <ul className="help-block-popover-scroll">
-        {httpHeaderInsertions("ALL").map( (t, index) =>
-          <li key={index}>{t.label}: {t.description}</li>
-        )}
-      </ul>
-    )
-  }
+  const onSelectDefaultPoolChange = (props) => {}
+  const onSelectInsertHeadersChange = (props) => { setInsertHeaders(props)}
+  const onSelectClientAuthentication = (props) => { setClientAuthentication(props)}
+  const onSelectCertificateContainer = (props) => { setCertificateContainer(props)}
+  const onSelectSNIContainers = (props) => { setSNIContainers(props)}
+  const onSelectCATLSContainers = (props) => { setCATLSContainer(props)}
 
   console.log("RENDER new listener")
   return ( 
@@ -178,7 +193,7 @@ const NewListener = (props) => {
             </span>
           </Form.ElementHorizontal>
           <Form.ElementHorizontal label='Default Pool' name="default_pool_id">
-            <SelectInput name="default_pool_id" isLoading={pools.isLoading} items={pools.items} onChange={onSelectPoolChange} />
+            <SelectInput name="default_pool_id" isLoading={pools.isLoading} items={pools.items} onChange={onSelectDefaultPoolChange} isClearable />
             { pools.error ? <span className="text-danger">{pools.error}</span>:""}
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
@@ -193,9 +208,9 @@ const NewListener = (props) => {
             </span>
           </Form.ElementHorizontal>
 
-          {insetHeaderSelectItems.length > 0 &&
+          {showInsertHeaders &&
             <Form.ElementHorizontal label='Insert Headers' name="insert_headers">
-              <SelectInput name="insert_headers" items={insetHeaderSelectItems} isMulti onChange={onSelectInsertHeadersChange} />
+              <SelectInput name="insert_headers" items={insetHeaderSelectItems} isMulti onChange={onSelectInsertHeadersChange} value={insertHeaders} useFormContext={false}/>
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
                   <span className="help-block-text">Headers to insert into the request before it is sent to the backend member.</span>
@@ -207,7 +222,7 @@ const NewListener = (props) => {
           {showCertificateContainer &&
             <Form.ElementHorizontal label='Certificate Container' name="default_tls_container_ref">
             { containers.error ? <span className="text-danger">{containers.error}</span>:""}
-              <SelectInput name="default_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCertificateContainer} />
+              <SelectInput name="default_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCertificateContainer} value={certificateContainer} useFormContext={false}/>
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
                   The container with the TLS secrets used for the listener.
@@ -215,10 +230,10 @@ const NewListener = (props) => {
             </Form.ElementHorizontal>
           }
 
-          {showSNIContainer &&
+          {showSNIContainers &&
             <Form.ElementHorizontal label='SNI Containers' name="sni_container_refs">
             { containers.error ? <span className="text-danger">{containers.error}</span>:""}
-              <SelectInput name="sni_container_refs" isLoading={containers.isLoading} isMulti items={containers.items} onChange={onSelectSNIContainers} />
+              <SelectInput name="sni_container_refs" isLoading={containers.isLoading} isMulti items={containers.items} onChange={onSelectSNIContainers} value={SNIContainers} useFormContext={false}/>
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
                   A list of containers with alternative TLS secrets used for Server Name Indication (SNI).
@@ -226,10 +241,9 @@ const NewListener = (props) => {
             </Form.ElementHorizontal>
           }
 
-
-          {clientAuthenticationSelectItems.length > 0 &&
+          {showClientAuthentication &&
             <Form.ElementHorizontal label='Client Authentication Mode' name="client_authentication">
-              <SelectInput name="client_authentication" items={clientAuthenticationSelectItems} onChange={onSelectClientAuthentication} />
+              <SelectInput name="client_authentication" items={clientAuthenticationSelectItems} onChange={onSelectClientAuthentication} value={clientAuthentication} isClearable useFormContext={false}/>
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
                   The TLS client authentication mode.
@@ -239,7 +253,7 @@ const NewListener = (props) => {
 
           {showCATLSContainer &&
             <Form.ElementHorizontal label='Client Authentication Container' name="client_ca_tls_container_ref">
-              <SelectInput name="client_ca_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCATLSContainers}  />
+              <SelectInput name="client_ca_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCATLSContainers} value={CATLSContainer} isClearable useFormContext={false}/>
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
                   The TLS client authentication certificate.
