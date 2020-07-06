@@ -220,7 +220,7 @@ const NewListener = (props) => {
           }
 
           {showCertificateContainer &&
-            <Form.ElementHorizontal label='Certificate Container' name="default_tls_container_ref">
+            <Form.ElementHorizontal label='Certificate Container' name="default_tls_container_ref" required>
             { containers.error ? <span className="text-danger">{containers.error}</span>:""}
               <SelectInput name="default_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCertificateContainer} value={certificateContainer} useFormContext={false}/>
                 <span className="help-block">

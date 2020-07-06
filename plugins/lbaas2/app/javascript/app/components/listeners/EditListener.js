@@ -7,20 +7,36 @@ import useListener from '../../../lib/hooks/useListener'
 import SelectInput from '../shared/SelectInput'
 import ErrorPage from '../ErrorPage';
 import TagsInput from '../shared/TagsInput'
+import HelpPopover from '../shared/HelpPopover'
+import { addNotice } from 'lib/flashes';
+import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
 const EditListener = (props) => {
-  const {matchParams, searchParamsToString, formErrorMessage, errorMessage, fetchPoolsForSelect } = useCommons()
-  const {fetchListener,protocolTypes} = useListener()
+  const {matchParams, searchParamsToString, formErrorMessage, fetchPoolsForSelect } = useCommons()
+  const {fetchListener,protocolTypes,protocolHeaderInsertionRelation, clientAuthenticationRelation, fetchContainersForSelect, certificateContainerRelation, SNIContainerRelation, CATLSContainerRelation, helpBlockTextInsertHeaders, updateListener} = useListener()
+  const {persistLoadbalancer} = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [listenerID, setListenerID] = useState(null)
+  
   const [protocolType, setProtocolType] = useState(null)
+  const [insetHeaders, setInsertHeaders] = useState(null)
+  const [CertificateContainer, setCertificateContainer] = useState(null) 
+  const [SNIContainers, setSNIContainers] = useState(null) 
+  const [clientAuthType, setClientAuthType] = useState(null) 
   const [defaultPoolID, setDefaultPoolID] = useState(null)
+  const [clientCATLScontainer, setClientCATLScontainer] = useState(null)
+
   const [listener, setListener] = useState({
     isLoading: false,
     error: null,
     item: null
   })
   const [pools, setPools] = useState({
+    isLoading: false,
+    error: null,
+    items: []
+  })
+  const [containers, setContainers] = useState({
     isLoading: false,
     error: null,
     items: []
@@ -41,27 +57,97 @@ const EditListener = (props) => {
     // fetch the listener to edit
     setListener({...listener, isLoading:true})
     fetchListener(lbID, ltID).then((data) => {
-      const protocol = data.listener.protocol || ""
-      const selectedProtocol = protocolTypes().find(i=>i.value == protocol.trim());
-      setProtocolType(selectedProtocol)
-      loadPools(lbID, data.listener.default_pool_id)
+      // load the rest of attributes once we have the listener
+      setSelectedProtocolType(data.listener.protocol)
+      setSelectedInsertHeaders(data.listener.protocol, data.listener.insert_headers)
+      setSelectedClientAuthenticationType(data.listener.protocol, data.listener.client_authentication)
+
+      loadPools (lbID).then((availablePools) => {        
+        setTimeout(() => setSelectedDefaultPoolID(availablePools, data.listener.default_pool_id), 300);        
+      }).catch((error) =>{})
+
+      loadContainers(lbID).then((availableContainers) => {
+        setSelectedCertificateContainer(data.listener.protocol, availableContainers, data.listener.default_tls_container_ref)
+        setSelectedSNIContainers(data.listener.protocol, availableContainers, data.listener.sni_container_refs)
+        setSelectedClientCATLScontainer(data.listener.protocol, availableContainers, data.listener.client_ca_tls_container_ref)
+      }).catch((error) =>{})
+
       setListener({...listener, isLoading:false, item: data.listener, error: null})
     })
     .catch( (error) => {      
       setListener({...listener, isLoading:false, error: error})
     })
+  }  
+
+  const setSelectedProtocolType = (selectedProtocolType) => {
+    const selectedOption = protocolTypes().find(i=>i.value == (selectedProtocolType || "").trim());
+    setProtocolType(selectedOption)
   }
 
-  const loadPools = (lbID, defaultPoolID) => {
-    setPools({...pools, isLoading:true})
-    fetchPoolsForSelect(lbID).then((data) => {
-      const pools = data.pools
-      const result = pools.find(i=>i.value == defaultPoolID.trim());
-      setDefaultPoolID(result)
-      setPools({...pools, isLoading:false, items: data.pools, error: null})
+  const setSelectedInsertHeaders = (selectedProtocolType, selecetedInsertHeaders) => {
+    const availableInsertHeaders = protocolHeaderInsertionRelation(selectedProtocolType)
+    setInsertHeaderSelectItems(availableInsertHeaders)
+    setShowInsertHeaders( (availableInsertHeaders || []).length > 0 )
+    const selectedOptions = availableInsertHeaders.filter( i => selecetedInsertHeaders.includes(i.value));
+    setInsertHeaders(selectedOptions)
+  }
+
+  const setSelectedClientAuthenticationType = (selectedProtocolType, selectedClientAuthType) => {
+    const availableClientAuthTypes = clientAuthenticationRelation(selectedProtocolType)
+    setClientAuthenticationSelectItems(availableClientAuthTypes)
+    setShowClientAuthentication( (availableClientAuthTypes || []).length > 0 )
+    const selectedOption = availableClientAuthTypes.find(i=>i.value == (selectedClientAuthType || "").trim());
+    setClientAuthType(selectedOption)
+  }
+
+  const setSelectedDefaultPoolID = (availablePools, selectedDefaultPoolID) => {
+    const selectedOption = availablePools.find(i=>i.value == (selectedDefaultPoolID || "").trim());
+    setDefaultPoolID(selectedOption)
+  }
+
+  const setSelectedCertificateContainer = (selectedProtocolType, availableContainers, selectedCertificateContainer) => {
+    setShowCertificateContainer(certificateContainerRelation(selectedProtocolType))
+    const selectedOption = availableContainers.find(i=>i.value == (selectedCertificateContainer || "").trim());
+    setCertificateContainer(selectedOption)
+  }
+
+  const setSelectedSNIContainers = (selectedProtocolType, availableContainers, selectedSNIContainers) => {
+    setShowSNIContainer(SNIContainerRelation(selectedProtocolType))
+    const selectedOptions = availableContainers.filter( i => selectedSNIContainers.includes(i.value));
+    setSNIContainers(selectedOptions)
+  }
+
+  const setSelectedClientCATLScontainer = (selectedProtocolType, availableContainers, selectedCATLSContainer) => {
+    setShowCATLSContainer(CATLSContainerRelation(selectedProtocolType))
+    const selectedOption = availableContainers.find(i=>i.value == (selectedCATLSContainer || "").trim());
+    setClientCATLScontainer(selectedOption)
+  }
+
+  const loadPools = (lbID) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      setPools({...pools, isLoading:true})
+      fetchPoolsForSelect(lbID).then((data) => {
+        setPools({...pools, isLoading:false, items: data.pools, error: null})
+        handleSuccess(data.pools)
+      })
+      .catch( (error) => {      
+        setPools({...pools, isLoading:false, error: error})
+        handleErrors(error)
+      })
     })
-    .catch( (error) => {      
-      setPools({...pools, isLoading:false, error: error})
+  }
+
+  const loadContainers = (lbID, selectedCertificateContainer, selectedSNIContainers, selectedCATLSContainer) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      setContainers({...containers, isLoading:true})
+      fetchContainersForSelect(lbID).then((data) => {
+        setContainers({...containers, isLoading:false, items: data.containers, error: null})
+        handleSuccess(data.containers)
+      })
+      .catch( (error) => {      
+        setContainers({...containers, isLoading:false, error: error})
+        handleErrors(error)
+      })
     })
   }
 
@@ -85,23 +171,47 @@ const EditListener = (props) => {
   }
 
   const [formErrors,setFormErrors] = useState(null)
+  const [insetHeaderSelectItems, setInsertHeaderSelectItems] = useState([])
+  const [clientAuthenticationSelectItems, setClientAuthenticationSelectItems] = useState([])
 
-  const validate = ({}) => {
-    return true
+  const [showInsertHeaders, setShowInsertHeaders] = useState(false)
+  const [showClientAuthentication, setShowClientAuthentication] = useState(false)
+  const [showCertificateContainer, setShowCertificateContainer] = useState(false)
+  const [showSNIContainer, setShowSNIContainer] = useState(false)
+  const [showCATLSContainer, setShowCATLSContainer] = useState(false)
+
+  const validate = ({name,description,protocol_port,protocol,default_pool_id,connection_limit,insert_headers,default_tls_container_ref, sni_container_refs,client_authentication,client_ca_tls_container_ref,tags}) => {
+    return name && protocol_port && protocol && true
   }
 
   const onSubmit = (values) => {
     setFormErrors(null)
-    
-    // return updateLoadbalancer(loadbalancerID, values).then((response) => {
-    //   addNotice(<React.Fragment>Load Balancer <b>{response.data.name}</b> ({response.data.id}) is being updated.</React.Fragment>)
-    //   close()
-    // }).catch(error => {
-    //   setFormErrors(formErrorMessage(error))
-    // })
+
+    console.group("ONSUBMIT")
+    console.log(values)
+    console.groupEnd()
+
+    return updateListener(loadbalancerID, listenerID, values).then((response) => {
+      console.group("updateListener")
+      console.log(response)
+      console.groupEnd()
+
+      addNotice(<React.Fragment>Listener <b>{response.data.name}</b> ({response.data.id}) is being updated.</React.Fragment>)
+      // fetch the lb again containing the new listener so it gets updated fast
+      persistLoadbalancer(loadbalancerID).catch(error => {
+      })
+      close()
+    }).catch(error => {
+      setFormErrors(formErrorMessage(error))
+    })
   }
 
-  const onSelectPoolChange = (props) => {}
+  const onSelectDefaultPoolChange = (props) => {setDefaultPoolID(props)}
+  const onSelectInsertHeadersChange = (props) => {setInsertHeaders(props)}
+  const onSelectClientAuthentication = (props) => {setClientAuthType(props)}
+  const onSelectCertificateContainer = (props) => {setCertificateContainer(props)}
+  const onSelectSNIContainers = (props) => {setSNIContainers(props)}
+  const onSelectCATLSContainers = (props) => {setClientCATLScontainer(props)}
 
   console.log("RENDER edit listener")
   return ( 
@@ -159,7 +269,7 @@ const EditListener = (props) => {
                     </span>
                   </Form.ElementHorizontal>
                   <Form.ElementHorizontal label='Default Pool' name="default_pool_id">
-                    <SelectInput name="default_pool_id" isLoading={pools.isLoading} items={pools.items} onChange={onSelectPoolChange} value={defaultPoolID}/>
+                    <SelectInput name="default_pool_id" isLoading={pools.isLoading} items={pools.items} onChange={onSelectDefaultPoolChange} value={defaultPoolID} isClearable/>
                     { pools.error ? <span className="text-danger">{pools.error}</span>:""}
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
@@ -173,6 +283,60 @@ const EditListener = (props) => {
                       The number of parallel connections allowed to access the load balancer. Value -1 means infinite connections are allowed.
                     </span>
                   </Form.ElementHorizontal>
+
+                  {showInsertHeaders &&
+                    <Form.ElementHorizontal label='Insert Headers' name="insert_headers">
+                      <SelectInput name="insert_headers" items={insetHeaderSelectItems} isMulti onChange={onSelectInsertHeadersChange} value={insetHeaders}/>
+                        <span className="help-block">
+                          <i className="fa fa-info-circle"></i>
+                          <span className="help-block-text">Headers to insert into the request before it is sent to the backend member.</span>
+                          <HelpPopover text={helpBlockTextInsertHeaders()} />
+                        </span>
+                    </Form.ElementHorizontal>
+                  }
+
+                  {showCertificateContainer &&
+                    <Form.ElementHorizontal label='Certificate Container' name="default_tls_container_ref" required>
+                    { containers.error ? <span className="text-danger">{containers.error}</span>:""}
+                      <SelectInput name="default_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCertificateContainer} value={CertificateContainer} isClearable/>
+                        <span className="help-block">
+                          <i className="fa fa-info-circle"></i>
+                          The container with the TLS secrets used for the listener.
+                        </span>
+                    </Form.ElementHorizontal>
+                  }
+
+                  {showSNIContainer &&
+                    <Form.ElementHorizontal label='SNI Containers' name="sni_container_refs">
+                    { containers.error ? <span className="text-danger">{containers.error}</span>:""}
+                      <SelectInput name="sni_container_refs" isLoading={containers.isLoading} isMulti items={containers.items} onChange={onSelectSNIContainers} value={SNIContainers}/>
+                        <span className="help-block">
+                          <i className="fa fa-info-circle"></i>
+                          A list of containers with alternative TLS secrets used for Server Name Indication (SNI).
+                        </span>
+                    </Form.ElementHorizontal>
+                  }
+
+                  {showClientAuthentication &&
+                    <Form.ElementHorizontal label='Client Authentication Mode' name="client_authentication">
+                      <SelectInput name="client_authentication" items={clientAuthenticationSelectItems} onChange={onSelectClientAuthentication} value={clientAuthType} isClearable/>
+                        <span className="help-block">
+                          <i className="fa fa-info-circle"></i>
+                          The TLS client authentication mode.
+                        </span>
+                    </Form.ElementHorizontal>
+                  }
+
+                  {showCATLSContainer &&
+                    <Form.ElementHorizontal label='Client Authentication Container' name="client_ca_tls_container_ref">
+                      <SelectInput name="client_ca_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCATLSContainers} value={clientCATLScontainer} isClearable/>
+                        <span className="help-block">
+                          <i className="fa fa-info-circle"></i>
+                          The TLS client authentication certificate.
+                        </span>
+                    </Form.ElementHorizontal>
+                  }
+
                   <Form.ElementHorizontal label='Tags' name="tags">
                     <TagsInput name="tags" initValue={listener.item && listener.item.tags}/>
                     <span className="help-block">

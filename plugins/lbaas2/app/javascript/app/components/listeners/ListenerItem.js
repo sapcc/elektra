@@ -197,7 +197,7 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
       </td>
       <td>{listener.connection_limit}</td>
       <td>
-        <StaticTags tags={listener.insert_headers_keys} />
+        <StaticTags tags={listener.insert_headers} />
       </td>
       <td> 
         {disabled ?

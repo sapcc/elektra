@@ -268,6 +268,16 @@ const useListener = () => {
     })
   }
 
+  const helpBlockTextInsertHeaders = () => {
+    return (
+      <ul className="help-block-popover-scroll">
+        {httpHeaderInsertions("ALL").map( (t, index) =>
+          <li key={index}>{t.label}: {t.description}</li>
+        )}
+      </ul>
+    )
+  }
+
   return {
     fetchListeners,
     fetchListener,
@@ -288,7 +298,8 @@ const useListener = () => {
     certificateContainerRelation,
     SNIContainerRelation,
     CATLSContainerRelation,
-    fetchListnersNoDefaultPoolForSelect
+    fetchListnersNoDefaultPoolForSelect,
+    helpBlockTextInsertHeaders
   }
 }
 

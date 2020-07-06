@@ -6,7 +6,7 @@ module Lbaas2
     validates :name, presence: true
     validates :protocol, presence: true
     validates :protocol_port, presence: true, inclusion: {
-      in: '1'..'65535',
+      in: 1..65535,
       message: 'Choose a port between 1 and 65535'
     }
     validates_presence_of :default_tls_container_ref, message: 'A certificate container is needed for TERMINATED_HTTPS Listeners',
