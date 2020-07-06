@@ -3,7 +3,11 @@
   event.stopPropagation()
   button = $(event.target)
   action_path = $(event.target).data('automationScriptAction')
-  os_image_option = $('#server_image_id option:selected')
+
+  os_image_option = $('#server_vmware_image_id option:selected')
+  if $('#server_baremetal_image_id').val() != "" 
+    os_image_option = $('#server_baremetal_image_id option:selected')
+  
   checkOsType(button, os_image_option, action_path)
 
 @fetchLinuxScritp=(event) ->
@@ -43,6 +47,7 @@
   $( "#server_image_id" ).bind "change.automtion", () -> removeOsTypeButtons()
 
 @checkOsType = (button, os_image_option, action_path) ->
+
   os_image = os_image_option.data('vmwareOstype')
 
   # check empty image
