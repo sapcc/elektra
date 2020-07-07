@@ -82,16 +82,16 @@ const NewPool = (props) => {
   * Form stuff
   */
 
- const [formErrors,setFormErrors] = useState(null)
- const [initialValues, setInitialValues] = useState()
- const [protocols, setProtocols ] = useState(protocolListenerPoolCombinations())
+  const [formErrors,setFormErrors] = useState(null)
+  const [initialValues, setInitialValues] = useState()
+  const [protocols, setProtocols ] = useState(protocolListenerPoolCombinations())
 
- const [protocol, setProtocol] = useState(null)
- const [sessionPersistenceType, setSessionPersistenceType] = useState(null)
- const [listener, setListener] = useState(null)
+  const [protocol, setProtocol] = useState(null)
+  const [sessionPersistenceType, setSessionPersistenceType] = useState(null)
+  const [listener, setListener] = useState(null)
 
- const [showTLSSettings, setShowTLSSettings] = useState(false)
- const [showCookieName, setShowCookieName] = useState(false)
+  const [showTLSSettings, setShowTLSSettings] = useState(false)
+  const [showCookieName, setShowCookieName] = useState(false)
 
   const validate = ({name,description,lb_algorithm, protocol, session_persistence_type,session_persistence_cookie_name,listener_id,tls_enabled,tls_container_ref,ca_tls_container_ref,tags}) => {
     return name && lb_algorithm && protocol && true
@@ -212,13 +212,15 @@ const NewPool = (props) => {
           </Form.ElementHorizontal>
 
           {showCookieName &&
-            <Form.ElementHorizontal label='Cookie Name' name="session_persistence_cookie_name" required>
-              <Form.Input elementType='input' type='text' name='session_persistence_cookie_name' />
-              <span className="help-block">
-                <i className="fa fa-info-circle"></i>
-                The name of the HTTP cookie defined by your application. The cookie value will be used for session stickiness.
-              </span>
-            </Form.ElementHorizontal>
+            <div className="advanced-options">
+              <Form.ElementHorizontal label='Cookie Name' name="session_persistence_cookie_name" required>
+                <Form.Input elementType='input' type='text' name='session_persistence_cookie_name' />
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  The name of the HTTP cookie defined by your application. The cookie value will be used for session stickiness.
+                </span>
+              </Form.ElementHorizontal>
+            </div>
           }
 
           <Form.ElementHorizontal label='Default Pool for Listener' name="listener_id">

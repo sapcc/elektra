@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import { matchPath } from 'react-router-dom'
 import useCommons from '../../../lib/hooks/useCommons'
 import { Form } from 'lib/elektra-form';
 import useListener from '../../../lib/hooks/useListener'
@@ -49,24 +48,29 @@ const EditListener = (props) => {
     const ltID = params.listenerID
     setLoadbalancerID(lbID)
     setListenerID(ltID)
-    loadListener(lbID, ltID)
   }, []);
 
-  const loadListener = (lbID, ltID) => {
+  useEffect(() => {
+    if(listenerID){
+      loadListener()
+    }    
+  }, [listenerID]);
+
+  const loadListener = () => {
     console.log('fetching listener to edit')
     // fetch the listener to edit
-    setListener({...listener, isLoading:true})
-    fetchListener(lbID, ltID).then((data) => {
+    setListener({...listener, isLoading:true, error: null})
+    fetchListener(loadbalancerID, listenerID).then((data) => {
       // load the rest of attributes once we have the listener
       setSelectedProtocolType(data.listener.protocol)
       setSelectedInsertHeaders(data.listener.protocol, data.listener.insert_headers)
       setSelectedClientAuthenticationType(data.listener.protocol, data.listener.client_authentication)
 
-      loadPools (lbID).then((availablePools) => {        
+      loadPools (loadbalancerID).then((availablePools) => {        
         setTimeout(() => setSelectedDefaultPoolID(availablePools, data.listener.default_pool_id), 300);        
       }).catch((error) =>{})
 
-      loadContainers(lbID).then((availableContainers) => {
+      loadContainers(loadbalancerID).then((availableContainers) => {
         setSelectedCertificateContainer(data.listener.protocol, availableContainers, data.listener.default_tls_container_ref)
         setSelectedSNIContainers(data.listener.protocol, availableContainers, data.listener.sni_container_refs)
         setSelectedClientCATLScontainer(data.listener.protocol, availableContainers, data.listener.client_ca_tls_container_ref)

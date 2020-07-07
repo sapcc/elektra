@@ -19,7 +19,7 @@ import { reset } from 'numeral';
 
 const PoolItem = ({props, pool, searchTerm, disabled}) => {
   const {persistPool,deletePool,onSelectPool, reset} = usePool()
-  const {MyHighlighter,matchParams,errorMessage} = useCommons()
+  const {MyHighlighter,matchParams,errorMessage,searchParamsToString} = useCommons()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const {persistLoadbalancer} = useLoadbalancer()
   let polling = null
@@ -61,6 +61,14 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
     clearInterval(polling)
     polling = null
   }
+
+  const canEdit = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:pool_update", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const canDelete = useMemo(
     () => 
@@ -229,6 +237,14 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
+            <li>
+              <SmartLink 
+                to={`/loadbalancers/${loadbalancerID}/pools/${pool.id}/edit?${searchParamsToString(props)}`}
+                isAllowed={canEdit} 
+                notAllowedText="Not allowed to edit. Please check with your administrator.">
+                  Edit
+              </SmartLink>
+            </li>
             <li>
               <SmartLink 
                 onClick={handleDelete} 
