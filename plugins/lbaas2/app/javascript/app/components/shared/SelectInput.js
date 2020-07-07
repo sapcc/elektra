@@ -1,20 +1,22 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Select from 'react-select';
 import { FormContext } from 'lib/elektra-form/components/form_context'
 
-const SelectInput = ({name, isLoading, items, isMulti, onChange, value, conditionalPlaceholderText, isClearable, conditionalPlaceholderCondition, isDisabled}) => {
-
+const SelectInput = ({name, isLoading, items, isMulti, onChange, value, defaultValue,  conditionalPlaceholderText, isClearable, conditionalPlaceholderCondition, isDisabled, useFormContext}) => {
   const context = useContext(FormContext)
+  const shouldUseContext = useFormContext == false ? false : true
 
   const onSelectChanged = (props) => {
+    let value = null
     if (props) {
       if (isMulti) {
-        const values =  props.map( (item, index) => item.value)
-        context.onChange(name,values)
+        value =  props.map( (item, index) => item.value)
       } else {
-        context.onChange(name,props.value)
+        value = props.value        
       }
     }
+
+    if(shouldUseContext) {context.onChange(name,value)}    
     onChange(props)
   }
 
@@ -33,6 +35,7 @@ const SelectInput = ({name, isLoading, items, isMulti, onChange, value, conditio
     onChange={onSelectChanged}
     options={items}
     value={value}
+    defaultValue={defaultValue}
     isMulti={isMulti}
     closeMenuOnSelect={isMulti?false:true}
     placeholder={placeholder}

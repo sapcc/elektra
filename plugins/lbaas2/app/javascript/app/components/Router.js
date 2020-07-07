@@ -1,7 +1,6 @@
 import React from 'react';
 import { HashRouter, Route, Redirect } from 'react-router-dom'
 import LoadbalancerList from './loadbalancers/LoadbalancerList';
-import SharedPoolList from './pools/SharedPoolList'
 import Tabs from './Tabs'
 import NewLoadbalancer from './loadbalancers/NewLoadbalancer'
 import Details from './loadbalancers/Details'
@@ -14,6 +13,7 @@ import NewHealthMonitor from './healthmonitor/NewHealthMonitor'
 import EditHealthMonitor from './healthmonitor/EditHealthMonitor'
 import AttachFIP from './loadbalancers/AttachFIP'
 import EditLoadbalancer from './loadbalancers/EditLoadbalancer'
+import EditListener from './listeners/EditListener'
 
 const Router = (props) => {
 
@@ -43,11 +43,13 @@ const Router = (props) => {
             component={Details}
           />
           <Route exact path="/loadbalancers/:loadbalancerID/listeners/new" component={NewListener}/>
-          <Route exact path="/loadbalancers/:loadbalancerID/pools/new" component={NewPool}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/edit" component={EditListener}/>
 
+          <Route exact path="/loadbalancers/:loadbalancerID/pools/new" component={NewPool}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/members/new" component={NewMember}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/healthmonitor/new" component={NewHealthMonitor}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/healthmonitor/:healthmonitorID/edit" component={EditHealthMonitor}/>
+
           <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/l7policies/new" component={NewL7Policy}/>
           <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/l7policies/:l7policyID/l7rules/new" component={NewL7Rule}/>
       </div>

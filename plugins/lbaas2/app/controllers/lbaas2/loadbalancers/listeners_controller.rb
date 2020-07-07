@@ -46,6 +46,25 @@ module Lbaas2
         listener = services.lbaas2.new_listener(newParams)
         if listener.save
           audit_logger.info(current_user, 'has created', listener)
+          extend_listener_data([listener])
+          render json: listener
+        else
+          render json: {errors: listener.errors}, status: 422
+        end
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
+      def update
+        newParams = parseListenerParams
+        listener = services.lbaas2.find_listener(params[:id])
+
+        listener.update_attributes(newParams)
+        if listener.update
+          audit_logger.info(current_user, 'has updated', listener)
+          extend_listener_data([listener])
           render json: listener
         else
           render json: {errors: listener.errors}, status: 422
@@ -106,8 +125,8 @@ module Lbaas2
           end
 
           # get insert headers with true value
-          listener.insert_headers = {} if  listener.insert_headers.blank?
-          listener.insert_headers_keys = listener.insert_headers.select{|key, value| value == "true"}.keys
+          insert_headers = listener.insert_headers || {}
+          listener.insert_headers = insert_headers.select{|key, value| value == "true"}.keys
         end
       end
 
@@ -122,6 +141,9 @@ module Lbaas2
           octavia_headers[h.to_sym] = "true"
         end
         listenerParams[:insert_headers] = octavia_headers
+        # parse to int
+        listenerParams[:protocol_port] = listenerParams[:protocol_port].to_i unless listenerParams[:protocol_port].blank?
+
         return listenerParams
       end
 

@@ -4,7 +4,7 @@ const CachedInfoPopoverContentContainers = ({containers}) => {
   return (
     containers.length>0 ?
      containers.map( (container, index) =>
-        <div key={container}>
+        <div key={container} key={index}>
           <div className="row">
             <div className="col-md-12">
               {container.ref &&
@@ -21,9 +21,9 @@ const CachedInfoPopoverContentContainers = ({containers}) => {
                 <React.Fragment>
                   <div>{container.name}:</div>
                   <div className="list">
-                  {container.refList.map( (item, index) =>  
-                    <div className="list-entry word-break">                  
-                      <a  key={index} href={item} target="_blank">
+                  {container.refList.map( (item, refListIndex) =>  
+                    <div className="list-entry word-break" key={refListIndex}> 
+                      <a  href={item} target="_blank">
                         {item}
                       </a>                    
                     </div>

@@ -6,7 +6,7 @@ module Lbaas2
     validates :name, presence: true
     validates :protocol, presence: true
     validates :protocol_port, presence: true, inclusion: {
-      in: '1'..'65535',
+      in: 1..65535,
       message: 'Choose a port between 1 and 65535'
     }
     validates_presence_of :default_tls_container_ref, message: 'A certificate container is needed for TERMINATED_HTTPS Listeners',
@@ -17,7 +17,6 @@ module Lbaas2
         'loadbalancer_id' => read('loadbalancer_id'),
         'name' => read('name'),
         'description' => read('description'),
-        'admin_state_up' => read('admin_state_up'),
         'connection_limit' => read('connection_limit'),
         'default_pool_id' => read('default_pool_id'),
         'default_tls_container_ref' => read('default_tls_container_ref'),
@@ -32,6 +31,22 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
+    def attributes_for_update
+      {
+        'name' => read('name'),
+        'description' => read('description'),
+        'admin_state_up' => read('admin_state_up'),
+        'connection_limit' => read('connection_limit'),
+        'default_pool_id' => read('default_pool_id'),
+        'default_tls_container_ref' => read('default_tls_container_ref'),
+        'sni_container_refs' => read('sni_container_refs'),
+        'insert_headers' => read('insert_headers'),
+        'client_authentication' => read('client_authentication'),
+        'client_ca_tls_container_ref' => read('client_ca_tls_container_ref'),
+        'tags'                      => read('tags')
+      }.delete_if { |k, v| v.blank? && !%w[name description default_pool_id sni_container_refs connection_limit insert_headers].include?(k) }
+    end
+
     def save
       if valid?
         persist!
@@ -40,7 +55,24 @@ module Lbaas2
       end
     end
 
+    def update()
+      if valid?
+        update!()
+      else
+        false
+      end
+    end
+
     private
+
+    def update!()
+      newListener= service.update_listener(id, attributes_for_update)
+      self.update_attributes(newListener)
+      true
+    rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
 
     def persist!()
       newListener= service.create_listener(attributes_for_create)
@@ -48,6 +80,11 @@ module Lbaas2
       self.update_attributes(newListener)
       true
     rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
+
+    def rescue_eletron_errors(e)
       apiErrorCount = 0
       apiKey = "api_error_" + apiErrorCount.to_s
       e.messages.each do |m| 
@@ -69,7 +106,6 @@ module Lbaas2
           apiErrorCount += 1
         end
       end
-      false
     end
 
   end

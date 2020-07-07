@@ -91,6 +91,17 @@ const useListener = () => {
     })
   }
 
+  const updateListener = (lbID, listenerID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.put(`/loadbalancers/${lbID}/listeners/${listenerID}`, { listener: values }).then((response) => {
+        dispatch({type: 'RECEIVE_LISTENER', listener: response.data}) 
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
   const setSearchTerm = (searchTerm) => {
     dispatch({type: 'SET_LISTENERS_SEARCH_TERM', searchTerm: searchTerm})
   }
@@ -257,12 +268,23 @@ const useListener = () => {
     })
   }
 
+  const helpBlockTextInsertHeaders = () => {
+    return (
+      <ul className="help-block-popover-scroll">
+        {httpHeaderInsertions("ALL").map( (t, index) =>
+          <li key={index}>{t.label}: {t.description}</li>
+        )}
+      </ul>
+    )
+  }
+
   return {
     fetchListeners,
     fetchListener,
     persistListeners,
     persistListener,
     createListener,
+    updateListener,
     deleteListener,
     onSelectListener,
     setSearchTerm,
@@ -276,7 +298,8 @@ const useListener = () => {
     certificateContainerRelation,
     SNIContainerRelation,
     CATLSContainerRelation,
-    fetchListnersNoDefaultPoolForSelect
+    fetchListnersNoDefaultPoolForSelect,
+    helpBlockTextInsertHeaders
   }
 }
 
