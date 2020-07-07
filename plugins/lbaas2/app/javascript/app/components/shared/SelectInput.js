@@ -16,8 +16,12 @@ const SelectInput = ({name, isLoading, items, isMulti, onChange, value, defaultV
       }
     }
 
-    if(shouldUseContext) {context.onChange(name,value)}    
-    onChange(props)
+    if(shouldUseContext) {
+      setTimeout(() => {
+        context.onChange(name,value)
+      }, 100);      
+    }    
+    if(onChange) {onChange(props)}
   }
 
   const placeholder = conditionalPlaceholderCondition ? conditionalPlaceholderText : "Select..."

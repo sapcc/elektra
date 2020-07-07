@@ -154,7 +154,7 @@ const NewLoadbalancer = (props) => {
                 <h5>Advanced Network Options</h5>
                 <p>These optional settings are for advanced usecases that require more control over the network configuration of the new loadbalancer.</p>
                 <Form.ElementHorizontal label='Subnet' name="vip_subnet_id">
-                  <SelectInput name="vip_subnet_id" isLoading={subnets.isLoading} items={subnets.items} onChange={onSelectSubnetChange} value={subnet} conditionalPlaceholderText="Please choose a network first." conditionalPlaceholderCondition={privateNetwork == null} isClearable useFormContext={false}/>
+                  <SelectInput name="vip_subnet_id" isLoading={subnets.isLoading} items={subnets.items} onChange={onSelectSubnetChange} value={subnet} conditionalPlaceholderText="Please choose a network first" conditionalPlaceholderCondition={privateNetwork == null} isClearable useFormContext={false}/>
                   { subnets.error ? <span className='text-danger'>{subnets.error}</span>:""}
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
