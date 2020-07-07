@@ -17,6 +17,11 @@ const NewLoadbalancer = (props) => {
     error: null,
     items: []
   })
+  const [subnets, setSubnets] = useState({ 
+    isLoading: false, 
+    error: null, 
+    items: [] 
+  })
 
   useEffect(() => {
     console.log('fetching private networks')
@@ -51,15 +56,20 @@ const NewLoadbalancer = (props) => {
   const [formErrors,setFormErrors] = useState(null)
   const [initialValues, setInitialValues] = useState({})
 
-  const validate = ({name,description,vip_network_id,vip_subnet_id,vip_address,tags}) => {
-    return name && vip_network_id && true
+  const validate = ({name,description,vip_network_id,vip_subnet_id,vip_address,tags}) => {    
+    return name && privateNetwork && true
   }
 
   const onSubmit = (values) => {
     setFormErrors(null)
+
+    const newValues = {... values}
+    if(privateNetwork) {newValues.vip_network_id = privateNetwork.value}    
+    if(subnet) {newValues.vip_subnet_id = subnet.value}
+
     // save the entered values in case of error
     setInitialValues(values)
-    return createLoadbalancer(values).then((response) => {
+    return createLoadbalancer(newValues).then((response) => {
       addNotice(<React.Fragment>Loadbalancer <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       close()
     }).catch(error => {
@@ -68,31 +78,25 @@ const NewLoadbalancer = (props) => {
   }
 
   const [privateNetwork, setPrivateNetwork] = useState(null)
-  const [subnets, setSubnets] = useState({ isLoading: false, error: null, items: [] })
   const [subnet, setSubnet] = useState(null)
 
   const onSelectPrivateNetworkChange = (props) => {
     if (props) {
       setPrivateNetwork(props)
+      // reset selected subnet
+      setSubnet(null)
+      // set the new subnets 
       setSubnets({...subnets, isLoading: true, error: null, items:[]})
-      fetchSubnets(props.value)
-      .then( (response) => {
+      fetchSubnets(props.value).then( (response) => {
         // new subnets loaded
         setSubnets({...subnets, isLoading: false, error: null, items: response})
-        // reset selected subnet
-        setSubnet(null)
       })
       .catch( (error) => {     
         setSubnets({...subnets, isLoading: false, error: errorMessage(error)})
       })
     }
   }
-
-  const onSelectSubnetChange = (props) => {
-    if (props) {
-      setSubnet(props)
-    }
-  }
+  const onSelectSubnetChange = (props) => { setSubnet(props) }
 
   const [showAdvanceNetworkSettings, setShowAdvanceNetworkSettings] =  useState(false)
   const handleAdvanceNetworkSettings = () => {
@@ -131,7 +135,7 @@ const NewLoadbalancer = (props) => {
             </Form.ElementHorizontal>
 
             <Form.ElementHorizontal label='Private Network' required name="vip_network_id">
-              <SelectInput name="vip_network_id" isLoading={privateNetworks.isLoading} items={privateNetworks.items} onChange={onSelectPrivateNetworkChange} value={privateNetwork}/>
+              <SelectInput name="vip_network_id" isLoading={privateNetworks.isLoading} items={privateNetworks.items} onChange={onSelectPrivateNetworkChange} value={privateNetwork} useFormContext={false}/>
               { privateNetworks.error ? <span className='text-danger'>{privateNetworks.error}</span>:""}
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
@@ -150,7 +154,7 @@ const NewLoadbalancer = (props) => {
                 <h5>Advanced Network Options</h5>
                 <p>These optional settings are for advanced usecases that require more control over the network configuration of the new loadbalancer.</p>
                 <Form.ElementHorizontal label='Subnet' name="vip_subnet_id">
-                  <SelectInput name="vip_subnet_id" isLoading={subnets.isLoading} items={subnets.items} onChange={onSelectSubnetChange} value={subnet} conditionalPlaceholderText="Please choose a network first." conditionalPlaceholderCondition={privateNetwork == null}/>
+                  <SelectInput name="vip_subnet_id" isLoading={subnets.isLoading} items={subnets.items} onChange={onSelectSubnetChange} value={subnet} conditionalPlaceholderText="Please choose a network first." conditionalPlaceholderCondition={privateNetwork == null} isClearable useFormContext={false}/>
                   { subnets.error ? <span className='text-danger'>{subnets.error}</span>:""}
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
