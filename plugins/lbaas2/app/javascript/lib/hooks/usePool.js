@@ -74,6 +74,17 @@ const usePool = () => {
     })
   }
 
+  const updatePool = (lbID, poolID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.put(`/loadbalancers/${lbID}/pools/${poolID}`, { pool: values }).then((response) => {
+        dispatch({type: 'RECEIVE_POOL', pool: response.data}) 
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
   const findPool = (pools, poolID) => {
     if (pools) {
       const index = pools.findIndex((item) => item.id==poolID);
@@ -210,12 +221,17 @@ const usePool = () => {
     )
   }
 
+  const filterListeners = (listeners, selectedProtocol) => {
+    return listeners.filter( i => poolProtocolListenerCombinations(selectedProtocol).includes(i.protocol))
+  }
+
   return {
     fetchPools,
     persistPools,
     fetchPool,
     persistPool,
     createPool,
+    updatePool,
     deletePool,
     onSelectPool,
     setSearchTerm,
@@ -227,7 +243,8 @@ const usePool = () => {
     poolPersistenceTypes,
     poolProtocolListenerCombinations,
     protocolListenerPoolCombinations,
-    helpBlockTextSessionPersistences
+    helpBlockTextSessionPersistences,
+    filterListeners
   };
 }
  

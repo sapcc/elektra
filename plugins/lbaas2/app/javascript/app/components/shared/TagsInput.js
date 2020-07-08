@@ -8,10 +8,13 @@ const TagsInput = ({name, initValue}) => {
   const context = useContext(FormContext)
 
   useEffect(() => {
-    setTimeout(() => initTags(),200)
+    // no use of timeout because of rerender in between
+    // setTimeout(() => initTags(),200)
+    initTags()
   }, [initValue])
 
   const initTags = () => {
+    // init input with values
     let newValues = []
     initValue && initValue.forEach(item => {
       newValues.push(createOption(item))

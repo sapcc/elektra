@@ -6,22 +6,52 @@ import ErrorPage from '../ErrorPage';
 import { Form } from 'lib/elektra-form';
 import SelectInput from '../shared/SelectInput'
 import HelpPopover from '../shared/HelpPopover'
-import { value } from 'numeral';
+import useListener from '../../../lib/hooks/useListener';
+import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
+import TagsInput from '../shared/TagsInput'
+import { addNotice } from 'lib/flashes';
 
 const EditPool = (props) => {
   const {matchParams, searchParamsToString, formErrorMessage, fetchPoolsForSelect } = useCommons()
-  const {lbAlgorithmTypes,poolPersistenceTypes, protocolListenerPoolCombinations, poolProtocolListenerCombinations, fetchPool, helpBlockTextSessionPersistences} = usePool()
+  const {lbAlgorithmTypes,
+        poolPersistenceTypes, 
+        protocolListenerPoolCombinations,
+        fetchPool, 
+        helpBlockTextSessionPersistences,
+        filterListeners,
+        updatePool} = usePool()
+  const {persistLoadbalancer} = useLoadbalancer()
+  const {fetchListnersForSelect, fetchContainersForSelect} = useListener()
+
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [poolID, setPoolID] = useState(null)
+  const [availableListeners, setAvailableListeners] = useState([])
+  const [availableListenersLoading, setAvailableListenersLoading] = useState(true)
+  const [listenersLoaded, setListenersLoaded] = useState(false)
+  const [containersLoaded, setContainersLoaded] = useState(false)
 
   const [lbAlgorithm, setLbAlgorithm] = useState(null)
   const [protocol, setProtocol] = useState(null)
   const [sessionPersistenceType, setSessionPersistenceType] = useState(null)
+  const [sessionPersistenceCookieName, setSessionPersistenceCookieName] = useState(null)
+  const [listener, setListener] = useState(null)
+  const [certificateContainer, setCertificateContainer] = useState(null)
+  const [authenticationContainer, setAuthenticationContainer] = useState(null)
 
   const [pool, setPool] = useState({
     isLoading: false,
     error: null,
     item: null
+  })
+  const [listeners, setListeners] = useState({
+    isLoading: false,
+    error: null,
+    items: []
+  })
+  const [containers, setContainers] = useState({
+    isLoading: false,
+    error: null,
+    items: []
   })
 
   useEffect(() => {
@@ -36,23 +66,74 @@ const EditPool = (props) => {
   useEffect(() => {
     if(poolID) {
       loadPool()
+      loadListeners()
+      loadContainers()
     }
   }, [poolID]);
 
   const loadPool = () => {
     console.log('fetching pool to edit')
-
     setPool({...pool, isLoading:true, error: null})
     fetchPool(loadbalancerID, poolID).then((data) => {
       setSelectedLbAlgorithm(data.pool.lb_algorithm)
       setSelectedProtocol(data.pool.protocol)
-      setSelectedSessionPersistenceType(data.pool.session_persistence)
+      setSelectedSessionPersistence(data.pool)
+      setSelectedUseTLS(data.pool.tls_enabled)
       setPool({...pool, isLoading:false, item: data.pool, error: null})
     })
     .catch( (error) => {      
       setPool({...pool, isLoading:false, error: error})
     })
   }
+
+  const loadListeners = () => {
+    console.log('fetching listeners to pool edit')
+    setListeners({...listeners, isLoading:true})
+    fetchListnersForSelect(loadbalancerID).then((data) => {
+      setListeners({...listeners, isLoading:false, items: data.listeners, error: null})
+      setListenersLoaded(true)
+    })
+    .catch( (error) => {      
+      setListeners({...listeners, isLoading:false, error: error})
+    })
+  }
+
+  const loadContainers = () => {
+    setContainers({...containers, isLoading:true})
+    fetchContainersForSelect(loadbalancerID).then((data) => {
+      setContainers({...containers, isLoading:false, items: data.containers, error: null})
+      setContainersLoaded(true)
+    })
+    .catch( (error) => {      
+      setContainers({...containers, isLoading:false, error: error})
+    })
+  }
+
+  useEffect(() => {
+    if(protocol && protocol.value) {
+      const selectedProtocol = protocol ? protocol.value : ""
+      const filteredListeners =  filterListeners(listeners.items, selectedProtocol)
+      setAvailableListeners(filteredListeners)
+      setAvailableListenersLoading(false)
+      if(pool.item && pool.item.listeners) {
+        setSelectedListener(filteredListeners, pool.item.listeners)
+      }
+    }
+  }, [listenersLoaded, protocol, pool]);
+
+  useEffect(() => {
+    // for testing
+    // if(pool.item) {
+    //   setSelectedCertificateContainer(containers.items, "https://keymanager-3.qa-de-1.cloud.sap:443/v1/containers/9cb71563-3ce3-4642-a93a-a027f7d48776")
+    //   setSelectedAuthenticationContainer(containers.items, "https://keymanager-3.qa-de-1.cloud.sap:443/v1/containers/9cb71563-3ce3-4642-a93a-a027f7d48776")
+    // }    
+    if(pool.item && pool.item.tls_container_ref) {
+      setSelectedCertificateContainer(containers.items, pool.item.tls_container_ref)
+    }
+    if(pool.item && pool.item.ca_tls_container_ref) {
+      setSelectedAuthenticationContainer(containers.items, pool.item.ca_tls_container_ref)
+    }
+  }, [containersLoaded, pool]);
 
   const setSelectedLbAlgorithm = (selectedLbAlgorithm) => {
     const selectedOption = lbAlgorithmTypes().find(i=>i.value == (selectedLbAlgorithm || "").trim());
@@ -64,13 +145,43 @@ const EditPool = (props) => {
     setProtocol(selectedOption)
   }
 
-  const setSelectedSessionPersistenceType = (selectedPersistenceType) => {
+  const setSelectedSessionPersistence = (pool) => {
+    const selectedPersistenceType = pool.session_persistence
     if(selectedPersistenceType && selectedPersistenceType.type) {
       const selectedOption = poolPersistenceTypes().find(i=>i.value == (selectedPersistenceType.type || "").trim());
       setSessionPersistenceType(selectedOption)
+      setShowPersistenceCookieName(selectedOption)
+      pool.session_persistence_type = selectedPersistenceType.type
+    }
+    if(selectedPersistenceType && selectedPersistenceType.cookie_name) {
+      // Need to be just set per context since this is a plain input field and no value attribute available
+      pool.session_persistence_cookie_name = selectedPersistenceType.cookie_name
     }
   }
 
+  const setSelectedListener = (filteredListeners, selectedListeners) => {
+    const selectedListenerKeys = selectedListeners.map((i) => i.id);
+    const selectedOptions = filteredListeners.filter(i => selectedListenerKeys.includes(i.value));
+    setListener(selectedOptions)
+  }
+
+  const setSelectedUseTLS = (selectedUseTLS) => {
+    setShowTLSSettings(selectedUseTLS)
+  }
+
+  const setSelectedCertificateContainer = (containers, selectedCertificateContainer) => {
+    const selectedOption = containers.find(i=>i.value == (selectedCertificateContainer || "").trim());
+    setCertificateContainer(selectedOption)
+  }
+
+  const setSelectedAuthenticationContainer = (containers, selectedAuthenticationContainer) => {
+    const selectedOption = containers.find(i=>i.value == (selectedAuthenticationContainer || "").trim());
+    setAuthenticationContainer(selectedOption)
+  }
+
+  const setShowPersistenceCookieName = (option) => {
+    setShowCookieName(option && option.value == "APP_COOKIE")
+  }
 
   /*
   * Modal stuff
@@ -97,45 +208,61 @@ const EditPool = (props) => {
   const [formErrors,setFormErrors] = useState(null)
   const [protocols, setProtocols ] = useState(protocolListenerPoolCombinations())
   const [showCookieName, setShowCookieName] = useState(false)
+  const [showTLSSettings, setShowTLSSettings] = useState(false)
 
   const validate = ({name,description,lb_algorithm, session_persistence_type,session_persistence_cookie_name,listener_id,tls_enabled,tls_container_ref,ca_tls_container_ref,tags}) => {
-
-    console.group("VALIDATE")
-    console.log(name, "-", lb_algorithm)
-    console.groupEnd()
-
     return name && lb_algorithm && true
   }
 
   const onSubmit = (values) => {
-    console.group("ONSUBMIT")
-    console.log(values)
-    console.groupEnd()
-
     const newValues = {... values}
-    if(newValues.session_persistence_type || newValues.session_persistence_cookie_name) {
-      // the session has been changed and the Json blob should be deleted and new attributes has been saved in
-      // session_persistence_type and/or session_persistence_cookie_name. Rails will be build the new JSON
+    const persistenceBlob = newValues.session_persistence || {}
+    if(persistenceBlob.type != newValues.session_persistence_type ||
+      persistenceBlob.cookie_name != newValues.session_persistence_cookie_name) {
+      // the session persistence has been changed. The JSON blob will be overwritten with new attributes
+      // session_persistence_type and/or session_persistence_cookie_name by the rails controller
+      if(newValues.session_persistence_type != "APP_COOKIE") { 
+        // remove just in case it still in context but presistence is not anymore app_coockie
+        delete newValues.session_persistence_cookie_name 
+      }
     } else {
-      if(newValues.session_persistence && newValues.session_persistence.type) {
-        newValues.session_persistence_type = newValues.session_persistence.type        
-      }
-      if(newValues.session_persistence && newValues.session_persistence.cookie_name) {
-        newValues.session_persistence_cookie_name = newValues.session_persistence.cookie_name        
-      }
+      // the session persistence is the same as in the JSON Blob. Remove the session_persistence_type and/or session_persistence_cookie_name
+      // so it doesn't create a new blob
+      delete newValues.session_persistence_type 
+      delete newValues.session_persistence_cookie_name 
     }
 
-    console.group("ONSUBMIT new")
-    console.log(newValues)
-    console.groupEnd()
+    if(!showTLSSettings){ 
+      // remove tls attributes just in case they still in context but tls not anymore enabled
+      delete newValues.tls_container_ref
+      delete newValues.ca_tls_container_ref
+    }
+
+    setFormErrors(null)
+    return updatePool(loadbalancerID, poolID, newValues).then((response) => {
+      addNotice(<React.Fragment>Pool <b>{response.data.name}</b> ({response.data.id}) is being updated.</React.Fragment>)
+      // fetch the lb again containing the new listener so it gets updated fast
+      persistLoadbalancer(loadbalancerID).catch(error => {
+      })
+      close()
+    }).catch(error => {
+      setFormErrors(formErrorMessage(error))
+    })
   }
 
   const onLbAlgorithmChange = (option) => { setLbAlgorithm(option)}
   const onPoolPersistenceTypeChanged = (option) => { 
     setSessionPersistenceType(option) 
-    setShowCookieName(option && option.value == "APP_COOKIE")
+    setShowPersistenceCookieName(option)
   }
-
+  const onChangedTLS = (e) => {
+    if(e && e.target) {
+      const value = e.target.checked
+      setTimeout(() => setShowTLSSettings(value),200)
+    }
+  }
+  const onCertificateContainerChange = (option) => { setCertificateContainer(option) }
+  const onAuthenticationContainerChange = (option) => { setAuthenticationContainer(option) }
 
   console.log("RENDER edit pool")
   return ( 
@@ -209,7 +336,7 @@ const EditPool = (props) => {
               {showCookieName &&
                 <div className="advanced-options">
                   <Form.ElementHorizontal label='Cookie Name' name="session_persistence_cookie_name" required>
-                    <Form.Input elementType='input' type='text' name='session_persistence_cookie_name' />
+                    <Form.Input elementType='input' type='text' name='session_persistence_cookie_name'/>
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
                       The name of the HTTP cookie defined by your application. The cookie value will be used for session stickiness.
@@ -217,6 +344,54 @@ const EditPool = (props) => {
                   </Form.ElementHorizontal>
                 </div>
               }
+
+              <Form.ElementHorizontal label='Assigned to Listeners' name="listener_id">
+                <SelectInput name="listener_id" isClearable isMulti isLoading={availableListenersLoading} items={availableListeners} value={listener} isDisabled/> 
+                { listeners.error ? <span className="text-danger">{listeners.error}</span>:""}
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  The listener for which this pool is set as the default one.
+                </span>
+              </Form.ElementHorizontal>
+
+              <Form.ElementHorizontal label='Use TLS' name="tls_enabled">
+                <Form.Input elementType='input' type='checkbox' name='tls_enabled' onClick={onChangedTLS} />
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  When true connections to backend member servers will use TLS encryption
+                </span>
+              </Form.ElementHorizontal>
+
+              {showTLSSettings &&
+                <div className="advanced-options">
+
+                  <Form.ElementHorizontal label='Certificate Container' name="tls_container_ref">
+                  { containers.error ? <span className="text-danger">{containers.error}</span>:""}
+                    <SelectInput name="tls_container_ref" isClearable isLoading={containers.isLoading}  items={containers.items} onChange={onCertificateContainerChange} value={certificateContainer}/>
+                      <span className="help-block">
+                        <i className="fa fa-info-circle"></i>
+                        The reference to the secret containing a PKCS12 format certificate/key bundle for TLS client authentication to the member servers.
+                      </span>
+                  </Form.ElementHorizontal>
+
+                  <Form.ElementHorizontal label='Authentication Container (CA)' name="ca_tls_container_ref">
+                  { containers.error ? <span className="text-danger">{containers.error}</span>:""}
+                    <SelectInput name="ca_tls_container_ref" isClearable isLoading={containers.isLoading}  items={containers.items} onChange={onAuthenticationContainerChange} value={authenticationContainer}/>
+                      <span className="help-block">
+                        <i className="fa fa-info-circle"></i>
+                        The reference secret containing a PEM format CA certificate bundle for tls_enabled pools.
+                      </span>
+                  </Form.ElementHorizontal>
+                </div>
+              }
+
+              <Form.ElementHorizontal label='Tags' name="tags">
+                <TagsInput name="tags" initValue={pool.item && pool.item.tags}/>
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  Start a new tag typing a string and hitting the Enter or Tab key.
+                </span>
+              </Form.ElementHorizontal>
 
             </Modal.Body>
 

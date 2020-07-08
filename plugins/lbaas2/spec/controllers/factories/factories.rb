@@ -14,8 +14,16 @@ module Lbaas2
       {name: "listener_test", protocol: "HTTP", protocol_port: "8080"}.merge(params)
     end
 
+    def update_listener(params={})
+      {id: "update_listener", name: "listener_test", protocol: "HTTP", protocol_port: "8080"}.merge(params)
+    end
+
     def pool(params={})
       {name: "pool_test", lb_algorithm: "ROUND_ROBIN", protocol: "HTTP"}.merge(params)
+    end
+
+    def update_pool(params={})
+      {id: "update_pool", name: "pool_test", lb_algorithm: "ROUND_ROBIN", protocol: "HTTP"}.merge(params)
     end
 
     def l7policy(params={})

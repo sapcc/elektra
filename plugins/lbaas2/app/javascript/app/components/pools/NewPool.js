@@ -13,7 +13,12 @@ import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
 const NewPool = (props) => {
   const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
-  const {lbAlgorithmTypes,poolPersistenceTypes, protocolListenerPoolCombinations, poolProtocolListenerCombinations, createPool, helpBlockTextSessionPersistences} = usePool()
+  const {lbAlgorithmTypes,
+        poolPersistenceTypes, 
+        protocolListenerPoolCombinations,
+        createPool, 
+        helpBlockTextSessionPersistences, 
+        filterListeners} = usePool()
   const {fetchListnersNoDefaultPoolForSelect, fetchContainersForSelect} = useListener()
   const {persistLoadbalancer} = useLoadbalancer()
   const [availableListeners, setAvailableListeners] = useState([])
@@ -129,10 +134,6 @@ const NewPool = (props) => {
     })
   }
 
-  const filterListeners = (listeners, selectedProtocol) => {
-    return listeners.filter( i => poolProtocolListenerCombinations(selectedProtocol).includes(i.protocol))
-  }
-
   const onProtocolChanged = (props) => {
     setProtocol(props)
     setListener(null)
@@ -246,7 +247,7 @@ const NewPool = (props) => {
 
               <Form.ElementHorizontal label='Certificate Container' name="tls_container_ref">
               { containers.error ? <span className="text-danger">{containers.error}</span>:""}
-                <SelectInput name="tls_container_ref" isLoading={containers.isLoading}  items={containers.items} />
+                <SelectInput name="tls_container_ref" isClearable isLoading={containers.isLoading}  items={containers.items} />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
                     The reference to the secret containing a PKCS12 format certificate/key bundle for TLS client authentication to the member servers.
@@ -255,7 +256,7 @@ const NewPool = (props) => {
 
               <Form.ElementHorizontal label='Authentication Container (CA)' name="ca_tls_container_ref">
               { containers.error ? <span className="text-danger">{containers.error}</span>:""}
-                <SelectInput name="ca_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} />
+                <SelectInput name="ca_tls_container_ref" isClearable isLoading={containers.isLoading}  items={containers.items} />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
                     The reference secret containing a PEM format CA certificate bundle for tls_enabled pools.

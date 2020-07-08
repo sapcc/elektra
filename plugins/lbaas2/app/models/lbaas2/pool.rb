@@ -33,6 +33,20 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
+    def attributes_for_update
+      {
+        'name'                      => read('name'),
+        'description'               => read('description'),
+        'lb_algorithm'              => read('lb_algorithm'),
+        'session_persistence'       => read('session_persistence'),        
+        'admin_state_up'            => read('admin_state_up'),
+        'tls_enabled'               => read('tls_enabled'),
+        'tls_container_ref'         => read('tls_container_ref'),
+        'ca_tls_container_ref'      => read('ca_tls_container_ref'),
+        'tags'                      => read('tags')
+      }.delete_if { |k, v| v.blank? and !%w[name description session_persistence].include?(k) }
+    end
+
     def save
       if valid?
         persist!
@@ -41,7 +55,24 @@ module Lbaas2
       end
     end
 
+    def update()
+      if valid?
+        update!()
+      else
+        false
+      end
+    end
+
     private
+
+    def update!()
+      newPool= service.update_pool(id, attributes_for_update)
+      self.update_attributes(newPool)
+      true
+    rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
 
     def persist!()
       newPool= service.create_pool(attributes_for_create)
@@ -49,6 +80,11 @@ module Lbaas2
       self.update_attributes(newPool)
       true
     rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
+
+    def rescue_eletron_errors(e)
       apiErrorCount = 0
       apiKey = "api_error_" + apiErrorCount.to_s
       e.messages.each do |m| 
@@ -70,7 +106,6 @@ module Lbaas2
           apiErrorCount += 1
         end
       end
-      false
     end
 
   end

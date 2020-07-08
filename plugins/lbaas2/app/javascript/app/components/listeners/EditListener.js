@@ -190,16 +190,7 @@ const EditListener = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null)
-
-    console.group("ONSUBMIT")
-    console.log(values)
-    console.groupEnd()
-
     return updateListener(loadbalancerID, listenerID, values).then((response) => {
-      console.group("updateListener")
-      console.log(response)
-      console.groupEnd()
-
       addNotice(<React.Fragment>Listener <b>{response.data.name}</b> ({response.data.id}) is being updated.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
       persistLoadbalancer(loadbalancerID).catch(error => {
