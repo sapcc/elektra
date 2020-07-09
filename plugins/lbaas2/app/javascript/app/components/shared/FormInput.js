@@ -1,7 +1,7 @@
 import React, { useContext,useEffect } from 'react';
 import { FormContext } from 'lib/elektra-form/components/form_context'
 
-const FormInput = ({type, name, placeholder, value}) => {
+const FormInput = ({type, name, placeholder, value, disabled}) => {
   const context = useContext(FormContext)
 
   const getRandomInt = (max) => {
@@ -23,7 +23,7 @@ const FormInput = ({type, name, placeholder, value}) => {
 
   return ( 
     <React.Fragment>
-      <input type={inputType} defaultValue={value} placeholder={placeholder} name={name} id={name} className="form-control" onChange={onTextChanged}/>
+      <input type={inputType} defaultValue={value} placeholder={placeholder} name={name} id={name} className="form-control" onChange={onTextChanged} disabled={disabled}/>
     </React.Fragment>
    );
 }

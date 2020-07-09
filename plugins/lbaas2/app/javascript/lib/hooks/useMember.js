@@ -58,7 +58,7 @@ const useMember = () => {
   const createNameTag = (name) => {
     return name ? <React.Fragment><b>name:</b> {name} <br/></React.Fragment> : ""
   }
-  
+
   const deleteMember = (lbID, poolID, memberID, memberName) => {
     return new Promise((handleSuccess,handleErrors) => {
       confirm(<React.Fragment><p>Do you really want to delete following Member?</p><p>{createNameTag(memberName)} <b>id:</b> {memberID}</p></React.Fragment>).then(() => {
@@ -94,6 +94,17 @@ const useMember = () => {
     })
   }
 
+  const updateMember = (lbID, poolID, memberID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.put(`/loadbalancers/${lbID}/pools/${poolID}/members/${memberID}`, { member: values }).then((response) => {
+        dispatch({type: 'RECEIVE_MEMBER', member: response.data}) 
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
   const setSearchTerm = (searchTerm) => {
     dispatch({type: 'SET_MEMBERS_SEARCH_TERM', searchTerm: searchTerm})
   }
@@ -101,10 +112,12 @@ const useMember = () => {
   return ({
     fetchMembers,
     persistMembers,
+    fetchMember,
     persistMember,
     deleteMember,
     fetchServers,
     createMember,
+    updateMember,
     setSearchTerm
   });
 }

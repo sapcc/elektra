@@ -50,6 +50,129 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
 
   end
 
+  describe "PUT 'update'" do
+    before :each do
+      member = double('elektron', service: double("octavia", get: double("get", map_to: double("member", to_json:{}, identifier:"", attributes:{}, update_attributes: {}, update:{})), put: double("put", body: {}) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(member)
+      allow_any_instance_of(Lbaas2::Loadbalancers::Pools::MembersController).to receive(:parseMemberParams).and_return(::Lbaas2::FakeFactory.new.member_params)
+    end
+
+    context 'network_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_admin' }
+          token
+        end
+      end
+      it 'return http success' do
+        member = ::Lbaas2::FakeFactory.new.update_member
+        put :update, params: default_params.merge({id: member[:id], member: member})
+        expect(response).to be_successful
+      end
+    end
+    context 'loadbalancer_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'loadbalancer_admin' }
+          token
+        end
+      end
+      it 'return http success' do
+        member = ::Lbaas2::FakeFactory.new.update_member
+        put :update, params: default_params.merge({id: member[:id], member: member})
+        expect(response).to be_successful
+      end
+    end
+    context 'cloud_network_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'cloud_network_admin' }
+          token
+        end
+      end
+      it 'return http success' do
+        member = ::Lbaas2::FakeFactory.new.update_member
+        put :update, params: default_params.merge({id: member[:id], member: member})
+        expect(response).to be_successful
+      end
+    end
+    context 'member' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'member' }
+          token
+        end
+      end
+      it 'return http success' do
+        member = ::Lbaas2::FakeFactory.new.update_member
+        put :update, params: default_params.merge({id: member[:id], member: member})
+        expect(response).to be_successful
+      end
+    end
+    context 'loadbalancer_poolmemberadmin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'loadbalancer_poolmemberadmin' }
+          token
+        end
+      end
+      it 'return http success' do
+        member = ::Lbaas2::FakeFactory.new.update_member
+        put :update, params: default_params.merge({id: member[:id], member: member})
+        expect(response).to be_successful
+      end
+    end
+    context 'network_viewer' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'network_viewer' }
+          token
+        end
+      end
+      it 'return 401 error' do
+        member = ::Lbaas2::FakeFactory.new.update_member
+        put :update, params: default_params.merge({id: member[:id], member: member})
+        expect(response.code).to be == ("401")
+        expect(response).to_not be_successful
+      end
+    end
+    context 'loadbalancer_viewer' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'lbaas2_role', 'name' => 'loadbalancer_viewer' }
+          token
+        end
+      end
+      it 'return 401 error' do
+        member = ::Lbaas2::FakeFactory.new.update_member
+        put :update, params: default_params.merge({id: member[:id], member: member})
+        expect(response.code).to be == ("401")
+        expect(response).to_not be_successful
+      end
+    end
+    context 'empty network roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token
+        end
+      end
+      it 'return 401 error' do
+        member = ::Lbaas2::FakeFactory.new.update_member
+        put :update, params: default_params.merge({id: member[:id], member: member})
+        expect(response.code).to be == ("401")
+        expect(response).to_not be_successful
+      end
+    end
+  end
+
   describe "POST 'create'" do
     before :each do
       member = double('elektron', service: double("octavia", get: double("get", map_to: double("lb", vip_subnet_id: "some_id", to_json:{})), post: double("post", body: {}) ))
