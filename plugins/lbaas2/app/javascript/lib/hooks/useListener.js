@@ -268,6 +268,16 @@ const useListener = () => {
     })
   }
 
+  const fetchListnersForSelect = (lbID) => {
+    return new Promise((handleSuccess,handleError) => {    
+      ajaxHelper.get(`/loadbalancers/${lbID}/listeners/items_for_select`).then((response) => {      
+        handleSuccess(response.data)
+      }).catch( (error) => {     
+        handleError(error.response)
+      })      
+    })
+  }
+
   const helpBlockTextInsertHeaders = () => {
     return (
       <ul className="help-block-popover-scroll">
@@ -298,6 +308,7 @@ const useListener = () => {
     certificateContainerRelation,
     SNIContainerRelation,
     CATLSContainerRelation,
+    fetchListnersForSelect,
     fetchListnersNoDefaultPoolForSelect,
     helpBlockTextInsertHeaders
   }

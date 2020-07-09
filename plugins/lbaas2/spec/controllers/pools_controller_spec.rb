@@ -66,6 +66,22 @@ describe Lbaas2::Loadbalancers::PoolsController, type: :controller do
 
   end
 
+  describe "PUT 'update'" do
+    before :each do
+      pool = double('elektron', service: double("octavia", get: double("get", map_to: double("pool", to_json:{}, update_attributes: {}, update:{})),  put: double("put", body: {}) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(pool)
+      allow_any_instance_of(Lbaas2::Loadbalancers::PoolsController).to receive(:extend_pool_data).and_return(double('cached_pools').as_null_object)
+    end
+
+    it_behaves_like 'PUT action' do
+      subject do
+        @default_params = default_params
+        pool = ::Lbaas2::FakeFactory.new.update_pool
+        @extra_params = {id: pool[:id], pool: pool}
+      end
+    end
+  end
+
   describe "DELETE 'destroy'" do
     before :each do
       pool = double('elektron', service: double("octavia", delete: double("delete") ))

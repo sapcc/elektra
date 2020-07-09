@@ -114,6 +114,17 @@ module Lbaas2
         render json: { errors: e.message }, status: "500"
       end
 
+      def itemsForSelect
+        listeners = services.lbaas2.listeners({loadbalancer_id: params[:loadbalancer_id]})
+        select_listeners = listeners.map {|listener| {"label": "#{listener.name || listener.id} (#{listener.protocol})", "value": listener.id, protocol: listener.protocol}}
+
+        render json: { listeners: select_listeners }
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
       protected
 
       def extend_listener_data(listeners)

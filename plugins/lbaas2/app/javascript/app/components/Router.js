@@ -14,6 +14,7 @@ import EditHealthMonitor from './healthmonitor/EditHealthMonitor'
 import AttachFIP from './loadbalancers/AttachFIP'
 import EditLoadbalancer from './loadbalancers/EditLoadbalancer'
 import EditListener from './listeners/EditListener'
+import EditPool from './pools/EditPool';
 
 const Router = (props) => {
 
@@ -46,6 +47,7 @@ const Router = (props) => {
           <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/edit" component={EditListener}/>
 
           <Route exact path="/loadbalancers/:loadbalancerID/pools/new" component={NewPool}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/edit" component={EditPool}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/members/new" component={NewMember}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/healthmonitor/new" component={NewHealthMonitor}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/healthmonitor/:healthmonitorID/edit" component={EditHealthMonitor}/>

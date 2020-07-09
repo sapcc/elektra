@@ -64,7 +64,22 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
         @extra_params = {listener: ::Lbaas2::FakeFactory.new.listener}
       end
     end
+  end
 
+  describe "PUT 'update'" do
+    before :each do
+      listener = double('elektron', service: double("octavia", get: double("get", map_to: double("listener", to_json:{}, update_attributes: {}, update:{})),  put: double("put", body: {}) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(listener)
+      allow_any_instance_of(Lbaas2::Loadbalancers::ListenersController).to receive(:extend_listener_data).and_return(double('cached_listeners').as_null_object)
+    end
+
+    it_behaves_like 'PUT action' do
+      subject do
+        @default_params = default_params
+        listener = ::Lbaas2::FakeFactory.new.update_listener
+        @extra_params = {id: listener[:id], listener: listener}
+      end
+    end
   end
 
   describe "DELETE 'destroy'" do
@@ -110,7 +125,22 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
         @path = "itemsWithoutDefaultPoolForSelect"
       end
     end
-
   end
+
+  describe "GET 'itemsForSelect'" do
+    before :each do
+      listeners = double('elektron', service: double("octavia", get: double("get", map_to: []) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(listeners)
+    end
+
+    it_behaves_like 'GET action with editor context' do
+      subject do
+        @default_params = default_params
+        @extra_params = {loadbalancer_id: 'lb_id'}
+        @path = "itemsForSelect"
+      end
+    end
+  end
+
 end
 

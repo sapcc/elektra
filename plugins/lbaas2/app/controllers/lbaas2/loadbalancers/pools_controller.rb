@@ -45,11 +45,31 @@ module Lbaas2
 
       def create
         poolParams = params[:pool]
-        newParams = poolParams.merge(session_persistence: composeSessionPersistence(poolParams), project_id: @scoped_project_id, loadbalancer_id: params[:loadbalancer_id])
+        composeSessionPersistence(poolParams)
+        newParams = poolParams.merge(project_id: @scoped_project_id, loadbalancer_id: params[:loadbalancer_id])
         pool = services.lbaas2.new_pool(newParams)
         
         if pool.save
           audit_logger.info(current_user, 'has created', pool)
+          extend_pool_data([pool])
+          render json: pool
+        else
+          render json: {errors: pool.errors}, status: 422
+        end
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
+      def update
+        poolParams = params[:pool]
+        composeSessionPersistence(poolParams)
+        pool = services.lbaas2.find_pool(params[:id])
+        pool.update_attributes(poolParams)
+        if pool.update
+          audit_logger.info(current_user, 'has updated', pool)
+          extend_pool_data([pool])
           render json: pool
         else
           render json: {errors: pool.errors}, status: 422
@@ -96,8 +116,8 @@ module Lbaas2
           if persistenceType == "APP_COOKIE"
             session_persistence[:cookie_name] = poolParams['session_persistence_cookie_name']
           end
+          poolParams.merge!(session_persistence: session_persistence)
         end
-        session_persistence
       end
 
       def extend_pool_data(pools)
