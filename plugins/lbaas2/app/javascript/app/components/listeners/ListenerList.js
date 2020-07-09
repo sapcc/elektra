@@ -7,7 +7,7 @@ import queryString from 'query-string'
 import { Link } from 'react-router-dom';
 import HelpPopover from '../shared/HelpPopover'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { useDispatch, useGlobalState } from '../StateProvider'
+import { useGlobalState } from '../StateProvider'
 import ErrorPage from '../ErrorPage';
 import useCommons from '../../../lib/hooks/useCommons'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
@@ -27,23 +27,75 @@ const TableFadeTransition = ({
 
 
 const ListenerList = ({props, loadbalancerID}) => {
-  const dispatch = useDispatch()
   const {persistListeners, setSelected, setSearchTerm, onSelectListener} = useListener()
   const state = useGlobalState().listeners
   const {searchParamsToString} = useCommons()
+  const [initialLoadDone, setInitialLoadDone] = useState(false)
+  const [triggerFindSelectedListener, setTriggerFindSelectedListener] = useState(false)
 
+  // when the load balancer id changes the state is reseted and a new load begins
   useEffect(() => { 
     initialLoad()
   }, [loadbalancerID]);
 
+  // when listeners are loaded we check if we have to select one of them
+  useEffect(() => { 
+    if(initialLoadDone){
+      selectListenerFromURL()
+    }
+  }, [initialLoadDone]);
+
+  // if listener is selected check if exists on the state
+  useEffect(() => { 
+    if(state.selected){
+      findSelectedListener()
+    }
+  }, [state.selected]);
+
+  useEffect(() => { 
+    if(triggerFindSelectedListener){
+      findSelectedListener()
+    }
+  }, [triggerFindSelectedListener]);
+
+
   const initialLoad = () => {
     console.log('LISTENER INITIAL FETCH')
-    // no add marker so we get always the first ones on lading component
+    // no add marker so we get always the first ones on loading the component
     persistListeners(loadbalancerID, true, null).then((data) => {
-      selectListener(data)
+      setInitialLoadDone(true)
     }).catch( error => {
-      // TODO
     })
+  }
+
+  // when initial load happens we check if a listener is per url selected
+  const selectListenerFromURL = () => {
+    const values = queryString.parse(props.location.search)
+    const id = values.listener
+    if (id) {
+        // Listener was selected
+        setSelected(id)
+        // filter the listener list to show just the one item
+        setSearchTerm(id)
+    }
+  }
+
+  const findSelectedListener = () => {
+    setTriggerFindSelectedListener(false)
+    const index = state.items.findIndex((item) => item.id==selected);
+
+    if(index >=0) {
+      return
+    } else if(hasNext) {
+      // No listener found in the current list. If there is more listener we will fetch all of them
+      persistListeners(loadbalancerID, false, {limit: 9999}).then(() => {
+        // trigger again find selected listener
+        setTriggerFindSelectedListener(true)
+      }).catch( (error) => {
+      })
+    } else {
+      addError(<React.Fragment>Listener <b>{selected}</b> not found.</React.Fragment>)
+    }
   }
 
   const canCreate = useMemo(
@@ -53,24 +105,6 @@ const ListenerList = ({props, loadbalancerID}) => {
       }),
     [scope.domain]
   );
-
-  const selectListener = (data) => {
-    const values = queryString.parse(props.location.search)
-    const id = values.listener
-
-    if (id) {
-      // check if id belows to the lb object
-      const index = data.listeners.findIndex((item) => item.id==id);
-      if (index>=0) {
-        // Listener was selected
-        setSelected(id)
-        // filter the listener list to show just the one item
-        setSearchTerm(id)
-      } else {
-        addError(<React.Fragment>Listener <b>{id}</b> not found.</React.Fragment>)
-      }
-    }
-  }
 
   const handlePaginateClick = (e,page) => {
     e.preventDefault()
@@ -96,7 +130,7 @@ const ListenerList = ({props, loadbalancerID}) => {
       persistListeners(loadbalancerID, false, {limit: 9999}).catch( (error) => {
       })
     }
-    dispatch({type: 'SET_LISTENERS_SEARCH_TERM', searchTerm: term})
+    setSearchTerm(term)
   }
 
   const error = state.error

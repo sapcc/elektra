@@ -136,7 +136,7 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
             <CachedInfoPopover  popoverId={"pool-listeners-popover-"+listenersIDs.id} 
               buttonName={listenersIDs.length} 
               title={<React.Fragment>Listeners</React.Fragment>}
-              content={<CachedInfoPopoverContentListeners props={props} listenerIDs={listenersIDs} cachedListeners={pool.cached_listeners} />} />
+              content={<CachedInfoPopoverContentListeners props={props} loadbalancerID={loadbalancerID} listenerIDs={listenersIDs} cachedListeners={pool.cached_listeners} />} />
           </div>
         </div>
       )
