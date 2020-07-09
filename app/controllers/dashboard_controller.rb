@@ -176,6 +176,11 @@ class DashboardController < ::ScopeController
         return render(template: 'application/exceptions/project_not_found')
       end
 
+      # NOTE: LEAVE this here because for better review
+      # we do not need extra permissions check for project and domains because elektron and monsoon_openstack_auth
+      # are doing the job. If the user has no access with his token monsoon_openstack_auth will trow an NotAuthorized
+      # error that we will catch and handle to show 'application/exceptions/unauthorized'
+      # 
       # if no access this is handled in rescue from above
       # did not return -> check if user projects include the requested project.
       #has_project_access = services.identity.has_project_access(
@@ -188,7 +193,8 @@ class DashboardController < ::ScopeController
       #  @can_access_project = false
       #  return render(template: 'application/exceptions/unauthorized')
       #end
-    elsif @scoped_domain_id
+    # elsif @scoped_domain_id 
+      # NOTE: LEAVE hit here because for better review
       # @scoped_project_id is nil and @scoped_domain_id exists -> check if
       # user can access the requested domain.
 
@@ -201,7 +207,9 @@ class DashboardController < ::ScopeController
       #  # unscoped token and return
       #  return authentication_rescope_token(domain: nil, project: nil)
       #end
-    else
+    elsif @scoped_domain_id == "default" and @scoped_project_id.nil?
+      return authentication_rescope_token(domain: nil, project: nil)
+    else 
       # both @scoped_project_id and @scoped_domain_id are nil
       # -> render unauthorized page and return.
       @can_access_project = false
