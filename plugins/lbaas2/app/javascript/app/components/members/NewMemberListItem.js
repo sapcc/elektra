@@ -46,14 +46,16 @@ const NewMemberListItem =  ({member, index, onRemoveMember, results}) => {
       {member.saved ?
         <span>{member.address}</span>
         :
-        <FormInput name={`member[${member.id}][address]`} value={member.address}/>
+        <React.Fragment>
+          <FormInput name={`member[${member.id}][address]`} value={member.address} disabled={member.edit}/>
+        </React.Fragment>
       }
     </td>
     <td>
       {member.saved ?
         <span>{member.protocol_port}</span>
         :
-        <FormInput type="number" name={`member[${member.id}][protocol_port]`} value={member.protocol_port}/>
+        <FormInput type="number" name={`member[${member.id}][protocol_port]`} value={member.protocol_port} disabled={member.edit}/>
       }
     </td>
     <td>
@@ -71,12 +73,16 @@ const NewMemberListItem =  ({member, index, onRemoveMember, results}) => {
       }      
     </td>
     <td>
-      {member.saved ?
-        <i className="fa fa-check"></i>
-        :
-        <Button bsStyle="link" onClick={onRemoveClick}>
-          <i className="fa fa-minus-circle"></i>
-        </Button>
+      {onRemoveMember &&
+        <React.Fragment>
+          {member.saved ?
+            <i className="fa fa-check"></i>
+            :
+            <Button bsStyle="link" onClick={onRemoveClick}>
+              <i className="fa fa-minus-circle"></i>
+            </Button>
+          }
+        </React.Fragment>
       }
     </td>
   </tr>

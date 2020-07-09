@@ -238,39 +238,43 @@ const NewMember = (props) => {
             { servers.error ? <span className="text-danger">{formErrorMessage(servers.error)}</span>:""}
           </Form.ElementInline>
 
-          <div className='toolbar'>
-            <div className="main-buttons">
-              <Button bsStyle="primary" disabled={members.isLoading} onClick={addExternalMembers}>Add External</Button>  
-            </div>
-          </div>
 
-          <Table className="table new_members" responsive>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th><abbr title="required">*</abbr>Address</th>
-                    <th><abbr title="required">*</abbr>Protocol Port</th>
-                    <th style={{width:"10%"}}>Weight</th>
-                    <th style={{width:"20%"}}>Tags</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-              {allMembers.length>0 ?
-                allMembers.map( (member, index) =>
-                  <NewMemberListItem member={member} key={member.id} index={index} onRemoveMember={onRemoveMember} results={submitResults[member.id]}/>
-                )
-              :
-                <tr>
-                  <td colSpan="5">
-                  { members.isLoading ? <span className='spinner'/> : 'No Members added.' }
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </Table>
-          { members.error ? <span className="text-danger">{formErrorMessage(members.error)}</span>:""}
+          <div className="existing-members">
+            <b>Existing Members</b>
+            <div className='toolbar'>
+              <div className="main-buttons">
+                <Button bsStyle="primary" disabled={members.isLoading} onClick={addExternalMembers}>Add External</Button>  
+              </div>
+            </div>
+
+            <Table className="table new_members" responsive>
+              <thead>
+                  <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th><abbr title="required">*</abbr>Address</th>
+                      <th><abbr title="required">*</abbr>Protocol Port</th>
+                      <th style={{width:"10%"}}>Weight</th>
+                      <th style={{width:"20%"}}>Tags</th>
+                      <th></th>
+                  </tr>
+              </thead>
+              <tbody>
+                {allMembers.length>0 ?
+                  allMembers.map( (member, index) =>
+                    <NewMemberListItem member={member} key={member.id} index={index} onRemoveMember={onRemoveMember} results={submitResults[member.id]}/>
+                  )
+                :
+                  <tr>
+                    <td colSpan="5">
+                    { members.isLoading ? <span className='spinner'/> : 'No Members added.' }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </Table>
+            { members.error ? <span className="text-danger">{formErrorMessage(members.error)}</span>:""}
+          </div>
 
         </Modal.Body>
         <Modal.Footer>  

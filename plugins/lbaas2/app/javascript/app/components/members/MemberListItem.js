@@ -12,7 +12,7 @@ import { policy } from "policy";
 import { scope } from "ajax_helper";
 
 const MemberListItem = ({props, poolID, member, searchTerm}) => {
-  const {MyHighlighter,matchParams,errorMessage} = useCommons()
+  const {MyHighlighter,matchParams,searchParamsToString,errorMessage} = useCommons()
   const {persistPool} = usePool()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const {persistMember,deleteMember} = useMember()
@@ -50,6 +50,14 @@ const MemberListItem = ({props, poolID, member, searchTerm}) => {
     clearInterval(polling)
     polling = null
   }
+
+  const canEdit = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:member_update", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const canDelete = useMemo(
     () => 
@@ -120,6 +128,14 @@ const MemberListItem = ({props, poolID, member, searchTerm}) => {
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
+          <li>
+              <SmartLink 
+                to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/${member.id}/edit?${searchParamsToString(props)}`}
+                isAllowed={canEdit} 
+                notAllowedText="Not allowed to edit. Please check with your administrator.">
+                  Edit
+              </SmartLink>
+            </li>
             <li>
               <SmartLink 
                 onClick={handleDelete} 

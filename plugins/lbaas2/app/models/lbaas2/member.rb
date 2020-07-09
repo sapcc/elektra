@@ -23,8 +23,25 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
+    def attributes_for_update
+      {
+        'name'            => read('name'),
+        'admin_state_up' => read('admin_state_up'),
+        'weight'         => read('weight'),
+        'tags'          => read('tags')
+      }.delete_if { |_k, v| v.blank? }
+    end
+
     def destroy()
       destroy!()
+    end
+
+    def update()
+      if valid?
+        update!()
+      else
+        false
+      end
     end
 
     def save
@@ -39,6 +56,15 @@ module Lbaas2
 
     def destroy!()
       service.delete_member(attributes['pool_id'], id)
+    rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
+
+    def update!()
+      newMember = service.update_member(attributes['pool_id'], id, attributes_for_update)
+      self.update_attributes(newMember)
+      true
     rescue ::Elektron::Errors::ApiResponse => e
       rescue_eletron_errors(e)
       false

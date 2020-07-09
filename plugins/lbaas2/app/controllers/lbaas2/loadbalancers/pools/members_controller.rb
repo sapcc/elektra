@@ -78,6 +78,45 @@ module Lbaas2
           render json: { errors: e.message }, status: "500"
         end
 
+        def update
+          membersParams = parseMemberParams()
+
+          success = true
+          errors = []
+          saved_members = []
+          results = {}
+          membersParams.each do |k,values|
+            # convert tags to array do to parse_nested_query
+            unless values["tags"].blank?              
+              values["tags"] = JSON.parse(values["tags"])
+            end
+            newParams = values.merge(pool_id: params[:pool_id])
+            member = services.lbaas2.find_member(params[:pool_id], params[:id])
+            
+            member.update_attributes(newParams)
+            if member.update
+              results[member.identifier] = member.attributes.merge({saved: true})
+              saved_members << member
+              audit_logger.info(current_user, 'has updated', member)
+            else
+              success = false
+              results[member.identifier] = member.attributes.merge({saved: false})
+              errors << {"row #{member.index}": member.errors}
+            end      
+          end
+
+          if success
+            render json: saved_members.first
+          else
+            sortedErrors = errors.sort_by { |hsh| hsh.keys.first }
+            render json: {errors: sortedErrors, results: results}, status: 422
+          end
+        rescue Elektron::Errors::ApiResponse => e
+          render json: { errors: e.message }, status: e.code
+        rescue Exception => e
+          render json: { errors: e.message }, status: "500"
+        end
+
         def destroy
           member = services.lbaas2.new_member
           member.pool_id = params[:pool_id]
