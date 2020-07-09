@@ -27,6 +27,15 @@ class DashboardController < ::ScopeController
   before_action :load_help_text
 
   # authenticate user -> current_user is available
+  # throws only errors
+  #api_authentication_required domain: ->(c) { c.instance_variable_get(:@scoped_domain_id) },
+  #                        domain_name: ->(c) { c.instance_variable_get(:@scoped_domain_name) },
+  #                        project: ->(c) { c.instance_variable_get(:@scoped_project_id) },
+  #                        rescope: false,
+  #                        two_factor: :two_factor_required?,
+  #                        except: :terms_of_use
+
+  # with redirect
   authentication_required domain: ->(c) { c.instance_variable_get(:@scoped_domain_id) },
                           domain_name: ->(c) { c.instance_variable_get(:@scoped_domain_name) },
                           project: ->(c) { c.instance_variable_get(:@scoped_project_id) },
@@ -49,7 +58,6 @@ class DashboardController < ::ScopeController
                 :load_webcli_endpoint, except: %i[terms_of_use]
   before_action :set_mailer_host
 
-
   rescue_from 'ActionView::MissingTemplate' do |exception|
     options = {
       warning: true, sentry: true,
@@ -61,12 +69,27 @@ class DashboardController < ::ScopeController
   end
 
   rescue_from 'Elektron::Errors::TokenExpired',
-              'MonsoonOpenstackAuth::Authentication::NotAuthorized',
-              'ActionController::InvalidAuthenticityToken' do
+              'ActionController::InvalidAuthenticityToken' do | exception |
+    # puts "INVALID TOKEN"
+    # puts exception.message
     redirect_to monsoon_openstack_auth.login_path(
       domain_fid: @scoped_domain_fid,
       domain_name: @scoped_domain_name, after_login: params[:after_login]
     )
+  end
+
+  rescue_from 'MonsoonOpenstackAuth::Authentication::NotAuthorized' do | exception |
+    # puts "NOT 'AUTHORIZED"
+    # puts exception.message
+    # for project "has no access to project"
+    if exception.message =~ /User has no access to the requested scope/
+      render(template: 'application/exceptions/unauthorized')
+    else
+      redirect_to monsoon_openstack_auth.login_path(
+        domain_fid: @scoped_domain_fid,
+        domain_name: @scoped_domain_name, after_login: params[:after_login]
+      )
+    end
   end
 
   rescue_from 'Elektron::Errors::ApiResponse' do |exception|
@@ -153,30 +176,31 @@ class DashboardController < ::ScopeController
         return render(template: 'application/exceptions/project_not_found')
       end
 
+      # if no access this is handled in rescue from above
       # did not return -> check if user projects include the requested project.
-      has_project_access = services.identity.has_project_access(
-        @scoped_project_id
-      )
+      #has_project_access = services.identity.has_project_access(
+      #  @scoped_project_id
+      #)
 
-      unless has_project_access
-        # user has no permissions for requested project -> reset
-        # @can_access_project, render unauthorized page and return.
-        @can_access_project = false
-        return render(template: 'application/exceptions/unauthorized')
-      end
+      #unless has_project_access
+      #  # user has no permissions for requested project -> reset
+      #  # @can_access_project, render unauthorized page and return.
+      #  @can_access_project = false
+      #  return render(template: 'application/exceptions/unauthorized')
+      #end
     elsif @scoped_domain_id
       # @scoped_project_id is nil and @scoped_domain_id exists -> check if
       # user can access the requested domain.
 
       # check if user has access to current domain, add rescue nil for cases where the token scope inexplicably contains a deleted project
       # without the rescue this call leads to an error message and the user can't see the domain page
-      has_domain_access = services.identity.has_domain_access(@scoped_domain_id) rescue nil
+      #has_domain_access = services.identity.has_domain_access(@scoped_domain_id) rescue nil
 
-      unless has_domain_access
-        # user has no permissions for the new domain -> rescope to
-        # unscoped token and return
-        return authentication_rescope_token(domain: nil, project: nil)
-      end
+      #unless has_domain_access
+      #  # user has no permissions for the new domain -> rescope to
+      #  # unscoped token and return
+      #  return authentication_rescope_token(domain: nil, project: nil)
+      #end
     else
       # both @scoped_project_id and @scoped_domain_id are nil
       # -> render unauthorized page and return.

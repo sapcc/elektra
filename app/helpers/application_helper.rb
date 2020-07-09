@@ -287,7 +287,8 @@ module ApplicationHelper
   end
 
   def selected_service_name
-    context = (current_user && current_user.is_allowed?('cloud_admin')) ? :cloud_admin : :services # this might be a bit ugly. But since we have two separate navs for general services and cloud admin services we have to somehow specify the correct context
+    return unless current_user
+    context = (current_user.is_allowed?('cloud_admin')) ? :cloud_admin : :services # this might be a bit ugly. But since we have two separate navs for general services and cloud admin services we have to somehow specify the correct context
     name = active_navigation_item_name(context: context, :level => :all)
     if name.blank?
       name = "Services"
@@ -296,6 +297,7 @@ module ApplicationHelper
   end
 
   def selected_category_icon
+    return unless current_user
     active_item = active_navigation_item(context: :services, :level => 1)
     icon_class = "services-icon"
     if active_item
@@ -313,6 +315,7 @@ module ApplicationHelper
   end
 
   def active_service_breadcrumb
+    return unless current_user
     context = (current_user && current_user.is_allowed?('cloud_admin')) ? :cloud_admin : :services # this might be a bit ugly. But since we have two separate navs for general services and cloud admin services we have to somehow specify the correct context
     active_service = active_navigation_item_name(context: context, :level => :all)
     crumb = "Home" # Default case, only visible on domain home page
