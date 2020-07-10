@@ -44,7 +44,7 @@ export default class ProjectSyncAction extends React.Component {
         msg = <React.Fragment><span className='spinner'/>Reloading project...</React.Fragment>;
         break;
       default:
-        msg = <a href='#' onClick={this.handleStartSync}>Sync now</a>;
+        msg = <a href='#' onClick={this.handleStartSync}>Sync usage info now</a>;
         break;
     }
     return <span>&ndash; {msg}</span>;
