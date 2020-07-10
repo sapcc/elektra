@@ -1,7 +1,6 @@
 import React from 'react';
 import { useEffect, useState, useMemo } from 'react'
 import useListener from '../../../lib/hooks/useListener'
-import {DefeatableLink} from 'lib/components/defeatable_link';
 import ListenerItem from './ListenerItem'
 import queryString from 'query-string'
 import { Link } from 'react-router-dom';
@@ -28,22 +27,80 @@ const TableFadeTransition = ({
 
 const ListenerList = ({props, loadbalancerID}) => {
   const dispatch = useDispatch()
-  const {persistListeners, setSelected, setSearchTerm, onSelectListener} = useListener()
+  const {persistListeners, persistListener, setSelected, setSearchTerm, onSelectListener} = useListener()
   const state = useGlobalState().listeners
   const {searchParamsToString} = useCommons()
+  const [initialLoadDone, setInitialLoadDone] = useState(false)
+  const [triggerFindSelectedListener, setTriggerFindSelectedListener] = useState(false)
 
+  // when the load balancer id changes the state is reseted and a new load begins
   useEffect(() => { 
     initialLoad()
   }, [loadbalancerID]);
 
+  // when listeners are loaded we check if we have to select one of them
+  useEffect(() => { 
+    if(initialLoadDone){
+      selectListenerFromURL()
+      setInitialLoadDone(false)
+    }
+  }, [initialLoadDone]);
+
+  // if listener is selected check if exists on the state
+  useEffect(() => { 
+    if(state.selected){
+      findSelectedListener()
+    }
+  }, [state.selected]);
+
+  useEffect(() => { 
+    if(triggerFindSelectedListener){
+      findSelectedListener()
+    }
+  }, [triggerFindSelectedListener]);
+
+
   const initialLoad = () => {
     console.log('LISTENER INITIAL FETCH')
-    // no add marker so we get always the first ones on lading component
+    // no add marker so we get always the first ones on loading the component
     persistListeners(loadbalancerID, true, null).then((data) => {
-      selectListener(data)
+      setInitialLoadDone(true)
     }).catch( error => {
-      // TODO
     })
+  }
+
+  // when initial load happens we check if a listener is per url selected
+  const selectListenerFromURL = () => {
+    const values = queryString.parse(props.location.search)
+    const id = values.listener
+    if (id) {
+        // Listener was selected
+        setSelected(id)
+        // filter the listener list to show just the one item
+        setSearchTerm(id)
+    }
+  }
+
+  const findSelectedListener = () => {
+    setTriggerFindSelectedListener(false)
+    const index = state.items.findIndex((item) => item.id==selected);
+
+    if(index >=0) {
+      return
+    } else if(hasNext) {
+      // set state to loading
+      dispatch({type: 'REQUEST_LISTENERS'})
+      // No listener found in the current list.
+      persistListener(loadbalancerID, selected).then(() => {
+        // trigger again find selected listener
+        setTriggerFindSelectedListener(true)
+      }).catch( (error) => {
+        dispatch({type: 'REQUEST_LISTENERS_FAILURE', error: error})
+      })
+    } else {
+      // something weird happend. We just show an error
+      addError(<React.Fragment>Listener <b>{selected}</b> not found.</React.Fragment>)
+    }
   }
 
   const canCreate = useMemo(
@@ -53,24 +110,6 @@ const ListenerList = ({props, loadbalancerID}) => {
       }),
     [scope.domain]
   );
-
-  const selectListener = (data) => {
-    const values = queryString.parse(props.location.search)
-    const id = values.listener
-
-    if (id) {
-      // check if id belows to the lb object
-      const index = data.listeners.findIndex((item) => item.id==id);
-      if (index>=0) {
-        // Listener was selected
-        setSelected(id)
-        // filter the listener list to show just the one item
-        setSearchTerm(id)
-      } else {
-        addError(<React.Fragment>Listener <b>{id}</b> not found.</React.Fragment>)
-      }
-    }
-  }
 
   const handlePaginateClick = (e,page) => {
     e.preventDefault()
@@ -96,7 +135,7 @@ const ListenerList = ({props, loadbalancerID}) => {
       persistListeners(loadbalancerID, false, {limit: 9999}).catch( (error) => {
       })
     }
-    dispatch({type: 'SET_LISTENERS_SEARCH_TERM', searchTerm: term})
+    setSearchTerm(term)
   }
 
   const error = state.error
@@ -131,7 +170,7 @@ const ListenerList = ({props, loadbalancerID}) => {
           <HelpPopover text="Object representing the listening endpoint of a load balanced service. TCP / UDP port, as well as protocol information and other protocol- specific details are attributes of the listener. Notably, though, the IP address is not." />
         </div>
         {error ?
-          <ErrorPage headTitle="Load Balancers Listeners" error={error} onReload={initialLoad}/>
+          <ErrorPage headTitle="Listeners" error={error} onReload={initialLoad}/>
           :
           <React.Fragment>
             <div className='toolbar'>

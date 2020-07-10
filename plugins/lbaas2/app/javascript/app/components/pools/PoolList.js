@@ -1,7 +1,6 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useDispatch, useGlobalState } from '../StateProvider'
 import usePool from '../../../lib/hooks/usePool'
-import {DefeatableLink} from 'lib/components/defeatable_link';
 import PoolItem from './PoolItem'
 import queryString from 'query-string'
 import { Link } from 'react-router-dom';
@@ -14,23 +13,82 @@ import { SearchField } from 'lib/components/search_field';
 import { policy } from "policy";
 import { scope } from "ajax_helper";
 import SmartLink from "../shared/SmartLink"
+import ErrorPage from '../ErrorPage';
 
 const PoolList = ({props, loadbalancerID}) => {
   const dispatch = useDispatch()
-  const {persistPools, setSearchTerm, setSelected, onSelectPool} = usePool()
+  const {persistPools,persistPool, setSearchTerm, setSelected, onSelectPool} = usePool()
   const {searchParamsToString} = useCommons()
   const state = useGlobalState().pools
+  const [initialLoadDone, setInitialLoadDone] = useState(false)
+  const [triggerFindSelected, setTriggerFindSelected] = useState(false)
 
+  // when the load balancer id changes the state is reseted and a new load begins
   useEffect(() => {  
-    initLoad()
+    initialLoad()
   }, [loadbalancerID]);
 
-  const initLoad = () => {
+  // when pools are loaded we check if we have to select one of them
+  useEffect(() => { 
+    if(initialLoadDone){
+      selectPoolFromURL()
+      setInitialLoadDone(false)
+    }
+  }, [initialLoadDone]);
+
+  // if listener is selected check if exists on the state
+  useEffect(() => { 
+    if(state.selected){
+      findSelectedPool()
+    }
+  }, [state.selected]);
+
+  useEffect(() => { 
+    if(triggerFindSelected){
+      findSelectedPool()
+    }
+  }, [triggerFindSelected]);
+
+  const initialLoad = () => {
     console.log("FETCH POOLS")
+    // no add marker so we get always the first ones on loading the component
     persistPools(loadbalancerID, true, null).then((data) => {
-      selectPool(data)
+      setInitialLoadDone(true)
     }).catch( error => {
     })
+  }
+
+  const selectPoolFromURL = (data) => {
+    const values = queryString.parse(props.location.search)
+    const id = values.pool
+    if (id) {
+      // pool was selected
+      setSelected(id)
+      // filter the pool list to show just the one item
+      setSearchTerm(id)
+    }
+  }
+
+  const findSelectedPool = () => {
+    setTriggerFindSelected(false)
+    const index = state.items.findIndex((item) => item.id==selected);
+
+    if(index >=0) {
+      return
+    } else if(hasNext) {      
+      // set state to loading
+      dispatch({type: 'REQUEST_POOLS'})
+      // No listener found in the current list. Fetch just the selected
+      persistPool(loadbalancerID, selected).then(() => {
+        // trigger again find selected listener
+        setTriggerFindSelected(true)
+      }).catch( (error) => {
+        dispatch({type: 'REQUEST_POOLS_FAILURE', error: error})
+      })
+    } else {
+      // something weird happend. We just show an error
+      addError(<React.Fragment>Pool <b>{selected}</b> not found.</React.Fragment>)
+    }
   }
 
   const canCreate = useMemo(
@@ -40,23 +98,6 @@ const PoolList = ({props, loadbalancerID}) => {
       }),
     [scope.domain]
   );
-
-  const selectPool = (data) => {
-    const values = queryString.parse(props.location.search)
-    const id = values.pool
-    if (id) {
-      // check if id belows to the lb object
-      const index = data.pools.findIndex((item) => item.id==id);
-      if (index>=0) {
-        // pool was selected
-        setSelected(id)
-        // filter the pool list to show just the one item
-        setSearchTerm(id)
-      } else {
-        addError(<React.Fragment>Pool <b>{id}</b> not found.</React.Fragment>)
-      }
-    }
-  }
 
   const handlePaginateClick = (e,page) => {
     e.preventDefault()
@@ -119,7 +160,7 @@ const PoolList = ({props, loadbalancerID}) => {
         </div>
         
         {error ?
-          <ErrorPage headTitle="Load Balancers Pools" error={error} onReload={initLoad}/>
+          <ErrorPage headTitle="Pools" error={error} onReload={initialLoad}/>
           :
           <React.Fragment>
 

@@ -19,11 +19,11 @@ const CachedInfoPopoverContent = ({props, lbID, listenerID, l7PolicyIDs, cachedl
     onSelectPolicyWithListner(props, listenerID, id)
   }
 
-  const onSelectPolicyWithListner = (props, listenerID, policyID) => {
+  const onSelectPolicyWithListner = (props, listenerID, l7PolicyID) => {
     const pathname = props.location.pathname; 
     const searchParams = new URLSearchParams(props.location.search); 
     searchParams.set("listener", listenerID);
-    searchParams.set("l7policy", policyID);
+    searchParams.set("l7policy", l7PolicyID);
     props.history.push({
       pathname: pathname,
       search: searchParams.toString()

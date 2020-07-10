@@ -15,6 +15,7 @@ import SmartLink from "../shared/SmartLink"
 
 const MemberList = ({props,loadbalancerID}) => {
   const poolID = useGlobalState().pools.selected
+  const poolError = useGlobalState().pools.error
   const {searchParamsToString} = useCommons()
   const {persistMembers, setSearchTerm} = useMember()
   const state = useGlobalState().members
@@ -70,7 +71,7 @@ const MemberList = ({props,loadbalancerID}) => {
     console.log("RENDER member list")
     return (
       <React.Fragment>
-        {poolID && 
+        {poolID && !poolError &&
           <React.Fragment>
             {error ?
               <div className="members subtable multiple-subtable-right">
@@ -151,7 +152,7 @@ const MemberList = ({props,loadbalancerID}) => {
         }
       </React.Fragment>
     );
-  } , [poolID, JSON.stringify(members), error, isLoading, searchTerm, props])
+  } , [poolID, poolError, JSON.stringify(members), error, isLoading, searchTerm, props])
 }
  
 export default MemberList;

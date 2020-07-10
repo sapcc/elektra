@@ -5,7 +5,7 @@ import useCommons from '../../../lib/hooks/useCommons'
 import HelpPopover from '../shared/HelpPopover'
 import L7PolicyListItem from './L7PolicyListItem'
 import { Table } from 'react-bootstrap'
-import { useGlobalState } from '../StateProvider'
+import { useDispatch, useGlobalState } from '../StateProvider'
 import L7PolicySelected from './L7PolicySelected'
 import queryString from 'query-string'
 import ErrorPage from '../ErrorPage';
@@ -17,17 +17,23 @@ import { scope } from "ajax_helper";
 import SmartLink from "../shared/SmartLink"
 
 const L7PolicyList = ({props, loadbalancerID }) => {
-  const {persistL7Policies, setSearchTerm, setSelected, reset, onSelectL7Policy} = useL7Policy()
+  const dispatch = useDispatch()
+  const {persistL7Policies, persistL7Policy, setSearchTerm, setSelected, reset, onSelectL7Policy} = useL7Policy()
   const {searchParamsToString} = useCommons()
   const [tableScroll, setTableScroll] = useState(false)
   const state = useGlobalState().l7policies
   const listenerID = useGlobalState().listeners.selected
+  const listenerError = useGlobalState().listeners.error
+  const [initialLoadDone, setInitialLoadDone] = useState(false)
+  const [triggerFindSelected, setTriggerFindSelected] = useState(false)
+
   // timeout for scroll event
   let handleScrollTimeout = null
   // timeout for the event handler
   let eventHandlerTimeout = null
   const [count, setCount] = useState(0)
 
+  // when the listener id changes the state is reseted and a new load begins
   useEffect(() => {    
     initialLoad()
     return () => {
@@ -35,20 +41,62 @@ const L7PolicyList = ({props, loadbalancerID }) => {
     }
   }, [listenerID]);
 
-  const canCreate = useMemo(
-    () => 
-      policy.isAllowed("lbaas2:l7policy_create", {
-        target: { scoped_domain_name: scope.domain }
-      }),
-    [scope.domain]
-  );
+  // when policies are loaded we check if we have to select one of them
+  useEffect(() => { 
+    if(initialLoadDone){
+      selectL7PolicyFromURL()
+      setInitialLoadDone(false)
+    }
+  }, [initialLoadDone]);
+
+  // if listener is selected check if exists on the state
+  useEffect(() => { 
+    if(state.selected){
+      findSelectedL7Policy()
+    }
+  }, [state.selected]);
+
+  useEffect(() => { 
+    if(triggerFindSelected){
+      findSelectedL7Policy()
+    }
+  }, [triggerFindSelected]);
 
   const initialLoad = () => {
     if (listenerID) {
       console.log("FETCH L7 POLICIES")
       persistL7Policies(loadbalancerID, listenerID, null).then((data) => {
-        selectL7Policy(data)
+        setInitialLoadDone(true)
       }).catch( error => {
+      })
+    }
+  }
+
+  const selectL7PolicyFromURL = () => {
+    const values = queryString.parse(props.location.search)    
+    const id = values.l7policy
+    if (id) {
+      // policy was selected
+      setSelected(id)
+      // filter the policy list to show just the one item
+      setSearchTerm(id)
+    } 
+  }
+
+  const findSelectedL7Policy = () => {
+    setTriggerFindSelected(false)
+    const index = state.items.findIndex((item) => item.id==selected);
+    if(index >=0) {
+      return
+    } else {      
+      // set state to loading
+      dispatch({type: 'REQUEST_L7POLICIES'})
+      // No listener found in the current list. Fetch just the selected
+      persistL7Policy(loadbalancerID, listenerID, selected).then(() => {
+        // trigger again find selected listener
+        setTriggerFindSelected(true)
+      }).catch( (error) => {
+        dispatch({type: 'REQUEST_L7POLICIES_FAILURE', error: error})
       })
     }
   }
@@ -95,22 +143,13 @@ const L7PolicyList = ({props, loadbalancerID }) => {
     }, 1000 )
   }
 
-  const selectL7Policy = (data) => {
-    const values = queryString.parse(props.location.search)    
-    const id = values.l7policy
-    if (id) {
-      // check if id belows to the lb object
-      const index = data.l7policies.findIndex((item) => item.id==id);
-      if (index>=0) {
-        // policy was selected
-        setSelected(id)
-        // filter the policy list to show just the one item
-        setSearchTerm(id)
-      } else {
-        addError(<React.Fragment>L7 Policy <b>{id}</b> not found.</React.Fragment>)
-      }
-    } 
-  }
+  const canCreate = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:l7policy_create", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const restoreUrl = (e) => {
     if (e) {
@@ -121,10 +160,6 @@ const L7PolicyList = ({props, loadbalancerID }) => {
   }
 
   const search = (term) => {
-    if(hasNext && !isLoading) {
-      persistL7Policies(loadbalancerID, listenerID, {limit: 9999}).catch( (error) => {
-      })
-    }
     setSearchTerm(term)
   }
 
@@ -155,7 +190,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
     console.log("RENDER L7 POLICIES")
     return ( 
       <React.Fragment>
-        {listenerID &&
+        {listenerID && !listenerError &&
           <React.Fragment>
             { error ?
               <div className={selected ? "l7policies subtable multiple-subtable-left": "l7policies subtable"} ref={container}>
@@ -245,7 +280,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
         } 
       </React.Fragment>
     );
-  } , [ listenerID, JSON.stringify(l7Policies), error, selected, isLoading, searchTerm, props, tableScroll])
+  } , [ listenerID, listenerError, JSON.stringify(l7Policies), error, selected, isLoading, searchTerm, props, tableScroll])
 }
  
 export default L7PolicyList;
