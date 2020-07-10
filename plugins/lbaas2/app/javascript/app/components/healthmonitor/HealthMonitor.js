@@ -17,6 +17,7 @@ import SmartLink from "../shared/SmartLink"
 const HealthMonitor = ({props, loadbalancerID }) => {
   const {deleteHealthmonitor,persistHealthmonitor, resetState} = useHealthMonitor()
   const poolID = useGlobalState().pools.selected
+  const poolError = useGlobalState().pools.error
   const pools = useGlobalState().pools.items
   const {findPool,persistPool} = usePool()
   const {searchParamsToString,matchParams,errorMessage} = useCommons()
@@ -97,7 +98,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
     console.log("RENDER healthmonitor")
     return ( 
       <React.Fragment>
-        {poolID &&
+        {poolID && !poolError &&
           <React.Fragment>
             {error ?
               <div className="healthmonitor subtable multiple-subtable-left">
@@ -168,7 +169,7 @@ const HealthMonitor = ({props, loadbalancerID }) => {
         }
       </React.Fragment>
     );
-  } , [ poolID, JSON.stringify(healthmonitor), error, isLoading, props])
+  } , [ poolID, poolError, JSON.stringify(healthmonitor), error, isLoading, props])
 }
  
 export default HealthMonitor;

@@ -1,13 +1,12 @@
 import React from 'react';
 import { useEffect, useState, useMemo } from 'react'
 import useListener from '../../../lib/hooks/useListener'
-import {DefeatableLink} from 'lib/components/defeatable_link';
 import ListenerItem from './ListenerItem'
 import queryString from 'query-string'
 import { Link } from 'react-router-dom';
 import HelpPopover from '../shared/HelpPopover'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { useGlobalState } from '../StateProvider'
+import { useDispatch, useGlobalState } from '../StateProvider'
 import ErrorPage from '../ErrorPage';
 import useCommons from '../../../lib/hooks/useCommons'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
@@ -27,7 +26,8 @@ const TableFadeTransition = ({
 
 
 const ListenerList = ({props, loadbalancerID}) => {
-  const {persistListeners, setSelected, setSearchTerm, onSelectListener} = useListener()
+  const dispatch = useDispatch()
+  const {persistListeners, persistListener, setSelected, setSearchTerm, onSelectListener} = useListener()
   const state = useGlobalState().listeners
   const {searchParamsToString} = useCommons()
   const [initialLoadDone, setInitialLoadDone] = useState(false)
@@ -42,6 +42,7 @@ const ListenerList = ({props, loadbalancerID}) => {
   useEffect(() => { 
     if(initialLoadDone){
       selectListenerFromURL()
+      setInitialLoadDone(false)
     }
   }, [initialLoadDone]);
 
@@ -87,13 +88,17 @@ const ListenerList = ({props, loadbalancerID}) => {
     if(index >=0) {
       return
     } else if(hasNext) {
-      // No listener found in the current list. If there is more listener we will fetch all of them
-      persistListeners(loadbalancerID, false, {limit: 9999}).then(() => {
+      // set state to loading
+      dispatch({type: 'REQUEST_LISTENERS'})
+      // No listener found in the current list.
+      persistListener(loadbalancerID, selected).then(() => {
         // trigger again find selected listener
         setTriggerFindSelectedListener(true)
       }).catch( (error) => {
+        dispatch({type: 'REQUEST_LISTENERS_FAILURE', error: error})
       })
     } else {
+      // something weird happend. We just show an error
       addError(<React.Fragment>Listener <b>{selected}</b> not found.</React.Fragment>)
     }
   }
@@ -165,7 +170,7 @@ const ListenerList = ({props, loadbalancerID}) => {
           <HelpPopover text="Object representing the listening endpoint of a load balanced service. TCP / UDP port, as well as protocol information and other protocol- specific details are attributes of the listener. Notably, though, the IP address is not." />
         </div>
         {error ?
-          <ErrorPage headTitle="Load Balancers Listeners" error={error} onReload={initialLoad}/>
+          <ErrorPage headTitle="Listeners" error={error} onReload={initialLoad}/>
           :
           <React.Fragment>
             <div className='toolbar'>

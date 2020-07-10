@@ -6,7 +6,7 @@ module Lbaas2
         authorization_required
 
         def index
-          limit = (params[:limit] || 19).to_i
+          limit = (params[:limit] || 9999).to_i
           sort_key = (params[:sort_key] || 'position')
           sort_dir = (params[:sort_dir] || 'asc')
           pagination_options = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
