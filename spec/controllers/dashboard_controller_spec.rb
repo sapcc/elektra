@@ -41,8 +41,7 @@ describe DashboardController, type: :controller do
         end
       end
       
-      # NOTE: comment because that is not working because we do not
-      #       check auth/project explicitly anymore.
+      # NOTE: that is not working because we do not check auth/project explicitly anymore.
       #context 'and user has no access to project' do
       #  before :each do
       #    allow(controller.services.identity)
@@ -127,12 +126,13 @@ describe DashboardController, type: :controller do
           expect(response).not_to render_template('application/exceptions/unauthorized')
         end
 
-        it 'should rescope to unscoped token' do
-          expect(controller).to receive(:authentication_rescope_token).with(
-            domain: nil, project: nil
-          )
-          get :index, params: { domain_id: default_params[:domain_id] }
-        end
+        # NOTE: this cannot longer be tested because the extra permissions check for auth/domains was removed
+        #it 'should rescope to unscoped token' do
+        #  expect(controller).to receive(:authentication_rescope_token).with(
+        #    domain: nil, project: nil
+        #  )
+        #  get :index, params: { domain_id: default_params[:domain_id] }
+        #end
       end
     end
   end

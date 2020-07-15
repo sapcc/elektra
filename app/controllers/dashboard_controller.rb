@@ -82,6 +82,7 @@ class DashboardController < ::ScopeController
     # puts "NOT 'AUTHORIZED"
     # puts exception.message
     # for project "has no access to project"
+    # check MonsoonOpenstackAuth/Authentication/auth_session.rb
     if exception.message =~ /User has no access to the requested scope/
       render(template: 'application/exceptions/unauthorized')
     else
@@ -155,11 +156,6 @@ class DashboardController < ::ScopeController
     { 'Core::Error::ProjectNotFound' => {
       title: 'Project Not Found', sentry: false, warning: true
     } }
-    # ,
-    # { 'ActionController::InvalidAuthenticityToken' => {
-    #   title: 'User session expired', sentry: false, warning: true,
-    #   description: 'The user session is expired, please reload the page!'
-    # } }
   ]
 
   # this method checks if user has permissions for the new scope and if so
@@ -193,7 +189,7 @@ class DashboardController < ::ScopeController
       #  @can_access_project = false
       #  return render(template: 'application/exceptions/unauthorized')
       #end
-    # elsif @scoped_domain_id 
+    elsif @scoped_domain_id 
       # NOTE: LEAVE hit here because for better review
       # @scoped_project_id is nil and @scoped_domain_id exists -> check if
       # user can access the requested domain.
@@ -203,12 +199,11 @@ class DashboardController < ::ScopeController
       #has_domain_access = services.identity.has_domain_access(@scoped_domain_id) rescue nil
 
       #unless has_domain_access
+      #  # this can happen if the user is using a link to  some domain and project
       #  # user has no permissions for the new domain -> rescope to
-      #  # unscoped token and return
+      #  # unscoped token and return this will be the startpoint to rescope again
       #  return authentication_rescope_token(domain: nil, project: nil)
       #end
-    elsif @scoped_domain_id == "default" and @scoped_project_id.nil?
-      return authentication_rescope_token(domain: nil, project: nil)
     else 
       # both @scoped_project_id and @scoped_domain_id are nil
       # -> render unauthorized page and return.
