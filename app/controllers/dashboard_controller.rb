@@ -58,6 +58,9 @@ class DashboardController < ::ScopeController
                 :load_webcli_endpoint, except: %i[terms_of_use]
   before_action :set_mailer_host
 
+  # GLOBAL ERROR RESCUE && HANDLING
+  ##############################
+  # handle Missing Template
   rescue_from 'ActionView::MissingTemplate' do |exception|
     options = {
       warning: true, sentry: true,
@@ -68,22 +71,22 @@ class DashboardController < ::ScopeController
     render_exception_page(exception, options.merge(sentry: true))
   end
 
+  # handle Token issues
   rescue_from 'Elektron::Errors::TokenExpired',
               'ActionController::InvalidAuthenticityToken' do | exception |
-    # puts "INVALID TOKEN"
-    # puts exception.message
     redirect_to monsoon_openstack_auth.login_path(
       domain_fid: @scoped_domain_fid,
       domain_name: @scoped_domain_name, after_login: params[:after_login]
     )
   end
 
+  # handle NotAuthorized but NOTE! this should never fetch because all errors related to 
+  # "MonsoonOpenstackAuth::Authentication::NotAuthorized" are rescued directly in rescope_token and handled by 
+  # "rescue_and_render_exception_page" but I leave it here just in case ;-) 
   rescue_from 'MonsoonOpenstackAuth::Authentication::NotAuthorized' do | exception |
-    # puts "NOT 'AUTHORIZED"
-    # puts exception.message
     # for project "has no access to project"
     # check MonsoonOpenstackAuth/Authentication/auth_session.rb
-    if exception.message =~ /User has no access to the requested scope/
+    if exception.message =~ /has no access to project/
       render(template: 'application/exceptions/unauthorized')
     else
       redirect_to monsoon_openstack_auth.login_path(
@@ -93,6 +96,7 @@ class DashboardController < ::ScopeController
     end
   end
 
+  # handle all api errors
   rescue_from 'Elektron::Errors::ApiResponse' do |exception|
     options = {
       title: exception.code_type, description: :message,
@@ -106,7 +110,6 @@ class DashboardController < ::ScopeController
     #   # Most likely this is the cause of double render error!
     #   return
     when 401 # unauthorized
-
       redirect_to monsoon_openstack_auth.login_path(
         domain_fid: @scoped_domain_fid,
         domain_name: @scoped_domain_name, after_login: params[:after_login]
@@ -135,7 +138,7 @@ class DashboardController < ::ScopeController
     end
   end
 
-  # catch all mentioned errors and render error page
+  # catch all mentioned errors that are note handled and render error page
   rescue_and_render_exception_page [
     {
       'MonsoonOpenstackAuth::Authorization::SecurityViolation' => {
@@ -210,9 +213,17 @@ class DashboardController < ::ScopeController
       @can_access_project = false
       return render(template: 'application/exceptions/unauthorized')
     end
-
     # did not return yet -> rescope token to the 'new' scope.
-    authentication_rescope_token
+    begin
+      authentication_rescope_token 
+    rescue MonsoonOpenstackAuth::Authentication::NotAuthorized => exception
+      if exception.message =~ /has no access to project/
+        render(template: 'application/exceptions/unauthorized')
+      elsif exception.message =~ /has no access to domain/
+        authentication_rescope_token(domain: nil, project: nil)
+      end
+      # All other NotAuthorized Errors handled by "rescue_and_render_exception_page"
+    end
   end
 
   def check_terms_of_use
