@@ -27,6 +27,15 @@ class DashboardController < ::ScopeController
   before_action :load_help_text
 
   # authenticate user -> current_user is available
+  # throws only errors
+  #api_authentication_required domain: ->(c) { c.instance_variable_get(:@scoped_domain_id) },
+  #                        domain_name: ->(c) { c.instance_variable_get(:@scoped_domain_name) },
+  #                        project: ->(c) { c.instance_variable_get(:@scoped_project_id) },
+  #                        rescope: false,
+  #                        two_factor: :two_factor_required?,
+  #                        except: :terms_of_use
+
+  # with redirect
   authentication_required domain: ->(c) { c.instance_variable_get(:@scoped_domain_id) },
                           domain_name: ->(c) { c.instance_variable_get(:@scoped_domain_name) },
                           project: ->(c) { c.instance_variable_get(:@scoped_project_id) },
@@ -49,7 +58,9 @@ class DashboardController < ::ScopeController
                 :load_webcli_endpoint, except: %i[terms_of_use]
   before_action :set_mailer_host
 
-
+  # GLOBAL ERROR RESCUE && HANDLING
+  ##############################
+  # handle Missing Template
   rescue_from 'ActionView::MissingTemplate' do |exception|
     options = {
       warning: true, sentry: true,
@@ -60,15 +71,32 @@ class DashboardController < ::ScopeController
     render_exception_page(exception, options.merge(sentry: true))
   end
 
+  # handle Token issues
   rescue_from 'Elektron::Errors::TokenExpired',
-              'MonsoonOpenstackAuth::Authentication::NotAuthorized',
-              'ActionController::InvalidAuthenticityToken' do
+              'ActionController::InvalidAuthenticityToken' do | exception |
     redirect_to monsoon_openstack_auth.login_path(
       domain_fid: @scoped_domain_fid,
       domain_name: @scoped_domain_name, after_login: params[:after_login]
     )
   end
 
+  # handle NotAuthorized but NOTE! this should never fetch because all errors related to 
+  # "MonsoonOpenstackAuth::Authentication::NotAuthorized" are rescued directly in rescope_token and handled by 
+  # "rescue_and_render_exception_page" but I leave it here just in case ;-) 
+  rescue_from 'MonsoonOpenstackAuth::Authentication::NotAuthorized' do | exception |
+    # for project "has no access to project"
+    # check MonsoonOpenstackAuth/Authentication/auth_session.rb
+    if exception.message =~ /has no access to project/
+      render(template: 'application/exceptions/unauthorized')
+    else
+      redirect_to monsoon_openstack_auth.login_path(
+        domain_fid: @scoped_domain_fid,
+        domain_name: @scoped_domain_name, after_login: params[:after_login]
+      )
+    end
+  end
+
+  # handle all api errors
   rescue_from 'Elektron::Errors::ApiResponse' do |exception|
     options = {
       title: exception.code_type, description: :message,
@@ -82,7 +110,6 @@ class DashboardController < ::ScopeController
     #   # Most likely this is the cause of double render error!
     #   return
     when 401 # unauthorized
-
       redirect_to monsoon_openstack_auth.login_path(
         domain_fid: @scoped_domain_fid,
         domain_name: @scoped_domain_name, after_login: params[:after_login]
@@ -111,7 +138,7 @@ class DashboardController < ::ScopeController
     end
   end
 
-  # catch all mentioned errors and render error page
+  # catch all mentioned errors that are note handled and render error page
   rescue_and_render_exception_page [
     {
       'MonsoonOpenstackAuth::Authorization::SecurityViolation' => {
@@ -132,11 +159,6 @@ class DashboardController < ::ScopeController
     { 'Core::Error::ProjectNotFound' => {
       title: 'Project Not Found', sentry: false, warning: true
     } }
-    # ,
-    # { 'ActionController::InvalidAuthenticityToken' => {
-    #   title: 'User session expired', sentry: false, warning: true,
-    #   description: 'The user session is expired, please reload the page!'
-    # } }
   ]
 
   # this method checks if user has permissions for the new scope and if so
@@ -153,39 +175,55 @@ class DashboardController < ::ScopeController
         return render(template: 'application/exceptions/project_not_found')
       end
 
+      # NOTE: LEAVE this here because for better review
+      # we do not need extra permissions check for project and domains because elektron and monsoon_openstack_auth
+      # are doing the job. If the user has no access with his token monsoon_openstack_auth will trow an NotAuthorized
+      # error that we will catch and handle to show 'application/exceptions/unauthorized'
+      # 
+      # if no access this is handled in rescue from above
       # did not return -> check if user projects include the requested project.
-      has_project_access = services.identity.has_project_access(
-        @scoped_project_id
-      )
+      #has_project_access = services.identity.has_project_access(
+      #  @scoped_project_id
+      #)
 
-      unless has_project_access
-        # user has no permissions for requested project -> reset
-        # @can_access_project, render unauthorized page and return.
-        @can_access_project = false
-        return render(template: 'application/exceptions/unauthorized')
-      end
-    elsif @scoped_domain_id
+      #unless has_project_access
+      #  # user has no permissions for requested project -> reset
+      #  # @can_access_project, render unauthorized page and return.
+      #  @can_access_project = false
+      #  return render(template: 'application/exceptions/unauthorized')
+      #end
+    elsif @scoped_domain_id 
+      # NOTE: LEAVE hit here because for better review
       # @scoped_project_id is nil and @scoped_domain_id exists -> check if
       # user can access the requested domain.
 
       # check if user has access to current domain, add rescue nil for cases where the token scope inexplicably contains a deleted project
       # without the rescue this call leads to an error message and the user can't see the domain page
-      has_domain_access = services.identity.has_domain_access(@scoped_domain_id) rescue nil
+      #has_domain_access = services.identity.has_domain_access(@scoped_domain_id) rescue nil
 
-      unless has_domain_access
-        # user has no permissions for the new domain -> rescope to
-        # unscoped token and return
-        return authentication_rescope_token(domain: nil, project: nil)
-      end
-    else
+      #unless has_domain_access
+      #  # this can happen if the user is using a link to  some domain and project
+      #  # user has no permissions for the new domain -> rescope to
+      #  # unscoped token and return this will be the startpoint to rescope again
+      #  return authentication_rescope_token(domain: nil, project: nil)
+      #end
+    else 
       # both @scoped_project_id and @scoped_domain_id are nil
       # -> render unauthorized page and return.
       @can_access_project = false
       return render(template: 'application/exceptions/unauthorized')
     end
-
     # did not return yet -> rescope token to the 'new' scope.
-    authentication_rescope_token
+    begin
+      authentication_rescope_token 
+    rescue MonsoonOpenstackAuth::Authentication::NotAuthorized => exception
+      if exception.message =~ /has no access to project/
+        render(template: 'application/exceptions/unauthorized')
+      elsif exception.message =~ /has no access to domain/
+        authentication_rescope_token(domain: nil, project: nil)
+      end
+      # All other NotAuthorized Errors handled by "rescue_and_render_exception_page"
+    end
   end
 
   def check_terms_of_use

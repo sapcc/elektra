@@ -40,19 +40,21 @@ describe DashboardController, type: :controller do
           get :index, params: default_params
         end
       end
-      context 'and user has no access to project' do
-        before :each do
-          allow(controller.services.identity)
-            .to receive(:has_project_access)
-            .with(default_params[:project_id])
-            .and_return(false)
-        end
+      
+      # NOTE: that is not working because we do not check auth/project explicitly anymore.
+      #context 'and user has no access to project' do
+      #  before :each do
+      #    allow(controller.services.identity)
+      #      .to receive(:has_project_access)
+      #      .with(default_params[:project_id])
+      #      .and_return(false)
+      #  end
 
-        it 'should render unauthorized page' do
-          get :index, params: default_params
-          expect(response).to render_template('application/exceptions/unauthorized')
-        end
-      end
+      #  it 'should render unauthorized page' do
+      #    get :index, params: default_params
+      #    expect(response).to render_template('application/exceptions/unauthorized')
+      #  end
+      #end
 
       context 'and project does not exists' do
         before :each do
@@ -124,12 +126,13 @@ describe DashboardController, type: :controller do
           expect(response).not_to render_template('application/exceptions/unauthorized')
         end
 
-        it 'should rescope to unscoped token' do
-          expect(controller).to receive(:authentication_rescope_token).with(
-            domain: nil, project: nil
-          )
-          get :index, params: { domain_id: default_params[:domain_id] }
-        end
+        # NOTE: this cannot longer be tested because the extra permissions check for auth/domains was removed
+        #it 'should rescope to unscoped token' do
+        #  expect(controller).to receive(:authentication_rescope_token).with(
+        #    domain: nil, project: nil
+        #  )
+        #  get :index, params: { domain_id: default_params[:domain_id] }
+        #end
       end
     end
   end

@@ -21,7 +21,6 @@ class ScopeController < ::ApplicationController
     domain_friendly_id = rescoping_service.domain_friendly_id(
       @scoped_domain_fid
     )
-
     unless domain_friendly_id
       raise Core::Error::DomainNotFound, "Domain #{domain_id} not found!"
     end
@@ -45,8 +44,10 @@ class ScopeController < ::ApplicationController
       @scoped_project_name = project_friendly_id.name
     end
 
-    # if (domain_id != @scoped_domain_fid && domain_id != @scoped_domain_name) ||
-    #    project_id != @scoped_project_fid
+    #puts "SCOPED CONTROLLER"
+    #puts @scoped_domain_id
+    #puts @scoped_project_id
+
     if domain_id != @scoped_domain_fid || project_id != @scoped_project_fid
       # url_for does not work for plugins. Use path instead!
 

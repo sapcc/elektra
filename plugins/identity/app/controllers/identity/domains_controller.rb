@@ -15,6 +15,8 @@ module Identity
       @domains = services.identity.domains
     end
 
+    # to render the projects menu on domain and project level
+    # this function is called anytime elektra view es rerendered
     def auth_projects
       projects = services.identity.auth_projects(@scoped_domain_id).sort_by(&:name)
       render json: { auth_projects: projects }
