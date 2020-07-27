@@ -16,6 +16,7 @@ import EditLoadbalancer from './loadbalancers/EditLoadbalancer'
 import EditListener from './listeners/EditListener'
 import EditPool from './pools/EditPool';
 import EditMember from './members/EditMember';
+import EditL7Policy from './l7policies/EditL7Policy'
 
 const Router = (props) => {
 
@@ -57,6 +58,8 @@ const Router = (props) => {
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/healthmonitor/:healthmonitorID/edit" component={EditHealthMonitor}/>
 
           <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/l7policies/new" component={NewL7Policy}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/l7policies/:l7policyID/edit" component={EditL7Policy}/>
+
           <Route exact path="/loadbalancers/:loadbalancerID/listeners/:listenerID/l7policies/:l7policyID/l7rules/new" component={NewL7Rule}/>
       </div>
     </HashRouter>

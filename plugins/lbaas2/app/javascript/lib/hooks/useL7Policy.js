@@ -60,7 +60,18 @@ const useL7Policy = () => {
   const createL7Policy = (lbID, listenerID, values) => {
     return new Promise((handleSuccess,handleErrors) => {
       ajaxHelper.post(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies`, { l7policy: values }).then((response) => {        
-        dispatch({type: 'RECEIVE_L7POLICY', l7Policy: response.data}) 
+        dispatch({type: 'RECEIVE_L7POLICY', l7Policy: response.data.l7policy}) 
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
+  const updateL7Policy = (lbID, listenerID, l7policyID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.put(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7policyID}`, { l7policy: values }).then((response) => {
+        dispatch({type: 'RECEIVE_L7POLICY', l7Policy: response.data.l7policy}) 
         handleSuccess(response)
       }).catch(error => {
         handleErrors(error)
@@ -114,6 +125,23 @@ const useL7Policy = () => {
     dispatch({type: 'SET_L7POLICIES_SELECTED_ITEM', selected: null})
   }
 
+  const actionTypes = () => {
+    return [
+      {value:"REDIRECT_PREFIX", label:"REDIRECT_PREFIX"}, 
+      {value: "REDIRECT_TO_POOL", label:"REDIRECT_TO_POOL"}, 
+      {value:"REDIRECT_TO_URL", label: "REDIRECT_TO_URL"}, 
+      {value: "REJECT", label: "REJECT"}]
+  }
+  
+  const codeTypes = () => {
+    return [
+      {value:"301", label:"301"}, 
+      {value:"302", label:"302"}, 
+      {value:"303", label:"303"}, 
+      {value:"307", label:"307"}, 
+      {value:"308", label:"308"}]
+  }
+
   const actionRedirect = (action) => {
     switch (action) {
       case 'REDIRECT_PREFIX':
@@ -131,6 +159,7 @@ const useL7Policy = () => {
     fetchL7Policies,
     fetchL7Policy,
     createL7Policy,
+    updateL7Policy,
     deleteL7Policy,
     onSelectL7Policy,
     actionRedirect,
@@ -138,6 +167,8 @@ const useL7Policy = () => {
     persistL7Policy,
     setSearchTerm,
     setSelected,
+    actionTypes,
+    codeTypes,
     reset
   }
 }
