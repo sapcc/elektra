@@ -153,10 +153,6 @@ const EditL7Policy = (props) => {
       return obj;
     }, {});
 
-    console.group("SUBMIT")
-    console.log(filteredValues)
-    console.groupEnd()
-
     return updateL7Policy(loadbalancerID, listenerID, l7policyID, values).then((response) => {
       addNotice(<React.Fragment>L7 Policy <b>{response.data.l7policy.name}</b> ({response.data.l7policy.id}) is being updated.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast

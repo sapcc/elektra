@@ -56,6 +56,7 @@ describe Lbaas2::Loadbalancers::Listeners::L7policiesController, type: :controll
     before :each do
       l7policy = double('elektron', service: double("octavia", post: double("post", body: {}) ))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(l7policy)
+      allow_any_instance_of(Lbaas2::Loadbalancers::Listeners::L7policiesController).to receive(:extend_l7policies_data).and_return(double('l7policies_cache').as_null_object)
     end
 
     it_behaves_like 'post action' do
@@ -65,6 +66,22 @@ describe Lbaas2::Loadbalancers::Listeners::L7policiesController, type: :controll
       end
     end
 
+  end
+
+  describe "PUT 'update'" do
+    before :each do
+      l7policy = double('elektron', service: double("octavia", get: double("get", map_to: double("l7policy", to_json:{}, update_attributes: {}, update:{})),  put: double("put", body: {}) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(l7policy)
+      allow_any_instance_of(Lbaas2::Loadbalancers::Listeners::L7policiesController).to receive(:extend_l7policies_data).and_return(double('l7policies_cache').as_null_object)
+    end
+
+    it_behaves_like 'PUT action' do
+      subject do
+        @default_params = default_params
+        l7policy = ::Lbaas2::FakeFactory.new.update_policy
+        @extra_params = {id: l7policy[:id], l7policy: l7policy}
+      end
+    end
   end
 
   describe "DELETE 'destroy'" do
