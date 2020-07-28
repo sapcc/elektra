@@ -115,9 +115,8 @@ module Lbaas2
 
     def update
       lbParams = params[:loadbalancer]
-      loadbalancer = services.lbaas2.find_loadbalancer(params[:id])
+      loadbalancer = services.lbaas2.new_loadbalancer(lbParams)
 
-      loadbalancer.update_attributes(lbParams)
       if loadbalancer.update
         audit_logger.info(current_user, 'has updated', loadbalancer)
         render json: loadbalancer

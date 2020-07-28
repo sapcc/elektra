@@ -65,8 +65,8 @@ module Lbaas2
       def update
         poolParams = params[:pool]
         composeSessionPersistence(poolParams)
-        pool = services.lbaas2.find_pool(params[:id])
-        pool.update_attributes(poolParams)
+        pool = services.lbaas2.new_pool(poolParams)
+        
         if pool.update
           audit_logger.info(current_user, 'has updated', pool)
           extend_pool_data([pool])
