@@ -46,7 +46,10 @@ module Lbaas2
           l7policy = services.lbaas2.new_l7policy(l7PolicyParams)
           if l7policy.save
             audit_logger.info(current_user, 'has created', l7policy)
-            render json: l7policy
+            extend_l7policies_data([l7policy])
+            render json: {
+              l7policy: l7policy
+            }   
           else
             render json: {errors: l7policy.errors}, status: 422
           end
@@ -57,7 +60,21 @@ module Lbaas2
         end
 
         def update
-          # TODO
+          newParams = params[:l7policy]
+          l7policy = services.lbaas2.new_l7policy(newParams)
+          if l7policy.update
+            audit_logger.info(current_user, 'has updated', l7policy)
+            extend_l7policies_data([l7policy])
+            render json: {
+              l7policy: l7policy
+            }   
+          else
+            render json: {errors: l7policy.errors}, status: 422
+          end
+        rescue Elektron::Errors::ApiResponse => e
+          render json: { errors: e.message }, status: e.code
+        rescue Exception => e
+          render json: { errors: e.message }, status: "500"
         end
 
         def destroy

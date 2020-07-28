@@ -13,6 +13,14 @@ module Lbaas2
       end
     end
 
+    def update()
+      if valid?
+        update!()
+      else
+        false
+      end
+    end
+
     def attributes_for_create
       {
         'name'                => read('name'),
@@ -29,7 +37,31 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
+    def attributes_for_update
+      {
+        'name'                => read('name'),
+        'description'         => read('description'),
+        'admin_state_up'      => read('admin_state_up'),
+        'position'            => read('position'),
+        'action'              => read('action'),
+        'redirect_url'        => read('redirect_url'),        
+        'redirect_prefix'     => read('redirect_prefix'),
+        'redirect_http_code'  => read('redirect_http_code'),
+        'redirect_pool_id'    => read('redirect_pool_id'),
+        'tags'                => read('tags')
+      }
+    end
+    
     private
+
+    def update!()
+      newL7Policy= service.update_l7policy(id, attributes_for_update)
+      self.update_attributes(newL7Policy)
+      true
+    rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
 
     def persist!()
       newL7policy = service.create_l7policy(attributes_for_create)

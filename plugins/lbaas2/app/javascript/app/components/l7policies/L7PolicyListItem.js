@@ -15,7 +15,7 @@ import { scope } from "ajax_helper";
 import SmartLink from "../shared/SmartLink"
 
 const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID, disabled}) => {
-  const {MyHighlighter,matchParams,errorMessage} = useCommons()
+  const {MyHighlighter,matchParams,errorMessage,searchParamsToString} = useCommons()
   const {actionRedirect, deleteL7Policy, persistL7Policy, onSelectL7Policy} = useL7Policy()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const {persistListener} = useListener()
@@ -61,6 +61,14 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
     }
     onSelectL7Policy(props, l7Policy.id)
   }
+
+  const canEdit = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:l7policy_update", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const canDelete = useMemo(
     () => 
@@ -160,6 +168,14 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
+            <li>
+              <SmartLink 
+                to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${l7Policy.id}/edit?${searchParamsToString(props)}`}
+                isAllowed={canEdit} 
+                notAllowedText="Not allowed to edit. Please check with your administrator.">
+                  Edit
+              </SmartLink>
+            </li>
             <li>
               <SmartLink 
                 onClick={handleDelete} 

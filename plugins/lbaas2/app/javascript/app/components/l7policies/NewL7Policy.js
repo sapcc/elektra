@@ -10,7 +10,7 @@ import { addNotice } from 'lib/flashes';
 
 const NewL7Policy = (props) => {
   const {searchParamsToString, matchParams, formErrorMessage, fetchPoolsForSelect} = useCommons()
-  const {createL7Policy} = useL7Policy()
+  const {createL7Policy, actionTypes, actionRedirect, codeTypes} = useL7Policy()
   const {persistListener} = useListener()
   const [pools, setPools] = useState({
     isLoading: false,
@@ -54,9 +54,7 @@ const NewL7Policy = (props) => {
    * Form stuff
    */
   const [formErrors,setFormErrors] = useState(null)
-  const [initialValues, setInitialValues] = useState({})
-  const [actions, setActions] = useState([{value:"REDIRECT_PREFIX", label:"REDIRECT_PREFIX"}, {value: "REDIRECT_TO_POOL", label:"REDIRECT_TO_POOL"}, {value:"REDIRECT_TO_URL", label: "REDIRECT_TO_URL"}, {value: "REJECT", label: "REJECT"}])
-  const [codes, setCodes] = useState([{value:"301", label:"301"}, {value:"302", label:"302"}, {value:"303", label:"303"}, {value:"307", label:"307"}, {value:"308", label:"308"}])
+  const [initialValues, setInitialValues] = useState({position: 1})
   const [showRedirectHttpCode, setShowRedirectHttpCode] = useState(false)
   const [showRedirectPoolID, setShowRedirectPoolID] = useState(false)
   const [showRedirectPrefix, setShowRedirectPrefix] = useState(false)
@@ -68,21 +66,30 @@ const NewL7Policy = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null)
-    // save the entered values in case of error
-    setInitialValues(values)
+
+    // remove redirect attributes that not belongs to the action type
+    const redirectAttr = actionRedirect(values.action).map(attr => attr.value)    
+    const filteredValues = Object.keys(values)
+    .filter(key => {      
+      if(key.includes('redirect_') && !redirectAttr.includes(key)){
+        return false
+      }
+      return true
+    }).reduce((obj, key) => {
+      obj[key] = values[key];
+      return obj;
+    }, {});
+
     // collect lb and listener id  
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     const listenerID = params.listenerID
-    return createL7Policy(lbID, listenerID, values).then((response) => {
-      addNotice(<React.Fragment>L7 Policy <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
+    return createL7Policy(lbID, listenerID, filteredValues).then((response) => {
+      addNotice(<React.Fragment>L7 Policy <b>{response.data.l7policy.name}</b> ({response.data.l7policy.id}) is being created.</React.Fragment>)
       // load the listener again containing the new policy
-      persistListener(lbID, listenerID).then(() => {
-        close()
-      }).catch(error => {
-        console.log(JSON.stringify(error))
-        // TODO update the listeners then
+      persistListener(lbID, listenerID).catch(error => {
       })
+      close()
     }).catch(error => {
       setFormErrors(formErrorMessage(error))
     })
@@ -148,14 +155,14 @@ const NewL7Policy = (props) => {
               <Form.Input elementType='input' type='text' name='description'/>
             </Form.ElementHorizontal>
             <Form.ElementHorizontal label='Position' name="position">
-              <Form.Input elementType='input' type='text' name='position'/>
+              <Form.Input elementType='input' type='number' min="1" step="1" name='position'/>
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
                   Policies are evaluated in the order as defined by the 'position' attribute. The first one that matches a given request will be the one whose action is followed. If no policy matches a given request, then the request is routed to the listener's default pool (if it exists).
               </span>
             </Form.ElementHorizontal>
             <Form.ElementHorizontal label='Action' name="action" required>
-            <SelectInput name="action" items={actions} onChange={onSelectAction} />
+            <SelectInput name="action" items={actionTypes()} onChange={onSelectAction} />
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
                 Will be executed when all L7 Rules are matched.
@@ -163,41 +170,49 @@ const NewL7Policy = (props) => {
             </Form.ElementHorizontal>
 
             {showRedirectHttpCode &&
-              <Form.ElementHorizontal label='Redirect HTTP Code' name="redirect_http_code">
-              <SelectInput name="redirect_http_code" items={codes} onChange={onSelectCode}/>
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  Requests matching this policy will be redirected to the specified URL or Prefix URL with the HTTP response code. Default is 302.
-                </span>
-              </Form.ElementHorizontal>
+              <div className="advanced-options advanced-options-minus-margin">
+                <Form.ElementHorizontal label='Redirect HTTP Code' name="redirect_http_code">
+                <SelectInput name="redirect_http_code" items={codeTypes()} onChange={onSelectCode}/>
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    Requests matching this policy will be redirected to the specified URL or Prefix URL with the HTTP response code. Default is 302.
+                  </span>
+                </Form.ElementHorizontal>
+              </div>
             }
             {showRedirectPoolID &&
-              <Form.ElementHorizontal label='Redirect Pool ID' name="redirect_pool_id">
-                <SelectInput name="redirect_pool_id" isLoading={pools.isLoading} items={pools.items} onChange={onSelectPoolChange} />
-                { pools.error ? <span className="text-danger">{pools.error}</span>:""}
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  Requests matching this policy will be redirected to the pool with this ID.
-                </span>
-              </Form.ElementHorizontal>
+              <div className="advanced-options">
+                <Form.ElementHorizontal label='Redirect Pool ID' name="redirect_pool_id">
+                  <SelectInput name="redirect_pool_id" isLoading={pools.isLoading} items={pools.items} onChange={onSelectPoolChange} />
+                  { pools.error ? <span className="text-danger">{pools.error}</span>:""}
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    Requests matching this policy will be redirected to the pool with this ID.
+                  </span>
+                </Form.ElementHorizontal>
+              </div>
             }
             {showRedirectPrefix &&
-              <Form.ElementHorizontal label='Redirect Prefix' name="redirect_prefix">
-                <Form.Input elementType='input' type='text' name='redirect_prefix'/>
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  Requests matching this policy will be redirected to this Prefix URL.
-                </span>
-              </Form.ElementHorizontal>
+              <div className="advanced-options">
+                <Form.ElementHorizontal label='Redirect Prefix' name="redirect_prefix">
+                  <Form.Input elementType='input' type='text' name='redirect_prefix'/>
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    Requests matching this policy will be redirected to this Prefix URL.
+                  </span>
+                </Form.ElementHorizontal>
+              </div>
             }
             {showRedirectURL &&
-              <Form.ElementHorizontal label='Redirect Url' name="redirect_url">
-                <Form.Input elementType='input' type='text' name='redirect_url'/>
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  Requests matching this policy will be redirected to this URL.
-                </span>
-              </Form.ElementHorizontal>
+              <div className="advanced-options">
+                <Form.ElementHorizontal label='Redirect Url' name="redirect_url">
+                  <Form.Input elementType='input' type='text' name='redirect_url'/>
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    Requests matching this policy will be redirected to this URL.
+                  </span>
+                </Form.ElementHorizontal>
+              </div>
             }
 
             <Form.ElementHorizontal label='Tags' name="tags">

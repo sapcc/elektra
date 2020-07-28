@@ -30,6 +30,10 @@ module Lbaas2
       {name: "lypolicy_test", action: "REDIRECT_PREFIX"}.merge(params)
     end
 
+    def update_policy(params={})
+      {id: "update_policy", name: "lypolicy_test", action: "REDIRECT_PREFIX"}.merge(params)
+    end
+
     def l7rule(params={})
       {type: "PATH", value: "test_value", compare_type: "CONTAINS"}.merge(params)
     end
