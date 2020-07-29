@@ -56,15 +56,13 @@ const NewLoadbalancer = (props) => {
   const [formErrors,setFormErrors] = useState(null)
   const [initialValues, setInitialValues] = useState({})
 
-  const validate = ({name,description,vip_network_id,vip_subnet_id,vip_address,tags}) => {    
-    return name && privateNetwork && true
+  const validate = ({name,description,vip_network_id,vip_subnet_id,vip_address,tags}) => {
+    return name && vip_network_id && true
   }
 
   const onSubmit = (values) => {
     setFormErrors(null)
-
-    const newValues = {... values}
-    if(privateNetwork) {newValues.vip_network_id = privateNetwork.value}    
+    const newValues = {... values}  
     if(subnet) {newValues.vip_subnet_id = subnet.value}
 
     // save the entered values in case of error
@@ -135,7 +133,7 @@ const NewLoadbalancer = (props) => {
             </Form.ElementHorizontal>
 
             <Form.ElementHorizontal label='Private Network' required name="vip_network_id">
-              <SelectInput name="vip_network_id" isLoading={privateNetworks.isLoading} items={privateNetworks.items} onChange={onSelectPrivateNetworkChange} value={privateNetwork} useFormContext={false}/>
+              <SelectInput name="vip_network_id" isLoading={privateNetworks.isLoading} items={privateNetworks.items} onChange={onSelectPrivateNetworkChange} value={privateNetwork}/>
               { privateNetworks.error ? <span className='text-danger'>{privateNetworks.error}</span>:""}
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
