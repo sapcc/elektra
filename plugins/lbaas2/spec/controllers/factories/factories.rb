@@ -7,7 +7,7 @@ module Lbaas2
     end
 
     def update_loadbalancer(params = {})
-      {id: "update_loadbalancer", name: "test lb update"}.merge(params) 
+      {id: "update_loadbalancer", vip_subnet_id: "456", vip_network_id: "123", name: "test lb"}.merge(params) 
     end
 
     def listener(params={})
@@ -43,7 +43,7 @@ module Lbaas2
     end
 
     def update_healthmonitor(params={})
-      {id: "update_test_healthmonitor", name: "healthmonitor_test", delay: "10", max_retries: "5", timeout: "5"}.merge(params)
+      {id: "update_test_healthmonitor", type: "HTTP", name: "healthmonitor_test", delay: "10", max_retries: "5", timeout: "5"}.merge(params)
     end
 
     def member(params={})

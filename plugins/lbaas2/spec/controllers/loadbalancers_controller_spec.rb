@@ -68,8 +68,9 @@ describe Lbaas2::LoadbalancersController, type: :controller do
 
   describe "PUT 'update'" do
     before :each do
-      loadbalancer = double('elektron', service: double("octavia", get: double("get", map_to: double("loadbalancer", to_json:{}, type: "HTTP", update_attributes: {}, update:{})),  put: double("put", body: {}) ))
+      loadbalancer = double('elektron', service: double("octavia", get: double("get", map_to: double("loadbalancer", to_json:{}, update:{})),  put: double("put", body: {}) ))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(loadbalancer)
+      allow_any_instance_of(Lbaas2::LoadbalancersController).to receive(:extend_lb_data).and_return(double('lbaas').as_null_object)
     end
 
     it_behaves_like 'PUT action' do

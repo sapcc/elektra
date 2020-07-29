@@ -7,22 +7,6 @@ module Lbaas2
     validates :vip_network_id, presence: true, unless: ->(lb){lb.vip_subnet_id.present?}
     validates :name, presence: true
 
-    def save
-      if valid?
-        persist!
-      else
-        false
-      end
-    end
-
-    def update()
-      if valid?
-        update!()
-      else
-        false
-      end
-    end
-
     def attributes_for_create
       {
         'name'            => read('name'),
@@ -42,52 +26,6 @@ module Lbaas2
         'admin_state_up'  => read('admin_state_up'),
         'tags'            => read('tags')
       }.delete_if { |k, v| v.blank? and !%w[name description].include?(k) }
-    end
-
-    private
-
-    def update!()
-      newLB= service.update_loadbalancer(id, attributes_for_update)
-      self.update_attributes(newLB)
-      true
-    rescue ::Elektron::Errors::ApiResponse => e
-      rescue_eletron_errors(e)
-      false
-    end
-
-    def persist!()
-      newLB = service.create_loadbalancer(attributes_for_create)
-      # update self with the new loadbalancer
-      self.update_attributes(newLB)
-      true
-    rescue ::Elektron::Errors::ApiResponse => e
-      rescue_eletron_errors(e)
-      false
-    end
-
-
-    def rescue_eletron_errors(e)
-      apiErrorCount = 0
-      apiKey = "api_error_" + apiErrorCount.to_s
-      e.messages.each do |m| 
-        # scan string
-        keywords = {}
-        m.scan(/[\w']+/) do |w|
-          if attributes_for_create.key? (w)
-            keywords[w.to_s] = m
-          end
-        end
-        if keywords.keys.count == 1
-          # 1 key was found
-          keywords.keys.each do |key|
-            errors.add(key.to_s, keywords[key])                     
-          end   
-        else
-          # no key or more than 1 key was found in the sentence
-          errors.add(apiKey.to_s, m) unless m.blank?
-          apiErrorCount += 1
-        end
-      end
     end
 
   end

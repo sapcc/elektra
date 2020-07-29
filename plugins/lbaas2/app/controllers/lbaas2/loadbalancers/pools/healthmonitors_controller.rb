@@ -19,8 +19,7 @@ module Lbaas2
         def create
           healthMonitorParams = healthmonitor_params()
           newParams = healthMonitorParams.merge(project_id: @scoped_project_id, pool_id: params[:pool_id])
-          healthmonitor = services.lbaas2.new_healthmonitor()
-          healthmonitor.attributes = newParams
+          healthmonitor = services.lbaas2.new_healthmonitor(newParams)
 
           if healthmonitor.save
             audit_logger.info(current_user, 'has created', healthmonitor)
@@ -36,10 +35,8 @@ module Lbaas2
 
         def update
           healthmonitorParams = healthmonitor_params()
-          healthmonitor = services.lbaas2.find_healthmonitor(params[:id])
-          # type is now inmutable
-          healthmonitorParams[:type] = healthmonitor.type
-          healthmonitor.update_attributes(healthmonitorParams)
+          healthmonitor = services.lbaas2.new_healthmonitor(healthmonitorParams)
+
           if healthmonitor.update
             audit_logger.info(current_user, 'has updated', healthmonitor)
             render json: healthmonitor

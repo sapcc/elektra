@@ -44,6 +44,7 @@ module Lbaas2
         # add project id and filter params
         newParams = parseListenerParams.merge(project_id: @scoped_project_id, loadbalancer_id: params[:loadbalancer_id])
         listener = services.lbaas2.new_listener(newParams)
+        
         if listener.save
           audit_logger.info(current_user, 'has created', listener)
           extend_listener_data([listener])
@@ -59,9 +60,8 @@ module Lbaas2
 
       def update
         newParams = parseListenerParams
-        listener = services.lbaas2.find_listener(params[:id])
+        listener = services.lbaas2.new_listener(newParams)
 
-        listener.update_attributes(newParams)
         if listener.update
           audit_logger.info(current_user, 'has updated', listener)
           extend_listener_data([listener])

@@ -32,6 +32,7 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
+    # need to add this methods since the Model can't perform service methods with 3 parameters    
     def destroy()
       destroy!()
     end
