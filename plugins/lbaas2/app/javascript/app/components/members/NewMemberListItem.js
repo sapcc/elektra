@@ -69,7 +69,7 @@ const NewMemberListItem =  ({member, index, onRemoveMember, results}) => {
       {member.saved ?
         <StaticTags tags={member.tags} shouldPopover={true}/>
         :    
-        <TagsInput name={`member[${member.id}][tags]`} />
+        <TagsInput name={`member[${member.id}][tags]`} initValue={member.tags}/>
       }      
     </td>
     <td>
