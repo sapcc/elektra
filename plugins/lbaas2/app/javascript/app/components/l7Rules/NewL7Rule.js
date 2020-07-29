@@ -11,8 +11,9 @@ import { addNotice } from 'lib/flashes';
 
 const NewL7Rule = (props) => {
   const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
-  const {ruleTypes, ruleCompareType, createL7Rule} = useL7Rule()
+  const {ruleTypes, ruleCompareType, createL7Rule, ruleTypeKeyRelation} = useL7Rule()
   const {persistL7Policy} = useL7Policy()
+  const [showKeyAttribute, setShowKeyAttribute] = useState(false)
 
   /**
    * Modal stuff
@@ -44,8 +45,15 @@ const NewL7Rule = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null)
+    
+    const newValues = {... values}
+    // remove key if the type was changed from header or cookie to another type
+    if( !ruleTypeKeyRelation(newValues.type) ) {
+      delete newValues.key
+    }
+
     // save the entered values in case of error
-    setInitialValues(values)
+    setInitialValues(newValues)
     // collect lb and listener id
     const params = matchParams(props)
     const lbID = params.loadbalancerID
@@ -63,7 +71,10 @@ const NewL7Rule = (props) => {
     })
   }
 
-  const onSelectType = () => {}
+  const onSelectType = (option) => {
+    setShowKeyAttribute(ruleTypeKeyRelation(option.value))
+  }
+
   const onSelectCompareType = () => {}
 
   const helpBlockTextType = () => {
@@ -132,13 +143,17 @@ const NewL7Rule = (props) => {
               When true the logic of the rule is inverted. For example, with invert true, equal to would become not equal to. Default is false.
             </span>
           </Form.ElementHorizontal>
-          <Form.ElementHorizontal label='Key' name="key">
-            <Form.Input elementType='input' type='text' name='key'/>
-            <span className="help-block">
-              <i className="fa fa-info-circle"></i>
-              The key to use for the comparison. For example, the name of the cookie to evaluate.
-            </span>
-          </Form.ElementHorizontal>
+          {showKeyAttribute && 
+            <div className="advanced-options">
+              <Form.ElementHorizontal label='Key' name="key" required>
+                <Form.Input elementType='input' type='text' name='key'/>
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  The key to use for the comparison. For example, the name of the cookie to evaluate.
+                </span>
+              </Form.ElementHorizontal>
+            </div>
+          }
           <Form.ElementHorizontal label='Value' name="value" required>
             <Form.Input elementType='input' type='text' name='value'/>
             <span className="help-block">

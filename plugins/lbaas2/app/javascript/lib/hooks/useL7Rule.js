@@ -141,6 +141,14 @@ const useL7Rule = () => {
       {label: "SSL_DN_FIELD", value:"SSL_DN_FIELD", description: "The rule looks for a Distinguished Name field defined in the key parameter and compares it against the value parameter in the rule."}]
   }
 
+  const ruleTypeKeyRelation = (type) => {
+    let showKeyAttribute = false
+    if(type == "COOKIE" || type == "HEADER"){
+      showKeyAttribute = true
+    }
+    return showKeyAttribute
+  }
+
   const ruleCompareType = () => {
     return [
       {label:"CONTAINS", value:"CONTAINS", description:"String contains"}, 
@@ -156,6 +164,7 @@ const useL7Rule = () => {
     persistL7Rule,
     createL7Rule,
     ruleTypes,
+    ruleTypeKeyRelation,
     ruleCompareType,
     deleteL7Rule,
     setSearchTerm,
