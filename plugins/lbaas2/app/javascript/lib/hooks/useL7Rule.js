@@ -70,6 +70,17 @@ const useL7Rule = () => {
     })
   }
 
+  const updateL7Rule = (lbID, listenerID, l7PolicyID, l7ruleID, values) => {
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.put(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${l7ruleID}`, { l7rule: values }).then((response) => {
+        dispatch({type: 'RECEIVE_L7RULE', l7Rule: response.data.l7rule}) 
+        handleSuccess(response)
+      }).catch(error => {
+        handleErrors(error)
+      })
+    })
+  }
+
   const setSearchTerm = (searchTerm) => {
     dispatch({type: 'SET_L7RULES_SEARCH_TERM', searchTerm: searchTerm})
   }
@@ -141,7 +152,15 @@ const useL7Rule = () => {
       {label: "SSL_DN_FIELD", value:"SSL_DN_FIELD", description: "The rule looks for a Distinguished Name field defined in the key parameter and compares it against the value parameter in the rule."}]
   }
 
-  const ruleCompareType = () => {
+  const ruleTypeKeyRelation = (type) => {
+    let showKeyAttribute = false
+    if(type == "COOKIE" || type == "HEADER"){
+      showKeyAttribute = true
+    }
+    return showKeyAttribute
+  }
+
+  const ruleCompareTypes = () => {
     return [
       {label:"CONTAINS", value:"CONTAINS", description:"String contains"}, 
       {label:"ENDS_WITH", value:"ENDS_WITH", description:"String ends with"},
@@ -153,10 +172,13 @@ const useL7Rule = () => {
   return {
     fetchL7Rules,
     persistL7Rules,
+    fetchL7Rule,
     persistL7Rule,
     createL7Rule,
+    updateL7Rule,
     ruleTypes,
-    ruleCompareType,
+    ruleTypeKeyRelation,
+    ruleCompareTypes,
     deleteL7Rule,
     setSearchTerm,
     displayInvert

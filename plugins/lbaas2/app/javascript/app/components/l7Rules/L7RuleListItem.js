@@ -9,7 +9,7 @@ import { policy } from "policy";
 import { scope } from "ajax_helper";
 
 const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tableScroll}) => {
-  const {MyHighlighter,matchParams,errorMessage} = useCommons()
+  const {MyHighlighter,matchParams,errorMessage, searchParamsToString} = useCommons()
   const {deleteL7Rule, displayInvert,persistL7Rule} = useL7Rule()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   let polling = null
@@ -46,6 +46,14 @@ const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tabl
     clearInterval(polling)
     polling = null
   }
+
+  const canEdit = useMemo(
+    () => 
+      policy.isAllowed("lbaas2:l7rule_update", {
+        target: { scoped_domain_name: scope.domain }
+      }),
+    [scope.domain]
+  );
 
   const canDelete = useMemo(
     () => 
@@ -99,6 +107,14 @@ const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tabl
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
+            <li>
+              <SmartLink 
+                to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${l7Rule.id}/edit?${searchParamsToString(props)}`}
+                isAllowed={canEdit} 
+                notAllowedText="Not allowed to edit. Please check with your administrator.">
+                  Edit
+              </SmartLink>
+            </li>
             <li>
               <SmartLink 
                 onClick={handleDelete} 

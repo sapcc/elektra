@@ -66,6 +66,21 @@ describe Lbaas2::Loadbalancers::Listeners::L7policies::L7rulesController, type: 
 
   end
 
+  describe "PUT 'update'" do
+    before :each do
+      l7rule = double('elektron', service: double("octavia", get: double("get", map_to: double("l7rule", to_json:{},  update:{})),  put: double("put", body: {}) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(l7rule)
+    end
+
+    it_behaves_like 'PUT action' do
+      subject do
+        @default_params = default_params
+        l7rule = ::Lbaas2::FakeFactory.new.update_l7rule
+        @extra_params = {id: l7rule[:id], l7rule: l7rule}
+      end
+    end
+  end
+
   describe "DELETE 'destroy'" do
     before :each do
       l7rule = double('elektron', service: double("octavia", delete: double("delete") ))
