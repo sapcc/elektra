@@ -90,10 +90,10 @@ module Lbaas2
             unless values["tags"].blank?              
               values["tags"] = JSON.parse(values["tags"])
             end
-            newParams = values.merge(pool_id: params[:pool_id])
-            member = services.lbaas2.find_member(params[:pool_id], params[:id])
-            
-            member.update_attributes(newParams)
+            newParams = values.merge(pool_id: params[:pool_id], id: params[:id])
+            member = services.lbaas2.new_member(newParams)
+
+            # member.update_attributes(newParams)
             if member.update
               results[member.identifier] = member.attributes.merge({saved: true})
               saved_members << member
