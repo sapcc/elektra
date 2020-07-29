@@ -11,7 +11,7 @@ import { addNotice } from 'lib/flashes';
 
 const NewL7Rule = (props) => {
   const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
-  const {ruleTypes, ruleCompareType, createL7Rule, ruleTypeKeyRelation} = useL7Rule()
+  const {ruleTypes, ruleCompareTypes, createL7Rule, ruleTypeKeyRelation} = useL7Rule()
   const {persistL7Policy} = useL7Policy()
   const [showKeyAttribute, setShowKeyAttribute] = useState(false)
 
@@ -90,7 +90,7 @@ const NewL7Rule = (props) => {
   const helpBlockTextCompareType = () => {
     return (
       <ul className="help-block-popover-scroll">
-        {ruleCompareType().map( (t, index) =>
+        {ruleCompareTypes().map( (t, index) =>
           <li key={index}>{t.label}: {t.description}</li>
         )}
       </ul>
@@ -129,7 +129,7 @@ const NewL7Rule = (props) => {
             </span>
           </Form.ElementHorizontal>
           <Form.ElementHorizontal label='Compare Type' name="compare_type" required>
-            <SelectInput name="compare_type" items={ruleCompareType()} onChange={onSelectCompareType} />
+            <SelectInput name="compare_type" items={ruleCompareTypes()} onChange={onSelectCompareType} />
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
               <span className="help-block-text">The L7 rule compare type. See help for more information.</span>

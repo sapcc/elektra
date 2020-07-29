@@ -29,6 +29,15 @@ module Lbaas2
       end
     end
 
+    def update()
+      if valid?
+        update!()
+      else
+        false
+      end
+    end
+
+
     def destroy()
       destroy!()
     end
@@ -36,6 +45,7 @@ module Lbaas2
     def attributes_for_create
       {
         'type'                => read('type'),
+        'admin_state_up'      => read('admin_state_up'),
         'compare_type'        => read('compare_type'),
         'invert'              => read('invert'),
         'value'               => read('value'),
@@ -43,6 +53,18 @@ module Lbaas2
         'tags'                => read('tags'),
         'project_id'          => read('project_id')
       }.delete_if { |_k, v| v.blank? }
+    end
+
+    def attributes_for_update
+      {
+        'type'                => read('type'),
+        'admin_state_up'      => read('admin_state_up'),
+        'compare_type'        => read('compare_type'),
+        'invert'              => read('invert'),
+        'value'               => read('value'),
+        'key'                 => read('key'),
+        'tags'                => read('tags')
+      }
     end
 
   private
@@ -57,7 +79,16 @@ module Lbaas2
     def persist!()
       newL7rule = service.create_l7rule(attributes['l7policy_id'], attributes_for_create)
       # update self with the new rule
-      self.update_attributes(newL7rule)
+      self.attributes = newL7rule
+      true
+    rescue ::Elektron::Errors::ApiResponse => e
+      rescue_eletron_errors(e)
+      false
+    end
+
+    def update!()
+      newL7rule = service.update_l7rule(attributes['l7policy_id'], id, attributes_for_update)
+      self.attributes = newL7rule
       true
     rescue ::Elektron::Errors::ApiResponse => e
       rescue_eletron_errors(e)
