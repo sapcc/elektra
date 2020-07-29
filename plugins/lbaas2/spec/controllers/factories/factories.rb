@@ -7,7 +7,7 @@ module Lbaas2
     end
 
     def update_loadbalancer(params = {})
-      {id: "update_loadbalancer", name: "test lb update"}.merge(params) 
+      {id: "update_loadbalancer", vip_subnet_id: "456", vip_network_id: "123", name: "test lb"}.merge(params) 
     end
 
     def listener(params={})

@@ -119,6 +119,7 @@ module Lbaas2
 
       if loadbalancer.update
         audit_logger.info(current_user, 'has updated', loadbalancer)
+        extend_lb_data([loadbalancer])
         render json: loadbalancer
       else
         render json: {errors: loadbalancer.errors}, status: 422
