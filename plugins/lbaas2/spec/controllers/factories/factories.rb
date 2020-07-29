@@ -38,6 +38,10 @@ module Lbaas2
       {type: "PATH", value: "test_value", compare_type: "CONTAINS"}.merge(params)
     end
 
+    def update_l7rule(params={})
+      {id: "update_test_l7rule", type: "PATH", value: "test_value", compare_type: "CONTAINS"}.merge(params)
+    end
+
     def healthmonitor(params={})
       {name: "healthmonitor_test", type: "HTTP", delay: "10", max_retries: "5", timeout: "5"}.merge(params)
     end
