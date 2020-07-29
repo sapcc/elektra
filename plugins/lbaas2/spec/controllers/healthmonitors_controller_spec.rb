@@ -53,7 +53,7 @@ describe Lbaas2::Loadbalancers::Pools::HealthmonitorsController, type: :controll
 
   describe "PUT 'update'" do
     before :each do
-      healthmonitor = double('elektron', service: double("octavia", get: double("get", map_to: double("healthmnonitor", to_json:{}, type: "HTTP", update_attributes: {}, update:{})),  put: double("put", body: {}) ))
+      healthmonitor = double('elektron', service: double("octavia", get: double("get", map_to: double("healthmnonitor", to_json:{}, update:{})),  put: double("put", body: {}) ))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(healthmonitor)
     end
 

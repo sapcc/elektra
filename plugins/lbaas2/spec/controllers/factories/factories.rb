@@ -43,7 +43,7 @@ module Lbaas2
     end
 
     def update_healthmonitor(params={})
-      {id: "update_test_healthmonitor", name: "healthmonitor_test", delay: "10", max_retries: "5", timeout: "5"}.merge(params)
+      {id: "update_test_healthmonitor", type: "HTTP", name: "healthmonitor_test", delay: "10", max_retries: "5", timeout: "5"}.merge(params)
     end
 
     def member(params={})
