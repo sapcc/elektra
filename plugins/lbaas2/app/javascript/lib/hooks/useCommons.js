@@ -43,7 +43,8 @@ const useCommons = () => {
     })
   }
   
-  const errorMessage = (err) => {
+  const errorMessage = (error) => {
+    const err = error.response || error
     return err.data &&  (err.data.errors || err.data.error) || err.message
   }
 
