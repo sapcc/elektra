@@ -64,7 +64,7 @@ module Lbaas2
 
     def update!()
       newMember = service.update_member(attributes['pool_id'], id, attributes_for_update)
-      self.update_attributes(newMember)
+      self.attributes = newMember
       true
     rescue ::Elektron::Errors::ApiResponse => e
       rescue_eletron_errors(e)
@@ -74,7 +74,7 @@ module Lbaas2
     def persist!()
       newMember = service.create_member(attributes['pool_id'], attributes_for_create)
       # update self with the new member
-      self.update_attributes(newMember)
+      self.attributes = newMember
       true
     rescue ::Elektron::Errors::ApiResponse => e
       rescue_eletron_errors(e)
