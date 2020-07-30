@@ -11,8 +11,8 @@ import { addNotice } from 'lib/flashes';
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
 const EditListener = (props) => {
-  const {matchParams, searchParamsToString, formErrorMessage, fetchPoolsForSelect } = useCommons()
-  const {fetchListener,protocolTypes,protocolHeaderInsertionRelation, clientAuthenticationRelation, fetchContainersForSelect, certificateContainerRelation, SNIContainerRelation, CATLSContainerRelation, helpBlockTextInsertHeaders, updateListener} = useListener()
+  const {matchParams, searchParamsToString, formErrorMessage, fetchPoolsForSelect, helpBlockTextForSelect} = useCommons()
+  const {fetchListener,protocolTypes,protocolHeaderInsertionRelation, clientAuthenticationRelation, fetchContainersForSelect, certificateContainerRelation, SNIContainerRelation, CATLSContainerRelation, updateListener, httpHeaderInsertions} = useListener()
   const {persistLoadbalancer} = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [listenerID, setListenerID] = useState(null)
@@ -288,7 +288,7 @@ const EditListener = (props) => {
                         <span className="help-block">
                           <i className="fa fa-info-circle"></i>
                           <span className="help-block-text">Headers to insert into the request before it is sent to the backend member.</span>
-                          <HelpPopover text={helpBlockTextInsertHeaders()} />
+                          <HelpPopover text={helpBlockTextForSelect(httpHeaderInsertions("ALL"))} />
                         </span>
                     </Form.ElementHorizontal>
                   }

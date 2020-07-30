@@ -48,6 +48,16 @@ const useCommons = () => {
     return err.data &&  (err.data.errors || err.data.error) || err.message
   }
 
+  const helpBlockTextForSelect = (options = []) => {
+    return (
+      <ul className="help-block-popover-scroll small">
+        {options.map( (t, index) =>
+          <li key={index}><b>{t.label}</b>: {t.description}</li>
+        )}
+      </ul>
+    )
+  }
+
   return {
     MyHighlighter,
     searchParamsToString,
@@ -55,7 +65,8 @@ const useCommons = () => {
     matchParams,
     formErrorMessage,
     fetchPoolsForSelect,
-    errorMessage
+    errorMessage,
+    helpBlockTextForSelect
   }
 }
  

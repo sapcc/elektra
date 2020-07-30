@@ -12,12 +12,11 @@ import TagsInput from '../shared/TagsInput'
 import { addNotice } from 'lib/flashes';
 
 const EditPool = (props) => {
-  const {matchParams, searchParamsToString, formErrorMessage, fetchPoolsForSelect } = useCommons()
+  const {matchParams, searchParamsToString, formErrorMessage, helpBlockTextForSelect } = useCommons()
   const {lbAlgorithmTypes,
         poolPersistenceTypes, 
         protocolListenerPoolCombinations,
-        fetchPool, 
-        helpBlockTextSessionPersistences,
+        fetchPool,
         filterListeners,
         updatePool} = usePool()
   const {persistLoadbalancer} = useLoadbalancer()
@@ -329,7 +328,7 @@ const EditPool = (props) => {
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
                   <span className="help-block-text">Defines the method used for session stickiness. Traffic for a client will be send always to the same member after the session is established.</span>
-                  <HelpPopover text={helpBlockTextSessionPersistences()} />
+                  <HelpPopover text={helpBlockTextForSelect(poolPersistenceTypes())} />
                 </span>
               </Form.ElementHorizontal>
 

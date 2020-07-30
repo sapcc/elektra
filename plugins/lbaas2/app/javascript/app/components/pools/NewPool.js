@@ -12,12 +12,11 @@ import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
 
 const NewPool = (props) => {
-  const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage} = useCommons()
+  const {searchParamsToString, queryStringSearchValues, matchParams, formErrorMessage, helpBlockTextForSelect} = useCommons()
   const {lbAlgorithmTypes,
         poolPersistenceTypes, 
         protocolListenerPoolCombinations,
-        createPool, 
-        helpBlockTextSessionPersistences, 
+        createPool,
         filterListeners} = usePool()
   const {fetchListnersNoDefaultPoolForSelect, fetchContainersForSelect} = useListener()
   const {persistLoadbalancer} = useLoadbalancer()
@@ -208,7 +207,7 @@ const NewPool = (props) => {
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
               <span className="help-block-text">Defines the method used for session stickiness. Traffic for a client will be send always to the same member after the session is established.</span>
-              <HelpPopover text={helpBlockTextSessionPersistences()} />
+              <HelpPopover text={helpBlockTextForSelect(poolPersistenceTypes())} />
             </span>
           </Form.ElementHorizontal>
 
