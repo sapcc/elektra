@@ -17,14 +17,6 @@ import { policy } from "policy";
 import { scope } from "ajax_helper";
 import SmartLink from "../shared/SmartLink"
 
-const TableFadeTransition = ({
-  children,
-  ...props
-}) => (<CSSTransition {...props} timeout={200} unmountOnExit classNames="css-transition-fade">
-  {children}
-</CSSTransition>);
-
-
 const ListenerList = ({props, loadbalancerID}) => {
   const dispatch = useDispatch()
   const {persistListeners, persistListener, setSelected, setSearchTerm, onSelectListener} = useListener()
@@ -199,55 +191,53 @@ const ListenerList = ({props, loadbalancerID}) => {
               </div>
             </div>
             
-            <TransitionGroup>
-              <TableFadeTransition key={listeners.length}>
-                <table className={selected ? "table table-section listeners" : "table table-hover listeners"} >
-                  <thead>
-                      <tr>
-                        <th>
-                          <div className="display-flex">
-                            Name
-                            <div className="margin-left">
-                            <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Name ASC</Tooltip>}>
-                              <i className="fa fa-sort-asc" />
-                            </OverlayTrigger>  
-                            </div>
-                            /ID/Description
+            <div className="table-responsive">
+              <table className={selected ? "table table-section listeners" : "table table-hover listeners"} responsive>
+                <thead>
+                    <tr>
+                      <th>
+                        <div className="display-flex">
+                          Name
+                          <div className="margin-left">
+                          <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Name ASC</Tooltip>}>
+                            <i className="fa fa-sort-asc" />
+                          </OverlayTrigger>  
                           </div>
-                        </th>
-                        <th>State/Prov. Status</th>
-                        <th>Tags</th>
-                        <th>Protocol/Client Auth/Secrets</th>
-                        <th>Protocol Port</th>
-                        <th>Default Pool</th>
-                        <th>Connection Limit</th>
-                        <th>Insert Headers</th>
-                        <th>#L7 Policies</th>
-                        <th className='snug'></th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    {listeners && listeners.length>0 ?
-                      listeners.map( (listener, index) =>
-                        <ListenerItem 
-                        props={props}
-                        listener={listener} 
-                        searchTerm={searchTerm} 
-                        key={index} 
-                        disabled={selected ? true : false}
-                        />
-                      )
-                      :
-                      <tr>
-                        <td colSpan="11">
-                          { isLoading ? <span className='spinner'/> : 'No listeners found.' }
-                        </td>
-                      </tr>  
-                    }
-                  </tbody>
-                </table>
-              </TableFadeTransition>
-            </TransitionGroup>
+                          /ID/Description
+                        </div>
+                      </th>
+                      <th>State/Prov. Status</th>
+                      <th>Tags</th>
+                      <th>Protocol/Client Auth/Secrets</th>
+                      <th>Protocol Port</th>
+                      <th>Default Pool</th>
+                      <th>Connection Limit</th>
+                      <th>Insert Headers</th>
+                      <th>#L7 Policies</th>
+                      <th className='snug'></th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {listeners && listeners.length>0 ?
+                    listeners.map( (listener, index) =>
+                      <ListenerItem 
+                      props={props}
+                      listener={listener} 
+                      searchTerm={searchTerm} 
+                      key={index} 
+                      disabled={selected ? true : false}
+                      />
+                    )
+                    :
+                    <tr>
+                      <td colSpan="11">
+                        { isLoading ? <span className='spinner'/> : 'No listeners found.' }
+                      </td>
+                    </tr>  
+                  }
+                </tbody>
+              </table>
+            </div>
 
             {listeners.length > 0 && !selected &&
               <Pagination isLoading={isLoading} items={state.items} hasNext={hasNext} handleClick={handlePaginateClick}/>

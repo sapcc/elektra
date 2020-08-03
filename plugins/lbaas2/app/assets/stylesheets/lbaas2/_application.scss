@@ -43,6 +43,12 @@
 
 .details-section {
   margin-top: 20px;
+  .table-responsive {
+    max-height:850px;
+  }
+  .pagination {
+    margin-top: 0px;
+  }
 }
 
 .table-section {
@@ -50,6 +56,9 @@
   thead {
     background-color: #666;
     color: #fff;
+  }
+  thead tr:nth-child(1) th{
+    background: #666 !important;
   }
 }
 
@@ -106,6 +115,22 @@
 }
 
 /*
+* table responsive trick
+*/
+
+.table-responsive{
+  max-height:380px;  
+  overflow-y:scroll;
+
+  thead tr:nth-child(1) th{
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+}
+
+/*
 * help-block in a form
 */
 
@@ -139,18 +164,6 @@
   margin-bottom: 14px;
   border: 1px solid #e1e1e8;
   width: 100%;
-
-  .table-responsive{
-    max-height:380px;  
-    overflow-y:scroll;
-
-    thead tr:nth-child(1) th{
-      background: white;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-  }
 
   .members {
     margin-top: 20px;
