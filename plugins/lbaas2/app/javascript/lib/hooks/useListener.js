@@ -309,13 +309,7 @@ const useListener = () => {
   }
 
   const helpBlockItems = (protocol) => {
-    const help = predefinedPolicies(protocol).map((item) => predPolicyDesc(item.value) )
-
-    console.group("--block--")
-    console.log(help)
-    console.groupEnd()
-
-    return help
+    return predefinedPolicies(protocol).map((item) => predPolicyDesc(item.value) )
   }
 
   const predPolicyDesc = (policy) => {
@@ -343,8 +337,15 @@ const useListener = () => {
     }
   }
 
-  const marginOnOptionalAttr = (protocol) => {
+  const marginOnInsertHeaderAttr = (protocol) => {
     if(protocol == "HTTP" || protocol == "HTTPS"){
+      return true
+    }
+    return false
+  }
+
+  const marginOnPredPoliciesAttr = (protocol) => {
+    if(protocol == "TCP"){
       return true
     }
     return false
@@ -374,7 +375,8 @@ const useListener = () => {
     fetchListnersNoDefaultPoolForSelect,
     predefinedPolicies,
     helpBlockItems,
-    marginOnOptionalAttr
+    marginOnInsertHeaderAttr,
+    marginOnPredPoliciesAttr
   }
 }
 

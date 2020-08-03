@@ -19,7 +19,8 @@ const NewListener = (props) => {
           SNIContainerRelation, 
           CATLSContainerRelation, 
           createListener,
-          marginOnOptionalAttr,
+          marginOnInsertHeaderAttr,
+          marginOnPredPoliciesAttr,
           predefinedPolicies,
           httpHeaderInsertions,
           helpBlockItems} = useListener()
@@ -34,6 +35,7 @@ const NewListener = (props) => {
     error: null,
     items: []
   })
+  const [selectedPredPolicies, setSelectedPredPolicies] = useState([])
 
   useEffect(() => {
     console.log('fetching pools and containers for select')
@@ -99,7 +101,8 @@ const NewListener = (props) => {
   const [showSNIContainers, setShowSNIContainers] = useState(false)
   const [showCATLSContainer, setShowCATLSContainer] = useState(false)
   const [showPredefinedPolicies, setShowPredefinedPolicies] = useState(false)
-  const [showMarginOnAttr, setShowMarginOnAttr] = useState(false)
+  const [showMarginOnInsertHeaderAttr, setShowMarginOnInsertHeaderAttr] = useState(false)
+  const [showMarginOnPredPoliciesAttr, setShowMarginOnPredPoliciesAttr] = useState(false)
 
   const validate = ({name,description,protocol_port,protocol,default_pool_id,connection_limit,insert_headers,default_tls_container_ref, sni_container_refs,client_authentication,client_ca_tls_container_ref,tags}) => {
     return name && protocol_port && protocol && true
@@ -157,7 +160,8 @@ const NewListener = (props) => {
       setShowCATLSContainer(CATLSContainerRelation(props.value))
       setShowPredefinedPolicies(predefinedPolicies(props.value).length > 0)
       // set css styles
-      setShowMarginOnAttr(marginOnOptionalAttr(props.value))
+      setShowMarginOnInsertHeaderAttr(marginOnInsertHeaderAttr(props.value))
+      setShowMarginOnPredPoliciesAttr(marginOnPredPoliciesAttr(props.value))
     }
   }
   const onSelectDefaultPoolChange = (props) => {}
@@ -166,7 +170,17 @@ const NewListener = (props) => {
   const onSelectCertificateContainer = (props) => { setCertificateContainer(props)}
   const onSelectSNIContainers = (props) => { setSNIContainers(props)}
   const onSelectCATLSContainers = (props) => { setCATLSContainer(props)}
-  const onSelectPredPolicies = (options) => {}
+
+  const onSelectPredPolicies = (options) => {
+    const selectedOptions = options || []
+    // add fixed attribute
+    const newOptions = selectedOptions.map(item => {
+      item.isFixed = true
+      return item
+    })
+
+    setSelectedPredPolicies(newOptions)
+  }
 
   console.log("RENDER new listener")
   return ( 
@@ -230,12 +244,12 @@ const NewListener = (props) => {
           </Form.ElementHorizontal>
 
           {showPredefinedPolicies &&
-            <div className="advanced-options">
+            <div className={showMarginOnPredPoliciesAttr ? "advanced-options" : "advanced-options advanced-options-minus-margin"}>
               <Form.ElementHorizontal label='Extended Policy' name="extended_policies">
                 <SelectInput name="extended_policies" items={predefinedPoliciesSelectItems} isMulti onChange={onSelectPredPolicies} useFormContext={false}/>
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                    <span className="help-block-text">Policies predefined by CCloud for special purpose. The policy will apply specific settings on the load balancer objects. L7Rules are not applicable and the Policy will be applied always.</span>
+                    <span className="help-block-text">Policies predefined by CCloud for special purpose. The policy will apply specific settings on the load balancer objects. L7Rules are not applicable and the Policy will be applied always. These will be added as fixed tags.</span>
                     <HelpPopover text={helpBlockTextForSelect(helpBlockItemsPredPolicies)} />
                   </span>
               </Form.ElementHorizontal>
@@ -243,7 +257,7 @@ const NewListener = (props) => {
           }
 
           {showInsertHeaders &&
-            <div className={showMarginOnAttr ? "advanced-options" : "advanced-options advanced-options-minus-margin"}>
+            <div className={showMarginOnInsertHeaderAttr ? "advanced-options" : "advanced-options advanced-options-minus-margin"}>
               <Form.ElementHorizontal label='Insert Headers' name="insert_headers">
                 <SelectInput name="insert_headers" items={insetHeaderSelectItems} isMulti onChange={onSelectInsertHeadersChange} value={insertHeaders} useFormContext={false}/>
                   <span className="help-block">
@@ -306,7 +320,7 @@ const NewListener = (props) => {
           }
 
           <Form.ElementHorizontal label='Tags' name="tags">
-            <TagsInput name="tags" />
+            <TagsInput name="tags" predTags={selectedPredPolicies}/>
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
               Start a new tag typing a string and hitting the Enter or Tab key.

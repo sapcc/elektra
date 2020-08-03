@@ -12,7 +12,20 @@ import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 
 const EditListener = (props) => {
   const {matchParams, searchParamsToString, formErrorMessage, fetchPoolsForSelect, helpBlockTextForSelect} = useCommons()
-  const {fetchListener,protocolTypes,protocolHeaderInsertionRelation, clientAuthenticationRelation, fetchContainersForSelect, certificateContainerRelation, SNIContainerRelation, CATLSContainerRelation, updateListener, httpHeaderInsertions} = useListener()
+  const { fetchListener,
+          protocolTypes,
+          protocolHeaderInsertionRelation, 
+          clientAuthenticationRelation, 
+          fetchContainersForSelect, 
+          certificateContainerRelation, 
+          SNIContainerRelation, 
+          CATLSContainerRelation, 
+          updateListener, 
+          httpHeaderInsertions,
+          predefinedPolicies,
+          marginOnInsertHeaderAttr,
+          marginOnPredPoliciesAttr,
+          helpBlockItems} = useListener()
   const {persistLoadbalancer} = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [listenerID, setListenerID] = useState(null)
@@ -24,6 +37,8 @@ const EditListener = (props) => {
   const [clientAuthType, setClientAuthType] = useState(null) 
   const [defaultPoolID, setDefaultPoolID] = useState(null)
   const [clientCATLScontainer, setClientCATLScontainer] = useState(null)
+  const [predPolicies, setPredPolicies] = useState([])
+  const [tags, setTags] = useState([])
 
   const [listener, setListener] = useState({
     isLoading: false,
@@ -61,11 +76,6 @@ const EditListener = (props) => {
     // fetch the listener to edit
     setListener({...listener, isLoading:true, error: null})
     fetchListener(loadbalancerID, listenerID).then((data) => {
-      // load the rest of attributes once we have the listener
-      setSelectedProtocolType(data.listener.protocol)
-      setSelectedInsertHeaders(data.listener.protocol, data.listener.insert_headers)
-      setSelectedClientAuthenticationType(data.listener.protocol, data.listener.client_authentication)
-
       loadPools (loadbalancerID).then((availablePools) => {        
         setTimeout(() => setSelectedDefaultPoolID(availablePools, data.listener.default_pool_id), 300);        
       }).catch((error) =>{})
@@ -83,24 +93,34 @@ const EditListener = (props) => {
     })
   }  
 
-  const setSelectedProtocolType = (selectedProtocolType) => {
-    const selectedOption = protocolTypes().find(i=>i.value == (selectedProtocolType || "").trim());
+  useEffect(() => {
+    if(listener.item){
+      setSelectedProtocolType()
+      setSelectedInsertHeaders()
+      setSelectedClientAuthenticationType()
+      setSelectedPredPoliciesAndTags()
+      setOptionalAttrStyles()
+    }    
+  }, [listener.item]);
+
+  const setSelectedProtocolType = () => {
+    const selectedOption = protocolTypes().find(i=>i.value == (listener.item.protocol || "").trim());
     setProtocolType(selectedOption)
   }
 
-  const setSelectedInsertHeaders = (selectedProtocolType, selecetedInsertHeaders) => {
-    const availableInsertHeaders = protocolHeaderInsertionRelation(selectedProtocolType)
+  const setSelectedInsertHeaders = () => {
+    const availableInsertHeaders = protocolHeaderInsertionRelation(listener.item.protocol)
     setInsertHeaderSelectItems(availableInsertHeaders)
     setShowInsertHeaders( (availableInsertHeaders || []).length > 0 )
-    const selectedOptions = availableInsertHeaders.filter( i => selecetedInsertHeaders.includes(i.value));
+    const selectedOptions = availableInsertHeaders.filter( i => listener.item.insert_headers.includes(i.value));
     setInsertHeaders(selectedOptions)
   }
 
-  const setSelectedClientAuthenticationType = (selectedProtocolType, selectedClientAuthType) => {
-    const availableClientAuthTypes = clientAuthenticationRelation(selectedProtocolType)
+  const setSelectedClientAuthenticationType = () => {
+    const availableClientAuthTypes = clientAuthenticationRelation(listener.item.protocol)
     setClientAuthenticationSelectItems(availableClientAuthTypes)
     setShowClientAuthentication( (availableClientAuthTypes || []).length > 0 )
-    const selectedOption = availableClientAuthTypes.find(i=>i.value == (selectedClientAuthType || "").trim());
+    const selectedOption = availableClientAuthTypes.find(i=>i.value == (listener.item.client_authentication || "").trim());
     setClientAuthType(selectedOption)
   }
 
@@ -125,6 +145,35 @@ const EditListener = (props) => {
     setShowCATLSContainer(CATLSContainerRelation(selectedProtocolType))
     const selectedOption = availableContainers.find(i=>i.value == (selectedCATLSContainer || "").trim());
     setClientCATLScontainer(selectedOption)
+  }
+
+  const setSelectedPredPoliciesAndTags = () => {
+    const predPolicies = predefinedPolicies(listener.item.protocol)
+    // set available pred policies depending on the protocol
+    setPredefinedPoliciesSelectItems(predPolicies)
+    // find the selected pred policies from the tags
+    const selectedPredPoliciesOptions = predPolicies.filter( i => listener.item.tags.includes(i.value));
+    // add fixed attribute
+    const newOptions = selectedPredPoliciesOptions.map(item => {
+      item.isFixed = true
+      return item
+    })
+    setPredPolicies(newOptions)
+    // remove the pred policies from the tags to avoid duplicates
+    const selectedTagsOptions = listener.item.tags.filter( tag => !selectedPredPoliciesOptions.find(i => i.value==tag))
+    setTags(selectedTagsOptions)
+
+    setShowPredefinedPolicies(predefinedPolicies(listener.item.protocol).length > 0)
+    setHelpBlockItemsPredPolicies(helpBlockItems(listener.item.protocol))
+  }
+
+  const setSelectedTags = () => {
+
+  }
+
+  const setOptionalAttrStyles = () => {
+    setShowMarginOnInsertHeaderAttr(marginOnInsertHeaderAttr(listener.item.protocol))
+    setShowMarginOnPredPoliciesAttr(marginOnPredPoliciesAttr(listener.item.protocol))
   }
 
   const loadPools = (lbID) => {
@@ -180,12 +229,17 @@ const EditListener = (props) => {
   const [formErrors,setFormErrors] = useState(null)
   const [insetHeaderSelectItems, setInsertHeaderSelectItems] = useState([])
   const [clientAuthenticationSelectItems, setClientAuthenticationSelectItems] = useState([])
+  const [predefinedPoliciesSelectItems, setPredefinedPoliciesSelectItems] = useState(null)
+  const [helpBlockItemsPredPolicies, setHelpBlockItemsPredPolicies] = useState(null)
 
   const [showInsertHeaders, setShowInsertHeaders] = useState(false)
   const [showClientAuthentication, setShowClientAuthentication] = useState(false)
   const [showCertificateContainer, setShowCertificateContainer] = useState(false)
   const [showSNIContainer, setShowSNIContainer] = useState(false)
   const [showCATLSContainer, setShowCATLSContainer] = useState(false)
+  const [showPredefinedPolicies, setShowPredefinedPolicies] = useState(false)
+  const [showMarginOnInsertHeaderAttr, setShowMarginOnInsertHeaderAttr] = useState(false)
+  const [showMarginOnPredPoliciesAttr, setShowMarginOnPredPoliciesAttr] = useState(false)
 
   const validate = ({name,description,protocol_port,protocol,default_pool_id,connection_limit,insert_headers,default_tls_container_ref, sni_container_refs,client_authentication,client_ca_tls_container_ref,tags}) => {
     return name && protocol_port && protocol && true
@@ -210,6 +264,17 @@ const EditListener = (props) => {
   const onSelectCertificateContainer = (props) => {setCertificateContainer(props)}
   const onSelectSNIContainers = (props) => {setSNIContainers(props)}
   const onSelectCATLSContainers = (props) => {setClientCATLScontainer(props)}
+
+  const onSelectPredPolicies = (options) => {
+    const selectedOptions = options || []
+    // add fixed attribute
+    const newOptions = selectedOptions.map(item => {
+      item.isFixed = true
+      return item
+    })
+
+    setPredPolicies(newOptions)
+  }
 
   console.log("RENDER edit listener")
   return ( 
@@ -282,61 +347,84 @@ const EditListener = (props) => {
                     </span>
                   </Form.ElementHorizontal>
 
+                  {showPredefinedPolicies &&
+                    <div className={showMarginOnPredPoliciesAttr ? "advanced-options" : "advanced-options advanced-options-minus-margin"}>
+                      <Form.ElementHorizontal label='Extended Policy' name="extended_policies">
+                        <SelectInput name="extended_policies" items={predefinedPoliciesSelectItems} isMulti onChange={onSelectPredPolicies} value={predPolicies} useFormContext={false}/>
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            <span className="help-block-text">Policies predefined by CCloud for special purpose. The policy will apply specific settings on the load balancer objects. L7Rules are not applicable and the Policy will be applied always. These will be added as fixed tags.</span>
+                            <HelpPopover text={helpBlockTextForSelect(helpBlockItemsPredPolicies)} />
+                          </span>
+                      </Form.ElementHorizontal>
+                    </div>
+                  }
+
                   {showInsertHeaders &&
-                    <Form.ElementHorizontal label='Insert Headers' name="insert_headers">
-                      <SelectInput name="insert_headers" items={insetHeaderSelectItems} isMulti onChange={onSelectInsertHeadersChange} value={insetHeaders}/>
-                        <span className="help-block">
-                          <i className="fa fa-info-circle"></i>
-                          <span className="help-block-text">Headers to insert into the request before it is sent to the backend member.</span>
-                          <HelpPopover text={helpBlockTextForSelect(httpHeaderInsertions("ALL"))} />
-                        </span>
-                    </Form.ElementHorizontal>
+                    <div className={showMarginOnInsertHeaderAttr ? "advanced-options" : "advanced-options advanced-options-minus-margin"}>
+                      <Form.ElementHorizontal label='Insert Headers' name="insert_headers">
+                        <SelectInput name="insert_headers" items={insetHeaderSelectItems} isMulti onChange={onSelectInsertHeadersChange} value={insetHeaders}/>
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            <span className="help-block-text">Headers to insert into the request before it is sent to the backend member.</span>
+                            <HelpPopover text={helpBlockTextForSelect(httpHeaderInsertions("ALL"))} />
+                          </span>
+                      </Form.ElementHorizontal>
+                    </div>
                   }
 
                   {showCertificateContainer &&
-                    <Form.ElementHorizontal label='Certificate Container' name="default_tls_container_ref" required>
-                    { containers.error ? <span className="text-danger">{containers.error}</span>:""}
-                      <SelectInput name="default_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCertificateContainer} value={CertificateContainer} isClearable/>
-                        <span className="help-block">
-                          <i className="fa fa-info-circle"></i>
-                          The container with the TLS secrets used for the listener.
-                        </span>
-                    </Form.ElementHorizontal>
+                    <div className="advanced-options advanced-options-minus-margin">
+                      <Form.ElementHorizontal label='Certificate Container' name="default_tls_container_ref" required>
+                      { containers.error ? <span className="text-danger">{containers.error}</span>:""}
+                        <SelectInput name="default_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCertificateContainer} value={CertificateContainer} isClearable/>
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            The container with the TLS secrets used for the listener.
+                          </span>
+                      </Form.ElementHorizontal>
+                    </div>
                   }
 
                   {showSNIContainer &&
-                    <Form.ElementHorizontal label='SNI Containers' name="sni_container_refs">
-                    { containers.error ? <span className="text-danger">{containers.error}</span>:""}
-                      <SelectInput name="sni_container_refs" isLoading={containers.isLoading} isMulti items={containers.items} onChange={onSelectSNIContainers} value={SNIContainers}/>
-                        <span className="help-block">
-                          <i className="fa fa-info-circle"></i>
-                          A list of containers with alternative TLS secrets used for Server Name Indication (SNI).
-                        </span>
-                    </Form.ElementHorizontal>
+                    <div className="advanced-options advanced-options-minus-margin">
+                      <Form.ElementHorizontal label='SNI Containers' name="sni_container_refs">
+                      { containers.error ? <span className="text-danger">{containers.error}</span>:""}
+                        <SelectInput name="sni_container_refs" isLoading={containers.isLoading} isMulti items={containers.items} onChange={onSelectSNIContainers} value={SNIContainers}/>
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            A list of containers with alternative TLS secrets used for Server Name Indication (SNI).
+                          </span>
+                      </Form.ElementHorizontal>
+                    </div>
                   }
 
                   {showClientAuthentication &&
-                    <Form.ElementHorizontal label='Client Authentication Mode' name="client_authentication">
-                      <SelectInput name="client_authentication" items={clientAuthenticationSelectItems} onChange={onSelectClientAuthentication} value={clientAuthType} isClearable/>
-                        <span className="help-block">
-                          <i className="fa fa-info-circle"></i>
-                          The TLS client authentication mode.
-                        </span>
-                    </Form.ElementHorizontal>
+                    <div className="advanced-options advanced-options-minus-margin">
+                      <Form.ElementHorizontal label='Client Authentication Mode' name="client_authentication">
+                        <SelectInput name="client_authentication" items={clientAuthenticationSelectItems} onChange={onSelectClientAuthentication} value={clientAuthType} isClearable/>
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            The TLS client authentication mode.
+                          </span>
+                      </Form.ElementHorizontal>
+                    </div>
                   }
 
                   {showCATLSContainer &&
-                    <Form.ElementHorizontal label='Client Authentication Container' name="client_ca_tls_container_ref">
-                      <SelectInput name="client_ca_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCATLSContainers} value={clientCATLScontainer} isClearable/>
-                        <span className="help-block">
-                          <i className="fa fa-info-circle"></i>
-                          The TLS client authentication certificate.
-                        </span>
-                    </Form.ElementHorizontal>
+                    <div className="advanced-options">
+                      <Form.ElementHorizontal label='Client Authentication Container' name="client_ca_tls_container_ref">
+                        <SelectInput name="client_ca_tls_container_ref" isLoading={containers.isLoading}  items={containers.items} onChange={onSelectCATLSContainers} value={clientCATLScontainer} isClearable/>
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            The TLS client authentication certificate.
+                          </span>
+                      </Form.ElementHorizontal>
+                    </div>
                   }
 
                   <Form.ElementHorizontal label='Tags' name="tags">
-                    <TagsInput name="tags" initValue={listener.item && listener.item.tags}/>
+                    <TagsInput name="tags" initValue={tags} predTags={predPolicies}/>
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
                       Start a new tag typing a string and hitting the Enter or Tab key.
