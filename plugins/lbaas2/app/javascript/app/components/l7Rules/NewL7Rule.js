@@ -10,7 +10,7 @@ import useL7Policy from '../../../lib/hooks/useL7Policy'
 import { addNotice } from 'lib/flashes';
 
 const NewL7Rule = (props) => {
-  const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
+  const {searchParamsToString, matchParams, formErrorMessage, helpBlockTextForSelect} = useCommons()
   const {ruleTypes, ruleCompareTypes, createL7Rule, ruleTypeKeyRelation} = useL7Rule()
   const {persistL7Policy} = useL7Policy()
   const [showKeyAttribute, setShowKeyAttribute] = useState(false)
@@ -77,26 +77,6 @@ const NewL7Rule = (props) => {
 
   const onSelectCompareType = () => {}
 
-  const helpBlockTextType = () => {
-    return (
-      <ul className="help-block-popover-scroll">
-        {ruleTypes().map( (t, index) =>
-          <li key={index}>{t.label}: {t.description}</li>
-        )}
-      </ul>
-    )
-  }
-
-  const helpBlockTextCompareType = () => {
-    return (
-      <ul className="help-block-popover-scroll">
-        {ruleCompareTypes().map( (t, index) =>
-          <li key={index}>{t.label}: {t.description}</li>
-        )}
-      </ul>
-    )
-  }
-
   return ( 
     <Modal
     show={show}
@@ -125,7 +105,7 @@ const NewL7Rule = (props) => {
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
               <span className="help-block-text">The L7 rule type. See help for more information.</span>
-              <HelpPopover text={helpBlockTextType()} />
+              <HelpPopover text={helpBlockTextForSelect(ruleTypes())} />
             </span>
           </Form.ElementHorizontal>
           <Form.ElementHorizontal label='Compare Type' name="compare_type" required>
@@ -133,7 +113,7 @@ const NewL7Rule = (props) => {
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
               <span className="help-block-text">The L7 rule compare type. See help for more information.</span>
-              <HelpPopover text={helpBlockTextCompareType()} />
+              <HelpPopover text={helpBlockTextForSelect(ruleCompareTypes())} />
             </span>
           </Form.ElementHorizontal>
           <Form.ElementHorizontal label='Inverse Comparisation (NOT)' name="invert">

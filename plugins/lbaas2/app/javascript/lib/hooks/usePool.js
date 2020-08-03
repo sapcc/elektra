@@ -211,16 +211,6 @@ const usePool = () => {
     }
   }
 
-  const helpBlockTextSessionPersistences = () => {
-    return (
-      <ul className="help-block-popover-scroll">
-        {poolPersistenceTypes().map( (t, index) =>
-          <li key={index}>{t.label}: {t.description}</li>
-        )}
-      </ul>
-    )
-  }
-
   const filterListeners = (listeners, selectedProtocol) => {
     return listeners.filter( i => poolProtocolListenerCombinations(selectedProtocol).includes(i.protocol))
   }
@@ -243,7 +233,6 @@ const usePool = () => {
     poolPersistenceTypes,
     poolProtocolListenerCombinations,
     protocolListenerPoolCombinations,
-    helpBlockTextSessionPersistences,
     filterListeners
   };
 }

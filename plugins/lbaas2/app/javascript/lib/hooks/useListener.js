@@ -278,14 +278,77 @@ const useListener = () => {
     })
   }
 
-  const helpBlockTextInsertHeaders = () => {
-    return (
-      <ul className="help-block-popover-scroll">
-        {httpHeaderInsertions("ALL").map( (t, index) =>
-          <li key={index}>{t.label}: {t.description}</li>
-        )}
-      </ul>
-    )
+  const predefinedPolicies = (protocol) => {
+    switch (protocol) {
+      case 'HTTP':
+        return [{label: "x_forward_5b6e_v1_0", value: "x_forward_5b6e_v1_0"}, 
+                {label: "no_one_connect_3caB_v1_0", value: "no_one_connect_3caB_v1_0"}, 
+                {label: "http_compression_e4a2_v1_0", value: "http_compression_e4a2_v1_0"}, 
+                {label: "cookie_encryption_b82a_v1_0", value: "cookie_encryption_b82a_v1_0"}, 
+                {label: 'http_redirect_a26c_v1_0', value: 'http_redirect_a26c_v1_0'}]
+      case 'HTTPS':
+        return [{label: "x_forward_5b6e_v1_0", value: "x_forward_5b6e_v1_0"}, 
+                {label: "no_one_connect_3caB_v1_0", value: "no_one_connect_3caB_v1_0"},
+                {label: "http_compression_e4a2_v1_0", value: "http_compression_e4a2_v1_0"}, 
+                {label: "cookie_encryption_b82a_v1_0", value: "cookie_encryption_b82a_v1_0"}]
+      case 'TERMINATED_HTTPS':
+        return [{label: "x_forward_5b6e_v1_0", value: "x_forward_5b6e_v1_0"}, 
+                {label: "no_one_connect_3caB_v1_0", value: "no_one_connect_3caB_v1_0"}, 
+                {label: "http_compression_e4a2_v1_0", value: "http_compression_e4a2_v1_0"}, 
+                {label: "cookie_encryption_b82a_v1_0", value: "cookie_encryption_b82a_v1_0"}, 
+                {label: 'sso_22b0_v1_0', value: 'sso_22b0_v1_0'}]
+      case 'TCP':
+        return [{label: "proxy_protocol_2edF_v1_0", value: "proxy_protocol_2edF_v1_0"}, 
+                {label: "proxy_protocol_V2_e8f6_v1_0", value: "proxy_protocol_V2_e8f6_v1_0"}, 
+                {label: "standard_tcp_a3de_v1_0", value: "standard_tcp_a3de_v1_0"}]
+      case 'UDP':
+        return []
+      default:
+        return []
+    }
+  }
+
+  const helpBlockItems = (protocol) => {
+    return predefinedPolicies(protocol).map((item) => predPolicyDesc(item.value) )
+  }
+
+  const predPolicyDesc = (policy) => {
+    switch (policy) {
+      case 'proxy_protocol_2edF_v1_0':
+        return {label: 'Set Proxy Protocol (proxy_protocol_2edF_v1_0)', description: <React.Fragment>Adds client IP/Port information to the TCP request <b>in text format.</b><br/>Format:  PROXY TCP[VERSION] [REMOTE ADDR] [LOCAL ADDR] [REMOTE PORT] [LOCAL PORT] <br/> For more information please take a look at <a href='https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt' target='_blank'>the Proxy Protocol Specification.</a><br/>All backend members have to have Proxy Protocol Version 1 support enabled.</React.Fragment>}
+      case 'proxy_protocol_V2_e8f6_v1_0':
+        return {label: 'Set Proxy Protocol V2 (proxy_protocol_V2_e8f6_v1_0)', description: <React.Fragment>Adds client IP information to the TCP request <b>strong in binary format</b>.<br/>For more information please take a look at <a href='https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt' target='_blank'>the Proxy Protocol Specification.</a><br/> All backend members have to have Proxy Protocol Version 2 support enabled.</React.Fragment>}
+      case 'standard_tcp_a3de_v1_0':
+        return {label: 'Use Standard Profile (standard_tcp_a3de_v1_0)', description: <React.Fragment>Switch listener from FastL4 to standard profile on F5 device. Use it only when FastL4 profile doesn't work for your application!!! <a href='https://support.f5.com/csp/article/K55185917' target='_blank'>(F5 Documentation)</a></React.Fragment>}
+      case 'x_forward_5b6e_v1_0':
+        return {label: 'Set X-Forwarded Headers (x_forward_5b6e_v1_0)', description: <React.Fragment>Adds X-FORWARDED-FOR/PROTO/PORT to HTTP header.</React.Fragment>}
+      case 'no_one_connect_3caB_v1_0':
+        return {label: 'Disable OneConnect (no_one_connect_3caB_v1_0)', description: <React.Fragment>Disables the OneConnect Profile on listeners (used for member connection reuse) <a href='https://support.f5.com/csp/article/K7208' target='_blank'>(F5 Documentation)</a></React.Fragment>}
+      case 'http_compression_e4a2_v1_0':
+        return {label: 'Enable HTTP compression (http_compression_e4a2_v1_0)', description: <React.Fragment>Enables HTTP compression profile on listener. Compression is done with gzip for content  types text/* and application/(xml|x-javascript).</React.Fragment>}
+      case 'cookie_encryption_b82a_v1_0':
+        return {label: 'Enable Cookie Encryption (cookie_encryption_b82a_v1_0)', description: <React.Fragment>All cookies are encrypted when sent to client and decrypted when passed to backend members.</React.Fragment>}
+      case 'sso_22b0_v1_0':
+        return {label: 'Enable Client Authentication (SSO) (sso_22b0_v1_0)', description: <React.Fragment>Prompts clients for certificates. Validates Client Ceritificates and adds various X-SSL-Client-Cert-* attributes to HTTP header. Expects listener (TERMINATED_HTTPS) certificate name used for SSL offloading starts with CATrust*</React.Fragment>}
+      case 'http_redirect_a26c_v1_0':
+        return {label: 'Redirect HTTP to HTTPS (http_redirect_a26c_v1_0)', description: <React.Fragment>Redirects all HTTP calls to HTTPS protocol on port 443. A given path will also be added to the https redirect, i.e. http://sap.com/hana would result in https://sap.com/hana.</React.Fragment>}
+      default:
+        return []
+    }
+  }
+
+  const marginOnInsertHeaderAttr = (protocol) => {
+    if(protocol == "HTTP" || protocol == "HTTPS"){
+      return true
+    }
+    return false
+  }
+
+  const marginOnPredPoliciesAttr = (protocol) => {
+    if(protocol == "TCP"){
+      return true
+    }
+    return false
   }
 
   return {
@@ -310,7 +373,10 @@ const useListener = () => {
     CATLSContainerRelation,
     fetchListnersForSelect,
     fetchListnersNoDefaultPoolForSelect,
-    helpBlockTextInsertHeaders
+    predefinedPolicies,
+    helpBlockItems,
+    marginOnInsertHeaderAttr,
+    marginOnPredPoliciesAttr
   }
 }
 
