@@ -47,7 +47,7 @@
     max-height:850px;
   }
   .pagination {
-    margin-top: 0px;
+    margin-top: 10px;
   }
 }
 
@@ -122,11 +122,14 @@
   max-height:650px;  
   overflow-y:scroll;
 
-  thead tr:nth-child(1) th{
-    background: white;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  table {
+    margin-bottom: 0px;
+    thead tr:nth-child(1) th{
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
   }
 }
 
