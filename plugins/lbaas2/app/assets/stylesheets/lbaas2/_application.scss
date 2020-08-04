@@ -43,6 +43,12 @@
 
 .details-section {
   margin-top: 20px;
+  .table-responsive {
+    max-height:850px;
+  }
+  .pagination {
+    margin-top: 10px;
+  }
 }
 
 .table-section {
@@ -50,6 +56,9 @@
   thead {
     background-color: #666;
     color: #fff;
+  }
+  thead tr:nth-child(1) th{
+    background: #666 !important;
   }
 }
 
@@ -106,6 +115,25 @@
 }
 
 /*
+* table responsive trick
+*/
+
+.table-responsive{
+  max-height:650px;  
+  overflow-y:scroll;
+
+  table {
+    margin-bottom: 0px;
+    thead tr:nth-child(1) th{
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+  }
+}
+
+/*
 * help-block in a form
 */
 
@@ -140,18 +168,6 @@
   border: 1px solid #e1e1e8;
   width: 100%;
 
-  .table-responsive{
-    max-height:380px;  
-    overflow-y:scroll;
-
-    thead tr:nth-child(1) th{
-      background: white;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-  }
-
   .members {
     margin-top: 20px;
   }
@@ -174,18 +190,17 @@
 
   .multiple-subtable-left {
     width: 50%;
-    height: 510px;
-    padding: 0px;
+    max-height: 775px;
+    padding: 0px 0px 14px 0px;
   }
 
   .multiple-subtable-right {
     width: 50%;
-    height:510px;
-    padding: 0px;
+    max-height:775px;
+    padding: 0px 0px 14px 0px;
     
     .table-responsive {
-      padding-left: 9px;
-      padding-right: 9px;
+      padding: 0px 14px 0px 14px;
     }
   }
 
@@ -194,8 +209,8 @@
   }
   
   .multiple-subtable-scroll-body {
-    padding: 9px 14px; 
-    max-height: 370px;
+    padding: 9px 14px;
+    max-height: 650px;
     overflow-y: scroll;
   }
 }
@@ -233,8 +248,8 @@
   .selected-l7policy-head {
     padding: 9px 0px;
     background-color: #f9f9f9;
-    border-top: 1px solid #e1e1e8;
-    border-bottom: 1px solid #e1e1e8;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
     margin-top: 20px;
     .selected-l7policy-head-content {
       padding: 2px 14px;  

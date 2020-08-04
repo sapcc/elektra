@@ -191,51 +191,53 @@ const PoolList = ({props, loadbalancerID}) => {
               </div>
             </div>
             
-            <table className={selected ? "table table-section pools" : "table table-hover pools"}>
-              <thead>
-                  <tr>
-                    <th>
-                      <div className="display-flex">
-                        Name
-                        <div className="margin-left">
-                        <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Name ASC</Tooltip>}>
-                          <i className="fa fa-sort-asc" />
-                        </OverlayTrigger>  
+            <div className="table-responsive">
+              <table className={selected ? "table table-section pools" : "table table-hover pools"} responsive>
+                <thead>
+                    <tr>
+                      <th>
+                        <div className="display-flex">
+                          Name
+                          <div className="margin-left">
+                          <OverlayTrigger placement="top" overlay={<Tooltip id="defalult-pool-tooltip">Sorted by Name ASC</Tooltip>}>
+                            <i className="fa fa-sort-asc" />
+                          </OverlayTrigger>  
+                          </div>
+                          /ID/Description
                         </div>
-                        /ID/Description
-                      </div>
-                    </th>
-                    <th>State/Prov. Status</th>
-                    <th>Tags</th>
-                    <th>Algorithm</th>
-                    <th>Protocol</th>
-                    <th>Session Persistence</th>
-                    <th>Assigned to</th>
-                    <th>TLS enabled/Secrets</th>
-                    <th>#Members</th>
-                    <th className='snug'></th>
-                  </tr>
-              </thead>
-              <tbody>
-                {pools && pools.length>0 ?
-                  pools.map( (pool, index) =>
-                    <PoolItem
-                    props={props} 
-                    pool={pool} 
-                    searchTerm={searchTerm} 
-                    key={index} 
-                    disabled={selected ? true : false}
-                    />
-                  )
-                  :
-                  <tr>
-                    <td colSpan="9">
-                      { isLoading ? <span className='spinner'/> : 'No pools found.' }
-                    </td>
-                  </tr>  
-                }
-              </tbody>
-            </table>  
+                      </th>
+                      <th>State/Prov. Status</th>
+                      <th>Tags</th>
+                      <th>Algorithm</th>
+                      <th>Protocol</th>
+                      <th>Session Persistence</th>
+                      <th>Assigned to</th>
+                      <th>TLS enabled/Secrets</th>
+                      <th>#Members</th>
+                      <th className='snug'></th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {pools && pools.length>0 ?
+                    pools.map( (pool, index) =>
+                      <PoolItem
+                      props={props} 
+                      pool={pool} 
+                      searchTerm={searchTerm} 
+                      key={index} 
+                      disabled={selected ? true : false}
+                      />
+                    )
+                    :
+                    <tr>
+                      <td colSpan="9">
+                        { isLoading ? <span className='spinner'/> : 'No pools found.' }
+                      </td>
+                    </tr>  
+                  }
+                </tbody>
+              </table>
+            </div>
 
             {pools.length > 0 && !selected &&
               <Pagination isLoading={isLoading} items={state.items} hasNext={hasNext} handleClick={handlePaginateClick}/>
