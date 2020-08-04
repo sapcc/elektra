@@ -188,16 +188,16 @@
   .multiple-subtable-left {
     width: 50%;
     max-height: 775px;
-    padding: 0px;
+    padding: 0px 0px 14px 0px;
   }
 
   .multiple-subtable-right {
     width: 50%;
     max-height:775px;
-    padding: 0px;
+    padding: 0px 0px 14px 0px;
     
     .table-responsive {
-      padding: 0px 14px 9px 14px;
+      padding: 0px 14px 0px 14px;
     }
   }
 
@@ -245,8 +245,8 @@
   .selected-l7policy-head {
     padding: 9px 0px;
     background-color: #f9f9f9;
-    border-top: 1px solid #e1e1e8;
-    border-bottom: 1px solid #e1e1e8;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
     margin-top: 20px;
     .selected-l7policy-head-content {
       padding: 2px 14px;  
