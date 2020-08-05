@@ -35,7 +35,8 @@ const NewListener = (props) => {
     error: null,
     items: []
   })
-  const [selectedPredPolicies, setSelectedPredPolicies] = useState([])
+  const [predPolicies, setPredPolicies] = useState([])
+  const [tags, setTags] = useState([])
 
   useEffect(() => {
     console.log('fetching pools and containers for select')
@@ -118,11 +119,12 @@ const NewListener = (props) => {
     if(showCertificateContainer && certificateContainer) { newValues.default_tls_container_ref = certificateContainer.value}
     if(showSNIContainers && SNIContainers){ newValues.sni_container_refs = SNIContainers.map( (item, index) => item.value)}
     if(showCATLSContainer && CATLSContainer){ newValues.client_ca_tls_container_ref = CATLSContainer.value}
+    const newTags = [...predPolicies,...tags]
+    if(newTags){newValues.tags = newTags.map( (item, index) => item.value)}
 
     // get the lb id
     const params = matchParams(props)
     const lbID = params.loadbalancerID
-
     return createListener(lbID, newValues).then((response) => {
       addNotice(<React.Fragment>Listener <b>{response.data.name}</b> ({response.data.id}) is being created.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
@@ -172,14 +174,11 @@ const NewListener = (props) => {
   const onSelectCATLSContainers = (props) => { setCATLSContainer(props)}
 
   const onSelectPredPolicies = (options) => {
-    const selectedOptions = options || []
-    // add fixed attribute
-    const newOptions = selectedOptions.map(item => {
-      item.isFixed = true
-      return item
-    })
+    setPredPolicies(options)
+  }
 
-    setSelectedPredPolicies(newOptions)
+  const onTagsChange = (options) => {
+    setTags(options)
   }
 
   console.log("RENDER new listener")
@@ -249,7 +248,7 @@ const NewListener = (props) => {
                 <SelectInput name="extended_policies" items={predefinedPoliciesSelectItems} isMulti onChange={onSelectPredPolicies} useFormContext={false}/>
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                    <span className="help-block-text">Policies predefined by CCloud for special purpose. The policy will apply specific settings on the load balancer objects. L7Rules are not applicable and the Policy will be applied always. These will be added as fixed tags.</span>
+                    <span className="help-block-text">Policies predefined by CCloud for special purpose. The policy will apply specific settings on the load balancer objects. L7Rules are not applicable and the Policy will be applied always. After creation these will be shown as a tag.</span>
                     <HelpPopover text={helpBlockTextForSelect(helpBlockItemsPredPolicies)} />
                   </span>
               </Form.ElementHorizontal>
@@ -320,7 +319,7 @@ const NewListener = (props) => {
           }
 
           <Form.ElementHorizontal label='Tags' name="tags">
-            <TagsInput name="tags" predTags={selectedPredPolicies}/>
+            <TagsInput name="tags" useFormContext={false} onChange={onTagsChange}/>
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
               Start a new tag typing a string and hitting the Enter or Tab key.
