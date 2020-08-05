@@ -1,5 +1,5 @@
 import React, { useState,useEffect} from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import useCommons from '../../../lib/hooks/useCommons'
 import { Form } from 'lib/elektra-form';
 import useMember from '../../../lib/hooks/useMember';
@@ -9,6 +9,7 @@ import { addNotice } from 'lib/flashes';
 import { Table } from 'react-bootstrap'
 import NewMemberListItem from './NewMemberListItem'
 import usePool from '../../../lib/hooks/usePool'
+import FormSubmitButton from '../shared/FormSubmitButton'
 
 const NewMember = (props) => {
   const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
@@ -78,9 +79,10 @@ const NewMember = (props) => {
   const [initialValues, setInitialValues] = useState({})
   const [formErrors,setFormErrors] = useState(null)
   const [submitResults, setSubmitResults] = useState({})
+  const [showServerDropdown, setShowServerDropdown] = useState(false)
 
   const validate = (values) => {
-    return newMembers.length > 0
+    return newMembers && newMembers.length > 0
   }
 
   const onSubmit = (values) => {
@@ -147,28 +149,27 @@ const NewMember = (props) => {
   }
 
   const addMembers = () => {
-    // // create a unique id for the values
-    // const newValues = (selectedServers || []).map((item, index) => {
-    //   return {id: uniqueId("member_"), name: item.name, address: item.address}
-    // })
-    // // concat items
-    // let newItems = (members.slice() || []).concat(newValues);
-    // setMembers(newItems)
-    
     // create a unique id for the value
     const newValues =  [{id: uniqueId("member_"), name: selectedServers.name, address: selectedServers.address}]
 
     //  replace items
     setNewMembers(newValues)
     setSelectedServers([])
+    setShowServerDropdown(false)
   }
 
   const addExternalMembers = () => {
-    // const newExtMembers = (members.slice() || []).concat({id: uniqueId("member_"), type: "external"});
-
     // replace values
     const newExtMembers = [{id: uniqueId("member_"), type: "external"}]
     setNewMembers(newExtMembers)
+  }
+
+  const onShowServersDropdown = () => {
+    setShowServerDropdown(true)
+  }
+
+  const onCancelShowServer = () => {
+    setShowServerDropdown(false)
   }
 
   const onChangeServers = (values) => {
@@ -215,35 +216,43 @@ const NewMember = (props) => {
           <p>Members are servers that serve traffic behind a load balancer. Each member is specified by the IP address and port that it uses to serve traffic.</p>
           <Form.Errors errors={formErrors}/>
 
-          <Form.ElementInline label='Add a Member by selecting a Server' name="servers">
-            <div className="display-flex">
-              <Select
-                className="basic-single"
-                classNamePrefix="select"
-                isDisabled={false}
-                isLoading={servers.isLoading}
-                isClearable={true}
-                isRtl={false}
-                isSearchable={true}
-                name="servers"
-                onChange={onChangeServers}
-                options={servers.items}
-                isMulti={false}
-                closeMenuOnSelect={true}
-                styles={styles}
-                value={selectedServers}
-              />              
-              <Button bsStyle="primary" disabled={members.isLoading} className="margin-left" onClick={addMembers}>Add</Button>  
-            </div>
-            { servers.error ? <span className="text-danger">{formErrorMessage(servers.error)}</span>:""}
-          </Form.ElementInline>
-
-
           <div className="existing-members">
             <b>Existing Members</b>
             <div className='toolbar'>
+
+              {showServerDropdown &&
+                <React.Fragment>
+                  <div className="display-flex select-server-section">
+                    <Select
+                      className="basic-single server-select"
+                      classNamePrefix="select"
+                      isDisabled={false}
+                      isLoading={servers.isLoading}
+                      isClearable={true}
+                      isRtl={false}
+                      isSearchable={true}
+                      name="servers"
+                      onChange={onChangeServers}
+                      options={servers.items}
+                      isMulti={false}
+                      closeMenuOnSelect={true}
+                      styles={styles}
+                      value={selectedServers}
+                    />
+                    <Button disabled={!selectedServers || selectedServers.length == 0} bsStyle="primary" className="margin-left" onClick={addMembers}>Add</Button>
+                    <Button bsStyle="primary" onClick={onCancelShowServer}>Cancel</Button>
+                  </div>                  
+                  { servers.error ? <span className="text-danger">{formErrorMessage(servers.error)}</span>:""}
+                </React.Fragment>
+              }
+
               <div className="main-buttons">
-                <Button bsStyle="primary" disabled={members.isLoading} onClick={addExternalMembers}>Add External</Button>  
+                {!showServerDropdown &&
+                  <DropdownButton disabled={members.isLoading} title="Add" bsStyle="primary" noCaret pullRight id="add-member-dropdown">
+                    <MenuItem onClick={onShowServersDropdown} eventKey="1">By selecting a server</MenuItem>
+                    <MenuItem onClick={addExternalMembers} eventKey="2">External</MenuItem>
+                  </DropdownButton>
+                }
               </div>
             </div>
 
@@ -251,7 +260,7 @@ const NewMember = (props) => {
               <thead>
                   <tr>
                       <th>#</th>
-                      <th>Name</th>
+                      <th><abbr title="required">*</abbr>Name</th>
                       <th><abbr title="required">*</abbr>Address</th>
                       <th><abbr title="required">*</abbr>Protocol Port</th>
                       <th style={{width:"10%"}}>Weight</th>
@@ -279,7 +288,7 @@ const NewMember = (props) => {
         </Modal.Body>
         <Modal.Footer>  
           <Button onClick={close}>Cancel</Button>
-          <Form.SubmitButton label='Save'/>
+          <FormSubmitButton label='Save' disabled={!newMembers || newMembers.length == 0}/>
         </Modal.Footer>
       </Form>
     </Modal>

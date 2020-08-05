@@ -75,9 +75,7 @@ const NewMemberListItem =  ({member, index, onRemoveMember, results}) => {
     <td>
       {onRemoveMember &&
         <React.Fragment>
-          {member.saved ?
-            <i className="fa fa-check"></i>
-            :
+          {!member.saved &&
             <Button bsStyle="link" onClick={onRemoveClick}>
               <i className="fa fa-minus-circle"></i>
             </Button>
