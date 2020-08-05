@@ -2,31 +2,23 @@ import React, { useContext, useState,useEffect } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { FormContext } from 'lib/elektra-form/components/form_context'
 
-/*
-* initValue: initialize the tags array
-* predTags: Add predefined tags decoupled from the editor array. Add them as fixed options.
-*/
-const TagsInput = ({name, initValue, predTags}) => {
+const TagsInput = ({name, initValue, onChange, useFormContext}) => {
   const [tagEditorInputValue, setTagEditorInputValue] = useState("")
   const [tagEditorValue, setTagEditorValue] = useState([])
-  const [predefinedTags, setPredefinedTags] = useState([])
+  const [tags, setTags] = useState(null)
   const context = useContext(FormContext)
+  const shouldUseContext = useFormContext == false ? false : true
 
   useEffect(() => {
     initTags()
   }, [initValue])
 
   useEffect(() => {
-    addPredefinedTags()
-  }, [predTags])
-
-  useEffect(() => {
-    updateContext()
-  }, [predefinedTags])
-
-  useEffect(() => {
-    updateContext()
-  }, [tagEditorValue])
+    if(tags) {
+      updateContext()
+      onChangeCallback()
+    }
+  }, [tags])
 
   const initTags = () => {
     // no need to initialize in case of empty array
@@ -37,16 +29,6 @@ const TagsInput = ({name, initValue, predTags}) => {
     const newValues = createOptions(initValue)
     setTagEditorValue(newValues)
     setTagEditorInputValue("")
-  }
-
-  const addPredefinedTags = () => {
-    // no need to do anything
-    if(!predTags || predTags.length == 0) {
-      return
-    }
-    // create options
-    const newValues = createOptions(predTags)
-    setPredefinedTags(newValues)
   }
 
   const createOptions = (options = []) => {
@@ -88,20 +70,20 @@ const TagsInput = ({name, initValue, predTags}) => {
   }
 
   const createNewTag = () => {
-    setTagEditorValue([...tagEditorValue, createOption(tagEditorInputValue)])
+    const newTags = [...tagEditorValue, createOption(tagEditorInputValue)]
+    setTagEditorValue(newTags)
+    setTags(newTags.map( (value, index) => value.value ))
     setTagEditorInputValue("")
   }
 
   const updateContext = () => {
-    //send the tags to the context
-    const editorTags = tagEditorValue.map( (value, index) => value.value )
-    const extraTags = predefinedTags.map( (value, index) => value.value )
-    const contextTags = [...extraTags, ...editorTags]
-    context.onChange(name, contextTags)
+    if(shouldUseContext){
+      context.onChange(name, tags)
+    }
   }
 
   const onChangeCallback = () => {
-    if(onChange) {
+    if(onChange){
       onChange(tagEditorValue)
     }
   }
@@ -118,7 +100,9 @@ const TagsInput = ({name, initValue, predTags}) => {
         value = tagEditorValue.filter(v => v.isFixed);
         break;
     }
-    setTagEditorValue(value || [])
+    const newTags = value || []
+    setTagEditorValue(newTags)
+    setTags(newTags.map( (value, index) => value.value ))
   }
 
   const onTagEditorInputChange = (inputValue) => {
@@ -135,7 +119,6 @@ const TagsInput = ({name, initValue, predTags}) => {
     }
   };
 
-  const tagsValue = [...predefinedTags, ...tagEditorValue]
   return ( 
     <CreatableSelect
       styles={styles}
@@ -148,7 +131,7 @@ const TagsInput = ({name, initValue, predTags}) => {
       onInputChange={onTagEditorInputChange}
       onKeyDown={onTagEditorKeyDown}
       placeholder=""
-      value={tagsValue}
+      value={tagEditorValue}
     />
    );
 }

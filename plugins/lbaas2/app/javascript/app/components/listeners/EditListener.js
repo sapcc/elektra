@@ -167,10 +167,6 @@ const EditListener = (props) => {
     setHelpBlockItemsPredPolicies(helpBlockItems(listener.item.protocol))
   }
 
-  const setSelectedTags = () => {
-
-  }
-
   const setOptionalAttrStyles = () => {
     setShowMarginOnInsertHeaderAttr(marginOnInsertHeaderAttr(listener.item.protocol))
     setShowMarginOnPredPoliciesAttr(marginOnPredPoliciesAttr(listener.item.protocol))
@@ -247,7 +243,11 @@ const EditListener = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null)
-    return updateListener(loadbalancerID, listenerID, values).then((response) => {
+    const newValues = {... values}
+    // add optional attributes that not set per context
+    newValues.tags = [...predPolicies,...tags].map( (item, index) => item.value)
+
+    return updateListener(loadbalancerID, listenerID, newValues).then((response) => {
       addNotice(<React.Fragment>Listener <b>{response.data.name}</b> ({response.data.id}) is being updated.</React.Fragment>)
       // fetch the lb again containing the new listener so it gets updated fast
       persistLoadbalancer(loadbalancerID).catch(error => {
@@ -266,14 +266,11 @@ const EditListener = (props) => {
   const onSelectCATLSContainers = (props) => {setClientCATLScontainer(props)}
 
   const onSelectPredPolicies = (options) => {
-    const selectedOptions = options || []
-    // add fixed attribute
-    const newOptions = selectedOptions.map(item => {
-      item.isFixed = true
-      return item
-    })
+    setPredPolicies(options)
+  }
 
-    setPredPolicies(newOptions)
+  const onTagsChange = (options) => {
+    setTags(options)
   }
 
   console.log("RENDER edit listener")
@@ -353,7 +350,7 @@ const EditListener = (props) => {
                         <SelectInput name="extended_policies" items={predefinedPoliciesSelectItems} isMulti onChange={onSelectPredPolicies} value={predPolicies} useFormContext={false}/>
                           <span className="help-block">
                             <i className="fa fa-info-circle"></i>
-                            <span className="help-block-text">Policies predefined by CCloud for special purpose. The policy will apply specific settings on the load balancer objects. L7Rules are not applicable and the Policy will be applied always. These will be added as fixed tags.</span>
+                            <span className="help-block-text">Policies predefined by CCloud for special purpose. The policy will apply specific settings on the load balancer objects. L7Rules are not applicable and the Policy will be applied always. After creation these will be shown as a tag.</span>
                             <HelpPopover text={helpBlockTextForSelect(helpBlockItemsPredPolicies)} />
                           </span>
                       </Form.ElementHorizontal>
@@ -424,7 +421,7 @@ const EditListener = (props) => {
                   }
 
                   <Form.ElementHorizontal label='Tags' name="tags">
-                    <TagsInput name="tags" initValue={tags} predTags={predPolicies}/>
+                    <TagsInput name="tags" initValue={tags} useFormContext={false} onChange={onTagsChange}/>
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
                       Start a new tag typing a string and hitting the Enter or Tab key.
