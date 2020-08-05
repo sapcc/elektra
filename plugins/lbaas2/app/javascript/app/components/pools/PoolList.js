@@ -213,6 +213,7 @@ const PoolList = ({props, loadbalancerID}) => {
                       <th>Session Persistence</th>
                       <th>Assigned to</th>
                       <th>TLS enabled/Secrets</th>
+                      <th>Health Monitor</th>
                       <th>#Members</th>
                       <th className='snug'></th>
                     </tr>

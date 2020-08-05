@@ -97,9 +97,6 @@ const TagsInput = ({name, initValue, predTags}) => {
     const editorTags = tagEditorValue.map( (value, index) => value.value )
     const extraTags = predefinedTags.map( (value, index) => value.value )
     const contextTags = [...extraTags, ...editorTags]
-
-    console.log("updateContext>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", name, "-", contextTags)
-
     context.onChange(name, contextTags)
   }
 

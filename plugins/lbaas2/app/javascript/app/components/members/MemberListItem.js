@@ -89,7 +89,7 @@ const MemberListItem = ({props, poolID, member, searchTerm}) => {
 
   const displayName = () => {
     const name = member.name || member.id  
-    return <CopyPastePopover text={name} size={20} sliceType="MIDDLE" searchTerm={searchTerm}/>
+    return <CopyPastePopover text={name} size={12} sliceType="MIDDLE" searchTerm={searchTerm}/>
   }
 
   const displayID = () => {

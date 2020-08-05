@@ -145,8 +145,8 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
     }
   }
 
-  const displayTLS = () => {
-    if (pool.tls_enabled) {
+  const displayCheck = (option) => {
+    if (option) {
      return <i className="fa fa-check" />
     } else {
       return <i className="fa fa-times" />
@@ -213,9 +213,10 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
       </td>
       <td>{displayAssignedTo()}</td>
       <td>
-        {displayTLS()}
+        {displayCheck(pool.tls_enabled)}
         {displaySecrets()}
       </td>
+      <td>{displayCheck(pool.healthmonitor_id)}</td>
       <td>
         {disabled ?
           <span className="info-text">{memberIDs.length}</span>

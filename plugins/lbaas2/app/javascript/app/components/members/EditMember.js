@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, DropdownButton } from 'react-bootstrap';
 import useCommons from '../../../lib/hooks/useCommons'
 import { Form } from 'lib/elektra-form';
 import useMember from '../../../lib/hooks/useMember';
 import ErrorPage from '../ErrorPage';
-import Select from 'react-select';
 import { Table } from 'react-bootstrap'
 import NewMemberListItem from './NewMemberListItem'
 import usePool from '../../../lib/hooks/usePool'
@@ -189,29 +188,12 @@ const EditMember = (props) => {
                 <p>Members are servers that serve traffic behind a load balancer. Each member is specified by the IP address and port that it uses to serve traffic.</p>
                 <Form.Errors errors={formErrors}/>
 
-                <Form.ElementInline label='Add a Member by selecting a Server' name="servers">
-                  <div className="display-flex">
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      isDisabled={true}
-                      isClearable={true}
-                      isRtl={false}
-                      isSearchable={true}
-                      name="servers"
-                      isMulti={false}
-                      closeMenuOnSelect={true}
-                      styles={styles}
-                    />              
-                    <Button bsStyle="primary" disabled={true} className="margin-left">Add</Button>  
-                  </div>
-                </Form.ElementInline>
-
                 <div className="existing-members">
                   <b>Existing Members</b>
                   <div className='toolbar'>
                     <div className="main-buttons">
-                      <Button bsStyle="primary" disabled={true}>Add External</Button>  
+                      <DropdownButton disabled={true} title="Add" bsStyle="primary" noCaret pullRight id="add-member-dropdown">
+                      </DropdownButton>
                     </div>
                   </div>
 
@@ -219,7 +201,7 @@ const EditMember = (props) => {
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Name</th>
+                            <th><abbr title="required">*</abbr>Name</th>
                             <th><abbr title="required">*</abbr>Address</th>
                             <th><abbr title="required">*</abbr>Protocol Port</th>
                             <th style={{width:"10%"}}>Weight</th>

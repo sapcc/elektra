@@ -233,6 +233,16 @@
 * New members
 */
 
+.select-server-section {
+  width: 100%;
+
+  .server-select {
+    line-height: 14px;
+    z-index: 11;
+  }
+
+}
+
 .existing-members {
   margin-top: 20px;
   .toolbar {
