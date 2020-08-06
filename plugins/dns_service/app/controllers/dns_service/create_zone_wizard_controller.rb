@@ -84,29 +84,10 @@ module DnsService
         requested_parent_zone_name = requested_parent_zone_name.partition('.').last
       end
 
-      # get dns zones quota for target project
-      dns_zone_resource = cloud_admin.resource_management.find_project(
-        @inquiry.domain_id, @inquiry.project_id,
-        service: 'dns',
-        resource: 'zones',
-      ).resources.first or raise ActiveRecord::RecordNotFound
+      # check quotas
+      check_quotas(@inquiry.domain_id, @inquiry.project_id, 'zones')
+      check_quotas(@inquiry.domain_id, @inquiry.project_id, 'recordsets')
 
-      if dns_zone_resource.quota == 0 || dns_zone_resource.usable == dns_zone_resource.usage
-        unless dns_zone_resource.quota < dns_zone_resource.usage
-          # standard increase quota +1
-          dns_zone_resource.quota += 1
-        else
-          # special case if quota is smaller than usage than adjust quota to usage plus 1
-          dns_zone_resource.quota = dns_zone_resource.usage + 1
-        end
-        unless dns_zone_resource.save
-           # catch error for automatic zone quota adjustment
-           dns_zone_resource.errors.each { |k, m| @zone_request.errors.add(k,m) }
-           render action: :new
-           return
-        end
-      end
-      
       if @zone.save
         # we need zone transfer if the domain was created in cloud-admin project
         if zone_transfer
@@ -166,6 +147,31 @@ module DnsService
 
     def load_pool(pool_id)
       cloud_admin.dns_service.find_pool(pool_id)
+    end
+
+    def check_quotas(domain_id,project_id,resource)
+      # get dns quota for resource and target project
+      dns_resource = cloud_admin.resource_management.find_project(
+        domain_id, project_id,
+        service: 'dns',
+        resource: resource,
+      ).resources.first or raise ActiveRecord::RecordNotFound
+
+      if dns_resource.quota == 0 || dns_resource.usable_quota <= dns_resource.usage
+        unless dns_resource.usable_quota < dns_resource.usage
+          # standard increase quota +1
+          dns_resource.quota += 1
+        else
+          # special case if usable quota is smaller than usage than adjust new quota to usage plus 1
+          dns_resource.quota = dns_resource.usage + 1
+        end
+        unless dns_resource.save
+           # catch error for automatic quota adjustment
+           dns_resource.errors.each { |k, m| @zone_request.errors.add(k,m) }
+           render action: :new
+           return
+        end
+      end
     end
   end
 end
