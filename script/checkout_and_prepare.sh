@@ -14,15 +14,12 @@ if [ "$1" == "--help" ]; then
   exit 0
 fi
 
+COMMIT=${1-HEAD}
 echo "INFO: please be aware that you should stop puma and webpacker first!"
-read -p "INFO: setup elektra? (y/n)" -n 1 -r
+read -p "INFO: prepare elektra for $COMMIT ? (y/n)" -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-  COMMIT=${1-HEAD}
-
-  if [ -n "$COMMIT" ]; then
-    git checkout $COMMIT 
-  fi
-
+  echo ""
+  git checkout $COMMIT && 
   rm -rf ./node_modules/ &&
   yarn &&
   bundle install &&
