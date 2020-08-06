@@ -4,7 +4,8 @@ import CachedInforPopover from '../shared/CachedInforPopover';
 import CachedInfoPopoverListenerContent from './CachedInfoPopoverListenerContent';
 import CachedInfoPopoverPoolContent from './CachedInfoPopoverPoolContent';
 import StaticTags from '../StaticTags';
-import StateLabel from '../StateLabel'
+import StateLabel from '../shared/StateLabel'
+import StatusLabel from '../shared/StatusLabel'
 import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import { addNotice, addError } from 'lib/flashes';
@@ -143,8 +144,8 @@ const LoadbalancerItem = ({loadbalancer, searchTerm, disabled}) => {
         {displayID()}
         <CopyPastePopover text={loadbalancer.description} size={40} shouldCopy={false} shouldPopover={true} searchTerm={searchTerm}/>
       </td>
-      <td><StateLabel placeholder={loadbalancer.operating_status} path="operating_status" /></td>
-      <td><StateLabel placeholder={loadbalancer.provisioning_status} path="provisioning_status"/></td>
+      <td><StateLabel label={loadbalancer.operating_status} /></td>
+      <td><StatusLabel label={loadbalancer.provisioning_status} /></td>
       <td>
         <StaticTags tags={loadbalancer.tags} />
       </td>

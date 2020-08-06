@@ -1,7 +1,8 @@
 import { useEffect,useState, useMemo } from 'react'
 import useCommons from '../../../lib/hooks/useCommons'
 import CopyPastePopover from '../shared/CopyPastePopover'
-import StateLabel from '../StateLabel'
+import StateLabel from '../shared/StateLabel'
+import StatusLabel from '../shared/StatusLabel'
 import StaticTags from '../StaticTags';
 import useL7Rule from '../../../lib/hooks/useL7Rule';
 import SmartLink from "../shared/SmartLink"
@@ -78,8 +79,8 @@ const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tabl
         <CopyPastePopover text={l7Rule.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldClose={tableScroll} searchTerm={searchTerm}/>
       </td>
       <td>
-        <StateLabel placeholder={l7Rule.operating_status} path="" /><br/>
-        <StateLabel placeholder={l7Rule.provisioning_status} path=""/>
+        <StateLabel label={l7Rule.operating_status} /><br/>
+        <StatusLabel label={l7Rule.provisioning_status} />
       </td>
       <td>
         <StaticTags tags={l7Rule.tags} shouldPopover={true}/>

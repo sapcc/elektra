@@ -1,7 +1,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import useCommons from '../../../lib/hooks/useCommons'
 import { Link } from 'react-router-dom';
-import StateLabel from '../StateLabel'
+import StateLabel from '../shared/StateLabel'
+import StatusLabel from '../shared/StatusLabel'
 import StaticTags from '../StaticTags';
 import useL7Policy from '../../../lib/hooks/useL7Policy'
 import CopyPastePopover from '../shared/CopyPastePopover'
@@ -127,8 +128,8 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
         {displayID()}
         <CopyPastePopover text={l7Policy.description} size={20} shouldCopy={false} shouldClose={tableScroll} shouldPopover={true} searchTerm={searchTerm}/>
       </td>
-      <td><StateLabel placeholder={l7Policy.operating_status} path="" /></td>
-      <td><StateLabel placeholder={l7Policy.provisioning_status} path=""/></td>
+      <td><StateLabel label={l7Policy.operating_status} /></td>
+      <td><StatusLabel label={l7Policy.provisioning_status}/></td>
       <td>
         <StaticTags tags={l7Policy.tags} />
       </td>

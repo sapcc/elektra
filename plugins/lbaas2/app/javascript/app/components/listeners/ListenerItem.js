@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom';
-import StateLabel from '../StateLabel'
+import StateLabel from '../shared/StateLabel'
+import StatusLabel from '../shared/StatusLabel'
 import StaticTags from '../StaticTags';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import CopyPastePopover from '../shared/CopyPastePopover'
@@ -176,8 +177,8 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
         <CopyPastePopover text={listener.description} size={20} shouldCopy={false} shouldPopover={true} searchTerm={searchTerm}/>
       </td>
       <td>
-        <div><StateLabel placeholder={listener.operating_status} path="" /></div>
-        <div><StateLabel placeholder={listener.provisioning_status} path=""/></div>
+        <div><StateLabel label={listener.operating_status} /></div>
+        <div><StatusLabel label={listener.provisioning_status} /></div>
       </td>
       <td>
         <StaticTags tags={listener.tags} />

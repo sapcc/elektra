@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import CopyPastePopover from '../shared/CopyPastePopover'
-import StateLabel from '../StateLabel'
+import StateLabel from '../shared/StateLabel'
+import StatusLabel from '../shared/StatusLabel'
 import StaticTags from '../StaticTags';
 import useL7Policy from '../../../lib/hooks/useL7Policy'
 import { Link } from 'react-router-dom';
@@ -160,7 +161,7 @@ const L7PolicySelected = ({props, listenerID, l7Policy, onBackLink}) => {
           </div>
           <div className="row">
             <div className="col-md-12">
-              <StateLabel placeholder={l7Policy.operating_status} path="" />
+              <StateLabel label={l7Policy.operating_status} />
             </div>
           </div>
         </div>
@@ -173,7 +174,7 @@ const L7PolicySelected = ({props, listenerID, l7Policy, onBackLink}) => {
           </div>
           <div className="row">
             <div className="col-md-12">
-              <StateLabel placeholder={l7Policy.provisioning_status} path="" />
+              <StatusLabel label={l7Policy.provisioning_status} />
             </div>
           </div>
         </div>

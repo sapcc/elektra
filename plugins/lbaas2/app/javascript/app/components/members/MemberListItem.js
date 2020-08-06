@@ -1,7 +1,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import CopyPastePopover from '../shared/CopyPastePopover'
 import useCommons from '../../../lib/hooks/useCommons'
-import StateLabel from '../StateLabel'
+import StateLabel from '../shared/StateLabel'
+import StatusLabel from '../shared/StatusLabel'
 import StaticTags from '../StaticTags';
 import useMember from '../../../lib/hooks/useMember'
 import usePool from '../../../lib/hooks/usePool'
@@ -108,8 +109,8 @@ const MemberListItem = ({props, poolID, member, searchTerm}) => {
         <CopyPastePopover text={member.address} size={12} searchTerm={searchTerm}/>
       </td>
       <td>
-        <StateLabel placeholder={member.operating_status} path="" /><br/>
-        <StateLabel placeholder={member.provisioning_status} path=""/>
+        <StateLabel label={member.operating_status} /><br/>
+        <StatusLabel label={member.provisioning_status}/>
       </td>
       <td>
         <StaticTags tags={member.tags} shouldPopover={true}/>

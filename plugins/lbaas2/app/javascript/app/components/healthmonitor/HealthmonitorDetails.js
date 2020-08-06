@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import StateLabel from '../StateLabel'
+import StateLabel from '../shared/StateLabel'
+import StatusLabel from '../shared/StatusLabel'
 import StaticTags from '../StaticTags';
 import useHealthMonitor from '../../../lib/hooks/useHealthMonitor'
 import CopyPastePopover from '../shared/CopyPastePopover'
@@ -87,10 +88,10 @@ const HealthmonitorDetails = ({loadbalancerID, poolID, healthmonitor}) => {
           <div className="col-md-12">
             <div className="display-flex">
               <span>
-                <StateLabel placeholder={healthmonitor.operating_status} path="" />
+                <StateLabel label={healthmonitor.operating_status} />
               </span>
               <span className="label-right">
-                <StateLabel placeholder={healthmonitor.provisioning_status} path="" />
+                <StatusLabel label={healthmonitor.provisioning_status}/>
               </span>
             </div>
           </div>

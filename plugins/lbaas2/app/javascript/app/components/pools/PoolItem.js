@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom';
-import StateLabel from '../StateLabel'
+import StateLabel from '../shared/StateLabel'
+import StatusLabel from '../shared/StatusLabel'
 import StaticTags from '../StaticTags';
 import CopyPastePopover from '../shared/CopyPastePopover'
 import CachedInfoPopover from '../shared/CachedInforPopover';
@@ -195,8 +196,8 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
         <CopyPastePopover text={pool.description} size={20} shouldCopy={false} shouldPopover={true} searchTerm={searchTerm}/>
       </td>
       <td>
-        <div><StateLabel placeholder={pool.operating_status} path="" /></div>
-        <div><StateLabel placeholder={pool.provisioning_status} path=""/></div>
+        <div><StateLabel label={pool.operating_status} /></div>
+        <div><StatusLabel label={pool.provisioning_status} /></div>
       </td>
       <td>
         <StaticTags tags={pool.tags} />
