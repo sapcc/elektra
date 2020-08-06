@@ -12,6 +12,14 @@
     - if @zone_request.errors.present?
       .alert.alert-error
         = render_errors(@zone_request.errors)
+    - if @zone_resource.usable_quota <= @zone_resource.usage
+      .alert.alert-warning
+        Not enough zone quota left. Please increase your quota in
+        = link_to 'resource management', plugin('resources').project_path(), target: :_blank
+    - if @recordset_resource.usable_quota <= @recordset_resource.usage
+      .alert.alert-warning
+        Not enough recordset quota left. Please increase your quota in 
+        = link_to 'resource management', plugin('resources').project_path(), target: :_blank
 
     = f.input :domain_pool, as: :select, label: 'DNS Provider' do
       = f.select :domain_pool, @pools.uniq.collect{|pool| [(pool.attributes.fetch("attributes", {}).fetch("label",nil) || pool.name.humanize), pool.id]},

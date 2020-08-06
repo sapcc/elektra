@@ -6,6 +6,19 @@ module DnsService
     def new
       @zone_request = ::DnsService::ZoneRequest.new(nil)
       @pools = cloud_admin.dns_service.pools[:items]
+
+      @zone_resource = cloud_admin.resource_management.find_project(
+        @scoped_domain_id, @scoped_project_id,
+        service: 'dns',
+        resource: 'zones',
+      ).resources.first or raise ActiveRecord::RecordNotFound
+
+      @recordset_resource = cloud_admin.resource_management.find_project(
+        @scoped_domain_id, @scoped_project_id,
+        service: 'dns',
+        resource: 'recordsets',
+      ).resources.first or raise ActiveRecord::RecordNotFound
+
     end
 
     def create
