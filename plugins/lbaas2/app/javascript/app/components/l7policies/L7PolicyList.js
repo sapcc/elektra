@@ -20,18 +20,17 @@ const L7PolicyList = ({props, loadbalancerID }) => {
   const dispatch = useDispatch()
   const {persistL7Policies, persistL7Policy, setSearchTerm, setSelected, reset, onSelectL7Policy} = useL7Policy()
   const {searchParamsToString} = useCommons()
-  const [tableScroll, setTableScroll] = useState(false)
   const state = useGlobalState().l7policies
   const listenerID = useGlobalState().listeners.selected
   const listenerError = useGlobalState().listeners.error
   const [initialLoadDone, setInitialLoadDone] = useState(false)
   const [triggerFindSelected, setTriggerFindSelected] = useState(false)
 
-  // timeout for scroll event
-  let handleScrollTimeout = null
-  // timeout for the event handler
-  let eventHandlerTimeout = null
-  const [count, setCount] = useState(0)
+  // // timeout for scroll event
+  // let handleScrollTimeout = null
+  // // timeout for the event handler
+  // let eventHandlerTimeout = null
+  // const [count, setCount] = useState(0)
 
   // when the listener id changes the state is reseted and a new load begins
   useEffect(() => {    
@@ -101,47 +100,47 @@ const L7PolicyList = ({props, loadbalancerID }) => {
     }
   }
 
-  const container = useRef(null)
-  useEffect(() => {
-    if (listenerID) {
-      const containerElement = container.current 
-      if(containerElement){
-        // wait until the responsive table is build
-        handleScrollListener(containerElement)
-        return () => {      
-          if (containerElement && containerElement.querySelector('.table-responsive')){
-            containerElement.querySelector('.table-responsive').removeEventListener("scroll",handleScroll)
-          }
-          clearTimeout(handleScrollTimeout)
-          clearTimeout(eventHandlerTimeout)
-        } 
-      }
-    }
-  },[listenerID])
+  // const container = useRef(null)
+  // useEffect(() => {
+  //   if (listenerID) {
+  //     const containerElement = container.current 
+  //     if(containerElement){
+  //       // wait until the responsive table is build
+  //       handleScrollListener(containerElement)
+  //       return () => {      
+  //         if (containerElement && containerElement.querySelector('.table-responsive')){
+  //           containerElement.querySelector('.table-responsive').removeEventListener("scroll",handleScroll)
+  //         }
+  //         clearTimeout(handleScrollTimeout)
+  //         clearTimeout(eventHandlerTimeout)
+  //       } 
+  //     }
+  //   }
+  // },[listenerID])
 
-  const handleScrollListener = (containerElement) => {
-    if(eventHandlerTimeout) return
-    setCount(count + 1)
-    if ( containerElement && containerElement.querySelector('.table-responsive') ){
-      containerElement.querySelector('.table-responsive').addEventListener('scroll', handleScroll);
-    } else {
-      if (count < 5) {
-        eventHandlerTimeout = setTimeout(() => {
-          eventHandlerTimeout = null
-          handleScrollListener(containerElement)
-        }, 500)
-      }
-    }
-  }
+  // const handleScrollListener = (containerElement) => {
+  //   if(eventHandlerTimeout) return
+  //   setCount(count + 1)
+  //   if ( containerElement && containerElement.querySelector('.table-responsive') ){
+  //     containerElement.querySelector('.table-responsive').addEventListener('scroll', handleScroll);
+  //   } else {
+  //     if (count < 5) {
+  //       eventHandlerTimeout = setTimeout(() => {
+  //         eventHandlerTimeout = null
+  //         handleScrollListener(containerElement)
+  //       }, 500)
+  //     }
+  //   }
+  // }
 
-  const handleScroll = () => {
-    if(handleScrollTimeout) return
-    setTableScroll(true)
-    handleScrollTimeout = setTimeout(() => {
-      handleScrollTimeout = null
-      setTableScroll(false)
-    }, 1000 )
-  }
+  // const handleScroll = () => {
+  //   if(handleScrollTimeout) return
+  //   setTableScroll(true)
+  //   handleScrollTimeout = setTimeout(() => {
+  //     handleScrollTimeout = null
+  //     setTableScroll(false)
+  //   }, 1000 )
+  // }
 
   const canCreate = useMemo(
     () => 
@@ -193,11 +192,11 @@ const L7PolicyList = ({props, loadbalancerID }) => {
         {listenerID && !listenerError &&
           <React.Fragment>
             { error ?
-              <div className={selected ? "l7policies subtable multiple-subtable-left": "l7policies subtable"} ref={container}>
+              <div className={selected ? "l7policies subtable multiple-subtable-left": "l7policies subtable"}>
                 <ErrorPage headTitle="L7 Policies" error={error} onReload={initialLoad}/>
               </div>
             :
-              <div className={selected ? "l7policies subtable multiple-subtable-left": "l7policies subtable"} ref={container}>
+              <div className={selected ? "l7policies subtable multiple-subtable-left": "l7policies subtable"}>
                 <div className="display-flex multiple-subtable-header">
                   <h4>L7 Policies</h4>
                   <HelpPopover text="Collection of L7 rules that get logically ANDed together as well as a routing policy for any given HTTP or terminated HTTPS client requests which match said rules. An L7 Policy is associated with exactly one HTTP or terminated HTTPS listener." />
@@ -258,7 +257,6 @@ const L7PolicyList = ({props, loadbalancerID }) => {
                               l7Policy={l7Policy} 
                               searchTerm={searchTerm} 
                               key={index} 
-                              tableScroll={tableScroll} 
                               listenerID={listenerID}
                               disabled={selected ? true : false}
                               />
@@ -280,7 +278,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
         } 
       </React.Fragment>
     );
-  } , [ listenerID, listenerError, JSON.stringify(l7Policies), error, selected, isLoading, searchTerm, props, tableScroll])
+  } , [ listenerID, listenerError, JSON.stringify(l7Policies), error, selected, isLoading, searchTerm, props])
 }
  
 export default L7PolicyList;

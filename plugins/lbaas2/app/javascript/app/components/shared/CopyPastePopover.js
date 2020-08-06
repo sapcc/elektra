@@ -31,27 +31,10 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
   const baseClass = bsClass || "cp"
   const shouldCopyText = shouldCopy == false ? false : true
   const shouldPopoverText = shouldPopover == false ? false : true
-  let timeout = null
-  const [windowScroll, setWindowScroll] = useState(false)
 
   useEffect(() => {
     if (shouldClose && showPopover) setShowPopover(false)
-    if (windowScroll && showPopover) setShowPopover(false)
-  },[shouldClose, windowScroll])
-
-  // useEffect(() => {
-  //   window.addEventListener('scroll', handleScroll)
-  //   return () => window.removeEventListener('scroll', handleScroll)
-  // },[])
-
-  // const handleScroll = () => {
-  //   if(timeout) return
-  //   setWindowScroll(true)
-  //   timeout = setTimeout(() => {
-  //     timeout = null
-  //     setWindowScroll(false)
-  //   }, 1000 )
-  // }
+  },[shouldClose])
 
   const onCopySuccess = () => {
     setShowTooltip(true)
@@ -73,12 +56,13 @@ const CopyPastePopover = ({text, size, sliceType, shouldClose, bsClass, shouldCo
   const popOver =  <Popover id={uniqueId("copy-paste-popover-")}>
     <div className="lbaas2">
         <span className="cp-popover-text">{text}</span>
-        {shouldCopyText &&
+        {/* not show copy icon again in the popover */}
+        {/* {shouldCopyText &&
           <div className="text-right">
             {clipboard}
             {tooltip}
           </div>
-        }
+        } */}
     </div>
   </Popover>
 
