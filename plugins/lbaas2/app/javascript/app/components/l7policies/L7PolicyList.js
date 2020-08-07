@@ -26,12 +26,6 @@ const L7PolicyList = ({props, loadbalancerID }) => {
   const [initialLoadDone, setInitialLoadDone] = useState(false)
   const [triggerFindSelected, setTriggerFindSelected] = useState(false)
 
-  // // timeout for scroll event
-  // let handleScrollTimeout = null
-  // // timeout for the event handler
-  // let eventHandlerTimeout = null
-  // const [count, setCount] = useState(0)
-
   // when the listener id changes the state is reseted and a new load begins
   useEffect(() => {    
     initialLoad()
@@ -99,49 +93,7 @@ const L7PolicyList = ({props, loadbalancerID }) => {
       })
     }
   }
-
-  // const container = useRef(null)
-  // useEffect(() => {
-  //   if (listenerID) {
-  //     const containerElement = container.current 
-  //     if(containerElement){
-  //       // wait until the responsive table is build
-  //       handleScrollListener(containerElement)
-  //       return () => {      
-  //         if (containerElement && containerElement.querySelector('.table-responsive')){
-  //           containerElement.querySelector('.table-responsive').removeEventListener("scroll",handleScroll)
-  //         }
-  //         clearTimeout(handleScrollTimeout)
-  //         clearTimeout(eventHandlerTimeout)
-  //       } 
-  //     }
-  //   }
-  // },[listenerID])
-
-  // const handleScrollListener = (containerElement) => {
-  //   if(eventHandlerTimeout) return
-  //   setCount(count + 1)
-  //   if ( containerElement && containerElement.querySelector('.table-responsive') ){
-  //     containerElement.querySelector('.table-responsive').addEventListener('scroll', handleScroll);
-  //   } else {
-  //     if (count < 5) {
-  //       eventHandlerTimeout = setTimeout(() => {
-  //         eventHandlerTimeout = null
-  //         handleScrollListener(containerElement)
-  //       }, 500)
-  //     }
-  //   }
-  // }
-
-  // const handleScroll = () => {
-  //   if(handleScrollTimeout) return
-  //   setTableScroll(true)
-  //   handleScrollTimeout = setTimeout(() => {
-  //     handleScrollTimeout = null
-  //     setTableScroll(false)
-  //   }, 1000 )
-  // }
-
+  
   const canCreate = useMemo(
     () => 
       policy.isAllowed("lbaas2:l7policy_create", {
