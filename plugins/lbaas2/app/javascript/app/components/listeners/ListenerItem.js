@@ -144,6 +144,14 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
 
   const displayProtocol = () => {
     const containers = collectContainers()
+    const numberOfElements = containers.reduce( (numberOfElements, container) => {
+      if(container.ref) { return numberOfElements + 1}
+      else if(container.refList) { return numberOfElements + container.refList.length}
+      else {return numberOfElements}
+    }, 0)
+
+
+
     return (
       <React.Fragment>
         <MyHighlighter search={searchTerm}>{listener.protocol}</MyHighlighter>
@@ -158,7 +166,7 @@ const ListenerItem = ({props, listener, searchTerm, disabled}) => {
             <span>Secrets: </span>
             <div className="label-right">
               <CachedInfoPopover  popoverId={"listeners-secrets-popover-"+listener.id} 
-                buttonName={containers.length} 
+                buttonName={numberOfElements} 
                 title={<React.Fragment>Secrets</React.Fragment>}
                 content={<CachedInfoPopoverContentContainers containers={containers} />} />
             </div>

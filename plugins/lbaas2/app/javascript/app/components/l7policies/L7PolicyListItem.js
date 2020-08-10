@@ -15,7 +15,7 @@ import { policy } from "policy";
 import { scope } from "ajax_helper";
 import SmartLink from "../shared/SmartLink"
 
-const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID, disabled}) => {
+const L7PolicyListItem = ({props, l7Policy, searchTerm, listenerID, disabled}) => {
   const {MyHighlighter,matchParams,errorMessage,searchParamsToString} = useCommons()
   const {actionRedirect, deleteL7Policy, persistL7Policy, onSelectL7Policy} = useL7Policy()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
@@ -114,7 +114,7 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
       if (disabled) {
         return <div className="info-text"><CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/></div>
       } else {
-        return <CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldClose={tableScroll} searchTerm={searchTerm}/>
+        return <CopyPastePopover text={l7Policy.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"  searchTerm={searchTerm}/>
       }
     }
   }
@@ -126,7 +126,7 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
       <td className="snug-nowrap">
         {displayName()}
         {displayID()}
-        <CopyPastePopover text={l7Policy.description} size={20} shouldCopy={false} shouldClose={tableScroll} shouldPopover={true} searchTerm={searchTerm}/>
+        <CopyPastePopover text={l7Policy.description} size={20} shouldCopy={false} shouldPopover={true} searchTerm={searchTerm}/>
       </td>
       <td><StateLabel label={l7Policy.operating_status} /></td>
       <td><StatusLabel label={l7Policy.provisioning_status}/></td>
@@ -140,7 +140,7 @@ const L7PolicyListItem = ({props, l7Policy, searchTerm, tableScroll, listenerID,
           <span className="display-flex" key={index}>
             <br/><b>{redirect.label}: </b>
             {redirect.value === "redirect_prefix" || redirect.value === "redirect_url" ?
-              <CopyPastePopover text={l7Policy[redirect.value]} size={20} shouldClose={tableScroll} bsClass="cp label-right"/>
+              <CopyPastePopover text={l7Policy[redirect.value]} size={20} bsClass="cp label-right"/>
             :
             <span className="label-right">{l7Policy[redirect.value]}</span>              
             }

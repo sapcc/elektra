@@ -9,7 +9,7 @@ import SmartLink from "../shared/SmartLink"
 import { policy } from "policy";
 import { scope } from "ajax_helper";
 
-const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tableScroll}) => {
+const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm}) => {
   const {MyHighlighter,matchParams,errorMessage, searchParamsToString} = useCommons()
   const {deleteL7Rule, displayInvert,persistL7Rule} = useL7Rule()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
@@ -76,7 +76,7 @@ const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tabl
   return ( 
     <tr>
       <td className="snug-nowrap">
-        <CopyPastePopover text={l7Rule.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldClose={tableScroll} searchTerm={searchTerm}/>
+        <CopyPastePopover text={l7Rule.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids"  searchTerm={searchTerm}/>
       </td>
       <td>
         <StateLabel label={l7Rule.operating_status} /><br/>
@@ -93,10 +93,10 @@ const L7RuleListItem = ({props, listenerID, l7PolicyID, l7Rule, searchTerm, tabl
         {displayInvert(l7Rule.invert)}
       </td>
       <td>
-        <CopyPastePopover text={l7Rule.key} size={12} shouldClose={tableScroll}/>
+        <CopyPastePopover text={l7Rule.key} size={12} />
       </td>
       <td>
-        <CopyPastePopover text={l7Rule.value} size={12} shouldClose={tableScroll} searchTerm={searchTerm}/>
+        <CopyPastePopover text={l7Rule.value} size={12}  searchTerm={searchTerm}/>
       </td>
       <td>
         <div className='btn-group'>
