@@ -2,6 +2,18 @@
   - if current_user.is_allowed?("loadbalancing:loadbalancer_create")
     = link_to 'Load Balancers', plugin('loadbalancing').loadbalancers_path()
 
+- if plugin_available?(:lbaas2) && services.available?(:lbaas2)
+  %br
+  .bs-callout.bs-callout-info.bs-callout-emphasize
+    %h4
+      LbaaS V2
+      %span.badge.alert-warning
+        Beta
+      has released!
+    %p
+      Try the new UI based on Octavia driver for Neutron LBaaS.
+      = link_to 'Switch to new version.', plugin('lbaas2').root_path()
+
 %ul.nav.nav-tabs
   %li.active{role: "presentation"}= link_to 'Load Balancers', '#loadbalancers', aria: {controls:"loadbalancers"}, role: "tab", data: {toggle:"tab"}
 
