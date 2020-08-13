@@ -1333,6 +1333,11 @@ footer,
     .page-title {
       font-family: $font-family-sans-serif-light;
       padding-top: $line-height-computed / 3;
+      display: flex;
+
+      > * {
+        margin-right: 0.25em;
+      }
 
       .fa {
         @include opacity(0.8);
