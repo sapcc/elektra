@@ -6,44 +6,44 @@
 
 $font-size-medium: ceil(($font-size-base * 1.125));
 $context-breadcrumb-font-size: $font-size-medium;
-$state-info-bg:         #d9edf7;
-$state-info-border:     #bcdff1;
-$state-info-text:       #31708f;
-$state-warning-bg:      #fcf8e3;
-$state-warning-border:  #faf2cc;
-$state-warning-text:    #8a6d3b;
-$state-success-bg:      #dff0d8;
-$state-success-border:  #d0e9c6;
-$state-success-text:    #3c763d;
-$state-danger-bg:       #f2dede;
-$state-danger-border:   #ebcccc;
-$state-danger-text:     #a94442;
+$state-info-bg: #d9edf7;
+$state-info-border: #bcdff1;
+$state-info-text: #31708f;
+$state-warning-bg: #fcf8e3;
+$state-warning-border: #faf2cc;
+$state-warning-text: #8a6d3b;
+$state-success-bg: #dff0d8;
+$state-success-border: #d0e9c6;
+$state-success-text: #3c763d;
+$state-danger-bg: #f2dede;
+$state-danger-border: #ebcccc;
+$state-danger-text: #a94442;
 
 /* Bootstrap descriptive colors */
 $brand-primary: $medium-blue;
-$brand-info:    lighten($bright-blue, 10%);
+$brand-info: lighten($bright-blue, 10%);
 $brand-success: $medium-green;
 $brand-warning: lighten($bright-orange, 5%);
-$brand-danger:  #e22;
-
-
+$brand-danger: #e22;
 
 // ---------------------------------------------------------------------------------
 // Fonts
 // ---------------------------------------------------------------------------------
 
 @font-face {
-    font-family: 'MonsoonIcons';
-    src: font-url('MonsoonIcons-Regular.eot'); /* IE9 Compat Modes */
-    src: font-url('MonsoonIcons-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    font-url('MonsoonIcons-Regular.woff') format('woff'), /* Modern Browsers */
-    font-url('MonsoonIcons-Regular.ttf')  format('truetype'), /* Safari, Android, iOS */
-    font-url('MonsoonIcons-Regular.svg#c6b2bb2514051854bf2bababb8772ce0') format('svg'); /* Legacy iOS */
+  font-family: "MonsoonIcons";
+  src: font-url("MonsoonIcons-Regular.eot"); /* IE9 Compat Modes */
+  src: font-url("MonsoonIcons-Regular.eot?#iefix") format("embedded-opentype"),
+    /* IE6-IE8 */ font-url("MonsoonIcons-Regular.woff") format("woff"),
+    /* Modern Browsers */ font-url("MonsoonIcons-Regular.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */
+      font-url("MonsoonIcons-Regular.svg#c6b2bb2514051854bf2bababb8772ce0")
+      format("svg"); /* Legacy iOS */
 
-    font-style:   normal;
-    font-weight:  400;
+  font-style: normal;
+  font-weight: 400;
 }
-
 
 //
 // icons
@@ -65,7 +65,6 @@ i.dialog-title-icon {
     @extend .fa-exclamation-triangle;
     color: $alarm-red;
   }
-
 }
 
 span.highlight {
@@ -77,11 +76,10 @@ span.highlight {
 //
 .flashes-container {
   &.flashes-react {
-
   }
 }
 
-.role-assignments{
+.role-assignments {
   ul {
     list-style-type: none;
     padding-left: 0;
@@ -127,7 +125,7 @@ span.highlight {
 
   &.collapsed {
     .collapsable-content {
-      max-height: $line-height-computed*2;
+      max-height: $line-height-computed * 2;
       transition: max-height 0.15s ease-out;
     }
 
@@ -155,17 +153,15 @@ span.highlight {
 }
 
 .icon-monsoon {
-  font-family: 'MonsoonIcons';
+  font-family: "MonsoonIcons";
   display: inline-block;
   font-size: 1em;
   font-style: normal;
 }
 
 .icon-monsoon-cloud:before {
-  content: "\E000"
+  content: "\E000";
 }
-
-
 
 // ---------------------------------------------------------------------------------
 // General
@@ -185,7 +181,8 @@ body {
   padding-top: $navbar-height + $context-breadcrumb-height;
   margin-bottom: $footer-height + $footer-margin-top; // needed for sticky footer
 
-  &.landing, &.onboarding {
+  &.landing,
+  &.onboarding {
     padding-top: $navbar-height;
   }
 }
@@ -202,7 +199,8 @@ body {
   margin: 0;
 }
 
-.flex-header-sticky, .flex-footer-sticky {
+.flex-header-sticky,
+.flex-footer-sticky {
   flex: 0 0 auto;
 }
 
@@ -216,8 +214,14 @@ h4 {
   font-family: $font-family-sans-serif-medium;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  small, .small {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  small,
+  .small {
     font-family: $font-family-sans-serif-light;
   }
 
@@ -226,7 +230,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   &.heading-whitespace {
-    margin-top: $line-height-computed*1.5;
+    margin-top: $line-height-computed * 1.5;
     margin-bottom: $line-height-computed;
   }
 
@@ -252,12 +256,12 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-h5, h6 {
+h5,
+h6 {
   font-weight: bold;
 }
 
 .content {
-
   .nav li {
     background-image: none;
     padding-left: 0;
@@ -274,14 +278,13 @@ h5, h6 {
   }
 }
 
-
 ul {
   &.content-list {
     padding-left: 0;
     list-style-type: none;
 
     li {
-      background: inline-svg('rounded-square-outline.svg') 0 4px no-repeat;
+      background: inline-svg("rounded-square-outline.svg") 0 4px no-repeat;
       padding-left: 19px;
     }
   }
@@ -299,15 +302,15 @@ ul {
   }
 }
 
-.text-copy, .well {
+.text-copy,
+.well {
   ul {
     @extend .content-list;
   }
 }
 
-
-
-.navbar a, a.btn {
+.navbar a,
+a.btn {
   text-decoration: none;
 }
 
@@ -317,7 +320,7 @@ abbr[data-original-title] {
 }
 
 section {
-  padding: $line-height-computed*2 0;
+  padding: $line-height-computed * 2 0;
 }
 
 .content {
@@ -349,7 +352,6 @@ section {
 
 .info-text {
   @include opacity(0.45);
-
 
   &.info-clickable:hover {
     @include opacity(1);
@@ -423,7 +425,6 @@ section {
   color: #777;
 }
 
-
 // ---------------------------------------------------------------------------------
 // Scaffolding
 // ---------------------------------------------------------------------------------
@@ -437,7 +438,6 @@ section {
   width: $container-lg;
 }
 
-
 // ---------------------------------------------------------------------------------
 // Icons
 // ---------------------------------------------------------------------------------
@@ -447,28 +447,28 @@ section {
 }
 
 .moo-cloud {
-  background: inline-svg('monsoon_logo_flat.svg') 0 0px no-repeat;
+  background: inline-svg("monsoon_logo_flat.svg") 0 0px no-repeat;
   display: inline-block;
   width: 32px;
   height: 32px;
 }
 
 .moo-cloud-white {
-  background: inline-svg('monsoon_logo_flat_white.svg') 0 0px no-repeat;
+  background: inline-svg("monsoon_logo_flat_white.svg") 0 0px no-repeat;
   display: inline-block;
   width: 32px;
   height: 32px;
 }
 
 .moo-cloud-black {
-  background: inline-svg('monsoon_logo_flat_black.svg') 0 0px no-repeat;
+  background: inline-svg("monsoon_logo_flat_black.svg") 0 0px no-repeat;
   display: inline-block;
   width: 32px;
   height: 32px;
 }
 
 .monsoon-cloud-logo {
-  background: inline-image('monsoon_cloud.png') 0 0px no-repeat;
+  background: inline-image("monsoon_cloud.png") 0 0px no-repeat;
   display: inline-block;
   width: 49px;
   height: 43px;
@@ -604,7 +604,11 @@ section {
 // ---------------------------------------------------------------------------------
 
 .btn-outline {
-  @include button-variant-outline($btn-outline-color, $btn-outline-bg, $btn-outline-border);
+  @include button-variant-outline(
+    $btn-outline-color,
+    $btn-outline-bg,
+    $btn-outline-border
+  );
 }
 
 .btn-outline-negative {
@@ -620,7 +624,13 @@ section {
 
 .btn-md {
   // line-height: ensure even-numbered height of button next to large input
-  @include button-size($padding-medium-vertical, $padding-medium-horizontal, $font-size-large, $line-height-large, $border-radius-base);
+  @include button-size(
+    $padding-medium-vertical,
+    $padding-medium-horizontal,
+    $font-size-large,
+    $line-height-large,
+    $border-radius-base
+  );
 }
 
 .btn {
@@ -639,7 +649,6 @@ section {
   }
 }
 
-
 // ---------------------------------------------------------------------------------
 // Labels
 // ---------------------------------------------------------------------------------
@@ -651,8 +660,6 @@ section {
 .label-danger-greyscale {
   background-color: $label-danger-greyscale-bg;
 }
-
-
 
 // ---------------------------------------------------------------------------------
 // Toolbar
@@ -696,7 +703,12 @@ section {
     margin-bottom: 10px;
     color: #333;
 
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       margin-top: $line-height-computed / 2;
       margin-bottom: $line-height-computed / 2;
     }
@@ -705,7 +717,8 @@ section {
   label {
     margin: 0 10px 0 0;
 
-    &.radio-inline, &.checkbox-inline {
+    &.radio-inline,
+    &.checkbox-inline {
       margin-right: 2px;
     }
   }
@@ -720,7 +733,6 @@ section {
   }
 
   .toolbar-container {
-
   }
 
   .main-buttons {
@@ -745,13 +757,14 @@ section {
     }
   }
 
-
-  h3, h4 {
+  h3,
+  h4 {
     margin-top: 6px;
     margin-bottom: 6px;
   }
 
-  .radio-inline input[type="radio"], .checkbox-inline input[type="checkbox"] {
+  .radio-inline input[type="radio"],
+  .checkbox-inline input[type="checkbox"] {
     margin-top: 11px;
   }
 
@@ -804,7 +817,7 @@ section {
 
   &:hover {
     text-decoration: line-through;
-    
+
     i {
       color: #000;
     }
@@ -813,7 +826,6 @@ section {
   i {
     margin-left: 8px;
   }
-
 }
 
 // ---------------------------------------------------------------------------------
@@ -862,7 +874,6 @@ section {
 }
 
 .navbar-inverse {
-
   .dropdown-menu {
     background-color: $inverse-dropdown-bg;
 
@@ -886,9 +897,7 @@ section {
         color: $dropdown-link-active-color;
       }
     }
-
   }
-
 }
 
 .navbar-login {
@@ -900,7 +909,6 @@ section {
   @include column-count(2);
   padding-left: 0;
   margin-top: $line-height-computed;
-
 
   a {
     padding-left: 0;
@@ -950,8 +958,6 @@ section {
   margin-bottom: $line-height-computed;
 }
 
-
-
 // ---------------------------------------------------------------------------------
 // Header
 // ---------------------------------------------------------------------------------
@@ -966,13 +972,12 @@ section {
   width: 62px;
 }
 
-
-
 // ---------------------------------------------------------------------------------
 // Footer
 // ---------------------------------------------------------------------------------
 
-footer, .footer {
+footer,
+.footer {
   @include pie-clearfix;
   background: #e9e9e9;
   margin-top: $footer-margin-top;
@@ -998,7 +1003,6 @@ footer, .footer {
   }
 }
 
-
 // ---------------------------------------------------------------------------------
 // Breadcrumb
 // ---------------------------------------------------------------------------------
@@ -1008,7 +1012,6 @@ footer, .footer {
   margin-bottom: $line-height-computed;
 
   > li {
-
     > a {
       color: #333;
     }
@@ -1021,7 +1024,6 @@ footer, .footer {
   & > li + li:before {
     padding: 0 10px 0 14px;
   }
-
 }
 
 .context-breadcrumb {
@@ -1040,7 +1042,6 @@ footer, .footer {
   .context-container {
     position: relative;
     display: flex;
-
 
     .dropdown-mega {
       position: static;
@@ -1079,9 +1080,10 @@ footer, .footer {
   .solo-icon-link {
     display: block;
     float: left;
-    padding: ($context-breadcrumb-height - $font-size-small*2)/2 0;
+    padding: ($context-breadcrumb-height - $font-size-small * 2)/2 0;
 
-    &:hover, &.active {
+    &:hover,
+    &.active {
       .fa-stack-2x {
         @include opacity(0.8);
       }
@@ -1099,7 +1101,6 @@ footer, .footer {
     .fa-inverse {
       color: #fff;
     }
-
   }
 
   .context-list {
@@ -1128,12 +1129,14 @@ footer, .footer {
         }
       }
 
-      &.open, &:hover {
+      &.open,
+      &:hover {
         background-color: $dropdown-bg;
         border-color: $dropdown-border;
       }
 
-      .fa, .icon-monsoon {
+      .fa,
+      .icon-monsoon {
         margin-right: 5px;
 
         &.icon-link {
@@ -1158,12 +1161,9 @@ footer, .footer {
         left: -1px;
         padding: $line-height-computed 0;
 
-
-
         > li {
           padding-left: $grid-gutter-width * 1.5;
         }
-
 
         .fancy-nav-header {
           > span {
@@ -1179,14 +1179,21 @@ footer, .footer {
         }
       }
 
-
       > a {
         color: #333;
         display: inline-block;
-        padding: (($context-breadcrumb-height - ($context-breadcrumb-font-size - $font-size-base) - $line-height-computed) / 2) 0; // to calculate the correct padding subtract from the total height the actual line-height (computed + adjustment for font size (if other than base size)), then divide by 2
+        padding: (
+            (
+                $context-breadcrumb-height -
+                  ($context-breadcrumb-font-size - $font-size-base) -
+                  $line-height-computed
+              ) / 2
+          )
+          0; // to calculate the correct padding subtract from the total height the actual line-height (computed + adjustment for font size (if other than base size)), then divide by 2
         padding-right: $context-breadcrumb-padding-horizontal;
 
-        &:active, &:focus {
+        &:active,
+        &:focus {
           text-decoration: none;
         }
       }
@@ -1200,7 +1207,8 @@ footer, .footer {
       > li {
         border-right-color: rgba(255, 255, 255, 0.4);
 
-        &.open, &:hover {
+        &.open,
+        &:hover {
           > .glyphicon {
             color: #333;
           }
@@ -1238,7 +1246,6 @@ footer, .footer {
   .mega-nav-items {
     display: flex;
     flex-wrap: wrap;
-
   }
 
   ul.mega-nav-block {
@@ -1271,7 +1278,6 @@ footer, .footer {
         &:hover {
           border-color: $medium-blue;
         }
-
       }
     }
   }
@@ -1285,10 +1291,9 @@ footer, .footer {
     width: 250px;
   }
 
-  @media (min-width: 1700px) { }
-
+  @media (min-width: 1700px) {
+  }
 }
-
 
 // ---------------------------------------------------------------------------------
 // Main Toolbar
@@ -1315,7 +1320,9 @@ footer, .footer {
         color: #888;
 
         &.help-link {
-          &:hover, &:active, &:focus {
+          &:hover,
+          &:active,
+          &:focus {
             color: $link-color;
             text-decoration: none;
           }
@@ -1338,18 +1345,23 @@ footer, .footer {
   }
 }
 
-
 // ---------------------------------------------------------------------------------
 // Alerts
 // ---------------------------------------------------------------------------------
 
 .alert {
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin-top: 0;
   }
 }
 
-.alert-error, .alert-alert {
+.alert-error,
+.alert-alert {
   @extend .alert-danger;
 }
 
@@ -1362,7 +1374,6 @@ footer, .footer {
   font-weight: bold;
   text-decoration: underline;
 }
-
 
 .alert-extended {
   padding: 0;
@@ -1402,7 +1413,7 @@ footer, .footer {
   }
 
   &.bs-callout-emphasize {
-     background: #f9f9f9;
+    background: #f9f9f9;
   }
 
   &.bs-callout-primary {
@@ -1514,22 +1525,30 @@ footer, .footer {
       color: $brand-danger;
     }
 
-    a, h1,h2,h3,h4,h5,h6  {
+    a,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       color: darken($brand-danger, 10);
     }
-
   }
-
-
 
   table {
     margin-bottom: 0;
   }
-
 }
 
-blockquote, .bs-callout {
-  h1, h2, h3, h4, h5, h6 {
+blockquote,
+.bs-callout {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin-top: 0;
   }
 }
@@ -1546,9 +1565,8 @@ blockquote, .bs-callout {
     margin-bottom: 8px;
   }
   .table {
-    th, td {
-
-
+    th,
+    td {
       &:first-child {
         padding-left: 0;
       }
@@ -1566,13 +1584,19 @@ blockquote, .bs-callout {
   color: rgba(255, 255, 255, 0.8);
   font-family: $font-family-sans-serif-light;
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: #fff;
   }
 }
 
 .jumbotron-plain {
-  padding: $line-height-computed*1.5 $line-height-computed $line-height-computed $line-height-computed;
+  padding: $line-height-computed * 1.5 $line-height-computed
+    $line-height-computed $line-height-computed;
 
   h1 {
     font-size: $font-size-h1;
@@ -1599,7 +1623,7 @@ blockquote, .bs-callout {
   .info-stat-text {
     @include opacity(0.7);
     font-size: $font-size-small;
-    letter-spacing: .15em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
   }
 }
@@ -1612,9 +1636,8 @@ blockquote, .bs-callout {
 // Text Transformation
 // ---------------------------------------------------------------------------------
 .capitalize {
-  text-transform:capitalize;
+  text-transform: capitalize;
 }
-
 
 // ---------------------------------------------------------------------------------
 // Tables
@@ -1624,9 +1647,11 @@ blockquote, .bs-callout {
   margin-top: $line-height-computed * 2;
 }
 
-div, td, th {
+div,
+td,
+th {
   &.actions {
-    width: 12%
+    width: 12%;
   }
 
   &.snug {
@@ -1655,13 +1680,15 @@ div, td, th {
 }
 
 .title-row {
-  th,td {
+  th,
+  td {
     background-color: #efefef;
   }
 }
 
 .table.no-borders {
-  td, th {
+  td,
+  th {
     border: none;
   }
 }
@@ -1687,8 +1714,8 @@ table.table-select tbody tr {
   }
 }
 
-tr.deleting, tr.updating {
-
+tr.deleting,
+tr.updating {
   td:first-child {
     &:before {
       content: " ";
@@ -1709,17 +1736,19 @@ tr.deleting, tr.updating {
       &:before {
         content: "";
       }
-
     }
   }
-  .state-error-icon, .state-suspended-icon, .state-paused-icon,
-  .state-locked-icon, .state-shutoff-icon {
+  .state-error-icon,
+  .state-suspended-icon,
+  .state-paused-icon,
+  .state-locked-icon,
+  .state-shutoff-icon {
     display: none;
   }
 }
 
 .table > tbody > tr.details > td {
-  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.05));
+  @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.05));
   border-top: none;
   background: #f5f5f5;
 
@@ -1758,7 +1787,8 @@ tr.deleting, tr.updating {
   }
 }
 
-.state-suspended-icon, .state-paused-icon {
+.state-suspended-icon,
+.state-paused-icon {
   &:before {
     @include fa-icon;
     @extend .fa;
@@ -1816,11 +1846,9 @@ tr.task-state {
       &:before {
         content: "";
       }
-
     }
   }
 }
-
 
 // DATATABLES
 
@@ -1846,7 +1874,7 @@ tr.task-state {
 
 .table-fancy {
   table-layout: fixed;
-  margin: $line-height-computed*2 0;
+  margin: $line-height-computed * 2 0;
 
   thead {
     tr {
@@ -1868,11 +1896,10 @@ tr.task-state {
     padding-left: 0;
 
     li {
-      background: inline-svg('rounded-square-outline.svg') 0 1px no-repeat;
+      background: inline-svg("rounded-square-outline.svg") 0 1px no-repeat;
       padding-left: 22px;
     }
   }
-
 }
 
 .loading {
@@ -1911,9 +1938,6 @@ tr.task-state {
   text-align: left;
 }
 
-
-
-
 // ---------------------------------------------------------------------------------
 // Lists
 // ---------------------------------------------------------------------------------
@@ -1949,14 +1973,12 @@ tr.task-state {
       margin-bottom: 3px;
       font-weight: bold;
     }
-
   }
 
   &.fancy-list-2col {
     > li {
       @include make-md-column(6);
       padding-left: $font-size-large * 1.5 + $grid-gutter-width * 1.25;
-
     }
   }
 
@@ -1964,7 +1986,6 @@ tr.task-state {
     > li {
       @include make-md-column(5);
       padding-left: $font-size-large * 1.5 + $grid-gutter-width * 1.25;
-
     }
   }
 
@@ -1975,7 +1996,6 @@ tr.task-state {
   }
 }
 
-
 // ---------------------------------------------------------------------------------
 // Tree
 // ---------------------------------------------------------------------------------
@@ -1985,7 +2005,8 @@ tr.task-state {
     columns: 280px 3;
   }
 
-  &, ul {
+  &,
+  ul {
     list-style-type: none;
     padding-left: 0;
   }
@@ -1996,7 +2017,8 @@ tr.task-state {
     padding-left: 19px;
     break-inside: avoid;
 
-    a, span {
+    a,
+    span {
       display: inline-block;
       padding-bottom: 8px;
     }
@@ -2008,31 +2030,26 @@ tr.task-state {
     > .node-icon {
       position: absolute;
       left: 0;
-      background: inline-svg('rounded-square-outline-grey.svg') 0 5px no-repeat;
+      background: inline-svg("rounded-square-outline-grey.svg") 0 5px no-repeat;
       cursor: pointer;
       height: 16px;
       width: 19px;
       padding-left: 19px;
-
     }
 
-
     &.has-children {
-
       > .node-icon {
-        background-image: inline-svg('angle-right-outline.svg');
+        background-image: inline-svg("angle-right-outline.svg");
         background-position: 2px 4px;
-
       }
 
       > ul {
         display: none;
       }
 
-
       &.node-expanded {
         > .node-icon {
-          background-image: inline-svg('angle-down-outline.svg');
+          background-image: inline-svg("angle-down-outline.svg");
           background-position: 0 8px;
         }
 
@@ -2040,25 +2057,20 @@ tr.task-state {
           display: block;
         }
       }
-
     }
   }
 }
 
 .projects-tree {
-
   .tree {
     margin-top: ($line-height-computed / 2);
   }
 }
 
-
-
 // ------------------------------------
 // Searchable
 // ------------------------------------
 .searchable.search-mode {
-
   a {
     color: #ccc;
   }
@@ -2081,7 +2093,7 @@ tr.task-state {
     }
   }
 
-  li.has-search-result ul  {
+  li.has-search-result ul {
     display: block;
   }
 }
@@ -2101,7 +2113,6 @@ tr.task-state {
   }
 }
 
-
 table.searchable.search-mode {
   tr {
     display: none;
@@ -2119,9 +2130,6 @@ table.searchable.search-mode {
   }
 }
 
-
-
-
 // ------------------------------------
 // Pagination
 // ------------------------------------
@@ -2137,7 +2145,6 @@ table.searchable.search-mode {
     margin-left: 8px;
   }
 }
-
 
 // ---------------------------------------------------------------------------------
 // Forms
@@ -2178,18 +2185,23 @@ i.confirm-icon {
 .confirm-term input {
   @include border-radius(4px);
   @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075));
-  @include transition(border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s);
+  @include transition(
+    border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s
+  );
   padding: 6px 12px;
   border: 1px solid #ccc;
   margin-left: 10px;
 }
 
-input[type='checkbox'], input[type='radio'] {
+input[type="checkbox"],
+input[type="radio"] {
   cursor: pointer;
 }
 
 label {
-  input[type='checkbox'], input[type='radio'] {
+  input[type="checkbox"],
+  input[type="radio"] {
     margin-right: 4px;
   }
 }
@@ -2202,7 +2214,8 @@ label {
   }
 }
 
-.inline-form-cell, .inline-form-button {
+.inline-form-cell,
+.inline-form-button {
   display: table-cell;
 }
 
@@ -2219,7 +2232,9 @@ label {
 }
 
 .form-readonly {
-  .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+  .form-control[disabled],
+  .form-control[readonly],
+  fieldset[disabled] .form-control {
     @include box-shadow(none);
     background: #fff;
     border: none;
@@ -2256,7 +2271,6 @@ label {
   display: none;
 }
 
-
 // ---------------------------------------------------------------------------------
 // DEV: News
 // ---------------------------------------------------------------------------------
@@ -2265,7 +2279,12 @@ label {
   .new {
     margin-bottom: $line-height-computed * 3;
 
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       margin-top: $line-height-computed * 1.5;
     }
   }
@@ -2291,7 +2310,6 @@ label {
     top: -45px;
   }
 }
-
 
 // ---------------------------------------------------------------------------------
 // Help
@@ -2330,7 +2348,6 @@ label {
   }
 }
 
-
 // ---------------------------------------------------------------------------------
 // jQuery Autocomplete
 // ---------------------------------------------------------------------------------
@@ -2350,7 +2367,7 @@ label {
   padding: 3px 20px;
 }
 .ui-autocomplete > li.ui-state-focus {
-  background-color: #DDD;
+  background-color: #ddd;
 }
 .ui-helper-hidden-accessible {
   display: none;
@@ -2368,12 +2385,11 @@ label {
 // Bootstrap Accordion
 // --------------------------------------------------------------------------------------
 
-.panel-group.smooth-accordion  > .panel:first-child .panel-heading {
+.panel-group.smooth-accordion > .panel:first-child .panel-heading {
   border-radius: 4px 4px 0 0;
 }
 
-.panel-group.smooth-accordion  {
-
+.panel-group.smooth-accordion {
   .panel {
     margin-top: 0;
     border-radius: 0;
@@ -2413,7 +2429,8 @@ label {
       background-color: #f9f9f9;
     }
 
-    &:focus, &:hover  {
+    &:focus,
+    &:hover {
       text-decoration: none;
     }
   }
@@ -2437,7 +2454,7 @@ label {
   }
 
   .panel-collapse > .panel-body {
-     border-top-color: none;
+    border-top-color: none;
   }
 
   /* #bs-collapse icon scale option */
@@ -2447,7 +2464,7 @@ label {
     font-size: 20px;
     color: #008fcc;
     position: absolute;
-    font-family: 'FontAwesome';
+    font-family: "FontAwesome";
     right: 10px;
     top: 10px;
     transform: rotate(90deg);
@@ -2461,8 +2478,6 @@ label {
   }
 }
 
-
-
 // --------------------------------------------------------------------------------------
 // Domain specific styling (only for danger domains)
 // --------------------------------------------------------------------------------------
@@ -2473,11 +2488,9 @@ label {
   }
 }
 
-
 // ---------------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------------
-
 
 .u-margin-top-small {
   margin-top: 8px;
@@ -2488,7 +2501,7 @@ label {
 }
 
 .u-margin-top-large {
-  margin-top: $line-height-computed*2;
+  margin-top: $line-height-computed * 2;
 }
 
 .u-clearfix {
