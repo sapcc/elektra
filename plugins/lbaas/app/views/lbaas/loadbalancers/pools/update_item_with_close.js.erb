@@ -1,9 +1,0 @@
-<%if @pool %>
-$("#pool").replaceWith("<%= j(render(partial: 'lbaas/loadbalancers/pools/item_detail', locals: {loadbalancer: @loadbalancer, pool: @pool, listener: @listener})) %>");
-$("#pool").update();
-PollingService.update('<%=@loadbalancer.id%>/update_status')
-MoModal.close();
-<% else %>
-$("#pool").remove();
-PollingService.update('<%=@loadbalancer.id%>/update_status')
-<% end %>

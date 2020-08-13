@@ -100,11 +100,6 @@ PATH
       rails (~> 5.2.3)
 
 PATH
-  remote: plugins/lbaas
-  specs:
-    lbaas (0.0.1)
-
-PATH
   remote: plugins/loadbalancing
   specs:
     loadbalancing (0.0.1)
@@ -627,7 +622,6 @@ DEPENDENCIES
   keppel!
   key_manager!
   kubernetes!
-  lbaas!
   lbaas2!
   loadbalancing!
   lookup!
