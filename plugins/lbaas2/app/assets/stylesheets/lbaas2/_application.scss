@@ -44,7 +44,7 @@
 .details-section {
   margin-top: 20px;
   .table-responsive {
-    max-height:850px;
+    max-height: 850px;
   }
   .pagination {
     margin-top: 10px;
@@ -57,7 +57,7 @@
     background-color: #666;
     color: #fff;
   }
-  thead tr:nth-child(1) th{
+  thead tr:nth-child(1) th {
     background: #666 !important;
   }
 }
@@ -75,15 +75,17 @@
     margin-left: auto;
   }
   .label-right {
-    padding-left:8px;
+    padding-left: 8px;
   }
   .margin-left {
-    margin-left:8px;
+    margin-left: 8px;
   }
 }
 
 .copy-paste-ids {
-  span.cp-substring, span.cp-string, a.cp-help-link {
+  span.cp-substring,
+  span.cp-string,
+  a.cp-help-link {
     filter: alpha(opacity=45);
     opacity: 0.45;
   }
@@ -114,17 +116,21 @@
   opacity: 0;
 }
 
+.btn-release-link {
+  color: #337ab7 !important;
+}
+
 /*
 * table responsive trick
 */
 
-.table-responsive{
-  max-height:650px;  
-  overflow-y:scroll;
+.table-responsive {
+  max-height: 650px;
+  overflow-y: scroll;
 
   table {
     margin-bottom: 0px;
-    thead tr:nth-child(1) th{
+    thead tr:nth-child(1) th {
       background: white;
       position: sticky;
       top: 0;
@@ -153,7 +159,7 @@
 }
 .help-block-popover-scroll {
   max-height: 150px;
-  overflow-y:scroll;
+  overflow-y: scroll;
   padding-left: 20px;
 }
 
@@ -186,7 +192,7 @@
   }
 }
 
-.subtable:empty { 
+.subtable:empty {
   border: none;
 }
 
@@ -205,9 +211,9 @@
 
   .multiple-subtable-right {
     width: 50%;
-    max-height:775px;
+    max-height: 775px;
     padding: 0px 0px 14px 0px;
-    
+
     .table-responsive {
       padding: 0px 14px 0px 14px;
     }
@@ -216,7 +222,7 @@
   .multiple-subtable-header {
     padding: 14px 14px 0px 14px;
   }
-  
+
   .multiple-subtable-scroll-body {
     padding: 9px 14px;
     max-height: 650px;
@@ -224,17 +230,17 @@
   }
 }
 
-.l7policies.multiple-subtable-left{
+.l7policies.multiple-subtable-left {
   width: 25%;
 }
-.l7rules.multiple-subtable-right{
+.l7rules.multiple-subtable-right {
   width: 75%;
 }
 
-.healthmonitor.multiple-subtable-left{
+.healthmonitor.multiple-subtable-left {
   width: 35%;
 }
-.members.multiple-subtable-right{
+.members.multiple-subtable-right {
   width: 65%;
 }
 
@@ -249,7 +255,6 @@
     line-height: 14px;
     z-index: 11;
   }
-
 }
 
 .existing-members {
@@ -271,7 +276,7 @@
     border-bottom: 1px solid #eee;
     margin-top: 20px;
     .selected-l7policy-head-content {
-      padding: 2px 14px;  
+      padding: 2px 14px;
     }
   }
 
@@ -294,16 +299,16 @@
   &:hover {
     background-color: #f9f9f9;
     .cp-help-link {
-      color:#337ab7;
+      color: #337ab7;
     }
   }
   .cp-help-link {
-    color:inherit;
+    color: inherit;
   }
   .cp-dots-help {
     padding-left: 4px;
     padding-right: 4px;
-    font-size: 14px;  
+    font-size: 14px;
   }
   .copy-paste-icon {
     button {
@@ -313,7 +318,7 @@
 }
 // muss be outside of cp because the popover is rendered otside the lbaas content
 .cp-popover-text {
-  word-wrap:break-word;
+  word-wrap: break-word;
 }
 
 .list-group-item-text-copy {
@@ -332,19 +337,16 @@
 }
 
 .cached-info-popover {
-
   .cached-info-content {
     padding: 9px 14px;
-    overflow-y : scroll;
+    overflow-y: scroll;
     max-height: 250px;
-    
   }
 
   .cached-info-footer {
     padding: 9px 14px;
     background-color: #f7f7f7;
   }
-
 }
 
 /*
@@ -359,7 +361,8 @@
     margin-bottom: 5px;
     overflow: hidden;
 
-    .key, .value {
+    .key,
+    .value {
       float: left;
       padding: 0 4px;
     }
