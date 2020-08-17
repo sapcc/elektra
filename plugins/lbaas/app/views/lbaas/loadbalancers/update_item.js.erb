@@ -1,8 +1,0 @@
-<%if @loadbalancer%>
-  $("#<%=params[:id]%>").replaceWith("<%= j(render(partial: 'lbaas/loadbalancers/item', locals: {loadbalancer: @loadbalancer})) %>");
-  $("#<%=params[:id]%>").update();
-<%else%>
-  $("#<%=params[:id]%>").remove();
-<%end%>
-lbaas.update_state("<%= plugin('lbaas').update_status_loadbalancer_path(format: :js) %>", "<%=@loadbalancer.id%>");
-MoModal.close();

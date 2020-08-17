@@ -1,8 +1,0 @@
-// update or remove item
-<%if @member%>
-  $("#member_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'lbaas/loadbalancers/pools/members/item', locals: {loadbalancer: @loadbalancer, pool: @pool, member: @member})) %>");
-  $("#member_<%=params[:id]%>").update();
-<%else%>
-  $("#member_<%=params[:id]%>").remove();
-<%end%>
-$('[data-update-loadbalancer-state]').loadbalancerState({enforce_state: 'PENDING_UPDATE'});

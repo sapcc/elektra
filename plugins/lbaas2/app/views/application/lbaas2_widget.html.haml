@@ -1,2 +1,10 @@
+= content_for :main_toolbar do
+  = link_to 'LBaaS V2', plugin('lbaas2').root_path()
+  %p.lbaas2
+    = link_to plugin('loadbalancing').loadbalancers_path(), class: "btn btn-link btn-release-link" do
+      %i.fa.fa-chevron-circle-left
+      Back to classic UI
+    
+
 = javascript_pack_tag 'lbaas2_app',
   data: { url: plugin('lbaas2').root_path }

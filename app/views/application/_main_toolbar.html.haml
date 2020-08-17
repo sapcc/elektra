@@ -34,10 +34,11 @@
 
         .page-title
           %i.fa.fa-angle-right
-          = link_to request.fullpath do
-            - if content_for? :main_toolbar
-              = yield :main_toolbar
-            - else
-              = active_service_breadcrumb
+          .title-content
+            = link_to request.fullpath do
+              - if content_for? :main_toolbar
+                = yield :main_toolbar
+              - else
+                = active_service_breadcrumb
 
           = release_state_tag(release_state) if release_state
