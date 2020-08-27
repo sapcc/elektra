@@ -191,7 +191,7 @@ const useListener = () => {
       case 'HTTP':
         return [httpHeaderInsertions("X-Forwarded-For"), httpHeaderInsertions("X-Forwarded-Port"), httpHeaderInsertions("X-Forwarded-Proto")]
       case 'HTTPS':
-        return [httpHeaderInsertions("X-Forwarded-For"), httpHeaderInsertions("X-Forwarded-Port"), httpHeaderInsertions("X-Forwarded-Proto")]
+        return []
       case 'TERMINATED_HTTPS':
         return httpHeaderInsertions("ALL")
       case 'TCP':
