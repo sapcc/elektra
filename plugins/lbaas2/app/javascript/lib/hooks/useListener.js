@@ -285,21 +285,23 @@ const useListener = () => {
                 {label: "no_one_connect_3caB_v1_0", value: "no_one_connect_3caB_v1_0"}, 
                 {label: "http_compression_e4a2_v1_0", value: "http_compression_e4a2_v1_0"}, 
                 {label: "cookie_encryption_b82a_v1_0", value: "cookie_encryption_b82a_v1_0"}, 
-                {label: 'http_redirect_a26c_v1_0', value: 'http_redirect_a26c_v1_0'}]
-      case 'HTTPS':
-        return [{label: "x_forward_5b6e_v1_0", value: "x_forward_5b6e_v1_0"}, 
-                {label: "no_one_connect_3caB_v1_0", value: "no_one_connect_3caB_v1_0"},
-                {label: "http_compression_e4a2_v1_0", value: "http_compression_e4a2_v1_0"}, 
-                {label: "cookie_encryption_b82a_v1_0", value: "cookie_encryption_b82a_v1_0"}]
+                {label: 'http_redirect_a26c_v1_0', value: 'http_redirect_a26c_v1_0'},
+                {label: "proxy_protocol_2edF_v1_0", value: "proxy_protocol_2edF_v1_0"},
+                {label: "proxy_protocol_V2_e8f6_v1_0", value: "proxy_protocol_V2_e8f6_v1_0"},
+                {label: "standard_tcp_a3de_v1_0", value: "standard_tcp_a3de_v1_0"}]
       case 'TERMINATED_HTTPS':
         return [{label: "x_forward_5b6e_v1_0", value: "x_forward_5b6e_v1_0"}, 
                 {label: "no_one_connect_3caB_v1_0", value: "no_one_connect_3caB_v1_0"}, 
                 {label: "http_compression_e4a2_v1_0", value: "http_compression_e4a2_v1_0"}, 
                 {label: "cookie_encryption_b82a_v1_0", value: "cookie_encryption_b82a_v1_0"}, 
-                {label: 'sso_22b0_v1_0', value: 'sso_22b0_v1_0'}]
+                {label: 'sso_22b0_v1_0', value: 'sso_22b0_v1_0'},
+                {label: "proxy_protocol_2edF_v1_0", value: "proxy_protocol_2edF_v1_0"},
+                {label: "proxy_protocol_V2_e8f6_v1_0", value: "proxy_protocol_V2_e8f6_v1_0"},
+                {label: "standard_tcp_a3de_v1_0", value: "standard_tcp_a3de_v1_0"}]
+      case 'HTTPS':
       case 'TCP':
-        return [{label: "proxy_protocol_2edF_v1_0", value: "proxy_protocol_2edF_v1_0"}, 
-                {label: "proxy_protocol_V2_e8f6_v1_0", value: "proxy_protocol_V2_e8f6_v1_0"}, 
+        return [{label: "proxy_protocol_2edF_v1_0", value: "proxy_protocol_2edF_v1_0"},
+                {label: "proxy_protocol_V2_e8f6_v1_0", value: "proxy_protocol_V2_e8f6_v1_0"},
                 {label: "standard_tcp_a3de_v1_0", value: "standard_tcp_a3de_v1_0"}]
       case 'UDP':
         return []
