@@ -1,29 +1,38 @@
-import React, { useState,useEffect} from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import useCommons from '../../../lib/hooks/useCommons'
-import useHealthmonitor from '../../../lib/hooks/useHealthMonitor'
-import usePool from '../../../lib/hooks/usePool'
-import { Form } from 'lib/elektra-form';
-import SelectInput from '../shared/SelectInput'
-import FormInput from '../shared/FormInput'
-import { addNotice } from 'lib/flashes';
-import TagsInput from '../shared/TagsInput'
-import ErrorPage from '../ErrorPage';
+import React, { useState, useEffect } from "react"
+import { Modal, Button } from "react-bootstrap"
+import useCommons from "../../../lib/hooks/useCommons"
+import useHealthmonitor from "../../../lib/hooks/useHealthMonitor"
+import usePool from "../../../lib/hooks/usePool"
+import { Form } from "lib/elektra-form"
+import SelectInput from "../shared/SelectInput"
+import FormInput from "../shared/FormInput"
+import { addNotice } from "lib/flashes"
+import TagsInput from "../shared/TagsInput"
+import ErrorPage from "../ErrorPage"
+import Log from "../shared/logger"
 
 const EditHealthMonitor = (props) => {
-  const {searchParamsToString, matchParams, formErrorMessage} = useCommons()
-  const {fetchHealthmonitor,updateHealthmonitor, healthMonitorTypes, httpMethodRelation, expectedCodesRelation, urlPathRelation, httpMethods} = useHealthmonitor()
-  const {persistPool} = usePool()
+  const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
+  const {
+    fetchHealthmonitor,
+    updateHealthmonitor,
+    healthMonitorTypes,
+    httpMethodRelation,
+    expectedCodesRelation,
+    urlPathRelation,
+    httpMethods,
+  } = useHealthmonitor()
+  const { persistPool } = usePool()
   const [healthmonitor, setHealthmonitor] = useState({
     isLoading: false,
     error: null,
-    item: null
+    item: null,
   })
 
   useEffect(() => {
-    console.log('fetching healthmonitor to edit')
+    Log.debug("fetching healthmonitor to edit")
     loadHealthmonitor()
-  }, []);
+  }, [])
 
   const loadHealthmonitor = () => {
     // get the lb id and poolId
@@ -32,43 +41,51 @@ const EditHealthMonitor = (props) => {
     const poolID = params.poolID
     const healthmonitorID = params.healthmonitorID
     // fetch the healthmonitor to edit
-    setHealthmonitor({...healthmonitor, isLoading:true})
-    fetchHealthmonitor(lbID, poolID, healthmonitorID).then((data) => {
-      setHealthmonitor({...healthmonitor, isLoading:false, item: data.healthmonitor, error: null})
-    })
-    .catch( (error) => {      
-      setHealthmonitor({...healthmonitor, isLoading:false, error: error})
-    })
+    setHealthmonitor({ ...healthmonitor, isLoading: true })
+    fetchHealthmonitor(lbID, poolID, healthmonitorID)
+      .then((data) => {
+        setHealthmonitor({
+          ...healthmonitor,
+          isLoading: false,
+          item: data.healthmonitor,
+          error: null,
+        })
+      })
+      .catch((error) => {
+        setHealthmonitor({ ...healthmonitor, isLoading: false, error: error })
+      })
   }
 
-   /**
+  /**
    * Modal stuff
    */
   const [show, setShow] = useState(true)
 
   const close = (e) => {
-    if(e) e.stopPropagation()
+    if (e) e.stopPropagation()
     setShow(false)
   }
 
   const restoreUrl = () => {
-    if (!show){
+    if (!show) {
       const params = matchParams(props)
       const lbID = params.loadbalancerID
-      props.history.replace(`/loadbalancers/${lbID}/show?${searchParamsToString(props)}`)
+      props.history.replace(
+        `/loadbalancers/${lbID}/show?${searchParamsToString(props)}`
+      )
     }
   }
 
-     /**
+  /**
    * Form stuff
    */
   const [initialValues, setInitialValues] = useState({})
-  const [formErrors,setFormErrors] = useState(null)
+  const [formErrors, setFormErrors] = useState(null)
   const [showHttpMethods, setShowHttpMethods] = useState(false)
   const [showExpectedCodes, setShowExpectedCodes] = useState(false)
   const [showUrlPath, setShowUrlPath] = useState(false)
 
-  const validate = ({name, max_retries, delay}) => {
+  const validate = ({ name, max_retries, delay }) => {
     return name && max_retries && delay && true
   }
 
@@ -82,149 +99,224 @@ const EditHealthMonitor = (props) => {
     const poolID = params.poolID
     const healthmonitorID = params.healthmonitorID
 
-    return updateHealthmonitor(lbID, poolID, healthmonitorID, values).then((response) => {
-      addNotice(<React.Fragment>Health Monitor <b>{response.data.name}</b> ({response.data.id}) is being updated.</React.Fragment>)
-      // fetch the pool again containing the new healthmonitor so it gets updated fast
-      persistPool(lbID,poolID).then(() => {
-      }).catch(error => {
+    return updateHealthmonitor(lbID, poolID, healthmonitorID, values)
+      .then((response) => {
+        addNotice(
+          <React.Fragment>
+            Health Monitor <b>{response.data.name}</b> ({response.data.id}) is
+            being updated.
+          </React.Fragment>
+        )
+        // fetch the pool again containing the new healthmonitor so it gets updated fast
+        persistPool(lbID, poolID)
+          .then(() => {})
+          .catch((error) => {})
+        close()
       })
-      close()
-    }).catch(error => {
-      setFormErrors(formErrorMessage(error))
-    })
+      .catch((error) => {
+        setFormErrors(formErrorMessage(error))
+      })
   }
 
   const onHealthMonitorTypeChanged = () => {}
   const onHttpMethodsChanged = (options) => {}
 
-  return ( 
+  return (
     <Modal
-    show={show}
-    onHide={close}
-    bsSize="large"
-    backdrop='static'
-    onExited={restoreUrl}
-    aria-labelledby="contained-modal-title-lg"
-    bsClass="lbaas2 modal">
+      show={show}
+      onHide={close}
+      bsSize="large"
+      backdrop="static"
+      onExited={restoreUrl}
+      aria-labelledby="contained-modal-title-lg"
+      bsClass="lbaas2 modal"
+    >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-lg">Edit Health Monitor</Modal.Title>
+        <Modal.Title id="contained-modal-title-lg">
+          Edit Health Monitor
+        </Modal.Title>
       </Modal.Header>
 
-      {healthmonitor.error ?
+      {healthmonitor.error ? (
         <Modal.Body>
-          <ErrorPage headTitle="Edit Health Monitor" error={healthmonitor.error} onReload={loadHealthmonitor}/>
+          <ErrorPage
+            headTitle="Edit Health Monitor"
+            error={healthmonitor.error}
+            onReload={loadHealthmonitor}
+          />
         </Modal.Body>
-      :
+      ) : (
         <React.Fragment>
-          {healthmonitor.isLoading ? 
+          {healthmonitor.isLoading ? (
             <Modal.Body>
-              <span className='spinner'/>
+              <span className="spinner" />
             </Modal.Body>
-          :
+          ) : (
             <Form
-              className='form form-horizontal'
+              className="form form-horizontal"
               validate={validate}
               onSubmit={onSubmit}
               initialValues={healthmonitor.item}
-              resetForm={false}>
-
+              resetForm={false}
+            >
               <Modal.Body>
-                <p>Checks the health of the pool members. Unhealthy members will be taken out of traffic schedule. Set's a load balancer to OFFLINE when all members are unhealthy.</p>
-                <Form.Errors errors={formErrors}/>
+                <p>
+                  Checks the health of the pool members. Unhealthy members will
+                  be taken out of traffic schedule. Set's a load balancer to
+                  OFFLINE when all members are unhealthy.
+                </p>
+                <Form.Errors errors={formErrors} />
 
-                <Form.ElementHorizontal label='Name' name="name" required>
-                  <Form.Input elementType='input' type='text' name='name'/>
+                <Form.ElementHorizontal label="Name" name="name" required>
+                  <Form.Input elementType="input" type="text" name="name" />
                 </Form.ElementHorizontal>
 
-                <Form.ElementHorizontal label='Type' name="type" required>
-                  <SelectInput name="type" items={healthMonitorTypes()} isDisabled onChange={onHealthMonitorTypeChanged} value={healthmonitor.item && {label: healthmonitor.item.type, value: healthmonitor.item.type }}/>
+                <Form.ElementHorizontal label="Type" name="type" required>
+                  <SelectInput
+                    name="type"
+                    items={healthMonitorTypes()}
+                    isDisabled
+                    onChange={onHealthMonitorTypeChanged}
+                    value={
+                      healthmonitor.item && {
+                        label: healthmonitor.item.type,
+                        value: healthmonitor.item.type,
+                      }
+                    }
+                  />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                    The type of probe sent by the load balancer to verify the member state.
+                    The type of probe sent by the load balancer to verify the
+                    member state.
                   </span>
                 </Form.ElementHorizontal>
 
-                <Form.ElementHorizontal label='Max Retries' name="max_retries" required>
-                  <Form.Input elementType='input' type='number' min="1" max="10" name='max_retries'/>
+                <Form.ElementHorizontal
+                  label="Max Retries"
+                  name="max_retries"
+                  required
+                >
+                  <Form.Input
+                    elementType="input"
+                    type="number"
+                    min="1"
+                    max="10"
+                    name="max_retries"
+                  />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                      The number of successful checks before changing the operating status of the member to ONLINE. A valid value is from 1 to 10.
+                    The number of successful checks before changing the
+                    operating status of the member to ONLINE. A valid value is
+                    from 1 to 10.
                   </span>
                 </Form.ElementHorizontal>
 
-                <Form.ElementHorizontal label='Timeout' name="timeout" required>
-                  <Form.Input elementType='input' type='number' min="1" name='timeout'/>
+                <Form.ElementHorizontal label="Timeout" name="timeout" required>
+                  <Form.Input
+                    elementType="input"
+                    type="number"
+                    min="1"
+                    name="timeout"
+                  />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                    The maximum time, in seconds, that a monitor waits to connect before it times out. This value must be less than the delay value.
+                    The maximum time, in seconds, that a monitor waits to
+                    connect before it times out. This value must be less than
+                    the delay value.
                   </span>
                 </Form.ElementHorizontal>
 
-                <Form.ElementHorizontal label='Delays' name="delay" required>
-                  <Form.Input elementType='input' type='number' min="1" name='delay'/>
+                <Form.ElementHorizontal label="Delays" name="delay" required>
+                  <Form.Input
+                    elementType="input"
+                    type="number"
+                    min="1"
+                    name="delay"
+                  />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
                     The time, in seconds, between sending probes to members.
                   </span>
                 </Form.ElementHorizontal>
 
-                {showHttpMethods &&
-                  <Form.ElementHorizontal label='Http method' name="http_method">
-                    <SelectInput name="http_method" items={httpMethods()} onChange={onHttpMethodsChanged} value={{label: "GET", value: "GET"}}/>
+                {showHttpMethods && (
+                  <Form.ElementHorizontal
+                    label="Http method"
+                    name="http_method"
+                  >
+                    <SelectInput
+                      name="http_method"
+                      items={httpMethods()}
+                      onChange={onHttpMethodsChanged}
+                      value={{ label: "GET", value: "GET" }}
+                    />
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
-                      The HTTP method that the health monitor uses for requests. The default is GET.
+                      The HTTP method that the health monitor uses for requests.
+                      The default is GET.
                     </span>
                   </Form.ElementHorizontal>
-                }
+                )}
 
-                {showExpectedCodes &&
-                  <Form.ElementHorizontal label='Expected codes' name="expected_codes">
-                    <FormInput type="text" name="expected_codes" value="200"/>
-                      <span className="help-block">
-                        <i className="fa fa-info-circle"></i>
-                        The list of HTTP status codes expected in response from the member to declare it healthy. Specify one of the following values:
-                        <ul>
-                          <li>A single value, such as 200</li>
-                          <li>A list, such as 200, 202</li>
-                          <li>A range, such as 200-204</li>
-                        </ul>
-                        The default is 200.
-                      </span>
+                {showExpectedCodes && (
+                  <Form.ElementHorizontal
+                    label="Expected codes"
+                    name="expected_codes"
+                  >
+                    <FormInput type="text" name="expected_codes" value="200" />
+                    <span className="help-block">
+                      <i className="fa fa-info-circle"></i>
+                      The list of HTTP status codes expected in response from
+                      the member to declare it healthy. Specify one of the
+                      following values:
+                      <ul>
+                        <li>A single value, such as 200</li>
+                        <li>A list, such as 200, 202</li>
+                        <li>A range, such as 200-204</li>
+                      </ul>
+                      The default is 200.
+                    </span>
                   </Form.ElementHorizontal>
-                }
+                )}
 
-                {showUrlPath &&
-                  <Form.ElementHorizontal label='Url path' name="url_path">
-                    <FormInput type="text" name="url_path" value="/"/>
-                      <span className="help-block">
-                        <i className="fa fa-info-circle"></i>
-                        The HTTP URL path of the request sent by the monitor to test the health of a backend member. Must be a string that begins with a forward slash (/). The default URL path is /.
-                      </span>
+                {showUrlPath && (
+                  <Form.ElementHorizontal label="Url path" name="url_path">
+                    <FormInput type="text" name="url_path" value="/" />
+                    <span className="help-block">
+                      <i className="fa fa-info-circle"></i>
+                      The HTTP URL path of the request sent by the monitor to
+                      test the health of a backend member. Must be a string that
+                      begins with a forward slash (/). The default URL path is
+                      /.
+                    </span>
                   </Form.ElementHorizontal>
-                }
+                )}
 
-                <Form.ElementHorizontal label='Tags' name="tags">
-                  <TagsInput name="tags" initValue={healthmonitor.item && healthmonitor.item.tags}/>
+                <Form.ElementHorizontal label="Tags" name="tags">
+                  <TagsInput
+                    name="tags"
+                    initValue={healthmonitor.item && healthmonitor.item.tags}
+                  />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                    Start a new tag typing a string and hitting the Enter or Tab key.
+                    Start a new tag typing a string and hitting the Enter or Tab
+                    key.
                   </span>
                 </Form.ElementHorizontal>
-
               </Modal.Body>
-              <Modal.Footer>  
+              <Modal.Footer>
                 <Button onClick={close}>Cancel</Button>
-                <Form.SubmitButton disabled={!healthmonitor.item} label='Save'/>
+                <Form.SubmitButton
+                  disabled={!healthmonitor.item}
+                  label="Save"
+                />
               </Modal.Footer>
             </Form>
-          }
+          )}
         </React.Fragment>
-      }
-
+      )}
     </Modal>
-
-   );
+  )
 }
- 
-export default EditHealthMonitor;
+
+export default EditHealthMonitor

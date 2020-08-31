@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
-import { Overlay, Button, Popover } from 'react-bootstrap'
+import React, { useState } from "react"
+import { Overlay, Button, Popover } from "react-bootstrap"
+import Log from "../shared/logger"
 
-
-const LbPopover = ({popoverId, buttonName, title, content}) => {
-  console.log("--> RENDER LbPopover")
+const LbPopover = ({ popoverId, buttonName, title, content }) => {
+  Log.debug("--> RENDER LbPopover")
 
   const [show, setShow] = useState(false)
   const [target, setTarget] = useState(null)
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     setShow(!show)
     setTarget(event.target)
   }
 
-  return (    
+  return (
     <div>
-      <Button bsClass="cached-info-button btn btn-link" onClick={handleClick} >{buttonName}</Button>
+      <Button bsClass="cached-info-button btn btn-link" onClick={handleClick}>
+        {buttonName}
+      </Button>
       <Overlay
         rootClose
         onHide={() => setShow(false)}
@@ -25,17 +27,16 @@ const LbPopover = ({popoverId, buttonName, title, content}) => {
         container={this}
         containerPadding={20}
       >
-          <Popover bsClass="lbaas2 cached-info-popover popover" id={popoverId} title={title}>
-            <div className="cached-info-content">
-              {content}
-            </div>
-            <div className="cached-info-footer">
-              Preview from cache
-            </div>
-          </Popover>
+        <Popover
+          bsClass="lbaas2 cached-info-popover popover"
+          id={popoverId}
+          title={title}
+        >
+          <div className="cached-info-content">{content}</div>
+          <div className="cached-info-footer">Preview from cache</div>
+        </Popover>
       </Overlay>
     </div>
-
   )
 }
 

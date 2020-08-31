@@ -35,6 +35,7 @@
     "react-datetime": "*",
     "react-dom": "^16.8.1",
     "react-json-view": "^1.16.6",
+    "react-native-dotenv": "^2.3.0",
     "react-redux": "^7.0.0",
     "react-router-dom": "^5.1.2",
     "react-select": "^3.0.8",
