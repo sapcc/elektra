@@ -1,7 +1,13 @@
+//
+// Add to your .env following variable LBAAS2_LOGGER and restart webpacker:
+// drun bundle exec bin/webpack-dev-server
+//
+
 import { LBAAS2_LOGGER } from "@env"
 
 const BASE = "lbaas2"
 const COLOURS = {
+  debug: "pink",
   trace: "lightblue",
   info: "cyan",
   warn: "yellow",
@@ -18,6 +24,10 @@ class Log {
         "color:reset" + ";font-weight:reset;"
       )
     }
+  }
+
+  debug(message) {
+    return this.generateMessage("debug", message)
   }
 
   trace(message) {
