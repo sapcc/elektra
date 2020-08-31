@@ -1,35 +1,40 @@
-import { useEffect, useState, useMemo } from 'react'
-import { Link } from 'react-router-dom';
-import StateLabel from '../shared/StateLabel'
-import StatusLabel from '../shared/StatusLabel'
-import StaticTags from '../StaticTags';
-import CopyPastePopover from '../shared/CopyPastePopover'
-import CachedInfoPopover from '../shared/CachedInforPopover';
-import CachedInfoPopoverContent from './CachedInfoPopoverContent'
-import CachedInfoPopoverContentListeners from './CachedInfoPopoverContentListeners'
-import CachedInfoPopoverContentContainers from '../shared/CachedInfoPopoverContentContainers'
-import usePool from '../../../lib/hooks/usePool'
-import useCommons from '../../../lib/hooks/useCommons'
-import { addNotice, addError } from 'lib/flashes';
-import { ErrorsList } from 'lib/elektra-form/components/errors_list';
-import useLoadbalancer from '../../../lib/hooks/useLoadbalancer'
-import { policy } from "policy";
-import { scope } from "ajax_helper";
+import { useEffect, useState, useMemo } from "react"
+import { Link } from "react-router-dom"
+import StateLabel from "../shared/StateLabel"
+import StatusLabel from "../shared/StatusLabel"
+import StaticTags from "../StaticTags"
+import CopyPastePopover from "../shared/CopyPastePopover"
+import CachedInfoPopover from "../shared/CachedInforPopover"
+import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
+import CachedInfoPopoverContentListeners from "./CachedInfoPopoverContentListeners"
+import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
+import usePool from "../../../lib/hooks/usePool"
+import useCommons from "../../../lib/hooks/useCommons"
+import { addNotice, addError } from "lib/flashes"
+import { ErrorsList } from "lib/elektra-form/components/errors_list"
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
+import { policy } from "policy"
+import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
-import { reset } from 'numeral';
+import { reset } from "numeral"
 
-const PoolItem = ({props, pool, searchTerm, disabled}) => {
-  const {persistPool,deletePool,onSelectPool, reset} = usePool()
-  const {MyHighlighter,matchParams,errorMessage,searchParamsToString} = useCommons()
+const PoolItem = ({ props, pool, searchTerm, disabled }) => {
+  const { persistPool, deletePool, onSelectPool, reset } = usePool()
+  const {
+    MyHighlighter,
+    matchParams,
+    errorMessage,
+    searchParamsToString,
+  } = useCommons()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
-  const {persistLoadbalancer} = useLoadbalancer()
+  const { persistLoadbalancer } = useLoadbalancer()
   let polling = null
 
   useEffect(() => {
     const params = matchParams(props)
     setLoadbalancerID(params.loadbalancerID)
 
-    if(pool.provisioning_status.includes('PENDING')) {
+    if (pool.provisioning_status.includes("PENDING")) {
       startPolling(5000)
     } else {
       startPolling(30000)
@@ -37,24 +42,23 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
 
     return function cleanup() {
       stopPolling()
-    };
-  });
+    }
+  })
 
-  const startPolling = (interval) => {   
+  const startPolling = (interval) => {
     // do not create a new polling interval if already polling
-    if(polling) return;
+    if (polling) return
     polling = setInterval(() => {
       console.log("Polling pool -->", pool.id, " with interval -->", interval)
-      persistPool(loadbalancerID,pool.id).catch( (error) => {
-        if(error && error.status == 404) {
+      persistPool(loadbalancerID, pool.id).catch((error) => {
+        if (error && error.status == 404) {
           // check if the pool is selected and if yes deselect the item
-          if(disabled){
+          if (disabled) {
             reset()
           }
-        } 
+        }
       })
-    }, interval
-    )
+    }, interval)
   }
 
   const stopPolling = () => {
@@ -64,20 +68,20 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
   }
 
   const canEdit = useMemo(
-    () => 
+    () =>
       policy.isAllowed("lbaas2:pool_update", {
-        target: { scoped_domain_name: scope.domain }
+        target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canDelete = useMemo(
-    () => 
+    () =>
       policy.isAllowed("lbaas2:pool_delete", {
-        target: { scoped_domain_name: scope.domain }
+        target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const handleDelete = (e) => {
     if (e) {
@@ -86,17 +90,24 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
     }
     const poolID = pool.id
     const poolName = pool.name
-    return deletePool(loadbalancerID, poolID, poolName).then((response) => {
-      addNotice(<React.Fragment>Pool <b>{poolName}</b> ({poolID}) is being deleted.</React.Fragment>)
-      // fetch the lb again containing the new listener so it gets updated fast
-      persistLoadbalancer(loadbalancerID).catch(error => {
+    return deletePool(loadbalancerID, poolID, poolName)
+      .then((response) => {
+        addNotice(
+          <React.Fragment>
+            Pool <b>{poolName}</b> ({poolID}) is being deleted.
+          </React.Fragment>
+        )
+        // fetch the lb again containing the new listener so it gets updated fast
+        persistLoadbalancer(loadbalancerID).catch((error) => {})
+        // TODO: back to the poles
       })
-      // TODO: back to the poles      
-    }).catch(error => {
-      addError(React.createElement(ErrorsList, {
-        errors: errorMessage(error.response)
-      }))
-    })
+      .catch((error) => {
+        addError(
+          React.createElement(ErrorsList, {
+            errors: errorMessage(error.response),
+          })
+        )
+      })
   }
 
   const onPoolClick = (e) => {
@@ -104,40 +115,86 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
       e.stopPropagation()
       e.preventDefault()
     }
-    onSelectPool(props,pool.id)
+    onSelectPool(props, pool.id)
   }
 
   const displayName = () => {
     const name = pool.name || pool.id
     if (disabled) {
-      return <div className="info-text"><CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldCopy={false} bsClass="cp copy-paste-ids"/></div>
+      return (
+        <div className="info-text">
+          <CopyPastePopover
+            text={name}
+            size={20}
+            sliceType="MIDDLE"
+            shouldCopy={false}
+            bsClass="cp copy-paste-ids"
+          />
+        </div>
+      )
     } else {
-      return <Link to="#" onClick={onPoolClick}>
-              <CopyPastePopover text={name} size={20} sliceType="MIDDLE" shouldPopover={false} shouldCopy={false} searchTerm={searchTerm}/>
-            </Link>
+      return (
+        <Link to="#" onClick={onPoolClick}>
+          <CopyPastePopover
+            text={name}
+            size={20}
+            sliceType="MIDDLE"
+            shouldPopover={false}
+            shouldCopy={false}
+            searchTerm={searchTerm}
+          />
+        </Link>
+      )
     }
   }
   const displayID = () => {
     if (pool.name) {
       if (disabled) {
-        return <div className="info-text"><CopyPastePopover text={pool.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" shouldPopover={false}/></div>
+        return (
+          <div className="info-text">
+            <CopyPastePopover
+              text={pool.id}
+              size={12}
+              sliceType="MIDDLE"
+              bsClass="cp copy-paste-ids"
+              shouldPopover={false}
+            />
+          </div>
+        )
       } else {
-        return <CopyPastePopover text={pool.id} size={12} sliceType="MIDDLE" bsClass="cp copy-paste-ids" searchTerm={searchTerm}/>
+        return (
+          <CopyPastePopover
+            text={pool.id}
+            size={12}
+            sliceType="MIDDLE"
+            bsClass="cp copy-paste-ids"
+            searchTerm={searchTerm}
+          />
+        )
       }
     }
   }
 
-  const listenersIDs = pool.listeners.map(m => m.id)
+  const listenersIDs = pool.listeners.map((m) => m.id)
   const displayAssignedTo = () => {
     if (pool.listeners && pool.listeners.length > 0) {
       return (
         <div className="display-flex">
           <span>Listeners:</span>
           <div className="label-right">
-            <CachedInfoPopover  popoverId={"pool-listeners-popover-"+listenersIDs.id} 
-              buttonName={listenersIDs.length} 
+            <CachedInfoPopover
+              popoverId={"pool-listeners-popover-" + listenersIDs.id}
+              buttonName={listenersIDs.length}
               title={<React.Fragment>Listeners</React.Fragment>}
-              content={<CachedInfoPopoverContentListeners props={props} loadbalancerID={loadbalancerID} listenerIDs={listenersIDs} cachedListeners={pool.cached_listeners} />} />
+              content={
+                <CachedInfoPopoverContentListeners
+                  props={props}
+                  loadbalancerID={loadbalancerID}
+                  listenerIDs={listenersIDs}
+                  cachedListeners={pool.cached_listeners}
+                />
+              }
+            />
           </div>
         </div>
       )
@@ -148,7 +205,7 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
 
   const displayCheck = (option) => {
     if (option) {
-     return <i className="fa fa-check" />
+      return <i className="fa fa-check" />
     } else {
       return <i className="fa fa-times" />
     }
@@ -156,15 +213,18 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
 
   const collectContainers = () => {
     const containers = [
-      {name:"Certificate Container", ref: pool.tls_container_ref},
-      {name:"Authentication Container (CA)", ref: pool.ca_tls_container_ref}
+      { name: "Certificate Container", ref: pool.tls_container_ref },
+      { name: "Authentication Container (CA)", ref: pool.ca_tls_container_ref },
     ]
-    var filteredContainers = containers.reduce( (filteredContainers, item) => {
-      if(item.ref && item.ref.length > 0 || item.refList && item.refList.length > 0) {
+    var filteredContainers = containers.reduce((filteredContainers, item) => {
+      if (
+        (item.ref && item.ref.length > 0) ||
+        (item.refList && item.refList.length > 0)
+      ) {
         filteredContainers.push(item)
       }
       return filteredContainers
-    },[])
+    }, [])
     return filteredContainers
   }
 
@@ -172,45 +232,60 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
     const containers = collectContainers()
     return (
       <React.Fragment>
-        {pool.tls_enabled &&
+        {pool.tls_enabled && (
           <div className="display-flex">
             <span>Secrets: </span>
             <div className="label-right">
-              <CachedInfoPopover  popoverId={"pool-secrets-popover-"+pool.id} 
-                buttonName={containers.length} 
+              <CachedInfoPopover
+                popoverId={"pool-secrets-popover-" + pool.id}
+                buttonName={containers.length}
                 title={<React.Fragment>Secrets</React.Fragment>}
-                content={<CachedInfoPopoverContentContainers containers={containers} />} />
+                content={
+                  <CachedInfoPopoverContentContainers containers={containers} />
+                }
+              />
             </div>
           </div>
-        }
+        )}
       </React.Fragment>
     )
   }
 
-  const memberIDs = pool.members.map(m => m.id)
-  return ( 
+  const memberIDs = pool.members.map((m) => m.id)
+  return (
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
         {displayName()}
         {displayID()}
-        <CopyPastePopover text={pool.description} size={20} shouldCopy={false} shouldPopover={true} searchTerm={searchTerm}/>
+        <CopyPastePopover
+          text={pool.description}
+          size={20}
+          shouldCopy={false}
+          shouldPopover={true}
+          searchTerm={searchTerm}
+        />
       </td>
       <td>
-        <div><StateLabel label={pool.operating_status} /></div>
-        <div><StatusLabel label={pool.provisioning_status} /></div>
+        <div>
+          <StateLabel label={pool.operating_status} />
+        </div>
+        <div>
+          <StatusLabel label={pool.provisioning_status} />
+        </div>
       </td>
       <td>
         <StaticTags tags={pool.tags} />
       </td>
       <td>{pool.lb_algorithm}</td>
-      <td><MyHighlighter search={searchTerm}>{pool.protocol}</MyHighlighter></td>
       <td>
+        <MyHighlighter search={searchTerm}>{pool.protocol}</MyHighlighter>
+      </td>
+      <td>
+        {pool.session_persistence && <div>{pool.session_persistence.type}</div>}
         {pool.session_persistence &&
-          <div>{pool.session_persistence.type}</div>
-        }
-        {pool.session_persistence && pool.session_persistence.type == "APP_COOKIE" &&
-          <div>{pool.session_persistence.cookie_name}</div>
-        }
+          pool.session_persistence.type == "APP_COOKIE" && (
+            <div>{pool.session_persistence.cookie_name}</div>
+          )}
       </td>
       <td>{displayAssignedTo()}</td>
       <td>
@@ -219,47 +294,69 @@ const PoolItem = ({props, pool, searchTerm, disabled}) => {
       </td>
       <td>{displayCheck(pool.healthmonitor_id)}</td>
       <td>
-        {disabled ?
+        {disabled ? (
           <span className="info-text">{memberIDs.length}</span>
-        :
-        <CachedInfoPopover  popoverId={"member-popover-"+memberIDs.id} 
-                    buttonName={memberIDs.length} 
-                    title={<React.Fragment>Members<Link to="#" onClick={onPoolClick} style={{float: 'right'}}>Show all</Link></React.Fragment>}
-                    content={<CachedInfoPopoverContent props={props} lbID={loadbalancerID} poolID={pool.id} memberIDs={memberIDs} cachedMembers={pool.cached_members}/>} />
-        }
+        ) : (
+          <CachedInfoPopover
+            popoverId={"member-popover-" + memberIDs.id}
+            buttonName={memberIDs.length}
+            title={
+              <React.Fragment>
+                Members
+                <Link to="#" onClick={onPoolClick} style={{ float: "right" }}>
+                  Show all
+                </Link>
+              </React.Fragment>
+            }
+            content={
+              <CachedInfoPopoverContent
+                props={props}
+                lbID={loadbalancerID}
+                poolID={pool.id}
+                memberIDs={memberIDs}
+                cachedMembers={pool.cached_members}
+              />
+            }
+          />
+        )}
       </td>
 
       <td>
-        <div className='btn-group'>
+        <div className="btn-group">
           <button
-            className='btn btn-default btn-sm dropdown-toggle'
+            className="btn btn-default btn-sm dropdown-toggle"
             type="button"
             data-toggle="dropdown"
-            aria-expanded={true}>
+            aria-expanded={true}
+          >
             <span className="fa fa-cog"></span>
           </button>
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
             <li>
-              <SmartLink 
-                to={`/loadbalancers/${loadbalancerID}/pools/${pool.id}/edit?${searchParamsToString(props)}`}
-                isAllowed={canEdit} 
-                notAllowedText="Not allowed to edit. Please check with your administrator.">
-                  Edit
+              <SmartLink
+                to={`/loadbalancers/${loadbalancerID}/pools/${
+                  pool.id
+                }/edit?${searchParamsToString(props)}`}
+                isAllowed={canEdit}
+                notAllowedText="Not allowed to edit. Please check with your administrator."
+              >
+                Edit
               </SmartLink>
             </li>
             <li>
-              <SmartLink 
-                onClick={handleDelete} 
-                isAllowed={canDelete} 
-                notAllowedText="Not allowed to delete. Please check with your administrator.">
-                  Delete
+              <SmartLink
+                onClick={handleDelete}
+                isAllowed={canDelete}
+                notAllowedText="Not allowed to delete. Please check with your administrator."
+              >
+                Delete
               </SmartLink>
             </li>
           </ul>
         </div>
       </td>
     </tr>
-   );
+  )
 }
- 
-export default PoolItem;
+
+export default PoolItem
