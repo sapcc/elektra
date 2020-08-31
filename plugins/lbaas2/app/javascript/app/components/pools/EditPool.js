@@ -10,6 +10,7 @@ import useListener from "../../../lib/hooks/useListener"
 import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
+import Log from "../shared/logger"
 
 const EditPool = (props) => {
   const {
@@ -83,7 +84,7 @@ const EditPool = (props) => {
   }, [poolID])
 
   const loadPool = () => {
-    console.log("fetching pool to edit")
+    Log.debug("fetching pool to edit")
     setPool({ ...pool, isLoading: true, error: null })
     fetchPool(loadbalancerID, poolID)
       .then((data) => {
@@ -99,7 +100,7 @@ const EditPool = (props) => {
   }
 
   const loadListeners = () => {
-    console.log("fetching listeners to pool edit")
+    Log.debug("fetching listeners to pool edit")
     setListeners({ ...listeners, isLoading: true })
     fetchListnersForSelect(loadbalancerID)
       .then((data) => {
@@ -342,7 +343,7 @@ const EditPool = (props) => {
     setAuthenticationContainer(option)
   }
 
-  console.log("RENDER edit pool")
+  Log.debug("RENDER edit pool")
   return (
     <Modal
       show={show}

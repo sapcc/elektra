@@ -13,6 +13,7 @@ import HealthmonitorDetails from "./HealthmonitorDetails"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
 
 const HealthMonitor = ({ props, loadbalancerID }) => {
   const {
@@ -37,7 +38,7 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
       // find the pool to get the health monitor id
       const pool = findPool(pools, poolID)
       if (pool && pool.healthmonitor_id) {
-        console.log("FETCH HEALTH MONITOR")
+        Log.debug("FETCH HEALTH MONITOR")
         persistHealthmonitor(
           loadbalancerID,
           poolID,
@@ -113,7 +114,7 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
   const isLoading = state.isLoading
 
   return useMemo(() => {
-    console.log("RENDER healthmonitor")
+    Log.debug("RENDER healthmonitor")
     return (
       <React.Fragment>
         {poolID && !poolError && (

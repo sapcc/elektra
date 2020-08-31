@@ -16,6 +16,7 @@ import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
 
 const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
   const {
@@ -54,7 +55,7 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
     // do not create a new polling interval if already polling
     if (polling) return
     polling = setInterval(() => {
-      console.log(
+      Log.debug(
         "Polling listener -->",
         listener.id,
         " with interval -->",
@@ -72,7 +73,7 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
   }
 
   const stopPolling = () => {
-    console.log("stop polling for listener id -->", listener.id)
+    Log.debug("stop polling for listener id -->", listener.id)
     clearInterval(polling)
     polling = null
   }

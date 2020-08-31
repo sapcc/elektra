@@ -6,6 +6,7 @@ import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
 import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import useCommons from "../../../lib/hooks/useCommons"
+import Log from "../shared/logger"
 
 const NewLoadbalancer = (props) => {
   const {
@@ -27,7 +28,7 @@ const NewLoadbalancer = (props) => {
   })
 
   useEffect(() => {
-    console.log("fetching private networks")
+    Log.debug("fetching private networks")
     setPrivateNetworks({ ...privateNetworks, isLoading: true })
     fetchPrivateNetworks()
       .then((data) => {
@@ -144,7 +145,7 @@ const NewLoadbalancer = (props) => {
     setShowAdvanceNetworkSettings(!showAdvanceNetworkSettings)
   }
 
-  console.log("RENDER new loadbalancer")
+  Log.debug("RENDER new loadbalancer")
   return (
     <Modal
       show={show}

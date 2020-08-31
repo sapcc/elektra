@@ -4,6 +4,7 @@ import StatusLabel from "../shared/StatusLabel"
 import StaticTags from "../StaticTags"
 import useHealthMonitor from "../../../lib/hooks/useHealthMonitor"
 import CopyPastePopover from "../shared/CopyPastePopover"
+import Log from "../shared/logger"
 
 const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
   const {
@@ -30,7 +31,7 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
     // do not create a new polling interval if already polling
     if (polling) return
     polling = setInterval(() => {
-      console.log(
+      Log.debug(
         "Polling healthmonitor -->",
         healthmonitor.id,
         " with interval -->",
@@ -43,7 +44,7 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
   }
 
   const stopPolling = () => {
-    console.log("stop polling for healthmonitor id -->", healthmonitor.id)
+    Log.debug("stop polling for healthmonitor id -->", healthmonitor.id)
     clearInterval(polling)
     polling = null
   }

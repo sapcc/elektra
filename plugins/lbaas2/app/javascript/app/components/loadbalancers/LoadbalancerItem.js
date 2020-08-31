@@ -14,6 +14,7 @@ import SmartLink from "../shared/SmartLink"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import useCommons from "../../../lib/hooks/useCommons"
+import Log from "../shared/logger"
 
 const LoadbalancerItem = ({ loadbalancer, searchTerm, disabled }) => {
   const {
@@ -39,7 +40,7 @@ const LoadbalancerItem = ({ loadbalancer, searchTerm, disabled }) => {
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
     if (polling) return
-    console.log(
+    Log.debug(
       "Polling loadbalancer -->",
       loadbalancer.id,
       " with interval -->",
@@ -51,7 +52,7 @@ const LoadbalancerItem = ({ loadbalancer, searchTerm, disabled }) => {
   }
 
   const stopPolling = () => {
-    console.log("stop polling for id -->", loadbalancer.id)
+    Log.debug("stop polling for id -->", loadbalancer.id)
     clearInterval(polling)
     polling = null
   }
@@ -197,7 +198,7 @@ const LoadbalancerItem = ({ loadbalancer, searchTerm, disabled }) => {
     }
   }
 
-  console.log("RENDER loadbalancer list item id-->", loadbalancer.id)
+  Log.debug("RENDER loadbalancer list item id-->", loadbalancer.id)
   return (
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">

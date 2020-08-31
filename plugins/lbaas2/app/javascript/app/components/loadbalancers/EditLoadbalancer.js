@@ -8,6 +8,7 @@ import { matchPath } from "react-router-dom"
 import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
+import Log from "../shared/logger"
 
 const EditLoadbalancer = (props) => {
   const {
@@ -35,7 +36,7 @@ const EditLoadbalancer = (props) => {
   const [loadbalancerID, setLoadbalancerID] = useState(null)
 
   useEffect(() => {
-    console.log("fetching loadbalancer to edit")
+    Log.debug("fetching loadbalancer to edit")
     loadLoadbalancer()
   }, [])
 
@@ -62,7 +63,7 @@ const EditLoadbalancer = (props) => {
   }
 
   const loadPrivateNetworks = (pn) => {
-    console.log("fetching private networks")
+    Log.debug("fetching private networks")
     setPrivateNetworks({ ...privateNetworks, isLoading: true })
     fetchPrivateNetworks()
       .then((data) => {
@@ -138,7 +139,7 @@ const EditLoadbalancer = (props) => {
       })
   }
 
-  console.log("RENDER edit loadbalancer")
+  Log.debug("RENDER edit loadbalancer")
   return (
     <Modal
       show={show}

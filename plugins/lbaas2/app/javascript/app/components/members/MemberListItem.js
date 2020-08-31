@@ -11,6 +11,7 @@ import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import SmartLink from "../shared/SmartLink"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
+import Log from "../shared/logger"
 
 const MemberListItem = ({ props, poolID, member, searchTerm }) => {
   const {
@@ -43,20 +44,13 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
     // do not create a new polling interval if already polling
     if (polling) return
     polling = setInterval(() => {
-      console.log(
-        "Polling member -->",
-        member.id,
-        " with interval -->",
-        interval
-      )
-      persistMember(loadbalancerID, poolID, member.id).catch((error) => {
-        // console.log(JSON.stringify(error))
-      })
+      Log.debug("Polling member -->", member.id, " with interval -->", interval)
+      persistMember(loadbalancerID, poolID, member.id).catch((error) => {})
     }, interval)
   }
 
   const stopPolling = () => {
-    console.log("stop polling for member id -->", member.id)
+    Log.debug("stop polling for member id -->", member.id)
     clearInterval(polling)
     polling = null
   }

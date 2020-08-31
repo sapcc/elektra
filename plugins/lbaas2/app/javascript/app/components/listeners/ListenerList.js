@@ -16,6 +16,7 @@ import { SearchField } from "lib/components/search_field"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
 
 const ListenerList = ({ props, loadbalancerID }) => {
   const dispatch = useDispatch()
@@ -61,7 +62,7 @@ const ListenerList = ({ props, loadbalancerID }) => {
   }, [triggerFindSelectedListener])
 
   const initialLoad = () => {
-    console.log("LISTENER INITIAL FETCH")
+    Log.debug("LISTENER INITIAL FETCH")
     // no add marker so we get always the first ones on loading the component
     persistListeners(loadbalancerID, true, null)
       .then((data) => {
@@ -173,7 +174,7 @@ const ListenerList = ({ props, loadbalancerID }) => {
   const listeners = filterItems(searchTerm, items)
   const isLoading = state.isLoading
   return useMemo(() => {
-    console.log("RENDER Listener list")
+    Log.debug("RENDER Listener list")
     return (
       <div className="details-section">
         <div className="display-flex">

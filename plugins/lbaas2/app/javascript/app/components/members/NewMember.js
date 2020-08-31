@@ -10,6 +10,7 @@ import { Table } from "react-bootstrap"
 import NewMemberListItem from "./NewMemberListItem"
 import usePool from "../../../lib/hooks/usePool"
 import FormSubmitButton from "../shared/FormSubmitButton"
+import Log from "../shared/logger"
 
 const NewMember = (props) => {
   const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
@@ -29,7 +30,7 @@ const NewMember = (props) => {
   const [newMembers, setNewMembers] = useState([])
 
   useEffect(() => {
-    console.log("fetching servers for select")
+    Log.debug("fetching servers for select")
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     const poolID = params.poolID

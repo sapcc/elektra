@@ -9,6 +9,7 @@ import FormInput from "../shared/FormInput"
 import { addNotice } from "lib/flashes"
 import TagsInput from "../shared/TagsInput"
 import ErrorPage from "../ErrorPage"
+import Log from "../shared/logger"
 
 const EditHealthMonitor = (props) => {
   const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
@@ -29,7 +30,7 @@ const EditHealthMonitor = (props) => {
   })
 
   useEffect(() => {
-    console.log("fetching healthmonitor to edit")
+    Log.debug("fetching healthmonitor to edit")
     loadHealthmonitor()
   }, [])
 

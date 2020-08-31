@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { useDispatch } from "../../app/components/StateProvider"
 import { ajaxHelper } from "ajax_helper"
+import Log from "../../app/components/shared/logger"
 
 const useStatusTree = ({ lbId }) => {
   const dispatch = useDispatch()
@@ -21,7 +22,7 @@ const useStatusTree = ({ lbId }) => {
   })
 
   const startPolling = () => {
-    console.log(
+    Log.debug(
       "start status tree polling for id -->",
       lbId,
       " polling:",
@@ -33,13 +34,13 @@ const useStatusTree = ({ lbId }) => {
   }
 
   const stopPolling = () => {
-    console.log("stop polling for id -->", lbId)
+    Log.debug("stop polling for id -->", lbId)
     clearInterval(polling)
     polling = null
   }
 
   const reloadStatus = () => {
-    console.log("reload status tree for id -->", lbId)
+    Log.debug("reload status tree for id -->", lbId)
     ajaxHelper
       .get(`/loadbalancers/` + lbId + `/status-tree`)
       .then((response) => {
@@ -50,7 +51,7 @@ const useStatusTree = ({ lbId }) => {
         })
       })
       .catch((error) => {
-        console.log("error loading status tree -->" + errorMessage(error))
+        Log.debug("error loading status tree -->" + errorMessage(error))
         dispatch({
           type: "REQUEST_LB_STATUS_TREE_FAILURE",
           lbId: lbId,

@@ -5,6 +5,7 @@ import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
 import SelectInput from "../shared/SelectInput"
 import useCommons from "../../../lib/hooks/useCommons"
 import { addNotice } from "lib/flashes"
+import Log from "../shared/logger"
 
 const AttachFIP = (props) => {
   const { fetchFloatingIPs, attachFIP } = useLoadbalancer()
@@ -21,7 +22,7 @@ const AttachFIP = (props) => {
     const params = matchParams(props)
     setLoadbalancerID(params.loadbalancerID)
 
-    console.log("fetching floating IPs")
+    Log.debug("fetching floating IPs")
     setFloatingIPs({ ...floatingIPs, isLoading: true })
     fetchFloatingIPs()
       .then((data) => {

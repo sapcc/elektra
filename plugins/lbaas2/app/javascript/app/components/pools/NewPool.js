@@ -9,6 +9,7 @@ import useListener from "../../../lib/hooks/useListener"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
 import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
+import Log from "../shared/logger"
 
 const NewPool = (props) => {
   const {
@@ -44,7 +45,7 @@ const NewPool = (props) => {
   })
 
   useEffect(() => {
-    console.log("fetching listeners for select")
+    Log.debug("fetching listeners for select")
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     // get listeners for the select
@@ -198,7 +199,7 @@ const NewPool = (props) => {
     }
   }
 
-  console.log("RENDER new pool")
+  Log.debug("RENDER new pool")
   return (
     <Modal
       show={show}

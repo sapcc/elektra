@@ -14,6 +14,7 @@ import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import ErrorPage from "../ErrorPage"
+import Log from "../shared/logger"
 
 const PoolList = ({ props, loadbalancerID }) => {
   const dispatch = useDispatch()
@@ -56,7 +57,7 @@ const PoolList = ({ props, loadbalancerID }) => {
   }, [triggerFindSelected])
 
   const initialLoad = () => {
-    console.log("FETCH POOLS")
+    Log.debug("FETCH POOLS")
     // no add marker so we get always the first ones on loading the component
     persistPools(loadbalancerID, true, null)
       .then((data) => {
@@ -162,7 +163,7 @@ const PoolList = ({ props, loadbalancerID }) => {
   const isLoading = state.isLoading
 
   return useMemo(() => {
-    console.log("RENDER pool list")
+    Log.debug("RENDER pool list")
     return (
       <div className="details-section">
         <div className="display-flex">

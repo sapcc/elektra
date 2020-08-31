@@ -1,11 +1,11 @@
 import { StateProvider } from "./components/StateProvider"
 import reducers from "./reducers"
 import Router from "./components/Router"
-// import { FlashMessages } from 'lib/flashes';
 import FloatingFlashMessages from "./components/shared/FloatingFlashMessages"
+import Log from "./components/shared/logger"
 
 const App = () => {
-  console.log("RENDER App")
+  Log.debug("RENDER App")
   return (
     <React.Fragment>
       <div className="bs-callout bs-callout-info bs-callout-emphasize">

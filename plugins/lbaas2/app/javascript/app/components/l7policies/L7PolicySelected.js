@@ -12,6 +12,7 @@ import useListener from "../../../lib/hooks/useListener"
 import SmartLink from "../shared/SmartLink"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
+import Log from "../shared/logger"
 
 const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
   const { actionRedirect, deleteL7Policy, persistL7Policy } = useL7Policy()
@@ -39,22 +40,22 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
     // do not create a new polling interval if already polling
     if (polling) return
     polling = setInterval(() => {
-      console.log(
+      Log.debug(
         "Polling l7 policy selected -->",
         l7Policy.id,
         " with interval -->",
         interval
       )
-      persistL7Policy(loadbalancerID, listenerID, l7Policy.id).catch(
-        (error) => {
-          // console.log(JSON.stringify(error))
-        }
-      )
+      persistL7Policy(
+        loadbalancerID,
+        listenerID,
+        l7Policy.id
+      ).catch((error) => {})
     }, interval)
   }
 
   const stopPolling = () => {
-    console.log("stop polling for listener id -->", l7Policy.id)
+    Log.debug("stop polling for listener id -->", l7Policy.id)
     clearInterval(polling)
     polling = null
   }

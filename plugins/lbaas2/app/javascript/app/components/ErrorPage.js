@@ -1,9 +1,10 @@
 import React, { useState } from "react"
 import { Button } from "react-bootstrap"
 import { Link } from "react-router-dom"
+import Log from "./shared/logger"
 
 const ErrorPage = ({ error, headTitle, onReload }) => {
-  console.log("RENDER error page")
+  Log.debug("RENDER error page")
 
   const [showDetails, setShowDetails] = useState(false)
   const err = error.error || error

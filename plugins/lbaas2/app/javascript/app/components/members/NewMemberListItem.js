@@ -3,6 +3,7 @@ import FormInput from "../shared/FormInput"
 import TagsInput from "../shared/TagsInput"
 import { Button } from "react-bootstrap"
 import StaticTags from "../StaticTags"
+import Log from "../shared/logger"
 
 const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
   const onRemoveClick = (e) => {
@@ -16,7 +17,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
     return false
   }
 
-  console.log("RENDER NewMemberListItem")
+  Log.debug("RENDER NewMemberListItem")
   return (
     <tr>
       <td>

@@ -1,8 +1,9 @@
 import React from "react"
 import CopyPastePopover from "./shared/CopyPastePopover"
+import Log from "./shared/logger"
 
 const StaticTags = ({ tags, shouldPopover }) => {
-  console.log("render tags")
+  Log.debug("render tags")
   return (
     <React.Fragment>
       <div className="static-tags clearfix">

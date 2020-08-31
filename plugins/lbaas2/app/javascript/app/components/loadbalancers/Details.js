@@ -8,6 +8,7 @@ import L7PolicyList from "../l7policies/L7PolicyList"
 import L7ERuleList from "../l7Rules/L7RuleList"
 import MemberList from "../members/MemberList"
 import HealthMonitor from "../healthmonitor/HealthMonitor"
+import Log from "../shared/logger"
 
 const Details = (props) => {
   const dispatch = useDispatch()
@@ -19,7 +20,7 @@ const Details = (props) => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    console.log("FETCH details")
+    Log.debug("FETCH details")
     connect()
     return function cleanup() {
       // deselect the loadbalancer
@@ -88,7 +89,7 @@ const Details = (props) => {
 
   let loadbalancer = state.items.find((item) => item.id == loadbalancerId)
   return useMemo(() => {
-    console.log("RENDER Details list")
+    Log.debug("RENDER Details list")
     return (
       <React.Fragment>
         {error ? (

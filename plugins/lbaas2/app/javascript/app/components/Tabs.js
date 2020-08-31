@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import Log from "./shared/logger"
 
 const Tabs = ({ match, location, history, tabsConfig, ...otherProps }) => {
   let tabItems = []
@@ -30,7 +31,7 @@ const Tabs = ({ match, location, history, tabsConfig, ...otherProps }) => {
     )
   }
 
-  console.log("RENDER tabs")
+  Log.debug("RENDER tabs")
   return (
     <div>
       <ul className="nav nav-tabs" role="tablist">

@@ -8,6 +8,7 @@ import useL7Rule from "../../../lib/hooks/useL7Rule"
 import SmartLink from "../shared/SmartLink"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
+import Log from "../shared/logger"
 
 const L7RuleListItem = ({
   props,
@@ -45,22 +46,23 @@ const L7RuleListItem = ({
     // do not create a new polling interval if already polling
     if (polling) return
     polling = setInterval(() => {
-      console.log(
+      Log.debug(
         "Polling l7 rule -->",
         l7Rule.id,
         " with interval -->",
         interval
       )
-      persistL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule.id).catch(
-        (error) => {
-          // console.log(JSON.stringify(error))
-        }
-      )
+      persistL7Rule(
+        loadbalancerID,
+        listenerID,
+        l7PolicyID,
+        l7Rule.id
+      ).catch((error) => {})
     }, interval)
   }
 
   const stopPolling = () => {
-    console.log("stop polling for l7rule id -->", l7Rule.id)
+    Log.debug("stop polling for l7rule id -->", l7Rule.id)
     clearInterval(polling)
     polling = null
   }

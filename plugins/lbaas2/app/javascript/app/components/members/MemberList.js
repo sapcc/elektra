@@ -12,6 +12,7 @@ import { SearchField } from "lib/components/search_field"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
 
 const MemberList = ({ props, loadbalancerID }) => {
   const poolID = useGlobalState().pools.selected
@@ -26,7 +27,7 @@ const MemberList = ({ props, loadbalancerID }) => {
 
   const initialLoad = () => {
     if (poolID) {
-      console.log("FETCH MEMBERS")
+      Log.debug("FETCH MEMBERS")
       persistMembers(loadbalancerID, poolID)
         .then((data) => {})
         .catch((error) => {})
@@ -67,7 +68,7 @@ const MemberList = ({ props, loadbalancerID }) => {
 
   const members = filterItems(searchTerm, items)
   return useMemo(() => {
-    console.log("RENDER member list")
+    Log.debug("RENDER member list")
     return (
       <React.Fragment>
         {poolID && !poolError && (

@@ -8,6 +8,7 @@ import ErrorPage from "../ErrorPage"
 import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
+import Log from "../shared/logger"
 
 const EditL7Policy = (props) => {
   const {
@@ -61,7 +62,7 @@ const EditL7Policy = (props) => {
   }, [l7policyID])
 
   const loadL7policy = () => {
-    console.log("fetching l7policy to edit")
+    Log.debug("fetching l7policy to edit")
     setL7policy({ ...l7policy, isLoading: true, error: null })
     fetchL7Policy(loadbalancerID, listenerID, l7policyID)
       .then((data) => {
@@ -84,7 +85,7 @@ const EditL7Policy = (props) => {
   }, [loadbalancerID])
 
   const loadPoolsForSelect = () => {
-    console.log("fetching pools for select")
+    Log.debug("fetching pools for select")
     setPools({ ...pools, isLoading: true })
     fetchPoolsForSelect(loadbalancerID)
       .then((data) => {
@@ -239,7 +240,7 @@ const EditL7Policy = (props) => {
     setRedirectPoolID(p)
   }
 
-  console.log("RENDER edit L7 Policy")
+  Log.debug("RENDER edit L7 Policy")
   return (
     <Modal
       show={show}

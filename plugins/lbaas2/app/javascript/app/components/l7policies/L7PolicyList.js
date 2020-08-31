@@ -15,6 +15,7 @@ import { SearchField } from "lib/components/search_field"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
 
 const L7PolicyList = ({ props, loadbalancerID }) => {
   const dispatch = useDispatch()
@@ -64,7 +65,7 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
 
   const initialLoad = () => {
     if (listenerID) {
-      console.log("FETCH L7 POLICIES")
+      Log.debug("FETCH L7 POLICIES")
       persistL7Policies(loadbalancerID, listenerID, null)
         .then((data) => {
           setInitialLoadDone(true)
@@ -147,7 +148,7 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
   const l7Policies = filterItems(searchTerm, items)
   const isLoading = state.isLoading
   return useMemo(() => {
-    console.log("RENDER L7 POLICIES")
+    Log.debug("RENDER L7 POLICIES")
     return (
       <React.Fragment>
         {listenerID && !listenerError && (

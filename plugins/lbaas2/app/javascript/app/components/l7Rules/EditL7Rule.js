@@ -9,6 +9,7 @@ import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import useL7Policy from "../../../lib/hooks/useL7Policy"
 import { addNotice } from "lib/flashes"
+import Log from "../shared/logger"
 
 const EditL7Rule = (props) => {
   const {
@@ -59,7 +60,7 @@ const EditL7Rule = (props) => {
   }, [l7ruleID])
 
   const loadL7rule = () => {
-    console.log("fetching l7rule to edit")
+    Log.debug("fetching l7rule to edit")
     setL7rule({ ...l7rule, isLoading: true, error: null })
     fetchL7Rule(loadbalancerID, listenerID, l7policyID, l7ruleID)
       .then((data) => {
@@ -168,7 +169,7 @@ const EditL7Rule = (props) => {
     setRuleCompareType(option)
   }
 
-  console.log("RENDER edit L7 Rule")
+  Log.debug("RENDER edit L7 Rule")
   return (
     <Modal
       show={show}

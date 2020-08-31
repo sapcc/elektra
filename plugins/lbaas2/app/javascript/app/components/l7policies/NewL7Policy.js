@@ -7,6 +7,7 @@ import useListener from "../../../lib/hooks/useListener"
 import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
+import Log from "../shared/logger"
 
 const NewL7Policy = (props) => {
   const {
@@ -29,7 +30,7 @@ const NewL7Policy = (props) => {
   })
 
   useEffect(() => {
-    console.log("fetching pools")
+    Log.debug("fetching pools")
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     // get pools for the select
@@ -151,7 +152,7 @@ const NewL7Policy = (props) => {
   const onSelectCode = () => {}
   const onSelectPoolChange = () => {}
 
-  console.log("RENDER new L7 Policy")
+  Log.debug("RENDER new L7 Policy")
 
   return (
     <Modal

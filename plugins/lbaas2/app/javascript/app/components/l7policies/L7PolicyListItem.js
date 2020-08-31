@@ -14,6 +14,7 @@ import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
 
 const L7PolicyListItem = ({
   props,
@@ -57,22 +58,22 @@ const L7PolicyListItem = ({
     // do not create a new polling interval if already polling
     if (polling) return
     polling = setInterval(() => {
-      console.log(
+      Log.debug(
         "Polling l7 policy -->",
         l7Policy.id,
         " with interval -->",
         interval
       )
-      persistL7Policy(loadbalancerID, listenerID, l7Policy.id).catch(
-        (error) => {
-          // console.log(JSON.stringify(error))
-        }
-      )
+      persistL7Policy(
+        loadbalancerID,
+        listenerID,
+        l7Policy.id
+      ).catch((error) => {})
     }, interval)
   }
 
   const stopPolling = () => {
-    console.log("stop polling for l7policy id -->", l7Policy.id)
+    Log.debug("stop polling for l7policy id -->", l7Policy.id)
     clearInterval(polling)
     polling = null
   }
@@ -188,7 +189,7 @@ const L7PolicyListItem = ({
   }
 
   const l7RuleIDs = l7Policy.rules.map((l7rule) => l7rule.id)
-  console.log("RENDER L7 Policy Item")
+  Log.debug("RENDER L7 Policy Item")
   return (
     <tr>
       <td className="snug-nowrap">

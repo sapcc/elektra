@@ -9,6 +9,7 @@ import TagsInput from "../shared/TagsInput"
 import HelpPopover from "../shared/HelpPopover"
 import { addNotice } from "lib/flashes"
 import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
+import Log from "../shared/logger"
 
 const EditListener = (props) => {
   const {
@@ -80,7 +81,7 @@ const EditListener = (props) => {
   }, [listenerID])
 
   const loadListener = () => {
-    console.log("fetching listener to edit")
+    Log.debug("fetching listener to edit")
     // fetch the listener to edit
     setListener({ ...listener, isLoading: true, error: null })
     fetchListener(loadbalancerID, listenerID)
@@ -420,7 +421,7 @@ const EditListener = (props) => {
     setTags(options)
   }
 
-  console.log("RENDER edit listener")
+  Log.debug("RENDER edit listener")
   return (
     <Modal
       show={show}

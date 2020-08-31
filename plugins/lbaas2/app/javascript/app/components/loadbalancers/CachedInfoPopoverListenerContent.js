@@ -1,8 +1,9 @@
 import React from "react"
 import { Link } from "react-router-dom"
+import Log from "../shared/logger"
 
 const LbPopoverListenerContent = ({ lbID, listenerIds, cachedListeners }) => {
-  console.log("RENDER lbPoopover CONTENT")
+  Log.debug("RENDER lbPoopover CONTENT")
   return listenerIds.length > 0 ? (
     listenerIds.map((id, index) => (
       <div key={id}>

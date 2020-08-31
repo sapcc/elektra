@@ -1,3 +1,5 @@
+import Log from "../components/shared/logger"
+
 const initialState = {
   trees: [],
   unassignedTreeErrorCount: 0,
@@ -5,12 +7,12 @@ const initialState = {
 }
 
 const request = (state) => {
-  console.log("statusTrees request")
+  Log.debug("statusTrees request")
   return state
 }
 
 const receive = (state, { lbId, tree }) => {
-  console.log("statusTrees receive")
+  Log.debug("statusTrees receive")
   const index = state.trees.findIndex((item) => item.id == tree.loadbalancer.id)
   const trees = state.trees.slice()
   const newTreeState = {
@@ -28,14 +30,14 @@ const receive = (state, { lbId, tree }) => {
 }
 
 const requestFailure = (state, { lbId, error }) => {
-  console.log("statusTree request failure")
+  Log.debug("statusTree request failure")
   const index = state.trees.findIndex((item) => item.id == lbId)
   const trees = state.trees.slice()
   let unassignedTreeErrorCount = state.unassignedTreeErrorCount
   let unassignedTreeError = state.unassignedTreeError
   if (index >= 0) {
     const errorCount = trees[index].errorCount || 0
-    console.log("errorCount-->", errorCount)
+    Log.debug("errorCount-->", errorCount)
     trees[index] = {
       ...trees[index],
       errorCount: errorCount + 1,

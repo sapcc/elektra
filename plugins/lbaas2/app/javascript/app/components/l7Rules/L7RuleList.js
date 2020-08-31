@@ -12,6 +12,7 @@ import { SearchField } from "lib/components/search_field"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
 
 const L7RulesList = ({ props, loadbalancerID }) => {
   const { searchParamsToString } = useCommons()
@@ -26,7 +27,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
 
   const initialLoad = () => {
     if (l7PolicyID) {
-      console.log("FETCH L7 RULES")
+      Log.debug("FETCH L7 RULES")
       persistL7Rules(loadbalancerID, listenerID, l7PolicyID, null)
         .then((data) => {})
         .catch((error) => {})

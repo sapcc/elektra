@@ -8,6 +8,7 @@ import TagsInput from "../shared/TagsInput"
 import HelpPopover from "../shared/HelpPopover"
 import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
 import { addNotice } from "lib/flashes"
+import Log from "../shared/logger"
 
 const NewListener = (props) => {
   const {
@@ -47,7 +48,7 @@ const NewListener = (props) => {
   const [tags, setTags] = useState([])
 
   useEffect(() => {
-    console.log("fetching pools and containers for select")
+    Log.debug("fetching pools and containers for select")
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     // get pools for the select
@@ -265,7 +266,7 @@ const NewListener = (props) => {
     setTags(options)
   }
 
-  console.log("RENDER new listener")
+  Log.debug("RENDER new listener")
   return (
     <Modal
       show={show}

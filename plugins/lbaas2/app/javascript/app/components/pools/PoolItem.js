@@ -16,7 +16,7 @@ import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
-import { reset } from "numeral"
+import Log from "../shared/logger"
 
 const PoolItem = ({ props, pool, searchTerm, disabled }) => {
   const { persistPool, deletePool, onSelectPool, reset } = usePool()
@@ -49,7 +49,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
     // do not create a new polling interval if already polling
     if (polling) return
     polling = setInterval(() => {
-      console.log("Polling pool -->", pool.id, " with interval -->", interval)
+      Log.debug("Polling pool -->", pool.id, " with interval -->", interval)
       persistPool(loadbalancerID, pool.id).catch((error) => {
         if (error && error.status == 404) {
           // check if the pool is selected and if yes deselect the item
@@ -62,7 +62,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
   }
 
   const stopPolling = () => {
-    console.log("stop polling for pool id -->", pool.id)
+    Log.debug("stop polling for pool id -->", pool.id)
     clearInterval(polling)
     polling = null
   }

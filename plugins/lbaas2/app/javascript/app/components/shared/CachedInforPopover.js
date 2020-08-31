@@ -1,8 +1,9 @@
 import React, { useState } from "react"
 import { Overlay, Button, Popover } from "react-bootstrap"
+import Log from "../shared/logger"
 
 const LbPopover = ({ popoverId, buttonName, title, content }) => {
-  console.log("--> RENDER LbPopover")
+  Log.debug("--> RENDER LbPopover")
 
   const [show, setShow] = useState(false)
   const [target, setTarget] = useState(null)

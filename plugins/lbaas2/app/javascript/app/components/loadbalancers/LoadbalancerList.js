@@ -18,6 +18,7 @@ import Pagination from "../shared/Pagination"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
 
 const TableFadeTransition = ({ children, ...props }) => (
   <CSSTransition
@@ -40,7 +41,7 @@ const LoadbalancerList = (props) => {
   }, [])
 
   const initLoad = () => {
-    console.log("FETCH initial loadbalancers")
+    Log.debug("FETCH initial loadbalancers")
     persistLoadbalancers({ marker: state.marker }).catch((error) => {})
   }
 
@@ -92,7 +93,7 @@ const LoadbalancerList = (props) => {
   }
   const loadbalancers = filterItems(searchTerm, items)
   return useMemo(() => {
-    console.log("RENDER loadbalancer list")
+    Log.debug("RENDER loadbalancer list")
     return (
       <React.Fragment>
         {error ? (
