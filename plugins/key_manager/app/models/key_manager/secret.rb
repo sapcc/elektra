@@ -47,7 +47,7 @@ module KeyManager
           Type::PRIVATE.to_sym => [OCTET_STREAM, TEXTPLAIN],
           Type::PASSPHRASE.to_sym => [TEXTPLAIN, TEXTPLAIN_CHARSET_UTF8],
           Type::CERTIFICATE.to_sym => [PKCS8, PKIX_CERT, TEXTPLAIN],
-          Type::OPAQUE.to_sym => [TEXTPLAIN]
+          Type::OPAQUE.to_sym => [TEXTPLAIN, OCTET_STREAM]
         }
       end
     end
