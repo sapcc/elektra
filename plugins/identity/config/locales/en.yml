@@ -15,6 +15,7 @@ en:
       cloud_baremetal_admin: Ironic Cloud Administrator
       cloud_compute_admin: Nova Cloud Administrator
       cloud_dns_admin: Designate Cloud Administrator
+      cloud_dns_resource_admin: Limes Cloud Administrator (DNS only)
       cloud_image_admin: Glance Cloud Administrator
       cloud_keymanager_admin: Barbican Cloud Administrator
       cloud_network_admin: Neutron Cloud Administrator
