@@ -24,7 +24,7 @@ const EditListener = (props) => {
     protocolTypes,
     protocolHeaderInsertionRelation,
     clientAuthenticationRelation,
-    fetchContainersForSelect,
+    fetchSecretsForSelect,
     certificateContainerRelation,
     SNIContainerRelation,
     CATLSContainerRelation,
@@ -59,7 +59,7 @@ const EditListener = (props) => {
     error: null,
     items: [],
   })
-  const [containers, setContainers] = useState({
+  const [secrets, setSecrets] = useState({
     isLoading: false,
     error: null,
     items: [],
@@ -99,21 +99,21 @@ const EditListener = (props) => {
           })
           .catch((error) => {})
 
-        loadContainers(loadbalancerID)
-          .then((availableContainers) => {
+        loadSecrets(loadbalancerID)
+          .then((availableSecrets) => {
             setSelectedCertificateContainer(
               data.listener.protocol,
-              availableContainers,
+              availableSecrets,
               data.listener.default_tls_container_ref
             )
             setSelectedSNIContainers(
               data.listener.protocol,
-              availableContainers,
+              availableSecrets,
               data.listener.sni_container_refs
             )
             setSelectedClientCATLScontainer(
               data.listener.protocol,
-              availableContainers,
+              availableSecrets,
               data.listener.client_ca_tls_container_ref
             )
           })
@@ -181,25 +181,27 @@ const EditListener = (props) => {
 
   const setSelectedCertificateContainer = (
     selectedProtocolType,
-    availableContainers,
+    availableSecrets,
     selectedCertificateContainer
   ) => {
     setShowCertificateContainer(
       certificateContainerRelation(selectedProtocolType)
     )
-    const selectedOption = availableContainers.find(
+
+    const selectedOption = availableSecrets.find(
       (i) => i.value == (selectedCertificateContainer || "").trim()
     )
+
     setCertificateContainer(selectedOption)
   }
 
   const setSelectedSNIContainers = (
     selectedProtocolType,
-    availableContainers,
+    availableSecrets,
     selectedSNIContainers
   ) => {
     setShowSNIContainer(SNIContainerRelation(selectedProtocolType))
-    const selectedOptions = availableContainers.filter((i) =>
+    const selectedOptions = availableSecrets.filter((i) =>
       selectedSNIContainers.includes(i.value)
     )
     setSNIContainers(selectedOptions)
@@ -207,11 +209,11 @@ const EditListener = (props) => {
 
   const setSelectedClientCATLScontainer = (
     selectedProtocolType,
-    availableContainers,
+    availableSecrets,
     selectedCATLSContainer
   ) => {
     setShowCATLSContainer(CATLSContainerRelation(selectedProtocolType))
-    const selectedOption = availableContainers.find(
+    const selectedOption = availableSecrets.find(
       (i) => i.value == (selectedCATLSContainer || "").trim()
     )
     setClientCATLScontainer(selectedOption)
@@ -272,26 +274,26 @@ const EditListener = (props) => {
     })
   }
 
-  const loadContainers = (
+  const loadSecrets = (
     lbID,
     selectedCertificateContainer,
     selectedSNIContainers,
     selectedCATLSContainer
   ) => {
     return new Promise((handleSuccess, handleErrors) => {
-      setContainers({ ...containers, isLoading: true })
-      fetchContainersForSelect(lbID)
+      setSecrets({ ...secrets, isLoading: true })
+      fetchSecretsForSelect(lbID)
         .then((data) => {
-          setContainers({
-            ...containers,
+          setSecrets({
+            ...secrets,
             isLoading: false,
-            items: data.containers,
+            items: data.secrets,
             error: null,
           })
-          handleSuccess(data.containers)
+          handleSuccess(data.secrets)
         })
         .catch((error) => {
-          setContainers({ ...containers, isLoading: false, error: error })
+          setSecrets({ ...secrets, isLoading: false, error: error })
           handleErrors(error)
         })
     })
@@ -459,6 +461,27 @@ const EditListener = (props) => {
               resetForm={false}
             >
               <Modal.Body>
+                <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+                  <p>
+                    <h4>
+                      Switch to using PKCS12 for TLS Term certs (New in API
+                      version 2.8)
+                    </h4>
+                  </p>
+                  <p>
+                    Listeners use now the URI of the key manager service secret
+                    containing a PKCS12 format certificate/key bundle for
+                    TERMINATED_HTTPS protocol.
+                  </p>
+                  <p>
+                    <b>
+                      Old listeners using secret containers of type
+                      “certificate” containing the certificate and key for
+                      TERMINATED_HTTPS protocol will not anymore be able to
+                      edit. Please remove/recreate them.
+                    </b>
+                  </p>
+                </div>
                 <p>
                   A Listener defines a protocol/port combination under which the
                   load balancer can be called.
@@ -628,27 +651,27 @@ const EditListener = (props) => {
                 {showCertificateContainer && (
                   <div className="advanced-options advanced-options-minus-margin">
                     <Form.ElementHorizontal
-                      label="Certificate Container"
+                      label="Certificate Secret"
                       name="default_tls_container_ref"
                       required
                     >
-                      {containers.error ? (
-                        <span className="text-danger">{containers.error}</span>
+                      {secrets.error ? (
+                        <span className="text-danger">{secrets.error}</span>
                       ) : (
                         ""
                       )}
                       <SelectInput
                         name="default_tls_container_ref"
-                        isLoading={containers.isLoading}
-                        items={containers.items}
+                        isLoading={secrets.isLoading}
+                        items={secrets.items}
                         onChange={onSelectCertificateContainer}
                         value={CertificateContainer}
                         isClearable
                       />
                       <span className="help-block">
                         <i className="fa fa-info-circle"></i>
-                        The container with the TLS secrets used for the
-                        listener.
+                        The secret containing a PKCS12 format certificate/key
+                        bundles.
                       </span>
                     </Form.ElementHorizontal>
                   </div>
@@ -657,26 +680,26 @@ const EditListener = (props) => {
                 {showSNIContainer && (
                   <div className="advanced-options advanced-options-minus-margin">
                     <Form.ElementHorizontal
-                      label="SNI Containers"
+                      label="SNI Secrets"
                       name="sni_container_refs"
                     >
-                      {containers.error ? (
-                        <span className="text-danger">{containers.error}</span>
+                      {secrets.error ? (
+                        <span className="text-danger">{secrets.error}</span>
                       ) : (
                         ""
                       )}
                       <SelectInput
                         name="sni_container_refs"
-                        isLoading={containers.isLoading}
+                        isLoading={secrets.isLoading}
                         isMulti
-                        items={containers.items}
+                        items={secrets.items}
                         onChange={onSelectSNIContainers}
                         value={SNIContainers}
                       />
                       <span className="help-block">
-                        <i className="fa fa-info-circle"></i>A list of
-                        containers with alternative TLS secrets used for Server
-                        Name Indication (SNI).
+                        <i className="fa fa-info-circle"></i>A list of secrets
+                        containing PKCS12 format certificate/key bundles used
+                        for Server Name Indication (SNI).
                       </span>
                     </Form.ElementHorizontal>
                   </div>
@@ -706,20 +729,21 @@ const EditListener = (props) => {
                 {showCATLSContainer && (
                   <div className="advanced-options">
                     <Form.ElementHorizontal
-                      label="Client Authentication Container"
+                      label="Client Authentication Secret"
                       name="client_ca_tls_container_ref"
                     >
                       <SelectInput
                         name="client_ca_tls_container_ref"
-                        isLoading={containers.isLoading}
-                        items={containers.items}
+                        isLoading={secrets.isLoading}
+                        items={secrets.items}
                         onChange={onSelectCATLSContainers}
                         value={clientCATLScontainer}
                         isClearable
                       />
                       <span className="help-block">
                         <i className="fa fa-info-circle"></i>
-                        The TLS client authentication certificate.
+                        The secret containing a PEM format client CA certificate
+                        bundle.
                       </span>
                     </Form.ElementHorizontal>
                   </div>

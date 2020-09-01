@@ -417,6 +417,19 @@ const useListener = () => {
     })
   }
 
+  const fetchSecretsForSelect = (lbID) => {
+    return new Promise((handleSuccess, handleError) => {
+      ajaxHelper
+        .get(`/loadbalancers/${lbID}/listeners/secrets`)
+        .then((response) => {
+          handleSuccess(response.data)
+        })
+        .catch((error) => {
+          handleError(error.response)
+        })
+    })
+  }
+
   const fetchListnersNoDefaultPoolForSelect = (lbID) => {
     return new Promise((handleSuccess, handleError) => {
       ajaxHelper
@@ -688,6 +701,7 @@ const useListener = () => {
     protocolHeaderInsertionRelation,
     clientAuthenticationRelation,
     fetchContainersForSelect,
+    fetchSecretsForSelect,
     certificateContainerRelation,
     SNIContainerRelation,
     CATLSContainerRelation,

@@ -14,6 +14,7 @@ Lbaas2::Engine.routes.draw do
 
       collection do
         get 'containers' => 'listeners#containers'
+        get 'secrets' => 'listeners#secrets'
         get 'items_for_select' => 'listeners#itemsForSelect'
         get 'items_no_def_pool_for_select' => 'listeners#itemsWithoutDefaultPoolForSelect'
       end

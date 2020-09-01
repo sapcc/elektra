@@ -1,5 +1,4 @@
 {
-
   "lbaas2_member": "role:member or role:Member",
   "lbaas2_viewer": "role:loadbalancer_viewer or role:network_viewer",
   "lbaas2_admin": "role:loadbalancer_admin or role:network_admin",
@@ -27,6 +26,7 @@
   "lbaas2:listener_update": "rule:lbaas2_context_is_editor",
   "lbaas2:listener_delete": "rule:lbaas2_context_is_editor",
   "lbaas2:listener_containers": "rule:lbaas2_context_is_editor",
+  "lbaas2:listener_secrets": "rule:lbaas2_context_is_editor",
   "lbaas2:listener_itemsForSelect": "rule:lbaas2_context_is_editor",
   "lbaas2:listener_itemsWithoutDefaultPoolForSelect": "rule:lbaas2_context_is_editor",
 
