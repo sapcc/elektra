@@ -48,7 +48,7 @@ module ServiceLayer
       end
 
       def delete_loadbalancer(id)
-        elektron_lb2.delete("loadbalancers/#{id}")
+        elektron_lb2.delete("loadbalancers/#{id}?cascade=true")
       end
 
     end
