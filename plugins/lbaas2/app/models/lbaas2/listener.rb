@@ -44,7 +44,7 @@ module Lbaas2
         'client_authentication' => read('client_authentication'),
         'client_ca_tls_container_ref' => read('client_ca_tls_container_ref'),
         'tags'                      => read('tags')
-      }.delete_if { |k, v| v.blank? && !%w[name description default_pool_id sni_container_refs connection_limit insert_headers].include?(k) }
+      }
     end
 
   end

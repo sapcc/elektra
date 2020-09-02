@@ -44,7 +44,7 @@ module Lbaas2
         'tls_container_ref'         => read('tls_container_ref'),
         'ca_tls_container_ref'      => read('ca_tls_container_ref'),
         'tags'                      => read('tags')
-      }.delete_if { |k, v| v.blank? and !%w[name description session_persistence].include?(k) }
+      }
     end
 
   end

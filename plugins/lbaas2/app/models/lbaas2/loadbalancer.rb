@@ -25,7 +25,7 @@ module Lbaas2
         'description'     => read('description'),
         'admin_state_up'  => read('admin_state_up'),
         'tags'            => read('tags')
-      }.delete_if { |k, v| v.blank? and !%w[name description].include?(k) }
+      }
     end
 
   end

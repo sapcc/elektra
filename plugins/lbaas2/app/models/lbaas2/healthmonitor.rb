@@ -47,7 +47,7 @@ module Lbaas2
         'url_path' => read('url_path'),
         'tags' => read('tags'),
         'admin_state_up' => read('admin_state_up')
-      }.delete_if { |k, v| v.blank? && !%w[name].include?(k) }
+      }
     end
 
   end

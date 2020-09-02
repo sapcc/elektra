@@ -29,7 +29,7 @@ module Lbaas2
         'admin_state_up' => read('admin_state_up'),
         'weight'         => read('weight'),
         'tags'          => read('tags')
-      }.delete_if { |_k, v| v.blank? }
+      }
     end
 
     # need to add this methods since the Model can't perform service methods with 3 parameters    
