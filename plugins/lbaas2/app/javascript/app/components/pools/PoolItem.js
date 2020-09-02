@@ -213,8 +213,8 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
 
   const collectContainers = () => {
     const containers = [
-      { name: "Certificate Container", ref: pool.tls_container_ref },
-      { name: "Authentication Container (CA)", ref: pool.ca_tls_container_ref },
+      { name: "Certificate Secret", ref: pool.tls_container_ref },
+      { name: "Authentication Secret (CA)", ref: pool.ca_tls_container_ref },
     ]
     var filteredContainers = containers.reduce((filteredContainers, item) => {
       if (

@@ -28,7 +28,7 @@ const NewPool = (props) => {
   } = usePool()
   const {
     fetchListnersNoDefaultPoolForSelect,
-    fetchContainersForSelect,
+    fetchSecretsForSelect,
   } = useListener()
   const { persistLoadbalancer } = useLoadbalancer()
   const [availableListeners, setAvailableListeners] = useState([])
@@ -38,7 +38,7 @@ const NewPool = (props) => {
     error: null,
     items: [],
   })
-  const [containers, setContainers] = useState({
+  const [secrets, setSecrets] = useState({
     isLoading: false,
     error: null,
     items: [],
@@ -65,18 +65,18 @@ const NewPool = (props) => {
       })
 
     // get the containers for the select
-    setContainers({ ...containers, isLoading: true })
-    fetchContainersForSelect(lbID)
+    setSecrets({ ...secrets, isLoading: true })
+    fetchSecretsForSelect(lbID)
       .then((data) => {
-        setContainers({
-          ...containers,
+        setSecrets({
+          ...secrets,
           isLoading: false,
-          items: data.containers,
+          items: data.secrets,
           error: null,
         })
       })
       .catch((error) => {
-        setContainers({ ...containers, isLoading: false, error: error })
+        setSecrets({ ...secrets, isLoading: false, error: error })
       })
   }, [])
 
@@ -222,6 +222,26 @@ const NewPool = (props) => {
         resetForm={false}
       >
         <Modal.Body>
+          <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+            <h4>
+              Switched to using PKCS12 for TLS Term certs (New in API version
+              2.8)
+            </h4>
+            <p>
+              For pools with TLS encryption now use the URI of the Key Manager
+              service secret containing a PKCS12 format certificate/key bundle.
+            </p>
+            <p>
+              Please see following examples for creating certs with PKCS12
+              format:{" "}
+              <a
+                href="https://github.com/openstack/octavia/blob/master/doc/source/user/guides/basic-cookbook.rst"
+                target="_blank"
+              >
+                Basic Load Balancing Cookbook
+              </a>
+            </p>
+          </div>
           <p>
             Object representing the grouping of members to which the listener
             forwards client requests. Note that a pool is associated with only
@@ -351,19 +371,14 @@ const NewPool = (props) => {
           {showTLSSettings && (
             <div className="advanced-options">
               <Form.ElementHorizontal
-                label="Certificate Container"
+                label="Certificate Secret"
                 name="tls_container_ref"
               >
-                {containers.error ? (
-                  <span className="text-danger">{containers.error}</span>
-                ) : (
-                  ""
-                )}
                 <SelectInput
                   name="tls_container_ref"
                   isClearable
-                  isLoading={containers.isLoading}
-                  items={containers.items}
+                  isLoading={secrets.isLoading}
+                  items={secrets.items}
                 />
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
@@ -371,28 +386,29 @@ const NewPool = (props) => {
                   certificate/key bundle for TLS client authentication to the
                   member servers.
                 </span>
+                {secrets.error && (
+                  <span className="text-danger">{secrets.error}</span>
+                )}
               </Form.ElementHorizontal>
 
               <Form.ElementHorizontal
-                label="Authentication Container (CA)"
+                label="Authentication Secret (CA)"
                 name="ca_tls_container_ref"
               >
-                {containers.error ? (
-                  <span className="text-danger">{containers.error}</span>
-                ) : (
-                  ""
-                )}
                 <SelectInput
                   name="ca_tls_container_ref"
                   isClearable
-                  isLoading={containers.isLoading}
-                  items={containers.items}
+                  isLoading={secrets.isLoading}
+                  items={secrets.items}
                 />
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
                   The reference secret containing a PEM format CA certificate
-                  bundle for tls_enabled pools.
+                  bundle.
                 </span>
+                {secrets.error && (
+                  <span className="text-danger">{secrets.error}</span>
+                )}
               </Form.ElementHorizontal>
             </div>
           )}

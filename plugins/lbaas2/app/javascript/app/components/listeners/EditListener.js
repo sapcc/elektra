@@ -525,8 +525,8 @@ const EditListener = (props) => {
                       containing the certificate and key for TERMINATED_HTTPS
                       protocol are deprecated and will no longer work in the
                       near future. Please consider exchanging the secret
-                      containers for secrets with PKCS12 format as soon as
-                      possible!
+                      containers for secrets and use PKCS12 format
+                      certificate/key bundles as soon as possible!
                     </b>
                   </p>
                   <p>
