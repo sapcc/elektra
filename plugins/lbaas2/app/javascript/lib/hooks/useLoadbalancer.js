@@ -87,7 +87,7 @@ const useLoadbalancer = () => {
   
   const deleteLoadbalancer = (name, id) => {
     return new Promise((handleSuccess,handleErrors) => {
-      confirm(<React.Fragment><p>Do you really want to delete following Load Balancer?</p><p>{createNameTag(name)} <b>id:</b> {id}</p></React.Fragment>).then(() => {
+      confirm(<React.Fragment><p>Do you really want to delete following Load Balancer and all related objects?</p><p>{createNameTag(name)} <b>id:</b> {id}</p></React.Fragment>).then(() => {
         return ajaxHelper.delete(`/loadbalancers/${id}`)
         .then( (response) => {
           dispatch({type: 'REQUEST_REMOVE_LOADBALANCER', id: id})
