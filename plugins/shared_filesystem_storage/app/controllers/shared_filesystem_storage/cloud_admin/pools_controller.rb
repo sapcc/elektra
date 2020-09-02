@@ -26,7 +26,7 @@ module SharedFilesystemStorage
           end
           pool.availability_zone ||= 'unknown'
           pool
-        end.sort_by!(&:availability_zone)
+        end.sort_by!{ |p| [p.availability_zone, p.host, p.aggregate] }
       end
 
       def show
