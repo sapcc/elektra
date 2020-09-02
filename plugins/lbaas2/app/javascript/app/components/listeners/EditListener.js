@@ -425,8 +425,16 @@ const EditListener = (props) => {
   const onSubmit = (values) => {
     setFormErrors(null)
     const newValues = { ...values }
+
+    // removing tags or pred policies can result to null variables instead of empty arrays
+    const newPredPolicies = predPolicies || []
+    const newTags = tags || []
+
     // add optional attributes that not set per context
-    newValues.tags = [...predPolicies, ...tags].map((item, index) => item.value)
+    newValues.tags = [...newPredPolicies, ...newTags].map(
+      (item, index) => item.value
+    )
+
     return updateListener(loadbalancerID, listenerID, newValues)
       .then((response) => {
         addNotice(
