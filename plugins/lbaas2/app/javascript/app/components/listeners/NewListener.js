@@ -290,6 +290,27 @@ const NewListener = (props) => {
         resetForm={false}
       >
         <Modal.Body>
+          <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+            <h4>
+              Switched to using PKCS12 for TLS Term certs (New in API version
+              2.8)
+            </h4>
+            <p>
+              For the TERMINATED_HTTPS protocol listeners now use the URI of the
+              Key Manager service secret containing a PKCS12 format
+              certificate/key bundle.
+            </p>
+            <p>
+              Please see following examples for creating certs with PKCS12
+              format:{" "}
+              <a
+                href="https://github.com/openstack/octavia/blob/master/doc/source/user/guides/basic-cookbook.rst"
+                target="_blank"
+              >
+                Basic Load Balancing Cookbook
+              </a>
+            </p>
+          </div>
           <p>
             A Listener defines a protocol/port combination under which the load
             balancer can be called.

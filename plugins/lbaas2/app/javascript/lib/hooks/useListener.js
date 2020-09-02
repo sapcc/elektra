@@ -2,9 +2,11 @@ import React from "react"
 import { ajaxHelper } from "ajax_helper"
 import { useDispatch } from "../../app/components/StateProvider"
 import { confirm } from "lib/dialogs"
+import useCommons from "./useCommons"
 
 const useListener = () => {
   const dispatch = useDispatch()
+  const { errorMessage } = useCommons()
 
   const fetchListeners = (lbID, options) => {
     return new Promise((handleSuccess, handleError) => {
@@ -412,7 +414,7 @@ const useListener = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(errorMessage(error.response))
         })
     })
   }
@@ -425,7 +427,7 @@ const useListener = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(errorMessage(error.response))
         })
     })
   }
@@ -438,7 +440,7 @@ const useListener = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(errorMessage(error.response))
         })
     })
   }
@@ -451,7 +453,7 @@ const useListener = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(errorMessage(error.response))
         })
     })
   }
