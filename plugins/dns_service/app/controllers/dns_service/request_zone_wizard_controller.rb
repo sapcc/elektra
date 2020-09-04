@@ -14,7 +14,6 @@ module DnsService
     end
 
     def create
-      puts "äääääääääääää"
       @zone_request = ::DnsService::ZoneRequest.new(nil, params[:zone_request])
       inquiry = nil
 

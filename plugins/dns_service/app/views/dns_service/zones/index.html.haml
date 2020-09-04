@@ -18,8 +18,12 @@
     %a.help-link.has-feedback-help{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: 'Search term can use wildcard "*".'}}
       %i.fa.fa-question-circle
 
-    .main-buttons
-      = link_to 'Request New Zone', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary'
+    - if current_user.is_allowed?("dns_service:zone_create")
+      .main-buttons
+        = link_to 'Create New Zone', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary'
+    - elsif current_user.is_allowed?("dns_service:request_zone")
+      .main-buttons
+        = link_to 'Request New Zone', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary'
 
 %table.table.zones
   %thead
