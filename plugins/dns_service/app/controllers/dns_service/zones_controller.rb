@@ -136,6 +136,7 @@ module DnsService
     end
 
     def destroy
+      # TODO: if zone cannot be deleted like subzones are existing the error is not handled
       @deleted = services.dns_service.delete_zone(params[:id], @impersonate_option)
       respond_to do |format|
         format.js {}
