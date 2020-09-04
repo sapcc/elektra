@@ -75,8 +75,10 @@ module DnsService
             puts "requested zone #{@zone_request.zone_name} is part of existing zone #{requested_parent_zone_name} inside the project #{requested_parent_zone.project_id}"
             # this is usualy the case if we found "only.sap" or "c.REGION-cloud.sap" that lives in the ccadmin/master project
 
+            # 0. find project to get domain_id
+            requested_parent_zone_project = services.identity.find_project(requested_parent_zone.project_id)
             # 1. check zone quota for requested_parent_zone project where the zone is first created
-            check_quotas(@inquiry.domain_id, requested_parent_zone.project_id, 'zones')
+            check_quotas(requested_parent_zone_project.domain_id, requested_parent_zone.project_id, 'zones')
             # 2. zone will be created inside the project where the parent zone lives
             @zone.project_id(requested_parent_zone.project_id)
             # 3. zone transfer to destination project is needed
