@@ -1,4 +1,5 @@
 FROM ruby:2.3-alpine
+LABEL source_repository="https://github.com/sapcc/elektra"
 
 WORKDIR /omnitruck
 RUN apk add --no-cache git build-base linux-headers --virtual .builddeps \
