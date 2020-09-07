@@ -1,4 +1,5 @@
 FROM alpine:3.6
+LABEL source_repository="https://github.com/sapcc/elektra"
 
 ENV GITHUB_CHANGELOG_GENERATOR_VERSION "1.14.3"
 

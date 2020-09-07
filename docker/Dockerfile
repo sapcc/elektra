@@ -90,3 +90,4 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
       && su postgres -c 'script/pg_tmp.sh -d /tmp/pg stop'
 
 FROM elektra
+LABEL source_repository="https://github.com/sapcc/elektra"
