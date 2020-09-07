@@ -28,7 +28,7 @@ const EditPool = (props) => {
     updatePool,
   } = usePool()
   const { persistLoadbalancer } = useLoadbalancer()
-  const { fetchListnersForSelect, fetchContainersForSelect } = useListener()
+  const { fetchListnersForSelect, fetchSecretsForSelect } = useListener()
 
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [poolID, setPoolID] = useState(null)
@@ -37,7 +37,7 @@ const EditPool = (props) => {
     true
   )
   const [listenersLoaded, setListenersLoaded] = useState(false)
-  const [containersLoaded, setContainersLoaded] = useState(false)
+  const [secretsLoaded, setSecretsLoaded] = useState(false)
 
   const [lbAlgorithm, setLbAlgorithm] = useState(null)
   const [protocol, setProtocol] = useState(null)
@@ -48,7 +48,15 @@ const EditPool = (props) => {
   ] = useState(null)
   const [listener, setListener] = useState(null)
   const [certificateContainer, setCertificateContainer] = useState(null)
+  const [
+    certificateContainerDeprecated,
+    setCertificateContainerDeprecated,
+  ] = useState(null)
   const [authenticationContainer, setAuthenticationContainer] = useState(null)
+  const [
+    authenticationContainerDeprecated,
+    setAuthenticationContainerDeprecated,
+  ] = useState(null)
 
   const [pool, setPool] = useState({
     isLoading: false,
@@ -60,7 +68,7 @@ const EditPool = (props) => {
     error: null,
     items: [],
   })
-  const [containers, setContainers] = useState({
+  const [secrets, setSecrets] = useState({
     isLoading: false,
     error: null,
     items: [],
@@ -79,7 +87,7 @@ const EditPool = (props) => {
     if (poolID) {
       loadPool()
       loadListeners()
-      loadContainers()
+      loadSecrets()
     }
   }, [poolID])
 
@@ -117,20 +125,20 @@ const EditPool = (props) => {
       })
   }
 
-  const loadContainers = () => {
-    setContainers({ ...containers, isLoading: true })
-    fetchContainersForSelect(loadbalancerID)
+  const loadSecrets = () => {
+    setSecrets({ ...secrets, isLoading: true })
+    fetchSecretsForSelect(loadbalancerID)
       .then((data) => {
-        setContainers({
-          ...containers,
+        setSecrets({
+          ...secrets,
           isLoading: false,
-          items: data.containers,
+          items: data.secrets,
           error: null,
         })
-        setContainersLoaded(true)
+        setSecretsLoaded(true)
       })
       .catch((error) => {
-        setContainers({ ...containers, isLoading: false, error: error })
+        setSecrets({ ...secrets, isLoading: false, error: error })
       })
   }
 
@@ -157,17 +165,17 @@ const EditPool = (props) => {
     // }
     if (pool.item && pool.item.tls_container_ref) {
       setSelectedCertificateContainer(
-        containers.items,
+        secrets.items,
         pool.item.tls_container_ref
       )
     }
     if (pool.item && pool.item.ca_tls_container_ref) {
       setSelectedAuthenticationContainer(
-        containers.items,
+        secrets.items,
         pool.item.ca_tls_container_ref
       )
     }
-  }, [containersLoaded, pool])
+  }, [secretsLoaded, pool])
 
   const setSelectedLbAlgorithm = (selectedLbAlgorithm) => {
     const selectedOption = lbAlgorithmTypes().find(
@@ -212,22 +220,41 @@ const EditPool = (props) => {
   }
 
   const setSelectedCertificateContainer = (
-    containers,
+    availableSecrets,
     selectedCertificateContainer
   ) => {
-    const selectedOption = containers.find(
+    const selectedOption = availableSecrets.find(
       (i) => i.value == (selectedCertificateContainer || "").trim()
     )
+
+    // save the secret in a different var if not found
+    // given the user has choose before a secret (selectedCertificateContainer)
+    // and the secrets are laoded (availableSecrets)
+    if (!selectedOption && selectedCertificateContainer && availableSecrets) {
+      setCertificateContainerDeprecated(selectedCertificateContainer)
+    }
+
     setCertificateContainer(selectedOption)
   }
 
   const setSelectedAuthenticationContainer = (
-    containers,
+    availableSecrets,
     selectedAuthenticationContainer
   ) => {
-    const selectedOption = containers.find(
+    const selectedOption = availableSecrets.find(
       (i) => i.value == (selectedAuthenticationContainer || "").trim()
     )
+    // save the secret in a different var if not found
+    // given the user has choose before a secret (selectedCertificateContainer)
+    // and the secrets are laoded (availableSecrets)
+    if (
+      !selectedOption &&
+      selectedAuthenticationContainer &&
+      availableSecrets
+    ) {
+      setAuthenticationContainerDeprecated(selectedAuthenticationContainer)
+    }
+
     setAuthenticationContainer(selectedOption)
   }
 
@@ -381,6 +408,34 @@ const EditPool = (props) => {
               resetForm={false}
             >
               <Modal.Body>
+                <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+                  <h4>
+                    Switched to using PKCS12 for TLS Term certs (New in API
+                    version 2.8)
+                  </h4>
+                  <p>
+                    For pools with TLS encryption now use the URI of the Key
+                    Manager service secret containing a PKCS12 format
+                    certificate/key bundle.
+                  </p>
+                  <p>
+                    <b>
+                      Please consider exchanging the secret containers for
+                      secrets and use PKCS12 format certificate/key bundle for
+                      the for TLS client authentication as soon as possible!
+                    </b>
+                  </p>
+                  <p>
+                    Please see following examples for creating certs with PKCS12
+                    format:{" "}
+                    <a
+                      href="https://github.com/openstack/octavia/blob/master/doc/source/user/guides/basic-cookbook.rst"
+                      target="_blank"
+                    >
+                      Basic Load Balancing Cookbook
+                    </a>
+                  </p>
+                </div>
                 <p>
                   Object representing the grouping of members to which the
                   listener forwards client requests. Note that a pool is
@@ -522,19 +577,14 @@ const EditPool = (props) => {
                 {showTLSSettings && (
                   <div className="advanced-options">
                     <Form.ElementHorizontal
-                      label="Certificate Container"
+                      label="Certificate Secret"
                       name="tls_container_ref"
                     >
-                      {containers.error ? (
-                        <span className="text-danger">{containers.error}</span>
-                      ) : (
-                        ""
-                      )}
                       <SelectInput
                         name="tls_container_ref"
                         isClearable
-                        isLoading={containers.isLoading}
-                        items={containers.items}
+                        isLoading={secrets.isLoading}
+                        items={secrets.items}
                         onChange={onCertificateContainerChange}
                         value={certificateContainer}
                       />
@@ -544,30 +594,51 @@ const EditPool = (props) => {
                         certificate/key bundle for TLS client authentication to
                         the member servers.
                       </span>
+                      {secrets.error && (
+                        <span className="text-danger">{secrets.error}</span>
+                      )}
+                      {certificateContainerDeprecated && (
+                        <React.Fragment>
+                          <p>
+                            <b className="text-danger">Secret(s) not found: </b>
+                          </p>
+                          <ul className="secrets-not-found">
+                            <li>{certificateContainerDeprecated}</li>
+                          </ul>
+                        </React.Fragment>
+                      )}
                     </Form.ElementHorizontal>
 
                     <Form.ElementHorizontal
-                      label="Authentication Container (CA)"
+                      label="Authentication Secret (CA)"
                       name="ca_tls_container_ref"
                     >
-                      {containers.error ? (
-                        <span className="text-danger">{containers.error}</span>
-                      ) : (
-                        ""
-                      )}
                       <SelectInput
                         name="ca_tls_container_ref"
                         isClearable
-                        isLoading={containers.isLoading}
-                        items={containers.items}
+                        isLoading={secrets.isLoading}
+                        items={secrets.items}
                         onChange={onAuthenticationContainerChange}
                         value={authenticationContainer}
                       />
                       <span className="help-block">
                         <i className="fa fa-info-circle"></i>
                         The reference secret containing a PEM format CA
-                        certificate bundle for tls_enabled pools.
+                        certificate bundle.
                       </span>
+                      {secrets.error && (
+                        <span className="text-danger">{secrets.error}</span>
+                      )}
+                      {authenticationContainerDeprecated && (
+                        <React.Fragment>
+                          <p>
+                            <b className="text-danger">Secret(s) not found: </b>
+                          </p>
+                          <ul className="secrets-not-found">
+                            <li>{authenticationContainerDeprecated}</li>
+                          </ul>
+                        </React.Fragment>
+                      )}
                     </Form.ElementHorizontal>
                   </div>
                 )}

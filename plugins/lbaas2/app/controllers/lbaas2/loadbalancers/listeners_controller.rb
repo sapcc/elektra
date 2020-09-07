@@ -103,6 +103,18 @@ module Lbaas2
         render json: { errors: e.message }, status: "500"
       end
 
+      def secrets
+        secrets = services.key_manager.secrets(limit: 100)
+        secrets = {items: []} if secrets.blank?
+        selectSecrets = secrets[:items].keep_if{|i| i.secret_type == ::KeyManager::Secret::Type::CERTIFICATE || i.secret_type == ::KeyManager::Secret::Type::OPAQUE}.map{ |c| {"label": "#{c.name} (#{c.id})", "value": c.secret_ref} }
+
+        render json: {
+          secrets: selectSecrets
+        }
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+      end
+
       def itemsWithoutDefaultPoolForSelect
         listeners = services.lbaas2.listeners({loadbalancer_id: params[:loadbalancer_id]}).keep_if { |l| l.default_pool_id.blank? }
         select_listeners = listeners.map {|listener| {"label": "#{listener.name || listener.id} (#{listener.protocol})", "value": listener.id, protocol: listener.protocol}}

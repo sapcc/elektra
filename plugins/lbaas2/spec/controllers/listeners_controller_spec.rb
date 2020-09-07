@@ -112,6 +112,21 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
 
   end
 
+  describe "GET 'secrets'" do
+    before :each do
+      allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:secrets).and_return([])
+    end
+
+    it_behaves_like 'GET action with editor context' do
+      subject do
+        @default_params = default_params
+        @extra_params = {}
+        @path = "secrets"
+      end
+    end
+
+  end
+
   describe "GET 'itemsWithoutDefaultPoolForSelect'" do
     before :each do
       listeners = double('elektron', service: double("octavia", get: double("get", map_to:  double("get", keep_if: [])) ))

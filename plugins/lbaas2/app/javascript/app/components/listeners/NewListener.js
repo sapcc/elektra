@@ -17,12 +17,13 @@ const NewListener = (props) => {
     fetchPoolsForSelect,
     formErrorMessage,
     helpBlockTextForSelect,
+    errorMessage,
   } = useCommons()
   const {
     protocolTypes,
     protocolHeaderInsertionRelation,
     clientAuthenticationRelation,
-    fetchContainersForSelect,
+    fetchSecretsForSelect,
     certificateContainerRelation,
     SNIContainerRelation,
     CATLSContainerRelation,
@@ -39,7 +40,7 @@ const NewListener = (props) => {
     error: null,
     items: [],
   })
-  const [containers, setContainers] = useState({
+  const [secrets, setSecrets] = useState({
     isLoading: false,
     error: null,
     items: [],
@@ -48,7 +49,7 @@ const NewListener = (props) => {
   const [tags, setTags] = useState([])
 
   useEffect(() => {
-    Log.debug("fetching pools and containers for select")
+    Log.debug("fetching pools and secrets for select")
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     // get pools for the select
@@ -61,19 +62,19 @@ const NewListener = (props) => {
         setPools({ ...pools, isLoading: false, error: error })
       })
 
-    // get the containers for the select
-    setContainers({ ...containers, isLoading: true })
-    fetchContainersForSelect(lbID)
+    // get the secrets for the select
+    setSecrets({ ...secrets, isLoading: true })
+    fetchSecretsForSelect(lbID)
       .then((data) => {
-        setContainers({
-          ...containers,
+        setSecrets({
+          ...secrets,
           isLoading: false,
-          items: data.containers,
+          items: data.secrets,
           error: null,
         })
       })
       .catch((error) => {
-        setContainers({ ...containers, isLoading: false, error: error })
+        setSecrets({ ...secrets, isLoading: false, error: errorMessage(error) })
       })
   }, [])
 
@@ -289,6 +290,27 @@ const NewListener = (props) => {
         resetForm={false}
       >
         <Modal.Body>
+          <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+            <h4>
+              Switched to using PKCS12 for TLS Term certs (New in API version
+              2.8)
+            </h4>
+            <p>
+              For the TERMINATED_HTTPS protocol listeners now use the URI of the
+              Key Manager service secret containing a PKCS12 format
+              certificate/key bundle.
+            </p>
+            <p>
+              Please see following examples for creating certs with PKCS12
+              format:{" "}
+              <a
+                href="https://github.com/openstack/octavia/blob/master/doc/source/user/guides/basic-cookbook.rst"
+                target="_blank"
+              >
+                Basic Load Balancing Cookbook
+              </a>
+            </p>
+          </div>
           <p>
             A Listener defines a protocol/port combination under which the load
             balancer can be called.
@@ -438,27 +460,25 @@ const NewListener = (props) => {
           {showCertificateContainer && (
             <div className="advanced-options advanced-options-minus-margin">
               <Form.ElementHorizontal
-                label="Certificate Container"
+                label="Certificate Secret"
                 name="default_tls_container_ref"
                 required
               >
-                {containers.error ? (
-                  <span className="text-danger">{containers.error}</span>
-                ) : (
-                  ""
-                )}
                 <SelectInput
                   name="default_tls_container_ref"
-                  isLoading={containers.isLoading}
-                  items={containers.items}
+                  isLoading={secrets.isLoading}
+                  items={secrets.items}
                   onChange={onSelectCertificateContainer}
                   value={certificateContainer}
                   useFormContext={false}
                 />
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
-                  The container with the TLS secrets used for the listener.
+                  The secret containing a PKCS12 format certificate/key bundles.
                 </span>
+                {secrets.error && (
+                  <span className="text-danger">{secrets.error}</span>
+                )}
               </Form.ElementHorizontal>
             </div>
           )}
@@ -466,27 +486,26 @@ const NewListener = (props) => {
           {showSNIContainers && (
             <div className="advanced-options advanced-options-minus-margin">
               <Form.ElementHorizontal
-                label="SNI Containers"
+                label="SNI Secrets"
                 name="sni_container_refs"
               >
-                {containers.error ? (
-                  <span className="text-danger">{containers.error}</span>
-                ) : (
-                  ""
-                )}
                 <SelectInput
                   name="sni_container_refs"
-                  isLoading={containers.isLoading}
+                  isLoading={secrets.isLoading}
                   isMulti
-                  items={containers.items}
+                  items={secrets.items}
                   onChange={onSelectSNIContainers}
                   value={SNIContainers}
                   useFormContext={false}
                 />
                 <span className="help-block">
-                  <i className="fa fa-info-circle"></i>A list of containers with
-                  alternative TLS secrets used for Server Name Indication (SNI).
+                  <i className="fa fa-info-circle"></i>A list of secrets
+                  containing PKCS12 format certificate/key bundles used for
+                  Server Name Indication (SNI).
                 </span>
+                {secrets.error && (
+                  <span className="text-danger">{secrets.error}</span>
+                )}
               </Form.ElementHorizontal>
             </div>
           )}
@@ -516,13 +535,13 @@ const NewListener = (props) => {
           {showCATLSContainer && (
             <div className="advanced-options">
               <Form.ElementHorizontal
-                label="Client Authentication Container"
+                label="Client Authentication Secret"
                 name="client_ca_tls_container_ref"
               >
                 <SelectInput
                   name="client_ca_tls_container_ref"
-                  isLoading={containers.isLoading}
-                  items={containers.items}
+                  isLoading={secrets.isLoading}
+                  items={secrets.items}
                   onChange={onSelectCATLSContainers}
                   value={CATLSContainer}
                   isClearable
@@ -530,8 +549,12 @@ const NewListener = (props) => {
                 />
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
-                  The TLS client authentication certificate.
+                  The secret containing a PEM format client CA certificate
+                  bundle.
                 </span>
+                {secrets.error && (
+                  <span className="text-danger">{secrets.error}</span>
+                )}
               </Form.ElementHorizontal>
             </div>
           )}

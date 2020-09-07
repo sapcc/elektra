@@ -188,12 +188,12 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
   const collectContainers = () => {
     const containers = [
       {
-        name: "Certificate Container",
+        name: "Certificate Secret",
         ref: listener.default_tls_container_ref,
       },
-      { name: "SNI Containers", refList: listener.sni_container_refs },
+      { name: "SNI Secrets", refList: listener.sni_container_refs },
       {
-        name: "Client Authentication Container",
+        name: "Client Authentication Secret",
         ref: listener.client_ca_tls_container_ref,
       },
     ]
