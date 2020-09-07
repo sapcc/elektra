@@ -15,9 +15,25 @@ module SharedFilesystemStorage
           map[host] = service.zone
         end
 
-        productive_pools = services.shared_filesystem_storage.pools(
-          share_type: 'default'
-        )
+        productive_pools = []
+        pool_names = []
+        # cast boolean to integer to have default type at the top
+        types = services.shared_filesystem_storage.all_share_types.sort_by{ |type| type.is_default ? 0 : 1 }
+
+        types.each do |type|
+          type_pools =  services.shared_filesystem_storage.pools(
+            share_type: type.id
+          )
+          type_pools.each do |type_pool|
+            type_pool.type = type.name
+            # report every pool only once
+            unless pool_names.include?(type_pool.name)
+              productive_pools << type_pool
+              pool_names << type_pool.name
+            end
+          end
+        end
+
         # load pools and add availability_zone to each pool based on host using
         # the host_az_map.
         @pools = productive_pools.map do |pool|
@@ -26,7 +42,7 @@ module SharedFilesystemStorage
           end
           pool.availability_zone ||= 'unknown'
           pool
-        end.sort_by!{ |p| [p.availability_zone, p.host, p.aggregate] }
+        end.sort_by!{ |p| [p.availability_zone, p.type, p.host, p.aggregate] }
       end
 
       def show

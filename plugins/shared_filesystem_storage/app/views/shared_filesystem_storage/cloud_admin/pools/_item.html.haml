@@ -1,5 +1,5 @@
 %tr{id: "pool_#{pool.pool}"}
-  %td
+  %td= pool.type
   %td
     - if current_user.is_allowed?("shared_filesystem_storage:pool_get")
       = link_to pool.aggregate, plugin('shared_filesystem_storage').cloud_admin_pool_path(id: pool.aggregate), data: {modal: true}

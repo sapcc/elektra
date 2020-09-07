@@ -38,6 +38,12 @@ module ServiceLayer
         end
       end
 
+      def all_share_types
+        elektron_shares.get('types', {is_public: 'all'}).map_to('body.share_types') do |params|
+          SharedFilesystemStorage::ShareType.new(self, params)
+        end
+      end
+
       def share_export_locations(share_id)
         elektron_shares.get("shares/#{share_id}/export_locations").map_to(
           'body.export_locations'
