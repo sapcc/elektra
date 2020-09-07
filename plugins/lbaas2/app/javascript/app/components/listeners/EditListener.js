@@ -25,6 +25,7 @@ const EditListener = (props) => {
     protocolHeaderInsertionRelation,
     clientAuthenticationRelation,
     fetchSecretsForSelect,
+    isSecretAContainer,
     certificateContainerRelation,
     SNIContainerRelation,
     CATLSContainerRelation,
@@ -43,19 +44,27 @@ const EditListener = (props) => {
   const [insetHeaders, setInsertHeaders] = useState(null)
   const [certificateContainer, setCertificateContainer] = useState(null)
   const [
+    CertificateContainerNotFound,
+    setCertificateContainerNotFound,
+  ] = useState(null)
+  const [
     CertificateContainerDeprecated,
     setCertificateContainerDeprecated,
-  ] = useState(null)
+  ] = useState(false)
   const [SNIContainers, setSNIContainers] = useState(null)
-  const [SNIContainersDeprecated, setSNIContainersDeprecated] = useState(null)
+  const [SNIContainersNotFound, setSNIContainersNotFound] = useState(null)
+  const [SNIContainersDeprecated, setSNIContainersDeprecated] = useState(false)
   const [clientAuthType, setClientAuthType] = useState(null)
   const [defaultPoolID, setDefaultPoolID] = useState(null)
   const [clientCATLScontainer, setClientCATLScontainer] = useState(null)
   const [
+    clientCATLScontainerNotFound,
+    setClientCATLScontainerNotFound,
+  ] = useState(null)
+  const [
     clientCATLScontainerDeprecated,
     setClientCATLScontainerDeprecated,
-  ] = useState(null)
-
+  ] = useState(false)
   const [predPolicies, setPredPolicies] = useState([])
   const [tags, setTags] = useState([])
 
@@ -219,7 +228,10 @@ const EditListener = (props) => {
     // given the user has choose before a secret (selectedCertificateContainer)
     // and the secrets are laoded (availableSecrets)
     if (!selectedOption && selectedCertificateContainer && availableSecrets) {
-      setCertificateContainerDeprecated(selectedCertificateContainer)
+      setCertificateContainerNotFound(selectedCertificateContainer)
+      setCertificateContainerDeprecated(
+        isSecretAContainer(selectedCertificateContainer)
+      )
     }
 
     setCertificateContainer(selectedOption)
@@ -239,9 +251,13 @@ const EditListener = (props) => {
     const foundOptions = selectedOptions || []
     const selectedSecrets = selectedSNIContainers || []
     const difference = selectedSecrets.filter((x) => !foundOptions.includes(x))
-
     if (difference.length > 0) {
-      setSNIContainersDeprecated(difference)
+      setSNIContainersNotFound(difference)
+      difference.forEach((s) => {
+        if (isSecretAContainer(s)) {
+          setSNIContainersDeprecated(true)
+        }
+      })
     }
 
     setSNIContainers(selectedOptions)
@@ -263,7 +279,10 @@ const EditListener = (props) => {
     // given the user has choose before a secret (selectedCertificateContainer)
     // and the secrets are laoded (availableSecrets)
     if (!selectedOption && selectedProtocolType && availableSecrets) {
-      setClientCATLScontainerDeprecated(selectedCATLSContainer)
+      setClientCATLScontainerNotFound(selectedCATLSContainer)
+      setClientCATLScontainerDeprecated(
+        isSecretAContainer(selectedCATLSContainer)
+      )
     }
 
     setClientCATLScontainer(selectedOption)
@@ -735,14 +754,21 @@ const EditListener = (props) => {
                       {secrets.error && (
                         <span className="text-danger">{secrets.error}</span>
                       )}
-                      {CertificateContainerDeprecated && (
+                      {CertificateContainerNotFound && (
                         <React.Fragment>
                           <p>
                             <b className="text-danger">Secret not found: </b>
                           </p>
                           <ul className="secrets-not-found">
-                            <li>{CertificateContainerDeprecated}</li>
+                            <li>{CertificateContainerNotFound}</li>
                           </ul>
+                          {CertificateContainerDeprecated && (
+                            <p>
+                              (It looks like one or more of your secrets are
+                              containers. Please consider the warning shown
+                              above.)
+                            </p>
+                          )}
                         </React.Fragment>
                       )}
                     </Form.ElementHorizontal>
@@ -771,8 +797,8 @@ const EditListener = (props) => {
                       {secrets.error && (
                         <span className="text-danger">{secrets.error}</span>
                       )}
-                      {SNIContainersDeprecated &&
-                        SNIContainersDeprecated.length > 0 && (
+                      {SNIContainersNotFound &&
+                        SNIContainersNotFound.length > 0 && (
                           <React.Fragment>
                             <p>
                               <b className="text-danger">
@@ -780,10 +806,17 @@ const EditListener = (props) => {
                               </b>
                             </p>
                             <ul className="secrets-not-found">
-                              {SNIContainersDeprecated.map((s, index) => (
+                              {SNIContainersNotFound.map((s, index) => (
                                 <li key={index}>{s}</li>
                               ))}
                             </ul>
+                            {SNIContainersDeprecated && (
+                              <p>
+                                (It looks like one or more of your secrets are
+                                containers. Please consider the warning shown
+                                above.)
+                              </p>
+                            )}
                           </React.Fragment>
                         )}
                     </Form.ElementHorizontal>
@@ -833,14 +866,21 @@ const EditListener = (props) => {
                       {secrets.error && (
                         <span className="text-danger">{secrets.error}</span>
                       )}
-                      {clientCATLScontainerDeprecated && (
+                      {clientCATLScontainerNotFound && (
                         <React.Fragment>
                           <p>
                             <b className="text-danger">Secret(s) not found: </b>
                           </p>
                           <ul className="secrets-not-found">
-                            <li>{clientCATLScontainerDeprecated}</li>
+                            <li>{clientCATLScontainerNotFound}</li>
                           </ul>
+                          {clientCATLScontainerDeprecated && (
+                            <p>
+                              (It looks like one or more of your secrets are
+                              containers. Please consider the warning shown
+                              above.)
+                            </p>
+                          )}
                         </React.Fragment>
                       )}
                     </Form.ElementHorizontal>

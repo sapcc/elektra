@@ -428,6 +428,13 @@ const useListener = () => {
     })
   }
 
+  const isSecretAContainer = (secret) => {
+    if (secret && secret.length > 0) {
+      return secret.includes("container")
+    }
+    return false
+  }
+
   const fetchListnersNoDefaultPoolForSelect = (lbID) => {
     return new Promise((handleSuccess, handleError) => {
       ajaxHelper
@@ -703,6 +710,7 @@ const useListener = () => {
     clientAuthenticationRelation,
     fetchContainersForSelect,
     fetchSecretsForSelect,
+    isSecretAContainer,
     certificateContainerRelation,
     SNIContainerRelation,
     CATLSContainerRelation,
