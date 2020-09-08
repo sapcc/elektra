@@ -39,8 +39,12 @@ module ServiceLayer
       end
 
       def all_share_types
-        elektron_shares.get('types', {is_public: 'all'}).map_to('body.share_types') do |params|
-          SharedFilesystemStorage::ShareType.new(self, params)
+        # to retrieve 'is_default' flag we need at least microversion 2.46
+        elektron.service(
+          'sharev2',
+          headers: { 'X-OpenStack-Manila-API-Version' => "2.46" }
+          ).get('types', {is_public: 'all'}).map_to('body.share_types') do |params|
+            SharedFilesystemStorage::ShareType.new(self, params)
         end
       end
 
