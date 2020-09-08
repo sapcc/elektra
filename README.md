@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/sapcc/elektra.svg?branch=master)](https://travis-ci.org/sapcc/elektra)
 
 Elektra
-===============
+================
 
 ![Elektra Landing Page](https://github.com/sapcc/documents/raw/master/screenshots/sapcc_elektra_landing_page.png)
 
