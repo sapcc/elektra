@@ -2,7 +2,7 @@ import moment from 'moment';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 export const PrettyDate = ({date}) => {
-  const m = (typeof date == 'number') ? moment.unix(date) : moment(date);
+  const m = (typeof date == 'number') ? moment.unix(date) : moment.utc(date);
 
   let tooltip = <Tooltip id='dateTooltip'>{m.format('LLLL')}</Tooltip>;
 
@@ -12,7 +12,7 @@ export const PrettyDate = ({date}) => {
       placement="top"
       delayShow={300}
       delayHide={150}>
-      <span>{m.fromNow(true)} ago</span>
+      <span>{m.fromNow()}</span>
     </OverlayTrigger>
   )
 }
