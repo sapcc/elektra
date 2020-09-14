@@ -1,4 +1,4 @@
-IMAGE=hub.global.cloud.sap/monsoon/fetch-chef-versions
+IMAGE=keppel.eu-de-1.cloud.sap/ccloud/fetch-chef-versions
 ifneq ($(http_proxy),)
 BUILD_ARGS:= --build-arg http_proxy=$(http_proxy) --build-arg https_proxy=$(https_proxy) --build-arg no_proxy=$(no_proxy)
 endif
