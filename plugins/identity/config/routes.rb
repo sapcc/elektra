@@ -78,6 +78,8 @@ Identity::Engine.routes.draw do
   get 'project/wizard'      => 'projects#show_wizard', as: :project_wizard
   get 'home'                => 'domains#show', as: :domain
 
-  resources :credentials
+  # we dont use Keystone credential store anymore
+  # can be deleted later
+  # resources :credentials
 
 end

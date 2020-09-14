@@ -1,11 +1,13 @@
 en:
-  credentials:
-    ec2:
-      access: Access Key
-      secret: Secret Key
-    ssh-key:
-      name: Name
-      public_key: Public Key
+  # we dont use Keystone credential store anymore
+  # can be deleted later
+  #credentials:
+  #  ec2:
+  #    access: Access Key
+  #    secret: Secret Key
+  #  ssh-key:
+  #    name: Name
+  #    public_key: Public Key
   roles:
       admin: Keystone Administrator
       baremetal_admin: Ironic Administrator
