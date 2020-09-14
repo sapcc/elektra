@@ -165,10 +165,10 @@ module DnsService
 
       if dns_resource.quota == 0 || dns_resource.usable_quota <= dns_resource.usage
         unless dns_resource.usable_quota < dns_resource.usage
-          # standard increase quota +2
+          # standard increase quota plus increase value
           dns_resource.quota += increase
         else
-          # special case if usable quota is smaller than usage than adjust new quota to usage plus 2
+          # special case if usable quota is smaller than usage than adjust new quota to usage plus increase value
           dns_resource.quota = dns_resource.usage + increase
         end
         unless dns_resource.save
