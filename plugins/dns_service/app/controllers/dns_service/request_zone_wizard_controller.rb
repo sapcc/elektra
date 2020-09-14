@@ -4,20 +4,12 @@ module DnsService
   # Implements Zone Requests
   class RequestZoneWizardController < ::DashboardController
     def new
+      
       @zone_request = ::DnsService::ZoneRequest.new(nil)
       @pools = cloud_admin.dns_service.pools[:items]
 
-      @zone_resource = cloud_admin.resource_management.find_project(
-        @scoped_domain_id, @scoped_project_id,
-        service: 'dns',
-        resource: 'zones',
-      ).resources.first or raise ActiveRecord::RecordNotFound
-
-      @recordset_resource = cloud_admin.resource_management.find_project(
-        @scoped_domain_id, @scoped_project_id,
-        service: 'dns',
-        resource: 'recordsets',
-      ).resources.first or raise ActiveRecord::RecordNotFound
+      @zone_resource = get_zone_resource
+      @recordset_resource = get_recordset_resource
 
     end
 
@@ -65,11 +57,29 @@ module DnsService
         render template: 'dns_service/request_zone_wizard/create.js'
       else
         @pools = cloud_admin.dns_service.pools[:items]
+        @zone_resource = get_zone_resource
+        @recordset_resource = get_recordset_resource
         render action: :new
       end
     end
 
     protected
+
+    def get_zone_resource
+      cloud_admin.resource_management.find_project(
+        @scoped_domain_id, @scoped_project_id,
+        service: 'dns',
+        resource: 'zones',
+      ).resources.first or raise ActiveRecord::RecordNotFound
+    end
+
+    def get_recordset_resource
+      @recordset_resource = cloud_admin.resource_management.find_project(
+        @scoped_domain_id, @scoped_project_id,
+        service: 'dns',
+        resource: 'recordsets',
+      ).resources.first or raise ActiveRecord::RecordNotFound
+    end
 
     def list_ccadmin_master_dns_admins
       cloud_dns_admin_role = cloud_admin.identity

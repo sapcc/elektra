@@ -74,9 +74,14 @@ module DnsService
           else
             puts "requested zone #{@zone_request.zone_name} is part of existing zone #{requested_parent_zone_name} inside the project #{requested_parent_zone.project_id}"
             # this is usualy the case if we found "only.sap" or "c.REGION-cloud.sap" that lives in the ccadmin/master project
-            # zone will be created inside the project where the parent zone lives
+
+            # 0. find project to get domain_id
+            requested_parent_zone_project = services.identity.find_project(requested_parent_zone.project_id)
+            # 1. check zone quota for requested_parent_zone project where the zone is first created that their is in any case enough zone quota free
+            check_and_increase_quota(requested_parent_zone_project.domain_id, requested_parent_zone.project_id, 'zones')
+            # 2. zone will be created inside the project where the parent zone lives
             @zone.project_id(requested_parent_zone.project_id)
-            # zone transfer to destination project is needed
+            # 3. zone transfer to destination project is needed
             zone_transfer = true
             break
           end
@@ -84,9 +89,10 @@ module DnsService
         requested_parent_zone_name = requested_parent_zone_name.partition('.').last
       end
 
-      # check quotas
-      check_quotas(@inquiry.domain_id, @inquiry.project_id, 'zones')
-      check_quotas(@inquiry.domain_id, @inquiry.project_id, 'recordsets')
+      # check and increase zone quota for destination project 
+      check_and_increase_quota(@inquiry.domain_id, @inquiry.project_id, 'zones')
+      # make sure that recordset quota is increased at least by 2 as there are two recrodsets are created (NS + SOA)
+      check_and_increase_quota(@inquiry.domain_id, @inquiry.project_id, 'recordsets', 2)
 
       if @zone.save
         # we need zone transfer if the domain was created in cloud-admin project
@@ -149,7 +155,7 @@ module DnsService
       cloud_admin.dns_service.find_pool(pool_id)
     end
 
-    def check_quotas(domain_id,project_id,resource)
+    def check_and_increase_quota(domain_id,project_id,resource,increase = 1)
       # get dns quota for resource and target project
       dns_resource = cloud_admin.resource_management.find_project(
         domain_id, project_id,
@@ -159,11 +165,11 @@ module DnsService
 
       if dns_resource.quota == 0 || dns_resource.usable_quota <= dns_resource.usage
         unless dns_resource.usable_quota < dns_resource.usage
-          # standard increase quota +1
-          dns_resource.quota += 1
+          # standard increase quota plus increase value
+          dns_resource.quota += increase
         else
-          # special case if usable quota is smaller than usage than adjust new quota to usage plus 1
-          dns_resource.quota = dns_resource.usage + 1
+          # special case if usable quota is smaller than usage than adjust new quota to usage plus increase value
+          dns_resource.quota = dns_resource.usage + increase
         end
         unless dns_resource.save
            # catch error for automatic quota adjustment
