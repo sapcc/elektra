@@ -1,10 +1,11 @@
 ObjectStorage::Engine.routes.draw do
 
   get '/' => 'entry#index', as: 'entry'
-
-  resources 'containers', except: :edit do
+  # for all container operations to allow literally anything
+  # https://guides.rubyonrails.org/routing.html#specifying-constraints
+  resources 'containers', constraints: { id: /[^\/]+/ }, except: :edit do
     member do
-      get  :confirm_deletion
+      get  :confirm_deletion 
       get  :confirm_emptying
       post :pre_empty
       post :empty
