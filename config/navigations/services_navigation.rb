@@ -57,113 +57,218 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
 
-    primary.item :compute, 'Compute', nil, html: {class: "fancy-nav-header", 'data-icon': "compute-icon"},
-    if: -> {services.available?(:compute,:instances) or services.available?(:image,:os_images) or plugin_available?(:block_storage)} do |compute_nav|
-      compute_nav.item :instances, 'Servers', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }, highlights_on: Proc.new { params[:controller][/compute\/instances/] }
-      compute_nav.item :block_storage, 'Volumes & Snapshots', -> {plugin('block_storage').root_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage/] }
-
-      compute_nav.item :images, 'Server Images & Snapshots', -> {
-        services.image.current_version >= 'v2.5' ? plugin('image').ng_path : plugin('image').os_images_public_index_path
-      }, if: -> { services.available?(:image, :os_images) }, highlights_on: Proc.new { params[:controller][/image\/.*/] }
-
-      compute_nav.item :flavors, 'Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
-      # compute_nav.dom_attributes = {class: 'content-list'}
+    primary.item :compute, 
+      'Compute', 
+      nil, 
+      html: {class: "fancy-nav-header", 'data-icon': "compute-icon"},
+      if: -> { services.available?(:compute,:instances) or
+               services.available?(:image,:os_images) or
+               plugin_available?(:block_storage)
+             } do |compute_nav|
+        compute_nav.item :instances, 
+          'Servers', 
+          -> {plugin('compute').instances_path}, 
+          if: -> { services.available?(:compute,:instances) }, 
+          highlights_on: Proc.new { params[:controller][/compute\/instances/] }
+        compute_nav.item :block_storage, 
+          'Volumes & Snapshots', 
+          -> {plugin('block_storage').root_path}, 
+          if: -> { plugin_available?(:block_storage) }, 
+          highlights_on: Proc.new { params[:controller][/block_storage/] }
+        compute_nav.item :images, 
+          'Server Images & Snapshots', 
+          -> {services.image.current_version >= 'v2.5' ? plugin('image').ng_path : plugin('image').os_images_public_index_path}, 
+          if: -> { services.available?(:image, :os_images) }, 
+          highlights_on: Proc.new { params[:controller][/image\/.*/] }
+        compute_nav.item :flavors, 
+          'Flavors', 
+          -> { plugin('compute').flavors_path },
+          if: -> { plugin_available?(:compute) },
+          highlights_on: -> { params[:controller][%r{flavors/?.*}] }
     end
 
-    primary.item :containers, 'Containers', nil, html: {class: "fancy-nav-header", 'data-icon': "containers-icon"},
-    if: -> {plugin_available?(:kubernetes) && current_user && current_user.has_service?('kubernikus')} do |containers_nav|
-      containers_nav.item :kubernetes, 'Kubernetes', -> { plugin('kubernetes').root_path }, if: -> { plugin_available?(:kubernetes) && current_user && current_user.has_service?('kubernikus') }, highlights_on: Proc.new { params[:controller][/kubernetes\/.*/] }
-      # compute_nav.dom_attributes = {class: 'content-list'}
+    primary.item :containers, 
+      'Containers', 
+      nil, html: {class: "fancy-nav-header", 'data-icon': "containers-icon"},
+      if: -> { plugin_available?(:kubernetes) &&
+               current_user && 
+               current_user.has_service?('kubernikus')
+             } do |containers_nav|
+        containers_nav.item :kubernetes, 
+          'Kubernetes', 
+          -> { plugin('kubernetes').root_path }, 
+          if: -> { plugin_available?(:kubernetes) && current_user && current_user.has_service?('kubernikus') },
+          highlights_on: Proc.new { params[:controller][/kubernetes\/.*/] }
     end
 
 
-    primary.item :automation, 'Monsoon Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "automation-icon" }, if: -> {services.available?(:automation,:nodes) } do |automation_nav|
-      automation_nav.item :automation, 'Automation', -> {plugin('automation').nodes_path}, if: -> { services.available?(:automation,:nodes)}, highlights_on: Proc.new { params[:controller][/automation\/.*/] }
-
-      # automation_nav.dom_attributes = {class: 'content-list'}
+    primary.item :automation, 
+      'Monsoon Automation', 
+      nil, 
+      html: {class: "fancy-nav-header", 'data-icon': "automation-icon" }, 
+      if: -> {services.available?(:automation,:nodes) } do |automation_nav|
+        automation_nav.item :automation, 
+          'Automation', 
+          -> {plugin('automation').nodes_path}, 
+          if: -> { services.available?(:automation,:nodes)}, 
+          highlights_on: Proc.new { params[:controller][/automation\/.*/] }
     end
 
-   primary.item :hana, 'Bare Metal Data Processing & HANA', nil, html: {class: "fancy-nav-header", 'data-icon': "hana-icon" }, if: -> {services.available?(:bare_metal_hana,:nodes) } do |bare_metal_hana_nav|
-     bare_metal_hana_nav.item :bare_metal_hana, 'HANA Servers', -> {plugin('bare_metal_hana').entry_path}, if: -> { services.available?(:bare_metal_hana,:nodes)}, highlights_on: Proc.new { params[:controller][/bare_metal_hana\/.*/] }
-   end
-
-    primary.item :api, 'API Access', nil, html: {class: "fancy-nav-header", 'data-icon': "api-icon"} do |api_nav|
-      api_nav.item :web_console, 'Web Shell', -> { plugin('webconsole').root_path}, if: -> { services.available?(:webconsole) && current_user && current_user.is_allowed?('webconsole:application_get') }, highlights_on: Proc.new { params[:controller][/webconsole\/.*/] }
-      api_nav.item :api_endpoints, 'API Endpoints for Clients', -> { plugin('identity').projects_api_endpoints_path}
-
-      # api_nav.dom_attributes = {class: 'content-list'}
+    primary.item :hana, 
+      'Bare Metal Data Processing & HANA', 
+      nil, 
+      html: {class: "fancy-nav-header", 'data-icon': "hana-icon" }, 
+      if: -> {services.available?(:bare_metal_hana,:nodes) } do |bare_metal_hana_nav|
+        bare_metal_hana_nav.item :bare_metal_hana, 
+        'HANA Servers', 
+        -> {plugin('bare_metal_hana').entry_path}, 
+        if: -> { services.available?(:bare_metal_hana,:nodes)}, 
+        highlights_on: Proc.new { params[:controller][/bare_metal_hana\/.*/] }
     end
 
-    primary.item :access_management, 'Authorizations', nil,
+    primary.item :api, 
+      'API Access', 
+      nil, 
+      html: {class: "fancy-nav-header", 'data-icon': "api-icon"} do |api_nav|
+        api_nav.item :web_console, 
+          'Web Shell', 
+          -> { plugin('webconsole').root_path}, 
+          if: -> { services.available?(:webconsole) && current_user && current_user.is_allowed?('webconsole:application_get') },
+          highlights_on: Proc.new { params[:controller][/webconsole\/.*/] }
+        api_nav.item :api_endpoints, 
+          'API Endpoints for Clients', 
+          -> { plugin('identity').projects_api_endpoints_path}
+    end
+
+    primary.item :access_management, 
+      'Authorizations', 
+      nil,
       html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
-      if: -> {services.available?(:identity) and current_user && (current_user.is_allowed?('identity:project_member_list') or ( current_user && current_user.is_allowed?('identity:project_group_list'))) } do |access_management_nav|
-        access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_role_assignments_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: %r{identity/projects/members/?.*}
-        access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_role_assignments_path(active_tab: 'groupRoles')}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: %r{identity/projects/groups/?.*}
-        access_management_nav.item :key_manager, 'Key Manager', -> {plugin('key_manager').secrets_path}, if: -> { services.available?(:key_manager) }, highlights_on: Proc.new { params[:controller][/key_manager\/.*/] }
-      end
+      if: -> { services.available?(:identity) and 
+               current_user && (
+                 current_user.is_allowed?('identity:project_member_list') or 
+                 ( current_user && current_user.is_allowed?('identity:project_group_list'))
+               ) 
+             } do |access_management_nav|
+        access_management_nav.item :user_role_assignments, 
+          'User Role Assignments', 
+          -> {plugin('identity').projects_role_assignments_path}, 
+          if: -> { current_user.is_allowed?('identity:project_member_list')},
+          highlights_on: %r{identity/projects/members/?.*}
+        access_management_nav.item :group_management,
+          'Group Role Assignments', 
+          -> {plugin('identity').projects_role_assignments_path(active_tab: 'groupRoles')},
+          if: -> { current_user.is_allowed?('identity:project_group_list')},
+          highlights_on: %r{identity/projects/groups/?.*}
+        access_management_nav.item :key_manager,
+          'Key Manager', 
+          -> {plugin('key_manager').secrets_path},
+          if: -> { services.available?(:key_manager) },
+          highlights_on: Proc.new { params[:controller][/key_manager\/.*/] }
+    end
 
     primary.item :networking,
-                 'Networking & Loadbalancing',
-                 nil,
-                 html: { class: 'fancy-nav-header', 'data-icon': 'networking-icon' },
-                 if: -> { plugin_available?(:networking) || plugin_available?(:loadbalancing) || plugin_available?(:dns_service) } do |networking_nav|
-                    networking_nav.item :networks,
-                                        'Networks & Routers',
-                                        -> { plugin('networking').networks_external_index_path },
-                                        if: -> { plugin_available?(:networking) },
-                                        highlights_on: %r{networking/(networks|routers)/?.*}
-                    networking_nav.item :backup_networks,
-                                        'Backup Networks',
-                                        -> { plugin('networking').backup_networks_path },
-                                        if: -> { plugin_available?(:networking) },
-                                        highlights_on: %r{networking/(backup_networks)/?.*}
-                    networking_nav.item :ports,
-                                        'Fixed IPs / Ports',
-                                        -> { plugin('networking').widget_ports_path },
-                                        if: -> { plugin_available?(:networking) },
-                                        highlights_on: %r{networking/ports/?.*}
-                    networking_nav.item :floating_ips,
-                                        'Floating IPs',
-                                        -> { plugin('networking').floating_ips_path },
-                                        if: -> { plugin_available?(:networking) },
-                                        highlights_on: %r{networking/floating_ips/?.*}
-                    networking_nav.item :security_groups,
-                                        'Security Groups',
-                                        -> { plugin('networking').widget_security_groups_path },
-                                        if: -> { plugin_available?(:networking) },
-                                        highlights_on: %r{networking/security-groups/?.*}
-                    networking_nav.item :loadbalancing,
-                                        'Load Balancers',
-                                        -> { plugin('loadbalancing').loadbalancers_path },
-                                        if: -> { plugin_available?(:loadbalancing) && services.available?(:loadbalancing) },
-                                        highlights_on: -> { params[:controller][%r{loadbalancing/?.*}] }
-                    networking_nav.item :dns_service,
-                                        'DNS',
-                                        -> { plugin('dns_service').zones_path },
-                                        if: -> { plugin_available?(:dns_service) && services.available?(:dns_service) },
-                                        highlights_on: -> { params[:controller][%r{dns_service/?.*}] }
+      'Networking & Loadbalancing',
+      nil,
+      html: { class: 'fancy-nav-header', 'data-icon': 'networking-icon' },
+      if: -> { plugin_available?(:networking) || 
+               plugin_available?(:loadbalancing) || 
+               plugin_available?(:dns_service) 
+             } do |networking_nav|
+        networking_nav.item :networks,
+          'Networks & Routers',
+          -> { plugin('networking').networks_external_index_path },
+          if: -> { plugin_available?(:networking) },
+          highlights_on: %r{networking/(networks|routers)/?.*}
+        networking_nav.item :backup_networks,
+          'Backup Networks',
+          -> { plugin('networking').backup_networks_path },
+          if: -> { plugin_available?(:networking) },
+          highlights_on: %r{networking/(backup_networks)/?.*}
+        networking_nav.item :ports,
+          'Fixed IPs / Ports',
+          -> { plugin('networking').widget_ports_path },
+          if: -> { plugin_available?(:networking) },
+          highlights_on: %r{networking/ports/?.*}
+        networking_nav.item :floating_ips,
+          'Floating IPs',
+          -> { plugin('networking').floating_ips_path },
+          if: -> { plugin_available?(:networking) },
+          highlights_on: %r{networking/floating_ips/?.*}
+        networking_nav.item :security_groups,
+          'Security Groups',
+          -> { plugin('networking').widget_security_groups_path },
+          if: -> { plugin_available?(:networking) },
+          highlights_on: %r{networking/security-groups/?.*}
+        networking_nav.item :loadbalancing,
+          'Load Balancers',
+          -> { plugin('loadbalancing').loadbalancers_path },
+          if: -> { plugin_available?(:loadbalancing) && services.available?(:loadbalancing) },
+          highlights_on: -> { params[:controller][%r{loadbalancing/?.*}] }
+        networking_nav.item :dns_service,
+          'DNS',
+          -> { plugin('dns_service').zones_path },
+          if: -> { plugin_available?(:dns_service) && services.available?(:dns_service) },
+          highlights_on: -> { params[:controller][%r{dns_service/?.*}] }
     end
 
-    primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "storage-icon" },
+    primary.item :storage, 
+      'Storage', 
+      nil, 
+      html: {class: "fancy-nav-header", 'data-icon': "storage-icon" },
       if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
-      storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services.available?(:object_storage,:containers) }, highlights_on: Proc.new { params[:controller][/object_storage\/.*/] }
-      storage_nav.item :shared_filesystem_storage, 'Shared File System Storage', -> {plugin('shared_filesystem_storage').start_path('shares')},
-        if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") },
-        highlights_on: Proc.new { params[:controller][/shared_filesystem_storage\/.*/] }
-      storage_nav.item :container_image_registry, 'Container Image Registry', -> {plugin('keppel').start_path},
-        if: -> { services.available?(:keppel) },
-        highlights_on: Proc.new { params[:controller][/keppel\/.*/] }
-    #   storage_nav.dom_attributes = {class: 'content-list'}
+        storage_nav.item :shared_storage, 
+          'Shared Object Storage', 
+          -> {plugin('object_storage').entry_path}, 
+          if: -> { services.available?(:object_storage,:containers) },
+          highlights_on: Proc.new { params[:controller][/object_storage\/.*/] }
+        storage_nav.item :shared_filesystem_storage,
+          'Shared File System Storage',
+          -> {plugin('shared_filesystem_storage').start_path('shares')},
+          if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") },
+          highlights_on: Proc.new { params[:controller][/shared_filesystem_storage\/.*/] }
+        storage_nav.item :container_image_registry, 
+          'Container Image Registry',
+          -> {plugin('keppel').start_path},
+          if: -> { services.available?(:keppel) },
+          highlights_on: Proc.new { params[:controller][/keppel\/.*/] }
     end
 
-    primary.item :resource_management, 'Capacity, Masterdata & Metrics', nil,
+    primary.item :resource_management,
+      'Capacity, Masterdata & Metrics', 
+      nil,
       html: {class: "fancy-nav-header", 'data-icon': "monitoring-icon" },
-      if: -> {services.available?(:resources) or services.available?(:masterdata_cockpit) or plugin_available?(:metrics) or plugin_available?(:audit) or plugin_available?(:reports)} do |monitoring_nav|
-      monitoring_nav.item :resources, 'Resource Management ', -> {plugin('resources').project_path}, if: -> { services.available?(:resources) }, highlights_on: Proc.new { params[:controller][/resources\/.*/] }
-      monitoring_nav.item :masterdata_cockpit,  'Masterdata',  -> {plugin('masterdata_cockpit').project_masterdata_path}, if: -> { services.available?(:masterdata_cockpit) }, highlights_on: Proc.new { params[:controller][/masterdata_cockpit\/.*/] }
-      monitoring_nav.item :metrics, 'Metrics', -> { plugin('metrics').index_path }, if: -> { plugin_available?(:metrics)}, highlights_on: Proc.new { params[:controller][/metrics\/.*/] }
-      monitoring_nav.item :audit, 'Audit', -> { plugin('audit').root_path }, if: -> { plugin_available?(:audit)}, highlights_on: -> { params[:controller][%r{audit/?.*}] }
-      monitoring_nav.item :reports, 'Cost Report', -> { plugin('reports').project_cost_index_path }, if: -> { plugin_available?(:reports)}, highlights_on: -> { params[:controller][%r{reports/?.*}] }
+      if: -> { services.available?(:resources) or 
+               services.available?(:masterdata_cockpit) or 
+               plugin_available?(:metrics) or 
+               plugin_available?(:audit) or 
+               plugin_available?(:reports)
+             } do |monitoring_nav|
+        monitoring_nav.item :resources, 
+          'Resource Management ', 
+          -> {plugin('resources').project_path},
+          if: -> { services.available?(:resources) },
+          highlights_on: Proc.new { params[:controller][/resources\/.*/] }
+        monitoring_nav.item :masterdata_cockpit,
+          'Masterdata',
+          -> {plugin('masterdata_cockpit').project_masterdata_path},
+          if: -> { services.available?(:masterdata_cockpit) },
+          highlights_on: Proc.new { params[:controller][/masterdata_cockpit\/.*/] }
+        monitoring_nav.item :metrics,
+          'Metrics',
+          -> { plugin('metrics').index_path },
+          if: -> { plugin_available?(:metrics)},
+          highlights_on: Proc.new { params[:controller][/metrics\/.*/] }
+        monitoring_nav.item :audit,
+          'Audit', 
+          -> { plugin('audit').root_path },
+          if: -> { plugin_available?(:audit)},
+          highlights_on: -> { params[:controller][%r{audit/?.*}] }
+        monitoring_nav.item :reports,
+          'Cost Report',
+          -> { plugin('reports').project_cost_index_path },
+          if: -> { plugin_available?(:reports)},
+          highlights_on: -> { params[:controller][%r{reports/?.*}] }
     end
 
     primary.item :cc_tools, "Tools", nil,
@@ -171,13 +276,6 @@ SimpleNavigation::Configuration.run do |navigation|
       if: -> { current_user.is_allowed?('tools:application_get') } do |cc_tools_nav|
         cc_tools_nav.item :universal_search, 'Universal Search', -> { plugin('cc_tools').start_path }, highlights_on: -> { params[:controller][%r{tools/?.*}] }
     end
-
-    # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
-    #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
-    #
-    #   account_nav.dom_attributes = {class: 'content-list'}
-    # end
-
 
     # Add an item which has a sub navigation (same params, but with block)
     # primary.item :key_2, 'name', url, options do |sub_nav|
