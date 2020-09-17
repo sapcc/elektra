@@ -280,6 +280,10 @@ SimpleNavigation::Configuration.run do |navigation|
           'Universal Search', 
           -> { plugin('cc_tools').start_path },
           highlights_on: -> { params[:controller][%r{tools/?.*}] }
+        cc_tools_nav.item :email_service, 
+          'Email Service', 
+          -> { plugin('email_service').index_path },
+          highlights_on: -> { params[:controller][%r{tools/?.*}] }
     end
 
     # Add an item which has a sub navigation (same params, but with block)
