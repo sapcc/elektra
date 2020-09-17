@@ -271,10 +271,15 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: -> { params[:controller][%r{reports/?.*}] }
     end
 
-    primary.item :cc_tools, "Tools", nil,
+    primary.item :cc_tools, 
+      "Tools", 
+      nil,
       html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon" },
       if: -> { current_user.is_allowed?('tools:application_get') } do |cc_tools_nav|
-        cc_tools_nav.item :universal_search, 'Universal Search', -> { plugin('cc_tools').start_path }, highlights_on: -> { params[:controller][%r{tools/?.*}] }
+        cc_tools_nav.item :universal_search, 
+          'Universal Search', 
+          -> { plugin('cc_tools').start_path },
+          highlights_on: -> { params[:controller][%r{tools/?.*}] }
     end
 
     # Add an item which has a sub navigation (same params, but with block)
