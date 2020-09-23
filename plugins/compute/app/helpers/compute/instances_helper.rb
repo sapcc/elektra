@@ -221,6 +221,7 @@ module Compute
       ).map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
 
       available_floating_ips = @project_floating_ips.collect(&:floating_ip_address)
+
       instance_floating_ips = instance.floating_ips.collect { |f| f['addr'] }
 
       if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
