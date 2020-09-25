@@ -1,134 +1,140 @@
-import { Link } from 'react-router-dom'
-import { Highlighter } from 'react-bootstrap-typeahead'
-import { projectUrl, objectUrl, vCenterUrl } from '../../shared/object_link_helper'
-import moment from 'moment'
+import { Link } from "react-router-dom"
+import { Highlighter } from "react-bootstrap-typeahead"
+import {
+  projectUrl,
+  objectUrl,
+  vCenterUrl,
+} from "../../shared/object_link_helper"
+import moment from "moment"
 
-
-const ObjectLink = ({id, name, term}) =>
+const ObjectLink = ({ id, name, term }) => (
   <React.Fragment>
-    <Link to={`/universal-search/${id}/show`} state={{test: 'ok'}}>
-      {name ?
-        <Highlighter search={term || ''}>{name || ''}</Highlighter>
-        :
-        <Highlighter search={term || ''}>{id || ''}</Highlighter>
-      }
+    <Link to={`/universal-search/${id}/show`} state={{ test: "ok" }}>
+      {name ? (
+        <Highlighter search={term || ""}>{name || ""}</Highlighter>
+      ) : (
+        <Highlighter search={term || ""}>{id || ""}</Highlighter>
+      )}
     </Link>
-    {name &&
+    {name && (
       <React.Fragment>
-        <br/>
-        <span className='info-text u-text-monospace u-text-small'>
-          <Highlighter search={term || ''}>{id || ''}</Highlighter>
+        <br />
+        <span className="info-text u-text-monospace u-text-small">
+          <Highlighter search={term || ""}>{id || ""}</Highlighter>
         </span>
       </React.Fragment>
-    }
+    )}
   </React.Fragment>
+)
 
-const ObjectInfo = ({id, name, term}) =>
-  name ?
+const ObjectInfo = ({ id, name, term }) =>
+  name ? (
     <React.Fragment>
-      <Highlighter search={term || ''}>{name}</Highlighter>
-      <br/>
-      <span className='info-text u-text-monospace u-text-small'>
-        <Highlighter search={term || ''}>{id || ''}</Highlighter>
+      <Highlighter search={term || ""}>{name}</Highlighter>
+      <br />
+      <span className="info-text u-text-monospace u-text-small">
+        <Highlighter search={term || ""}>{id || ""}</Highlighter>
       </span>
     </React.Fragment>
-    :
-    <Highlighter search={term || ''}>{id || ''}</Highlighter>
+  ) : (
+    <Highlighter search={term || ""}>{id || ""}</Highlighter>
+  )
 
-
-export default ({item, term}) => {
+export default ({ item, term, aggregates }) => {
   const scope = item.payload.scope || {}
   const projectLink = projectUrl(item)
   const objectLink = objectUrl(item)
-  const vCenterLink = vCenterUrl(item)
+  const vCenterLink = vCenterUrl(item, aggregates)
 
-  return(
+  return (
     <tr>
       <td className="big-data-cell">{item.cached_object_type}</td>
       <td className="big-data-cell">
         {/* Object */}
-        <ObjectLink
-          id={item.id}
-          name={item.name}
-          term={term}/>
+        <ObjectLink id={item.id} name={item.name} term={term} />
       </td>
       <td className="big-data-cell">
-        {item.search_label && item.search_label.trim().length>0 &&
+        {item.search_label && item.search_label.trim().length > 0 && (
           <React.Fragment>
             <span className="info-text">
-              <Highlighter search={term || ''}>{item.search_label}</Highlighter>
+              <Highlighter search={term || ""}>{item.search_label}</Highlighter>
             </span>
             <br />
           </React.Fragment>
-        }
-        <span className="info-text">Last Updated: {moment(item.updated_at).fromNow()}</span>
+        )}
+        <span className="info-text">
+          Last Updated: {moment(item.updated_at).fromNow()}
+        </span>
       </td>
       <td className="big-data-cell">
         {/* Domain */}
-        {policy.isAllowed("tools:show_scope_object") ?
+        {policy.isAllowed("tools:show_scope_object") ? (
           <ObjectLink
-            id={(scope.domain_id || item.domain_id)}
+            id={scope.domain_id || item.domain_id}
             name={scope.domain_name}
-            term={term}/>
-          :
+            term={term}
+          />
+        ) : (
           <ObjectInfo
-            id={(scope.domain_id || item.domain_id)}
+            id={scope.domain_id || item.domain_id}
             name={scope.domain_name}
-            term={term}/>
-        }
-
+            term={term}
+          />
+        )}
       </td>
       <td className="big-data-cell">
         {/* Project */}
-        {policy.isAllowed("tools:show_scope_object") ?
+        {policy.isAllowed("tools:show_scope_object") ? (
           <ObjectLink
             id={scope.project_id}
             name={scope.project_name}
-            term={term}/>
-          :
+            term={term}
+          />
+        ) : (
           <ObjectInfo
             id={scope.project_id}
             name={scope.project_name}
-            term={term}/>
-        }
+            term={term}
+          />
+        )}
       </td>
       <td className="snug">
-        {(projectLink || objectLink || vCenterLink) &&
-          <div className='btn-group'>
-            <button className="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
-              <i className='fa fa-cog'></i>
+        {(projectLink || objectLink || vCenterLink) && (
+          <div className="btn-group">
+            <button
+              className="btn btn-default btn-sm dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+              aria-expanded="true"
+            >
+              <i className="fa fa-cog"></i>
             </button>
-            <ul className='dropdown-menu dropdown-menu-right' role="menu">
-              {vCenterLink &&
+            <ul className="dropdown-menu dropdown-menu-right" role="menu">
+              {vCenterLink && (
                 <li>
-                  <a
-                    href={vCenterLink}
-                    target='_blank'>
-                    <i className='fa fa-fw fa-external-link'/> Jump to VCenter
+                  <a href={vCenterLink} target="_blank">
+                    <i className="fa fa-fw fa-external-link" /> Jump to VCenter
                   </a>
                 </li>
-              }
-              {objectLink &&
+              )}
+              {objectLink && (
                 <li>
-                  <a
-                    href={objectLink}
-                    target='_blank'>
-                    <i className='fa fa-fw fa-external-link'/> Show in Elektra
+                  <a href={objectLink} target="_blank">
+                    <i className="fa fa-fw fa-external-link" /> Show in Elektra
                   </a>
                 </li>
-              }
-              {projectLink &&
+              )}
+              {projectLink && (
                 <li>
-                  <a
-                    href={projectLink}
-                    target='_blank'>
-                    <i className='fa fa-fw fa-external-link'/> Switch to Project
+                  <a href={projectLink} target="_blank">
+                    <i className="fa fa-fw fa-external-link" /> Switch to
+                    Project
                   </a>
                 </li>
-              }
+              )}
             </ul>
           </div>
-        }
+        )}
       </td>
     </tr>
   )
