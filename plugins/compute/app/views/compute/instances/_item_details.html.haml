@@ -77,25 +77,25 @@
               - attached_volumes.each do |vol|
                 - if vol.attachments.first['device'] == @instance.root_disk_device_name
                   - root_disk_size = vol.size
-              %table.table.datatable
-                %tbody
-                  %tr
-                    %th Flavor
-                    %td= @instance.flavor['original_name']
-                  %tr
-                    %th RAM
-                    %td= "#{@instance.flavor['ram']}MB"
-                  %tr
-                    %th VCPUs
-                    %td= "#{@instance.flavor['vcpus']} VCPU"
-                  %tr
-                    %th Root Disk
-                    %td
-                      = root_disk_size
-                      GB
-                      %p
-                        %small 
-                          =@instance.root_disk_device_name
+            %table.table.datatable
+              %tbody
+                %tr
+                  %th Flavor
+                  %td= @instance.flavor['original_name']
+                %tr
+                  %th RAM
+                  %td= "#{@instance.flavor['ram']}MB"
+                %tr
+                  %th VCPUs
+                  %td= "#{@instance.flavor['vcpus']} VCPU"
+                %tr
+                  %th Root Disk
+                  %td
+                    = root_disk_size
+                    GB
+                    %p
+                      %small 
+                        =@instance.root_disk_device_name
           - else
             No instance specifications
 
@@ -136,10 +136,19 @@
         .tab-pane{role:"tabpanel", id:"metadata"}
           %table.table.datatable
             %tbody
-              - unless @instance.metadata.image_name
-                %tr
-                  %th Image name
-                  %td= render_image_name(@instance.image_object)
+              %tr 
+                %th Image name
+                %td
+                  - if @instance.metadata && @instance.metadata.image_name
+                    = @instance.metadata.image_name
+                  - elsif @instance.image_object 
+                    = render_image_name(@instance.image_object)
+                  - else 
+                    -  
+              %tr
+                %th Image ID
+                %td= @instance.image ? @instance.image[:id] : "-"
+                
               - @instance.metadata.attributes.each do |k,v|
                 - next if k.to_s == 'id'
                 %tr
