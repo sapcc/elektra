@@ -22,7 +22,6 @@ module ElektronMiddlewares
                     # find objects to be cached
                     find_objects(response.body)
                   end
-
         ::ObjectCache.cache_objects(objects) if objects && !objects.empty?
       rescue StandardError => e
         Rails.logger.debug("ObjectCache ERROR: #{e}") if debug
@@ -53,6 +52,7 @@ module ElektronMiddlewares
       # ignore black listed keys.
       return nil if BLACKLIST_PARENT_KEYS.include?(parent_key)
 
+    
       if data.is_a?(Hash)
         # speacial case role_assignments
         if parent_key == 'role_assignments'
@@ -89,7 +89,13 @@ module ElektronMiddlewares
           # There is no more data available!
           return nil if data.keys.length == 1
           # store the object type inside the object itself.
+          
           data['cached_object_type'] = parent_key.singularize if parent_key
+          
+          # Unfortunately, the ID of aggregates is not unique and overlaps with flavors, for example.
+          if data['cached_object_type'] == "aggregate"
+            data['id'] = "aggregate_#{data['id']}" 
+          end
           return [data]
         end
         # objects does not contain the id attribute

@@ -58,10 +58,14 @@ export default class ShowSearchObjectModal extends React.Component {
   }
 
   render() {
-    const { item, project } = this.props
+    const { item, project, aggregates } = this.props
+    const vcAggregates =
+      aggregates && aggregates.items
+        ? aggregates.items.filter((a) => a.name.indexOf("vc-") === 0)
+        : []
     const projectLink = projectUrl(item)
     const objectLink = objectUrl(item)
-    const vCenterLink = vCenterUrl(item)
+    const vCenterLink = vCenterUrl(item, vcAggregates)
     const found = this.props.location.search.match(/\?tab=([^\&]+)/)
     let activeTab = found ? found[1] : null
     const isProject = item && item.cached_object_type == "project"

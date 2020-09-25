@@ -20,7 +20,7 @@ export default connect(
         )
     }
 
-    return { item, project }
+    return { item, project, aggregates: state.search.aggregates }
   },
   (dispatch) => ({
     load: (id) => dispatch(fetchObject(id)),
