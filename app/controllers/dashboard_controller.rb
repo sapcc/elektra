@@ -125,6 +125,11 @@ class DashboardController < ::ScopeController
       options[:description] = exception.message ||
                               'You are not authorized to request this page.'
       render_exception_page(exception, options.merge(sentry: true))
+    when 422 # UNPROCESSABLE ENTITY
+      options[:title] = 'Unprocessable Entity'
+      options[:description] = exception.message ||
+                              'Backend Error.'
+      render_exception_page(exception, options.merge(sentry: true))
     when 429 # too many requests
       options[:title] = 'Too Many Requests'
       options[:description] = exception.message ||
