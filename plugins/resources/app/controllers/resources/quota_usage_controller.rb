@@ -14,14 +14,15 @@ module Resources
       shared_filesystem_storage: { service_type: :sharev2, resource_names: [:gigabytes, :shares, :snapshots, :share_networks, :share_groups] },
       dns_service: { service_type: :dns, resource_names: [:zones, :recordsets]},
       keppel: { service_type: :keppel, resource_names: [:images] },
+      object_storage: { service_type: "object-store", resource_names: [:capacity] },
     }
 
     def index
       render json: usage(params[:type])
     end
-
+    
     private 
-
+    
     def usage(type)
       resources = QUOTA_RESOURCES[type.to_sym] if type
       return [] unless resources
