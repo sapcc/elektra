@@ -1,56 +1,46 @@
 en:
-  # we dont use Keystone credential store anymore
-  # can be deleted later
-  #credentials:
-  #  ec2:
-  #    access: Access Key
-  #    secret: Secret Key
-  #  ssh-key:
-  #    name: Name
-  #    public_key: Public Key
   roles:
-      admin: Keystone Administrator
-      baremetal_admin: Ironic Administrator
-      baremetal_viewer: Ironic Read-Only
-      cfm_admin: Cloud Frame Administrator
-      cfm_user: Cloud Frame User
-      cloud_baremetal_admin: Ironic Cloud Administrator
-      cloud_compute_admin: Nova Cloud Administrator
-      cloud_dns_admin: Designate Cloud Administrator
-      cloud_dns_resource_admin: Limes Cloud Administrator (DNS only)
-      cloud_image_admin: Glance Cloud Administrator
-      cloud_keymanager_admin: Barbican Cloud Administrator
-      cloud_network_admin: Neutron Cloud Administrator
-      cloud_resource_admin: Limes Cloud Administrator
-      cloud_resource_viewer: Limes Cloud Read-Only
-      cloud_sharedfilesystem_admin: Manila Cloud Administrator
-      cloud_sharedfilesystem_viewer: Manila Cloud Read-Only
-      cloud_volume_admin: Cinder Cloud Administrator
-      compute_admin: Nova Administrator
-      compute_admin_wsg: Nova Administrator without Securitygroup Management
-      compute_viewer: Nova Read-Only
-      dns_viewer: Designate Read-Only
-      dns_admin: Designate Administrator
-      image_admin: Glance Administrator
-      image_viewer: Glance Read-Only
-      keymanager_admin: Barbican Administrator
-      keymanager_viewer: Barbican Read-Only
-      member: Member
-      network_admin: Neutron Administrator
-      network_viewer: Neutron Read-Only
-      role_admin: Role Assignments (Authorizations) Administrator
-      role_viewer: Role Assignments (Authorizations) Read-Only
-      resource_admin: Limes Administrator
-      resource_viewer: Limes Read-Only
-      service: Service User
-      sharedfilesystem_admin: Manila Administrator
-      sharedfilesystem_viewer: Manila Read-Only
-      swiftoperator: Object Store Administrator
-      swiftreseller: Object Store Cloud Administrator
-      volume_admin: Cinder Administrator
-      volume_viewer: Cinder Read-Only
-      securitygroup_viewer: Security Group Read-Only
-      securitygroup_admin: Security Group Administrator
-      registry_viewer: Keppel Read-Only
-      registry_admin: Keppel Administrator
-
+    admin: Keystone Administrator
+    baremetal_admin: Ironic Administrator
+    baremetal_viewer: Ironic Read-Only
+    cfm_admin: Cloud Frame Administrator
+    cfm_user: Cloud Frame User
+    cloud_baremetal_admin: Ironic Cloud Administrator
+    cloud_compute_admin: Nova Cloud Administrator
+    cloud_dns_admin: Designate Cloud Administrator
+    cloud_dns_resource_admin: Limes Cloud Administrator (DNS only)
+    cloud_image_admin: Glance Cloud Administrator
+    cloud_keymanager_admin: Barbican Cloud Administrator
+    cloud_network_admin: Neutron Cloud Administrator
+    cloud_resource_admin: Limes Cloud Administrator
+    cloud_resource_viewer: Limes Cloud Read-Only
+    cloud_sharedfilesystem_admin: Manila Cloud Administrator
+    cloud_sharedfilesystem_viewer: Manila Cloud Read-Only
+    cloud_volume_admin: Cinder Cloud Administrator
+    compute_admin: Nova Administrator
+    compute_admin_wsg: Nova Administrator without Securitygroup Management
+    compute_viewer: Nova Read-Only
+    dns_viewer: Designate Read-Only
+    dns_admin: Designate Administrator
+    image_admin: Glance Administrator
+    image_viewer: Glance Read-Only
+    keymanager_admin: Barbican Administrator
+    keymanager_viewer: Barbican Read-Only
+    member: Member
+    network_admin: Neutron Administrator
+    network_viewer: Neutron Read-Only
+    role_admin: Role Assignments (Authorizations) Administrator
+    role_viewer: Role Assignments (Authorizations) Read-Only
+    resource_admin: Limes Administrator
+    resource_viewer: Limes Read-Only
+    service: Service User
+    sharedfilesystem_admin: Manila Administrator
+    sharedfilesystem_viewer: Manila Read-Only
+    swiftoperator: Object Store Administrator
+    swiftreseller: Object Store Cloud Administrator
+    volume_admin: Cinder Administrator
+    volume_viewer: Cinder Read-Only
+    securitygroup_viewer: Security Group Read-Only
+    securitygroup_admin: Security Group Administrator
+    registry_viewer: Keppel Read-Only
+    registry_admin: Keppel Administrator
