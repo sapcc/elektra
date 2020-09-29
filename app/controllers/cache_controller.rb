@@ -43,6 +43,10 @@ class CacheController < ::ScopeController
     render json: { items: [] }
   end
 
+  def cache_objects
+    byebug
+  end
+
   def csv
     items = ObjectCache.find_objects(
       type: params[:type], term: params[:term], include_scope: true,

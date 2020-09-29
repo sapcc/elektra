@@ -22,6 +22,7 @@ store = createStore(AppReducers, composeEnhancers(applyMiddleware(ReduxThunk.def
 
 AppProvider = ({permissions, token, kubernikusBaseUrl}) ->
   kubernetes.ajaxHelper = new ReactAjaxHelper(kubernikusBaseUrl, authToken: token)
+  kubernetes.backendAjaxClient = new ReactAjaxHelper("#{window.location.origin}/#{window.scopedDomainFid}/#{window.scopedProjectFid}")
   React.createElement Provider, store: store,
     React.createElement App, {permissions: permissions, kubernikusBaseUrl: kubernikusBaseUrl}
 

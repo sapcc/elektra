@@ -10,9 +10,18 @@
     error: error
 
   receiveClusters = (json, total) ->
-    type: app.RECEIVE_CLUSTERS
+    console.log("===================================",json)
+    # app.ajaxHelper.post('/cache/objects', json)
+    # console.log($.ajax)
+    # $.ajax.get('/cache/objects')
+    console.log(app.backendAjaxClient)
+    app.backendAjaxClient.post("/cache")
+    # app.backendAjaxClient.get("/cache",{contentType: "application/json"})
+
+    {type: app.RECEIVE_CLUSTERS
     clusters: json
-    total: total
+    total: total}
+
 
   loadClusters = () ->
     (dispatch, getState) ->
