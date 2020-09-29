@@ -145,12 +145,13 @@
                     = render_image_name(@instance.image_object)
                   - else 
                     -  
-              %tr
-                %th Image ID
-                %td= @instance.image ? @instance.image[:id] : "-"
+              - if @instance.image 
+                %tr
+                  %th Image ID
+                  %td= @instance.image.is_a?(Hash) ? @instance.image[:id] : @instance.image
                 
               - @instance.metadata.attributes.each do |k,v|
-                - next if k.to_s == 'id'
+                - next if k.to_s == 'id' || k.to_s == 'image_name'
                 %tr
                   %th= k.to_s.humanize
                   %td= v.blank? ? "N/A" : v
