@@ -10,13 +10,8 @@
     error: error
 
   receiveClusters = (json, total) ->
-    console.log("===================================",json)
-    # app.ajaxHelper.post('/cache/objects', json)
-    # console.log($.ajax)
-    # $.ajax.get('/cache/objects')
-    console.log(app.backendAjaxClient)
-    app.backendAjaxClient.post("/cache")
-    # app.backendAjaxClient.get("/cache",{contentType: "application/json"})
+    # cache clusters in elektra
+    app.backendAjaxClient.post("/cache/objects",{contentType: "application/json", dataType: "json", data: {objects: json, type: "kubernikus_cluster"}})
 
     {type: app.RECEIVE_CLUSTERS
     clusters: json
