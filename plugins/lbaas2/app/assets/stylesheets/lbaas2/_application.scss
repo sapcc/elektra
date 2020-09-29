@@ -243,10 +243,10 @@ ul.secrets-not-found {
 }
 
 .healthmonitor.multiple-subtable-left {
-  width: 35%;
+  width: 25%;
 }
 .members.multiple-subtable-right {
-  width: 65%;
+  width: 75%;
 }
 
 /*
@@ -267,6 +267,14 @@ ul.secrets-not-found {
   .toolbar {
     margin-top: 6px;
   }
+}
+
+.imput-field-md {
+  width: 90px;
+}
+
+.imput-field-sm {
+  width: 50px;
 }
 
 /*

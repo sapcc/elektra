@@ -19,7 +19,8 @@ module Lbaas2
         'weight'         => read('weight'),
         'project_id'    => read('project_id'),        
         'subnet_id'     => read('subnet_id'),
-        'tags'          => read('tags')
+        'tags'          => read('tags'),
+        'backup'          => read('backup')
       }.delete_if { |_k, v| v.blank? }
     end
 
@@ -28,7 +29,8 @@ module Lbaas2
         'name'            => read('name'),
         'admin_state_up' => read('admin_state_up'),
         'weight'         => read('weight'),
-        'tags'          => read('tags')
+        'tags'          => read('tags'),
+        'backup'          => read('backup')
       }
     end
 

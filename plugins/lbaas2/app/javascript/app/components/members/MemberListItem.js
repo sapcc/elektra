@@ -156,6 +156,14 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
       </td>
       <td>{member.weight}</td>
       <td>
+        {member.backup ? (
+          <i className="fa fa-check" />
+        ) : (
+          <i className="fa fa-times" />
+        )}
+      </td>
+
+      <td>
         <div className="btn-group">
           <button
             className="btn btn-default btn-sm dropdown-toggle"
