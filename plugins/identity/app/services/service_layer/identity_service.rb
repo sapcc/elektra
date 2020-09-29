@@ -10,10 +10,6 @@ module ServiceLayer
     include IdentityServices::Role
     include IdentityServices::RoleAssignment
 
-    # we dont use Keystone credential store anymore
-    # can be deleted later
-    #include IdentityServices::OsCredential
-
     def available?(_action_name_sym = nil)
       elektron.service?('identity')
     end
@@ -31,6 +27,7 @@ module ServiceLayer
                end
 
       return unless filter[:project]
+
       project = if domain
                   projects(domain_id: domain.id, name: filter[:project]).first
                 end || find_project(filter[:project])
