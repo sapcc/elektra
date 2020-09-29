@@ -62,7 +62,8 @@ class ObjectCache < ApplicationRecord
     'domain_group_role_assignment' => %w[scope role user group],
     'domain_group_role_project_assignment' => %w[scope role user group],
     'domain_user_role_assignment' => %w[scope role user group],
-    'domain_user_role_project_assignment' => %w[scope role user group]
+    'domain_user_role_project_assignment' => %w[scope role user group],
+    'kubernikus_cluster' => %w[status]
   }.freeze
 
   def self.cache_objects(objects)
@@ -74,6 +75,7 @@ class ObjectCache < ApplicationRecord
     # Devide objects in to be created and updated
     objects_to_be_updated = {}
     objects_to_be_created = []
+
 
     id_object_map.each do |id, data|
       attributes = object_attributes(data)

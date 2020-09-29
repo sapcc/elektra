@@ -10,9 +10,13 @@
     error: error
 
   receiveClusters = (json, total) ->
-    type: app.RECEIVE_CLUSTERS
+    # cache clusters in elektra
+    app.backendAjaxClient.post("/cache/objects",{contentType: "application/json", dataType: "json", data: {objects: json, type: "kubernikus_cluster"}})
+
+    {type: app.RECEIVE_CLUSTERS
     clusters: json
-    total: total
+    total: total}
+
 
   loadClusters = () ->
     (dispatch, getState) ->

@@ -43,6 +43,24 @@ class CacheController < ::ScopeController
     render json: { items: [] }
   end
 
+  def cache_objects
+    type = params[:type]
+    objects = params[:objects]
+    
+    if type && objects && objects.length > 0
+      objects.map! {|o| 
+        o[:cached_object_type] = type
+        o[:id] = o[:id] || "#{@scoped_project_id}_#{o[:name]}"
+        o[:domain_id] = o[:domain_id] || @scoped_domain_id
+        o[:project_id] = o[:project_id] || @scoped_project_id
+        o.to_unsafe_hash
+      }
+
+      ::ObjectCache.cache_objects(objects)
+    end
+    head :ok
+  end
+
   def csv
     items = ObjectCache.find_objects(
       type: params[:type], term: params[:term], include_scope: true,
