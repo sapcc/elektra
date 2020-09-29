@@ -1,5 +1,5 @@
 import { useDispatch, useGlobalState } from "../StateProvider"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import LoadbalancerItem from "./LoadbalancerItem"
 import ErrorPage from "../ErrorPage"
 import { DefeatableLink } from "lib/components/defeatable_link"
@@ -7,6 +7,9 @@ import { SearchField } from "lib/components/search_field"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import { Link } from "react-router-dom"
 import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
+import { addError } from "lib/flashes"
+import { ErrorsList } from "lib/elektra-form/components/errors_list"
+import useCommons from "../../../lib/hooks/useCommons"
 import {
   Tooltip,
   OverlayTrigger,
@@ -23,7 +26,7 @@ import Log from "../shared/logger"
 const TableFadeTransition = ({ children, ...props }) => (
   <CSSTransition
     {...props}
-    timeout={200}
+    timeout={100}
     unmountOnExit
     classNames="css-transition-fade"
   >
@@ -34,11 +37,21 @@ const TableFadeTransition = ({ children, ...props }) => (
 const LoadbalancerList = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
-  const { persistLoadbalancers } = useLoadbalancer()
+  const { persistLoadbalancers, persistAll } = useLoadbalancer()
+  const { errorMessage } = useCommons()
+
+  const [shouldFetchNext, setShouldFetchNext] = useState(false)
+  const [fetchingAllItems, setFetchingAllItems] = useState(false)
 
   useEffect(() => {
     initLoad()
   }, [])
+
+  useEffect(() => {
+    if (shouldFetchNext) {
+      fetchAll()
+    }
+  }, [shouldFetchNext])
 
   const initLoad = () => {
     Log.debug("FETCH initial loadbalancers")
@@ -56,17 +69,37 @@ const LoadbalancerList = (props) => {
   const handlePaginateClick = (e, page) => {
     e.preventDefault()
     if (page === "all") {
-      persistLoadbalancers({ limit: 9999 }).catch((error) => {})
+      setShouldFetchNext(true)
+      setFetchingAllItems(true)
     } else {
       persistLoadbalancers({ marker: state.marker }).catch((error) => {})
     }
   }
 
   const search = (term) => {
-    if (hasNext && !isLoading) {
-      persistLoadbalancers({ limit: 9999 }).catch((error) => {})
+    if (hasNext && !isLoading && term != "") {
+      setShouldFetchNext(true)
+      setFetchingAllItems(true)
+    }
+    // if no search term then stop fetching
+    if (term == "") {
+      setFetchingAllItems(false)
     }
     dispatch({ type: "SET_LOADBALANCER_SEARCH_TERM", searchTerm: term })
+  }
+
+  const fetchAll = () => {
+    setShouldFetchNext(false)
+    persistLoadbalancers({ limit: 19, marker: state.marker })
+      .then((data) => {
+        if (data.has_next && !selected && fetchingAllItems) {
+          setShouldFetchNext(true)
+        }
+      })
+      .catch((error) => {
+        setFetchingAllItems(false)
+        addError(<React.Fragment>{errorMessage(error)}</React.Fragment>)
+      })
   }
 
   const error = state.error
@@ -96,7 +129,7 @@ const LoadbalancerList = (props) => {
     Log.debug("RENDER loadbalancer list")
     return (
       <React.Fragment>
-        {error ? (
+        {error && !fetchingAllItems ? (
           <ErrorPage
             headTitle="Load Balancers"
             error={error}
@@ -180,6 +213,7 @@ const LoadbalancerList = (props) => {
                           disabled={selected ? true : false}
                           key={index}
                           searchTerm={searchTerm}
+                          shouldPoll={loadbalancers.length < 21}
                         />
                       ))
                     ) : (
@@ -198,14 +232,15 @@ const LoadbalancerList = (props) => {
               </TableFadeTransition>
             </TransitionGroup>
 
-            {loadbalancers.length > 0 && !selected && (
-              <Pagination
-                isLoading={isLoading}
-                items={state.items}
-                hasNext={hasNext}
-                handleClick={handlePaginateClick}
-              />
-            )}
+            {(loadbalancers.length > 0 || (searchTerm && searchTerm != "")) &&
+              !selected && (
+                <Pagination
+                  isLoading={isLoading}
+                  items={state.items}
+                  hasNext={hasNext}
+                  handleClick={handlePaginateClick}
+                />
+              )}
           </React.Fragment>
         )}
       </React.Fragment>
