@@ -16,7 +16,12 @@ import { scope } from "ajax_helper"
 import useCommons from "../../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 
-const LoadbalancerItem = ({ loadbalancer, searchTerm, disabled }) => {
+const LoadbalancerItem = ({
+  loadbalancer,
+  searchTerm,
+  disabled,
+  shouldPoll,
+}) => {
   const {
     persistLoadbalancer,
     deleteLoadbalancer,
@@ -26,14 +31,15 @@ const LoadbalancerItem = ({ loadbalancer, searchTerm, disabled }) => {
   let polling = null
 
   useEffect(() => {
-    if (loadbalancer.provisioning_status.includes("PENDING")) {
-      startPolling(5000)
-    } else {
-      startPolling(30000)
+    if (shouldPoll) {
+      if (loadbalancer.provisioning_status.includes("PENDING")) {
+        startPolling(5000)
+      } else {
+        startPolling(30000)
+      }
     }
-
     return function cleanup() {
-      stopPolling()
+      if (shouldPoll) stopPolling()
     }
   })
 
