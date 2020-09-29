@@ -4,9 +4,13 @@ const Pagination = ({ isLoading, items, hasNext, handleClick }) => {
   return (
     <div className="pagination">
       {isLoading ? (
-        <div className="main-buttons">
-          <span className="spinner"></span> Loading more items...
-        </div>
+        <React.Fragment>
+          <span>{items.length} Items</span>
+          <span> | </span>
+          <span className="main-buttons">
+            <span className="spinner"></span> Loading more items...
+          </span>
+        </React.Fragment>
       ) : (
         <React.Fragment>
           <span>{items.length} Items</span>
