@@ -43,11 +43,3 @@
   "identity:user_show": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s) or rule:cloud_viewer",
   "identity:user_update": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)"
 }
-
-// we dont use Keystone credential store anymore
-// can be deleted later
-// "identity:credential_get": "rule:admin_required",
-// "identity:credential_list": "rule:cloud_admin or domain_id:%(domain_id)s",
-// "identity:credential_create": "rule:admin_required or user_id:%(credential.user_id)s",
-// "identity:credential_update": "rule:admin_required",
-// "identity:credential_delete": "rule:admin_required or user_id:%(target.credential.user_id)s",
