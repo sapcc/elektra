@@ -98,7 +98,11 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
             )}
           </React.Fragment>
         ) : (
-          <FormInput type="checkbox" name={`member[${member.id}][backup]`} />
+          <FormInput
+            type="checkbox"
+            name={`member[${member.id}][backup]`}
+            value={member.backup}
+          />
         )}
       </td>
       <td>
