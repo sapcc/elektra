@@ -60,13 +60,13 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
   const displayID = () => {
     if (healthmonitor.name) {
       return (
-        <span className="info-text">
+        <small className="info-text">
           <CopyPastePopover
             text={healthmonitor.id}
             shouldPopover={false}
             bsClass="cp copy-paste-ids"
           />
-        </span>
+        </small>
       )
     }
   }
@@ -184,7 +184,9 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
             </div>
           </div>
           <div className="row">
-            <div className="col-md-12">{healthmonitor.url_path}</div>
+            <div className="col-md-12">
+              <CopyPastePopover text={healthmonitor.url_path} size={40} />
+            </div>
           </div>
         </div>
       )}

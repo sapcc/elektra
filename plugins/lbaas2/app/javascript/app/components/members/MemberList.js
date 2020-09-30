@@ -139,6 +139,7 @@ const MemberList = ({ props, loadbalancerID }) => {
                       <th>Tags</th>
                       <th style={{ width: "10%" }}>Protocol Port</th>
                       <th style={{ width: "10%" }}>Weight</th>
+                      <th style={{ width: "10%" }}>Backup Member</th>
                       <th className="snug"></th>
                     </tr>
                   </thead>
