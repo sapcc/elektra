@@ -252,8 +252,9 @@ const EditMember = (props) => {
                         <th>
                           <abbr title="required">*</abbr>Protocol Port
                         </th>
-                        <th style={{ width: "10%" }}>Weight</th>
-                        <th style={{ width: "20%" }}>Tags</th>
+                        <th>Weight</th>
+                        <th>Backup Member</th>
+                        <th>Tags</th>
                         <th></th>
                       </tr>
                     </thead>

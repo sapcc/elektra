@@ -90,6 +90,23 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
       </td>
       <td>
         {member.saved ? (
+          <React.Fragment>
+            {member.backup ? (
+              <i className="fa fa-check" />
+            ) : (
+              <i className="fa fa-times" />
+            )}
+          </React.Fragment>
+        ) : (
+          <FormInput
+            type="checkbox"
+            name={`member[${member.id}][backup]`}
+            value={member.backup}
+          />
+        )}
+      </td>
+      <td>
+        {member.saved ? (
           <StaticTags tags={member.tags} shouldPopover={true} />
         ) : (
           <TagsInput
