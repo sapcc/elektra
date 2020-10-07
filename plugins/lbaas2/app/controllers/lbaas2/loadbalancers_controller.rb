@@ -200,12 +200,18 @@ module Lbaas2
             next unless cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
             
             grouped_fips[sub.name] ||= []
-            grouped_fips[sub.name] << {label: fip.floating_ip_address, value: fip.id}
+            # add the description to the label ip
+            label = fip.floating_ip_address
+            label = "#{label} (#{fip.description})" unless fip.description.blank?
+            grouped_fips[sub.name] << {label: label, value: fip.id}
             break
           end
         else
           grouped_fips[net.name] ||= []
-          grouped_fips[net.name] << {label: fip.floating_ip_address, value: fip.id}
+          # add the description to the label ip
+          label = fip.floating_ip_address
+          label = "#{label} (#{fip.description})" unless fip.description.blank?
+          grouped_fips[net.name] << {label: label, value: fip.id}
         end
       end
 
