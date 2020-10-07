@@ -582,6 +582,11 @@ module Compute
     end
 
     def new_snapshot
+      @quota_data = services.resource_management.quota_data(
+        @scoped_domain_id, @scoped_project_id,
+        [{service_type: :volumev2, resource_name: :snapshots}]
+      )
+
       @action_from_show = params[:action_from_show] == 'true' || false
     end
 
