@@ -167,7 +167,8 @@ const NewHealthMonitor = (props) => {
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
               The time, in seconds, after which a single health check probe
-              times out (fails). This value must be less than the delay value.
+              times out (fails). This value must be less than the interval
+              value.
             </span>
           </Form.ElementHorizontal>
 

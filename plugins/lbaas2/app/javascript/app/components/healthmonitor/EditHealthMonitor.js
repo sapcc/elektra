@@ -225,7 +225,7 @@ const EditHealthMonitor = (props) => {
                     <i className="fa fa-info-circle"></i>
                     The time, in seconds, after which a single health check
                     probe times out (fails). This value must be less than the
-                    delay value.
+                    interval value.
                   </span>
                 </Form.ElementHorizontal>
 
