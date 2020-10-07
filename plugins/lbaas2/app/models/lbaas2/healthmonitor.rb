@@ -40,14 +40,14 @@ module Lbaas2
       {
         'name' => read('name'),
         'max_retries' => read('max_retries'),
-        'timeout' => read('timeout_value'),
+        'timeout' => read('timeout'),
         'delay' => read('delay'),        
         'http_method' => read('http_method'),
         'expected_codes' => read('expected_codes'),
         'url_path' => read('url_path'),
         'tags' => read('tags'),
         'admin_state_up' => read('admin_state_up')
-      }
+      }.delete_if { |_k, v| v.nil? }
     end
 
   end
