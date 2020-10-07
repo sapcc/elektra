@@ -128,6 +128,7 @@ group :development, :test do
   gem 'database_cleaner'
 
   gem 'pry-rails'
+  gem 'prettier'
 end
 
 group :development, :test, :integration_tests do
