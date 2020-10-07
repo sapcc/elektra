@@ -1,56 +1,59 @@
-import { Modal, Button } from 'react-bootstrap';
-import { Form } from 'lib/elektra-form';
-import { Link } from 'react-router-dom';
-import * as constants from '../../constants';
+import { Modal, Button } from "react-bootstrap"
+import { Form } from "lib/elektra-form"
+import { Link } from "react-router-dom"
+import * as constants from "../../constants"
 
-const FormBody = ({values,volume,availabilityZones}) =>
+const FormBody = ({ values, volume, availabilityZones }) => (
   <Modal.Body>
-    <Form.Errors/>
+    <Form.Errors />
 
-    <Form.ElementHorizontal label='Source Volume' name="source_volid">
-      <p className='form-control-static'>
-        {volume ?
+    <Form.ElementHorizontal label="Source Volume" name="source_volid">
+      <p className="form-control-static">
+        {volume ? (
           <React.Fragment>
             {volume.name}
-            <br/>
-            <span className='info-text'>ID: {volume.id}</span>
+            <br />
+            <span className="info-text">ID: {volume.id}</span>
           </React.Fragment>
-          :
+        ) : (
           volume.id
-        }
+        )}
       </p>
     </Form.ElementHorizontal>
 
-    <Form.ElementHorizontal label='Image Name' name="image_name" required>
-      <Form.Input elementType='input' type='text' name='image_name'/>
+    <Form.ElementHorizontal label="Image Name" name="image_name" required>
+      <Form.Input elementType="input" type="text" name="image_name" />
     </Form.ElementHorizontal>
 
-    <Form.ElementHorizontal label='Disk Format' name="disk_format">
+    <Form.ElementHorizontal label="Disk Format" name="disk_format">
       <Form.Input
-        elementType='select'
+        elementType="select"
         className="select  form-control"
-        name='disk_format'>
+        name="disk_format"
+      >
         <option></option>
         <option>raw</option>
         <option>vmdk</option>
       </Form.Input>
     </Form.ElementHorizontal>
 
-    <Form.ElementHorizontal label='Container Format' name="container_format">
+    <Form.ElementHorizontal label="Container Format" name="container_format">
       <Form.Input
-        elementType='select'
+        elementType="select"
         className="select  form-control"
-        name='container_format'>
+        name="container_format"
+      >
         <option></option>
         <option>bare</option>
       </Form.Input>
     </Form.ElementHorizontal>
 
-    <Form.ElementHorizontal label='Visibility' name="visibility">
+    <Form.ElementHorizontal label="Visibility" name="visibility">
       <Form.Input
-        elementType='select'
+        elementType="select"
         className="select  form-control"
-        name='visibility'>
+        name="visibility"
+      >
         <option></option>
         <option>private</option>
         <option>shared</option>
@@ -59,32 +62,28 @@ const FormBody = ({values,volume,availabilityZones}) =>
       </Form.Input>
     </Form.ElementHorizontal>
 
-    <Form.ElementHorizontal label='' name="protected">
+    <Form.ElementHorizontal label="" name="protected">
       <label>
-        <input
-          type='checkbox'
-          name="protected"/>
+        <Form.Input elementType="input" type="checkbox" name="protected" />
         Protect this image
       </label>
     </Form.ElementHorizontal>
 
-    <Form.ElementHorizontal label='' name="force">
+    <Form.ElementHorizontal label="" name="force">
       <label>
-        <input
-          type='checkbox'
-          name="force"/>
+        <Form.Input elementType="input" type="checkbox" name="force" />
         Upload even if it is attached to an instance.
       </label>
     </Form.ElementHorizontal>
   </Modal.Body>
+)
 
-
-export default class ResetVolumeStatusForm extends React.Component {
+export default class ToImageForm extends React.Component {
   state = { show: true }
 
   componentDidMount() {
-    if(!this.props.volume) {
-      this.props.loadVolume().catch((loadError) => this.setState({loadError}))
+    if (!this.props.volume) {
+      this.props.loadVolume().catch((loadError) => this.setState({ loadError }))
     }
   }
 
@@ -93,29 +92,30 @@ export default class ResetVolumeStatusForm extends React.Component {
   }
 
   close = (e) => {
-    if(e) e.stopPropagation()
-    this.setState({show: false})
+    if (e) e.stopPropagation()
+    this.setState({ show: false })
   }
 
   restoreUrl = (e) => {
-    if (!this.state.show)
-      this.props.history.replace(`/volumes`)
+    if (!this.state.show) this.props.history.replace(`/volumes`)
   }
 
-  onSubmit = (values) =>{
-    return this.props.handleSubmit(values).then(() => this.close());
+  onSubmit = (values) => {
+    return this.props.handleSubmit(values).then(() => this.close())
   }
 
-  render(){
-    const {volume, id} = this.props
-    const initialValues = volume ? {
-      image_name: `from-volume-${volume.name}`,
-      force: false,
-      disk_format: 'vmdk',
-      container_format: 'bare',
-      visibility: 'private',
-      protected: true
-    } : {}
+  render() {
+    const { volume, id } = this.props
+    const initialValues = volume
+      ? {
+          image_name: `from-volume-${volume.name}`,
+          force: false,
+          disk_format: "vmdk",
+          container_format: "bare",
+          visibility: "private",
+          protected: true,
+        }
+      : {}
 
     return (
       <Modal
@@ -123,34 +123,38 @@ export default class ResetVolumeStatusForm extends React.Component {
         onHide={this.close}
         bsSize="large"
         onExited={this.restoreUrl}
-        aria-labelledby="contained-modal-title-lg">
+        aria-labelledby="contained-modal-title-lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
-            Upload To Image <span className="info-text">{volume && volume.name || this.props.id}</span>
+            Upload To Image{" "}
+            <span className="info-text">
+              {(volume && volume.name) || this.props.id}
+            </span>
           </Modal.Title>
         </Modal.Header>
 
         <Form
-          className='form form-horizontal'
+          className="form form-horizontal"
           validate={this.validate}
           onSubmit={this.onSubmit}
-          initialValues={initialValues}>
-
-          {this.props.volume ?
-            <FormBody volume={volume}/>
-            :
+          initialValues={initialValues}
+        >
+          {this.props.volume ? (
+            <FormBody volume={volume} />
+          ) : (
             <Modal.Body>
-              <span className='spinner'></span>
+              <span className="spinner"></span>
               Loading...
             </Modal.Body>
-          }
+          )}
 
           <Modal.Footer>
             <Button onClick={this.close}>Cancel</Button>
-            <Form.SubmitButton label='Clone'/>
+            <Form.SubmitButton label="Clone" />
           </Modal.Footer>
         </Form>
       </Modal>
-    );
+    )
   }
 }
