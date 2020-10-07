@@ -14,5 +14,11 @@ module ServiceLayer
         'volumev2'
       )
     end
+
+    def elektron_volumesv3
+      @elektron_volumes ||= elektron.service(
+        'volumev3'
+      )
+    end
   end
 end

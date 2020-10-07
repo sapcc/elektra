@@ -1,174 +1,214 @@
-import { Link } from 'react-router-dom';
-import { policy } from 'policy';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { PrettyDate } from 'lib/components/pretty_date';
-import { PrettySize } from 'lib/components/pretty_size';
-
-export const ImageIcon = ({image}) => {
-  const tooltip = <Tooltip id='imageIconTooltip'>{image.visibility}</Tooltip>;
-  let iconType;
-  switch(image.visibility) {
-    case 'public': iconType='fa-cloud'; break;
-    case 'private': iconType='fa-lock'; break;
-    case 'community': iconType='fa-users'; break;
-    case 'shared': iconType='fa-share'; break;
-  }
-
-  return (
-    <OverlayTrigger
-      overlay={tooltip}
-      placement="top"
-      delayShow={300}
-      delayHide={150}>
-      <i className={`text-primary fa fa-fw ${iconType}`}/>
-    </OverlayTrigger>
-  )
-}
+import { Link } from "react-router-dom"
+import { policy } from "policy"
+import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { PrettyDate } from "lib/components/pretty_date"
+import { PrettySize } from "lib/components/pretty_size"
+import { ImageIcon } from "./icon"
 
 export const OwnerIcon = () => {
-  const tooltip = <Tooltip id='ownerIconTooltip'>Owned by this project</Tooltip>;
+  const tooltip = <Tooltip id="ownerIconTooltip">Owned by this project</Tooltip>
 
   return (
     <OverlayTrigger
       overlay={tooltip}
       placement="top"
       delayShow={300}
-      delayHide={150}>
-      <i className='text-primary fa fa-fw fa-user'/>
+      delayHide={150}
+    >
+      <i className="text-primary fa fa-fw fa-user" />
     </OverlayTrigger>
   )
 }
 
 export const SnapshotIcon = () => {
-  const tooltip = <Tooltip id='snapshotIconTooltip'>Snapshot</Tooltip>;
+  const tooltip = <Tooltip id="snapshotIconTooltip">Snapshot</Tooltip>
 
   return (
     <OverlayTrigger
       overlay={tooltip}
       placement="top"
       delayShow={300}
-      delayHide={150}>
-      <i className='fa fa-fw fa-camera'/>
+      delayHide={150}
+    >
+      <i className="fa fa-fw fa-camera" />
     </OverlayTrigger>
   )
 }
 
 export default (props) => {
   let { image } = props
-  const canCreateInstance =  policy.isAllowed(
-    "compute:instance_create",
-    { target: {
-      project: {parent_id: props.project_parent_id},
-      scoped_domain_name: props.scoped_domain_name}
-    }
-  )
+  const canCreateInstance = policy.isAllowed("compute:instance_create", {
+    target: {
+      project: { parent_id: props.project_parent_id },
+      scoped_domain_name: props.scoped_domain_name,
+    },
+  })
 
-  return(
-    <tr className={ (image.isDeleting || image.isFetching) ? 'updating' : ''}>
+  return (
+    <tr className={image.isDeleting || image.isFetching ? "updating" : ""}>
       <td className="snug">
-        <ImageIcon image={image}/>
-        {policy.isAllowed("image:image_owner", {image}) && <OwnerIcon/>}
+        <ImageIcon image={image} />
+        {policy.isAllowed("image:image_owner", { image }) && <OwnerIcon />}
       </td>
       <td>
-        <Link to={`/os-images/${props.activeTab}/${image.id}/show`}>{image.image_type=='snapshot' && <SnapshotIcon/>} {image.name || image.id}</Link>
-        { image.name && <span className='info-text'><br/>{image.id}</span> }
+        <Link to={`/os-images/${props.activeTab}/${image.id}/show`}>
+          {image.image_type == "snapshot" && <SnapshotIcon />}{" "}
+          {image.name || image.id}
+        </Link>
+        {image.name && (
+          <span className="info-text">
+            <br />
+            {image.id}
+          </span>
+        )}
       </td>
       <td>{image.disk_format}</td>
-      <td><PrettySize size={image.size}/></td>
-      <td><PrettyDate date={image.created_at}/></td>
+      <td>
+        <PrettySize size={image.size} />
+      </td>
+      <td>
+        <PrettyDate date={image.created_at} />
+      </td>
       <td>{image.status}</td>
       <td className="snug">
-        { (canCreateInstance || policy.isAllowed("image:image_unpublish") || policy.isAllowed("image:image_delete", {image})) &&
-          <div className='btn-group'>
+        {(canCreateInstance ||
+          policy.isAllowed("image:image_unpublish") ||
+          policy.isAllowed("image:image_delete", { image })) && (
+          <div className="btn-group">
             <button
-              className='btn btn-default btn-sm dropdown-toggle'
-              type='button'
-              data-toggle='dropdown'
-              aria-expanded={true}>
-              <i className='fa fa-cog'></i>
+              className="btn btn-default btn-sm dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+              aria-expanded={true}
+            >
+              <i className="fa fa-cog"></i>
             </button>
-            <ul className='dropdown-menu dropdown-menu-right' role='menu'>
-              { props.activeTab !== 'suggested' && canCreateInstance &&
+            <ul className="dropdown-menu dropdown-menu-right" role="menu">
+              {props.activeTab !== "suggested" && canCreateInstance && (
                 <li>
                   <a
                     href={`${props.launchInstanceUrl}?image_id=${image.id}`}
-                    data-modal>
+                    data-modal
+                  >
                     Launch Instance
                   </a>
                 </li>
-              }
-              { props.activeTab == 'suggested' && image.visibility == 'shared' &&
-                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handleAccept(image.id)}}>Accept</a></li>
-              }
-              { props.activeTab == 'suggested' && image.visibility == 'shared' &&
-                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handleReject(image.id)}}>Reject</a></li>
-              }
-              { props.activeTab == 'available' &&
-                <li><Link to={`/os-images/${props.activeTab}/${image.id}/members`}>Access Control</Link></li>
-              }
-              { image.visibility!='private' && policy.isAllowed("image:image_visibility_to_private", {image}) &&
+              )}
+              {props.activeTab == "suggested" && image.visibility == "shared" && (
                 <li>
                   <a
-                    href='#'
+                    href="#"
                     onClick={(e) => {
-                      e.preventDefault();
-                      props.handleVisibilityChange(image.id, 'private')
-                    }}>
-                    Set to private
+                      e.preventDefault()
+                      props.handleAccept(image.id)
+                    }}
+                  >
+                    Accept
                   </a>
                 </li>
-              }
-              {image.visibility!='public' && policy.isAllowed("image:image_visibility_to_public", {image}) &&
+              )}
+              {props.activeTab == "suggested" && image.visibility == "shared" && (
                 <li>
                   <a
-                    href='#'
+                    href="#"
                     onClick={(e) => {
-                      e.preventDefault();
-                      props.handleVisibilityChange(image.id, 'public')
-                    }}>
-                    Set to public
+                      e.preventDefault()
+                      props.handleReject(image.id)
+                    }}
+                  >
+                    Reject
                   </a>
                 </li>
-              }
-              { image.visibility!='shared' && policy.isAllowed("image:image_visibility_to_shared", {image}) &&
+              )}
+              {props.activeTab == "available" && (
                 <li>
-                  <a
-                    href='#'
-                    onClick={(e) => {
-                      e.preventDefault();
-                      props.handleVisibilityChange(image.id, 'shared')
-                    }}>
-                    Set to shared
-                  </a>
+                  <Link
+                    to={`/os-images/${props.activeTab}/${image.id}/members`}
+                  >
+                    Access Control
+                  </Link>
                 </li>
-              }
-              { image.visibility!='community' && policy.isAllowed("image:image_visibility_to_community", {image}) &&
+              )}
+              {image.visibility != "private" &&
+                policy.isAllowed("image:image_visibility_to_private", {
+                  image,
+                }) && (
+                  <li>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        props.handleVisibilityChange(image.id, "private")
+                      }}
+                    >
+                      Set to private
+                    </a>
+                  </li>
+                )}
+              {image.visibility != "public" &&
+                policy.isAllowed("image:image_visibility_to_public", {
+                  image,
+                }) && (
+                  <li>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        props.handleVisibilityChange(image.id, "public")
+                      }}
+                    >
+                      Set to public
+                    </a>
+                  </li>
+                )}
+              {image.visibility != "shared" &&
+                policy.isAllowed("image:image_visibility_to_shared", {
+                  image,
+                }) && (
+                  <li>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        props.handleVisibilityChange(image.id, "shared")
+                      }}
+                    >
+                      Set to shared
+                    </a>
+                  </li>
+                )}
+              {image.visibility != "community" &&
+                policy.isAllowed("image:image_visibility_to_community", {
+                  image,
+                }) && (
+                  <li>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        props.handleVisibilityChange(image.id, "community")
+                      }}
+                    >
+                      Set to community
+                    </a>
+                  </li>
+                )}
+              {policy.isAllowed("image:image_delete", { image }) && (
                 <li>
                   <a
-                    href='#'
+                    href="#"
                     onClick={(e) => {
-                      e.preventDefault();
-                      props.handleVisibilityChange(image.id, 'community')
-                    }}>
-                    Set to community
-                  </a>
-                </li>
-              }
-              { policy.isAllowed("image:image_delete", {image}) &&
-                <li>
-                  <a
-                    href='#'
-                    onClick={(e) => {
-                      e.preventDefault();
+                      e.preventDefault()
                       props.handleDelete(image.id)
-                    }}>
+                    }}
+                  >
                     Delete
                   </a>
                 </li>
-              }
+              )}
             </ul>
           </div>
-        }
+        )}
       </td>
     </tr>
   )

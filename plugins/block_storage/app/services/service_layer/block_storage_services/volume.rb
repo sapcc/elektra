@@ -88,7 +88,8 @@ module ServiceLayer
       end
 
       def upload_volume_to_image(id, options = {})
-        elektron_volumes.post("volumes/#{id}/action") do
+        # set version to 3.1 to support protected and force 
+        elektron_volumesv3.post("volumes/#{id}/action", {headers: {"OpenStack-API-Version"=> "volume 3.1"}}) do
           {
             'os-volume_upload_image'=> {
               'image_name' => options['image_name'],
@@ -96,10 +97,12 @@ module ServiceLayer
               'disk_format' => options['disk_format'] || 'vmdk',
               'container_format' => options['container_format'] || 'bare',
               'visibility' => options['visibility'] || 'private',
-              'protected' => false
+              'protected' => options['protected'] || false
             }
           }
         end
+
+
       end
 
       def attach(volume_id, server_id, device = nil)
