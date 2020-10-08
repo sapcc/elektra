@@ -205,13 +205,16 @@ const EditHealthMonitor = (props) => {
                   />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                    The number of successful checks before changing the
-                    operating status of the member to ONLINE. A valid value is
-                    from 1 to 10.
+                    Number of failed health checks before pool member is marked
+                    OFFLINE. A valid value is from 1 to 10.
                   </span>
                 </Form.ElementHorizontal>
 
-                <Form.ElementHorizontal label="Timeout" name="timeout" required>
+                <Form.ElementHorizontal
+                  label="Probe Timeout"
+                  name="timeout"
+                  required
+                >
                   <Form.Input
                     elementType="input"
                     type="number"
@@ -220,13 +223,13 @@ const EditHealthMonitor = (props) => {
                   />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                    The maximum time, in seconds, that a monitor waits to
-                    connect before it times out. This value must be less than
-                    the delay value.
+                    The time, in seconds, after which a single health check
+                    probe times out (fails). This value must be less than the
+                    interval value.
                   </span>
                 </Form.ElementHorizontal>
 
-                <Form.ElementHorizontal label="Delays" name="delay" required>
+                <Form.ElementHorizontal label="Interval" name="delay" required>
                   <Form.Input
                     elementType="input"
                     type="number"
@@ -235,7 +238,8 @@ const EditHealthMonitor = (props) => {
                   />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                    The time, in seconds, between sending probes to members.
+                    The time, in seconds, between sending health check probes to
+                    pool members.
                   </span>
                 </Form.ElementHorizontal>
 
