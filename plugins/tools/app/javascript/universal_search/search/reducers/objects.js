@@ -23,7 +23,7 @@ const requestObjectsFailure=(state) => (
 
 const updateSearchParams=(state, {term,objectType}) => {
   const newState = {...state}
-  if(typeof term == 'string') newState.searchTerm = term
+  if(typeof term == 'string') newState.searchTerm = term.trim()
   if(typeof objectType == 'string') newState.searchType = objectType
 
   return newState
