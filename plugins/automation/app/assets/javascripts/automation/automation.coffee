@@ -46,6 +46,20 @@
       btn_group.removeClass('hide')
 
 
+@update_repository_credentials=(event) ->
+  textarea = $('textarea[data-toggle="update_repository_credentials"]')
+  submitButton = $('button[data-toggle="update_repository_credentials"]')
+
+  console.log(submitButton.attr("data-authentication-enabled"))
+  console.log(submitButton.attr("data-authentication-enabled") == "true")
+
+  if textarea.val().length == 0 && submitButton.attr("data-authentication-enabled") == "true"
+    event.stopPropagation()
+    event.preventDefault()
+    submitButton.attr("data-confirm","Are you sure you want to remove the repository credentials?")
+    submitButton.attr("data-ok","Yes, remove it")
+    $.rails.showConfirmDialog(submitButton)
+
 $ ->
   # add handler to the show modal event
   $(document).on('modal:contentUpdated', init_tag_editor_inputs)
@@ -56,6 +70,8 @@ $ ->
   $(document).on 'change','select[data-toggle="selectAutomationInstance"]', select_automation_instance
 
   $(document).on 'click','a[data-toggle="run_automation_link"]', run_automation_link
+
+  $(document).on 'click','button[data-toggle="update_repository_credentials"]', update_repository_credentials
 
   # init in case the content is not in modal
   init_tag_editor_inputs()
