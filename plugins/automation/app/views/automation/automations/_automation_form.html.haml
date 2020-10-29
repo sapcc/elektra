@@ -4,6 +4,9 @@
 
 = f.input :repository, required: true, label: 'Repository', input_html: {}, placeholder: 'Enter repository'
 
+- if form_type == 'new'
+  = f.input :repository_credentials, label: 'Repository credentials', input_html: {}, placeholder: 'Enter repository credentials'
+
 = f.input :repository_revision, label: 'Repository version', input_html: {}, placeholder: 'Enter repository revision'
 
 = f.input :timeout, required:true, label: 'Timeout', input_html: {}, placeholder: 'Enter timeout in seconds', icon_hint: t('automation.help_hint.max_time_out')

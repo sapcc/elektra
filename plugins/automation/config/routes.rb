@@ -13,6 +13,8 @@ Automation::Engine.routes.draw do
 
   resources :automations, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
     get 'index_update_runs', :on => :collection
+    get 'edit_repository_credentials', :on => :collection
+    put 'update_repository_credentials', :on => :collection
   end
 
   resources :runs, only: [:show] do
