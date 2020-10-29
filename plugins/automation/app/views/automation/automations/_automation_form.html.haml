@@ -5,7 +5,7 @@
 = f.input :repository, required: true, label: 'Repository', input_html: {}, placeholder: 'Enter repository'
 
 - if form_type == 'new'
-  = f.input :repository_credentials, label: 'Repository credentials', input_html: {}, placeholder: 'Enter repository credentials'
+  = f.input :repository_credentials, :as => :text, label: 'Repository credentials', input_html: { class: 'auto-text-field', :rows => 5 }, placeholder: 'Enter repository credentials'
 
 = f.input :repository_revision, label: 'Repository version', input_html: {}, placeholder: 'Enter repository revision'
 
