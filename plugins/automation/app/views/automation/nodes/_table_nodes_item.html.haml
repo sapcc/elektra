@@ -1,6 +1,8 @@
 %tr{id: "node_#{node.id}"}
   %td
     = link_to(node.display_name, plugin('automation').node_path(id: node.id), data: {modal: true})
+    %div.info-text 
+      = node.id
 
   %td= "#{node.automation_facts.platform} #{node.automation_facts.platform_version}"
 
