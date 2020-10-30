@@ -1,6 +1,8 @@
 %tr
   %td
     = link_to(run.automation_name, plugin('automation').run_path(id: run.id), data: {modal: true})
+    %div.info-text 
+      = run.id
   %td
     = date_humanize(run.created_at)
   %td

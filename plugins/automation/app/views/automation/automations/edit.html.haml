@@ -11,7 +11,7 @@
     .modal-falshes
       = render "automation/shared/flashes.html"
 
-      = render partial: 'automation_form', locals: {automation: @automation, f: f, form_type: 'edit'}
+    = render partial: 'automation_form', locals: {automation: @automation, f: f, form_type: 'edit'}
 
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?

@@ -10,8 +10,10 @@
     = render "automation/shared/flashes.html"
 
   .form-horizontal
+    - form_horizontal_static_input('ID', @automation.id)
     - form_horizontal_static_input('Name', @automation.name)
     - form_horizontal_static_input('Repository', @automation.repository)
+    - form_horizontal_static_input('Repository authentication', @automation.repository_authentication_enabled)
     - form_horizontal_static_input('Repository version', @automation.repository_revision)
     - form_horizontal_static_input('Timeout', @automation.timeout)
     -# No use case for automation tags right now

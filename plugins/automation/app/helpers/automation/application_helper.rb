@@ -244,6 +244,14 @@ module Automation
     # Automations
     #
 
+    def displayCheck(option)
+      if option 
+        haml_tag :i, class: 'fa fa-check'
+      else 
+        haml_tag :i, class: 'fa fa-times'
+      end
+    end
+
     def selected_automation_type(type)
       if type.blank?
         'chef'

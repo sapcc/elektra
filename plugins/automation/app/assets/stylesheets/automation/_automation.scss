@@ -62,6 +62,14 @@
   @include pie-clearfix;
 }
 
+.auto-text-field {
+  width: 100%;
+}
+
+.control-text {
+  padding-top: 6px;
+}
+
 // Index
 
 .loading-spinner-section {

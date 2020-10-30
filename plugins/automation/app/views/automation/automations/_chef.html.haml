@@ -1,7 +1,7 @@
 #chef-automation{class: ('hide' if hide_chef_automation(@automation.type))}
   %h3 Chef
 
-  = f.input :run_list, as: :text, required: false, label: 'Runlist', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'tag', tagEditor_name: 'runlist'} }, placeholder: 'Enter runlist',
+  = f.input :run_list, as: :text, required: true, label: 'Runlist', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'tag', tagEditor_name: 'runlist'} }, placeholder: 'Enter runlist',
   icon_hint: 'Runlist is an array of strings. See hint for more information.',
   help_hint: t('automation.help_hint.string_array')
 

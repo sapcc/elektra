@@ -10,6 +10,8 @@ module Automation
     attribute :type, String
     attribute :name, String
     attribute :repository, String
+    attribute :repository_credentials, String
+    attribute :repository_authentication_enabled, Boolean
     attribute :repository_revision, String, default: 'master'
     attribute :tags, String # JSON
     attribute :timeout, Integer, default: 3600
@@ -51,6 +53,10 @@ module Automation
       end
     end
 
+    def update_repository_credentials(automation_service)
+      update!(automation_service, false)
+    end
+
     private
 
     def persist!(automation_service)
@@ -63,6 +69,7 @@ module Automation
         errors.add 'chef_attributes'.to_sym, e.inspect
         return false
       end
+      
       success = automation.save!
       if !success || !automation.errors.blank?
         messages = automation.errors.blank? ? {} : automation.errors
@@ -71,10 +78,16 @@ module Automation
       success
     end
 
-    def update!(automation_service)
+    def update!(automation_service, skip_credentials=true)
       automation = automation_service.find(id)
       begin
         automation.form_to_attributes(attributes)
+
+        # default update do not update credentials to prevent removing on empty fields
+        if skip_credentials 
+          automation.attributes.reject!{ |k,v| k == 'repository_authentication_enabled' || k == 'repository_credentials' }
+        end
+        
       rescue JSON::ParserError => e
         # catch chef attributes json parse error
         errors.add 'chef_attributes'.to_sym, e.inspect
