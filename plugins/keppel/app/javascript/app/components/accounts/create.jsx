@@ -87,7 +87,7 @@ const FormBody = ({ values }) => {
                   </Form.ElementHorizontal>
 
                   <Form.ElementHorizontal label='Password' name='password'>
-                    <Form.Input elementType='input' type='text' name='password' />
+                    <Form.Input elementType='input' type='password' name='password' />
                     <p className='form-control-static'>These credentials are used by Keppel to pull images from the upstream source. Leave blank to pull as an anonymous user.</p>
                   </Form.ElementHorizontal>
 
