@@ -104,36 +104,6 @@ module Automation
       render action: 'edit'
     end
 
-    def edit_repository_credentials
-    end
-
-    def update_repository_credentials
-      form_params = automation_params
-      # create model
-      @automation.repository_credentials = form_params[:repository_credentials]
-      # validate and save
-      if @automation.update_repository_credentials(services.automation.automation_service)
-        flash[:success] = "Automation #{@automation.name} was successfully updated."
-        redirect_to plugin('automation').automations_path
-      else
-        render action: 'edit_repository_credentials'
-      end
-    end
-
-    def remove_repository_credentials
-      form_params = automation_params
-      # create model
-      @automation.repository_credentials = ""      
-      # validate and save
-      if @automation.update_repository_credentials(services.automation.automation_service)
-        flash[:success] = "Automation #{@automation.name} was successfully updated."
-        render template: 'automation/automations/update_item.js'
-      else
-        flash[:error] = @automation.errors.messages
-        render template: 'automation/automations/update_item.js'
-      end
-    end
-
     def destroy
       automation = services.automation.automation(params[:id])
       automation.destroy

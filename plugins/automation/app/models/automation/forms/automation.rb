@@ -11,6 +11,7 @@ module Automation
     attribute :name, String
     attribute :repository, String
     attribute :repository_credentials, String
+    attribute :repository_credentials_removed, Boolean
     attribute :repository_authentication_enabled, Boolean
     attribute :repository_revision, String, default: 'master'
     attribute :tags, String # JSON
@@ -53,9 +54,9 @@ module Automation
       end
     end
 
-    def update_repository_credentials(automation_service)
-      update!(automation_service, false)
-    end
+    # def update_repository_credentials(automation_service)
+    #   update!(automation_service, false)
+    # end
 
     private
 
@@ -78,16 +79,24 @@ module Automation
       success
     end
 
-    def update!(automation_service, skip_credentials=true)
+    def update!(automation_service)
       automation = automation_service.find(id)
       begin
         automation.form_to_attributes(attributes)
 
-        # default update do not update credentials to prevent removing on empty fields
-        if skip_credentials 
-          automation.attributes.reject!{ |k,v| k == 'repository_authentication_enabled' || k == 'repository_credentials' }
+        # update credentials section
+        if automation.repository_credentials_removed
+          # credentials should be removed
+          automation.attributes[:repository_credentials] = ""
+          automation.attributes.reject!{ |k,v| k == 'repository_authentication_enabled' || k == 'repository_credentials_removed'}
+        elsif automation.repository_credentials.blank?
+          # credentials hasn't been changed
+          automation.attributes.reject!{ |k,v| k == 'repository_authentication_enabled' || k == 'repository_credentials' || k == 'repository_credentials_removed'}
+        else
+          # credentials has been changed
+          automation.attributes.reject!{ |k,v| k == 'repository_authentication_enabled' || k == 'repository_credentials_removed'}
         end
-        
+
       rescue JSON::ParserError => e
         # catch chef attributes json parse error
         errors.add 'chef_attributes'.to_sym, e.inspect

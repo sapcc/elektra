@@ -1,3 +1,14 @@
+.bs-callout.bs-callout-info.bs-callout-emphasize
+  %p
+    %b
+      GIT Repository Authentication
+  %p
+    You can now add credentials for git repositories. Credentials on existing 
+    = link_to 'automations', automations_path 
+    can be updated by choosing "Repository Credentials" from the function menu
+    %span.fa.fa-cog
+    \.
+
 %ul.nav.nav-tabs
   %li{class: ('active' if pane == 'nodes'), role: "presentation"}= link_to 'Nodes', nodes_path, aria: {controls:"nodes-pane"}, role: "tab"
   %li{class: ('active' if pane == 'automations'), role: "presentation"}= link_to 'Automations', automations_path, aria: {controls:"automations-pane"}, role: "tab"
