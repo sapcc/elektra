@@ -112,7 +112,9 @@ export default class ShowModal extends React.Component {
                       <Row label="Vmware OS Type" value={image.vmware_ostype} />
                     )}
                     {image.virtual_size && (
-                      <Row label="Virtual Size" value={image.virtual_size} />
+                      <Row label="Virtual Size">
+                        <PrettySize size={image.virtual_size} />
+                      </Row>
                     )}
                     {image.vmware_disktype && (
                       <Row
@@ -156,9 +158,6 @@ export default class ShowModal extends React.Component {
                     {image.architecture && (
                       <Row label="Architecture" value={image.architecture} />
                     )}
-                    <Row label="Virtual Size">
-                      <PrettySize size={image.virtual_size} />
-                    </Row>
 
                     <Row label="Created At">
                       <PrettyDate date={image.created_at} />
