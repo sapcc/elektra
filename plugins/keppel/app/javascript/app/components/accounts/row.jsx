@@ -35,7 +35,8 @@ export default class AccountRow extends React.Component {
   }
 
   render() {
-    const { name: accountName, auth_tenant_id: projectID, in_maintenance: inMaintenance, replication } = this.props.account;
+    const { name: accountName, auth_tenant_id: projectID, in_maintenance: inMaintenance, metadata, replication } = this.props.account;
+    const isEditable = (metadata || {}).readonly_in_elektra != 'true';
     const containerName = `keppel-${accountName}`;
     const swiftContainerURL = `/_/${projectID}/object-storage/containers/${containerName}/list`;
 
@@ -106,7 +107,10 @@ export default class AccountRow extends React.Component {
               {this.props.isAdmin && (
                 <React.Fragment>
                   <li className="divider"></li>
-                  {!replication && (
+                  {(isEditable && replication && replication.strategy == 'from_external_on_first_use') && (
+                    <li><Link to={`/accounts/${accountName}/upstream_config`}>Edit replication credentials</Link></li>
+                  )}
+                  {(!replication || replication.strategy == 'from_external_on_first_use') && (
                     <li><Link to={`/accounts/${accountName}/sublease`}>Issue sublease token</Link></li>
                   )}
                   <li><Link to={`/accounts/${accountName}/toggle_maintenance`}>{inMaintenance ? 'End maintenance' : 'Set in maintenance'}</Link></li>
