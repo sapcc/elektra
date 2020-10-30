@@ -66,9 +66,17 @@ export default class AccountRow extends React.Component {
         </td>
         <td className='col-md-6'>
           { replication ? (
-            <div>
-              Replica of <strong>{replication.upstream}/{accountName}</strong>
-            </div>
+            replication.strategy == 'on_first_use' ? (
+              <div>
+                Replica of <strong>{replication.upstream}/{accountName}</strong>
+              </div>
+            ) : replication.strategy == 'from_external_on_first_use' ? (
+              <div>
+                Replica of <strong>{replication.upstream.url}</strong>
+              </div>
+            ) : (
+              <div>Unknown replication strategy</div>
+            )
           ) : (
             <div>
               Primary account

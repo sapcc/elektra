@@ -3,11 +3,12 @@ import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Base64 } from 'js-base64';
 
-const initialValues = { role: '', name: '', token: '' };
+const initialValues = { role: '', name: '', url: '', username: '', password: '', token: '' };
 
 const roleInfoTexts = {
   'primary': "You can push images into this account. Accounts in other regions can replicate from this account.",
   'replica': "This account replicates images from a primary account in a different region with the same name. You cannot push images into this account directly. Images are replicated on first use, when a client first tries to pull them.",
+  'external_replica': "This account replicates images from a registry outside of Keppel (e.g. Docker Hub). You cannot push images into this account directly. Images are replicated on first use, when a client first tries to pull them. Only pulls by authenticated users can trigger replication.",
 };
 
 const decodeSubleaseToken = (token) => {
@@ -56,11 +57,12 @@ const FormBody = ({ values }) => {
           {values.role ? null : <option value=''>-- Please select --</option>}
           <option value='primary'>Primary account</option>
           <option value='replica'>Replica account</option>
+          <option value='external_replica'>External replica account</option>
         </Form.Input>
         {roleInfoText && <p className='form-control-static'>{roleInfoText}</p>}
       </Form.ElementHorizontal>
 
-      {values.role == 'primary' && (
+      {(values.role == 'primary' || values.role == 'external_replica') && (
         <React.Fragment>
 
           <Form.ElementHorizontal label='Name' name='name' required>
@@ -71,6 +73,26 @@ const FormBody = ({ values }) => {
             <React.Fragment>
 
               <BackingStorageInfo accountName={accountName} />
+
+              {values.role == 'external_replica' && (
+                <React.Fragment>
+
+                  <Form.ElementHorizontal label='Upstream source' name='url' required>
+                    <Form.Input elementType='input' type='text' name='url' />
+                    <p className='form-control-static'>{'Enter the domain name of a registry (for Docker Hub, use "registry-1.docker.io"). If you only want to replicate images below a certain path, append the path after the domain name (e.g. "gcr.io/google_containers").'}</p>
+                  </Form.ElementHorizontal>
+
+                  <Form.ElementHorizontal label='User name' name='username'>
+                    <Form.Input elementType='input' type='text' name='username' />
+                  </Form.ElementHorizontal>
+
+                  <Form.ElementHorizontal label='Password' name='password'>
+                    <Form.Input elementType='input' type='text' name='password' />
+                    <p className='form-control-static'>These credentials are used by Keppel to pull images from the upstream source. Leave blank to pull as an anonymous user.</p>
+                  </Form.ElementHorizontal>
+
+                </React.Fragment>
+              )}
 
               <Form.ElementHorizontal label='Advanced' name='advanced'>
                 <p className='form-control-static text-muted'>
@@ -144,18 +166,20 @@ export default class AccountCreateModal extends React.Component {
     setTimeout(() => this.props.history.replace('/accounts'), 300);
   };
 
-  validate = ({role, name, token}) => {
+  validate = ({role, name, token, url, username, password}) => {
     switch (role) {
       case 'primary':
         return name && true;
       case 'replica':
         return isValidSubleaseToken(decodeSubleaseToken(token));
+      case 'external_replica':
+        return name && url && true;
       default:
         return false;
     }
   };
 
-  onSubmit = ({role, name, token}) => {
+  onSubmit = ({role, name, token, url, username, password}) => {
     const invalid = (field, reason) => Promise.reject({ errors: { [field]: reason } });
 
     const newAccount = { auth_tenant_id: this.props.projectID };
@@ -174,6 +198,20 @@ export default class AccountCreateModal extends React.Component {
         newAccount.name = t.account;
         newAccount.replication = { strategy: 'on_first_use', upstream: t.primary };
         reqHeaders["X-Keppel-Sublease-Token"] = token;
+        break;
+
+      case 'external_replica':
+        newAccount.name = name;
+        newAccount.replication = {
+          strategy: 'from_external_on_first_use',
+          upstream: { url, username, password },
+        };
+        if (username != '' && password == '') {
+          return invalid('password', 'must be given if username is given');
+        }
+        if (username == '' && password != '') {
+          return invalid('username', 'must be given if password is given');
+        }
         break;
 
       default:
