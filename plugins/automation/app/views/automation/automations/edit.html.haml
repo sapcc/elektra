@@ -18,4 +18,4 @@
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
       = link_to "Cancel", plugin('automation').automations_path(), class: 'btn btn-default'
-    = button_tag "Save", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+    = button_tag "Save", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait...", toggle: "update_repository_credentials", authentication_enabled: @automation.repository_authentication_enabled } }
