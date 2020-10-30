@@ -5,7 +5,13 @@
 = f.input :repository, required: true, label: 'Repository', input_html: {}, placeholder: 'Enter repository'
 
 - if form_type == 'new'
-  = f.input :repository_credentials, :as => :text, label: 'Repository credentials', input_html: { class: 'auto-text-field', :rows => 5 }, placeholder: 'Enter repository credentials'
+  = f.input :repository_credentials, :as => :text, label: 'Repository credentials', input_html: { class: 'auto-text-field', :rows => 5 }, placeholder: 'Enter repository credentials', icon_hint: "Please enter new credentials: <br/>- ssh: Provide ssh private key (e.g. deploy key)<br/>- https: Provide password (github: personal access token)"
+- elsif form_type == 'edit'  
+  - if automation.repository_authentication_enabled
+    = f.input :repository_credentials, :as => :text, label: 'Repository credentials', input_html: { class: 'auto-text-field', :rows => 5}, placeholder: 'Enter new repository credentials (leave empty to retain existing credentials)', icon_hint: "Due to security reasons credentials will not be displayed. To edit enter new credentials. <br/>- ssh: Provide ssh private key (e.g. deploy key)<br/>- https: Provide password (github: personal access token)"
+    = f.input :repository_credentials_removed, as: :boolean, label: 'Remove repository credentials', input_html: {:data => { :toggle => "update_repository_credentials"}}, :wrapper => :horizontal_radio_and_checkboxes_4x8
+  - else
+    = f.input :repository_credentials, :as => :text, label: 'Repository credentials', input_html: { class: 'auto-text-field', :rows => 5 }, placeholder: 'Enter repository credentials', icon_hint: "Please enter new credentials: <br/>- ssh: Provide ssh private key (e.g. deploy key)<br/>- https: Provide password (github: personal access token)"
 
 = f.input :repository_revision, label: 'Repository version', input_html: {}, placeholder: 'Enter repository revision'
 
