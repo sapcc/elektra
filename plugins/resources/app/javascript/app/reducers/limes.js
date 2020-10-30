@@ -143,7 +143,7 @@ const receive = (state, {data, receivedAt}) => {
   // validation: check that each service has resources (we might see missing
   // resources immediately after project creation, before Limes has completed
   // the initial scrape of all project services)
-  if (data.services.some(srv => (srv.resources || []).length == 0)) {
+  if (data.services.some(srv => (srv.resources || []).length == 0 && srv.scraped_at == null)) {
     return {
       ...state,
       receivedAt,
