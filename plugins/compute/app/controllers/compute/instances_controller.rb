@@ -584,9 +584,11 @@ module Compute
     def new_snapshot
       @quota_data = services.resource_management.quota_data(
         @scoped_domain_id, @scoped_project_id,
-        [{service_type: :volumev2, resource_name: :snapshots}]
+        [{service_type: :'object-store', resource_name: :capacity}]
       )
-
+      @quota = @quota_data.select{|q| q.name == :capacity}.first
+      @free_capa = @quota.quota - @quota.usage
+      @free_capa = @free_capa / 1024 / 1024
       @action_from_show = params[:action_from_show] == 'true' || false
     end
 
