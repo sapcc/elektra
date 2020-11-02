@@ -17,6 +17,7 @@ import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
+import { regexString } from 'lib/tools/regex_string';
 
 const ListenerList = ({ props, loadbalancerID }) => {
   const dispatch = useDispatch()
@@ -161,7 +162,7 @@ const ListenerList = ({ props, loadbalancerID }) => {
     if (selected) {
       return items.filter((i) => i.id == searchTerm.trim())
     } else {
-      const regex = new RegExp(searchTerm.trim(), "i")
+      const regex = new RegExp(regexString(searchTerm.trim()), "i")
       return items.filter(
         (i) =>
           `${i.id} ${i.name} ${i.description} ${i.protocol} ${i.protocol_port}`.search(

@@ -10,6 +10,7 @@ import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
 import { addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import useCommons from "../../../lib/hooks/useCommons"
+import { regexString } from 'lib/tools/regex_string';
 import {
   Tooltip,
   OverlayTrigger,
@@ -111,11 +112,12 @@ const LoadbalancerList = (props) => {
 
   const filterItems = (searchTerm, items) => {
     if (!searchTerm) return items
+
     // filter items
     if (selected) {
       return items.filter((i) => i.id == searchTerm.trim())
     } else {
-      const regex = new RegExp(searchTerm.trim(), "i")
+      const regex = new RegExp(regexString(searchTerm.trim()), "i")
       return items.filter(
         (i) =>
           `${i.id} ${i.name} ${i.description} ${i.vip_address} ${

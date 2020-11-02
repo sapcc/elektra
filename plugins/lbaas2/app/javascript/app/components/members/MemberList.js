@@ -13,6 +13,7 @@ import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
+import { regexString } from 'lib/tools/regex_string';
 
 const MemberList = ({ props, loadbalancerID }) => {
   const poolID = useGlobalState().pools.selected
@@ -58,7 +59,7 @@ const MemberList = ({ props, loadbalancerID }) => {
     if (selected) {
       return items.filter((i) => i.id == searchTerm.trim())
     } else {
-      const regex = new RegExp(searchTerm.trim(), "i")
+      const regex = new RegExp(regexString(searchTerm.trim()), "i")
       return items.filter(
         (i) =>
           `${i.id} ${i.name} ${i.address} ${i.protocol_port}`.search(regex) >= 0
