@@ -15,6 +15,7 @@ import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import ErrorPage from "../ErrorPage"
 import Log from "../shared/logger"
+import { regexString } from 'lib/tools/regex_string';
 
 const PoolList = ({ props, loadbalancerID }) => {
   const dispatch = useDispatch()
@@ -151,7 +152,7 @@ const PoolList = ({ props, loadbalancerID }) => {
     if (selected) {
       return items.filter((i) => i.id == searchTerm.trim())
     } else {
-      const regex = new RegExp(searchTerm.trim(), "i")
+      const regex = new RegExp(regexString(searchTerm.trim()), "i")
       return items.filter(
         (i) =>
           `${i.id} ${i.name} ${i.description} ${i.protocol}`.search(regex) >= 0
