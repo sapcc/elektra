@@ -13,6 +13,7 @@ import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
+import { regexString } from 'lib/tools/regex_string';
 
 const L7RulesList = ({ props, loadbalancerID }) => {
   const { searchParamsToString } = useCommons()
@@ -58,7 +59,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
     if (selected) {
       return items.filter((i) => i.id == searchTerm.trim())
     } else {
-      const regex = new RegExp(searchTerm.trim(), "i")
+      const regex = new RegExp(regexString(searchTerm.trim()), "i")
       return items.filter(
         (i) => `${i.id} ${i.type} ${i.value}`.search(regex) >= 0
       )
