@@ -4,12 +4,14 @@
 - if current_user.is_allowed?("compute:image_admin")
   = simple_form_for :snapshot, url: plugin('compute').create_image_instance_path(id:params[:id], action_from_show:@action_from_show), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
     %div{class: modal? ? 'modal-body' : ''}
-      - quota = @quota_data.select{|q| q.name == :snapshots}.first
-      -if !quota || quota.usage >= quota.quota 
+      - if !@quota
+        .alert.alert-danger
+          Server image snapshots are stored in your object storage. Your remaining object storage quota is not available. You can request storage 
+          = link_to 'here', "#{plugin('resources').project_path()}#/storage", {target: "_blank"}
+      - if @free_capa <= 5120 
         .alert.alert-warning
-          No quota available for the server image / snapshot. Please request more quota. 
-          = link_to 'resources', plugin('resources').project_path(), {target: "_blank"}
-
+          Server image snapshots are stored in your object storage. Your remaining object storage quota is low. You can request more
+          = link_to 'here', "#{plugin('resources').project_path()}#/storage", {target: "_blank"}
       = f.input :name, icon_hint: 'A snapshot is an image which preserves the disk state of a running instance.'
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
@@ -17,7 +19,8 @@
         %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
       - else
         = link_to "Cancel", instances_url(), class: 'btn btn-default'
-      = button_tag "Create Snapshot", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+      - if @quota
+        = button_tag "Create Snapshot", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
 - else
   %div{class: modal? ? 'modal-body' : ''}
     .alert.alert-info
