@@ -72,6 +72,14 @@ $ ->
     $html.on 'hidden.bs.modal', (e) ->
       # remove confirming mark
       link.removeAttr('data-confirming')
+      
+      # https://github.com/twbs/bootstrap/issues/15260
+      # Closing the confirm dialog when the main modal view still open removes the class "modal-open" from body which prevents the modal view to be scrolled again
+      # check if the main modal view still open
+      if $('#mainModal.modal.in').length > 0
+        # set back the class "modal-open" back to the body so the main modal view can still be used
+        $("body").addClass("modal-open");
+
 
     $html.modal()
 
