@@ -143,7 +143,13 @@ const receive = (state, {data, receivedAt}) => {
   // validation: check that each service has resources (we might see missing
   // resources immediately after project creation, before Limes has completed
   // the initial scrape of all project services)
-  if (data.services.some(srv => (srv.resources || []).length == 0 && srv.scraped_at == null)) {
+  //
+  // We cannot just check for some(resources.length == 0) because some services
+  // legitimately don't have resources. We also cannot just check for
+  // some(scraped_at == null) because domain/cluster level does not have the
+  // scraped_at field on the service level. So look specifically for an
+  // incomplete project scraping:
+  if (data.services.some(srv => (srv.resources || []).length == 0) && data.services.some(srv => srv.scraped_at === null) && data.services.some(srv => srv.scraped_at !== null)) {
     return {
       ...state,
       receivedAt,
