@@ -33,6 +33,8 @@ ALLOWED_ROLES = %w[
   securitygroup_admin
   registry_viewer
   registry_admin
+  email_admin
+  email_user
 ].freeze
 
 BETA_ROLES = %w[
