@@ -70,8 +70,12 @@ const restructureReport = (data, resourceFilter = null) => {
     serviceList = serviceList.map(srv => ({
       ...srv,
       resources: srv.resources.filter(resourceFilter),
-    })).filter(srv => srv.resources.length > 0);
+    }));
   }
+  //skip services that do not have any resources (either because of the
+  //`resourceFilter` above or because the service in question only reports
+  //rates)
+  serviceList = serviceList.filter(srv => srv.resources.length > 0);
 
   // `categories` is what the Category component needs.
   const categories = {};
