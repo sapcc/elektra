@@ -17,9 +17,11 @@ module Core
         @pagination_current_page = (params[:page] || 1).to_i
         @pagination_seen_items = (@pagination_current_page - 1)*@pagination_per_page
 
+        sort_order_mode = {normal: options[:reverse] ? 'asc' : 'desc', reverse: options[:reverse] ? 'desc' : 'asc'}
+
         pagination_options = {
           limit: options[:per_page].to_i + 1,
-          sort_dir: (params[:reverse] && @pagination_current_page>1)? 'desc' : 'asc'
+          sort_dir: (params[:reverse] && @pagination_current_page>1)? sort_order_mode[:normal] : sort_order_mode[:reverse]
         }
         pagination_options[:marker] = params[:marker] if (params[:marker] && @pagination_current_page>1)
         result = block.call(pagination_options)

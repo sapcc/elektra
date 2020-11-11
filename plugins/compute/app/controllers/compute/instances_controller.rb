@@ -22,6 +22,7 @@ module Compute
       @search = nil
       @searchfor = nil
 
+      
       if params.include?(:search)
         if not params[:search].blank?
           @search = params[:search]
@@ -32,10 +33,12 @@ module Compute
           params.delete(:searchfor)
         end
       end
+
       # search with filter or for all
       if (@searchfor and @searchfor.downcase() != 'id') or filter.empty?
         if @scoped_project_id
-          @instances = paginatable(per_page: per_page.to_i) do |pagination_options|
+          # reverse: true changes the order direction
+          @instances = paginatable(per_page: per_page.to_i, reverse: true) do |pagination_options|
             services.compute.servers(@admin_option.merge(pagination_options).merge(filter))
           end
           if @instances.nil?
