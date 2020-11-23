@@ -78,19 +78,34 @@ const LoadbalancerList = (props) => {
   }
 
   const search = (term) => {
-    if (hasNext && !isLoading && term != "") {
+    // if (hasNext && !isLoading && term != "") {
+    //   setShouldFetchNext(true)
+    //   setFetchingAllItems(true)
+    // }
+
+    if (!fetchingAllItems && term != "") {
       setShouldFetchNext(true)
       setFetchingAllItems(true)
+      // reset marker to force load all loabalancers from the beginning
+      dispatch({ type: "RESET_LOADBALANCER_SEARCH_ALL" })
     }
-    // if no search term then stop fetching
+
+    // if no search term then stop fetching all items
     if (term == "") {
       setFetchingAllItems(false)
     }
-    dispatch({ type: "SET_LOADBALANCER_SEARCH_TERM", searchTerm: term })
+
+    // update the filter
+    dispatch({ type: "SET_LOADBALANCER_SEARCH_TERM", searchTerm: term })    
   }
 
   const fetchAll = () => {
     setShouldFetchNext(false)
+
+    console.group("+++marker+++")
+    console.log(state.marker)
+    console.groupEnd("+++")
+
     persistLoadbalancers({ limit: 19, marker: state.marker })
       .then((data) => {
         if (data.has_next && !selected && fetchingAllItems) {

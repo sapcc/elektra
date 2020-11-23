@@ -78,6 +78,10 @@ const setSearchTerm = (state, { searchTerm }) => {
   return { ...state, searchTerm }
 }
 
+const resetSearchAll = (state) => {
+  return { ...state, marker: null, hasNext: true }
+}
+
 const removeLoadbalancer = (state, { id }) => {
   const index = state.items.findIndex((item) => item.id == id)
   if (index < 0) {
@@ -122,6 +126,8 @@ export default (state = initialState, action) => {
       return selectLoadbalancer(state, action)
     case "SET_LOADBALANCER_SEARCH_TERM":
       return setSearchTerm(state, action)
+    case "RESET_LOADBALANCER_SEARCH_ALL":
+      return resetSearchAll(state)
     case "REMOVE_LOADBALANCER":
       return removeLoadbalancer(state, action)
     case "REQUEST_REMOVE_LOADBALANCER":
