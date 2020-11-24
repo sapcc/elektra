@@ -78,11 +78,6 @@ const LoadbalancerList = (props) => {
   }
 
   const search = (term) => {
-    // if (hasNext && !isLoading && term != "") {
-    //   setShouldFetchNext(true)
-    //   setFetchingAllItems(true)
-    // }
-
     if (!fetchingAllItems && term != "") {
       setShouldFetchNext(true)
       setFetchingAllItems(true)
@@ -90,7 +85,7 @@ const LoadbalancerList = (props) => {
       dispatch({ type: "RESET_LOADBALANCER_SEARCH_ALL" })
     }
 
-    // if no search term then stop fetching all items
+    // stop fetching all items
     if (term == "") {
       setFetchingAllItems(false)
     }
@@ -102,14 +97,12 @@ const LoadbalancerList = (props) => {
   const fetchAll = () => {
     setShouldFetchNext(false)
 
-    console.group("+++marker+++")
-    console.log(state.marker)
-    console.groupEnd("+++")
-
     persistLoadbalancers({ limit: 19, marker: state.marker })
       .then((data) => {
         if (data.has_next && !selected && fetchingAllItems) {
           setShouldFetchNext(true)
+        } else {
+          setFetchingAllItems(false)  
         }
       })
       .catch((error) => {
