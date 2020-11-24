@@ -8,7 +8,7 @@ const Pagination = ({ isLoading, items, hasNext, handleClick }) => {
           <span>{items.length} Items</span>
           <span> | </span>
           <span className="main-buttons">
-            <span className="spinner"></span> Loading more items...
+            <span className="spinner"></span> Loading...
           </span>
         </React.Fragment>
       ) : (
