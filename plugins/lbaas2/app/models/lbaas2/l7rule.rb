@@ -58,7 +58,6 @@ module Lbaas2
     def attributes_for_update
       {
         'type'                => read('type'),
-        'admin_state_up'      => read('admin_state_up'),
         'compare_type'        => read('compare_type'),
         'invert'              => read('invert'),
         'value'               => read('value'),
