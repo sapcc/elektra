@@ -219,6 +219,7 @@ const LoadbalancerList = (props) => {
                     {loadbalancers && loadbalancers.length > 0 ? (
                       loadbalancers.map((loadbalancer, index) => (
                         <LoadbalancerItem
+                          props={props}
                           loadbalancer={loadbalancer}
                           disabled={selected ? true : false}
                           key={index}

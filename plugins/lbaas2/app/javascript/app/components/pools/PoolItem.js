@@ -83,6 +83,14 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
     [scope.domain]
   )
 
+  const canShowJSON = useMemo(
+    () =>
+      policy.isAllowed("lbaas2:pool_get", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  )
+
   const handleDelete = (e) => {
     if (e) {
       e.stopPropagation()
@@ -350,6 +358,17 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
                 notAllowedText="Not allowed to delete. Please check with your administrator."
               >
                 Delete
+              </SmartLink>
+            </li>
+            <li>
+              <SmartLink
+                to={`/loadbalancers/${loadbalancerID}/pools/${
+                  pool.id
+                }/json?${searchParamsToString(props)}`}
+                isAllowed={canShowJSON}
+                notAllowedText="Not allowed to get JSOn. Please check with your administrator."
+              >
+                JSON
               </SmartLink>
             </li>
           </ul>
