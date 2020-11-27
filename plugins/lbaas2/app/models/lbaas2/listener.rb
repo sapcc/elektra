@@ -35,7 +35,6 @@ module Lbaas2
       {
         'name' => read('name'),
         'description' => read('description'),
-        'admin_state_up' => read('admin_state_up'),
         'connection_limit' => read('connection_limit'),
         'default_pool_id' => read('default_pool_id'),
         'default_tls_container_ref' => read('default_tls_container_ref'),

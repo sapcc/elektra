@@ -25,7 +25,6 @@ module Lbaas2
       {
         'name'                => read('name'),
         'description'         => read('description'),
-        'admin_state_up'      => read('admin_state_up'),
         'position'            => read('position'),
         'action'              => read('action'),
         'redirect_url'        => read('redirect_url'),        

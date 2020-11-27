@@ -45,8 +45,7 @@ module Lbaas2
         'http_method' => read('http_method'),
         'expected_codes' => read('expected_codes'),
         'url_path' => read('url_path'),
-        'tags' => read('tags'),
-        'admin_state_up' => read('admin_state_up')
+        'tags' => read('tags')
       }.delete_if { |_k, v| v.nil? }
     end
 
