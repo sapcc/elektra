@@ -20,6 +20,7 @@ import ListenerJSON from './listeners/ListenerJSON'
 import EditPool from './pools/EditPool';
 import PoolJSON from './pools/PoolJSON';
 import EditMember from './members/EditMember';
+import MemberJSON from './members/MemberJSON'
 import EditL7Policy from './l7policies/EditL7Policy'
 import L7PolicyJSON from './l7policies/L7PolicyJSON'
 import EditL7Rule from './l7Rules/EditL7Rule'
@@ -64,6 +65,7 @@ const Router = (props) => {
 
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/members/new" component={NewMember}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/members/:memberID/edit" component={EditMember}/>
+          <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/members/:memberID/json" component={MemberJSON}/>
 
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/healthmonitor/new" component={NewHealthMonitor}/>
           <Route exact path="/loadbalancers/:loadbalancerID/pools/:poolID/healthmonitor/:healthmonitorID/edit" component={EditHealthMonitor}/>
