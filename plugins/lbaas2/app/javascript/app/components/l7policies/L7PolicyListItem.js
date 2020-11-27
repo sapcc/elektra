@@ -102,6 +102,14 @@ const L7PolicyListItem = ({
     [scope.domain]
   )
 
+  const canShowJSON = useMemo(
+    () =>
+      policy.isAllowed("lbaas2:l7policy_get", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  )
+
   const handleDelete = (e) => {
     if (e) {
       e.stopPropagation()
@@ -295,6 +303,17 @@ const L7PolicyListItem = ({
                 notAllowedText="Not allowed to delete. Please check with your administrator."
               >
                 Delete
+              </SmartLink>
+            </li>
+            <li>
+              <SmartLink
+                to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${
+                  l7Policy.id
+                }/json?${searchParamsToString(props)}`}
+                isAllowed={canShowJSON}
+                notAllowedText="Not allowed to get JSOn. Please check with your administrator."
+              >
+                JSON
               </SmartLink>
             </li>
           </ul>

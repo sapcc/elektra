@@ -70,6 +70,14 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
     [scope.domain]
   )
 
+  const canShowJSON = useMemo(
+    () =>
+      policy.isAllowed("lbaas2:healthmonitor_get", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  )
+
   const canDelete = useMemo(
     () =>
       policy.isAllowed("lbaas2:healthmonitor_delete", {
@@ -168,6 +176,17 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
                               notAllowedText="Not allowed to delete. Please check with your administrator."
                             >
                               Delete
+                            </SmartLink>
+                          </li>
+                          <li>
+                            <SmartLink
+                              to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/healthmonitor/${
+                                healthmonitor.id
+                              }/json?${searchParamsToString(props)}`}
+                              isAllowed={canShowJSON}
+                              notAllowedText="Not allowed to get JSOn. Please check with your administrator."
+                            >
+                              JSON
                             </SmartLink>
                           </li>
                         </ul>
