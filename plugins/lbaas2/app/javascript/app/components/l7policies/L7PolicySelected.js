@@ -16,7 +16,7 @@ import Log from "../shared/logger"
 
 const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
   const { actionRedirect, deleteL7Policy, persistL7Policy } = useL7Policy()
-  const { matchParams, errorMessage } = useCommons()
+  const { matchParams, errorMessage, searchParamsToString } = useCommons()
   const { persistListener } = useListener()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   let polling = null
@@ -60,9 +60,25 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
     polling = null
   }
 
+  const canEdit = useMemo(
+    () =>
+      policy.isAllowed("lbaas2:l7policy_update", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  )
+
   const canDelete = useMemo(
     () =>
       policy.isAllowed("lbaas2:l7policy_delete", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  )
+
+  const canShowJSON = useMemo(
+    () =>
+      policy.isAllowed("lbaas2:l7policy_get", {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
@@ -120,6 +136,17 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
                 <ul className="dropdown-menu dropdown-menu-right" role="menu">
                   <li>
                     <SmartLink
+                      to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${
+                        l7Policy.id
+                      }/edit?${searchParamsToString(props)}`}
+                      isAllowed={canEdit}
+                      notAllowedText="Not allowed to edit. Please check with your administrator."
+                    >
+                      Edit
+                    </SmartLink>
+                  </li>
+                  <li>
+                    <SmartLink
                       onClick={handleDelete}
                       isAllowed={canDelete}
                       notAllowedText="Not allowed to delete. Please check with your administrator."
@@ -127,6 +154,17 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
                       Delete
                     </SmartLink>
                   </li>
+                  <li>
+                    <SmartLink
+                      to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${
+                        l7Policy.id
+                      }/json?${searchParamsToString(props)}`}
+                      isAllowed={canShowJSON}
+                      notAllowedText="Not allowed to get JSOn. Please check with your administrator."
+                    >
+                      JSON
+                    </SmartLink>
+                  </li>                  
                 </ul>
               </div>
             </div>
