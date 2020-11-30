@@ -12,6 +12,7 @@ import SmartLink from "../shared/SmartLink"
 import { policy } from "policy"
 import { scope } from "ajax_helper"
 import Log from "../shared/logger"
+import DropDownMenu from '../shared/DropdownMenu'
 
 const MemberListItem = ({ props, poolID, member, searchTerm }) => {
   const {
@@ -170,7 +171,9 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
           <i className="fa fa-times" />
         )}
       </td>
-
+      <td>
+        <DropDownMenu />
+      </td>
       <td>
         <div className="btn-group">
           <button
