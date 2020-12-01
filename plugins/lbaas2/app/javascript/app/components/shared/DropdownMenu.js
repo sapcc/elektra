@@ -2,119 +2,47 @@ import React, { useState, useEffect } from "react"
 import { DropdownButton, MenuItem } from 'react-bootstrap'
 import uniqueId from 'lodash/uniqueId'
 
-const DropDownMenu = ({ name }) => {
+
+// Custom Bootstrap Dropdown
+// This dropdown is made to be used in scroll containers where the dropdown menu
+// can be clipped. When clicking the dropdown menu in a scroll container the position
+// is being calculated to expand the scroll container in case the menu is clipped.
+const DropDownMenu = ({ buttonIcon, children }) => {
   const [componentID, setcomponentID] = useState(null)
-
-  // $('.dropdown').on('show.bs.dropdown', function () {
-  //   $('body').append($('.dropdown').css({
-  //     position:'absolute',
-  //     left:$('.dropdown').offset().left, 
-  //     top:$('.dropdown').offset().top
-  //   }).detach());
-  // });
-  
-  // $('.dropdown').on('hidden.bs.dropdown', function () {
-  //   $('.bs-example').append($('.dropdown').css({
-  //     position:false, left:false, top:false
-  //   }).detach());
-  // });
-
 
   useEffect(() => {
     if (componentID) {
-      const $element = $("#"+componentID)
-      console.log($element)
-
-      var $table = $element.closest('.table-responsive'),
-          $menu = $element.find('.dropdown-menu')
+      var $component = $("#"+componentID)
+      var $table = $component.closest('.table-responsive'),
+          $menu = $component.find('.dropdown-menu')
 
       if ($table) {
-        // console.group("metrics")
-        // console.log($table)
-        // console.log($menu)
-        // console.groupEnd()
-
-        $element.on('show.bs.dropdown', function () {
+        // add padding and animation on open dropdown
+        $component.on('show.bs.dropdown', function () {
           console.log("testing")
           var tableOffsetHeight = $table.offset().top + $table.height(),
-              menuOffsetHeight = $element.offset().top + $element.outerHeight(true) + $menu.outerHeight(true)
-
-          // console.group("metrics")
-          // console.log($element)
-          // console.log($table)
-          // console.log($menu)
-          // console.log("table offset top: ", $table.offset().top)
-          // console.log("table height: ", $table.height())
-          // console.log("element offset top: ", $element.offset().top)
-          // console.log("element height: ", $element.outerHeight(true))
-          // console.log("menu offset top: ", $menu.offset().top)
-          // console.log("menu height: ", $menu.outerHeight(true))
-          // console.log(tableOffsetHeight)
-          // console.log(menuOffsetHeight)
-          // console.log(menuOffsetHeight > tableOffsetHeight)
-          // console.log(menuOffsetHeight - tableOffsetHeight)
-          // console.log("scrolltop: ", $table.scrollTop())
-          // console.groupEnd()
+              menuOffsetHeight = $component.offset().top + $component.outerHeight(true) + $menu.outerHeight(true)
 
           if (menuOffsetHeight > tableOffsetHeight) {
             var padding = menuOffsetHeight - tableOffsetHeight
             var scrollTarget = $table.scrollTop() + padding
-            console.group("metrics")
-            console.log("padding: ", padding)
-            console.log("scrollTarget", scrollTarget)
-            console.groupEnd()
             $table.css("padding-bottom", padding)
-            // $table.scrollTop(scrollTarget)
             $table.animate({
               scrollTop: scrollTarget
-              }, 1000)
+              }, 500)
           }
         });
         
-        $element.on('hide.bs.dropdown', function () {
+        // remove padding on close dropdown
+        $component.on('hide.bs.dropdown', function () {
           $table.css("padding-bottom", 0);
         })
+
+        // clean up
+        return () => {
+          $component.off()
+        }
       }
-
-      // element.on('show.bs.dropdown', function () {
-      //   console.log("test")
-      //   $('body').append(element.css({
-      //     position:'absolute',
-      //     left:element.offset().left, 
-      //     top:element.offset().top
-      //   }).detach());
-      // });
-      
-      // element.on('hidden.bs.dropdown', function () {
-      //   $('.bs-example').append(element.css({
-      //     position:false, left:false, top:false
-      //   }).detach());
-      // });
-
-
-
-      // $('.table-responsive').on('shown.bs.dropdown', function (e) {
-      //   var $table = $(this),
-      //       $menu = $(e.target).find('.dropdown-menu'),
-      //       tableOffsetHeight = $table.offset().top + $table.height(),
-      //       menuOffsetHeight = $menu.offset().top + $menu.outerHeight(true);
-    
-      //   console.group("metrics")
-      //   console.log($table)
-      //   console.log($menu)
-      //   console.log(tableOffsetHeight)
-      //   console.log(menuOffsetHeight)
-      //   console.log(menuOffsetHeight - tableOffsetHeight)
-      //   console.groupEnd()
-
-      //   if (menuOffsetHeight > tableOffsetHeight)
-      //     $table.css("padding-bottom", menuOffsetHeight - tableOffsetHeight);
-      // });
-    
-      // $('.table-responsive').on('hide.bs.dropdown', function () {
-      //   $(this).css("padding-bottom", 0);
-      // })
-
     }
   }, [componentID]);
 
@@ -132,18 +60,10 @@ const DropDownMenu = ({ name }) => {
           data-toggle="dropdown"
           aria-expanded={true}
         >
-          test
+          {buttonIcon}
         </button>
         <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            <li>
-              Test1
-            </li>
-            <li>
-              Test2
-            </li>
-            <li>
-              Test3
-            </li>
+            {children}
           </ul>
       </div>
     </React.Fragment>

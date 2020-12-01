@@ -172,52 +172,39 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
         )}
       </td>
       <td>
-        <DropDownMenu />
-      </td>
-      <td>
-        <div className="btn-group">
-          <button
-            className="btn btn-default btn-sm dropdown-toggle"
-            type="button"
-            data-toggle="dropdown"
-            aria-expanded={true}
-          >
-            <span className="fa fa-cog"></span>
-          </button>
-          <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            <li>
-              <SmartLink
-                to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/${
-                  member.id
-                }/edit?${searchParamsToString(props)}`}
-                isAllowed={canEdit}
-                notAllowedText="Not allowed to edit. Please check with your administrator."
-              >
-                Edit
-              </SmartLink>
-            </li>
-            <li>
-              <SmartLink
-                onClick={handleDelete}
-                isAllowed={canDelete}
-                notAllowedText="Not allowed to delete. Please check with your administrator."
-              >
-                Delete
-              </SmartLink>
-            </li>
-            <li>
-              <SmartLink
-                to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/${
-                  member.id
-                }/json?${searchParamsToString(props)}`}
-                isAllowed={canShowJSON}
-                notAllowedText="Not allowed to get JSOn. Please check with your administrator."
-              >
-                JSON
-              </SmartLink>
-            </li>
-          </ul>
-        </div>
+        <DropDownMenu buttonIcon={<span className="fa fa-cog"/>}>
+          <li>
+            <SmartLink
+              to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/${
+                member.id
+              }/edit?${searchParamsToString(props)}`}
+              isAllowed={canEdit}
+              notAllowedText="Not allowed to edit. Please check with your administrator."
+            >
+              Edit
+            </SmartLink>
+          </li>
+          <li>
+            <SmartLink
+              onClick={handleDelete}
+              isAllowed={canDelete}
+              notAllowedText="Not allowed to delete. Please check with your administrator."
+            >
+              Delete
+            </SmartLink>
+          </li>
+          <li>
+            <SmartLink
+              to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/${
+                member.id
+              }/json?${searchParamsToString(props)}`}
+              isAllowed={canShowJSON}
+              notAllowedText="Not allowed to get JSOn. Please check with your administrator."
+            >
+              JSON
+            </SmartLink>
+          </li>          
+        </DropDownMenu>
       </td>
     </tr>
   )
