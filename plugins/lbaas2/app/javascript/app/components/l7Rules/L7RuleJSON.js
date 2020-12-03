@@ -10,7 +10,8 @@ const L7RuleJSON = (props) => {
   } = useL7Rule()
   const {
     matchParams,
-    searchParamsToString
+    searchParamsToString,
+    sortObjectByKeys
   } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
@@ -45,11 +46,11 @@ const L7RuleJSON = (props) => {
   const loadObject = () => {
     setJsonObject({ ...jsonObject, isLoading: true,  error: null })
     fetchL7Rule(loadbalancerID, listenerID, l7policyID, l7ruleID)
-      .then((data) => {
+      .then((data) => {    
         setJsonObject({
           ...jsonObject,
           isLoading: false,
-          item: data.l7rule,
+          item: sortObjectByKeys(data.l7rule),
           error: null,
         })
         init_json_editor()

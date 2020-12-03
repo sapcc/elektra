@@ -10,7 +10,8 @@ const HealthmonitorJSON = (props) => {
   } = useHealthmonitor()
   const {
     matchParams,
-    searchParamsToString
+    searchParamsToString,
+    sortObjectByKeys
   } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
@@ -46,7 +47,7 @@ const HealthmonitorJSON = (props) => {
         setJsonObject({
           ...jsonObject,
           isLoading: false,
-          item: data.healthmonitor,
+          item: sortObjectByKeys(data.healthmonitor),
           error: null,
         })
         init_json_editor()

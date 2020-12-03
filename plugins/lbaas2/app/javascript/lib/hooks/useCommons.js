@@ -100,6 +100,10 @@ const useCommons = () => {
     }
   }
 
+  const sortObjectByKeys = (o) => {
+    return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
+  }
+
   return {
     MyHighlighter,
     searchParamsToString,
@@ -110,7 +114,8 @@ const useCommons = () => {
     errorMessage,
     helpBlockTextForSelect,
     labelStateAttributes,
-    labelStatusAttributes
+    labelStatusAttributes,
+    sortObjectByKeys
   }
 }
  

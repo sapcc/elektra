@@ -10,7 +10,8 @@ const L7PolicyJSON = (props) => {
   } = useL7Policy()
   const {
     matchParams,
-    searchParamsToString
+    searchParamsToString,
+    sortObjectByKeys
   } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
@@ -46,7 +47,7 @@ const L7PolicyJSON = (props) => {
         setJsonObject({
           ...jsonObject,
           isLoading: false,
-          item: data.l7policy,
+          item: sortObjectByKeys(data.l7policy),
           error: null,
         })
         init_json_editor()
