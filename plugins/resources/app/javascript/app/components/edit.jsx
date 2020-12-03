@@ -2,7 +2,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
 import { sendQuotaRequest } from '../actions/elektra';
-import { byLeaderAndName, t, buttonCaption } from '../utils';
+import { sortByLogicalOrderAndName, t, buttonCaption } from '../utils';
 import { Scope } from '../scope';
 import { Unit } from '../unit';
 
@@ -425,7 +425,7 @@ export default class EditModal extends React.Component {
           <div className='row edit-quota-form-header'>
             <div className='col-md-offset-6 col-md-6'><strong>New Quota</strong></div>
           </div>
-          {this.state.inputs && category.resources.sort(byLeaderAndName).map(res => (
+          {this.state.inputs && sortByLogicalOrderAndName(category.resources).map(res => (
             <Resource
               key={res.name} resource={res} {...forwardProps}
               edit={this.state.inputs[res.name]}
