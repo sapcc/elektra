@@ -10,7 +10,8 @@ const PoolJSON = (props) => {
   } = usePool()
   const {
     matchParams,
-    searchParamsToString
+    searchParamsToString,
+    sortObjectByKeys
   } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
@@ -43,7 +44,7 @@ const PoolJSON = (props) => {
         setJsonObject({
           ...jsonObject,
           isLoading: false,
-          item: data.pool,
+          item: sortObjectByKeys(data.pool),
           error: null,
         })
         init_json_editor()

@@ -11,7 +11,8 @@ const LoadbalancerJSON = (props) => {
   } = useLoadbalancer()
   const {
     matchParams,
-    searchParamsToString
+    searchParamsToString,
+    sortObjectByKeys
   } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
@@ -37,7 +38,7 @@ const LoadbalancerJSON = (props) => {
         setJsonObject({
           ...jsonObject,
           isLoading: false,
-          item: data.loadbalancer,
+          item: sortObjectByKeys(data.loadbalancer),
           error: null,
         })
         init_json_editor()

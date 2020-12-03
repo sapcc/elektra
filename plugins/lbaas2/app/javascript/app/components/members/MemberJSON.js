@@ -10,7 +10,8 @@ const MemberJSON = (props) => {
   } = useMember()
   const {
     matchParams,
-    searchParamsToString
+    searchParamsToString,
+    sortObjectByKeys
   } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
@@ -46,7 +47,7 @@ const MemberJSON = (props) => {
         setJsonObject({
           ...jsonObject,
           isLoading: false,
-          item: data.member,
+          item: sortObjectByKeys(data.member),
           error: null,
         })
         init_json_editor()

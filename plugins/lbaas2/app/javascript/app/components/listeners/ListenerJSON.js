@@ -10,7 +10,8 @@ const ListenerJSON = (props) => {
   } = useListener()
   const {
     matchParams,
-    searchParamsToString
+    searchParamsToString,
+    sortObjectByKeys
   } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
@@ -43,7 +44,7 @@ const ListenerJSON = (props) => {
         setJsonObject({
           ...jsonObject,
           isLoading: false,
-          item: data.listener,
+          item: sortObjectByKeys(data.listener),
           error: null,
         })
         init_json_editor()
