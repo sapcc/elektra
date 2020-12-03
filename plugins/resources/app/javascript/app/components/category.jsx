@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { byLeaderAndName, t } from '../utils';
+import { sortByLogicalOrderAndName, t } from '../utils';
 import { Scope } from '../scope';
 
 export default class Category extends React.Component {
@@ -33,7 +33,7 @@ export default class Category extends React.Component {
             )}
           </div>
         </h3>
-        {resources.sort(byLeaderAndName).map(res => (
+        {sortByLogicalOrderAndName(resources).map(res => (
           <Resource key={res.name} resource={res} {...forwardProps} />
         ))}
       </React.Fragment>
