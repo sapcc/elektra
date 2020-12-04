@@ -1412,6 +1412,10 @@ footer,
     @include pie-clearfix;
   }
 
+  .bs-callout-image {
+    margin-bottom: 1.5rem;
+  }
+
   .callout-footer {
     border-top: 1px solid #eee;
     padding-top: 5px;
@@ -1448,6 +1452,33 @@ footer,
       border-color: $emphasize-info-border-color;
       border-left-color: $bright-blue;
       background: lighten($alert-info-bg, 5);
+    }
+
+    .btn {
+      @extend .btn-info;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $bright-blue;
+    }
+  }
+
+  &.bs-callout-info-cta {
+    border-left-color: $btn-info-border;
+    color: #fff;
+
+    &.bs-callout-emphasize {
+      border-color: #000;
+      border-left-color: $btn-info-border;
+      background: #222;
+    }
+
+    a {
+      color: $btn-info-border;
     }
 
     .btn {
