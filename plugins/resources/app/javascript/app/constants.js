@@ -49,6 +49,8 @@ export const STRINGS = {
     "healthmonitors_single":                     "Health Monitor",
     "images":                                    "Images",
     "instances":                                 "Instances",
+    "instances_bigvm":                           "Instances (Big VMs)",
+    "instances_regular":                         "Instances (Regular VMs)",
     "instances_single":                          "Instance",
     "inconsistencies":                           "Inconsistencies",
     "keppel":                                    "Container Image Registry",
