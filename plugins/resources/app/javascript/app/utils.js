@@ -39,6 +39,7 @@ export const sortByLogicalOrderAndName = (resources) => {
     const parts = [];
     if (res.contained_in) {
       parts.push(sortingKeyForName(res.contained_in));
+      parts.push('000'); //ensure that `contained_in` resources are sorted before `scales_with` resources
     }
     if (res.scales_with) {
       parts.push(sortingKeyForName(res.scales_with.resource_name));
@@ -52,7 +53,6 @@ export const sortByLogicalOrderAndName = (resources) => {
   return resources.sort((resA, resB) => {
     const keyA = sortingKeyForName(resA.name);
     const keyB = sortingKeyForName(resB.name);
-    console.log(`${keyA} ${(keyA < keyB) ? '<' : (keyA > keyB) ? '>' : '='} ${keyB}`);
     return (keyA < keyB) ? -1 : (keyA > keyB) ? 1 : 0;
   });
 };
