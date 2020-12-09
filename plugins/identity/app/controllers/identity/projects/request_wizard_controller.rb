@@ -5,17 +5,31 @@ module Identity
     # This controller implemnts the workflow to create a project request
     class RequestWizardController < ::DashboardController
       before_action do
-        enforce_permissions('identity:project_request',
-                            domain_id: @scoped_domain_id)
+         enforce_permissions('identity:project_request',domain_id: @scoped_domain_id)
       end
 
       def new
+        # get lobs and generate the list
+        lob_list = ENV['LOB_LIST']
+        lobs_and_board_area = lob_list.split(',') if lob_list
+        lob_hash = {}
+        lobs_and_board_area.each do |lob_and_ba |
+          lob,ba = lob_and_ba.split('|')
+          lob_hash[ba] ||= []
+          lob_hash[ba] << lob
+        end
+        @lobs ||= []
+        lob_hash.keys.sort.each do | board_area | 
+          @lobs << [board_area, lob_hash[board_area].sort]
+        end 
+
         @project = services.identity.new_project
         @project.enabled = true
         @project.parent_id = @scoped_project_id
         @project.parent_name = @scoped_project_name
         @project.cost_control = {}
         return unless services.available?(:cost_control)
+
         @cost_control_masterdata = services.cost_control.new_project_masterdata
       end
 
@@ -23,7 +37,7 @@ module Identity
         @project = services.identity.new_project
         @project.attributes = params.fetch(:project, {})
                                     .merge(domain_id: @scoped_domain_id)
-                                    
+        # #{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').domains_create_project_path(project_id: nil)}
         if @project.valid?
           begin
             inquiry = services.inquiry.create_inquiry(
@@ -37,21 +51,21 @@ module Identity
               {
                 'approved': {
                   'name': 'Approve',
-                  'action': "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').domains_create_project_path(project_id: nil)}"
+                  'action': ""
                 }
               },
               nil, # no domain override
               { domain_name: @scoped_domain_name, region: current_region }
             )
-            unless inquiry.errors?
+            if inquiry.errors?
+              render action: :new
+            else
               flash.now[:notice] = 'Project request successfully created'
               audit_logger.info(current_user, "has requested project #{@project.attributes}")
               render template: 'identity/projects/request_wizard/create.js'
-            else
-              render action: :new
             end
-          rescue => e
-            @project.errors.add('message',e.message)
+          rescue StandardError => e
+            @project.errors.add('message', e.message)
             render action: :new
           end
         else
