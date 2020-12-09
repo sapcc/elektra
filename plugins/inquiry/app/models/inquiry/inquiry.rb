@@ -88,7 +88,7 @@ module Inquiry
       state :approved
       state :rejected
       state :closed
-      event :open, :after => [:notify_new_project,:notify_requester, :notify_processor], :error => :error_on_event do
+      event :open, :after => [:notify_new_project,:notify_requester,:notify_processors], :error => :error_on_event do
         transitions :from => :new, :to => :open, :after => Proc.new { |*args| log_process_step(*args) }
       end
 
