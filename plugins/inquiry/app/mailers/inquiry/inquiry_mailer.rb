@@ -28,5 +28,20 @@ module Inquiry
       mail(to: processor_emails, subject: subject, :content_type => 'text/html')
     end
 
+    def notification_new_project(inquiry, user_full_name)
+      @inquiry = inquiry
+      @requester_name = user_full_name
+      subject =  "Converged Cloud: New project was created"
+      if @inquiry.tags
+        if @inquiry.tags['region']
+          subject += " for region #{@inquiry.tags['region']}"
+        end
+        if @inquiry.tags['domain_name']
+          subject += "/#{@inquiry.tags['domain_name']}"
+        end
+      end
+      mail(to: "hans-georg.winkler@sap.com", subject: subject, :content_type => 'text/html')
+    end
+
   end
 end
