@@ -29,25 +29,29 @@
       %br
       = "---"
       %br
+      %b Project Name:
+      %br
+      %pre= @inquiry.payload["name"]
+      %br
       %b Request reason:
       %br
       %pre= @inquiry.description
       %br
       %b Line of Business:
       %br
-      %pre= @inquiry.lob
+      %pre= @inquiry.payload["lob"]
       %br
-      %b Directly generating revenue
+      %b Directly generating revenue:
       %br
-      %pre= @inquiry.directly_generating_revenue
+      %pre= @inquiry.payload["directly_generating_revenue"]
       %br
       %b Resource Demand:
       %br
-      %pre= @inquiry.resource_demand
+      %pre= @inquiry.payload["resource_demand"]
       %br
-      %b Organisation Description
+      %b Organisation Description:
       %br
-      %pre= @inquiry.organisation_description
+      %pre= @inquiry.payload["organisation_description"]
       %br
     %p
       Kind regards,
