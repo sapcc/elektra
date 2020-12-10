@@ -37,7 +37,6 @@ module Identity
         @project = services.identity.new_project
         @project.attributes = params.fetch(:project, {})
                                     .merge(domain_id: @scoped_domain_id)
-        # #{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').domains_create_project_path(project_id: nil)}
         if @project.valid?
           begin
             inquiry = services.inquiry.create_inquiry(
@@ -51,7 +50,7 @@ module Identity
               {
                 'approved': {
                   'name': 'Approve',
-                  'action': ""
+                  'action': "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').domains_create_project_path(project_id: nil)}"
                 }
               },
               nil, # no domain override
