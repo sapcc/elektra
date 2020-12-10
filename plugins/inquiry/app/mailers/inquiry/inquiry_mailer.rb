@@ -29,6 +29,7 @@ module Inquiry
     end
 
     def notification_new_project(inquiry, user_full_name)
+      inform_new_project_dl = ENV['MONSOON_NEW_PROJECT_DL'] || "dl_not_set@sap.com"
       @inquiry = inquiry
       @requester_name = user_full_name
       subject =  "Converged Cloud: New project was created"
@@ -40,8 +41,7 @@ module Inquiry
           subject += "/#{@inquiry.tags['domain_name']}"
         end
       end
-      mail(to: "hans-georg.winkler@sap.com", subject: subject, :content_type => 'text/html')
+      mail(to: inform_new_project_dl, subject: subject, :content_type => 'text/html')
     end
-
   end
 end
