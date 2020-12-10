@@ -10,7 +10,7 @@ module Identity
 
       def new
         # get lobs and generate the list
-        lob_list = ENV['LOB_LIST'] || ""
+        lob_list = ENV['MONSOON_LOB_LIST'] || ""
         lobs_and_board_area = lob_list.split(',') if lob_list
         lob_hash = {}
         lobs_and_board_area.each do |lob_and_ba |
