@@ -18,7 +18,7 @@
   placeholder: 'Additional information about this project'}
 = form.input :enabled, as: :hidden, :input_html => { value: true}
 
-= form.input :lob, label: 'Choose your Line of business',
+= form.input :lob, label: 'Line of business',
   as:            :grouped_select,
   collection:    @lobs,
   group_method:  :last
