@@ -1,0 +1,59 @@
+!!!
+%html
+  %head
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+
+  %body
+    %p 
+      A new project was created for 
+      = @requester_name
+
+    %p
+      - if @inquiry.tags && @inquiry.tags['region']
+        %br
+        %b CC Region:
+        = @inquiry.tags['region']
+
+      %br
+      %b CC Domain:
+      - if (@inquiry.tags && @inquiry.tags['domain_name'])
+        = "#{@inquiry.tags['domain_name']} (#{@inquiry.domain_id})"
+      - else
+        = @inquiry.domain_id
+
+    %p
+      Details on the project can be found below.
+
+    %p
+      %b Request details:
+      %br
+      = "---"
+      %br
+      %b Project Name:
+      %br
+      %pre= @inquiry.payload["name"]
+      %br
+      %b Request reason:
+      %br
+      %pre= @inquiry.description
+      %br
+      %b Line of Business:
+      %br
+      %pre= @inquiry.payload["lob"]
+      %br
+      %b Directly generating revenue:
+      %br
+      %pre= @inquiry.payload["directly_generating_revenue"]
+      %br
+      %b Resource Demand:
+      %br
+      %pre= @inquiry.payload["resource_demand"]
+      %br
+      %b Organisation Description:
+      %br
+      %pre= @inquiry.payload["organisation_description"]
+      %br
+    %p
+      Kind regards,
+      %br
+      The SAP Converged Cloud Team

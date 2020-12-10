@@ -88,12 +88,11 @@ module Inquiry
       state :approved
       state :rejected
       state :closed
-
-      event :open, :after => [:notify_requester, :notify_processors], :error => :error_on_event do
+      event :open, :after => [:notify_new_project,:notify_requester,:notify_processors], :error => :error_on_event do
         transitions :from => :new, :to => :open, :after => Proc.new { |*args| log_process_step(*args) }
       end
 
-      event :approve, :after => :notify_requester, :error => :error_on_event, :guards => Proc.new { |*args| can_approve?(*args) } do
+      event :approve, :after => [:notify_requester, :notify_new_project], :error => :error_on_event, :guards => Proc.new { |*args| can_approve?(*args) } do
         before do
           #run_automatically('approved')
         end
@@ -248,8 +247,9 @@ module Inquiry
       end
     end
 
-
+    # Note: for testing use 'deliver_now'
     def notify_requester
+      puts "######### NOTIFY REQUESTER #########"
       begin
         InquiryMailer.notification_email_requester(self.requester.email, self.requester.full_name, self, self.process_steps.last).deliver_later
       rescue Net::SMTPFatalError => e
@@ -257,7 +257,17 @@ module Inquiry
       end
     end
 
+    def notify_new_project
+      puts "######### NOTIFY NEW PROJECT #########"
+      begin
+        InquiryMailer.notification_new_project(self, self.requester.full_name).deliver_later
+      rescue Net::SMTPFatalError => e
+        Rails.logger.error "InquiryMailer: Could not send email to hans-georg.winkler@sap.com. Exception: #{e.message}"
+      end
+    end
+
     def notify_processors
+      puts "######### NOTIFY PROCESSORS #########"
       begin
         InquiryMailer.notification_email_processors((self.processors.map { |p| p.email }).compact, self, self.process_steps.last, self.requester).deliver_later
       rescue Net::SMTPFatalError => e

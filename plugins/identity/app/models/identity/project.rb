@@ -5,10 +5,11 @@ module Identity
   class Project < Core::ServiceLayer::Model
     validates :name, presence: { message: 'Name should not be empty' }
     validates :description, presence: { message: 'Please enter a description' }
+    validates :lob, presence: { message: 'Please choose the line of business' }
 
     # limit from billing api and keystone
     validates :description,
-      length: { maximum: 255, too_long: "255 characters is the maximum allowed" }
+              length: { maximum: 255, too_long: '255 characters is the maximum allowed' }
 
     attr_accessor :inquiry_id # to close inquiry after creation
 
@@ -21,13 +22,10 @@ module Identity
     def shards
       shards = []
       read(:tags).each do |tag|
-        if tag.start_with?('vc-')
-          shards << tag
-        end
+        shards << tag if tag.start_with?('vc-')
       end
-      return shards
+      shards
     end
-
 
     def subprojects_ids
       return @subprojetcs_ids if @subprojetcs_ids
@@ -43,6 +41,7 @@ module Identity
 
     def parents_project_ids
       return @parents_project_ids if @parents_project_ids
+
       @parents_project_ids = read(:parents)
       if @parents_project_ids.is_a?(Array)
         @parents_project_ids = @parents_project_ids.collect do |project_attrs|
