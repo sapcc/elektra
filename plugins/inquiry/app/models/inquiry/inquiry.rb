@@ -88,7 +88,7 @@ module Inquiry
       state :approved
       state :rejected
       state :closed
-      event :open, :after => [:notify_new_project,:notify_requester,:notify_processors], :error => :error_on_event do
+      event :open, :after => [:notify_requester,:notify_processors], :error => :error_on_event do
         transitions :from => :new, :to => :open, :after => Proc.new { |*args| log_process_step(*args) }
       end
 
@@ -249,7 +249,7 @@ module Inquiry
 
     # Note: for testing use 'deliver_now'
     def notify_requester
-      puts "######### NOTIFY REQUESTER #{@user_email}#########"
+      puts "######### NOTIFY REQUESTER #########"
       begin
         InquiryMailer.notification_email_requester(self.requester.email, self.requester.full_name, self, self.process_steps.last).deliver_later
       rescue Net::SMTPFatalError => e
@@ -259,7 +259,7 @@ module Inquiry
 
     def notify_new_project
       inform_new_project_dl = ENV['MONSOON_NEW_PROJECT_DL'] || "dl_not_set@sap.com"
-      puts "######### NOTIFY NEW PROJECT to #{inform_new_project_dl} #########"
+      puts "######### NOTIFY NEW PROJECT #########"
       begin
         InquiryMailer.notification_new_project(inform_new_project_dl, self, self.requester.full_name).deliver_later
       rescue Net::SMTPFatalError => e
