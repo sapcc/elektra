@@ -92,7 +92,7 @@ module Inquiry
         transitions :from => :new, :to => :open, :after => Proc.new { |*args| log_process_step(*args) }
       end
 
-      event :approve, :after => [:notify_requester, :notify_new_project], :error => :error_on_event, :guards => Proc.new { |*args| can_approve?(*args) } do
+      event :approve, :after => [:notify_requester,:notify_new_project], :error => :error_on_event, :guards => Proc.new { |*args| can_approve?(*args) } do
         before do
           #run_automatically('approved')
         end

@@ -49,6 +49,10 @@
       %br
       %pre= @inquiry.payload["organisation_description"]
       %br
+      %b Request raw data:
+      %pre= JSON.pretty_generate(@inquiry.payload) rescue "Error during rendering of JSON payload!"
+      %br
+      %pre= JSON.pretty_generate(@inquiry.tags) rescue "None"
     %p
       Kind regards,
       %br
