@@ -17,7 +17,8 @@ Capybara.register_driver :poltergeist do |app|
     phantomjs_options: ['--ssl-protocol=any',
                         '--ignore-ssl-errors=true',
                         '--proxy-type=none',
-                        '--disk-cache=true' ]
+                        '--disk-cache=true',
+                        '--load-images=false' ]
   })
 end
 
