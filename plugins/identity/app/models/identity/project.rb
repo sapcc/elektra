@@ -5,7 +5,6 @@ module Identity
   class Project < Core::ServiceLayer::Model
     validates :name, presence: { message: 'Name should not be empty' }
     validates :description, presence: { message: 'Please enter a description' }
-    validates :lob, presence: { message: 'Please choose the line of business' }
 
     # limit from billing api and keystone
     validates :description,
