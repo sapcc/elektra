@@ -258,12 +258,14 @@ module Inquiry
     end
 
     def notify_new_project
-      inform_new_project_dl = ENV['MONSOON_NEW_PROJECT_DL'] || "dl_not_set@sap.com"
-      puts "######### NOTIFY NEW PROJECT #########"
-      begin
-        InquiryMailer.notification_new_project(inform_new_project_dl, self, self.requester.full_name).deliver_later
-      rescue Net::SMTPFatalError => e
-        Rails.logger.error "InquiryMailer: Could not send email to #{inform_new_project_dl} Exception: #{e.message}"
+      if self.kind == "project"
+        puts "######### NOTIFY NEW PROJECT #########"
+        inform_new_project_dl = ENV['MONSOON_NEW_PROJECT_DL'] || "dl_not_set@sap.com"
+        begin
+          InquiryMailer.notification_new_project(inform_new_project_dl, self, self.requester.full_name).deliver_later
+        rescue Net::SMTPFatalError => e
+          Rails.logger.error "InquiryMailer: Could not send email to #{inform_new_project_dl} Exception: #{e.message}"
+        end
       end
     end
 
