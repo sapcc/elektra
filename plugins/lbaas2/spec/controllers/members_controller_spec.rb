@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative './factories/factories.rb'
+require_relative './factories/factories'
 require_relative 'shared'
 
 describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
@@ -9,8 +9,8 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
 
   default_params = {  domain_id: AuthenticationStub.domain_id,
                       project_id: AuthenticationStub.project_id,
-                      loadbalancer_id: "lb_123456789",
-                      pool_id: "pool_123456789" }
+                      loadbalancer_id: 'lb_123456789',
+                      pool_id: 'pool_123456789' }
 
   before(:all) do
     FriendlyIdEntry.find_or_create_entry(
@@ -24,7 +24,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
 
   describe "GET 'index'" do
     before :each do
-      members = double('elektron', service: double("octavia", get: double("get", map_to: []) ))
+      members = double('elektron', service: double('octavia', get: double('get', map_to: [])))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(members)
     end
 
@@ -33,12 +33,11 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
         @default_params = default_params
       end
     end
-
   end
 
   describe "GET 'show'" do
     before :each do
-      member = double('elektron', service: double("octavia", get: double("get", map_to: double("member", to_json:{})) ))
+      member = double('elektron', service: double('octavia', get: double('get', map_to: double('member', to_json: {}))))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(member)
     end
 
@@ -47,12 +46,13 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
         @default_params = default_params
       end
     end
-
   end
 
   describe "PUT 'update'" do
     before :each do
-      member = double('elektron', service: double("octavia", get: double("get", map_to: double("member", to_json:{}, identifier:"", attributes:{}, update_attributes: {}, update:{})), put: double("put", body: {}) ))
+      member = double('elektron',
+                      service: double('octavia',
+                                      get: double('get', map_to: double('member', to_json: {}, identifier: '', attributes: {}, update_attributes: {}, update: {})), put: double('put', body: {})))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(member)
       allow_any_instance_of(Lbaas2::Loadbalancers::Pools::MembersController).to receive(:parseMemberParams).and_return(::Lbaas2::FakeFactory.new.member_params)
     end
@@ -67,7 +67,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.update_member
-        put :update, params: default_params.merge({id: member[:id], member: member})
+        put :update, params: default_params.merge({ id: member[:id], member: member })
         expect(response).to be_successful
       end
     end
@@ -81,7 +81,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.update_member
-        put :update, params: default_params.merge({id: member[:id], member: member})
+        put :update, params: default_params.merge({ id: member[:id], member: member })
         expect(response).to be_successful
       end
     end
@@ -95,7 +95,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.update_member
-        put :update, params: default_params.merge({id: member[:id], member: member})
+        put :update, params: default_params.merge({ id: member[:id], member: member })
         expect(response).to be_successful
       end
     end
@@ -109,7 +109,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.update_member
-        put :update, params: default_params.merge({id: member[:id], member: member})
+        put :update, params: default_params.merge({ id: member[:id], member: member })
         expect(response).to be_successful
       end
     end
@@ -123,7 +123,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.update_member
-        put :update, params: default_params.merge({id: member[:id], member: member})
+        put :update, params: default_params.merge({ id: member[:id], member: member })
         expect(response).to be_successful
       end
     end
@@ -137,8 +137,8 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return 401 error' do
         member = ::Lbaas2::FakeFactory.new.update_member
-        put :update, params: default_params.merge({id: member[:id], member: member})
-        expect(response.code).to be == ("401")
+        put :update, params: default_params.merge({ id: member[:id], member: member })
+        expect(response.code).to be == ('401')
         expect(response).to_not be_successful
       end
     end
@@ -152,8 +152,8 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return 401 error' do
         member = ::Lbaas2::FakeFactory.new.update_member
-        put :update, params: default_params.merge({id: member[:id], member: member})
-        expect(response.code).to be == ("401")
+        put :update, params: default_params.merge({ id: member[:id], member: member })
+        expect(response.code).to be == ('401')
         expect(response).to_not be_successful
       end
     end
@@ -166,8 +166,8 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return 401 error' do
         member = ::Lbaas2::FakeFactory.new.update_member
-        put :update, params: default_params.merge({id: member[:id], member: member})
-        expect(response.code).to be == ("401")
+        put :update, params: default_params.merge({ id: member[:id], member: member })
+        expect(response.code).to be == ('401')
         expect(response).to_not be_successful
       end
     end
@@ -175,7 +175,9 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
 
   describe "POST 'create'" do
     before :each do
-      member = double('elektron', service: double("octavia", get: double("get", map_to: double("lb", vip_subnet_id: "some_id", to_json:{})), post: double("post", body: {}) ))
+      member = double('elektron',
+                      service: double('octavia', get: double('get', map_to: double('lb', vip_subnet_id: 'some_id', to_json: {})),
+                                                 post: double('post', body: {})))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(member)
       allow_any_instance_of(Lbaas2::Loadbalancers::Pools::MembersController).to receive(:parseMemberParams).and_return(::Lbaas2::FakeFactory.new.member_params)
     end
@@ -190,7 +192,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.member
-        post :create, params: default_params.merge({member: member})
+        post :create, params: default_params.merge({ member: member })
         expect(response).to be_successful
       end
     end
@@ -204,7 +206,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.member
-        post :create, params: default_params.merge({member: member})
+        post :create, params: default_params.merge({ member: member })
         expect(response).to be_successful
       end
     end
@@ -218,7 +220,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.member
-        post :create, params: default_params.merge({member: member})
+        post :create, params: default_params.merge({ member: member })
         expect(response).to be_successful
       end
     end
@@ -232,7 +234,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.member
-        post :create, params: default_params.merge({member: member})
+        post :create, params: default_params.merge({ member: member })
         expect(response).to be_successful
       end
     end
@@ -246,7 +248,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return http success' do
         member = ::Lbaas2::FakeFactory.new.member
-        post :create, params: default_params.merge({member: member})
+        post :create, params: default_params.merge({ member: member })
         expect(response).to be_successful
       end
     end
@@ -260,8 +262,8 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return 401 error' do
         member = ::Lbaas2::FakeFactory.new.member
-        post :create, params: default_params.merge({member: member})
-        expect(response.code).to be == ("401")
+        post :create, params: default_params.merge({ member: member })
+        expect(response.code).to be == ('401')
         expect(response).to_not be_successful
       end
     end
@@ -275,8 +277,8 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return 401 error' do
         member = ::Lbaas2::FakeFactory.new.member
-        post :create, params: default_params.merge({member: member})
-        expect(response.code).to be == ("401")
+        post :create, params: default_params.merge({ member: member })
+        expect(response.code).to be == ('401')
         expect(response).to_not be_successful
       end
     end
@@ -289,8 +291,8 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return 401 error' do
         member = ::Lbaas2::FakeFactory.new.member
-        post :create, params: default_params.merge({member: member})
-        expect(response.code).to be == ("401")
+        post :create, params: default_params.merge({ member: member })
+        expect(response.code).to be == ('401')
         expect(response).to_not be_successful
       end
     end
@@ -298,7 +300,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
 
   describe "DELETE 'destroy'" do
     before :each do
-      member = double('elektron', service: double("octavia", delete: double("delete") ))
+      member = double('elektron', service: double('octavia', delete: double('delete')))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(member)
     end
 
@@ -377,7 +379,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return 401 error' do
         delete :destroy, params: default_params.merge(id: 'member_id')
-        expect(response.code).to be == ("401")
+        expect(response.code).to be == ('401')
         expect(response).to_not be_successful
       end
     end
@@ -391,7 +393,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       end
       it 'return 401 error' do
         delete :destroy, params: default_params.merge(id: 'member_id')
-        expect(response.code).to be == ("401")
+        expect(response.code).to be == ('401')
         expect(response).to_not be_successful
       end
     end
@@ -405,7 +407,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
 
       it 'return 401 error' do
         delete :destroy, params: default_params.merge(id: 'member_id')
-        expect(response.code).to be == ("401")
+        expect(response.code).to be == ('401')
         expect(response).to_not be_successful
       end
     end
@@ -421,10 +423,8 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
       subject do
         @default_params = default_params
         @extra_params = {}
-        @path = "serversForSelect"
+        @path = 'serversForSelect'
       end
     end
-
   end
-
 end
