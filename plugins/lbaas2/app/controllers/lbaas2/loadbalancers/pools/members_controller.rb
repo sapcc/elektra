@@ -132,6 +132,21 @@ module Lbaas2
         end
 
         def serversForSelect
+          # fetch the lb
+          loadbalancer = services.lbaas2.find_loadbalancer(params[:loadbalancer_id])
+          vip_network_id = loadbalancer.vip_network_id
+
+          # fetch the ports from the network
+          ports = services.networking.ports(network_id: vip_network_id)
+          selected_ips = []
+          ports.each do |port|
+            next if port.fixed_ips.blank?
+
+            port.fixed_ips.each do |obj|
+              selected_ips << obj['ip_address'] unless obj['ip_address'].blank?
+            end
+          end
+
           # get all servers
           per_page = params[:per_page] || 9999
           per_page = per_page.to_i
@@ -147,6 +162,8 @@ module Lbaas2
 
               ip_values.each do |value|
                 next unless value['OS-EXT-IPS:type'] == 'fixed'
+
+                next unless selected_ips.include? value['addr']
 
                 select_servers << { "label": "#{value['addr']} - #{server.name} (#{server.id})",
                                     "value": value['addr'], "address": value['addr'], "name": server.name, "id": server.id }
