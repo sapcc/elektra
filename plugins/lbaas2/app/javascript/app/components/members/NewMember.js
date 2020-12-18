@@ -258,7 +258,7 @@ const NewMember = (props) => {
 
           <div className="existing-members">
             <b>Existing Members</b>
-            <div className="toolbar">
+            <div className="toolbar toolbar-multi-line">
               {showServerDropdown && (
                 <React.Fragment>
                   <div className="display-flex select-server-section">
