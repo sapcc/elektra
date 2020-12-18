@@ -415,14 +415,21 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
 
   describe "GET 'serversForSelect'" do
     before :each do
+      lbs = double('elektron',
+                   service: double('octavia',
+                                   get: double('get', map_to: double('lb', vip_network_id: '123', to_json: {}))))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(lbs)
+
       allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:containers).and_return([])
+      allow_any_instance_of(ServiceLayer::NetworkingService).to receive(:ports).and_return([])
       allow_any_instance_of(ServiceLayer::ComputeService).to receive(:servers).and_return([])
     end
 
     it_behaves_like 'GET action with editor context including loadbalancer_poolmemberadmin' do
       subject do
+        loadbalancer = ::Lbaas2::FakeFactory.new.update_loadbalancer
         @default_params = default_params
-        @extra_params = {}
+        @extra_params = { id: loadbalancer[:id] }
         @path = 'serversForSelect'
       end
     end
