@@ -61,6 +61,7 @@ module Identity
       private
 
       def generate_lob_list
+        @show_lob_list = true
         lob_list = ENV['MONSOON_LOB_LIST'] || "no lob list found"
         lobs_and_board_area = lob_list.split(',') if lob_list
         lob_hash = {}
