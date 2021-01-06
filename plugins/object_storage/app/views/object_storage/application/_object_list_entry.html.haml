@@ -8,7 +8,7 @@
     - else
       - if object.content_type.start_with?('text/')
         %span.fa.fa-fw.fa-file-text-o{ title: 'Object' }
-        = link_to object.basename, plugin('object_storage').download_object_path(encoded_container_name, encoded_object_path, inline: 1), title: 'Show file contents in browser'
+        = link_to object.basename, plugin('object_storage').download_object_path(encoded_container_name, encoded_object_path, inline: 1), target: "_blank", title: 'Show file contents in browser'
       - else
         %span.fa.fa-fw.fa-file-o{ title: 'Object' }
         = link_to object.basename, plugin('object_storage').download_object_path(encoded_container_name, encoded_object_path), title: 'Download Object'

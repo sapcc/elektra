@@ -20,7 +20,8 @@ module ObjectStorage
       headers['Content-Type'] = @object.content_type
       if params[:inline] == '1'
         headers['Content-Disposition'] = "inline"
-        render html: @object.file_contents
+        render inline: @object.file_contents
+        #render html: @object.file_contents
       else
         headers['Content-Disposition'] = "attachment; filename=\"#{@object.basename}\""
         render body: @object.file_contents
