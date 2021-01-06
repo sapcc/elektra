@@ -23,7 +23,6 @@ module Lbaas2
       {
         'name'            => read('name'),
         'description'     => read('description'),
-        'admin_state_up'  => read('admin_state_up'),
         'tags'            => read('tags')
       }
     end

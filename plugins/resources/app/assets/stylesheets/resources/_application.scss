@@ -72,6 +72,24 @@
 
 }
 
+.row.usage-only {
+  /* group with the previous resource (probably the one that this one is "contained_in") */
+  position: relative;
+  top: -14px;
+
+  .progress {
+    /* 12px less than normal (20px) to compensate the displacement above */
+    margin-bottom: 6px;
+
+    /* smaller fontsizes and dimensions inside the bar */
+    height: 14px;
+    .progress-bar {
+      line-height: 14px;
+      font-size: 10px;
+    }
+  }
+}
+
 div.flavor-data {
   /* ensure that flavor data text appears grouped with its resource */
   margin-bottom: 1em;

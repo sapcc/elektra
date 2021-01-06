@@ -39,7 +39,6 @@ module Lbaas2
         'description'               => read('description'),
         'lb_algorithm'              => read('lb_algorithm'),
         'session_persistence'       => read('session_persistence'),        
-        'admin_state_up'            => read('admin_state_up'),
         'tls_enabled'               => read('tls_enabled'),
         'tls_container_ref'         => read('tls_container_ref'),
         'ca_tls_container_ref'      => read('ca_tls_container_ref'),

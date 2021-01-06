@@ -15,6 +15,7 @@ import { policy } from "policy"
 import { scope } from "ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
+import DropDownMenu from '../shared/DropdownMenu'
 
 const L7PolicyListItem = ({
   props,
@@ -97,6 +98,14 @@ const L7PolicyListItem = ({
   const canDelete = useMemo(
     () =>
       policy.isAllowed("lbaas2:l7policy_delete", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  )
+
+  const canShowJSON = useMemo(
+    () =>
+      policy.isAllowed("lbaas2:l7policy_get", {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
@@ -267,38 +276,39 @@ const L7PolicyListItem = ({
       </td>
 
       <td>
-        <div className="btn-group">
-          <button
-            className="btn btn-default btn-sm dropdown-toggle"
-            type="button"
-            data-toggle="dropdown"
-            aria-expanded={true}
-          >
-            <span className="fa fa-cog"></span>
-          </button>
-          <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            <li>
-              <SmartLink
-                to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${
-                  l7Policy.id
-                }/edit?${searchParamsToString(props)}`}
-                isAllowed={canEdit}
-                notAllowedText="Not allowed to edit. Please check with your administrator."
-              >
-                Edit
-              </SmartLink>
-            </li>
-            <li>
-              <SmartLink
-                onClick={handleDelete}
-                isAllowed={canDelete}
-                notAllowedText="Not allowed to delete. Please check with your administrator."
-              >
-                Delete
-              </SmartLink>
-            </li>
-          </ul>
-        </div>
+        <DropDownMenu buttonIcon={<span className="fa fa-cog"/>}>
+          <li>
+            <SmartLink
+              to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${
+                l7Policy.id
+              }/edit?${searchParamsToString(props)}`}
+              isAllowed={canEdit}
+              notAllowedText="Not allowed to edit. Please check with your administrator."
+            >
+              Edit
+            </SmartLink>
+          </li>
+          <li>
+            <SmartLink
+              onClick={handleDelete}
+              isAllowed={canDelete}
+              notAllowedText="Not allowed to delete. Please check with your administrator."
+            >
+              Delete
+            </SmartLink>
+          </li>
+          <li>
+            <SmartLink
+              to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${
+                l7Policy.id
+              }/json?${searchParamsToString(props)}`}
+              isAllowed={canShowJSON}
+              notAllowedText="Not allowed to get JSOn. Please check with your administrator."
+            >
+              JSON
+            </SmartLink>
+          </li>
+        </DropDownMenu>
       </td>
     </tr>
   )

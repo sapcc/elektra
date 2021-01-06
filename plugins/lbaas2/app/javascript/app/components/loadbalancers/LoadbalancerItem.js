@@ -17,6 +17,7 @@ import useCommons from "../../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 
 const LoadbalancerItem = ({
+  props,
   loadbalancer,
   searchTerm,
   disabled,
@@ -27,7 +28,10 @@ const LoadbalancerItem = ({
     deleteLoadbalancer,
     detachFIP,
   } = useLoadbalancer()
-  const { errorMessage } = useCommons()
+  const { 
+    errorMessage,
+    searchParamsToString 
+  } = useCommons()
   let polling = null
 
   useEffect(() => {
@@ -90,6 +94,14 @@ const LoadbalancerItem = ({
   const canDetachFIP = useMemo(
     () =>
       policy.isAllowed("lbaas2:loadbalancer_detach_fip", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  )
+
+  const canShowJSON = useMemo(
+    () =>
+      policy.isAllowed("lbaas2:loadbalancer_get", {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
@@ -334,8 +346,8 @@ const LoadbalancerItem = ({
               <SmartLink
                 to={
                   disabled
-                    ? `/loadbalancers/${loadbalancer.id}/show/edit`
-                    : `/loadbalancers/${loadbalancer.id}/edit`
+                    ? `/loadbalancers/${loadbalancer.id}/show/edit?${searchParamsToString(props)}`
+                    : `/loadbalancers/${loadbalancer.id}/edit?${searchParamsToString(props)}`
                 }
                 isAllowed={canEdit}
                 notAllowedText="Not allowed to edit. Please check with your administrator."
@@ -352,6 +364,19 @@ const LoadbalancerItem = ({
                 Delete
               </SmartLink>
             </li>
+            <li>
+              <SmartLink
+                to={
+                  disabled
+                    ? `/loadbalancers/${loadbalancer.id}/show/json?${searchParamsToString(props)}`
+                    : `/loadbalancers/${loadbalancer.id}/json?${searchParamsToString(props)}`
+                }
+                isAllowed={canShowJSON}
+                notAllowedText="Not allowed to get JSOn. Please check with your administrator."
+              >
+                JSON
+              </SmartLink>
+            </li>
             <li className="divider"></li>
             <li>
               {loadbalancer.floating_ip ? (
@@ -364,7 +389,7 @@ const LoadbalancerItem = ({
                 </SmartLink>
               ) : (
                 <SmartLink
-                  to={`/loadbalancers/${loadbalancer.id}/attach_fip`}
+                  to={`/loadbalancers/${loadbalancer.id}/attach_fip?${searchParamsToString(props)}`}
                   isAllowed={canAttachFIP}
                   notAllowedText="Not allowed to attach Floating IP. Please check with your administrator."
                 >

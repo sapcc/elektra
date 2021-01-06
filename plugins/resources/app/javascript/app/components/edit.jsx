@@ -2,9 +2,12 @@ import { Modal, Button } from 'react-bootstrap';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
 import { sendQuotaRequest } from '../actions/elektra';
-import { byLeaderAndName, t, buttonCaption } from '../utils';
+import { sortByLogicalOrderAndName, t, buttonCaption } from '../utils';
 import { Scope } from '../scope';
 import { Unit } from '../unit';
+
+//A filtering predicate for resources that track quota.
+const tracksQuota = res => res.quota !== undefined;
 
 export default class EditModal extends React.Component {
   state = {
@@ -46,11 +49,12 @@ export default class EditModal extends React.Component {
     if (!resources) {
       return;
     }
+    const resourcesWithQuota = resources.filter(tracksQuota);
 
     //initialize the state of the input form
     const inputs = {};
     const hasResource = {};
-    for (let res of resources) {
+    for (let res of resourcesWithQuota) {
       const unit = new Unit(res.unit);
       inputs[res.name] = {
         value: res.quota,
@@ -58,7 +62,7 @@ export default class EditModal extends React.Component {
       };
       hasResource[res.name] = true;
     }
-    for (let res of resources) {
+    for (let res of resourcesWithQuota) {
       //can only use scaling relations between resources in the same service+category
       if (res.scales_with && res.scales_with.service_type == props.category.serviceType) {
         if (hasResource[res.scales_with.resource_name]) {
@@ -88,7 +92,7 @@ export default class EditModal extends React.Component {
     //also, clear away:
     //- all check results (to convert the "Submit" button back to "Check")
     //- the animation attributes
-    for (let res of this.props.category.resources) {
+    for (let res of this.props.category.resources.filter(tracksQuota)) {
       if (newState.inputs[res.name].checkResult) {
         newState.inputs[res.name] = { ...newState.inputs[res.name] };
         delete newState.inputs[res.name].checkResult;
@@ -135,7 +139,7 @@ export default class EditModal extends React.Component {
 
     const newState = { ...this.state, inputs: {}, hasNewInputs: false };
     const scope = new Scope(this.props.scopeData);
-    for (let res of this.props.category.resources) {
+    for (let res of this.props.category.resources.filter(tracksQuota)) {
       const unit = new Unit(res.unit);
       const oldInput = this.state.inputs[res.name];
       const input = { text: oldInput.text, isFollowing: oldInput.isFollowing };
@@ -169,7 +173,7 @@ export default class EditModal extends React.Component {
     }
 
     //follower resources have their values computed automatically
-    for (let res of this.props.category.resources) {
+    for (let res of this.props.category.resources.filter(tracksQuota)) {
       if (!newState.inputs[res.name].isFollowing) {
         continue;
       }
@@ -211,7 +215,7 @@ export default class EditModal extends React.Component {
     const scope = new Scope(this.props.scopeData);
 
     const resourcesForRequest = [];
-    for (let res of this.props.category.resources) {
+    for (let res of this.props.category.resources.filter(tracksQuota)) {
       const input = this.state.inputs[res.name];
       if (input.error) {
         return;
@@ -245,7 +249,7 @@ export default class EditModal extends React.Component {
 
     const newInputs = { ...this.state.inputs };
     const resUnitByName = {};
-    for (let res of this.props.category.resources) {
+    for (let res of this.props.category.resources.filter(tracksQuota)) {
       newInputs[res.name].checkResult = { success: true };
       resUnitByName[res.name] = new Unit(res.unit);
     }
@@ -303,7 +307,7 @@ export default class EditModal extends React.Component {
 
     const resourcesForLimes = [];
     const resourcesForElektra = [];
-    for (let res of this.props.category.resources) {
+    for (let res of this.props.category.resources.filter(tracksQuota)) {
       const input = this.state.inputs[res.name];
       if (input.error) {
         return;
@@ -383,7 +387,7 @@ export default class EditModal extends React.Component {
     let canSubmit = true;
     let hasCheckErrors = false;
     let requestRequiredCount = 0;
-    for (let res of category.resources) {
+    for (let res of category.resources.filter(tracksQuota)) {
       const input = (this.state.inputs || {})[res.name] || {};
       if (input.error) {
         hasInputErrors = true;
@@ -425,7 +429,7 @@ export default class EditModal extends React.Component {
           <div className='row edit-quota-form-header'>
             <div className='col-md-offset-6 col-md-6'><strong>New Quota</strong></div>
           </div>
-          {this.state.inputs && category.resources.sort(byLeaderAndName).map(res => (
+          {this.state.inputs && sortByLogicalOrderAndName(category.resources.filter(tracksQuota)).map(res => (
             <Resource
               key={res.name} resource={res} {...forwardProps}
               edit={this.state.inputs[res.name]}

@@ -5,9 +5,9 @@ module Identity
     # This controller implemnts the workflow to create a project request
     class RequestWizardController < ::DashboardController
       before_action do
-        enforce_permissions('identity:project_request',
-                            domain_id: @scoped_domain_id)
+         enforce_permissions('identity:project_request',domain_id: @scoped_domain_id)
       end
+      before_action :generate_lob_list, only:  [:new, :create]
 
       def new
         @project = services.identity.new_project
@@ -23,7 +23,6 @@ module Identity
         @project = services.identity.new_project
         @project.attributes = params.fetch(:project, {})
                                     .merge(domain_id: @scoped_domain_id)
-                                    
         if @project.valid?
           begin
             inquiry = services.inquiry.create_inquiry(
@@ -43,23 +42,43 @@ module Identity
               nil, # no domain override
               { domain_name: @scoped_domain_name, region: current_region }
             )
-            unless inquiry.errors?
+            if inquiry.errors?
+              render action: :new
+            else
               flash.now[:notice] = 'Project request successfully created'
               audit_logger.info(current_user, "has requested project #{@project.attributes}")
               render template: 'identity/projects/request_wizard/create.js'
-            else
-              render action: :new
             end
-          rescue => e
-            @project.errors.add('message',e.message)
+          rescue StandardError => e
+            @project.errors.add('message', e.message)
             render action: :new
           end
         else
           render action: :new
         end
       end
+
+      private
+
+      def generate_lob_list
+        @show_lob_list = true
+        lob_list = ENV['MONSOON_LOB_LIST'] || "no lob list found"
+        lobs_and_board_area = lob_list.split(',') if lob_list
+        lob_hash = {}
+        lobs_and_board_area.each do |lob_and_ba |
+          lob,ba = lob_and_ba.split('|')
+          lob_hash[ba] ||= []
+          lob_hash[ba] << lob
+        end
+        @lobs ||= []
+        lob_hash.keys.sort.each do | board_area | 
+          @lobs << [board_area, lob_hash[board_area].sort]
+        end 
+      end
+    # end RequestWizardController
     end
 
+    # begin Projects class!!!
     def edit
       payload = @inquiry.payload
       @project = Identity::Project.new(nil, {})
@@ -106,5 +125,6 @@ module Identity
         render template: '/identity/projects/create_wizard/not_found'
       end
     end
+
   end
 end

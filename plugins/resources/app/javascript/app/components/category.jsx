@@ -1,7 +1,12 @@
 import { Link } from 'react-router-dom';
 
-import { byLeaderAndName, t } from '../utils';
+import { sortByLogicalOrderAndName, t } from '../utils';
 import { Scope } from '../scope';
+import UsageOnlyResource from './usage_only_resource';
+
+const tracksQuota = (res) => {
+  return res.quota !== undefined || res.domains_quota !== undefined || res.projects_quota !== undefined;
+};
 
 export default class Category extends React.Component {
   state = {}
@@ -21,6 +26,20 @@ export default class Category extends React.Component {
       categoryName, area, canEdit,
     };
 
+    //on domain/cluster level, skip resources that do not track quota (those
+    //levels pretty much only care about quota distribution)
+    const resourcesDisplayed = scope.isProject() ? resources : resources.filter(tracksQuota);
+
+    //for usage-only resources with no quota of their own, this finds
+    //the resource they're ultimately "contained_in"
+    const getContainingResourceFor = (resName) => {
+      const res = resources.find(res => res.name === resName);
+      if (res.contained_in) {
+        return getContainingResourceFor(res.contained_in);
+      }
+      return res;
+    };
+
     return (
       <React.Fragment>
         <h3>
@@ -33,8 +52,12 @@ export default class Category extends React.Component {
             )}
           </div>
         </h3>
-        {resources.sort(byLeaderAndName).map(res => (
-          <Resource key={res.name} resource={res} {...forwardProps} />
+        {sortByLogicalOrderAndName(resourcesDisplayed).map(res => (
+          tracksQuota(res) ? (
+            <Resource key={res.name} resource={res} {...forwardProps} />
+          ) : (
+            <UsageOnlyResource key={res.name} resource={res} parentResource={getContainingResourceFor(res.name)} {...forwardProps} />
+          )
         ))}
       </React.Fragment>
     );

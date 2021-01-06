@@ -79,7 +79,7 @@ const FormBody = ({ values }) => {
 
                   <Form.ElementHorizontal label='Upstream source' name='url' required>
                     <Form.Input elementType='input' type='text' name='url' />
-                    <p className='form-control-static'>{'Enter the domain name of a registry (for Docker Hub, use "registry-1.docker.io"). If you only want to replicate images below a certain path, append the path after the domain name (e.g. "gcr.io/google_containers").'}</p>
+                    <p className='form-control-static'>{'Enter the domain name of a registry (for Docker Hub, use "index.docker.io"). If you only want to replicate images below a certain path, append the path after the domain name (e.g. "gcr.io/google_containers").'}</p>
                   </Form.ElementHorizontal>
 
                   <Form.ElementHorizontal label='User name' name='username'>

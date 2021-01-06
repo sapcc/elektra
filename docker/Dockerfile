@@ -1,6 +1,4 @@
-FROM ruby:2.4-alpine3.10 AS elektra
-
-ENV OVERLAY=sucks3
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.4-alpine3.10 AS elektra
 
 # alpine3.10
 # nodejs (10.16.3-r0)
@@ -41,8 +39,14 @@ RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/dow
 
 WORKDIR /home/app/webapp
 ENV RAILS_ENV=production
+
 ARG MONSOON_RAILS_SECRET_TOKEN
 ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
+ARG MONSOON_LOB_LIST
+ENV MONSOON_LOB_LIST=$MONSOON_LOB_LIST
+ARG MONSOON_NEW_PROJECT_DL
+ENV MONSOON_NEW_PROJECT_DL=$MONSOON_NEW_PROJECT_DL
+
 LABEL quay.expires-after=26w
 
 # add Gemfile and Gemfile.lock to /home/app/webapp/

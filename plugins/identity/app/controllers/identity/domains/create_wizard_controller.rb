@@ -30,7 +30,9 @@ module Identity
 
           if services.available?(:resource_management)
             # discover newly created projects
-            services.resource_management.discover_projects(@scoped_domain_id)
+            # use cloud_admin because domain resource admin role is required for this call
+            # rescue in case an exception happens so that the rest of the action is performed
+            cloud_admin.resource_management.discover_projects(@scoped_domain_id) rescue nil
           end
             
           flash.now[:notice] = "Project #{@project.name} successfully created."

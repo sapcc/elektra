@@ -24,11 +24,37 @@ export const byUIString = (a, b) => {
   return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
 };
 
-//A sorting predicate for resources in a category.
-export const byLeaderAndName = (resA, resB) => {
-  const keyA = (resA.scales_with ? t(resA.scales_with.resource_name) + '/' : '') + t(resA.name);
-  const keyB = (resB.scales_with ? t(resB.scales_with.resource_name) + '/' : '') + t(resB.name);
-  return (keyA < keyB) ? -1 : (keyA > keyB) ? 1 : 0;
+//A sorting method for resources in a category. This is not just a predicate
+//because we need to traverse the entire list to compute individual sorting
+//keys.
+export const sortByLogicalOrderAndName = (resources) => {
+  const sortingKeysByName = {};
+  let sortingKeyForName;
+  sortingKeyForName = (resName) => {
+    const cached = sortingKeysByName[resName];
+    if (cached) {
+      return cached;
+    }
+    const res = resources.find(res => res.name == resName);
+    const parts = [];
+    if (res.contained_in) {
+      parts.push(sortingKeyForName(res.contained_in));
+      parts.push('000'); //ensure that `contained_in` resources are sorted before `scales_with` resources
+    }
+    if (res.scales_with) {
+      parts.push(sortingKeyForName(res.scales_with.resource_name));
+    }
+    parts.push(t(resName));
+    const key = parts.join('/');
+    sortingKeysByName[resName] = key;
+    return key;
+  };
+
+  return resources.sort((resA, resB) => {
+    const keyA = sortingKeyForName(resA.name);
+    const keyB = sortingKeyForName(resB.name);
+    return (keyA < keyB) ? -1 : (keyA > keyB) ? 1 : 0;
+  });
 };
 
 //A sorting predicate for categories: Sort by translated name, but categories

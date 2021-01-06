@@ -53,7 +53,7 @@ export default class ResourceBar extends React.Component {
   render() {
     //NOTE: `capacity` and `fill` are generic names. What they actually stand for is
     //defined where this component gets used.
-    const {capacity, fill, unitName, isDanger, labelOverride, overcommitAfter, beforeOvercommitTooltip, afterOvercommitTooltip, showsCapacity} = this.props;
+    const {capacity, fill, unitName, isDanger, labelOverride, overcommitAfter, beforeOvercommitTooltip, afterOvercommitTooltip, showsCapacity, labelIsUsageOnly} = this.props;
     const unit = new Unit(this.props.unitName || "");
 
     //indicate overcommit if necessary
@@ -107,6 +107,10 @@ export default class ResourceBar extends React.Component {
 
     const label = labelOverride ? (
       <span className='progress-bar-label'>{labelOverride}</span>
+    ) : labelIsUsageOnly ? (
+      <span className='progress-bar-label'>
+        {valueWithUnit(fill, unit)}
+      </span>
     ) : (
       <span className='progress-bar-label'>
         {valueWithUnit(fill, unit)}/{valueWithUnit(capacity, unit)}

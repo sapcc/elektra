@@ -1,5 +1,5 @@
 # Pull base image.
-FROM ruby:2.4.1-slim-stretch
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.4.1-slim-stretch
 
 RUN apt update
 RUN apt -y install \

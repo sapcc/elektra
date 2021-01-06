@@ -125,6 +125,13 @@ ul.secrets-not-found {
   padding-left: 15px;
 }
 
+.toolbar.toolbar-multi-line {
+  flex-flow: row wrap;
+  .text-danger {
+    flex: 1 100%;
+  }
+}
+
 /*
 * table responsive trick
 */
