@@ -4,6 +4,7 @@ const AccessControlForm = (props) => {
   let accessTypes = {}
   if (props.share.share_proto == 'NFS') accessTypes['ip'] = 'ip'
   else if(props.share.share_proto == 'CIFS') accessTypes['user'] = 'user'
+  else if(props.share.share_proto == 'MULTI') accessTypes = { ip: 'ip', user: 'user' }
   const accessLevels = { ro: 'read-only', rw: 'read-write'}
 
   const accessToPlaceholder = () => {

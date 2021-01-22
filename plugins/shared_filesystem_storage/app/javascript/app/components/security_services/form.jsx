@@ -34,6 +34,7 @@ export default class SecurityServiceForm extends React.Component {
             <Form.Input elementType='select' type='text'>
               <option></option>
               <option value='active_directory'>Active Directory</option>
+              <option value='ldap'>LDAP</option>
             </Form.Input>
           </Form.ElementHorizontal>
 
@@ -41,7 +42,7 @@ export default class SecurityServiceForm extends React.Component {
             <Form.Input elementType='input'/>
           </Form.ElementHorizontal>
 
-          <Form.ElementHorizontal label='Name' required name="name">
+          <Form.ElementHorizontal label='Name' name="name">
             <Form.Input elementType='input'/>
           </Form.ElementHorizontal>
 
