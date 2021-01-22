@@ -2,8 +2,6 @@ import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
 
-const protocols = ['NFS','CIFS']
-
 export default class NewSnapshotForm extends React.Component {
   constructor(props){
   	super(props);

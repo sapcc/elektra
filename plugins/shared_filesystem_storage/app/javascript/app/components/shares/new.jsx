@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
 
-const protocols = ['NFS','CIFS']
+const protocols = ['NFS','CIFS','MULTI']
 
 export default class NewShareForm extends React.Component {
   constructor(props){
