@@ -1,7 +1,9 @@
 import AutoscalingConfig from '../../containers/autoscaling/config';
+import AutoscalingConfigNg from '../../containers/autoscaling/config_ng';
 import AutoscalingOpsReport from '../../containers/autoscaling/ops_report';
 
 const pages = [
+  { label: "Configuration new", component: AutoscalingConfigNg },
   { label: "Configuration", component: AutoscalingConfig },
   { label: "Pending operations", component: AutoscalingOpsReport, props: { reportType: 'pending' } },
   { label: "Recently succeeded", component: AutoscalingOpsReport, props: { reportType: 'recently-succeeded' } },
