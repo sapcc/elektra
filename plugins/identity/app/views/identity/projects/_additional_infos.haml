@@ -33,16 +33,23 @@
     - else
       = link_to plugin('identity').projects_request_project_path(), class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
         %i.fa.fa-plus-square-o
--# subtree
+
 %div{data: {react_auth_projects: true, root: @scoped_project_id, title: 'false' } }
+
+- unless @sharding
+  .bs-callout.bs-callout-warning.bs-callout-emphasize.u-margin-top-normal
+    Sharding is disabled. To enable addition resources click
+    = link_to plugin('identity').project_enable_sharding_path(), title: "Enable Sharding", data: {modal: true, toggle: "tooltip", placement: "left"}  do
+      %i.fa.fa-arrow-right.fa-fw
+      here
 
 - unless @project_resource.nil?
   - if @project_resource.bursting && !@project_resource.burst_usage.empty? && @active_project.name != "cloud_admin"
     .bs-callout.bs-callout-warning.bs-callout-emphasize.u-margin-top-normal
       Your resource usage is bursting.
-      =link_to 'Check details here',plugin('resources').project_path, style: "color:inherit; text-decoration:underline;"
+      = link_to 'Check details here',plugin('resources').project_path, style: "color:inherit; text-decoration:underline;"
   - elsif @project_resource.bursting && @project_resource.bursting_enabled && @active_project.name != "cloud_admin"
     .bs-callout.bs-callout-info.bs-callout-emphasize.u-margin-top-normal
       Quota bursting is now available. See
-      =link_to 'documentation', sap_url_for('documentation') + "docs/quota/#quota-bursting", style: "color:inherit; text-decoration:underline;"
+      = link_to 'documentation', sap_url_for('documentation') + "docs/quota/#quota-bursting", style: "color:inherit; text-decoration:underline;"
       for details.

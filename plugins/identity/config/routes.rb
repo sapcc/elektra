@@ -58,8 +58,9 @@ Identity::Engine.routes.draw do
     end
   end
 
-  get 'project/home'        => 'projects#show', as: :project
-  get 'project/view'        => 'projects#view', as: :project_view
-  get 'project/wizard'      => 'projects#show_wizard', as: :project_wizard
-  get 'home'                => 'domains#show', as: :domain
+  get 'project/enable_sharding' => 'projects#enable_sharding', as: :project_enable_sharding
+  get 'project/home'            => 'projects#show', as: :project
+  get 'project/view'            => 'projects#view', as: :project_view
+  get 'project/wizard'          => 'projects#show_wizard', as: :project_wizard
+  get 'home'                    => 'domains#show', as: :domain
 end

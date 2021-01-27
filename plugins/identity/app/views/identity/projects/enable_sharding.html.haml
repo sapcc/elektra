@@ -1,0 +1,27 @@
+=content_for :title do
+  Enable sharding for project #{@scoped_project_name}
+
+.modal-body
+
+  - if @project.errors.present?
+    .alert.alert-error
+      = render_errors(@project.errors)
+
+  %h4 What is sharding?
+  .alert.alert-info
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+  %h4 What are the consequence?
+  .alert.alert-info
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+  Please note: enable sharding cannot be undone! 
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+      = link_to 'Enable', plugin('identity').project_enable_sharding_path(enable: "true"), class: 'btn btn-danger', method: :get, data: { confirm: 'Are you sure you want to enable sharding?', ok: "Yes, do it!", confirmed: :loading_status}
+    - else
+      = link_to "Cancel", plugin('compute').instances_url, class: 'btn btn-default'
+

@@ -8,7 +8,7 @@ module Identity
 
     # load @project because we do not want to use the @active_project from the object cache
     # in case the description was changed we want to show the user the changes immediately
-    before_action :get_project, only: [:show, :view, :show_wizard]
+    before_action :get_project, only: [:show, :view, :show_wizard, :enable_sharding]
 
     # check wizard state and redirect unless finished
     before_action :check_wizard_status, only: [:show]
@@ -38,6 +38,21 @@ module Identity
       flash.now[:error] = 'Deleting projects is currently not allowed because \
       it creates orphaned dependant objects in backend services.'
       render action: :show
+    end
+
+    def enable_sharding
+      if params['enable'] == "true"
+        service_user_project = service_user.identity.find_project(@project_id)
+        tags = service_user_project.tags
+        tags << "sharding_enabled"
+        service_user_project.tags = tags
+        if service_user_project.save && audit_logger.info(current_user, 'sharding enabled', service_user_project)
+          flash[:notice] = "Activation for sharding was successfull"
+        else
+          flash[:error] = service_user_project.errors.full_messages.to_sentence
+        end
+        redirect_to plugin('identity').project_path({project_id: @project.id})
+      end
     end
 
     def api_endpoints
@@ -104,6 +119,7 @@ module Identity
       @project = services.identity.find_project(
         @project_id, subtree_as_ids: true, parents_as_ids: true
       )
+      @sharding = @project.tags.include?("sharding_enabled")
     end
 
     def get_project_id
