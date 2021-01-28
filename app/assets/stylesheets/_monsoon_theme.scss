@@ -1751,6 +1751,10 @@ table.table-select tbody tr {
   }
 }
 
+tr.clickable {
+  cursor: pointer;
+}
+
 tr.deleting,
 tr.updating {
   td:first-child {
@@ -2139,6 +2143,30 @@ tr.task-state {
   cursor: pointer;
   pointer-events: all;
 }
+
+// -------------------------------------
+// Floating Placeholder
+// -------------------------------------
+.has-floating-placeholder {
+  position: relative;
+}
+
+.form-control-floating-placeholder {
+  position: absolute;
+  top: 7px;
+  left: 13px;
+  background-color: white;
+  transition: all 200ms;
+  opacity: 0.5;
+}
+
+.form-control:focus ~ .form-control-floating-placeholder,
+.form-control:valid ~ .form-control-floating-placeholder {
+  font-size: 75%;
+  transform: translate3d(0, -100%, 0);
+  opacity: 1;
+}
+// ------------------- END --------------
 
 [data-trigger="show-searchable-search"] {
   &.active {
