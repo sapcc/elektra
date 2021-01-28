@@ -57,12 +57,7 @@ export const pluginAjaxHelper = (pluginName, options = {}) => {
 export const createAjaxHelper = (options = {}) => {
   const instanceOptions = Object.assign({ timeout: 60000 }, options)
   // create a copy of options headers
-  instanceOptions.headers = Object.assign(
-    {
-      "Access-Control-Allow-Origin": "*",
-    },
-    options.headers
-  )
+  instanceOptions.headers = Object.assign({}, options.headers)
 
   if (
     !instanceOptions.headers["X-Auth-Token"] &&
