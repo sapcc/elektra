@@ -1,6 +1,7 @@
 import { DataTable } from 'lib/components/datatable';
-import { AutoscalingConfigItem, generateConfig, parseConfig } from './config_item';
+import { AutoscalingConfigItem } from './config_item';
 
+import {parseConfig,generateConfig} from './helper'
 import { t } from '../../utils';
 
 const columns = [
@@ -134,6 +135,7 @@ export default class AutoscalingConfig extends React.Component {
     const { autoscalableSubscopes, projectConfigs, canEdit } = this.props;
     const { currentFullResource, editValues, isSubmitting } = this.state;
 
+
     //assemble options for <select> box
     const options = [];
     for (const srvType in autoscalableSubscopes) {
@@ -151,10 +153,11 @@ export default class AutoscalingConfig extends React.Component {
         }
 
         const subscopes = autoscalableSubscopes[srvType][resName];
+        const category = subscopes.length > 0 && subscopes[0].category || srvType
         if (subscopes.length > 0) {
           options.push({
             key: `${srvType}/${resName}`,
-            label: `${t(srvType)} > ${t(resName)} (${enabledCount}/${subscopes.length})`,
+            label: `${t(category)} > ${t(resName)} (${enabledCount}/${subscopes.length})`,
           });
         }
       }
@@ -163,7 +166,7 @@ export default class AutoscalingConfig extends React.Component {
 
     return (
       <React.Fragment>
-        <p className='row'>
+        <div className='row'>
           <div className='col-md-8'>
             <select className='form-control' onChange={(e) => this.handleSelect(e.target.value)} value={currentFullResource}>
               {currentFullResource == '' && <option value=''>-- Select a resource --</option>}
@@ -189,7 +192,7 @@ export default class AutoscalingConfig extends React.Component {
               </div>
             )
           )}
-        </p>
+        </div>
         {currentFullResource != '' && (
           <DataTable columns={columns}>{this.renderRows()}</DataTable>
         )}
