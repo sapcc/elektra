@@ -3,7 +3,7 @@ import AutoscalingConfigNg from '../../containers/autoscaling/config_ng';
 import AutoscalingOpsReport from '../../containers/autoscaling/ops_report';
 
 const pages = [
-  { label: "Configuration new", component: AutoscalingConfigNg },
+  { label: "Project Resources", component: AutoscalingConfigNg },
   { label: "Configuration", component: AutoscalingConfig },
   { label: "Pending operations", component: AutoscalingOpsReport, props: { reportType: 'pending' } },
   { label: "Recently succeeded", component: AutoscalingOpsReport, props: { reportType: 'recently-succeeded' } },
@@ -15,6 +15,8 @@ export default class AutoscalingTabs extends React.Component {
     active: 0,
   }
 
+
+
   handleSelect(pageIdx, e) {
     e.preventDefault();
     this.setState({
@@ -24,6 +26,10 @@ export default class AutoscalingTabs extends React.Component {
   }
 
   render() {
+    if(!this.props.canAutoscale) {
+      return <><span className="spinner"/> Loading...</>
+    }
+    
     const CurrentPage = pages[this.state.active].component;
     const pageProps = {
       ...(pages[this.state.active].props || {}),
