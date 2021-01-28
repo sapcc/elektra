@@ -31,9 +31,10 @@ export default class Overview extends React.Component {
     areas.push('availability_zones');
 
     const { canAutoscale, scopeData } = props;
-    if (canAutoscale) {
+    
+    //if (canAutoscale) {
       areas.push('autoscaling');
-    }
+    //}
     const scope = new Scope(scopeData);
     if (scope.isCluster()) {
       areas.push('inconsistencies');
@@ -100,8 +101,8 @@ export default class Overview extends React.Component {
   }
 
   renderAutoscalingTab() {
-    const { scopeData, canEdit } = this.props;
-    return <AutoscalingTabs scopeData={scopeData} canEdit={canEdit} />;
+    const { scopeData, canEdit, canAutoscale } = this.props;
+    return <AutoscalingTabs scopeData={scopeData} canEdit={canEdit} canAutoscale={canAutoscale}/>;
   }
 
   renderInconsistenciesTab() {
@@ -140,7 +141,9 @@ export default class Overview extends React.Component {
           <ul className='nav nav-tabs'>
             { allAreas.map(area => (
               <li key={area} role="presentation" className={currentArea == area ? "active" : ""}>
-                <Link to={`/${area}`}>{t(area)}</Link>
+                <Link to={`/${area}`}>
+                  {t(area)} {" "}
+                  {area === "autoscaling" && !canAutoscale && <span className='spinner'/>}</Link>
               </li>
             ))}
           </ul>
