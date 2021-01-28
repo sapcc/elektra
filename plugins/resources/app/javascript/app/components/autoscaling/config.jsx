@@ -153,10 +153,11 @@ export default class AutoscalingConfig extends React.Component {
         }
 
         const subscopes = autoscalableSubscopes[srvType][resName];
+        const category = subscopes.length > 0 && subscopes[0].category || srvType
         if (subscopes.length > 0) {
           options.push({
             key: `${srvType}/${resName}`,
-            label: `${t(srvType)} > ${t(resName)} (${enabledCount}/${subscopes.length})`,
+            label: `${t(category)} > ${t(resName)} (${enabledCount}/${subscopes.length})`,
           });
         }
       }

@@ -5,6 +5,7 @@ import { parseConfig, generateConfig } from "../helper"
 import Item from "./list_item"
 import Subscopes from "./subscopes"
 import { Unit } from "../../../unit"
+import resource from "../../domain/resource"
 
 const styles = {
   detailsWrapper: {
@@ -39,6 +40,11 @@ function subscopesReducer(state, action) {
         ...state,
         items: state.items.map((i) => ({ ...i, error: null, editMode: true })),
       }
+    case "updateAll":
+      return {
+        ...state,
+        items: state.items.map((i) => ({ ...i, value: action.value })),
+      }
 
     case "saveAll":
       return {
@@ -65,6 +71,7 @@ function subscopesReducer(state, action) {
           error: null,
           editMode: false,
           isSaving: false,
+          value: i.originValue,
         })),
       }
   }
@@ -96,7 +103,13 @@ function subscopesReducer(state, action) {
       return { ...state, items }
 
     case "cancel":
-      items[index] = { ...item, error: null, editMode: false, isSaving: false }
+      items[index] = {
+        ...item,
+        error: null,
+        editMode: false,
+        isSaving: false,
+        value: item.originValue,
+      }
       return { ...state, items }
 
     default:
@@ -135,6 +148,8 @@ const AutoscalingConfigNgSubscopes = ({
     items: [],
   })
 
+  const applyToAllRef = React.useRef()
+
   const initialized = React.useRef(false)
 
   React.useEffect(() => {
@@ -143,11 +158,12 @@ const AutoscalingConfigNgSubscopes = ({
         type: "init",
         items: project.subscopes.map((s) => {
           const parsedData = parseConfig(s.data)
+
           return {
             assetType: `project-quota:${s.service}:${s.resource}`,
             service: s.service,
             resource: s.resource,
-            serviceLabel: t(s.service),
+            serviceLabel: t(s.category),
             resourceLabel: t(s.resource),
             value: parsedData?.value,
             originValue: parsedData?.value,
@@ -308,32 +324,60 @@ const AutoscalingConfigNgSubscopes = ({
                     Filter by resource
                   </label>
                 </div>
-                <div className="clearfix">
-                  <div className="pull-right">
-                    <Button
-                      disabled={editModeCount === filteredSubscopes.length}
-                      bsSize="small"
-                      bsStyle="warning"
-                      onClick={editAll}
-                    >
-                      Edit All
-                    </Button>{" "}
-                    <Button
-                      disabled={editModeCount === 0}
-                      bsSize="small"
-                      bsStyle="default"
-                      onClick={cancelAll}
-                    >
-                      Cancel All
-                    </Button>{" "}
-                    <Button
-                      disabled={editModeCount === 0}
-                      bsSize="small"
-                      bsStyle="primary"
-                      onClick={saveAll}
-                    >
-                      Save All
-                    </Button>
+
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div className="form-group">
+                    {editModeCount === filteredSubscopes.length && (
+                      <div className="input-group input-group-sm">
+                        <input
+                          ref={applyToAllRef}
+                          type="number"
+                          className="form-control"
+                        />
+                        <div
+                          className="btn input-group-addon bg-success"
+                          onClick={(e) =>
+                            dispatch({
+                              type: "updateAll",
+                              value: applyToAllRef.current.value,
+                            })
+                          }
+                        >
+                          apply to all
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="clearfix">
+                    <div className="pull-right">
+                      <Button
+                        disabled={editModeCount === filteredSubscopes.length}
+                        bsSize="small"
+                        bsStyle="warning"
+                        onClick={editAll}
+                      >
+                        Edit All
+                      </Button>{" "}
+                      <Button
+                        disabled={editModeCount === 0}
+                        bsSize="small"
+                        bsStyle="default"
+                        onClick={cancelAll}
+                      >
+                        Cancel All
+                      </Button>{" "}
+                      <Button
+                        disabled={editModeCount === 0}
+                        bsSize="small"
+                        bsStyle="primary"
+                        onClick={saveAll}
+                      >
+                        Save All
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Col>

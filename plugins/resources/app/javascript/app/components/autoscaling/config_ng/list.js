@@ -38,6 +38,7 @@ const AutoscalingConfigNg = ({
             projectItems[project.id]["subscopes"] || []
 
           projectItems[project.id]["subscopes"].push({
+            category: project.category,
             service,
             resource,
             unitName: units[assetType],

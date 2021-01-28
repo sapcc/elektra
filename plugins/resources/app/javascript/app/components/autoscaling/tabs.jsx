@@ -3,8 +3,8 @@ import AutoscalingConfigNg from '../../containers/autoscaling/config_ng';
 import AutoscalingOpsReport from '../../containers/autoscaling/ops_report';
 
 const pages = [
-  { label: "Project Resources", component: AutoscalingConfigNg },
-  { label: "Configuration", component: AutoscalingConfig },
+  { label: "Config by Project", component: AutoscalingConfigNg },
+  { label: "Config by Resource", component: AutoscalingConfig },
   { label: "Pending operations", component: AutoscalingOpsReport, props: { reportType: 'pending' } },
   { label: "Recently succeeded", component: AutoscalingOpsReport, props: { reportType: 'recently-succeeded' } },
   { label: "Recently failed", component: AutoscalingOpsReport, props: { reportType: 'recently-failed' } },

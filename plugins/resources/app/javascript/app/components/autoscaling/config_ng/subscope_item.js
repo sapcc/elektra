@@ -96,26 +96,30 @@ const AutoscalingConfigSubscopeItem = ({
         )}
       </td>
       <td>
-        {isSaving ? (
-          <Button bsSize="small" bsStyle="primary" disabled={true}>
-            ...saving
-          </Button>
-        ) : editMode ? (
-          <Button
-            bsSize="small"
-            bsStyle={hasChanged ? "primary" : "default"}
-            onClick={hasChanged ? save : cancel}
-          >
-            {hasChanged ? "Save" : "Cancel"}
-          </Button>
-        ) : (
-          <Button
-            bsSize="small"
-            bsStyle={value ? "primary" : "success"}
-            onClick={edit}
-          >
-            {value ? "Edit" : "Enable"}
-          </Button>
+        {!custom && (
+          <>
+            {isSaving ? (
+              <Button bsSize="small" bsStyle="primary" disabled={true}>
+                ...saving
+              </Button>
+            ) : editMode ? (
+              <Button
+                bsSize="small"
+                bsStyle={hasChanged ? "primary" : "default"}
+                onClick={hasChanged ? save : cancel}
+              >
+                {hasChanged ? "Save" : "Cancel"}
+              </Button>
+            ) : (
+              <Button
+                bsSize="small"
+                bsStyle={value ? "primary" : "success"}
+                onClick={edit}
+              >
+                {value ? "Edit" : "Enable"}
+              </Button>
+            )}
+          </>
         )}
       </td>
     </tr>
