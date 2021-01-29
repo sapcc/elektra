@@ -73,7 +73,7 @@ export class Scope {
     return `/v1/domains`;
   }
   capacityUrlPath() {
-    return `/v1/clusters/${this.clusterID}`;
+    return `/v1/clusters/${this.clusterID}?detail`;
   }
 
   descendIntoSubscope(id) {

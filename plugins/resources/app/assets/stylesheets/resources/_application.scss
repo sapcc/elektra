@@ -72,6 +72,14 @@
 
 }
 
+.progress-without-margin {
+  margin-bottom: 0px !important;
+}
+
+.shard-name {
+  font-size:smaller;
+}
+
 .row.usage-only {
   /* group with the previous resource (probably the one that this one is "contained_in") */
   position: relative;

@@ -44,9 +44,11 @@ createWidget(__dirname).then((widget) => {
   }
   delete(widget.config.scriptParams.app)
 
-  //convert params from strings into the respective types
+  //convert params from strings into the respective types that you can access the data from props
   widget.config.scriptParams.flavorData = JSON.parse(widget.config.scriptParams.flavorData) 
   widget.config.scriptParams.bigVmResources = JSON.parse(widget.config.scriptParams.bigVmResources)
+  widget.config.scriptParams.shardingEnabled = JSON.parse(widget.config.scriptParams.shardingEnabled)
+  widget.config.scriptParams.projectShards = JSON.parse(widget.config.scriptParams.projectShards)
   widget.config.scriptParams.canEdit = widget.config.scriptParams.canEdit == 'true';
   widget.config.scriptParams.isForeignScope = widget.config.scriptParams.isForeignScope == 'true';
 

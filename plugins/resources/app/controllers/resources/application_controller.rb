@@ -81,6 +81,16 @@ module Resources
     private
 
     def prepare_data_for_view
+      
+      @project =  services.identity.find_project!(@scoped_project_id) 
+      
+      project_shards = []
+      sharding_enabled = false
+      unless @project.nil?
+        sharding_enabled = @project.shards.include?('sharding_enabled')
+        project_shards = @project.shards
+      end
+
       @js_data = {
         token:            current_user.token,
         limes_api:        current_user.service_url('resources'), # see also init.js -> configureAjaxHelper
@@ -88,6 +98,8 @@ module Resources
         placement_api:    current_user.service_url('placement'),
         flavor_data:      fetch_baremetal_flavor_data,
         big_vm_resources: fetch_big_vm_data,
+        sharding_enabled: sharding_enabled,
+        project_shards:   project_shards,
         docs_url:         sap_url_for('documentation'),
         cluster_id:       params[:cluster_id] || 'current',
       } # this will end in widget.config.scriptParams on JS side
@@ -145,13 +157,12 @@ module Resources
 
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
-      project =  services.identity.find_project!(@scoped_project_id) 
       
       # domain level: we do not show bigVMresources
-      if project.nil?
+      if @project.nil?
         return {}
       end
-      project_shards = project.shards
+      project_shards = @project.shards
  
       # build mapping between AV(availability_zone) or VZ(shard) and host_aggregates.name
       host_aggregates = cloud_admin.compute.host_aggregates
