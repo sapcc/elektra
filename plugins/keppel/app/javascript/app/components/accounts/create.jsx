@@ -91,6 +91,16 @@ const FormBody = ({ values }) => {
                     <p className='form-control-static'>These credentials are used by Keppel to pull images from the upstream source. Leave blank to pull as an anonymous user.</p>
                   </Form.ElementHorizontal>
 
+                  <Form.ElementHorizontal label='User name' name='username'>
+                    <Form.Input elementType='input' type='text' name='username' />
+                  </Form.ElementHorizontal>
+
+                  <Form.ElementHorizontal label='Platform filter' name='platform_filter'>
+                    <Form.Input elementType='input' type='checkbox' name='platform_filter_linux_amd64' />
+                    {" "}Only x86_64 Linux
+                    <p className='form-control-static'>When replicating a multi-architecture images, a platform filter restricts which parts get replicated. Custom platform filters can be defined when using the Keppel API directly.</p>
+                  </Form.ElementHorizontal>
+
                 </React.Fragment>
               )}
 
@@ -179,7 +189,7 @@ export default class AccountCreateModal extends React.Component {
     }
   };
 
-  onSubmit = ({role, name, token, url, username, password}) => {
+  onSubmit = ({role, name, token, url, username, password, platform_filter_linux_amd64: withPlatformFilter }) => {
     const invalid = (field, reason) => Promise.reject({ errors: { [field]: reason } });
 
     const newAccount = { auth_tenant_id: this.props.projectID };
@@ -211,6 +221,9 @@ export default class AccountCreateModal extends React.Component {
         }
         if (username == '' && password != '') {
           return invalid('username', 'must be given if password is given');
+        }
+        if (withPlatformFilter === true) {
+          newAccount.platform_filter = [{ 'os': 'linux', 'architecture': 'amd64' }];
         }
         break;
 
