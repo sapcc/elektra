@@ -35,10 +35,20 @@ export default class AccountRow extends React.Component {
   }
 
   render() {
-    const { name: accountName, auth_tenant_id: projectID, in_maintenance: inMaintenance, metadata, replication } = this.props.account;
+    const { name: accountName, auth_tenant_id: projectID, in_maintenance: inMaintenance, metadata, replication, platform_filter: platformFilter } = this.props.account;
     const isEditable = (metadata || {}).readonly_in_elektra != 'true';
     const containerName = `keppel-${accountName}`;
     const swiftContainerURL = `/_/${projectID}/object-storage/containers/${containerName}/list`;
+
+    let platformFilterDisplay = "";
+    if (Array.isArray(platformFilter) && platformFilter.length > 0) {
+      const pf = platformFilter;
+      if (pf.length == 1 && pf[0].os == "linux" && pf[0].architecture == "amd64") {
+        platformFilterDisplay = ", restricted to x86_64 parts of multi-arch images";
+      } else {
+        platformFilterDisplay = ", with custom platform filter for multi-arch images";
+      }
+    }
 
     let statusDisplay = 'Ready';
     if (this.state.isDeleting) {
@@ -70,10 +80,12 @@ export default class AccountRow extends React.Component {
             replication.strategy == 'on_first_use' ? (
               <div>
                 Replica of <strong>{replication.upstream}/{accountName}</strong>
+                {platformFilterDisplay}
               </div>
             ) : replication.strategy == 'from_external_on_first_use' ? (
               <div>
                 Replica of <strong>{replication.upstream.url}</strong>
+                {platformFilterDisplay}
               </div>
             ) : (
               <div>Unknown replication strategy</div>
