@@ -18,6 +18,10 @@ module Identity
       true
     end
 
+    def sharding_enabled
+      return read(:tags).include?('sharding_enabled') || false
+    end
+
     def shards
       shards = []
       read(:tags).each do |tag|

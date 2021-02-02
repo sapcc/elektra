@@ -119,7 +119,7 @@ module Identity
       @project = services.identity.find_project(
         @project_id, subtree_as_ids: true, parents_as_ids: true
       )
-      @sharding = @project.tags.include?("sharding_enabled")
+      @sharding_enabled = @project.sharding_enabled
     end
 
     def get_project_id

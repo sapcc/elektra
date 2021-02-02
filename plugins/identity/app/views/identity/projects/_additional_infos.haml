@@ -36,7 +36,7 @@
 
 %div{data: {react_auth_projects: true, root: @scoped_project_id, title: 'false' } }
 
-- unless @sharding
+- unless @sharding_enabled
   .bs-callout.bs-callout-warning.bs-callout-emphasize.u-margin-top-normal
     Sharding is disabled. To use all shards and get access to addition resources click
     = link_to plugin('identity').project_enable_sharding_path(), title: "Enable Sharding", data: {modal: true, toggle: "tooltip", placement: "left"}  do

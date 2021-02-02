@@ -95,7 +95,7 @@ module Resources
 
       @project =  services.identity.find_project!(@scoped_project_id) 
       unless @project.nil?
-        sharding_enabled = @project.tags.include?('sharding_enabled') || false
+        sharding_enabled = @project.sharding_enabled
         project_shards = @project.shards || []
         @js_data[:sharding_enabled] = sharding_enabled
         @js_data[:project_shards] = project_shards
