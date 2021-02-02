@@ -8,9 +8,10 @@ import EditModal from '../../containers/edit';
 import ProjectSettingsModal from '../../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
-  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum, bigVmResources } = props;
+  // this are the static data that comes from elektra rails controller and was initilized in init.js
+  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum, bigVmResources, projectShards, shardingEnabled, projectScope } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId, projectID: projectId };
-  const rootProps = { flavorData, scopeData, bigVmResources };
+  const rootProps = { flavorData, scopeData, bigVmResources, projectShards, shardingEnabled, projectScope };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>

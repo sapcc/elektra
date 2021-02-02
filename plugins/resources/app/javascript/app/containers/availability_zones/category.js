@@ -8,6 +8,9 @@ export default connect(
     return {
       category:          data.categories[props.categoryName],
       availabilityZones: data.availabilityZones,
+      projectShards:     props.projectShards,
+      shardingEnabled:   props.shardingEnabled,
+      projectScope: props.projectScope,
     };
   },
   dispatch => ({}),
