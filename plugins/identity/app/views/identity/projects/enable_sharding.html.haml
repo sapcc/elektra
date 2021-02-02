@@ -9,13 +9,33 @@
 
   %h4 What is sharding?
   .alert.alert-info
-    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    CCloud spreads clusters within an availability zone (AZ) across multiple 
+    %strong shards.
+    New projects get created in only one shard initially. Only projects that have 
+    %strong sharding
+    enabled have access to all the resource in all the shards of an AZ. Having 
+    %strong sharding
+    enabled allows a new server to be scheduled on any and all shards in the AZ.
+    %br
+    %br
+    We highly recommended that you enable Sharding for your project, except for special cases described below.
 
   %h4 What are the consequence?
   .alert.alert-info
-    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    More resources are available to create servers in your project. This benefits projects in busy and highly-utilized regions especially.
 
-  Please note: enable sharding cannot be undone! 
+  %h4 Special Cases
+  .alert.alert-info
+    If you plan to run a Kubernetes cluster in your project, then enabling sharding is 
+    %strong not
+    recommended. Kubernetes nodes depend on very fast volume attachment and sharding slows cinder volume attachment times somewhat.
+    %br
+    %br
+    If for some other reason you need 
+    %strong very
+    fast cinder-volume attachment times as well, then enabling sharding 
+    %strong might not
+    be advisable.
 
 - if modal?
   .modal-footer
