@@ -25,11 +25,11 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
   if ('subcapacities' in resource) {
     let subcapacities = resource.subcapacities
     return (
-      <div className='row usage-only'>
+      <div className='row usage-only' key={resource.name}>
         <ResourceName name="" flavorData={flavorData} />
         { availabilityZones.map( (azName, index) => 
-            <div className={`col-md-${azColumnWidth}`} style={{marginBottom: 5}}> <span className="text-left">Usage details</span>
-              { subcapacities.sort(function(a, b) { // https://stackoverflow.com/questions/47998188/how-to-sort-an-object-alphabetically-within-an-array-in-react-js
+            <div className={`col-md-${azColumnWidth}`} style={{marginBottom: 5}} key={azName}> <span className="text-left">Usage details</span>
+              { subcapacities.sort(function(a, b) { // to sort shards -> https://stackoverflow.com/questions/47998188/how-to-sort-an-object-alphabetically-within-an-array-in-react-js
                   if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
                   if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
                   return 0;
@@ -37,7 +37,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                 { 
                   if (item.name.startsWith('vc') ) {
                     if (item.metadata.availability_zone == azName) {
-                      // calculate count with over commit factor if exist
+                      // calculate data with over commit factor if exist
                       let capa = item.capacity
                       if (ocFactor) {
                         capa = item.capacity*ocFactor
@@ -45,7 +45,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                       
                       if (projectScope) {
                         if (projectShards.indexOf(item.name) > -1 ) {
-                          return <span>
+                          return <span key={capa}>
                             <ResourceBar
                               capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
                               isDanger={false} showsCapacity={true}
@@ -54,7 +54,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                           </span>
                         } else {
                           // disable resourceBar if sharding are disabled and the shard is not part of the project
-                          return <span>
+                          return <span key={capa}>
                             <ResourceBar
                               capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
                               isDanger={false} showsCapacity={true} disabled={!shardingEnabled}
@@ -65,7 +65,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                       }
                       else {
                           // Domain scope
-                          return <span>
+                          return <span key={capa}>
                           <ResourceBar
                             capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
                             isDanger={false} showsCapacity={true}
@@ -91,7 +91,7 @@ const AvailabilityZoneResource = ({ resource, serviceType, flavorData: allFlavor
   let subcapacitieBars = renderShard(resource, azColumnWidth, flavorData, availabilityZones, projectShards, shardingEnabled, projectScope)
   
   let resourceBar = (
-    <div className='row'>
+    <div className='row' key={displayName}>
       <ResourceName name={displayName} flavorData={flavorData} />
       {availabilityZones.map(azName => (
         <div key={azName} className={`col-md-${azColumnWidth}`}>
