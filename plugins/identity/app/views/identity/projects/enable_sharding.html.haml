@@ -8,7 +8,7 @@
       = render_errors(@project.errors)
 
   %h4 What is sharding?
-  .alert.alert-info
+  .bs-callout.bs-callout-info.bs-callout-emphasize
     CCloud spreads clusters within an availability zone (AZ) across multiple 
     %strong shards.
     New projects get created in only one shard initially. Only projects that have 
@@ -20,12 +20,12 @@
     %br
     We highly recommended that you enable Sharding for your project, except for special cases described below.
 
-  %h4 What are the consequence?
-  .alert.alert-info
+  %h4 What are the consequences?
+  .bs-callout.bs-callout-info.bs-callout-emphasize
     More resources are available to create servers in your project. This benefits projects in busy and highly-utilized regions especially.
 
   %h4 Special cases
-  .alert.alert-info
+  .bs-callout.bs-callout-info.bs-callout-emphasize
     If you plan to run a Kubernetes cluster in your project, then enabling sharding is 
     %strong not
     recommended. Kubernetes nodes depend on very fast volume attachment and sharding slows cinder volume attachment times somewhat.

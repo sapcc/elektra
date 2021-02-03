@@ -47,11 +47,11 @@ module Identity
         tags << "sharding_enabled"
         service_user_project.tags = tags
         if service_user_project.save && audit_logger.info(current_user, 'sharding enabled', service_user_project)
-          flash[:notice] = "Activation for sharding was successfull"
+          flash[:notice] = "Sharding activation was successfull. You can now use all available shards."
         else
           flash[:error] = service_user_project.errors.full_messages.to_sentence
         end
-        redirect_to plugin('identity').project_path({project_id: @project.id})
+        redirect_to "#{plugin('resources').project_path()}#/availability_zones"
       end
     end
 
