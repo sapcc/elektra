@@ -73,11 +73,14 @@
 }
 
 .progress-without-margin {
-  margin-bottom: 0px !important;
+  margin-bottom: 5px !important;
+  margin-left:5px;
 }
 
 .shard-name {
-  font-size:smaller;
+  font-size:x-small;
+  padding-left:15px;
+  padding-right:0px;
 }
 
 .row.usage-only {

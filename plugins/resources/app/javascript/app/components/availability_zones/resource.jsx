@@ -28,7 +28,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
       <div className='row usage-only' key={resource.name}>
         <ResourceName name="" flavorData={flavorData} />
         { availabilityZones.map( (azName, index) => 
-            <div className={`col-md-${azColumnWidth}`} style={{marginBottom: 5}} key={azName}> <span className="text-left">Usage details</span>
+            <div className={`col-md-${azColumnWidth}`} style={{marginBottom: 5}} key={azName}> <span className="text-left small">Detailed Usage:</span>
               { subcapacities.sort(function(a, b) { // to sort shards -> https://stackoverflow.com/questions/47998188/how-to-sort-an-object-alphabetically-within-an-array-in-react-js
                   if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
                   if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
@@ -45,33 +45,39 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                       
                       if (projectScope) {
                         if (projectShards.indexOf(item.name) > -1 ) {
-                          return <span key={capa}>
+                          return <div className="row" key={capa}>
+                            <div className="col-md-2 text-left shard-name">shard {item.name}</div>
+                            <div className="col-md-10" style={{"padding-left":"8px"}}>
                             <ResourceBar
                               capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
                               isDanger={false} showsCapacity={true}
-                              customProgressClass="progress-without-margin" />
-                            <span className="text-left shard-name">shard {item.name}</span>
-                          </span>
+                            />
+                            </div>
+                          </div>
                         } else {
                           // disable resourceBar if sharding are disabled and the shard is not part of the project
-                          return <span key={capa}>
-                            <ResourceBar
-                              capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
-                              isDanger={false} showsCapacity={true} disabled={!shardingEnabled}
-                              customProgressClass="progress-without-margin" />
-                            <span className="text-left shard-name">shard {item.name}</span>
-                          </span>
+                          return <div className="row" key={capa}>
+                            <div className="col-md-2 text-left shard-name">shard {item.name}</div>
+                            <div className="col-md-10" style={{"padding-left":"8px"}}>
+                              <ResourceBar
+                                capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
+                                isDanger={false} showsCapacity={true} disabled={!shardingEnabled}
+                              />
+                            </div>
+                          </div>
                         }
                       }
                       else {
                           // Domain scope
-                          return <span key={capa}>
-                          <ResourceBar
-                            capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
-                            isDanger={false} showsCapacity={true}
-                            customProgressClass="progress-without-margin" />
-                          <span className="text-left shard-name">shard {item.name}</span>
-                        </span>
+                          return <div className="row" key={capa}>
+                            <div className="col-md-2 text-left shard-name">shard {item.name}</div>
+                            <div className="col-md-10" style={{"padding-left":"8px"}}>
+                              <ResourceBar
+                                capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
+                                isDanger={false} showsCapacity={true}
+                              />
+                            </div>
+                        </div>
                       }
                     }
                   }
