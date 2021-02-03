@@ -5,6 +5,7 @@ import AvailabilityZoneCategory from '../../components/availability_zones/catego
 export default connect(
   (state, props) => {
     const data = state.limes.capacityData;
+
     return {
       category:          data.categories[props.categoryName],
       availabilityZones: data.availabilityZones,

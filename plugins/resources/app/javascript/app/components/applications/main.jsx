@@ -9,9 +9,9 @@ import ProjectSettingsModal from '../../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
   // this are the static data that comes from elektra rails controller and was initilized in init.js
-  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum, bigVmResources, projectShards, shardingEnabled, projectScope } = props;
+  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum, bigVmResources, projectShards, shardingEnabled, projectScope, pathToEnableSharding } = props;
   const scopeData = { clusterID: clusterId, domainID: domainId, projectID: projectId };
-  const rootProps = { flavorData, scopeData, bigVmResources, projectShards, shardingEnabled, projectScope };
+  const rootProps = { flavorData, scopeData, bigVmResources, projectShards, shardingEnabled, projectScope, pathToEnableSharding };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>

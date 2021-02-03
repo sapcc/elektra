@@ -2,17 +2,20 @@ import AvailabilityZoneCategory from '../../containers/availability_zones/catego
 
 import { byUIString, byNameIn } from '../../utils';
 
-const AvailabilityZoneOverview = ({ isFetching, overview, flavorData, scopeData, projectShards, shardingEnabled , projectScope}) => {
+const AvailabilityZoneOverview = ({ isFetching, overview, flavorData, scopeData, projectShards, shardingEnabled , projectScope, pathToEnableSharding}) => {
   if (isFetching) {
     return <p><span className='spinner'/> Loading capacity data...</p>;
   }
 
-  const forwardProps = { flavorData, scopeData, projectShards, shardingEnabled, projectScope };
+  const forwardProps = { flavorData, scopeData, projectShards, shardingEnabled, projectScope};
 
+  //pathToEnableSharding = "/monsoon3/hgws/identity/project/enable_sharding"
   let shardingEnabledMessage = ""
   if (!shardingEnabled && projectScope) {
     shardingEnabledMessage = <div className='bs-callout bs-callout-info bs-callout-emphasize'>
-      Why do I see greyed out capacity bars for Cores, Instances and RAM? Because sharding is not enabled for this project. To use all shards and get access to additional resources you need to enable sharding. For more information check the overview site of your project.
+      <h5>Why do I see greyed out capacity bars for Cores, Instances and RAM?</h5>
+      Because sharding is not enabled for this project. To use all shards and get access to additional resources you need to enable sharding. To enable sharding click
+      <a title="" data-modal="true" data-toggle="tooltip" data-placement="left" href={pathToEnableSharding} data-original-title="Enable Sharding"><i className="fa fa-arrow-right fa-fw"></i>here</a>
     </div>
   }
 

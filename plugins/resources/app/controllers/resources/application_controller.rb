@@ -100,11 +100,13 @@ module Resources
         @js_data[:sharding_enabled] = sharding_enabled
         @js_data[:project_shards] = project_shards
         @js_data[:project_scope] = true
+        @js_data[:path_to_enable_sharding] = plugin('identity').project_enable_sharding_path()
       else 
         # domain and ccadmin scope
         @js_data[:sharding_enabled] = false
         @js_data[:project_shards] = []
         @js_data[:project_scope] = false
+        @js_data[:path_to_enable_sharding] = ""
       end
 
       # when this is true, the frontend will never try to generate quota requests

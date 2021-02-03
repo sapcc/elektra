@@ -47,7 +47,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                         if (projectShards.indexOf(item.name) > -1 ) {
                           return <div className="row" key={capa}>
                             <div className="col-md-2 text-left shard-name">shard {item.name}</div>
-                            <div className="col-md-10" style={{"padding-left":"8px"}}>
+                            <div className="col-md-10" style={{"paddingLeft":"8px"}}>
                             <ResourceBar
                               capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
                               isDanger={false} showsCapacity={true}
@@ -58,7 +58,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                           // disable resourceBar if sharding are disabled and the shard is not part of the project
                           return <div className="row" key={capa}>
                             <div className="col-md-2 text-left shard-name">shard {item.name}</div>
-                            <div className="col-md-10" style={{"padding-left":"8px"}}>
+                            <div className="col-md-10" style={{"paddingLeft":"8px"}}>
                               <ResourceBar
                                 capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
                                 isDanger={false} showsCapacity={true} disabled={!shardingEnabled}
@@ -71,7 +71,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                           // Domain scope
                           return <div className="row" key={capa}>
                             <div className="col-md-2 text-left shard-name">shard {item.name}</div>
-                            <div className="col-md-10" style={{"padding-left":"8px"}}>
+                            <div className="col-md-10" style={{"paddingLeft":"8px"}}>
                               <ResourceBar
                                 capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
                                 isDanger={false} showsCapacity={true}

@@ -89,10 +89,17 @@ export default class Overview extends React.Component {
   }
 
   renderAvailabilityZoneTab() {
-    const { scopeData, flavorData, bigVmResources, shardingEnabled, projectShards, projectScope} = this.props;
+    const { scopeData, flavorData, bigVmResources, shardingEnabled, projectShards, projectScope, pathToEnableSharding} = this.props;
     return (
       <div>
-        <AvailabilityZoneOverview flavorData={flavorData} scopeData={scopeData} projectShards={projectShards} shardingEnabled={shardingEnabled} projectScope={projectScope}/>
+        <AvailabilityZoneOverview 
+          flavorData={flavorData} 
+          scopeData={scopeData} 
+          projectShards={projectShards} 
+          shardingEnabled={shardingEnabled}
+          projectScope={projectScope}
+          pathToEnableSharding={pathToEnableSharding}
+        />
         <AvailableBigVmResources bigVmResources={bigVmResources} />
       </div>
     );
