@@ -28,7 +28,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
       <div className='row usage-only' key={resource.name}>
         <ResourceName name="" flavorData={flavorData} />
         { availabilityZones.map( (azName, index) => 
-            <div className={`col-md-${azColumnWidth}`} style={{marginBottom: 5}} key={azName}> <span className="text-left small">Detailed Usage:</span>
+            <div className={`col-md-${azColumnWidth}`} style={{marginBottom: 5}} key={azName}>
               { subcapacities.sort(function(a, b) { // to sort shards -> https://stackoverflow.com/questions/47998188/how-to-sort-an-object-alphabetically-within-an-array-in-react-js
                   if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
                   if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
@@ -46,7 +46,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                       if (projectScope) {
                         if (projectShards.indexOf(item.name) > -1 ) {
                           return <div className="row" key={capa}>
-                            <div className="col-md-2 text-left shard-name">shard {item.name}</div>
+                            <div className="col-md-2 text-left shard-name" title={"resource pool "+item.name}>{"rp - "+item.name}</div>
                             <div className="col-md-10" style={{"paddingLeft":"8px"}}>
                             <ResourceBar
                               capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
@@ -55,9 +55,13 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                             </div>
                           </div>
                         } else {
+                          let opacity = {}
+                          if (!shardingEnabled) {
+                            opacity = {"opacity":0.5}
+                          }
                           // disable resourceBar if sharding are disabled and the shard is not part of the project
                           return <div className="row" key={capa}>
-                            <div className="col-md-2 text-left shard-name">shard {item.name}</div>
+                            <div className="col-md-2 text-left shard-name" title={"resource pool "+item.name} style={opacity}>{"rp - "+item.name}</div>
                             <div className="col-md-10" style={{"paddingLeft":"8px"}}>
                               <ResourceBar
                                 capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}
@@ -70,7 +74,7 @@ const renderShard = (resource, azColumnWidth, flavorData, availabilityZones, pro
                       else {
                           // Domain scope
                           return <div className="row" key={capa}>
-                            <div className="col-md-2 text-left shard-name">shard {item.name}</div>
+                            <div className="col-md-2 text-left shard-name" title={"resource pool "+item.name}>{"rp - "+item.name}</div>
                             <div className="col-md-10" style={{"paddingLeft":"8px"}}>
                               <ResourceBar
                                 capacity={capa || 0} fill={item.usage || 0} unitName={resource.unit}

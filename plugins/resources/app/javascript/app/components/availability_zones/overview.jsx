@@ -14,8 +14,8 @@ const AvailabilityZoneOverview = ({ isFetching, overview, flavorData, scopeData,
   if (!shardingEnabled && projectScope) {
     shardingEnabledMessage = <div className='bs-callout bs-callout-info bs-callout-emphasize'>
       <h5>Why do I see greyed out capacity bars for Cores, Instances and RAM?</h5>
-      Because sharding is not enabled for this project. To use all shards and get access to additional resources you need to enable sharding. To enable sharding click
-      <a title="" data-modal="true" data-toggle="tooltip" data-placement="left" href={pathToEnableSharding} data-original-title="Enable Sharding"><i className="fa fa-arrow-right fa-fw"></i>here</a>
+      Because not all resource pools are enabled. To use all resource pools and get access to additional resources click
+      <a title="" data-modal="true" data-toggle="tooltip" data-placement="left" href={pathToEnableSharding} data-original-title="Enable Resource Pooling"><i className="fa fa-arrow-right fa-fw"></i>here</a>
     </div>
   }
 
