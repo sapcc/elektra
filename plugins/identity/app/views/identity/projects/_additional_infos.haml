@@ -36,7 +36,7 @@
 
 %div{data: {react_auth_projects: true, root: @scoped_project_id, title: 'false' } }
 
-- unless @sharding_enabled
+- unless @sharding_enabled || @project.name == "cloud_admin"
   .bs-callout.bs-callout-warning.bs-callout-emphasize.u-margin-top-normal
     Not all resource pools are enabled. To get access to additional resources click
     = link_to plugin('identity').project_enable_sharding_path(), title: "Enable Resource Pooling", data: {modal: true, toggle: "tooltip", placement: "left"}  do
