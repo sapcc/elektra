@@ -9,12 +9,13 @@ const taggedColumns = [
   { key: 'name', label: 'Tag name / Canonical digest', sortStrategy: 'text',
     sortKey: props => props.data.name || '' },
   { key: 'media_type', label: 'Format' },
-  { key: 'size_bytes', label: 'Size', sortStrategy: 'numeric',
-    sortKey: props => props.data.size_bytes || 0 },
   { key: 'pushed_at', label: 'Pushed', sortStrategy: 'numeric',
     sortKey: props => props.data.pushed_at || 0 },
   { key: 'last_pulled_at', label: 'Last pulled', sortStrategy: 'numeric',
     sortKey: props => props.data.last_pulled_at || 0 },
+  { key: 'size_bytes', label: 'Size', sortStrategy: 'numeric',
+    sortKey: props => props.data.size_bytes || 0 },
+  { key: 'vuln_status', label: 'Vulnerability Status' },
   { key: 'actions', label: '' },
 ];
 

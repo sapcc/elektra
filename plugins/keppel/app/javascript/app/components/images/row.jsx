@@ -42,6 +42,7 @@ export default class ImageRow extends React.Component {
       size_bytes: sizeBytes,
       pushed_at: pushedAtUnix,
       last_pulled_at: lastPulledAtUnix,
+      vulnerability_status: vulnerabilityStatus,
     } = this.props.data;
 
     const pushedAt = moment.unix(pushedAtUnix);
@@ -63,9 +64,6 @@ export default class ImageRow extends React.Component {
           <span title={mediaType}>{mediaTypeDescs[mediaType] || mediaType}</span>
         </td>
         <td className='col-md-2'>
-          {byteToHuman(sizeBytes)}
-        </td>
-        <td className='col-md-2'>
           <span title={pushedAt.format('LLLL')}>{pushedAt.fromNow(true)} ago</span>
         </td>
         <td className='col-md-2'>
@@ -74,6 +72,12 @@ export default class ImageRow extends React.Component {
           ) : (
             <span className='text-muted'>Never</span>
           )}
+        </td>
+        <td className='col-md-1'>
+          {byteToHuman(sizeBytes)}
+        </td>
+        <td className='col-md-1'>
+          {vulnerabilityStatus}
         </td>
         {this.props.canEdit && (
           <td className='snug text-right text-nobreak'>
