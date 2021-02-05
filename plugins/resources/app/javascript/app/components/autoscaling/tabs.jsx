@@ -26,10 +26,6 @@ export default class AutoscalingTabs extends React.Component {
   }
 
   render() {
-    if(!this.props.canAutoscale) {
-      return <><span className="spinner"/> Loading...</>
-    }
-    
     const CurrentPage = pages[this.state.active].component;
     const pageProps = {
       ...(pages[this.state.active].props || {}),
