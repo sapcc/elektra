@@ -46,7 +46,7 @@ module Lbaas2
         'expected_codes' => read('expected_codes'),
         'url_path' => read('url_path'),
         'tags' => read('tags')
-      }.delete_if { |_k, v| v.nil? }
+      }
     end
 
   end

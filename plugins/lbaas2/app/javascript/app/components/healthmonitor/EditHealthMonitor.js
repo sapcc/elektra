@@ -23,16 +23,36 @@ const EditHealthMonitor = (props) => {
     httpMethods,
   } = useHealthmonitor()
   const { persistPool } = usePool()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
+  const [poolID, setPoolID] = useState(null)
+  const [healthmonitorID, setHealthmonitorID] = useState(null)
   const [healthmonitor, setHealthmonitor] = useState({
     isLoading: false,
     error: null,
     item: null,
   })
 
+  // useEffect(() => {
+  //   Log.debug("fetching healthmonitor to edit")
+  //   loadHealthmonitor()
+  // }, [])
+
   useEffect(() => {
-    Log.debug("fetching healthmonitor to edit")
-    loadHealthmonitor()
+    // get the lb
+    const params = matchParams(props)
+    const lbID = params.loadbalancerID
+    const poolID = params.poolID
+    const healthmonitorID = params.healthmonitorID
+    setLoadbalancerID(lbID)
+    setPoolID(poolID)
+    setHealthmonitorID(healthmonitorID)
   }, [])
+
+  useEffect(() => {
+    if (healthmonitorID) {
+      loadHealthmonitor()
+    }
+  }, [healthmonitorID])
 
   const loadHealthmonitor = () => {
     // get the lb id and poolId
@@ -55,6 +75,14 @@ const EditHealthMonitor = (props) => {
         setHealthmonitor({ ...healthmonitor, isLoading: false, error: error })
       })
   }
+
+  useEffect(() => {
+    if (healthmonitor.item) {
+      setShowHttpMethods(httpMethodRelation(healthmonitor.item.type))
+      setShowExpectedCodes(expectedCodesRelation(healthmonitor.item.type))
+      setShowUrlPath(urlPathRelation(healthmonitor.item.type))
+    }
+  }, [healthmonitor.item])
 
   /**
    * Modal stuff
