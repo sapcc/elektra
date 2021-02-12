@@ -5,7 +5,10 @@ import App from './components/application';
 createWidget(__dirname).then((widget) => {
   widget.configureAjaxHelper({
     baseURL: widget.config.scriptParams.keppelApi,
-    headers: { 'X-Auth-Token': widget.config.scriptParams.token },
+    headers: {
+      'Authorization': 'keppel', //required by the Registry API, ignored by the Keppel API
+      'X-Auth-Token': widget.config.scriptParams.token,
+    },
   })
 
   //convert params from strings into the respective types
