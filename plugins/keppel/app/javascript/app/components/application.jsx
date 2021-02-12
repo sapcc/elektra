@@ -9,6 +9,7 @@ import RBACPoliciesEditModal from '../containers/rbac_policies/edit';
 import ValidationRulesEditModal from '../containers/validation_rules/edit';
 import RepositoryList from '../containers/repositories/list';
 import ImageList from '../containers/images/list';
+import ImageDetails from '../containers/images/details';
 
 export default (props) => {
   const { projectId, canEdit, isAdmin, dockerInfo } = props;
@@ -23,7 +24,7 @@ export default (props) => {
 
           {/* account list */}
           <Route path="/accounts" render={(props) => <AccountList {...rootProps} />} />
-          {/* modal dialogs that are reached from /accounts */}
+          {/* modal dialogs that are reached from <AccountList> */}
           {isAdmin && <Route exact path="/accounts/new" render={(props) => <AccountCreateModal {...props} {...rootProps} /> } />}
           <Route exact path="/accounts/:account/access_policies" render={(props) => <RBACPoliciesEditModal {...props} {...rootProps} />} />
           <Route exact path="/accounts/:account/sublease" render={(props) => <AccountSubleaseTokenModal {...props} {...rootProps} />} />
@@ -34,8 +35,10 @@ export default (props) => {
           {/* repository list within account */}
           <Route path="/account/:account" render={(props) => <RepositoryList {...props} {...rootProps} />} />
 
-          {/* manifest list within repository */}
+          {/* manifest list within repository (this matches to much if we have a subpath behind the repo; this gets fixed in <ImageList>) */}
           <Route path="/repo/:account/:repo+" render={(props) => <ImageList {...props} {...rootProps} />} />
+          {/* modal dialogs that are reached from <ImageList> */}
+          <Route exact path="/repo/:account/:repo+/-/manifest/:digest/details" render={(props) => <ImageDetails {...props} {...rootProps} />} />
         </div>
       </HashRouter>
     </Loader>

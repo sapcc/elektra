@@ -169,6 +169,7 @@ export const deleteRepository = (accountName, repoName) => dispatch => {
       })
   );
 };
+
 ////////////////////////////////////////////////////////////////////////////////
 // get manifests
 
@@ -217,6 +218,39 @@ export const fetchManifestsIfNeeded = (accountName, repoName) => (dispatch, getS
     return;
   }
   return dispatch(fetchManifestPage(accountName, repoName, null));
+};
+
+const fetchManifest = (accountName, repoName, digest) => dispatch => {
+  dispatch({
+    type: constants.REQUEST_MANIFEST,
+    accountName, repoName, digest,
+    requestedAt: Date.now(),
+  });
+
+  ajaxHelper.get(`/v2/${accountName}/${repoName}/manifests/${digest}`)
+    .then(response => {
+      dispatch({
+        type: constants.RECEIVE_MANIFEST,
+        accountName, repoName, digest,
+        data: response.data,
+        receivedAt: Date.now(),
+      });
+    })
+    .catch(error => {
+      dispatch({
+        type: constants.REQUEST_MANIFEST_FAILURE,
+        accountName, repoName, digest,
+      });
+      showError(error);
+    });
+};
+
+export const fetchManifestIfNeeded = (accountName, repoName, digest) => (dispatch, getState) => {
+  const state = ((getState().keppel.manifestFor[accountName] || {})[repoName] || {})[digest] || {};
+  if (state.isFetching || state.requestedAt) {
+    return;
+  }
+  return dispatch(fetchManifest(accountName, repoName, digest));
 };
 
 export const deleteManifest = (accountName, repoName, digest, tagName) => (dispatch, getState) => {

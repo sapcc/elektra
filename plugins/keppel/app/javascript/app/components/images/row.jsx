@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 import { addSuccess } from 'lib/flashes';
 import { byteToHuman } from 'lib/tools/size_formatter';
@@ -6,12 +7,12 @@ import { byteToHuman } from 'lib/tools/size_formatter';
 import Digest from '../digest';
 import { makeGCNotice, mergeLastPulledAt } from '../utils';
 
-const mediaTypeDescs = {
-  'application/vnd.docker.distribution.manifest.v1+prettyjws': 'Docker image (old format)',
-  'application/vnd.docker.distribution.manifest.v2+json':      'Docker image',
-  'application/vnd.docker.distribution.manifest.list.v2+json': 'Docker image index',
-  'application/vnd.oci.image.manifest.v1+json':                'OCI image',
-  'application/vnd.oci.image.index.v1+json':                   'OCI image index',
+const mediaTypes = {
+  'application/vnd.docker.distribution.manifest.v1+prettyjws': { description: 'Docker image (old format)', hasDetails: false },
+  'application/vnd.docker.distribution.manifest.v2+json':      { description: 'Docker image',              hasDetails: false },
+  'application/vnd.docker.distribution.manifest.list.v2+json': { description: 'Docker image index',        hasDetails: true  },
+  'application/vnd.oci.image.manifest.v1+json':                { description: 'OCI image',                 hasDetails: false },
+  'application/vnd.oci.image.index.v1+json':                   { description: 'OCI image index',           hasDetails: true  },
 };
 
 export default class ImageRow extends React.Component {
@@ -47,6 +48,7 @@ export default class ImageRow extends React.Component {
 
     const pushedAt = moment.unix(pushedAtUnix);
     const lastPulledAt = lastPulledAtUnix ? moment.unix(lastPulledAtUnix) : null;
+    const mediaTypeInfo = mediaTypes[mediaType] || { description: mediaType };
 
     return (
       <tr>
@@ -61,7 +63,7 @@ export default class ImageRow extends React.Component {
           )}
         </td>
         <td className='col-md-2'>
-          <span title={mediaType}>{mediaTypeDescs[mediaType] || mediaType}</span>
+          <span title={mediaType}>{mediaTypeInfo.description}</span>
         </td>
         <td className='col-md-2'>
           <span title={pushedAt.format('LLLL')}>{pushedAt.fromNow(true)} ago</span>
@@ -79,7 +81,7 @@ export default class ImageRow extends React.Component {
         <td className='col-md-1'>
           {vulnerabilityStatus}
         </td>
-        {this.props.canEdit && (
+        {(this.props.canEdit || mediaTypeInfo.hasDetails) && (
           <td className='snug text-right text-nobreak'>
             {this.state.isDeleting ? (
               <React.Fragment>
@@ -96,7 +98,15 @@ export default class ImageRow extends React.Component {
                   <span className="fa fa-cog"></span>
                 </button>
                 <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                {mediaTypeInfo.hasDetails ? (
+                  <li><Link to={`/repo/${this.props.accountName}/${this.props.repositoryName}/-/manifest/${digest}/details`}>Details</Link></li>
+                ) : null}
+                {(this.props.canEdit && mediaTypeInfo.hasDetails) ? (
+                  <li className="divider"></li>
+                ) : null}
+                {this.props.canEdit ? (
                   <li><a href="#" onClick={e => this.handleDelete(e)}>Delete</a></li>
+                ) : null}
                 </ul>
               </div>
             )}

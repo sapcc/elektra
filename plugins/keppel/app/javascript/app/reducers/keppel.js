@@ -9,6 +9,7 @@ const initialState = {
   },
   repositoriesFor: {},
   manifestsFor: {},
+  manifestFor: {},
 };
 
 const initialRepositoriesState = {
@@ -19,6 +20,13 @@ const initialRepositoriesState = {
 };
 
 const initialManifestsState = {
+  isFetching:  false,
+  requestedAt: null,
+  receivedAt:  null,
+  data:        null,
+};
+
+const initialManifestState = {
   isFetching:  false,
   requestedAt: null,
   receivedAt:  null,
@@ -137,7 +145,7 @@ const deleteRepo = (state, {accountName, repoName}) => ({
 });
 
 ////////////////////////////////////////////////////////////////////////////////
-// manifests
+// manifest lists
 
 const updateManifestsFor = (state, accountName, repoName, update) => {
   const manifestsForAccount = state.manifestsFor[accountName] || {};
@@ -184,6 +192,52 @@ const recvManifestsDone = (state, {accountName, repoName, receivedAt}) => (
   }))
 );
 
+////////////////////////////////////////////////////////////////////////////////
+// manifests
+
+const updateManifestFor = (state, accountName, repoName, digest, update) => {
+  const manifestsForAccount = state.manifestFor[accountName] || {};
+  const manifestsForRepo = manifestsForAccount[repoName] || {};
+  return {
+    ...state,
+    manifestFor: {
+      ...state.manifestFor,
+      [accountName]: {
+        ...manifestsForAccount,
+        [repoName]: {
+          ...manifestsForRepo,
+          [digest]: update(manifestsForRepo[digest] || {}),
+        },
+      },
+    },
+  };
+};
+
+const reqManifest = (state, {accountName, repoName, digest, requestedAt}) => (
+  updateManifestFor(state, accountName, repoName, digest, oldState => ({
+    ...initialManifestState,
+    isFetching: true,
+    requestedAt,
+  }))
+);
+
+const reqManifestFail = (state, {accountName, repoName, digest}) => (
+  updateManifestFor(state, accountName, repoName, digest, oldState => ({
+    ...oldState,
+    isFetching: false,
+    data: null,
+  }))
+);
+
+const recvManifest = (state, {accountName, repoName, digest, data, receivedAt}) => (
+  updateManifestFor(state, accountName, repoName, digest, oldState => ({
+    ...oldState,
+    isFetching: false,
+    data,
+    receivedAt,
+  }))
+);
+
 const deleteManifest = (state, {accountName, repoName, digest}) => (
   updateManifestsFor(state, accountName, repoName, oldState => ({
     ...oldState,
@@ -213,6 +267,9 @@ export const keppel = (state, action) => {
     case constants.REQUEST_MANIFESTS_FAILURE:  return reqManifestsFail(state, action);
     case constants.RECEIVE_MANIFESTS:          return recvManifests(state, action);
     case constants.REQUEST_MANIFESTS_FINISHED: return recvManifestsDone(state, action);
+    case constants.REQUEST_MANIFEST:         return reqManifest(state, action);
+    case constants.REQUEST_MANIFEST_FAILURE: return reqManifestFail(state, action);
+    case constants.RECEIVE_MANIFEST:         return recvManifest(state, action);
     case constants.DELETE_MANIFEST:            return deleteManifest(state, action);
     default: return state;
   }

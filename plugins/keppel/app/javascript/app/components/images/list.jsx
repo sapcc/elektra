@@ -134,6 +134,8 @@ export default class RepositoryList extends React.Component {
     const forwardProps = {
       canEdit:        this.props.canEdit,
       deleteManifest: this.props.deleteManifest,
+      accountName:    account.name,
+      repositoryName: repository.name,
     };
 
     return (
