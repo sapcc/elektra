@@ -22,3 +22,7 @@ export const REQUEST_MANIFEST          = 'keppel/REQUEST_MANIFEST';
 export const RECEIVE_MANIFEST          = 'keppel/RECEIVE_MANIFEST';
 export const REQUEST_MANIFEST_FAILURE  = 'keppel/REQUEST_MANIFEST_FAILURE';
 export const DELETE_MANIFEST            = 'keppel/DELETE_MANIFEST';
+
+export const REQUEST_BLOB          = 'keppel/REQUEST_BLOB';
+export const RECEIVE_BLOB          = 'keppel/RECEIVE_BLOB';
+export const REQUEST_BLOB_FAILURE  = 'keppel/REQUEST_BLOB_FAILURE';

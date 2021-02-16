@@ -289,3 +289,39 @@ export const deleteManifest = (accountName, repoName, digest, tagName) => (dispa
     ).catch(() => reject());
   });
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// get blobs
+
+const fetchBlob = (accountName, repoName, digest) => dispatch => {
+  dispatch({
+    type: constants.REQUEST_BLOB,
+    accountName, repoName, digest,
+    requestedAt: Date.now(),
+  });
+
+  ajaxHelper.get(`/v2/${accountName}/${repoName}/blobs/${digest}`)
+    .then(response => {
+      dispatch({
+        type: constants.RECEIVE_BLOB,
+        accountName, repoName, digest,
+        data: response.data,
+        receivedAt: Date.now(),
+      });
+    })
+    .catch(error => {
+      dispatch({
+        type: constants.REQUEST_BLOB_FAILURE,
+        accountName, repoName, digest,
+      });
+      showError(error);
+    });
+};
+
+export const fetchBlobIfNeeded = (accountName, repoName, digest) => (dispatch, getState) => {
+  const state = (getState().keppel.blobFor[accountName] || {})[digest] || {};
+  if (state.isFetching || state.requestedAt) {
+    return;
+  }
+  return dispatch(fetchBlob(accountName, repoName, digest));
+};

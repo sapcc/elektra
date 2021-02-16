@@ -8,10 +8,10 @@ import Digest from '../digest';
 import { makeGCNotice, mergeLastPulledAt } from '../utils';
 
 const mediaTypes = {
-  'application/vnd.docker.distribution.manifest.v2+json':      { description: 'Docker image',              hasDetails: false },
-  'application/vnd.docker.distribution.manifest.list.v2+json': { description: 'Docker image index',        hasDetails: true  },
-  'application/vnd.oci.image.manifest.v1+json':                { description: 'OCI image',                 hasDetails: false },
-  'application/vnd.oci.image.index.v1+json':                   { description: 'OCI image index',           hasDetails: true  },
+  'application/vnd.docker.distribution.manifest.v2+json':      { description: 'Docker image',       hasDetails: true },
+  'application/vnd.docker.distribution.manifest.list.v2+json': { description: 'Docker image index', hasDetails: true },
+  'application/vnd.oci.image.manifest.v1+json':                { description: 'OCI image',          hasDetails: true },
+  'application/vnd.oci.image.index.v1+json':                   { description: 'OCI image index',    hasDetails: true },
 };
 
 export default class ImageRow extends React.Component {
@@ -47,7 +47,7 @@ export default class ImageRow extends React.Component {
 
     const pushedAt = moment.unix(pushedAtUnix);
     const lastPulledAt = lastPulledAtUnix ? moment.unix(lastPulledAtUnix) : null;
-    const mediaTypeInfo = mediaTypes[mediaType] || { description: mediaType };
+    const mediaTypeInfo = mediaTypes[mediaType] || { description: mediaType, hasDetails: false };
 
     return (
       <tr>
