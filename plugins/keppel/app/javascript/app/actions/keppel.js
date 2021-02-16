@@ -325,3 +325,39 @@ export const fetchBlobIfNeeded = (accountName, repoName, digest) => (dispatch, g
   }
   return dispatch(fetchBlob(accountName, repoName, digest));
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// get vulnerabilities
+
+const fetchVulns = (accountName, repoName, digest) => dispatch => {
+  dispatch({
+    type: constants.REQUEST_VULNS,
+    accountName, repoName, digest,
+    requestedAt: Date.now(),
+  });
+
+  ajaxHelper.get(`/keppel/v1/accounts/${accountName}/repositories/${repoName}/_manifests/${digest}/vulnerability_report`)
+    .then(response => {
+      dispatch({
+        type: constants.RECEIVE_VULNS,
+        accountName, repoName, digest,
+        data: response.data,
+        receivedAt: Date.now(),
+      });
+    })
+    .catch(error => {
+      dispatch({
+        type: constants.REQUEST_VULNS_FAILURE,
+        accountName, repoName, digest,
+      });
+      showError(error);
+    });
+};
+
+export const fetchVulnsIfNeeded = (accountName, repoName, digest) => (dispatch, getState) => {
+  const state = ((getState().keppel.vulnsFor[accountName] || {})[repoName] || {})[digest] || {};
+  if (state.isFetching || state.requestedAt) {
+    return;
+  }
+  return dispatch(fetchVulns(accountName, repoName, digest));
+};
