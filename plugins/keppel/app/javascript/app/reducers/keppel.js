@@ -10,6 +10,7 @@ const initialState = {
   repositoriesFor: {},
   manifestsFor: {},
   manifestFor: {},
+  blobFor: {},
 };
 
 const initialRepositoriesState = {
@@ -27,6 +28,13 @@ const initialManifestsState = {
 };
 
 const initialManifestState = {
+  isFetching:  false,
+  requestedAt: null,
+  receivedAt:  null,
+  data:        null,
+};
+
+const initialBlobState = {
   isFetching:  false,
   requestedAt: null,
   receivedAt:  null,
@@ -246,6 +254,48 @@ const deleteManifest = (state, {accountName, repoName, digest}) => (
 );
 
 ////////////////////////////////////////////////////////////////////////////////
+// blobs
+
+const updateBlobFor = (state, accountName, repoName, digest, update) => {
+  const blobsForAccount = state.blobFor[accountName] || {};
+  return {
+    ...state,
+    blobFor: {
+      ...state.blobFor,
+      [accountName]: {
+        ...blobsForAccount,
+        [digest]: update(blobsForAccount[digest] || {}),
+      },
+    },
+  };
+};
+
+const reqBlob = (state, {accountName, repoName, digest, requestedAt}) => (
+  updateBlobFor(state, accountName, repoName, digest, oldState => ({
+    ...initialBlobState,
+    isFetching: true,
+    requestedAt,
+  }))
+);
+
+const reqBlobFail = (state, {accountName, repoName, digest}) => (
+  updateBlobFor(state, accountName, repoName, digest, oldState => ({
+    ...oldState,
+    isFetching: false,
+    data: null,
+  }))
+);
+
+const recvBlob = (state, {accountName, repoName, digest, data, receivedAt}) => (
+  updateBlobFor(state, accountName, repoName, digest, oldState => ({
+    ...oldState,
+    isFetching: false,
+    data,
+    receivedAt,
+  }))
+);
+
+////////////////////////////////////////////////////////////////////////////////
 
 export const keppel = (state, action) => {
   if (state == null) {
@@ -271,6 +321,9 @@ export const keppel = (state, action) => {
     case constants.REQUEST_MANIFEST_FAILURE: return reqManifestFail(state, action);
     case constants.RECEIVE_MANIFEST:         return recvManifest(state, action);
     case constants.DELETE_MANIFEST:            return deleteManifest(state, action);
+    case constants.REQUEST_BLOB:         return reqBlob(state, action);
+    case constants.REQUEST_BLOB_FAILURE: return reqBlobFail(state, action);
+    case constants.RECEIVE_BLOB:         return recvBlob(state, action);
     default: return state;
   }
 };
