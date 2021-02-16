@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import Clipboard from 'react-clipboard.js';
 
-const Digest = ({digest}) => {
+const Digest = ({digest, wideDisplay}) => {
   const [ isCopied, setCopied ] = useState(false);
   if (isCopied) {
     setTimeout(() => setCopied(false), 3000);
   }
 
   const [ algo, hash ] = digest.split(':');
-  const shortDigest = `${algo}:${hash.slice(0, 12)}`;
+  const shortDigest = wideDisplay ? digest : `${algo}:${hash.slice(0, 12)}… `;
   return (
     <span className='shortened-digest'>
-      {shortDigest}…
+      {shortDigest}
       <span className='full-digest'>
         {digest}
         <span className='digest-actions'>
