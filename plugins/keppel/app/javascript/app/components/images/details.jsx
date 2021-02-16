@@ -61,6 +61,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
     const { data: manifest } = this.props.manifest || {};
     if (manifest && manifest.config) {
       this.props.loadBlobOnce(manifest.config.digest);
+      this.props.loadVulnsOnce();
     }
   }
 
@@ -96,6 +97,10 @@ export default class AccountUpstreamConfigModal extends React.Component {
     if (typeOfManifest[manifest.digest] == 'image' && (isFetchingImageConfig || imageConfig === undefined)) {
       return <p><span className='spinner' /> Loading image config...</p>;
     }
+    const { isFetching: isFetchingVulnReport, data: vulnReport } = this.props.vulnReport || {};
+    if (typeOfManifest[manifest.digest] == 'image' && (isFetchingVulnReport || vulnReport === undefined)) {
+      return <p><span className='spinner' /> Loading vulnerability report...</p>;
+    }
 
     const { digest } = this.props.match.params;
     const { media_type: mediaType, tags } = manifests.find(m => m.digest == digest) || {};
@@ -118,7 +123,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
             <td colSpan='2'>{mediaType}</td>
           </tr>
           {typeOfManifest[mediaType] == 'list' ? this.renderSubmanifestReferences(manifest.manifests, manifests) : null}
-          {typeOfManifest[mediaType] == 'image' ? this.renderLayers(manifest, imageConfig) : null}
+          {typeOfManifest[mediaType] == 'image' ? this.renderLayers(manifest, imageConfig, vulnReport) : null}
         </tbody>
       </table>
     );
@@ -170,12 +175,20 @@ export default class AccountUpstreamConfigModal extends React.Component {
     return rows;
   }
 
-  renderLayers(manifest, imageConfig) {
+  renderLayers(manifest, imageConfig, vulnReport) {
     if (!imageConfig) {
       return (
         <tr className='text-danger'>
           <th>Error</th>
           <td>Cannot load image configuration.</td>
+        </tr>
+      );
+    }
+    if (!vulnReport) {
+      return (
+        <tr className='text-danger'>
+          <th>Error</th>
+          <td>Cannot load vulnerability report.</td>
         </tr>
       );
     }
@@ -186,7 +199,6 @@ export default class AccountUpstreamConfigModal extends React.Component {
     for (const step of imageConfig.history) {
       stepIndex++;
       const layer = step.empty_layer ? null : manifest.layers[layerIndex++];
-      console.log([step, layer]); //TODO remove
 
       rows.push(<tr key={`spacer-${stepIndex}`} className='spacer'><td /></tr>);
 
@@ -215,6 +227,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
       }
     }
 
+    rows.push(<tr key='debug'><td colSpan='3'><pre>{JSON.stringify(vulnReport, null, 2)}</pre></td></tr>);
     return rows;
   }
 }

@@ -26,3 +26,7 @@ export const DELETE_MANIFEST            = 'keppel/DELETE_MANIFEST';
 export const REQUEST_BLOB          = 'keppel/REQUEST_BLOB';
 export const RECEIVE_BLOB          = 'keppel/RECEIVE_BLOB';
 export const REQUEST_BLOB_FAILURE  = 'keppel/REQUEST_BLOB_FAILURE';
+
+export const REQUEST_VULNS          = 'keppel/REQUEST_VULNS';
+export const RECEIVE_VULNS          = 'keppel/RECEIVE_VULNS';
+export const REQUEST_VULNS_FAILURE  = 'keppel/REQUEST_VULNS_FAILURE';

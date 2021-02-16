@@ -11,6 +11,7 @@ const initialState = {
   manifestsFor: {},
   manifestFor: {},
   blobFor: {},
+  vulnsFor: {},
 };
 
 const initialRepositoriesState = {
@@ -35,6 +36,13 @@ const initialManifestState = {
 };
 
 const initialBlobState = {
+  isFetching:  false,
+  requestedAt: null,
+  receivedAt:  null,
+  data:        null,
+};
+
+const initialVulnsState = {
   isFetching:  false,
   requestedAt: null,
   receivedAt:  null,
@@ -296,6 +304,52 @@ const recvBlob = (state, {accountName, repoName, digest, data, receivedAt}) => (
 );
 
 ////////////////////////////////////////////////////////////////////////////////
+// vulnerability reports
+
+const updateVulnsFor = (state, accountName, repoName, digest, update) => {
+  const vulnsForAccount = state.vulnsFor[accountName] || {};
+  const vulnsForRepo = vulnsForAccount[repoName] || {};
+  return {
+    ...state,
+    vulnsFor: {
+      ...state.vulnsFor,
+      [accountName]: {
+        ...vulnsForAccount,
+        [repoName]: {
+          ...vulnsForRepo,
+          [digest]: update(vulnsForRepo[digest] || {}),
+        },
+      },
+    },
+  };
+};
+
+const reqVulns = (state, {accountName, repoName, digest, requestedAt}) => (
+  updateVulnsFor(state, accountName, repoName, digest, oldState => ({
+    ...initialVulnsState,
+    isFetching: true,
+    requestedAt,
+  }))
+);
+
+const reqVulnsFail = (state, {accountName, repoName, digest}) => (
+  updateVulnsFor(state, accountName, repoName, digest, oldState => ({
+    ...oldState,
+    isFetching: false,
+    data: null,
+  }))
+);
+
+const recvVulns = (state, {accountName, repoName, digest, data, receivedAt}) => (
+  updateVulnsFor(state, accountName, repoName, digest, oldState => ({
+    ...oldState,
+    isFetching: false,
+    data,
+    receivedAt,
+  }))
+);
+
+////////////////////////////////////////////////////////////////////////////////
 
 export const keppel = (state, action) => {
   if (state == null) {
@@ -324,6 +378,9 @@ export const keppel = (state, action) => {
     case constants.REQUEST_BLOB:         return reqBlob(state, action);
     case constants.REQUEST_BLOB_FAILURE: return reqBlobFail(state, action);
     case constants.RECEIVE_BLOB:         return recvBlob(state, action);
+    case constants.REQUEST_VULNS:         return reqVulns(state, action);
+    case constants.REQUEST_VULNS_FAILURE: return reqVulnsFail(state, action);
+    case constants.RECEIVE_VULNS:         return recvVulns(state, action);
     default: return state;
   }
 };
