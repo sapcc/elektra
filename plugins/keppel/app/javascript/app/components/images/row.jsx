@@ -8,7 +8,6 @@ import Digest from '../digest';
 import { makeGCNotice, mergeLastPulledAt } from '../utils';
 
 const mediaTypes = {
-  'application/vnd.docker.distribution.manifest.v1+prettyjws': { description: 'Docker image (old format)', hasDetails: false },
   'application/vnd.docker.distribution.manifest.v2+json':      { description: 'Docker image',              hasDetails: false },
   'application/vnd.docker.distribution.manifest.list.v2+json': { description: 'Docker image index',        hasDetails: true  },
   'application/vnd.oci.image.manifest.v1+json':                { description: 'OCI image',                 hasDetails: false },

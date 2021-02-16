@@ -73,3 +73,20 @@ ol.howto {
 pre.sublease-token > code {
   font-size: 150%;
 }
+
+.modal-body > .datatable:first-child {
+  margin-top: 0;
+
+  tr:first-child > * {
+    border-top: 0;
+  }
+
+  tr.spacer {
+    height: 28px;
+
+    & > td {
+      border-top: 0;
+      opacity: 0;
+    }
+  }
+}
