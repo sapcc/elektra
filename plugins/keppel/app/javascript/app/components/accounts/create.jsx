@@ -91,10 +91,6 @@ const FormBody = ({ values }) => {
                     <p className='form-control-static'>These credentials are used by Keppel to pull images from the upstream source. Leave blank to pull as an anonymous user.</p>
                   </Form.ElementHorizontal>
 
-                  <Form.ElementHorizontal label='User name' name='username'>
-                    <Form.Input elementType='input' type='text' name='username' />
-                  </Form.ElementHorizontal>
-
                   <Form.ElementHorizontal label='Platform filter' name='platform_filter'>
                     <Form.Input elementType='input' type='checkbox' name='platform_filter_linux_amd64' />
                     {" "}Only x86_64 Linux
