@@ -14,6 +14,16 @@ const typeOfManifest = {
   'application/vnd.oci.image.index.v1+json':                   'list',
 };
 
+const severityOrder = {
+  "Unknown": 0,
+  "Negligible": 1,
+  "Low": 2,
+  "Medium": 3,
+  "High": 4,
+  "Critical": 5,
+  "Defcon1": 6,
+};
+
 const formatStepCreatedBy = (input) => {
   //This attempts to reformat the "created_by" line of a image config history step into its respective Dockerfile command.
   let match;
@@ -32,6 +42,48 @@ const formatStepCreatedBy = (input) => {
 
   //fallback: don't change anything
   return input;
+};
+
+const getVulnerabilitiesForLayer = (digest, vulnReport) => {
+  const rows = [];
+  //for each package introduced in this layer...
+  for (const packageID in vulnReport.environments) {
+    if (vulnReport.environments[packageID].some(env => env.introduced_in == digest)) {
+      //...for each vulnerability affecting that package...
+      for (const vulnID of (vulnReport.package_vulnerabilities[packageID] || [])) {
+        //...add a <tr> for that vulnerability
+        const pkg = vulnReport.packages[packageID];
+        const vuln = vulnReport.vulnerabilities[vulnID];
+        const maybeFixedIn = vuln.fixed_in_version ? ` (fixed in ${vuln.fixed_in_version})` : '';
+
+        rows.push([
+          severityOrder[vuln.normalized_severity] || 0,
+          pkg.name,
+          <tr key={`vuln-${digest}-${vulnID}`}>
+            <th>{vuln.normalized_severity} severity</th>
+            <td>
+              <div>
+                Vulnerability in <strong>{pkg.name} {pkg.version}</strong>{maybeFixedIn+": "}
+                {vuln.links ? <a href={vuln.links} target='_blank'>{vuln.name}</a> : vuln.name}
+              </div>
+              {vuln.description ? <div className='text-muted'>{vuln.description}</div> : null}
+            </td>
+          </tr>
+        ]);
+      }
+    }
+  }
+
+  //`rows` contains triples of [numerical_severity, pkg_name, row]
+  //-> sort on severity in descending order, then on pkg_name, then return only the rows
+  rows.sort((a, b) => {
+    const sevDelta = b[0] - a[0];
+    if (sevDelta != 0) {
+      return sevDelta;
+    }
+    return a[1].localeCompare(b[1]);
+  });
+  return rows.map(pair => pair[2]);
 };
 
 export default class AccountUpstreamConfigModal extends React.Component {
@@ -200,12 +252,13 @@ export default class AccountUpstreamConfigModal extends React.Component {
     for (const step of imageConfig.history) {
       stepIndex++;
       const layer = step.empty_layer ? null : manifest.layers[layerIndex++];
+      const vulnRows = layer ? getVulnerabilitiesForLayer(layer.digest, vulnReport) : null;
 
       rows.push(<tr key={`spacer-${stepIndex}`} className='spacer'><td /></tr>);
 
       rows.push(
         <tr key={`step-${stepIndex}`}>
-          <th rowSpan={layer ? 3 : 2}>Step #{stepIndex}</th>
+          <th rowSpan={layer ? 3 + vulnRows.length : 2}>Step #{stepIndex}</th>
           <td colSpan='2'><code>{formatStepCreatedBy(step.created_by)}</code></td>
         </tr>
       );
@@ -225,10 +278,10 @@ export default class AccountUpstreamConfigModal extends React.Component {
             <td>{byteToHuman(layer.size)} at <Digest digest={layer.digest} /></td>
           </tr>
         );
+        Array.prototype.push.apply(rows, vulnRows);
       }
     }
 
-    rows.push(<tr key='debug'><td colSpan='3'><pre>{JSON.stringify(vulnReport, null, 2)}</pre></td></tr>);
     return rows;
   }
 }
