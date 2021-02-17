@@ -57,11 +57,11 @@ export default class AccountUpstreamConfigModal extends React.Component {
     if (accountName && repoName) {
       this.props.loadManifestsOnce();
       this.props.loadManifestOnce();
-    }
-    const { data: manifest } = this.props.manifest || {};
-    if (manifest && manifest.config) {
-      this.props.loadBlobOnce(manifest.config.digest);
-      this.props.loadVulnsOnce();
+      const { data: manifest } = this.props.manifest || {};
+      if (manifest && manifest.config) {
+        this.props.loadBlobOnce(manifest.config.digest);
+        this.props.loadVulnsOnce();
+      }
     }
   }
 
@@ -93,17 +93,18 @@ export default class AccountUpstreamConfigModal extends React.Component {
     if (isFetchingManifest || manifest === undefined) {
       return <p><span className='spinner' /> Loading image manifest...</p>;
     }
-    const { isFetching: isFetchingImageConfig, data: imageConfig } = this.props.imageConfig || {};
-    if (typeOfManifest[manifest.digest] == 'image' && (isFetchingImageConfig || imageConfig === undefined)) {
-      return <p><span className='spinner' /> Loading image config...</p>;
-    }
-    const { isFetching: isFetchingVulnReport, data: vulnReport } = this.props.vulnReport || {};
-    if (typeOfManifest[manifest.digest] == 'image' && (isFetchingVulnReport || vulnReport === undefined)) {
-      return <p><span className='spinner' /> Loading vulnerability report...</p>;
-    }
 
     const { digest } = this.props.match.params;
     const { media_type: mediaType, tags } = manifests.find(m => m.digest == digest) || {};
+
+    const { isFetching: isFetchingImageConfig, data: imageConfig } = this.props.imageConfig || {};
+    if (typeOfManifest[mediaType] == 'image' && (isFetchingImageConfig || imageConfig === undefined)) {
+      return <p><span className='spinner' /> Loading image config...</p>;
+    }
+    const { isFetching: isFetchingVulnReport, data: vulnReport } = this.props.vulnReport || {};
+    if (typeOfManifest[mediaType] == 'image' && (isFetchingVulnReport || vulnReport === undefined)) {
+      return <p><span className='spinner' /> Loading vulnerability report...</p>;
+    }
 
     return (
       <table className='table datatable'>
