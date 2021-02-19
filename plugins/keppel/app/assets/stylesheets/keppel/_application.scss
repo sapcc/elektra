@@ -74,6 +74,7 @@ pre.sublease-token > code {
   font-size: 150%;
 }
 
+//image details screen (incl. vulnerability report)
 .modal-body > .datatable:first-child {
   margin-top: 0;
 
@@ -88,5 +89,19 @@ pre.sublease-token > code {
       border-top: 0;
       opacity: 0;
     }
+  }
+
+  th {
+    white-space: nowrap;
+  }
+
+  td.no-top-border {
+    border-top: 0;
+  }
+  th.vulnerability-folder {
+    cursor: pointer;
+  }
+  td.vulnerability {
+    padding-left: 4em;
   }
 }
