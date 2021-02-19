@@ -344,7 +344,14 @@ const recvVulns = (state, {accountName, repoName, digest, data, receivedAt}) => 
   updateVulnsFor(state, accountName, repoName, digest, oldState => ({
     ...oldState,
     isFetching: false,
-    data,
+    data: {
+      //ensure that `data` contains at least empty values for all required keys
+      packages: {},
+      environments: {},
+      vulnerabilities: {},
+      package_vulnerabilities: {},
+      ...data,
+    },
     receivedAt,
   }))
 );
