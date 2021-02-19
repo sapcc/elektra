@@ -7,6 +7,7 @@ import ImageRow from './row';
 
 const taggedColumns = [
   { key: 'name', label: 'Tag name / Canonical digest', sortStrategy: 'text',
+    searchKey: props => `${props.data.name || ''} ${props.data.digest || ''}`,
     sortKey: props => props.data.name || '' },
   { key: 'media_type', label: 'Format' },
   { key: 'pushed_at', label: 'Pushed', sortStrategy: 'numeric',
@@ -15,12 +16,14 @@ const taggedColumns = [
     sortKey: props => props.data.last_pulled_at || 0 },
   { key: 'size_bytes', label: 'Size', sortStrategy: 'numeric',
     sortKey: props => props.data.size_bytes || 0 },
-  { key: 'vuln_status', label: 'Vulnerability Status' },
+  { key: 'vuln_status', label: 'Vulnerability Status',
+    searchKey: props => props.data.vulnerability_status || '' },
   { key: 'actions', label: '' },
 ];
 
 const untaggedColumns = [
   { key: 'digest', label: 'Canonical digest', sortStrategy: 'text',
+    searchKey: props => props.data.digest || '',
     sortKey: props => props.data.digest || '' },
   ...(taggedColumns.slice(1)),
 ];
@@ -38,6 +41,7 @@ const maxTimestamp = (x, y) => {
 export default class RepositoryList extends React.Component {
   state = {
     currentTab: 'tagged',
+    searchText: '',
     howtoVisible: false,
   };
 
@@ -57,6 +61,9 @@ export default class RepositoryList extends React.Component {
 
   selectTab(tab) {
     this.setState({ ...this.state, currentTab: tab });
+  }
+  setSearchText(searchText) {
+    this.setState({ ...this.state, searchText });
   }
   setHowtoVisible(howtoVisible) {
     this.setState({ ...this.state, howtoVisible });
@@ -80,7 +87,7 @@ export default class RepositoryList extends React.Component {
     }
     tags.sort((a, b) => (a.name || a.digest).localeCompare(b.name || b.digest));
     return (
-      <DataTable columns={taggedColumns} pageSize={10}>
+      <DataTable columns={taggedColumns} pageSize={10} searchText={this.state.searchText}>
       {tags.map(tag => (
         <ImageRow key={tag.name} data={tag} {...forwardProps} />
       ))}
@@ -99,7 +106,7 @@ export default class RepositoryList extends React.Component {
     );
 
     return (
-      <DataTable columns={untaggedColumns}>
+      <DataTable columns={untaggedColumns} pageSize={10} searchText={this.state.searchText}>
         {untaggedManifests.map(manifest => (
           <ImageRow key={manifest.digest} data={manifest} {...forwardProps} />
         ))}
@@ -140,12 +147,16 @@ export default class RepositoryList extends React.Component {
 
     return (
       <React.Fragment>
-        <ol className='breadcrumb'>
+        <ol className='breadcrumb followed-by-search-box'>
           <li><Link to='/accounts'>All accounts</Link></li>
           <li><Link to={`/account/${account.name}`}>Account: {account.name}</Link></li>
           <li className='active'>Repository: {repository.name}</li>
           {!howtoVisible && makeHowtoOpener(showHowto)}
         </ol>
+        <div className='search-box'>
+          <input className='form-control' type='text' value={this.state.searchText}
+            placeholder='Filter images' onChange={e => this.setSearchText(e.target.value)} />
+        </div>
         {howtoVisible && makeHowto(this.props.dockerInfo, account.name, repository.name, hideHowto)}
         {/* when there is only the "Tags" tab, skip the tablist entirely */}
         {hasUntagged && makeTabBar(tabs, currentTab, key => this.selectTab(key))}

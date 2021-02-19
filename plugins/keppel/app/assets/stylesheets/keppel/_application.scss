@@ -21,12 +21,29 @@
 
 */
 
-ol.breadcrumb > li.help-link {
-  float: right;
+ol.breadcrumb {
+  & > li.help-link {
+    float: right;
 
-  // do not use breadcrumb separator
-  &:before {
-    display: none;
+    // do not use breadcrumb separator
+    &:before {
+      display: none;
+    }
+  }
+
+  &.followed-by-search-box {
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+    & + .search-box {
+      margin-bottom: 20px;
+
+      & > input {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+    }
   }
 }
 

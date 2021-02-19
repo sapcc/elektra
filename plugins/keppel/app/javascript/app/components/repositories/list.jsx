@@ -7,6 +7,7 @@ import RepositoryRow from './row';
 
 const columns = [
   { key: 'name', label: 'Repository name', sortStrategy: 'text',
+    searchKey: props => props.repo.name || '',
     sortKey: props => props.repo.name || '' },
   { key: 'image_counts', label: 'Contains', sortStrategy: 'numeric',
     sortKey: props => (props.repo.tag_count || 0) + 0.00001 * (props.repo.manifest_count || 0) },
@@ -19,6 +20,7 @@ const columns = [
 
 export default class RepositoryList extends React.Component {
   state = {
+    searchText: '',
     //either `true` or `false` when set by user, or `null` to apply default visibility rule (see below)
     howtoVisible: null,
   };
@@ -30,6 +32,9 @@ export default class RepositoryList extends React.Component {
     this.props.loadRepositoriesOnce();
   }
 
+  setSearchText(searchText) {
+    this.setState({ ...this.state, searchText });
+  }
   setHowtoVisible(howtoVisible) {
     this.setState({ ...this.state, howtoVisible });
   }
@@ -58,16 +63,20 @@ export default class RepositoryList extends React.Component {
 
     return (
       <React.Fragment>
-        <ol className='breadcrumb'>
+        <ol className='breadcrumb followed-by-search-box'>
           <li><Link to='/accounts'>All accounts</Link></li>
           <li className='active'>Account: {account.name}</li>
           {!howtoVisible && makeHowtoOpener(showHowto)}
         </ol>
+        <div className='search-box'>
+          <input className='form-control' type='text' value={this.state.searchText}
+            placeholder='Filter repositories' onChange={e => this.setSearchText(e.target.value)} />
+        </div>
         {howtoVisible && makeHowto(this.props.dockerInfo, account.name, '<repo>', hideHowto)}
         {isFetching ? (
           <p><span className='spinner' /> Loading repositories for account...</p>
         ) : (
-          <DataTable columns={columns} pageSize={10}>
+          <DataTable columns={columns} pageSize={10} searchText={this.state.searchText}>
             {(repos || []).map(repo => (
               <RepositoryRow key={repo.name} repo={repo} {...forwardProps} />
             ))}
