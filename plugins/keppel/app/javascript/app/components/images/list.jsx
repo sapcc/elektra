@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { DataTable } from 'lib/components/datatable';
 
+import { SEVERITY_ORDER } from '../../constants';
 import { makeTabBar, makeHowto, makeHowtoOpener } from '../utils';
 import ImageRow from './row';
 
@@ -16,8 +17,9 @@ const taggedColumns = [
     sortKey: props => props.data.last_pulled_at || 0 },
   { key: 'size_bytes', label: 'Size', sortStrategy: 'numeric',
     sortKey: props => props.data.size_bytes || 0 },
-  { key: 'vuln_status', label: 'Vulnerability Status',
-    searchKey: props => props.data.vulnerability_status || '' },
+  { key: 'vuln_status', label: 'Vulnerability Status', sortStrategy: 'numeric',
+    searchKey: props => props.data.vulnerability_status || '',
+    sortKey: props => SEVERITY_ORDER[props.data.vulnerability_status || ''] || 0 },
   { key: 'actions', label: '' },
 ];
 
