@@ -6,6 +6,7 @@ import { Form } from 'lib/elektra-form';
 import { byteToHuman } from 'lib/tools/size_formatter';
 
 import Digest from '../digest';
+import VulnerabilityFolder from './vulnerability_folder';
 
 const typeOfManifest = {
   'application/vnd.docker.distribution.manifest.v2+json':      'image',
@@ -45,45 +46,35 @@ const formatStepCreatedBy = (input) => {
 };
 
 const getVulnerabilitiesForLayer = (digest, vulnReport) => {
-  const rows = [];
+  const vulnsBySeverity = {};
   //for each package introduced in this layer...
   for (const packageID in vulnReport.environments) {
     if (vulnReport.environments[packageID].some(env => env.introduced_in == digest)) {
-      //...for each vulnerability affecting that package...
+      //collect each vulnerability affecting that package
       for (const vulnID of (vulnReport.package_vulnerabilities[packageID] || [])) {
         //...add a <tr> for that vulnerability
         const pkg = vulnReport.packages[packageID];
         const vuln = vulnReport.vulnerabilities[vulnID];
-        const maybeFixedIn = vuln.fixed_in_version ? ` (fixed in ${vuln.fixed_in_version})` : '';
+        const severity = vuln.normalized_severity;
 
-        rows.push([
-          severityOrder[vuln.normalized_severity] || 0,
-          pkg.name,
-          <tr key={`vuln-${digest}-${vulnID}`}>
-            <th>{vuln.normalized_severity} severity</th>
-            <td>
-              <div>
-                Vulnerability in <strong>{pkg.name} {pkg.version}</strong>{maybeFixedIn+": "}
-                {vuln.links ? <a href={vuln.links} target='_blank'>{vuln.name}</a> : vuln.name}
-              </div>
-              {vuln.description ? <div className='text-muted'>{vuln.description}</div> : null}
-            </td>
-          </tr>
-        ]);
+        vulnsBySeverity[severity] = vulnsBySeverity[severity] || [];
+        vulnsBySeverity[severity].push({ ...vuln, pkg });
       }
     }
   }
 
-  //`rows` contains triples of [numerical_severity, pkg_name, row]
-  //-> sort on severity in descending order, then on pkg_name, then return only the rows
-  rows.sort((a, b) => {
-    const sevDelta = b[0] - a[0];
-    if (sevDelta != 0) {
-      return sevDelta;
-    }
-    return a[1].localeCompare(b[1]);
-  });
-  return rows.map(pair => pair[2]);
+  const folders = [];
+  for (const severity in vulnsBySeverity) {
+    const vulns = vulnsBySeverity[severity];
+    folders.push([
+      severityOrder[severity] || 0,
+      <VulnerabilityFolder severity={severity} vulns={vulns} />
+    ]);
+  }
+
+  //`folders` contains pairs of [numerical_severity, folder] -> sort on severity in descending order
+  folders.sort((a, b) => b[0] - a[0]);
+  return folders.map(pair => pair[1]);
 };
 
 export default class AccountUpstreamConfigModal extends React.Component {
@@ -120,7 +111,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
   render() {
     //className='keppel' on <Modal> ensures that CSS rules from this plugin can apply
     return (
-      <Modal backdrop='static' className='keppel' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal backdrop='static' dialogClassName="modal-xl" className='keppel' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
             Image details
@@ -258,7 +249,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
 
       rows.push(
         <tr key={`step-${stepIndex}`}>
-          <th rowSpan={layer ? 3 + vulnRows.length : 2}>Step #{stepIndex}</th>
+          <th rowSpan={layer ? 3 : 2}>Step #{stepIndex}</th>
           <td colSpan='2'><code>{formatStepCreatedBy(step.created_by)}</code></td>
         </tr>
       );
