@@ -1,4 +1,4 @@
-//A <table> with pagination and sorting. Give the individual table rows as
+//A <table> with pagination, filtering and sorting. Give the individual table rows as
 //children, and specify column attributes in props.columns like this:
 //
 //    //NOTE: Place this on the package level, not in render(), so that the
@@ -8,7 +8,8 @@
 //      { key: 'size', label: 'Volume Size',
 //        sortStrategy: 'numeric', sortKey: props => props.volume.size || 0 },
 //      { key: 'status', label: 'Status',
-//        sortStrategy: 'text', sortKey: props => props.volume.status || '' },
+//        sortStrategy: 'text', sortKey: props => props.volume.status || '',
+//        searchKey: props => props.volume.status || '' },
 //    ];
 //
 //    render() {
@@ -27,6 +28,10 @@
 //extracts the sorting key for a given row from its props. For the `numeric`
 //sorting strategy, this must return a number. For the `text` sorting strategy,
 //this must return a string.
+//
+//Columns can be declared as searchable by supplying a `searchKey` function.
+//The table does not render a textbox on its own; you need to supply the
+//`searchText` attribute on the <DataTable/> to trigger filtering.
 //
 //Each child element should render exactly one <tr> each with the same
 //column layout as defined in props.columns of the DataTable.
@@ -106,6 +111,13 @@ export class DataTable extends React.Component {
     currentPage: 1,       //numbering starts at 1
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.searchText !== this.props.searchText) {
+      //page number may change when the search text changes -> go back to page 1 to ensure we're on a valid page
+      this.setState({ ...this.state, currentPage: 1 });
+    }
+  }
+
   setSortColumnIdx(columnIdx) {
     if (this.state.sortColumnIdx == columnIdx) {
       //when already sorted on this column, just flip direction
@@ -125,9 +137,10 @@ export class DataTable extends React.Component {
   }
 
   pageCount() {
-    const { pageSize, children } = this.props;
+    const pageSize = this.props.pageSize;
     if (pageSize > 0) {
-      return Math.ceil(children.length / pageSize);
+      const rows = this.getVisibleRows();
+      return Math.ceil(rows.length / pageSize);
     }
     return 1; //when pagination is disabled, there is only one page
   }
@@ -178,8 +191,22 @@ export class DataTable extends React.Component {
     );
   }
 
+  getVisibleRows() {
+    const rows = this.props.children;
+    const searchText = this.props.searchText;
+    if (!searchText) {
+      return rows;
+    }
+    const pattern = searchText.toLowerCase();
+    return rows.filter(row => (
+      this.props.columns.some(column => (
+        column.searchKey && (column.searchKey(row.props) || '').toString().toLowerCase().includes(pattern)
+      ))
+    ));
+  }
+
   render() {
-    let rows = this.props.children;
+    let rows = this.getVisibleRows();
 
     //if requested, sort rows using a classic Schwartzian transform
     if (this.state.sortColumnIdx != null) {
