@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Form } from 'lib/elektra-form';
 import { byteToHuman } from 'lib/tools/size_formatter';
 
+import { SEVERITY_ORDER } from '../../constants';
 import Digest from '../digest';
 import VulnerabilityFolder from './vulnerability_folder';
 
@@ -13,16 +14,6 @@ const typeOfManifest = {
   'application/vnd.docker.distribution.manifest.list.v2+json': 'list',
   'application/vnd.oci.image.manifest.v1+json':                'image',
   'application/vnd.oci.image.index.v1+json':                   'list',
-};
-
-const severityOrder = {
-  "Unknown": 0,
-  "Negligible": 1,
-  "Low": 2,
-  "Medium": 3,
-  "High": 4,
-  "Critical": 5,
-  "Defcon1": 6,
 };
 
 const formatStepCreatedBy = (input) => {
@@ -67,7 +58,7 @@ const getVulnerabilitiesForLayer = (digest, vulnReport) => {
   for (const severity in vulnsBySeverity) {
     const vulns = vulnsBySeverity[severity];
     folders.push([
-      severityOrder[severity] || 0,
+      SEVERITY_ORDER[severity] || 0,
       <VulnerabilityFolder severity={severity} vulns={vulns} />
     ]);
   }
