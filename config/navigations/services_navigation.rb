@@ -202,9 +202,9 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: %r{networking/security-groups/?.*}
         networking_nav.item :loadbalancing,
           'Load Balancers',
-          -> { plugin('loadbalancing').loadbalancers_path },
-          if: -> { plugin_available?(:loadbalancing) && services.available?(:loadbalancing) },
-          highlights_on: -> { params[:controller][%r{loadbalancing/?.*}] }
+          -> { plugin('lbaas2').root_path() },
+          if: -> { plugin_available?(:lbaas2) && services.available?(:lbaas2) },
+          highlights_on: -> { params[:controller][%r{lbaas2/?.*}] }
         networking_nav.item :dns_service,
           'DNS',
           -> { plugin('dns_service').zones_path },
