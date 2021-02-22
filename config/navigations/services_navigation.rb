@@ -172,7 +172,7 @@ SimpleNavigation::Configuration.run do |navigation|
       nil,
       html: { class: 'fancy-nav-header', 'data-icon': 'networking-icon' },
       if: -> { plugin_available?(:networking) || 
-               plugin_available?(:loadbalancing) || 
+               plugin_available?(:lbaas2) || 
                plugin_available?(:dns_service) 
              } do |networking_nav|
         networking_nav.item :networks,
