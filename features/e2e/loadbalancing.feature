@@ -7,7 +7,7 @@ Feature: Load Balancing
     Then I am redirected to domain path "home"
 
   Scenario: The Loadbalancers page is reachable
-    When I visit project path "/loadbalancing/loadbalancers"
+    When I visit project path "/lbaas2"
     Then the page status code is successful
     And I see "Load Balancers"
 

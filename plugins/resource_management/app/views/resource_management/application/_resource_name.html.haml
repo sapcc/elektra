@@ -59,7 +59,7 @@
             - when :security_groups, :security_group_rules
               = link_to translated_name, plugin('networking').security_groups_path, title: linktitle
             - when :loadbalancers, :listeners, :pools, :healthmonitors, :l7policies
-              = link_to translated_name, plugin('loadbalancing').loadbalancers_path, title: linktitle
+              = link_to translated_name, plugin('lbaas2').root_path, title: linktitle
             - else
               = translated_name
         - when :dns

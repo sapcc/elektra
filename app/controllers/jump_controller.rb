@@ -31,7 +31,7 @@ class JumpController < ::ApplicationController
         project_name: o[4], 
         domain_id: o[5], 
         domain_name: o[6],
-        url: object_url(type: o[2], domain_id: o[5], project_id: o[3], id: o[0]),
+        url: object_url(type: o[2], domain_id: o[5], project_id: o[3], id: o[0], payload: o[7]),
         payload: o[7]
       )
     end
@@ -41,7 +41,7 @@ class JumpController < ::ApplicationController
 
   protected
 
-  def object_url(type:,domain_id:,project_id:,id:)
+  def object_url(type:,domain_id:,project_id:,id:,payload:)
     return nil unless (domain_id && project_id && id)
     
     case type
@@ -53,8 +53,12 @@ class JumpController < ::ApplicationController
       plugin('networking').floating_ip_url(domain_id: domain_id, project_id: project_id, id: id)
     when 'image'      
       plugin('image').ng_url(domain_id: domain_id, project_id: project_id)
-    when 'l7policy', 'listener'   
-      plugin('loadbalancing').loadbalancers_url(domain_id: domain_id, project_id: project_id)
+    when 'listener'   
+      lb = payload.fetch("loadbalancers", [])[0].fetch("id", "") # take the first loadbalacer containing the pool
+      return plugin('lbaas2').root_url(domain_id: domain_id, project_id: project_id) + ("#/loadbalancers/#{lb}/show?listener=#{id}" unless lb.blank?)
+    when 'pool'
+      lb = payload.fetch("loadbalancers", [])[0].fetch("id", "") # take the first loadbalacer containing the pool
+      return plugin('lbaas2').root_url(domain_id: domain_id, project_id: project_id) + ("#/loadbalancers/#{lb}/show?pool=#{id}" unless lb.blank?)
     when 'network'    
       plugin('networking').networks_external_url(domain_id: domain_id, project_id: project_id)
     when 'port'       
@@ -72,7 +76,7 @@ class JumpController < ::ApplicationController
     when 'zone'       
       plugin('dns_service').zone_recordsets_url(domain_id: domain_id, project_id: project_id, id: id)
     when 'loadbalancer'   
-      plugin('loadbalancing').loadbalancer_listeners_url(domain_id: domain_id, project_id: project_id, id: id)
+      plugin('lbaas2').root_url(domain_id: domain_id, project_id: project_id) + "#/loadbalancers/#{id}/show"
     when 'security_group' 
       plugin('networking').security_group_url(domain_id: domain_id, project_id: project_id, id: id)
     when 'share_network', 'share_server', 'share', 'share_type'   
@@ -83,12 +87,13 @@ class JumpController < ::ApplicationController
       plugin('identity').projects_role_assignments_url(domain_id: domain_id, project_id: project_id)
     else
       if domain_id && project_id
-        return object_url(type: 'project', domain_id: domain_id, project_id: project_id, id: id)
+        return object_url(type: 'project', domain_id: domain_id, project_id: project_id, id: id, payload: payload)
       end
       if domain_id 
-        return object_url(type: 'domain', doamin_id: domain_id, project_id: project_id, id: id)
+        return object_url(type: 'domain', doamin_id: domain_id, project_id: project_id, id: id, payload: payload)
       end
       nil
     end
   end
+
 end
