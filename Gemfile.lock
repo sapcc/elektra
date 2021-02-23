@@ -105,11 +105,6 @@ PATH
       rails (~> 5.2.3)
 
 PATH
-  remote: plugins/loadbalancing
-  specs:
-    loadbalancing (0.0.1)
-
-PATH
   remote: plugins/lookup
   specs:
     lookup (0.0.1)
@@ -644,7 +639,6 @@ DEPENDENCIES
   key_manager!
   kubernetes!
   lbaas2!
-  loadbalancing!
   lookup!
   lyra-client!
   masterdata_cockpit!

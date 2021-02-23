@@ -1,8 +1,0 @@
-// this can only be used for all lbaas objects under one load balancer
-// run through all states and grabs all id's for replacement
-<% if @states %>
-  <% @states.state.deep_select("id").each do |id| %>
-    $('*[data-prov-status="<%= id %>"]').updateState('<%= @states.find_state(id).provisioning_status || 'UNKNOWN' %>');
-    $('*[data-op-status="<%= id %>"]').updateState('<%= @states.find_state(id).operating_status || 'UNKNOWN' %>');
-  <% end %>
-<% end %>

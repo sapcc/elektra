@@ -10,8 +10,8 @@ const App = () => {
     <React.Fragment>
       <div className="bs-callout bs-callout-info bs-callout-emphasize">
         <p>
-          This is the new beta UI based on Octavia driver for Neutron LBaaS.
-          Feel free to try it! We are happy to get your feedback on our slack
+          This is the new UI based on Octavia driver for Neutron LBaaS.
+          We are happy to get your feedback on our slack
           channel{" "}
           <a href="https://convergedcloud.slack.com/archives/C018SPLDB9Q">
             #octavia-users

@@ -8,7 +8,6 @@ module Resources
     QUOTA_RESOURCES = {
       compute: {service_type: :compute, resource_names: [:instances, :cores, :ram]},
       block_storage: {service_type: :volumev2, resource_names: [:volumes, :snapshots, :capacity]},
-      loadbalancing: {service_type: :network, resource_names: [:loadbalancers, :listeners, :pools, :l7policies]},
       lbaas2: {service_type: :network, resource_names: [:loadbalancers, :listeners, :pools, :l7policies]},
       networking: {service_type: :network, resource_names: [:floating_ips, :networks, :subnets, :routers, :security_groups] },
       shared_filesystem_storage: { service_type: :sharev2, resource_names: [:gigabytes, :shares, :snapshots, :share_networks, :share_groups] },

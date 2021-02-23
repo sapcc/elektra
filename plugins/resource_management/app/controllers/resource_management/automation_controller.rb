@@ -18,7 +18,7 @@ module ResourceManagement
       legacy_names = {
         :compute        => 'compute',
         :dns            => 'dns',
-        :loadbalancing  => 'loadbalancing',
+        :loadbalancing  => 'lbaas2',
         :networking     => 'networking',
         :'object-store' => 'object_storage',
         :sharev2        => 'shared_filesystem_storage',
