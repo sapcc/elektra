@@ -491,7 +491,8 @@ const EditListener = (props) => {
   }
 
   const onSelectPredPolicies = (options) => {
-    setPredPolicies(options)
+    const newOptions = options || []
+    setPredPolicies(newOptions)
   }
 
   const onTagsChange = (options) => {
