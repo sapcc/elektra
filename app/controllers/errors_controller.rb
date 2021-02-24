@@ -1,7 +1,11 @@
 # This class is used by ShowException middleware. See config/environments/production.rb
-class ErrorsController < ActionController::Base
+class ErrorsController < ActionController::Base  
   include CurrentUserWrapper
   layout 'plain'
+
+  # Introduced skip auth token since responding js generates following error: 
+  # Security warning: an embedded <script> tag on another site requested protected JavaScript. If you know what you're doing, go ahead and disable forgery protection on this action to permit cross-origin JavaScript embedding.
+  skip_before_action :verify_authenticity_token, if: :js_request? 
 
   def error_404
     render action: :page_not_found
@@ -32,11 +36,16 @@ class ErrorsController < ActionController::Base
 
     respond_to do |format|
       format.html { render :show, status: @status_code, layout: !request.xhr? }
-      format.json { render json: {error: details}, status: @status_code }
+      format.json { render json: {error: details}, status: @status_code } 
+      format.js { render json: {error: details}, status: @status_code }
     end
   end
 
   protected
+
+  def js_request?
+    request.format.js?
+  end
 
   def debug_visible?
     params[:debug]
@@ -57,7 +66,7 @@ class ErrorsController < ActionController::Base
         h[:description] = i18n.t("#{key}.description", default: description).html_safe
       end
 
-      h[:env]       = request.env
+      # h[:env]       = request.env # commented since it blows up the json redering. If needed we should select needed attributes from the env
       h[:name]      = @exception.class.name
       h[:message]   = @exception.message
       h[:token]     = token
