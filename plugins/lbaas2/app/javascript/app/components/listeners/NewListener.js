@@ -28,8 +28,7 @@ const NewListener = (props) => {
     SNIContainerRelation,
     CATLSContainerRelation,
     createListener,
-    marginOnInsertHeaderAttr,
-    marginOnPredPoliciesAttr,
+    advancedSectionRelation,
     predefinedPolicies,
     httpHeaderInsertions,
     helpBlockItems,
@@ -134,12 +133,8 @@ const NewListener = (props) => {
   const [showCATLSContainer, setShowCATLSContainer] = useState(false)
   const [showPredefinedPolicies, setShowPredefinedPolicies] = useState(false)
   const [
-    showMarginOnInsertHeaderAttr,
-    setShowMarginOnInsertHeaderAttr,
-  ] = useState(false)
-  const [
-    showMarginOnPredPoliciesAttr,
-    setShowMarginOnPredPoliciesAttr,
+    showAdvancedSection,
+    setShowAdvancedSection,
   ] = useState(false)
 
   const validate = ({
@@ -237,9 +232,7 @@ const NewListener = (props) => {
       setShowSNIContainers(SNIContainerRelation(props.value))
       setShowCATLSContainer(CATLSContainerRelation(props.value))
       setShowPredefinedPolicies(predefinedPolicies(props.value).length > 0)
-      // set css styles
-      setShowMarginOnInsertHeaderAttr(marginOnInsertHeaderAttr(props.value))
-      setShowMarginOnPredPoliciesAttr(marginOnPredPoliciesAttr(props.value))
+      setShowAdvancedSection(advancedSectionRelation(props.value))
     }
   }
   const onSelectDefaultPoolChange = (props) => {}
@@ -353,6 +346,200 @@ const NewListener = (props) => {
               The protocol which can be used to access the load balancer port.
             </span>
           </Form.ElementHorizontal>
+
+          {showAdvancedSection && (
+            <div className="advanced-options">
+
+              {showCertificateContainer && (
+                <React.Fragment>
+                  <div>
+                    <Form.ElementHorizontal
+                      label="Certificate Secret"
+                      name="default_tls_container_ref"
+                      required
+                    >
+                      <SelectInput
+                        name="default_tls_container_ref"
+                        isLoading={secrets.isLoading}
+                        items={secrets.items}
+                        onChange={onSelectCertificateContainer}
+                        value={certificateContainer}
+                        useFormContext={false}
+                      />
+                      <span className="help-block">
+                        <i className="fa fa-info-circle"></i>
+                        The secret containing a PKCS12 format certificate/key bundles.
+                      </span>
+                      {secrets.error && (
+                        <span className="text-danger">{secrets.error}</span>
+                      )}
+                    </Form.ElementHorizontal>
+                  </div>
+                  <div>
+                    <p>Optional attributes:</p>
+                  </div>
+                </React.Fragment>
+              )}
+
+              {showPredefinedPolicies && (
+                <div>
+                  <Form.ElementHorizontal
+                    label="Extended Policy"
+                    name="extended_policies"
+                  >
+                    <SelectInput
+                      name="extended_policies"
+                      items={predefinedPoliciesSelectItems}
+                      isMulti
+                      onChange={onSelectPredPolicies}
+                      useFormContext={false}
+                    />
+                    <span className="help-block">
+                      <i className="fa fa-info-circle"></i>
+                      <span className="help-block-text">
+                        Policies predefined by CCloud for special purpose. The
+                        policy will apply specific settings on the load balancer
+                        objects. L7Rules are not applicable and the Policy will be
+                        applied always. After creation these will be shown as a tag.
+                      </span>
+                      <HelpPopover
+                        text={helpBlockTextForSelect(helpBlockItemsPredPolicies)}
+                      />
+                    </span>
+                  </Form.ElementHorizontal>
+                </div>
+              )}
+
+              {showInsertHeaders && (
+                <div>
+                  <Form.ElementHorizontal
+                    label="Insert Headers"
+                    name="insert_headers"
+                  >
+                    <SelectInput
+                      name="insert_headers"
+                      items={insetHeaderSelectItems}
+                      isMulti
+                      onChange={onSelectInsertHeadersChange}
+                      value={insertHeaders}
+                      useFormContext={false}
+                    />
+                    <span className="help-block">
+                      <i className="fa fa-info-circle"></i>
+                      <span className="help-block-text">
+                        Headers to insert into the request before it is sent to the
+                        backend member.
+                      </span>
+                      <HelpPopover
+                        text={helpBlockTextForSelect(httpHeaderInsertions("ALL"))}
+                      />
+                    </span>
+                  </Form.ElementHorizontal>
+                </div>
+              )}
+
+              {showSNIContainers && (
+                <div>
+                  <div className="row">
+                    <div className="col-sm-11 col-sm-push-1">
+                      <p> Use SNI if you have multiple TLS certificates that you would like to use on the same listener using Server Name Indication (SNI) technology. Please also visit {" "}
+                        <a
+                          href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-sni"
+                          target="_blank"
+                        >the Octavia SNI section</a>
+                        {" "}for more information. 
+                      </p>    
+                    </div>
+                  </div>
+            
+                  <Form.ElementHorizontal
+                    label="SNI Secrets"
+                    name="sni_container_refs"
+                  >
+                    <SelectInput
+                      name="sni_container_refs"
+                      isLoading={secrets.isLoading}
+                      isMulti
+                      items={secrets.items}
+                      onChange={onSelectSNIContainers}
+                      value={SNIContainers}
+                      useFormContext={false}
+                    />
+                    <span className="help-block">
+                      <i className="fa fa-info-circle"></i>A list of secrets
+                      containing PKCS12 format certificate/key bundles used for
+                      Server Name Indication (SNI).
+                    </span>
+                    {secrets.error && (
+                      <span className="text-danger">{secrets.error}</span>
+                    )}
+                  </Form.ElementHorizontal>
+                </div>
+              )}
+
+              {showClientAuthentication && (
+                <div>
+                  <div className="row">
+                    <div className="col-sm-11 col-sm-push-1">
+                      <p>Adding client authentication allows users to authenticate connections to the VIP using certificates. This is also known as two-way TLS authentication. Please also visit {" "}
+                      <a
+                          href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-client-authentication"
+                          target="_blank"
+                        >the Octavia client authentication section</a>
+                        {" "}for more information. 
+                      </p>
+                    </div>
+                  </div>
+                  <Form.ElementHorizontal
+                    label="Client Authentication Mode"
+                    name="client_authentication"
+                  >
+                    <SelectInput
+                      name="client_authentication"
+                      items={clientAuthenticationSelectItems}
+                      onChange={onSelectClientAuthentication}
+                      value={clientAuthentication}
+                      isClearable
+                      useFormContext={false}
+                    />
+                    <span className="help-block">
+                      <i className="fa fa-info-circle"></i>
+                      The TLS client authentication mode.
+                    </span>
+                  </Form.ElementHorizontal>
+                </div>
+              )}
+
+              {showCATLSContainer && (
+                <div>
+                  <Form.ElementHorizontal
+                    label="Client Authentication Secret"
+                    name="client_ca_tls_container_ref"
+                  >
+                    <SelectInput
+                      name="client_ca_tls_container_ref"
+                      isLoading={secrets.isLoading}
+                      items={secrets.items}
+                      onChange={onSelectCATLSContainers}
+                      value={CATLSContainer}
+                      isClearable
+                      useFormContext={false}
+                    />
+                    <span className="help-block">
+                      <i className="fa fa-info-circle"></i>
+                      The secret containing a PEM format client CA certificate
+                      bundle.
+                    </span>
+                    {secrets.error && (
+                      <span className="text-danger">{secrets.error}</span>
+                    )}
+                  </Form.ElementHorizontal>
+                </div>
+              )}
+
+            </div>            
+          )}
+
           <Form.ElementHorizontal label="Default Pool" name="default_pool_id">
             <SelectInput
               name="default_pool_id"
@@ -388,177 +575,6 @@ const NewListener = (props) => {
               balancer. Value -1 means infinite connections are allowed.
             </span>
           </Form.ElementHorizontal>
-
-          {showPredefinedPolicies && (
-            <div
-              className={
-                showMarginOnPredPoliciesAttr
-                  ? "advanced-options"
-                  : "advanced-options advanced-options-minus-margin"
-              }
-            >
-              <Form.ElementHorizontal
-                label="Extended Policy"
-                name="extended_policies"
-              >
-                <SelectInput
-                  name="extended_policies"
-                  items={predefinedPoliciesSelectItems}
-                  isMulti
-                  onChange={onSelectPredPolicies}
-                  useFormContext={false}
-                />
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  <span className="help-block-text">
-                    Policies predefined by CCloud for special purpose. The
-                    policy will apply specific settings on the load balancer
-                    objects. L7Rules are not applicable and the Policy will be
-                    applied always. After creation these will be shown as a tag.
-                  </span>
-                  <HelpPopover
-                    text={helpBlockTextForSelect(helpBlockItemsPredPolicies)}
-                  />
-                </span>
-              </Form.ElementHorizontal>
-            </div>
-          )}
-
-          {showInsertHeaders && (
-            <div
-              className={
-                showMarginOnInsertHeaderAttr
-                  ? "advanced-options"
-                  : "advanced-options advanced-options-minus-margin"
-              }
-            >
-              <Form.ElementHorizontal
-                label="Insert Headers"
-                name="insert_headers"
-              >
-                <SelectInput
-                  name="insert_headers"
-                  items={insetHeaderSelectItems}
-                  isMulti
-                  onChange={onSelectInsertHeadersChange}
-                  value={insertHeaders}
-                  useFormContext={false}
-                />
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  <span className="help-block-text">
-                    Headers to insert into the request before it is sent to the
-                    backend member.
-                  </span>
-                  <HelpPopover
-                    text={helpBlockTextForSelect(httpHeaderInsertions("ALL"))}
-                  />
-                </span>
-              </Form.ElementHorizontal>
-            </div>
-          )}
-
-          {showCertificateContainer && (
-            <div className="advanced-options advanced-options-minus-margin">
-              <Form.ElementHorizontal
-                label="Certificate Secret"
-                name="default_tls_container_ref"
-                required
-              >
-                <SelectInput
-                  name="default_tls_container_ref"
-                  isLoading={secrets.isLoading}
-                  items={secrets.items}
-                  onChange={onSelectCertificateContainer}
-                  value={certificateContainer}
-                  useFormContext={false}
-                />
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  The secret containing a PKCS12 format certificate/key bundles.
-                </span>
-                {secrets.error && (
-                  <span className="text-danger">{secrets.error}</span>
-                )}
-              </Form.ElementHorizontal>
-            </div>
-          )}
-
-          {showSNIContainers && (
-            <div className="advanced-options advanced-options-minus-margin">
-              <Form.ElementHorizontal
-                label="SNI Secrets"
-                name="sni_container_refs"
-              >
-                <SelectInput
-                  name="sni_container_refs"
-                  isLoading={secrets.isLoading}
-                  isMulti
-                  items={secrets.items}
-                  onChange={onSelectSNIContainers}
-                  value={SNIContainers}
-                  useFormContext={false}
-                />
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>A list of secrets
-                  containing PKCS12 format certificate/key bundles used for
-                  Server Name Indication (SNI).
-                </span>
-                {secrets.error && (
-                  <span className="text-danger">{secrets.error}</span>
-                )}
-              </Form.ElementHorizontal>
-            </div>
-          )}
-
-          {showClientAuthentication && (
-            <div className="advanced-options advanced-options-minus-margin">
-              <Form.ElementHorizontal
-                label="Client Authentication Mode"
-                name="client_authentication"
-              >
-                <SelectInput
-                  name="client_authentication"
-                  items={clientAuthenticationSelectItems}
-                  onChange={onSelectClientAuthentication}
-                  value={clientAuthentication}
-                  isClearable
-                  useFormContext={false}
-                />
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  The TLS client authentication mode.
-                </span>
-              </Form.ElementHorizontal>
-            </div>
-          )}
-
-          {showCATLSContainer && (
-            <div className="advanced-options">
-              <Form.ElementHorizontal
-                label="Client Authentication Secret"
-                name="client_ca_tls_container_ref"
-              >
-                <SelectInput
-                  name="client_ca_tls_container_ref"
-                  isLoading={secrets.isLoading}
-                  items={secrets.items}
-                  onChange={onSelectCATLSContainers}
-                  value={CATLSContainer}
-                  isClearable
-                  useFormContext={false}
-                />
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  The secret containing a PEM format client CA certificate
-                  bundle.
-                </span>
-                {secrets.error && (
-                  <span className="text-danger">{secrets.error}</span>
-                )}
-              </Form.ElementHorizontal>
-            </div>
-          )}
 
           <Form.ElementHorizontal label="Tags" name="tags">
             <TagsInput
