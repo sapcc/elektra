@@ -441,14 +441,16 @@ const NewListener = (props) => {
               {showSNIContainers && (
                 <div>
                   <div className="row">
-                    <div className="col-sm-11 col-sm-push-1">
-                      <p> Use SNI if you have multiple TLS certificates that you would like to use on the same listener using Server Name Indication (SNI) technology. Please also visit {" "}
-                        <a
-                          href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-sni"
-                          target="_blank"
-                        >the Octavia SNI section</a>
-                        {" "}for more information. 
-                      </p>    
+                    <div className="col-sm-8 col-sm-push-4">
+                      <div className="bs-callout bs-callout-info bs-callout-emphasize">
+                        <p> Use <b>SNI</b> if you have multiple TLS certificates that you would like to use on the same listener using Server Name Indication (SNI) technology. Please also visit {" "}
+                          <a
+                            href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-sni"
+                            target="_blank"
+                          >the Octavia SNI section</a>
+                          {" "}for more information. 
+                        </p>
+                      </div>  
                     </div>
                   </div>
             
@@ -480,16 +482,19 @@ const NewListener = (props) => {
               {showClientAuthentication && (
                 <div>
                   <div className="row">
-                    <div className="col-sm-11 col-sm-push-1">
-                      <p>Adding client authentication allows users to authenticate connections to the VIP using certificates. This is also known as two-way TLS authentication. Please also visit {" "}
-                      <a
-                          href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-client-authentication"
-                          target="_blank"
-                        >the Octavia client authentication section</a>
-                        {" "}for more information. 
-                      </p>
+                    <div className="col-sm-8 col-sm-push-4">
+                      <div className="bs-callout bs-callout-info bs-callout-emphasize">
+                        <p><b>Client authentication</b> allows users to authenticate themselves to the VIP using certificates. This is also known as two-way TLS authentication. Please also visit {" "}
+                        <a
+                            href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-client-authentication"
+                            target="_blank"
+                          >the Octavia client authentication section</a>
+                          {" "}for more information. 
+                        </p>                        
+                      </div>
                     </div>
                   </div>
+
                   <Form.ElementHorizontal
                     label="Client Authentication Mode"
                     name="client_authentication"
