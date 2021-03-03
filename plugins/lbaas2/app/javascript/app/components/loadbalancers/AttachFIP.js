@@ -34,7 +34,7 @@ const AttachFIP = (props) => {
         })
       })
       .catch((error) => {
-        setFloatingIPs({ ...floatingIPs, isLoading: false, error: error })
+        setFloatingIPs({ ...floatingIPs, isLoading: false, error: errorMessage(error) })
       })
   }, [])
 
