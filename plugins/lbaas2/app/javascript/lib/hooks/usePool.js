@@ -143,9 +143,7 @@ const usePool = () => {
   const lbAlgorithmTypes = () => {
     return [
       {label: "LEAST_CONNECTIONS", value: "LEAST_CONNECTIONS"},
-      {label: "ROUND_ROBIN", value: "ROUND_ROBIN"},
-      {label: "SOURCE_IP", value: "SOURCE_IP"},
-      {label: "SOURCE_IP_PORT", value: "SOURCE_IP_PORT"}]
+      {label: "ROUND_ROBIN", value: "ROUND_ROBIN"}]
   }
 
   const protocolTypes = (type) => {
