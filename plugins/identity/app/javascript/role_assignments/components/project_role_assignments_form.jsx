@@ -179,20 +179,6 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
               :
               <React.Fragment>
                 <button
-                  className='btn btn-default btn-sm'
-                  onClick={this.selectAdminRoles}
-                  disabled={this.state.saving}>
-                  Select Admin Roles
-                </button>
-                {policy.isAllowed('cloud_admin') &&
-                  <button
-                    className='btn btn-default btn-sm'
-                    onClick={this.selectEndUserAdminRoles}
-                    disabled={this.state.saving}>
-                    Select End User Admin Roles
-                  </button>
-                }
-                <button
                   className='btn btn-default btn-sm hover-danger'
                   onClick={this.removeAllRoles}
                   disabled={this.state.saving}>
