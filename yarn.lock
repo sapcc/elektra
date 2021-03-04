@@ -10234,9 +10234,9 @@ react-motion@^0.5.2:
     raf "^3.1.0"
 
 react-native-dotenv@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-dotenv/-/react-native-dotenv-2.3.0.tgz#5c41bb06879616e9222f998446c4e401447c0638"
-  integrity sha512-I+qChtJT8U8EXSr91O1cMC7uU4Xaalg3aVFtRb1b47DX+30PMK+I8sCOMGnZcJW6YQyUaf0fjqlVXmmaMOcfWg==
+  version "2.5.3"
+  resolved "https://registry.yarnpkg.com/react-native-dotenv/-/react-native-dotenv-2.5.3.tgz#ec70186d2b1491b0519647c53bf91f34395377a3"
+  integrity sha512-Fibw5q6vy91aRwol7yO6U9Om+EyE7Vs4pO70AYGRkDuMkaQ4EIyYw9mmiPcKo6VFCwlpE8y1AZImxoKREFASXA==
   dependencies:
     dotenv "^8.0.0"
 
