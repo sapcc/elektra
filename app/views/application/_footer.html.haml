@@ -7,7 +7,12 @@
         = "Two-Factor Authentication is still valid!" 
 
       :javascript
-        setInterval(function(){ var counter = parseInt($('#token-counter').text()); $('#token-counter').text(counter-1) }, 60000);
+        setInterval(function(){ 
+          if($) {
+            var counter = parseInt($('#token-counter').text()); 
+            $('#token-counter').text(counter-1)
+          } 
+        }, 60000);
 
   .container
     = image_tag "monsoon_cloud.svg", alt: "Monsoon Converged Cloud", class: "pull-right"
