@@ -59,6 +59,8 @@ Identity::Engine.routes.draw do
   end
 
   get 'project/enable_sharding' => 'projects#enable_sharding', as: :project_enable_sharding
+  get 'project/sharding_skip_wizard_confirm' => 'projects#sharding_skip_wizard_confirm'
+  post 'project/sharding_skip_wizard' => 'projects#sharding_skip_wizard'
   get 'project/home'            => 'projects#show', as: :project
   get 'project/view'            => 'projects#view', as: :project_view
   get 'project/wizard'          => 'projects#show_wizard', as: :project_wizard
