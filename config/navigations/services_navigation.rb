@@ -288,7 +288,7 @@ SimpleNavigation::Configuration.run do |navigation|
                  html: { class: 'fancy-nav-header', 'data-icon': 'service-icon' },
                  if: -> { true } do |services_nav|
       services_nav.item :email_service,
-                        'Email Service',
+                        'Email',
                         -> { plugin('email_service').index_path },
                         highlights_on: -> { params[:controller][%r{tools/?.*}] }
     end
