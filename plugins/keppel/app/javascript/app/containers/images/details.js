@@ -1,5 +1,5 @@
 import { connect } from  'react-redux';
-import ImageDetails from '../../components/images/details';
+import ImageDetailsModal from '../../components/images/details';
 import { fetchBlobIfNeeded, fetchManifestsIfNeeded, fetchManifestIfNeeded, fetchVulnsIfNeeded } from '../../actions/keppel';
 
 export default connect(
@@ -29,4 +29,4 @@ export default connect(
       loadVulnsOnce:     ()           => dispatch(fetchVulnsIfNeeded(accountName, repoName, digest)),
     };
   },
-)(ImageDetails);
+)(ImageDetailsModal);
