@@ -286,6 +286,17 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: -> { params[:controller][%r{tools/?.*}] }
     end
 
+    primary.item :services,
+                 'Services',
+                 nil,
+                 html: { class: 'fancy-nav-header', 'data-icon': 'service-icon' },
+                 if: -> { true } do |services_nav|
+      services_nav.item :email_service,
+                        'Email',
+                        -> { plugin('email_service').index_path },
+                        highlights_on: -> { params[:controller][%r{tools/?.*}] }
+    end
+
     # Add an item which has a sub navigation (same params, but with block)
     # primary.item :key_2, 'name', url, options do |sub_nav|
     #   # Add an item to the sub navigation (same params again)

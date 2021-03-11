@@ -1,0 +1,25 @@
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'emails'}
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"containers-pane"}
+
+    %h3
+      Sent Emails
+
+    .row
+
+      .col-sm-9
+        .toolbar
+          - if current_user.is_allowed?('context_is_emailservice_editor')
+            .main-buttons
+              = link_to "New Email", plugin('email_service').new_email_path, data: {modal: true}, class: 'btn btn-primary'
+
+        .js-table-email
+          = render partial: 'table_emails', locals: {emails: @emails}
+
+      .col-sm-3
+        .bs-callout.bs-callout-primary.toolbar-aligment
+          %p
+            These emails are sent by Cronus Service - Proxy implementation of AWS SES.
+            = link_to "AWS SES", "https://aws.amazon.com/ses/", :target => "_blank"
+            \.
