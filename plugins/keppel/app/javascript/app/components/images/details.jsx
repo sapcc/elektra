@@ -254,7 +254,7 @@ export default class ImageDetailsModal extends React.Component {
 
     let stepIndex = 0;
     let layerIndex = 0;
-    for (const step of imageConfig.history) {
+    for (const step of (imageConfig.history || [])) {
       stepIndex++;
       const layer = step.empty_layer ? null : manifest.layers[layerIndex++];
       const vulnRows = layer ? getVulnerabilitiesForLayer(layer.digest, vulnReport) : null;
