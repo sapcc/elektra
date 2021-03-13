@@ -1,0 +1,3 @@
+%ul.nav.nav-tabs
+  %li{class: ('active' if pane == 'emails'), role: "presentation"}= link_to 'Emails', plugin('email_service').emails_path, aria: {controls:"emails-pane"}, role: "tab"
+  %li{class: ('active' if pane == 'templates'), role: "presentation"}= link_to 'Templates', plugin('email_service').templates_path, aria: {controls:"templates-pane"}, role: "tab"

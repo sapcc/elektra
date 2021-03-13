@@ -4,25 +4,13 @@ $:.push File.expand_path("lib", __dir__)
 Gem::Specification.new do |spec|
   spec.name        = "email_service"
   spec.version     = "0.0.1"
-  spec.authors     = [" Write your name"]
-  spec.email       = [" Write your email address"]
+  spec.authors     = ["Sirajudheen Mohamed Ali"]
+  spec.email       = ["sirajudheen.mohamed.ali@sap.com"]
   spec.homepage    = ""
-  spec.summary     = " Summary of EmailService."
-  spec.description = " Description of EmailService."
+  spec.summary     = "EmailService AWS SES Proxy"
+  spec.description = "EmailService UI elektra plugin for AWS SES proxy implementation cronus"
   spec.license     = "MIT"
-
-  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
-  # to allow pushing to a single host or delete this section to allow pushing to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata["allowed_push_host"] = " Set to 'http://mygemserver.com'"
-  else
-    raise "RubyGems 2.0 or newer is required to protect against " \
-      "public gem pushes."
-  end
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  spec.add_dependency "rails", "~> 5.2.4", ">= 5.2.4.3"
-
-  spec.add_development_dependency "sqlite3"
 end

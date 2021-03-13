@@ -1,7 +1,9 @@
 =content_for :main_toolbar do
   Email Service
 
-%h3 Email - Service aka Cronus
-%p
-  cronus client is installled please use the Web-Shell
-  #webconsole-container{ data: {plugin_name: plugin_name, toolbar: 'on', title: "Web Shell", buttons: ['help','reload', 'fullscreen'], height: 'viewport'} }
+  %h3 Email - Service aka Cronus
+
+  
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'emails'}
+
+

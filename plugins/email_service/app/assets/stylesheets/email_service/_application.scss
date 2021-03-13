@@ -20,3 +20,54 @@
   ***************************************************
 
 */
+@import "emails";
+
+.loading-spinner-section {
+  position: relative;
+  left: 50%;
+  @include spinner(3em);
+}
+
+.modal-section {
+  padding: 20px 0;
+}
+.modal-section.first {
+  padding: 0;
+}
+
+.attribute-group {
+  margin-top: 10px;
+}
+
+.state_success {
+  color: $deep-green;
+}
+
+.state_failed {
+  color: $alarm-red;
+}
+
+.toolbar-aligment {
+  margin-top: 20px;
+}
+
+.static-tags {
+  .tag {
+    float: left;
+    margin-right: 10px;
+    border-radius: 2px 0 0 2px;
+    background-color: $hover-light-blue;
+    color: #46799b;
+    margin-bottom: 5px;
+    overflow: hidden;
+
+    .key, .value {
+      float: left;
+      padding: 0 4px;
+    }
+    .key {
+      background-color: #46799b;
+      color: white;
+    }
+  }
+}

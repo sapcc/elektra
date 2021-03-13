@@ -66,6 +66,10 @@ gem 'httpclient' # The only faraday backend that handled no_proxy :|
 gem 'lyra-client', git: 'https://github.com/sapcc/lyra-client.git'
 gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 
+# Email Service
+gem 'aws-sdk-ses'
+# gem 'aws-sdk-rails'
+
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
