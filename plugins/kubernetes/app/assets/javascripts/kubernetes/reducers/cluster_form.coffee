@@ -196,18 +196,18 @@
     # router -> network -> subnet chain
     if metaData.routers?
       router = metaData.routers[0]
-      defaults.routerID = router.id
+      defaults.routerID = if router? then router.id else ""
 
       if router.networks?
         network = router.networks[0]
-        defaults.networkID = network.id
+        defaults.networkID = if network? then network.id else ""
 
         if network.subnets?
-          defaults.lbSubnetID = network.subnets[0].id
+          defaults.lbSubnetID = if network.subnets[0]? then network.subnets[0].id else ""
 
     # securityGroups
     if metaData.securityGroups?
-      defaults.securityGroupName = metaData.securityGroups[0].name
+      defaults.securityGroupName = if metaData.securityGroups[0] then metaData.securityGroups[0].name else ""
 
     # ensure already selected values aren't overwritten by the defaults
     dataMerged = ReactHelpers.mergeObjects({},defaults,state.data.spec.openstack)
