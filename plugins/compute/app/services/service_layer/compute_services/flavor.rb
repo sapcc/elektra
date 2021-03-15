@@ -4,6 +4,7 @@ module ServiceLayer
   module ComputeServices
     # This module implements Openstack Domain API
     module Flavor
+      OBSOLETE_FLAVORS_PREFIX = "x_deprecated"
       def flavor_map
         @flavor_map ||= class_map_proc(Compute::Flavor)
       end
@@ -24,7 +25,7 @@ module ServiceLayer
       def flavors(filter = {})
         elektron_compute.get('flavors/detail', filter).map_to(
           'body.flavors', &flavor_map
-        )
+        ).select{|f| !f.id.starts_with? OBSOLETE_FLAVORS_PREFIX }
       end
 
       def find_flavor!(flavor_id, use_cache = false)
