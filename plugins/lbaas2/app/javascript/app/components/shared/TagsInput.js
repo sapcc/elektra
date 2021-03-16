@@ -92,7 +92,8 @@ const TagsInput = ({name, initValue, onChange, useFormContext}) => {
     switch (action) {
       case 'remove-value':
       case 'pop-value':
-        if (removedValue.isFixed) {
+        // add check removedValue in case you hit delete key until nothing is in the field
+        if (removedValue && removedValue.isFixed) {
           return;
         }
         break;

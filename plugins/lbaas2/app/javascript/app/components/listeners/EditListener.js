@@ -441,9 +441,10 @@ const EditListener = (props) => {
     const newTags = tags || []
 
     // add optional attributes that not set per context
-    newValues.tags = [...newPredPolicies, ...newTags].map(
-      (item, index) => item.value
-    )
+    newValues.tags = [...newPredPolicies, ...newTags].map(      
+      (item, index) => {
+        return item.value || item
+      })
 
     return updateListener(loadbalancerID, listenerID, newValues)
       .then((response) => {
