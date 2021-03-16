@@ -1,11 +1,11 @@
 {
-  "context_is_cloud_volume_admin":  "role:cloud_volume_admin",
+  "context_is_cloud_volume_admin": "role:cloud_volume_admin",
   "member": "role:member or role:Member",
   "volume_viewer": "role:volume_viewer",
   "volume_admin": "role:volume_admin",
   "context_is_volume_admin": "rule:context_is_cloud_volume_admin or rule:volume_admin",
   "context_is_volume_editor": "rule:context_is_volume_admin or rule:member",
-  "context_is_volume_viewer":  "rule:context_is_volume_editor or rule:volume_viewer",
+  "context_is_volume_viewer": "rule:context_is_volume_editor or rule:volume_viewer",
 
   "block_storage:volume_get": "rule:context_is_volume_viewer",
   "block_storage:volume_list": "rule:context_is_volume_viewer",
@@ -17,6 +17,7 @@
   "block_storage:volume_reset_status": "rule:context_is_volume_admin",
   "block_storage:volume_force_delete": "rule:context_is_volume_admin",
   "block_storage:volume_extend_size": "rule:context_is_volume_admin",
+  "block_storage:volume_types": "rule:context_is_volume_viewer",
   "block_storage:snapshot_get": "rule:context_is_volume_viewer",
   "block_storage:snapshot_list": "rule:context_is_volume_viewer",
   "block_storage:snapshot_create": "rule:context_is_volume_editor and (not rule:monsoon2_domain or rule:project_parent)",
