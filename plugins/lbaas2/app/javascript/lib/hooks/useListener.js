@@ -347,6 +347,21 @@ const useListener = () => {
     }
   }
 
+  const tlsPoolRelation = (protocol) => {
+    switch (protocol) {
+      case "HTTP":
+        return false
+      case "HTTPS":
+        return false
+      case "TERMINATED_HTTPS":
+        return true
+      case "TCP":
+        return false
+      default:
+        return false
+    }
+  } 
+
   const protocolHeaderInsertionRelation = (protocol) => {
     switch (protocol) {
       case "HTTP":
@@ -703,6 +718,7 @@ const useListener = () => {
     setSelected,
     reset,
     protocolTypes,
+    tlsPoolRelation,
     httpHeaderInsertions,
     protocolHeaderInsertionRelation,
     clientAuthenticationRelation,
