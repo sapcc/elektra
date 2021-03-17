@@ -1,5 +1,6 @@
 module DnsService
   class ApplicationController < ::DashboardController
+    include CreateZonesHelper
     before_action :all_projects
 
     private
