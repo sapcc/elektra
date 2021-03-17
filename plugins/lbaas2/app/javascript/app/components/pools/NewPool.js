@@ -370,6 +370,14 @@ const NewPool = (props) => {
 
           {showTLSSettings && (
             <div className="advanced-options">
+              <div className="row">
+                <div className="col-sm-8 col-sm-push-4">
+                  <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+                    <p> TLS-enabled pool can only be attached to a <b>TERMINATED_HTTPS</b> type listener!
+                    </p>                        
+                  </div>
+                </div>
+              </div>
               <Form.ElementHorizontal
                 label="Certificate Secret"
                 name="tls_container_ref"
