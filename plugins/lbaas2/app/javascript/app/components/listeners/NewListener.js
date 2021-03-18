@@ -21,6 +21,7 @@ const NewListener = (props) => {
   } = useCommons()
   const {
     protocolTypes,
+    tlsPoolRelation,
     protocolHeaderInsertionRelation,
     clientAuthenticationRelation,
     fetchSecretsForSelect,
@@ -39,6 +40,8 @@ const NewListener = (props) => {
     error: null,
     items: [],
   })
+  const [tlsPools, setTlsPools] = useState([])
+  const [displayPools, setDisplayPools] = useState([])
   const [secrets, setSecrets] = useState({
     isLoading: false,
     error: null,
@@ -77,6 +80,11 @@ const NewListener = (props) => {
       })
   }, [])
 
+  useEffect(() => {
+    setDisplayPools(pools.items)
+    setTlsPools(pools.items.filter((i) => i.tls_enabled == true))    
+  }, [pools])
+
   /**
    * Modal stuff
    */
@@ -114,6 +122,7 @@ const NewListener = (props) => {
   const [certificateContainer, setCertificateContainer] = useState(null)
   const [SNIContainers, setSNIContainers] = useState(null)
   const [CATLSContainer, setCATLSContainer] = useState(null)
+  const [defaultPool, setDefaultPool] = useState(null)
   const [
     predefinedPoliciesSelectItems,
     setPredefinedPoliciesSelectItems,
@@ -136,6 +145,7 @@ const NewListener = (props) => {
     showAdvancedSection,
     setShowAdvancedSection,
   ] = useState(false)
+  const [showTLSPoolWarning, setShowTLSPoolWarning] = useState(false)
 
   const validate = ({
     name,
@@ -156,7 +166,7 @@ const NewListener = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null)
-
+       
     const newValues = { ...values }
     // add optional attributes that not set per context
     if (showInsertHeaders && insertHeaders) {
@@ -179,6 +189,10 @@ const NewListener = (props) => {
     const newTags = [...predPolicies, ...tags]
     if (newTags) {
       newValues.tags = newTags.map((item, index) => item.value)
+    }
+
+    if (defaultPool) {
+      newValues.default_pool_id = defaultPool.value
     }
 
     // get the lb id
@@ -233,9 +247,25 @@ const NewListener = (props) => {
       setShowCATLSContainer(CATLSContainerRelation(props.value))
       setShowPredefinedPolicies(predefinedPolicies(props.value).length > 0)
       setShowAdvancedSection(advancedSectionRelation(props.value))
+
+      // TLS-enabled pool can only be attached to a TERMINATED_HTTPS type listener
+      // so on change protocol the the default pool will be reseted      
+      if (tlsPoolRelation(props.value)) {
+        // if pool is not tls reset option
+        if(defaultPool && !defaultPool.tls_enabled){
+          setDefaultPool(null)
+        }        
+        setDisplayPools(tlsPools)
+        setShowTLSPoolWarning(true)
+      } else {
+        setDisplayPools(pools.items)
+        setShowTLSPoolWarning(false)
+      }
     }
   }
-  const onSelectDefaultPoolChange = (props) => {}
+  const onSelectDefaultPoolChange = (props) => {
+    setDefaultPool(props)
+  }
   const onSelectInsertHeadersChange = (props) => {
     setInsertHeaders(props)
   }
@@ -545,12 +575,25 @@ const NewListener = (props) => {
             </div>            
           )}
 
+          {showTLSPoolWarning && (
+            <div className="row">
+              <div className="col-sm-8 col-sm-push-4">
+                <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+                  <p> TLS-enabled pool can only be attached to a <b>TERMINATED_HTTPS</b> type listener!
+                  </p>                        
+                </div>
+              </div>
+            </div>
+          )}
+
           <Form.ElementHorizontal label="Default Pool" name="default_pool_id">
             <SelectInput
               name="default_pool_id"
+              value={defaultPool}
               isLoading={pools.isLoading}
-              items={pools.items}
+              items={displayPools}
               onChange={onSelectDefaultPoolChange}
+              useFormContext={false}
               isClearable
             />
             {pools.error ? (
