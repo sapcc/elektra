@@ -68,7 +68,7 @@ const EditListener = (props) => {
   ] = useState(false)
   const [predPolicies, setPredPolicies] = useState([])
   const [tags, setTags] = useState([])
-  const [tlsPools, setTlsPools] = useState([])
+  const [nonSelectableTlsPools, setNonSelectableTlsPools] = useState([])
   const [displayPools, setDisplayPools] = useState([])
 
   const [listener, setListener] = useState({
@@ -110,7 +110,14 @@ const EditListener = (props) => {
 
   useEffect(() => {
     if(pools.items.length > 0) {
-      setTlsPools(pools.items.filter((i) => i.tls_enabled == true))
+      const newItems = [...pools.items]
+      for (let i = 0; i < newItems.length; i++) {
+        if (newItems[i].tls_enabled == true) {
+          const newLabel = `${newItems[i].label} - available with protocol TERMINATED_HTTPS`
+          newItems[i] = { ...newItems[i], ...{ isDisabled: true, label: newLabel } }
+        }      
+      }
+      setNonSelectableTlsPools(newItems)
     }
   }, [pools])
 
@@ -119,7 +126,7 @@ const EditListener = (props) => {
       setSelectedDefaultPool()
       setupDisplayPools(listener.item.protocol)
     }
-  }, [pools, listener, tlsPools])
+  }, [pools, listener, nonSelectableTlsPools])
 
   const loadListener = () => {
     Log.debug("fetching listener to edit")
@@ -181,18 +188,11 @@ const EditListener = (props) => {
   }, [listener.item])
 
   const setupDisplayPools = (protocol) => {
-    // TLS-enabled pool can only be attached to a TERMINATED_HTTPS type listener
-    // so on change protocol the the default pool will be reseted      
+    // TLS-enabled pool can only be attached to a TERMINATED_HTTPS type listener    
     if (tlsPoolRelation(protocol)) {
-      // if pool is not tls reset option
-      if(defaultPool && !defaultPool.tls_enabled){
-        setDefaultPool(null)
-      }        
-      setDisplayPools(tlsPools)
-      setShowTLSPoolWarning(true)
-    } else {
       setDisplayPools(pools.items)
-      setShowTLSPoolWarning(false)
+    } else {
+      setDisplayPools(nonSelectableTlsPools)
     }
   }
 
@@ -232,6 +232,11 @@ const EditListener = (props) => {
     const selectedOption = pools.items.find(
       (i) => i.value == (selectedDefaultPoolID || "").trim()
     )
+    // if pool is not tls reset option
+    setShowTLSPoolWarning(false)
+    if(listener.item.protocol != "TERMINATED_HTTPS" && selectedOption && selectedOption.tls_enabled){
+      setShowTLSPoolWarning(true)
+    }
     setDefaultPool(selectedOption)
   }
 
@@ -900,8 +905,8 @@ const EditListener = (props) => {
                   <div className="row">
                     <div className="col-sm-8 col-sm-push-4">
                       <div className="bs-callout bs-callout-warning bs-callout-emphasize">
-                        <p> TLS-enabled pool can only be attached to a <b>TERMINATED_HTTPS</b> type listener!
-                        </p>                        
+                        <p>TLS-enabled pool can only be attached to a <b>TERMINATED_HTTPS</b> type listener!</p>                        
+                        <p>Please change default pool!</p>
                       </div>
                     </div>
                   </div>
