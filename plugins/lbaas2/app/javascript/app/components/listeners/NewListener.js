@@ -40,7 +40,7 @@ const NewListener = (props) => {
     error: null,
     items: [],
   })
-  const [tlsPools, setTlsPools] = useState([])
+  const [nonSelectableTlsPools, setNonSelectableTlsPools] = useState([])
   const [displayPools, setDisplayPools] = useState([])
   const [secrets, setSecrets] = useState({
     isLoading: false,
@@ -82,7 +82,14 @@ const NewListener = (props) => {
 
   useEffect(() => {
     setDisplayPools(pools.items)
-    setTlsPools(pools.items.filter((i) => i.tls_enabled == true))    
+    const newItems = [...pools.items]
+    for (let i = 0; i < newItems.length; i++) {
+      if (newItems[i].tls_enabled == true) {
+        const newLabel = `${newItems[i].label} - available with protocol TERMINATED_HTTPS`
+        newItems[i] = { ...newItems[i], ...{ isDisabled: true, label: newLabel } }
+      }      
+    }
+    setNonSelectableTlsPools(newItems)
   }, [pools])
 
   /**
@@ -249,17 +256,17 @@ const NewListener = (props) => {
       setShowAdvancedSection(advancedSectionRelation(props.value))
 
       // TLS-enabled pool can only be attached to a TERMINATED_HTTPS type listener
-      // so on change protocol the the default pool will be reseted      
+      // so on change protocol the the default pool will be reseted
+      setShowTLSPoolWarning(false)
       if (tlsPoolRelation(props.value)) {
-        // if pool is not tls reset option
-        if(defaultPool && !defaultPool.tls_enabled){
-          setDefaultPool(null)
-        }        
-        setDisplayPools(tlsPools)
-        setShowTLSPoolWarning(true)
-      } else {
         setDisplayPools(pools.items)
-        setShowTLSPoolWarning(false)
+      } else {
+        // if pool is not tls reset option
+        if(defaultPool && defaultPool.tls_enabled){
+          setDefaultPool(null)
+          setShowTLSPoolWarning(true)
+        }
+        setDisplayPools(nonSelectableTlsPools)
       }
     }
   }
@@ -579,8 +586,8 @@ const NewListener = (props) => {
             <div className="row">
               <div className="col-sm-8 col-sm-push-4">
                 <div className="bs-callout bs-callout-warning bs-callout-emphasize">
-                  <p> TLS-enabled pool can only be attached to a <b>TERMINATED_HTTPS</b> type listener!
-                  </p>                        
+                  <p>TLS-enabled pool can only be attached to a <b>TERMINATED_HTTPS</b> type listener!</p>
+                  <p>Switch to TERMINATED_HTTPS protocol to see TLS-enalbed pools</p>
                 </div>
               </div>
             </div>
