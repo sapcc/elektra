@@ -97,7 +97,7 @@ module Lbaas2
 
       def itemsForSelect
         pools = services.lbaas2.pools({ loadbalancer_id: params[:loadbalancer_id], sort_key: 'name', sort_dir: 'asc'})
-        select_pools = pools.map {|pool| {"label": "#{pool.name} (#{pool.id})", "value": pool.id, "tls_enabled": pool.tls_enabled}}
+        select_pools = pools.map {|pool| {"label": "#{pool.name} (#{pool.id} #{pool.tls_enabled ? "- TLS enabled" : ""})", "value": pool.id, "tls_enabled": pool.tls_enabled}}
         
         render json: { pools: select_pools }
       rescue Elektron::Errors::ApiResponse => e
