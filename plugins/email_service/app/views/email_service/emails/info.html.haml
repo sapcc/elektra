@@ -1,0 +1,50 @@
+
+=content_for :main_toolbar do
+  Email Service
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'emails'}
+
+= link_to "Verify Email", 'emails/verify_email', data: {modal: true}, class: 'btn btn-primary'
+            
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"emails-pane"}
+
+  %h3
+    Information
+
+%p
+  %h4
+    token:
+    =current_user.token
+%p
+  identity_url
+  =current_user.service_url('identity')
+%p
+  user_id
+  =current_user.id
+%p
+  project_id
+  =current_user.project_id
+%p
+  region
+  =current_user.default_services_region
+%p
+  Cronus URL:
+  =current_user.service_url('email-aws')
+
+
+%p
+  Verified EMails: 
+=@verified_emails
+%p
+  Pending Emails:
+=@pending_emails
+
+%p
+  Access:
+=@access
+%p
+  Secret:
+  =@secret
+%p
+  SES Client:
+=@ses_client

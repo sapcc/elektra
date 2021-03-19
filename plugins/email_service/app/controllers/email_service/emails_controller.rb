@@ -1,5 +1,6 @@
 module EmailService
   class EmailsController < ::EmailService::ApplicationController
+    include AwsSesHelper
 
     # before_action :email_form_attr, only: %i[new create]
 
@@ -9,17 +10,22 @@ module EmailService
     # authorization_required except: %i[]
 
     def index
-      # @containers = containers
-      @token = current_user.token
-      # puts @token
+
     end
 
-    # def show
-    #   @container = services.key_manager.find_container(params[:id])
-    #   # get the user name from the openstack id if available
-    #   user = service_user.identity.find_user(@container.creator_id)
-    #   @user = user ? user.name : @container.creator_id
-    # end
+    def verify_email
+      
+    end
+
+    def info
+      @access, @secret = get_ec2_creds
+      @ses_client = create_ses_client
+      @verified_emails, @pending_emails = list_verified_emails
+    end
+
+    def show
+
+    end
 
     # def new; end
 

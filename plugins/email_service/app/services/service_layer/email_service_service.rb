@@ -7,14 +7,28 @@ module ServiceLayer
     include EmailServiceServices::Template
 
     def available?(_action_name_sym = nil)
-      elektron.service?('email-service')
+      elektron.service?('email-aws')
     end
 
     def elektron_email_service
       @elektron_email_service ||= elektron.service(
-        'email-aws', path_prefix: '/v1'
+        'identity', path_prefix: '/v3'
       )
     end
+
+    def elektron_identity_service
+      @elektron_identity_service ||= elektron.service(
+        'identity', path_prefix: '/v3'
+      )
+    end
+    # def elektron_id_client(token, identity_url, project_id, region)
+    #   # logger.debug "reached elektron_id_client"
+    #   @elektron_id_client ||= Elektron.client({
+    #     url: identity_url,
+    #     token: token,
+    #     scope_project_id: project_id
+    #   }, { region: region, interface: 'public'})
+    # end
 
   end
 end
