@@ -27,7 +27,7 @@ module Automation
       end
     end
 
-    # 
+    # catch globally not found
     rescue_from 'Excon::Error::NotFound' do |exception|
       options = {
         title: 'Resource not found',
