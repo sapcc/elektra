@@ -27,6 +27,23 @@ module Automation
       end
     end
 
+    # 
+    rescue_from 'Excon::Error::NotFound' do |exception|
+      options = {
+        title: 'Resource not found',
+        sentry: false,
+        warning: true,
+        status: 404,
+        description: "The resource you are looking for cannot be found."
+      }
+
+      if params[:polling_service]
+        head options[:status]
+      else
+        render_exception_page(exception, options)
+      end
+    end
+
     # when comming from lyra api
     rescue_from 'Excon::Error::Unauthorized' do |exception|
       options = {
