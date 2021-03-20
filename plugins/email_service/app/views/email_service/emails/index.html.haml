@@ -16,7 +16,7 @@
             .main-buttons
               = link_to "New Email", plugin('email_service').new_email_path, data: {modal: false}, class: 'btn btn-primary'
 
-        .js-table-container
+        .js-table-email
           = render partial: 'table_emails', locals: {emails: @emails}
 
       .col-sm-3

@@ -1,0 +1,36 @@
+=content_for :main_toolbar do
+  Verification
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'verifications'}
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"verifications-pane"}
+
+    %h5
+      Verification Success email addresses
+      =@verified_emails
+      %p
+      Verification Pending email addresses
+      =@pending_emails
+
+    %p
+
+    .row
+
+      .col-sm-9
+        .toolbar
+          - if current_user.is_allowed?('context_is_emailservice_editor')
+            .main-buttons
+              = link_to "Verify Email", 'verifications/new', data: {modal: true}, class: 'btn btn-primary'
+
+        .js-table-container
+          = render partial: 'table_verified_emails', locals: {verified_emails: @verified_emails }
+
+      .col-sm-3
+        .bs-callout.bs-callout-primary.toolbar-aligment
+          %p
+            Converged Cloud EMails Service - AWS Simple EMail Service
+            = link_to "AWS Simple EMail Service", "https://aws.amazon.com/ses/", :target => "_blank"
+            \.
+
+
+ 

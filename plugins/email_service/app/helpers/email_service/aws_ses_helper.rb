@@ -23,6 +23,10 @@ module EmailService
       end
     end
 
+    def verified_emails
+      verified_emails, pending_emails = list_verified_emails
+    end
+
     def verify_email(recipient)
       ses_client = create_ses_client
       # recipient = params[:email][:address].to_s
@@ -47,6 +51,7 @@ module EmailService
       attrs = Hash.new
       verified_emails = []
       pending_emails = []
+      emails_list_hash = []
       begin
         ses_client = create_ses_client
         # Get up to 1000 identities
@@ -58,7 +63,10 @@ module EmailService
             identities: [email]
           })
           status = attrs.verification_attributes[email].verification_status
+          # email_list = {:email => email, :status => status}
+          # emails_list_hash.push(email_list)
           # puts "The verification status of #{email} is #{status}"
+
           if status == "Success"
             verified_email_hash = {:email => email, :status => status}
             verified_emails.push(verified_email_hash)
@@ -67,6 +75,7 @@ module EmailService
             pending_emails.push(pending_email_hash)
           end
           [verified_emails, pending_emails]
+          # return emails_list_hash
         end
       rescue Aws::SES::Errors::ServiceError => error
         puts "error while listing verified emails. Error message: #{error}"
