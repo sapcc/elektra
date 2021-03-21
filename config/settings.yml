@@ -19,8 +19,8 @@ credentials:
 # set the ACTUAL_TERMS anchor to the new key and
 # set the actual_terms_version to the new key
 terms:
-  actual_terms_version: &ACTUAL_TERMS_VERSION v1
-  v1: &ACTUAL_TERMS >
+  actual_terms_version: &ACTUAL_TERMS_VERSION v2
+  v2: &ACTUAL_TERMS >
     ### Overview
 
     #### Service Description
@@ -37,6 +37,11 @@ terms:
     Your content must follow SAP’s Acceptable Use Policy, the Converged Cloud teams reserves the right to remove any content that falls outside this policy.
     The end user is responsible for maintaining all installed software licenses that are not centrally provided by the Converged Cloud Service.
 
+    #### Definitions
+
+    In this document the terms "provider" and "platform" are used to represent the Converged Cloud platform and provided services.
+    The term "user" is used to represent the SAP employees and contractors (inclusing technical user accounts) using the SAP Converged Cloud platform.
+
     ### Disclaimers
 
     #### Litigation Hold
@@ -49,7 +54,7 @@ terms:
 
     #### Confidential Information
 
-    The SAP Converged Cloud Team will use all reasonable efforts to preserve and protect any stored confidential data within its cloud environment.
+    The SAP Converged Cloud Team will use all reasonable efforts to preserve and protect any stored confidential data within the platform.
     Converged Cloud team is working with IT Security and Data Privacy to ensure CI.
     SAP will ensure that all employees and agents that have access to the data are legally bound not to disclose this information.
     Confidential Information shall mean all trade secrets and other information or Services which SAP or third parties protect
@@ -65,33 +70,55 @@ terms:
 
     #### Fees
 
-    Converged Cloud systems are subject to reoccurring fees agreed upon deployment and usage of specific services.
-    These fees are agreed upon upfront by the customer and the customer designated cost object is responsible
-    for these fees during the duration of system operation. It is your responsibility to maintain a correct
-    cost object per organization. If the cost object is not valid we have to bill your Headcount Cost Center.
-    SAP reserves the right to reasonably increase fees based on current conditions.
-    SAP will provide reasonable notice on any planned fee increase.
-
-    #### OS Access
-
-    SAP will provide the Converged Cloud user with Root/Administrator access to deployed system.
-    Root Access to OS should not be given to customers / partners. As such Converged Cloud team will provide good faith effort
-    to resolve any technical or performance issues related to the Operating System. Converged Cloud team cannot guarantee that
-    we will be able to fully resolve any OS issue. Converged Cloud team will fully support all infrastructure and orchestration layers.
+    Converged Cloud systems are subject to reoccurring fees agreed upon requesting resource quotas for specific services.
+    These fees are transparently updated and accessible to the user and the user's designated cost object will be used
+    for charging these fees for the duration of quota allocation. It is the user's responsibility to maintain a correct
+    cost object per organization. If the cost object is not valid we have to bill the personal Cost Center.
+    SAP reserves the right to reasonably adjust fees based on current conditions.
+    SAP will provide timely notice on any planned adjustments.
 
     #### Cookbooks
 
-    Cookbooks are created and maintained by Open Community Standards. Cookbook owner is responsible for maintenance and
-    support of cookbook Converged Cloud team does not provide cookbook support.
+    Cookbooks are created and maintained by Open Community Standards. Cookbook owner is responsible for the maintenance and
+    support of cookbooks. The platform team does not provide cookbook support.
 
     #### Security Zones
 
-    Converged Cloud will provide ability to place systems into Network Zones 1(Internal Prod Biz), Zone 2 (Internal) and Zone 4 (DMZ).
-    If a system is deployed in zone 1,4 a security concept will be required to be submitted and approved by IT Security.
-    The creating and approval of the security concept is the responsibility of the scenario owner, IT-IS will support where required.
-    Root Access to OS should not be given to customers / partners.
+    The platform provides the capability to expose systems to different Network Zones: Internal Prod Biz, Internal and External.
+    The user is required to create and maintain applicable Securiity Concepts according to the policies established within SAP.
+    The submission and approval of the security concept is the responsibility of the user.
+    
+    #### Software Upgrades
 
-    ### Customer Obligations
+    From time to time, the platform team may apply upgrades, patches, bug fixes or other maintenance to the Service Offerings,
+    Operating Systems or Software. We agree to use reasonable efforts to avoid disruption during such maintenance. The plaform will
+    inform users of any scheduled Maintenance which may result in Service disruption, except for emergency maintenance and users agree
+    to use reasonable efforts to comply with any maintenance announced timely and/or without undue delay.
+
+    ### User Obligations
+
+    #### Platform Services
+
+    Users must comply with current technical documentation applicable to the Services (including applicable developer guides) 
+    as published on the platform documentation site.
+
+    #### Network Configuration
+
+    The user is responsible for the network configuration within his projects. This includes but is not limited to the exposure of
+    services, the maintenance of internal Security Groups and the integrity and confidentiality of network traffic.
+
+    #### Operating System Access and Responsibility
+
+    The user is responsible to setup and operate the operating systems provisioned on the platform.
+    The platform may provide the users operating system images which can be used to deploy system, this does not limit the
+    responsibilities of the user to configure, operate and maintain the instances according to SAP Security Policies and Procedures.
+    Users are encouraged to create, maintain and use custom images to fulfill regulatory, corporate, legal and contractual requirements.
+    Administrative access to OS should not be granted to external parties. The platform team cannot guarantee to resolve any OS issue.
+    Converged Cloud team will fully support all infrastructure issues, the platform APIs and orchestration layers.
+
+    #### Access Control
+
+    The user is responsible to oversee user access and role based access control within their respective platform projects. 
 
     #### Software Approval
 
@@ -100,31 +127,38 @@ terms:
     That means that the software has to pass the Software Approval Process and has to be rated white or grey in the
     SWAP Catalog before it can be ordered via SRM.
 
-    #### Software Upgrades
-
-    From time to time, the Converged Cloud team may apply upgrades, patches, bug fixes or other maintenance to the Service Offerings,
-    Operating Systems or Software. We agree to use reasonable efforts to provide you with prior notice of any scheduled Maintenance,
-    except for emergency Maintenance and you agree to use reasonable efforts to comply with any Maintenance requirements that we notify you about.
-
     #### Security Patching
 
-    From time to time, the SAP-IT team may apply upgrades, patches, bug fixes or other maintenance to the Service Offerings,
-    Operating Systems or Software. We agree to use reasonable efforts to provide you with prior notice of any scheduled Maintenance,
-    except for emergency Maintenance and you agree to use reasonable efforts to comply with any Maintenance requirements that
-    SAP –IT notify you about. It is customer responsibility to ensure installation of any OS / Security patches that are
-    requested by SAP-IT and to comply with their guidance / requests and time lines.
+    It is the user responsibility to ensure installation of any OS / Security patches that are requested by SAP Guidelines 
+    and to comply with their guidance / requests and timelines.
 
     #### Change Management
 
-    Any request for a system change that isn’t currently automated by Converged Cloud can be requested through the Change Management process.
-    This process is listed in the Converged Cloud documentation and can trigger by the end user at any time.
-    Please note that certain Change Management processes can incur an additional fee; please refer to the documentation listed.
-    If systems require existing change management user must follow current change management processes listed.
+    Any request for a system change within the user area of responsibility must follow applicable Change Management processes.
+    Please note that certain Change Management processes can incur additional effort.
 
-    ### Backup
+    #### Data processing
+
+    Users must ensure applicable confidentiality of any data stored and processed within their area of responsibility,
+    this includes but is not limited to access credentials, cryptographic secrets and enforcing applicable server-side encryption 
+    of data.
+    Users processing personal data of End Users or other identifiable individuals in their use of a Service are responsible for 
+    providing legally adequate privacy notices and obtaining necessary consents for the processing of such data. Users ensure 
+    that they provided all necessary privacy notices and obtained all necessary consents. Users are responsible for processing such 
+    data in accordance with SAP policies and applicable law.
+
+    #### Backup
 
     Converged Cloud offers the standard File system (FS) and DB Backup / Restore from the Global Backup Team.
-    Customer is responsible for requesting to enable backups on their systems. Backups are not enabled by default.
+    Users are responsible for requesting to enable backups on their systems. Backups are not enabled by default.
+    The user is required to ensure that business critical data is properly protected against dataloss caused by infrastructure failure.
+
+    #### High Avaiability and Disaster Recovery
+
+    The platform provides means to increase the resilience of the users workload through documented measures for the implementation of 
+    high availability (HA). The platform does not provide inherent high availability for the user application. 
+    Disaster Revovery (DR) can be implemented by the user and shall be established according to their respective need to recover from
+    infrastructure outages.
 
     ### LIMITATION OF LIABILITY
 
