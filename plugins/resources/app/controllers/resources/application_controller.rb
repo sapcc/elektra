@@ -143,6 +143,9 @@ module Resources
 
     def fetch_big_vm_data
 
+      # disabled until bugfix is done
+      return {}
+
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
       project =  services.identity.find_project!(@scoped_project_id) 
