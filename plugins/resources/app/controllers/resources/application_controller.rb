@@ -143,9 +143,6 @@ module Resources
 
     def fetch_big_vm_data
 
-      # disabled until bugfix is done
-      return {}
-
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
       project =  services.identity.find_project!(@scoped_project_id) 
@@ -240,10 +237,20 @@ module Resources
             next
           end
 
-          parent_provider_uuid   = resource_provider["parent_provider_uuid"]
-          resource_provider_uuid = resource_provider["uuid"]
-          resource_links         = resource_provider["links"]
+          parent_provider_uuid   = resource_provider["parent_provider_uuid"] || ""
+          resource_provider_uuid = resource_provider["uuid"] || ""
+          resource_links         = resource_provider["links"] || ""
           
+          #puts "===================="
+          #puts parent_provider_uuid
+          #puts resource_links
+          #puts "===================="
+
+          if parent_provider_uuid.empty? 
+            rp_aggregates = cloud_admin.resources.get_resource_provider_aggregates(resource_provider_uuid)
+            parent_provider_uuid = rp_aggregates[0] unless rp_aggregates.empty?
+          end
+
           #puts "RESOURCE PROVIDER"
           #pp resource_provider
           # https://github.com/sapcc/helm-charts/blob/master/openstack/sap-seeds/templates/flavor-seed.yaml
@@ -257,6 +264,7 @@ module Resources
             "4":  [6],
             "6":  [6],
           }
+
           resource_links.each do |resource_link|
             available = false
             if resource_link["rel"] == "inventories"
