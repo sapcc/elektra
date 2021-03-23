@@ -33,9 +33,19 @@ module ServiceLayer
     end
 
     def get_resource_provider_inventory(uuid)
+      # puts "get_resource_provider_inventory"
+      # puts "resource_providers/#{uuid}/inventories"
       data = elektron_placement.get("resource_providers/#{uuid}/inventories")
       inventories = data.body['inventories'] || {}
       return inventories
+    end
+
+    def get_resource_provider_aggregates(uuid)
+      # puts "get_resource_provider_aggregates"
+      # puts "resource_providers/#{uuid}/aggregates"
+      data = elektron_placement.get("resource_providers/#{uuid}/aggregates")
+      aggregates = data.body['aggregates'] || {}
+      return aggregates
     end
 
     def big_vm_available(uuid)
