@@ -11,7 +11,7 @@ const columns = [
     sortKey: props => props.repo.name || '' },
   { key: 'image_counts', label: 'Contains', sortStrategy: 'numeric',
     sortKey: props => (props.repo.tag_count || 0) + 0.00001 * (props.repo.manifest_count || 0) },
-  { key: 'size_bytes', label: 'Size (before deduplication)', sortStrategy: 'numeric',
+  { key: 'size_bytes', label: 'Total size', sortStrategy: 'numeric',
     sortKey: props => props.repo.size_bytes || 0 },
   { key: 'pushed_at', label: 'Last pushed', sortStrategy: 'numeric',
     sortKey: props => props.repo.pushed_at || 0 },
