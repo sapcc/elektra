@@ -79,7 +79,6 @@ module Lbaas2
 
         def update
           membersParams = parseMemberParams
-
           success = true
           errors = []
           saved_members = []
@@ -186,7 +185,7 @@ module Lbaas2
           membersParams = params[:member]
           newMemberParams = {}
           membersParams.each do |k, v|
-            newMemberParams = newMemberParams.deep_merge(Rack::Utils.parse_nested_query("#{k}=#{v}")['member'])
+            newMemberParams = newMemberParams.deep_merge(Rack::Utils.parse_nested_query("#{k}=#{Rack::Utils.escape(v)}")['member'])
           end
           newMemberParams
         end
