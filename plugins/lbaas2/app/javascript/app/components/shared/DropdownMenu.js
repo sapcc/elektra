@@ -19,7 +19,6 @@ const DropDownMenu = ({ buttonIcon, children }) => {
       if ($table) {
         // add padding and animation on open dropdown
         $component.on('show.bs.dropdown', function () {
-          console.log("testing")
           var tableOffsetHeight = $table.offset().top + $table.height(),
               menuOffsetHeight = $component.offset().top + $component.outerHeight(true) + $menu.outerHeight(true)
 
