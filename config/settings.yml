@@ -136,7 +136,7 @@ terms:
 
     #### Security Patching
 
-    It is the user responsibility to ensure installation of any OS / Security patches that are requested by SAP Guidelines 
+    It is the user's responsibility to ensure installation of all OS / Security patches that are requested by SAP Guidelines 
     and to comply with their guidance / requests and timelines.
 
     #### Change Management
@@ -156,7 +156,7 @@ terms:
 
     #### Backup
 
-    Converged Cloud offers the standard File system (FS) and DB Backup / Restore from the Global Backup Team.
+    Converged Cloud offers the standard File system (FS) and DB Backup / Restore service of the Global Backup Team.
     Users are responsible for requesting to enable backups on their systems. Backups are not enabled by default.
     The user is required to ensure that business critical data is properly protected against dataloss caused by infrastructure failure.
     The platform cannot guarantee the recovery of data lost due to any reason including but not limited to hardware defects, deliberate
