@@ -25,22 +25,22 @@ terms:
 
     #### Service Description
 
-    IT Infrastructure Services will give the ability to provide standalone virtual operating systems as well as,
-    software automation (Iaas +PaaS). This is the automated provisioning of virtual servers via a self-service using IT IS’s Converged Cloud Platform.
-    These instances can be based on fixed sizes or customized specifically to the needs of the customers.
-
-    #### Usage Guidelines
-
-    Converged Cloud is intended for the use of Employees of SAP SE along with all subsidiaries.
-    The end user is solely responsible for all content, development and use of content.
-    You may use Converged Cloud to store, retrieve, query, serve and execute your content.
-    Your content must follow SAP’s Acceptable Use Policy, the Converged Cloud teams reserves the right to remove any content that falls outside this policy.
-    The end user is responsible for maintaining all installed software licenses that are not centrally provided by the Converged Cloud Service.
+    SAP GCS enables the capability to provide standalone virtual operating systems as well as software automation 
+    (Iaas + PaaS). This is the automated provisioning of physical and virtual servers, virtual networks, routers 
+    and load-balancers via a self-service using GCS’s Converged Cloud platform.
 
     #### Definitions
 
     In this document the terms "provider" and "platform" are used to represent the Converged Cloud platform and provided services.
     The term "user" is used to represent the SAP employees and contractors (inclusing technical user accounts) using the SAP Converged Cloud platform.
+
+    #### Usage Guidelines
+
+    Converged Cloud is intended for the use of Employees of SAP SE along with all subsidiaries.
+    The user is solely responsible for all content, development and use of content.
+    You may use Converged Cloud to store, retrieve, query, serve and execute your content.
+    Your content must follow SAP’s Acceptable Use Policy, the Converged Cloud teams reserves the right to remove any content that falls outside this policy.
+    The end user is responsible for maintaining all installed software licenses that are not centrally provided by the Converged Cloud Service.
 
     ### Disclaimers
 
@@ -101,6 +101,13 @@ terms:
 
     Users must comply with current technical documentation applicable to the Services (including applicable developer guides) 
     as published on the platform documentation site.
+    
+    #### Capacity Management
+    
+    The user is required to manage the resources and capacity within his projects and raise requests for additional capacity
+    timely and accurately in order to avoid delays in processing expansion and scalability.
+    Users of the Bare-metal service are additionally required to manage spare capacity within their projects to compensate
+    hardware failure of the platform's Bare-metal servers.
 
     #### Network Configuration
 
@@ -152,6 +159,8 @@ terms:
     Converged Cloud offers the standard File system (FS) and DB Backup / Restore from the Global Backup Team.
     Users are responsible for requesting to enable backups on their systems. Backups are not enabled by default.
     The user is required to ensure that business critical data is properly protected against dataloss caused by infrastructure failure.
+    The platform cannot guarantee the recovery of data lost due to any reason including but not limited to hardware defects, deliberate
+    sabotage or human error.
 
     #### High Avaiability and Disaster Recovery
 
