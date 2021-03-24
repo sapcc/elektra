@@ -1,8 +1,0 @@
-%fieldset
-  = f.input :name, { label: 'Policy Type' , include_blank: false, as: :select, collection: @pre_polices, label_method: -> (pre) {t("loadbalancing.policies.#{pre}")}, value_method: -> (pre) {pre}}
-  = f.input :description
-
-=content_for :javascripts do
-  :javascript
-    $(document).ready(function() {
-    });

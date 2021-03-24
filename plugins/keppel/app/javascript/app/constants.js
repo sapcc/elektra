@@ -30,3 +30,16 @@ export const REQUEST_BLOB_FAILURE  = 'keppel/REQUEST_BLOB_FAILURE';
 export const REQUEST_VULNS          = 'keppel/REQUEST_VULNS';
 export const RECEIVE_VULNS          = 'keppel/RECEIVE_VULNS';
 export const REQUEST_VULNS_FAILURE  = 'keppel/REQUEST_VULNS_FAILURE';
+
+//sorting order for severities in image list and image details views
+export const SEVERITY_ORDER = {
+  "Pending": -2, //pseudo-severity: not scanned yet
+  "Clean": -1,   //pseudo-severity: no vulnerabilities found
+  "Unknown": 0,
+  "Negligible": 1,
+  "Low": 2,
+  "Medium": 3,
+  "High": 4,
+  "Critical": 5,
+  "Defcon1": 6,
+};

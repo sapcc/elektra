@@ -4,17 +4,17 @@
     %tbody
       %tr
         %th Name
-        %td= @keypair.name
+        %td= @keypair.nil? ? "" : @keypair.name
       %tr
         %th User ID
-        %td= @keypair.user_id
+        %td= @keypair.nil? ? "" : @keypair.user_id
       %tr
         %th Fingerprint
-        %td= @keypair.fingerprint
+        %td= @keypair.nil? ? "" : @keypair.fingerprint
       %tr
         %th Public Key
         %td.big-data-cell
-          = @keypair.public_key
+          = @keypair.nil? ? "" : @keypair.public_key
 
 - if modal?
   .modal-footer

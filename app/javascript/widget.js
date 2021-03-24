@@ -152,7 +152,7 @@ export const createWidget = (dirname, options={}) => {
   htmlOptions = Object.assign({}, defaultHtmlOptions, htmlOptions);
   for(let attr in htmlOptions) {
     for(let reactContainer of reactContainers) {
-      reactContainer.setAttribute(attr, htmlOptions[attr])
+      if(reactContainer) reactContainer.setAttribute(attr, htmlOptions[attr])
     }
   }
 

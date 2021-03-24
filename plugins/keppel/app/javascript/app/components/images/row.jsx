@@ -77,7 +77,7 @@ export default class ImageRow extends React.Component {
         <td className='col-md-1'>
           {byteToHuman(sizeBytes)}
         </td>
-        <td className='col-md-1'>
+        <td className={vulnerabilityStatus === 'Error' ? 'col-md-1 text-danger' : 'col-md-1'}>
           {vulnerabilityStatus}
         </td>
         {(this.props.canEdit || mediaTypeInfo.hasDetails) && (

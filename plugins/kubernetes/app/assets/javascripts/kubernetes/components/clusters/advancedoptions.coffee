@@ -103,7 +103,7 @@ AdvancedOptions = ({
                         option value: router.id, key: router.id, router.name
 
         # Network
-        if options.routerID? && selectedRouter.networks?
+        if options.routerID? && selectedRouter? && selectedRouter.networks?
           div className: "form-group required string" ,
             label className: "string required col-sm-4 control-label", htmlFor: "networkID",
               abbr title: "required", '*'
@@ -122,7 +122,7 @@ AdvancedOptions = ({
 
 
         # Subnet
-        if options.lbSubnetID? && selectedNetwork.subnets?
+        if options.lbSubnetID? && selectedNetwork? && selectedNetwork.subnets?
           div className: "form-group required string" ,
             label className: "string required col-sm-4 control-label", htmlFor: "subnetID",
               abbr title: "required", '*'

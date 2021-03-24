@@ -335,6 +335,33 @@ const useListener = () => {
     }
   }
 
+  const advancedSectionRelation = (protocol) => {
+    switch (protocol) {
+      case "HTTP":
+      case "HTTPS":
+      case "TERMINATED_HTTPS":
+      case "TCP":
+        return true
+      default:
+        return false
+    }
+  }
+
+  const tlsPoolRelation = (protocol) => {
+    switch (protocol) {
+      case "HTTP":
+        return false
+      case "HTTPS":
+        return false
+      case "TERMINATED_HTTPS":
+        return true
+      case "TCP":
+        return false
+      default:
+        return false
+    }
+  } 
+
   const protocolHeaderInsertionRelation = (protocol) => {
     switch (protocol) {
       case "HTTP":
@@ -678,20 +705,6 @@ const useListener = () => {
     }
   }
 
-  const marginOnInsertHeaderAttr = (protocol) => {
-    if (protocol == "HTTP" || protocol == "HTTPS") {
-      return true
-    }
-    return false
-  }
-
-  const marginOnPredPoliciesAttr = (protocol) => {
-    if (protocol == "TCP") {
-      return true
-    }
-    return false
-  }
-
   return {
     fetchListeners,
     fetchListener,
@@ -705,6 +718,7 @@ const useListener = () => {
     setSelected,
     reset,
     protocolTypes,
+    tlsPoolRelation,
     httpHeaderInsertions,
     protocolHeaderInsertionRelation,
     clientAuthenticationRelation,
@@ -718,8 +732,7 @@ const useListener = () => {
     fetchListnersNoDefaultPoolForSelect,
     predefinedPolicies,
     helpBlockItems,
-    marginOnInsertHeaderAttr,
-    marginOnPredPoliciesAttr,
+    advancedSectionRelation,
   }
 }
 

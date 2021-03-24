@@ -14,6 +14,7 @@
   "lbaas2:loadbalancer_create": "rule:lbaas2_context_is_editor",
   "lbaas2:loadbalancer_update": "rule:lbaas2_context_is_editor",
   "lbaas2:loadbalancer_delete": "rule:lbaas2_context_is_editor",
+  "lbaas2:loadbalancer_fips": "rule:lbaas2_context_is_editor",
   "lbaas2:loadbalancer_attach_fip": "rule:lbaas2_context_is_editor",
   "lbaas2:loadbalancer_detach_fip": "rule:lbaas2_context_is_editor",
   "lbaas2:loadbalancer_status_tree": "rule:lbaas2_context_is_viewer",

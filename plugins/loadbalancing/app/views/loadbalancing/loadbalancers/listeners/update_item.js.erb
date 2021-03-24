@@ -1,7 +1,0 @@
-<%if @listener%>
-$("#<%=params[:id]%>").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: @listener})) %>");
-$("#<%=params[:id]%>").update();
-<%else%>
-$("#<%=params[:id]%>").remove();
-<%end%>
-PollingService.update('<%=@loadbalancer.id%>/update_status')

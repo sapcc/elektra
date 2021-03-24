@@ -5,23 +5,15 @@ import { Link } from 'react-router-dom';
 import { Form } from 'lib/elektra-form';
 import { byteToHuman } from 'lib/tools/size_formatter';
 
+import { SEVERITY_ORDER } from '../../constants';
 import Digest from '../digest';
+import VulnerabilityFolder from './vulnerability_folder';
 
 const typeOfManifest = {
   'application/vnd.docker.distribution.manifest.v2+json':      'image',
   'application/vnd.docker.distribution.manifest.list.v2+json': 'list',
   'application/vnd.oci.image.manifest.v1+json':                'image',
   'application/vnd.oci.image.index.v1+json':                   'list',
-};
-
-const severityOrder = {
-  "Unknown": 0,
-  "Negligible": 1,
-  "Low": 2,
-  "Medium": 3,
-  "High": 4,
-  "Critical": 5,
-  "Defcon1": 6,
 };
 
 const formatStepCreatedBy = (input) => {
@@ -45,48 +37,42 @@ const formatStepCreatedBy = (input) => {
 };
 
 const getVulnerabilitiesForLayer = (digest, vulnReport) => {
-  const rows = [];
+  if (!vulnReport) {
+    return [];
+  }
+
+  const vulnsBySeverity = {};
   //for each package introduced in this layer...
   for (const packageID in vulnReport.environments) {
     if (vulnReport.environments[packageID].some(env => env.introduced_in == digest)) {
-      //...for each vulnerability affecting that package...
+      //collect each vulnerability affecting that package
       for (const vulnID of (vulnReport.package_vulnerabilities[packageID] || [])) {
         //...add a <tr> for that vulnerability
         const pkg = vulnReport.packages[packageID];
         const vuln = vulnReport.vulnerabilities[vulnID];
-        const maybeFixedIn = vuln.fixed_in_version ? ` (fixed in ${vuln.fixed_in_version})` : '';
+        const severity = vuln.normalized_severity;
 
-        rows.push([
-          severityOrder[vuln.normalized_severity] || 0,
-          pkg.name,
-          <tr key={`vuln-${digest}-${vulnID}`}>
-            <th>{vuln.normalized_severity} severity</th>
-            <td>
-              <div>
-                Vulnerability in <strong>{pkg.name} {pkg.version}</strong>{maybeFixedIn+": "}
-                {vuln.links ? <a href={vuln.links} target='_blank'>{vuln.name}</a> : vuln.name}
-              </div>
-              {vuln.description ? <div className='text-muted'>{vuln.description}</div> : null}
-            </td>
-          </tr>
-        ]);
+        vulnsBySeverity[severity] = vulnsBySeverity[severity] || [];
+        vulnsBySeverity[severity].push({ ...vuln, pkg });
       }
     }
   }
 
-  //`rows` contains triples of [numerical_severity, pkg_name, row]
-  //-> sort on severity in descending order, then on pkg_name, then return only the rows
-  rows.sort((a, b) => {
-    const sevDelta = b[0] - a[0];
-    if (sevDelta != 0) {
-      return sevDelta;
-    }
-    return a[1].localeCompare(b[1]);
-  });
-  return rows.map(pair => pair[2]);
+  const folders = [];
+  for (const severity in vulnsBySeverity) {
+    const vulns = vulnsBySeverity[severity];
+    folders.push([
+      SEVERITY_ORDER[severity] || 0,
+      <VulnerabilityFolder severity={severity} vulns={vulns} />
+    ]);
+  }
+
+  //`folders` contains pairs of [numerical_severity, folder] -> sort on severity in descending order
+  folders.sort((a, b) => b[0] - a[0]);
+  return folders.map(pair => pair[1]);
 };
 
-export default class AccountUpstreamConfigModal extends React.Component {
+export default class ImageDetailsModal extends React.Component {
   state = {
     show: true,
   };
@@ -112,7 +98,13 @@ export default class AccountUpstreamConfigModal extends React.Component {
       const { data: manifest } = this.props.manifest || {};
       if (manifest && manifest.config) {
         this.props.loadBlobOnce(manifest.config.digest);
-        this.props.loadVulnsOnce();
+        if ((this.props.manifests.data || []).length > 0) {
+          const { digest } = this.props.match.params;
+          const manifestInfo = this.props.manifests.data.find(m => m.digest == digest);
+          if (manifestInfo && manifestInfo.vulnerability_status !== 'Error') {
+            this.props.loadVulnsOnce();
+          }
+        }
       }
     }
   }
@@ -120,7 +112,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
   render() {
     //className='keppel' on <Modal> ensures that CSS rules from this plugin can apply
     return (
-      <Modal backdrop='static' className='keppel' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal backdrop='static' dialogClassName="modal-xl" className='keppel' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
             Image details
@@ -147,14 +139,18 @@ export default class AccountUpstreamConfigModal extends React.Component {
     }
 
     const { digest } = this.props.match.params;
-    const { media_type: mediaType, tags } = manifests.find(m => m.digest == digest) || {};
+    const {
+      media_type: mediaType, tags,
+      vulnerability_status: vulnStatus,
+      vulnerability_scan_error: vulnScanError,
+    } = manifests.find(m => m.digest == digest) || {};
 
     const { isFetching: isFetchingImageConfig, data: imageConfig } = this.props.imageConfig || {};
     if (typeOfManifest[mediaType] == 'image' && (isFetchingImageConfig || imageConfig === undefined)) {
       return <p><span className='spinner' /> Loading image config...</p>;
     }
     const { isFetching: isFetchingVulnReport, data: vulnReport } = this.props.vulnReport || {};
-    if (typeOfManifest[mediaType] == 'image' && (isFetchingVulnReport || vulnReport === undefined)) {
+    if (typeOfManifest[mediaType] == 'image' && vulnStatus !== 'Error' && (isFetchingVulnReport || vulnReport === undefined)) {
       return <p><span className='spinner' /> Loading vulnerability report...</p>;
     }
 
@@ -176,7 +172,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
             <td colSpan='2'>{mediaType}</td>
           </tr>
           {typeOfManifest[mediaType] == 'list' ? this.renderSubmanifestReferences(manifest.manifests, manifests) : null}
-          {typeOfManifest[mediaType] == 'image' ? this.renderLayers(manifest, imageConfig, vulnReport) : null}
+          {typeOfManifest[mediaType] == 'image' ? this.renderLayers(manifest, imageConfig, vulnReport, vulnStatus, vulnScanError) : null}
         </tbody>
       </table>
     );
@@ -228,7 +224,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
     return rows;
   }
 
-  renderLayers(manifest, imageConfig, vulnReport) {
+  renderLayers(manifest, imageConfig, vulnReport, vulnStatus, vulnScanError) {
     if (!imageConfig) {
       return (
         <tr className='text-danger'>
@@ -237,7 +233,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
         </tr>
       );
     }
-    if (!vulnReport) {
+    if (vulnStatus !== 'Error' && !vulnReport) {
       return (
         <tr className='text-danger'>
           <th>Error</th>
@@ -247,9 +243,18 @@ export default class AccountUpstreamConfigModal extends React.Component {
     }
 
     const rows = [];
+    if (vulnStatus === 'Error') {
+      rows.push(
+        <tr className='text-danger'>
+          <th>Vulnerability scan error</th>
+          <td>{vulnScanError}</td>
+        </tr>
+      );
+    }
+
     let stepIndex = 0;
     let layerIndex = 0;
-    for (const step of imageConfig.history) {
+    for (const step of (imageConfig.history || [])) {
       stepIndex++;
       const layer = step.empty_layer ? null : manifest.layers[layerIndex++];
       const vulnRows = layer ? getVulnerabilitiesForLayer(layer.digest, vulnReport) : null;
@@ -258,7 +263,7 @@ export default class AccountUpstreamConfigModal extends React.Component {
 
       rows.push(
         <tr key={`step-${stepIndex}`}>
-          <th rowSpan={layer ? 3 + vulnRows.length : 2}>Step #{stepIndex}</th>
+          <th rowSpan={layer ? 3 : 2}>Step #{stepIndex}</th>
           <td colSpan='2'><code>{formatStepCreatedBy(step.created_by)}</code></td>
         </tr>
       );
