@@ -100,7 +100,7 @@ class DashboardController < ::ScopeController
   rescue_from 'Elektron::Errors::ApiResponse' do |exception|
     options = {
       title: exception.code_type, description: :message,
-      warning: true, sentry: true
+      warning: true, sentry: false
     }
 
     case exception.code.to_i
@@ -119,27 +119,27 @@ class DashboardController < ::ScopeController
       options[:title] = 'Object not Found'
       options[:description] = "The object you are looking for doesn't exist. \
       Please verify your input. (#{exception.message})"
-      render_exception_page(exception, options.merge(sentry: true))
+      render_exception_page(exception, options.merge(sentry: false))
     when 403 # forbidden
       options[:title] = 'Permission Denied'
       options[:description] = exception.message ||
                               'You are not authorized to request this page.'
-      render_exception_page(exception, options.merge(sentry: true))
+      render_exception_page(exception, options.merge(sentry: false))
     when 422 # UNPROCESSABLE ENTITY
       options[:title] = 'Unprocessable Entity'
       options[:description] = exception.message ||
                               'Backend Error.'
-      render_exception_page(exception, options.merge(sentry: true))
+      render_exception_page(exception, options.merge(sentry: false))
     when 429 # too many requests
       options[:title] = 'Too Many Requests'
       options[:description] = exception.message ||
                               'You have made too many requests to identity. Please try again later.'
-      render_exception_page(exception, options.merge(sentry: true))
+      render_exception_page(exception, options.merge(sentry: false))
     when 501 # Not implemented
       options[:title] = 'Not Implemented'
       options[:description] = exception.message ||
                               'The requested functionality is not supported.'
-      render_exception_page(exception, options.merge(sentry: true))
+      render_exception_page(exception, options.merge(sentry: false))
     end
   end
 
