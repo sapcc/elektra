@@ -52,7 +52,7 @@
     #custom_root_disk_wrapper{class: 'hidden'}
       = f.input :custom_root_disk, 
         as: :boolean,
-        wrapper: :horizontal_boolean_4x8 
+        wrapper: :horizontal_radio_and_checkboxes_4x8
     
     #custom_root_disk_size_wrapper{class: params[:custom_root_disk] ? '' : 'hidden'}
       = f.input :custom_root_disk_size, 

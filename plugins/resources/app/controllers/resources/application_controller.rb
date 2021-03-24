@@ -159,7 +159,7 @@ module Resources
       hosts_shard = {}
       unless host_aggregates.nil?
         host_aggregates.each do |host_aggregate|
-          #pp host_aggregate
+          # pp host_aggregate
           unless host_aggregate.hosts.nil?
             host_aggregate.hosts.each do |hostname|
               if host_aggregate.name == host_aggregate.availability_zone
@@ -174,33 +174,37 @@ module Resources
         end
       end
 
-      #puts "HOSTS_SHARDS"
-      #pp hosts_shard
-      #{
-      #  "nova-compute-bb95"=>"vc-a-1",
-      #  "nova-compute-bb93"=>"vc-b-0",
-      #  "nova-compute-bb94"=>"vc-b-0",
-      #  "nova-compute-bb91"=>"vc-a-0",
-      #  "nova-compute-bb92"=>"vc-a-0"
-      #}
+      # puts "HOSTS_SHARDS"
+      # pp hosts_shard
+      # {
+      #   "nova-compute-bb95"=>"vc-a-1",
+      #   "nova-compute-bb93"=>"vc-b-0",
+      #   "nova-compute-bb94"=>"vc-b-0",
+      #   "nova-compute-bb91"=>"vc-a-0",
+      #   "nova-compute-bb92"=>"vc-a-0"
+      # }
 
-      #puts "HOSTS_AZ"
-      #pp hosts_az
-      #{
-      #  "nova-compute-bb91"=>"qa-de-1a",
-      #  "nova-compute-bb92"=>"qa-de-1a",
-      #  "nova-compute-ironic-bm092"=>"qa-de-1a",
-      #  "nova-compute-bb95"=>"qa-de-1a",
-      #  "nova-compute-bb93"=>"qa-de-1b",
-      #  "nova-compute-bb94"=>"qa-de-1b",
-      #  "nova-compute-ironic-bm091"=>"qa-de-1b"
-      #}
+      # puts "HOSTS_AZ"
+      # pp hosts_az
+      # {
+      #   "nova-compute-bb91"=>"qa-de-1a",
+      #   "nova-compute-bb92"=>"qa-de-1a",
+      #   "nova-compute-ironic-bm092"=>"qa-de-1a",
+      #   "nova-compute-bb95"=>"qa-de-1a",
+      #   "nova-compute-bb93"=>"qa-de-1b",
+      #   "nova-compute-bb94"=>"qa-de-1b",
+      #   "nova-compute-ironic-bm091"=>"qa-de-1b"
+      # }
 
       resource_providers.each do |resource_provider|
         # filter only for resource_providers with name "bigvm-deployment-"
+
         if resource_provider["name"].include? "bigvm-deployment-"
           # get hostname like nova-compute-bb91
           resource_provider_name = resource_provider["name"].gsub("bigvm-deployment-","")
+          # puts "======================="
+          # puts resource_provider["name"]
+          # puts resource_provider_name
           
           # create empty resource_provider config
           big_vm_resources[resource_provider_name] = {}
@@ -222,27 +226,50 @@ module Resources
             # in case project_shards.empty? any resource_provider_name is allowed
             if resource_provider_name == hostname && ( big_vm_resources[resource_provider_name]["shard"] || project_shards.empty? )
               availability_zone = hosts_az[hostname]
-              #puts "MAPPING"
-              #puts hostname
-              #puts resource_provider_name 
-              #puts availability_zone 
+              # puts "MAPPING"
+              # puts hostname
+              # puts resource_provider_name 
+              # puts availability_zone 
               big_vm_resources[resource_provider_name]["availability_zone"] = availability_zone
             end
           end
+
+          # puts "======================"
+          # puts "big_vm_resources"
+          # puts big_vm_resources
 
           # filter resource_provider config if no availability_zone was found
           # this should be the case if the availability_zone was filtered 
           unless big_vm_resources[resource_provider_name]["availability_zone"] 
             big_vm_resources.delete(resource_provider_name)
+            puts "Info: no matching availability zone was found for bigvm-resource-provider #{resource_provider_name} and the current project shards"
+            # puts "======================"
+            # puts "current_project_shards"
+            # puts project_shards
+            # puts "======================"
+            # puts "hosts_shard related to #{resource_provider_name}"
+            # puts hosts_shard[resource_provider_name]
+            # puts "======================"
             next
           end
 
-          parent_provider_uuid   = resource_provider["parent_provider_uuid"]
-          resource_provider_uuid = resource_provider["uuid"]
-          resource_links         = resource_provider["links"]
+          parent_provider_uuid   = resource_provider["parent_provider_uuid"] || ""
+          resource_provider_uuid = resource_provider["uuid"] || ""
+          resource_links         = resource_provider["links"] || ""
           
-          #puts "RESOURCE PROVIDER"
-          #pp resource_provider
+          # puts "===================="
+          # puts parent_provider_uuid
+          # puts resource_links
+          # puts "===================="
+
+          if parent_provider_uuid.empty? 
+            puts "Info: no parent_provider_uuid was found, try to get it from aggregates"
+            rp_aggregates = cloud_admin.resources.get_resource_provider_aggregates(resource_provider_uuid)
+            parent_provider_uuid = rp_aggregates[0] unless rp_aggregates.empty?
+          end
+
+          # puts "RESOURCE PROVIDER"
+          # pp resource_provider
           # https://github.com/sapcc/helm-charts/blob/master/openstack/sap-seeds/templates/flavor-seed.yaml
           # see host_fraction
           # available HVs 1.5Tib, 2TiB, 3TiB, 6TiB
@@ -254,6 +281,7 @@ module Resources
             "4":  [6],
             "6":  [6],
           }
+
           resource_links.each do |resource_link|
             available = false
             if resource_link["rel"] == "inventories"
@@ -300,20 +328,20 @@ module Resources
         end
       end
 
-      #puts "BIG_VM_RESOURCES"
-      #pp big_vm_resources
-      #big_vm_resources = {"nova-compute-bb124"=>
-      #  {"availability_zone"=>"qa-de-1a",
-      #   "memory"=>"2.0",
-      #   "available_big_sizes"=>"2x1TiB, 1x1.5TiB, 1x2TiB"},
-      # "nova-compute-bb137"=>
-      #  {"availability_zone"=>"qa-de-1b",
-      #   "memory"=>"2.0",
-      #   "available_big_sizes"=>"2x1TiB, 1x1.5TiB, 1x2TiB"},
-      # "nova-compute-bb45"=>
-      #  {"availability_zone"=>"qa-de-1b",
-      #   "memory"=>"1.5",
-      #   "available_big_sizes"=>"1x1TiB, 1x1.5TiB"}}
+      # puts "BIG_VM_RESOURCES"
+      # pp big_vm_resources
+      # big_vm_resources = {"nova-compute-bb124"=>
+      #   {"availability_zone"=>"qa-de-1a",
+      #    "memory"=>"2.0",
+      #    "available_big_sizes"=>"2x1TiB, 1x1.5TiB, 1x2TiB"},
+      #  "nova-compute-bb137"=>
+      #   {"availability_zone"=>"qa-de-1b",
+      #    "memory"=>"2.0",
+      #    "available_big_sizes"=>"2x1TiB, 1x1.5TiB, 1x2TiB"},
+      #  "nova-compute-bb45"=>
+      #   {"availability_zone"=>"qa-de-1b",
+      #    "memory"=>"1.5",
+      #    "available_big_sizes"=>"1x1TiB, 1x1.5TiB"}}
 
       # massage data for better use
       big_vms_by_az = {}
@@ -325,12 +353,12 @@ module Resources
         end
       end
 
-      #fake data for debug
-      #puts "BIG_VM_BY_AZ"
-      #pp big_vms_by_az
-      #big_vms_by_az["qa-de-1a"]["6"] = "BB-bla"
-      #big_vms_by_az["qa-de-1b"]["6"] = "BB-bla"
-      #big_vms_by_az["qa-de-1b"]["3"] = "BB-bla"
+      # fake data for debug
+      # puts "BIG_VM_BY_AZ"
+      # pp big_vms_by_az
+      # big_vms_by_az["qa-de-1a"]["6"] = "BB-bla"
+      # big_vms_by_az["qa-de-1b"]["6"] = "BB-bla"
+      # big_vms_by_az["qa-de-1b"]["3"] = "BB-bla"
 
       return big_vms_by_az
     end

@@ -23,6 +23,7 @@ const EditListener = (props) => {
   const {
     fetchListener,
     protocolTypes,
+    tlsPoolRelation,
     protocolHeaderInsertionRelation,
     clientAuthenticationRelation,
     fetchSecretsForSelect,
@@ -55,7 +56,7 @@ const EditListener = (props) => {
   const [SNIContainersNotFound, setSNIContainersNotFound] = useState(null)
   const [SNIContainersDeprecated, setSNIContainersDeprecated] = useState(false)
   const [clientAuthType, setClientAuthType] = useState(null)
-  const [defaultPoolID, setDefaultPoolID] = useState(null)
+  const [defaultPool, setDefaultPool] = useState(null)
   const [clientCATLScontainer, setClientCATLScontainer] = useState(null)
   const [
     clientCATLScontainerNotFound,
@@ -67,6 +68,8 @@ const EditListener = (props) => {
   ] = useState(false)
   const [predPolicies, setPredPolicies] = useState([])
   const [tags, setTags] = useState([])
+  const [nonSelectableTlsPools, setNonSelectableTlsPools] = useState([])
+  const [displayPools, setDisplayPools] = useState([])
 
   const [listener, setListener] = useState({
     isLoading: false,
@@ -95,9 +98,35 @@ const EditListener = (props) => {
 
   useEffect(() => {
     if (listenerID) {
-      loadListener()
+      loadListener()      
     }
   }, [listenerID])
+
+  useEffect(() => {
+    if (loadbalancerID) {
+      loadPools(loadbalancerID)      
+    }
+  }, [loadbalancerID])
+
+  useEffect(() => {
+    if(pools.items.length > 0) {
+      const newItems = [...pools.items]
+      for (let i = 0; i < newItems.length; i++) {
+        if (newItems[i].tls_enabled == true) {
+          const newLabel = `${newItems[i].label} - available with protocol TERMINATED_HTTPS`
+          newItems[i] = { ...newItems[i], ...{ isDisabled: true, label: newLabel } }
+        }      
+      }
+      setNonSelectableTlsPools(newItems)
+    }
+  }, [pools])
+
+  useEffect(() => {
+    if(pools.items.length > 0 && listener.item) {
+      setSelectedDefaultPool()
+      setupDisplayPools(listener.item.protocol)
+    }
+  }, [pools, listener, nonSelectableTlsPools])
 
   const loadListener = () => {
     Log.debug("fetching listener to edit")
@@ -105,19 +134,6 @@ const EditListener = (props) => {
     setListener({ ...listener, isLoading: true, error: null })
     fetchListener(loadbalancerID, listenerID)
       .then((data) => {
-        loadPools(loadbalancerID)
-          .then((availablePools) => {
-            setTimeout(
-              () =>
-                setSelectedDefaultPoolID(
-                  availablePools,
-                  data.listener.default_pool_id
-                ),
-              300
-            )
-          })
-          .catch((error) => {})
-
         // fill the secret depending fields with loaded secrets
         loadSecrets(loadbalancerID)
           .then((availableSecrets) => {
@@ -157,7 +173,7 @@ const EditListener = (props) => {
   }
 
   useEffect(() => {
-    if (listener.item) {
+    if (listener.item) {      
       setSelectedProtocolType()
       setSelectedInsertHeaders()
       setSelectedClientAuthenticationType()
@@ -170,6 +186,15 @@ const EditListener = (props) => {
       setSelectedClientCATLScontainer(listener.item.protocol, null, "")
     }
   }, [listener.item])
+
+  const setupDisplayPools = (protocol) => {
+    // TLS-enabled pool can only be attached to a TERMINATED_HTTPS type listener    
+    if (tlsPoolRelation(protocol)) {
+      setDisplayPools(pools.items)
+    } else {
+      setDisplayPools(nonSelectableTlsPools)
+    }
+  }
 
   const setSelectedProtocolType = () => {
     const selectedOption = protocolTypes().find(
@@ -202,11 +227,17 @@ const EditListener = (props) => {
     setClientAuthType(selectedOption)
   }
 
-  const setSelectedDefaultPoolID = (availablePools, selectedDefaultPoolID) => {
-    const selectedOption = availablePools.find(
+  const setSelectedDefaultPool = () => {
+    const selectedDefaultPoolID = listener.item.default_pool_id
+    const selectedOption = pools.items.find(
       (i) => i.value == (selectedDefaultPoolID || "").trim()
     )
-    setDefaultPoolID(selectedOption)
+    // if pool is not tls reset option
+    setShowTLSPoolWarning(false)
+    if(listener.item.protocol != "TERMINATED_HTTPS" && selectedOption && selectedOption.tls_enabled){
+      setShowTLSPoolWarning(true)
+    }
+    setDefaultPool(selectedOption)
   }
 
   const setSelectedCertificateContainer = (
@@ -414,6 +445,7 @@ const EditListener = (props) => {
     showAdvancedSection,
     setShowAdvancedSection,
   ] = useState(false)
+  const [showTLSPoolWarning, setShowTLSPoolWarning] = useState(false)
 
   const validate = ({
     name,
@@ -441,9 +473,10 @@ const EditListener = (props) => {
     const newTags = tags || []
 
     // add optional attributes that not set per context
-    newValues.tags = [...newPredPolicies, ...newTags].map(
-      (item, index) => item.value
-    )
+    newValues.tags = [...newPredPolicies, ...newTags].map(      
+      (item, index) => {
+        return item.value || item
+      })
 
     return updateListener(loadbalancerID, listenerID, newValues)
       .then((response) => {
@@ -463,7 +496,7 @@ const EditListener = (props) => {
   }
 
   const onSelectDefaultPoolChange = (props) => {
-    setDefaultPoolID(props)
+    setDefaultPool(props)
   }
   const onSelectInsertHeadersChange = (props) => {
     setInsertHeaders(props)
@@ -868,6 +901,17 @@ const EditListener = (props) => {
                   </div>
                 )}
 
+                {showTLSPoolWarning && (
+                  <div className="row">
+                    <div className="col-sm-8 col-sm-push-4">
+                      <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+                        <p>TLS-enabled pool can only be attached to a <b>TERMINATED_HTTPS</b> type listener!</p>                        
+                        <p>Please change default pool!</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <Form.ElementHorizontal
                   label="Default Pool"
                   name="default_pool_id"
@@ -875,9 +919,9 @@ const EditListener = (props) => {
                   <SelectInput
                     name="default_pool_id"
                     isLoading={pools.isLoading}
-                    items={pools.items}
+                    items={displayPools}
                     onChange={onSelectDefaultPoolChange}
-                    value={defaultPoolID}
+                    value={defaultPool}
                     isClearable
                   />
                   {pools.error && (

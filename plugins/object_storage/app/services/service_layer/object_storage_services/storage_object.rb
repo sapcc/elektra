@@ -109,7 +109,7 @@ module ServiceLayer
 
       def move_object(source_container_name, source_path, target_container_name, target_path, options = {})
         copy_object(source_container_name, source_path, target_container_name, target_path, options.merge(with_metadata: true))
-        delete_object(source_container_name, source_path)
+        elektron_object_storage.delete("#{source_container_name}/#{source_path}")
       end
 
       def bulk_delete(targets)
@@ -176,7 +176,7 @@ module ServiceLayer
         ) { contents.read }
       end
 
-      def delete_object(container_name, object, keep_segments)
+      def delete_object(container_name, object, keep_segments = true)
         if keep_segments
           elektron_object_storage.delete("#{container_name}/#{object.path}")
         else

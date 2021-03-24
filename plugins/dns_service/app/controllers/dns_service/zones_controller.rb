@@ -105,9 +105,48 @@ module DnsService
     end
 
     def create
-      @zone = services.dns_service.new_zone(params[:zone])
+
+      # check for existing zone
+      zone_name = params[:zone][:name]
+      @zone = services.dns_service.zones(name: zone_name)[:items].first
+      if @zone
+        @zone.errors.add('Error', 'Zone already existing')
+        render action: :new
+        return
+      else
+        @zone = services.dns_service.new_zone(params[:zone])
+      end
+
+      # check that subzones are not exsisting in other projects 
+      zone_transfer = check_parent_zone(zone_name,@scoped_project_id)
+      # check and increase zone quota for destination project 
+      check_and_increase_quota(@scoped_domain_id, @scoped_project_id, 'zones')
+      # make sure that recordset quota is increased at least by 2 as there are two recrodsets are created (NS + SOA)
+      check_and_increase_quota(@scoped_domain_id, @scoped_project_id, 'recordsets', 2)
 
       if @zone.save
+
+        if zone_transfer
+          # try to find existing zone transfer request
+          @zone_transfer_request = services.dns_service.zone_transfer_requests(
+            status: 'ACTIVE'
+          ).select do |zone_transfer_request|
+            zone_transfer_request.target_project_id == @scoped_project_id &&
+              zone_transfer_request.zone_id == @zone.id
+          end.first
+
+          # create a new zone transfer request if not exists
+          @zone_transfer_request ||= services.dns_service.new_zone_transfer_request(
+            @zone.id, target_project_id: @scoped_project_id, source_project_id: @zone.project_id
+          )
+          @zone_transfer_request.description = "create new zone via elektra"
+
+          unless @zone_transfer_request.save && @zone_transfer_request.accept(@scoped_project_id)
+            # catch errors for transfer zone request
+            @zone_transfer_request.errors.each { |k, m| @zone_request.errors.add(k,m) }
+          end
+        end
+
         flash.now[:notice] = "Zone successfully created."
         respond_to do |format|
           format.html{redirect_to zones_url}
