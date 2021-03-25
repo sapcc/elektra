@@ -1,10 +1,3 @@
 {
-  "member": "role:member or role:Member",
-  "admin": "role:admin",
-
-  "email_service:entry_list": "rule:admin or rule:member",
-  "email_service:entry_get": "rule:admin or rule:member",
-  "email_service:entry_create": "rule:admin or rule:member",
-  "email_service:entry_delete": "rule:admin or rule:member",
-  "email_service:entry_update": "rule:admin or rule:member"
+  "email_service:application_list": "@"
 }
