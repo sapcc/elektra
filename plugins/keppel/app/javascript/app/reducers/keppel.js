@@ -261,6 +261,18 @@ const deleteManifest = (state, {accountName, repoName, digest}) => (
   }))
 );
 
+const deleteTag = (state, {accountName, repoName, tagName}) => (
+  updateManifestsFor(state, accountName, repoName, oldState => ({
+    ...oldState,
+    data: (oldState.data || []).map(manifest => {
+      return {
+        ...manifest,
+        tags: (manifest.tags || []).filter(t => t.name != tagName),
+      };
+    }),
+  }))
+);
+
 ////////////////////////////////////////////////////////////////////////////////
 // blobs
 
@@ -364,30 +376,31 @@ export const keppel = (state, action) => {
   }
 
   switch(action.type) {
-    case constants.REQUEST_ACCOUNTS:         return reqAccts(state, action);
-    case constants.REQUEST_ACCOUNTS_FAILURE: return reqAcctsFail(state);
-    case constants.RECEIVE_ACCOUNTS:         return recvAccts(state, action);
-    case constants.UPDATE_ACCOUNT:           return updateAcct(state, action);
-    case constants.DELETE_ACCOUNT:           return deleteAcct(state, action);
+    case constants.REQUEST_ACCOUNTS:              return reqAccts(state, action);
+    case constants.REQUEST_ACCOUNTS_FAILURE:      return reqAcctsFail(state);
+    case constants.RECEIVE_ACCOUNTS:              return recvAccts(state, action);
+    case constants.UPDATE_ACCOUNT:                return updateAcct(state, action);
+    case constants.DELETE_ACCOUNT:                return deleteAcct(state, action);
     case constants.REQUEST_REPOSITORIES:          return reqRepos(state, action);
     case constants.REQUEST_REPOSITORIES_FAILURE:  return reqReposFail(state, action);
     case constants.RECEIVE_REPOSITORIES:          return recvRepos(state, action);
     case constants.REQUEST_REPOSITORIES_FINISHED: return recvReposDone(state, action);
     case constants.DELETE_REPOSITORY:             return deleteRepo(state, action);
-    case constants.REQUEST_MANIFESTS:          return reqManifests(state, action);
-    case constants.REQUEST_MANIFESTS_FAILURE:  return reqManifestsFail(state, action);
-    case constants.RECEIVE_MANIFESTS:          return recvManifests(state, action);
-    case constants.REQUEST_MANIFESTS_FINISHED: return recvManifestsDone(state, action);
-    case constants.REQUEST_MANIFEST:         return reqManifest(state, action);
-    case constants.REQUEST_MANIFEST_FAILURE: return reqManifestFail(state, action);
-    case constants.RECEIVE_MANIFEST:         return recvManifest(state, action);
-    case constants.DELETE_MANIFEST:            return deleteManifest(state, action);
-    case constants.REQUEST_BLOB:         return reqBlob(state, action);
-    case constants.REQUEST_BLOB_FAILURE: return reqBlobFail(state, action);
-    case constants.RECEIVE_BLOB:         return recvBlob(state, action);
-    case constants.REQUEST_VULNS:         return reqVulns(state, action);
-    case constants.REQUEST_VULNS_FAILURE: return reqVulnsFail(state, action);
-    case constants.RECEIVE_VULNS:         return recvVulns(state, action);
+    case constants.REQUEST_MANIFESTS:             return reqManifests(state, action);
+    case constants.REQUEST_MANIFESTS_FAILURE:     return reqManifestsFail(state, action);
+    case constants.RECEIVE_MANIFESTS:             return recvManifests(state, action);
+    case constants.REQUEST_MANIFESTS_FINISHED:    return recvManifestsDone(state, action);
+    case constants.REQUEST_MANIFEST:              return reqManifest(state, action);
+    case constants.REQUEST_MANIFEST_FAILURE:      return reqManifestFail(state, action);
+    case constants.RECEIVE_MANIFEST:              return recvManifest(state, action);
+    case constants.DELETE_MANIFEST:               return deleteManifest(state, action);
+    case constants.DELETE_TAG:                    return deleteTag(state, action);
+    case constants.REQUEST_BLOB:                  return reqBlob(state, action);
+    case constants.REQUEST_BLOB_FAILURE:          return reqBlobFail(state, action);
+    case constants.RECEIVE_BLOB:                  return recvBlob(state, action);
+    case constants.REQUEST_VULNS:                 return reqVulns(state, action);
+    case constants.REQUEST_VULNS_FAILURE:         return reqVulnsFail(state, action);
+    case constants.RECEIVE_VULNS:                 return recvVulns(state, action);
     default: return state;
   }
 };
