@@ -1,6 +1,6 @@
 import { connect } from  'react-redux';
 import ImageList from '../../components/images/list';
-import { deleteManifest, fetchManifestsIfNeeded } from '../../actions/keppel';
+import { deleteManifest, deleteTag, fetchManifestsIfNeeded } from '../../actions/keppel';
 
 const fixGreedyRepoNameMatch = (repoName) => {
   //In the <Route> to this component, we match on `/repo/:account/:repo+`. This
@@ -35,6 +35,7 @@ export default connect(
     return {
       loadManifestsOnce:     () => dispatch(fetchManifestsIfNeeded(accountName, repoName)),
       deleteManifest: (...args) => dispatch(deleteManifest(accountName, repoName, ...args)),
+      deleteTag:      (...args) => dispatch(deleteTag(accountName, repoName, ...args)),
     };
   },
 )(ImageList);

@@ -290,6 +290,23 @@ export const deleteManifest = (accountName, repoName, digest, tagName) => (dispa
   });
 };
 
+export const deleteTag = (accountName, repoName, tagName) => dispatch => {
+  return new Promise((resolve, reject) => {
+    ajaxHelper.delete(`/keppel/v1/accounts/${accountName}/repositories/${repoName}/_tags/${tagName}`)
+      .then(() => {
+        dispatch({
+          type: constants.DELETE_TAG,
+          accountName, repoName, tagName,
+        });
+        resolve();
+      })
+      .catch(error => {
+        showError(error);
+        reject();
+      })
+  });
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // get blobs
 

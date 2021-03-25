@@ -16,12 +16,31 @@ const mediaTypes = {
 
 export default class ImageRow extends React.Component {
   state = {
+    isUntagging: false,
     isDeleting: false,
   };
 
+  handleUntag(e) {
+    e.preventDefault();
+    if (this.state.isDeleting || this.state.isUntagging) {
+      return;
+    }
+
+    const { name: tagName } = this.props.data;
+    if (!tagName) {
+      //cannot untag an untagged image
+      return;
+    }
+
+    this.setState({ ...this.state, isUntagging: true });
+    this.props.deleteTag(tagName)
+      .then(() => addSuccess('Tag removed.'))
+      .finally(() => this.setState({ ...this.state, isUntagging: false }));
+  }
+
   handleDelete(e) {
     e.preventDefault();
-    if (this.state.isDeleting) {
+    if (this.state.isDeleting || this.state.isUntagging) {
       return;
     }
 
@@ -82,9 +101,13 @@ export default class ImageRow extends React.Component {
         </td>
         {(this.props.canEdit || mediaTypeInfo.hasDetails) && (
           <td className='snug text-right text-nobreak'>
-            {this.state.isDeleting ? (
+            {this.state.isUntagging ? (
               <React.Fragment>
-                <span className='spinner' /> Deleting...
+                <span className='spinner' /> Deleting tag...
+              </React.Fragment>
+            ) : this.state.isDeleting ? (
+              <React.Fragment>
+                <span className='spinner' /> Deleting image...
               </React.Fragment>
             ) : (
               <div className='btn-group'>
@@ -103,8 +126,11 @@ export default class ImageRow extends React.Component {
                 {(this.props.canEdit && mediaTypeInfo.hasDetails) ? (
                   <li className="divider"></li>
                 ) : null}
+                {(this.props.canEdit && tagName) ? (
+                  <li><a href="#" onClick={e => this.handleUntag(e)}>Untag</a></li>
+                ) : null}
                 {this.props.canEdit ? (
-                  <li><a href="#" onClick={e => this.handleDelete(e)}>Delete</a></li>
+                  <li><a href="#" onClick={e => this.handleDelete(e)}>Delete image</a></li>
                 ) : null}
                 </ul>
               </div>

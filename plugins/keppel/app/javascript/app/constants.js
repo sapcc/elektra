@@ -18,10 +18,12 @@ export const REQUEST_MANIFESTS          = 'keppel/REQUEST_MANIFESTS';
 export const RECEIVE_MANIFESTS          = 'keppel/RECEIVE_MANIFESTS';
 export const REQUEST_MANIFESTS_FINISHED = 'keppel/REQUEST_MANIFESTS_FINISHED';
 export const REQUEST_MANIFESTS_FAILURE  = 'keppel/REQUEST_MANIFESTS_FAILURE';
-export const REQUEST_MANIFEST          = 'keppel/REQUEST_MANIFEST';
-export const RECEIVE_MANIFEST          = 'keppel/RECEIVE_MANIFEST';
-export const REQUEST_MANIFEST_FAILURE  = 'keppel/REQUEST_MANIFEST_FAILURE';
+export const REQUEST_MANIFEST           = 'keppel/REQUEST_MANIFEST';
+export const RECEIVE_MANIFEST           = 'keppel/RECEIVE_MANIFEST';
+export const REQUEST_MANIFEST_FAILURE   = 'keppel/REQUEST_MANIFEST_FAILURE';
 export const DELETE_MANIFEST            = 'keppel/DELETE_MANIFEST';
+
+export const DELETE_TAG            = 'keppel/DELETE_TAG';
 
 export const REQUEST_BLOB          = 'keppel/REQUEST_BLOB';
 export const RECEIVE_BLOB          = 'keppel/RECEIVE_BLOB';
