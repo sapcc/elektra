@@ -9,6 +9,10 @@ module ServiceLayer
         @creds_map ||= class_map_proc(::EmailService::Email)
       end
 
+      def new_verified_email(attributes = {})
+        creds_map.call(attributes)
+      end
+
       def aws_creds(user_id, filter = {})
         # response = elektron_email_service.get("users/#{user_id}/credentials/OS-EC2")
         response = elektron_identity_service.get("users/#{user_id}/credentials/OS-EC2")

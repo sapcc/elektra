@@ -1,19 +1,68 @@
 module EmailService
   module AwsSesHelper
 
+    class PlainEmail
+      Email = Struct.new(:encoding, :source, :to_addr, :cc_addr, :bcc_addr, :subject, :htmlbody, :textbody)
+      attr_accessor :email
+      def initialize(opts)
+        @email = Email.new(opts[:encoding], opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:subject], opts[:htmlbody], opts[:textbody] )
+      end
+    end
+
+    def new_email(attributes = {})
+      email = PlainEmail.new(attributes)
+    end
+
+    def send_email(plain_email)
+      success = false
+      ses_client = create_ses_client
+      begin
+        ses_client.send_email(
+          destination: {
+            to_addresses: plain_email.email.to_addr,
+            cc_addresses: plain_email.email.cc_addr,
+            bcc_addresses: plain_email.email.bcc_addr
+          },
+          message: {
+            body: {
+              html: {
+                charset: plain_email.email.encoding,
+                data: plain_email.email.htmlbody
+              },
+              text: {
+                charset: plain_email.email.encoding,
+                data: plain_email.email.textbody
+              }
+            },
+            subject: {
+              charset: plain_email.email.encoding,
+              data: plain_email.email.subject
+            }
+          },
+          source: plain_email.email.source,
+        )
+        success = true
+      rescue Aws::SES::Errors::ServiceError => error
+        success = false
+        puts "Email not sent. Error message: #{error}"
+      end
+      # redirect_to({ :controller => 'emails', :action=>'index' }, :notice => "Email sent successfully to #{to_addr} ")
+    end
+
+
     def get_ec2_creds
       result = services.email_service.get_aws_creds(current_user.id)
-      aws_creds = result[:items]
-      # h = Hash.new
-      h = aws_creds[0]
+      # aws_creds = result[:items]
+      # h = aws_creds[0]
+      h = result[:items][0]
       access = h.access
-      secret= h.secret
+      secret = h.secret
       [access, secret]
     end
 
     def create_ses_client
-      region = map_region(current_user.default_services_region) #|| 'eu-central-1'
-      endpoint = current_user.service_url('email-aws')# || 'https://cronus.qa-de-1.cloud.sap'
+      region = map_region(current_user.default_services_region)
+      endpoint = current_user.service_url('email-aws')
       begin
         access, secret = get_ec2_creds
         credentials = Aws::Credentials.new(access, secret)
@@ -35,15 +84,17 @@ module EmailService
           ses_client.verify_email_identity({
           email_address: recipient
           })
-          redirect_to({ :controller => 'emails', :action=>'index' }, :notice => "Verification email sent successfully to #{recipient}")
-  
+          flash.now[:success] = "Verification email sent successfully to #{recipient}"
+          redirect_to plugin('email_service').verifications_path
+
         rescue Aws::SES::Errors::ServiceError => error
-          redirect_to({ :controller => 'emails', :action=>'index' }, :notice => "Email verification failed. Error message: #{error}")
+          flash.now[:warning] = "Email verification failed. Error message: #{error}"
+          redirect_to plugin('email_service').verifications_path  
         end
       end
       if recipient.include?("sap.com")
-        puts "You can't verify an SAP domain email address "
-        redirect_to({ :controller => 'emails', :action=>'index' }, :notice => "sap.com domain email is not allowed to verify as a sender(#{recipient})")
+        flash.now[:warning] = "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
+        redirect_to plugin('email_service').verifications_path  
       end
     end
 

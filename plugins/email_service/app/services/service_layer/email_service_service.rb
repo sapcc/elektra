@@ -5,6 +5,7 @@ module ServiceLayer
   class EmailServiceService < Core::ServiceLayer::Service
     include EmailServiceServices::Email
     include EmailServiceServices::Template
+    include EmailServiceServices::VerifiedEmail
 
     def available?(_action_name_sym = nil)
       elektron.service?('email-aws')

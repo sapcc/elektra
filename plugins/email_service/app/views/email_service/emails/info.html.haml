@@ -6,15 +6,15 @@
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"emails-pane"}
 
-  %h3
+  %h4
     Information
 
 %p
-  %h4
-    token:
-    =current_user.token
+  token:
+  =current_user.token
 %p
-  identity_url
+  Identity URL:
+  ="#{current_user.service_url('identity')}"
   =current_user.service_url('identity')
 %p
   user_id
@@ -46,3 +46,13 @@
 %p
   SES Client:
 =@ses_client
+
+%p
+=@abc
+
+%p
+=@cdf.email.source
+
+-#%p
+-#  Plugin Email Service
+-#  =plugin('email_service').inspect
