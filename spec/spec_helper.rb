@@ -130,5 +130,9 @@ RSpec.configure do |config|
     # stub user_projects which is called in each request
     allow_any_instance_of(::DashboardController)
       .to receive(:load_active_project).and_return([])
+    
+    # stub check_terms_of_use which is called in each request
+    allow_any_instance_of(::DashboardController)
+      .to receive(:check_terms_of_use).and_return(true)
   end
 end
