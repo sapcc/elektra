@@ -1,5 +1,9 @@
 class UserProfile < ApplicationRecord
-  has_many :domain_profiles
+  has_many :domain_profiles 
+  # NOTE: since we create a user profile for every user ID and a user has a different user ID in every domain, 
+  # there will only ever be one domain profile per user profile. And a natural user will have one user profile 
+  # per domain. Might be worth thinking about changing at some point so we have one user profile per natural user
+  # and the domain profiles contain the user id per domain or something like that...
 
   scope :search_by_name, ->(name) {
     where('full_name ILIKE ? or name ILIKE ?', "%#{name}%", "%#{name}%")
@@ -12,11 +16,12 @@ class UserProfile < ApplicationRecord
 
   def self.tou(user_id, domain_id, version)
     UserProfile.find_by(uid: user_id).domain_profiles.find_by(
-      domain_id: domain_id, tou_version: version
+      tou_version: version # check if any domain profile exists where the user has accepted the given tou version
     )
   rescue
     false
   end
+
 
   # this methods tries to find cached user ba name. It expects a block which
   # returns the user from API.
