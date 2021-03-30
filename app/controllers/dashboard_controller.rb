@@ -233,20 +233,25 @@ class DashboardController < ::ScopeController
 
   def check_terms_of_use
     return if tou_accepted?
-    render action: :accept_terms_of_use && return
+    render action: :accept_terms_of_use
   end
 
   def accept_terms_of_use
     if params[:terms_of_use]
-      # user has accepted terms of use -> onboard user
-      UserProfile.create_with(name: current_user.name,
-                              email: current_user.email,
-                              full_name: current_user.full_name)
-                 .find_or_create_by(uid: current_user.id)
-                 .domain_profiles.create(
-                   domain_id: current_user.user_domain_id,
-                   tou_version: Settings.actual_terms.version
-                 )
+      # user has accepted terms of use -> save the accepted version in the domain profile
+      # 30.03.2021: change domain_profiles.create to create! so that an exception is thrown in case something goes wrong (would have saved me a day of debugging if we had had that)
+      UserProfile
+        .create_with(
+          name: current_user.name,
+          email: current_user.email,
+          full_name: current_user.full_name)
+        .find_or_create_by(
+          uid: current_user.id)
+        .domain_profiles.create!(
+          tou_version: Settings.actual_terms.version,
+          domain_id: current_user.user_domain_id
+        )
+
       reset_last_request_cache
       # redirect to domain path
       if plugin_available?('identity')
@@ -366,6 +371,7 @@ class DashboardController < ::ScopeController
         Settings.actual_terms.version
       )
     end
+
     session[:tou_accepted]
   end
 

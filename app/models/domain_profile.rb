@@ -1,3 +1,3 @@
 class DomainProfile < ApplicationRecord
-  belongs_to :UserProfile
+  belongs_to :user_profile
 end
