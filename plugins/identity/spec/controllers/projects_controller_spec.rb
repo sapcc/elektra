@@ -75,12 +75,15 @@ describe Identity::ProjectsController, type: :controller do
       @profile.update_wizard_status('masterdata_cockpit', nil)
       @profile.update_wizard_status('resource_management', nil)
       @profile.update_wizard_status('networking', nil)
+      @profile.update_wizard_status('sharding', nil)
       allow(controller)
         .to receive(:update_resource_management_wizard_status).and_return(true)
       allow(controller)
         .to receive(:update_networking_wizard_status).and_return(true)
       allow(controller)
         .to receive(:update_masterdata_cockpit_wizard_status).and_return(true)
+      allow(controller)
+        .to receive(:update_sharding_wizard_status).and_return(true)
       allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
         .to receive(:available?).with(:masterdata_cockpit).and_return(true)
       allow_any_instance_of(::Core::ServiceLayer::ServicesManager)
@@ -174,7 +177,12 @@ describe Identity::ProjectsController, type: :controller do
         expect(assigns(:masterdata_cockpit_service_available)).not_to eq(true)
       end
 
-      it 'should set wizard_finished to true' do
+      it 'sharding is no service' do
+        subject
+        expect(assigns(:sharding_service_available)).not_to eq(false)
+      end
+
+      it 'sharding should always available because its not a service' do
         subject
         expect(assigns(:wizard_finished)).to eq(true)
       end
@@ -203,6 +211,11 @@ describe Identity::ProjectsController, type: :controller do
       it 'should not set masterdata_cockpit_service_available' do
         subject
         expect(assigns(:masterdata_cockpit_service_available)).to be(nil)
+      end
+
+      it 'sharding should always available because its not a service' do
+        subject
+        expect(assigns(:sharding_service_available)).to be(true)
       end
 
       it 'should set wizard_finished to true' do

@@ -3,7 +3,7 @@ import AvailabilityZoneResource from './resource';
 import { Scope } from '../../scope';
 import { byUIString, t } from '../../utils';
 
-const AvailabilityZoneCategory = ({ categoryName, category, availabilityZones, flavorData, scopeData }) => {
+const AvailabilityZoneCategory = ({ categoryName, category, availabilityZones, flavorData, scopeData, projectShards, shardingEnabled, projectScope }) => {
   const { serviceType, resources } = category;
   const scope = new Scope(scopeData);
 
@@ -16,7 +16,7 @@ const AvailabilityZoneCategory = ({ categoryName, category, availabilityZones, f
   //the resource names use 2 grid columns, so we have 10 grid columns for the
   //AZ bars - choose the column width accordingly
   const azColumnWidth = Math.floor(10 / visibleAvailabilityZones.length);
-  const forwardProps = { flavorData, availabilityZones: visibleAvailabilityZones, azColumnWidth, serviceType };
+  const forwardProps = { flavorData, availabilityZones: visibleAvailabilityZones, azColumnWidth, serviceType, projectShards, shardingEnabled, projectScope };
 
   return (
     <React.Fragment>

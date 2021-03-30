@@ -85,6 +85,39 @@
     status: 'pending'}) do
     %p The Resource Management service is currently unavailable.
 
+-# SHARDING
+- can_set_sharding = current_user.is_allowed?("identity:project_update", {target: {project: @active_project}})
+- required_roles = current_user.required_roles('identity:project_update')
+- required_roles = required_roles && required_roles.join(', ')
+
+- if @project_profile.wizard_skipped?('sharding')
+  = wizard_step({title: 'Resource pooling',
+    mandatory: true,
+    status: 'skipped'}) do
+    %p
+      This project skipped resource pooling.
+- elsif @project_profile.wizard_finished?('sharding')
+  = wizard_step({title: 'Resource pooling',
+    mandatory: true,
+    status: 'done'}) do
+    %p This project already enabled resource pooling.
+- else
+  - action_button = { label: 'Enable resource pooling',
+    url: can_set_sharding ? plugin('identity').project_enable_sharding_path(project_wizard: true) : nil,
+    tooltip: can_set_sharding ? nil : "You don't have permissions to enable resource pooling. Please check if you have one of the following roles: <b>#{required_roles}</b>"}
+
+  = wizard_step({title: 'Resource Pooling',
+    mandatory: true,
+    action_button: action_button,
+    skip_button:( { label: 'Skip Step', url: plugin('identity').project_sharding_skip_wizard_confirm_path(), data: {modal: true, wizard_action_button: true}} if can_set_sharding ),
+    status: nil}) do
+    %p 
+      To use all possible resources you can enable resource pooling.
+    %p
+      %small 
+        Please read the description carefully (you can find the information in the dialog to switch resource pooling on) 
+
+
 -# NETWORKING
 - if @networking_service_available
   - can_setup_network = current_user.is_allowed?("networking:network_wizard_get")
