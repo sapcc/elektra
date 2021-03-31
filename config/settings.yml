@@ -26,13 +26,13 @@ terms:
     #### Service Description
 
     SAP GCS enables the capability to provide standalone virtual operating systems as well as software automation 
-    (Iaas + PaaS). This is the automated provisioning of physical and virtual servers, virtual networks, routers 
+    (IaaS + PaaS). This is the automated provisioning of physical and virtual servers, virtual networks, routers 
     and load-balancers via a self-service using GCS’s Converged Cloud platform.
 
     #### Definitions
 
     In this document the terms "provider" and "platform" are used to represent the Converged Cloud platform and provided services.
-    The term "user" is used to represent the SAP employees and contractors (inclusing technical user accounts) using the SAP Converged Cloud platform.
+    The term "user" is used to represent the SAP employees and contractors (including technical user accounts) using the SAP Converged Cloud platform.
 
     #### Usage Guidelines
 
@@ -85,13 +85,13 @@ terms:
     #### Security Zones
 
     The platform provides the capability to expose systems to different Network Zones: Internal Prod Biz, Internal and External.
-    The user is required to create and maintain applicable Securiity Concepts according to the policies established within SAP.
+    The user is required to create and maintain applicable Security Concepts according to the policies established within SAP.
     The submission and approval of the security concept is the responsibility of the user.
     
     #### Software Upgrades
 
     From time to time, the platform team may apply upgrades, patches, bug fixes or other maintenance to the Service Offerings,
-    Operating Systems or Software. We agree to use reasonable efforts to avoid disruption during such maintenance. The plaform will
+    Operating Systems or Software. We agree to use reasonable efforts to avoid disruption during such maintenance. The platform will
     inform users of any scheduled Maintenance which may result in Service disruption, except for emergency maintenance and users agree
     to use reasonable efforts to comply with any maintenance announced timely and/or without undue delay.
 
@@ -166,7 +166,7 @@ terms:
 
     The platform provides means to increase the resilience of the users workload through documented measures for the implementation of 
     high availability (HA). The platform does not provide inherent high availability for the user application. 
-    Disaster Revovery (DR) can be implemented by the user and shall be established according to their respective need to recover from
+    Disaster Recovery (DR) can be implemented by the user and shall be established according to their respective need to recover from
     infrastructure outages.
 
     ### LIMITATION OF LIABILITY
