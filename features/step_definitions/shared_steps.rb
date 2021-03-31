@@ -13,8 +13,17 @@ Given(/^I am not logged in$/) do
 end
 
 Given /^Test user has accepted terms of use$/ do
-  if defined? DashboardController
-    allow_any_instance_of(DashboardController).to receive(:check_terms_of_use).and_return(true)
+  # the below code doesn't seem to work. defined? DashboardController is always false
+  # if defined? DashboardController
+  #   allow_any_instance_of(DashboardController).to receive(:check_terms_of_use).and_return(true)
+  #   allow_any_instance_of(DashboardController).to receive(:tou_accepted?).and_return(Settings.actual_terms.version)
+  # end
+  # check if the accept terms of use checkbox is present on the page. If yes, click it and accept the tou
+  # This feels like a not very stable workaround but I couldn't find a way to just mock that the user has accepted the tou :(
+  # it also really only works if this step is performed after an earlier step tried to access any page
+  if page.has_css?('#accept_tos')
+    check('terms_of_use')
+    click_on 'Accept'
   end
 end
 
