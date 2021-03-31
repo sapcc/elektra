@@ -59,15 +59,23 @@
     #modal-holder
 
   :javascript
-
-    $(document).ready(function(){
+    function loadPolicy(){
       try {
         window.policy = new PolicyEngine(#{policy.try(:to_js).try(:html_safe) || {}});
-
         // usage:
         //console.log(policy.isAllowed("identity:project_get"))
       } catch(e) { }
-    });
+    };
+    // Dirty hack to check for $ since sometimes $ is being used before jquery is loaded    
+    if($) {
+      $(document).ready(function(){
+        loadPolicy()
+      });
+    } else {
+      setTimeout(function(){
+        loadPolicy()
+      }, 1000)
+    }
 
   -# add react application pack (global react js) 
   = javascript_pack_tag 'application'
