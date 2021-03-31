@@ -16,10 +16,10 @@ Feature: Authentication
      And I see login form
 
   Scenario: User is not logged in but already accepted terms of use
-    Given Test user has accepted terms of use
     Given I am not logged in
     When I visit domain path "home"
      And I log in as test_user
+    Given Test user has accepted terms of use
     Then I am redirected to domain path "home"
      And I click on user navigation
      And I see a "Log out" button
