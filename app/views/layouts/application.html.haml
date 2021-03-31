@@ -60,17 +60,17 @@
 
   :javascript
     function loadPolicy(){
-      try {
-        window.policy = new PolicyEngine(#{policy.try(:to_js).try(:html_safe) || {}});
-        // usage:
-        //console.log(policy.isAllowed("identity:project_get"))
-      } catch(e) { }
+      $(document).ready(function(){
+        try {
+          window.policy = new PolicyEngine(#{policy.try(:to_js).try(:html_safe) || {}});
+          // usage:
+          //console.log(policy.isAllowed("identity:project_get"))
+        } catch(e) { }
+      });
     };
     // Dirty hack to check for $ since sometimes $ is being used before jquery is loaded    
     if($) {
-      $(document).ready(function(){
-        loadPolicy()
-      });
+      loadPolicy()
     } else {
       setTimeout(function(){
         loadPolicy()
