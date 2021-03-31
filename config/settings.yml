@@ -162,7 +162,7 @@ terms:
     The platform cannot guarantee the recovery of data lost due to any reason including but not limited to hardware defects, deliberate
     sabotage or human error.
 
-    #### High Avaiability and Disaster Recovery
+    #### High Availability and Disaster Recovery
 
     The platform provides means to increase the resilience of the users workload through documented measures for the implementation of 
     high availability (HA). The platform does not provide inherent high availability for the user application. 
