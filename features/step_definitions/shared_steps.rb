@@ -14,13 +14,13 @@ end
 
 Given /^Test user has accepted terms of use$/ do
   if defined? DashboardController
-    allow_any_instance_of(DashboardController).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(DashboardController).to receive(:check_terms_of_use).and_return(true)
   end
 end
 
 Given /^Test user has not accepted terms of use$/ do
   if defined? DashboardController
-    allow_any_instance_of(DashboardController).to receive(:tou_accepted?).and_return(false)
+    allow_any_instance_of(DashboardController).to receive(:check_terms_of_use).and_return(false)
   end
 end
 
