@@ -4,7 +4,7 @@ module ServiceLayer
   # This class implements the email_service api
   class EmailServiceService < Core::ServiceLayer::Service
     def available?(_action_name_sym = nil)
-      true
+      elektron.service?('cronus')
     end
 
     def test

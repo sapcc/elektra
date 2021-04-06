@@ -286,11 +286,12 @@ SimpleNavigation::Configuration.run do |navigation|
                  'Services',
                  nil,
                  html: { class: 'fancy-nav-header', 'data-icon': 'service-icon' },
-                 if: -> { true } do |services_nav|
+                 if: -> { services.available?(:email_service) } do |services_nav|
       services_nav.item :email_service,
                         'Email',
                         -> { plugin('email_service').index_path },
-                        highlights_on: -> { params[:controller][%r{tools/?.*}] }
+                        if: -> { services.available?(:email_service) },
+                        highlights_on: -> { params[:controller][%r{email_service/?.*}] }
     end
 
     primary.item :cc_tools,
@@ -301,10 +302,7 @@ SimpleNavigation::Configuration.run do |navigation|
       cc_tools_nav.item :universal_search,
                         'Universal Search',
                         -> { plugin('cc_tools').start_path },
-                        highlights_on: -> { params[:controller][%r{tools/?.*}] }
-      cc_tools_nav.item :email_service,
-                        'Email Service',
-                        -> { plugin('email_service').index_path },
+                        if: -> { current_user.is_allowed?('tools:application_get') },
                         highlights_on: -> { params[:controller][%r{tools/?.*}] }
     end
 
