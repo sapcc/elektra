@@ -62,13 +62,6 @@ ADD plugins/*/*.gemspec tmp/plugins/
 ADD script/organize_plugins_gemspecs script/
 RUN script/organize_plugins_gemspecs
 
-# Install the SAP Global Root CA
-#ADD docker/certs/*.crt /usr/local/share/ca-certificates/
-#RUN ls /usr/local/share/ca-certificates/
-#RUN update-ca-certificates 
-#\
-#      && curl -sS https://github.wdf.sap.corp >> curltest.txt
-
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 
