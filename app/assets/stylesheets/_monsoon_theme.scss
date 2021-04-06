@@ -506,6 +506,11 @@ section {
   @extend .fa-cloud;
 }
 
+.service-icon {
+  @extend .fa;
+  @extend .fa-cloud;
+}
+
 .cloud-admin-icon {
   @extend .fa;
   @extend .fa-fw;

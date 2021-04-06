@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-describe MasterdataCockpit::ApplicationController, type: :controller do
-  routes { MasterdataCockpit::Engine.routes }
+describe EmailService::ApplicationController, type: :controller do
+  routes { EmailService::Engine.routes }
 
   default_params = { domain_id: AuthenticationStub.domain_id,
                      project_id: AuthenticationStub.project_id }

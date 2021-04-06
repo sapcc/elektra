@@ -60,6 +60,12 @@ PATH
     dns_service (0.0.1)
 
 PATH
+  remote: plugins/email_service
+  specs:
+    email_service (0.0.1)
+      rails (~> 5.2.4, >= 5.2.4.3)
+
+PATH
   remote: plugins/identity
   specs:
     identity (0.0.1)
@@ -603,6 +609,7 @@ DEPENDENCIES
   dns_service!
   dotenv-rails
   elektron!
+  email_service!
   factory_girl_rails (~> 4.0)
   font-awesome-sass
   foreman (~> 0.87.0)
