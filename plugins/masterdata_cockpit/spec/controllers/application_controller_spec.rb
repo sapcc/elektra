@@ -13,6 +13,7 @@ describe MasterdataCockpit::ApplicationController, type: :controller do
                                          default_params[:domain_id], 'default')
     FriendlyIdEntry.find_or_create_entry('Project',
                                          default_params[:domain_id],
+                                         default_params[:project_id],
                                          default_params[:project_id])
   end
 

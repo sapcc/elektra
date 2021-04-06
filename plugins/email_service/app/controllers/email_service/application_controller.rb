@@ -1,5 +1,6 @@
+# frozen_string_literal: true
+
 module EmailService
-  
   class ApplicationController < DashboardController
     include AwsSesHelper
     include EmailHelper
