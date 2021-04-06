@@ -81,7 +81,8 @@ module Resources
     private
 
     def prepare_data_for_view
-      
+
+      @project =  services.identity.find_project!(@scoped_project_id) 
       @js_data = {
         token:            current_user.token,
         limes_api:        current_user.service_url('resources'), # see also init.js -> configureAjaxHelper
@@ -93,7 +94,6 @@ module Resources
         cluster_id:       params[:cluster_id] || 'current',
       } # this will end in widget.config.scriptParams on JS side
 
-      @project =  services.identity.find_project!(@scoped_project_id) 
       unless @project.nil?
         sharding_enabled = @project.sharding_enabled
         project_shards = @project.shards || []
@@ -162,9 +162,9 @@ module Resources
 
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
-      
       # domain level: we do not show bigVMresources
       if @project.nil?
+        puts "Info: fetch big VM data, but project is empty!"
         return {}
       end
       project_shards = @project.shards
