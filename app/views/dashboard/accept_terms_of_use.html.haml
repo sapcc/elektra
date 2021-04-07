@@ -31,6 +31,7 @@
         .checkbox
           %label
             = check_box_tag 'terms_of_use', 'accepted', false, id: "accept_tos"
+            = hidden_field_tag 'orginal_url', "#{@orginal_url}"
             I have read and agree to the terms of use
 
       .form-group
