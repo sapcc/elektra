@@ -1,27 +1,50 @@
+# require 'logger'
 module EmailService
   module AwsSesHelper
 
-    class PlainEmail
-      Email = Struct.new(:encoding, :source, :to_addr, :cc_addr, :bcc_addr, :subject, :htmlbody, :textbody)
-      attr_accessor :email
-      def initialize(opts)
-        @email = Email.new(opts[:encoding], opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:subject], opts[:htmlbody], opts[:textbody] )
+    # class PlainEmail
+    #   Email = Struct.new(:encoding, :source, :to_addr, :cc_addr, :bcc_addr, :subject, :htmlbody, :textbody)
+    #   attr_accessor :email
+    #   def initialize(opts)
+    #     @email = Email.new(opts[:encoding], opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:subject], opts[:htmlbody], opts[:textbody] )
+    #   end
+    # end
+
+    # def new_email(attributes = {})
+    #   email = PlainEmail.new(attributes)
+    # end
+
+
+
+    def addr_validate(raw_addr)
+      unless raw_addr.empty?
+        values = raw_addr.split(",")
+        addr = []
+        values.each do |value|
+          addr << value.strip
+          # @email_addr_count =  @email_addr_count + 1
+        end
+        return addr
       end
+      return []
     end
 
-    def new_email(attributes = {})
-      email = PlainEmail.new(attributes)
+    def email_to_array(plain_email)
+      plain_email.email.to_addr= addr_validate(plain_email.email.to_addr)
+      plain_email.email.cc_addr= addr_validate(plain_email.email.cc_addr)
+      plain_email.email.bcc_addr = addr_validate(plain_email.email.bcc_addr)
+      plain_email
     end
 
     def send_email(plain_email)
-      success = false
+      @success = false
       ses_client = create_ses_client
       begin
         ses_client.send_email(
           destination: {
-            to_addresses: plain_email.email.to_addr,
-            cc_addresses: plain_email.email.cc_addr,
-            bcc_addresses: plain_email.email.bcc_addr
+            to_addresses: plain_email.email.to_addr ,
+            cc_addresses: plain_email.email.cc_addr ,
+            bcc_addresses: plain_email.email.bcc_addr,
           },
           message: {
             body: {
@@ -41,22 +64,21 @@ module EmailService
           },
           source: plain_email.email.source,
         )
-        success = true
       rescue Aws::SES::Errors::ServiceError => error
-        success = false
-        puts "Email not sent. Error message: #{error}"
+        puts "Error Occured : #{error}"
+        @success = false
       end
+      @success = true
+      logger.warn "email sent success ? " + @success.to_s
       # redirect_to({ :controller => 'emails', :action=>'index' }, :notice => "Email sent successfully to #{to_addr} ")
     end
 
 
     def get_ec2_creds
-      result = services.email_service.get_aws_creds(current_user.id)
-      # aws_creds = result[:items]
-      # h = aws_creds[0]
-      h = result[:items][0]
-      access = h.access
-      secret = h.secret
+      resp = services.email_service.get_aws_creds(current_user.id)
+      keyhash = resp[:items][0]
+      access = keyhash.access
+      secret = keyhash.secret
       [access, secret]
     end
 
@@ -78,59 +100,90 @@ module EmailService
 
     def verify_email(recipient)
       ses_client = create_ses_client
-      # recipient = params[:email][:address].to_s
       if recipient != nil && ! recipient.include?("sap.com")
         begin
           ses_client.verify_email_identity({
           email_address: recipient
           })
-          flash.now[:success] = "Verification email sent successfully to #{recipient}"
+          logger.debug "Verification email sent successfully to #{recipient}"
           redirect_to plugin('email_service').verifications_path
+          flash.now[:success] = "Verification email sent successfully to #{recipient}"
 
         rescue Aws::SES::Errors::ServiceError => error
-          flash.now[:warning] = "Email verification failed. Error message: #{error}"
+          logger.debug "Email verification failed. Error message: #{error}"
           redirect_to plugin('email_service').verifications_path  
+          flash.now[:warning] = "Email verification failed. Error message: #{error}"
         end
       end
       if recipient.include?("sap.com")
         flash.now[:warning] = "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
+        logger.debug "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
         redirect_to plugin('email_service').verifications_path  
       end
     end
 
     def list_verified_emails
       attrs = Hash.new
+      @all_verified_identities = []
       verified_emails = []
       pending_emails = []
-      emails_list_hash = []
       begin
         ses_client = create_ses_client
         # Get up to 1000 identities
         ids = ses_client.list_identities({
           identity_type: "EmailAddress"
         })
+        # logger.debug "ID iden size #{ids.identities.size}"
+        # logger.debug "ID iden class #{ids.identities.class}" #Array
+        id = 0
         ids.identities.each do |email|
           attrs = ses_client.get_identity_verification_attributes({
             identities: [email]
           })
           status = attrs.verification_attributes[email].verification_status
-          # email_list = {:email => email, :status => status}
-          # emails_list_hash.push(email_list)
-          # puts "The verification status of #{email} is #{status}"
+          # Add id to each entry of verified identities 
+          id += 1
+          identity_hash = {:id => id,:email => email, :status => status}
+          @all_verified_identities.push(identity_hash)
 
-          if status == "Success"
-            verified_email_hash = {:email => email, :status => status}
-            verified_emails.push(verified_email_hash)
-          elsif status == "Pending"
-            pending_email_hash = {:email => email, :status => status}
-            pending_emails.push(pending_email_hash)
+          # logger.debug "all_identities_hash#{identity_hash}"
+          # logger.debug "all_verified_identities #{all_verified_identities}"
+
+          #keep it on its own function
+          if ! email.include?('@activation.email.global.cloud.sap')
+            if status == "Success"
+              # verified_email_hash = {:email => email, :status => status}
+              verified_email_hash = {:id => id,:email => email, :status => status}
+              logger.debug "verified_email_hash : #{verified_email_hash}"
+              verified_emails.push(verified_email_hash)
+            elsif status == "Pending"
+              # pending_email_hash = {:email => email, :status => status}
+              pending_email_hash = {:id => id,:email => email, :status => status}
+              logger.debug "pending_email_hash : #{pending_email_hash}"
+              pending_emails.push(pending_email_hash)
+            end
           end
-          [verified_emails, pending_emails]
-          # return emails_list_hash
+
         end
       rescue Aws::SES::Errors::ServiceError => error
-        puts "error while listing verified emails. Error message: #{error}"
+        logger.debug "error while listing verified emails. Error message: #{error}"
       end
+      [verified_emails, pending_emails]
+    end
+
+    def remove_verified_identity(identity)
+      ses = create_ses_client
+      status = ""
+        begin
+          ses.delete_identity({
+            identity: identity
+          })
+          status = "success"
+          # redirect_to({ :controller => 'emails', :action=>'index' }, :notice => "#{identity} is removed from list of verfied identities")
+        rescue Aws::SES::Errors::ServiceError => error
+          status = "#{error}"
+          # redirect_to({ :controller => 'emails', :action=>'index' }, :notice => "Removal of verified email failed. Error message: #{error}")
+        end
     end
 
     def map_region(region)

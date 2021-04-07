@@ -1,0 +1,6 @@
+en:
+  email_service:
+    form:
+      new:
+        icon_hint:
+          multipleaddress: '50 email addresses are allowed.'

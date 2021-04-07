@@ -2,23 +2,66 @@
   New Email
 =content_for :main_toolbar do
   Email Service
-= render partial: 'email_service/shared/nav.html', locals: {pane: 'emails'}
+
 %h3
   New Email
+
 = simple_form_for :email, url: plugin('email_service').emails_path(), method: :post, remote: request.xhr?,  html: {id: 'form_email', data: {modal: true}}, wrapper: :vertical_form do |f|
   .row
     .col-sm-6
-      = f.input :encoding, required: true, label: 'Encoding', input_html: { autofocus: 'autofocus' }, placeholder: 'Choose encoding'
-      = f.input :source, required: true, label: 'Sender', placeholder: 'Enter name'
-      = f.input :to_addr, required: true, label: 'To Address(es)', placeholder: 'Enter To Addresses'
-      = f.input :cc_addr, required: true, label: 'Cc Address(es)', placeholder: 'Enter Bcc Addresses'
-      = f.input :subject, required: true, label: 'Subject', placeholder: 'Enter Subject'
-      = f.text_area :htmlbody, required: true, label: 'HTML Body', placeholder: 'Enter HTML Email Body '
-      = f.text_area :textbody, required: true, label: 'Text Body', placeholder: 'Enter Text Email Body'
-      
+      = f.input :encoding, 
+        required: true, 
+        label: 'Encoding', 
+        input_html: { autofocus: 'autofocus', value: "UTF-8"}, 
+        hint: "Choose encoding",
+        placeholder: 'Choose encoding'
+      = f.input :source, { label: "Sender", 
+        collection: @e_collection, as: :select,
+        placeholder: "Enter your source email address",
+        hint: "Enter email address you wish to send this email from ",
+        required: true}
+      = f.input :to_addr, required: true, 
+        label: 'To Address(es)', 
+        placeholder: 'Enter To Addresses', 
+        input_html: {value: "sirajudheenam@gmail.com"},
+        hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+      = f.input :cc_addr, 
+        required: false, 
+        label: 'Cc Address(es)', 
+        placeholder: 'Enter Cc Addresses',
+        input_html: { value: "sirajudheenam@gmail.com, buzzmesam@gmail.com" },
+        hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+      = f.input :bcc_addr, 
+        required: false, 
+        label: 'Bcc Address(es)', 
+        placeholder: 'Enter Bcc Addresses',
+        input_html: { value: "buzzmesam@gmail.com, buzzmesam@gmail.com" },
+        hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+      = f.input :subject, 
+        input_html: { value: "Cronus email Service - from Elektra UI Plugin - 01 April 2021"},
+        required: true, 
+        label: 'Subject', 
+        placeholder: 'Enter Subject',
+        hint: 'Enter subject line'
+      = f.input :htmlbody,
+        label:              "HTML Body",
+        placeholder:        "Enter HTML Email Body",
+        input_html:         {rows: "15", class: "u-text-monospace", 
+        value: "<h1>Email Sent by Cronus </h1><p><h2>AWS SES Proxy Service</h2>"},
+        as:                 :text,
+        required:           true,
+        hint: 'Enter HTML Text of your email'
+      = f.input :textbody,        
+        label:              "Text Body",
+        placeholder: "Enter Text Email Body",
+        input_html:         {rows: "15", class: "u-text-monospace", value: "Email Sent by Cronus - AWS SES Proxy Service"},
+        as:                 :text,
+        required:           true,
+        hint: 'Enter Plain Text of your email'
+
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
       = link_to "Cancel", plugin('email_service').emails_path(), class: 'btn btn-default'
-    = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+    = button_tag "Send", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

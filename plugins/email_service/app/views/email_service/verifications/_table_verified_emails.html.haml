@@ -2,13 +2,13 @@
 %table.table
   %thead
     %tr
-      %th Email Address
-      %th Status
+      %th eMail address
+      %th Verification status
       %th.snug
   %tbody
     - if @verified_emails.empty?
       %tr
-        %td{colspan: 3} No verified email address available
+        %td{colspan: 3} No verified eMail address available
     - elsif @verified_emails.class == String
       = render partial: 'table_verified_email_item', locals: {verified_email: @verified_emails}
     - elsif @verified_emails.class == Array
