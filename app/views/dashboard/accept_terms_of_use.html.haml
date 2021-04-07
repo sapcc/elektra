@@ -9,6 +9,7 @@
 
 
 = form_tag main_app.accept_terms_of_use_path, method: :post do
+  = hidden_field_tag 'orginal_url', "#{@orginal_url}"
   .row
     .col-sm-8
       .form-group

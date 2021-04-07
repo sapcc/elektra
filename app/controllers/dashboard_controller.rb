@@ -232,6 +232,7 @@ class DashboardController < ::ScopeController
   end
 
   def check_terms_of_use
+    @orginal_url = request.original_url
     return if tou_accepted?
     render action: :accept_terms_of_use
   end
@@ -253,8 +254,10 @@ class DashboardController < ::ScopeController
         )
 
       reset_last_request_cache
-      # redirect to domain path
-      if plugin_available?('identity')
+      # redirect to original path, this is the case after the TOU view
+      if params[:orginal_url]
+        redirect_to params[:orginal_url]
+      elsif plugin_available?('identity')
         redirect_to main_app.domain_home_path(domain_id: @scoped_domain_fid)
       else
         redirect_to main_app.root_path
