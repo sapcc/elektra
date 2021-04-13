@@ -3,7 +3,7 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-import { generateConfig, parseConfig } from '../components/autoscaling/config_item';
+import { generateConfig, parseConfig } from '../components/autoscaling/helper';
 
 describe('generate_config', () => {
   it('generates configs that .parse_config accepts', () => {
