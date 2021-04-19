@@ -1,0 +1,42 @@
+=content_for :title do
+  Enable Resource Pooling for project #{@scoped_project_name}
+
+.modal-body
+
+  - if @project.errors.present?
+    .alert.alert-error
+      = render_errors(@project.errors)
+
+  %h4 What is Resource Pooling?
+  %p{:style => "padding-bottom:15px"}
+    CCloud spreads clusters within an availability zone (AZ) 
+    across multiple resource pools. New projects get created in only one resource pool initially. That means, 
+    %strong 
+      %em
+        only projects that have all resource pools enabled have access to all resources in all resource pools of an AZ. 
+    In other words, having all resource pools enabled allows a new server to be scheduled on any and all resource pools in the AZ.
+    .bs-callout.bs-callout-info.bs-callout-emphasize
+      We highly recommended that you enable all resource pools for your project, except for special cases described below.
+
+  %h4 What are the consequences?
+  %p{:style => "padding-bottom:15px"}
+    More resources are available to create servers in your project. This benefits projects in busy and highly-utilized regions especially.
+
+  %h4 Special cases
+  %p{:style => "padding-bottom:10px"}
+    If you plan to run a Kubernetes cluster in your project, then enabling all resource pools is not recommended. Kubernetes nodes depend on very fast volume attachment and cross-resource-pool projects have slightly increased cinder volume attachment times.
+    %br
+    %br
+    If for some other reason you need very fast cinder-volume attachments as well, then enabling all resource pools might not be advisable.
+  
+  .bs-callout.bs-callout-warning.bs-callout-emphasize
+    Please be aware that enabling all resource pools is a permanent change that cannot be undone!
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+      = link_to 'Enable', plugin('identity').project_enable_sharding_path(enable: "true", project_wizard: @project_wizard), class: 'btn btn-danger', method: :get, data: { confirm: 'Are you sure you want to enable Resource Pooling?', ok: "Yes, do it!", confirmed: :loading_status}, remote: @project_wizard
+    - else
+      = link_to "Cancel", plugin('compute').instances_url, class: 'btn btn-default'
+

@@ -1,9 +1,9 @@
 @javascript
 Feature: DNS
   Background:
-    Given Test user has accepted terms of use
     Given I visit domain path "home"
     And I log in as test_user
+    Given Test user has accepted terms of use
     Then I am redirected to domain path "home"
 
   Scenario: The DNS page is reachable

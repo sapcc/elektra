@@ -81,6 +81,8 @@ module Resources
     private
 
     def prepare_data_for_view
+
+      @project =  services.identity.find_project!(@scoped_project_id) 
       @js_data = {
         token:            current_user.token,
         limes_api:        current_user.service_url('resources'), # see also init.js -> configureAjaxHelper
@@ -91,6 +93,21 @@ module Resources
         docs_url:         sap_url_for('documentation'),
         cluster_id:       params[:cluster_id] || 'current',
       } # this will end in widget.config.scriptParams on JS side
+
+      unless @project.nil?
+        sharding_enabled = @project.sharding_enabled
+        project_shards = @project.shards || []
+        @js_data[:sharding_enabled] = sharding_enabled
+        @js_data[:project_shards] = project_shards
+        @js_data[:project_scope] = true
+        @js_data[:path_to_enable_sharding] = plugin('identity').project_enable_sharding_path()
+      else 
+        # domain and ccadmin scope
+        @js_data[:sharding_enabled] = false
+        @js_data[:project_shards] = []
+        @js_data[:project_scope] = false
+        @js_data[:path_to_enable_sharding] = ""
+      end
 
       # when this is true, the frontend will never try to generate quota requests
       @js_data[:is_foreign_scope] = (params[:override_project_id] || params[:override_domain_id] || (@js_data[:cluster_id] != 'current')) ? true : false
@@ -145,13 +162,12 @@ module Resources
 
       big_vm_resources = {}
       resource_providers = cloud_admin.resources.list_resource_providers
-      project =  services.identity.find_project!(@scoped_project_id) 
-      
       # domain level: we do not show bigVMresources
-      if project.nil?
+      if @project.nil?
+        puts "Info: fetch big VM data, but project is empty!"
         return {}
       end
-      project_shards = project.shards
+      project_shards = @project.shards
  
       # build mapping between AV(availability_zone) or VZ(shard) and host_aggregates.name
       host_aggregates = cloud_admin.compute.host_aggregates

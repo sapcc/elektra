@@ -3,7 +3,7 @@ FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.4-alpine3.1
 # alpine3.10
 # nodejs (10.16.3-r0)
 # yarn (1.16.0-r0)
-RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
+RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime-info
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
@@ -62,11 +62,6 @@ ADD plugins/*/*.gemspec tmp/plugins/
 ADD script/organize_plugins_gemspecs script/
 RUN script/organize_plugins_gemspecs
 
-# Install the SAP Global Root CA
-ADD docker/certs/*.crt /usr/local/share/ca-certificates/
-RUN update-ca-certificates \
-      && curl -sS https://github.wdf.sap.corp >> curltest.txt
-
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 
@@ -92,6 +87,7 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
       && rake db:create db:migrate \
       && bundle exec rspec \
       && su postgres -c 'script/pg_tmp.sh -d /tmp/pg stop'
+      # && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
 
 FROM elektra
 LABEL source_repository="https://github.com/sapcc/elektra"

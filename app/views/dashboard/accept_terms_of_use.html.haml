@@ -4,11 +4,12 @@
       %h1
         Welcome
         = current_user.full_name
-      %p Please accept the terms of use for this domain before you continue. Once you have accepted the terms your user will be registered to the domain.
+      %p Please accept the terms of use for this domain before you continue. You only need to do this once as a new user or when the terms change.
       %p Thank you and enjoy your stay!
 
 
 = form_tag main_app.accept_terms_of_use_path, method: :post do
+  = hidden_field_tag 'orginal_url', "#{@orginal_url}"
   .row
     .col-sm-8
       .form-group
@@ -34,4 +35,4 @@
             I have read and agree to the terms of use
 
       .form-group
-        = submit_tag "Register", class: "btn btn-primary btn-lg", id: "register-button", disabled: true
+        = submit_tag "Accept", class: "btn btn-primary btn-lg", id: "register-button", disabled: true
