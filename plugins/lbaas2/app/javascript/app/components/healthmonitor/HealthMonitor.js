@@ -24,19 +24,32 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
   const poolID = useGlobalState().pools.selected
   const poolError = useGlobalState().pools.error
   const pools = useGlobalState().pools.items
-  const { findPool, persistPool } = usePool()
+  const { findPool, fetchPool, persistPool } = usePool()
   const { searchParamsToString, matchParams, errorMessage } = useCommons()
   const state = useGlobalState().healthmonitors
 
+  const [triggerInitialLoad, setTriggerInitialLoad] = useState(false)
+
   useEffect(() => {
     initialLoad()
-  }, [poolID, pools])
+  }, [poolID, triggerInitialLoad])
 
   const initialLoad = () => {
     // if pool selected
-    if (poolID) {
+    if (poolID) {     
       // find the pool to get the health monitor id
-      const pool = findPool(pools, poolID)
+      let pool = findPool(pools, poolID)      
+      // in case everything is being load from the url it can happen that the pool is not in the first pool load and has to be loaded extra
+      // fetching the pool extra the initial load is being retriggered
+      fetchPool(loadbalancerID, poolID)
+      .then((data) => {
+        // Retrigger the initialLoad so we can check if there is a healthmonitor to load
+        setTriggerInitialLoad(true)
+      })
+      .catch((error) => {
+        // if error happend loading the pool it will be shown in the pool section
+      })
+
       if (pool && pool.healthmonitor_id) {
         Log.debug("FETCH HEALTH MONITOR")
         persistHealthmonitor(
@@ -48,7 +61,7 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
           .then((data) => {})
           .catch((error) => {})
       } else {
-        // reset state
+        // reset healthmonitor state. Remove any saved healthmonitor in the state
         resetState()
       }
     }
