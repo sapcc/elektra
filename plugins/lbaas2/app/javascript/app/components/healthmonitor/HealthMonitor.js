@@ -30,7 +30,7 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
 
   useEffect(() => {
     initialLoad()
-  }, [poolID])
+  }, [poolID, pools])
 
   const initialLoad = () => {
     // if pool selected
