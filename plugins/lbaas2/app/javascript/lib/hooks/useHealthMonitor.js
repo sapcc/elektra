@@ -6,9 +6,9 @@ import { confirm } from 'lib/dialogs';
 const useHealthMonitor = () => {
   const dispatch = useDispatch()
 
-  const fetchHealthmonitor = (lbID, poolID, healthmonitorID) => {   
+  const fetchHealthmonitor = (lbID, poolID, healthmonitorID, options) => {   
     return new Promise((handleSuccess,handleError) => {    
-      ajaxHelper.get(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`).then((response) => {      
+      ajaxHelper.get(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`, { params: options }).then((response) => {      
         handleSuccess(response.data)
       }).catch( (error) => {     
         handleError(error.response)
@@ -16,11 +16,11 @@ const useHealthMonitor = () => {
     }) 
   }
 
-  const persistHealthmonitor = (lbID, poolID, healthmonitorID) => {
+  const persistHealthmonitor = (lbID, poolID, healthmonitorID, options) => {
     dispatch({type: 'RESET_HEALTHMONITOR'})
     dispatch({type: 'REQUEST_HEALTHMONITOR'})
     return new Promise((handleSuccess,handleError) => {
-      fetchHealthmonitor(lbID, poolID, healthmonitorID).then((data) => {
+      fetchHealthmonitor(lbID, poolID, healthmonitorID, options).then((data) => {
         dispatch({type: 'RECEIVE_HEALTHMONITOR', healthmonitor: data.healthmonitor})
         handleSuccess(data)
       }).catch( error => {

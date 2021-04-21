@@ -44,7 +44,7 @@ const PoolList = ({ props, loadbalancerID }) => {
     }
   }, [initialLoadDone])
 
-  // if listener is selected check if exists on the state
+  // if pool is selected check if exists on the state
   useEffect(() => {
     if (state.selected) {
       findSelectedPool()
@@ -83,14 +83,15 @@ const PoolList = ({ props, loadbalancerID }) => {
     const index = state.items.findIndex((item) => item.id == selected)
 
     if (index >= 0) {
+      // pool already exist on the state
       return
     } else if (hasNext) {
-      // set state to loading
+      // set state to loading to fetch the requested pool
       dispatch({ type: "REQUEST_POOLS" })
       // No listener found in the current list. Fetch just the selected
       persistPool(loadbalancerID, selected)
         .then(() => {
-          // trigger again find selected listener
+          // trigger again find selected listener to produce a reload
           setTriggerFindSelected(true)
         })
         .catch((error) => {

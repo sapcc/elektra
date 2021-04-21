@@ -73,6 +73,16 @@ const useLoadbalancer = () => {
     })
   }
 
+  const findLoadbalancer = (loadbalancers, lbID) => {
+    if (loadbalancers) {
+      const index = loadbalancers.findIndex((item) => item.id==lbID);
+      if (index>=0) { 
+        return loadbalancers[index]
+      } 
+    }
+    return null
+  }
+
   const createLoadbalancer = (values) => {
     return new Promise((handleSuccess, handleErrors) => {
       ajaxHelper
@@ -230,6 +240,7 @@ const useLoadbalancer = () => {
     fetchLoadbalancer,
     persistLoadbalancers,
     persistLoadbalancer,
+    findLoadbalancer,
     deleteLoadbalancer,
     createLoadbalancer,
     updateLoadbalancer,
