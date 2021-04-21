@@ -72,6 +72,7 @@ module DnsService
           )
           @zone_transfer_request.description = "approve zone-request workflow"
 
+          #approve zone transfer to destination project
           if @zone_transfer_request.save && @zone_transfer_request.accept(@inquiry.project_id)
             if @inquiry
               services.inquiry.set_inquiry_state(
@@ -85,6 +86,7 @@ module DnsService
             @zone_transfer_request.errors.each { |k, m| @zone_request.errors.add(k,m) }
           end
         else
+          # everything went fine set workflow to approved
           if @inquiry
             services.inquiry.set_inquiry_state(
               @inquiry.id, :approved,
