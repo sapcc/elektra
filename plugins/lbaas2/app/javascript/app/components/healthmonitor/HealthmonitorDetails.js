@@ -5,6 +5,7 @@ import StaticTags from "../StaticTags"
 import useHealthMonitor from "../../../lib/hooks/useHealthMonitor"
 import CopyPastePopover from "../shared/CopyPastePopover"
 import Log from "../shared/logger"
+import HelpPopover from "../shared/HelpPopover"
 
 const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
   const {
@@ -190,6 +191,32 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
           </div>
         </div>
       )}
+
+      <div className="list-entry">
+        <div className="row">
+          <div className="col-md-12 display-flex">
+            <b>Healthmonitor IPs:</b>
+            <HelpPopover text="These IP addresses should be reachable for the health check monitors." />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-12">
+            <ul className="less-left-margin">
+              {healthmonitor.allowed_address_pairs && healthmonitor.allowed_address_pairs.length > 0 &&
+                healthmonitor.allowed_address_pairs.map((pair_item, index) => (
+                  <li key={index}>
+                    <CopyPastePopover
+                      text={pair_item.ip_address}
+                      shouldPopover={false}
+                    />
+                    <small className="info-text">MAC address: {pair_item.mac_address}</small>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

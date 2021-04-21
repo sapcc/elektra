@@ -176,13 +176,17 @@ ul.secrets-not-found {
 }
 
 /*
-* List
+* Lists
 */
 
 .list {
   .list-entry {
     margin-bottom: 10px;
   }
+}
+
+ul.less-left-margin {
+  padding-left: 20px;
 }
 
 /*
