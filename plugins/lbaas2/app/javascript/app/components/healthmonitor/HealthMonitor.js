@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react"
 import HelpPopover from "../shared/HelpPopover"
 import { useGlobalState } from "../StateProvider"
 import useCommons from "../../../lib/hooks/useCommons"
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
 import useHealthMonitor from "../../../lib/hooks/useHealthMonitor"
 import { DefeatableLink } from "lib/components/defeatable_link"
 import usePool from "../../../lib/hooks/usePool"
@@ -27,6 +28,8 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
   const { findPool, fetchPool, persistPool } = usePool()
   const { searchParamsToString, matchParams, errorMessage } = useCommons()
   const state = useGlobalState().healthmonitors
+  const { findLoadbalancer } = useLoadbalancer()
+  const loadbalancers = useGlobalState().loadbalancers.items
 
   const [triggerInitialLoad, setTriggerInitialLoad] = useState(false)
 
@@ -38,7 +41,7 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
     // if pool selected
     if (poolID) {     
       // find the pool to get the health monitor id
-      let pool = findPool(pools, poolID)      
+      const pool = findPool(pools, poolID)      
       // in case everything is being load from the url it can happen that the pool is not in the first pool load and has to be loaded extra
       // fetching the pool extra the initial load is being retriggered
       fetchPool(loadbalancerID, poolID)
@@ -51,12 +54,19 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
       })
 
       if (pool && pool.healthmonitor_id) {
+        // if lb loaded get the vip_port_id
+        let options = null
+        const lb = findLoadbalancer(loadbalancers, loadbalancerID)        
+        if (lb) {
+          options = { vip_port_id: lb.vip_port_id }
+        }
+
         Log.debug("FETCH HEALTH MONITOR")
         persistHealthmonitor(
           loadbalancerID,
           poolID,
           pool.healthmonitor_id,
-          null
+          options
         )
           .then((data) => {})
           .catch((error) => {})

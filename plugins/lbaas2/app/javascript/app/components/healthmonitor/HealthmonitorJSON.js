@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react"
+import { useGlobalState } from "../StateProvider"
 import useHealthmonitor from "../../../lib/hooks/useHealthMonitor"
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
 import useCommons from "../../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 import JsonView from "../shared/JsonView"
 
 const HealthmonitorJSON = (props) => {
+  const loadbalancers = useGlobalState().loadbalancers.items
+  const { findLoadbalancer } = useLoadbalancer()
   const {
     fetchHealthmonitor
   } = useHealthmonitor()
@@ -17,7 +21,7 @@ const HealthmonitorJSON = (props) => {
     isLoading: false,
     error: null,
     item: null,
-  })
+  })  
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [poolID, setPoolID] = useState(null)
   const [healthmonitorID, setHealthmonitorID] = useState(null)
@@ -42,7 +46,15 @@ const HealthmonitorJSON = (props) => {
 
   const loadObject = () => {
     setJsonObject({ ...jsonObject, isLoading: true,  error: null })
-    fetchHealthmonitor(loadbalancerID, poolID, healthmonitorID)
+    // fetch the loadbalancer vip_port_id
+    let options = null
+    const lb = findLoadbalancer(loadbalancers, loadbalancerID)        
+    if (lb) {
+      options = { vip_port_id: lb.vip_port_id }
+    }
+
+    // fetch the healthmonitor
+    fetchHealthmonitor(loadbalancerID, poolID, healthmonitorID, options)
       .then((data) => {
         setJsonObject({
           ...jsonObject,
