@@ -205,7 +205,10 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
               {healthmonitor.allowed_address_pairs && healthmonitor.allowed_address_pairs.length > 0 &&
                 healthmonitor.allowed_address_pairs.map((pair_item, index) => (
                   <li key={index}>
-                    {pair_item.ip_address} <br/>
+                    <CopyPastePopover
+                      text={pair_item.ip_address}
+                      shouldPopover={false}
+                    />
                     <small className="info-text">MAC address: {pair_item.mac_address}</small>
                   </li>
                 ))
