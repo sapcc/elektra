@@ -7,6 +7,7 @@ module Lbaas2
         
         def show
           healthmonitor = services.lbaas2.find_healthmonitor(params[:id])
+          extend_healthmonitor_data(healthmonitor)
           render json: {
             healthmonitor: healthmonitor
           }
@@ -66,6 +67,18 @@ module Lbaas2
         end
 
         private
+
+        def extend_healthmonitor_data(healthmonitor)         
+          vip_port_id = params[:vip_port_id]
+          if vip_port_id.blank?
+            # fetch first the loadbalancer
+            loadbalancer = services.lbaas2.find_loadbalancer(params[:loadbalancer_id])
+            vip_port_id = loadbalancer.vip_port_id
+          end
+          # call to newtron to get the ips
+          port = services.networking.find_port(vip_port_id)
+          healthmonitor.allowed_address_pairs = port.allowed_address_pairs
+        end
 
         def healthmonitor_params
           hp = params[:healthmonitor].to_unsafe_hash.symbolize_keys if params[:healthmonitor]
