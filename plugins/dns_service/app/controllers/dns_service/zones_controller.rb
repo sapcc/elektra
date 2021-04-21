@@ -102,6 +102,23 @@ module DnsService
 
     def new
       @zone = services.dns_service.new_zone
+
+      scraped_at = cloud_admin.resource_management.find_project(
+        @scoped_domain_id,
+        @scoped_project_id,
+        service: 'dns',
+        resource: 'zones'
+      ).services.first.scraped_at rescue 0
+
+      # sync if last sync was more than 1 minute ago that we have the latest data to check quota during create step
+      if (Time.now.to_i - scraped_at.to_i) > 60
+        Thread.new {
+          cloud_admin.resource_management.sync_project_asynchronously(
+            @scoped_domain_id, @scoped_project_id
+          )
+        }
+      end
+      
     end
 
     def create

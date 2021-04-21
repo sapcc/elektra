@@ -3,6 +3,8 @@
 module DnsService
   # Implements Zone Requests
   class RequestZoneWizardController < ::DashboardController
+    include CreateZonesHelper
+    
     def new
       
       @zone_request = ::DnsService::ZoneRequest.new(nil)
@@ -64,22 +66,6 @@ module DnsService
     end
 
     protected
-
-    def get_zone_resource
-      cloud_admin.resource_management.find_project(
-        @scoped_domain_id, @scoped_project_id,
-        service: 'dns',
-        resource: 'zones',
-      ).resources.first or raise ActiveRecord::RecordNotFound
-    end
-
-    def get_recordset_resource
-      @recordset_resource = cloud_admin.resource_management.find_project(
-        @scoped_domain_id, @scoped_project_id,
-        service: 'dns',
-        resource: 'recordsets',
-      ).resources.first or raise ActiveRecord::RecordNotFound
-    end
 
     def list_ccadmin_master_dns_admins
       cloud_dns_admin_role = cloud_admin.identity
