@@ -26,6 +26,7 @@ describe Lbaas2::Loadbalancers::Pools::HealthmonitorsController, type: :controll
     before :each do
       healthmonitor = double('elektron', service: double("octavia", get: double("get", map_to: double("healthmnonitor", to_json:{})) ))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(healthmonitor)
+      allow_any_instance_of(Lbaas2::Loadbalancers::Pools::HealthmonitorsController).to receive(:extend_healthmonitor_data).and_return(double('healthmonitor').as_null_object)
     end
 
     it_behaves_like 'show action' do
