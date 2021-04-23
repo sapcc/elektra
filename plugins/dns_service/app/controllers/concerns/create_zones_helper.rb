@@ -61,11 +61,11 @@ module CreateZonesHelper
     # note dns_resource.usable_quota is quota + burst
     if dns_resource.quota == 0 || dns_resource.quota <= dns_resource.usage
       if dns_resource.quota < dns_resource.usage
-        puts "INFO: in domain #{domain_id} and project #{project_id} usable quota smaller than usage! Set quota for resource #{resource} to #{dns_resource.usage + increase}"
+        puts "INFO: for project #{project_id} in domain #{domain_id} the usable quota is smaller than usage! Set quota for resource #{resource} to #{dns_resource.usage + increase}"
         # special case if usable quota is smaller than usage than adjust new quota to usage plus increase value
         dns_resource.quota = dns_resource.usage + increase
       else
-        puts "INFO: increase quota in domain #{domain_id} and project #{project_id} for resource #{resource} by #{increase}"
+        puts "INFO: increase quota for project #{project_id} in domain #{domain_id} for resource #{resource} by #{increase}"
         # standard increase quota plus increase value
         dns_resource.quota += increase
       end
@@ -96,7 +96,7 @@ module CreateZonesHelper
 
     scraped_at_new = scraped_at_old
     while scraped_at_new.to_i == scraped_at_old.to_i
-      puts "INFO: update limes data for project #{project_id} and domain #{domain_id}, wait 3s to check that update is done"
+      puts "INFO: update limes data for project #{project_id} in domain #{domain_id}, wait 3s to check that update is done"
       sleep 3
       scraped_at_new = cloud_admin.resource_management.find_project(
         domain_id,
