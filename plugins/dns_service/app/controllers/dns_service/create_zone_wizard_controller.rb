@@ -48,6 +48,7 @@ module DnsService
         @zone.write('attributes', pool_attrs)
       end
 
+      update_limes_data(@inquiry.domain_id, @inquiry.project_id)
       # check that subzones are not exsisting in other projects 
       zone_transfer = check_parent_zone(@zone_request.zone_name,@inquiry.project_id)
       # check and increase zone quota for destination project 

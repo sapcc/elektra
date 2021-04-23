@@ -34,6 +34,8 @@ module CreateZonesHelper
 
           # 0. find project to get domain_id
           requested_parent_zone_project = services.identity.find_project(requested_parent_zone.project_id)
+
+          update_limes_data(requested_parent_zone_project.domain_id,requested_parent_zone.project_id)
           # 1. check zone quota for requested_parent_zone project where the zone is first created that their is in any case enough zone quota free
           check_and_increase_quota(requested_parent_zone_project.domain_id, requested_parent_zone.project_id, 'zones')
           # 2. zone will be created inside the project where the parent zone lives
@@ -58,11 +60,11 @@ module CreateZonesHelper
 
     if dns_resource.usable_quota == 0 || dns_resource.usable_quota <= dns_resource.usage
       if dns_resource.usable_quota < dns_resource.usage
-        puts "INFO: in project #{project_id} usable quota smaller than usage! Set quota for resource #{resource} to #{dns_resource.usage + increase}"
+        puts "INFO: in domain #{domain_id} and project #{project_id} usable quota smaller than usage! Set quota for resource #{resource} to #{dns_resource.usage + increase}"
         # special case if usable quota is smaller than usage than adjust new quota to usage plus increase value
         dns_resource.quota = dns_resource.usage + increase
       else
-        puts "INFO: increase quota in project #{project_id} for resource #{resource} by #{increase}"
+        puts "INFO: increase quota in domain #{domain_id} and project #{project_id} for resource #{resource} by #{increase}"
         # standard increase quota plus increase value
         dns_resource.quota += increase
       end
@@ -72,10 +74,38 @@ module CreateZonesHelper
          render action: :new
          return
       else 
-        puts "INFO: wait 10s to be sure that limes could set the quota correctly"
-        sleep 10
+        puts "INFO: wait 3s to be sure that limes could set the quota correctly"
+        sleep 3
       end
     end
+  end
+
+  def update_limes_data(domain_id,project_id)
+    # update limes data synchronously
+    scraped_at_old = cloud_admin.resource_management.find_project(
+      domain_id,
+      project_id,
+      service: 'dns',
+      resource: 'zones'
+    ).services.first.scraped_at rescue 0
+
+    cloud_admin.resource_management.sync_project_asynchronously(
+      domain_id, project_id
+    )
+
+    scraped_at_new = scraped_at_old
+    while scraped_at_new.to_i == scraped_at_old.to_i
+      puts "INFO: update limes data for project #{project_id} and domain #{domain_id}, wait 3s to check that update is done"
+      sleep 3
+      scraped_at_new = cloud_admin.resource_management.find_project(
+        domain_id,
+        project_id,
+        service: 'dns',
+        resource: 'zones'
+      ).services.first.scraped_at rescue 0
+      puts "INFO: check limes update. scraped_at_old: #{scraped_at_old.to_i}; scraped_at_new: #{scraped_at_new.to_i}"
+    end
+
   end
 
   def get_zone_resource
