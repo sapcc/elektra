@@ -1,12 +1,11 @@
-= content_for :title do
-  New Email
-=content_for :main_toolbar do
-  Email Service
-
-%h3
-  New Email
-
 = simple_form_for :email, url: plugin('email_service').emails_path(), method: :post, remote: request.xhr?,  html: {id: 'form_email', data: {modal: true}}, wrapper: :vertical_form do |f|
+  - if @e_collection.empty? 
+    %p.alert.alert-warning
+      There are verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
+      You can get verified your eMail address
+      = link_to 'here', plugin('email_service').new_verification_path()
+  
+  %div{class: modal? ? 'modal-body' : ''}
   .row
     .col-sm-6
       = f.input :encoding, 
@@ -20,25 +19,32 @@
         placeholder: "Enter your source email address",
         hint: "Enter email address you wish to send this email from ",
         required: true}
+
       = f.input :to_addr, required: true, 
         label: 'To Address(es)', 
         placeholder: 'Enter To Addresses', 
         input_html: {value: "sirajudheenam@gmail.com"},
         hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+      %span.toEmailHelpBlock
+      %span.toErrBlock
       = f.input :cc_addr, 
         required: false, 
         label: 'Cc Address(es)', 
         placeholder: 'Enter Cc Addresses',
-        input_html: { value: "sirajudheenam@gmail.com, buzzmesam@gmail.com" },
+        input_html: { value: "sirajudheenam@gmail.com" },
         hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+      %span.ccEmailHelpBlock 
+      %span.ccErrBlock
       = f.input :bcc_addr, 
         required: false, 
         label: 'Bcc Address(es)', 
         placeholder: 'Enter Bcc Addresses',
-        input_html: { value: "buzzmesam@gmail.com, buzzmesam@gmail.com" },
+        input_html: { value: "buzzmesam@gmail.com" },
         hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+      %span.bccEmailHelpBlock
+      %span.bccErrBlock
       = f.input :subject, 
-        input_html: { value: "Cronus email Service - from Elektra UI Plugin - 01 April 2021"},
+        input_html: { value: "Cronus email Service - from Elektra UI Plugin - #{@current_time}" },
         required: true, 
         label: 'Subject', 
         placeholder: 'Enter Subject',

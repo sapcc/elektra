@@ -1,15 +1,28 @@
 =content_for :main_toolbar do
   Email Service
+  .placeholder-div
 
 = simple_form_for :verified_email, url: plugin('email_service').verifications_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' } do |f|
-
-  %div{class: modal? ? 'modal-body' : ''}
-    = f.input :sender, icon_hint: "Multiple email addresses can be separated by comma (,)"
-
-  %div.buttons{class: modal? ? 'modal-footer' : ''}
-  - if modal?
-    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
-  - else
-    = link_to "Cancel", plugin('email-service').verifications_url(), class: 'btn btn-default'
-  = button_tag "Verify", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
-
+  .modal-body
+    %div{class: modal? ? 'modal-body' : ''}
+      = f.input :sender,
+        required: true,
+        icon_hint: "Multiple email addresses can be separated by comma"
+      %div{class: 'invalid-feedback' }
+    %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", plugin('email_service').verifications_path(), class: 'btn btn-default'
+    = button_tag "Verify", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+:javascript
+  $( document ).ready(function() {
+    $('#verified_email_sender').blur(function() {
+        inputText = $(this).val();
+        abc(inputText);
+        $('.invalid-feedback').text( "value intered is : " +  inputText );  
+    });
+  });
+  function abc(inputText) {
+    alert("this is sample alert" + inputText );
+  }

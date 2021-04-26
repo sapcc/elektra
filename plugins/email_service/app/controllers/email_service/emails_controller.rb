@@ -4,30 +4,47 @@ module EmailService
     include EmailHelper
 
     def index
-      @verified_emails, @pending_emails = verified_emails
 
+      @all_emails = list_verified_identities("EmailAddress")
+      @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
+      @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
+      @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
     end
 
     def info
+
       @access, @secret = get_ec2_creds
       @ses_client = create_ses_client
-      @verified_emails, @pending_emails = list_verified_emails
+
+      @all_emails = list_verified_identities("EmailAddress")
+      @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
+      @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
+      @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
     end
 
     def show
     end
 
     def new 
-      @verified_emails, @pending_emails = verified_emails
+
+      @all_emails = list_verified_identities("EmailAddress")
+      @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
+      @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
+      @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
+
       @e_collection = []
-      @verified_emails.each do |e|
-        @e_collection << e[:email]
-        # logger.info "#{e[:email]} is included in to the collection"
+      if ! @verified_emails.empty? 
+        @verified_emails.each do | e |
+          @e_collection << e[:email] unless e[:email].include?('@activation.email.global.cloud.sap')
+        end
       end
+         # TO BE CLEANED UP
+      @current_time = Time.new
     end
 
     def create
-      @verified_emails, @pending_emails = verified_emails
+ 
+      # @verified_emails, @pending_emails = verified_emails
       @email = new_email(email_params)  
       # plain_email = PlainEmail.new( {
       #   encoding: "UTF-8",
@@ -43,34 +60,30 @@ module EmailService
       #   textbody: "Text Body",
       # })
       # @plain_email_params =  plain_email.email.inspect
-      @email1 = email_to_array(@email)
-      logger.warn "@email1 : (inspect) " + @email1.inspect
+
+
+      result = email_to_array(@email)
+      status = send_email(result)
       
-      # Rails.logger.info "Check out this info! -- CRONUS" 
-      # logger.debug "@email1 : (inspect) " + @email1.inspect
-
-      success_from_controller = send_email(@email1)
-      logger.warn "success from controller ??" + success_from_controller.to_s
+      if status == "success"
+        msg = "eMail sent successfully"
+      else 
+        msg = "error occured: #{status}"   
+      end
+      logger.debug "CRONUS DEBUG: #{msg}"
+      flash.now[:alert] = msg 
       redirect_to plugin('email_service').emails_path
+
     end
-
-
 
     def email_params
       unless params['email'].blank?
         email = params.clone.fetch('email', {})
-        # email.to_addr = addr_validate(params['email']['to_addr'])
-        # email.cc_addr = addr_validate(params['email']['cc_addr'])
-        # email.bcc_addr = addr_validate(params['email']['bcc_addr'])
-        # if @email_addr_count > 50 
-        #   puts "maximum number of email address including to, cc, bcc fields can't be more than 50"
-        # end
-        # remove if blank
-        # email.delete_if { |key, value| value.blank? }
         return email
       end
       return {}
     end
+
 
   end
 end

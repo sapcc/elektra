@@ -1,2 +1,34 @@
-%p
-  new template
+= content_for :title do
+  New Template
+
+
+= simple_form_for :template, url: plugin('email_service').templates_path(), method: :post, remote: request.xhr?,  html: {id: 'form_template', data: {modal: true}}, wrapper: :vertical_form do |f|
+
+  .modal-body
+
+    .row
+      .col-sm-6
+        = f.input :name, required: true, label: 'Name', input_html: { autofocus: 'autofocus' }, placeholder: 'Enter name'
+        = f.input :subject, label: 'Subject', required: true, placeholder: 'Enter subject'
+        =f.input :html_part,
+        label:              "HTML eMail Content",
+        placeholder:        "Enter html text eMail template",
+        input_html:         {rows: "15", class: "u-text-monospace", 
+        value: "&lt;h3&gt;Dear {{ contact.firstName }},&lt;/h3&gt;" },
+        as:                 :text,
+        required:           true,
+        hint: 'Enter html part of your template' 
+        =f.input :text_part,
+        label:              "Plain text eMail Content",
+        placeholder:        "Enter plain text eMail template",
+        input_html:         {rows: "15", class: "u-text-monospace", 
+        value: "Dear {{ contact.firstName }} {{ contact.lastName }}"},
+        as:                 :text,
+        required:           true,
+        hint: 'Enter plain text part of your eMail template' 
+  %div{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", plugin('email_service').templates_path(), class: 'btn btn-default'
+    = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

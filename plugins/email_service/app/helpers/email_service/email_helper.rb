@@ -18,27 +18,48 @@ module EmailService
 
     def isEmailVerified?(email)
       status = " "
-      verified_emails, pending_emails = list_verified_emails
-        verified_emails.each do | e |
-          if e[:email] == email
-            status = "success"
-            logger.debug "status is assigned to : #{status}"
-            break
-          end
-        end
+      all_emails = list_verified_identities("EmailAddress")
 
-        pending_emails.each do | e |
-          if e[:email] == email
-            status = "pending"
-            logger.debug "status is assigned to : #{status}"
-            break
+      verified_emails = get_verified_emails_by_status(all_emails, "Success")
+      pending_emails = get_verified_emails_by_status(all_emails, "Pending")
+
+      all_emails.each do | e |
+        if e[:email] == email
+          case e[:status]
+            when "Success"
+              status = "success"
+            when "Pending"
+              status = "pending"
+              break
+            when "Failed"
+              status = "failed"
           end
+          logger.debug "CRONUS : status is assigned to : #{status}"
         end
-        logger.debug "return status is : #{status}"
-       status
+      end
+      status
     end
 
+    def addr_validate(raw_addr)
+      unless raw_addr.empty?
+        values = raw_addr.split(",")
+        addr = []
+        values.each do |value|
+          addr << value.strip
+          # TO DO: check email addresses count is not exceeding 50 
+          # @email_addr_count =  @email_addr_count + 1
+        end
+        return addr
+      end
+      return []
+    end
 
+    def email_to_array(plain_email)
+      plain_email.email.to_addr= addr_validate(plain_email.email.to_addr)
+      plain_email.email.cc_addr= addr_validate(plain_email.email.cc_addr)
+      plain_email.email.bcc_addr = addr_validate(plain_email.email.bcc_addr)
+      plain_email
+    end
 
   end
 end

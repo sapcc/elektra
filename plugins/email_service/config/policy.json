@@ -15,6 +15,12 @@
   "email_service:verified_email_delete": "rule:admin or rule:member",
   "email_service:verified_email_update": "rule:admin or rule:member",
 
+  "email_service:template_list": "rule:admin or rule:member",
+  "email_service:template_get": "rule:admin or rule:member",
+  "email_service:template_create": "rule:admin or rule:member",
+  "email_service:template_delete": "rule:admin or rule:member",
+  "email_service:template_update": "rule:admin or rule:member",
+
   "email_service_viewer": "role:email_service_viewer",
   "email_service_admin": "role:email_service_admin",
   "context_is_email_service_admin": "rule:context_is_cloud_email_service_admin or rule:email_service_admin",

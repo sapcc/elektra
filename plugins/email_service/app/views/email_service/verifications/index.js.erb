@@ -5,5 +5,13 @@ initAutoDismissibleFlash();
 $(".js-table-verified-email").html("<%= escape_javascript(render partial: 'table_verified_emails', locals: {verified_emails: @verified_emails}) %>");
 <% end %>
 
+<% unless @pending_emails.nil? %>
+$(".js-table-pending-email").html("<%= escape_javascript(render partial: 'table_pending_emails', locals: {pending_emails: @pending_emails}) %>");
+<% end %>
+
+<% unless @failed_emails.nil? %>
+$(".js-table-failed-email").html("<%= escape_javascript(render partial: 'table_failed_emails', locals: {failed_emails: @failed_emails}) %>");
+<% end %>
+
 // reload the pagination spinner
 $('[data-toggle="paginationSpinner"]').initPaginationSpinner()

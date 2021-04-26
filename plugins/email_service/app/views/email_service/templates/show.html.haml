@@ -1,2 +1,29 @@
+=content_for :main_toolbar do
+  Email Service
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'templates'}
+
+%h3
+  Show template :
 %p
-  Templates show page
+- if @template
+  %table.table
+    %tr
+      %td
+        %strong Name:
+      %td 
+        =@template.template.name
+    %tr
+      %td
+        %strong Subject:
+      %td 
+        =@template.template.subject
+    %tr
+      %td
+        %strong HTML part:
+      %td 
+        =@template.template.html_part
+    %tr
+      %td
+        %strong Text part:
+      %td 
+        =@template.template.text_part
