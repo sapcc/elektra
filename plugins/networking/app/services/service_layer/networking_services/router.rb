@@ -60,8 +60,16 @@ module ServiceLayer
 
       def update_router(id, attributes)
         elektron_networking.put("routers/#{id}") do
-          { 'router' => attributes }
-        end.body['router']
+        { 'router' => attributes }
+      end.body['router']
+    rescue Elektron::Errors::ApiResponse => e
+        # regarding the issue https://github.com/sapcc/elektra/issues/879
+        # If the external network is outside of this scope (other owner project), 
+        # update of the router will throw the error "Port ... could not be found". 
+        # This has to do with the fact that the associated port also exists 
+        # outside of this scope and therefore cannot be found from this scope (current user).
+        # We handle this case by catching the appropriate error and doing nothing.
+        raise e if !(e.message =~ /Port .+ could not be found/i) 
       end
 
       def delete_router(id)

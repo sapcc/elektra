@@ -181,7 +181,13 @@ module Networking
         @router.external_gateway_info = params[:router][:external_gateway_info].to_unsafe_hash
       end
 
+      # <ActionController::Parameters {"utf8"=>"✓", "_method"=>"put", "router"=><ActionController::Parameters {"name"=>"test router qa", "external_gateway_info"=><ActionController::Parameters {"network_id"=>"430991b3-da0d-41cb-ac54-d1d532841725", "external_fixed_ips"=>[{"subnet_id"=>"c62a3c29-9fb0-4604-bf61-b8f8ff6c6777"}]} permitted: false>} permitted: false>, "button"=>"", "modal"=>"true", "domain_id"=>"monsoon3", "project_id"=>"andreas-pfau", "controller"=>"networking/routers", "action"=>"update", "id"=>"72e8afbd-f272-48ed-ac22-b87602981718"} permitted: false>
+
       @router.internal_subnets = @selected_internal_subnet_ids
+
+      @external_network = services.networking.find_network(
+        @router.external_gateway_info['network_id']
+      )
 
       if @router.save
         attached_ports = services.networking.ports(

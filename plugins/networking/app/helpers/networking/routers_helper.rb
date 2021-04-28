@@ -18,14 +18,14 @@ module Networking
     end
 
     def router_internal_networks(router)
-      ports = ObjectCache.where(
-        ["payload ->> 'device_id' = ? AND payload ->> 'device_owner' = ?",
-          router.id, 'network:router_interface'
-        ]).where(cached_object_type: 'port')
+      # ports = ObjectCache.where(
+      #   ["payload ->> 'device_id' = ? AND payload ->> 'device_owner' = ?",
+      #     router.id, 'network:router_interface'
+      #   ]).where(cached_object_type: 'port')
         
       ports = cloud_admin.networking.ports(
         device_id: router.id, device_owner: 'network:router_interface'
-      ) if ports.empty?
+      ) #if ports.empty?
 
       network_ids = ports.collect do |port|
         port.respond_to?(:payload) ? port.payload['network_id'] : port.network_id
