@@ -25,13 +25,15 @@
             collection: @subnets,
             selected: @router_external_subnet_ids
 
-    = f.input :internal_subnets, {label: "Private Network Subnets",
-      input_html:         {multiple: true},
-      as:                 :select,
-      collection:         @internal_subnets.sort{|a,b| a.network_name<=>b.network_name},
-      selected:           @router_internal_subnet_ids,
-      label_method:       -> s {"#{s.name} (#{s.network_name})"},
-      required:           true}
+    = f.input :internal_subnets, 
+      label:      "Private Network Subnets",
+      wrapper:    :horizontal_radio_and_checkboxes_4x8_scrollable,
+      required:   true,
+      as:         :check_boxes, 
+      collection: @internal_subnets.sort{|a,b| a.network_name<=>b.network_name}.map{|n| ["#{n.name} (#{n.network_name})",n.id]},
+      checked:   @router_internal_subnet_ids
+    
+
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

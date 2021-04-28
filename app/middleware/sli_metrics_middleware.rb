@@ -11,7 +11,7 @@ class SLIMetricsMiddleware
 
     @histogram = @registry.get(:elektra_sli) || @registry.histogram(
                               :elektra_sli,
-                              'A histogram if sli'
+                              docstring: 'A histogram if sli'
                             )
   end
 
