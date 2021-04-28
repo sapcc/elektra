@@ -10,7 +10,7 @@ class InquiryMetricsMiddleware
     @open_inquiry_metrics = @registry.get(:elektra_open_inquiry_metrics) ||
                             @registry.gauge(
                               :elektra_open_inquiry_metrics,
-                              'A gauge of open elektra requests'
+                              docstring: 'A gauge of open elektra requests'
                             )
   end
 

@@ -155,6 +155,23 @@ SimpleForm.setup do |config|
     end
   end
 
+  config.wrappers :horizontal_radio_and_checkboxes_4x8_scrollable, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
+    b.use :html5
+    b.optional :readonly
+
+    b.use :label, class: 'col-sm-4 control-label'
+
+    b.wrapper tag: 'div', class: 'col-sm-8' do |ba|
+      ba.wrapper tag: 'div', class: 'input-wrapper horizontal_radio_and_checkboxes_4x8_scrollable' do |i|
+        i.use :input
+        i.use :help_hint
+      end
+
+      ba.use :error, wrap_with: { tag: 'span', class: 'help-block' }
+      ba.use :icon_hint,  wrap_with: { tag: 'p', class: 'help-block' }
+    end
+  end
+
 
   config.wrappers :horizontal_radio_and_checkboxes, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5
@@ -162,8 +179,8 @@ SimpleForm.setup do |config|
 
     b.use :label, class: 'col-sm-3 control-label'
 
-    b.wrapper tag: 'div', class: 'col-sm-9' do |ba|
-      ba.use :input
+    b.wrapper tag: 'div', class: 'col-sm-9 ' do |ba|
+      ba.use :input, class: 'overflow-auto' 
       ba.use :error, wrap_with: { tag: 'span', class: 'help-block' }
       ba.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
     end

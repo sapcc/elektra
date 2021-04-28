@@ -2612,3 +2612,9 @@ label {
 .u-nowrap {
   white-space: nowrap;
 }
+
+// Simple Form
+.horizontal_radio_and_checkboxes_4x8_scrollable {
+  max-height: 200px;
+  overflow: auto;
+}
