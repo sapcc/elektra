@@ -48,6 +48,7 @@ module DnsService
         @zone.write('attributes', pool_attrs)
       end
 
+      update_limes_data(@inquiry.domain_id, @inquiry.project_id)
       # check that subzones are not exsisting in other projects 
       zone_transfer = check_parent_zone(@zone_request.zone_name,@inquiry.project_id)
       # check and increase zone quota for destination project 
@@ -72,6 +73,7 @@ module DnsService
           )
           @zone_transfer_request.description = "approve zone-request workflow"
 
+          #approve zone transfer to destination project
           if @zone_transfer_request.save && @zone_transfer_request.accept(@inquiry.project_id)
             if @inquiry
               services.inquiry.set_inquiry_state(
@@ -85,6 +87,7 @@ module DnsService
             @zone_transfer_request.errors.each { |k, m| @zone_request.errors.add(k,m) }
           end
         else
+          # everything went fine set workflow to approved
           if @inquiry
             services.inquiry.set_inquiry_state(
               @inquiry.id, :approved,

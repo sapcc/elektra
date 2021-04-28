@@ -117,6 +117,7 @@ module DnsService
         @zone = services.dns_service.new_zone(params[:zone])
       end
 
+      update_limes_data(@scoped_domain_id, @scoped_project_id)
       # check that subzones are not exsisting in other projects 
       zone_transfer = check_parent_zone(zone_name,@scoped_project_id)
       # check and increase zone quota for destination project 
