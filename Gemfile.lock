@@ -340,7 +340,7 @@ GEM
     ffi (1.9.25)
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
-    foreman (0.87.0)
+    foreman (0.87.2)
     formatador (0.2.5)
     friendly_id (5.2.1)
       activerecord (>= 4.0.0)
