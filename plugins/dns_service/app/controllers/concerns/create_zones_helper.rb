@@ -95,7 +95,8 @@ module CreateZonesHelper
     )
 
     scraped_at_new = scraped_at_old
-    while scraped_at_new.to_i == scraped_at_old.to_i
+    retry_count = 1
+    while scraped_at_new.to_i == scraped_at_old.to_i && retry_count <= 10
       puts "INFO: update limes data for project #{project_id} in domain #{domain_id}, wait 3s to check that update is done"
       sleep 3
       scraped_at_new = cloud_admin.resource_management.find_project(
@@ -104,7 +105,8 @@ module CreateZonesHelper
         service: 'dns',
         resource: 'zones'
       ).services.first.scraped_at rescue 0
-      puts "INFO: check limes update. scraped_at_old: #{scraped_at_old.to_i}; scraped_at_new: #{scraped_at_new.to_i}"
+      puts "INFO: check limes update. retry_count: #{retry_count}; scraped_at_old: #{scraped_at_old.to_i}; scraped_at_new: #{scraped_at_new.to_i}"
+      retry_count += 1
     end
 
   end
