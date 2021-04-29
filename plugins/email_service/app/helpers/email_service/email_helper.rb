@@ -4,10 +4,18 @@ module EmailService
     include AwsSesHelper
 
     class PlainEmail
-      Email = Struct.new(:encoding, :source, :to_addr, :cc_addr, :bcc_addr, :subject, :htmlbody, :textbody)
+      Email = Struct.new(:source, :to_addr, :cc_addr, :bcc_addr, :subject, :htmlbody, :textbody)
       attr_accessor :email
       def initialize(opts)
-        @email = Email.new(opts[:encoding], opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:subject], opts[:htmlbody], opts[:textbody] )
+        @email = Email.new(opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:subject], opts[:htmlbody], opts[:textbody] )
+      end
+    end
+
+    class TemplatedEmail
+      Email = Struct.new(:source, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :template_name, :template_data, :configset_name)
+      attr_accessor :email
+      def initialize(opts)
+        @email = Email.new(opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:reply_to_addr], opts[:template_name], opts[:template_data], opts[:configset_name] )
       end
     end
 
@@ -15,6 +23,32 @@ module EmailService
       email = PlainEmail.new(attributes)
     end
 
+    def new_templated_email(attributes = {})
+      email = TemplatedEmail.new(attributes)
+    end
+
+    def get_verified_email_collection(verified_emails)
+      e_collection = []
+      if !verified_emails.empty? 
+        verified_emails.each do |element|
+          e_collection << element[:email] unless element[:email].include?('@activation.email.global.cloud.sap')
+        end
+      end
+      logger.debug "CRONUS DEBUG: e_collection #{e_collection} "
+      e_collection if !e_collection.empty?
+    end
+
+    # Get templates name as a collection to be rendered at view
+    def get_templates_collection(templates)
+      templates_collection = []
+      if !templates.empty?
+        templates.each do |template|
+          templates_collection << template[:name]
+        end
+      end
+      logger.debug "CRONUS DEBUG: templates_collection #{templates_collection} "
+      templates_collection if !templates_collection.empty?
+    end
 
     def isEmailVerified?(email)
       status = " "

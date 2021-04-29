@@ -4,5 +4,4 @@
   %td
     = template[:subject]
   %td.snug
-    - if current_user.is_allowed?("email_service:template_delete", {target: { template: template}}) or current_user.is_allowed?("email_service:template_update", {})
-      = render partial: 'item_actions', locals: { template: template, show_view: false }
+    = render partial: 'item_actions', locals: { template: template, show_view: false }

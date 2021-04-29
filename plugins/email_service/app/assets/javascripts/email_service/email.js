@@ -8,9 +8,16 @@ const re = /[\s, ]+/; // comma and space regex.
 const regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 
-$(document).ready(function() {
-  // alert("Document is ready !!");
-  $('#email_to_addr').val() = "HELLO"
+$(document).ready(function () {
+  // alert("Document is loaded completely !!");
+  // document.getElementById('configset_name').blur(function () {
+  //   alert("Document is loaded completely !!");
+  //   // document.getElementById('configset_name').value = "Hello";
+  // })
+  // $('input#configset_name').on('blur change', (function () {
+  //   alert("Document is loaded completely !!");
+  // });
+
   // Test fake email data population to the input fields
   // populateClearFakeEmails('#toBtnPopulate', '#toeMail', toFakeAddresses);
   // populateClearFakeEmails('#ccBtnPopulate', '#cceMail', ccFakeAddresses);
@@ -21,7 +28,7 @@ $(document).ready(function() {
   emailValidate("#email_cc_addr", "#ccEmailHelpBlock", "#ccErrBlock");
   emailValidate("#email_bcc_addr", "#bccEmailHelpBlock", "#bccErrBlock");
 
-  
+
   // document.getElementsByClassName("email-addr")[0];
   // $(".email-addr").forEach( (item, index ) => {
   //   emailValidate(".email-addr", "#toEmailHelpBlock", "#toErrBlock");
@@ -31,9 +38,9 @@ $(document).ready(function() {
 });
 
 function populateClearFakeEmails(btnElement, inputElement, strAddr) {
-  $(btnElement).click(function() { 
+  $(btnElement).click(function () {
     tmp = $(inputElement).val();
-    if (!tmp || tmp.length === 0  ) {
+    if (!tmp || tmp.length === 0) {
       $(inputElement).val(strAddr);
     }
     else {
@@ -44,10 +51,10 @@ function populateClearFakeEmails(btnElement, inputElement, strAddr) {
 
 function emailValidate(inputElement, helperBlock, errorBlock) {
   var valideMailArr = [];
-  $(inputElement).on('blur change' , function (){
+  $(inputElement).on('blur change', function () {
     const inputText = $(inputElement).val();
-    if ( !inputText || inputText.length === 0 ) {
-      $(errorBlock).html("At least one email address is required : "+ valideMailArr.length);
+    if (!inputText || inputText.length === 0) {
+      $(errorBlock).html("At least one email address is required : " + valideMailArr.length);
     }
     else {
       var result = processBulkEmail(inputText);
@@ -57,11 +64,11 @@ function emailValidate(inputElement, helperBlock, errorBlock) {
         $(errorBlock).html("Invalid entries: " + invalidEntries + " and will be omitted");
       }
       // console.log( "Valid Count: " + valideMailArr.length + " Invalid Count : "+ invalidEntries.length);
-      if ( valideMailArr.length <= 50 ) {
-        $(helperBlock).html("<b>"+ valideMailArr.length  + " </b>valid email recipients of " + (valideMailArr.length + invalidEntries.length) + " entries.");
+      if (valideMailArr.length <= 50) {
+        $(helperBlock).html("<b>" + valideMailArr.length + " </b>valid email recipients of " + (valideMailArr.length + invalidEntries.length) + " entries.");
       }
-      if ( valideMailArr.length > 50 ) {
-        $(errorBlock).html("Error: Number of recipients ( "+ valideMailArr.length +" ) are exceeding the maximum limit of 50");
+      if (valideMailArr.length > 50) {
+        $(errorBlock).html("Error: Number of recipients ( " + valideMailArr.length + " ) are exceeding the maximum limit of 50");
       }
     }
     // if ( totalRecipients.length > 50 ){
@@ -74,12 +81,12 @@ function emailValidate(inputElement, helperBlock, errorBlock) {
 function processBulkEmail(inputText) {
   var invalidEntries = [];
   var valideMailArr = [];
-  emailList = inputText.split(re); 
+  emailList = inputText.split(re);
   console.log("Unprocessed - Count is : " + emailList.length);
-  emailList.forEach( ( element, index ) => {
+  emailList.forEach((element, index) => {
     var emElement = element.trimEnd().trimStart();
-    if ( validateEmail( emElement ) ) {
-      valideMailArr.push( emElement );
+    if (validateEmail(emElement)) {
+      valideMailArr.push(emElement);
     }
     else {
       invalidEntries.push(element);
@@ -88,6 +95,6 @@ function processBulkEmail(inputText) {
   return { valideMailArr, invalidEntries };
 }
 
-const validateEmail= (email) => {
-    return regex.test(String(email).toLowerCase());
+const validateEmail = (email) => {
+  return regex.test(String(email).toLowerCase());
 }

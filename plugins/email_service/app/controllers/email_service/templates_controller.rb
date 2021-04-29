@@ -34,7 +34,7 @@ module EmailService
     end
 
     def new
-      
+
     end
 
     def create
@@ -45,22 +45,14 @@ module EmailService
       # logger.debug "CRONUS: DEBUG (on create): @template.inspect : #{@template.inspect}"
       if status == "success"
         msg = "eMail template is saved"
-        redirect_to plugin('email_service').templates_path, notice: msg
+        flash[:success] = msg
+        redirect_to plugin('email_service').templates_path
       else 
         msg = "error occured: #{status}"
-        redirect_to plugin('email_service').edit_template_path, alert: msg
+        flash[:warning] = msg
+        redirect_to plugin('email_service').edit_template_path
       end
       logger.debug "CRONUS DEBUG: #{msg}"
-      # flash.now[:alert] = msg 
-
-      # flash.now[:success] = " Template Size : #{@templates.size} "
-
-      # @template = services.email_service.new_template(template_params)
-      # if @template.save
-      #   redirect_to plugin('email_service').templates_path
-      # else
-      #   render action: :new
-      # end
     end
 
     def destroy
@@ -69,9 +61,11 @@ module EmailService
       status = delete_template(params[:name])
       if status == "success"
         msg = "Template #{params[:name]} deleted successfully"
+        flash[:success] = msg
         redirect_to plugin('email_service').templates_path
       else
         msg = "Unable to delete template [#{params[:name]}] : #{status} "
+        flash[:warning] = msg
       end
       # # delete template
       # @template = services.email_service.new_template

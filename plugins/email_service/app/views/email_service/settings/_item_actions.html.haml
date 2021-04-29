@@ -1,0 +1,7 @@
+.btn-group
+  %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true } }
+    %span.fa.fa-cog
+  %ul.dropdown-menu.dropdown-menu-right{ role:"menu" }
+    - if current_user
+      %li= link_to 'Enable', "#", method: :post
+      %li= link_to 'Disable', "#", method: :post, data: { confirm: "Are you sure you want to disable Cronus (AWS SES)", ok: "Yes, disable it", confirmed: :loading_status}

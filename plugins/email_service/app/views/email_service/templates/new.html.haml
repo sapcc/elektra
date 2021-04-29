@@ -1,11 +1,8 @@
 = content_for :title do
   New Template
 
-
 = simple_form_for :template, url: plugin('email_service').templates_path(), method: :post, remote: request.xhr?,  html: {id: 'form_template', data: {modal: true}}, wrapper: :vertical_form do |f|
-
   .modal-body
-
     .row
       .col-sm-6
         = f.input :name, required: true, label: 'Name', input_html: { autofocus: 'autofocus' }, placeholder: 'Enter name'

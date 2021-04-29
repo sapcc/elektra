@@ -1,0 +1,15 @@
+= simple_form_for :configset, url: plugin('email_service').settings_create_configset_path(), method: :post, remote: request.xhr?, html: {id: 'form_configset', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  .modal-body
+    .row
+      .col-sm-6
+        = f.input :name, { label: "Configuration Set Name",
+          placeholder: "Enter Configuration Set Name",
+          hint: "Enter Configuration Set Name",
+          required: true}
+
+  %div{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", plugin('email_service').emails_path(), class: 'btn btn-default'
+    = button_tag "Send", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

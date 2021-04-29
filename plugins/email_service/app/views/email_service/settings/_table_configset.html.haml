@@ -1,0 +1,13 @@
+.configset_table
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th.snug
+  %tbody
+    - if !@configsets
+      %tr
+        %td{ colspan: 2 } No configuration set available
+    - else
+      -@configsets.each do | configset |
+        = render partial: 'table_configset_item', locals: { configset: configset }

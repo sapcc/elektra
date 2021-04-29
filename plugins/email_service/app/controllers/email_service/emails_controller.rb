@@ -9,6 +9,7 @@ module EmailService
       @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
       @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
       @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
+
     end
 
     def info
@@ -20,6 +21,7 @@ module EmailService
       @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
       @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
       @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
+
     end
 
     def show
@@ -32,15 +34,10 @@ module EmailService
       @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
       @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
 
-      @e_collection = []
-      if ! @verified_emails.empty? 
-        @verified_emails.each do | e |
-          @e_collection << e[:email] unless e[:email].include?('@activation.email.global.cloud.sap')
-        end
-      end
-         # TO BE CLEANED UP
-      @current_time = Time.new
+      @e_collection = get_verified_email_collection(@verified_emails) if !@verified_emails.empty?
+      
     end
+
 
     def create
  
@@ -67,11 +64,13 @@ module EmailService
       
       if status == "success"
         msg = "eMail sent successfully"
+        flash[:success] = msg
       else 
-        msg = "error occured: #{status}"   
+        msg = "error occured: #{status}"
+        flash[:warning] = msg
       end
       logger.debug "CRONUS DEBUG: #{msg}"
-      flash.now[:alert] = msg 
+       
       redirect_to plugin('email_service').emails_path
 
     end

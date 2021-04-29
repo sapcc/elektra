@@ -1,13 +1,11 @@
 =content_for :main_toolbar do
-  Email Service
+  eMail Service - AWS SES (Cronus)
 = render partial: 'email_service/shared/nav.html', locals: {pane: 'templates'}
 
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"templates-pane"}
     %h3
       Available Templates
-    .flashes
-      render "application/flashes"
     .row
       .col-sm-9
         .toolbar

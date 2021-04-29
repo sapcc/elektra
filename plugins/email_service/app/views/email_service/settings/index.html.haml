@@ -1,0 +1,33 @@
+=content_for :main_toolbar do
+  eMail Service - AWS SES (Cronus)
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'settings'}
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"settings-pane"}
+    %h3
+      Settings
+    .row
+      .col-sm-9
+        - if !@cronus_activated
+          .toolbar
+            - if current_user.is_allowed?('context_is_emailservice_editor')
+              .main-buttons
+                = link_to "Activate Cronus", "#", data: {modal: true}, class: 'btn btn-primary'
+
+        .js-table-settings
+          = render partial: 'table_settings', locals: {}
+        %h4
+          Configuration Set
+        .toolbar
+          - if current_user.is_allowed?('context_is_emailservice_editor')
+            .main-buttons
+              = link_to "New ConfigSet", plugin('email_service').settings_new_configset_path(), data: {modal: true}, class: 'btn btn-primary'
+        .js-table-configset
+          = render partial: 'table_configset', locals: {configsets: @configsets}
+
+      .col-sm-3
+        .bs-callout.bs-callout-primary.toolbar-aligment
+          %p
+            Converged Cloud EMails Service - AWS Simple eMail Service - Settings
+            = link_to "AWS Simple eMail Service", "https://aws.amazon.com/ses/", :target => "_blank"
+            \.

@@ -1,0 +1,16 @@
+.settings_table
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Status
+      %th.snug
+  %tbody
+    %tr
+      %td Cronus
+      - if @cronus_activated
+        %td Enabled 
+      - else 
+        %td Disabled
+      %td.snug
+        = render partial: 'item_actions', locals: { cronus_activated: @cronus_activated, show_view: false }
