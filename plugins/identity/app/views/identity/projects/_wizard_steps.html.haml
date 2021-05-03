@@ -15,6 +15,7 @@
 -# MASTERDATA
 - if @masterdata_cockpit_service_available
   - can_setup_masterdata = current_user.is_allowed?("masterdata:create_masterdata")
+  - can_see_masterdata = current_user.is_allowed?("masterdata:show")
 
   -# this is a special case if some data is missing after the user maintained the masterdata in the first time
   - if @project_masterdata_missing_attributes
@@ -24,7 +25,7 @@
       action_button: ({label: 'Edit Masterdata', url:plugin('masterdata_cockpit').project_masterdata_edit_path()} if can_setup_masterdata),
       }) do
       %p
-        The Masterdata was maintained but there are some data missing.
+        Was maintained but there are some data missing.
         %br
         Missing attributes: #{@project_masterdata_missing_attributes}
   - else
@@ -36,8 +37,10 @@
       }) do
       - if @project_profile.wizard_finished?('masterdata_cockpit')
         %p
-          The Masterdata was successfully maintained. For more details take a look to the
-          = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
+          Was successfully maintained. 
+          - if can_see_masterdata
+            For more details take a look to the 
+            = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
       - else
         %p Please maintain the masterdata for this project
 - else
