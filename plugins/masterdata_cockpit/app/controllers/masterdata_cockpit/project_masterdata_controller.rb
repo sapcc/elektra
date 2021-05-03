@@ -41,7 +41,7 @@ module MasterdataCockpit
 
       # need to cut the length because the masterdata api supports at the moment max 255 chars
       @project_masterdata.description = @active_project.description.truncate(255)
-
+ 
       unless @project_masterdata.save
         render action: :new
       else
@@ -153,8 +153,10 @@ module MasterdataCockpit
     def inheritance
       begin
         if @active_project.parent_id != @scoped_domain_id
+          # sub-project level
           @inheritance = services.masterdata_cockpit.check_inheritance(@scoped_domain_id, @active_project.parent_id)
         else
+          # domain level
           @inheritance = services.masterdata_cockpit.check_inheritance(@scoped_domain_id)
         end
       rescue

@@ -138,16 +138,22 @@
     .panel-body
       .row
         .col-md-3
-          - if @inheritance.co_inheritable == true
+          - inheritance_from = "domain"
+          - if @active_project.parent_id != @active_project.domain_id
+            - inheritance_from = "parent project"
+
+          - if @inheritance.co_inheritable
             = f.input :cost_object_inherited,
-              label: "Inherited from domain",
+              label: "Inherited from #{inheritance_from}",
               as: :select,
               include_hidden: false,
               include_blank: false,
               required: false
           - else
-            %label.control-label Inherited from domain
+            %label.control-label Inherited from #{inheritance_from}
             %input.form-control{disabled: true, type:"text", value: "Not allowed"}
+            =# to be sure that :cost_object_inherited is in any case false
+            = f.input :cost_object_inherited, :as => :hidden, :input_html => { :value => "false" }
         .col-md-3
           - types = MasterdataCockpit::Config.cost_object_types
           = f.input :cost_object_type, 
