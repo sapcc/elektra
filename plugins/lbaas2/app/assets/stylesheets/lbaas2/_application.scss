@@ -80,6 +80,10 @@
   .margin-left {
     margin-left: 8px;
   }
+  .horizontal-padding-min {
+    padding-left: 3px;
+    padding-right: 3px;
+  }
 }
 
 .copy-paste-ids {
@@ -130,6 +134,22 @@ ul.secrets-not-found {
   .text-danger {
     flex: 1 100%;
   }
+}
+
+/*
+* hide arrows in numeric fields
+*/
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 /*

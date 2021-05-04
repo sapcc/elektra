@@ -78,6 +78,32 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
         )}
       </td>
       <td>
+      {member.saved ? (
+          <div className="display-flex ">
+            <span>{member.monitor_address}</span>
+            {member.monitor_address &&
+              <span className="horizontal-padding-min">/</span>
+            }
+            <span>{member.monitor_port}</span>
+          </div>
+        ) : (
+          <div className="display-flex ">
+            <FormInput
+              name={`member[${member.id}][monitor_address]`}
+              value={member.monitor_address}
+              size="md"
+            />
+            <span className="horizontal-padding-min">/</span>
+            <FormInput
+              type="number"
+              name={`member[${member.id}][monitor_port]`}
+              value={member.monitor_port}
+              size="sm"
+            />
+          </div>           
+        )}        
+      </td>
+      <td>
         {member.saved ? (
           <span>{member.weight}</span>
         ) : (

@@ -16,6 +16,8 @@ module Lbaas2
         'name'            => read('name'),
         'address'       => read('address'),        
         'protocol_port' => read('protocol_port'),
+        'monitor_address' => read('monitor_address'),
+        'monitor_port' => read('monitor_port'),
         'weight'         => read('weight'),
         'project_id'    => read('project_id'),        
         'subnet_id'     => read('subnet_id'),
@@ -28,6 +30,8 @@ module Lbaas2
     def attributes_for_update
       {
         'name'            => read('name'),
+        'monitor_address' => read('monitor_address'),
+        'monitor_port' => read('monitor_port'),        
         'weight'         => read('weight'),
         'tags'          => read('tags'),
         'backup'          => read('backup')
