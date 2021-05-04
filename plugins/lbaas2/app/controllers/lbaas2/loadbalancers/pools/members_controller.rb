@@ -86,6 +86,9 @@ module Lbaas2
           membersParams.each do |_k, values|
             # convert tags to array do to parse_nested_query
             values['tags'] = JSON.parse(values['tags']) unless values['tags'].blank?
+            # set monitor address port to null if empty
+            values['monitor_address'] = nil if values['monitor_address'].blank?
+            values['monitor_port'] = nil if values['monitor_port'].blank?
             newParams = values.merge(pool_id: params[:pool_id], id: params[:id])
             member = services.lbaas2.new_member(newParams)
 
