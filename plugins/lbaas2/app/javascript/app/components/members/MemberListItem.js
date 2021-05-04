@@ -113,7 +113,7 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
     return (
       <CopyPastePopover
         text={name}
-        size={12}
+        size={10}
         sliceType="MIDDLE"
         searchTerm={searchTerm}
         shouldCopy={false}
@@ -126,7 +126,7 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
       return (
         <CopyPastePopover
           text={member.id}
-          size={12}
+          size={10}
           sliceType="MIDDLE"
           bsClass="cp copy-paste-ids"
           searchTerm={searchTerm}

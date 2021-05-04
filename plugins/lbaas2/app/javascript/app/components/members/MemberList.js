@@ -136,7 +136,7 @@ const MemberList = ({ props, loadbalancerID }) => {
                         </div>
                       </th>
                       <th>State/Prov. Status</th>
-                      <th>Tags</th>
+                      <th style={{ width: "12%" }}>Tags</th>
                       <th>IP Address</th>
                       <th style={{ width: "8%" }}>Protocol Port</th>
                       <th>Monitor Address/Port</th>
