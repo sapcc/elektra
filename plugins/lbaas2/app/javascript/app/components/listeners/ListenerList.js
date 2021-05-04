@@ -9,7 +9,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group"
 import { useDispatch, useGlobalState } from "../StateProvider"
 import ErrorPage from "../ErrorPage"
 import useCommons from "../../../lib/hooks/useCommons"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Tooltip, OverlayTrigger, Table } from "react-bootstrap"
 import { addError } from "lib/flashes"
 import Pagination from "../shared/Pagination"
 import { SearchField } from "lib/components/search_field"
@@ -222,7 +222,7 @@ const ListenerList = ({ props, loadbalancerID }) => {
             </div>
 
             <div className="table-responsive">
-              <table
+              <Table
                 className={
                   selected
                     ? "table table-section listeners"
@@ -284,7 +284,7 @@ const ListenerList = ({ props, loadbalancerID }) => {
                     </tr>
                   )}
                 </tbody>
-              </table>
+              </Table>
             </div>
 
             {listeners.length > 0 && !selected && (
