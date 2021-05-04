@@ -2,7 +2,7 @@ configset_name = 'input[id="configset_name"]'
 
 email_template_data = 'text_area[id="email_template_data"]'
 email_template_name = 'select[id="email_template_name"]'
-selectTemplateName =  'select[id="selectTemplateName"]'
+
 
 change_configset_name= (e) ->
   value = $(e.target).val()
@@ -13,8 +13,7 @@ change_configset_name= (e) ->
 $ ->
 
   # $(document).on 'change', configset_name, change_configset_name
-
-
+  console.log "Document is loaded you see..."
 
   $(document).on 'click', configset_name, ->
     $( ".can-be-hidden" ).css("color", "red").text("")
@@ -25,6 +24,6 @@ $ ->
     if /\s/.test($(this).val().trim())
       $( '.can-be-hidden' ).text("can't contain space!!")
 
-  $(document).on 'blur', email_template_name ->
-  if $(email_template_name).val() == "Preferences" || "Gift_Template"
-    $(email_template_data).text('EMPTY')
+  $(document).on 'change', email_template_name, ->
+    if $(email_template_name).val() == "Preferences" || "Gift_Template"
+      $(email_template_data).text('EMPTY STRING')
