@@ -1,111 +1,111 @@
-import { useEffect, useState, useMemo } from "react"
-import { useDispatch, useGlobalState } from "../StateProvider"
-import usePool from "../../../lib/hooks/usePool"
-import PoolItem from "./PoolItem"
-import queryString from "query-string"
-import { Link } from "react-router-dom"
-import HelpPopover from "../shared/HelpPopover"
-import useCommons from "../../../lib/hooks/useCommons"
-import { Tooltip, OverlayTrigger, Table } from "react-bootstrap"
-import { addError } from "lib/flashes"
-import Pagination from "../shared/Pagination"
-import { SearchField } from "lib/components/search_field"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
-import SmartLink from "../shared/SmartLink"
-import ErrorPage from "../ErrorPage"
-import Log from "../shared/logger"
-import { regexString } from 'lib/tools/regex_string';
+import { useEffect, useState, useMemo } from "react";
+import { useDispatch, useGlobalState } from "../StateProvider";
+import usePool from "../../../lib/hooks/usePool";
+import PoolItem from "./PoolItem";
+import queryString from "query-string";
+import { Link } from "react-router-dom";
+import HelpPopover from "../shared/HelpPopover";
+import useCommons from "../../../lib/hooks/useCommons";
+import { Tooltip, OverlayTrigger, Table } from "react-bootstrap";
+import { addError } from "lib/flashes";
+import Pagination from "../shared/Pagination";
+import { SearchField } from "lib/components/search_field";
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink";
+import ErrorPage from "../ErrorPage";
+import Log from "../shared/logger";
+import { regexString } from "lib/tools/regex_string";
 
 const PoolList = ({ props, loadbalancerID }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const {
     persistPools,
     persistPool,
     setSearchTerm,
     setSelected,
     onSelectPool,
-  } = usePool()
-  const { searchParamsToString } = useCommons()
-  const state = useGlobalState().pools
-  const [initialLoadDone, setInitialLoadDone] = useState(false)
-  const [triggerFindSelected, setTriggerFindSelected] = useState(false)
+  } = usePool();
+  const { searchParamsToString } = useCommons();
+  const state = useGlobalState().pools;
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const [triggerFindSelected, setTriggerFindSelected] = useState(false);
 
   // when the load balancer id changes the state is reseted and a new load begins
   useEffect(() => {
-    initialLoad()
-  }, [loadbalancerID])
+    initialLoad();
+  }, [loadbalancerID]);
 
   // when pools are loaded we check if we have to select one of them
   useEffect(() => {
     if (initialLoadDone) {
-      selectPoolFromURL()
-      setInitialLoadDone(false)
+      selectPoolFromURL();
+      setInitialLoadDone(false);
     }
-  }, [initialLoadDone])
+  }, [initialLoadDone]);
 
   // if pool is selected check if exists on the state
   useEffect(() => {
     if (state.selected) {
-      findSelectedPool()
+      findSelectedPool();
     }
-  }, [state.selected])
+  }, [state.selected]);
 
   useEffect(() => {
     if (triggerFindSelected) {
-      findSelectedPool()
+      findSelectedPool();
     }
-  }, [triggerFindSelected])
+  }, [triggerFindSelected]);
 
   const initialLoad = () => {
-    Log.debug("FETCH POOLS")
+    Log.debug("FETCH POOLS");
     // no add marker so we get always the first ones on loading the component
     persistPools(loadbalancerID, true, null)
       .then((data) => {
-        setInitialLoadDone(true)
+        setInitialLoadDone(true);
       })
-      .catch((error) => {})
-  }
+      .catch((error) => {});
+  };
 
   const selectPoolFromURL = (data) => {
-    const values = queryString.parse(props.location.search)
-    const id = values.pool
+    const values = queryString.parse(props.location.search);
+    const id = values.pool;
     if (id) {
       // pool was selected
-      setSelected(id)
+      setSelected(id);
       // filter the pool list to show just the one item
-      setSearchTerm(id)
+      setSearchTerm(id);
     }
-  }
+  };
 
   const findSelectedPool = () => {
-    setTriggerFindSelected(false)
-    const index = state.items.findIndex((item) => item.id == selected)
+    setTriggerFindSelected(false);
+    const index = state.items.findIndex((item) => item.id == selected);
 
     if (index >= 0) {
       // pool already exist on the state
-      return
+      return;
     } else if (hasNext) {
       // set state to loading to fetch the requested pool
-      dispatch({ type: "REQUEST_POOLS" })
+      dispatch({ type: "REQUEST_POOLS" });
       // No listener found in the current list. Fetch just the selected
       persistPool(loadbalancerID, selected)
         .then(() => {
           // trigger again find selected listener to produce a reload
-          setTriggerFindSelected(true)
+          setTriggerFindSelected(true);
         })
         .catch((error) => {
-          dispatch({ type: "REQUEST_POOLS_FAILURE", error: error })
-        })
+          dispatch({ type: "REQUEST_POOLS_FAILURE", error: error });
+        });
     } else {
       // something weird happend. We just show an error
       addError(
         <React.Fragment>
           Pool <b>{selected}</b> not found.
         </React.Fragment>
-      )
+      );
     }
-  }
+  };
 
   const canCreate = useMemo(
     () =>
@@ -113,59 +113,59 @@ const PoolList = ({ props, loadbalancerID }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const handlePaginateClick = (e, page) => {
-    e.preventDefault()
+    e.preventDefault();
     if (page === "all") {
-      persistPools(loadbalancerID, false, { limit: 9999 }).catch((error) => {})
+      persistPools(loadbalancerID, false, { limit: 9999 }).catch((error) => {});
     } else {
       persistPools(loadbalancerID, false, {
         marker: state.marker,
-      }).catch((error) => {})
+      }).catch((error) => {});
     }
-  }
+  };
 
   const restoreUrl = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    onSelectPool(props)
-  }
+    onSelectPool(props);
+  };
 
   const search = (term) => {
     if (hasNext && !isLoading) {
-      persistPools(loadbalancerID, false, { limit: 9999 }).catch((error) => {})
+      persistPools(loadbalancerID, false, { limit: 9999 }).catch((error) => {});
     }
-    dispatch({ type: "SET_POOLS_SEARCH_TERM", searchTerm: term })
-  }
+    dispatch({ type: "SET_POOLS_SEARCH_TERM", searchTerm: term });
+  };
 
-  const error = state.error
-  const hasNext = state.hasNext
-  const items = state.items
-  const selected = state.selected
-  const searchTerm = state.searchTerm
+  const error = state.error;
+  const hasNext = state.hasNext;
+  const items = state.items;
+  const selected = state.selected;
+  const searchTerm = state.searchTerm;
 
   const filterItems = (searchTerm, items) => {
-    if (!searchTerm) return items
+    if (!searchTerm) return items;
     // filter items
     if (selected) {
-      return items.filter((i) => i.id == searchTerm.trim())
+      return items.filter((i) => i.id == searchTerm.trim());
     } else {
-      const regex = new RegExp(regexString(searchTerm.trim()), "i")
+      const regex = new RegExp(regexString(searchTerm.trim()), "i");
       return items.filter(
         (i) =>
           `${i.id} ${i.name} ${i.description} ${i.protocol}`.search(regex) >= 0
-      )
+      );
     }
-  }
+  };
 
-  const pools = filterItems(searchTerm, items)
-  const isLoading = state.isLoading
+  const pools = filterItems(searchTerm, items);
+  const isLoading = state.isLoading;
 
   return useMemo(() => {
-    Log.debug("RENDER pool list")
+    Log.debug("RENDER pool list");
     return (
       <div className="details-section">
         <div className="display-flex">
@@ -238,7 +238,7 @@ const PoolList = ({ props, loadbalancerID }) => {
                         /ID/Description
                       </div>
                     </th>
-                    <th>State/Prov. Status</th>
+                    <th>Status</th>
                     <th>Tags</th>
                     <th>Algorithm</th>
                     <th>Protocol</th>
@@ -287,7 +287,7 @@ const PoolList = ({ props, loadbalancerID }) => {
           </React.Fragment>
         )}
       </div>
-    )
+    );
   }, [
     JSON.stringify(pools),
     error,
@@ -296,7 +296,7 @@ const PoolList = ({ props, loadbalancerID }) => {
     selected,
     props,
     hasNext,
-  ])
-}
+  ]);
+};
 
-export default PoolList
+export default PoolList;

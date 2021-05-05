@@ -1,20 +1,19 @@
-import { useEffect, useMemo } from "react"
-import { Link } from "react-router-dom"
-import CachedInforPopover from "../shared/CachedInforPopover"
-import CachedInfoPopoverListenerContent from "./CachedInfoPopoverListenerContent"
-import CachedInfoPopoverPoolContent from "./CachedInfoPopoverPoolContent"
-import StaticTags from "../StaticTags"
-import StateLabel from "../shared/StateLabel"
-import StatusLabel from "../shared/StatusLabel"
-import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
-import CopyPastePopover from "../shared/CopyPastePopover"
-import { addNotice, addError } from "lib/flashes"
-import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import SmartLink from "../shared/SmartLink"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
-import useCommons from "../../../lib/hooks/useCommons"
-import Log from "../shared/logger"
+import { useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
+import CachedInforPopover from "../shared/CachedInforPopover";
+import CachedInfoPopoverListenerContent from "./CachedInfoPopoverListenerContent";
+import CachedInfoPopoverPoolContent from "./CachedInfoPopoverPoolContent";
+import StaticTags from "../StaticTags";
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer";
+import CopyPastePopover from "../shared/CopyPastePopover";
+import { addNotice, addError } from "lib/flashes";
+import { ErrorsList } from "lib/elektra-form/components/errors_list";
+import SmartLink from "../shared/SmartLink";
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import useCommons from "../../../lib/hooks/useCommons";
+import Log from "../shared/logger";
+import useStatus from "../../../lib/hooks/useStatus";
 
 const LoadbalancerItem = ({
   props,
@@ -27,45 +26,46 @@ const LoadbalancerItem = ({
     persistLoadbalancer,
     deleteLoadbalancer,
     detachFIP,
-  } = useLoadbalancer()
-  const { 
-    errorMessage,
-    searchParamsToString 
-  } = useCommons()
-  let polling = null
+  } = useLoadbalancer();
+  const { errorMessage, searchParamsToString } = useCommons();
+  const { entityStatus } = useStatus(
+    loadbalancer.operating_status,
+    loadbalancer.provisioning_status
+  );
+  let polling = null;
 
   useEffect(() => {
     if (shouldPoll) {
       if (loadbalancer.provisioning_status.includes("PENDING")) {
-        startPolling(5000)
+        startPolling(5000);
       } else {
-        startPolling(30000)
+        startPolling(30000);
       }
     }
     return function cleanup() {
-      if (shouldPoll) stopPolling()
-    }
-  })
+      if (shouldPoll) stopPolling();
+    };
+  });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
-    if (polling) return
+    if (polling) return;
     Log.debug(
       "Polling loadbalancer -->",
       loadbalancer.id,
       " with interval -->",
       interval
-    )
+    );
     polling = setInterval(() => {
-      persistLoadbalancer(loadbalancer.id).catch((error) => {})
-    }, interval)
-  }
+      persistLoadbalancer(loadbalancer.id).catch((error) => {});
+    }, interval);
+  };
 
   const stopPolling = () => {
-    Log.debug("stop polling for id -->", loadbalancer.id)
-    clearInterval(polling)
-    polling = null
-  }
+    Log.debug("stop polling for id -->", loadbalancer.id);
+    clearInterval(polling);
+    polling = null;
+  };
 
   const canDelete = useMemo(
     () =>
@@ -73,7 +73,7 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canEdit = useMemo(
     () =>
@@ -81,7 +81,7 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canAttachFIP = useMemo(
     () =>
@@ -89,7 +89,7 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canDetachFIP = useMemo(
     () =>
@@ -97,7 +97,7 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canShowJSON = useMemo(
     () =>
@@ -105,15 +105,15 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const handleDelete = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    const ladbalancerID = loadbalancer.id
-    const loadbalancerName = loadbalancer.name
+    const ladbalancerID = loadbalancer.id;
+    const loadbalancerName = loadbalancer.name;
     return deleteLoadbalancer(loadbalancerName, ladbalancerID)
       .then((response) => {
         addNotice(
@@ -121,25 +121,25 @@ const LoadbalancerItem = ({
             Load Balancer <b>{loadbalancerName}</b> ({ladbalancerID}) is being
             deleted.
           </React.Fragment>
-        )
+        );
       })
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
             errors: errorMessage(error.response),
           })
-        )
-      })
-  }
+        );
+      });
+  };
 
   const handleDetachFIP = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
 
-    const ladbalancerID = loadbalancer.id
-    const floatingIP = loadbalancer.floating_ip.id
+    const ladbalancerID = loadbalancer.id;
+    const floatingIP = loadbalancer.floating_ip.id;
     return detachFIP(ladbalancerID, { floating_ip: floatingIP })
       .then((response) => {
         addNotice(
@@ -147,21 +147,21 @@ const LoadbalancerItem = ({
             Floating IP <b>{loadbalancer.floating_ip.floating_ip_address}</b> (
             {floatingIP}) is being detached.
           </React.Fragment>
-        )
+        );
       })
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
             errors: errorMessage(error),
           })
-        )
-      })
-  }
+        );
+      });
+  };
 
-  const poolIds = loadbalancer.pools.map((p) => p.id)
-  const listenerIds = loadbalancer.listeners.map((l) => l.id)
+  const poolIds = loadbalancer.pools.map((p) => p.id);
+  const listenerIds = loadbalancer.listeners.map((l) => l.id);
   const displayName = () => {
-    const name = loadbalancer.name || loadbalancer.id
+    const name = loadbalancer.name || loadbalancer.id;
     if (disabled) {
       return (
         <span className="info-text">
@@ -173,7 +173,7 @@ const LoadbalancerItem = ({
             bsClass="cp copy-paste-ids"
           />
         </span>
-      )
+      );
     } else {
       return (
         <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
@@ -186,9 +186,9 @@ const LoadbalancerItem = ({
             searchTerm={searchTerm}
           />
         </Link>
-      )
+      );
     }
-  }
+  };
   const displayID = () => {
     if (loadbalancer.name) {
       if (disabled) {
@@ -201,7 +201,7 @@ const LoadbalancerItem = ({
               bsClass="cp copy-paste-ids"
             />
           </div>
-        )
+        );
       } else {
         return (
           <CopyPastePopover
@@ -211,12 +211,12 @@ const LoadbalancerItem = ({
             bsClass="cp copy-paste-ids"
             searchTerm={searchTerm}
           />
-        )
+        );
       }
     }
-  }
+  };
 
-  Log.debug("RENDER loadbalancer list item id-->", loadbalancer.id)
+  Log.debug("RENDER loadbalancer list item id-->", loadbalancer.id);
   return (
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
@@ -230,12 +230,7 @@ const LoadbalancerItem = ({
           searchTerm={searchTerm}
         />
       </td>
-      <td>
-        <StateLabel label={loadbalancer.operating_status} />
-      </td>
-      <td>
-        <StatusLabel label={loadbalancer.provisioning_status} />
-      </td>
+      <td>{entityStatus}</td>
       <td>
         <StaticTags tags={loadbalancer.tags} />
       </td>
@@ -346,8 +341,12 @@ const LoadbalancerItem = ({
               <SmartLink
                 to={
                   disabled
-                    ? `/loadbalancers/${loadbalancer.id}/show/edit?${searchParamsToString(props)}`
-                    : `/loadbalancers/${loadbalancer.id}/edit?${searchParamsToString(props)}`
+                    ? `/loadbalancers/${
+                        loadbalancer.id
+                      }/show/edit?${searchParamsToString(props)}`
+                    : `/loadbalancers/${
+                        loadbalancer.id
+                      }/edit?${searchParamsToString(props)}`
                 }
                 isAllowed={canEdit}
                 notAllowedText="Not allowed to edit. Please check with your administrator."
@@ -368,8 +367,12 @@ const LoadbalancerItem = ({
               <SmartLink
                 to={
                   disabled
-                    ? `/loadbalancers/${loadbalancer.id}/show/json?${searchParamsToString(props)}`
-                    : `/loadbalancers/${loadbalancer.id}/json?${searchParamsToString(props)}`
+                    ? `/loadbalancers/${
+                        loadbalancer.id
+                      }/show/json?${searchParamsToString(props)}`
+                    : `/loadbalancers/${
+                        loadbalancer.id
+                      }/json?${searchParamsToString(props)}`
                 }
                 isAllowed={canShowJSON}
                 notAllowedText="Not allowed to get JSOn. Please check with your administrator."
@@ -389,7 +392,9 @@ const LoadbalancerItem = ({
                 </SmartLink>
               ) : (
                 <SmartLink
-                  to={`/loadbalancers/${loadbalancer.id}/attach_fip?${searchParamsToString(props)}`}
+                  to={`/loadbalancers/${
+                    loadbalancer.id
+                  }/attach_fip?${searchParamsToString(props)}`}
                   isAllowed={canAttachFIP}
                   notAllowedText="Not allowed to attach Floating IP. Please check with your administrator."
                 >
@@ -401,9 +406,9 @@ const LoadbalancerItem = ({
         </div>
       </td>
     </tr>
-  )
-}
+  );
+};
 
-LoadbalancerItem.displayName = "LoadbalancerItem"
+LoadbalancerItem.displayName = "LoadbalancerItem";
 
-export default LoadbalancerItem
+export default LoadbalancerItem;

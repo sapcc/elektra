@@ -1,23 +1,22 @@
-import { useEffect, useState, useMemo } from "react"
-import { Link } from "react-router-dom"
-import StateLabel from "../shared/StateLabel"
-import StatusLabel from "../shared/StatusLabel"
-import StaticTags from "../StaticTags"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
-import CopyPastePopover from "../shared/CopyPastePopover"
-import CachedInfoPopover from "../shared/CachedInforPopover"
-import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
-import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
-import useListener from "../../../lib/hooks/useListener"
-import useCommons from "../../../lib/hooks/useCommons"
-import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
-import { addNotice, addError } from "lib/flashes"
-import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
-import SmartLink from "../shared/SmartLink"
-import Log from "../shared/logger"
-import DropDownMenu from '../shared/DropdownMenu'
+import { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import StaticTags from "../StaticTags";
+import { Tooltip, OverlayTrigger } from "react-bootstrap";
+import CopyPastePopover from "../shared/CopyPastePopover";
+import CachedInfoPopover from "../shared/CachedInforPopover";
+import CachedInfoPopoverContent from "./CachedInfoPopoverContent";
+import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers";
+import useListener from "../../../lib/hooks/useListener";
+import useCommons from "../../../lib/hooks/useCommons";
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer";
+import { addNotice, addError } from "lib/flashes";
+import { ErrorsList } from "lib/elektra-form/components/errors_list";
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink";
+import Log from "../shared/logger";
+import DropDownMenu from "../shared/DropdownMenu";
+import useStatus from "../../../lib/hooks/useStatus";
 
 const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
   const {
@@ -26,66 +25,70 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
     deleteListener,
     onSelectListener,
     reset,
-  } = useListener()
+  } = useListener();
   const {
     MyHighlighter,
     matchParams,
     errorMessage,
     searchParamsToString,
-  } = useCommons()
-  const { persistLoadbalancer } = useLoadbalancer()
-  let polling = null
-  const [loadbalancerID, setLoadbalancerID] = useState(null)
+  } = useCommons();
+  const { persistLoadbalancer } = useLoadbalancer();
+  let polling = null;
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
+  const { entityStatus } = useStatus(
+    listener.operating_status,
+    listener.provisioning_status
+  );
 
   useEffect(() => {
-    const params = matchParams(props)
-    setLoadbalancerID(params.loadbalancerID)
+    const params = matchParams(props);
+    setLoadbalancerID(params.loadbalancerID);
 
     if (listener.provisioning_status.includes("PENDING")) {
-      startPolling(5000)
+      startPolling(5000);
     } else {
-      startPolling(30000)
+      startPolling(30000);
     }
 
     return function cleanup() {
-      stopPolling()
-    }
-  })
+      stopPolling();
+    };
+  });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
-    if (polling) return
+    if (polling) return;
     polling = setInterval(() => {
       Log.debug(
         "Polling listener -->",
         listener.id,
         " with interval -->",
         interval
-      )
+      );
       persistListener(loadbalancerID, listener.id).catch((error) => {
         if (error && error.status == 404) {
           // check if listener selected and if yes deselect the item
           if (disabled) {
-            reset()
+            reset();
           }
         }
-      })
-    }, interval)
-  }
+      });
+    }, interval);
+  };
 
   const stopPolling = () => {
-    Log.debug("stop polling for listener id -->", listener.id)
-    clearInterval(polling)
-    polling = null
-  }
+    Log.debug("stop polling for listener id -->", listener.id);
+    clearInterval(polling);
+    polling = null;
+  };
 
   const onListenerClick = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    onSelectListener(props, listener.id)
-  }
+    onSelectListener(props, listener.id);
+  };
 
   const canEdit = useMemo(
     () =>
@@ -93,7 +96,7 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canDelete = useMemo(
     () =>
@@ -101,7 +104,7 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canShowJSON = useMemo(
     () =>
@@ -109,36 +112,36 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const handleDelete = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    const listenerID = listener.id
-    const listenerName = listener.name
+    const listenerID = listener.id;
+    const listenerName = listener.name;
     return deleteListener(loadbalancerID, listenerID, listenerName)
       .then((response) => {
         addNotice(
           <React.Fragment>
             Listener <b>{listenerName}</b> ({listenerID}) is being deleted.
           </React.Fragment>
-        )
+        );
         // fetch the lb again containing the new listener so it gets updated fast
-        persistLoadbalancer(loadbalancerID).catch((error) => {})
+        persistLoadbalancer(loadbalancerID).catch((error) => {});
       })
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
             errors: errorMessage(error.response),
           })
-        )
-      })
-  }
+        );
+      });
+  };
 
   const displayName = () => {
-    const name = listener.name || listener.id
+    const name = listener.name || listener.id;
     if (disabled) {
       return (
         <div className="info-text">
@@ -150,7 +153,7 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
             bsClass="cp copy-paste-ids"
           />
         </div>
-      )
+      );
     } else {
       return (
         <Link to="#" onClick={onListenerClick}>
@@ -163,9 +166,9 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
             searchTerm={searchTerm}
           />
         </Link>
-      )
+      );
     }
-  }
+  };
 
   const displayID = () => {
     if (listener.name) {
@@ -179,7 +182,7 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
               bsClass="cp copy-paste-ids"
             />
           </div>
-        )
+        );
       } else {
         return (
           <CopyPastePopover
@@ -189,10 +192,10 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
             bsClass="cp copy-paste-ids"
             searchTerm={searchTerm}
           />
-        )
+        );
       }
     }
-  }
+  };
 
   const collectContainers = () => {
     const containers = [
@@ -205,33 +208,33 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
         name: "Client Authentication Secret",
         ref: listener.client_ca_tls_container_ref,
       },
-    ]
+    ];
     var filteredContainers = containers.reduce((filteredContainers, item) => {
       if (
         (item.ref && item.ref.length > 0) ||
         (item.refList && item.refList.length > 0)
       ) {
-        filteredContainers.push(item)
+        filteredContainers.push(item);
       }
-      return filteredContainers
-    }, [])
-    return filteredContainers
-  }
+      return filteredContainers;
+    }, []);
+    return filteredContainers;
+  };
 
   const displayProtocol = () => {
-    const containers = collectContainers()
+    const containers = collectContainers();
     const numberOfElements = containers.reduce(
       (numberOfElements, container) => {
         if (container.ref) {
-          return numberOfElements + 1
+          return numberOfElements + 1;
         } else if (container.refList) {
-          return numberOfElements + container.refList.length
+          return numberOfElements + container.refList.length;
         } else {
-          return numberOfElements
+          return numberOfElements;
         }
       },
       0
-    )
+    );
 
     return (
       <React.Fragment>
@@ -260,10 +263,10 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
           </div>
         )}
       </React.Fragment>
-    )
-  }
+    );
+  };
 
-  const l7PolicyIDs = listener.l7policies.map((l7p) => l7p.id)
+  const l7PolicyIDs = listener.l7policies.map((l7p) => l7p.id);
   return (
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
@@ -277,14 +280,7 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
           searchTerm={searchTerm}
         />
       </td>
-      <td>
-        <div>
-          <StateLabel label={listener.operating_status} />
-        </div>
-        <div>
-          <StatusLabel label={listener.provisioning_status} />
-        </div>
-      </td>
+      <td>{entityStatus}</td>
       <td>
         <StaticTags tags={listener.tags} />
       </td>
@@ -346,7 +342,7 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
         )}
       </td>
       <td>
-        <DropDownMenu buttonIcon={<span className="fa fa-cog"/>}>
+        <DropDownMenu buttonIcon={<span className="fa fa-cog" />}>
           <li>
             <SmartLink
               to={`/loadbalancers/${loadbalancerID}/listeners/${
@@ -381,7 +377,7 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
         </DropDownMenu>
       </td>
     </tr>
-  )
-}
+  );
+};
 
-export default ListenerItem
+export default ListenerItem;

@@ -1,25 +1,25 @@
-import React, { useEffect, useState, useRef, useMemo } from "react"
-import { DefeatableLink } from "lib/components/defeatable_link"
-import useL7Policy from "../../../lib/hooks/useL7Policy"
-import useCommons from "../../../lib/hooks/useCommons"
-import HelpPopover from "../shared/HelpPopover"
-import L7PolicyListItem from "./L7PolicyListItem"
-import { Table } from "react-bootstrap"
-import { useDispatch, useGlobalState } from "../StateProvider"
-import L7PolicySelected from "./L7PolicySelected"
-import queryString from "query-string"
-import ErrorPage from "../ErrorPage"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
-import { addError } from "lib/flashes"
-import { SearchField } from "lib/components/search_field"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
-import SmartLink from "../shared/SmartLink"
-import Log from "../shared/logger"
-import { regexString } from 'lib/tools/regex_string';
+import React, { useEffect, useState, useRef, useMemo } from "react";
+import { DefeatableLink } from "lib/components/defeatable_link";
+import useL7Policy from "../../../lib/hooks/useL7Policy";
+import useCommons from "../../../lib/hooks/useCommons";
+import HelpPopover from "../shared/HelpPopover";
+import L7PolicyListItem from "./L7PolicyListItem";
+import { Table } from "react-bootstrap";
+import { useDispatch, useGlobalState } from "../StateProvider";
+import L7PolicySelected from "./L7PolicySelected";
+import queryString from "query-string";
+import ErrorPage from "../ErrorPage";
+import { Tooltip, OverlayTrigger } from "react-bootstrap";
+import { addError } from "lib/flashes";
+import { SearchField } from "lib/components/search_field";
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink";
+import Log from "../shared/logger";
+import { regexString } from "lib/tools/regex_string";
 
 const L7PolicyList = ({ props, loadbalancerID }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const {
     persistL7Policies,
     persistL7Policy,
@@ -27,84 +27,84 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
     setSelected,
     reset,
     onSelectL7Policy,
-  } = useL7Policy()
-  const { searchParamsToString } = useCommons()
-  const state = useGlobalState().l7policies
-  const listenerID = useGlobalState().listeners.selected
-  const listenerError = useGlobalState().listeners.error
-  const [initialLoadDone, setInitialLoadDone] = useState(false)
-  const [triggerFindSelected, setTriggerFindSelected] = useState(false)
+  } = useL7Policy();
+  const { searchParamsToString } = useCommons();
+  const state = useGlobalState().l7policies;
+  const listenerID = useGlobalState().listeners.selected;
+  const listenerError = useGlobalState().listeners.error;
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const [triggerFindSelected, setTriggerFindSelected] = useState(false);
 
   // when the listener id changes the state is reseted and a new load begins
   useEffect(() => {
-    initialLoad()
+    initialLoad();
     return () => {
-      reset()
-    }
-  }, [listenerID])
+      reset();
+    };
+  }, [listenerID]);
 
   // when policies are loaded we check if we have to select one of them
   useEffect(() => {
     if (initialLoadDone) {
-      selectL7PolicyFromURL()
-      setInitialLoadDone(false)
+      selectL7PolicyFromURL();
+      setInitialLoadDone(false);
     }
-  }, [initialLoadDone])
+  }, [initialLoadDone]);
 
   // if listener is selected check if exists on the state
   useEffect(() => {
     if (state.selected) {
-      findSelectedL7Policy()
+      findSelectedL7Policy();
     }
-  }, [state.selected])
+  }, [state.selected]);
 
   useEffect(() => {
     if (triggerFindSelected) {
-      findSelectedL7Policy()
+      findSelectedL7Policy();
     }
-  }, [triggerFindSelected])
+  }, [triggerFindSelected]);
 
   const initialLoad = () => {
     if (listenerID) {
-      Log.debug("FETCH L7 POLICIES")
+      Log.debug("FETCH L7 POLICIES");
       persistL7Policies(loadbalancerID, listenerID, null)
         .then((data) => {
-          setInitialLoadDone(true)
+          setInitialLoadDone(true);
         })
-        .catch((error) => {})
+        .catch((error) => {});
     }
-  }
+  };
 
   const selectL7PolicyFromURL = () => {
-    const values = queryString.parse(props.location.search)
-    const id = values.l7policy
+    const values = queryString.parse(props.location.search);
+    const id = values.l7policy;
     if (id) {
       // policy was selected
-      setSelected(id)
+      setSelected(id);
       // filter the policy list to show just the one item
-      setSearchTerm(id)
+      setSearchTerm(id);
     }
-  }
+  };
 
   const findSelectedL7Policy = () => {
-    setTriggerFindSelected(false)
-    const index = state.items.findIndex((item) => item.id == selected)
+    setTriggerFindSelected(false);
+    const index = state.items.findIndex((item) => item.id == selected);
     if (index >= 0) {
-      return
+      return;
     } else {
       // set state to loading
-      dispatch({ type: "REQUEST_L7POLICIES" })
+      dispatch({ type: "REQUEST_L7POLICIES" });
       // No listener found in the current list. Fetch just the selected
       persistL7Policy(loadbalancerID, listenerID, selected)
         .then(() => {
           // trigger again find selected listener
-          setTriggerFindSelected(true)
+          setTriggerFindSelected(true);
         })
         .catch((error) => {
-          dispatch({ type: "REQUEST_L7POLICIES_FAILURE", error: error })
-        })
+          dispatch({ type: "REQUEST_L7POLICIES_FAILURE", error: error });
+        });
     }
-  }
+  };
 
   const canCreate = useMemo(
     () =>
@@ -112,44 +112,44 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const restoreUrl = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    onSelectL7Policy(props)
-  }
+    onSelectL7Policy(props);
+  };
 
   const search = (term) => {
-    setSearchTerm(term)
-  }
+    setSearchTerm(term);
+  };
 
-  const error = state.error
-  const hasNext = state.hasNext
-  const searchTerm = state.searchTerm
-  const selected = state.selected
-  const items = state.items
+  const error = state.error;
+  const hasNext = state.hasNext;
+  const searchTerm = state.searchTerm;
+  const selected = state.selected;
+  const items = state.items;
 
   const filterItems = (searchTerm, items) => {
-    if (!searchTerm) return items
+    if (!searchTerm) return items;
     // filter items
     if (selected) {
-      return items.filter((i) => i.id == searchTerm.trim())
+      return items.filter((i) => i.id == searchTerm.trim());
     } else {
-      const regex = new RegExp(regexString(searchTerm.trim()), "i")
+      const regex = new RegExp(regexString(searchTerm.trim()), "i");
       return items.filter(
         (i) =>
           `${i.id} ${i.name} ${i.description} ${i.action}`.search(regex) >= 0
-      )
+      );
     }
-  }
+  };
 
-  const l7Policies = filterItems(searchTerm, items)
-  const isLoading = state.isLoading
+  const l7Policies = filterItems(searchTerm, items);
+  const isLoading = state.isLoading;
   return useMemo(() => {
-    Log.debug("RENDER L7 POLICIES")
+    Log.debug("RENDER L7 POLICIES");
     return (
       <React.Fragment>
         {listenerID && !listenerError && (
@@ -227,8 +227,7 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
                       <thead>
                         <tr>
                           <th>Name/ID/Description</th>
-                          <th>State</th>
-                          <th>Prov. Status</th>
+                          <th>Status</th>
                           <th>Tags</th>
                           <th>
                             <div className="display-flex">
@@ -284,7 +283,7 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
           </React.Fragment>
         )}
       </React.Fragment>
-    )
+    );
   }, [
     listenerID,
     listenerError,
@@ -294,7 +293,7 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
     isLoading,
     searchTerm,
     props,
-  ])
-}
+  ]);
+};
 
-export default L7PolicyList
+export default L7PolicyList;
