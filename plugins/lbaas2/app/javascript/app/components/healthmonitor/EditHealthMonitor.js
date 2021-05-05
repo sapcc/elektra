@@ -302,7 +302,6 @@ const EditHealthMonitor = (props) => {
                       type="text"
                       name="expected_codes"
                     />
-                    {/* <FormInput type="text" name="expected_codes" /> */}
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
                       The list of HTTP status codes expected in response from
@@ -325,7 +324,6 @@ const EditHealthMonitor = (props) => {
                       type="text"
                       name="url_path"
                     />
-                    {/* <FormInput type="text" name="url_path" /> */}
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
                       The HTTP URL path of the request sent by the monitor to
