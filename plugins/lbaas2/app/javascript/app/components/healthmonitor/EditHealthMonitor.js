@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react"
-import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../../lib/hooks/useCommons"
-import useHealthmonitor from "../../../lib/hooks/useHealthMonitor"
-import usePool from "../../../lib/hooks/usePool"
-import { Form } from "lib/elektra-form"
-import SelectInput from "../shared/SelectInput"
-import FormInput from "../shared/FormInput"
-import { addNotice } from "lib/flashes"
-import TagsInput from "../shared/TagsInput"
-import ErrorPage from "../ErrorPage"
-import Log from "../shared/logger"
+import React, { useState, useEffect } from "react";
+import { Modal, Button } from "react-bootstrap";
+import useCommons from "../../../lib/hooks/useCommons";
+import useHealthmonitor from "../../../lib/hooks/useHealthMonitor";
+import usePool from "../../../lib/hooks/usePool";
+import { Form } from "lib/elektra-form";
+import SelectInput from "../shared/SelectInput";
+import FormInput from "../shared/FormInput";
+import { addNotice } from "lib/flashes";
+import TagsInput from "../shared/TagsInput";
+import ErrorPage from "../ErrorPage";
+import Log from "../shared/logger";
 
 const EditHealthMonitor = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
+  const { searchParamsToString, matchParams, formErrorMessage } = useCommons();
   const {
     fetchHealthmonitor,
     updateHealthmonitor,
@@ -21,111 +21,111 @@ const EditHealthMonitor = (props) => {
     expectedCodesRelation,
     urlPathRelation,
     httpMethods,
-  } = useHealthmonitor()
-  const { persistPool } = usePool()
-  const [loadbalancerID, setLoadbalancerID] = useState(null)
-  const [poolID, setPoolID] = useState(null)
-  const [healthmonitorID, setHealthmonitorID] = useState(null)
+  } = useHealthmonitor();
+  const { persistPool } = usePool();
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
+  const [poolID, setPoolID] = useState(null);
+  const [healthmonitorID, setHealthmonitorID] = useState(null);
   const [healthmonitor, setHealthmonitor] = useState({
     isLoading: false,
     error: null,
     item: null,
-  })
-
-  // useEffect(() => {
-  //   Log.debug("fetching healthmonitor to edit")
-  //   loadHealthmonitor()
-  // }, [])
+  });
+  const [httpMethod, setHttpMethod] = useState(null);
+  const [expectedCode, setExpectedCode] = useState(null);
 
   useEffect(() => {
     // get the lb
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
-    const poolID = params.poolID
-    const healthmonitorID = params.healthmonitorID
-    setLoadbalancerID(lbID)
-    setPoolID(poolID)
-    setHealthmonitorID(healthmonitorID)
-  }, [])
+    const params = matchParams(props);
+    const lbID = params.loadbalancerID;
+    const poolID = params.poolID;
+    const healthmonitorID = params.healthmonitorID;
+    setLoadbalancerID(lbID);
+    setPoolID(poolID);
+    setHealthmonitorID(healthmonitorID);
+  }, []);
 
   useEffect(() => {
     if (healthmonitorID) {
-      loadHealthmonitor()
+      loadHealthmonitor();
     }
-  }, [healthmonitorID])
+  }, [healthmonitorID]);
 
   const loadHealthmonitor = () => {
-    // get the lb id and poolId
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
-    const poolID = params.poolID
-    const healthmonitorID = params.healthmonitorID
     // fetch the healthmonitor to edit
-    setHealthmonitor({ ...healthmonitor, isLoading: true })
-    fetchHealthmonitor(lbID, poolID, healthmonitorID)
+    setHealthmonitor({ ...healthmonitor, isLoading: true });
+    fetchHealthmonitor(loadbalancerID, poolID, healthmonitorID)
       .then((data) => {
         setHealthmonitor({
           ...healthmonitor,
           isLoading: false,
           item: data.healthmonitor,
           error: null,
-        })
+        });
       })
       .catch((error) => {
-        setHealthmonitor({ ...healthmonitor, isLoading: false, error: error })
-      })
-  }
+        setHealthmonitor({ ...healthmonitor, isLoading: false, error: error });
+      });
+  };
 
   useEffect(() => {
     if (healthmonitor.item) {
-      setShowHttpMethods(httpMethodRelation(healthmonitor.item.type))
-      setShowExpectedCodes(expectedCodesRelation(healthmonitor.item.type))
-      setShowUrlPath(urlPathRelation(healthmonitor.item.type))
+      setShowHttpMethods(httpMethodRelation(healthmonitor.item.type));
+      setShowExpectedCodes(expectedCodesRelation(healthmonitor.item.type));
+      setShowUrlPath(urlPathRelation(healthmonitor.item.type));
+      setSelectHttpMehod();
     }
-  }, [healthmonitor.item])
+  }, [healthmonitor.item]);
+
+  const setSelectHttpMehod = () => {
+    const selectedOption = httpMethods().find(
+      (i) => i.value == healthmonitor.item.http_method
+    );
+    setHttpMethod(selectedOption);
+  };
 
   /**
    * Modal stuff
    */
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
 
   const close = (e) => {
-    if (e) e.stopPropagation()
-    setShow(false)
-  }
+    if (e) e.stopPropagation();
+    setShow(false);
+  };
 
   const restoreUrl = () => {
     if (!show) {
-      const params = matchParams(props)
-      const lbID = params.loadbalancerID
+      const params = matchParams(props);
+      const lbID = params.loadbalancerID;
       props.history.replace(
         `/loadbalancers/${lbID}/show?${searchParamsToString(props)}`
-      )
+      );
     }
-  }
+  };
 
   /**
    * Form stuff
    */
-  const [initialValues, setInitialValues] = useState({})
-  const [formErrors, setFormErrors] = useState(null)
-  const [showHttpMethods, setShowHttpMethods] = useState(false)
-  const [showExpectedCodes, setShowExpectedCodes] = useState(false)
-  const [showUrlPath, setShowUrlPath] = useState(false)
+  const [initialValues, setInitialValues] = useState({});
+  const [formErrors, setFormErrors] = useState(null);
+  const [showHttpMethods, setShowHttpMethods] = useState(false);
+  const [showExpectedCodes, setShowExpectedCodes] = useState(false);
+  const [showUrlPath, setShowUrlPath] = useState(false);
 
   const validate = ({ name, max_retries, delay }) => {
-    return name && max_retries && delay && true
-  }
+    return name && max_retries && delay && true;
+  };
 
   const onSubmit = (values) => {
-    setFormErrors(null)
+    setFormErrors(null);
     // save the entered values in case of error
-    setInitialValues(values)
+    setInitialValues(values);
     // get the lb id and poolId
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
-    const poolID = params.poolID
-    const healthmonitorID = params.healthmonitorID
+    const params = matchParams(props);
+    const lbID = params.loadbalancerID;
+    const poolID = params.poolID;
+    const healthmonitorID = params.healthmonitorID;
 
     return updateHealthmonitor(lbID, poolID, healthmonitorID, values)
       .then((response) => {
@@ -134,20 +134,22 @@ const EditHealthMonitor = (props) => {
             Health Monitor <b>{response.data.name}</b> ({response.data.id}) is
             being updated.
           </React.Fragment>
-        )
+        );
         // fetch the pool again containing the new healthmonitor so it gets updated fast
         persistPool(lbID, poolID)
           .then(() => {})
-          .catch((error) => {})
-        close()
+          .catch((error) => {});
+        close();
       })
       .catch((error) => {
-        setFormErrors(formErrorMessage(error))
-      })
-  }
+        setFormErrors(formErrorMessage(error));
+      });
+  };
 
-  const onHealthMonitorTypeChanged = () => {}
-  const onHttpMethodsChanged = (options) => {}
+  const onHealthMonitorTypeChanged = () => {};
+  const onHttpMethodsChanged = (options) => {
+    setHttpMethod(options);
+  };
 
   return (
     <Modal
@@ -280,7 +282,7 @@ const EditHealthMonitor = (props) => {
                       name="http_method"
                       items={httpMethods()}
                       onChange={onHttpMethodsChanged}
-                      value={{ label: "GET", value: "GET" }}
+                      value={httpMethod}
                     />
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
@@ -295,7 +297,12 @@ const EditHealthMonitor = (props) => {
                     label="Expected codes"
                     name="expected_codes"
                   >
-                    <FormInput type="text" name="expected_codes" value="200" />
+                    <Form.Input
+                      elementType="input"
+                      type="text"
+                      name="expected_codes"
+                    />
+                    {/* <FormInput type="text" name="expected_codes" /> */}
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
                       The list of HTTP status codes expected in response from
@@ -313,7 +320,12 @@ const EditHealthMonitor = (props) => {
 
                 {showUrlPath && (
                   <Form.ElementHorizontal label="Url path" name="url_path">
-                    <FormInput type="text" name="url_path" value="/" />
+                    <Form.Input
+                      elementType="input"
+                      type="text"
+                      name="url_path"
+                    />
+                    {/* <FormInput type="text" name="url_path" /> */}
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
                       The HTTP URL path of the request sent by the monitor to
@@ -348,7 +360,7 @@ const EditHealthMonitor = (props) => {
         </React.Fragment>
       )}
     </Modal>
-  )
-}
+  );
+};
 
-export default EditHealthMonitor
+export default EditHealthMonitor;
