@@ -36,6 +36,7 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
+    # http_method should be removed of the update object if "nil" and not empty string
     def attributes_for_update
       {
         'name' => read('name'),
@@ -46,7 +47,7 @@ module Lbaas2
         'expected_codes' => read('expected_codes'),
         'url_path' => read('url_path'),
         'tags' => read('tags')
-      }
+      }.delete_if { |_k, v| v.nil? }
     end
 
   end

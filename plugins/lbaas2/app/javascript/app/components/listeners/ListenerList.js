@@ -1,116 +1,116 @@
-import React from "react"
-import { useEffect, useState, useMemo } from "react"
-import useListener from "../../../lib/hooks/useListener"
-import ListenerItem from "./ListenerItem"
-import queryString from "query-string"
-import { Link } from "react-router-dom"
-import HelpPopover from "../shared/HelpPopover"
-import { CSSTransition, TransitionGroup } from "react-transition-group"
-import { useDispatch, useGlobalState } from "../StateProvider"
-import ErrorPage from "../ErrorPage"
-import useCommons from "../../../lib/hooks/useCommons"
-import { Tooltip, OverlayTrigger, Table } from "react-bootstrap"
-import { addError } from "lib/flashes"
-import Pagination from "../shared/Pagination"
-import { SearchField } from "lib/components/search_field"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
-import SmartLink from "../shared/SmartLink"
-import Log from "../shared/logger"
-import { regexString } from 'lib/tools/regex_string';
+import React from "react";
+import { useEffect, useState, useMemo } from "react";
+import useListener from "../../../lib/hooks/useListener";
+import ListenerItem from "./ListenerItem";
+import queryString from "query-string";
+import { Link } from "react-router-dom";
+import HelpPopover from "../shared/HelpPopover";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { useDispatch, useGlobalState } from "../StateProvider";
+import ErrorPage from "../ErrorPage";
+import useCommons from "../../../lib/hooks/useCommons";
+import { Tooltip, OverlayTrigger, Table } from "react-bootstrap";
+import { addError } from "lib/flashes";
+import Pagination from "../shared/Pagination";
+import { SearchField } from "lib/components/search_field";
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink";
+import Log from "../shared/logger";
+import { regexString } from "lib/tools/regex_string";
 
 const ListenerList = ({ props, loadbalancerID }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const {
     persistListeners,
     persistListener,
     setSelected,
     setSearchTerm,
     onSelectListener,
-  } = useListener()
-  const state = useGlobalState().listeners
-  const { searchParamsToString } = useCommons()
-  const [initialLoadDone, setInitialLoadDone] = useState(false)
+  } = useListener();
+  const state = useGlobalState().listeners;
+  const { searchParamsToString } = useCommons();
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
   const [
     triggerFindSelectedListener,
     setTriggerFindSelectedListener,
-  ] = useState(false)
+  ] = useState(false);
 
   // when the load balancer id changes the state is reseted and a new load begins
   useEffect(() => {
-    initialLoad()
-  }, [loadbalancerID])
+    initialLoad();
+  }, [loadbalancerID]);
 
   // when listeners are loaded we check if we have to select one of them
   useEffect(() => {
     if (initialLoadDone) {
-      selectListenerFromURL()
-      setInitialLoadDone(false)
+      selectListenerFromURL();
+      setInitialLoadDone(false);
     }
-  }, [initialLoadDone])
+  }, [initialLoadDone]);
 
   // if listener is selected check if exists on the state
   useEffect(() => {
     if (state.selected) {
-      findSelectedListener()
+      findSelectedListener();
     }
-  }, [state.selected])
+  }, [state.selected]);
 
   useEffect(() => {
     if (triggerFindSelectedListener) {
-      findSelectedListener()
+      findSelectedListener();
     }
-  }, [triggerFindSelectedListener])
+  }, [triggerFindSelectedListener]);
 
   const initialLoad = () => {
-    Log.debug("LISTENER INITIAL FETCH")
+    Log.debug("LISTENER INITIAL FETCH");
     // no add marker so we get always the first ones on loading the component
     persistListeners(loadbalancerID, true, null)
       .then((data) => {
-        setInitialLoadDone(true)
+        setInitialLoadDone(true);
       })
-      .catch((error) => {})
-  }
+      .catch((error) => {});
+  };
 
   // when initial load happens we check if a listener is per url selected
   const selectListenerFromURL = () => {
-    const values = queryString.parse(props.location.search)
-    const id = values.listener
+    const values = queryString.parse(props.location.search);
+    const id = values.listener;
     if (id) {
       // Listener was selected
-      setSelected(id)
+      setSelected(id);
       // filter the listener list to show just the one item
-      setSearchTerm(id)
+      setSearchTerm(id);
     }
-  }
+  };
 
   const findSelectedListener = () => {
-    setTriggerFindSelectedListener(false)
-    const index = state.items.findIndex((item) => item.id == selected)
+    setTriggerFindSelectedListener(false);
+    const index = state.items.findIndex((item) => item.id == selected);
 
     if (index >= 0) {
-      return
+      return;
     } else if (hasNext) {
       // set state to loading
-      dispatch({ type: "REQUEST_LISTENERS" })
+      dispatch({ type: "REQUEST_LISTENERS" });
       // No listener found in the current list.
       persistListener(loadbalancerID, selected)
         .then(() => {
           // trigger again find selected listener
-          setTriggerFindSelectedListener(true)
+          setTriggerFindSelectedListener(true);
         })
         .catch((error) => {
-          dispatch({ type: "REQUEST_LISTENERS_FAILURE", error: error })
-        })
+          dispatch({ type: "REQUEST_LISTENERS_FAILURE", error: error });
+        });
     } else {
       // something weird happend. We just show an error
       addError(
         <React.Fragment>
           Listener <b>{selected}</b> not found.
         </React.Fragment>
-      )
+      );
     }
-  }
+  };
 
   const canCreate = useMemo(
     () =>
@@ -118,64 +118,64 @@ const ListenerList = ({ props, loadbalancerID }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const handlePaginateClick = (e, page) => {
-    e.preventDefault()
+    e.preventDefault();
     if (page === "all") {
       persistListeners(loadbalancerID, false, {
         limit: 9999,
-      }).catch((error) => {})
+      }).catch((error) => {});
     } else {
       persistListeners(loadbalancerID, false, {
         marker: state.marker,
-      }).catch((error) => {})
+      }).catch((error) => {});
     }
-  }
+  };
 
   const restoreUrl = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    onSelectListener(props)
-  }
+    onSelectListener(props);
+  };
 
   const search = (term) => {
     if (hasNext && !isLoading) {
       persistListeners(loadbalancerID, false, {
         limit: 9999,
-      }).catch((error) => {})
+      }).catch((error) => {});
     }
-    setSearchTerm(term)
-  }
+    setSearchTerm(term);
+  };
 
-  const error = state.error
-  const hasNext = state.hasNext
-  const items = state.items
-  const selected = state.selected
-  const searchTerm = state.searchTerm
+  const error = state.error;
+  const hasNext = state.hasNext;
+  const items = state.items;
+  const selected = state.selected;
+  const searchTerm = state.searchTerm;
 
   const filterItems = (searchTerm, items) => {
-    if (!searchTerm) return items
+    if (!searchTerm) return items;
     // filter items
     if (selected) {
-      return items.filter((i) => i.id == searchTerm.trim())
+      return items.filter((i) => i.id == searchTerm.trim());
     } else {
-      const regex = new RegExp(regexString(searchTerm.trim()), "i")
+      const regex = new RegExp(regexString(searchTerm.trim()), "i");
       return items.filter(
         (i) =>
           `${i.id} ${i.name} ${i.description} ${i.protocol} ${i.protocol_port}`.search(
             regex
           ) >= 0
-      )
+      );
     }
-  }
+  };
 
-  const listeners = filterItems(searchTerm, items)
-  const isLoading = state.isLoading
+  const listeners = filterItems(searchTerm, items);
+  const isLoading = state.isLoading;
   return useMemo(() => {
-    Log.debug("RENDER Listener list")
+    Log.debug("RENDER Listener list");
     return (
       <div className="details-section">
         <div className="display-flex">
@@ -250,7 +250,7 @@ const ListenerList = ({ props, loadbalancerID }) => {
                         /ID/Description
                       </div>
                     </th>
-                    <th>State/Prov. Status</th>
+                    <th>Status</th>
                     <th>Tags</th>
                     <th>Protocol/Client Auth/Secrets</th>
                     <th>Protocol Port</th>
@@ -298,7 +298,7 @@ const ListenerList = ({ props, loadbalancerID }) => {
           </React.Fragment>
         )}
       </div>
-    )
+    );
   }, [
     JSON.stringify(listeners),
     error,
@@ -307,7 +307,7 @@ const ListenerList = ({ props, loadbalancerID }) => {
     selected,
     props,
     hasNext,
-  ])
-}
+  ]);
+};
 
-export default ListenerList
+export default ListenerList;

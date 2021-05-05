@@ -115,6 +115,19 @@
   word-break: break-word;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
+.centered {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.form-margin-top {
+  margin-top: 30px;
+}
+
 .transparent {
   filter: alpha(opacity=0);
   opacity: 0;
@@ -148,7 +161,7 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
