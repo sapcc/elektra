@@ -1,6 +1,6 @@
 //
 // Add to your .env following variable LBAAS2_LOGGER and restart webpacker:
-// drun bundle exec bin/webpack-dev-server
+// bundle exec bin/webpack-dev-server
 //
 
 import { LBAAS2_LOGGER } from "@env"
