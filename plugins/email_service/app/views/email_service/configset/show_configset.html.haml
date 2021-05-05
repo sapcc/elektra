@@ -1,0 +1,18 @@
+.modal-body
+  %h3
+    Details
+
+  .show_details
+    .row
+      .col-md-2
+        %b
+          Config Set Name:
+      .col-md-10
+        = @a_configset.configuration_set.name
+
+
+%div{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+  - else
+    = link_to "Close", plugin('email_service').settings_path(), class: 'btn btn-default'

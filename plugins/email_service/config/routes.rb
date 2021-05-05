@@ -8,10 +8,13 @@ EmailService::Engine.routes.draw do
   post 'settings/enable_cronus' => 'settings#enable_cronus'
   post 'settings/disable_cronus' => 'settings#disable_cronus'
   
-  get 'settings/new_configset' => 'settings#new_configset'
-  post 'settings/create_configset' => 'settings#create_configset'
-  post 'settings/destroy_configset' => 'settings#destroy_configset'
-  # resource :settings, only: [:index]
+  get 'configset' => 'configset#index'
+  get 'configset/new_configset' => 'configset#new_configset'
+  get 'configset/show_configset' => 'configset#show_configset'
+
+  post 'configset/create_configset' => 'configset#create_configset'
+  post 'configset/destroy_configset' => 'configset#destroy_configset'
+
   resource :templated_emails, only: [:index, :new, :create]
 
   resources :emails, only: [:index, :show, :new, :create, :destroy]

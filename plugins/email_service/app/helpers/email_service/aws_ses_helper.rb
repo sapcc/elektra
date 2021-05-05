@@ -3,7 +3,7 @@ module EmailService
   module AwsSesHelper
     @encoding = "utf-8"
 
-### EC2 CREDS ### 
+    ### EC2 CREDS ### 
     def get_ec2_creds
       resp = services.email_service.get_aws_creds(current_user.id)
       keyhash = resp[:items][0]
@@ -12,7 +12,7 @@ module EmailService
       [access, secret] if access && secret
     end
 
-### CREATE SES CLIENT ###
+    ### CREATE SES CLIENT ###
     def create_ses_client
       region = map_region(current_user.default_services_region)
       endpoint = current_user.service_url('email-aws')
@@ -25,6 +25,7 @@ module EmailService
       end
     end
 
+    ## Send Plain eMail ##
     def send_email(plain_email)
       status = ""
       ses_client = create_ses_client
@@ -55,10 +56,10 @@ module EmailService
           source: plain_email.email.source,
         )
         status = "success"
-        logger.debug "#{Time.new}: CRONUS: DEBUG: templated email aws ses #{status}"
+        # logger.debug "#{Time.new}: CRONUS: DEBUG: templated email aws ses #{status}"
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
-        logger.debug "CRONUS : DEBUG : #{error}"
+        logger.debug "CRONUS : DEBUG : Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
       end
       status 
     end
@@ -102,6 +103,7 @@ module EmailService
 
     def configset_create(name)
       status = ""
+
       begin
         ses_client = create_ses_client
         resp = ses_client.create_configuration_set({
@@ -114,7 +116,7 @@ module EmailService
         status = "#{error}"
         logger.debug "CRONUS: DEBUG: CONFIGSET: #{error}"
       end
-      # logger.debug "CRONUS: DEBUG: CONFIGSET: create: #{status}"
+
       status
     end
 
@@ -152,10 +154,16 @@ module EmailService
     end
 
     def describe_configset(name)
-      resp = client.describe_configuration_set({
-        configuration_set_name: name, # required
-        configuration_set_attribute_names: ["eventDestinations"], # accepts eventDestinations, trackingOptions, deliveryOptions, reputationOptions
-      })
+      begin
+        ses_client = create_ses_client
+        resp = ses_client.describe_configuration_set({
+          configuration_set_name: name, # required
+          configuration_set_attribute_names: ["eventDestinations"], # accepts eventDestinations, trackingOptions, deliveryOptions, reputationOptions
+        })
+      rescue Aws::SES::Errors::ServiceError => error
+        status = "#{error}"
+        logger.debug "CRONUS: DEBUG: (AWS SES HELPER) DESCRIBE CONFIGSET: #{error}"
+      end
       # resp.configuration_set.name #=> String
       # resp.event_destinations #=> Array
       # resp.event_destinations[0].name #=> String
@@ -296,7 +304,7 @@ module EmailService
         # logger.debug "CRONUS: DEBUG: REAL COUNT : #{template_list.templates_metadata.count} "  
         index = 0 
         # logger.debug "CRONUS: DEBUG: template_list SIZE : #{template_list.size}"
-        while template_list.size > 0 && index < template_list.templates_metadata.count  
+        while template_list.size > 0 && index < template_list.templates_metadata.count
             resp = ses_client.get_template({
             template_name: template_list.templates_metadata[index].name,
             })

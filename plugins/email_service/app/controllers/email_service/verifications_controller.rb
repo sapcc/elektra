@@ -75,9 +75,9 @@ module EmailService
         msg = "Identity #{identity} removal failed : #{status}"
         flash[:error] = msg
       end
-
-      render action: :index
-
+      
+      # render action: :index
+      redirect_to({ action: :index } ) 
     end
 
   end
