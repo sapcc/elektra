@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react"
-import StateLabel from "../shared/StateLabel"
-import StatusLabel from "../shared/StatusLabel"
-import StaticTags from "../StaticTags"
-import useHealthMonitor from "../../../lib/hooks/useHealthMonitor"
-import CopyPastePopover from "../shared/CopyPastePopover"
-import Log from "../shared/logger"
-import HelpPopover from "../shared/HelpPopover"
+import { useEffect, useState } from "react";
+import StaticTags from "../StaticTags";
+import useHealthMonitor from "../../../lib/hooks/useHealthMonitor";
+import CopyPastePopover from "../shared/CopyPastePopover";
+import Log from "../shared/logger";
+import HelpPopover from "../shared/HelpPopover";
+import useStatus from "../../../lib/hooks/useStatus";
 
 const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
   const {
@@ -13,50 +12,54 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
     httpMethodRelation,
     expectedCodesRelation,
     urlPathRelation,
-  } = useHealthMonitor()
-  let polling = null
+  } = useHealthMonitor();
+  const { entityStatus } = useStatus(
+    healthmonitor.operating_status,
+    healthmonitor.provisioning_status
+  );
+  let polling = null;
 
   useEffect(() => {
     if (healthmonitor.provisioning_status.includes("PENDING")) {
-      startPolling(5000)
+      startPolling(5000);
     } else {
-      startPolling(30000)
+      startPolling(30000);
     }
 
     return function cleanup() {
-      stopPolling()
-    }
-  })
+      stopPolling();
+    };
+  });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
-    if (polling) return
+    if (polling) return;
     polling = setInterval(() => {
       Log.debug(
         "Polling healthmonitor -->",
         healthmonitor.id,
         " with interval -->",
         interval
-      )
+      );
       pollHealthmonitor(loadbalancerID, poolID, healthmonitor.id, null)
         .then((data) => {})
-        .catch((error) => {})
-    }, interval)
-  }
+        .catch((error) => {});
+    }, interval);
+  };
 
   const stopPolling = () => {
-    Log.debug("stop polling for healthmonitor id -->", healthmonitor.id)
-    clearInterval(polling)
-    polling = null
-  }
+    Log.debug("stop polling for healthmonitor id -->", healthmonitor.id);
+    clearInterval(polling);
+    polling = null;
+  };
 
   const displayName = () => {
     if (healthmonitor.name) {
-      return healthmonitor.name
+      return healthmonitor.name;
     } else {
-      return <CopyPastePopover text={healthmonitor.id} shouldPopover={false} />
+      return <CopyPastePopover text={healthmonitor.id} shouldPopover={false} />;
     }
-  }
+  };
 
   const displayID = () => {
     if (healthmonitor.name) {
@@ -68,9 +71,9 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
             bsClass="cp copy-paste-ids"
           />
         </small>
-      )
+      );
     }
-  }
+  };
 
   return (
     <div className="list multiple-subtable-scroll-body">
@@ -95,20 +98,13 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
       <div className="list-entry">
         <div className="row">
           <div className="col-md-12">
-            <b>State/Provisioning Status:</b>
+            <b>Status:</b>
           </div>
         </div>
 
         <div className="row">
           <div className="col-md-12">
-            <div className="display-flex">
-              <span>
-                <StateLabel label={healthmonitor.operating_status} />
-              </span>
-              <span className="label-right">
-                <StatusLabel label={healthmonitor.provisioning_status} />
-              </span>
-            </div>
+            <div>{entityStatus}</div>
           </div>
         </div>
       </div>
@@ -202,23 +198,25 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
         <div className="row">
           <div className="col-md-12">
             <ul className="less-left-margin">
-              {healthmonitor.allowed_address_pairs && healthmonitor.allowed_address_pairs.length > 0 &&
+              {healthmonitor.allowed_address_pairs &&
+                healthmonitor.allowed_address_pairs.length > 0 &&
                 healthmonitor.allowed_address_pairs.map((pair_item, index) => (
                   <li key={index}>
                     <CopyPastePopover
                       text={pair_item.ip_address}
                       shouldPopover={false}
                     />
-                    <small className="info-text">MAC address: {pair_item.mac_address}</small>
+                    <small className="info-text">
+                      MAC address: {pair_item.mac_address}
+                    </small>
                   </li>
-                ))
-              }
+                ))}
             </ul>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HealthmonitorDetails
+export default HealthmonitorDetails;

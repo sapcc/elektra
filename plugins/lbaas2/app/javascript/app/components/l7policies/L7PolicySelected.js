@@ -1,64 +1,67 @@
-import { useEffect, useState, useMemo } from "react"
-import CopyPastePopover from "../shared/CopyPastePopover"
-import StateLabel from "../shared/StateLabel"
-import StatusLabel from "../shared/StatusLabel"
-import StaticTags from "../StaticTags"
-import useL7Policy from "../../../lib/hooks/useL7Policy"
-import { Link } from "react-router-dom"
-import { addNotice, addError } from "lib/flashes"
-import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import useCommons from "../../../lib/hooks/useCommons"
-import useListener from "../../../lib/hooks/useListener"
-import SmartLink from "../shared/SmartLink"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
-import Log from "../shared/logger"
+import { useEffect, useState, useMemo } from "react";
+import CopyPastePopover from "../shared/CopyPastePopover";
+import StaticTags from "../StaticTags";
+import useL7Policy from "../../../lib/hooks/useL7Policy";
+import { Link } from "react-router-dom";
+import { addNotice, addError } from "lib/flashes";
+import { ErrorsList } from "lib/elektra-form/components/errors_list";
+import useCommons from "../../../lib/hooks/useCommons";
+import useListener from "../../../lib/hooks/useListener";
+import SmartLink from "../shared/SmartLink";
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import Log from "../shared/logger";
+import useStatus from "../../../lib/hooks/useStatus";
 
 const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
-  const { actionRedirect, deleteL7Policy, persistL7Policy } = useL7Policy()
-  const { matchParams, errorMessage, searchParamsToString } = useCommons()
-  const { persistListener } = useListener()
-  const [loadbalancerID, setLoadbalancerID] = useState(null)
-  let polling = null
+  const { actionRedirect, deleteL7Policy, persistL7Policy } = useL7Policy();
+  const { matchParams, errorMessage, searchParamsToString } = useCommons();
+  const { persistListener } = useListener();
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
+  const { entityStatus } = useStatus(
+    l7Policy.operating_status,
+    l7Policy.provisioning_status
+  );
+  let polling = null;
 
   useEffect(() => {
-    const params = matchParams(props)
-    setLoadbalancerID(params.loadbalancerID)
+    const params = matchParams(props);
+    setLoadbalancerID(params.loadbalancerID);
 
     if (l7Policy.provisioning_status.includes("PENDING")) {
-      startPolling(5000)
+      startPolling(5000);
     } else {
-      startPolling(30000)
+      startPolling(30000);
     }
 
     return function cleanup() {
-      stopPolling()
-    }
-  })
+      stopPolling();
+    };
+  });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
-    if (polling) return
+    if (polling) return;
     polling = setInterval(() => {
       Log.debug(
         "Polling l7 policy selected -->",
         l7Policy.id,
         " with interval -->",
         interval
-      )
+      );
       persistL7Policy(
         loadbalancerID,
         listenerID,
         l7Policy.id
-      ).catch((error) => {})
-    }, interval)
-  }
+      ).catch((error) => {});
+    }, interval);
+  };
 
   const stopPolling = () => {
-    Log.debug("stop polling for listener id -->", l7Policy.id)
-    clearInterval(polling)
-    polling = null
-  }
+    Log.debug("stop polling for listener id -->", l7Policy.id);
+    clearInterval(polling);
+    polling = null;
+  };
 
   const canEdit = useMemo(
     () =>
@@ -66,7 +69,7 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canDelete = useMemo(
     () =>
@@ -74,7 +77,7 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canShowJSON = useMemo(
     () =>
@@ -82,37 +85,37 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const handleDelete = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    const l7policyID = l7Policy.id
-    const l7policyName = l7Policy.name
+    const l7policyID = l7Policy.id;
+    const l7policyName = l7Policy.name;
     return deleteL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
       .then((response) => {
         addNotice(
           <React.Fragment>
             L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.
           </React.Fragment>
-        )
+        );
         // fetch the listener again containing the new policy so it gets updated fast
         persistListener(loadbalancerID, listenerID)
           .then(() => {})
-          .catch((error) => {})
+          .catch((error) => {});
         // on remove go back to policy list
-        onBackLink()
+        onBackLink();
       })
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
             errors: errorMessage(error.response),
           })
-        )
-      })
-  }
+        );
+      });
+  };
 
   return (
     <React.Fragment>
@@ -164,7 +167,7 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
                     >
                       JSON
                     </SmartLink>
-                  </li>                  
+                  </li>
                 </ul>
               </div>
             </div>
@@ -212,26 +215,11 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
         <div className="selected-l7policy-entry">
           <div className="row">
             <div className="col-md-12">
-              <b>State:</b>
+              <b>Status:</b>
             </div>
           </div>
           <div className="row">
-            <div className="col-md-12">
-              <StateLabel label={l7Policy.operating_status} />
-            </div>
-          </div>
-        </div>
-
-        <div className="selected-l7policy-entry">
-          <div className="row">
-            <div className="col-md-12">
-              <b>Prov. Status:</b>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-12">
-              <StatusLabel label={l7Policy.provisioning_status} />
-            </div>
+            <div className="col-md-12">{entityStatus}</div>
           </div>
         </div>
 
@@ -301,7 +289,7 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
         </div>
       </div>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default L7PolicySelected
+export default L7PolicySelected;

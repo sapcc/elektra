@@ -1,15 +1,14 @@
-import { useEffect, useState, useMemo } from "react"
-import useCommons from "../../../lib/hooks/useCommons"
-import CopyPastePopover from "../shared/CopyPastePopover"
-import StateLabel from "../shared/StateLabel"
-import StatusLabel from "../shared/StatusLabel"
-import StaticTags from "../StaticTags"
-import useL7Rule from "../../../lib/hooks/useL7Rule"
-import SmartLink from "../shared/SmartLink"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
-import Log from "../shared/logger"
-import DropDownMenu from '../shared/DropdownMenu'
+import { useEffect, useState, useMemo } from "react";
+import useCommons from "../../../lib/hooks/useCommons";
+import CopyPastePopover from "../shared/CopyPastePopover";
+import StaticTags from "../StaticTags";
+import useL7Rule from "../../../lib/hooks/useL7Rule";
+import SmartLink from "../shared/SmartLink";
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import Log from "../shared/logger";
+import DropDownMenu from "../shared/DropdownMenu";
+import useStatus from "../../../lib/hooks/useStatus";
 
 const L7RuleListItem = ({
   props,
@@ -23,50 +22,54 @@ const L7RuleListItem = ({
     matchParams,
     errorMessage,
     searchParamsToString,
-  } = useCommons()
-  const { deleteL7Rule, displayInvert, persistL7Rule } = useL7Rule()
-  const [loadbalancerID, setLoadbalancerID] = useState(null)
-  let polling = null
+  } = useCommons();
+  const { deleteL7Rule, displayInvert, persistL7Rule } = useL7Rule();
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
+  const { entityStatus } = useStatus(
+    l7Rule.operating_status,
+    l7Rule.provisioning_status
+  );
+  let polling = null;
 
   useEffect(() => {
-    const params = matchParams(props)
-    setLoadbalancerID(params.loadbalancerID)
+    const params = matchParams(props);
+    setLoadbalancerID(params.loadbalancerID);
 
     if (l7Rule.provisioning_status.includes("PENDING")) {
-      startPolling(5000)
+      startPolling(5000);
     } else {
-      startPolling(30000)
+      startPolling(30000);
     }
 
     return function cleanup() {
-      stopPolling()
-    }
-  })
+      stopPolling();
+    };
+  });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
-    if (polling) return
+    if (polling) return;
     polling = setInterval(() => {
       Log.debug(
         "Polling l7 rule -->",
         l7Rule.id,
         " with interval -->",
         interval
-      )
+      );
       persistL7Rule(
         loadbalancerID,
         listenerID,
         l7PolicyID,
         l7Rule.id
-      ).catch((error) => {})
-    }, interval)
-  }
+      ).catch((error) => {});
+    }, interval);
+  };
 
   const stopPolling = () => {
-    Log.debug("stop polling for l7rule id -->", l7Rule.id)
-    clearInterval(polling)
-    polling = null
-  }
+    Log.debug("stop polling for l7rule id -->", l7Rule.id);
+    clearInterval(polling);
+    polling = null;
+  };
 
   const canEdit = useMemo(
     () =>
@@ -74,7 +77,7 @@ const L7RuleListItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canDelete = useMemo(
     () =>
@@ -82,7 +85,7 @@ const L7RuleListItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canShowJSON = useMemo(
     () =>
@@ -90,15 +93,15 @@ const L7RuleListItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const handleDelete = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    deleteL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule).then(() => {})
-  }
+    deleteL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule).then(() => {});
+  };
 
   return (
     <tr>
@@ -111,11 +114,7 @@ const L7RuleListItem = ({
           searchTerm={searchTerm}
         />
       </td>
-      <td>
-        <StateLabel label={l7Rule.operating_status} />
-        <br />
-        <StatusLabel label={l7Rule.provisioning_status} />
-      </td>
+      <td>{entityStatus}</td>
       <td>
         <StaticTags tags={l7Rule.tags} shouldPopover={true} />
       </td>
@@ -136,7 +135,7 @@ const L7RuleListItem = ({
         />
       </td>
       <td>
-        <DropDownMenu buttonIcon={<span className="fa fa-cog"/>}>
+        <DropDownMenu buttonIcon={<span className="fa fa-cog" />}>
           <li>
             <SmartLink
               to={`/loadbalancers/${loadbalancerID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${
@@ -171,7 +170,7 @@ const L7RuleListItem = ({
         </DropDownMenu>
       </td>
     </tr>
-  )
-}
+  );
+};
 
-export default L7RuleListItem
+export default L7RuleListItem;

@@ -1,72 +1,75 @@
-import { useEffect, useState, useMemo } from "react"
-import { Link } from "react-router-dom"
-import StateLabel from "../shared/StateLabel"
-import StatusLabel from "../shared/StatusLabel"
-import StaticTags from "../StaticTags"
-import CopyPastePopover from "../shared/CopyPastePopover"
-import CachedInfoPopover from "../shared/CachedInforPopover"
-import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
-import CachedInfoPopoverContentListeners from "./CachedInfoPopoverContentListeners"
-import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
-import usePool from "../../../lib/hooks/usePool"
-import useCommons from "../../../lib/hooks/useCommons"
-import { addNotice, addError } from "lib/flashes"
-import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
-import SmartLink from "../shared/SmartLink"
-import Log from "../shared/logger"
-import DropDownMenu from '../shared/DropdownMenu'
+import { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import StaticTags from "../StaticTags";
+import CopyPastePopover from "../shared/CopyPastePopover";
+import CachedInfoPopover from "../shared/CachedInforPopover";
+import CachedInfoPopoverContent from "./CachedInfoPopoverContent";
+import CachedInfoPopoverContentListeners from "./CachedInfoPopoverContentListeners";
+import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers";
+import usePool from "../../../lib/hooks/usePool";
+import useCommons from "../../../lib/hooks/useCommons";
+import { addNotice, addError } from "lib/flashes";
+import { ErrorsList } from "lib/elektra-form/components/errors_list";
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer";
+import { policy } from "policy";
+import { scope } from "ajax_helper";
+import SmartLink from "../shared/SmartLink";
+import Log from "../shared/logger";
+import DropDownMenu from "../shared/DropdownMenu";
+import useStatus from "../../../lib/hooks/useStatus";
 
 const PoolItem = ({ props, pool, searchTerm, disabled }) => {
-  const { persistPool, deletePool, onSelectPool, reset } = usePool()
+  const { persistPool, deletePool, onSelectPool, reset } = usePool();
   const {
     MyHighlighter,
     matchParams,
     errorMessage,
     searchParamsToString,
-  } = useCommons()
-  const [loadbalancerID, setLoadbalancerID] = useState(null)
-  const { persistLoadbalancer } = useLoadbalancer()
-  let polling = null
+  } = useCommons();
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
+  const { persistLoadbalancer } = useLoadbalancer();
+  const { entityStatus } = useStatus(
+    pool.operating_status,
+    pool.provisioning_status
+  );
+  let polling = null;
 
   useEffect(() => {
-    const params = matchParams(props)
-    setLoadbalancerID(params.loadbalancerID)
+    const params = matchParams(props);
+    setLoadbalancerID(params.loadbalancerID);
 
     if (pool.provisioning_status.includes("PENDING")) {
-      startPolling(5000)
+      startPolling(5000);
     } else {
-      startPolling(30000)
+      startPolling(30000);
     }
 
     return function cleanup() {
-      stopPolling()
-    }
-  })
+      stopPolling();
+    };
+  });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
-    if (polling) return
+    if (polling) return;
     polling = setInterval(() => {
-      Log.debug("Polling pool -->", pool.id, " with interval -->", interval)
+      Log.debug("Polling pool -->", pool.id, " with interval -->", interval);
       persistPool(loadbalancerID, pool.id).catch((error) => {
         if (error && error.status == 404) {
           // check if the pool is selected and if yes deselect the item
           if (disabled) {
-            reset()
+            reset();
           }
         }
-      })
-    }, interval)
-  }
+      });
+    }, interval);
+  };
 
   const stopPolling = () => {
-    Log.debug("stop polling for pool id -->", pool.id)
-    clearInterval(polling)
-    polling = null
-  }
+    Log.debug("stop polling for pool id -->", pool.id);
+    clearInterval(polling);
+    polling = null;
+  };
 
   const canEdit = useMemo(
     () =>
@@ -74,7 +77,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canDelete = useMemo(
     () =>
@@ -82,7 +85,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const canShowJSON = useMemo(
     () =>
@@ -90,24 +93,24 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  )
+  );
 
   const handleDelete = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    const poolID = pool.id
-    const poolName = pool.name
+    const poolID = pool.id;
+    const poolName = pool.name;
     return deletePool(loadbalancerID, poolID, poolName)
       .then((response) => {
         addNotice(
           <React.Fragment>
             Pool <b>{poolName}</b> ({poolID}) is being deleted.
           </React.Fragment>
-        )
+        );
         // fetch the lb again containing the new listener so it gets updated fast
-        persistLoadbalancer(loadbalancerID).catch((error) => {})
+        persistLoadbalancer(loadbalancerID).catch((error) => {});
         // TODO: back to the poles
       })
       .catch((error) => {
@@ -115,20 +118,20 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
           React.createElement(ErrorsList, {
             errors: errorMessage(error.response),
           })
-        )
-      })
-  }
+        );
+      });
+  };
 
   const onPoolClick = (e) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
     }
-    onSelectPool(props, pool.id)
-  }
+    onSelectPool(props, pool.id);
+  };
 
   const displayName = () => {
-    const name = pool.name || pool.id
+    const name = pool.name || pool.id;
     if (disabled) {
       return (
         <div className="info-text">
@@ -140,7 +143,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
             bsClass="cp copy-paste-ids"
           />
         </div>
-      )
+      );
     } else {
       return (
         <Link to="#" onClick={onPoolClick}>
@@ -153,9 +156,9 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
             searchTerm={searchTerm}
           />
         </Link>
-      )
+      );
     }
-  }
+  };
   const displayID = () => {
     if (pool.name) {
       if (disabled) {
@@ -169,7 +172,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
               shouldPopover={false}
             />
           </div>
-        )
+        );
       } else {
         return (
           <CopyPastePopover
@@ -179,12 +182,12 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
             bsClass="cp copy-paste-ids"
             searchTerm={searchTerm}
           />
-        )
+        );
       }
     }
-  }
+  };
 
-  const listenersIDs = pool.listeners.map((m) => m.id)
+  const listenersIDs = pool.listeners.map((m) => m.id);
   const displayAssignedTo = () => {
     if (pool.listeners && pool.listeners.length > 0) {
       return (
@@ -206,39 +209,39 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
             />
           </div>
         </div>
-      )
+      );
     } else {
-      return <React.Fragment>Load Balancer</React.Fragment>
+      return <React.Fragment>Load Balancer</React.Fragment>;
     }
-  }
+  };
 
   const displayCheck = (option) => {
     if (option) {
-      return <i className="fa fa-check" />
+      return <i className="fa fa-check" />;
     } else {
-      return <i className="fa fa-times" />
+      return <i className="fa fa-times" />;
     }
-  }
+  };
 
   const collectContainers = () => {
     const containers = [
       { name: "Certificate Secret", ref: pool.tls_container_ref },
       { name: "Authentication Secret (CA)", ref: pool.ca_tls_container_ref },
-    ]
+    ];
     var filteredContainers = containers.reduce((filteredContainers, item) => {
       if (
         (item.ref && item.ref.length > 0) ||
         (item.refList && item.refList.length > 0)
       ) {
-        filteredContainers.push(item)
+        filteredContainers.push(item);
       }
-      return filteredContainers
-    }, [])
-    return filteredContainers
-  }
+      return filteredContainers;
+    }, []);
+    return filteredContainers;
+  };
 
   const displaySecrets = () => {
-    const containers = collectContainers()
+    const containers = collectContainers();
     return (
       <React.Fragment>
         {pool.tls_enabled && (
@@ -257,10 +260,10 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
           </div>
         )}
       </React.Fragment>
-    )
-  }
+    );
+  };
 
-  const memberIDs = pool.members.map((m) => m.id)
+  const memberIDs = pool.members.map((m) => m.id);
   return (
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
@@ -274,14 +277,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
           searchTerm={searchTerm}
         />
       </td>
-      <td>
-        <div>
-          <StateLabel label={pool.operating_status} />
-        </div>
-        <div>
-          <StatusLabel label={pool.provisioning_status} />
-        </div>
-      </td>
+      <td>{entityStatus}</td>
       <td>
         <StaticTags tags={pool.tags} />
       </td>
@@ -330,7 +326,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
         )}
       </td>
       <td>
-        <DropDownMenu buttonIcon={<span className="fa fa-cog"/>}>
+        <DropDownMenu buttonIcon={<span className="fa fa-cog" />}>
           <li>
             <SmartLink
               to={`/loadbalancers/${loadbalancerID}/pools/${
@@ -365,7 +361,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
         </DropDownMenu>
       </td>
     </tr>
-  )
-}
+  );
+};
 
-export default PoolItem
+export default PoolItem;
