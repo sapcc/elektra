@@ -324,20 +324,21 @@ const NewMember = (props) => {
             <Table className="table new_members" responsive>
               <thead>
                 <tr>
-                  <th>#</th>
+                  <th className="snug">#</th>
                   <th>
                     <abbr title="required">*</abbr>Name
                   </th>
                   <th>
-                    <abbr title="required">*</abbr>Address
+                    <abbr className="snug" title="required">*</abbr>Address
                   </th>
-                  <th>
+                  <th className="snug">
                     <abbr title="required">*</abbr>Protocol Port
                   </th>
-                  <th>Weight</th>
-                  <th>Backup Member</th>
+                  <th>Monitor Address/Port</th>
+                  <th className="snug">Weight</th>
+                  <th>Backup</th>
                   <th>Tags</th>
-                  <th></th>
+                  <th className="snug"></th>
                 </tr>
               </thead>
               <tbody>

@@ -113,7 +113,7 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
     return (
       <CopyPastePopover
         text={name}
-        size={12}
+        size={10}
         sliceType="MIDDLE"
         searchTerm={searchTerm}
         shouldCopy={false}
@@ -126,7 +126,7 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
       return (
         <CopyPastePopover
           text={member.id}
-          size={12}
+          size={10}
           sliceType="MIDDLE"
           bsClass="cp copy-paste-ids"
           searchTerm={searchTerm}
@@ -142,13 +142,6 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
         {displayID()}
       </td>
       <td>
-        <CopyPastePopover
-          text={member.address}
-          size={12}
-          searchTerm={searchTerm}
-        />
-      </td>
-      <td>
         <StateLabel label={member.operating_status} />
         <br />
         <StatusLabel label={member.provisioning_status} />
@@ -158,7 +151,26 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
       </td>
       <td>
         <CopyPastePopover
+          text={member.address}
+          size={12}
+          searchTerm={searchTerm}
+        />
+      </td>      
+      <td>
+        <CopyPastePopover
           text={member.protocol_port}
+          size={12}
+          searchTerm={searchTerm}
+        />
+      </td>
+      <td>
+        <CopyPastePopover
+            text={member.monitor_address}
+            size={12}
+            searchTerm={searchTerm}
+          />
+        <CopyPastePopover
+          text={member.monitor_port}
           size={12}
           searchTerm={searchTerm}
         />

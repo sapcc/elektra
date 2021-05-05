@@ -6,7 +6,7 @@ import queryString from "query-string"
 import { Link } from "react-router-dom"
 import HelpPopover from "../shared/HelpPopover"
 import useCommons from "../../../lib/hooks/useCommons"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Tooltip, OverlayTrigger, Table } from "react-bootstrap"
 import { addError } from "lib/flashes"
 import Pagination from "../shared/Pagination"
 import { SearchField } from "lib/components/search_field"
@@ -210,7 +210,7 @@ const PoolList = ({ props, loadbalancerID }) => {
             </div>
 
             <div className="table-responsive">
-              <table
+              <Table
                 className={
                   selected
                     ? "table table-section pools"
@@ -273,7 +273,7 @@ const PoolList = ({ props, loadbalancerID }) => {
                     </tr>
                   )}
                 </tbody>
-              </table>
+              </Table>
             </div>
 
             {pools.length > 0 && !selected && (
