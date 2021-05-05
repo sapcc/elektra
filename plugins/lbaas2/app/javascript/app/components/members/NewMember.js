@@ -1,41 +1,41 @@
-import React, { useState, useEffect } from "react"
-import { Modal, Button, DropdownButton, MenuItem } from "react-bootstrap"
-import useCommons from "../../../lib/hooks/useCommons"
-import { Form } from "lib/elektra-form"
-import useMember from "../../../lib/hooks/useMember"
-import Select from "react-select"
-import uniqueId from "lodash/uniqueId"
-import { addNotice } from "lib/flashes"
-import { Table } from "react-bootstrap"
-import NewMemberListItem from "./NewMemberListItem"
-import usePool from "../../../lib/hooks/usePool"
-import FormSubmitButton from "../shared/FormSubmitButton"
-import Log from "../shared/logger"
+import React, { useState, useEffect } from "react";
+import { Modal, Button, DropdownButton, MenuItem } from "react-bootstrap";
+import useCommons from "../../../lib/hooks/useCommons";
+import { Form } from "lib/elektra-form";
+import useMember from "../../../lib/hooks/useMember";
+import Select from "react-select";
+import uniqueId from "lodash/uniqueId";
+import { addNotice } from "lib/flashes";
+import { Table } from "react-bootstrap";
+import NewMemberListItem from "./NewMemberListItem";
+import usePool from "../../../lib/hooks/usePool";
+import FormSubmitButton from "../shared/FormSubmitButton";
+import Log from "../shared/logger";
 
 const NewMember = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
-  const { fetchServers, createMember, fetchMembers } = useMember()
-  const { persistPool } = usePool()
+  const { searchParamsToString, matchParams, formErrorMessage } = useCommons();
+  const { fetchServers, createMember, fetchMembers } = useMember();
+  const { persistPool } = usePool();
   const [servers, setServers] = useState({
     isLoading: false,
     error: null,
     items: [],
-  })
-  const [selectedServers, setSelectedServers] = useState([])
+  });
+  const [selectedServers, setSelectedServers] = useState([]);
   const [members, setMembers] = useState({
     isLoading: false,
     error: null,
     items: [],
-  })
-  const [newMembers, setNewMembers] = useState([])
+  });
+  const [newMembers, setNewMembers] = useState([]);
 
   useEffect(() => {
-    Log.debug("fetching servers for select")
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
-    const poolID = params.poolID
+    Log.debug("fetching servers for select");
+    const params = matchParams(props);
+    const lbID = params.loadbalancerID;
+    const poolID = params.poolID;
     // get servers for the select
-    setServers({ ...servers, isLoading: true })
+    setServers({ ...servers, isLoading: true });
     fetchServers(lbID, poolID)
       .then((data) => {
         setServers({
@@ -43,94 +43,94 @@ const NewMember = (props) => {
           isLoading: false,
           items: data.servers,
           error: null,
-        })
+        });
       })
       .catch((error) => {
-        setServers({ ...servers, isLoading: false, error: error })
-      })
+        setServers({ ...servers, isLoading: false, error: error });
+      });
     // get the existing members
-    setMembers({ ...members, isLoading: true })
+    setMembers({ ...members, isLoading: true });
     fetchMembers(lbID, poolID)
       .then((data) => {
-        const newItems = data.members || []
+        const newItems = data.members || [];
         for (let i = 0; i < newItems.length; i++) {
-          newItems[i] = { ...newItems[i], ...{ saved: true } }
+          newItems[i] = { ...newItems[i], ...{ saved: true } };
         }
         setMembers({
           ...members,
           isLoading: false,
           items: newItems,
           error: null,
-        })
+        });
       })
       .catch((error) => {
-        setMembers({ ...members, isLoading: false, error: error })
-      })
-  }, [])
+        setMembers({ ...members, isLoading: false, error: error });
+      });
+  }, []);
 
   /**
    * Modal stuff
    */
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
 
   const close = (e) => {
-    if (e) e.stopPropagation()
-    setShow(false)
-  }
+    if (e) e.stopPropagation();
+    setShow(false);
+  };
 
   const restoreUrl = () => {
     if (!show) {
-      const params = matchParams(props)
-      const lbID = params.loadbalancerID
+      const params = matchParams(props);
+      const lbID = params.loadbalancerID;
       props.history.replace(
         `/loadbalancers/${lbID}/show?${searchParamsToString(props)}`
-      )
+      );
     }
-  }
+  };
 
   /**
    * Form stuff
    */
-  const [initialValues, setInitialValues] = useState({})
-  const [formErrors, setFormErrors] = useState(null)
-  const [submitResults, setSubmitResults] = useState({})
-  const [showServerDropdown, setShowServerDropdown] = useState(false)
+  const [initialValues, setInitialValues] = useState({});
+  const [formErrors, setFormErrors] = useState(null);
+  const [submitResults, setSubmitResults] = useState({});
+  const [showServerDropdown, setShowServerDropdown] = useState(false);
 
   const validate = (values) => {
-    return newMembers && newMembers.length > 0
-  }
+    return newMembers && newMembers.length > 0;
+  };
 
   const onSubmit = (values) => {
-    setFormErrors(null)
+    setFormErrors(null);
     // get the lb id and poolId
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
-    const poolID = params.poolID
+    const params = matchParams(props);
+    const lbID = params.loadbalancerID;
+    const poolID = params.poolID;
 
     //  filter items in context, which are removed from the list or already saved
     const filtered = Object.keys(values)
       .filter((key) => {
-        let found = false
+        let found = false;
         for (let i = 0; i < newMembers.length; i++) {
           if (found) {
-            break
+            break;
           }
           // if found means the key from the form context exists in the selected member list
           // the context contains all references of members added and removed from the list
           // don't send rows already saved successfully
           if (!newMembers[i].saved) {
-            found = key.includes(newMembers[i].id)
+            found = key.includes(newMembers[i].id);
           }
         }
-        return found
+        return found;
       })
       .reduce((obj, key) => {
-        obj[key] = values[key]
-        return obj
-      }, {})
+        obj[key] = values[key];
+        return obj;
+      }, {});
 
     // save the entered values in case of error
-    setInitialValues(filtered)
+    setInitialValues(filtered);
     return createMember(lbID, poolID, filtered)
       .then((response) => {
         if (response && response.data) {
@@ -139,41 +139,41 @@ const NewMember = (props) => {
               Member <b>{response.data.name}</b> ({response.data.id}) is being
               created.
             </React.Fragment>
-          )
+          );
         }
         // TODO: fetch the Members and the pool again
         persistPool(lbID, poolID)
           .then(() => {})
-          .catch((error) => {})
-        close()
+          .catch((error) => {});
+        close();
       })
       .catch((error) => {
         const results =
-          error.response && error.response.data && error.response.data.results
-        setFormErrors(formErrorMessage(error))
+          error.response && error.response.data && error.response.data.results;
+        setFormErrors(formErrorMessage(error));
         if (results) {
-          mergeSubmitResults(results)
-          setSubmitResults(results)
+          mergeSubmitResults(results);
+          setSubmitResults(results);
         }
-      })
-  }
+      });
+  };
 
   const mergeSubmitResults = (results) => {
-    let newItems = newMembers.slice() || []
+    let newItems = newMembers.slice() || [];
     Object.keys(results).forEach((key) => {
       for (let i = 0; i < newItems.length; i++) {
         if (newItems[i].id == key) {
           if (results[key].saved) {
-            newItems[i] = { ...newItems[i], ...results[key] }
+            newItems[i] = { ...newItems[i], ...results[key] };
           } else {
-            newItems[i]["saved"] = results[key].saved
+            newItems[i]["saved"] = results[key].saved;
           }
-          break
+          break;
         }
       }
-    })
-    setNewMembers(newItems)
-  }
+    });
+    setNewMembers(newItems);
+  };
 
   const addMembers = () => {
     // create a unique id for the value
@@ -183,50 +183,50 @@ const NewMember = (props) => {
         name: selectedServers.name,
         address: selectedServers.address,
       },
-    ]
+    ];
 
     //  replace items
-    setNewMembers(newValues)
-    setSelectedServers([])
-    setShowServerDropdown(false)
-  }
+    setNewMembers(newValues);
+    setSelectedServers([]);
+    setShowServerDropdown(false);
+  };
 
   const addExternalMembers = () => {
     // replace values
-    const newExtMembers = [{ id: uniqueId("member_"), type: "external" }]
-    setNewMembers(newExtMembers)
-  }
+    const newExtMembers = [{ id: uniqueId("member_"), type: "external" }];
+    setNewMembers(newExtMembers);
+  };
 
   const onShowServersDropdown = () => {
-    setShowServerDropdown(true)
-  }
+    setShowServerDropdown(true);
+  };
 
   const onCancelShowServer = () => {
-    setShowServerDropdown(false)
-  }
+    setShowServerDropdown(false);
+  };
 
   const onChangeServers = (values) => {
-    setSelectedServers(values)
-  }
+    setSelectedServers(values);
+  };
 
   const onRemoveMember = (id) => {
-    const index = newMembers.findIndex((item) => item.id == id)
+    const index = newMembers.findIndex((item) => item.id == id);
     if (index < 0) {
-      return
+      return;
     }
-    let newItems = newMembers.slice()
-    newItems.splice(index, 1)
-    setNewMembers(newItems)
-  }
+    let newItems = newMembers.slice();
+    newItems.splice(index, 1);
+    setNewMembers(newItems);
+  };
 
   const styles = {
     container: (base) => ({
       ...base,
       flex: 1,
     }),
-  }
+  };
 
-  const allMembers = [...newMembers, ...members.items]
+  const allMembers = [...newMembers, ...members.items];
   return (
     <Modal
       show={show}
@@ -328,13 +328,17 @@ const NewMember = (props) => {
                   <th>
                     <abbr title="required">*</abbr>Name
                   </th>
-                  <th>
-                    <abbr className="snug" title="required">*</abbr>Address
-                  </th>
-                  <th className="snug">
-                    <abbr title="required">*</abbr>Protocol Port
-                  </th>
-                  <th>Monitor Address/Port</th>
+                  {/* <th>
+                    <span className="nowrap">
+                      <abbr className="snug" title="required">
+                        *
+                      </abbr>
+                      Address/Protocol Port
+                    </span>
+                    <br />
+                    <span className="nowrap">Monitor Address/Port</span>
+                  </th> */}
+                  <th>IPs</th>
                   <th className="snug">Weight</th>
                   <th>Backup</th>
                   <th>Tags</th>
@@ -383,7 +387,7 @@ const NewMember = (props) => {
         </Modal.Footer>
       </Form>
     </Modal>
-  )
-}
+  );
+};
 
-export default NewMember
+export default NewMember;

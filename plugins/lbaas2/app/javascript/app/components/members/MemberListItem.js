@@ -12,6 +12,7 @@ import { policy } from "policy";
 import { scope } from "ajax_helper";
 import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
+import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons";
 
 const MemberListItem = ({ props, poolID, member, searchTerm }) => {
   const { matchParams, searchParamsToString, errorMessage } = useCommons();
@@ -116,7 +117,7 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
     return (
       <CopyPastePopover
         text={name}
-        size={10}
+        size={20}
         sliceType="MIDDLE"
         searchTerm={searchTerm}
         shouldCopy={false}
@@ -129,12 +130,18 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
       return (
         <CopyPastePopover
           text={member.id}
-          size={10}
+          size={20}
           sliceType="MIDDLE"
           bsClass="cp copy-paste-ids"
           searchTerm={searchTerm}
         />
       );
+    }
+  };
+
+  const monitorAddressPort = () => {
+    if (member.monitor_address || member.monitor_port) {
+      return `${member.monitor_address}:${member.monitor_port}`;
     }
   };
 
@@ -149,30 +156,22 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
         <StaticTags tags={member.tags} shouldPopover={true} />
       </td>
       <td>
-        <CopyPastePopover
-          text={member.address}
-          size={12}
-          searchTerm={searchTerm}
-        />
-      </td>
-      <td>
-        <CopyPastePopover
-          text={member.protocol_port}
-          size={12}
-          searchTerm={searchTerm}
-        />
-      </td>
-      <td>
-        <CopyPastePopover
-          text={member.monitor_address}
-          size={12}
-          searchTerm={searchTerm}
-        />
-        <CopyPastePopover
-          text={member.monitor_port}
-          size={12}
-          searchTerm={searchTerm}
-        />
+        <p className="list-group-item-text list-group-item-text-copy display-flex">
+          <MemberIpIcon />
+          <CopyPastePopover
+            text={`${member.address}:${member.protocol_port}`}
+            searchTerm={searchTerm}
+          />
+        </p>
+        {monitorAddressPort() && (
+          <p className="list-group-item-text list-group-item-text-copy display-flex">
+            <MemberMonitorIcon />
+            <CopyPastePopover
+              text={monitorAddressPort()}
+              searchTerm={searchTerm}
+            />
+          </p>
+        )}
       </td>
       <td>{member.weight}</td>
       <td>

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react"
-import { Modal, Button, DropdownButton } from "react-bootstrap"
-import useCommons from "../../../lib/hooks/useCommons"
-import { Form } from "lib/elektra-form"
-import useMember from "../../../lib/hooks/useMember"
-import ErrorPage from "../ErrorPage"
-import { Table } from "react-bootstrap"
-import NewMemberListItem from "./NewMemberListItem"
-import usePool from "../../../lib/hooks/usePool"
-import { addNotice } from "lib/flashes"
-import Log from "../shared/logger"
+import React, { useState, useEffect } from "react";
+import { Modal, Button, DropdownButton } from "react-bootstrap";
+import useCommons from "../../../lib/hooks/useCommons";
+import { Form } from "lib/elektra-form";
+import useMember from "../../../lib/hooks/useMember";
+import ErrorPage from "../ErrorPage";
+import { Table } from "react-bootstrap";
+import NewMemberListItem from "./NewMemberListItem";
+import usePool from "../../../lib/hooks/usePool";
+import { addNotice } from "lib/flashes";
+import Log from "../shared/logger";
 
 const EditMember = (props) => {
   const {
@@ -16,53 +16,53 @@ const EditMember = (props) => {
     searchParamsToString,
     formErrorMessage,
     fetchPoolsForSelect,
-  } = useCommons()
-  const { fetchMember, fetchMembers, updateMember } = useMember()
-  const { persistPool } = usePool()
-  const [loadbalancerID, setLoadbalancerID] = useState(null)
-  const [poolID, setPoolID] = useState(null)
-  const [memberID, setMemberID] = useState(null)
+  } = useCommons();
+  const { fetchMember, fetchMembers, updateMember } = useMember();
+  const { persistPool } = usePool();
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
+  const [poolID, setPoolID] = useState(null);
+  const [memberID, setMemberID] = useState(null);
 
-  const [newMembers, setNewMembers] = useState([])
+  const [newMembers, setNewMembers] = useState([]);
 
   const [members, setMembers] = useState({
     isLoading: false,
     error: null,
     items: [],
-  })
+  });
 
   const [member, setMember] = useState({
     isLoading: false,
     error: null,
     item: null,
-  })
+  });
 
   useEffect(() => {
     // get the lb
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
-    const plID = params.poolID
-    const mID = params.memberID
-    setLoadbalancerID(lbID)
-    setPoolID(plID)
-    setMemberID(mID)
-  }, [])
+    const params = matchParams(props);
+    const lbID = params.loadbalancerID;
+    const plID = params.poolID;
+    const mID = params.memberID;
+    setLoadbalancerID(lbID);
+    setPoolID(plID);
+    setMemberID(mID);
+  }, []);
 
   useEffect(() => {
     if (memberID) {
-      loadMember()
+      loadMember();
     }
-  }, [memberID])
+  }, [memberID]);
 
   useEffect(() => {
     if (member.item) {
-      loadMembers()
+      loadMembers();
     }
-  }, [member.item])
+  }, [member.item]);
 
   const loadMember = () => {
-    Log.debug("fetching member to edit")
-    setMember({ ...member, isLoading: true, error: null })
+    Log.debug("fetching member to edit");
+    setMember({ ...member, isLoading: true, error: null });
     fetchMember(loadbalancerID, poolID, memberID)
       .then((data) => {
         setMember({
@@ -70,29 +70,29 @@ const EditMember = (props) => {
           isLoading: false,
           item: data.member,
           error: null,
-        })
-        setSelectedMember(data.member)
+        });
+        setSelectedMember(data.member);
       })
       .catch((error) => {
-        setMember({ ...member, isLoading: false, error: error })
-      })
-  }
+        setMember({ ...member, isLoading: false, error: error });
+      });
+  };
 
   const loadMembers = () => {
-    Log.debug("fetching members for table")
-    setMembers({ ...members, isLoading: true })
+    Log.debug("fetching members for table");
+    setMembers({ ...members, isLoading: true });
     fetchMembers(loadbalancerID, poolID)
       .then((data) => {
         // set state saved so it can be edited
-        const newItems = data.members || []
+        const newItems = data.members || [];
         for (let i = 0; i < newItems.length; i++) {
-          newItems[i] = { ...newItems[i], ...{ saved: true } }
+          newItems[i] = { ...newItems[i], ...{ saved: true } };
         }
         // remove teh member to edit from the list
         if (member.item) {
-          const index = newItems.findIndex((item) => item.id == member.item.id)
+          const index = newItems.findIndex((item) => item.id == member.item.id);
           if (index >= 0) {
-            newItems.splice(index, 1)
+            newItems.splice(index, 1);
           }
         }
 
@@ -101,54 +101,54 @@ const EditMember = (props) => {
           isLoading: false,
           items: newItems,
           error: null,
-        })
+        });
       })
       .catch((error) => {
-        setMembers({ ...members, isLoading: false, error: error })
-      })
-  }
+        setMembers({ ...members, isLoading: false, error: error });
+      });
+  };
 
   const setSelectedMember = (selectedMember) => {
     // create a unique id for the value
     // const newValues =  [{id: uniqueId("member_"), name: selectedMember.name, address: selectedMember.address}]
-    selectedMember.edit = true
-    setNewMembers([selectedMember])
-  }
+    selectedMember.edit = true;
+    setNewMembers([selectedMember]);
+  };
 
   /*
    * Modal stuff
    */
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
 
   const close = (e) => {
-    if (e) e.stopPropagation()
-    setShow(false)
-  }
+    if (e) e.stopPropagation();
+    setShow(false);
+  };
 
   const restoreUrl = () => {
     if (!show) {
       // get the lb
-      const params = matchParams(props)
-      const lbID = params.loadbalancerID
+      const params = matchParams(props);
+      const lbID = params.loadbalancerID;
       props.history.replace(
         `/loadbalancers/${lbID}/show?${searchParamsToString(props)}`
-      )
+      );
     }
-  }
+  };
 
   /**
    * Form stuff
    */
-  const [initialValues, setInitialValues] = useState({})
-  const [formErrors, setFormErrors] = useState(null)
-  const [submitResults, setSubmitResults] = useState({})
+  const [initialValues, setInitialValues] = useState({});
+  const [formErrors, setFormErrors] = useState(null);
+  const [submitResults, setSubmitResults] = useState({});
 
   const validate = (values) => {
-    return true
-  }
+    return true;
+  };
 
   const onSubmit = (values) => {
-    setFormErrors(null)
+    setFormErrors(null);
     return updateMember(loadbalancerID, poolID, memberID, values)
       .then((response) => {
         addNotice(
@@ -156,30 +156,30 @@ const EditMember = (props) => {
             Member <b>{response.data.name}</b> ({response.data.id}) is being
             created.
           </React.Fragment>
-        )
+        );
         persistPool(loadbalancerID, poolID)
           .then(() => {})
-          .catch((error) => {})
-        close()
+          .catch((error) => {});
+        close();
       })
       .catch((error) => {
         const results =
-          error.response && error.response.data && error.response.data.results
-        setFormErrors(formErrorMessage(error))
+          error.response && error.response.data && error.response.data.results;
+        setFormErrors(formErrorMessage(error));
         if (results) {
-          setSubmitResults(results)
+          setSubmitResults(results);
         }
-      })
-  }
+      });
+  };
 
   const styles = {
     container: (base) => ({
       ...base,
       flex: 1,
     }),
-  }
+  };
 
-  const allMembers = [...newMembers, ...members.items]
+  const allMembers = [...newMembers, ...members.items];
   return (
     <Modal
       show={show}
@@ -246,15 +246,9 @@ const EditMember = (props) => {
                         <th>
                           <abbr title="required">*</abbr>Name
                         </th>
-                        <th>
-                          <abbr className="snug" title="required">*</abbr>Address
-                        </th>
-                        <th>
-                          <abbr title="required">*</abbr>Protocol Port
-                        </th>
-                        <th>Monitor Address/Port</th>
+                        <th>IPs</th>
                         <th className="snug">Weight</th>
-                        <th>Backup Member</th>
+                        <th className="snug">Backup</th>
                         <th>Tags</th>
                         <th className="snug"></th>
                       </tr>
@@ -296,7 +290,7 @@ const EditMember = (props) => {
         </React.Fragment>
       )}
     </Modal>
-  )
-}
+  );
+};
 
-export default EditMember
+export default EditMember;

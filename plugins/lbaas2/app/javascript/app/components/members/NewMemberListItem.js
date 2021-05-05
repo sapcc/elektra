@@ -1,26 +1,45 @@
-import React from "react"
-import FormInput from "../shared/FormInput"
-import TagsInput from "../shared/TagsInput"
-import { Button } from "react-bootstrap"
-import StaticTags from "../StaticTags"
-import Log from "../shared/logger"
+import React from "react";
+import FormInput from "../shared/FormInput";
+import TagsInput from "../shared/TagsInput";
+import { Button } from "react-bootstrap";
+import StaticTags from "../StaticTags";
+import Log from "../shared/logger";
+import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons";
+import CopyPastePopover from "../shared/CopyPastePopover";
 
 const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
   const onRemoveClick = (e) => {
-    onRemoveMember(member.id)
-  }
+    onRemoveMember(member.id);
+  };
 
   const shouldAlert = () => {
     if (results) {
-      return results.saved == false
+      return results.saved == false;
     }
-    return false
-  }
+    return false;
+  };
 
-  Log.debug("RENDER NewMemberListItem")
+  const displayName = () => {
+    return (
+      <CopyPastePopover
+        text={member.name}
+        size={20}
+        sliceType="MIDDLE"
+        shouldCopy={false}
+      />
+    );
+  };
+
+  const monitorAddressPort = () => {
+    if (member.monitor_address || member.monitor_port) {
+      return `${member.monitor_address}:${member.monitor_port}`;
+    }
+  };
+
+  Log.debug("RENDER NewMemberListItem");
   return (
     <tr>
-      <td>
+      <td className="centered">
         <div className={shouldAlert() ? "text-danger" : ""}>
           {shouldAlert() ? (
             <span>
@@ -47,71 +66,87 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
       </td>
       <td>
         {member.saved ? (
-          <span>{member.name}</span>
+          <span>{displayName()}</span>
         ) : (
-          <FormInput name={`member[${member.id}][name]`} value={member.name} />
-        )}
-      </td>
-      <td>
-        {member.saved ? (
-          <span>{member.address}</span>
-        ) : (
-          <React.Fragment>
+          <div className="form-margin-top">
             <FormInput
-              name={`member[${member.id}][address]`}
-              value={member.address}
-              disabled={member.edit}
+              name={`member[${member.id}][name]`}
+              value={member.name}
             />
-          </React.Fragment>
-        )}
-      </td>
-      <td>
-        {member.saved ? (
-          <span>{member.protocol_port}</span>
-        ) : (
-          <FormInput
-            type="number"
-            name={`member[${member.id}][protocol_port]`}
-            value={member.protocol_port}
-            disabled={member.edit}
-          />
-        )}
-      </td>
-      <td>
-      {member.saved ? (
-          <div className="display-flex ">
-            <span>{member.monitor_address}</span>
-            {member.monitor_address &&
-              <span className="horizontal-padding-min">/</span>
-            }
-            <span>{member.monitor_port}</span>
           </div>
+        )}
+      </td>
+      <td>
+        {member.saved ? (
+          <>
+            <p className="list-group-item-text list-group-item-text-copy display-flex">
+              <MemberIpIcon />
+              {member.address}:{member.protocol_port}
+            </p>
+            {monitorAddressPort() && (
+              <p className="list-group-item-text list-group-item-text-copy display-flex">
+                <MemberMonitorIcon />
+                {monitorAddressPort()}
+              </p>
+            )}
+          </>
         ) : (
-          <div className="display-flex ">
-            <FormInput
-              name={`member[${member.id}][monitor_address]`}
-              value={member.monitor_address}
-              size="md"
-            />
-            <span className="horizontal-padding-min">/</span>
-            <FormInput
-              type="number"
-              name={`member[${member.id}][monitor_port]`}
-              value={member.monitor_port}
-              size="sm"
-            />
-          </div>           
-        )}        
+          <>
+            <p className="nowrap">
+              <abbr className="snug" title="required">
+                *
+              </abbr>
+              <MemberIpIcon />
+              Address/Protocol Port
+            </p>
+            <div className="display-flex ">
+              <FormInput
+                name={`member[${member.id}][address]`}
+                value={member.address}
+                disabled={member.edit}
+                // size="md"
+              />
+              <span className="horizontal-padding-min">:</span>
+              <FormInput
+                type="number"
+                name={`member[${member.id}][protocol_port]`}
+                value={member.protocol_port}
+                disabled={member.edit}
+                size="md"
+              />
+            </div>
+            <p className="nowrap">
+              <MemberMonitorIcon />
+              Monitor Address/Port
+            </p>
+            <div className="display-flex ">
+              <FormInput
+                name={`member[${member.id}][monitor_address]`}
+                value={member.monitor_address}
+                // size="md"
+              />
+              <span className="horizontal-padding-min">:</span>
+              <FormInput
+                type="number"
+                name={`member[${member.id}][monitor_port]`}
+                value={member.monitor_port}
+                size="md"
+              />
+            </div>
+          </>
+        )}
       </td>
       <td>
         {member.saved ? (
           <span>{member.weight}</span>
         ) : (
-          <FormInput
-            type="number"
-            name={`member[${member.id}][weight]`}
-            value={member.weight || 1}
-          />
+          <div className="form-margin-top">
+            <FormInput
+              type="number"
+              name={`member[${member.id}][weight]`}
+              value={member.weight || 1}
+            />
+          </div>
         )}
       </td>
       <td>
@@ -124,24 +159,28 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
             )}
           </React.Fragment>
         ) : (
-          <FormInput
-            type="checkbox"
-            name={`member[${member.id}][backup]`}
-            value={member.backup}
-          />
+          <div className="form-margin-top">
+            <FormInput
+              type="checkbox"
+              name={`member[${member.id}][backup]`}
+              value={member.backup}
+            />
+          </div>
         )}
       </td>
       <td>
         {member.saved ? (
           <StaticTags tags={member.tags} shouldPopover={true} />
         ) : (
-          <TagsInput
-            name={`member[${member.id}][tags]`}
-            initValue={member.tags}
-          />
+          <div className="form-margin-top">
+            <TagsInput
+              name={`member[${member.id}][tags]`}
+              initValue={member.tags}
+            />
+          </div>
         )}
       </td>
-      <td>
+      <td className="centered">
         {onRemoveMember && (
           <React.Fragment>
             {!member.saved && (
@@ -153,7 +192,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
         )}
       </td>
     </tr>
-  )
-}
+  );
+};
 
-export default NewMemberListItem
+export default NewMemberListItem;
