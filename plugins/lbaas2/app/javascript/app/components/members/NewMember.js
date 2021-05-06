@@ -325,22 +325,10 @@ const NewMember = (props) => {
               <thead>
                 <tr>
                   <th className="snug">#</th>
-                  <th>
-                    <abbr title="required">*</abbr>Name
-                  </th>
-                  {/* <th>
-                    <span className="nowrap">
-                      <abbr className="snug" title="required">
-                        *
-                      </abbr>
-                      Address/Protocol Port
-                    </span>
-                    <br />
-                    <span className="nowrap">Monitor Address/Port</span>
-                  </th> */}
+                  <th>Name</th>
                   <th>IPs</th>
                   <th className="snug">Weight</th>
-                  <th>Backup</th>
+                  <th className="snug">Backup</th>
                   <th>Tags</th>
                   <th className="snug"></th>
                 </tr>

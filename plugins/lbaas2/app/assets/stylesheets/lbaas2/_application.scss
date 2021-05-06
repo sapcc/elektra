@@ -124,10 +124,6 @@
   vertical-align: middle;
 }
 
-.form-margin-top {
-  margin-top: 30px;
-}
-
 .transparent {
   filter: alpha(opacity=0);
   opacity: 0;
@@ -149,6 +145,39 @@ ul.secrets-not-found {
   }
 }
 
+.margin-top {
+  margin-top: 10px;
+}
+
+/*
+* Input with Icon inside in Member section
+*/
+.member-required-icon {
+  position: relative;
+  abbr {
+    position: absolute;
+    left: -10px;
+    top: 0px;
+  }
+}
+
+.member-icon-in-input {
+  position: relative;
+  i {
+    position: absolute;
+    left: 5px;
+  }
+  input.icon-in-input {
+    padding-left: 25px;
+    &.form-left-margin {
+      margin-left: 5px;
+    }
+  }
+
+  &.margin-top {
+    margin-top: 10px;
+  }
+}
 /*
 * hide arrows in numeric fields
 */

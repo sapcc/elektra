@@ -31,3 +31,14 @@ export const MemberMonitorIcon = () => {
     </OverlayTrigger>
   );
 };
+
+export const MemberRequiredField = () => {
+  return (
+    <OverlayTrigger
+      placement="top"
+      overlay={<Tooltip id="defalult-pool-tooltip">Required</Tooltip>}
+    >
+      <abbr title="required">*</abbr>
+    </OverlayTrigger>
+  );
+};
