@@ -311,9 +311,6 @@ module EmailService
             tmpl_hash = { :id => index, :name => resp.template.template_name, :subject => resp.template.subject_part, :text_part => resp.template.text_part, :html_part => resp.template.html_part }
             templates.push(tmpl_hash)
             index = index + 1
-            # logger.debug "CRONUS: DEBUG: RESP: #{resp}"
-            # logger.debug "CRONUS: DEBUG: TMPL_HASH #{tmpl_hash}"
-            # logger.debug "CRONUS: DEBUG: INDEX #{index}"
         end
 
       rescue Aws::SES::Errors::ServiceError => error
@@ -377,6 +374,40 @@ module EmailService
     end
 
     def update_template(template)
+    end
+
+    ## Get Send Statistics
+
+    def get_send_stats
+
+      ses_client = create_ses_client
+      stats_arr  = []
+      
+      begin
+        resp = ses_client.get_send_statistics({
+      })
+
+      datapoints = resp.send_data_points
+
+      index = 0
+      while datapoints.size > 0 && index < datapoints.count
+        # logger.debug "TIMESTAMP : #{datapoints[index].timestamp}"
+        # logger.debug "DELIVERY_ATTEMPTS : #{datapoints[index].delivery_attempts}"
+        # logger.debug "BOUNCES : #{datapoints[index].bounces}"
+        # logger.debug "REJECTS : #{datapoints[index].rejects}"
+        # logger.debug "COMPLAINTS : #{datapoints[index].complaints}"
+        stats_hash = { timestamp: datapoints[index].timestamp, delivery_attempts: datapoints[index].delivery_attempts, bounces: datapoints[index].bounces, rejects: datapoints[index].rejects, complaints: datapoints[index].complaints }
+        logger.debug "CRONUS: STATS HASH AWS HELPER : #{stats_hash}"
+        stats_arr.push(stats_hash)
+        logger.debug "CRONUS: ARRAY SIZE - EACH : #{stats_arr.size}"
+        index += 1
+      end
+
+      # If something goes wrong, display an error message.
+      rescue Aws::SES::Errors::ServiceError => error
+        logger.debug "CRONUS SEND : #{error}" 
+      end
+      stats_arr
     end
 
     def map_region(region)

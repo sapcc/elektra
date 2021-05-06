@@ -8,47 +8,56 @@
   %h4
     Information
 
-%p
-  token:
-  =current_user.token
-%p
-  Identity URL:
-  ="#{current_user.service_url('identity')}"
-  =current_user.service_url('identity')
-%p
-  user_id
-  =current_user.id
-%p
-  project_id
-  =current_user.project_id
-%p
-  region
-  =current_user.default_services_region
-%p
-  Cronus URL:
-  =current_user.service_url('email-aws')
+%table.table
+  %tr
+    %td
+      Timestamp
+    %td
+      Delivery attempts
+    %td
+      Bounces
+    %td
+      Rejects
+    %td
+      Complaints
+  - @send_stats.each do | stat |
+    %tr        
+      %td
+        =stat[:timestamp]
+      %td
+        =stat[:delivery_attempts]
+      %td
+        =stat[:bounces]
+      %td
+        =stat[:rejects]
+      %td
+        =stat[:complaints]
+%hr
 
-
-%p
-  Verified EMails: 
-=@verified_emails
-%p
-  Pending Emails:
-=@pending_emails
-
-%p
-  Access:
-=@access
-%p
-  Secret:
-  =@secret
-%p
-  SES Client:
-=@ses_client
-
-
-
-
--#%p
--#  Plugin Email Service
--#  =plugin('email_service').inspect
+%table.table
+  %tr
+    %td token:
+    %td
+      =current_user.token
+  %tr
+    %td Identity URL:
+    %td
+      ="#{current_user.service_url('identity')}"
+      %br
+      =current_user.service_url('identity')
+  %tr
+    %td user_id
+    %td 
+      =current_user.id
+  %tr
+    %td project_id
+    %td 
+      =current_user.project_id
+  %tr
+    %td region
+    %td 
+      =current_user.default_services_region
+  %tr
+    %td Cronus URL:
+    %td 
+      =current_user.service_url('email-aws')

@@ -1,7 +1,7 @@
 = content_for :title do
   New Configuration Set
 
-= simple_form_for :configset, url: plugin('email_service').settings_create_configset_path(), method: :post, remote: request.xhr?, html: {id: 'form_configset', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for :configset, url: plugin('email_service').configset_create_configset_path(), method: :post, remote: request.xhr?, html: {id: 'form_configset', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   .modal-body
     .row
       .col-sm-6
@@ -15,5 +15,5 @@
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
-      = link_to "Cancel", plugin('email_service').emails_path(), class: 'btn btn-default'
+      = link_to "Cancel", plugin('email_service').configset_path(), class: 'btn btn-default'
     = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

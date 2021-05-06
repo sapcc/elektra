@@ -24,10 +24,10 @@ module EmailService
       status = configset_create(name)
       # logger.debug "CRONUS: DEBUG: create_configset (controller): #{status}"
       if status == "success"
-        msg = "Config Set: #{name} is saved"
+        msg = "Config Set: #{name} is created"
         flash[:success] = msg
       else
-        msg = "Config Set #{name} is not saved : #{status}"
+        msg = "Config Set #{name} is not created : #{status}"
         flash[:warning] = msg
       end
       redirect_to plugin('email_service').configset_path
@@ -41,10 +41,10 @@ module EmailService
       status = configset_destroy(name) if name
 
       if status == "success"
-        msg = "Config Set: #{name} is deleted"
+        msg = "Config Set: #{name} is removed"
         flash[:success] = msg
       else
-        msg = "Config Set #{name} is not deleted : #{status}"
+        msg = "Config Set #{name} is not removed : #{status}"
         flash[:warning] = msg
       end
      
