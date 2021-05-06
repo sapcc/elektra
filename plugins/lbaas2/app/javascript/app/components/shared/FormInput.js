@@ -1,48 +1,59 @@
-import React, { useContext, useEffect, useState } from "react"
-import { FormContext } from "lib/elektra-form/components/form_context"
+import React, { useContext, useEffect, useState } from "react";
+import { FormContext } from "lib/elektra-form/components/form_context";
 
 // size: md, sm
-const FormInput = ({ type, name, placeholder, value, disabled, size }) => {
-  const context = useContext(FormContext)
-  const [checkboxValue, setCheckboxValue] = useState(false)
+const FormInput = ({
+  type,
+  name,
+  placeholder,
+  value,
+  disabled,
+  size,
+  extraClassName,
+}) => {
+  const context = useContext(FormContext);
+  const [checkboxValue, setCheckboxValue] = useState(false);
 
   const getRandomInt = (max) => {
-    return Math.floor(Math.random() * Math.floor(max))
-  }
+    return Math.floor(Math.random() * Math.floor(max));
+  };
 
   useEffect(() => {
     // in case of checkboxes init the state
-    setCheckboxValue(inputType == "checkbox" ? value : false)
+    setCheckboxValue(inputType == "checkbox" ? value : false);
     // init the context with the values
     setTimeout(() => {
-      context.onChange(name, value), getRandomInt(200)
-    })
-  }, [value])
+      context.onChange(name, value), getRandomInt(200);
+    });
+  }, [value]);
 
   const onTextChanged = (e) => {
-    const target = e.target
-    const newValue = target.type === "checkbox" ? target.checked : target.value
-    const newName = target.name
+    const target = e.target;
+    const newValue = target.type === "checkbox" ? target.checked : target.value;
+    const newName = target.name;
     // update checkbox check since it is set directly on the input tag
-    setCheckboxValue(inputType == "checkbox" ? newValue : false)
-    context.onChange(newName, newValue)
-  }
+    setCheckboxValue(inputType == "checkbox" ? newValue : false);
+    context.onChange(newName, newValue);
+  };
 
-  const inputType = type || "text"
+  const inputType = type || "text";
 
   const classNameInput = () => {
-    let className = "form-control"
+    let className = "form-control";
     if (inputType == "checkbox") {
-      className = "form-check-input"
+      className = "form-check-input";
     }
     if (size == "md") {
-      className = `imput-field-md ${className}`
+      className = `imput-field-md ${className}`;
     }
     if (size == "sm") {
-      className = `imput-field-sm ${className}`
+      className = `imput-field-sm ${className}`;
     }
-    return className
-  }
+    if (extraClassName) {
+      className = `${className} ${extraClassName}`;
+    }
+    return className;
+  };
 
   return (
     <React.Fragment>
@@ -58,7 +69,7 @@ const FormInput = ({ type, name, placeholder, value, disabled, size }) => {
         disabled={disabled}
       />
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default FormInput
+export default FormInput;

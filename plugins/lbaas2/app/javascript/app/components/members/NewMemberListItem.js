@@ -4,7 +4,11 @@ import TagsInput from "../shared/TagsInput";
 import { Button } from "react-bootstrap";
 import StaticTags from "../StaticTags";
 import Log from "../shared/logger";
-import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons";
+import {
+  MemberIpIcon,
+  MemberMonitorIcon,
+  MemberRequiredField,
+} from "./MemberIpIcons";
 import CopyPastePopover from "../shared/CopyPastePopover";
 
 const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
@@ -39,7 +43,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
   Log.debug("RENDER NewMemberListItem");
   return (
     <tr>
-      <td className="centered">
+      <td>
         <div className={shouldAlert() ? "text-danger" : ""}>
           {shouldAlert() ? (
             <span>
@@ -68,7 +72,8 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
         {member.saved ? (
           <span>{displayName()}</span>
         ) : (
-          <div className="form-margin-top">
+          <div className="display-flex member-required-icon">
+            <MemberRequiredField />
             <FormInput
               name={`member[${member.id}][name]`}
               value={member.name}
@@ -78,7 +83,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
       </td>
       <td>
         {member.saved ? (
-          <>
+          <div>
             <p className="list-group-item-text list-group-item-text-copy display-flex">
               <MemberIpIcon />
               {member.address}:{member.protocol_port}
@@ -89,22 +94,18 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
                 {monitorAddressPort()}
               </p>
             )}
-          </>
+          </div>
         ) : (
           <>
-            <p className="nowrap">
-              <abbr className="snug" title="required">
-                *
-              </abbr>
+            <div className="display-flex member-icon-in-input member-required-icon">
+              <MemberRequiredField />
               <MemberIpIcon />
-              Address/Protocol Port
-            </p>
-            <div className="display-flex ">
               <FormInput
                 name={`member[${member.id}][address]`}
                 value={member.address}
                 disabled={member.edit}
-                // size="md"
+                placeholder="Address"
+                extraClassName="icon-in-input"
               />
               <span className="horizontal-padding-min">:</span>
               <FormInput
@@ -112,24 +113,24 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
                 name={`member[${member.id}][protocol_port]`}
                 value={member.protocol_port}
                 disabled={member.edit}
+                placeholder="Port"
                 size="md"
               />
             </div>
-            <p className="nowrap">
+            <div className="display-flex member-icon-in-input margin-top">
               <MemberMonitorIcon />
-              Monitor Address/Port
-            </p>
-            <div className="display-flex ">
               <FormInput
                 name={`member[${member.id}][monitor_address]`}
                 value={member.monitor_address}
-                // size="md"
+                placeholder="Monitor Address"
+                extraClassName="icon-in-input"
               />
               <span className="horizontal-padding-min">:</span>
               <FormInput
                 type="number"
                 name={`member[${member.id}][monitor_port]`}
                 value={member.monitor_port}
+                placeholder="Port"
                 size="md"
               />
             </div>
@@ -140,7 +141,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
         {member.saved ? (
           <span>{member.weight}</span>
         ) : (
-          <div className="form-margin-top">
+          <div>
             <FormInput
               type="number"
               name={`member[${member.id}][weight]`}
@@ -159,7 +160,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
             )}
           </React.Fragment>
         ) : (
-          <div className="form-margin-top">
+          <div>
             <FormInput
               type="checkbox"
               name={`member[${member.id}][backup]`}
@@ -172,7 +173,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
         {member.saved ? (
           <StaticTags tags={member.tags} shouldPopover={true} />
         ) : (
-          <div className="form-margin-top">
+          <div>
             <TagsInput
               name={`member[${member.id}][tags]`}
               initValue={member.tags}
