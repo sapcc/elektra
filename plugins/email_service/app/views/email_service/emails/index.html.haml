@@ -29,29 +29,4 @@
           Converged Cloud EMails Service - AWS Simple eMail Service - Send eMails
           = link_to "AWS Simple eMail Service", "https://aws.amazon.com/ses/", :target => "_blank"
           \.
-  %hr
-  %table.table
-    %tr
-      %td
-        Timestamp
-      %td
-        Delivery attempts
-      %td
-        Bounces
-      %td
-        Rejects
-      %td
-        Complaints
-    - @send_stats.each do | stat |
-      %tr        
-        %td
-          =stat[:timestamp]
-        %td
-          =stat[:delivery_attempts]
-        %td
-          =stat[:bounces]
-        %td
-          =stat[:rejects]
-        %td
-          =stat[:complaints]
-  %hr
+%hr

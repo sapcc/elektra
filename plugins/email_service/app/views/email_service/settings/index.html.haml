@@ -13,6 +13,8 @@
             - if current_user.is_allowed?('context_is_emailservice_editor')
               .main-buttons
                 = link_to "Activate Cronus", "#", data: {modal: true}, class: 'btn btn-primary'
+
+        = render partial: 'table_settings', locals: { }
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p

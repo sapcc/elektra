@@ -384,26 +384,21 @@ module EmailService
       stats_arr  = []
       
       begin
-        resp = ses_client.get_send_statistics({
-      })
+        resp = ses_client.get_send_statistics({})
+        datapoints = resp.send_data_points
 
-      datapoints = resp.send_data_points
-
-      index = 0
-      while datapoints.size > 0 && index < datapoints.count
-        # logger.debug "TIMESTAMP : #{datapoints[index].timestamp}"
-        # logger.debug "DELIVERY_ATTEMPTS : #{datapoints[index].delivery_attempts}"
-        # logger.debug "BOUNCES : #{datapoints[index].bounces}"
-        # logger.debug "REJECTS : #{datapoints[index].rejects}"
-        # logger.debug "COMPLAINTS : #{datapoints[index].complaints}"
-        stats_hash = { timestamp: datapoints[index].timestamp, delivery_attempts: datapoints[index].delivery_attempts, bounces: datapoints[index].bounces, rejects: datapoints[index].rejects, complaints: datapoints[index].complaints }
-        logger.debug "CRONUS: STATS HASH AWS HELPER : #{stats_hash}"
-        stats_arr.push(stats_hash)
-        logger.debug "CRONUS: ARRAY SIZE - EACH : #{stats_arr.size}"
-        index += 1
-      end
-
-      # If something goes wrong, display an error message.
+        index = 0
+        while datapoints.size > 0 && index < datapoints.count
+          # logger.debug "TIMESTAMP : #{datapoints[index].timestamp}"
+          # logger.debug "DELIVERY_ATTEMPTS : #{datapoints[index].delivery_attempts}"
+          # logger.debug "BOUNCES : #{datapoints[index].bounces}"
+          # logger.debug "REJECTS : #{datapoints[index].rejects}"
+          # logger.debug "COMPLAINTS : #{datapoints[index].complaints}"
+          stats_hash = { timestamp: datapoints[index].timestamp, delivery_attempts: datapoints[index].delivery_attempts, bounces: datapoints[index].bounces, rejects: datapoints[index].rejects, complaints: datapoints[index].complaints }
+          stats_arr.push(stats_hash)
+          # TODO: SORT this data by date and humanize
+          index += 1
+        end
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "CRONUS SEND : #{error}" 
       end

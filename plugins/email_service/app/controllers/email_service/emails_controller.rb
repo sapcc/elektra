@@ -9,8 +9,11 @@ module EmailService
       @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
       @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
       @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
+      @send_stats = get_send_stats
+    end
+
+    def stats
       @send_stats = get_send_stats # # JSON.pretty_generate(@send_stats.to_h)
-      # logger.debug "CRONUS: DEBUG: CONTROLLER : GET_SEND_STATS : #{ JSON.pretty_generate(@send_stats.to_h) } "
     end
 
     def info

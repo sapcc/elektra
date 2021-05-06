@@ -1,0 +1,22 @@
+=content_for :main_toolbar do
+  eMail Service - AWS SES (Cronus)
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'stats'}
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"stats-pane"}
+    %h3
+      eMails Sent Statistics
+    .row
+      .col-sm-9
+
+        .js-table-verified-email
+          = render partial: 'table_stats', locals: { send_stats: @send_stats }
+
+      .col-sm-3
+        .bs-callout.bs-callout-primary.toolbar-aligment
+          %p
+            Converged Cloud EMails Service - AWS Simple eMail Service - verified eMails
+            = link_to "AWS Simple eMail Service", "https://aws.amazon.com/ses/", :target => "_blank"
+            \.
+
+%hr
