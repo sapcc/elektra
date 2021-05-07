@@ -104,7 +104,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
                 name={`member[${member.id}][address]`}
                 value={member.address}
                 disabled={member.edit}
-                placeholder="Address"
+                placeholder="IP Address"
                 extraClassName="icon-in-input"
               />
               <span className="horizontal-padding-min">:</span>
@@ -122,7 +122,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
               <FormInput
                 name={`member[${member.id}][monitor_address]`}
                 value={member.monitor_address}
-                placeholder="Monitor Address"
+                placeholder="Alternate Monitor IP"
                 extraClassName="icon-in-input"
               />
               <span className="horizontal-padding-min">:</span>
