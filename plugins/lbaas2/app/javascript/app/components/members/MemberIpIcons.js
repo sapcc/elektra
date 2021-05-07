@@ -22,8 +22,8 @@ export const MemberMonitorIcon = () => {
       placement="top"
       overlay={
         <Tooltip id="defalult-pool-tooltip">
-          IP address and protocol port used for health monitoring a backend
-          member.
+          Alternate IP address and protocol port used for health monitoring a
+          backend member.
         </Tooltip>
       }
     >
