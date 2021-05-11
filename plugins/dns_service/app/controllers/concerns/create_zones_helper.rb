@@ -2,7 +2,7 @@
 module CreateZonesHelper
 
   def check_parent_zone(zone_name,destination_project_id)
-    zone_transfer = false
+    zone_transfer = true
     # check that subzones are not exsisting in other projects
     # Example: bla.only.sap
     # 0) check finds that the zone "only.sap" exists not in the destination project
@@ -82,7 +82,8 @@ module CreateZonesHelper
   end
 
   def update_limes_data(domain_id,project_id)
-    # update limes data synchronously
+    
+    # get last scraped time
     scraped_at_old = cloud_admin.resource_management.find_project(
       domain_id,
       project_id,
@@ -90,6 +91,7 @@ module CreateZonesHelper
       resource: 'zones'
     ).services.first.scraped_at rescue 0
 
+    # update limes data synchronously
     cloud_admin.resource_management.sync_project_asynchronously(
       domain_id, project_id
     )
@@ -97,8 +99,8 @@ module CreateZonesHelper
     scraped_at_new = scraped_at_old
     retry_count = 1
     while scraped_at_new.to_i == scraped_at_old.to_i && retry_count <= 10
-      puts "INFO: update limes data for project #{project_id} in domain #{domain_id}, wait 3s to check that update is done"
-      sleep 3
+      puts "INFO: update limes data for project #{project_id} in domain #{domain_id}, wait 2s to check that update is done"
+      sleep 2
       scraped_at_new = cloud_admin.resource_management.find_project(
         domain_id,
         project_id,
