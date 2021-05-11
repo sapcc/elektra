@@ -55,7 +55,7 @@ module DnsService
       check_and_increase_quota(@inquiry.domain_id, @inquiry.project_id, 'zones')
       # make sure that recordset quota is increased at least by 2 as there are two recrodsets are created (NS + SOA)
       check_and_increase_quota(@inquiry.domain_id, @inquiry.project_id, 'recordsets', 2)
-
+      
       if @zone.save
         # we need zone transfer if the domain was created in cloud-admin project
         if zone_transfer
@@ -103,10 +103,14 @@ module DnsService
       end
 
       if @zone_request.errors.empty?
+        # render create.js.erb
         render action: :create
+        return
       else
         render action: :new
+        return
       end
+
     end
 
     protected
