@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react"
-import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../../lib/hooks/useCommons"
-import { Form } from "lib/elektra-form"
-import usePool from "../../../lib/hooks/usePool"
-import SelectInput from "../shared/SelectInput"
-import HelpPopover from "../shared/HelpPopover"
-import useListener from "../../../lib/hooks/useListener"
-import TagsInput from "../shared/TagsInput"
-import { addNotice } from "lib/flashes"
-import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
-import Log from "../shared/logger"
+import React, { useState, useEffect } from "react";
+import { Modal, Button } from "react-bootstrap";
+import useCommons from "../../../lib/hooks/useCommons";
+import { Form } from "lib/elektra-form";
+import usePool from "../../../lib/hooks/usePool";
+import SelectInput from "../shared/SelectInput";
+import HelpPopover from "../shared/HelpPopover";
+import useListener from "../../../lib/hooks/useListener";
+import TagsInput from "../shared/TagsInput";
+import { addNotice } from "lib/flashes";
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer";
+import Log from "../shared/logger";
 
 const NewPool = (props) => {
   const {
@@ -18,38 +18,36 @@ const NewPool = (props) => {
     matchParams,
     formErrorMessage,
     helpBlockTextForSelect,
-  } = useCommons()
+  } = useCommons();
   const {
     lbAlgorithmTypes,
     poolPersistenceTypes,
     protocolListenerPoolCombinations,
     createPool,
     filterListeners,
-  } = usePool()
-  const {
-    fetchListnersNoDefaultPoolForSelect,
-    fetchSecretsForSelect,
-  } = useListener()
-  const { persistLoadbalancer } = useLoadbalancer()
-  const [availableListeners, setAvailableListeners] = useState([])
-  const [listenersLoading, setListenersLoading] = useState(true)
+  } = usePool();
+  const { fetchListnersNoDefaultPoolForSelect, fetchSecretsForSelect } =
+    useListener();
+  const { persistLoadbalancer } = useLoadbalancer();
+  const [availableListeners, setAvailableListeners] = useState([]);
+  const [listenersLoading, setListenersLoading] = useState(true);
   const [listeners, setListeners] = useState({
     isLoading: false,
     error: null,
     items: [],
-  })
+  });
   const [secrets, setSecrets] = useState({
     isLoading: false,
     error: null,
     items: [],
-  })
+  });
 
   useEffect(() => {
-    Log.debug("fetching listeners for select")
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
+    Log.debug("fetching listeners for select");
+    const params = matchParams(props);
+    const lbID = params.loadbalancerID;
     // get listeners for the select
-    setListeners({ ...listeners, isLoading: true })
+    setListeners({ ...listeners, isLoading: true });
     fetchListnersNoDefaultPoolForSelect(lbID)
       .then((data) => {
         setListeners({
@@ -57,15 +55,15 @@ const NewPool = (props) => {
           isLoading: false,
           items: data.listeners,
           error: null,
-        })
-        setListenersLoading(false)
+        });
+        setListenersLoading(false);
       })
       .catch((error) => {
-        setListeners({ ...listeners, isLoading: false, error: error })
-      })
+        setListeners({ ...listeners, isLoading: false, error: error });
+      });
 
     // get the containers for the select
-    setSecrets({ ...secrets, isLoading: true })
+    setSecrets({ ...secrets, isLoading: true });
     fetchSecretsForSelect(lbID)
       .then((data) => {
         setSecrets({
@@ -73,54 +71,56 @@ const NewPool = (props) => {
           isLoading: false,
           items: data.secrets,
           error: null,
-        })
+        });
       })
       .catch((error) => {
-        setSecrets({ ...secrets, isLoading: false, error: error })
-      })
-  }, [])
+        setSecrets({ ...secrets, isLoading: false, error: error });
+      });
+  }, []);
 
   useEffect(() => {
     if (!listenersLoading) {
-      const selectedProtocol = protocol ? protocol.value : ""
-      setAvailableListeners(filterListeners(listeners.items, selectedProtocol))
+      const selectedProtocol = protocol ? protocol.value : "";
+      setAvailableListeners(filterListeners(listeners.items, selectedProtocol));
     }
-  }, [listenersLoading])
+  }, [listenersLoading]);
 
   /**
    * Modal stuff
    */
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
 
   const close = (e) => {
-    if (e) e.stopPropagation()
-    setShow(false)
-  }
+    if (e) e.stopPropagation();
+    setShow(false);
+  };
 
   const restoreUrl = () => {
     if (!show) {
-      const params = matchParams(props)
-      const lbID = params.loadbalancerID
+      const params = matchParams(props);
+      const lbID = params.loadbalancerID;
       props.history.replace(
         `/loadbalancers/${lbID}/show?${searchParamsToString(props)}`
-      )
+      );
     }
-  }
+  };
 
   /**
    * Form stuff
    */
 
-  const [formErrors, setFormErrors] = useState(null)
-  const [initialValues, setInitialValues] = useState()
-  const [protocols, setProtocols] = useState(protocolListenerPoolCombinations())
+  const [formErrors, setFormErrors] = useState(null);
+  const [initialValues, setInitialValues] = useState();
+  const [protocols, setProtocols] = useState(
+    protocolListenerPoolCombinations()
+  );
 
-  const [protocol, setProtocol] = useState(null)
-  const [sessionPersistenceType, setSessionPersistenceType] = useState(null)
-  const [listener, setListener] = useState(null)
+  const [protocol, setProtocol] = useState(null);
+  const [sessionPersistenceType, setSessionPersistenceType] = useState(null);
+  const [listener, setListener] = useState(null);
 
-  const [showTLSSettings, setShowTLSSettings] = useState(false)
-  const [showCookieName, setShowCookieName] = useState(false)
+  const [showTLSSettings, setShowTLSSettings] = useState(false);
+  const [showCookieName, setShowCookieName] = useState(false);
 
   const validate = ({
     name,
@@ -135,33 +135,33 @@ const NewPool = (props) => {
     ca_tls_container_ref,
     tags,
   }) => {
-    return name && lb_algorithm && protocol && true
-  }
+    return name && lb_algorithm && protocol && true;
+  };
 
   const onSubmit = (values) => {
-    setFormErrors(null)
+    setFormErrors(null);
 
-    const newValues = { ...values }
+    const newValues = { ...values };
     if (!listener) {
       // remove just in case protocol changes and the listener list ist rerendered without choosing again a listener
-      delete newValues.listener_id
+      delete newValues.listener_id;
     }
     if (
       sessionPersistenceType &&
       sessionPersistenceType.value != "APP_COOKIE"
     ) {
       // remove just in case it still in context but presistence is not anymore app_coockie
-      delete newValues.session_persistence_cookie_name
+      delete newValues.session_persistence_cookie_name;
     }
     if (!showTLSSettings) {
       // remove tls attributes just in case they still in context but tls not anymore enabled
-      delete newValues.tls_container_ref
-      delete newValues.ca_tls_container_ref
+      delete newValues.tls_container_ref;
+      delete newValues.ca_tls_container_ref;
     }
 
     // get the lb id
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
+    const params = matchParams(props);
+    const lbID = params.loadbalancerID;
     return createPool(lbID, newValues)
       .then((response) => {
         addNotice(
@@ -169,37 +169,37 @@ const NewPool = (props) => {
             Pool <b>{response.data.name}</b> ({response.data.id}) is being
             created.
           </React.Fragment>
-        )
+        );
         // fetch the lb again containing the new listener so it gets updated fast
-        persistLoadbalancer(lbID).catch((error) => {})
-        close()
+        persistLoadbalancer(lbID).catch((error) => {});
+        close();
       })
       .catch((error) => {
-        setFormErrors(formErrorMessage(error))
-      })
-  }
+        setFormErrors(formErrorMessage(error));
+      });
+  };
 
   const onProtocolChanged = (props) => {
-    setProtocol(props)
-    setListener(null)
-    setAvailableListeners(filterListeners(listeners.items, props.value))
-  }
+    setProtocol(props);
+    setListener(null);
+    setAvailableListeners(filterListeners(listeners.items, props.value));
+  };
 
   const onPoolPersistenceTypeChanged = (option) => {
-    setSessionPersistenceType(option)
-    setShowCookieName(option && option.value == "APP_COOKIE")
-  }
+    setSessionPersistenceType(option);
+    setShowCookieName(option && option.value == "APP_COOKIE");
+  };
   const onSelectListenerChange = (props) => {
-    setListener(props)
-  }
+    setListener(props);
+  };
   const onChangedTLS = (e) => {
     if (e && e.target) {
-      const value = e.target.checked
-      setTimeout(() => setShowTLSSettings(value), 200)
+      const value = e.target.checked;
+      setTimeout(() => setShowTLSSettings(value), 200);
     }
-  }
+  };
 
-  Log.debug("RENDER new pool")
+  Log.debug("RENDER new pool");
   return (
     <Modal
       show={show}
@@ -373,8 +373,11 @@ const NewPool = (props) => {
               <div className="row">
                 <div className="col-sm-8 col-sm-push-4">
                   <div className="bs-callout bs-callout-warning bs-callout-emphasize">
-                    <p> TLS-enabled pool can only be attached to a <b>TERMINATED_HTTPS</b> type listener!
-                    </p>                        
+                    <p>
+                      {" "}
+                      TLS-enabled pool can only be attached to a{" "}
+                      <b>TERMINATED_HTTPS</b> type listener!
+                    </p>
                   </div>
                 </div>
               </div>
@@ -435,7 +438,7 @@ const NewPool = (props) => {
         </Modal.Footer>
       </Form>
     </Modal>
-  )
-}
+  );
+};
 
-export default NewPool
+export default NewPool;

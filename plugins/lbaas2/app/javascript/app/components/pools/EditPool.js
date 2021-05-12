@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react"
-import useCommons from "../../../lib/hooks/useCommons"
-import { Modal, Button } from "react-bootstrap"
-import usePool from "../../../lib/hooks/usePool"
-import ErrorPage from "../ErrorPage"
-import { Form } from "lib/elektra-form"
-import SelectInput from "../shared/SelectInput"
-import HelpPopover from "../shared/HelpPopover"
-import useListener from "../../../lib/hooks/useListener"
-import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
-import TagsInput from "../shared/TagsInput"
-import { addNotice } from "lib/flashes"
-import Log from "../shared/logger"
+import React, { useState, useEffect } from "react";
+import useCommons from "../../../lib/hooks/useCommons";
+import { Modal, Button } from "react-bootstrap";
+import usePool from "../../../lib/hooks/usePool";
+import ErrorPage from "../ErrorPage";
+import { Form } from "lib/elektra-form";
+import SelectInput from "../shared/SelectInput";
+import HelpPopover from "../shared/HelpPopover";
+import useListener from "../../../lib/hooks/useListener";
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer";
+import TagsInput from "../shared/TagsInput";
+import { addNotice } from "lib/flashes";
+import Log from "../shared/logger";
 
 const EditPool = (props) => {
   const {
@@ -18,7 +18,7 @@ const EditPool = (props) => {
     searchParamsToString,
     formErrorMessage,
     helpBlockTextForSelect,
-  } = useCommons()
+  } = useCommons();
   const {
     lbAlgorithmTypes,
     poolPersistenceTypes,
@@ -26,90 +26,85 @@ const EditPool = (props) => {
     fetchPool,
     filterListeners,
     updatePool,
-  } = usePool()
-  const { persistLoadbalancer } = useLoadbalancer()
-  const { fetchListnersForSelect, fetchSecretsForSelect } = useListener()
+  } = usePool();
+  const { persistLoadbalancer } = useLoadbalancer();
+  const { fetchListnersForSelect, fetchSecretsForSelect } = useListener();
 
-  const [loadbalancerID, setLoadbalancerID] = useState(null)
-  const [poolID, setPoolID] = useState(null)
-  const [availableListeners, setAvailableListeners] = useState([])
-  const [availableListenersLoading, setAvailableListenersLoading] = useState(
-    true
-  )
-  const [listenersLoaded, setListenersLoaded] = useState(false)
-  const [secretsLoaded, setSecretsLoaded] = useState(false)
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
+  const [poolID, setPoolID] = useState(null);
+  const [availableListeners, setAvailableListeners] = useState([]);
+  const [availableListenersLoading, setAvailableListenersLoading] =
+    useState(true);
+  const [listenersLoaded, setListenersLoaded] = useState(false);
+  const [secretsLoaded, setSecretsLoaded] = useState(false);
 
-  const [lbAlgorithm, setLbAlgorithm] = useState(null)
-  const [protocol, setProtocol] = useState(null)
-  const [sessionPersistenceType, setSessionPersistenceType] = useState(null)
-  const [
-    sessionPersistenceCookieName,
-    setSessionPersistenceCookieName,
-  ] = useState(null)
-  const [listener, setListener] = useState(null)
-  const [certificateContainer, setCertificateContainer] = useState(null)
-  const [
-    certificateContainerDeprecated,
-    setCertificateContainerDeprecated,
-  ] = useState(null)
-  const [authenticationContainer, setAuthenticationContainer] = useState(null)
+  const [lbAlgorithm, setLbAlgorithm] = useState(null);
+  const [protocol, setProtocol] = useState(null);
+  const [sessionPersistenceType, setSessionPersistenceType] = useState(null);
+  const [sessionPersistenceCookieName, setSessionPersistenceCookieName] =
+    useState(null);
+  const [listener, setListener] = useState(null);
+  const [certificateContainer, setCertificateContainer] = useState(null);
+  const [certificateContainerDeprecated, setCertificateContainerDeprecated] =
+    useState(null);
+  const [authenticationContainer, setAuthenticationContainer] = useState(null);
   const [
     authenticationContainerDeprecated,
     setAuthenticationContainerDeprecated,
-  ] = useState(null)
+  ] = useState(null);
 
   const [pool, setPool] = useState({
     isLoading: false,
     error: null,
     item: null,
-  })
+  });
   const [listeners, setListeners] = useState({
     isLoading: false,
     error: null,
     items: [],
-  })
+  });
   const [secrets, setSecrets] = useState({
     isLoading: false,
     error: null,
     items: [],
-  })
+  });
 
   useEffect(() => {
     // get the lb
-    const params = matchParams(props)
-    const lbID = params.loadbalancerID
-    const plID = params.poolID
-    setLoadbalancerID(lbID)
-    setPoolID(plID)
-  }, [])
+    const params = matchParams(props);
+    const lbID = params.loadbalancerID;
+    const plID = params.poolID;
+    setLoadbalancerID(lbID);
+    setPoolID(plID);
+  }, []);
 
   useEffect(() => {
     if (poolID) {
-      loadPool()
-      loadListeners()
-      loadSecrets()
+      loadPool();
+      loadListeners();
+      loadSecrets();
     }
-  }, [poolID])
+  }, [poolID]);
 
   const loadPool = () => {
-    Log.debug("fetching pool to edit")
-    setPool({ ...pool, isLoading: true, error: null })
+    Log.debug("fetching pool to edit");
+    setPool({ ...pool, isLoading: true, error: null });
     fetchPool(loadbalancerID, poolID)
       .then((data) => {
-        setSelectedLbAlgorithm(data.pool.lb_algorithm)
-        setSelectedProtocol(data.pool.protocol)
-        setSelectedSessionPersistence(data.pool)
-        setSelectedUseTLS(data.pool.tls_enabled)
-        setPool({ ...pool, isLoading: false, item: data.pool, error: null })
+        setSelectedLbAlgorithm(data.pool.lb_algorithm);
+        setSelectedProtocol(data.pool.protocol);
+        setSelectedSessionPersistence(data.pool);
+        setSelectedUseTLS(data.pool.tls_enabled);
+        setPool({ ...pool, isLoading: false, item: data.pool, error: null });
       })
       .catch((error) => {
-        setPool({ ...pool, isLoading: false, error: error })
-      })
-  }
+        setPool({ ...pool, isLoading: false, error: error });
+      });
+  };
 
   const loadListeners = () => {
-    Log.debug("fetching listeners to pool edit")
-    setListeners({ ...listeners, isLoading: true })
+    Log.debug("fetching listeners to pool edit");
+    setListeners({ ...listeners, isLoading: true });
     fetchListnersForSelect(loadbalancerID)
       .then((data) => {
         setListeners({
@@ -117,16 +112,16 @@ const EditPool = (props) => {
           isLoading: false,
           items: data.listeners,
           error: null,
-        })
-        setListenersLoaded(true)
+        });
+        setListenersLoaded(true);
       })
       .catch((error) => {
-        setListeners({ ...listeners, isLoading: false, error: error })
-      })
-  }
+        setListeners({ ...listeners, isLoading: false, error: error });
+      });
+  };
 
   const loadSecrets = () => {
-    setSecrets({ ...secrets, isLoading: true })
+    setSecrets({ ...secrets, isLoading: true });
     fetchSecretsForSelect(loadbalancerID)
       .then((data) => {
         setSecrets({
@@ -134,28 +129,28 @@ const EditPool = (props) => {
           isLoading: false,
           items: data.secrets,
           error: null,
-        })
-        setSecretsLoaded(true)
+        });
+        setSecretsLoaded(true);
       })
       .catch((error) => {
-        setSecrets({ ...secrets, isLoading: false, error: error })
-      })
-  }
+        setSecrets({ ...secrets, isLoading: false, error: error });
+      });
+  };
 
   useEffect(() => {
     if (protocol && protocol.value) {
-      const selectedProtocol = protocol ? protocol.value : ""
+      const selectedProtocol = protocol ? protocol.value : "";
       const filteredListeners = filterListeners(
         listeners.items,
         selectedProtocol
-      )
-      setAvailableListeners(filteredListeners)
-      setAvailableListenersLoading(false)
+      );
+      setAvailableListeners(filteredListeners);
+      setAvailableListenersLoading(false);
       if (pool.item && pool.item.listeners) {
-        setSelectedListener(filteredListeners, pool.item.listeners)
+        setSelectedListener(filteredListeners, pool.item.listeners);
       }
     }
-  }, [listenersLoaded, protocol, pool])
+  }, [listenersLoaded, protocol, pool]);
 
   useEffect(() => {
     // for testing
@@ -167,57 +162,58 @@ const EditPool = (props) => {
       setSelectedCertificateContainer(
         secrets.items,
         pool.item.tls_container_ref
-      )
+      );
     }
     if (pool.item && pool.item.ca_tls_container_ref) {
       setSelectedAuthenticationContainer(
         secrets.items,
         pool.item.ca_tls_container_ref
-      )
+      );
     }
-  }, [secretsLoaded, pool])
+  }, [secretsLoaded, pool]);
 
   const setSelectedLbAlgorithm = (selectedLbAlgorithm) => {
     const selectedOption = lbAlgorithmTypes().find(
       (i) => i.value == (selectedLbAlgorithm || "").trim()
-    )
-    setLbAlgorithm(selectedOption)
-  }
+    );
+    setLbAlgorithm(selectedOption);
+  };
 
   const setSelectedProtocol = (selectedProtocol) => {
     const selectedOption = protocolListenerPoolCombinations().find(
       (i) => i.value == (selectedProtocol || "").trim()
-    )
-    setProtocol(selectedOption)
-  }
+    );
+    setProtocol(selectedOption);
+  };
 
   const setSelectedSessionPersistence = (pool) => {
-    const selectedPersistenceType = pool.session_persistence
+    const selectedPersistenceType = pool.session_persistence;
     if (selectedPersistenceType && selectedPersistenceType.type) {
       const selectedOption = poolPersistenceTypes().find(
         (i) => i.value == (selectedPersistenceType.type || "").trim()
-      )
-      setSessionPersistenceType(selectedOption)
-      setShowPersistenceCookieName(selectedOption)
-      pool.session_persistence_type = selectedPersistenceType.type
+      );
+      setSessionPersistenceType(selectedOption);
+      setShowPersistenceCookieName(selectedOption);
+      pool.session_persistence_type = selectedPersistenceType.type;
     }
     if (selectedPersistenceType && selectedPersistenceType.cookie_name) {
       // Need to be just set per context since this is a plain input field and no value attribute available
-      pool.session_persistence_cookie_name = selectedPersistenceType.cookie_name
+      pool.session_persistence_cookie_name =
+        selectedPersistenceType.cookie_name;
     }
-  }
+  };
 
   const setSelectedListener = (filteredListeners, selectedListeners) => {
-    const selectedListenerKeys = selectedListeners.map((i) => i.id)
+    const selectedListenerKeys = selectedListeners.map((i) => i.id);
     const selectedOptions = filteredListeners.filter((i) =>
       selectedListenerKeys.includes(i.value)
-    )
-    setListener(selectedOptions)
-  }
+    );
+    setListener(selectedOptions);
+  };
 
   const setSelectedUseTLS = (selectedUseTLS) => {
-    setShowTLSSettings(selectedUseTLS)
-  }
+    setShowTLSSettings(selectedUseTLS);
+  };
 
   const setSelectedCertificateContainer = (
     availableSecrets,
@@ -225,17 +221,17 @@ const EditPool = (props) => {
   ) => {
     const selectedOption = availableSecrets.find(
       (i) => i.value == (selectedCertificateContainer || "").trim()
-    )
+    );
 
     // save the secret in a different var if not found
     // given the user has choose before a secret (selectedCertificateContainer)
     // and the secrets are laoded (availableSecrets)
     if (!selectedOption && selectedCertificateContainer && availableSecrets) {
-      setCertificateContainerDeprecated(selectedCertificateContainer)
+      setCertificateContainerDeprecated(selectedCertificateContainer);
     }
 
-    setCertificateContainer(selectedOption)
-  }
+    setCertificateContainer(selectedOption);
+  };
 
   const setSelectedAuthenticationContainer = (
     availableSecrets,
@@ -243,7 +239,7 @@ const EditPool = (props) => {
   ) => {
     const selectedOption = availableSecrets.find(
       (i) => i.value == (selectedAuthenticationContainer || "").trim()
-    )
+    );
     // save the secret in a different var if not found
     // given the user has choose before a secret (selectedCertificateContainer)
     // and the secrets are laoded (availableSecrets)
@@ -252,44 +248,46 @@ const EditPool = (props) => {
       selectedAuthenticationContainer &&
       availableSecrets
     ) {
-      setAuthenticationContainerDeprecated(selectedAuthenticationContainer)
+      setAuthenticationContainerDeprecated(selectedAuthenticationContainer);
     }
 
-    setAuthenticationContainer(selectedOption)
-  }
+    setAuthenticationContainer(selectedOption);
+  };
 
   const setShowPersistenceCookieName = (option) => {
-    setShowCookieName(option && option.value == "APP_COOKIE")
-  }
+    setShowCookieName(option && option.value == "APP_COOKIE");
+  };
 
   /*
    * Modal stuff
    */
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
 
   const close = (e) => {
-    if (e) e.stopPropagation()
-    setShow(false)
-  }
+    if (e) e.stopPropagation();
+    setShow(false);
+  };
 
   const restoreUrl = () => {
     if (!show) {
       // get the lb
-      const params = matchParams(props)
-      const lbID = params.loadbalancerID
+      const params = matchParams(props);
+      const lbID = params.loadbalancerID;
       props.history.replace(
         `/loadbalancers/${lbID}/show?${searchParamsToString(props)}`
-      )
+      );
     }
-  }
+  };
 
   /**
    * Form stuff
    */
-  const [formErrors, setFormErrors] = useState(null)
-  const [protocols, setProtocols] = useState(protocolListenerPoolCombinations())
-  const [showCookieName, setShowCookieName] = useState(false)
-  const [showTLSSettings, setShowTLSSettings] = useState(false)
+  const [formErrors, setFormErrors] = useState(null);
+  const [protocols, setProtocols] = useState(
+    protocolListenerPoolCombinations()
+  );
+  const [showCookieName, setShowCookieName] = useState(false);
+  const [showTLSSettings, setShowTLSSettings] = useState(false);
 
   const validate = ({
     name,
@@ -303,12 +301,12 @@ const EditPool = (props) => {
     ca_tls_container_ref,
     tags,
   }) => {
-    return name && lb_algorithm && true
-  }
+    return name && lb_algorithm && true;
+  };
 
   const onSubmit = (values) => {
-    const newValues = { ...values }
-    const persistenceBlob = newValues.session_persistence || {}
+    const newValues = { ...values };
+    const persistenceBlob = newValues.session_persistence || {};
     if (
       persistenceBlob.type != newValues.session_persistence_type ||
       persistenceBlob.cookie_name != newValues.session_persistence_cookie_name
@@ -317,22 +315,22 @@ const EditPool = (props) => {
       // session_persistence_type and/or session_persistence_cookie_name by the rails controller
       if (newValues.session_persistence_type != "APP_COOKIE") {
         // remove just in case it still in context but presistence is not anymore app_coockie
-        delete newValues.session_persistence_cookie_name
+        delete newValues.session_persistence_cookie_name;
       }
     } else {
       // the session persistence is the same as in the JSON Blob. Remove the session_persistence_type and/or session_persistence_cookie_name
       // so it doesn't create a new blob
-      delete newValues.session_persistence_type
-      delete newValues.session_persistence_cookie_name
+      delete newValues.session_persistence_type;
+      delete newValues.session_persistence_cookie_name;
     }
 
     if (!showTLSSettings) {
       // remove tls attributes just in case they still in context but tls not anymore enabled
-      delete newValues.tls_container_ref
-      delete newValues.ca_tls_container_ref
+      delete newValues.tls_container_ref;
+      delete newValues.ca_tls_container_ref;
     }
 
-    setFormErrors(null)
+    setFormErrors(null);
     return updatePool(loadbalancerID, poolID, newValues)
       .then((response) => {
         addNotice(
@@ -340,37 +338,37 @@ const EditPool = (props) => {
             Pool <b>{response.data.name}</b> ({response.data.id}) is being
             updated.
           </React.Fragment>
-        )
+        );
         // fetch the lb again containing the new listener so it gets updated fast
-        persistLoadbalancer(loadbalancerID).catch((error) => {})
-        close()
+        persistLoadbalancer(loadbalancerID).catch((error) => {});
+        close();
       })
       .catch((error) => {
-        setFormErrors(formErrorMessage(error))
-      })
-  }
+        setFormErrors(formErrorMessage(error));
+      });
+  };
 
   const onLbAlgorithmChange = (option) => {
-    setLbAlgorithm(option)
-  }
+    setLbAlgorithm(option);
+  };
   const onPoolPersistenceTypeChanged = (option) => {
-    setSessionPersistenceType(option)
-    setShowPersistenceCookieName(option)
-  }
+    setSessionPersistenceType(option);
+    setShowPersistenceCookieName(option);
+  };
   const onChangedTLS = (e) => {
     if (e && e.target) {
-      const value = e.target.checked
-      setTimeout(() => setShowTLSSettings(value), 200)
+      const value = e.target.checked;
+      setTimeout(() => setShowTLSSettings(value), 200);
     }
-  }
+  };
   const onCertificateContainerChange = (option) => {
-    setCertificateContainer(option)
-  }
+    setCertificateContainer(option);
+  };
   const onAuthenticationContainerChange = (option) => {
-    setAuthenticationContainer(option)
-  }
+    setAuthenticationContainer(option);
+  };
 
-  Log.debug("RENDER edit pool")
+  Log.debug("RENDER edit pool");
   return (
     <Modal
       show={show}
@@ -665,7 +663,7 @@ const EditPool = (props) => {
         </React.Fragment>
       )}
     </Modal>
-  )
-}
+  );
+};
 
-export default EditPool
+export default EditPool;
