@@ -26,12 +26,8 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
     onSelectListener,
     reset,
   } = useListener();
-  const {
-    MyHighlighter,
-    matchParams,
-    errorMessage,
-    searchParamsToString,
-  } = useCommons();
+  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
+    useCommons();
   const { persistLoadbalancer } = useLoadbalancer();
   let polling = null;
   const [loadbalancerID, setLoadbalancerID] = useState(null);

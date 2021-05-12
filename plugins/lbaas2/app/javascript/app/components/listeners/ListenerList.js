@@ -31,10 +31,8 @@ const ListenerList = ({ props, loadbalancerID }) => {
   const state = useGlobalState().listeners;
   const { searchParamsToString } = useCommons();
   const [initialLoadDone, setInitialLoadDone] = useState(false);
-  const [
-    triggerFindSelectedListener,
-    setTriggerFindSelectedListener,
-  ] = useState(false);
+  const [triggerFindSelectedListener, setTriggerFindSelectedListener] =
+    useState(false);
 
   // when the load balancer id changes the state is reseted and a new load begins
   useEffect(() => {

@@ -20,12 +20,8 @@ import useStatus from "../../../lib/hooks/useStatus";
 
 const PoolItem = ({ props, pool, searchTerm, disabled }) => {
   const { persistPool, deletePool, onSelectPool, reset } = usePool();
-  const {
-    MyHighlighter,
-    matchParams,
-    errorMessage,
-    searchParamsToString,
-  } = useCommons();
+  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
+    useCommons();
   const [loadbalancerID, setLoadbalancerID] = useState(null);
   const { persistLoadbalancer } = useLoadbalancer();
   const { entityStatus } = useStatus(

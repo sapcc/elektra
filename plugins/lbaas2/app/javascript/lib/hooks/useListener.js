@@ -1,44 +1,44 @@
-import React from "react"
-import { ajaxHelper } from "ajax_helper"
-import { useDispatch } from "../../app/components/StateProvider"
-import { confirm } from "lib/dialogs"
-import useCommons from "./useCommons"
+import React from "react";
+import { ajaxHelper } from "ajax_helper";
+import { useDispatch } from "../../app/components/StateProvider";
+import { confirm } from "lib/dialogs";
+import useCommons from "./useCommons";
 
 const useListener = () => {
-  const dispatch = useDispatch()
-  const { errorMessage } = useCommons()
+  const dispatch = useDispatch();
+  const { errorMessage } = useCommons();
 
   const fetchListeners = (lbID, options) => {
     return new Promise((handleSuccess, handleError) => {
       ajaxHelper
         .get(`/loadbalancers/${lbID}/listeners`, { params: options })
         .then((response) => {
-          handleSuccess(response.data)
+          handleSuccess(response.data);
         })
         .catch((error) => {
-          handleError(error.response)
-        })
-    })
-  }
+          handleError(error.response);
+        });
+    });
+  };
 
   const fetchListener = (lbID, id) => {
     return new Promise((handleSuccess, handleError) => {
       ajaxHelper
         .get(`/loadbalancers/${lbID}/listeners/${id}`)
         .then((response) => {
-          handleSuccess(response.data)
+          handleSuccess(response.data);
         })
         .catch((error) => {
-          handleError(error.response)
-        })
-    })
-  }
+          handleError(error.response);
+        });
+    });
+  };
 
   const persistListeners = (lbID, shouldReset, options) => {
     if (shouldReset) {
-      dispatch({ type: "RESET_LISTENERS" })
+      dispatch({ type: "RESET_LISTENERS" });
     }
-    dispatch({ type: "REQUEST_LISTENERS" })
+    dispatch({ type: "REQUEST_LISTENERS" });
     return new Promise((handleSuccess, handleError) => {
       fetchListeners(lbID, options)
         .then((data) => {
@@ -49,45 +49,45 @@ const useListener = () => {
             limit: data.limit,
             sort_key: data.sort_key,
             sort_dir: data.sort_dir,
-          })
-          handleSuccess(data)
+          });
+          handleSuccess(data);
         })
         .catch((error) => {
-          dispatch({ type: "REQUEST_LISTENERS_FAILURE", error: error })
-          handleError(error)
-        })
-    })
-  }
+          dispatch({ type: "REQUEST_LISTENERS_FAILURE", error: error });
+          handleError(error);
+        });
+    });
+  };
 
   const persistListener = (lbID, id) => {
     return new Promise((handleSuccess, handleError) => {
       fetchListener(lbID, id)
         .then((data) => {
-          dispatch({ type: "RECEIVE_LISTENER", listener: data.listener })
-          handleSuccess(data)
+          dispatch({ type: "RECEIVE_LISTENER", listener: data.listener });
+          handleSuccess(data);
         })
         .catch((error) => {
           if (error && error.status == 404) {
-            dispatch({ type: "REMOVE_LISTENER", id: id })
+            dispatch({ type: "REMOVE_LISTENER", id: id });
           }
-          handleError(error)
-        })
-    })
-  }
+          handleError(error);
+        });
+    });
+  };
 
   const createListener = (lbID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
       ajaxHelper
         .post(`/loadbalancers/${lbID}/listeners`, { listener: values })
         .then((response) => {
-          dispatch({ type: "RECEIVE_LISTENER", listener: response.data })
-          handleSuccess(response)
+          dispatch({ type: "RECEIVE_LISTENER", listener: response.data });
+          handleSuccess(response);
         })
         .catch((error) => {
-          handleErrors(error)
-        })
-    })
-  }
+          handleErrors(error);
+        });
+    });
+  };
 
   const createNameTag = (name) => {
     return name ? (
@@ -96,8 +96,8 @@ const useListener = () => {
       </React.Fragment>
     ) : (
       ""
-    )
-  }
+    );
+  };
 
   const deleteListener = (lbID, listenerID, listenerName) => {
     return new Promise((handleSuccess, handleErrors) => {
@@ -113,16 +113,16 @@ const useListener = () => {
           return ajaxHelper
             .delete(`/loadbalancers/${lbID}/listeners/${listenerID}`)
             .then((response) => {
-              dispatch({ type: "REQUEST_REMOVE_LISTENER", id: listenerID })
-              handleSuccess(response)
+              dispatch({ type: "REQUEST_REMOVE_LISTENER", id: listenerID });
+              handleSuccess(response);
             })
             .catch((error) => {
-              handleErrors(error)
-            })
+              handleErrors(error);
+            });
         })
-        .catch((cancel) => true)
-    })
-  }
+        .catch((cancel) => true);
+    });
+  };
 
   const updateListener = (lbID, listenerID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
@@ -131,46 +131,46 @@ const useListener = () => {
           listener: values,
         })
         .then((response) => {
-          dispatch({ type: "RECEIVE_LISTENER", listener: response.data })
-          handleSuccess(response)
+          dispatch({ type: "RECEIVE_LISTENER", listener: response.data });
+          handleSuccess(response);
         })
         .catch((error) => {
-          handleErrors(error)
-        })
-    })
-  }
+          handleErrors(error);
+        });
+    });
+  };
 
   const setSearchTerm = (searchTerm) => {
-    dispatch({ type: "SET_LISTENERS_SEARCH_TERM", searchTerm: searchTerm })
-  }
+    dispatch({ type: "SET_LISTENERS_SEARCH_TERM", searchTerm: searchTerm });
+  };
 
   const setSelected = (item) => {
-    dispatch({ type: "SET_LISTENERS_SELECTED_ITEM", selected: item })
-  }
+    dispatch({ type: "SET_LISTENERS_SELECTED_ITEM", selected: item });
+  };
 
   const reset = () => {
-    dispatch({ type: "SET_LISTENERS_SEARCH_TERM", searchTerm: null })
-    dispatch({ type: "SET_LISTENERS_SELECTED_ITEM", selected: null })
-  }
+    dispatch({ type: "SET_LISTENERS_SEARCH_TERM", searchTerm: null });
+    dispatch({ type: "SET_LISTENERS_SELECTED_ITEM", selected: null });
+  };
 
   const onSelectListener = (props, listenerID) => {
-    const id = listenerID || ""
-    const pathname = props.location.pathname
-    const searchParams = new URLSearchParams(props.location.search)
-    searchParams.set("listener", id)
+    const id = listenerID || "";
+    const pathname = props.location.pathname;
+    const searchParams = new URLSearchParams(props.location.search);
+    searchParams.set("listener", id);
     if (id == "") {
       // if listener was unselected then we remove the policy selection
-      searchParams.set("l7policy", "")
+      searchParams.set("l7policy", "");
     }
     props.history.push({
       pathname: pathname,
       search: searchParams.toString(),
-    })
+    });
     // Listener was selected
-    setSelected(listenerID)
+    setSelected(listenerID);
     // filter the listener list to show just the one item
-    setSearchTerm(listenerID)
-  }
+    setSearchTerm(listenerID);
+  };
 
   const protocolTypes = () => {
     return [
@@ -179,8 +179,8 @@ const useListener = () => {
       { label: "TCP", value: "TCP" },
       { label: "TERMINATED_HTTPS", value: "TERMINATED_HTTPS" },
       { label: "UDP", value: "UDP" },
-    ]
-  }
+    ];
+  };
 
   const httpHeaderInsertions = (header) => {
     switch (header) {
@@ -190,77 +190,77 @@ const useListener = () => {
           value: "X-Forwarded-For",
           description:
             "When selected a X-Forwarded-For header is inserted into the request to the backend member that specifies the client IP address.",
-        }
+        };
       case "X-Forwarded-Port":
         return {
           label: "X-Forwarded-Port",
           value: "X-Forwarded-Port",
           description:
             "When selected a X-Forwarded-Port header is inserted into the request to the backend member that specifies the listener port.",
-        }
+        };
       case "X-Forwarded-Proto":
         return {
           label: "X-Forwarded-Proto",
           value: "X-Forwarded-Proto",
           description:
             "When selected a X-Forwarded-Proto header is inserted into the request to the backend member. HTTP for the HTTP listener protocol type, HTTPS for the TERMINATED_HTTPS listener protocol type.",
-        }
+        };
       case "X-SSL-Client-Verify":
         return {
           label: "X-SSL-Client-Verify",
           value: "X-SSL-Client-Verify",
           description:
             "When selected a X-SSL-Client-Verify header is inserted into the request to the backend member that contains 0 if the client authentication was successful, or an result error number greater than 0 that align to the openssl veryify error codes.",
-        }
+        };
       case "X-SSL-Client-Has-Cert":
         return {
           label: "X-SSL-Client-Has-Cert",
           value: "X-SSL-Client-Has-Cert",
           description:
             "When selected a X-SSL-Client-Has-Cert header is inserted into the request to the backend member that is ‘’true’’ if a client authentication certificate was presented, and ‘’false’’ if not. Does not indicate validity.",
-        }
+        };
       case "X-SSL-Client-DN":
         return {
           label: "X-SSL-Client-DN",
           value: "X-SSL-Client-DN",
           description:
             "When selected a X-SSL-Client-DN header is inserted into the request to the backend member that contains the full Distinguished Name of the certificate presented by the client.",
-        }
+        };
       case "X-SSL-Client-CN":
         return {
           label: "X-SSL-Client-CN",
           value: "X-SSL-Client-CN",
           description:
             "When selected a X-SSL-Client-CN header is inserted into the request to the backend member that contains the Common Name from the full Distinguished Name of the certificate presented by the client.",
-        }
+        };
       case "X-SSL-Issuer":
         return {
           label: "X-SSL-Issuer",
           value: "X-SSL-Issuer",
           description:
             "When selected a X-SSL-Issuer header is inserted into the request to the backend member that contains the full Distinguished Name of the client certificate issuer.",
-        }
+        };
       case "X-SSL-Client-SHA1":
         return {
           label: "X-SSL-Client-SHA1",
           value: "X-SSL-Client-SHA1",
           description:
             "When selected a X-SSL-Client-SHA1 header is inserted into the request to the backend member that contains the SHA-1 fingerprint of the certificate presented by the client in hex string format.",
-        }
+        };
       case "X-SSL-Client-Not-Before":
         return {
           label: "X-SSL-Client-Not-Before",
           value: "X-SSL-Client-Not-Before",
           description:
             "When selected a X-SSL-Client-Not-Before header is inserted into the request to the backend member that contains the start date presented by the client as a formatted string YYMMDDhhmmss[Z].",
-        }
+        };
       case "X-SSL-Client-Not-After":
         return {
           label: "X-SSL-Client-Not-After",
           value: "X-SSL-Client-Not-After",
           description:
             "When selected a X-SSL-Client-Not-After header is inserted into the request to the backend member that contains the end date presented by the client as a formatted string YYMMDDhhmmss[Z].",
-        }
+        };
       case "ALL":
         return [
           {
@@ -329,11 +329,11 @@ const useListener = () => {
             description:
               "When selected a X-SSL-Client-Not-After header is inserted into the request to the backend member that contains the end date presented by the client as a formatted string YYMMDDhhmmss[Z].",
           },
-        ]
+        ];
       default:
-        return []
+        return [];
     }
-  }
+  };
 
   const advancedSectionRelation = (protocol) => {
     switch (protocol) {
@@ -341,26 +341,26 @@ const useListener = () => {
       case "HTTPS":
       case "TERMINATED_HTTPS":
       case "TCP":
-        return true
+        return true;
       default:
-        return false
+        return false;
     }
-  }
+  };
 
   const tlsPoolRelation = (protocol) => {
     switch (protocol) {
       case "HTTP":
-        return false
+        return false;
       case "HTTPS":
-        return false
+        return false;
       case "TERMINATED_HTTPS":
-        return true
+        return true;
       case "TCP":
-        return false
+        return false;
       default:
-        return false
+        return false;
     }
-  } 
+  };
 
   const protocolHeaderInsertionRelation = (protocol) => {
     switch (protocol) {
@@ -369,124 +369,124 @@ const useListener = () => {
           httpHeaderInsertions("X-Forwarded-For"),
           httpHeaderInsertions("X-Forwarded-Port"),
           httpHeaderInsertions("X-Forwarded-Proto"),
-        ]
+        ];
       case "HTTPS":
-        return []
+        return [];
       case "TERMINATED_HTTPS":
-        return httpHeaderInsertions("ALL")
+        return httpHeaderInsertions("ALL");
       case "TCP":
-        return []
+        return [];
       case "UDP":
-        return []
+        return [];
       case "ALL":
-        return httpHeaderInsertions("ALL")
+        return httpHeaderInsertions("ALL");
       default:
-        return []
+        return [];
     }
-  }
+  };
 
   const clientAuthenticationTypes = () => {
     return [
       { label: "NONE", value: "NONE" },
       { label: "OPTIONAL", value: "OPTIONAL" },
       { label: "MANDATORY", value: "MANDATORY" },
-    ]
-  }
+    ];
+  };
 
   const clientAuthenticationRelation = (protocol) => {
     switch (protocol) {
       case "TERMINATED_HTTPS":
-        return clientAuthenticationTypes()
+        return clientAuthenticationTypes();
       default:
-        return []
+        return [];
     }
-  }
+  };
 
   const certificateContainerRelation = (protocol) => {
     switch (protocol) {
       case "TERMINATED_HTTPS":
-        return true
+        return true;
       default:
-        return false
+        return false;
     }
-  }
+  };
 
   const SNIContainerRelation = (protocol) => {
     switch (protocol) {
       case "TERMINATED_HTTPS":
-        return true
+        return true;
       default:
-        return false
+        return false;
     }
-  }
+  };
 
   const CATLSContainerRelation = (protocol) => {
     switch (protocol) {
       case "TERMINATED_HTTPS":
-        return true
+        return true;
       default:
-        return false
+        return false;
     }
-  }
+  };
 
   const fetchContainersForSelect = (lbID) => {
     return new Promise((handleSuccess, handleError) => {
       ajaxHelper
         .get(`/loadbalancers/${lbID}/listeners/containers`)
         .then((response) => {
-          handleSuccess(response.data)
+          handleSuccess(response.data);
         })
         .catch((error) => {
-          handleError(errorMessage(error.response))
-        })
-    })
-  }
+          handleError(errorMessage(error.response));
+        });
+    });
+  };
 
   const fetchSecretsForSelect = (lbID) => {
     return new Promise((handleSuccess, handleError) => {
       ajaxHelper
         .get(`/loadbalancers/${lbID}/listeners/secrets`)
         .then((response) => {
-          handleSuccess(response.data)
+          handleSuccess(response.data);
         })
         .catch((error) => {
-          handleError(errorMessage(error.response))
-        })
-    })
-  }
+          handleError(errorMessage(error.response));
+        });
+    });
+  };
 
   const isSecretAContainer = (secret) => {
     if (secret && secret.length > 0) {
-      return secret.includes("container")
+      return secret.includes("container");
     }
-    return false
-  }
+    return false;
+  };
 
   const fetchListnersNoDefaultPoolForSelect = (lbID) => {
     return new Promise((handleSuccess, handleError) => {
       ajaxHelper
         .get(`/loadbalancers/${lbID}/listeners/items_no_def_pool_for_select`)
         .then((response) => {
-          handleSuccess(response.data)
+          handleSuccess(response.data);
         })
         .catch((error) => {
-          handleError(errorMessage(error.response))
-        })
-    })
-  }
+          handleError(errorMessage(error.response));
+        });
+    });
+  };
 
   const fetchListnersForSelect = (lbID) => {
     return new Promise((handleSuccess, handleError) => {
       ajaxHelper
         .get(`/loadbalancers/${lbID}/listeners/items_for_select`)
         .then((response) => {
-          handleSuccess(response.data)
+          handleSuccess(response.data);
         })
         .catch((error) => {
-          handleError(errorMessage(error.response))
-        })
-    })
-  }
+          handleError(errorMessage(error.response));
+        });
+    });
+  };
 
   const predefinedPolicies = (protocol) => {
     switch (protocol) {
@@ -518,7 +518,7 @@ const useListener = () => {
             value: "proxy_protocol_V2_e8f6_v1_0",
           },
           { label: "standard_tcp_a3de_v1_0", value: "standard_tcp_a3de_v1_0" },
-        ]
+        ];
       case "TERMINATED_HTTPS":
         return [
           { label: "x_forward_5b6e_v1_0", value: "x_forward_5b6e_v1_0" },
@@ -544,7 +544,7 @@ const useListener = () => {
             value: "proxy_protocol_V2_e8f6_v1_0",
           },
           { label: "standard_tcp_a3de_v1_0", value: "standard_tcp_a3de_v1_0" },
-        ]
+        ];
       case "HTTPS":
       case "TCP":
         return [
@@ -557,19 +557,19 @@ const useListener = () => {
             value: "proxy_protocol_V2_e8f6_v1_0",
           },
           { label: "standard_tcp_a3de_v1_0", value: "standard_tcp_a3de_v1_0" },
-        ]
+        ];
       case "UDP":
-        return []
+        return [];
       default:
-        return []
+        return [];
     }
-  }
+  };
 
   const helpBlockItems = (protocol) => {
     return predefinedPolicies(protocol).map((item) =>
       predPolicyDesc(item.value)
-    )
-  }
+    );
+  };
 
   const predPolicyDesc = (policy) => {
     switch (policy) {
@@ -595,7 +595,7 @@ const useListener = () => {
               enabled.
             </React.Fragment>
           ),
-        }
+        };
       case "proxy_protocol_V2_e8f6_v1_0":
         return {
           label: "Set Proxy Protocol V2 (proxy_protocol_V2_e8f6_v1_0)",
@@ -614,7 +614,7 @@ const useListener = () => {
               support enabled.
             </React.Fragment>
           ),
-        }
+        };
       case "standard_tcp_a3de_v1_0":
         return {
           label: "Use Standard Profile (standard_tcp_a3de_v1_0)",
@@ -630,7 +630,7 @@ const useListener = () => {
               </a>
             </React.Fragment>
           ),
-        }
+        };
       case "x_forward_5b6e_v1_0":
         return {
           label: "Set X-Forwarded Headers (x_forward_5b6e_v1_0)",
@@ -639,7 +639,7 @@ const useListener = () => {
               Adds X-FORWARDED-FOR/PROTO/PORT to HTTP header.
             </React.Fragment>
           ),
-        }
+        };
       case "no_one_connect_3caB_v1_0":
         return {
           label: "Disable OneConnect (no_one_connect_3caB_v1_0)",
@@ -655,7 +655,7 @@ const useListener = () => {
               </a>
             </React.Fragment>
           ),
-        }
+        };
       case "http_compression_e4a2_v1_0":
         return {
           label: "Enable HTTP compression (http_compression_e4a2_v1_0)",
@@ -666,7 +666,7 @@ const useListener = () => {
               application/(xml|x-javascript).
             </React.Fragment>
           ),
-        }
+        };
       case "cookie_encryption_b82a_v1_0":
         return {
           label: "Enable Cookie Encryption (cookie_encryption_b82a_v1_0)",
@@ -676,7 +676,7 @@ const useListener = () => {
               passed to backend members.
             </React.Fragment>
           ),
-        }
+        };
       case "sso_22b0_v1_0":
         return {
           label: "Enable Client Authentication (SSO) (sso_22b0_v1_0)",
@@ -688,7 +688,7 @@ const useListener = () => {
               offloading starts with CATrust*
             </React.Fragment>
           ),
-        }
+        };
       case "http_redirect_a26c_v1_0":
         return {
           label: "Redirect HTTP to HTTPS (http_redirect_a26c_v1_0)",
@@ -699,11 +699,11 @@ const useListener = () => {
               http://sap.com/hana would result in https://sap.com/hana.
             </React.Fragment>
           ),
-        }
+        };
       default:
-        return []
+        return [];
     }
-  }
+  };
 
   return {
     fetchListeners,
@@ -733,7 +733,7 @@ const useListener = () => {
     predefinedPolicies,
     helpBlockItems,
     advancedSectionRelation,
-  }
-}
+  };
+};
 
-export default useListener
+export default useListener;
