@@ -175,7 +175,9 @@ const useListener = () => {
   const protocolTypes = () => {
     return [
       { label: "HTTP", value: "HTTP" },
-      { label: "HTTPS", value: "HTTPS" },
+      // Disable HTTPS when creating listeners
+      // With Octavia, HTTPS is exactly the same as TCP (it’s been meant to be TLS-HTTP passthrough for the backends, but octavia doesn’t really handles them any different than TCP).
+      { label: "HTTPS", value: "HTTPS", state: "disabled" },
       { label: "TCP", value: "TCP" },
       { label: "TERMINATED_HTTPS", value: "TERMINATED_HTTPS" },
       { label: "UDP", value: "UDP" },

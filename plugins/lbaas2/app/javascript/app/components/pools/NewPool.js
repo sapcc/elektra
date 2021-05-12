@@ -22,7 +22,7 @@ const NewPool = (props) => {
   const {
     lbAlgorithmTypes,
     poolPersistenceTypes,
-    protocolListenerPoolCombinations,
+    protocolTypes,
     createPool,
     filterListeners,
   } = usePool();
@@ -111,9 +111,6 @@ const NewPool = (props) => {
 
   const [formErrors, setFormErrors] = useState(null);
   const [initialValues, setInitialValues] = useState();
-  const [protocols, setProtocols] = useState(
-    protocolListenerPoolCombinations()
-  );
 
   const [protocol, setProtocol] = useState(null);
   const [sessionPersistenceType, setSessionPersistenceType] = useState(null);
@@ -199,6 +196,11 @@ const NewPool = (props) => {
     }
   };
 
+  const protocolTypesFiltered = () => {
+    // do not show types disabled
+    return protocolTypes().filter((t) => !t.state?.includes("disabled"));
+  };
+
   Log.debug("RENDER new pool");
   return (
     <Modal
@@ -273,7 +275,7 @@ const NewPool = (props) => {
           <Form.ElementHorizontal label="Protocol" name="protocol" required>
             <SelectInput
               name="protocol"
-              items={protocols}
+              items={protocolTypesFiltered()}
               onChange={onProtocolChanged}
               value={protocol}
             />

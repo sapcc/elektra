@@ -181,27 +181,16 @@ const usePool = () => {
     ];
   };
 
-  const protocolTypes = (type) => {
-    switch (type) {
-      case "HTTP":
-        return { label: "HTTP", value: "HTTP" };
-      case "HTTPS":
-        return { label: "HTTPS", value: "HTTPS" };
-      case "PROXY":
-        return { label: "PROXY", value: "PROXY" };
-      case "TCP":
-        return { label: "TCP", value: "TCP" };
-      case "UDP":
-        return { label: "UDP", value: "UDP" };
-      default:
-        return [
-          { label: "HTTP", value: "HTTP" },
-          { label: "HTTPS", value: "HTTPS" },
-          { label: "PROXY", value: "PROXY" },
-          { label: "TCP", value: "TCP" },
-          { label: "UDP", value: "UDP" },
-        ];
-    }
+  const protocolTypes = () => {
+    return [
+      { label: "HTTP", value: "HTTP" },
+      // Disable HTTPS when creating listeners
+      // With Octavia, HTTPS is exactly the same as TCP (it’s been meant to be TLS-HTTP passthrough for the backends, but octavia doesn’t really handles them any different than TCP).
+      { label: "HTTPS", value: "HTTPS", state: "disabled" },
+      { label: "PROXY", value: "PROXY" },
+      { label: "TCP", value: "TCP" },
+      { label: "UDP", value: "UDP" },
+    ];
   };
 
   const poolPersistenceTypes = () => {
@@ -244,32 +233,6 @@ const usePool = () => {
     }
   };
 
-  const protocolListenerPoolCombinations = (listenerProtocol) => {
-    switch (listenerProtocol) {
-      case "HTTP":
-        return [protocolTypes("HTTP"), protocolTypes("PROXY")];
-      case "HTTPS":
-        return [
-          protocolTypes("HTTPS"),
-          protocolTypes("PROXY"),
-          protocolTypes("TCP"),
-        ];
-      case "TCP":
-        return [
-          protocolTypes("HTTP"),
-          protocolTypes("HTTPS"),
-          protocolTypes("PROXY"),
-          protocolTypes("TCP"),
-        ];
-      case "TERMINATED_HTTPS":
-        return [protocolTypes("HTTP"), protocolTypes("PROXY")];
-      case "UDP":
-        return [protocolTypes("UDP")];
-      default:
-        return protocolTypes();
-    }
-  };
-
   const filterListeners = (listeners, selectedProtocol) => {
     return listeners.filter((i) =>
       poolProtocolListenerCombinations(selectedProtocol).includes(i.protocol)
@@ -293,7 +256,6 @@ const usePool = () => {
     protocolTypes,
     poolPersistenceTypes,
     poolProtocolListenerCombinations,
-    protocolListenerPoolCombinations,
     filterListeners,
   };
 };

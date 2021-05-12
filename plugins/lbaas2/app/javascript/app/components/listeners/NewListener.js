@@ -300,6 +300,11 @@ const NewListener = (props) => {
     setTags(options);
   };
 
+  const protocolTypesFiltered = () => {
+    // do not show types disabled
+    return protocolTypes().filter((t) => !t.state?.includes("disabled"));
+  };
+
   Log.debug("RENDER new listener");
   return (
     <Modal
@@ -377,7 +382,7 @@ const NewListener = (props) => {
           <Form.ElementHorizontal label="Protocol" name="protocol" required>
             <SelectInput
               name="protocol"
-              items={protocolTypes()}
+              items={protocolTypesFiltered()}
               onChange={onSelectProtocolType}
             />
             <span className="help-block">
