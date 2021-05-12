@@ -49,13 +49,21 @@ module DnsService
       end
 
       update_limes_data(@inquiry.domain_id, @inquiry.project_id)
-      # check that subzones are not exsisting in other projects 
+      # check for subzones that they are not exsisting in other projects
+      # zone_transfer = true -> if subzone exist in other project, than we need to create the zone there and transfer it to the source project
+      # zone_transfer = false -> all subzones already existing in the source project
       zone_transfer = check_parent_zone(@zone_request.zone_name,@inquiry.project_id)
       # check and increase zone quota for destination project 
       check_and_increase_quota(@inquiry.domain_id, @inquiry.project_id, 'zones')
       # make sure that recordset quota is increased at least by 2 as there are two recrodsets are created (NS + SOA)
       check_and_increase_quota(@inquiry.domain_id, @inquiry.project_id, 'recordsets', 2)
-      
+
+      # catch errors from limes api
+      unless @zone_request.errors.empty?
+        render action: :new
+        return
+      end
+
       if @zone.save
         # we need zone transfer if the domain was created in cloud-admin project
         if zone_transfer
@@ -105,10 +113,8 @@ module DnsService
       if @zone_request.errors.empty?
         # render create.js.erb
         render action: :create
-        return
       else
         render action: :new
-        return
       end
 
     end

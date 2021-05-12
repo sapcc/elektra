@@ -58,7 +58,7 @@ module CreateZonesHelper
       resource: resource,
     ).resources.first or raise ActiveRecord::RecordNotFound
 
-    # note dns_resource.usable_quota is quota + burst
+    # NOTE: dns_resource.usable_quota is quota + burst
     if dns_resource.quota == 0 || dns_resource.quota <= dns_resource.usage
       if dns_resource.quota < dns_resource.usage
         puts "INFO: for project #{project_id} in domain #{domain_id} the usable quota is smaller than usage! Set quota for resource #{resource} to #{dns_resource.usage + increase}"
@@ -72,8 +72,6 @@ module CreateZonesHelper
       unless dns_resource.save
          # catch error for automatic quota adjustment
          dns_resource.errors.each { |k, m| @zone_request.errors.add(k,m) }
-         render action: :new
-         return
       else 
         puts "INFO: wait 3s to be sure that limes could set the quota correctly"
         sleep 3
