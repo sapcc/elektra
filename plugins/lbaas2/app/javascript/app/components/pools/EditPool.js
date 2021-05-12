@@ -22,7 +22,7 @@ const EditPool = (props) => {
   const {
     lbAlgorithmTypes,
     poolPersistenceTypes,
-    protocolListenerPoolCombinations,
+    protocolTypes,
     fetchPool,
     filterListeners,
     updatePool,
@@ -180,7 +180,7 @@ const EditPool = (props) => {
   };
 
   const setSelectedProtocol = (selectedProtocol) => {
-    const selectedOption = protocolListenerPoolCombinations().find(
+    const selectedOption = protocolTypes().find(
       (i) => i.value == (selectedProtocol || "").trim()
     );
     setProtocol(selectedOption);
@@ -283,9 +283,7 @@ const EditPool = (props) => {
    * Form stuff
    */
   const [formErrors, setFormErrors] = useState(null);
-  const [protocols, setProtocols] = useState(
-    protocolListenerPoolCombinations()
-  );
+  const [protocols, setProtocols] = useState(protocolTypes());
   const [showCookieName, setShowCookieName] = useState(false);
   const [showTLSSettings, setShowTLSSettings] = useState(false);
 
