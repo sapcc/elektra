@@ -41,6 +41,12 @@
   "shared_filesystem_storage:snapshot_list": "rule:context_is_share_viewer",
   "shared_filesystem_storage:snapshot_update": "rule:context_is_share_editor",
 
+  "shared_filesystem_storage:replica_create": "rule:context_is_sharedfilesystem_admin",
+  "shared_filesystem_storage:replica_delete": "rule:context_is_sharedfilesystem_admin",
+  "shared_filesystem_storage:replica_get": "rule:context_is_sharedfilesystem_admin",
+  "shared_filesystem_storage:replica_list": "rule:context_is_sharedfilesystem_admin",
+  "shared_filesystem_storage:replica_resync": "rule:context_is_sharedfilesystem_admin",
+
   "shared_filesystem_storage:share_network_create": "rule:context_is_sharedfilesystem_admin",
   "shared_filesystem_storage:share_network_delete": "rule:context_is_sharedfilesystem_admin",
   "shared_filesystem_storage:share_network_update": "rule:context_is_sharedfilesystem_admin",

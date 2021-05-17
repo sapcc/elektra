@@ -6,6 +6,7 @@ module ServiceLayer
     include SharedFilesystemStorageServices::Pool
     include SharedFilesystemStorageServices::Service
     include SharedFilesystemStorageServices::Share
+    include SharedFilesystemStorageServices::Replica
     include SharedFilesystemStorageServices::ShareRule
     include SharedFilesystemStorageServices::ShareNetwork
     include SharedFilesystemStorageServices::ShareServer
@@ -13,7 +14,7 @@ module ServiceLayer
     include SharedFilesystemStorageServices::Snapshot
     include SharedFilesystemStorageServices::ErrorMessage
 
-    MICROVERSION = 2.44
+    MICROVERSION = 2.57
 
     def available?(_action_name_sym = nil)
       elektron.service?('sharev2')
