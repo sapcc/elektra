@@ -76,7 +76,7 @@ export const REQUEST_DELETE_SECURITY_SERVICE    = 'shared_filesystem_storage/sec
 export const DELETE_SECURITY_SERVICE_FAILURE    = 'shared_filesystem_storage/security_services/DELETE_SECURITY_SERVICE_FAILURE'
 export const DELETE_SECURITY_SERVICE_SUCCESS    = 'shared_filesystem_storage/security_services/DELETE_SECURITY_SERVICE_SUCCESS'
 
-// SNAPSHOTS
+// REPLICAS
 export const REQUEST_SNAPSHOTS                  = 'shared_filesystem_storage/snapshots/REQUEST_SNAPSHOTS'
 export const RECEIVE_SNAPSHOTS                  = 'shared_filesystem_storage/snapshots/RECEIVE_SNAPSHOTS'
 export const REQUEST_SNAPSHOT                   = 'shared_filesystem_storage/snapshots/REQUEST_SNAPSHOT'
@@ -86,6 +86,18 @@ export const RECEIVE_SNAPSHOT                   = 'shared_filesystem_storage/sna
 export const REQUEST_DELETE_SNAPSHOT            = 'shared_filesystem_storage/snapshots/REQUEST_DELETE_SNAPSHOT'
 export const DELETE_SNAPSHOT_FAILURE            = 'shared_filesystem_storage/snapshots/DELETE_SNAPSHOT_FAILURE'
 export const DELETE_SNAPSHOT_SUCCESS            = 'shared_filesystem_storage/snapshots/DELETE_SNAPSHOT_SUCCESS'
+
+// REPLICAS
+export const REQUEST_REPLICAS                  = 'shared_filesystem_storage/snapshots/REQUEST_REPLICAS'
+export const RECEIVE_REPLICAS                  = 'shared_filesystem_storage/snapshots/RECEIVE_REPLICAS'
+export const REQUEST_REPLICA                   = 'shared_filesystem_storage/snapshots/REQUEST_REPLICA'
+export const REQUEST_REPLICA_FAILURE           = 'shared_filesystem_storage/snapshots/REQUEST_REPLICA_FAILURE'
+export const REQUEST_REPLICAS_FAILURE          = 'shared_filesystem_storage/snapshots/REQUEST_REPLICAS_FAILURE'
+export const RECEIVE_REPLICA                   = 'shared_filesystem_storage/snapshots/RECEIVE_REPLICA'
+export const REQUEST_DELETE_REPLICA            = 'shared_filesystem_storage/snapshots/REQUEST_DELETE_REPLICA'
+export const DELETE_REPLICA_FAILURE            = 'shared_filesystem_storage/snapshots/DELETE_REPLICA_FAILURE'
+export const DELETE_REPLICA_SUCCESS            = 'shared_filesystem_storage/snapshots/DELETE_REPLICA_SUCCESS'
+// TODO: resync
 
 // ERROR MESSAGES
 export const REQUEST_ERROR_MESSAGES             = 'shared_filesystem_storage/error_messages/REQUEST_ERROR_MESSAGES'

@@ -20,9 +20,15 @@ export default class ShareActions extends React.Component {
           <i className='fa fa-cog'></i>
         </button>
         <ul className='dropdown-menu dropdown-menu-right' role="menu">
-          { policy.isAllowed("shared_filesystem_storage:snapshot_create") && share.status=='available' &&
+          { policy.isAllowed("shared_filesystem_storage:replica_create") && share.status=='available' &&
             <li>
               <Link to={`/${parentView}/${share.id}/snapshots/new`}>Create Snapshot</Link>
+            </li>
+          }
+
+          { policy.isAllowed("shared_filesystem_storage:replica_create") && share.status=='available' &&
+            <li>
+              <Link to={`/shares/${share.id}/replicas/new`}>Create Replica</Link>
             </li>
           }
 

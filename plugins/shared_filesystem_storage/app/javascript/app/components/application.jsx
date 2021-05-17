@@ -13,9 +13,11 @@ import ResetShareStatusModal from '../containers/shares/reset_status'
 import RevertShareToSnapshotModal from '../containers/shares/revert_to_snapshot'
 
 import Snapshots from '../containers/snapshots/list';
+import Replicas from '../containers/replicas/list';
 import EditSnapshotModal from '../containers/snapshots/edit';
 import ShowSnapshotModal from '../containers/snapshots/show';
 import NewSnapshotModal from '../containers/snapshots/new';
+import NewReplicaModal from '../containers/replicas/new';
 
 import ShareNetworks from '../containers/share_networks/list';
 import NewShareNetworkModal from '../containers/share_networks/new';
@@ -36,6 +38,7 @@ import ErrorMessagesModal from '../containers/error_messages/list';
 const tabsConfigDefault = [
   { to: '/shares', label: 'Shares', component: Shares },
   { to: '/snapshots', label: 'Snapshots', component: Snapshots },
+  { to: '/replicas', label: 'Replicas', component: Replicas },
   { to: '/share-networks', label: 'Share Networks', component: ShareNetworks },
   { to: '/security-services', label: 'Security Services', component: SecurityServices},
 ]
@@ -76,9 +79,11 @@ export default (props) => {
         { policy.isAllowed("shared_filesystem_storage:share_update") &&
           <Route exact path="/:parent(shares|autoscaling)/:id/access-control" component={AccessControlModal}/>
         }
-
         { policy.isAllowed("shared_filesystem_storage:snapshot_create") &&
           <Route exact path="/:parent(shares|autoscaling)/:id/snapshots/new" component={NewSnapshotModal}/>
+        }
+        { policy.isAllowed("shared_filesystem_storage:replica_create") &&
+          <Route exact path="/:parent(shares)/:id/replicas/new" component={NewReplicaModal}/>
         }
         { policy.isAllowed("shared_filesystem_storage:snapshot_get") &&
           <Route exact path="/snapshots/:id/show" component={ShowSnapshotModal}/>
@@ -92,7 +97,6 @@ export default (props) => {
         { policy.isAllowed("shared_filesystem_storage:share_revert_to_snapshot") &&
           <Route exact path="/:parent(shares|autoscaling)/:id/revert-to-snapshot" component={RevertShareToSnapshotModal}/>
         }
-
         { policy.isAllowed("shared_filesystem_storage:share_network_create") &&
           <Route exact path="/share-networks/new" component={NewShareNetworkModal}/>
         }

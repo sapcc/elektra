@@ -16,6 +16,7 @@ SharedFilesystemStorage::Engine.routes.draw do
     end
   end
   resources :snapshots, except: %i[new edit], constraints: { format: :json }
+  resources :replicas, except: %i[new], constraints: { format: :json }
   resources :error_messages, only: %i[index], constraints: { format: :json }
 
   resources :share_types, only: %i[index], constraints: { format: :json }
