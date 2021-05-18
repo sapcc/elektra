@@ -116,17 +116,36 @@ export const provisioningStatusOptions = (option) => {
   }
 };
 
-const useStatus = (operatingStatus, provisioningStatus) => {
+const useStatus = (operatingStatus, provisioningStatus, options) => {
   const entityStatus = React.useMemo(() => {
     const opStatusOptions = operationStatusOptions(operatingStatus);
     const provStatusOptions = provisioningStatusOptions(provisioningStatus);
+
+    const stateLabelTitle = () => {
+      // add extra error options if this option is set. Used in pools section
+      if (
+        options &&
+        options.operatingStatusErrorExtraTitle &&
+        operatingStatus === "ERROR"
+      ) {
+        return (
+          <>
+            <ul className="label-tooltip extra-title">
+              <li>{options.operatingStatusErrorExtraTitle}</li>
+            </ul>
+            {opStatusOptions.title}
+          </>
+        );
+      }
+      return opStatusOptions.title;
+    };
 
     return (
       <>
         <StateLabel
           label={operatingStatus}
           labelClassName={opStatusOptions.labelClassName}
-          title={opStatusOptions.title}
+          title={stateLabelTitle()}
         />
         {provisioningStatus !== "ACTIVE" && (
           <>
