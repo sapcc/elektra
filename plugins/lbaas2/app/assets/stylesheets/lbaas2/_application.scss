@@ -220,6 +220,9 @@ input[type="number"] {
 .label-tooltip {
   text-align: left;
   padding-left: 20px;
+  &.extra-title {
+    margin-bottom: 0px;
+  }
 }
 
 /*
