@@ -26,7 +26,8 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
   const { persistLoadbalancer } = useLoadbalancer();
   const { entityStatus } = useStatus(
     pool.operating_status,
-    pool.provisioning_status
+    pool.provisioning_status,
+    { operatingStatusErrorExtraTitle: "The pool has no members" }
   );
   let polling = null;
 
