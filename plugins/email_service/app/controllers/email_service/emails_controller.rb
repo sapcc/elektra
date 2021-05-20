@@ -39,18 +39,17 @@ module EmailService
 
       @all_emails = list_verified_identities("EmailAddress")
       @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
-      @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
-      @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
+      # @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
+      # @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
 
-      @e_collection = get_verified_email_collection(@verified_emails) if !@verified_emails.empty?
-      
+      @e_collection = get_verified_email_collection(@verified_emails) unless @verified_emails.nil? || @verified_emails.empty?
+ 
     end
 
 
     def create
- 
-      # @verified_emails, @pending_emails = verified_emails
-      @email = new_email(email_params)  
+      @email = new_email(email_params) 
+      # @verified_emails, @pending_emails = verified_emails 
       # plain_email = PlainEmail.new( {
       #   encoding: "UTF-8",
       #   source: "sirajudheenam@gmail.com",
@@ -73,14 +72,13 @@ module EmailService
       if status == "success"
         msg = "eMail sent successfully"
         flash[:success] = msg
+        redirect_to plugin('email_service').emails_path
       else 
         msg = "error occured: #{status}"
         flash[:warning] = msg
+        render 'new'
       end
       logger.debug "CRONUS DEBUG: #{msg}"
-       
-      redirect_to plugin('email_service').emails_path
-
     end
 
     def email_params

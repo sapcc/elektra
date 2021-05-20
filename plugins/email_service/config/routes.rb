@@ -8,6 +8,8 @@ EmailService::Engine.routes.draw do
   get '/info' => 'emails#info'
 
   get 'emails/stats' => 'emails#stats'
+  
+  get 'settings/show_config' => 'settings#show_config'
   get 'settings' => 'settings#index'
   post 'settings/enable_cronus' => 'settings#enable_cronus'
   post 'settings/disable_cronus' => 'settings#disable_cronus'

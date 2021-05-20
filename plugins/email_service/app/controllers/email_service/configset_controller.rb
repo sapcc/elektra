@@ -14,8 +14,7 @@ module EmailService
 
     def show_configset
       name = params[:name] if params[:name]
-      @a_configset = describe_configset(name)
-
+      @configset_description = describe_configset(name)
     end
 
     def create_configset

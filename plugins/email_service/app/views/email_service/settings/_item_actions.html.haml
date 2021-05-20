@@ -3,6 +3,4 @@
     %span.fa.fa-cog
   %ul.dropdown-menu.dropdown-menu-right{ role:"menu" }
     - if current_user
-      %li= link_to 'Show Config', "#", method: :post
-      %li= link_to 'Enable', "#", method: :post
-      %li= link_to 'Disable', "#", method: :post, data: { confirm: "Are you sure you want to disable Cronus (AWS SES)", ok: "Yes, disable it", confirmed: :loading_status}
+      %li= link_to 'Show Config', settings_show_config_path, method: :get

@@ -14,7 +14,10 @@ module EmailService
 
       # flash.now[:success] = "access key : #{access} secret : #{secret}" if (access && secret)
     end
-    
+    def show_config
+      @access, @secret = get_ec2_creds
+    end
+
     def enable_cronus
     end
 

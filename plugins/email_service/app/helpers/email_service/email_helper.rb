@@ -28,17 +28,14 @@ module EmailService
     end
 
     def get_verified_email_collection(verified_emails)
-      e_collection = []
-      if !verified_emails.empty? 
+      verified_email_collection = []
         verified_emails.each do |element|
-          e_collection << element[:email] unless element[:email].include?('@activation.email.global.cloud.sap')
-        end
-      end
-      logger.debug "CRONUS DEBUG: e_collection #{e_collection} "
-      e_collection if !e_collection.empty?
+          verified_email_collection << element[:email] unless element[:email].include?('@activation.email.global.cloud.sap')
+        end unless verified_emails.empty? 
+        verified_email_collection
     end
 
-    # Get templates name as a collection to be rendered at view
+    # Get templates name as a collection to be rendered
     def get_templates_collection(templates)
       templates_collection = []
       if !templates.empty?
@@ -74,6 +71,7 @@ module EmailService
       status
     end
 
+    # create an array of valid email addresses
     def addr_validate(raw_addr)
       unless raw_addr.empty?
         values = raw_addr.split(",")
@@ -81,7 +79,7 @@ module EmailService
         values.each do |value|
           addr << value.strip
           # TO DO: check email addresses count is not exceeding 50 
-          # @email_addr_count =  @email_addr_count + 1
+
         end
         return addr
       end
@@ -92,6 +90,7 @@ module EmailService
       plain_email.email.to_addr= addr_validate(plain_email.email.to_addr)
       plain_email.email.cc_addr= addr_validate(plain_email.email.cc_addr)
       plain_email.email.bcc_addr = addr_validate(plain_email.email.bcc_addr)
+      # return plain_email struct after validation
       plain_email
     end
 

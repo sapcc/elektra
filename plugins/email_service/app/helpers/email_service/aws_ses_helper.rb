@@ -27,11 +27,11 @@ module EmailService
 
     ## Send Plain eMail ##
     def send_email(plain_email)
-      status = ""
+      error = ""
       ses_client = create_ses_client
       
       begin
-        ses_client.send_email(
+        resp = ses_client.send_email(
           destination: {
             to_addresses: plain_email.email.to_addr ,
             cc_addresses: plain_email.email.cc_addr ,
@@ -55,25 +55,23 @@ module EmailService
           },
           source: plain_email.email.source,
         )
-        status = "success"
-        # logger.debug "#{Time.new}: CRONUS: DEBUG: templated email aws ses #{status}"
       rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS : DEBUG : Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
+        logger.debug "CRONUS : DEBUG : ERROR: Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
       end
-      status 
+      resp && resp.successful? ? "success" : error
     end
 
 
     def send_templated_email(templated_email)
-      status = ""
+      error = ""
+      resp = ""
       ses_client = create_ses_client
       begin
-        status = ses_client.send_templated_email({
+        resp = ses_client.send_templated_email({
           source: templated_email.email.source, # required
           destination: { # required
-            to_addresses: templated_email.email.to_addr ,
-            cc_addresses: templated_email.email.cc_addr ,
+            to_addresses: templated_email.email.to_addr,
+            cc_addresses: templated_email.email.cc_addr,
             bcc_addresses: templated_email.email.bcc_addr,
           },
           reply_to_addresses: [templated_email.email.reply_to_addr],
@@ -91,12 +89,12 @@ module EmailService
           # template_arn: "",
           template_data: templated_email.email.template_data, # required
         })
-        status = "success"
-        logger.debug "#{Time.new}: CRONUS: DEBUG: templated email aws ses #{status}"
       rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
         logger.debug "CRONUS: DEBUG: #{error}"
+        return error
       end
+      # debugger
+      resp && resp.successful? ? "success" : error
     end
 
     ### CONFIG SET ###

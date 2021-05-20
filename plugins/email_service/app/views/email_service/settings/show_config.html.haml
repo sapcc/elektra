@@ -1,0 +1,17 @@
+= content_for :title do
+  AWS EC2 Credentials
+%table.table.table-striped
+  %tr
+    %td AWS Access Key 
+    %td 
+      =@access if @access
+  %tr
+    %td AWS Secret Key 
+    %td 
+      =@secret if @secret
+  %tr
+    %td Cronus Endpoint 
+    %td 
+      =current_user
+%p
+  =current_user.inspect

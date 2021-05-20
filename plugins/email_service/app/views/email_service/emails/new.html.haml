@@ -1,7 +1,7 @@
 = simple_form_for :email, url: plugin('email_service').emails_path(), method: :post, remote: request.xhr?, html: {id: 'form_plain_email', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
-  - if @e_collection.empty? 
+  - if !@e_collection || @e_collection.empty? 
     %p.alert.alert-warning
-      There are verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
+      There is no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMails.
       You can get verified your eMail address
       = link_to 'here', plugin('email_service').new_verification_path()
   
