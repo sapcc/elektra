@@ -1,23 +1,18 @@
 module EmailService
   module EmailHelper
-
     include AwsSesHelper
+    include PlainEmailHelper
+    include TemplatedEmailHelper
 
-    class PlainEmail
-      Email = Struct.new(:source, :to_addr, :cc_addr, :bcc_addr, :subject, :htmlbody, :textbody)
-      attr_accessor :email
-      def initialize(opts)
-        @email = Email.new(opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:subject], opts[:htmlbody], opts[:textbody] )
-      end
-    end
+    VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
-    class TemplatedEmail
-      Email = Struct.new(:source, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :template_name, :template_data, :configset_name)
-      attr_accessor :email
-      def initialize(opts)
-        @email = Email.new(opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:reply_to_addr], opts[:template_name], opts[:template_data], opts[:configset_name] )
-      end
-    end
+    # class TemplatedEmail
+    #   Email = Struct.new(:source, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :template_name, :template_data, :configset_name)
+    #   attr_accessor :email
+    #   def initialize(opts)
+    #     @email = Email.new(opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:reply_to_addr], opts[:template_name], opts[:template_data], opts[:configset_name] )
+    #   end
+    # end
 
     def new_email(attributes = {})
       email = PlainEmail.new(attributes)
@@ -30,7 +25,8 @@ module EmailService
     def get_verified_email_collection(verified_emails)
       verified_email_collection = []
         verified_emails.each do |element|
-          verified_email_collection << element[:email] unless element[:email].include?('@activation.email.global.cloud.sap')
+          verified_email_collection << element[:email] \
+          unless element[:email].include?('@activation.email.global.cloud.sap')
         end unless verified_emails.empty? 
         verified_email_collection
     end
@@ -44,7 +40,7 @@ module EmailService
         end
       end
       logger.debug "CRONUS DEBUG: templates_collection #{templates_collection} "
-      templates_collection if !templates_collection.empty?
+      templates_collection
     end
 
     def isEmailVerified?(email)

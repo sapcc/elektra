@@ -1,17 +1,31 @@
+=content_for :main_toolbar do
+  AWS EC2 Credentials | eMail Service
 = content_for :title do
-  AWS EC2 Credentials
-%table.table.table-striped
-  %tr
-    %td AWS Access Key 
-    %td 
-      =@access if @access
-  %tr
-    %td AWS Secret Key 
-    %td 
-      =@secret if @secret
-  %tr
-    %td Cronus Endpoint 
-    %td 
-      =current_user
-%p
-  =current_user.inspect
+  eMail Service | AWS EC2 Credentials
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'settings'}
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"settings-pane"}
+    %h3
+      Configuration
+    .row
+      .col-sm-9
+        %table.table.table-striped
+          %tr
+            %td AWS Access Key 
+            %td 
+              =@access if @access
+          %tr
+            %td AWS Secret Key 
+            %td 
+              =@secret if @secret
+          %tr
+            %td Cronus Endpoint 
+            %td 
+              =current_user.service_url('email-aws')
+      .col-sm-3
+        .bs-callout.bs-callout-primary.toolbar-aligment
+          %p
+            Converged Cloud EMails Service - AWS Simple eMail Service - Settings
+            = link_to "AWS Simple eMail Service", "https://aws.amazon.com/ses/", :target => "_blank"
+            \.

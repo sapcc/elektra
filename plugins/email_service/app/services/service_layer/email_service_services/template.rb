@@ -32,7 +32,7 @@ module ServiceLayer
         nil
       end
 
-      ################ MODEL INTERFACE ###################
+      ################ MODEL/API INTERFACE ###################
       def create_template(attributes = {})
         template_ref = elektron_email_service.post('templates') do
           attributes

@@ -1,11 +1,20 @@
-= simple_form_for :email, url: plugin('email_service').emails_path(), method: :post, remote: request.xhr?, html: {id: 'form_plain_email', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+- pl = plugin('email_service')
+= simple_modal_form_for :email, submit_action: "Send eMail", url: pl.emails_path(), method: :post, remote: request.xhr?, cancel_url: pl.emails_path() do |f|
+
   - if !@e_collection || @e_collection.empty? 
     %p.alert.alert-warning
       There is no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMails.
       You can get verified your eMail address
       = link_to 'here', plugin('email_service').new_verification_path()
-  
-  .modal-body
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - if !@email.nil? 
+      - if @email.errors?
+        .alert.alert-error
+          = render_error_messages(@email.errors)
+    .flashes
+      = render "application/flashes"
+
     .row
       .col-sm-6
         = f.input :source, { label: "Sender", 
@@ -16,7 +25,7 @@
         = f.input :to_addr, required: true, 
           label: 'To Address(es)', 
           placeholder: 'Enter To Addresses', 
-          input_html: {value: "sirajudheen.mohamed.ali@sap.com"},
+          input_html: {value: ""},
           hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
         %span.toEmailHelpBlock
         %span.toErrBlock
@@ -24,7 +33,7 @@
           required: false, 
           label: 'Cc Address(es)', 
           placeholder: 'Enter Cc Addresses',
-          input_html: { value: "sirajudheen.mohamed.ali@sap.com" },
+          input_html: { value: "" },
           hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
         %span.ccEmailHelpBlock 
         %span.ccErrBlock
@@ -32,7 +41,7 @@
           required: false, 
           label: 'Bcc Address(es)', 
           placeholder: 'Enter Bcc Addresses',
-          input_html: { value: "sirajudheen.mohamed.ali@sap.com" },
+          input_html: { value: "" },
           hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
         %span.bccEmailHelpBlock
         %span.bccErrBlock
@@ -57,10 +66,3 @@
           as:                 :text,
           required:           true,
           hint: 'Enter Plain Text of your email'
-
-  %div{class: modal? ? 'modal-footer' : ''}
-    - if modal?
-      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
-    - else
-      = link_to "Cancel", plugin('email_service').emails_path(), class: 'btn btn-default'
-    = button_tag "Send", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

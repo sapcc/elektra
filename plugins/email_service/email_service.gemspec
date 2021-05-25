@@ -7,8 +7,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ["Sirajudheen Mohamed Ali"]
   spec.email       = ["sirajudheen.mohamed.ali@sap.com"]
   spec.homepage    = ""
-  spec.summary     = "EmailService AWS SES Proxy"
-  spec.description = "EmailService UI elektra plugin for AWS SES proxy implementation cronus"
+  spec.summary     = "eMailService AWS SES Proxy"
+  spec.description = "eMailService UI elektra plugin for Cronus"
   spec.license     = "MIT"
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]

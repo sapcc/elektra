@@ -1,6 +1,8 @@
 module EmailService
   class ApplicationController < DashboardController
-    
+    include AwsSesHelper
+    include EmailHelper
+    include TemplateHelper
     private
 
     def index

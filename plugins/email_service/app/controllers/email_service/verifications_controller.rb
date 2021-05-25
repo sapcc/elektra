@@ -8,20 +8,6 @@ module EmailService
       @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
       @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
       @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
-      # flash.now[:success] = @msg.nil? ? " oops ... from controller itself" : @msg
-      # flash.now[:success] = "Verification emails are getting rendered." # works
-
-      # @verified_emails = []
-      # @pending_emails = []
-      # @failed_emails = []
-
-      # v_test = { id: 200, email: "abc@kyc.com", status: "Success"}
-      # @verified_emails.push(v_test)
-      # p_test = { id: 201, email: "cdf@lmn.com", status: "Pending"}
-      # @pending_emails.push(p_test)
-      # f_test = { id: 202, email: "ghi@opq.com", status: "Failed"}
-      # @failed_emails.push(f_test)
-      # # flash.now[:notice] = "This is how a notice looks like.#{@verified_emails.inspect}"
     end
 
     def new

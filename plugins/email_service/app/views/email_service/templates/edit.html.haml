@@ -1,0 +1,33 @@
+= content_for :title do
+  Edit Template
+- if params[:template].present?
+  - name      = params[:template]["name"]
+  - subject   = params[:template]["subject"]
+  - html_part = params[:template]["html_part"]
+  - text_part = params[:template]["text_part"]
+
+- pl = plugin('email_service')
+= simple_modal_form_for :template, submit_action: "Create", url: pl.templates_path(), method: :post, remote: request.xhr?,  html: {id: 'form_template', data: {modal: true} }, cancel_url: pl.templates_path(),  wrapper: :horizontal_form do |f|
+  .modal-body
+    .flashes
+      = render "application/flashes"
+    - if @template.errors?
+      %p.alert.alert-warning
+        = render_error_messages(@template.errors)
+
+    .row
+      .col-sm-6
+        = f.input :name, label: 'Name', required: true, input_html: { autofocus: "autofocus", value: name }
+        = f.input :subject, required: true, input_html: { value: subject }, label: 'Subject', placeholder: 'Enter subject'
+        = f.input :html_part, required: true,
+          label: "HTML eMail Content",
+          placeholder:        "Enter html text eMail template",
+          input_html: { rows: "15", class: "u-text-monospace" , value: html_part },
+          as: :text, hint: 'Enter html part of your template' 
+        = f.input :text_part,
+        label:              "Plain text eMail Content",
+        placeholder:        "Enter plain text eMail template",
+        input_html:         {rows: "15", class: "u-text-monospace", value: text_part },
+        as:                 :text,
+        required:           true,
+        hint: 'Enter plain text part of your eMail template' 

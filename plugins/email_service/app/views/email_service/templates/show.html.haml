@@ -12,22 +12,22 @@
           %td
             %strong Name:
           %td 
-            =@template.template.name
+            =@template.name
         %tr
           %td
             %strong Subject:
           %td 
-            =@template.template.subject
+            =@template.subject
         %tr
           %td
             %strong HTML part:
           %td 
-            =@template.template.html_part
+            =@template.html_part
         %tr
           %td
             %strong Text part:
           %td 
-            =@template.template.text_part
+            =@template.text_part
 
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?

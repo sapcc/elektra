@@ -12,5 +12,6 @@
 <%= @main_toolbar_content %>
 <%= yield %>
 
+<%= debug(params) if Rails.env.development? %>
 </body>
 </html>

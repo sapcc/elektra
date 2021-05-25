@@ -5,17 +5,21 @@ module EmailService
 
     def index
       @cronus_activated = false
-      access, secret = get_ec2_creds
-      if access && secret 
+      creds = get_ec2_creds
+      @access = creds.access
+      @secret = creds.secret
+
+      if @access && @secret 
         @cronus_activated = true
       end
 
       @configsets = get_configset
 
-      # flash.now[:success] = "access key : #{access} secret : #{secret}" if (access && secret)
     end
     def show_config
-      @access, @secret = get_ec2_creds
+      creds = get_ec2_creds
+      @access = creds.access
+      @secret = creds.secret
     end
 
     def enable_cronus

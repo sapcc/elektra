@@ -5,11 +5,7 @@ module EmailService
 
     ### EC2 CREDS ### 
     def get_ec2_creds
-      resp = services.email_service.get_aws_creds(current_user.id)
-      keyhash = resp[:items][0]
-      access = keyhash.access
-      secret = keyhash.secret
-      [access, secret] if access && secret
+      aws_creds = services.email_service.aws_creds(current_user.id)
     end
 
     ### CREATE SES CLIENT ###
@@ -17,8 +13,8 @@ module EmailService
       region = map_region(current_user.default_services_region)
       endpoint = current_user.service_url('email-aws')
       begin
-        access, secret = get_ec2_creds
-        credentials = Aws::Credentials.new(access, secret)
+        creds =  get_ec2_creds
+        credentials = Aws::Credentials.new(creds.access, creds.secret)
         ses_client = Aws::SES::Client.new(region: region, endpoint: endpoint, credentials: credentials)
       rescue Aws::SES::Errors::ServiceError => error
         puts "Error is : #{error}"
@@ -33,33 +29,67 @@ module EmailService
       begin
         resp = ses_client.send_email(
           destination: {
-            to_addresses: plain_email.email.to_addr ,
-            cc_addresses: plain_email.email.cc_addr ,
-            bcc_addresses: plain_email.email.bcc_addr,
+            to_addresses: plain_email.to_addr ,
+            cc_addresses: plain_email.cc_addr ,
+            bcc_addresses: plain_email.bcc_addr,
           },
           message: {
             body: {
               html: {
                 charset: @encoding,
-                data: plain_email.email.htmlbody
+                data: plain_email.htmlbody
               },
               text: {
                 charset: @encoding,
-                data: plain_email.email.textbody
+                data: plain_email.textbody
               }
             },
             subject: {
               charset: @encoding,
-              data: plain_email.email.subject
+              data: plain_email.subject
             }
           },
-          source: plain_email.email.source,
+          source: plain_email.source,
         )
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "CRONUS : DEBUG : ERROR: Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
       end
       resp && resp.successful? ? "success" : error
     end
+    # def send_email(plain_email)
+    #   error = ""
+    #   ses_client = create_ses_client
+      
+    #   begin
+    #     resp = ses_client.send_email(
+    #       destination: {
+    #         to_addresses: plain_email.email.to_addr ,
+    #         cc_addresses: plain_email.email.cc_addr ,
+    #         bcc_addresses: plain_email.email.bcc_addr,
+    #       },
+    #       message: {
+    #         body: {
+    #           html: {
+    #             charset: @encoding,
+    #             data: plain_email.email.htmlbody
+    #           },
+    #           text: {
+    #             charset: @encoding,
+    #             data: plain_email.email.textbody
+    #           }
+    #         },
+    #         subject: {
+    #           charset: @encoding,
+    #           data: plain_email.email.subject
+    #         }
+    #       },
+    #       source: plain_email.email.source,
+    #     )
+    #   rescue Aws::SES::Errors::ServiceError => error
+    #     logger.debug "CRONUS : DEBUG : ERROR: Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
+    #   end
+    #   resp && resp.successful? ? "success" : error
+    # end
 
 
     def send_templated_email(templated_email)
@@ -68,14 +98,14 @@ module EmailService
       ses_client = create_ses_client
       begin
         resp = ses_client.send_templated_email({
-          source: templated_email.email.source, # required
+          source: templated_email.source, # required
           destination: { # required
-            to_addresses: templated_email.email.to_addr,
-            cc_addresses: templated_email.email.cc_addr,
-            bcc_addresses: templated_email.email.bcc_addr,
+            to_addresses: templated_email.to_addr,
+            cc_addresses: templated_email.cc_addr,
+            bcc_addresses: templated_email.bcc_addr,
           },
-          reply_to_addresses: [templated_email.email.reply_to_addr],
-          return_path: templated_email.email.reply_to_addr,
+          reply_to_addresses: [templated_email.reply_to_addr],
+          return_path: templated_email.reply_to_addr,
           # source_arn: "",
           # return_path_arn: "",
           tags: [
@@ -84,10 +114,10 @@ module EmailService
               value: "MessageTagValue", # required
             },
           ],
-          configuration_set_name: templated_email.email.configset_name,
-          template: templated_email.email.template_name, # required
+          configuration_set_name: templated_email.configset_name,
+          template: templated_email.template_name, # required
           # template_arn: "",
-          template_data: templated_email.email.template_data, # required
+          template_data: templated_email.template_data, # required
         })
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "CRONUS: DEBUG: #{error}"
@@ -218,26 +248,26 @@ module EmailService
           email_address: recipient
           })
           logger.debug "Verification email sent successfully to #{recipient}"
-          redirect_to plugin('email_service').verifications_path
           flash.now[:success] = "Verification email sent successfully to #{recipient}"
-
         rescue Aws::SES::Errors::ServiceError => error
           logger.debug "Email verification failed. Error message: #{error}"
-          redirect_to plugin('email_service').verifications_path  
+          # redirect_to plugin('email_service').verifications_path  
           flash.now[:warning] = "Email verification failed. Error message: #{error}"
         end
+
       end
       if recipient.include?("sap.com")
         flash.now[:warning] = "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
         logger.debug "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
-        redirect_to plugin('email_service').verifications_path  
+        # redirect_to plugin('email_service').verifications_path  
       end
+      redirect_to plugin('email_service').verifications_path
     end
 
     # Lists verified identities so far id_type "Email Address" is used.
     def list_verified_identities(id_type)
       attrs = Hash.new
-      all_verified_emails = []
+      verified_emails = []
       begin
         ses_client = create_ses_client
         # Get up to 1000 identities
@@ -253,12 +283,12 @@ module EmailService
           # Add id to each entry of verified identities 
           id += 1
           identity_hash = {:id => id, :email => email, :status => status}
-          all_verified_emails.push(identity_hash)
+          verified_emails.push(identity_hash)
         end
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "error while listing verified emails. Error message: #{error}"
       end
-      all_verified_emails
+      verified_emails
     end
 
     # Removes verified identity
@@ -288,18 +318,7 @@ module EmailService
           next_token: "",
           max_items: 10,
         })
-        
-        # if template_list.size > 0
-        #   for index in 0 ... template_list.size - 1 
-        #     resp = ses_client.get_template({
-        #       template_name: template_list.templates_metadata[index].name,
-        #     })
-        #     tmpl_hash = { :id => index, :name => resp.template.template_name, :subject => resp.template.subject_part, :text_part => resp.template.text_part, :html_part => resp.template.html_part }
-        #     templates.push(tmpl_hash)
-        #   end 
-        # end
-
-        # logger.debug "CRONUS: DEBUG: REAL COUNT : #{template_list.templates_metadata.count} "  
+       
         index = 0 
         # logger.debug "CRONUS: DEBUG: template_list SIZE : #{template_list.size}"
         while template_list.size > 0 && index < template_list.templates_metadata.count
@@ -331,22 +350,22 @@ module EmailService
       template
     end
 
-    def create_template(tmpl)
+    def store_template(tmpl)
       status = " "
       ses_client = create_ses_client
       begin
         resp = ses_client.create_template({
           template: {
-            template_name: tmpl.template.name,
-            subject_part: tmpl.template.subject,
-            text_part: tmpl.template.text_part,
-            html_part: tmpl.template.html_part,
+            template_name: tmpl.name,
+            subject_part: tmpl.subject,
+            text_part: tmpl.text_part,
+            html_part: tmpl.html_part,
           },
         })
         msg = "Template is saved"
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
-        msg = "Template not saved. Error message: #{error}"
+        msg = "Unable to save template: #{error}"
         status = msg
       end
       logger.debug "CRONUS: DEBUG: #{msg} "
