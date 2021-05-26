@@ -1,50 +1,59 @@
-import SnapshotItem from './item';
+import ReplicaItem from "./item"
 
-export default class SnapshotList extends React.Component {
-  constructor(props){
-  	super(props);
-  	this.share = this.share.bind(this)
+export default class ReplicaList extends React.Component {
+  constructor(props) {
+    super(props)
+    this.share = this.share.bind(this)
   }
 
   componentDidMount() {
-    if(this.props.active) this.props.loadSnapshotsOnce()
+    if (this.props.active) this.props.loadReplicasOnce()
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if(nextProps.active) this.props.loadSnapshotsOnce()
+    if (nextProps.active) this.props.loadReplicasOnce()
   }
 
-  share(snapshot){
-    if(this.props.shares.isFetching) return 'loading'
-    return this.props.shares.items.find(i=>i.id==snapshot.share_id)
+  share(replica) {
+    if (this.props.shares.isFetching) return "loading"
+    return this.props.shares.items.find((i) => i.id == replica.share_id)
   }
 
-  render(){
+  render() {
     if (this.props.isFetching) {
-      return <div><span className='spinner'></span>Loading...</div>
+      return (
+        <div>
+          <span className="spinner"></span>Loading...
+        </div>
+      )
     }
+
     return (
-      <table className='table snapshots'>
+      <table className="table replicas">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Source</th>
-            <th>Size</th>
+            <th>ID</th>
+            <th>Source Share</th>
+            <th>Replica State</th>
             <th>Status</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          { this.props.snapshots.length==0 &&
-            <tr><td colSpan="5">No Snapshots found.</td></tr>
-          }
-          {this.props.snapshots.map(snapshot =>
-            <SnapshotItem
-              key={snapshot.id}
-              snapshot={snapshot}
-              share={this.share(snapshot)}
-              handleDelete={this.props.handleDelete}
-              reloadSnapshot={this.props.reloadSnapshot}/>
+          {this.props.replicas.length === 0 ? (
+            <tr>
+              <td colSpan="5">No Replicas found.</td>
+            </tr>
+          ) : (
+            this.props.replicas.map((replica) => (
+              <ReplicaItem
+                key={replica.id}
+                replica={replica}
+                share={this.share(replica)}
+                handleDelete={this.props.handleDelete}
+                reloadReplica={this.props.reloadReplica}
+              />
+            ))
           )}
         </tbody>
       </table>

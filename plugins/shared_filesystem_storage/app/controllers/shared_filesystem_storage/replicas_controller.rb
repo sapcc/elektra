@@ -4,7 +4,7 @@ module SharedFilesystemStorage
   # replicas
   class ReplicasController < ApplicationController
     def index
-      render json: services.shared_filesystem_storage.replicas_detail
+      render json: services.shared_filesystem_storage.replicas_detail 
     end
 
     def show

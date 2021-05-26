@@ -1,20 +1,20 @@
-import { connect } from  'react-redux';
-import SnapshotList from '../../components/snapshots/list';
+import { connect } from "react-redux"
+import ReplicaList from "../../components/replicas/list"
 import {
-  fetchSnapshotsIfNeeded,
-  deleteSnapshot,
-  reloadSnapshot
-} from '../../actions/snapshots';
+  fetchReplicasIfNeeded,
+  deleteReplica,
+  reloadReplica,
+} from "../../actions/replicas"
 
 export default connect(
   (state) => ({
-    snapshots: state.snapshots.items,
+    replicas: state.replicas.items,
     shares: state.shares,
-    isFetching: state.snapshots.isFetching
+    isFetching: state.replicas.isFetching,
   }),
   (dispatch) => ({
-    loadSnapshotsOnce: () => dispatch(fetchSnapshotsIfNeeded()),
-    handleDelete: (snapshotId) => dispatch(deleteSnapshot(snapshotId)),
-    reloadSnapshot: (snapshotId) => dispatch(reloadSnapshot(snapshotId))
+    loadReplicasOnce: () => dispatch(fetchReplicasIfNeeded()),
+    handleDelete: (replicaId) => dispatch(deleteReplica(replicaId)),
+    reloadReplica: (replicaId) => dispatch(reloadReplica(replicaId)),
   })
-)(SnapshotList)
+)(ReplicaList)
