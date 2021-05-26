@@ -6,7 +6,7 @@
   "share_admin": "role:sharedfilesystem_admin",
   "context_is_sharedfilesystem_admin": "rule:context_is_cloud_sharedfilesystem_admin or rule:share_admin",
   "context_is_share_editor": "(rule:context_is_sharedfilesystem_admin or rule:member) and not project_id:nil",
-  "context_is_share_viewer":  "(rule:context_is_share_editor or rule:share_viewer) and not project_id:nil",
+  "context_is_share_viewer": "(rule:context_is_share_editor or rule:share_viewer) and not project_id:nil",
 
   "shared_filesystem_storage:share_list": "rule:context_is_share_viewer",
   "shared_filesystem_storage:share_get": "rule:context_is_share_viewer",
@@ -46,6 +46,7 @@
   "shared_filesystem_storage:replica_get": "rule:context_is_sharedfilesystem_admin",
   "shared_filesystem_storage:replica_list": "rule:context_is_sharedfilesystem_admin",
   "shared_filesystem_storage:replica_resync": "rule:context_is_sharedfilesystem_admin",
+  "shared_filesystem_storage:replica_update": "rule:context_is_sharedfilesystem_admin",
 
   "shared_filesystem_storage:share_network_create": "rule:context_is_sharedfilesystem_admin",
   "shared_filesystem_storage:share_network_delete": "rule:context_is_sharedfilesystem_admin",

@@ -1,19 +1,21 @@
-import { connect } from  'react-redux';
-import ShowShareModal from '../../components/snapshots/show';
+import { connect } from "react-redux"
+import Show from "../../components/replicas/show"
 
 export default connect(
-  (state,ownProps ) => {
-    let snapshot;
-    if (ownProps.match &&
-        ownProps.match.params &&
-        ownProps.match.params.id &&
-        state.snapshots.items) {
-      snapshot = state.snapshots.items.find(i =>
-        i.id==ownProps.match.params.id
+  (state, ownProps) => {
+    let replica
+    if (
+      ownProps.match &&
+      ownProps.match.params &&
+      ownProps.match.params.id &&
+      state.replicas.items
+    ) {
+      replica = state.replicas.items.find(
+        (i) => i.id == ownProps.match.params.id
       )
     }
 
-    return { snapshot }
+    return { replica }
   },
-  dispatch => ({})
-)(ShowShareModal);
+  (dispatch) => ({})
+)(Show)

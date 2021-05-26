@@ -18,12 +18,13 @@ module ServiceLayer
 
       def replicas(filter = {})
         elektron_share_replicas.get('share-replicas', filter)
-                       .map_to('body.replicas', &replica_map)
+                       .map_to('body.replicas', &replica_map)           
       end
 
       def replicas_detail(filter = {})
         elektron_share_replicas.get('share-replicas/detail', filter)
-                       .map_to('body.replicas', &replica_map)
+                       .map_to('body.share_replicas', &replica_map)
+
       end
 
       def find_replica!(id)
