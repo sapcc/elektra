@@ -16,7 +16,13 @@ SharedFilesystemStorage::Engine.routes.draw do
     end
   end
   resources :snapshots, except: %i[new edit], constraints: { format: :json }
-  resources :replicas, except: %i[new], constraints: { format: :json }
+  resources :replicas, except: %i[new], constraints: { format: :json } do
+    member do
+      post 'promote' => 'replicas#promote'
+      post 'resync' => 'replicas#resync'
+    end
+  end
+
   resources :error_messages, only: %i[index], constraints: { format: :json }
 
   resources :share_types, only: %i[index], constraints: { format: :json }

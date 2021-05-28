@@ -2,7 +2,9 @@
 
 module SharedFilesystemStorage
   # replicas
-  class ReplicasController < ApplicationController
+  class ReplicasController < SharedFilesystemStorage::ApplicationController
+    skip_authorization only: %i[promote resync destroy]
+
     def index
       render json: services.shared_filesystem_storage.replicas_detail 
     end
@@ -23,10 +25,7 @@ module SharedFilesystemStorage
     end
 
     def create
-      puts "####################"
-      puts replica_params
       replica = services.shared_filesystem_storage.new_replica(replica_params)
-      pp replica
 
       if replica.save
         render json: replica
@@ -34,6 +33,30 @@ module SharedFilesystemStorage
         render json: { errors: replica.errors }
       end
     end
+
+    def promote
+      replica = services.shared_filesystem_storage.new_replica
+      replica.id = params[:id]
+
+
+      if replica.promote
+        render json: replica
+      else
+        render json: { errors: replica.errors }
+      end
+    end
+
+    def resync
+      replica = services.shared_filesystem_storage.new_replica
+      replica.id = params[:id]
+
+      if replica.resync
+        render json: replica
+      else
+        render json: { errors: replica.errors }
+      end
+    end
+
 
     def destroy
       replica = services.shared_filesystem_storage.new_replica

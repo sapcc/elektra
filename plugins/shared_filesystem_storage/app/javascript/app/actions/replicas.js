@@ -13,6 +13,11 @@ const requestReplicasFailure = () => ({
   type: constants.REQUEST_REPLICAS_FAILURE,
 })
 
+const resetFetchingState = (replicaId) => ({
+  type: constants.RESET_REPLICA_FETCHING_STATE,
+  replicaId,
+})
+
 const receiveReplicas = (json) => ({
   type: constants.RECEIVE_REPLICAS,
   replicas: json || [],
@@ -104,13 +109,16 @@ const deleteReplica = (replicaId) =>
                   errors: response.data.errors,
                 })
               )
+              dispatch(deleteReplicaFailure(replicaId))
             } else dispatch(removeReplica(replicaId))
           })
           .catch((error) =>
             addError(`Could not delete replica (${error.message})`)
           )
       })
-      .catch((error) => null)
+      .catch((error) => {
+        dispatch(deleteReplicaFailure(replicaId))
+      })
   }
 //################ SHARREPLICAE FORM ###################
 const submitNewReplicaForm = (values) => (dispatch) =>
@@ -143,6 +151,61 @@ const submitEditReplicaForm = (values) => (dispatch) =>
       })
       .catch((error) => handleErrors({ errors: error.message }))
   })
+
+//################ Resync ###################
+const resyncReplica = (id) => (dispatch) =>
+  new Promise((handleSuccess, handleErrors) => {
+    dispatch(requestReplica(id))
+    ajaxHelper
+      .post(`/replicas/${id}/resync`, {})
+      .then((response) => {
+        if (response.data.errors) {
+          let errorMessage = ""
+          for (let name in response.data.errors)
+            errorMessage += `${name}: ${response.data.errors[name]}\n`
+          addError(errorMessage)
+          handleErrors({ errors: response.data.errors })
+          dispatch(resetFetchingState(id))
+        } else {
+          dispatch(resetFetchingState(id))
+          handleSuccess()
+          addNotice("Replica has been synced.")
+        }
+      })
+      .catch((error) => {
+        addError(error.response?.data?.error || error.message)
+        handleErrors({ errors: error.message })
+        dispatch(resetFetchingState(id))
+      })
+  })
+
+//################ Promote ###################
+const promoteReplica = (id) => (dispatch) =>
+  new Promise((handleSuccess, handleErrors) => {
+    dispatch(requestReplica(id))
+    ajaxHelper
+      .post(`/replicas/${id}/promote`, {})
+      .then((response) => {
+        if (response.data.errors || response.data.error) {
+          let errorMessage = response.data.error || ""
+          for (let name in response.data.errors)
+            errorMessage += `${name}: ${response.data.errors[name]}\n`
+          addError(errorMessage)
+          handleErrors({ errors: response.data.errors })
+          dispatch(requestReplicaFailure(id))
+        } else {
+          dispatch(receiveReplica(response.data))
+          handleSuccess()
+          addNotice("Replica has been promoted.")
+        }
+      })
+      .catch((error) => {
+        addError(error.response?.data?.error || error.message)
+        handleErrors({ errors: error.message })
+        dispatch(requestReplicaFailure(id))
+      })
+  })
+
 // export
 export {
   fetchReplicasIfNeeded,
@@ -150,4 +213,6 @@ export {
   submitNewReplicaForm,
   reloadReplica,
   deleteReplica,
+  resyncReplica,
+  promoteReplica,
 }

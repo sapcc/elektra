@@ -4,6 +4,8 @@ import {
   fetchReplicasIfNeeded,
   deleteReplica,
   reloadReplica,
+  promoteReplica,
+  resyncReplica,
 } from "../../actions/replicas"
 
 export default connect(
@@ -16,5 +18,7 @@ export default connect(
     loadReplicasOnce: () => dispatch(fetchReplicasIfNeeded()),
     handleDelete: (replicaId) => dispatch(deleteReplica(replicaId)),
     reloadReplica: (replicaId) => dispatch(reloadReplica(replicaId)),
+    promoteReplica: (replicaId) => dispatch(promoteReplica(replicaId)),
+    resyncReplica: (replicaId) => dispatch(resyncReplica(replicaId)),
   })
 )(ReplicaList)
