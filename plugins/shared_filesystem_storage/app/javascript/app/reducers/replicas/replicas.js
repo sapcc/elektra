@@ -25,14 +25,16 @@ const receiveReplicas = (state, { replicas, receivedAt }) => ({
 
 const requestReplica = function (state, { replicaId, requestedAt }) {
   const index = state.items.findIndex((i) => i.id == replicaId)
+
   if (index < 0) {
     return state
   }
 
-  const newState = Object.assign({}, state)
-  newState.items[index].isFetching = true
-  newState.items[index].requestedAt = requestedAt
-  return newState
+  const newItems = state.items.slice()
+  newItems[index].isFetching = true
+  newItems[index].requestedAt = requestedAt
+
+  return { ...state, items: newItems }
 }
 
 const requestReplicaFailure = function (state, { replicaId }) {
@@ -41,9 +43,9 @@ const requestReplicaFailure = function (state, { replicaId }) {
     return state
   }
 
-  const newState = Object.assign({}, state)
-  newState.items[index].isFetching = false
-  return newState
+  const newItems = state.items.slice()
+  newItems[index].isFetching = false
+  return { ...state, items: newItems }
 }
 
 const receiveReplica = function (state, { replica }) {
@@ -55,7 +57,8 @@ const receiveReplica = function (state, { replica }) {
   } else {
     items.push(replica)
   }
-  return Object.assign({}, state, { items })
+
+  return { ...state, items }
 }
 
 const requestDeleteReplica = function (state, { replicaId }) {
@@ -66,18 +69,16 @@ const requestDeleteReplica = function (state, { replicaId }) {
 
   const items = state.items.slice()
   items[index].isDeleting = true
-  return Object.assign({}, state, { items })
+  return { ...state, items }
 }
 
 const deleteReplicaFailure = function (state, { replicaId }) {
   const index = state.items.findIndex((i) => i.id == replicaId)
-  if (index < 0) {
-    return state
-  }
+  if (index < 0) return state
 
   const items = state.items.slice()
   items[index].isDeleting = false
-  return Object.assign({}, state, { items })
+  return { ...state, items }
 }
 
 const deleteReplicaSuccess = function (state, { replicaId }) {
@@ -87,7 +88,7 @@ const deleteReplicaSuccess = function (state, { replicaId }) {
   }
   const items = state.items.slice()
   items.splice(index, 1)
-  return Object.assign({}, state, { items })
+  return { ...state, items }
 }
 
 // replicas reducer
@@ -105,6 +106,7 @@ export const replicas = function (state, action) {
     case constants.REQUEST_REPLICA:
       return requestReplica(state, action)
     case constants.REQUEST_REPLICA_FAILURE:
+    case constants.RESET_REPLICA_FETCHING_STATE:
       return requestReplicaFailure(state, action)
     case constants.RECEIVE_REPLICA:
       return receiveReplica(state, action)

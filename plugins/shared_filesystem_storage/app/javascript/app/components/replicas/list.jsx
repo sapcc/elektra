@@ -52,6 +52,8 @@ export default class ReplicaList extends React.Component {
                 share={this.share(replica)}
                 handleDelete={this.props.handleDelete}
                 reloadReplica={this.props.reloadReplica}
+                promoteReplica={() => this.props.promoteReplica(replica.id)}
+                resyncReplica={() => this.props.resyncReplica(replica.id)}
               />
             ))
           )}

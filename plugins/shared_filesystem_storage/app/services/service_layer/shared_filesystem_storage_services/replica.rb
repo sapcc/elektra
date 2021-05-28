@@ -18,7 +18,7 @@ module ServiceLayer
 
       def replicas(filter = {})
         elektron_share_replicas.get('share-replicas', filter)
-                       .map_to('body.replicas', &replica_map)           
+                       .map_to('body.share_replicas', &replica_map)           
       end
 
       def replicas_detail(filter = {})
@@ -29,7 +29,7 @@ module ServiceLayer
 
       def find_replica!(id)
         elektron_share_replicas.get("share-replicas/#{id}")
-                       .map_to('body.replica', &share_map)
+                       .map_to('body.share_replica', &share_map)
       end
 
       def find_replica(id)
@@ -46,14 +46,20 @@ module ServiceLayer
       def create_replica(params)
         elektron_share_replicas.post('share-replicas') do
           { share_replica: params }
-        end.body['share-replica']
+        end.body['share_replica']
       end
 
-      def resync_replica(id, params)
-        # TODO
-        #elektron_share_replicas.put("replicas/#{id}") do
-        #  { replica: params }
-        #end.body['replica']
+      def resync_replica(id)
+        elektron_share_replicas.post("share-replicas/#{id}/action") do
+         { resync: true }
+        end.body['share_replica']
+      end
+
+      def promote_replica(id)
+        # byebug
+        elektron_share_replicas.post("share-replicas/#{id}/action") do
+          { promote: true }
+        end.body['share_replica']
       end
 
       def delete_replica(id)

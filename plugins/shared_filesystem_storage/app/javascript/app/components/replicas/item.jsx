@@ -14,14 +14,28 @@ import { policy } from "policy"
 // status: "available"
 // updated_at: "2019-02-06T13:39:55.000000"
 
-const ReplicaItem = ({ replica, share, handleDelete, reloadReplica }) => {
+const ReplicaItem = ({
+  replica,
+  share,
+  handleDelete,
+  reloadReplica,
+  promoteReplica,
+  resyncReplica,
+}) => {
   React.useEffect(() => {
-    if (replica.status !== "creating") return
+    if (["replication_change", "creating"].indexOf(replica.status) < 0) return
     const polling = setInterval(() => reloadReplica(replica.id), 10000)
 
     return () => clearInterval(polling)
   }, [reloadReplica, replica.id, replica.status])
 
+  const canI = React.useCallback(
+    (permission) =>
+      policy.isAllowed(`shared_filesystem_storage:replica_${permission}`, {
+        replica,
+      }),
+    [replica]
+  )
   return (
     <tr className={replica.isFetching || replica.isDeleting ? "updating" : ""}>
       <td>
@@ -53,8 +67,10 @@ const ReplicaItem = ({ replica, share, handleDelete, reloadReplica }) => {
         {replica.status}
       </td>
       <td className="snug">
-        {(policy.isAllowed("shared_filesystem_storage:replica_delete") ||
-          policy.isAllowed("shared_filesystem_storage:replica_update")) && (
+        {(canI("promote") ||
+          canI("delete") ||
+          canI("resync") ||
+          canI("get_error_log")) && (
           <div className="btn-group">
             <button
               className="btn btn-default btn-sm dropdown-toggle"
@@ -65,28 +81,52 @@ const ReplicaItem = ({ replica, share, handleDelete, reloadReplica }) => {
               <i className="fa fa-cog"></i>
             </button>
             <ul className="dropdown-menu dropdown-menu-right" role="menu">
-              {policy.isAllowed("shared_filesystem_storage:replica_delete") &&
-                replica.status != "creating" && (
-                  <li>
-                    <a
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        handleDelete(replica.id)
-                      }}
-                    >
-                      Delete
-                    </a>
-                  </li>
-                )}
-              {policy.isAllowed("shared_filesystem_storage:replica_update") && (
+              {canI("delete") && replica.status != "creating" && (
                 <li>
-                  <Link to={`/replicas/${replica.id}/edit`}>Edit</Link>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handleDelete(replica.id)
+                    }}
+                  >
+                    Delete
+                  </a>
                 </li>
               )}
-              <li>
-                <Link to={`/replicas/${replica.id}/error-log`}>Error Log</Link>
-              </li>
+              {canI("promote") && (
+                <li>
+                  <a
+                    onClick={(e) => {
+                      e.preventDefault()
+                      promoteReplica()
+                    }}
+                    href="#"
+                  >
+                    Activate
+                  </a>
+                </li>
+              )}
+              {canI("resync") && (
+                <li>
+                  <a
+                    onClick={(e) => {
+                      e.preventDefault()
+                      resyncReplica()
+                    }}
+                    href="#"
+                  >
+                    Re-sync
+                  </a>
+                </li>
+              )}
+              {canI("get_error_log") && (
+                <li>
+                  <Link to={`/replicas/${replica.id}/error-log`}>
+                    Error Log
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         )}
