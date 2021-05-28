@@ -7,6 +7,7 @@ import {
   promoteReplica,
   resyncReplica,
 } from "../../actions/replicas"
+import { fetchSharesIfNeeded } from "../../actions/shares"
 
 export default connect(
   (state) => ({
@@ -15,6 +16,7 @@ export default connect(
     isFetching: state.replicas.isFetching,
   }),
   (dispatch) => ({
+    loadSharesOnce: () => dispatch(fetchSharesIfNeeded()),
     loadReplicasOnce: () => dispatch(fetchReplicasIfNeeded()),
     handleDelete: (replicaId) => dispatch(deleteReplica(replicaId)),
     reloadReplica: (replicaId) => dispatch(reloadReplica(replicaId)),

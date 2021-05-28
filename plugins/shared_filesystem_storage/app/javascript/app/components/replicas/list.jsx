@@ -7,7 +7,10 @@ export default class ReplicaList extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.active) this.props.loadReplicasOnce()
+    if (this.props.active) {
+      this.props.loadReplicasOnce()
+      this.props.loadSharesOnce()
+    }
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
