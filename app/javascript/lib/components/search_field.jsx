@@ -63,7 +63,7 @@ export class SearchField extends React.Component {
         {this.props.text &&
           <div className="has-feedback-help">
             <OverlayTrigger trigger="click" placement="top" rootClose overlay={this.infoText}>
-              <a className='help-link' href='javascript:void(0)'>
+              <a className='help-link' href='#' onClick={() => null}>
                 <i className="fa fa-question-circle"></i>
               </a>
             </OverlayTrigger>
