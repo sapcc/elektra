@@ -1,7 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 
-export default class NewSnapshotForm extends React.Component {
+export default class NewReplicaForm extends React.Component {
   constructor(props){
   	super(props);
   	this.state = {show: true};
@@ -25,25 +25,38 @@ export default class NewSnapshotForm extends React.Component {
       <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
-            New Snapshot for Share {share && (share.name || share.id)}
+            New Replica for Share {share && (share.name || share.id)}
           </Modal.Title>
         </Modal.Header>
 
         <Form
           className='form form-horizontal'
           validate={()=>true}
-          initialValues={ { name: (share ? `${(share.name || share.id)}_snapshot` : '')} }
           onSubmit={this.onSubmit}>
 
           <Modal.Body>
             <Form.Errors/>
 
-            <Form.ElementHorizontal label='Name' name="name">
-              <Form.Input elementType='input' type='text' name='name'/>
-            </Form.ElementHorizontal>
+            <Form.ElementHorizontal label='Availability Zone' name="share_az">
+              { this.props.availabilityZones.isFetching ? (
+                <span><span className='spinner'></span>Loading...</span>
+              ) : (
+                <div>
+                  <Form.Input elementType='select' name='availability_zone' className="required select form-control">
+                    <option></option>
+                    { this.props.availabilityZones.items.map((az,index) =>
+                      <option value={az.name} key={index}>{az.name}</option>
+                    )}
+                  </Form.Input>
 
-            <Form.ElementHorizontal label='Description' name="description">
-              <Form.Input elementType='textarea' className="text optional form-control" name="description"/>
+                  { this.props.availabilityZones.items.length==0 &&
+                    <p className='help-block'>
+                      <i className="fa fa-info-circle"></i>
+                      No availability zones available.
+                    </p>
+                  }
+                </div>
+              )}
             </Form.ElementHorizontal>
 
           </Modal.Body>
