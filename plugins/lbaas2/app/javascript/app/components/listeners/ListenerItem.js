@@ -36,20 +36,20 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
     listener.provisioning_status
   );
 
-  useEffect(() => {
-    const params = matchParams(props);
-    setLoadbalancerID(params.loadbalancerID);
+  // useEffect(() => {
+  //   const params = matchParams(props);
+  //   setLoadbalancerID(params.loadbalancerID);
 
-    if (listener.provisioning_status.includes("PENDING")) {
-      startPolling(5000);
-    } else {
-      startPolling(30000);
-    }
+  //   if (listener.provisioning_status.includes("PENDING")) {
+  //     startPolling(5000);
+  //   } else {
+  //     startPolling(30000);
+  //   }
 
-    return function cleanup() {
-      stopPolling();
-    };
-  });
+  //   return function cleanup() {
+  //     stopPolling();
+  //   };
+  // });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling

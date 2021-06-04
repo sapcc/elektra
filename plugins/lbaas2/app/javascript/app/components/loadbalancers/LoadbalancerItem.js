@@ -22,11 +22,8 @@ const LoadbalancerItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const {
-    persistLoadbalancer,
-    deleteLoadbalancer,
-    detachFIP,
-  } = useLoadbalancer();
+  const { persistLoadbalancer, deleteLoadbalancer, detachFIP } =
+    useLoadbalancer();
   const { errorMessage, searchParamsToString } = useCommons();
   const { entityStatus } = useStatus(
     loadbalancer.operating_status,
@@ -34,18 +31,18 @@ const LoadbalancerItem = ({
   );
   let polling = null;
 
-  useEffect(() => {
-    if (shouldPoll) {
-      if (loadbalancer.provisioning_status.includes("PENDING")) {
-        startPolling(5000);
-      } else {
-        startPolling(30000);
-      }
-    }
-    return function cleanup() {
-      if (shouldPoll) stopPolling();
-    };
-  });
+  // useEffect(() => {
+  //   if (shouldPoll) {
+  //     if (loadbalancer.provisioning_status.includes("PENDING")) {
+  //       startPolling(5000);
+  //     } else {
+  //       startPolling(30000);
+  //     }
+  //   }
+  //   return function cleanup() {
+  //     if (shouldPoll) stopPolling();
+  //   };
+  // });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
