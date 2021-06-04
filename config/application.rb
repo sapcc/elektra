@@ -19,7 +19,9 @@ module MonsoonDashboard
     config.load_defaults 5.2
     config.react.addons = true
 
-    config.web_console.development_only = true
+    # commented out due to error seen in prod:
+    # Cannot render console from 10.XX.XX.XX! Allowed networks: XX.XX.XX.XX, ...
+    # config.web_console.development_only = false
 
     # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
     # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
