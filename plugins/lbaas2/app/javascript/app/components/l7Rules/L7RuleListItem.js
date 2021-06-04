@@ -17,12 +17,8 @@ const L7RuleListItem = ({
   l7Rule,
   searchTerm,
 }) => {
-  const {
-    MyHighlighter,
-    matchParams,
-    errorMessage,
-    searchParamsToString,
-  } = useCommons();
+  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
+    useCommons();
   const { deleteL7Rule, displayInvert, persistL7Rule } = useL7Rule();
   const [loadbalancerID, setLoadbalancerID] = useState(null);
   const { entityStatus } = useStatus(
@@ -31,20 +27,20 @@ const L7RuleListItem = ({
   );
   let polling = null;
 
-  useEffect(() => {
-    const params = matchParams(props);
-    setLoadbalancerID(params.loadbalancerID);
+  // useEffect(() => {
+  //   const params = matchParams(props);
+  //   setLoadbalancerID(params.loadbalancerID);
 
-    if (l7Rule.provisioning_status.includes("PENDING")) {
-      startPolling(5000);
-    } else {
-      startPolling(30000);
-    }
+  //   if (l7Rule.provisioning_status.includes("PENDING")) {
+  //     startPolling(5000);
+  //   } else {
+  //     startPolling(30000);
+  //   }
 
-    return function cleanup() {
-      stopPolling();
-    };
-  });
+  //   return function cleanup() {
+  //     stopPolling();
+  //   };
+  // });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
@@ -56,12 +52,9 @@ const L7RuleListItem = ({
         " with interval -->",
         interval
       );
-      persistL7Rule(
-        loadbalancerID,
-        listenerID,
-        l7PolicyID,
-        l7Rule.id
-      ).catch((error) => {});
+      persistL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule.id).catch(
+        (error) => {}
+      );
     }, interval);
   };
 
