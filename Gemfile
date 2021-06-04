@@ -110,10 +110,9 @@ group :production do
   gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
 end
 
-# Access an IRB console on exception pages or by using <%= console %> in views
-gem 'web-console', '~> 3.0'
-
 group :development, :test do
+  # Access an IRB console on exception pages or by using <%= console %> in views
+  gem 'web-console', '~> 3.0'
   # load .env.bak needed for cucumber tests!
   gem 'dotenv-rails'
 
