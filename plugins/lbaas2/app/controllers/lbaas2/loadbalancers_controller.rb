@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Lbaas2
-  class LoadbalancersController < DashboardController
+  class LoadbalancersController < ::AjaxController
     authorization_context 'lbaas2'
     authorization_required
 

@@ -3,7 +3,7 @@ require 'rack'
 module Lbaas2
   module Loadbalancers
     module Pools
-      class MembersController < DashboardController
+      class MembersController < ::AjaxController
         authorization_context 'lbaas2'
         authorization_required
 

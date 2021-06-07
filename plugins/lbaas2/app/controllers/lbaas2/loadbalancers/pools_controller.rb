@@ -2,7 +2,7 @@
 
 module Lbaas2
   module Loadbalancers
-    class PoolsController < DashboardController
+    class PoolsController < ::AjaxController
       authorization_context 'lbaas2'
       authorization_required
 

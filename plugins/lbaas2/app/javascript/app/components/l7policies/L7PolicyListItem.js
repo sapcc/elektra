@@ -35,20 +35,20 @@ const L7PolicyListItem = ({
   );
   let polling = null;
 
-  // useEffect(() => {
-  //   const params = matchParams(props);
-  //   setLoadbalancerID(params.loadbalancerID);
+  useEffect(() => {
+    const params = matchParams(props);
+    setLoadbalancerID(params.loadbalancerID);
 
-  //   if (l7Policy.provisioning_status.includes("PENDING")) {
-  //     startPolling(5000);
-  //   } else {
-  //     startPolling(30000);
-  //   }
+    if (l7Policy.provisioning_status.includes("PENDING")) {
+      startPolling(5000);
+    } else {
+      startPolling(30000);
+    }
 
-  //   return function cleanup() {
-  //     stopPolling();
-  //   };
-  // });
+    return function cleanup() {
+      stopPolling();
+    };
+  });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
