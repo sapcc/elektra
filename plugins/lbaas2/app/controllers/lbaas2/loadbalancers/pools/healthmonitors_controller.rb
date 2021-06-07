@@ -1,7 +1,7 @@
 module Lbaas2
   module Loadbalancers
     module Pools
-      class HealthmonitorsController < DashboardController
+      class HealthmonitorsController < ::AjaxController
         authorization_context 'lbaas2'
         authorization_required
         

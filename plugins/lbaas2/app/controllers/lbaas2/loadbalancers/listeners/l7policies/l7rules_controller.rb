@@ -2,7 +2,7 @@ module Lbaas2
   module Loadbalancers
     module Listeners
       module L7policies
-        class L7rulesController < DashboardController
+        class L7rulesController < AjaxController
           authorization_context 'lbaas2'
           authorization_required
 

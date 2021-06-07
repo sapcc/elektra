@@ -2,7 +2,7 @@
 
 module Lbaas2
   module Loadbalancers
-    class ListenersController < DashboardController
+    class ListenersController < ::AjaxController
       authorization_context 'lbaas2'
       authorization_required
 
