@@ -19,17 +19,17 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
   );
   let polling = null;
 
-  useEffect(() => {
-    if (healthmonitor.provisioning_status.includes("PENDING")) {
-      startPolling(5000);
-    } else {
-      startPolling(30000);
-    }
+  // useEffect(() => {
+  //   if (healthmonitor.provisioning_status.includes("PENDING")) {
+  //     startPolling(30000);
+  //   } else {
+  //     startPolling(60000);
+  //   }
 
-    return function cleanup() {
-      stopPolling();
-    };
-  });
+  //   return function cleanup() {
+  //     stopPolling();
+  //   };
+  // });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
