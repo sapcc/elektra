@@ -48,7 +48,7 @@ const L7PolicyListItem = ({
   //   return function cleanup() {
   //     stopPolling();
   //   };
-  });
+  // });
 
   const startPolling = (interval) => {
     // do not create a new polling interval if already polling
