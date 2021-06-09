@@ -26,7 +26,7 @@ const usePolling = ({ delay, callback, active }) => {
           timeoutId = setTimeout(poll, newDelay);
         })
         .catch((reason) => {
-          if (reason !== promiseCanceledError && errorRetries < 5) {
+          if (reason !== promiseCanceledError && errorRetries < 4) {
             // increase polling delay if error different the canceled promise and less than 5 retries
             errorRetries = errorRetries + 1;
             newDelay = newDelay * 2;
