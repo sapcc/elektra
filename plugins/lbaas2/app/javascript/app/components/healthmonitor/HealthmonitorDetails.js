@@ -5,6 +5,7 @@ import CopyPastePopover from "../shared/CopyPastePopover";
 import Log from "../shared/logger";
 import HelpPopover from "../shared/HelpPopover";
 import useStatus from "../../../lib/hooks/useStatus";
+import usePolling from "../../../lib/hooks/usePolling";
 
 const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
   const {
@@ -17,41 +18,18 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
     healthmonitor.operating_status,
     healthmonitor.provisioning_status
   );
-  let polling = null;
 
-  // useEffect(() => {
-  //   if (healthmonitor.provisioning_status.includes("PENDING")) {
-  //     startPolling(30000);
-  //   } else {
-  //     startPolling(60000);
-  //   }
-
-  //   return function cleanup() {
-  //     stopPolling();
-  //   };
-  // });
-
-  const startPolling = (interval) => {
-    // do not create a new polling interval if already polling
-    if (polling) return;
-    polling = setInterval(() => {
-      Log.debug(
-        "Polling healthmonitor -->",
-        healthmonitor.id,
-        " with interval -->",
-        interval
-      );
-      pollHealthmonitor(loadbalancerID, poolID, healthmonitor.id, null)
-        .then((data) => {})
-        .catch((error) => {});
-    }, interval);
+  const pollingCallback = () => {
+    return pollHealthmonitor(loadbalancerID, poolID, healthmonitor.id, null);
   };
 
-  const stopPolling = () => {
-    Log.debug("stop polling for healthmonitor id -->", healthmonitor.id);
-    clearInterval(polling);
-    polling = null;
-  };
+  usePolling({
+    delay: healthmonitor.provisioning_status.includes("PENDING")
+      ? 20000
+      : 60000,
+    callback: pollingCallback,
+    active: true,
+  });
 
   const displayName = () => {
     if (healthmonitor.name) {

@@ -161,6 +161,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
                           l7Rule={l7Rule}
                           key={index}
                           searchTerm={searchTerm}
+                          shouldPoll={l7Rules.length < 11}
                         />
                       ))
                     ) : (

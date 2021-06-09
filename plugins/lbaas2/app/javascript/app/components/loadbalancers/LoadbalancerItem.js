@@ -14,6 +14,7 @@ import { scope } from "ajax_helper";
 import useCommons from "../../../lib/hooks/useCommons";
 import Log from "../shared/logger";
 import useStatus from "../../../lib/hooks/useStatus";
+import usePolling from "../../../lib/hooks/usePolling";
 
 const LoadbalancerItem = ({
   props,
@@ -29,40 +30,16 @@ const LoadbalancerItem = ({
     loadbalancer.operating_status,
     loadbalancer.provisioning_status
   );
-  let polling = null;
 
-  // useEffect(() => {
-  //   if (shouldPoll) {
-  //     if (loadbalancer.provisioning_status.includes("PENDING")) {
-  //       startPolling(30000);
-  //     } else {
-  //       startPolling(60000);
-  //     }
-  //   }
-  //   return function cleanup() {
-  //     if (shouldPoll) stopPolling();
-  //   };
-  // });
-
-  const startPolling = (interval) => {
-    // do not create a new polling interval if already polling
-    if (polling) return;
-    Log.debug(
-      "Polling loadbalancer -->",
-      loadbalancer.id,
-      " with interval -->",
-      interval
-    );
-    polling = setInterval(() => {
-      persistLoadbalancer(loadbalancer.id).catch((error) => {});
-    }, interval);
+  const pollingCallback = () => {
+    return persistLoadbalancer(loadbalancer.id);
   };
 
-  const stopPolling = () => {
-    Log.debug("stop polling for id -->", loadbalancer.id);
-    clearInterval(polling);
-    polling = null;
-  };
+  usePolling({
+    delay: loadbalancer.provisioning_status.includes("PENDING") ? 20000 : 60000,
+    callback: pollingCallback,
+    active: shouldPoll,
+  });
 
   const canDelete = useMemo(
     () =>

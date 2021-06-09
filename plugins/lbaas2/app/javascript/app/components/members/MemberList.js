@@ -152,6 +152,7 @@ const MemberList = ({ props, loadbalancerID }) => {
                           member={member}
                           key={index}
                           searchTerm={searchTerm}
+                          shouldPoll={members.length < 11}
                         />
                       ))
                     ) : (

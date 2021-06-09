@@ -12,9 +12,11 @@ import { policy } from "policy";
 import { scope } from "ajax_helper";
 import Log from "../shared/logger";
 import useStatus from "../../../lib/hooks/useStatus";
+import usePolling from "../../../lib/hooks/usePolling";
 
 const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
-  const { actionRedirect, deleteL7Policy, persistL7Policy } = useL7Policy();
+  const { actionRedirect, deleteL7Policy, persistL7Policy, reset } =
+    useL7Policy();
   const { matchParams, errorMessage, searchParamsToString } = useCommons();
   const { persistListener } = useListener();
   const [loadbalancerID, setLoadbalancerID] = useState(null);
@@ -22,46 +24,28 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
     l7Policy.operating_status,
     l7Policy.provisioning_status
   );
-  let polling = null;
 
   useEffect(() => {
     const params = matchParams(props);
     setLoadbalancerID(params.loadbalancerID);
+  }, []);
 
-    if (l7Policy.provisioning_status.includes("PENDING")) {
-      startPolling(5000);
-    } else {
-      startPolling(30000);
-    }
+  const pollingCallback = () => {
+    return persistL7Policy(loadbalancerID, listenerID, l7Policy.id).catch(
+      (error) => {
+        if (error && error.status == 404) {
+          // deselect l7Policy
+          reset();
+        }
+      }
+    );
+  };
 
-    return function cleanup() {
-      stopPolling();
-    };
+  usePolling({
+    delay: l7Policy.provisioning_status.includes("PENDING") ? 20000 : 60000,
+    callback: pollingCallback,
+    active: true,
   });
-
-  const startPolling = (interval) => {
-    // do not create a new polling interval if already polling
-    if (polling) return;
-    polling = setInterval(() => {
-      Log.debug(
-        "Polling l7 policy selected -->",
-        l7Policy.id,
-        " with interval -->",
-        interval
-      );
-      persistL7Policy(
-        loadbalancerID,
-        listenerID,
-        l7Policy.id
-      ).catch((error) => {});
-    }, interval);
-  };
-
-  const stopPolling = () => {
-    Log.debug("stop polling for listener id -->", l7Policy.id);
-    clearInterval(polling);
-    polling = null;
-  };
 
   const canEdit = useMemo(
     () =>
