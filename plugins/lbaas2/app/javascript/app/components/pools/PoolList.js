@@ -259,6 +259,7 @@ const PoolList = ({ props, loadbalancerID }) => {
                         searchTerm={searchTerm}
                         key={index}
                         disabled={selected ? true : false}
+                        shouldPoll={pools.length < 11}
                       />
                     ))
                   ) : (

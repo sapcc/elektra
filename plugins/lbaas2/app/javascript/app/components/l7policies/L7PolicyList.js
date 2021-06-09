@@ -261,6 +261,7 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
                               key={index}
                               listenerID={listenerID}
                               disabled={selected}
+                              shouldPoll={l7Policies.length < 11}
                             />
                           ))
                         ) : (

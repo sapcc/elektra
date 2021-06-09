@@ -15,6 +15,7 @@ import SmartLink from "../shared/SmartLink";
 import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
 import useStatus from "../../../lib/hooks/useStatus";
+import usePolling from "../../../lib/hooks/usePolling";
 
 const L7PolicyListItem = ({
   props,
@@ -22,55 +23,38 @@ const L7PolicyListItem = ({
   searchTerm,
   listenerID,
   disabled,
+  shouldPoll,
 }) => {
   const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
     useCommons();
-  const { actionRedirect, deleteL7Policy, persistL7Policy, onSelectL7Policy } =
-    useL7Policy();
+  const {
+    actionRedirect,
+    deleteL7Policy,
+    persistL7Policy,
+    onSelectL7Policy,
+    reset,
+  } = useL7Policy();
   const [loadbalancerID, setLoadbalancerID] = useState(null);
   const { persistListener } = useListener();
   const { entityStatus } = useStatus(
     l7Policy.operating_status,
     l7Policy.provisioning_status
   );
-  let polling = null;
 
-  // useEffect(() => {
-  //   const params = matchParams(props);
-  //   setLoadbalancerID(params.loadbalancerID);
+  useEffect(() => {
+    const params = matchParams(props);
+    setLoadbalancerID(params.loadbalancerID);
+  }, []);
 
-  //   if (l7Policy.provisioning_status.includes("PENDING")) {
-  //     startPolling(30000);
-  //   } else {
-  //     startPolling(60000);
-  //   }
-
-  //   return function cleanup() {
-  //     stopPolling();
-  //   };
-  // });
-
-  const startPolling = (interval) => {
-    // do not create a new polling interval if already polling
-    if (polling) return;
-    polling = setInterval(() => {
-      Log.debug(
-        "Polling l7 policy -->",
-        l7Policy.id,
-        " with interval -->",
-        interval
-      );
-      persistL7Policy(loadbalancerID, listenerID, l7Policy.id).catch(
-        (error) => {}
-      );
-    }, interval);
+  const pollingCallback = () => {
+    return persistL7Policy(loadbalancerID, listenerID, l7Policy.id);
   };
 
-  const stopPolling = () => {
-    Log.debug("stop polling for l7policy id -->", l7Policy.id);
-    clearInterval(polling);
-    polling = null;
-  };
+  usePolling({
+    delay: l7Policy.provisioning_status.includes("PENDING") ? 20000 : 60000,
+    callback: pollingCallback,
+    active: shouldPoll,
+  });
 
   const onL7PolicyClick = (e) => {
     if (e) {
