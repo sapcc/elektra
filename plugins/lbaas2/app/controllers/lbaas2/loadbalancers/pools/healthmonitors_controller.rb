@@ -77,7 +77,9 @@ module Lbaas2
           end
           # call to newtron to get the ips
           port = services.networking.find_port(vip_port_id)
-          healthmonitor.allowed_address_pairs = port.allowed_address_pairs
+          if port && port.allowed_address_pairs
+            healthmonitor.allowed_address_pairs = port.allowed_address_pairs
+          end
         end
 
         def healthmonitor_params
