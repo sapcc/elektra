@@ -20,14 +20,19 @@ module Networking
         services.networking.networks(options)
       end
 
-      @network_subnets = ObjectCache.where(cached_object_type: 'subnet').where(
-        ["payload ->> 'network_id' IN(?)", @networks.collect(&:id)]
-      ).each_with_object({}) do |cached_subnet, map|
-        sn = cached_subnet.payload
-        map[sn['network_id']] ||= []
-        map[sn['network_id']] << Networking::Subnet.new(nil, sn)
-      end
+      # cached version
+      # @network_subnets = ObjectCache.where(cached_object_type: 'subnet').where(
+      #   ["payload ->> 'network_id' IN(?)", @networks.collect(&:id)]
+      # ).each_with_object({}) do |cached_subnet, map|
+      #   sn = cached_subnet.payload
+      #   map[sn['network_id']] ||= []
+      #   map[sn['network_id']] << Networking::Subnet.new(nil, sn)
+      # end
 
+      @network_subnets = @networks.each_with_object({}) do |nw, map| 
+        map[nw.id] = services.networking.subnets(network_id: nw.id)
+      end
+    
       @network_projects = ObjectCache.where(
         id: @networks.collect(&:tenant_id)
       ).each_with_object({}) do |project, map|
