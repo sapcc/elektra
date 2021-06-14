@@ -9,6 +9,7 @@ import { scope } from "ajax_helper";
 import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
 import useStatus from "../../../lib/hooks/useStatus";
+import usePolling from "../../../lib/hooks/usePolling";
 
 const L7RuleListItem = ({
   props,
@@ -16,6 +17,7 @@ const L7RuleListItem = ({
   l7PolicyID,
   l7Rule,
   searchTerm,
+  shouldPoll,
 }) => {
   const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
     useCommons();
@@ -25,44 +27,21 @@ const L7RuleListItem = ({
     l7Rule.operating_status,
     l7Rule.provisioning_status
   );
-  let polling = null;
 
   useEffect(() => {
     const params = matchParams(props);
     setLoadbalancerID(params.loadbalancerID);
+  }, []);
 
-    if (l7Rule.provisioning_status.includes("PENDING")) {
-      startPolling(5000);
-    } else {
-      startPolling(30000);
-    }
+  const pollingCallback = () => {
+    return persistL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule.id);
+  };
 
-    return function cleanup() {
-      stopPolling();
-    };
+  usePolling({
+    delay: l7Rule.provisioning_status.includes("PENDING") ? 20000 : 60000,
+    callback: pollingCallback,
+    active: shouldPoll,
   });
-
-  const startPolling = (interval) => {
-    // do not create a new polling interval if already polling
-    if (polling) return;
-    polling = setInterval(() => {
-      Log.debug(
-        "Polling l7 rule -->",
-        l7Rule.id,
-        " with interval -->",
-        interval
-      );
-      persistL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule.id).catch(
-        (error) => {}
-      );
-    }, interval);
-  };
-
-  const stopPolling = () => {
-    Log.debug("stop polling for l7rule id -->", l7Rule.id);
-    clearInterval(polling);
-    polling = null;
-  };
 
   const canEdit = useMemo(
     () =>

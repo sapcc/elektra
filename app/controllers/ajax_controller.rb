@@ -3,8 +3,11 @@
 # Dashboard Controller. So we use Scope Controller with authentication
 
 class AjaxController < ::ScopeController
+  include Rescue
+
   authentication_required domain: ->(c) { c.instance_variable_get(:@scoped_domain_id) },
                           domain_name: ->(c) { c.instance_variable_get(:@scoped_domain_name) },
                           project: ->(c) { c.instance_variable_get(:@scoped_project_id) },
                           rescope: true
+
 end

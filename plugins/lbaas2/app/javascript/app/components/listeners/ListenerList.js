@@ -268,6 +268,7 @@ const ListenerList = ({ props, loadbalancerID }) => {
                         searchTerm={searchTerm}
                         key={index}
                         disabled={selected ? true : false}
+                        shouldPoll={listeners.length < 11}
                       />
                     ))
                   ) : (

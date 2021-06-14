@@ -17,8 +17,9 @@ import SmartLink from "../shared/SmartLink";
 import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
 import useStatus from "../../../lib/hooks/useStatus";
+import usePolling from "../../../lib/hooks/usePolling";
 
-const PoolItem = ({ props, pool, searchTerm, disabled }) => {
+const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
   const { persistPool, deletePool, onSelectPool, reset } = usePool();
   const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
     useCommons();
@@ -29,44 +30,28 @@ const PoolItem = ({ props, pool, searchTerm, disabled }) => {
     pool.provisioning_status,
     { operatingStatusErrorExtraTitle: "The pool has no members" }
   );
-  let polling = null;
 
   useEffect(() => {
     const params = matchParams(props);
     setLoadbalancerID(params.loadbalancerID);
+  }, []);
 
-    if (pool.provisioning_status.includes("PENDING")) {
-      startPolling(5000);
-    } else {
-      startPolling(30000);
-    }
-
-    return function cleanup() {
-      stopPolling();
-    };
-  });
-
-  const startPolling = (interval) => {
-    // do not create a new polling interval if already polling
-    if (polling) return;
-    polling = setInterval(() => {
-      Log.debug("Polling pool -->", pool.id, " with interval -->", interval);
-      persistPool(loadbalancerID, pool.id).catch((error) => {
-        if (error && error.status == 404) {
-          // check if the pool is selected and if yes deselect the item
-          if (disabled) {
-            reset();
-          }
+  const pollingCallback = () => {
+    return persistPool(loadbalancerID, pool.id).catch((error) => {
+      if (error && error.status == 404) {
+        // check if the pool is selected and if yes deselect the item
+        if (disabled) {
+          reset();
         }
-      });
-    }, interval);
+      }
+    });
   };
 
-  const stopPolling = () => {
-    Log.debug("stop polling for pool id -->", pool.id);
-    clearInterval(polling);
-    polling = null;
-  };
+  usePolling({
+    delay: pool.provisioning_status.includes("PENDING") ? 20000 : 60000,
+    callback: pollingCallback,
+    active: shouldPoll,
+  });
 
   const canEdit = useMemo(
     () =>

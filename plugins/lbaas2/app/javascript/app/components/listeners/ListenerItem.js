@@ -17,8 +17,15 @@ import SmartLink from "../shared/SmartLink";
 import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
 import useStatus from "../../../lib/hooks/useStatus";
+import usePolling from "../../../lib/hooks/usePolling";
 
-const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
+const ListenerItem = ({
+  props,
+  listener,
+  searchTerm,
+  disabled,
+  shouldPoll,
+}) => {
   const {
     persistListener,
     certificateContainerRelation,
@@ -29,7 +36,6 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
   const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
     useCommons();
   const { persistLoadbalancer } = useLoadbalancer();
-  let polling = null;
   const [loadbalancerID, setLoadbalancerID] = useState(null);
   const { entityStatus } = useStatus(
     listener.operating_status,
@@ -39,44 +45,24 @@ const ListenerItem = ({ props, listener, searchTerm, disabled }) => {
   useEffect(() => {
     const params = matchParams(props);
     setLoadbalancerID(params.loadbalancerID);
+  }, []);
 
-    if (listener.provisioning_status.includes("PENDING")) {
-      startPolling(5000);
-    } else {
-      startPolling(30000);
-    }
-
-    return function cleanup() {
-      stopPolling();
-    };
-  });
-
-  const startPolling = (interval) => {
-    // do not create a new polling interval if already polling
-    if (polling) return;
-    polling = setInterval(() => {
-      Log.debug(
-        "Polling listener -->",
-        listener.id,
-        " with interval -->",
-        interval
-      );
-      persistListener(loadbalancerID, listener.id).catch((error) => {
-        if (error && error.status == 404) {
-          // check if listener selected and if yes deselect the item
-          if (disabled) {
-            reset();
-          }
+  const pollingCallback = () => {
+    return persistListener(loadbalancerID, listener.id).catch((error) => {
+      if (error && error.status == 404) {
+        // check if the listener is selected and if yes deselect the item from the list
+        if (disabled) {
+          reset();
         }
-      });
-    }, interval);
+      }
+    });
   };
 
-  const stopPolling = () => {
-    Log.debug("stop polling for listener id -->", listener.id);
-    clearInterval(polling);
-    polling = null;
-  };
+  usePolling({
+    delay: listener.provisioning_status.includes("PENDING") ? 20000 : 60000,
+    callback: pollingCallback,
+    active: shouldPoll,
+  });
 
   const onListenerClick = (e) => {
     if (e) {

@@ -13,8 +13,9 @@ import { scope } from "ajax_helper";
 import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
 import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons";
+import usePolling from "../../../lib/hooks/usePolling";
 
-const MemberListItem = ({ props, poolID, member, searchTerm }) => {
+const MemberListItem = ({ props, poolID, member, searchTerm, shouldPoll }) => {
   const { matchParams, searchParamsToString, errorMessage } = useCommons();
   const { persistPool } = usePool();
   const [loadbalancerID, setLoadbalancerID] = useState(null);
@@ -23,42 +24,21 @@ const MemberListItem = ({ props, poolID, member, searchTerm }) => {
     member.operating_status,
     member.provisioning_status
   );
-  let polling = null;
 
   useEffect(() => {
     const params = matchParams(props);
     setLoadbalancerID(params.loadbalancerID);
+  }, []);
 
-    if (member.provisioning_status.includes("PENDING")) {
-      startPolling(5000);
-    } else {
-      startPolling(30000);
-    }
+  const pollingCallback = () => {
+    return persistMember(loadbalancerID, poolID, member.id);
+  };
 
-    return function cleanup() {
-      stopPolling();
-    };
+  usePolling({
+    delay: member.provisioning_status.includes("PENDING") ? 20000 : 60000,
+    callback: pollingCallback,
+    active: shouldPoll,
   });
-
-  const startPolling = (interval) => {
-    // do not create a new polling interval if already polling
-    if (polling) return;
-    polling = setInterval(() => {
-      Log.debug(
-        "Polling member -->",
-        member.id,
-        " with interval -->",
-        interval
-      );
-      persistMember(loadbalancerID, poolID, member.id).catch((error) => {});
-    }, interval);
-  };
-
-  const stopPolling = () => {
-    Log.debug("stop polling for member id -->", member.id);
-    clearInterval(polling);
-    polling = null;
-  };
 
   const canEdit = useMemo(
     () =>
