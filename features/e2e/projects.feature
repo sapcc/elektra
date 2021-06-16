@@ -40,14 +40,6 @@ Feature: Projects
     And  I see "My Requests"
 
   @admin
-  Scenario: Manage Requests
-    When I visit domain path "home"
-    Then I see "Manage Requests" button
-    When I click on "Manage Requests"
-    Then the page status code is successful
-    And  I see "Requests for Processing"
-
-  @admin
   Scenario: Group Management
     When I visit domain path "home"
     Then I see "Group Management" button
