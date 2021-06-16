@@ -39,8 +39,12 @@ module Inquiry
 
     def self.processor_open_requests(domain_id, processor_id)
       where(aasm_state: 'open', approver_domain_id: domain_id).to_a.keep_if do |r|
-        r.processors.collect(&:uid).include?(processor_id)
+        r.processors.collect(&:uid).include?(processor_id) 
       end
+    end
+
+    def self.processor_open_requests_count(domain_id)
+      where(aasm_state: 'open', approver_domain_id: domain_id).count
     end
 
     def self.requestor_open_requests(domain_id, user_id)

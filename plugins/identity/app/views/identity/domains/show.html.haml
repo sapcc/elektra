@@ -37,11 +37,12 @@
           %i.inquiry-icon
           Domain Admin Requests
 
-        %ul.plain-list
-          %li
-            = link_to plugin('inquiry').admin_inquiries_path do
-              Manage Requests
-              = " (#{::Inquiry::Inquiry.processor_open_requests(@scoped_domain_id, current_user.id).length})"
+        - if current_user.is_allowed?("inquiry:manage_requests")
+          %ul.plain-list
+            %li
+              = link_to plugin('inquiry').admin_inquiries_path do
+                Manage Requests
+                = " (#{::Inquiry::Inquiry.processor_open_requests_count(@scoped_domain_id)})"
 
       - if plugin_available?('cc_tools') && current_user.is_allowed?('tools:application_get')
         %h5
