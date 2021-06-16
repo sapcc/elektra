@@ -12,7 +12,7 @@
 
   .inquiries.spinner
 
-  = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {approver_domain_id: current_user.user_domain_id, processor_id: current_user.id, state: state}, container_id: container_id)
+  = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {approver_domain_id: current_user.user_domain_id,  state: state}, container_id: container_id)
 
 - else
   .alert.alert-info
