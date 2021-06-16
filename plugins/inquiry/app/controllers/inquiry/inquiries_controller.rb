@@ -10,8 +10,8 @@ module Inquiry
     def index
       @domain_id = current_user.is_allowed?('cloud_admin') ? nil : current_user.user_domain_id
       # This is true if an update is made via the PollingService
+      filter = params[:filter] ? params[:filter] : {}
       if params[:partial]
-        filter = params[:filter] ? params[:filter] : {}
         @page = params[:page] || 1
         @inquiries = ::Inquiry::Inquiry.filter(filter).order(created_at: :desc).page(@page).per(params[:per_page])
         respond_to do |format|
@@ -21,7 +21,6 @@ module Inquiry
           format.js
         end
       elsif params[:export]
-        filter = params[:filter] ? params[:filter] : {}
         @inquiries = ::Inquiry::Inquiry.filter(filter).order(created_at: :desc)
 
         respond_to do |format|

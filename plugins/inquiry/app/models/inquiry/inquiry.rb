@@ -153,8 +153,13 @@ module Inquiry
       self.process_steps << step
     end
 
+    def is_resource_admin? user 
+      user = self.current_user unless user
+      return !user.nil? && user.has_role?("resource_admin") || user.has_role?("loud_resource_admin")
+    end
+
     def can_approve? options={}
-      return self.open? && user_is_processor?(get_user_id(options[:user]))
+      return self.open? && (user_is_processor?(get_user_id(options[:user])) || is_resource_admin?(options[:user]))
     end
 
     def can_reopen? options={}
@@ -162,7 +167,7 @@ module Inquiry
     end
 
     def can_reject? options={}
-      return self.open? && user_is_processor?(get_user_id(options[:user]))
+      return self.open? && (user_is_processor?(get_user_id(options[:user])) || is_resource_admin?(options[:user]))
     end
 
     def can_close? options={}

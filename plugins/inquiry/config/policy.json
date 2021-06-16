@@ -6,5 +6,6 @@
   "inquiry:inquiry_delete": "rule:no_admin_required",
   "inquiry:inquiry_update": "rule:no_admin_required",
   "inquiry:inquiry_create": "rule:no_admin_required",
-  "inquiry:inquiry_edit": "rule:no_admin_required"
+  "inquiry:inquiry_edit": "rule:no_admin_required",
+  "inquiry:inquiry_can_approve": "role:resource_admin or role:cloud_resource_admin"
 }
