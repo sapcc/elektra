@@ -100,7 +100,7 @@ module Inquiry
         before do
           #run_automatically('approved')
         end
-        transitions :from => :open, :to => :approved, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_approve?]
+        transitions :from => :open, :to => :approved, :after => Proc.new { |*args| log_process_step(*args) }, :guards => Proc.new { |*args| can_approve?(*args) }
       end
 
       event :reject, :after => :notify_requester, :error => :error_on_event, :guards => Proc.new { |*args| can_reject?(*args) } do
