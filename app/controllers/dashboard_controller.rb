@@ -115,11 +115,13 @@ class DashboardController < ::ScopeController
     begin
       authentication_rescope_token 
     rescue MonsoonOpenstackAuth::Authentication::NotAuthorized => exception
-      if exception.message =~ /has no access to project/
-        render(template: 'application/exceptions/unauthorized')
-      elsif exception.message =~ /has no access to domain/
-        authentication_rescope_token(domain: nil, project: nil)
-      end
+      if exception.message =~ /has no access to the requested scope/
+        if @scoped_project_id.present? 
+          render(template: 'application/exceptions/unauthorized')
+        elsif @scoped_domain_id.present?
+          authentication_rescope_token(domain: nil, project: nil)
+        end
+      end 
       # All other NotAuthorized Errors handled by "rescue_and_render_exception_page"
     end
   end
