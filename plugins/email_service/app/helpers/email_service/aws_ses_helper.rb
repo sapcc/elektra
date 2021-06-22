@@ -1,6 +1,7 @@
 # require 'logger'
 module EmailService
   module AwsSesHelper
+    include TemplateHelper
     @encoding = "utf-8"
 
     ### EC2 CREDS ### 
@@ -20,6 +21,17 @@ module EmailService
         puts "Error is : #{error}"
       end
     end
+
+    # Get send data
+    def get_send_data
+      resp_hash = {}
+      ses_client = create_ses_client
+      resp = ses_client.get_send_quota({
+      })
+      resp_hash = resp.to_h
+    end
+
+
 
     ## Send Plain eMail ##
     def send_email(plain_email)
@@ -251,7 +263,6 @@ module EmailService
           flash.now[:success] = "Verification email sent successfully to #{recipient}"
         rescue Aws::SES::Errors::ServiceError => error
           logger.debug "Email verification failed. Error message: #{error}"
-          # redirect_to plugin('email_service').verifications_path  
           flash.now[:warning] = "Email verification failed. Error message: #{error}"
         end
 
@@ -259,7 +270,7 @@ module EmailService
       if recipient.include?("sap.com")
         flash.now[:warning] = "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
         logger.debug "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
-        # redirect_to plugin('email_service').verifications_path  
+ 
       end
       redirect_to plugin('email_service').verifications_path
     end
@@ -309,18 +320,23 @@ module EmailService
     #### TEMPLATES ###
 
     # Lists templates 
-    def list_templates
+    def list_templates(token="")
       tmpl_hash = Hash.new
       templates = []
       begin
         ses_client = create_ses_client
         template_list = ses_client.list_templates({
-          next_token: "",
+          next_token: token,
           max_items: 10,
         })
-       
+        # logger.debug "CRONUS: DEBUG: next token : #{template_list.next_token}"
+        next_token = template_list.next_token
+        # current_token = token
+        # debugger 
         index = 0 
         # logger.debug "CRONUS: DEBUG: template_list SIZE : #{template_list.size}"
+        logger.debug "CRONUS: DEBUG: template_list SIZE : #{template_list.templates_metadata.count}"
+        # debugger
         while template_list.size > 0 && index < template_list.templates_metadata.count
             resp = ses_client.get_template({
             template_name: template_list.templates_metadata[index].name,
@@ -335,19 +351,37 @@ module EmailService
         logger.debug "CRONUS: DEBUG: #{msg}"
         flash.now[:alert] = msg # TODO: fix this flash
       end
-      templates
+      # return current_token, next_token, templates
+      return next_token, templates
     end
 
     def find_template_by_name(name)
-      @templates = list_templates
-      # logger.debug "CRONUS: DEBUG: FT {@templates.size} #{@templates.size}"
+      template = find_template(name, "")
+
+      # next_token, templates = list_templates(next_token="")
+      # # logger.debug "CRONUS: DEBUG: FT {@templates.size} #{@templates.size}"
+      # template = new_template({})
+      # templates.each do |t|
+      #   if t[:name] == name 
+      #     template = new_template(t)
+      #   else
+      #     next_token, templates = list_templates(next_token)
+      #   end
+      # end
+      # # template
+    end
+
+    def find_template(name, next_token)
+      next_token, templates = list_templates(next_token)
       template = new_template({})
-      @templates.each do |t|
+      templates.each do |t|
         if t[:name] == name 
           template = new_template(t)
+          return template
+        else
+          find_template(name, next_token)
         end
       end
-      template
     end
 
     def store_template(tmpl)
@@ -362,7 +396,7 @@ module EmailService
             html_part: tmpl.html_part,
           },
         })
-        msg = "Template is saved"
+        msg = "Template #{tmpl.name} is saved"
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
         msg = "Unable to save template: #{error}"
@@ -373,24 +407,53 @@ module EmailService
     end
 
     def delete_template(tmpl_name)
-      # name = params[:name]  
       status = " "
       ses_client = create_ses_client
       begin
         resp = ses_client.delete_template({
             template_name: tmpl_name,
         })
+        msg = "Template #{tmpl_name} is deleted."
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
          msg = "Unable to delete template #{name}. Error message: #{error} "
         status = msg
-        # redirect_to({ :controller => 'email_templates', :action=>'index' }, :notice => "#{error}")
       end
-      # logger.debug "#{msg}"
+      logger.debug "#{msg}"
       status
     end
 
-    def update_template(template)
+    def modify_template(template_old, template_new)
+      status = ""
+      
+      # Create template clone with name template_clone
+      clone_tmpl = Template.new({name: "#{template_old.name}_TEMP_CLONE_", subject: template_old.subject, html_part: template_old.html_part, text_part: template_old.text_part })
+      status = store_template(clone_tmpl)
+      if status == "success"
+        logger.debug "Template Clone #{clone_tmpl.name} created"
+        status = ""
+      end
+
+      # Delete the old template
+      status = delete_template(template_old.name)
+      if status == "success"
+        logger.debug "Original template: #{template_old.name} Deleted"
+        status = ""
+      end
+
+      # Try to create template with new params
+      status = store_template(template_new)
+      if status == "success"
+        logger.debug "Modified Template #{template_new.name} created"
+        status = ""
+      end
+
+      # Delete old template clone, Once modified template is created successfully
+      status = delete_template(clone_tmpl.name)
+      if status == "success"
+        logger.debug "Cloned Template #{clone_tmpl.name} deleted"
+      end
+      status
     end
 
     ## Get Send Statistics
@@ -406,11 +469,6 @@ module EmailService
 
         index = 0
         while datapoints.size > 0 && index < datapoints.count
-          # logger.debug "TIMESTAMP : #{datapoints[index].timestamp}"
-          # logger.debug "DELIVERY_ATTEMPTS : #{datapoints[index].delivery_attempts}"
-          # logger.debug "BOUNCES : #{datapoints[index].bounces}"
-          # logger.debug "REJECTS : #{datapoints[index].rejects}"
-          # logger.debug "COMPLAINTS : #{datapoints[index].complaints}"
           stats_hash = { timestamp: datapoints[index].timestamp, delivery_attempts: datapoints[index].delivery_attempts, bounces: datapoints[index].bounces, rejects: datapoints[index].rejects, complaints: datapoints[index].complaints }
           stats_arr.push(stats_hash)
           # TODO: SORT this data by date and humanize
@@ -419,7 +477,9 @@ module EmailService
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "CRONUS SEND : #{error}" 
       end
-      stats_arr
+      # logger.debug "#{stats_arr}"
+      stats_arr.sort_by! { |hsh| hsh[:timestamp] } 
+      stats_arr.reverse!
     end
 
     def map_region(region)

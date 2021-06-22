@@ -1,7 +1,7 @@
 %tr
   %td
-    = template[:name]
+    = tmpl[:name]
   %td
-    = template[:subject]
+    = tmpl[:subject]
   %td.snug
-    = render partial: 'item_actions', locals: { template: template, show_view: false }
+    = render partial: 'item_actions', locals: { tmpl: tmpl, show_view: false }

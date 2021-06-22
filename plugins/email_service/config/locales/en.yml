@@ -1,4 +1,22 @@
 en:
+  simple_form:
+    labels:
+      template:
+        name: "template name"
+        subject: "Subject"
+        html_part: "HTML Part"
+        text_part: "Text Part"
+      hints:
+        name: "template name"
+        subject: "Subject"
+        html_part: "HTML Part"
+        text_part: "Text Part"
+      placeholders:
+        name: "template name"
+        subject: "Subject"
+        html_part: "HTML Part"
+        text_part: "Text Part"
+
   email_service:
     form:
       new:

@@ -1,7 +1,7 @@
 =content_for :main_toolbar do
   eMail Service - AWS SES (Cronus)
 = render partial: 'email_service/shared/nav.html', locals: {pane: 'templates'}
-
+= render "email_service/shared/flashes.html"
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"templates-pane"}
     %h3
@@ -15,10 +15,30 @@
 
         .js-table-templates-list
           = render partial: 'table_templates', locals: {templates: @templates}
-
+        .main-buttons
+          = link_to "Next", plugin('email_service').templates_path(next_token: @next_token), class: 'btn btn-primary'
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p
-            Converged Cloud EMails Service - AWS Simple eMail Service - Templates
-            = link_to "AWS Simple eMail Service", "https://aws.amazon.com/ses/", :target => "_blank"
-            \.
+            %center
+              Max Templates
+            %center
+              %br
+              %b
+                10000
+            %br
+            %center
+              Max Template Size
+              %br
+              %b
+                500 KB
+            %br
+            %center
+              Template Count
+              %br
+              %b
+                20
+            %hr
+            Templates are useful when you wish to send customized eMails to your recipients. These templates include a subject line, and the text and HTML parts of the email body. The subject and body sections may also contain unique values that are personalized for each recipient. More on
+            %b
+              = link_to "eMail Templates", "https://docs.aws.amazon.com/ses/latest/dg/send-personalized-email-api.html", :target => "_blank"

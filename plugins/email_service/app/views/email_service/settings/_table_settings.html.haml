@@ -4,7 +4,6 @@
     %tr
       %th Name
       %th Status
-      %th.snug
   %tbody
     %tr
       %td Cronus
@@ -12,5 +11,3 @@
         %td Enabled 
       - else 
         %td Disabled
-      %td.snug
-        = render partial: 'item_actions', locals: { cronus_activated: @cronus_activated, show_view: false }

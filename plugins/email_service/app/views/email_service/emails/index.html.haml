@@ -10,10 +10,9 @@
       .toolbar
         - if current_user.is_allowed?('context_is_emailservice_editor')
           .main-buttons
-            = link_to "New plain eMail", plugin('email_service').new_email_path, data: {modal: true}, class: 'btn btn-primary'
-            = link_to "New templated eMail", plugin('email_service').new_templated_emails_path, 
-            data: {modal: true}, class: 'btn btn-primary'
-
+            = link_to "New plain eMail", plugin('email_service').new_email_path, data: { modal: true }, class: 'btn btn-primary'
+            = link_to "New templated eMail", plugin('email_service').new_templated_emails_path, data: {modal: true}, class: 'btn btn-primary'
+               
     -#.btn-group{role: "group"}
       -#%button.btn.btn-default.btn-sm.dropdown-toggle#btnGroupDrop1{type: "button", data: { toggle: "dropdown"}, aria: { expanded: false, haspopup: true}}
         -#.dropdown-menu{ aria: { labelledby: "btnGroupDrop1"}}
@@ -22,10 +21,29 @@
 
       .js-table-email
         = render partial: 'table_emails', locals: {emails: @emails}
-      
+
+          
     .col-sm-3
       .bs-callout.bs-callout-primary.toolbar-aligment
         %p
+          Max Send Quota / 24 hours
+          %br
+          %center
+            %b
+              = @send_data[:max_24_hour_send].to_i
+          %br
+          Max Send Rate / second
+          %br
+          %center
+            %b
+              = @send_data[:max_send_rate].to_i
+          %br
+          eMails Sent (last 24 hours)
+          %br
+          %center
+            %b
+              = @send_data[:sent_last_24_hours].to_i
+          %hr
           You can send eMail to maximum 50 email addresses at a time which includes 
           %b 
             To, Cc
@@ -33,7 +51,6 @@
           %b
             Bcc 
           recipients. 
-          Converged Cloud eMail Service - AWS Simple eMail Service
-          = link_to "AWS Simple eMail Service", "https://aws.amazon.com/ses/", :target => "_blank"
-          \.
-%hr
+          You can also send 
+          %b
+            = link_to "templated eMails", "https://documentation.global.cloud.sap/services/email-howto-templates#send-template-email", :target => "_blank"

@@ -55,8 +55,9 @@ module EmailService
         errors
       end
 
-    end
-
+    end # Template Class ends
+    
+    # Stuff outside Template Class 
     def new_template(attributes = {})
       template = Template.new(attributes)
     end

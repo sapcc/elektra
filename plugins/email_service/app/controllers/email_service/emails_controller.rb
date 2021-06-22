@@ -8,6 +8,7 @@ module EmailService
       @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
       @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
       @send_stats = get_send_stats
+      @send_data = get_send_data
     end
 
     def stats
@@ -26,7 +27,8 @@ module EmailService
       @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
 
       @send_stats = get_send_stats
-
+      @send_data = get_send_data
+      # debugger
       logger.debug "CRONUS: CONTROLLER : INSPECT #{@send_stats.inspect}"
 
     end
@@ -37,7 +39,6 @@ module EmailService
     def new 
       @all_emails = list_verified_identities("EmailAddress")
       @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
-
       @e_collection = get_verified_email_collection(@verified_emails) unless @verified_emails.nil? || @verified_emails.empty?
  
     end

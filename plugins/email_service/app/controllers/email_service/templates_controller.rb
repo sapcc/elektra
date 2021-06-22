@@ -4,7 +4,15 @@ module EmailService
     helper :all
 
     def index
-      @templates = list_templates
+      if params[:next_token]
+        # @current_token, 
+        @next_token, @templates = list_templates(params[:next_token])
+      else
+        # @current_token, 
+        @next_token, @templates = list_templates
+      end
+      # TODO
+      # Implement fetching more than 10 items
     end
 
     def show
@@ -15,24 +23,39 @@ module EmailService
     def new; end
 
     def edit
+      @template = find_template_by_name(params[:name])
+    end
+
+    def modify
+      status = ""
+      template_old = find_template_by_name(params[:name])
+      logger.debug "CONTROLLER: Name: #{template_old.name} Subject: #{template_old.subject} HTML: #{template_old.html_part} TEXT: #{template_old.text_part}"
+      template_new = new_template(template_params)
+      if template_new.errors?
+        flash[:warning] = @template.errors.first[:message]
+        redirect_to 'edit', data: {modal: true}
+      else
+        status = modify_template(template_old, template_new)
+        if status == "success"
+          flash[:success] = "eMail template [#{template_new.name}] is modified"
+        end
+      end
+      redirect_to plugin('email_service').templates_path
     end
 
     def create
       status = ""
       @template = new_template(template_params)
       if @template.errors?
-        flash[:warning] = @template.errors.first[:message]
-        # TODO - fix render 'edit' form
-        # render 'edit' and return # , locals: { data: { modal: true } } and return
+        flash.now[:error] = @template.errors#.first[:message]
+        render 'new' and return
       else
         status = store_template(@template)
         if status == "success"
-          flash[:success] = "eMail template is saved"
-          
+          flash[:success] = "eMail template #{@template.name} is saved"
         else
           flash.now[:warning] = status
-          # TODO - fix render 'edit' form
-          # render 'edit' and return #, locals: { data: { modal: true } } and return
+          render 'new' and return
         end 
       end
       redirect_to plugin('email_service').templates_path
@@ -50,9 +73,11 @@ module EmailService
 
     private
 
-      def template_params
-        params.require(:template).permit(:name, :subject, :html_part, :text_part)
+      def set_template
+        @template = find_template_by_name(params[:name])
       end
-
+      def template_params
+        params.require(:templ).permit(:name, :subject, :html_part, :text_part)
+      end
   end
 end

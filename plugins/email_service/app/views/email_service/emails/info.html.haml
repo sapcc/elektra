@@ -5,9 +5,38 @@
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"emails-pane"}
 
+%section.section-features
+  .row
+    .col-sm-3
+      .feature-box
+        %i.feature-box__icon.icon-basic-world
+        %h2.heading-tertiary.u-margin-bottom-small
+          Max Send Quota
+          %br
+          (24 hours)
+        %p.feature-box__text
+          = @send_data[:max_24_hour_send]
+    .col-sm-3
+      .feature-box
+        %i.feature-box__icon.icon-basic-world
+        %h2.heading-tertiary.u-margin-bottom-small
+          Max Send Rate
+          %br
+          (per second)
+        %p.feature-box__text
+          = @send_data[:max_send_rate]
+    .col-sm-3
+      .feature-box
+        %i.feature-box__icon.icon-basic-world
+        %h2.heading-tertiary.u-margin-bottom-small
+          Sent 
+          %br
+          (last 24 hours)
+        %p.feature-box__text
+          = @send_data[:sent_last_24_hours]
+
   %h4
     Information
-
 %table.table
   %tr
     %td

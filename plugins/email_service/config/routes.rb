@@ -23,8 +23,16 @@ EmailService::Engine.routes.draw do
 
   resource :templated_emails, only: [:index, :new, :create]
   resources :emails, only: [:index, :show, :new, :create, :destroy]
-  resources :templates # , only: [:index, :show, :new, :create, :destroy]
+
+  resources :templates do
+    member do
+      post :modify
+    end
+  end
+
+  #, only: [:index, :show, :new, :create, :update, :destroy]
   resources :verifications, only: [:index, :show, :new, :create, :destroy]
 
+  # post 'templates/update' => 'templates#update'
 
 end
