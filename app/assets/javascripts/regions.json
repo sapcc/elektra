@@ -99,6 +99,15 @@
     "date":       "2018"
   },
   {
+    "country":    "Saudi Arabia",
+    "regionkey":  "ap-sa-2",
+    "regionname": "AP-SA-2",
+    "lat":        26.40,
+    "lon":        49.98,
+    "available":  false,
+    "date":       "2021"
+  },
+  {
     "country":    "China",
     "regionkey":  "ap-cn-1",
     "regionname": "AP-CN-1",
