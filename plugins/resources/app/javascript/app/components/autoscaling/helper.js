@@ -6,11 +6,20 @@
 //  { custom: true }                -> autoscaling enabled through other Castellum client
 export const parseConfig = (config) => {
   if (!config) {
-    return { custom: false, value: null }
+    return { custom: false, value: null, minFree: null }
   }
   if (!config.size_steps.single) {
     return { custom: true }
   }
+  if (
+    config.size_constraints?.minimum_free &&
+    (!config.low_threshold ||
+      !config.critical_threshold ||
+      config.high_threshold)
+  ) {
+    return { custom: false, minFree: config.size_constraints?.minimum_free }
+  }
+
   if (
     !config.low_threshold ||
     !config.critical_threshold ||
@@ -18,10 +27,8 @@ export const parseConfig = (config) => {
   ) {
     return { custom: true }
   }
-  const {
-    usage_percent: lowPerc,
-    delay_seconds: lowSecs,
-  } = config.low_threshold
+  const { usage_percent: lowPerc, delay_seconds: lowSecs } =
+    config.low_threshold
   const { usage_percent: criticalPerc } = config.critical_threshold
   if (lowSecs != 60) {
     return { custom: true }
@@ -33,12 +40,17 @@ export const parseConfig = (config) => {
   if (Math.abs(lowPerc - expectedLowPerc) > 0.000001) {
     return { custom: true }
   }
-  return { custom: false, value: 100 - criticalPerc }
+  return {
+    custom: false,
+    value: 100 - criticalPerc,
+    minFree: config?.size_constraints?.minimum_free,
+  }
 }
 
 //Generate a Castellum resource configuration that parseConfig() recognizes.
-export const generateConfig = (value) => ({
+export const generateConfig = (value, minFree) => ({
   low_threshold: { usage_percent: 99.9 - value, delay_seconds: 60 },
   critical_threshold: { usage_percent: 100 - value },
   size_steps: { single: true },
+  size_constraints: minFree ? { minimum_free: minFree } : undefined,
 })

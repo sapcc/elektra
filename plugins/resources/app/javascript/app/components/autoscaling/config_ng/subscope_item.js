@@ -9,10 +9,13 @@ const AutoscalingConfigSubscopeItem = ({
   edit,
   cancel,
   update,
+  updateMinFree,
   serviceLabel,
   resourceLabel,
   value,
+  minFree,
   originValue,
+  originMinFree,
   unit,
   custom,
   error,
@@ -30,15 +33,25 @@ const AutoscalingConfigSubscopeItem = ({
     update(newValue)
   })
 
+  const updateMinFreeValue = React.useCallback((newValue) => {
+    //input sanitizing: only allow positive integer values
+    newValue = newValue.replace(/[^0-9]+/, "")
+
+    updateMinFree(parseInt(newValue))
+  })
+
   const hasChanged = React.useMemo(() => {
     if (
-      originValue === value ||
-      (originValue === null && value === "") ||
-      String(originValue) === String(value)
+      (originValue === value ||
+        (originValue === null && value === "") ||
+        String(originValue) === String(value)) &&
+      (originMinFree === minFree ||
+        (originMinFree === null && minFree === "") ||
+        String(originMinFree) === String(minFree))
     )
       return false
     return true
-  }, [value, originValue])
+  }, [value, originValue, minFree, originMinFree])
 
   return (
     <tr>
@@ -58,17 +71,33 @@ const AutoscalingConfigSubscopeItem = ({
           <em>Custom configuration (applied via API)</em>
         ) : editMode ? (
           <>
-            <input
-              disabled={isSaving}
-              type="number"
-              className="form-control"
-              style={{ width: "auto", display: "inline" }}
-              value={value || ""}
-              onKeyPress={(e) => e.key === "Enter" && save()}
-              onChange={(e) => updateValue(e.target.value)}
-            />{" "}
-            % free quota
-            <br />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div>
+                <input
+                  disabled={isSaving}
+                  type="number"
+                  className="form-control"
+                  style={{ width: 100, display: "inline" }}
+                  value={minFree || ""}
+                  onKeyPress={(e) => e.key === "Enter" && save()}
+                  onChange={(e) => updateMinFreeValue(e.target.value)}
+                />{" "}
+                {unit.name || "units"}
+              </div>
+              <div>
+                <input
+                  disabled={isSaving}
+                  type="number"
+                  className="form-control"
+                  style={{ width: 100, display: "inline" }}
+                  value={value || ""}
+                  onKeyPress={(e) => e.key === "Enter" && save()}
+                  onChange={(e) => updateValue(e.target.value)}
+                />{" "}
+                %
+              </div>
+            </div>
+
             <span className="small text-muted">
               leave empty to disable{" "}
               <a
@@ -84,17 +113,33 @@ const AutoscalingConfigSubscopeItem = ({
           </>
         ) : (
           <span onClick={edit} style={{ cursor: "pointer" }}>
-            {value === null || value === "" ? (
+            {(value === null || value === "") &&
+            (minFree === null || minFree === "") ? (
               "not enabled"
             ) : (
               <span>
-                <strong>{value}%</strong> free quota{" "}
+                {!Number.isNaN(minFree) && minFree && (
+                  <>
+                    <strong>{minFree}</strong> {unit.name || "units "}
+                  </>
+                )}
+                {!Number.isNaN(minFree) &&
+                  minFree &&
+                  !Number.isNaN(value) &&
+                  value &&
+                  ", "}
+                {!Number.isNaN(value) && value && (
+                  <>
+                    <strong>{value}%</strong>{" "}
+                  </>
+                )}
                 {value === 0 ? `(but at least ${unit.format(1)} free)` : ""}
               </span>
             )}
           </span>
         )}
       </td>
+
       <td>
         {!custom && (
           <>
@@ -113,10 +158,10 @@ const AutoscalingConfigSubscopeItem = ({
             ) : (
               <Button
                 bsSize="small"
-                bsStyle={value ? "primary" : "success"}
+                bsStyle={value || minFree ? "primary" : "success"}
                 onClick={edit}
               >
-                {value ? "Edit" : "Enable"}
+                {value || minFree ? "Edit" : "Enable"}
               </Button>
             )}
           </>
