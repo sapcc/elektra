@@ -11,14 +11,6 @@ export const parseConfig = (config) => {
   if (!config.size_steps.single) {
     return { custom: true }
   }
-  if (
-    config.size_constraints?.minimum_free &&
-    (!config.low_threshold ||
-      !config.critical_threshold ||
-      config.high_threshold)
-  ) {
-    return { custom: false, minFree: config.size_constraints?.minimum_free }
-  }
 
   if (
     !config.low_threshold ||
@@ -54,3 +46,9 @@ export const generateConfig = (value, minFree) => ({
   size_steps: { single: true },
   size_constraints: minFree ? { minimum_free: minFree } : undefined,
 })
+
+export const isUnset = (value) =>
+  value === null ||
+  Number.isNaN(value) ||
+  value === "" ||
+  typeof value === "undefined"

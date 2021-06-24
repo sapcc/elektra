@@ -1,7 +1,7 @@
 import { Table, FormControl, Button, Row, Col } from "react-bootstrap"
 import SubscopeItem from "./subscope_item"
 import { t } from "../../../utils"
-import { parseConfig, generateConfig } from "../helper"
+import { parseConfig, generateConfig, isUnset } from "../helper"
 import { Unit } from "../../../unit"
 
 const styles = {
@@ -150,7 +150,6 @@ const AutoscalingConfigNgSubscopes = ({
   })
 
   const applyToAllRef = React.useRef()
-
   const initialized = React.useRef(false)
 
   React.useEffect(() => {
@@ -183,10 +182,11 @@ const AutoscalingConfigNgSubscopes = ({
   const submit = React.useCallback(
     (assetType, newValue, minFree) => {
       if (!project?.id) return Promise.reject()
-      if (newValue === "" && minFree === "") {
+      if (isUnset(newValue)) {
         return deleteConfig(project.id, assetType)
       } else {
         const newValueInt = parseInt(newValue)
+        minFree = minFree && parseInt(minFree)
         const cfg = generateConfig(newValueInt, minFree)
         return updateConfig(project.id, assetType, cfg)
       }
@@ -205,8 +205,11 @@ const AutoscalingConfigNgSubscopes = ({
 
       if (!subscope)
         return Promise.reject(new Error(`subscope ${assetType} not found!`))
-      const newValue = subscope.value || ""
-      const originValue = subscope.originValue || ""
+
+      const newValue = isUnset(subscope.value) ? "" : subscope.value
+      const originValue = isUnset(subscope.originValue)
+        ? ""
+        : subscope.originValue
       const newMinFree = subscope.minFree
       const originMinFree = subscope.originMinFree
 
@@ -226,15 +229,17 @@ const AutoscalingConfigNgSubscopes = ({
     dispatch({ type: "saveAll" })
     const promises = []
     for (let subscope of subscopesState.items) {
-      const newValue = subscope.value || ""
-      const originValue = subscope.originValue || ""
+      const newValue = isUnset(subscope.value) ? "" : subscope.value
+      const originValue = isUnset(subscope.originValue)
+        ? ""
+        : subscope.originValue
       const newMinFree = subscope.minFree
       const originMinFree = subscope.originMinFree
 
       if (newValue === originValue && newMinFree === originMinFree) return
 
       promises.push(
-        submit(subscope.assetType, newValue, newMinFreegit).catch((error) =>
+        submit(subscope.assetType, newValue, newMinFree).catch((error) =>
           dispatch({ type: "error", assetType, error: error.message })
         )
       )
@@ -375,7 +380,7 @@ const AutoscalingConfigNgSubscopes = ({
               <thead>
                 <tr>
                   <th>Ressource</th>
-                  <th>Status of free quota</th>
+                  <th>Free quota</th>
                   <th className="snug"></th>
                 </tr>
               </thead>
@@ -391,7 +396,6 @@ const AutoscalingConfigNgSubscopes = ({
                             justifyContent: "space-between",
                           }}
                         >
-                          <div></div>
                           <div>
                             <input
                               ref={applyToAllRef}
@@ -400,23 +404,23 @@ const AutoscalingConfigNgSubscopes = ({
                               style={{ width: 100, display: "inline" }}
                             />{" "}
                             %
+                            <Button
+                              bsSize="small"
+                              bsStyle="default"
+                              onClick={(e) =>
+                                dispatch({
+                                  type: "updateAll",
+                                  value: applyToAllRef.current.value,
+                                })
+                              }
+                            >
+                              apply to all
+                            </Button>
                           </div>
+                          <div></div>
                         </div>
                       </td>
-                      <td>
-                        <Button
-                          bsSize="small"
-                          bsStyle="default"
-                          onClick={(e) =>
-                            dispatch({
-                              type: "updateAll",
-                              value: applyToAllRef.current.value,
-                            })
-                          }
-                        >
-                          apply to all
-                        </Button>
-                      </td>
+                      <td></td>
                     </tr>
                   )}
 
