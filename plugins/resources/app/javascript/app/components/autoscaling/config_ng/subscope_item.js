@@ -23,30 +23,44 @@ const AutoscalingConfigSubscopeItem = ({
   isSaving,
   editMode,
 }) => {
-  const updateValue = React.useCallback((newValue) => {
-    //input sanitizing: only allow positive integer values
-    newValue = newValue.replace(/[^0-9]+/, "")
-    //input sanitizing: do not allow values above 90%
-    if (parseInt(newValue) > 90) {
-      newValue = "90"
-    }
+  const [tempMinFree, setTempMinFree] = React.useState(
+    minFree ? unit.format(minFree) : minFree
+  )
 
-    update(newValue)
-  })
+  const updateValue = React.useCallback(
+    (newValue) => {
+      //input sanitizing: only allow positive integer values
+      newValue = newValue.replace(/[^0-9]+/, "")
+      //input sanitizing: do not allow values above 90%
+      if (parseInt(newValue) > 90) {
+        newValue = "90"
+      }
 
-  const [tempMinFree, setTempMinFree] = React.useState(minFree)
+      update(newValue)
+      if (isUnset(newValue) || newValue === "") {
+        updateMinFree(null)
+        setTempMinFree(null)
+      }
+    },
+    [update, updateMinFree, setTempMinFree]
+  )
 
   React.useEffect(() => {
-    if (!tempMinFree) return
+    if (!tempMinFree) {
+      updateMinFree(null)
+      return
+    }
 
     if (!unit.name) {
-      updateMinFree(tempMinFree.replace(/[^0-9]+/, ""))
+      const newValue = tempMinFree.toString().replace(/[^0-9]+/, "")
+      updateMinFree(parseInt(newValue))
       return
     }
 
     const parsedValue = unit.parse(tempMinFree)
     if (parsedValue.error) {
-      updateMinFree(tempMinFree.replace(/[^0-9]+/, ""))
+      const newValue = tempMinFree.toString().replace(/[^0-9]+/, "")
+      updateMinFree(parseInt(newValue))
       return
     } else {
       updateMinFree(parsedValue)
@@ -130,7 +144,7 @@ const AutoscalingConfigSubscopeItem = ({
                   <br />
                   <div className="pull-right">
                     <span className="small text-muted">
-                      {minFree} {minFree && (unit.name || "units")}
+                      {minFree} {unit.name ? unit.name : "units"}
                     </span>
                   </div>
                 </div>
@@ -148,7 +162,7 @@ const AutoscalingConfigSubscopeItem = ({
                   {(value === 0 || !isUnset(minFree)) &&
                     ` (but at least ${unit.format(
                       isUnset(minFree) ? 1 : minFree
-                    )} ${unit.name || "units"} free)`}
+                    )} ${unit.name ? "" : "units"} free)`}
                 </span>
               )}
             </span>

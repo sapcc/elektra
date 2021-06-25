@@ -393,10 +393,9 @@ const AutoscalingConfigNgSubscopes = ({
                         <div
                           style={{
                             display: "flex",
-                            justifyContent: "space-between",
                           }}
                         >
-                          <div>
+                          <div style={{ width: 150 }}>
                             <input
                               ref={applyToAllRef}
                               type="number"
@@ -404,23 +403,23 @@ const AutoscalingConfigNgSubscopes = ({
                               style={{ width: 100, display: "inline" }}
                             />{" "}
                             %
-                            <Button
-                              bsSize="small"
-                              bsStyle="default"
-                              onClick={(e) =>
-                                dispatch({
-                                  type: "updateAll",
-                                  value: applyToAllRef.current.value,
-                                })
-                              }
-                            >
-                              apply to all
-                            </Button>
                           </div>
-                          <div></div>
                         </div>
                       </td>
-                      <td></td>
+                      <td>
+                        <Button
+                          bsSize="small"
+                          bsStyle="default"
+                          onClick={(e) =>
+                            dispatch({
+                              type: "updateAll",
+                              value: applyToAllRef.current.value,
+                            })
+                          }
+                        >
+                          apply to all
+                        </Button>
+                      </td>
                     </tr>
                   )}
 
