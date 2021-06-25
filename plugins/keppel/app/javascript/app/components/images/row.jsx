@@ -81,7 +81,7 @@ export default class ImageRow extends React.Component {
       vulnerability_status: vulnerabilityStatus,
     } = this.props.data;
 
-    const labelKeys = Object.keys(labels).sort();
+    const labelKeys = Object.keys(labels || {}).sort();
     const pushedAt = moment.unix(pushedAtUnix);
     const lastPulledAt = lastPulledAtUnix ? moment.unix(lastPulledAtUnix) : null;
     const mediaTypeInfo = mediaTypes[mediaType] || { description: mediaType, hasDetails: false };
