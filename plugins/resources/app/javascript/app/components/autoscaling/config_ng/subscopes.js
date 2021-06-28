@@ -1,15 +1,12 @@
 import { Table, FormControl, Button, Row, Col } from "react-bootstrap"
 import SubscopeItem from "./subscope_item"
 import { t } from "../../../utils"
-import { parseConfig, generateConfig } from "../helper"
-import Item from "./list_item"
-import Subscopes from "./subscopes"
+import { parseConfig, generateConfig, isUnset } from "../helper"
 import { Unit } from "../../../unit"
-import resource from "../../domain/resource"
 
 const styles = {
   detailsWrapper: {
-    width: "50%",
+    width: "60%",
     maxWidth: 1024,
     height: "100vh",
     position: "fixed",
@@ -86,6 +83,10 @@ function subscopesReducer(state, action) {
       items[index] = { ...item, value: action.value }
       return { ...state, items }
 
+    case "updateMinFree":
+      items[index] = { ...item, minFree: action.value }
+      return { ...state, items }
+
     case "save":
       items[index] = { ...item, isSaving: true, error: null }
       return { ...state, items }
@@ -149,7 +150,6 @@ const AutoscalingConfigNgSubscopes = ({
   })
 
   const applyToAllRef = React.useRef()
-
   const initialized = React.useRef(false)
 
   React.useEffect(() => {
@@ -166,7 +166,9 @@ const AutoscalingConfigNgSubscopes = ({
             serviceLabel: t(s.category),
             resourceLabel: t(s.resource),
             value: parsedData?.value,
+            minFree: parsedData?.minFree,
             originValue: parsedData?.value,
+            originMinFree: parsedData?.minFree,
             custom: parsedData?.custom,
             unit: new Unit(s.unitName),
             editMode: initialized.current !== project.id && editMode,
@@ -178,13 +180,14 @@ const AutoscalingConfigNgSubscopes = ({
   }, [project?.subscopes])
 
   const submit = React.useCallback(
-    (assetType, newValue) => {
+    (assetType, newValue, minFree) => {
       if (!project?.id) return Promise.reject()
-      if (newValue === "") {
+      if (isUnset(newValue)) {
         return deleteConfig(project.id, assetType)
       } else {
         const newValueInt = parseInt(newValue)
-        const cfg = generateConfig(newValueInt)
+        minFree = minFree && parseInt(minFree)
+        const cfg = generateConfig(newValueInt, minFree)
         return updateConfig(project.id, assetType, cfg)
       }
     },
@@ -202,13 +205,18 @@ const AutoscalingConfigNgSubscopes = ({
 
       if (!subscope)
         return Promise.reject(new Error(`subscope ${assetType} not found!`))
-      const newValue = subscope.value || ""
-      const originValue = subscope.originValue || ""
 
-      if (newValue === originValue) return
+      const newValue = isUnset(subscope.value) ? "" : subscope.value
+      const originValue = isUnset(subscope.originValue)
+        ? ""
+        : subscope.originValue
+      const newMinFree = subscope.minFree
+      const originMinFree = subscope.originMinFree
+
+      if (newValue === originValue && newMinFree === originMinFree) return
 
       dispatch({ type: "save", assetType })
-      submit(assetType, newValue)
+      submit(assetType, newValue, newMinFree)
         .then(() => dispatch({ type: "saved", assetType }))
         .catch((error) =>
           dispatch({ type: "error", assetType, error: error.message })
@@ -221,13 +229,17 @@ const AutoscalingConfigNgSubscopes = ({
     dispatch({ type: "saveAll" })
     const promises = []
     for (let subscope of subscopesState.items) {
-      const newValue = subscope.value || ""
-      const originValue = subscope.originValue || ""
+      const newValue = isUnset(subscope.value) ? "" : subscope.value
+      const originValue = isUnset(subscope.originValue)
+        ? ""
+        : subscope.originValue
+      const newMinFree = subscope.minFree
+      const originMinFree = subscope.originMinFree
 
-      if (newValue === originValue) continue
+      if (newValue === originValue && newMinFree === originMinFree) return
 
       promises.push(
-        submit(subscope.assetType, newValue).catch((error) =>
+        submit(subscope.assetType, newValue, newMinFree).catch((error) =>
           dispatch({ type: "error", assetType, error: error.message })
         )
       )
@@ -235,13 +247,15 @@ const AutoscalingConfigNgSubscopes = ({
     Promise.all(promises).then(() => dispatch({ type: "savedAll" }))
   }, [subscopesState, dispatch])
 
-  const editAll = React.useCallback(() => dispatch({ type: "editAll" }), [
-    dispatch,
-  ])
+  const editAll = React.useCallback(
+    () => dispatch({ type: "editAll" }),
+    [dispatch]
+  )
 
-  const cancelAll = React.useCallback(() => dispatch({ type: "cancelAll" }), [
-    dispatch,
-  ])
+  const cancelAll = React.useCallback(
+    () => dispatch({ type: "cancelAll" }),
+    [dispatch]
+  )
 
   const [top, maxHeight] = React.useMemo(() => [93, height - 93], [height])
 
@@ -271,7 +285,7 @@ const AutoscalingConfigNgSubscopes = ({
     <div
       style={{
         ...styles.detailsWrapper,
-        width: open ? "50%" : 0,
+        width: open ? "60%" : 0,
         top,
         height: maxHeight,
       }}
@@ -328,28 +342,7 @@ const AutoscalingConfigNgSubscopes = ({
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <div className="form-group">
-                    {editModeCount === filteredSubscopes.length && (
-                      <div className="input-group input-group-sm">
-                        <input
-                          ref={applyToAllRef}
-                          type="number"
-                          className="form-control"
-                        />
-                        <div
-                          className="btn input-group-addon bg-success"
-                          onClick={(e) =>
-                            dispatch({
-                              type: "updateAll",
-                              value: applyToAllRef.current.value,
-                            })
-                          }
-                        >
-                          apply to all
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <div></div>
 
                   <div className="clearfix">
                     <div className="pull-right">
@@ -386,12 +379,50 @@ const AutoscalingConfigNgSubscopes = ({
             <Table responsive hover>
               <thead>
                 <tr>
-                  <th className="snug">Ressource</th>
-                  <th>Status</th>
+                  <th>Ressource</th>
+                  <th>Free quota</th>
                   <th className="snug"></th>
                 </tr>
               </thead>
               <tbody>
+                {editModeCount === filteredSubscopes.length &&
+                  filteredSubscopes.length > 1 && (
+                    <tr>
+                      <td></td>
+                      <td>
+                        <div
+                          style={{
+                            display: "flex",
+                          }}
+                        >
+                          <div style={{ width: 150 }}>
+                            <input
+                              ref={applyToAllRef}
+                              type="number"
+                              className="form-control"
+                              style={{ width: 100, display: "inline" }}
+                            />{" "}
+                            %
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <Button
+                          bsSize="small"
+                          bsStyle="default"
+                          onClick={(e) =>
+                            dispatch({
+                              type: "updateAll",
+                              value: applyToAllRef.current.value,
+                            })
+                          }
+                        >
+                          apply to all
+                        </Button>
+                      </td>
+                    </tr>
+                  )}
+
                 {filteredSubscopes.map(({ assetType, ...props }, i) => (
                   <SubscopeItem
                     key={i}
@@ -405,6 +436,13 @@ const AutoscalingConfigNgSubscopes = ({
                     update={(value) =>
                       dispatch({
                         type: "update",
+                        assetType: assetType,
+                        value,
+                      })
+                    }
+                    updateMinFree={(value) =>
+                      dispatch({
+                        type: "updateMinFree",
                         assetType: assetType,
                         value,
                       })
