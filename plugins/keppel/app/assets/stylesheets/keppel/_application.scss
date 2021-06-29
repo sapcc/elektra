@@ -122,3 +122,16 @@ pre.sublease-token > code {
     padding-left: 4em;
   }
 }
+
+//label list on images in image list
+tr.image-labels {
+  td {
+    & > :not(:last-child) {
+      margin-right: 0.5em;
+    }
+
+    span.image-label-value {
+      font-weight: normal;
+    }
+  }
+}
