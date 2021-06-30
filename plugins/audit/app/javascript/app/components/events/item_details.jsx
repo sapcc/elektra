@@ -1,5 +1,5 @@
 export default ({event}) =>
-  <tr>
+  <tr className='explains-previous-line'>
     <td colSpan='6'>
       { event.isFetchingDetails ?
         <span className='spinner'/>
