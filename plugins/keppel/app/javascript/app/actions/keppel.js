@@ -194,7 +194,7 @@ const fetchManifestPage = (accountName, repoName, marker) => dispatch => {
         receivedAt: Date.now(),
       });
       if (response.data.truncated) {
-        fetchManifestPage(accountName, repoName, manifests[manifests.length-1].name);
+        fetchManifestPage(accountName, repoName, manifests[manifests.length-1].digest);
       } else {
         dispatch({
           type: constants.REQUEST_MANIFESTS_FINISHED,
