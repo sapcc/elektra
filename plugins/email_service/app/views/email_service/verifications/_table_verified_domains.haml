@@ -1,0 +1,15 @@
+.verified_domain_table
+%table.table
+  %thead
+    %tr
+      %th Domain
+      %th Verification status
+      %th.snug
+  %tbody
+    - if @all_domains.empty?
+      %tr
+        %td{ colspan: 3 } No verified domain available
+    - else
+      -@all_domains.each do | all_domain |
+        = render partial: 'table_verified_domain_item', locals: { all_domain: all_domain }
+      = paginate verified_email, :theme => 'twitter-bootstrap-3', :remote => true

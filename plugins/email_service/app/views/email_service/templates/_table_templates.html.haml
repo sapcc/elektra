@@ -10,7 +10,7 @@
       %tr
         %td{ colspan: 3 } No eMail Template available
     - else
-      -@templates.each do | tmpl |
+      - @paginatable_array.each do | tmpl |
         = render partial: 'table_template_item', locals: { tmpl: tmpl }
--#= paginate verified_email, :theme => 'twitter-bootstrap-3', :remote => true
+= paginate @paginatable_array, :theme => 'twitter-bootstrap-3', :remote => false
 

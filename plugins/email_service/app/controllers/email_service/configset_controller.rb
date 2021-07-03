@@ -5,6 +5,10 @@ module EmailService
 
     def index
       @configsets = get_configset
+      items_per_page = 10
+      @paginatable_array = Kaminari.paginate_array(@configsets, total_count: @configsets.count).page(params[:page]).per(items_per_page)
+      @id = 0
+
     end
     
 

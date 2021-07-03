@@ -329,14 +329,9 @@ module EmailService
           next_token: token,
           max_items: 10,
         })
-        # logger.debug "CRONUS: DEBUG: next token : #{template_list.next_token}"
         next_token = template_list.next_token
-        # current_token = token
-        # debugger 
-        index = 0 
-        # logger.debug "CRONUS: DEBUG: template_list SIZE : #{template_list.size}"
+        index = 0
         logger.debug "CRONUS: DEBUG: template_list SIZE : #{template_list.templates_metadata.count}"
-        # debugger
         while template_list.size > 0 && index < template_list.templates_metadata.count
             resp = ses_client.get_template({
             template_name: template_list.templates_metadata[index].name,
@@ -353,6 +348,16 @@ module EmailService
       end
       # return current_token, next_token, templates
       return next_token, templates
+    end
+    # Get all templates 
+    def get_all_templates
+      templates = []
+      next_token, templates = list_templates
+      while next_token 
+        next_token, templates_set = list_templates(next_token)
+        templates += templates_set
+      end
+      return templates
     end
 
     def find_template_by_name(name)
@@ -371,15 +376,13 @@ module EmailService
       # # template
     end
 
-    def find_template(name, next_token)
-      next_token, templates = list_templates(next_token)
+    def find_template(name)
+      templates = get_all_templates
       template = new_template({})
       templates.each do |t|
         if t[:name] == name 
           template = new_template(t)
           return template
-        else
-          find_template(name, next_token)
         end
       end
     end

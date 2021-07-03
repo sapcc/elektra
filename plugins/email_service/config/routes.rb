@@ -21,6 +21,13 @@ EmailService::Engine.routes.draw do
   post 'configset/create_configset' => 'configset#create_configset'
   post 'configset/destroy_configset' => 'configset#destroy_configset'
 
+
+  concern :paginatable do
+    get '(page/:page)', action: :index, on: :collection, as: ''
+  end
+  
+  resources :configset, concerns: :paginatable
+
   resource :templated_emails, only: [:index, :new, :create]
   resources :emails, only: [:index, :show, :new, :create, :destroy]
 
