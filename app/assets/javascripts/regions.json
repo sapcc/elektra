@@ -104,7 +104,7 @@
     "regionname": "AP-SA-2",
     "lat":        26.40,
     "lon":        49.98,
-    "available":  false,
+    "available":  true,
     "date":       "2021"
   },
   {
