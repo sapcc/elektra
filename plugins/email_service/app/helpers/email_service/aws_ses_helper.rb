@@ -261,39 +261,41 @@ module EmailService
       result
     end
 
-    # Verify Domain
+    # Find an identity by name
+    def find_verified_identity_by_name(identity, id_type)
+      id_list = list_verified_identities(id_type)
+      found = {}
+      id_list.each do |item|
+        if identity == item[:identity]
+          found = item
+        end
+      end
+      return found
+    end
+
+    # Verify Identity
     def verify_identity(identity, identity_type)
       resp = Aws::SES::Types::VerifyDomainIdentityResponse.new 
       status = ""
       ses_client = create_ses_client
       if identity.include?("sap.com") && identity_type == "EmailAddress"
         status = "sap.com domain email addresses are not allowed to verify as a sender(#{identity})"
-        # flash[:warning] = status
-        logger.debug status
-      elsif identity == ""
+      elsif identity == "" || !identity || identity == nil
         status = "#{identity_type} can't be empty"
-        logger.debug status
-        flash.now[:warning] = status
-      elsif identity != nil && (identity_type == "Domain" || identity_type == "EmailAddress")
+      elsif identity != nil && identity_type == "Domain"
         begin
-          if identity_type == "Domain"
-            resp = ses_client.verify_domain_identity({
-              domain: identity, 
-            })
-          elsif identity_type == "EmailAddress"
-            response = ses_client.verify_email_identity({
-            email_address: identity,
-            })
-          end
+          resp = ses_client.verify_domain_identity({ domain: identity, })
         rescue Aws::SES::Errors::ServiceError => error
-          status = "#{identity_type} verification failed. Error message: #{error}"
-          logger.debug status
-          flash.now[:warning] = status
+          resp = "#{identity_type} verification failed. Error message: #{error}"
+        end
+      elsif identity != nil && identity_type == "EmailAddress"
+        begin
+          ses_client.verify_email_identity({ email_address: identity, })
+          status = "success"
+        rescue Aws::SES::Errors::ServiceError => error
+          status = "#{identity_type} verification failed. Error message: #{error}"  
         end
       end
-      logger.debug "The verification token is :#{resp.verification_token} " if resp.verification_token
-      logger.debug "RESPONSE : #{resp.inspect} : #{status.inspect} "
-      # TODO Fix this return type
       return identity_type == "Domain" ? resp : status 
     end
 
@@ -335,11 +337,16 @@ module EmailService
           attrs = ses_client.get_identity_verification_attributes({
             identities: [identity]
           })
+          logger.debug "Attributes Inspect: #{attrs.inspect} "
+
           status = attrs.verification_attributes[identity].verification_status
+          token = attrs.verification_attributes[identity].verification_token
           # Add id to each entry of verified identities 
           id += 1
-          identity_hash = {:id => id, :identity => identity, :status => status}
+          identity_hash = {:id => id, :identity => identity, :status => status, :verification_token => token}
           verified_identities.push(identity_hash)
+          logger.debug "IDENTITY_HASH: #{identity_hash}"
+
         end
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "error while listing verified identities. Error message: #{error}"

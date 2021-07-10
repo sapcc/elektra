@@ -39,6 +39,6 @@ EmailService::Engine.routes.draw do
   resources :verifications, only: [:index, :show, :new, :create, :destroy]
 
   # resources :email_verifications, only: [:index, :show, :new, :create, :destroy]
-  resources :domain_verifications # , only: [:index, :show, :new, :create, :destroy]
+  resources :domain_verifications #, only: [:index, :show, :new, :create, :destroy]
 
 end
