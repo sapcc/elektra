@@ -478,38 +478,58 @@ module EmailService
       status
     end
 
-    def modify_template(template_old, template_new)
-      status = ""
-      
-      # Create template clone with name template_clone
-      clone_tmpl = Template.new({name: "#{template_old.name}_TEMP_CLONE_", subject: template_old.subject, html_part: template_old.html_part, text_part: template_old.text_part })
-      status = store_template(clone_tmpl)
-      if status == "success"
-        logger.debug "Template Clone #{clone_tmpl.name} created"
-        status = ""
-      end
-
-      # Delete the old template
-      status = delete_template(template_old.name)
-      if status == "success"
-        logger.debug "Original template: #{template_old.name} Deleted"
-        status = ""
-      end
-
-      # Try to create template with new params
-      status = store_template(template_new)
-      if status == "success"
-        logger.debug "Modified Template #{template_new.name} created"
-        status = ""
-      end
-
-      # Delete old template clone, Once modified template is created successfully
-      status = delete_template(clone_tmpl.name)
-      if status == "success"
-        logger.debug "Cloned Template #{clone_tmpl.name} deleted"
-      end
-      status
+    def update_template(name, subject, html_part, text_part)
+      logger.debug "#{name} : #{subject} : #{html_part} : #{text_part} "
+      debugger
+      begin
+        ses_client = create_ses_client
+        resp = ses_client.update_template({
+          template: { # required
+            template_name: name,  # "TemplateName", # required
+            subject_part: subject, # "SubjectPart",
+            text_part: text_part, # "TextPart",
+            html_part: html_part, #"HtmlPart",
+          },
+        })
+        status = "success"
+      rescue Aws::SES::Errors::ServiceError => error
+        msg = "Unable to update template #{name}. Error: #{error}"
+        status = msg
+     end
+     status
     end
+    # def modify_template(template_old, template_new)
+    #   status = ""
+      
+    #   # Create template clone with name template_clone
+    #   clone_tmpl = Template.new({name: "#{template_old.name}_TEMP_CLONE_", subject: template_old.subject, html_part: template_old.html_part, text_part: template_old.text_part })
+    #   status = store_template(clone_tmpl)
+    #   if status == "success"
+    #     logger.debug "Template Clone #{clone_tmpl.name} created"
+    #     status = ""
+    #   end
+
+    #   # Delete the old template
+    #   status = delete_template(template_old.name)
+    #   if status == "success"
+    #     logger.debug "Original template: #{template_old.name} Deleted"
+    #     status = ""
+    #   end
+
+    #   # Try to create template with new params
+    #   status = store_template(template_new)
+    #   if status == "success"
+    #     logger.debug "Modified Template #{template_new.name} created"
+    #     status = ""
+    #   end
+
+    #   # Delete old template clone, Once modified template is created successfully
+    #   status = delete_template(clone_tmpl.name)
+    #   if status == "success"
+    #     logger.debug "Cloned Template #{clone_tmpl.name} deleted"
+    #   end
+    #   status
+    # end
 
     ## Get Send Statistics
 

@@ -24,12 +24,6 @@ module EmailService
       # Implement fetching more than 10 items
     end
 
-    # TODO: delete after testing
-    # def info 
-    #   @configsets = get_configset
-    #   @paginatable_array = Kaminari.paginate_array(@configsets).page(params[:page]).per(10)
-    # end
-
     def show
       @template = find_template(params[:name])
       render "show", locals: { data: { modal: true } }
@@ -42,20 +36,35 @@ module EmailService
     end
 
     def modify
-      status = ""
-      template_old = find_template(params[:name])
-      logger.debug "CONTROLLER: Name: #{template_old.name} Subject: #{template_old.subject} HTML: #{template_old.html_part} TEXT: #{template_old.text_part}"
+      # status = ""
+      # template_old = find_template(params[:name])
+      # logger.debug "CONTROLLER: Name: #{template_old.name} Subject: #{template_old.subject} HTML: #{template_old.html_part} TEXT: #{template_old.text_part}"
+      # template_new = new_template(template_params)
+      # if template_new.errors?
+      #   flash[:warning] = @template.errors.first[:message]
+      #   redirect_to 'edit', data: {modal: true}
+      # else
+      #   status = modify_template(template_old, template_new)
+      #   if status == "success"
+      #     flash[:success] = "eMail template [#{template_new.name}] is modified"
+      #   end
+      # end
+      staus = ""
+      template = find_template(params[:name])
       template_new = new_template(template_params)
       if template_new.errors?
-        flash[:warning] = @template.errors.first[:message]
+        flash[:error] = @template.errors.first[:message]
         redirect_to 'edit', data: {modal: true}
-      else
-        status = modify_template(template_old, template_new)
-        if status == "success"
-          flash[:success] = "eMail template [#{template_new.name}] is modified"
-        end
+      elsif template 
+        status = update_template(template.name, template_new.subject, template_new.html_part, template_new.text_part)
       end
-      redirect_to plugin('email_service').templates_path
+
+      if status == "success"
+        flash[:success] = "eMail template [#{template.name}] is updated" 
+      else 
+        flash[:error] = "Error: #{status}; eMail template [#{template.name}] is not updated" 
+      end
+        redirect_to plugin('email_service').templates_path
     end
 
     def create
