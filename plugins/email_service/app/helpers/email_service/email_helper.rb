@@ -26,7 +26,7 @@ module EmailService
       verified_email_collection = []
         verified_emails.each do |element|
           verified_email_collection << element[:email] \
-          unless element[:email].include?('@activation.email.global.cloud.sap')
+          unless element[:identity].include?('@activation.email.global.cloud.sap')
         end unless verified_emails.empty? 
         verified_email_collection
     end
@@ -47,11 +47,14 @@ module EmailService
       status = " "
       all_emails = list_verified_identities("EmailAddress")
 
-      verified_emails = get_verified_emails_by_status(all_emails, "Success")
-      pending_emails = get_verified_emails_by_status(all_emails, "Pending")
+      # verified_emails = get_verified_emails_by_status(all_emails, "Success")
+      # pending_emails = get_verified_emails_by_status(all_emails, "Pending")
+
+      # verified_emails = get_verified_identities_by_status(all_emails, "Success")
+      # pending_emails = get_verified_identities_by_status(all_emails, "Pending")
 
       all_emails.each do | e |
-        if e[:email] == email
+        if e[:identity] == email
           case e[:status]
             when "Success"
               status = "success"
@@ -65,6 +68,27 @@ module EmailService
         end
       end
       status
+    end
+
+    # Get identity verification status
+    def get_identity_verification_status(identity, identity_type="EmailAddress")
+      status = ""
+      identities_list  = list_verified_identities(identity_type)
+      identities_list.each do | identity_item |
+        if identity_item[:identity] == identity
+          case identity_item[:status]
+            when "Success"
+              status = "success"
+            when "Pending"
+              status = "pending"
+              break
+            when "Failed"
+              status = "failed"
+          end
+          logger.debug "CRONUS : status is assigned to : #{status}"
+        end
+      end
+      status # Returns the verification status
     end
 
     # create an array of valid email addresses

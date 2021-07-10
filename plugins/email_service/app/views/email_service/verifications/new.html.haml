@@ -5,7 +5,7 @@
 = simple_form_for :verified_email, url: plugin('email_service').verifications_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' } do |f|
   .modal-body
     %div{class: modal? ? 'modal-body' : ''}
-      = f.input :sender,
+      = f.input :identity,
         required: true,
         icon_hint: "Multiple email addresses can be separated by comma"
     %div.buttons{class: modal? ? 'modal-footer' : ''}

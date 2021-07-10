@@ -229,8 +229,8 @@ module EmailService
       begin
         ses_client = create_ses_client
         resp = ses_client.delete_configuration_set({
-        configuration_set_name: name,
-      })
+              configuration_set_name: name,
+        })
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
@@ -249,6 +249,52 @@ module EmailService
         end
       end
       result
+    end
+    # To get a list of verified identities
+    def get_verified_identities_by_status(all_identities, status)
+      result = []
+      all_identities.each do | e |
+        if e[:status] == status
+          result.push(e)
+        end
+      end
+      result
+    end
+
+    # Verify Domain
+    def verify_identity(identity, identity_type)
+      resp = Aws::SES::Types::VerifyDomainIdentityResponse.new 
+      status = ""
+      ses_client = create_ses_client
+      if identity.include?("sap.com") && identity_type == "EmailAddress"
+        status = "sap.com domain email addresses are not allowed to verify as a sender(#{identity})"
+        # flash[:warning] = status
+        logger.debug status
+      elsif identity == ""
+        status = "#{identity_type} can't be empty"
+        logger.debug status
+        flash.now[:warning] = status
+      elsif identity != nil && (identity_type == "Domain" || identity_type == "EmailAddress")
+        begin
+          if identity_type == "Domain"
+            resp = ses_client.verify_domain_identity({
+              domain: identity, 
+            })
+          elsif identity_type == "EmailAddress"
+            response = ses_client.verify_email_identity({
+            email_address: identity,
+            })
+          end
+        rescue Aws::SES::Errors::ServiceError => error
+          status = "#{identity_type} verification failed. Error message: #{error}"
+          logger.debug status
+          flash.now[:warning] = status
+        end
+      end
+      logger.debug "The verification token is :#{resp.verification_token} " if resp.verification_token
+      logger.debug "RESPONSE : #{resp.inspect} : #{status.inspect} "
+      # TODO Fix this return type
+      return identity_type == "Domain" ? resp : status 
     end
 
     # Verify an email address with AWS SES excluding sap.com address
@@ -270,15 +316,14 @@ module EmailService
       if recipient.include?("sap.com")
         flash.now[:warning] = "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
         logger.debug "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
- 
       end
-      redirect_to plugin('email_service').verifications_path
+      # redirect_to plugin('email_service').verifications_path
     end
 
     # Lists verified identities so far id_type "Email Address" is used.
     def list_verified_identities(id_type)
       attrs = Hash.new
-      verified_emails = []
+      verified_identities = []
       begin
         ses_client = create_ses_client
         # Get up to 1000 identities
@@ -286,20 +331,20 @@ module EmailService
           identity_type: id_type
         })
         id = 0
-        ids.identities.each do |email|
+        ids.identities.each do |identity|
           attrs = ses_client.get_identity_verification_attributes({
-            identities: [email]
+            identities: [identity]
           })
-          status = attrs.verification_attributes[email].verification_status
+          status = attrs.verification_attributes[identity].verification_status
           # Add id to each entry of verified identities 
           id += 1
-          identity_hash = {:id => id, :email => email, :status => status}
-          verified_emails.push(identity_hash)
+          identity_hash = {:id => id, :identity => identity, :status => status}
+          verified_identities.push(identity_hash)
         end
       rescue Aws::SES::Errors::ServiceError => error
-        logger.debug "error while listing verified emails. Error message: #{error}"
+        logger.debug "error while listing verified identities. Error message: #{error}"
       end
-      verified_emails
+      verified_identities
     end
 
     # Removes verified identity

@@ -22,7 +22,8 @@
           %td
             %strong HTML part:
           %td 
-            =@template.html_part
+            -#=pretty_print_html(@template.html_part)
+            = @template.html_part 
         %tr
           %td
             %strong Text part:

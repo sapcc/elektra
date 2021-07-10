@@ -62,6 +62,9 @@ module EmailService
       template = Template.new(attributes)
     end
 
+    def pretty_print_html(input)
+      html = Nokogiri::HTML(input)
+    end
   end
 end
 

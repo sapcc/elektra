@@ -8,6 +8,8 @@ module EmailService
       @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
       @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
       @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
+      @all_domains = list_verified_identities("Domain")
+      @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
     end
 
     def new
@@ -19,22 +21,22 @@ module EmailService
     end
 
     def create
-      sender = params[:verified_email][:sender].to_s
-      status = isEmailVerified?(sender)
+      identity = params[:verified_email][:identity].to_s
+      status = get_identity_verification_status(identity, "EmailAddress")
       logger.debug "email verification status : #{status}"
       if status == "success"
-        msg= "This email address #{sender} is already verified."
+        msg= "This email address #{identity} is already verified."
         flash[:warning] = msg
       elsif status == "pending"
-        msg = "verification eMail is already sent to #{sender}. Please check your email including Junk folder."
+        msg = "verification eMail is already sent to #{identity}. Please check your email including Junk folder."
         flash[:warning] = msg
       else # if status == "failed"
-        st = verify_email(sender)
-        if st == "success"
-          msg = "Please check your eMail [#{sender}] including Junk folder."
+        status = verify_identity(identity, "EmailAddress")
+        if status == "success"
+          msg = "Please check your eMail [#{identity}] including Junk folder."
           flash[:success] = msg
         else 
-          msg = "Failed: #{st}"
+          msg = "Failed: #{status}"
           flash[:error] = msg
         end
       end
@@ -45,14 +47,15 @@ module EmailService
 
     def destroy
       
-      identity = params[:email] unless params[:email].nil?
-      # logger.debug "CRONUS delete : #{params.inspect} IDENTITY: #{ identity } "
+      identity = params[:identity] unless params[:identity].nil?
+      # logger.debug "CRONUS delete : #{params.inspect} IDENTITY: #{ identity }"
       status = remove_verified_identity(identity)
 
       @all_emails = list_verified_identities("EmailAddress")
-      @verified_emails = get_verified_emails_by_status(@all_emails, "Success")
-      # @pending_emails  = get_verified_emails_by_status(@all_emails, "Pending")
-      # @failed_emails   = get_verified_emails_by_status(@all_emails, "Failed")
+      @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
+      
+      # @pending_emails  = get_verified_identities_by_status(@all_emails, "Pending")
+      # @failed_emails   = get_verified_identities_by_status(@all_emails, "Failed")
 
       if status == "success"
         msg = "The identity #{identity} is removed"
@@ -61,8 +64,7 @@ module EmailService
         msg = "Identity #{identity} removal failed : #{status}"
         flash[:error] = msg
       end
-      
-      # render action: :index
+
       redirect_to({ action: :index } ) 
     end
 

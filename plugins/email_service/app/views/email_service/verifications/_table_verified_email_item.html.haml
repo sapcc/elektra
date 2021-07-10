@@ -1,9 +1,9 @@
-- if not all_email[:email].include?('@activation.email.global.cloud.sap')
+- if not all_email[:identity].include?('@activation.email.global.cloud.sap')
   %tr
     %td
-      = all_email[:email]
+      = all_email[:identity]
     %td
       = all_email[:status]
     %td.snug
       - if current_user.is_allowed?("email_service:verified_email_delete", {target: { all_email: all_email, project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("email_service:verified_email_update", {})
-        = render partial: 'item_actions', locals: { all_email: all_email, show_view: false }
+        = render partial: 'email_item_actions', locals: { all_email: all_email, show_view: false }

@@ -3,8 +3,6 @@ EmailService::Engine.routes.draw do
   # get '/' => 'emails#index', as: :index
   root 'emails#index', as: :index
 
-
-
   get '/info' => 'emails#info'
 
   get 'emails/stats' => 'emails#stats'
@@ -37,9 +35,10 @@ EmailService::Engine.routes.draw do
     end
   end
 
-  #, only: [:index, :show, :new, :create, :update, :destroy]
+ 
   resources :verifications, only: [:index, :show, :new, :create, :destroy]
 
-  # post 'templates/update' => 'templates#update'
+  # resources :email_verifications, only: [:index, :show, :new, :create, :destroy]
+  resources :domain_verifications # , only: [:index, :show, :new, :create, :destroy]
 
 end
