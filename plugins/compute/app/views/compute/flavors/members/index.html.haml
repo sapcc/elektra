@@ -42,4 +42,15 @@
     $('#toggle_form').click(function(){
       $(this).closest('tr').find('.form-wrapper').fadeToggle();
     });
+
+    // for the case the value of the input was autocompleted
+    // and the input contains now the name of the project
+    // we add a hidden input with the project id which overrides 
+    // the origin input value.  
+    $('#members .form-wrapper form').on("submit",(e) => {
+      const value = $('#member_tenant_id').data('autocompleteValue')
+      if(value) {
+        $('#member_tenant_id').after($('<input type="hidden" name="member[tenant_id]" value="'+value+'"/>'))
+      }   
+    })
   });
