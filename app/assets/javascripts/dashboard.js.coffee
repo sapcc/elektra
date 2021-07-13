@@ -165,6 +165,7 @@ $(document).on 'modal:contentUpdated', (e) ->
         appendTo: $input.parent(),
         source: $input.data('autocompleteUrl'),
         select: ( event, ui ) ->
+          $input.attr("data-autocomplete-value",ui.item[valueAttr])
           $input.val(ui.item.name);
           return false;
       }).data('ui-autocomplete')._renderItem = ( ul, item ) ->
