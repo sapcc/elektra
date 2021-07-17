@@ -41,4 +41,8 @@ EmailService::Engine.routes.draw do
   # resources :email_verifications, only: [:index, :show, :new, :create, :destroy]
   resources :domain_verifications #, only: [:index, :show, :new, :create, :destroy]
 
+  post 'verify_dkim', action: :verify_dkim, controller: 'domain_verifications'
+  post 'activate_dkim', action: :activate_dkim, controller: 'domain_verifications'
+  post 'deactivate_dkim', action: :deactivate_dkim, controller: 'domain_verifications'
+
 end

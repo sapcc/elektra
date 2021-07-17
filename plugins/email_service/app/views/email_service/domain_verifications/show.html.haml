@@ -1,6 +1,5 @@
 = content_for :title do
   Identity details
-
 .modal-body.static-columns
 
   .modal-section.first
@@ -30,6 +29,37 @@
             %strong Status:
           %td 
             =@verified_identity[:status]
+        %tr
+          %td
+            %strong DKIM Tokens:
+          %td 
+            =@verified_identity[:dkim_tokens]
+        %tr
+          %td
+            %strong DKIM Enabled:
+          %td 
+            =@verified_identity[:dkim_enabled]
+        %tr
+          %td
+            %strong DKIM Verification Status:
+          %td 
+            =@verified_identity[:dkim_verification_status]
+
+%hr
+- if @verified_identity[:dkim_tokens]
+  Create the following CNAME DNS records.
+  %table.table.table-striped
+    %th Name
+    %th Type
+    %th Content
+  - @verified_identity[:dkim_tokens].each  do |token|
+    %tr
+      %td 
+      = "#{token}._domainkey.#{@verified_identity[:identity]}"
+      %td 
+        CNAME
+      %td
+      = "#{token}.dkim.amazonses.com."
 
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?

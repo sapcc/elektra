@@ -6,6 +6,7 @@
   .modal-body
     %div{class: modal? ? 'modal-body' : ''}
       = f.input :identity, required: true
+      = f.input :dkim_enabled,  as: :boolean, checked_value: true, unchecked_value: false, label: "Enable DKIM"
     %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel

@@ -3,6 +3,12 @@
     %span.fa.fa-cog
   %ul.dropdown-menu.dropdown-menu-right{ role:"menu" }
     %li= link_to 'Show details', plugin('email_service').domain_verification_path(id: all_domain[:id], identity: all_domain[:identity], action_from_show: show_view), data: {modal: true}
+    - if all_domain[:dkim_verification_status] != ("Success" || "Pending")
+      %li= link_to 'Verify DKIM', plugin('email_service').verify_dkim_path(id: all_domain[:id], identity: all_domain[:identity], action_from_show: show_view), method: :post
+    - if all_domain[:dkim_enabled]
+      %li= link_to 'Disable DKIM', plugin('email_service').deactivate_dkim_path(id: all_domain[:id], identity: all_domain[:identity], action_from_show: show_view), method: :post
+    - else
+      %li= link_to 'Enable DKIM', plugin('email_service').activate_dkim_path(id: all_domain[:id], identity: all_domain[:identity], action_from_show: show_view), method: :post
     - if current_user.is_allowed?("email_service:verified_email_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
       %li= link_to 'Delete', plugin('email_service').domain_verification_path(id: all_domain[:id], identity: all_domain[:identity], action_from_show: show_view), method: :delete, data: { confirm: "Are you sure you want to remove this domain '#{all_domain[:identity]}'?", ok: "Yes, remove it", confirmed: :loading_status}
       -#%li= link_to "Delete-NEW", {:controller => "domain_verifications", :action => 'destroy',:id => all_domain[:id], :identity => all_domain[:identity] }, data: { confirm: "Are you sure you want to remove this domain '#{all_domain[:identity]}'?", ok: "Yes, remove it", confirmed: :loading_status}

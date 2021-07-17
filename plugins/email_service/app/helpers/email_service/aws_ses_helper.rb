@@ -102,6 +102,86 @@ module EmailService
       resp && resp.successful? ? "success" : error
     end
 
+
+    def get_dkim_attributes(identities=[])
+      status = ""
+      dkim_attributes = {}
+      begin
+        ses_client = create_ses_client
+        dkim_attributes = ses_client.get_identity_dkim_attributes({
+          identities: identities, 
+        })
+        status = "success" 
+      rescue Aws::SES::Errors::ServiceError => error
+        status = "#{error}"
+        logger.debug "CRONUS: DEBUG: DKIM Attributes: #{error}"
+      end
+      return status, dkim_attributes
+    end
+
+    def get_dkim_tokens(resp, identity)
+      dkim_token = resp[:dkim_attributes][identity][:dkim_tokens]
+      return dkim_token
+    end
+    
+    def is_dkim_enabled(resp, identity)
+      dkim_enabled = resp[:dkim_attributes][identity][:dkim_enabled]
+    end
+    
+    def get_dkim_verification_status(resp, identity)
+      verification_status = resp[:dkim_attributes][identity][:dkim_verification_status] if resp
+      return verification_status if verification_status
+    end
+
+    def verify_dkim(identity)
+      status = ""
+      begin
+        ses_client = create_ses_client
+        resp = ses_client.verify_domain_dkim({
+          domain: identity, 
+        })
+        logger.debug "verify dkim: #{resp} "
+        status = "success"
+        debugger
+      rescue Aws::SES::Errors::ServiceError => error
+        status = "#{error}"
+        logger.debug "CRONUS: DEBUG: DKIM VERIFY: #{error}"
+      end
+      return status, resp
+    end
+
+    def enable_dkim(identity)
+      status = ""
+      begin
+        ses_client = create_ses_client
+        resp = ses_client.set_identity_dkim_enabled({
+          dkim_enabled: true, 
+          identity: identity, 
+        }) 
+        status = "success"
+      rescue Aws::SES::Errors::ServiceError => error
+        status = "#{error}"
+        logger.debug "CRONUS: DEBUG: DKIM Enable: #{error}"
+      end
+      return status
+    end
+    
+    def disable_dkim(identity)
+      status = ""
+      begin
+        ses_client = create_ses_client
+        resp = ses_client.set_identity_dkim_enabled({
+          dkim_enabled: false, 
+          identity: identity, 
+        }) 
+        status = "success"
+      rescue Aws::SES::Errors::ServiceError => error
+        status = "#{error}"
+        logger.debug "CRONUS: DEBUG: DKIM Disable: #{error}"
+      end
+      return status
+    end
+
     ### CONFIG SET ###
 
     def configset_create(name)
@@ -203,16 +283,6 @@ module EmailService
     end
 #### VERIFIED IDENTITIES ###
 
-    # To get a list of email addresses by their verifcation status eg., "Success", "Pending", "Failed"
-    # def get_verified_emails_by_status(all_emails, status)
-    #   result = []
-    #   all_emails.each do | e |
-    #     if e[:status] == status
-    #       result.push(e)
-    #     end
-    #   end
-    #   result
-    # end
     # To get a list of verified identities
     def get_verified_identities_by_status(all_identities, status)
       result = []
@@ -282,10 +352,8 @@ module EmailService
         flash.now[:warning] = "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
         logger.debug "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
       end
-      # redirect_to plugin('email_service').verifications_path
     end
 
-    # Lists verified identities so far id_type "Email Address" is used.
     def list_verified_identities(id_type)
       attrs = Hash.new
       verified_identities = []
@@ -300,16 +368,27 @@ module EmailService
           attrs = ses_client.get_identity_verification_attributes({
             identities: [identity]
           })
-          logger.debug "Attributes Inspect: #{attrs.inspect} "
-
           status = attrs.verification_attributes[identity].verification_status
           token = attrs.verification_attributes[identity].verification_token
-          # Add id to each entry of verified identities 
+          status, dkim = get_dkim_attributes([identity])
+          logger.debug "dkim_attributes : #{dkim}"
+          logger.debug "dkim[:dkim_attributes] : #{dkim[:dkim_attributes]}"
+          logger.debug "dkim[:dkim_attributes][identity] : #{dkim[:dkim_attributes][identity]}"
+          if dkim
+            dkim_enabled = dkim[:dkim_attributes][identity][:dkim_enabled]
+            dkim_tokens = dkim[:dkim_attributes][identity][:dkim_tokens]
+            dkim_verification_status = dkim[:dkim_attributes][identity][:dkim_verification_status]
+            logger.debug "Status: #{status}"
+            logger.debug "dkim_enabled: #{dkim_enabled}"
+            logger.debug "dkim_tokens: #{dkim_tokens}"
+            logger.debug "dkim_verification_status: #{dkim_verification_status}"
+          end
           id += 1
-          identity_hash = {:id => id, :identity => identity, :status => status, :verification_token => token}
+          identity_hash = {id: id, identity: identity, status: status,\
+           verification_token: token, dkim_enabled: dkim_enabled, \
+           dkim_tokens: dkim_tokens, dkim_verification_status: dkim_verification_status }
+           logger.debug "identity_hash: #{identity_hash}"
           verified_identities.push(identity_hash)
-          logger.debug "IDENTITY_HASH: #{identity_hash}"
-
         end
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "error while listing verified identities. Error message: #{error}"
@@ -334,7 +413,6 @@ module EmailService
 
     #### TEMPLATES ###
 
-    # Lists templates 
     def list_templates(token="")
       tmpl_hash = Hash.new
       templates = []
@@ -364,7 +442,8 @@ module EmailService
       # return next_token, templates
       return next_token, templates
     end
-    # Get all templates 
+
+
     def get_all_templates
       templates = []
       next_token, templates = list_templates
@@ -375,21 +454,6 @@ module EmailService
       return templates
     end
 
-    def find_template_by_name(name)
-      template = find_template(name, "")
-
-      # next_token, templates = list_templates(next_token="")
-      # # logger.debug "CRONUS: DEBUG: FT {@templates.size} #{@templates.size}"
-      # template = new_template({})
-      # templates.each do |t|
-      #   if t[:name] == name 
-      #     template = new_template(t)
-      #   else
-      #     next_token, templates = list_templates(next_token)
-      #   end
-      # end
-      # # template
-    end
 
     def find_template(name)
       templates = get_all_templates
@@ -460,6 +524,7 @@ module EmailService
      end
      status
     end
+
     # def modify_template(template_old, template_new)
     #   status = ""
       
