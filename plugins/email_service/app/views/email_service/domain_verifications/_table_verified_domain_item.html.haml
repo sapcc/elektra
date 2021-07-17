@@ -1,0 +1,12 @@
+%tr
+  %td
+    = all_domain[:id]
+  %td
+    = all_domain[:identity]
+  %td
+    = all_domain[:verification_token]
+  %td
+    = all_domain[:status]
+  %td.snug
+    - if current_user.is_allowed?("email_service:verified_domain_delete", {target: { all_domain: all_domain, project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("email_service:verified_domain_update", {})
+      = render partial: 'domain_item_actions', locals: { all_domain: all_domain, show_view: false }

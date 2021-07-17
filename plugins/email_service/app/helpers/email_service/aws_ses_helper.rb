@@ -31,8 +31,6 @@ module EmailService
       resp_hash = resp.to_h
     end
 
-
-
     ## Send Plain eMail ##
     def send_email(plain_email)
       error = ""
@@ -68,41 +66,6 @@ module EmailService
       end
       resp && resp.successful? ? "success" : error
     end
-    # def send_email(plain_email)
-    #   error = ""
-    #   ses_client = create_ses_client
-      
-    #   begin
-    #     resp = ses_client.send_email(
-    #       destination: {
-    #         to_addresses: plain_email.email.to_addr ,
-    #         cc_addresses: plain_email.email.cc_addr ,
-    #         bcc_addresses: plain_email.email.bcc_addr,
-    #       },
-    #       message: {
-    #         body: {
-    #           html: {
-    #             charset: @encoding,
-    #             data: plain_email.email.htmlbody
-    #           },
-    #           text: {
-    #             charset: @encoding,
-    #             data: plain_email.email.textbody
-    #           }
-    #         },
-    #         subject: {
-    #           charset: @encoding,
-    #           data: plain_email.email.subject
-    #         }
-    #       },
-    #       source: plain_email.email.source,
-    #     )
-    #   rescue Aws::SES::Errors::ServiceError => error
-    #     logger.debug "CRONUS : DEBUG : ERROR: Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
-    #   end
-    #   resp && resp.successful? ? "success" : error
-    # end
-
 
     def send_templated_email(templated_email)
       error = ""
@@ -135,7 +98,7 @@ module EmailService
         logger.debug "CRONUS: DEBUG: #{error}"
         return error
       end
-      # debugger
+
       resp && resp.successful? ? "success" : error
     end
 
@@ -241,15 +204,15 @@ module EmailService
 #### VERIFIED IDENTITIES ###
 
     # To get a list of email addresses by their verifcation status eg., "Success", "Pending", "Failed"
-    def get_verified_emails_by_status(all_emails, status)
-      result = []
-      all_emails.each do | e |
-        if e[:status] == status
-          result.push(e)
-        end
-      end
-      result
-    end
+    # def get_verified_emails_by_status(all_emails, status)
+    #   result = []
+    #   all_emails.each do | e |
+    #     if e[:status] == status
+    #       result.push(e)
+    #     end
+    #   end
+    #   result
+    # end
     # To get a list of verified identities
     def get_verified_identities_by_status(all_identities, status)
       result = []
@@ -383,7 +346,7 @@ module EmailService
         })
         next_token = template_list.next_token
         index = 0
-        logger.debug "CRONUS: DEBUG: template_list SIZE : #{template_list.templates_metadata.count}"
+        # logger.debug "CRONUS: DEBUG: template_list SIZE : #{template_list.templates_metadata.count}"
         while template_list.size > 0 && index < template_list.templates_metadata.count
             resp = ses_client.get_template({
             template_name: template_list.templates_metadata[index].name,
@@ -398,7 +361,7 @@ module EmailService
         logger.debug "CRONUS: DEBUG: #{msg}"
         flash.now[:alert] = msg # TODO: fix this flash
       end
-      # return current_token, next_token, templates
+      # return next_token, templates
       return next_token, templates
     end
     # Get all templates 
@@ -480,7 +443,6 @@ module EmailService
 
     def update_template(name, subject, html_part, text_part)
       logger.debug "#{name} : #{subject} : #{html_part} : #{text_part} "
-      debugger
       begin
         ses_client = create_ses_client
         resp = ses_client.update_template({

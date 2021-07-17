@@ -4,16 +4,6 @@ module EmailService
     include PlainEmailHelper
     include TemplatedEmailHelper
 
-    VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-
-    # class TemplatedEmail
-    #   Email = Struct.new(:source, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :template_name, :template_data, :configset_name)
-    #   attr_accessor :email
-    #   def initialize(opts)
-    #     @email = Email.new(opts[:source], opts[:to_addr], opts[:cc_addr], opts[:bcc_addr], opts[:reply_to_addr], opts[:template_name], opts[:template_data], opts[:configset_name] )
-    #   end
-    # end
-
     def new_email(attributes = {})
       email = PlainEmail.new(attributes)
     end
@@ -22,13 +12,20 @@ module EmailService
       email = TemplatedEmail.new(attributes)
     end
 
-    def get_verified_email_collection(verified_emails)
-      verified_email_collection = []
-        verified_emails.each do |element|
-          verified_email_collection << element[:email] \
-          unless element[:identity].include?('@activation.email.global.cloud.sap')
-        end unless verified_emails.empty? 
-        verified_email_collection
+
+    def get_verified_identities_collection(verified_identities, identity_type)
+      verified_identities_collection = []
+      if identity_type == "EmailAddress" && !verified_identities.empty?
+        verified_identities.each do |element|
+          verified_identities_collection << element[:identity] \
+            unless element[:identity].include?('@activation.email.global.cloud.sap')
+        end
+      elsif identity_type == "Domain" && !verified_identities.empty?
+        verified_identities.each do |element|
+          verified_identities_collection << element[:identity]
+        end    
+      end
+      return verified_identities_collection
     end
 
     # Get templates name as a collection to be rendered
@@ -39,36 +36,9 @@ module EmailService
           templates_collection << template[:name]
         end
       end
-      logger.debug "CRONUS DEBUG: templates_collection #{templates_collection} "
       templates_collection
     end
 
-    def isEmailVerified?(email)
-      status = " "
-      all_emails = list_verified_identities("EmailAddress")
-
-      # verified_emails = get_verified_emails_by_status(all_emails, "Success")
-      # pending_emails = get_verified_emails_by_status(all_emails, "Pending")
-
-      # verified_emails = get_verified_identities_by_status(all_emails, "Success")
-      # pending_emails = get_verified_identities_by_status(all_emails, "Pending")
-
-      all_emails.each do | e |
-        if e[:identity] == email
-          case e[:status]
-            when "Success"
-              status = "success"
-            when "Pending"
-              status = "pending"
-              break
-            when "Failed"
-              status = "failed"
-          end
-          logger.debug "CRONUS : status is assigned to : #{status}"
-        end
-      end
-      status
-    end
 
     # Get identity verification status
     def get_identity_verification_status(identity, identity_type="EmailAddress")
@@ -85,10 +55,9 @@ module EmailService
             when "Failed"
               status = "failed"
           end
-          logger.debug "CRONUS : status is assigned to : #{status}"
         end
       end
-      status # Returns the verification status
+      status
     end
 
     # create an array of valid email addresses
@@ -98,8 +67,6 @@ module EmailService
         addr = []
         values.each do |value|
           addr << value.strip
-          # TO DO: check email addresses count is not exceeding 50 
-
         end
         return addr
       end
@@ -110,7 +77,6 @@ module EmailService
       plain_email.email.to_addr= addr_validate(plain_email.email.to_addr)
       plain_email.email.cc_addr= addr_validate(plain_email.email.cc_addr)
       plain_email.email.bcc_addr = addr_validate(plain_email.email.bcc_addr)
-      # return plain_email struct after validation
       plain_email
     end
 

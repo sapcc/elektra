@@ -90,3 +90,8 @@
     %td Cronus URL:
     %td 
       =current_user.service_url('email-aws')
+
+All templates
+- @all_templates.each do | template |
+  %br
+  =template[:name]

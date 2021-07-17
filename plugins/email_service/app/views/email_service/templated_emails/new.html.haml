@@ -1,21 +1,22 @@
-= simple_modal_form_for :email, submit_action: "Send", url: plugin('email_service').templated_emails_path(), method: :post, remote: request.xhr?, cancel_url: plugin('email_service').templated_emails_path(), html: {id: 'form_templated_email', data: {modal: true} } do |f|
+- pl = plugin('email_service')
+= simple_form_for :email, url: pl.templated_emails_path(), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   - if !@verified_emails_collection || @verified_emails_collection.empty? 
     %p.alert.alert-warning
       There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
       You can get verified your eMail address
-      = link_to 'here', plugin('email_service').new_verification_path()
+      = link_to 'here', pl.new_verification_path()
   - if !@templates_collection || @templates_collection.empty?
     %p.alert.alert-warning
       There is no eMail template defined for your account to send email from. Without an eMail template, you can't send templated eMail.
       You can create eMail template from
-      = link_to 'here', plugin('email_service').new_template_path()
+      = link_to 'here', pl.new_template_path()
       or you can send plain eMail from
-      = link_to 'here', plugin('email_service').new_email_path() 
+      = link_to 'here', pl.new_email_path() 
   - if !@configsets || @configsets.empty?
     %p.alert.alert-warning
       There is no Configuration Set defined for your account. Without a Config Set, you can't send templated eMail.
       You can create Configuration Set from
-      = link_to 'here', plugin('email_service').configset_new_configset_path()
+      = link_to 'here', pl.configset_new_configset_path()
   
   .modal-body
     .row
@@ -72,3 +73,9 @@
           collection: @configsets, as: :select,
           required:           false,
           hint: 'Choose ConfigSet Name'
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", pl.templated_emails_path(), class: 'btn btn-default'
+    = button_tag "Send", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

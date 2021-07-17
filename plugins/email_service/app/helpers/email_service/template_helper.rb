@@ -1,8 +1,6 @@
 module EmailService
   module TemplateHelper
 
-    # include AwsSesHelper
-
     class Template 
       def initialize(opts = {})
         @name       = opts[:name]
@@ -55,15 +53,15 @@ module EmailService
         errors
       end
 
-    end # Template Class ends
+    end
     
-    # Stuff outside Template Class 
+
     def new_template(attributes = {})
       template = Template.new(attributes)
     end
 
     def pretty_print_html(input)
-      html = Nokogiri::HTML(input)
+      html_output = Nokogiri::HTML(input)
     end
   end
 end

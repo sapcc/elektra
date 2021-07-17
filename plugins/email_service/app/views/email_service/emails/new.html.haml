@@ -1,7 +1,7 @@
 - pl = plugin('email_service')
 = simple_form_for :email, url: pl.emails_path(), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
-  - if !@e_collection || @e_collection.empty? 
+  - if !@verified_emails_collection || @verified_emails_collection.empty? 
     %p.alert.alert-warning
       There is no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMails.
       You can get verified your eMail address
@@ -18,7 +18,7 @@
     .row
       .col-sm-8
         = f.input :source, { label: "Sender", 
-          collection: @e_collection, as: :select,
+          collection: @verified_emails_collection, as: :select,
           hint: "Enter email address you wish to send this email from ",
           required: true}
         = f.input :to_addr, required: true, 
