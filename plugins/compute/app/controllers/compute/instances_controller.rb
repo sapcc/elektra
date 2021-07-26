@@ -681,10 +681,17 @@ module Compute
       @instance = services.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_keys = []
+      @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       @instance_security_groups.each do |sg|
         @instance_security_groups_keys << sg.id
+        # delete existing groups from security groups list
+        @security_groups.delete_if{ |group| group.id == sg.id}
+        # then re-add existing groups to the beginning of the list
+        # have to retrieve the group from nova because the groups obtained via @instance.security_groups_details don't contain all the info
+        grp = services.networking.find_security_group!(sg.id)
+        @security_groups.unshift(grp)
       end
-      @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+
     end
 
     def assign_securitygroups
