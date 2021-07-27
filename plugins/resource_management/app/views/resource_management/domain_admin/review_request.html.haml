@@ -1,5 +1,5 @@
 = content_for :title do
-  Review Request for more: #{t("resource_management.#{@project_resource.service_type}")} &gt; #{userfriendly_resource_name(@project_resource)}
+  Review Request for more: #{t("resource_management.#{@project_resource.category.presence || @project_resource.service_type}")} &gt; #{userfriendly_resource_name(@project_resource)}
 
 = simple_form_for @project_resource,
   url: plugin('resource_management').admin_approve_request_path,
