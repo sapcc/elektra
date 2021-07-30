@@ -26,9 +26,9 @@ export const getBaseURL = () => {
  * is mostly encapsulated in the Scope class defined here. A Scope can be
  * constructed in one of three ways:
  *
- *     const projectScope = new Scope({ clusterID, domainID, projectID });
- *     const domainScope  = new Scope({ clusterID, domainID });
- *     const clusterScope = new Scope({ clusterID });
+ *     const projectScope = new Scope({ domainID, projectID });
+ *     const domainScope  = new Scope({ domainID });
+ *     const clusterScope = new Scope({ });
  *
  * In practice, the constructor argument is passed down the React foodchain in
  * the field `props.scopeData`:
@@ -37,7 +37,6 @@ export const getBaseURL = () => {
  */
 export class Scope {
   constructor(scopeData) {
-    this.clusterID = scopeData.clusterID;
     this.domainID = scopeData.domainID;
     this.projectID = scopeData.projectID;
   }
@@ -65,7 +64,7 @@ export class Scope {
   urlPath() {
     if (this.projectID) return `/v1/domains/${this.domainID}/projects/${this.projectID}`;
     if (this.domainID)  return `/v1/domains/${this.domainID}`;
-    return `/v1/clusters/${this.clusterID}`;
+    return `/v1/clusters/current`;
   }
   subscopesUrlPath() {
     if (this.projectID) return null; //there is nothing below projects
@@ -73,15 +72,15 @@ export class Scope {
     return `/v1/domains`;
   }
   capacityUrlPath() {
-    return `/v1/clusters/${this.clusterID}?detail`;
+    return `/v1/clusters/current?detail`;
   }
 
   descendIntoSubscope(id) {
     if (this.projectID) return null; //there is nothing below projects
     if (this.domainID) {
-      return { clusterID: this.clusterID, domainID: this.domainID, projectID: id };
+      return { domainID: this.domainID, projectID: id };
     }
-    return { clusterID: this.clusterID, domainID: id };
+    return { domainID: id };
   }
 
   //Level-specific component for resource bars inside a <Category/>.
@@ -131,9 +130,9 @@ export class Scope {
   //Generates an URL to the main view for this scope.
   elektraUrlPath() {
     const base = getBaseURL();
-    if (this.projectID) return `${base}project/${this.clusterID}/${this.domainID}/${this.projectID}`;
-    if (this.domainID)  return  `${base}domain/${this.clusterID}/${this.domainID}`;
-                        return `${base}cluster/${this.clusterID}`;
+    if (this.projectID) return `${base}project/current/${this.domainID}/${this.projectID}`;
+    if (this.domainID)  return  `${base}domain/current/${this.domainID}`;
+                        return `${base}cluster/current`;
   }
 
   canAutoscaleSubscopes() {

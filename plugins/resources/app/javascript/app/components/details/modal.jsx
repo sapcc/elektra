@@ -5,7 +5,6 @@ import { FormErrors } from 'lib/elektra-form/components/form_errors';
 import { t } from '../../utils';
 import { Scope } from '../../scope';
 import { Unit } from '../../unit';
-import DetailsClusters from '../../components/details/clusters';
 import DetailsResource from '../../components/details/resource';
 import ReloadIndicator from '../../components/reload_indicator';
 
@@ -172,7 +171,6 @@ export default class DetailsModal extends React.Component {
 
   render() {
     const { categoryName, resourceName } = this.props;
-    const { shared: isShared } = this.props.category;
     const { isFetching, apiErrors } = this.state;
 
     const scope = new Scope(this.props.scopeData);
@@ -203,14 +201,6 @@ export default class DetailsModal extends React.Component {
             <Resource wide={true} captionOverride='Quota usage' {...forwardProps} />
             <Resource wide={true} captionOverride='Resource usage' showUsage={true} {...forwardProps} />
           </ReloadIndicator>
-
-          {scope.isCluster() && isShared && !isFetching && (
-            <DetailsClusters {...forwardProps}
-              category={this.props.category}
-              listClusters={this.props.listClusters}
-              handleAPIErrors={this.handleAPIErrors}
-            />
-          )}
 
           {isFetching ? <p>
             <span className='spinner'/> Loading {scope.sublevel()}s...

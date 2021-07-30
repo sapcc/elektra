@@ -2,17 +2,19 @@ Resources::Engine.routes.draw do
   ##############################################################################
   # main views
   #
-  # NOTE: If you don't know what to give as :cluster_id, use "current".
+  # NOTE: "current" used to be ":cluster_id". Since multi-cluster support has
+  # been removed from the UI, the value "current" is hardcoded to preserve
+  # backwards compatibility.
 
-  get '/project/:cluster_id/:override_domain_id/:override_project_id' \
+  get '/project/current/:override_domain_id/:override_project_id' \
                  => 'application#project', as: 'foreign_project'
   get '/project' => 'application#project', as: 'project'
 
-  get '/domain/:cluster_id/:override_domain_id' \
+  get '/domain/current/:override_domain_id' \
                 => 'application#domain', as: 'foreign_domain'
   get '/domain' => 'application#domain', as: 'domain'
 
-  get '/cluster/:cluster_id' => 'application#cluster', as: 'cluster'
+  get '/cluster/current' => 'application#cluster', as: 'cluster'
 
   ##############################################################################
   # quota request workflows

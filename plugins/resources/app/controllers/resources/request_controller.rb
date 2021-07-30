@@ -141,7 +141,6 @@ module Resources
       auth_params = {
         project_id: @scoped_project_id,
         domain_id:  @scoped_domain_id,
-        cluster_id: 'current',
       }.reject { |k,v| v.nil? }
       scope = @scoped_project_id ? 'project' : 'domain'
       enforce_permissions("::resources:#{scope}:edit", { selected: auth_params })

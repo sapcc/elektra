@@ -3,8 +3,8 @@
    * building blocks - do not use directly
    */
 
-  "limes_project_scope": "%(selected.cluster_id)s == \"current\" and project_domain_id:%(selected.domain_id)s and project_id:%(selected.project_id)s",
-  "limes_domain_scope": "%(selected.cluster_id)s == \"current\" and domain_id:%(selected.domain_id)s",
+  "limes_project_scope": "project_domain_id:%(selected.domain_id)s and project_id:%(selected.project_id)s",
+  "limes_domain_scope": "domain_id:%(selected.domain_id)s",
 
   "limes_project_view_roles": "role:member or role:_member_ or role:Member or role:resource_viewer",
 

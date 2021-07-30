@@ -1,5 +1,5 @@
 import { connect } from  'react-redux';
-import { fetchData, listClusters, listSubscopes, setQuota } from '../../actions/limes';
+import { fetchData, listSubscopes, setQuota } from '../../actions/limes';
 import DetailsModal from '../../components/details/modal';
 
 export default connect(
@@ -16,7 +16,6 @@ export default connect(
   },
   dispatch => ({
     fetchData:     (...args) => dispatch(fetchData(...args)),
-    listClusters:  (...args) => dispatch(listClusters(...args)),
     listSubscopes: (...args) => dispatch(listSubscopes(...args)),
     setQuota:      (...args) => dispatch(setQuota(...args)),
   }),

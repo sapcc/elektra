@@ -6,9 +6,6 @@ import InitProjectApp from './components/applications/init_project';
 
 createWidget(__dirname).then((widget) => {
   const limesHeaders = { 'X-Auth-Token': widget.config.scriptParams.token }
-  if (widget.config.scriptParams.clusterId != 'current') {
-    limesHeaders['X-Limes-Cluster-Id'] = widget.config.scriptParams.clusterId
-  }
   widget.configureAjaxHelper({
     baseURL: widget.config.scriptParams.limesApi,
     headers: limesHeaders,

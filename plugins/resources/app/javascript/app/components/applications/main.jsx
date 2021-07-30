@@ -9,8 +9,8 @@ import ProjectSettingsModal from '../../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
   // this are the static data that comes from elektra rails controller and was initilized in init.js
-  const { clusterId, domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum, bigVmResources, projectShards, shardingEnabled, projectScope, pathToEnableSharding } = props;
-  const scopeData = { clusterID: clusterId, domainID: domainId, projectID: projectId };
+  const { domainId, projectId, flavorData, docsUrl, canEdit, isForeignScope, hasCastellum, bigVmResources, projectShards, shardingEnabled, projectScope, pathToEnableSharding } = props;
+  const scopeData = { domainID: domainId, projectID: projectId };
   const rootProps = { flavorData, scopeData, bigVmResources, projectShards, shardingEnabled, projectScope, pathToEnableSharding };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
@@ -31,8 +31,8 @@ const routesForProjectLevel = (props) => {
 }
 
 const routesForDomainLevel = (props) => {
-  const { clusterId, domainId, flavorData, canEdit, isForeignScope, hasCastellum, bigVmResources } = props;
-  const scopeData = { clusterID: clusterId, domainID: domainId };
+  const { domainId, flavorData, canEdit, isForeignScope, hasCastellum, bigVmResources } = props;
+  const scopeData = { domainID: domainId };
   const rootProps = { flavorData, scopeData, bigVmResources };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
@@ -51,8 +51,8 @@ const routesForDomainLevel = (props) => {
 }
 
 const routesForClusterLevel = (props) => {
-  const { clusterId, flavorData, canEdit, hasCastellum, bigVmResources } = props;
-  const scopeData = { clusterID: clusterId };
+  const { flavorData, canEdit, hasCastellum, bigVmResources } = props;
+  const scopeData = {};
   const rootProps = { flavorData, scopeData, bigVmResources };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>

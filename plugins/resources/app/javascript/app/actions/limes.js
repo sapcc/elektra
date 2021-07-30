@@ -91,21 +91,6 @@ export const listSubscopes = (scopeData, serviceType, resourceName) =>
   }
 
 ////////////////////////////////////////////////////////////////////////////////
-// get quota/usage data for all clusters
-
-export const listClusters = (serviceType, resourceName) =>
-  function (dispatch, getState) {
-    const url = `/v1/clusters?local&service=${serviceType}&resource=${resourceName}`
-
-    return new Promise((resolve, reject) =>
-      ajaxHelper
-        .get(url)
-        .then((response) => resolve(response.data))
-        .catch((error) => reject({ errors: limesErrorMessage(error) }))
-    )
-  }
-
-////////////////////////////////////////////////////////////////////////////////
 // get capacity data for the cluster level
 
 const requestCapacity = () => ({

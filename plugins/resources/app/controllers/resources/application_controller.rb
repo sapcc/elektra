@@ -18,8 +18,10 @@ module Resources
     #
     #   /$DOMAIN_NAME/resources/project/current/$DOMAIN_ID/$PROJECT_ID
     #
-    # As a cloud admin, you can even navigate to domains and projects in
-    # foreign clusters by exchanging "current" for the correct cluster ID.
+    # As a cloud admin, you also used to be able to navigate to domains and
+    # projects in foreign clusters by exchanging "current" for the correct
+    # cluster ID. (Multi-cluster support was removed from Limes, so "current"
+    # is now hardcoded in the URLs to preserve backwards compatibility.)
     #
     # The policy.json is therefore a bit more complicated than you might
     # expect, and the syntax it uses only works with the Ruby implementation of
@@ -91,7 +93,6 @@ module Resources
         flavor_data:      fetch_baremetal_flavor_data,
         big_vm_resources: fetch_big_vm_data,
         docs_url:         sap_url_for('documentation'),
-        cluster_id:       params[:cluster_id] || 'current',
       } # this will end in widget.config.scriptParams on JS side
 
       unless @project.nil?
@@ -110,25 +111,15 @@ module Resources
       end
 
       # when this is true, the frontend will never try to generate quota requests
-      @js_data[:is_foreign_scope] = (params[:override_project_id] || params[:override_domain_id] || (@js_data[:cluster_id] != 'current')) ? true : false
+      @js_data[:is_foreign_scope] = (params[:override_project_id] || params[:override_domain_id]) ? true : false
 
       # these variables (@XXX_override) trigger an infobox at the top of the
       # view informing that the user that they're viewing a foreign scope
-      if @js_data[:cluster_id] == 'current'
-        if params[:override_project_id]
-          @project_override = services.identity.find_project!(params[:override_project_id])
-        end
-        if params[:override_domain_id]
-          @domain_override = services.identity.find_domain!(params[:override_domain_id])
-        end
-      else
-        @cluster_override = @js_data[:cluster_id]
-        if params[:override_project_id]
-          @project_override = Identity::Project.new(nil, { name: params[:override_project_id] })
-        end
-        if params[:override_domain_id]
-          @domain_override = Identity::Domain.new(nil, { name: params[:override_domain_id] })
-        end
+      if params[:override_project_id]
+        @project_override = services.identity.find_project!(params[:override_project_id])
+      end
+      if params[:override_domain_id]
+        @domain_override = services.identity.find_domain!(params[:override_domain_id])
       end
     end
 
