@@ -18,7 +18,7 @@
       - prev_service = ''
       - @project.resources.each do |res|
         %tr{ class: ResourceManagement::Package.significant?(res.service_type, res.name) ? 'significant' : 'insignificant' }
-          %td.resource-name= t("resource_management.#{res.service_type}") + " > " + userfriendly_resource_name(res)
+          %td.resource-name= t("resource_management.#{res.category.presence || res.service_type}") + " > " + userfriendly_resource_name(res)
           - ResourceManagement::Package.all.each do |pkg|
             %td= res.data_type.format(pkg.quota(res.service_type, res.name))
       %tr

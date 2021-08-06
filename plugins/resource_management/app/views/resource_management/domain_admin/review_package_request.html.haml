@@ -35,7 +35,7 @@
             - new_projects_quota = domain_resource.projects_quota - project_resource.quota + package_quota
             %tr{ class: new_projects_quota > domain_resource.quota ? 'bg-danger' : (new_projects_quota > 0.8 * domain_resource.quota ? 'bg-warning' : '') }
               %td
-                = t("resource_management.#{domain_resource.service_type}")
+                = t("resource_management.#{domain_resource.category.presence || domain_resource.service_type}")
                 &gt;
                 = userfriendly_resource_name(domain_resource)
               %td= dt.format(domain_resource.quota)

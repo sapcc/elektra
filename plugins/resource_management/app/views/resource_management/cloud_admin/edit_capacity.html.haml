@@ -1,5 +1,5 @@
 =content_for :title do
-  Edit resource: #{t("resource_management.#{@cluster_resource.service_type}")} &gt; #{userfriendly_resource_name(@cluster_resource)}
+  Edit resource: #{t("resource_management.#{@cluster_resource.category.presence || @cluster_resource.service_type}")} &gt; #{userfriendly_resource_name(@cluster_resource)}
 
 =simple_form_for @cluster_resource, url: cloud_admin_update_capacity_path(service: @cluster_resource.service_type, resource: @cluster_resource.name), method: :put, remote: request.xhr?, html: { data: { modal: true } } do |f|
 
