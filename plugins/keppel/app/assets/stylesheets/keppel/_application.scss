@@ -61,18 +61,18 @@ ol.howto {
   }
 }
 
-.shortened-digest {
+.hover-copier {
   position: relative;
 
   //enforce predictable height (with display:inline, element may vary in height
   //based on which chars appear in it)
   display: inline-block;
 
-  & > .full-digest {
+  & > .hover-copier-expanded {
     display: none;
   }
 
-  &:hover > .full-digest {
+  &:hover > .hover-copier-expanded {
     display: block;
     position: absolute;
     top: -4px;
@@ -81,7 +81,7 @@ ol.howto {
     padding: 4px 8px;
     background: #F5F5F5;
 
-    & > span.digest-actions > button:disabled {
+    & > span.hover-copier-actions > button:disabled {
       cursor: pointer !important;
     }
   }
