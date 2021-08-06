@@ -7,6 +7,7 @@ import { byteToHuman } from 'lib/tools/size_formatter';
 
 import { SEVERITY_ORDER } from '../../constants';
 import Digest from '../digest';
+import TagName from '../tagname';
 import VulnerabilityFolder from './vulnerability_folder';
 
 const typeOfManifest = {
@@ -154,31 +155,41 @@ export default class ImageDetailsModal extends React.Component {
       return <p><span className='spinner' /> Loading vulnerability report...</p>;
     }
 
+    const repositoryURL = `${this.props.dockerInfo.registryDomain}/${this.props.account.name}/${this.props.repository.name}`;
+
+    const tagsDisplay = [];
+    for (const [tag, idx] of (tags || []).map((tag, idx) => [tag, idx])) {
+      if (idx > 0) {
+        tagsDisplay.push(', ');
+      }
+      tagsDisplay.push(<TagName key={tag.name} name={tag.name} repositoryURL={repositoryURL} />);
+    }
+
     return (
       <table className='table datatable'>
         <tbody>
           <tr>
             <th>Canonical digest</th>
-            <td colSpan='2'><Digest digest={digest} wideDisplay={true} /></td>
+            <td colSpan='2'><Digest digest={digest} wideDisplay={true} repositoryURL={repositoryURL} /></td>
           </tr>
           {(tags && tags.length > 0) ? (
             <tr>
               <th>Tagged as</th>
-              <td colSpan='2'>{tags.map(t => t.name).sort().join(", ")}</td>
+              <td colSpan='2'>{tagsDisplay}</td>
             </tr>
           ) : null}
           <tr>
             <th>MIME type</th>
             <td colSpan='2'>{mediaType}</td>
           </tr>
-          {typeOfManifest[mediaType] == 'list' ? this.renderSubmanifestReferences(manifest.manifests, manifests) : null}
-          {typeOfManifest[mediaType] == 'image' ? this.renderLayers(manifest, imageConfig, vulnReport, vulnStatus, vulnScanError) : null}
+          {typeOfManifest[mediaType] == 'list' ? this.renderSubmanifestReferences(manifest.manifests, manifests, repositoryURL) : null}
+          {typeOfManifest[mediaType] == 'image' ? this.renderLayers(manifest, imageConfig, vulnReport, vulnStatus, vulnScanError, repositoryURL) : null}
         </tbody>
       </table>
     );
   }
 
-  renderSubmanifestReferences(submanifests, allManifests) {
+  renderSubmanifestReferences(submanifests, allManifests, repositoryURL) {
     const rows = [];
     let rowIndex = 0;
     for (const manifest of submanifests) {
@@ -193,7 +204,7 @@ export default class ImageDetailsModal extends React.Component {
       rows.push(
         <tr key={`digest-${manifest.digest}`}>
           <th rowSpan={manifestInfo ? 4 : 3}>Payload #{rowIndex}</th>
-          <td colSpan='2'><Digest digest={manifest.digest} wideDisplay={true} /></td>
+          <td colSpan='2'><Digest digest={manifest.digest} wideDisplay={true} repositoryURL={repositoryURL} /></td>
         </tr>
       );
 
@@ -276,6 +287,9 @@ export default class ImageDetailsModal extends React.Component {
         </tr>
       );
 
+      //NOTE: `repositoryURL` is not given to <Digest /> because the generated
+      //URLs would be nonsensical (the `<repo>@<digest>` format only makes
+      //sense for manifests)
       if (layer) {
         rows.push(
           <tr key={`layer-${stepIndex}`}>

@@ -80,9 +80,14 @@ ol.howto {
     border-radius: 4px;
     padding: 4px 8px;
     background: #F5F5F5;
+    z-index: 10;
 
-    & > span.hover-copier-actions > button:disabled {
-      cursor: pointer !important;
+    & > span.hover-copier-actions {
+      white-space: nowrap;
+
+      & > button:disabled {
+        cursor: pointer !important;
+      }
     }
   }
 }

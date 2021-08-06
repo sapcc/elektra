@@ -5,6 +5,7 @@ import { addSuccess } from 'lib/flashes';
 import { byteToHuman } from 'lib/tools/size_formatter';
 
 import Digest from '../digest';
+import TagName from '../tagname';
 import { makeGCNotice, mergeLastPulledAt } from '../utils';
 
 const mediaTypes = {
@@ -92,11 +93,11 @@ export default class ImageRow extends React.Component {
           <td className='col-md-4'>
             {tagName ? (
               <React.Fragment>
-                <div>{tagName}</div>
-                <div className='small text-muted'><Digest digest={digest} /></div>
+                <div><TagName name={tagName} repositoryURL={this.props.repositoryURL} /></div>
+                <div className='small text-muted'><Digest digest={digest} repositoryURL={this.props.repositoryURL} /></div>
               </React.Fragment>
             ) : (
-              <Digest digest={digest} />
+              <Digest digest={digest} repositoryURL={this.props.repositoryURL} />
             )}
           </td>
           <td className='col-md-2'>

@@ -19,6 +19,7 @@ const HoverCopier = ({ shortText, longText, actions }) => {
       {shortText}
       <span className='hover-copier-expanded'>
         {longText}
+        <br />
         <span className='hover-copier-actions'>
           {actions.map(action => (
             (copiedLabel == action.label) ? (

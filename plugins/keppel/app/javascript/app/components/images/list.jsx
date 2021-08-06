@@ -140,12 +140,14 @@ export default class RepositoryList extends React.Component {
     const showHowto = val => this.setHowtoVisible(true);
     const hideHowto = val => this.setHowtoVisible(false);
 
+    const { registryDomain } = this.props.dockerInfo;
     const forwardProps = {
       canEdit:        this.props.canEdit,
       deleteManifest: this.props.deleteManifest,
       deleteTag:      this.props.deleteTag,
       accountName:    account.name,
       repositoryName: repository.name,
+      repositoryURL:  `${registryDomain}/${account.name}/${repository.name}`,
     };
 
     return (
