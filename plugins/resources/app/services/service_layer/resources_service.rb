@@ -17,13 +17,13 @@ module ServiceLayer
       @elektron_placement ||= elektron.service(
         'placement', 
         interface: 'public',
-        headers: { 'OpenStack-API-Version' => 'placement 1.17' }
+        headers: { 'OpenStack-API-Version' => 'placement 1.18' }
       )
     end
 
-    def list_resource_providers
-      providers = elektron_placement.get('resource_providers')
-      return providers.body['resource_providers'] || { 'resource_providers' => [] }
+    def list_resource_providers(filter={})
+      providers = elektron_placement.get('resource_providers',filter)
+      return providers.body['resource_providers'] || []
     end
 
     def list_resource_aggregates(path)
@@ -38,6 +38,13 @@ module ServiceLayer
       data = elektron_placement.get("resource_providers/#{uuid}/inventories")
       inventories = data.body['inventories'] || {}
       return inventories
+    end
+
+    def traits(uuid=nil)
+      url = uuid.nil? ? "traits" : "resource_providers/#{uuid}/traits"
+      data = elektron_placement.get(url)
+      traits = data.body['traits'] || []
+      return traits
     end
 
     def get_resource_provider_aggregates(uuid)
