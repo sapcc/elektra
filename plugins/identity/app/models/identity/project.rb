@@ -4,11 +4,13 @@ module Identity
   # This class represents the Openstack Project
   class Project < Core::ServiceLayer::Model
     validates :name, presence: { message: 'Name should not be empty' }
-    validates :description, presence: { message: 'Please enter a description' }
 
-    # limit from billing api and keystone
+     # validate presence only on create to prevent errors in cases where a project doesn't have a desccription but something else about the project
+     # is edited (e.g. the labels to set shard info). Without the 'on: :create' this validation will prevent the edit action
+    validates :description, presence: { message: 'Please enter a description' }, on: :create
+    # limit from billing api and keystone, allow blank for same reason as on: :create above
     validates :description,
-              length: { maximum: 255, too_long: '255 characters is the maximum allowed' }
+              length: { maximum: 255, too_long: '255 characters is the maximum allowed' }, allow_blank: true
 
     attr_accessor :inquiry_id # to close inquiry after creation
 
