@@ -111,7 +111,7 @@ module ResourceManagement
       elsif domain_id
         rescue_api_errors { @service.put_domain_data(cluster_id, domain_id, services) }
       elsif cluster_id
-        rescue_api_errors { @service.put_cluster_data(services) }
+        rescue_api_errors { @service.put_cluster_data(cluster_id,services) }
       else
         raise ArgumentError, "found nowhere to put quota: #{attributes.inspect}"
       end
