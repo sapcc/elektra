@@ -40,6 +40,10 @@ module Resources
       enforce_permissions('::resources:project:show', auth_params)
       @js_data[:can_edit] = current_user.is_allowed?('resources:project:edit', auth_params)
 
+      # p "======================================================"
+      # # {"qa-de-1a"=>{"3.0"=>"1.5TiB, 2TiB, 3TiB"}}
+      # p @js_data[:big_vm_resources]
+      # byebug
       render action: 'show'
     end
 
@@ -80,6 +84,10 @@ module Resources
       render action: 'show'
     end
 
+    def bigvm_resources
+      render json: fetch_big_vm_data
+    end
+
     private
 
     def prepare_data_for_view
@@ -91,7 +99,9 @@ module Resources
         castellum_api:    current_user.service_url('castellum'), # see also init.js -> configureCastellumAjaxHelper
         placement_api:    current_user.service_url('placement'),
         flavor_data:      fetch_baremetal_flavor_data,
-        big_vm_resources: fetch_big_vm_data,
+        # do not load bigvm resources on init
+        # use ajax instead (see: bigvm_resources action)
+        # big_vm_resources: fetch_big_vm_data,
         docs_url:         sap_url_for('documentation'),
       } # this will end in widget.config.scriptParams on JS side
 
@@ -149,226 +159,151 @@ module Resources
       return result
     end
 
+
+    # fetches all bigvms taking into account the availability zone, project shards 
+    # and provider traits
     def fetch_big_vm_data
-
-      big_vm_resources = {}
-      resource_providers = cloud_admin.resources.list_resource_providers
-      # domain level: we do not show bigVMresources
-      if @project.nil?
-        puts "Info: fetch big VM data, but project is empty!"
-        return {}
+      # get flavors with NUMASIZE trait
+      flavors = cloud_admin.compute.flavors.select do |f|
+        f.extra_specs.keys.find {|k| /trait:CUSTOM_NUMASIZE_/ =~ k}
       end
-      project_shards = @project.shards
- 
-      # build mapping between AV(availability_zone) or VZ(shard) and host_aggregates.name
-      host_aggregates = cloud_admin.compute.host_aggregates
-      hosts_az = {}
-      hosts_shard = {}
-      unless host_aggregates.nil?
-        host_aggregates.each do |host_aggregate|
-          # pp host_aggregate
-          unless host_aggregate.hosts.nil?
-            host_aggregate.hosts.each do |hostname|
-              if host_aggregate.name == host_aggregate.availability_zone
-                # this is a availability_zone
-                hosts_az[hostname] = host_aggregate.name
-              else
-                # this is a shard
-                hosts_shard[hostname] = host_aggregate.name
-              end
-            end
+      # return unless region supports NUMASIZE flavors
+      return {} if flavors.empty?
+      flavors_by_numa = {}
+    
+      # group flavors by trait
+      # { trait => flavors }
+      flavors.each do |f|
+        trait = f.extra_specs.keys.find {|k| /trait:CUSTOM_NUMASIZE_/ =~ k}
+        next if trait.blank? 
+        trait_key = trait.gsub('trait:CUSTOM_NUMASIZE_','')
+
+        flavors_by_numa[trait_key] ||= []
+        flavors_by_numa[trait_key] << f
+      end
+
+      project_shards = @project ? @project.shards : []
+
+      # filter bigvms by specific name prefix
+      bigvm_resource_providers = cloud_admin.resources.list_resource_providers.select do |rp| 
+        rp["name"].starts_with?("bigvm-deployment-")
+      end
+
+      # build a map for host -> AZ, e.g. nova-compute-bb92: qa-de-1a
+      # build a map for host -> VC (shards), e.g. nova-compute-bb92: vc-a-0
+      host_az_map = {}
+      host_vc_map = {}
+
+      # fetch availability zones and shards
+      cloud_admin.compute.host_aggregates.each do |ha|
+        # ignore this aggregate unless availability_zone or hosts are present
+        next if ha.availability_zone.nil? || ha.hosts.nil?  
+
+        ha.hosts.each do |hostname|
+          if ha.availability_zone == ha.name
+            host_az_map[hostname] =  ha.availability_zone
+          elsif ha.name.starts_with?('vc-')
+            host_vc_map[hostname] = ha.name
           end
         end
       end
 
-      # puts "HOSTS_SHARDS"
-      # pp hosts_shard
-      # {
-      #   "nova-compute-bb95"=>"vc-a-1",
-      #   "nova-compute-bb93"=>"vc-b-0",
-      #   "nova-compute-bb94"=>"vc-b-0",
-      #   "nova-compute-bb91"=>"vc-a-0",
-      #   "nova-compute-bb92"=>"vc-a-0"
-      # }
-
-      # puts "HOSTS_AZ"
-      # pp hosts_az
-      # {
-      #   "nova-compute-bb91"=>"qa-de-1a",
-      #   "nova-compute-bb92"=>"qa-de-1a",
-      #   "nova-compute-ironic-bm092"=>"qa-de-1a",
-      #   "nova-compute-bb95"=>"qa-de-1a",
-      #   "nova-compute-bb93"=>"qa-de-1b",
-      #   "nova-compute-bb94"=>"qa-de-1b",
-      #   "nova-compute-ironic-bm091"=>"qa-de-1b"
-      # }
-
-      resource_providers.each do |resource_provider|
-        # filter only for resource_providers with name "bigvm-deployment-"
-
-        if resource_provider["name"].include? "bigvm-deployment-"
-          # get hostname like nova-compute-bb91
-          resource_provider_name = resource_provider["name"].gsub("bigvm-deployment-","")
-          # puts "======================="
-          # puts resource_provider["name"]
-          # puts resource_provider_name
-          
-          # create empty resource_provider config
-          big_vm_resources[resource_provider_name] = {}
-
-          # map the shards to the related resource_provider_name
-          # "nova-compute-bb91"=>"vc-a-0"
-          hosts_shard.keys.each do |hostname|
-            shard = hosts_shard[hostname]
-            if project_shards.include?(shard) && resource_provider_name == hostname
-              # shards for projects are defined so we filter only resource_provider that are related to the shard
-              big_vm_resources[resource_provider_name]["shard"] = shard
-            end
-          end
-
-          # map and filter the availability_zone to the resource_provider_name
-          # "nova-compute-bb91"=>"qa-de-1a"
-          hosts_az.keys.each do |hostname|
-            # only availability_zones are allowed that are related to the shards that are available for the project
-            # in case project_shards.empty? any resource_provider_name is allowed
-            if resource_provider_name == hostname && ( big_vm_resources[resource_provider_name]["shard"] || project_shards.empty? )
-              availability_zone = hosts_az[hostname]
-              # puts "MAPPING"
-              # puts hostname
-              # puts resource_provider_name 
-              # puts availability_zone 
-              big_vm_resources[resource_provider_name]["availability_zone"] = availability_zone
-            end
-          end
-
-          # puts "======================"
-          # puts "big_vm_resources"
-          # puts big_vm_resources
-
-          # filter resource_provider config if no availability_zone was found
-          # this should be the case if the availability_zone was filtered 
-          unless big_vm_resources[resource_provider_name]["availability_zone"] 
-            big_vm_resources.delete(resource_provider_name)
-            puts "Info: no matching availability zone was found for bigvm-resource-provider #{resource_provider_name} and the current project shards"
-            # puts "======================"
-            # puts "current_project_shards"
-            # puts project_shards
-            # puts "======================"
-            # puts "hosts_shard related to #{resource_provider_name}"
-            # puts hosts_shard[resource_provider_name]
-            # puts "======================"
-            next
-          end
-
-          parent_provider_uuid   = resource_provider["parent_provider_uuid"] || ""
-          resource_provider_uuid = resource_provider["uuid"] || ""
-          resource_links         = resource_provider["links"] || ""
-          
-          # puts "===================="
-          # puts parent_provider_uuid
-          # puts resource_links
-          # puts "===================="
-
-          if parent_provider_uuid.empty? 
-            puts "Info: no parent_provider_uuid was found, try to get it from aggregates"
-            rp_aggregates = cloud_admin.resources.get_resource_provider_aggregates(resource_provider_uuid)
-            parent_provider_uuid = rp_aggregates[0] unless rp_aggregates.empty?
-          end
-
-          # puts "RESOURCE PROVIDER"
-          # pp resource_provider
-          # https://github.com/sapcc/helm-charts/blob/master/openstack/sap-seeds/templates/flavor-seed.yaml
-          # see host_fraction
-          # available HVs 1.5Tib, 2TiB, 3TiB, 6TiB
-          # bigvm-size : allowed_hv_size
-          big_vm_sizes = {
-            "1.5":[1.5,2,3],
-            "2":  [2,3],
-            "3":  [3,6],
-            "4":  [6],
-            "6":  [6],
-          }
-
-          resource_links.each do |resource_link|
-            available = false
-            if resource_link["rel"] == "inventories"
-              # check that hypervisors for big vms are available
-              available = cloud_admin.resources.big_vm_available(resource_provider_uuid)
-              if available == true
-                inventory_data = cloud_admin.resources.get_resource_provider_inventory(parent_provider_uuid)
-                if inventory_data && inventory_data.key?("MEMORY_MB")
-                  memory_size_in_mb =  inventory_data["MEMORY_MB"]["max_unit"] || 0
-                  big_vm_resources[resource_provider_name]["memory"] = sprintf("%.1f",memory_size_in_mb.to_f/1000/1000).to_s
-                  # big_vm_resources[resource_provider_name]["memory"] = "6"
-                  
-                  # calculate available bigvms
-                  big_vm_resources[resource_provider_name]["available_big_sizes"] = ""
-                  big_vm_sizes.each do |size ,allowed_hv_size|
-                    allowed_hv_size.each do |hv_size|
-                      if hv_size.to_f == big_vm_resources[resource_provider_name]["memory"].to_f
-                        big_vm_resources[resource_provider_name]["available_big_sizes"] += "#{size}TiB, "
-                        break
-                      end
-                    end
-                  end
-
-                  unless big_vm_resources[resource_provider_name]["available_big_sizes"].empty?
-                    big_vm_resources[resource_provider_name]["available_big_sizes"].chomp!(", ")
-                  else
-                    big_vm_resources[resource_provider_name]["available_big_sizes"] = "??? Unkown HV size ???"
-                  end
-
-                  # puts "MEMORY_MB"
-                  # puts resource_provider_name
-                  # puts inventory_data["MEMORY_MB"]["max_unit"]
-                  # puts big_vm_resources[resource_provider_name]
-                else
-                  big_vm_resources.delete(resource_provider_name)
-                  next
-                end
-              else
-                big_vm_resources.delete(resource_provider_name)
-                next
-              end
-            end
-          end
-        end
+      # add all shards to project shards if sharding is enabled 
+      if @project && @project.sharding_enabled 
+        project_shards = host_vc_map.values.uniq
       end
 
-      # puts "BIG_VM_RESOURCES"
-      # pp big_vm_resources
-      # big_vm_resources = {"nova-compute-bb124"=>
-      #   {"availability_zone"=>"qa-de-1a",
-      #    "memory"=>"2.0",
-      #    "available_big_sizes"=>"2x1TiB, 1x1.5TiB, 1x2TiB"},
-      #  "nova-compute-bb137"=>
-      #   {"availability_zone"=>"qa-de-1b",
-      #    "memory"=>"2.0",
-      #    "available_big_sizes"=>"2x1TiB, 1x1.5TiB, 1x2TiB"},
-      #  "nova-compute-bb45"=>
-      #   {"availability_zone"=>"qa-de-1b",
-      #    "memory"=>"1.5",
-      #    "available_big_sizes"=>"1x1TiB, 1x1.5TiB"}}
+      bigvm_rps = []
 
-      # massage data for better use
-      big_vms_by_az = {}
-      big_vm_resources.each do |key,value|
-        if value.key? "memory"
-          big_vms_by_az[value["availability_zone"]] ||= {} 
-          # there is only one HV per az and memory size
-          big_vms_by_az[value["availability_zone"]][value["memory"]] = value["available_big_sizes"]
+      # set the AZ and VC for every bigvm rp
+      bigvm_resource_providers.each do |rp|
+        host = rp['name'].gsub('bigvm-deployment-','')
+        rp['host'] = host
+
+        # map the shards to the related host
+        shard = host_vc_map[host]
+        if shard && project_shards.include?(host_vc_map[host])
+          rp['shard'] = shard
         end
+
+        # map and filter the availability_zone to the host
+        # only availability_zones are allowed that are related to the shards 
+        # that are available for the project
+        # in case project_shards.empty? any resource_provider_name is allowed
+        if rp['shard'] || project_shards.empty?
+          rp['az'] = host_az_map[host]
+        end
+
+        # ignore this resource provider unless availability_zone is present
+        next unless rp['az'] 
+
+        # get the usage of current resource provider
+        inventories = cloud_admin.resources.get_resource_provider_inventory(rp['uuid'])
+        reserved = inventories.fetch('CUSTOM_BIGVM',{}).fetch('reserved')
+        if reserved.blank? 
+          rp['status'] = 'waiting'
+        elsif reserved == 1
+          rp['status'] = 'used'
+        elsif reserved == 0
+          rp['status'] = 'free'
+        else
+          rp['status'] = 'unknown'
+        end
+
+        # fetch the parent uuid of thi rp unless set
+        if rp['parent_provider_uuid'].blank? 
+          puts "Info: no parent_provider_uuid was found, try to get it from aggregates"
+          rp_aggregates = cloud_admin.resources.get_resource_provider_aggregates(rp['uuid'])
+          rp['parent_provider_uuid'] = rp_aggregates[0] unless rp_aggregates.empty?
+        end
+
+        # get the host_size for current rp
+        parent_inventories = cloud_admin.resources.get_resource_provider_inventory(rp['parent_provider_uuid'])
+        host_mb = parent_inventories.fetch('MEMORY_MB', {}).fetch('max_unit')
+        if host_mb.blank?
+          # should not happen. broken nova-compute
+          raise "could not find host memory of #{rp['uuid']}"
+        end
+        rp['host_size_mb'] = host_mb# get the parent for every bigvm rp
+
+
+        # get the traits for current rp to show NUMA
+        traits = cloud_admin.resources.traits(rp['parent_provider_uuid']).select do |t|
+          t.starts_with? 'CUSTOM_NUMASIZE_'
+        end.map {|t| t.gsub('CUSTOM_NUMASIZE_','')}
+
+        rp['numa_trait'] = traits
+        bigvm_rps << rp
       end
+      
+      # collect all resource providers which have the availability zone
+      result = []
+      bigvm_rps.each do |rp|
+        # p "#{rp['host']} #{rp['az']} #{rp['shard']} #{rp['numa_trait']}"
+        next unless rp['az']
+        
+        flavors = []
+        rp['numa_trait'].each {|numa| flavors.concat(flavors_by_numa[numa])}
+        flavors.select! {|f| f.ram <= rp['host_size_mb']}
+        flavors = flavors.uniq{|f| f.name}
+        next if flavors.empty?
 
-      # fake data for debug
-      # puts "BIG_VM_BY_AZ"
-      # pp big_vms_by_az
-      # big_vms_by_az["qa-de-1a"]["6"] = "BB-bla"
-      # big_vms_by_az["qa-de-1b"]["6"] = "BB-bla"
-      # big_vms_by_az["qa-de-1b"]["3"] = "BB-bla"
-
-      return big_vms_by_az
+        result << {
+          az: rp['az'],
+          shard: rp['shard'],
+          name: rp['host'], 
+          size_mb: rp['host_size_mb'], 
+          numa_trait: rp['numa_trait'], 
+          status: rp['status'],
+          flavors: flavors.map{|f| {
+            name: f.name, 
+            disk: f.disk,
+            vcpus: f.vcpus,
+            ram: f.ram,
+          }}
+        }
+      end
+      result
     end
-
   end
 end

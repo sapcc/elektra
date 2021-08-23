@@ -9,6 +9,7 @@ Resources::Engine.routes.draw do
   get '/project/current/:override_domain_id/:override_project_id' \
                  => 'application#project', as: 'foreign_project'
   get '/project' => 'application#project', as: 'project'
+  get '/project/bigvm_resources' => 'application#bigvm_resources', as: 'bigvm_resources'
 
   get '/domain/current/:override_domain_id' \
                 => 'application#domain', as: 'foreign_domain'

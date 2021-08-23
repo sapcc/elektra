@@ -23,7 +23,7 @@ module ServiceLayer
       end
 
       def flavors(filter = {})
-        elektron_compute.get('flavors/detail', filter).map_to(
+        elektron_compute.get('flavors/detail', filter, {headers: { 'X-OpenStack-Nova-API-Version' => "2.65" }}).map_to(
           'body.flavors', &flavor_map
         ).select{|f| !f.id.starts_with? OBSOLETE_FLAVORS_PREFIX }
       end
