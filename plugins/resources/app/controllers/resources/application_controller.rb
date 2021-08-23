@@ -239,7 +239,7 @@ module Resources
 
         # get the usage of current resource provider
         inventories = cloud_admin.resources.get_resource_provider_inventory(rp['uuid'])
-        reserved = inventories.fetch('CUSTOM_BIGVM',{}).fetch('reserved')
+        reserved = inventories.fetch('CUSTOM_BIGVM',{}).fetch('reserved',nil)
         if reserved.blank? 
           rp['status'] = 'waiting'
         elsif reserved == 1
