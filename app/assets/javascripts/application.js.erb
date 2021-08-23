@@ -55,7 +55,6 @@
 //= require flash
 //= require monsoon_openstack_auth/policy_engine
 
-
 <%
 Core::PluginsManager.plugins_with_global_js.each do |plugin|
   require_asset("#{plugin.name}/#{plugin.class::GLOBAL_JS_FILE_NAME}")

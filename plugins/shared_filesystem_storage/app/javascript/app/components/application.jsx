@@ -1,5 +1,5 @@
 /* eslint no-console:0 */
-import { HashRouter, Route, Redirect } from "react-router-dom"
+import { BrowserRouter, Route, Redirect } from "react-router-dom"
 
 import Tabs from "../components/tabs"
 
@@ -59,7 +59,7 @@ export default (props) => {
   const tabsConfig = hasCastellum ? tabsConfigWithCastellum : tabsConfigDefault
 
   return (
-    <HashRouter /*hashType="noslash"*/>
+    <BrowserRouter basename={`${window.location.pathname}?r=`}>
       <div>
         {/* redirect root to shares tab */}
         {policy.isAllowed("shared_filesystem_storage:share_get") && (
@@ -228,6 +228,6 @@ export default (props) => {
             />
           )}
       </div>
-    </HashRouter>
+    </BrowserRouter>
   )
 }

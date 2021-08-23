@@ -72,13 +72,13 @@ SimpleNavigation::Configuration.run do |navigation|
                        highlights_on: proc { params[:controller][%r{compute/instances}] }
       compute_nav.item :block_storage,
                        'Volumes & Snapshots',
-                       -> { plugin('block_storage').root_path },
+                       -> { plugin('block_storage').root_path+'?r=' },
                        if: -> { plugin_available?(:block_storage) },
                        highlights_on: proc { params[:controller][/block_storage/] }
       compute_nav.item :images,
                        'Server Images & Snapshots',
                        lambda {
-                         services.image.current_version >= 'v2.5' ? plugin('image').ng_path : plugin('image').os_images_public_index_path
+                         services.image.current_version >= 'v2.5' ? plugin('image').ng_path+'?r=' : plugin('image').os_images_public_index_path
                        },
                        if: -> { services.available?(:image, :os_images) },
                        highlights_on: proc { params[:controller][%r{image/.*}] }
@@ -195,7 +195,7 @@ SimpleNavigation::Configuration.run do |navigation|
                           highlights_on: %r{networking/(backup_networks)/?.*}
       networking_nav.item :ports,
                           'Fixed IPs / Ports',
-                          -> { plugin('networking').widget_ports_path },
+                          -> { plugin('networking').widget_ports_path+'?r=' },
                           if: -> { plugin_available?(:networking) },
                           highlights_on: %r{networking/ports/?.*}
       networking_nav.item :floating_ips,
@@ -210,7 +210,7 @@ SimpleNavigation::Configuration.run do |navigation|
                           highlights_on: %r{networking/security-groups/?.*}
       networking_nav.item :loadbalancing,
                           'Load Balancers',
-                          -> { plugin('lbaas2').root_path() },
+                          -> { plugin('lbaas2').root_path()+'?r=/' },
                           if: -> { plugin_available?(:lbaas2) && services.available?(:lbaas2) },
                           highlights_on: -> { params[:controller][%r{lbaas2/?.*}] }
       networking_nav.item :dns_service,
@@ -232,7 +232,7 @@ SimpleNavigation::Configuration.run do |navigation|
                        highlights_on: proc { params[:controller][%r{object_storage/.*}] }
       storage_nav.item :shared_filesystem_storage,
                        'Shared File System Storage',
-                       -> { plugin('shared_filesystem_storage').start_path('shares') },
+                       -> { plugin('shared_filesystem_storage').start_path('shares')+'?r=' },
                        if: lambda {
                              services.available?(:shared_filesystem_storage) and current_user.is_allowed?('shared_filesystem_storage:application_get')
                            },
