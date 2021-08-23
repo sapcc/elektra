@@ -168,7 +168,7 @@ module Resources
         f.extra_specs.keys.find {|k| /trait:CUSTOM_NUMASIZE_/ =~ k}
       end
       # return unless region supports NUMASIZE flavors
-      return {} if flavors.empty?
+      return [] if flavors.empty?
       flavors_by_numa = {}
     
       # group flavors by trait
