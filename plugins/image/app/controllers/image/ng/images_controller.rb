@@ -33,6 +33,11 @@ module Image
         }
       end
 
+      def show 
+        @image = services.image.find_image(params[:id])
+        render json: (@image.errors.empty? ? @image : { errors: @image.errors })
+      end
+
       def destroy
         if @image.destroy
           head :no_content

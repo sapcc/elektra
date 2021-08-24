@@ -4,7 +4,7 @@ Image::Engine.routes.draw do
   # next generation plugin
   namespace :ng do
     get '/', to: 'images#app'
-    resources :images, except: %i[show new edit] do
+    resources :images, except: %i[new edit] do
       put 'update_visibility'
 
       resources :members, except: %i[show new edit] do
