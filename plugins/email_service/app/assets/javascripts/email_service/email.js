@@ -1,37 +1,103 @@
-const toFakeAddresses = " rjones@sbcglobal.net, doormat@comcast.net, less mfburgo@me.com, alfred@outlook.com, mfleming@comcast.net, verymuch hermanab@comcast.net, dpitts@sbcglobal.net, care,fairbank@aol.com, moxfulder@live.com, tarreau@comcast.net, simone@sbcglobal.net, I,bahwi@outlook.com, jonas@optonline.net, so much malvar@verizon.net, zeller@yahoo.ca, policies@att.net, froodian@hotmail.com, alias@me.com, fmerges@att.net, tmccarth@yahoo.com"
-const ccFakeAddresses = " curly@comcast.net, plover@me.com, jmcnamara@icloud.com, dgriffith@comcast.net, invalid,elmer@optonline.net, lamky@yahoo.ca, barlow@sbcglobal.net, random,timlinux@optonline.net, anicolao@me.com, jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com, benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com, pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon.net, globalcampbell@verizon.net, notaprguy@verizon.net"
-const bccFakeAddresses = " greear@icloud.com, major,ranasta@gmail.com, forsberg@sbcglobal.net, pdbaby@verizon.net, afifi@aol.com, ninenine@verizon.net, potato mbswan@live.com, galbra@mac.com, vsprintf@hotmail.com, ducasse@att.net, tomato sopwith@yahoo.ca, wildfire@yahoo.ca, donev@mac.com, pdbaby@msn.com, gfody@hotmail.com, minor,frederic@hotmail.com, ardagna@optonline.net, citizenl@yahoo.com, makarow@gmail.com, xnormal@live.com"
+const toFakeAddresses = " rjones@sbcglobal.net, doormat@comcast.net, less mfburgo@me.com, alfred@outlook.com, mfleming@comcast.net, verymuch hermanab@comcast.net, dpitts@sbcglobal.net, care,fairbank@aol.com, moxfulder@live.com, tarreau@comcast.net, simone@sbcglobal.net, I,bahwi@outlook.com, jonas@optonline.net, so much malvar@verizon.net, zeller@yahoo.ca, policies@att.net, froodian@hotmail.com, alias@me.com, fmerges@att.net, tmccarth@yahoo.com";
+const ccFakeAddresses = " curly@comcast.net, plover@me.com, jmcnamara@icloud.com, dgriffith@comcast.net, invalid,elmer@optonline.net, lamky@yahoo.ca, barlow@sbcglobal.net, random,timlinux@optonline.net, anicolao@me.com, jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com, benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com, pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon.net, globalcampbell@verizon.net, notaprguy@verizon.net";
+const bccFakeAddresses = " greear@icloud.com, major,ranasta@gmail.com, forsberg@sbcglobal.net, pdbaby@verizon.net, afifi@aol.com, ninenine@verizon.net, potato mbswan@live.com, galbra@mac.com, vsprintf@hotmail.com, ducasse@att.net, tomato sopwith@yahoo.ca, wildfire@yahoo.ca, donev@mac.com, pdbaby@msn.com, gfody@hotmail.com, minor,frederic@hotmail.com, ardagna@optonline.net, citizenl@yahoo.com, makarow@gmail.com, xnormal@live.com";
 
-const re = /[\s, ]+/; // comma and space regex.
+// const re = /[\s, ]+/; // comma and space regex.
 const regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-var toAddrInput = "";
-var toAddrProcessed = "";
-var fixtoElementAdded = false;
+// let toAddrProcessed, toAddrInput;
+// let fixtoElementAdded = false;
 
-$(document).ready(function () {
-  console.log("document is ready - email.js");
-  // Initialize data
-  $("#email_source").on("blur", function () {
-    $("#email_to_add").val(toFakeAddresses);
-    $("#email_cc_addr").val(ccFakeAddresses);
-    $("#email_bcc_addr").val(bccFakeAddresses);
-    alert("source is changed - email.js");
+$(document).ready(function() {
+  
+  $('.modal').on('load', function() {
+    console.log("mainModel loaded");
   });
+  // console.log('document is ready');
+  // console.log(window.pluginName);
+  // $('body.emails').css({backgroundColor: "#bbb"});
+  $('body.emails').click(function(e) {
+    initializeData();
+    console.log(`Clicked Item is ${e.target.id}`);
+
+    $('select#email_source').change(function() {
+      console.log('email_source changed');
+      var source_value = $('select#email_source').val();
+      console.log(source_value);
+    });
+    
+    $('textarea#email_to_addr').click(function() {
+      console.log('to_addr blur triggered');
+    });
+    $('textarea#email_to_addr').blur(function() {
+      console.log('cc blurred');
+    });
+    if ( $('.modal').is(":visible") ) {
+      console.log('modal is visble');
+    }
+  });
+
+});
+
+
+const initializeData = function(){
+  $('textarea#email_to_addr').val(toFakeAddresses);
+  $("#email_cc_addr").val(ccFakeAddresses);
+  $("#email_bcc_addr").val(bccFakeAddresses);
+  // console.log("source is changed - email.js");
+}
+// $("#mainModal").on('shown.bs.modal', function () {
+//   alert('The mainModal is fully shown.');
+// });
+
+// $(document).ready(function() {
+//   $('#mainModal').on('load', function() {
+//      alert("hello!");
+//   })
+// });
+
+// const afterPageLoad = function() {
+//   console.log('this happens onLoad - Plain JavaScript');
+// }
+// window.onload = afterPageLoad; // works
+
+// window.onload = function afterPageLoad() {
+//   console.log('this happens onLoad');
+// }
+
+// $(document).ready(function() {
+//   console.log('document ready using JQuery');
+//   $("#email_to_addr").on("keydown", function (e) {
+//     console.log(e);
+//   });
+// }); 
+
+
+
+// const email_source = document.querySelector('#email_source');
+// const email_to_add = document.querySelector("#email_to_add");
+// console.log(email_to_add);
+// email_to_add.addEventListener('blur', function() {
+//   console.log('email_source change event');
+// });
+
+/*
+
 
 
   $("#email_to_addr").on("blur", function () {
     toAddrInput = $("#email_to_addr").val();
+    let valideMailArr, invalidEntries;
     result = processBulkEmail(toAddrInput);
-    var invalidEntries = result.invalidEntries;
-    var valideMailArr = result.valideMailArr;
+    invalidEntries = result.invalidEntries;
+    valideMailArr = result.valideMailArr;
     toAddrProcessed = valideMailArr;
     if (invalidEntries) {
-      $("#email_to_addr").addClass("is-invalid");
+      $("#email_to_addr").addClass("invalid");
       if (!fixtoElementAdded) {
         fixtoElementAdded = true;
       }
     } else {
-      $("#email_to_addr").addClass("is-valid");
+      $("#email_to_addr").addClass("valid");
     }
     $(".toEmailHelpBlock").html(valideMailArr);
     $(".toErrBlock").html(invalidEntries.join(", "));
@@ -115,3 +181,5 @@ function processBulkEmail(inputText) {
 const validateEmail = (email) => {
   return regex.test(String(email).toLowerCase());
 }
+*/
+

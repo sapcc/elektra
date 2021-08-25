@@ -1,6 +1,5 @@
 - pl = plugin('email_service')
-= simple_form_for :email, url: pl.emails_path(), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
-
+= simple_form_for :email, url: pl.emails_path(), method: :post, remote: request.xhr?, html: {id: 'form_plain_email', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   - if !@verified_emails_collection || @verified_emails_collection.empty? 
     %p.alert.alert-warning
       There is no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMails.
@@ -24,22 +23,22 @@
         = f.input :to_addr, required: true, 
           label: 'To Address(es)', 
           placeholder: 'Enter To Addresses', 
-          input_html:         { rows: "10", class: "u-text-monospace" },
-          as:                 :text,
+          input_html: { rows: "10", class: "u-text-monospace" },
+          as: :text,
           hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
         = f.input :cc_addr, 
           required: false, 
           label: 'Cc Address(es)', 
           placeholder: 'Enter Cc Addresses',
-          input_html:         { rows: "10", class: "u-text-monospace" },
-          as:                 :text,
+          input_html: { rows: "10", class: "u-text-monospace" },
+          as: :text,
           hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
         = f.input :bcc_addr, 
           required: false, 
           label: 'Bcc Address(es)', 
           placeholder: 'Enter Bcc Addresses',
-          input_html:         { rows: "10", class: "u-text-monospace" },
-          as:                 :text,
+          input_html: { rows: "10", class: "u-text-monospace" },
+          as: :text,
           hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
         = f.input :subject, 
           input_html: { value: "Cronus eMail Service - from Elektra UI Plugin - #{Time.new}" },
@@ -48,19 +47,19 @@
           placeholder: 'Enter Subject',
           hint: 'Enter subject line'
         = f.input :htmlbody,
-          label:              "HTML Body",
-          placeholder:        "Enter HTML Email Body",
-          input_html:         {rows: "15", class: "u-text-monospace", 
+          label: "HTML Body",
+          placeholder: "Enter HTML Email Body",
+          input_html: {rows: "15", class: "u-text-monospace", 
           value: "<h1>Email Sent by Cronus </h1><p><h2>AWS SES Proxy Service</h2>"},
-          as:                 :text,
-          required:           true,
+          as: :text,
+          required: true,
           hint: 'Enter HTML Text of your email'
         = f.input :textbody,        
-          label:              "Text Body",
+          label: "Text Body",
           placeholder: "Enter Text Email Body",
-          input_html:         {rows: "15", class: "u-text-monospace", value: "Email Sent by Cronus - AWS SES Proxy Service"},
-          as:                 :text,
-          required:           true,
+          input_html: {rows: "15", class: "u-text-monospace", value: "Email Sent by Cronus - AWS SES Proxy Service"},
+          as: :text,
+          required: true,
           hint: 'Enter Plain Text of your email'
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

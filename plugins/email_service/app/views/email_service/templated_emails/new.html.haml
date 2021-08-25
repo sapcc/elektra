@@ -1,5 +1,7 @@
+= content_for :title do
+  Templated eMail
 - pl = plugin('email_service')
-= simple_form_for :email, url: pl.templated_emails_path(), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for :email, url: pl.templated_emails_path(), method: :post, remote: request.xhr?, html: {id: 'form_templated_email', data: {modal: true}, class: 'form-horizontal needs-validation' }, wrapper: :horizontal_form do |f|
   - if !@verified_emails_collection || @verified_emails_collection.empty? 
     %p.alert.alert-warning
       There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
@@ -20,7 +22,7 @@
   
   .modal-body
     .row
-      .col-sm-6
+      .col-sm-8
         = f.input :source, { label: "Sender", 
           collection: @verified_emails_collection, as: :select,
           hint: "Choose an eMail address you wish to send this email from",
@@ -28,34 +30,26 @@
         = f.input :to_addr, required: true, 
           label: 'To Address(es)', 
           placeholder: 'Enter To Addresses', 
-          input_html: {value: ""},
+          input_html:         { rows: "10", class: "u-text-monospace" },
           hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
-        %span.toEmailHelpBlock
-        %span.toErrBlock
         = f.input :cc_addr, 
           required: false, 
           label: 'Cc Address(es)', 
           placeholder: 'Enter Cc Addresses',
-          input_html: { value: "" },
+          input_html:         { rows: "10", class: "u-text-monospace" },
           hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
-        %span.ccEmailHelpBlock 
-        %span.ccErrBlock
         = f.input :bcc_addr, 
           required: false, 
           label: 'Bcc Address(es)', 
           placeholder: 'Enter Bcc Addresses',
-          input_html: { value: "" },
+          input_html:         { rows: "10", class: "u-text-monospace" },
           hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
-        %span.bccEmailHelpBlock
-        %span.bccErrBlock
         = f.input :reply_to_addr, 
           required: false, 
           label: 'Reply To', 
           placeholder: 'Enter Bcc Addresses',
           collection: @verified_emails_collection, as: :select,
           hint: 'Reply To Address'
-        %span.bccEmailHelpBlock
-        %span.bccErrBlock
         = f.input :template_name,label: "Template Name", 
           collection: @templates_collection, as: :select,
           data: {toggle: "selectTemplateName"},

@@ -35,7 +35,7 @@ module EmailService
 
     def new 
       @all_emails = list_verified_identities("EmailAddress")
-      @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
+      @verified_emails = get_verified_identities_by_status(@all_emails, "success")
       @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress") unless @verified_emails.nil? || @verified_emails.empty?
     end
     
