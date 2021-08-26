@@ -29,8 +29,6 @@
         %span.toEmailHelpBlock
         %br
         %span.toEmailErrorBlock
-        = f.input :to_addr_fix, label: "Fix errors",
-          input_html: { type: "checkbox", class: "hiddene" }
         = f.input :cc_addr, 
           required: false, 
           label: 'Cc Address(es)', 
@@ -41,8 +39,6 @@
         %span.ccEmailHelpBlock
         %br
         %span.ccEmailErrorBlock
-        = f.input :cc_addr_fix, label: "Fix errors",
-          input_html: { type: "checkbox", class: "hidden" }
         = f.input :bcc_addr, 
           required: false, 
           label: 'Bcc Address(es)', 
@@ -53,8 +49,6 @@
         %span.bccEmailHelpBlock
         %br
         %span.bccEmailErrorBlock
-        = f.input :bcc_addr_fix, label: "Fix errors",
-          input_html: { type: "checkbox", class: "hidden" }
         = f.input :subject, 
           input_html: { value: "Cronus eMail Service - from Elektra UI Plugin - #{Time.new}" },
           required: true, 

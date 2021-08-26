@@ -8,60 +8,61 @@ const regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(
 // let fixtoElementAdded = false;
 
 let validToAddresses, validCcAddresses, validBccAddresses;
-let validToAddressCount, validCcAddressCount, validBccAddressCount;
+let validToAddressCount, validCcAddressCount, validBccAddressCount = 0;
 let totalEmailAddresses = 0;
 
+const errSpanEmailCount =  $("<span id=\"errEmailCount\"> eMail Count </span>");
+
 $(document).ready(function() {
-  
-  if ($('body').hasClass('modal-open')) {
-    console.log('modal-open class is added');
-    console.log($('#modal-dialog').find('.modal').is(":visible"));
-  }
- 
-  $('.modal').on('focus', function() {
-    console.log("mainModel loaded");
-  });
 
-  if ( $('.modal').is(":visible") ) {
-    console.log('modal is visble');
-  }
-
+  // plain email form handling
   $('body.emails.modal-open').click(function(e) {
+    target_id = e.target.id;
     initializeData();
-    console.log(`Clicked Item is ${e.target.id}`);
+    errSpanEmailCount.insertAfter(".flashes");
+    errSpanEmailCount.hide();
+    // if ( target_id === "email_subject" ) 
+    //   loadFakeData();
 
-    $("select#email_source").change(function() {
-      console.log('email_source changed');
+    $("select#email_source").click(function() {
       var source_value = $('select#email_source').val();
-      console.log(source_value);
+      // console.log(`source_value : ${source_value}`);
     });
-    
-    $('textarea#email_to_addr').blur(function() {
-      console.log('to_addr blur triggered');
+
+    $('textarea#email_to_addr').on ("blur click change", function() {
       validateEmails('#email_to_addr','span.toEmailHelpBlock','span.toEmailErrorBlock');
+      getTotalEmailAddresses();
+      $('span.toEmailErrorBlock').show();
+      $('span.ccEmailErrorBlock').text("");
+      $('span.bccEmailErrorBlock').text("");
+      // console.log("blur or click event");
     });
 
-    $('textarea#email_cc_addr').blur(function() {
-      console.log('cc blurred');
+    $('textarea#email_cc_addr').on ("blur click change", function() {
       validateEmails('#email_cc_addr','span.ccEmailHelpBlock','span.ccEmailErrorBlock');
+      getTotalEmailAddresses();
+      $('span.ccEmailErrorBlock').show();
+      $('span.toEmailErrorBlock').text("");
+      $('span.bccEmailErrorBlock').text("");
+      // console.log("blur or click event");
     });
 
-    $('textarea#email_bcc_addr').blur(function() {
-      console.log('bcc blurred');
-      validateEmails('#email_cc_addr','span.bccEmailHelpBlock','span.bccEmailErrorBlock');
+    $('textarea#email_bcc_addr').on ("blur click change", function() {
+      validateEmails('#email_bcc_addr','span.bccEmailHelpBlock','span.bccEmailErrorBlock');
+      getTotalEmailAddresses();
+      $('span.bccEmailErrorBlock').show();
+      $('span.toEmailErrorBlock').text("");
+      $('span.ccEmailErrorBlock').text("");
+      // console.log("blur or click event");
     });
 
-  });
+  }); // body click ends
 
-});
-
+}); // document.ready ends
 
 const initializeData = function(){
-  
-  $("#email_to_addr").val(toFakeAddresses);
-  $("#email_cc_addr").val(ccFakeAddresses);
-  $("#email_bcc_addr").val(bccFakeAddresses);
-
+  // TODO REMOVE THIS
+  // loadFakeData();
   validToAddressCount, validCcAddressCount, validBccAddressCount = 0;
   $('span.toEmailHelpBlock').css("color", "blue");
   $('span.ccEmailHelpBlock').css("color", "blue");
@@ -70,59 +71,63 @@ const initializeData = function(){
   $('span.toEmailErrorBlock').css("color", "red");
   $('span.ccEmailErrorBlock').css("color", "red");
   $('span.bccEmailErrorBlock').css("color", "red");
-
-  $("div.form-group.email_to_addr_fix").hide();
-  $("div.form-group.email_cc_addr_fix").hide();
-  $("div.form-group.email_bcc_addr_fix").hide();
-
 }
 
-const showFixControl = function(element) {
-  $(element).show();
-};
-function populateClearFakeEmails(btnElement, inputElement, strAddr) {
-  $(btnElement).click(function () {
-    tmp = $(inputElement).val();
-    if (!tmp || tmp.length === 0) {
-      $(inputElement).val(strAddr);
-    }
-    else {
-      $(inputElement).val("");
-    }
-  });
+// TODO REMOVE THIS
+const loadFakeData = function() {
+  $("#email_to_addr").val(toFakeAddresses);
+  $("#email_cc_addr").val(ccFakeAddresses);
+  $("#email_bcc_addr").val(bccFakeAddresses);
+}
+
+const toggleCountError = function(totalCount) {
+  errSpanEmailCount.show();
+  errSpanEmailCount.css({ "color" : "red" , "font-size": "20" } );
+  errSpanEmailCount.text(`emails count :${totalCount} is exceeding the allowed 50`);
 }
 
 const validateEmails = function (inputElement, helperBlock, errorBlock) {
-  var valideMailArr = [];
+  let result, invalidEntries, valideMailArr, helperText, errorText;
+  valideMailArr = [];
   const inputText = $(inputElement).val();
-  if (!inputText || inputText.length === 0) {
-    $(errorBlock).html("At least one email address is required : " + valideMailArr.length);
+  console.log(`totalEmailAddresses : ${totalEmailAddresses}`);
+  if ( !inputText || inputText.length === 0 ){
+      errorText = "At least one email address is required.";
+      $(errorBlock).html(errorText);
   }
   else {
-    var result = processBulkEmail(inputText);
-    var invalidEntries = result.invalidEntries;
+    result = processBulkEmail(inputText);
+    invalidEntries = result.invalidEntries;
     valideMailArr = result.valideMailArr;
-    if (invalidEntries || invalidEntries.length > 0) {
-      $(errorBlock).html("Invalid entries: " + invalidEntries + " and will be omitted");
+    console.log(`invalidEntries.length : ${invalidEntries.length}` );
+    if (invalidEntries.length > 0) {
+      errorText = `Invalid entries: <b><em> ${invalidEntries}</em></b> and will be omitted`;
+      $(errorBlock).html(errorText);
     }
     if (valideMailArr.length <= 50) {
-      $(helperBlock).html("<b>" + valideMailArr.length + " </b>valid email recipients of " + (valideMailArr.length + invalidEntries.length) + " entries.");
-    }
-    if (valideMailArr.length > 50) {
-      $(errorBlock).html("Error: Number of recipients ( " + valideMailArr.length + " ) are exceeding the maximum limit of 50");
+      helperText = `<b> ${valideMailArr.length} </b>valid email recipients of ${ (valideMailArr.length + invalidEntries.length) } entries.`;
+      $(helperBlock).html(helperText);
+    } else if (valideMailArr.length > 50) {
+      errorText = `Error: Number of recipients <b> ${valideMailArr.length } </b> are exceeding the maximum limit of <b>50</b>`;
+      $(errorBlock).html(errorText);
     }
   } 
+  switch (inputElement) {
+    case "#email_to_addr":
+      validToAddresses = valideMailArr;
+      validToAddressCount = valideMailArr.length;
+    break;
+    case "#email_cc_addr":
+      validCcAddresses = valideMailArr;
+      validCcAddressCount = valideMailArr.length;
+    break;
+    case "#email_bcc_addr":
+      validBccAddresses = valideMailArr;
+      validBccAddressCount = valideMailArr.length;
 
-  if (inputElement === "#email_to_addr") {
-    validToAddresses = valideMailArr;
-    validToAddressCount = valideMailArr.length;
-  } else if (inputElement === "#email_cc_addr") {
-    validCcAddresses = valideMailArr;
-    validCcAddressCount = valideMailArr.length;
-  } else if (inputElement === "#email_bcc_addr") {
-    validBccAddresses = valideMailArr;
-    validBccAddressCount = valideMailArr.length;
+    break;
   }
+
   // return valideMailArr.length;
 }
 
@@ -131,7 +136,7 @@ const processBulkEmail = function (inputText) {
   var valideMailArr = [];
   var emElement = "";
   emailList = inputText.split(re);
-  console.log("Unprocessed - Count is : " + emailList.length);
+  // console.log("Unprocessed - Count is : " + emailList.length);
   emailList.forEach((element, index) => {
     emElement = element.trimEnd().trimStart();
     if (validateEmail(emElement)) {
@@ -141,18 +146,28 @@ const processBulkEmail = function (inputText) {
       invalidEntries.push(element);
     }
   });
-  console.log("Processed - Count is : " + valideMailArr.length);
-  console.log("invalidEntries - Count is : " + invalidEntries.length);
+  // console.log("Processed - Count is : " + valideMailArr.length);
+  // console.log("invalidEntries - Count is : " + invalidEntries.length);
   return { valideMailArr, invalidEntries };
 }
+
 const validateEmail = (email) => {
   return regex.test(String(email).toLowerCase());
 }
 
 const getTotalEmailAddresses = function() {
+  console.log(`--TO: ${validToAddressCount}`);
+  console.log(`--CC: ${validCcAddressCount}`);
+  console.log(`--BCC: ${validBccAddressCount}`);
   totalEmailAddresses = validToAddressCount + validCcAddressCount + validBccAddressCount;
+  if (totalEmailAddresses > 50 ) {
+    toggleCountError(totalEmailAddresses);
+  }
+  console.log(`TOTAL: ${totalEmailAddresses}`);
   return totalEmailAddresses;
 }
+
+
 // console.log(window.pluginName);
 // $('body.emails').css({backgroundColor: "#bbb"});
 
@@ -204,3 +219,44 @@ const getTotalEmailAddresses = function() {
   //   $(".toErrBlock").html(invalidEntries.join(", "));
 
   // });
+
+  // $('.modal').on('focus', function() {
+  //   console.log("mainModel loaded");
+  // });
+
+  // console.log('doc is ready');
+  // if ($('body').hasClass('modal-open')) {
+  //   console.log('modal-open class is added');
+  //   console.log($('#modal-dialog').find('.modal').is(":visible"));
+  // }
+ 
+  // if ( $('.modal').is(":visible") ) {
+  //   console.log('modal is visble');
+  //   // $("div.form-group.email_to_addr_fix").hide(); // addClass("hidden");
+  //   // $("div.form-group.email_cc_addr_fix").hide(); // .addClass("hidden");
+  //   // $("div.form-group.email_bcc_addr_fix").hide(); // .addClass("hidden");
+  // }
+
+
+  // if (inputElement === "#email_to_addr") {
+  //   validToAddresses = valideMailArr;
+  //   validToAddressCount = valideMailArr.length;
+  //   console.log(`To: ${validToAddressCount}`);
+  // } else if (inputElement === "#email_cc_addr") {
+  //   validCcAddresses = valideMailArr;
+  //   validCcAddressCount = valideMailArr.length;
+  //   console.log(`Cc: ${validCcAddressCount}`);
+  // } else if (inputElement === "#email_bcc_addr") {
+  //   validBccAddresses = valideMailArr;
+  //   validBccAddressCount = valideMailArr.length;
+  //   console.log(`Bcc: ${validBccAddressCount}`);
+  // }
+
+
+
+
+  // // Prefilling data
+  // source_ids = ["email_to_addr", "email_cc_addr", "email_bcc_addr"];
+  // if ( source_ids.some( id => target_id.includes(id) ) ) {
+  //   initializeData();
+  // }
