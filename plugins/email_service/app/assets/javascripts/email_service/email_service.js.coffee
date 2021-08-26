@@ -1,7 +1,7 @@
-# configset_name = 'input[id="configset_name"]'
-
 # email_template_name = 'select[id="email_template_name"]'
 # email_template_data = 'text_area[id="email_template_data"]'
+
+# configset_name = 'input[id="configset_name"]'
 
 # change_configset_name = (e) ->
 #   value = $(e.target).val()
@@ -44,11 +44,6 @@
 #   $(document).on 'change', configset_name, get_value
 
 #   exec_plain_email()
-
-  
-
-    
-
 
 # #   $(document).on 'blur', configset_name, ->
 # #     # if /\s/.test($(this).val().trim()) # /$|\s+/ or /(.|\s)*\S(.|\s)*/ empty or contains space #->  /\s/ - in between space
