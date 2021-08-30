@@ -1,3 +1,9 @@
+# email_source = 'input[id="email_source"]'
+# email_to_addr = 'text_area[id="email_to_addr"]'
+# email_cc_addr = 'text_area[id="email_cc_addr"]'
+# email_bcc_addr = 'text_area[id="email_bcc_addr"]'
+
+
 # email_template_name = 'select[id="email_template_name"]'
 # email_template_data = 'text_area[id="email_template_data"]'
 
@@ -6,9 +12,7 @@
 # change_configset_name = (e) ->
 #   value = $(e.target).val()
 
-# email_source = 'input[id="email_source"]'
-# email_to_addr = 'text_area[id="email_to_addr"]'
-# email_cc_addr = 'text_area[id="email_cc_addr"]'
+
 
 # get_value = (e) ->
 #   console.log "Inside get value"
@@ -24,9 +28,10 @@
 # $ ->
 #   # email form
 #   console.log "Document is loaded; email_service.js.coffee"
-#   # $(document).on('modal:contentUpdated', exec_plain_email)
-#   # $(document).on 'change', configset_name, change_configset_name
-#     #   console.log "Document is loaded you see..." # works
+#   $(document).on('modal:contentUpdated', exec_plain_email)
+#   console.log "Document is loaded you see...Coffee " # works
+
+# $(document).on 'change', configset_name, change_configset_name
 
 #   $(document).on 'click', configset_name, ->
 #     $( '#configsetNameHelp' ).toggle()
