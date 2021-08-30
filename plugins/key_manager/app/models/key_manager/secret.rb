@@ -69,7 +69,7 @@ module KeyManager
     strip_attributes
 
     # validation
-    validates_presence_of :name, :secret_type, :payload, :payload_content_type
+    validates_presence_of :name, :secret_type, :payload, :payload_content_type, :expiration
 
     def attributes_for_create
       attrs = {
