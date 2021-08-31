@@ -1,0 +1,16 @@
+.templates_table
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Subject
+      %th.snug
+  %tbody
+    - if @templates.empty?
+      %tr
+        %td{ colspan: 3 } No eMail Template available
+    - else
+      - @paginatable_templates.each do | tmpl |
+        = render partial: 'table_template_item', locals: { tmpl: tmpl }
+= paginate @paginatable_templates, :theme => 'twitter-bootstrap-3', :remote => false
+
