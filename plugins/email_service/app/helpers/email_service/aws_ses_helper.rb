@@ -439,7 +439,6 @@ module EmailService
         logger.debug "CRONUS: DEBUG: #{msg}"
         flash.now[:alert] = msg # TODO: fix this flash
       end
-      # return next_token, templates
       return next_token, templates
     end
 
