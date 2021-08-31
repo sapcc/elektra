@@ -1,0 +1,24 @@
+%table.table.table-striped
+  %tr
+    %td
+      Timestamp
+    %td
+      Delivery attempts
+    %td
+      Bounces
+    %td
+      Rejects
+    %td
+      Complaints
+  - send_stats.each do | stat |
+    %tr        
+      %td
+        =stat[:timestamp]
+      %td
+        =stat[:delivery_attempts]
+      %td
+        =stat[:bounces]
+      %td
+        =stat[:rejects]
+      %td
+        =stat[:complaints]

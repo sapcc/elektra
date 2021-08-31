@@ -1,0 +1,18 @@
+.verified_domain_table
+%table.table
+  %thead
+    %tr
+      %th ID
+      %th Domain
+      %th Verification status
+      %th DKIM enabled
+      %th DKIM status
+      %th.snug
+  %tbody
+    - if @all_domains.empty?
+      %tr
+        %td{ colspan: 4 } No verified domain available
+    - else
+      -@all_domains.each do | all_domain |
+        = render partial: 'table_verified_domain_item', locals: { all_domain: all_domain }
+      -#= paginate all_domain, :theme => 'twitter-bootstrap-3', :remote => true

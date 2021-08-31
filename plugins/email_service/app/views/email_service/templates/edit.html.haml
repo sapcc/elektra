@@ -1,0 +1,37 @@
+= content_for :title do
+  Update Template
+
+- t_name = @template.name
+- t_subject = @template.subject
+- t_html_part = @template.html_part 
+- t_text_part = @template.text_part
+
+= simple_form_for :templ, url: plugin('email_service').send("modify_template_path", id: params[:id], name: params[:name], method: :post, remote: request.xhr?, html: { data: { modal: true } }) do |f|
+
+  .modal-body
+    .modal-flashes
+      = render "email_service/shared/flashes.html"
+    .row
+      .col-sm-6
+        = f.input :name, required: true, label: 'Name', input_html: { autofocus: 'autofocus', value: t_name }, placeholder: 'Enter name'
+        = f.input :subject, label: 'Subject', required: true, placeholder: 'Enter subject', input_html: { value: t_subject }
+        =f.input :html_part,
+        label:              "HTML eMail Content",
+        placeholder:        "Enter html text eMail template",
+        input_html:         {rows: "15", cols: "100", class: "u-text-monospace", value: t_html_part },
+        as:                 :text,
+        required:           true,
+        hint: 'Enter html part of your template' 
+        =f.input :text_part,
+        label:              "Plain text eMail Content",
+        placeholder:        "Enter plain text eMail template",
+        input_html:         {rows: "15", cols: "100", class: "u-text-monospace", value: t_text_part },
+        as:                 :text,
+        required:           true,
+        hint: 'Enter plain text part of your eMail template'  
+  %div{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", plugin('email_service').templates_path(), class: 'btn btn-default'
+    = button_tag "Update", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

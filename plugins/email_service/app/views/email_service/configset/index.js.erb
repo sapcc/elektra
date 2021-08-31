@@ -1,0 +1,8 @@
+$(".flashes").html("<%= escape_javascript( render "application/flashes.html" ) %>");
+initAutoDismissibleFlash();
+
+$(".js-table-configset").html("<%= escape_javascript(render partial: 'table_configset', locals: {}) %>");
+
+
+// reload the pagination spinner
+$('[data-toggle="paginationSpinner"]').initPaginationSpinner()
