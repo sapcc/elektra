@@ -1,0 +1,6 @@
+:javascript 
+  if(window.location.href.indexOf('?r=') < 0)  {
+      window.history.replaceState(null, "Ports", window.location.href+'/?r=');
+  }
+
+= javascript_pack_tag "networking_ports", data: {instances_path: plugin('compute').instances_url}

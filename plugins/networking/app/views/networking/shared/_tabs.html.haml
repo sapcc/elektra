@@ -11,6 +11,14 @@
   - if tab == 'routers'
     %li.active{role: 'presentation'}
       = link_to 'Routers', '#'
+
   - else
     %li{role: 'presentation'}
       = link_to 'Routers', plugin('networking').routers_path
+
+  - if tab == 'bgp_vpns'
+    %li.active{role: 'presentation'}
+      = link_to 'BGP VPNs', '#'
+  - else
+    %li{role: 'presentation'}
+      = link_to 'BGP VPNs', plugin('networking').bgp_vpns_widget_path    

@@ -187,7 +187,7 @@ SimpleNavigation::Configuration.run do |navigation|
                           'Networks & Routers',
                           -> { plugin('networking').networks_external_index_path },
                           if: -> { plugin_available?(:networking) },
-                          highlights_on: %r{networking/(networks|routers)/?.*}
+                          highlights_on: %r{networking/(networks|routers|widget/bgp-vpns)/?.*}
       networking_nav.item :backup_networks,
                           'Backup Networks',
                           -> { plugin('networking').backup_networks_path },
@@ -195,9 +195,9 @@ SimpleNavigation::Configuration.run do |navigation|
                           highlights_on: %r{networking/(backup_networks)/?.*}
       networking_nav.item :ports,
                           'Fixed IPs / Ports',
-                          -> { plugin('networking').widget_ports_path+'?r=' },
+                          -> { plugin('networking').ports_widget_path },
                           if: -> { plugin_available?(:networking) },
-                          highlights_on: %r{networking/ports/?.*}
+                          highlights_on: %r{networking/widget/ports/?.*}
       networking_nav.item :floating_ips,
                           'Floating IPs',
                           -> { plugin('networking').floating_ips_path },
@@ -205,9 +205,9 @@ SimpleNavigation::Configuration.run do |navigation|
                           highlights_on: %r{networking/floating_ips/?.*}
       networking_nav.item :security_groups,
                           'Security Groups',
-                          -> { plugin('networking').widget_security_groups_path },
+                          -> { plugin('networking').security_groups_widget_path },
                           if: -> { plugin_available?(:networking) },
-                          highlights_on: %r{networking/security-groups/?.*}
+                          highlights_on: %r{networking/widget/security-groups/?.*}
       networking_nav.item :loadbalancing,
                           'Load Balancers',
                           -> { plugin('lbaas2').root_path()+'?r=/' },

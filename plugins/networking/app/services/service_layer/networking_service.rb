@@ -14,6 +14,7 @@ module ServiceLayer
     include NetworkingServices::Quota
     include NetworkingServices::DhcpAgent
     include NetworkingServices::Asr
+    include NetworkingServices::BgpVpn
 
     def available?(_action_name_sym = nil)
       elektron.service?('network')

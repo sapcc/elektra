@@ -66,5 +66,6 @@
   "networking:security_groups_rbac_policy_create": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(security_group.tenant_id)s)",
   "networking:security_groups_rbac_policy_delete": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(security_group.tenant_id)s)",
 
-  "networking:network_usage_stat_list": "rule:context_is_cloud_network_admin"
+  "networking:network_usage_stat_list": "rule:context_is_cloud_network_admin",
+  "networking:widget_ports": "rule:context_is_network_admin"
 }

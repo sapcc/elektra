@@ -1,5 +1,5 @@
 /* eslint no-console:0 */
-import { HashRouter, Route, Switch } from "react-router-dom"
+import { BrowserRouter, Route, Switch } from "react-router-dom"
 
 import SecurityGroups from "../containers/security_groups/list"
 import NewSecurityGroupModal from "../containers/security_groups/new"
@@ -15,7 +15,7 @@ import Title from "./title"
 export default (props) => {
   //console.log(props)
   return (
-    <HashRouter /*hashType="noslash"*/>
+    <BrowserRouter basename={`${window.location.pathname}?r=`}>
       <React.Fragment>
         <Title />
         <Switch>
@@ -47,6 +47,6 @@ export default (props) => {
 
         <Route exact path="/:securityGroupId/rbacs" component={RBACs} />
       </React.Fragment>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
