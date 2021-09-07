@@ -603,6 +603,7 @@ DEPENDENCIES
   arc-client!
   audit!
   automation!
+  aws-sdk-ses
   block_storage!
   bootstrap-sass
   byebug
