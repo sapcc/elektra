@@ -16,58 +16,48 @@
 
     .row
       .col-sm-8
-        = f.input :source, { label: "Sender", 
+        = f.input :source, { label: "From",
           collection: @verified_emails_collection, as: :select,
-          hint: "Enter email address you wish to send this email from ",
+          icon_hint: "Choose Source email address",
           required: true}
         = f.input :to_addr, required: true, 
-          label: 'To Address(es)', 
-          placeholder: 'Enter To Addresses', 
-          input_html: { rows: "10", class: "u-text-monospace" },
+          label: 'To', 
+          placeholder: 'Enter To Addresses',
           as: :text,
           icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
-        %span.toEmailHelpBlock
-        %br
-        %span.toEmailErrorBlock
+        -# = f.input :toggle_cc, label: "Cc?", input_html: { type: "checkbox" }
         = f.input :cc_addr, 
           required: false, 
           label: 'Cc Address(es)', 
           placeholder: 'Enter Cc Addresses',
-          input_html: { rows: "10", class: "u-text-monospace" },
           as: :text,
           icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
-        %span.ccEmailHelpBlock
-        %br
-        %span.ccEmailErrorBlock
+        -# = f.input :toggle_bcc, label: "Bcc?", input_html: { type: "checkbox" }
         = f.input :bcc_addr, 
           required: false, 
           label: 'Bcc Address(es)', 
           placeholder: 'Enter Bcc Addresses',
-          input_html: { rows: "10", class: "u-text-monospace" },
           as: :text,
           icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
-        %span.bccEmailHelpBlock
-        %br
-        %span.bccEmailErrorBlock
         = f.input :subject, 
           required: true, 
           label: 'Subject', 
           placeholder: 'Enter Subject',
-          hint: 'Enter subject line'
+          icon_hint: 'Enter subject line'
         = f.input :htmlbody,
           label: "HTML Body",
           placeholder: "Enter HTML Email Body",
           input_html: {rows: "15", class: "u-text-monospace"},
           as: :text,
           required: true,
-          hint: 'Enter HTML Text of your email'
+          icon_hint: 'Enter HTML Text of your email'
         = f.input :textbody,        
           label: "Text Body",
           placeholder: "Enter Text Email Body",
           input_html: {rows: "15", class: "u-text-monospace"},
           as: :text,
           required: true,
-          hint: 'Enter Plain Text of your email'
+          icon_hint: 'Enter Plain Text of your email'
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
