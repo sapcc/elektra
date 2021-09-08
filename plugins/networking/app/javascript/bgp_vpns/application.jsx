@@ -11,8 +11,8 @@ const App = (props) => {
   return (
     <StateProvider reducer={reducer} initialState={initialState}>
       <BrowserRouter basename={`${window.location.pathname}?r=`}>
-        <Route path="/" component={BgpVpns} />
-        <Route path="/:id" component={ShowBgpVpn} />
+        {/* <Route path="/" component={BgpVpns} />
+        <Route path="/:id" component={ShowBgpVpn} /> */}
       </BrowserRouter>
     </StateProvider>
   )

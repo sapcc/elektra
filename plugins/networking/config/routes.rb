@@ -15,7 +15,14 @@ Networking::Engine.routes.draw do
     get 'security_groups', on: :collection
   end
 
-  resources :bgp_vpns, only: %i[index show], path: 'bgp-vpns'
+  resources :bgp_vpns, only: %i[index show], path: 'bgp-vpns' do 
+    get 'routers', on: :collection
+    member do 
+      get 'router-associations' => 'bgp_vpns#router_associations'
+      post 'router-associations' => 'bgp_vpns#create_router_association'
+      delete 'router-associations' => 'bgp_vpns#destroy_router_association'
+    end
+  end
 
   resources :security_groups, except: %i[edit new], path: 'security-groups' do
     resources :rules, module: :security_groups

@@ -11,6 +11,34 @@ module ServiceLayer
         return e.code, e.messages.join(', ')
       end
 
+      def router_associations(bgpvpn_id)
+        # byebug
+        return 200, elektron_networking.get("bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations").body
+      rescue Elektron::Errors::ApiResponse => e
+        return e.code, e.messages.join(', ')
+      end
+
+      def create_router_association(bgpvpn_id,router_id)
+        return 201, elektron_networking.post("bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations") do 
+          {
+            "router_association": {
+              "router_id": router_id
+            }
+          }
+        end.body
+      rescue Elektron::Errors::ApiResponse => e
+        return e.code, e.messages.join(', ')
+      end
+
+      def delete_router_association(bgpvpn_id,router_association_id)
+        elektron_networking.delete(
+          "bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations/#{router_association_id}"
+        )
+        return 204
+      rescue Elektron::Errors::ApiResponse => e
+        return e.code, e.messages.join(', ')
+      end
+
      
       # def new_network(attributes = {})
       #   network_map.call(attributes)

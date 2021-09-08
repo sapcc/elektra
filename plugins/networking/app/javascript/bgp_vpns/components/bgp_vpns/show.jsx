@@ -1,6 +1,8 @@
+import React from "react"
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
 import { useGlobalState } from "../../stateProvider"
+import BgpVpnRouters from "./bgpvpnRouters"
 
 const Row = ({ label, value, children }) => {
   label = (label && label.replace("_", " ")) || ""
@@ -16,7 +18,7 @@ const Show = () => {
   const [show, setShow] = React.useState(true)
   const history = useHistory()
   const { id } = useParams()
-  const { bgpvpns, projects, routers } = useGlobalState()
+  const { bgpvpns, projects: cachedProjects } = useGlobalState()
 
   const item = React.useMemo(() => {
     if (!id) return
@@ -54,47 +56,21 @@ const Show = () => {
         ) : !item ? (
           <span>Could not find BGP VPN {id}</span>
         ) : (
-          <Tabs defaultActiveKey={1}>
+          <Tabs defaultActiveKey={1} id="routers" mountOnEnter={true}>
             <Tab eventKey={1} title="Overview">
               <table className="table">
                 <tbody>
                   <Row label="ID" value={item.id} />
                   <Row label="Name" value={item.name} />
-                  <Row label="Routers">
-                    {(item.routers || []).map((router, i) => (
-                      <div>
-                        {routers.data[router] ? (
-                          <span>
-                            {routers.data[router].name}
-                            <br />
-
-                            <span className="info-text">
-                              Scope:{" "}
-                              {routers.data[router].payload?.scope?.domain_name}
-                              /
-                              {
-                                routers.data[router].payload?.scope
-                                  ?.project_name
-                              }
-                              <br />
-                              ID: {router}
-                            </span>
-                          </span>
-                        ) : (
-                          router
-                        )}
-                      </div>
-                    ))}
-                  </Row>
                   <Row label="Project">
-                    {projects.data[item.project_id] ? (
+                    {cachedProjects.data[item.project_id] ? (
                       <React.Fragment>
                         <a href={`/_/${item.project_id}`} target="_blank">
                           {
-                            projects.data[item.project_id].payload?.scope
+                            cachedProjects.data[item.project_id].payload?.scope
                               ?.domain_name
                           }
-                          /{projects.data[item.project_id].name}
+                          /{cachedProjects.data[item.project_id].name}
                         </a>
                         <br />
                         <span className="info-text">{item.project_id}</span>
@@ -111,32 +87,7 @@ const Show = () => {
               </table>
             </Tab>
             <Tab eventKey={2} title="Routers">
-              <table className="table">
-                <tbody>
-                  <thead>
-                    <tr>
-                      <th>Name/ID</th>
-                      <th>Networks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {item.routers.map((router, i) => (
-                      <tr key={router}>
-                        <td>
-                          {routers.data[router]?.name}
-                          <br />
-                          <span className="info-text">{router}</span>
-                        </td>
-                        <td>
-                          <pre>
-                            {JSON.stringify(routers.data[router], null, 2)}
-                          </pre>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </tbody>
-              </table>
+              <BgpVpnRouters bgpvpn={item} />
             </Tab>
           </Tabs>
         )}

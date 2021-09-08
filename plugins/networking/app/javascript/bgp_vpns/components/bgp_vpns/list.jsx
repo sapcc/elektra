@@ -36,13 +36,15 @@ const loadCachedObjectsAsMap = (ids) =>
     )
 
 const BgpVpns = () => {
-  const { bgpvpns, projects, routers } = useGlobalState()
+  const {
+    bgpvpns,
+    projects: cachedProjects,
+    routers: cachedRouters,
+  } = useGlobalState()
   const dispatch = useDispatch()
   const [filter, setFilter] = React.useState()
 
-  // const [projects, setProjects] = React.useState({})
-  // const [routers, setRouters] = React.useState({})
-
+  // load bgp vpns
   React.useEffect(() => {
     dispatch({ type: "REQUEST_BGP_VPNS" })
     apiClient
@@ -55,6 +57,7 @@ const BgpVpns = () => {
       )
   }, [])
 
+  // load objects from cache
   React.useEffect(() => {
     if (!bgpvpns.items || bgpvpns.items.length === 0) return
 
@@ -87,7 +90,9 @@ const BgpVpns = () => {
           text="Filters by name or ID"
         />
       </div>
-      {bgpvpns.isFetching ? (
+      {!policy.isAllowed("networking:bgp_vpn_list") ? (
+        <span>You are not allowed to see this page</span>
+      ) : bgpvpns.isFetching ? (
         <span>
           <span className="spinner" />
           Loading...
@@ -116,14 +121,14 @@ const BgpVpns = () => {
                   <span className="info-text">{item.id}</span>
                 </td>
                 <td>
-                  {projects.data[item.project_id] ? (
+                  {cachedProjects.data[item.project_id] ? (
                     <React.Fragment>
                       <a href={`/_/${item.project_id}`} target="_blank">
                         {
-                          projects.data[item.project_id].payload?.scope
+                          cachedProjects.data[item.project_id].payload?.scope
                             ?.domain_name
                         }
-                        /{projects.data[item.project_id].name}
+                        /{cachedProjects.data[item.project_id].name}
                       </a>
                       <br />
                       <span className="info-text">{item.project_id}</span>
@@ -135,9 +140,9 @@ const BgpVpns = () => {
                 <td>
                   {(item.routers || []).map((r, i) => (
                     <div key={i}>
-                      {routers.data[r] ? (
+                      {cachedRouters.data[r] ? (
                         <React.Fragment>
-                          {routers.data[r].name}
+                          {cachedRouters.data[r].name}
                           <br />
                           <span className="info-text">{r}</span>
                         </React.Fragment>

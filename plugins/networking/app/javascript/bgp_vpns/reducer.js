@@ -1,5 +1,5 @@
 const initialState = {
-  data: {},
+  payload: {},
   isFetching: false,
   error: null,
   updatedAt: null,
@@ -7,16 +7,16 @@ const initialState = {
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
-    case "REQUEST_PROJECTS":
+    case "request":
       return { ...state, isFetching: true, error: null }
-    case "RECEIVE_PROJECTS":
+    case "receive":
       return {
         ...state,
-        data: Object.assign(state.data, action.data),
+        payload: action.payload,
         isFetching: false,
         updatedAt: Date.now(),
       }
-    case "RECEIVE_PROJECTS_ERROR":
+    case "error":
       return {
         ...state,
         isFetching: false,
