@@ -5,77 +5,59 @@ import React from "react"
 import * as apiClient from "../../apiClient"
 import { useGlobalState, useDispatch } from "../../stateProvider"
 
-/*
-cached_object_type: "bgpvpn"
-export_targets: []
-id: "1e44fe36-4ea0-4fb2-8223-0a9bb7ca234a"
-import_targets: []
-local_pref: null
-name: "test-vpn"
-networks: []
-ports: []
-project_id: "f7bbfa9fbdb84ac2811452e3ef0f5431"
-route_distinguishers: []
-route_targets: []
-routers: []
-search_label: ""
-shared: true
-tenant_id: "f7bbfa9fbdb84ac2811452e3ef0f5431"
-*/
-
-const loadCachedObjectsAsMap = (ids) =>
-  apiClient
-    .get(`../../../../cache/objects-by-ids`, {
-      ids,
-    })
-    .then((items) =>
-      items.reduce((map, item) => {
-        map[item.id] = item
-        return map
-      }, {})
-    )
-
 const BgpVpns = () => {
-  const {
-    bgpvpns,
-    projects: cachedProjects,
-    routers: cachedRouters,
-  } = useGlobalState()
+  const { bgpvpns, cachedProjects, cachedRouters } = useGlobalState()
+  const cachedProjectsData = React.useMemo(
+    () => cachedProjects.data || {},
+    [cachedProjects.data]
+  )
+  const cachedRoutersData = React.useMemo(
+    () => cachedRouters.data || {},
+    [cachedRouters.data]
+  )
   const dispatch = useDispatch()
   const [filter, setFilter] = React.useState()
 
   // load bgp vpns
   React.useEffect(() => {
-    dispatch({ type: "REQUEST_BGP_VPNS" })
+    dispatch("bgpvpns", "request")
     apiClient
       .get("../../bgp-vpns")
-      .then((data) =>
-        dispatch({ type: "RECEIVE_BGP_VPNS", items: data.bgpvpns })
-      )
-      .catch((error) =>
-        dispatch({ type: "RECEIVE_BGP_VPNS_ERROR", error: error.message })
-      )
+      .then((data) => dispatch("bgpvpns", "receive", { items: data.bgpvpns }))
+      .catch((error) => dispatch("bgpvpns", "error", { error: error.message }))
   }, [])
 
   // load objects from cache
   React.useEffect(() => {
-    if (!bgpvpns.items || bgpvpns.items.length === 0) return
+    if (!bgpvpns.items) return
 
-    // load projects by ids from elektra cache
-    dispatch({ type: "REQUEST_PROJECTS" })
-    loadCachedObjectsAsMap(bgpvpns.items.map((i) => i.project_id)).then(
-      (data) => dispatch({ type: "RECEIVE_PROJECTS", data })
+    const ids = bgpvpns.items.reduce(
+      (list, i) => list.concat(i.routers, [i.project_id]),
+      []
     )
 
-    // load routers from elektra cache
-    dispatch({ type: "REQUEST_ROUTERS" })
-    loadCachedObjectsAsMap(bgpvpns.items.map((i) => i.routers).flat()).then(
-      (data) => dispatch({ type: "RECEIVE_ROUTERS", data })
-    )
+    apiClient
+      .get(`../../../../cache/objects-by-ids`, {
+        ids,
+      })
+      .then((items) => {
+        // group items by cache_type and i
+        // result: {"project": {id: item}, "router": {id: item}}
+        const data = items.reduce((map, i) => {
+          map[i.cached_object_type] = map[i.cached_object_type] || {}
+          map[i.cached_object_type][i.id] = i
+          return map
+        }, {})
+
+        // set data to global state
+        dispatch("cachedProjects", "receive", { data: data["project"] })
+        dispatch("cachedRouters", "receive", { data: data["router"] })
+      })
   }, [bgpvpns.items])
 
+  // filter items by name or id
   const filteredItems = React.useMemo(() => {
-    if (!filter || filter.length === 0) return bgpvpns.items
+    if (!filter || filter.length === 0) return bgpvpns.items || []
     return bgpvpns.items.filter(
       (i) => i.name.indexOf(filter) >= 0 || i.id.indexOf(filter) >= 0
     )
@@ -121,14 +103,14 @@ const BgpVpns = () => {
                   <span className="info-text">{item.id}</span>
                 </td>
                 <td>
-                  {cachedProjects.data[item.project_id] ? (
+                  {cachedProjectsData[item.project_id] ? (
                     <React.Fragment>
                       <a href={`/_/${item.project_id}`} target="_blank">
                         {
-                          cachedProjects.data[item.project_id].payload?.scope
+                          cachedProjectsData[item.project_id].payload?.scope
                             ?.domain_name
                         }
-                        /{cachedProjects.data[item.project_id].name}
+                        /{cachedProjectsData[item.project_id].name}
                       </a>
                       <br />
                       <span className="info-text">{item.project_id}</span>
@@ -140,9 +122,9 @@ const BgpVpns = () => {
                 <td>
                   {(item.routers || []).map((r, i) => (
                     <div key={i}>
-                      {cachedRouters.data[r] ? (
+                      {cachedRoutersData[r] ? (
                         <React.Fragment>
-                          {cachedRouters.data[r].name}
+                          {cachedRoutersData[r].name}
                           <br />
                           <span className="info-text">{r}</span>
                         </React.Fragment>

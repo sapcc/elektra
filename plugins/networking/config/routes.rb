@@ -20,7 +20,7 @@ Networking::Engine.routes.draw do
     member do 
       get 'router-associations' => 'bgp_vpns#router_associations'
       post 'router-associations' => 'bgp_vpns#create_router_association'
-      delete 'router-associations' => 'bgp_vpns#destroy_router_association'
+      delete 'router-associations/:router_association_id' => 'bgp_vpns#destroy_router_association'
     end
   end
 

@@ -31,7 +31,6 @@ module Networking
       subnets = services.networking.subnets(limit: 500, fields: [:name,:cidr,:network_id,:project_id,:id])
 
       routers.each do |router|
-        ports
         ports.select{ |port| port.device_id === router.id }.each do |port|
           router.subnets = subnets.select{|subnet| subnet.network_id === port.network_id}
         end

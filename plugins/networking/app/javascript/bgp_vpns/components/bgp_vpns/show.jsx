@@ -18,10 +18,14 @@ const Show = () => {
   const [show, setShow] = React.useState(true)
   const history = useHistory()
   const { id } = useParams()
-  const { bgpvpns, projects: cachedProjects } = useGlobalState()
+  const { bgpvpns, cachedProjects } = useGlobalState()
+  const cachedProjectsData = React.useMemo(
+    () => cachedProjects.data || {},
+    [cachedProjects.data]
+  )
 
   const item = React.useMemo(() => {
-    if (!id) return
+    if (!id || bgpvpns.isFetching || !bgpvpns.items) return
     return bgpvpns.items.find((i) => i.id === id)
   }, [bgpvpns.items, id])
 
@@ -63,14 +67,14 @@ const Show = () => {
                   <Row label="ID" value={item.id} />
                   <Row label="Name" value={item.name} />
                   <Row label="Project">
-                    {cachedProjects.data[item.project_id] ? (
+                    {cachedProjectsData[item.project_id] ? (
                       <React.Fragment>
                         <a href={`/_/${item.project_id}`} target="_blank">
                           {
-                            cachedProjects.data[item.project_id].payload?.scope
+                            cachedProjectsData[item.project_id].payload?.scope
                               ?.domain_name
                           }
-                          /{cachedProjects.data[item.project_id].name}
+                          /{cachedProjectsData[item.project_id].name}
                         </a>
                         <br />
                         <span className="info-text">{item.project_id}</span>
