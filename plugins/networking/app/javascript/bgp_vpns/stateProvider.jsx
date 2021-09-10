@@ -1,37 +1,7 @@
 import React from "react"
-
+import reducer from "./defaultReducer"
 // This module provides the state provider with a default reducer, which is used
 // several times. This makes it possible to manage several states dynamically.
-// default initial state
-const initialState = {
-  isFetching: false,
-  error: null,
-  updatedAt: null,
-}
-
-// default reducer
-const reducer = (state = initialState, action = {}) => {
-  switch (action.type) {
-    case "request":
-      return { ...state, isFetching: true, error: null }
-    case "receive":
-      const { type, ...payload } = action
-      return {
-        ...state,
-        ...payload,
-        isFetching: false,
-        updatedAt: Date.now(),
-      }
-    case "error":
-      return {
-        ...state,
-        isFetching: false,
-        error: action.error,
-      }
-    default:
-      return state
-  }
-}
 
 /**
  * Hook to create multiple reducers
@@ -44,7 +14,7 @@ const useReducers = (reducerKeys) => {
   const state = {}
   const dispatchFunc = {}
   for (let key of reducerKeys) {
-    const [s, d] = React.useReducer(reducer, initialState)
+    const [s, d] = React.useReducer(reducer, reducer())
     state[key] = s
     dispatchFunc[key] = d
   }

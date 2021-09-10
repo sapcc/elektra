@@ -5,7 +5,7 @@ import ShowBgpVpn from "./components/bgp_vpns/show"
 import StateProvider from "./stateProvider"
 
 // render all components inside a hash router
-const App = (props) => {
+const App = () => {
   return (
     <StateProvider
       stateKeys={[
@@ -17,7 +17,7 @@ const App = (props) => {
     >
       <BrowserRouter basename={`${window.location.pathname}?r=`}>
         <Route path="/" component={BgpVpns} />
-        <Route path="/:id" component={ShowBgpVpn} />
+        <Route path="/:id/:tab?" component={ShowBgpVpn} />
       </BrowserRouter>
     </StateProvider>
   )

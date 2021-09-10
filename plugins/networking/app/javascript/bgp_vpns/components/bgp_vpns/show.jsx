@@ -17,11 +17,20 @@ const Row = ({ label, value, children }) => {
 const Show = () => {
   const [show, setShow] = React.useState(true)
   const history = useHistory()
-  const { id } = useParams()
+  const { id, tab } = useParams()
   const { bgpvpns, cachedProjects } = useGlobalState()
   const cachedProjectsData = React.useMemo(
     () => cachedProjects.data || {},
     [cachedProjects.data]
+  )
+
+  const [currentTab, setCurrentTab] = React.useState(tab ? parseInt(tab) : 1)
+  const selectTab = React.useCallback(
+    (newTab) => {
+      setCurrentTab(newTab)
+      history.replace(`/${id}/${newTab}`)
+    },
+    [id]
   )
 
   const item = React.useMemo(() => {
@@ -60,7 +69,12 @@ const Show = () => {
         ) : !item ? (
           <span>Could not find BGP VPN {id}</span>
         ) : (
-          <Tabs defaultActiveKey={1} id="routers" mountOnEnter={true}>
+          <Tabs
+            defaultActiveKey={currentTab}
+            id="routers"
+            mountOnEnter={true}
+            onSelect={(key) => selectTab(key)}
+          >
             <Tab eventKey={1} title="Overview">
               <table className="table">
                 <tbody>

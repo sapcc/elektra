@@ -4,41 +4,51 @@ import { useDispatch, useGlobalState } from "../../stateProvider"
 import { Alert } from "react-bootstrap"
 import AddRouterAssociation from "./addRouterAssociation"
 import AssociationItem from "./associationItem"
+import reducer from "../../defaultReducer"
 
-const reducer = (state = { items: [] }, action = {}) => {
-  switch (action.type) {
-    case "load":
-      return { ...state, isFetching: true, error: null }
-    case "receive":
-      return {
-        ...state,
-        items: action.items,
-        isFetching: false,
-        updatedAt: Date.now(),
-      }
-    case "error":
-      return {
-        ...state,
-        isFetching: false,
-        error: action.error,
-      }
-    default:
-      return state
-  }
-}
-
+/**
+ * The bgp vpns contain an attribute "routers", which contains the IDs of associated routers.
+ * In addition to the routers to which the user has access, this array can also contain
+ * routers from other scopes (managed by admin).
+ *
+ * In this component we explicitly load the associations of current bgpvpn.
+ * However, these associations only contain the routers accessible by the user.
+ * So there can be a discrepancy between the "routers" array from the bgpvpn and the associations.
+ *
+ * In the UI we show the accessible routers as editable associations and the routers from
+ * the external scope as non-editable ones.
+ *
+ * The enormous complicity arises when new associations are created or existing ones are removed.
+ * In this case we not only have to manage the associations state, but also the "routers"
+ * array directly on the bgpvpn.
+ * @param {object} props, contains the selected bgpvpn (show)
+ * @returns react component
+ */
 const BgpVpnRouters = ({ bgpvpn }) => {
+  // routers in the elektra cache
   const cachedRoutersData = useGlobalState("cachedRouters").data || {}
+  // routers from the api
   const availableRouters = useGlobalState("availableRouters")
-  const bgpvpns = useGlobalState("bgpvpns")
   const bgpvpnRouterIDs = React.useMemo(() => bgpvpn.routers || [])
   const globalDispatch = useDispatch()
+  // state variables to manage the visibility of add button
   const [addMode, setAddMode] = React.useState(false)
   const [isAdding, setIsAdding] = React.useState(false)
+  const [isDeleting, setIsDeleting] = React.useState({})
 
+  const isMounted = React.useRef(false)
+
+  React.useEffect(() => {
+    isMounted.current = true // Will set it to true on mount ...
+    return () => {
+      isMounted.current = false
+    } // ... and to false on unmount
+  }, [])
+
+  // local state of associations
   const [associations, associationDispatch] = React.useReducer(
     reducer,
-    reducer()
+    reducer({ items: [] })
   )
 
   const url = React.useMemo(
@@ -48,40 +58,39 @@ const BgpVpnRouters = ({ bgpvpn }) => {
 
   // delete router association
   const handleDeleteAssociation = React.useCallback(
-    (id) =>
+    (id) => {
+      associationDispatch({ type: "resetError" })
+      setIsDeleting((state) => ({ ...state, [id]: true }))
+
       apiClient
         .del(`${url}/${id}`)
         .then(() => {
-          // remove from associations
           if (!associations.items) return
-          const index = associations.items.findIndex((i) => i.id === id)
-          if (index < 0) return
-          const items = associations.items
-          let association = items[index]
-          items.splice(index, 1)
-          associationDispatch({ type: "receive", items })
+          const association = associations.items.find((i) => i.id === id)
+          if (isMounted.current)
+            associationDispatch({ type: "remove", name: "items", id })
           return association
         })
         .then((association) => {
-          if (!bgpvpns.items) return
-          if (!bgpvpn || !bgpvpn.routers) return
-          const index = bgpvpn.routers.indexOf(association?.router_id)
-          if (index < 0) return
-          const indexOfBgpvpn = bgpvpns.items.findIndex(
-            (i) => i.id === bgpvpn.id
-          )
-          if (indexOfBgpvpn < 0) return
-          const items = bgpvpns.items.slice()
-          const routers = bgpvpn.routers.slice()
-          routers.splice(index, 1)
-          items[indexOfBgpvpn] = { ...bgpvpn, routers }
-
-          globalDispatch("bgpvpns", "receive", { items })
+          // remove from the "routers" array of the current bgp vpn
+          if (!association?.router_id || !bgpvpn) return
+          const item = { ...bgpvpn }
+          item.routers = item.routers
+            .slice()
+            .filter((id) => id !== association.router_id)
+          globalDispatch("bgpvpns", "update", { name: "items", item })
         })
-        .catch((error) =>
-          associationDispatch({ type: "error", error: error.message })
-        ),
-    [url, associations, bgpvpns, bgpvpn]
+        .then(
+          () =>
+            isMounted.current &&
+            setIsDeleting((state) => ({ ...state, [id]: false }))
+        )
+        .catch(
+          (error) =>
+            isMounted.current && associationDispatch({ type: "error", error })
+        )
+    },
+    [url, associations, bgpvpn, associationDispatch]
   )
 
   // create router association
@@ -89,36 +98,56 @@ const BgpVpnRouters = ({ bgpvpn }) => {
     (router_id) => {
       setAddMode(false)
       setIsAdding(true)
+      associationDispatch({ type: "resetError" })
       apiClient
         .post(`${url}`, { router_id })
         .then((data) => {
-          const items = associations.items.slice()
-          items.unshift(data.router_association)
-          associationDispatch({ type: "receive", items })
+          // add to the current
+          if (isMounted.current)
+            associationDispatch({
+              type: "add",
+              name: "items",
+              item: data.router_association,
+            })
         })
-        .catch((error) =>
-          associationDispatch({ type: "error", error: error.message })
+        .then(() => {
+          // add router_id to the "routers" array of the current bgp vpn
+          if (!bgpvpn || !bgpvpn.routers) return
+          const item = { ...bgpvpn }
+          const index = item.routers.indexOf(router_id)
+          // ignore if already in the list
+          if (index >= 0) return
+          item.routers = item.routers.slice()
+          item.routers.push(router_id)
+
+          globalDispatch("bgpvpns", "update", { name: "items", item })
+        })
+        .catch(
+          (error) =>
+            isMounted.current && associationDispatch({ type: "error", error })
         )
-        .finally(() => setIsAdding(false))
+        .finally(() => isMounted.current && setIsAdding(false))
     },
-    [url, associations]
+    [url, bgpvpn, associationDispatch]
   )
 
   // load bgp vpn router associations
   React.useEffect(() => {
-    associationDispatch({ type: "load" })
+    associationDispatch({ type: "request" })
     apiClient
       .get(url)
       .then((data) => {
-        associationDispatch({
-          type: "receive",
-          items: data.router_associations,
-        })
+        if (isMounted.current)
+          associationDispatch({
+            type: "receive",
+            items: data.router_associations,
+          })
       })
-      .catch((error) =>
-        associationDispatch({ type: "error", error: error.message })
+      .catch(
+        (error) =>
+          isMounted.current && associationDispatch({ type: "error", error })
       )
-  }, [])
+  }, [associationDispatch])
 
   // load available routers (for selectbox)
   // available routers are also used for subnet infos
@@ -149,11 +178,14 @@ const BgpVpnRouters = ({ bgpvpn }) => {
         globalDispatch("availableRouters", "receive", { data: routersByID })
       })
       .catch((error) =>
-        globalDispatch("availableRouters", "receive", { error: error.message })
+        globalDispatch("availableRouters", "receive", {
+          error,
+        })
       )
   }, [availableRouters, associations.items])
 
   const foreignRouterIDs = React.useMemo(() => {
+    if (!associations.items) return []
     const ids = associations.items.map((i) => i.router_id)
     return bgpvpnRouterIDs.filter((id) => ids.indexOf(id) < 0)
   }, [associations.items, bgpvpnRouterIDs])
@@ -166,7 +198,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
     )
   }, [availableRouters.data, associations.items])
 
-  if (associations.isFetching || routers.isFetching)
+  if (associations.isFetching || availableRouters.isFetching)
     return (
       <span>
         <span className="spinner" />
@@ -177,7 +209,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
   return (
     <React.Fragment>
       {associations.error && (
-        <Alert bsStyle="danger">{associations.error}</Alert>
+        <Alert bsStyle="danger">{associations.error.toString()}</Alert>
       )}
 
       <table className="table">
@@ -203,6 +235,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
               {associations.items.map((association, i) => (
                 <AssociationItem
                   key={i}
+                  isDeleting={isDeleting[association.id]}
                   onDelete={() => handleDeleteAssociation(association.id)}
                   routerId={association.router_id}
                   cachedData={cachedRoutersData[association.router_id]}
@@ -245,22 +278,24 @@ const BgpVpnRouters = ({ bgpvpn }) => {
               </div>
             </td>
             <td className="snug">
-              {addMode ? (
-                <button
-                  onClick={() => setAddMode(false)}
-                  className="btn btn-default btn-sm"
-                >
-                  Cancel
-                </button>
-              ) : (
-                <button
-                  disabled={isAdding}
-                  onClick={() => setAddMode(true)}
-                  className="btn btn-success btn-sm"
-                >
-                  <i className="fa fa-plus fa-fw" />
-                </button>
-              )}
+              <div className="pull-right">
+                {addMode ? (
+                  <button
+                    onClick={() => setAddMode(false)}
+                    className="btn btn-default btn-sm"
+                  >
+                    Cancel
+                  </button>
+                ) : (
+                  <button
+                    disabled={isAdding}
+                    onClick={() => setAddMode(true)}
+                    className="btn btn-success btn-sm"
+                  >
+                    <i className="fa fa-plus fa-fw" />
+                  </button>
+                )}
+              </div>
             </td>
           </tr>
         </tbody>

@@ -1,5 +1,24 @@
-const Item = ({ routerId, cachedData, router, onDelete, isFetching }) => {
-  const [isDeleting, setIsDeleting] = React.useState(false)
+const Item = ({
+  routerId,
+  cachedData,
+  router,
+  onDelete,
+  isFetching,
+  isDeleting,
+}) => {
+  const [confirm, setConfirm] = React.useState(false)
+  let timer
+
+  const getConfirmation = React.useCallback(() => {
+    if (timer) clearTimeout(timer)
+    setConfirm(true)
+    timer = setTimeout(() => setConfirm(false), 5000)
+  }, [])
+
+  const remove = React.useCallback(() => {
+    setConfirm(false)
+    onDelete()
+  }, [onDelete])
 
   return (
     <tr>
@@ -53,14 +72,11 @@ const Item = ({ routerId, cachedData, router, onDelete, isFetching }) => {
         {onDelete && (
           <button
             disabled={isDeleting}
-            onClick={() => {
-              if (isDeleting) return
-              setIsDeleting(true)
-              onDelete().finally(() => setIsDeleting(false))
-            }}
-            className="btn btn-default btn-sm"
+            onClick={() => (confirm ? remove() : getConfirmation())}
+            className={`btn btn-${confirm ? "danger" : "default"} btn-sm`}
           >
             {isDeleting && <span className="spinner" />}
+            {confirm && "Confirm"}
             <i className="fa fa-trash fa-fw" />
           </button>
         )}

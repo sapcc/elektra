@@ -16,7 +16,7 @@ module Networking
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if code.to_i >= 400
-        render json: {errors: e.messages}, status: code
+        render json: {errors: bgp_vpns}, status: code
       else
         render json: bgp_vpns
       end 
@@ -47,7 +47,7 @@ module Networking
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if code.to_i >= 400
-        render json: {errors: e.messages}, status: code
+        render json: {errors: router_associations}, status: code
       else
         render json: router_associations
       end 
@@ -59,19 +59,19 @@ module Networking
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if code.to_i >= 400
-        render json: {errors: e.messages}, status: code
+        render json: {errors: router_association}, status: code
       else
         render json: router_association
       end 
     end
 
     def destroy_router_association
-      code = services.networking.delete_router_association(params[:id],params[:router_association_id])
+      code, errors = services.networking.delete_router_association(params[:id],params[:router_association_id])
 
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if code.to_i >= 400
-        render json: {errors: e.messages}, status: code
+        render json: {errors: errors}, status: code
       else
         head code
       end 

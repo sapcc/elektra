@@ -32,7 +32,11 @@ const AddRouterAssociation = ({ routers, onSelect }) => {
           </MenuItem>
         ))}
       </DropdownButton>
-      <Button bsStyle="primary" onClick={() => onSelect(routerID)}>
+      <Button
+        bsStyle="primary"
+        onClick={() => onSelect(routerID)}
+        disabled={!routerID || routerID.length === ""}
+      >
         Add
       </Button>
     </ButtonGroup>

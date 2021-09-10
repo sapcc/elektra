@@ -1,9 +1,10 @@
 import { SearchField } from "lib/components/search_field"
-import { Alert } from "react-bootstrap"
+import { Alert, MenuItem, Dropdown } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import React from "react"
 import * as apiClient from "../../apiClient"
 import { useGlobalState, useDispatch } from "../../stateProvider"
+import { useHistory } from "react-router-dom"
 
 const BgpVpns = () => {
   const { bgpvpns, cachedProjects, cachedRouters } = useGlobalState()
@@ -17,6 +18,7 @@ const BgpVpns = () => {
   )
   const dispatch = useDispatch()
   const [filter, setFilter] = React.useState()
+  const history = useHistory()
 
   // load bgp vpns
   React.useEffect(() => {
@@ -24,7 +26,7 @@ const BgpVpns = () => {
     apiClient
       .get("../../bgp-vpns")
       .then((data) => dispatch("bgpvpns", "receive", { items: data.bgpvpns }))
-      .catch((error) => dispatch("bgpvpns", "error", { error: error.message }))
+      .catch((error) => dispatch("bgpvpns", "error", { error }))
   }, [])
 
   // load objects from cache
@@ -135,7 +137,18 @@ const BgpVpns = () => {
                   ))}
                 </td>
                 <td>{`${item.shared}`}</td>
-                <td></td>
+                <td>
+                  <Dropdown id={`bgpvpns-dropdown-${item.id}`} pullRight>
+                    <Dropdown.Toggle noCaret className="btn-sm">
+                      <span className="fa fa-cog" />
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="super-colors">
+                      <MenuItem onClick={() => history.push(`/${item.id}/2`)}>
+                        Manage Routers
+                      </MenuItem>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </td>
               </tr>
             ))}
           </tbody>
