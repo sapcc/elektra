@@ -33,7 +33,7 @@ export default ({ securityGroup, handleDelete, project }) => {
           securityGroup.project_id
         )}
       </td>
-      <td>{`${securityGroup.shared}`}</td>
+      <td>{securityGroup.shared ? "Yes" : "No"}</td>
       <td>
         {(canDelete || canUpdate) && securityGroup.name != "default" && (
           <div className="btn-group">
