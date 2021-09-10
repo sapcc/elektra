@@ -21,9 +21,7 @@ module Networking
     end
 
     def index
-      security_groups = services.networking.security_groups(
-        tenant_id: @scoped_project_id
-      )
+      security_groups = services.networking.security_groups
 
       # byebug
       render json: {
