@@ -8,12 +8,15 @@ import EditSecurityGroupModal from "../containers/security_groups/edit"
 import SecurityGroupRules from "../containers/security_group_rules/list"
 import NewSecurityGroupRuleModal from "../containers/security_group_rules/new"
 
+import Title from "./title"
+
 // render all components inside a hash router
 export default (props) => {
   //console.log(props)
   return (
     <HashRouter /*hashType="noslash"*/>
       <React.Fragment>
+        <Title />
         <Switch>
           {policy.isAllowed("networking:rule_list") && (
             <Route
