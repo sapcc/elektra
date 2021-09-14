@@ -3,6 +3,8 @@
 module Compute
   # Represents Openstack Flavor
   class Flavor < Core::ServiceLayer::Model
+    # avoid . and /
+    validates :id, format: {with: /\A[^\.\/]*\z/}
     def to_s
       "#{name}, #{vcpus} VCPUs, #{disk}GB Disk, #{ram}MB Ram"
     end
@@ -28,7 +30,7 @@ module Compute
       # execute before callback
       before_save
       return false unless valid?
-
+      
       rescue_api_errors do
         begin
           @service.delete_flavor(id) unless id.blank?
@@ -59,7 +61,7 @@ module Compute
         'swap'                        => read('swap'),
         'OS-FLV-EXT-DATA:ephemeral'   => ephemeral,
         'os-flavor-access:is_public'  => public?
-      }.delete_if { |_k, v| v.blank? }
+      }.delete_if { |_k, v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }
     end
   end
 end
