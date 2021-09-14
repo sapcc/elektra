@@ -23,8 +23,10 @@ window.activeAjaxCallsCount = window.activeAjaxCallsCount || 0
 var origFetch = window.fetch
 window.fetch = function () {
   window.activeAjaxCallsCount += 1
-
-  return origFetch.apply(undefined, arguments).finally(function () {
-    window.activeAjaxCallsCount -= 1
-  })
+  setTimeout(() => {
+    if (window.activeAjaxCallsCount > 0) window.activeAjaxCallsCount -= 1
+  }, 8000)
+  return origFetch
+    .apply(this, arguments)
+    .finally(() => (window.activeAjaxCallsCount -= 1))
 }
