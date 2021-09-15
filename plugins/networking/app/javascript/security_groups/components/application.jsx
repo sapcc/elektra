@@ -7,6 +7,7 @@ import EditSecurityGroupModal from "../containers/security_groups/edit"
 
 import SecurityGroupRules from "../containers/security_group_rules/list"
 import NewSecurityGroupRuleModal from "../containers/security_group_rules/new"
+import RBACs from "../containers/security_groups/rbacs"
 
 import Title from "./title"
 
@@ -43,6 +44,8 @@ export default (props) => {
             component={NewSecurityGroupRuleModal}
           />
         )}
+
+        <Route exact path="/:securityGroupId/rbacs" component={RBACs} />
       </React.Fragment>
     </HashRouter>
   )
