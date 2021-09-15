@@ -69,9 +69,8 @@ export const createAjaxHelper = (options = {}) => {
       (tag) => tag.getAttribute("name") == "csrf-token"
     )
     if (csrfToken)
-      instanceOptions.headers["x-csrf-token"] = csrfToken.getAttribute(
-        "content"
-      )
+      instanceOptions.headers["x-csrf-token"] =
+        csrfToken.getAttribute("content")
   }
 
   // console.log('instanceOptions',instanceOptions)

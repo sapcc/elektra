@@ -3,6 +3,8 @@ import { DefeatableLink } from "lib/components/defeatable_link"
 import { SearchField } from "lib/components/search_field"
 import SecurityGroupItem from "./item"
 import { AjaxPaginate } from "lib/components/ajax_paginate"
+import { pluginAjaxHelper } from "ajax_helper"
+const ajaxHelper = pluginAjaxHelper("networking")
 
 const List = ({ loadSecurityGroupsOnce, securityGroups, handleDelete }) => {
   const [searchTerm, setSearchTerm] = React.useState("")
@@ -24,19 +26,16 @@ const List = ({ loadSecurityGroupsOnce, securityGroups, handleDelete }) => {
       }, {})
     )
 
-    fetch(`../../cache/objects-by-ids?ids=${projectIDs.join(",")}`).then(
-      (response) => {
-        if (response.status < 400) {
-          response.json().then((items) => {
-            const itemsById = items.reduce((map, i) => {
-              map[i.id] = i
-              return map
-            }, {})
-            setCachedProjects(itemsById)
-          })
-        }
-      }
-    )
+    ajaxHelper
+      .get(`cache/objects-by-ids?ids=${projectIDs.join(",")}`)
+      .then((response) => {
+        const items = response.data
+        const itemsById = items.reduce((map, i) => {
+          map[i.id] = i
+          return map
+        }, {})
+        setCachedProjects(itemsById)
+      })
   }, [securityGroups.items])
 
   const filteredItems = React.useMemo(() => {
