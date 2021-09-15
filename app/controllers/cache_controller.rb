@@ -43,6 +43,17 @@ class CacheController < ::ScopeController
     render json: { items: [] }
   end
 
+  def objects_by_ids 
+    ids = params[:ids]
+    ids = ids.split(",") if ids.kind_of?(String)
+  
+    objects = ObjectCache.find_objects(include_scope: true) do |scope|
+      where_current_token_scope(scope).where(id: ids)
+    end
+
+    render json: objects
+  end
+
   def cache_objects
     type = params[:type]
     objects = params[:objects]

@@ -35,6 +35,7 @@ Rails.application.routes.draw do
         get 'live_search'
         get 'related-objects' => 'cache#related_objects'
         post 'objects' => 'cache#cache_objects'
+        get 'objects-by-ids' => 'cache#objects_by_ids'
       end
     end
   end

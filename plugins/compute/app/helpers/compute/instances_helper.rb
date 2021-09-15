@@ -45,7 +45,7 @@ module Compute
         groupd_images_map = images.each_with_object({}) do |image, map|
           next if image.name.nil?
 
-          hypervisor_type = image.hypervisor_type || 'bare metal'
+          hypervisor_type = image.hypervisor_type || 'baremetal'
           visibility = image.visibility
           visibility = 'snapshot' if image.image_type == 'snapshot'
           map[visibility] ||= {}

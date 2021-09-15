@@ -144,9 +144,11 @@ module Compute
       index = @availability_zones.index { |az| az.zoneName == prefered_availability_zone }
       az = @availability_zones.delete_at(index) if index
       @availability_zones.unshift(az) if az
-      # byebug
 
-      @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+      # @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+      # to get shared security groups the tenant_id filter should be ignored
+      @security_groups = services.networking.security_groups
+
       @private_networks = services.networking.project_networks(@scoped_project_id, "router:external"=>false) if services.networking.available?
 
       @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
