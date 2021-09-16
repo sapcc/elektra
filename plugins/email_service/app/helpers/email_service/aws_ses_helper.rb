@@ -140,7 +140,7 @@ module EmailService
         resp = ses_client.verify_domain_dkim({
           domain: identity, 
         })
-        logger.debug "verify dkim: #{resp} "
+        # logger.debug "verify dkim: #{resp} "
         status = "success"
         debugger
       rescue Aws::SES::Errors::ServiceError => error
@@ -371,23 +371,23 @@ module EmailService
           status = attrs.verification_attributes[identity].verification_status
           token = attrs.verification_attributes[identity].verification_token
           status, dkim = get_dkim_attributes([identity])
-          logger.debug "dkim_attributes : #{dkim}"
-          logger.debug "dkim[:dkim_attributes] : #{dkim[:dkim_attributes]}"
-          logger.debug "dkim[:dkim_attributes][identity] : #{dkim[:dkim_attributes][identity]}"
+          # logger.debug "dkim_attributes : #{dkim}"
+          # logger.debug "dkim[:dkim_attributes] : #{dkim[:dkim_attributes]}"
+          # logger.debug "dkim[:dkim_attributes][identity] : #{dkim[:dkim_attributes][identity]}"
           if dkim
             dkim_enabled = dkim[:dkim_attributes][identity][:dkim_enabled]
             dkim_tokens = dkim[:dkim_attributes][identity][:dkim_tokens]
             dkim_verification_status = dkim[:dkim_attributes][identity][:dkim_verification_status]
-            logger.debug "Status: #{status}"
-            logger.debug "dkim_enabled: #{dkim_enabled}"
-            logger.debug "dkim_tokens: #{dkim_tokens}"
-            logger.debug "dkim_verification_status: #{dkim_verification_status}"
+            # logger.debug "Status: #{status}"
+            # logger.debug "dkim_enabled: #{dkim_enabled}"
+            # logger.debug "dkim_tokens: #{dkim_tokens}"
+            # logger.debug "dkim_verification_status: #{dkim_verification_status}"
           end
           id += 1
           identity_hash = {id: id, identity: identity, status: status,\
            verification_token: token, dkim_enabled: dkim_enabled, \
            dkim_tokens: dkim_tokens, dkim_verification_status: dkim_verification_status }
-           logger.debug "identity_hash: #{identity_hash}"
+          #  logger.debug "identity_hash: #{identity_hash}"
           verified_identities.push(identity_hash)
         end
       rescue Aws::SES::Errors::ServiceError => error
