@@ -11,6 +11,7 @@ Networking::Engine.routes.draw do
   resources :security_groups, except: %i[edit new], path: 'security-groups' do
     get 'widget', on: :collection
     resources :rules, module: :security_groups
+    resources :rbacs, module: :security_groups, only: %i[index create destroy]
   end
 
   resources :routers do

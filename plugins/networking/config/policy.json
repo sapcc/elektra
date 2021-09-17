@@ -1,11 +1,11 @@
 {
-  "context_is_cloud_network_admin":  "role:cloud_network_admin",
-  "network_admin":  "role:network_admin",
+  "context_is_cloud_network_admin": "role:cloud_network_admin",
+  "network_admin": "role:network_admin",
   "network_viewer": "role:network_viewer",
   "member": "role:member or role:Member",
   "context_is_network_admin": "rule:context_is_cloud_network_admin or rule:network_admin",
   "context_is_network_editor": "rule:context_is_network_admin or rule:member",
-  "context_is_network_viewer":  "rule:context_is_network_editor or rule:network_viewer",
+  "context_is_network_viewer": "rule:context_is_network_editor or rule:network_viewer",
 
   "context_is_compute_admin_for_networking": "role:cloud_compute_admin or role:compute_admin",
 
@@ -45,13 +45,13 @@
 
   "networking:router_create": "rule:context_is_network_admin",
   "networking:router_update": "rule:context_is_network_admin and project_id:%(router.tenant_id)s",
-  "networking:router_get":    "rule:context_is_network_viewer",
+  "networking:router_get": "rule:context_is_network_viewer",
   "networking:router_delete": "rule:context_is_network_admin and project_id:%(router.tenant_id)s",
 
   "networking:port_create": "rule:context_is_network_admin",
-  "networking:port_list":   "rule:context_is_network_admin",
+  "networking:port_list": "rule:context_is_network_admin",
   "networking:port_widget": "rule:context_is_network_admin",
-  "networking:port_get":    "rule:context_is_network_viewer and (project_id:%(port.tenant_id)s or project_id:%(target.id)s)",
+  "networking:port_get": "rule:context_is_network_viewer and (project_id:%(port.tenant_id)s or project_id:%(target.id)s)",
   "networking:port_delete": "rule:context_is_network_admin and project_id:%(port.tenant_id)s",
   "networking:port_update": "rule:context_is_network_editor",
 
@@ -61,6 +61,10 @@
   "networking:rbac_policy_list": "rule:context_is_cloud_network_admin or (rule:context_is_network_viewer and project_id:%(network.tenant_id)s)",
   "networking:rbac_policy_create": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(network.tenant_id)s)",
   "networking:rbac_policy_delete": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(network.tenant_id)s)",
+
+  "networking:security_groups_rbac_policy_list": "rule:context_is_cloud_network_admin or (rule:context_is_network_viewer and project_id:%(security_group.tenant_id)s)",
+  "networking:security_groups_rbac_policy_create": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(security_group.tenant_id)s)",
+  "networking:security_groups_rbac_policy_delete": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(security_group.tenant_id)s)",
 
   "networking:network_usage_stat_list": "rule:context_is_cloud_network_admin"
 }
