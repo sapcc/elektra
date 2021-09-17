@@ -283,9 +283,7 @@ module Compute
             @port.errors.each { |k, v| @instance.errors.add(k, v) }
           end
         elsif @instance.security_groups.present?
-          @security_groups = services.networking.security_groups(
-            tenant_id: @scoped_project_id
-          )
+          @security_groups = services.networking.security_groups
           @instance.security_groups = @instance.security_groups.each_with_object([]) do |sg_id, array|
             security_group = @security_groups.find { |sg| sg_id == sg.id }
             array << security_group.name if security_group
@@ -302,10 +300,7 @@ module Compute
         @flavors = services.compute.flavors
         # @images = services.image.images
         @availability_zones = services.compute.availability_zones
-        @security_groups ||= services.networking.security_groups(
-          tenant_id: @scoped_project_id
-        )
-
+        @security_groups ||= services.networking.security_groups
         @fixed_ip_ports = services.networking.fixed_ip_ports
         @subnets = services.networking.subnets
 
@@ -436,9 +431,7 @@ module Compute
       @os_interface = services.compute.new_os_interface(params[:id])
       @os_interface.fixed_ips = []
       @networks = services.networking.networks('router:external' => false)
-      @security_groups = services.networking.security_groups(
-        tenant_id: @scoped_project_id
-      )
+      @security_groups = services.networking.security_groups
 
       @fixed_ip_ports = services.networking.fixed_ip_ports.select do |ip|
         ip.device_id.blank?
@@ -495,9 +488,7 @@ module Compute
         @networks = services.networking.networks('router:external' => false)
         @fixed_ip_ports = services.networking.fixed_ip_ports
         @subnets = services.networking.subnets
-        @security_groups = services.networking.security_groups(
-          tenant_id: @scoped_project_id
-        )
+        @security_groups = services.networking.security_groups
         render action: :attach_interface
       end
     end
@@ -683,7 +674,7 @@ module Compute
       @instance = services.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_keys = []
-      @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+      @security_groups = services.networking.security_groups
       @instance_security_groups.each do |sg|
         @instance_security_groups_keys << sg.id
         # delete existing groups from security groups list
@@ -717,7 +708,7 @@ module Compute
         @instance_security_groups.each do |sg|
           @instance_security_groups_keys << sg.id
         end
-        @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+        @security_groups = services.networking.security_groups
         render action: :edit_securitygroups and return
       else
         sgs.each do |sg|
@@ -753,7 +744,7 @@ module Compute
           @instance_security_groups.each do |sg|
             @instance_security_groups_keys << sg.id
           end
-          @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+          @security_groups = services.networking.security_groups
           flash.now[:error] = "An error happend while assigning/unassigned security groups to the server. Error: #{e}"
           render action: :edit_securitygroups and return
         end
@@ -769,7 +760,7 @@ module Compute
         .each_with_object({}) do |sg, map|
         next if map[sg.id]
         map[sg.id] = services.networking.security_groups(
-          tenant_id: @scoped_project_id, id: sg.id
+          id: sg.id
         ).first
       end.values
     end
