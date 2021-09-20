@@ -1,8 +1,9 @@
+import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useParams, useHistory } from "react-router-dom"
 import { pluginAjaxHelper } from "ajax_helper"
 import { AutocompleteField } from "lib/components/autocomplete_field"
-import React from "react"
+import Item from "./item"
 const ajaxHelper = pluginAjaxHelper("networking")
 
 const initialState = { items: [] }
@@ -48,52 +49,6 @@ function reducer(state, action) {
     default:
       throw new Error()
   }
-}
-
-const Item = ({ item, onDelete, canDelete, cachedProject }) => {
-  const [confirm, setConfirm] = React.useState(false)
-  let timer
-
-  const getConfirmation = React.useCallback(() => {
-    if (timer) clearTimeout(timer)
-    setConfirm(true)
-    timer = setTimeout(() => setConfirm(false), 5000)
-  }, [timer])
-
-  const remove = React.useCallback(() => {
-    setConfirm(false)
-    onDelete(item.id)
-  }, [timer, item])
-
-  return (
-    <tr>
-      <td>{item.id}</td>
-      <td>
-        {cachedProject ? (
-          <React.Fragment>
-            {cachedProject.name}
-            <br />
-            <span className="info-text">{item.target_tenant}</span>
-          </React.Fragment>
-        ) : (
-          item.target_tenant
-        )}
-      </td>
-      <td>
-        {canDelete && (
-          <button
-            className={`btn btn-${confirm ? "danger" : "default"} btn-sm ${
-              item.isDeleting ? "loading" : ""
-            }`}
-            onClick={() => (confirm ? remove() : getConfirmation())}
-          >
-            {confirm && "Confirm"}
-            <i className="fa fa-trash fa-fw" />
-          </button>
-        )}
-      </td>
-    </tr>
-  )
 }
 
 const RBACs = ({ securityGroup }) => {
@@ -226,7 +181,7 @@ const RBACs = ({ securityGroup }) => {
           <table className="table">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Policy</th>
                 <th width="45%">Target Project</th>
                 <th className="snug"></th>
               </tr>

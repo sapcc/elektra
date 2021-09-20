@@ -7,7 +7,7 @@ import EditSecurityGroupModal from "../containers/security_groups/edit"
 
 import SecurityGroupRules from "../containers/security_group_rules/list"
 import NewSecurityGroupRuleModal from "../containers/security_group_rules/new"
-import RBACs from "../containers/security_groups/rbacs"
+import RBACs from "../containers/rbacs/list"
 
 import Title from "./title"
 

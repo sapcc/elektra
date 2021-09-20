@@ -1,5 +1,5 @@
 import { connect } from "react-redux"
-import RBACs from "../../components/security_groups/rbacs"
+import RBACs from "../../components/rbacs/list"
 
 export default connect((state, ownProps) => {
   let securityGroup
