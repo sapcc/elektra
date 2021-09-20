@@ -31,12 +31,14 @@ const BgpVpnRouters = ({ bgpvpn }) => {
   const availableRouters = useGlobalState("availableRouters")
   const bgpvpnRouterIDs = React.useMemo(() => bgpvpn.routers || [])
   const globalDispatch = useDispatch()
-  // state variables to manage the visibility of add button
-  const [addMode, setAddMode] = React.useState(false)
+  // router id
+  const [routerID, setRouterID] = React.useState()
   const [isAdding, setIsAdding] = React.useState(false)
   const [isDeleting, setIsDeleting] = React.useState({})
 
   const isMounted = React.useRef(false)
+
+  const bgpvpnRouters = React.useRef(bgpvpn?.routers)
 
   React.useEffect(() => {
     isMounted.current = true // Will set it to true on mount ...
@@ -57,7 +59,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
   )
 
   // delete router association
-  const handleDeleteAssociation = React.useCallback(
+  const deleteAssociation = React.useCallback(
     (id) => {
       associationDispatch({ type: "resetError" })
       setIsDeleting((state) => ({ ...state, [id]: true }))
@@ -73,11 +75,12 @@ const BgpVpnRouters = ({ bgpvpn }) => {
         })
         .then((association) => {
           // remove from the "routers" array of the current bgp vpn
-          if (!association?.router_id || !bgpvpn) return
+          if (!association?.router_id || !bgpvpnRouters.current) return
           const item = { ...bgpvpn }
-          item.routers = item.routers
+          item.routers = bgpvpnRouters.current
             .slice()
             .filter((id) => id !== association.router_id)
+          bgpvpnRouters.current = item.routers
           globalDispatch("bgpvpns", "update", { name: "items", item })
         })
         .then(
@@ -90,46 +93,43 @@ const BgpVpnRouters = ({ bgpvpn }) => {
             isMounted.current && associationDispatch({ type: "error", error })
         )
     },
-    [url, associations, bgpvpn, associationDispatch]
+    [url, associations, associationDispatch, bgpvpn]
   )
 
   // create router association
-  const handleAddAssociation = React.useCallback(
-    (router_id) => {
-      setAddMode(false)
-      setIsAdding(true)
-      associationDispatch({ type: "resetError" })
-      apiClient
-        .post(`${url}`, { router_id })
-        .then((data) => {
-          // add to the current
-          if (isMounted.current)
-            associationDispatch({
-              type: "add",
-              name: "items",
-              item: data.router_association,
-            })
-        })
-        .then(() => {
-          // add router_id to the "routers" array of the current bgp vpn
-          if (!bgpvpn || !bgpvpn.routers) return
-          const item = { ...bgpvpn }
-          const index = item.routers.indexOf(router_id)
-          // ignore if already in the list
-          if (index >= 0) return
-          item.routers = item.routers.slice()
-          item.routers.push(router_id)
-
-          globalDispatch("bgpvpns", "update", { name: "items", item })
-        })
-        .catch(
-          (error) =>
-            isMounted.current && associationDispatch({ type: "error", error })
-        )
-        .finally(() => isMounted.current && setIsAdding(false))
-    },
-    [url, bgpvpn, associationDispatch]
-  )
+  const addAssociation = React.useCallback(() => {
+    setIsAdding(true)
+    associationDispatch({ type: "resetError" })
+    apiClient
+      .post(`${url}`, { router_id: routerID })
+      .then((data) => {
+        // add to the current
+        if (isMounted.current)
+          associationDispatch({
+            type: "add",
+            name: "items",
+            item: data.router_association,
+          })
+      })
+      .then(() => {
+        // add router_id to the "routers" array of the current bgp vpn
+        if (!bgpvpn || !bgpvpnRouters.current) return
+        const item = { ...bgpvpn }
+        const index = item.routers.indexOf(routerID)
+        // ignore if already in the list
+        if (index >= 0) return
+        item.routers = bgpvpnRouters.current.slice()
+        item.routers.push(routerID)
+        bgpvpnRouters.current = item.routers
+        globalDispatch("bgpvpns", "update", { name: "items", item })
+        setRouterID(null)
+      })
+      .catch(
+        (error) =>
+          isMounted.current && associationDispatch({ type: "error", error })
+      )
+      .finally(() => isMounted.current && setIsAdding(false))
+  }, [url, bgpvpn, associationDispatch, routerID])
 
   // load bgp vpn router associations
   React.useEffect(() => {
@@ -216,7 +216,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
         <thead>
           <tr>
             <th>Name/ID</th>
-            <th>Subnets</th>
+            <th width="45%">Subnets</th>
             <th className="snug"></th>
           </tr>
         </thead>
@@ -236,7 +236,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
                 <AssociationItem
                   key={i}
                   isDeleting={isDeleting[association.id]}
-                  onDelete={() => handleDeleteAssociation(association.id)}
+                  onDelete={() => deleteAssociation(association.id)}
                   routerId={association.router_id}
                   cachedData={cachedRoutersData[association.router_id]}
                   router={
@@ -255,47 +255,35 @@ const BgpVpnRouters = ({ bgpvpn }) => {
               ))}
             </React.Fragment>
           )}
+        </tbody>
+      </table>
 
+      <table className="table">
+        <tbody>
           <tr>
-            <td colSpan="2">
+            <td></td>
+            <td width="45%">
               <div className="pull-right">
-                {isAdding ? (
-                  <span>
-                    <span className="spinner" />
-                    adding...
-                  </span>
-                ) : (
-                  addMode &&
-                  (availableRouters.data ? (
-                    <AddRouterAssociation
-                      routers={availableAssociationRouters}
-                      onSelect={(routerID) => handleAddAssociation(routerID)}
-                    />
-                  ) : (
-                    <span className="spinner" />
-                  ))
+                {availableRouters.data && (
+                  <AddRouterAssociation
+                    routerID={routerID}
+                    disabled={isAdding}
+                    routers={availableAssociationRouters}
+                    onSelect={(routerID) => setRouterID(routerID)}
+                  />
                 )}
               </div>
             </td>
             <td className="snug">
-              <div className="pull-right">
-                {addMode ? (
-                  <button
-                    onClick={() => setAddMode(false)}
-                    className="btn btn-default btn-sm"
-                  >
-                    Cancel
-                  </button>
-                ) : (
-                  <button
-                    disabled={isAdding}
-                    onClick={() => setAddMode(true)}
-                    className="btn btn-success btn-sm"
-                  >
-                    <i className="fa fa-plus fa-fw" />
-                  </button>
-                )}
-              </div>
+              <button
+                disabled={!routerID || isAdding}
+                onClick={() => addAssociation()}
+                className={`btn btn-primary btn-sm ${
+                  isAdding ? "loading" : ""
+                }`}
+              >
+                Add
+              </button>
             </td>
           </tr>
         </tbody>

@@ -73,9 +73,10 @@ const Item = ({
           <button
             disabled={isDeleting}
             onClick={() => (confirm ? remove() : getConfirmation())}
-            className={`btn btn-${confirm ? "danger" : "default"} btn-sm`}
+            className={`btn btn-${confirm ? "danger" : "default"} ${
+              isDeleting ? "loading" : ""
+            } btn-sm`}
           >
-            {isDeleting && <span className="spinner" />}
             {confirm && "Confirm"}
             <i className="fa fa-trash fa-fw" />
           </button>
