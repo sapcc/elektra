@@ -60,6 +60,7 @@
 
     #baremetal_image_id_wrapper{class:'hidden'}
       = f.input :baremetal_image_id, label: 'BM Image',
+        selected:      @instance.image_id, 
         as:            :grouped_select,
         collection:    grouped_images(@images,@bootable_volumes,'baremetal'),
         group_method:  :last,
@@ -68,6 +69,7 @@
         
     #vmware_image_id_wrapper{class:'hidden'}
       = f.input :vmware_image_id, label: 'VM Image',
+        selected:      @instance.image_id, 
         as:            :grouped_select,
         collection:    grouped_images(@images,@bootable_volumes,'vmware'),
         group_method:  :last,
