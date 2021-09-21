@@ -14,8 +14,8 @@ module ServiceLayer
         )
       end
 
-      def volumes_detail(filter = {})
-        elektron_volumes.get('volumes/detail', filter).map_to(
+      def volumes_detail(filter = {})      
+        elektron_volumesv3.get('volumes/detail', filter, {headers: { 'OpenStack-API-Version' => "volume 3.34" }}).map_to(
           'body.volumes', &volume_map
         )
       end

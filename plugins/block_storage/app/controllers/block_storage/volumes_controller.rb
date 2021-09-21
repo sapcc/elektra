@@ -20,8 +20,8 @@ module BlockStorage
       else 
         filters = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
         filters[:marker] = params[:marker] if params[:marker]
-        filters[params[:search_type]] = params[:search_term] if params[:search_type] 
-
+        filters["#{params[:search_type]}~"] = params[:search_term] if params[:search_type] 
+        # byebug
         volumes = services.block_storage.volumes_detail(filters)
         extend_volume_data(volumes)
       end    
