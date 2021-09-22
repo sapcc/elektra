@@ -117,6 +117,8 @@ $ ->
 
 
   # $('[data-collapsable]').collapsable()
+  # make tables sortable
+  $ -> $('table[data-sortable-columns]').sortableTable()
 
 
 # use MutationObserver to make new added nodes collapsable

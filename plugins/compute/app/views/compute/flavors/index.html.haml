@@ -6,7 +6,8 @@
     .main-buttons
       = link_to 'Create new', plugin('compute').new_flavor_path, data: {modal: true}, class: 'btn btn-primary'
 
-%table.table.flavors
+= @pagination_enable
+%table.table.flavors{ "data-sortable-columns" => "1:string,2:number,3!:number,4:number"}
   %thead
     %tr
       %th Name

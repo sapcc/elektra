@@ -7,7 +7,9 @@
       opacity: 0.5;
     }
 
-    &:active, &:hover, &:focus {
+    &:active,
+    &:hover,
+    &:focus {
       i.sortable-hint {
         display: inline-block;
       }
