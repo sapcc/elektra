@@ -4,6 +4,14 @@
 = simple_form_for @instance, url: plugin('compute').resize_instance_path(id:@instance.id, action_from_show:@action_from_show), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   
   %div{class: modal? ? 'modal-body' : ''}
+    .bs-callout.bs-callout-info
+      %h4.text-info Please note! 
+      %p 
+        Resizing a server is a technically complex operation and might fail for a variety of reasons. 
+        In many cases a better course of action is to create a new server in the new size and deleting the old.          
+
+
+
     - if @instance.errors.present?
       .alert.alert-error
         = render_errors(@instance.errors)
