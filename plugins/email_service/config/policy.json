@@ -33,5 +33,7 @@
   "email_service_admin": "role:email_service_admin",
   "context_is_email_service_admin": "rule:context_is_cloud_email_service_admin or rule:email_service_admin",
   "context_is_email_service_editor": "(rule:context_is_email_service_admin) and not project_id:nil",
-  "context_is_email_service_viewer": "(rule:context_is_email_service_editor or rule:email_service_viewer) and not project_id:nil"
+  "context_is_email_service_viewer": "(rule:context_is_email_service_editor or rule:email_service_viewer) and not project_id:nil",
+  "email_user": "role:email_user",
+  "email_administrator": "role:email_admin"
 }

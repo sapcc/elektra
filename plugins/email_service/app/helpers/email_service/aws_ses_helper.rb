@@ -505,7 +505,7 @@ module EmailService
     end
 
     def update_template(name, subject, html_part, text_part)
-      logger.debug "#{name} : #{subject} : #{html_part} : #{text_part} "
+      # logger.debug "#{name} : #{subject} : #{html_part} : #{text_part} "
       begin
         ses_client = create_ses_client
         resp = ses_client.update_template({
@@ -520,7 +520,7 @@ module EmailService
       rescue Aws::SES::Errors::ServiceError => error
         msg = "Unable to update template #{name}. Error: #{error}"
         status = msg
-     end
+      end
      status
     end
 
@@ -572,13 +572,11 @@ module EmailService
         while datapoints.size > 0 && index < datapoints.count
           stats_hash = { timestamp: datapoints[index].timestamp, delivery_attempts: datapoints[index].delivery_attempts, bounces: datapoints[index].bounces, rejects: datapoints[index].rejects, complaints: datapoints[index].complaints }
           stats_arr.push(stats_hash)
-          # TODO: SORT this data by date and humanize
           index += 1
         end
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "CRONUS SEND : #{error}" 
       end
-      # logger.debug "#{stats_arr}"
       stats_arr.sort_by! { |hsh| hsh[:timestamp] } 
       stats_arr.reverse!
     end
