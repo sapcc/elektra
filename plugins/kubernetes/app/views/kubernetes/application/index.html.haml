@@ -6,8 +6,6 @@
 -# - else
 
 .bs-callout.bs-callout-info.bs-callout-emphasize
-  %h4 Welcome to our Kubernetes-as-a-Service offering
-  %p Within minutes you will be able to setup a VM based Kubernetes cluster. Your cluster is fully-managed and allows auto-updating masters and auto-repairing nodes. Identity management and access control is integrated with Converged Cloud.
   - unless current_user.is_allowed?('kubernetes:application_list')
     %p
       %strong
