@@ -46,8 +46,8 @@ export const operationStatusOptions = (option) => {
 
     case "ERROR":
       return {
-        labelClassName: "label-danger",
-        textClassName: "text-danger",
+        labelClassName: "label-warning-greyscale",
+        textClassName: "text-warning-greyscale",
         title: (
           <React.Fragment>
             <ul className="label-tooltip">
@@ -116,12 +116,19 @@ export const provisioningStatusOptions = (option) => {
   }
 };
 
+const operatingStatusLable = (label) => {
+  if (label == "ERROR") {
+    return "OFFLINE";
+  }
+  return label;
+};
+
 const useStatus = (operatingStatus, provisioningStatus, options) => {
   const entityStatus = React.useMemo(() => {
     const opStatusOptions = operationStatusOptions(operatingStatus);
     const provStatusOptions = provisioningStatusOptions(provisioningStatus);
 
-    const stateLabelTitle = () => {
+    const stateLabelTooltipContent = () => {
       // add extra error options if this option is set. Used in pools section
       if (
         options &&
@@ -143,9 +150,9 @@ const useStatus = (operatingStatus, provisioningStatus, options) => {
     return (
       <>
         <StateLabel
-          label={operatingStatus}
+          label={operatingStatusLable(operatingStatus)}
           labelClassName={opStatusOptions.labelClassName}
-          title={stateLabelTitle()}
+          tooltipContent={stateLabelTooltipContent()}
         />
         {provisioningStatus !== "ACTIVE" && (
           <>
