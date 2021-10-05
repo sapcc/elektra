@@ -67,6 +67,11 @@ const Router = (props) => {
         />
         <Route
           exact
+          path="/loadbalancers/:loadbalancerID/show/attach_fip"
+          component={AttachFIP}
+        />
+        <Route
+          exact
           path="/loadbalancers/:loadbalancerID/json"
           component={LoadbalancerJSON}
         />

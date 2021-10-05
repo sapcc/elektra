@@ -5,11 +5,12 @@ import useLoadbalancer from "../../../lib/hooks/useLoadbalancer";
 import SelectInput from "../shared/SelectInput";
 import useCommons from "../../../lib/hooks/useCommons";
 import { addNotice } from "lib/flashes";
+import { matchPath } from "react-router-dom";
 import Log from "../shared/logger";
 
 const AttachFIP = (props) => {
   const { fetchFloatingIPs, attachFIP } = useLoadbalancer();
-  const { matchParams, errorMessage } = useCommons();
+  const { matchParams, errorMessage, searchParamsToString } = useCommons();
   const [loadbalancerID, setLoadbalancerID] = useState(null);
 
   const [floatingIPs, setFloatingIPs] = useState({
@@ -54,7 +55,18 @@ const AttachFIP = (props) => {
 
   const restoreUrl = () => {
     if (!show) {
-      props.history.replace("/loadbalancers");
+      const isRequestFromDetails = matchPath(
+        props.location.pathname,
+        "/loadbalancers/:loadbalancerID/show/attach_fip"
+      );
+
+      if (isRequestFromDetails && isRequestFromDetails.isExact) {
+        props.history.replace(
+          `/loadbalancers/${loadbalancerID}/show?${searchParamsToString(props)}`
+        );
+      } else {
+        props.history.replace("/loadbalancers");
+      }
     }
   };
 
