@@ -1,29 +1,30 @@
-import React, { useState, useEffect } from "react"
-import { Modal, Button } from "react-bootstrap"
-import { Form } from "lib/elektra-form"
-import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
-import SelectInput from "../shared/SelectInput"
-import useCommons from "../../../lib/hooks/useCommons"
-import { addNotice } from "lib/flashes"
-import Log from "../shared/logger"
+import React, { useState, useEffect } from "react";
+import { Modal, Button } from "react-bootstrap";
+import { Form } from "lib/elektra-form";
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer";
+import SelectInput from "../shared/SelectInput";
+import useCommons from "../../../lib/hooks/useCommons";
+import { addNotice } from "lib/flashes";
+import { matchPath } from "react-router-dom";
+import Log from "../shared/logger";
 
 const AttachFIP = (props) => {
-  const { fetchFloatingIPs, attachFIP } = useLoadbalancer()
-  const { matchParams, errorMessage } = useCommons()
-  const [loadbalancerID, setLoadbalancerID] = useState(null)
+  const { fetchFloatingIPs, attachFIP } = useLoadbalancer();
+  const { matchParams, errorMessage, searchParamsToString } = useCommons();
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
 
   const [floatingIPs, setFloatingIPs] = useState({
     isLoading: false,
     error: null,
     items: [],
-  })
+  });
 
   useEffect(() => {
-    const params = matchParams(props)
-    setLoadbalancerID(params.loadbalancerID)
+    const params = matchParams(props);
+    setLoadbalancerID(params.loadbalancerID);
 
-    Log.debug("fetching floating IPs")
-    setFloatingIPs({ ...floatingIPs, isLoading: true })
+    Log.debug("fetching floating IPs");
+    setFloatingIPs({ ...floatingIPs, isLoading: true });
     fetchFloatingIPs()
       .then((data) => {
         setFloatingIPs({
@@ -31,43 +32,58 @@ const AttachFIP = (props) => {
           isLoading: false,
           items: data,
           error: null,
-        })
+        });
       })
       .catch((error) => {
-        setFloatingIPs({ ...floatingIPs, isLoading: false, error: errorMessage(error) })
-      })
-  }, [])
+        setFloatingIPs({
+          ...floatingIPs,
+          isLoading: false,
+          error: errorMessage(error),
+        });
+      });
+  }, []);
 
   /*
    * Modal stuff
    */
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
 
   const close = (e) => {
-    if (e) e.stopPropagation()
-    setShow(false)
-  }
+    if (e) e.stopPropagation();
+    setShow(false);
+  };
 
   const restoreUrl = () => {
     if (!show) {
-      props.history.replace("/loadbalancers")
+      const isRequestFromDetails = matchPath(
+        props.location.pathname,
+        "/loadbalancers/:loadbalancerID/show/attach_fip"
+      );
+
+      if (isRequestFromDetails && isRequestFromDetails.isExact) {
+        props.history.replace(
+          `/loadbalancers/${loadbalancerID}/show?${searchParamsToString(props)}`
+        );
+      } else {
+        props.history.replace("/loadbalancers");
+      }
     }
-  }
+  };
 
   /*
    * Form stuff
    */
-  const [formErrors, setFormErrors] = useState(null)
-  const [initialValues, setInitialValues] = useState({})
+  const [formErrors, setFormErrors] = useState(null);
+  const [initialValues, setInitialValues] = useState({});
 
   const validate = ({ floating_ip }) => {
-    return floating_ip && true
-  }
+    return floating_ip && true;
+  };
 
   const onSubmit = (values) => {
-    setFormErrors(null)
+    setFormErrors(null);
     // save the entered values in case of error
-    setInitialValues(values)
+    setInitialValues(values);
 
     return attachFIP(loadbalancerID, values)
       .then((response) => {
@@ -77,15 +93,15 @@ const AttachFIP = (props) => {
             <b>{response.data.loadbalancer.floating_ip.floating_ip_address}</b>{" "}
             ({response.data.loadbalancer.floating_ip.id}) is being attached.
           </React.Fragment>
-        )
-        close()
+        );
+        close();
       })
       .catch((error) => {
-        setFormErrors(errorMessage(error))
-      })
-  }
+        setFormErrors(errorMessage(error));
+      });
+  };
 
-  const onSelectfloatingIPChange = (values) => {}
+  const onSelectfloatingIPChange = (values) => {};
 
   return (
     <Modal
@@ -141,7 +157,7 @@ const AttachFIP = (props) => {
         </Modal.Footer>
       </Form>
     </Modal>
-  )
-}
+  );
+};
 
-export default AttachFIP
+export default AttachFIP;

@@ -366,9 +366,15 @@ const LoadbalancerItem = ({
                 </SmartLink>
               ) : (
                 <SmartLink
-                  to={`/loadbalancers/${
-                    loadbalancer.id
-                  }/attach_fip?${searchParamsToString(props)}`}
+                  to={
+                    disabled
+                      ? `/loadbalancers/${
+                          loadbalancer.id
+                        }/show/attach_fip?${searchParamsToString(props)}`
+                      : `/loadbalancers/${
+                          loadbalancer.id
+                        }/attach_fip?${searchParamsToString(props)}`
+                  }
                   isAllowed={canAttachFIP}
                   notAllowedText="Not allowed to attach Floating IP. Please check with your administrator."
                 >
