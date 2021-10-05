@@ -1,30 +1,30 @@
-import React from "react"
-import { BrowserRouter, Route, Redirect } from "react-router-dom"
-import LoadbalancerList from "./loadbalancers/LoadbalancerList"
-import Tabs from "./Tabs"
-import NewLoadbalancer from "./loadbalancers/NewLoadbalancer"
-import Details from "./loadbalancers/Details"
-import NewL7Policy from "./l7policies/NewL7Policy"
-import NewL7Rule from "./l7Rules/NewL7Rule"
-import NewListener from "./listeners/NewListener"
-import NewPool from "./pools/NewPool"
-import NewMember from "./members/NewMember"
-import NewHealthMonitor from "./healthmonitor/NewHealthMonitor"
-import EditHealthMonitor from "./healthmonitor/EditHealthMonitor"
-import HealthMonitorJSON from "./healthmonitor/HealthmonitorJSON"
-import AttachFIP from "./loadbalancers/AttachFIP"
-import LoadbalancerJSON from "./loadbalancers/LoadbalancerJSON"
-import EditLoadbalancer from "./loadbalancers/EditLoadbalancer"
-import EditListener from "./listeners/EditListener"
-import ListenerJSON from "./listeners/ListenerJSON"
-import EditPool from "./pools/EditPool"
-import PoolJSON from "./pools/PoolJSON"
-import EditMember from "./members/EditMember"
-import MemberJSON from "./members/MemberJSON"
-import EditL7Policy from "./l7policies/EditL7Policy"
-import L7PolicyJSON from "./l7policies/L7PolicyJSON"
-import EditL7Rule from "./l7Rules/EditL7Rule"
-import L7RuleJSON from "./l7Rules/L7RuleJSON"
+import React from "react";
+import { BrowserRouter, Route, Redirect } from "react-router-dom";
+import LoadbalancerList from "./loadbalancers/LoadbalancerList";
+import Tabs from "./Tabs";
+import NewLoadbalancer from "./loadbalancers/NewLoadbalancer";
+import Details from "./loadbalancers/Details";
+import NewL7Policy from "./l7policies/NewL7Policy";
+import NewL7Rule from "./l7Rules/NewL7Rule";
+import NewListener from "./listeners/NewListener";
+import NewPool from "./pools/NewPool";
+import NewMember from "./members/NewMember";
+import NewHealthMonitor from "./healthmonitor/NewHealthMonitor";
+import EditHealthMonitor from "./healthmonitor/EditHealthMonitor";
+import HealthMonitorJSON from "./healthmonitor/HealthmonitorJSON";
+import AttachFIP from "./loadbalancers/AttachFIP";
+import LoadbalancerJSON from "./loadbalancers/LoadbalancerJSON";
+import EditLoadbalancer from "./loadbalancers/EditLoadbalancer";
+import EditListener from "./listeners/EditListener";
+import ListenerJSON from "./listeners/ListenerJSON";
+import EditPool from "./pools/EditPool";
+import PoolJSON from "./pools/PoolJSON";
+import EditMember from "./members/EditMember";
+import MemberJSON from "./members/MemberJSON";
+import EditL7Policy from "./l7policies/EditL7Policy";
+import L7PolicyJSON from "./l7policies/L7PolicyJSON";
+import EditL7Rule from "./l7Rules/EditL7Rule";
+import L7RuleJSON from "./l7Rules/L7RuleJSON";
 
 const Router = (props) => {
   const tabsConfig = [
@@ -34,7 +34,7 @@ const Router = (props) => {
       component: LoadbalancerList,
     },
     // { to: '/pools', label: 'Project Pools', component: SharedPoolList }
-  ]
+  ];
 
   return (
     <BrowserRouter basename={`${window.location.pathname}?r=`}>
@@ -181,7 +181,7 @@ const Router = (props) => {
         />
       </div>
     </BrowserRouter>
-  )
-}
+  );
+};
 
-export default Router
+export default Router;
