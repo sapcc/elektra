@@ -12,7 +12,7 @@ module Lbaas2
       sort_dir = (params[:sort_dir] || 'asc')
       pagination_options = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
       pagination_options[:marker] = params[:marker] if params[:marker]
-      loadbalancers = services.lbaas2.loadbalancers({ project_id: @scoped_project_id}.merge(pagination_options))
+      loadbalancers = services.lbaas2.loadbalancers({ project_id: @scoped_project_id}.merge(pagination_options))      
 
       extend_lb_data(loadbalancers)
 
@@ -33,6 +33,18 @@ module Lbaas2
 
       render json: {
         loadbalancer: loadbalancer
+      }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
+    def device
+      device = services.lbaas2.loadbalancer_device(params[:id])
+
+      render json: {
+        device: device
       }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code

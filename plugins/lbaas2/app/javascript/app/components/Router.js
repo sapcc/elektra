@@ -13,6 +13,7 @@ import NewHealthMonitor from "./healthmonitor/NewHealthMonitor";
 import EditHealthMonitor from "./healthmonitor/EditHealthMonitor";
 import HealthMonitorJSON from "./healthmonitor/HealthmonitorJSON";
 import AttachFIP from "./loadbalancers/AttachFIP";
+import DeviceInfo from "./loadbalancers/DeviceInfo";
 import LoadbalancerJSON from "./loadbalancers/LoadbalancerJSON";
 import EditLoadbalancer from "./loadbalancers/EditLoadbalancer";
 import EditListener from "./listeners/EditListener";
@@ -69,6 +70,16 @@ const Router = (props) => {
           exact
           path="/loadbalancers/:loadbalancerID/show/attach_fip"
           component={AttachFIP}
+        />
+        <Route
+          exact
+          path="/loadbalancers/:loadbalancerID/device"
+          component={DeviceInfo}
+        />
+        <Route
+          exact
+          path="/loadbalancers/:loadbalancerID/show/device"
+          component={DeviceInfo}
         />
         <Route
           exact
