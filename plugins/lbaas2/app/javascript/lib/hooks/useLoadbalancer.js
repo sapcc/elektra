@@ -32,6 +32,19 @@ const useLoadbalancer = () => {
     });
   };
 
+  const fetchLoadbalancerDevice = (id) => {
+    return new Promise((handleSuccess, handleError) => {
+      ajaxHelper
+        .get(`/loadbalancers/${id}/device`)
+        .then((response) => {
+          handleSuccess(response.data);
+        })
+        .catch((error) => {
+          handleError(error.response);
+        });
+    });
+  };
+
   const persistLoadbalancers = (options) => {
     dispatch({ type: "REQUEST_LOADBALANCERS", requestedAt: Date.now() });
     return new Promise((handleSuccess, handleError) => {
@@ -238,6 +251,7 @@ const useLoadbalancer = () => {
   return {
     fetchLoadbalancers,
     fetchLoadbalancer,
+    fetchLoadbalancerDevice,
     persistLoadbalancers,
     persistLoadbalancer,
     findLoadbalancer,

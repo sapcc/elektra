@@ -18,5 +18,9 @@ module ServiceLayer
     def elektron_lb2
       @elektron_lb2 ||= elektron.service('octavia', path_prefix: '/v2.0/lbaas')
     end
+
+    def elektron_amphorae
+      @elektron_lb2 ||= elektron.service('octavia', path_prefix: '/v2.0/octavia/amphorae')
+    end
   end
 end

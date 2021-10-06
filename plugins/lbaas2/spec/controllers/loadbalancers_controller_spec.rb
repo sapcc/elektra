@@ -97,6 +97,21 @@ describe Lbaas2::LoadbalancersController, type: :controller do
 
   end
 
+  describe "GET 'device'" do
+    before :each do
+      lbs = double('elektron', service: double("octavia", get: double("get", body: { "amphora": {} }) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(lbs)
+    end
+
+    it_behaves_like 'GET action with lbaas_admin rule.' do
+      subject do
+        @default_params = default_params
+        @extra_params = {id: 'lb_id'}
+        @path = "device"
+      end
+    end
+  end
+
   describe "GET 'status_tree'" do
     before :each do
       lbs = double('elektron', service: double("octavia", get: double("get", map_to: double("status_tree", to_json:{})) ))
@@ -111,7 +126,6 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         @path = "status_tree"
       end
     end
-
   end
 
   describe "PUT 'attach_fip'" do

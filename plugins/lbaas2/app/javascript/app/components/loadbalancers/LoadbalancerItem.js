@@ -81,6 +81,14 @@ const LoadbalancerItem = ({
     [scope.domain]
   );
 
+  const canShowDeviceInfo = useMemo(
+    () =>
+      policy.isAllowed("lbaas2:loadbalancer_device", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  );
+
   const handleDelete = (e) => {
     if (e) {
       e.stopPropagation();
@@ -381,6 +389,23 @@ const LoadbalancerItem = ({
                   Attach Floating IP
                 </SmartLink>
               )}
+            </li>
+            <li>
+              <SmartLink
+                to={
+                  disabled
+                    ? `/loadbalancers/${
+                        loadbalancer.id
+                      }/show/device?${searchParamsToString(props)}`
+                    : `/loadbalancers/${
+                        loadbalancer.id
+                      }/device?${searchParamsToString(props)}`
+                }
+                isAllowed={canShowDeviceInfo}
+                notAllowedText="Not allowed to get device information. Please check with your administrator."
+              >
+                Device Info
+              </SmartLink>
             </li>
           </ul>
         </div>

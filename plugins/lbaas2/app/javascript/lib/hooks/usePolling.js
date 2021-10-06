@@ -10,7 +10,6 @@ const usePolling = ({ delay, callback, active }) => {
     let errorRetries = 0;
 
     const poll = () => {
-      console.log("polling with delay: ", newDelay);
       callback()
         .then((data) => {
           // check if the promise was canceled

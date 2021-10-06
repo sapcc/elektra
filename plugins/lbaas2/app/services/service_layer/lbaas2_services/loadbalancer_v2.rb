@@ -6,10 +6,14 @@ module ServiceLayer
       
       def loadbalancer_map
         @loadbalancer_map ||= class_map_proc(::Lbaas2::Loadbalancer)
-      end
+      end      
 
       def lb_status_map
         @lb_status_map ||= class_map_proc(::Lbaas2::Statuses)
+      end
+
+      def loadbalancer_device(id)
+        elektron_amphorae.get(id).body.fetch("amphora", {}) 
       end
 
       def loadbalancers(filter = {})
