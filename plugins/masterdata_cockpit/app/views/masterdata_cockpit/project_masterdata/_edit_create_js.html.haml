@@ -1,6 +1,7 @@
 = content_for :javascripts do
   :javascript
     var cost_object_inherited = #{@project_masterdata.cost_object_inherited};
+    var domain_co_inheritance = #{@inheritance.co_inheritable};
     
     $(function() {
 
@@ -10,7 +11,7 @@
           $('#project_masterdata_additional_information').parent().addClass('has-error');
         }
 
-        if (cost_object_inherited) {
+        if (cost_object_inherited && domain_co_inheritance) {
           $('select#project_masterdata_cost_object_type').prop('disabled', function(i, v) { return !v; });
           $('input#project_masterdata_cost_object_name').prop('disabled', function(i, v) { return !v; });
         }
@@ -61,8 +62,6 @@
             chars_left = parseInt($(this).attr('maxlength')) - this.value.length;
             $('span#additional_information_length').html("Remaining characters "+chars_left);
         })
-
-
 
         $('select#project_masterdata_business_criticality').change(function(){
           if ( $(this).val().match(/^prod/g) && 
