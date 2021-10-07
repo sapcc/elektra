@@ -15,11 +15,6 @@ module DnsService
         @recordset = services.dns_service.new_recordset(
           @impersonate_option.merge(zone_id: @zone.id)
         )
-
-        #@recordset_types = DnsService::Recordset::CONTENT_LABELS.merge(dynamic_label: '#recordset_records', ns: { label: 'NS record', type: 'string' })
-        #if current_user.is_allowed?("dns_service:zone_create")
-        #@recordset_type_labels = DnsService::Recordset::TYPE_LABELS.merge('NS - Nameserver record' => 'ns',)
-        #pp @recordset_types
       end
 
       def create
