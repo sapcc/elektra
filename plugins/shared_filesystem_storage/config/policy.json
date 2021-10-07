@@ -14,7 +14,7 @@
   "shared_filesystem_storage:share_delete": "rule:context_is_share_editor",
   "shared_filesystem_storage:share_update": "rule:context_is_share_editor",
   "shared_filesystem_storage:share_export_locations": "rule:context_is_share_viewer",
-  "shared_filesystem_storage:share_force_delete": "rule:context_is_sharedfilesystem_admin",
+  "shared_filesystem_storage:share_force_delete": "rule:context_is_cloud_sharedfilesystem_admin",
   "shared_filesystem_storage:share_reset_status": "rule:context_is_sharedfilesystem_admin",
   "shared_filesystem_storage:share_revert_to_snapshot": "rule:context_is_share_editor",
   "shared_filesystem_storage:share_extend": "rule:context_is_share_editor",
