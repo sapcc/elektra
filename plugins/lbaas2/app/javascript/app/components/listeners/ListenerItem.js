@@ -18,6 +18,7 @@ import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
 import useStatus from "../../../lib/hooks/useStatus";
 import usePolling from "../../../lib/hooks/usePolling";
+import BooleanLabel from "../shared/BooleanLabel";
 
 const ListenerItem = ({
   props,
@@ -273,20 +274,10 @@ const ListenerItem = ({
         </MyHighlighter>
       </td>
       <td>
-        {listener.default_pool_id ? (
-          <OverlayTrigger
-            placement="top"
-            overlay={
-              <Tooltip id="defalult-pool-tooltip">
-                {listener.default_pool_id}
-              </Tooltip>
-            }
-          >
-            <i className="fa fa-check" />
-          </OverlayTrigger>
-        ) : (
-          <i className="fa fa-times" />
-        )}
+        <BooleanLabel
+          value={listener.default_pool_id}
+          tooltipText={listener.default_pool_id}
+        />
       </td>
       <td>{listener.connection_limit}</td>
       <td>

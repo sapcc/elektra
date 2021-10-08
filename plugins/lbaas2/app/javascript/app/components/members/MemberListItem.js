@@ -14,6 +14,7 @@ import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
 import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons";
 import usePolling from "../../../lib/hooks/usePolling";
+import BooleanLabel from "../shared/BooleanLabel";
 
 const MemberListItem = ({ props, poolID, member, searchTerm, shouldPoll }) => {
   const { matchParams, searchParamsToString, errorMessage } = useCommons();
@@ -155,11 +156,7 @@ const MemberListItem = ({ props, poolID, member, searchTerm, shouldPoll }) => {
       </td>
       <td>{member.weight}</td>
       <td>
-        {member.backup ? (
-          <i className="fa fa-check" />
-        ) : (
-          <i className="fa fa-times" />
-        )}
+        <BooleanLabel value={member.backup} />
       </td>
       <td>
         <DropDownMenu buttonIcon={<span className="fa fa-cog" />}>
