@@ -111,13 +111,18 @@
         .tab-pane{role:"tabpanel", id:"sec_groups"}
           %table.table.datatable
             %tbody
-              - security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+              - security_groups = services.networking.security_groups
+              - cached_projects = cached_projects_by_project_id(@instance_security_groups)
               - (@instance_security_groups.compact || []).each do |sg|
                 %tr
                   %th
                     ="#{sg.name}"
-                    %p
-                    ="(#{sg.id})"
+                    %br
+                    .info-text
+                      ="ID: #{sg.id}"
+                      - if cached_projects[sg.project_id] 
+                        %br
+                        = "Project: #{cached_projects[sg.project_id].name}"
                   %td
                     - if sg.security_group_rules.empty?
                       No rules defined.

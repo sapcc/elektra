@@ -756,13 +756,16 @@ module Compute
     private
 
     def load_security_groups(instance)
+      
+      # @instance_security_groups = instance.security_groups_details
+
       @instance_security_groups = instance.security_groups_details
         .each_with_object({}) do |sg, map|
         next if map[sg.id]
-        map[sg.id] = services.networking.security_groups(
-          id: sg.id
-        ).first
+        map[sg.id] = services.networking.find_security_group(sg.id)
       end.values
+
+      # byebug
     end
     # This method finds the availability zone with the most avalilable RAM.
     # It use the elektra object cache.
@@ -898,6 +901,8 @@ module Compute
     def instance_params
       params.require(:instance).permit(:q)
     end
+
+
 
   end
 

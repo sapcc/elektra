@@ -184,6 +184,33 @@ module Compute
       result
     end
 
+    def cached_projects_by_project_id(objects)
+      return {} unless objects
+      project_ids = objects.map(&:project_id)
+      return ObjectCache.where(id:project_ids).each_with_object({})do |pr, map|
+        map[pr.id] = pr
+      end
+    end
+
+    def grouped_security_groups(security_groups)
+      # get project names from cache
+      cached_projects = cached_projects_by_project_id(security_groups)
+
+      grouped_by_project = security_groups.each_with_object({}) do |sg,map|
+        key = sg.project_id
+        key = cached_projects[sg.project_id].name if cached_projects[sg.project_id]
+        map[key] ||= [] 
+        map[key] << sg
+      end.sort_by{|key,_| key}
+
+      result = []
+      grouped_by_project.each do |key,values|
+        result << [key,values.sort{|a,b| a.name <=> b.name}]
+      end
+
+      result
+    end
+
     def js_flavor_data(flavors)
       js_data = []
       unless flavors.empty?

@@ -28,12 +28,20 @@
       selected:           @instance.availability_zone_id,
       required:           true}
 
+    -# = f.input :security_groups, { label: "Security groups",
+    -#   input_html:         {multiple: true},
+    -#   as:                 :select,
+    -#   collection:         @security_groups.collect{|sg| ["#{sg.name} (#{sg.project_name || sg.project_id})",sg.id]},
+    -#   selected:           (@instance.security_groups || []).collect{|sg| sg},
+    -#   required:           true}
+
     = f.input :security_groups, { label: "Security groups",
       input_html:         {multiple: true},
-      as:                 :select,
-      collection:         @security_groups.collect{|sg| [sg.name,sg.id]},
-      selected:           (@instance.security_groups || []).collect{|sg| sg},
-      required:           true}
+      as:                 :grouped_select,
+      required:           true,
+      collection:         grouped_security_groups(@security_groups),
+      group_method:       :last,
+      label_method:       -> (sg) { sg.name }}
 
     = f.input :keypair_id, { label: "Key pair",
       input_html:         {},
