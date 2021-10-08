@@ -11,10 +11,11 @@ module DnsService
       'CAA - Certification Authority Authorization record' => 'caa',
       'CNAME - Canonical name record' => 'cname',
       'MX - Mail exchange record' => 'mx',
+      'NS - Nameserver record' => 'ns',
       'PTR - Pointer record' => 'ptr',
       'SPF - Sender Policy Framework' => 'spf',
       'SRV - Service locator' => 'srv',
-      'TXT - Text record' => 'txt'
+      'TXT - Text record' => 'txt',
     }.freeze
 
     CONTENT_LABELS = {
@@ -23,10 +24,11 @@ module DnsService
       caa: { label: 'Certification Authority Authorization', type: 'string' },
       cname: { label: 'Canonical Name', type: 'string' },
       mx: { label: 'Mail Server', type: 'string' },
+      ns: { label: 'Record Data', type: 'string' },
       ptr: { label: 'PTR Domain Name', type: 'string' },
       spf: { label: 'Text', type: 'text' },
       srv: { label: 'Value', type: 'string' },
-      txt: { label: 'Text', type: 'text' }
+      txt: { label: 'Text', type: 'text' },
     }.freeze
 
     validates :type, presence: { message: 'Please select a type' }
@@ -60,7 +62,8 @@ module DnsService
       if type == 'cname' or
          type == 'mx' or
          type == 'ptr' or
-         type == 'srv'
+         type == 'srv' or
+         type == 'ns'
         records.each do |value|
           unless value.end_with?('.')
             errors.add('records', "#{CONTENT_LABELS[type.to_sym][:label]} should end with a dot.")
