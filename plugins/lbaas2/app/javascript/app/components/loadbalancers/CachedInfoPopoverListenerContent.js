@@ -1,9 +1,10 @@
-import React from "react"
-import { Link } from "react-router-dom"
-import Log from "../shared/logger"
+import React from "react";
+import { Link } from "react-router-dom";
+import Log from "../shared/logger";
+import BooleanLabel from "../shared/BooleanLabel";
 
 const LbPopoverListenerContent = ({ lbID, listenerIds, cachedListeners }) => {
-  Log.debug("RENDER lbPoopover CONTENT")
+  Log.debug("RENDER lbPoopover CONTENT");
   return listenerIds.length > 0 ? (
     listenerIds.map((id, index) => (
       <div key={id}>
@@ -42,11 +43,9 @@ const LbPopoverListenerContent = ({ lbID, listenerIds, cachedListeners }) => {
             <div className="row">
               <div className="col-md-12">
                 <b>Default Pool:</b>{" "}
-                {cachedListeners[id].payload.default_pool_id ? (
-                  <i className="fa fa-check" />
-                ) : (
-                  <i className="fa fa-times" />
-                )}
+                <BooleanLabel
+                  value={cachedListeners[id].payload.default_pool_id}
+                />
               </div>
             </div>
             <div className="row">
@@ -70,7 +69,7 @@ const LbPopoverListenerContent = ({ lbID, listenerIds, cachedListeners }) => {
     ))
   ) : (
     <p>No listeners found</p>
-  )
-}
+  );
+};
 
-export default LbPopoverListenerContent
+export default LbPopoverListenerContent;

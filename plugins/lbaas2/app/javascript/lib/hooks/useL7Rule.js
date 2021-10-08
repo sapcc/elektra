@@ -4,6 +4,7 @@ import { useDispatch } from "../../app/components/StateProvider";
 import { confirm } from "lib/dialogs";
 import { addNotice, addError } from "lib/flashes";
 import { ErrorsList } from "lib/elektra-form/components/errors_list";
+import BooleanLabel from "../../app/components/shared/BooleanLabel";
 
 const useL7Rule = () => {
   const dispatch = useDispatch();
@@ -119,14 +120,6 @@ const useL7Rule = () => {
     return (err.data && (err.data.errors || err.data.error)) || err.message;
   };
 
-  const displayInvert = (invert) => {
-    if (invert) {
-      return <i className="fa fa-check" />;
-    } else {
-      return <i className="fa fa-times" />;
-    }
-  };
-
   const confirmMessageOnDelete = (l7Rule) => {
     return (
       <React.Fragment>
@@ -138,7 +131,7 @@ const useL7Rule = () => {
           <br />
           <b>Compare Type:</b> {l7Rule.compare_type}
           <br />
-          <b>Invert:</b> {displayInvert(l7Rule.invert)}
+          <b>Invert:</b> <BooleanLabel value={l7Rule.invert} />
           <br />
           <b>Key:</b> {l7Rule.key}
           <br />
@@ -292,7 +285,6 @@ const useL7Rule = () => {
     ruleCompareTypes,
     deleteL7Rule,
     setSearchTerm,
-    displayInvert,
   };
 };
 

@@ -18,6 +18,7 @@ import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
 import useStatus from "../../../lib/hooks/useStatus";
 import usePolling from "../../../lib/hooks/usePolling";
+import BooleanLabel from "../shared/BooleanLabel";
 
 const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
   const { persistPool, deletePool, onSelectPool, reset } = usePool();
@@ -197,14 +198,6 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
     }
   };
 
-  const displayCheck = (option) => {
-    if (option) {
-      return <i className="fa fa-check" />;
-    } else {
-      return <i className="fa fa-times" />;
-    }
-  };
-
   const collectContainers = () => {
     const containers = [
       { name: "Certificate Secret", ref: pool.tls_container_ref },
@@ -276,10 +269,12 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
       </td>
       <td>{displayAssignedTo()}</td>
       <td>
-        {displayCheck(pool.tls_enabled)}
+        <BooleanLabel value={pool.tls_enabled} />
         {displaySecrets()}
       </td>
-      <td>{displayCheck(pool.healthmonitor_id)}</td>
+      <td>
+        <BooleanLabel value={pool.healthmonitor_id} />
+      </td>
       <td>
         {disabled ? (
           <span className="info-text">{memberIDs.length}</span>

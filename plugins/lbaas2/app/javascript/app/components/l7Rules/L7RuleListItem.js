@@ -10,6 +10,7 @@ import Log from "../shared/logger";
 import DropDownMenu from "../shared/DropdownMenu";
 import useStatus from "../../../lib/hooks/useStatus";
 import usePolling from "../../../lib/hooks/usePolling";
+import BooleanLabel from "../shared/BooleanLabel";
 
 const L7RuleListItem = ({
   props,
@@ -21,7 +22,7 @@ const L7RuleListItem = ({
 }) => {
   const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
     useCommons();
-  const { deleteL7Rule, displayInvert, persistL7Rule } = useL7Rule();
+  const { deleteL7Rule, persistL7Rule } = useL7Rule();
   const [loadbalancerID, setLoadbalancerID] = useState(null);
   const { entityStatus } = useStatus(
     l7Rule.operating_status,
@@ -95,7 +96,9 @@ const L7RuleListItem = ({
         <br />
         {l7Rule.compare_type}
       </td>
-      <td>{displayInvert(l7Rule.invert)}</td>
+      <td>
+        <BooleanLabel value={l7Rule.invert} />
+      </td>
       <td>
         <CopyPastePopover text={l7Rule.key} size={12} />
       </td>

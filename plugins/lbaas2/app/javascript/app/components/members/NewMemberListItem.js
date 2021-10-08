@@ -10,6 +10,7 @@ import {
   MemberRequiredField,
 } from "./MemberIpIcons";
 import CopyPastePopover from "../shared/CopyPastePopover";
+import BooleanLabel from "../shared/BooleanLabel";
 
 const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
   const onRemoveClick = (e) => {
@@ -153,11 +154,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
       <td>
         {member.saved ? (
           <React.Fragment>
-            {member.backup ? (
-              <i className="fa fa-check" />
-            ) : (
-              <i className="fa fa-times" />
-            )}
+            <BooleanLabel value={member.backup} />
           </React.Fragment>
         ) : (
           <div>
