@@ -187,7 +187,7 @@ module Compute
     def cached_projects_by_project_id(objects)
       return {} unless objects
       project_ids = objects.map(&:project_id)
-      return ObjectCache.where(id:project_ids).each_with_object({})do |pr, map|
+      return ObjectCache.where(id:project_ids).includes(:domain).each_with_object({})do |pr, map|
         map[pr.id] = pr
       end
     end
@@ -198,7 +198,13 @@ module Compute
 
       grouped_by_project = security_groups.each_with_object({}) do |sg,map|
         key = sg.project_id
-        key = cached_projects[sg.project_id].name if cached_projects[sg.project_id]
+        if cached_projects[sg.project_id]
+          if cached_projects[sg.project_id].domain
+            key = "#{cached_projects[sg.project_id].domain.name}/" 
+          end
+          key += cached_projects[sg.project_id].name
+        end
+
         map[key] ||= [] 
         map[key] << sg
       end.sort_by{|key,_| key}

@@ -122,7 +122,10 @@
                       ="ID: #{sg.id}"
                       - if cached_projects[sg.project_id] 
                         %br
-                        = "Project: #{cached_projects[sg.project_id].name}"
+                        - if cached_projects[sg.project_id].domain
+                          = "Scope: #{cached_projects[sg.project_id].domain.name}/#{cached_projects[sg.project_id].name}"
+                        - else 
+                          = "Project: #{cached_projects[sg.project_id].name}"
                   %td
                     - if sg.security_group_rules.empty?
                       No rules defined.
