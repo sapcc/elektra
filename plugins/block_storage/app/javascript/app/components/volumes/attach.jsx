@@ -22,7 +22,7 @@ const FormBody = ({values,loadNextServers,servers}) => {
     <p className="alert alert-info">
       Please enter a server ID or select a server from the list when clicking
       on the input field. Note that only servers with the Availability
-      Zone <b>{values.availability_zone}</b> can be attacht.
+      Zone <b>{values.availability_zone}</b> can be attached.
     </p>
 
     <Form.ElementHorizontal label='Server ID' name="server_id" required>
