@@ -23,7 +23,7 @@ module DnsService
       a: { label: 'IPv4 Address', type: 'string' },
       aaaa: { label: 'IPv6 Address', type: 'string' },
       caa: { label: 'Certification Authority Authorization', type: 'string' },
-      cert: { label: 'Certificate', type: 'text' },
+      cert: { label: 'Certificate', type: 'string' },
       cname: { label: 'Canonical Name', type: 'string' },
       mx: { label: 'Mail Server', type: 'string' },
       ns: { label: 'Record Data', type: 'string' },
