@@ -75,7 +75,7 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 gem 'sdoc', '~> 1.1.0', group: :doc
 
 # if you update puma check Dockerfile for Version dependencies!
-gem 'puma', '= 3.12.6', require: false
+gem 'puma', '= 4.3.8', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
