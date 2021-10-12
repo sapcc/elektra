@@ -57,7 +57,7 @@
     "eslint": "6.8.0",
     "eslint-loader": "4.0.2",
     "eslint-plugin-import": "2.25.1",
-    "eslint-plugin-react": "7.23.2",
+    "eslint-plugin-react": "7.26.1",
     "jest": "24.9.0",
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.14.0",
