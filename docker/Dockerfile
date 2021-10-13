@@ -12,7 +12,7 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install byebug -v 9.0.6 \
       && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
-      && gem install nio4r -v 2.3.1 \
+      && gem install nio4r -v 2.5.8 \
       && gem install nokogiri -v 1.10.9 \
       && gem install pg -v 0.21.0 \
       && gem install puma -v 4.3.9  \
