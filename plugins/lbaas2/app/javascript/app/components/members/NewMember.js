@@ -7,7 +7,8 @@ import Select from "react-select";
 import uniqueId from "lodash/uniqueId";
 import { addNotice } from "lib/flashes";
 import { Table } from "react-bootstrap";
-import NewMemberListItem from "./NewMemberListItem";
+import NewMemberListExistingItem from "./NewMemberListExistingItem";
+import NewMemberListNewItem from "./NewMemberListNewItem";
 import usePool from "../../../lib/hooks/usePool";
 import FormSubmitButton from "../shared/FormSubmitButton";
 import Log from "../shared/logger";
@@ -256,8 +257,7 @@ const NewMember = (props) => {
           </p>
           <Form.Errors errors={formErrors} />
 
-          <div className="existing-members">
-            <b>Existing Members</b>
+          <div className="new-members-container">
             <div className="toolbar toolbar-multi-line">
               {showServerDropdown && (
                 <React.Fragment>
@@ -321,10 +321,25 @@ const NewMember = (props) => {
               </div>
             </div>
 
-            <Table className="table new_members" responsive>
+            {newMembers.length > 0 && (
+              <Table className="table new_members" responsive>
+                <tbody>
+                  {newMembers.map((member, index) => (
+                    <NewMemberListNewItem
+                      member={member}
+                      key={member.id}
+                      index={index}
+                      onRemoveMember={onRemoveMember}
+                      results={submitResults[member.id]}
+                    />
+                  ))}
+                </tbody>
+              </Table>
+            )}
+
+            <Table className="table existing_members" responsive>
               <thead>
                 <tr>
-                  <th className="snug">#</th>
                   <th>Name</th>
                   <th>IPs</th>
                   <th className="snug">Weight</th>
@@ -334,9 +349,9 @@ const NewMember = (props) => {
                 </tr>
               </thead>
               <tbody>
-                {allMembers.length > 0 ? (
-                  allMembers.map((member, index) => (
-                    <NewMemberListItem
+                {members.items.length > 0 ? (
+                  members.items.map((member, index) => (
+                    <NewMemberListExistingItem
                       member={member}
                       key={member.id}
                       index={index}

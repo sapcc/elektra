@@ -140,6 +140,7 @@ const MemberList = ({ props, loadbalancerID }) => {
                       <th>IPs</th>
                       <th style={{ width: "8%" }}>Weight</th>
                       <th style={{ width: "8%" }}>Backup</th>
+                      <th style={{ width: "8%" }}>Admin State</th>
                       <th className="snug"></th>
                     </tr>
                   </thead>

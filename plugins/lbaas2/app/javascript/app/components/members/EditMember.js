@@ -5,7 +5,7 @@ import { Form } from "lib/elektra-form";
 import useMember from "../../../lib/hooks/useMember";
 import ErrorPage from "../ErrorPage";
 import { Table } from "react-bootstrap";
-import NewMemberListItem from "./NewMemberListItem";
+import NewMemberListExistingItem from "./NewMemberListExistingItem";
 import usePool from "../../../lib/hooks/usePool";
 import { addNotice } from "lib/flashes";
 import Log from "../shared/logger";
@@ -224,7 +224,7 @@ const EditMember = (props) => {
                 </p>
                 <Form.Errors errors={formErrors} />
 
-                <div className="existing-members">
+                <div className="new-members-container">
                   <b>Existing Members</b>
                   <div className="toolbar">
                     <div className="main-buttons">
@@ -256,7 +256,7 @@ const EditMember = (props) => {
                     <tbody>
                       {allMembers.length > 0 &&
                         allMembers.map((member, index) => (
-                          <NewMemberListItem
+                          <NewMemberListExistingItem
                             member={member}
                             key={member.id}
                             index={index}

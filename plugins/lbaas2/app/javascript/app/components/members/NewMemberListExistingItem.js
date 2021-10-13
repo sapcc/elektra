@@ -12,7 +12,12 @@ import {
 import CopyPastePopover from "../shared/CopyPastePopover";
 import BooleanLabel from "../shared/BooleanLabel";
 
-const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
+const NewMemberListExistingItem = ({
+  member,
+  index,
+  onRemoveMember,
+  results,
+}) => {
   const onRemoveClick = (e) => {
     onRemoveMember(member.id);
   };
@@ -41,21 +46,13 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
     }
   };
 
-  Log.debug("RENDER NewMemberListItem");
+  Log.debug("RENDER NewMemberListExistingItem");
   return (
     <tr>
       <td>
-        <div className={shouldAlert() ? "text-danger" : ""}>
-          {shouldAlert() ? (
-            <span>
-              <strong>{index}</strong>
-            </span>
-          ) : (
-            <span>{index}</span>
-          )}
-        </div>
-        {!member.saved && (
-          <React.Fragment>
+        {member.saved ? (
+          <>
+            <span>{displayName()}</span>
             <FormInput
               type="hidden"
               name={`member[${member.id}][identifier]`}
@@ -66,12 +63,7 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
               name={`member[${member.id}][index]`}
               value={index}
             />
-          </React.Fragment>
-        )}
-      </td>
-      <td>
-        {member.saved ? (
-          <span>{displayName()}</span>
+          </>
         ) : (
           <div className="display-flex member-required-icon">
             <MemberRequiredField />
@@ -193,4 +185,4 @@ const NewMemberListItem = ({ member, index, onRemoveMember, results }) => {
   );
 };
 
-export default NewMemberListItem;
+export default NewMemberListExistingItem;

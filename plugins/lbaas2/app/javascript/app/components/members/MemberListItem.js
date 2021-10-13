@@ -111,7 +111,7 @@ const MemberListItem = ({ props, poolID, member, searchTerm, shouldPoll }) => {
       return (
         <CopyPastePopover
           text={member.id}
-          size={20}
+          size={12}
           sliceType="MIDDLE"
           bsClass="cp copy-paste-ids"
           searchTerm={searchTerm}
@@ -157,6 +157,9 @@ const MemberListItem = ({ props, poolID, member, searchTerm, shouldPoll }) => {
       <td>{member.weight}</td>
       <td>
         <BooleanLabel value={member.backup} />
+      </td>
+      <td>
+        <BooleanLabel value={member.admin_state_up} />
       </td>
       <td>
         <DropDownMenu buttonIcon={<span className="fa fa-cog" />}>
