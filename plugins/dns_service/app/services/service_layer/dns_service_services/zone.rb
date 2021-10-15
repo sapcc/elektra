@@ -26,6 +26,16 @@ module ServiceLayer
         }
       end
 
+      def shared_zones(filter = {})
+        project_id = ""
+        header_options = {}
+        if filter[:project_id]
+          project_id = filter.delete(:project_id)
+          header_options = {"x-auth-sudo-project-id": project_id}
+        end
+        response = elektron_dns.get('zones/share')
+      end
+
       def new_zone(attributes = {})
         zone_map.call(attributes)
       end

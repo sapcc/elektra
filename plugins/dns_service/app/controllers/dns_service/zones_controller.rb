@@ -29,6 +29,7 @@ module DnsService
           @admin_option.merge(pagination_options).merge(filter)
         )[:items]
       end
+      services.dns_service.shared_zones()
 
       active_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
 
