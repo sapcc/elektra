@@ -113,6 +113,9 @@ export default class AccountRow extends React.Component {
             </button>
             <ul className="dropdown-menu dropdown-menu-right" role="menu">
               <li><Link to={`/accounts/${accountName}/access_policies`}>Access policies</Link></li>
+              {this.props.hasExperimentalFeatures && (
+                <li><Link to={`/accounts/${accountName}/gc_policies`}>Garbage collection policies</Link></li>
+              )}
               {!replication && (
                 <li><Link to={`/accounts/${accountName}/validation_rules`}>Validation rules</Link></li>
               )}

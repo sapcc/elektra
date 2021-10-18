@@ -14,8 +14,9 @@ module Keppel
         project_id: @scoped_project_id,
 
         # permission flags for the UI rendering
-        can_edit:   @can_edit,
-        is_admin:   @is_admin,
+        can_edit: @can_edit,
+        is_admin: @is_admin,
+        has_experimental_features: @scoped_project_name == "cc-demo" && @scoped_domain_name == "monsoon3",
 
         # used to display instructions for how to use the Docker CLI with Keppel
         docker_cli_username: "#{current_user.name}@#{current_user.user_domain_name}/#{@scoped_project_name}@#{@scoped_domain_name}",
