@@ -249,6 +249,7 @@ const EditMember = (props) => {
                         <th>IPs</th>
                         <th className="snug">Weight</th>
                         <th className="snug">Backup</th>
+                        <th className="snug">Admin State</th>
                         <th>Tags</th>
                         <th className="snug"></th>
                       </tr>

@@ -160,6 +160,21 @@ const NewMemberListExistingItem = ({
       </td>
       <td>
         {member.saved ? (
+          <React.Fragment>
+            <BooleanLabel value={member.admin_state_up} />
+          </React.Fragment>
+        ) : (
+          <div>
+            <FormInput
+              type="checkbox"
+              name={`member[${member.id}][admin_state_up]`}
+              value={member.admin_state_up}
+            />
+          </div>
+        )}
+      </td>
+      <td>
+        {member.saved ? (
           <StaticTags tags={member.tags} shouldPopover={true} />
         ) : (
           <div>

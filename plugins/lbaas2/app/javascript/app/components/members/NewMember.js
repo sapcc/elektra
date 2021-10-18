@@ -13,6 +13,14 @@ import usePool from "../../../lib/hooks/usePool";
 import FormSubmitButton from "../shared/FormSubmitButton";
 import Log from "../shared/logger";
 
+const generateMember = (name, address) => {
+  return {
+    id: uniqueId("member_"),
+    name: name || "",
+    address: address || "",
+  };
+};
+
 const NewMember = (props) => {
   const { searchParamsToString, matchParams, formErrorMessage } = useCommons();
   const { fetchServers, createMember, fetchMembers } = useMember();
@@ -28,7 +36,7 @@ const NewMember = (props) => {
     error: null,
     items: [],
   });
-  const [newMembers, setNewMembers] = useState([]);
+  const [newMembers, setNewMembers] = useState([generateMember()]);
 
   useEffect(() => {
     Log.debug("fetching servers for select");
@@ -178,24 +186,27 @@ const NewMember = (props) => {
 
   const addMembers = () => {
     // create a unique id for the value
-    const newValues = [
-      {
-        id: uniqueId("member_"),
-        name: selectedServers.name,
-        address: selectedServers.address,
-      },
-    ];
+    const newValues = generateMember(
+      selectedServers.name,
+      selectedServers.address
+    );
 
-    //  replace items
-    setNewMembers(newValues);
-    setSelectedServers([]);
+    let items = newMembers.slice();
+    items.push(newValues);
+    //  add items to the state
+    setNewMembers(items);
+    // reset selected server values from the dropdown
+    setSelectedServers({});
+    // hide dropdown
     setShowServerDropdown(false);
   };
 
   const addExternalMembers = () => {
-    // replace values
-    const newExtMembers = [{ id: uniqueId("member_"), type: "external" }];
-    setNewMembers(newExtMembers);
+    const newExtMembers = generateMember();
+    let items = newMembers.slice();
+    items.push(newExtMembers);
+    // add values
+    setNewMembers(items);
   };
 
   const onShowServersDropdown = () => {
@@ -258,84 +269,36 @@ const NewMember = (props) => {
           <Form.Errors errors={formErrors} />
 
           <div className="new-members-container">
-            <div className="toolbar toolbar-multi-line">
-              {showServerDropdown && (
-                <React.Fragment>
-                  <div className="display-flex select-server-section">
-                    <Select
-                      className="basic-single server-select"
-                      classNamePrefix="select"
-                      isDisabled={false}
-                      isLoading={servers.isLoading}
-                      isClearable={true}
-                      isRtl={false}
-                      isSearchable={true}
-                      name="servers"
-                      onChange={onChangeServers}
-                      options={servers.items}
-                      isMulti={false}
-                      closeMenuOnSelect={true}
-                      styles={styles}
-                      value={selectedServers}
-                    />
-                    <Button
-                      disabled={!selectedServers || selectedServers.length == 0}
-                      bsStyle="primary"
-                      className="margin-left"
-                      onClick={addMembers}
-                    >
-                      Add
-                    </Button>
-                    <Button bsStyle="primary" onClick={onCancelShowServer}>
-                      Cancel
-                    </Button>
-                  </div>
-                  {servers.error ? (
-                    <span className="text-danger">
-                      {formErrorMessage(servers.error)}
-                    </span>
-                  ) : (
-                    ""
-                  )}
-                </React.Fragment>
-              )}
-
-              <div className="main-buttons">
-                {!showServerDropdown && (
-                  <DropdownButton
-                    disabled={members.isLoading}
-                    title="Add"
-                    bsStyle="primary"
-                    noCaret
-                    pullRight
-                    id="add-member-dropdown"
-                  >
-                    <MenuItem onClick={onShowServersDropdown} eventKey="1">
-                      By selecting a server
-                    </MenuItem>
-                    <MenuItem onClick={addExternalMembers} eventKey="2">
-                      External
-                    </MenuItem>
-                  </DropdownButton>
+            <Table className="table new_members" responsive>
+              <tbody>
+                {newMembers.length > 0 ? (
+                  <>
+                    {newMembers.map((member, index) => (
+                      <NewMemberListNewItem
+                        member={member}
+                        key={member.id}
+                        index={index}
+                        onRemoveMember={onRemoveMember}
+                        results={submitResults[member.id]}
+                        servers={servers}
+                      />
+                    ))}
+                  </>
+                ) : (
+                  <tr>
+                    <td>"No new members added yet."</td>
+                  </tr>
                 )}
-              </div>
+              </tbody>
+            </Table>
+
+            <div className="add-more-section">
+              <Button bsStyle="primary" onClick={addExternalMembers}>
+                Add another
+              </Button>
             </div>
 
-            {newMembers.length > 0 && (
-              <Table className="table new_members" responsive>
-                <tbody>
-                  {newMembers.map((member, index) => (
-                    <NewMemberListNewItem
-                      member={member}
-                      key={member.id}
-                      index={index}
-                      onRemoveMember={onRemoveMember}
-                      results={submitResults[member.id]}
-                    />
-                  ))}
-                </tbody>
-              </Table>
-            )}
+            <h4>Existing Members</h4>
 
             <Table className="table existing_members" responsive>
               <thead>
@@ -344,6 +307,7 @@ const NewMember = (props) => {
                   <th>IPs</th>
                   <th className="snug">Weight</th>
                   <th className="snug">Backup</th>
+                  <th className="snug">Admin State</th>
                   <th>Tags</th>
                   <th className="snug"></th>
                 </tr>
@@ -365,7 +329,7 @@ const NewMember = (props) => {
                       {members.isLoading ? (
                         <span className="spinner" />
                       ) : (
-                        "No Members added."
+                        "There is no existing members."
                       )}
                     </td>
                   </tr>
