@@ -1,3 +1,9 @@
+/**
+ * Since we are accessing the window object, we use jsdom,
+ * which emulates the browser
+ * @jest-environment jsdom
+ */
+
 import { setupStore } from 'testHelper'
 import * as constants from '../../constants'
 import { fetchProject } from '../../actions/project'
@@ -10,7 +16,7 @@ describe('fetchProject action', () => {
   let store;
   let httpMock;
 
-  const flushAllPromises = () => new Promise(resolve => setImmediate(resolve));
+  const flushAllPromises = () => new Promise(resolve => setTimeout(resolve));
 
   beforeEach(() => {
     httpMock = new MockAdapter(axios)

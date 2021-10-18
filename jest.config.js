@@ -10,5 +10,5 @@ module.exports = {
     "ajax_helper": "<rootDir>/app/javascript/ajax_helper.js",
     "testHelper": "<rootDir>/app/javascript/test/support/testHelper.js"
   },
-  "setupTestFrameworkScriptFile": "<rootDir>/app/javascript/test/support/setupEnzyme.js"
+  "setupFilesAfterEnv": ["<rootDir>/app/javascript/test/support/setupEnzyme.js"]
 };

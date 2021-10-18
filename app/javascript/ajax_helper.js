@@ -6,6 +6,7 @@ let globalOptions = {}
 export let scope = {}
 
 // this variables are needed by integration tests
+
 window.activeAjaxCallsCount = 0
 window.failedAjaxCallsCount = 0
 
