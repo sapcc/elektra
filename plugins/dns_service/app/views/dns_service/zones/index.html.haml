@@ -47,7 +47,7 @@
               %i.fa.fa-external-link
               How to get a DNS zone
     - else
-      = render partial: 'list', locals: {zones: @zones, active_zone_transfer_requests: @active_zone_transfer_requests, pools: @pools}
+      = render partial: 'list', locals: {zones: @zones, shared_zones: @shared_zones, active_zone_transfer_requests: @active_zone_transfer_requests, pools: @pools}
 
 -# if @pagination_has_next
   .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.zones tbody', search_input_selector: '#search_zones_input'} }

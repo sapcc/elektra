@@ -3,16 +3,24 @@
 - className= 'bg-warning' if zone.status=='PENDING' and zone.action=='UPDATE'
 - className= 'bg-danger' if zone.status=='PENDING' and zone.action=='DELETE'
 
+
+
 %tr{id: "zone_#{zone.id}", class: className, data: {search_name: zone.name+'_'+zone.id, marker_id: zone.id} }
   %td
     - if active_zone_transfer_requests[zone.id]
       %i.fa.fa-fw.fa-truck{ data: {toggle:"tooltip", placement:"bottom", title: "There is a transfer request for this zone."}}
     - if current_user.is_allowed?("dns_service:zone_get", zone: zone.attributes)
       = link_to zone.name, zone_path(zone.id)
-      - if zone.shared
-        %span.shared-label= "shared"
     - else
       = zone.name
+
+    - if zone.shared
+      %span.bg-info= "shared from other project"
+    - else
+      - shared_zones.each do | shared_zone |
+        - if zone.id == shared_zone.zone_id && @scoped_project_id ==  shared_zone.project_id
+          %span.bg-success= "shared with other project"
+
     %br
     %span.info-text= zone.id
   - if @all_projects

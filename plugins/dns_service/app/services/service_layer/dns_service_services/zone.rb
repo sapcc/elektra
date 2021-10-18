@@ -8,6 +8,11 @@ module ServiceLayer
         @zone_map ||= class_map_proc(DnsService::Zone)
       end
 
+      def shard_zone_map
+        @shard_zone_map ||= class_map_proc(DnsService::SharedZone)
+      end
+
+
       def zones(filter = {})
         project_id = ""
         header_options = {}
@@ -33,7 +38,7 @@ module ServiceLayer
           project_id = filter.delete(:project_id)
           header_options = {"x-auth-sudo-project-id": project_id}
         end
-        response = elektron_dns.get('zones/share')
+        response = elektron_dns.get('zones/share').map_to('body.shared_zones',&shard_zone_map)
       end
 
       def new_zone(attributes = {})
