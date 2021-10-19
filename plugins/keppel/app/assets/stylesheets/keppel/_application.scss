@@ -140,3 +140,16 @@ tr.image-labels {
     }
   }
 }
+
+//GC policies editing screen
+td.policy-order-buttons > button {
+  width: 100%;
+}
+div.policy-matching-rule-line {
+  & > select:first-child {
+    width: 16.5em;
+  }
+  &:not(:last-child) {
+    padding-bottom: 4px;
+  }
+}

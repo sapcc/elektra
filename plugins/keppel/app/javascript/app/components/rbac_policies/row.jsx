@@ -1,3 +1,5 @@
+import { makeSelectBox } from '../utils';
+
 const permsOptions = [
   { value: 'anonymous_pull', label: 'Pull anonymously' },
   { value: 'pull', label: 'Pull' },
@@ -10,7 +12,6 @@ const permsOptions = [
 const RBACPoliciesEditRow = ({ index, policy, isEditable, setRepoRegex, setUserRegex, setPermissions, removePolicy }) => {
   const { match_repository: repoRegex, match_username: userRegex } = policy;
   const currentPerms = policy.permissions.sort().join(',') || '';
-  const currentPermsOption = permsOptions.find(o => o.value == currentPerms);
   return (
     <tr>
       <td>
@@ -39,19 +40,10 @@ const RBACPoliciesEditRow = ({ index, policy, isEditable, setRepoRegex, setUserR
         )}
       </td>
       <td>
-        {isEditable ? (
-          <select value={currentPerms} className='form-control select'
-              onChange={e => setPermissions(index, e.target.value)}>
-            {!currentPermsOption && (
-              <option key='unknown' value={currentPerms}>-- Please select --</option>
-            )}
-            {permsOptions.map(o => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
-        ) : (
-          currentPermsOption ? currentPermsOption.label : ''
-        )}
+        {makeSelectBox({
+          isEditable, options: permsOptions, value: currentPerms,
+          onChange: e => setPermissions(index, e.target.value),
+        })}
       </td>
       <td>
         {isEditable && (

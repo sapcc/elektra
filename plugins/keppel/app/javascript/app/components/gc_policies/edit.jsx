@@ -1,6 +1,8 @@
 import { Modal, Button } from 'react-bootstrap';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
+import GCPoliciesEditRow from './row';
+
 export default class GCPoliciesEditModal extends React.Component {
   state = {
     show: true,
@@ -21,7 +23,20 @@ export default class GCPoliciesEditModal extends React.Component {
       return;
     }
     if (this.state.policies == null) {
-      const policies = this.props.account.gc_policies || [];
+      const policies = [ ...(this.props.account.gc_policies || []) ];
+      for (const policy of policies) {
+        //We cannot derive the full state of the UI out of the policy itself.
+        //When adding new matches, the new match will initially be unfilled,
+        //which the UI would otherwise misinterpret as the absence of the
+        //filter, causing the edit UI for the filter to remain hidden.
+        policy.ui_hints = {};
+        policy.ui_hints.repo_filter = (policy.match_repository !== '.*' || policy.except_repository !== '.*') ? 'on': 'off';
+        if (policy.only_untagged) {
+          policy.ui_hints.tag_filter = 'untagged';
+        } else {
+          policy.ui_hints.tag_filter = (policy.match_tag !== '.*' || policy.except_tag !== '.*') ? 'on': 'off';
+        }
+      }
       this.setState({ ...this.state, policies });
     }
   }
@@ -32,13 +47,54 @@ export default class GCPoliciesEditModal extends React.Component {
     setTimeout(() => this.props.history.replace('/accounts'), 300);
   }
 
-  setPoliciesJSON = (input) => {
-    try {
-      const policies = JSON.parse(input);
-      this.setState({ ...this.state, policies });
-    } catch (e) {
-      console.log(e);
+  addPolicy = e => {
+    const newPolicy = {
+      match_repository: '',
+      action: 'protect',
+      ui_hints: { repo_filter: 'off', tag_filter: 'off' },
+    };
+    this.setState({ ...this.state,
+      policies: [ ...this.state.policies, newPolicy ],
+    });
+  };
+  removePolicy = (idx, input) => {
+    const policies = this.state.policies.filter((p, index) => idx != index);
+    this.setState({ ...this.state, policies });
+  };
+  movePolicy = (idx, step) => {
+    const policies = [ ...this.state.policies ];
+    const p1 = policies[idx], p2 = policies[idx + step];
+    if (p1 !== null && p2 !== null) {
+      policies[idx] = p2;
+      policies[idx + step] = p1;
     }
+    this.setState({ ...this.state, policies });
+  };
+
+  setPolicyAttribute = (idx, attr, input) => {
+    const policies = [ ...this.state.policies ];
+    policies[idx] = { ...policies[idx] };
+    switch (attr) {
+      case "action":
+      case "match_repository":
+      case "except_repository":
+      case "match_tag":
+      case "except_tag":
+        policies[idx][attr] = input;
+        break;
+      case "repo_filter":
+        policies[idx].ui_hints.repo_filter = input;
+        policies[idx].match_repository = '.*';
+        delete(policies[idx].except_repository);
+        break;
+      case "tag_filter":
+        policies[idx].ui_hints.tag_filter = input;
+        policies[idx].only_untagged = input == 'untagged';
+        delete(policies[idx].match_tag);
+        delete(policies[idx].except_tag);
+        break;
+    }
+    this.setState({ ...this.state, policies });
   };
 
   handleSubmit = e => {
@@ -52,7 +108,13 @@ export default class GCPoliciesEditModal extends React.Component {
       isSubmitting: true,
       apiErrors: null,
     });
-    const newAccount = { ...this.props.account, gc_policies: this.state.policies };
+    const newAccount = { ...this.props.account, gc_policies: [] };
+    for (const policy of this.state.policies) {
+      const policyCloned = { ...policy };
+      delete(policyCloned.ui_hints);
+      newAccount.gc_policies.push(policyCloned);
+    }
+
     this.props.putAccount(newAccount)
       .then(() => this.close())
       .catch(errors => {
@@ -74,8 +136,12 @@ export default class GCPoliciesEditModal extends React.Component {
     const policies = this.state.policies || [];
     const { isSubmitting, errorMessage, apiErrors } = this.state;
 
+    const { movePolicy, setPolicyAttribute, removePolicy } = this;
+    const commonPropsForRow = { isEditable, policyCount: policies.length, movePolicy, setPolicyAttribute, removePolicy };
+
+    //NOTE: className='keppel' on Modal ensures that plugin-specific CSS rules get applied
     return (
-      <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal className='keppel' dialogClassName="modal-xl" backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
             Garbage collection policies for account: {account.name}
@@ -84,12 +150,51 @@ export default class GCPoliciesEditModal extends React.Component {
 
         <Modal.Body>
           {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
+          <p className='bs-callout bs-callout-info bs-callout-emphasize'>
+            If GC policies are maintained, they will be evaluated by Keppel about once every hour, and matching images will be deleted automatically. Deletions will be recorded in the project's audit log with the initiator <code>policy-driven-gc</code>.
+          </p>
+          <p className='bs-callout bs-callout-warning bs-callout-emphasize'>
+            <strong>The order of policies is significant!</strong> Policies are evaluated starting from the top of the list. For each image, the first policy that matches gets applied, and all subsequent policies will be ignored.
+          </p>
           {isAdmin && !isEditable && (
             <p className='bs-callout bs-callout-warning bs-callout-emphasize'>
               The configuration for this account is read-only in this UI, probably because it was deployed by an automated process.
             </p>
           )}
-          <textarea rows="10" onChange={e => this.setPoliciesJSON(e.target.value)} style={{width:"100%",resize:"vertical",fontFamily:"monospace"}} value={JSON.stringify(policies, null, 2)} />
+          <table className='table'>
+            <thead>
+              <tr>
+                <th className='col-md-1'>{isEditable ? 'Order' : ''}</th>
+                <th className='col-md-2'>Action</th>
+                <th className='col-md-8'>Matching rule</th>
+                <th className='col-md-1'>
+                  {isEditable && (
+                    <button className='btn btn-sm btn-default' onClick={this.addPolicy}>
+                      Add policy
+                    </button>
+                  )}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {policies.map((policy, idx) => (
+                <GCPoliciesEditRow {...commonPropsForRow}
+                  key={idx} index={idx} policy={policy}
+                />
+              ))}
+              { policies.length == 0 && (
+                <tr>
+                  <td colSpan='4' className='text-muted text-center'>No entries</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          {policies.length > 0 && (
+            <p>
+              Matches on repository names and tag names use the <a href='https://golang.org/pkg/regexp/syntax/'>Go regex syntax</a>. Leading <code>^</code> and trailing <code>$</code> anchors are always added automatically.
+            </p>
+          )}
+          {<pre><code>{JSON.stringify(policies, null, 2)}</code></pre>}
         </Modal.Body>
 
         <Modal.Footer>
