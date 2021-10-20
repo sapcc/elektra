@@ -83,6 +83,7 @@ export default class List extends React.Component {
             <DefeatableLink
               to={`/security-groups/${this.props.securityGroupId}/rules/new`}
               className="btn btn-primary"
+              disabled={!this.props.securityGroup}
             >
               Add New Rule
             </DefeatableLink>
@@ -94,7 +95,7 @@ export default class List extends React.Component {
 
   renderTable = () => {
     const items = this.filterItems();
-    const isFetching = !this.props.securityGroup;
+    const isFetching = this.props.isFetching;
 
     return (
       <table className="table shares">
