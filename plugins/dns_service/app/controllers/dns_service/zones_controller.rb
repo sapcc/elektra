@@ -72,6 +72,7 @@ module DnsService
       end
 
       @zone = services.dns_service.find_zone(params[:id], all_projects: @all_projects)
+      @shared_zones = services.dns_service.shared_zones()
 
       @recordsets = paginatable(per_page: per_page.to_i) do |pagination_options|
         services.dns_service.recordsets(

@@ -7,7 +7,8 @@
     - zone_shared = @zone.shared
     - parent_project = @zone.project_id
     - if zone_shared
-      %h5 Shared by project: #{parent_project} 
+      - project = ObjectCache.where(id: parent_project).first
+      %h5 This zone is shared by project: #{project.name||parent_project} 
     - else
       %h4 Nameservers
       %ul
@@ -16,6 +17,14 @@
           - records = [records] unless records.is_a?(Array)
           - records.each do |record|
             %li= record
+      - @shared_zones.each do | shared_zone |
+        %h5 This zone is shared with project
+        %ul
+          - if @zone.id == shared_zone.zone_id && @scoped_project_id != shared_zone.target_project_id
+            - project = ObjectCache.where(id: shared_zone.target_project_id).first
+            %li= project.name || shared_zone.target_project_id
+          - else
+            %li nothing shared
 .row
   .col-md-9
     = render partial: 'dns_service/zones/recordsets/list', locals: { zone: @zone, recordsets: @recordsets }

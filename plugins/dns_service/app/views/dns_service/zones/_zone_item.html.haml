@@ -3,8 +3,6 @@
 - className= 'bg-warning' if zone.status=='PENDING' and zone.action=='UPDATE'
 - className= 'bg-danger' if zone.status=='PENDING' and zone.action=='DELETE'
 
-
-
 %tr{id: "zone_#{zone.id}", class: className, data: {search_name: zone.name+'_'+zone.id, marker_id: zone.id} }
   %td
     - if active_zone_transfer_requests[zone.id]
@@ -15,7 +13,7 @@
       = zone.name
 
     - if zone.shared
-      %span.bg-info= "shared from other project"
+      %span.bg-info= "shared by other project"
     - else
       - shared_zones.each do | shared_zone |
         - if zone.id == shared_zone.zone_id && @scoped_project_id ==  shared_zone.project_id
@@ -41,9 +39,9 @@
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
           - if current_user.is_allowed?("dns_service:zone_get", zone: zone.attributes)
             %li= link_to 'Manage Records', plugin('dns_service').zone_path(zone.id)
-          - if current_user.is_allowed?("dns_service:zone_update", zone: zone.attributes)
+          - if current_user.is_allowed?("dns_service:zone_update", zone: zone.attributes) && !zone.shared
             %li= link_to 'Edit', plugin('dns_service').edit_zone_path(zone.id), data: {modal: true}
-          - if current_user.is_allowed?("dns_service:transfer_request_create", zone: zone.attributes)
+          - if current_user.is_allowed?("dns_service:transfer_request_create", zone: zone.attributes) && !zone.shared
             %li= link_to 'Zone Transfer', plugin('dns_service').new_zone_transfer_request_path(zone_id: zone.id), data: {modal: true}
-          - if current_user.is_allowed?("dns_service:zone_delete", zone: zone.attributes)
+          - if current_user.is_allowed?("dns_service:zone_delete", zone: zone.attributes) && !zone.shared
             %li= link_to 'Delete', plugin('dns_service').zone_path(zone.id), method: :delete, data: { confirm: 'Are you sure you want to delete this zone?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
