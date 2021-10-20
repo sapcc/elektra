@@ -157,10 +157,11 @@ const AutoscalingConfigNgSubscopes = ({
       dispatch({
         type: "init",
         items: project.subscopes.map((s) => {
-          const parsedData = parseConfig(s.data)
+          const assetType = `project-quota:${s.service}:${s.resource}`
+          const parsedData = parseConfig(s.data, assetType)
 
           return {
-            assetType: `project-quota:${s.service}:${s.resource}`,
+            assetType,
             service: s.service,
             resource: s.resource,
             serviceLabel: t(s.category),
@@ -187,7 +188,7 @@ const AutoscalingConfigNgSubscopes = ({
       } else {
         const newValueInt = parseInt(newValue)
         minFree = minFree && parseInt(minFree)
-        const cfg = generateConfig(newValueInt, minFree)
+        const cfg = generateConfig(newValueInt, minFree, assetType)
         return updateConfig(project.id, assetType, cfg)
       }
     },

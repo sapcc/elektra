@@ -5,6 +5,7 @@ import AccountCreateModal from '../containers/accounts/create';
 import AccountMaintenanceModal from '../containers/accounts/maintenance';
 import AccountSubleaseTokenModal from '../containers/accounts/sublease';
 import AccountUpstreamConfigModal from '../containers/accounts/upstream_config';
+import GCPoliciesEditModal from '../containers/gc_policies/edit';
 import RBACPoliciesEditModal from '../containers/rbac_policies/edit';
 import ValidationRulesEditModal from '../containers/validation_rules/edit';
 import RepositoryList from '../containers/repositories/list';
@@ -12,8 +13,8 @@ import ImageList from '../containers/images/list';
 import ImageDetailsModal from '../containers/images/details';
 
 export default (props) => {
-  const { projectId, canEdit, isAdmin, dockerInfo } = props;
-  const rootProps = { projectID: projectId, canEdit, isAdmin, dockerInfo };
+  const { projectId, canEdit, isAdmin, hasExperimentalFeatures, dockerInfo } = props;
+  const rootProps = { projectID: projectId, canEdit, isAdmin, hasExperimentalFeatures, dockerInfo };
 
   return (
     <Loader>
@@ -27,6 +28,7 @@ export default (props) => {
           {/* modal dialogs that are reached from <AccountList> */}
           {isAdmin && <Route exact path="/accounts/new" render={(props) => <AccountCreateModal {...props} {...rootProps} /> } />}
           <Route exact path="/accounts/:account/access_policies" render={(props) => <RBACPoliciesEditModal {...props} {...rootProps} />} />
+          <Route exact path="/accounts/:account/gc_policies" render={(props) => <GCPoliciesEditModal {...props} {...rootProps} />} />
           <Route exact path="/accounts/:account/sublease" render={(props) => <AccountSubleaseTokenModal {...props} {...rootProps} />} />
           <Route exact path="/accounts/:account/toggle_maintenance" render={(props) => <AccountMaintenanceModal {...props} {...rootProps} />} />
           <Route exact path="/accounts/:account/upstream_config" render={(props) => <AccountUpstreamConfigModal {...props} {...rootProps} />} />

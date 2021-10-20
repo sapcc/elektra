@@ -1,9 +1,9 @@
 import { Unit } from '../../unit';
 import {parseConfig} from './helper'
 
-const renderConfigUI = ({ projectID, config, editValue, handleEditValue, unitName }) => {
+const renderConfigUI = ({ projectID, assetType, config, editValue, handleEditValue, unitName }) => {
   const unit = new Unit(unitName);
-  const parsed = parseConfig(config);
+  const parsed = parseConfig(config, assetType);
   if (parsed.custom) {
     return <em>Custom configuration (applied via API)</em>;
   }
@@ -44,6 +44,7 @@ export const AutoscalingConfigItem = ({ project, config, assetType, ...editorPro
       ) : (
         renderConfigUI({
           projectID: project.id,
+          assetType,
           config: config.data[assetType],
           ...editorProps,
         })

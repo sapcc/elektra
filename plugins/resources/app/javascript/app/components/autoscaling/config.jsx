@@ -34,7 +34,7 @@ export default class AutoscalingConfig extends React.Component {
     const { projectConfigs } = this.props;
     const editValues = {};
     for (const projectID in projectConfigs) {
-      const parsed = parseConfig(projectConfigs[projectID].data[assetType]);
+      const parsed = parseConfig(projectConfigs[projectID].data[assetType], assetType);
       if (!parsed.custom) {
         editValues[projectID] = parsed.value === null ? '' : parsed.value;
       }
@@ -81,14 +81,14 @@ export default class AutoscalingConfig extends React.Component {
     const promises = [];
     for (const projectID in projectConfigs) {
       //make sure we don't accidentally overwrite custom configs
-      const parsed = parseConfig(projectConfigs[projectID].data[assetType]);
+      const parsed = parseConfig(projectConfigs[projectID].data[assetType], assetType);
       if (parsed.custom || editValues[projectID] === undefined) {
         continue;
       }
       if (editValues[projectID] === '') {
         promises.push(this.props.deleteCastellumProjectResource(projectID, assetType));
       } else {
-        const cfg = generateConfig(parseInt(editValues[projectID], 10));
+        const cfg = generateConfig(parseInt(editValues[projectID], 10), null, assetType);
         promises.push(this.props.updateCastellumProjectResource(projectID, assetType, cfg));
       }
     }

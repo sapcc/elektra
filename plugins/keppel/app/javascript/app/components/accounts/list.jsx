@@ -18,6 +18,9 @@ const byName = (account1, account2) => {
 
 export default class AccountList extends React.Component {
   render() {
+    const { isAdmin, hasExperimentalFeatures } = this.props;
+    const forwardProps = { isAdmin, hasExperimentalFeatures };
+
     return (
       <React.Fragment>
         {this.props.isAdmin && (
@@ -29,7 +32,7 @@ export default class AccountList extends React.Component {
         )}
         <DataTable columns={columns} pageSize={10}>
           {this.props.accounts.sort(byName).map(account => (
-            <AccountRow key={account.name} account={account} isAdmin={this.props.isAdmin} />
+            <AccountRow key={account.name} account={account} {...forwardProps} />
           ))}
         </DataTable>
       </React.Fragment>
