@@ -3,15 +3,15 @@ import { Modal, Button, DropdownButton, MenuItem } from "react-bootstrap";
 import useCommons from "../../../lib/hooks/useCommons";
 import { Form } from "lib/elektra-form";
 import useMember from "../../../lib/hooks/useMember";
-import Select from "react-select";
 import uniqueId from "lodash/uniqueId";
 import { addNotice } from "lib/flashes";
-import { Table } from "react-bootstrap";
-import NewMemberListExistingItem from "./NewMemberListExistingItem";
 import NewMemberListNewItem from "./NewMemberListNewItem";
 import usePool from "../../../lib/hooks/usePool";
 import FormSubmitButton from "../shared/FormSubmitButton";
 import Log from "../shared/logger";
+import { SearchField } from "lib/components/search_field";
+import { regexString } from "lib/tools/regex_string";
+import MembersTable from "./MembersTable";
 
 const generateMember = (name, address) => {
   return {
@@ -19,6 +19,16 @@ const generateMember = (name, address) => {
     name: name || "",
     address: address || "",
   };
+};
+
+const filterItems = (searchTerm, items) => {
+  if (!searchTerm) return items;
+
+  const regex = new RegExp(regexString(searchTerm.trim()), "i");
+  return items.filter(
+    (i) =>
+      `${i.id} ${i.name} ${i.address} ${i.protocol_port}`.search(regex) >= 0
+  );
 };
 
 const NewMember = (props) => {
@@ -35,17 +45,28 @@ const NewMember = (props) => {
     error: null,
     items: [],
   });
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
+  const [poolID, setPoolID] = useState(null);
   const [newMembers, setNewMembers] = useState([generateMember()]);
   const [showExistingMembers, setShowExistingMembers] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(null);
+  const [filteredItems, setFilteredItems] = useState([]);
 
   useEffect(() => {
-    Log.debug("fetching servers for select");
+    // get the lb
     const params = matchParams(props);
     const lbID = params.loadbalancerID;
-    const poolID = params.poolID;
+    const plID = params.poolID;
+    setLoadbalancerID(lbID);
+    setPoolID(plID);
+  }, []);
+
+  useEffect(() => {
+    if (!loadbalancerID && !poolID) return;
+    Log.debug("fetching servers for select");
     // get servers for the select
     setServers({ ...servers, isLoading: true });
-    fetchServers(lbID, poolID)
+    fetchServers(loadbalancerID, poolID)
       .then((data) => {
         setServers({
           ...servers,
@@ -59,7 +80,7 @@ const NewMember = (props) => {
       });
     // get the existing members
     setMembers({ ...members, isLoading: true });
-    fetchMembers(lbID, poolID)
+    fetchMembers(loadbalancerID, poolID)
       .then((data) => {
         const newItems = data.members || [];
         for (let i = 0; i < newItems.length; i++) {
@@ -75,7 +96,12 @@ const NewMember = (props) => {
       .catch((error) => {
         setMembers({ ...members, isLoading: false, error: error });
       });
-  }, []);
+  }, [loadbalancerID, poolID]);
+
+  useEffect(() => {
+    const newItems = filterItems(searchTerm, members.items);
+    setFilteredItems(newItems);
+  }, [searchTerm, members]);
 
   /**
    * Modal stuff
@@ -89,10 +115,8 @@ const NewMember = (props) => {
 
   const restoreUrl = () => {
     if (!show) {
-      const params = matchParams(props);
-      const lbID = params.loadbalancerID;
       props.history.replace(
-        `/loadbalancers/${lbID}/show?${searchParamsToString(props)}`
+        `/loadbalancers/${loadbalancerID}/show?${searchParamsToString(props)}`
       );
     }
   };
@@ -110,11 +134,6 @@ const NewMember = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null);
-    // get the lb id and poolId
-    const params = matchParams(props);
-    const lbID = params.loadbalancerID;
-    const poolID = params.poolID;
-
     //  filter items in context, which are removed from the list or already saved
     const filtered = Object.keys(values)
       .filter((key) => {
@@ -139,7 +158,7 @@ const NewMember = (props) => {
 
     // save the entered values in case of error
     setInitialValues(filtered);
-    return createMember(lbID, poolID, filtered)
+    return createMember(loadbalancerID, poolID, filtered)
       .then((response) => {
         if (response && response.data) {
           addNotice(
@@ -150,7 +169,7 @@ const NewMember = (props) => {
           );
         }
         // TODO: fetch the Members and the pool again
-        persistPool(lbID, poolID)
+        persistPool(loadbalancerID, poolID)
           .then(() => {})
           .catch((error) => {});
         close();
@@ -201,14 +220,6 @@ const NewMember = (props) => {
     setNewMembers(newItems);
   };
 
-  const styles = {
-    container: (base) => ({
-      ...base,
-      flex: 1,
-    }),
-  };
-
-  const allMembers = [...newMembers, ...members.items];
   return (
     <Modal
       show={show}
@@ -287,51 +298,29 @@ const NewMember = (props) => {
               </div>
 
               <div className="collapse" id="collapseExistingMembers">
-                <div className="well exisiting-members-collapse-container">
-                  <Table className="table" responsive>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>IPs</th>
-                        <th className="snug">Weight</th>
-                        <th className="snug">Backup</th>
-                        <th className="snug">Admin State</th>
-                        <th>Tags</th>
-                        <th className="snug"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {members.items.length > 0 ? (
-                        members.items.map((member, index) => (
-                          <NewMemberListExistingItem
-                            member={member}
-                            key={member.id}
-                            index={index}
-                            onRemoveMember={onRemoveMember}
-                            results={submitResults[member.id]}
-                          />
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="5">
-                            {members.isLoading ? (
-                              <span className="spinner" />
-                            ) : (
-                              "There is no existing members."
-                            )}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </Table>
-                  {members.error ? (
-                    <span className="text-danger">
-                      {formErrorMessage(members.error)}
-                    </span>
-                  ) : (
-                    ""
-                  )}
+                <div className="toolbar searchToolbar">
+                  <SearchField
+                    value={searchTerm}
+                    onChange={(term) => setSearchTerm(term)}
+                    placeholder="Name, ID, IP or port"
+                    text="Searches by Name, ID, IP address or protocol port."
+                  />
                 </div>
+
+                <MembersTable
+                  members={filteredItems}
+                  props={props}
+                  poolID={poolID}
+                  searchTerm={searchTerm}
+                  isLoading={members.isLoading}
+                />
+                {members.error ? (
+                  <span className="text-danger">
+                    {formErrorMessage(members.error)}
+                  </span>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </div>

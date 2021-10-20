@@ -1,19 +1,16 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { DefeatableLink } from "lib/components/defeatable_link";
+import React, { useEffect, useMemo } from "react";
 import HelpPopover from "../shared/HelpPopover";
 import { useGlobalState } from "../StateProvider";
-import { Table } from "react-bootstrap";
 import useCommons from "../../../lib/hooks/useCommons";
 import useMember from "../../../lib/hooks/useMember";
-import MemberListItem from "./MemberListItem";
 import ErrorPage from "../ErrorPage";
-import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { SearchField } from "lib/components/search_field";
 import { policy } from "policy";
 import { scope } from "ajax_helper";
 import SmartLink from "../shared/SmartLink";
 import Log from "../shared/logger";
 import { regexString } from "lib/tools/regex_string";
+import MembersTable from "./MembersTable";
 
 const MemberList = ({ props, loadbalancerID }) => {
   const poolID = useGlobalState().pools.selected;
@@ -29,9 +26,7 @@ const MemberList = ({ props, loadbalancerID }) => {
   const initialLoad = () => {
     if (poolID) {
       Log.debug("FETCH MEMBERS");
-      persistMembers(loadbalancerID, poolID)
-        .then((data) => {})
-        .catch((error) => {});
+      persistMembers(loadbalancerID, poolID);
     }
   };
 
@@ -114,61 +109,15 @@ const MemberList = ({ props, loadbalancerID }) => {
                   </div>
                 </React.Fragment>
 
-                <Table className="table members" responsive>
-                  <thead>
-                    <tr>
-                      <th>
-                        <div className="display-flex">
-                          Name
-                          <div className="margin-left">
-                            <OverlayTrigger
-                              placement="top"
-                              overlay={
-                                <Tooltip id="defalult-pool-tooltip">
-                                  Sorted by Name ASC
-                                </Tooltip>
-                              }
-                            >
-                              <i className="fa fa-sort-asc" />
-                            </OverlayTrigger>
-                          </div>
-                          /ID
-                        </div>
-                      </th>
-                      <th>Status</th>
-                      <th style={{ width: "15%" }}>Tags</th>
-                      <th>IPs</th>
-                      <th style={{ width: "8%" }}>Weight</th>
-                      <th style={{ width: "8%" }}>Backup</th>
-                      <th style={{ width: "8%" }}>Admin State</th>
-                      <th className="snug"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {members && members.length > 0 ? (
-                      members.map((member, index) => (
-                        <MemberListItem
-                          props={props}
-                          poolID={poolID}
-                          member={member}
-                          key={index}
-                          searchTerm={searchTerm}
-                          shouldPoll={members.length < 11}
-                        />
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="7">
-                          {isLoading ? (
-                            <span className="spinner" />
-                          ) : (
-                            "No Members found."
-                          )}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </Table>
+                <MembersTable
+                  members={members}
+                  props={props}
+                  poolID={poolID}
+                  searchTerm={searchTerm}
+                  shouldPoll={members.length < 11}
+                  isLoading={isLoading}
+                  displayActions
+                />
               </div>
             )}
           </React.Fragment>
