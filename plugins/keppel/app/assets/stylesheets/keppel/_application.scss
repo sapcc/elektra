@@ -149,6 +149,9 @@ div.policy-matching-rule-line {
   & > select:first-child {
     width: 16.5em;
   }
+  & > input[type=text] {
+    width: 12em;
+  }
   &:not(:last-child) {
     padding-bottom: 4px;
   }

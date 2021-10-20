@@ -62,11 +62,11 @@ const GCPoliciesEditRow = ({ index, policy, policyCount, isEditable, movePolicy,
           })}
           {policy.ui_hints.repo_filter == 'on' && (
             <React.Fragment>
-              {" "}
+              {" regex "}
               {makeTextInput('match_repository', policy.match_repository)}
               {(isEditable || policy.except_repository) && (
                 <React.Fragment>
-                  {" but not "}
+                  {" but not regex "}
                   {makeTextInput('except_repository', policy.except_repository)}
                 </React.Fragment>
               )}
@@ -80,11 +80,11 @@ const GCPoliciesEditRow = ({ index, policy, policyCount, isEditable, movePolicy,
           })}
           {policy.ui_hints.tag_filter == 'on' && (
             <React.Fragment>
-              {" "}
+              {" regex "}
               {makeTextInput('match_tag', policy.match_tag)}
               {(isEditable || policy.except_tag) && (
                 <React.Fragment>
-                  {" but not "}
+                  {" but not regex "}
                   {makeTextInput('except_tag', policy.except_tag)}
                 </React.Fragment>
               )}

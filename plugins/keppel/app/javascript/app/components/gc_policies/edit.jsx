@@ -1,4 +1,5 @@
 import { Modal, Button } from 'react-bootstrap';
+import { v4 as uuidv4 } from 'uuid';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
 import GCPoliciesEditRow from './row';
@@ -30,12 +31,16 @@ export default class GCPoliciesEditModal extends React.Component {
         //which the UI would otherwise misinterpret as the absence of the
         //filter, causing the edit UI for the filter to remain hidden.
         policy.ui_hints = {};
-        policy.ui_hints.repo_filter = (policy.match_repository !== '.*' || policy.except_repository !== '.*') ? 'on': 'off';
+        policy.ui_hints.repo_filter = (policy.match_repository !== '.*' || (policy.except_repository || '') !== '') ? 'on': 'off';
         if (policy.only_untagged) {
           policy.ui_hints.tag_filter = 'untagged';
         } else {
-          policy.ui_hints.tag_filter = (policy.match_tag !== '.*' || policy.except_tag !== '.*') ? 'on': 'off';
+          policy.ui_hints.tag_filter = ((policy.match_tag || '') !== '.*' || (policy.except_tag || '') !== '') ? 'on': 'off';
         }
+        //Also, we give a unique key to each policy that gets used as the "key"
+        //property in the list of table rows. This ensures that button focus
+        //behaves as expected when moving rows down or up.
+        policy.ui_hints.key = uuidv4();
       }
       this.setState({ ...this.state, policies });
     }
@@ -51,7 +56,7 @@ export default class GCPoliciesEditModal extends React.Component {
     const newPolicy = {
       match_repository: '',
       action: 'protect',
-      ui_hints: { repo_filter: 'off', tag_filter: 'off' },
+      ui_hints: { key: uuidv4(), repo_filter: 'off', tag_filter: 'off' },
     };
     this.setState({ ...this.state,
       policies: [ ...this.state.policies, newPolicy ],
@@ -90,7 +95,11 @@ export default class GCPoliciesEditModal extends React.Component {
       case "tag_filter":
         policies[idx].ui_hints.tag_filter = input;
         policies[idx].only_untagged = input == 'untagged';
-        delete(policies[idx].match_tag);
+        if (input == 'on') {
+          policies[idx].match_tag = '.*';
+        } else {
+          delete(policies[idx].match_tag);
+        }
         delete(policies[idx].except_tag);
         break;
     }
@@ -179,7 +188,7 @@ export default class GCPoliciesEditModal extends React.Component {
             <tbody>
               {policies.map((policy, idx) => (
                 <GCPoliciesEditRow {...commonPropsForRow}
-                  key={idx} index={idx} policy={policy}
+                  key={policy.ui_hints.key} index={idx} policy={policy}
                 />
               ))}
               { policies.length == 0 && (
