@@ -8,6 +8,7 @@ DnsService::Engine.routes.draw do
   resources :zones do
     scope module: :zones do
       resources :recordsets
+      resources :shared_zones, only: [:index,:new,:create,:destroy]
       resources :transfer_requests, only: [:new,:create]
 
       collection do

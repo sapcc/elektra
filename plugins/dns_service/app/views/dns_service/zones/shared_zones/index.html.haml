@@ -1,0 +1,21 @@
+= content_for :title do
+  Maintain Shared Zones
+
+%div{class: modal? ? 'modal-body' : ''}
+
+  %h5 Zone is shared with project/s
+
+  %table.table.projects
+    %thead
+      %tr
+        %th Name
+        %th ID
+        %th.snug
+    %tbody
+      - @shared_zones.each do | shared_zone |
+        - if @zone.id == shared_zone.zone_id && @scoped_project_id != shared_zone.target_project_id
+          - project = ObjectCache.where(id: shared_zone.target_project_id).first
+          %td= project.name || "name not found in cache"
+          %td= shared_zone.target_project_id
+          %td
+            =# link_to 'Delete', plugin('dns_service').zone_shared_zone_path(shared_zone.target_project_id), class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure you want to delete this share?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
