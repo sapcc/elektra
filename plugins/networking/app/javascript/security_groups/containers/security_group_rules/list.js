@@ -12,12 +12,14 @@ export default connect(
   (state, ownProps) => {
     let securityGroupRules;
     let securityGroup;
+    let isFetching;
     let securityGroupId =
       ownProps.match &&
       ownProps.match.params &&
       ownProps.match.params.securityGroupId;
 
     if (securityGroupId) {
+      isFetching = state.securityGroups.isFetching;
       securityGroup = state.securityGroups.items.find(
         (i) => i.id == securityGroupId
       );
@@ -29,6 +31,7 @@ export default connect(
     return {
       securityGroupId,
       securityGroup,
+      isFetching,
       securityGroupRules,
       securityGroups: state.securityGroups.items,
     };
