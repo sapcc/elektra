@@ -25,11 +25,12 @@ export default ({ rule, handleDelete, securityGroups }) => {
   };
 
   const remoteSecurityGroup = () => {
+    let nameOrId = rule.remote_group_id;
     let group = securityGroups.find((g) => g.id == rule.remote_group_id);
-    if (!group) return rule.remote_group_id;
+    if (group) nameOrId = group.name;
     return (
       <Link to={`/security-groups/${rule.remote_group_id}/rules`}>
-        {group.name}
+        {nameOrId}
       </Link>
     );
   };
