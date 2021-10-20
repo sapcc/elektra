@@ -82,13 +82,22 @@ const fetchSecurityGroup = (id) => (dispatch) => {
       })
       .catch((error) => {
         if (error.response.status == 404) {
+          // remove from state
           dispatch(removeSecurityGroup(id));
-        } else {
-          handleError(errorMessage(error));
         }
+        // set state to not loading
+        dispatch(requestSecurityGroupsFailure());
+        // add error
+        addError(
+          React.createElement(ErrorsList, {
+            errors: errorMessage(error),
+          })
+        );
+        handleError(errorMessage(error));
       })
   );
 };
+
 const deleteSecurityGroup = (id) => (dispatch) =>
   confirm(`Do you really want to delete the securit group ${id}?`)
     .then(() => {
