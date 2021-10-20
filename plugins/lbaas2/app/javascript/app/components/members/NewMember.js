@@ -30,13 +30,13 @@ const NewMember = (props) => {
     error: null,
     items: [],
   });
-  const [selectedServers, setSelectedServers] = useState([]);
   const [members, setMembers] = useState({
     isLoading: false,
     error: null,
     items: [],
   });
   const [newMembers, setNewMembers] = useState([generateMember()]);
+  const [showExistingMembers, setShowExistingMembers] = useState(false);
 
   useEffect(() => {
     Log.debug("fetching servers for select");
@@ -103,7 +103,6 @@ const NewMember = (props) => {
   const [initialValues, setInitialValues] = useState({});
   const [formErrors, setFormErrors] = useState(null);
   const [submitResults, setSubmitResults] = useState({});
-  const [showServerDropdown, setShowServerDropdown] = useState(false);
 
   const validate = (values) => {
     return newMembers && newMembers.length > 0;
@@ -185,40 +184,11 @@ const NewMember = (props) => {
   };
 
   const addMembers = () => {
-    // create a unique id for the value
-    const newValues = generateMember(
-      selectedServers.name,
-      selectedServers.address
-    );
-
-    let items = newMembers.slice();
-    items.push(newValues);
-    //  add items to the state
-    setNewMembers(items);
-    // reset selected server values from the dropdown
-    setSelectedServers({});
-    // hide dropdown
-    setShowServerDropdown(false);
-  };
-
-  const addExternalMembers = () => {
     const newExtMembers = generateMember();
     let items = newMembers.slice();
     items.push(newExtMembers);
     // add values
     setNewMembers(items);
-  };
-
-  const onShowServersDropdown = () => {
-    setShowServerDropdown(true);
-  };
-
-  const onCancelShowServer = () => {
-    setShowServerDropdown(false);
-  };
-
-  const onChangeServers = (values) => {
-    setSelectedServers(values);
   };
 
   const onRemoveMember = (id) => {
@@ -269,80 +239,101 @@ const NewMember = (props) => {
           <Form.Errors errors={formErrors} />
 
           <div className="new-members-container">
-            <Table className="table new_members" responsive>
-              <tbody>
-                {newMembers.length > 0 ? (
-                  <>
-                    {newMembers.map((member, index) => (
-                      <NewMemberListNewItem
-                        member={member}
-                        key={member.id}
-                        index={index}
-                        onRemoveMember={onRemoveMember}
-                        results={submitResults[member.id]}
-                        servers={servers}
-                      />
-                    ))}
-                  </>
-                ) : (
-                  <tr>
-                    <td>"No new members added yet."</td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-
-            <div className="add-more-section">
-              <Button bsStyle="primary" onClick={addExternalMembers}>
-                Add another
-              </Button>
-            </div>
-
-            <h4>Existing Members</h4>
-
-            <Table className="table existing_members" responsive>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>IPs</th>
-                  <th className="snug">Weight</th>
-                  <th className="snug">Backup</th>
-                  <th className="snug">Admin State</th>
-                  <th>Tags</th>
-                  <th className="snug"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {members.items.length > 0 ? (
-                  members.items.map((member, index) => (
-                    <NewMemberListExistingItem
+            <div className="new-members">
+              {newMembers.length > 0 ? (
+                <>
+                  {newMembers.map((member, index) => (
+                    <NewMemberListNewItem
                       member={member}
                       key={member.id}
                       index={index}
                       onRemoveMember={onRemoveMember}
                       results={submitResults[member.id]}
+                      servers={servers}
                     />
-                  ))
+                  ))}
+                </>
+              ) : (
+                <p>"No new members added yet."</p>
+              )}
+
+              <div className="add-more-section">
+                <Button bsStyle="default" onClick={addMembers}>
+                  Add another
+                </Button>
+              </div>
+            </div>
+
+            <div className="existing-members">
+              <div
+                className="collapse-trigger"
+                onClick={() => setShowExistingMembers(!showExistingMembers)}
+                data-toggle="collapse"
+                data-target="#collapseExistingMembers"
+                aria-expanded={showExistingMembers}
+                aria-controls="collapseExistingMembers"
+              >
+                {showExistingMembers ? (
+                  <>
+                    <span>Hide existing members</span>
+                    <i className="fa fa-chevron-circle-up" />
+                  </>
                 ) : (
-                  <tr>
-                    <td colSpan="5">
-                      {members.isLoading ? (
-                        <span className="spinner" />
-                      ) : (
-                        "There is no existing members."
-                      )}
-                    </td>
-                  </tr>
+                  <>
+                    <span>Show existing members</span>
+                    <i className="fa fa-chevron-circle-down" />
+                  </>
                 )}
-              </tbody>
-            </Table>
-            {members.error ? (
-              <span className="text-danger">
-                {formErrorMessage(members.error)}
-              </span>
-            ) : (
-              ""
-            )}
+              </div>
+
+              <div className="collapse" id="collapseExistingMembers">
+                <div className="well exisiting-members-collapse-container">
+                  <Table className="table" responsive>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>IPs</th>
+                        <th className="snug">Weight</th>
+                        <th className="snug">Backup</th>
+                        <th className="snug">Admin State</th>
+                        <th>Tags</th>
+                        <th className="snug"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {members.items.length > 0 ? (
+                        members.items.map((member, index) => (
+                          <NewMemberListExistingItem
+                            member={member}
+                            key={member.id}
+                            index={index}
+                            onRemoveMember={onRemoveMember}
+                            results={submitResults[member.id]}
+                          />
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5">
+                            {members.isLoading ? (
+                              <span className="spinner" />
+                            ) : (
+                              "There is no existing members."
+                            )}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+                  {members.error ? (
+                    <span className="text-danger">
+                      {formErrorMessage(members.error)}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>

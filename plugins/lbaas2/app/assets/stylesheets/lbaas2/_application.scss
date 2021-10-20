@@ -333,6 +333,14 @@ ul.less-left-margin {
 * New members
 */
 
+.existing-members {
+  margin-top: 2rem;
+
+  .table-responsive {
+    max-height: 250px;
+  }
+}
+
 .select-server-section {
   width: 100%;
 
@@ -343,9 +351,28 @@ ul.less-left-margin {
 }
 
 .new-members-container {
-  margin-top: 20px;
+  margin-top: 2rem;
+
+  .collapse-trigger {
+    cursor: pointer;
+    :hover {
+      text-decoration: underline;
+    }
+    i {
+      margin-left: 0.5rem;
+    }
+  }
+  .collapse {
+    .exisiting-members-collapse-container {
+      table thead tr:nth-child(1) th {
+        background-color: inherit;
+      }
+    }
+  }
+
   .add-more-section {
     text-align: right;
+    margin-top: 2rem;
   }
 }
 
