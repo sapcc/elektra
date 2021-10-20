@@ -5,6 +5,7 @@ import { deleteSecurityGroupRule } from "../../actions/security_group_rules";
 import {
   fetchSecurityGroup,
   deleteSecurityGroup,
+  fetchSecurityGroupsIfNeeded,
 } from "../../actions/security_groups";
 
 export default connect(
@@ -42,6 +43,7 @@ export default connect(
         dispatch(deleteSecurityGroupRule(securityGroupId, id)),
       handleGroupDelete: () => dispatch(deleteSecurityGroup(securityGroupId)),
       loadSecurityGroup: () => dispatch(fetchSecurityGroup(securityGroupId)),
+      loadSecurityGroupsOnce: () => dispatch(fetchSecurityGroupsIfNeeded()),
     };
   }
 )(Items);

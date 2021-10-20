@@ -12,6 +12,8 @@ export default class List extends React.Component {
     if (!this.props.securityGroup) {
       this.props.loadSecurityGroup();
     }
+    // load all security groups to build the links properly if comming per deeplink
+    this.props.loadSecurityGroupsOnce();
   }
 
   sortBy = (name) => {

@@ -27,7 +27,11 @@ export default ({ rule, handleDelete, securityGroups }) => {
   const remoteSecurityGroup = () => {
     let group = securityGroups.find((g) => g.id == rule.remote_group_id);
     if (!group) return rule.remote_group_id;
-    return group.name;
+    return (
+      <Link to={`/security-groups/${rule.remote_group_id}/rules`}>
+        {group.name}
+      </Link>
+    );
   };
 
   const canDelete = policy.isAllowed("networking:rule_delete");
@@ -39,11 +43,16 @@ export default ({ rule, handleDelete, securityGroups }) => {
       <td>{rule.protocol || "Any"}</td>
       <td>{displayPort()}</td>
       <td>
-        {rule.remote_ip_prefix
-          ? `IP: ${rule.remote_ip_prefix}`
-          : rule.remote_group_id
-          ? `Group: ${remoteSecurityGroup()}`
-          : "-"}
+        {rule.remote_ip_prefix ? (
+          `IP: ${rule.remote_ip_prefix}`
+        ) : rule.remote_group_id ? (
+          <>
+            <span>Group: </span>
+            {remoteSecurityGroup()}
+          </>
+        ) : (
+          "-"
+        )}
       </td>
       <td>{rule.description}</td>
       <td>
