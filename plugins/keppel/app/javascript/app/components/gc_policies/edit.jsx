@@ -36,7 +36,7 @@ export default class GCPoliciesEditModal extends React.Component {
         if (policy.only_untagged) {
           policy.ui_hints.tag_filter = 'untagged';
         } else {
-          policy.ui_hints.tag_filter = ((policy.match_tag || '') !== '.*' || (policy.except_tag || '') !== '') ? 'on': 'off';
+          policy.ui_hints.tag_filter = ((policy.match_tag || '') !== '' || (policy.except_tag || '') !== '') ? 'on': 'off';
         }
         //Also, we give a unique key to each policy that gets used as the "key"
         //property in the list of table rows. This ensures that button focus

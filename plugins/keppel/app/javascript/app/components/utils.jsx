@@ -60,7 +60,7 @@ export const makeGCNotice = objectType => (
 export const makeSelectBox = ({ options, value, isEditable, onChange }) => {
   const current = options.find(o => o.value == value);
   if (!isEditable) {
-    return current ? current.label : '';
+    return current ? trimEllipsis(current.label) : '';
   }
   return (
     <select value={value} className='form-control select' onChange={onChange}>
@@ -69,3 +69,7 @@ export const makeSelectBox = ({ options, value, isEditable, onChange }) => {
     </select>
   );
 };
+
+const trimEllipsis = (str) => (
+  str.substr(-3) === '...' ? str.substr(0, str.length - 3) : str
+);
