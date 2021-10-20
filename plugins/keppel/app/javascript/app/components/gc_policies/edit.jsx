@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FormErrors } from 'lib/elektra-form/components/form_errors';
 
 import GCPoliciesEditRow from './row';
+import { validatePolicy } from './utils';
 
 export default class GCPoliciesEditModal extends React.Component {
   state = {
@@ -54,7 +55,7 @@ export default class GCPoliciesEditModal extends React.Component {
 
   addPolicy = e => {
     const newPolicy = {
-      match_repository: '',
+      match_repository: '.*',
       action: 'protect',
       ui_hints: { key: uuidv4(), repo_filter: 'off', tag_filter: 'off' },
     };
@@ -102,6 +103,63 @@ export default class GCPoliciesEditModal extends React.Component {
         }
         delete(policies[idx].except_tag);
         break;
+      case "timestamp":
+        if (input == 'off') {
+          delete(policies[idx].time_constraint);
+        } else {
+          policies[idx].time_constraint = {
+            ...(policies[idx].time_constraint || {}),
+            on: input,
+          };
+        }
+        break;
+      case "time_constraint":
+        const defaultValues = {
+          oldest: 5,
+          newest: 5,
+          older_than: { value: 1, unit: 'w' },
+          newer_than: { value: 1, unit: 'w' },
+        };
+        policies[idx].time_constraint = {
+          ...policies[idx].time_constraint,
+        };
+        for (const key in defaultValues) {
+          if (input == key) {
+            policies[idx].time_constraint[key] = defaultValues[key];
+          } else {
+            delete(policies[idx].time_constraint[key]);
+          }
+        }
+        break;
+      case "oldest":
+      case "newest":
+        policies[idx].time_constraint = {
+          ...policies[idx].time_constraint,
+          [attr]: input || 1,
+        };
+        break;
+      case "older_than":
+      case "newer_than":
+        policies[idx].time_constraint = {
+          ...policies[idx].time_constraint,
+          [attr]: {
+            ...policies[idx].time_constraint[attr],
+            value: input || 1,
+          },
+        };
+        break;
+      case "time_unit":
+        const tc = {
+          ...policies[idx].time_constraint,
+        };
+        if ("older_than" in tc) {
+          tc.older_than = { ...tc.older_than, unit: input };
+        }
+        if ("newer_than" in tc) {
+          tc.newer_than = { ...tc.newer_than, unit: input };
+        }
+        policies[idx].time_constraint = tc;
+        break;
     }
     this.setState({ ...this.state, policies });
   };
@@ -143,6 +201,7 @@ export default class GCPoliciesEditModal extends React.Component {
     const isEditable = isAdmin && (account.metadata || {}).readonly_in_elektra != 'true';
 
     const policies = this.state.policies || [];
+    const isValid = policies.every(p => validatePolicy(p) === null);
     const { isSubmitting, errorMessage, apiErrors } = this.state;
 
     const { movePolicy, setPolicyAttribute, removePolicy } = this;
@@ -203,14 +262,13 @@ export default class GCPoliciesEditModal extends React.Component {
               Matches on repository names and tag names use the <a href='https://golang.org/pkg/regexp/syntax/'>Go regex syntax</a>. Leading <code>^</code> and trailing <code>$</code> anchors are always added automatically.
             </p>
           )}
-          {<pre><code>{JSON.stringify(policies, null, 2)}</code></pre>}
         </Modal.Body>
 
         <Modal.Footer>
           {isEditable ? (
             <React.Fragment>
               <Button onClick={this.handleSubmit} bsStyle='primary'
-                  disabled={isSubmitting || !isEditable}>
+                  disabled={!isValid || isSubmitting || !isEditable}>
                 {isSubmitting ? 'Saving...' : 'Save'}
               </Button>
               <Button onClick={this.close}>Cancel</Button>

@@ -147,10 +147,13 @@ td.policy-order-buttons > button {
 }
 div.policy-matching-rule-line {
   & > select:first-child {
-    width: 16.5em;
+    width: 18em;
   }
   & > input[type=text] {
     width: 12em;
+  }
+  & > input[type=number] {
+    width: 6em;
   }
   &:not(:last-child) {
     padding-bottom: 4px;
