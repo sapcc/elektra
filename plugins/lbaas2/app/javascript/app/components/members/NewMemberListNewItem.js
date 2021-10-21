@@ -55,10 +55,6 @@ const NewMemberListNewItem = ({
     return uniqueId("collapseServerSelect-");
   }, [index]);
 
-  const onRemoveClick = (e) => {
-    onRemoveMember(member.id);
-  };
-
   const onChangeServers = (values) => {
     setSelectedServers(values);
     setName(values.name);
@@ -76,9 +72,9 @@ const NewMemberListNewItem = ({
             <div className="row">
               <div className="col-md-1"></div>
               <div className="col-md-11">
-                <div className="display-flex">
+                <div className="display-flex new-member-item-actions">
                   <div
-                    className="collapse-trigger"
+                    className="action-link"
                     onClick={() => setShowServers(!showServers)}
                     data-toggle="collapse"
                     data-target={`#${collapseId}`}
@@ -97,6 +93,15 @@ const NewMemberListNewItem = ({
                       </>
                     )}
                   </div>
+                  {index > 0 && (
+                    <div
+                      className="new-member-item-remove action-link"
+                      onClick={() => onRemoveMember(member.id)}
+                    >
+                      <span>Remove</span>
+                      <i className="fa fa-trash fa-fw" />
+                    </div>
+                  )}
                 </div>
                 <div className="collapse margin-top" id={collapseId}>
                   <Select
@@ -234,6 +239,9 @@ const NewMemberListNewItem = ({
     JSON.stringify(member),
     name,
     address,
+    onRemoveMember,
+    setShowServers,
+    onChangeServers,
   ]);
 };
 

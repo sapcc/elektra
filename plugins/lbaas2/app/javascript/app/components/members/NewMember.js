@@ -277,25 +277,27 @@ const NewMember = (props) => {
             </div>
 
             <div className="existing-members">
-              <div
-                className="collapse-trigger"
-                onClick={() => setShowExistingMembers(!showExistingMembers)}
-                data-toggle="collapse"
-                data-target="#collapseExistingMembers"
-                aria-expanded={showExistingMembers}
-                aria-controls="collapseExistingMembers"
-              >
-                {showExistingMembers ? (
-                  <>
-                    <span>Hide existing members</span>
-                    <i className="fa fa-chevron-circle-up" />
-                  </>
-                ) : (
-                  <>
-                    <span>Show existing members</span>
-                    <i className="fa fa-chevron-circle-down" />
-                  </>
-                )}
+              <div className="display-flex">
+                <div
+                  className="action-link"
+                  onClick={() => setShowExistingMembers(!showExistingMembers)}
+                  data-toggle="collapse"
+                  data-target="#collapseExistingMembers"
+                  aria-expanded={showExistingMembers}
+                  aria-controls="collapseExistingMembers"
+                >
+                  {showExistingMembers ? (
+                    <>
+                      <span>Hide existing members</span>
+                      <i className="fa fa-chevron-circle-up" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Show existing members</span>
+                      <i className="fa fa-chevron-circle-down" />
+                    </>
+                  )}
+                </div>
               </div>
 
               <div className="collapse" id="collapseExistingMembers">

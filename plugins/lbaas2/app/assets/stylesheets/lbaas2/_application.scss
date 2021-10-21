@@ -353,7 +353,7 @@ ul.less-left-margin {
 .new-members-container {
   margin-top: 2rem;
 
-  .collapse-trigger {
+  .action-link {
     cursor: pointer;
     :hover {
       text-decoration: underline;
@@ -361,6 +361,13 @@ ul.less-left-margin {
     i {
       margin-left: 0.5rem;
     }
+  }
+
+  .new-member-item-actions {
+    widht: 100%;
+  }
+  .new-member-item-remove {
+    margin-left: auto;
   }
 
   .add-more-section {
