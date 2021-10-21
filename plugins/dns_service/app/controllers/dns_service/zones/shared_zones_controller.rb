@@ -28,6 +28,18 @@ module DnsService
 
       end
 
+      def destroy
+        shared_zone_id = params[:id]
+        @shared_zone = services.dns_service.new_shared_zone(id: shared_zone_id)
+        @deleted = false
+        if @shared_zone.destroy
+          @deleted =  true
+        end
+        respond_to do |format|
+          format.js {}
+        end
+      end
+
     end
   end
 end

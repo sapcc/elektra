@@ -1,22 +1,31 @@
 = content_for :title do
-  Maintain Shared Zones
+  Zone is shared with project/s
 
 %div{class: modal? ? 'modal-body' : ''}
-
-  %h5 Zone is shared with project/s
+  .alert.alert-error.hidden
 
   %table.table.projects
     %thead
       %tr
-        %th Name
-        %th ID
+        %th Project Name
+        %th Project ID
+        %th Shared Zone ID
         %th.snug
     %tbody
-      - @shared_zones.each do | shared_zone |
-        %tr
-          - if @zone.id == shared_zone.zone_id && @scoped_project_id != shared_zone.target_project_id
-            - project = ObjectCache.where(id: shared_zone.target_project_id).first
-            %td= project ? project.name : "name not found in cache"
-            %td= shared_zone.target_project_id
-            %td
-              =# link_to 'Delete', plugin('dns_service').zone_shared_zone_path(shared_zone.target_project_id), class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure you want to delete this share?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
+      - if @shared_zones.length==0
+        %tr{data: {empty: true}}
+          %td{colspa: 6}
+            %h5= 'This zone is currently not shared...'
+      - else
+        - @shared_zones.each do | shared_zone |
+          %tr{id: "shared_zone_#{shared_zone.id}"}
+            - if @zone.id == shared_zone.zone_id && @scoped_project_id != shared_zone.target_project_id
+              - project = ObjectCache.where(id: shared_zone.target_project_id).first
+              %td= project ? project.name : "Name not found in cache..."
+              %td= shared_zone.target_project_id
+              %td= shared_zone.id
+              %td
+                = link_to 'Unshare', plugin('dns_service').zone_shared_zone_path(id: shared_zone.id), class: 'btn btn-danger', method: :delete, data: { confirm: "Are you sure you want to unshare?", ok: "Yes, delete it", confirmed: :loading_status}, remote: true
+  - unless @shared_zones.length==0
+    .bs-callout.bs-callout-info
+      Please be aware you need to delete all recordsets in other projects that are sharing this zone before you can unshare

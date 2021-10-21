@@ -12,7 +12,6 @@ module ServiceLayer
         @shared_zone_map ||= class_map_proc(DnsService::SharedZone)
       end
 
-
       def zones(filter = {})
         project_id = ""
         header_options = {}

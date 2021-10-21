@@ -1,0 +1,7 @@
+<% if @deleted %>
+  $('.alert.alert-error').addClass('hidden');
+  $('#shared_zone_<%=params[:id]%>').remove();
+<% else %>
+  $('.alert.alert-error').removeClass('hidden');
+  $('.alert.alert-error').html('Cannot unshare! Hint: please delete all recordsets in all other projects that share this zone before unsharing.');
+<% end %> 
