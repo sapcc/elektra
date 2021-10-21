@@ -18,6 +18,7 @@ const generateMember = (name, address) => {
     id: uniqueId("member_"),
     name: name || "",
     address: address || "",
+    backup: false,
   };
 };
 
