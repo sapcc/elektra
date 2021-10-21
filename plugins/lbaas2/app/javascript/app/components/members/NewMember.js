@@ -12,6 +12,8 @@ import Log from "../shared/logger";
 import { SearchField } from "lib/components/search_field";
 import { regexString } from "lib/tools/regex_string";
 import MembersTable from "./MembersTable";
+import { Tooltip, OverlayTrigger } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const generateMember = (name, address) => {
   return {
@@ -29,6 +31,45 @@ const filterItems = (searchTerm, items) => {
   return items.filter(
     (i) =>
       `${i.id} ${i.name} ${i.address} ${i.protocol_port}`.search(regex) >= 0
+  );
+};
+
+const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
+  return (
+    <>
+      {disabled ? (
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip id={uniqueId("tooltip-")}>
+              You reach the maximum of 5 new members
+            </Tooltip>
+          }
+        >
+          <Link
+            to={""}
+            className="btn btn-default btn-xs"
+            disabled={true}
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+          >
+            Add another
+          </Link>
+        </OverlayTrigger>
+      ) : (
+        <Link
+          to={""}
+          className="btn btn-default btn-xs"
+          onClick={(e) => {
+            e.preventDefault();
+            addMembersCallback();
+          }}
+        >
+          Add another
+        </Link>
+      )}
+    </>
   );
 };
 
@@ -275,9 +316,10 @@ const NewMember = (props) => {
               )}
 
               <div className="add-more-section">
-                <Button bsStyle="default" onClick={addMembers}>
-                  Add another
-                </Button>
+                <AddNewMemberButton
+                  disabled={newMembers.length > 4}
+                  addMembersCallback={addMembers}
+                />
               </div>
             </div>
 
