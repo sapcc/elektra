@@ -33,7 +33,8 @@ const filterItems = (searchTerm, items) => {
 };
 
 const NewMember = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage } = useCommons();
+  const { searchParamsToString, matchParams, formErrorMessage, errorMessage } =
+    useCommons();
   const { fetchServers, createMember, fetchMembers } = useMember();
   const { persistPool } = usePool();
   const [servers, setServers] = useState({
@@ -77,7 +78,11 @@ const NewMember = (props) => {
         });
       })
       .catch((error) => {
-        setServers({ ...servers, isLoading: false, error: error });
+        setServers({
+          ...servers,
+          isLoading: false,
+          error: errorMessage(error),
+        });
       });
     // get the existing members
     setMembers({ ...members, isLoading: true });

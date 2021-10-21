@@ -121,6 +121,9 @@ const NewMemberListNewItem = ({
                     value={selectedServers}
                     placeholder="Select..."
                   />
+                  {servers.error && (
+                    <span className="text-danger">{servers.error}</span>
+                  )}
                 </div>
               </div>
             </div>
