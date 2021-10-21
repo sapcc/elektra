@@ -14,7 +14,9 @@
 
     - zone_shared = zone.shared
     - if zone_shared
-      %span.bg-info= "shared by other project"
+      - parent_project = zone.project_id
+      - project = ObjectCache.where(id:parent_project).first
+      %span.bg-info= "shared by project #{project ? project.name : parent_project}"
     - else
       - shared_zones.each do | shared_zone |
         - if zone.id == shared_zone.zone_id && @scoped_project_id ==  shared_zone.project_id

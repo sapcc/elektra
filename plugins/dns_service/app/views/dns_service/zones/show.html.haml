@@ -9,7 +9,7 @@
     - if zone_shared
       -# target project
       - project = ObjectCache.where(id: parent_project).first
-      %h5 This zone is shared by project: #{project.name||parent_project} 
+      %h5 This zone is shared by project: #{project ? project.name : parent_project} 
     - else
       -# source project
       .row 
@@ -27,7 +27,7 @@
             - @shared_zones.each do | shared_zone |
               - if @zone.id == shared_zone.zone_id && @scoped_project_id != shared_zone.target_project_id
                 - project = ObjectCache.where(id: shared_zone.target_project_id).first
-                %li= project.name || shared_zone.target_project_id
+                %li= project ? project.name : shared_zone.target_project_id
               - else
                 %li nothing shared
 .row
