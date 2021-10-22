@@ -8,6 +8,7 @@ import { byteToHuman } from 'lib/tools/size_formatter';
 import { SEVERITY_ORDER } from '../../constants';
 import Digest from '../digest';
 import TagName from '../tagname';
+import GCPolicyFolder from './gc_policy_folder';
 import VulnerabilityFolder from './vulnerability_folder';
 
 const typeOfManifest = {
@@ -144,6 +145,7 @@ export default class ImageDetailsModal extends React.Component {
       media_type: mediaType, tags,
       vulnerability_status: vulnStatus,
       vulnerability_scan_error: vulnScanError,
+      gc_status: gcStatus,
     } = manifests.find(m => m.digest == digest) || {};
 
     const { isFetching: isFetchingImageConfig, data: imageConfig } = this.props.imageConfig || {};
@@ -169,7 +171,7 @@ export default class ImageDetailsModal extends React.Component {
       <table className='table datatable'>
         <tbody>
           <tr>
-            <th>Canonical digest</th>
+            <th className='preset-width'>Canonical digest</th>
             <td colSpan='2'><Digest digest={digest} wideDisplay={true} repositoryURL={repositoryURL} /></td>
           </tr>
           {(tags && tags.length > 0) ? (
@@ -182,11 +184,46 @@ export default class ImageDetailsModal extends React.Component {
             <th>MIME type</th>
             <td colSpan='2'>{mediaType}</td>
           </tr>
+          {gcStatus ? this.renderGCStatus(gcStatus, repositoryURL) : null}
           {typeOfManifest[mediaType] == 'list' ? this.renderSubmanifestReferences(manifest.manifests, manifests, repositoryURL) : null}
           {typeOfManifest[mediaType] == 'image' ? this.renderLayers(manifest, imageConfig, vulnReport, vulnStatus, vulnScanError, repositoryURL) : null}
         </tbody>
       </table>
     );
+  }
+
+  renderGCStatus(gcStatus, repositoryURL) {
+    if (gcStatus.protected_by_recent_upload) {
+      return <GCPolicyFolder caption='Protected from garbage collection because of recent upload' />;
+    }
+
+    if (gcStatus.protected_by_parent) {
+      const digest = gcStatus.protected_by_parent;
+      const caption = (
+        <React.Fragment>
+          {"Protected from garbage collection because of reference in "}
+          <Digest digest={digest} repositoryURL={repositoryURL} />
+          {" ("}
+          <Link to={`/repo/${this.props.account.name}/${this.props.repository.name}/-/manifest/${digest}/details`}>Details</Link>
+          {")"}
+        </React.Fragment>
+      );
+      return <GCPolicyFolder caption={caption} />;
+    }
+
+    if (gcStatus.protected_by_policy) {
+      return <GCPolicyFolder caption="Protected from garbage collection by policy" policies={[gcStatus.protected_by_policy]} />;
+    }
+
+    if (gcStatus.relevant_policies) {
+      const policies = gcStatus.relevant_policies;
+      if (gcStatus.relevant_policies.length === 0) {
+        return <GCPolicyFolder caption='No matching policies' />;
+      }
+      return <GCPolicyFolder caption={`${policies.length} matching policies`} policies={policies} />;
+    }
+
+    return <GCPolicyFolder caption='Unknown' />;
   }
 
   renderSubmanifestReferences(submanifests, allManifests, repositoryURL) {
