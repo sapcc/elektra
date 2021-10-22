@@ -28,4 +28,4 @@
                 = link_to 'Unshare', plugin('dns_service').zone_shared_zone_path(id: shared_zone.id), class: 'btn btn-danger', method: :delete, data: { confirm: "Are you sure you want to unshare?", ok: "Yes, delete it", confirmed: :loading_status}, remote: true
   - unless @shared_zones.length==0
     .bs-callout.bs-callout-info
-      Please be aware you need to delete all recordsets in other projects that are sharing this zone before you can unshare
+      Please be aware. You need to delete all recordsets in other projects that are sharing this zone before you can unshare.
