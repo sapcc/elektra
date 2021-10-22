@@ -37,13 +37,7 @@ const shouldAlert = (results) => {
   return false;
 };
 
-const NewMemberListNewItem = ({
-  member,
-  index,
-  onRemoveMember,
-  results,
-  servers,
-}) => {
+const NewMemberListNewItem = ({ member, index, onRemoveMember, servers }) => {
   const [selectedServers, setSelectedServers] = useState([]);
   const [name, setName] = useState(member.name);
   const [address, setAddress] = useState(member.address);
@@ -191,7 +185,7 @@ const NewMemberListNewItem = ({
                 <FormInput
                   type="number"
                   name={`member[${member.id}][weight]`}
-                  value={member.weight || 1}
+                  value={member.weight || "1"}
                 />
               </div>
             </div>

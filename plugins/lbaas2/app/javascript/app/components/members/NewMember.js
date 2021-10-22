@@ -76,7 +76,7 @@ const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
 const NewMember = (props) => {
   const { searchParamsToString, matchParams, formErrorMessage, errorMessage } =
     useCommons();
-  const { fetchServers, createMember, fetchMembers } = useMember();
+  const { fetchServers, create, fetchMembers } = useMember();
   const { persistPool } = usePool();
   const [servers, setServers] = useState({
     isLoading: false,
@@ -173,7 +173,6 @@ const NewMember = (props) => {
    */
   const [initialValues, setInitialValues] = useState({});
   const [formErrors, setFormErrors] = useState(null);
-  const [submitResults, setSubmitResults] = useState({});
 
   const validate = (values) => {
     return newMembers && newMembers.length > 0;
@@ -181,7 +180,10 @@ const NewMember = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null);
-    //  filter items in context, which are removed from the list or already saved
+
+    console.log("Values: ", values);
+
+    // filter items from the form context which are removed from the newMember list
     const filtered = Object.keys(values)
       .filter((key) => {
         let found = false;
@@ -189,12 +191,7 @@ const NewMember = (props) => {
           if (found) {
             break;
           }
-          // if found means the key from the form context exists in the selected member list
-          // the context contains all references of members added and removed from the list
-          // don't send rows already saved successfully
-          if (!newMembers[i].saved) {
-            found = key.includes(newMembers[i].id);
-          }
+          found = key.includes(newMembers[i].id);
         }
         return found;
       })
@@ -203,9 +200,33 @@ const NewMember = (props) => {
         return obj;
       }, {});
 
+    // parse nested keys to objects
+    // from values like member[XYZ][name]="arturo" to {XYZ:{name:"arturo"}}
+    let newMemberObjs = {};
+    Object.keys(filtered).forEach((key) => {
+      const newKeys = key
+        .split("[")
+        .filter(function (v) {
+          return v.indexOf("]") > -1;
+        })
+        .map(function (value) {
+          return value.split("]")[0];
+        });
+
+      const member = newKeys[0];
+      const field = newKeys[1];
+      if (!newMemberObjs[member]) newMemberObjs[member] = {};
+      newMemberObjs[member][field] = filtered[key];
+    });
+
+    let batchMembers = [];
+    Object.keys(newMemberObjs).forEach((key) => {
+      batchMembers.push(newMemberObjs[key]);
+    });
+
     // save the entered values in case of error
     setInitialValues(filtered);
-    return createMember(loadbalancerID, poolID, filtered)
+    return create(loadbalancerID, poolID, batchMembers)
       .then((response) => {
         if (response && response.data) {
           addNotice(
@@ -215,38 +236,13 @@ const NewMember = (props) => {
             </React.Fragment>
           );
         }
-        // TODO: fetch the Members and the pool again
-        persistPool(loadbalancerID, poolID)
-          .then(() => {})
-          .catch((error) => {});
+        // fetch the Members and the pool again
+        persistPool(loadbalancerID, poolID);
         close();
       })
       .catch((error) => {
-        const results =
-          error.response && error.response.data && error.response.data.results;
-        setFormErrors(formErrorMessage(error));
-        if (results) {
-          mergeSubmitResults(results);
-          setSubmitResults(results);
-        }
+        setFormErrors(errorMessage(error));
       });
-  };
-
-  const mergeSubmitResults = (results) => {
-    let newItems = newMembers.slice() || [];
-    Object.keys(results).forEach((key) => {
-      for (let i = 0; i < newItems.length; i++) {
-        if (newItems[i].id == key) {
-          if (results[key].saved) {
-            newItems[i] = { ...newItems[i], ...results[key] };
-          } else {
-            newItems[i]["saved"] = results[key].saved;
-          }
-          break;
-        }
-      }
-    });
-    setNewMembers(newItems);
   };
 
   const addMembers = () => {
@@ -306,7 +302,6 @@ const NewMember = (props) => {
                       key={member.id}
                       index={index}
                       onRemoveMember={onRemoveMember}
-                      results={submitResults[member.id]}
                       servers={servers}
                     />
                   ))}

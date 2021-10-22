@@ -116,6 +116,13 @@ const useMember = () => {
     });
   };
 
+  const create = (lbID, poolID, values) => {
+    if (values && Array.isArray(values) && values.length == 1) {
+      return createMember(lbID, poolID, values[0]);
+    }
+    return updateBatchMembers(lbID, poolID, values);
+  };
+
   const createMember = (lbID, poolID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
       ajaxHelper
@@ -131,6 +138,8 @@ const useMember = () => {
         });
     });
   };
+
+  const updateBatchMembers = (lbID, poolID, values) => {};
 
   const updateMember = (lbID, poolID, memberID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
@@ -159,6 +168,7 @@ const useMember = () => {
     persistMember,
     deleteMember,
     fetchServers,
+    create,
     createMember,
     updateMember,
     setSearchTerm,

@@ -38,47 +38,38 @@ module Lbaas2
         end
 
         def create
-          membersParams = parseMemberParams
+          membersParams = params[:member]
           # OS Bug, Subnet not optional, has to be set to VIP subnet
           loadbalancer = services.lbaas2.find_loadbalancer(params[:loadbalancer_id])
           vip_subnet_id = loadbalancer.vip_subnet_id
+          newParams = membersParams.merge(pool_id: params[:pool_id], subnet_id: vip_subnet_id, project_id: @scoped_project_id)
+          member = services.lbaas2.new_member(newParams)       
 
-          success = true
-          errors = []
-          saved_members = []
-          results = {}
-          membersParams.each do |_k, values|
-            # convert tags to array do to parse_nested_query
-            values['tags'] = JSON.parse(values['tags']) unless values['tags'].blank?
-            newParams = values.merge(pool_id: params[:pool_id], subnet_id: vip_subnet_id,
-                                     project_id: @scoped_project_id)
-            member = services.lbaas2.new_member(newParams)
-
-            if member.save
-              results[member.identifier] = member.attributes.merge({ saved: true })
-              saved_members << member
-              audit_logger.info(current_user, 'has created', member)
-            else
-              success = false
-              results[member.identifier] = member.attributes.merge({ saved: false })
-              errors << { "row #{member.index}": member.errors }
-            end
-          end
-
-          if success
-            render json: saved_members.first
+          if member.save
+            audit_logger.info(current_user, 'has created', member)
+            render json: member
           else
-            sortedErrors = errors.sort_by { |hsh| hsh.keys.first }
-            render json: { errors: sortedErrors, results: results }, status: 422
+            render json: {errors: member.errors}, status: 422
           end
+
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
           render json: { errors: e.message }, status: '500'
         end
 
-        def update
-          membersParams = parseMemberParams
+         def update
+          params = params[:member]
+          puts "^^^^^^^^^^^^^^^^^^"
+          puts params
+          puts "^^^^^^^^^^^^^^^^^^"
+        rescue Exception => e
+          render json: { errors: e.message }, status: '500'
+        end
+
+        # TODO finisch mehtod
+        def batch_update
+          membersParams = parseBatchMemberParams
           success = true
           errors = []
           saved_members = []
@@ -184,11 +175,11 @@ module Lbaas2
 
         protected
 
-        def parseMemberParams
-          membersParams = params[:member]
+        def parseBatchMemberParams
+          membersParams = params[:members]
           newMemberParams = {}
           membersParams.each do |k, v|
-            newMemberParams = newMemberParams.deep_merge(Rack::Utils.parse_nested_query("#{k}=#{Rack::Utils.escape(v)}")['member'])
+            newMemberParams = newMemberParams.deep_merge(Rack::Utils.parse_nested_query("#{k}=#{Rack::Utils.escape(v)}")['members'])
           end
           newMemberParams
         end
