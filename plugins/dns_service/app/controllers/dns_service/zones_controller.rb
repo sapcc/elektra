@@ -29,7 +29,8 @@ module DnsService
           @admin_option.merge(pagination_options).merge(filter)
         )[:items]
       end
-
+      @shared_zones = services.dns_service.shared_zones()
+      
       active_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
 
       @zone_transfer_requests = active_requests.select do |r|
@@ -71,6 +72,7 @@ module DnsService
       end
 
       @zone = services.dns_service.find_zone(params[:id], all_projects: @all_projects)
+      @shared_zones = services.dns_service.shared_zones()
 
       @recordsets = paginatable(per_page: per_page.to_i) do |pagination_options|
         services.dns_service.recordsets(
