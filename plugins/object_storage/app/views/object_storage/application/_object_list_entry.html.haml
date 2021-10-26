@@ -4,14 +4,14 @@
   %td.name-with-icon
     - if object.is_directory?
       %span.fa.fa-fw.fa-folder-open{ title: 'Directory' }
-      = link_to object.basename, plugin('object_storage').list_objects_path(encoded_container_name, encoded_object_path), title: 'List contents'
+      = link_to object.basename, plugin('object_storage').list_objects_path(encoded_container_name, encoded_object_path), title: "List #{object.path}"
     - else
       - if object.content_type.start_with?('text/')
         %span.fa.fa-fw.fa-file-text-o{ title: 'Object' }
         = link_to object.basename, plugin('object_storage').download_object_path(encoded_container_name, encoded_object_path, inline: 1), target: "_blank", title: 'Show file contents in browser'
       - else
         %span.fa.fa-fw.fa-file-o{ title: 'Object' }
-        = link_to object.basename, plugin('object_storage').download_object_path(encoded_container_name, encoded_object_path), title: 'Download Object'
+        = link_to object.basename, plugin('object_storage').download_object_path(encoded_container_name, encoded_object_path), title: "Download #{object.path}"
   %td
     - unless object.is_directory?
       = format_bytes(object.size_bytes)

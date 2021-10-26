@@ -59,8 +59,20 @@ module ServiceLayer
 
       # NOTE: keep in mind there is a limit container_listing_limit
       def list_objects(container_name, options={})
-        # prevent prefix and delimiter with slash, if this happens
-        # an empty list is returned
+        # https://docs.openstack.org/api-ref/object-store/index.html?expanded=show-container-details-and-list-objects-detail
+
+        # delimiter: The delimiter is a single character used to split object names to present a 
+        #            pseudo-directory hierarchy of objects. When combined with a prefix query, this enables 
+        #            API users to simulate and traverse the objects in a container as if they were in a directory tree.
+
+        # prefix: Only objects with this prefix will be returned. When combined with a delimiter query, 
+        #         this enables API users to simulate and traverse the objects in a container as if they 
+        #         were in a directory tree.
+
+        # path: For a string value, returns the object names that are nested in the pseudo path. 
+        #       Please use prefix/delimiter queries instead of using this path query.
+
+        # prevent prefix and delimiter with slash, if this happens an empty list is returned
         if options[:prefix] == '/' && options[:delimiter] == '/'
           options[:prefix] = ''
         end
@@ -83,14 +95,23 @@ module ServiceLayer
 
       def list_objects_at_path(container_name, object_path, filter = {})
         object_path += '/' if !object_path.end_with?('/') && !object_path.empty?
+
         result = list_objects(
           container_name, filter.merge(prefix: object_path, delimiter: '/')
         )
+        if object_path.empty? || object_path == "/"
+          # we consider objects with leading slash like "//bla.txt"
+          result.concat(list_objects(
+            container_name, filter.merge(prefix: "//", delimiter: '/')
+          ))
+        end
+
         # if there is a pseudo-folder at `object_path`, it will be in the result, too;
         # filter this out since we only want stuff below `object_path`
         objects = result.reject { |obj| obj['id'] == object_path }
         objects.collect { |data| object_map.call(data) }
       end
+
 
       def list_objects_below_path(container_name, object_path, filter={})
         list_objects(container_name, filter.merge(prefix: object_path))
