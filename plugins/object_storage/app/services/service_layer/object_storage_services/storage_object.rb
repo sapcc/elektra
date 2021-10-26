@@ -73,9 +73,7 @@ module ServiceLayer
         #       Please use prefix/delimiter queries instead of using this path query.
 
         # prevent prefix and delimiter with slash, if this happens an empty list is returned
-        if options[:prefix] == '/' && options[:delimiter] == '/'
-          options[:prefix] = ''
-        end
+        
         list = elektron_object_storage.get(container_name, options).body
         result = list.map! do |o|
           object = map_attribute_names(o, OBJECTS_ATTRMAP)
@@ -94,17 +92,35 @@ module ServiceLayer
       end
 
       def list_objects_at_path(container_name, object_path, filter = {})
+        # add trailing / to avaoid empty directorys
+        # test/bla.txt
+        # GET prefix: "test", delimiter: "/" -> this cause an empty result
+        # GET prefix: "test/", delimiter: "/" -> this will find "bla.txt"
         object_path += '/' if !object_path.end_with?('/') && !object_path.empty?
-
+        
+        # result contains all folders with leading slash and without like
+        # test/foo.txt
+        # /test2/foo.txt
+        # bla.txt
+        # 
+        # prefix: "", delimiter: "/"
+        # result = ["test/", "/", "bla.txt"]
         result = list_objects(
           container_name, filter.merge(prefix: object_path, delimiter: '/')
         )
-        if object_path.empty? || object_path == "/"
-          # we consider objects with leading slash like "//bla.txt"
+
+        # special case for leading slashes
+        # remove "/" from result 
+        # result = ["test/","bla.txt"]
+        root = result.select{|o| o["path"] == "/"}
+        result.reject!{|o| o["path"] == "/"}
+        # if found "/" then get results for prefix: "/", delimiter: "/"
+        unless root.empty?
           result.concat(list_objects(
-            container_name, filter.merge(prefix: "//", delimiter: '/')
+            container_name, filter.merge(prefix: "/", delimiter: '/')
           ))
         end
+        # result = ["test/", "test2/", "bla.txt"]
 
         # if there is a pseudo-folder at `object_path`, it will be in the result, too;
         # filter this out since we only want stuff below `object_path`
@@ -249,8 +265,10 @@ module ServiceLayer
       end
 
       def delete_folder(container_name, object_path)
+        prefix = object_path 
+        prefix += "/" unless object_path.ends_with?("/")
         targets = list_objects_below_path(
-          container_name, sanitize_path(object_path) + '/'
+          container_name, prefix
         ).map do |obj|
           { container: container_name, object: obj.path }
         end
