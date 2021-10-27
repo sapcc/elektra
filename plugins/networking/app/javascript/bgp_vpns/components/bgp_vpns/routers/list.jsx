@@ -1,10 +1,10 @@
 import React from "react"
-import * as apiClient from "../../apiClient"
-import { useDispatch, useGlobalState } from "../../stateProvider"
+import * as apiClient from "../../../apiClient"
+import { useDispatch, useGlobalState } from "../../../stateProvider"
 import { Alert } from "react-bootstrap"
 import AddRouterAssociation from "./addRouterAssociation"
 import AssociationItem from "./associationItem"
-import reducer from "../../defaultReducer"
+import reducer from "../../../defaultReducer"
 
 /**
  * The bgp vpns contain an attribute "routers", which contains the IDs of associated routers.

@@ -2,7 +2,8 @@ import React from "react"
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
 import { useGlobalState } from "../../stateProvider"
-import BgpVpnRouters from "./bgpvpnRouters"
+import BgpVpnRouters from "./routers/list"
+import RBAC from "./rbacs/list"
 
 const Row = ({ label, value, children }) => {
   label = (label && label.replace("_", " ")) || ""
@@ -99,13 +100,26 @@ const Show = () => {
                   </Row>
                   <Row label="Shared" value={`${item.shared}`} />
                   <Row label="Type" value={item.type} />
-                  <Row label="Import Targets" value={item.import_targets} />
-                  <Row label="Export Targets" value={item.export_targets} />
+                  <Row
+                    label="Import Targets"
+                    value={
+                      item.import_targets && item.import_targets.join(", ")
+                    }
+                  />
+                  <Row
+                    label="Export Targets"
+                    value={
+                      item.export_targets && item.export_targets.join(", ")
+                    }
+                  />
                 </tbody>
               </table>
             </Tab>
             <Tab eventKey={2} title="Routers">
               <BgpVpnRouters bgpvpn={item} />
+            </Tab>
+            <Tab eventKey={3} title="Access Control">
+              <RBAC bgpvpn={item} />
             </Tab>
           </Tabs>
         )}

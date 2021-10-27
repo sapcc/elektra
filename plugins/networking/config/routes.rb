@@ -22,6 +22,7 @@ Networking::Engine.routes.draw do
       post 'router-associations' => 'bgp_vpns#create_router_association'
       delete 'router-associations/:router_association_id' => 'bgp_vpns#destroy_router_association'
     end
+    resources :rbacs, module: :bgp_vpns, only: %i[index create destroy]
   end
 
   resources :security_groups, except: %i[edit new], path: 'security-groups' do

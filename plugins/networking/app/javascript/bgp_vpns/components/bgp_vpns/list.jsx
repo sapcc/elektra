@@ -146,6 +146,9 @@ const BgpVpns = () => {
                       <MenuItem onClick={() => history.push(`/${item.id}/2`)}>
                         Manage Routers
                       </MenuItem>
+                      <MenuItem onClick={() => history.push(`/${item.id}/3`)}>
+                        Access Control
+                      </MenuItem>
                     </Dropdown.Menu>
                   </Dropdown>
                 </td>

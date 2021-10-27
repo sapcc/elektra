@@ -71,5 +71,8 @@
   "networking:widget_ports": "rule:context_is_network_admin",
   "networking:widget_bgp_vpns": "rule:context_is_network_viewer",
 
+  "networking:bgp_vpn_rbac_policy_list": "rule:context_is_cloud_network_admin or (rule:context_is_network_viewer and project_id:%(bgp_vpn.tenant_id)s)",
+  "networking:bgp_vpn_rbac_policy_create": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(bgp_vpn.tenant_id)s)",
+  "networking:bgp_vpn_rbac_policy_delete": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(bgp_vpn.tenant_id)s)",
   "networking:bgp_vpn_list": "rule:context_is_network_viewer"
 }

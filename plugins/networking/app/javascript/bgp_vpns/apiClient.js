@@ -23,6 +23,16 @@ const pathParamsToUrl = (path, params) => {
   return url
 }
 
+const errorMessage = (error) => {
+  if (!error) return ""
+  if (typeof error === "string") return error
+  if (Array.isArray(error)) return error.join(", ")
+
+  return Object.keys(error)
+    .map((key) => `${key}: ${errorMessage(error[key])}`)
+    .join(", ")
+}
+
 // Check response status
 const checkStatus = async (response) => {
   if (response.status >= 200 && response.status < 300) {
@@ -32,7 +42,7 @@ const checkStatus = async (response) => {
     const contentType = response.headers.get("content-type")
     let message = await response
       .json()
-      .then((body) => body.errors || body)
+      .then((body) => errorMessage(body.errors || body))
       .catch(() => status)
     var error = new Error(message || status)
     error.status = status
