@@ -35,10 +35,13 @@
         .page-title
           %i.fa.fa-angle-right
           .title-content
-            = link_to request.fullpath do
+            - crumb,url = active_service_breadcrumb
+
+            = link_to url do
               - if content_for? :main_toolbar
                 = yield :main_toolbar
               - else
-                = active_service_breadcrumb
+                = crumb
+
 
           = release_state_tag(release_state) if release_state

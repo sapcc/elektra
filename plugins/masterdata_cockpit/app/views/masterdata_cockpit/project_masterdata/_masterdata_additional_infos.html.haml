@@ -1,3 +1,6 @@
+- inquiry = Inquiry::Inquiry.where(kind: "project", domain_id: @scoped_domain_id).find{|i| i.payload["name"] == @scoped_project_name}  
+- requester = inquiry.present? ? inquiry.requester : nil
+
 - if @project_masterdata
   .infobox
     %h4.action-heading
@@ -25,5 +28,10 @@
               = last_change.strftime('%I:%M:%S %p %d.%B %Y')
             - else
               \-
+        - if requester.present? 
+          %tr
+            %th.snug-nowrap Requested by 
+            %td= requester.name                
+
 
 Masterdata is needed for billing purposes but it is also the first source of information for the Converged Cloud operations team in case of questions and incidents.
