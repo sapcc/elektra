@@ -1,4 +1,4 @@
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.4-alpine3.10 AS elektra
+FROM ruby:2.4-alpine3.10 AS elektra
 
 # alpine3.10
 # nodejs (10.16.3-r0)
