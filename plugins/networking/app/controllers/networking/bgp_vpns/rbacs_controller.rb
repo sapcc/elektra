@@ -3,25 +3,26 @@
 require 'ipaddr'
 
 module Networking
-  module SecurityGroups
-    # Implements Security Group Rule actions
+  module BgpVpns
+    # Implements BGP VPN RBAC actions
     class RbacsController < ::AjaxController
 
       def index
         rbacs = services.networking.rbacs(
-          object_id: params[:security_group_id], object_type: 'security_group'
+          object_id: params[:bgp_vpn_id], object_type: 'bgpvpn'
         )
 
         render json: rbacs
       rescue Elektron::Errors::ApiResponse => e
         render json: { errors: e.message }, status: e.code
       end
+      
   
       def create
         rbac = services.networking.new_rbac(params[:rbac])
-        rbac.object_id     = params[:security_group_id]
+        rbac.object_id     = params[:bgp_vpn_id]
         rbac.target_tenant = params[:target_tenant]
-        rbac.object_type   = 'security_group'
+        rbac.object_type   = 'bgpvpn'
         rbac.action        = 'access_as_shared'
 
         if rbac.save

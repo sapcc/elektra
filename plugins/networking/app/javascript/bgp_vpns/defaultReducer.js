@@ -51,6 +51,31 @@ const reducer = (state = initialState, action = {}) => {
         updatedAt: Date.now(),
       }
     }
+
+    case "patch": {
+      const attrName = action.name
+      const payload = state[attrName]
+
+      let items
+      if (Array.isArray(payload)) {
+        items = payload.slice()
+        const index = items.findIndex((i) => i.id === action.id)
+
+        if (index < 0) return state
+        items[index] = { ...items[index], ...action.values }
+      } else {
+        items = { ...payload }
+        if (!items[action.item.id]) return state
+        items[action.item.id] = { ...items[action.item.id], ...action.values }
+      }
+
+      return {
+        ...state,
+        [attrName]: items,
+        updatedAt: Date.now(),
+      }
+    }
+
     case "add": {
       const attrName = action.name
       const payload = state[attrName]

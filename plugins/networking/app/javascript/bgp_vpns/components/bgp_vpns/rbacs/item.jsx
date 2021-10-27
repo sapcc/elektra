@@ -37,6 +37,7 @@ const Item = ({ item, onDelete, canDelete, cachedProject }) => {
             className={`btn btn-${confirm ? "danger" : "default"} btn-sm ${
               item.isDeleting ? "loading" : ""
             }`}
+            disabled={item.isDeleting}
             onClick={() => (confirm ? remove() : getConfirmation())}
           >
             {confirm && "Confirm"}
