@@ -10,6 +10,7 @@
             = link_to plugin('masterdata_cockpit').project_masterdata_edit_project_path({load_project_root: true}), title: "Edit project info", data: {modal: true, toggle: "tooltip", placement: "left"} do
               %i.fa.fa-edit.fa-fw
               Edit Project
+
   %table.table
     %tbody
       %tr
@@ -21,7 +22,8 @@
         %th.snug-nowrap
           Description:
         %td
-          = @project.description
+          = @project.description 
+ 
 
 - if current_user.is_allowed?('identity:project_request')
   %h4.action-heading

@@ -314,17 +314,34 @@ module ApplicationHelper
     name
   end
 
+  # OLD VERSION!
+  # def active_service_breadcrumb
+  #   return unless current_user
+  #   context = (current_user && current_user.is_allowed?('cloud_admin')) ? :cloud_admin : :services # this might be a bit ugly. But since we have two separate navs for general services and cloud admin services we have to somehow specify the correct context
+  #   active_service = active_navigation_item_name(context: context, :level => :all)
+  #   crumb = "Home" # Default case, only visible on domain home page
+  #   if active_service.blank?
+  #     crumb = "Project Overview" unless @active_project.blank? # no service selected, if project is available this is the project home page -> print project name
+  #   else
+  #     crumb = active_service # print active service name
+  #   end
+  #   crumb
+  # end
+
+  # returns an array with crumb and url
   def active_service_breadcrumb
     return unless current_user
     context = (current_user && current_user.is_allowed?('cloud_admin')) ? :cloud_admin : :services # this might be a bit ugly. But since we have two separate navs for general services and cloud admin services we have to somehow specify the correct context
-    active_service = active_navigation_item_name(context: context, :level => :all)
+    active_service = active_navigation_item(context: context, :level => :all)
+    url = request.fullpath # defaults to currenr url
     crumb = "Home" # Default case, only visible on domain home page
     if active_service.blank?
       crumb = "Project Overview" unless @active_project.blank? # no service selected, if project is available this is the project home page -> print project name
     else
-      crumb = active_service # print active service name
+      crumb = active_service.name # print active service name
+      url = active_service.url
     end
-    crumb
+    [crumb,url]
   end
 
   def body_class
