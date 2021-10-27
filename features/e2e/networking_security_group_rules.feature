@@ -8,7 +8,7 @@ Feature: Security Group Rules
 
   @admin
   Scenario: Can create a new Security Group Rule
-    When I visit project path "networking/security-groups/widget"
+    When I visit project path "networking/widget/security-groups"
     Then the page status code is successful
     And All AJAX calls are successful
     And I see a "default" link
@@ -19,7 +19,7 @@ Feature: Security Group Rules
 
   @member
   Scenario: Can not create a new Security Group Rule or remove the default ones
-    When I visit project path "networking/security-groups/widget"
+    When I visit project path "networking/widget/security-groups"
     Then the page status code is successful
     And All AJAX calls are successful
     And I see a "default" link
