@@ -24,7 +24,7 @@ module ServiceLayer
       end
 
       def delete_bgp_vpn(id)
-        return 201, elektron_networking.delete(`bgpvpn/bgpvpns/${id}`)
+        return 201, elektron_networking.delete("bgpvpn/bgpvpns/#{id}")
       rescue Elektron::Errors::ApiResponse => e
         return e.code, e.messages.join(', ')
       end

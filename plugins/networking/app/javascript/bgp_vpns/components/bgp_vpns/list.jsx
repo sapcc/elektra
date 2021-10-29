@@ -66,18 +66,16 @@ const BgpVpns = () => {
           id,
           values: { isDeleting: true },
         })
-        console.log("=========================DELETE")
         apiClient
           .del(`../../bgp-vpns/${id}`)
           .then(() => {
-            console.log("=========================================DESTROYED")
-            dispatch("bgpvpns", "remove", { id })
+            dispatch("bgpvpns", "remove", { name: "items", id })
           })
           .catch((error) => {
             dispatch("bgpvpns", "error", { error: error.message })
             dispatch("bgpvpns", "patch", {
-              name: items,
-              id: id,
+              name: "items",
+              id,
               values: { isDeleting: false },
             })
           })
@@ -110,6 +108,8 @@ const BgpVpns = () => {
           )}
         </div>
       </div>
+      {bgpvpns.error && <Alert bsStyle="danger">{bgpvpns.error}</Alert>}
+
       {!policy.isAllowed("networking:bgp_vpn_list") ? (
         <span>You are not allowed to see this page</span>
       ) : bgpvpns.isFetching ? (
@@ -117,8 +117,6 @@ const BgpVpns = () => {
           <span className="spinner" />
           Loading...
         </span>
-      ) : bgpvpns.error ? (
-        <Alert bsStyle="danger">{bgpvpns.error}</Alert>
       ) : filteredItems.length === 0 ? (
         <span>No items found!</span>
       ) : (
@@ -174,27 +172,29 @@ const BgpVpns = () => {
                 </td>
                 <td>{`${item.shared}`}</td>
                 <td>
-                  <Dropdown id={`bgpvpns-dropdown-${item.id}`} pullRight>
-                    <Dropdown.Toggle noCaret className="btn-sm">
-                      <span className="fa fa-cog" />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu className="super-colors">
-                      <MenuItem onClick={() => history.push(`/${item.id}/2`)}>
-                        Manage Routers
-                      </MenuItem>
-                      <MenuItem onClick={() => history.push(`/${item.id}/3`)}>
-                        Access Control
-                      </MenuItem>
-                      {policy.isAllowed("networking:bgp_vpn_delete") && (
-                        <>
-                          <MenuItem divider />
-                          <MenuItem onClick={() => deleteBgpvpn(item.id)}>
-                            Delete
-                          </MenuItem>
-                        </>
-                      )}
-                    </Dropdown.Menu>
-                  </Dropdown>
+                  {!item.isDeleting && (
+                    <Dropdown id={`bgpvpns-dropdown-${item.id}`} pullRight>
+                      <Dropdown.Toggle noCaret className="btn-sm">
+                        <span className="fa fa-cog" />
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu className="super-colors">
+                        <MenuItem onClick={() => history.push(`/${item.id}/2`)}>
+                          Manage Routers
+                        </MenuItem>
+                        <MenuItem onClick={() => history.push(`/${item.id}/3`)}>
+                          Access Control
+                        </MenuItem>
+                        {policy.isAllowed("networking:bgp_vpn_delete") && (
+                          <>
+                            <MenuItem divider />
+                            <MenuItem onClick={() => deleteBgpvpn(item.id)}>
+                              Delete
+                            </MenuItem>
+                          </>
+                        )}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  )}
                 </td>
               </tr>
             ))}

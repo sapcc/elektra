@@ -32,7 +32,7 @@ module Networking
       end 
     end
 
-    def destroy
+    def destroy      
       code, bgp_vpn = services.networking.delete_bgp_vpn(params.require(:id))
 
       if code.to_i >= 400
