@@ -62,13 +62,15 @@ const BgpVpns = () => {
     confirm(`Do you really want to delete the BGP VPN ${id}?`)
       .then(() => {
         dispatch("bgpvpns", "patch", {
-          name: items,
-          id: id,
+          name: "items",
+          id,
           values: { isDeleting: true },
         })
+        console.log("=========================DELETE")
         apiClient
           .del(`../../bgp-vpns/${id}`)
           .then(() => {
+            console.log("=========================================DESTROYED")
             dispatch("bgpvpns", "remove", { id })
           })
           .catch((error) => {
@@ -132,7 +134,7 @@ const BgpVpns = () => {
           </thead>
           <tbody>
             {filteredItems.map((item, i) => (
-              <tr key={i}>
+              <tr key={i} className={item.isDeleting ? "updating" : ""}>
                 <td>
                   <Link to={`/${item.id}`}>{item.name}</Link>
                   <br />
