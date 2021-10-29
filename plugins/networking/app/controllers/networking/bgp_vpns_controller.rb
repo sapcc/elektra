@@ -8,7 +8,7 @@ module Networking
     authorization_context 'networking'
     # enforce permission checks. This will automatically
     # investigate the rule name.
-    authorization_required only: %i[index]
+    authorization_required only: %i[index create destroy]
 
     def index
       code, bgp_vpns = services.networking.bgp_vpns()
@@ -19,6 +19,26 @@ module Networking
         render json: {errors: bgp_vpns}, status: code
       else
         render json: bgp_vpns
+      end 
+    end
+
+    def create
+      code, bgp_vpn = services.networking.create_bgp_vpn(params.require(:name))
+
+      if code.to_i >= 400
+        render json: {errors: bgp_vpn}, status: code
+      else
+        render json: bgp_vpn
+      end 
+    end
+
+    def destroy
+      code, bgp_vpn = services.networking.delete_bgp_vpn(params.require(:id))
+
+      if code.to_i >= 400
+        render json: {errors: bgp_vpn}, status: code
+      else
+        head :ok
       end 
     end
 

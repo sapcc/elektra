@@ -11,6 +11,24 @@ module ServiceLayer
         return e.code, e.messages.join(', ')
       end
 
+      def create_bgp_vpn(name)
+        return 201, elektron_networking.post("bgpvpn/bgpvpns") do 
+          {
+            "bgpvpn": {
+              "name": name,
+            }
+          }
+        end
+      rescue Elektron::Errors::ApiResponse => e
+        return e.code, e.messages.join(', ')
+      end
+
+      def delete_bgp_vpn(id)
+        return 201, elektron_networking.delete(`bgpvpn/bgpvpns/${id}`)
+      rescue Elektron::Errors::ApiResponse => e
+        return e.code, e.messages.join(', ')
+      end
+
       def router_associations(bgpvpn_id)
         # byebug
         return 200, elektron_networking.get("bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations").body

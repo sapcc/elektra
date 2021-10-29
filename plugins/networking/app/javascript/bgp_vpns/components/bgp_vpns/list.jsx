@@ -1,10 +1,11 @@
 import { SearchField } from "lib/components/search_field"
 import { Alert, MenuItem, Dropdown } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import React from "react"
+import React, { useCallback } from "react"
 import * as apiClient from "../../apiClient"
 import { useGlobalState, useDispatch } from "../../stateProvider"
 import { useHistory } from "react-router-dom"
+import { confirm } from "lib/dialogs"
 
 const BgpVpns = () => {
   const { bgpvpns, cachedProjects, cachedRouters } = useGlobalState()
@@ -26,7 +27,7 @@ const BgpVpns = () => {
     apiClient
       .get("../../bgp-vpns")
       .then((data) => dispatch("bgpvpns", "receive", { items: data.bgpvpns }))
-      .catch((error) => dispatch("bgpvpns", "error", { error }))
+      .catch((error) => dispatch("bgpvpns", "error", { error: error.message }))
   }, [])
 
   // load objects from cache
@@ -57,6 +58,31 @@ const BgpVpns = () => {
       })
   }, [bgpvpns.items])
 
+  const deleteBgpvpn = useCallback((id) => {
+    confirm(`Do you really want to delete the BGP VPN ${id}?`)
+      .then(() => {
+        dispatch("bgpvpns", "patch", {
+          name: items,
+          id: id,
+          values: { isDeleting: true },
+        })
+        apiClient
+          .del(`../../bgp-vpns/${id}`)
+          .then(() => {
+            dispatch("bgpvpns", "remove", { id })
+          })
+          .catch((error) => {
+            dispatch("bgpvpns", "error", { error: error.message })
+            dispatch("bgpvpns", "patch", {
+              name: items,
+              id: id,
+              values: { isDeleting: false },
+            })
+          })
+      })
+      .catch((_aborted) => null)
+  }, [])
+
   // filter items by name or id
   const filteredItems = React.useMemo(() => {
     if (!filter || filter.length === 0) return bgpvpns.items || []
@@ -73,6 +99,14 @@ const BgpVpns = () => {
           placeholder="name or ID"
           text="Filters by name or ID"
         />
+
+        <div className="main-buttons">
+          {policy.isAllowed("networking:bgp_vpn_create") && (
+            <Link to="/new" className="btn btn-primary">
+              New BGP VPN
+            </Link>
+          )}
+        </div>
       </div>
       {!policy.isAllowed("networking:bgp_vpn_list") ? (
         <span>You are not allowed to see this page</span>
@@ -149,6 +183,14 @@ const BgpVpns = () => {
                       <MenuItem onClick={() => history.push(`/${item.id}/3`)}>
                         Access Control
                       </MenuItem>
+                      {policy.isAllowed("networking:bgp_vpn_delete") && (
+                        <>
+                          <MenuItem divider />
+                          <MenuItem onClick={() => deleteBgpvpn(item.id)}>
+                            Delete
+                          </MenuItem>
+                        </>
+                      )}
                     </Dropdown.Menu>
                   </Dropdown>
                 </td>

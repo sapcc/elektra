@@ -90,7 +90,8 @@ const BgpVpnRouters = ({ bgpvpn }) => {
         )
         .catch(
           (error) =>
-            isMounted.current && associationDispatch({ type: "error", error })
+            isMounted.current &&
+            associationDispatch({ type: "error", error: error })
         )
     },
     [url, associations, associationDispatch, bgpvpn]

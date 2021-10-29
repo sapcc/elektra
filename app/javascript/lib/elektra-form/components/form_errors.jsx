@@ -1,19 +1,21 @@
-import { ErrorsList } from './errors_list';
-import { useContext } from 'react'
-import { FormContext } from './form_context' 
+import { ErrorsList } from "./errors_list"
+import { useContext } from "react"
+import { FormContext } from "./form_context"
 
 export const FormErrors = ({
-  className='alert alert-error',
+  className = "alert alert-error",
   ...otherProps
 }) => {
   const context = useContext(FormContext)
 
   // return null if no errors given
-  let localErrors = otherProps['errors'] || context.formErrors;
+  let localErrors = otherProps["errors"] || context.formErrors
 
-  if (!localErrors) return null;
+  if (!localErrors) return null
 
   return (
-    <div className={className}><ErrorsList errors={localErrors}/></div>
+    <div className={className}>
+      <ErrorsList errors={localErrors} />
+    </div>
   )
-};
+}
