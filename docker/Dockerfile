@@ -1,4 +1,4 @@
-FROM keppel.global.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.5-alpine3.13 AS elektra
+FROM ruby:2.5-alpine3.13 AS elektra
 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
