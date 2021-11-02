@@ -6,12 +6,20 @@ module EmailService
     include EmailHelper
     include TemplateHelper
 
-    authorization_context 'email_service'
-    authorization_required
+    # authorization_context 'email_service'
+    # authorization_required
 
-    def index
-      enforce_permissions('email_service:application_list')
+    def ui_switcher
+      if current_user.has_role?('cloud_support_tools_viewer')
+        redirect_to emails_path
+      end
     end
+ 
+    def restrict_access
+      unless current_user.has_role?('cloud_support_tools_viewer')
+        redirect_to index_path
+      end
+    end 
 
     def render_paginatable_for_configset(items, filter={})
       return if !@pagination_enabled || !items || items.length.zero?

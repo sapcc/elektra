@@ -22,14 +22,6 @@ module ServiceLayer
         'identity', path_prefix: '/v3'
       )
     end
-    # def elektron_id_client(token, identity_url, project_id, region)
-    #   # logger.debug "reached elektron_id_client"
-    #   @elektron_id_client ||= Elektron.client({
-    #     url: identity_url,
-    #     token: token,
-    #     scope_project_id: project_id
-    #   }, { region: region, interface: 'public'})
-    # end
 
   end
 end

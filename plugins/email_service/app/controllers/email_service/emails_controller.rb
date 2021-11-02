@@ -1,33 +1,45 @@
 module EmailService
   class EmailsController < ::EmailService::ApplicationController
-
+    before_action :restrict_access
+    
     def index
-      @all_emails = list_verified_identities("EmailAddress")
-      @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
-
-      @send_stats = get_send_stats
-      @send_data = get_send_data
+      creds = get_ec2_creds
+      if creds.error.empty?
+        @all_emails = list_verified_identities("EmailAddress")
+        @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
+        @send_stats = get_send_stats
+        @send_data = get_send_data
+      else
+        flash[:error] = creds.error
+      end
     end
 
     def stats
-      @send_stats = get_send_stats
+      creds = get_ec2_creds
+      if creds.error.empty?
+        @send_stats = get_send_stats
+      else
+        flash[:error] = creds.error
+      end
     end
 
     def info
       creds = get_ec2_creds
-      @access = creds.access
-      @secret = creds.secret
-      @ses_client = create_ses_client
+      if creds.error.empty? 
+        @access = creds.access
+        @secret = creds.secret
+        @ses_client = create_ses_client
+        @all_emails = list_verified_identities("EmailAddress")
+        @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
+        @pending_emails  = get_verified_identities_by_status(@all_emails, "Pending")
+        @failed_emails   = get_verified_identities_by_status(@all_emails, "Failed")
+        @send_stats = get_send_stats
+        @send_data = get_send_data
+        @all_templates = get_all_templates
+      else
+        flash[:error] = creds.error
+      end
 
-      @all_emails = list_verified_identities("EmailAddress")
-      @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
-      @pending_emails  = get_verified_identities_by_status(@all_emails, "Pending")
-      @failed_emails   = get_verified_identities_by_status(@all_emails, "Failed")
-
-      @send_stats = get_send_stats
-      @send_data = get_send_data
-
-      @all_templates = get_all_templates
     end
 
     def show

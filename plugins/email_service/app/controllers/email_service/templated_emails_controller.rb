@@ -1,25 +1,34 @@
 module EmailService
   class TemplatedEmailsController < ::EmailService::ApplicationController
-    include AwsSesHelper
-    include EmailHelper
+    # before_action :restrict_access
 
     def index
-
-      @all_emails = list_verified_identities("EmailAddress")
-      @verified_emails = get_verified_identities_by_status(@all_emails, "success")
-      @pending_emails  = get_verified_identities_by_status(@all_emails, "pending")
-      @failed_emails   = get_verified_identities_by_status(@all_emails, "failed")
-      @configsets = get_configset
-
+      creds = get_ec2_creds
+      if creds.error.empty?
+        @all_emails = list_verified_identities("EmailAddress")
+        @verified_emails = get_verified_identities_by_status(@all_emails, "success")
+        @pending_emails  = get_verified_identities_by_status(@all_emails, "pending")
+        @failed_emails   = get_verified_identities_by_status(@all_emails, "failed")
+        @configsets = get_configset
+      else
+        msg = "EC2 Credentials #{ creds.error }. "
+        msg+= "Open your web-console and execute `openstack ec2 credentials create` command"
+        flash[:warning] = msg
+      end
     end
 
     def new
-      @all_emails = list_verified_identities("EmailAddress")
-      @verified_emails = get_verified_identities_by_status(@all_emails, "success")
-      @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress")
-      @templates = get_all_templates
-      @templates_collection = get_templates_collection(@templates) if @templates && !@templates.empty?
-      @configsets = get_configset
+      creds = get_ec2_creds
+      if creds.error.empty?
+        @all_emails = list_verified_identities("EmailAddress")
+        @verified_emails = get_verified_identities_by_status(@all_emails, "success")
+        @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress")
+        @templates = get_all_templates
+        @templates_collection = get_templates_collection(@templates) if @templates && !@templates.empty?
+        @configsets = get_configset
+      else
+        flash[:error] = creds.error
+      end
     end
 
     def create

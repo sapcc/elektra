@@ -15,7 +15,7 @@
           %br
           (24 hours)
         %p.feature-box__text
-          = @send_data[:max_24_hour_send]
+          = @send_data[:max_24_hour_send] if @send_data
     .col-sm-3
       .feature-box
         %i.feature-box__icon.icon-basic-world
@@ -24,7 +24,7 @@
           %br
           (per second)
         %p.feature-box__text
-          = @send_data[:max_send_rate]
+          = @send_data[:max_send_rate] if @send_data
     .col-sm-3
       .feature-box
         %i.feature-box__icon.icon-basic-world
@@ -33,7 +33,7 @@
           %br
           (last 24 hours)
         %p.feature-box__text
-          = @send_data[:sent_last_24_hours]
+          = @send_data[:sent_last_24_hours] if @send_data
 
   %h4
     Information
@@ -49,18 +49,19 @@
       Rejects
     %td
       Complaints
-  - @send_stats.each do | stat |
-    %tr        
-      %td
-        =stat[:timestamp]
-      %td
-        =stat[:delivery_attempts]
-      %td
-        =stat[:bounces]
-      %td
-        =stat[:rejects]
-      %td
-        =stat[:complaints]
+  -if @send_stats 
+    - @send_stats.each do | stat |
+      %tr        
+        %td
+          =stat[:timestamp]
+        %td
+          =stat[:delivery_attempts]
+        %td
+          =stat[:bounces]
+        %td
+          =stat[:rejects]
+        %td
+          =stat[:complaints]
 %hr
 
 %table.table
@@ -92,6 +93,21 @@
       =current_user.service_url('email-aws')
 
 All templates
-- @all_templates.each do | template |
-  %br
-  =template[:name]
+- if @all_templates 
+  - @all_templates.each do | template |
+    %br
+    =template[:name]
+
+%br
+
+Current User:
+=current_user.roles.inspect
+
+%br
+
+Count:
+=current_user.roles.count
+
+%br
+Has Role?:
+=current_user.has_role?('email_user')

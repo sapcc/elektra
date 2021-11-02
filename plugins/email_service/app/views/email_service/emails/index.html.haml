@@ -29,19 +29,19 @@
           %br
           %center
             %b
-              = @send_data[:max_24_hour_send].to_i
+              = @send_data[:max_24_hour_send].to_i if @send_data
           %br
           Max Send Rate / second
           %br
           %center
             %b
-              = @send_data[:max_send_rate].to_i
+              = @send_data[:max_send_rate].to_i if @send_data
           %br
           eMails Sent (last 24 hours)
           %br
           %center
             %b
-              = @send_data[:sent_last_24_hours].to_i
+              = @send_data[:sent_last_24_hours].to_i if @send_data
           %hr
           You can send eMail to maximum 50 email addresses at a time which includes 
           %b 

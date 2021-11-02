@@ -6,7 +6,7 @@
       %th Verification status
       %th.snug
   %tbody
-    - if @all_emails.empty?
+    - if !@all_emails || @all_emails.empty?
       %tr
         %td{ colspan: 3 } No verified eMail address available
     - else

@@ -1,19 +1,22 @@
 module EmailService
   class SettingsController < ::EmailService::ApplicationController
-    include AwsSesHelper
-    include EmailHelper
+    # before_action :restrict_access
 
     def index
       @cronus_activated = false
       creds = get_ec2_creds
-      @access = creds.access
-      @secret = creds.secret
-
-      if @access && @secret 
-        @cronus_activated = true
+      if creds.error.empty?
+        @access = creds.access
+        @secret = creds.secret
+        if @access && @secret 
+          @cronus_activated = true
+        end
+        @configsets = get_configset
+      else
+        flash[:error] = creds.error
       end
 
-      @configsets = get_configset
+
 
     end
     def show_config

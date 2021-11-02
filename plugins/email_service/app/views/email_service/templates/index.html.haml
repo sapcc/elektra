@@ -23,7 +23,7 @@
               Templates in use
               %br
               %b
-                = @templates.count
+                = @templates.count if @templates
                 out of 10000
             %br
             %center

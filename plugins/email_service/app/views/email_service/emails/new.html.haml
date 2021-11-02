@@ -6,7 +6,7 @@
       You can get verified your eMail address
       = link_to 'here', plugin('email_service').new_verification_path()
 
-  .modal-body
+  .modal-body.static-columns
     - if !@email.nil? 
       - if @email.errors?
         .alert.alert-error

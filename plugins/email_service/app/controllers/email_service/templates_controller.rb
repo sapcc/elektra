@@ -1,14 +1,17 @@
 module EmailService
   class TemplatesController < ::EmailService::ApplicationController
-
-    helper :all
+    # before_action :restrict_access
 
     def index
-      @templates = get_all_templates
-      items_per_page = 10
-      @paginatable_templates = Kaminari.paginate_array(@templates, total_count: @templates.count).page(params[:page]).per(items_per_page)
-      @id = 0
-      
+      creds = get_ec2_creds
+      if creds.error.empty?
+        @templates = get_all_templates
+        items_per_page = 10
+        @paginatable_templates = Kaminari.paginate_array(@templates, total_count: @templates.count).page(params[:page]).per(items_per_page)
+        @id = 0
+      else
+        flash[:error] = creds.error
+      end
     end
 
     def show

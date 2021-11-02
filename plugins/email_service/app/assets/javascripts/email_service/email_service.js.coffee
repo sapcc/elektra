@@ -145,6 +145,7 @@ $(
           source_help.html( getHelpText  "", "valid" )
           $(fg_email_source).removeClass('has-error')
           source_help.hide(500);
+        # console.log "about to be loaded"
         loadFakeData()
       )
 

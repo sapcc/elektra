@@ -37,9 +37,9 @@ module EmailService
       def validate_template(opts)
         errors = []
         if opts[:name] == "" || opts[:name].nil?
-          errors.push({ name: "name", message: "Source can't be empty" })
+          errors.push({ name: "name", message: "Template name can't be empty" })
         elsif opts[:name].match(/(\w\s)+/)
-          errors.push({ name: "name", message: "Name can't have space, allowed separators are '-' and '_' " })
+          errors.push({ name: "name", message: "Template name can't have space, allowed separators are '-' and '_' " })
         end
         if opts[:subject] == "" || opts[:subject].nil?
           errors.push({ name: "subject", message: "Subject can't be empty" })

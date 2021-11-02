@@ -1,15 +1,21 @@
 module EmailService
   class DomainVerificationsController < ::EmailService::ApplicationController
-    include AwsSesHelper
-    include EmailHelper
+    # before_action :restrict_access
 
     def index
-      @all_domains = list_verified_identities("Domain")
-      @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
-      @pending_domains  = get_verified_identities_by_status(@all_domains, "Pending")
-      @failed_domains   = get_verified_identities_by_status(@all_domains, "Failed")
-      # identities_collection = get_verified_identities_collection(@verified_domains, "Domain")
-      # dkim_status, @dkim_attributes = get_dkim_attributes(identities_collection)
+      creds = get_ec2_creds
+      if creds.error.empty?
+        @all_domains = list_verified_identities("Domain")
+        @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
+        @pending_domains  = get_verified_identities_by_status(@all_domains, "Pending")
+        @failed_domains   = get_verified_identities_by_status(@all_domains, "Failed")
+        # identities_collection = get_verified_identities_collection(@verified_domains, "Domain")
+        # dkim_status, @dkim_attributes = get_dkim_attributes(identities_collection)
+      else
+        flash[:error] = creds.error
+      end
+
+
     end
 
     def new; end
