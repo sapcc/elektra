@@ -40,7 +40,7 @@ module Automation
 
     def revision_link
       if revision_from_github?
-        return URI::join(snapshot[:repository].gsub!(/(.git\s*)*$/, '/'), 'commit/', self.repository_revision).to_s
+        return URI::join(snapshot[:repository].sub!(/(\.git\s*)/, '/'), 'commit/', self.repository_revision).to_s
       end
       self.repository_revision
     end
