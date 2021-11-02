@@ -10,15 +10,17 @@
       Rejects
     %td
       Complaints
-  - send_stats.each do | stat |
-    %tr        
-      %td
-        =stat[:timestamp]
-      %td
-        =stat[:delivery_attempts]
-      %td
-        =stat[:bounces]
-      %td
-        =stat[:rejects]
-      %td
-        =stat[:complaints]
+
+  -if send_stats
+    - send_stats.each do | stat |
+      %tr        
+        %td
+          =stat[:timestamp]
+        %td
+          =stat[:delivery_attempts]
+        %td
+          =stat[:bounces]
+        %td
+          =stat[:rejects]
+        %td
+          =stat[:complaints]

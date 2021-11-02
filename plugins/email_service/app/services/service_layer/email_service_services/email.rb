@@ -5,24 +5,17 @@ module ServiceLayer
     # email api implementation
     module Email
 
-      Creds = Struct.new(:access, :secret)
-
-      # def creds_map
-      #   # @creds_map ||= class_map_proc(::EmailService::Email)
-      #   @creds_map ||= class_map_proc(::EmailService::AWSCreds)
-      # end
-
-      # commented - 23 may 2021
-      # def new_verified_email(attributes = {})
-      #   creds_map.call(attributes)
-      # end
-
+      # Creds = Struct.new(:access, :secret)
+      Creds = Struct.new(:access, :secret, :error)
       def aws_creds(user_id, filter = {})
 
         response = elektron_identity_service.get("users/#{user_id}/credentials/OS-EC2")
-        creds_hash = response.body["credentials"].first
-        aws_credentials = Creds.new(creds_hash["access"] , creds_hash["secret"])
-        
+        if !response.body["credentials"].empty?
+          creds_hash = response.body["credentials"].first
+          aws_credentials = Creds.new(creds_hash["access"] , creds_hash["secret"], "")
+        else
+          err = Creds.new("" , "", "AWS EC2 credentials are not created. Without this, email service will not work. Open your web-console and execute `openstack ec2 credentials create` command")
+        end
       end
 
     end

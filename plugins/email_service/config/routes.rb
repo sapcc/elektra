@@ -1,5 +1,7 @@
 EmailService::Engine.routes.draw do
-  get '/' => 'application#index', as: :index
+  # get '/' => 'application#index', as: :index
+
+  get '/' => 'web#index', as: :index
 
   get 'emails/stats' => 'emails#stats'
   get '/emails/info' => 'emails#info'
