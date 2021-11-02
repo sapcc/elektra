@@ -1,4 +1,4 @@
-FROM ruby:2.4.1-slim-stretch
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.5-slim-stretch
 
 RUN apt update \
   && apt -y install \
@@ -23,7 +23,7 @@ RUN cd /usr/local/share \
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
-RUN  gem install nokogiri -v 1.10.9 \
+RUN  gem install nokogiri -v 1.12.5 \
   && gem install websocket-driver -v 0.7.2 \
   && gem sources -c \
   && rm -f /usr/local/bundle/cache/*
