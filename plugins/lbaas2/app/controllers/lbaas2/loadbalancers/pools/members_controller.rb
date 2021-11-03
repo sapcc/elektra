@@ -58,18 +58,29 @@ module Lbaas2
           render json: { errors: e.message }, status: '500'
         end
 
-         def update
-          params = params[:member]
-          puts "^^^^^^^^^^^^^^^^^^"
-          puts params
-          puts "^^^^^^^^^^^^^^^^^^"
+        def update
+          membersParams = params[:member]          
+          # set monitor address port to null if empty
+          membersParams['monitor_address'] = nil if membersParams['monitor_address'].blank?
+          membersParams['monitor_port'] = nil if membersParams['monitor_port'].blank?
+          newParams = values.merge(pool_id: params[:pool_id], id: params[:id])
+
+          member = services.lbaas2.new_member(newParams)
+          if member.update
+            audit_logger.info(current_user, 'has updated', member)
+            render json: member
+          else
+            render json: {errors: member.errors}, status: 422
+          end
+        rescue Elektron::Errors::ApiResponse => e
+          render json: { errors: e.message }, status: e.code
         rescue Exception => e
-          render json: { errors: e.message }, status: '500'
+          render json: { errors: e.message }, status: "500"
         end
 
         # TODO finisch mehtod
         def batch_update
-          membersParams = parseBatchMemberParams
+          membersParams = params[:members]
           success = true
           errors = []
           saved_members = []
@@ -173,16 +184,6 @@ module Lbaas2
           render json: { errors: e.message }, status: '500'
         end
 
-        protected
-
-        def parseBatchMemberParams
-          membersParams = params[:members]
-          newMemberParams = {}
-          membersParams.each do |k, v|
-            newMemberParams = newMemberParams.deep_merge(Rack::Utils.parse_nested_query("#{k}=#{Rack::Utils.escape(v)}")['members'])
-          end
-          newMemberParams
-        end
       end
     end
   end

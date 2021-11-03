@@ -9,33 +9,30 @@ import NewMemberListExistingItem from "./NewMemberListExistingItem";
 import usePool from "../../../lib/hooks/usePool";
 import { addNotice } from "lib/flashes";
 import Log from "../shared/logger";
+import MembersTable from "./MembersTable";
+import { SearchField } from "lib/components/search_field";
 
 const EditMember = (props) => {
-  const {
-    matchParams,
-    searchParamsToString,
-    formErrorMessage,
-    fetchPoolsForSelect,
-  } = useCommons();
+  const { matchParams, searchParamsToString, formErrorMessage } = useCommons();
   const { fetchMember, fetchMembers, updateMember } = useMember();
   const { persistPool } = usePool();
   const [loadbalancerID, setLoadbalancerID] = useState(null);
   const [poolID, setPoolID] = useState(null);
   const [memberID, setMemberID] = useState(null);
-
   const [newMembers, setNewMembers] = useState([]);
-
   const [members, setMembers] = useState({
     isLoading: false,
     error: null,
     items: [],
   });
-
   const [member, setMember] = useState({
     isLoading: false,
     error: null,
     item: null,
   });
+  const [showExistingMembers, setShowExistingMembers] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(null);
+  const [filteredItems, setFilteredItems] = useState([]);
 
   useEffect(() => {
     // get the lb
@@ -172,13 +169,6 @@ const EditMember = (props) => {
       });
   };
 
-  const styles = {
-    container: (base) => ({
-      ...base,
-      flex: 1,
-    }),
-  };
-
   const allMembers = [...newMembers, ...members.items];
   return (
     <Modal
@@ -225,20 +215,6 @@ const EditMember = (props) => {
                 <Form.Errors errors={formErrors} />
 
                 <div className="new-members-container">
-                  <b>Existing Members</b>
-                  <div className="toolbar">
-                    <div className="main-buttons">
-                      <DropdownButton
-                        disabled={true}
-                        title="Add"
-                        bsStyle="primary"
-                        noCaret
-                        pullRight
-                        id="add-member-dropdown"
-                      ></DropdownButton>
-                    </div>
-                  </div>
-
                   <Table className="table new_members" responsive>
                     <thead>
                       <tr>
@@ -266,20 +242,59 @@ const EditMember = (props) => {
                         ))}
                     </tbody>
                   </Table>
-                  {members.isLoading ? (
-                    <React.Fragment>
-                      <span className="spinner" /> Loading Members...{" "}
-                    </React.Fragment>
-                  ) : (
-                    ""
-                  )}
-                  {members.error ? (
-                    <span className="text-danger">
-                      {formErrorMessage(members.error)}
-                    </span>
-                  ) : (
-                    ""
-                  )}
+
+                  <div className="existing-members">
+                    <div className="display-flex">
+                      <div
+                        className="action-link"
+                        onClick={() =>
+                          setShowExistingMembers(!showExistingMembers)
+                        }
+                        data-toggle="collapse"
+                        data-target="#collapseExistingMembers"
+                        aria-expanded={showExistingMembers}
+                        aria-controls="collapseExistingMembers"
+                      >
+                        {showExistingMembers ? (
+                          <>
+                            <span>Hide existing members</span>
+                            <i className="fa fa-chevron-circle-up" />
+                          </>
+                        ) : (
+                          <>
+                            <span>Show existing members</span>
+                            <i className="fa fa-chevron-circle-down" />
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="collapse" id="collapseExistingMembers">
+                      <div className="toolbar searchToolbar">
+                        <SearchField
+                          value={searchTerm}
+                          onChange={(term) => setSearchTerm(term)}
+                          placeholder="Name, ID, IP or port"
+                          text="Searches by Name, ID, IP address or protocol port."
+                        />
+                      </div>
+
+                      <MembersTable
+                        members={filteredItems}
+                        props={props}
+                        poolID={poolID}
+                        searchTerm={searchTerm}
+                        isLoading={members.isLoading}
+                      />
+                      {members.error ? (
+                        <span className="text-danger">
+                          {formErrorMessage(members.error)}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </div>
                 </div>
               </Modal.Body>
               <Modal.Footer>

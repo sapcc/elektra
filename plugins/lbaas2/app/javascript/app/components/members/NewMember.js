@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, DropdownButton, MenuItem } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import useCommons from "../../../lib/hooks/useCommons";
 import { Form } from "lib/elektra-form";
 import useMember from "../../../lib/hooks/useMember";
