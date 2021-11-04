@@ -1,8 +1,7 @@
-FROM ruby:2.4-alpine3.10 AS elektra
+FROM ruby:2.5-alpine3.13 AS elektra
 
-# alpine3.10
-# nodejs (10.16.3-r0)
-# yarn (1.16.0-r0)
+LABEL source_repository="https://github.com/sapcc/elektra"
+
 RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime-info
 
 # Install gems with native extensions before running bundle install
@@ -13,7 +12,7 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
       && gem install nio4r -v 2.5.8 \
-      && gem install nokogiri -v 1.10.9 \
+      && gem install nokogiri -v 1.12.5 \
       && gem install pg -v 0.21.0 \
       && gem install puma -v 4.3.9  \
       && gem install redcarpet -v 3.4.0 \
@@ -90,4 +89,4 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
       # && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
 
 FROM elektra
-LABEL source_repository="https://github.com/sapcc/elektra"
+
