@@ -37,6 +37,4 @@ COPY Gemfile.lock /app/Gemfile.lock
 
 RUN bundle install --without default test development production doc --standalone integration_test api_client
 
-RUN rm -rf /app/Gemfile*
-
 LABEL source_repository="https://github.com/sapcc/elektra"
