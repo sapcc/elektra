@@ -1,11 +1,39 @@
 #!/bin/bash
 
-# this script is only for using in workspaces!!!
-APP_PORT=$(wb elektra 'echo $APP_PORT' | tail -1 | tr -d '\r')
-HOST="http://localhost:$APP_PORT"
-SPECS_FOLDER="cypress/integration/**/*"
+function help_me () {
+  echo "Usage: run.sh ELEKTRA_HOST*"
+  echo "run.sh --help will print out this message"
+  echo "Note: if you run this on our workspaces with installed elektra env you can just use 'run.sh'"
+  echo "      the script will figure out where elektra is runing"
+  exit 1
+}
 
-echo "APP_PORT: $APP_PORT"
+if [[ "$1" == "--help" ]]; then
+  help_me
+else
+  HOST=$1
+fi
+
+if [[ -z "${HOST}" ]]; then
+  if [ -f "/usr/local/bin/wb" ]; then
+    # this runs in workspaces!!!
+    APP_PORT=$(wb elektra 'echo $APP_PORT' | tail -1 | tr -d '\r')
+    echo "APP_PORT: $APP_PORT"
+    HOST="http://localhost:$APP_PORT"
+  fi
+
+  if [[ -z "${APP_PORT}" ]]; then
+    echo "Error: no APP_PORT found"
+    help_me
+  fi
+fi
+
+if [[ -z "${HOST}" ]]; then
+  echo "Error: no HOST found"
+  help_me
+fi
+
+SPECS_FOLDER="cypress/integration/**/*"
 echo "HOST: $HOST"
 echo "SPECS_FOLDER: $SPECS_FOLDER"
 
