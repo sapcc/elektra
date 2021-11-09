@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # this script is only for using in workspaces!!!
-APP_PORT=$(wb elektra 'echo $APP_PORT' | tail -1)
+APP_PORT=$(wb elektra 'echo $APP_PORT' | tail -1 | tr -d '\r')
 HOST="http://localhost:$APP_PORT"
 SPECS_FOLDER="cypress/integration/**/*"
 
