@@ -11,7 +11,23 @@ function help_me () {
 if [[ "$1" == "--help" ]]; then
   help_me
 else
-  HOST=$1
+  while [[ $# -gt 0 ]]
+  do
+    key="$1"
+
+    case $key in
+        -h|--host)
+        HOST="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        *)    # test folder
+        SPECS_FOLDER="cypress/integration/$2/*"
+        shift # past argument
+        ;;
+    esac
+  done
+
 fi
 
 if [[ -z "${HOST}" ]]; then
@@ -37,4 +53,4 @@ SPECS_FOLDER="cypress/integration/**/*"
 echo "HOST: $HOST"
 echo "SPECS_FOLDER: $SPECS_FOLDER"
 
-docker run --rm -it -v "$PWD:/e2e" -w /e2e --network=host -e CYPRESS_baseUrl="$HOST" keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/cypress/included:7.1.0 --spec "$SPECS_FOLDER"
+docker run --rm -it -v "$PWD:/e2e" -w /e2e -e CYPRESS_baseUrl="$HOST" keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/cypress/included:7.1.0 --spec "$SPECS_FOLDER"

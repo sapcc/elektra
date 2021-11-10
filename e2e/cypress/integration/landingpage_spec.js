@@ -6,4 +6,14 @@ describe("Landing page", () => {
       expect(response.status).to.eq(200)
     })
   })
+
+  describe("Content", () => {
+    before(() => {
+      cy.visit("/")
+    })
+
+    it("contains Converged Cloud", () => {
+      cy.contains("Converged Cloud")
+    })
+  })
 })
