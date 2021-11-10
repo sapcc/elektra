@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function help_me () {
-  echo "Usage: run.sh ELEKTRA_HOST*"
+  echo "Usage: run.sh --host ELEKTRA_HOST* PLUGIN-TEST"
   echo "       run.sh --help will print out this message"
   echo "Note: if you run this on our workspaces with installed elektra env you can just use 'run.sh'"
   echo "      the script will figure out where elektra is runing"
@@ -27,7 +27,6 @@ else
         ;;
     esac
   done
-
 fi
 
 if [[ -z "${HOST}" ]]; then
