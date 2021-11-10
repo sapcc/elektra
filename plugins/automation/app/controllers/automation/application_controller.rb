@@ -1,5 +1,5 @@
 module Automation
-  class ApplicationController < DashboardController
+  class ApplicationController < ::DashboardController
     # when comming from arc api
     rescue_from 'ArcClient::ApiError' do |exception|
       if exception.respond_to?(:code) && (exception.code == 401 || exception.code == 403)

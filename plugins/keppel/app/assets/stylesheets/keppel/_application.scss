@@ -116,14 +116,17 @@ pre.sublease-token > code {
   th {
     white-space: nowrap;
   }
+  th.preset-width {
+    width: 10em;
+  }
 
   td.no-top-border {
     border-top: 0;
   }
-  th.vulnerability-folder {
+  th.vulnerability-folder, td.gcpolicy-folder {
     cursor: pointer;
   }
-  td.vulnerability {
+  td.vulnerability, td.gcpolicy {
     padding-left: 4em;
   }
 }

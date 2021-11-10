@@ -1,2 +1,2 @@
 - zones.each do | zone |
-  = render partial: 'zone_item', locals: {zone: zone, active_zone_transfer_requests: active_zone_transfer_requests, pools: pools}
+  = render partial: 'zone_item', locals: {zone: zone, shared_zones: shared_zones, active_zone_transfer_requests: active_zone_transfer_requests, pools: pools}

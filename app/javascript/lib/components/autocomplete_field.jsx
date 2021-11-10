@@ -62,7 +62,6 @@ export class AutocompleteField extends React.Component {
         options={this.state.options}
         clearButton={!!this.props.clearButton}
         autoFocus={true}
-        emptyLabel={false}
         allowNew={false}
         multiple={false}
         onChange={this.props.onSelected}

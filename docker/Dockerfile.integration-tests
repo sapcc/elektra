@@ -1,8 +1,9 @@
-# Pull base image.
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.4.1-slim-stretch
+FROM ruby:2.5-slim-stretch
 
-RUN apt update
-RUN apt -y install \
+LABEL source_repository="https://github.com/sapcc/elektra"
+
+RUN apt update \
+  && apt -y install \
   git \
   curl \
   fontconfig \
@@ -24,7 +25,7 @@ RUN cd /usr/local/share \
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
-RUN  gem install nokogiri -v 1.10.9 \
+RUN  gem install nokogiri -v 1.12.5 \
   && gem install websocket-driver -v 0.7.2 \
   && gem sources -c \
   && rm -f /usr/local/bundle/cache/*
@@ -37,7 +38,5 @@ COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 
 RUN bundle install --without default test development production doc --standalone integration_test api_client
-
-RUN rm -rf /app/Gemfile*
 
 LABEL source_repository="https://github.com/sapcc/elektra"

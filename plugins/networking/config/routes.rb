@@ -1,6 +1,13 @@
 Networking::Engine.routes.draw do
   root to: 'networks#index'
   resources :floating_ips
+
+  resource :widget, expect: %i[show new create edit update destroy] do 
+    get 'bgp-vpns' => 'widgets#bgp_vpns', on: :collection
+    get 'security-groups' => 'widgets#security_groups', on: :collection
+    get 'ports', on: :collection
+  end
+
   resources :ports, except: %i[edit new] do
     get 'widget', on: :collection
     get 'networks', on: :collection
@@ -8,8 +15,17 @@ Networking::Engine.routes.draw do
     get 'security_groups', on: :collection
   end
 
+  resources :bgp_vpns, only: %i[index show create destroy], path: 'bgp-vpns' do 
+    get 'routers', on: :collection
+    member do 
+      get 'router-associations' => 'bgp_vpns#router_associations'
+      post 'router-associations' => 'bgp_vpns#create_router_association'
+      delete 'router-associations/:router_association_id' => 'bgp_vpns#destroy_router_association'
+    end
+    resources :rbacs, module: :bgp_vpns, only: %i[index create destroy]
+  end
+
   resources :security_groups, except: %i[edit new], path: 'security-groups' do
-    get 'widget', on: :collection
     resources :rules, module: :security_groups
     resources :rbacs, module: :security_groups, only: %i[index create destroy]
   end

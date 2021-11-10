@@ -7,9 +7,7 @@ module Networking
     authorization_context 'networking'
     # enforce permission checks. This will automatically
     # investigate the rule name.
-    authorization_required only: %i[index create delete widget]
-
-    def widget; end
+    authorization_required only: %i[index create delete]
 
     def index
       per_page = params[:per_page] || 30

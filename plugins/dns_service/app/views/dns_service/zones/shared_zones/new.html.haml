@@ -1,0 +1,22 @@
+= content_for :title do
+  Shared zone with other project
+
+= simple_form_for @shared_zone, url: plugin('dns_service').zone_shared_zones_path(), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - if @shared_zone.errors.present?
+      .alert.alert-error
+        = render_errors(@shared_zone.errors)
+
+    = f.input :target_project_id,  
+      required: true, 
+      placeholder: "enter valid project-id",
+      label: "Project to share with",
+      icon_hint: "Please be aware. You need to delete all recordsets in other projects that are sharing this zone before you can unshare again."
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type: 'button', data: {dismiss: 'modal'}, aria: {label: 'Cancel'}} Cancel
+    - else
+      = link_to 'Cancel', zones_url(), class: 'btn btn-default'
+    = button_tag 'Share', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait... '} }
