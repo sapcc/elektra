@@ -59,11 +59,21 @@ module ServiceLayer
 
       # NOTE: keep in mind there is a limit container_listing_limit
       def list_objects(container_name, options={})
-        # prevent prefix and delimiter with slash, if this happens
-        # an empty list is returned
-        if options[:prefix] == '/' && options[:delimiter] == '/'
-          options[:prefix] = ''
-        end
+        # https://docs.openstack.org/api-ref/object-store/index.html?expanded=show-container-details-and-list-objects-detail
+
+        # delimiter: The delimiter is a single character used to split object names to present a 
+        #            pseudo-directory hierarchy of objects. When combined with a prefix query, this enables 
+        #            API users to simulate and traverse the objects in a container as if they were in a directory tree.
+
+        # prefix: Only objects with this prefix will be returned. When combined with a delimiter query, 
+        #         this enables API users to simulate and traverse the objects in a container as if they 
+        #         were in a directory tree.
+
+        # path: For a string value, returns the object names that are nested in the pseudo path. 
+        #       Please use prefix/delimiter queries instead of using this path query.
+
+        # prevent prefix and delimiter with slash, if this happens an empty list is returned
+        
         list = elektron_object_storage.get(container_name, options).body
         result = list.map! do |o|
           object = map_attribute_names(o, OBJECTS_ATTRMAP)
@@ -82,15 +92,42 @@ module ServiceLayer
       end
 
       def list_objects_at_path(container_name, object_path, filter = {})
+        # add trailing / to avaoid empty directorys
+        # test/bla.txt
+        # GET prefix: "test", delimiter: "/" -> this cause an empty result
+        # GET prefix: "test/", delimiter: "/" -> this will find "bla.txt"
         object_path += '/' if !object_path.end_with?('/') && !object_path.empty?
+        
+        # result contains all folders with leading slash and without like
+        # test/foo.txt
+        # /test2/foo.txt
+        # bla.txt
+        # 
+        # prefix: "", delimiter: "/"
+        # result = ["test/", "/", "bla.txt"]
         result = list_objects(
           container_name, filter.merge(prefix: object_path, delimiter: '/')
         )
+
+        # special case for leading slashes
+        # remove "/" from result 
+        # result = ["test/","bla.txt"]
+        root = result.select{|o| o["path"] == "/"}
+        result.reject!{|o| o["path"] == "/"}
+        # if found "/" then get results for prefix: "/", delimiter: "/"
+        unless root.empty?
+          result.concat(list_objects(
+            container_name, filter.merge(prefix: "/", delimiter: '/')
+          ))
+        end
+        # result = ["test/", "test2/", "bla.txt"]
+
         # if there is a pseudo-folder at `object_path`, it will be in the result, too;
         # filter this out since we only want stuff below `object_path`
         objects = result.reject { |obj| obj['id'] == object_path }
         objects.collect { |data| object_map.call(data) }
       end
+
 
       def list_objects_below_path(container_name, object_path, filter={})
         list_objects(container_name, filter.merge(prefix: object_path))
@@ -228,8 +265,10 @@ module ServiceLayer
       end
 
       def delete_folder(container_name, object_path)
+        prefix = object_path 
+        prefix += "/" unless object_path.ends_with?("/")
         targets = list_objects_below_path(
-          container_name, sanitize_path(object_path) + '/'
+          container_name, prefix
         ).map do |obj|
           { container: container_name, object: obj.path }
         end
