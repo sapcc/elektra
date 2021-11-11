@@ -1,10 +1,12 @@
 #!/bin/bash
 
 function help_me () {
-  echo "Usage: run.sh ELEKTRA_HOST*"
-  echo "run.sh --help will print out this message"
+
+  echo "Usage: run.sh --host ELEKTRA_HOST* PLUGIN-TEST"
+  echo "       run.sh --help will print out this message"
   echo "Note: if you run this on our workspaces with installed elektra env you can just use 'run.sh'"
   echo "      the script will figure out where elektra is runing"
+  echo "MAC users: ./run.sh --host http://host.docker.internal:3000"
   exit 1
 }
 
@@ -27,7 +29,6 @@ else
         ;;
     esac
   done
-
 fi
 
 if [[ -z "${HOST}" ]]; then
@@ -53,4 +54,4 @@ SPECS_FOLDER="cypress/integration/**/*"
 echo "HOST: $HOST"
 echo "SPECS_FOLDER: $SPECS_FOLDER"
 
-docker run --rm -it -v "$PWD:/e2e" -w /e2e -e CYPRESS_baseUrl="$HOST" keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/cypress/included:7.1.0 --spec "$SPECS_FOLDER"
+docker run --rm -it -v "$PWD:/e2e" -w /e2e -e CYPRESS_baseUrl="$HOST" --network=host keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/cypress/included:7.1.0 --spec "$SPECS_FOLDER"
