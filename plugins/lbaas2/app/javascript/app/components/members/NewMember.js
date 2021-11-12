@@ -290,12 +290,12 @@ const NewMember = (props) => {
                 <p>"No new members added yet."</p>
               )}
 
-              <div className="add-more-section">
+              {/* <div className="add-more-section">
                 <AddNewMemberButton
                   disabled={newMembers.length > 4}
                   addMembersCallback={addMembers}
                 />
-              </div>
+              </div> */}
             </div>
 
             <div className="existing-members">

@@ -77,40 +77,41 @@ module Lbaas2
           render json: { errors: e.message }, status: "500"
         end
 
-        # TODO finisch mehtod
+        # TODO wait to octavia Ussuri upgrade since the flag additive_only is necessary
+        # TODO add policy for this new route and tests
         def batch_update
-          membersParams = members_params
-          success = true
-          errors = []
-          saved_members = []
-          results = {}
-          membersParams.each do |_k, values|
-            # convert tags to array do to parse_nested_query
-            values['tags'] = JSON.parse(values['tags']) unless values['tags'].blank?
-            # set monitor address port to null if empty
-            values['monitor_address'] = nil if values['monitor_address'].blank?
-            values['monitor_port'] = nil if values['monitor_port'].blank?
-            newParams = values.merge(pool_id: params[:pool_id], id: params[:id])
-            member = services.lbaas2.new_member(newParams)
+          # membersParams = members_params
+          # success = true
+          # errors = []
+          # saved_members = []
+          # results = {}
+          # membersParams.each do |_k, values|
+          #   # convert tags to array do to parse_nested_query
+          #   values['tags'] = JSON.parse(values['tags']) unless values['tags'].blank?
+          #   # set monitor address port to null if empty
+          #   values['monitor_address'] = nil if values['monitor_address'].blank?
+          #   values['monitor_port'] = nil if values['monitor_port'].blank?
+          #   newParams = values.merge(pool_id: params[:pool_id], id: params[:id])
+          #   member = services.lbaas2.new_member(newParams)
 
-            # member.update_attributes(newParams)
-            if member.update
-              results[member.identifier] = member.attributes.merge({ saved: true })
-              saved_members << member
-              audit_logger.info(current_user, 'has updated', member)
-            else
-              success = false
-              results[member.identifier] = member.attributes.merge({ saved: false })
-              errors << { "row #{member.index}": member.errors }
-            end
-          end
+          #   # member.update_attributes(newParams)
+          #   if member.update
+          #     results[member.identifier] = member.attributes.merge({ saved: true })
+          #     saved_members << member
+          #     audit_logger.info(current_user, 'has updated', member)
+          #   else
+          #     success = false
+          #     results[member.identifier] = member.attributes.merge({ saved: false })
+          #     errors << { "row #{member.index}": member.errors }
+          #   end
+          # end
 
-          if success
-            render json: saved_members.first
-          else
-            sortedErrors = errors.sort_by { |hsh| hsh.keys.first }
-            render json: { errors: sortedErrors, results: results }, status: 422
-          end
+          # if success
+          #   render json: saved_members.first
+          # else
+          #   sortedErrors = errors.sort_by { |hsh| hsh.keys.first }
+          #   render json: { errors: sortedErrors, results: results }, status: 422
+          # end
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
