@@ -171,9 +171,6 @@ const NewMember = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null);
-
-    console.log("onsubmit: ", values);
-
     // filter items from the form context which are removed from the newMember list
     const filtered = Object.keys(values)
       .filter((key) => {
