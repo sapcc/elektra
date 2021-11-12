@@ -13,3 +13,9 @@
 ```
 
 run.sh will find out all information
+
+## run e2e from darwin running elektra locally on port 3000
+
+```bash
+./run.sh --host http://host.docker.internal:3000
+```
