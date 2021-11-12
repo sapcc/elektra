@@ -350,9 +350,8 @@ ul.less-left-margin {
   }
 }
 
-.new-members-container {
-  margin-top: 2rem;
-
+.new-members-container,
+.edit-members-container {
   .action-link {
     cursor: pointer;
     :hover {
@@ -362,6 +361,10 @@ ul.less-left-margin {
       margin-left: 0.5rem;
     }
   }
+}
+
+.new-members-container {
+  margin-top: 2rem;
 
   .new-member-item-actions {
     widht: 100%;

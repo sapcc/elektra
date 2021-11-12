@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, DropdownButton } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import useCommons from "../../../lib/hooks/useCommons";
 import { Form } from "lib/elektra-form";
-import useMember from "../../../lib/hooks/useMember";
+import useMember, {
+  filterItems,
+  parseNestedValues,
+} from "../../../lib/hooks/useMember";
 import ErrorPage from "../ErrorPage";
-import { Table } from "react-bootstrap";
-import NewMemberListExistingItem from "./NewMemberListExistingItem";
+import NewEditMemberListItem from "./NewEditMemberListItem";
 import usePool from "../../../lib/hooks/usePool";
 import { addNotice } from "lib/flashes";
 import Log from "../shared/logger";
@@ -19,7 +21,6 @@ const EditMember = (props) => {
   const [loadbalancerID, setLoadbalancerID] = useState(null);
   const [poolID, setPoolID] = useState(null);
   const [memberID, setMemberID] = useState(null);
-  const [newMembers, setNewMembers] = useState([]);
   const [members, setMembers] = useState({
     isLoading: false,
     error: null,
@@ -57,6 +58,12 @@ const EditMember = (props) => {
     }
   }, [member.item]);
 
+  // load all members so they can be displayed
+  useEffect(() => {
+    const newItems = filterItems(searchTerm, members.items);
+    setFilteredItems(newItems);
+  }, [searchTerm, members]);
+
   const loadMember = () => {
     Log.debug("fetching member to edit");
     setMember({ ...member, isLoading: true, error: null });
@@ -68,7 +75,6 @@ const EditMember = (props) => {
           item: data.member,
           error: null,
         });
-        setSelectedMember(data.member);
       })
       .catch((error) => {
         setMember({ ...member, isLoading: false, error: error });
@@ -105,13 +111,6 @@ const EditMember = (props) => {
       });
   };
 
-  const setSelectedMember = (selectedMember) => {
-    // create a unique id for the value
-    // const newValues =  [{id: uniqueId("member_"), name: selectedMember.name, address: selectedMember.address}]
-    selectedMember.edit = true;
-    setNewMembers([selectedMember]);
-  };
-
   /*
    * Modal stuff
    */
@@ -146,17 +145,19 @@ const EditMember = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null);
-    return updateMember(loadbalancerID, poolID, memberID, values)
+    // parse nested keys to objects
+    // from values like member[XYZ][name]="arturo" to {XYZ:{name:"arturo"}}
+    const newValues = parseNestedValues(values);
+    return updateMember(loadbalancerID, poolID, memberID, newValues[memberID])
       .then((response) => {
         addNotice(
           <React.Fragment>
             Member <b>{response.data.name}</b> ({response.data.id}) is being
-            created.
+            updated.
           </React.Fragment>
         );
-        persistPool(loadbalancerID, poolID)
-          .then(() => {})
-          .catch((error) => {});
+        // update pool
+        persistPool(loadbalancerID, poolID);
         close();
       })
       .catch((error) => {
@@ -169,7 +170,9 @@ const EditMember = (props) => {
       });
   };
 
-  const allMembers = [...newMembers, ...members.items];
+  // enforceFocus={false} needed so the clipboard.js library on bootstrap modals
+  // https://github.com/zenorocha/clipboard.js/issues/388
+  // https://github.com/twbs/bootstrap/issues/19971
   return (
     <Modal
       show={show}
@@ -179,6 +182,7 @@ const EditMember = (props) => {
       onExited={restoreUrl}
       aria-labelledby="contained-modal-title-lg"
       bsClass="lbaas2 modal"
+      enforceFocus={false}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">Edit Member</Modal.Title>
@@ -214,35 +218,17 @@ const EditMember = (props) => {
                 </p>
                 <Form.Errors errors={formErrors} />
 
-                <div className="new-members-container">
-                  <Table className="table new_members" responsive>
-                    <thead>
-                      <tr>
-                        <th className="snug">#</th>
-                        <th>
-                          <abbr title="required">*</abbr>Name
-                        </th>
-                        <th>IPs</th>
-                        <th className="snug">Weight</th>
-                        <th className="snug">Backup</th>
-                        <th className="snug">Admin State</th>
-                        <th>Tags</th>
-                        <th className="snug"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {allMembers.length > 0 &&
-                        allMembers.map((member, index) => (
-                          <NewMemberListExistingItem
-                            member={member}
-                            key={member.id}
-                            index={index}
-                            results={submitResults[member.id]}
-                          />
-                        ))}
-                    </tbody>
-                  </Table>
-
+                <div className="edit-members-container">
+                  <div className="new-members-container">
+                    {member.item && (
+                      <NewEditMemberListItem
+                        member={member.item}
+                        key={member.item.id}
+                        index={0}
+                        edit
+                      />
+                    )}
+                  </div>
                   <div className="existing-members">
                     <div className="display-flex">
                       <div

@@ -1,15 +1,10 @@
 import React, { useState, useMemo } from "react";
 import FormInput from "../shared/FormInput";
 import TagsInput from "../shared/TagsInput";
-import { Button } from "react-bootstrap";
 import uniqueId from "lodash/uniqueId";
 import Select from "react-select";
 import Log from "../shared/logger";
-import {
-  MemberIpIcon,
-  MemberMonitorIcon,
-  MemberRequiredField,
-} from "./MemberIpIcons";
+import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons";
 
 const styles = {
   container: (base) => ({
@@ -30,14 +25,13 @@ const CustomLabel = ({ htmlFor, labelText, required }) => {
   );
 };
 
-const shouldAlert = (results) => {
-  if (results) {
-    return results.saved == false;
-  }
-  return false;
-};
-
-const NewMemberListNewItem = ({ member, index, onRemoveMember, servers }) => {
+const NewEditMemberListItem = ({
+  member,
+  index,
+  onRemoveMember,
+  servers,
+  edit,
+}) => {
   const [selectedServers, setSelectedServers] = useState([]);
   const [name, setName] = useState(member.name);
   const [address, setAddress] = useState(member.address);
@@ -55,7 +49,7 @@ const NewMemberListNewItem = ({ member, index, onRemoveMember, servers }) => {
     setAddress(values.address);
   };
 
-  Log.debug("RENDER NewMemberListExistingItem");
+  Log.debug("RENDER NewEditMemberListItem");
 
   return useMemo(() => {
     return (
@@ -63,64 +57,70 @@ const NewMemberListNewItem = ({ member, index, onRemoveMember, servers }) => {
         {index > 0 && <hr />}
         <div className="row display-flex">
           <div className="col-md-12">
-            <div className="row">
-              <div className="col-md-1"></div>
-              <div className="col-md-11">
-                <div className="display-flex new-member-item-actions">
-                  <div
-                    className="action-link"
-                    onClick={() => setShowServers(!showServers)}
-                    data-toggle="collapse"
-                    data-target={`#${collapseId}`}
-                    aria-expanded={showServers}
-                    aria-controls={collapseId}
-                  >
-                    {showServers ? (
-                      <>
-                        <span>Choose name and IP from an existing server</span>
-                        <i className="fa fa-chevron-circle-up" />
-                      </>
-                    ) : (
-                      <>
-                        <span>Choose name and IP from an existing server</span>
-                        <i className="fa fa-chevron-circle-down" />
-                      </>
+            {servers && (
+              <div className="row">
+                <div className="col-md-1"></div>
+                <div className="col-md-11">
+                  <div className="display-flex new-member-item-actions">
+                    <div
+                      className="action-link"
+                      onClick={() => setShowServers(!showServers)}
+                      data-toggle="collapse"
+                      data-target={`#${collapseId}`}
+                      aria-expanded={showServers}
+                      aria-controls={collapseId}
+                    >
+                      {showServers ? (
+                        <>
+                          <span>
+                            Choose name and IP from an existing server
+                          </span>
+                          <i className="fa fa-chevron-circle-up" />
+                        </>
+                      ) : (
+                        <>
+                          <span>
+                            Choose name and IP from an existing server
+                          </span>
+                          <i className="fa fa-chevron-circle-down" />
+                        </>
+                      )}
+                    </div>
+                    {index > 0 && (
+                      <div
+                        className="new-member-item-remove action-link"
+                        onClick={() => onRemoveMember(member.id)}
+                      >
+                        <span>Remove</span>
+                        <i className="fa fa-trash fa-fw" />
+                      </div>
                     )}
                   </div>
-                  {index > 0 && (
-                    <div
-                      className="new-member-item-remove action-link"
-                      onClick={() => onRemoveMember(member.id)}
-                    >
-                      <span>Remove</span>
-                      <i className="fa fa-trash fa-fw" />
-                    </div>
-                  )}
-                </div>
-                <div className="collapse margin-top" id={collapseId}>
-                  <Select
-                    className="basic-single server-select"
-                    classNamePrefix="select"
-                    isDisabled={false}
-                    isLoading={servers.isLoading}
-                    isClearable={true}
-                    isRtl={false}
-                    isSearchable={true}
-                    name="servers"
-                    onChange={onChangeServers}
-                    options={servers.items}
-                    isMulti={false}
-                    closeMenuOnSelect={true}
-                    styles={styles}
-                    value={selectedServers}
-                    placeholder="Select..."
-                  />
-                  {servers.error && (
-                    <span className="text-danger">{servers.error}</span>
-                  )}
+                  <div className="collapse margin-top" id={collapseId}>
+                    <Select
+                      className="basic-single server-select"
+                      classNamePrefix="select"
+                      isDisabled={false}
+                      isLoading={servers.isLoading}
+                      isClearable={true}
+                      isRtl={false}
+                      isSearchable={true}
+                      name="servers"
+                      onChange={onChangeServers}
+                      options={servers.items}
+                      isMulti={false}
+                      closeMenuOnSelect={true}
+                      styles={styles}
+                      value={selectedServers}
+                      placeholder="Select..."
+                    />
+                    {servers.error && (
+                      <span className="text-danger">{servers.error}</span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             <div className="row margin-top">
               <div className="col-md-1">
@@ -162,6 +162,7 @@ const NewMemberListNewItem = ({ member, index, onRemoveMember, servers }) => {
                   <FormInput
                     name={`member[${member.id}][address]`}
                     value={address}
+                    disabled={edit}
                     placeholder="IP Address"
                     extraClassName="icon-in-input"
                   />
@@ -170,6 +171,7 @@ const NewMemberListNewItem = ({ member, index, onRemoveMember, servers }) => {
                     type="number"
                     name={`member[${member.id}][protocol_port]`}
                     value={member.protocol_port}
+                    disabled={edit}
                     placeholder="Port"
                     size="lg"
                   />
@@ -224,6 +226,25 @@ const NewMemberListNewItem = ({ member, index, onRemoveMember, servers }) => {
                 />
               </div>
             </div>
+            {edit && (
+              <div className="row margin-top">
+                <div className="col-md-1"></div>
+                <div className="col-md-6"></div>
+                <div className="col-md-1">
+                  <CustomLabel
+                    htmlFor={`member[${member.id}][admin_state_up]`}
+                    labelText="Admin State"
+                  />
+                </div>
+                <div className="col-md-4">
+                  <FormInput
+                    type="checkbox"
+                    name={`member[${member.id}][admin_state_up]`}
+                    value={member.admin_state_up}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </>
@@ -242,4 +263,4 @@ const NewMemberListNewItem = ({ member, index, onRemoveMember, servers }) => {
   ]);
 };
 
-export default NewMemberListNewItem;
+export default NewEditMemberListItem;

@@ -143,7 +143,7 @@ const MembersTableItem = ({
       <td>
         <StaticTags tags={member.tags} shouldPopover={true} />
       </td>
-      <td>
+      <td className="snug-nowrap">
         <p className="list-group-item-text list-group-item-text-copy display-flex">
           <MemberIpIcon />
           <CopyPastePopover

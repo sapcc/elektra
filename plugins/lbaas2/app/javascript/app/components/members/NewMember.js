@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import useCommons from "../../../lib/hooks/useCommons";
 import { Form } from "lib/elektra-form";
-import useMember from "../../../lib/hooks/useMember";
+import useMember, {
+  filterItems,
+  parseNestedValues,
+} from "../../../lib/hooks/useMember";
 import uniqueId from "lodash/uniqueId";
 import { addNotice } from "lib/flashes";
-import NewMemberListNewItem from "./NewMemberListNewItem";
+import NewEditMemberListItem from "./NewEditMemberListItem";
 import usePool from "../../../lib/hooks/usePool";
 import FormSubmitButton from "../shared/FormSubmitButton";
 import Log from "../shared/logger";
 import { SearchField } from "lib/components/search_field";
-import { regexString } from "lib/tools/regex_string";
 import MembersTable from "./MembersTable";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -23,17 +25,6 @@ const generateMember = (name, address) => {
     backup: false,
   };
 };
-
-const filterItems = (searchTerm, items) => {
-  if (!searchTerm) return items;
-
-  const regex = new RegExp(regexString(searchTerm.trim()), "i");
-  return items.filter(
-    (i) =>
-      `${i.id} ${i.name} ${i.address} ${i.protocol_port}`.search(regex) >= 0
-  );
-};
-
 const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
   return (
     <>
@@ -181,7 +172,7 @@ const NewMember = (props) => {
   const onSubmit = (values) => {
     setFormErrors(null);
 
-    console.log("Values: ", values);
+    console.log("onsubmit: ", values);
 
     // filter items from the form context which are removed from the newMember list
     const filtered = Object.keys(values)
@@ -202,22 +193,7 @@ const NewMember = (props) => {
 
     // parse nested keys to objects
     // from values like member[XYZ][name]="arturo" to {XYZ:{name:"arturo"}}
-    let newMemberObjs = {};
-    Object.keys(filtered).forEach((key) => {
-      const newKeys = key
-        .split("[")
-        .filter(function (v) {
-          return v.indexOf("]") > -1;
-        })
-        .map(function (value) {
-          return value.split("]")[0];
-        });
-
-      const member = newKeys[0];
-      const field = newKeys[1];
-      if (!newMemberObjs[member]) newMemberObjs[member] = {};
-      newMemberObjs[member][field] = filtered[key];
-    });
+    const newMemberObjs = parseNestedValues(filtered);
 
     let batchMembers = [];
     Object.keys(newMemberObjs).forEach((key) => {
@@ -263,6 +239,9 @@ const NewMember = (props) => {
     setNewMembers(newItems);
   };
 
+  // enforceFocus={false} needed so the clipboard.js library on bootstrap modals
+  // https://github.com/zenorocha/clipboard.js/issues/388
+  // https://github.com/twbs/bootstrap/issues/19971
   return (
     <Modal
       show={show}
@@ -272,6 +251,7 @@ const NewMember = (props) => {
       onExited={restoreUrl}
       aria-labelledby="contained-modal-title-lg"
       bsClass="lbaas2 modal"
+      enforceFocus={false}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">New Member</Modal.Title>
@@ -297,7 +277,7 @@ const NewMember = (props) => {
               {newMembers.length > 0 ? (
                 <>
                   {newMembers.map((member, index) => (
-                    <NewMemberListNewItem
+                    <NewEditMemberListItem
                       member={member}
                       key={member.id}
                       index={index}

@@ -3,11 +3,11 @@ module Lbaas2
     validates :name, presence: true
     validates :address, presence: true
     validates :weight, presence: true, inclusion: {
-      in: '1'..'256',
+      in: 1..256,
       message: 'Choose a weight between 1 and 256'
     }
     validates :protocol_port, presence: true, inclusion: {
-      in: '1'..'65535',
+      in: 1..65535,
       message: 'Choose a port between 1 and 65535'
     }
 
@@ -34,7 +34,8 @@ module Lbaas2
         'monitor_port' => read('monitor_port'),        
         'weight'         => read('weight'),
         'tags'          => read('tags'),
-        'backup'          => read('backup')
+        'backup'          => read('backup'),
+        'admin_state_up' => read('admin_state_up'),
       }
     end
 

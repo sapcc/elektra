@@ -2,6 +2,39 @@ import React from "react";
 import { useDispatch } from "../../app/components/StateProvider";
 import { ajaxHelper } from "ajax_helper";
 import { confirm } from "lib/dialogs";
+import { regexString } from "lib/tools/regex_string";
+
+// parse nested keys to objects
+// from values like member[XYZ][name]="arturo" to {XYZ:{name:"arturo"}}
+export const parseNestedValues = (items) => {
+  let newMemberObjs = {};
+  Object.keys(items).forEach((key) => {
+    const newKeys = key
+      .split("[")
+      .filter(function (v) {
+        return v.indexOf("]") > -1;
+      })
+      .map(function (value) {
+        return value.split("]")[0];
+      });
+
+    const member = newKeys[0];
+    const field = newKeys[1];
+    if (!newMemberObjs[member]) newMemberObjs[member] = {};
+    newMemberObjs[member][field] = items[key];
+  });
+  return newMemberObjs;
+};
+
+export const filterItems = (searchTerm, items) => {
+  if (!searchTerm) return items;
+
+  const regex = new RegExp(regexString(searchTerm.trim()), "i");
+  return items.filter(
+    (i) =>
+      `${i.id} ${i.name} ${i.address} ${i.protocol_port}`.search(regex) >= 0
+  );
+};
 
 const useMember = () => {
   const dispatch = useDispatch();

@@ -38,7 +38,7 @@ module Lbaas2
         end
 
         def create
-          membersParams = params[:member]
+          membersParams = member_params
           # OS Bug, Subnet not optional, has to be set to VIP subnet
           loadbalancer = services.lbaas2.find_loadbalancer(params[:loadbalancer_id])
           vip_subnet_id = loadbalancer.vip_subnet_id
@@ -59,12 +59,11 @@ module Lbaas2
         end
 
         def update
-          membersParams = params[:member]          
+          membersParams = member_params  
           # set monitor address port to null if empty
           membersParams['monitor_address'] = nil if membersParams['monitor_address'].blank?
           membersParams['monitor_port'] = nil if membersParams['monitor_port'].blank?
-          newParams = values.merge(pool_id: params[:pool_id], id: params[:id])
-
+          newParams = membersParams.merge(pool_id: params[:pool_id], id: params[:id])
           member = services.lbaas2.new_member(newParams)
           if member.update
             audit_logger.info(current_user, 'has updated', member)
@@ -80,7 +79,7 @@ module Lbaas2
 
         # TODO finisch mehtod
         def batch_update
-          membersParams = params[:members]
+          membersParams = members_params
           success = true
           errors = []
           saved_members = []
@@ -182,6 +181,20 @@ module Lbaas2
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
           render json: { errors: e.message }, status: '500'
+        end
+
+        private
+
+        def member_params
+          member = params[:member] || {}
+          member[:protocol_port] = member[:protocol_port].to_i unless member[:protocol_port].blank?
+          member[:monitor_port] = member[:monitor_port].to_i unless member[:monitor_port].blank?
+          member[:weight] = member[:weight].to_i unless member[:weight].blank?
+          member
+        end
+
+        def members_params
+          params
         end
 
       end
