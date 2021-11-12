@@ -1,3 +1,5 @@
+require("../support/commands")
+
 describe("Landing page", () => {
   it("loads content", () => {
     // content is loaded if children of root element exists.

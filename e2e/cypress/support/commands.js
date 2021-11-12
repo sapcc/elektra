@@ -23,3 +23,10 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add("elektraLogin", (domain, user, password) => {
+  cy.visit(`/cc3test/auth/login/${domain}?after_login=%2F${domain}%2Fhome`)
+  cy.get("#username").type(user)
+  cy.get("#password").type(password)
+  cy.get('button[type="submit"]').click()
+})
