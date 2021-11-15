@@ -2,7 +2,7 @@
 
 function help_me () {
 
-  echo "Usage: run.sh --host ELEKTRA_HOST* --profile member|admin --debug cypress:* PLUGIN-TEST "
+  echo "Usage: run.sh --host HOST --profile member|admin --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
   echo "       run.sh --help                                                 # will print out this message"
   echo "       run.sh --host http://localhost:3000 landingpage               # will only run landingpage tests"
   echo "       run.sh --host http://localhost:3000 --debug cypress:network:* # will show debug information about the networking"
@@ -61,13 +61,11 @@ else
   done
 fi
 
-echo "PROFILE=$PROFILE"
-
 if [[ -z "${HOST}" ]]; then
   if [ -f "/usr/local/bin/wb" ]; then
     # this runs in workspaces!!!
     APP_PORT=$(wb elektra 'echo $APP_PORT' | tail -1 | tr -d '\r')
-    echo "APP_PORT: $APP_PORT"
+    echo "APP_PORT      => $APP_PORT"
     HOST="http://localhost:$APP_PORT"
   fi
 
@@ -92,11 +90,13 @@ if [[ "${PROFILE}" == "admin" ]]; then
   TEST_PASSWORD=$TEST_ADMIN_PASSWORD
 fi
 
-echo "HOST: $HOST"
-echo "SPECS_FOLDER: $SPECS_FOLDER"
-echo "TEST_DOMAIN: $TEST_DOMAIN"
-echo "TEST_USER: $TEST_USER"
-echo "DEBUG: $DEBUG"
+echo "HOST          => $HOST"
+echo "SPECS_FOLDER  => $SPECS_FOLDER"
+echo "PROFILE       => $PROFILE"
+echo "TEST_DOMAIN   => $TEST_DOMAIN"
+echo "TEST_USER     => $TEST_USER"
+echo "DEBUG:        => $DEBUG"
+echo ""
 
 docker run --rm -it -v "$PWD:/e2e" -w /e2e \
   -e DEBUG="$DEBUG" \
