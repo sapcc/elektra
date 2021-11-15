@@ -2,11 +2,28 @@
 
 function help_me () {
 
-  echo "Usage: run.sh --host ELEKTRA_HOST* PLUGIN-TEST --profile member|admin"
-  echo "       run.sh --help will print out this message"
-  echo "Note: if you run this on our workspaces with installed elektra env you can just use 'run.sh'"
-  echo "      the script will figure out where elektra is runing"
+  echo "Usage: run.sh --host ELEKTRA_HOST* --profile member|admin --debug cypress:* PLUGIN-TEST "
+  echo "       run.sh --help                                                 # will print out this message"
+  echo "       run.sh --host http://localhost:3000 landingpage               # will only run landingpage tests"
+  echo "       run.sh --host http://localhost:3000 --debug cypress:network:* # will show debug information about the networking"
   echo "MAC users: ./run.sh --host http://host.docker.internal:3000"
+  echo ""
+  echo "Debugging options: https://docs.cypress.io/guides/references/troubleshooting#Log-sources"
+  echo "cypress:cli                 The top-level command line parsing problems"
+  echo "cypress:server:args         Incorrect parsed command line arguments"
+  echo "cypress:server:specs        Not finding the expected specs"
+  echo "cypress:server:project      Opening the project"
+  echo "cypress:server:browsers     Finding installed browsers"
+  echo "cypress:launcher            Launching the found browser"
+  echo "cypress:network:*           Adding network interceptors"
+  echo "cypress:net-stubbing*       Network interception in the proxy layer"
+  echo "cypress:server:reporter     Problems with test reporters"
+  echo "cypress:server:preprocessor Processing specs"
+  echo "cypress:server:plugins      Running the plugins file and bundling specs"
+  echo "cypress:server:socket-e2e   Watching spec files"
+  echo "cypress:server:task         Invoking the cy.task() command"
+  echo "cypress:server:socket-base  Debugging cy.request() command"
+  echo "cypress:webpack             Bundling specs using webpack"
   exit 1
 }
 
@@ -28,6 +45,11 @@ else
         ;;
         -p|--profile)
         PROFILE="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        -d|--debug)
+        DEBUG="$2"
         shift # past argument
         shift # past value
         ;;
@@ -60,11 +82,6 @@ if [[ -z "${HOST}" ]]; then
   help_me
 fi
 
-
-echo "HOST: $HOST"
-echo "SPECS_FOLDER: $SPECS_FOLDER"
-
-
 set -o allexport; source ../.env; set +o allexport
 
 TEST_USER=$TEST_MEMBER_USER
@@ -75,7 +92,14 @@ if [[ "${PROFILE}" == "admin" ]]; then
   TEST_PASSWORD=$TEST_ADMIN_PASSWORD
 fi
 
+echo "HOST: $HOST"
+echo "SPECS_FOLDER: $SPECS_FOLDER"
+echo "TEST_DOMAIN: $TEST_DOMAIN"
+echo "TEST_USER: $TEST_USER"
+echo "DEBUG: $DEBUG"
+
 docker run --rm -it -v "$PWD:/e2e" -w /e2e \
+  -e DEBUG="$DEBUG" \
   -e CYPRESS_baseUrl="$HOST" \
   -e CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
   -e CYPRESS_TEST_USER="$TEST_USER" \
