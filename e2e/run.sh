@@ -3,9 +3,9 @@
 function help_me () {
 
   echo "Usage: run.sh --host HOST --profile member|admin --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
-  echo "       run.sh --help                                                 # will print out this message"
-  echo "       run.sh --host http://localhost:3000 landingpage               # will only run landingpage tests"
-  echo "       run.sh --host http://localhost:3000 --debug cypress:network:* # will show debug information about the networking"
+  echo "       run.sh --help                                                   # will print out this message"
+  echo "       run.sh --host http://localhost:3000 landingpage                 # will only run landingpage tests"
+  echo "       run.sh --host http://localhost:3000 --debug 'cypress:network:*' # will show debug information about the networking"
   echo "MAC users: ./run.sh --host http://host.docker.internal:3000"
   echo ""
   echo "Debugging options: https://docs.cypress.io/guides/references/troubleshooting#Log-sources"
@@ -61,9 +61,10 @@ else
   done
 fi
 
+# find the host if nothing was given
 if [[ -z "${HOST}" ]]; then
   if [ -f "/usr/local/bin/wb" ]; then
-    # this runs in workspaces!!!
+    # this runs only in workspaces!!!
     APP_PORT=$(wb elektra 'echo $APP_PORT' | tail -1 | tr -d '\r')
     echo "APP_PORT      => $APP_PORT"
     HOST="http://localhost:$APP_PORT"
@@ -95,7 +96,9 @@ echo "SPECS_FOLDER  => $SPECS_FOLDER"
 echo "PROFILE       => $PROFILE"
 echo "TEST_DOMAIN   => $TEST_DOMAIN"
 echo "TEST_USER     => $TEST_USER"
-echo "DEBUG:        => $DEBUG"
+if [[ -n "$DEBUG" ]]; then
+  echo "DEBUG:        => $DEBUG"
+fi
 echo ""
 
 docker run --rm -it -v "$PWD:/e2e" -w /e2e \
