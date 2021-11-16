@@ -1,9 +1,9 @@
 {
-  // https://stackoverflow.com/questions/52434223/lost-intellisense-for-cypress-in-visual-studio-code
+  // https://docs.cypress.io/guides/tooling/IDE-integration#Set-up-in-your-Dev-Environment
   "compilerOptions": {
     "allowJs": true,
     "outDir": "./build",
-    "baseUrl": "../../node_modules",
+    //"baseUrl": "../../node_modules",
     "types": [
       "cypress"
     ]
