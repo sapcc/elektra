@@ -4,7 +4,10 @@
 {
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+      // https://github.com/cypress-io/eslint-plugin-cypress
+    // https://stackoverflow.com/questions/58982852/eslint-cy-is-not-defined-cypress
+    "plugin:cypress/recommended"
   ] // enables rules
   ,
   "parser": "babel-eslint",
