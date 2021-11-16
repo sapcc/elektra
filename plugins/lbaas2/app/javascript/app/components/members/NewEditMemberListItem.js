@@ -233,7 +233,12 @@ const NewEditMemberListItem = ({
                 <div className="col-md-1">
                   <CustomLabel
                     htmlFor={`member[${member.id}][admin_state_up]`}
-                    labelText="Admin State"
+                    labelText={
+                      <>
+                        <span>Admin </span>
+                        <span className="nowrap">State Up</span>
+                      </>
+                    }
                   />
                 </div>
                 <div className="col-md-4">
