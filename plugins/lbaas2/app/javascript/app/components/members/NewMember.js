@@ -202,12 +202,18 @@ const NewMember = (props) => {
     return create(loadbalancerID, poolID, batchMembers)
       .then((response) => {
         if (response && response.data) {
-          addNotice(
-            <React.Fragment>
-              Member <b>{response.data.name}</b> ({response.data.id}) is being
-              created.
-            </React.Fragment>
-          );
+          if (batchMembers.length == 1) {
+            addNotice(
+              <React.Fragment>
+                Member <b>{response.data.name}</b> ({response.data.id}) is being
+                created.
+              </React.Fragment>
+            );
+          } else {
+            addNotice(
+              <React.Fragment>Members are being created.</React.Fragment>
+            );
+          }
         }
         // fetch the Members and the pool again
         persistPool(loadbalancerID, poolID);
@@ -287,12 +293,12 @@ const NewMember = (props) => {
                 <p>"No new members added yet."</p>
               )}
 
-              {/* <div className="add-more-section">
+              <div className="add-more-section">
                 <AddNewMemberButton
                   disabled={newMembers.length > 4}
                   addMembersCallback={addMembers}
                 />
-              </div> */}
+              </div>
             </div>
 
             <div className="existing-members">

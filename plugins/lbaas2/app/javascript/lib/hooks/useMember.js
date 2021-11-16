@@ -172,7 +172,20 @@ const useMember = () => {
     });
   };
 
-  const updateBatchMembers = (lbID, poolID, values) => {};
+  const updateBatchMembers = (lbID, poolID, values) => {
+    return new Promise((handleSuccess, handleErrors) => {
+      ajaxHelper
+        .post(`/loadbalancers/${lbID}/pools/${poolID}/members/batch_update`, {
+          members: values,
+        })
+        .then((response) => {
+          handleSuccess(response);
+        })
+        .catch((error) => {
+          handleErrors(error);
+        });
+    });
+  };
 
   const updateMember = (lbID, poolID, memberID, values) => {
     return new Promise((handleSuccess, handleErrors) => {

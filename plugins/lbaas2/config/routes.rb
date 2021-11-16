@@ -42,6 +42,7 @@ Lbaas2::Engine.routes.draw do
 
         collection do
           get 'servers_for_select' => 'members#serversForSelect'
+          post 'batch_update' => 'members#batch_update'
         end
 
       end
