@@ -16,7 +16,14 @@ import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons";
 import usePolling from "../../../lib/hooks/usePolling";
 import BooleanLabel from "../shared/BooleanLabel";
 
-const MemberListItem = ({ props, poolID, member, searchTerm, shouldPoll }) => {
+const MembersTableItem = ({
+  props,
+  poolID,
+  member,
+  searchTerm,
+  shouldPoll,
+  displayActions,
+}) => {
   const { matchParams, searchParamsToString, errorMessage } = useCommons();
   const { persistPool } = usePool();
   const [loadbalancerID, setLoadbalancerID] = useState(null);
@@ -136,7 +143,7 @@ const MemberListItem = ({ props, poolID, member, searchTerm, shouldPoll }) => {
       <td>
         <StaticTags tags={member.tags} shouldPopover={true} />
       </td>
-      <td>
+      <td className="snug-nowrap">
         <p className="list-group-item-text list-group-item-text-copy display-flex">
           <MemberIpIcon />
           <CopyPastePopover
@@ -161,43 +168,45 @@ const MemberListItem = ({ props, poolID, member, searchTerm, shouldPoll }) => {
       <td>
         <BooleanLabel value={member.admin_state_up} />
       </td>
-      <td>
-        <DropDownMenu buttonIcon={<span className="fa fa-cog" />}>
-          <li>
-            <SmartLink
-              to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/${
-                member.id
-              }/edit?${searchParamsToString(props)}`}
-              isAllowed={canEdit}
-              notAllowedText="Not allowed to edit. Please check with your administrator."
-            >
-              Edit
-            </SmartLink>
-          </li>
-          <li>
-            <SmartLink
-              onClick={handleDelete}
-              isAllowed={canDelete}
-              notAllowedText="Not allowed to delete. Please check with your administrator."
-            >
-              Delete
-            </SmartLink>
-          </li>
-          <li>
-            <SmartLink
-              to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/${
-                member.id
-              }/json?${searchParamsToString(props)}`}
-              isAllowed={canShowJSON}
-              notAllowedText="Not allowed to get JSOn. Please check with your administrator."
-            >
-              JSON
-            </SmartLink>
-          </li>
-        </DropDownMenu>
-      </td>
+      {displayActions && (
+        <td>
+          <DropDownMenu buttonIcon={<span className="fa fa-cog" />}>
+            <li>
+              <SmartLink
+                to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/${
+                  member.id
+                }/edit?${searchParamsToString(props)}`}
+                isAllowed={canEdit}
+                notAllowedText="Not allowed to edit. Please check with your administrator."
+              >
+                Edit
+              </SmartLink>
+            </li>
+            <li>
+              <SmartLink
+                onClick={handleDelete}
+                isAllowed={canDelete}
+                notAllowedText="Not allowed to delete. Please check with your administrator."
+              >
+                Delete
+              </SmartLink>
+            </li>
+            <li>
+              <SmartLink
+                to={`/loadbalancers/${loadbalancerID}/pools/${poolID}/members/${
+                  member.id
+                }/json?${searchParamsToString(props)}`}
+                isAllowed={canShowJSON}
+                notAllowedText="Not allowed to get JSOn. Please check with your administrator."
+              >
+                JSON
+              </SmartLink>
+            </li>
+          </DropDownMenu>
+        </td>
+      )}
     </tr>
   );
 };
 
-export default MemberListItem;
+export default MembersTableItem;

@@ -1,42 +1,106 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, DropdownButton, MenuItem } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import useCommons from "../../../lib/hooks/useCommons";
 import { Form } from "lib/elektra-form";
-import useMember from "../../../lib/hooks/useMember";
-import Select from "react-select";
+import useMember, {
+  filterItems,
+  parseNestedValues,
+} from "../../../lib/hooks/useMember";
 import uniqueId from "lodash/uniqueId";
 import { addNotice } from "lib/flashes";
-import { Table } from "react-bootstrap";
-import NewMemberListItem from "./NewMemberListItem";
+import NewEditMemberListItem from "./NewEditMemberListItem";
 import usePool from "../../../lib/hooks/usePool";
 import FormSubmitButton from "../shared/FormSubmitButton";
 import Log from "../shared/logger";
+import { SearchField } from "lib/components/search_field";
+import MembersTable from "./MembersTable";
+import { Tooltip, OverlayTrigger } from "react-bootstrap";
+import { Link } from "react-router-dom";
+
+const generateMember = (name, address) => {
+  return {
+    id: uniqueId("member_"),
+    name: name || "",
+    address: address || "",
+    backup: false,
+  };
+};
+const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
+  return (
+    <>
+      {disabled ? (
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip id={uniqueId("tooltip-")}>
+              You reach the maximum of 5 new members
+            </Tooltip>
+          }
+        >
+          <Link
+            to={""}
+            className="btn btn-default btn-xs"
+            disabled={true}
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+          >
+            Add another
+          </Link>
+        </OverlayTrigger>
+      ) : (
+        <Link
+          to={""}
+          className="btn btn-default btn-xs"
+          onClick={(e) => {
+            e.preventDefault();
+            addMembersCallback();
+          }}
+        >
+          Add another
+        </Link>
+      )}
+    </>
+  );
+};
 
 const NewMember = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage } = useCommons();
-  const { fetchServers, createMember, fetchMembers } = useMember();
+  const { searchParamsToString, matchParams, formErrorMessage, errorMessage } =
+    useCommons();
+  const { fetchServers, create, fetchMembers } = useMember();
   const { persistPool } = usePool();
   const [servers, setServers] = useState({
     isLoading: false,
     error: null,
     items: [],
   });
-  const [selectedServers, setSelectedServers] = useState([]);
   const [members, setMembers] = useState({
     isLoading: false,
     error: null,
     items: [],
   });
-  const [newMembers, setNewMembers] = useState([]);
+  const [loadbalancerID, setLoadbalancerID] = useState(null);
+  const [poolID, setPoolID] = useState(null);
+  const [newMembers, setNewMembers] = useState([generateMember()]);
+  const [showExistingMembers, setShowExistingMembers] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(null);
+  const [filteredItems, setFilteredItems] = useState([]);
 
   useEffect(() => {
-    Log.debug("fetching servers for select");
+    // get the lb
     const params = matchParams(props);
     const lbID = params.loadbalancerID;
-    const poolID = params.poolID;
+    const plID = params.poolID;
+    setLoadbalancerID(lbID);
+    setPoolID(plID);
+  }, []);
+
+  useEffect(() => {
+    if (!loadbalancerID && !poolID) return;
+    Log.debug("fetching servers for select");
     // get servers for the select
     setServers({ ...servers, isLoading: true });
-    fetchServers(lbID, poolID)
+    fetchServers(loadbalancerID, poolID)
       .then((data) => {
         setServers({
           ...servers,
@@ -46,11 +110,15 @@ const NewMember = (props) => {
         });
       })
       .catch((error) => {
-        setServers({ ...servers, isLoading: false, error: error });
+        setServers({
+          ...servers,
+          isLoading: false,
+          error: errorMessage(error),
+        });
       });
     // get the existing members
     setMembers({ ...members, isLoading: true });
-    fetchMembers(lbID, poolID)
+    fetchMembers(loadbalancerID, poolID)
       .then((data) => {
         const newItems = data.members || [];
         for (let i = 0; i < newItems.length; i++) {
@@ -66,7 +134,12 @@ const NewMember = (props) => {
       .catch((error) => {
         setMembers({ ...members, isLoading: false, error: error });
       });
-  }, []);
+  }, [loadbalancerID, poolID]);
+
+  useEffect(() => {
+    const newItems = filterItems(searchTerm, members.items);
+    setFilteredItems(newItems);
+  }, [searchTerm, members]);
 
   /**
    * Modal stuff
@@ -80,10 +153,8 @@ const NewMember = (props) => {
 
   const restoreUrl = () => {
     if (!show) {
-      const params = matchParams(props);
-      const lbID = params.loadbalancerID;
       props.history.replace(
-        `/loadbalancers/${lbID}/show?${searchParamsToString(props)}`
+        `/loadbalancers/${loadbalancerID}/show?${searchParamsToString(props)}`
       );
     }
   };
@@ -93,8 +164,6 @@ const NewMember = (props) => {
    */
   const [initialValues, setInitialValues] = useState({});
   const [formErrors, setFormErrors] = useState(null);
-  const [submitResults, setSubmitResults] = useState({});
-  const [showServerDropdown, setShowServerDropdown] = useState(false);
 
   const validate = (values) => {
     return newMembers && newMembers.length > 0;
@@ -102,12 +171,7 @@ const NewMember = (props) => {
 
   const onSubmit = (values) => {
     setFormErrors(null);
-    // get the lb id and poolId
-    const params = matchParams(props);
-    const lbID = params.loadbalancerID;
-    const poolID = params.poolID;
-
-    //  filter items in context, which are removed from the list or already saved
+    // filter items from the form context which are removed from the newMember list
     const filtered = Object.keys(values)
       .filter((key) => {
         let found = false;
@@ -115,12 +179,7 @@ const NewMember = (props) => {
           if (found) {
             break;
           }
-          // if found means the key from the form context exists in the selected member list
-          // the context contains all references of members added and removed from the list
-          // don't send rows already saved successfully
-          if (!newMembers[i].saved) {
-            found = key.includes(newMembers[i].id);
-          }
+          found = key.includes(newMembers[i].id);
         }
         return found;
       })
@@ -129,9 +188,18 @@ const NewMember = (props) => {
         return obj;
       }, {});
 
+    // parse nested keys to objects
+    // from values like member[XYZ][name]="arturo" to {XYZ:{name:"arturo"}}
+    const newMemberObjs = parseNestedValues(filtered);
+
+    let batchMembers = [];
+    Object.keys(newMemberObjs).forEach((key) => {
+      batchMembers.push(newMemberObjs[key]);
+    });
+
     // save the entered values in case of error
     setInitialValues(filtered);
-    return createMember(lbID, poolID, filtered)
+    return create(loadbalancerID, poolID, batchMembers)
       .then((response) => {
         if (response && response.data) {
           addNotice(
@@ -141,72 +209,21 @@ const NewMember = (props) => {
             </React.Fragment>
           );
         }
-        // TODO: fetch the Members and the pool again
-        persistPool(lbID, poolID)
-          .then(() => {})
-          .catch((error) => {});
+        // fetch the Members and the pool again
+        persistPool(loadbalancerID, poolID);
         close();
       })
       .catch((error) => {
-        const results =
-          error.response && error.response.data && error.response.data.results;
-        setFormErrors(formErrorMessage(error));
-        if (results) {
-          mergeSubmitResults(results);
-          setSubmitResults(results);
-        }
+        setFormErrors(errorMessage(error));
       });
   };
 
-  const mergeSubmitResults = (results) => {
-    let newItems = newMembers.slice() || [];
-    Object.keys(results).forEach((key) => {
-      for (let i = 0; i < newItems.length; i++) {
-        if (newItems[i].id == key) {
-          if (results[key].saved) {
-            newItems[i] = { ...newItems[i], ...results[key] };
-          } else {
-            newItems[i]["saved"] = results[key].saved;
-          }
-          break;
-        }
-      }
-    });
-    setNewMembers(newItems);
-  };
-
   const addMembers = () => {
-    // create a unique id for the value
-    const newValues = [
-      {
-        id: uniqueId("member_"),
-        name: selectedServers.name,
-        address: selectedServers.address,
-      },
-    ];
-
-    //  replace items
-    setNewMembers(newValues);
-    setSelectedServers([]);
-    setShowServerDropdown(false);
-  };
-
-  const addExternalMembers = () => {
-    // replace values
-    const newExtMembers = [{ id: uniqueId("member_"), type: "external" }];
-    setNewMembers(newExtMembers);
-  };
-
-  const onShowServersDropdown = () => {
-    setShowServerDropdown(true);
-  };
-
-  const onCancelShowServer = () => {
-    setShowServerDropdown(false);
-  };
-
-  const onChangeServers = (values) => {
-    setSelectedServers(values);
+    const newExtMembers = generateMember();
+    let items = newMembers.slice();
+    items.push(newExtMembers);
+    // add values
+    setNewMembers(items);
   };
 
   const onRemoveMember = (id) => {
@@ -219,14 +236,9 @@ const NewMember = (props) => {
     setNewMembers(newItems);
   };
 
-  const styles = {
-    container: (base) => ({
-      ...base,
-      flex: 1,
-    }),
-  };
-
-  const allMembers = [...newMembers, ...members.items];
+  // enforceFocus={false} needed so the clipboard.js library on bootstrap modals
+  // https://github.com/zenorocha/clipboard.js/issues/388
+  // https://github.com/twbs/bootstrap/issues/19971
   return (
     <Modal
       show={show}
@@ -236,6 +248,7 @@ const NewMember = (props) => {
       onExited={restoreUrl}
       aria-labelledby="contained-modal-title-lg"
       bsClass="lbaas2 modal"
+      enforceFocus={false}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">New Member</Modal.Title>
@@ -256,114 +269,82 @@ const NewMember = (props) => {
           </p>
           <Form.Errors errors={formErrors} />
 
-          <div className="existing-members">
-            <b>Existing Members</b>
-            <div className="toolbar toolbar-multi-line">
-              {showServerDropdown && (
-                <React.Fragment>
-                  <div className="display-flex select-server-section">
-                    <Select
-                      className="basic-single server-select"
-                      classNamePrefix="select"
-                      isDisabled={false}
-                      isLoading={servers.isLoading}
-                      isClearable={true}
-                      isRtl={false}
-                      isSearchable={true}
-                      name="servers"
-                      onChange={onChangeServers}
-                      options={servers.items}
-                      isMulti={false}
-                      closeMenuOnSelect={true}
-                      styles={styles}
-                      value={selectedServers}
-                    />
-                    <Button
-                      disabled={!selectedServers || selectedServers.length == 0}
-                      bsStyle="primary"
-                      className="margin-left"
-                      onClick={addMembers}
-                    >
-                      Add
-                    </Button>
-                    <Button bsStyle="primary" onClick={onCancelShowServer}>
-                      Cancel
-                    </Button>
-                  </div>
-                  {servers.error ? (
-                    <span className="text-danger">
-                      {formErrorMessage(servers.error)}
-                    </span>
-                  ) : (
-                    ""
-                  )}
-                </React.Fragment>
-              )}
-
-              <div className="main-buttons">
-                {!showServerDropdown && (
-                  <DropdownButton
-                    disabled={members.isLoading}
-                    title="Add"
-                    bsStyle="primary"
-                    noCaret
-                    pullRight
-                    id="add-member-dropdown"
-                  >
-                    <MenuItem onClick={onShowServersDropdown} eventKey="1">
-                      By selecting a server
-                    </MenuItem>
-                    <MenuItem onClick={addExternalMembers} eventKey="2">
-                      External
-                    </MenuItem>
-                  </DropdownButton>
-                )}
-              </div>
-            </div>
-
-            <Table className="table new_members" responsive>
-              <thead>
-                <tr>
-                  <th className="snug">#</th>
-                  <th>Name</th>
-                  <th>IPs</th>
-                  <th className="snug">Weight</th>
-                  <th className="snug">Backup</th>
-                  <th>Tags</th>
-                  <th className="snug"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {allMembers.length > 0 ? (
-                  allMembers.map((member, index) => (
-                    <NewMemberListItem
+          <div className="new-members-container">
+            <div className="new-members">
+              {newMembers.length > 0 ? (
+                <>
+                  {newMembers.map((member, index) => (
+                    <NewEditMemberListItem
                       member={member}
                       key={member.id}
                       index={index}
                       onRemoveMember={onRemoveMember}
-                      results={submitResults[member.id]}
+                      servers={servers}
                     />
-                  ))
+                  ))}
+                </>
+              ) : (
+                <p>"No new members added yet."</p>
+              )}
+
+              {/* <div className="add-more-section">
+                <AddNewMemberButton
+                  disabled={newMembers.length > 4}
+                  addMembersCallback={addMembers}
+                />
+              </div> */}
+            </div>
+
+            <div className="existing-members">
+              <div className="display-flex">
+                <div
+                  className="action-link"
+                  onClick={() => setShowExistingMembers(!showExistingMembers)}
+                  data-toggle="collapse"
+                  data-target="#collapseExistingMembers"
+                  aria-expanded={showExistingMembers}
+                  aria-controls="collapseExistingMembers"
+                >
+                  {showExistingMembers ? (
+                    <>
+                      <span>Hide existing members</span>
+                      <i className="fa fa-chevron-circle-up" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Show existing members</span>
+                      <i className="fa fa-chevron-circle-down" />
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="collapse" id="collapseExistingMembers">
+                <div className="toolbar searchToolbar">
+                  <SearchField
+                    value={searchTerm}
+                    onChange={(term) => setSearchTerm(term)}
+                    placeholder="Name, ID, IP or port"
+                    text="Searches by Name, ID, IP address or protocol port."
+                  />
+                </div>
+
+                <MembersTable
+                  members={filteredItems}
+                  props={props}
+                  poolID={poolID}
+                  searchTerm={searchTerm}
+                  isLoading={members.isLoading}
+                />
+                {members.error ? (
+                  <span className="text-danger">
+                    {formErrorMessage(members.error)}
+                  </span>
                 ) : (
-                  <tr>
-                    <td colSpan="5">
-                      {members.isLoading ? (
-                        <span className="spinner" />
-                      ) : (
-                        "No Members added."
-                      )}
-                    </td>
-                  </tr>
+                  ""
                 )}
-              </tbody>
-            </Table>
-            {members.error ? (
-              <span className="text-danger">
-                {formErrorMessage(members.error)}
-              </span>
-            ) : (
-              ""
-            )}
+              </div>
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>

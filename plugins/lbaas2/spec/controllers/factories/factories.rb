@@ -51,15 +51,15 @@ module Lbaas2
     end
 
     def member(params={})
-      {"member[member_858][index]"=>0, "member[member_858][name]"=>"bmc_test", "member[member_858][identifier]"=>"member_858", "member[member_858][address]"=>"10.180.0.240", "member[member_858][protocol_port]"=>"8889", "member[member_858][weight]"=>1, "member[member_858][tags]"=>["kak"]}.merge(params)
+      {"index"=>"0", "name"=>"bmc_test", "identifier"=>"member_858", "address"=>"10.180.0.240",  "protocol_port"=>8889, "tags"=>'["kak"]', "weight"=>1}.merge(params)
     end
 
     def update_member(params={})
-      {id: "update_member", "member[member_858][index]"=>0, "member[member_858][name]"=>"bmc_test", "member[member_858][identifier]"=>"member_858", "member[member_858][address]"=>"10.180.0.240", "member[member_858][protocol_port]"=>"8889", "member[member_858][weight]"=>1, "member[member_858][tags]"=>["kak"]}.merge(params)
+      {id: "update_member", "index"=>"0", "name"=>"bmc_test", "identifier"=>"member_858", "address"=>"10.180.0.240",  "protocol_port"=>8889, "tags"=>'["kak"]', "weight"=>1}.merge(params)
     end
 
     def member_params
-      {"member_858"=>{"address"=>"10.180.0.240", "identifier"=>"member_858", "index"=>"0", "name"=>"bmc_test", "protocol_port"=>"8889", "tags"=>'["kak"]', "weight"=>"1"}}
+      member()
     end
 
   end
