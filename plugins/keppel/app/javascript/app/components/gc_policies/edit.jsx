@@ -207,6 +207,8 @@ export default class GCPoliciesEditModal extends React.Component {
     const { movePolicy, setPolicyAttribute, removePolicy } = this;
     const commonPropsForRow = { isEditable, policyCount: policies.length, movePolicy, setPolicyAttribute, removePolicy };
 
+    const hasLastPullPolicies = policies.some(policy => ((policy.time_constraint || {}).on || '') == 'last_pulled_at');
+
     //NOTE: className='keppel' on Modal ensures that plugin-specific CSS rules get applied
     return (
       <Modal className='keppel' dialogClassName="modal-xl" backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
@@ -218,10 +220,10 @@ export default class GCPoliciesEditModal extends React.Component {
 
         <Modal.Body>
           {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
-          <p className='bs-callout bs-callout-info bs-callout-emphasize'>
+          <p>
             If GC policies are maintained, they will be evaluated by Keppel about once every hour, and matching images will be deleted automatically. Deletions will be recorded in the project's audit log with the initiator <code>policy-driven-gc</code>.
           </p>
-          <p className='bs-callout bs-callout-warning bs-callout-emphasize'>
+          <p className='bs-callout bs-callout-info bs-callout-emphasize'>
             <strong>The order of policies is significant!</strong> Policies are evaluated starting from the top of the list. For each image, the first policy that matches gets applied, and all subsequent policies will be ignored.
           </p>
           {isAdmin && !isEditable && (
@@ -260,6 +262,11 @@ export default class GCPoliciesEditModal extends React.Component {
           {policies.length > 0 && (
             <p>
               Matches on repository names and tag names use the <a href='https://golang.org/pkg/regexp/syntax/'>Go regex syntax</a>. Leading <code>^</code> and trailing <code>$</code> anchors are always added automatically.
+            </p>
+          )}
+          {hasLastPullPolicies && (
+            <p className='bs-callout bs-callout-warning bs-callout-emphasize'>
+              Some of these policies evaluate the last pull timestamp of images. Please be aware that, for the purposes of GC policy evaluation, images that have <strong>never been pulled</strong> will have their last pull timestamp set to the UNIX epoch (midnight UTC of January 1st, 1970).
             </p>
           )}
         </Modal.Body>
