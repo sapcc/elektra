@@ -179,7 +179,7 @@ describe Lbaas2::Loadbalancers::Pools::MembersController, type: :controller do
                       service: double('octavia', get: double('get', map_to: double('lb', vip_subnet_id: 'some_id', to_json: {})),
                                                  post: double('post', body: {})))
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(member)
-      allow_any_instance_of(Lbaas2::Loadbalancers::Pools::MembersController).to receive(:parseMemberParams).and_return(::Lbaas2::FakeFactory.new.member_params)
+      allow_any_instance_of(Lbaas2::Loadbalancers::Pools::MembersController).to receive(:member_params).and_return(::Lbaas2::FakeFactory.new.member_params)
     end
 
     context 'network_admin' do
