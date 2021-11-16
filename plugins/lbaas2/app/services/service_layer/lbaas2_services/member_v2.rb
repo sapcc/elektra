@@ -22,6 +22,13 @@ module ServiceLayer
         member_map.call(attributes)
       end
 
+      # TODO need to test
+      def batch_update_members(pool_id, members)
+        elektron_lb2.put("pools/#{pool_id}/members") do
+          members
+        end
+      end
+
       ################# INTERFACE METHODS ######################
 
       def create_member(pool_id, params)

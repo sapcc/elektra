@@ -12,6 +12,7 @@ module ServiceLayer
         @lb_status_map ||= class_map_proc(::Lbaas2::Statuses)
       end
 
+      # API call without model mapping
       def loadbalancer_device(id)
         elektron_amphorae.get(id).body.fetch("amphora", {}) 
       end
