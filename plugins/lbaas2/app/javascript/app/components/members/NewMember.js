@@ -67,7 +67,7 @@ const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
 const NewMember = (props) => {
   const { searchParamsToString, matchParams, formErrorMessage, errorMessage } =
     useCommons();
-  const { fetchServers, create, fetchMembers } = useMember();
+  const { fetchServers, create, fetchMembers, persistMembers } = useMember();
   const { persistPool } = usePool();
   const [servers, setServers] = useState({
     isLoading: false,
@@ -215,8 +215,12 @@ const NewMember = (props) => {
             );
           }
         }
-        // fetch the Members and the pool again
+        // update pool info
         persistPool(loadbalancerID, poolID);
+        // TODO reload pool list if batch update
+        if (batchMembers.length > 1) {
+          persistMembers(loadbalancerID, poolID);
+        }
         close();
       })
       .catch((error) => {
