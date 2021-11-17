@@ -165,7 +165,7 @@ const NewEditMemberListItem = ({
                     name={`member[${member.id}][address]`}
                     value={address}
                     disabled={edit}
-                    placeholder="IP Address"
+                    placeholder="IP Address &#42;"
                     extraClassName="icon-in-input"
                   />
                   <span className="horizontal-padding-min">:</span>
@@ -174,7 +174,7 @@ const NewEditMemberListItem = ({
                     name={`member[${member.id}][protocol_port]`}
                     value={member.protocol_port}
                     disabled={edit}
-                    placeholder="Port"
+                    placeholder="Port &#42;"
                     size="lg"
                   />
                 </div>
