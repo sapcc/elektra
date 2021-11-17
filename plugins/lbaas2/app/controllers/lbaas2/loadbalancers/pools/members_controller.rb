@@ -78,7 +78,6 @@ module Lbaas2
         end
 
         # TODO wait to octavia Ussuri upgrade since the flag additive_only is necessary
-        # TODO add policy for this new route and tests
         def batch_update
           members = {members: []}
 
@@ -96,11 +95,6 @@ module Lbaas2
             member.merge!("subnet_id" => vip_subnet_id, "project_id" => @scoped_project_id)
             members[:members].push(member)
           end
-
-          puts"=======2"
-          puts members
-          puts"======="
-
           services.lbaas2.batch_update_members(params[:pool_id], members)          
           audit_logger.info(current_user, 'has created', membersParams.to_json)
           render json: { results: "members are being created" }
@@ -184,17 +178,6 @@ module Lbaas2
           member[:monitor_port] = member[:monitor_port].to_i unless member[:monitor_port].blank?
           member[:weight] = member[:weight].to_i unless member[:weight].blank?
           member
-        end
-
-        def members_params
-          members = params[:members] || []
-          members.each do |member|
-            # convert to int
-            member[:protocol_port] = member[:protocol_port].to_i unless member[:protocol_port].blank?
-            member[:monitor_port] = member[:monitor_port].to_i unless member[:monitor_port].blank?
-            member[:weight] = member[:weight].to_i unless member[:weight].blank?
-          end
-          members
         end
 
       end

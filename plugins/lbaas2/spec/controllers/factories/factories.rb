@@ -51,7 +51,7 @@ module Lbaas2
     end
 
     def member(params={})
-      {"index"=>"0", "name"=>"bmc_test", "identifier"=>"member_858", "address"=>"10.180.0.240",  "protocol_port"=>8889, "tags"=>'["kak"]', "weight"=>1}.merge(params)
+      {"name"=>"bmc_test", "address"=>"10.180.0.240",  "protocol_port"=>8889, "tags"=>'["kak"]', "weight"=>1}.merge(params)
     end
 
     def update_member(params={})
