@@ -45,8 +45,10 @@ const NewEditMemberListItem = ({
 
   const onChangeServers = (values) => {
     setSelectedServers(values);
-    setName(values.name);
-    setAddress(values.address);
+    if (values) {
+      setName(values?.name || "");
+      setAddress(values?.address || "");
+    }
   };
 
   Log.debug("RENDER NewEditMemberListItem");
