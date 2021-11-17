@@ -80,14 +80,29 @@ module Lbaas2
         # TODO wait to octavia Ussuri upgrade since the flag additive_only is necessary
         # TODO add policy for this new route and tests
         def batch_update
-          membersParams = members_params
+          members = {members: []}
+
+          # get subnet from loadbalancer
+          loadbalancer = services.lbaas2.find_loadbalancer(params[:loadbalancer_id])
+          vip_subnet_id = loadbalancer.vip_subnet_id
+
+          membersParams = JSON.parse(params[:members].to_json)
+          membersParams.each do |member|
+            # convert to int
+            member["protocol_port"] = member["protocol_port"].to_i unless member["protocol_port"].blank?
+            member["monitor_port"] = member["monitor_port"].to_i unless member["monitor_port"].blank?
+            member["weight"] = member["weight"].to_i unless member["weight"].blank?
+            # OS Bug, Subnet not optional, has to be set to VIP subnet
+            member.merge!("subnet_id" => vip_subnet_id, "project_id" => @scoped_project_id)
+            members[:members].push(member)
+          end
 
           puts"=======2"
-          puts membersParams.inspect
+          puts members
           puts"======="
 
-          services.lbaas2.batch_update_members("abc", membersParams)
-          audit_logger.info(current_user, 'has created', membersParams)
+          services.lbaas2.batch_update_members(params[:pool_id], members)          
+          audit_logger.info(current_user, 'has created', membersParams.to_json)
           render json: { results: "members are being created" }
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code
@@ -174,6 +189,7 @@ module Lbaas2
         def members_params
           members = params[:members] || []
           members.each do |member|
+            # convert to int
             member[:protocol_port] = member[:protocol_port].to_i unless member[:protocol_port].blank?
             member[:monitor_port] = member[:monitor_port].to_i unless member[:monitor_port].blank?
             member[:weight] = member[:weight].to_i unless member[:weight].blank?

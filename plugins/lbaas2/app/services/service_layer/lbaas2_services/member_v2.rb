@@ -24,7 +24,7 @@ module ServiceLayer
 
       # TODO need to test
       def batch_update_members(pool_id, members)
-        elektron_amphorae.put("pools/#{pool_id}/members") do
+        elektron_lb2.put("pools/#{pool_id}/members") do
           members
         end
       end
