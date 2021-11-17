@@ -13,12 +13,7 @@
       You can create eMail template from
       = link_to 'here', pl.new_template_path()
       or you can send plain eMail from
-      = link_to 'here', pl.new_email_path() 
-  - if !@configsets || @configsets.empty?
-    %p.alert.alert-warning
-      There is no Configuration Set defined for your account. Without a Config Set, you can't send templated eMail.
-      You can create Configuration Set from
-      = link_to 'here', pl.configset_new_configset_path()
+      = link_to 'here', pl.new_email_path()
   
   .modal-body
     .row
