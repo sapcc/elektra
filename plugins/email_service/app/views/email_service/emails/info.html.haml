@@ -109,5 +109,19 @@ Count:
 =current_user.roles.count
 
 %br
-Has Role?:
+Has Role? email_user :
 =current_user.has_role?('email_user')
+
+%br
+Has Role? email_admin :
+=current_user.has_role?('email_admin')
+
+%br
+Has Role? fake_email_admin :
+=current_user.has_role?('fake_email_admin')
+
+%br
+Current User Allowed (email_service:email_create):
+=current_user.is_allowed?('email_service:email_create')
+
+

@@ -4,6 +4,8 @@ module EmailService
 
     def index
       creds = get_ec2_creds
+
+
       if creds.error.empty?
         @all_emails = list_verified_identities("EmailAddress")
         @verified_emails = get_verified_identities_by_status(@all_emails, "success")
@@ -50,14 +52,18 @@ module EmailService
     end
 
     def edit
-      @all_emails = list_verified_identities("EmailAddress")
-      @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
+      creds = get_ec2_creds
+      if creds.error.empty?
+        @all_emails = list_verified_identities("EmailAddress")
+        @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
 
-      @configsets = get_configset
-      @templates = get_all_templates
-      @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress")
-      @templates_collection = get_templates_collection(@templates) if @templates && !@templates.empty?
-
+        @configsets = get_configset
+        @templates = get_all_templates
+        @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress")
+        @templates_collection = get_templates_collection(@templates) if @templates && !@templates.empty?
+      else
+        flash[:error] = creds.error
+      end
     end
 
     def templated_email_params

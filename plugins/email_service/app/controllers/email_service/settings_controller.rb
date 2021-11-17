@@ -15,10 +15,8 @@ module EmailService
       else
         flash[:error] = creds.error
       end
-
-
-
     end
+
     def show_config
       creds = get_ec2_creds
       @access = creds.access
