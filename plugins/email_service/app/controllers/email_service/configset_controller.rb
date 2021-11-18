@@ -1,6 +1,6 @@
 module EmailService
   class ConfigsetController < ::EmailService::ApplicationController
-    # before_action :restrict_access
+    before_action :restrict_access
 
     def index
       creds = get_ec2_creds
@@ -14,7 +14,6 @@ module EmailService
       end
     end
     
-
     def new_configset
 
     end

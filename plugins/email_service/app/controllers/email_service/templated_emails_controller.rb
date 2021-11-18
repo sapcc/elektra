@@ -1,11 +1,10 @@
 module EmailService
   class TemplatedEmailsController < ::EmailService::ApplicationController
-    # before_action :restrict_access
+    before_action :restrict_access
 
     def index
       creds = get_ec2_creds
-
-
+      
       if creds.error.empty?
         @all_emails = list_verified_identities("EmailAddress")
         @verified_emails = get_verified_identities_by_status(@all_emails, "success")

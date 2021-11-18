@@ -1,6 +1,6 @@
 module EmailService
   class VerificationsController < ::EmailService::ApplicationController
-    # before_action :restrict_access
+    before_action :restrict_access
     
     def index
       creds = get_ec2_creds

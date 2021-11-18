@@ -15,8 +15,11 @@
               =@access if @access
           %tr
             %td AWS Secret Key 
-            %td 
-              =@secret if @secret
+            %td
+              - if current_user.is_allowed?('email_service:settings_create')
+                =@secret if @secret
+              - else 
+                XXXXXXX
           %tr
             %td Cronus Endpoint 
             %td 
