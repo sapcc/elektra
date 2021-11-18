@@ -1,6 +1,6 @@
 module EmailService
   class SettingsController < ::EmailService::ApplicationController
-    # before_action :restrict_access
+    before_action :restrict_access
 
     def index
       @cronus_activated = false

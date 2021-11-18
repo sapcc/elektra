@@ -10,6 +10,7 @@
         .main-buttons
           - if current_user.is_allowed?('email_service:email_create')
             = link_to "New plain eMail", plugin('email_service').new_email_path, data: { modal: true }, class: 'btn btn-primary'
+          - if current_user.is_allowed?('email_service:templated_email_create')
             = link_to "New templated eMail", plugin('email_service').new_templated_emails_path, data: {modal: true}, class: 'btn btn-primary'
     .col-sm-3
       .bs-callout.bs-callout-primary.toolbar-aligment

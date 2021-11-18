@@ -107,10 +107,3 @@ describe EmailService::EmailsController, type: :controller do
     end
 
 end
-
-# RSpec.describe "load plain_email_form", :type => :request do
-#   it 'creates a new plain email form' do
-#     get "/new"
-#     expect(response).to render_template(:new)
-#   end
-# end

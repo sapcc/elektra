@@ -12,6 +12,12 @@ module EmailService
         else
           flash[:error] = creds.error
         end
+
+        # if current_user.has_role?('email_admin')
+        #   flash[:info] = "email_admin role is enabled"
+        # else
+        #   flash[:warning] = "email_admin role is not enabled"
+        # end
     end
 
     def stats

@@ -6,9 +6,6 @@ module EmailService
     include EmailHelper
     include TemplateHelper
 
-    # authorization_context 'email_service'
-    # authorization_required
-
     def ui_switcher
       if current_user.has_role?('cloud_support_tools_viewer')
         redirect_to emails_path
