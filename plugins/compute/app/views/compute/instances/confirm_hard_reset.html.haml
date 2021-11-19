@@ -3,21 +3,21 @@
 
 = simple_modal_form_for @form, submit_action: 'Hard Reset', url: plugin('compute').pre_hard_reset_instance_path(id: @instance.id), method: :post, cancel_url: plugin('compute').console_instance_path(id: @instance.id) do |f|
   .bs-callout.bs-callout-danger
-    If your operating system does not respond to a restart signal you might need to hard reset your machine. 
-    That means the instance will be hard shutoff and afterwards switch back on. 
+    If your operating system does not respond to a restart signal you might need to hard reset your machine.
+    That means the instance will be hard shutoff and afterwards switch back on.
     %strong
-      This may result in data loss! 
-    Please double check in the console below that the instance is not currently in the process of performing 
+      This may result in data loss!
+    Please double check in the console below that the instance is not currently in the process of performing
     a soft reset or otherwise occupied.
     %br
     %br
     Are you sure you want to hard reset the instance
     %strong
-      = @instance.name 
+      = @instance.name
     ?
     %br
     %br
-    Note: after the hardreset is triggered the vnc console will stop to work. It will reload automaticly after the countdown ends.
+    Note: after the hardreset is triggered the web console will stop to work. It will reload automaticly after the countdown ends.
   .row
     .col-md-6
       %fieldset
