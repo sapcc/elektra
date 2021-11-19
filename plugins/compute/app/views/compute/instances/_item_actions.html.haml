@@ -5,7 +5,7 @@
 
   %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
     - if current_user.is_allowed?("compute:instance_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-      %li= link_to 'VNC Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
+      %li= link_to 'Web Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
       / / Disabled until Serial LOg from nova side again %li= link_to 'Serial Log', console_log_instance_path(id: instance.id), data: {modal: true }
       %li.divider
 
