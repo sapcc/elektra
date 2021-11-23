@@ -45,8 +45,10 @@ const NewEditMemberListItem = ({
 
   const onChangeServers = (values) => {
     setSelectedServers(values);
-    setName(values.name);
-    setAddress(values.address);
+    if (values) {
+      setName(values?.name || "");
+      setAddress(values?.address || "");
+    }
   };
 
   Log.debug("RENDER NewEditMemberListItem");
@@ -163,7 +165,7 @@ const NewEditMemberListItem = ({
                     name={`member[${member.id}][address]`}
                     value={address}
                     disabled={edit}
-                    placeholder="IP Address"
+                    placeholder="IP Address &#42;"
                     extraClassName="icon-in-input"
                   />
                   <span className="horizontal-padding-min">:</span>
@@ -172,7 +174,7 @@ const NewEditMemberListItem = ({
                     name={`member[${member.id}][protocol_port]`}
                     value={member.protocol_port}
                     disabled={edit}
-                    placeholder="Port"
+                    placeholder="Port &#42;"
                     size="lg"
                   />
                 </div>
@@ -233,7 +235,12 @@ const NewEditMemberListItem = ({
                 <div className="col-md-1">
                   <CustomLabel
                     htmlFor={`member[${member.id}][admin_state_up]`}
-                    labelText="Admin State"
+                    labelText={
+                      <>
+                        <span>Admin </span>
+                        <span className="nowrap">State Up</span>
+                      </>
+                    }
                   />
                 </div>
                 <div className="col-md-4">

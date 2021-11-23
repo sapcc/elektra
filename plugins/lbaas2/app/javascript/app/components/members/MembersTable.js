@@ -39,7 +39,10 @@ const MembersTable = ({
           <th>IPs</th>
           <th style={{ width: "8%" }}>Weight</th>
           <th style={{ width: "8%" }}>Backup</th>
-          <th style={{ width: "8%" }}>Admin State</th>
+          <th style={{ width: "8%" }}>
+            <span>Admin </span>
+            <span className="nowrap">State Up</span>
+          </th>
           {displayActions && <th className="snug"></th>}
         </tr>
       </thead>
