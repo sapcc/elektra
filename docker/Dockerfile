@@ -1,4 +1,4 @@
-FROM ruby:2.5-alpine3.10 AS elektra
+FROM ruby:2.5-alpine3.11 AS elektra
 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
@@ -66,12 +66,19 @@ RUN bundle install --without "development integration_tests"
 
 ADD . /home/app/webapp
 
+#ENV NODE_ENV=production
+# install latest possible node version
+#RUN apk add --no-cache nodejs-current 
+# yarn task is called within "assets:precompile" -> /workspace/elektra/vendor/bundle/ruby/2.5.0/gems/railties-5.2.6/lib/rails/tasks/yarn.rake
+#RUN yarn install --no-progress
+
 # precompile assets including webpacker packs
 # We use dummy master.key to workaround the fact that
 # assets:precompile needs them but we don't want the real master.key to be built
 # into the container. The MONSOON_RAILS_SECRET_TOKEN should be injected as env var when starting the
 # container.
 # https://github.com/rails/rails/issues/32947
+
 ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
@@ -89,4 +96,3 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
       # && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
 
 FROM elektra
-
