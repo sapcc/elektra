@@ -58,6 +58,7 @@
     "enzyme-adapter-react-16": "1.15.6",
     "eslint": "6.8.0",
     "eslint-loader": "4.0.2",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "2.25.1",
     "eslint-plugin-react": "7.26.1",
     "jest": "24.9.0",
