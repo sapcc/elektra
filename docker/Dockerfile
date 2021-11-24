@@ -1,4 +1,4 @@
-FROM ruby:2.5-alpine3.11 AS elektra
+FROM ruby:2.6-alpine3.11 AS elektra
 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
