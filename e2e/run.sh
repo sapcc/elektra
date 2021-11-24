@@ -91,7 +91,12 @@ if [[ "${PROFILE}" == "admin" ]]; then
   TEST_PASSWORD=$TEST_ADMIN_PASSWORD
 fi
 
+# show all hidden chars for debugging
+# https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+# echo $HOST | cat -A
+
 echo "HOST          => $HOST"
+echo "TEST_PATH     => $PWD"
 echo "SPECS_FOLDER  => $SPECS_FOLDER"
 echo "PROFILE       => $PROFILE"
 echo "TEST_DOMAIN   => $TEST_DOMAIN"
@@ -101,11 +106,13 @@ if [[ -n "$DEBUG" ]]; then
 fi
 echo ""
 
-docker run --rm -it -v "$PWD:/e2e" -w /e2e \
-  -e DEBUG="$DEBUG" \
-  -e CYPRESS_baseUrl="$HOST" \
-  -e CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
-  -e CYPRESS_TEST_USER="$TEST_USER" \
-  -e CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
+docker run --rm -it \
+  --volume "$PWD:/e2e" \
+  --workdir /e2e \
+  --env DEBUG="$DEBUG" \
+  --env CYPRESS_baseUrl="$HOST" \
+  --env CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
+  --env CYPRESS_TEST_USER="$TEST_USER" \
+  --env CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
   --network=host \
   keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/cypress/included:7.1.0 --spec "$SPECS_FOLDER"
