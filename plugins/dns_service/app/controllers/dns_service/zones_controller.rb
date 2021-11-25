@@ -72,7 +72,19 @@ module DnsService
       end
 
       @zone = services.dns_service.find_zone(params[:id], all_projects: @all_projects)
-      @shared_zones = services.dns_service.shared_zones()
+      all_shared_zones = services.dns_service.shared_zones()
+
+      @shared_with_projects = []
+      all_shared_zones.each do | shared_zone |
+        if @zone.id == shared_zone.zone_id && @scoped_project_id != shared_zone.target_project_id
+          project = ObjectCache.where(id: shared_zone.target_project_id).first
+          if project
+            @shared_with_projects << project.name
+          else
+            @shared_with_projects << shared_zone.target_project_id
+          end
+        end
+      end
 
       @recordsets = paginatable(per_page: per_page.to_i) do |pagination_options|
         services.dns_service.recordsets(
