@@ -18,10 +18,13 @@
       - project = ObjectCache.where(id:parent_project).first
       %span.bg-info= "shared by project #{project ? project.name : parent_project}"
     - else
+      - zone_shared_with = 0
       - shared_zones.each do | shared_zone |
         - if zone.id == shared_zone.zone_id && @scoped_project_id ==  shared_zone.project_id
-          - zone_shared = true
-      - if zone_shared
+          - zone_shared_with += 1
+      - if zone_shared_with == 1
+        %span.bg-success= "shared with other project"
+      - if zone_shared_with > 1
         %span.bg-success= "shared with other project/s"
 
     %br
