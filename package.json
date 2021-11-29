@@ -6,7 +6,7 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@nivo/bar": "0.49.0",
-    "@rails/webpacker": "^4.2.2",
+    "@rails/webpacker": "^4.3.0",
     "axios": "^0.21",
     "babel-loader": "^8.0.6",
     "babel-plugin-react-require": "^3.1.1",
