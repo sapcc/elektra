@@ -1,5 +1,5 @@
-import { Button } from "react-bootstrap";
-import { isUnset } from "../helper";
+import { Button } from "react-bootstrap"
+import { isUnset } from "../helper"
 
 /**
  * Resource scope entry
@@ -26,43 +26,43 @@ const AutoscalingConfigSubscopeItem = ({
   const updateValue = React.useCallback(
     (newValue) => {
       //input sanitizing: only allow positive integer values
-      newValue = newValue.replace(/[^0-9]+/, "");
+      newValue = newValue.replace(/[^0-9]+/, "")
       //input sanitizing: do not allow values above 90%
       if (parseInt(newValue) > 90) {
-        newValue = "90";
+        newValue = "90"
       }
 
-      update(newValue);
+      update(newValue)
       if (isUnset(newValue) || newValue === "") {
-        updateMinFree(null);
+        updateMinFree(null)
       }
     },
     [update, updateMinFree]
-  );
+  )
 
   React.useEffect(() => {
     if (!minFree) {
-      updateMinFree(null);
-      return;
+      updateMinFree(null)
+      return
     }
 
     if (!unit.name) {
-      const newValue = minFree.toString().replace(/[^0-9]+/, "");
-      updateMinFree(parseInt(newValue));
-      return;
+      const newValue = minFree.toString().replace(/[^0-9]+/, "")
+      updateMinFree(parseInt(newValue))
+      return
     }
 
-    const parsedValue = unit.parse(minFree);
+    const parsedValue = unit.parse(minFree)
     if (parsedValue.error) {
-      const newValue = minFree.toString().replace(/[^0-9]+/, "");
-      updateMinFree(parseInt(newValue));
-      return;
+      const newValue = minFree.toString().replace(/[^0-9]+/, "")
+      updateMinFree(parseInt(newValue))
+      return
     } else {
-      updateMinFree(parsedValue);
+      updateMinFree(parsedValue)
     }
     //input sanitizing: only allow positive integer values
     //newValue = newValue.replace(/[^0-9]+/, "")
-  }, [JSON.stringify(unit), minFree]);
+  }, [JSON.stringify(unit), minFree])
 
   const hasChanged = React.useMemo(() => {
     if (
@@ -73,9 +73,9 @@ const AutoscalingConfigSubscopeItem = ({
         (originMinFree === null && minFree === "") ||
         String(originMinFree) === String(minFree))
     )
-      return false;
-    return true;
-  }, [value, originValue, minFree, originMinFree]);
+      return false
+    return true
+  }, [value, originValue, minFree, originMinFree])
 
   return (
     <>
@@ -115,9 +115,9 @@ const AutoscalingConfigSubscopeItem = ({
                     <a
                       href="#"
                       onClick={(e) => {
-                        e.preventDefault();
-                        updateValue("");
-                        updateMinFreeValue("");
+                        e.preventDefault()
+                        updateValue("")
+                        updateMinFreeValue("")
                       }}
                     >
                       clear
@@ -193,7 +193,7 @@ const AutoscalingConfigSubscopeItem = ({
         </td>
       </tr>
     </>
-  );
-};
+  )
+}
 
-export default AutoscalingConfigSubscopeItem;
+export default AutoscalingConfigSubscopeItem
