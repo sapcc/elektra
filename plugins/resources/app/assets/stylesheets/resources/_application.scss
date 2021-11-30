@@ -21,6 +21,16 @@
 
 */
 
+.display-flex {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.margin-left {
+  margin-left: 1rem;
+}
+
 .progress {
   position: relative; /* required for position:absolute on children */
 
@@ -50,12 +60,22 @@
     }
 
     &.progress-bar-disabled {
-      @include background(repeating-linear-gradient(-55deg, transparent, transparent 3px, #DCDCDC 3px, #DCDCDC 5px));
+      @include background(
+        repeating-linear-gradient(
+          -55deg,
+          transparent,
+          transparent 3px,
+          #dcdcdc 3px,
+          #dcdcdc 5px
+        )
+      );
       box-shadow: none;
       color: black;
     }
 
-    &.has-label, &.has-label-if-fits, &.has-label-unless-fits {
+    &.has-label,
+    &.has-label-if-fits,
+    &.has-label-unless-fits {
       text-align: left;
       .progress-bar-label {
         padding-left: 0.5em;
@@ -69,18 +89,17 @@
   &:not(.label-fits) .has-label-if-fits .progress-bar-label {
     display: none;
   }
-
 }
 
 .progress-without-margin {
   margin-bottom: 5px !important;
-  margin-left:5px;
+  margin-left: 5px;
 }
 
 .shard-name {
-  font-size:x-small;
-  padding-left:15px;
-  padding-right:0px;
+  font-size: x-small;
+  padding-left: 15px;
+  padding-right: 0px;
 }
 
 .row.usage-only {
@@ -144,7 +163,6 @@ div.edit-quota-input {
       background-color: white;
     }
   }
-
 }
 
 .btn.btn-sm.btn-quota-details {
@@ -162,7 +180,7 @@ div.edit-quota-input {
 
   /* a semi-transparent rectangle that blocks out the view while it's reloading */
   &:after {
-    content: ' ';
+    content: " ";
     display: block;
     z-index: -1000;
     position: absolute;
@@ -170,7 +188,7 @@ div.edit-quota-input {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.0);
+    background: rgba(255, 255, 255, 0);
     transition: background-color 0.5s;
   }
   &.is-reloading:after {
@@ -215,26 +233,26 @@ div.edit-quota-input {
     /* look similar to .bs-callout.bs-callout-emphasize.bs-callout-info, but
      * with different spacings and with the border at the top instead of at the
      * left */
-    border: 1px solid #EEE;
-    border-top: 5px solid #00B3FF;
+    border: 1px solid #eee;
+    border-top: 5px solid #00b3ff;
     border-radius: 3px;
     margin: 10px 0;
     padding: 10px;
 
     &.is-selected {
-      border-color: #E2E8EA;
-      border-top-color: #008FCC;
-      background: #EEF7FB;
+      border-color: #e2e8ea;
+      border-top-color: #008fcc;
+      background: #eef7fb;
     }
 
     &.is-unavailable {
-      border-top-color: #CCC;
+      border-top-color: #ccc;
       color: #888;
-      background: #FCFCFC;
+      background: #fcfcfc;
       cursor: not-allowed;
 
       h3 {
-        color: #AAA;
+        color: #aaa;
       }
     }
 
