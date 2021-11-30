@@ -1,5 +1,6 @@
 import { Button } from "react-bootstrap"
 import { isUnset } from "../helper"
+import uniqueId from "lodash/uniqueId"
 
 /**
  * The minFree value allows the user to enter a string such as 2 TiB.
@@ -199,11 +200,7 @@ const AutoscalingConfigSubscopeItem = ({
                   </div>
                 </div>
 
-                <div>
-                  <Button bsStyle="link" onClick={cancel}>
-                    <i className="fa fa-close" />
-                  </Button>
-                </div>
+                <div></div>
               </div>
             </>
           ) : (
@@ -224,24 +221,31 @@ const AutoscalingConfigSubscopeItem = ({
 
         <td>
           {!custom && (
-            <>
+            <div className="display-flex">
               {isSaving ? (
                 <Button bsSize="small" bsStyle="primary" disabled={true}>
                   ...saving
                 </Button>
               ) : editMode ? (
                 <>
-                  {/* <Button bsSize="small" bsStyle="default" onClick={cancel}>
+                  <Button bsSize="small" bsStyle="default" onClick={cancel}>
                     Cancel
-                  </Button> */}
-                  {hasChanged && (
-                    <Button bsSize="small" bsStyle="primary" onClick={save}>
+                  </Button>
+                  <div className="margin-left">
+                    <Button
+                      key={uniqueId("button-save-")}
+                      bsSize="small"
+                      bsStyle="primary"
+                      onClick={save}
+                      disabled={!hasChanged}
+                    >
                       Save
                     </Button>
-                  )}
+                  </div>
                 </>
               ) : (
                 <Button
+                  key={uniqueId("button-edit-enable-")}
                   bsSize="small"
                   bsStyle={!isUnset(value) ? "primary" : "success"}
                   onClick={edit}
@@ -249,7 +253,7 @@ const AutoscalingConfigSubscopeItem = ({
                   {!isUnset(value) ? "Edit" : "Enable"}
                 </Button>
               )}
-            </>
+            </div>
           )}
         </td>
       </tr>
