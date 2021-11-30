@@ -2,6 +2,74 @@ import { Button } from "react-bootstrap"
 import { isUnset } from "../helper"
 
 /**
+ * The minFree value allows the user to enter a string such as 2 TiB.
+ * We want to display what the user entered, but store the formatted
+ * value in the state. For this we use the tempMinFree variable.
+ * tempMinFree stores the user input and triggers an update with
+ * formatted value in the state.
+ * @param {object} props
+ * @returns a react component
+ */
+const MinFreeInput = ({ unit, isDisabled, minFree, onChange }) => {
+  const [value, setValue] = React.useState()
+  // minFree ? unit.format(minFree) : minFree
+
+  const parseAndUpdateMinFree = React.useCallback(
+    (newValue) => {
+      // update tempMinFree value
+      setValue(newValue)
+
+      // if new tempMinFree value is undefined then reset the minFree value in the state.
+      if (isUnset(newValue)) {
+        onChange(null)
+        return
+      }
+
+      // if no unit given e.g. count of instances then we extract only the digit from the value.
+      if (!unit.name) {
+        const count = newValue.toString().replace(/[^0-9]+/, "")
+        onChange(parseInt(count))
+        return
+      }
+
+      // unit is given -> parse value (MiB or GiB etc.)
+      let parsedValue = unit.parse(newValue)
+
+      if (parsedValue.error) {
+        parsedValue = newValue.toString().replace(/[^0-9]+/, "")
+        onChange(parseInt(parsedValue))
+        return
+      } else {
+        onChange(parsedValue)
+      }
+      //input sanitizing: only allow positive integer values
+      //newValue = newValue.replace(/[^0-9]+/, "")
+    },
+    [unit, onChange, setValue]
+  )
+
+  const currentValue = React.useMemo(() => {
+    // if minFree is undefined or null return empty string (reset minFree case)
+    if (isUnset(minFree)) return ""
+    //
+    if (value) return value
+    return unit.format(minFree)
+  }, [value, minFree])
+
+  return (
+    <input
+      disabled={isDisabled}
+      type="text"
+      className="form-control"
+      style={{ width: 100, display: "inline" }}
+      value={currentValue}
+      onKeyPress={(e) => e.key === "Enter" && save()}
+      onChange={(e) => parseAndUpdateMinFree(e.target.value)}
+    />
+  )
+}
+
+/**
  * Resource scope entry
  * @param {map} props
  */
@@ -23,6 +91,7 @@ const AutoscalingConfigSubscopeItem = ({
   isSaving,
   editMode,
 }) => {
+  // update the percent value
   const updateValue = React.useCallback(
     (newValue) => {
       //input sanitizing: only allow positive integer values
@@ -40,30 +109,6 @@ const AutoscalingConfigSubscopeItem = ({
     [update, updateMinFree]
   )
 
-  React.useEffect(() => {
-    if (!minFree) {
-      updateMinFree(null)
-      return
-    }
-
-    if (!unit.name) {
-      const newValue = minFree.toString().replace(/[^0-9]+/, "")
-      updateMinFree(parseInt(newValue))
-      return
-    }
-
-    const parsedValue = unit.parse(minFree)
-    if (parsedValue.error) {
-      const newValue = minFree.toString().replace(/[^0-9]+/, "")
-      updateMinFree(parseInt(newValue))
-      return
-    } else {
-      updateMinFree(parsedValue)
-    }
-    //input sanitizing: only allow positive integer values
-    //newValue = newValue.replace(/[^0-9]+/, "")
-  }, [JSON.stringify(unit), minFree])
-
   const hasChanged = React.useMemo(() => {
     if (
       (originValue === value ||
@@ -76,6 +121,19 @@ const AutoscalingConfigSubscopeItem = ({
       return false
     return true
   }, [value, originValue, minFree, originMinFree])
+
+  const atLeastLabel = React.useMemo(() => {
+    // value is the percentage value
+    if (value !== 0 && isUnset(minFree)) return ""
+
+    // minValue cannot be zero! min RAM or min units must be at least 1.
+    // Because scaling down to 0% means at least one unit.
+    // unit.format returns a string such as 1 MiB or 1 Gib etc.
+    const minValue = unit.format(isUnset(minFree) ? 1 : minFree)
+    // minLabel, in case the unit name is not known we add the "units" string
+    const unitLabel = unit.name ? "" : "units"
+    return ` (but at least ${minValue} ${unitLabel} free)`
+  }, [value, minFree, unit])
 
   return (
     <>
@@ -117,7 +175,7 @@ const AutoscalingConfigSubscopeItem = ({
                       onClick={(e) => {
                         e.preventDefault()
                         updateValue("")
-                        updateMinFreeValue("")
+                        updateMinFree("")
                       }}
                     >
                       clear
@@ -127,14 +185,11 @@ const AutoscalingConfigSubscopeItem = ({
 
                 <div>
                   min.{" "}
-                  <input
-                    disabled={isSaving || isUnset(value)}
-                    type="text"
-                    className="form-control"
-                    style={{ width: 100, display: "inline" }}
-                    value={isUnset(minFree) ? "" : minFree}
-                    onKeyPress={(e) => e.key === "Enter" && save()}
-                    onChange={(e) => updateMinFree(e.target.value)}
+                  <MinFreeInput
+                    unit={unit}
+                    minFree={minFree}
+                    onChange={updateMinFree}
+                    isDisabled={isSaving || isUnset(value)}
                   />{" "}
                   <br />
                   <div className="pull-right">
@@ -142,6 +197,12 @@ const AutoscalingConfigSubscopeItem = ({
                       {minFree} {unit.name ? unit.name : "units"}
                     </span>
                   </div>
+                </div>
+
+                <div>
+                  <Button bsStyle="link" onClick={cancel}>
+                    <i className="fa fa-close" />
+                  </Button>
                 </div>
               </div>
             </>
@@ -154,10 +215,7 @@ const AutoscalingConfigSubscopeItem = ({
                   <>
                     <strong>{value}%</strong>{" "}
                   </>
-                  {(value === 0 || !isUnset(minFree)) &&
-                    ` (but at least ${unit.format(
-                      isUnset(minFree) ? 1 : minFree
-                    )} ${unit.name ? "" : "units"} free)`}
+                  {atLeastLabel}
                 </span>
               )}
             </span>
@@ -172,13 +230,16 @@ const AutoscalingConfigSubscopeItem = ({
                   ...saving
                 </Button>
               ) : editMode ? (
-                <Button
-                  bsSize="small"
-                  bsStyle={hasChanged ? "primary" : "default"}
-                  onClick={hasChanged ? save : cancel}
-                >
-                  {hasChanged ? "Save" : "Cancel"}
-                </Button>
+                <>
+                  {/* <Button bsSize="small" bsStyle="default" onClick={cancel}>
+                    Cancel
+                  </Button> */}
+                  {hasChanged && (
+                    <Button bsSize="small" bsStyle="primary" onClick={save}>
+                      Save
+                    </Button>
+                  )}
+                </>
               ) : (
                 <Button
                   bsSize="small"
