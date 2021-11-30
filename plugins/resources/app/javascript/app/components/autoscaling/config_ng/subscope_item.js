@@ -23,10 +23,6 @@ const AutoscalingConfigSubscopeItem = ({
   isSaving,
   editMode,
 }) => {
-  const [tempMinFree, setTempMinFree] = React.useState(
-    minFree ? unit.format(minFree) : minFree
-  )
-
   const updateValue = React.useCallback(
     (newValue) => {
       //input sanitizing: only allow positive integer values
@@ -39,27 +35,26 @@ const AutoscalingConfigSubscopeItem = ({
       update(newValue)
       if (isUnset(newValue) || newValue === "") {
         updateMinFree(null)
-        setTempMinFree(null)
       }
     },
-    [update, updateMinFree, setTempMinFree]
+    [update, updateMinFree]
   )
 
   React.useEffect(() => {
-    if (!tempMinFree) {
+    if (!minFree) {
       updateMinFree(null)
       return
     }
 
     if (!unit.name) {
-      const newValue = tempMinFree.toString().replace(/[^0-9]+/, "")
+      const newValue = minFree.toString().replace(/[^0-9]+/, "")
       updateMinFree(parseInt(newValue))
       return
     }
 
-    const parsedValue = unit.parse(tempMinFree)
+    const parsedValue = unit.parse(minFree)
     if (parsedValue.error) {
-      const newValue = tempMinFree.toString().replace(/[^0-9]+/, "")
+      const newValue = minFree.toString().replace(/[^0-9]+/, "")
       updateMinFree(parseInt(newValue))
       return
     } else {
@@ -67,7 +62,7 @@ const AutoscalingConfigSubscopeItem = ({
     }
     //input sanitizing: only allow positive integer values
     //newValue = newValue.replace(/[^0-9]+/, "")
-  }, [unit, tempMinFree])
+  }, [JSON.stringify(unit), minFree])
 
   const hasChanged = React.useMemo(() => {
     if (
@@ -137,9 +132,9 @@ const AutoscalingConfigSubscopeItem = ({
                     type="text"
                     className="form-control"
                     style={{ width: 100, display: "inline" }}
-                    value={isUnset(tempMinFree) ? "" : tempMinFree}
+                    value={isUnset(minFree) ? "" : minFree}
                     onKeyPress={(e) => e.key === "Enter" && save()}
-                    onChange={(e) => setTempMinFree(e.target.value)}
+                    onChange={(e) => updateMinFree(e.target.value)}
                   />{" "}
                   <br />
                   <div className="pull-right">
