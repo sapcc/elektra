@@ -27,6 +27,7 @@ for(let index in widget_paths) {
 function extendConfig(orgConfig) {
   if (orgConfig.toWebpackConfig){
     orgConfig = orgConfig.toWebpackConfig()
+    orgConfig.output.filename = "js/[name]-[hash].js"
   }
 
   orgConfig.resolve.modules = orgConfig.resolve.modules.concat(customConfig.resolve.modules)

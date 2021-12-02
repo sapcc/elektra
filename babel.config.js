@@ -39,6 +39,7 @@ module.exports = function(api) {
     ].filter(Boolean),
     plugins: [
       "react-require",
+      "module:react-native-dotenv",
       'babel-plugin-macros',
       '@babel/plugin-syntax-dynamic-import',
       isTestEnv && 'babel-plugin-dynamic-import-node',

@@ -12,7 +12,7 @@ default: &default
   # ['app/assets', 'engine/foo/app/assets']
   additional_paths: ["plugins"]
 
-  # Reload manifest.json on all requests so we reload latest compiled packs
+  # Reload manifest.json on all requests so we reload latest compiled packs
   cache_manifest: false
 
   # Extract and emit a css file
@@ -37,12 +37,12 @@ default: &default
     - .erb
     - .mjs
     - .js
+    - .jsx
+    - .ts
+    - .vue
     - .sass
     - .scss
     - .css
-    - .module.sass
-    - .module.scss
-    - .module.css
     - .png
     - .svg
     - .gif
@@ -51,7 +51,10 @@ default: &default
 
 development:
   <<: *default
-  compile: true
+  compile: false
+
+  # Verifies that correct packages and versions are installed by inspecting package.json, yarn.lock, and node_modules
+  check_yarn_integrity: true
 
   # Reference: https://webpack.js.org/configuration/dev-server/
   dev_server:
@@ -82,11 +85,11 @@ test:
 production:
   <<: *default
 
-  # Production depends on precompilation of packs prior to booting for performance.
+  # To see more details in case something goes wrong,
+  # otherwise you will see only "compilation error" without any details
+  webpack_compile_output: true
+  # Production demands on precompilation of packs prior to booting for performance.
   compile: false
-
-  # Extract and emit a css file
-  extract_css: true
 
   # Cache manifest.json for performance
   cache_manifest: true
