@@ -23,7 +23,13 @@
           Description:
         %td
           = @project.description 
- 
+      %tr
+        %th.snug-nowrap
+          = link_to plugin('galvani').root_path, data: {modal: true} do
+            Access Profiles
+        %td
+          %span.badge.alert-info
+            0
 
 - if current_user.is_allowed?('identity:project_request')
   %h4.action-heading

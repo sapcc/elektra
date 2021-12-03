@@ -66,6 +66,12 @@ PATH
       rails (~> 5.2.4, >= 5.2.4.3)
 
 PATH
+  remote: plugins/galvani
+  specs:
+    galvani (0.0.1)
+      rails (~> 5.2.6)
+
+PATH
   remote: plugins/identity
   specs:
     identity (0.0.1)
@@ -613,6 +619,7 @@ DEPENDENCIES
   font-awesome-sass
   foreman (~> 0.87.0)
   friendly_id
+  galvani!
   guard-rspec
   haml-rails
   high_voltage

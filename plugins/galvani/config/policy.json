@@ -1,0 +1,10 @@
+{
+  "member": "role:member or role:Member",
+  "admin": "role:admin",
+
+  "galvani:entry_list": "rule:admin or rule:member",
+  "galvani:entry_get": "rule:admin or rule:member",
+  "galvani:entry_create": "rule:admin or rule:member",
+  "galvani:entry_delete": "rule:admin or rule:member",
+  "galvani:entry_update": "rule:admin or rule:member"
+}
