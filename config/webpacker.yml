@@ -1,5 +1,10 @@
 # Note: You must restart bin/webpack-dev-server for changes to take effect
 
+# upgrade from 3 to 4
+# https://github.com/rails/webpacker/blob/4-x-stable/docs/v4-upgrade.md
+# https://makandracards.com/makandra/65770-upgrade-guide-for-moving-a-rails-app-from-webpack-3-to-webpack-4
+# https://github.com/rails/webpacker#upgrading
+
 default: &default
   source_path: app/javascript
   source_entry_path: packs
@@ -16,7 +21,7 @@ default: &default
   cache_manifest: false
 
   # Extract and emit a css file
-  extract_css: false
+  extract_css: true
 
   static_assets_extensions:
     - .jpg
@@ -56,11 +61,28 @@ development:
   # Verifies that correct packages and versions are installed by inspecting package.json, yarn.lock, and node_modules
   check_yarn_integrity: true
 
-  # Reference: https://webpack.js.org/configuration/dev-server/
+  # NOTE:
+  # there is a bug so the webpacker config is not fully used to start webpack! 
+  # the port and host is not used and webpack-dev-server starts in any case with the default port 8081 
+  # https://github.com/rails/webpacker/blob/5-x-stable/lib/webpacker/dev_server_runner.rb#L48
+  # possible fix in execute_cmd
+  # cmd += ["--port", @port.to_s]
+  # cmd += ["--host", @hostname.to_s]
+  #
+  # Workarround:
+  # only way to overwrite the port is to modify webpack_config -> config/webpack/custom.js -> extendConfig()
+  # and use the same port that we use here in webpacker config
+  # orgConfig.devServer = extendConfig.devServer || {}
+  # orgConfig.devServer.port = 3000
+  # orgConfig.devServer.host = "0.0.0.0"
   dev_server:
-    host: 0.0.0.0
-    port: 3035
-    public: 0.0.0.0:3035
+    # webpacker config:
+    # where is the webpack server running so Webpacker will automatically 
+    # start proxying all webpack asset requests to this server
+    # https://github.com/rails/webpacker#development
+    host: 0.0.0.0 
+    port: 8081
+    public: 0.0.0.0:8081
     # https://webpack.js.org/concepts/hot-module-replacement/
     hmr: false
     https: false
