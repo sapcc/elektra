@@ -27,6 +27,7 @@ for(let index in widget_paths) {
 function extendConfig(orgConfig) {
   if (orgConfig.toWebpackConfig){
     orgConfig = orgConfig.toWebpackConfig()
+    // https://github.com/gloriaJun/til/issues/3
     orgConfig.output.filename = "js/[name]-[hash].js"
   }
 
