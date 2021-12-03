@@ -533,6 +533,7 @@ GEM
       ffi (~> 1.9)
     sdoc (1.1.0)
       rdoc (>= 5.0)
+    semantic_range (3.0.0)
     sentry-raven (2.6.3)
       faraday (>= 0.7.6, < 1.0)
     sexp_processor (4.10.0)
@@ -574,10 +575,11 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webpacker (4.3.0)
-      activesupport (>= 4.2)
+    webpacker (5.4.3)
+      activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
-      railties (>= 4.2)
+      railties (>= 5.2)
+      semantic_range (>= 2.3.0)
     websocket-driver (0.7.2)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -670,7 +672,7 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 3.0)
   webconsole!
-  webpacker (~> 4.0)
+  webpacker (~> 5.0)
 
 BUNDLED WITH
    1.17.3
