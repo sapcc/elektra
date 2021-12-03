@@ -1,8 +1,6 @@
 # Note: You must restart bin/webpack-dev-server for changes to take effect
 
 # upgrade from 4 to 5
-# https://github.com/rails/webpacker/blob/4-x-stable/docs/v4-upgrade.md
-# https://makandracards.com/makandra/65770-upgrade-guide-for-moving-a-rails-app-from-webpack-3-to-webpack-4
 # https://github.com/rails/webpacker#upgrading
 
 default: &default
