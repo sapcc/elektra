@@ -110,7 +110,7 @@ docker run --rm -it \
   --volume "$PWD:/e2e" \
   --workdir /e2e \
   --env DEBUG="$DEBUG" \
-  --env CYPRESS_baseUrl="$HOST" \
+  --env CYPRESS_BASE_URL="$HOST" \
   --env CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
   --env CYPRESS_TEST_USER="$TEST_USER" \
   --env CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
