@@ -1,11 +1,11 @@
 import React, { useEffect } from "react"
-import { persistConfig } from "../actions/tags"
+import { fetchConfig } from "../actions/tags"
 
 const Config = () => {
   useEffect(() => {
     console.log("fetching config")
 
-    persistConfig()
+    fetchConfig()
       .then((data) => {
         console.log("config: ", data)
       })

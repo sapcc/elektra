@@ -4,12 +4,6 @@ const initialState = {
   updatedAt: null,
   searchTerm: null,
   error: null,
-
-  marker: null,
-  hasNext: true,
-  limit: 20,
-  sortKey: "name",
-  sortDir: "asc",
 }
 
 const requestTags = (state) => ({
@@ -18,27 +12,20 @@ const requestTags = (state) => ({
   error: null,
 })
 
-const receiveTags = (state, { tags, has_next, limit, sort_key, sort_dir }) => {
+const receiveTags = (state, { tags }) => {
   let newItems = (state.items.slice() || []).concat(tags)
   // filter duplicated items
   newItems = newItems.filter(
-    (item, pos, arr) => arr.findIndex((i) => i.id == item.id) == pos
+    (item, pos, arr) => arr.findIndex((i) => i == item) == pos
   )
-  // create marker before sorting just in case there is any difference
-  const marker = tags.length > 0 ? tags[tags.length - 1].id : null
   // sort
-  newItems = newItems.sort((a, b) => a.name.localeCompare(b.name))
+  newItems = newItems.sort((a, b) => a.localeCompare(b))
 
   return {
     ...state,
     isLoading: false,
     items: newItems,
     error: null,
-    marker: marker,
-    hasNext: has_next,
-    limit: limit,
-    sortKey: sort_key,
-    sortDir: sort_dir,
     updatedAt: Date.now(),
   }
 }
@@ -53,7 +40,7 @@ const receiveTag = (state, { tag }) => {
     return state
   }
 
-  const index = state.items.findIndex((item) => item.id == tag.id)
+  const index = state.items.findIndex((item) => item == tag)
   let items = state.items.slice()
   if (index >= 0) {
     items[index] = tag
@@ -69,8 +56,8 @@ const setSearchTerm = (state, { searchTerm }) => {
   return { ...state, searchTerm }
 }
 
-const removeTag = (state, { id }) => {
-  const index = state.items.findIndex((item) => item.id == id)
+const removeTag = (state, { tag }) => {
+  const index = state.items.findIndex((item) => item == tag)
   if (index < 0) {
     return state
   }

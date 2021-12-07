@@ -1,5 +1,7 @@
-import profiles from "./profiles"
+import tags from "./tags"
+import config from "./config"
 
 export default {
-  profiles,
+  tags,
+  config,
 }

@@ -1,16 +1,27 @@
 import React, { useEffect } from "react"
-import { persistTags } from "../actions/tags"
+import { fetchTags } from "../actions/tags"
 import Config from "./Config"
+import { useDispatch, useGlobalState } from "./StateProvider"
 
 const TagsList = () => {
-  useEffect(() => {
-    console.log("fetching tags")
+  const state = useGlobalState()
+  const dispatch = useDispatch()
+  console.log(state)
 
-    persistTags()
+  useEffect(() => {
+    fetchTags()
       .then((data) => {
+        dispatch({
+          type: "RECEIVE_TAGS",
+          tags: data.tags,
+        })
         console.log("data: ", data)
       })
       .catch((error) => {
+        dispatch({
+          type: "REQUEST_TAGS_FAILURE",
+          error: error,
+        })
         console.log(error)
       })
   }, [])
