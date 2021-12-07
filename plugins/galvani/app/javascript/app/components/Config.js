@@ -1,13 +1,13 @@
 import React, { useEffect } from "react"
-import { persistTags } from "../actions/tags"
+import { persistConfig } from "../actions/tags"
 
-const Tags = () => {
+const Config = () => {
   useEffect(() => {
-    console.log("fetching tags")
+    console.log("fetching config")
 
-    persistTags()
+    persistConfig()
       .then((data) => {
-        console.log("data: ", data)
+        console.log("config: ", data)
       })
       .catch((error) => {
         console.log(error)
@@ -17,4 +17,4 @@ const Tags = () => {
   return <h2>Tags:</h2>
 }
 
-export default Tags
+export default Config

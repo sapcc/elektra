@@ -1,0 +1,13 @@
+access_profiles:
+  "xs:internet":
+    "keppel_account_pull:$1":
+      description: Pull access for keppel account
+      $1: Keppel account name
+    "keppel_account_push:$1":
+      description: Push and pull access for keppel account
+      $1: Keppel account name
+    "dns:reader":
+      description: Allow read access to the designate API
+    "dns_edit_zone:$1":
+      description: Edit records of dns zone
+      $1: Zone ID

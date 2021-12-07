@@ -1,12 +1,12 @@
 import { StateProvider } from "./components/StateProvider"
 import reducers from "./reducers"
-import Tags from "./components/Tags"
+import TagsList from "./components/TagsList"
 
 const App = () => {
   return (
     <React.Fragment>
       <h1>Hello</h1>
-      <Tags />
+      <TagsList />
     </React.Fragment>
   )
 }

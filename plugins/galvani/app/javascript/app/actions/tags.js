@@ -47,4 +47,19 @@ const persistTags = () => {
   )
 }
 
-export { fetchTags, persistTags }
+const persistConfig = () => {
+  return new Promise((handleSuccess, handleErrors) =>
+    ajaxHelper
+      .get(`/tags/config`)
+      .then((response) => {
+        // dispatch
+        handleSuccess(response.data.config)
+      })
+      .catch((error) => {
+        // dispatch
+        handleErrors(error.message)
+      })
+  )
+}
+
+export { fetchTags, persistTags, persistConfig }
