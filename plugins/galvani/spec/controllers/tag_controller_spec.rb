@@ -19,6 +19,8 @@ describe Galvani::TagsController, type: :controller do
 
   describe "PUT 'create a tag'" do
     before :each do
+      @existing_tag = "xs:internet:keppel_account_pull:d063222"
+      allow(controller.cloud_admin).to receive(:list_tags).and_return([@existing_tag])
     end
 
     context 'validation' do
@@ -40,6 +42,10 @@ describe Galvani::TagsController, type: :controller do
       end
       it 'returns http error using just the profile name' do
         post :create, params: default_params.merge({tag: "xs:internet"})
+        expect(response).to_not be_successful
+      end
+      it 'returns http error if tag already exists' do
+        post :create, params: default_params.merge({tag: @existing_tag})
         expect(response).to_not be_successful
       end
     end

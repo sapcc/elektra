@@ -18,7 +18,8 @@ module Galvani
 
     def create
       tag = params[:tag]
-      ok, err = validate_tag(tag)
+      tags = cloud_admin.identity.list_tags(@scoped_project_id)
+      ok, err = validate_tag(tag, filter_tags(tags))
       unless ok
         return render json: {errors: err, tagSpec: GalvaniConfig["access_profiles"]}, status: 422        
       end
@@ -33,7 +34,7 @@ module Galvani
 
     def destroy
       tag = params[:tag]
-      unless validate(tag).nil?
+      unless tag.blank?
         render json: {errors: "tag is empty!"}, status: 422
       end
 
@@ -47,11 +48,6 @@ module Galvani
     end
 
     def profiles_config
-
-      puts "---config--"
-      puts GalvaniConfig["access_profiles"]
-      puts "------"
-
       render json: { config: GalvaniConfig["access_profiles"] }
     rescue Exception => e
       render json: { errors: e.message }, status: "500"
@@ -59,27 +55,14 @@ module Galvani
 
     private
 
-    # def profile_tag_mapper(profiles_cfg, tags)
-    #   new_profiles_cfg = profiles_cfg || {}
-    #   new_tags = tags || []
-      
-    #   new_profiles_cfg.keys.each { |key| new_tags.select { |n| n.start_with?(key) }}
-    # end
-
     # return all galvani tags --> prefixes from config file xs:internet, ...
     # the base prefixes should be removed
     def filter_tags(tags)
       if tags.blank?
         return []
       end
-      
-      puts "=========="
       profile_prefixes = GalvaniConfig["access_profiles"].keys || []
-      puts profile_prefixes
-      puts "=========="
-
-      # array with splat operator(*)
-      # select returns a new array
+      # array with splat operator(*), select returns a new array
       tags.select { |n| n.start_with?(*profile_prefixes) }
     end
 
@@ -87,9 +70,8 @@ module Galvani
     def ensure_base_prefix()
     end
 
-    # Config flatten access profile with service ending up to such prefixes xs:internet:keppel_account_pull
-    # validate that tag starts with one of this prefixes
-    def validate_tag(tag)
+    # validate that tag 
+    def validate_tag(tag, existing_tags)
       # get for base prefix
       base_prefixes = GalvaniConfig["access_profiles"].keys.select do|n| 
         tag.start_with?(n)
@@ -124,6 +106,11 @@ module Galvani
       if service_args.length != tag_args.length
         return false, "provided arguments mismatch"
       end    
+
+      # check for duplicates
+      if existing_tags.include?(tag)
+        return false, "tag '" + tag + "' already exists" 
+      end
 
       return true, ""
     end
