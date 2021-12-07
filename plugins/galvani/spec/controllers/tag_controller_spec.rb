@@ -24,7 +24,6 @@ describe Galvani::TagsController, type: :controller do
     context 'validation' do
       it 'returns http success using profile and service with required variable' do
         post :create, params: default_params.merge({tag: "xs:internet:keppel_account_pull:cc-demo"})             
-        puts response.body
         expect(response).to be_successful
       end
       it 'returns http error using profile and service without required variable' do
@@ -37,6 +36,10 @@ describe Galvani::TagsController, type: :controller do
       end
       it 'returns http error using profile and service and not required variable' do
         post :create, params: default_params.merge({tag: "xs:internet:dns:reader:test"})
+        expect(response).to_not be_successful
+      end
+      it 'returns http error using just the profile name' do
+        post :create, params: default_params.merge({tag: "xs:internet"})
         expect(response).to_not be_successful
       end
     end
