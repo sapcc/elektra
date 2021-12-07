@@ -1,0 +1,7 @@
+%tr
+  %td
+    = tmpl[:name]
+  %td
+    = tmpl[:subject]
+  %td.snug
+    = render partial: 'item_actions', locals: { tmpl: tmpl, show_view: false }
