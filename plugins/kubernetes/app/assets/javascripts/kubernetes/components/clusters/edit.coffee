@@ -203,7 +203,7 @@ EditCluster = React.createClass
                     type: "checkbox", 
                     "data-index": index, 
                     checked: (nodePool.config.allowReboot), 
-                    onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReboot", !nodePool.config.allowReboot))
+                    onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReboot", e.target.checked))
                   "Allow Reboot"
 
               # Nodepool Allow Replace
@@ -213,7 +213,7 @@ EditCluster = React.createClass
                     type: "checkbox", 
                     "data-index": index, 
                     checked: (nodePool.config.allowReplace),
-                    onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReplace", !nodePool.config.allowReplace))
+                    onChange: ((e) -> handleNodePoolChange(e.target.dataset.index, "allowReplace", e.target.checked))
                   "Allow Replace"
 
 
