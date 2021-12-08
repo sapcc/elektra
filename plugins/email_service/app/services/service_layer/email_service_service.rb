@@ -17,12 +17,6 @@ module ServiceLayer
       )
     end
 
-    def elektron_identity_service
-      @elektron_identity_service ||= elektron.service(
-        'identity', path_prefix: '/v3'
-      )
-    end
-
   end
 end
 

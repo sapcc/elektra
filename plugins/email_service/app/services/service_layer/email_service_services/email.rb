@@ -9,7 +9,7 @@ module ServiceLayer
       Creds = Struct.new(:access, :secret, :error)
       def aws_creds(user_id, filter = {})
 
-        response = elektron_identity_service.get("users/#{user_id}/credentials/OS-EC2")
+        response = elektron_email_service.get("users/#{user_id}/credentials/OS-EC2")
         if !response.body["credentials"].empty?
           creds_hash = response.body["credentials"].first
           aws_credentials = Creds.new(creds_hash["access"] , creds_hash["secret"], "")
