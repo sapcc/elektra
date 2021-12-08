@@ -53,23 +53,23 @@
     "@babel/cli": "7.16.0",
     "@types/jest": "27.0.2",
     "axios-mock-adapter": "1.18.2",
-    "babel-core": "^7.0.0-bridge.0",
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
     "babel-jest": "27.3.0",
-    "cypress": "^9.0.0",
+    "cypress": "9.0.0",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.6",
     "eslint": "6.8.0",
     "eslint-loader": "4.0.2",
-    "eslint-plugin-cypress": "^2.12.1",
+    "eslint-plugin-cypress": "2.12.1",
     "eslint-plugin-import": "2.25.1",
     "eslint-plugin-react": "7.26.1",
     "jest": "27.3.0",
-    "jsdom": "^18.0.0",
+    "jsdom": "18.1.1",
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.14.0",
     "redux-mock-store": "1.5.4",
-    "webpack-dev-server": "^4.6.0"
+    "webpack-dev-server": "4.6.0"
   },
   "scripts": {
     "test": "NODE_ENV=test jest --config jest.config.js"
