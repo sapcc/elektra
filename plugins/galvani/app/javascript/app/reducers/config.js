@@ -1,5 +1,5 @@
 const initialState = {
-  config: null,
+  profiles: null,
   isLoading: false,
   updatedAt: null,
   error: null,
@@ -15,7 +15,7 @@ const receiveConfig = (state, { config }) => {
   return {
     ...state,
     isLoading: false,
-    config: config,
+    profiles: config,
     error: null,
     updatedAt: Date.now(),
   }
