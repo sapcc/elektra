@@ -5,6 +5,9 @@
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"emails-pane"}
 
+%h3
+  = @creds
+  
 %section.section-features
   .row
     .col-sm-3
@@ -124,4 +127,44 @@ Has Role? fake_email_admin :
 Current User Allowed (email_service:email_create):
 =current_user.is_allowed?('email_service:email_create')
 
+%br
+All Emails:
+= @all_emails
+%br
+Verified Emails:
+= @verified_emails
+%br
+Pending Emails:
+= @pending_emails
+%br
+Failed Emails:
+= @failed_emails
 
+%br
+Verified Email Collection
+%br
+= @verified_emails_collection
+
+%h4
+  Domains:
+%br
+All
+%br
+= @all_domains
+%br
+Verified
+%br
+= @verified_domains
+%br
+Pending
+%br
+= @pending_domains
+%br
+Failed
+%br
+= @failed_domains
+
+%br
+Domain Collection
+%br
+= @verified_domains_collection

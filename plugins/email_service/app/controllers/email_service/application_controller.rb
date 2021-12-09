@@ -5,6 +5,8 @@ module EmailService
     include AwsSesHelper
     include EmailHelper
     include TemplateHelper
+    include VerificationHelper
+    include ConfigsetHelper
 
     def ui_switcher
       if current_user.has_role?('cloud_support_tools_viewer')

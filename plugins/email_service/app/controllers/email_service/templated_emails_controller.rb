@@ -7,9 +7,9 @@ module EmailService
       
       if creds.error.empty?
         @all_emails = list_verified_identities("EmailAddress")
-        @verified_emails = get_verified_identities_by_status(@all_emails, "success")
-        @pending_emails  = get_verified_identities_by_status(@all_emails, "pending")
-        @failed_emails   = get_verified_identities_by_status(@all_emails, "failed")
+        @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
+        @pending_emails  = get_verified_identities_by_status(@all_emails, "Pending")
+        @failed_emails   = get_verified_identities_by_status(@all_emails, "Failed")
         @configsets = get_configset
       else
         msg = "EC2 Credentials #{ creds.error }. "
@@ -26,7 +26,7 @@ module EmailService
       creds = get_ec2_creds
       if creds.error.empty?
         @all_emails = list_verified_identities("EmailAddress")
-        @verified_emails = get_verified_identities_by_status(@all_emails, "success")
+        @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
         @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress")
         @templates = get_all_templates
         @templates_collection = get_templates_collection(@templates) if @templates && !@templates.empty?

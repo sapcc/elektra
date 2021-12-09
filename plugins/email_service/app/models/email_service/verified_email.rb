@@ -1,9 +1,9 @@
-# frozen_string_literal: true
+# # frozen_string_literal: true
 
-module EmailService
-  # Verified Email
-  class VerifiedEmail < ::Core::ServiceLayer::Model
+# module EmailService
+#   # Verified Email
+#   class VerifiedEmail < ::Core::ServiceLayer::Model
 
-  end
+#   end
  
-end
+# end

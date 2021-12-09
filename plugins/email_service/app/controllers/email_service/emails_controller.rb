@@ -32,15 +32,23 @@ module EmailService
     end
 
     def info
-      creds = get_ec2_creds
-      if creds.error.empty? 
-        @access = creds.access
-        @secret = creds.secret
+      @creds = get_ec2_creds
+      if @creds.error.empty? 
+        @access = @creds.access
+        @secret = @creds.secret
         @ses_client = create_ses_client
         @all_emails = list_verified_identities("EmailAddress")
         @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
         @pending_emails  = get_verified_identities_by_status(@all_emails, "Pending")
         @failed_emails   = get_verified_identities_by_status(@all_emails, "Failed")
+        @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress")
+
+        @all_domains = list_verified_identities("Domain")
+        @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
+        @pending_domains  = get_verified_identities_by_status(@all_domains, "Pending")
+        @failed_domains   = get_verified_identities_by_status(@all_domains, "Failed")
+        @verified_domains_collection = get_verified_identities_collection(@verified_domains, "Domain")
+        
         @send_stats = get_send_stats
         @send_data = get_send_data
         @all_templates = get_all_templates
@@ -64,8 +72,11 @@ module EmailService
 
     def new 
       @all_emails = list_verified_identities("EmailAddress")
-      @verified_emails = get_verified_identities_by_status(@all_emails, "success")
+      @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
       @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress") unless @verified_emails.nil? || @verified_emails.empty?
+      @all_domains = list_verified_identities("Domain")
+      @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
+      @verified_domains_collection = get_verified_identities_collection(@verified_domains, "Domain") unless @verified_domains.nil? || @verified_domains.empty?
     rescue Elektron::Errors::ApiResponse => e
       flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
     rescue Exception => e

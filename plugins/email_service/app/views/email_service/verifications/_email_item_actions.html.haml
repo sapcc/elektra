@@ -3,4 +3,4 @@
     %span.fa.fa-cog
   %ul.dropdown-menu.dropdown-menu-right{ role:"menu" }
     - if current_user.is_allowed?("email_service:verified_email_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-      %li= link_to 'Delete', plugin('email_service').verification_path(id: all_email[:id], identity: all_email[:identity], action_from_show: show_view), method: :delete, data: { confirm: "Are you sure you want to remove this eMail '#{all_email[:identity]}'?", ok: "Yes, remove it", confirmed: :loading_status}
+      %li= link_to 'Delete', plugin('email_service').verification_path(id: email_item[:id], identity: email_item[:identity], action_from_show: show_view), method: :delete, data: { confirm: "Are you sure you want to remove this eMail '#{email_item[:identity]}'?", ok: "Yes, remove it", confirmed: :loading_status}

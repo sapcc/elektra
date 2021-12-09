@@ -13,17 +13,21 @@
             %td AWS Access Key
             %td 
               =@access if @access
+            %td
           %tr
             %td AWS Secret Key 
             %td
-              -# if current_user.is_allowed?('email_service:settings_create')
-                -#=@secret if @secret
-              -# else 
-              XXXXXXX
+              .shown_secret
+                -# =@secret if @secret
+              .hidden_secret 
+                XXXXXXX
+              %td.show_hide_btn
+                = link_to 'Show/Hide', '#', class: "btn btn-primary", id: "secret_toggle"
           %tr
             %td Cronus Endpoint 
             %td 
               =current_user.service_url('email-aws')
+            %td
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p

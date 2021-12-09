@@ -1,6 +1,19 @@
 module EmailService
   module TemplateHelper
 
+    # moved out of aws_helper on 9 Dec 2021
+    # Get templates name as a collection to be rendered
+    def get_templates_collection(templates)
+      templates_collection = []
+      if !templates.empty?
+        templates.each do |template|
+          templates_collection << template[:name]
+        end
+      end
+      templates_collection
+    end
+    # moved out of aws_helper on 9 Dec 2021
+    
     ## moved from aws_helper.rb on 15 Nov 2021
      #### TEMPLATES ###
 
