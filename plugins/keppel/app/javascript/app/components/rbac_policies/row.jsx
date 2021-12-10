@@ -2,6 +2,7 @@ import { makeSelectBox } from '../utils';
 
 const permsOptions = [
   { value: 'anonymous_pull', label: 'Pull anonymously' },
+  { value: 'anonymous_first_pull', label: 'Pull anonymously (even new images)' },
   { value: 'pull', label: 'Pull' },
   { value: 'pull,push', label: 'Pull & Push' },
   { value: 'delete,pull,push', label: 'Pull & Push & Delete' },
@@ -9,9 +10,10 @@ const permsOptions = [
   { value: 'delete', label: 'Delete' },
 ];
 
-const RBACPoliciesEditRow = ({ index, policy, isEditable, setRepoRegex, setUserRegex, setPermissions, removePolicy }) => {
-  const { match_repository: repoRegex, match_username: userRegex } = policy;
+const RBACPoliciesEditRow = ({ index, policy, isEditable, isExternalReplica, setRepoRegex, setUserRegex, setSourceCIDR, setPermissions, removePolicy }) => {
+  const { match_repository: repoRegex, match_username: userRegex, match_cidr: sourceCIDR } = policy;
   const currentPerms = policy.permissions.sort().join(',') || '';
+  const currentPermsOptions = isExternalReplica ? permsOptions : permsOptions.filter(opt => opt.value != 'anonymous_first_pull');
   return (
     <tr>
       <td>
@@ -31,7 +33,7 @@ const RBACPoliciesEditRow = ({ index, policy, isEditable, setRepoRegex, setUserR
           <input type='text' value={userRegex || ''}
             className='form-control'
             onChange={e => setUserRegex(index, e.target.value)}
-            disabled={currentPerms == 'anonymous_pull'}
+            disabled={currentPerms == 'anonymous_pull' || currentPerms == 'anonymous_first_pull'}
           />
         ) : userRegex ? (
           <code>{userRegex}</code>
@@ -40,8 +42,20 @@ const RBACPoliciesEditRow = ({ index, policy, isEditable, setRepoRegex, setUserR
         )}
       </td>
       <td>
+        {isEditable ? (
+          <input type='text' value={sourceCIDR || ''}
+            className='form-control'
+            onChange={e => setSourceCIDR(index, e.target.value)}
+          />
+        ) : sourceCIDR ? (
+          <code>{sourceCIDR}</code>
+        ) : (
+          <em>Any</em>
+        )}
+      </td>
+      <td>
         {makeSelectBox({
-          isEditable, options: permsOptions, value: currentPerms,
+          isEditable, options: currentPermsOptions, value: currentPerms,
           onChange: e => setPermissions(index, e.target.value),
         })}
       </td>
