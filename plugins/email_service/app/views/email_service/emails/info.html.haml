@@ -168,3 +168,29 @@ Failed
 Domain Collection
 %br
 = @verified_domains_collection
+
+%h2 Templates
+
+%br
+All Templates
+%br
+= @all_templates
+
+%br
+All Templates Count
+%br
+= @all_templates.count if !@all_templates.nil?
+
+%br
+Template Item Match
+%br
+= @subject_match
+
+%br
+HTML Match
+%br
+= @html_part_match
+%br
+Text Match
+%br
+= @text_part_match

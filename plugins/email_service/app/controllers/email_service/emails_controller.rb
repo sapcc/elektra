@@ -2,6 +2,9 @@ module EmailService
   class EmailsController < ::EmailService::ApplicationController
     before_action :restrict_access
 
+    authorization_context 'email_service'
+    authorization_required
+
     def index
       creds = get_ec2_creds
       if creds.error.empty?
@@ -37,6 +40,7 @@ module EmailService
         @access = @creds.access
         @secret = @creds.secret
         @ses_client = create_ses_client
+
         @all_emails = list_verified_identities("EmailAddress")
         @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
         @pending_emails  = get_verified_identities_by_status(@all_emails, "Pending")
@@ -52,6 +56,8 @@ module EmailService
         @send_stats = get_send_stats
         @send_data = get_send_data
         @all_templates = get_all_templates
+
+        @template_items_match = get_template_items
       else
         flash[:error] = creds.error
       end

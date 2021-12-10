@@ -1,7 +1,19 @@
 module EmailService
   module TemplateHelper
 
-    # moved out of aws_helper on 9 Dec 2021
+    def get_template_items
+      template_regex = /\{{\K[^\s}}]+(?=}})/
+      subject = "Subscription Preferences for {{contact.firstName}} {{contact.lastName}}"
+      html_part = "<!doctype html><html><head><meta charset='utf-8'></head><body><h1>Your Preferences</h1> <p>You have indicated that you are interested in receiving information about the following subjects:</p> <ul> {{#each subscription}} <li>{{interest}}</li> {{/each}} </ul> <p>You can change these settings at any time by visiting the <a href=https://www.example.com/preferences/i.aspx?id={{meta.userId}}> Preference Center</a>.</p></body></html>"
+      text_part = "Your Preferences\n\nYou have indicated that you are interested in receiving information about the following subjects:\n {{#each subscription}} - {{interest}}\n {{/each}} \nYou can change these settings at any time by visiting the Preference Center at https://www.example.com/prefererences/i.aspx?id={{meta.userId}}"
+      # to get first occurance
+      # @subject_match = subject.match(template_regex)
+      # to get all occurances
+      @subject_match = subject.scan(template_regex)
+      @html_part_match = html_part.scan(template_regex)
+      @text_part_match = text_part.scan(template_regex)
+    end
+
     # Get templates name as a collection to be rendered
     def get_templates_collection(templates)
       templates_collection = []
@@ -12,11 +24,7 @@ module EmailService
       end
       templates_collection
     end
-    # moved out of aws_helper on 9 Dec 2021
     
-    ## moved from aws_helper.rb on 15 Nov 2021
-     #### TEMPLATES ###
-
      def list_templates(token="")
       tmpl_hash = Hash.new
       templates = []

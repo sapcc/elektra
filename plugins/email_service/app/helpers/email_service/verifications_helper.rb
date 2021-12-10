@@ -1,5 +1,5 @@
 module EmailService
-  module VerificationHelper
+  module VerificationsHelper
     include AwsSesHelper
     include PlainEmailHelper
     include TemplatedEmailHelper

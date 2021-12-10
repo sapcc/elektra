@@ -2,6 +2,9 @@ module EmailService
   class TemplatedEmailsController < ::EmailService::ApplicationController
     before_action :restrict_access
 
+    authorization_context 'email_service'
+    authorization_required
+    
     def index
       creds = get_ec2_creds
       
@@ -41,7 +44,6 @@ module EmailService
     end
 
     def create
-
       @templated_email = new_templated_email(templated_email_params)  
       status = send_templated_email(@templated_email)
       

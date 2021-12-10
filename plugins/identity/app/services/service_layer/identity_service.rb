@@ -9,9 +9,6 @@ module ServiceLayer
     include IdentityServices::Group
     include IdentityServices::Role
     include IdentityServices::RoleAssignment
-    include IdentityServices::AWS::Ec2Creds
-    include IdentityServices::AWS::Template
-    # include IdentityServices::AWS::VerifiedEmail
 
     def available?(_action_name_sym = nil)
       elektron.service?('identity')

@@ -1,5 +1,6 @@
 module EmailService
   module PlainEmailHelper
+
     class PlainEmail
       VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
      
@@ -99,5 +100,6 @@ module EmailService
       end
 
     end
+
   end
 end

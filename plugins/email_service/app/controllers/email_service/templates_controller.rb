@@ -2,6 +2,9 @@ module EmailService
   class TemplatesController < ::EmailService::ApplicationController
     before_action :restrict_access
 
+    authorization_context 'email_service'
+    authorization_required
+
     def index
       creds = get_ec2_creds
       if creds.error.empty?

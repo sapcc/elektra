@@ -6,7 +6,8 @@ module EmailService
 
     ### EC2 CREDS ### 
     def get_ec2_creds
-      aws_creds = services.identity.aws_creds(current_user.id)
+      aws_creds = services.email_service.aws_creds(current_user.id)
+      # aws_creds = services.email.aws_creds(current_user.id)
     end
 
     ### CREATE SES CLIENT ###
@@ -30,72 +31,6 @@ module EmailService
       })
       resp_hash = resp.to_h
     end
-
-    ## Send Plain eMail ##
-    def send_email(plain_email)
-      error = ""
-      begin
-        ses_client = create_ses_client
-        resp = ses_client.send_email(
-          destination: {
-            to_addresses: plain_email.to_addr ,
-            cc_addresses: plain_email.cc_addr ,
-            bcc_addresses: plain_email.bcc_addr,
-          },
-          message: {
-            body: {
-              html: {
-                charset: @encoding,
-                data: plain_email.htmlbody
-              },
-              text: {
-                charset: @encoding,
-                data: plain_email.textbody
-              }
-            },
-            subject: {
-              charset: @encoding,
-              data: plain_email.subject
-            }
-          },
-          source: plain_email.source,
-        )
-      rescue Aws::SES::Errors::ServiceError => error
-        logger.debug "CRONUS : DEBUG : ERROR: Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
-      end
-      resp && resp.successful? ? "success" : error
-    end
-
-    def send_templated_email(templated_email)
-      error = ""
-      resp = ""
-      begin
-        ses_client = create_ses_client
-        resp = ses_client.send_templated_email({
-          source: templated_email.source, 
-          destination: {
-            to_addresses: templated_email.to_addr,
-            cc_addresses: templated_email.cc_addr,
-            bcc_addresses: templated_email.bcc_addr,
-          },
-          reply_to_addresses: [templated_email.reply_to_addr],
-          return_path: templated_email.reply_to_addr,
-          tags: [
-            {
-              name: "MessageTagName", 
-              value: "MessageTagValue",
-            },
-          ],
-          configuration_set_name: templated_email.configset_name,
-          template: templated_email.template_name, 
-          template_data: templated_email.template_data,
-        })
-      rescue Aws::SES::Errors::ServiceError => error
-        logger.debug "CRONUS: DEBUG: #{error}"
-      end
-      resp && resp.successful? ? "success" : error
-    end
-
 
     def get_send_stats
       stats_arr  = []

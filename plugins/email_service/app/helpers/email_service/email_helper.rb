@@ -26,13 +26,83 @@ module EmailService
       return []
     end
 
-    def email_to_array(plain_email)
-      plain_email.email.to_addr= addr_validate(plain_email.email.to_addr)
-      plain_email.email.cc_addr= addr_validate(plain_email.email.cc_addr)
-      plain_email.email.bcc_addr = addr_validate(plain_email.email.bcc_addr)
-      plain_email
+    def email_to_array(email_item)
+      email_item.email.to_addr= addr_validate(email_item.email.to_addr)
+      email_item.email.cc_addr= addr_validate(email_item.email.cc_addr)
+      email_item.email.bcc_addr = addr_validate(email_item.email.bcc_addr)
+      email_item
     end
 
+    
+    def send_email(plain_email)
+      error = ""
+      begin
+        ses_client = create_ses_client
+        resp = ses_client.send_email(
+          destination: {
+            to_addresses: plain_email.to_addr ,
+            cc_addresses: plain_email.cc_addr ,
+            bcc_addresses: plain_email.bcc_addr,
+          },
+          message: {
+            body: {
+              html: {
+                charset: @encoding,
+                data: plain_email.htmlbody
+              },
+              text: {
+                charset: @encoding,
+                data: plain_email.textbody
+              }
+            },
+            subject: {
+              charset: @encoding,
+              data: plain_email.subject
+            }
+          },
+          source: plain_email.source,
+        )
+        logger.debug "CRONUS: DEBUG: PLAIN EMAIL SEND RESPONSE #{resp}"
+        logger.debug "CRONUS: DEBUG: PLAIN EMAIL SEND RESPONSE success? #{resp.successful?}"
+        # debugger
+      rescue Aws::SES::Errors::ServiceError => error
+        logger.debug "CRONUS : DEBUG : ERROR: Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
+      end
+      resp && resp.successful? ? "success" : error
+    end
+
+    def send_templated_email(templated_email)
+      error = ""
+      resp = ""
+      begin
+        ses_client = create_ses_client
+        resp = ses_client.send_templated_email({
+          source: templated_email.source, 
+          destination: {
+            to_addresses: templated_email.to_addr,
+            cc_addresses: templated_email.cc_addr,
+            bcc_addresses: templated_email.bcc_addr,
+          },
+          reply_to_addresses: [templated_email.reply_to_addr],
+          return_path: templated_email.reply_to_addr,
+          tags: [
+            {
+              name: "MessageTagName", 
+              value: "MessageTagValue",
+            },
+          ],
+          configuration_set_name: templated_email.configset_name,
+          template: templated_email.template_name, 
+          template_data: templated_email.template_data,
+        })
+        logger.debug "CRONUS: DEBUG: TEMPLATE EMAIL SEND RESPONSE #{resp}"
+        logger.debug "CRONUS: DEBUG: TEMPLATE EMAIL SEND RESPONSE success? #{resp.successful?}"
+      rescue Aws::SES::Errors::ServiceError => error
+        logger.debug "CRONUS: DEBUG: #{error}"
+      end
+      resp && resp.successful? ? "success" : error
+    end
+    
   end
 end
 

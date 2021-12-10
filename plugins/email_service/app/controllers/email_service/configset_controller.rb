@@ -2,6 +2,9 @@ module EmailService
   class ConfigsetController < ::EmailService::ApplicationController
     before_action :restrict_access
 
+    authorization_context 'email_service'
+    authorization_required
+    
     def index
       creds = get_ec2_creds
       if creds.error.empty?
@@ -18,9 +21,8 @@ module EmailService
       flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
     
-    def new_configset
+    def new_configset; end
 
-    end
 
     def show_configset
       name = params[:name] if params[:name]
