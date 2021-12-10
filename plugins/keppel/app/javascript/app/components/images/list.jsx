@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { DataTable } from 'lib/components/datatable';
 
 import { SEVERITY_ORDER } from '../../constants';
-import { makeTabBar, makeHowto, makeHowtoOpener } from '../utils';
+import { makeTabBar, makeHowtoOpener } from '../utils';
+import Howto from '../howto';
 import ImageRow from './row';
 
 const taggedColumns = [
@@ -162,7 +163,7 @@ export default class RepositoryList extends React.Component {
           <input className='form-control' type='text' value={this.state.searchText}
             placeholder='Filter images' onChange={e => this.setSearchText(e.target.value)} />
         </div>
-        {howtoVisible && makeHowto(this.props.dockerInfo, account.name, repository.name, hideHowto)}
+        {howtoVisible && <Howto dockerInfo={this.props.dockerInfo} accountName={account.name} repoName={repository.name} handleClose={hideHowto} />}
         {/* when there is only the "Tags" tab, skip the tablist entirely */}
         {hasUntagged && makeTabBar(tabs, currentTab, key => this.selectTab(key))}
         {(!hasUntagged || currentTab == 'tagged') && this.renderTaggedImagesList(forwardProps)}
