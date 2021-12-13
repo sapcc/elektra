@@ -114,5 +114,7 @@ docker run --rm -it \
   --env CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
   --env CYPRESS_TEST_USER="$TEST_USER" \
   --env CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
+  --env CYPRESS_API_URL="http://localhost:1234/" \
+  --entrypoint cy2 \
   --network=host \
-  keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/cypress/included:7.1.0 --spec "$SPECS_FOLDER"
+  sorry-cypress run --record --key XXX --parallel --ci-build-id `date +%s` --spec "$SPECS_FOLDER"
