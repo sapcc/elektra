@@ -1,21 +1,44 @@
 # Note: You must restart bin/webpack-dev-server for changes to take effect
 
+# upgrade from 4 to 5
+# https://github.com/rails/webpacker#upgrading
+
 default: &default
   source_path: app/javascript
   source_entry_path: packs
+  public_root_path: public
   public_output_path: packs
   cache_path: tmp/cache/webpacker
+  webpack_compile_output: true
 
   # Additional paths webpack should lookup modules
   # ['app/assets', 'engine/foo/app/assets']
-  resolved_paths: ["plugins"]
+  additional_paths: ["plugins"]
 
   # Reload manifest.json on all requests so we reload latest compiled packs
   cache_manifest: false
 
+  # Extract and emit a css file
+  extract_css: true
+
+  static_assets_extensions:
+    - .jpg
+    - .jpeg
+    - .png
+    - .gif
+    - .tiff
+    - .ico
+    - .svg
+    - .eot
+    - .otf
+    - .ttf
+    - .woff
+    - .woff2
+
   extensions:
     - .coffee
     - .erb
+    - .mjs
     - .js
     - .jsx
     - .ts
@@ -36,11 +59,28 @@ development:
   # Verifies that correct packages and versions are installed by inspecting package.json, yarn.lock, and node_modules
   check_yarn_integrity: true
 
-  # Reference: https://webpack.js.org/configuration/dev-server/
+  # NOTE:
+  # there is a bug so the port and host from the webpacker config is not used and 
+  # webpack-dev-server starts in any case with the default port 8081 
+  # https://github.com/rails/webpacker/blob/5-x-stable/lib/webpacker/dev_server_runner.rb#L48
+  # possible fix in execute_cmd
+  # cmd += ["--port", @port.to_s]
+  # cmd += ["--host", @hostname.to_s]
+  #
+  # Workarround:
+  # a way to overwrite the port is to modify webpack_config -> config/webpack/custom.js -> extendConfig()
+  # and use the same port that we use here in webpacker config
+  # orgConfig.devServer = extendConfig.devServer || {}
+  # orgConfig.devServer.port = 3000
+  # orgConfig.devServer.host = "0.0.0.0"
   dev_server:
-    host: 0.0.0.0
-    port: 3035
-    public: 0.0.0.0:3035
+    # webpacker config:
+    # where is the webpack server running so Webpacker will automatically 
+    # start proxying all webpack asset requests to this server
+    # https://github.com/rails/webpacker#development
+    host: 0.0.0.0 
+    port: 8081
+    public: 0.0.0.0:8081
     # https://webpack.js.org/concepts/hot-module-replacement/
     hmr: false
     https: false

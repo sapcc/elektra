@@ -22,14 +22,15 @@
               - records.each do |record|
                 %li= record
         .col-md-9
-          %h5 This zone is shared with project/s
-          %ul
-            - @shared_zones.each do | shared_zone |
-              - if @zone.id == shared_zone.zone_id && @scoped_project_id != shared_zone.target_project_id
-                - project = ObjectCache.where(id: shared_zone.target_project_id).first
-                %li= project ? project.name : shared_zone.target_project_id
-              - else
-                %li nothing shared
+          - if @shared_with_projects.length == 1
+            %h5 This zone is shared with project
+          - if @shared_with_projects.length > 1
+            %h5 This zone is shared with projects
+          - if @shared_with_projects.length > 0
+            %ul
+              - @shared_with_projects.each do | shared_with_project |
+                %li= shared_with_project
+          
 .row
   .col-md-9
     = render partial: 'dns_service/zones/recordsets/list', locals: { zone: @zone, recordsets: @recordsets }

@@ -6,7 +6,7 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@nivo/bar": "0.49.0",
-    "@rails/webpacker": "^4.2.2",
+    "@rails/webpacker": "5.4.3",
     "axios": "^0.21",
     "babel-loader": "^8.0.6",
     "babel-plugin-react-require": "^3.1.1",
@@ -45,27 +45,31 @@
     "redux-devtools-extension": "^2.13.5",
     "redux-thunk": "^2.2.0",
     "regenerator-runtime": "^0.13.3",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^4.9.1"
   },
   "devDependencies": {
-    "@babel/cli": "7.15.7",
+    "@babel/cli": "7.16.0",
     "@types/jest": "27.0.2",
     "axios-mock-adapter": "1.18.2",
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
-    "babel-jest": "24.9.0",
-    "cypress": "^9.0.0",
+    "babel-jest": "27.3.0",
+    "cypress": "9.0.0",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.6",
     "eslint": "6.8.0",
     "eslint-loader": "4.0.2",
-    "eslint-plugin-cypress": "^2.12.1",
+    "eslint-plugin-cypress": "2.12.1",
     "eslint-plugin-import": "2.25.1",
     "eslint-plugin-react": "7.26.1",
-    "jest": "24.9.0",
+    "jest": "27.3.0",
+    "jsdom": "18.1.1",
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.14.0",
     "redux-mock-store": "1.5.4",
-    "webpack-dev-server": "3.11.0"
+    "webpack-dev-server": "4.6.0"
   },
   "scripts": {
     "test": "NODE_ENV=test jest --config jest.config.js"

@@ -276,10 +276,11 @@ const AutoscalingConfigNgSubscopes = ({
     return items.sort((a, b) =>
       a.service < b.service ? -1 : a.service > b.service ? 1 : 0
     )
-  }, [subscopesState, searchTerm])
+  }, [JSON.stringify(subscopesState), searchTerm])
 
   const editModeCount = React.useMemo(
-    () => filteredSubscopes.filter((s) => s.editMode).length
+    () => filteredSubscopes.filter((s) => s.editMode).length,
+    [JSON.stringify(filteredSubscopes)]
   )
 
   return (
