@@ -6,8 +6,7 @@ module EmailService
 
     ### EC2 CREDS ### 
     def get_ec2_creds
-      aws_creds = services.email_service.aws_creds(current_user.id)
-      # aws_creds = services.email.aws_creds(current_user.id)
+      credentials = services.identity.credentials(current_user.id)
     end
 
     ### CREATE SES CLIENT ###
@@ -27,8 +26,7 @@ module EmailService
     def get_send_data
       resp_hash = {}
       ses_client = create_ses_client
-      resp = ses_client.get_send_quota({
-      })
+      resp = ses_client.get_send_quota({})
       resp_hash = resp.to_h
     end
 

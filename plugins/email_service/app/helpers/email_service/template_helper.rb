@@ -1,6 +1,7 @@
 module EmailService
   module TemplateHelper
 
+    # Attempt to parse using regex the template data
     def get_template_items
       template_regex = /\{{\K[^\s}}]+(?=}})/
       subject = "Subscription Preferences for {{contact.firstName}} {{contact.lastName}}"
@@ -36,12 +37,17 @@ module EmailService
         })
         next_token = template_list.next_token
         index = 0
-        # logger.debug "CRONUS: DEBUG: template_list SIZE : #{template_list.templates_metadata.count}"
         while template_list.size > 0 && index < template_list.templates_metadata.count
             resp = ses_client.get_template({
-            template_name: template_list.templates_metadata[index].name,
+              template_name: template_list.templates_metadata[index].name,
             })
-            tmpl_hash = { :id => index, :name => resp.template.template_name, :subject => resp.template.subject_part, :text_part => resp.template.text_part, :html_part => resp.template.html_part }
+            tmpl_hash = { 
+              :id => index,
+              :name => resp.template.template_name,
+              :subject => resp.template.subject_part,
+              :text_part => resp.template.text_part,
+              :html_part => resp.template.html_part 
+            }
             templates.push(tmpl_hash)
             index = index + 1
         end
@@ -49,7 +55,7 @@ module EmailService
       rescue Aws::SES::Errors::ServiceError => error
         msg = "Unable to fetch templates. Error message: #{error}"
         logger.debug "CRONUS: DEBUG: #{msg}"
-        flash.now[:alert] = msg # TODO: fix this flash
+        flash.now[:alert] = msg
       end
       return next_token, templates
     end
@@ -117,15 +123,14 @@ module EmailService
     end
 
     def update_template(name, subject, html_part, text_part)
-      # logger.debug "#{name} : #{subject} : #{html_part} : #{text_part} "
       begin
         ses_client = create_ses_client
         resp = ses_client.update_template({
-          template: { # required
-            template_name: name,  # "TemplateName", # required
-            subject_part: subject, # "SubjectPart",
-            text_part: text_part, # "TextPart",
-            html_part: html_part, #"HtmlPart",
+          template: {
+            template_name: name, 
+            subject_part: subject,
+            text_part: text_part,
+            html_part: html_part,
           },
         })
         status = "success"
@@ -135,7 +140,6 @@ module EmailService
       end
      status
     end
-    ## moved from aws_helper.rb on 15 Nov 2021
 
     class Template 
       def initialize(opts = {})

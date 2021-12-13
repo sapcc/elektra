@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe EmailService::SettingsController, type: :controller do
+describe EmailService::TemplatesController, type: :controller do
   routes { EmailService::Engine.routes }
  
   default_params = { domain_id: AuthenticationStub.domain_id,
@@ -24,9 +24,10 @@ describe EmailService::SettingsController, type: :controller do
       :elektron_email_service
     ).and_return(email_service)
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
-    allow_any_instance_of(EmailService::SettingsController).to receive(:get_configset).and_return(double('configset').as_null_object)            
-    allow_any_instance_of(EmailService::SettingsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
+    allow_any_instance_of(EmailService::TemplatesController).to receive(:get_all_templates).and_return(double('templates').as_null_object)            
+    allow_any_instance_of(EmailService::TemplatesController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
   end
+
 
   # check index route
   describe "GET 'index'" do
