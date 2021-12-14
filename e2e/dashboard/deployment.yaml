@@ -41,6 +41,7 @@ spec:
           persistentVolumeClaim:
             claimName: cypress-pvc
 
+      # https://docs.sorry-cypress.dev/configuration/persistent
       containers:
         - name: mongo
           image: mongo:4.2
@@ -52,6 +53,7 @@ spec:
             - containerPort: 27017
               protocol: TCP
 
+        # https://docs.sorry-cypress.dev/configuration/director-configuration
         - name: director
           image: agoldis/sorry-cypress-director:latest
           env:
@@ -83,6 +85,7 @@ spec:
             - containerPort: 1234
               protocol: TCP
 
+        # https://docs.sorry-cypress.dev/configuration/api-configuration
         - name: api
           image: agoldis/sorry-cypress-api:latest
           env:
@@ -94,6 +97,7 @@ spec:
             - containerPort: 4000
               protocol: TCP
 
+        # https://docs.sorry-cypress.dev/configuration/dashboard-configuration/configuration
         - name: dashboard
           image: agoldis/sorry-cypress-dashboard:latest
           env:
@@ -109,6 +113,7 @@ spec:
             - containerPort: 8080
               protocol: TCP
 
+        # https://docs.sorry-cypress.dev/configuration/director-configuration/minio-configuration
         - name: storage
           image: minio/minio
           args: ["server", "/data"]
