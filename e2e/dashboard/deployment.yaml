@@ -25,6 +25,8 @@ metadata:
   name: cypress-dashboard
   namespace: cypress
 spec:
+  strategy:
+    type: Recreate
   replicas: 1
   selector:
     matchLabels:
@@ -38,6 +40,7 @@ spec:
         - name: cypress-data
           persistentVolumeClaim:
             claimName: cypress-pvc
+
       containers:
         - name: mongo
           image: mongo:4.2
@@ -63,17 +66,17 @@ spec:
             - name: SCREENSHOTS_DRIVER
               value: "../screenshots/minio.driver"
             - name: MINIO_ACCESS_KEY
-              value: "MW32h3gd6HvjBEgTRx"
+              value: "blablabla"
             - name: MINIO_SECRET_KEY
-              value: "t6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7"
+              value: "foofoofoo"
             - name: MINIO_ENDPOINT
-              value: "storage"
+              value: "storage.cypress.qa-de-1.cloud.sap"
             - name: MINIO_URL
-              value: "http://localhost"
+              value: "https://storage.cypress.qa-de-1.cloud.sap"
             - name: MINIO_PORT
-              value: "9000"
+              value: "443"
             - name: MINIO_USESSL
-              value: "false"
+              value: "true"
             - name: MINIO_BUCKET
               value: "sorry-cypress"
           ports:
@@ -105,6 +108,33 @@ spec:
           ports:
             - containerPort: 8080
               protocol: TCP
+
+        - name: storage
+          image: minio/minio
+          args: ["server", "/data"]
+          env:
+            - name: MINIO_ACCESS_KEY
+              value: "blablabla"
+            - name: MINIO_SECRET_KEY
+              value: "foofoofoo"
+          volumeMounts:
+            - name: cypress-data
+              subPath: minio
+              mountPath: /data
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+
+        # this is to create the sorry cypress bucket for first time
+        - name: createbuckets
+          image: minio/mc
+          command:
+            [
+              "/bin/sh",
+              "-c",
+              "sleep 10; /usr/bin/mc config host add myminio http://localhost:9000 blablabla foofoofoo; /usr/bin/mc rm -r --dangerous --force myminio/sorry-cypress; /usr/bin/mc mb myminio/sorry-cypress; /usr/bin/mc policy set download myminio/sorry-cypress; /usr/bin/mc policy set public myminio/sorry-cypress; tail -f /dev/null",
+            ]
+
 ---
 kind: Service
 apiVersion: v1
@@ -123,6 +153,9 @@ spec:
       protocol: TCP
     - name: cypress-director
       port: 1234
+      protocol: TCP
+    - name: cypress-storage
+      port: 9000
       protocol: TCP
 ---
 apiVersion: networking.k8s.io/v1beta1
@@ -160,3 +193,10 @@ spec:
             backend:
               serviceName: cypress-service
               servicePort: 1234
+    - host: storage.cypress.qa-de-1.cloud.sap
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: cypress-service
+              servicePort: 9000
