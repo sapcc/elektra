@@ -2,10 +2,11 @@
 
 function help_me () {
 
-  echo "Usage: run.sh --host HOST --profile member|admin --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
+  echo "Usage: run.sh --host HOST --profile member|admin --e2e_path /path/to/e2e --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
   echo "       run.sh --help                                                   # will print out this message"
   echo "       run.sh --host http://localhost:3000 landingpage                 # will only run landingpage tests"
   echo "       run.sh --host http://localhost:3000 --debug 'cypress:network:*' # will show debug information about the networking"
+  echo "       run.sh --e2e_path                                               # this optional if not set \$PWD is used"
   echo "MAC users: ./run.sh --host http://host.docker.internal:3000"
   echo ""
   echo "Debugging options: https://docs.cypress.io/guides/references/troubleshooting#Log-sources"
@@ -29,7 +30,7 @@ function help_me () {
 
 SPECS_FOLDER="cypress/integration/**/*"
 PROFILE="member"
-
+CY_CMD="cypress"
 if [[ "$1" == "--help" ]]; then
   help_me
 else
@@ -53,10 +54,25 @@ else
         shift # past argument
         shift # past value
         ;;
+        -e2e|--e2e_path) # local path for e2e
+        E2E_PATH="$1"
+        shift # past argument
+        shift # past value
+        ;;
+        -r|--record) # local path for e2e
+        date=$(date)
+        hostname=$(hostname)
+        ci_build_id="$date - $hostname"
+        CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$ci_build_id")
+        CY_CMD="cy2"
+        CY_RECORD="https://director.cypress.qa-de-1.cloud.sap"
+        shift # past argument
+        ;;
         *)    # test folder
         SPECS_FOLDER="cypress/integration/$1.js"
         shift # past argument
         ;;
+
     esac
   done
 fi
@@ -91,6 +107,10 @@ if [[ "${PROFILE}" == "admin" ]]; then
   TEST_PASSWORD=$TEST_ADMIN_PASSWORD
 fi
 
+if [[ -z "${E2E_PATH}" ]]; then
+  E2E_PATH=$PWD
+fi
+
 # show all hidden chars for debugging
 # https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 # echo $HOST | cat -A
@@ -98,25 +118,27 @@ fi
 echo "HOST          => $HOST"
 echo "TEST_PATH     => $PWD"
 echo "SPECS_FOLDER  => $SPECS_FOLDER"
+echo "E2E_PATH      => $E2E_PATH"
 echo "PROFILE       => $PROFILE"
 echo "TEST_DOMAIN   => $TEST_DOMAIN"
 echo "TEST_USER     => $TEST_USER"
+if [[ -n "$CY_RECORD" ]]; then
+  echo "RECORD        => $CY_RECORD"
+fi
 if [[ -n "$DEBUG" ]]; then
   echo "DEBUG:        => $DEBUG"
 fi
 echo ""
 
-date=$(date)
-
 docker run --rm -it \
-  --volume "/home/core/workspace/elektra/e2e:/e2e" \
+  --volume "$E2E_PATH:/e2e" \
   --workdir "/e2e" \
   --env DEBUG="$DEBUG" \
   --env CYPRESS_BASE_URL="$HOST" \
   --env CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
   --env CYPRESS_TEST_USER="$TEST_USER" \
   --env CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
-  --env CYPRESS_API_URL="https://director.cypress.qa-de-1.cloud.sap/" \
-  --entrypoint /usr/local/bin/entrypoint.sh \
+  --env CYPRESS_API_URL=$CY_RECORD \
+  --entrypoint $CY_CMD \
   --network=host \
-  cy2 run --record --key "elektra" --parallel --ci-build-id "$date" --spec "$SPECS_FOLDER"
+  cy2 run "${CY_OPTIONS[@]}" --spec "$SPECS_FOLDER"
