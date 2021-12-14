@@ -62,11 +62,9 @@ module EmailService
           },
           source: plain_email.source,
         )
-        logger.debug "CRONUS: DEBUG: PLAIN EMAIL SEND RESPONSE #{resp}"
-        logger.debug "CRONUS: DEBUG: PLAIN EMAIL SEND RESPONSE success? #{resp.successful?}"
-        # debugger
+        audit_logger.info(current_user, 'has sent email to', plain_email.to_addr,plain_email.cc_addr, plain_email.bcc_addr)
       rescue Aws::SES::Errors::ServiceError => error
-        logger.debug "CRONUS : DEBUG : ERROR: Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
+        logger.debug "CRONUS : ERROR: Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
       end
       resp && resp.successful? ? "success" : error
     end
@@ -95,8 +93,10 @@ module EmailService
           template: templated_email.template_name, 
           template_data: templated_email.template_data,
         })
-        logger.debug "CRONUS: DEBUG: TEMPLATE EMAIL SEND RESPONSE #{resp}"
-        logger.debug "CRONUS: DEBUG: TEMPLATE EMAIL SEND RESPONSE success? #{resp.successful?}"
+        audit_logger.info(current_user, 'has sent templated email from the template', \
+        templated_email.template_name,  'to', templated_email.to_addr, \
+        templated_email.cc_addr, templated_email.bcc_addr)
+        debugger
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "CRONUS: DEBUG: #{error}"
       end
