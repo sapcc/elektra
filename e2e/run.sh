@@ -106,6 +106,8 @@ if [[ -n "$DEBUG" ]]; then
 fi
 echo ""
 
+date=$(date)
+
 docker run --rm -it \
   --volume "/home/core/workspace/elektra/e2e:/e2e" \
   --workdir "/e2e" \
@@ -114,7 +116,7 @@ docker run --rm -it \
   --env CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
   --env CYPRESS_TEST_USER="$TEST_USER" \
   --env CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
-  --env CYPRESS_API_URL="http://localhost:1234/" \
+  --env CYPRESS_API_URL="https://director.cypress.qa-de-1.cloud.sap/" \
   --entrypoint /usr/local/bin/entrypoint.sh \
   --network=host \
-  cy2 run --record --key "elektra" --parallel --ci-build-id `date +%s` --spec "$SPECS_FOLDER"
+  cy2 run --record --key "elektra" --parallel --ci-build-id "$date" --spec "$SPECS_FOLDER"

@@ -1,0 +1,162 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cypress
+  labels:
+    name: cypress
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cypress-pvc
+  namespace: cypress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cypress-dashboard
+  name: cypress-dashboard
+  namespace: cypress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cypress-dashboard
+  template:
+    metadata:
+      labels:
+        app: cypress-dashboard
+    spec:
+      volumes:
+        - name: cypress-data
+          persistentVolumeClaim:
+            claimName: cypress-pvc
+      containers:
+        - name: mongo
+          image: mongo:4.2
+          volumeMounts:
+            - name: cypress-data
+              subPath: mongo
+              mountPath: /data/db
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+
+        - name: director
+          image: agoldis/sorry-cypress-director:latest
+          env:
+            - name: DASHBOARD_URL
+              value: "https://dashboard.cypress.qa-de-1.cloud.sap"
+            - name: EXECUTION_DRIVER
+              value: "../execution/mongo/driver"
+            - name: MONGODB_URI
+              value: "mongodb://localhost:27017"
+            - name: MONGODB_DATABASE
+              value: "sorry-cypress"
+            - name: SCREENSHOTS_DRIVER
+              value: "../screenshots/minio.driver"
+            - name: MINIO_ACCESS_KEY
+              value: "MW32h3gd6HvjBEgTRx"
+            - name: MINIO_SECRET_KEY
+              value: "t6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7"
+            - name: MINIO_ENDPOINT
+              value: "storage"
+            - name: MINIO_URL
+              value: "http://localhost"
+            - name: MINIO_PORT
+              value: "9000"
+            - name: MINIO_USESSL
+              value: "false"
+            - name: MINIO_BUCKET
+              value: "sorry-cypress"
+          ports:
+            - containerPort: 1234
+              protocol: TCP
+
+        - name: api
+          image: agoldis/sorry-cypress-api:latest
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://localhost:27017"
+            - name: MONGODB_DATABASE
+              value: "sorry-cypress"
+          ports:
+            - containerPort: 4000
+              protocol: TCP
+
+        - name: dashboard
+          image: agoldis/sorry-cypress-dashboard:latest
+          env:
+            - name: GRAPHQL_SCHEMA_URL
+              value: "https://api.cypress.qa-de-1.cloud.sap"
+            - name: GRAPHQL_CLIENT_CREDENTIALS
+              value: ""
+            - name: PORT
+              value: "8080"
+            - name: CI_URL
+              value: ""
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: cypress
+  name: cypress-service
+spec:
+  selector:
+    app: cypress-dashboard
+  ports:
+    - name: cypress-api
+      port: 4000
+      protocol: TCP
+    - name: cypress-dasboard
+      port: 8080
+      protocol: TCP
+    - name: cypress-director
+      port: 1234
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: cypress-ingress
+  namespace: cypress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+    - hosts:
+        - "*.cypress.qa-de-1.cloud.sap"
+      secretName: tls-cypress-ingress
+  rules:
+    - host: api.cypress.qa-de-1.cloud.sap
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: cypress-service
+              servicePort: 4000
+    - host: dashboard.cypress.qa-de-1.cloud.sap
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: cypress-service
+              servicePort: 8080
+    - host: director.cypress.qa-de-1.cloud.sap
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: cypress-service
+              servicePort: 1234
