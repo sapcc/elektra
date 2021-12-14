@@ -107,14 +107,14 @@ fi
 echo ""
 
 docker run --rm -it \
-  --volume "$PWD:/e2e" \
-  --workdir /e2e \
+  --volume "/home/core/workspace/elektra/e2e:/e2e" \
+  --workdir "/e2e" \
   --env DEBUG="$DEBUG" \
   --env CYPRESS_BASE_URL="$HOST" \
   --env CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
   --env CYPRESS_TEST_USER="$TEST_USER" \
   --env CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
   --env CYPRESS_API_URL="http://localhost:1234/" \
-  --entrypoint cy2 \
+  --entrypoint /usr/local/bin/entrypoint.sh \
   --network=host \
-  sorry-cypress run --record --key XXX --parallel --ci-build-id `date +%s` --spec "$SPECS_FOLDER"
+  cy2 run --record --key "elektra" --parallel --ci-build-id `date +%s` --spec "$SPECS_FOLDER"

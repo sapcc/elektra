@@ -1,4 +1,4 @@
-version: '3.6'
+version: "3.6"
 
 services:
   mongo:
@@ -10,18 +10,18 @@ services:
   director:
     image: agoldis/sorry-cypress-director:latest
     environment:
-      DASHBOARD_URL: http://localhost:8180
-      EXECUTION_DRIVER: '../execution/mongo/driver'
-      MONGODB_URI: 'mongodb://mongo:27017'
-      MONGODB_DATABASE: 'sorry-cypress'
+      DASHBOARD_URL: http://workbench-prod.hgw.c.eu-de-1.cloud.sap:8180
+      EXECUTION_DRIVER: "../execution/mongo/driver"
+      MONGODB_URI: "mongodb://mongo:27017"
+      MONGODB_DATABASE: "sorry-cypress"
 
-      SCREENSHOTS_DRIVER: '../screenshots/minio.driver'
-      MINIO_ACCESS_KEY: 'MW32h3gd6HvjBEgTRx'
-      MINIO_SECRET_KEY: 't6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7'
-      MINIO_ENDPOINT: 'storage'
-      MINIO_URL: 'http://localhost'
-      MINIO_PORT: '9000'
-      MINIO_USESSL: 'false'
+      SCREENSHOTS_DRIVER: "../screenshots/minio.driver"
+      MINIO_ACCESS_KEY: "MW32h3gd6HvjBEgTRx"
+      MINIO_SECRET_KEY: "t6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7"
+      MINIO_ENDPOINT: "storage"
+      MINIO_URL: "http://localhost"
+      MINIO_PORT: "9000"
+      MINIO_USESSL: "false"
       MINIO_BUCKET: sorry-cypress
 
     ports:
@@ -33,20 +33,20 @@ services:
   api:
     image: agoldis/sorry-cypress-api:latest
     environment:
-      MONGODB_URI: 'mongodb://mongo:27017'
-      MONGODB_DATABASE: 'sorry-cypress'
+      MONGODB_URI: "mongodb://mongo:27017"
+      MONGODB_DATABASE: "sorry-cypress"
     ports:
-      - 4000:4000
+      - 8080:4000
     depends_on:
       - mongo
 
   dashboard:
     image: agoldis/sorry-cypress-dashboard:latest
     environment:
-      GRAPHQL_SCHEMA_URL: http://localhost:4000
-      GRAPHQL_CLIENT_CREDENTIALS: ''
+      GRAPHQL_SCHEMA_URL: http://workbench-prod.hgw.c.eu-de-1.cloud.sap:8080
+      GRAPHQL_CLIENT_CREDENTIALS: ""
       PORT: 8080
-      CI_URL: ''
+      CI_URL: ""
     ports:
       - 8180:8080
     depends_on:
@@ -55,10 +55,10 @@ services:
 
   storage:
     image: minio/minio
-    hostname: 'storage'
+    hostname: "storage"
     environment:
-      MINIO_ACCESS_KEY: 'MW32h3gd6HvjBEgTRx'
-      MINIO_SECRET_KEY: 't6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7'
+      MINIO_ACCESS_KEY: "MW32h3gd6HvjBEgTRx"
+      MINIO_SECRET_KEY: "t6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7"
     volumes:
       - ./data/data-minio-cypress:/data
     command: server /data
