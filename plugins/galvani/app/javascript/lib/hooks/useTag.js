@@ -1,19 +1,21 @@
 import React from "react"
 
-// given --> dns:reader, dns_edit_zone:$1
+// remove service params from the key
+// Ex
+// dns_reader --> name: dns_reader, hasVars: false
+// dns_edit_zone:$1 --> name: dns_edit_zone, hasVars: true
 const getServiceParams = (service) => {
   const params = service.split(":")
   let name = params[0] || ""
   let hasVars = false
   if (params[1]) {
-    // TODO we still need this check??
     if (params[1].includes("$")) {
       hasVars = true
     } else {
       name = `${name}:${params[1]}`
     }
   }
-  return { name: name, hasVars: hasVars }
+  return { key: service, name: name, hasVars: hasVars }
 }
 
 const getTopologyTags = (cfg, tags) => {
@@ -27,22 +29,29 @@ const getTopologyTags = (cfg, tags) => {
     // loop over services from in the access prefix
     Object.keys(cfg[profileKey]).forEach((serviceKey) => {
       const serviceParams = getServiceParams(serviceKey)
+      // add service
       topo[profileKey][serviceParams.name] = {
         description: cfg[profileKey][serviceKey]["description"],
-        items: [],
+        displayName: cfg[profileKey][serviceKey]["display_name"],
+        tags: [],
       }
 
       // find tags with this access prefix
       tags.forEach((tag) => {
-        if (tag.startsWith(`${profileKey}:${serviceParams.name}`)) {
-          topo[profileKey][serviceParams.name]["items"].push(tag)
+        const prefix = `${profileKey}:${serviceParams.name}`
+        if (tag.startsWith(prefix)) {
+          const value = tag.split(`${prefix}:`)[1] || null
+          topo[profileKey][serviceParams.name]["tags"].push({
+            tag: tag,
+            value: value,
+          })
         }
       })
 
-      // sort tags in the service
-      topo[profileKey][serviceParams.name]["items"] = topo[profileKey][
+      // sort tags in the service by value
+      topo[profileKey][serviceParams.name]["tags"] = topo[profileKey][
         serviceParams.name
-      ]["items"].sort((a, b) => a.localeCompare(b))
+      ]["tags"].sort((a, b) => a.value.localeCompare(b.value))
     })
   })
 

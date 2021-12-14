@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import AccessService from "./AccessService"
 import { policy } from "policy"
 import SmartLink from "./shared/SmartLink"
@@ -8,11 +8,21 @@ const AccessProfile = ({ profileName, items }) => {
 
   const onCreateClick = () => {}
 
+  const displayItems = useMemo(
+    () =>
+      Object.keys(items).reduce((object, serviceKey) => {
+        if (items[serviceKey].tags.length > 0) {
+          object[serviceKey] = items[serviceKey]
+        }
+        return object
+      }, {}),
+    [items]
+  )
+
   return (
     <div>
-      <h4>{profileName}</h4>
-
       <div className="toolbar searchToolbar">
+        <span>{profileName}</span>
         <div className="main-buttons">
           <SmartLink
             onClick={onCreateClick}
@@ -29,12 +39,11 @@ const AccessProfile = ({ profileName, items }) => {
       <table className="table datatable">
         <tbody>
           {items &&
-            Object.keys(items).map((serviceKey, i) => (
+            Object.keys(displayItems).map((serviceKey, i) => (
               <AccessService
                 key={i}
-                serviceName={serviceKey}
-                description={items[serviceKey].description}
-                items={items[serviceKey].items}
+                serviceKey={serviceKey}
+                serviceAttr={items[serviceKey]}
               />
             ))}
         </tbody>

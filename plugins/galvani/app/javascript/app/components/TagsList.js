@@ -37,17 +37,10 @@ const TagsList = () => {
       })
   }
 
-  const accessProfileKeys = () => {
-    console.log(topology)
-    if (topology) return Object.keys(topology)
-    return []
-  }
-
   return (
     <>
       {profilesCfg && (
         <>
-          <h3>Existing Access Profiles</h3>
           {tags.error ? (
             <ErrorPage
               headTitle="Loading access profiles"
