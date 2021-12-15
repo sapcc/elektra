@@ -13,6 +13,7 @@ module EmailService
             name: name, # required
           },
         })
+        audit_logger.info(current_user, 'has created configset', name)
         status = "success" 
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
@@ -94,6 +95,8 @@ module EmailService
         resp = ses_client.delete_configuration_set({
               configuration_set_name: name,
         })
+        
+        audit_logger.info(current_user, 'has deleted configset', name)
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
