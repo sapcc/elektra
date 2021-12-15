@@ -32,4 +32,10 @@
   td {
     vertical-align: middle;
   }
+  td.service-value {
+    width: 40%;
+  }
+  td.service-name-empty {
+    border-top: 0;
+  }
 }

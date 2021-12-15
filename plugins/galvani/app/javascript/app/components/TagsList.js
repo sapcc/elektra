@@ -52,7 +52,7 @@ const TagsList = () => {
               {tags.isLoading ? (
                 <div>
                   <span className="spinner"></span>
-                  Loading profiles...
+                  Loading access profiles...
                 </div>
               ) : (
                 <>

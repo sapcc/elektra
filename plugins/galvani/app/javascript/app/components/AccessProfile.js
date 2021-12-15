@@ -1,5 +1,5 @@
 import React, { useMemo } from "react"
-import AccessService from "./AccessService"
+import ServiceActionTag from "./ServiceActionTag"
 import { policy } from "policy"
 import SmartLink from "./shared/SmartLink"
 
@@ -40,7 +40,7 @@ const AccessProfile = ({ profileName, items }) => {
         <tbody>
           {items &&
             Object.keys(displayItems).map((serviceKey, i) => (
-              <AccessService
+              <ServiceActionTag
                 key={i}
                 serviceKey={serviceKey}
                 serviceAttr={items[serviceKey]}
