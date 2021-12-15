@@ -4,10 +4,10 @@ import { policy } from "policy"
 import SmartLink from "./shared/SmartLink"
 
 const AccessProfile = ({ profileName, items }) => {
-  const canCreate = true
-
+  const canCreate = false
   const onCreateClick = () => {}
 
+  // remove services without tags
   const displayItems = useMemo(
     () =>
       Object.keys(items).reduce((object, serviceKey) => {
@@ -21,22 +21,22 @@ const AccessProfile = ({ profileName, items }) => {
 
   return (
     <div>
-      <div className="toolbar searchToolbar">
-        <span>{profileName}</span>
+      <div className="toolbar access-profiles-toolbar">
+        <span className="toolbar-title">{profileName}</span>
         <div className="main-buttons">
           <SmartLink
             onClick={onCreateClick}
             style="primary"
             size="small"
             isAllowed={canCreate}
-            notAllowedText="Not allowed to create. Please check with your administrator."
+            notAllowedText="Not allowed to add new access profiles. Please check with your administrator."
           >
             New Access Profile
           </SmartLink>
         </div>
       </div>
 
-      <table className="table datatable">
+      <table className="table datatable access-profiles-table">
         <tbody>
           {items &&
             Object.keys(displayItems).map((serviceKey, i) => (

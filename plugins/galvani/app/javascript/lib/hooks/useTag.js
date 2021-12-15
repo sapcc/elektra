@@ -24,13 +24,17 @@ const getTopologyTags = (cfg, tags) => {
   const topo = {}
   // loop over access prefixes
   Object.keys(cfg).forEach((profileKey) => {
-    if (!topo[profileKey]) topo[profileKey] = {}
+    // TODO remove xs: prefix
+    const profileName = profileKey.split(":")[1] || profileKey
+    if (!topo[profileName]) topo[profileName] = {}
+
+    console.log("profileName: ", profileName)
 
     // loop over services from in the access prefix
     Object.keys(cfg[profileKey]).forEach((serviceKey) => {
       const serviceParams = getServiceParams(serviceKey)
       // add service
-      topo[profileKey][serviceParams.name] = {
+      topo[profileName][serviceParams.name] = {
         description: cfg[profileKey][serviceKey]["description"],
         displayName: cfg[profileKey][serviceKey]["display_name"],
         tags: [],
@@ -41,7 +45,7 @@ const getTopologyTags = (cfg, tags) => {
         const prefix = `${profileKey}:${serviceParams.name}`
         if (tag.startsWith(prefix)) {
           const value = tag.split(`${prefix}:`)[1] || null
-          topo[profileKey][serviceParams.name]["tags"].push({
+          topo[profileName][serviceParams.name]["tags"].push({
             tag: tag,
             value: value,
           })
@@ -49,10 +53,12 @@ const getTopologyTags = (cfg, tags) => {
       })
 
       // sort tags in the service by value
-      topo[profileKey][serviceParams.name]["tags"] = topo[profileKey][
+      topo[profileName][serviceParams.name]["tags"] = topo[profileName][
         serviceParams.name
       ]["tags"].sort((a, b) => a.value.localeCompare(b.value))
     })
+
+    // sort sevices
   })
 
   console.log("topo: ", topo)

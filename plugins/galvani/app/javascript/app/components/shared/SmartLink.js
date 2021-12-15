@@ -12,10 +12,11 @@ const SmartLink = ({
   isAllowed,
   notAllowedText,
 }) => {
-  const shouldRenderLink = isAllowed == false ? false : true
+  const isAllowedToClick = isAllowed == false ? false : true
+
   return (
     <React.Fragment>
-      {shouldRenderLink ? (
+      {isAllowedToClick ? (
         <Button
           href={href}
           bsStyle={style}
@@ -40,17 +41,20 @@ const SmartLink = ({
             <Tooltip id={uniqueId("smart-link-")}>{notAllowedText}</Tooltip>
           }
         >
-          <Button
-            href={href}
-            bsSize={size}
-            bsStyle={style}
-            disabled={true}
-            onClick={(e) => {
-              e.preventDefault()
-            }}
-          >
-            {children}
-          </Button>
+          <div style={{ display: "inline-block", cursor: "not-allowed" }}>
+            <Button
+              style={{ pointerEvents: "none" }}
+              href={href}
+              bsSize={size}
+              bsStyle={style}
+              disabled={true}
+              onClick={(e) => {
+                e.preventDefault()
+              }}
+            >
+              {children}
+            </Button>
+          </div>
         </OverlayTrigger>
       )}
     </React.Fragment>

@@ -21,6 +21,15 @@
 
 */
 
-.table.datatable {
+.access-profiles-toolbar {
+  .toolbar-title {
+    text-transform: capitalize;
+  }
+}
+
+.access-profiles-table.table.datatable {
   margin-top: 0rem;
+  td {
+    vertical-align: middle;
+  }
 }
