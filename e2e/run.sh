@@ -2,13 +2,13 @@
 
 function help_me () {
 
-  echo "Usage: run.sh --host HOST --profile member|admin --e2e_path /path/to/e2e --browser chrome|firefox --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
+  echo "Usage: run.sh --host HOST --profile member|admin --e2e_path /path/to/e2e --browser chrome|firefox|electron --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
   echo "       run.sh --help                                                   # will print out this message"
   echo "       run.sh --info                                                   # prints info about used cypress"
   echo "       run.sh --host http://localhost:3000 landingpage                 # will only run landingpage tests"
   echo "       run.sh --host http://localhost:3000 --debug 'cypress:network:*' # will show debug information about the networking"
   echo "       run.sh --e2e_path                                               # this optional if not set \$PWD is used"
-  echo "       run.sh --browser chrome                                         # choose browser to test (default is chrome)"
+  echo "       run.sh --browser chrome                                         # choose browser to test (default is electron)"
   echo "MAC users: ./run.sh --host http://host.docker.internal:3000"
   echo ""
   echo "Debugging options: https://docs.cypress.io/guides/references/troubleshooting#Log-sources"
@@ -57,24 +57,23 @@ else
         shift # past value
         ;;
         -e2e|--e2e_path) # local path for e2e
-        E2E_PATH="$1"
+        E2E_PATH="$2"
         shift # past argument
         shift # past value
         ;;
-        -b|--browser) # local path for e2e
-        BROWSER="$1"
+        -b|--browser) 
+        BROWSER="$2"
         shift # past argument
         shift # past value
         ;;
-        -i|--info) # local path for e2e
+        -i|--info) 
         docker run -it --rm --entrypoint=cypress cy2 info
         exit
         ;;
-        -r|--record) # local path for e2e
+        -r|--record) 
         date=$(date)
         hostname=$(hostname)
-        ci_build_id="$date - $hostname"
-        CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$ci_build_id")
+        CI_BUID_ID="$date - $hostname"
         CY_CMD="cy2"
         CY_RECORD="https://director.cypress.qa-de-1.cloud.sap"
         shift # past argument
@@ -86,6 +85,26 @@ else
     esac
   done
 fi
+
+if [[ -z "${E2E_PATH}" ]]; then
+  E2E_PATH=$PWD
+fi
+
+if [[ -z "${BROWSER}" ]]; then
+  BROWSER="electron"
+fi
+
+# https://docs.cypress.io/guides/guides/command-line#cypress-run
+# --ci-build-id https://docs.cypress.io/guides/guides/command-line#cypress-run-ci-build-id-lt-id-gt
+# --key         https://docs.cypress.io/guides/guides/command-line#cypress-run-record-key-lt-record-key-gt
+# --paralell    https://docs.cypress.io/guides/guides/parallelization#Turning-on-parallelization
+# https://docs.sorry-cypress.dev/guide/get-started
+if [[ -n "${CI_BUID_ID}" ]]; then
+  BROWSER_VERSION=$(docker run -it --rm --entrypoint sh cy2 -c "echo \$$BROWSER")
+   CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$CI_BUID_ID - $BROWSER $BROWSER_VERSION")
+fi
+#echo "${CY_OPTIONS[@]}"
+#exit
 
 # find the host if nothing was given
 if [[ -z "${HOST}" ]]; then
@@ -115,14 +134,6 @@ TEST_PASSWORD=$TEST_MEMBER_PASSWORD
 if [[ "${PROFILE}" == "admin" ]]; then
   TEST_USER=$TEST_ADMIN_USER
   TEST_PASSWORD=$TEST_ADMIN_PASSWORD
-fi
-
-if [[ -z "${E2E_PATH}" ]]; then
-  E2E_PATH=$PWD
-fi
-
-if [[ -z "${BROWSER}" ]]; then
-  BROWSER="chrome"
 fi
 
 # show all hidden chars for debugging
