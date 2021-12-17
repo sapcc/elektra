@@ -2,10 +2,13 @@
 
 function help_me () {
 
-  echo "Usage: run.sh --host HOST --profile member|admin --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
+  echo "Usage: run.sh --host HOST --profile member|admin --e2e_path /path/to/e2e --browser chrome|firefox|electron --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
   echo "       run.sh --help                                                   # will print out this message"
+  echo "       run.sh --info                                                   # prints info about used cypress"
   echo "       run.sh --host http://localhost:3000 landingpage                 # will only run landingpage tests"
   echo "       run.sh --host http://localhost:3000 --debug 'cypress:network:*' # will show debug information about the networking"
+  echo "       run.sh --e2e_path                                               # this optional if not set \$PWD is used"
+  echo "       run.sh --browser chrome                                         # choose browser to test (default is electron)"
   echo "MAC users: ./run.sh --host http://host.docker.internal:3000"
   echo ""
   echo "Debugging options: https://docs.cypress.io/guides/references/troubleshooting#Log-sources"
@@ -29,7 +32,7 @@ function help_me () {
 
 SPECS_FOLDER="cypress/integration/**/*"
 PROFILE="member"
-
+CY_CMD="cypress"
 if [[ "$1" == "--help" ]]; then
   help_me
 else
@@ -53,6 +56,28 @@ else
         shift # past argument
         shift # past value
         ;;
+        -e2e|--e2e_path) # local path for e2e
+        E2E_PATH="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        -b|--browser) 
+        CYPRESS_BROWSER="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        -i|--info) 
+        docker run -it --rm --entrypoint=cypress cy2 info
+        exit
+        ;;
+        -r|--record) 
+        date=$(date)
+        hostname=$(hostname)
+        CI_BUID_ID="$date - $hostname - DEV"
+        CY_CMD="cy2"
+        CY_RECORD="https://director.cypress.qa-de-1.cloud.sap"
+        shift # past argument
+        ;;
         *)    # test folder
         SPECS_FOLDER="cypress/integration/$1.js"
         shift # past argument
@@ -60,6 +85,26 @@ else
     esac
   done
 fi
+
+if [[ -z "${E2E_PATH}" ]]; then
+  E2E_PATH=$PWD
+fi
+
+if [[ -z "${CYPRESS_BROWSER}" ]]; then
+  CYPRESS_BROWSER="electron"
+fi
+
+# https://docs.cypress.io/guides/guides/command-line#cypress-run
+# --ci-build-id https://docs.cypress.io/guides/guides/command-line#cypress-run-ci-build-id-lt-id-gt
+# --key         https://docs.cypress.io/guides/guides/command-line#cypress-run-record-key-lt-record-key-gt
+# --paralell    https://docs.cypress.io/guides/guides/parallelization#Turning-on-parallelization
+# https://docs.sorry-cypress.dev/guide/get-started
+if [[ -n "${CI_BUID_ID}" ]]; then
+  BROWSER_VERSION=$(docker run -it --rm --entrypoint sh cy2 -c "echo \$$CYPRESS_BROWSER")
+   CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$CI_BUID_ID - $CYPRESS_BROWSER $BROWSER_VERSION")
+fi
+#echo "${CY_OPTIONS[@]}"
+#exit
 
 # find the host if nothing was given
 if [[ -z "${HOST}" ]]; then
@@ -96,23 +141,32 @@ fi
 # echo $HOST | cat -A
 
 echo "HOST          => $HOST"
+echo "BROWSER       => $CYPRESS_BROWSER"
 echo "TEST_PATH     => $PWD"
 echo "SPECS_FOLDER  => $SPECS_FOLDER"
+echo "E2E_PATH      => $E2E_PATH"
 echo "PROFILE       => $PROFILE"
 echo "TEST_DOMAIN   => $TEST_DOMAIN"
 echo "TEST_USER     => $TEST_USER"
+if [[ -n "$CY_RECORD" ]]; then
+  echo "RECORD        => $CY_RECORD"
+fi
 if [[ -n "$DEBUG" ]]; then
   echo "DEBUG:        => $DEBUG"
 fi
 echo ""
 
 docker run --rm -it \
-  --volume "$PWD:/e2e" \
-  --workdir /e2e \
+  --volume "$E2E_PATH:/e2e" \
+  --workdir "/e2e" \
   --env DEBUG="$DEBUG" \
   --env CYPRESS_BASE_URL="$HOST" \
   --env CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
   --env CYPRESS_TEST_USER="$TEST_USER" \
   --env CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
+  --env CYPRESS_API_URL=$CY_RECORD \
+  --entrypoint $CY_CMD \
   --network=host \
-  keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/cypress/included:7.1.0 --spec "$SPECS_FOLDER"
+  keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest run "${CY_OPTIONS[@]}" --spec "$SPECS_FOLDER" --browser $CYPRESS_BROWSER
+  # https://github.wdf.sap.corp/cc/secrets/tree/master/ci/cypress-dashboard/Dockerfile
+  # https://main.ci.eu-de-2.cloud.sap/teams/services/pipelines/cypress-dashboard/jobs/build-cypress-client-image/
