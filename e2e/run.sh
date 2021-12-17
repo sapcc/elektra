@@ -62,7 +62,7 @@ else
         shift # past value
         ;;
         -b|--browser) 
-        BROWSER="$2"
+        CYPRESS_BROWSER="$2"
         shift # past argument
         shift # past value
         ;;
@@ -73,7 +73,7 @@ else
         -r|--record) 
         date=$(date)
         hostname=$(hostname)
-        CI_BUID_ID="$date - $hostname"
+        CI_BUID_ID="$date - $hostname - DEV"
         CY_CMD="cy2"
         CY_RECORD="https://director.cypress.qa-de-1.cloud.sap"
         shift # past argument
@@ -90,8 +90,8 @@ if [[ -z "${E2E_PATH}" ]]; then
   E2E_PATH=$PWD
 fi
 
-if [[ -z "${BROWSER}" ]]; then
-  BROWSER="electron"
+if [[ -z "${CYPRESS_BROWSER}" ]]; then
+  CYPRESS_BROWSER="electron"
 fi
 
 # https://docs.cypress.io/guides/guides/command-line#cypress-run
@@ -100,8 +100,8 @@ fi
 # --paralell    https://docs.cypress.io/guides/guides/parallelization#Turning-on-parallelization
 # https://docs.sorry-cypress.dev/guide/get-started
 if [[ -n "${CI_BUID_ID}" ]]; then
-  BROWSER_VERSION=$(docker run -it --rm --entrypoint sh cy2 -c "echo \$$BROWSER")
-   CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$CI_BUID_ID - $BROWSER $BROWSER_VERSION")
+  BROWSER_VERSION=$(docker run -it --rm --entrypoint sh cy2 -c "echo \$$CYPRESS_BROWSER")
+   CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$CI_BUID_ID - $CYPRESS_BROWSER $BROWSER_VERSION")
 fi
 #echo "${CY_OPTIONS[@]}"
 #exit
@@ -141,7 +141,7 @@ fi
 # echo $HOST | cat -A
 
 echo "HOST          => $HOST"
-echo "BROWSER       => $BROWSER"
+echo "BROWSER       => $CYPRESS_BROWSER"
 echo "TEST_PATH     => $PWD"
 echo "SPECS_FOLDER  => $SPECS_FOLDER"
 echo "E2E_PATH      => $E2E_PATH"
@@ -167,4 +167,6 @@ docker run --rm -it \
   --env CYPRESS_API_URL=$CY_RECORD \
   --entrypoint $CY_CMD \
   --network=host \
-  cy2 run "${CY_OPTIONS[@]}" --spec "$SPECS_FOLDER" --browser $BROWSER
+  keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest run "${CY_OPTIONS[@]}" --spec "$SPECS_FOLDER" --browser $CYPRESS_BROWSER
+  # https://github.wdf.sap.corp/cc/secrets/tree/master/ci/cypress-dashboard/Dockerfile
+  # https://main.ci.eu-de-2.cloud.sap/teams/services/pipelines/cypress-dashboard/jobs/build-cypress-client-image/

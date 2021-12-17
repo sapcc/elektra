@@ -1,5 +1,9 @@
 # Usage
 
+```bash
+./run.sh --help
+```
+
 ## run e2e tests against elektra running on remote host
 
 ```bash
