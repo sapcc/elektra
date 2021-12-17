@@ -67,13 +67,12 @@ else
         shift # past value
         ;;
         -i|--info) 
-        docker run -it --rm --entrypoint=cypress cy2 info
+        docker run -it --rm --entrypoint=cypress keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest info
         exit
         ;;
         -r|--record) 
-        date=$(date)
         hostname=$(hostname)
-        CI_BUID_ID="$date - $hostname - DEV"
+        CI_BUID_ID="$(date) - DEV - $hostname"
         CY_CMD="cy2"
         CY_RECORD="https://director.cypress.qa-de-1.cloud.sap"
         shift # past argument
@@ -94,13 +93,16 @@ if [[ -z "${CYPRESS_BROWSER}" ]]; then
   CYPRESS_BROWSER="electron"
 fi
 
+echo "check for latest cypress image"
+docker pull keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest
+
 # https://docs.cypress.io/guides/guides/command-line#cypress-run
 # --ci-build-id https://docs.cypress.io/guides/guides/command-line#cypress-run-ci-build-id-lt-id-gt
 # --key         https://docs.cypress.io/guides/guides/command-line#cypress-run-record-key-lt-record-key-gt
 # --paralell    https://docs.cypress.io/guides/guides/parallelization#Turning-on-parallelization
 # https://docs.sorry-cypress.dev/guide/get-started
 if [[ -n "${CI_BUID_ID}" ]]; then
-  BROWSER_VERSION=$(docker run -it --rm --entrypoint sh cy2 -c "echo \$$CYPRESS_BROWSER")
+  BROWSER_VERSION=$(docker run -it --rm --entrypoint sh keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest -c "echo \$$CYPRESS_BROWSER")
    CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$CI_BUID_ID - $CYPRESS_BROWSER $BROWSER_VERSION")
 fi
 #echo "${CY_OPTIONS[@]}"
@@ -154,8 +156,8 @@ fi
 if [[ -n "$DEBUG" ]]; then
   echo "DEBUG:        => $DEBUG"
 fi
-echo ""
 
+echo ""
 docker run --rm -it \
   --volume "$E2E_PATH:/e2e" \
   --workdir "/e2e" \
