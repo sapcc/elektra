@@ -146,12 +146,14 @@ module Networking
 
     def ip_availability
       availability = begin
-                       cloud_admin.networking.network_ip_availability(
-                         params[:network_id]
-                       )
-                     rescue StandardError
-                       nil
-                     end
+        # you need to be network_viewer or network_admin in the project the network is defined in. 
+        # since the floating ip networks are usually shared from other projects we need to use the cloud_admin user. 
+        cloud_admin.networking.network_ip_availability(
+          params[:network_id]
+        )
+      rescue StandardError
+        nil
+      end
       render json: availability.nil? ? [] : availability.subnet_ip_availability
     end
 
