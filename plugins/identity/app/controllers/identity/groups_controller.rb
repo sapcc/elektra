@@ -12,6 +12,11 @@ module Identity
     def index
       enforce_permissions('identity:group_list', domain_id: @scoped_domain_id)
       @groups = services.identity.groups(domain_id: @scoped_domain_id)
+
+      respond_to do |format|
+        format.html { render :index} # or whatever to simply render html
+        format.json { render json: @groups.to_json }
+     end
     end
 
     def new_member

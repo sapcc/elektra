@@ -1,21 +1,35 @@
-import { Tabs, Tab } from 'react-bootstrap';
-import ProjectRoleAssignments from '../containers/project_role_assignments'
+import { useCallback } from "react"
+import { Tabs, Tab } from "react-bootstrap"
+import ProjectRoleAssignments from "../containers/project_role_assignments"
 
-export default ({activeTab, projectId, domainId}) => {
-  return(
-    <Tabs defaultActiveKey={activeTab || 'userRoles'} id="item_payload">
-      <Tab eventKey='userRoles' title="User Role Assignments">
+export default ({ activeTab, projectId, domainId }) => {
+  // update browser address bar
+  const handleSelect = useCallback((tab) => {
+    const newHref = window.location.href.replace(
+      /^(.*active_tab=)(.*)$/,
+      "$1" + tab
+    )
+    window.history.replaceState({}, "Tab " + tab, newHref)
+  })
+
+  return (
+    <Tabs
+      defaultActiveKey={activeTab || "userRoles"}
+      id="item_payload"
+      onSelect={handleSelect}
+    >
+      <Tab eventKey="userRoles" title="User Role Assignments">
         <ProjectRoleAssignments
           projectId={projectId}
           projectDomainId={domainId}
-          type='user'
+          type="user"
         />
       </Tab>
-      <Tab eventKey='groupRoles' title="Group Role Assignments">
+      <Tab eventKey="groupRoles" title="Group Role Assignments">
         <ProjectRoleAssignments
           projectId={projectId}
           projectDomainId={domainId}
-          type='group'
+          type="group"
         />
       </Tab>
     </Tabs>
