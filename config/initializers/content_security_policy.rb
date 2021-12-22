@@ -17,6 +17,12 @@ domains.concat([
 end
   
 Rails.application.config.content_security_policy do |policy|
-  policy.connect_src :self, :https, *domains
-  policy.img_src     :self, :https, :data, "*"
+#  policy.connect_src :self, :https, *domains
+#  policy.img_src     :self, :https, :data, "*"
+
+  # policy.default_src :self, :https, *domains
+  # policy.font_src :self, :https, :data, "*"
+  # policy.object_src :none
+  # policy.script_src :self, :https, "*" 
+  # policy.style_src :self, :https, :unsafe_inline
 end
