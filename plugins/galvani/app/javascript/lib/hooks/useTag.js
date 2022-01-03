@@ -19,22 +19,19 @@ const getServiceParams = (service) => {
 }
 
 const getTopologyTags = (cfg, tags) => {
-  console.log("tags: ", tags, " cfg: ", cfg)
+  const topo = { profiles: {}, totalCount: 0 }
 
-  const topo = {}
   // loop over access prefixes
   Object.keys(cfg).forEach((profileKey) => {
-    // TODO remove xs: prefix
+    // remove xs: prefix
     const profileName = profileKey.split(":")[1] || profileKey
-    if (!topo[profileName]) topo[profileName] = {}
-
-    console.log("profileName: ", profileName)
+    if (!topo.profiles[profileName]) topo.profiles[profileName] = {}
 
     // loop over services from in the access prefix
     Object.keys(cfg[profileKey]).forEach((serviceKey) => {
       const serviceParams = getServiceParams(serviceKey)
       // add service
-      topo[profileName][serviceParams.name] = {
+      topo.profiles[profileName][serviceParams.name] = {
         description: cfg[profileKey][serviceKey]["description"],
         displayName: cfg[profileKey][serviceKey]["display_name"],
         tags: [],
@@ -45,17 +42,27 @@ const getTopologyTags = (cfg, tags) => {
         const prefix = `${profileKey}:${serviceParams.name}`
         if (tag.startsWith(prefix)) {
           const value = tag.split(`${prefix}:`)[1] || null
-          topo[profileName][serviceParams.name]["tags"].push({
+          topo.profiles[profileName][serviceParams.name]["tags"].push({
             tag: tag,
             value: value,
+          })
+          topo.profiles[profileName][serviceParams.name]["tags"].push({
+            tag: tag,
+            value: `${value}2`,
           })
         }
       })
 
       // sort tags in the service by value
-      topo[profileName][serviceParams.name]["tags"] = topo[profileName][
-        serviceParams.name
-      ]["tags"].sort((a, b) => a.value.localeCompare(b.value))
+      topo.profiles[profileName][serviceParams.name]["tags"] = topo.profiles[
+        profileName
+      ][serviceParams.name]["tags"].sort((a, b) =>
+        a.value.localeCompare(b.value)
+      )
+
+      // count tags
+      topo.totalCount +=
+        topo.profiles[profileName][serviceParams.name]["tags"].length
     })
 
     // sort sevices
@@ -71,8 +78,6 @@ const useTag = (cfg, tags) => {
     if (!cfg) return null
     // check undefined input
     if (!tags) tags = []
-    // inforce inputs as array
-    if (!Array.isArray(tags)) tags = [tags]
 
     return getTopologyTags(cfg, tags)
   }, [JSON.stringify(tags), JSON.stringify(cfg)])

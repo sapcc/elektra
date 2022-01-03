@@ -3,9 +3,9 @@ import { fetchTags } from "../actions/tags"
 import ErrorPage from "./ErrorPage"
 import { useDispatch, useGlobalState } from "./StateProvider"
 import useTag from "../../lib/hooks/useTag"
-import AccessProfile from "./AccessProfile"
+import AccessProfileItem from "./AccessProfileItem"
 
-const TagsList = () => {
+const AccessProfilesList = () => {
   const profilesCfg = useGlobalState().config.profiles
   const tags = useGlobalState().tags
   const topology = useTag(profilesCfg, tags.items)
@@ -37,6 +37,8 @@ const TagsList = () => {
       })
   }
 
+  console.log("topology: ", topology)
+
   return (
     <>
       {profilesCfg && (
@@ -56,14 +58,16 @@ const TagsList = () => {
                 </div>
               ) : (
                 <>
-                  {topology &&
-                    Object.keys(topology).map((accessProfileKey, i) => (
-                      <AccessProfile
-                        key={i}
-                        profileName={accessProfileKey}
-                        items={topology[accessProfileKey]}
-                      />
-                    ))}
+                  {topology?.profiles &&
+                    Object.keys(topology.profiles).map(
+                      (accessProfileKey, i) => (
+                        <AccessProfileItem
+                          key={i}
+                          profileKey={accessProfileKey}
+                          items={topology.profiles[accessProfileKey]}
+                        />
+                      )
+                    )}
                 </>
               )}
             </>
@@ -74,4 +78,4 @@ const TagsList = () => {
   )
 }
 
-export default TagsList
+export default AccessProfilesList

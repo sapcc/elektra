@@ -3,7 +3,6 @@ import { Tooltip, OverlayTrigger, Button } from "react-bootstrap"
 import uniqueId from "lodash/uniqueId"
 
 const SmartLink = ({
-  href,
   style,
   size,
   disabled,
@@ -18,7 +17,6 @@ const SmartLink = ({
     <React.Fragment>
       {isAllowedToClick ? (
         <Button
-          href={href}
           bsStyle={style}
           bsSize={size}
           disabled={disabled}
@@ -44,7 +42,6 @@ const SmartLink = ({
           <div style={{ display: "inline-block", cursor: "not-allowed" }}>
             <Button
               style={{ pointerEvents: "none" }}
-              href={href}
               bsSize={size}
               bsStyle={style}
               disabled={true}

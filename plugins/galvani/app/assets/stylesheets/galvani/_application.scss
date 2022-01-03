@@ -21,21 +21,78 @@
 
 */
 
-.access-profiles-toolbar {
-  .toolbar-title {
-    text-transform: capitalize;
+.capitalize {
+  text-transform: capitalize;
+}
+
+.service {
+  display: flex;
+
+  .service-name {
+    border-top: 1px solid #ddd;
+    width: 50%;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .service-name.empty-service {
+    width: 100%;
+  }
+
+  .service-tags {
+    width: 50%;
+    .tag-container {
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #ddd;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      .tag-value {
+        width: 100%;
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
+      }
+      .tag-actions {
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
+      }
+    }
+    .tag-container-disabled {
+      background-color: #f9f9f9;
+    }
+    .confirm-remove {
+      background-color: #f9f9f9;
+      padding-left: 0.8rem;
+      padding-right: 0.8rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      .text {
+        width: 100%;
+      }
+      .cancel {
+        margin-left: 0.5rem;
+      }
+    }
   }
 }
 
-.access-profiles-table.table.datatable {
-  margin-top: 0rem;
-  td {
-    vertical-align: middle;
+.new-service-container {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  .new-service-title {
+    padding-bottom: 1rem;
   }
-  td.service-value {
-    width: 40%;
-  }
-  td.service-name-empty {
-    border-top: 0;
+  .new-service-footer {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    padding-top: 1.5rem;
+    .cancel {
+      margin-left: 0.5rem;
+    }
   }
 }

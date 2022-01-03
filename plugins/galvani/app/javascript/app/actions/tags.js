@@ -14,6 +14,20 @@ const fetchTags = () => {
   )
 }
 
+const removeTag = (service, tag) => {
+  return new Promise((handleSuccess, handleErrors) => {
+    return ajaxHelper
+      .delete(`/tags/${id}`)
+      .then((response) => {
+        // dispatch({ type: "REQUEST_REMOVE_LOADBALANCER", id: id });
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        handleErrors(error.response)
+      })
+  })
+}
+
 const fetchConfig = () => {
   return new Promise((handleSuccess, handleErrors) =>
     ajaxHelper
@@ -27,4 +41,4 @@ const fetchConfig = () => {
   )
 }
 
-export { fetchTags, fetchConfig }
+export { fetchTags, removeTag, fetchConfig }
