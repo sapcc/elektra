@@ -12,6 +12,7 @@ describe("generate_config", () => {
       expect(parseConfig(generateConfig(value, assetType), assetType)).toEqual({
         custom: false,
         value,
+        minFree: "project-quota:foo:bar",
       })
     }
   })
