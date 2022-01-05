@@ -42,8 +42,7 @@ const AccessProfileItem = ({ profileKey, items }) => {
       </div>
 
       <NewTag
-        profilekey={profileKey}
-        items={items}
+        profileName={profileKey}
         show={showNewForm}
         cancelCallback={() => setShowNewForm(false)}
       />

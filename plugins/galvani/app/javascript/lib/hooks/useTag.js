@@ -4,7 +4,8 @@ import React from "react"
 // Ex
 // dns_reader --> name: dns_reader, hasVars: false
 // dns_edit_zone:$1 --> name: dns_edit_zone, hasVars: true
-const getServiceParams = (service) => {
+// TODO: need to test
+export const getServiceParams = (service) => {
   const params = service.split(":")
   let name = params[0] || ""
   let hasVars = false
@@ -18,6 +19,18 @@ const getServiceParams = (service) => {
   return { key: service, name: name, hasVars: hasVars }
 }
 
+const sortMapElements = (map) => {
+  return Object.keys(map)
+    .sort()
+    .reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: map[key],
+      }),
+      {}
+    )
+}
+
 const getTopologyTags = (cfg, tags) => {
   const topo = { profiles: {}, totalCount: 0 }
 
@@ -27,7 +40,7 @@ const getTopologyTags = (cfg, tags) => {
     const profileName = profileKey.split(":")[1] || profileKey
     if (!topo.profiles[profileName]) topo.profiles[profileName] = {}
 
-    // loop over services from in the access prefix
+    // loop over services in the access prefix
     Object.keys(cfg[profileKey]).forEach((serviceKey) => {
       const serviceParams = getServiceParams(serviceKey)
       // add service
@@ -53,7 +66,7 @@ const getTopologyTags = (cfg, tags) => {
         }
       })
 
-      // sort tags in the service by value
+      // sort tags in the profile service by value
       topo.profiles[profileName][serviceParams.name]["tags"] = topo.profiles[
         profileName
       ][serviceParams.name]["tags"].sort((a, b) =>
@@ -65,8 +78,11 @@ const getTopologyTags = (cfg, tags) => {
         topo.profiles[profileName][serviceParams.name]["tags"].length
     })
 
-    // sort sevices
+    // sort sevices in the profile
+    topo.profiles[profileName] = sortMapElements(topo.profiles[profileName])
   })
+
+  // TODO: need to sort the profiles?
 
   console.log("topo: ", topo)
 

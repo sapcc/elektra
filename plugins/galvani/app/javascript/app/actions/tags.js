@@ -14,12 +14,24 @@ const fetchTags = () => {
   )
 }
 
+const createTag = (tag) => {
+  return new Promise((handleSuccess, handleErrors) => {
+    ajaxHelper
+      .post("/tags/", { tag: tag })
+      .then((response) => {
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        handleErrors(error.response)
+      })
+  })
+}
+
 const removeTag = (service, tag) => {
   return new Promise((handleSuccess, handleErrors) => {
     return ajaxHelper
       .delete(`/tags/${id}`)
       .then((response) => {
-        // dispatch({ type: "REQUEST_REMOVE_LOADBALANCER", id: id });
         handleSuccess(response.data)
       })
       .catch((error) => {
@@ -41,4 +53,10 @@ const fetchConfig = () => {
   )
 }
 
-export { fetchTags, removeTag, fetchConfig }
+// xs:internet:dns_reader', 'xs:internet:keppel_account_pull:cc-demo'
+const composeTag = (profile, serviceAction, option) => {
+  const tag = `xs:${profile}:${serviceAction}`
+  return tag
+}
+
+export { fetchTags, createTag, removeTag, fetchConfig, composeTag }

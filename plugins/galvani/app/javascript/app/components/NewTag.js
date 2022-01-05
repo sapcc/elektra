@@ -1,18 +1,49 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useState, useEffect } from "react"
 import { Button, Collapse } from "react-bootstrap"
 import Select from "react-select"
+import { useDispatch, useGlobalState } from "./StateProvider"
+import { getServiceParams } from "../../lib/hooks/useTag"
 
-const NewTag = ({ profilekey, items, show, cancelCallback }) => {
-  // remove services without tags
-  const displayItems = useMemo(() => {
-    if (!items) return []
-    return Object.keys(items).map((key) => {
-      return { value: key, label: `${key} (${items[key].description})` }
+const NewTag = ({ profileName, show, cancelCallback }) => {
+  const profilesCfg = useGlobalState().config.profiles
+  const [serviceValue, setServiceValue] = useState(null)
+  const [showVarsInput, setShowVarsInput] = useState(false)
+
+  // reset selected tag on hide
+  useEffect(() => {
+    // load when the configuration is loaded
+    if (!show) {
+      setShowVarsInput(false)
+    }
+  }, [show])
+
+  // create select options
+  const selectOptions = useMemo(() => {
+    if (!profilesCfg) return []
+
+    // find profile key to avoid errors in case galvani root prefix changes
+    const foundProfileKey = Object.keys(profilesCfg).find((i) =>
+      i.includes(profileName)
+    )
+    const foundServices = profilesCfg[foundProfileKey] || []
+
+    return Object.keys(foundServices).map((serviceKey) => {
+      const serviceParams = getServiceParams(serviceKey)
+      return {
+        value: serviceParams.name,
+        label: `${serviceParams.name} (${profilesCfg[foundProfileKey][serviceKey].description})`,
+        hasVars: serviceParams.hasVars,
+      }
     })
-  }, [items])
+  }, [profilesCfg])
 
   const onSaveClick = () => {}
-  const onSelectChanged = () => {}
+
+  const onServiceSelectChanged = (options) => {
+    // need to check if the profileAction has a variable to set
+    setServiceValue(options)
+    console.log("selected option: ", options)
+  }
 
   return (
     <Collapse in={show}>
@@ -20,7 +51,7 @@ const NewTag = ({ profilekey, items, show, cancelCallback }) => {
         <div className="new-service-title">
           <b>
             Add a new
-            <i className="capitalize">{` ${profilekey} `}</i>
+            <i className="capitalize">{` ${profileName} `}</i>
             Access Profile
           </b>
         </div>
@@ -32,9 +63,9 @@ const NewTag = ({ profilekey, items, show, cancelCallback }) => {
           isRtl={false}
           isSearchable={true}
           name="service-action"
-          onChange={onSelectChanged}
-          options={displayItems}
-          // value={value}
+          onChange={onServiceSelectChanged}
+          options={selectOptions}
+          value={serviceValue}
           closeMenuOnSelect={true}
           placeholder="Select Service and Action"
         />
