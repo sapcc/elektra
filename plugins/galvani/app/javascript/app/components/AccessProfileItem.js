@@ -3,6 +3,7 @@ import ServiceAction from "./ServiceAction"
 import { policy } from "policy"
 import SmartLink from "./shared/SmartLink"
 import NewTag from "./NewTag"
+import { FormStateProvider } from "./FormState"
 
 const AccessProfileItem = ({ profileKey, items }) => {
   const [showNewForm, setShowNewForm] = useState(false)
@@ -41,11 +42,13 @@ const AccessProfileItem = ({ profileKey, items }) => {
         </div>
       </div>
 
-      <NewTag
-        profileName={profileKey}
-        show={showNewForm}
-        cancelCallback={() => setShowNewForm(false)}
-      />
+      <FormStateProvider>
+        <NewTag
+          profileName={profileKey}
+          show={showNewForm}
+          cancelCallback={() => setShowNewForm(false)}
+        />
+      </FormStateProvider>
 
       {displayItems && Object.keys(displayItems).length > 0 ? (
         Object.keys(displayItems).map((serviceKey, i) => (
