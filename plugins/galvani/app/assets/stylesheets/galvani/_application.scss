@@ -21,6 +21,24 @@
 
 */
 
+.error-page {
+  .display-flex {
+    display: flex;
+    align-items: center;
+  }
+
+  .action-link {
+    margin-top: 1.5rem;
+    cursor: pointer;
+    :hover {
+      text-decoration: underline;
+    }
+    i {
+      margin-left: 0.5rem;
+    }
+  }
+}
+
 .capitalize {
   text-transform: capitalize;
 }
@@ -86,11 +104,13 @@
   .new-service-title {
     padding-bottom: 1rem;
   }
+  .new-service-input {
+    padding-bottom: 1.5rem;
+  }
   .new-service-footer {
     display: flex;
     align-items: center;
     flex-direction: row-reverse;
-    padding-top: 1.5rem;
     .cancel {
       margin-left: 0.5rem;
     }

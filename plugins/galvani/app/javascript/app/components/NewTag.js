@@ -1,13 +1,16 @@
 import React, { useMemo, useState, useEffect } from "react"
-import { Button, Collapse } from "react-bootstrap"
+import { Button, Collapse, FormGroup, FormControl } from "react-bootstrap"
 import Select from "react-select"
 import { useDispatch, useGlobalState } from "./StateProvider"
 import { getServiceParams } from "../../lib/hooks/useTag"
 
 const NewTag = ({ profileName, show, cancelCallback }) => {
   const profilesCfg = useGlobalState().config.profiles
-  const [serviceValue, setServiceValue] = useState(null)
   const [showVarsInput, setShowVarsInput] = useState(false)
+
+  const [serviceValue, setServiceValue] = useState(null)
+  const [serviceVarPlaceholder, setServiceVarPlaceholder] =
+    useState("Enter text")
 
   // reset selected tag on hide
   useEffect(() => {
@@ -33,6 +36,9 @@ const NewTag = ({ profileName, show, cancelCallback }) => {
         value: serviceParams.name,
         label: `${serviceParams.name} (${profilesCfg[foundProfileKey][serviceKey].description})`,
         hasVars: serviceParams.hasVars,
+        varPlaceholder: `${
+          profilesCfg[foundProfileKey][serviceKey].$1 || "Enter text"
+        }`,
       }
     })
   }, [profilesCfg])
@@ -42,8 +48,11 @@ const NewTag = ({ profileName, show, cancelCallback }) => {
   const onServiceSelectChanged = (options) => {
     // need to check if the profileAction has a variable to set
     setServiceValue(options)
+    setShowVarsInput(options.hasVars || false)
     console.log("selected option: ", options)
   }
+
+  const onChangeServiceVar = () => {}
 
   return (
     <Collapse in={show}>
@@ -55,20 +64,40 @@ const NewTag = ({ profileName, show, cancelCallback }) => {
             Access Profile
           </b>
         </div>
-        <Select
-          className="basic-single"
-          classNamePrefix="select"
-          isDisabled={false}
-          isClearable={true}
-          isRtl={false}
-          isSearchable={true}
-          name="service-action"
-          onChange={onServiceSelectChanged}
-          options={selectOptions}
-          value={serviceValue}
-          closeMenuOnSelect={true}
-          placeholder="Select Service and Action"
-        />
+
+        <FormGroup controlId="service">
+          <Select
+            className="basic-single"
+            classNamePrefix="select"
+            isDisabled={false}
+            isClearable={true}
+            isRtl={false}
+            isSearchable={true}
+            name="service-action"
+            onChange={onServiceSelectChanged}
+            options={selectOptions}
+            value={serviceValue}
+            closeMenuOnSelect={true}
+            placeholder="Select Service and Action"
+          />
+        </FormGroup>
+
+        {showVarsInput && (
+          <FormGroup
+            controlId="serviceVar"
+            // validationState={this.getValidationState()}
+          >
+            <FormControl
+              type="text"
+              // value={this.state.value}
+              placeholder={serviceVarPlaceholder}
+              onChange={onChangeServiceVar}
+            />
+            <FormControl.Feedback />
+            {/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
+          </FormGroup>
+        )}
+
         <div className="new-service-footer">
           <span className="cancel">
             <Button bsStyle="default" bsSize="small" onClick={cancelCallback}>

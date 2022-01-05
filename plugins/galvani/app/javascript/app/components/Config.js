@@ -36,16 +36,27 @@ const Config = () => {
       {config.error ? (
         <ErrorPage
           headTitle="Loading configuration"
-          error={tags.error}
+          error={config.error}
           onReload={loadConfig}
         />
       ) : (
         <>
-          {config.isLoading && (
+          {config.isLoading ? (
             <div>
               <span className="spinner"></span>
               Loading configuration...
             </div>
+          ) : (
+            <>
+              {(!config.profiles ||
+                Object.keys(config.profiles).length == 0) && (
+                <ErrorPage
+                  headTitle="Loading configuration"
+                  error="Configuration seems to be empty."
+                  onReload={loadConfig}
+                />
+              )}
+            </>
           )}
         </>
       )}
