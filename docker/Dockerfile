@@ -65,6 +65,7 @@ RUN script/organize_plugins_gemspecs
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 
+# add elektra sources into image
 ADD . /home/app/webapp
 
 #ENV NODE_ENV=production
