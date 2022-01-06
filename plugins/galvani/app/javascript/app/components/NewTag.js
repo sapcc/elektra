@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react"
-import { Button, Collapse, FormGroup, FormControl } from "react-bootstrap"
+import { Button, Collapse, Form, FormGroup, FormControl } from "react-bootstrap"
 import Select from "react-select"
 import { useDispatch, useGlobalState } from "./StateProvider"
 import { getServiceParams } from "../../lib/hooks/useTag"
@@ -75,48 +75,65 @@ const NewTag = ({ profileName, show, cancelCallback }) => {
           </b>
         </div>
 
-        <FormGroup controlId="service">
-          <Select
-            className="basic-single"
-            classNamePrefix="select"
-            isDisabled={false}
-            isRtl={false}
-            isSearchable={true}
-            name="service-action"
-            value={formState.service}
-            onChange={onServiceSelectChanged}
-            options={selectOptions}
-            closeMenuOnSelect={true}
-            placeholder="Select Service and Action"
-          />
-        </FormGroup>
-
-        <Collapse in={showVarsInput}>
-          <FormGroup
-            controlId="serviceVar"
-            // validationState={this.getValidationState()}
-          >
-            <FormControl
-              type="text"
-              value={formState.attr}
-              placeholder={serviceVarPlaceholder}
-              onChange={onChangeServiceVar}
+        <Form
+          autoComplete="off"
+          onSubmit={(e) => e.preventDefault()}
+          onKeyDown={(e) => {
+            // no submit on enter pressed
+            if (e.key === 13) {
+              e.preventDefault()
+              e.stopPropagation()
+              return false
+            }
+          }}
+        >
+          <FormGroup controlId="service">
+            <Select
+              className="basic-single"
+              classNamePrefix="select"
+              isDisabled={false}
+              isRtl={false}
+              isSearchable={true}
+              name="service-action"
+              value={formState.service}
+              onChange={onServiceSelectChanged}
+              options={selectOptions}
+              closeMenuOnSelect={true}
+              placeholder="Select Service and Action"
             />
-            <FormControl.Feedback />
-            {/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
           </FormGroup>
-        </Collapse>
 
-        <div className="new-service-footer">
-          <span className="cancel">
-            <Button bsStyle="default" bsSize="small" onClick={onCancelClicked}>
-              Cancel
+          <Collapse in={showVarsInput}>
+            <FormGroup
+              controlId="serviceVar"
+              // validationState={this.getValidationState()}
+            >
+              <FormControl
+                type="text"
+                value={formState.attr}
+                placeholder={serviceVarPlaceholder}
+                onChange={onChangeServiceVar}
+              />
+              <FormControl.Feedback />
+              {/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
+            </FormGroup>
+          </Collapse>
+
+          <div className="new-service-footer">
+            <span className="cancel">
+              <Button
+                bsStyle="default"
+                bsSize="small"
+                onClick={onCancelClicked}
+              >
+                Cancel
+              </Button>
+            </span>
+            <Button bsStyle="primary" bsSize="small" onClick={onSaveClick}>
+              save
             </Button>
-          </span>
-          <Button bsStyle="primary" bsSize="small" onClick={onSaveClick}>
-            save
-          </Button>
-        </div>
+          </div>
+        </Form>
       </div>
     </Collapse>
   )
