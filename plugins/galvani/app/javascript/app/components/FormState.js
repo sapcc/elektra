@@ -3,20 +3,20 @@ import React, { createContext, useReducer } from "react"
 const FormState = createContext(null)
 const FormDispatch = createContext(null)
 
-const initialState = { service: null, attr: null }
+const initialState = { service: null, attr: "" }
 
 const setService = (state, { service }) => {
   // get the id of the last item
-  return { ...state, service: service, attr: null }
+  return { ...state, service: service, attr: "" }
 }
 const removeService = (state) => {
-  return { ...state, service: null, attr: null }
+  return { ...state, service: null, attr: "" }
 }
 const setServiceAttr = (state, { attr }) => {
   return { ...state, attr: attr }
 }
 const removeServiceAttr = (state) => {
-  return { ...state, attr: null }
+  return { ...state, attr: "" }
 }
 
 function reducer(state, action) {
@@ -34,7 +34,7 @@ function reducer(state, action) {
   }
 }
 
-export const FormStateProvider = ({ children, items }) => {
+export const FormStateProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   return (
     <FormState.Provider value={state}>
