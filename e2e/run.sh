@@ -8,7 +8,7 @@ function help_me () {
   echo "       run.sh --host http://localhost:3000 landingpage                 # will only run landingpage tests"
   echo "       run.sh --host http://localhost:3000 --debug 'cypress:network:*' # will show debug information about the networking"
   echo "       run.sh --e2e_path                                               # this optional if not set \$PWD is used"
-  echo "       run.sh --browser chrome                                         # choose browser to test (default is electron)"
+  echo "       run.sh --browser chrome                                         # choose browser to test (default is chrome)"
   echo "MAC users: ./run.sh --host http://host.docker.internal:3000"
   echo ""
   echo "Debugging options: https://docs.cypress.io/guides/references/troubleshooting#Log-sources"
@@ -90,7 +90,7 @@ if [[ -z "${E2E_PATH}" ]]; then
 fi
 
 if [[ -z "${CYPRESS_BROWSER}" ]]; then
-  CYPRESS_BROWSER="electron"
+  CYPRESS_BROWSER="chrome"
 fi
 
 echo "check for latest cypress image"
@@ -103,7 +103,7 @@ docker pull keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest
 # https://docs.sorry-cypress.dev/guide/get-started
 if [[ -n "${CI_BUID_ID}" ]]; then
   BROWSER_VERSION=$(docker run -it --rm --entrypoint sh keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest -c "echo \$$CYPRESS_BROWSER")
-   CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$CI_BUID_ID - $CYPRESS_BROWSER $BROWSER_VERSION")
+  CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$CI_BUID_ID - $CYPRESS_BROWSER $BROWSER_VERSION")
 fi
 #echo "${CY_OPTIONS[@]}"
 #exit
