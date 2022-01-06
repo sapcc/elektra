@@ -286,11 +286,11 @@ SimpleNavigation::Configuration.run do |navigation|
                  'Services',
                  nil,
                  html: { class: 'fancy-nav-header', 'data-icon': 'service-icon' },
-                 if: -> { plugin_available?(:email_service) } do |services_nav|
+                 if: -> { services.available?(:email_service) } do |services_nav|
       services_nav.item :email_service,
-                        'eMail',
+                        'Email',
                         -> { plugin('email_service').index_path },
-                        if: -> { plugin_available?(:email_service) },
+                        if: -> { services.available?(:email_service) },
                         highlights_on: -> { params[:controller][%r{email_service/?.*}] }
     end
 

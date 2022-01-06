@@ -91,9 +91,6 @@ Dir.glob('plugins/*').each do |plugin_path|
   end
 end
 
-# email_service
-gem 'aws-sdk-ses'
-
 ######################## END #######################
 
 group :api_client do
