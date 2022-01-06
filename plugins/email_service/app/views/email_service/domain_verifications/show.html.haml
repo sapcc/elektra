@@ -1,0 +1,68 @@
+= content_for :title do
+  Identity details
+.modal-body.static-columns
+
+  .modal-section.first
+    %h3
+      Details
+    - if @verified_identity
+      %table.table
+        %tr
+          %td
+            %strong ID:
+          %td 
+            =@verified_identity[:id]
+        %tr
+          %td
+            %strong Identity:
+          %td 
+            =@verified_identity[:identity]
+        %tr
+          %td
+            %strong Verification Token:
+            %a{ href: "#", title: "You need to create a TXT record for your domain using this token displayed here.", data: { toggle: "tooltip", html: true} }
+              %i.fa.fa-question-circle-o
+          %td 
+            =@verified_identity[:verification_token]
+        %tr
+          %td
+            %strong Status:
+          %td 
+            =@verified_identity[:status]
+        %tr
+          %td
+            %strong DKIM Tokens:
+          %td 
+            =@verified_identity[:dkim_tokens]
+        %tr
+          %td
+            %strong DKIM Enabled:
+          %td 
+            =@verified_identity[:dkim_enabled]
+        %tr
+          %td
+            %strong DKIM Verification Status:
+          %td 
+            =@verified_identity[:dkim_verification_status]
+
+%hr
+- if @verified_identity[:dkim_tokens]
+  Create the following CNAME DNS records.
+  %table.table.table-striped
+    %th Name
+    %th Type
+    %th Content
+  - @verified_identity[:dkim_tokens].each  do |token|
+    %tr
+      %td 
+      = "#{token}._domainkey.#{@verified_identity[:identity]}"
+      %td 
+        CNAME
+      %td
+      = "#{token}.dkim.amazonses.com."
+
+%div{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+  - else
+    = link_to "Close", plugin('email_service').domain_verifications_url(), class: 'btn btn-default'
