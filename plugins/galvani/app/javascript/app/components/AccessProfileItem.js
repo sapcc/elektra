@@ -44,7 +44,7 @@ const AccessProfileItem = ({ profileKey, items }) => {
 
       <FormStateProvider>
         <NewTag
-          profileName={profileKey}
+          profileKey={profileKey}
           show={showNewForm}
           cancelCallback={() => setShowNewForm(false)}
         />

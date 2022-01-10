@@ -3,20 +3,21 @@ import React, { createContext, useReducer } from "react"
 const FormState = createContext(null)
 const FormDispatch = createContext(null)
 
-const initialState = { service: null, attr: "" }
+const initialState = { profile: "", service: null, attrs: {} }
 
-const setService = (state, { service }) => {
-  // get the id of the last item
-  return { ...state, service: service, attr: "" }
+const setService = (state, { profile, service }) => {
+  return { ...state, profile, service, attrs: {} }
 }
 const removeService = (state) => {
-  return { ...state, service: null, attr: "" }
+  return { ...state, profile: "", service: null, attrs: {} }
 }
-const setServiceAttr = (state, { attr }) => {
-  return { ...state, attr: attr }
+const setServiceAttr = (state, { key, value }) => {
+  return { ...state, attrs: { ...state.attrs, [key]: value } }
 }
-const removeServiceAttr = (state) => {
-  return { ...state, attr: "" }
+const removeServiceAttr = (state, { key }) => {
+  const attrCopy = { ...state.attrs }
+  delete attrCopy[key]
+  return { ...state, attrs: attrCopy }
 }
 
 function reducer(state, action) {

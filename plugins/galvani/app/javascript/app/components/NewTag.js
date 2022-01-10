@@ -2,67 +2,65 @@ import React, { useMemo, useState, useEffect } from "react"
 import { Button, Collapse, Form, FormGroup, FormControl } from "react-bootstrap"
 import Select from "react-select"
 import { useDispatch, useGlobalState } from "./StateProvider"
-import { getServiceParams } from "../../lib/hooks/useTag"
+import {
+  getServiceParams,
+  createTag,
+  formValidation,
+  BASE_PREFIX,
+} from "../../lib/hooks/useTag"
 import { useFormState, useFormDispatch } from "./FormState"
 
-const NewTag = ({ profileName, show, cancelCallback }) => {
+const NewTag = ({ profileKey, show, cancelCallback }) => {
   const profilesCfg = useGlobalState().config.profiles
-  const [showVarsInput, setShowVarsInput] = useState(false)
-  const [serviceVarPlaceholder, setServiceVarPlaceholder] =
-    useState("Enter text")
+  const [validation, setValidation] = useState({
+    valid: true,
+    invalidItems: {},
+  })
   const dispatch = useFormDispatch()
   const formState = useFormState()
 
-  // reset selected tag on hide
-  useEffect(() => {
-    // load when the configuration is loaded
-    if (!show) {
-      setShowVarsInput(false)
-    }
-  }, [show])
+  const profilePrefix = useMemo(
+    () => `${BASE_PREFIX}:${profileKey}`,
+    [profileKey]
+  )
 
   // create select options
   const selectOptions = useMemo(() => {
     if (!profilesCfg) return []
 
-    // find profile key to avoid errors in case galvani root prefix changes
-    const foundProfileKey = Object.keys(profilesCfg).find((i) =>
-      i.includes(profileName)
-    )
-    const foundServices = profilesCfg[foundProfileKey] || []
-
+    const foundServices = profilesCfg[profilePrefix] || []
     return Object.keys(foundServices).map((serviceKey) => {
+      // serviceKey is in the form of keyname:$1:$2
+      // getServiceParams return the keyname and the vars $1,$2 as []
       const serviceParams = getServiceParams(serviceKey)
       return {
         value: serviceParams.name,
-        label: `${serviceParams.name} (${profilesCfg[foundProfileKey][serviceKey].description})`,
-        hasVars: serviceParams.hasVars,
-        varPlaceholder: `${
-          profilesCfg[foundProfileKey][serviceKey].$1 || "Enter text"
-        }`,
+        label: `${serviceParams.name} (${profilesCfg[profilePrefix]?.[serviceKey]?.description})`,
+        key: serviceParams.key,
+        vars: serviceParams.vars,
       }
     })
   }, [profilesCfg])
 
-  const onSaveClick = () => {}
-
-  const onServiceSelectChanged = (options) => {
-    dispatch({ type: "SET_SERVICE", service: options })
-
-    // need to check if the profileAction has a variable to set
-    setShowVarsInput(options.hasVars || false)
-    setServiceVarPlaceholder(options.varPlaceholder)
+  const onSaveClick = () => {
+    // validate form
+    const isValidForm = formValidation(profilesCfg, formState)
+    console.log("isValidForm: ", isValidForm)
+    // collect values and build tag
+    const tag = createTag(formState)
+    console.log("the new tag: ", tag)
   }
 
-  const onChangeServiceVar = (e) => {
-    dispatch({ type: "SET_SERVICE_ATTR", attr: e.target.value })
+  const onServiceSelectChanged = (options) => {
+    dispatch({ type: "SET_SERVICE", profile: profileKey, service: options })
   }
 
   const onCancelClicked = () => {
-    // reset values when closing
     dispatch({ type: "REMOVE_SERVICE" })
     cancelCallback()
   }
+
+  const serviceVars = formState.service?.vars || []
 
   return (
     <Collapse in={show}>
@@ -70,7 +68,7 @@ const NewTag = ({ profileName, show, cancelCallback }) => {
         <div className="new-service-title">
           <b>
             Add a new
-            <i className="capitalize">{` ${profileName} `}</i>
+            <i className="capitalize">{` ${profileKey} `}</i>
             Access Profile
           </b>
         </div>
@@ -103,21 +101,33 @@ const NewTag = ({ profileName, show, cancelCallback }) => {
             />
           </FormGroup>
 
-          <Collapse in={showVarsInput}>
-            <FormGroup
-              controlId="serviceVar"
-              // validationState={this.getValidationState()}
-            >
-              <FormControl
-                type="text"
-                value={formState.attr}
-                placeholder={serviceVarPlaceholder}
-                onChange={onChangeServiceVar}
-              />
-              <FormControl.Feedback />
-              {/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
-            </FormGroup>
-          </Collapse>
+          <>
+            {serviceVars.map((varKey, i) => (
+              <FormGroup
+                key={i}
+                controlId={varKey}
+                // validationState="success"
+              >
+                <FormControl
+                  type="text"
+                  value={formState.attrs[varKey] || ""}
+                  placeholder={
+                    profilesCfg[profilePrefix]?.[formState.service.key]?.[
+                      varKey
+                    ] || "Enter value"
+                  }
+                  onChange={(e) => {
+                    dispatch({
+                      type: "SET_SERVICE_ATTR",
+                      key: varKey,
+                      value: e.target.value,
+                    })
+                  }}
+                />
+                <FormControl.Feedback />
+              </FormGroup>
+            ))}
+          </>
 
           <div className="new-service-footer">
             <span className="cancel">

@@ -1,22 +1,75 @@
 import React from "react"
 
+export const BASE_PREFIX = "xs"
+
 // remove service params from the key
 // Ex
 // dns_reader --> name: dns_reader, hasVars: false
 // dns_edit_zone:$1 --> name: dns_edit_zone, hasVars: true
 // TODO: need to test
 export const getServiceParams = (service) => {
-  const params = service.split(":")
+  const newService = service || ""
+  const params = newService.split(":") || []
   let name = params[0] || ""
   let hasVars = false
-  if (params[1]) {
-    if (params[1].includes("$")) {
-      hasVars = true
-    } else {
-      name = `${name}:${params[1]}`
+  let vars = []
+  // check for attr
+  if (params.length > 0) {
+    const attrs = params.slice(1)
+    attrs.forEach((attr) => {
+      if (attr.includes("$")) {
+        hasVars = true
+        vars.push(attr)
+      }
+    })
+  }
+  return { key: newService, name: name, hasVars: hasVars, vars: vars }
+}
+
+export const createTag = ({ profile, service, attrs }) => {
+  let tag = `${BASE_PREFIX}:${profile}:${service.value}`
+  Object.keys(attrs).forEach((key) => {
+    tag = `${tag}:${attrs[key]}`
+  })
+  return tag
+}
+
+// use the config to find the description of the attr to validate
+export const formValidation = (cfg, { profile, service, attrs }) => {
+  const invalidItems = {}
+
+  // find the profileKey with the root prefix 'xs'
+  const foundProfileKey = Object.keys(cfg).find((i) => i.includes(profile))
+
+  // service vars are the variables extracted with getServiceParams
+  if (service.vars.length > 0) {
+    service.vars.forEach((varKey) => {
+      const attrName = cfg[foundProfileKey]?.[service.key]?.[varKey]
+      // check if var exist as attr given from the inputs
+      if (!attrs[varKey] || attrs[varKey].length === 0) {
+        if (!invalidItems[varKey]) invalidItems[varKey] = []
+        invalidItems[varKey].push(`Attribute '${attrName}' is missing`)
+      }
+      // max attrs length: 50 for prefixes and the rest for attr.
+      // xs:internet:keppel_account_push: --> 32 chars
+      // keystone tag max length --> 255
+      if (attrs[varKey] && attrs[varKey].length > 200) {
+        if (!invalidItems[varKey]) invalidItems[varKey] = []
+        invalidItems[varKey].push(`Attribute '${attrName}' is missing`)
+      }
+    })
+  } else {
+    const numbAttrs = Object.keys(attrs) || []
+    // check for non attribute
+    if (numbAttrs && numbAttrs.length > 0) {
+      if (!invalidItems["attr"]) invalidItems["attr"] = []
+      invalidItems["attr"].push(
+        `Attributes ${JSON.stringify(numbAttrs)} not allowed`
+      )
     }
   }
-  return { key: service, name: name, hasVars: hasVars }
+
+  return invalidItems
 }
 
 const sortMapElements = (map) => {
