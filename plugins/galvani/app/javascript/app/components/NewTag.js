@@ -1,5 +1,12 @@
 import React, { useMemo, useState, useEffect } from "react"
-import { Button, Collapse, Form, FormGroup, FormControl } from "react-bootstrap"
+import {
+  Button,
+  Collapse,
+  Form,
+  FormGroup,
+  FormControl,
+  HelpBlock,
+} from "react-bootstrap"
 import Select from "react-select"
 import { useDispatch, useGlobalState } from "./StateProvider"
 import {
@@ -12,10 +19,7 @@ import { useFormState, useFormDispatch } from "./FormState"
 
 const NewTag = ({ profileKey, show, cancelCallback }) => {
   const profilesCfg = useGlobalState().config.profiles
-  const [validation, setValidation] = useState({
-    valid: true,
-    invalidItems: {},
-  })
+  const [validation, setValidation] = useState({})
   const dispatch = useFormDispatch()
   const formState = useFormState()
 
@@ -45,18 +49,28 @@ const NewTag = ({ profileKey, show, cancelCallback }) => {
   const onSaveClick = () => {
     // validate form
     const isValidForm = formValidation(profilesCfg, formState)
-    console.log("isValidForm: ", isValidForm)
+    setValidation(isValidForm)
+
+    // if no valid
+    if (Object.keys(isValidForm).length > 0) return
     // collect values and build tag
     const tag = createTag(formState)
     console.log("the new tag: ", tag)
+    // TODO: send request
   }
 
   const onServiceSelectChanged = (options) => {
+    // save the option in the formState
     dispatch({ type: "SET_SERVICE", profile: profileKey, service: options })
+    // reset the validation
+    setValidation({})
   }
 
   const onCancelClicked = () => {
+    // reset service
     dispatch({ type: "REMOVE_SERVICE" })
+    // reset the validation
+    setValidation({})
     cancelCallback()
   }
 
@@ -106,7 +120,7 @@ const NewTag = ({ profileKey, show, cancelCallback }) => {
               <FormGroup
                 key={i}
                 controlId={varKey}
-                // validationState="success"
+                validationState={validation[varKey] && "error"}
               >
                 <FormControl
                   type="text"
@@ -124,7 +138,10 @@ const NewTag = ({ profileKey, show, cancelCallback }) => {
                     })
                   }}
                 />
-                <FormControl.Feedback />
+                {validation[varKey] &&
+                  validation[varKey].map((msg, i) => (
+                    <HelpBlock key={i}>{msg}</HelpBlock>
+                  ))}
               </FormGroup>
             ))}
           </>

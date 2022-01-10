@@ -44,18 +44,17 @@ export const formValidation = (cfg, { profile, service, attrs }) => {
   // service vars are the variables extracted with getServiceParams
   if (service.vars.length > 0) {
     service.vars.forEach((varKey) => {
-      const attrName = cfg[foundProfileKey]?.[service.key]?.[varKey]
       // check if var exist as attr given from the inputs
       if (!attrs[varKey] || attrs[varKey].length === 0) {
         if (!invalidItems[varKey]) invalidItems[varKey] = []
-        invalidItems[varKey].push(`Attribute '${attrName}' is missing`)
+        invalidItems[varKey].push(`Attribute can't be blank`)
       }
       // max attrs length: 50 for prefixes and the rest for attr.
       // xs:internet:keppel_account_push: --> 32 chars
       // keystone tag max length --> 255
       if (attrs[varKey] && attrs[varKey].length > 200) {
         if (!invalidItems[varKey]) invalidItems[varKey] = []
-        invalidItems[varKey].push(`Attribute '${attrName}' is missing`)
+        invalidItems[varKey].push(`Attribute is too long. Max 200 chars.`)
       }
     })
   } else {
