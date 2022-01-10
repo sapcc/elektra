@@ -29,16 +29,17 @@ const AccessProfileItem = ({ profileKey, items }) => {
       <div className="toolbar access-profiles-toolbar">
         <span className="capitalize">{profileKey}</span>
         <div className="main-buttons">
-          <SmartLink
-            onClick={onCreateClick}
-            style="primary"
-            size="small"
-            disabled={showNewForm}
-            isAllowed={canCreate}
-            notAllowedText="Not allowed to add new access profiles. Please check with your administrator."
-          >
-            New
-          </SmartLink>
+          {!showNewForm && (
+            <SmartLink
+              onClick={onCreateClick}
+              style="primary"
+              size="small"
+              isAllowed={canCreate}
+              notAllowedText="Not allowed to add new access profiles. Please check with your administrator."
+            >
+              New
+            </SmartLink>
+          )}
         </div>
       </div>
 
