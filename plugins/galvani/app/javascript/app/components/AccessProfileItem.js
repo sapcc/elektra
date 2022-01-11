@@ -72,7 +72,7 @@ const AccessProfileItem = ({ profileKey, items, reloadTags }) => {
       {displayItems && Object.keys(displayItems).length > 0 ? (
         Object.keys(displayItems).map((serviceKey, i) => (
           <ServiceAction
-            key={i}
+            key={serviceKey}
             serviceKey={serviceKey}
             serviceAttr={items[serviceKey]}
           />

@@ -129,7 +129,7 @@ const NewTag = ({ profileKey, onClose }) => {
               onChange={onServiceSelectChanged}
               options={selectOptions}
               closeMenuOnSelect={true}
-              placeholder="Select Service and Action"
+              placeholder="Select service and action"
             />
             {formValidation["service"] &&
               formValidation["service"].map((msg, i) => (
