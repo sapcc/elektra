@@ -23,6 +23,7 @@ const NewTag = ({ profileKey, onClose }) => {
   const profilesCfg = useGlobalState().config.profiles
   const [formValidation, setFormValidation] = useState({})
   const [apiError, setApiError] = useState(null)
+  const [saving, setSaving] = useState(false)
   const dispatch = useFormDispatch()
   const formState = useFormState()
 
@@ -50,12 +51,16 @@ const NewTag = ({ profileKey, onClose }) => {
   }, [profilesCfg])
 
   const onSaveClick = () => {
+    setSaving(true)
     // validate form
     const isValidForm = validateForm(profilesCfg, formState)
     setFormValidation(isValidForm)
 
     // if no valid
-    if (Object.keys(isValidForm).length > 0) return
+    if (Object.keys(isValidForm).length > 0) {
+      setSaving(false)
+      return
+    }
     // collect values and build tag
     const tag = composeTag(formState)
 
@@ -72,6 +77,7 @@ const NewTag = ({ profileKey, onClose }) => {
         onClose({ reload: true })
       })
       .catch((error) => {
+        setSaving(false)
         setApiError(errorMessage(error))
       })
   }
@@ -108,7 +114,10 @@ const NewTag = ({ profileKey, onClose }) => {
             }
           }}
         >
-          <FormGroup controlId="service">
+          <FormGroup
+            controlId="service"
+            validationState={formValidation["service"] && "error"}
+          >
             <Select
               className="basic-single"
               classNamePrefix="select"
@@ -122,6 +131,10 @@ const NewTag = ({ profileKey, onClose }) => {
               closeMenuOnSelect={true}
               placeholder="Select Service and Action"
             />
+            {formValidation["service"] &&
+              formValidation["service"].map((msg, i) => (
+                <HelpBlock key={i}>{msg}</HelpBlock>
+              ))}
           </FormGroup>
 
           <>
@@ -164,11 +177,22 @@ const NewTag = ({ profileKey, onClose }) => {
 
           <div className="new-service-footer">
             <span className="cancel">
-              <Button bsStyle="default" bsSize="small" onClick={onClose}>
+              <Button
+                bsStyle="default"
+                bsSize="small"
+                disabled={saving}
+                onClick={onClose}
+              >
                 Cancel
               </Button>
             </span>
-            <Button bsStyle="primary" bsSize="small" onClick={onSaveClick}>
+            <Button
+              bsStyle="primary"
+              bsSize="small"
+              disabled={saving}
+              onClick={onSaveClick}
+            >
+              {saving && <span className="spinner"></span>}
               save
             </Button>
           </div>

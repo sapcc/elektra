@@ -40,9 +40,20 @@ export const validateForm = (cfg, { profile, service, attrs }) => {
 
   // find the profileKey with the root prefix 'xs'
   const foundProfileKey = Object.keys(cfg).find((i) => i.includes(profile))
+  if (!foundProfileKey) {
+    if (!invalidItems["profile"]) invalidItems["profile"] = []
+    invalidItems["profile"].push(`No access profile found`)
+  }
+  const foundServiceKey = Object.keys(cfg[foundProfileKey]).find((i) =>
+    i.includes(service?.value)
+  )
+  if (!foundServiceKey) {
+    if (!invalidItems["service"]) invalidItems["service"] = []
+    invalidItems["service"].push(`No service and action found`)
+  }
 
   // service vars are the variables extracted with getServiceParams
-  if (service.vars.length > 0) {
+  if (service?.vars?.length > 0) {
     service.vars.forEach((varKey) => {
       // check if var exist as attr given from the inputs
       if (!attrs[varKey] || attrs[varKey].length === 0) {

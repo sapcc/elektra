@@ -8,6 +8,7 @@ import { errorMessage } from "../../lib/hooks/useTag"
 
 const Tag = ({ tag }) => {
   const [showConfirm, setShowConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const dispatch = useDispatch()
   const canDelete = true
 
@@ -16,7 +17,7 @@ const Tag = ({ tag }) => {
   }
 
   const onConfirmDeleteClick = () => {
-    console.log("remove tag: ", tag)
+    setDeleting(true)
 
     return removeTag(tag.tag)
       .then((response) => {
@@ -30,6 +31,7 @@ const Tag = ({ tag }) => {
         loadTags()
       })
       .catch((error) => {
+        setDeleting(false)
         addError(`Could not remove access profile, ${errorMessage(error)}`)
       })
   }
@@ -75,13 +77,16 @@ const Tag = ({ tag }) => {
             <div className="text">Are you sure?</div>
             <Button
               bsStyle="danger"
+              disabled={deleting}
               bsSize="small"
               onClick={onConfirmDeleteClick}
             >
+              {deleting && <span className="spinner"></span>}
               Yes
             </Button>
             <span className="cancel">
               <Button
+                disabled={deleting}
                 bsStyle="default"
                 bsSize="small"
                 onClick={() => setShowConfirm(false)}
