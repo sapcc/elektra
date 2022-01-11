@@ -1,5 +1,5 @@
 describe("Instances", () => {
-  before(() => {
+  beforeEach(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
       Cypress.env("TEST_USER"),
@@ -14,19 +14,13 @@ describe("Instances", () => {
     cy.request("/").should((response) => {
       expect(response.status).to.eq(200)
     })
-  })
-
-  it("contains 'Create New' button", () => {
     cy.get(".btn").contains("Create New")
   })
 
-  // instances?overlay=new
   it("click on 'Create New' button opens a modal window", () => {
     cy.get(".btn").contains("Create New").click()
     cy.url().should("include", "instances?overlay=new")
-    cy.get(".modal-content").as("modal")
-
-    cy.get("@modal").contains("New Instance")
-    cy.get("@modal").contains("Create")
+    cy.get("button.btn.btn-primary").contains("Create")
   })
+
 })
