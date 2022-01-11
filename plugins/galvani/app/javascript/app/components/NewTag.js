@@ -8,7 +8,7 @@ import {
   HelpBlock,
 } from "react-bootstrap"
 import Select from "react-select"
-import { useDispatch, useGlobalState } from "./StateProvider"
+import { useGlobalState } from "./StateProvider"
 import {
   getServiceParams,
   composeTag,
@@ -58,9 +58,7 @@ const NewTag = ({ profileKey, onClose }) => {
     if (Object.keys(isValidForm).length > 0) return
     // collect values and build tag
     const tag = composeTag(formState)
-    console.log("the new tag: ", tag)
 
-    // TODO: send request
     return createTag(tag)
       .then((response) => {
         if (response) {

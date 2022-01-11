@@ -24,6 +24,10 @@ describe Galvani::TagsController, type: :controller do
     end
 
     context 'validation' do
+      it 'returns http error if no tag given' do
+        post :create, params: default_params.merge({})
+        expect(response).to_not be_successful
+      end      
       it 'returns http success using profile and service with required variable' do
         post :create, params: default_params.merge({tag: "xs:internet:keppel_account_pull:cc-demo"})             
         expect(response).to be_successful
@@ -54,6 +58,34 @@ describe Galvani::TagsController, type: :controller do
       end
     end
     
+  end
+
+  describe "DELETE 'tag'" do
+
+    before :each do
+      @existing_tag = "xs:internet:keppel_account_pull:d063222"
+      allow(controller.cloud_admin).to receive(:list_tags).and_return([@existing_tag])
+      allow(controller.cloud_admin).to receive(:remove_single_tag).and_return("succeed")
+    end
+
+    context 'validation' do
+      it 'returns http error if no tag given' do
+        delete :destroy, params: default_params.merge({id: ""})
+        expect(response).to_not be_successful
+      end
+
+      it 'returns http error if no tag no valid' do
+        delete :destroy, params: default_params.merge({id: "xs:internet:non_existing_service:d063222"})
+        expect(response).to_not be_successful
+      end
+
+      it 'returns succeed with an existing tag which matches the config' do
+        delete :destroy, params: default_params.merge({id: "xs:internet:keppel_account_pull:d063222"})
+        expect(response).to be_successful
+      end
+
+    end
+
   end
 
 end

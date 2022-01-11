@@ -13,13 +13,8 @@ const requestTags = (state) => ({
 })
 
 const receiveTags = (state, { tags }) => {
-  let newItems = (state.items.slice() || []).concat(tags)
-  // filter duplicated items
-  newItems = newItems.filter(
-    (item, pos, arr) => arr.findIndex((i) => i == item) == pos
-  )
   // sort
-  newItems = newItems.sort((a, b) => a.localeCompare(b))
+  const newItems = tags.sort((a, b) => a.localeCompare(b))
 
   return {
     ...state,

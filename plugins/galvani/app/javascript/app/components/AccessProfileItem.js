@@ -34,7 +34,6 @@ const AccessProfileItem = ({ profileKey, items, reloadTags }) => {
 
   const onCloseNewTag = ({ reload }) => {
     if (reload) {
-      console.log("LETS RELOAD!!!!")
       reloadTags()
     }
     setShowNewForm(false)

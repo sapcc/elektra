@@ -19,7 +19,7 @@ module Galvani
     def create
       tag = params[:tag]
       tags = cloud_admin.identity.list_tags(@scoped_project_id)
-      ok, err = validate_tag(tag, filter_tags(tags))
+      ok, err = validate_tag(tag, filter_tags(tags), "create")
       unless ok
         return render json: {errors: err, tagSpec: GalvaniConfig["access_profiles"]}, status: 422        
       end
@@ -33,9 +33,11 @@ module Galvani
     end
 
     def destroy
-      tag = params[:tag]
-      unless tag.blank?
-        render json: {errors: "tag is empty!"}, status: 422
+      tag = params[:id]
+      tags = cloud_admin.identity.list_tags(@scoped_project_id)
+      ok, err = validate_tag(tag, filter_tags(tags), "destroy")
+      unless ok
+        return render json: {errors: err, tagSpec: GalvaniConfig["access_profiles"]}, status: 422        
       end
 
       cloud_admin.identity.remove_single_tag(@scoped_project_id, tag)      
@@ -71,7 +73,12 @@ module Galvani
     end
 
     # validate that tag 
-    def validate_tag(tag, existing_tags)
+    def validate_tag(tag, existing_tags, action)
+      # check for empty tags
+      if tag.blank?
+        return false, "access profile is empty!"
+      end
+
       # get for base prefix
       base_prefixes = GalvaniConfig["access_profiles"].keys.select do|n| 
         tag.start_with?(n)
@@ -107,9 +114,11 @@ module Galvani
         return false, "provided arguments mismatch"
       end    
 
-      # check for duplicates
-      if existing_tags.include?(tag)
-        return false, "tag '" + tag + "' already exists" 
+      if action == "create"
+        # check for duplicates when creating new tags
+        if existing_tags.include?(tag)
+          return false, "access profile already exists" 
+        end
       end
 
       return true, ""

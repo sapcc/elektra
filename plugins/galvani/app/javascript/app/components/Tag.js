@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import SmartLink from "./shared/SmartLink"
 import { Button, Collapse } from "react-bootstrap"
-import { removeTag } from "../actions/tags"
+import { removeTag, fetchTags } from "../actions/tags"
+import { addNotice, addError } from "lib/flashes"
+import { useDispatch } from "./StateProvider"
+import { errorMessage } from "../../lib/hooks/useTag"
 
 const Tag = ({ tag }) => {
   const [showConfirm, setShowConfirm] = useState(false)
+  const dispatch = useDispatch()
   const canDelete = true
 
   const onDeleteClick = () => {
@@ -12,7 +16,38 @@ const Tag = ({ tag }) => {
   }
 
   const onConfirmDeleteClick = () => {
-    console.log("remove tag: ", tag.value)
+    console.log("remove tag: ", tag)
+
+    return removeTag(tag.tag)
+      .then((response) => {
+        if (response) {
+          addNotice(
+            <>
+              Access profile <b>{response.tag}</b> has been removed.
+            </>
+          )
+        }
+        loadTags()
+      })
+      .catch((error) => {
+        addError(`Could not remove access profile, ${errorMessage(error)}`)
+      })
+  }
+
+  const loadTags = () => {
+    fetchTags()
+      .then((data) => {
+        dispatch({
+          type: "RECEIVE_TAGS",
+          tags: data.tags,
+        })
+      })
+      .catch((error) => {
+        dispatch({
+          type: "REQUEST_TAGS_FAILURE",
+          error: error,
+        })
+      })
   }
 
   return (
