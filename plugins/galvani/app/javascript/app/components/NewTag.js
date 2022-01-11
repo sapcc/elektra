@@ -19,7 +19,7 @@ import {
 import { useFormState, useFormDispatch } from "./FormState"
 import { createTag } from "../actions/tags"
 
-const NewTag = ({ profileKey, cancelCallback }) => {
+const NewTag = ({ profileKey, onClose }) => {
   const profilesCfg = useGlobalState().config.profiles
   const [formValidation, setFormValidation] = useState({})
   const [apiError, setApiError] = useState(null)
@@ -70,8 +70,8 @@ const NewTag = ({ profileKey, cancelCallback }) => {
             </>
           )
         }
-        // TODO fetch TAGS again
-        onCancelClicked()
+        // fetch TAGS on close adding true
+        onClose({ reload: true })
       })
       .catch((error) => {
         setApiError(errorMessage(error))
@@ -83,14 +83,6 @@ const NewTag = ({ profileKey, cancelCallback }) => {
     dispatch({ type: "SET_SERVICE", profile: profileKey, service: options })
     // reset the validation
     setFormValidation({})
-  }
-
-  const onCancelClicked = () => {
-    // reset service
-    dispatch({ type: "REMOVE_SERVICE" })
-    // reset the validation
-    setFormValidation({})
-    cancelCallback()
   }
 
   const serviceVars = formState.service?.vars || []
@@ -174,11 +166,7 @@ const NewTag = ({ profileKey, cancelCallback }) => {
 
           <div className="new-service-footer">
             <span className="cancel">
-              <Button
-                bsStyle="default"
-                bsSize="small"
-                onClick={onCancelClicked}
-              >
+              <Button bsStyle="default" bsSize="small" onClick={onClose}>
                 Cancel
               </Button>
             </span>

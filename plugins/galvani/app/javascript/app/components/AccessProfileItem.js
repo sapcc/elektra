@@ -6,7 +6,7 @@ import NewTag from "./NewTag"
 import { Collapse } from "react-bootstrap"
 import { FormStateProvider } from "./FormState"
 
-const AccessProfileItem = ({ profileKey, items }) => {
+const AccessProfileItem = ({ profileKey, items, reloadTags }) => {
   const [showNewForm, setShowNewForm] = useState(false)
   const [renderNewTag, setRenderNewTag] = useState(false)
   const canCreate = true
@@ -32,6 +32,14 @@ const AccessProfileItem = ({ profileKey, items }) => {
     [items]
   )
 
+  const onCloseNewTag = ({ reload }) => {
+    if (reload) {
+      console.log("LETS RELOAD!!!!")
+      reloadTags()
+    }
+    setShowNewForm(false)
+  }
+
   return (
     <>
       <div className="toolbar access-profiles-toolbar">
@@ -56,10 +64,7 @@ const AccessProfileItem = ({ profileKey, items }) => {
         <div className="container-to-work-collapse">
           {renderNewTag && (
             <FormStateProvider>
-              <NewTag
-                profileKey={profileKey}
-                cancelCallback={() => setShowNewForm(false)}
-              />
+              <NewTag profileKey={profileKey} onClose={onCloseNewTag} />
             </FormStateProvider>
           )}
         </div>

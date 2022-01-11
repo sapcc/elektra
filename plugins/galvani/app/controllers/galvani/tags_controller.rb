@@ -23,8 +23,8 @@ module Galvani
       unless ok
         return render json: {errors: err, tagSpec: GalvaniConfig["access_profiles"]}, status: 422        
       end
-      # cloud_admin.identity.add_single_tag(@scoped_project_id, tag)
-      # audit_logger.info(current_user, 'has created tag', tag)
+      cloud_admin.identity.add_single_tag(@scoped_project_id, tag)
+      audit_logger.info(current_user, 'has created tag', tag)
       render json: { tag: tag }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code

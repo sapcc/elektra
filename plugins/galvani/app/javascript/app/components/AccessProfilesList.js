@@ -14,14 +14,18 @@ const AccessProfilesList = () => {
   useEffect(() => {
     // load when the configuration is loaded
     if (profilesCfg) {
-      loadTags()
+      initLoadTags()
     }
   }, [profilesCfg])
 
-  const loadTags = () => {
+  const initLoadTags = () => {
     dispatch({
       type: "REQUEST_TAGS",
     })
+    loadTags()
+  }
+
+  const loadTags = () => {
     fetchTags()
       .then((data) => {
         dispatch({
@@ -47,7 +51,7 @@ const AccessProfilesList = () => {
             <ErrorPage
               headTitle="Loading access profiles"
               error={tags.error}
-              onReload={loadTags}
+              onReload={initLoadTags}
             />
           ) : (
             <>
@@ -65,6 +69,7 @@ const AccessProfilesList = () => {
                           key={i}
                           profileKey={accessProfileKey}
                           items={topology.profiles[accessProfileKey]}
+                          reloadTags={loadTags}
                         />
                       )
                     )}

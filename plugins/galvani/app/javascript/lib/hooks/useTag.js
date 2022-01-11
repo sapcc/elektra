@@ -125,10 +125,6 @@ const getTopologyTags = (cfg, tags) => {
             tag: tag,
             value: value,
           })
-          topo.profiles[profileName][serviceParams.name]["tags"].push({
-            tag: tag,
-            value: `${value}2`,
-          })
         }
       })
 
