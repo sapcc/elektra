@@ -26,7 +26,7 @@ export const getServiceParams = (service) => {
   return { key: newService, name: name, hasVars: hasVars, vars: vars }
 }
 
-export const createTag = ({ profile, service, attrs }) => {
+export const composeTag = ({ profile, service, attrs }) => {
   let tag = `${BASE_PREFIX}:${profile}:${service.value}`
   Object.keys(attrs).forEach((key) => {
     tag = `${tag}:${attrs[key]}`
@@ -35,7 +35,7 @@ export const createTag = ({ profile, service, attrs }) => {
 }
 
 // use the config to find the description of the attr to validate
-export const formValidation = (cfg, { profile, service, attrs }) => {
+export const validateForm = (cfg, { profile, service, attrs }) => {
   const invalidItems = {}
 
   // find the profileKey with the root prefix 'xs'
@@ -69,6 +69,20 @@ export const formValidation = (cfg, { profile, service, attrs }) => {
   }
 
   return invalidItems
+}
+
+export const errorMessage = (error) => {
+  const err = error.response || error
+  if (
+    err &&
+    err.data &&
+    err.data.errors &&
+    Object.keys(err.data.errors).length
+  ) {
+    return err.data.errors
+  } else {
+    return error.message
+  }
 }
 
 const sortMapElements = (map) => {

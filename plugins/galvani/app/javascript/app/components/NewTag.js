@@ -1,7 +1,7 @@
-import React, { useMemo, useState, useEffect } from "react"
+import React, { useMemo, useState } from "react"
+import { addNotice } from "lib/flashes"
 import {
   Button,
-  Collapse,
   Form,
   FormGroup,
   FormControl,
@@ -11,15 +11,18 @@ import Select from "react-select"
 import { useDispatch, useGlobalState } from "./StateProvider"
 import {
   getServiceParams,
-  createTag,
-  formValidation,
+  composeTag,
+  validateForm,
   BASE_PREFIX,
+  errorMessage,
 } from "../../lib/hooks/useTag"
 import { useFormState, useFormDispatch } from "./FormState"
+import { createTag } from "../actions/tags"
 
-const NewTag = ({ profileKey, show, cancelCallback }) => {
+const NewTag = ({ profileKey, cancelCallback }) => {
   const profilesCfg = useGlobalState().config.profiles
-  const [validation, setValidation] = useState({})
+  const [formValidation, setFormValidation] = useState({})
+  const [apiError, setApiError] = useState(null)
   const dispatch = useFormDispatch()
   const formState = useFormState()
 
@@ -48,36 +51,52 @@ const NewTag = ({ profileKey, show, cancelCallback }) => {
 
   const onSaveClick = () => {
     // validate form
-    const isValidForm = formValidation(profilesCfg, formState)
-    setValidation(isValidForm)
+    const isValidForm = validateForm(profilesCfg, formState)
+    setFormValidation(isValidForm)
 
     // if no valid
     if (Object.keys(isValidForm).length > 0) return
     // collect values and build tag
-    const tag = createTag(formState)
+    const tag = composeTag(formState)
     console.log("the new tag: ", tag)
+
     // TODO: send request
+    return createTag(tag)
+      .then((response) => {
+        if (response) {
+          addNotice(
+            <>
+              Access profile <b>{response.tag}</b> created.
+            </>
+          )
+        }
+        // TODO fetch TAGS again
+        onCancelClicked()
+      })
+      .catch((error) => {
+        setApiError(errorMessage(error))
+      })
   }
 
   const onServiceSelectChanged = (options) => {
     // save the option in the formState
     dispatch({ type: "SET_SERVICE", profile: profileKey, service: options })
     // reset the validation
-    setValidation({})
+    setFormValidation({})
   }
 
   const onCancelClicked = () => {
     // reset service
     dispatch({ type: "REMOVE_SERVICE" })
     // reset the validation
-    setValidation({})
+    setFormValidation({})
     cancelCallback()
   }
 
   const serviceVars = formState.service?.vars || []
 
   return (
-    <Collapse in={show}>
+    <>
       <div className="new-service-container">
         <div className="new-service-title">
           <b>
@@ -120,7 +139,7 @@ const NewTag = ({ profileKey, show, cancelCallback }) => {
               <FormGroup
                 key={i}
                 controlId={varKey}
-                validationState={validation[varKey] && "error"}
+                validationState={formValidation[varKey] && "error"}
               >
                 <FormControl
                   type="text"
@@ -138,13 +157,20 @@ const NewTag = ({ profileKey, show, cancelCallback }) => {
                     })
                   }}
                 />
-                {validation[varKey] &&
-                  validation[varKey].map((msg, i) => (
+                {formValidation[varKey] &&
+                  formValidation[varKey].map((msg, i) => (
                     <HelpBlock key={i}>{msg}</HelpBlock>
                   ))}
               </FormGroup>
             ))}
           </>
+
+          {apiError && (
+            <div className="api-error text-danger">
+              <span className="fa fa-fw fa-exclamation-triangle"></span>
+              <div className="api-error-text">{apiError}</div>
+            </div>
+          )}
 
           <div className="new-service-footer">
             <span className="cancel">
@@ -162,7 +188,7 @@ const NewTag = ({ profileKey, show, cancelCallback }) => {
           </div>
         </Form>
       </div>
-    </Collapse>
+    </>
   )
 }
 

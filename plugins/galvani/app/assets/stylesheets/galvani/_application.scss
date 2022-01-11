@@ -21,6 +21,15 @@
 
 */
 
+.sticky-flash {
+  width: 100%;
+  position: fixed;
+  z-index: 1029;
+  .sticky-flash-container {
+    padding: 1rem;
+  }
+}
+
 .error-page {
   .display-flex {
     display: flex;
@@ -106,6 +115,13 @@
   }
   .new-service-input {
     padding-bottom: 1.5rem;
+  }
+  .api-error {
+    display: flex;
+    align-items: center;
+    .api-error-text {
+      margin-left: 0.5rem;
+    }
   }
   .new-service-footer {
     display: flex;

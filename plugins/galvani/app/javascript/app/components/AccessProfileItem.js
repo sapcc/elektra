@@ -3,13 +3,21 @@ import ServiceAction from "./ServiceAction"
 import { policy } from "policy"
 import SmartLink from "./shared/SmartLink"
 import NewTag from "./NewTag"
+import { Collapse } from "react-bootstrap"
 import { FormStateProvider } from "./FormState"
 
 const AccessProfileItem = ({ profileKey, items }) => {
   const [showNewForm, setShowNewForm] = useState(false)
+  const [renderNewTag, setRenderNewTag] = useState(false)
   const canCreate = true
+
   const onCreateClick = () => {
     setShowNewForm(true)
+    setRenderNewTag(true)
+  }
+
+  const onCollapseExited = () => {
+    setRenderNewTag(false)
   }
 
   // remove services without tags
@@ -43,13 +51,19 @@ const AccessProfileItem = ({ profileKey, items }) => {
         </div>
       </div>
 
-      <FormStateProvider>
-        <NewTag
-          profileKey={profileKey}
-          show={showNewForm}
-          cancelCallback={() => setShowNewForm(false)}
-        />
-      </FormStateProvider>
+      {/* lets create a new form state on open new tag form */}
+      <Collapse in={showNewForm} onExited={onCollapseExited}>
+        <div className="container-to-work-collapse">
+          {renderNewTag && (
+            <FormStateProvider>
+              <NewTag
+                profileKey={profileKey}
+                cancelCallback={() => setShowNewForm(false)}
+              />
+            </FormStateProvider>
+          )}
+        </div>
+      </Collapse>
 
       {displayItems && Object.keys(displayItems).length > 0 ? (
         Object.keys(displayItems).map((serviceKey, i) => (
