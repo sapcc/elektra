@@ -114,14 +114,16 @@ const getTopologyTags = (cfg, tags) => {
   // loop over access prefixes
   Object.keys(cfg).forEach((profileKey) => {
     // remove xs: prefix
+    // duplicate profiles will be overwriten since this is a hash
     const profileName = profileKey.split(":")[1] || profileKey
     if (!topo.profiles[profileName]) topo.profiles[profileName] = {}
 
     // loop over services in the access prefix
     Object.keys(cfg[profileKey]).forEach((serviceKey) => {
-      const serviceParams = getServiceParams(serviceKey)
+      const serviceName = getServiceParams(serviceKey).name
       // add service
-      topo.profiles[profileName][serviceParams.name] = {
+      // duplicate services will be overwriten since this is a hash
+      topo.profiles[profileName][serviceName] = {
         description: cfg[profileKey][serviceKey]["description"],
         displayName: cfg[profileKey][serviceKey]["display_name"],
         tags: [],
@@ -129,32 +131,35 @@ const getTopologyTags = (cfg, tags) => {
 
       // find tags with this access prefix
       tags.forEach((tag) => {
-        const prefix = `${profileKey}:${serviceParams.name}`
+        const prefix = `${profileKey}:${serviceName}`
         if (tag.startsWith(prefix)) {
           const value = tag.split(`${prefix}:`)[1] || null
-          topo.profiles[profileName][serviceParams.name]["tags"].push({
+          topo.profiles[profileName][serviceName]["tags"].push({
             tag: tag,
             value: value,
           })
         }
       })
 
-      // sort tags in the profile service by value
-      topo.profiles[profileName][serviceParams.name]["tags"] = topo.profiles[
+      // filter out duplicates tags
+      topo.profiles[profileName][serviceName]["tags"] = topo.profiles[
         profileName
-      ][serviceParams.name]["tags"].sort((a, b) =>
-        a.value.localeCompare(b.value)
+      ][serviceName]["tags"].filter(
+        (item, pos, arr) => arr.findIndex((i) => i.tag == item.tag) == pos
       )
 
+      // sort tags in the profile service by value
+      topo.profiles[profileName][serviceName]["tags"] = topo.profiles[
+        profileName
+      ][serviceName]["tags"].sort((a, b) => a.value.localeCompare(b.value))
+
       // count tags
-      topo.totalCount +=
-        topo.profiles[profileName][serviceParams.name]["tags"].length
+      topo.totalCount += topo.profiles[profileName][serviceName]["tags"].length
     })
 
     // sort sevices in the profile
     topo.profiles[profileName] = sortMapElements(topo.profiles[profileName])
   })
-
   // TODO: need to sort the profiles?
 
   console.log("topo: ", topo)

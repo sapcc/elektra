@@ -19,6 +19,9 @@ const Tag = ({ tag }) => {
   const onConfirmDeleteClick = () => {
     setDeleting(true)
 
+    // TODO: return tag value or service name and action as notice
+    console.log("removing tag: ", tag)
+
     return removeTag(tag.tag)
       .then((response) => {
         if (response) {
