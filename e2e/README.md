@@ -1,3 +1,5 @@
+Please Note, the Test User,Domain and Project is only configured in QA-DE-1
+
 # Usage
 
 ```bash
@@ -51,3 +53,17 @@ Debugging options: https://docs.cypress.io/guides/references/troubleshooting#Log
 ```bash
 ./run.sh --host http://host.docker.internal:3000
 ```
+
+## env
+
+you need to add the following env vars to your `.env`
+
+```
+TEST_DOMAIN="cc3test"
+TEST_MEMBER_USER="TEST_D021500_TM"
+TEST_MEMBER_PASSWORD="xxx"
+TEST_ADMIN_USER="TEST_D021500_TA"
+TEST_ADMIN_PASSWORD="xxd"
+```
+
+for password check `secrets/qa-de-1/values/domain-seeds.yaml`

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! -f "cypress.json" ]; then
+  echo "ERROR: you need to run this script in e2e folder!"
+  exit 1
+fi
+
 function help_me () {
 
   echo "Usage: run.sh --host HOST --profile member|admin --e2e_path /path/to/e2e --browser chrome|firefox|electron --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
@@ -113,7 +118,7 @@ if [[ -z "${HOST}" ]]; then
   if [ -f "/usr/local/bin/wb" ]; then
     # this runs only in workspaces!!!
     APP_PORT=$(wb elektra 'echo $APP_PORT' | tail -1 | tr -d '\r')
-    echo "APP_PORT      => $APP_PORT"
+    SHOW_APP_PORT="APP_PORT      => $APP_PORT"
     HOST="http://localhost:$APP_PORT"
   fi
 
@@ -128,6 +133,7 @@ if [[ -z "${HOST}" ]]; then
   help_me
 fi
 
+# get test user and password
 set -o allexport; source ../.env; set +o allexport
 
 TEST_USER=$TEST_MEMBER_USER
@@ -136,12 +142,40 @@ TEST_PASSWORD=$TEST_MEMBER_PASSWORD
 if [[ "${PROFILE}" == "admin" ]]; then
   TEST_USER=$TEST_ADMIN_USER
   TEST_PASSWORD=$TEST_ADMIN_PASSWORD
+
+  if [[ -z "${TEST_ADMIN_USER}" ]]; then
+    echo "ERROR: no TEST_ADMIN_USER found please check .env"
+    exit 1
+  fi
+
+  if [[ -z "${TEST_ADMIN_PASSWORD}" ]]; then
+    echo "ERROR: no TEST_ADMIN_PASSWORD found please check .env"
+    exit 1
+  fi
+else
+  if [[ -z "${TEST_MEMBER_USER}" ]]; then
+    echo "ERROR: no TEST_MEMBER_USER found please check .env"
+    exit 1
+  fi
+
+  if [[ -z "${TEST_MEMBER_PASSWORD}" ]]; then
+    echo "ERROR: no TEST_MEMBER_PASSWORD found please check .env"
+    exit 1
+  fi
+fi
+
+if [[ -z "${TEST_DOMAIN}" ]]; then
+  echo "ERROR: no TEST_DOMAIN found please check .env"
+  exit 1
 fi
 
 # show all hidden chars for debugging
 # https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 # echo $HOST | cat -A
 
+
+echo ""
+echo "$SHOW_APP_PORT"
 echo "HOST          => $HOST"
 echo "BROWSER       => $CYPRESS_BROWSER"
 echo "TEST_PATH     => $PWD"
@@ -156,8 +190,10 @@ fi
 if [[ -n "$DEBUG" ]]; then
   echo "DEBUG:        => $DEBUG"
 fi
-
 echo ""
+echo "Please Note: the e2e tests run only with QA-DE-1, because the Test-User,Domain and Project is only configured there."
+echo ""
+
 docker run --rm -it \
   --volume "$E2E_PATH:/e2e" \
   --workdir "/e2e" \
