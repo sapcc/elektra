@@ -18,7 +18,7 @@
 
     - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
       .main-buttons
-        = link_to 'Create new', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary'
+        = link_to 'Create New', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary'
 
 -# add searchable plugin to instances table (identified by css class searchable)
 %table.table.instances
