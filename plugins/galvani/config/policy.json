@@ -1,8 +1,0 @@
-{
-  "galvani_admin_required": "rule:project_admin and role:cloud_support_tools_viewer",
-
-  "galvani:tag_list": "rule:galvani_admin_required",
-  "galvani:tag_create": "rule:galvani_admin_required",
-  "galvani:tag_delete": "rule:galvani_admin_required",
-  "galvani:tag_profiles_config": "rule:galvani_admin_required"
-}
