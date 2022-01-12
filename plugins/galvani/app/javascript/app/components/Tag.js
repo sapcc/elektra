@@ -93,7 +93,7 @@ const Tag = ({ service, tag }) => {
               onClick={onConfirmDeleteClick}
             >
               {deleting && <span className="spinner"></span>}
-              Yes
+              Delete
             </Button>
             <span className="cancel">
               <Button
