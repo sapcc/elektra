@@ -63,13 +63,17 @@ const NewTag = ({ profileKey, onClose }) => {
     }
     // collect values and build tag
     const tag = composeTag(formState)
+    let noticeText = formState.service.value
+    Object.keys(formState.attrs).forEach((key) => {
+      noticeText = `${noticeText} / ${formState.attrs[key]}`
+    })
 
     return createTag(tag)
       .then((response) => {
         if (response) {
           addNotice(
             <>
-              Access profile <b>{response.tag}</b> created.
+              Access profile <b>{noticeText}</b> created.
             </>
           )
         }

@@ -6,7 +6,7 @@ import { addNotice, addError } from "lib/flashes"
 import { useDispatch } from "./StateProvider"
 import { errorMessage } from "../../lib/hooks/useTag"
 
-const Tag = ({ tag }) => {
+const Tag = ({ service, tag }) => {
   const [showConfirm, setShowConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const dispatch = useDispatch()
@@ -19,15 +19,14 @@ const Tag = ({ tag }) => {
   const onConfirmDeleteClick = () => {
     setDeleting(true)
 
-    // TODO: return tag value or service name and action as notice
-    console.log("removing tag: ", tag)
-
+    // return tag value or service name and action as notice
+    const noticeText = `${service}${tag.value ? ` / ${tag.value}` : ""}`
     return removeTag(tag.tag)
       .then((response) => {
         if (response) {
           addNotice(
             <>
-              Access profile <b>{response.tag}</b> has been removed.
+              Access profile <b>{noticeText}</b> has been removed.
             </>
           )
         }

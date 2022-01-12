@@ -12,7 +12,9 @@ const ServiceAction = ({ serviceKey, serviceAttr }) => {
       </div>
       <div className="service-tags">
         {serviceAttr.tags &&
-          serviceAttr.tags.map((tag) => <Tag key={tag.tag} tag={tag} />)}
+          serviceAttr.tags.map((tag) => (
+            <Tag key={tag.tag} service={serviceKey} tag={tag} />
+          ))}
       </div>
     </div>
   )
