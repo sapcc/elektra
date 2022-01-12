@@ -2,6 +2,8 @@
 
 module Galvani
   class TagsController < ::AjaxController
+    authorization_context 'galvani'
+    authorization_required
 
     # Returns project tags relevant to galvani
     # tags are filtered with the configuration file provided

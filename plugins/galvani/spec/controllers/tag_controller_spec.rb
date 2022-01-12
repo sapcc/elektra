@@ -17,13 +17,81 @@ describe Galvani::TagsController, type: :controller do
     )
   end
 
-  describe "PUT 'create a tag'" do
+  describe "GET 'index'" do
     before :each do
-      @existing_tag = "xs:internet:keppel_account_pull:d063222"
-      allow(controller.cloud_admin).to receive(:list_tags).and_return([@existing_tag])
+      @existing_tags = ["xs:internet:keppel_account_pull:test1","xs:internet:keppel_account_pull:test2"]
+      allow(controller.cloud_admin).to receive(:list_tags).and_return(@existing_tags)
+    end
+
+    context 'project_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token
+        end
+      end
+      it 'returns http success' do
+        get :index, params: default_params.merge({})
+        expect(response).to be_successful
+      end
+    end
+
+    context 'empty roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token
+        end
+      end
+      it 'returns http success' do
+        get :index, params: default_params.merge({})
+        expect(response).to_not be_successful
+      end
+    end
+
+
+  end
+
+  describe "PUT 'create a tag'" do
+    context 'project_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token
+        end
+      end
+      it 'returns http success' do
+        post :create, params: default_params.merge({tag: "xs:internet:keppel_account_pull:cc-demo"})
+        expect(response).to be_successful
+      end
+    end
+
+    context 'empty roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token
+        end
+      end
+      it 'returns http success' do
+        post :create, params: default_params.merge({tag: "xs:internet:keppel_account_pull:cc-demo"})
+        expect(response).to_not be_successful
+      end
     end
 
     context 'validation' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token
+        end
+        @existing_tag = "xs:internet:keppel_account_pull:d063222"
+        allow(controller.cloud_admin).to receive(:list_tags).and_return([@existing_tag])
+      end
+
       it 'returns http error if no tag given' do
         post :create, params: default_params.merge({})
         expect(response).to_not be_successful
@@ -61,14 +129,48 @@ describe Galvani::TagsController, type: :controller do
   end
 
   describe "DELETE 'tag'" do
-
     before :each do
       @existing_tag = "xs:internet:keppel_account_pull:d063222"
       allow(controller.cloud_admin).to receive(:list_tags).and_return([@existing_tag])
       allow(controller.cloud_admin).to receive(:remove_single_tag).and_return("succeed")
     end
 
+    context 'project_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token
+        end
+      end
+      it 'returns http success' do
+        delete :destroy, params: default_params.merge({id: "xs:internet:keppel_account_pull:d063222"})
+        expect(response).to be_successful
+      end
+    end
+
+    context 'empty roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token
+        end
+      end
+      it 'returns http success' do
+        delete :destroy, params: default_params.merge({id: "xs:internet:keppel_account_pull:d063222"})
+        expect(response).to_not be_successful
+      end
+    end
+
     context 'validation' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token
+        end
+      end
+
       it 'returns http error if no tag given' do
         delete :destroy, params: default_params.merge({id: ""})
         expect(response).to_not be_successful
