@@ -5,11 +5,19 @@ import SmartLink from "./shared/SmartLink"
 import NewTag from "./NewTag"
 import { Collapse } from "react-bootstrap"
 import { FormStateProvider } from "./FormState"
+import { scope } from "ajax_helper"
 
 const AccessProfileItem = ({ profileKey, items, reloadTags }) => {
   const [showNewForm, setShowNewForm] = useState(false)
   const [renderNewTag, setRenderNewTag] = useState(false)
-  const canCreate = true
+
+  const canCreate = useMemo(
+    () =>
+      policy.isAllowed("galvani:tag_create", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  )
 
   const onCreateClick = () => {
     setShowNewForm(true)

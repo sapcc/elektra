@@ -1,16 +1,25 @@
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 import SmartLink from "./shared/SmartLink"
 import { Button, Collapse } from "react-bootstrap"
 import { removeTag, fetchTags } from "../actions/tags"
 import { addNotice, addError } from "lib/flashes"
 import { useDispatch } from "./StateProvider"
 import { errorMessage } from "../../lib/hooks/useTag"
+import { scope } from "ajax_helper"
+import { policy } from "policy"
 
 const Tag = ({ service, tag }) => {
   const [showConfirm, setShowConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const dispatch = useDispatch()
-  const canDelete = true
+
+  const canDelete = useMemo(
+    () =>
+      policy.isAllowed("galvani:tag_delete", {
+        target: { scoped_domain_name: scope.domain },
+      }),
+    [scope.domain]
+  )
 
   const onDeleteClick = () => {
     setShowConfirm(true)

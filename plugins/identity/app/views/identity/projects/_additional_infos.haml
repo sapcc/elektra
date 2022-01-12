@@ -22,15 +22,14 @@
         %th.snug-nowrap
           Description:
         %td
-          = @project.description 
-      %tr
-        %th.snug-nowrap
-          Access Profiles:
-        %td
-          = link_to plugin('galvani').root_path, data: {modal: true, modal_size: "none"} do
-            Edit        
-            -# %span.badge.alert-info
-            -#   0
+          = @project.description
+      - if current_user.is_allowed?("galvani:tag_index", {target: {project: @active_project}})
+        %tr
+          %th.snug-nowrap
+            Access Profiles:
+          %td
+            = link_to plugin('galvani').root_path, data: {modal: true, modal_size: "none"} do
+              Edit
 
 - if current_user.is_allowed?('identity:project_request')
   %h4.action-heading
