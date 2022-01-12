@@ -1,6 +1,6 @@
 / .modal#mainModal.fade{tabindex: "-1", role: "dialog", data: { backdrop: 'static' }, aria: {labelledby: "mainModalLabel", hidden: true} }
 .modal#mainModal{tabindex: "-1", role: "dialog", data: { backdrop: 'static' }, aria: {labelledby: "mainModalLabel", hidden: true} }
-  .modal-dialog.modal-xl
+  %div{class: "modal-dialog #{modal_size}"}
     .modal-content{class: "#{plugin_name if plugin_name}"}
       .modal-header
         %button.close{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}}
