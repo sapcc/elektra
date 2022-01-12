@@ -23,7 +23,7 @@
           Description:
         %td
           = @project.description
-      - if current_user.is_allowed?("galvani:tag_index", {target: {project: @active_project}})
+      - if current_user.is_allowed?("galvani:tag_list", {target: {project: @active_project}})
         %tr
           %th.snug-nowrap
             Access Profiles:
