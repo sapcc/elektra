@@ -1,4 +1,4 @@
-import { getServiceParams, createTag } from "./useTag"
+import { getServiceParams, composeTag } from "./useTag"
 
 describe("useTag", () => {
   describe("getServiceParams", () => {
@@ -53,19 +53,27 @@ describe("useTag", () => {
       })
     })
   })
-  describe("createTag", () => {
+  describe("composeTag", () => {
     describe("tag without params", () => {
       test("returns tag", () => {
-        expect(createTag("internet", "dns_reader")).toEqual(
-          "xs:internet:dns_reader"
-        )
+        expect(
+          composeTag({
+            profile: "internet",
+            service: { value: "dns_reader" },
+            attrs: [],
+          })
+        ).toEqual("xs:internet:dns_reader")
       })
     })
     describe("tag with params", () => {
       test("returns tag", () => {
-        expect(createTag("internet", "dns_edit_zone", "arturo")).toEqual(
-          "xs:internet:dns_edit_zone:arturo"
-        )
+        expect(
+          composeTag({
+            profile: "internet",
+            service: { value: "dns_edit_zone" },
+            attrs: { $1: "arturo" },
+          })
+        ).toEqual("xs:internet:dns_edit_zone:arturo")
       })
     })
   })
