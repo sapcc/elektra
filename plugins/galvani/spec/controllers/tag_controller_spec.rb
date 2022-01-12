@@ -28,6 +28,7 @@ describe Galvani::TagsController, type: :controller do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
@@ -59,6 +60,7 @@ describe Galvani::TagsController, type: :controller do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
@@ -86,6 +88,7 @@ describe Galvani::TagsController, type: :controller do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
           token
         end
         @existing_tag = "xs:internet:keppel_account_pull:d063222"
@@ -140,6 +143,7 @@ describe Galvani::TagsController, type: :controller do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
@@ -167,6 +171,7 @@ describe Galvani::TagsController, type: :controller do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
@@ -186,6 +191,38 @@ describe Galvani::TagsController, type: :controller do
         expect(response).to be_successful
       end
 
+    end
+
+  end
+
+  describe "get 'profiles_config'" do
+
+    context 'project_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
+          token
+        end
+      end
+      it 'returns http success' do
+        get :profiles_config, params: default_params.merge({})
+        expect(response).to be_successful
+      end
+    end
+
+    context 'empty roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token
+        end
+      end
+      it 'returns http success' do
+        get :profiles_config, params: default_params.merge({})
+        expect(response).to_not be_successful
+      end
     end
 
   end
