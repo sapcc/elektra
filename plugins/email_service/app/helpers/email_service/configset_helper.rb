@@ -1,30 +1,51 @@
 module EmailService
   module ConfigsetHelper
     include AwsSesHelper
-    include PlainEmailHelper
-    include TemplatedEmailHelper
+    # include PlainEmailHelper
+    # include TemplatedEmailHelper
 
-    def configset_create(name)
+    # https://docs.aws.amazon.com/sdk-for-ruby/v2/api/Aws/SES/Client.html#update_configuration_set_event_destination-instance_method
+    
+    def store_configset(configset)
       status = ""
       begin
         ses_client = create_ses_client
         resp = ses_client.create_configuration_set({
           configuration_set: { # required
-            name: name, # required
+            name: configset.name, # required
           },
         })
-        audit_logger.info(current_user, 'has created configset', name)
+        audit_logger.info(current_user, 'has created configset', configset.name)
         status = "success" 
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
         logger.debug "CRONUS: DEBUG: CONFIGSET: #{error}"
       end
-
       status
     end
 
-    def get_configset
+    def delete_configset(name)
+      logger.debug "CRONUS: DEBUG: DELETE CONFIGSET: helper entered"
       status = ""
+      begin
+        ses_client = create_ses_client
+        resp = ses_client.delete_configuration_set({
+              configuration_set_name: name,
+        })
+        msg = "Configset #{name} is deleted."
+        audit_logger.info(current_user, 'has deleted configset', name)
+        status = "success"
+      rescue Aws::SES::Errors::ServiceError => error
+        msg = "Unable to delete Configset #{name}. Error message: #{error} "
+        status = msg
+        logger.debug "CRONUS: DEBUG: (AWS SES HELPER) CONFIGSET: #{error}"
+      end
+      status
+    end
+
+
+    def list_configsets(token="")
+      configset_hash = Hash.new
       configsets = []
       begin
         ses_client = create_ses_client
@@ -32,28 +53,31 @@ module EmailService
           next_token: "",
           max_items: 1000,
         })
-
+        next_token = resp.next_token
         for index in 0 ... resp.configuration_sets.size
-          configsets << resp.configuration_sets[index].name
+          configset_hash = { 
+              :id => index,
+              :name => resp.configuration_sets[index].name
+            }
+          configsets.push(configset_hash)
         end if resp.configuration_sets.size > 0
-
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
         logger.debug "CRONUS: DEBUG: (AWS SES HELPER) CONFIGSET: #{error}"
+        # configsets && !configsets.empty? ? configsets : error
       end
-
-      # configsets if configsets && !configsets.empty?
-      configsets && !configsets.empty? ? configsets : error
-    # resp.configuration_sets #=> Array
-    # resp.configuration_sets[0].name #=> String
-    # resp.next_token #=> String
+      return next_token, configsets && !configsets.empty? ? configsets : error
     end
 
     # Find existing config set
     def find_configset(name)
-      resp = get_configset
-      resp.configuration_sets.each do |config_set|
-        logger.debug config_set[0].name
+      _, configsets = list_configsets
+      configset = new_configset({})
+      configsets.each do |cfg|
+        if cfg[:name] == name 
+          configset = new_configset(cfg)
+          return configset
+        end
       end
     end
 
@@ -68,42 +92,68 @@ module EmailService
         status = "#{error}"
         logger.debug "CRONUS: DEBUG: (AWS SES HELPER) DESCRIBE CONFIGSET: #{error}"
       end
-      # resp.configuration_set.name #=> String
-      # resp.event_destinations #=> Array
-      # resp.event_destinations[0].name #=> String
-      # resp.event_destinations[0].enabled #=> Boolean
-      # resp.event_destinations[0].matching_event_types #=> Array
-      # resp.event_destinations[0].matching_event_types[0] #=> String, one of "send", "reject", "bounce", "complaint", "delivery", "open", "click", "renderingFailure"
-      # resp.event_destinations[0].kinesis_firehose_destination.iam_role_arn #=> String
-      # resp.event_destinations[0].kinesis_firehose_destination.delivery_stream_arn #=> String
-      # resp.event_destinations[0].cloud_watch_destination.dimension_configurations #=> Array
-      # resp.event_destinations[0].cloud_watch_destination.dimension_configurations[0].dimension_name #=> String
-      # resp.event_destinations[0].cloud_watch_destination.dimension_configurations[0].dimension_value_source #=> String, one of "messageTag", "emailHeader", "linkTag"
-      # resp.event_destinations[0].cloud_watch_destination.dimension_configurations[0].default_dimension_value #=> String
-      # resp.event_destinations[0].sns_destination.topic_arn #=> String
-      # resp.tracking_options.custom_redirect_domain #=> String
-      # resp.delivery_options.tls_policy #=> String, one of "Require", "Optional"
-      # resp.reputation_options.sending_enabled #=> Boolean
-      # resp.reputation_options.reputation_metrics_enabled #=> Boolean
-      # resp.reputation_options.last_fresh_start #=> Time
     end
 
-    def configset_destroy(name)
-      status = ""
-      begin
-        ses_client = create_ses_client
-        resp = ses_client.delete_configuration_set({
-              configuration_set_name: name,
-        })
-        
-        audit_logger.info(current_user, 'has deleted configset', name)
-        status = "success"
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS: DEBUG: (AWS SES HELPER) CONFIGSET: #{error}"
-      end
-      status
+    def matching_event_types_collection 
+      ["send", "reject", "bounce", "complaint", "delivery", "open", "click", "renderingFailure"]
     end
+
+    def dimension_value_source_collection
+      ["messageTag", "emailHeader", "linkTag"]
+    end
+
+    def configuration_set_attribute_names
+      ["eventDestinations", "trackingOptions", "deliveryOptions", "reputationOptions"]
+    end
+
+    class Configset 
+      def initialize(opts = {})
+        @name       = opts[:name]
+        @event_destinations = opts[:event_destinations]
+        @errors     = validate_config(opts)
+      end 
+    
+      def name
+        @name
+      end
+
+      def errors?
+        @errors.empty? ? false : true
+      end
+
+      def validate_config(opts)
+        errors = []
+        if opts[:name] == "" || opts[:name].nil?
+          errors.push({ name: "name", message: "Configset name can't be empty" })
+        end
+        errors
+      end
+
+    end
+
+    def new_configset(attributes = {})
+      configset = Configset.new(attributes)
+    end
+
 
   end
 end
+
+    # def get_all_configsets
+    #   status = ""
+    #   configsets = []
+    #   begin
+    #     ses_client = create_ses_client
+    #     resp = ses_client.list_configuration_sets({
+    #       next_token: "",
+    #       max_items: 1000,
+    #     })
+    #     for index in 0 ... resp.configuration_sets.size
+    #       configsets << { id: index, name: resp.configuration_sets[index].name }
+    #     end if resp.configuration_sets.size > 0
+    #     rescue Aws::SES::Errors::ServiceError => error
+    #       status = "#{error}"
+    #       logger.debug "CRONUS: DEBUG: (AWS SES HELPER) CONFIGSET: #{error}"
+    #   end
+    #   configsets && !configsets.empty? ? configsets : error
+    # end

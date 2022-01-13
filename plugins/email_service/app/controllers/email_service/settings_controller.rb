@@ -14,7 +14,7 @@ module EmailService
         if @access && @secret 
           @cronus_activated = true
         end
-        @configsets = get_configset
+        @configsets = list_configsets
       else
         flash[:error] = creds.error
       end
@@ -24,7 +24,7 @@ module EmailService
       flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
-    def show_config
+    def show
       creds = get_ec2_creds
       @access = creds.access
       @secret = creds.secret
@@ -34,11 +34,17 @@ module EmailService
       flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
-    def enable_cronus
-    end
+    # def enable
+    #   flash[:info] = "Cronus is enabled"
+    #   # Add code to enable
+    #   redirect_to :index
+    # end
 
-    def disable_cronus
-    end
+    # def disable
+    #   flash[:info] = "Cronus is disabled"
+    #   # Add code to disable
+    #   redirect_to :index
+    # end
 
   end
 end

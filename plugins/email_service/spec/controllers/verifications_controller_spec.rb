@@ -24,7 +24,6 @@ describe EmailService::VerificationsController, type: :controller do
       allow_any_instance_of(EmailService::VerificationsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)     
     end
  
-    # check email admin role
     context 'email_admin' do
       before :each do
         stub_authentication do |token|
@@ -40,7 +39,6 @@ describe EmailService::VerificationsController, type: :controller do
       end
     end
 
-    # check email user role
     context 'email_user' do
       before :each do
         stub_authentication do |token|
@@ -56,6 +54,19 @@ describe EmailService::VerificationsController, type: :controller do
       end
     end
  
+    context 'cloud_support_tools_viewer_role alone' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http 401 status' do
+        get :index, params: default_params
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
   end
 
 end

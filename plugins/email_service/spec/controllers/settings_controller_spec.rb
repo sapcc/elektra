@@ -17,12 +17,6 @@ describe EmailService::SettingsController, type: :controller do
   end
  
   before :each do
-    stub_authentication
-
-    email_service = double('email_service').as_null_object
-    allow_any_instance_of(ServiceLayer::EmailServiceService).to receive(
-      :elektron_email_service
-    ).and_return(email_service)
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(EmailService::SettingsController).to receive(:get_configset).and_return(double('configset').as_null_object)            
     allow_any_instance_of(EmailService::SettingsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)

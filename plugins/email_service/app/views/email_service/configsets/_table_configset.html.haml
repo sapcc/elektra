@@ -9,8 +9,9 @@
       %tr
         %td{ colspan: 2 } No configuration set available
     - else
-      -@paginatable_array.each do | configset |
+      -@paginatable_configsets.each do | configset |
         = render partial: 'table_configset_item', locals: { configset: configset }
     
--# = paginate @paginatable_array, :theme => 'twitter-bootstrap-3', :remote => false 
+= paginate @paginatable_configsets, :theme => 'twitter-bootstrap-3', :remote => false 
+
 

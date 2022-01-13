@@ -210,7 +210,7 @@ module EmailService
         resp = ses_client.verify_domain_dkim({
           domain: identity, 
         })
-        audit_logger.info(current_user, 'has initiated DKIM verification ', identity)
+        audit_logger.info(current_user, ' has initiated DKIM verification ', identity)
         status = "success"
         debugger
       rescue Aws::SES::Errors::ServiceError => error
@@ -228,7 +228,7 @@ module EmailService
           dkim_enabled: true, 
           identity: identity, 
         }) 
-        audit_logger.info(current_user, 'has enabled DKIM ', identity)
+        audit_logger.info(current_user, ' has enabled DKIM ', identity)
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
@@ -245,7 +245,7 @@ module EmailService
           dkim_enabled: false, 
           identity: identity, 
         }) 
-        audit_logger.info(current_user, 'has disabled DKIM ', identity)
+        audit_logger.info(current_user, ' has disabled DKIM ', identity)
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"

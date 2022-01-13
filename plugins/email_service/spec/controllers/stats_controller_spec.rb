@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe EmailService::ConfigsetController, type: :controller do
+describe EmailService::StatsController, type: :controller do
   routes { EmailService::Engine.routes }
  
   default_params = { domain_id: AuthenticationStub.domain_id,
@@ -16,31 +16,29 @@ describe EmailService::ConfigsetController, type: :controller do
     )
   end
  
+  before :each do
+    allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(EmailService::StatsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
+    allow_any_instance_of(EmailService::StatsController).to receive(:get_send_stats).and_return(double('send_stats').as_null_object)
+  end
 
-  # check index route
   describe "GET 'index'" do
-    before :each do
-      allow_any_instance_of(EmailService::ConfigsetController).to receive(:get_configset).and_return(double('config_sets').as_null_object)            
-      allow_any_instance_of(EmailService::ConfigsetController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
-    end
- 
-    # check email admin role
+
     context 'email_admin' do
       before :each do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'returns http success' do
+      it 'returns http 200 status' do
         get :index, params: default_params
-        expect(response).to be_successful
+        expect(response).to have_http_status(200)
       end
     end
 
-    # check email user role
     context 'email_user' do
       before :each do
         stub_authentication do |token|
@@ -56,8 +54,7 @@ describe EmailService::ConfigsetController, type: :controller do
       end
     end
  
-    # check without cloud_support_tools_viewer_role role
-    context 'with cloud_support_tools_viewer_role' do
+    context 'only cloud_support_tools_viewer_role' do
       before :each do
         stub_authentication do |token|
           token['roles'] = []
@@ -65,9 +62,9 @@ describe EmailService::ConfigsetController, type: :controller do
           token
         end
       end
-      it 'returns http status' do
+      it 'returns http status 401' do
         get :index, params: default_params
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 

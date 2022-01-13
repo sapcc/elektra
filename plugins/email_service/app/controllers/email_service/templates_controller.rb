@@ -15,48 +15,36 @@ module EmailService
       else
         flash[:error] = creds.error
       end
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     def show
       @template = find_template(params[:name])
       render "show", locals: { data: { modal: true } }
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     def new; end
 
     def edit
       @template = find_template(params[:name])
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
-    def modify
-      # status = ""
-      # template_old = find_template(params[:name])
-      # logger.debug "CONTROLLER: Name: #{template_old.name} Subject: #{template_old.subject} HTML: #{template_old.html_part} TEXT: #{template_old.text_part}"
-      # template_new = new_template(template_params)
-      # if template_new.errors?
-      #   flash[:warning] = @template.errors.first[:message]
-      #   redirect_to 'edit', data: {modal: true}
-      # else
-      #   status = modify_template(template_old, template_new)
-      #   if status == "success"
-      #     flash[:success] = "eMail template [#{template_new.name}] is modified"
-      #   end
-      # end
-      staus = ""
+    def update
+      status = ""
       template = find_template(params[:name])
       template_new = new_template(template_params)
+
       if template_new.errors?
         flash[:error] = @template.errors.first[:message]
         redirect_to 'edit', data: {modal: true}
@@ -88,10 +76,10 @@ module EmailService
         end 
       end
       redirect_to plugin('email_service').templates_path
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     def destroy

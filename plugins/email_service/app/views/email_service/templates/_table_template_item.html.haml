@@ -1,6 +1,6 @@
 %tr
   %td
-    = tmpl[:name]
+    = link_to tmpl[:name], plugin('email_service').template_path(id: tmpl[:id], name: tmpl[:name]), data: {modal: true}
   %td
     = tmpl[:subject]
   %td.snug

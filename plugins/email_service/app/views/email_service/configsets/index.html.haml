@@ -1,9 +1,9 @@
 =content_for :main_toolbar do
   eMail Service - AWS SES (Cronus)
-= render partial: 'email_service/shared/nav.html', locals: {pane: 'configset'}
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'configsets'}
 
 .tab-content
-  .tab-pane.active{role:"tabpanel", id:"settings-pane"}
+  .tab-pane.active{role:"tabpanel", id:"configsets-pane"}
     %h3
       Configuration Set
     .row
@@ -11,7 +11,7 @@
         .toolbar
           - if current_user.is_allowed?('email_service:configset_create')
             .main-buttons
-              = link_to "New ConfigSet", plugin('email_service').configset_new_configset_path(), data: {modal: true}, class: 'btn btn-primary'
+              = link_to "New ConfigSet", plugin('email_service').new_configset_path(), data: {modal: true}, class: 'btn btn-primary'
 
         .js-table-configset
           = render partial: 'table_configset', locals: {configsets: @configsets}

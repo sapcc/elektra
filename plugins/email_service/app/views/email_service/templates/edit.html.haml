@@ -6,8 +6,8 @@
 - t_html_part = @template.html_part 
 - t_text_part = @template.text_part
 
-= simple_form_for :templ, url: plugin('email_service').send("modify_template_path", id: params[:id], name: params[:name], method: :post, remote: request.xhr?, html: { data: { modal: true } }) do |f|
-
+-#= simple_form_for :templ, url: plugin('email_service').send("modify_template_path", id: params[:id], name: params[:name], method: :post, remote: request.xhr?, html: { data: { modal: true } }) do |f|
+= simple_form_for :templ, url: plugin('email_service').template_path(id: params[:id], name: params[:name]), method: :patch, remote: request.xhr?, html: { data: { modal: true } } do |f|
   .modal-body
     .modal-flashes
       = render "email_service/shared/flashes.html"

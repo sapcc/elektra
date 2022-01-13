@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe EmailService::DomainVerificationsController, type: :controller do
+describe EmailService::ConfigsetsController, type: :controller do
   routes { EmailService::Engine.routes }
  
   default_params = { domain_id: AuthenticationStub.domain_id,
@@ -16,15 +16,14 @@ describe EmailService::DomainVerificationsController, type: :controller do
     )
   end
  
+
   # check index route
   describe "GET 'index'" do
     before :each do
-      allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
-      allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
-      allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)     
+      allow_any_instance_of(EmailService::ConfigsetsController).to receive(:list_configsets).and_return(double('config_sets').as_null_object)            
+      allow_any_instance_of(EmailService::ConfigsetsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
     end
  
-    # check email admin role
     context 'email_admin' do
       before :each do
         stub_authentication do |token|
@@ -40,7 +39,6 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
     end
 
-    # check email user role
     context 'email_user' do
       before :each do
         stub_authentication do |token|
@@ -56,7 +54,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
     end
  
-    context 'cloud_support_tools_viewer_role alone' do
+    context 'with cloud_support_tools_viewer_role' do
       before :each do
         stub_authentication do |token|
           token['roles'] = []
@@ -64,11 +62,12 @@ describe EmailService::DomainVerificationsController, type: :controller do
           token
         end
       end
-      it 'returns http 401 status' do
+      it 'returns http status 401' do
         get :index, params: default_params
         expect(response).to have_http_status(:unauthorized)
       end
     end
 
   end
+
 end

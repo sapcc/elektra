@@ -17,12 +17,6 @@ describe EmailService::TemplatesController, type: :controller do
   end
  
   before :each do
-    stub_authentication
-
-    email_service = double('email_service').as_null_object
-    allow_any_instance_of(ServiceLayer::EmailServiceService).to receive(
-      :elektron_email_service
-    ).and_return(email_service)
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:get_all_templates).and_return(double('templates').as_null_object)            
     allow_any_instance_of(EmailService::TemplatesController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
@@ -64,8 +58,7 @@ describe EmailService::TemplatesController, type: :controller do
       end
     end
  
-    # check without cloud_support_tools_viewer_role role
-    context 'with cloud_support_tools_viewer_role' do
+    context 'cloud_support_tools_viewer_role alone' do
       before :each do
         stub_authentication do |token|
           token['roles'] = []
