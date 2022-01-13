@@ -21,37 +21,6 @@ module EmailService
         flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
-    # def info
-    #   @creds = get_ec2_creds
-    #   if @creds.error.empty? 
-    #     @access = @creds.access
-    #     @secret = @creds.secret
-    #     @ses_client = create_ses_client
-    #     @all_emails = list_verified_identities("EmailAddress")
-    #     @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
-    #     @pending_emails  = get_verified_identities_by_status(@all_emails, "Pending")
-    #     @failed_emails   = get_verified_identities_by_status(@all_emails, "Failed")
-    #     @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress")
-    #     @all_domains = list_verified_identities("Domain")
-    #     @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
-    #     @pending_domains  = get_verified_identities_by_status(@all_domains, "Pending")
-    #     @failed_domains   = get_verified_identities_by_status(@all_domains, "Failed")
-    #     @verified_domains_collection = get_verified_identities_collection(@verified_domains, "Domain")
-    #     # @ids = get_all_verified_identities_collection
-    #     @send_stats = get_send_stats
-    #     @send_data = get_send_data
-    #     @all_templates = get_all_templates
-    #     @template_items_match = get_template_items
-    #     @all_identities = @verified_emails.zip(@verified_domains).flatten.compact
-    #   else
-    #     flash[:error] = creds.error
-    #   end
-    #   rescue Elektron::Errors::ApiResponse => e
-    #     flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    #   rescue Exception => e
-    #     flash[:error] = "Status Code: 500 : Error: #{e.message}"
-    # end
-
     def show
     end
 

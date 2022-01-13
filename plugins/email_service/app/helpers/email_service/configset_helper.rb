@@ -138,22 +138,3 @@ module EmailService
 
   end
 end
-
-    # def get_all_configsets
-    #   status = ""
-    #   configsets = []
-    #   begin
-    #     ses_client = create_ses_client
-    #     resp = ses_client.list_configuration_sets({
-    #       next_token: "",
-    #       max_items: 1000,
-    #     })
-    #     for index in 0 ... resp.configuration_sets.size
-    #       configsets << { id: index, name: resp.configuration_sets[index].name }
-    #     end if resp.configuration_sets.size > 0
-    #     rescue Aws::SES::Errors::ServiceError => error
-    #       status = "#{error}"
-    #       logger.debug "CRONUS: DEBUG: (AWS SES HELPER) CONFIGSET: #{error}"
-    #   end
-    #   configsets && !configsets.empty? ? configsets : error
-    # end

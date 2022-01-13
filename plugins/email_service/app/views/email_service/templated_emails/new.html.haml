@@ -1,7 +1,7 @@
 = content_for :title do
   Templated eMail
-- pl = plugin('email_service')
-= simple_form_for :email, url: pl.templated_emails_path(), method: :post, remote: request.xhr?, html: {id: 'form_templated_email', data: {modal: true}, class: 'form-horizontal needs-validation' }, wrapper: :horizontal_form do |f|
+- url = plugin('email_service').templated_emails_path()
+= simple_form_for :email, url: url, method: :post, remote: request.xhr?, html: {id: 'form_templated_email', data: {modal: true}, class: 'form-horizontal needs-validation' }, wrapper: :horizontal_form do |f|
   - if !@verified_emails_collection || @verified_emails_collection.empty? 
     %p.alert.alert-warning
       There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.

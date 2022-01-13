@@ -91,28 +91,6 @@ module EmailService
       return identity_type == "Domain" ? resp : status 
     end
 
-    # # Verify an email address with AWS SES excluding sap.com address
-    # def verify_email(recipient)
-    #   ses_client = create_ses_client
-    #   if recipient != nil && ! recipient.include?("sap.com")
-    #     begin
-    #       ses_client.verify_email_identity({
-    #       email_address: recipient
-    #       })
-    #       logger.debug "Verification email sent successfully to #{recipient}"
-    #       flash.now[:success] = "Verification email sent successfully to #{recipient}"
-    #     rescue Aws::SES::Errors::ServiceError => error
-    #       logger.debug "Email verification failed. Error message: #{error}"
-    #       flash.now[:warning] = "Email verification failed. Error message: #{error}"
-    #     end
-
-    #   end
-    #   if recipient.include?("sap.com")
-    #     flash.now[:warning] = "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
-    #     logger.debug "sap.com domain email addresses are not allowed to verify as a sender(#{recipient})"
-    #   end
-    # end
-
     def list_verified_identities(id_type)
       attrs = Hash.new
       verified_identities = []
@@ -130,24 +108,15 @@ module EmailService
           status = attrs.verification_attributes[identity].verification_status
           token = attrs.verification_attributes[identity].verification_token
           dkim_err, dkim_attr = get_dkim_attributes([identity])
-          # logger.debug "Status: #{status}"
-          # logger.debug "dkim_attributes : #{dkim}"
-          # logger.debug "dkim[:dkim_attributes] : #{dkim[:dkim_attributes]}"
-          # logger.debug "dkim[:dkim_attributes][identity] : #{dkim[:dkim_attributes][identity]}"
           if dkim_attr
             dkim_enabled = dkim_attr[:dkim_attributes][identity][:dkim_enabled]
             dkim_tokens = dkim_attr[:dkim_attributes][identity][:dkim_tokens]
             dkim_verification_status = dkim_attr[:dkim_attributes][identity][:dkim_verification_status]
-            # logger.debug "Status: #{status}"
-            # logger.debug "dkim_enabled: #{dkim_enabled}"
-            # logger.debug "dkim_tokens: #{dkim_tokens}"
-            # logger.debug "dkim_verification_status: #{dkim_verification_status}"
           end
           id += 1
           identity_hash = {id: id, identity: identity, status: status,\
            verification_token: token, dkim_enabled: dkim_enabled, \
            dkim_tokens: dkim_tokens, dkim_verification_status: dkim_verification_status }
-          #  logger.debug "identity_hash: #{identity_hash}"
           verified_identities.push(identity_hash)
         end
       rescue Aws::SES::Errors::ServiceError => error
@@ -173,7 +142,6 @@ module EmailService
     end
 
     # DKIM Related methods
-    
     def get_dkim_attributes(identities=[])
       err = ""
       dkim_attributes = {}
@@ -212,7 +180,6 @@ module EmailService
         })
         audit_logger.info(current_user, ' has initiated DKIM verification ', identity)
         status = "success"
-        debugger
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
         logger.debug "CRONUS: DEBUG: DKIM VERIFY: #{error}"

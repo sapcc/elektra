@@ -12,12 +12,9 @@ module EmailService
         @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
         @pending_domains  = get_verified_identities_by_status(@all_domains, "Pending")
         @failed_domains   = get_verified_identities_by_status(@all_domains, "Failed")
-        # identities_collection = get_verified_identities_collection(@verified_domains, "Domain")
-        # dkim_status, @dkim_attributes = get_dkim_attributes(identities_collection)
       else
         flash[:error] = creds.error
       end
-
     rescue Elektron::Errors::ApiResponse => e
       flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
     rescue Exception => e
@@ -38,17 +35,16 @@ module EmailService
     def verify_dkim
       identity = params[:identity]
       st, dkim = verify_dkim(identity)
-      logger.debug "DKIM tokens : #{dkim.dkim_tokens}"
       redirect_to({ action: :index } )  
     rescue Elektron::Errors::ApiResponse => e
       flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
     rescue Exception => e
       flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
+    
     def activate_dkim
       identity = params[:identity]
       dkim_status, dkim_attributes = get_dkim_attributes([identity])
-      logger.debug "dkim_status : #{dkim_status} :  dkim_attributes : #{dkim_attributes.inspect} "
       @dkim_enabled = is_dkim_enabled(dkim_attributes, identity)
       logger.debug "@dkim_enabled : #{@dkim_enabled} "
       if @dkim_enabled == false
@@ -84,8 +80,6 @@ module EmailService
     end
 
     def create
-      logger.debug "DKIM Enabled: #{params[:verified_domain][:dkim_enabled].to_s}"
-      # DKIM Enabled: true
       dkim_enabled = params[:verified_domain][:dkim_enabled].to_s
       domain_name = params[:verified_domain][:identity].to_s
       status = get_identity_verification_status(domain_name, "Domain")
@@ -113,12 +107,8 @@ module EmailService
     end
 
     def destroy
-      
       identity = params[:identity] unless params[:identity].nil?
-      logger.debug "Identity is : #{identity}"
-      # debugger
       status = remove_verified_identity(identity)
-
       if status == "success"
         msg = "The identity #{identity} is removed"
         flash[:success] = msg
@@ -126,10 +116,8 @@ module EmailService
         msg = "Identity #{identity} removal failed : #{status}"
         flash[:error] = msg
       end
-      
       @all_domains = list_verified_identities("Domain")
       @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
-
       redirect_to({ action: :index } ) 
     rescue Elektron::Errors::ApiResponse => e
       flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"

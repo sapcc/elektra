@@ -11,7 +11,6 @@ module EmailService
         @templates = get_all_templates
         items_per_page = 10
         @paginatable_templates = Kaminari.paginate_array(@templates, total_count: @templates.count).page(params[:page]).per(items_per_page)
-        @id = 0
       else
         flash[:error] = creds.error
       end

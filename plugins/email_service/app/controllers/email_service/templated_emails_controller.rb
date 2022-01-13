@@ -7,7 +7,6 @@ module EmailService
     
     def index
       creds = get_ec2_creds
-      
       if creds.error.empty?
         @all_emails = list_verified_identities("EmailAddress")
         @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
@@ -87,7 +86,6 @@ module EmailService
       params.require(:email).permit(:source, :to_addr, :cc_addr, :bcc_addr,\
         :reply_to_addr, :template_name, :template_data, :configset_name)
     end
-
 
   end
 end

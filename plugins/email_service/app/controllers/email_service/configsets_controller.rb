@@ -11,7 +11,6 @@ module EmailService
         next_token, @configsets = list_configsets
         items_per_page = 10
         @paginatable_configsets = Kaminari.paginate_array(@configsets, total_count: @configsets.count).page(params[:page]).per(items_per_page)
-        # @id = 0
       else
         flash[:error] = creds.error
       end

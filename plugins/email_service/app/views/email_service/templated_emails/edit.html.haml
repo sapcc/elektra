@@ -10,10 +10,10 @@
 - template_data   = params[:email].present? ? params[:email]["template_data"] : ""
 - configset_name  = params[:email].present? ? params[:email]["configset_name"] : ""
 
-- pl = plugin('email_service')
+- url = plugin('email_service').templated_emails_path()
 
 
-= simple_modal_form_for :email, submit_action: "Send", url: pl.templated_emails_path(), method: :post, remote: request.xhr?, cancel_url: pl.templated_emails_path(), html: {id: 'form_templated_email', data: {modal: true} } do |f|
+= simple_modal_form_for :email, submit_action: "Send", url: url, method: :post, remote: request.xhr?, cancel_url: pl.templated_emails_path(), html: {id: 'form_templated_email', data: {modal: true} } do |f|
   .modal-body
     .flashes
     = render "application/flashes"

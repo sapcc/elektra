@@ -96,7 +96,6 @@ module EmailService
         audit_logger.info(current_user, 'has sent templated email from the template', \
         templated_email.template_name,  'to', templated_email.to_addr, \
         templated_email.cc_addr, templated_email.bcc_addr)
-        debugger
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "CRONUS: DEBUG: #{error}"
       end
