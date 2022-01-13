@@ -4,6 +4,7 @@ Networking::Engine.routes.draw do
 
   resource :widget, expect: %i[show new create edit update destroy] do 
     get 'bgp-vpns' => 'widgets#bgp_vpns', on: :collection
+    get 'interconnections' => 'widgets#interconnections', on: :collection
     get 'security-groups' => 'widgets#security_groups', on: :collection
     get 'ports', on: :collection
   end
@@ -24,6 +25,8 @@ Networking::Engine.routes.draw do
     end
     resources :rbacs, module: :bgp_vpns, only: %i[index create destroy]
   end
+
+  resources :interconnections, only: %i[index show create destroy], path: 'interconnections'
 
   resources :security_groups, except: %i[edit new], path: 'security-groups' do
     resources :rules, module: :security_groups

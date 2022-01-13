@@ -187,7 +187,7 @@ SimpleNavigation::Configuration.run do |navigation|
                           'Networks & Routers',
                           -> { plugin('networking').networks_external_index_path },
                           if: -> { plugin_available?(:networking) },
-                          highlights_on: %r{networking/(networks|routers|widget/bgp-vpns)/?.*}
+                          highlights_on: %r{networking/(networks|routers|widget/bgp-vpns|widget/interconnections)/?.*}
       networking_nav.item :backup_networks,
                           'Backup Networks',
                           -> { plugin('networking').backup_networks_path },

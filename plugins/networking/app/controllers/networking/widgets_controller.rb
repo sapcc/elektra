@@ -8,8 +8,8 @@ module Networking
     # investigate the rule name.
     authorization_required only: %i[ports bgp_vpns]
 
-    def bgp_vpns
-    end
+    def bgp_vpns; end
+    def interconnections; end
 
     def security_groups
       @quota_data = []

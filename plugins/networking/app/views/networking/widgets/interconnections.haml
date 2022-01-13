@@ -1,0 +1,8 @@
+=render partial: 'networking/shared/tabs', locals: { tab: 'interconnections' }
+
+:javascript 
+  if(window.location.href.indexOf('?r=') < 0)  {
+      window.history.replaceState(null, "Interconnections", window.location.href+'/?r=');
+  }
+
+= javascript_pack_tag "networking_interconnections"
