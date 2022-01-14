@@ -71,6 +71,81 @@ describe EmailService::EmailsController, type: :controller do
       end
     end
 
+    context 'other roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token
+        end
+      end
+      it 'not allowed' do
+        get :index, params: default_params
+        expect(response).to_not be_successful
+      end
+    end
+
+  end
+
+  # GET new
+  describe "GET 'new'" do
+
+    context 'email_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
+          token
+        end
+      end
+      it 'returns http 200 status' do
+        get :new, params: default_params
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'email_user' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_user' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
+          token
+        end
+      end
+      it 'returns http 200 status' do
+        get :new, params: default_params
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'cloud_support_tools_viewer_role alone' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
+          token
+        end
+      end
+      it 'returns http 401 status' do
+        get :new, params: default_params
+        expect(response).to have_http_status(401)
+      end
+    end
+
+    context 'other roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token
+        end
+      end
+      it 'not allowed' do
+        get :index, params: default_params
+        expect(response).to_not be_successful
+      end
+    end
+
   end
 
 end

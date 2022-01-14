@@ -21,9 +21,7 @@ module EmailService
         flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
-    def show
-    end
-
+    
     def new 
       @all_emails = list_verified_identities("EmailAddress")
       @verified_emails = get_verified_identities_by_status(@all_emails, "Success")

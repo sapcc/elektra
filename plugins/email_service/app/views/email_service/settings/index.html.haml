@@ -14,15 +14,14 @@
             %td 
               =@access if @access
             %td
-          -#%tr
+          %tr#tr_secret
             %td AWS Secret Key 
-            %td#secret_key
-              %div#shown_secret
-                -#=@secret if @secret
-              %div#hidden_secret 
-                XXXXXXX
+            %td#td_secret_key
+              =@secret if @secret
             %td.show_hide_btn
-              = link_to 'Show/Hide', '#', class: "btn btn-primary", id: "secret_toggle"
+              %button.btn.btn-primary#btn_tg_secret
+                %i.fa.fa-eye-slash#eye_slash
+                %i.fa.fa-eye#eye
           %tr
             %td Cronus Endpoint 
             %td 

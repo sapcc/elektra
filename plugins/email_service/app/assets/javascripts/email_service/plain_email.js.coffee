@@ -32,10 +32,39 @@ $(
     subject = "Cronus eMail Service - from Elektra UI Plugin - #{currentDate}"
     htmlBody = "<h1>Email Sent by Cronus </h1><p><h2>AWS SES Proxy Service</h2>"
     textBody = "Email Sent by Cronus - AWS SES Proxy Service"
-    toFakeAddresses = " rjones@sbcglobal.net, doormat@comcast.net, less mfburgo@me.com, alfred@outlook.com, mfleming@comcast.net, verymuch hermanab@comcast.net, dpitts@sbcglobal.net, care,fairbank@aol.com, moxfulder@live.com, tarreau@comcast.net, simone@sbcglobal.net, I,bahwi@outlook.com, jonas@optonline.net, so much mal@verizon.net, zeller@yahoo.ca, policies@att.net, froodian@hotmail.com, alias@me.com, fmerges@att.net, tmccarth@yahoo.com";
-    ccFakeAddresses = " curly@comcast.net, plover@me.com, jmcnamara@icloud.com, dgriffith@comcast.net, invalid,elmer@optonline.net, lamky@yahoo.ca, barlow@sbcglobal.net, random,timlinux@optonline.net, anicolao@me.com, jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com, benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com, pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon.net, globalcampbell@verizon.net, notaprguy@verizon.net";
-    bccFakeAddresses = " greear@icloud.com, major,ranasta@gmail.com, forsberg@sbcglobal.net, pdbaby@verizon.net, afifi@aol.com, ninenine@verizon.net, potato mbswan@live.com, galbra@mac.com, vsprintf@hotmail.com, ducasse@att.net, tomato sopwith@yahoo.ca, wildfire@yahoo.ca, donev@mac.com, pdbaby@msn.com, gfody@hotmail.com, minor,frederic@hotmail.com, ardagna@optonline.net, citizenl@yahoo.com, makarow@gmail.com, xnormal@live.com";
+    toFakeAddresses = """ 
+      rjones@sbcglobal.net, doormat@comcast.net, less mfburgo@me.com, 
+      alfred@outlook.com, mfleming@comcast.net, verymuch hermanab@comcast.net,
+      dpitts@sbcglobal.net, care,fairbank@aol.com, moxfulder@live.com, 
+      simone@sbcglobal.net, tarreau@comcast.net,so much mal@verizon.net,
+      I,bahwi@outlook.com, jonas@optonline.net,  zeller@yahoo.ca, alias@me.com,
+      policies@att.net,froodian@hotmail.com, fmerges@att.net, tmccarth@yahoo.com
+    """
+    ccFakeAddresses = """ 
+      curly@comcast.net, plover@me.com, jmcnamara@icloud.com, random,
+      dgriffith@comcast.net, invalid,elmer@optonline.net, lamky@yahoo.ca, 
+      barlow@sbcglobal.net,timlinux@optonline.net, anicolao@me.com, 
+      jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com, 
+      benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com, 
+      pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon.net, 
+      globalcampbell@verizon.net, notaprguy@verizon.net
+    """
+    bccFakeAddresses = """
+      greear@icloud.com, major,ranasta@gmail.com, forsberg@sbcglobal.net, 
+      pdbaby@verizon.net, afifi@aol.com, ninenine@verizon.net, potato 
+      mbswan@live.com, galbra@mac.com, vsprintf@hotmail.com, ducasse@att.net,
+      tomato sopwith@yahoo.ca, wildfire@yahoo.ca, donev@mac.com, minor
+      pdbaby@msn.com, gfody@hotmail.com,frederic@hotmail.com, xnormal@live.com,
+       ardagna@optonline.net, citizenl@yahoo.com, makarow@gmail.com, 
+    """
 
+    loadFakeData = () ->
+      $(emailToAddr).val toFakeAddresses
+      $(emailCcAddr).val ccFakeAddresses
+      $(emailBccAddr).val bccFakeAddresses
+      $(emailSubject).val subject
+      $(emailHtmlBody).val htmlBody
+      $(emailTextBody).val textBody
 
     initializeData = () ->
       source_help = $(".form-group.email_source p").filter(".help-block")
@@ -46,20 +75,9 @@ $(
       htmlbody_help = $(".form-group.email_htmlbody p").filter(".help-block")
       textbody_help = $(".form-group.email_textbody p").filter(".help-block")
       
-
     increaseTextArea = (textField ,textLength) ->
-      # increase the to, cc and bcc textarea row size depends on the input
       rows =   Math.round(textLength / 35)
       $(textField).prop("rows", "#{rows}")
-
-    # TODO REMOVE THIS
-    loadFakeData = () ->
-      $(emailToAddr).val toFakeAddresses
-      $(emailCcAddr).val ccFakeAddresses
-      $(emailBccAddr).val bccFakeAddresses
-      $(emailSubject).val subject
-      $(emailHtmlBody).val htmlBody
-      $(emailTextBody).val textBody
 
     getHelpText = (errText, helpText) ->
       errSpan  = if errText  then "<span class='helpSpan'>#{errText}</span>"  else ""
@@ -71,14 +89,13 @@ $(
       if totalEmailAddresses > 50 
         errorText = "emails count : #{totalEmailAddresses} is exceeding the allowed 50"
 
-
     validateEmails = (inputElement) ->
       validEmails   = []
       invalidEmails = []
       inputText = $(inputElement).val().trimEnd().trimStart()
       $(inputElement).val(inputText);
       if not inputText or inputText.length is 0 and totalEmailAddresses is 0
-          errorText = "At least one valid email address is required."
+        errorText = "At least one valid email address is required."
       else
         inputText.split(re).forEach (emailItem, index) => 
           emElement = emailItem.trimEnd().trimStart()
@@ -95,7 +112,7 @@ $(
         when emailToAddr
           validToAddresses = validEmails
           validToAddressCount = validEmails.length
-          $(to_help).show();
+          $(to_help).show()
           if invalidEmails.length > 0 or errorText
             $(to_help).html( getHelpText errorText, helperText )
             $(fg_email_to_addr).addClass('has-error')
@@ -144,9 +161,8 @@ $(
         else
           source_help.html( getHelpText  "", "valid" )
           $(fg_email_source).removeClass('has-error')
-          source_help.hide(500);
-        # console.log "about to be loaded"
-        loadFakeData()
+          source_help.hide(500);          
+        # loadFakeData()
       )
 
       $(emailToAddr).on("blur click", () ->
@@ -214,11 +230,6 @@ $(
             $(textbody_help).hide(1500)
       )
 
-
-    )
-    # Templates Modal
-    $('body.templates.modal-open').on('click', () ->
-      console.log "template modal is clicked"
     )
 
 )
