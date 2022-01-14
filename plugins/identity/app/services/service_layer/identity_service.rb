@@ -12,6 +12,7 @@ module ServiceLayer
     include IdentityServices::Tag
     include IdentityServices::Credential
 
+
     def available?(_action_name_sym = nil)
       elektron.service?('identity')
     end

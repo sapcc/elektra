@@ -22,8 +22,14 @@
         %th.snug-nowrap
           Description:
         %td
-          = @project.description 
- 
+          = @project.description
+      - if current_user.is_allowed?("access_profile:tag_list", {target: {project: @active_project}})
+        %tr
+          %th.snug-nowrap
+            Access Profiles:
+          %td
+            = link_to plugin('access_profile').root_path, data: {modal: true, modal_size: "none"} do
+              Edit
 
 - if current_user.is_allowed?('identity:project_request')
   %h4.action-heading

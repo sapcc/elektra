@@ -44,10 +44,15 @@ export default class RBACPoliciesEditModal extends React.Component {
     policies[idx] = { ...policies[idx], match_username: input };
     this.setState({ ...this.state, policies });
   }
+  setSourceCIDR = (idx, input) => {
+    const policies = [ ...this.state.policies ];
+    policies[idx] = { ...policies[idx], match_cidr: input };
+    this.setState({ ...this.state, policies });
+  }
   setPermissions = (idx, input) => {
     const policies = [ ...this.state.policies ];
     policies[idx] = { ...policies[idx], permissions: input.split(',') };
-    if (input == 'anonymous_pull') {
+    if (input == 'anonymous_pull' || input == 'anonymous_first_pull') {
       policies[idx].match_username = '';
     }
     this.setState({ ...this.state, policies });
@@ -92,15 +97,16 @@ export default class RBACPoliciesEditModal extends React.Component {
       return;
     }
     const isEditable = isAdmin && (account.metadata || {}).readonly_in_elektra != 'true';
+    const isExternalReplica = (account.replication || {}).strategy === 'from_external_on_first_use';
 
     const policies = this.state.policies || [];
     const { isSubmitting, errorMessage, apiErrors } = this.state;
 
-    const { setRepoRegex, setUserRegex, setPermissions, removePolicy } = this;
-    const commonPropsForRow = { isEditable, setRepoRegex, setUserRegex, setPermissions, removePolicy };
+    const { setRepoRegex, setUserRegex, setSourceCIDR, setPermissions, removePolicy } = this;
+    const commonPropsForRow = { isEditable, isExternalReplica, setRepoRegex, setUserRegex, setSourceCIDR, setPermissions, removePolicy };
 
     return (
-      <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal backdrop='static' dialogClassName="modal-xl" show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
             Access policies for account: {account.name}
@@ -113,6 +119,12 @@ export default class RBACPoliciesEditModal extends React.Component {
             By default, all users with the <code>registry_admin</code> role can pull, push and delete images. And all users with the <code>registry_viewer</code> role can pull images.
             <br/><br/>
             Access policies are more granular: You can give specific users access to specific repositories within a single account if you want to. You can also use access policies to enable anonymous pulling, thereby making matching repositories publicly readable.
+            {isExternalReplica && (
+              <React.Fragment>
+                <br/><br/>
+                Since this is an external replica account, anonymous users are not allowed to replicate new images. This is a safeguard against third parties cluttering your account. You can enable anonymous replication with the "Pull Anonymously (even new images)" permission, but make sure to only enable this permission for trusted source IPs.
+              </React.Fragment>
+            )}
           </p>
           {isAdmin && !isEditable && (
             <p className='bs-callout bs-callout-warning bs-callout-emphasize'>
@@ -122,8 +134,9 @@ export default class RBACPoliciesEditModal extends React.Component {
           <table className='table'>
             <thead>
               <tr>
-                <th className='col-md-4'>Repositories matching</th>
-                <th className='col-md-4'>User names matching</th>
+                <th className='col-md-3'>Repositories matching</th>
+                <th className='col-md-3'>User names matching</th>
+                <th className='col-md-2'>Requests from (CIDR)</th>
                 <th className='col-md-3'>Permissions</th>
                 <th className='col-md-1'>
                   {isEditable && (

@@ -1,5 +1,5 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
-FROM ruby:2.5-alpine3.11 AS elektra
+FROM ruby:2.6-alpine3.11 AS elektra
 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
@@ -65,6 +65,7 @@ RUN script/organize_plugins_gemspecs
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 
+# add elektra sources into image
 ADD . /home/app/webapp
 
 #ENV NODE_ENV=production
@@ -85,7 +86,6 @@ RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
-LABEL source_repository="https://github.com/sapcc/elektra"
 
 FROM elektra AS tests
 RUN apk add --no-cache postgresql bash
@@ -97,3 +97,5 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
       # && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
 
 FROM elektra
+
+# docker -t elektra build --file docker/Dockerfile .

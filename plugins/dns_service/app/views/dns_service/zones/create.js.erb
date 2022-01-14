@@ -1,2 +1,2 @@
-$('table.zones').prepend("<%= j(render(partial: 'dns_service/zones/zone_item', locals: {zone: @zone, active_zone_transfer_requests: {}, pools: @pools} )) %>");
+$('table.zones').prepend("<%= j(render(partial: 'dns_service/zones/zone_item', locals: {zone: @zone, shared_zones: @shared_zones, active_zone_transfer_requests: {}, pools: @pools} )) %>");
 MoModal.close();

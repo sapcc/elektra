@@ -29,6 +29,7 @@ class @MoModal
       $button = $(anker)
       #$button.addClass('loading')
       location = $(anker).attr('href')
+      modalSize = $(anker).attr('data-modal-size')
 
     # do nothing if modal is loading
     return false if modal_is_loading
@@ -38,9 +39,12 @@ class @MoModal
 
     #Load modal dialog from server
     InfoDialog.showLoading()
+    attr = {modal:true}
+    if modalSize && modalSize.length > 0
+      attr["modal_size"] = modalSize
 
     modal_is_loading = true
-    $.get(location, {modal:true})
+    $.get(location, attr)
       .error showError
       .done (data, status, xhr)->
         # console.log 'done'
