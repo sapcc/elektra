@@ -210,7 +210,7 @@ module Lbaas2
             sub = subnets[subid]
             cidr = NetAddr.parse_net(sub.cidr)
             next unless cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
-            
+
             grouped_fips[sub.name] ||= []
             # add the description to the label ip
             label = fip.floating_ip_address
@@ -245,7 +245,7 @@ module Lbaas2
       select_availability_zones = enabled_availability_zones.map { |az| { "label": az["name"], "value": az["name"] } }
 
       render json: {
-        availability_zones: []
+        availability_zones: select_availability_zones
       }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
