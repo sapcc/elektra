@@ -459,7 +459,7 @@ GEM
     pry-rails (0.3.6)
       pry (>= 0.10.4)
     public_suffix (3.1.1)
-    puma (4.3.9)
+    puma (4.3.10)
       nio4r (~> 2.0)
     quantile (0.2.1)
     racc (1.6.0)
@@ -666,7 +666,7 @@ DEPENDENCIES
   prettier
   prometheus-client
   pry-rails
-  puma (= 4.3.9)
+  puma (= 4.3.10)
   rails (~> 5.2.5)
   rails-controller-testing
   rails_stdout_logging
