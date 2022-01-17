@@ -1,0 +1,26 @@
+=content_for :main_toolbar do
+  eMail Service - AWS SES (Cronus)
+= render partial: 'email_service/shared/nav.html', locals: {pane: 'stats'}
+
+- if current_user.is_allowed?('email_service:stats_list')
+  .tab-content
+    .tab-pane.active{role:"tabpanel", id:"stats-pane"}
+      %h3
+        eMails Sent Statistics
+      .row
+        .col-sm-9
+
+          .js-table-verified-email
+            = render partial: 'table_stats', locals: { send_stats: @send_stats }
+
+        .col-sm-3
+          .bs-callout.bs-callout-primary.toolbar-aligment
+            %p
+              The Amazon SES API provides the 
+              %code 
+                GetSendStatistics 
+              operation, which returns information about your service usage. We recommend that you check your sending statistics regularly, so that you can make adjustments if needed.
+              = link_to "For more information", "https://docs.aws.amazon.com/ses/latest/dg/monitor-sending-activity-api.html", :target => "_blank"
+              \.
+
+%hr

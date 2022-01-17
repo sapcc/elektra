@@ -10,6 +10,8 @@ module ServiceLayer
     include IdentityServices::Role
     include IdentityServices::RoleAssignment
     include IdentityServices::Tag
+    include IdentityServices::Credential
+
 
     def available?(_action_name_sym = nil)
       elektron.service?('identity')

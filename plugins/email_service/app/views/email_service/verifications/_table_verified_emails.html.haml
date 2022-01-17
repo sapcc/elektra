@@ -1,0 +1,16 @@
+.verification_table
+%table.table
+  %thead
+    %tr
+      %th eMail address
+      %th Verification status
+      %th.snug
+  %tbody
+    - if !@all_emails || @all_emails.empty?
+      %tr
+        %td{ colspan: 3 } No verified eMail address available
+    - else
+      -@all_emails.each do | email_item |
+        = render partial: 'table_verified_email_item', locals: { email_item: email_item }
+-#= paginate verified_email, :theme => 'twitter-bootstrap-3', :remote => true
+

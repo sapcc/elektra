@@ -1,0 +1,70 @@
+= content_for :title do
+  Templated eMail
+- url = plugin('email_service').templated_emails_path()
+= simple_form_for :email, url: url, method: :post, remote: request.xhr?, html: {id: 'form_templated_email', data: {modal: true}, class: 'form-horizontal needs-validation' }, wrapper: :horizontal_form do |f|
+  - if !@verified_emails_collection || @verified_emails_collection.empty? 
+    %p.alert.alert-warning
+      There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
+      You can get verified your eMail address
+      = link_to 'here', pl.new_verification_path()
+  - if !@templates_collection || @templates_collection.empty?
+    %p.alert.alert-warning
+      There is no eMail template defined for your account to send email from. Without an eMail template, you can't send templated eMail.
+      You can create eMail template from
+      = link_to 'here', pl.new_template_path()
+      or you can send plain eMail from
+      = link_to 'here', pl.new_email_path()
+  
+  .modal-body
+    .row
+      .col-sm-8
+        = f.input :source, { label: "Sender", 
+          collection: @verified_emails_collection, as: :select,
+          hint: "Choose an eMail address you wish to send this email from",
+          required: true}
+        = f.input :to_addr, required: true, 
+          label: 'To Address(es)', 
+          placeholder: 'Enter To Addresses', 
+          input_html:         { rows: "10", class: "u-text-monospace" },
+          hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+        = f.input :cc_addr, 
+          required: false, 
+          label: 'Cc Address(es)', 
+          placeholder: 'Enter Cc Addresses',
+          input_html:         { rows: "10", class: "u-text-monospace" },
+          hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+        = f.input :bcc_addr, 
+          required: false, 
+          label: 'Bcc Address(es)', 
+          placeholder: 'Enter Bcc Addresses',
+          input_html:         { rows: "10", class: "u-text-monospace" },
+          hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+        = f.input :reply_to_addr, 
+          required: false, 
+          label: 'Reply To', 
+          placeholder: 'Enter Bcc Addresses',
+          collection: @verified_emails_collection, as: :select,
+          hint: 'Reply To Address'
+        = f.input :template_name,label: "Template Name", 
+          collection: @templates_collection, as: :select,
+          data: {toggle: "selectTemplateName"},
+          hint: 'Choose a template',
+          required: true    
+        = f.input :template_data,
+          label:              "Template data",
+          input_html:         {rows: "25", class: "u-text-monospace", 
+          value: "{}"},
+          as:                 :text,
+          required:           true,
+          hint: 'Enter template data in JSON format'
+        = f.input :configset_name,        
+          label:              "ConfigSet Name",
+          collection: @configsets, as: :select,
+          required:           false,
+          hint: 'Choose ConfigSet Name'
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", pl.templated_emails_path(), class: 'btn btn-default'
+    = button_tag "Send", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
