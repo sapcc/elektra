@@ -238,14 +238,19 @@ module Lbaas2
     end
 
     def availability_zones
-        availability_zones = services.lbaas2.availability_zones()          
-        render json: {
-          availability_zones: availability_zones,
-        }
-      rescue Elektron::Errors::ApiResponse => e
-        render json: { errors: e.message }, status: e.code
-      rescue Exception => e
-        render json: { errors: e.message }, status: "500"
+      availability_zones = services.lbaas2.availability_zones()
+      # reject disabled zones
+      enabled_availability_zones = availability_zones.select { |az| az["enabled"] }
+      # transform to select options
+      select_availability_zones = enabled_availability_zones.map { |az| { "label": az["name"], "value": az["name"] } }
+
+      render json: {
+        availability_zones: []
+      }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
     end
 
     protected
@@ -265,7 +270,7 @@ module Lbaas2
           unless lb.subnet
             lb.subnet = services.networking.subnets(id: lb.vip_subnet_id).first
             lb.subnet_from_cache false
-          end          
+          end
         end
 
         # get cached listeners
