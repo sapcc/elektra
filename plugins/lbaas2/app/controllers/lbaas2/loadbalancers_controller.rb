@@ -237,6 +237,17 @@ module Lbaas2
       render json: { errors: e.message }, status: "500"
     end
 
+    def availability_zones
+        availability_zones = services.lbaas2.availability_zones()          
+        render json: {
+          availability_zones: availability_zones,
+        }
+      rescue Elektron::Errors::ApiResponse => e
+        render json: { errors: e.message }, status: e.code
+      rescue Exception => e
+        render json: { errors: e.message }, status: "500"
+    end
+
     protected
 
     def extend_lb_data(lbs)

@@ -177,7 +177,6 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         @path = "private_networks"
       end
     end
-
   end
 
   describe "GET 'subnets'" do
@@ -192,7 +191,22 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         @path = "subnets"
       end
     end
+  end
 
+  describe "GET 'availability_zones'" do
+    before :each do      
+      avs = double('elektron', service: double("octavia", get: double("response", body: double("body", fetch: ["zoneA", "zoneB", "zoneC"] )) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(avs)
+    end
+
+    it_behaves_like 'GET action with editor context' do
+      subject do
+        @default_params = default_params
+        @extra_params = {}
+        @path = "availability_zones"
+        @result = {availability_zones: ["zoneA", "zoneB", "zoneC"]}
+      end
+    end
   end
 
 end
