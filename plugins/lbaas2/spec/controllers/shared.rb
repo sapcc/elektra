@@ -624,7 +624,7 @@ RSpec.shared_examples 'GET action with editor context' do
     it 'returns http success' do
       get @path, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
-      if @result 
+      if @result
         expect(response.body).to eq(@result.to_json)
       end
     end

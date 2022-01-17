@@ -194,9 +194,10 @@ describe Lbaas2::LoadbalancersController, type: :controller do
   end
 
   describe "GET 'availability_zones'" do
-    before :each do      
-      avs = double('elektron', service: double("octavia", get: double("response", body: double("body", fetch: ["zoneA", "zoneB", "zoneC"] )) ))
-      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(avs)
+    before :each do
+      @avs = [{"name"=>"qa-de-1a", "enabled"=>true}, {"name"=>"qa-de-1b", "enabled"=>false}]
+      elektron = double('elektron', service: double("octavia", get: double("response", body: double("body", fetch: @avs )) ))
+      allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(elektron)
     end
 
     it_behaves_like 'GET action with editor context' do
@@ -204,7 +205,7 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         @default_params = default_params
         @extra_params = {}
         @path = "availability_zones"
-        @result = {availability_zones: ["zoneA", "zoneB", "zoneC"]}
+        @result = {availability_zones: [{"label"=>"qa-de-1a", "value"=>"qa-de-1a"}]}
       end
     end
   end
