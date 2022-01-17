@@ -108,8 +108,14 @@ const NewLoadbalancer = (props) => {
   const onSubmit = (values) => {
     setFormErrors(null)
     const newValues = { ...values }
+
+    // copy the subnet Id on every submit click if exists. No existing in values itself
     if (subnet) {
       newValues.vip_subnet_id = subnet.value
+    }
+
+    if (availabilityZone) {
+      newValues.availability_zone = availabilityZone.value
     }
 
     // save the entered values in case of error
@@ -263,7 +269,7 @@ const NewLoadbalancer = (props) => {
                   items={availabilityZones.items}
                   onChange={onSelectAvailibilityZone}
                   value={availabilityZone}
-                  conditionalPlaceholderText="Feature not available. There are no availability zones to select."
+                  conditionalPlaceholderText="Feature not available. There are no availability zones to select"
                   conditionalPlaceholderCondition={
                     isAvailabilityZoneSelectDisabled
                   }
@@ -278,9 +284,8 @@ const NewLoadbalancer = (props) => {
                 )}
                 <span className="help-block">
                   <i className="fa fa-info-circle"></i>
-                  You may specify an availability zone (AZ). If left empty, this
-                  will yield the regular behaviour of a non AZ-aware load
-                  balancer.
+                  You may specify an availability zone (AZ). If left empty,
+                  automatic cross-DC high availability will be used.
                 </span>
               </Form.ElementHorizontal>
 
