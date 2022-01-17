@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react"
-import { Modal, Button } from "react-bootstrap"
+import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import { addNotice } from "lib/flashes"
-import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
+import useLoadbalancer, {
+  fetchAvailabilityZones,
+} from "../../../lib/hooks/useLoadbalancer"
 import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import useCommons from "../../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 
 const NewLoadbalancer = (props) => {
-  const {
-    createLoadbalancer,
-    fetchSubnets,
-    fetchPrivateNetworks,
-  } = useLoadbalancer()
+  const { createLoadbalancer, fetchSubnets, fetchPrivateNetworks } =
+    useLoadbalancer()
   const { errorMessage } = useCommons()
 
   const [privateNetworks, setPrivateNetworks] = useState({
@@ -26,10 +25,18 @@ const NewLoadbalancer = (props) => {
     error: null,
     items: [],
   })
+  const [availabilityZones, setAvailabilityZones] = useState({
+    isLoading: false,
+    error: null,
+    items: [],
+  })
+  const [showAdvanceNetworkSettings, setShowAdvanceNetworkSettings] =
+    useState(false)
 
   useEffect(() => {
     Log.debug("fetching private networks")
     setPrivateNetworks({ ...privateNetworks, isLoading: true })
+    setAvailabilityZones({ ...privateNetworks, isLoading: true })
     fetchPrivateNetworks()
       .then((data) => {
         setPrivateNetworks({
@@ -42,6 +49,23 @@ const NewLoadbalancer = (props) => {
       .catch((error) => {
         setPrivateNetworks({
           ...privateNetworks,
+          isLoading: false,
+          error: errorMessage(error),
+        })
+      })
+    fetchAvailabilityZones()
+      .then((data) => {
+        console.log("availabilityZones: ", data)
+        setAvailabilityZones({
+          ...availabilityZones,
+          isLoading: false,
+          items: data,
+          error: null,
+        })
+      })
+      .catch((error) => {
+        setAvailabilityZones({
+          ...availabilityZones,
           isLoading: false,
           error: errorMessage(error),
         })
@@ -107,6 +131,7 @@ const NewLoadbalancer = (props) => {
 
   const [privateNetwork, setPrivateNetwork] = useState(null)
   const [subnet, setSubnet] = useState(null)
+  const [availabilityZone, setAvailabilityZone] = useState(null)
 
   const onSelectPrivateNetworkChange = (props) => {
     if (props) {
@@ -138,12 +163,12 @@ const NewLoadbalancer = (props) => {
     setSubnet(props)
   }
 
-  const [showAdvanceNetworkSettings, setShowAdvanceNetworkSettings] = useState(
-    false
-  )
-  const handleAdvanceNetworkSettings = () => {
-    setShowAdvanceNetworkSettings(!showAdvanceNetworkSettings)
+  const onSelectAvailibilityZone = (props) => {
+    setAvailabilityZone(props)
   }
+
+  const isAvailabilityZoneSelectDisabled =
+    !availabilityZones.isLoading && availabilityZones.items.length == 0
 
   Log.debug("RENDER new loadbalancer")
   return (
@@ -208,20 +233,57 @@ const NewLoadbalancer = (props) => {
 
           <Form.ElementHorizontal>
             <span className="pull-right">
-              <Button bsStyle="link" onClick={handleAdvanceNetworkSettings}>
+              <Button
+                bsStyle="link"
+                onClick={() =>
+                  setShowAdvanceNetworkSettings(!showAdvanceNetworkSettings)
+                }
+              >
                 Toggle advanced network options
               </Button>
             </span>
           </Form.ElementHorizontal>
 
-          {showAdvanceNetworkSettings && (
+          <Collapse in={showAdvanceNetworkSettings}>
             <div className="advanced-options">
               <h5>Advanced Network Options</h5>
               <p>
                 These optional settings are for advanced usecases that require
-                more control over the network configuration of the new
-                loadbalancer.
+                more control over the network configuration of the new load
+                balancer.
               </p>
+
+              <Form.ElementHorizontal
+                label="Availability zone"
+                name="availability_zone"
+              >
+                <SelectInput
+                  name="availability_zone"
+                  isLoading={availabilityZones.isLoading}
+                  items={availabilityZones.items}
+                  onChange={onSelectAvailibilityZone}
+                  value={availabilityZone}
+                  conditionalPlaceholderText="Feature not available. There are no availability zones to select."
+                  conditionalPlaceholderCondition={
+                    isAvailabilityZoneSelectDisabled
+                  }
+                  isDisabled={isAvailabilityZoneSelectDisabled}
+                  isClearable
+                  useFormContext={false}
+                />
+                {availabilityZones.error ? (
+                  <span className="text-danger">{availabilityZones.error}</span>
+                ) : (
+                  ""
+                )}
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  You may specify an availability zone (AZ). If left empty, this
+                  will yield the regular behaviour of a non AZ-aware load
+                  balancer.
+                </span>
+              </Form.ElementHorizontal>
+
               <Form.ElementHorizontal label="Subnet" name="vip_subnet_id">
                 <SelectInput
                   name="vip_subnet_id"
@@ -259,7 +321,7 @@ const NewLoadbalancer = (props) => {
                 </span>
               </Form.ElementHorizontal>
             </div>
-          )}
+          </Collapse>
 
           <Form.ElementHorizontal label="Tags" name="tags">
             <TagsInput name="tags" />
