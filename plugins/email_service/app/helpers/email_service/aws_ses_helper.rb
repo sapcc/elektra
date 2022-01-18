@@ -6,11 +6,7 @@ module EmailService
 
     ### EC2 CREDS ### 
     def get_ec2_creds
-      credentials = services.identity.aws_credentials(current_user.id, current_user.project_id)
-    end
-
-    def get_all_creds
-      err, creds = services.identity.all_ec2_creds(current_user.id)
+      credentials = services.identity.aws_credentials(current_user.id, current_user.project_id).first
     end
     
     ### CREATE SES CLIENT ###
