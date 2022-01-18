@@ -251,80 +251,84 @@ const NewLoadbalancer = (props) => {
           </Form.ElementHorizontal>
 
           <Collapse in={showAdvanceNetworkSettings}>
-            <div className="advanced-options">
-              <h5>Advanced Network Options</h5>
-              <p>
-                These optional settings are for advanced usecases that require
-                more control over the network configuration of the new load
-                balancer.
-              </p>
+            <div className="advanced-options-section">
+              <div className="advanced-options">
+                <h5>Advanced Network Options</h5>
+                <p>
+                  These optional settings are for advanced usecases that require
+                  more control over the network configuration of the new load
+                  balancer.
+                </p>
 
-              <Form.ElementHorizontal
-                label="Availability zone"
-                name="availability_zone"
-              >
-                <SelectInput
+                <Form.ElementHorizontal
+                  label="Availability zone"
                   name="availability_zone"
-                  isLoading={availabilityZones.isLoading}
-                  items={availabilityZones.items}
-                  onChange={onSelectAvailibilityZone}
-                  value={availabilityZone}
-                  conditionalPlaceholderText="Feature not available. There are no availability zones to select"
-                  conditionalPlaceholderCondition={
-                    isAvailabilityZoneSelectDisabled
-                  }
-                  isDisabled={isAvailabilityZoneSelectDisabled}
-                  isClearable
-                  useFormContext={false}
-                />
-                {availabilityZones.error ? (
-                  <span className="text-danger">{availabilityZones.error}</span>
-                ) : (
-                  ""
-                )}
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  You may specify an availability zone (AZ). If left empty,
-                  automatic cross-DC high availability will be used.
-                </span>
-              </Form.ElementHorizontal>
+                >
+                  <SelectInput
+                    name="availability_zone"
+                    isLoading={availabilityZones.isLoading}
+                    items={availabilityZones.items}
+                    onChange={onSelectAvailibilityZone}
+                    value={availabilityZone}
+                    conditionalPlaceholderText="Feature not available. There are no availability zones to select"
+                    conditionalPlaceholderCondition={
+                      isAvailabilityZoneSelectDisabled
+                    }
+                    isDisabled={isAvailabilityZoneSelectDisabled}
+                    isClearable
+                    useFormContext={false}
+                  />
+                  {availabilityZones.error ? (
+                    <span className="text-danger">
+                      {availabilityZones.error}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    You may specify an availability zone (AZ). If left empty,
+                    automatic cross-DC high availability will be used.
+                  </span>
+                </Form.ElementHorizontal>
 
-              <Form.ElementHorizontal label="Subnet" name="vip_subnet_id">
-                <SelectInput
-                  name="vip_subnet_id"
-                  isLoading={subnets.isLoading}
-                  items={subnets.items}
-                  onChange={onSelectSubnetChange}
-                  value={subnet}
-                  conditionalPlaceholderText="Please choose a network first"
-                  conditionalPlaceholderCondition={privateNetwork == null}
-                  isClearable
-                  useFormContext={false}
-                />
-                {subnets.error ? (
-                  <span className="text-danger">{subnets.error}</span>
-                ) : (
-                  ""
-                )}
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  You can specify a subnet from which the fixed IP is chosen. If
-                  empty any subnet is selected.
-                </span>
-              </Form.ElementHorizontal>
+                <Form.ElementHorizontal label="Subnet" name="vip_subnet_id">
+                  <SelectInput
+                    name="vip_subnet_id"
+                    isLoading={subnets.isLoading}
+                    items={subnets.items}
+                    onChange={onSelectSubnetChange}
+                    value={subnet}
+                    conditionalPlaceholderText="Please choose a network first"
+                    conditionalPlaceholderCondition={privateNetwork == null}
+                    isClearable
+                    useFormContext={false}
+                  />
+                  {subnets.error ? (
+                    <span className="text-danger">{subnets.error}</span>
+                  ) : (
+                    ""
+                  )}
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    You can specify a subnet from which the fixed IP is chosen.
+                    If empty any subnet is selected.
+                  </span>
+                </Form.ElementHorizontal>
 
-              <Form.ElementHorizontal label="IP Address" name="vip_address">
-                <Form.Input
-                  elementType="input"
-                  type="text"
-                  name="vip_address"
-                />
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  You can specify an IP from the subnet if you like. Otherwise
-                  an IP will be allocated automatically.
-                </span>
-              </Form.ElementHorizontal>
+                <Form.ElementHorizontal label="IP Address" name="vip_address">
+                  <Form.Input
+                    elementType="input"
+                    type="text"
+                    name="vip_address"
+                  />
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    You can specify an IP from the subnet if you like. Otherwise
+                    an IP will be allocated automatically.
+                  </span>
+                </Form.ElementHorizontal>
+              </div>
             </div>
           </Collapse>
 

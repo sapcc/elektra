@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Modal, Button } from "react-bootstrap"
+import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import useCommons from "../../../lib/hooks/useCommons"
 import useL7Rule from "../../../lib/hooks/useL7Rule"
@@ -148,11 +148,9 @@ const EditL7Rule = (props) => {
           </React.Fragment>
         )
         // fetch the policy again containing the new l7rule
-        persistL7Policy(
-          loadbalancerID,
-          listenerID,
-          l7policyID
-        ).catch((error) => {})
+        persistL7Policy(loadbalancerID, listenerID, l7policyID).catch(
+          (error) => {}
+        )
         close()
       })
       .catch((error) => {
@@ -268,18 +266,26 @@ const EditL7Rule = (props) => {
                     Default is false.
                   </span>
                 </Form.ElementHorizontal>
-                {showKeyAttribute && (
-                  <div className="advanced-options">
-                    <Form.ElementHorizontal label="Key" name="key" required>
-                      <Form.Input elementType="input" type="text" name="key" />
-                      <span className="help-block">
-                        <i className="fa fa-info-circle"></i>
-                        The key to use for the comparison. For example, the name
-                        of the cookie to evaluate.
-                      </span>
-                    </Form.ElementHorizontal>
+
+                <Collapse in={showKeyAttribute}>
+                  <div className="advanced-options-section">
+                    <div className="advanced-options">
+                      <Form.ElementHorizontal label="Key" name="key" required>
+                        <Form.Input
+                          elementType="input"
+                          type="text"
+                          name="key"
+                        />
+                        <span className="help-block">
+                          <i className="fa fa-info-circle"></i>
+                          The key to use for the comparison. For example, the
+                          name of the cookie to evaluate.
+                        </span>
+                      </Form.ElementHorizontal>
+                    </div>
                   </div>
-                )}
+                </Collapse>
+
                 <Form.ElementHorizontal label="Value" name="value" required>
                   <Form.Input elementType="input" type="text" name="value" />
                   <span className="help-block">
