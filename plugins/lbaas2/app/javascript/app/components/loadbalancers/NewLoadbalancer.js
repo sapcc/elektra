@@ -55,7 +55,6 @@ const NewLoadbalancer = (props) => {
       })
     fetchAvailabilityZones()
       .then((data) => {
-        console.log("availabilityZones: ", data)
         setAvailabilityZones({
           ...availabilityZones,
           isLoading: false,
@@ -277,6 +276,7 @@ const NewLoadbalancer = (props) => {
                     isDisabled={isAvailabilityZoneSelectDisabled}
                     isClearable
                     useFormContext={false}
+                    isOptionDisabled={(option) => !option.enabled}
                   />
                   {availabilityZones.error ? (
                     <span className="text-danger">

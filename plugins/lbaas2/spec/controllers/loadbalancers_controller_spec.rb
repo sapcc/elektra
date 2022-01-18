@@ -205,7 +205,7 @@ describe Lbaas2::LoadbalancersController, type: :controller do
         @default_params = default_params
         @extra_params = {}
         @path = "availability_zones"
-        @result = {availability_zones: [{"label"=>"qa-de-1a", "value"=>"qa-de-1a"}]}
+        @result = {availability_zones: [{"label"=>"qa-de-1a", "value"=>"qa-de-1a", "enabled"=>true},{"label"=>"qa-de-1b", "value"=>"qa-de-1b", "enabled"=>false}]}
       end
     end
   end

@@ -239,10 +239,8 @@ module Lbaas2
 
     def availability_zones
       availability_zones = services.lbaas2.availability_zones()
-      # reject disabled zones
-      enabled_availability_zones = availability_zones.select { |az| az["enabled"] }
       # transform to select options
-      select_availability_zones = enabled_availability_zones.map { |az| { "label": az["name"], "value": az["name"] } }
+      select_availability_zones = availability_zones.map { |az| { "label": az["name"], "value": az["name"], "enabled": az["enabled"]} }
 
       render json: {
         availability_zones: select_availability_zones
