@@ -6,7 +6,9 @@ module EmailService
     authorization_required
 
     def index
+
       creds = get_ec2_creds
+      
       if creds.error.empty?
         next_token, @configsets = list_configsets
         items_per_page = 10
@@ -17,10 +19,34 @@ module EmailService
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
       rescue Exception => e
-        flash[:error] = "Status Code: 500- : Error: #{e.message}"
+        flash[:error] = "Status Code: 500: Error: #{e.message}"
     end
 
-    def new;end
+    # current
+    def new; end
+
+    def create
+      status = ""
+      @configset = new_configset(configset_params)
+      if !@configset.valid?
+        render 'edit', local: {configset: @configset } and return
+      else
+        status = store_configset(@configset)
+        if status == "success"
+          flash[:success] = "Configset #{@configset.name} is saved"
+          redirect_to plugin('email_service').configsets_path # and return
+        else
+          flash.now[:warning] = status
+          render 'edit', local: {configset: @configset } and return
+        end 
+      end
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      redirect_to plugin('email_service').configsets_path
+    end
+
 
     def show
       @id = params[:id] if params[:id]
@@ -31,31 +57,7 @@ module EmailService
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
       rescue Exception => e
-        flash[:error] = "Status Code: --500-- : Error: #{e.message}"
-    end
-
-    def create
-      status = ""
-      @configset = new_configset(configset_params)
-      if @configset.errors?
-        flash.now[:error] = @configset.errors
-        render 'new' and return
-      else
-        status = store_configset(@configset)
-        if status == "success"
-          flash[:success] = "Configset #{@configset.name} is saved"
-          redirect_to plugin('email_service').configsets_path
-        else
-          flash.now[:warning] = status
-          render 'new' and return
-        end 
-      end
-      redirect_to plugin('email_service').configsets_path
-      rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-      rescue Exception => e
         flash[:error] = "Status Code: 500 : Error: #{e.message}"
-      
     end
 
     def destroy
@@ -77,6 +79,7 @@ module EmailService
       rescue Exception => e
         flash[:error] = "Status Code: 500 : Error: #{e}"
       redirect_to plugin('email_service').configsets_path
+      
     end
 
 
@@ -100,9 +103,13 @@ module EmailService
       def set_configset
         @configset = find_configset(params[:name])
       end
+
       def configset_params
-        params.require(:configset).permit(:name)
+        params.require(:configset).permit(:name, :event_destinations)
       end
 
+      def new_configset(attributes = {})
+        configset = ::EmailService::Configset.new(attributes)
+      end
   end
 end

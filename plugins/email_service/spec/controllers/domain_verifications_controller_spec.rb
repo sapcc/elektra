@@ -1,4 +1,5 @@
 require 'spec_helper'
+require_relative '../factories/factories'
 
 describe EmailService::DomainVerificationsController, type: :controller do
   routes { EmailService::Engine.routes }

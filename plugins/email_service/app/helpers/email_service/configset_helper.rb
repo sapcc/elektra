@@ -6,6 +6,15 @@ module EmailService
 
     # https://docs.aws.amazon.com/sdk-for-ruby/v2/api/Aws/SES/Client.html#update_configuration_set_event_destination-instance_method
     
+    def is_unique(name)
+      configset = find_configset(name)
+      if configset.name == name
+        return false
+      else
+        return true
+      end
+    end
+
     def store_configset(configset)
       status = ""
       begin
@@ -19,13 +28,12 @@ module EmailService
         status = "success" 
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
-        logger.debug "CRONUS: DEBUG: CONFIGSET: #{error}"
+        logger.debug "CRONUS: DEBUG: SAVE CONFIGSET: #{error}"
       end
       status
     end
 
     def delete_configset(name)
-      logger.debug "CRONUS: DEBUG: DELETE CONFIGSET: helper entered"
       status = ""
       begin
         ses_client = create_ses_client
@@ -38,7 +46,7 @@ module EmailService
       rescue Aws::SES::Errors::ServiceError => error
         msg = "Unable to delete Configset #{name}. Error message: #{error} "
         status = msg
-        logger.debug "CRONUS: DEBUG: (AWS SES HELPER) CONFIGSET: #{error}"
+        logger.debug "CRONUS: DEBUG: DELETE CONFIGSET: #{error}"
       end
       status
     end
@@ -63,10 +71,18 @@ module EmailService
         end if resp.configuration_sets.size > 0
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
-        logger.debug "CRONUS: DEBUG: (AWS SES HELPER) CONFIGSET: #{error}"
-        # configsets && !configsets.empty? ? configsets : error
+        logger.debug "CRONUS: DEBUG: LIST CONFIGSETS: #{error}"
       end
       return next_token, configsets && !configsets.empty? ? configsets : error
+    end
+
+    def list_configset_names(token="")
+      configset_names = []
+      _, configsets = list_configsets(token)
+      configsets.each do | cfg |
+        configset_names << cfg[:name]
+      end if configsets && !configsets.empty?
+      configset_names      
     end
 
     # Find existing config set
@@ -90,7 +106,7 @@ module EmailService
         })
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
-        logger.debug "CRONUS: DEBUG: (AWS SES HELPER) DESCRIBE CONFIGSET: #{error}"
+        logger.debug "CRONUS: DEBUG: DESCRIBE CONFIGSET: #{error}"
       end
     end
 
@@ -105,36 +121,6 @@ module EmailService
     def configuration_set_attribute_names
       ["eventDestinations", "trackingOptions", "deliveryOptions", "reputationOptions"]
     end
-
-    class Configset 
-      def initialize(opts = {})
-        @name       = opts[:name]
-        @event_destinations = opts[:event_destinations]
-        @errors     = validate_config(opts)
-      end 
-    
-      def name
-        @name
-      end
-
-      def errors?
-        @errors.empty? ? false : true
-      end
-
-      def validate_config(opts)
-        errors = []
-        if opts[:name] == "" || opts[:name].nil?
-          errors.push({ name: "name", message: "Configset name can't be empty" })
-        end
-        errors
-      end
-
-    end
-
-    def new_configset(attributes = {})
-      configset = Configset.new(attributes)
-    end
-
 
   end
 end

@@ -1,8 +1,8 @@
 EmailService::Engine.routes.draw do
   get '/' => 'web#index', as: :index
   resources :settings, only: [:index, :show]
-  resources :templated_emails, only: [:index, :new, :create]
-  resources :emails, only: [:index, :new, :create, :destroy]
+  resources :templated_emails, only: [:index, :new, :create, :edit]
+  resources :emails, only: [:index, :new, :create, :edit]
   resources :templates , only: [:index, :show, :new, :edit, :create, :destroy, :update]
   resources :configsets, only: [:index, :show, :new, :edit, :create, :destroy, :update]
   resources :verifications, only: [:index, :show, :new, :create, :destroy]

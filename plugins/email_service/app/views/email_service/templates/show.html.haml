@@ -28,7 +28,9 @@
             %strong Text part:
           %td.text-part
             =@template.text_part
-
+    - else 
+      Template not found.
+      
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
