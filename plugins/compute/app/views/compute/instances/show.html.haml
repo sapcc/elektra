@@ -10,3 +10,63 @@
       = link_to "Close", plugin('compute').instances_url, class: 'btn btn-default'
 
 
+:javascript
+  $(document).ready(function(){
+
+    const catchErrors = (response) => {
+      if (response.status < 400) {
+        return response
+      } else {
+        return response.text().then((message) => {
+          var error = new Error(message || response.statusText || response.status)
+          error.statusCode = response.status
+          //InfoDialog.show("Problem to get vmware version",error)
+          $("#guest_tools").html("Problem to get guest tools version: "+error.message)
+        })
+      }
+    }
+
+    var virtualmachine_guest_tools_target_version = "0";
+    fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (guest_tools_target_version) (vrops_virtualmachine_guest_tools_target_version_info)')
+      .then(catchErrors)
+      .then((response) => response.json())
+      .then((json) => {
+        var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
+        var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
+        console.log(virtualMachineGuestToolsTargetVersion)
+        fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (virtualmachine, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{virtualmachine="#{@instance.name} (#{@instance.id})"}) AND on (virtualmachine) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
+          .then(catchErrors)
+          .then((response) => response.json())
+          .then((json) => {
+            console.log(json)
+            $("span.spinner").hide()
+            if (json.data.result.length == 0 ) {
+              $("span.no_guest_tools").show()
+            } else {
+              var guestToolsVersionRaw = json.data.result[0].metric.guest_tools_version
+              var guestToolsVersion = parseInt(guestToolsVersionRaw.replace(/\./g,""))
+              if ( guestToolsVersion == 0 ) {
+                $("span.no_guest_tools").show()
+              } 
+              else if (guestToolsVersion < virtualMachineGuestToolsTargetVersion ) {
+                $("span.guest_tools_not_uptodate_current_version").html(guestToolsVersionRaw)
+                $("span.guest_tools_not_uptodate_target_version").html(virtualMachineGuestToolsTargetVersionRaw)
+                $("span.guest_tools_not_uptodate").show()
+              }
+              else {
+                $("span.guest_tools_uptodate_current_version").html(guestToolsVersionRaw)
+                $("span.guest_tools_uptodate").show()
+              }
+            }
+          })
+          .catch((error) => { 
+            console.log("ERROR FETCH TOOLS VERSION", error)
+            $("#guest_tools").html("Problem to get guest tools version...")
+          })
+      })
+      .catch((error) => {
+        console.log("ERROR FETCH TARGET VERSION", error)
+        $("#guest_tools").html("Problem to get target version...")
+      })
+  });
+

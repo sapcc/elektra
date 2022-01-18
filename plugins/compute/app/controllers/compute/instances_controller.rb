@@ -94,6 +94,7 @@ module Compute
 
     def show
       @instance = services.compute.find_server(params[:id])
+      @current_region = ENV['MONSOON_DASHBOARD_REGION']
       return if @instance.blank?
       load_security_groups(@instance)
     end
