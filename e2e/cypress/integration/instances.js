@@ -11,7 +11,9 @@ describe("Instances", () => {
   it("The Instances page is reachable", () => {
     cy.get(".table.instances")
     cy.contains("Servers")
-    cy.request("/").should((response) => {
+    cy.request(
+      `/${Cypress.env("TEST_DOMAIN")}/member/compute/instances`
+    ).should((response) => {
       expect(response.status).to.eq(200)
     })
     cy.get(".btn").contains("Create New")
@@ -22,5 +24,4 @@ describe("Instances", () => {
     cy.url().should("include", "instances?overlay=new")
     cy.get("button.btn.btn-primary").contains("Create")
   })
-
 })

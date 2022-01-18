@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  helper_method :modal?, :plugin_name
+  helper_method :modal?, :plugin_name, :modal_size
 
   # catch all api errors and render exception page
 
@@ -44,6 +44,13 @@ class ApplicationController < ActionController::Base
       @modal = request.xhr? && params[:modal] ? true : false
     end
     @modal
+  end
+
+  def modal_size
+    if @modal_size.nil?
+      @modal_size = params[:modal_size] || "modal-xl"
+    end
+    @modal_size
   end
 
   def render(*args)

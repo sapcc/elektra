@@ -43,7 +43,9 @@ describe("Snapshots", () => {
 
   it("The Snapshots page is reachable", () => {
     cy.get(".table.snapshots")
-    cy.request("/").should((response) => {
+    cy.request(
+      `/${Cypress.env("TEST_DOMAIN")}/member/block-storage/?r=/snapshots`
+    ).should((response) => {
       expect(response.status).to.eq(200)
     })
   })

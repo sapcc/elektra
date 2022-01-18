@@ -1,0 +1,6 @@
+.btn-group
+  %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true } }
+    %span.fa.fa-cog
+  %ul.dropdown-menu.dropdown-menu-right{ role:"menu" }
+    - if current_user.is_allowed?('email_service:setting_list')
+      %li= link_to 'Show Config', settings_show_config_path, method: :get

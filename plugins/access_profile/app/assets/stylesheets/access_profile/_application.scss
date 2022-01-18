@@ -1,0 +1,134 @@
+/****************************************************
+  We are using SASS!
+  DO NOT USE require, require_tree, and require_self.
+  ***************************************************
+
+  Instead require further sass files by calling the "@import" directive.
+  e.g. @import "mixins";
+  FYI:
+  The core app automatically namespaces a plugin's css with the plugin name. I.e. it encapsulates a plugin's css in a class with the same name as plugin (e.g. a plugin with name "myplugin" gets surrounded with css class ".myplugin").
+  This means that in the compiled css e.g. .test { color: #f00; } becomes .myplugin .test { color: #f00; }
+  The core app also ensures that the content div surrounding the plugin views gets a css class with the name of current plugin.
+  This way we ensure that your styles take effect only inside the content of your plugin and don't accidentally overwrite styles defined elsewhere (either in the core or in another plugin).
+
+  ***************************************************
+  IMPORTANT
+  ---------------------------------------------------
+  1) The namespacing happens automatically. There is no special action required from the plugin author. The only thing you need to pay attention to is that you write styles only for elements in the context of your plugin's views.
+
+  2) Make sure all your scss files are partials (i.e. the file name starts with an underscore, e.g. "_application.scss"). Otherwise the base imports in the main stylesheet won't be available in your engine stylesheets!
+  ***************************************************
+
+*/
+
+.sticky-flash {
+  width: 100%;
+  position: fixed;
+  z-index: 1029;
+  .sticky-flash-container {
+    padding: 1rem;
+  }
+}
+
+.error-page {
+  .display-flex {
+    display: flex;
+    align-items: center;
+  }
+
+  .action-link {
+    margin-top: 1.5rem;
+    cursor: pointer;
+    :hover {
+      text-decoration: underline;
+    }
+    i {
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.service {
+  display: flex;
+
+  .service-name {
+    border-top: 1px solid #ddd;
+    width: 50%;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .service-name.empty-service {
+    width: 100%;
+  }
+
+  .service-tags {
+    width: 50%;
+    .tag-container {
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #ddd;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      .tag-value {
+        width: 100%;
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
+      }
+      .tag-actions {
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
+      }
+    }
+    .tag-container-disabled {
+      background-color: #f9f9f9;
+    }
+    .confirm-remove {
+      background-color: #f9f9f9;
+      padding-left: 0.8rem;
+      padding-right: 0.8rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      .text {
+        width: 100%;
+      }
+      .cancel {
+        margin-left: 0.5rem;
+      }
+    }
+  }
+}
+
+.new-service-container {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  .new-service-title {
+    padding-bottom: 1rem;
+  }
+  .new-service-input {
+    padding-bottom: 1.5rem;
+  }
+  .api-error {
+    display: flex;
+    align-items: center;
+    .api-error-text {
+      margin-left: 0.5rem;
+    }
+  }
+  .new-service-footer {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    .cancel {
+      margin-left: 0.5rem;
+    }
+  }
+}

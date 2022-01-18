@@ -1,0 +1,69 @@
+- pl = plugin('email_service')
+= simple_form_for :email, url: pl.emails_path(), method: :post, remote: request.xhr?, html: {id: 'form_plain_email', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  - if !@verified_emails_collection || @verified_emails_collection.empty? 
+    %p.alert.alert-warning
+      There is no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMails.
+      You can get verified your eMail address
+      = link_to 'here', plugin('email_service').new_verification_path()
+
+  .modal-body.static-columns
+    - if !@email.nil? 
+      - if @email.errors?
+        .alert.alert-error
+          = render_error_messages(@email.errors)
+    .flashes
+      = render "application/flashes"
+
+    .row
+      .col-sm-8
+        = f.input :source, { label: "From",
+          collection: @verified_emails_collection, as: :select,
+          icon_hint: "Choose Source email address",
+          required: true}
+        = f.input :to_addr, required: true, 
+          label: 'To', 
+          placeholder: 'Enter To Addresses',
+          as: :text,
+          icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
+        -# = f.input :toggle_cc, label: "Cc?", input_html: { type: "checkbox" }
+        = f.input :cc_addr, 
+          required: false, 
+          label: 'Cc Address(es)', 
+          placeholder: 'Enter Cc Addresses',
+          as: :text,
+          icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
+        -# = f.input :toggle_bcc, label: "Bcc?", input_html: { type: "checkbox" }
+        = f.input :bcc_addr, 
+          required: false, 
+          label: 'Bcc Address(es)', 
+          placeholder: 'Enter Bcc Addresses',
+          as: :text,
+          icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
+        = f.input :subject, 
+          required: true, 
+          label: 'Subject', 
+          placeholder: 'Enter Subject',
+          icon_hint: 'Enter subject line'
+        = f.input :htmlbody,
+          label: "HTML Body",
+          placeholder: "Enter HTML Email Body",
+          input_html: {rows: "15", class: "u-text-monospace"},
+          as: :text,
+          required: true,
+          icon_hint: 'Enter HTML Text of your email'
+        = f.input :textbody,        
+          label: "Text Body",
+          placeholder: "Enter Text Email Body",
+          input_html: {rows: "15", class: "u-text-monospace"},
+          as: :text,
+          required: true,
+          icon_hint: 'Enter Plain Text of your email'
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", pl.emails_path(), class: 'btn btn-default'
+    = button_tag "Send", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+
+
