@@ -1,20 +1,20 @@
-import { useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
-import CachedInforPopover from "../shared/CachedInforPopover";
-import CachedInfoPopoverListenerContent from "./CachedInfoPopoverListenerContent";
-import CachedInfoPopoverPoolContent from "./CachedInfoPopoverPoolContent";
-import StaticTags from "../StaticTags";
-import useLoadbalancer from "../../../lib/hooks/useLoadbalancer";
-import CopyPastePopover from "../shared/CopyPastePopover";
-import { addNotice, addError } from "lib/flashes";
-import { ErrorsList } from "lib/elektra-form/components/errors_list";
-import SmartLink from "../shared/SmartLink";
-import { policy } from "policy";
-import { scope } from "ajax_helper";
-import useCommons from "../../../lib/hooks/useCommons";
-import Log from "../shared/logger";
-import useStatus from "../../../lib/hooks/useStatus";
-import usePolling from "../../../lib/hooks/usePolling";
+import { useEffect, useMemo } from "react"
+import { Link } from "react-router-dom"
+import CachedInforPopover from "../shared/CachedInforPopover"
+import CachedInfoPopoverListenerContent from "./CachedInfoPopoverListenerContent"
+import CachedInfoPopoverPoolContent from "./CachedInfoPopoverPoolContent"
+import StaticTags from "../StaticTags"
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
+import CopyPastePopover from "../shared/CopyPastePopover"
+import { addNotice, addError } from "lib/flashes"
+import { ErrorsList } from "lib/elektra-form/components/errors_list"
+import SmartLink from "../shared/SmartLink"
+import { policy } from "policy"
+import { scope } from "ajax_helper"
+import useCommons from "../../../lib/hooks/useCommons"
+import Log from "../shared/logger"
+import useStatus from "../../../lib/hooks/useStatus"
+import usePolling from "../../../lib/hooks/usePolling"
 
 const LoadbalancerItem = ({
   props,
@@ -24,22 +24,22 @@ const LoadbalancerItem = ({
   shouldPoll,
 }) => {
   const { persistLoadbalancer, deleteLoadbalancer, detachFIP } =
-    useLoadbalancer();
-  const { errorMessage, searchParamsToString } = useCommons();
+    useLoadbalancer()
+  const { errorMessage, searchParamsToString } = useCommons()
   const { entityStatus } = useStatus(
     loadbalancer.operating_status,
     loadbalancer.provisioning_status
-  );
+  )
 
   const pollingCallback = () => {
-    return persistLoadbalancer(loadbalancer.id);
-  };
+    return persistLoadbalancer(loadbalancer.id)
+  }
 
   usePolling({
     delay: loadbalancer.provisioning_status.includes("PENDING") ? 20000 : 60000,
     callback: pollingCallback,
     active: shouldPoll,
-  });
+  })
 
   const canDelete = useMemo(
     () =>
@@ -47,7 +47,7 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canEdit = useMemo(
     () =>
@@ -55,7 +55,7 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canAttachFIP = useMemo(
     () =>
@@ -63,7 +63,7 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canDetachFIP = useMemo(
     () =>
@@ -71,7 +71,7 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canShowJSON = useMemo(
     () =>
@@ -79,7 +79,7 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canShowDeviceInfo = useMemo(
     () =>
@@ -87,15 +87,15 @@ const LoadbalancerItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const handleDelete = (e) => {
     if (e) {
-      e.stopPropagation();
-      e.preventDefault();
+      e.stopPropagation()
+      e.preventDefault()
     }
-    const ladbalancerID = loadbalancer.id;
-    const loadbalancerName = loadbalancer.name;
+    const ladbalancerID = loadbalancer.id
+    const loadbalancerName = loadbalancer.name
     return deleteLoadbalancer(loadbalancerName, ladbalancerID)
       .then((response) => {
         addNotice(
@@ -103,25 +103,25 @@ const LoadbalancerItem = ({
             Load Balancer <b>{loadbalancerName}</b> ({ladbalancerID}) is being
             deleted.
           </React.Fragment>
-        );
+        )
       })
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
             errors: errorMessage(error.response),
           })
-        );
-      });
-  };
+        )
+      })
+  }
 
   const handleDetachFIP = (e) => {
     if (e) {
-      e.stopPropagation();
-      e.preventDefault();
+      e.stopPropagation()
+      e.preventDefault()
     }
 
-    const ladbalancerID = loadbalancer.id;
-    const floatingIP = loadbalancer.floating_ip.id;
+    const ladbalancerID = loadbalancer.id
+    const floatingIP = loadbalancer.floating_ip.id
     return detachFIP(ladbalancerID, { floating_ip: floatingIP })
       .then((response) => {
         addNotice(
@@ -129,21 +129,21 @@ const LoadbalancerItem = ({
             Floating IP <b>{loadbalancer.floating_ip.floating_ip_address}</b> (
             {floatingIP}) is being detached.
           </React.Fragment>
-        );
+        )
       })
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
             errors: errorMessage(error),
           })
-        );
-      });
-  };
+        )
+      })
+  }
 
-  const poolIds = loadbalancer.pools.map((p) => p.id);
-  const listenerIds = loadbalancer.listeners.map((l) => l.id);
+  const poolIds = loadbalancer.pools.map((p) => p.id)
+  const listenerIds = loadbalancer.listeners.map((l) => l.id)
   const displayName = () => {
-    const name = loadbalancer.name || loadbalancer.id;
+    const name = loadbalancer.name || loadbalancer.id
     if (disabled) {
       return (
         <span className="info-text">
@@ -155,7 +155,7 @@ const LoadbalancerItem = ({
             bsClass="cp copy-paste-ids"
           />
         </span>
-      );
+      )
     } else {
       return (
         <Link to={`/loadbalancers/${loadbalancer.id}/show`}>
@@ -168,9 +168,9 @@ const LoadbalancerItem = ({
             searchTerm={searchTerm}
           />
         </Link>
-      );
+      )
     }
-  };
+  }
   const displayID = () => {
     if (loadbalancer.name) {
       if (disabled) {
@@ -183,7 +183,7 @@ const LoadbalancerItem = ({
               bsClass="cp copy-paste-ids"
             />
           </div>
-        );
+        )
       } else {
         return (
           <CopyPastePopover
@@ -193,12 +193,12 @@ const LoadbalancerItem = ({
             bsClass="cp copy-paste-ids"
             searchTerm={searchTerm}
           />
-        );
+        )
       }
     }
-  };
+  }
 
-  Log.debug("RENDER loadbalancer list item id-->", loadbalancer.id);
+  Log.debug("RENDER loadbalancer list item id-->", loadbalancer.id)
   return (
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
@@ -226,6 +226,11 @@ const LoadbalancerItem = ({
               {loadbalancer.subnet.name}
             </p>
           </React.Fragment>
+        )}
+        {loadbalancer.availability_zone && (
+          <p className="list-group-item-text list-group-item-text-copy">
+            {loadbalancer.availability_zone}
+          </p>
         )}
         {loadbalancer.vip_address && (
           <React.Fragment>
@@ -411,9 +416,9 @@ const LoadbalancerItem = ({
         </div>
       </td>
     </tr>
-  );
-};
+  )
+}
 
-LoadbalancerItem.displayName = "LoadbalancerItem";
+LoadbalancerItem.displayName = "LoadbalancerItem"
 
-export default LoadbalancerItem;
+export default LoadbalancerItem

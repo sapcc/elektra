@@ -624,6 +624,9 @@ RSpec.shared_examples 'GET action with editor context' do
     it 'returns http success' do
       get @path, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
+      if @result
+        expect(response.body).to eq(@result.to_json)
+      end
     end
   end
   context 'loadbalancer_admin' do
@@ -638,6 +641,9 @@ RSpec.shared_examples 'GET action with editor context' do
     it 'returns http success' do
       get @path, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
+      if @result 
+        expect(response.body).to eq(@result.to_json)
+      end
     end
   end
   context 'cloud_network_admin' do
@@ -652,6 +658,9 @@ RSpec.shared_examples 'GET action with editor context' do
     it 'returns http success' do
       get @path, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
+      if @result 
+        expect(response.body).to eq(@result.to_json)
+      end
     end
   end
   context 'member' do
@@ -666,6 +675,9 @@ RSpec.shared_examples 'GET action with editor context' do
     it 'returns http success' do
       get @path, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
+      if @result 
+        expect(response.body).to eq(@result.to_json)
+      end
     end
   end
   context 'network_viewer' do

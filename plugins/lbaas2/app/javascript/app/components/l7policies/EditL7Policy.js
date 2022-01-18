@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react"
-import { Modal, Button } from "react-bootstrap"
+import React, { useState, useEffect, useMemo } from "react"
+import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import useCommons from "../../../lib/hooks/useCommons"
 import useL7Policy from "../../../lib/hooks/useL7Policy"
@@ -159,6 +159,20 @@ const EditL7Policy = (props) => {
   const [showRedirectPoolID, setShowRedirectPoolID] = useState(false)
   const [showRedirectPrefix, setShowRedirectPrefix] = useState(false)
   const [showRedirectURL, setShowRedirectURL] = useState(false)
+
+  const showExtraSection = useMemo(
+    () =>
+      showRedirectHttpCode ||
+      showRedirectPoolID ||
+      showRedirectPrefix ||
+      showRedirectURL,
+    [
+      showRedirectHttpCode,
+      showRedirectPoolID,
+      showRedirectPrefix,
+      showRedirectURL,
+    ]
+  )
 
   const validate = ({
     name,
@@ -326,91 +340,96 @@ const EditL7Policy = (props) => {
                   </span>
                 </Form.ElementHorizontal>
 
-                {showRedirectHttpCode && (
-                  <div className="advanced-options advanced-options-minus-margin">
-                    <Form.ElementHorizontal
-                      label="Redirect HTTP Code"
-                      name="redirect_http_code"
-                    >
-                      <SelectInput
-                        name="redirect_http_code"
-                        items={codeTypes()}
-                        onChange={onSelectCode}
-                        value={redirectCode}
-                      />
-                      <span className="help-block">
-                        <i className="fa fa-info-circle"></i>
-                        Requests matching this policy will be redirected to the
-                        specified URL or Prefix URL with the HTTP response code.
-                        Default is 302.
-                      </span>
-                    </Form.ElementHorizontal>
+                <Collapse in={showExtraSection}>
+                  <div className="advanced-options-section">
+                    {showRedirectHttpCode && (
+                      <div className="advanced-options advanced-options-minus-margin">
+                        <Form.ElementHorizontal
+                          label="Redirect HTTP Code"
+                          name="redirect_http_code"
+                        >
+                          <SelectInput
+                            name="redirect_http_code"
+                            items={codeTypes()}
+                            onChange={onSelectCode}
+                            value={redirectCode}
+                          />
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            Requests matching this policy will be redirected to
+                            the specified URL or Prefix URL with the HTTP
+                            response code. Default is 302.
+                          </span>
+                        </Form.ElementHorizontal>
+                      </div>
+                    )}
+                    {showRedirectPoolID && (
+                      <div className="advanced-options">
+                        <Form.ElementHorizontal
+                          label="Redirect Pool ID"
+                          name="redirect_pool_id"
+                        >
+                          <SelectInput
+                            name="redirect_pool_id"
+                            isLoading={pools.isLoading}
+                            items={pools.items}
+                            onChange={onSelectPoolChange}
+                            value={redirectPoolID}
+                          />
+                          {pools.error ? (
+                            <span className="text-danger">{pools.error}</span>
+                          ) : (
+                            ""
+                          )}
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            Requests matching this policy will be redirected to
+                            the pool with this ID.
+                          </span>
+                        </Form.ElementHorizontal>
+                      </div>
+                    )}
+                    {showRedirectPrefix && (
+                      <div className="advanced-options">
+                        <Form.ElementHorizontal
+                          label="Redirect Prefix"
+                          name="redirect_prefix"
+                        >
+                          <Form.Input
+                            elementType="input"
+                            type="text"
+                            name="redirect_prefix"
+                          />
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            Requests matching this policy will be redirected to
+                            this Prefix URL.
+                          </span>
+                        </Form.ElementHorizontal>
+                      </div>
+                    )}
+                    {showRedirectURL && (
+                      <div className="advanced-options">
+                        <Form.ElementHorizontal
+                          label="Redirect Url"
+                          name="redirect_url"
+                        >
+                          <Form.Input
+                            elementType="input"
+                            type="text"
+                            name="redirect_url"
+                          />
+                          <span className="help-block">
+                            <i className="fa fa-info-circle"></i>
+                            Requests matching this policy will be redirected to
+                            this URL.
+                          </span>
+                        </Form.ElementHorizontal>
+                      </div>
+                    )}
                   </div>
-                )}
-                {showRedirectPoolID && (
-                  <div className="advanced-options">
-                    <Form.ElementHorizontal
-                      label="Redirect Pool ID"
-                      name="redirect_pool_id"
-                    >
-                      <SelectInput
-                        name="redirect_pool_id"
-                        isLoading={pools.isLoading}
-                        items={pools.items}
-                        onChange={onSelectPoolChange}
-                        value={redirectPoolID}
-                      />
-                      {pools.error ? (
-                        <span className="text-danger">{pools.error}</span>
-                      ) : (
-                        ""
-                      )}
-                      <span className="help-block">
-                        <i className="fa fa-info-circle"></i>
-                        Requests matching this policy will be redirected to the
-                        pool with this ID.
-                      </span>
-                    </Form.ElementHorizontal>
-                  </div>
-                )}
-                {showRedirectPrefix && (
-                  <div className="advanced-options">
-                    <Form.ElementHorizontal
-                      label="Redirect Prefix"
-                      name="redirect_prefix"
-                    >
-                      <Form.Input
-                        elementType="input"
-                        type="text"
-                        name="redirect_prefix"
-                      />
-                      <span className="help-block">
-                        <i className="fa fa-info-circle"></i>
-                        Requests matching this policy will be redirected to this
-                        Prefix URL.
-                      </span>
-                    </Form.ElementHorizontal>
-                  </div>
-                )}
-                {showRedirectURL && (
-                  <div className="advanced-options">
-                    <Form.ElementHorizontal
-                      label="Redirect Url"
-                      name="redirect_url"
-                    >
-                      <Form.Input
-                        elementType="input"
-                        type="text"
-                        name="redirect_url"
-                      />
-                      <span className="help-block">
-                        <i className="fa fa-info-circle"></i>
-                        Requests matching this policy will be redirected to this
-                        URL.
-                      </span>
-                    </Form.ElementHorizontal>
-                  </div>
-                )}
+                </Collapse>
+
                 <Form.ElementHorizontal label="Tags" name="tags">
                   <TagsInput
                     name="tags"
