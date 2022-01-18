@@ -67,3 +67,7 @@ TEST_ADMIN_PASSWORD="xxd"
 ```
 
 for password check `secrets/qa-de-1/values/domain-seeds.yaml`
+
+## cypress.json
+
+* https://docs.cypress.io/guides/references/configuration#Global
