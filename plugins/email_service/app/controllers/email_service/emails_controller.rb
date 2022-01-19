@@ -7,12 +7,10 @@ module EmailService
 
     def index
       creds = get_ec2_creds
-
+      
       if creds.error.empty?
         @all_emails = list_verified_identities("EmailAddress")
         @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
-        # @send_stats = get_send_stats
-        # @send_data = get_send_data
       else
         flash[:error] = "Err: #{creds.error}"
       end

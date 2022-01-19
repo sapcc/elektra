@@ -6,9 +6,17 @@ module EmailService
 
     ### EC2 CREDS ### 
     def get_ec2_creds
-      credentials = services.identity.aws_credentials(current_user.id, current_user.project_id).first
+      resp = services.identity.aws_credentials(current_user.id, current_user.project_id)
+      if resp.class == ServiceLayer::IdentityServices::Credential::AWSCreds
+        if resp["error"]
+          puts resp["error"]
+        end
+      elsif resp.class == Array
+        credentials = resp.first
+      end
+      credentials.nil? ? resp : credentials
     end
-    
+
     ### CREATE SES CLIENT ###
     def create_ses_client
       region = map_region(current_user.default_services_region)
