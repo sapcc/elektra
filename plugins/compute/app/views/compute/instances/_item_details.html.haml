@@ -74,10 +74,14 @@
                 %td{id: "guest_tools"}
                   %span.spinner
                   %span.no_guest_tools{style:"display: none;"}
-                    no guest tools found -> 
+                    %span.text-warning
+                      = icon('exclamation-triangle')
+                      not found -> 
                     = link_to "howto install", "https://documentation.global.cloud.sap/compute/image-start-customers#prerequisites-for-the-images", target: "_blank"
                   %span.guest_tools_not_uptodate{style:"display: none;"}
-                    guest tools not uptodate -> 
+                    %span.text-warning
+                      = icon('wrench')
+                      not uptodate -> 
                     = link_to "howto update", "https://documentation.global.cloud.sap/compute/image-start-customers#prerequisites-for-the-images", target: "_blank"
                     .small
                       ( Installed version: 
@@ -86,7 +90,9 @@
                       %span.guest_tools_not_uptodate_target_version
                       )
                   %span.guest_tools_uptodate{style:"display: none;"}
-                    guest tools uptodate
+                    %span.text-success
+                      = icon('check')
+                      uptodate
                     .small
                       ( Installed version: 
                       %span.guest_tools_uptodate_current_version
