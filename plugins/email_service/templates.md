@@ -17,7 +17,7 @@ Subject: Preferences for {{ name.firstName }}
       </ul>
       <p>
         You can change these settings at any time by visiting 
-        the <a href=https://www.example.com/preferences/i.aspx?id={{meta.userId}}>
+        the <a href=https://www.abc.xyz/preferences/i.aspx?id={{meta.userId}}>
         Preference Center</a>.
       </p>
     </body>
@@ -31,11 +31,11 @@ Template Data:
       "userId":"575132908"
     },
     "contact":{
-      "firstName":"Sam",
-      "lastName":"Miller",
-      "city":"Berlin",
-      "country":"Germany",
-      "postalCode":"11017"
+      "firstName":"Michael",
+      "lastName":"Jackson",
+      "city":"Texas",
+      "country":"USA",
+      "postalCode":"78974"
     },
     "subscription":[
       {

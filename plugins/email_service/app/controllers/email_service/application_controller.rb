@@ -23,5 +23,24 @@ module EmailService
       end
     end 
     
+    protected
+    
+    helper_method :release_state
+
+    # Overwrite this method in your controller if you want to set the release
+    # state of your plugin to a different value. A tag will be displayed in
+    # the main toolbar next to the page header
+    # DON'T OVERWRITE THE VALUE HERE IN THE DASHBOARD CONTROLLER
+    # Possible values:
+    # ----------------
+    # "public_release"  (plugin is properly live and works, default)
+    # "experimental"    (for plugins that barely work or don't work at all)
+    # "tech_preview"    (early preview for a new feature that probably still
+    #                    has several bugs)
+    # "beta"            (if it's almost ready for public release)
+    def release_state
+      'tech_preview'
+    end
+
   end
 end

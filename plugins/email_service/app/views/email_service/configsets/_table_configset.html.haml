@@ -11,7 +11,5 @@
     - else
       -@paginatable_configsets.each do | configset |
         = render partial: 'table_configset_item', locals: { configset: configset }
-    
-= paginate @paginatable_configsets, :theme => 'twitter-bootstrap-3', :remote => false 
-
-
+-if @paginatable_configsets    
+  = paginate @paginatable_configsets, :theme => 'twitter-bootstrap-3', :remote => false 
