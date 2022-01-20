@@ -14,8 +14,12 @@ module EmailService
       EmailService::ConfigsetHelper::Configset.new(configset_opts)
     end
 
+    def template
+      EmailService::TemplateHelper::Template.new(template_opts)
+    end
+
     def plain_email_opts
-      plain_email_opts = {
+      {
         source: "abc@def.com",
         to_addr: "abc@def.com, ghi@rbss.de",
         cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk", 
@@ -26,8 +30,18 @@ module EmailService
       }
     end
 
+    def template_opts
+      {
+        id: 0,
+        name: "new template",
+        subject: "Subject of the new template",
+        html_part: "<h1>HTML Content of the eMail </h1>",
+        text_part: "Content of the eMail"
+      }
+    end
+
     def templated_email_opts
-      templated_email_opts = {
+      {
         source: "abc@def.com",
         to_addr: "abc@def.com, ghi@rbss.de",
         cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk", 
@@ -37,11 +51,19 @@ module EmailService
       }
     end
 
-    def configset_opts
-      configset_opts = {
+    def configset_opts 
+      {
         id: 0, 
         name: "New ConfigSet"
       }
+    end
+
+    def verfied_email_opts
+      { id: 0, identity: "abc@ghi.com" }
+    end
+
+    def verfied_domain_opts
+      { id: 0, identity: "test.ghi.com", dkim_enabled: true }
     end
 
   end

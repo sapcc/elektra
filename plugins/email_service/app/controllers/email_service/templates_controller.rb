@@ -56,14 +56,14 @@ module EmailService
       else 
         flash[:error] = "Error: #{status}; eMail template [#{template.name}] is not updated" 
       end
-        redirect_to plugin('email_service').templates_path
+      redirect_to plugin('email_service').templates_path
     end
 
     def create
       status = ""
       @template = new_template(template_params)
       if @template.errors?
-        flash.now[:error] = @template.errors#.first[:message]
+        flash.now[:error] = @template.errors
         render 'new' and return
       else
         status = store_template(@template)
@@ -74,11 +74,12 @@ module EmailService
           render 'new' and return
         end 
       end
-      redirect_to plugin('email_service').templates_path
+      
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
       rescue Exception => e
         flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      redirect_to plugin('email_service').templates_path
     end
 
     def destroy
