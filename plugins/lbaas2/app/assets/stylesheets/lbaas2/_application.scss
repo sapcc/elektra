@@ -503,15 +503,18 @@ ul.less-left-margin {
 * error page
 */
 .ep {
-  .ep-details-link {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 0px;
+  .display-flex {
+    display: flex;
+    align-items: center;
   }
-  .ep-details-link.btn:focus {
-    outline: none;
-  }
-  .ep-reload-button {
-    margin-top: 15px;
+  .action-link {
+    margin-top: 1.5rem;
+    cursor: pointer;
+    :hover {
+      text-decoration: underline;
+    }
+    i {
+      margin-left: 0.5rem;
+    }
   }
 }
