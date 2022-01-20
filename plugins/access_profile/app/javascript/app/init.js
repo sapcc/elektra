@@ -33,7 +33,6 @@ const createNewConfig = (widgetName, scriptParams) => {
   // // as document is loaded.
   return new Promise((resolve, reject) => {
     document.addEventListener("DOMContentLoaded", () => {
-      console.log("test: ", scriptTagContainer.scriptParams)
       resolve(createConfig(widgetName, scriptTagContainer.scriptParams))
     })
   })

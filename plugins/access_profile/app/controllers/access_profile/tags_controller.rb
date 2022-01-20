@@ -14,7 +14,6 @@ module AccessProfile
       puts "error elektron"
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      puts "generic error"
       render json: { errors: e.message }, status: "500"
     end
 

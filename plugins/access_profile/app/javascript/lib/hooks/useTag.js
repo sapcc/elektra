@@ -162,8 +162,6 @@ const getTopologyTags = (cfg, tags) => {
   })
   // TODO: need to sort the profiles?
 
-  console.log("topo: ", topo)
-
   return topo
 }
 

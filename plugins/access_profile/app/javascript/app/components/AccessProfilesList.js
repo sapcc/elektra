@@ -41,8 +41,6 @@ const AccessProfilesList = () => {
       })
   }
 
-  console.log("topology: ", topology)
-
   return (
     <>
       {profilesCfg && (
