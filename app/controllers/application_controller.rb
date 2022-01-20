@@ -47,10 +47,7 @@ class ApplicationController < ActionController::Base
   end
 
   def modal_size
-    if @modal_size.nil?
-      @modal_size = params[:modal_size] || "modal-xl"
-    end
-    @modal_size
+    params[:modal_size] || "modal-xl"
   end
 
   def render(*args)
