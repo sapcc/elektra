@@ -66,7 +66,10 @@ const ErrorPage = ({ error, headTitle, onReload }) => {
       (err.data && (err.data.errors || err.data.error)) || err.message
     // TODO DELETE this httpStatus check when the role cloud_support_tools_viewer is not anymore used
     const httpStatus = (error && error.status) || error.status
-    return errorDetails && httpStatus != 401
+    if (errorDetails && httpStatus != 401) {
+      return errorDetails
+    }
+    return false
   }
 
   return (

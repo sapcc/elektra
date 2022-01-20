@@ -182,7 +182,7 @@ const LoadbalancerList = (props) => {
                 <table
                   className={
                     selected
-                      ? "table loadbalancers"
+                      ? "table table-section loadbalancers"
                       : "table table-hover loadbalancers"
                   }
                 >

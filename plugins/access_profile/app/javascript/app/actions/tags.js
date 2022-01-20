@@ -7,7 +7,9 @@ const fetchTags = () => {
       .then((response) => {
         handleSuccess(response.data)
       })
-      .catch((error) => handleErrors(error.response))
+      .catch((error) => {
+        handleErrors(error.response)
+      })
   )
 }
 

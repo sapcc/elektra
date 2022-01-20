@@ -21,7 +21,6 @@ const Config = () => {
           type: "RECEIVE_CONFIG",
           config: data.config,
         })
-        console.log("config: ", data.config)
       })
       .catch((error) => {
         dispatch({
