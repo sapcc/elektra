@@ -33,12 +33,12 @@
       .then((json) => {
         var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
         var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
-        console.log(virtualMachineGuestToolsTargetVersion)
+        // console.log(virtualMachineGuestToolsTargetVersion)
         fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (virtualmachine, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{virtualmachine="#{@instance.name} (#{@instance.id})"}) AND on (virtualmachine) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
           .then(catchErrors)
           .then((response) => response.json())
           .then((json) => {
-            console.log(json)
+            // console.log(json)
             $("span.spinner").hide()
             if (json.data.result.length == 0 ) {
               $("span.no_guest_tools").show()
