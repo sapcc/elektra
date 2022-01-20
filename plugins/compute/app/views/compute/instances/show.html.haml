@@ -17,11 +17,14 @@
       if (response.status < 400) {
         return response
       } else {
+        // error case get response from the api and show it in error message
         return response.text().then((message) => {
           var error = new Error(message || response.statusText || response.status)
           error.statusCode = response.status
           //InfoDialog.show("Problem to get vmware version",error)
-          $("#guest_tools").html("Problem to get guest tools version: "+error.message)
+          $("span.spinner").hide()
+          $("span.guest_tools_problem").show()
+          $("span.guest_tools_problem_text").html("Problem to get guest tools version: "+error.message)
         })
       }
     }
@@ -59,14 +62,20 @@
               }
             }
           })
-          .catch((error) => { 
-            console.log("ERROR FETCH TOOLS VERSION", error)
-            $("#guest_tools").html("Problem to get guest tools version...")
-          })
+          // NOTE: do not use catch here because in case of error catchErrors() is not used
+          //.catch((error) => { 
+          //  console.log("ERROR FETCH TOOLS VERSION", error)
+          //  $("span.spinner").hide()
+          //  $("span.guest_tools_problem").show()
+          //  $("span.guest_tools_problem_text").html("Problem to get guest tools version. " + error.message)
+          //})
       })
-      .catch((error) => {
-        console.log("ERROR FETCH TARGET VERSION", error)
-        $("#guest_tools").html("Problem to get target version...")
-      })
+      // NOTE: do not use catch here because in case of error catchErrors() is not used
+      //.catch((error) => {
+      //  console.log("ERROR FETCH TARGET VERSION", error)
+      //  $("span.spinner").hide()
+      //  $("span.guest_tools_problem").show()
+      //  $("span.guest_tools_problem_text").html("Problem to get target version. " + error.message)
+      //})
   });
 

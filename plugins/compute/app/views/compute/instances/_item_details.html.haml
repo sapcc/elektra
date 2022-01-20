@@ -97,6 +97,10 @@
                       ( Installed version: 
                       %span.guest_tools_uptodate_current_version
                       )
+                  %span.guest_tools_problem{style:"display: none;"}
+                    %span.text-danger
+                      = icon('exclamation-triangle')
+                      %span.guest_tools_problem_text
 
         .tab-pane{role:"tabpanel", id:"specs"}
           - if @instance.flavor
