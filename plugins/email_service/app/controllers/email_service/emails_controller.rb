@@ -12,7 +12,7 @@ module EmailService
         @all_emails = list_verified_identities("EmailAddress")
         @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
       else
-        flash[:error] = "Err: #{creds.error}"
+        flash[:error] = creds.error
       end
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"

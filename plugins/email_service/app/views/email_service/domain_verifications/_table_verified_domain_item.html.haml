@@ -1,15 +1,15 @@
-- identity = all_domain[:identity]
+- identity = domain_item[:identity]
 %tr
   %td
-    = all_domain[:id]
+    = domain_item[:id]
   %td
-    = all_domain[:identity]
+    = domain_item[:identity]
   %td
-    = all_domain[:status]
+    = domain_item[:status]
   %td
-    = all_domain[:dkim_enabled]
+    = domain_item[:dkim_enabled]
   %td
-    = all_domain[:dkim_verification_status]
+    = domain_item[:dkim_verification_status]
   %td.snug
-    - if current_user.is_allowed?("email_service:verified_domain_delete", {target: { all_domain: all_domain, project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("email_service:verified_domain_update", {})
-      = render partial: 'domain_item_actions', locals: { all_domain: all_domain, show_view: false }
+    - if current_user.is_allowed?("email_service:verified_domain_delete", {target: { domain_item: domain_item, project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("email_service:verified_domain_update", {})
+      = render partial: 'domain_item_actions', locals: { domain_item: domain_item, show_view: false }

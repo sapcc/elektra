@@ -12,6 +12,8 @@ module EmailService
         @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
         @pending_domains  = get_verified_identities_by_status(@all_domains, "Pending")
         @failed_domains   = get_verified_identities_by_status(@all_domains, "Failed")
+        items_per_page = 10
+        @paginatable_domains = Kaminari.paginate_array(@all_domains, total_count: @all_domains.count).page(params[:page]).per(items_per_page)
       else
         flash[:error] = creds.error
       end
@@ -32,15 +34,15 @@ module EmailService
       flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
-    def verify_dkim
-      identity = params[:identity]
-      st, dkim = verify_dkim(identity)
-      redirect_to({ action: :index } )  
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
-    end
+    # def verify_dkim
+    #   identity = params[:identity]
+    #   st, dkim = verify_dkim(identity)
+    #   redirect_to({ action: :index } )  
+    # rescue Elektron::Errors::ApiResponse => e
+    #   flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+    # rescue Exception => e
+    #   flash[:error] = "Status Code: 500 : Error: #{e.message}"
+    # end
     
     def activate_dkim
       identity = params[:identity]
@@ -124,6 +126,11 @@ module EmailService
     rescue Exception => e
       flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
+
+    private
+      def domain_verification_params
+        params.require(:verified_domain).permit(:identity, :dkim_enabled)
+      end
 
   end
 end

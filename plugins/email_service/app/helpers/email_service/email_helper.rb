@@ -1,17 +1,16 @@
 module EmailService
   module EmailHelper
-    include AwsSesHelper
+    include AwsSesHelper 
     include PlainEmailHelper
-    include TemplatedEmailHelper
+    # include TemplatedEmailHelper
 
     def new_email(attributes = {})
       email = PlainEmail.new(attributes)
     end
 
-    def new_templated_email(attributes = {})
-      email = TemplatedEmail.new(attributes)
-    end
-
+    # def new_templated_email(attributes = {})
+    #   email = EmailService::TemplatedEmail.new(attributes)
+    # end
 
     # create an array of valid email addresses
     def addr_validate(raw_addr)
@@ -62,7 +61,7 @@ module EmailService
           },
           source: plain_email.source,
         )
-        audit_logger.info(current_user, 'has sent email to', plain_email.to_addr,plain_email.cc_addr, plain_email.bcc_addr)
+        audit_logger.info(current_user.id, 'has sent email to', plain_email.to_addr,plain_email.cc_addr, plain_email.bcc_addr)
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "CRONUS : ERROR: Send Plain eMail -#{plain_email.inspect} :-:  #{error}"
       end
@@ -70,8 +69,6 @@ module EmailService
     end
 
     def send_templated_email(templated_email)
-      error = ""
-      resp = ""
       begin
         ses_client = create_ses_client
         resp = ses_client.send_templated_email({
@@ -93,15 +90,15 @@ module EmailService
           template: templated_email.template_name, 
           template_data: templated_email.template_data,
         })
-        audit_logger.info(current_user, 'has sent templated email from the template', \
+        audit_logger.info(current_user.id, 'has sent templated email from the template', \
         templated_email.template_name,  'to', templated_email.to_addr, \
-        templated_email.cc_addr, templated_email.bcc_addr)
+        templated_email.cc_addr, templated_email.bcc_addr, 'with the template data', templated_email.template_data )
       rescue Aws::SES::Errors::ServiceError => error
         logger.debug "CRONUS: DEBUG: #{error}"
       end
       resp && resp.successful? ? "success" : error
     end
-    
+  
   end
 end
 

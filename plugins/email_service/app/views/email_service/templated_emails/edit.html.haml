@@ -1,75 +1,21 @@
 = content_for :title do
   Edit Templated eMail
 
-- name            = params[:email].present? ? params[:email]["name"] : ""
-- to_addr         = params[:email].present? ? params[:email]["to_addr"] : ""
-- cc_addr         = params[:email].present? ? params[:email]["cc_addr"] : ""
-- bcc_addr        = params[:email].present? ? params[:email]["bcc_addr"] : ""
-- reply_to_addr   = params[:email].present? ? params[:email]["reply_to_addr"] : ""
-- template_name   = params[:email].present? ? params[:email]["template_name"] : ""
-- template_data   = params[:email].present? ? params[:email]["template_data"] : ""
-- configset_name  = params[:email].present? ? params[:email]["configset_name"] : ""
+- unless modal?
+  %h3  Edit Templated eMail
 
-- url = plugin('email_service').templated_emails_path()
+= simple_form_for @templated_email, as: :templated_email, url: plugin('email_service').templated_emails_path(), method: :post, remote: request.xhr?,  html: {id: 'form_templated_email', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
+  .modal-body.static-columns
 
-= simple_modal_form_for :email, submit_action: "Send", url: url, method: :post, remote: request.xhr?, cancel_url: url, html: {id: 'form_templated_email', data: {modal: true} } do |f|
-  .modal-body
-    .flashes
-    = render "application/flashes"
-    .row
-      .col-sm-6
-        = f.input :source, { label: "Sender", 
-          collection: @verified_emails_collection, as: :select,
-          hint: "Choose an eMail address you wish to send this email from",
-          required: true}
-        = f.input :to_addr, required: true, 
-          label: 'To Address(es)', 
-          placeholder: 'Enter To Addresses', 
-          input_html: {value: to_addr },
-          hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
-        %span.toEmailHelpBlock
-        %span.toErrBlock
-        = f.input :cc_addr, 
-          required: false, 
-          label: 'Cc Address(es)', 
-          placeholder: 'Enter Cc Addresses',
-          input_html: { value: cc_addr },
-          hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
-        %span.ccEmailHelpBlock 
-        %span.ccErrBlock
-        = f.input :bcc_addr, 
-          required: false, 
-          label: 'Bcc Address(es)', 
-          placeholder: 'Enter Bcc Addresses',
-          input_html: { value: bcc_addr },
-          hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
-        %span.bccEmailHelpBlock
-        %span.bccErrBlock
-        = f.input :reply_to_addr, 
-          required: false, 
-          label: 'Reply To', 
-          collection: @verified_emails_collection, as: :select,
-          input_html: {value: reply_to_addr},
-          hint: 'Reply To Address'
-        %span.bccEmailHelpBlock
-        %span.bccErrBlock
-        = f.input :template_name,label: "Template Name", 
-          input_html: {value: template_name},
-          collection: @templates_collection, as: :select,
-          data: {toggle: "selectTemplateName"},
-          hint: 'Choose a template',
-          required: true    
-        = f.input :template_data,
-          label:              "Template data",
-          input_html:         {rows: "25", class: "u-text-monospace", 
-          value: template_data},
-          as:                 :text,
-          required:           true,
-          hint: 'Enter template data in JSON format'
-        = f.input :configset_name,        
-          input_html: {value: configset_name},
-          label:              "ConfigSet Name",
-          collection: @configsets, as: :select,
-          required:           false,
-          hint: 'Choose ConfigSet Name'
+    .modal-falshes
+      = render "email_service/shared/flashes.html"
+
+    = render partial: 'form', locals: { f: f, form_type: 'edit'}
+
+  %div{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", plugin('automation').automations_path(), class: 'btn btn-default'
+    = button_tag "Send", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
