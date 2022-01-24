@@ -95,7 +95,7 @@ module EmailService
             html_part: tmpl.html_part,
           },
         })
-        audit_logger.info(current_user, 'has created a template ', tmpl.name)
+        audit_logger.info(current_user.id, 'has created a template ', tmpl.name)
         msg = "Template #{tmpl.name} is saved"
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
@@ -114,7 +114,7 @@ module EmailService
             template_name: tmpl_name,
         })
         msg = "Template #{tmpl_name} is deleted."
-        audit_logger.info(current_user, 'has deleted template ', tmpl_name)
+        audit_logger.info(current_user.id, 'has deleted template ', tmpl_name)
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
          msg = "Unable to delete template #{name}. Error message: #{error} "
@@ -135,7 +135,7 @@ module EmailService
             html_part: html_part,
           },
         })
-        audit_logger.info(current_user, 'has updated template ', name)
+        audit_logger.info(current_user.id, 'has updated template ', name)
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
         msg = "Unable to update template #{name}. Error: #{error}"

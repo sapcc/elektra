@@ -42,12 +42,13 @@ module EmailService
 
     def templated_email_opts
       {
-        source: "abc@def.com",
-        to_addr: "abc@def.com, ghi@rbss.de",
-        cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk", 
-        bcc_addr: "abc@xyz.mn.rb, kd@mr.jq.lk", 
-        template: "MyTemplate", 
-        configset: "MyConfigSet"
+          source: "abc@def.com",
+          to_addr: "abc@def.com, ghi@rbss.de",
+          cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk", 
+          bcc_addr: "abc@xyz.mn.rb, kd@mr.jq.lk", 
+          template_name: "MyTemplate", 
+          template_data: '{ "abc": { "def": "klm"}}', 
+          configset: "MyConfigSet"
       }
     end
 
