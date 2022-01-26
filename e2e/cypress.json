@@ -1,1 +1,4 @@
-{}
+{
+  "projectId": "elektra",
+  "defaultCommandTimeout": 30000
+}

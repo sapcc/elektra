@@ -1,9 +1,9 @@
-import { useEffect, useMemo } from "react";
-import { DefeatableLink } from "lib/components/defeatable_link";
-import { policy } from "policy";
-import { Form, Pagination } from "lib/components/searchComponents";
-import Item from "./item";
-import { scope } from "ajax_helper";
+import { useEffect, useMemo } from "react"
+import { DefeatableLink } from "lib/components/defeatable_link"
+import { policy } from "policy"
+import { Form, Pagination } from "lib/components/searchComponents"
+import Item from "./item"
+import { scope } from "ajax_helper"
 
 export default ({
   active,
@@ -14,37 +14,37 @@ export default ({
   reloadVolume,
   deleteVolume,
   forceDeleteVolume,
-  detachVolume
+  detachVolume,
 }) => {
   // Body
-  useEffect(() => listenToVolumes(), []);
+  useEffect(() => listenToVolumes(), [])
   useEffect(() => {
-    if (active) loadVolumesOnce();
-  }, [active]);
+    if (active) loadVolumesOnce()
+  }, [active])
 
   const canCreate = useMemo(
     () =>
       policy.isAllowed("block_storage:volume_create", {
-        target: { scoped_domain_name: scope.domain }
+        target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
-  const handlePaginateClick = page => {
+  const handlePaginateClick = (page) => {
     if (page === "all") {
       fetchVolumes({
         searchType: volumes.searchType,
         searchTerm: volumes.searchTerm,
-        limit: 9999
-      });
+        limit: 9999,
+      })
     } else {
       fetchVolumes({
         searchType: volumes.searchType,
         searchTerm: volumes.searchTerm,
-        page
-      });
+        page,
+      })
     }
-  };
+  }
 
   return (
     <React.Fragment>
@@ -110,5 +110,5 @@ export default ({
       </table>
       <Pagination {...volumes} onPageRequest={handlePaginateClick} />
     </React.Fragment>
-  );
-};
+  )
+}

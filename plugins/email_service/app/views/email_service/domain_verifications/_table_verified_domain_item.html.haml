@@ -1,0 +1,15 @@
+- identity = domain_item[:identity]
+%tr
+  %td
+    = domain_item[:id]
+  %td
+    = domain_item[:identity]
+  %td
+    = domain_item[:status]
+  %td
+    = domain_item[:dkim_enabled]
+  %td
+    = domain_item[:dkim_verification_status]
+  %td.snug
+    - if current_user.is_allowed?("email_service:verified_domain_delete", {target: { domain_item: domain_item, project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("email_service:verified_domain_update", {})
+      = render partial: 'domain_item_actions', locals: { domain_item: domain_item, show_view: false }

@@ -1,0 +1,10 @@
+$(".flashes").html("<%= escape_javascript( render "application/flashes.html" ) %>");
+initAutoDismissibleFlash();
+
+<% unless @verified_emails.nil? %>
+$(".js-table-verified-email").html("<%= escape_javascript(render partial: 'table_verified_emails', locals: {verified_emails: @verified_emails}) %>");
+<% end %>
+
+
+// reload the pagination spinner
+$('[data-toggle="paginationSpinner"]').initPaginationSpinner()

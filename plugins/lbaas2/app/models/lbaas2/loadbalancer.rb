@@ -12,6 +12,7 @@ module Lbaas2
         'name'            => read('name'),
         'description'     => read('description'),
         'vip_network_id'   => read('vip_network_id'),
+        'availability_zone' => read('availability_zone'),
         'vip_subnet_id'   => read('vip_subnet_id'),
         'vip_address'     => read('vip_address'),        
         'project_id'      => read('project_id'),

@@ -60,3 +60,10 @@ vendor_4.2.4/
 *.swp
 *.swo
 
+
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity

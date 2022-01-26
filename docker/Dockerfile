@@ -1,4 +1,5 @@
-FROM ruby:2.5-alpine3.10 AS elektra
+# Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
+FROM ruby:2.6-alpine3.11 AS elektra
 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
@@ -15,7 +16,7 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install nokogiri -v 1.12.5 \
       && gem install pg -v 0.21.0 \
       && gem install puma -v 4.3.9  \
-      && gem install redcarpet -v 3.4.0 \
+      && gem install redcarpet -v 3.5.1 \
       && gem install unf -v 0.2.0.beta2 \
       && gem install websocket-driver -v 0.7.2 \
       && gem install bindex -v 0.6.0 \
@@ -64,7 +65,14 @@ RUN script/organize_plugins_gemspecs
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 
+# add elektra sources into image
 ADD . /home/app/webapp
+
+#ENV NODE_ENV=production
+# install latest possible node version
+#RUN apk add --no-cache nodejs-current 
+# yarn task is called within "assets:precompile" -> /workspace/elektra/vendor/bundle/ruby/2.5.0/gems/railties-5.2.6/lib/rails/tasks/yarn.rake
+#RUN yarn install --no-progress
 
 # precompile assets including webpacker packs
 # We use dummy master.key to workaround the fact that
@@ -72,12 +80,12 @@ ADD . /home/app/webapp
 # into the container. The MONSOON_RAILS_SECRET_TOKEN should be injected as env var when starting the
 # container.
 # https://github.com/rails/rails/issues/32947
+
 ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
-LABEL source_repository="https://github.com/sapcc/elektra"
 
 FROM elektra AS tests
 RUN apk add --no-cache postgresql bash
@@ -90,3 +98,4 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
 
 FROM elektra
 
+# docker -t elektra build --file docker/Dockerfile .

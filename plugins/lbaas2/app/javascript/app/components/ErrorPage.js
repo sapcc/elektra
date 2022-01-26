@@ -1,99 +1,119 @@
 import React, { useState } from "react"
 import { Button } from "react-bootstrap"
-import { Link } from "react-router-dom"
 import Log from "./shared/logger"
+
+const serverError = (errorText, onReload) => {
+  return (
+    <>
+      <p>{errorText}</p>
+      <p>
+        Please try later again
+        {onReload && (
+          <React.Fragment>
+            <span> or try reloading.</span>
+          </React.Fragment>
+        )}
+      </p>
+      {onReload && (
+        <div className="ep-reload-button">
+          <Button bsStyle="primary" onClick={onReload}>
+            Reload <i className="fa fa-refresh"></i>
+          </Button>
+        </div>
+      )}
+    </>
+  )
+}
+
+const subTitle = (error) => {
+  if (error && error.status && error.statusText) {
+    return (
+      <p>
+        <b>{error.status}</b> {error.statusText}
+      </p>
+    )
+  }
+  return null
+}
+
+const description = (error, onReload) => {
+  const errorText =
+    "There was an error. Don't worry, it's not you - it's us. Sorry about that."
+  const httpStatus = (error && error.status) || error.status
+
+  // internal errors
+  if (!httpStatus) {
+    return serverError(error, onReload)
+  }
+
+  // rest api call errors
+  if (httpStatus >= 500) {
+    return serverError(errorText, onReload)
+  } else if (httpStatus == 404) {
+    return <p>That’s an error. The requested entity was not found</p>
+  } else if (httpStatus >= 400 && httpStatus < 500) {
+    return null
+  } else {
+    return serverError(errorText, onReload)
+  }
+}
 
 const ErrorPage = ({ error, headTitle, onReload }) => {
   Log.debug("RENDER error page")
-
   const [showDetails, setShowDetails] = useState(false)
   const err = error.error || error
 
-  const httpStatus = () => {
-    return (err && err.status) || err.status
-  }
-
-  const title = () => {
-    return err.statusText
-  }
-
-  const description = () => {
-    const serverError = (
-      <React.Fragment>
-        <p>
-          There was an error. Don't worry, it's not you - it's us. Sorry about
-          that.
-        </p>
-        <p>
-          Please try later again
-          {onReload && (
-            <React.Fragment>
-              <span> or try reloading</span>
-            </React.Fragment>
-          )}
-        </p>
-        {onReload && (
-          <div className="ep-reload-button">
-            <Button bsStyle="primary" onClick={onReload}>
-              Reload <i className="fa fa-refresh"></i>
-            </Button>
-          </div>
-        )}
-      </React.Fragment>
-    )
-
-    if (httpStatus() >= 500) {
-      return serverError
-    } else if (httpStatus() >= 400 && httpStatus() < 500) {
-      return ""
-    } else if (httpStatus() == 404) {
-      return <p>That’s an error. The requested entity was not found</p>
-    } else {
-      return serverError
-    }
-  }
-
   const details = () => {
-    return (err.data && (err.data.errors || err.data.error)) || err.message
-  }
-
-  const handleDetails = (e) => {
-    if (e) e.stopPropagation()
-    setShowDetails(!showDetails)
+    const errorDetails =
+      (err.data && (err.data.errors || err.data.error)) || err.message
+    return errorDetails
   }
 
   return (
-    <React.Fragment>
-      <div className="row">
+    <>
+      <div className="row error-page">
         <div className="col-md-10 col-md-offset-2">
           <div className="row">
-            <div className="col-md-10 ep">
-              <h2>LBaaS - {headTitle}</h2>
-              <p>
-                <b>{httpStatus()}</b> {title()}
-              </p>
-              {description()}
+            <div className="col-md-10">
+              <h3>{headTitle}</h3>
+              {subTitle(err)}
+              {description(err, onReload)}
               {details() && (
-                <React.Fragment>
-                  <Button
-                    bsStyle="link"
-                    className="ep-details-link"
-                    onClick={handleDetails}
-                  >
-                    Details
-                  </Button>
-                  {showDetails && (
+                <>
+                  <div className="display-flex">
+                    <div
+                      className="action-link"
+                      onClick={() => setShowDetails(!showDetails)}
+                      data-toggle="collapse"
+                      data-target="#collapseDetails"
+                      aria-expanded={showDetails}
+                      aria-controls="collapseDetails"
+                    >
+                      {showDetails ? (
+                        <>
+                          <span>Hide details</span>
+                          <i className="fa fa-chevron-circle-up" />
+                        </>
+                      ) : (
+                        <>
+                          <span>Show details</span>
+                          <i className="fa fa-chevron-circle-down" />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="collapse" id="collapseDetails">
                     <pre>
                       <code>{details()}</code>
                     </pre>
-                  )}
-                </React.Fragment>
+                  </div>
+                </>
               )}
             </div>
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

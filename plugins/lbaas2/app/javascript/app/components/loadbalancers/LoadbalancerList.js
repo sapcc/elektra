@@ -1,28 +1,28 @@
-import { useDispatch, useGlobalState } from "../StateProvider";
-import { useEffect, useMemo, useState } from "react";
-import LoadbalancerItem from "./LoadbalancerItem";
-import ErrorPage from "../ErrorPage";
-import { DefeatableLink } from "lib/components/defeatable_link";
-import { SearchField } from "lib/components/search_field";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { Link } from "react-router-dom";
-import useLoadbalancer from "../../../lib/hooks/useLoadbalancer";
-import { addError } from "lib/flashes";
-import { ErrorsList } from "lib/elektra-form/components/errors_list";
-import useCommons from "../../../lib/hooks/useCommons";
-import { regexString } from "lib/tools/regex_string";
+import { useDispatch, useGlobalState } from "../StateProvider"
+import { useEffect, useMemo, useState } from "react"
+import LoadbalancerItem from "./LoadbalancerItem"
+import ErrorPage from "../ErrorPage"
+import { DefeatableLink } from "lib/components/defeatable_link"
+import { SearchField } from "lib/components/search_field"
+import { CSSTransition, TransitionGroup } from "react-transition-group"
+import { Link } from "react-router-dom"
+import useLoadbalancer from "../../../lib/hooks/useLoadbalancer"
+import { addError } from "lib/flashes"
+import { ErrorsList } from "lib/elektra-form/components/errors_list"
+import useCommons from "../../../lib/hooks/useCommons"
+import { regexString } from "lib/tools/regex_string"
 import {
   Tooltip,
   OverlayTrigger,
   ToggleButton,
   ToggleButtonGroup,
   ButtonToolbar,
-} from "react-bootstrap";
-import Pagination from "../shared/Pagination";
-import { policy } from "policy";
-import { scope } from "ajax_helper";
-import SmartLink from "../shared/SmartLink";
-import Log from "../shared/logger";
+} from "react-bootstrap"
+import Pagination from "../shared/Pagination"
+import { policy } from "policy"
+import { scope } from "ajax_helper"
+import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
 
 const TableFadeTransition = ({ children, ...props }) => (
   <CSSTransition
@@ -33,31 +33,31 @@ const TableFadeTransition = ({ children, ...props }) => (
   >
     {children}
   </CSSTransition>
-);
+)
 
 const LoadbalancerList = (props) => {
-  const dispatch = useDispatch();
-  const state = useGlobalState().loadbalancers;
-  const { persistLoadbalancers, persistAll } = useLoadbalancer();
-  const { errorMessage } = useCommons();
+  const dispatch = useDispatch()
+  const state = useGlobalState().loadbalancers
+  const { persistLoadbalancers, persistAll } = useLoadbalancer()
+  const { errorMessage } = useCommons()
 
-  const [shouldFetchNext, setShouldFetchNext] = useState(false);
-  const [fetchingAllItems, setFetchingAllItems] = useState(false);
+  const [shouldFetchNext, setShouldFetchNext] = useState(false)
+  const [fetchingAllItems, setFetchingAllItems] = useState(false)
 
   useEffect(() => {
-    initLoad();
-  }, []);
+    initLoad()
+  }, [])
 
   useEffect(() => {
     if (shouldFetchNext) {
-      fetchAll();
+      fetchAll()
     }
-  }, [shouldFetchNext]);
+  }, [shouldFetchNext])
 
   const initLoad = () => {
-    Log.debug("FETCH initial loadbalancers");
-    persistLoadbalancers({ marker: state.marker }).catch((error) => {});
-  };
+    Log.debug("FETCH initial loadbalancers")
+    persistLoadbalancers({ marker: state.marker }).catch((error) => {})
+  }
 
   const canCreate = useMemo(
     () =>
@@ -65,78 +65,78 @@ const LoadbalancerList = (props) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const handlePaginateClick = (e, page) => {
-    e.preventDefault();
+    e.preventDefault()
     if (page === "all") {
-      setShouldFetchNext(true);
-      setFetchingAllItems(true);
+      setShouldFetchNext(true)
+      setFetchingAllItems(true)
     } else {
-      persistLoadbalancers({ marker: state.marker }).catch((error) => {});
+      persistLoadbalancers({ marker: state.marker }).catch((error) => {})
     }
-  };
+  }
 
   const search = (term) => {
     if (!fetchingAllItems && term != "") {
-      setShouldFetchNext(true);
-      setFetchingAllItems(true);
+      setShouldFetchNext(true)
+      setFetchingAllItems(true)
       // reset marker to force load all loabalancers from the beginning
-      dispatch({ type: "RESET_LOADBALANCER_SEARCH_ALL" });
+      dispatch({ type: "RESET_LOADBALANCER_SEARCH_ALL" })
     }
 
     // stop fetching all items
     if (term == "") {
-      setFetchingAllItems(false);
+      setFetchingAllItems(false)
     }
 
     // update the filter
-    dispatch({ type: "SET_LOADBALANCER_SEARCH_TERM", searchTerm: term });
-  };
+    dispatch({ type: "SET_LOADBALANCER_SEARCH_TERM", searchTerm: term })
+  }
 
   const fetchAll = () => {
-    setShouldFetchNext(false);
+    setShouldFetchNext(false)
 
     persistLoadbalancers({ limit: 19, marker: state.marker })
       .then((data) => {
         if (data.has_next && !selected && fetchingAllItems) {
-          setShouldFetchNext(true);
+          setShouldFetchNext(true)
         } else {
-          setFetchingAllItems(false);
+          setFetchingAllItems(false)
         }
       })
       .catch((error) => {
-        setFetchingAllItems(false);
-        addError(<React.Fragment>{errorMessage(error)}</React.Fragment>);
-      });
-  };
+        setFetchingAllItems(false)
+        addError(<React.Fragment>{errorMessage(error)}</React.Fragment>)
+      })
+  }
 
-  const error = state.error;
-  const isLoading = state.isLoading;
-  const hasNext = state.hasNext;
-  const searchTerm = state.searchTerm;
-  const items = state.items;
-  const selected = state.selected;
+  const error = state.error
+  const isLoading = state.isLoading
+  const hasNext = state.hasNext
+  const searchTerm = state.searchTerm
+  const items = state.items
+  const selected = state.selected
 
   const filterItems = (searchTerm, items) => {
-    if (!searchTerm) return items;
+    if (!searchTerm) return items
 
     // filter items
     if (selected) {
-      return items.filter((i) => i.id == searchTerm.trim());
+      return items.filter((i) => i.id == searchTerm.trim())
     } else {
-      const regex = new RegExp(regexString(searchTerm.trim()), "i");
+      const regex = new RegExp(regexString(searchTerm.trim()), "i")
       return items.filter(
         (i) =>
           `${i.id} ${i.name} ${i.description} ${i.vip_address} ${
             i.floating_ip && i.floating_ip.floating_ip_address
           }`.search(regex) >= 0
-      );
+      )
     }
-  };
-  const loadbalancers = filterItems(searchTerm, items);
+  }
+  const loadbalancers = filterItems(searchTerm, items)
   return useMemo(() => {
-    Log.debug("RENDER loadbalancer list");
+    Log.debug("RENDER loadbalancer list")
     return (
       <React.Fragment>
         {error && !fetchingAllItems ? (
@@ -182,7 +182,7 @@ const LoadbalancerList = (props) => {
                 <table
                   className={
                     selected
-                      ? "table loadbalancers"
+                      ? "table table-section loadbalancers"
                       : "table table-hover loadbalancers"
                   }
                 >
@@ -208,7 +208,7 @@ const LoadbalancerList = (props) => {
                       </th>
                       <th>Status</th>
                       <th>Tags</th>
-                      <th className="snug-nowrap">Subnet/IP Address</th>
+                      <th className="snug-nowrap">Subnet/AZ/IP Address</th>
                       <th>#Listeners</th>
                       <th>#Pools</th>
                       <th className="snug"></th>
@@ -254,7 +254,7 @@ const LoadbalancerList = (props) => {
           </React.Fragment>
         )}
       </React.Fragment>
-    );
+    )
   }, [
     JSON.stringify(loadbalancers),
     error,
@@ -262,6 +262,6 @@ const LoadbalancerList = (props) => {
     isLoading,
     searchTerm,
     hasNext,
-  ]);
-};
-export default LoadbalancerList;
+  ])
+}
+export default LoadbalancerList

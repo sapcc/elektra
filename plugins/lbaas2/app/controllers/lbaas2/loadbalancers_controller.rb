@@ -210,7 +210,7 @@ module Lbaas2
             sub = subnets[subid]
             cidr = NetAddr.parse_net(sub.cidr)
             next unless cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
-            
+
             grouped_fips[sub.name] ||= []
             # add the description to the label ip
             label = fip.floating_ip_address
@@ -237,6 +237,20 @@ module Lbaas2
       render json: { errors: e.message }, status: "500"
     end
 
+    def availability_zones
+      availability_zones = services.lbaas2.availability_zones()
+      # transform to select options
+      select_availability_zones = availability_zones.map { |az| { "label": az["name"], "value": az["name"], "enabled": az["enabled"]} }
+
+      render json: {
+        availability_zones: select_availability_zones
+      }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
     protected
 
     def extend_lb_data(lbs)
@@ -254,7 +268,7 @@ module Lbaas2
           unless lb.subnet
             lb.subnet = services.networking.subnets(id: lb.vip_subnet_id).first
             lb.subnet_from_cache false
-          end          
+          end
         end
 
         # get cached listeners

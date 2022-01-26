@@ -7,11 +7,13 @@ const AvailabilityZoneCategory = ({ categoryName, category, availabilityZones, f
   const { serviceType, resources } = category;
   const scope = new Scope(scopeData);
 
-  //during buildup, capacity may be displayed in the "unknown" AZ before being
-  //assigned to an actual AZ; hide this capacity except for cluster admins
+  //some AZs are hidden for regular users and only shown for cluster admins:
+  //- "unknown": pseudo-AZ for capacity not assigned to an AZ (mostly during buildup)
+  //- "tempest-test-...": dummy AZ created by Tempest
+  //- "cp...": pseudo-AZ for control plane nodes without AZ association
   const visibleAvailabilityZones = scope.isCluster()
     ? availabilityZones
-    : availabilityZones.filter(az => az != 'unknown');
+    : availabilityZones.filter(az => az != 'unknown' && !(/^tempest-|^cp/).test(az));
 
   //the resource names use 2 grid columns, so we have 10 grid columns for the
   //AZ bars - choose the column width accordingly

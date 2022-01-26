@@ -2,6 +2,7 @@ module DnsService
   class ZonesController < DnsService::ApplicationController
     before_action ->(id = params[:id]) { load_zone id }, except: %i[index]
     before_action :load_pools, only: %i[index show update create new]
+    before_action :load_shared_zones, only: %i[index update create]
 
     authorization_context 'dns_service'
     authorization_required
@@ -29,7 +30,6 @@ module DnsService
           @admin_option.merge(pagination_options).merge(filter)
         )[:items]
       end
-      @shared_zones = services.dns_service.shared_zones()
       
       active_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
 
@@ -72,7 +72,19 @@ module DnsService
       end
 
       @zone = services.dns_service.find_zone(params[:id], all_projects: @all_projects)
-      @shared_zones = services.dns_service.shared_zones()
+      all_shared_zones = services.dns_service.shared_zones()
+
+      @shared_with_projects = []
+      all_shared_zones.each do | shared_zone |
+        if @zone.id == shared_zone.zone_id && @scoped_project_id != shared_zone.target_project_id
+          project = ObjectCache.where(id: shared_zone.target_project_id).first
+          if project
+            @shared_with_projects << project.name
+          else
+            @shared_with_projects << shared_zone.target_project_id
+          end
+        end
+      end
 
       @recordsets = paginatable(per_page: per_page.to_i) do |pagination_options|
         services.dns_service.recordsets(
@@ -192,6 +204,10 @@ module DnsService
       @pools = []
       return unless current_user.is_allowed?("dns_service:pool_list")
       @pools = services.dns_service.pools[:items]
+    end
+
+    def load_shared_zones
+      @shared_zones = services.dns_service.shared_zones()
     end
   end
 end

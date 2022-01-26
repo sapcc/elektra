@@ -53,6 +53,7 @@ buildNewStateUrl= (href) ->
 
   href = href.replace(hostUrl,'').replace(current_path,'').replace(/^\/+/,'').trim()
   href = "/#{href}" if isAbsolutePath
+  href = encodeURIComponent(href)
 
   if !supportHistory
     return "?overlay=#{href}"

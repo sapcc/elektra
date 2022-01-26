@@ -16,10 +16,10 @@
     #modal-holder
 
   - hypervisor = @instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
-  %body.vnc-console
+  %body.web-console
     .toolbar.toolbar-with-h
       %h5
-        VNC Console
+        Web Console
         %small (Click the blue bar to focus the console for keyboard input)
       .main-buttons
         - unless hypervisor.to_s.include?('nova-compute-ironic')

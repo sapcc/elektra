@@ -1,3 +1,4 @@
+# Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
 FROM ruby:2.5-slim-stretch
 
 LABEL source_repository="https://github.com/sapcc/elektra"
@@ -35,8 +36,9 @@ RUN mkdir -p /app
 WORKDIR /app
 
 COPY Gemfile /app/Gemfile
-COPY Gemfile.lock /app/Gemfile.lock
+COPY Gemfile.lock /app/Gemfile.lock 
 
 RUN bundle install --without default test development production doc --standalone integration_test api_client
 
-LABEL source_repository="https://github.com/sapcc/elektra"
+# docker -t elektra-integration-tests build --file docker/Dockerfile.integration-tests .
+

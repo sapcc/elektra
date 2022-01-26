@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 
 import { DataTable } from 'lib/components/datatable';
 
-import { makeHowto, makeHowtoOpener } from '../utils';
+import { makeHowtoOpener } from '../utils';
+import Howto from '../howto';
 import RepositoryRow from './row';
 
 const columns = [
@@ -72,7 +73,7 @@ export default class RepositoryList extends React.Component {
           <input className='form-control' type='text' value={this.state.searchText}
             placeholder='Filter repositories' onChange={e => this.setSearchText(e.target.value)} />
         </div>
-        {howtoVisible && makeHowto(this.props.dockerInfo, account.name, '<repo>', hideHowto)}
+        {howtoVisible && <Howto dockerInfo={this.props.dockerInfo} accountName={account.name} repoName={'<repo>'} handleClose={hideHowto} />}
         {isFetching ? (
           <p><span className='spinner' /> Loading repositories for account...</p>
         ) : (

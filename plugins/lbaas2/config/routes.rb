@@ -9,6 +9,7 @@ Lbaas2::Engine.routes.draw do
       get 'fips' => 'loadbalancers#fips'
       put ':id/attach_fip' => 'loadbalancers#attach_fip'
       put ':id/detach_fip' => 'loadbalancers#detach_fip'
+      get 'availability-zones' => 'loadbalancers#availability_zones'
     end
 
     resources :listeners, module: :loadbalancers, only: [:index, :show, :create, :update, :destroy] do

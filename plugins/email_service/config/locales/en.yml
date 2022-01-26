@@ -1,0 +1,13 @@
+en:
+  email_service:
+    messages:
+      configset_removed_successfully: 'Configset %{name} removed successfully.'
+    help_hint:
+      template_name: "template name should not contain space"
+      configset_name: "configset name should not contain space"
+    icon_hint:
+      maximum_email: "Maximum email addresses count can't exceed 50"
+    configset:
+      errors:
+        configset_creation_error: "Error creating configset."
+        configset_name_taken: "Name is already taken. Use a different name"
