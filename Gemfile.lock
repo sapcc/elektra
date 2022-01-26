@@ -70,7 +70,7 @@ PATH
   specs:
     email_service (0.0.1)
       aws-sdk-ses
-      rails (~> 5.2.4, >= 5.2.4.3)
+      virtus
 
 PATH
   remote: plugins/identity

@@ -6,32 +6,26 @@ module EmailService
     authorization_required
     
     def index
-      creds = get_ec2_creds
-      if creds.error.empty?
-        @all_domains = list_verified_identities("Domain")
-        @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
-        @pending_domains  = get_verified_identities_by_status(@all_domains, "Pending")
-        @failed_domains   = get_verified_identities_by_status(@all_domains, "Failed")
-        items_per_page = 10
-        @paginatable_domains = Kaminari.paginate_array(@all_domains, total_count: @all_domains.count).page(params[:page]).per(items_per_page)
-      else
-        flash[:error] = creds.error
-      end
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      @all_domains = list_verified_identities("Domain")
+      @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
+      @pending_domains  = get_verified_identities_by_status(@all_domains, "Pending")
+      @failed_domains   = get_verified_identities_by_status(@all_domains, "Failed")
+      items_per_page = 10
+      @paginatable_domains = Kaminari.paginate_array(@all_domains, total_count: @all_domains.count).page(params[:page]).per(items_per_page)
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     def new; end
     
     def show
-      identity = params[:identity]
-      @verified_identity = find_verified_identity_by_name(identity, "Domain")
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      @verified_identity = find_verified_identity_by_name(params[:identity], "Domain")
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     # def verify_dkim
@@ -56,10 +50,10 @@ module EmailService
       @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
       flash[:success] = "DKIM for #{identity} is activated"
       redirect_to({ action: :index } )  
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     def deactivate_dkim
@@ -75,10 +69,10 @@ module EmailService
       @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
       flash[:success] = "DKIM for #{identity} is deactivated"
       redirect_to({ action: :index } )  
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     def create
@@ -102,10 +96,10 @@ module EmailService
         end
       end
       redirect_to({ action: :index } )  
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     def destroy
@@ -121,10 +115,10 @@ module EmailService
       @all_domains = list_verified_identities("Domain")
       @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
       redirect_to({ action: :index } ) 
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
+      rescue Elektron::Errors::ApiResponse => e
+        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+      rescue Exception => e
+        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     private

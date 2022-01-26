@@ -3,19 +3,31 @@ module EmailService
   class FakeFactory
 
     def plain_email
-      EmailService::PlainEmailHelper::PlainEmail.new(plain_email_opts)
+      EmailService::Forms::PlainEmail.new(plain_email_opts)
     end
 
     def templated_email
-      EmailService::TemplatedEmailHelper::TemplatedEmail.new(templated_email_opts)
+      EmailService::Forms::TemplatedEmail.new(templated_email_opts)
     end
 
     def configset 
-      EmailService::ConfigsetHelper::Configset.new(configset_opts)
+      EmailService::Configset.new(configset_opts)
     end
 
     def template
-      EmailService::TemplateHelper::Template.new(template_opts)
+      EmailService::Template.new(template_opts)
+    end
+
+    def aws_creds_error
+      ServiceLayer::IdentityServices::Credential::AWSCreds.new("", "", "Error occured")
+    end
+
+    def aws_creds_array
+      creds_array = []
+      2.times do
+        creds_array << ServiceLayer::IdentityServices::Credential::AWSCreds.new("abcdefghijk", "abcdefghijk", "")
+      end
+      creds_array
     end
 
     def plain_email_opts
@@ -42,20 +54,20 @@ module EmailService
 
     def templated_email_opts
       {
-          source: "abc@def.com",
-          to_addr: "abc@def.com, ghi@rbss.de",
-          cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk", 
-          bcc_addr: "abc@xyz.mn.rb, kd@mr.jq.lk", 
-          template_name: "MyTemplate", 
-          template_data: '{ "abc": { "def": "klm"}}', 
-          configset: "MyConfigSet"
+        source: "abc@def.com",
+        to_addr: "abc@def.com, ghi@rbss.de",
+        cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk", 
+        bcc_addr: "abc@xyz.mn.rb, kd@mr.jq.lk", 
+        template_name: "MyTemplate", 
+        template_data: '{ "abc": { "def": "klm"}}', 
+        configset: "MyConfigSet"
       }
     end
 
     def configset_opts 
       {
         id: 0, 
-        name: "New ConfigSet"
+        name: "NewConfigSet"
       }
     end
 

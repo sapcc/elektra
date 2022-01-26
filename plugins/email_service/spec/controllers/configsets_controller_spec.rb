@@ -18,7 +18,6 @@ describe EmailService::ConfigsetsController, type: :controller do
   end
   before :each do
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:list_configsets).and_return(double('config_sets').as_null_object)            
-    allow_any_instance_of(EmailService::ConfigsetsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:new_configset).and_return(double('config_set').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:store_configset).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:delete_configset).and_return(double('status').as_null_object)
@@ -293,6 +292,36 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
     end
 
+  end
+
+
+  # experimental
+  let(:configset) { ::EmailService::FakeFactory.new.configset } 
+  describe "#receive.params" do
+
+    context 'email_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it '.allows#params' do
+        allow(controller).to receive(:params).and_return(configset: configset.name)
+        # puts "params #{controller.params.inspect}"
+        # puts "controller class #{controller.class}"
+        expect(controller.params[:configset]).to eq("NewConfigSet")
+      end
+
+      it ".allows#strong#params" do
+        params = ActionController::Parameters.new(configset: 'A_Fancy_Configset')
+        allow(controller).to receive(:params).and_return(params)
+        # puts "strong params #{controller.params.inspect}"
+        # puts "AuthenticationStub: #{AuthenticationStub.instance_methods}"
+      end
+    end
   end
 
 

@@ -18,7 +18,6 @@ describe EmailService::VerificationsController, type: :controller do
   end
  
   before :each do
-    allow_any_instance_of(EmailService::VerificationsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::VerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::VerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)     
     allow_any_instance_of(EmailService::VerificationsController).to receive(:remove_verified_identity).and_return(double('status').as_null_object)

@@ -1,19 +1,15 @@
 module EmailService
   class TemplatesController < ::EmailService::ApplicationController
     before_action :restrict_access
+    before_action :set_template, only: %i[new show edit]
 
     authorization_context 'email_service'
     authorization_required
 
     def index
-      creds = get_ec2_creds
-      if creds.error.empty?
-        @templates = get_all_templates
-        items_per_page = 10
-        @paginatable_templates = Kaminari.paginate_array(@templates, total_count: @templates.count).page(params[:page]).per(items_per_page)
-      else
-        flash[:error] = creds.error
-      end
+      @templates = get_all_templates
+      items_per_page = 10
+      @paginatable_templates = Kaminari.paginate_array(@templates, total_count: @templates.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
       rescue Exception => e
@@ -21,7 +17,6 @@ module EmailService
     end
 
     def show
-      @template = find_template(params[:name])
       render "show", locals: { data: { modal: true } }
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
@@ -29,57 +24,49 @@ module EmailService
         flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
-    def new; end
+    def new;end
 
-    def edit
-      @template = find_template(params[:name])
-      rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-      rescue Exception => e
-        flash[:error] = "Status Code: 500 : Error: #{e.message}"
-    end
-
-    def update
-      status = ""
-      template = find_template(params[:name])
-      template_new = new_template(template_params)
-
-      if template_new.errors?
-        flash[:error] = @template.errors.first[:message]
-        redirect_to 'edit', data: {modal: true}
-      elsif template 
-        status = update_template(template.name, template_new.subject, template_new.html_part, template_new.text_part)
-      end
-
-      if status == "success"
-        flash[:success] = "eMail template [#{template.name}] is updated" 
-      else 
-        flash[:error] = "Error: #{status}; eMail template [#{template.name}] is not updated" 
-      end
-      redirect_to plugin('email_service').templates_path
-    end
+    def edit;end
 
     def create
-      status = ""
-      @template = new_template(template_params)
-      if @template.errors?
-        flash.now[:error] = @template.errors
-        render 'new' and return
-      else
+      @template = template_form(template_params)
+      if @template.valid?
         status = store_template(@template)
         if status == "success"
           flash[:success] = "eMail template #{@template.name} is saved"
+          redirect_to plugin('email_service').templates_path and return
         else
-          flash.now[:warning] = status
-          render 'new' and return
-        end 
+          flash.now[:error] = status
+          render "new", locals: {data: {modal: true} } and return
+        end
+      else
+        render "new", locals: {data: {modal: true} } and return
       end
-      
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
       rescue Exception => e
         flash[:error] = "Status Code: 500 : Error: #{e.message}"
       redirect_to plugin('email_service').templates_path
+    end
+
+
+    def update
+      @template = template_form(template_params)
+      @template.name = params[:name]
+      form_params = template_params
+      if @template.valid?
+        # update the original template
+        status = update_template(@template.name, @template.subject, @template.html_part, @template.text_part)
+      else
+        return render action: 'edit', data: {modal: true}
+      end
+      if status == "success"
+        flash[:success] = "eMail template [#{@template.name}] is updated" 
+        redirect_to plugin('email_service').templates_path and return
+      else 
+        flash.now[:error] = "Error: #{status}; eMail template [#{@template.name}] is not updated" 
+        render 'edit', data: {modal: true}
+      end
     end
 
     def destroy
@@ -94,11 +81,21 @@ module EmailService
 
     private
 
-      def set_template
-        @template = find_template(params[:name])
+    def template_form(attributes={})
+      EmailService::Template.new(attributes)
+    end
+
+    def set_template
+      @template = find_template(params[:name])
+    end
+    
+    def template_params
+      if params.include?(:template)
+        return params.require(:template).permit(:name, :subject, :html_part, :text_part)
+      else
+        return {}
       end
-      def template_params
-        params.require(:templ).permit(:name, :subject, :html_part, :text_part)
-      end
+    end
+
   end
 end

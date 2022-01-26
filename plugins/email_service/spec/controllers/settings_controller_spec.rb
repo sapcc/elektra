@@ -20,7 +20,6 @@ describe EmailService::SettingsController, type: :controller do
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(EmailService::SettingsController).to receive(:get_configset).and_return(double('configset').as_null_object)            
-    allow_any_instance_of(EmailService::SettingsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
   end
 
   # check index route

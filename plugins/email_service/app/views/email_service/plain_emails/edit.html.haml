@@ -1,16 +1,17 @@
 = content_for :title do
-  New Templated eMail
+  Edit eMail
 
 - unless modal?
-  %h3 New Templated eMail
+  %h3 Edit eMail
 
-= simple_form_for @templated_email, as: :templated_email, url: plugin('email_service').templated_emails_path(), method: :post, remote: request.xhr?,  html: {id: 'form_templated_email', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for @plain_email, as: :plain_email, url: plugin('email_service').plain_emails_path(), method: :post, remote: request.xhr?,  html: {id: 'form_plain_email', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   .modal-body.static-columns
+  
     .modal-flashes
       = render "email_service/shared/flashes.html"
 
-    = render partial: 'form', locals: { f: f, form_type: 'new' }
+    = render partial: 'form', locals: { f: f, form_type: 'edit' }
 
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?
@@ -18,3 +19,5 @@
     - else
       = link_to "Cancel", plugin('email_service').emails_path(), class: 'btn btn-default'
     = button_tag "Send", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+
+

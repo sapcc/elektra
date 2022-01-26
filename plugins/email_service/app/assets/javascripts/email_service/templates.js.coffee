@@ -1,5 +1,7 @@
 $(
   () ->
+    template_name = "Preference_Template"
+    template_subject = "Preferences"
     template_html_part = """
       <!doctype html>
       <html>
@@ -52,16 +54,24 @@ $(
           ]
         }
     """
-    templates_modal = 'body.templates.modal-open'
+    templatesModal = 'body.templates.modal-open'
+    templateForm = 'form[id="form_template"]'
+    name = 'input[id="template_name"]'
+    subject = 'input[id="template_subject"]'
+    html_input = 'textarea[id="template_html_part"]'
+    text_input = 'textarea[id="template_text_part"]'
+    labelTemplateName = 'label[for="template_name"]'
 
-    html_input = $(templates_modal).find('textarea[id="tmpl_html_part"]')
-    text_input = 'textarea[id="tmpl_text_part"]'
-    sample_json = 'form[id="tmpl_sample_json"]'
+    loadTestData = () -> 
+      $(name).val template_name
+      $(subject).val template_name
+      $(html_input).val template_html_part
+      $(text_input).val template_text_part
+      
 
-    $(templates_modal).on('click', () ->
-      console.log 'template is clicked'
-      # console.log(template_html_part)
-      # console.log(template_text_part)
-      # console.log(template_json_content)
+    $(templatesModal).on('click', () ->
+      $(labelTemplateName).on( "click", () -> 
+        loadTestData()
+      )
     )
 )

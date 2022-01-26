@@ -10,35 +10,51 @@ $(
     source_help = to_help = cc_help = bcc_help = subject_help = htmlbody_help = textbody_help = undefined
     validToAddressCount = validCcAddressCount = validBccAddressCount =  totalEmailAddresses = 0
     # form elements
-    emailSource  = 'select[id="email_source"]'
-    emailToAddr  = 'textarea[id="email_to_addr"]'
-    emailCcAddr  = 'textarea[id="email_cc_addr"]'
-    emailBccAddr = 'textarea[id="email_bcc_addr"]'
-    emailSubject  = 'input[id="email_subject"]'
-    emailHtmlBody = 'textarea[id="email_htmlbody"]'
-    emailTextBody = 'textarea[id="email_textbody"]'
+    emailSource  = 'select[id="plain_email_source"]'
+    emailToAddr  = 'textarea[id="plain_email_to_addr"]'
+    emailCcAddr  = 'textarea[id="plain_email_cc_addr"]'
+    emailBccAddr = 'textarea[id="plain_email_bcc_addr"]'
+    emailSubject  = 'input[id="plain_email_subject"]'
+    emailHtmlBody = 'textarea[id="plain_email_html_body"]'
+    emailTextBody = 'textarea[id="plain_email_text_body"]'
     plainEmailForm = 'form[id="form_plain_email"]'
 
+    labelPlainEmailSource = 'label[for="plain_email_source"]'
+    labelPlainEmailToAddr = 'label[for="plain_email_to_addr"]'
+
     # icon_hint classes
-    fg_email_source = '.form-group.email_source'
-    fg_email_to_addr = '.form-group.email_to_addr'
-    fg_email_cc_addr = '.form-group.email_cc_addr'
-    fg_email_bcc_addr = '.form-group.email_bcc_addr'
-    fg_email_subject = '.form-group.email_subject'
-    fg_email_htmlbody = '.form-group.email_htmlbody'
-    fg_email_textbody = '.form-group.email_textbody'
+    fg_email_source = '.form-group.plain_email_source'
+    fg_email_to_addr = '.form-group.plain_email_to_addr'
+    fg_email_cc_addr = '.form-group.plain_email_cc_addr'
+    fg_email_bcc_addr = '.form-group.plain_email_bcc_addr'
+    fg_email_subject = '.form-group.plain_email_subject'
+    fg_email_htmlbody = '.form-group.plain_email_html_body'
+    fg_email_textbody = '.form-group.plain_email_text_body'
 
     # Test data
+    sender = "development.solution03@gmail.com"
     subject = "Cronus eMail Service - from Elektra UI Plugin - #{currentDate}"
-    htmlBody = "<h1>Email Sent by Cronus </h1><p><h2>AWS SES Proxy Service</h2>"
-    textBody = "Email Sent by Cronus - AWS SES Proxy Service"
+    htmlBody = "<h1>Email Sent by Cronus </h1><p><h2>AWS SES Proxy Service</h2> <p> #{currentDate}</p>"
+    textBody = "Email Sent by Cronus - AWS SES Proxy Service #{currentDate}"
+    toRealAddresses = "sirajudheenam@gmail.com, buzzmesam@gmail.com"
+    ccRealAddresses = "sirajudheenam@gmail.com, buzzmesam@gmail.com"
+    bccRealAddresses = "sirajudheenam@gmail.com, buzzmesam@gmail.com"
+
     toFakeAddresses = """ 
       rjones@sbcglobal.net, doormat@comcast.net, less mfburgo@me.com, 
       alfred@outlook.com, mfleming@comcast.net, verymuch hermanab@comcast.net,
       dpitts@sbcglobal.net, care,fairbank@aol.com, moxfulder@live.com, 
       simone@sbcglobal.net, tarreau@comcast.net,so much mal@verizon.net,
       I,bahwi@outlook.com, jonas@optonline.net,  zeller@yahoo.ca, alias@me.com,
-      policies@att.net,froodian@hotmail.com, fmerges@att.net, tmccarth@yahoo.com
+      policies@att.net,froodian@hotmail.com, fmerges@att.net, tmccarth@yahoo.com,
+      curly@comcast.net, plover@me.com, jmcnamara@icloud.com, random,
+      dgriffith@comcast.net, invalid,elmer@optonline.net, lamky@yahoo.ca, 
+      barlow@sbcglobal.net,timlinux@optonline.net, anicolao@me.com, 
+      jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com, 
+      benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com, 
+      pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon.net, 
+      globalcampbell@verizon.net, notaprguy@verizon.net
+      
     """
     ccFakeAddresses = """ 
       curly@comcast.net, plover@me.com, jmcnamara@icloud.com, random,
@@ -46,7 +62,7 @@ $(
       barlow@sbcglobal.net,timlinux@optonline.net, anicolao@me.com, 
       jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com, 
       benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com, 
-      pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon.net, 
+      pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon., 
       globalcampbell@verizon.net, notaprguy@verizon.net
     """
     bccFakeAddresses = """
@@ -59,9 +75,19 @@ $(
     """
 
     loadFakeData = () ->
+      $(emailSource).val sender
       $(emailToAddr).val toFakeAddresses
       $(emailCcAddr).val ccFakeAddresses
       $(emailBccAddr).val bccFakeAddresses
+      $(emailSubject).val subject
+      $(emailHtmlBody).val htmlBody
+      $(emailTextBody).val textBody
+
+    loadRealData = () -> 
+      $(emailSource).val sender
+      $(emailToAddr).val toRealAddresses
+      $(emailCcAddr).val ccRealAddresses
+      $(emailBccAddr).val bccRealAddresses
       $(emailSubject).val subject
       $(emailHtmlBody).val htmlBody
       $(emailTextBody).val textBody
@@ -151,84 +177,93 @@ $(
     $('body.emails.modal-open').on( "click", () ->
       initializeData()
 
-      $(emailSource).on("change blur", 
-      () ->
-        source_value = $(this).val()
-        if not source_value and source_value.length is 0 
-          $(fg_email_source).addClass('has-error');
-          source_help.html( getHelpText "Source email can\'t be empty", "" );
-          source_help.show();
-        else
-          source_help.html( getHelpText  "", "valid" )
-          $(fg_email_source).removeClass('has-error')
-          source_help.hide(500);          
-        # loadFakeData()
+      # load real valid data to form, when source label is clicked
+      $(labelPlainEmailSource).on("click", () -> 
+        loadRealData()
       )
 
-      $(emailToAddr).on("blur click", () ->
-        validateEmails(emailToAddr)
-        $(this).addClass("u-text-monospace")
-        $(this).css("color", "blue")
-      )
-      $(emailCcAddr).on("blur click", () ->
-        validateEmails(emailCcAddr)
-        $(this).addClass("u-text-monospace")
-        $(this).css("color", "blue")
-      )
-      $(emailBccAddr).on("blur click", () ->
-        validateEmails(emailBccAddr)
-        $(this).addClass("u-text-monospace")
-        $(this).css("color", "blue")
-      )
-      $(emailToAddr).on("change", () ->
-        increaseTextArea emailToAddr, $(this).val().length
-      )
-      $(emailCcAddr).on("change", () ->
-        increaseTextArea emailCcAddr, $(this).val().length
-      )
-      $(emailBccAddr).on("change", () ->
-        increaseTextArea emailBccAddr, $(this).val().length
-      )
-      $(emailSubject).on("blur click", 
-        () ->
-          $(this).addClass("u-text-monospace")
-          $(this).css("color", "blue")
-          if $(this).val().length is 0
-            $(fg_email_subject).addClass('has-error')
-            $(subject_help).html( getHelpText "<b>Subject</b> can't be empty", ""  )
-            $(subject_help).show()
-          else
-            $(fg_email_subject).removeClass('has-error')
-            $(subject_help).html( getHelpText "", "valid" )
-            $(subject_help).hide(1000)
+      # load fake data to form to validate when to addr label is clicked
+      $(labelPlainEmailToAddr).on("click", () -> 
+        loadFakeData()
       )
 
-      $(emailHtmlBody).on("blur click", 
-        () ->
-          $(this).addClass("u-text-monospace")
-          $(this).css("color", "blue")
-          if $(this).val().length is 0 
-            $(fg_email_htmlbody).addClass('has-error')
-            $(htmlbody_help).html( getHelpText "<b>HTML Body</b> can't be empty", "" )
-            $(htmlbody_help).show()
-          else 
-            $(fg_email_htmlbody).removeClass('has-error')
-            $(htmlbody_help).html( getHelpText "", "valid" )
-            $(htmlbody_help).hide(1500)
-      )
-      $(emailTextBody).on("blur click", 
-        () ->
-          $(this).addClass("u-text-monospace")
-          $(this).css("color", "blue")
-          if $(this).val().length is 0
-            $(fg_email_textbody).addClass('has-error')
-            $(textbody_help).html( getHelpText "<b>Text Body</b> can't be empty", "" )
-            $(textbody_help).show()
-          else
-            $(fg_email_textbody).removeClass('has-error')
-            $(textbody_help).html( getHelpText "", "valid" )
-            $(textbody_help).hide(1500)
-      )
+      # $(emailSource).on("change blur", 
+      # () ->
+      #   source_value = $(this).val()
+      #   if not source_value and source_value.length is 0 
+      #     $(fg_email_source).addClass('has-error');
+      #     source_help.html( getHelpText "Source email can\'t be empty", "" );
+      #     source_help.show();
+      #   else
+      #     source_help.html( getHelpText  "", "valid" )
+      #     $(fg_email_source).removeClass('has-error')
+      #     source_help.hide(500);
+      # )
+
+      # $(emailToAddr).on("blur click", () ->
+      #   validateEmails(emailToAddr)
+      #   $(this).addClass("u-text-monospace")
+      #   $(this).css("color", "blue")
+      # )
+      # $(emailCcAddr).on("blur click", () ->
+      #   validateEmails(emailCcAddr)
+      #   $(this).addClass("u-text-monospace")
+      #   $(this).css("color", "blue")
+      # )
+      # $(emailBccAddr).on("blur click", () ->
+      #   validateEmails(emailBccAddr)
+      #   $(this).addClass("u-text-monospace")
+      #   $(this).css("color", "blue")
+      # )
+      # $(emailToAddr).on("change", () ->
+      #   increaseTextArea emailToAddr, $(this).val().length
+      # )
+      # $(emailCcAddr).on("change", () ->
+      #   increaseTextArea emailCcAddr, $(this).val().length
+      # )
+      # $(emailBccAddr).on("change", () ->
+      #   increaseTextArea emailBccAddr, $(this).val().length
+      # )
+      # $(emailSubject).on("blur click", 
+      #   () ->
+      #     $(this).addClass("u-text-monospace")
+      #     $(this).css("color", "blue")
+      #     if $(this).val().length is 0
+      #       $(fg_email_subject).addClass('has-error')
+      #       $(subject_help).html( getHelpText "<b>Subject</b> can't be empty", ""  )
+      #       $(subject_help).show()
+      #     else
+      #       $(fg_email_subject).removeClass('has-error')
+      #       $(subject_help).html( getHelpText "", "valid" )
+      #       $(subject_help).hide(1000)
+      # )
+      # $(emailHtmlBody).on("blur click", 
+      #   () ->
+      #     $(this).addClass("u-text-monospace")
+      #     $(this).css("color", "blue")
+      #     if $(this).val().length is 0 
+      #       $(fg_email_htmlbody).addClass('has-error')
+      #       $(htmlbody_help).html( getHelpText "<b>HTML Body</b> can't be empty", "" )
+      #       $(htmlbody_help).show()
+      #     else 
+      #       $(fg_email_htmlbody).removeClass('has-error')
+      #       $(htmlbody_help).html( getHelpText "", "valid" )
+      #       $(htmlbody_help).hide(1500)
+      # )
+      # $(emailTextBody).on("blur click", 
+      #   () ->
+      #     $(this).addClass("u-text-monospace")
+      #     $(this).css("color", "blue")
+      #     if $(this).val().length is 0
+      #       $(fg_email_textbody).addClass('has-error')
+      #       $(textbody_help).html( getHelpText "<b>Text Body</b> can't be empty", "" )
+      #       $(textbody_help).show()
+      #     else
+      #       $(fg_email_textbody).removeClass('has-error')
+      #       $(textbody_help).html( getHelpText "", "valid" )
+      #       $(textbody_help).hide(1500)
+      # )
+
 
     )
 

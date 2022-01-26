@@ -1,8 +1,8 @@
 module EmailService
-  class TemplatedEmailsController < ::EmailService::ApplicationController
+  class PlainEmailsController < ::EmailService::ApplicationController
     before_action :restrict_access
     before_action :fetch_aws_data, only: %i[new create edit]
-    before_action :templated_email, only: %i[new edit]
+    before_action :plain_email, only: %i[new edit]
 
     authorization_context 'email_service'
     authorization_required
@@ -12,12 +12,11 @@ module EmailService
     def edit;end
 
     def create
-
-      @templated_email = templated_email_form(templated_email_params)
-      templated_email_values = @templated_email.process(EmailService::TemplatedEmail)
-      if @templated_email.valid?
+      @plain_email = plain_email_form(plain_email_params)
+      plain_email_values = @plain_email.process(EmailService::PlainEmail)
+      if @plain_email.valid?
         begin
-          status = send_templated_email(templated_email_values) 
+          status = send_plain_email(plain_email_values) 
           if status == "success"
             flash[:success] = "eMail sent successfully"
             redirect_to plugin('email_service').emails_path and return
@@ -34,7 +33,6 @@ module EmailService
         render "edit", locals: {data: {modal: true} } and return
       end
       redirect_to plugin('email_service').emails_path
-
     end
 
     private
@@ -44,9 +42,9 @@ module EmailService
         @all_emails = list_verified_identities("EmailAddress")
         @verified_emails = get_verified_identities_by_status(@all_emails, "Success")
         @verified_emails_collection = get_verified_identities_collection(@verified_emails, "EmailAddress")
-        @templates = get_all_templates
-        @templates_collection = get_templates_collection(@templates) if @templates && !@templates.empty?
-        @configsets = list_configset_names
+        @all_domains = list_verified_identities("Domain")
+        @verified_domains = get_verified_identities_by_status(@all_domains, "Success")
+        @verified_domains_collection = get_verified_identities_collection(@verified_domains, "Domain") unless @verified_domains.nil? || @verified_domains.empty?
       else
         flash[:error] = ec2_creds.error
       end
@@ -56,17 +54,17 @@ module EmailService
         flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
-    def templated_email_form(attributes={})
-      EmailService::Forms::TemplatedEmail.new(attributes)
+    def plain_email_form(attributes={})
+      EmailService::Forms::PlainEmail.new(attributes)
     end
 
-    def templated_email
-      @templated_email = templated_email_form(templated_email_params)
+    def plain_email
+      @plain_email = plain_email_form(plain_email_params)
     end
 
-    def templated_email_params
-      if params.include?(:templated_email)
-        return params.require(:templated_email).permit(:source, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :template_name, :template_data, :configset_name)
+    def plain_email_params
+      if params.include?(:plain_email)
+        return params.require(:plain_email).permit(:source, :to_addr, :cc_addr, :bcc_addr, :subject, :html_body, :text_body)
       else 
         return {}
       end
@@ -74,3 +72,4 @@ module EmailService
 
   end
 end
+

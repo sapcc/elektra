@@ -1,38 +1,20 @@
 = content_for :title do
   New Template
 
-- template_html_part =  "<!doctype html><html><head><meta charset='utf-8'></head><body><h1>Your Preferences</h1><h2>Dear {{ name.lastName }}, </h2><p> You have indicated that you are interested in receiving information about the following topics:</p><ul>{{#each subscription}}<li>{{interest}}</li>{{/each}}</ul><p>You can change these settings at any time by visiting the <a href=https://www.abc.xyz/preferences/i.aspx?id={{meta.userId}}> Preference Center</a>.</p></body></html>"
-- template_text_part =  "Your Preferences. Dear {{ name.lastName }}, You have indicated that you are interested in receiving information about the following topics: {{#each subscription}} {{interest}} {{/each}}. You can change these settings at any time by visiting the https://www.abc.xyz/preferences/i.aspx?id={{meta.userId}}> Preference Center"
+- unless modal?
+  %h3 New Template
 
-= simple_form_for :templ, url: plugin('email_service').templates_path(), method: :post, remote: request.xhr?,  html: {id: 'form_template', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
-  .modal-body
+= simple_form_for @template, as: :template, url: plugin('email_service').templates_path(), method: :post, remote: request.xhr?,  html: {id: 'form_template', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  .modal-body.static-columns
     .modal-flashes
-    = render "email_service/shared/flashes.html"
-    .row
-      .col-sm-12
-        = f.input :name, required: true, label: 'Name', input_html: { autofocus: 'autofocus' }, placeholder: 'Enter name'
-        = f.input :subject, label: 'Subject', required: true, placeholder: 'Enter subject'
-        =f.input :html_part,
-        label:              "HTML eMail Content",
-        placeholder:        "Enter HTML part of your email template",
-        input_html:         {rows: "15", class: "u-text-monospace", 
-        value: template_html_part },
-        as:                 :text,
-        required:           true,
-        hint: 'Enter html part of your template' 
-        =f.input :text_part,
-        label:              "Plain text eMail Content",
-        placeholder:        "Enter PLAIN text part of your email template",
-        input_html:         {rows: "15", class: "u-text-monospace", 
-        value: template_text_part },
-        as:                 :text,
-        required:           true,
-        hint: 'Enter plain text part of your eMail template'
+      = render "email_service/shared/flashes.html"
 
+    = render partial: 'form', locals: { f: f, form_type: 'new' }
 
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
-      = link_to "Cancel", plugin('email_service').templates_path(), class: 'btn btn-default'
-    = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+      = link_to "Cancel", plugin('email_service').plugin('email_service').templates_path(), class: 'btn btn-default'
+    = button_tag "Save", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

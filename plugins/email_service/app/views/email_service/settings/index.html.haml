@@ -12,12 +12,12 @@
           %tr
             %td AWS Access Key
             %td 
-              =@access if @access
+              =@access ? @access : "AWS EC2 credentials are not created. Create on webconsole using `openstack ec2 credentials create` command."
             %td
           %tr#tr_secret
             %td AWS Secret Key 
             %td#td_secret_key
-              =@secret if @secret
+              =@secret ? @secret : ""
             %td.show_hide_btn
               %button.btn.btn-primary#btn_tg_secret
                 %i.fa.fa-eye-slash#eye_slash

@@ -1,4 +1,3 @@
-# Document Ready function
 $(
   () -> 
 
@@ -11,7 +10,7 @@ $(
     emailTemplateData = 'textarea[id="templated_email_template_data"]'
     emailConfigSetName = 'select[id="templated_email_configset_name"]'
     templatedEmailForm = 'form[id="form_templated_email"]'
-    h4ModelTitle = "h4.modal-title"
+    labelSource = 'label[for="templated_email_source"]'
 
 
     # Test data
@@ -48,7 +47,6 @@ $(
         }
     """
     
-
     loadTestData = () ->
       $(emailSource).val source
       $(emailToAddr).val toAddresses
@@ -63,7 +61,7 @@ $(
     $('body.emails.modal-open').on( "click", (e) ->
       # console.log "Click event detected on Form"
       # console.log e
-      $(h4ModelTitle).on( "click", () -> 
+      $(labelSource).on( "click", () -> 
         # console.log "H4 clicked"
         loadTestData()
       )

@@ -7,14 +7,6 @@ module EmailService
 
     TAG_SEPERATOR = ","
 
-    def is_valid_email?(str)
-      str.strip.match(VALID_EMAIL_REGEX).nil? ? false : true
-    end
-
-    def templated_email_instance
-      EmailService::TemplatedEmail
-    end
-    
     def string_to_hash(attr)
       unless attr.blank?
         result_hash = {}
@@ -30,17 +22,6 @@ module EmailService
       else
         {}
       end
-    end
-
-    def string_to_email_array(str)
-      addr_arr = []
-      unless str.blank?
-        items = str.split TAG_SEPERATOR
-        items.each do | item |
-          addr_arr << item.strip unless !is_valid_email?(item)
-        end
-      end
-      addr_arr
     end
 
     def json_to_string(attr)
@@ -67,7 +48,6 @@ module EmailService
       end
       return ""
     end
-
 
   end
 

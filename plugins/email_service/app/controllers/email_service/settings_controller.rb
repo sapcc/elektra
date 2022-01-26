@@ -7,16 +7,15 @@ module EmailService
     
     def index
       @cronus_activated = false
-      creds = get_ec2_creds
-      if creds.error.empty?
-        @access = creds.access
-        @secret = creds.secret
+      if ec2_creds.error.empty?
+        @access = ec2_creds.access
+        @secret = ec2_creds.secret
         if @access && @secret 
           @cronus_activated = true
         end
         @configsets = list_configsets
       else
-        flash[:error] = creds.error
+        flash[:error] = ec2_creds.error
       end
     rescue Elektron::Errors::ApiResponse => e
       flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
@@ -25,9 +24,8 @@ module EmailService
     end
 
     def show
-      creds = get_ec2_creds
-      @access = creds.access
-      @secret = creds.secret
+      @access = ec2_creds.access
+      @secret = ec2_creds.secret
     rescue Elektron::Errors::ApiResponse => e
       flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
     rescue Exception => e

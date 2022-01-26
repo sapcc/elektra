@@ -1,19 +1,18 @@
 # frozen_string_literal: true
 
 module EmailService
-  class ApplicationController < DashboardController
-    include AwsSesHelper
-    include EmailHelper
-    include TemplateHelper
-    include VerificationsHelper
-    include ConfigsetHelper
+  class ApplicationController < ::DashboardController
+    # figure out why have to include specifically
+    include ApplicationHelper
+    include AwsEc2
 
     authorization_context 'email_service'
     authorization_required
 
     def ui_switcher
       if current_user.has_role?('cloud_support_tools_viewer')
-        redirect_to emails_path
+        # redirect_to emails_path
+        check_ec2_credentials
       end
     end
  
@@ -22,7 +21,45 @@ module EmailService
         redirect_to index_path
       end
     end 
+
+    def check_ec2_credentials
+      if !ec2_creds.error.empty?
+        render 'email_service/shared/ec2_credentials'
+      else
+        redirect_to emails_path
+      end
+    end
     
+    # Handle exception related to roles
+    rescue_from 'MonsoonOpenstackAuth::Authorization::SecurityViolation' do |exception|
+      if exception.resource[:action] == 'index' && exception.resource[:controller] == 'email_service/emails'
+        @title = 'Unauthorized'
+        @status = 401
+        @description = 'You are not authorized to view this page.'
+        if exception.respond_to?(:involved_roles) && exception.involved_roles && exception.involved_roles.length.positive?
+          @description += " Please check (role assignments) if you have one of the following roles: #{exception.involved_roles.flatten.join(', ')}."
+        end
+        render '/email_service/shared/warning.html', status: @status
+      end
+
+      options = {
+        title: 'Unauthorized',
+        sentry: false,
+        warning: true,
+        status: 401,
+        description: lambda do |e, _c|
+          m = 'You are not authorized to view this page.'
+          if e.involved_roles && e.involved_roles.length.positive?
+            m += " Please check (role assignments) if you have one of the \
+          following roles: #{e.involved_roles.flatten.join(', ')}."
+          end
+          m
+        end
+      }
+
+      render_exception_page(exception, options)
+    end
+
     protected
     
     helper_method :release_state

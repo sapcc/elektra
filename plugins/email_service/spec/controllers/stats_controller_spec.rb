@@ -19,7 +19,6 @@ describe EmailService::StatsController, type: :controller do
  
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
-    allow_any_instance_of(EmailService::StatsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::StatsController).to receive(:get_send_stats).and_return(double('send_stats').as_null_object)
   end
 

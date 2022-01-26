@@ -17,5 +17,5 @@
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
-      = link_to "Cancel", plugin('automation').automations_path(), class: 'btn btn-default'
+      = link_to "Cancel", plugin('email_service').emails_path(), class: 'btn btn-default'
     = button_tag "Send", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

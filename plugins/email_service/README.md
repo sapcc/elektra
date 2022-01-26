@@ -26,3 +26,8 @@ Contribution directions go here.
 
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+## TODO LIST
+  * Multi-encoding support - to send plain and templated emails.
+  * Send email with verified domains.
+  

@@ -1,9 +1,13 @@
 - identity = domain_item[:identity]
+- status = domain_item[:dkim_verification_status]
 %tr
   %td
     = domain_item[:id]
   %td
-    = domain_item[:identity]
+    - if status == "Pending"
+      %a{ href: "#", title: "You need to create a TXT record for your domain. Click on the domain link for more details.", data: { toggle: "tooltip", html: true} }
+        %i.fa.fa-question-circle-o
+    = link_to domain_item[:identity], plugin('email_service').domain_verification_path(id: domain_item[:id], identity: domain_item[:identity]), data: {modal: true}
   %td
     = domain_item[:status]
   %td

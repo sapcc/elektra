@@ -1,9 +1,6 @@
 $(".flashes").html("<%= escape_javascript( render "application/flashes.html" ) %>");
 initAutoDismissibleFlash();
 
-<% unless @emails.nil? %>
-$(".js-table-email").html("<%= escape_javascript(render partial: 'table_emails', locals: {emails: @emails}) %>");
-<% end %>
 
 // reload the pagination spinner
 $('[data-toggle="paginationSpinner"]').initPaginationSpinner()

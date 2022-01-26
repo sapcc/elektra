@@ -1,7 +1,7 @@
 require 'spec_helper'
 require_relative '../factories/factories'
 
-describe EmailService::TemplatedEmailsController, type: :controller do
+describe EmailService::PlainEmailsController, type: :controller do
   routes { EmailService::Engine.routes }
  
   default_params = { domain_id: AuthenticationStub.domain_id,
@@ -19,18 +19,16 @@ describe EmailService::TemplatedEmailsController, type: :controller do
  
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)           
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_send_data).and_return(double('data').as_null_object)            
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_verified_identities_collection).and_return(double('verified_identities').as_null_object)
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_all_templates).and_return(double('templates').as_null_object)
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_templates_collection).and_return(double('templates').as_null_object)
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:list_configset_names).and_return(double('configsets').as_null_object) 
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:send_templated_email).and_return(double('status').as_null_object) 
+    allow_any_instance_of(EmailService::PlainEmailsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
+    allow_any_instance_of(EmailService::PlainEmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)     
+    allow_any_instance_of(EmailService::PlainEmailsController).to receive(:get_send_stats).and_return(double('stats').as_null_object)           
+    allow_any_instance_of(EmailService::PlainEmailsController).to receive(:get_send_data).and_return(double('data').as_null_object)            
+    allow_any_instance_of(EmailService::PlainEmailsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
+    allow_any_instance_of(EmailService::PlainEmailsController).to receive(:send_plain_email).and_return(double('status').as_null_object)
   end
 
-  # GET New
-  describe "GET 'New'" do
+  # GET new
+  describe "GET 'new'" do
 
     context 'email_admin' do
       before :each do
@@ -44,6 +42,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       it 'returns http 200 status' do
         get :new, params: default_params
         expect(response).to have_http_status(200)
+        expect(response).to render_template(:new)
       end
     end
 
@@ -59,6 +58,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       it 'returns http 200 status' do
         get :new, params: default_params
         expect(response).to have_http_status(200)
+        expect(response).to render_template(:new)
       end
     end
 
@@ -88,13 +88,18 @@ describe EmailService::TemplatedEmailsController, type: :controller do
         expect(response).to_not be_successful
       end
     end
+
   end
+
 
   # POST create
   describe "POST 'create'" do
+
     before :each do
-      @opts = ::EmailService::FakeFactory.new.templated_email_opts
+      @plain_email = ::EmailService::FakeFactory.new.plain_email
+      @plain_email_opts = ::EmailService::FakeFactory.new.plain_email_opts
     end
+
     context 'email_admin' do
       before :each do
         stub_authentication do |token|
@@ -104,8 +109,10 @@ describe EmailService::TemplatedEmailsController, type: :controller do
           token
         end
       end
-      it 'render#edit' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(200)
+      it 'returns http 200 status' do
+        assigns(plain_email: @plain_email)
+        post(:create, params: default_params.merge(opts: @plain_email_opts))
+        expect(response).to have_http_status(200)
       end
     end
 
@@ -118,12 +125,14 @@ describe EmailService::TemplatedEmailsController, type: :controller do
           token
         end
       end
-      it 'render#edit' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(200)
+      it 'returns http 200 status' do
+        assigns(plain_email: @plain_email)
+        post(:create, params: default_params.merge(opts: @plain_email_opts))
+        expect(response).to have_http_status(200)
       end
     end
 
-    context 'cloud_support_tools_viewer_role#only' do
+    context 'cloud_support_tools_viewer_role alone' do
       before :each do
         stub_authentication do |token|
           token['roles'] = []
@@ -149,7 +158,5 @@ describe EmailService::TemplatedEmailsController, type: :controller do
     end
 
   end
-
-
 
 end
