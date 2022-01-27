@@ -43,7 +43,6 @@ module Resources
       # p "======================================================"
       # # {"qa-de-1a"=>{"3.0"=>"1.5TiB, 2TiB, 3TiB"}}
       # p @js_data[:big_vm_resources]
-      # byebug
       render action: 'show'
     end
 
@@ -85,7 +84,8 @@ module Resources
     end
 
     def bigvm_resources
-      render json: fetch_big_vm_data
+      # render json: fetch_big_vm_data
+      render json: dedicated_hana_vm_region? ? fetch_hana_big_vm_data : fetch_big_vm_data
     end
 
     private
@@ -159,21 +159,163 @@ module Resources
       return result
     end
 
+    # A region that has flavors with the trait CUSTOM_HANA_EXCLUSIVE_HOST='required' 
+    # can mount dedicated hana vms.
+    def dedicated_hana_vm_region?
+      @flavors = @flavors || cloud_admin.compute.flavors
+      @flavors.select do |f|
+        f.extra_specs.select {|key,value| key == "trait:CUSTOM_HANA_EXCLUSIVE_HOST" && value == "required"}.length > 0 &&
+        f.name.starts_with?("hana_")
+      end.length > 0
+    end
+
+
+    # dedicated Hana VM BBs in CCloud
+    # !!!It's crazy to implement that inUI, but the backend guys don't want to give us that via API.!!!
+    # 1. Check for 
+    #    CUSTOM_HANA_EXCLUSIVE_HOST traits and CUSTOM_NUMASIZE_C48_M729 or CUSTOM_NUMASIZE_C48_M1459
+    #    openstack resource provider list --required CUSTOM_HANA_EXCLUSIVE_HOST --required CUSTOM_NUMASIZE_C48_M729
+    #    openstack resource provider list --required CUSTOM_HANA_EXCLUSIVE_HOST --required CUSTOM_NUMASIZE_C48_M1459
+    # 2. Check the size of the BB (3Tb or 6TB)
+    #    openstack resource provider inventory list 2ea46894-6a93-4b05-a91b-b03044b28a4e
+    #    the inventory contains a max_unit column which, for the MEMORY_MB resource_class, shows the HV size
+    # 3. Check the free space on the BB
+    #    openstack resource provider inventory list 2ea46894-6a93-4b05-a91b-b03044b28a4e
+    #    MEMORY_MB: (total -reserved) * allocation_ration – used = free capacity – the Hana flavors to find out which would still fit.
+    #    used = (openstack resource provider usage show <RP_UUID>)['MEMORY_MB']      
+    # 4. Translate the resource-provider uuid to a BB by looking at Nova's API for the hypervisors:
+    #    nova hypervisor-show 2ea46894-6a93-4b05-a91b-b03044b28a4e 
+    #    to get the service_host
+    # 5. Show the Flavors which would fit.
+    def fetch_hana_big_vm_data
+      hana_trait = 'CUSTOM_HANA_EXCLUSIVE_HOST'
+      custom_traits = ["CUSTOM_NUMASIZE_C48_M729","CUSTOM_NUMASIZE_C48_M1459"]
+      
+      # get flavors with NUMASIZE trait
+      @flavors = @flavors || cloud_admin.compute.flavors
+      relevant_flavors = @flavors.select do |f|
+        f.extra_specs.select {|key,value| key == "trait:#{hana_trait}" && value == "required"}.length > 0 &&
+        f.name.starts_with?("hana_")
+      end
+
+      # return unless region supports NUMASIZE flavors
+      return [] if relevant_flavors.empty?
+
+      # group flavors by trait
+      # { trait => flavors }
+      flavors_by_numa = relevant_flavors.each_with_object({}) do |flavor, hash| 
+        custom_traits.each do |trait| 
+          if flavor.extra_specs.has_key?("trait:#{trait}")
+            hash[trait] ||= []
+            hash[trait] << flavor
+          end
+        end
+        hash
+      end
+
+      # build a map for host -> AZ, e.g. nova-compute-bb92: qa-de-1a
+      # build a map for host -> VC (shards), e.g. nova-compute-bb92: vc-a-0
+      host_az_map = {}
+      host_vc_map = {}
+
+      # fetch availability zones and shards
+      cloud_admin.compute.host_aggregates.each do |ha|
+        # ignore this aggregate unless availability_zone or hosts are present
+        next if ha.availability_zone.nil? || ha.hosts.nil?  
+ 
+        ha.hosts.each do |hostname|
+          if ha.availability_zone == ha.name
+            host_az_map[hostname] =  ha.availability_zone
+          elsif ha.name.starts_with?('vc-')
+            host_vc_map[hostname] = ha.name
+          end
+        end
+      end
+
+      project_shards = @project ? @project.shards : []
+
+      result = []
+      # for all traits do
+      custom_traits.each do |trait|
+        bigvm_resource_providers = cloud_admin.resources.list_resource_providers({
+          required: "#{hana_trait},#{trait}"
+        }).uniq {|rp| rp["uuid"]}
+
+        bigvm_resource_providers.each do |rp|
+          # get host from hypervisor
+          host = cloud_admin.compute.find_hypervisor(rp['uuid']).try(:host)
+          # host = hypervisor && hypervisor.host
+
+          # map the shards to the related host
+          shard = host_vc_map[host]
+          if shard && project_shards.include?(host_vc_map[host])
+            rp['shard'] = shard
+          end
+
+          next unless host
+          # map and filter the availability_zone to the host
+          # only availability_zones are allowed that are related to the shards 
+          # that are available for the project
+          # in case project_shards.empty? any resource_provider_name is allowed
+          if rp['shard'] || project_shards.empty?
+            rp['az'] = host_az_map[host]
+          end
+
+          # ignore this resource provider unless availability_zone is present
+          next unless rp['az'] 
+
+          inventories = cloud_admin.resources.get_resource_provider_inventory(rp['uuid'])
+          usages = cloud_admin.resources.get_resource_provider_usage(rp['uuid'])
+        
+          memory = inventories.fetch('MEMORY_MB',{})
+          host_mb = memory.fetch('max_unit')
+          total = memory.fetch('total')
+          reserved = memory.fetch('reserved')
+          allocation_ratio = memory.fetch('allocation_ratio')
+          used = usages.fetch('MEMORY_MB',0)
+          free = (total - reserved) * allocation_ratio - used
+  
+          if host_mb.blank?
+            # should not happen. broken nova-compute
+            raise "could not find host memory of #{rp['uuid']}"
+          end
+          possible_flavors = flavors_by_numa[trait].select {|f| f.ram <= free}         
+
+          result << {
+            az: rp['az'],
+            shard: rp['shard'],
+            name: rp['name'],
+            size_mb: host_mb, # get the parent for every bigvm rp
+            numa_trait: trait,
+            status: possible_flavors.length > 0 ? "free" : "used",
+            flavors: possible_flavors.map {|f| {
+              name: f.name, 
+              disk: f.disk,
+              vcpus: f.vcpus,
+              ram: f.ram,
+            }}
+          }
+        end
+      end
+      return result
+    end
 
     # fetches all bigvms taking into account the availability zone, project shards 
     # and provider traits
     def fetch_big_vm_data
       # get flavors with NUMASIZE trait
-      flavors = cloud_admin.compute.flavors.select do |f|
+      @flavors = @flavors || cloud_admin.compute.flavors
+      
+      relevant_flavors = @flavors.select do |f|
         f.extra_specs.keys.find {|k| /trait:CUSTOM_NUMASIZE_/ =~ k}
       end
       # return unless region supports NUMASIZE flavors
-      return [] if flavors.empty?
+      return [] if relevant_flavors.empty?
       flavors_by_numa = {}
     
       # group flavors by trait
       # { trait => flavors }
-      flavors.each do |f|
+      relevant_flavors.each do |f|
         trait = f.extra_specs.keys.find {|k| /trait:CUSTOM_NUMASIZE_/ =~ k}
         next if trait.blank? 
         trait_key = trait.gsub('trait:CUSTOM_NUMASIZE_','')
