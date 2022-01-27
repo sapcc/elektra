@@ -10,4 +10,4 @@ en:
     configset:
       errors:
         configset_creation_error: "Error creating configset."
-        configset_name_taken: "Name is already taken. Use a diffrent name"
+        configset_name_taken: "Name is already taken. Use a different name"

@@ -153,10 +153,12 @@ describe EmailService::ConfigsetsController, type: :controller do
 
   end
 
-
   # check create route
-  # TO_CHECK AGAIN - REDIRECT
   describe "POST 'create'" do
+
+    before :each do
+      @configset = ::EmailService::FakeFactory.new.configset_opts
+    end
 
     context 'email_admin' do
       before :each do
@@ -168,8 +170,7 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns redirects status' do
-        configset = ::EmailService::FakeFactory.new.configset_opts
-        expect(post(:create, params: default_params.merge(configset: configset))).to have_http_status(200) #redirect_to(configsets_path(default_params))
+        expect(post(:create, params: default_params.merge(configset: @configset))).to have_http_status(200) #redirect_to(configsets_path(default_params))
         expect(response.code).to eq("200")
       end
     end
@@ -185,11 +186,10 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       
       it 'returns http success' do
-        configset_opts = ::EmailService::FakeFactory.new.configset_opts
-        configset = ::EmailService::FakeFactory.new.configset
-        controller.instance_variable_set(:@configset, configset)
-        cfg = controller.instance_variable_get(:@configset)
-        post :create, params: default_params.merge(configset: configset_opts)
+        # configset = ::EmailService::FakeFactory.new.configset
+        # controller.instance_variable_set(:@configset, configset)
+        # cfg = controller.instance_variable_get(:@configset)
+        post :create, params: default_params.merge(configset: @configset)
         expect(response).to have_http_status(200)
         expect(response).to render_template(:edit)
       end
@@ -204,7 +204,7 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns http status 401' do
-        post :create, params: default_params
+        post :create, params: default_params.merge(configset: @configset)
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -217,7 +217,7 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'not allowed' do
-        post :create, params: default_params
+        post :create, params: default_params.merge(configset: @configset)
         expect(response).to_not be_successful
       end
     end
@@ -227,6 +227,10 @@ describe EmailService::ConfigsetsController, type: :controller do
 
   # check destroy route
   describe "DELETE 'destroy'" do
+
+    before :each do
+      @configset = ::EmailService::FakeFactory.new.configset_opts
+    end
 
     context 'email_admin' do
       before :each do
@@ -239,7 +243,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it 'returns http redirect' do
         configset = ::EmailService::FakeFactory.new.configset_opts
-        delete :destroy, params: default_params.merge(id: configset[:id])
+        delete :destroy, params: default_params.merge(id: @configset[:id])
         expect(response).to have_http_status(302)
       end
     end
@@ -254,8 +258,8 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns http redirect' do
-        configset = ::EmailService::FakeFactory.new.configset_opts
-        delete :destroy, params: default_params.merge(id: configset[:id])
+        # configset = ::EmailService::FakeFactory.new.configset_opts
+        delete :destroy, params: default_params.merge(id: @configset[:id])
         expect(response).to have_http_status(302)
       end
     end
@@ -269,8 +273,8 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns http status 401' do
-        configset = ::EmailService::FakeFactory.new.configset_opts
-        delete :destroy, params: default_params.merge(id: configset[:id])
+        # configset = ::EmailService::FakeFactory.new.configset_opts
+        delete :destroy, params: default_params.merge(id: @configset[:id])
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -283,7 +287,8 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'not allowed' do
-        get :new, params: default_params
+        # configset = ::EmailService::FakeFactory.new.configset_opts
+        delete :destroy, params: default_params.merge(id: @configset[:id])
         expect(response).to_not be_successful
       end
     end

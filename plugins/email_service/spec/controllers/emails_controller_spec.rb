@@ -150,7 +150,7 @@ describe EmailService::EmailsController, type: :controller do
         end
       end
       it 'not allowed' do
-        get :index, params: default_params
+        get :new, params: default_params
         expect(response).to_not be_successful
       end
     end
@@ -160,6 +160,10 @@ describe EmailService::EmailsController, type: :controller do
 
   # POST create
   describe "POST 'create'" do
+
+    before :each do
+      @opts = ::EmailService::FakeFactory.new.plain_email_opts
+    end
 
     context 'email_admin' do
       before :each do
@@ -171,9 +175,7 @@ describe EmailService::EmailsController, type: :controller do
         end
       end
       it 'returns http 302 status' do
-        opts = ::EmailService::FakeFactory.new.plain_email_opts
-        # puts opts.inspect
-        expect(post(:create, params: default_params.merge(opts: opts))).to redirect_to(emails_path(default_params))
+        expect(post(:create, params: default_params.merge(opts: @opts))).to redirect_to(emails_path(default_params))
         expect(response.code).to eq("302")
       end
     end
@@ -188,8 +190,7 @@ describe EmailService::EmailsController, type: :controller do
         end
       end
       it 'returns http 302 status' do
-        opts = ::EmailService::FakeFactory.new.plain_email_opts
-        expect(post(:create, params: default_params.merge(opts: opts))).to redirect_to(emails_path(default_params))
+        expect(post(:create, params: default_params.merge(opts: @opts))).to redirect_to(emails_path(default_params))
         expect(response.code).to eq("302")
       end
     end
@@ -203,8 +204,7 @@ describe EmailService::EmailsController, type: :controller do
         end
       end
       it 'returns http 401 status' do
-        post :create, params: default_params
-        expect(response).to have_http_status(401)
+        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(401)
       end
     end
 
@@ -216,8 +216,7 @@ describe EmailService::EmailsController, type: :controller do
         end
       end
       it 'not allowed' do
-        post :create, params: default_params
-        expect(response).to_not be_successful
+        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(401)
       end
     end
 

@@ -2,7 +2,7 @@ module EmailService
   module VerificationsHelper
     include AwsSesHelper
     include PlainEmailHelper
-    include TemplatedEmailHelper
+    # include TemplatedEmailHelper
 
     def get_verified_identities_collection(verified_identities, identity_type)
       verified_identities_collection = []
@@ -75,14 +75,14 @@ module EmailService
       elsif identity != nil && identity_type == "Domain"
         begin
           resp = ses_client.verify_domain_identity({ domain: identity, })
-          audit_logger.info(current_user, 'has initiated to verify identity ', identity)
+          audit_logger.info(current_user.id, 'has initiated to verify domain identity ', identity)
         rescue Aws::SES::Errors::ServiceError => error
           resp = "#{identity_type} verification failed. Error message: #{error}"
         end
       elsif identity != nil && identity_type == "EmailAddress"
         begin
           ses_client.verify_email_identity({ email_address: identity, })
-          audit_logger.info(current_user, 'has initiated to verify email Address ', identity)
+          audit_logger.info(current_user.id, 'has initiated to verify email identity ', identity)
           status = "success"
         rescue Aws::SES::Errors::ServiceError => error
           status = "#{identity_type} verification failed. Error message: #{error}"  
@@ -133,7 +133,7 @@ module EmailService
           ses.delete_identity({
             identity: identity
           })
-          audit_logger.info(current_user, 'has removed verified identity ', identity)
+          audit_logger.info(current_user.id, 'has removed verified identity ', identity)
           status = "success"
          rescue Aws::SES::Errors::ServiceError => error
           status = "error: #{error}"
@@ -178,7 +178,7 @@ module EmailService
         resp = ses_client.verify_domain_dkim({
           domain: identity, 
         })
-        audit_logger.info(current_user, ' has initiated DKIM verification ', identity)
+        audit_logger.info(current_user.id, ' has initiated DKIM verification ', identity)
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
@@ -195,7 +195,7 @@ module EmailService
           dkim_enabled: true, 
           identity: identity, 
         }) 
-        audit_logger.info(current_user, ' has enabled DKIM ', identity)
+        audit_logger.info(current_user.id, ' has enabled DKIM ', identity)
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"
@@ -212,7 +212,7 @@ module EmailService
           dkim_enabled: false, 
           identity: identity, 
         }) 
-        audit_logger.info(current_user, ' has disabled DKIM ', identity)
+        audit_logger.info(current_user.id, ' has disabled DKIM ', identity)
         status = "success"
       rescue Aws::SES::Errors::ServiceError => error
         status = "#{error}"

@@ -1,8 +1,6 @@
 module EmailService
   module ConfigsetHelper
     include AwsSesHelper
-    # include PlainEmailHelper
-    # include TemplatedEmailHelper
 
     # https://docs.aws.amazon.com/sdk-for-ruby/v2/api/Aws/SES/Client.html#update_configuration_set_event_destination-instance_method
     
@@ -16,67 +14,80 @@ module EmailService
     end
 
     def store_configset(configset)
-      status = ""
-      begin
-        ses_client = create_ses_client
-        resp = ses_client.create_configuration_set({
-          configuration_set: { # required
-            name: configset.name, # required
-          },
-        })
-        audit_logger.info(current_user, 'has created configset', configset.name)
-        status = "success" 
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS: DEBUG: SAVE CONFIGSET: #{error}"
+      ses_client = create_ses_client # Aws::SES::Client or "ERROR Message"
+      if ses_client.class == Aws::SES::Client
+        begin
+          # empty response on success #<struct Aws::SES::Types::CreateConfigurationSetResponse>
+          resp = ses_client.create_configuration_set({
+            configuration_set: { # required
+              name: configset.name, # required
+            },
+          })
+          audit_logger.info(current_user.id, 'has created configset', configset.name)
+          status = "success" 
+        rescue Aws::SES::Errors::ServiceError => error
+          status = "#{error}"
+          logger.debug "CRONUS: DEBUG: SAVE CONFIGSET: #{error}"
+        end
+        return status
+      else
+        return ses_client
       end
-      status
     end
 
     def delete_configset(name)
-      status = ""
-      begin
-        ses_client = create_ses_client
-        resp = ses_client.delete_configuration_set({
-              configuration_set_name: name,
-        })
-        msg = "Configset #{name} is deleted."
-        audit_logger.info(current_user, 'has deleted configset', name)
-        status = "success"
-      rescue Aws::SES::Errors::ServiceError => error
-        msg = "Unable to delete Configset #{name}. Error message: #{error} "
-        status = msg
-        logger.debug "CRONUS: DEBUG: DELETE CONFIGSET: #{error}"
+      ses_client = create_ses_client # Aws::SES::Client or "ERROR Message"
+      if ses_client.class == Aws::SES::Client
+        begin
+          ses_client = create_ses_client
+          resp = ses_client.delete_configuration_set({
+                configuration_set_name: name,
+          })
+          audit_logger.info(current_user.id, 'has deleted configset', name)
+          status = "success"
+        rescue Aws::SES::Errors::ServiceError => error
+          msg = "Unable to delete Configset #{name}. Error message: #{error} "
+          status = msg
+          logger.debug "CRONUS: DEBUG: DELETE CONFIGSET: #{error}"
+        end
+        return status
+      else
+        return ses_client
       end
-      status
     end
 
 
-    def list_configsets(token="")
+    def list_configsets(token=nil)
       configset_hash = Hash.new
       configsets = []
-      begin
-        ses_client = create_ses_client
-        resp = ses_client.list_configuration_sets({
-          next_token: "",
-          max_items: 1000,
-        })
-        next_token = resp.next_token
-        for index in 0 ... resp.configuration_sets.size
-          configset_hash = { 
-              :id => index,
-              :name => resp.configuration_sets[index].name
-            }
-          configsets.push(configset_hash)
-        end if resp.configuration_sets.size > 0
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS: DEBUG: LIST CONFIGSETS: #{error}"
+      next_token = nil
+      ses_client = create_ses_client
+      if ses_client.class == Aws::SES::Client
+        begin
+          # lists 1000 items
+          resp = ses_client.list_configuration_sets({
+            next_token: token,
+            max_items: 1000,
+          })
+          next_token = resp.next_token
+          for index in 0 ... resp.configuration_sets.size
+            configset_hash = { 
+                :id => index,
+                :name => resp.configuration_sets[index].name
+              }
+            configsets.push(configset_hash)
+          end if resp.configuration_sets.size > 0
+        rescue Aws::SES::Errors::ServiceError => error
+          status = "#{error}"
+          logger.debug "CRONUS: DEBUG: LIST CONFIGSETS: #{error}"
+        end
+      else
+        error = ses_client
       end
       return next_token, configsets && !configsets.empty? ? configsets : error
     end
 
-    def list_configset_names(token="")
+    def list_configset_names(token=nil)
       configset_names = []
       _, configsets = list_configsets(token)
       configsets.each do | cfg |
@@ -98,15 +109,21 @@ module EmailService
     end
 
     def describe_configset(name)
-      begin
-        ses_client = create_ses_client
-        resp = ses_client.describe_configuration_set({
-          configuration_set_name: name, # required
-          configuration_set_attribute_names: ["eventDestinations"], # accepts eventDestinations, trackingOptions, deliveryOptions, reputationOptions
-        })
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS: DEBUG: DESCRIBE CONFIGSET: #{error}"
+      ses_client = create_ses_client
+      if ses_client.class == Aws::SES::Client
+        begin
+          ses_client = create_ses_client
+          resp = ses_client.describe_configuration_set({
+            configuration_set_name: name, # required
+            configuration_set_attribute_names: ["eventDestinations"], # accepts eventDestinations, trackingOptions, deliveryOptions, reputationOptions
+          })
+        rescue Aws::SES::Errors::ServiceError => error
+          status = "#{error}"
+          logger.debug "CRONUS: DEBUG: DESCRIBE CONFIGSET: #{error}"
+        end
+        return resp
+      else
+        return ses_client
       end
     end
 
