@@ -7,13 +7,15 @@ fi
 
 function help_me () {
 
-  echo "Usage: run.sh --host HOST --profile member|admin --e2e_path /path/to/e2e --browser chrome|firefox|electron --debug CYPRESS-DEBUG-FLAG PLUGIN-TEST "
+  echo "Usage: run.sh --host HOST --profile member|admin --e2e_path /path/to/e2e --record* --browser chrome|firefox|electron* --debug CYPRESS-DEBUG-FLAG* TESTNAME* "
   echo "       run.sh --help                                                   # will print out this message"
   echo "       run.sh --info                                                   # prints info about used cypress"
   echo "       run.sh --host http://localhost:3000 landingpage                 # will only run landingpage tests"
   echo "       run.sh --host http://localhost:3000 --debug 'cypress:network:*' # will show debug information about the networking"
   echo "       run.sh --e2e_path                                               # this optional if not set \$PWD is used"
+  echo "       run.sh --record                                                 # record your test in cypress-dashboard"
   echo "       run.sh --browser chrome                                         # choose browser to test (default is chrome)"
+  echo ""
   echo "MAC users: ./run.sh --host http://host.docker.internal:3000"
   echo ""
   echo "Debugging options: https://docs.cypress.io/guides/references/troubleshooting#Log-sources"
@@ -174,11 +176,9 @@ fi
 # echo $HOST | cat -A
 
 
-echo ""
 echo "$SHOW_APP_PORT"
 echo "HOST          => $HOST"
 echo "BROWSER       => $CYPRESS_BROWSER"
-echo "TEST_PATH     => $PWD"
 echo "SPECS_FOLDER  => $SPECS_FOLDER"
 echo "E2E_PATH      => $E2E_PATH"
 echo "PROFILE       => $PROFILE"
