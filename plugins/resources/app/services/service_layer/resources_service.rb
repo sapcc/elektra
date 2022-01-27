@@ -26,6 +26,11 @@ module ServiceLayer
       return providers.body['resource_providers'] || []
     end
 
+    def get_resource_provider(uuid)
+      providers = elektron_placement.get("resource_providers/#{uuid}")
+      return providers.body
+    end
+
     def list_resource_aggregates(path)
       aggregates = elektron_placement.get(path)
       list = aggregates.body['aggregates'] || []
@@ -33,10 +38,14 @@ module ServiceLayer
     end
 
     def get_resource_provider_inventory(uuid)
-      # puts "get_resource_provider_inventory"
-      # puts "resource_providers/#{uuid}/inventories"
       data = elektron_placement.get("resource_providers/#{uuid}/inventories")
       inventories = data.body['inventories'] || {}
+      return inventories
+    end
+
+    def get_resource_provider_usage(uuid)
+      data = elektron_placement.get("resource_providers/#{uuid}/usages")
+      inventories = data.body['usages'] || {}
       return inventories
     end
 
