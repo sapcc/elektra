@@ -125,7 +125,7 @@ const MemberForm = (
           if (state.items.length > 1) {
             persistMembers(loadbalancerID, poolID)
           }
-          close()
+          onFormCallback({ shouldClose: true })
         })
         .catch((error) => {
           onFormCallback({ isSubmitting: false, isValid: true })

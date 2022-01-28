@@ -1,24 +1,14 @@
-import React, {
-  useState,
-  useEffect,
-  createRef,
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-} from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { Modal, Button } from "react-bootstrap"
 import useCommons from "../../../lib/hooks/useCommons"
-import useMember, {
-  filterItems,
-  parseNestedValues,
-} from "../../../lib/hooks/useMember"
-import { addNotice } from "lib/flashes"
+import useMember, { filterItems } from "../../../lib/hooks/useMember"
 import usePool from "../../../lib/hooks/usePool"
 import Log from "../shared/logger"
 import { SearchField } from "lib/components/search_field"
 import MembersTable from "./MembersTable"
-import { FormStateProvider, generateMemberItem } from "./FormState"
+import { FormStateProvider } from "./FormState"
 import MemberForm from "./MemberForm"
+import SaveButton from "../shared/SaveButton"
 
 const NewMember = (props) => {
   const { searchParamsToString, matchParams, formErrorMessage, errorMessage } =
@@ -40,6 +30,7 @@ const NewMember = (props) => {
   const [showExistingMembers, setShowExistingMembers] = useState(false)
   const [searchTerm, setSearchTerm] = useState(null)
   const [filteredItems, setFilteredItems] = useState([])
+  const [show, setShow] = useState(true)
 
   useEffect(() => {
     // get the lb
@@ -96,11 +87,6 @@ const NewMember = (props) => {
     setFilteredItems(newItems)
   }, [searchTerm, members])
 
-  /**
-   * Modal stuff
-   */
-  const [show, setShow] = useState(true)
-
   const close = (e) => {
     if (e) e.stopPropagation()
     setShow(false)
@@ -114,69 +100,6 @@ const NewMember = (props) => {
     }
   }
 
-  /**
-   * Form stuff
-   */
-
-  // const onSubmit = (values) => {
-  //   setFormErrors(null)
-  //   // filter items from the form context which are removed from the newMember list
-  //   const filtered = Object.keys(values)
-  //     .filter((key) => {
-  //       let found = false
-  //       for (let i = 0; i < newMembers.length; i++) {
-  //         if (found) {
-  //           break
-  //         }
-  //         found = key.includes(newMembers[i].id)
-  //       }
-  //       return found
-  //     })
-  //     .reduce((obj, key) => {
-  //       obj[key] = values[key]
-  //       return obj
-  //     }, {})
-
-  //   // parse nested keys to objects
-  //   // from values like member[XYZ][name]="arturo" to {XYZ:{name:"arturo"}}
-  //   const newMemberObjs = parseNestedValues(filtered)
-
-  //   let batchMembers = []
-  //   Object.keys(newMemberObjs).forEach((key) => {
-  //     batchMembers.push(newMemberObjs[key])
-  //   })
-
-  //   // save the entered values in case of error
-  //   setInitialValues(filtered)
-  //   return create(loadbalancerID, poolID, batchMembers)
-  //     .then((response) => {
-  //       if (response && response.data) {
-  //         if (batchMembers.length == 1) {
-  //           addNotice(
-  //             <React.Fragment>
-  //               Member <b>{response.data.name}</b> ({response.data.id}) is being
-  //               created.
-  //             </React.Fragment>
-  //           )
-  //         } else {
-  //           addNotice(
-  //             <React.Fragment>Members are being created.</React.Fragment>
-  //           )
-  //         }
-  //       }
-  //       // update pool info
-  //       persistPool(loadbalancerID, poolID)
-  //       // reload members list if batch update
-  //       if (batchMembers.length > 1) {
-  //         persistMembers(loadbalancerID, poolID)
-  //       }
-  //       close()
-  //     })
-  //     .catch((error) => {
-  //       setFormErrors(errorMessage(error))
-  //     })
-  // }
-
   const memberFormRef = useRef()
   const onSaveClicked = () => {
     memberFormRef.current.onSubmit()
@@ -184,9 +107,10 @@ const NewMember = (props) => {
 
   const [formSubmitting, setFormSubmitting] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
-  const onFormCallback = ({ isSubmitting, isValid }) => {
+  const onFormCallback = ({ isSubmitting, isValid, shouldClose }) => {
     setFormSubmitting(isSubmitting || false)
     setIsFormValid(isValid || false)
+    if (shouldClose) close()
   }
 
   // enforceFocus={false} needed so the clipboard.js library works on bootstrap modals
@@ -279,14 +203,20 @@ const NewMember = (props) => {
         <Button disabled={formSubmitting} onClick={close}>
           Cancel
         </Button>
-        <Button
+        {/* <Button
           bsStyle="primary"
           disabled={formSubmitting || !isFormValid}
           onClick={onSaveClicked}
         >
           {formSubmitting && <span className="spinner"></span>}
           save
-        </Button>
+        </Button> */}
+        <SaveButton
+          disabled={formSubmitting || !isFormValid}
+          text={<>{formSubmitting && <span className="spinner" />}Save</>}
+          tooltipText="Please check validation and required fields"
+          callback={onSaveClicked}
+        />
       </Modal.Footer>
     </Modal>
   )

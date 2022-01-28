@@ -86,13 +86,15 @@ module Lbaas2
           vip_subnet_id = loadbalancer.vip_subnet_id
 
           membersParams = JSON.parse(params[:members].to_json)
-          membersParams.each do |member|
+          membersParams.each do |member|            
             # convert to int
             member["protocol_port"] = member["protocol_port"].to_i unless member["protocol_port"].blank?
             member["monitor_port"] = member["monitor_port"].to_i unless member["monitor_port"].blank?
             member["weight"] = member["weight"].to_i unless member["weight"].blank?
             # OS Bug, Subnet not optional, has to be set to VIP subnet
             member.merge!("subnet_id" => vip_subnet_id, "project_id" => @scoped_project_id)
+            # there is no mapping to model for the batch updte. Remove incomming id
+            member.reject! { |k| k == "id" } 
             members[:members].push(member)
           end
           services.lbaas2.batch_update_members(params[:pool_id], members)          
