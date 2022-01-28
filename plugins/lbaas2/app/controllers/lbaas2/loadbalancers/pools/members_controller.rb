@@ -179,6 +179,8 @@ module Lbaas2
           member[:protocol_port] = member[:protocol_port].to_i unless member[:protocol_port].blank?
           member[:monitor_port] = member[:monitor_port].to_i unless member[:monitor_port].blank?
           member[:weight] = member[:weight].to_i unless member[:weight].blank?
+          # remove incomming id since it is not exchanged with the right id when creating
+          member.reject! { |k| k == "id" } 
           member
         end
 

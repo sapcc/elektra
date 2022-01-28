@@ -1,35 +1,23 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Modal, Button } from "react-bootstrap"
 import useCommons from "../../../lib/hooks/useCommons"
-import useMember, { filterItems } from "../../../lib/hooks/useMember"
-import usePool from "../../../lib/hooks/usePool"
+import useMember from "../../../lib/hooks/useMember"
 import Log from "../shared/logger"
-import { SearchField } from "lib/components/search_field"
-import MembersTable from "./MembersTable"
 import { FormStateProvider } from "./FormState"
 import MemberForm from "./MemberForm"
 import SaveButton from "../shared/SaveButton"
+import ExistingMembersDropDown from "./ExistingMembersDropDown"
 
 const NewMember = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage, errorMessage } =
-    useCommons()
-  const { fetchServers, create, fetchMembers, persistMembers } = useMember()
-  const { persistPool } = usePool()
+  const { searchParamsToString, matchParams, errorMessage } = useCommons()
+  const { fetchServers } = useMember()
   const [servers, setServers] = useState({
-    isLoading: false,
-    error: null,
-    items: [],
-  })
-  const [members, setMembers] = useState({
     isLoading: false,
     error: null,
     items: [],
   })
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [poolID, setPoolID] = useState(null)
-  const [showExistingMembers, setShowExistingMembers] = useState(false)
-  const [searchTerm, setSearchTerm] = useState(null)
-  const [filteredItems, setFilteredItems] = useState([])
   const [show, setShow] = useState(true)
 
   useEffect(() => {
@@ -62,30 +50,7 @@ const NewMember = (props) => {
           error: errorMessage(error),
         })
       })
-    // get the existing members
-    setMembers({ ...members, isLoading: true })
-    fetchMembers(loadbalancerID, poolID)
-      .then((data) => {
-        const newItems = data.members || []
-        for (let i = 0; i < newItems.length; i++) {
-          newItems[i] = { ...newItems[i], ...{ saved: true } }
-        }
-        setMembers({
-          ...members,
-          isLoading: false,
-          items: newItems,
-          error: null,
-        })
-      })
-      .catch((error) => {
-        setMembers({ ...members, isLoading: false, error: error })
-      })
   }, [loadbalancerID, poolID])
-
-  useEffect(() => {
-    const newItems = filterItems(searchTerm, members.items)
-    setFilteredItems(newItems)
-  }, [searchTerm, members])
 
   const close = (e) => {
     if (e) e.stopPropagation()
@@ -148,69 +113,12 @@ const NewMember = (props) => {
           />
         </FormStateProvider>
 
-        <div className="existing-members">
-          <div className="display-flex">
-            <div
-              className="action-link"
-              onClick={() => setShowExistingMembers(!showExistingMembers)}
-              data-toggle="collapse"
-              data-target="#collapseExistingMembers"
-              aria-expanded={showExistingMembers}
-              aria-controls="collapseExistingMembers"
-            >
-              {showExistingMembers ? (
-                <>
-                  <span>Hide existing members</span>
-                  <i className="fa fa-chevron-circle-up" />
-                </>
-              ) : (
-                <>
-                  <span>Show existing members</span>
-                  <i className="fa fa-chevron-circle-down" />
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="collapse" id="collapseExistingMembers">
-            <div className="toolbar searchToolbar">
-              <SearchField
-                value={searchTerm}
-                onChange={(term) => setSearchTerm(term)}
-                placeholder="Name, ID, IP or port"
-                text="Searches by Name, ID, IP address or protocol port."
-              />
-            </div>
-
-            <MembersTable
-              members={filteredItems}
-              props={props}
-              poolID={poolID}
-              searchTerm={searchTerm}
-              isLoading={members.isLoading}
-            />
-            {members.error ? (
-              <span className="text-danger">
-                {formErrorMessage(members.error)}
-              </span>
-            ) : (
-              ""
-            )}
-          </div>
-        </div>
+        <ExistingMembersDropDown props={props} poolID={poolID} />
       </Modal.Body>
       <Modal.Footer>
         <Button disabled={formSubmitting} onClick={close}>
           Cancel
         </Button>
-        {/* <Button
-          bsStyle="primary"
-          disabled={formSubmitting || !isFormValid}
-          onClick={onSaveClicked}
-        >
-          {formSubmitting && <span className="spinner"></span>}
-          save
-        </Button> */}
         <SaveButton
           disabled={formSubmitting || !isFormValid}
           text={<>{formSubmitting && <span className="spinner" />}Save</>}

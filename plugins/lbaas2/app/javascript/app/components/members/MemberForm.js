@@ -70,8 +70,6 @@ const validate = (items) => {
     })
   }
 
-  console.log("VALID: ", isValid)
-
   return isValid
 }
 
@@ -101,7 +99,6 @@ const MemberForm = (
       }
       setFormErrors(null)
       onFormCallback({ isSubmitting: true, isValid: true })
-      console.log("ITEMS: ", state.items)
       return create(loadbalancerID, poolID, state.items)
         .then((response) => {
           onFormCallback({ isSubmitting: true, isValid: false })
