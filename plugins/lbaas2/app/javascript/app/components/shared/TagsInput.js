@@ -1,92 +1,92 @@
-import React, { useContext, useState, useEffect } from "react";
-import CreatableSelect from "react-select/creatable";
-import { FormContext } from "lib/elektra-form/components/form_context";
+import React, { useContext, useState, useEffect } from "react"
+import CreatableSelect from "react-select/creatable"
+import { FormContext } from "lib/elektra-form/components/form_context"
 
 const TagsInput = ({ name, initValue, onChange, useFormContext }) => {
-  const [tagEditorInputValue, setTagEditorInputValue] = useState("");
-  const [tagEditorValue, setTagEditorValue] = useState([]);
-  const [tags, setTags] = useState(null);
-  const context = useContext(FormContext);
-  const shouldUseContext = useFormContext == false ? false : true;
+  const [tagEditorInputValue, setTagEditorInputValue] = useState("")
+  const [tagEditorValue, setTagEditorValue] = useState([])
+  const [tags, setTags] = useState(null)
+  const context = useContext(FormContext)
+  const shouldUseContext = useFormContext == false ? false : true
 
   useEffect(() => {
-    initTags();
-  }, [initValue]);
+    initTags()
+  }, [initValue])
 
   useEffect(() => {
     if (tags) {
-      updateContext();
-      onChangeCallback();
+      updateContext()
+      onChangeCallback()
     }
-  }, [tags]);
+  }, [tags])
 
   const initTags = () => {
     // no need to initialize in case of empty array
     if (!initValue || initValue.length == 0) {
-      return;
+      return
     }
     // init input with values
-    const newValues = createOptions(initValue);
-    setTagEditorValue(newValues);
-    setTagEditorInputValue("");
-  };
+    const newValues = createOptions(initValue)
+    setTagEditorValue(newValues)
+    setTagEditorInputValue("")
+  }
 
   const createOptions = (options = []) => {
     // init input with values
-    let newValues = [];
+    let newValues = []
     options.forEach((item) => {
       if (typeof item == "string") {
-        newValues.push(createOption(item));
+        newValues.push(createOption(item))
       } else {
-        newValues.push(item);
+        newValues.push(item)
       }
-    });
-    return newValues;
-  };
+    })
+    return newValues
+  }
 
   const styles = {
     multiValue: (base, state) => {
-      return state.data.isFixed ? { ...base, backgroundColor: "gray" } : base;
+      return state.data.isFixed ? { ...base, backgroundColor: "gray" } : base
     },
     multiValueLabel: (base, state) => {
       return state.data.isFixed
         ? { ...base, fontWeight: "bold", color: "white", paddingRight: 6 }
-        : base;
+        : base
     },
     multiValueRemove: (base, state) => {
-      return state.data.isFixed ? { ...base, display: "none" } : base;
+      return state.data.isFixed ? { ...base, display: "none" } : base
     },
-  };
+  }
 
   const components = {
     DropdownIndicator: null,
-  };
+  }
 
   const createOption = (label) => {
     return {
       label,
       value: label,
-    };
-  };
+    }
+  }
 
   const createNewTag = () => {
-    const newTags = [...tagEditorValue, createOption(tagEditorInputValue)];
-    setTagEditorValue(newTags);
-    setTags(newTags.map((value, index) => value.value));
-    setTagEditorInputValue("");
-  };
+    const newTags = [...tagEditorValue, createOption(tagEditorInputValue)]
+    setTagEditorValue(newTags)
+    setTags(newTags.map((value, index) => value.value))
+    setTagEditorInputValue("")
+  }
 
   const updateContext = () => {
     if (shouldUseContext) {
-      context.onChange(name, tags);
+      context.onChange(name, tags)
     }
-  };
+  }
 
   const onChangeCallback = () => {
     if (onChange) {
-      onChange(tagEditorValue);
+      onChange(tagEditorValue)
     }
-  };
+  }
 
   const onTagEditorChange = (value, { action, removedValue }) => {
     switch (action) {
@@ -94,31 +94,31 @@ const TagsInput = ({ name, initValue, onChange, useFormContext }) => {
       case "pop-value":
         // add check removedValue in case you hit delete key until nothing is in the field
         if (removedValue && removedValue.isFixed) {
-          return;
+          return
         }
-        break;
+        break
       case "clear":
-        value = tagEditorValue.filter((v) => v.isFixed);
-        break;
+        value = tagEditorValue.filter((v) => v.isFixed)
+        break
     }
-    const newTags = value || [];
-    setTagEditorValue(newTags);
-    setTags(newTags.map((value, index) => value.value));
-  };
+    const newTags = value || []
+    setTagEditorValue(newTags)
+    setTags(newTags.map((value, index) => value.value))
+  }
 
   const onTagEditorInputChange = (inputValue) => {
-    setTagEditorInputValue(inputValue);
-  };
+    setTagEditorInputValue(inputValue)
+  }
 
   const onTagEditorKeyDown = (event) => {
-    if (!tagEditorInputValue) return;
+    if (!tagEditorInputValue) return
     switch (event.key) {
       case "Enter":
       case "Tab":
-        createNewTag();
-        event.preventDefault();
+        createNewTag()
+        event.preventDefault()
     }
-  };
+  }
 
   return (
     <CreatableSelect
@@ -134,7 +134,7 @@ const TagsInput = ({ name, initValue, onChange, useFormContext }) => {
       placeholder=""
       value={tagEditorValue}
     />
-  );
-};
+  )
+}
 
-export default TagsInput;
+export default TagsInput

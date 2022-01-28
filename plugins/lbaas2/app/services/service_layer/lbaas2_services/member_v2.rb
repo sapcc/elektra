@@ -22,9 +22,9 @@ module ServiceLayer
         member_map.call(attributes)
       end
 
-      # TODO need to test
+      # do not remove the parameter additive_only, this would remove existing members and save the ones send per body
       def batch_update_members(pool_id, members)
-        elektron_lb2.put("pools/#{pool_id}/members") do
+        elektron_lb2.put("pools/#{pool_id}/members?additive_only=true") do
           members
         end
       end
