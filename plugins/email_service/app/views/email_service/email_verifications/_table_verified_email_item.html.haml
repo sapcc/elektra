@@ -1,0 +1,19 @@
+- identity = email_item[:identity]
+- status = email_item[:status]
+
+- if not identity.include?('@activation.email.global.cloud.sap')
+  %tr
+    %td
+      = identity
+    %td
+      - if status == "Pending"
+        %a{ href: "#", title: "Status: Pending; Click on the activation link sent to your email address.", data: { toggle: "tooltip", html: true} }
+          %i.fa.far.fa-pause-circle
+      - elsif status == "Success"
+        %i.fa.far.fa-check-circle
+      - elsif status == "Failed"
+        %a{ href: "#", title: "Status: failed; Activation link is expired. Please initiate verification for email address #{identity} again.", data: { toggle: "tooltip", html: true} }
+          %i.fa.fas.fa-exclamation-triangle 
+    %td.snug
+      - if current_user.is_allowed?("email_service:verified_email_delete", {target: { email_item: email_item, project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("email_service:verified_email_update", {})
+        = render partial: 'email_item_actions', locals: { email_item: email_item, show_view: false }

@@ -310,16 +310,12 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it '.allows#params' do
         allow(controller).to receive(:params).and_return(configset: configset.name)
-        # puts "params #{controller.params.inspect}"
-        # puts "controller class #{controller.class}"
         expect(controller.params[:configset]).to eq("NewConfigSet")
       end
 
       it ".allows#strong#params" do
         params = ActionController::Parameters.new(configset: 'A_Fancy_Configset')
         allow(controller).to receive(:params).and_return(params)
-        # puts "strong params #{controller.params.inspect}"
-        # puts "AuthenticationStub: #{AuthenticationStub.instance_methods}"
       end
     end
   end

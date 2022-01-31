@@ -2,7 +2,7 @@
   Email Service
   .placeholder-div
 
-= simple_form_for :verified_domain, url: plugin('email_service').domain_verifications_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' } do |f|
+= simple_form_for @verified_domain, as: :verified_domain, url: plugin('email_service').domain_verifications_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' } do |f|
   .modal-body
     %div{class: modal? ? 'modal-body' : ''}
       = f.input :identity, required: true

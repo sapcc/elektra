@@ -1,29 +1,29 @@
 - pl = plugin('email_service')
-- if !@verified_emails_collection || @verified_emails_collection.empty? 
+- if !verified_emails_collection || verified_emails_collection.empty? 
   %p.alert.alert-warning
     There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
     You can get verified your eMail address
-    = link_to 'here', pl.new_verification_path()
-- if !@templates_collection || @templates_collection.empty?
+    = link_to 'here', pl.new_email_verification_path
+- if !templates_collection || templates_collection.empty?
   %p.alert.alert-warning
     There is no eMail template defined for your account to send email from. Without an eMail template, you can't send templated eMail.
     You can create eMail template from
-    = link_to 'here', pl.new_template_path()
+    = link_to 'here', pl.new_template_path
     or you can send plain eMail from
-    = link_to 'here', pl.new_email_path()
+    = link_to 'here', pl.new_plain_email_path
     
-= f.input :source, required: true, label: "Sender", collection: @verified_emails_collection, as: :select, input_html: { autofocus: 'autofocus' }, hint: "Choose an eMail address you wish to send this email from"
+= f.input :source, required: true, label: "Sender", collection: verified_emails_collection, as: :select, input_html: { autofocus: 'autofocus' }, icon_hint: "Choose an eMail address you wish to send this email from"
   
-= f.input :to_addr, required: true, label: 'To Address(es)', placeholder: 'Enter To Addresses', as: :text, input_html: { class: 'auto-text-field u-text-monospace', :rows => 5 }, hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+= f.input :to_addr, required: true, label: 'To Address(es)', placeholder: 'Enter To Addresses', as: :text, input_html: { class: 'auto-text-field u-text-monospace', :rows => 5 }, icon_hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
 
-= f.input :cc_addr, required: false, label: 'Cc Address(es)', placeholder: 'Enter Cc Addresses', input_html: { class: 'auto-text-field u-text-monospace', :rows => 5 }, hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+= f.input :cc_addr, required: false, label: 'Cc Address(es)', placeholder: 'Enter Cc Addresses', input_html: { class: 'auto-text-field u-text-monospace', :rows => 5 }, icon_hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
 
-= f.input :bcc_addr, required: false, label: 'Bcc Address(es)', placeholder: 'Enter Bcc Addresses', input_html: { rows: "10", class: "u-text-monospace" }, hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+= f.input :bcc_addr, required: false, label: 'Bcc Address(es)', placeholder: 'Enter Bcc Addresses', input_html: { rows: "10", class: "u-text-monospace" }, icon_hint: 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
 
-= f.input :reply_to_addr, required: false, label: 'Reply To', placeholder: 'Enter Bcc Addresses', collection: @verified_emails_collection, as: :select, hint: 'Reply To Address'
+= f.input :reply_to_addr, required: false, label: 'Reply To', placeholder: 'Enter Bcc Addresses', collection: verified_emails_collection, as: :select, icon_hint: 'Reply To Address'
 
-= f.input :template_name, required: true, label: "Template Name", collection: @templates_collection, as: :select, data: {toggle: "selectTemplateName"}, hint: 'Choose a template'    
+= f.input :template_name, required: true, label: "Template Name", collection: templates_collection, as: :select, data: {toggle: "selectTemplateName"}, icon_hint: 'Choose a template'    
 
-= f.input :template_data, required: true, label: "Template data - JSON", placeholder: 'Enter valid JSON', input_html: {class: 'auto-text-field u-text-monospace', :rows => 5}, as: :text, hint: 'Enter template data in JSON format'
+= f.input :template_data, required: true, label: "Template data - JSON", placeholder: 'Enter valid JSON', input_html: {class: 'auto-text-field u-text-monospace', :rows => 5}, as: :text, icon_hint: 'Enter template data in JSON format'
 
-= f.input :configset_name, required: false, label: "ConfigSet", collection: @configsets, as: :select, hint: 'Choose ConfigSet Name'
+= f.input :configset_name, required: false, label: "ConfigSet", collection: configset_names, as: :select, icon_hint: 'Choose ConfigSet Name'

@@ -2,9 +2,8 @@
 
 module EmailService
   class ApplicationController < ::DashboardController
-    # figure out why have to include specifically
-    include ApplicationHelper
-    include AwsEc2
+    
+    include ::EmailService::ApplicationHelper
 
     authorization_context 'email_service'
     authorization_required
@@ -23,7 +22,7 @@ module EmailService
     end 
 
     def check_ec2_credentials
-      if !ec2_creds.error.empty?
+      if !ec2_creds.error.nil?
         render 'email_service/shared/ec2_credentials'
       else
         redirect_to emails_path

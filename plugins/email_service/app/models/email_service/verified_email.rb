@@ -1,5 +1,5 @@
 module EmailService
-  class TemplatedEmail
+  class VerifiedEmail
     include ::EmailService::Helpers
 
     def initialize(attributes = {})
@@ -44,7 +44,7 @@ module EmailService
     private
 
     def array_attr
-      [:to_addr, :cc_addr, :bcc_addr]
+      [:identity]
     end
 
   end

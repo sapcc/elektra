@@ -46,7 +46,7 @@ module EmailService
       plain_email = plain_email_instance.new
       begin
         plain_email.form_to_attributes(attributes)
-      rescue JSON::ParserError => e
+      rescue StandardError => e
         errors.add 'plain_email_attributes'.to_sym, e.inspect
       end
       if !plain_email.errors.blank?

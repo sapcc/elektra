@@ -1,10 +1,11 @@
 = content_for :title do
   New Template
 
+- url = plugin('email_service').templates_path
 - unless modal?
   %h3 New Template
 
-= simple_form_for @template, as: :template, url: plugin('email_service').templates_path(), method: :post, remote: request.xhr?,  html: {id: 'form_template', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for @template, as: :template, url: url, method: :post, remote: request.xhr?,  html: {id: 'form_template', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   .modal-body.static-columns
     .modal-flashes
@@ -16,5 +17,5 @@
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
-      = link_to "Cancel", plugin('email_service').plugin('email_service').templates_path(), class: 'btn btn-default'
+      = link_to "Cancel", url, class: 'btn btn-default'
     = button_tag "Save", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

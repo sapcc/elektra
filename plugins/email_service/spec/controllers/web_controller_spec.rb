@@ -7,7 +7,6 @@ describe EmailService::WebController, type: :controller do
  
   default_params = { domain_id: AuthenticationStub.domain_id,
                      project_id: AuthenticationStub.project_id }
-  puts AuthenticationStub.domain_id
   before(:all) do
     FriendlyIdEntry.find_or_create_entry('Domain', nil,
                                          default_params[:domain_id], 'default')

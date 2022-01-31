@@ -7,13 +7,12 @@ module EmailService
     
     def index
       @cronus_activated = false
-      if ec2_creds.error.empty?
+      if ec2_creds.error.nil?
         @access = ec2_creds.access
         @secret = ec2_creds.secret
         if @access && @secret 
           @cronus_activated = true
         end
-        @configsets = list_configsets
       else
         flash[:error] = ec2_creds.error
       end

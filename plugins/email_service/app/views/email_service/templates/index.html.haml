@@ -13,7 +13,7 @@
               = link_to "New Template", plugin('email_service').new_template_path, data: {modal: true}, class: 'btn btn-primary'
 
         .js-table-templates-list
-          = render partial: 'table_templates' #, locals: {templates: @templates}
+          = render partial: 'table_templates'#, locals: {templates: @templates}
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p

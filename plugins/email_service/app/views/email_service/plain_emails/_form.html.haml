@@ -1,11 +1,11 @@
 - pl = plugin('email_service')
-- if !@verified_emails_collection || @verified_emails_collection.empty? 
+- if !verified_emails_collection || verified_emails_collection.empty? 
   %p.alert.alert-warning
     There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
     You can get verified your eMail address
-    = link_to 'here', pl.new_verification_path()
+    = link_to 'here', pl.new_email_verification_path
     
-= f.input :source,   required: true, label: "From", collection: @verified_emails_collection, as: :select, icon_hint: "Choose Source email address"
+= f.input :source,   required: true, label: "From", collection: verified_emails_collection, as: :select, icon_hint: "Choose Source email address"
 
 = f.input :to_addr,  required: true, label: 'To', placeholder: 'Enter To Addresses', as: :text, icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
 

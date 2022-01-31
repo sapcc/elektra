@@ -1,8 +1,180 @@
 module EmailService
   module ApplicationHelper
-    
-    @encoding = "utf-8"
 
+    def encoding 
+      @encoding ||= 'utf-8'
+    end
+
+    def user_id
+      @user_id ||= current_user.id
+    end
+
+    def project_id
+      @project_id ||= current_user.project_id
+    end
+
+    def service_url
+      @service_url ||= current_user.service_url('email-aws')
+    end
+
+    def cronus_region
+      @cronus_region ||= current_user.default_services_region
+    end
+
+    def ec2_creds
+      @ec2_creds ||= services.identity.aws_credentials(user_id, project_id)
+      if @ec2_creds.class == Array
+        return @ec2_creds.first
+      elsif @ec2_creds.class == ServiceLayer::IdentityServices::Credential::AWSCreds
+        return @ec2_creds
+      end
+    end
+  
+    def ses_client
+      @region ||= map_region(@cronus_region)
+      @endpoint = service_url
+      if ec2_creds.error.nil?
+        begin
+          @credentials ||= Aws::Credentials.new(ec2_creds.access, ec2_creds.secret)
+          @ses_client ||= Aws::SES::Client.new(region: @region, endpoint: @endpoint, credentials: @credentials)
+        rescue Aws::SES::Errors::ServiceError => error
+          return error
+        end  
+      end
+      @ses_client ? @ses_client : ec2_creds.error
+    end
+  
+    def map_region(region)
+      aws_region = 'eu-central-1'
+      case region
+      when 'na-us-1'
+        aws_region = 'us-east-1'
+      when 'na-us-2'
+        aws_region = 'us-east-2'
+      when 'na-us-3'
+        aws_region = 'us-west-2'
+      when 'ap-ae-1'
+        aws_region = 'ap-south-1'
+      when 'ap-jp-1'
+        aws_region = 'ap-northeast-1'
+      when 'ap-jp-2'
+        aws_region = 'ap-northeast-2'
+      when 'eu-de-1', 'qa-de-1', 'qa-de-2'
+        aws_region = 'eu-central-1'
+      when 'eu-nl-1'
+        aws_region = 'eu-west-1'
+      when 'na-ca-1'
+        aws_region = 'ca-central-1'
+      when 'la-br-1'
+        aws_region = 'sa-east-1'
+      else
+        aws_region = 'eu-central-1'
+      end
+  
+    end
+    
+    
+    def email_addresses
+      @email_addresses ||= list_verified_identities("EmailAddress")
+    end
+
+    def verified_email_addresses
+      unless !email_addresses || email_addresses.empty?
+        @verified_email_addresses ||= get_verified_identities_by_status(email_addresses, "Success")
+      else
+        []
+      end
+    end
+
+    def verified_emails_collection
+      unless !verified_email_addresses || verified_email_addresses.empty?
+        @verified_emails_collection ||= get_verified_identities_collection(verified_email_addresses, "EmailAddress")
+      else
+        []
+      end
+    end
+
+    def pending_email_addresses
+      unless !email_addresses || email_addresses.empty?
+        @pending_email_addresses ||= get_verified_identities_by_status(email_addresses, "Pending")
+      else
+        []
+      end
+    end
+
+    def failed_email_addresses
+      unless !email_addresses || email_addresses.empty?
+        @failed_email_addresses ||= get_verified_identities_by_status(email_addresses, "Failed")
+      else
+        []
+      end
+    end
+
+    def templates 
+      @templates ||= get_all_templates
+    end
+
+    def templates_collection
+      unless !templates && templates.empty?
+        @templates_collection ||= get_templates_collection(templates)
+      else
+        []
+      end
+    end
+   
+    def all_domains
+      @all_domains ||= list_verified_identities("Domain")
+    end
+
+    def verified_domains
+      unless !all_domains && all_domains.empty?
+        @verified_domains ||= get_verified_identities_by_status(all_domains, "Success")
+      else
+        []
+      end
+    end
+
+    def verified_domains_collection
+      unless !verified_domains && verified_domains.empty?
+        @verified_domains_collection ||= get_verified_identities_collection(verified_domains, "Domain")
+      else
+        []
+      end
+    end
+
+    def pending_domains
+      unless !all_domains && all_domains.empty?
+        @pending_domains ||= get_verified_identities_by_status(all_domains, "Pending")
+      else
+        []
+      end
+    end
+
+    def failed_domains
+      unless !all_domains && all_domains.empty?
+        @failed_domains ||= get_verified_identities_by_status(all_domains, "Failed")
+      else
+        []
+      end
+    end
+
+    def configsets 
+      @configsets ||= list_configsets
+    end
+
+    def configset_names
+      @configset_names ||= list_configset_names
+    end
+
+    def send_data
+      @send_data ||=  get_send_data
+    end
+
+    def send_stats
+      @send_stats ||= get_send_stats
+    end
+
+    #
     # https://docs.aws.amazon.com/sdk-for-ruby/v2/api/Aws/SES/Client.html#update_configuration_set_event_destination-instance_method
     
     #
@@ -107,7 +279,7 @@ module EmailService
     # Get template names as a collection to be rendered on form
     def get_templates_collection(templates)
       templates_collection = []
-      if !templates.empty?
+      unless templates.empty?
         templates.each do |template|
           templates_collection << template[:name]
         end
@@ -115,11 +287,25 @@ module EmailService
       templates_collection
     end
     
+    # get all templates with next_token for every 10 items
+    def get_all_templates
+
+      templates = []
+      next_token, templates = list_templates
+      while !next_token.nil? 
+        next_token, templates_set = list_templates(next_token)
+        templates += templates_set
+      end
+
+      return templates
+
+    end
+
     # list first 10 templates
-    def list_templates(token="")
+    def list_templates(token=nil)
       tmpl_hash = Hash.new
       templates = []
-      next_token = ""
+      next_token = nil
       begin
         template_list = ses_client.list_templates({
           next_token: token,
@@ -149,19 +335,7 @@ module EmailService
 
     end
 
-    # get all templates with next_token for every 10 items
-    def get_all_templates
 
-      templates = []
-      next_token, templates = list_templates
-      while next_token 
-        next_token, templates_set = list_templates(next_token)
-        templates += templates_set
-      end
-
-      return templates
-
-    end
 
     # find a template with name or returns an empty template object
     def find_template(name)
@@ -182,7 +356,7 @@ module EmailService
 
     def store_template(template)
 
-      status = ""
+      status = nil
 
       begin
         resp = ses_client.create_template({
@@ -207,7 +381,7 @@ module EmailService
 
     def delete_template(template_name)
 
-      status = ""
+      status = nil
 
       begin
         resp = ses_client.delete_template({
@@ -282,7 +456,7 @@ module EmailService
     # get identity verification status
     def get_identity_verification_status(identity, identity_type="EmailAddress")
 
-      status = ""
+      status = nil
       identities_list  = list_verified_identities(identity_type)
       identities_list.each do | identity_item |
         if identity_item[:identity] == identity
@@ -335,7 +509,7 @@ module EmailService
     def verify_identity(identity, identity_type)
 
       resp = Aws::SES::Types::VerifyDomainIdentityResponse.new 
-      status = ""
+      status = nil
       if identity.include?("sap.com") && identity_type == "EmailAddress"
         status = "sap.com domain email addresses are not allowed to verify as a sender(#{identity})"
       elsif identity == "" || !identity || identity == nil
@@ -347,7 +521,7 @@ module EmailService
         rescue Aws::SES::Errors::ServiceError => error
           resp = "#{identity_type} verification failed. Error message: #{error}"
         end
-      elsif identity != nil && identity_type == "EmailAddress"
+      elsif identity != nil && identity.length.positive? && identity_type == "EmailAddress"
         begin
           ses_client.verify_email_identity({ email_address: identity, })
           audit_logger.info(current_user.id, 'has initiated to verify email identity ', identity)
@@ -402,7 +576,7 @@ module EmailService
     # delete a verified identity
     def remove_verified_identity(identity)
 
-      status = ""
+      status = nil
         begin
           ses_client.delete_identity({
             identity: identity
@@ -420,7 +594,7 @@ module EmailService
     # list dkim attributes
     def get_dkim_attributes(identities=[])
 
-      err = ""
+      err = nil
       dkim_attributes = {}
 
       begin
@@ -451,9 +625,9 @@ module EmailService
       return verification_status if verification_status
     end
 
-    def verify_dkim(identity)
+    def start_dkim_verification(identity)
 
-      status = ""
+      status = nil
 
       begin
         resp = ses_client.verify_domain_dkim({
@@ -472,7 +646,7 @@ module EmailService
 
     def enable_dkim(identity)
 
-      status = ""
+      status = nil
 
       begin
         resp = ses_client.set_identity_dkim_enabled({
@@ -492,7 +666,7 @@ module EmailService
     
     def disable_dkim(identity)
 
-      status = ""
+      status = nil
 
       begin
         resp = ses_client.set_identity_dkim_enabled({
@@ -603,43 +777,56 @@ module EmailService
           max_items: 1000,
         })
         next_token = resp.next_token
-        for index in 0 ... resp.configuration_sets.size
-          configset_hash = { 
-              :id => index,
-              :name => resp.configuration_sets[index].name
-            }
-          configsets.push(configset_hash)
-        end if resp.configuration_sets.size > 0
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS: DEBUG: LIST CONFIGSETS: #{error}"
+        if resp.configuration_sets.size > 0
+          for index in 0 ... resp.configuration_sets.size
+            configset_hash = { 
+                :id => index,
+                :name => resp.configuration_sets[index].name
+              }
+            configsets.push(configset_hash)
+          end
+        else
+          status = "configset is empty"
+        end
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e}"
+        logger.debug "CRONUS: DEBUG: LIST CONFIGSETS: #{status}"
       end
       
-      return next_token, configsets && !configsets.empty? ? configsets : error
+      return configsets
 
     end
 
-    # get an array of configset names
+    # get an array of configset names up to 1000 entries
     def list_configset_names(token=nil)
 
       configset_names = []
-      _, configsets = list_configsets(token)
-      configsets.each do | cfg |
-        configset_names << cfg[:name]
-      end if configsets && !configsets.empty?
-      configset_names     
+      configsets = list_configsets(token)
+      unless configsets.empty?
+        configsets.each do | cfg |
+          configset_names << cfg[:name]
+        end 
+      end
 
+      return configset_names     
+
+    end
+
+    def new_configset(attributes = {})
+      return ::EmailService::Configset.new(attributes)
     end
 
     # find existing config set
     def find_configset(name)
 
-      _, configsets = list_configsets
+      configsets = list_configsets
       configset = new_configset({})
-      configsets.each do |cfg|
-        if cfg[:name] == name 
-          configset = new_configset(cfg)
-          return configset
+      unless configsets.empty?
+        configsets.each do |cfg|
+          if cfg[:name] == name 
+            configset = new_configset(cfg)
+            return configset
+          end
         end
       end
 
@@ -673,6 +860,7 @@ module EmailService
     def configuration_set_attribute_names
       ["eventDestinations", "trackingOptions", "deliveryOptions", "reputationOptions"]
     end
+
 
   end
 end

@@ -7,7 +7,7 @@ module EmailService
     authorization_required
 
     def index
-      @templates = get_all_templates
+      @templates = templates
       items_per_page = 10
       @paginatable_templates = Kaminari.paginate_array(@templates, total_count: @templates.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e

@@ -11,14 +11,14 @@
         .toolbar
           - if current_user.is_allowed?('email_service:verified_email_create')
             .main-buttons
-              = link_to "Verify an eMail Address", plugin('email_service').new_verification_path, data: {modal: true}, class: 'btn btn-primary'
+              = link_to "Verify an eMail Address", plugin('email_service').new_email_verification_path, data: {modal: true}, class: 'btn btn-primary'
         .js-table-verified-email
-          = render partial: 'table_verified_emails', locals: { all_emails: @all_emails }
+          = render partial: 'table_verified_emails', locals: { all_emails: email_addresses }
 
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p
-            You need to have one or more Verified identities (eMail) in order to send an eMail from Cronus. More information on Cronus eMail Service can be found
+            You need to have atleast one Verified identities (eMail Address) in order to send an eMail from Cronus. More information on Cronus eMail Service can be found
             %b
               = link_to "here", "https://documentation.global.cloud.sap/services/email-overview", :target => "_blank"
           \.

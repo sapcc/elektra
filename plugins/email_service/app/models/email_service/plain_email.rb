@@ -4,15 +4,9 @@ module EmailService
 
     def initialize(attributes = {})
       @attributes = attributes
-      
-      @errors = ActiveModel::Errors.new(self)
     end
 
-    attr_accessor :attributes, :errors
-
-    def form_attribute(name)
-      attributes.fetch(name, '')
-    end
+    attr_accessor :attributes
 
     def form_to_attributes(attrs)
       attrs.keys.each do |key|
