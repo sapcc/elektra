@@ -15,24 +15,24 @@
     .col-sm-3
       .bs-callout.bs-callout-primary.toolbar-aligment
         %p
-        - if @send_data
+        - if send_data
           Max Send Quota / 24 hours
           %br
           %center
             %b
-              = @send_data[:max_24_hour_send].to_i
+              = send_data[:max_24_hour_send].to_i
           %br
           Max Send Rate / second
           %br
           %center
             %b
-              = @send_data[:max_send_rate].to_i
+              = send_data[:max_send_rate].to_i
           %br
           eMails Sent (last 24 hours)
           %br
           %center
             %b
-              = @send_data[:sent_last_24_hours].to_i
+              = send_data[:sent_last_24_hours].to_i
           %hr
         You can send eMail to maximum 50 email addresses at a time which includes 
         %b 
