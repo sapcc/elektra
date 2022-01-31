@@ -38,13 +38,14 @@ module Lbaas2
         end
 
         def create
-          membersParams = member_params(params[:member] || {})
+          membersParams = params[:member] || {}
           # OS Bug, Subnet not optional, has to be set to VIP subnet
           loadbalancer = services.lbaas2.find_loadbalancer(params[:loadbalancer_id])
           vip_subnet_id = loadbalancer.vip_subnet_id
           newParams = membersParams.merge(pool_id: params[:pool_id], subnet_id: vip_subnet_id, project_id: @scoped_project_id)
           member = services.lbaas2.new_member(newParams)       
 
+          # empty attributes will be removed on submitting with the model
           if member.save
             audit_logger.info(current_user, 'has created', member)
             render json: member
@@ -59,7 +60,7 @@ module Lbaas2
         end
 
         def update
-          membersParams = member_params(params[:member] || {})
+          membersParams = params[:member] || {}
           # set monitor address port to null if empty
           membersParams['monitor_address'] = nil if membersParams['monitor_address'].blank?
           membersParams['monitor_port'] = nil if membersParams['monitor_port'].blank?
@@ -77,6 +78,7 @@ module Lbaas2
           render json: { errors: e.message }, status: "500"
         end
 
+        # no model used empty attributes should be set to nil
         def batch_update
           members = {members: []}
           # get subnet from loadbalancer
@@ -84,15 +86,7 @@ module Lbaas2
           vip_subnet_id = loadbalancer.vip_subnet_id
 
           membersParams = JSON.parse(params[:members].to_json)
-          membersParams.each do |member|
-
-            puts "====="
-            puts member
-            puts member["monitor_port"]
-            puts member["monitor_port"].to_i
-            puts "====="
-
-            member = member_params(member || {})           
+          membersParams.each do |member|    
             # OS Bug, Subnet not optional, has to be set to VIP subnet
             member.merge!("subnet_id" => vip_subnet_id, "project_id" => @scoped_project_id)
             members[:members].push(member)
@@ -170,17 +164,6 @@ module Lbaas2
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
           render json: { errors: e.message }, status: '500'
-        end
-
-        private
-
-        def member_params(member)
-          member["protocol_port"] = member["protocol_port"].blank? ? nil : member["protocol_port"].to_i 
-          member["monitor_port"] =  member["monitor_port"].blank? ? nil : member["monitor_port"].to_i 
-          member["weight"] = member["weight"].blank? ? nil : member["weight"].to_i
-          # remove incomming id since it is not exchanged with the right id when creating
-          member.reject! { |k| k == "id" } 
-          member
         end
 
       end

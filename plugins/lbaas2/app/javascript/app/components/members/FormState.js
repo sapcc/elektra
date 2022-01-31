@@ -12,11 +12,6 @@ const updateItem = (state, { id, key, value }) => {
   // if not found return
   if (index < 0) return state
 
-  // keep monitor_port, protocol_port and weight as int
-  // if (key === "monitor_port" || key === "protocol_port" || key === "weight") {
-  //   value = parseInt(value, 10) || ""
-  // }
-
   // update item
   let item = {
     ...newValues[index],
@@ -32,8 +27,6 @@ const updateItem = (state, { id, key, value }) => {
 const addItem = (state, { item }) => {
   let newValues = [...state.items]
   newValues.push(item)
-  // `value` prop on `input` should not be null. Consider using an empty string to clear the component or `undefined` for uncontrolled components.
-
   return { ...state, items: newValues }
 }
 

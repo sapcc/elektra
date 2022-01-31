@@ -4,7 +4,7 @@ import useCommons from "../../../lib/hooks/useCommons"
 import useMember from "../../../lib/hooks/useMember"
 import Log from "../shared/logger"
 import { FormStateProvider } from "./FormState"
-import MemberForm from "./MemberForm"
+import NewMemberForm from "./NewMemberForm"
 import SaveButton from "../shared/SaveButton"
 import ExistingMembersDropDown from "./ExistingMembersDropDown"
 
@@ -104,7 +104,7 @@ const NewMember = (props) => {
         </p>
 
         <FormStateProvider>
-          <MemberForm
+          <NewMemberForm
             loadbalancerID={loadbalancerID}
             poolID={poolID}
             servers={servers}

@@ -86,8 +86,6 @@ const EditMember = (props) => {
    */
 
   // const onSubmit = (values) => {
-  //   console.log("ONSUBMIT EDIT: ", values)
-
   //   // setFormErrors(null)
   //   // parse nested keys to objects
   //   // from values like member[XYZ][name]="arturo" to {XYZ:{name:"arturo"}}

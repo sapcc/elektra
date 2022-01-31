@@ -45,9 +45,6 @@ const EditMemberForm = (
       .then((data) => {
         setIsLoading(false)
         setErrorMessage(null)
-
-        console.log("ITEM: ", data.member)
-
         dispatch({
           type: "ADD_ITEM",
           item: data.member,

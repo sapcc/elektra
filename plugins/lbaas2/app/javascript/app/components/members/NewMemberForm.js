@@ -12,7 +12,10 @@ import { Link } from "react-router-dom"
 import { ErrorsList } from "lib/elektra-form"
 import { addNotice } from "lib/flashes"
 import useCommons from "../../../lib/hooks/useCommons"
-import useMember, { validateForm } from "../../../lib/hooks/useMember"
+import useMember, {
+  validateForm,
+  formAttrForSubmit,
+} from "../../../lib/hooks/useMember"
 import usePool from "../../../lib/hooks/usePool"
 
 const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
@@ -54,7 +57,7 @@ const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
   )
 }
 
-const MemberForm = (
+const NewMemberForm = (
   { loadbalancerID, poolID, servers, onFormCallback },
   ref
 ) => {
@@ -84,9 +87,10 @@ const MemberForm = (
       if (!validateForm(state.items)) {
         return onFormCallback({ isSubmitting: false, isValid: false })
       }
+      const memberItems = formAttrForSubmit(state.items)
       setFormErrors(null)
       onFormCallback({ isSubmitting: true, isValid: true })
-      return create(loadbalancerID, poolID, state.items)
+      return create(loadbalancerID, poolID, memberItems)
         .then((response) => {
           onFormCallback({ isSubmitting: true, isValid: false })
           if (response && response.data) {
@@ -162,4 +166,4 @@ const MemberForm = (
   )
 }
 
-export default forwardRef(MemberForm)
+export default forwardRef(NewMemberForm)

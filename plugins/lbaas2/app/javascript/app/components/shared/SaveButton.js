@@ -17,7 +17,7 @@ const SaveButton = ({ disabled, text, showTooltip, tooltipText, callback }) => {
             disabled={disabled}
             onClick={(e) => {
               e.preventDefault()
-              callback()
+              if (!disabled) callback()
             }}
           >
             {text}
@@ -30,7 +30,7 @@ const SaveButton = ({ disabled, text, showTooltip, tooltipText, callback }) => {
           disabled={disabled}
           onClick={(e) => {
             e.preventDefault()
-            callback()
+            if (!disabled) callback()
           }}
         >
           {text}

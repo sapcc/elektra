@@ -70,7 +70,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
         {index > 0 && <hr />}
         <div className="row display-flex">
           <div className="col-md-12">
-            {servers && (
+            {servers && !edit && (
               <div className="row">
                 <div className="col-md-1"></div>
                 <div className="col-md-11">

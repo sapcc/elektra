@@ -4,6 +4,34 @@ import { ajaxHelper } from "ajax_helper"
 import { confirm } from "lib/dialogs"
 import { regexString } from "lib/tools/regex_string"
 
+export const formAttrForSubmit = (items) => {
+  if (!items || !Array.isArray(items)) return null
+  // fast deep copy of an array of objects to be modified
+  let newItems = items.map((item) => {
+    return { ...item }
+  })
+  newItems.forEach((member) => {
+    Object.keys(member).forEach((key) => {
+      // this attributes should be integers
+      if (
+        (key === "protocol_port" ||
+          key === "monitor_port" ||
+          key === "weight") &&
+        member[key]
+      ) {
+        member[key] = parseInt(member[key], 10)
+      } else if (typeof member[key] === "string" && member[key].length === 0) {
+        // set attr to nil if empty
+        member[key] = null
+      }
+    })
+    // remove id since it is just self generated for the ui
+    delete member.id
+  })
+
+  return newItems
+}
+
 export const validateForm = (items) => {
   let isValid = true
   if (items && Array.isArray(items)) {
