@@ -121,6 +121,7 @@ const NewMember = (props) => {
         </Button>
         <SaveButton
           disabled={formSubmitting || !isFormValid}
+          showTooltip={!isFormValid}
           text={<>{formSubmitting && <span className="spinner" />}Save</>}
           tooltipText="Please check validation and required fields"
           callback={onSaveClicked}

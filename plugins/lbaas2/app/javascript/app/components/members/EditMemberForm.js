@@ -14,48 +14,11 @@ import { addNotice } from "lib/flashes"
 import useCommons from "../../../lib/hooks/useCommons"
 import useMember, { validateForm } from "../../../lib/hooks/useMember"
 import usePool from "../../../lib/hooks/usePool"
+import Log from "../shared/logger"
+import ErrorPage from "../ErrorPage"
 
-const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
-  return (
-    <>
-      {disabled ? (
-        <OverlayTrigger
-          placement="top"
-          overlay={
-            <Tooltip id={uniqueId("tooltip-")}>
-              You reach the maximum of 5 new members
-            </Tooltip>
-          }
-        >
-          <Link
-            to={""}
-            className="btn btn-default btn-xs"
-            disabled={true}
-            onClick={(e) => {
-              e.preventDefault()
-            }}
-          >
-            Add another
-          </Link>
-        </OverlayTrigger>
-      ) : (
-        <Link
-          to={""}
-          className="btn btn-default btn-xs"
-          onClick={(e) => {
-            e.preventDefault()
-            addMembersCallback()
-          }}
-        >
-          Add another
-        </Link>
-      )}
-    </>
-  )
-}
-
-const MemberForm = (
-  { loadbalancerID, poolID, servers, onFormCallback },
+const EditMemberForm = (
+  { loadbalancerID, poolID, memberID, onFormCallback },
   ref
 ) => {
   const state = useFormState()
@@ -64,19 +27,36 @@ const MemberForm = (
   const { create, persistMembers } = useMember()
   const { persistPool } = usePool()
   const { errorMessage } = useCommons()
+  const { fetchMember, updateMember } = useMember()
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMerssage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    if (loadbalancerID && poolID) {
-      addMembers()
+    if (memberID && loadbalancerID && poolID) {
+      loadMember()
     }
-  }, [loadbalancerID, poolID])
+  }, [memberID, loadbalancerID, poolID])
 
-  const addMembers = () => {
-    const item = generateMemberItem()
-    dispatch({
-      type: "ADD_ITEM",
-      item: item,
-    })
+  const loadMember = () => {
+    Log.debug("fetching member to edit")
+    setIsLoading(true)
+    setErrorMessage(null)
+    fetchMember(loadbalancerID, poolID, memberID)
+      .then((data) => {
+        setIsLoading(false)
+        setErrorMessage(null)
+
+        console.log("ITEM: ", data.member)
+
+        dispatch({
+          type: "ADD_ITEM",
+          item: data.member,
+        })
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        setErrorMessage(error)
+      })
   }
 
   useImperativeHandle(ref, () => ({
@@ -126,40 +106,50 @@ const MemberForm = (
   }, [JSON.stringify(state.items)])
 
   return (
-    <Form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-      {formErrors && (
-        <div className="alert alert-error">
-          <ErrorsList errors={formErrors} />
-        </div>
-      )}
-
-      <div className="new-members-container">
-        <div className="new-members">
-          {state.items.length > 0 ? (
-            <>
-              {state.items.map((member, index) => (
-                <NewEditMemberListItem
-                  id={member.id}
-                  key={member.id}
-                  index={index}
-                  servers={servers}
-                />
-              ))}
-            </>
+    <>
+      {errorMerssage ? (
+        <ErrorPage
+          headTitle="Edit Member"
+          error={errorMerssage}
+          onReload={loadMember}
+        />
+      ) : (
+        <>
+          {isLoading ? (
+            <span className="spinner" />
           ) : (
-            <p>No new members added yet.</p>
-          )}
+            <Form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+              {formErrors && (
+                <div className="alert alert-error">
+                  <ErrorsList errors={formErrors} />
+                </div>
+              )}
 
-          <div className="add-more-section">
-            <AddNewMemberButton
-              disabled={state.items.length > 4}
-              addMembersCallback={addMembers}
-            />
-          </div>
-        </div>
-      </div>
-    </Form>
+              <div className="new-members-container">
+                <div className="new-members">
+                  {state.items.length > 0 ? (
+                    <>
+                      {state.items.map((member, index) => (
+                        <NewEditMemberListItem
+                          id={member.id}
+                          key={member.id}
+                          index={index}
+                          servers={[]}
+                          edit={true}
+                        />
+                      ))}
+                    </>
+                  ) : (
+                    <p>No new members added yet.</p>
+                  )}
+                </div>
+              </div>
+            </Form>
+          )}
+        </>
+      )}
+    </>
   )
 }
 
-export default forwardRef(MemberForm)
+export default forwardRef(EditMemberForm)

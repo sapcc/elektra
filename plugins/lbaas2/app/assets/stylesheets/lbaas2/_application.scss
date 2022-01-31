@@ -366,7 +366,8 @@ ul.less-left-margin {
   }
 }
 
-.new-members-container {
+.new-members-container,
+.edit-members-container {
   margin-top: 2rem;
 
   .new-member-item-actions {

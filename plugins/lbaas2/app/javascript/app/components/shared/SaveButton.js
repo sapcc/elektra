@@ -3,10 +3,10 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import uniqueId from "lodash/uniqueId"
 
-const SaveButton = ({ disabled, text, tooltipText, callback }) => {
+const SaveButton = ({ disabled, text, showTooltip, tooltipText, callback }) => {
   return (
     <>
-      {disabled ? (
+      {showTooltip ? (
         <OverlayTrigger
           placement="top"
           overlay={<Tooltip id={uniqueId("tooltip-")}>{tooltipText}</Tooltip>}
@@ -14,9 +14,10 @@ const SaveButton = ({ disabled, text, tooltipText, callback }) => {
           <Link
             to={""}
             className="btn btn-primary"
-            disabled={true}
+            disabled={disabled}
             onClick={(e) => {
               e.preventDefault()
+              callback()
             }}
           >
             {text}
@@ -26,6 +27,7 @@ const SaveButton = ({ disabled, text, tooltipText, callback }) => {
         <Link
           to={""}
           className="btn btn-primary"
+          disabled={disabled}
           onClick={(e) => {
             e.preventDefault()
             callback()

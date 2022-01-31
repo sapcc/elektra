@@ -150,7 +150,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                   type="text"
                   id={`member[${member.id}][name]`}
                   name="name"
-                  value={member.name}
+                  value={member.name || ""}
                   onChange={(e) => {
                     onUpdateItem("name", e.target.value)
                   }}
@@ -167,7 +167,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                   type="checkbox"
                   id={`member[${member.id}][backup]`}
                   name="backup"
-                  value={member.backup}
+                  checked={member.backup}
                   onChange={(e) => {
                     onUpdateItem("backup", e.target.checked)
                   }}
@@ -190,7 +190,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                     type="text"
                     id={`member[${member.id}][address]`}
                     name="address"
-                    value={member.address}
+                    value={member.address || ""}
                     disabled={edit}
                     placeholder="IP Address &#42;"
                     bsClass="form-control icon-in-input"
@@ -203,7 +203,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                     type="number"
                     id={`member[${member.id}][protocol_port]`}
                     name="protocol_port"
-                    value={member.protocol_port}
+                    value={member.protocol_port || ""}
                     disabled={edit}
                     placeholder="Port &#42;"
                     onChange={(e) => {
@@ -223,7 +223,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                   type="number"
                   id={`member[${member.id}][weight]`}
                   name="weight"
-                  value={member.weight}
+                  value={member.weight || ""}
                   onChange={(e) => {
                     onUpdateItem("weight", e.target.value)
                   }}
@@ -240,7 +240,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                     type="text"
                     id={`member[${member.id}][monitor_address]`}
                     name="monitor_address"
-                    value={member.monitor_address}
+                    value={member.monitor_address || ""}
                     placeholder="Alternate Monitor IP"
                     bsClass="form-control icon-in-input"
                     onChange={(e) => {
@@ -252,7 +252,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                     type="number"
                     id={`member[${member.id}][monitor_port]`}
                     name="monitor_port"
-                    value={member.monitor_port}
+                    value={member.monitor_port || ""}
                     placeholder="Port"
                     onChange={(e) => {
                       onUpdateItem("monitor_port", e.target.value)
@@ -278,6 +278,13 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                     onUpdateItem("tags", tags)
                   }}
                 />
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  Start a new tag typing a string and hitting the <b>
+                    Enter
+                  </b>{" "}
+                  or <b>Tab key</b>.
+                </span>
               </div>
             </div>
 
@@ -301,7 +308,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                     type="checkbox"
                     id={`member[${member.id}][admin_state_up]`}
                     name="admin_state_up"
-                    value={member.admin_state_up}
+                    checked={member.admin_state_up}
                     onChange={(e) => {
                       onUpdateItem("admin_state_up", e.target.checked)
                     }}

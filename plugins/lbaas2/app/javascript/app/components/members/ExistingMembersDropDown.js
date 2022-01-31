@@ -47,7 +47,7 @@ const ExistingMembersDropDown = (props, poolID) => {
           <SearchField
             value={searchTerm}
             onChange={(term) => setSearchTerm(term)}
-            placeholder="Name, ID, IP or port"
+            placeholder="Name, ID, IPs or ports"
             text="Searches by Name, ID, IPs or protocols."
           />
         </div>

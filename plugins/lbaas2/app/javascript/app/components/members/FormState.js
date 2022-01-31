@@ -13,9 +13,9 @@ const updateItem = (state, { id, key, value }) => {
   if (index < 0) return state
 
   // keep monitor_port, protocol_port and weight as int
-  if (key === "monitor_port" || key === "protocol_port" || key === "weight") {
-    value = parseInt(value, 10) || ""
-  }
+  // if (key === "monitor_port" || key === "protocol_port" || key === "weight") {
+  //   value = parseInt(value, 10) || ""
+  // }
 
   // update item
   let item = {
@@ -32,6 +32,8 @@ const updateItem = (state, { id, key, value }) => {
 const addItem = (state, { item }) => {
   let newValues = [...state.items]
   newValues.push(item)
+  // `value` prop on `input` should not be null. Consider using an empty string to clear the component or `undefined` for uncontrolled components.
+
   return { ...state, items: newValues }
 }
 
@@ -62,13 +64,10 @@ function reducer(state, action) {
 }
 
 export const FormStateProvider = ({ children }) => {
-  // set default items if not given
-  const defaultItems = [generateMemberItem()]
-
   // init with given items and make a copy
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    items: defaultItems,
+    items: [],
   })
 
   return (
@@ -91,14 +90,14 @@ export const useFormState = (itemID) => {
 export const generateMemberItem = () => {
   return {
     id: uniqueId("member_"),
-    name: "",
-    address: "",
-    protocol_port: "",
-    monitor_address: "",
-    monitor_port: "",
+    name: null,
+    address: null,
+    protocol_port: null,
+    monitor_address: null,
+    monitor_port: null,
     weight: "1",
     backup: false,
-    tags: "",
+    tags: [],
     admin_state_up: true,
   }
 }
