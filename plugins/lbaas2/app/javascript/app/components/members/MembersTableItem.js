@@ -45,7 +45,7 @@ const MembersTableItem = ({
   usePolling({
     delay: member.provisioning_status.includes("PENDING") ? 20000 : 60000,
     callback: pollingCallback,
-    active: shouldPoll || member.provisioning_status.includes("PENDING"),
+    active: shouldPoll || member?.provisioning_status?.includes("PENDING"),
   })
 
   const canEdit = useMemo(

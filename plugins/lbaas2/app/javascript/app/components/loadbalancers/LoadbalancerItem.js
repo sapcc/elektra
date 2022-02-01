@@ -38,7 +38,8 @@ const LoadbalancerItem = ({
   usePolling({
     delay: loadbalancer.provisioning_status.includes("PENDING") ? 20000 : 60000,
     callback: pollingCallback,
-    active: shouldPoll,
+    active:
+      shouldPoll || loadbalancer?.provisioning_status?.includes("PENDING"),
   })
 
   const canDelete = useMemo(

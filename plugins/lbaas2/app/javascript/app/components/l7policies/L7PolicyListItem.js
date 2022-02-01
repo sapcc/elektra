@@ -1,21 +1,21 @@
-import { useEffect, useState, useMemo } from "react";
-import useCommons from "../../../lib/hooks/useCommons";
-import { Link } from "react-router-dom";
-import StaticTags from "../StaticTags";
-import useL7Policy from "../../../lib/hooks/useL7Policy";
-import CopyPastePopover from "../shared/CopyPastePopover";
-import useListener from "../../../lib/hooks/useListener";
-import { addNotice, addError } from "lib/flashes";
-import { ErrorsList } from "lib/elektra-form/components/errors_list";
-import CachedInfoPopover from "../shared/CachedInforPopover";
-import CachedInfoPopoverContent from "./CachedInfoPopoverContent";
-import { policy } from "policy";
-import { scope } from "ajax_helper";
-import SmartLink from "../shared/SmartLink";
-import Log from "../shared/logger";
-import DropDownMenu from "../shared/DropdownMenu";
-import useStatus from "../../../lib/hooks/useStatus";
-import usePolling from "../../../lib/hooks/usePolling";
+import { useEffect, useState, useMemo } from "react"
+import useCommons from "../../../lib/hooks/useCommons"
+import { Link } from "react-router-dom"
+import StaticTags from "../StaticTags"
+import useL7Policy from "../../../lib/hooks/useL7Policy"
+import CopyPastePopover from "../shared/CopyPastePopover"
+import useListener from "../../../lib/hooks/useListener"
+import { addNotice, addError } from "lib/flashes"
+import { ErrorsList } from "lib/elektra-form/components/errors_list"
+import CachedInfoPopover from "../shared/CachedInforPopover"
+import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
+import { policy } from "policy"
+import { scope } from "ajax_helper"
+import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
+import DropDownMenu from "../shared/DropdownMenu"
+import useStatus from "../../../lib/hooks/useStatus"
+import usePolling from "../../../lib/hooks/usePolling"
 
 const L7PolicyListItem = ({
   props,
@@ -26,43 +26,43 @@ const L7PolicyListItem = ({
   shouldPoll,
 }) => {
   const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons();
+    useCommons()
   const {
     actionRedirect,
     deleteL7Policy,
     persistL7Policy,
     onSelectL7Policy,
     reset,
-  } = useL7Policy();
-  const [loadbalancerID, setLoadbalancerID] = useState(null);
-  const { persistListener } = useListener();
+  } = useL7Policy()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
+  const { persistListener } = useListener()
   const { entityStatus } = useStatus(
     l7Policy.operating_status,
     l7Policy.provisioning_status
-  );
+  )
 
   useEffect(() => {
-    const params = matchParams(props);
-    setLoadbalancerID(params.loadbalancerID);
-  }, []);
+    const params = matchParams(props)
+    setLoadbalancerID(params.loadbalancerID)
+  }, [])
 
   const pollingCallback = () => {
-    return persistL7Policy(loadbalancerID, listenerID, l7Policy.id);
-  };
+    return persistL7Policy(loadbalancerID, listenerID, l7Policy.id)
+  }
 
   usePolling({
     delay: l7Policy.provisioning_status.includes("PENDING") ? 20000 : 60000,
     callback: pollingCallback,
-    active: shouldPoll,
-  });
+    active: shouldPoll || l7Policy?.provisioning_status?.includes("PENDING"),
+  })
 
   const onL7PolicyClick = (e) => {
     if (e) {
-      e.stopPropagation();
-      e.preventDefault();
+      e.stopPropagation()
+      e.preventDefault()
     }
-    onSelectL7Policy(props, l7Policy.id);
-  };
+    onSelectL7Policy(props, l7Policy.id)
+  }
 
   const canEdit = useMemo(
     () =>
@@ -70,7 +70,7 @@ const L7PolicyListItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canDelete = useMemo(
     () =>
@@ -78,7 +78,7 @@ const L7PolicyListItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canShowJSON = useMemo(
     () =>
@@ -86,38 +86,38 @@ const L7PolicyListItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const handleDelete = (e) => {
     if (e) {
-      e.stopPropagation();
-      e.preventDefault();
+      e.stopPropagation()
+      e.preventDefault()
     }
-    const l7policyID = l7Policy.id;
-    const l7policyName = l7Policy.name;
+    const l7policyID = l7Policy.id
+    const l7policyName = l7Policy.name
     return deleteL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
       .then((response) => {
         addNotice(
           <React.Fragment>
             L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.
           </React.Fragment>
-        );
+        )
         // fetch the listener again containing the new policy so it gets updated fast
         persistListener(loadbalancerID, listenerID)
           .then(() => {})
-          .catch((error) => {});
+          .catch((error) => {})
       })
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
             errors: errorMessage(error.response),
           })
-        );
-      });
-  };
+        )
+      })
+  }
 
   const displayName = () => {
-    const name = l7Policy.name || l7Policy.id;
+    const name = l7Policy.name || l7Policy.id
     if (disabled) {
       return (
         <span className="info-text">
@@ -130,7 +130,7 @@ const L7PolicyListItem = ({
             bsClass="cp copy-paste-ids"
           />
         </span>
-      );
+      )
     } else {
       return (
         <Link to="#" onClick={onL7PolicyClick}>
@@ -143,9 +143,9 @@ const L7PolicyListItem = ({
             searchTerm={searchTerm}
           />
         </Link>
-      );
+      )
     }
-  };
+  }
   const displayID = () => {
     if (l7Policy.name) {
       if (disabled) {
@@ -159,7 +159,7 @@ const L7PolicyListItem = ({
               shouldPopover={false}
             />
           </div>
-        );
+        )
       } else {
         return (
           <CopyPastePopover
@@ -169,13 +169,13 @@ const L7PolicyListItem = ({
             bsClass="cp copy-paste-ids"
             searchTerm={searchTerm}
           />
-        );
+        )
       }
     }
-  };
+  }
 
-  const l7RuleIDs = l7Policy.rules.map((l7rule) => l7rule.id);
-  Log.debug("RENDER L7 Policy Item");
+  const l7RuleIDs = l7Policy.rules.map((l7rule) => l7rule.id)
+  Log.debug("RENDER L7 Policy Item")
   return (
     <tr>
       <td className="snug-nowrap">
@@ -283,7 +283,7 @@ const L7PolicyListItem = ({
         </DropDownMenu>
       </td>
     </tr>
-  );
-};
+  )
+}
 
-export default L7PolicyListItem;
+export default L7PolicyListItem
