@@ -4,7 +4,7 @@ import { ajaxHelper } from "ajax_helper"
 import { confirm } from "lib/dialogs"
 import { regexString } from "lib/tools/regex_string"
 
-export const formAttrForSubmit = (items) => {
+export const formAttrForSubmit = (items, action) => {
   if (!items || !Array.isArray(items)) return null
   // fast deep copy of an array of objects to be modified
   let newItems = items.map((item) => {
@@ -25,8 +25,10 @@ export const formAttrForSubmit = (items) => {
         member[key] = null
       }
     })
-    // remove uiid when creating a new item since it is just self generated for the ui
-    delete member.uiid
+    // remove id when creating a NEW item since it is just self generated for the ui
+    if (action === "create") {
+      delete member.id
+    }
   })
 
   return newItems

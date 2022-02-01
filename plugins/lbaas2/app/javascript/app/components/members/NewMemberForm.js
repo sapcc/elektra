@@ -87,7 +87,9 @@ const NewMemberForm = (
       if (!validateForm(state.items)) {
         return onFormCallback({ isSubmitting: false, isValid: false })
       }
-      const memberItems = formAttrForSubmit(state.items)
+      // transform values since batch update do no use model. Empty values should be nil and id when creating
+      // should not be send
+      const memberItems = formAttrForSubmit(state.items, "create")
       setFormErrors(null)
       onFormCallback({ isSubmitting: true, isValid: true })
       return create(loadbalancerID, poolID, memberItems)
