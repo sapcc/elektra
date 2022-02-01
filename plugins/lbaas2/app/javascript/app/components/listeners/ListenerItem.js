@@ -62,7 +62,7 @@ const ListenerItem = ({
   usePolling({
     delay: listener.provisioning_status.includes("PENDING") ? 20000 : 60000,
     callback: pollingCallback,
-    active: shouldPoll,
+    active: shouldPoll || listener?.provisioning_status?.includes("PENDING"),
   })
 
   const onListenerClick = (e) => {

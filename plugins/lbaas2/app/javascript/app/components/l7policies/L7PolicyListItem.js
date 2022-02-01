@@ -53,7 +53,7 @@ const L7PolicyListItem = ({
   usePolling({
     delay: l7Policy.provisioning_status.includes("PENDING") ? 20000 : 60000,
     callback: pollingCallback,
-    active: shouldPoll,
+    active: shouldPoll || l7Policy?.provisioning_status?.includes("PENDING"),
   })
 
   const onL7PolicyClick = (e) => {

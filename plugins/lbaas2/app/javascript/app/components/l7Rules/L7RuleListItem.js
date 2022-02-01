@@ -41,7 +41,7 @@ const L7RuleListItem = ({
   usePolling({
     delay: l7Rule.provisioning_status.includes("PENDING") ? 20000 : 60000,
     callback: pollingCallback,
-    active: shouldPoll,
+    active: shouldPoll || l7Rule?.provisioning_status?.includes("PENDING"),
   })
 
   const canEdit = useMemo(

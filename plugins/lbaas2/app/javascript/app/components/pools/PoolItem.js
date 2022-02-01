@@ -51,7 +51,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
   usePolling({
     delay: pool.provisioning_status.includes("PENDING") ? 20000 : 60000,
     callback: pollingCallback,
-    active: shouldPoll,
+    active: shouldPoll || pool?.provisioning_status?.includes("PENDING"),
   })
 
   const canEdit = useMemo(
