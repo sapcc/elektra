@@ -1,16 +1,16 @@
-import { useEffect, useState, useMemo } from "react";
-import useCommons from "../../../lib/hooks/useCommons";
-import CopyPastePopover from "../shared/CopyPastePopover";
-import StaticTags from "../StaticTags";
-import useL7Rule from "../../../lib/hooks/useL7Rule";
-import SmartLink from "../shared/SmartLink";
-import { policy } from "policy";
-import { scope } from "ajax_helper";
-import Log from "../shared/logger";
-import DropDownMenu from "../shared/DropdownMenu";
-import useStatus from "../../../lib/hooks/useStatus";
-import usePolling from "../../../lib/hooks/usePolling";
-import BooleanLabel from "../shared/BooleanLabel";
+import { useEffect, useState, useMemo } from "react"
+import useCommons from "../../../lib/hooks/useCommons"
+import CopyPastePopover from "../shared/CopyPastePopover"
+import StaticTags from "../StaticTags"
+import useL7Rule from "../../../lib/hooks/useL7Rule"
+import SmartLink from "../shared/SmartLink"
+import { policy } from "policy"
+import { scope } from "ajax_helper"
+import Log from "../shared/logger"
+import DropDownMenu from "../shared/DropdownMenu"
+import useStatus from "../../../lib/hooks/useStatus"
+import usePolling from "../../../lib/hooks/usePolling"
+import BooleanLabel from "../shared/BooleanLabel"
 
 const L7RuleListItem = ({
   props,
@@ -21,28 +21,28 @@ const L7RuleListItem = ({
   shouldPoll,
 }) => {
   const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons();
-  const { deleteL7Rule, persistL7Rule } = useL7Rule();
-  const [loadbalancerID, setLoadbalancerID] = useState(null);
+    useCommons()
+  const { deleteL7Rule, persistL7Rule } = useL7Rule()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(
     l7Rule.operating_status,
     l7Rule.provisioning_status
-  );
+  )
 
   useEffect(() => {
-    const params = matchParams(props);
-    setLoadbalancerID(params.loadbalancerID);
-  }, []);
+    const params = matchParams(props)
+    setLoadbalancerID(params.loadbalancerID)
+  }, [])
 
   const pollingCallback = () => {
-    return persistL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule.id);
-  };
+    return persistL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule.id)
+  }
 
   usePolling({
     delay: l7Rule.provisioning_status.includes("PENDING") ? 20000 : 60000,
     callback: pollingCallback,
     active: shouldPoll,
-  });
+  })
 
   const canEdit = useMemo(
     () =>
@@ -50,7 +50,7 @@ const L7RuleListItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canDelete = useMemo(
     () =>
@@ -58,7 +58,7 @@ const L7RuleListItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const canShowJSON = useMemo(
     () =>
@@ -66,15 +66,15 @@ const L7RuleListItem = ({
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const handleDelete = (e) => {
     if (e) {
-      e.stopPropagation();
-      e.preventDefault();
+      e.stopPropagation()
+      e.preventDefault()
     }
-    deleteL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule).then(() => {});
-  };
+    deleteL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule).then(() => {})
+  }
 
   return (
     <tr>
@@ -145,7 +145,7 @@ const L7RuleListItem = ({
         </DropDownMenu>
       </td>
     </tr>
-  );
-};
+  )
+}
 
-export default L7RuleListItem;
+export default L7RuleListItem
