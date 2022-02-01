@@ -191,7 +191,8 @@ if [[ -n "$DEBUG" ]]; then
   echo "DEBUG:        => $DEBUG"
 fi
 echo ""
-echo "Please Note: the e2e tests run only with QA-DE-1, https://dashboard-e2e.qa-de-1.cloud.sap because the Test-User,Domain and Project is only configured there."
+echo "Please Note: the e2e tests run only with QA-DE-1, (your local elektra that is configured for qa-de-1"
+echo "or https://dashboard-e2e.qa-de-1.cloud.sap) because the Test-User,Domain and Project is only configured there."
 echo ""
 
 docker run --rm -it \
