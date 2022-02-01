@@ -9,7 +9,7 @@
       %th DKIM status
       %th.snug
   %tbody
-    - if !@all_domains || @all_domains.empty?
+    - if !all_domains || all_domains.empty?
       %tr
         %td{ colspan: 4 } No verified domain available
     - else

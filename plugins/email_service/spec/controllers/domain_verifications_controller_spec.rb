@@ -18,11 +18,13 @@ describe EmailService::DomainVerificationsController, type: :controller do
   end
  
   before :each do
-    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)     
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:remove_verified_identity).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:verify_dkim).and_return(double('status').as_null_object)
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:activate_dkim).and_return(double('status').as_null_object)
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:deactivate_dkim).and_return(double('status').as_null_object)
   end
 
   # check index route
@@ -220,7 +222,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
   end
 
 
-  # check create route
+  # check delete route
   describe "DELETE#destroy" do
     before :each do 
       @opts = EmailService::FakeFactory.new.verfied_domain_opts
@@ -280,6 +282,204 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         delete :destroy, params: default_params.merge(id: @opts[:id])
+        expect(response).to_not be_successful
+      end
+    end
+
+  end
+
+  # check verify_dkim route
+  describe "verify_dkim" do
+    before :each do 
+      @opts = EmailService::FakeFactory.new.verfied_domain_opts
+    end
+    # check email admin role
+    context 'email_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http success' do
+        post :verify_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to be_successful
+      end
+    end
+
+    # check email user role
+    context 'email_user' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_user' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http success' do
+        post :verify_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to be_successful
+      end
+    end
+  
+    context 'cloud_support_tools_viewer_role alone' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http 401 status' do
+        post :verify_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'other roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token
+        end
+      end
+      it 'not allowed' do
+        post :verify_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to_not be_successful
+      end
+    end
+
+  end
+
+  # check post#activate_dkim route
+  describe "POST#activate_dkim" do
+    before :each do 
+      @opts = EmailService::FakeFactory.new.verfied_domain_opts
+    end
+    # check email admin role
+    context 'email_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http success' do
+        post :activate_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to be_successful
+      end
+    end
+
+    # check email user role
+    context 'email_user' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_user' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http success' do
+        post :activate_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to be_successful
+      end
+    end
+  
+    context 'cloud_support_tools_viewer_role alone' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http 401 status' do
+        post :activate_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'other roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token
+        end
+      end
+      it 'not allowed' do
+        post :activate_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to_not be_successful
+      end
+    end
+
+  end
+
+  # check post#deactivate_dkim route
+  describe "POST#deactivate_dkim" do
+    before :each do 
+      @opts = EmailService::FakeFactory.new.verfied_domain_opts
+    end
+    # check email admin role
+    context 'email_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http success' do
+        post :deactivate_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to be_successful
+      end
+    end
+
+    # check email user role
+    context 'email_user' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_user' }
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http success' do
+        post :deactivate_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to be_successful
+      end
+    end
+  
+    context 'cloud_support_tools_viewer_role alone' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'] = []
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token
+        end
+      end
+      it 'returns http 401 status' do
+        post :deactivate_dkim, params: default_params.merge(id: @opts[:id])
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'other roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token
+        end
+      end
+      it 'not allowed' do
+        post :deactivate_dkim, params: default_params.merge(id: @opts[:id])
         expect(response).to_not be_successful
       end
     end

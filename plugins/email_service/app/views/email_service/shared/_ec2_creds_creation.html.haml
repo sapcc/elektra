@@ -1,0 +1,13 @@
+.bs-callout.bs-callout-info.bs-callout-emphasize
+  %h4
+    Please note:
+  %p
+    AWS EC2 Credentials are to be created in your project in order to use email service.
+
+  - if services.available?(:webconsole)
+    %p.help-block
+      In the below webconsole, please run the following command.
+      %code openstack ec2 credentials create
+      command on the
+      = succeed '.' do
+        %a{ href: '#', data: {trigger: 'webconsole:open'} } Web Shell

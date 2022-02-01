@@ -13,7 +13,7 @@
             .main-buttons
               = link_to "Verify a domain", plugin('email_service').new_domain_verification_path, data: {modal: true}, class: 'btn btn-primary'
         .js-table-verified-domain
-          = render partial: 'table_verified_domains', locals: { all_domains: @all_domains }
+          = render partial: 'table_verified_domains', locals: { all_domains: all_domains }
 
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment

@@ -14,10 +14,10 @@ module ServiceLayer
           creds_hash = response.body["credentials"]
           creds_hash.each do | creds |
             next if creds['tenant_id'] != project_id
-            aws_creds << AWSCreds.new(creds["access"] , creds["secret"], "") 
+            aws_creds << AWSCreds.new(creds["access"] , creds["secret"], nil) 
           end
         else
-          err = AWSCreds.new("" , "", "AWS EC2 credentials are not created. Without this, email service will not work. Open your web-console and execute `openstack ec2 credentials create` command")
+          err = AWSCreds.new(nil , nil, "AWS EC2 credentials are not created. Without this, email service will not work. Open your web-console and execute `openstack ec2 credentials create` command")
         end
         err ? err : aws_creds
       end

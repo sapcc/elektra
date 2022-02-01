@@ -19,8 +19,6 @@ describe EmailService::TemplatesController, type: :controller do
  
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
-    allow_any_instance_of(EmailService::TemplatesController).to receive(:get_all_templates).and_return(double('templates').as_null_object)            
-    allow_any_instance_of(EmailService::TemplatesController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:store_template).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:update_template).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:list_templates).and_return(double('templates').as_null_object)
@@ -178,8 +176,7 @@ describe EmailService::TemplatesController, type: :controller do
         end
       end
       it 'returns http 302 status' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to redirect_to(templates_path(default_params))
-        expect(response.code).to eq("302")
+        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(200)
       end
     end
 
@@ -193,8 +190,7 @@ describe EmailService::TemplatesController, type: :controller do
         end
       end
       it 'returns http 302 status' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to redirect_to(templates_path(default_params))
-        expect(response.code).to eq("302")
+        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(200)
       end
     end
 

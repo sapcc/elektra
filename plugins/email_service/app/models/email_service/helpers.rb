@@ -5,20 +5,12 @@ module EmailService
 
     VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
-    TAG_SEPERATOR = ","
+    EMAIL_SEPARATOR = ","
 
-    def is_valid_email?(str)
-      str.strip.match(VALID_EMAIL_REGEX).nil? ? false : true
-    end
-
-    def templated_email_instance
-      EmailService::TemplatedEmail
-    end
-    
     def string_to_hash(attr)
       unless attr.blank?
         result_hash = {}
-        attr.split(TAG_SEPERATOR).each do |tag|
+        attr.split(EMAIL_SEPARATOR).each do |tag|
           tags_array = tag.split(/\:|\=/)
           if tags_array.count == 2
             result_hash[tags_array[0]] = tags_array[1]
@@ -32,42 +24,30 @@ module EmailService
       end
     end
 
-    def string_to_email_array(str)
-      addr_arr = []
-      unless str.blank?
-        items = str.split TAG_SEPERATOR
-        items.each do | item |
-          addr_arr << item.strip unless !is_valid_email?(item)
-        end
-      end
-      addr_arr
-    end
-
     def json_to_string(attr)
       result_string = ""
       unless attr.blank?
         attr.each do |key, value|
-          result_string << "#{key}:#{value}#{TAG_SEPERATOR}"
+          result_string << "#{key}:#{value}#{EMAIL_SEPARATOR}"
         end
-        result_string.chomp! TAG_SEPERATOR
+        result_string.chomp! EMAIL_SEPARATOR
       end
       result_string
     end
 
     def string_to_array(attr)
       unless attr.blank?
-        return attr.split TAG_SEPERATOR
+        return attr.split EMAIL_SEPARATOR
       end
       return []
     end
 
     def array_to_string(attr)
       unless attr.blank?
-        return attr.join TAG_SEPERATOR
+        return attr.join EMAIL_SEPARATOR
       end
       return ""
     end
-
 
   end
 

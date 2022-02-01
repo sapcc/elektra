@@ -22,7 +22,6 @@ describe EmailService::TemplatedEmailsController, type: :controller do
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)           
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_send_data).and_return(double('data').as_null_object)            
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_verified_identities_collection).and_return(double('verified_identities').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_all_templates).and_return(double('templates').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_templates_collection).and_return(double('templates').as_null_object)
@@ -95,7 +94,6 @@ describe EmailService::TemplatedEmailsController, type: :controller do
   describe "POST 'create'" do
     before :each do
       @opts = ::EmailService::FakeFactory.new.templated_email_opts
-      puts @opts.inspect
     end
     context 'email_admin' do
       before :each do

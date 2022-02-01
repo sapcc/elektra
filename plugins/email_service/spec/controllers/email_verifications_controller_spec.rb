@@ -1,7 +1,7 @@
 require 'spec_helper'
 require_relative '../factories/factories'
 
-describe EmailService::VerificationsController, type: :controller do
+describe EmailService::EmailVerificationsController, type: :controller do
   routes { EmailService::Engine.routes }
  
   default_params = { domain_id: AuthenticationStub.domain_id,
@@ -18,11 +18,10 @@ describe EmailService::VerificationsController, type: :controller do
   end
  
   before :each do
-    allow_any_instance_of(EmailService::VerificationsController).to receive(:get_ec2_creds).and_return(double('creds').as_null_object)
-    allow_any_instance_of(EmailService::VerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
-    allow_any_instance_of(EmailService::VerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)     
-    allow_any_instance_of(EmailService::VerificationsController).to receive(:remove_verified_identity).and_return(double('status').as_null_object)
-    allow_any_instance_of(EmailService::VerificationsController).to receive(:verify_identity).and_return(double('status').as_null_object)
+    allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
+    allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)     
+    allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:remove_verified_identity).and_return(double('status').as_null_object)
+    allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:verify_identity).and_return(double('status').as_null_object)
   end
 
   # check index route
@@ -102,6 +101,7 @@ describe EmailService::VerificationsController, type: :controller do
       end
       it 'returns http success' do
         get :new, params: default_params
+        # debugger
         expect(response).to be_successful
         expect(response).to render_template(:new)
       end
@@ -172,7 +172,7 @@ describe EmailService::VerificationsController, type: :controller do
         end
       end
       it 'returns http success' do
-        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(200)
+        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(302)
       end
     end
 
@@ -187,7 +187,7 @@ describe EmailService::VerificationsController, type: :controller do
         end
       end
       it 'returns http success' do
-        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(200)
+        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(302)
       end
     end
   

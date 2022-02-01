@@ -22,9 +22,12 @@ module EmailService
     # validation
     validates_presence_of :source, message: "sender can't be empty"
     validates_presence_of :template_name, message: "Template name can't be empty"
+    validates_presence_of :to_addr, message: "To address can't be empty"
+    validates_presence_of :reply_to_addr, message: "Reply to address can't be empty"
+    validates_presence_of :template_data, message: "Template data can't be empty"
     validates :to_addr, presence: true, email: true
-    validates :cc_addr, presence: false, email: true
-    validates :bcc_addr, presence: false, email: true
+    validates :cc_addr, allow_nil: true, email: true
+    validates :bcc_addr, allow_nil: true, email: true
     validates :reply_to_addr, presence: true, email: true
     validates :template_data, presence: true, json: true
 

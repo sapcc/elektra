@@ -1,15 +1,35 @@
 - identity = domain_item[:identity]
+- status = domain_item[:status]
+- dkim_verification_status = domain_item[:dkim_verification_status]
+- dkim_enabled = domain_item[:dkim_enabled]
 %tr
   %td
     = domain_item[:id]
   %td
-    = domain_item[:identity]
+    = link_to identity, plugin('email_service').domain_verification_path(id: domain_item[:id], identity: identity), data: {modal: true}
   %td
-    = domain_item[:status]
+    - if status == "Pending"
+      %a{ href: "#", title: "You need to create a TXT record for your domain. Click on the domain link for more details.", data: { toggle: "tooltip", html: true} }
+        %i.fa.far.fa-pause-circle
+    - elsif status == "Success"
+      %i.fa.far.fa-check-circle
+    - elsif status == "Failed"
+      %a{ href: "#", title: "Status: failed; Time limited to verification is expired. Please initiate verification again.", data: { toggle: "tooltip", html: true} }
+        %i.fa.fas.fa-exclamation-triangle
   %td
-    = domain_item[:dkim_enabled]
+    - if dkim_enabled
+      %i.fa.fa-check-circle
+    - else
+      %i.fa.fa-times-circle
   %td
-    = domain_item[:dkim_verification_status]
+    - if dkim_verification_status == "Pending"
+      %a{ href: "#", title: "You need to create a TXT record for your domain. Click on the domain link for more details.", data: { toggle: "tooltip", html: true} }
+        %i.fa.far.fa-pause-circle
+    - elsif dkim_verification_status == "Success"
+      %i.fa.far.fa-check-circle
+    - elsif dkim_verification_status == "Failed"
+      %a{ href: "#", title: "Status: failed; Time limited to verification is expired. Please initiate verification again.", data: { toggle: "tooltip", html: true} }
+        %i.fa.fas.fa-exclamation-triangle
   %td.snug
     - if current_user.is_allowed?("email_service:verified_domain_delete", {target: { domain_item: domain_item, project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("email_service:verified_domain_update", {})
       = render partial: 'domain_item_actions', locals: { domain_item: domain_item, show_view: false }

@@ -5,7 +5,6 @@ module EmailService
     include ActiveModel::Conversion
     include ActiveModel::Validations
     include ActiveModel::Validations::Callbacks
-    include ::EmailService::ConfigsetHelper
 
     attribute :name, String
     attribute :event_destinations, String
@@ -15,12 +14,15 @@ module EmailService
     # validation
     validates_presence_of :name
 
+    def to_model
+      self
+    end
+    
     def persisted?
       false
     end
 
     private
-
 
     def assign_errors(messages)
       messages.each do |key, value|
@@ -29,32 +31,6 @@ module EmailService
         end
       end
     end
-
-    # def initialize(opts = {})
-    #   @name       = opts[:name]
-    #   @event_destinations = opts[:event_destinations]
-    #   @errors     = validate_opts(opts)
-    # end 
-  
-    # def name
-    #   @name
-    # end
-
-    # def errors?
-    #   @errors.empty? ? false : true
-    # end
-
-    # def errors
-    #   @errors
-    # end
-
-    # def validate_opts(opts)
-    #   errors = []
-    #   if opts[:name] == "" || opts[:name].nil?
-    #     errors.push({ name: "name", message: "Configset name can't be empty" })
-    #   end
-    #   errors
-    # end
 
   end
 end

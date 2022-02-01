@@ -2,20 +2,14 @@ module EmailService
   class ConfigsetsController < ::EmailService::ApplicationController
     before_action :restrict_access
 
+    before_action :set_configset, only: %i[edit, destroy, update]
     authorization_context 'email_service'
     authorization_required
 
     def index
-
-      creds = get_ec2_creds
-      
-      if creds.error.empty?
-        next_token, @configsets = list_configsets
-        items_per_page = 10
-        @paginatable_configsets = Kaminari.paginate_array(@configsets, total_count: @configsets.count).page(params[:page]).per(items_per_page)
-      else
-        flash[:error] = creds.error
-      end
+      # next_token, @configsets = list_configsets
+      items_per_page = 10
+      @paginatable_configsets = Kaminari.paginate_array(configsets, total_count: configsets.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
       rescue Exception => e
@@ -52,7 +46,6 @@ module EmailService
       @id = params[:id] if params[:id]
       @name = params[:name] if params[:name]
       @configset_description = describe_configset(@name)
-      #<struct Aws::SES::Types::DescribeConfigurationSetResponse configuration_set=#<struct Aws::SES::Types::ConfigurationSet name="ABC">, event_destinations=[], tracking_options=nil, delivery_options=nil, reputation_options=nil>
       render "show", locals: { data: { modal: true } }
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
@@ -69,33 +62,25 @@ module EmailService
       if status == "success"
         msg = "Config Set: #{name} is removed"
         flash[:success] = msg
-        redirect_to plugin('email_service').configsets_path
       else
         msg = "Config Set #{name} is not removed : #{status}"
         flash[:error] = msg
       end
+      redirect_to plugin('email_service').configsets_path and return
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
       rescue Exception => e
         flash[:error] = "Status Code: 500 : Error: #{e}"
-      redirect_to plugin('email_service').configsets_path
       
     end
 
 
     def edit
-      @configset = find_configset(params[:name])
-      rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-      rescue Exception => e
-        flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
 
     def update
-      status = ""
-      configset = find_configset(params[:name])
-      # Add code to modify with other props here.
-      redirect_to plugin('email_service').configsets_path
+      # # Add code to modify with other props here.
+      # redirect_to plugin('email_service').configsets_path
     end
 
     private
@@ -108,8 +93,5 @@ module EmailService
         params.require(:configset).permit(:name, :event_destinations)
       end
 
-      def new_configset(attributes = {})
-        configset = ::EmailService::Configset.new(attributes)
-      end
   end
 end
