@@ -78,7 +78,6 @@ module Lbaas2
           render json: { errors: e.message }, status: "500"
         end
 
-        # no model used empty attributes should be set to nil
         def batch_update
           members = {members: []}
           # get subnet from loadbalancer

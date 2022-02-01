@@ -25,8 +25,8 @@ export const formAttrForSubmit = (items) => {
         member[key] = null
       }
     })
-    // remove id since it is just self generated for the ui
-    delete member.id
+    // remove uiid when creating a new item since it is just self generated for the ui
+    delete member.uiid
   })
 
   return newItems
@@ -235,10 +235,15 @@ const useMember = () => {
   }
 
   const updateMember = (lbID, poolID, memberID, values) => {
+    let memberToUpdate = values
+    if (values && Array.isArray(values) && values.length == 1) {
+      memberToUpdate = values[0]
+    }
+
     return new Promise((handleSuccess, handleErrors) => {
       ajaxHelper
         .put(`/loadbalancers/${lbID}/pools/${poolID}/members/${memberID}`, {
-          member: values,
+          member: memberToUpdate,
         })
         .then((response) => {
           dispatch({ type: "RECEIVE_MEMBER", member: response.data })

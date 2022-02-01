@@ -140,7 +140,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
             <div className="row margin-top">
               <div className="col-md-1">
                 <CustomLabel
-                  htmlFor={`member[${member.id}][name]`}
+                  htmlFor={`member[${member.uiid}][name]`}
                   labelText="Name"
                   required
                 />
@@ -148,7 +148,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
               <div className="col-md-6">
                 <FormControl
                   type="text"
-                  id={`member[${member.id}][name]`}
+                  id={`member[${member.uiid}][name]`}
                   name="name"
                   value={member.name || ""}
                   onChange={(e) => {
@@ -158,14 +158,14 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
               </div>
               <div className="col-md-1">
                 <CustomLabel
-                  htmlFor={`member[${member.id}][backup]`}
+                  htmlFor={`member[${member.uiid}][backup]`}
                   labelText="Backup"
                 />
               </div>
               <div className="col-md-4">
                 <input
                   type="checkbox"
-                  id={`member[${member.id}][backup]`}
+                  id={`member[${member.uiid}][backup]`}
                   name="backup"
                   checked={member.backup}
                   onChange={(e) => {
@@ -178,7 +178,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
             <div className="row margin-top">
               <div className="col-md-1">
                 <CustomLabel
-                  htmlFor={`member[${member.id}][address]`}
+                  htmlFor={`member[${member.uiid}][address]`}
                   labelText="IPs"
                   required
                 />
@@ -188,7 +188,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                   <MemberIpIcon />
                   <FormControl
                     type="text"
-                    id={`member[${member.id}][address]`}
+                    id={`member[${member.uiid}][address]`}
                     name="address"
                     value={member.address || ""}
                     disabled={edit}
@@ -201,7 +201,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                   <span className="horizontal-padding-min">:</span>
                   <FormControl
                     type="number"
-                    id={`member[${member.id}][protocol_port]`}
+                    id={`member[${member.uiid}][protocol_port]`}
                     name="protocol_port"
                     value={member.protocol_port || ""}
                     disabled={edit}
@@ -214,14 +214,14 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
               </div>
               <div className="col-md-1">
                 <CustomLabel
-                  htmlFor={`member[${member.id}][weight]`}
+                  htmlFor={`member[${member.uiid}][weight]`}
                   labelText="Weight"
                 />
               </div>
               <div className="col-md-4">
                 <FormControl
                   type="number"
-                  id={`member[${member.id}][weight]`}
+                  id={`member[${member.uiid}][weight]`}
                   name="weight"
                   value={member.weight || ""}
                   onChange={(e) => {
@@ -238,7 +238,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                   <MemberMonitorIcon />
                   <FormControl
                     type="text"
-                    id={`member[${member.id}][monitor_address]`}
+                    id={`member[${member.uiid}][monitor_address]`}
                     name="monitor_address"
                     value={member.monitor_address || ""}
                     placeholder="Alternate Monitor IP"
@@ -250,7 +250,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                   <span className="horizontal-padding-min">:</span>
                   <FormControl
                     type="number"
-                    id={`member[${member.id}][monitor_port]`}
+                    id={`member[${member.uiid}][monitor_port]`}
                     name="monitor_port"
                     value={member.monitor_port || ""}
                     placeholder="Port"
@@ -262,13 +262,13 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
               </div>
               <div className="col-md-1">
                 <CustomLabel
-                  htmlFor={`member[${member.id}][tags]`}
+                  htmlFor={`member[${member.uiid}][tags]`}
                   labelText="Tags"
                 />
               </div>
               <div className="col-md-4">
                 <TagsInput
-                  name={`member[${member.id}][tags]`}
+                  name={`member[${member.uiid}][tags]`}
                   initValue={member.tags}
                   useFormContext={false}
                   onChange={(editorTags) => {
@@ -294,7 +294,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                 <div className="col-md-6"></div>
                 <div className="col-md-1">
                   <CustomLabel
-                    htmlFor={`member[${member.id}][admin_state_up]`}
+                    htmlFor={`member[${member.uiid}][admin_state_up]`}
                     labelText={
                       <>
                         <span>Admin </span>
@@ -306,7 +306,7 @@ const NewEditMemberListItem = ({ id, index, servers, edit }) => {
                 <div className="col-md-4">
                   <input
                     type="checkbox"
-                    id={`member[${member.id}][admin_state_up]`}
+                    id={`member[${member.uiid}][admin_state_up]`}
                     name="admin_state_up"
                     checked={member.admin_state_up}
                     onChange={(e) => {

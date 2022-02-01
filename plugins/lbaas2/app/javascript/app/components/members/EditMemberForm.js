@@ -12,7 +12,10 @@ import { Link } from "react-router-dom"
 import { ErrorsList } from "lib/elektra-form"
 import { addNotice } from "lib/flashes"
 import useCommons from "../../../lib/hooks/useCommons"
-import useMember, { validateForm } from "../../../lib/hooks/useMember"
+import useMember, {
+  validateForm,
+  formAttrForSubmit,
+} from "../../../lib/hooks/useMember"
 import usePool from "../../../lib/hooks/usePool"
 import Log from "../shared/logger"
 import ErrorPage from "../ErrorPage"
@@ -61,31 +64,19 @@ const EditMemberForm = (
       if (!validateForm(state.items)) {
         return onFormCallback({ isSubmitting: false, isValid: false })
       }
+      const memberItems = formAttrForSubmit(state.items)
       setFormErrors(null)
       onFormCallback({ isSubmitting: true, isValid: true })
-      return create(loadbalancerID, poolID, state.items)
+      return updateMember(loadbalancerID, poolID, memberID, memberItems)
         .then((response) => {
-          onFormCallback({ isSubmitting: true, isValid: false })
-          if (response && response.data) {
-            if (state.items.length == 1) {
-              addNotice(
-                <React.Fragment>
-                  Member <b>{response.data.name}</b> ({response.data.id}) is
-                  being created.
-                </React.Fragment>
-              )
-            } else {
-              addNotice(
-                <React.Fragment>Members are being created.</React.Fragment>
-              )
-            }
-          }
-          // update pool info
+          addNotice(
+            <React.Fragment>
+              Member <b>{response.data.name}</b> ({response.data.id}) is being
+              updated.
+            </React.Fragment>
+          )
+          // update pool
           persistPool(loadbalancerID, poolID)
-          // reload members list if batch update
-          if (state.items.length > 1) {
-            persistMembers(loadbalancerID, poolID)
-          }
           onFormCallback({ shouldClose: true })
         })
         .catch((error) => {

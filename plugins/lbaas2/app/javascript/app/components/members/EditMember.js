@@ -81,32 +81,6 @@ const EditMember = (props) => {
     }
   }
 
-  /**
-   * Form stuff
-   */
-
-  // const onSubmit = (values) => {
-  //   // setFormErrors(null)
-  //   // parse nested keys to objects
-  //   // from values like member[XYZ][name]="arturo" to {XYZ:{name:"arturo"}}
-  //   const newValues = parseNestedValues(values)
-  //   return updateMember(loadbalancerID, poolID, memberID, newValues[memberID])
-  //     .then((response) => {
-  //       addNotice(
-  //         <React.Fragment>
-  //           Member <b>{response.data.name}</b> ({response.data.id}) is being
-  //           updated.
-  //         </React.Fragment>
-  //       )
-  //       // update pool
-  //       persistPool(loadbalancerID, poolID)
-  //       close()
-  //     })
-  //     .catch((error) => {
-  //       setFormErrors(formErrorMessage(error))
-  //     })
-  // }
-
   const memberFormRef = useRef()
   const onSaveClicked = () => {
     memberFormRef.current.onSubmit()
