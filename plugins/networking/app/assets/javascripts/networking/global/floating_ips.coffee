@@ -23,15 +23,21 @@ loadSubnets= (networkId) ->
   else
     $('form#new_floating_ip button[type="submit"]').prop('disabled',true)
     $('fieldset#subnets .form-group').hide()
-    $('fieldset#subnets').append($loader)
-    $.ajax(
-      #url: "networks/#{networkId}/ip_availability"
-      url: "#{window.location.protocol}//#{window.location.host}/#{scopedDomainFid}/#{scopedProjectFid}/networking/networks/#{networkId}/ip_availability"
-      success: (data, textStatus, jqXHR ) ->
-        subnets[networkId] = data
-        $loader.remove()
-        showSubnets(subnets[networkId])
-    )
+    if policy.isAllowed("networking:ip_availability")
+      $('fieldset#subnets').append($loader)
+      $.ajax(
+        #url: "networks/#{networkId}/ip_availability"
+        url: "#{window.location.protocol}//#{window.location.host}/#{scopedDomainFid}/#{scopedProjectFid}/networking/networks/#{networkId}/ip_availability"
+        success: (data, textStatus, jqXHR ) ->
+          subnets[networkId] = data
+          $loader.remove()
+          showSubnets(subnets[networkId])
+      )
+    else
+      $select = $('#floating_ip_floating_subnet_id')
+      $select.empty()
+      $('fieldset#subnets .form-group').show()
+      $('#floating_ip_floating_subnet_id').parent().append("<p class='help-block'>To see availability information for IPs you need the role network_viewer or network_admin</p>")
 
 init= () ->
   if $('#floating_ip_floating_subnet_id').length==0 || ($('#floating_ip_floating_subnet_id')[0].value || '').trim().length==0
