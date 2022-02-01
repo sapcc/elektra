@@ -26,7 +26,6 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
-    # admin_state_up has been removed to prevent to send a nil object in the backend since this attribute will not be returned from the form
     def attributes_for_update
       {
         'name'            => read('name'),

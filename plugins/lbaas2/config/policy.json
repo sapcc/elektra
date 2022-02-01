@@ -61,6 +61,7 @@
   "lbaas2:member_get": "rule:lbaas2_context_is_viewer",
   "lbaas2:member_create": "rule:lbaas2_context_is_editor or rule:lbaas2_poolmemberadmin",
   "lbaas2:member_update": "rule:lbaas2_context_is_editor or rule:lbaas2_poolmemberadmin",
+  "lbaas2:member_batch_update": "rule:lbaas2_context_is_editor or rule:lbaas2_poolmemberadmin",
   "lbaas2:member_delete": "rule:lbaas2_context_is_editor or rule:lbaas2_poolmemberadmin",
   "lbaas2:member_serversForSelect": "rule:lbaas2_context_is_editor or rule:lbaas2_poolmemberadmin"
 }

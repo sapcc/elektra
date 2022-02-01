@@ -207,7 +207,8 @@ const NewHealthMonitor = (props) => {
               label="Expected codes"
               name="expected_codes"
             >
-              <FormInput type="text" name="expected_codes" value="200" />
+              {/* We need here the shared FormInput because of need to set a default value */}
+              <FormInput type="text" name="expected_codes" defaultValue="200" />
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
                 The list of HTTP status codes expected in response from the
@@ -225,7 +226,8 @@ const NewHealthMonitor = (props) => {
 
           {showUrlPath && (
             <Form.ElementHorizontal label="Url path" name="url_path">
-              <FormInput type="text" name="url_path" value="/" />
+              {/* We need here the shared FormInput because of need to set a default value */}
+              <FormInput type="text" name="url_path" defaultValue="/" />
               <span className="help-block">
                 <i className="fa fa-info-circle"></i>
                 The HTTP URL path of the request sent by the monitor to test the

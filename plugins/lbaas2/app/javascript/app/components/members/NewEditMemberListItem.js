@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from "react";
-import FormInput from "../shared/FormInput";
-import TagsInput from "../shared/TagsInput";
-import uniqueId from "lodash/uniqueId";
-import Select from "react-select";
-import Log from "../shared/logger";
-import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons";
+import React, { useState, useMemo } from "react"
+import TagsInput from "../shared/TagsInput"
+import uniqueId from "lodash/uniqueId"
+import Select from "react-select"
+import Log from "../shared/logger"
+import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons"
+import { FormControl } from "react-bootstrap"
+import { useFormState, useFormDispatch } from "./FormState"
 
 const styles = {
   container: (base) => ({
@@ -13,45 +14,55 @@ const styles = {
   }),
   menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
   menu: (provided) => ({ ...provided, zIndex: 9999 }),
-};
+}
 
 const CustomLabel = ({ htmlFor, labelText, required }) => {
-  let className = "control-label" + " " + (required ? "required" : "optional");
+  let className = "control-label" + " " + (required ? "required" : "optional")
   return (
     <label className={className} htmlFor={htmlFor}>
       {labelText}
       {required && <abbr title="required">*</abbr>}
     </label>
-  );
-};
+  )
+}
 
-const NewEditMemberListItem = ({
-  member,
-  index,
-  onRemoveMember,
-  servers,
-  edit,
-}) => {
-  const [selectedServers, setSelectedServers] = useState([]);
-  const [name, setName] = useState(member.name);
-  const [address, setAddress] = useState(member.address);
-  const [showServers, setShowServers] = useState(false);
+const NewEditMemberListItem = ({ id, index, servers, edit }) => {
+  const member = useFormState(id)
+  const [selectedServers, setSelectedServers] = useState([])
+  const [showServers, setShowServers] = useState(false)
+  const dispatch = useFormDispatch()
 
   // create a new id just if the index is different.
   // Avoid rerenders just because it creates a new object with the same id
   const collapseId = useMemo(() => {
-    return uniqueId("collapseServerSelect-");
-  }, [index]);
+    return uniqueId("collapseServerSelect-")
+  }, [index])
 
   const onChangeServers = (values) => {
-    setSelectedServers(values);
+    setSelectedServers(values)
     if (values) {
-      setName(values?.name || "");
-      setAddress(values?.address || "");
+      onUpdateItem("name", values?.name || "")
+      onUpdateItem("address", values?.address || "")
     }
-  };
+  }
 
-  Log.debug("RENDER NewEditMemberListItem");
+  const onRemoveItem = (id) => {
+    dispatch({
+      type: "REMOVE_ITEM",
+      id,
+    })
+  }
+
+  const onUpdateItem = (key, value) => {
+    dispatch({
+      type: "UPDATE_ITEM",
+      id,
+      key: key,
+      value: value,
+    })
+  }
+
+  Log.debug("RENDER NewEditMemberListItem")
 
   return useMemo(() => {
     return (
@@ -59,7 +70,7 @@ const NewEditMemberListItem = ({
         {index > 0 && <hr />}
         <div className="row display-flex">
           <div className="col-md-12">
-            {servers && (
+            {servers && !edit && (
               <div className="row">
                 <div className="col-md-1"></div>
                 <div className="col-md-11">
@@ -91,7 +102,9 @@ const NewEditMemberListItem = ({
                     {index > 0 && (
                       <div
                         className="new-member-item-remove action-link"
-                        onClick={() => onRemoveMember(member.id)}
+                        onClick={() => {
+                          onRemoveItem(id)
+                        }}
                       >
                         <span>Remove</span>
                         <i className="fa fa-trash fa-fw" />
@@ -133,7 +146,15 @@ const NewEditMemberListItem = ({
                 />
               </div>
               <div className="col-md-6">
-                <FormInput name={`member[${member.id}][name]`} value={name} />
+                <FormControl
+                  type="text"
+                  id={`member[${member.id}][name]`}
+                  name="name"
+                  value={member.name || ""}
+                  onChange={(e) => {
+                    onUpdateItem("name", e.target.value)
+                  }}
+                />
               </div>
               <div className="col-md-1">
                 <CustomLabel
@@ -142,10 +163,14 @@ const NewEditMemberListItem = ({
                 />
               </div>
               <div className="col-md-4">
-                <FormInput
+                <input
                   type="checkbox"
-                  name={`member[${member.id}][backup]`}
-                  value={member.backup}
+                  id={`member[${member.id}][backup]`}
+                  name="backup"
+                  checked={member.backup}
+                  onChange={(e) => {
+                    onUpdateItem("backup", e.target.checked)
+                  }}
                 />
               </div>
             </div>
@@ -161,21 +186,29 @@ const NewEditMemberListItem = ({
               <div className="col-md-6">
                 <div className="display-flex member-icon-in-input member-required-icon">
                   <MemberIpIcon />
-                  <FormInput
-                    name={`member[${member.id}][address]`}
-                    value={address}
+                  <FormControl
+                    type="text"
+                    id={`member[${member.id}][address]`}
+                    name="address"
+                    value={member.address || ""}
                     disabled={edit}
                     placeholder="IP Address &#42;"
-                    extraClassName="icon-in-input"
+                    bsClass="form-control icon-in-input"
+                    onChange={(e) => {
+                      onUpdateItem("address", e.target.value)
+                    }}
                   />
                   <span className="horizontal-padding-min">:</span>
-                  <FormInput
+                  <FormControl
                     type="number"
-                    name={`member[${member.id}][protocol_port]`}
-                    value={member.protocol_port}
+                    id={`member[${member.id}][protocol_port]`}
+                    name="protocol_port"
+                    value={member.protocol_port || ""}
                     disabled={edit}
                     placeholder="Port &#42;"
-                    size="lg"
+                    onChange={(e) => {
+                      onUpdateItem("protocol_port", e.target.value)
+                    }}
                   />
                 </div>
               </div>
@@ -186,10 +219,14 @@ const NewEditMemberListItem = ({
                 />
               </div>
               <div className="col-md-4">
-                <FormInput
+                <FormControl
                   type="number"
-                  name={`member[${member.id}][weight]`}
-                  value={member.weight || "1"}
+                  id={`member[${member.id}][weight]`}
+                  name="weight"
+                  value={member.weight || ""}
+                  onChange={(e) => {
+                    onUpdateItem("weight", e.target.value)
+                  }}
                 />
               </div>
             </div>
@@ -199,19 +236,27 @@ const NewEditMemberListItem = ({
               <div className="col-md-6">
                 <div className="display-flex member-icon-in-input">
                   <MemberMonitorIcon />
-                  <FormInput
-                    name={`member[${member.id}][monitor_address]`}
-                    value={member.monitor_address}
+                  <FormControl
+                    type="text"
+                    id={`member[${member.id}][monitor_address]`}
+                    name="monitor_address"
+                    value={member.monitor_address || ""}
                     placeholder="Alternate Monitor IP"
-                    extraClassName="icon-in-input"
+                    bsClass="form-control icon-in-input"
+                    onChange={(e) => {
+                      onUpdateItem("monitor_address", e.target.value)
+                    }}
                   />
                   <span className="horizontal-padding-min">:</span>
-                  <FormInput
+                  <FormControl
                     type="number"
-                    name={`member[${member.id}][monitor_port]`}
-                    value={member.monitor_port}
+                    id={`member[${member.id}][monitor_port]`}
+                    name="monitor_port"
+                    value={member.monitor_port || ""}
                     placeholder="Port"
-                    size="lg"
+                    onChange={(e) => {
+                      onUpdateItem("monitor_port", e.target.value)
+                    }}
                   />
                 </div>
               </div>
@@ -225,9 +270,24 @@ const NewEditMemberListItem = ({
                 <TagsInput
                   name={`member[${member.id}][tags]`}
                   initValue={member.tags}
+                  useFormContext={false}
+                  onChange={(editorTags) => {
+                    const tags = editorTags.map((item, index) => {
+                      return item.value || item
+                    })
+                    onUpdateItem("tags", tags)
+                  }}
                 />
+                <span className="help-block">
+                  <i className="fa fa-info-circle"></i>
+                  Start a new tag typing a string and hitting the <b>
+                    Enter
+                  </b>{" "}
+                  or <b>Tab key</b>.
+                </span>
               </div>
             </div>
+
             {edit && (
               <div className="row margin-top">
                 <div className="col-md-1"></div>
@@ -244,10 +304,14 @@ const NewEditMemberListItem = ({
                   />
                 </div>
                 <div className="col-md-4">
-                  <FormInput
+                  <input
                     type="checkbox"
-                    name={`member[${member.id}][admin_state_up]`}
-                    value={member.admin_state_up}
+                    id={`member[${member.id}][admin_state_up]`}
+                    name="admin_state_up"
+                    checked={member.admin_state_up}
+                    onChange={(e) => {
+                      onUpdateItem("admin_state_up", e.target.checked)
+                    }}
                   />
                 </div>
               </div>
@@ -255,19 +319,16 @@ const NewEditMemberListItem = ({
           </div>
         </div>
       </>
-    );
+    )
   }, [
+    member,
     showServers,
     collapseId,
     JSON.stringify(servers),
     selectedServers,
-    JSON.stringify(member),
-    name,
-    address,
-    onRemoveMember,
     setShowServers,
     onChangeServers,
-  ]);
-};
+  ])
+}
 
-export default NewEditMemberListItem;
+export default NewEditMemberListItem
