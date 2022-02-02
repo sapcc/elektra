@@ -1,4 +1,5 @@
 {
   "projectId": "elektra",
-  "defaultCommandTimeout": 30000
+  "defaultCommandTimeout": 10000,
+  "chromeWebSecurity": false
 }

@@ -15,16 +15,21 @@
 
     const catchErrors = (response) => {
       if (response.status < 400) {
+        //console.log(response)
         return response
       } else {
-        // error case get response from the api and show it in error message
+        // to get the error message from the API
         return response.text().then((message) => {
+          // try to parse json
+          try{ 
+            var mesageData = JSON.parse(message)
+            message = mesageData.error
+          }
+          catch(e){}
           var error = new Error(message || response.statusText || response.status)
           error.statusCode = response.status
-          //InfoDialog.show("Problem to get vmware version",error)
-          $("span.spinner").hide()
-          $("span.guest_tools_problem").show()
-          $("span.guest_tools_problem_text").html("Problem to get guest tools version: "+error.message)
+          // this is handeled in the catch case
+          throw error
         })
       }
     }
@@ -32,15 +37,18 @@
     var virtualmachine_guest_tools_target_version = "0";
     fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (guest_tools_target_version) (vrops_virtualmachine_guest_tools_target_version_info)')
       .then(catchErrors)
-      .then((response) => response.json())
+      .then(response => response.json())
       .then((json) => {
+        // get the target version
+        //console.log(json)
         var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
         var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
         // console.log(virtualMachineGuestToolsTargetVersion)
         fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (virtualmachine, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{virtualmachine="#{@instance.name} (#{@instance.id})"}) AND on (virtualmachine) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
           .then(catchErrors)
-          .then((response) => response.json())
+          .then(response => response.json())
           .then((json) => {
+            // get the installed version
             // console.log(json)
             $("span.spinner").hide()
             if (json.data.result.length == 0 ) {
@@ -62,20 +70,18 @@
               }
             }
           })
-          // NOTE: do not use catch here because in case of error catchErrors() is not used
-          //.catch((error) => { 
-          //  console.log("ERROR FETCH TOOLS VERSION", error)
-          //  $("span.spinner").hide()
-          //  $("span.guest_tools_problem").show()
-          //  $("span.guest_tools_problem_text").html("Problem to get guest tools version. " + error.message)
-          //})
+          .catch((error) => { 
+            console.log("ERROR FETCH TOOLS VERSION", error)
+            $("span.spinner").hide()
+            $("span.guest_tools_problem").show()
+            $("span.guest_tools_problem_text").html("Problem to get guest tools version: " + error.message)
+          })
       })
-      // NOTE: do not use catch here because in case of error catchErrors() is not used
-      //.catch((error) => {
-      //  console.log("ERROR FETCH TARGET VERSION", error)
-      //  $("span.spinner").hide()
-      //  $("span.guest_tools_problem").show()
-      //  $("span.guest_tools_problem_text").html("Problem to get target version. " + error.message)
-      //})
+      .catch((error) => {
+        console.log("ERROR FETCH TARGET VERSION", error)
+        $("span.spinner").hide()
+        $("span.guest_tools_problem").show()
+        $("span.guest_tools_problem_text").html("Problem to get target version: " + error.message)
+      })
   });
 
