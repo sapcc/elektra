@@ -10,8 +10,7 @@ module EmailService
 
     def ui_switcher
       if current_user.has_role?('cloud_support_tools_viewer')
-        # redirect_to emails_path
-        check_ec2_credentials
+        redirect_to emails_path
       end
     end
  
@@ -20,14 +19,6 @@ module EmailService
         redirect_to index_path
       end
     end 
-
-    def check_ec2_credentials
-      if !ec2_creds.error.nil?
-        render 'email_service/shared/ec2_credentials'
-      else
-        redirect_to emails_path
-      end
-    end
     
     # Handle exception related to roles
     rescue_from 'MonsoonOpenstackAuth::Authorization::SecurityViolation' do |exception|

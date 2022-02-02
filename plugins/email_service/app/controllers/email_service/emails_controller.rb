@@ -7,6 +7,7 @@ module EmailService
     authorization_required
 
     def index
+
     end
 
   end
