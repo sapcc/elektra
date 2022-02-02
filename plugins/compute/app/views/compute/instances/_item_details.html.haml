@@ -69,7 +69,39 @@
                     - project_id_and_name(@instance.tenant_id)
                   - else
                     = project_name(@instance.tenant_id)
-        
+              %tr
+                %th VMware Guest Tools
+                %td{id: "guest_tools"}
+                  %span.spinner
+                  %span.no_guest_tools{style:"display: none;"}
+                    %span.text-warning
+                      = icon('exclamation-triangle')
+                      not found -> 
+                    = link_to "how to install", "https://documentation.global.cloud.sap/compute/image-vmware-tools", target: "_blank"
+                  %span.guest_tools_not_uptodate{style:"display: none;"}
+                    %span.text-warning
+                      = icon('wrench')
+                      outdated -> 
+                    = link_to "how to update", "https://documentation.global.cloud.sap/compute/image-vmware-tools", target: "_blank"
+                    .small
+                      ( Installed version: 
+                      %span.guest_tools_not_uptodate_current_version
+                      Target version: 
+                      %span.guest_tools_not_uptodate_target_version
+                      )
+                  %span.guest_tools_uptodate{style:"display: none;"}
+                    %span.text-success
+                      = icon('check')
+                      up to date
+                    .small
+                      ( Installed version: 
+                      %span.guest_tools_uptodate_current_version
+                      )
+                  %span.guest_tools_problem{style:"display: none;"}
+                    %span.text-danger
+                      = icon('exclamation-triangle')
+                      %span.guest_tools_problem_text
+
         .tab-pane{role:"tabpanel", id:"specs"}
           - if @instance.flavor
             - root_disk_size = @instance.flavor['disk']
