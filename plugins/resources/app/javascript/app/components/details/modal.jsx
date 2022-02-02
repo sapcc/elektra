@@ -1,6 +1,7 @@
 import { Modal, Button } from "react-bootstrap"
 import { DataTable } from "lib/components/datatable"
 import { FormErrors } from "lib/elektra-form/components/form_errors"
+import { SearchField } from "lib/components/search_field"
 
 import { t } from "../../utils"
 import { Scope } from "../../scope"
@@ -47,6 +48,7 @@ const domainDataTableColumns = [
     key: "id",
     label: "Project",
     sortStrategy: "text",
+    searchKey: (props) => `${props.metadata.name} ${props.metadata.id}` || "",
     sortKey: (props) => props.metadata.name || "",
   },
   {
@@ -80,6 +82,7 @@ export default class DetailsModal extends React.Component {
     isFetching: false,
     //Unexpected errors returned from the Limes API, if any.
     apiErrors: null,
+    searchTerm: null,
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -279,18 +282,31 @@ export default class DetailsModal extends React.Component {
               <span className="spinner" /> Loading {scope.sublevel()}s...
             </p>
           ) : (
-            <DataTable columns={columns} pageSize={8}>
-              {(this.state.subscopes || []).map((subscopeProps) => (
-                <DetailsResource
-                  key={subscopeProps.metadata.id}
-                  {...subscopeProps}
-                  canEdit={this.props.canEdit}
-                  scopeData={this.props.scopeData}
-                  setQuota={this.setSubscopeQuota}
-                  handleAPIErrors={this.handleAPIErrors}
+            <>
+              <div className="toolbar searchToolbar">
+                <SearchField
+                  value={this.state.searchTerm}
+                  onChange={(term) => this.setState({ searchTerm: term })}
+                  placeholder="Name or ID"
                 />
-              ))}
-            </DataTable>
+              </div>
+              <DataTable
+                columns={columns}
+                pageSize={8}
+                searchText={this.state.searchTerm}
+              >
+                {(this.state.subscopes || []).map((subscopeProps) => (
+                  <DetailsResource
+                    key={subscopeProps.metadata.id}
+                    {...subscopeProps}
+                    canEdit={this.props.canEdit}
+                    scopeData={this.props.scopeData}
+                    setQuota={this.setSubscopeQuota}
+                    handleAPIErrors={this.handleAPIErrors}
+                  />
+                ))}
+              </DataTable>
+            </>
           )}
         </Modal.Body>
 
