@@ -7,14 +7,14 @@ module EmailService
     
     def index
       @cronus_activated = false
-      if ec2_creds.error.nil?
+      unless ec2_creds.nil?
         @access = ec2_creds.access
         @secret = ec2_creds.secret
         if @access && @secret 
           @cronus_activated = true
         end
       else
-        flash[:error] = ec2_creds.error
+        flash[:error] = "Cronus is not activated"
       end
     rescue Elektron::Errors::ApiResponse => e
       flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
