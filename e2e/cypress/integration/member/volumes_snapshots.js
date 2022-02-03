@@ -15,11 +15,11 @@ describe("Volumes", () => {
     })
   })
 
-  it("contains 'Create New' button", () => {
+  it("Contains 'Create New' button", () => {
     cy.get(".btn").contains("Create New")
   })
 
-  it("click on 'Create New' button opens a modal window", () => {
+  it("Click on 'Create New' button opens a modal window", () => {
     cy.get(".btn").contains("Create New").click()
     cy.url().should("include", "/?r=/volumes/new")
     cy.get(".modal-content").as("modal")
@@ -52,7 +52,7 @@ describe("Snapshots", () => {
 })
 
 describe("Deep links", () => {
-  it("opens the new volume modal window", () => {
+  it("Opens the new volume modal window", () => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
       Cypress.env("TEST_USER"),

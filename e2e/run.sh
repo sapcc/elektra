@@ -37,8 +37,8 @@ function help_me () {
   exit 1
 }
 
-SPECS_FOLDER="cypress/integration/**/*"
 PROFILE="member"
+SPECS_FOLDER="cypress/integration/$PROFILE/**/*"
 CY_CMD="cypress"
 if [[ "$1" == "--help" ]]; then
   help_me
@@ -85,7 +85,7 @@ else
         shift # past argument
         ;;
         *)    # test folder
-        SPECS_FOLDER="cypress/integration/$1.js"
+        SPECS_FOLDER="cypress/integration/$PROFILE/$1.js"
         shift # past argument
         ;;
     esac

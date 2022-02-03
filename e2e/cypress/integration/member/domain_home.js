@@ -1,5 +1,3 @@
-require("../support/commands")
-
 describe("Landing page", () => {
   before(() => {
     cy.elektraLogin(
@@ -9,7 +7,7 @@ describe("Landing page", () => {
     )
   })
 
-  it("contains home breadcrumb", () => {
+  it("Contains home breadcrumb", () => {
     cy.get(".title-content").contains("Home")
   })
 })

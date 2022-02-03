@@ -1,5 +1,9 @@
 Please Note, the Test User,Domain and Project is only configured in QA-DE-1
 
+# Best Practice
+
+https://docs.cypress.io/guides/references/best-practices
+
 # Usage
 
 ```bash

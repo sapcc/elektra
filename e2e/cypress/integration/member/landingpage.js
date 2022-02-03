@@ -14,7 +14,7 @@ describe("Landing page", () => {
       cy.visit("/")
     })
 
-    it("contains Converged Cloud", () => {
+    it("Contains Converged Cloud", () => {
       cy.contains("Converged Cloud")
     })
   })
