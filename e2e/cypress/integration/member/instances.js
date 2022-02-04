@@ -1,4 +1,4 @@
-describe("Instances", () => {
+describe("instances", () => {
   beforeEach(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -8,7 +8,7 @@ describe("Instances", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances`)
   })
 
-  it("The Instances page is reachable and you can see VM with title 'elektra-test-vm' ", () => {
+  it("the instances page is reachable and you can see VM with title 'elektra-test-vm' ", () => {
     cy.get(".table.instances")
     cy.contains("Servers")
     cy.contains("Create New")

@@ -1,4 +1,4 @@
-describe("Authentication", () => {
+describe("authentication", () => {
   it("Login user", () => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -8,7 +8,7 @@ describe("Authentication", () => {
     cy.location("pathname").should("eq", `/${Cypress.env("TEST_DOMAIN")}/home`)
   })
 
-  it("Login failed", () => {
+  it("login failed", () => {
     cy.elektraLogin("cc3test", "BATMAN", "BAD_PASSWORD")
     cy.contains("Invalid username/password combination.")
   })

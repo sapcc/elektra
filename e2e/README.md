@@ -4,6 +4,8 @@ Please Note, the Test User,Domain and Project is only configured in QA-DE-1
 
 https://docs.cypress.io/guides/references/best-practices
 
+* write descriptions always in lowercase
+
 # Usage
 
 ```bash

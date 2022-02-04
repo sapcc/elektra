@@ -1,4 +1,4 @@
-describe("Project Landing Page", () => {
+describe("project landing page", () => {
   before(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -7,7 +7,7 @@ describe("Project Landing Page", () => {
     )
   })
 
-  it("Open project landing page and edit project description", () => {
+  it("open project landing page and edit project description", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
     cy.get('div.dropdown.header-action').click()
     cy.get(`a[href*="${Cypress.env("TEST_DOMAIN")}/member/masterdata-cockpit/project/edit_project?load_project_root=true"]`).click()

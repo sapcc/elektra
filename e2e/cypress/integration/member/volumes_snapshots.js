@@ -1,4 +1,4 @@
-describe("Volumes", () => {
+describe("volumes", () => {
   before(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -8,18 +8,18 @@ describe("Volumes", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/block-storage/?r=/volumes`)
   })
 
-  it("The Volumes page is reachable", () => {
+  it("the volumes page is reachable", () => {
     cy.get(".table.volumes")
     cy.request("/").should((response) => {
       expect(response.status).to.eq(200)
     })
   })
 
-  it("Contains 'Create New' button", () => {
+  it("contains 'Create New' button", () => {
     cy.get(".btn").contains("Create New")
   })
 
-  it("Click on 'Create New' button opens a modal window", () => {
+  it("click on 'Create New' button opens a modal window", () => {
     cy.get(".btn").contains("Create New").click()
     cy.url().should("include", "/?r=/volumes/new")
     cy.get(".modal-content").as("modal")
@@ -29,7 +29,7 @@ describe("Volumes", () => {
   })
 })
 
-describe("Snapshots", () => {
+describe("snapshots", () => {
   before(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -41,7 +41,7 @@ describe("Snapshots", () => {
     )
   })
 
-  it("The Snapshots page is reachable", () => {
+  it("the snapshots page is reachable", () => {
     cy.get(".table.snapshots")
     cy.request(
       `/${Cypress.env("TEST_DOMAIN")}/member/block-storage/?r=/snapshots`
@@ -51,8 +51,8 @@ describe("Snapshots", () => {
   })
 })
 
-describe("Deep links", () => {
-  it("Opens the new volume modal window", () => {
+describe("deep links", () => {
+  it("opens the new volume modal window", () => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
       Cypress.env("TEST_USER"),

@@ -1,4 +1,4 @@
-describe("Project Landing page", () => {
+describe("project landing page", () => {
   before(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -7,7 +7,7 @@ describe("Project Landing page", () => {
     )
   })
 
-  it("Open project start site and cannot see edit project button", () => {
+  it("open project start site and cannot see edit project button", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
     cy.contains("Project Overview")
     cy.contains("This project is used by TEST_D021500_TM user for elektra e2e tests")

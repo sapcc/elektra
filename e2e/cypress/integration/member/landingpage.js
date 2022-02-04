@@ -1,4 +1,4 @@
-describe("Landing page", () => {
+describe("landing page", () => {
   it("loads content", () => {
     // content is loaded if children of root element exists.
     // children are built by React
@@ -12,7 +12,7 @@ describe("Landing page", () => {
       cy.visit("/")
     })
 
-    it("Contains Converged Cloud", () => {
+    it("contains Converged Cloud", () => {
       cy.contains("Converged Cloud")
     })
   })

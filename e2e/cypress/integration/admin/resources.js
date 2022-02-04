@@ -1,4 +1,4 @@
-describe("Resource Management - Project Level", () => {
+describe("resource management - project level", () => {
   beforeEach(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -7,14 +7,14 @@ describe("Resource Management - Project Level", () => {
     )
   })
 
-  it("Start page is reachable, and you can see the project settings", () => {
+  it("start page is reachable, and you can see the project settings", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/resources/project`)
     cy.contains('div','Members per Server Group')
     cy.get('a[href*="#/compute/settings"]').click()
     cy.contains('h4','Project Settings')
   })
   
-  it("Network page is reachable, and you can edit and check DNS quota", () => {
+  it("network page is reachable, and you can edit and check DNS quota", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/resources/project#/dns`)
     cy.contains('div','Recordsets per Zone')
     cy.get('a[href*="#/dns/edit/dns"]').click()
