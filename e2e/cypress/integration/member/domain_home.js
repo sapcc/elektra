@@ -1,4 +1,4 @@
-describe("Landing page", () => {
+describe("Domain Landing Page", () => {
   before(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -7,7 +7,10 @@ describe("Landing page", () => {
     )
   })
 
-  it("Contains home breadcrumb", () => {
+  it("Open domain landing page and test search for project member", () => {
     cy.get(".title-content").contains("Home")
+    cy.get('#search-input').type('member')
+    cy.contains('a','member').click()
+    cy.contains('Project Overview')
   })
 })
