@@ -24,22 +24,22 @@ module EmailService
     # fetch first credential for the current user with current project scope
     def ec2_creds
       filter = { tenant_id: project_id }
-      @ec2_creds ||= services.identity.find_or_create_credentials(user_id, filter)
+      @ec2_creds ||= services.identity.find_or_create_ec2_credentials(user_id, filter)
     end
 
     # list project scoped credentials for current user
     def project_creds
-      @project_creds ||= services.identity.project_credentials(user_id, { tenant_id: project_id })
+      @project_creds ||= services.identity.project_ec2_credentials(user_id, { tenant_id: project_id })
     end
 
     # find credentials for current user by access key
     def find_cred(access_id)
-      @cred ||= services.identity.find_credential(user_id, access_id)
+      @cred ||= services.identity.find_ec2_credential(user_id, access_id)
     end
 
     # delete credential for current user identified by access key
     def delete_cred(access_id)
-      services.identity.delete_credential(user_id, access_id)
+      services.identity.delete_ec2_credential(user_id, access_id)
     end
   
     def ses_client

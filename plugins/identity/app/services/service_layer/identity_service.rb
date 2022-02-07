@@ -10,7 +10,7 @@ module ServiceLayer
     include IdentityServices::Role
     include IdentityServices::RoleAssignment
     include IdentityServices::Tag
-    include IdentityServices::Credential
+    include IdentityServices::Ec2Credential
 
 
     def available?(_action_name_sym = nil)

@@ -2,6 +2,6 @@
 
 module Identity
   # This class represents the Openstack Credential
-  class Credential < Core::ServiceLayer::Model
+  class Ec2Credential < Core::ServiceLayer::Model
   end
 end
