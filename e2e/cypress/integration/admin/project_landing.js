@@ -13,9 +13,8 @@ describe("project landing page", () => {
     cy.get(`a[href*="${Cypress.env("TEST_DOMAIN")}/member/masterdata-cockpit/project/edit_project?load_project_root=true"]`).click()
     cy.contains('h4','Edit Project')
     let currenDate = Date.now()
-    cy.get('input#project_description').type(`{selectall}This project is used by TEST_D021500_TM user for elektra e2e tests added by e2e test ${currenDate}`)
+    cy.get('textarea#project_description').type(`{selectall}This project is used by TEST_D021500_TM user for elektra e2e tests added by e2e test ${currenDate}`)
     cy.contains('button','Update').click()
-    cy.contains('Update was successfully')
     cy.contains(`added by e2e test ${currenDate}`)
   })
 
