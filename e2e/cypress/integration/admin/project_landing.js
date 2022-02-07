@@ -7,6 +7,7 @@ describe("project landing page", () => {
     )
   })
 
+
   it("open project landing page and edit project description", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
     cy.get('div.dropdown.header-action').click()
@@ -18,7 +19,20 @@ describe("project landing page", () => {
     cy.contains(`added by e2e test ${currenDate}`)
   })
 
-  it("open project start site and see project wizard", () => {
+  it("open project landing page and check user profile", () => {
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
+    cy.contains('a.navbar-identity','Technical User').click()
+    cy.contains('a','Profile').click()
+    // check not in one string because it can be different order
+    cy.contains('td','network_admin')
+    cy.contains('td','admin')
+    cy.contains('td','resource_admin')
+    cy.contains('td','member')
+    cy.contains('a','edit role assignments').click()
+    cy.contains('button','Add New Member')
+  })
+
+  it("open project landing page and see project wizard", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
 
     // check resource pooling setup and skip modal windows

@@ -3,5 +3,6 @@
   "defaultCommandTimeout": 10000,
   "viewportWidth":1300,
   "viewportHeight":1100,
+  "videoCompression":20,
   "chromeWebSecurity": false
 }
