@@ -11,6 +11,6 @@ describe("domain Landing page", () => {
     cy.get(".title-content").contains("Home")
     cy.get('#search-input').type('member')
     cy.contains('a','member').click()
-    cy.contains('Project Overview')
+    cy.contains("This project is used by TEST_D021500_TM user for elektra e2e tests")
   })
 })
