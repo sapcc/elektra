@@ -21,19 +21,32 @@ module EmailService
       @cronus_region ||= current_user.default_services_region
     end
 
+    # fetch first credential for the current user with current project scope
     def ec2_creds
-      @ec2_creds ||= services.identity.aws_credentials(user_id, project_id)
-      if @ec2_creds.class == Array
-        return @ec2_creds.first
-      elsif @ec2_creds.class == ServiceLayer::IdentityServices::Credential::AWSCreds
-        return @ec2_creds
-      end
+      filter = { tenant_id: project_id }
+      @ec2_creds ||= services.identity.find_or_create_ec2_credentials(user_id, filter)
+    end
+
+    # list project scoped credentials for current user
+    def project_creds
+      @project_creds ||= services.identity.project_ec2_credentials(user_id, { tenant_id: project_id })
+    end
+
+    # find credentials for current user by access key
+    def find_cred(access_id)
+      @cred ||= services.identity.find_ec2_credential(user_id, access_id)
+    end
+
+    # delete credential for current user identified by access key
+    def delete_cred(access_id)
+      services.identity.delete_ec2_credential(user_id, access_id)
     end
   
     def ses_client
       @region ||= map_region(@cronus_region)
-      @endpoint = service_url
-      if ec2_creds.error.nil?
+      @endpoint ||= service_url
+
+      unless ec2_creds.nil?
         begin
           @credentials ||= Aws::Credentials.new(ec2_creds.access, ec2_creds.secret)
           @ses_client ||= Aws::SES::Client.new(region: @region, endpoint: @endpoint, credentials: @credentials)
@@ -41,10 +54,13 @@ module EmailService
           return error
         end  
       end
-      @ses_client ? @ses_client : ec2_creds.error
+
+      @ses_client ? @ses_client : nil
+
     end
   
     def map_region(region)
+
       aws_region = 'eu-central-1'
       case region
       when 'na-us-1'
