@@ -18,17 +18,17 @@ module EmailService
       EmailService::Template.new(template_opts)
     end
 
-    def aws_creds_error
-      ServiceLayer::IdentityServices::Credential::AWSCreds.new("", "", "Error occured")
-    end
+    # def aws_creds_error
+    #   ServiceLayer::IdentityServices::Credential::AWSCreds.new("", "", "Error occured")
+    # end
 
-    def aws_creds_array
-      creds_array = []
-      2.times do
-        creds_array << ServiceLayer::IdentityServices::Credential::AWSCreds.new("abcdefghijk", "abcdefghijk", "")
-      end
-      creds_array
-    end
+    # def aws_creds_array
+    #   creds_array = []
+    #   2.times do
+    #     creds_array << ServiceLayer::IdentityServices::Credential::AWSCreds.new("abcdefghijk", "abcdefghijk", "")
+    #   end
+    #   creds_array
+    # end
 
     def plain_email_opts
       {
