@@ -77,3 +77,11 @@ for password check `secrets/qa-de-1/values/domain-seeds.yaml`
 ## cypress.json
 
 * https://docs.cypress.io/guides/references/configuration#Global
+
+# Tips
+
+* `cy.get().should('be.disabled')` works not with `a` or `div` tag instead use
+```
+  cy.get().should('have.attr', 'disabled');
+  cy.get().should('not.have.attr', 'disabled');
+```

@@ -1,7 +1,7 @@
 {
   "projectId": "elektra",
   "defaultCommandTimeout": 10000,
-  "viewportWidth":1000,
-  "viewportHeight":800,
+  "viewportWidth":1300,
+  "viewportHeight":1100,
   "chromeWebSecurity": false
 }
