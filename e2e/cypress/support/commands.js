@@ -28,7 +28,7 @@ Cypress.Commands.add("elektraLogin", (domain, user, password) => {
 
   cy.visit(`/cc3test/auth/login/${domain}?after_login=%2F${domain}%2Fhome`)
   cy.get("#username").type(user)
-  cy.get("#password").type(password)
+  cy.get("#password").type(password, { log: false })
   cy.get('button[type="submit"]').click()
 
   // accept terms of use if not already accepted
