@@ -26,18 +26,15 @@ describe("instances", () => {
   })
 
   it("click on 'Create New' button opens a modal window", () => {
-
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances`)
     cy.contains("Create New")
     cy.get(".btn").contains("Create New").click()
     cy.url().should("include", "instances?overlay=new")
     cy.contains('label','Name')
     cy.get("button.btn.btn-primary").contains("Create")
-
   })
 
   it("the dropdown menu for 'elektra-test-vm' is available and menus are working", () => {
-
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances?searchfor=Name&search=elektra`)
     
     cy.get('button.dropdown-toggle').click()
@@ -97,11 +94,9 @@ describe("instances", () => {
     cy.contains('a.btn','Cancel').should('be.visible').then(($btn) => {
       cy.wrap($btn).click()
     })
-
   })
 
   it("rename 'elektra-test-vm' and show it's details", () => {
-
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances?searchfor=Name&search=elektra`)
     cy.get('button.dropdown-toggle').click()
     cy.contains('a','Edit').should('be.visible').then(($menu) => {
@@ -113,7 +108,6 @@ describe("instances", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances?searchfor=Name&search=elektra`)
     cy.contains("elektra-test-vm").click()
     cy.contains(`added by e2e test ${currenDate}`);
-
   })
 
 })

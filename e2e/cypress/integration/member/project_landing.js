@@ -51,7 +51,6 @@ describe("project landing page", () => {
     cy.contains('button','Cancel').should('be.visible').then(($btn) => {
       cy.wrap($btn).click()
     })
-
   })
 
 })

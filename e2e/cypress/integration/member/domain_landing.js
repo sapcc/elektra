@@ -1,4 +1,4 @@
-describe("domain Landing page", () => {
+describe("domain landing page", () => {
   beforeEach(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
