@@ -5,9 +5,7 @@ describe("instances", () => {
       Cypress.env("TEST_USER"),
       Cypress.env("TEST_PASSWORD")
     )
-    
   })
-
 
   it("the instances page is reachable and you can search for VM with title 'elektra-test-vm' and show it's details", () => {
 

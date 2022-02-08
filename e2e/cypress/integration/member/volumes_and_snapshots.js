@@ -1,5 +1,5 @@
 describe("volumes", () => {
-  before(() => {
+  beforeEach(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
       Cypress.env("TEST_USER"),
@@ -30,7 +30,7 @@ describe("volumes", () => {
 })
 
 describe("snapshots", () => {
-  before(() => {
+  beforeEach(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
       Cypress.env("TEST_USER"),
