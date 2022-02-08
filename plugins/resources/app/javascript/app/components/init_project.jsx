@@ -241,7 +241,7 @@ export default class InitProjectModal extends React.Component {
           <ul>
             <li>Quota assignments incur costs according to our
               {" "}
-              <a href={`${docsUrl}docs/start/pricing.html`}>price list</a>.</li>
+              <a href={`${docsUrl}docs/start-pricing`}>price list</a>.</li>
             <li>You can always change your quotas later on. Large quota requests may be
               {" "}
               <a href={`${docsUrl}docs/quota/#auto-approval`}>subject to approval</a>.</li>
