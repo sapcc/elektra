@@ -64,7 +64,6 @@ module EmailService
       messages.each do |key, value|
         value.each do |item|
           errors.add key.to_sym, item
-          logger.debug "ASSIGN_ERRORS #{key.to_sym}, #{item}"
         end
       end
     end

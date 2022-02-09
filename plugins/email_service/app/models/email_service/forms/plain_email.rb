@@ -23,7 +23,6 @@ module EmailService
     validates_presence_of :to_addr, message: "To address can't be empty"
     validates_presence_of :subject, message: "Subject can't be empty"
     validates_presence_of :html_body, message: "HTML part can't be empty"
-    validates_presence_of :text_body, message: "Text part can't be empty"
     validates :to_addr, presence: true, email: true
     validates :cc_addr, allow_nil: true, email: true
     validates :bcc_addr, allow_nil: true, email: true
@@ -61,7 +60,6 @@ module EmailService
       messages.each do |key, value|
         value.each do |item|
           errors.add key.to_sym, item
-          logger.debug "ASSIGN_ERRORS #{key.to_sym}, #{item}"
         end
       end
     end

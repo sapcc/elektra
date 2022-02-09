@@ -29,10 +29,7 @@ class EmailValidator < ActiveModel::EachValidator
   end
 
   def validate_email_array(raw_str)
-    # ERROR : dynamic constant assignment
-    # VALID_EMAIL_REGEX = /\A([^@\s]+)@((?:[-a-z0-9]+\
-    # VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-    # VALID_EMAIL_REGEX = /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
+    
     errors = []
     addresses = []
     valid_addresses = []

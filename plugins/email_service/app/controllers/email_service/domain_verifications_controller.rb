@@ -81,7 +81,7 @@ module EmailService
       identity = params[:identity]
       dkim_status, dkim_attributes = get_dkim_attributes([identity])
       @dkim_enabled = is_dkim_enabled(dkim_attributes, identity)
-      logger.debug "@dkim_enabled : #{@dkim_enabled} "
+      Rails.logger.info  "@dkim_enabled : #{@dkim_enabled} "
       if @dkim_enabled == false
         st = enable_dkim(identity)
       end
