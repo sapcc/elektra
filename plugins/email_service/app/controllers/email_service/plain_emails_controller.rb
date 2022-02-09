@@ -1,7 +1,6 @@
 module EmailService
   class PlainEmailsController < ::EmailService::ApplicationController
     before_action :restrict_access
-    # before_action :fetch_aws_data, only: %i[new create edit]
     before_action :plain_email, only: %i[new edit]
 
     authorization_context 'email_service'

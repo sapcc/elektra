@@ -18,16 +18,18 @@ module EmailService
       EmailService::Template.new(template_opts)
     end
 
-    # def aws_creds_error
-    #   ServiceLayer::IdentityServices::Credential::AWSCreds.new("", "", "Error occured")
-    # end
-
-    # def aws_creds_array
-    #   creds_array = []
-    #   2.times do
-    #     creds_array << ServiceLayer::IdentityServices::Credential::AWSCreds.new("abcdefghijk", "abcdefghijk", "")
-    #   end
-    #   creds_array
+    # def ec2_creds
+    #   {
+    #     "user_id"=>"xxxxxx_user_id_xxxxxxx", 
+    #     "tenant_id"=>"xxxxxx_project_id_xxxxxxx", 
+    #     "access"=>"xxxxxx_access_id_xxxxxxx", 
+    #     "secret"=>"xxxxxx_secret_id_xxxxxxx", 
+    #     "trust_id"=>nil, 
+    #     "links"=>{
+    #       "self"=>"https://identity_v3_url/users/xxxxxx_user_id_xxxxxxx/credentials/OS-EC2/xxxxxx_access_id_xxxxxxx"
+    #     }, 
+    #     "id"=>nil
+    #   }
     # end
 
     def plain_email_opts

@@ -7,6 +7,9 @@ class JsonValidator < ActiveModel::EachValidator
     unless valid_json?(value)
       record.errors.add attribute, (options[:message] || "JSON is invalid" )
     end
+    if !value || value.nil? || value.empty? 
+      record.errors.add attribute, (options[:message] || "JSON can't be empty" )
+    end
   end
 
   def valid_json?(json)
