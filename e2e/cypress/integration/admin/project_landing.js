@@ -13,10 +13,11 @@ describe("project landing page", () => {
     cy.get('div.dropdown.header-action').click()
     cy.get(`a[href*="${Cypress.env("TEST_DOMAIN")}/member/masterdata-cockpit/project/edit_project?load_project_root=true"]`).click()
     cy.contains('h4','Edit Project')
-    let currenDate = Date.now()
-    cy.get('textarea#project_description').type(`{selectall}This project is used by TEST_D021500_TM user for elektra e2e tests added by e2e test ${currenDate}`)
-    cy.contains('button','Update').click()
-    cy.contains(`added by e2e test ${currenDate}`)
+    // disabled that test because it causes problems with friendlyID
+    //let currenDate = Date.now()
+    //cy.get('textarea#project_description').type(`{selectall}This project is used by TEST_D021500_TM user for elektra e2e tests added by e2e test ${currenDate}`)
+    //cy.contains('button','Update').click()
+    //cy.contains(`added by e2e test ${currenDate}`)
   })
 
   it("open project landing page and check user profile", () => {
