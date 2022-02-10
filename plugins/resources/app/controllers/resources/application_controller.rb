@@ -2,7 +2,20 @@
 
 module Resources
   class ApplicationController < DashboardController
-    before_action :prepare_data_for_view
+    # check also QuotaUsageController that is inherit from this controller
+    before_action :prepare_data_for_view, :unless => Proc.new { 
+    [
+      'webconsole',
+      'identity',
+      'key_manager',
+      'masterdata_cockpit',
+      'audit',
+      'reports',
+      'email_service',
+      'tools',
+      'kubernetes',
+      'automation'
+    ].include?(params[:type]) }
 
     # Most of the machinery in this controller is there to make cross-scope
     # jumping work. For example, as a cloud resource admin, you can open the
