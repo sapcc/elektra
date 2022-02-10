@@ -5,7 +5,7 @@ describe("authentication", () => {
     cy.contains('Please sign in')
   })
 
-  it("login member and redirected to the requested url after login", () => {
+  it("login admin and redirected to the requested url after login", () => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
       Cypress.env("TEST_USER"),
