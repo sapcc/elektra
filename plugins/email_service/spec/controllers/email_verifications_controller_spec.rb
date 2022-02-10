@@ -101,7 +101,6 @@ describe EmailService::EmailVerificationsController, type: :controller do
       end
       it 'returns http success' do
         get :new, params: default_params
-        # debugger
         expect(response).to be_successful
         expect(response).to render_template(:new)
       end

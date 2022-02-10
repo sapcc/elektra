@@ -50,8 +50,9 @@ module EmailService
         begin
           @credentials ||= Aws::Credentials.new(ec2_creds.access, ec2_creds.secret)
           @ses_client ||= Aws::SES::Client.new(region: @region, endpoint: @endpoint, credentials: @credentials)
-        rescue Aws::SES::Errors::ServiceError => error
-          return error
+        rescue Aws::SES::Errors::ServiceError => e
+          Rails.logger.error e.message
+          return e.message
         end  
       end
 
@@ -199,7 +200,7 @@ module EmailService
 
     # send plain email
     def send_plain_email(plain_email)
-      error = ""
+
       begin
         resp = ses_client.send_email(
           destination: {
@@ -227,8 +228,8 @@ module EmailService
         )
         audit_logger.info(current_user.id, 'has sent email to', plain_email.to_addr,plain_email.cc_addr, plain_email.bcc_addr)
       rescue Aws::SES::Errors::ServiceError => e
-        error = e
-        logger.debug "CRONUS : sending plain email  #{error}"
+        error = e.message
+        Rails.logger.error "CRONUS : sending plain email  #{e.message}"
       end
 
       return resp && resp.successful? ? "success" : error
@@ -265,8 +266,9 @@ module EmailService
         audit_logger.info(current_user.id, 'has sent templated email from the template', \
         templated_email.template_name,  'to', templated_email.to_addr, \
         templated_email.cc_addr, templated_email.bcc_addr, 'with the template data', templated_email.template_data )
-      rescue Aws::SES::Errors::ServiceError => error
-        logger.debug "CRONUS: DEBUG: sending templated email #{error}"
+      rescue Aws::SES::Errors::ServiceError => e
+        error = e.message
+        Rails.logger.error "CRONUS: DEBUG: sending templated email #{e.message}"
       end
 
       return resp && resp.successful? ? "success" : error
@@ -343,8 +345,8 @@ module EmailService
             templates.push(tmpl_hash)
             index = index + 1
         end
-      rescue Aws::SES::Errors::ServiceError => error
-        logger.debug "CRONUS: DEBUG: Unable to fetch templates. Error message: #{error}"
+      rescue Aws::SES::Errors::ServiceError => e
+        Rails.logger.error "CRONUS: DEBUG: Unable to fetch templates. Error message: #{e.message}"
       end
 
       return next_token, templates
@@ -386,9 +388,9 @@ module EmailService
         audit_logger.info(current_user.id, 'has created a template ', template.name)
         msg = "Template #{template.name} is saved"
         status = "success"
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "Unable to save template: #{error}"
-        logger.debug "CRONUS: DEBUG: #{status} "
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "Unable to save template: #{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: #{status}."
       end
       
       return status
@@ -405,9 +407,9 @@ module EmailService
         })
         audit_logger.info(current_user.id, 'has deleted template ', template_name)
         status = "success"
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "Unable to delete template #{template_name}. Error message: #{error} "
-        logger.debug status
+      rescue Aws::SES::Errors::ServiceError => e
+        status = e.message
+        Rails.logger.error "Unable to delete template #{template_name}. Error message: #{e.message} "
       end
 
       return status
@@ -427,8 +429,9 @@ module EmailService
         })
         audit_logger.info(current_user.id, 'has updated template ', name)
         status = "success"
-      rescue Aws::SES::Errors::ServiceError => error
-        msg = "Unable to update template #{name}. Error: #{error}"
+      rescue Aws::SES::Errors::ServiceError => e
+        msg = "Unable to update template #{name}. Error: #{e.message}"
+        Rails.logger.error msg
         status = msg
       end
 
@@ -534,16 +537,18 @@ module EmailService
         begin
           resp = ses_client.verify_domain_identity({ domain: identity, })
           audit_logger.info(current_user.id, 'has initiated to verify domain identity ', identity)
-        rescue Aws::SES::Errors::ServiceError => error
-          resp = "#{identity_type} verification failed. Error message: #{error}"
+        rescue Aws::SES::Errors::ServiceError => e
+          resp = "#{identity_type} verification failed. Error message: #{e.message}"
+          Rails.logger.error resp
         end
       elsif identity != nil && identity.length.positive? && identity_type == "EmailAddress"
         begin
           ses_client.verify_email_identity({ email_address: identity, })
           audit_logger.info(current_user.id, 'has initiated to verify email identity ', identity)
           status = "success"
-        rescue Aws::SES::Errors::ServiceError => error
-          status = "#{identity_type} verification failed. Error message: #{error}"  
+        rescue Aws::SES::Errors::ServiceError => e
+          status = "#{identity_type} verification failed. Error message: #{e.message}" 
+          Rails.logger.error status
         end
       end
 
@@ -581,8 +586,8 @@ module EmailService
            dkim_tokens: dkim_tokens, dkim_verification_status: dkim_verification_status }
           verified_identities.push(identity_hash)
         end
-      rescue Aws::SES::Errors::ServiceError => error
-        logger.debug "error while listing verified identities. Error message: #{error}"
+      rescue Aws::SES::Errors::ServiceError => e
+        Rails.logger.error "error while listing verified identities. #{e.message}"
       end
 
       return verified_identities
@@ -599,9 +604,9 @@ module EmailService
           })
           audit_logger.info(current_user.id, 'has removed verified identity ', identity)
           status = "success"
-         rescue Aws::SES::Errors::ServiceError => error
-          status = "error: #{error}"
-          logger.debug "error while removing verified identity. Error message: #{error}"
+         rescue Aws::SES::Errors::ServiceError => e
+          status = "error: #{e.message}"
+          Rails.logger.error "error while removing verified identity. Error message: #{e.message}"
         end
 
         return status 
@@ -617,9 +622,9 @@ module EmailService
         dkim_attributes = ses_client.get_identity_dkim_attributes({
           identities: identities, 
         })
-      rescue Aws::SES::Errors::ServiceError => error
-        err = "#{error}"
-        logger.debug "CRONUS: DEBUG: DKIM Attributes: #{error}"
+      rescue Aws::SES::Errors::ServiceError => e
+        err = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: DKIM Attributes: #{err}"
       end
 
       return err, dkim_attributes
@@ -651,9 +656,9 @@ module EmailService
         })
         audit_logger.info(current_user.id, ' has initiated DKIM verification ', identity)
         status = "success"
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS: DEBUG: DKIM VERIFY: #{error}"
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: DKIM VERIFY: #{e.message}"
       end
 
       return status, resp
@@ -671,9 +676,9 @@ module EmailService
         }) 
         audit_logger.info(current_user.id, ' has enabled DKIM ', identity)
         status = "success"
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS: DEBUG: enable dkim: #{error}"
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: enable dkim: #{e.message}"
       end
 
       return status
@@ -691,9 +696,9 @@ module EmailService
         }) 
         audit_logger.info(current_user.id, ' has disabled DKIM ', identity)
         status = "success"
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS: DEBUG: DKIM Disable: #{error}"
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: DKIM Disable: #{e.message}"
       end
 
       return status
@@ -708,8 +713,8 @@ module EmailService
       resp_hash = {}
       begin
         resp = ses_client.get_send_quota({})
-      rescue Aws::SES::Errors::ServiceError => error
-        logger.debug "CRONUS SEND : #{error}" 
+      rescue Aws::SES::Errors::ServiceError => e
+        Rails.logger.error "CRONUS SEND : #{e.message}" 
       end
       resp_hash = resp ? resp.to_h : resp_hash
 
@@ -726,8 +731,8 @@ module EmailService
           stats_arr.push(stats_hash)
           index += 1
         end
-      rescue Aws::SES::Errors::ServiceError => error
-        logger.debug "CRONUS SEND : #{error}" 
+      rescue Aws::SES::Errors::ServiceError => e
+        Rails.logger.error "CRONUS SEND : #{e.message}" 
       end
       stats_arr.sort_by! { |hsh| hsh[:timestamp] } 
       stats_arr.reverse!
@@ -752,9 +757,9 @@ module EmailService
         })
         audit_logger.info(current_user.id, 'has created configset', configset.name)
         status = "success" 
-      rescue Aws::SES::Errors::ServiceError => error
-        status = "#{error}"
-        logger.debug "CRONUS: DEBUG: store configset: #{error}"
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: store configset: #{e.message}"
       end
 
       return status
@@ -769,10 +774,10 @@ module EmailService
         })
         audit_logger.info(current_user.id, 'has deleted configset', name)
         status = "success"
-      rescue Aws::SES::Errors::ServiceError => error
-        msg = "Unable to delete Configset #{name}. Error message: #{error} "
+      rescue Aws::SES::Errors::ServiceError => e
+        msg = "Unable to delete Configset #{name}. Error message: #{e.message} "
         status = msg
-        logger.debug "CRONUS: DEBUG: DELETE CONFIGSET: #{error}"
+        Rails.logger.error msg
       end
 
       return status
@@ -805,8 +810,8 @@ module EmailService
           status = "configset is empty"
         end
       rescue Aws::SES::Errors::ServiceError => e
-        status = "#{e}"
-        logger.debug "CRONUS: DEBUG: LIST CONFIGSETS: #{status}"
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: LIST CONFIGSETS: #{status}"
       end
       
       return configsets
@@ -856,9 +861,9 @@ module EmailService
           configuration_set_name: name, # required
           configuration_set_attribute_names: ["eventDestinations"], # accepts eventDestinations, trackingOptions, deliveryOptions, reputationOptions
         })
-      rescue Aws::SES::Errors::ServiceError => error
+      rescue Aws::SES::Errors::ServiceError => e
         status = "#{error}"
-        logger.debug "CRONUS: DEBUG: DESCRIBE CONFIGSET: #{error}"
+        Rails.logger.error "CRONUS: DEBUG: DESCRIBE CONFIGSET: #{error}"
       end
 
       return configset_description
