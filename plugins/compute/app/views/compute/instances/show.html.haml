@@ -43,7 +43,7 @@
         var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
         var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
         // console.log(virtualMachineGuestToolsTargetVersion)
-        fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (instance_uuid, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{instance_uuid="#{@instance.name}"}) AND on (instance_uuid) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
+        fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (instance_uuid, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{instance_uuid="#{@instance.id}"}) AND on (instance_uuid) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
           .then(catchErrors)
           .then(response => response.json())
           .then((json) => {
