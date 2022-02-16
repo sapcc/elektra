@@ -20,7 +20,7 @@
         // to get the error message from the API
         return response.text().then((message) => {
           // try to parse json
-          try{ 
+          try{
             var mesageData = JSON.parse(message)
             message = mesageData.error
           }
@@ -43,7 +43,7 @@
         var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
         var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
         // console.log(virtualMachineGuestToolsTargetVersion)
-        fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (virtualmachine, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{virtualmachine="#{@instance.name} (#{@instance.id})"}) AND on (virtualmachine) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
+        fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (instance_uuid, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{instance_uuid="#{@instance.id}"}) AND on (instance_uuid) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
           .then(catchErrors)
           .then(response => response.json())
           .then((json) => {
@@ -57,7 +57,7 @@
               var guestToolsVersion = parseInt(guestToolsVersionRaw.replace(/\./g,""))
               if ( guestToolsVersion == 0 ) {
                 $("span.no_guest_tools").show()
-              } 
+              }
               else if (guestToolsVersion < virtualMachineGuestToolsTargetVersion ) {
                 $("span.guest_tools_not_uptodate_current_version").html(guestToolsVersionRaw)
                 $("span.guest_tools_not_uptodate_target_version").html(virtualMachineGuestToolsTargetVersionRaw)
@@ -69,7 +69,7 @@
               }
             }
           })
-          .catch((error) => { 
+          .catch((error) => {
             console.log("ERROR FETCH TOOLS VERSION", error)
             $("span.spinner").hide()
             $("span.guest_tools_problem").show()
@@ -83,4 +83,3 @@
         $("span.guest_tools_problem_text").html("Problem to get target version: " + error.message)
       })
   });
-
