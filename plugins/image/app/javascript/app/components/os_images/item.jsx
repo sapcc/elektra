@@ -51,7 +51,7 @@ export default (props) => {
         {policy.isAllowed("image:image_owner", { image }) && <OwnerIcon />}
       </td>
       <td>
-        <Link to={`/os-images/${props.activeTab}/${image.id}/show`}>
+        <Link to={`/os-images/${props.activeTab}/${image.id}/show`} data-test="images">
           {image.image_type == "snapshot" && <SnapshotIcon />}{" "}
           {image.name || image.id}
         </Link>

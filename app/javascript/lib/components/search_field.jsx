@@ -47,6 +47,7 @@ export class SearchField extends React.Component {
       <React.Fragment>
         <div className='has-feedback has-feedback-searchable'>
           <input
+            data-test="search"
             type="text"
             className="form-control"
             value={this.state.searchTerm}

@@ -85,3 +85,5 @@ for password check `secrets/qa-de-1/values/domain-seeds.yaml`
   cy.get().should('have.attr', 'disabled');
   cy.get().should('not.have.attr', 'disabled');
 ```
+
+* if you do not find a good identifier use data attribute like `data-test="search"` you can access it in cypress with `cy.get('[data-test=search]`')
