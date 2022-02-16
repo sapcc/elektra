@@ -9,6 +9,8 @@ describe("resource management - project level", () => {
 
   it("start page is reachable, you need the resource_admin role and ypu can access dns, network, storage, and availability_zones tab", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/resources/project`)
+    cy.contains('[data-test=page-title]','Manage Project Resources')
+
     cy.contains('div','Members per Server Group')
     cy.contains('you need the resource_admin role')
 

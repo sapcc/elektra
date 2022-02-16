@@ -7,6 +7,11 @@ describe("landing page", () => {
     })
   })
 
+  it("user is not logged, tries to visit domain", () => {
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}`)
+    cy.contains('Log in')
+  }) 
+
   describe("Content", () => {
     before(() => {
       cy.visit("/")

@@ -9,6 +9,7 @@ describe("api endpoints", () => {
   })
 
   it("the api endpoints for clients page reachable", () => {
+    cy.contains('[data-test=page-title]','API Endpoints for Clients')
     cy.contains('Here you can find the parameters needed to access the project with an openstack client.')
     cy.contains('a.btn','Download Openstack RC File')
     cy.contains('a.btn','Download Openstack RC File for Windows PowerShell')
@@ -28,7 +29,7 @@ describe("web shell", () => {
 
   it("open web shell", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/webconsole/`)
-    cy.contains('a','Web Shell')
+    cy.contains('[data-test=page-title]','Web Shell')
   })
 
   it("open web shell on toolbar", () => {

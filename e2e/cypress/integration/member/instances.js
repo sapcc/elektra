@@ -8,8 +8,8 @@ describe("instances", () => {
   })
 
   it("the instances page is reachable and you can search for VM with title 'elektra-test-vm' and show it's details", () => {
-
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances`)
+    cy.contains('[data-test=page-title]','Servers')
     cy.get("#search")
       .should('be.visible')
       .type('elektra{enter}')
@@ -25,6 +25,8 @@ describe("instances", () => {
 
   it("click on 'Create New' button opens a modal window", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances`)
+    cy.contains('[data-test=page-title]','Servers')
+
     cy.contains("Create New")
     cy.get(".btn").contains("Create New").click()
     cy.url().should("include", "instances?overlay=new")
@@ -34,7 +36,8 @@ describe("instances", () => {
 
   it("the dropdown menu for 'elektra-test-vm' is available and menus are working", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances?searchfor=Name&search=elektra`)
-    
+    cy.contains('[data-test=page-title]','Servers')
+
     cy.get('button.dropdown-toggle').click()
     cy.contains('a','Edit').should('be.visible').then(($menu) => {
       cy.wrap($menu).click()
@@ -96,6 +99,8 @@ describe("instances", () => {
 
   it("rename 'elektra-test-vm' and show it's details", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances?searchfor=Name&search=elektra`)
+    cy.contains('[data-test=page-title]','Servers')
+    
     cy.get('button.dropdown-toggle').click()
     cy.contains('a','Edit').should('be.visible').then(($menu) => {
       cy.wrap($menu).click()

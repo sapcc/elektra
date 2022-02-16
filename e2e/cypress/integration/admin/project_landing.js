@@ -7,7 +7,6 @@ describe("project landing page", () => {
     )
   })
 
-
   it("open project landing page and edit project description", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
     cy.get('div.dropdown.header-action').click()

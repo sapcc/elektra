@@ -1,6 +1,6 @@
 describe("authentication", () => {
 
-  it("user is not logged, tries to visit domain landing and is redirected to login page", () => {
+  it("user is not logged, tries to visit domain home and is redirected to login page", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/home/`)
     cy.contains('Please sign in')
   })

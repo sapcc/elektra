@@ -9,14 +9,11 @@ describe("volumes", () => {
   })
 
   it("the volumes page is reachable", () => {
+    cy.contains('[data-test=page-title]','Volumes & Snapshots')
     cy.get(".table.volumes")
     cy.request("/").should((response) => {
       expect(response.status).to.eq(200)
     })
-  })
-
-  it("contains 'Create New' button", () => {
-    cy.get(".btn").contains("Create New")
   })
 
   it("click on 'Create New' button opens a modal window", () => {
@@ -42,6 +39,7 @@ describe("snapshots", () => {
   })
 
   it("the snapshots page is reachable", () => {
+    cy.contains('[data-test=page-title]','Volumes & Snapshots')
     cy.get(".table.snapshots")
     cy.request(
       `/${Cypress.env("TEST_DOMAIN")}/member/block-storage/?r=/snapshots`
@@ -61,6 +59,7 @@ describe("deep links", () => {
     cy.visit(
       `/${Cypress.env("TEST_DOMAIN")}/member/block-storage/?r=/volumes/new`
     )
+    cy.contains('[data-test=page-title]','Volumes & Snapshots')
     cy.get(".modal-content").as("modal")
     cy.get("@modal").contains("New Volume")
     cy.get("@modal").contains("Save")
