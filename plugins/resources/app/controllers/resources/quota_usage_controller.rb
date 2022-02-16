@@ -5,6 +5,7 @@ module Resources
     authorization_required
     authorization_context 'resources'
 
+    # check also plugins/resources/app/controllers/resources/application_controller.rb
     QUOTA_RESOURCES = {
       compute: {service_type: :compute, resource_names: [:instances, :cores, :ram]},
       block_storage: {service_type: :volumev2, resource_names: [:volumes, :snapshots, :capacity]},
@@ -16,6 +17,7 @@ module Resources
       object_storage: { service_type: "object-store", resource_names: [:capacity] },
     }
 
+    # this is called from app/views/application/_main_toolbar.html.haml
     def index
       render json: usage(params[:type])
     end

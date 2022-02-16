@@ -23,6 +23,8 @@
                   Project ID:
                   = @active_project.id
 
+                -# this is called in any view, check plugins/resources/app/controllers/resources/application_controller.rb 
+                -# to prevent loading meaningless data if there is no quota usage like for identity or web-console
                 %div{data: {"react-quota-usage": true, type: plugin_name}} 
                   
                 - if @plugin_help_text
