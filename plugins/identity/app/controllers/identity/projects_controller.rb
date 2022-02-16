@@ -24,7 +24,12 @@ module Identity
       }
     )
 
-    def show; end
+    def show
+      if @project.nil?
+        # this is a fallback if something goes wrong to load the project
+        get_project
+      end
+    end
 
     def view; end
 
