@@ -44,14 +44,6 @@ describe("domain landing page", () => {
     cy.contains('Complete')
   })
 
-  it("open domain landing page and check cost report", () => {
-    cy.contains('[data-test=page-title]','Home')
-    cy.contains('a','Cost Report').click()
-    cy.contains('[data-test=page-title]','Cost Report')
-    cy.contains('text.label','network')
-    cy.contains('text.label','virtualMachine')
-  })
-
   /*
   it("open domain landing page and check cost report", () => {
     // TODO: there is in widget.js:31 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'attributes')
@@ -92,7 +84,6 @@ describe("domain landing page", () => {
     cy.contains('Hans-Georg Winkler')
   })
   */
-
   it("open domain landing page and search Child Objects for elektra test vm", () => {
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','Find by Child Objects').click()
