@@ -32,9 +32,16 @@ describe("project landing page", () => {
     cy.contains('button','Add New Member')
   })
 
+  it("open project landing page and check logout button", () => {
+    cy.contains('a.navbar-identity','Technical User').click()
+    cy.contains('a','Log out').click()
+    // check not in one string because it can be different order
+    cy.contains('SAP Converged Cloud')
+    cy.contains('a','Enter the cloud')
+  })
+
   it("open project landing page and see project wizard", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
-
     // check resource pooling setup and skip modal windows
     cy.contains("a.btn","Enable resource pooling").click()
     cy.contains('Please be aware that enabling all resource pools is a permanent change that cannot be undone!')

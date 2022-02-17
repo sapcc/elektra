@@ -53,4 +53,12 @@ describe("project landing page", () => {
     })
   })
 
+  it("open project landing page and check logout button", () => {
+    cy.contains('a.navbar-identity','Technical User').click()
+    cy.contains('a','Log out').click()
+    // check not in one string because it can be different order
+    cy.contains('SAP Converged Cloud')
+    cy.contains('a','Enter the cloud')
+  })
+
 })

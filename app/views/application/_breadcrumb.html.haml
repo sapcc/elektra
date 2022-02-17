@@ -8,7 +8,7 @@
 
       - unless @domain_switch
         %ol.context-list
-          %li.dropdown{data: {react_auth_projects_link: 'true', icon_class: 'icon-link fa fa-th-list'}}
+          %li.dropdown{id: 'projects_list', data: {react_auth_projects_link: 'true', icon_class: 'icon-link fa fa-th-list'}}
 
     - if @can_access_project && !@domain_switch
       %ol.context-list
