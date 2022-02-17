@@ -53,8 +53,8 @@ describe("resource management - project level", () => {
 
   it("availability zones page is directly reachable and you need the resource_admin role", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/resources/project#/availability_zones`)
-    cy.contains('div', 'Block Storage (Premium SSD)')
-    cy.contains('div', 'Block Storage (Standard HDD)')
+    cy.contains('Block Storage (Premium SSD)')
+    cy.contains('Block Storage (Standard HDD)')
     cy.contains('you need the resource_admin role')
   })
 

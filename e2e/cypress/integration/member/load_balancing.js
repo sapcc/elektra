@@ -1,4 +1,4 @@
-describe("Load Balancing", () => {
+describe("load balancing", () => {
   beforeEach(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
