@@ -44,14 +44,7 @@ describe("domain landing page", () => {
     cy.contains('Complete')
   })
 
-  /*
   it("open domain landing page and check cost report", () => {
-    // TODO: there is in widget.js:31 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'attributes')
-    // https://stackoverflow.com/questions/53845493/cypress-uncaught-assertion-error-despite-cy-onuncaughtexception
-    // ignore browser error 
-    Cypress.on('uncaught:exception', () => {
-      return false;
-    });
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','Cost Report').click()
     cy.contains('[data-test=page-title]','Cost Report for cc3test')
@@ -59,11 +52,6 @@ describe("domain landing page", () => {
   })
 
   it("open domain landing page and check group management", () => {
-    // TODO: there is in widget.js:31 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'attributes')
-    // ignore browser error 
-    Cypress.on('uncaught:exception', () => {
-      return false;
-    });
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','Group Management').click()
     cy.contains('[data-test=page-title]','Groups')
@@ -72,18 +60,13 @@ describe("domain landing page", () => {
   })
 
   it("open domain landing page and check user management", () => {
-    // TODO: there is in widget.js:31 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'attributes')
-    // ignore browser error 
-    Cypress.on('uncaught:exception', () => {
-      return false;
-    });
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','User Management').click()
     cy.contains('[data-test=page-title]','Users')
     cy.get('#filter_users').type('d058266')
     cy.contains('Hans-Georg Winkler')
   })
-  */
+
   it("open domain landing page and search Child Objects for elektra test vm", () => {
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','Find by Child Objects').click()
