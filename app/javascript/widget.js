@@ -28,6 +28,7 @@ const isIterable = (obj) => {
 
 const getDataset = (element) => {
   const set = {}
+  if(!(element && element.attributes)) return set
   for(let a of element.attributes) {
     if(a.name.indexOf('data-')==0) set[a.name] = a.value
   }
@@ -77,7 +78,7 @@ class Widget {
     for(let reactContainer of this.reactContainers) {
       let dataset = getDataset(reactContainer)
       let wrappedComponent = React.createElement(container, Object.assign({},dataset,this.config.params))
-
+      if (!reactContainer) continue ;
       if(this.store) {
         ReactDOM.render(
           <Provider store = { this.store }>
