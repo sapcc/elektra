@@ -33,14 +33,12 @@ describe("resource management - project level", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/resources/project#/dns`)
     cy.contains('Recordsets per Zone')
     cy.contains('you need the resource_admin role')
-    
   })
 
   it("network page is directly reachable and you need the resource_admin role", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/resources/project#/network`)
     cy.contains('Security Group Rules')
     cy.contains('you need the resource_admin role')
-    
   })
 
   it("storage page is directly reachable and you need the resource_admin role", () => {
@@ -48,7 +46,6 @@ describe("resource management - project level", () => {
     cy.contains('Shared Filesystem Storage (Premium SSD)')
     cy.contains('Shared Filesystem Storage (Hypervisor Storage)')
     cy.contains('you need the resource_admin role')
-    
   })
 
   it("availability zones page is directly reachable and you need the resource_admin role", { defaultCommandTimeout: 30000 }, () => {
