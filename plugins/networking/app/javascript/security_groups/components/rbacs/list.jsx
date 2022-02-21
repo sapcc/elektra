@@ -94,28 +94,55 @@ const RBACs = ({ securityGroup }) => {
       })
   }, [securityGroupId])
 
+  // This function adds a new project (newItem) to the access control.
+  // The user either selected the new project from the autocompletion
+  // or entered the ID directly.
   const add = React.useCallback(() => {
+    // mark as creating
     setIsCreating(true)
+    // reset state
     dispatch({ type: "reset_error" })
-    ajaxHelper
-      .post(`security-groups/${securityGroupId}/rbacs`, {
-        target_tenant: newItem,
+
+    // start promise chain
+    // using Promise here allows us to do the error processing once
+    // at the end of the chain
+    new Promise((resolve, reject) => {
+      if (newItem.id) resolve(true)
+      // no id provided -> throw error
+      else reject("No project ID provided")
+    })
+      .then(() => {
+        if (!newItem.name) {
+          // no name exists -> make a live search to check if this project exists
+          return ajaxHelper
+            .get(`cache/live_search?type=project&term=${newItem.id}`)
+            .then((response) => {
+              // trow error if no items found
+              if (!response?.data?.items || response.data.items.length === 0)
+                throw `No project found with ID ${newItem.id}`
+            })
+        }
       })
-      .then((response) => {
-        dispatch({ type: "add", item: response.data })
-      })
+      .then(() =>
+        ajaxHelper
+          .post(`security-groups/${securityGroupId}/rbacs`, {
+            target_tenant: newItem.id,
+          })
+          .then((response) => {
+            dispatch({ type: "add", item: response.data })
+          })
+      )
       .catch((error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.errors) ||
-          error.message
+        // process errors
+        const message = error?.response?.data?.errors || error.message || error
         dispatch({ type: "error", error: message })
       })
       .finally(() => {
+        //cleanup
         setIsCreating(false)
-        setNewItem("")
+        setNewItem(null)
       })
+    //----------------------------
   }, [newItem])
 
   const remove = React.useCallback((id) => {
@@ -218,9 +245,11 @@ const RBACs = ({ securityGroup }) => {
                     disabled={isCreating}
                     onSelected={(list) => {
                       const id = list[0]?.id
-                      if (id) setNewItem(id)
+                      setNewItem({ id, name: list[0]?.name })
                     }}
-                    onInputChange={(id) => setNewItem(id)}
+                    onInputChange={(id) => {
+                      setNewItem({ id })
+                    }}
                   />
                 </td>
                 <td className="snug">
