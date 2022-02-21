@@ -7,8 +7,7 @@ module EmailService
     authorization_required
 
     def index
-      # @nebula_status = nebula_status
-      # @nebula_endpoint = "https://nebula.#{current_region}.cloud.sap"
+      @nebula_status = nebula_status
     end
 
     def new
@@ -21,8 +20,7 @@ module EmailService
       @multicloud_account = multicloud_account_form(multicloud_account_params)
       multicloud_account_values = @multicloud_account.process(EmailService::MulticloudAccount)
       if @multicloud_account.valid?
-        # status = nebula_activate(multicloud_account_values)
-        # debugger
+        status = nebula_activate(multicloud_account_values)
         status == "success"
         if status == "success"
           flash[:success] = "Cronus is enabled for your project"
