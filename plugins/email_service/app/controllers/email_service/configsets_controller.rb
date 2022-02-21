@@ -1,13 +1,14 @@
 module EmailService
   class ConfigsetsController < ::EmailService::ApplicationController
     before_action :restrict_access
-
+    before_action :check_user_creds_roles
     before_action :set_configset, only: %i[edit, destroy, update]
+    
     authorization_context 'email_service'
     authorization_required
 
     def index
-      # next_token, @configsets = list_configsets
+      
       items_per_page = 10
       @paginatable_configsets = Kaminari.paginate_array(configsets, total_count: configsets.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e

@@ -1,6 +1,7 @@
 module EmailService
   class TemplatesController < ::EmailService::ApplicationController
     before_action :restrict_access
+    before_action :check_user_creds_roles
     before_action :set_template, only: %i[new show edit]
 
     authorization_context 'email_service'
@@ -9,7 +10,8 @@ module EmailService
     def index
       @templates = templates
       items_per_page = 10
-      @paginatable_templates = Kaminari.paginate_array(@templates, total_count: @templates.count).page(params[:page]).per(items_per_page)
+      # = !@templates && @templates.count == 0 ? [] :
+      @paginatable_templates  = Kaminari.paginate_array(@templates, total_count: @templates.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
       rescue Exception => e

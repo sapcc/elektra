@@ -1,6 +1,6 @@
 - @header_title ||= "Application"
 - @title ||= "Warning"
-- @description ||= "Service unavailable"
+- @description ||= "Cronus Service is not enabled"
 
 - if modal?
   = content_for :title do
@@ -9,16 +9,18 @@
       = "#{@header_title} Warning"
 
   .modal-body
-    = render partial: 'email_service/shared/roles_attention_box'
-    
-    %h3= sanitize(@title)
-    %p= sanitize(@description, tags: %w(b))
+
+    -# %h3= sanitize(@title)
+    -# %p= sanitize(@description, tags: %w(b))
+
+    = render partial: 'email_service/shared/cronus_activation'
 
   .modal-footer
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
 
 - else
-  = render partial: 'email_service/shared/roles_attention_box'
 
-  %h3= sanitize(@title)
-  %p= sanitize(@description, tags: %w(b))
+  -# %h3= sanitize(@title)
+  -# %p= sanitize(@description, tags: %w(b))
+
+  = render partial: 'email_service/shared/cronus_activation'

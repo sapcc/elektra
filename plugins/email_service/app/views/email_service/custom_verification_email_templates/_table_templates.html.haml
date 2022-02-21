@@ -1,0 +1,18 @@
+.templates_table
+%table.table.table-striped
+  %thead
+    %tr
+      %th Name
+      %th Subject
+      %th.snug
+  %tbody
+    - if !@custom_templates || @custom_templates.empty?
+      %tr
+      %td{ colspan: 3 } No Verification eMail Template available
+    - else    
+      - @paginatable_templates.each do | item |
+        = render partial: 'table_template_item', locals: { item: item }
+      
+- if @paginatable_templates && !@paginatable_templates.empty?
+  = paginate @paginatable_templates, :theme => 'twitter-bootstrap-3', :remote => false
+

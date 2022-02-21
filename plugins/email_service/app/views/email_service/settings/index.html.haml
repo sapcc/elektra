@@ -8,25 +8,29 @@
       Settings
     .row
       .col-sm-9
-        %table.table.table-striped
-          %tr
-            %td AWS Access Key
-            %td 
-              =@access ? @access : "AWS EC2 credentials are not created. Create on webconsole using `openstack ec2 credentials create` command."
-            %td
-          %tr#tr_secret
-            %td AWS Secret Key 
-            %td#td_secret_key
-              =@secret ? @secret : ""
-            %td.show_hide_btn
-              %button.btn.btn-primary#btn_tg_secret
-                %i.fa.fa-eye-slash#eye_slash
-                %i.fa.fa-eye#eye
-          %tr
-            %td Cronus Endpoint 
-            %td 
-              =current_user.service_url('email-aws')
-            %td
+        .toolbar
+          .main-buttons 
+          - if current_user.is_allowed?('email_service:multicloud_account_create') && !nebula_active?
+            = link_to "Enable Cronus", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-primary'
+          - if current_user.is_allowed?('email_service:multicloud_account_delete') && nebula_active?
+            = link_to 'Disable Cronus', plugin('email_service').multicloud_account_path(id: project_id), method: :delete, class: 'btn btn-primary', data: { confirm: "Are you sure you want to disable cronus for this project '#{project_id}'?", ok: "Yes, disable it", confirmed: :loading_status}
+        %br
+        
+        = render partial: 'multicloud'
+        = render partial: 'ec2_creds'
+        %br
+        - if ec2_creds_collection && ec2_creds_collection.size > 1
+          = link_to "Manage EC2 Credentials", plugin('email_service').ec2_credentials_path, class: 'btn btn-primary'
+
+        -# %p
+        -#   nebula status
+        -#   =@nebula_status
+        -# %p 
+        -#   nebula details
+        -#   =@nebula_details
+        -# %p
+        -#   nebula url
+        -#   =get_nebula_uri
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p

@@ -6,42 +6,29 @@ module EmailService
     authorization_required
     
     def index
-      @cronus_activated = false
-      unless ec2_creds.nil?
+      @nebula_details = nebula_details
+      @nebula_status = nebula_status
+      puts @nebula_status
+      puts @nebula_details
+      @nebula_endpoint = "https://nebula.#{current_region}.cloud.sap"
+      # debugger
+
+      @cronus_active = false
+      unless !ec2_creds && ec2_creds.nil?
         @access = ec2_creds.access
         @secret = ec2_creds.secret
         if @access && @secret 
-          @cronus_activated = true
+          @cronus_active = true
         end
       else
         flash[:error] = "Cronus is not activated"
+        check_user_creds_roles settings_path  
       end
     rescue Elektron::Errors::ApiResponse => e
       flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
     rescue Exception => e
       flash[:error] = "Status Code: 500 : Error: #{e.message}"
     end
-
-    def show
-      @access = ec2_creds.access
-      @secret = ec2_creds.secret
-    rescue Elektron::Errors::ApiResponse => e
-      flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
-    rescue Exception => e
-      flash[:error] = "Status Code: 500 : Error: #{e.message}"
-    end
-
-    # def enable
-    #   flash[:info] = "Cronus is enabled"
-    #   # Add code to enable
-    #   redirect_to :index
-    # end
-
-    # def disable
-    #   flash[:info] = "Cronus is disabled"
-    #   # Add code to disable
-    #   redirect_to :index
-    # end
 
   end
 end

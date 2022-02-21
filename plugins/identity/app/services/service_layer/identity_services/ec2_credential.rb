@@ -27,34 +27,25 @@ module ServiceLayer
       end
 
       # find ec2 credentials of a user for a particular project if project_id given
-      # else return all ec2 credentials of the user
-      def ec2_credentials(user_id, filter = {})
+      # else return all ec2 credentials (Array) of the user
+      def ec2_credentials(user_id = nil, filter = {})
         # caching
-        @ec2_credentials ||= elektron_identity.get("users/#{user_id}/credentials/OS-EC2", filter).map_to(
+        @ec2_credentials = elektron_identity.get("users/#{user_id}/credentials/OS-EC2", filter).map_to(
           'body.credentials', &ec2_credential_map
         )
         return @ec2_credentials if filter[:tenant_id].nil?
         @ec2_credentials.select { |ec2_cred| ec2_cred.tenant_id == filter[:tenant_id] }
       end
 
-      def project_ec2_credentials(user_id = nil, filter = {})
-        @project_ec2_credentials = ec2_credentials(user_id, filter)
-      end
-
-      # find or create credentials for the current (project & user) context
-      def find_or_create_ec2_credentials(user_id = nil, filter = {})
-        return nil if user_id.blank?
+      # create credentials for the current (project & user) context
+      def create_ec2_credentials(user_id = nil, filter = {})
+        return nil if user_id.blank? || filter[:tenant_id].nil?
         @created = false
-        @fetched = project_ec2_credentials(user_id, filter)
-        unless @fetched.empty?
-          return @fetched.first
-        else
-          @created = new_ec2_credential({ user_id: user_id, project_id: filter[:tenant_id] }).save
-          @creds = elektron_identity.get("users/#{user_id}/credentials/OS-EC2", filter).map_to(
-                      'body.credentials', &ec2_credential_map
-                    ) 
-          return @creds.first if @created && @creds.length.positive?
-        end
+        @created = new_ec2_credential({ user_id: user_id, project_id: filter[:tenant_id] }).save
+        @creds = elektron_identity.get("users/#{user_id}/credentials/OS-EC2", filter).map_to(
+                    'body.credentials', &ec2_credential_map
+                  ) 
+        return @created && @creds.length.positive? ? @creds.first : nil
       end
 
       # Model methods

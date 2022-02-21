@@ -19,18 +19,57 @@ module EmailService
         redirect_to index_path
       end
     end 
+
+    def check_user_creds_roles
+      unless current_user.has_role?('email_admin') && current_user.has_role?('email_user') || ec2_creds && !ec2_creds.nil?
+        render '/email_service/shared/setup.html'
+      end
+    end 
     
     # Handle exception related to roles
     rescue_from 'MonsoonOpenstackAuth::Authorization::SecurityViolation' do |exception|
-      if exception.resource[:action] == 'index' && exception.resource[:controller] == 'email_service/emails'
+
+      actions = [ 'index', 
+                  'new', 
+                  'create', 
+                  'update', 
+                  'destroy', 
+                  'show', 
+                  'verify_dkim', 
+                  'activate_dkim', 
+                  'deactivate_dkim'  
+                ]
+
+      controllers = [ 'email_service/emails', 
+                      'email_service/configsets', 
+                      'email_service/emails',
+                      'email_service/configsets',
+                      'email_service/plain_emails',
+                      'email_service/templated_emails',
+                      'email_service/emails',
+                      'email_service/templates',
+                      'email_service/configsets',
+                      'email_service/email_verifications',
+                      'email_service/stats',
+                      'email_service/domain_verifications',
+                      'email_service/settings',
+                      'email_service/custom_verification_email_templates',
+                      'email_service/multicloud_accounts',
+                      'email_service/ec2_credentials',
+                      'email_service/web'
+                    ]
+
+      if actions.include?(exception.resource[:action]) && controllers.include?(exception.resource[:controller])
         @title = 'Unauthorized'
         @status = 401
         @description = 'You are not authorized to view this page.'
         if exception.respond_to?(:involved_roles) && exception.involved_roles && exception.involved_roles.length.positive?
           @description += " Please check (role assignments) if you have one of the following roles: #{exception.involved_roles.flatten.join(', ')}."
         end
-        render '/email_service/shared/warning.html', status: @status
+        render '/email_service/shared/role_warning.html'
       end
+
+      # render '/email_service/shared/role_warning.html'
 
       options = {
         title: 'Unauthorized',

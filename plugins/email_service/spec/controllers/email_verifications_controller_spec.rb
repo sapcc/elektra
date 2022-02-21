@@ -18,6 +18,9 @@ describe EmailService::EmailVerificationsController, type: :controller do
   end
  
   before :each do
+    allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:check_user_creds_roles).and_return(double('redirect_path').as_null_object) 
+    allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:ec2_creds).and_return(double('redirect_path').as_null_object)
     allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)     
     allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:remove_verified_identity).and_return(double('status').as_null_object)
@@ -67,7 +70,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         get :index, params: default_params
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('email_service/shared/role_warning.html')
       end
     end
 
@@ -80,7 +83,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       end
       it 'not allowed' do
         get :index, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('email_service/shared/role_warning.html')
       end
     end
 
@@ -133,7 +136,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         get :new, params: default_params
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('email_service/shared/role_warning.html')
       end
     end
 
@@ -146,7 +149,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       end
       it 'not allowed' do
         get :new, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('email_service/shared/role_warning.html')
       end
     end
 
@@ -199,7 +202,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
         end
       end
       it 'returns http 401 status' do
-        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(401)
+        expect(post(:create, params: default_params.merge(verified_email: @opts))).to render_template('email_service/shared/role_warning.html')
       end
     end
 
@@ -211,7 +214,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
         end
       end
       it 'not allowed' do
-        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(:unauthorized)
+        expect(post(:create, params: default_params.merge(verified_email: @opts))).to render_template('email_service/shared/role_warning.html')
       end
     end
 
@@ -262,7 +265,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
         end
       end
       it 'returns http 401 status' do
-        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to have_http_status(401)
+        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to render_template('email_service/shared/role_warning.html')
       end
     end
 
@@ -274,7 +277,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
         end
       end
       it 'not allowed' do
-        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to have_http_status(:unauthorized)
+        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to render_template('email_service/shared/role_warning.html')
       end
     end
 

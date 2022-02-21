@@ -1,20 +1,50 @@
 - pl = plugin('email_service')
+
+- email_addr_hint = 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+
+- optional_email_addr_hint = 'You can enter up to 50 recipient email addresses (To, Cc, Bcc) together'
+
+- subject_hint = 'Subject of your email message'
+
+- html_text_hint = 'Enter HTML Text of your email'
+
+- plain_text_hint = 'Enter Plain Text of your email'
+
+- reply_to_addr_hint = 'If the recipient replies to the message, each reply-to address will receive the reply.'
+
+- return_path_hint = "The email address that bounces and complaints will be forwarded to when feedback forwarding is enabled. If the message cannot be delivered to the recipient, then an error message will be returned from the recipient\'s ISP; this message will then be forwarded to the email address specified by the ReturnPath parameter."
+
+- configset_name_hint = "The name of the configuration set to use when you send an email (optional)"
+
 - if !verified_emails_collection || verified_emails_collection.empty? 
   %p.alert.alert-warning
     There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
     You can get verified your eMail address
     = link_to 'here', pl.new_email_verification_path
-    
-= f.input :source,   required: true, label: "From", collection: verified_emails_collection, as: :select, icon_hint: "Choose Source email address"
 
-= f.input :to_addr,  required: true, label: 'To', placeholder: 'Enter To Addresses', as: :text, icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
 
-= f.input :cc_addr,  required: false, label: 'Cc Address(es)', placeholder: 'Enter Cc Addresses', as: :text, icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
+= f.input :source_type, required: true, label: "Sender Type", input_html: {data: {toggle: 'sourceSwitch'}}, collection: types.sort.map {|k,v| [v,k]}, selected: selected_source_type(plain_email.source_type)
 
-= f.input :bcc_addr, required: false, label: 'Bcc Address(es)', placeholder: 'Enter Bcc Addresses', as: :text, icon_hint: "You can enter up to 50 recipient email addresses (To, Cc, Bcc) together"
+%hr
 
-= f.input :subject,  required: true, label: 'Subject', placeholder: 'Enter Subject', icon_hint: 'Enter subject line'
+  = render partial: 'domain_list', locals: {f:f}
+  
+  = render partial: 'email_list', locals: {f:f}
 
-= f.input :html_body, required: true, label: "HTML Body", placeholder: "Enter HTML Email Body", input_html: {rows: "15", class: "u-text-monospace"}, as: :text, icon_hint: 'Enter HTML Text of your email'
+= f.input :to_addr,  required: true, label: 'To', placeholder: 'Enter To Addresses', as: :text, icon_hint: email_addr_hint
 
-= f.input :text_body, required: true, label: "Text Body", placeholder: "Enter Text Email Body", input_html: {rows: "15", class: "u-text-monospace"}, as: :text, icon_hint: 'Enter Plain Text of your email'
+= f.input :cc_addr,  required: false, label: 'Cc Address(es)', placeholder: 'Enter Cc Addresses', as: :text, icon_hint: optional_email_addr_hint
+
+= f.input :bcc_addr, required: false, label: 'Bcc Address(es)', placeholder: 'Enter Bcc Addresses', as: :text, icon_hint: optional_email_addr_hint
+
+= f.input :reply_to_addr, required: false, label: 'Reply To', placeholder: 'Enter Reply-To Address(es)', input_html: {rows: "5", class: "u-text-monospace"}, as: :text, icon_hint: reply_to_addr_hint
+-# = render partial: 'reply_to', locals: {f:f}
+= f.input :return_path, required: false, label: 'Return Path', placeholder: 'Enter Return-Path Address', icon_hint: return_path_hint
+-# = render partial: 'return_path', locals: {f:f}
+= f.input :subject,  required: true, label: 'Subject', placeholder: 'Enter Subject', icon_hint: subject_hint
+
+= f.input :html_body, required: true, label: 'HTML Body', placeholder: "Enter HTML Email Body", input_html: {rows: "10", class: "u-text-monospace"}, as: :text, icon_hint: html_text_hint
+
+= f.input :text_body, required: true, label: 'Text Body', placeholder: "Enter Text Email Body", input_html: {rows: "10", class: "u-text-monospace"}, as: :text, icon_hint: plain_text_hint
+
+-# = f.input :configset_name, required: false, label: "ConfigSet", collection: configset_names, as: :select, icon_hint: configset_name_hint

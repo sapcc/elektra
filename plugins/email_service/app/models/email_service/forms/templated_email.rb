@@ -8,11 +8,17 @@ module EmailService
     include ActiveModel::Validations::Callbacks
     include ::EmailService::Helpers
 
+    attribute :source_type, String
     attribute :source, String
+    attribute :source_email, String
+    attribute :source_domain, String
+    attribute :source_domain_name_part, String
+
     attribute :to_addr, String
     attribute :cc_addr, String
     attribute :bcc_addr, String
     attribute :reply_to_addr, String
+    attribute :return_path, String
     attribute :template_name, String
     attribute :template_data, String
     attribute :configset_name, String
@@ -20,16 +26,16 @@ module EmailService
     strip_attributes
 
     # validation
-    validates_presence_of :source, message: "sender can't be empty"
+    validates_presence_of :source, message: "Sender can't be empty"
     validates_presence_of :template_name, message: "Template name can't be empty"
     validates_presence_of :to_addr, message: "To address can't be empty"
-    validates_presence_of :reply_to_addr, message: "Reply to address can't be empty"
     validates_presence_of :template_data, message: "Template data can't be empty"
+
     validates :to_addr, presence: true, email: true
     validates :cc_addr, allow_nil: true, email: true
     validates :bcc_addr, allow_nil: true, email: true
-    validates :reply_to_addr, presence: true, email: true
     validates :template_data, presence: true, json: true
+
 
     def to_model
       self

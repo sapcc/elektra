@@ -1,6 +1,7 @@
 module EmailService
   module ApplicationHelper
 
+    
     def encoding 
       @encoding ||= 'utf-8'
     end
@@ -23,22 +24,25 @@ module EmailService
 
     # fetch first credential for the current user with current project scope
     def ec2_creds
-      filter = { tenant_id: project_id }
-      @ec2_creds ||= services.identity.find_or_create_ec2_credentials(user_id, filter)
+      @ec2_creds ||= services.identity.ec2_credentials(user_id, { tenant_id: project_id })&.first
     end
 
-    # list project scoped credentials for current user
-    def project_creds
-      @project_creds ||= services.identity.project_ec2_credentials(user_id, { tenant_id: project_id })
+    def ec2_creds_collection
+      @ec2_creds_collection ||= services.identity.ec2_credentials(user_id, { tenant_id: project_id })
+    end
+
+    # create ec2 credentials
+    def create_credentials
+      @new_creds ||= services.identity.create_ec2_credentials(user_id, { tenant_id: project_id })
     end
 
     # find credentials for current user by access key
-    def find_cred(access_id)
-      @cred ||= services.identity.find_ec2_credential(user_id, access_id)
+    def find_credentials(access_id)
+      @found ||= services.identity.find_ec2_credential(user_id, access_id)
     end
 
     # delete credential for current user identified by access key
-    def delete_cred(access_id)
+    def delete_credentials(access_id)
       services.identity.delete_ec2_credential(user_id, access_id)
     end
   
@@ -46,7 +50,7 @@ module EmailService
       @region ||= map_region(@cronus_region)
       @endpoint ||= service_url
 
-      unless ec2_creds.nil?
+      unless !ec2_creds || ec2_creds.nil?
         begin
           @credentials ||= Aws::Credentials.new(ec2_creds.access, ec2_creds.secret)
           @ses_client ||= Aws::SES::Client.new(region: @region, endpoint: @endpoint, credentials: @credentials)
@@ -89,8 +93,7 @@ module EmailService
       end
   
     end
-    
-    
+
     def email_addresses
       @email_addresses ||= list_verified_identities("EmailAddress")
     end
@@ -202,7 +205,7 @@ module EmailService
     def send_plain_email(plain_email)
 
       begin
-        resp = ses_client.send_email(
+        resp = ses_client.send_email({
           destination: {
             to_addresses: plain_email.to_addr,
             cc_addresses: plain_email.cc_addr,
@@ -225,7 +228,9 @@ module EmailService
             }
           },
           source: plain_email.source,
-        )
+          reply_to_addresses: plain_email.reply_to_addr,
+          return_path: plain_email.return_path,
+        })
         audit_logger.info(current_user.id, 'has sent email to', plain_email.to_addr,plain_email.cc_addr, plain_email.bcc_addr)
       rescue Aws::SES::Errors::ServiceError => e
         error = e.message
@@ -235,6 +240,38 @@ module EmailService
       return resp && resp.successful? ? "success" : error
 
     end
+
+    # switch between email and domain source type
+
+    def selected_source_type(type)
+      if type.blank?
+        'email'
+      else
+        type.downcase
+      end
+    end
+
+    def hide_email_source(type)
+      if type.blank?
+        return true
+      else
+        return false if type.casecmp('email').zero?
+      end
+      false
+      #true
+    end
+
+    def hide_domain_source(type)
+      if type.blank?
+        return true
+      else
+        return false if type.casecmp('domain').zero?
+      end
+
+      true
+    end
+
+    
 
     #
     # TemplatedEmail
@@ -251,8 +288,8 @@ module EmailService
             cc_addresses: templated_email.cc_addr,
             bcc_addresses: templated_email.bcc_addr,
           },
-          reply_to_addresses: [templated_email.reply_to_addr],
-          return_path: templated_email.reply_to_addr,
+          reply_to_addresses: templated_email.reply_to_addr,
+          return_path: templated_email.return_path,
           tags: [
             {
               name: "MessageTagName", 
@@ -862,11 +899,54 @@ module EmailService
           configuration_set_attribute_names: ["eventDestinations"], # accepts eventDestinations, trackingOptions, deliveryOptions, reputationOptions
         })
       rescue Aws::SES::Errors::ServiceError => e
-        status = "#{error}"
-        Rails.logger.error "CRONUS: DEBUG: DESCRIBE CONFIGSET: #{error}"
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: DESCRIBE CONFIGSET: #{e.message}"
       end
 
       return configset_description
+
+    end
+
+    # To be tested
+
+      # :rule_set_name (required, String) — The name of the rule set to create. The name must:
+      # This value can only contain ASCII letters (a-z, A-Z), numbers (0-9), underscores (_), or dashes (-).
+      # Start and end with a letter or number.
+      # Contain less than 64 characters.
+      # :original_rule_set_name (required, String) — The name of the rule set to clone.
+    def clone_receipt_rule_set # return empty response.
+      resp = ses_client.clone_receipt_rule_set({
+        rule_set_name: "ReceiptRuleSetName", # required
+        original_rule_set_name: "ReceiptRuleSetName", # required
+      })
+    end
+
+    def create_configuration_set_event_destination(params = {})
+
+      resp = ses_client.create_configuration_set_event_destination({
+        configuration_set_name: "ConfigurationSetName", # required
+        event_destination: { # required
+          name: "EventDestinationName", # required
+          enabled: false,
+          matching_event_types: ["send"], # required, accepts send, reject, bounce, complaint, delivery, open, click, renderingFailure
+          kinesis_firehose_destination: {
+            iam_role_arn: "AmazonResourceName", # required
+            delivery_stream_arn: "AmazonResourceName", # required
+          },
+          cloud_watch_destination: {
+            dimension_configurations: [ # required
+              {
+                dimension_name: "DimensionName", # required
+                dimension_value_source: "messageTag", # required, accepts messageTag, emailHeader, linkTag
+                default_dimension_value: "DefaultDimensionValue", # required
+              },
+            ],
+          },
+          sns_destination: {
+            topic_arn: "AmazonResourceName", # required
+          },
+        },
+      })
 
     end
 
@@ -883,5 +963,321 @@ module EmailService
     end
 
 
-  end
+    # 
+
+    ### Custom verification email template
+
+    #
+    
+    def create_custom_verification_email_template(custom_template)
+
+      begin 
+        # empty response
+        resp = ses_client.create_custom_verification_email_template({
+          template_name: custom_template.template_name, #params[:template_name],
+          from_email_address:  custom_template.from_email_address, #params[:from_email_address],
+          template_subject: custom_template.template_subject, # params[:template_subject],
+          template_content: custom_template.template_content, # params[:template_content],
+          success_redirection_url: custom_template.success_redirection_url, #params[:success_redirection_url],
+          failure_redirection_url: custom_template.failure_redirection_url, #params[:failure_redirection_url],
+        })
+        status = "success"
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+      end
+      return status
+    end
+
+    def delete_custom_verification_email_template(name)
+
+      begin 
+        # empty response
+        resp = ses_client.delete_custom_verification_email_template({
+          template_name: name,
+        })
+        return "success"
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+      end
+    
+    end
+
+    # create a template instance used by find_template to return empty one
+    def new_custom_verification_email_template(attributes = {})
+      template = EmailService::CustomVerificationEmailTemplate.new(attributes)
+    end
+
+    def update_custom_verification_email_template(custom_template = {})
+      begin 
+        resp = ses_client.update_custom_verification_email_template({
+          template_name: custom_template.template_name,
+          from_email_address: custom_template.from_email_address, 
+          template_subject: custom_template.template_subject,
+          template_content: custom_template.template_content,
+          success_redirection_url: custom_template.success_redirection_url,
+          failure_redirection_url: custom_template.failure_redirection_url,
+        })
+        return "success"
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+      end
+      
+    end
+
+    def custom_templates(next_token = nil)
+
+      @custom_verification_email_templates = []
+
+      resp = list_custom_verification_email_templates({
+        next_token: next_token,
+        max_results: 50,
+      })
+
+      if resp.is_a?(Error)
+        return resp 
+      end
+
+      index = 1
+      resp[:custom_verification_email_templates].each do  |item| 
+        template_item = {
+          :id => index,
+          :template_name => item[:template_name],
+          :from_email_address => item[:from_email_address],
+          :template_subject => item[:template_subject],
+          :success_redirection_url => item[:success_redirection_url],
+          :failure_redirection_url => item[:failure_redirection_url],
+        }
+      # @custom_verification_email_templates.push(new_custom_verification_email_template(item))
+      @custom_verification_email_templates.push(template_item)
+      index += 1
+      end
+      return @custom_verification_email_templates
+
+    end
+
+    def list_custom_verification_email_templates(params = {})
+      begin 
+        @all_templates ||= ses_client.list_custom_verification_email_templates(params)
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+        return e
+      end
+    end
+
+    # find a template with name or returns an empty template object
+    def find_custom_verification_email_template(name)
+
+      begin 
+        template = ses_client.get_custom_verification_email_template({
+          template_name: name, # required
+        })
+      rescue Aws::SES::Errors::ServiceError => e
+        status = "#{e.message}"
+        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+      end
+
+      return template ? template : new_custom_verification_email_template
+
+    end
+
+    #
+
+    ### nebula
+
+    ## 
+
+    def _nebula_request(uri, method, headers = nil, body = nil )
+      # puts "Parsing URL: #{uri}"
+      https = Net::HTTP.new(uri.host, uri.port)
+      https.use_ssl = true
+      request = Net::HTTP::Get.new(uri)
+      case method
+      when "GET"
+        request = Net::HTTP::Get.new(uri)
+      when "POST"
+        request = Net::HTTP::Post.new(uri)
+      when "DELETE"
+        request = Net::HTTP::Delete.new(uri)
+      else
+        request = Net::HTTP::Get.new(uri)
+      end
+      request["X-Auth-Token"] = current_user.token 
+      request["Content-Type"] = "application/json"
+      unless headers.nil?
+        JSON.parse(headers).each do |name, value|
+          request[name] = value
+        end
+      end
+
+      unless body.nil?
+        request.body = body
+      end
+
+      begin
+        response = https.request(request) 
+      rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
+             Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
+        puts e
+        Rails.logger.error e.message
+        return e.message
+      end
+      return response
+    end
+
+    def nebula_details
+      url = URI("https://nebula.#{cronus_region}.cloud.sap/v1/aws/#{project_id}")
+      headers =  nil # JSON.dump({ "sample-head1": "head1", "sample-head2": "head2" })
+      body = nil # JSON.dump({ "sample-body2": "body1", "sample-body2": "body2", })
+      response = _nebula_request(url, "GET", headers, body)
+    
+      begin
+        status = JSON.parse(response.read_body)
+      rescue JSON::ParserError => e
+        status = "{\"error\" => \"#{e.message}\"}"
+      end
+
+      return status
+    end
+
+
+
+    def nebula_status
+      if nebula_details 
+        if nebula_details.is_a?(Hash)
+          if nebula_details.has_key?("status")
+            status = nebula_details["status"]
+          elsif nebula_details.has_key?("compliant") && nebula_details.has_key?("security_attributes")
+            status = "REQUESTED"
+          else
+            status = "INACTIVE"
+          end
+        elsif nebula_details.is_a?(String)
+          return JSON.parse(nebula_details).has_key?("error") ? "ERROR" : "" rescue nil
+        end
+      end
+      return status ? status : nil
+      # {"production"=>true, "status"=>"GRANTED", "security_attributes"=>"security officer David Halimi (I349172), environment DEV, valid until 2022-11-22", "compliant"=>true}
+      # debugger
+    end
+
+    # check if cronus service is enabled for the project
+    def nebula_active? 
+      @nebula_active ||= nebula_details && nebula_details["status"] == "GRANTED" ? true : false
+      # false
+    end
+
+    def get_nebula_uri(provider = nil, custom_url = nil)
+      unless custom_url == nil 
+        @nebula_url ||= URI("#{custom_url}/v1/#{provider}/#{project_id}")
+      else
+        # TODO : findout if URI is valid
+        provider = "aws" unless provider
+        @nebula_url ||= URI("https://nebula.#{cronus_region}.cloud.sap/v1/#{provider}/#{project_id}")
+      end
+    end
+
+    def nebula_activate(multicloud_account = nil)
+      return "nebula details are invalid " if multicloud_account.nil?
+      # multicloud_account.account_env
+      # multicloud_account.identity
+      # multicloud_account.mail_type
+      # multicloud_account.provider
+      # multicloud_account.security_officer
+      # multicloud_account.custom_endpoint_url
+      provider = multicloud_account.provider || "aws"
+      endpoint_url = multicloud_account.custom_endpoint_url ? multicloud_account.custom_endpoint_url : nil
+      url = get_nebula_uri(provider, endpoint_url)
+      
+      body = JSON.dump({
+        "accountEnv": multicloud_account.account_env,
+        "identities": multicloud_account.identity, # array
+        "mailType": multicloud_account.mail_type || "TRANSACTIONAL",
+        "securityOfficer": multicloud_account.security_officer
+      })
+      response = _nebula_request(url, "POST", headers, body)
+      puts response.read_body
+      # return response.read_body
+      if response.code.to_i < 300
+        status = "success"
+      else
+        status ="#{response.code} : #{response.read_body}"
+      end
+      return status 
+      # This is shown after deleting and activating again.
+      # response.code "409"
+      # "{\"error\":\"failed to create a Nebula account: account already activated\"}\n"
+    end
+
+    def nebula_available?(uri)
+      require "resolv"
+      dns_resolver = Resolv::DNS.new()
+      begin
+        dns_resolver.getaddress(uri)
+        return true
+      rescue Resolv::ResolvError => e
+        return false
+      end
+    end
+
+    def nebula_deactivate(multicloud_account = nil)
+      url = get_nebula_uri("aws", custom_endpoint_url)
+      response = _nebula_request(url, "DELETE", nil, nil)
+      if response.code.to_i < 300
+        status = "success"
+      else
+        status ="#{response.code} : #{response.read_body}"
+      end
+      return status
+    end
+
+    def account_env_collection
+      return [ "PROD", "QA", "DEV", "DEMO", "TRAIN", "SANDBOX", "LAB" ]
+    end
+
+    def aws_mail_type_collection
+      ["MARKETING", "TRANSACTIONAL"]
+    end
+
+    def custom_endpoint_url 
+      return nil
+    end
+
+    def nebula_provider_collection
+      ["aws", "int"]
+    end
+
+    def nebula_endpoint_url(region = nil)
+      if region.nil? 
+        region = current_region
+      end
+      return "https://nebula.#{region}.cloud.sap/v1"
+    end
+
+    # 
+    # Raw email 
+    # 
+
+    # https://docs.aws.amazon.com/ses/latest/dg/mime-types.html
+    def restricted_file_ext
+      return([ '.ade','.adp','.app','.asp','.bas','.bat','.cer',
+        '.chm','.cmd','.com','.cpl','.crt','.csh','.der','.exe','.fxp','.gadget','.hlp',
+        '.hta','.inf','.ins','.isp','.its','.js','.jse','.ksh','.lib','.lnk','.mad',
+        '.maf','.mag','.mam','.maq','.mar','.mas','.mat','.mau','.mav','.maw','.mda',
+        '.mdb','.mde','.mdt','.mdw','.mdz','.msc','.msh','.msh1','.msh2','.mshxml',
+        '.msh1xml','.msh2xml','.msi','.msp','.mst','.ops','.pcd','.pif','.plg','.prf',
+        '.prg','.reg','.scf','.scr','.sct','.shb','.shs','.sys','.ps1','.ps1xml','.ps2',
+        '.ps2xml','.psc1','.psc2','.tmp','.url','.vb','.vbe','.vbs','.vps','.vsmacros',
+        '.vss','.vst','.vsw','.vxd','.ws','.wsc','.wsf','.wsh','.xnk'
+        ])
+    end
+
+
+
+
+
+ end
 end

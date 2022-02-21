@@ -20,6 +20,7 @@ describe EmailService::EmailsController, type: :controller do
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(EmailService::EmailsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
+    allow_any_instance_of(EmailService::EmailsController).to receive(:check_user_creds_roles).and_return(double('redirect_path').as_null_object) 
     allow_any_instance_of(EmailService::EmailsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::EmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)     
     allow_any_instance_of(EmailService::EmailsController).to receive(:get_send_stats).and_return(double('stats').as_null_object)           
@@ -71,7 +72,7 @@ describe EmailService::EmailsController, type: :controller do
       end
       it 'returns http status 401' do
         get :index, params: default_params
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('email_service/shared/role_warning.html')
       end
     end
 
@@ -84,7 +85,7 @@ describe EmailService::EmailsController, type: :controller do
       end
       it 'not allowed' do
         get :index, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('email_service/shared/role_warning.html')
       end
     end
 
