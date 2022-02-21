@@ -31,12 +31,14 @@ describe("domain landing page", () => {
     cy.contains('Name: Name should not be empty')
   })
 
+  // this needs to be moved to the requests e2e tests
   it("open domain landing page and check my requests", () => {
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','My Requests').click()
     cy.contains('[data-test=page-title]','My Requests')
   })
 
+  // this needs to be moved to the requests e2e tests
   it("open domain landing page and check masterdata", () => {
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','Masterdata').click()
@@ -44,6 +46,7 @@ describe("domain landing page", () => {
     cy.contains('Complete')
   })
 
+  // this needs to be moved to the requests e2e tests
   it("open domain landing page and check cost report", () => {
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','Cost Report').click()
