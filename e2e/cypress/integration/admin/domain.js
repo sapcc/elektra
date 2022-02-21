@@ -67,17 +67,6 @@ describe("domain landing page", () => {
     cy.contains('Hans-Georg Winkler')
   })
 
-  it("open domain landing page and search Child Objects for elektra test vm", () => {
-    cy.contains('[data-test=page-title]','Home')
-    cy.contains('a','Find by Child Objects').click()
-    // TODO: rename to Find Object!
-    cy.contains('Find Project')
-    cy.get('#reverseLookupValue').type('elektra-test-vm (do not delete){enter}')
-    cy.contains('Could not load object (Request failed with status code 404)')
-    cy.get('#reverseLookupValue').type('{selectall}df628236-e1a5-4dcd-9715-e204e184fe71{enter}')
-    cy.contains('elektra-test-vm (do not delete)')
-  })
-
 })
 
 
