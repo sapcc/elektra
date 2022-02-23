@@ -142,11 +142,7 @@ group :development, :test, :integration_tests do
 end
 
 group :integration_tests do
-  gem 'capybara'
-  gem 'capybara-screenshot'
   gem 'cucumber-rails', require: false
-  gem 'phantomjs', require: false
-  gem 'poltergeist'
 end
 
 group :test do
