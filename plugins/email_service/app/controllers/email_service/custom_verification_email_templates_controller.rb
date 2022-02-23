@@ -6,16 +6,7 @@ module EmailService
 
     authorization_context 'email_service'
     authorization_required
-
-#     custom_verification_email_templates     GET    /custom_verification_email_templates(.:format)          email_service/custom_verification_email_templates#index
-#                                             POST   /custom_verification_email_templates(.:format)          email_service/custom_verification_email_templates#create
-# new_custom_verification_email_template      GET    /custom_verification_email_templates/new(.:format)      email_service/custom_verification_email_templates#new
-# edit_custom_verification_email_template     GET    /custom_verification_email_templates/:id/edit(.:format) email_service/custom_verification_email_templates#edit
-# custom_verification_email_template          GET    /custom_verification_email_templates/:id(.:format)      email_service/custom_verification_email_templates#show
-                                              # PATCH  /custom_verification_email_templates/:id(.:format)      email_service/custom_verification_email_templates#update
-                                              # PUT    /custom_verification_email_templates/:id(.:format)      email_service/custom_verification_email_templates#update
-                                              # DELETE /custom_verification_email_templates/:id(.:format)      email_service/custom_verification_email_templates#destroy
-
+    
     def index
 
       @custom_templates = custom_templates
@@ -77,8 +68,6 @@ module EmailService
 
     def update
       @custom_template = custom_verification_email_template_form(custom_verification_email_template_params)
-      # @custom_template.template_name = params[:template_name]
-      # form_params = custom_verification_email_template_params
 
       if @custom_template.valid?
         # update the original custom_template
