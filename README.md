@@ -88,29 +88,6 @@ Available Services in Elektra
 If elektra is configured against a standard DevStack installation, only the core services like identity, nova, neutron and cinder are (sometimes partly) available and
 shown in Elektra. Additional services like swift, LBaaS, manila, ... will only be shown when available from the DevStack backend side.  
 
-Running the cucumber tests
---------------------------
-
-The following ENV parameters can be set for running cucumbers:
-
-CCTEST_DOMAIN= ```[test domain name,default:cctest_cluster_3]```
-
-CCTEST_PROJECT= ```[test project name, default:public]```
-
-CCTEST_USER= ```[test user name, default:cctest_cluster_3_member]```
-
-CCTEST_PASSWORD= ```[test user password]```
-
-Profiles e2e and admin are relevant:
-
-* **e2e:** Should pass with project member user
-* **admin:** Should only pass with an domain admin user
-
-
-The ENV parameters can also be passed in command line like:
-
-```bin/cucumber CCTEST_PROJECT=admin CCTEST_USER=cctest_cluster_3_admin CCTEST_PASSWORD=XXX -p admin```
-
 Create a new Plugin
 -------------------
 

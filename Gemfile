@@ -115,7 +115,6 @@ group :development do
 end
 
 group :development, :test do
-  # load .env.bak needed for cucumber tests!
   gem 'dotenv-rails'
 
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -136,13 +135,8 @@ group :development, :test do
   gem 'prettier'
 end
 
-group :development, :test, :integration_tests do
+group :development, :test do
   gem 'rspec'
-  gem 'colorize' #needs to be here otherwise the tests will break
-end
-
-group :integration_tests do
-  gem 'cucumber-rails', require: false
 end
 
 group :test do
