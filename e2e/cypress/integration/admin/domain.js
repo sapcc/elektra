@@ -5,6 +5,7 @@ describe("domain landing page", () => {
       Cypress.env("TEST_USER"),
       Cypress.env("TEST_PASSWORD")
     )
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/home`)
   })
 
   it("open domain landing page and check user profile", () => {
