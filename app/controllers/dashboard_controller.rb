@@ -173,7 +173,8 @@ class DashboardController < ::ScopeController
 
   def two_factor_required?
     if ENV['TWO_FACTOR_AUTH_DOMAINS']
-      return ENV['TWO_FACTOR_AUTH_DOMAINS'].gsub(/\s+/, '').split(',').include?(@scoped_domain_name)
+      @two_factor_required = ENV['TWO_FACTOR_AUTH_DOMAINS'].gsub(/\s+/, '').split(',').include?(@scoped_domain_name)
+      return @two_factor_required
     end
     false
   end

@@ -1475,12 +1475,21 @@ footer,
 
   &.bs-callout-info-cta {
     border-left-color: $btn-info-border;
-    color: #fff;
+    color: rgb(187,187,187);
 
     &.bs-callout-emphasize {
       border-color: #000;
       border-left-color: $btn-info-border;
       background: #222;
+    }
+
+    &.bs-callout-announcement {
+      background: rgb(41, 47, 54) inline-svg("CCloud_cloud_shape.svg") right bottom no-repeat;
+      padding-right: 100px;
+    }
+
+    .emphasized-text {
+      color: rgb(222,223,224);
     }
 
     a {
