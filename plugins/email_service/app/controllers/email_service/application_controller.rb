@@ -21,7 +21,7 @@ module EmailService
     end 
 
     def check_ec2_creds_cronus_status
-      unless ec2_creds && !ec2_creds.nil? || nebula_active?
+      if ( !ec2_creds && ec2_creds.nil? ) || !nebula_active?
         render '/email_service/shared/setup.html'
       end
     end 
