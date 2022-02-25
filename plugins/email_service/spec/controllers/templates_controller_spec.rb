@@ -19,7 +19,7 @@ describe EmailService::TemplatesController, type: :controller do
  
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
-    allow_any_instance_of(EmailService::TemplatesController).to receive(:check_user_creds_roles).and_return(double('redirect_path').as_null_object)
+    allow_any_instance_of(EmailService::TemplatesController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:ec2_creds).and_return(double('redirect_path').as_null_object)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:store_template).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:update_template).and_return(double('status').as_null_object)

@@ -22,7 +22,7 @@ module EmailService
         end
       else
         flash[:error] = "Cronus is not activated"
-        check_user_creds_roles  
+        check_ec2_creds_cronus_status  
       end
     rescue Elektron::Errors::ApiResponse => e
       flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"

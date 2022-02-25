@@ -1,7 +1,7 @@
 module EmailService
   class ConfigsetsController < ::EmailService::ApplicationController
     before_action :restrict_access
-    before_action :check_user_creds_roles
+    before_action :check_ec2_creds_cronus_status
     before_action :set_configset, only: %i[edit, destroy, update]
     
     authorization_context 'email_service'

@@ -20,8 +20,8 @@ module EmailService
       end
     end 
 
-    def check_user_creds_roles
-      unless current_user.has_role?('email_admin') && current_user.has_role?('email_user') || ec2_creds && !ec2_creds.nil?
+    def check_ec2_creds_cronus_status
+      unless ec2_creds && !ec2_creds.nil? || nebula_active?
         render '/email_service/shared/setup.html'
       end
     end 

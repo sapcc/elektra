@@ -21,7 +21,7 @@ describe EmailService::SettingsController, type: :controller do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(EmailService::SettingsController).to receive(:ec2_creds).and_return(double('configset').as_null_object) 
     allow_any_instance_of(EmailService::SettingsController).to receive(:get_configset).and_return(double('configset').as_null_object)  
-    allow_any_instance_of(EmailService::SettingsController).to receive(:check_user_creds_roles).and_return(double('redirect_path').as_null_object)           
+    allow_any_instance_of(EmailService::SettingsController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object)           
   end
 
   # check index route

@@ -19,7 +19,7 @@ describe EmailService::ConfigsetsController, type: :controller do
  
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
-    allow_any_instance_of(EmailService::ConfigsetsController).to receive(:check_user_creds_roles).and_return(double('render').as_null_object)
+    allow_any_instance_of(EmailService::ConfigsetsController).to receive(:check_ec2_creds_cronus_status).and_return(double('render').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:ses_client).and_return(double('creds').as_null_object) 
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:list_configsets).and_return(double('config_sets').as_null_object)            

@@ -19,7 +19,7 @@ describe EmailService::PlainEmailsController, type: :controller do
  
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
-    allow_any_instance_of(EmailService::PlainEmailsController).to receive(:check_user_creds_roles).and_return(double('redirect_path').as_null_object) 
+    allow_any_instance_of(EmailService::PlainEmailsController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object) 
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)     
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(:get_send_stats).and_return(double('stats').as_null_object)           

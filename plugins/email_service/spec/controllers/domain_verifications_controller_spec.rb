@@ -20,7 +20,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
-    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:check_user_creds_roles).and_return(double('redirect_path').as_null_object) 
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object) 
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)     
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:remove_verified_identity).and_return(double('status').as_null_object)
