@@ -81,7 +81,10 @@
             } , function(data){
               $('#acls').html(data);
             },
-            "html");
+            "html").fail(function(xhr, status, error) {
+              //console.log(xhr)
+              $('#acls').html('Sorry but something goes wrong with error code: '+xhr.status)
+            });
         }
       );
     }
@@ -96,8 +99,8 @@
           input.data('org', input.val());
           input.val('.r:*,\n.rlistings');
           input.prop('readonly', true);
-       }
-         else {
+        }
+        else {
           input.val(input.data('org'));
           input.prop('readonly', false);
         }

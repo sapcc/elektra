@@ -22,4 +22,12 @@ describe("shared object storage", () => {
     cy.contains('button','Cancel').click()
   })
 
+  it("open object storage and check access control and check ACLs button", () => {
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/containers?overlay=elektra-test%2Fshow_access_control`)
+    cy.contains('Read ACLs')
+    cy.contains('textarea','.rlistings')
+    cy.contains('a','Check ACLs').click()
+    cy.contains('valid token required: false')
+  })
+
 })
