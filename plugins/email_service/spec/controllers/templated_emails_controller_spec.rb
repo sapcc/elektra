@@ -73,7 +73,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       end
       it 'returns http 401 status' do
         get :new, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -86,7 +86,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       end
       it 'not allowed' do
         get :new, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
   end
@@ -133,7 +133,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
         end
       end
       it 'returns http 401 status' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('email_service/shared/role_warning.html')
+        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -145,7 +145,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
         end
       end
       it 'not allowed' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('email_service/shared/role_warning.html')
+        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('application/exceptions/warning.html')
       end
     end
 

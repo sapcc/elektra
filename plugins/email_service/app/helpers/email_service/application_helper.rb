@@ -1199,8 +1199,7 @@ module EmailService
         "securityOfficer": multicloud_account.security_officer
       })
       response = _nebula_request(url, "POST", headers, body)
-      puts response.read_body
-      # return response.read_body
+      
       if response.code.to_i < 300
         status = "success"
       else

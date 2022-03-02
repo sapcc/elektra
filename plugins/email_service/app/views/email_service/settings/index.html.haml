@@ -4,33 +4,27 @@
 
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"settings-pane"}
-    %h3
+    %h2
       Settings
     .row
       .col-sm-9
+        %h3 Cronus Account
         .toolbar
-          .main-buttons 
+          .main-buttons
           - if current_user.is_allowed?('email_service:multicloud_account_create') && !nebula_active?
             = link_to "Enable Cronus", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-primary'
           - if current_user.is_allowed?('email_service:multicloud_account_delete') && nebula_active?
             = link_to 'Disable Cronus', plugin('email_service').multicloud_account_path(id: project_id), method: :delete, class: 'btn btn-primary', data: { confirm: "Are you sure you want to disable cronus for this project '#{project_id}'?", ok: "Yes, disable it", confirmed: :loading_status}
         %br
-        
         = render partial: 'multicloud'
-        = render partial: 'ec2_creds'
         %br
-        - if ec2_creds_collection && ec2_creds_collection.size > 1
-          = link_to "Manage EC2 Credentials", plugin('email_service').ec2_credentials_path, class: 'btn btn-primary'
-
-        -# %p
-        -#   nebula status
-        -#   =@nebula_status
-        -# %p 
-        -#   nebula details
-        -#   =@nebula_details
-        -# %p
-        -#   nebula url
-        -#   =get_nebula_uri
+        %h3 EC2 Credentials
+        .toolbar
+          .main-buttons 
+          - if ec2_creds_collection && ec2_creds_collection.size > 1
+            = link_to "Manage EC2 Credentials", plugin('email_service').ec2_credentials_path, class: 'btn btn-primary'
+        %br
+        = render partial: 'ec2_creds'
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p
@@ -39,3 +33,4 @@
             and you can find How-To guides
             = link_to "here", "https://documentation.global.cloud.sap/services/email-howto", :target => "_blank"
             \.
+

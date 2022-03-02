@@ -70,7 +70,7 @@ describe EmailService::SettingsController, type: :controller do
       end
       it 'returns http status 401' do
         get :index, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 

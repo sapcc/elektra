@@ -82,7 +82,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it 'returns http status 401' do
         get :index, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -133,7 +133,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it 'returns http 401 status' do
         get :new, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -186,7 +186,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it 'returns http 401 status' do
         post(:create, params: default_params.merge(opts: @opts))
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -243,7 +243,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it 'returns http 401 status' do
         delete(:destroy, params: default_params.merge(id: @opts[:id]))
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 

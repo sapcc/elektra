@@ -21,7 +21,6 @@ module EmailService
       multicloud_account_values = @multicloud_account.process(EmailService::MulticloudAccount)
       if @multicloud_account.valid?
         status = nebula_activate(multicloud_account_values)
-        status == "success"
         if status == "success"
           flash[:success] = "Cronus is enabled for your project"
           redirect_to plugin('email_service').emails_path and return

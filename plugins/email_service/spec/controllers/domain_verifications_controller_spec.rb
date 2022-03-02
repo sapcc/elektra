@@ -73,7 +73,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         get :index, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -86,7 +86,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         get :index, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -140,7 +140,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         get :new, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -153,7 +153,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         get :new, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -204,7 +204,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         post :create, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -217,7 +217,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         post :create, params: default_params
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -271,7 +271,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         delete :destroy, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -284,7 +284,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         delete :destroy, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -337,7 +337,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         post :verify_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -350,7 +350,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         post :verify_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -403,7 +403,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         post :activate_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -416,7 +416,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         post :activate_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -469,7 +469,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         post :deactivate_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -482,7 +482,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         post :deactivate_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template('email_service/shared/role_warning.html')
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
