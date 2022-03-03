@@ -1,0 +1,8 @@
+.bs-callout.bs-callout-info.bs-callout-emphasize
+  %h4
+    Please note: Cronus is not enabled.
+  %p
+    Click on the button below to Enable Cronus for this project.
+  %br
+    - if current_user.is_allowed?('email_service:multicloud_account_create')
+      = link_to "Enable Cronus", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-primary'

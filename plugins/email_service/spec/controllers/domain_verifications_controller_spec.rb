@@ -18,7 +18,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
   end
  
   before :each do
+    allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object) 
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)     
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:remove_verified_identity).and_return(double('status').as_null_object)
@@ -71,7 +73,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         get :index, params: default_params
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -84,7 +86,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         get :index, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -138,7 +140,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         get :new, params: default_params
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -151,7 +153,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         get :new, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -202,7 +204,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         post :create, params: default_params
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -215,7 +217,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         post :create, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -269,7 +271,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         delete :destroy, params: default_params.merge(id: @opts[:id])
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -282,7 +284,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         delete :destroy, params: default_params.merge(id: @opts[:id])
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -335,7 +337,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         post :verify_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -348,7 +350,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         post :verify_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -401,7 +403,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         post :activate_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -414,7 +416,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         post :activate_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -467,7 +469,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http 401 status' do
         post :deactivate_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -480,7 +482,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'not allowed' do
         post :deactivate_dkim, params: default_params.merge(id: @opts[:id])
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 

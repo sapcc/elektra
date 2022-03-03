@@ -16,18 +16,31 @@ describe EmailService::ConfigsetsController, type: :controller do
       default_params[:project_id]
     )
   end
+ 
   before :each do
+    allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(EmailService::ConfigsetsController).to receive(:check_ec2_creds_cronus_status).and_return(double('render').as_null_object)
+    allow_any_instance_of(EmailService::ConfigsetsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
+    allow_any_instance_of(EmailService::ConfigsetsController).to receive(:ses_client).and_return(double('creds').as_null_object) 
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:list_configsets).and_return(double('config_sets').as_null_object)            
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:new_configset).and_return(double('config_set').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:store_configset).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:delete_configset).and_return(double('status').as_null_object)
     
+    # nebula_details
+    # nebula_status
+    # nebula_active?
+    # nebula_activate
+    # nebula_available?
+    # nebula_deactivate
+
   end
-      
+
 
   # check index route
   describe "GET 'index'" do
  
+    # check email admin role
     context 'email_admin' do
       before :each do
         stub_authentication do |token|
@@ -43,6 +56,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
     end
 
+    # check email user role
     context 'email_user' do
       before :each do
         stub_authentication do |token|
@@ -58,7 +72,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
     end
  
-    context 'with cloud_support_tools_viewer_role' do
+    context 'cloud_support_tools_viewer_role alone' do
       before :each do
         stub_authentication do |token|
           token['roles'] = []
@@ -68,95 +82,70 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it 'returns http status 401' do
         get :index, params: default_params
-        expect(response).to have_http_status(:unauthorized)
-      end
-    end
-
-    context 'other roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
-          token
-        end
-      end
-      it 'not allowed' do
-        get :index, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
   end
 
-
-  # check new route
+  # GET new
   describe "GET 'new'" do
- 
-    context 'email_admin role' do
+
+    context 'email_admin' do
       before :each do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'returns http success' do
+      it 'returns http 200 status' do
         get :new, params: default_params
-        expect(response).to be_successful
+        expect(response).to have_http_status(200)
         expect(response).to render_template(:new)
       end
     end
 
-    context 'email_user role' do
+    context 'email_user' do
       before :each do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_user' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'returns http success' do
+      it 'returns http 200 status' do
         get :new, params: default_params
-        expect(response).to be_successful
+        expect(response).to have_http_status(200)
         expect(response).to render_template(:new)
       end
     end
- 
-    context 'with cloud_support_tools_viewer_role' do
+
+    context 'cloud_support_tools_viewer_role alone' do
       before :each do
         stub_authentication do |token|
           token['roles'] = []
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'returns http status 401' do
+      it 'returns http 401 status' do
         get :new, params: default_params
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
-    context 'other roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
-          token
-        end
-      end
-      it 'not allowed' do
-        get :new, params: default_params
-        expect(response).to_not be_successful
-      end
-    end
 
   end
 
-  # check create route
+
+  # POST create
   describe "POST 'create'" do
 
     before :each do
-      @configset = ::EmailService::FakeFactory.new.configset_opts
+      @opts = ::EmailService::FakeFactory.new.configset_opts
     end
 
     context 'email_admin' do
@@ -164,13 +153,12 @@ describe EmailService::ConfigsetsController, type: :controller do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'returns redirects status' do
-        expect(post(:create, params: default_params.merge(configset: @configset))).to have_http_status(200) #redirect_to(configsets_path(default_params))
-        expect(response.code).to eq("200")
+      it 'returns http 302 status' do
+        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(302)
       end
     end
 
@@ -179,56 +167,38 @@ describe EmailService::ConfigsetsController, type: :controller do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_user' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      
-      it 'returns http success' do
-        # configset = ::EmailService::FakeFactory.new.configset
-        # controller.instance_variable_set(:@configset, configset)
-        # cfg = controller.instance_variable_get(:@configset)
-        post :create, params: default_params.merge(configset: @configset)
-        expect(response).to have_http_status(200)
-        expect(response).to render_template(:edit)
-      end
-    end
-  
-    context 'with cloud_support_tools_viewer_role' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
-          token
-        end
-      end
-      it 'returns http status 401' do
-        post :create, params: default_params.merge(configset: @configset)
-        expect(response).to have_http_status(:unauthorized)
+      it 'returns http 302 status' do
+        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(302)
       end
     end
 
-    context 'other roles' do
+    context 'cloud_support_tools_viewer_role alone' do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token['roles'] = []
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'not allowed' do
-        post :create, params: default_params.merge(configset: @configset)
-        expect(response).to_not be_successful
+      it 'returns http 401 status' do
+        post(:create, params: default_params.merge(opts: @opts))
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
   end
 
 
-  # check destroy route
+
+  # DELETE destroy
   describe "DELETE 'destroy'" do
 
     before :each do
-      @configset = ::EmailService::FakeFactory.new.configset_opts
+      @opts = ::EmailService::FakeFactory.new.configset_opts
     end
 
     context 'email_admin' do
@@ -236,14 +206,14 @@ describe EmailService::ConfigsetsController, type: :controller do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'returns http redirect' do
-        configset = ::EmailService::FakeFactory.new.configset_opts
-        delete :destroy, params: default_params.merge(id: @configset[:id])
-        expect(response).to have_http_status(302)
+      it 'returns http 302 status' do
+        delete(:destroy, params: default_params.merge(id: @opts[:id]))
+        expect(response).to redirect_to(configsets_path(default_params))
+        expect(response.code).to eq("302")
       end
     end
 
@@ -252,73 +222,31 @@ describe EmailService::ConfigsetsController, type: :controller do
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_user' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'returns http redirect' do
-        # configset = ::EmailService::FakeFactory.new.configset_opts
-        delete :destroy, params: default_params.merge(id: @configset[:id])
-        expect(response).to have_http_status(302)
-      end
-    end
-  
-    context 'with cloud_support_tools_viewer_role' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
-          token
-        end
-      end
-      it 'returns http status 401' do
-        # configset = ::EmailService::FakeFactory.new.configset_opts
-        delete :destroy, params: default_params.merge(id: @configset[:id])
-        expect(response).to have_http_status(:unauthorized)
+      it 'returns http 302 status' do 
+        delete(:destroy, params: default_params.merge(id: @opts[:id]))
+        expect(response).to redirect_to(configsets_path(default_params))
+        expect(response.code).to eq("302")
       end
     end
 
-    context 'other roles' do
+    context 'cloud_support_tools_viewer_role alone' do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token['roles'] = []
+          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'not allowed' do
-        # configset = ::EmailService::FakeFactory.new.configset_opts
-        delete :destroy, params: default_params.merge(id: @configset[:id])
-        expect(response).to_not be_successful
+      it 'returns http 401 status' do
+        delete(:destroy, params: default_params.merge(id: @opts[:id]))
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
   end
-
-
-  # experimental
-  let(:configset) { ::EmailService::FakeFactory.new.configset } 
-  describe "#receive.params" do
-
-    context 'email_admin' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
-          token
-        end
-      end
-      it '.allows#params' do
-        allow(controller).to receive(:params).and_return(configset: configset.name)
-        expect(controller.params[:configset]).to eq("NewConfigSet")
-      end
-
-      it ".allows#strong#params" do
-        params = ActionController::Parameters.new(configset: 'A_Fancy_Configset')
-        allow(controller).to receive(:params).and_return(params)
-      end
-    end
-  end
-
 
 end

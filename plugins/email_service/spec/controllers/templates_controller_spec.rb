@@ -19,6 +19,8 @@ describe EmailService::TemplatesController, type: :controller do
  
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(EmailService::TemplatesController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object)
+    allow_any_instance_of(EmailService::TemplatesController).to receive(:ec2_creds).and_return(double('redirect_path').as_null_object)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:store_template).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:update_template).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::TemplatesController).to receive(:list_templates).and_return(double('templates').as_null_object)
@@ -74,7 +76,7 @@ describe EmailService::TemplatesController, type: :controller do
       end
       it 'returns http status 401' do
         get :index, params: default_params
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -87,7 +89,7 @@ describe EmailService::TemplatesController, type: :controller do
       end
       it 'not allowed' do
         get :index, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -139,7 +141,7 @@ describe EmailService::TemplatesController, type: :controller do
       end
       it 'returns http 401 status' do
         get :new, params: default_params
-        expect(response).to have_http_status(401)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -152,7 +154,7 @@ describe EmailService::TemplatesController, type: :controller do
       end
       it 'not allowed' do
         get :new, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -203,7 +205,7 @@ describe EmailService::TemplatesController, type: :controller do
         end
       end
       it 'returns http 401 status' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(401)
+        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -215,7 +217,7 @@ describe EmailService::TemplatesController, type: :controller do
         end
       end
       it 'not allowed' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(401)
+        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -269,7 +271,7 @@ describe EmailService::TemplatesController, type: :controller do
         end
       end
       it 'returns http 401 status' do
-        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to have_http_status(401)
+        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -281,7 +283,7 @@ describe EmailService::TemplatesController, type: :controller do
         end
       end
       it 'not allowed' do
-        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to have_http_status(401)
+        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to render_template('application/exceptions/warning.html')
       end
     end
 

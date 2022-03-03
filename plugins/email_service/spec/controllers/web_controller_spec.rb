@@ -18,6 +18,9 @@ describe EmailService::WebController, type: :controller do
 
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(EmailService::WebController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object)
+    allow_any_instance_of(EmailService::WebController).to receive(:ec2_creds).and_return(double('redirect_path').as_null_object)
+
   end
 
   describe 'GET index' do
@@ -32,7 +35,7 @@ describe EmailService::WebController, type: :controller do
       end
       it 'returns http 401' do
         get :index, params: default_params
-        expect(response).to have_http_status(401)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 

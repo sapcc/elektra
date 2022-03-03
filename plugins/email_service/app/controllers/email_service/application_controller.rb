@@ -19,35 +19,11 @@ module EmailService
         redirect_to index_path
       end
     end 
-    
-    # Handle exception related to roles
-    rescue_from 'MonsoonOpenstackAuth::Authorization::SecurityViolation' do |exception|
-      if exception.resource[:action] == 'index' && exception.resource[:controller] == 'email_service/emails'
-        @title = 'Unauthorized'
-        @status = 401
-        @description = 'You are not authorized to view this page.'
-        if exception.respond_to?(:involved_roles) && exception.involved_roles && exception.involved_roles.length.positive?
-          @description += " Please check (role assignments) if you have one of the following roles: #{exception.involved_roles.flatten.join(', ')}."
-        end
-        render '/email_service/shared/warning.html', status: @status
+
+    def check_ec2_creds_cronus_status
+      if ( !ec2_creds && ec2_creds.nil? ) || !nebula_active?
+        render '/email_service/shared/setup.html'
       end
-
-      options = {
-        title: 'Unauthorized',
-        sentry: false,
-        warning: true,
-        status: 401,
-        description: lambda do |e, _c|
-          m = 'You are not authorized to view this page.'
-          if e.involved_roles && e.involved_roles.length.positive?
-            m += " Please check (role assignments) if you have one of the \
-          following roles: #{e.involved_roles.flatten.join(', ')}."
-          end
-          m
-        end
-      }
-
-      render_exception_page(exception, options)
     end
 
     protected

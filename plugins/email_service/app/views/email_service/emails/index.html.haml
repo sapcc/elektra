@@ -15,7 +15,7 @@
     .col-sm-3
       .bs-callout.bs-callout-primary.toolbar-aligment
         %p
-        - if send_data
+        - if ec2_creds && send_data
           Max Send Quota / 24 hours
           %br
           %center

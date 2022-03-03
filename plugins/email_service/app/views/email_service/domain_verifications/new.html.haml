@@ -1,11 +1,13 @@
 =content_for :main_toolbar do
   Email Service
   .placeholder-div
+- identity_hint = "The domain name to be verified"
+
 
 = simple_form_for @verified_domain, as: :verified_domain, url: plugin('email_service').domain_verifications_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' } do |f|
   .modal-body
     %div{class: modal? ? 'modal-body' : ''}
-      = f.input :identity, required: true
+      = f.input :identity, required: true, icon_hint: identity_hint
       = f.input :dkim_enabled,  as: :boolean, checked_value: true, unchecked_value: false, label: "Enable DKIM"
     %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
