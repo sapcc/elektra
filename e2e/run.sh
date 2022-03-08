@@ -37,8 +37,6 @@ function help_me () {
   exit 1
 }
 
-PROFILE="member"
-SPECS_FOLDER="cypress/integration/$PROFILE/**/*"
 CY_CMD="cypress"
 if [[ "$1" == "--help" ]]; then
   help_me
@@ -126,13 +124,27 @@ if [[ -z "${HOST}" ]]; then
   fi
 
   if [[ -z "${APP_PORT}" ]]; then
-    echo "Error: no APP_PORT found"
+    echo "ERROR: no APP_PORT found"
+    echo ""
     help_me
   fi
 fi
 
+if [[ -z "${PROFILE}" ]]; then
+  echo "ERROR: no PROFILE found"
+  echo ""
+  help_me
+fi
+
+if [[ -z "${SPECS_FOLDER}" ]]; then
+  echo "ERROR: no SPECS_FOLDER found"
+  echo ""
+  help_me
+fi
+
 if [[ -z "${HOST}" ]]; then
-  echo "Error: no HOST found"
+  echo "ERROR: no HOST found"
+  echo ""
   help_me
 fi
 
