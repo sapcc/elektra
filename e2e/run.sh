@@ -55,6 +55,7 @@ else
         ;;
         -p|--profile)
         PROFILE="$2"
+        SPECS_FOLDER="cypress/integration/$PROFILE/**/*"
         shift # past argument
         shift # past value
         ;;
