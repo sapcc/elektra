@@ -10,7 +10,7 @@
     .modal-flashes
       = render "email_service/shared/flashes.html"
 
-    = render partial: 'form', locals: { f: f, form_type: 'new' }
+    = render partial: 'form', locals: { templated_email: @templated_email, types: @source_types, f: f, form_type: 'new' }
 
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?

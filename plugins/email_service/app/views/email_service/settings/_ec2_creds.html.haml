@@ -1,0 +1,22 @@
+- if ec2_creds
+  %table.table.table-striped
+    %tr
+      %td AWS Access Key
+      %td 
+        =@access ? @access : ""
+      %td
+    %tr#tr_secret
+      %td AWS Secret Key 
+      %td#td_secret_key
+        =@secret ? @secret : ""
+      %td.show_hide_btn
+        %button.btn.btn-primary#btn_tg_secret
+          %i.fa.fa-eye-slash#eye_slash
+          %i.fa.fa-eye#eye
+    %tr
+      %td Cronus endpoint 
+      %td 
+        =current_user.service_url('email-aws')
+      %td
+- else 
+  %p "ec2 credentials are not created in this project"

@@ -19,6 +19,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
  
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)           
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_send_data).and_return(double('data').as_null_object)            
@@ -72,7 +73,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       end
       it 'returns http 401 status' do
         get :new, params: default_params
-        expect(response).to have_http_status(401)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -85,7 +86,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       end
       it 'not allowed' do
         get :new, params: default_params
-        expect(response).to_not be_successful
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
   end
@@ -132,7 +133,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
         end
       end
       it 'returns http 401 status' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(401)
+        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('application/exceptions/warning.html')
       end
     end
 
@@ -144,7 +145,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
         end
       end
       it 'not allowed' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(401)
+        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('application/exceptions/warning.html')
       end
     end
 

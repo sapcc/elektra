@@ -10,6 +10,10 @@ module EmailService
       EmailService::Forms::TemplatedEmail.new(templated_email_opts)
     end
 
+    def custom_verification_email_template
+      EmailService::Forms::CustomVerificationEmailTemplate.new(custom_verification_email_template_opts)
+    end
+
     def configset 
       EmailService::Configset.new(configset_opts)
     end
@@ -18,19 +22,44 @@ module EmailService
       EmailService::Template.new(template_opts)
     end
 
-    # def ec2_creds
-    #   {
-    #     "user_id"=>"xxxxxx_user_id_xxxxxxx", 
-    #     "tenant_id"=>"xxxxxx_project_id_xxxxxxx", 
-    #     "access"=>"xxxxxx_access_id_xxxxxxx", 
-    #     "secret"=>"xxxxxx_secret_id_xxxxxxx", 
-    #     "trust_id"=>nil, 
-    #     "links"=>{
-    #       "self"=>"https://identity_v3_url/users/xxxxxx_user_id_xxxxxxx/credentials/OS-EC2/xxxxxx_access_id_xxxxxxx"
-    #     }, 
-    #     "id"=>nil
-    #   }
-    # end
+    def ec2_creds
+      {
+        "user_id"=>"xxxxxx_user_id_xxxxxx", 
+        "tenant_id"=>"xxxxxx_project_id_xxxxxxx", 
+        "access"=>"xxxxxx_access_id_xxxxxx1", 
+        "secret"=>"xxxxxx_secret_id_xxxxxx1", 
+        "trust_id"=>nil, 
+        "links"=>{
+          "self"=>"https://identity_v3_url/users/xxxxxx_user_id_xxxxxxx/credentials/OS-EC2/xxxxxx_access_id_xxxxxxx"
+        }, 
+        "id"=>nil
+      }
+    end
+
+    def ec2_creds_collection
+      [{
+        "user_id"=>"xxxxxx_user_id_xxxxxxx", 
+        "tenant_id"=>"xxxxxx_project_id_xxxxxxx", 
+        "access"=>"xxxxxx_access_id_xxxxxx1", 
+        "secret"=>"xxxxxx_secret_id_xxxxxx1", 
+        "trust_id"=>nil, 
+        "links"=>{
+          "self"=>"https://identity_v3_url/users/xxxxxx_user_id_xxxxxxx/credentials/OS-EC2/xxxxxx_access_id_xxxxxx1"
+        }, 
+        "id"=>nil
+      },
+      {
+        "user_id"=>"xxxxxx_user_id_xxxxxxx", 
+        "tenant_id"=>"xxxxxx_project_id_xxxxxx2", 
+        "access"=>"xxxxxx_access_id_xxxxxx2", 
+        "secret"=>"xxxxxx_secret_id_xxxxxx2", 
+        "trust_id"=>nil, 
+        "links"=>{
+          "self"=>"https://identity_v3_url/users/xxxxxx_user_id_xxxxxxx/credentials/OS-EC2/xxxxxx_access_id_xxxxxx2"
+        }, 
+        "id"=>nil
+      }]
+    end
 
     def plain_email_opts
       {
@@ -41,6 +70,44 @@ module EmailService
         subject: "Sample Subject", 
         htmlbody: "<html><head><title>TEST</title><body><h1>Body of the HTML email<h1></body></html>", 
         textbody: "Body of the PLAIN email"
+      }
+    end
+
+    def formatted_email_opts
+      {
+        source: "ninenine@verizon.net.dk", # required
+        destination: { # required
+          to_addresses: ["curly@comcast.net, plover@me.com, jmcnamara@icloud.com"],
+          cc_addresses: ["jaesenj@yahoo.ca,cgcra@yahoo.com, guialbu@msn.com"],
+          bcc_addresses: ["policies@att.net,froodian@hotmail.com, fmerges@att.net"],
+        },
+        message: { # required
+          subject: { # required
+            data: "Winner Notification", # required
+            charset: "UTF-8",
+          },
+          body: { # required
+            text: {
+              data: "<h1> Winner Notification </h1><br><p>The winner is ...</p>", # required
+              charset: "UTF-8",
+            },
+            html: {
+              data: " Winner Notification. The winner is ...", # required
+              charset: "UTF-8",
+            },
+          },
+        },
+        reply_to_addresses: ["klm@yur.kr", "rjuhu@hyrtyd.co.uk"],
+        return_path: "Address",
+        source_arn: "AmazonResourceName",
+        return_path_arn: "AmazonResourceName",
+        tags: [
+          {
+            name: "MessageTagName", # required
+            value: "MessageTagValue", # required
+          },
+        ],
+        configuration_set_name: "ConfigurationSet1",
       }
     end
 
@@ -64,6 +131,45 @@ module EmailService
         template_data: '{ "abc": { "def": "klm"}}', 
         configset: "MyConfigSet"
       }
+    end
+
+    def custom_verification_email_template_opts
+      {
+        id: 201,
+        template_name: "TemplateName",
+        from_email_address: "abc@def.com",
+        template_subject: "Subject",
+        template_content: "TemplateContent",
+        success_redirection_url: "https://abc.com/v1/path/1",
+        failure_redirection_url: "https://abc.com/v1/path/2",
+      }
+    end
+
+    def template_replacement_json
+      return
+        {
+          "meta":{
+            "userId":"575132908"
+          },
+          "contact":{
+            "firstName":"Michael",
+            "lastName":"Jackson",
+            "city":"Texas",
+            "country":"USA",
+            "postalCode":"78974"
+          },
+          "subscription":[
+            {
+              "interest":"Sports"
+            },
+            {
+              "interest":"Travel"
+            },
+            {
+              "interest":"Cooking"
+            }
+          ]
+        }
     end
 
     def configset_opts 

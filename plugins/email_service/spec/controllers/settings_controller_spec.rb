@@ -19,7 +19,9 @@ describe EmailService::SettingsController, type: :controller do
  
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
-    allow_any_instance_of(EmailService::SettingsController).to receive(:get_configset).and_return(double('configset').as_null_object)            
+    allow_any_instance_of(EmailService::SettingsController).to receive(:ec2_creds).and_return(double('configset').as_null_object) 
+    allow_any_instance_of(EmailService::SettingsController).to receive(:get_configset).and_return(double('configset').as_null_object)  
+    allow_any_instance_of(EmailService::SettingsController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object)           
   end
 
   # check index route
@@ -68,7 +70,7 @@ describe EmailService::SettingsController, type: :controller do
       end
       it 'returns http status 401' do
         get :index, params: default_params
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to render_template('application/exceptions/warning.html')
       end
     end
 

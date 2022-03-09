@@ -11,7 +11,7 @@
     .modal-falshes
       = render "email_service/shared/flashes.html"
 
-    = render partial: 'form', locals: { f: f, form_type: 'edit'}
+    = render partial: 'form', locals: { templated_email: @templated_email, types: @source_types, f: f, form_type: 'edit'}
 
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?

@@ -1,10 +1,9 @@
 EmailService::Engine.routes.draw do
   get '/' => 'web#index', as: :index
-  resources :settings, only: [:index, :show]
   resources :plain_emails, only: [:new, :create, :edit]
   resources :templated_emails, only: [:new, :create, :edit]
   resources :emails, only: [:index ]
-  resources :templates , only: [:index, :show, :new, :edit, :create, :destroy, :update]
+  resources :templates, only: [:index, :show, :new, :edit, :create, :destroy, :update]
   resources :configsets, only: [:index, :show, :new, :edit, :create, :destroy, :update]
   resources :email_verifications, only: [:index, :show, :new, :create, :destroy]
   resources :stats, only: [:index]
@@ -15,4 +14,20 @@ EmailService::Engine.routes.draw do
       post 'deactivate_dkim'
     end
   end
+  resources :settings, only: [:index, :destroy] do 
+    member do 
+      post 'enable_cronus'
+      post 'disable_cronus'
+    end
+  end
+
+  resources :custom_verification_email_templates, only: [:index, :show, :new, :edit, :create, :destroy, :update]
+
+  resources :multicloud_accounts, only: [:index, :show, :new, :edit, :create, :destroy]
+  resources :ec2_credentials, only: [:index, :create, :show] do 
+    member do 
+      delete :destroy
+    end
+  end
+
 end

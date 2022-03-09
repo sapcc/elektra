@@ -8,10 +8,18 @@ module EmailService
     include ActiveModel::Validations::Callbacks
     include ::EmailService::Helpers
 
+    attribute :source_type, String
     attribute :source, String
+    attribute :source_email, String
+    attribute :source_domain, String
+    attribute :source_domain_name_part, String
+    
     attribute :to_addr, String
     attribute :cc_addr, String
     attribute :bcc_addr, String
+    attribute :return_path, String
+    attribute :reply_to_addr, String
+
     attribute :subject, String
     attribute :html_body, String
     attribute :text_body, String
@@ -54,6 +62,10 @@ module EmailService
       end
       plain_email
     end
+
+
+
+
 
 
     def assign_errors(messages)

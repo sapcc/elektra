@@ -1,5 +1,5 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
-FROM ruby:2.6-alpine3.11 AS elektra
+FROM ruby:2.7-alpine3.11 AS elektra
 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
@@ -9,6 +9,7 @@ RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
 RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
+      && gem install bundler:1.17.3 \
       && gem install byebug -v 9.0.6 \
       && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
@@ -47,8 +48,6 @@ ENV MONSOON_LOB_LIST=$MONSOON_LOB_LIST
 ARG MONSOON_NEW_PROJECT_DL
 ENV MONSOON_NEW_PROJECT_DL=$MONSOON_NEW_PROJECT_DL
 
-LABEL quay.expires-after=26w
-
 # add Gemfile and Gemfile.lock to /home/app/webapp/
 ADD Gemfile Gemfile.lock ./
 
@@ -63,6 +62,7 @@ ADD script/organize_plugins_gemspecs script/
 RUN script/organize_plugins_gemspecs
 
 # install gems, copy app and run rake tasks
+RUN apk --no-cache add build-base
 RUN bundle install --without "development integration_tests"
 
 # add elektra sources into image
@@ -97,5 +97,3 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
       # && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
 
 FROM elektra
-
-# docker -t elektra build --file docker/Dockerfile .

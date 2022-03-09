@@ -1,0 +1,15 @@
+- if @nebula_details
+  %table.table.table-striped
+    - @nebula_details.each do |k, v|
+      %tr
+        %td 
+          =k 
+        %td 
+          =v 
+    %tr
+      %td Nebula endpoint
+      %td 
+        =@nebula_endpoint
+- else
+  %p Cronus is not enabled on this project.
+  
