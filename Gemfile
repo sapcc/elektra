@@ -53,7 +53,7 @@ gem 'colorize'
 gem 'ruby-radius'
 
 # Extras
-gem 'config'
+gem 'config', '~> 2.2.1'
 
 # Prometheus instrumentation
 gem 'prometheus-client'
