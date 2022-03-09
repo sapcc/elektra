@@ -1,6 +1,6 @@
 {
   "projectId": "elektra",
-  "defaultCommandTimeout": 10000,
+  "defaultCommandTimeout": 20000,
   "viewportWidth":1300,
   "viewportHeight":1100,
   "videoCompression":20,

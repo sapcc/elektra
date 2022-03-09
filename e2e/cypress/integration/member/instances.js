@@ -7,7 +7,7 @@ describe("instances", () => {
     )
   })
 
-  it("the instances page is reachable and you can search for VM with title 'elektra-test-vm' and show it's details", () => {
+  it("in test project the instances page is reachable and you can search for VM with title 'elektra-test-vm' and show it's details", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances`)
     cy.contains('[data-test=page-title]','Servers')
     cy.get("#search")
@@ -20,21 +20,33 @@ describe("instances", () => {
     // because wrong SSL we test 400 from Hermes 
     // cy.get('span.guest_tools_problem').should('be.visible')
     // cy.get('span.guest_tools_problem_text').should('contain','Problem to get')
-
   })
 
-  it("click on 'Create New' button opens a modal window", () => {
+  it("click on 'Create New' button in test project opens a modal window and check form", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances`)
     cy.contains('[data-test=page-title]','Servers')
 
     cy.contains("Create New")
     cy.get(".btn").contains("Create New").click()
     cy.url().should("include", "instances?overlay=new")
-    cy.contains('label','Name')
-    cy.get("button.btn.btn-primary").contains("Create")
+    cy.get("button.btn.btn-primary").contains("Create").click()
+    cy.contains('li','Name: Please provide a name')
+    cy.contains('li','Image_id: Please select an image')
+    cy.contains('li','Flavor_id: Please select a flavor')
+    cy.contains('li','Network_ids: Please select a network')
   })
 
-  it("the dropdown menu for 'elektra-test-vm' is available and menus are working", () => {
+  it("click on 'Create New' button in member project and see private network not available", () => {
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/compute/instances`)
+    cy.contains('[data-test=page-title]','Servers')
+
+    cy.contains("Create New")
+    cy.get(".btn").contains("Create New").click()
+    cy.url().should("include", "instances?overlay=new")
+    cy.contains('Private_network: not available')
+  })
+
+  it("in test project the dropdown menu for 'elektra-test-vm' is available and menus are working", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances?searchfor=Name&search=elektra`)
     cy.contains('[data-test=page-title]','Servers')
 
@@ -97,7 +109,7 @@ describe("instances", () => {
     })
   })
 
-  it("rename 'elektra-test-vm' and show it's details", () => {
+  it("in test project rename 'elektra-test-vm' and show it's details", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances?searchfor=Name&search=elektra`)
     cy.contains('[data-test=page-title]','Servers')
     
