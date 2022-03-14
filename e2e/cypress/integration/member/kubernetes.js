@@ -8,7 +8,7 @@ describe("kubernetes", () => {
   })
 
   it("open kubernetes page in member project and see that I need kubernetes admin role", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/kubernetes/`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/kubernetes/`)
     cy.contains('[data-test=page-title]','Kubernetes as a Service')
     cy.contains('code','kubernetes_admin')
   })

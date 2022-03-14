@@ -12,28 +12,31 @@ describe("domain landing page", () => {
     cy.contains('a.navbar-identity','Technical User').click()
     cy.contains('a','Profile').click()
     // check not in one string because it can be different order
-    cy.contains('td','monitoring_viewer')
     cy.contains('td','reader')
     cy.contains('td','member')
   })
 
+  /*
+  // this is not working because the test user is seeing only 4 projects so the search is not available
   it("open domain landing page and test search for project member", () => {
     cy.contains('[data-test=page-title]','Home')
-    cy.get('#search-input').type('member')
-    cy.contains('a','member').click()
-    cy.contains("This project is used by TEST_D021500_TM user for elektra e2e tests")
+    cy.get('#search-input').type('test')
+    cy.contains('a','test').click()
+    cy.contains("Test Project")
   })
 
+  // this is not working because the test user is seeing only 4 projects so the search is not available
   it("open domain landing page and check project lists search", () => {
     cy.contains('[data-test=page-title]','Home')
     cy.get('#projects_list > a').click()
     cy.contains('Your Projects')
     // search is being covered by another element -> {force: true}
-    cy.get('#search-input').type('member',{force: true})
+    cy.get('#search-input').type('test',{force: true})
     // <a>admin</a> is being covered by another element -> {force: true}
-    cy.contains('a','member').should('be.visible').click({force: true})
-    cy.contains("This project is used by TEST_D021500_TM user for elektra e2e tests")
+    cy.contains('a','test').should('be.visible').click({force: true})
+    cy.contains("Test Project")
   })
+  */
 
   it("open domain landing page and test create project request", () => {
     cy.contains('[data-test=page-title]','Home')

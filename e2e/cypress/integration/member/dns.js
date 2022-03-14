@@ -8,7 +8,7 @@ describe("dns", () => {
   })
 
   it("open dns page and test Request New Zone dialog", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/dns-service/zones`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/dns-service/zones`)
     cy.contains('[data-test=page-title]','DNS')
     cy.contains('Request New Zone').click()
     cy.contains('Request New Domain')
@@ -16,7 +16,7 @@ describe("dns", () => {
   })
 
   it("open dns page and test Request New Zone with Internal SAP Hosted Zone", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/dns-service/zones`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/dns-service/zones`)
     cy.contains('[data-test=page-title]','DNS')
     cy.contains('Request New Zone').click()
     cy.contains('Request New Domain')
@@ -33,7 +33,7 @@ describe("dns", () => {
   })
 
   it("open dns page and test Request New Zone with Internal SAP Hosted Zone on F5", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/dns-service/zones`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/dns-service/zones`)
     cy.contains('[data-test=page-title]','DNS')
     cy.contains('Request New Zone').click()
     cy.contains('Request New Domain')

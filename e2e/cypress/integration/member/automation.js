@@ -9,7 +9,7 @@ describe("automation", () => {
 
   it("open automation page and get unauthorized", () => {
     cy.request({
-      url: `/${Cypress.env("TEST_DOMAIN")}/member/automation/nodes/`,
+      url: `/${Cypress.env("TEST_DOMAIN")}/test/automation/nodes/`,
       failOnStatusCode: false
     }).should((response) => {
       expect(response.status).to.eq(401)
