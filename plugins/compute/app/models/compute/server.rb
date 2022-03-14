@@ -307,7 +307,7 @@ module Compute
       unless errors.blank?
         if errors.full_messages.to_sentence == "Api No valid host was found. No valid host found for resize"
           errors.delete(:api)
-          errors.add(:api, "Instance resize not possible at this time; there is not enough free capacity for an automatic resize. Please open an SPC Service Request.")
+          errors.add(:api, 'Instance resize not possible at this time: there is not enough free capacity for an automatic resize. please open an ITSM ticket for Service Offering "GCS-CCloud API Services"')
         end
         return false
       else
