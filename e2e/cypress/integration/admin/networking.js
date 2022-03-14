@@ -43,7 +43,7 @@ describe("networking", () => {
   })
 
   it("open securtiy groups page and test create new security group dialog", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/networking/widget/security-groups/?r=`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/networking/widget/security-groups/?r=`)
     cy.contains('[data-test=page-title]','Security Groups')
     cy.contains('a','New Security Group').click()
     cy.contains('button','Save').should('be.disabled')
@@ -53,7 +53,7 @@ describe("networking", () => {
   })
 
   it("open securtiy groups page and test default security group actions", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/networking/widget/security-groups/?r=`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/networking/widget/security-groups/?r=`)
     cy.contains('[data-test=page-title]','Security Groups')
     cy.contains('a','default').click()
     cy.contains('h4','Security Group Info')

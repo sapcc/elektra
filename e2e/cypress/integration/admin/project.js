@@ -8,9 +8,9 @@ describe("project landing page", () => {
   })
 
   it("open project landing page and edit project description", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/identity/project/home`)
     cy.get('div.dropdown.header-action').click()
-    cy.get(`a[href*="${Cypress.env("TEST_DOMAIN")}/member/masterdata-cockpit/project/edit_project?load_project_root=true"]`).click()
+    cy.get(`a[href*="${Cypress.env("TEST_DOMAIN")}/admin/masterdata-cockpit/project/edit_project?load_project_root=true"]`).click()
     cy.contains('h4','Edit Project')
     // disabled that test because it causes problems with friendlyID
     //let currenDate = Date.now()
@@ -20,7 +20,7 @@ describe("project landing page", () => {
   })
 
   it("open project landing page and check user profile", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/identity/project/home`)
     cy.contains('a.navbar-identity','Technical User').click()
     cy.contains('a','Profile').click()
     // check not in one string because it can be different order
@@ -33,7 +33,7 @@ describe("project landing page", () => {
   })
 
   it("open project landing page and check logout button", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/identity/project/home`)
     cy.contains('a.navbar-identity','Technical User').click()
     cy.contains('a','Log out').click()
     // check not in one string because it can be different order
@@ -41,8 +41,10 @@ describe("project landing page", () => {
     cy.contains('a','Enter the cloud')
   })
 
+  /*
+  // wizard for the project not visible
   it("open project landing page and see project wizard", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/identity/project/home`)
     // check resource pooling setup and skip modal windows
     cy.contains("a.btn","Enable resource pooling").click()
     cy.contains('Please be aware that enabling all resource pools is a permanent change that cannot be undone!')
@@ -58,5 +60,6 @@ describe("project landing page", () => {
     cy.contains('h4','Skip Network Setup for Project')
     cy.contains('button','Cancel').click()
   })
+  */
 
 })

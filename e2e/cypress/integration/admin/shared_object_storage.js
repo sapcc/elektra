@@ -7,12 +7,14 @@ describe("shared object storage", () => {
     )
   })
 
+  /*
   it("open object storage and see that object storage is not enabled", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/object-storage/`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/object-storage/`)
     cy.contains('[data-test=page-title]','Object Storage')
     cy.contains('Object storage is not enabled for this project, yet. To enable it, request an Object Storage quota in the Resource Management tool.')
     cy.contains('a','Go to Resource Management')
   })
+  */
 
   it("open object storage and check create container button", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/`)

@@ -8,7 +8,7 @@ describe("shared object storage", () => {
   })
 
   it("open object storage and see that I need admin or swiftoperator role", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/object-storage/`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/object-storage/`)
     cy.contains('[data-test=page-title]','Object Storage')
     cy.contains('Object Storage can only be used when your user account has the admin or swiftoperator role for this project.')
   })
