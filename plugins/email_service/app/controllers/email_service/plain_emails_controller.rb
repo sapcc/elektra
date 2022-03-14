@@ -20,9 +20,15 @@ module EmailService
       @plain_email = plain_email_form(plain_email_params)
 
       if @plain_email.source_type == "domain"
-        @plain_email.source = @plain_email.source_domain_name_part == nil ? "test@#{@plain_email.source_domain}" : "#{@plain_email.source_domain_name_part}@#{@plain_email.source_domain}"
-      elsif @plain_email.source_type == "email"
+        @plain_email.source = @plain_email.source_domain_name_part == "" ? \
+          "test@#{@plain_email.source_domain}" : \
+          "#{@plain_email.source_domain_name_part}@#{@plain_email.source_domain}"
+      elsif @plain_email.source_type == "email" 
         @plain_email.source = @plain_email.source_email
+      end
+
+      if @plain_email.return_path == "" 
+        @plain_email.return_path = @plain_email.source
       end
 
       plain_email_values = @plain_email.process(EmailService::PlainEmail)

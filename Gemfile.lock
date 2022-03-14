@@ -20,9 +20,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 0c013eee81687d16ba57d30fc74493ba2a84531b
+  revision: 9c9a8b7160de12c7ab281eaaf6c112fde2fe8f20
   specs:
-    monsoon-openstack-auth (2.0.6)
+    monsoon-openstack-auth (2.0.7)
       excon
       hashie
       rails
@@ -331,7 +331,7 @@ GEM
     equalizer (0.0.11)
     erubi (1.10.0)
     erubis (2.7.0)
-    excon (0.91.0)
+    excon (0.92.0)
     execjs (2.7.0)
     factory_girl (4.8.0)
       activesupport (>= 3.0.0)

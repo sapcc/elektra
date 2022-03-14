@@ -1,5 +1,5 @@
 - domain_source_hint = 'Choose a verified domain to send email from'
-- name_hint = 'name part of the email address'
+- name_hint = 'local name, if left empty `test@domain` will be used'
 #domain-source{class: ('hide' if hide_domain_source(@templated_email.source_type))}
   = f.input :source_domain, required: true, label: "domain", collection: verified_domains_collection, as: :select, icon_hint: domain_source_hint
 #domain-source-name{class: ('hide' if hide_domain_source(@templated_email.source_type))}

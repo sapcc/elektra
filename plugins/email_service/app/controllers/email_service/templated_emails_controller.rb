@@ -20,15 +20,19 @@ module EmailService
       @templated_email = templated_email_form(templated_email_params)
 
       if @templated_email.source_type == "domain"
-        @templated_email.source = @templated_email.source_domain_name_part == nil ? \
+        @templated_email.source = @templated_email.source_domain_name_part == "" ? \
           "test@#{@templated_email.source_domain}" : \
           "#{@templated_email.source_domain_name_part}@#{@templated_email.source_domain}"
       elsif @templated_email.source_type == "email" 
         @templated_email.source = @templated_email.source_email
       end
-      
-      
+
+      if @templated_email.return_path == "" 
+        @templated_email.return_path = @templated_email.source
+      end
+
       templated_email_values = @templated_email.process(EmailService::TemplatedEmail)
+
       if @templated_email.valid?
         begin
           status = send_templated_email(templated_email_values) 

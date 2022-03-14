@@ -37,18 +37,7 @@
 
   = render partial: 'domain_list', locals: {f:f}
   = render partial: 'email_list', locals: {f:f}
-  
--# - if form_type == 'new'
--#   = render partial: 'domain_list', locals: {f:f}
--#   = render partial: 'email_list', locals: {f:f}
--# - elsif form_type == 'edit'
--#   - if templated_email.source_type == ::EmailService::Email::SourceType::EMAIL
--#     = render partial: 'email', locals: {f:f}
--#   - elsif templated_email.source_type == ::EmailService::Email::SourceType::DOMAIN
--#     = render partial: 'domain', locals: {f:f}
-
--# = f.input :source, required: true, label: "Sender", collection: verified_emails_collection, as: :select, input_html: { autofocus: 'autofocus' }, icon_hint: "Choose an eMail address you wish to send this email from"
-  
+   
 = f.input :to_addr, required: true, label: 'To address(es)', placeholder: 'Enter To Addresses', as: :text, input_html: { class: 'auto-text-field u-text-monospace', :rows => 5 }, icon_hint: to_addr_hint 
 
 = f.input :cc_addr, required: false, label: 'Cc address(es)', placeholder: 'Enter Cc Addresses', input_html: { class: 'auto-text-field u-text-monospace', :rows => 5 }, icon_hint: cc_addr_hint
@@ -59,7 +48,7 @@
 
 = f.input :return_path, required: false, label: 'Return Path', placeholder: 'Enter Return-Path Address', icon_hint: return_path_hint
 
-= f.input :template_name, required: true, label: 'Template Name', collection: templates_collection, as: :select, data: {toggle: "selectTemplateName"}, icon_hint: template_name_hint  
+= f.input :template_name, required: true, label: 'Template Name', collection: templates_collection, as: :select, input_html: {data: {toggle: 'templateSwitch'}}, icon_hint: template_name_hint  
 
 = f.input :template_data, required: true, label: 'Template data - JSON', placeholder: 'Enter valid JSON', input_html: {class: 'auto-text-field u-text-monospace', :rows => 5}, as: :text, icon_hint: template_data_hint
 

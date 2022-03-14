@@ -38,13 +38,13 @@
 = f.input :bcc_addr, required: false, label: 'Bcc Address(es)', placeholder: 'Enter Bcc Addresses', as: :text, icon_hint: optional_email_addr_hint
 
 = f.input :reply_to_addr, required: false, label: 'Reply To', placeholder: 'Enter Reply-To Address(es)', input_html: {rows: "5", class: "u-text-monospace"}, as: :text, icon_hint: reply_to_addr_hint
--# = render partial: 'reply_to', locals: {f:f}
+
 = f.input :return_path, required: false, label: 'Return Path', placeholder: 'Enter Return-Path Address', icon_hint: return_path_hint
--# = render partial: 'return_path', locals: {f:f}
+
 = f.input :subject,  required: true, label: 'Subject', placeholder: 'Enter Subject', icon_hint: subject_hint
 
 = f.input :html_body, required: true, label: 'HTML Body', placeholder: "Enter HTML Email Body", input_html: {rows: "10", class: "u-text-monospace"}, as: :text, icon_hint: html_text_hint
 
-= f.input :text_body, required: true, label: 'Text Body', placeholder: "Enter Text Email Body", input_html: {rows: "10", class: "u-text-monospace"}, as: :text, icon_hint: plain_text_hint
+= f.input :text_body, required: false, label: 'Text Body', placeholder: "Enter Text Email Body", input_html: {rows: "10", class: "u-text-monospace"}, as: :text, icon_hint: plain_text_hint
 
 -# = f.input :configset_name, required: false, label: "ConfigSet", collection: configset_names, as: :select, icon_hint: configset_name_hint
