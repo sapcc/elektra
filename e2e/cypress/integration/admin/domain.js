@@ -32,35 +32,10 @@ describe("domain landing page", () => {
     cy.contains('Name: Name should not be empty')
   })
 
-  // this needs to be moved to the requests e2e tests
   it("open domain landing page and check my requests", () => {
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','My Requests').click()
     cy.contains('[data-test=page-title]','My Requests')
-  })
-
-  // this needs to be moved to the requests e2e tests
-  it("open domain landing page and check cost report", () => {
-    cy.contains('[data-test=page-title]','Home')
-    cy.contains('a','Cost Report').click()
-    cy.contains('[data-test=page-title]','Cost Report for cc3test')
-    cy.contains('text.label','network')
-  })
-
-  it("open domain landing page and check group management", () => {
-    cy.contains('[data-test=page-title]','Home')
-    cy.contains('a','Group Management').click()
-    cy.contains('[data-test=page-title]','Groups')
-    cy.contains('a','CC3TEST_API_SUPPORT').click()
-    cy.contains('[data-test=page-title]','Groups / CC3TEST_API_SUPPORT')
-  })
-
-  it("open domain landing page and check user management", () => {
-    cy.contains('[data-test=page-title]','Home')
-    cy.contains('a','User Management').click()
-    cy.contains('[data-test=page-title]','Users')
-    cy.get('#filter_users').type('d058266')
-    cy.contains('Hans-Georg Winkler')
   })
 
 })

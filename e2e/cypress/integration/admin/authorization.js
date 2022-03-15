@@ -26,6 +26,15 @@ describe("user role assignments", () => {
     cy.contains('Hans-Georg Winkler')
   })
 
+  it("open domain landing page and check user management", () => {
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/home`)
+    cy.contains('[data-test=page-title]','Home')
+    cy.contains('a','User Management').click()
+    cy.contains('[data-test=page-title]','Users')
+    cy.get('#filter_users').type('d058266')
+    cy.contains('Hans-Georg Winkler')
+  })
+
 })
 
 describe("group role assignments", () => {
@@ -41,5 +50,15 @@ describe("group role assignments", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/identity/projects/role-assignments?active_tab=groupRoles`)
     cy.contains('[data-test=page-title]','Authorizations')
   })
+
+  it("open domain landing page and check group management", () => {
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/home`)
+    cy.contains('[data-test=page-title]','Home')
+    cy.contains('a','Group Management').click()
+    cy.contains('[data-test=page-title]','Groups')
+    cy.contains('a','CC3TEST_API_SUPPORT').click()
+    cy.contains('[data-test=page-title]','Groups / CC3TEST_API_SUPPORT')
+  })
+
 
 })
