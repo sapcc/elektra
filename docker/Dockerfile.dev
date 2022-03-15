@@ -1,0 +1,83 @@
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.11
+
+LABEL source_repository="https://github.wdf.sap.corp/monsoon/workspaces/tree/master/environments/elektra"
+
+ENV GIT_SSL_NO_VERIFY=true
+ENV GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" 
+ENV TZ="Europe/Berlin"
+
+RUN apk --no-cache add --update \
+  git \
+  curl \
+  nodejs \
+  build-base \
+  npm \
+  --virtual .builddeps \
+  postgresql-dev \
+  postgresql \
+  postgresql-client \
+  openssh \
+  python2 \
+  yarn \
+  bash \
+  unzip \
+  sqlite-dev \
+  jq \
+  the_silver_searcher \
+  vim \
+  shared-mime-info
+
+# stuff for mitmproxy
+RUN apk --update --no-cache add \
+  python3 \
+  py3-pip\
+  ca-certificates \
+  gcc \
+  libffi-dev \
+  python3-dev \
+  musl-dev \
+  openssl-dev \
+  g++ libxml2-dev \
+  libxslt-dev \
+  libjpeg-turbo-dev \
+  zlib-dev \
+  tshark 
+
+RUN pip3 install --upgrade pip
+RUN pip3 install mitmproxy
+ENV LANG=en_US.UTF-8
+
+RUN pip3 install -U pip
+
+# https://stackoverflow.com/questions/57284921/error-in-setting-up-mitmproxy-on-alpine-3-9
+RUN pip3 install mitmproxy
+
+RUN pip3 install pgcli
+
+################### POSTGRESQL
+ENV PGDATA /var/lib/postgresql/data
+
+RUN echo -e '#!/bin/bash\n\n\
+mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA"\n\
+if [ -z "$(ls -A $PGDATA)" ]; then\n\
+  echo "INFO: setup database"\n\
+  su - postgres -c "initdb $PGDATA" && chmod 700 $PGDATA\n\
+fi\n\
+mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql\n\
+su - postgres -c "pg_ctl -D $PGDATA -w start"\n\
+echo "INFO: create user \"dev\" with password \"dev\" and grant permissions"\n\
+su - postgres -c "createuser -dl dev"\n\
+su - postgres -c "psql -c \"ALTER USER dev WITH ENCRYPTED PASSWORD '"'"'dev'"'"';\""\n\
+/bin/sh -c $@' >> /usr/local/bin/start_db && chmod +x /usr/local/bin/start_db
+
+RUN mkdir /app
+WORKDIR /app
+VOLUME /app
+
+
+RUN gem install bundler && bundle config set --local path 'vendor/bundle'
+
+RUN echo -e  '#!/bin/bash\n/app/bin/rails s -b 0.0.0.0 -p $APP_PORT' >> /usr/local/bin/start && \
+  chmod +x /usr/local/bin/start
+
+ENTRYPOINT [ "/usr/local/bin/start_db" ]  
