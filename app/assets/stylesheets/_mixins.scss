@@ -1,3 +1,17 @@
+@mixin pie-clearfix() {
+  display: inline-block;
+  &:after {
+    content: "\0020";
+    display: block;
+    height: 0;
+    clear: both;
+    overflow: hidden;
+    visibility: hidden;
+  }
+
+  display: block;
+}
+
 @mixin button-variant-outline($color, $background, $border) {
   color: $color;
   background-color: $background;
@@ -11,7 +25,7 @@
   .open > &.dropdown-toggle {
     color: #fff;
     background-color: $border;
-        border-color: $border;
+    border-color: $border;
   }
 
   &:active,
@@ -30,7 +44,7 @@
     &:active,
     &.active {
       background-color: $background;
-          border-color: $border;
+      border-color: $border;
     }
   }
 
@@ -51,11 +65,11 @@
   .open > &.dropdown-toggle {
     color: $medium-blue;
     background-color: #fff;
-        border-color: #fff;
+    border-color: #fff;
   }
 }
 
-@mixin container-width-responsive($factor:1) {
+@mixin container-width-responsive($factor: 1) {
   @media (min-width: $screen-sm-min) {
     width: $container-sm * $factor;
   }

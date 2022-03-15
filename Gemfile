@@ -15,7 +15,6 @@ gem 'rails', '~> 5.2.7' # Don't use 5.1.3 because of redirect errors in tests (s
 gem 'webpacker' # Check package.json -> "@rails/webpacker"
 
 # Views and Assets
-gem 'compass-rails'
 gem 'sass-rails'
 gem 'bootstrap-sass'
 gem 'uglifier'

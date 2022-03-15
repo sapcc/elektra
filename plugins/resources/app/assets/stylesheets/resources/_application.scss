@@ -60,14 +60,12 @@
     }
 
     &.progress-bar-disabled {
-      @include background(
-        repeating-linear-gradient(
-          -55deg,
-          transparent,
-          transparent 3px,
-          #dcdcdc 3px,
-          #dcdcdc 5px
-        )
+      background: repeating-linear-gradient(
+        -55deg,
+        transparent,
+        transparent 3px,
+        #dcdcdc 3px,
+        #dcdcdc 5px
       );
       box-shadow: none;
       color: black;
