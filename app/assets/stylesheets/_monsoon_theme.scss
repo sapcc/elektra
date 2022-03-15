@@ -365,7 +365,7 @@ section {
 }
 
 .scrollable-text {
-  @include border-radius;
+  border-radius: 0;
   background: $input-bg-disabled;
   border: 1px solid #ccc;
   padding: 15px;
@@ -486,7 +486,7 @@ section {
 }
 
 .fancy-nav-icon {
-  @include background-size($font-size-h3);
+  background-size: $font-size-h3;
   width: $font-size-h3;
   font-size: $font-size-h3;
   font-weight: normal;
@@ -812,7 +812,7 @@ section {
 }
 
 .active-filter {
-  @include border-radius(14px);
+  border-radius: 14px;
   border: 1px solid #ccc;
   background: #fff;
   color: #666;
@@ -911,7 +911,7 @@ section {
 }
 
 .fancy-nav {
-  @include column-count(2);
+  column-count: 2;
   padding-left: 0;
   margin-top: $line-height-computed;
 
@@ -920,7 +920,7 @@ section {
   }
 
   > li {
-    @include column-break(inside, avoid);
+    break-inside: avoid;
     padding-left: $grid-gutter-width * 1.4;
   }
 
@@ -930,7 +930,7 @@ section {
   }
 
   .fancy-nav-header {
-    @include column-break(after, avoid);
+    break-after: avoid;
     position: relative;
     display: block;
     padding-top: 0;
@@ -1032,7 +1032,7 @@ footer,
 }
 
 .context-breadcrumb {
-  @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 5px);
+  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 5px;
   @include pie-clearfix;
   background: $context-breadcrumb-bg;
   border-bottom: 1px solid #ddd;
@@ -1161,7 +1161,7 @@ footer,
 
         // Megaflyout (full-width, requires context-container wrapper)
         @include container-width-responsive;
-        @include column-count(3);
+        column-count: 3;
 
         left: -1px;
         padding: $line-height-computed 0;
@@ -1175,7 +1175,7 @@ footer,
             font-size: $font-size-base;
 
             &.fancy-nav-icon {
-              @include background-size($font-size-medium);
+              background-size: $font-size-medium;
               font-size: $font-size-medium;
               left: $grid-gutter-width / 2;
               width: $font-size-medium;
@@ -1475,7 +1475,7 @@ footer,
 
   &.bs-callout-info-cta {
     border-left-color: $btn-info-border;
-    color: rgb(187,187,187);
+    color: rgb(187, 187, 187);
 
     &.bs-callout-emphasize {
       border-color: #000;
@@ -1484,12 +1484,13 @@ footer,
     }
 
     &.bs-callout-announcement {
-      background: rgb(41, 47, 54) inline-svg("CCloud_cloud_shape.svg") right bottom no-repeat;
+      background: rgb(41, 47, 54) inline-svg("CCloud_cloud_shape.svg") right
+        bottom no-repeat;
       padding-right: 100px;
     }
 
     .emphasized-text {
-      color: rgb(222,223,224);
+      color: rgb(222, 223, 224);
     }
 
     a {
@@ -1803,7 +1804,7 @@ tr.updating {
 }
 
 .table > tbody > tr.details > td {
-  @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.05));
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
   border-top: none;
   background: #f5f5f5;
 
@@ -2262,8 +2263,8 @@ i.confirm-icon {
   margin-right: 5px;
 }
 .confirm-term input {
-  @include border-radius(4px);
-  @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075));
+  border-radius: 4px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   @include transition(
     border-color ease-in-out 0.15s,
     box-shadow ease-in-out 0.15s
@@ -2314,7 +2315,7 @@ label {
   .form-control[disabled],
   .form-control[readonly],
   fieldset[disabled] .form-control {
-    @include box-shadow(none);
+    box-shadow: none;
     background: #fff;
     border: none;
     padding: 0;
@@ -2431,8 +2432,8 @@ label {
 // jQuery Autocomplete
 // ---------------------------------------------------------------------------------
 .ui-autocomplete {
-  @include border-radius(5px);
-  @include box-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+  border-radius: 5px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   position: absolute;
   z-index: 1000;
   cursor: default;

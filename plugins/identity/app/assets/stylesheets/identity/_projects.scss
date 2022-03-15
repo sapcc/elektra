@@ -4,5 +4,5 @@
 }
 
 .projects .content-list {
-  @include column-count(3);
+  column-count: 3;
 }
