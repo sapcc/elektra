@@ -60,8 +60,8 @@ development:
   check_yarn_integrity: true
 
   # NOTE:
-  # there is a bug so the port and host from the webpacker config is not used and 
-  # webpack-dev-server starts in any case with the default port 8081 
+  # there is a bug so the port and host from the webpacker config is not used and
+  # webpack-dev-server starts in any case with the default port 8081
   # https://github.com/rails/webpacker/blob/5-x-stable/lib/webpacker/dev_server_runner.rb#L48
   # possible fix in execute_cmd
   # cmd += ["--port", @port.to_s]
@@ -75,10 +75,10 @@ development:
   # orgConfig.devServer.host = "0.0.0.0"
   dev_server:
     # webpacker config:
-    # where is the webpack server running so Webpacker will automatically 
+    # where is the webpack server running so Webpacker will automatically
     # start proxying all webpack asset requests to this server
     # https://github.com/rails/webpacker#development
-    host: 0.0.0.0 
+    host: 0.0.0.0
     port: 8081
     public: 0.0.0.0:8081
     # https://webpack.js.org/concepts/hot-module-replacement/
