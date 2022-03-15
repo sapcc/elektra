@@ -1,4 +1,4 @@
-describe("role assignments", () => {
+describe("user role assignments", () => {
   beforeEach(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
