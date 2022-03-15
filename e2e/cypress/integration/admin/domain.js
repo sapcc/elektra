@@ -40,14 +40,6 @@ describe("domain landing page", () => {
   })
 
   // this needs to be moved to the requests e2e tests
-  it("open domain landing page and check masterdata", () => {
-    cy.contains('[data-test=page-title]','Home')
-    cy.contains('a','Masterdata').click()
-    cy.contains('[data-test=page-title]','Domain Masterdata')
-    cy.contains('Complete')
-  })
-
-  // this needs to be moved to the requests e2e tests
   it("open domain landing page and check cost report", () => {
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','Cost Report').click()

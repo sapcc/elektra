@@ -29,4 +29,14 @@ describe("masterdata", () => {
     cy.contains('button','Cancel').click()
   })
 
+  it("open domain landing page and check masterdata", () => {
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/home`)
+    cy.contains('[data-test=page-title]','Home')
+    cy.contains('a','Masterdata').click()
+    cy.contains('[data-test=page-title]','Domain Masterdata')
+    cy.contains('Complete')
+    cy.contains('a','Edit').click()
+    cy.contains('Edit masterdata for domain: cc3test')
+  })
+
 })
