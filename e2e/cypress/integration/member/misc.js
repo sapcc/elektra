@@ -7,9 +7,9 @@ describe("miscellaneous", () => {
       Cypress.env("TEST_PASSWORD")
     )
 
-    cy.visit("/_/440a7be0551347fb97db4665f03585dd")
-    cy.contains("440a7be0551347fb97db4665f03585dd")
-    cy.contains("This project is used by TEST_D021500_TM user for elektra e2e")
+    cy.visit("/_/d940aae3f8084f15a9b67de5b3b39720")
+    cy.contains("d940aae3f8084f15a9b67de5b3b39720")
+    cy.contains("Test Project")
   })
 
   it("load elektra test vm via id shortcut", () => {

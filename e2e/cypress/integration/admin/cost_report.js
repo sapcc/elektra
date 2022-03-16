@@ -14,4 +14,12 @@ describe("cost report", () => {
     cy.contains('text.label','virtualMachine')
   })
 
+  it("open domain landing page and check cost report", () => {
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/home`)
+    cy.contains('[data-test=page-title]','Home')
+    cy.contains('a','Cost Report').click()
+    cy.contains('[data-test=page-title]','Cost Report for cc3test')
+    cy.contains('text.label','network')
+  })
+
 })

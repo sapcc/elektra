@@ -1,4 +1,4 @@
-describe("audit", () => {
+describe("masterdata", () => {
   beforeEach(() => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -7,9 +7,9 @@ describe("audit", () => {
     )
   })
 
-  it("open audit and should see unauthorized", () => {
+  it("open masterdata", () => {
     cy.request({
-      url: `/${Cypress.env("TEST_DOMAIN")}/test/audit/`,
+      url: `/${Cypress.env("TEST_DOMAIN")}/test/masterdata-cockpit/project`,
       failOnStatusCode: false
     }).should((response) => {
       expect(response.status).to.eq(401)

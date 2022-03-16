@@ -43,7 +43,7 @@ describe("networking", () => {
   })
 
   it("open securtiy groups page and test create new security group dialog", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/networking/widget/security-groups/?r=`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/networking/widget/security-groups/?r=`)
     cy.contains('[data-test=page-title]','Security Groups')
     cy.contains('a','New Security Group').click()
     cy.contains('button','Save').should('be.disabled')
@@ -53,7 +53,7 @@ describe("networking", () => {
   })
 
   it("open securtiy groups page and test default security group actions", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/networking/widget/security-groups/?r=`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/networking/widget/security-groups/?r=`)
     cy.contains('[data-test=page-title]','Security Groups')
     cy.contains('a','default').click()
     cy.contains('h4','Security Group Info')
@@ -72,6 +72,22 @@ describe("networking", () => {
     cy.get('#floating_ip_floating_subnet_id').should('be.visible').select(1)
     cy.contains('button','Allocate').should('be.enabled')
     cy.contains('button','Cancel').click()
+  })
+
+  it("open backup networks", () => {
+    // use admin project because on the member project no networks are configured
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/networking/backup_networks`)
+    cy.contains('[data-test=page-title]','Backup Network')
+    cy.contains('a','Get Access').click()
+    cy.contains('The backup network cannot be automatically assigned in this domain. Please open a support ticket so our support staff can take care of this for you.')
+  })
+
+  it("open fixed IPs and Ports and check Reserved new IP", () => {
+    // use admin project because on the member project no networks are configured
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/networking/widget/ports/?r=/ports`)
+    cy.contains('[data-test=page-title]','Fixed IPs / Ports')
+    cy.contains('a','Reserve new IP').click()
+    cy.contains('button','Save').should('be.disabled')
   })
 
 })

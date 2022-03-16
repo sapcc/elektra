@@ -36,16 +36,6 @@ describe("instances", () => {
     cy.contains('li','Network_ids: Please select a network')
   })
 
-  it("click on 'Create New' button in member project and see private network not available", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/compute/instances`)
-    cy.contains('[data-test=page-title]','Servers')
-
-    cy.contains("Create New")
-    cy.get(".btn").contains("Create New").click()
-    cy.url().should("include", "instances?overlay=new")
-    cy.contains('Private_network: not available')
-  })
-
   it("in test project the dropdown menu for 'elektra-test-vm' is available and menus are working", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/compute/instances?searchfor=Name&search=elektra`)
     cy.contains('[data-test=page-title]','Servers')

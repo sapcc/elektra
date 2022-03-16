@@ -8,13 +8,15 @@ describe("project landing page", () => {
   })
 
   it("open project landing page and cannot see edit project button", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
-    cy.contains("This project is used by TEST_D021500_TM user for elektra e2e tests")
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/identity/project/home`)
+    cy.contains("Test Project")
     cy.get('div.dropdown.header-action').should('not.exist')
   })
 
+  /*
+  // wizard not available in test project
   it("open project landing page and see project wizard", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/identity/project/home`)
     cy.contains("Welcome to your new Project")
     cy.contains("h4","Project")
     cy.contains("This Project is not ready for use.")
@@ -28,14 +30,13 @@ describe("project landing page", () => {
     cy.contains("a.btn","Enable resource pooling").should('have.attr', 'disabled');
     cy.get('div.wizard-step').contains("h4","Configure Your Network")
   })
+  */
 
   it("open project landing page and check user profile and SSH keys", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/identity/project/home`)
     cy.contains('a.navbar-identity','Technical User').click()
     cy.contains('a','Profile').click()
     // check not in one string because it can be different order
-    cy.contains('td','dns_webmaster')
-    cy.contains('td','dns_viewer')
     cy.contains('td','member')
     cy.contains('td','reader')
     cy.contains('button','Close').click()
@@ -54,7 +55,7 @@ describe("project landing page", () => {
   })
 
   it("open project landing page and check logout button", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/member/identity/project/home`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/identity/project/home`)
     cy.contains('a.navbar-identity','Technical User').click()
     cy.contains('a','Log out').click()
     // check not in one string because it can be different order
