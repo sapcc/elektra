@@ -42,7 +42,6 @@
           $("span.sizing_cpu_recommendation_not_found").show()
         } else {
           let cpus = json.data.result[0].value[1]
-          cpus = Math.round(cpus * 100) / 100
           $("span.sizing_cpu_recommendation").show()
           $("span.sizing_cpu_recommendation_value").html(cpus)
         }
@@ -62,6 +61,7 @@
           $("span.sizing_memory_recommendation_not_found").show()
         } else {
           let memory = json.data.result[0].value[1]
+          // round value
           memory = Math.round(memory * 100) / 100
           $("span.sizing_memory_recommendation").show()
           $("span.sizing_memory_recommendation_value").html(memory+" GB")
