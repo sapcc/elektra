@@ -101,6 +101,40 @@
                     %span.text-danger
                       = icon('exclamation-triangle')
                       %span.guest_tools_problem_text
+              %tr
+                %th Sizing recommendation
+                %td
+                  %span.spinner
+                  %span.sizing_cpu_recommendation{style:"display: none;"}
+                    %span.text-success
+                      = icon('microchip')
+                      CPU ->
+                      %span.sizing_cpu_recommendation_value
+                  %span.sizing_cpu_recommendation_not_found{style:"display: none;"}
+                    %span.text-warning
+                      = icon('microchip')
+                      CPU was not found
+                  %span.sizing_cpu_recommendation_problem{style:"display: none;"}
+                    %span.text-danger
+                      = icon('exclamation-triangle')
+                      %span.sizing_cpu_recommendation_problem_text
+              %tr
+                %th{style: 'border-top:0px'}
+                %td{style: 'border-top:0px; padding-top:0px;'}
+                  %span.spinner
+                  %span.sizing_memory_recommendation{style:"display: none;"}
+                    %span.text-success
+                      = icon('database')
+                      Memory ->
+                      %span.sizing_memory_recommendation_value
+                  %span.sizing_memory_recommendation_not_found{style:"display: none;"}
+                    %span.text-warning
+                      = icon('database')
+                      Memory was not found
+                  %span.sizing_memory_recommendation_problem{style:"display: none;"}
+                    %span.text-danger
+                      = icon('exclamation-triangle')
+                      %span.sizing_memory_recommendation_problem_text
 
         .tab-pane{role:"tabpanel", id:"specs"}
           - if @instance.flavor

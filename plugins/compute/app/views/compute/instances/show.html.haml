@@ -33,6 +33,46 @@
       }
     }
 
+    fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=sum by (instance_uuid) (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} - vrops_virtualmachine_oversized_vcpus and vrops_virtualmachine_oversized_vcpus != 0) or (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} %2B vrops_virtualmachine_undersized_vcpus and vrops_virtualmachine_undersized_vcpus != 0)')
+      .then(catchErrors)
+      .then(response => response.json())
+      .then((json) => {
+        $("span.spinner").hide()
+        if (json.data.result.length == 0 ) {
+          $("span.sizing_cpu_recommendation_not_found").show()
+        } else {
+          let cpus = json.data.result[0].value[1]
+          cpus = Math.round(cpus * 100) / 100
+          $("span.sizing_cpu_recommendation").show()
+          $("span.sizing_cpu_recommendation_value").html(cpus)
+        }
+      }).catch((error) => {
+        console.log("ERROR FETCH CPU RECOMMENDATION", error)
+        $("span.spinner").hide()
+        $("span.sizing_cpu_recommendation_problem").show()
+        $("span.sizing_cpu_recommendation_problem_text").html("Problem to get cpu recommendation: " + error.message)
+      })
+
+    fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) - sum by (instance_uuid) (vrops_virtualmachine_oversized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_oversized_memory != 0)) or ((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) %2B sum by (instance_uuid) (vrops_virtualmachine_undersized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_undersized_memory != 0))')
+      .then(catchErrors)
+      .then(response => response.json())
+      .then((json) => {
+        $("span.spinner").hide()
+        if (json.data.result.length == 0 ) {
+          $("span.sizing_memory_recommendation_not_found").show()
+        } else {
+          let memory = json.data.result[0].value[1]
+          memory = Math.round(memory * 100) / 100
+          $("span.sizing_memory_recommendation").show()
+          $("span.sizing_memory_recommendation_value").html(memory+" GB")
+        }
+      }).catch((error) => {
+        console.log("ERROR FETCH MEMORY RECOMMENDATION", error)
+        $("span.spinner").hide()
+        $("span.sizing_memory_recommendation_problem").show()
+        $("span.sizing_memory_recommendation_problem_text").html("Problem to get memory recommendation: " + error.message)
+      })
+
     var virtualmachine_guest_tools_target_version = "0";
     fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (guest_tools_target_version) (vrops_virtualmachine_guest_tools_target_version_info)')
       .then(catchErrors)
