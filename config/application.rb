@@ -19,6 +19,12 @@ module MonsoonDashboard
     config.load_defaults 5.2
     config.react.addons = true
 
+    config.hosts << /.*\.cloud\.sap/
+
+    def self.parent_name
+      self.module_parent_name
+    end
+
     # commented out due to error seen in prod:
     # Cannot render console from 10.XX.XX.XX! Allowed networks: XX.XX.XX.XX, ...
     # config.web_console.development_only = false
