@@ -19,10 +19,10 @@ module MonsoonDashboard
     config.load_defaults 5.2
     config.react.addons = true
 
-    config.hosts << /.*\.cloud\.sap/
-
-    def self.parent_name
-      self.module_parent_name
+    #config.hosts << /.*\.cloud\.sap/
+    
+    def self.module_parent_name
+      super 
     end
 
     # commented out due to error seen in prod:
