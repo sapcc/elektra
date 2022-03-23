@@ -6,6 +6,8 @@ require 'rails/all'
 require_relative File.expand_path('../lib/core', __dir__)
 # Require middlewares due to loading bug in Rails 5.1
 require_relative File.expand_path('../app/middleware/middlewares', __dir__)
+# Require sassc custom functions
+require_relative File.expand_path('../lib/sassc', __dir__)
 
 require 'prometheus/middleware/collector'
 require 'prometheus/middleware/exporter'

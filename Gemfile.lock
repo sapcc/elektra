@@ -544,7 +544,6 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.7)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
-    sass_inline_svg (0.0.7)
     sassc (2.4.0)
       ffi (~> 1.9)
     sassc-rails (2.1.2)
@@ -673,7 +672,6 @@ DEPENDENCIES
   rspec-rails
   ruby-radius
   sass-rails
-  sass_inline_svg
   sdoc (~> 1.1.0)
   sentry-raven
   shared_filesystem_storage!

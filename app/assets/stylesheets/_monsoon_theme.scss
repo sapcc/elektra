@@ -284,7 +284,7 @@ ul {
     list-style-type: none;
 
     li {
-      background: inline-svg("rounded-square-outline.svg") 0 4px no-repeat;
+      background: inline_svg("rounded-square-outline.svg") 0 4px no-repeat;
       padding-left: 19px;
     }
   }
@@ -447,21 +447,21 @@ section {
 }
 
 .moo-cloud {
-  background: inline-svg("monsoon_logo_flat.svg") 0 0px no-repeat;
+  background: inline_svg("monsoon_logo_flat.svg") 0 0px no-repeat;
   display: inline-block;
   width: 32px;
   height: 32px;
 }
 
 .moo-cloud-white {
-  background: inline-svg("monsoon_logo_flat_white.svg") 0 0px no-repeat;
+  background: inline_svg("monsoon_logo_flat_white.svg") 0 0px no-repeat;
   display: inline-block;
   width: 32px;
   height: 32px;
 }
 
 .moo-cloud-black {
-  background: inline-svg("monsoon_logo_flat_black.svg") 0 0px no-repeat;
+  background: inline_svg("monsoon_logo_flat_black.svg") 0 0px no-repeat;
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -952,7 +952,7 @@ section {
     }
 
     a.active {
-      background: inline-svg("angle-right-outline.svg") 0 4px no-repeat;
+      background: inline_svg("angle-right-outline.svg") 0 4px no-repeat;
       padding-left: 12px;
       text-decoration: underline;
     }
@@ -968,7 +968,7 @@ section {
 // ---------------------------------------------------------------------------------
 
 .logo {
-  background: inline-svg("sap-logo.svg") no-repeat;
+  background: inline_svg("sap-logo.svg") no-repeat;
   background-size: contain;
   position: absolute;
   top: $navbar-padding-vertical - 5px;
@@ -1406,192 +1406,192 @@ footer,
 // Callouts / Blockouts
 // ---------------------------------------------------------------------------------
 
-// .bs-callout {
-//   padding: 20px;
-//   margin: 0 0 $line-height-computed;
-//   border: 1px solid #eee;
-//   border-left-width: 5px;
-//   border-radius: 3px;
+.bs-callout {
+  padding: 20px;
+  margin: 0 0 $line-height-computed;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
 
-//   p {
-//     @include pie-clearfix;
-//   }
+  p {
+    @include pie-clearfix;
+  }
 
-//   .bs-callout-image {
-//     margin-bottom: 1.5rem;
-//     max-width: 100%;
-//   }
+  .bs-callout-image {
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+  }
 
-//   .callout-footer {
-//     border-top: 1px solid #eee;
-//     padding-top: 5px;
-//   }
+  .callout-footer {
+    border-top: 1px solid #eee;
+    padding-top: 5px;
+  }
 
-//   &.bs-callout-emphasize {
-//     background: #f9f9f9;
-//   }
+  &.bs-callout-emphasize {
+    background: #f9f9f9;
+  }
 
-//   &.bs-callout-primary {
-//     border-left-color: $btn-primary-border;
+  &.bs-callout-primary {
+    border-left-color: $btn-primary-border;
 
-//     .btn {
-//       @extend .btn-primary;
+    .btn {
+      @extend .btn-primary;
 
-//       &.btn-default {
-//         @extend .btn-default;
-//       }
-//     }
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
 
-//     .fa {
-//       color: $brand-primary;
-//     }
+    .fa {
+      color: $brand-primary;
+    }
 
-//     a {
-//       color: darken($brand-primary, 10);
-//     }
-//   }
+    a {
+      color: darken($brand-primary, 10);
+    }
+  }
 
-//   &.bs-callout-info {
-//     border-left-color: $btn-info-border;
+  &.bs-callout-info {
+    border-left-color: $btn-info-border;
 
-//     &.bs-callout-emphasize {
-//       border-color: $emphasize-info-border-color;
-//       border-left-color: $bright-blue;
-//       background: lighten($alert-info-bg, 5);
-//     }
+    &.bs-callout-emphasize {
+      border-color: $emphasize-info-border-color;
+      border-left-color: $bright-blue;
+      background: lighten($alert-info-bg, 5);
+    }
 
-//     .btn {
-//       @extend .btn-info;
+    .btn {
+      @extend .btn-info;
 
-//       &.btn-default {
-//         @extend .btn-default;
-//       }
-//     }
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
 
-//     .fa {
-//       color: $bright-blue;
-//     }
-//   }
+    .fa {
+      color: $bright-blue;
+    }
+  }
 
-//   &.bs-callout-info-cta {
-//     border-left-color: $btn-info-border;
-//     color: rgb(187, 187, 187);
+  &.bs-callout-info-cta {
+    border-left-color: $btn-info-border;
+    color: rgb(187, 187, 187);
 
-//     &.bs-callout-emphasize {
-//       border-color: #000;
-//       border-left-color: $btn-info-border;
-//       background: #222;
-//     }
+    &.bs-callout-emphasize {
+      border-color: #000;
+      border-left-color: $btn-info-border;
+      background: #222;
+    }
 
-//     &.bs-callout-announcement {
-//       background: rgb(41, 47, 54) inline-svg("CCloud_cloud_shape.svg") right
-//         bottom no-repeat;
-//       padding-right: 100px;
-//     }
+    &.bs-callout-announcement {
+      background: rgb(41, 47, 54) inline_svg("CCloud_cloud_shape.svg") right
+        bottom no-repeat;
+      padding-right: 100px;
+    }
 
-//     .emphasized-text {
-//       color: rgb(222, 223, 224);
-//     }
+    .emphasized-text {
+      color: rgb(222, 223, 224);
+    }
 
-//     a {
-//       color: $btn-info-border;
-//     }
+    a {
+      color: $btn-info-border;
+    }
 
-//     .btn {
-//       @extend .btn-info;
+    .btn {
+      @extend .btn-info;
 
-//       &.btn-default {
-//         @extend .btn-default;
-//       }
-//     }
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
 
-//     .fa {
-//       color: $bright-blue;
-//     }
-//   }
+    .fa {
+      color: $bright-blue;
+    }
+  }
 
-//   &.bs-callout-success {
-//     border-left-color: $btn-success-border;
+  &.bs-callout-success {
+    border-left-color: $btn-success-border;
 
-//     &.bs-callout-emphasize {
-//       background: lighten($alert-success-bg, 5);
-//     }
+    &.bs-callout-emphasize {
+      background: lighten($alert-success-bg, 5);
+    }
 
-//     .btn {
-//       @extend .btn-success;
+    .btn {
+      @extend .btn-success;
 
-//       &.btn-default {
-//         @extend .btn-default;
-//       }
-//     }
+      // &.btn-default {
+      //   @extend .btn-default;
+      // }
+    }
 
-//     .fa {
-//       color: $brand-success;
-//     }
+    .fa {
+      color: $brand-success;
+    }
 
-//     a {
-//       color: darken($brand-success, 10);
-//     }
-//   }
+    a {
+      color: darken($brand-success, 10);
+    }
+  }
 
-//   &.bs-callout-warning {
-//     border-left-color: $btn-warning-border;
+  &.bs-callout-warning {
+    border-left-color: $btn-warning-border;
 
-//     &.bs-callout-emphasize {
-//       background: lighten($alert-warning-bg, 2);
-//     }
+    &.bs-callout-emphasize {
+      background: lighten($alert-warning-bg, 2);
+    }
 
-//     .btn {
-//       @extend .btn-warning;
+    .btn {
+      @extend .btn-warning;
 
-//       &.btn-default {
-//         @extend .btn-default;
-//       }
-//     }
+      // &.btn-default {
+      //   @extend .btn-default;
+      // }
+    }
 
-//     .fa {
-//       color: $brand-warning;
-//     }
+    .fa {
+      color: $brand-warning;
+    }
 
-//     a {
-//       color: darken($brand-warning, 10);
-//     }
-//   }
+    a {
+      color: darken($brand-warning, 10);
+    }
+  }
 
-//   &.bs-callout-danger {
-//     border-left-color: $btn-danger-border;
+  &.bs-callout-danger {
+    border-left-color: $btn-danger-border;
 
-//     &.bs-callout-emphasize {
-//       background: lighten($alert-danger-bg, 5);
-//     }
+    &.bs-callout-emphasize {
+      background: lighten($alert-danger-bg, 5);
+    }
 
-//     .btn {
-//       @extend .btn-danger;
+    .btn {
+      @extend .btn-danger;
 
-//       &.btn-default {
-//         @extend .btn-default;
-//       }
-//     }
+      // &.btn-default {
+      //   @extend .btn-default;
+      // }
+    }
 
-//     .fa {
-//       color: $brand-danger;
-//     }
+    .fa {
+      color: $brand-danger;
+    }
 
-//     a,
-//     h1,
-//     h2,
-//     h3,
-//     h4,
-//     h5,
-//     h6 {
-//       color: darken($brand-danger, 10);
-//     }
-//   }
+    a,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: darken($brand-danger, 10);
+    }
+  }
 
-//   table {
-//     margin-bottom: 0;
-//   }
-// }
+  table {
+    margin-bottom: 0;
+  }
+}
 
 blockquote,
 .bs-callout {
@@ -1952,7 +1952,7 @@ tr.task-state {
     padding-left: 0;
 
     li {
-      background: inline-svg("rounded-square-outline.svg") 0 1px no-repeat;
+      background: inline_svg("rounded-square-outline.svg") 0 1px no-repeat;
       padding-left: 22px;
     }
   }
@@ -2086,7 +2086,7 @@ tr.task-state {
     > .node-icon {
       position: absolute;
       left: 0;
-      background: inline-svg("rounded-square-outline-grey.svg") 0 5px no-repeat;
+      background: inline_svg("rounded-square-outline-grey.svg") 0 5px no-repeat;
       cursor: pointer;
       height: 16px;
       width: 19px;
@@ -2095,7 +2095,7 @@ tr.task-state {
 
     &.has-children {
       > .node-icon {
-        background-image: inline-svg("angle-right-outline.svg");
+        background-image: inline_svg("angle-right-outline.svg");
         background-position: 2px 4px;
       }
 
@@ -2105,7 +2105,7 @@ tr.task-state {
 
       &.node-expanded {
         > .node-icon {
-          background-image: inline-svg("angle-down-outline.svg");
+          background-image: inline_svg("angle-down-outline.svg");
           background-position: 0 8px;
         }
 

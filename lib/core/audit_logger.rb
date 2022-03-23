@@ -1,4 +1,4 @@
-class AuditLogger
+class Core::AuditLogger
   def initialize(logger=nil)
     @logger = logger
   end

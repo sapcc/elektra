@@ -16,6 +16,7 @@ gem 'webpacker' # Check package.json -> "@rails/webpacker"
 
 # Views and Assets
 gem 'sass-rails'
+
 gem 'bootstrap-sass'
 gem 'uglifier'
 gem 'coffee-rails'
@@ -25,7 +26,7 @@ gem 'haml-rails'
 gem 'simple_form'
 gem 'redcarpet'
 gem 'spinners'
-gem 'sass_inline_svg'
+
 gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder

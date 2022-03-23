@@ -1,0 +1,1 @@
+require_relative 'sassc/script/functions/inline_svg'
