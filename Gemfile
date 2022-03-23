@@ -11,11 +11,11 @@ source 'https://rubygems.org'
 # # unf is pulled in by the ruby-arc-client
 gem 'unf', '>= 0.2.0beta2'
 
-gem 'rails', '~> 5.2.7' # Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
+gem 'rails', '6.1.2' # Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
 gem 'webpacker' # Check package.json -> "@rails/webpacker"
 
 # Views and Assets
-gem 'sass-rails', '>= 5'
+gem 'sass-rails'
 gem 'bootstrap-sass'
 gem 'uglifier'
 gem 'coffee-rails'
@@ -29,7 +29,7 @@ gem 'sass_inline_svg'
 gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
-gem 'font-awesome-sass'
+gem 'font-awesome-sass', '~>4'
 gem 'kaminari', '~> 1.2.1'
 
 gem 'responders'

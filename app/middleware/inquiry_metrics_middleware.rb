@@ -19,14 +19,14 @@ class InquiryMetricsMiddleware
     if env['PATH_INFO'] == @path
       # reset all values to zero
       @open_inquiry_metrics.values.each do |labels, _value|
-        @open_inquiry_metrics.set(labels, 0)
+        @open_inquiry_metrics.set(0, labels)
       end
 
       # collect all metrics
       metrics.each do |data|
         count = data.delete(:count)
         @open_inquiry_metrics.set(
-          { region: Rails.configuration.default_region }.merge(data), count
+          count, { region: Rails.configuration.default_region }.merge(data)
         )
       end
     end

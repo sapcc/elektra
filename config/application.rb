@@ -16,14 +16,18 @@ Bundler.require(*Rails.groups)
 
 module MonsoonDashboard
   class Application < Rails::Application
-    config.load_defaults 5.2
+    config.load_defaults 6.1
     config.react.addons = true
 
-    #config.hosts << /.*\.cloud\.sap/
+    config.hosts << /.*\.cloud\.sap/
     
     def self.module_parent_name
       super 
     end
+
+    def self.parent_name 
+      self.module_parent_name
+    end 
 
     # commented out due to error seen in prod:
     # Cannot render console from 10.XX.XX.XX! Allowed networks: XX.XX.XX.XX, ...
