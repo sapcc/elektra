@@ -4,46 +4,22 @@
 .bs-callout.bs-callout-info-cta.bs-callout-emphasize.bs-callout-announcement
   - if @two_factor_required
     %p.emphasized-text
-      %strong We are currently preparing to improve the two-factor authentication (2FA) experience for you and will replace the current 2FA solution used for logging into this domain with 2FA provided by SAP ID Service. 
-    %p
-      %strong 
-        You may already try IDS authentication today in our test region:
-        %a{href: "https://dashboard-ids.eu-nl-1.cloud.sap/#{@scoped_domain_name}", target: "_blank"} 
-          https://dashboard-ids.eu-nl-1.cloud.sap
-      %br 
-      %i (Please note that for technical reasons the test system will ask for both the new SAP IDS 2FA and the current 2FA method. This won't be the case anymore once we go live with the SAP IDS implementation.)
+      %strong 2FA has now been switched to SAP IDS.
     %p
       See the
       %a{href: "https://documentation.global.cloud.sap/blog/better-two-factor-authentication--2fa--coming-soon", target: "_blank"} 
         announcement blog post
       for further information.
-    %p
-      Additionally in an effort to make accessing landscapes distributed across different regions easier for you we have created a new global landing page that you can use to quickly access the region and domain of your choice:
-      
-      %a{href: "https://convergedcloud.global.cloud.sap", target: "_blank"} 
-        %i.fa.fa-fw.fa-arrow-right
-        convergedcloud.global.cloud.sap
   - else
     %p.emphasized-text
       %strong 
-        Due to compliance regulations two-factor authentication (2FA) will be required for the Elektra dashboard going forward. This feature will be activated on the 23rd of March.
-        2FA will be implemented using SAP ID Service. The login will be valid for all Converged Cloud regions for 12 hours, so the 2FA authentication only needs to be performed once per day for all regions.
-    %p
-      %strong 
-        We recommend you try out the IDS authentication already in our test region:
-        %a{href: "https://dashboard-ids.eu-nl-1.cloud.sap/#{@scoped_domain_name}", target: "_blank"} 
-          https://dashboard-ids.eu-nl-1.cloud.sap
+        2FA has now been activated for all users.
     %p
       See the
       %a{href: "https://documentation.global.cloud.sap/blog/better-two-factor-authentication--2fa--coming-soon", target: "_blank"} 
         announcement blog post
       for further information.
-    -# %p
-    -#   Additionally in an effort to make accessing landscapes distributed across different regions easier for you we have created a new global landing page that you can use to quickly access the region and domain of your choice:
-      
-    -#   %a{href: "https://convergedcloud.global.cloud.sap", target: "_blank"} 
-    -#     %i.fa.fa-fw.fa-arrow-right
-    -#     convergedcloud.global.cloud.sap
+
 
 .row
   .col-md-3
