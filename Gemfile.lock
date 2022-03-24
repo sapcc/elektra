@@ -675,5 +675,3 @@ DEPENDENCIES
   webconsole!
   webpacker (~> 5.0)
 
-BUNDLED WITH
-   1.17.3

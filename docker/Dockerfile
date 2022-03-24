@@ -9,7 +9,7 @@ RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
 RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
-      && gem install bundler:1.17.3 \
+      && gem install bundler:2.3.9 \
       && gem install byebug -v 9.0.6 \
       && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
