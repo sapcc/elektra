@@ -247,6 +247,11 @@ module Resources
 
       project_shards = @project ? @project.shards : []
 
+      # add all shards to project shards if sharding is enabled 
+      if @project && @project.sharding_enabled 
+        project_shards = host_vc_map.values.uniq
+      end
+
       result = []
       # for all traits do
       custom_traits.each do |trait|
