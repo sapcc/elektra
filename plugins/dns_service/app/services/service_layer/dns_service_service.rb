@@ -3,7 +3,7 @@
 module ServiceLayer
   class DnsServiceService < Core::ServiceLayer::Service
     # middleware for elektron to setup headers based on params
-    class SetupHeadersMiddleware < Elektron::Middlewares::Base
+    class SetupHeadersMiddleware < ::Elektron::Middlewares::Base
       def call(request_context)
         # In this case it is meaningless. But in the case that this middlware
         # would be added directly to the electron client, this middleware

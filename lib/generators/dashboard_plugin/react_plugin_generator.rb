@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ReactPluginGenerator
+class Generators::DashboardPlugin::ReactPluginGenerator
   extend Forwardable
   def_delegators :@context, :options, :copy_file, :remove_file, :gsub_file,
                  :create_file, :name, :remove_dir, :directory, :source_paths,

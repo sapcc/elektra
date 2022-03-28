@@ -1,1 +1,1 @@
-require_relative 'sassc/script/functions/inline_svg'
+require_relative 'sassc/script/functions'

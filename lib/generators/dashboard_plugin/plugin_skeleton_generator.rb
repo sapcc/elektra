@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # This class generates the skeleton of a dashboard plugin.
-class PluginSkeletonGenerator
+class Generators::DashboardPlugin::PluginSkeletonGenerator
   extend Forwardable
   def_delegators :@context, :options, :copy_file, :remove_file, :gsub_file,
                  :create_file, :generate, :name

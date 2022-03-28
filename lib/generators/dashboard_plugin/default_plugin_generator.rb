@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # This class contains methods for adaption of default plugin.
-class DefaultPluginGenerator
+class Generators::DashboardPlugin::DefaultPluginGenerator
   extend Forwardable
   def_delegators :@context, :options, :copy_file, :remove_file, :gsub_file,
                  :create_file, :name

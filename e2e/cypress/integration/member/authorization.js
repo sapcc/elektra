@@ -8,17 +8,22 @@ describe("user role assignments", () => {
   })
 
   it("open user role assignments page", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/identity/projects/role-assignments`)
-    cy.contains('[data-test=page-title]','Authorizations')
-    cy.contains('Technical User TEST_D021500_TM')
-    cy.contains('button','Add New Member').should('not.exist')
+    cy.visit(
+      `/${Cypress.env("TEST_DOMAIN")}/test/identity/projects/role-assignments`
+    )
+    cy.contains("[data-test=page-title]", "Authorizations")
+    cy.contains("Technical User TEST_D021500_TM")
+    cy.contains("button", "Add New Member").should("not.exist")
   })
 
-  it("open user role assignments page", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/identity/projects/role-assignments?active_tab=groupRoles`)
-    cy.contains('[data-test=page-title]','Authorizations')
-    cy.contains('Converged Cloud cc3test Domain Administrators')
-    cy.contains('button','Add New Member').should('not.exist')
+  it("open group role assignments page", () => {
+    cy.visit(
+      `/${Cypress.env(
+        "TEST_DOMAIN"
+      )}/test/identity/projects/role-assignments?active_tab=groupRoles`
+    )
+    cy.contains("[data-test=page-title]", "Authorizations")
+    cy.contains("CC3TEST_DOMAIN_ADMINS")
+    cy.contains("button", "Add New Member").should("not.exist")
   })
-
 })
