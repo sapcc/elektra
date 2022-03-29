@@ -11,5 +11,9 @@ module ServiceLayer
       elektron.service?('castellum')
     end
 
+    def has_limes?
+      elektron.service?('resources')
+    end
+
   end
 end
