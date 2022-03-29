@@ -1,6 +1,6 @@
 module EmailService
   class MulticloudAccountsController < ::EmailService::ApplicationController
-    before_action :restrict_access
+    # before_action :restrict_access
     before_action :set_multicloud_account, only: %i[new destroy]
 
     authorization_context 'email_service'

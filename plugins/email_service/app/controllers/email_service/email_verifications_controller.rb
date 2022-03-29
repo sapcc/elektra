@@ -1,6 +1,6 @@
 module EmailService
   class EmailVerificationsController < ::EmailService::ApplicationController
-    before_action :restrict_access
+    # before_action :restrict_access
     before_action :check_ec2_creds_cronus_status
     before_action :verified_email, only: %i[new create]
     

@@ -25,12 +25,11 @@
   value = event.target.value
   console.log "domain change detected"
   $('#domain-source-name').val(value)
-
+  # console.log $('textarea[id="plain_email_html_body"]').val
+  # console.log $('textarea[id="plain_email_text_body"]').val
 
 $(document).on 'modal:contentUpdated', () ->
-
   # handler to switch source type between email and domain
-  # console.log "content updated"
   $(document).on 'change','select[data-toggle="sourceSwitch"]', switch_source_type
   # $(document).on 'click','#domain-source-name', set_domain_suffix
   # $(document).on 'change','select[id="plain_email_source_email"]', populate_email_addresses

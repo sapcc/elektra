@@ -58,6 +58,14 @@ sampleTemplateData = """
   value = event.target.value
   if value == 'Preferences'
     $(txtTemplateData).val sampleTemplateData
+    
+@validate_template_data=(event) ->
+  value = event.target.value
+  if value == "" || value == {}
+    console.log value
+    # console.log "Empty JSON, Please enter valid JSON"
 
 $(document).on 'modal:contentUpdated', () ->
   $(document).on 'change','select[data-toggle="templateSwitch"]', switch_template
+  $(document).on 'blur','textarea[id="templated_email_template_data"]', validate_template_data
+
