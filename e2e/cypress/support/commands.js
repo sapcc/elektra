@@ -25,8 +25,7 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add("elektraLogin", (domain, user, password) => {
-
-  cy.visit(`/cc3test/auth/login/${domain}`)
+  cy.visit(`/${domain}/auth/login/${domain}`)
   cy.get("#username").type(user)
   cy.get("#password").type(password, { log: false })
   cy.get('button[type="submit"]').click()
@@ -37,9 +36,19 @@ Cypress.Commands.add("elektraLogin", (domain, user, password) => {
   // get the user you want with "UserProfile.first.domain_profiles"
   // delete the profile with "UserProfile.second.domain_profiles.delete_all"
   cy.get("body").then(($body) => {
-    if($body.find('input#accept_tos').length > 0) {
-      cy.get('input#accept_tos').check()
-      cy.get("input").contains("Accept").click()
-    }
+    // return if login failed
+    if ($body.html().indexOf("Invalid username/password combination.") >= 0)
+      return
+
+    // go to domain home page
+    cy.visit(`/${domain}/home`)
+    // check if body contains terms of use content
+    cy.get("body").then(($body) => {
+      if ($body.find("input#accept_tos").length > 0) {
+        // accept
+        cy.get("input#accept_tos").check()
+        cy.get("input").contains("Accept").click()
+      }
+    })
   })
 })

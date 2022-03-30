@@ -130,14 +130,15 @@ group :development, :test do
   # Testing
 
   gem 'rspec-rails'
-  gem 'factory_girl_rails', '~> 4.0'
+  # gem 'factory_girl_rails', '~> 4.0'
+  gem "factory_bot_rails"
   gem 'database_cleaner'
 
   gem 'pry-rails'
   gem 'prettier'
+  gem 'listen'
 end
 
 group :test do
-  gem 'guard-rspec'
   gem 'rails-controller-testing'
 end

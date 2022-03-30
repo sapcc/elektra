@@ -157,9 +157,9 @@ NewCluster = ({
                     option value: '', 'Loading...'
                   else
                     if metaData.flavors?
-                      for flavor in metaData.flavors
+                      for flavor, f_index in metaData.flavors
                         flavorMetaData = if flavor.ram? && flavor.vcpus? then "(ram: #{flavor.ram}, vcpus: #{flavor.vcpus})" else ""
-                        option value: flavor.name, key: flavor.name, "#{flavor.name} #{flavorMetaData}"
+                        option value: flavor.name, key: f_index, "#{flavor.name} #{flavorMetaData}"
 
 
             # Nodepool Availability Zone
