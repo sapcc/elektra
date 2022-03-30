@@ -1,6 +1,6 @@
 module EmailService
   class WebController < ::EmailService::ApplicationController
-    before_action :ui_switcher
+    # before_action :ui_switcher
 
     authorization_context 'email_service'
     authorization_required

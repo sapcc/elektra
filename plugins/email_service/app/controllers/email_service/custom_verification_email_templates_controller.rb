@@ -1,6 +1,6 @@
 module EmailService
   class CustomVerificationEmailTemplatesController < ::EmailService::ApplicationController
-    before_action :restrict_access
+    # before_action :restrict_access
     before_action :check_ec2_creds_cronus_status
     before_action :set_custom_verification_email_template, only: %i[show edit]
 

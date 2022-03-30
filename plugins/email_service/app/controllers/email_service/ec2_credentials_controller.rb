@@ -1,7 +1,7 @@
 module EmailService
   class Ec2CredentialsController < ::EmailService::ApplicationController
 
-    before_action :restrict_access
+    # before_action :restrict_access
     
     authorization_context 'email_service'
     authorization_required

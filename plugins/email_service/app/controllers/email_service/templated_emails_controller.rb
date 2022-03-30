@@ -1,6 +1,6 @@
 module EmailService
   class TemplatedEmailsController < ::EmailService::ApplicationController
-    before_action :restrict_access
+    # before_action :restrict_access
     before_action :check_ec2_creds_cronus_status
     before_action :templated_email, only: %i[new edit]
 

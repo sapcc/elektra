@@ -8,17 +8,17 @@ module EmailService
     authorization_context 'email_service'
     authorization_required
 
-    def ui_switcher
-      if current_user.has_role?('cloud_support_tools_viewer')
-        redirect_to emails_path
-      end
-    end
+    # def ui_switcher
+    #   if current_user.has_role?('cloud_support_tools_viewer')
+    #     redirect_to emails_path
+    #   end
+    # end
  
-    def restrict_access
-      unless current_user.has_role?('cloud_support_tools_viewer')
-        redirect_to index_path
-      end
-    end 
+    # def restrict_access
+    #   unless current_user.has_role?('cloud_support_tools_viewer')
+    #     redirect_to index_path
+    #   end
+    # end 
 
     def check_ec2_creds_cronus_status
       if ( !ec2_creds && ec2_creds.nil? ) || !nebula_active?
