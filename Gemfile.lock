@@ -668,7 +668,6 @@ DEPENDENCIES
   resource_management!
   resources!
   responders
-  rspec
   rspec-rails
   ruby-radius
   sass-rails

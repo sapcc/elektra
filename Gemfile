@@ -14,9 +14,6 @@ gem 'unf', '>= 0.2.0beta2'
 gem 'rails', '6.1.2' # Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
 gem 'webpacker' # Check package.json -> "@rails/webpacker"
 
-# Views and Assets
-gem 'sass-rails'
-
 gem 'bootstrap-sass'
 gem 'uglifier'
 gem 'coffee-rails'
@@ -79,7 +76,7 @@ gem 'puma', '= 4.3.9', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
-black_list = %w[bare_metal_hana] # e.g. ['compute']
+black_list = [] # e.g. ['compute']
 if ENV.key?('BLACK_LIST_PLUGINS')
   ENV['BLACK_LIST_PLUGINS'].split(',').each { |plugin_name| black_list << plugin_name.strip }
 end
@@ -109,6 +106,11 @@ group :production do
   gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
 end
 
+group :development, :production do 
+  # Views and Assets
+  gem 'sass-rails'
+end
+
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 3.0'
@@ -133,10 +135,6 @@ group :development, :test do
 
   gem 'pry-rails'
   gem 'prettier'
-end
-
-group :development, :test do
-  gem 'rspec'
 end
 
 group :test do
