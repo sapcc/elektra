@@ -75,6 +75,7 @@ SimpleNavigation::Configuration.run do |navigation|
     if: -> { true } do |cloudops_nav|
       cloudops_nav.item :user_role_assignments, 'Cloudops Tools', -> {plugin('cloudops').start_path}
       cloudops_nav.item :castellum_errors, 'Castellum Errors', -> { plugin('cc_tools').castellum_errors_path }, if: -> { services.tools.has_castellum? and current_user and current_user.is_allowed?('tools:show_castellum_errors') }, highlights_on: -> { params[:controller][%r{cc-tools/castellum/?.*}] }
+      cloudops_nav.item :limes_errors, 'Limes Errors', -> { plugin('cc_tools').limes_errors_path }, if: -> { services.tools.has_limes? and current_user and current_user.is_allowed?('tools:show_limes_errors') }, highlights_on: -> { params[:controller][%r{cc-tools/limes/?.*}] }
       cloudops_nav.item :keppel_admin, 'All Keppel Accounts', -> { plugin('keppel').start_path }, if: -> { services.available?('keppel') and current_user and current_user.is_allowed?('keppel_cloud_viewer') }, highlights_on: -> { params[:controller][%r{keppel/?.*}] }
   end
 
