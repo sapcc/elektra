@@ -63,7 +63,8 @@ RUN script/organize_plugins_gemspecs
 
 # install gems, copy app and run rake tasks
 RUN apk --no-cache add build-base
-RUN bundle install --without "development integration_tests"
+RUN bundle config set --local without 'development integration_tests'
+RUN bundle install 
 
 # add elektra sources into image
 ADD . /home/app/webapp
