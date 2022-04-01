@@ -10,7 +10,8 @@ class InquiryMetricsMiddleware
     @open_inquiry_metrics = @registry.get(:elektra_open_inquiry_metrics) ||
                             @registry.gauge(
                               :elektra_open_inquiry_metrics,
-                              docstring: 'A gauge of open elektra requests'
+                              docstring: 'A gauge of open elektra requests',
+                              labels: [:region, :domain, :kind]
                             )
   end
 
@@ -26,7 +27,7 @@ class InquiryMetricsMiddleware
       metrics.each do |data|
         count = data.delete(:count)
         @open_inquiry_metrics.set(
-          count, { region: Rails.configuration.default_region }.merge(data)
+          count, labels: { region: Rails.configuration.default_region }.merge(data)
         )
       end
     end
