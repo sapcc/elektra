@@ -22,6 +22,7 @@ module MonsoonDashboard
     config.react.addons = true
 
     config.hosts << /.*\.cloud\.sap/
+    config.hosts << "0.0.0.0"
     
     def self.module_parent_name
       super 
