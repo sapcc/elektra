@@ -79,8 +79,7 @@ development:
     # start proxying all webpack asset requests to this server
     # https://github.com/rails/webpacker#development
     host: 0.0.0.0
-    port: 8080
-    public: 0.0.0.0:8080
+    port: 3035
     # https://webpack.js.org/concepts/hot-module-replacement/
     hmr: false
     https: false
