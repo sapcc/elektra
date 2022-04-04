@@ -8,3 +8,6 @@ require_relative 'http_metrics_middleware'
 require_relative 'sli_metrics_middleware'
 require_relative 'same_site_cookie_middleware'
 require_relative 'secure_cookies'
+
+module Middlewares 
+end

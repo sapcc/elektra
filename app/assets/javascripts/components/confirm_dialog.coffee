@@ -1,4 +1,4 @@
-#= require ./modal.coffee
+#= require ./modal
 { div, h4, p, i, button } = React.DOM
 ReactConfirmDialog = ({title,message,confirmCallback,cancelCallback,close}) ->
   div null,

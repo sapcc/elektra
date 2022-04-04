@@ -1,6 +1,6 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :user_profile do
-    uid "MyString"
+    uid { "MyString" }
   end
 
 end

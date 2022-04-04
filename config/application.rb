@@ -6,6 +6,8 @@ require 'rails/all'
 require_relative File.expand_path('../lib/core', __dir__)
 # Require middlewares due to loading bug in Rails 5.1
 require_relative File.expand_path('../app/middleware/middlewares', __dir__)
+# Require sassc custom functions
+require_relative File.expand_path('../lib/sassc', __dir__)
 
 require 'prometheus/middleware/collector'
 require 'prometheus/middleware/exporter'
@@ -16,8 +18,18 @@ Bundler.require(*Rails.groups)
 
 module MonsoonDashboard
   class Application < Rails::Application
-    config.load_defaults 5.2
+    config.load_defaults 6.1
     config.react.addons = true
+
+    config.hosts << /.*\.cloud\.sap/
+    
+    def self.module_parent_name
+      super 
+    end
+
+    def self.parent_name 
+      self.module_parent_name
+    end 
 
     # commented out due to error seen in prod:
     # Cannot render console from 10.XX.XX.XX! Allowed networks: XX.XX.XX.XX, ...
@@ -32,7 +44,10 @@ module MonsoonDashboard
     # -- all .rb files in that directory are automatically loaded.
 
     # config.autoload_paths += %W(#{config.root}/plugins)
-    config.autoload_paths << Rails.root.join('lib')
+
+    # config.autoload_paths << Rails.root.join('lib')
+    config.eager_load_paths << "#{Rails.root}/lib"
+    
 
     # Use memory for caching, file cache needs some work for working with docker
     # Not sure if this really makes sense becasue every passenger thread will have it's own cache

@@ -15,7 +15,7 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install json -v 1.8.6 \
       && gem install nio4r -v 2.5.8 \
       && gem install nokogiri -v 1.12.5 \
-      && gem install pg -v 0.21.0 \
+      && gem install pg -v 1.3.4 \
       && gem install puma -v 4.3.9  \
       && gem install redcarpet -v 3.5.1 \
       && gem install unf -v 0.2.0.beta2 \
@@ -63,7 +63,8 @@ RUN script/organize_plugins_gemspecs
 
 # install gems, copy app and run rake tasks
 RUN apk --no-cache add build-base
-RUN bundle install --without "development integration_tests"
+RUN bundle config set --local without 'development integration_tests'
+RUN bundle install 
 
 # add elektra sources into image
 ADD . /home/app/webapp

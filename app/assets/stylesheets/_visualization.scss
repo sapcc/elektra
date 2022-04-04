@@ -1,6 +1,5 @@
 // Worldmap styles
 #worldmap {
-
   path {
     stroke-width: 0.5px;
     stroke: white;
@@ -28,15 +27,11 @@
         stroke: #777;
       }
     }
-
-
-
   }
-
 }
 
 .d3-tip {
-  @include border-radius(3px);
+  border-radius: 3px;
   background: rgba(0, 0, 0, 0.8);
   color: #eee;
   padding: 4px 8px;

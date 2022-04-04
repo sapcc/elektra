@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require_relative './elektron_middlewares/debug_logger'
-require_relative './elektron_middlewares/user_context_logger'
+require_relative './elektron_middlewares/user_logger'
+require_relative './elektron_middlewares/service_user_logger'
+require_relative './elektron_middlewares/cloud_admin_logger'
 require_relative './elektron_middlewares/object_cache'
 require_relative './elektron_middlewares/request_uuid'
 
@@ -65,10 +67,10 @@ module Core
         },
         default_client_params
       )
-      client.middlewares.add(ElektronMiddlewares::RequestUUID, before: Elektron::Middlewares::ResponseErrorHandler)
-      client.middlewares.add(ElektronMiddlewares::ObjectCache, before: Elektron::Middlewares::ResponseErrorHandler)
-      client.middlewares.add(ElektronMiddlewares::UserLogger, before: ElektronMiddlewares::ObjectCache)
-      client.middlewares.add(ElektronMiddlewares::DebugLogger, before: ElektronMiddlewares::UserLogger)
+      client.middlewares.add(::Core::ElektronMiddlewares::RequestUUID, before: ::Elektron::Middlewares::ResponseErrorHandler)
+      client.middlewares.add(::Core::ElektronMiddlewares::ObjectCache, before: ::Elektron::Middlewares::ResponseErrorHandler)
+      client.middlewares.add(::Core::ElektronMiddlewares::UserLogger, before: ::Core::ElektronMiddlewares::ObjectCache)
+      client.middlewares.add(::Core::ElektronMiddlewares::DebugLogger, before: ::Core::ElektronMiddlewares::UserLogger)
       client
     end
 
@@ -82,10 +84,10 @@ module Core
       }
       begin
         client = ::Elektron.client(auth_config, default_client_params)
-        client.middlewares.add(ElektronMiddlewares::RequestUUID, before: Elektron::Middlewares::ResponseErrorHandler)
-        client.middlewares.add(ElektronMiddlewares::ObjectCache, before: Elektron::Middlewares::ResponseErrorHandler)
-        client.middlewares.add(ElektronMiddlewares::ServiceUserLogger, before: ElektronMiddlewares::ObjectCache)
-        client.middlewares.add(ElektronMiddlewares::DebugLogger, before: ElektronMiddlewares::ServiceUserLogger)
+        client.middlewares.add(::Core::ElektronMiddlewares::RequestUUID, before: ::Elektron::Middlewares::ResponseErrorHandler)
+        client.middlewares.add(::Core::ElektronMiddlewares::ObjectCache, before: ::Elektron::Middlewares::ResponseErrorHandler)
+        client.middlewares.add(::Core::ElektronMiddlewares::ServiceUserLogger, before: ::Core::ElektronMiddlewares::ObjectCache)
+        client.middlewares.add(::Core::ElektronMiddlewares::DebugLogger, before: ::Core::ElektronMiddlewares::ServiceUserLogger)
         client
       rescue ::Elektron::Errors::ApiResponse => _e
         unless auth_config[:scope_domain_id]
@@ -115,10 +117,10 @@ module Core
         default_client_params
       )
 
-      client.middlewares.add(ElektronMiddlewares::RequestUUID, before: Elektron::Middlewares::ResponseErrorHandler)
-      client.middlewares.add(ElektronMiddlewares::ObjectCache, before: Elektron::Middlewares::ResponseErrorHandler)
-      client.middlewares.add(ElektronMiddlewares::CloudAdminLogger, before: ElektronMiddlewares::ObjectCache)
-      client.middlewares.add(ElektronMiddlewares::DebugLogger, before: ElektronMiddlewares::CloudAdminLogger)
+      client.middlewares.add(::Core::ElektronMiddlewares::RequestUUID, before: ::Elektron::Middlewares::ResponseErrorHandler)
+      client.middlewares.add(::Core::ElektronMiddlewares::ObjectCache, before: ::Elektron::Middlewares::ResponseErrorHandler)
+      client.middlewares.add(::Core::ElektronMiddlewares::CloudAdminLogger, before: ::Core::ElektronMiddlewares::ObjectCache)
+      client.middlewares.add(::Core::ElektronMiddlewares::DebugLogger, before: ::Core::ElektronMiddlewares::CloudAdminLogger)
       client
     end
   end

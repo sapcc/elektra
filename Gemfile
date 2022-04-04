@@ -11,12 +11,9 @@ source 'https://rubygems.org'
 # # unf is pulled in by the ruby-arc-client
 gem 'unf', '>= 0.2.0beta2'
 
-gem 'rails', '~> 5.2.5' # Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
-gem 'webpacker', '~> 5.0' # Check package.json -> "@rails/webpacker"
+gem 'rails', '6.1.2' # Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
+gem 'webpacker' # Check package.json -> "@rails/webpacker"
 
-# Views and Assets
-gem 'compass-rails'
-gem 'sass-rails'
 gem 'bootstrap-sass'
 gem 'uglifier'
 gem 'coffee-rails'
@@ -26,11 +23,11 @@ gem 'haml-rails'
 gem 'simple_form'
 gem 'redcarpet'
 gem 'spinners'
-gem 'sass_inline_svg'
+
 gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
-gem 'font-awesome-sass'
+gem 'font-awesome-sass', '~>4'
 gem 'kaminari', '~> 1.2.1'
 
 gem 'responders'
@@ -39,7 +36,7 @@ gem 'responders'
 gem 'react-rails', '~> 2.2.1'
 
 # Database
-gem 'pg'
+gem 'pg', '1.3.4'
 gem 'activerecord-session_store'
 
 # Openstack
@@ -79,7 +76,7 @@ gem 'puma', '= 4.3.9', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
-black_list = %w[bare_metal_hana] # e.g. ['compute']
+black_list = [] # e.g. ['compute']
 if ENV.key?('BLACK_LIST_PLUGINS')
   ENV['BLACK_LIST_PLUGINS'].split(',').each { |plugin_name| black_list << plugin_name.strip }
 end
@@ -109,6 +106,11 @@ group :production do
   gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
 end
 
+group :development, :production do 
+  # Views and Assets
+  gem 'sass-rails'
+end
+
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 3.0'
@@ -128,18 +130,15 @@ group :development, :test do
   # Testing
 
   gem 'rspec-rails'
-  gem 'factory_girl_rails', '~> 4.0'
+  # gem 'factory_girl_rails', '~> 4.0'
+  gem "factory_bot_rails"
   gem 'database_cleaner'
 
   gem 'pry-rails'
   gem 'prettier'
-end
-
-group :development, :test do
-  gem 'rspec'
+  gem 'listen'
 end
 
 group :test do
-  gem 'guard-rspec'
   gem 'rails-controller-testing'
 end

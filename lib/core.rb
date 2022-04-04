@@ -6,7 +6,7 @@ require_relative 'core/plugins_manager'
 require_relative 'core/api_client_manager'
 require_relative 'core/service_layer'
 require_relative 'core/audit_logger'
-require_relative 'core/errors'
+require_relative 'core/error'
 require_relative 'core/paginatable'
 require_relative 'core/static_config'
 

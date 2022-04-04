@@ -99,7 +99,7 @@
     stateClone = JSON.parse(JSON.stringify(state))
     stateClone.data.spec.nodePools = nodePoolsClone
     poolValidity = nodePool.name.length > 0 && nodePool.size >= 0 && nodePool.flavor.length > 0 && nodePool.availabilityZone.length > 0
-
+    
     ReactHelpers.mergeObjects(state, stateClone, {
       nodePoolsValid: poolValidity
       isValid: (state.data.name.length > 0 && poolValidity && state.advancedOptionsValid)
