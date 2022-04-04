@@ -60,9 +60,15 @@ Rails.application.routes.draw do
               as: "#{plugin.name}_plugin"
       end
       ######################## END ############################
+      Logger.new(STDOUT).debug(
+        "Mount plugin tools as cc_tools_plugin"
+      )
       mount Tools::Engine => '/cc-tools', as: :cc_tools_plugin
     end
 
+    Logger.new(STDOUT).debug(
+      "Mount plugin cloudops as cloudops_plugin"
+    )
     mount Cloudops::Engine => "/#{Rails.configuration.cloud_admin_project}" \
                               "/cloudops", as: 'cloudops_plugin', defaults: { project_id: Rails.configuration.cloud_admin_project },
                               constraints: { domain_id: Rails.application.config.cloud_admin_domain }

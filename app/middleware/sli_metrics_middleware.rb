@@ -11,7 +11,8 @@ class SLIMetricsMiddleware
 
     @histogram = @registry.get(:elektra_sli) || @registry.histogram(
                               :elektra_sli,
-                              docstring: 'A histogram if sli'
+                              docstring: 'A histogram if sli',
+                              labels: [:path, :method]
                             )
   end
 
@@ -20,7 +21,7 @@ class SLIMetricsMiddleware
     if ![@path, '/assets'].include?(env['PATH_INFO']) && /^\/[^\/]+\/?$/.match?(env['PATH_INFO'])
       response = nil
       duration = Benchmark.realtime { response = @app.call(env) }
-      @histogram.observe({path: env['PATH_INFO'], method: env['REQUEST_METHOD'].downcase}, duration)
+      @histogram.observe(duration, labels: {path: env['PATH_INFO'], method: env['REQUEST_METHOD'].downcase})
       return response
     end
     

@@ -1,4 +1,4 @@
-#= require ./modal.coffee
+#= require ./modal
 
 { div, h4, i, p, button } = React.DOM
 ReactInfoDialog = ({title,message,close}) ->

@@ -58,3 +58,9 @@ vendor_4.2.4/
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity

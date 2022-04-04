@@ -14,19 +14,17 @@
 # Configure Using Gemfile
 # gem 'pg'
 #
-default: &default
+development:
   adapter: postgresql
   encoding: unicode
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV['MAX_THREADS'] || 10 %> 
+  pool: <%= ENV['MAX_THREADS'] || 10 %>
   username: <%= ENV['MONSOON_DB_USER'] || 'postgres' %>
   password: <%= ENV['MONSOON_DB_PASSWORD'] || '' %>
   host: <%= ENV['POSTGRES_PORT_5432_TCP_ADDR'] || ENV['ELEKTRA_POSTGRESQL_SERVICE_HOST'] || ENV['POSTGRES_ELEKTRA_SERVICE_HOST'] || ENV['POSTGRES_SERVICE_HOST'] || 'localhost' %>
   port: <%= ENV['POSTGRES_PORT_5432_TCP_PORT'] || ENV['ELEKTRA_POSTGRESQL_SERVICE_PORT'] || ENV['POSTGRES_ELEKTRA_SERVICE_PORT'] || ENV['POSTGRES_SERVICE_PORT'] || 5432 %>
 
-development:
-  <<: *default
   database: monsoon-dashboard_development
 
   # The specified database role being used to connect to postgres.
@@ -59,8 +57,17 @@ development:
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
-test: &test
-  <<: *default
+test:
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV['MAX_THREADS'] || 10 %>
+  username: <%= ENV['MONSOON_DB_USER'] || 'postgres' %>
+  password: <%= ENV['MONSOON_DB_PASSWORD'] || '' %>
+  host: <%= ENV['POSTGRES_PORT_5432_TCP_ADDR'] || ENV['ELEKTRA_POSTGRESQL_SERVICE_HOST'] || ENV['POSTGRES_ELEKTRA_SERVICE_HOST'] || ENV['POSTGRES_SERVICE_HOST'] || 'localhost' %>
+  port: <%= ENV['POSTGRES_PORT_5432_TCP_PORT'] || ENV['ELEKTRA_POSTGRESQL_SERVICE_PORT'] || ENV['POSTGRES_ELEKTRA_SERVICE_PORT'] || ENV['POSTGRES_SERVICE_PORT'] || 5432 %>
+
   database: monsoon-dashboard_test
 
 # As with config/secrets.yml, you never want to store sensitive information,
@@ -83,6 +90,14 @@ test: &test
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
-  database: monsoon-dashboard_production
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV['MAX_THREADS'] || 10 %>
+  username: <%= ENV['MONSOON_DB_USER'] || 'postgres' %>
+  password: <%= ENV['MONSOON_DB_PASSWORD'] || '' %>
+  host: <%= ENV['POSTGRES_PORT_5432_TCP_ADDR'] || ENV['ELEKTRA_POSTGRESQL_SERVICE_HOST'] || ENV['POSTGRES_ELEKTRA_SERVICE_HOST'] || ENV['POSTGRES_SERVICE_HOST'] || 'localhost' %>
+  port: <%= ENV['POSTGRES_PORT_5432_TCP_PORT'] || ENV['ELEKTRA_POSTGRESQL_SERVICE_PORT'] || ENV['POSTGRES_ELEKTRA_SERVICE_PORT'] || ENV['POSTGRES_SERVICE_PORT'] || 5432 %>
 
+  database: monsoon-dashboard_production
