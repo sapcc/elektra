@@ -60,7 +60,6 @@ function extendConfig(orgConfig) {
     orgConfig.devServer = orgConfig.devServer || {}
     if (devServer.host) orgConfig.devServer.host = devServer.host
     if (devServer.port) orgConfig.devServer.port = devServer.port
-    if (devServer.public) orgConfig.devServer.public = devServer.public
   }
 
   return orgConfig
