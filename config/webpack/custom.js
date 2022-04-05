@@ -2,18 +2,6 @@
 const path = require("path")
 const { sync } = require("glob")
 
-const yaml = require("js-yaml")
-const fs = require("fs")
-
-// Because the settings in webpacker.yml are not transferred to webpack.config,
-// we do this manually. We load the yaml file and read the values for devServer, if any.
-let webpackerConfig
-try {
-  webpackerConfig = yaml.load(
-    fs.readFileSync(path.resolve(__dirname, `../webpacker.yml`), "utf8")
-  )
-} catch (e) {}
-
 let customConfig = {
   entry: {},
   resolve: {
@@ -49,18 +37,6 @@ function extendConfig(orgConfig) {
   Object.assign(orgConfig.entry, customConfig.entry)
   orgConfig.node = orgConfig.node || {}
   Object.assign(orgConfig.node, customConfig.node)
-
-  // Apply setting for devServer from webpacker.yaml if defined.
-  if (
-    webpackerConfig &&
-    webpackerConfig.development &&
-    webpackerConfig.development.dev_server
-  ) {
-    const devServer = webpackerConfig.development.dev_server
-    orgConfig.devServer = orgConfig.devServer || {}
-    if (devServer.host) orgConfig.devServer.host = devServer.host
-    if (devServer.port) orgConfig.devServer.port = devServer.port
-  }
 
   return orgConfig
 }
