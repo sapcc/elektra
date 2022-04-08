@@ -33,7 +33,7 @@
       }
     }
 
-    fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=sum by (instance_uuid) (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} - vrops_virtualmachine_oversized_vcpus and vrops_virtualmachine_oversized_vcpus != 0) or (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} %2B vrops_virtualmachine_undersized_vcpus and vrops_virtualmachine_undersized_vcpus != 0)')
+    fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=sum by (instance_uuid) (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} - vrops_virtualmachine_oversized_vcpus and vrops_virtualmachine_oversized_vcpus != 0) or (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} %2B vrops_virtualmachine_undersized_vcpus and vrops_virtualmachine_undersized_vcpus != 0)')
       .then(catchErrors)
       .then(response => response.json())
       .then((json) => {
@@ -52,7 +52,7 @@
         $("span.sizing_cpu_recommendation_problem_text").html("Problem to get cpu recommendation: " + error.message)
       })
 
-    fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) - sum by (instance_uuid) (vrops_virtualmachine_oversized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_oversized_memory != 0)) or ((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) %2B sum by (instance_uuid) (vrops_virtualmachine_undersized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_undersized_memory != 0))')
+    fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) - sum by (instance_uuid) (vrops_virtualmachine_oversized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_oversized_memory != 0)) or ((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) %2B sum by (instance_uuid) (vrops_virtualmachine_undersized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_undersized_memory != 0))')
       .then(catchErrors)
       .then(response => response.json())
       .then((json) => {
@@ -74,7 +74,7 @@
       })
 
     var virtualmachine_guest_tools_target_version = "0";
-    fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (guest_tools_target_version) (vrops_virtualmachine_guest_tools_target_version_info)')
+    fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=group by (guest_tools_target_version) (vrops_virtualmachine_guest_tools_target_version_info)')
       .then(catchErrors)
       .then(response => response.json())
       .then((json) => {
@@ -83,7 +83,7 @@
         var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
         var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
         // console.log(virtualMachineGuestToolsTargetVersion)
-        fetch('https://prometheus-infra-collector.#{@current_region}.cloud.sap/api/v1/query?query=group by (instance_uuid, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{instance_uuid="#{@instance.id}"}) AND on (instance_uuid) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
+        fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=group by (instance_uuid, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{instance_uuid="#{@instance.id}"}) AND on (instance_uuid) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
           .then(catchErrors)
           .then(response => response.json())
           .then((json) => {
