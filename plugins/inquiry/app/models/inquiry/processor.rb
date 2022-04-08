@@ -11,11 +11,11 @@ module Inquiry
         begin
           if user.is_a? CurrentUserWrapper::CurrentUserWrapper # for current_user
             if processor.email != user.email or processor.name != user.name or processor.full_name != user.full_name
-              processor.update_attributes({email: user.email, name: user.name, full_name: user.full_name})
+              processor.update({email: user.email, name: user.name, full_name: user.full_name})
             end
           elsif user.respond_to?(:description)
             if processor.email != user.email or processor.name != user.name or processor.full_name != user.description
-              processor.update_attributes({email: user.email, name: user.name, full_name: user.description})
+              processor.update({email: user.email, name: user.name, full_name: user.description})
             end
           end
         rescue => e
