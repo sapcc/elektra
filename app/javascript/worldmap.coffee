@@ -1,7 +1,8 @@
-d3 = require("d3")
-d3Tip = require("d3-tip")
-topojson = require("topojson-client")
+import * as d3 from "d3";
+import d3Tip from "d3-tip"
+import * as topojson from "topojson-client"
 import { geoMiller } from "d3-geo-projection"
+regions = require("config/regions.json")
 
 class Worldmap
 
@@ -93,7 +94,7 @@ class Worldmap
         opacity: 0
         'pointer-events': 'none'
 
-      tip.show d
+      tip.show d, this
       return
 
 
@@ -186,24 +187,23 @@ class Worldmap
         .attr 'd', path
 
       # Read cities from config file. Render circles for cities
-      d3.json options.regions_config, (error, data) ->
-        g.selectAll('circle')
-          .data(data)
-          .enter()
-          .append('circle')
-          .attr('cx', (d) ->
-            projection([d.lon, d.lat])[0])
-          .attr('cy', (d) ->
-            projection([d.lon, d.lat])[1])
-          .attr('r', getRadius)
-          .classed(
-            'worldmap-city': true
-            'active': isActiveCity
-            'notavailable': (d) -> !d.available
-            'cominglater': isComingLater)
-          .each(showActiveTip)
-          .on('click', clickedCity)
-          .on('mouseover', mouseoverCity)
-          .on 'mouseout', mouseoutCity
-        return
+      g.selectAll('circle')
+        .data(regions)
+        .enter()
+        .append('circle')
+        .attr('cx', (d) ->
+          projection([d.lon, d.lat])[0])
+        .attr('cy', (d) ->
+          projection([d.lon, d.lat])[1])
+        .attr('r', getRadius)
+        .classed(
+          'worldmap-city': true
+          'active': isActiveCity
+          'notavailable': (d) -> !d.available
+          'cominglater': isComingLater)
+        .each(showActiveTip)
+        .on('click', clickedCity)
+        .on('mouseover', mouseoverCity)
+        .on 'mouseout', mouseoutCity
+
       return

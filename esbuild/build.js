@@ -27,6 +27,7 @@ require("esbuild")
       pathsResolverPlugin({
         lib: "app/javascript/lib",
         core: "app/javascript/core",
+        config: "config",
       }),
       globImportPlugin(),
       coffeeScriptPlugin(),
