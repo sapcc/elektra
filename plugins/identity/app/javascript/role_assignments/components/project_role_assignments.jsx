@@ -5,7 +5,7 @@ import { regexString } from "lib/tools/regex_string"
 import { AutocompleteField } from "lib/components/autocomplete_field"
 import ProjectRoleAssignmentForm from "../containers/project_role_assignments_form"
 import { OverlayTrigger, Tooltip } from "react-bootstrap"
-import { policy } from "policy"
+import { policy } from "lib/policy"
 
 const isMemberTooltip = (type) => (
   <Tooltip id="removeMemberTooltip">

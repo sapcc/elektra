@@ -2,4 +2,4 @@
   Audit Log
 
 =# react_component 'audit.AppProvider', permissions: {}, token: current_user.token, eventsApi: @events_endpoint
-= javascript_pack_tag 'audit_app', data: { token: current_user.token, events_api: @events_endpoint }
+= javascript_include_tag 'audit_app', data: { token: current_user.token, events_api: @events_endpoint }

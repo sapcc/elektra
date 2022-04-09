@@ -338,8 +338,6 @@ export class Graph extends React.Component {
           return '\uf132'
         case 'volume':
           return '\uf1c0'
-        case 'server':
-          return '\uf233'
         case 'project':
           return '\uf288'
         case 'floatingip':

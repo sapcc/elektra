@@ -1,5 +1,5 @@
 import * as constants from "../constants"
-import { ajaxHelper, pluginAjaxHelper } from "ajax_helper"
+import { ajaxHelper, pluginAjaxHelper } from "lib/ajax_helper"
 import { addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 
@@ -166,19 +166,17 @@ export const fetchInconsistencies = (scopeData) => (dispatch) => {
     })
 }
 
-export const fetchInconsistenciesIfNeeded = (scopeData) => (
-  dispatch,
-  getState
-) => {
-  const state = getState()
-  if (
-    state.limes.inconsistencyData.isFetching ||
-    state.limes.inconsistencyData.requestedAt
-  ) {
-    return
+export const fetchInconsistenciesIfNeeded =
+  (scopeData) => (dispatch, getState) => {
+    const state = getState()
+    if (
+      state.limes.inconsistencyData.isFetching ||
+      state.limes.inconsistencyData.requestedAt
+    ) {
+      return
+    }
+    return dispatch(fetchInconsistencies(scopeData))
   }
-  return dispatch(fetchInconsistencies(scopeData))
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // sync project
@@ -364,18 +362,16 @@ const discoverAutoscalableSubscopes = (scopeData) => (dispatch) => {
     })
 }
 
-export const discoverAutoscalableSubscopesIfNeeded = (scopeData) => (
-  dispatch,
-  getState
-) => {
-  const scope = new Scope(scopeData)
-  if (!scope.canAutoscaleSubscopes()) {
-    return
-  }
+export const discoverAutoscalableSubscopesIfNeeded =
+  (scopeData) => (dispatch, getState) => {
+    const scope = new Scope(scopeData)
+    if (!scope.canAutoscaleSubscopes()) {
+      return
+    }
 
-  const state = getState().limes.autoscalableSubscopes
-  if (state.isFetching || state.requestedAt) {
-    return
+    const state = getState().limes.autoscalableSubscopes
+    if (state.isFetching || state.requestedAt) {
+      return
+    }
+    return dispatch(discoverAutoscalableSubscopes(scopeData))
   }
-  return dispatch(discoverAutoscalableSubscopes(scopeData))
-}

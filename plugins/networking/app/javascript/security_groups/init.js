@@ -1,4 +1,4 @@
-import { createWidget } from "widget"
+import { createWidget } from "lib/widget"
 import * as reducers from "./reducers"
 import App from "./components/application"
 

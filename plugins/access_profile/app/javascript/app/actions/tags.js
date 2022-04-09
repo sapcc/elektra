@@ -1,4 +1,4 @@
-import { ajaxHelper } from "ajax_helper"
+import { ajaxHelper } from "lib/ajax_helper"
 
 const fetchTags = () => {
   return new Promise((handleSuccess, handleErrors) =>

@@ -1,35 +1,35 @@
-import React from "react";
-import { ajaxHelper } from "ajax_helper";
-import { useDispatch } from "../../app/components/StateProvider";
-import { confirm } from "lib/dialogs";
-import { addNotice, addError } from "lib/flashes";
-import { ErrorsList } from "lib/elektra-form/components/errors_list";
-import BooleanLabel from "../../app/components/shared/BooleanLabel";
+import React from "react"
+import { ajaxHelper } from "lib/ajax_helper"
+import { useDispatch } from "../../app/components/StateProvider"
+import { confirm } from "lib/dialogs"
+import { addNotice, addError } from "lib/flashes"
+import { ErrorsList } from "lib/elektra-form/components/errors_list"
+import BooleanLabel from "../../app/components/shared/BooleanLabel"
 
 const useL7Rule = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
   const fetchL7Rules = (lbID, listenerID, l7Policy, marker) => {
     return new Promise((handleSuccess, handleError) => {
-      const params = {};
-      if (marker) params["marker"] = marker.id;
+      const params = {}
+      if (marker) params["marker"] = marker.id
       ajaxHelper
         .get(
           `/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7Policy}/l7rules`,
           { params: params }
         )
         .then((response) => {
-          handleSuccess(response.data);
+          handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error);
-        });
-    });
-  };
+          handleError(error)
+        })
+    })
+  }
 
   const persistL7Rules = (lbID, listenerID, l7Policy, marker) => {
-    dispatch({ type: "RESET_L7RULES" });
-    dispatch({ type: "REQUEST_L7RULES" });
+    dispatch({ type: "RESET_L7RULES" })
+    dispatch({ type: "REQUEST_L7RULES" })
     return new Promise((handleSuccess, handleError) => {
       fetchL7Rules(lbID, listenerID, l7Policy, marker)
         .then((data) => {
@@ -37,15 +37,15 @@ const useL7Rule = () => {
             type: "RECEIVE_L7RULES",
             items: data.l7rules,
             hasNext: data.has_next,
-          });
-          handleSuccess(data);
+          })
+          handleSuccess(data)
         })
         .catch((error) => {
-          dispatch({ type: "REQUEST_L7RULES_FAILURE", error: error });
-          handleError(error.response);
-        });
-    });
-  };
+          dispatch({ type: "REQUEST_L7RULES_FAILURE", error: error })
+          handleError(error.response)
+        })
+    })
+  }
 
   const fetchL7Rule = (lbID, listenerID, l7PolicyID, l7RuleID) => {
     return new Promise((handleSuccess, handleError) => {
@@ -54,29 +54,29 @@ const useL7Rule = () => {
           `/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${l7RuleID}`
         )
         .then((response) => {
-          handleSuccess(response.data);
+          handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response);
-        });
-    });
-  };
+          handleError(error.response)
+        })
+    })
+  }
 
   const persistL7Rule = (lbID, listenerID, l7PolicyID, l7RuleID) => {
     return new Promise((handleSuccess, handleError) => {
       fetchL7Rule(lbID, listenerID, l7PolicyID, l7RuleID)
         .then((data) => {
-          dispatch({ type: "RECEIVE_L7RULE", l7Rule: data.l7rule });
-          handleSuccess(data);
+          dispatch({ type: "RECEIVE_L7RULE", l7Rule: data.l7rule })
+          handleSuccess(data)
         })
         .catch((error) => {
           if (error && error.status == 404) {
-            dispatch({ type: "REMOVE_L7RULE", id: l7RuleID });
+            dispatch({ type: "REMOVE_L7RULE", id: l7RuleID })
           }
-          handleError(error.response);
-        });
-    });
-  };
+          handleError(error.response)
+        })
+    })
+  }
 
   const createL7Rule = (lbID, listenerID, l7PolicyID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
@@ -86,14 +86,14 @@ const useL7Rule = () => {
           { l7rule: values }
         )
         .then((response) => {
-          dispatch({ type: "RECEIVE_L7RULE", l7Rule: response.data });
-          handleSuccess(response);
+          dispatch({ type: "RECEIVE_L7RULE", l7Rule: response.data })
+          handleSuccess(response)
         })
         .catch((error) => {
-          handleErrors(error);
-        });
-    });
-  };
+          handleErrors(error)
+        })
+    })
+  }
 
   const updateL7Rule = (lbID, listenerID, l7PolicyID, l7ruleID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
@@ -103,22 +103,22 @@ const useL7Rule = () => {
           { l7rule: values }
         )
         .then((response) => {
-          dispatch({ type: "RECEIVE_L7RULE", l7Rule: response.data.l7rule });
-          handleSuccess(response);
+          dispatch({ type: "RECEIVE_L7RULE", l7Rule: response.data.l7rule })
+          handleSuccess(response)
         })
         .catch((error) => {
-          handleErrors(error);
-        });
-    });
-  };
+          handleErrors(error)
+        })
+    })
+  }
 
   const setSearchTerm = (searchTerm) => {
-    dispatch({ type: "SET_L7RULES_SEARCH_TERM", searchTerm: searchTerm });
-  };
+    dispatch({ type: "SET_L7RULES_SEARCH_TERM", searchTerm: searchTerm })
+  }
 
   const errorMessage = (err) => {
-    return (err.data && (err.data.errors || err.data.error)) || err.message;
-  };
+    return (err.data && (err.data.errors || err.data.error)) || err.message
+  }
 
   const confirmMessageOnDelete = (l7Rule) => {
     return (
@@ -141,8 +141,8 @@ const useL7Rule = () => {
             : l7Rule.value}
         </p>
       </React.Fragment>
-    );
-  };
+    )
+  }
 
   const deleteL7Rule = (lbID, listenerID, l7PolicyID, l7Rule) => {
     return new Promise((handleSuccess, handleErrors) => {
@@ -153,24 +153,24 @@ const useL7Rule = () => {
               `/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}/l7rules/${l7Rule.id}`
             )
             .then((response) => {
-              dispatch({ type: "REQUEST_REMOVE_L7RULE", id: l7Rule.id });
+              dispatch({ type: "REQUEST_REMOVE_L7RULE", id: l7Rule.id })
               addNotice(
                 <React.Fragment>
                   <span>
                     L7 Rule <b>{l7Rule.id}</b> will be deleted.
                   </span>
                 </React.Fragment>
-              );
-              handleSuccess();
+              )
+              handleSuccess()
             })
             .catch((error) => {
               addError(
                 React.createElement(ErrorsList, {
                   errors: errorMessage(error.response),
                 })
-              );
-              handleErrors();
-            });
+              )
+              handleErrors()
+            })
         })
         .catch((cancel) => {
           if (cancel !== true) {
@@ -178,13 +178,13 @@ const useL7Rule = () => {
               React.createElement(ErrorsList, {
                 errors: cancel.toString(),
               })
-            );
+            )
           }
 
-          return true;
-        });
-    });
-  };
+          return true
+        })
+    })
+  }
 
   const ruleTypes = () => {
     return [
@@ -236,16 +236,16 @@ const useL7Rule = () => {
         description:
           "The rule looks for a Distinguished Name field defined in the key parameter and compares it against the value parameter in the rule.",
       },
-    ];
-  };
+    ]
+  }
 
   const ruleTypeKeyRelation = (type) => {
-    let showKeyAttribute = false;
+    let showKeyAttribute = false
     if (type == "COOKIE" || type == "HEADER") {
-      showKeyAttribute = true;
+      showKeyAttribute = true
     }
-    return showKeyAttribute;
-  };
+    return showKeyAttribute
+  }
 
   const ruleCompareTypes = () => {
     return [
@@ -270,8 +270,8 @@ const useL7Rule = () => {
         value: "STARTS_WITH",
         description: "String starts with",
       },
-    ];
-  };
+    ]
+  }
 
   return {
     fetchL7Rules,
@@ -285,7 +285,7 @@ const useL7Rule = () => {
     ruleCompareTypes,
     deleteL7Rule,
     setSearchTerm,
-  };
-};
+  }
+}
 
-export default useL7Rule;
+export default useL7Rule

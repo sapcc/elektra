@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from "react"
 import { DefeatableLink } from "lib/components/defeatable_link"
-import { policy } from "policy"
+import { policy } from "lib/policy"
 import { Form, Pagination } from "lib/components/searchComponents"
 import Item from "./item"
-import { scope } from "ajax_helper"
+import { scope } from "lib/ajax_helper"
 
 export default ({
   active,

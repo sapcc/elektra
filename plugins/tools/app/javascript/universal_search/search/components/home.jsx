@@ -3,7 +3,7 @@ import { SearchField } from "lib/components/search_field"
 import SearchItem from "./search_item"
 // import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Pagination } from "lib/components/pagination"
-import { scope } from "ajax_helper"
+import { scope } from "lib/ajax_helper"
 
 export default class Search extends React.Component {
   componentDidMount() {
@@ -18,9 +18,8 @@ export default class Search extends React.Component {
     const searchTermMatch = this.props.location.search.match(
       /[\?|\&]searchTerm=([^\&]+)/
     )
-    const searchTypeMatch = this.props.location.search.match(
-      /[\?|\&]type=([^\&]+)/
-    )
+    const searchTypeMatch =
+      this.props.location.search.match(/[\?|\&]type=([^\&]+)/)
 
     this.searchTerm = searchTermMatch && searchTermMatch[1]
     this.objectType = searchTypeMatch && searchTypeMatch[1]

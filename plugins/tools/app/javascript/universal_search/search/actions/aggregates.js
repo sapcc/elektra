@@ -1,5 +1,5 @@
 import * as constants from "../constants"
-import { ajaxHelper } from "ajax_helper"
+import { ajaxHelper } from "lib/ajax_helper"
 import { addNotice as showNotice, addError as showError } from "lib/flashes"
 
 //################### TYPES #########################

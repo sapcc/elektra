@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import "policy"
+import "lib/policy"
 
 export default ({ securityService, handleDelete }) => (
   <tr className={securityService.isDeleting ? "updating" : ""}>

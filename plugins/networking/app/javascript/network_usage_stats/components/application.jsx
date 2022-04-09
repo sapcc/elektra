@@ -1,122 +1,33 @@
-// /* eslint no-console:0 */
-//
-// import { fetchNetworkStats } from '../actions/network_stats'
-//
-// // render all components inside a hash router
-// export default class NetworkStats extends React.Component {
-//   state = {
-//     isFetching: false,
-//     items: null,
-//     errors: null
-//   }
-//
-//   componentDidMount() {
-//     const params = {}
-//     if(this.props.scopeType == 'domain') params['stats_domain_id'] = this.props.scopeId
-//     if(this.props.scopeType == 'project') params['stats_project_id'] = this.props.scopeId
-//
-//     this.setState({isFetching: true}, () =>
-//       fetchNetworkStats(params).then(networkStats => {
-//         console.log('networkStats', networkStats)
-//         this.setState({isFetching: false, items: networkStats})
-//       }).catch(errors => this.setState({isFetching: false, errors}))
-//     )
-//   }
-//
-//   //console.log(props)
-//   render() {
-//
-//     if(this.state.isFetching) return <span className="spinner"></span>
-//
-//     return (
-//       <React.Fragment>
-//         {this.state.items &&
-//           <table className="table">
-//             <thead>
-//               <tr>
-//                 <th>Network <span className='pull-right'>Floating IPs:</span></th>
-//                 <th>Available</th>
-//                 <th>Used</th>
-//                 <th>Approved</th>
-//                 <th>
-//                   Project
-//                   <span className="pull-right">
-//                     Approved Floating IPs
-//                   </span>
-//                 </th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {this.state.items.map( item =>
-//                 <tr key={item.usage.network_id}>
-//                   <td>
-//                     {item.usage.network_name}
-//                     <br/>
-//                     <span className='info-text'>{item.usage.network_id}</span>
-//                   </td>
-//                   <td>{item.usage.total_ips}</td>
-//                   <td>{item.usage.used_ips}</td>
-//                   <td>{item.floating_ip_quota}</td>
-//                   <td>
-//                     <table className="table no-borders">
-//                       <tbody>
-//                         {item.projects.map( (project, index) =>
-//                           <tr key={index}>
-//                             <td>
-//                               {project.name}
-//                               <br/>
-//                               <span className='info-text'>{project.id}</span>
-//                             </td>
-//                             <td>{project.quota && project.quota.floatingip}</td>
-//                           </tr>
-//                         )}
-//                       </tbody>
-//                     </table>
-//                   </td>
-//                 </tr>
-//               )}
-//             </tbody>
-//           </table>
-//         }
-//       </React.Fragment>
-//     )
-//   }
-// }
-
-
 /* eslint no-console:0 */
-
-import { fetchNetworkStats } from '../actions/network_stats'
 
 // render all components inside a hash router
 export default class NetworkStats extends React.Component {
   state = {
-    errors: null
+    errors: null,
   }
 
   componentDidMount() {
-    this.props.loadNetworkUsageStatsOnce().catch(errors =>
-      this.setState({errors})
-    )
+    this.props
+      .loadNetworkUsageStatsOnce()
+      .catch((errors) => this.setState({ errors }))
   }
 
   filterItems = () => {
-    if(!this.props.scopeType || !this.props.scopeId)
+    if (!this.props.scopeType || !this.props.scopeId)
       return this.props.networkUsageStats.items
 
     const items = []
 
-    for(let item of this.props.networkUsageStats.items) {
-      let filteredProjects = item.projects.filter(project => {
-        if(this.props.scopeType == 'project') {
+    for (let item of this.props.networkUsageStats.items) {
+      let filteredProjects = item.projects.filter((project) => {
+        if (this.props.scopeType == "project") {
           return project.id == this.props.scopeId
-        }
-        else if(this.props.scopeType == 'domain') {
+        } else if (this.props.scopeType == "domain") {
           return project.domain_id == this.props.scopeId
         }
       })
-      if(filteredProjects.length > 0) {
-        items.push(Object.assign({},item,{projects: filteredProjects}))
+      if (filteredProjects.length > 0) {
+        items.push(Object.assign({}, item, { projects: filteredProjects }))
       }
     }
     return items
@@ -124,42 +35,43 @@ export default class NetworkStats extends React.Component {
 
   //console.log(props)
   render() {
-    if(!this.props.networkUsageStats) return null
+    if (!this.props.networkUsageStats) return null
 
     const items = this.filterItems()
     const isFetching = this.props.networkUsageStats.isFetching
 
-    if(isFetching) return (
-      <React.Fragment>
-        <span className="spinner"></span> Loading ...
-      </React.Fragment>
-    )
+    if (isFetching)
+      return (
+        <React.Fragment>
+          <span className="spinner"></span> Loading ...
+        </React.Fragment>
+      )
 
     return (
       <React.Fragment>
-        {items &&
+        {items && (
           <table className="table">
             <thead>
               <tr>
-                <th>Network <span className='pull-right'>Floating IPs:</span></th>
+                <th>
+                  Network <span className="pull-right">Floating IPs:</span>
+                </th>
                 <th>Available</th>
                 <th>Used</th>
                 <th>Approved</th>
                 <th>
                   Project
-                  <span className="pull-right">
-                    Approved Floating IPs
-                  </span>
+                  <span className="pull-right">Approved Floating IPs</span>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {items.map( item =>
+              {items.map((item) => (
                 <tr key={item.usage.network_id}>
                   <td>
                     {item.usage.network_name}
-                    <br/>
-                    <span className='info-text'>{item.usage.network_id}</span>
+                    <br />
+                    <span className="info-text">{item.usage.network_id}</span>
                   </td>
                   <td>{item.usage.total_ips}</td>
                   <td>{item.usage.used_ips}</td>
@@ -167,24 +79,24 @@ export default class NetworkStats extends React.Component {
                   <td>
                     <table className="table no-borders">
                       <tbody>
-                        {item.projects.map( (project, index) =>
+                        {item.projects.map((project, index) => (
                           <tr key={index}>
                             <td>
                               {project.name}
-                              <br/>
-                              <span className='info-text'>{project.id}</span>
+                              <br />
+                              <span className="info-text">{project.id}</span>
                             </td>
                             <td>{project.quota && project.quota.floatingip}</td>
                           </tr>
-                        )}
+                        ))}
                       </tbody>
                     </table>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
-        }
+        )}
       </React.Fragment>
     )
   }

@@ -1,8 +1,8 @@
-import { createWidget } from 'widget'
-import * as reducers from './reducers';
-import App from './components/application';
+import { createWidget } from "lib/widget"
+import * as reducers from "./reducers"
+import App from "./components/application"
 
-createWidget(__dirname, {html: {class: 'flex-body'}}).then((widget) => {
+createWidget(__dirname, { html: { class: "flex-body" } }).then((widget) => {
   widget.configureAjaxHelper()
   widget.setPolicy()
   widget.createStore(reducers)

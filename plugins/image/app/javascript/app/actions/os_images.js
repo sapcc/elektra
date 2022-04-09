@@ -1,5 +1,5 @@
 import { imageConstants } from "../constants"
-import { pluginAjaxHelper } from "ajax_helper"
+import { pluginAjaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
 

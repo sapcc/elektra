@@ -1,4 +1,4 @@
-import { pluginAjaxHelper } from "ajax_helper"
+import { pluginAjaxHelper } from "lib/ajax_helper"
 
 import { Scope, getBaseURL } from "../scope"
 

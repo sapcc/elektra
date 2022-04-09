@@ -1,4 +1,4 @@
-import { createWidget } from "widget"
+import { createWidget } from "lib/widget"
 import App from "./application"
 
 createWidget().then((widget) => {

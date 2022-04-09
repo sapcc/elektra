@@ -3,7 +3,7 @@ import { DefeatableLink } from "lib/components/defeatable_link"
 import { SearchField } from "lib/components/search_field"
 import SecurityGroupItem from "./item"
 import { AjaxPaginate } from "lib/components/ajax_paginate"
-import { pluginAjaxHelper } from "ajax_helper"
+import { pluginAjaxHelper } from "lib/ajax_helper"
 const ajaxHelper = pluginAjaxHelper("networking")
 
 const List = ({ loadSecurityGroupsOnce, securityGroups, handleDelete }) => {

@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from "react"
 import ServiceAction from "./ServiceAction"
-import { policy } from "policy"
+import { policy } from "lib/policy"
 import SmartLink from "./shared/SmartLink"
 import NewTag from "./NewTag"
 import { Collapse } from "react-bootstrap"
 import { FormStateProvider } from "./FormState"
-import { scope } from "ajax_helper"
+import { scope } from "lib/ajax_helper"
 
 const AccessProfileItem = ({ profileKey, items, reloadTags }) => {
   const [showNewForm, setShowNewForm] = useState(false)

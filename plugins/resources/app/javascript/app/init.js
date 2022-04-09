@@ -1,4 +1,4 @@
-import { createWidget } from "widget"
+import { createWidget } from "lib/widget"
 import { configureCastellumAjaxHelper } from "./actions/castellum"
 import * as reducers from "./reducers"
 import MainApp from "./components/applications/main"

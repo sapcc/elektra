@@ -1,39 +1,39 @@
-import { useState, useEffect, useMemo } from "react";
-import { DefeatableLink } from "lib/components/defeatable_link";
-import useCommons from "../../../lib/hooks/useCommons";
-import HelpPopover from "../shared/HelpPopover";
-import useL7Rule from "../../../lib/hooks/useL7Rule";
-import { useGlobalState } from "../StateProvider";
-import { Table } from "react-bootstrap";
-import ErrorPage from "../ErrorPage";
-import L7RuleListItem from "./L7RuleListItem";
-import { Tooltip, OverlayTrigger } from "react-bootstrap";
-import { SearchField } from "lib/components/search_field";
-import { policy } from "policy";
-import { scope } from "ajax_helper";
-import SmartLink from "../shared/SmartLink";
-import Log from "../shared/logger";
-import { regexString } from "lib/tools/regex_string";
+import { useState, useEffect, useMemo } from "react"
+import { DefeatableLink } from "lib/components/defeatable_link"
+import useCommons from "../../../lib/hooks/useCommons"
+import HelpPopover from "../shared/HelpPopover"
+import useL7Rule from "../../../lib/hooks/useL7Rule"
+import { useGlobalState } from "../StateProvider"
+import { Table } from "react-bootstrap"
+import ErrorPage from "../ErrorPage"
+import L7RuleListItem from "./L7RuleListItem"
+import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import { SearchField } from "lib/components/search_field"
+import { policy } from "lib/policy"
+import { scope } from "lib/ajax_helper"
+import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
+import { regexString } from "lib/tools/regex_string"
 
 const L7RulesList = ({ props, loadbalancerID }) => {
-  const { searchParamsToString } = useCommons();
-  const { persistL7Rules, setSearchTerm } = useL7Rule();
-  const listenerID = useGlobalState().listeners.selected;
-  const l7PolicyID = useGlobalState().l7policies.selected;
-  const state = useGlobalState().l7rules;
+  const { searchParamsToString } = useCommons()
+  const { persistL7Rules, setSearchTerm } = useL7Rule()
+  const listenerID = useGlobalState().listeners.selected
+  const l7PolicyID = useGlobalState().l7policies.selected
+  const state = useGlobalState().l7rules
 
   useEffect(() => {
-    initialLoad();
-  }, [l7PolicyID]);
+    initialLoad()
+  }, [l7PolicyID])
 
   const initialLoad = () => {
     if (l7PolicyID) {
-      Log.debug("FETCH L7 RULES");
+      Log.debug("FETCH L7 RULES")
       persistL7Rules(loadbalancerID, listenerID, l7PolicyID, null)
         .then((data) => {})
-        .catch((error) => {});
+        .catch((error) => {})
     }
-  };
+  }
 
   const canCreate = useMemo(
     () =>
@@ -41,32 +41,32 @@ const L7RulesList = ({ props, loadbalancerID }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const search = (term) => {
-    setSearchTerm(term);
-  };
+    setSearchTerm(term)
+  }
 
-  const error = state.error;
-  const searchTerm = state.searchTerm;
-  const selected = state.selected;
-  const isLoading = state.isLoading;
-  const items = state.items;
+  const error = state.error
+  const searchTerm = state.searchTerm
+  const selected = state.selected
+  const isLoading = state.isLoading
+  const items = state.items
 
   const filterItems = (searchTerm, items) => {
-    if (!searchTerm) return items;
+    if (!searchTerm) return items
     // filter items
     if (selected) {
-      return items.filter((i) => i.id == searchTerm.trim());
+      return items.filter((i) => i.id == searchTerm.trim())
     } else {
-      const regex = new RegExp(regexString(searchTerm.trim()), "i");
+      const regex = new RegExp(regexString(searchTerm.trim()), "i")
       return items.filter(
         (i) => `${i.id} ${i.type} ${i.value}`.search(regex) >= 0
-      );
+      )
     }
-  };
+  }
 
-  const l7Rules = filterItems(searchTerm, items);
+  const l7Rules = filterItems(searchTerm, items)
   return useMemo(() => {
     return (
       <React.Fragment>
@@ -182,7 +182,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
           </React.Fragment>
         )}
       </React.Fragment>
-    );
+    )
   }, [
     l7PolicyID,
     JSON.stringify(l7Rules),
@@ -191,7 +191,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
     isLoading,
     searchTerm,
     props,
-  ]);
-};
+  ])
+}
 
-export default L7RulesList;
+export default L7RulesList

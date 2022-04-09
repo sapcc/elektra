@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useDispatch } from "../../app/components/StateProvider"
-import { ajaxHelper } from "ajax_helper"
+import { ajaxHelper } from "lib/ajax_helper"
 import Log from "../../app/components/shared/logger"
 
 const useStatusTree = ({ lbId }) => {

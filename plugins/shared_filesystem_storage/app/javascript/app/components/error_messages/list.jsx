@@ -1,20 +1,19 @@
-import { DefeatableLink } from 'lib/components/defeatable_link';
-import { policy } from 'policy';
-import {Modal,Button} from 'react-bootstrap';
-import ErrorMessageItem from './item';
+import { DefeatableLink } from "lib/components/defeatable_link"
+import { policy } from "lib/policy"
+import { Modal, Button } from "react-bootstrap"
+import ErrorMessageItem from "./item"
 
 export default class ErrorMessageList extends React.Component {
-  state = {show: true}
+  state = { show: true }
 
   restoreUrl = (e) => {
     const type = this.props.match && this.props.match.params.type
-    if (!this.state.show)
-      this.props.history.replace(type || 'shares')
+    if (!this.state.show) this.props.history.replace(type || "shares")
   }
 
   hide = (e) => {
     if (e) e.stopPropagation()
-    this.setState({show: false})
+    this.setState({ show: false })
   }
 
   loadDependencies = (props) => props.loadErrorMessagesOnce()
@@ -28,23 +27,27 @@ export default class ErrorMessageList extends React.Component {
   }
 
   render() {
-    let {errorMessages} = this.props
+    let { errorMessages } = this.props
 
     return (
       <Modal
         show={this.state.show}
         onExited={this.restoreUrl}
         onHide={this.hide}
-        bsSize="large" aria-labelledby="contained-modal-title-lg">
-
+        bsSize="large"
+        aria-labelledby="contained-modal-title-lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Error Log</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { !errorMessages || errorMessages.isFetching ? (
-            <div><span className='spinner'/>Loading...</div>
+          {!errorMessages || errorMessages.isFetching ? (
+            <div>
+              <span className="spinner" />
+              Loading...
+            </div>
           ) : (
-            <table className='table error-messages'>
+            <table className="table error-messages">
               <thead>
                 <tr>
                   <th>Level</th>
@@ -53,15 +56,16 @@ export default class ErrorMessageList extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                { errorMessages.items.length==0 &&
-                  <tr><td colSpan='3'>No errors found.</td></tr>
-                }
-                { errorMessages.items.map((errorMessage,index) =>
-                  <ErrorMessageItem key={index} errorMessage={errorMessage}/>
-                  )
-                }
-                </tbody>
-              </table>
+                {errorMessages.items.length == 0 && (
+                  <tr>
+                    <td colSpan="3">No errors found.</td>
+                  </tr>
+                )}
+                {errorMessages.items.map((errorMessage, index) => (
+                  <ErrorMessageItem key={index} errorMessage={errorMessage} />
+                ))}
+              </tbody>
+            </table>
           )}
         </Modal.Body>
         <Modal.Footer>
@@ -70,5 +74,4 @@ export default class ErrorMessageList extends React.Component {
       </Modal>
     )
   }
-
 }

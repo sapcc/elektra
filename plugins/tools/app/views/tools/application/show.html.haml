@@ -2,7 +2,7 @@
   Universal Search
 
 - if current_user.is_allowed?("tools:application_get")
-  = javascript_pack_tag("tools_universal_search")
+  = javascript_include_tag("tools_universal_search")
 - else
   %h3 Unauthorized
   %p You don't have the permissions required to see this content.

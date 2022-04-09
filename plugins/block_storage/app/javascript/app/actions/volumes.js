@@ -1,5 +1,5 @@
 import * as constants from "../constants"
-import { pluginAjaxHelper } from "ajax_helper"
+import { pluginAjaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
 
@@ -246,31 +246,30 @@ const receiveVolumes = ({
   sortDir: sort_dir,
   receivedAt: Date.now(),
 })
-const fetchVolumes = ({ searchType, searchTerm, limit, page } = {}) => (
-  dispatch,
-  getState
-) => {
-  dispatch(requestVolumes({ searchType, searchTerm }))
-  const params = { page: page || 1 }
-  if (searchType && searchTerm) {
-    params.search_type = searchType
-    params.search_term = searchTerm
-  }
-  if (limit) params.limit = limit
-  if (page > 1) {
-    const volumes = getState().volumes
-    if (volumes.items.length > 0) {
-      params.marker = volumes.items[volumes.items.length - 1].id
+const fetchVolumes =
+  ({ searchType, searchTerm, limit, page } = {}) =>
+  (dispatch, getState) => {
+    dispatch(requestVolumes({ searchType, searchTerm }))
+    const params = { page: page || 1 }
+    if (searchType && searchTerm) {
+      params.search_type = searchType
+      params.search_term = searchTerm
     }
-  }
+    if (limit) params.limit = limit
+    if (page > 1) {
+      const volumes = getState().volumes
+      if (volumes.items.length > 0) {
+        params.marker = volumes.items[volumes.items.length - 1].id
+      }
+    }
 
-  ajaxHelper
-    .get("/volumes", { params })
-    .then((response) => {
-      dispatch(receiveVolumes(response.data))
-    })
-    .catch((error) => dispatch(requestVolumesFailure(errorMessage(error))))
-}
+    ajaxHelper
+      .get("/volumes", { params })
+      .then((response) => {
+        dispatch(receiveVolumes(response.data))
+      })
+      .catch((error) => dispatch(requestVolumesFailure(errorMessage(error))))
+  }
 
 const shouldFetchVolumes = function (state) {
   if (state.volumes.isFetching || state.volumes.requestedAt) {

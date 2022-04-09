@@ -3,7 +3,8 @@
 // bundle exec bin/webpack-dev-server
 //
 
-import { LBAAS2_LOGGER } from "@env"
+import env from "env"
+env.LBAAS2_LOGGER = env.LBAAS2_LOGGER || "LBAAS2_LOGGER"
 
 const BASE = "lbaas2"
 const COLOURS = {

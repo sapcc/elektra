@@ -1,67 +1,67 @@
-import { Link } from "react-router-dom";
-import { DefeatableLink } from "lib/components/defeatable_link";
-import { SearchField } from "lib/components/search_field";
-import SecurityGroupRuleItem from "./item";
-import { policy } from "policy";
+import { Link } from "react-router-dom"
+import { DefeatableLink } from "lib/components/defeatable_link"
+import { SearchField } from "lib/components/search_field"
+import SecurityGroupRuleItem from "./item"
+import { policy } from "lib/policy"
 
 export default class List extends React.Component {
-  state = { searchTerm: "", sortByProtocol: null, sortByPort: null };
+  state = { searchTerm: "", sortByProtocol: null, sortByPort: null }
 
   componentDidMount() {
     // load dependencies unless already loaded
     if (!this.props.securityGroup) {
-      this.props.loadSecurityGroup();
+      this.props.loadSecurityGroup()
     }
     // load all security groups to build the links properly if comming per deeplink
-    this.props.loadSecurityGroupsOnce();
+    this.props.loadSecurityGroupsOnce()
   }
 
   sortBy = (name) => {
     if (name == "protocol") {
-      let direction = this.state.sortByProtocol || "desc";
-      direction == "asc" ? (direction = "desc") : (direction = "asc");
-      this.setState({ sortByProtocol: direction, sortByPort: null });
+      let direction = this.state.sortByProtocol || "desc"
+      direction == "asc" ? (direction = "desc") : (direction = "asc")
+      this.setState({ sortByProtocol: direction, sortByPort: null })
     } else if ((name = "port")) {
-      let direction = this.state.sortByPort || "desc";
-      direction == "asc" ? (direction = "desc") : (direction = "asc");
-      this.setState({ sortByPort: direction, sortByProtocol: null });
+      let direction = this.state.sortByPort || "desc"
+      direction == "asc" ? (direction = "desc") : (direction = "asc")
+      this.setState({ sortByPort: direction, sortByProtocol: null })
     }
-  };
+  }
 
   filterItems = () => {
-    let items = this.props.securityGroupRules || [];
+    let items = this.props.securityGroupRules || []
 
     if (
       this.state.searchTerm &&
       this.state.searchTerm.replace(/\s/g, "").length > 0
     ) {
-      const regex = new RegExp(this.state.searchTerm.trim(), "i");
+      const regex = new RegExp(this.state.searchTerm.trim(), "i")
 
       return items.filter(
         (i) =>
           `${i.direction} ${i.protocol} ${i.port_range_min} ${i.port_range_max}`.search(
             regex
           ) >= 0
-      );
+      )
     }
 
     if (this.state.sortByPort) {
       items.sort((a, b) => {
-        if (a.port_range_min < b.port_range_min) return -1;
-        if (a.port_range_min > b.port_range_min) return 1;
-        return 0;
-      });
-      if (this.state.sortByPort == "desc") items.reverse();
+        if (a.port_range_min < b.port_range_min) return -1
+        if (a.port_range_min > b.port_range_min) return 1
+        return 0
+      })
+      if (this.state.sortByPort == "desc") items.reverse()
     } else if (this.state.sortByProtocol) {
       items.sort((a, b) => {
-        if ((a.protocol || "Any") < (b.protocol || "Any")) return -1;
-        if ((a.protocol || "Any") > (b.protocol || "Any")) return 1;
-        return 0;
-      });
-      if (this.state.sortByProtocol == "desc") items.reverse();
+        if ((a.protocol || "Any") < (b.protocol || "Any")) return -1
+        if ((a.protocol || "Any") > (b.protocol || "Any")) return 1
+        return 0
+      })
+      if (this.state.sortByProtocol == "desc") items.reverse()
     }
-    return items;
-  };
+    return items
+  }
 
   renderToolbar = () => {
     return (
@@ -90,12 +90,12 @@ export default class List extends React.Component {
           )}
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   renderTable = () => {
-    const items = this.filterItems();
-    const isFetching = this.props.isFetching;
+    const items = this.filterItems()
+    const isFetching = this.props.isFetching
 
     return (
       <table className="table shares">
@@ -108,8 +108,8 @@ export default class List extends React.Component {
               <a
                 href="#"
                 onClick={(e) => {
-                  e.preventDefault();
-                  this.sortBy("protocol");
+                  e.preventDefault()
+                  this.sortBy("protocol")
                 }}
               >
                 <i
@@ -126,8 +126,8 @@ export default class List extends React.Component {
               <a
                 href="#"
                 onClick={(e) => {
-                  e.preventDefault();
-                  this.sortBy("port");
+                  e.preventDefault()
+                  this.sortBy("port")
                 }}
               >
                 <i
@@ -161,11 +161,11 @@ export default class List extends React.Component {
           )}
         </tbody>
       </table>
-    );
-  };
+    )
+  }
 
   renderGroupInfos = () => {
-    const canDeleteGroup = policy.isAllowed("networking:security_group_delete");
+    const canDeleteGroup = policy.isAllowed("networking:security_group_delete")
     return (
       <div className="infobox">
         <h4 className="action-heading">
@@ -182,10 +182,10 @@ export default class List extends React.Component {
                   <a
                     href="#"
                     onClick={(e) => {
-                      e.preventDefault();
+                      e.preventDefault()
                       this.props
                         .handleGroupDelete()
-                        .then((success) => this.props.history.replace(`/`));
+                        .then((success) => this.props.history.replace(`/`))
                     }}
                   >
                     Delete Security Group
@@ -222,12 +222,12 @@ export default class List extends React.Component {
           <span className="spinner" />
         )}
       </div>
-    );
-  };
+    )
+  }
 
   render() {
     if (!policy.isAllowed("networking:rule_list")) {
-      return <span>You are not allowed to see this page</span>;
+      return <span>You are not allowed to see this page</span>
     }
 
     return (
@@ -239,6 +239,6 @@ export default class List extends React.Component {
 
         <div className="col-md-3">{this.renderGroupInfos()}</div>
       </div>
-    );
+    )
   }
 }

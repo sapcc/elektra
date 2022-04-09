@@ -19,8 +19,8 @@ import {
   ButtonToolbar,
 } from "react-bootstrap"
 import Pagination from "../shared/Pagination"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
+import { policy } from "lib/policy"
+import { scope } from "lib/ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
 

@@ -11,17 +11,14 @@ import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import { Link } from "react-router-dom"
 import HealthmonitorDetails from "./HealthmonitorDetails"
-import { policy } from "policy"
-import { scope } from "ajax_helper"
+import { policy } from "lib/policy"
+import { scope } from "lib/ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
 
 const HealthMonitor = ({ props, loadbalancerID }) => {
-  const {
-    deleteHealthmonitor,
-    persistHealthmonitor,
-    resetState,
-  } = useHealthMonitor()
+  const { deleteHealthmonitor, persistHealthmonitor, resetState } =
+    useHealthMonitor()
   const poolID = useGlobalState().pools.selected
   const poolError = useGlobalState().pools.error
   const pools = useGlobalState().pools.items
@@ -39,24 +36,24 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
 
   const initialLoad = () => {
     // if pool selected
-    if (poolID) {     
+    if (poolID) {
       // find the pool to get the health monitor id
-      const pool = findPool(pools, poolID)      
+      const pool = findPool(pools, poolID)
       // in case everything is being load from the url it can happen that the pool is not in the first pool load and has to be loaded extra
       // fetching the pool extra the initial load is being retriggered
       fetchPool(loadbalancerID, poolID)
-      .then((data) => {
-        // Retrigger the initialLoad so we can check if there is a healthmonitor to load
-        setTriggerInitialLoad(true)
-      })
-      .catch((error) => {
-        // if error happend loading the pool it will be shown in the pool section
-      })
+        .then((data) => {
+          // Retrigger the initialLoad so we can check if there is a healthmonitor to load
+          setTriggerInitialLoad(true)
+        })
+        .catch((error) => {
+          // if error happend loading the pool it will be shown in the pool section
+        })
 
       if (pool && pool.healthmonitor_id) {
         // if lb loaded get the vip_port_id
         let options = null
-        const lb = findLoadbalancer(loadbalancers, loadbalancerID)        
+        const lb = findLoadbalancer(loadbalancers, loadbalancerID)
         if (lb) {
           options = { vip_port_id: lb.vip_port_id }
         }

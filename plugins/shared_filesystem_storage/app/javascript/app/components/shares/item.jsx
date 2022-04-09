@@ -1,15 +1,18 @@
-import { Link } from 'react-router-dom';
-import { policy } from 'policy';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import * as constants from '../../constants';
-import ShareActions from './actions';
+import { Link } from "react-router-dom"
+import { policy } from "lib/policy"
+import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import * as constants from "../../constants"
+import ShareActions from "./actions"
 
 class RuleTooltip extends React.Component {
   render() {
     let al = this.props.rule.access_level
-    let tooltip = <Tooltip id='ruleTooltip'>
-      Access Level: {al=='ro' ? 'read only' : (al=='rw' ? 'read/write' : al)}
-    </Tooltip>;
+    let tooltip = (
+      <Tooltip id="ruleTooltip">
+        Access Level:{" "}
+        {al == "ro" ? "read only" : al == "rw" ? "read/write" : al}
+      </Tooltip>
+    )
 
     return (
       <OverlayTrigger
@@ -20,14 +23,13 @@ class RuleTooltip extends React.Component {
       >
         {this.props.children}
       </OverlayTrigger>
-    );
+    )
   }
 }
 
-
 export default class ShareItem extends React.Component {
-  constructor(props){
-    super(props);
+  constructor(props) {
+    super(props)
     this.startPolling = this.startPolling.bind(this)
     this.stopPolling = this.stopPolling.bind(this)
   }
@@ -50,9 +52,10 @@ export default class ShareItem extends React.Component {
 
   startPolling = () => {
     // do not create a new polling interval if already polling
-    if(this.polling) return;
-    this.polling = setInterval(() =>
-      this.props.reloadShare(this.props.share.id), 5000
+    if (this.polling) return
+    this.polling = setInterval(
+      () => this.props.reloadShare(this.props.share.id),
+      5000
     )
   }
 
@@ -62,62 +65,72 @@ export default class ShareItem extends React.Component {
   }
 
   pendingState = (props = this.props) => {
-    return constants.isShareStatusPending(props.share.status);
+    return constants.isShareStatusPending(props.share.status)
   }
 
-  render(){
-    let { share, shareNetwork, shareRules, handleDelete, handleForceDelete } = this.props
+  render() {
+    let { share, shareNetwork, shareRules, handleDelete, handleForceDelete } =
+      this.props
 
-    return(
-      <tr className={ share.isDeleting ? 'updating' : ''}>
+    return (
+      <tr className={share.isDeleting ? "updating" : ""}>
         <td>
           <Link to={`/shares/${share.id}/show`}>{share.name || share.id}</Link>
         </td>
         <td>{share.availability_zone}</td>
         <td>{share.share_proto}</td>
-        <td>{(share.size || 0) + ' GB'}</td>
+        <td>{(share.size || 0) + " GB"}</td>
         <td>
-          { share.status == 'creating' &&
-            <span className='spinner'></span>
-          }
+          {share.status == "creating" && <span className="spinner"></span>}
           {share.status}
         </td>
         <td>
-          { shareNetwork ? (
+          {shareNetwork ? (
             <span>
               {shareNetwork.name}
-              { shareNetwork.cidr &&
-                <span className='info-text'>{" "+shareNetwork.cidr}</span>
-              }
-              { shareRules &&
-                (
-                  shareRules.isFetching ? (
-                    <span className='spinner'></span>
-                  ) : (
-                    <span>
-                      <br/>
-                      { shareRules.items.map( (rule) =>
-                        <RuleTooltip key={rule.id} rule={rule}>
-                          <small
-                            className={`${rule.access_level == 'rw' ? 'text-success' : 'text-info'}`}>
-                            <i className={`fa fa-fw fa-${rule.access_level == 'rw' ? 'pencil-square' : 'eye'}`}/>
-                            {rule.access_to}
-                          </small>
-                        </RuleTooltip>
-
-                      )}
-                    </span>
-                  )
-                )}
-            </span>) : (
-            <span className='spinner'></span>
+              {shareNetwork.cidr && (
+                <span className="info-text">{" " + shareNetwork.cidr}</span>
+              )}
+              {shareRules &&
+                (shareRules.isFetching ? (
+                  <span className="spinner"></span>
+                ) : (
+                  <span>
+                    <br />
+                    {shareRules.items.map((rule) => (
+                      <RuleTooltip key={rule.id} rule={rule}>
+                        <small
+                          className={`${
+                            rule.access_level == "rw"
+                              ? "text-success"
+                              : "text-info"
+                          }`}
+                        >
+                          <i
+                            className={`fa fa-fw fa-${
+                              rule.access_level == "rw"
+                                ? "pencil-square"
+                                : "eye"
+                            }`}
+                          />
+                          {rule.access_to}
+                        </small>
+                      </RuleTooltip>
+                    ))}
+                  </span>
+                ))}
+            </span>
+          ) : (
+            <span className="spinner"></span>
           )}
         </td>
         <td className="snug">
           <ShareActions
-            share={share} isPending={this.pendingState()}
-            parentView='shares'
-            handleDelete={handleDelete} handleForceDelete={handleForceDelete}
+            share={share}
+            isPending={this.pendingState()}
+            parentView="shares"
+            handleDelete={handleDelete}
+            handleForceDelete={handleForceDelete}
           />
         </td>
       </tr>

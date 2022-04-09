@@ -1,34 +1,34 @@
-import React, { useEffect, useMemo } from "react";
-import HelpPopover from "../shared/HelpPopover";
-import { useGlobalState } from "../StateProvider";
-import useCommons from "../../../lib/hooks/useCommons";
-import useMember from "../../../lib/hooks/useMember";
-import ErrorPage from "../ErrorPage";
-import { SearchField } from "lib/components/search_field";
-import { policy } from "policy";
-import { scope } from "ajax_helper";
-import SmartLink from "../shared/SmartLink";
-import Log from "../shared/logger";
-import { regexString } from "lib/tools/regex_string";
-import MembersTable from "./MembersTable";
+import React, { useEffect, useMemo } from "react"
+import HelpPopover from "../shared/HelpPopover"
+import { useGlobalState } from "../StateProvider"
+import useCommons from "../../../lib/hooks/useCommons"
+import useMember from "../../../lib/hooks/useMember"
+import ErrorPage from "../ErrorPage"
+import { SearchField } from "lib/components/search_field"
+import { policy } from "lib/policy"
+import { scope } from "lib/ajax_helper"
+import SmartLink from "../shared/SmartLink"
+import Log from "../shared/logger"
+import { regexString } from "lib/tools/regex_string"
+import MembersTable from "./MembersTable"
 
 const MemberList = ({ props, loadbalancerID }) => {
-  const poolID = useGlobalState().pools.selected;
-  const poolError = useGlobalState().pools.error;
-  const { searchParamsToString } = useCommons();
-  const { persistMembers, setSearchTerm } = useMember();
-  const state = useGlobalState().members;
+  const poolID = useGlobalState().pools.selected
+  const poolError = useGlobalState().pools.error
+  const { searchParamsToString } = useCommons()
+  const { persistMembers, setSearchTerm } = useMember()
+  const state = useGlobalState().members
 
   useEffect(() => {
-    initialLoad();
-  }, [poolID]);
+    initialLoad()
+  }, [poolID])
 
   const initialLoad = () => {
     if (poolID) {
-      Log.debug("FETCH MEMBERS");
-      persistMembers(loadbalancerID, poolID);
+      Log.debug("FETCH MEMBERS")
+      persistMembers(loadbalancerID, poolID)
     }
-  };
+  }
 
   const canCreate = useMemo(
     () =>
@@ -36,35 +36,35 @@ const MemberList = ({ props, loadbalancerID }) => {
         target: { scoped_domain_name: scope.domain },
       }),
     [scope.domain]
-  );
+  )
 
   const search = (term) => {
-    setSearchTerm(term);
-  };
+    setSearchTerm(term)
+  }
 
-  const error = state.error;
-  const isLoading = state.isLoading;
-  const searchTerm = state.searchTerm;
-  const selected = state.selected;
-  const items = state.items;
+  const error = state.error
+  const isLoading = state.isLoading
+  const searchTerm = state.searchTerm
+  const selected = state.selected
+  const items = state.items
 
   const filterItems = (searchTerm, items) => {
-    if (!searchTerm) return items;
+    if (!searchTerm) return items
     // filter items
     if (selected) {
-      return items.filter((i) => i.id == searchTerm.trim());
+      return items.filter((i) => i.id == searchTerm.trim())
     } else {
-      const regex = new RegExp(regexString(searchTerm.trim()), "i");
+      const regex = new RegExp(regexString(searchTerm.trim()), "i")
       return items.filter(
         (i) =>
           `${i.id} ${i.name} ${i.address} ${i.protocol_port}`.search(regex) >= 0
-      );
+      )
     }
-  };
+  }
 
-  const members = filterItems(searchTerm, items);
+  const members = filterItems(searchTerm, items)
   return useMemo(() => {
-    Log.debug("RENDER member list");
+    Log.debug("RENDER member list")
     return (
       <React.Fragment>
         {poolID && !poolError && (
@@ -123,7 +123,7 @@ const MemberList = ({ props, loadbalancerID }) => {
           </React.Fragment>
         )}
       </React.Fragment>
-    );
+    )
   }, [
     poolID,
     poolError,
@@ -132,7 +132,7 @@ const MemberList = ({ props, loadbalancerID }) => {
     isLoading,
     searchTerm,
     props,
-  ]);
-};
+  ])
+}
 
-export default MemberList;
+export default MemberList

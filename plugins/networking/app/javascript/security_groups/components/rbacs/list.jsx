@@ -1,7 +1,7 @@
 import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useParams, useHistory } from "react-router-dom"
-import { pluginAjaxHelper } from "ajax_helper"
+import { pluginAjaxHelper } from "lib/ajax_helper"
 import { AutocompleteField } from "lib/components/autocomplete_field"
 import Item from "./item"
 const ajaxHelper = pluginAjaxHelper("networking")

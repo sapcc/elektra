@@ -1,4 +1,4 @@
-// import { createWidget } from "widget"
+// import { createWidget } from "lib/widget"
 // import * as reducers from "./reducers"
 // import App from "./components/application"
 
@@ -18,9 +18,9 @@ import {
   getWidgetName,
   getContainerFromCurrentScript,
   createConfig,
-} from "widget"
-import { configureAjaxHelper } from "ajax_helper"
-import { setPolicy } from "policy"
+} from "lib/widget"
+import { configureAjaxHelper } from "lib/ajax_helper"
+import { setPolicy } from "lib/policy"
 
 const createNewConfig = (widgetName, scriptParams) => {
   // if document is already loaded then resolve Promise immediately

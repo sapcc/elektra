@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { policy } from "policy"
+import { policy } from "lib/policy"
 import { OverlayTrigger, Tooltip } from "react-bootstrap"
 import { PrettyDate } from "lib/components/pretty_date"
 import { PrettySize } from "lib/components/pretty_size"
@@ -51,7 +51,10 @@ export default (props) => {
         {policy.isAllowed("image:image_owner", { image }) && <OwnerIcon />}
       </td>
       <td>
-        <Link to={`/os-images/${props.activeTab}/${image.id}/show`} data-test="images">
+        <Link
+          to={`/os-images/${props.activeTab}/${image.id}/show`}
+          data-test="images"
+        >
           {image.image_type == "snapshot" && <SnapshotIcon />}{" "}
           {image.name || image.id}
         </Link>

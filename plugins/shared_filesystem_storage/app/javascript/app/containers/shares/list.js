@@ -1,17 +1,16 @@
-import { connect } from  'react-redux';
-import ShareList from '../../components/shares/list';
+import { connect } from "react-redux"
+import ShareList from "../../components/shares/list"
 import {
   fetchSharesIfNeeded,
-  fetchShareExportLocations,
   fetchAvailabilityZonesIfNeeded,
   deleteShare,
   forceDeleteShare,
   reloadShare,
   searchShares,
-  loadNext
-} from '../../actions/shares'
-import { fetchShareNetworksIfNeeded } from '../../actions/share_networks'
-import { fetchShareRulesIfNeeded } from '../../actions/share_rules'
+  loadNext,
+} from "../../actions/shares"
+import { fetchShareNetworksIfNeeded } from "../../actions/share_networks"
+import { fetchShareRulesIfNeeded } from "../../actions/share_rules"
 
 export default connect(
   (state) => ({
@@ -21,10 +20,10 @@ export default connect(
     searchTerm: state.shares.searchTerm,
     shareNetworks: state.shareNetworks,
     shareRules: state.shareRules,
-    availabilityZones: state.availabilityZones
+    availabilityZones: state.availabilityZones,
   }),
 
-  dispatch => ({
+  (dispatch) => ({
     loadSharesOnce: () => dispatch(fetchSharesIfNeeded()),
     loadShareNetworksOnce: () => dispatch(fetchShareNetworksIfNeeded()),
     loadShareRulesOnce: (shareId) => dispatch(fetchShareRulesIfNeeded(shareId)),
@@ -33,6 +32,6 @@ export default connect(
     searchShares: (term) => dispatch(searchShares(term)),
     reloadShare: (shareId) => dispatch(reloadShare(shareId)),
     handleDelete: (shareId) => dispatch(deleteShare(shareId)),
-    handleForceDelete: (shareId) => dispatch(forceDeleteShare(shareId))
+    handleForceDelete: (shareId) => dispatch(forceDeleteShare(shareId)),
   })
-)(ShareList);
+)(ShareList)

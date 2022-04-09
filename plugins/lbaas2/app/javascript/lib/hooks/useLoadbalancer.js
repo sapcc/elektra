@@ -1,6 +1,6 @@
 import React from "react"
 import { useDispatch } from "../../app/components/StateProvider"
-import { ajaxHelper } from "ajax_helper"
+import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 
 export const fetchAvailabilityZones = () => {

@@ -5,8 +5,8 @@ import { removeTag, fetchTags } from "../actions/tags"
 import { addNotice, addError } from "lib/flashes"
 import { useDispatch } from "./StateProvider"
 import { errorMessage } from "../../lib/hooks/useTag"
-import { scope } from "ajax_helper"
-import { policy } from "policy"
+import { scope } from "lib/ajax_helper"
+import { policy } from "lib/policy"
 
 const Tag = ({ service, tag }) => {
   const [showConfirm, setShowConfirm] = useState(false)
