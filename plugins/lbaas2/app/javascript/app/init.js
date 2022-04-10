@@ -24,5 +24,5 @@ let scriptTagContainer = getContainerFromCurrentScript(widgetName)
 createNewConfig(widgetName, scriptTagContainer.scriptParams).then((config) => {
   configureAjaxHelper(config.ajaxHelper)
   setPolicy(config.policy)
-  ReactDOM.render(<App />, scriptTagContainer.reactContainer)
+  ReactDOM.render(React.createElement(App), scriptTagContainer.reactContainer)
 })

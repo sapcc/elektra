@@ -41,7 +41,7 @@ const App = (props) => {
   return <List {...listProps} />
 }
 
-createWidget(__dirname, {
+createWidget(null, {
   html: { class: "flex-body" },
   params: { flashescontainer: "custom" },
   containers: reactContainers,

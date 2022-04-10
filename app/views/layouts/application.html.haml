@@ -22,6 +22,7 @@
         Raven.config('#{$sentry_public_dsn}').install();
         Raven.setUserContext(#{@sentry_user_context ? @sentry_user_context.to_json.html_safe : ''});
         Raven.setTagsContext(#{@sentry_tags_context ? @sentry_tags_context.to_json.html_safe : '{}' })
+    = javascript_include_tag 'essentials', 'data-turbolinks-track' => true
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
 
     / Load plugin js (plugin_name/plugin.js)

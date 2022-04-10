@@ -1,16 +1,3 @@
-// import { createWidget } from "lib/widget"
-// import * as reducers from "./reducers"
-// import App from "./components/application"
-
-// createWidget(__dirname).then((widget) => {
-//   widget.configureAjaxHelper({
-//     baseURL: widget.config.scriptParams.url,
-//   })
-//   widget.setPolicy()
-//   widget.createStore(reducers)
-//   widget.render(App)
-// })
-
 import React from "react"
 import ReactDOM from "react-dom"
 import App from "./App"
@@ -47,5 +34,5 @@ createNewConfig(widgetName, scriptTagContainer.scriptParams).then((config) => {
     baseURL: scriptTagContainer.scriptParams.url,
   })
   setPolicy(config.policy)
-  ReactDOM.render(<App />, scriptTagContainer.reactContainer)
+  ReactDOM.render(React.createElement(App), scriptTagContainer.reactContainer)
 })

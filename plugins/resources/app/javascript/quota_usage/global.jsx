@@ -62,7 +62,7 @@ const App = (props) => {
 }
 
 if (scope.project && scope.project !== "home") {
-  createWidget(__dirname, {
+  createWidget(null, {
     html: { class: "flex-body" },
     params: { flashescontainer: "custom" },
     containers: [quotaInfos],

@@ -120,11 +120,13 @@ export const getWidgetName = (dirname) => {
 }
 
 const getCurrentScript = (widgetName) => {
-  if (widgetName) {
+  if (false && widgetName) {
     let script = document.querySelector(`script[src*="/${widgetName}"]`)
     if (script) return script
   }
   let scripts = document.getElementsByTagName("script")
+
+  console.log("=====================1", scripts.slice(-1))
   return scripts[scripts.length - 1]
 }
 
