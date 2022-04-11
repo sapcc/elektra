@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const coffeeScriptPlugin = require("./coffeescript_loader_plugin")
 const pathsResolverPlugin = require("./paths_resolver_plugin")
 const globImportPlugin = require("./glob_import_plugin")
