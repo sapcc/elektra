@@ -2,7 +2,7 @@ import { createWidget } from "lib/widget"
 import * as reducers from "./reducers"
 import App from "./containers/app"
 
-createWidget(__dirname).then((widget) => {
+createWidget(null).then((widget) => {
   // console.log('widget.config', widget.config)
   // console.log('widget.config.scriptParams.url',widget.config.scriptParams.url)
 

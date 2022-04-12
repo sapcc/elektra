@@ -3,7 +3,11 @@ const { sync } = require("glob")
 // helper function to add glob entry points
 function resolveFiles(pathPattern) {
   const result = {}
-  const regex = new RegExp(pathPattern.replace(/\*/g, "([^/|.]+)"))
+  const regex = new RegExp(
+    pathPattern.replace(/\*/g, "([^/|.]+)").replace(/\.\{.*$/, "")
+  )
+
+  // console.log(regex)
   const files = sync(pathPattern).sort()
   for (let path of files) {
     const tokens = path.match(regex)

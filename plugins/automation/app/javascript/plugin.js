@@ -1,0 +1,7 @@
+import "./ansi_up"
+import "./automation_search.coffee"
+import "./automation.coffee"
+import "./inline_form_node_tag.coffee"
+import "./jquery.caret.min"
+import "./jquery.tag-editor"
+import "./node.coffee"

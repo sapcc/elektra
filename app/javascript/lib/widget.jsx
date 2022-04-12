@@ -83,6 +83,7 @@ class Widget {
         container,
         Object.assign({}, dataset, this.config.params)
       )
+
       if (!reactContainer) continue
       if (this.store) {
         ReactDOM.render(
@@ -120,7 +121,7 @@ export const getWidgetName = (dirname) => {
 }
 
 const getCurrentScript = (widgetName) => {
-  if (false && widgetName) {
+  if (widgetName) {
     let script = document.querySelector(`script[src*="/${widgetName}"]`)
     if (script) return script
   }
@@ -170,6 +171,8 @@ export const createWidget = (dirname, options = {}) => {
 
   const loadWidget = () =>
     new Widget(reactContainers, createConfig(widgetName, params))
+
+  if (document.readyState === "complete") return Promise.resolve(loadWidget())
 
   // document is not loaded yet -> create a new Promise and resolve it as soon
   // as document is loaded.

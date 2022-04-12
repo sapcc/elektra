@@ -13,10 +13,10 @@ require("esbuild")
   .build({
     entryPoints: entryPoints(
       [
-        "app/javascript/*.js", // all js files in app/javascript folder
-        "app/javascript/*.coffee", // all coffeescript files in app/javascript folder
-        "plugins/*/app/javascript/*/init.js", // all initi.js files in all plugins
-        "plugins/*/app/javascript/*/init.jsx", // all initi.jsx files in all plugins
+        // all "*" are replaced with the path tokens and joined by "_"
+        "app/javascript/*.{js,jsx}", // all js and jsx files in app/javascript folder
+        "plugins/*/app/javascript/*/init.{js,jsx}", // all initi.js and init.jsx files in all plugins
+        "plugins/*/app/javascript/plugin.{js,jsx}", // all plugin.js files in all plugins
       ],
       { log: true }
     ),

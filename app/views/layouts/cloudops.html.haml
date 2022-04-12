@@ -28,6 +28,11 @@
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = javascript_include_tag 'plugins', 'data-turbolinks-track' => true
 
+    / Load plugin js (plugin_name/plugin.js)
+    - plugin = Core::PluginsManager.plugin(plugin_name)
+    - if plugin and plugin.has_plugin_js?
+      = javascript_include_tag plugin.name
+
     = favicon_png
     = favicon_ico
     = apple_touch_icon

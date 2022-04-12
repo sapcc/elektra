@@ -11,27 +11,21 @@
 // about supported directives.
 //
 // Every Plugin file is surrounded with a closure by dashboard.
-// It means that your plugin js code runs in own namespace and can't 
-// break any code of other plugins. If you want to make your code available 
-// outside this closure you should bind functions to lookup. 
-//  
-//       
-//= require_tree .   
-  
-// This function is visible only inside this file.
-function test() {
-  //...  
-}    
+// It means that your plugin js code runs in own namespace and can't
+// break any code of other plugins. If you want to make your code available
+// outside this closure you should bind functions to lookup.
+//
+//
 
 // This function is available from everywhere by calling lookup.name()
-lookup.name = function() {
+lookup.name = function () {
   "lookup"
-} 
+}
 
 // This is always executed on page load.
-$(document).ready(function(){
+$(document).ready(function () {
   // ...
-}); 
-    
+})
+
 // Call function from other files inside this plugin using the variable lookup
-//lookup.anyFunction()    
+//lookup.anyFunction()

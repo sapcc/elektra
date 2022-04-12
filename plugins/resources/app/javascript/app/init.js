@@ -4,7 +4,7 @@ import * as reducers from "./reducers"
 import MainApp from "./components/applications/main"
 import InitProjectApp from "./components/applications/init_project"
 
-createWidget(__dirname).then((widget) => {
+createWidget(null).then((widget) => {
   const limesHeaders = { "X-Auth-Token": widget.config.scriptParams.token }
   widget.configureAjaxHelper({
     baseURL: widget.config.scriptParams.limesApi,

@@ -1,19 +1,18 @@
-import { ResponsiveBar } from '@nivo/bar'
-import Legend from './legend'
-import { scaleOrdinal } from 'd3-scale'
-import { CSSTransition } from 'react-transition-group';
-import Numeral from 'numeral';
+import { ResponsiveBar } from "@nivo/bar"
+import Legend from "./legend"
+require("d3-transition")
+import { scaleOrdinal } from "d3-scale"
+import Numeral from "numeral"
 
 class NivoBarChart extends React.Component {
-
   componentDidMount() {
     this.chartIsRendered()
   }
 
   // check until chart is rendered
   chartIsRendered = () => {
-    if(!$(".barChart svg").length) {
-      setTimeout(this.chartIsRendered,200)
+    if (!$(".barChart svg").length) {
+      setTimeout(this.chartIsRendered, 200)
     } else {
       this.fixMyAxis()
     }
@@ -21,13 +20,23 @@ class NivoBarChart extends React.Component {
 
   // fix for IE and Firefox
   fixMyAxis = () => {
-    const lineTop = $($(".barChart svg>g>g:nth-child(2)>g:nth-child(1) line")[0]).offset().top
-    const textTop = $($(".barChart svg>g>g:nth-child(2)>g:nth-child(1) text")[0]).offset().top
+    const lineTop = $(
+      $(".barChart svg>g>g:nth-child(2)>g:nth-child(1) line")[0]
+    ).offset().top
+    const textTop = $(
+      $(".barChart svg>g>g:nth-child(2)>g:nth-child(1) text")[0]
+    ).offset().top
     if (Math.abs(lineTop - textTop) < 5) {
       // fix x axis labels
-      $(".barChart svg>g>g:nth-child(2)>g:nth-child(1) text").attr("transform", "translate(0,20)")
+      $(".barChart svg>g>g:nth-child(2)>g:nth-child(1) text").attr(
+        "transform",
+        "translate(0,20)"
+      )
       // fix y axis labels
-      $(".barChart svg>g>g:nth-child(2)>g:nth-child(2)>g text").attr("transform", "translate(-10,4)")
+      $(".barChart svg>g>g:nth-child(2)>g:nth-child(2)>g text").attr(
+        "transform",
+        "translate(-10,4)"
+      )
     }
   }
 
@@ -35,7 +44,7 @@ class NivoBarChart extends React.Component {
   // Reverse array to go from the past to the present
   getData = () => {
     const data = this.props.cost.chartData
-    let resultArray = Object.keys(data).map(i => data[i])
+    let resultArray = Object.keys(data).map((i) => data[i])
     return resultArray.reverse()
   }
 
@@ -44,7 +53,7 @@ class NivoBarChart extends React.Component {
     const date = recData.indexValue
     const rawData = data[recData.indexValue]["rawData"]
     const total = data[recData.indexValue]["total"]
-    this.props.onClick({date: date, rawData: rawData, total: total})
+    this.props.onClick({ date: date, rawData: rawData, total: total })
   }
 
   getServiceByColor = (color) => {
@@ -55,41 +64,93 @@ class NivoBarChart extends React.Component {
     return colorScale.domain()[colorIndex]
   }
 
-  rectBarComponent = ({ x, y, width, height, color, data, onClick, tooltip, showTooltip, hideTooltip}) => {
-    const {clickService,clickedBar} = this.props
+  rectBarComponent = ({
+    x,
+    y,
+    width,
+    height,
+    color,
+    data,
+    onClick,
+    tooltip,
+    showTooltip,
+    hideTooltip,
+  }) => {
+    const { clickService, clickedBar } = this.props
     let service = this.getServiceByColor(color)
-    const handleTooltip = e => showTooltip(this.customTooltip(data, color), e)
+    const handleTooltip = (e) => showTooltip(this.customTooltip(data, color), e)
 
-    let newY = (service === clickService) ? 240-height : y
-    let opacity = (clickService !== "all" && service !== clickService) ? 0 : 1
-    opacity = (opacity == 1 && clickedBar!== "none" && data.indexValue !== clickedBar) ? 0.5 : opacity
+    let newY = service === clickService ? 240 - height : y
+    let opacity = clickService !== "all" && service !== clickService ? 0 : 1
+    opacity =
+      opacity == 1 && clickedBar !== "none" && data.indexValue !== clickedBar
+        ? 0.5
+        : opacity
 
     // hide hideTooltip
     if (opacity == 0) {
-      return <rect width={width} height={height} x={x} y={newY} fill={color} opacity={opacity}/>
+      return (
+        <rect
+          width={width}
+          height={height}
+          x={x}
+          y={newY}
+          fill={color}
+          opacity={opacity}
+        />
+      )
     }
 
-    return <rect style={{ cursor: "pointer" }} width={width} height={height} x={x} y={newY} fill={color} opacity={opacity} onClick={() => onClick(data)}
-              onMouseEnter={handleTooltip}
-              onMouseMove={handleTooltip}
-              onMouseLeave={hideTooltip}/>
+    return (
+      <rect
+        style={{ cursor: "pointer" }}
+        width={width}
+        height={height}
+        x={x}
+        y={newY}
+        fill={color}
+        opacity={opacity}
+        onClick={() => onClick(data)}
+        onMouseEnter={handleTooltip}
+        onMouseMove={handleTooltip}
+        onMouseLeave={hideTooltip}
+      />
+    )
   }
 
   customTooltip = (node, color) => {
     let total = 0
-    node.data.rawData.map(service => total += service.price_loc)
-    return (<div className="customTooltip flex-parent">
-        <span className="flex-item" style={{ fontWeight: 500 }}>Service</span>
-        <span className="flex-item"><i className="fa fa-square header-square service-square" style={{color: color}}/> {node.id}</span>
-        <span className="flex-item" style={{ fontWeight: 500 }}>Cost</span>
-        <span className="flex-item">{Numeral(node.value).format('0,0.00')} {this.currency()}</span>
-        <span className="flex-item" style={{ fontWeight: 500 }}>Total {node.indexValue}</span>
-        <span className="flex-item">{Numeral(total).format('0,0.00')} {this.currency()}</span>
-    </div>)
+    node.data.rawData.map((service) => (total += service.price_loc))
+    return (
+      <div className="customTooltip flex-parent">
+        <span className="flex-item" style={{ fontWeight: 500 }}>
+          Service
+        </span>
+        <span className="flex-item">
+          <i
+            className="fa fa-square header-square service-square"
+            style={{ color: color }}
+          />{" "}
+          {node.id}
+        </span>
+        <span className="flex-item" style={{ fontWeight: 500 }}>
+          Cost
+        </span>
+        <span className="flex-item">
+          {Numeral(node.value).format("0,0.00")} {this.currency()}
+        </span>
+        <span className="flex-item" style={{ fontWeight: 500 }}>
+          Total {node.indexValue}
+        </span>
+        <span className="flex-item">
+          {Numeral(total).format("0,0.00")} {this.currency()}
+        </span>
+      </div>
+    )
   }
 
   currency = () => {
-    const {data} = this.props.cost
+    const { data } = this.props.cost
     let currency = "EUR"
     if (data.length > 0 && data[0].currency) {
       currency = data[0].currency
@@ -98,21 +159,19 @@ class NivoBarChart extends React.Component {
   }
 
   render() {
-    const {data,services,isFetching,serviceMap} = this.props.cost
+    const { data, services, isFetching, serviceMap } = this.props.cost
     return (
       <React.Fragment>
-        {isFetching &&
+        {isFetching && (
           <div>
             Loading
-            <span className="spinner"/>
+            <span className="spinner" />
           </div>
-        }
-        {data && data.length == 0 &&
-          <div>
-            No data available for this project.
-          </div>
-        }
-        {data && data.length > 0 && services && serviceMap &&
+        )}
+        {data && data.length == 0 && (
+          <div>No data available for this project.</div>
+        )}
+        {data && data.length > 0 && services && serviceMap && (
           <div className="row">
             <div className="col-sm-10 col-xs-10">
               <div className="barChart">
@@ -122,17 +181,17 @@ class NivoBarChart extends React.Component {
                   margin={{
                     top: 30,
                     bottom: 30,
-                    left: 50
+                    left: 50,
                   }}
                   axisLeft={{
-                      "orient": "left",
-                      "tickSize": 5,
-                      "tickPadding": 5,
-                      "tickRotation": 0,
-                      "legend": this.currency(),
-                      "legendPosition": "center",
-                      "legendOffset": -40,
-                      "format": v => Numeral(v).format('0a[.]0')
+                    orient: "left",
+                    tickSize: 5,
+                    tickPadding: 5,
+                    tickRotation: 0,
+                    legend: this.currency(),
+                    legendPosition: "center",
+                    legendOffset: -40,
+                    format: (v) => Numeral(v).format("0a[.]0"),
                   }}
                   indexBy="date"
                   keys={services}
@@ -150,13 +209,19 @@ class NivoBarChart extends React.Component {
               </div>
             </div>
             <div className="col-sm-2 col-xs-2">
-              <Legend height="300" colors={this.props.colors} services={services} serviceMap={serviceMap} clickService={this.props.clickService} onClickLegend={this.props.onClickLegend}/>
+              <Legend
+                height="300"
+                colors={this.props.colors}
+                services={services}
+                serviceMap={serviceMap}
+                clickService={this.props.clickService}
+                onClickLegend={this.props.onClickLegend}
+              />
             </div>
           </div>
-
-        }
+        )}
       </React.Fragment>
     )
   }
 }
-export default NivoBarChart;
+export default NivoBarChart
