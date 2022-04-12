@@ -97,7 +97,7 @@ $ ->
     response
 
 
-class @InfoDialog
+class InfoDialog
   loading = """
       <div class="modal " data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-sm">
@@ -185,3 +185,6 @@ class @InfoDialog
 
   @showLoading: () -> $ajaxLoader.modal 'show'
   @hideLoading: () -> $ajaxLoader.modal 'hide'
+
+
+window.InfoDialog = InfoDialog

@@ -11,10 +11,10 @@ import ProjectSyncAction from "../components/project/sync_action"
 import AvailableBigVmResources from "./availability_zones/big_vm_resources"
 
 export default class Overview extends React.Component {
-  componentDidMount() {
+  UNSAFE_componentDidMount() {
     this.initCurrentArea(this.props)
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.initCurrentArea(nextProps)
   }
   initCurrentArea(props) {

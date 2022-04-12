@@ -8,22 +8,6 @@ import * as reducers from "./reducers"
 
 // console.log('This widget is always loaded')
 
-let authProjectsModalLinks = [
-  ...document.querySelectorAll("[data-react-auth-projects-link]"),
-]
-let authProjectContainers = [
-  ...document.querySelectorAll("[data-react-auth-projects]"),
-]
-
-let reactContainers = authProjectContainers.concat(authProjectsModalLinks)
-
-if (authProjectsModalLinks && authProjectsModalLinks.length > 0) {
-  const modalContainer = document.createElement("div")
-  modalContainer.setAttribute("data-auth-projects-modal-container", true)
-  document.body.appendChild(modalContainer)
-  reactContainers.push(modalContainer)
-}
-
 const App = (props) => {
   if (props["data-react-auth-projects-link"])
     return <ModalLink iconClass={props["data-icon-class"]} />
@@ -41,13 +25,33 @@ const App = (props) => {
   return <List {...listProps} />
 }
 
-createWidget(null, {
-  html: { class: "flex-body" },
-  params: { flashescontainer: "custom" },
-  containers: reactContainers,
-}).then((widget) => {
-  widget.configureAjaxHelper()
-  widget.setPolicy()
-  widget.createStore(reducers)
-  widget.render(App)
+$(() => {
+  let authProjectsModalLinks = [
+    ...document.querySelectorAll("[data-react-auth-projects-link]"),
+  ]
+  let authProjectContainers = [
+    ...document.querySelectorAll("[data-react-auth-projects]"),
+  ]
+
+  let reactContainers = authProjectContainers.concat(authProjectsModalLinks)
+
+  if (authProjectsModalLinks && authProjectsModalLinks.length > 0) {
+    const modalContainer = document.createElement("div")
+    modalContainer.setAttribute("data-auth-projects-modal-container", true)
+    document.body.appendChild(modalContainer)
+    reactContainers.push(modalContainer)
+  }
+
+  createWidget(null, {
+    html: { class: "flex-body" },
+    params: { flashescontainer: "custom" },
+    containers: reactContainers,
+  })
+    .then((widget) => {
+      widget.configureAjaxHelper()
+      widget.setPolicy()
+      widget.createStore(reducers)
+      widget.render(App)
+    })
+    .catch((e) => console.log(e))
 })

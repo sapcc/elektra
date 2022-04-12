@@ -80,6 +80,7 @@
       .then((json) => {
         // get the target version
         //console.log(json)
+        
         var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
         var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
         // console.log(virtualMachineGuestToolsTargetVersion)

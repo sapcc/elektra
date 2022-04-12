@@ -1,5 +1,4 @@
-import "jquery-ui"
-import "jquery-ui/ui/widgets/autocomplete"
+import "./core/jquery-ui"
 import "jquery-bbq"
 import "jquery.cookie"
 
@@ -22,5 +21,7 @@ import "./core/polling_service.coffee"
 import "./core/flash.coffee"
 import "./core/modal.coffee"
 import "./core/update.coffee"
+
+import "./core/cable"
 
 import "./core/init.coffee"

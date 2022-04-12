@@ -1,4 +1,4 @@
 import "./core/jquery"
-import "@rails/ujs"
+import "jquery-ujs"
 import "bootstrap"
 import "./core/dialogs.coffee"

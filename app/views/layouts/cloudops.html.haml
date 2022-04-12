@@ -9,6 +9,7 @@
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
     -# = content_for :javascripts do
     :javascript
+      window.policyConfig = #{policy.try(:to_js).try(:html_safe) || {}}
       //window.History = { options: { html4Mode: true} };
       window.pluginName = "#{plugin_name}";
       window.scopedDomainId = "#{@scoped_domain_id}";
@@ -22,12 +23,10 @@
         Raven.config('#{$sentry_public_dsn}').install();
         Raven.setUserContext(#{@sentry_user_context ? @sentry_user_context.to_json.html_safe : ''});
         Raven.setTagsContext(#{@sentry_tags_context ? @sentry_tags_context.to_json.html_safe : '{}' })
+    = javascript_include_tag 'policy_engine', 'data-turbolinks-track' => true
+    = javascript_include_tag 'essentials', 'data-turbolinks-track' => true
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
-
-    / Load plugin js (plugin_name/plugin.js)
-    - plugin = Core::PluginsManager.plugin(plugin_name)
-    - if plugin and plugin.has_plugin_js?
-      = javascript_include_tag "#{plugin.name}/#{plugin.class::PLUGIN_JS_FILE_NAME}"
+    = javascript_include_tag 'plugins', 'data-turbolinks-track' => true
 
     = favicon_png
     = favicon_ico
@@ -51,22 +50,3 @@
     = yield :javascripts
 
     #modal-holder
-
-  :javascript
-    function loadPolicy(){
-      try {
-        window.policy = new PolicyEngine(#{policy.try(:to_js).try(:html_safe) || {}});
-        // usage:
-        //console.log(policy.isAllowed("identity:project_get"))
-      } catch(e) { }
-    };
-    // Dirty hack to check for $ since sometimes $ is being used before jquery is loaded    
-    if($) {
-      $(document).ready(function(){
-        loadPolicy()
-      });
-    } else {
-      setTimeout(function(){
-        loadPolicy()
-      }, 1000)
-    }

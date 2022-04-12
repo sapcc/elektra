@@ -71,7 +71,7 @@ class Widget {
 
   setPolicy(policy) {
     policy = policy || this.config.policy
-    setPolicy(this.config.policy)
+    setPolicy(policy)
   }
 
   render(container) {
@@ -125,8 +125,6 @@ const getCurrentScript = (widgetName) => {
     if (script) return script
   }
   let scripts = document.getElementsByTagName("script")
-
-  console.log("=====================1", scripts.slice(-1))
   return scripts[scripts.length - 1]
 }
 
@@ -170,29 +168,23 @@ export const createWidget = (dirname, options = {}) => {
     }
   }
 
-  // if document is already loaded then resolve Promise immediately
-  // with a new widget object
-  if (document.readyState === "complete")
-    return Promise.resolve(
-      new Widget(reactContainers, createConfig(widgetName, params))
-    )
+  const loadWidget = () =>
+    new Widget(reactContainers, createConfig(widgetName, params))
 
   // document is not loaded yet -> create a new Promise and resolve it as soon
   // as document is loaded.
   return new Promise((resolve, reject) => {
-    document.addEventListener("DOMContentLoaded", () => {
-      resolve(new Widget(reactContainers, createConfig(widgetName, params)))
-    })
+    document.onreadystatechange = () => {
+      if (document.readyState === "complete") resolve(loadWidget())
+    }
+
+    document.addEventListener("DOMContentLoaded", () => resolve(loadWidget()))
   })
 }
 
 export const getContainerFromCurrentScript = (widgetName) => {
   const currentScript = getCurrentScript(widgetName)
   const scriptParams = JSON.parse(JSON.stringify(currentScript.dataset))
-  const srcTokens =
-    currentScript && currentScript.getAttribute("src")
-      ? currentScript.getAttribute("src").split("/")
-      : []
   const reactContainer = window.document.createElement("div")
 
   currentScript.parentNode.replaceChild(reactContainer, currentScript)

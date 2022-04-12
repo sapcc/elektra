@@ -13,8 +13,6 @@ const RBACs = ({ bgpvpn }) => {
   const isMounted = React.useRef(false)
   const url = React.useMemo(() => `../../bgp-vpns/${bgpvpn.id}/rbacs`, [bgpvpn])
 
-  console.log("===============RBACS", rbacs)
-  console.log("===============CACHED PROJECTS", cachedProjects)
   React.useEffect(() => {
     isMounted.current = true // Will set it to true on mount ...
     return () => {

@@ -37,6 +37,7 @@ require("esbuild")
     target: ["es6", "chrome58", "firefox57", "safari11", "edge18"],
     watch,
     minify: production,
+    inject: ["esbuild/react-shim.js"],
   })
   .then((result) => {
     if (watch) console.log("watching...")

@@ -153,3 +153,5 @@ class MoModal
     return false
 
 $ -> MoModal.init()
+
+window.MoModal = MoModal
