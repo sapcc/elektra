@@ -1,27 +1,26 @@
-#= require ./modal
+import "./modal"
 
-{ div, h4, i, p, button } = React.DOM
 ReactInfoDialog = ({title,message,close}) ->
-  div null,
-    div className: 'modal-body',
+  React.createElement 'div',  null,
+    React.createElement 'div',  className: 'modal-body',
       if title
-        h4 null,
-          i className: "fa fa-fw fa-info-circle", null
+        React.createElement 'h4', null,
+          React.createElement 'i',  className: "fa fa-fw fa-info-circle", null
           title
       if message
-        div null,
-          i className: "fa fa-fw fa-info-circle", null unless title
+        React.createElement 'div',  null,
+          React.createElement 'i',  className: "fa fa-fw fa-info-circle", null unless title
           message if message
 
-    div className: 'modal-footer',
-      button
+    React.createElement 'div',  className: 'modal-footer',
+      React.createElement 'button', 
         role: 'cancel',
         type: 'button',
         className: 'btn btn-default',
         onClick: close,
         'Close'
 
-@ReactInfoDialog = ReactModal.Wrapper('Info', ReactInfoDialog,
+window.ReactInfoDialog = ReactModal.Wrapper('Info', ReactInfoDialog,
   closeButton: false,
   static: true
 )

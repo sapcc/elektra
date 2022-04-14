@@ -255,10 +255,6 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    babel-source (5.8.35)
-    babel-transpiler (0.7.0)
-      babel-source (>= 4.0, < 6)
-      execjs (~> 2.0)
     bindex (0.8.1)
     bootstrap-kaminari-views (0.0.5)
       kaminari (>= 0.13)
@@ -283,7 +279,6 @@ GEM
     config (2.2.3)
       deep_merge (~> 1.2, >= 1.2.1)
       dry-validation (~> 1.0, >= 1.0.0)
-    connection_pool (2.2.5)
     crass (1.0.6)
     database_cleaner (2.0.1)
       database_cleaner-active_record (~> 2.0.0)
@@ -472,12 +467,6 @@ GEM
       ffi (~> 1.0)
     rdoc (6.4.0)
       psych (>= 4.0.0)
-    react-rails (2.2.1)
-      babel-transpiler (>= 0.7.0)
-      connection_pool
-      execjs
-      railties (>= 3.2)
-      tilt
     redcarpet (3.5.1)
     responders (3.0.1)
       actionpack (>= 5.0)
@@ -624,7 +613,6 @@ DEPENDENCIES
   rails (= 6.1.2)
   rails-controller-testing
   rails_stdout_logging
-  react-rails (~> 2.2.1)
   redcarpet
   reports!
   resource_management!

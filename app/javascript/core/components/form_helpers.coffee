@@ -1,13 +1,11 @@
-#= require ./helpers
-
-{ div, ul, li, button} = React.DOM
+import "./helpers.coffee"
 
 ReactFormHelpers = {}
 
 ################# ERRORS RENDERR #################
 ReactFormHelpers.Errors = ({errors}) ->
   if typeof errors == 'object'
-    ul null,
+    React.createElement 'ul',   null,
       for error,messages of errors
         for message in messages
           li null, "#{error}: #{message}"
@@ -28,7 +26,7 @@ ReactFormHelpers.SubmitButton = (options={}) ->
     onSubmit: () -> null
   },options)
 
-  button
+  React.createElement 'button',  
     type: "submit",
     onClick: ((e) -> e.preventDefault(); options.onSubmit()),
     className: "btn #{options.className}",
@@ -77,4 +75,4 @@ ReactFormHelpers.SubmitButton = (options={}) ->
 #       errors: errors
 #     })
 
-@ReactFormHelpers = ReactFormHelpers
+window.ReactFormHelpers = ReactFormHelpers

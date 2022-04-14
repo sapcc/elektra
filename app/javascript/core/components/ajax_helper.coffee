@@ -1,4 +1,4 @@
-class @ReactAjaxHelper
+class ReactAjaxHelper
   constructor: (rootUrl, options={}) ->
     @rootUrl = rootUrl
     unless @rootUrl
@@ -35,3 +35,5 @@ class @ReactAjaxHelper
   post: (path,options={}) -> ReactAjaxHelper.request(@rootUrl+path,'POST',ReactHelpers.mergeObjects(options, {'authToken': @authToken}))
   put: (path,options={}) -> ReactAjaxHelper.request(@rootUrl+path,'PUT',ReactHelpers.mergeObjects(options, {'authToken': @authToken}))
   delete: (path,options={}) -> ReactAjaxHelper.request(@rootUrl+path,'DELETE',ReactHelpers.mergeObjects(options, {'authToken': @authToken}))
+
+window.ReactAjaxHelper = ReactAjaxHelper

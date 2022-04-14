@@ -14,20 +14,29 @@ require("esbuild")
     entryPoints: entryPoints(
       [
         // all "*" are replaced with the path tokens and joined by "_"
-        "app/javascript/*.{js,jsx}", // all js and jsx files in app/javascript folder
-        "plugins/*/app/javascript/*/init.{js,jsx}", // all initi.js and init.jsx files in all plugins
-        "plugins/*/app/javascript/plugin.{js,jsx}", // all plugin.js files in all plugins
+        { path: "app/javascript/*.{js,jsx,coffee}" }, // all js and jsx files in app/javascript folder
+        {
+          path: "plugins/*/app/javascript/plugin.{js,jsx,coffee}",
+          suffix: "plugin",
+        }, // all plugin.js files in all plugins
+        {
+          path: "plugins/*/app/javascript/widgets/*/init.{js,jsx,coffee}",
+          suffix: "widget",
+        },
       ],
       { log: true }
     ),
     bundle: true,
     platform: "browser",
+    // format: "esm",
+    // splitting: true,
     outdir: "app/assets/builds",
     plugins: [
       envFilePlugin,
       pathsResolverPlugin({
         lib: "app/javascript/lib",
         core: "app/javascript/core",
+        plugins: "plugins",
         config: "config",
       }),
       globImportPlugin(),

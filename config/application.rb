@@ -19,7 +19,6 @@ Bundler.require(*Rails.groups)
 module MonsoonDashboard
   class Application < Rails::Application
     config.load_defaults 6.1
-    config.react.addons = true
 
     config.hosts << /.*\.cloud\.sap/
     

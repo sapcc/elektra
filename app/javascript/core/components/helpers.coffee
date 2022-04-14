@@ -61,4 +61,4 @@ ReactHelpers.isEmpty = (s) ->
 
 
 
-@ReactHelpers = ReactHelpers
+window.ReactHelpers = ReactHelpers

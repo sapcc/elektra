@@ -2,7 +2,7 @@ errorsToStringArray= (errors) ->
   errorsStringArray = []
   if typeof errors == 'object'
     for key, messages of errors
-      msg = if typeof messages == 'array' then messages.join(', ') else messages
+      msg = if Array.isArray(messages) then messages.join(', ') else messages
       errorsStringArray.push(key+': '+msg)
   else
     errorsStringArray = [errors]

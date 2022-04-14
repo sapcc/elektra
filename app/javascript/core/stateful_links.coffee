@@ -80,7 +80,7 @@ restoreOriginStateUrl= () ->
 
     return current_url
 
-@restoreOriginStateUrl = () ->
+window.restoreOriginStateUrl = () ->
   if supportHistory
     window.history.pushState(null, null, restoreOriginStateUrl())
 

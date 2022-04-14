@@ -13,7 +13,7 @@ import "bootstrap-multiselect/dist/js/bootstrap-multiselect.js"
 import "bootstrap-3-typeahead"
 import "bootstrap-slider"
 import "bootstrap-select"
-import "bootstrap-datetimepicker/src/js/bootstrap-datetimepicker"
+import "./lib/bootstrap-datetimepicker"
 
 import "./core/stateful_links.coffee"
 import "./core/snippets.coffee"
@@ -21,6 +21,7 @@ import "./core/polling_service.coffee"
 import "./core/flash.coffee"
 import "./core/modal.coffee"
 import "./core/update.coffee"
+import "./core/error_details.coffee"
 
 import "./core/cable"
 

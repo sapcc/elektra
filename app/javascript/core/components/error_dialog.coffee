@@ -1,27 +1,26 @@
-#= require ./modal
+import "./modal"
 
-{ div, h4, i, p, button } = React.DOM
 ReactErrorDialog = ({title,message,close}) ->
-  div null,
-    div className: 'modal-body',
+  React.createElement 'div',  null,
+    React.createElement 'div',  className: 'modal-body',
       if title
-        h4 className: 'text-danger',
-          i className: "fa fa-fw fa-exclamation-triangle", null
+        React.createElement 'h4',  className: 'text-danger',
+          React.createElement 'i',  className: "fa fa-fw fa-exclamation-triangle", null
           title
       if message
-        div className: "text-danger",
-          i className: "fa fa-fw fa-exclamation-triangle", null unless title
+        React.createElement 'div',  className: "text-danger",
+          React.createElement 'i',  className: "fa fa-fw fa-exclamation-triangle", null unless title
           message if message
 
-    div className: 'modal-footer',
-      button
+    React.createElement 'div',  className: 'modal-footer',
+      React.createElement 'button', 
         role: 'cancel',
         type: 'button',
         className: 'btn btn-default',
         onClick: close,
         'Close'
 
-@ReactErrorDialog = ReactModal.Wrapper('Error', ReactErrorDialog,
+window.ReactErrorDialog = ReactModal.Wrapper('Error', ReactErrorDialog,
   closeButton: false,
   static: false
 )

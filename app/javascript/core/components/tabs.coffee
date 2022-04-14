@@ -1,10 +1,8 @@
-{div,h4,a,ul,li} = React.DOM
-
-@ReactTabs = ({tabsConfig, activeTabUid, onSelect}) ->
+ReactTabs = ({tabsConfig, activeTabUid, onSelect}) ->
   return null unless tabsConfig and tabsConfig.length
 
   if tabsConfig.length==1
-    div null,
+    React.createElement 'div',   null,
       tabsConfig[0].content
   else
     activeTabUid ||= tabsConfig[0].uid
@@ -12,11 +10,11 @@
     panels = []
     for tab in tabsConfig
       tabs.push(
-        li
+        React.createElement 'li',  
           key: "#{tab.uid}_tab",
           role: "presentation",
           className: ("active" if activeTabUid==tab.uid),
-          a
+          React.createElement 'a',  
             href: "##{tab.uid}",
             "aria-controls": "home",
             role: "tab",
@@ -26,7 +24,7 @@
       )
 
       panels.push(
-        div
+        React.createElement 'div',  
           key: "#{tab.uid}_panel",
           role: "tabpanel",
           className: "tab-pane #{"active" if activeTabUid==tab.uid}",
@@ -34,6 +32,8 @@
           tab.content
       )
 
-    div null,
-      ul className: "nav nav-tabs", role: "tablist", tabs
-      div className: "tab-content", panels
+    React.createElement 'div',   null,
+      React.createElement 'ul',   className: "nav nav-tabs", role: "tablist", tabs
+      React.createElement 'div',   className: "tab-content", panels
+
+window.ReactTabs = ReactTabs

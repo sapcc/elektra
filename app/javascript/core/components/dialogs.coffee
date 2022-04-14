@@ -1,3 +1,3 @@
-#= require ./confirm_dialog
-#= require ./info_dialog
-#= require ./error_dialog
+import "./confirm_dialog.coffee"
+import "./info_dialog.coffee"
+import "./error_dialog.coffee"

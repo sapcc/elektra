@@ -1,7 +1,10 @@
-import "./ansi_up"
-import "./automation_search.coffee"
-import "./automation.coffee"
-import "./inline_form_node_tag.coffee"
-import "./jquery.caret.min"
-import "./jquery.tag-editor"
-import "./node.coffee"
+import "./plugin/ansi_up"
+import "./plugin/automation_search.coffee"
+import "./plugin/automation.coffee"
+import "./plugin/inline_form_node_tag.coffee"
+import "./plugin/jquery.caret.min"
+import "./plugin/jquery.tag-editor"
+import "./plugin/node.coffee"
+
+import "lib/jsoneditor.coffee"
+$(document).ready(init_json_editor)
