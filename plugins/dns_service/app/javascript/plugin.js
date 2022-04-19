@@ -1,10 +1,7 @@
 import "./recordsets.coffee"
 import "./transfer_requests.coffee"
 
-// This function is visible only inside this file.
-function test() {
-  //...
-}
+window.dns_service = window.dns_service || {}
 
 // This function is available from everywhere by calling dns_service.name()
 dns_service.name = function () {

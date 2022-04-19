@@ -1,5 +1,5 @@
 //= require monsoon_openstack_auth/policy_engine
 
-if (window.policyConfig) {
+if (window.policyConfig && window.policyConfig.rules && window.policyConfig.locals) {
   window.policy = new PolicyEngine(window.policyConfig);
 } else console.log('policy engine is loaded but "window.policyConfig" not found, please create policy engine manually.')

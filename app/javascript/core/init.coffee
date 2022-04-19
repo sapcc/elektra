@@ -23,7 +23,7 @@ class Dashboard
   @hideModal: () ->
     $('#modal-holder .modal').modal('hide')
 
-
+window.Dashboard = Dashboard
 
 # define console if not exists (this is a case for IE)
 if (typeof(window.console) == "undefined" || typeof(window.console.log) == "undefined")

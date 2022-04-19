@@ -259,4 +259,5 @@ class Topology
     return nodes
 
 
-networking.Topology ||= Topology
+window.networking ||= {}
+window.networking.Topology ||= Topology
