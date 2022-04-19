@@ -1,6 +1,6 @@
-import "core/components/form_helpers.coffee"
+import "../../lib/form_helpers.coffee"
 import "./advancedoptions.coffee"
-import "core/components/modal"
+import "../../lib/modal"
 
 import { connect } from "react-redux"
 import { 

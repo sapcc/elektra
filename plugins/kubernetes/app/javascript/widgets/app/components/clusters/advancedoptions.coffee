@@ -1,5 +1,5 @@
 import { connect } from "react-redux"
-import "core/components/form_helpers.coffee"
+import "../../lib/form_helpers.coffee"
 
 { updateAdvancedOptions, changeVersion} = kubernetes
 

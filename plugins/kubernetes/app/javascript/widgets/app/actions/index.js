@@ -1,4 +1,4 @@
-import "core/components/ajax_helper.coffee"
+import "../lib/ajax_helper.coffee"
 
 export * from "./clusters.coffee"
 export * from "./dialogs.coffee"

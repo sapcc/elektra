@@ -1,9 +1,10 @@
 import { saveAs } from 'file-saver';
 import * as constants from "../constants"
 import { ajaxHelper, backendAjaxClient } from "./ajax_helper"
-import "core/components/modal"
+import "../lib/modal"
 import {loadMetaData} from "./meta_data.coffee"
 import {loadInfo} from "./info.coffee"
+import {showConfirmDialog} from "./dialogs.coffee"
 #################### CLUSTERS #########################
 # ---- list ----
 requestClusters = () ->
@@ -171,7 +172,7 @@ openEditClusterDialog = (cluster) ->
 
 requestDeleteCluster = (clusterName) ->
   (dispatch) ->
-    dispatch(constants.showConfirmDialog({
+    dispatch(showConfirmDialog({
       title: 'Delete Cluster'
       message: "Do you really want to delete cluster #{clusterName}?",
       confirmCallback: (() -> dispatch(deleteCluster(clusterName)))

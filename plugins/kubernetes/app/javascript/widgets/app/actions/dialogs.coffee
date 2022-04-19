@@ -1,5 +1,5 @@
 import * as constants from "../constants"
-import "core/components/modal"
+import "../lib/modal"
 
 showConfirmDialog = ({title, message, confirmCallback, cancelCallback}) ->
   type:       ReactModal.SHOW_MODAL,

@@ -1,4 +1,4 @@
-import "core/components/form_helpers.coffee"
+import "../../lib/form_helpers.coffee"
 import { connect } from "react-redux"
 
 { } = kubernetes

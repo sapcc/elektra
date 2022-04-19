@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { updateClusterForm, submitClusterForm } from "../../actions"
-import "core/components/modal"
+import "../../lib/modal"
 
 Credentials = ({
   close,
