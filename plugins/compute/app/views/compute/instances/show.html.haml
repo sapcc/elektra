@@ -1,5 +1,8 @@
 .modal-body
-  = render partial: 'item_details'
+  - if @instance
+    = render partial: 'item_details'
+  - else 
+    Server could not be found
 
 - if modal?
   .modal-footer
@@ -8,118 +11,118 @@
     - else
       = link_to "Close", plugin('compute').instances_url, class: 'btn btn-default'
 
+- if @instance
+  :javascript
+    $(document).ready(function(){
 
-:javascript
-  $(document).ready(function(){
-
-    const catchErrors = (response) => {
-      if (response.status < 400) {
-        //console.log(response)
-        return response
-      } else {
-        // to get the error message from the API
-        return response.text().then((message) => {
-          // try to parse json
-          try{
-            var mesageData = JSON.parse(message)
-            message = mesageData.error
-          }
-          catch(e){}
-          var error = new Error(message || response.statusText || response.status)
-          error.statusCode = response.status
-          // this is handeled in the catch case
-          throw error
-        })
-      }
-    }
-
-    fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=sum by (instance_uuid) (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} - vrops_virtualmachine_oversized_vcpus and vrops_virtualmachine_oversized_vcpus != 0) or (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} %2B vrops_virtualmachine_undersized_vcpus and vrops_virtualmachine_undersized_vcpus != 0)')
-      .then(catchErrors)
-      .then(response => response.json())
-      .then((json) => {
-        $("span.spinner").hide()
-        if (json.data.result.length == 0 ) {
-          $("span.sizing_cpu_recommendation_not_found").show()
+      const catchErrors = (response) => {
+        if (response.status < 400) {
+          //console.log(response)
+          return response
         } else {
-          let cpus = json.data.result[0].value[1]
-          $("span.sizing_cpu_recommendation").show()
-          $("span.sizing_cpu_recommendation_value").html(cpus)
-        }
-      }).catch((error) => {
-        console.log("ERROR FETCH CPU RECOMMENDATION", error)
-        $("span.spinner").hide()
-        $("span.sizing_cpu_recommendation_problem").show()
-        $("span.sizing_cpu_recommendation_problem_text").html("Problem to get cpu recommendation: " + error.message)
-      })
-
-    fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) - sum by (instance_uuid) (vrops_virtualmachine_oversized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_oversized_memory != 0)) or ((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) %2B sum by (instance_uuid) (vrops_virtualmachine_undersized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_undersized_memory != 0))')
-      .then(catchErrors)
-      .then(response => response.json())
-      .then((json) => {
-        $("span.spinner").hide()
-        if (json.data.result.length == 0 ) {
-          $("span.sizing_memory_recommendation_not_found").show()
-        } else {
-          let memory = json.data.result[0].value[1]
-          // round value
-          memory = Math.round(memory * 100) / 100
-          $("span.sizing_memory_recommendation").show()
-          $("span.sizing_memory_recommendation_value").html(memory+" GB")
-        }
-      }).catch((error) => {
-        console.log("ERROR FETCH MEMORY RECOMMENDATION", error)
-        $("span.spinner").hide()
-        $("span.sizing_memory_recommendation_problem").show()
-        $("span.sizing_memory_recommendation_problem_text").html("Problem to get memory recommendation: " + error.message)
-      })
-
-    var virtualmachine_guest_tools_target_version = "0";
-    fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=group by (guest_tools_target_version) (vrops_virtualmachine_guest_tools_target_version_info)')
-      .then(catchErrors)
-      .then(response => response.json())
-      .then((json) => {
-        // get the target version
-        //console.log(json)
-        var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
-        var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
-        // console.log(virtualMachineGuestToolsTargetVersion)
-        fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=group by (instance_uuid, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{instance_uuid="#{@instance.id}"}) AND on (instance_uuid) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
-          .then(catchErrors)
-          .then(response => response.json())
-          .then((json) => {
-            // get the installed version
-            // console.log(json)
-            $("span.spinner").hide()
-            if (json.data.result.length == 0 ) {
-              $("span.no_guest_tools").show()
-            } else {
-              var guestToolsVersionRaw = json.data.result[0].metric.guest_tools_version
-              var guestToolsVersion = parseInt(guestToolsVersionRaw.replace(/\./g,""))
-              if ( guestToolsVersion == 0 ) {
-                $("span.no_guest_tools").show()
-              }
-              else if (guestToolsVersion < virtualMachineGuestToolsTargetVersion ) {
-                $("span.guest_tools_not_uptodate_current_version").html(guestToolsVersionRaw)
-                $("span.guest_tools_not_uptodate_target_version").html(virtualMachineGuestToolsTargetVersionRaw)
-                $("span.guest_tools_not_uptodate").show()
-              }
-              else {
-                $("span.guest_tools_uptodate_current_version").html(guestToolsVersionRaw)
-                $("span.guest_tools_uptodate").show()
-              }
+          // to get the error message from the API
+          return response.text().then((message) => {
+            // try to parse json
+            try{
+              var mesageData = JSON.parse(message)
+              message = mesageData.error
             }
+            catch(e){}
+            var error = new Error(message || response.statusText || response.status)
+            error.statusCode = response.status
+            // this is handeled in the catch case
+            throw error
           })
-          .catch((error) => {
-            console.log("ERROR FETCH TOOLS VERSION", error)
-            $("span.spinner").hide()
-            $("span.guest_tools_problem").show()
-            $("span.guest_tools_problem_text").html("Problem to get guest tools version: " + error.message)
-          })
-      })
-      .catch((error) => {
-        console.log("ERROR FETCH TARGET VERSION", error)
-        $("span.spinner").hide()
-        $("span.guest_tools_problem").show()
-        $("span.guest_tools_problem_text").html("Problem to get target version: " + error.message)
-      })
-  });
+        }
+      }
+
+      fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=sum by (instance_uuid) (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} - vrops_virtualmachine_oversized_vcpus and vrops_virtualmachine_oversized_vcpus != 0) or (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} %2B vrops_virtualmachine_undersized_vcpus and vrops_virtualmachine_undersized_vcpus != 0)')
+        .then(catchErrors)
+        .then(response => response.json())
+        .then((json) => {
+          $("span.spinner").hide()
+          if (json.data.result.length == 0 ) {
+            $("span.sizing_cpu_recommendation_not_found").show()
+          } else {
+            let cpus = json.data.result[0].value[1]
+            $("span.sizing_cpu_recommendation").show()
+            $("span.sizing_cpu_recommendation_value").html(cpus)
+          }
+        }).catch((error) => {
+          console.log("ERROR FETCH CPU RECOMMENDATION", error)
+          $("span.spinner").hide()
+          $("span.sizing_cpu_recommendation_problem").show()
+          $("span.sizing_cpu_recommendation_problem_text").html("Problem to get cpu recommendation: " + error.message)
+        })
+
+      fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) - sum by (instance_uuid) (vrops_virtualmachine_oversized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_oversized_memory != 0)) or ((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) %2B sum by (instance_uuid) (vrops_virtualmachine_undersized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_undersized_memory != 0))')
+        .then(catchErrors)
+        .then(response => response.json())
+        .then((json) => {
+          $("span.spinner").hide()
+          if (json.data.result.length == 0 ) {
+            $("span.sizing_memory_recommendation_not_found").show()
+          } else {
+            let memory = json.data.result[0].value[1]
+            // round value
+            memory = Math.round(memory * 100) / 100
+            $("span.sizing_memory_recommendation").show()
+            $("span.sizing_memory_recommendation_value").html(memory+" GB")
+          }
+        }).catch((error) => {
+          console.log("ERROR FETCH MEMORY RECOMMENDATION", error)
+          $("span.spinner").hide()
+          $("span.sizing_memory_recommendation_problem").show()
+          $("span.sizing_memory_recommendation_problem_text").html("Problem to get memory recommendation: " + error.message)
+        })
+
+      var virtualmachine_guest_tools_target_version = "0";
+      fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=group by (guest_tools_target_version) (vrops_virtualmachine_guest_tools_target_version_info)')
+        .then(catchErrors)
+        .then(response => response.json())
+        .then((json) => {
+          // get the target version
+          //console.log(json)
+          var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
+          var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
+          // console.log(virtualMachineGuestToolsTargetVersion)
+          fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=group by (instance_uuid, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{instance_uuid="#{@instance.id}"}) AND on (instance_uuid) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
+            .then(catchErrors)
+            .then(response => response.json())
+            .then((json) => {
+              // get the installed version
+              // console.log(json)
+              $("span.spinner").hide()
+              if (json.data.result.length == 0 ) {
+                $("span.no_guest_tools").show()
+              } else {
+                var guestToolsVersionRaw = json.data.result[0].metric.guest_tools_version
+                var guestToolsVersion = parseInt(guestToolsVersionRaw.replace(/\./g,""))
+                if ( guestToolsVersion == 0 ) {
+                  $("span.no_guest_tools").show()
+                }
+                else if (guestToolsVersion < virtualMachineGuestToolsTargetVersion ) {
+                  $("span.guest_tools_not_uptodate_current_version").html(guestToolsVersionRaw)
+                  $("span.guest_tools_not_uptodate_target_version").html(virtualMachineGuestToolsTargetVersionRaw)
+                  $("span.guest_tools_not_uptodate").show()
+                }
+                else {
+                  $("span.guest_tools_uptodate_current_version").html(guestToolsVersionRaw)
+                  $("span.guest_tools_uptodate").show()
+                }
+              }
+            })
+            .catch((error) => {
+              console.log("ERROR FETCH TOOLS VERSION", error)
+              $("span.spinner").hide()
+              $("span.guest_tools_problem").show()
+              $("span.guest_tools_problem_text").html("Problem to get guest tools version: " + error.message)
+            })
+        })
+        .catch((error) => {
+          console.log("ERROR FETCH TARGET VERSION", error)
+          $("span.spinner").hide()
+          $("span.guest_tools_problem").show()
+          $("span.guest_tools_problem_text").html("Problem to get target version: " + error.message)
+        })
+    });
