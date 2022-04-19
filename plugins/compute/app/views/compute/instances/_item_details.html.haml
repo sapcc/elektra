@@ -245,7 +245,10 @@
                 - else
                   - attached_volumes.each do |vol|
                     %tr
-                      %td= vol.name
+                      %td
+                        = vol.name
+                        %br
+                        %span.info-text= vol.id
                       %td= vol.attachments.first['device']
                       %td
                         =vol.size
