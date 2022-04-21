@@ -11,6 +11,10 @@ import TagName from '../tagname';
 import GCPolicyFolder from './gc_policy_folder';
 import VulnerabilityFolder from './vulnerability_folder';
 
+const hasVulnReport = (vulnStatus) => {
+  return vulnStatus !== 'Error' && vulnStatus !== 'Unsupported';
+};
+
 const typeOfManifest = {
   'application/vnd.docker.distribution.manifest.v2+json':      'image',
   'application/vnd.docker.distribution.manifest.list.v2+json': 'list',
@@ -103,7 +107,7 @@ export default class ImageDetailsModal extends React.Component {
         if ((this.props.manifests.data || []).length > 0) {
           const { digest } = this.props.match.params;
           const manifestInfo = this.props.manifests.data.find(m => m.digest == digest);
-          if (manifestInfo && manifestInfo.vulnerability_status !== 'Error') {
+          if (manifestInfo && hasVulnReport(manifestInfo.vulnerability_status)) {
             this.props.loadVulnsOnce();
           }
         }
@@ -153,7 +157,7 @@ export default class ImageDetailsModal extends React.Component {
       return <p><span className='spinner' /> Loading image config...</p>;
     }
     const { isFetching: isFetchingVulnReport, data: vulnReport } = this.props.vulnReport || {};
-    if (typeOfManifest[mediaType] == 'image' && vulnStatus !== 'Error' && (isFetchingVulnReport || vulnReport === undefined)) {
+    if (typeOfManifest[mediaType] == 'image' && hasVulnReport(vulnStatus) && (isFetchingVulnReport || vulnReport === undefined)) {
       return <p><span className='spinner' /> Loading vulnerability report...</p>;
     }
 
@@ -281,7 +285,7 @@ export default class ImageDetailsModal extends React.Component {
         </tr>
       );
     }
-    if (vulnStatus !== 'Error' && !vulnReport) {
+    if (hasVulnReport(vulnStatus) && !vulnReport) {
       return (
         <tr className='text-danger'>
           <th>Error</th>
@@ -291,7 +295,7 @@ export default class ImageDetailsModal extends React.Component {
     }
 
     const rows = [];
-    if (vulnStatus === 'Error') {
+    if (!hasVulnReport(vulnStatus)) {
       rows.push(
         <tr className='text-danger'>
           <th>Vulnerability scan error</th>
