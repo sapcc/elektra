@@ -24,7 +24,7 @@ const LbPopover = ({ popoverId, buttonName, title, content }) => {
         show={show}
         target={target}
         placement="bottom"
-        container={this}
+        // container={this}
         containerPadding={20}
       >
         <Popover

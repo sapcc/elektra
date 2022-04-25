@@ -5,15 +5,15 @@ window.init_json_editor = window.init_json_editor || () ->
     content = ""
     if $('#jsoneditor').data('content-id')
       try
-        content = JSON.parse(eval($('#jsoneditor').data('content-id')))
-      catch err
-        content = eval($('#jsoneditor').data('content-id'))
+        content = JSON.parse(window.eval($('#jsoneditor').data('content-id')))
+      catch err 
+        content = window.eval($('#jsoneditor').data('content-id'))
     else
       content = $('#jsoneditor').data('content')
     options =
       mode: $('#jsoneditor').data('mode'),
       onChange: (event) ->
-        eval($('#jsoneditor').data('on-change-update-field')).val(editor.getText())
+        window.eval($('#jsoneditor').data('on-change-update-field')).val(editor.getText())
         return
 
     # build the editor
