@@ -15,7 +15,7 @@ if [ "$1" == "--help" ]; then
 fi
 
 COMMIT=${1-HEAD}
-echo "INFO: please be aware that you should stop puma and webpacker first!"
+echo "INFO: please be aware that you should stop puma first!"
 read -p "INFO: prepare elektra for $COMMIT ? (y/n)" -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo ""
@@ -27,7 +27,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo "INFO: Checkout and preparations for release $COMMIT done" &&
   git show $COMMIT &&
   echo "" &&
-  echo "INFO: You can now start puma and webpacker for testing."
+  echo "INFO: You can now start puma testing."
 else
   echo ""
   echo "INFO: canceled!"

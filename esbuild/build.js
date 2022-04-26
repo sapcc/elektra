@@ -7,7 +7,8 @@ const entryPoints = require("./entrypoints")
 
 const args = process.argv.slice(2)
 const watch = args.indexOf("--watch") >= 0
-const production = args.indexOf("--production") >= 0
+const production =
+  args.indexOf("--production") >= 0 || process.env.RAILS_ENV === "production"
 
 require("esbuild")
   .build({

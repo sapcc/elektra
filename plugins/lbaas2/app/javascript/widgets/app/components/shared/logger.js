@@ -1,7 +1,5 @@
 //
-// Add to your .env following variable LBAAS2_LOGGER and restart webpacker:
-// bundle exec bin/webpack-dev-server
-//
+// Add to your .env following variable LBAAS2_LOGGER and restart yarn build
 
 import env from "env"
 const LBAAS2_LOGGER = env.LBAAS2_LOGGER || "LBAAS2_LOGGER"
