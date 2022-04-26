@@ -20,7 +20,7 @@ class InquiryMetricsMiddleware
     if env['PATH_INFO'] == @path
       # reset all values to zero
       @open_inquiry_metrics.values.each do |labels, _value|
-        @open_inquiry_metrics.set(0, labels)
+        @open_inquiry_metrics.set(0, { labels: labels })
       end
 
       # collect all metrics
