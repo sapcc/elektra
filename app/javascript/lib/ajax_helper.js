@@ -5,10 +5,6 @@ import axios from "axios"
 let globalOptions = {}
 export let scope = {}
 
-// this variables are needed by integration tests
-window.activeAjaxCallsCount = 0
-window.failedAjaxCallsCount = 0
-
 // find scope and store it in the scope variable
 const foundScope = window.location.pathname.match(/\/([^\/]+)\/([^\/|\?|&]+)/i)
 if (foundScope) {
@@ -91,9 +87,6 @@ export const createAjaxHelper = (options = {}) => {
   // suite has been loaded. So we cannot merge it earlier :(
   axiosInstance.interceptors.request.use(
     function (config) {
-      // increase active ajax calls counter
-      window.activeAjaxCallsCount += 1
-
       // console.log('globalOptions',JSON.stringify(globalOptions))
       let newConfig = mergeDeep(
         JSON.parse(JSON.stringify(globalOptions)),
@@ -120,7 +113,6 @@ export const createAjaxHelper = (options = {}) => {
   axiosInstance.interceptors.response.use(
     function (response) {
       // decrease the active ajax calls counter
-      window.activeAjaxCallsCount -= 1
       // Check if location exists in the response headers
       if (response && response.headers && response.headers.location) {
         // location is presented -> build the redirect url
@@ -148,10 +140,6 @@ export const createAjaxHelper = (options = {}) => {
       return response
     },
     function (error) {
-      // also in error case we should decrease the active ajax calls counter
-      window.activeAjaxCallsCount -= 1
-      // increase the failed counter
-      window.failedAjaxCallsCount += 1
       // Do something with response error
       return Promise.reject(error)
     }

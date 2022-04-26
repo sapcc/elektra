@@ -15,8 +15,6 @@ gem 'rails', '6.1.2' # Don't use 5.1.3 because of redirect errors in tests (scri
 # gem 'webpacker' # Check package.json -> "@rails/webpacker"
 gem 'jsbundling-rails'
 
-
-
 gem 'bootstrap-sass'
 gem 'uglifier'
 gem 'coffee-rails'
@@ -75,7 +73,8 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 gem 'sdoc', '~> 1.1.0', group: :doc
 
 # if you update puma check Dockerfile for Version dependencies!
-gem 'puma', '= 4.3.9', require: false
+# gem 'puma', '= 4.3.9', require: false
+gem "puma", ">= 4.3.12"
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
