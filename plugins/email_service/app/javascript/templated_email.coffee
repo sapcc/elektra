@@ -45,7 +45,7 @@ sampleTemplateData = """
 }
 """
 
-@loadTestData = () ->
+loadTestData = () ->
   $(emailSource).val source
   $(emailToAddr).val toAddresses
   $(emailCcAddr).val ccAddresses
@@ -54,14 +54,14 @@ sampleTemplateData = """
   $(emailTemplateName).val templateName
   $(emailTemplateData).val templateData
 
-@switch_template=(event) ->
+switch_template=(event) ->
   value = event.target.value
   if value == 'Preferences'
     $(txtTemplateData).val sampleTemplateData
     
-@validate_template_data=(event) ->
+validate_template_data=(event) ->
   value = event.target.value
-  if value == "" || value == {}
+  if value == "" 
     console.log value
     # console.log "Empty JSON, Please enter valid JSON"
 

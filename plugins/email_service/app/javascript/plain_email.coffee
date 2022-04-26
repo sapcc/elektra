@@ -270,11 +270,11 @@
 # )
 
 sourceDomainNamePart = 'input[id="plain_email_source_domain_name_part"]'
-@switch_domain_name=(event) -> 
+switch_domain_name=(event) -> 
   value = event.target.value
   # $(sourceDomainNamePart).val value
   console.log value
-@update_name_part=(event) -> 
+update_name_part=(event) -> 
   value = event.target.value 
   console.log "value is changed"
 

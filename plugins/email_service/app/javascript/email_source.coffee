@@ -1,5 +1,5 @@
 
-@switch_source_type=(event) ->
+switch_source_type=(event) ->
   value = event.target.value
   if value == 'email'
     $('#email-source').removeClass('hide')
@@ -11,17 +11,17 @@
     $('#email-source').addClass('hide')
 
 
-@populate_email_addresses=(event) ->
+populate_email_addresses=(event) ->
   value = event.target.value
   console.log "email address is changed: " + value
   $('#plain_email_reply_to_addr').val(value)
 
-@populate_domain_addresses=(event) ->
+populate_domain_addresses=(event) ->
   value = event.target.value
   console.log "domain address is changed: " + value
   $('#plain_email_source_domain').val(value)
 
-@set_domain_suffix=(event) ->
+set_domain_suffix=(event) ->
   value = event.target.value
   console.log "domain change detected"
   $('#domain-source-name').val(value)
