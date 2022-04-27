@@ -2,7 +2,8 @@
 const coffeeScriptPlugin = require("./coffeescript_loader_plugin")
 const pathsResolverPlugin = require("./paths_resolver_plugin")
 const globImportPlugin = require("./glob_import_plugin")
-const envFilePlugin = require("esbuild-envfile-plugin")
+// const envFilePlugin = require("esbuild-envfile-plugin")
+const envFilePlugin = require("./esbuild-plugin-env")
 const entryPoints = require("./entrypoints")
 
 const args = process.argv.slice(2)
@@ -47,9 +48,10 @@ require("esbuild")
     target: ["es6", "chrome58", "firefox57", "safari11", "edge18"],
     watch,
     minify: production,
+    sourcemap: !production,
     inject: ["esbuild/react-shim.js"],
   })
-  .then((result) => {
+  .then(() => {
     if (watch) console.log("watching...")
     else console.log("done")
   })

@@ -82,8 +82,7 @@ ADD . /home/app/webapp
 # https://github.com/rails/rails/issues/32947
 
 ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
-
-RUN RAILS_ENV=production bin/rails assets:precompile && rm -rf tmp/cache/assets
+RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
