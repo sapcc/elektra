@@ -4,7 +4,7 @@ import {
   Menu,
   MenuItem,
 } from "react-bootstrap-typeahead"
-import { pluginAjaxHelper } from "lib/ajax_helper"
+import { pluginAjaxHelper } from "ajax_helper"
 
 const liveSearchEndpoints = {
   users: "/identity/domains/users.json",

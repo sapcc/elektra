@@ -73,10 +73,9 @@ Second: Install nodejs modules
 
 Third: Start the Elektra Dashboard Application
 ---------------------------------------
-1. run: ```bin/rails s -b 0.0.0.0 -p 3000```
-2. run: ```yarn build --watch```
-3. Browser access for Elektra: http://localhost:3000
-4. DevStack: Login with user demo/devstack
+1. run: ```foreman start```. **Important:** Ensure the **PORT** parameter is set in **.env**! This will start the rails server and also the webpack-dev-server.
+2. Browser access for Elektra: http://localhost:<PORT>/Default
+3. DevStack: Login with user demo/devstack
 
 Use Elektra Request Management
 ------------------------------

@@ -25,7 +25,7 @@ class Generators::DashboardPlugin::DefaultPluginGenerator
     remove_file "#{plugin_path}/#{name}/app/assets/stylesheets/#{name}/application.css"
     remove_file "#{plugin_path}/#{name}/app/assets/javascripts/#{name}/application.js"
     copy_file 'default/app/assets/stylesheets/_application.scss', "#{plugin_path}/#{name}/app/assets/stylesheets/#{name}/_application.scss"
-    copy_file 'default/app/javascript/plugin.js', "#{plugin_path}/#{name}/app/javascript/plugin.js"
+    copy_file 'default/app/assets/javascripts/plugin.js', "#{plugin_path}/#{name}/app/assets/javascripts/#{name}/plugin.js"
   end
 
   def modify_application_controller

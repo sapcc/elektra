@@ -84,11 +84,11 @@ module Core
       end
 
       def has_plugin_js?
-        !Dir.glob(File.join(path,"app/javascript/plugin.{js,jsx}")).empty?
+        !Dir.glob(File.join(path,"app/assets/javascripts/#{name}/plugin.*")).empty?
       end
 
       def has_global_js?
-        !Dir.glob(File.join(path,"app/javascript/global.{js,jsx}")).empty?
+        !Dir.glob(File.join(path,"app/assets/javascripts/#{name}/global.*")).empty?
       end
 
       def has_application_css?

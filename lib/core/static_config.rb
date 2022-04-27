@@ -8,7 +8,7 @@ module Core
 
     # only gets invoked once
     def self.load_regions
-      JSON.parse(File.read(File.join(Rails.root, "config", "regions.json")))
+      JSON.parse(File.read(File.join(Rails.root,"app", "assets", "javascripts", "regions.json")))
     end
   end
 end
