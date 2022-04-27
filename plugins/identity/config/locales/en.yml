@@ -31,6 +31,7 @@ en:
     network_viewer: Neutron Read-Only
     role_admin: Role Assignments (Authorizations) Administrator
     role_viewer: Role Assignments (Authorizations) Read-Only
+    reader: Keystone Read-Only
     resource_admin: Limes Administrator
     resource_viewer: Limes Read-Only
     service: Service User
