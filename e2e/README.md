@@ -50,7 +50,6 @@ Debugging options: https://docs.cypress.io/guides/references/troubleshooting#Log
 - `cypress:server:socket-e2e` Watching spec files
 - `cypress:server:task` Invoking the cy.task() command
 - `cypress:server:socket-base` Debugging cy.request() command
-- `cypress:webpack` Bundling specs using webpack
 - `cypress:server:fixture` Loading fixture files
 - `cypress:server:record:ci-info` Git commit and CI information when recording to the Cypress Dashboard
 

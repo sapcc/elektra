@@ -33,7 +33,6 @@ function help_me () {
   echo "cypress:server:socket-e2e   Watching spec files"
   echo "cypress:server:task         Invoking the cy.task() command"
   echo "cypress:server:socket-base  Debugging cy.request() command"
-  echo "cypress:webpack             Bundling specs using webpack"
   exit 1
 }
 
