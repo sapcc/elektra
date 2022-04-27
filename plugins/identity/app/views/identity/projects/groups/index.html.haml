@@ -5,4 +5,4 @@
   = content_for :main_toolbar do
     Authorizations
 
-= javascript_pack_tag("identity_role_assignments", data: {flashescontainer: "custom", project_id: @scoped_project_id, domain_id: @scoped_domain_id, active_tab: 'groupRoles'})
+= javascript_include_tag "identity_role_assignments_widget", data: {flashescontainer: "custom", project_id: @scoped_project_id, domain_id: @scoped_domain_id, active_tab: 'groupRoles'}

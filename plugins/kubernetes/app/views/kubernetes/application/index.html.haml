@@ -22,7 +22,8 @@
 
 - if current_user.is_allowed?('kubernetes:application_list')
   - unless @kubernikus_endpoint.blank?
-    = react_component 'kubernetes.AppProvider', permissions: {}, token: current_user.token, kubernikusBaseUrl: @kubernikus_endpoint
+    =# react_component 'kubernetes.AppProvider', permissions: {}, token: current_user.token, kubernikusBaseUrl: @kubernikus_endpoint
+    = javascript_include_tag "kubernetes_app_widget", data: { permissions: {}, token: current_user.token, kubernikus_base_url: @kubernikus_endpoint }
   - else
     .alert.alert-warning
       We seem to have misplaced the Kubernetes service connection at the moment. This might be a temporary issue but if it persists don't hesitate to contact us so we can send our minions out to find it again.

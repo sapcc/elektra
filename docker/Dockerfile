@@ -1,5 +1,5 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
-FROM ruby:2.7-alpine3.11 AS elektra
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.11 AS elektra
 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
@@ -16,7 +16,7 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install nio4r -v 2.5.8 \
       && gem install nokogiri -v 1.12.5 \
       && gem install pg -v 1.3.4 \
-      && gem install puma -v 4.3.9  \
+      && gem install puma -v 4.3.12  \
       && gem install redcarpet -v 3.5.1 \
       && gem install unf -v 0.2.0.beta2 \
       && gem install websocket-driver -v 0.7.2 \
@@ -75,7 +75,6 @@ ADD . /home/app/webapp
 # yarn task is called within "assets:precompile" -> /workspace/elektra/vendor/bundle/ruby/2.5.0/gems/railties-5.2.6/lib/rails/tasks/yarn.rake
 #RUN yarn install --no-progress
 
-# precompile assets including webpacker packs
 # We use dummy master.key to workaround the fact that
 # assets:precompile needs them but we don't want the real master.key to be built
 # into the container. The MONSOON_RAILS_SECRET_TOKEN should be injected as env var when starting the

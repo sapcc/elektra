@@ -1,14 +1,19 @@
-const {defaults} = require("jest-config");
 module.exports = {
-  "verbose": true,
-  "testRegex": "\\.test\\.js$",
-  "transform": {
-    "^.+\\.jsx$": "babel-jest",
-    "^.+\\.js$": "babel-jest"
+  verbose: true,
+  testRegex: "\\.test\\.js$",
+  transform: {
+    "^.+\\.jsx?$": [
+      "esbuild-jest",
+      {
+        jsx: "preserve",
+        loader: { ".js": "jsx" },
+        sourcemap: true,
+      },
+    ],
   },
-  "moduleNameMapper": {
-    "ajax_helper": "<rootDir>/app/javascript/ajax_helper.js",
-    "testHelper": "<rootDir>/app/javascript/test/support/testHelper.js"
+  moduleNameMapper: {
+    ajax_helper: "<rootDir>/app/javascript/lib/ajax_helper.js",
+    testHelper: "<rootDir>/app/javascript/test/support/testHelper.js",
   },
-  "setupFilesAfterEnv": ["<rootDir>/app/javascript/test/support/setupEnzyme.js"]
-};
+  setupFilesAfterEnv: ["<rootDir>/app/javascript/test/support/setupEnzyme.js"],
+}
