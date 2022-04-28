@@ -1,6 +1,6 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
 FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.11 AS elektra
-
+RUN ls && env
 LABEL source_repository="https://github.com/sapcc/elektra"
 
 RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime-info
