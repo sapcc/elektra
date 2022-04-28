@@ -38,6 +38,7 @@
     "numeral": "^2.0.6",
     "prop-types": "^15.5.7",
     "query-string": "^7.1.1",
+    "raven-js": "3.7.0",
     "react": "^16.10.0",
     "react-bootstrap": "0.31.5",
     "react-bootstrap-typeahead": "^3.0.0-alpha.1",

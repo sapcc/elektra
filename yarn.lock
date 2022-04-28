@@ -4875,7 +4875,7 @@ json-stringify-pretty-compact@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stringify-pretty-compact/-/json-stringify-pretty-compact-1.2.0.tgz#0bc316b5e6831c07041fc35612487fb4e9ab98b8"
   integrity sha512-/11Pj1OyX814QMKO7K8l85SHPTr/KsFxHp8GE2zVa0BtJgGimDjXHfM3FhC7keQdWDea7+nXf+f1de7ATZcZkQ==
 
-json-stringify-safe@~5.0.1:
+json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
@@ -5896,6 +5896,13 @@ randexp@0.4.6:
   dependencies:
     discontinuous-range "1.0.0"
     ret "~0.1.10"
+
+raven-js@3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/raven-js/-/raven-js-3.7.0.tgz#1b848cd5043255af674af5260e48bc63d2c4edbb"
+  integrity sha1-G4SM1QQyVa9nSvUmDki8Y9LE7bs=
+  dependencies:
+    json-stringify-safe "^5.0.1"
 
 react-autocomplete-cli@0.0.3:
   version "0.0.3"
