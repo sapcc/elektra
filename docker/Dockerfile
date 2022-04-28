@@ -1,6 +1,6 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
 FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.11 AS elektra
-RUN ls && env
+
 LABEL source_repository="https://github.com/sapcc/elektra"
 
 RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime-info
@@ -69,11 +69,8 @@ RUN bundle install
 # add elektra sources into image
 ADD . /home/app/webapp
 
-#ENV NODE_ENV=production
-# install latest possible node version
-#RUN apk add --no-cache nodejs-current 
-# yarn task is called within "assets:precompile" -> /workspace/elektra/vendor/bundle/ruby/2.5.0/gems/railties-5.2.6/lib/rails/tasks/yarn.rake
-#RUN yarn install --no-progress
+# transpile javascripts
+RUN yarn install --no-progress && yarn build --production 
 
 # We use dummy master.key to workaround the fact that
 # assets:precompile needs them but we don't want the real master.key to be built
