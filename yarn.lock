@@ -4748,13 +4748,6 @@ jest@28.0:
     import-local "^3.0.2"
     jest-cli "^28.0.2"
 
-jquery-bbq@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/jquery-bbq/-/jquery-bbq-1.0.0.tgz#3500a7ab000e2ae39891fbf6f8f947012aee251c"
-  integrity sha1-NQCnqwAOKuOYkfv2+PlHASruJRw=
-  dependencies:
-    jquery "^1.9.1"
-
 jquery-ujs@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/jquery-ujs/-/jquery-ujs-1.2.3.tgz#dcac6026ab7268e5ee41faf9d31c997cd4ddd603"
@@ -4765,7 +4758,7 @@ jquery.cookie@1.4.1:
   resolved "https://registry.yarnpkg.com/jquery.cookie/-/jquery.cookie-1.4.1.tgz#d63dce209eab691fe63316db08ca9e47e0f9385b"
   integrity sha1-1j3OIJ6raR/mMxbbCMqeR+D5OFs=
 
-jquery@1.12.4, jquery@^1.9.1:
+jquery@1.12.4:
   version "1.12.4"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-1.12.4.tgz#01e1dfba290fe73deba77ceeacb0f9ba2fec9e0c"
   integrity sha1-AeHfuikP5z3rp3zurLD5ui/sngw=

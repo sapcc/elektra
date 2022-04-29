@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+full_path=$(realpath "$0")
+dir=$(dirname "$full_path")
+
+"$dir"/rails s -b 0.0.0.0 -p "$APP_PORT"

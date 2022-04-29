@@ -15,10 +15,6 @@ gem 'rails', '6.1.2' # Don't use 5.1.3 because of redirect errors in tests (scri
 gem 'jsbundling-rails'
 
 gem 'bootstrap-sass'
-gem 'uglifier'
-gem 'coffee-rails'
-# gem 'jquery-rails'
-# gem 'jquery-ui-rails'
 gem 'haml-rails'
 gem 'simple_form'
 gem 'redcarpet'

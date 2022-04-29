@@ -1,5 +1,7 @@
 import "./core/jquery-ui"
-import "jquery-bbq"
+
+// required only in inquiries
+import "./core/jquery.bbq"
 import "jquery.cookie"
 
 // custom jquery plugins
