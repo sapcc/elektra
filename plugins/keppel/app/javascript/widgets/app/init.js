@@ -2,7 +2,7 @@ import { createWidget } from "lib/widget"
 import * as reducers from "./reducers"
 import App from "./components/application"
 
-createWidget(__dirname).then((widget) => {
+createWidget(null).then((widget) => {
   widget.configureAjaxHelper({
     baseURL: widget.config.scriptParams.keppelApi,
     headers: {
