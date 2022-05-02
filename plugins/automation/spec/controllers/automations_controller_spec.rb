@@ -371,14 +371,14 @@ describe Automation::AutomationsController, type: :controller do
       it 'returns http success and renders view' do
         delete :destroy, params: default_params.merge(id: 'automation_id')
         expect(response).to be_successful
-        expect(response).to render_template('automation/automations/update_item.js')
+        expect(response).to render_template('automation/automations/update_item')
       end
 
       it 'something wrong happens show a flash error' do
         allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_raise('boom')
         delete :destroy, params: default_params.merge(id: 'automation_id')
         expect(response).to be_successful
-        expect(response).to render_template('automation/automations/update_item.js')
+        expect(response).to render_template('automation/automations/update_item')
         expect(flash.now[:error]).to_not be_nil
       end
     end

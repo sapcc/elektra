@@ -83,7 +83,7 @@ describe EmailService::CustomVerificationEmailTemplatesController, type: :contro
       end
       it 'returns http status 401' do
         get :index, params: default_params
-        expect(response).to render_template('application/exceptions/warning.html')
+        expect(response).to render_template('application/exceptions/warning')
       end
     end
 
@@ -134,7 +134,7 @@ describe EmailService::CustomVerificationEmailTemplatesController, type: :contro
       end
       it 'returns http 401 status' do
         get :new, params: default_params
-        expect(response).to render_template('application/exceptions/warning.html')
+        expect(response).to render_template('application/exceptions/warning')
       end
     end
 
@@ -186,7 +186,7 @@ describe EmailService::CustomVerificationEmailTemplatesController, type: :contro
         end
       end
       it 'returns http 401 status' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('application/exceptions/warning.html')
+        expect(post(:create, params: default_params.merge(opts: @opts))).to render_template('application/exceptions/warning')
       end
     end
 
@@ -240,7 +240,7 @@ describe EmailService::CustomVerificationEmailTemplatesController, type: :contro
         end
       end
       it 'returns http 401 status' do
-        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to render_template('application/exceptions/warning.html')
+        expect(delete(:destroy, params: default_params.merge(id: @opts[:id]))).to render_template('application/exceptions/warning')
       end
     end
 

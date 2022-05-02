@@ -17,7 +17,7 @@ RSpec.describe "networking/floating_ips/new.html.haml", type: :view do
   end
 
   it "displays the subnet select box" do
-    render
+    render template: "networking/floating_ips/new"
 
     expect(rendered).to match /id="floating_ip_floating_subnet_id"/
   end

@@ -35,7 +35,7 @@
 #       end
 #       it 'returns http 401' do
 #         get :index, params: default_params
-#         expect(response).to render_template('application/exceptions/warning.html')
+#         expect(response).to render_template('application/exceptions/warning')
 #       end
 #     end
 
