@@ -31,7 +31,7 @@ module DnsService
           flash.now[:notice] = 'Recordset successfully created.'
           respond_to do |format|
             format.html { redirect_to zone_path(@zone.id) }
-            format.js { render 'create.js' }
+            format.js { render 'create', formats: :js }
           end
         else
           render action: :new
@@ -66,7 +66,7 @@ module DnsService
           flash.now[:notice] = 'Recordset successfully updated.'
           respond_to do |format|
             format.html { redirect_to zone_path(@zone.id) }
-            format.js { render 'update.js' }
+            format.js { render 'update', formats: :js }
           end
 
         else

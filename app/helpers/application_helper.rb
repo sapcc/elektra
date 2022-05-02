@@ -128,8 +128,8 @@ module ApplicationHelper
   # ---------------------------------------------------------------------------------------------------
   def render_errors(errors=[])
     content_tag(:ul) do
-      errors.each do |name,message|
-        concat(content_tag(:li, "#{name.capitalize}: #{message}"))
+      errors.to_hash.each do |name,message|
+        concat(content_tag(:li, "#{name.capitalize}: #{message.join(', ')}"))
       end
     end
   end

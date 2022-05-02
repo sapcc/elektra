@@ -1,3 +1,7 @@
+require_relative "../../app/helpers/identity/application_helper"
+require_relative "../../app/helpers/identity/application_helper"
+require_relative "../../app/helpers/identity/projects_helper"
+
 module Identity
   class Engine < ::Rails::Engine
     isolate_namespace Identity

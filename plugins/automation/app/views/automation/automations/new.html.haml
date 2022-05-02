@@ -8,7 +8,7 @@
 
   .modal-body.static-columns
     .modal-flashes
-      = render "automation/shared/flashes.html"
+      = render "automation/shared/flashes"
 
     = render partial: 'automation_form', locals: {automation: @automation, types: @automation_types, f: f, form_type: 'new'}
 

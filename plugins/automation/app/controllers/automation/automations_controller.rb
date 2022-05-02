@@ -110,13 +110,13 @@ module Automation
       automations(1)
       runs_with_jobs(1)
       flash.now[:success] = I18n.t('automation.messages.automation_removed_successfully', name: automation.name)
-      render template: 'automation/automations/update_item.js'
+      render template: 'automation/automations/update_item', formats: :js
     rescue Exception => e
       Rails.logger.error e.message
       flash.now[:error] = I18n.t('automation.errors.automation_remove_error')
       automations(1)
       runs_with_jobs(1)
-      render template: 'automation/automations/update_item.js'
+      render template: 'automation/automations/update_item', formats: :js
     end
 
     def update_item

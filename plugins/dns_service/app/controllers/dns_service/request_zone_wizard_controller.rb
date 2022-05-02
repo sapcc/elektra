@@ -56,7 +56,7 @@ module DnsService
       if @zone_request.errors.empty?
         flash.now[:notice] = 'Zone request successfully created'
         audit_logger.info(current_user, "has requested zone #{@zone_request.attributes}")
-        render template: 'dns_service/request_zone_wizard/create.js'
+        render template: 'dns_service/request_zone_wizard/create', formats: :js
       else
         @pools = cloud_admin.dns_service.pools[:items]
         @zone_resource = get_zone_resource

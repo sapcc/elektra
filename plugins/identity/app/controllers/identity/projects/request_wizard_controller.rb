@@ -47,7 +47,7 @@ module Identity
             else
               flash.now[:notice] = 'Project request successfully created'
               audit_logger.info(current_user, "has requested project #{@project.attributes}")
-              render template: 'identity/projects/request_wizard/create.js'
+              render template: 'identity/projects/request_wizard/create', formats: :js
             end
           rescue StandardError => e
             @project.errors.add('message', e.message)
@@ -106,7 +106,7 @@ module Identity
         if inquiry.errors?
           render action: :edit
         else
-          render template: 'identity/projects/request_wizard/create.js'
+          render template: 'identity/projects/request_wizard/create', formats: :js
         end
       else
         render action: :edit

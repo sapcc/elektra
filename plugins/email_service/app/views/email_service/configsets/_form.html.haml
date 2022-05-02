@@ -3,7 +3,7 @@
 = simple_form_for :configset, url: plugin('email_service').configsets_path, method: :post, remote: request.xhr?, html: {id: 'form_configset', data: {modal: true}, class: 'form_horizontal' }, wrapper: :horizontal_form do |f|
   .modal-body
     .modal-falshes
-      = render "email_service/shared/flashes.html"
+      = render "email_service/shared/flashes"
     .row
       .col-sm-8
         -if form_type == 'new'

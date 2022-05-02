@@ -50,7 +50,7 @@ module Identity
             services.identity.grant_project_user_role_by_role_name(
               @project.id, inquiry.requester.uid, 'admin'
             )
-            render 'identity/domains/create_wizard/create.js'
+            render 'identity/domains/create_wizard/create', formats: :js
           else
             # there is no requiry -> current user is the creator of this
             # project. give current user all needed roles

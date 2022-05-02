@@ -1,4 +1,4 @@
-$(".flashes").html("<%= escape_javascript( render "application/flashes.html" ) %>");
+$(".flashes").html("<%= escape_javascript( render "application/flashes" ) %>");
 initAutoDismissibleFlash();
 
 $(".js-table-configset").html("<%= escape_javascript(render partial: 'table_configset', locals: {}) %>");

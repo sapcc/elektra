@@ -92,7 +92,7 @@ module Networking
       if @floating_ip.save
         respond_to do |format|
           format.html { redirect_to floating_ips_url }
-          format.js { render 'update.js' }
+          format.js { render 'update', formats: :js }
         end
       else
         render action: :edit

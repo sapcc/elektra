@@ -82,7 +82,7 @@ module Inquiry
       result = @inquiry.change_state(inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description], current_user)
       if result
         flash.now[:notice] = "Request successfully updated."
-        render 'inquiry/inquiries/update.js'
+        render 'inquiry/inquiries/update', formats: :js
       else
         @inquiry.aasm_state = inquiry_params[:aasm_state]
         render action: :edit
@@ -93,7 +93,7 @@ module Inquiry
       if @inquiry.destroy
         @inquiry = nil
         flash[:notice] = "Request successfully deleted."
-        render template: 'inquiry/inquiries/update.js'
+        render template: 'inquiry/inquiries/update', formats: :js
       else
         flash.now[:error] = @inquiry.errors.full_messages.to_sentence
         redirect_to :inquiries

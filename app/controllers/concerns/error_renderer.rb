@@ -68,12 +68,12 @@ module ErrorRenderer
 
       if @warning
         if request.xhr? && params[:polling_service]
-          render '/application/exceptions/error_polling.js', format: 'JS'
+          render '/application/exceptions/error_polling', formats: 'js', format: 'JS'
         else
           # byebug
           respond_to do |format|
-            format.html { render '/application/exceptions/warning.html', status: @status }
-            format.js { render '/application/exceptions/warning.js', status: @status }
+            format.html { render '/application/exceptions/warning', status: @status }
+            format.js { render '/application/exceptions/warning', status: @status, formats: :js }
             format.json { render json: { error: @description }, status: @status }
           end
         end
@@ -91,8 +91,8 @@ module ErrorRenderer
         # no render error if polling service
         unless params[:polling_service]
           respond_to do |format|
-            format.html { render '/application/exceptions/error.html', status: @status }
-            format.js { render '/application/exceptions/error.js', status: @status }
+            format.html { render '/application/exceptions/error', status: @status }
+            format.js { render '/application/exceptions/error', status: @status , formats: :js}
             format.json { render json: { error: @description }, status: @status }
           end
         end

@@ -335,7 +335,7 @@ module Compute
         end
         respond_to do |format|
           format.html { redirect_to instances_url }
-          format.js { render 'update.js' }
+          format.js { render 'update', formats: :js }
         end
       else
         render action: :edit
@@ -856,7 +856,7 @@ module Compute
         @terminate = action == 'terminate'
         load_security_groups(@instance)
       end
-      render template: 'compute/instances/update_item.js' if with_rendering
+      render template: 'compute/instances/update_item', formats: :js if with_rendering
 
     end
 

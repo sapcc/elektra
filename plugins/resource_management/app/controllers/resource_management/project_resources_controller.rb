@@ -206,7 +206,7 @@ module ResourceManagement
       )
 
       if inquiry.errors.empty?
-        render template: '/resource_management/project_resources/create_package_request.js'
+        render template: '/resource_management/project_resources/create_package_request', formats: :js
       else
         render action: :new_package_request
       end
