@@ -17,8 +17,11 @@
       = render partial: 'email_service/shared/ec2_credentials_creation'
     - if !current_user.has_role?('email_user') && !current_user.has_role?('email_admin') 
       = render partial: 'email_service/shared/role_attention_box'
+    - if !email_addresses || email_addresses.empty? 
+      = render partial: 'email_service/shared/verified_email_missing'
     - unless nebula_active?
       = render partial: 'email_service/shared/cronus_activation'
+
     
   .modal-footer
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
@@ -34,3 +37,6 @@
     = render partial: 'email_service/shared/role_attention_box'
   - unless nebula_active?
     = render partial: 'email_service/shared/cronus_activation'
+  - if !email_addresses || email_addresses.empty? 
+    -# = render partial: 'email_service/shared/verified_email_address.html'
+    = render partial: 'email_service/shared/verified_email_missing'
