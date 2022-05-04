@@ -582,7 +582,7 @@ DEPENDENCIES
   image!
   inquiry!
   jsbundling-rails
-  kaminari (~> 1.2.1)
+  kaminari
   keppel!
   key_manager!
   kubernetes!

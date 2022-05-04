@@ -5882,6 +5882,11 @@ railroad-diagrams@^1.0.0:
   resolved "https://registry.yarnpkg.com/railroad-diagrams/-/railroad-diagrams-1.0.0.tgz#eb7e6267548ddedfb899c1b90e57374559cddb7e"
   integrity sha1-635iZ1SN3t+4mcG5Dlc3RVnN234=
 
+rails-ujs@^5.2.7-1:
+  version "5.2.7-1"
+  resolved "https://registry.yarnpkg.com/rails-ujs/-/rails-ujs-5.2.7-1.tgz#07e43b32ca3b45c0fba378d1c8cc31d03e1077d6"
+  integrity sha512-eKJdOJOw/ZQbHy13c0YndwmlLqG+/bI6ScoBsuXTPJGdWpcgl0QOKN5sNPgCLeRhgngk8cqK9La71/E+jRN6uA==
+
 randexp@0.4.6:
   version "0.4.6"
   resolved "https://registry.yarnpkg.com/randexp/-/randexp-0.4.6.tgz#e986ad5e5e31dae13ddd6f7b3019aa7c87f60ca3"

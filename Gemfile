@@ -24,7 +24,7 @@ gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
 gem 'font-awesome-sass', '~>4'
-gem 'kaminari', '~> 1.2.1'
+gem 'kaminari'
 
 gem 'responders'
 
