@@ -9,12 +9,12 @@ module.exports = {
   name: "env",
   setup(build) {
     function _findEnvFile(dir) {
-      if (!fs.existsSync(dir)) return false
+      if (!fs.existsSync(dir) || dir === "/") return false
       let filePath = `${dir}/.env`
       if (fs.existsSync(filePath)) {
         return filePath
       } else {
-        return _findEnvFile(path.resolve(dir, "../"))
+        return _findEnvFile(path.resolve(dir, ".."))
       }
     }
 
