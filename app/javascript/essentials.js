@@ -1,5 +1,8 @@
 import "./core/jquery"
-// import "jquery-ujs"
-import "rails-ujs"
+// import Rails from "@rails/ujs"
+import x from "jquery-ujs"
+console.log("===============", x)
 import "bootstrap"
 import "./core/dialogs.coffee"
+
+// Rails.start()

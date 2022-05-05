@@ -18,3 +18,5 @@ $ ->
 
   # init dismissible flahses
   initAutoDismissibleFlash()
+
+  window.initAutoDismissibleFlash = initAutoDismissibleFlash

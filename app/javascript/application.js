@@ -24,6 +24,7 @@ import "./core/flash.coffee"
 import "./core/modal.coffee"
 import "./core/update.coffee"
 import "./core/error_details.coffee"
+import "./core/pagination_spinner.coffee"
 
 import "./core/cable"
 

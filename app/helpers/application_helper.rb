@@ -127,9 +127,11 @@ module ApplicationHelper
   # Errors Helper
   # ---------------------------------------------------------------------------------------------------
   def render_errors(errors=[])
+    
     content_tag(:ul) do
-      errors.each do |name,message|
-        concat(content_tag(:li, "#{name.capitalize}: #{message}"))
+      errors.each do |error|
+        
+        concat(content_tag(:li, "#{error.attribute.capitalize}: #{error.message}"))
       end
     end
   end
