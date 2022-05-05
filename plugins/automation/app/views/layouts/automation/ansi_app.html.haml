@@ -23,9 +23,9 @@
 
     = csrf_meta_tags
 
-    = javascript_include_tag "automation/ansi_up', media: 'all', 'data-turbolinks-track_widget" => true
+    
+    = javascript_include_tag "essentials"
+    = javascript_include_tag "automation_plugin"
 
   %body
     = yield
-
-    = yield :javascript

@@ -1,5 +1,5 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.11 AS elektra
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.15 AS elektra
 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
@@ -10,18 +10,18 @@ RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime
 # The versions need to be kept in sync with the Gemfile.lock
 RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install bundler:2.3.9 \
-      && gem install byebug -v 9.0.6 \
-      && gem install ffi -v 1.9.25 \
+      && gem install byebug -v 11.1.3 \
+      && gem install ffi -v 1.15.5 \
       && gem install json -v 1.8.6 \
       && gem install nio4r -v 2.5.8 \
-      && gem install nokogiri -v 1.12.5 \
+      && gem install nokogiri -v 1.13.3 \
       && gem install pg -v 1.3.4 \
       && gem install puma -v 4.3.12  \
       && gem install redcarpet -v 3.5.1 \
       && gem install unf -v 0.2.0.beta2 \
-      && gem install websocket-driver -v 0.7.2 \
-      && gem install bindex -v 0.6.0 \
-      && gem install sassc -v 2.2.1 \
+      && gem install websocket-driver -v 0.7.5 \
+      && gem install bindex -v 0.8.1 \
+      && gem install sassc -v 2.4.0 \
       && runDeps="$( \
       scanelf --needed --nobanner --recursive /usr/local \
       | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \

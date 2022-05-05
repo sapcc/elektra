@@ -1,4 +1,4 @@
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.11
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.15
 
 LABEL source_repository="https://github.wdf.sap.corp/monsoon/workspaces/tree/master/environments/elektra"
 
@@ -25,10 +25,7 @@ RUN apk --no-cache add --update \
   jq \
   the_silver_searcher \
   vim \
-  shared-mime-info
-
-# stuff for mitmproxy
-RUN apk --update --no-cache add \
+  shared-mime-info \
   python3 \
   py3-pip\
   ca-certificates \
@@ -54,8 +51,12 @@ RUN pip3 install mitmproxy
 
 RUN pip3 install pgcli
 
+RUN mkdir /app
+WORKDIR /app
+VOLUME /app
+
 ################### POSTGRESQL
-ENV PGDATA /var/lib/postgresql/data
+ENV PGDATA /app/tmp/postgresql/data
 
 RUN echo -e '#!/bin/bash\n\n\
 mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA"\n\
@@ -69,10 +70,6 @@ echo "INFO: create user \"dev\" with password \"dev\" and grant permissions"\n\
 su - postgres -c "createuser -dl dev"\n\
 su - postgres -c "psql -c \"ALTER USER dev WITH ENCRYPTED PASSWORD '"'"'dev'"'"';\""\n\
 /bin/sh -c $@' >> /usr/local/bin/start_db && chmod +x /usr/local/bin/start_db
-
-RUN mkdir /app
-WORKDIR /app
-VOLUME /app
 
 
 RUN gem install bundler && bundle config set --local path 'vendor/bundle'

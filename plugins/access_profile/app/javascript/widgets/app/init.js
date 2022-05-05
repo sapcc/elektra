@@ -25,7 +25,7 @@ const createNewConfig = (widgetName, scriptParams) => {
   })
 }
 
-let widgetName = getWidgetName(__dirname)
+let widgetName = getWidgetName(null)
 let scriptTagContainer = getContainerFromCurrentScript(widgetName)
 
 createNewConfig(widgetName, scriptTagContainer.scriptParams).then((config) => {

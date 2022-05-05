@@ -18,5 +18,5 @@
 domains = ["*.cloud.sap"]
 
 Rails.application.config.content_security_policy do |policy|
-  policy.connect_src :self, :https, *domains
+  policy.connect_src :self, :https, :wss, *domains
 end

@@ -50,6 +50,8 @@ require("esbuild")
     minify: production,
     sourcemap: !production,
     inject: ["esbuild/react-shim.js"],
+    // map global this to window
+    define: { this: "window" },
   })
   .then(() => {
     if (watch) console.log("watching...")
