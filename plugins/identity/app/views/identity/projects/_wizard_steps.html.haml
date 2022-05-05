@@ -63,7 +63,7 @@
       status: 'skipped'}) do
       %p
         This project skipped quota request. To manage your quota please use the
-        =link_to 'Resource Management',plugin('resource_management').resources_path()
+        =link_to 'Resource Management',plugin('resources').project_path()
   - elsif @project_profile.wizard_finished?('resource_management')
     -# DONE
     = wizard_step({title: 'Resource Quotas',
