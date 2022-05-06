@@ -1,11 +1,11 @@
-import { Modal, Button } from 'react-bootstrap';
-import { Form } from 'lib/elektra-form';
+import { Modal, Button } from "react-bootstrap"
+import { Form } from "lib/elektra-form"
 
 export default class NewShareNetworkForm extends React.Component {
-  constructor(props){
-  	super(props);
+  constructor(props) {
+    super(props)
 
-  	this.state = {show: true};
+    this.state = { show: true }
     this.close = this.close.bind(this)
     this.networkSubnets = this.networkSubnets.bind(this)
     this.renderForm = this.renderForm.bind(this)
@@ -14,13 +14,15 @@ export default class NewShareNetworkForm extends React.Component {
   }
 
   validate(values) {
-    return values.name && values.neutron_net_id && values.neutron_subnet_id && true
+    return (
+      values.name && values.neutron_net_id && values.neutron_subnet_id && true
+    )
   }
 
-  close(e){
-    if(e) e.stopPropagation()
-    this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/share-networks'),300)
+  close(e) {
+    if (e) e.stopPropagation()
+    this.setState({ show: false })
+    setTimeout(() => this.props.history.replace("/share-networks"), 300)
   }
 
   componentDidMount() {
@@ -28,101 +30,126 @@ export default class NewShareNetworkForm extends React.Component {
   }
 
   onValueChange(name, values) {
-    if (name=='neutron_net_id') {
+    if (name == "neutron_net_id") {
       this.props.loadSubnetsOnce(values[name])
     }
   }
 
-  onSubmit(values){
-    let subnet = this.props.subnets[values.neutron_net_id].items.find(i =>
-      i.id==values.neutron_subnet_id
+  onSubmit(values) {
+    let subnet = this.props.subnets[values.neutron_net_id].items.find(
+      (i) => i.id == values.neutron_subnet_id
     )
-    let newValues = Object.assign({},values,{cidr: subnet.cidr})
+    let newValues = Object.assign({}, values, { cidr: subnet.cidr })
     return this.props.handleSubmit(newValues).then(() => this.close())
   }
 
-  networkSubnets(neutron_net_id){
-    if(this.props.subnets && neutron_net_id)
-    return this.props.subnets[neutron_net_id]
+  networkSubnets(neutron_net_id) {
+    if (this.props.subnets && neutron_net_id)
+      return this.props.subnets[neutron_net_id]
   }
 
-  renderForm({values}) {
+  renderForm({ values }) {
     let networkSubnets = this.networkSubnets(values.neutron_net_id)
 
     return (
       <React.Fragment>
         <Modal.Body>
-          <Form.Errors/>
+          <Form.Errors />
 
-          <Form.ElementHorizontal label='Name' name="name" required>
-            <Form.Input elementType='input' type='text' name='name'/>
+          <Form.ElementHorizontal label="Name" name="name" required>
+            <Form.Input elementType="input" type="text" name="name" />
           </Form.ElementHorizontal>
 
-          <Form.ElementHorizontal label='Description' name="description">
-            <Form.Input elementType='textarea' className="text optional form-control" name="description"/>
+          <Form.ElementHorizontal label="Description" name="description">
+            <Form.Input
+              elementType="textarea"
+              className="text optional form-control"
+              name="description"
+            />
           </Form.ElementHorizontal>
 
-          <Form.ElementHorizontal label='Neutron Net' required={true} name="neutron_net_id">
-            { this.props.networks.isFetching ? (
-              <span className='spinner'/>
+          <Form.ElementHorizontal
+            label="Neutron Net"
+            required={true}
+            name="neutron_net_id"
+          >
+            {this.props.networks.isFetching ? (
+              <span className="spinner" />
             ) : (
               <Form.Input
-                elementType='select'
+                elementType="select"
                 className="select required form-control"
-                name='neutron_net_id'>
+                name="neutron_net_id"
+              >
                 <option></option>
-                {this.props.networks.items.map((network,index) =>
-                  <option value={network.id} key={network.id}>{network.name}</option>
-                )}
+                {this.props.networks.items.map((network, index) => (
+                  <option value={network.id} key={network.id}>
+                    {network.name}
+                  </option>
+                ))}
               </Form.Input>
             )}
           </Form.ElementHorizontal>
 
-          { networkSubnets &&
-            <Form.ElementHorizontal label='Neutron Subnet' required={true} name="cidr">
-              { networkSubnets.isFetching ? (
-                <span className='spinner'/>
+          {networkSubnets && (
+            <Form.ElementHorizontal
+              label="Neutron Subnet"
+              required={true}
+              name="cidr"
+            >
+              {networkSubnets.isFetching ? (
+                <span className="spinner" />
               ) : (
                 <Form.Input
-                  elementType='select'
+                  elementType="select"
                   className="select required form-control"
-                  name='neutron_subnet_id'>
+                  name="neutron_subnet_id"
+                >
                   <option></option>
-                  { networkSubnets.items.map((subnet,index) =>
-                    <option value={subnet.id} key={subnet.id}>{subnet.name} {subnet.cidr}</option>
-                  )}
+                  {networkSubnets.items.map((subnet, index) => (
+                    <option value={subnet.id} key={subnet.id}>
+                      {subnet.name} {subnet.cidr}
+                    </option>
+                  ))}
                 </Form.Input>
               )}
             </Form.ElementHorizontal>
-          }
-
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.close}>Cancel</Button>
-          <Form.SubmitButton label='Save'/>
+          <Form.SubmitButton label="Save" />
         </Modal.Footer>
-    </React.Fragment>
+      </React.Fragment>
     )
   }
 
-  render(){
+  render() {
+    const FormContent = this.renderForm
     return (
-      <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal
+        backdrop="static"
+        show={this.state.show}
+        onHide={this.close}
+        bsSize="large"
+        aria-labelledby="contained-modal-title-lg"
+      >
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">New Share Network</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">
+            New Share Network
+          </Modal.Title>
         </Modal.Header>
 
         <Form
           validate={this.validate}
           onValueChange={this.onValueChange}
           initialValues={{}}
-          className='form form-horizontal'
-          onSubmit={this.onSubmit}>
-
-          <this.renderForm/>
-
+          className="form form-horizontal"
+          onSubmit={this.onSubmit}
+        >
+          <FormContent />
         </Form>
       </Modal>
-    );
+    )
   }
 }
