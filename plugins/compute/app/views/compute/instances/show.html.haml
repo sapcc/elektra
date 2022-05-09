@@ -36,7 +36,7 @@
         }
       }
 
-      fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=sum by (instance_uuid) (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} - vrops_virtualmachine_oversized_vcpus and vrops_virtualmachine_oversized_vcpus != 0) or (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} %2B vrops_virtualmachine_undersized_vcpus and vrops_virtualmachine_undersized_vcpus != 0)')
+      fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=sum by (instance_uuid) (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} - vrops_virtualmachine_oversized_vcpus and vrops_virtualmachine_oversized_vcpus != 0 and on (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes < 256000000)) or (vrops_virtualmachine_number_vcpus_total{instance_uuid="#{@instance.id}"} %2B vrops_virtualmachine_undersized_vcpus and vrops_virtualmachine_undersized_vcpus != 0 and on (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes < 256000000))')
         .then(catchErrors)
         .then(response => response.json())
         .then((json) => {
@@ -55,7 +55,7 @@
           $("span.sizing_cpu_recommendation_problem_text").html("Problem to get cpu recommendation: " + error.message)
         })
 
-      fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) - sum by (instance_uuid) (vrops_virtualmachine_oversized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_oversized_memory != 0)) or ((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) %2B sum by (instance_uuid) (vrops_virtualmachine_undersized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_undersized_memory != 0))')
+      fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) - sum by (instance_uuid) (vrops_virtualmachine_oversized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_oversized_memory != 0) and on (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes < 256000000)) or ((sum by (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes{instance_uuid="#{@instance.id}"}) %2B sum by (instance_uuid) (vrops_virtualmachine_undersized_memory))/1024/1024 and sum by (instance_uuid) (vrops_virtualmachine_undersized_memory != 0) and on (instance_uuid) (vrops_virtualmachine_config_hardware_memory_kilobytes < 256000000))')
         .then(catchErrors)
         .then(response => response.json())
         .then((json) => {
