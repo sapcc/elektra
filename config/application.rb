@@ -1,16 +1,16 @@
-require_relative 'boot'
+require_relative "boot"
 
-require 'rails/all'
+require "rails/all"
 
 # Require core functionalities
-require_relative File.expand_path('../lib/core', __dir__)
+require_relative File.expand_path("../lib/core", __dir__)
 # Require middlewares due to loading bug in Rails 5.1
-require_relative File.expand_path('../app/middleware/middlewares', __dir__)
+require_relative File.expand_path("../app/middleware/middlewares", __dir__)
 # Require sassc custom functions
-require_relative File.expand_path('../lib/sassc', __dir__)
+require_relative File.expand_path("../lib/sassc", __dir__)
 
-require 'prometheus/middleware/collector'
-require 'prometheus/middleware/exporter'
+require "prometheus/middleware/collector"
+require "prometheus/middleware/exporter"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.

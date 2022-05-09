@@ -11,7 +11,7 @@ source 'https://rubygems.org'
 # # unf is pulled in by the ruby-arc-client
 gem 'unf', '>= 0.2.0beta2'
 
-gem 'rails', '6.1.2' # Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
+gem 'rails', '6.1.5.1'
 gem 'jsbundling-rails'
 
 gem 'bootstrap-sass'
