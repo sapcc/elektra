@@ -1,10 +1,13 @@
 {
-  "object_storage_admin": "role:admin or role:swiftoperator",
+  "object_storage_admin": "role:admin or role:swiftoperator or role:objectstore_admin",
+  "object_storage_viewer": "role:objectstore_viewer or rule:object_storage_admin",
   "object_storage:entry_list": "not project_id:nil",
-  
-  "object_storage:container_get":                   "rule:object_storage_admin",
-  "object_storage:container_check_acls":            "rule:object_storage_admin",
-  "object_storage:container_list":                  "rule:object_storage_admin",
+
+  "object_storage:container_get":                   "rule:object_storage_viewer",
+  "object_storage:container_check_acls":            "rule:object_storage_viewer",
+  "object_storage:container_show_access_control":   "rule:object_storage_viewer",
+  "object_storage:container_list":                  "rule:object_storage_viewer",
+
   "object_storage:container_new":                   "rule:object_storage_admin",
   "object_storage:container_create":                "rule:object_storage_admin",
   "object_storage:container_update":                "rule:object_storage_admin",
@@ -13,14 +16,14 @@
   "object_storage:container_pre_empty":             "rule:object_storage_admin",
   "object_storage:container_confirm_deletion":      "rule:object_storage_admin",
   "object_storage:container_confirm_emptying":      "rule:object_storage_admin",
-  "object_storage:container_show_access_control":   "rule:object_storage_admin",
   "object_storage:container_update_access_control": "rule:object_storage_admin",
 
-  "object_storage:object_get":           "rule:object_storage_admin",
-  "object_storage:object_list":          "rule:object_storage_admin",
+  "object_storage:object_get":           "rule:object_storage_viewer",
+  "object_storage:object_list":          "rule:object_storage_viewer",
+  "object_storage:object_download":      "rule:object_storage_viewer",
+
   "object_storage:object_update":        "rule:object_storage_admin",
   "object_storage:object_delete":        "rule:object_storage_admin",
-  "object_storage:object_download":      "rule:object_storage_admin",
   "object_storage:object_new_copy":      "rule:object_storage_admin",
   "object_storage:object_create_copy":   "rule:object_storage_admin",
   "object_storage:object_move":          "rule:object_storage_admin",
