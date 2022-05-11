@@ -66,6 +66,8 @@ module ErrorRenderer
         @status = 503
       end
 
+      @status = 400 if @status.to_i < 400 || @status.to_i > 511 
+      
       if @warning
         if request.xhr? && params[:polling_service]
           render '/application/exceptions/error_polling.js', format: 'JS'
