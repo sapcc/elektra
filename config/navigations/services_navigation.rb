@@ -76,9 +76,9 @@ SimpleNavigation::Configuration.run do |navigation|
                        if: -> { plugin_available?(:block_storage) },
                        highlights_on: proc { params[:controller][/block_storage/] }
       compute_nav.item :images,
-                       'Server Images & Snapshots',
+                       "Server Images & Snapshots",
                        lambda {
-                         services.image.current_version >= 'v2.5' ? plugin('image').ng_path+'?r=' : plugin('image').os_images_public_index_path
+                         Gem::Version.new(services.image.current_version.gsub('v','')) >= Gem::Version.new('2.5') ? plugin('image').ng_path+'?r=' : plugin('image').os_images_public_index_path
                        },
                        if: -> { services.available?(:image, :os_images) },
                        highlights_on: proc { params[:controller][%r{image/.*}] }
