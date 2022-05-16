@@ -17,6 +17,8 @@ en:
     cloud_sharedfilesystem_admin: Manila Cloud Administrator
     cloud_sharedfilesystem_viewer: Manila Cloud Read-Only
     cloud_volume_admin: Cinder Cloud Administrator
+    cloud_objectstore_admin: Swift Cloud Administrator
+    cloud_objectstore_viewer: Swift Cloud Read-Only
     compute_admin: Nova Administrator
     compute_admin_wsg: Nova Administrator without Securitygroup Management
     compute_viewer: Nova Read-Only
@@ -39,6 +41,8 @@ en:
     sharedfilesystem_viewer: Manila Read-Only
     swiftoperator: Object Store Administrator
     swiftreseller: Object Store Cloud Administrator
+    objectstore_admin: Swift Administrator
+    objectstore_viewer: Swift Read-Only
     volume_admin: Cinder Administrator
     volume_viewer: Cinder Read-Only
     securitygroup_viewer: Security Group Read-Only
