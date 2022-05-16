@@ -297,7 +297,7 @@ module Resources
             # should not happen. broken nova-compute
             raise "could not find host memory of #{rp['uuid']}"
           end
-          possible_flavors = flavors_by_numa[trait].select {|f| f.ram <= free}         
+          possible_flavors = flavors_by_numa[trait].select {|f| f.ram <= free && f.ram <= host_mb}         
 
           result << {
             az: rp['az'],
