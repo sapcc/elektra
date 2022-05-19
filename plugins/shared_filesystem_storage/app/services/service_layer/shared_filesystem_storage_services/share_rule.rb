@@ -9,15 +9,7 @@ module ServiceLayer
       end
 
       def share_rules(share_id)
-        # share-access-rules endpoint was added with microversion 2.45
-        elektron
-          .service(
-            "sharev2",
-            headers: {
-              "X-OpenStack-Manila-API-Version" => "2.45",
-            },
-          )
-          .get("share-access-rules?share_id=#{share_id}")
+        elektron_shares.get("share-access-rules?share_id=#{share_id}")
           .map_to("body.access_list", &share_rule_map)
       end
 
