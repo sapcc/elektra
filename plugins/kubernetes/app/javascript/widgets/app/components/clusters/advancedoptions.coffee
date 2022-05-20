@@ -1,7 +1,6 @@
 import { connect } from "react-redux"
 import "../../lib/form_helpers.coffee"
-
-{ updateAdvancedOptions, changeVersion} = kubernetes
+import { updateAdvancedOptions, changeVersion} from "../../actions/clusters.coffee"
 
 
 AdvancedOptions = ({
@@ -74,8 +73,8 @@ AdvancedOptions = ({
                     disabled: ('disabled' if metaData.securityGroups.length == 1),
                     onChange: ((e) -> handleChange(e.target.name, e.target.value)),
 
-                        for securityGroup in metaData.securityGroups
-                          React.createElement 'option', value: securityGroup.name, key: securityGroup.id, securityGroup.name
+                        for securityGroup, i in metaData.securityGroups
+                          React.createElement 'option', value: securityGroup.name, key: i, securityGroup.name
 
 
 
@@ -95,8 +94,8 @@ AdvancedOptions = ({
                   disabled: ('disabled' if metaData.routers.length == 1 || edit),
                   onChange: ((e) -> handleChange(e.target.name, e.target.value)),
 
-                      for router in metaData.routers
-                        React.createElement 'option', value: router.id, key: router.id, router.name
+                      for router, i in metaData.routers
+                        React.createElement 'option', value: router.id, key: i, router.name
 
         # Network
         if options.routerID? && selectedRouter? && selectedRouter.networks?
@@ -113,8 +112,8 @@ AdvancedOptions = ({
                   disabled: ('disabled' if selectedRouter.networks.length == 1 || edit),
                   onChange: ((e) -> handleChange(e.target.name, e.target.value)),
 
-                      for network in selectedRouter.networks
-                        React.createElement 'option', value: network.id, key: network.id, network.name
+                      for network, i in selectedRouter.networks
+                        React.createElement 'option', value: network.id, key: i, network.name
 
 
         # Subnet
@@ -132,8 +131,8 @@ AdvancedOptions = ({
                   disabled: ('disabled' if selectedNetwork.subnets.length == 1 || edit),
                   onChange: ((e) -> handleChange(e.target.name, e.target.value)),
 
-                      for subnet in selectedNetwork.subnets
-                        React.createElement 'option', value: subnet.id, key: subnet.id, subnet.name
+                      for subnet, i in selectedNetwork.subnets
+                        React.createElement 'option', value: subnet.id, key: i, subnet.name
 
 
     React.createElement 'div', className: "form-group required string" ,
@@ -155,7 +154,7 @@ AdvancedOptions = ({
 
                   for version in availableVersions(cluster.status.apiserverVersion)
                     React.createElement 'option', value: version, key: version, version
-    
+
 AdvancedOptions = connect(
   (state) ->
     clusterForm:  state.clusterForm
