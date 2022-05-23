@@ -184,7 +184,7 @@ module Resources
 
 
     # dedicated Hana VM BBs in CCloud
-    # !!!It's crazy to implement that inUI, but the backend guys don't want to give us that via API.!!!
+    # !!!It's crazy to implement that in UI, but the backend guys don't want to give us that via API.!!!
     # 1. Check for 
     #    CUSTOM_HANA_EXCLUSIVE_HOST traits and CUSTOM_NUMASIZE_C48_M729 or CUSTOM_NUMASIZE_C48_M1459
     #    openstack resource provider list --required CUSTOM_HANA_EXCLUSIVE_HOST --required CUSTOM_NUMASIZE_C48_M729

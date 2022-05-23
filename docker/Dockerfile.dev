@@ -60,15 +60,19 @@ ENV PGDATA /app/tmp/postgresql/data
 
 RUN echo -e '#!/bin/bash\n\n\
 mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA"\n\
-if [ -z "$(ls -A $PGDATA)" ]; then\n\
+PGDATA_FILES=$(ls -A $PGDATA)\n\
+if [ -z "$PGDATA_FILES" ]; then\n\
   echo "INFO: setup database"\n\
   su - postgres -c "initdb $PGDATA" && chmod 700 $PGDATA\n\
 fi\n\
 mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql\n\
 su - postgres -c "pg_ctl -D $PGDATA -w start"\n\
-echo "INFO: create user \"dev\" with password \"dev\" and grant permissions"\n\
-su - postgres -c "createuser -dl dev"\n\
-su - postgres -c "psql -c \"ALTER USER dev WITH ENCRYPTED PASSWORD '"'"'dev'"'"';\""\n\
+if [ -z "$PGDATA_FILES" ]; then\n\ 
+  echo "INFO: create user \"dev\" with password \"dev\" and grant permissions"\n\
+  su - postgres -c "createuser -dl dev"\n\
+  su - postgres -c "psql -c \"ALTER USER dev WITH ENCRYPTED PASSWORD '"'"'dev'"'"';\""\n\
+  bin/rails db:create && bin/rails db:migrate\n\
+fi\n\   
 /bin/sh -c $@' >> /usr/local/bin/start_db && chmod +x /usr/local/bin/start_db
 
 
