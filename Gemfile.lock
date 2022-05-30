@@ -14,9 +14,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/lyra-client.git
-  revision: 5846553e5e657943d936130a0c8fa9d0a1805a5f
+  revision: c87fc48ceb1743ce9f5bb4c0bfda90bbb88d710a
   specs:
-    lyra-client (0.1.1)
+    lyra-client (0.2.0)
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
