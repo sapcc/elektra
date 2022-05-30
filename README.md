@@ -123,13 +123,13 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
     a. Run rails puma server
 
     ```bash
-    bundle exec rails server -p 3000
+    bin/rails server -p 3000
     ```
 
     b. Run react live compiling
 
     ```bash
-    bundle exec yarn build --watch
+    bin/yarn build --watch
     ```
 
     Browser access for Elektra: http://localhost:3000
