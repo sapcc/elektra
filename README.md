@@ -44,38 +44,95 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
 
 # Installing and Running Elektra
 
-## Prerequisites
+## Steps for locally development on mac
 
-1. DevStack or Openstack installation, Mitaka Release
+1.  Install **postgres** database (actual version is 12).
 
-   a. **Important:** Ensure Keystone V3 is activated. By default DevStack uses V2 (which has no domain support). Adding `IDENTITY_API_VERSION=3` to local.conf enables V3 support in DevStack
+    ```bash
+    brew install postgresql@12
+    brew link postgresql@12
+    createuser -s postgres
+    ```
 
-   b. **Important:** Ensure the service user you configured in your **.env** file (see below) has the admin role in the Default domain and all other domains you want to use.
+2.  Install **ruby** version 2.7.6 (or check for the actual version).
 
-2. installed postgres database
-3. ruby installation, version >= 2.4.0, bundler installation
+    ```bash
+    brew install ruby-install
+    ruby-install ruby 2.7.6
+    ```
 
-## First: Application Installation with bundler
+3.  Install **chruby** to change the current ruby version (optional). This is helpful when having projects with different ruby versions.
 
-1. run: `gem install bundler`
-1. run: `bundle install`
-1. copy the **env.sample** file to a **.env** file and adjust the values
-   - Set the MONSOON*OPENSTACK_AUTH_API*\* values to your devstack/openstack configuration settings
-   - Enter the database configuration parameters
-1. run: `bundle exec rake db:create db:migrate db:seed`
+    ```bash
+    brew install chruby
+    ```
 
-## Second: Install nodejs modules
+4.  [Install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed. (current working version 12.22.6 but higher versions works also fine)
 
-1. [install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed. Current working version 11.4.0
-2. [install](https://yarnpkg.com/en/docs/install) **yarn** if not installed. Current working version 1.12.3
-3. cd into elektra/ directory and run: `yarn`
+    ```bash
+    brew install nodejs@12
+    brew link nodejs@12
+    ```
 
-## Third: Start the Elektra Dashboard Application
+5.  [Install](https://yarnpkg.com/en/docs/install) **yarn** (actual version is 1.19.2 but higher works also fine)
 
-1. run: `bin/rails s -b 0.0.0.0 -p 3000`
-2. run: `yarn build --watch`
-3. Browser access for Elektra: http://localhost:3000
-4. DevStack: Login with user demo/devstack
+    ```bash
+    brew install yarn@1.19.2
+    ```
+
+6.  Clone this repository to your machine.
+
+    ```bash
+    git clone git@github.com:sapcc/elektra.git
+    ```
+
+7.  Install **bundler**
+    Cd into elektra/ directory and run:
+
+    ```bash
+    gem install bundler -v 2.3.13 (check for the actual version)
+    ```
+
+8.  Compile and install elektra gems
+    Cd into elektra/ directory and run:
+
+    ```bash
+    bundle install
+    ```
+
+9.  Compile and install node modules
+    Cd into elektra/ directory and run:
+
+    ```bash
+    bundle exec yarn
+    ```
+
+10. Create, migrate and seed the database
+    Cd into elektra/ directory and run:
+
+    ```bash
+    bundle exec rake db:create db:migrate db:seed
+    ```
+
+11. Copy the **env.sample** file to a **.env** file and adjust the values
+
+    - Set the MONSOON*OPENSTACK_AUTH_API*\* values to your devstack/openstack configuration settings
+    - Enter the database configuration parameters
+
+12. Start the Elektra dashboard application
+    a. Run rails puma server
+
+    ```bash
+    bundle exec rails server -p 3000
+    ```
+
+    b. Run react live compiling
+
+    ```bash
+    bundle exec yarn build --watch
+    ```
+
+    Browser access for Elektra: http://localhost:3000
 
 ## Use Elektra Request Management
 
