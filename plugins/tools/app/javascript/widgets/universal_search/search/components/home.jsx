@@ -160,7 +160,7 @@ export default class Search extends React.Component {
           <Pagination
             currentPage={this.props.objects.currentPage}
             total={this.props.objects.total}
-            perPage={30}
+            perPage={100}
             onChange={this.props.loadPage}
             className="pagination-container u-flex-pos-right"
           />
