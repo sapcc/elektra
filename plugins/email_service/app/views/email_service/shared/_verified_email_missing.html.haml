@@ -1,0 +1,8 @@
+.bs-callout.bs-callout-info.bs-callout-emphasize
+  %h4
+    Please note: You need to have atleast one eMail address verified before cronus activation.
+  %p
+    Click on the button below to verify an eMail address for this project.
+  %br
+    - if current_user.is_allowed?('email_service:email_verification_create')
+      = link_to "Verify an eMail Address", plugin('email_service').new_email_verification_path, data: {modal: true}, class: 'btn btn-primary'
