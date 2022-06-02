@@ -95,7 +95,8 @@ class ScopeController < ::ApplicationController
       description: -> (_e, controller) { "A domain with the name <b>#{controller.params[:domain_id]}</b> doesn't seem to exist. Please check the spelling and try again" },
       details: :message,
       warning: true,
-      sentry: true
+      sentry: true,
+      status: 404
     )
   end
 end
