@@ -69,6 +69,8 @@ const NewL7Policy = (props) => {
   const [showRedirectPoolID, setShowRedirectPoolID] = useState(false)
   const [showRedirectPrefix, setShowRedirectPrefix] = useState(false)
   const [showRedirectURL, setShowRedirectURL] = useState(false)
+  const [redirectHttpCode, setRedirectHttpCode] = useState(null)
+  const [redirectPoolId, setRedirectPoolId] = useState(null)
 
   const showExtraSection = useMemo(
     () =>
@@ -84,24 +86,33 @@ const NewL7Policy = (props) => {
     ]
   )
 
-  const validate = ({
-    name,
-    description,
-    position,
-    action,
-    redirect_url,
-    redirect_prefix,
-    redirect_http_code,
-    redirect_pool_id,
-    tags,
-  }) => {
-    return name && action && true
+  const validate = (values) => {
+    var redirect_key = ""
+    switch (values.action) {
+      case "REDIRECT_PREFIX": {
+        redirect_key = "redirect_prefix"
+        break
+      }
+      case "REDIRECT_TO_POOL": {
+        redirect_key = "redirect_pool_id"
+        break
+      }
+      case "REDIRECT_TO_URL": {
+        redirect_key = "redirect_url"
+        break
+      }
+    }
+
+    if (redirect_key.length > 0) {
+      return values.name && values.action && values[redirect_key] && true
+    }
+    return values.name && values.action && true
   }
 
   const onSubmit = (values) => {
     setFormErrors(null)
 
-    // remove redirect attributes that not belongs to the action type
+    // remove redirect attributes that not belongs to the action type selected
     const redirectAttr = actionRedirect(values.action).map((attr) => attr.value)
     const filteredValues = Object.keys(values)
       .filter((key) => {
@@ -137,10 +148,12 @@ const NewL7Policy = (props) => {
   }
 
   const onSelectAction = (p) => {
+    // reset active section
     setShowRedirectHttpCode(false)
     setShowRedirectPoolID(false)
     setShowRedirectPrefix(false)
     setShowRedirectURL(false)
+
     switch (p.value) {
       case "REDIRECT_PREFIX": {
         setShowRedirectHttpCode(true)
@@ -159,8 +172,12 @@ const NewL7Policy = (props) => {
     }
   }
 
-  const onSelectCode = () => {}
-  const onSelectPoolChange = () => {}
+  const onSelectCode = (value) => {
+    setRedirectHttpCode(value)
+  }
+  const onSelectPoolChange = (value) => {
+    setRedirectPoolId(value)
+  }
 
   Log.debug("RENDER new L7 Policy")
 
@@ -241,6 +258,7 @@ const NewL7Policy = (props) => {
                       name="redirect_http_code"
                       items={codeTypes()}
                       onChange={onSelectCode}
+                      value={redirectHttpCode}
                     />
                     <span className="help-block">
                       <i className="fa fa-info-circle"></i>
@@ -257,12 +275,14 @@ const NewL7Policy = (props) => {
                   <Form.ElementHorizontal
                     label="Redirect Pool ID"
                     name="redirect_pool_id"
+                    required
                   >
                     <SelectInput
                       name="redirect_pool_id"
                       isLoading={pools.isLoading}
                       items={pools.items}
                       onChange={onSelectPoolChange}
+                      value={redirectPoolId}
                     />
                     {pools.error ? (
                       <span className="text-danger">{pools.error}</span>
@@ -283,6 +303,7 @@ const NewL7Policy = (props) => {
                   <Form.ElementHorizontal
                     label="Redirect Prefix"
                     name="redirect_prefix"
+                    required
                   >
                     <Form.Input
                       elementType="input"
@@ -303,6 +324,7 @@ const NewL7Policy = (props) => {
                   <Form.ElementHorizontal
                     label="Redirect Url"
                     name="redirect_url"
+                    required
                   >
                     <Form.Input
                       elementType="input"
