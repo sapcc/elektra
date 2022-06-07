@@ -39,6 +39,7 @@ const EditL7Rule = (props) => {
   const [showKeyAttribute, setShowKeyAttribute] = useState(false)
   const [ruleType, setRuleType] = useState(null)
   const [ruleCompareType, setRuleCompareType] = useState(null)
+  const [usedRegexComparedType, setUsedRegexComparedType] = useState(false)
 
   useEffect(() => {
     // get the lb
@@ -91,6 +92,10 @@ const EditL7Rule = (props) => {
   }
 
   const setSelectCompareType = () => {
+    if (l7rule.item.compare_type === "REGEX") {
+      setUsedRegexComparedType(true)
+      return
+    }
     const selectedOption = ruleCompareTypes().find(
       (i) => i.value == (l7rule.item.compare_type || "").trim()
     )
@@ -164,6 +169,7 @@ const EditL7Rule = (props) => {
   }
 
   const onSelectCompareType = (option) => {
+    setUsedRegexComparedType(false)
     setRuleCompareType(option)
   }
 
@@ -240,6 +246,15 @@ const EditL7Rule = (props) => {
                     onChange={onSelectCompareType}
                     value={ruleCompareType}
                   />
+                  {usedRegexComparedType ? (
+                    <span className="text-danger">
+                      {
+                        "Compare type 'REGEX' is not supported. Please choose a different one. "
+                      }
+                    </span>
+                  ) : (
+                    ""
+                  )}
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
                     <span className="help-block-text">

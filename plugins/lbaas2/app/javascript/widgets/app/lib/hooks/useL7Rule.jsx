@@ -261,11 +261,6 @@ const useL7Rule = () => {
         description: "String is equal to",
       },
       {
-        label: "REGEX",
-        value: "REGEX",
-        description: "Perl type regular expression matching",
-      },
-      {
         label: "STARTS_WITH",
         value: "STARTS_WITH",
         description: "String starts with",
