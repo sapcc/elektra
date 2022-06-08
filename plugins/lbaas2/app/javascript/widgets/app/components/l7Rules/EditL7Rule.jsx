@@ -94,7 +94,6 @@ const EditL7Rule = (props) => {
   const setSelectCompareType = () => {
     if (l7rule.item.compare_type === "REGEX") {
       setUsedRegexComparedType(true)
-      return
     }
     const selectedOption = ruleCompareTypes().find(
       (i) => i.value == (l7rule.item.compare_type || "").trim()
@@ -138,12 +137,17 @@ const EditL7Rule = (props) => {
       delete newValues.key
     }
 
+    // if the compare type wasn't changed after editing, this will removed so the user is force to change it.
+    if (newValues.compare_type === "REGEX") {
+      delete newValues.compare_type
+    }
+
     return updateL7Rule(
       loadbalancerID,
       listenerID,
       l7policyID,
       l7ruleID,
-      values
+      newValues
     )
       .then((response) => {
         addNotice(
