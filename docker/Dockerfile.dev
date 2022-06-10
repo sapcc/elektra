@@ -71,11 +71,13 @@ mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql\n
 su - postgres -c "pg_ctl -D $PGDATA -w start"\n\
 bin/rails db:create && bin/rails db:migrate\n\
 clear\n\
-/bin/bash -login -c $@' >> /usr/local/bin/start_db && chmod +x /usr/local/bin/start_db
+/bin/bash -login' >> /usr/local/bin/start_db && chmod +x /usr/local/bin/start_db
 
 RUN echo -e 'echo "Welcome to elektra dev container"\n\
-echo " - start rails run: bin/rails-start"\n\
-echo " - start javascript run: yarn build --watch"\n' >> /root/.profile
+echo " - start rails run: start_rails"\n\
+echo " - start javascript run: start_js"\n\
+alias start_rails="cd /app && bin/start-rails"\n\
+alias start_js="cd /app && yarn build --watch"\n' >> /root/.profile
 
 RUN echo -e  '#!/bin/bash\n/app/bin/rails s -b 0.0.0.0 -p $APP_PORT' >> /usr/local/bin/start && \
   chmod +x /usr/local/bin/start
