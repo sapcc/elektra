@@ -61,6 +61,7 @@ ENV PGDATA /app/tmp/postgresql/data
 RUN gem install bundler && bundle config set --local path 'vendor/bundle'
 RUN echo -e '#!/bin/bash\n\n\
 bundle install \n\
+yarn \n\
 mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA"\n\
 PGDATA_FILES=$(ls -A $PGDATA)\n\
 if [ -z "$PGDATA_FILES" ]; then\n\
