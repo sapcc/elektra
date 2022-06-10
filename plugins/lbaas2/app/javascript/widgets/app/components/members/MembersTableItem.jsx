@@ -128,9 +128,26 @@ const MembersTableItem = ({
   }
 
   const monitorAddressPort = () => {
+    // if ether monitor ip or port is set display it with the member ip or port as default if missing
     if (member.monitor_address || member.monitor_port) {
-      return `${member.monitor_address}:${member.monitor_port}`
+      var monitorAdress = member.monitor_address
+      var monitorPort = member.monitor_port
+      if (!monitorAdress) monitorAdress = member.address
+      if (!monitorPort) monitorPort = member.protocol_port
+      return `${monitorAdress}:${monitorPort}`
     }
+  }
+
+  // check if the monitor ip or ports defaults to the member ip or port
+  const monitorAddressPortIsDefaulted = () => {
+    // check if ether monitor ip or port is set
+    if (member.monitor_address || member.monitor_port) {
+      // if ether monitor ip or port is defaults to member if and return true
+      if (!member.monitor_address || !member.monitor_port) {
+        return true
+      }
+    }
+    return false
   }
 
   return (
@@ -153,10 +170,13 @@ const MembersTableItem = ({
         </p>
         {monitorAddressPort() && (
           <p className="list-group-item-text list-group-item-text-copy display-flex">
-            <MemberMonitorIcon />
+            <MemberMonitorIcon isDefaulted={monitorAddressPortIsDefaulted()} />
             <CopyPastePopover
               text={monitorAddressPort()}
               searchTerm={searchTerm}
+              bsClass={
+                monitorAddressPortIsDefaulted() ? "cp copy-paste-ids" : ""
+              }
             />
           </p>
         )}
