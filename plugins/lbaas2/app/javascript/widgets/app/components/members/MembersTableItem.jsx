@@ -157,7 +157,7 @@ const MembersTableItem = ({
         {displayID()}
       </td>
       <td>{entityStatus}</td>
-      <td>
+      <td className="snug-nowrap">
         <StaticTags tags={member.tags} shouldPopover={true} />
       </td>
       <td className="snug-nowrap">
