@@ -1,6 +1,6 @@
 import "./helpers.coffee"
-
 import { connect } from "react-redux"
+import React from "react"
 
 const ReactModal = {
   SHOW_MODAL: "SHOW_MODAL",
@@ -8,56 +8,64 @@ const ReactModal = {
   HIDE_ALL: "HIDE_ALL",
 }
 
-const addModalUrlFragment = ({ modalType, modalProps }) => {
-  let overlayParams = "&modal=#{modalType}"
-  overlayParams +=
-    "&" +
-    Object.keys(modalProps)
-      .map((k) => `${k}=${modalProps[k]}`)
-      .join("&")
-  if (window.location.hash.indexOf("&modal") >= 0)
-    window.location.hash.replace(/&modal.*/, overlayParams)
-  else window.location.hash += overlayParams
-}
+// const addModalUrlFragment = ({ modalType, modalProps }) => {
+//   let overlayParams = `&modal=${modalType}`
+//   overlayParams +=
+//     "&" +
+//     Object.keys(modalProps)
+//       .map((k) => `${k}=${modalProps[k]}`)
+//       .join("&")
 
-const removeModalUrlFragment = ({ modalType, modalProps }) => {
-  window.location.hash = window.location.hash.replace(/&modal.*/g, "")
-}
+//   if (window.location.hash.indexOf("&modal") >= 0)
+//     window.location.hash.replace(/&modal.*/, overlayParams)
+//   else window.location.hash += overlayParams
+// }
 
-const Modal =
-  (title, WrappedComponent, options) =>
-  ({ dispatch, modalType, modalProps, ...props }) => {
-    const elementRef = React.useRef()
+// const removeModalUrlFragment = ({ modalType, modalProps }) =>
+//   (window.location.hash = window.location.hash.replace(/&modal.*/g, ""))
+
+ReactModal.Wrapper = (title, WrappedComponent, options = {}) =>
+  connect((state) => state)((props) => {
+    const modalRef = React.useRef()
 
     const close = React.useCallback(
-      (e) => {
+      (e, _callback) => {
         if (e) e.preventDefault()
-        if (!elementRef.current) return
-        $(elementRef.current).modal("hide")
+        // bug in react. Instead of one parameter the onClick callback provides
+        // two parameters. The first is a Proxy object (don't know what it is).
+        // Deactivate the callback feature until fixed.
+        // $(@refs.modal).on('hidden.bs.modal', callback) if callback
+        $(modalRef.current).modal("hide")
       },
-      [elementRef.current]
+      [modalRef.current]
     )
 
     const handleClose = React.useCallback(() => {
-      if (dispatch) dispatch({ type: ReactModal.HIDE_MODAL, modalType })
-    }, [dispatch, modalType])
+      if (props.dispatch)
+        props.dispatch({
+          type: ReactModal.HIDE_MODAL,
+          modalType: props.modalType,
+        })
+    }, [props.dispatch, props.modalType])
 
     React.useEffect(() => {
-      if (!elementRef.current) return
-      $(elementRef.current).modal("show")
-      $(elementRef.current).on("hidden.bs.modal", handleClose)
-    }, [elementRef.current, handleClose])
+      if (!modalRef.current) return
+      $(modalRef.current).modal("show")
+      $(modalRef.current).on("hidden.bs.modal", handleClose)
+    }, [modalRef.current, handleClose])
 
-    options = ReactHelpers.mergeObjects({ closeButton: true }, options)
-    modalProps = modalProps || {}
-    const childProps = { modalType, dispatch, close, modalProps, ...props }
+    options = window.ReactHelpers.mergeObjects({ closeButton: true }, options)
+    let modalProps = props.modalProps || {}
+    let childProps = window.ReactHelpers.mergeObjects(props, { close: close })
+    delete childProps.modalProps
+    childProps = window.ReactHelpers.mergeObjects(childProps, modalProps)
 
     return (
       <div
         className="modal fade"
-        data-backdrop={options.static == true ? "static" : true}
-        tabIndex="-1"
-        ref={elementRef}
+        data-backdrop={options.static === true ? "static" : true}
+        tab-index="-1"
+        ref={modalRef}
         role="dialog"
         aria-labelledby="myModalLabel"
       >
@@ -73,10 +81,10 @@ const Modal =
                 <button
                   type="button"
                   className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
+                  dataDismiss="modal"
+                  ariaLabel="Close"
                 >
-                  <span aria-hidden="true">x</span>
+                  <span ariaHidden="true">x</span>
                 </button>
               )}
               <h4 className="modal-title">{title}</h4>
@@ -86,41 +94,32 @@ const Modal =
         </div>
       </div>
     )
-  }
-
-ReactModal.Wrapper = (title, WrappedComponent, options = {}) =>
-  connect((state) => state)(Modal(title, WrappedComponent, options))
+  })
 
 ReactModal.Reducer = (state = [], action) => {
   switch (action.type) {
     case ReactModal.SHOW_MODAL: {
-      let contains = false
-      for (let m of state) {
+      for (m of state) {
         if (m.modalType === action.modalType) {
-          contains = true
-          break
+          return state
         }
       }
 
-      if (contains) return state
-      let newState = state.slice()
+      const newState = state.slice()
       newState.push({
         modalType: action.modalType,
         modalProps: action.modalProps,
       })
-
-      //addModalUrlFragment(action)
+      // addModalUrlFragment(action)
       return newState
     }
     case ReactModal.HIDE_MODAL: {
-      const index = state.findIndex(
-        (entry) => entry.modalType === action.modalType
-      )
-      if (index < 0) return state
       let newState = state.slice()
-      newState.splice(index, 1)
-
-      //removeModalUrlFragment(action)
+      for (i in state) {
+        const m = state[i]
+        if (m.modalType === action.modalType) newState.splice(i, 1)
+      }
+      // removeModalUrlFragment(action)
       return newState
     }
     case ReactModal.HIDE_ALL:
@@ -130,11 +129,11 @@ ReactModal.Reducer = (state = [], action) => {
   }
 }
 
-ReactModal.Container = (reducerName, componentsMap) => {
-  let ModalRoot = ({ modals }) => {
-    if (!modals || modals.length === 0) return null
-
-    return (
+ReactModal.Container = (reducerName, componentsMap) =>
+  connect((state) => ({
+    modals: state[reducerName],
+  }))(({ modals }) =>
+    modals && modals.length ? (
       <div>
         {modals.map(
           (modal) =>
@@ -147,10 +146,7 @@ ReactModal.Container = (reducerName, componentsMap) => {
             })
         )}
       </div>
-    )
-  }
-
-  return connect((state) => ({ modals: state[reducerName] }))(ModalRoot)
-}
+    ) : null
+  )
 
 window.ReactModal = ReactModal
