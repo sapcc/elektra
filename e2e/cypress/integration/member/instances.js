@@ -86,7 +86,7 @@ describe("instances", () => {
     cy.contains('a','Create Snapshot').should('be.visible').then(($menu) => {
       cy.wrap($menu).click()
     })
-    cy.contains('you need the image_admin and swiftoperator role')
+    cy.contains('you need the image_admin and objectstore_admin role')
     cy.get('#mainModal button[type="button"]').click()
 
     cy.get('button.dropdown-toggle').click()

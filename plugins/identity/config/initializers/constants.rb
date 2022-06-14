@@ -20,6 +20,8 @@ ALLOWED_ROLES = %w[
   monitoring_viewer
   network_admin
   network_viewer
+  objectstore_admin
+  objectstore_viewer
   role_admin
   role_viewer
   reader

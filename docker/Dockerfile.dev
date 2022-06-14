@@ -58,7 +58,10 @@ VOLUME /app
 ################### POSTGRESQL
 ENV PGDATA /app/tmp/postgresql/data
 
+RUN gem install bundler && bundle config set --local path 'vendor/bundle'
 RUN echo -e '#!/bin/bash\n\n\
+bundle install \n\
+yarn \n\
 mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA"\n\
 PGDATA_FILES=$(ls -A $PGDATA)\n\
 if [ -z "$PGDATA_FILES" ]; then\n\
@@ -67,16 +70,15 @@ if [ -z "$PGDATA_FILES" ]; then\n\
 fi\n\
 mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql\n\
 su - postgres -c "pg_ctl -D $PGDATA -w start"\n\
-if [ -z "$PGDATA_FILES" ]; then\n\ 
-  echo "INFO: create user \"dev\" with password \"dev\" and grant permissions"\n\
-  su - postgres -c "createuser -dl dev"\n\
-  su - postgres -c "psql -c \"ALTER USER dev WITH ENCRYPTED PASSWORD '"'"'dev'"'"';\""\n\
-  bin/rails db:create && bin/rails db:migrate\n\
-fi\n\   
-/bin/sh -c $@' >> /usr/local/bin/start_db && chmod +x /usr/local/bin/start_db
+bin/rails db:create && bin/rails db:migrate\n\
+clear\n\
+/bin/bash -login' >> /usr/local/bin/start_db && chmod +x /usr/local/bin/start_db
 
-
-RUN gem install bundler && bundle config set --local path 'vendor/bundle'
+RUN echo -e 'echo "Welcome to elektra dev container"\n\
+echo " - start rails run: start_rails"\n\
+echo " - start javascript run: start_js"\n\
+alias start_rails="cd /app && bin/start-rails"\n\
+alias start_js="cd /app && yarn build --watch"\n' >> /root/.profile
 
 RUN echo -e  '#!/bin/bash\n/app/bin/rails s -b 0.0.0.0 -p $APP_PORT' >> /usr/local/bin/start && \
   chmod +x /usr/local/bin/start
