@@ -1,11 +1,11 @@
 //close the create request window
-Dashboard.hideModal();Dashboard
+Dashboard.hideModal();
 
 // trigger hard reset
 $.post("<%=plugin('compute').hard_reset_instance_path({id:@instance.id})%>");
 
 //close the create request window
-Dashboard.hideModal();Dashboard
+Dashboard.hideModal();
 
 var cnt = 15;
 // show countdown for reload
