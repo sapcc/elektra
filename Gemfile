@@ -12,19 +12,21 @@ source 'https://rubygems.org'
 gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '7.0' 
-gem "sprockets-rails"
-gem 'jsbundling-rails'
+# gem "sprockets-rails"
 
-gem 'bootstrap-sass'
+gem 'jsbundling-rails'
+gem 'cssbundling-rails'
+
+# gem 'bootstrap-sass'
 gem 'haml-rails'
 gem 'simple_form'
 gem 'redcarpet'
-gem 'spinners'
+# gem 'spinners'
 
 gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
-gem 'font-awesome-sass', '~>4'
+# gem 'font-awesome-sass', '~>4'
 gem 'kaminari', '~> 1.2.1'
 
 gem 'responders'

@@ -11,6 +11,8 @@ const watch = args.indexOf("--watch") >= 0
 const production =
   args.indexOf("--production") >= 0 || process.env.RAILS_ENV === "production"
 
+const currentFolder = process.argv[1].split("/").slice(0, -1).join("/")
+
 require("esbuild")
   .build({
     entryPoints: entryPoints(
@@ -49,7 +51,7 @@ require("esbuild")
     watch,
     minify: production,
     sourcemap: !production,
-    inject: ["esbuild/react-shim.js"],
+    inject: [`${currentFolder}/react-shim.js`],
   })
   .then(() => {
     if (watch) console.log("watching...")

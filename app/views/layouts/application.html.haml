@@ -29,8 +29,13 @@
 
     / Load plugin js (plugin_name/plugin.js)
     - plugin = Core::PluginsManager.plugin(plugin_name)
-    - if plugin and plugin.has_plugin_js?
-      = javascript_include_tag "#{plugin.name}_plugin"
+    - if plugin
+      - if plugin.has_plugin_js?
+        = javascript_include_tag "#{plugin.name}_plugin" 
+
+      -# - if plugin.has_application_css?
+      -#   = stylesheet_link_tag "#{plugin.name}/application"
+      -#   %style=".#{plugin.name} {  @import \"#{plugin.name}/application\"; }"
 
     = favicon_png
     = favicon_ico
