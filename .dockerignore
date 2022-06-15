@@ -1,4 +1,5 @@
 Dockerfile
+.DS_Store
 vendor/bundle
 .env
 .envrc
@@ -6,3 +7,10 @@ vendor/bundle
 tmp/
 log/*.log
 ci/
+
+.git
+node_modules
+docker
+docs
+e2e
+Procfile*
