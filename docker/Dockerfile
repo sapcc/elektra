@@ -3,9 +3,23 @@ FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.1
 
 ENV APP_PATH=/home/app
 ENV RAILS_ENV=production
+ARG MONSOON_LOB_LIST
+ENV MONSOON_LOB_LIST=$MONSOON_LOB_LIST
+ARG MONSOON_NEW_PROJECT_DL
+ENV MONSOON_NEW_PROJECT_DL=$MONSOON_NEW_PROJECT_DL
+
+# We use dummy master.key to workaround the fact that
+# assets:precompile needs them but we don't want the real master.key to be built
+# into the container. The MONSOON_RAILS_SECRET_TOKEN should be injected as env var when starting the
+# container.
+# https://github.com/rails/rails/issues/32947
+ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
+ARG MONSOON_RAILS_SECRET_TOKEN
+ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
+
 WORKDIR $APP_PATH
 
-
+################################### BUILDER ################################
 FROM base AS builder 
 RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime-info
 
@@ -63,23 +77,19 @@ RUN bundle install
 # add elektra sources into image
 ADD . $APP_PATH
 
-# We use dummy master.key to workaround the fact that
-# assets:precompile needs them but we don't want the real master.key to be built
-# into the container. The MONSOON_RAILS_SECRET_TOKEN should be injected as env var when starting the
-# container.
-# https://github.com/rails/rails/issues/32947
-ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
-ARG MONSOON_RAILS_SECRET_TOKEN
-ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
-
 # transpile javascripts
 #RUN yarn install --no-progress && yarn build --production && rm -rf node_modules
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets node_modules
 
 ############################ TEST IMAGE ##########################
-FROM builder AS tests
+FROM base AS tests
 RUN apk add --no-cache postgresql bash
 ENV RAILS_ENV=test
+# Copy the already built bundler artifact
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+# Copy the already built js artifact
+COPY --from=builder $APP_PATH $APP_PATH
+
 RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/pg start' \
       && rake db:create db:migrate \
       && bundle exec rspec \
@@ -88,13 +98,8 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
 
 
 ######################################### FINAL IMAGE ######################################
-FROM builder AS elektra
+FROM base AS elektra
 LABEL source_repository="https://github.com/sapcc/elektra"
-
-ARG MONSOON_LOB_LIST
-ENV MONSOON_LOB_LIST=$MONSOON_LOB_LIST
-ARG MONSOON_NEW_PROJECT_DL
-ENV MONSOON_NEW_PROJECT_DL=$MONSOON_NEW_PROJECT_DL
 
 # Copy the already built bundler artifact
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
