@@ -83,7 +83,7 @@ ADD . $APP_PATH
 #RUN yarn install --no-progress && yarn build --production && rm -rf node_modules
 RUN bin/rails assets:precompile && rm -rf node_modules
 
-RUN echo $(git rev-parse HEAD) > $APP_PATH/REVISION
+RUN echo $(git rev-parse HEAD) > $APP_PATH/REVISION && rm -rf .git
 ############################ TEST IMAGE ##########################
 FROM base AS tests
 RUN apk add --no-cache postgresql bash

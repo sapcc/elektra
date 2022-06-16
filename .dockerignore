@@ -8,7 +8,6 @@ tmp/
 log/*.log
 ci/
 
-.git
 node_modules
 docker
 docs
