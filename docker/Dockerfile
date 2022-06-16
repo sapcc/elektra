@@ -105,6 +105,7 @@ LABEL source_repository="https://github.com/sapcc/elektra"
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 # Copy the already built js artifact
 COPY --from=builder $APP_PATH $APP_PATH
+COPY --from=builder /usr/bin/dumb-init /usr/bin/dumb-init  
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
