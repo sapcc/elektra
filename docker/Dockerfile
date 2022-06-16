@@ -74,15 +74,16 @@ RUN script/organize_plugins_gemspecs
 # install gems, copy app and run rake tasks
 RUN apk --no-cache add build-base
 RUN bundle config set --local without 'development integration_tests'
-RUN bundle install 
+RUN bundle install --jobs=8
 
 # add elektra sources into image
 ADD . $APP_PATH
 
 # transpile javascripts
 #RUN yarn install --no-progress && yarn build --production && rm -rf node_modules
-RUN bin/rails assets:precompile && rm -rf tmp/cache/assets node_modules
+RUN bin/rails assets:precompile && rm -rf node_modules
 
+RUN echo $(git rev-parse HEAD) > $APP_PATH/REVISION
 ############################ TEST IMAGE ##########################
 FROM base AS tests
 RUN apk add --no-cache postgresql bash
@@ -96,7 +97,7 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
       && rake db:create db:migrate \
       && bundle exec rspec \
       && su postgres -c 'script/pg_tmp.sh -d /tmp/pg stop'
-      # && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
+# && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
 
 
 ######################################### FINAL IMAGE ######################################
@@ -111,4 +112,3 @@ COPY --from=builder /usr/bin/dumb-init /usr/bin/dumb-init
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
 
-FROM elektra
