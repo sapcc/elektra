@@ -19,9 +19,11 @@ ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
 
 WORKDIR $APP_PATH
 
+RUN apk --no-cache add tzdata postgresql-client
+
 ################################### BUILDER ################################
 FROM base AS builder 
-RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime-info
+RUN apk --no-cache add git curl nodejs yarn shared-mime-info
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
@@ -100,7 +102,6 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
 ######################################### FINAL IMAGE ######################################
 FROM base AS elektra
 LABEL source_repository="https://github.com/sapcc/elektra"
-RUN apk --no-cache add postgresql-client 
 # Copy the already built bundler artifact
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 # Copy the already built js artifact
