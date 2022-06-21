@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class Generators::DashboardPlugin::ReactPluginGenerator
+class ReactPluginGenerator
   extend Forwardable
   def_delegators :@context, :options, :copy_file, :remove_file, :gsub_file,
-                 :create_file, :name, :remove_dir, :directory, :source_paths,
-                 :append_to_file
+                :create_file, :name, :remove_dir, :directory, :source_paths,
+                :append_to_file
   attr_reader :plugin_path
 
   def initialize(context, plugin_path)

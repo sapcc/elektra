@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 # This class generates the skeleton of a dashboard plugin.
-class Generators::DashboardPlugin::PluginSkeletonGenerator
+class PluginSkeletonGenerator
   extend Forwardable
   def_delegators :@context, :options, :copy_file, :remove_file, :gsub_file,
-                 :create_file, :generate, :name
+                :create_file, :generate, :name
   attr_reader :plugin_path
 
   def initialize(context, plugin_path)
@@ -13,8 +13,7 @@ class Generators::DashboardPlugin::PluginSkeletonGenerator
   end
 
   def run
-    plugin_options = '--skip-gemfile --skip-bundle --skip-git --skip-test \
-      --skip-puma --skip-javascript --skip-gemfile-entry'
+    plugin_options = '--skip-gemfile --skip-bundle --skip-git --skip-test --skip-puma --skip-javascript --skip-gemfile-entry'
     plugin_options += ' --mountable' if options.mountable?
     plugin_options += ' --full' if options.service_layer? && !options.mountable?
 

@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 # This class contains methods for adaption of default plugin.
-class Generators::DashboardPlugin::DefaultPluginGenerator
+
+class DefaultPluginGenerator
   extend Forwardable
   def_delegators :@context, :options, :copy_file, :remove_file, :gsub_file,
-                 :create_file, :name
+                :create_file, :name
   attr_reader :plugin_path
 
   def initialize(context, plugin_path)
@@ -39,3 +40,4 @@ class Generators::DashboardPlugin::DefaultPluginGenerator
     copy_file 'default/config/routes.rb', "#{plugin_path}/#{name}/config/routes.rb"
   end
 end
+

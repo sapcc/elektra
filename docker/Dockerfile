@@ -1,14 +1,34 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.15 AS elektra
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.15 AS base 
 
-LABEL source_repository="https://github.com/sapcc/elektra"
+ENV APP_PATH=/home/app
+ENV RAILS_ENV=production
+ARG MONSOON_LOB_LIST
+ENV MONSOON_LOB_LIST=$MONSOON_LOB_LIST
+ARG MONSOON_NEW_PROJECT_DL
+ENV MONSOON_NEW_PROJECT_DL=$MONSOON_NEW_PROJECT_DL
 
-RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn shared-mime-info
+# We use dummy master.key to workaround the fact that
+# assets:precompile needs them but we don't want the real master.key to be built
+# into the container. The MONSOON_RAILS_SECRET_TOKEN should be injected as env var when starting the
+# container.
+# https://github.com/rails/rails/issues/32947
+ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
+ARG MONSOON_RAILS_SECRET_TOKEN
+ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
+
+WORKDIR $APP_PATH
+
+RUN apk --no-cache add tzdata postgresql-client
+
+################################### BUILDER ################################
+FROM base AS builder 
+RUN apk --no-cache add git curl nodejs yarn shared-mime-info
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
-RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
+RUN apk --no-cache add build-base postgresql-dev ruby-sassc --virtual .builddeps \
       && gem install bundler:2.3.9 \
       && gem install byebug -v 11.1.3 \
       && gem install ffi -v 1.15.5 \
@@ -38,23 +58,13 @@ RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/dow
       chmod +x /usr/bin/dumb-init && \
       dumb-init -V
 
-WORKDIR /home/app/webapp
-ENV RAILS_ENV=production
-
-ARG MONSOON_RAILS_SECRET_TOKEN
-ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
-ARG MONSOON_LOB_LIST
-ENV MONSOON_LOB_LIST=$MONSOON_LOB_LIST
-ARG MONSOON_NEW_PROJECT_DL
-ENV MONSOON_NEW_PROJECT_DL=$MONSOON_NEW_PROJECT_DL
-
-# add Gemfile and Gemfile.lock to /home/app/webapp/
+# add Gemfile and Gemfile.lock to $APP_PATH/
 ADD Gemfile Gemfile.lock ./
 
-# add package.json yarn.lock to /home/app/webapp
+# add package.json yarn.lock to $APP_PATH
 ADD package.json yarn.lock ./
 
-# copy all gemspec files from plugins folder into /home/app/webapp/tmp/plugins/
+# copy all gemspec files from plugins folder into $APP_PATH/tmp/plugins/
 ADD plugins/*/*.gemspec tmp/plugins/
 
 # copy organize_plugins_gemspecs script (see comments in script/organize_plugins_gemspecs) and execute it
@@ -64,33 +74,41 @@ RUN script/organize_plugins_gemspecs
 # install gems, copy app and run rake tasks
 RUN apk --no-cache add build-base
 RUN bundle config set --local without 'development integration_tests'
-RUN bundle install 
+RUN bundle install --jobs=8
 
 # add elektra sources into image
-ADD . /home/app/webapp
+ADD . $APP_PATH
 
 # transpile javascripts
-RUN yarn install --no-progress && yarn build --production 
+#RUN yarn install --no-progress && yarn build --production && rm -rf node_modules
+RUN bin/rails assets:precompile && rm -rf node_modules
 
-# We use dummy master.key to workaround the fact that
-# assets:precompile needs them but we don't want the real master.key to be built
-# into the container. The MONSOON_RAILS_SECRET_TOKEN should be injected as env var when starting the
-# container.
-# https://github.com/rails/rails/issues/32947
-
-ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
-RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
-
-ENTRYPOINT ["dumb-init", "-c", "--" ]
-CMD ["script/start.sh"]
-
-FROM elektra AS tests
+RUN echo $(git rev-parse HEAD) > $APP_PATH/REVISION && rm -rf .git
+############################ TEST IMAGE ##########################
+FROM base AS tests
 RUN apk add --no-cache postgresql bash
 ENV RAILS_ENV=test
+# Copy the already built bundler artifact
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+# Copy the already built js artifact
+COPY --from=builder $APP_PATH $APP_PATH
+
 RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/pg start' \
       && rake db:create db:migrate \
       && bundle exec rspec \
       && su postgres -c 'script/pg_tmp.sh -d /tmp/pg stop'
-      # && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
+# && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
 
-FROM elektra
+
+######################################### FINAL IMAGE ######################################
+FROM base AS elektra
+LABEL source_repository="https://github.com/sapcc/elektra"
+# Copy the already built bundler artifact
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+# Copy the already built js artifact
+COPY --from=builder $APP_PATH $APP_PATH
+COPY --from=builder /usr/bin/dumb-init /usr/bin/dumb-init  
+
+ENTRYPOINT ["dumb-init", "-c", "--" ]
+CMD ["script/start.sh"]
+

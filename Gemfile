@@ -39,8 +39,6 @@ gem 'activerecord-session_store'
 gem 'net-ssh'
 gem 'netaddr', '2.0.4'
 
-gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
-# gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 gem 'colorize'
 
 gem 'ruby-radius'
@@ -58,6 +56,9 @@ gem 'httpclient' # The only faraday backend that handled no_proxy :|
 # Automation
 gem 'lyra-client', git: 'https://github.com/sapcc/lyra-client.git'
 gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
+# auth
+gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
+# gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Spring:
+# (Note: using gem "spring", git: "..." won't work and is not a supported way of using Spring.)
+# So we have to disable spring for generate tasks!
+
+full_path=$(realpath "$0")
+dir=$(dirname "$full_path")
+
+DISABLE_SPRING=1 "$dir"/rails generate "$@"
