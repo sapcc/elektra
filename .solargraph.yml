@@ -1,0 +1,28 @@
+# https://solargraph.org/guides/configuration
+# https://solargraph.org/guides/type-checking
+# https://solargraph.org/guides/rails
+# used in code-server/vscode
+# https://github.com/castwide/vscode-solargraph
+---
+include:
+  - "**/*.rb"
+exclude:
+  - spec/**/*
+  - test/**/*
+  - vendor/**/*
+  - ".bundle/**/*"
+require: []
+domains: []
+reporters:
+  - rubocop
+  - require_not_found
+  - typecheck
+formatter:
+  rubocop:
+    cops: safe
+    except: []
+    only: []
+    extra_args: []
+require_paths: []
+plugins: []
+max_files: 5000
