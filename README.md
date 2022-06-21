@@ -168,34 +168,34 @@ For ease-of-use we have provided a generator which generates a skeleton plugin f
 
 ` cd [Elektra root]`
 
-`bin/rails g dashboard_plugin NAME`
+`bin/generate dashboard_plugin NAME`
 
 #### Create ServiceLayer Plugin
 
 ` cd [Elektra root]`
 
-`bin/rails g dashboard_plugin NAME --service_layer`
+`bin/generate dashboard_plugin NAME --service_layer`
 
 #### Create Mountable Plugin
 
 ` cd [Elektra root]`
 
-`bin/rails g dashboard_plugin NAME --mountable`
+`bin/generate dashboard_plugin NAME --mountable`
 
 #### Create Mountable ServiceLayer-Plugin
 
 ` cd [Elektra root]`
 
-`bin/rails g dashboard_plugin NAME --mountable --service_layer`
+`bin/generate dashboard_plugin NAME --mountable --service_layer`
 
 #### Create React Plugin
 
 ` cd [Elektra root]`
 
-`bin/rails generate dashboard_plugin NAME --react`
+`bin/generate dashboard_plugin NAME --react`
 
 For more information use:
-`bin/rails generate dashboard_plugin --help`
+`bin/generate dashboard_plugin --help`
 
 ### Creating Migrations
 
@@ -207,7 +207,7 @@ If your plugin needs to save things in the Elektra database, you'll need to crea
 
    Inside this (mountable) plugin you will find a bin folder and rails script within this folder.
 
-2. `bin/rails g migration entries`
+2. `bin/generate migration entries`
 
    A new migration was generated under `plugins/my_plugin/db/migrations/`
 

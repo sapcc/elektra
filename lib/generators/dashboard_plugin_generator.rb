@@ -4,7 +4,7 @@ require_relative './plugin_skeleton_generator'
 require_relative './default_plugin_generator'
 require_relative './react_plugin_generator'
 
-class Generators::DashboardPlugin::DashboardPluginGenerator < Rails::Generators::NamedBase
+class DashboardPluginGenerator < Rails::Generators::NamedBase
   PLUGINS_PATH = 'plugins'
 
   source_root File.expand_path('../templates', __FILE__)
@@ -32,3 +32,4 @@ class Generators::DashboardPlugin::DashboardPluginGenerator < Rails::Generators:
     end
   end
 end
+
