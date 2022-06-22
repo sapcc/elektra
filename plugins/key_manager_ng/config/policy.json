@@ -1,0 +1,10 @@
+{
+  "member": "role:member or role:Member",
+  "admin": "role:admin",
+
+  "key_manager_ng:entry_list": "rule:admin or rule:member",
+  "key_manager_ng:entry_get": "rule:admin or rule:member",
+  "key_manager_ng:entry_create": "rule:admin or rule:member",
+  "key_manager_ng:entry_delete": "rule:admin or rule:member",
+  "key_manager_ng:entry_update": "rule:admin or rule:member"
+}
