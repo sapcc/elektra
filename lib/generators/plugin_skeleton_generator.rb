@@ -36,14 +36,19 @@ class PluginSkeletonGenerator
   end
 
   def update_dependencies_to_gemspec
-    remove_file "#{plugin_path}/#{name}/lib/#{name}/version.rb"
-    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", "#{name.camelize}::VERSION", '"0.0.1"'
-    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", "# Maintain your gem's version:\n", ''
-    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", "require \"#{name}/version\"", ''
-    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /TODO:?/, ''
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.authors[^\n]*/, "spec.authors     = [\"Elektra UI team\"]"
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.description[^\n]*/, ""
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.summary[^\n]*/, 'spec.summary     = "An Elektra plugin"'
 
-    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /s.add_dependency "rails"[^\n]*\n/, ''
-    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /s.add_development_dependency "sqlite3"/, ''
+    # remove unnecessary infos
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.metadata[^\n]*/, ''
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.homepage[^\n]*/, ''
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.email[^\n]*/, ''
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /#[^\n]*/, ''
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /(\s*\n)+/, "\n"
+
+
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec\.add_dependency "rails[^\n]*\n/, ''
   end
 
   def replace_test_with_spec

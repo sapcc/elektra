@@ -1,59 +1,90 @@
-import { Modal, Button } from 'react-bootstrap';
-import { Form } from 'lib/elektra-form';
+import React from "react"
+import { Modal, Button } from "react-bootstrap"
+import { Form } from "lib/elektra-form"
+import { useHistory, useLocation } from "react-router-dom"
+import * as client from "../../client"
+import { useGlobalState } from "../StateProvider"
 
-export default class NewEntryForm extends React.Component {
-  constructor(props){
-  	super(props);
-  	this.state = {show: true};
-    this.close = this.close.bind(this)
-    this.onSubmit = this.onSubmit.bind(this)
-  }
+const New = () => {
+  const location = useLocation()
+  const history = useHistory()
+  const [_, dispatch] = useGlobalState()
+  const [show, setShow] = React.useState(true)
+  const mounted = React.useRef(false)
 
-  validate(values) {
-    return values.name && true
-  }
+  React.useEffect(() => {
+    mounted.current = true
+    return () => (mounted.current = false)
+  }, [])
 
-  close(e){
-    if(e) e.stopPropagation()
-    this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/entries'),300)
-  }
+  const onSubmit = React.useCallback(
+    (values) => {
+      client
+        .post("key-manager-ng/entries", { entry: values })
+        .then(
+          (item) =>
+            mounted.current && dispatch({ type: "@entries/receive", item })
+        )
+        .then(close)
+        .catch(
+          (error) =>
+            mounted.current &&
+            dispatch({ type: "@entries/error", error: error.message })
+        )
+    },
+    [dispatch]
+  )
 
-  onSubmit(values){
-    // handleSubmit returns a promise object. So, we can call then on this object
-    return this.props.handleSubmit(values).then(() => this.close());
-  }
+  const close = React.useCallback(() => {
+    setShow(false)
+  }, [])
 
-  render(){
-    return (
-      <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">New Entry</Modal.Title>
-        </Modal.Header>
+  const restoreURL = React.useCallback(
+    () => history.replace(location.pathname.replace("/new", "")),
+    [history, location]
+  )
 
-        <Form
-          className='form form-horizontal'
-          validate={this.validate}
-          onSubmit={this.onSubmit}>
+  const validate = React.useCallback((values) => !!values.name)
 
-          <Modal.Body>
-            <Form.Errors/>
+  return (
+    <Modal
+      show={show}
+      onHide={close}
+      onExited={restoreURL}
+      bsSize="large"
+      aria-labelledby="contained-modal-title-lg"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-lg">New Entry</Modal.Title>
+      </Modal.Header>
 
-            <Form.ElementHorizontal label='Name' name="name">
-              <Form.Input elementType='input' type='text' name='name'/>
-            </Form.ElementHorizontal>
+      <Form
+        className="form form-horizontal"
+        validate={validate}
+        onSubmit={onSubmit}
+      >
+        <Modal.Body>
+          <Form.Errors />
 
-            <Form.ElementHorizontal label='Description' name="description">
-              <Form.Input elementType='textarea' className="text optional form-control" name="description"/>
-            </Form.ElementHorizontal>
+          <Form.ElementHorizontal label="Name" name="name">
+            <Form.Input elementType="input" type="text" name="name" />
+          </Form.ElementHorizontal>
 
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={this.close}>Cancel</Button>
-            <Form.SubmitButton label='Save'/>
-          </Modal.Footer>
-        </Form>
-      </Modal>
-    );
-  }
+          <Form.ElementHorizontal label="Description" name="description">
+            <Form.Input
+              elementType="textarea"
+              className="text optional form-control"
+              name="description"
+            />
+          </Form.ElementHorizontal>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={close}>Cancel</Button>
+          <Form.SubmitButton label="Save" />
+        </Modal.Footer>
+      </Form>
+    </Modal>
+  )
 }
+
+export default New

@@ -7,21 +7,22 @@ class DashboardController < ::ScopeController
   include Rescue
 
   prepend_before_action do
-    requested_url = request.env['REQUEST_URI']
+    requested_url = request.env["REQUEST_URI"]
     referer_url = request.referer
-    referer_url = begin
-      "#{URI(referer_url).path}?#{URI(referer_url).query}"
-    rescue
-      nil
-    end
+    referer_url =
+      begin
+        "#{URI(referer_url).path}?#{URI(referer_url).query}"
+      rescue StandardError
+        nil
+      end
 
     unless params[:after_login]
       params[:after_login] = if requested_url =~ /(\?|\&)modal=true/ &&
-          referer_url =~ /(\?|\&)overlay=.+/
-                               referer_url
-                             else
-                               requested_url
-                             end
+           referer_url =~ /(\?|\&)overlay=.+/
+        referer_url
+      else
+        requested_url
+      end
     end
   end
 
@@ -37,9 +38,15 @@ class DashboardController < ::ScopeController
   #                        except: :terms_of_use
 
   # with redirect
-  authentication_required domain: ->(c) { c.instance_variable_get(:@scoped_domain_id) },
-                          domain_name: ->(c) { c.instance_variable_get(:@scoped_domain_name) },
-                          project: ->(c) { c.instance_variable_get(:@scoped_project_id) },
+  authentication_required domain: ->(c) {
+                            c.instance_variable_get(:@scoped_domain_id)
+                          },
+                          domain_name: ->(c) {
+                            c.instance_variable_get(:@scoped_domain_name)
+                          },
+                          project: ->(c) {
+                            c.instance_variable_get(:@scoped_project_id)
+                          },
                           rescope: false,
                           two_factor: :two_factor_required?,
                           except: :terms_of_use
@@ -51,12 +58,14 @@ class DashboardController < ::ScopeController
 
   # check if user has accepted terms of use.
   # Otherwise it is a new, unboarded user.
-  before_action :check_terms_of_use, except: %i[accept_terms_of_use terms_of_use]
+  before_action :check_terms_of_use,
+                except: %i[accept_terms_of_use terms_of_use]
   # rescope token
   before_action :rescope_token, except: [:terms_of_use]
   before_action :raven_context, except: [:terms_of_use]
   before_action :load_active_project,
-                :load_webcli_endpoint, except: %i[terms_of_use]
+                :load_webcli_endpoint,
+                except: %i[terms_of_use]
   before_action :set_mailer_host
 
   # this method checks if user has permissions for the new scope and if so
@@ -70,14 +79,14 @@ class DashboardController < ::ScopeController
         # friendly id entry is nil -> reset @can_access_project, render project
         # not found page and return.
         @can_access_project = false
-        return render(template: 'application/exceptions/project_not_found')
+        return render(template: "application/exceptions/project_not_found")
       end
 
       # NOTE: LEAVE this here because for better review
       # we do not need extra permissions check for project and domains because elektron and monsoon_openstack_auth
       # are doing the job. If the user has no access with his token monsoon_openstack_auth will trow an NotAuthorized
       # error that we will catch and handle to show 'application/exceptions/unauthorized'
-      # 
+      #
       # if no access this is handled in rescue from above
       # did not return -> check if user projects include the requested project.
       #has_project_access = services.identity.has_project_access(
@@ -90,7 +99,7 @@ class DashboardController < ::ScopeController
       #  @can_access_project = false
       #  return render(template: 'application/exceptions/unauthorized')
       #end
-    elsif @scoped_domain_id 
+    elsif @scoped_domain_id
       # NOTE: LEAVE hit here because for better review
       # @scoped_project_id is nil and @scoped_domain_id exists -> check if
       # user can access the requested domain.
@@ -105,23 +114,23 @@ class DashboardController < ::ScopeController
       #  # unscoped token and return this will be the startpoint to rescope again
       #  return authentication_rescope_token(domain: nil, project: nil)
       #end
-    else 
+    else
       # both @scoped_project_id and @scoped_domain_id are nil
       # -> render unauthorized page and return.
       @can_access_project = false
-      return render(template: 'application/exceptions/unauthorized')
+      return render(template: "application/exceptions/unauthorized")
     end
     # did not return yet -> rescope token to the 'new' scope.
     begin
-      authentication_rescope_token 
+      authentication_rescope_token
     rescue MonsoonOpenstackAuth::Authentication::NotAuthorized => exception
       if exception.message =~ /has no access to the requested scope/
-        if @scoped_project_id.present? 
-          render(template: 'application/exceptions/unauthorized')
+        if @scoped_project_id.present?
+          render(template: "application/exceptions/unauthorized")
         elsif @scoped_domain_id.present?
           authentication_rescope_token(domain: nil, project: nil)
         end
-      end 
+      end
       # All other NotAuthorized Errors handled by "rescue_and_render_exception_page"
     end
   end
@@ -140,10 +149,11 @@ class DashboardController < ::ScopeController
         .create_with(
           name: current_user.name,
           email: current_user.email,
-          full_name: current_user.full_name)
-        .find_or_create_by(
-          uid: current_user.id)
-        .domain_profiles.create!(
+          full_name: current_user.full_name
+        )
+        .find_or_create_by(uid: current_user.id)
+        .domain_profiles
+        .create!(
           tou_version: Settings.actual_terms.version,
           domain_id: current_user.user_domain_id
         )
@@ -152,7 +162,7 @@ class DashboardController < ::ScopeController
       # redirect to original path, this is the case after the TOU view
       if params[:orginal_url]
         redirect_to params[:orginal_url]
-      elsif plugin_available?('identity')
+      elsif plugin_available?("identity")
         redirect_to main_app.domain_home_path(domain_id: @scoped_domain_fid)
       else
         redirect_to main_app.root_path
@@ -164,16 +174,23 @@ class DashboardController < ::ScopeController
 
   def terms_of_use
     if current_user
-      @tou = UserProfile.tou(current_user.id,
-                             current_user.user_domain_id,
-                             Settings.actual_terms.version)
+      @tou =
+        UserProfile.tou(
+          current_user.id,
+          current_user.user_domain_id,
+          Settings.actual_terms.version
+        )
     end
     render action: :terms_of_use
   end
 
   def two_factor_required?
-    if ENV['TWO_FACTOR_AUTH_DOMAINS']
-      @two_factor_required = ENV['TWO_FACTOR_AUTH_DOMAINS'].gsub(/\s+/, '').split(',').include?(@scoped_domain_name)
+    if ENV["TWO_FACTOR_AUTH_DOMAINS"]
+      @two_factor_required =
+        ENV["TWO_FACTOR_AUTH_DOMAINS"]
+          .gsub(/\s+/, "")
+          .split(",")
+          .include?(@scoped_domain_name)
       return @two_factor_required
     end
     false
@@ -195,24 +212,25 @@ class DashboardController < ::ScopeController
   #                    has several bugs)
   # "beta"            (if it's almost ready for public release)
   def release_state
-    'public_release'
+    "public_release"
   end
 
   def show_beta?
-    params[:betafeatures] == 'showme'
+    params[:betafeatures] == "showme"
   end
 
   helper_method :show_beta?
 
   def raven_context
-    @sentry_user_context = {
-      ip_address: request.ip,
-      id: current_user.id,
-      email: current_user.email,
-      username: current_user.name,
-      domain: current_user.user_domain_name,
-      name: current_user.full_name
-    }.reject { |_, v| v.nil? }
+    @sentry_user_context =
+      {
+        ip_address: request.ip,
+        id: current_user.id,
+        email: current_user.email,
+        username: current_user.name,
+        domain: current_user.user_domain_name,
+        name: current_user.full_name
+      }.reject { |_, v| v.nil? }
 
     Raven.user_context(@sentry_user_context)
 
@@ -237,21 +255,25 @@ class DashboardController < ::ScopeController
     # load active project. Try first from ObjectCache and then from API
     cached_active_project = ObjectCache.where(id: @scoped_project_id).first
     if cached_active_project
-      @active_project = Identity::Project.new(services.identity, cached_active_project.payload)
+      @active_project =
+        Identity::Project.new(services.identity, cached_active_project.payload)
     else
       @active_project = service_user.identity.find_project(@scoped_project_id)
     end
 
     return if @active_project && @active_project.name == @scoped_project_name
 
-    @active_project = services.identity.find_project(
-      @scoped_project_id, subtree_as_ids: true, parents_as_ids: true
-    )
+    @active_project =
+      services.identity.find_project(
+        @scoped_project_id,
+        subtree_as_ids: true,
+        parents_as_ids: true
+      )
     FriendlyIdEntry.update_project_entry(@active_project)
   end
 
   def load_webcli_endpoint
-    @webcli_endpoint = current_user.service_url('webcli')
+    @webcli_endpoint = current_user.service_url("webcli")
   end
 
   def tou_accepted?
@@ -259,14 +281,16 @@ class DashboardController < ::ScopeController
     # and check_terms_of_use method is called on every request.
     # In order to reduce api calls we cache the result of new_user?
     # in the session for 5 minutes.
-    is_cache_expired = current_user.id != session[:last_user_id] ||
+    is_cache_expired =
+      current_user.id != session[:last_user_id] ||
         session[:last_request_timestamp].nil? ||
         (session[:last_request_timestamp] < Time.now - 5.minute)
     if is_cache_expired
       session[:last_request_timestamp] = Time.now
       session[:last_user_id] = current_user.id
       session[:tou_accepted] = UserProfile.tou_accepted?(
-        current_user.id, current_user.user_domain_id,
+        current_user.id,
+        current_user.user_domain_id,
         Settings.actual_terms.version
       )
     end
@@ -287,15 +311,16 @@ class DashboardController < ::ScopeController
   def project_id_required
     return unless params[:project_id].blank?
     raise Core::Error::ProjectNotFound,
-          'The project you have requested was not found.'
+          "The project you have requested was not found."
   end
 
   def load_help_text
     plugin_path = params[:controller]
 
-    plugin_index = Core::PluginsManager.available_plugins.find_index do |p|
-      plugin_path.starts_with?(p.name)
-    end
+    plugin_index =
+      Core::PluginsManager.available_plugins.find_index do |p|
+        plugin_path.starts_with?(p.name)
+      end
 
     unless plugin_index.blank?
       plugin = Core::PluginsManager.available_plugins.fetch(plugin_index, nil)
@@ -305,30 +330,30 @@ class DashboardController < ::ScopeController
 
     # get name of the specific service inside the plugin
     # remove plugin name from path
-    path = plugin_path.split('/')
+    path = plugin_path.split("/")
     path.shift
-    service_name = path.join('_')
+    service_name = path.join("_")
 
     # try to find the help file, check first for service specific help file,
     # next for general plugin help file
     help_file = File.join(plugin.path, "plugin_#{service_name}_help.md")
     unless File.exist?(help_file)
-      help_file = File.join(plugin.path, 'plugin_help.md')
+      help_file = File.join(plugin.path, "plugin_help.md")
     end
 
     # try to find the links file, check first for service specific links file,
     # next for general plugin links file
     help_links = File.join(plugin.path, "plugin_#{service_name}_help_links.md")
     unless File.exist?(help_links)
-      help_links = File.join(plugin.path, 'plugin_help_links.md')
+      help_links = File.join(plugin.path, "plugin_help_links.md")
     end
 
     # load plugin specific help text
-    @plugin_help_text = File.new(help_file, 'r').read if File.exist?(help_file)
+    @plugin_help_text = File.new(help_file, "r").read if File.exist?(help_file)
     return unless File.exist?(help_links)
     # load plugin specific help links
-    @plugin_help_links = File.new(help_links, 'r').read
-    @plugin_help_links = @plugin_help_links.gsub('#{@sap_docu_url}',
-                                                 sap_url_for('documentation'))
+    @plugin_help_links = File.new(help_links, "r").read
+    @plugin_help_links =
+      @plugin_help_links.gsub('#{@sap_docu_url}', sap_url_for("documentation"))
   end
 end
