@@ -97,6 +97,11 @@ PATH
       rails
 
 PATH
+  remote: plugins/key_manager_ng
+  specs:
+    key_manager_ng (0.1.0)
+
+PATH
   remote: plugins/key_manager
   specs:
     key_manager (0.0.1)
@@ -156,6 +161,11 @@ PATH
   remote: plugins/shared_filesystem_storage
   specs:
     shared_filesystem_storage (0.0.1)
+
+PATH
+  remote: plugins/testikus
+  specs:
+    testikus (0.1.0)
 
 PATH
   remote: plugins/tools
@@ -594,6 +604,7 @@ DEPENDENCIES
   kaminari
   keppel!
   key_manager!
+  key_manager_ng!
   kubernetes!
   lbaas2!
   listen
@@ -630,6 +641,7 @@ DEPENDENCIES
   spinners
   spring
   sqlite3
+  testikus!
   tools!
   unf (>= 0.2.0beta2)
   web-console (~> 3.0)

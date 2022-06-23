@@ -30,6 +30,9 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
       gsub_file(file, '%{PLUGIN_NAME_CAMELIZE}', name.camelize)
       gsub_file(file, /\n[\n]+/, "\n\n")
     end
+
+    p "=== Done!"
+    p "Go to dashboard: HOST/monsoon3/cc-demo/#{name}"
   end
 end
 

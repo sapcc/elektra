@@ -1,58 +1,102 @@
-import { Modal, Button } from 'react-bootstrap';
-import { Form } from 'lib/elektra-form';
+import React from "react"
+import { Modal, Button } from "react-bootstrap"
+import { Form } from "lib/elektra-form"
+import * as client from "../../client"
+import { useGlobalState } from "../StateProvider"
+import { useHistory, useLocation, useParams } from "react-router-dom"
 
-export default class EditEntryForm extends React.Component {
-  constructor(props){
-  	super(props);
-  	this.state = {show: this.props.entry!=null};
-    this.close = this.close.bind(this)
-    this.onSubmit = this.onSubmit.bind(this)
-  }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({show: nextProps.entry!=null})
-  }
+const Edit = () => {
+  const location = useLocation()
+  const history = useHistory()
+  const params = useParams()
+  const [state, dispatch] = useGlobalState()
+  const entry = React.useMemo(
+    () => state.entries.items.find((i) => i.id === params.id),
+    [state.entries, params.id]
+  )
+  const [show, setShow] = React.useState(!!entry)
+  const mounted = React.useRef(false)
 
-  close(e){
-    if(e) e.preventDefault()
-    this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/entries'), 300)
-  }
+  React.useEffect(() => {
+    mounted.current = true
+    setShow(!!params.id)
+    return () => (mounted.current = false)
+  }, [params.id])
 
-  onSubmit(values) {
-    // handleSubmit is a promise object.
-    return this.props.handleSubmit(values).then(() => this.close());
-  }
+  const onSubmit = React.useCallback(
+    (values) => {
+      client
+        .put(`key-manager-ng/entries/${params.id}`, { entry: values })
+        .then(
+          (item) =>
+            mounted.current && dispatch({ type: "@entries/receive", item })
+        )
+        .then(close)
+        .catch(
+          (error) =>
+            mounted.current &&
+            dispatch({ type: "@entries/error", error: error.message })
+        )
+    },
+    [params.id, dispatch]
+  )
 
-  render(){
-    return (
-      <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Edit Entry</Modal.Title>
-        </Modal.Header>
+  const close = React.useCallback(() => {
+    setShow(false)
+  }, [])
 
-        <Form
-          onSubmit={this.onSubmit}
-          className='form form-horizontal'
-          validate={values => true}
-          initialValues={this.props.entry}>
-          <Modal.Body>
-            <Form.Errors/>
-
-            <Form.ElementHorizontal label='Name' name="name">
-              <Form.Input elementType='input' type='text' name='name'/>
-            </Form.ElementHorizontal>
-
-            <Form.ElementHorizontal label='Description' name="description">
-              <Form.Input elementType='textarea' className="text optional form-control" name="description"/>
-            </Form.ElementHorizontal>
-
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={this.close}>Cancel</Button>
-            <Form.SubmitButton label='Save'/>
-          </Modal.Footer>
-        </Form>
-      </Modal>
+  const restoreURL = React.useCallback(() => {
+    history.replace(
+      location.pathname.replace(/^(\/[^/]*)\/.+\/edit$/, (a, b) => b)
     )
-  }
+  }, [history, location])
+
+  return (
+    <Modal
+      show={show}
+      onHide={close}
+      onExited={restoreURL}
+      bsSize="large"
+      aria-labelledby="contained-modal-title-lg"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-lg">Edit Entry</Modal.Title>
+      </Modal.Header>
+
+      <Form
+        onSubmit={onSubmit}
+        className="form form-horizontal"
+        validate={(values) => true}
+        initialValues={entry}
+      >
+        <Modal.Body>
+          <Form.Errors />
+
+          {entry ? (
+            <>
+              <Form.ElementHorizontal label="Name" name="name">
+                <Form.Input elementType="input" type="text" name="name" />
+              </Form.ElementHorizontal>
+
+              <Form.ElementHorizontal label="Description" name="description">
+                <Form.Input
+                  elementType="textarea"
+                  className="text optional form-control"
+                  name="description"
+                />
+              </Form.ElementHorizontal>
+            </>
+          ) : (
+            <span>Entry {params.id} not found</span>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={close}>Cancel</Button>
+          <Form.SubmitButton label="Save" />
+        </Modal.Footer>
+      </Form>
+    </Modal>
+  )
 }
+
+export default Edit

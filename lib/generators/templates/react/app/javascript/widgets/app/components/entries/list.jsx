@@ -1,42 +1,75 @@
+import React from "react"
 import { Link } from "react-router-dom"
 import { TransitionGroup } from "react-transition-group"
 import { FadeTransition } from "lib/components/transitions"
 import { policy } from "lib/policy"
 import { SearchField } from "lib/components/search_field"
 import EntryItem from "./item"
+import * as client from "../../client"
+import { useGlobalState } from "../StateProvider"
 
-export default class Entries extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
+const Entries = () => {
+  const [filterTerm, setFilterTerm] = React.useState(null)
+  const [state, dispatch] = useGlobalState()
+  const mounted = React.useRef(false)
 
-    this.toolbar = this.toolbar.bind(this)
-    this.renderTable = this.renderTable.bind(this)
-  }
+  React.useEffect(() => {
+    mounted.current = true
+    dispatch({ type: "request" })
+    client
+      .get("key-manager-ng/entries")
+      .then(
+        (items) =>
+          mounted.current && dispatch({ type: "@entries/receive", items })
+      )
+      .catch(
+        (error) =>
+          mounted.current &&
+          dispatch({ type: "@entries/error", error: error.message })
+      )
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    // load dependencies unless already loaded
-    this.loadDependencies(nextProps)
-  }
+    return () => (mounted.current = false)
+  }, [dispatch])
 
-  componentDidMount() {
-    // load dependencies unless already loaded
-    this.loadDependencies(this.props)
-  }
+  const handleDelete = React.useCallback(
+    (id) => {
+      dispatch({ type: "@entries/requestDelete", id })
+      client
+        .del(`key-manager-ng/entries/${id}`)
+        .then(
+          () => mounted.current && dispatch({ type: "@entries/delete", id })
+        )
+        .catch(
+          (error) =>
+            mounted.current &&
+            dispatch({
+              type: "@entries/deleteFailure",
+              id,
+              error: error.message,
+            })
+        )
+    },
+    [dispatch]
+  )
 
-  loadDependencies(props) {
-    if (!props.active) return
-    props.loadEntriesOnce()
-  }
+  const filteredItems = React.useMemo(() => {
+    if (!state.entries.items || state.entries.items.length === 0) return []
+    if (!filterTerm || filterTerm === "") return state.entries.items
+    return state.entries.items.filter(
+      (item) =>
+        (item.name && item.name.indexOf(filterTerm) >= 0) ||
+        (item.description && item.description.indexOf(filterTerm) >= 0)
+    )
+  }, [state.entries.items, filterTerm])
 
-  toolbar() {
-    return (
+  return (
+    <div>
       <div className="toolbar">
         <TransitionGroup>
-          {this.props.items.length >= 4 && (
+          {state.entries.items.length >= 4 && (
             <FadeTransition>
               <SearchField
-                onChange={(term) => this.props.filterEntries(term)}
+                onChange={setFilterTerm}
                 placeholder="name or description"
                 text="Searches by name or description in visible entries list only.
                       Entering a search term will automatically start loading the next pages
@@ -48,58 +81,46 @@ export default class Entries extends React.Component {
         </TransitionGroup>
 
         {policy.isAllowed("%{PLUGIN_NAME}:entry_create") && (
-          <Link to="/entries/new" className="btn btn-primary">
-            Create new
-          </Link>
+          <div className="main-buttons">
+            <Link to="/entries/new" className="btn btn-primary">
+              Create new
+            </Link>
+          </div>
         )}
       </div>
-    )
-  }
 
-  renderTable() {
-    return (
-      <table className="table entries">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.props.items && this.props.items.length > 0 ? (
-            this.props.items.map(
-              (entry, index) =>
-                !entry.isHidden && (
-                  <EntryItem
-                    key={index}
-                    entry={entry}
-                    handleDelete={this.props.handleDelete}
-                  />
-                )
-            )
-          ) : (
+      {!policy.isAllowed("%{PLUGIN_NAME}:entry_list") ? (
+        <span>You are not allowed to see this page</span>
+      ) : state.isFetching ? (
+        <span className="spinner" />
+      ) : (
+        <table className="table entries">
+          <thead>
             <tr>
-              <td colSpan="3">No Entries found.</td>
+              <th>Name</th>
+              <th>Description</th>
+              <th></th>
             </tr>
-          )}
-        </tbody>
-      </table>
-    )
-  }
-
-  render() {
-    return (
-      <div>
-        {this.toolbar()}
-        {!policy.isAllowed("%{PLUGIN_NAME}:entry_list") ? (
-          <span>You are not allowed to see this page</span>
-        ) : this.props.isFetching ? (
-          <span className="spinner"></span>
-        ) : (
-          this.renderTable()
-        )}
-      </div>
-    )
-  }
+          </thead>
+          <tbody>
+            {filteredItems && filteredItems.length > 0 ? (
+              filteredItems.map((entry, index) => (
+                <EntryItem
+                  key={index}
+                  entry={entry}
+                  handleDelete={handleDelete}
+                />
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3">No Entries found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
+    </div>
+  )
 }
+
+export default Entries
