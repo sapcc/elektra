@@ -4964,6 +4964,10 @@ jsx-to-string@^1.4.0:
     json-stringify-pretty-compact "^1.0.1"
     react "^0.14.0"
 
+"juno-ui-components@https://github.com/sapcc/juno/releases/download/v0_2_0/juno-ui-components.tgz":
+  version "0.2.0"
+  resolved "https://github.com/sapcc/juno/releases/download/v0_2_0/juno-ui-components.tgz#e04643a1fdbf60197d9bfea1e274e331ca0d3343"
+
 keycode@^2.1.2:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.2.1.tgz#09c23b2be0611d26117ea2501c2c391a01f39eff"
