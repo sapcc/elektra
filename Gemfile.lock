@@ -158,6 +158,11 @@ PATH
     shared_filesystem_storage (0.0.1)
 
 PATH
+  remote: plugins/testikus
+  specs:
+    testikus (0.1.0)
+
+PATH
   remote: plugins/tools
   specs:
     tools (0.0.1)
@@ -630,6 +635,7 @@ DEPENDENCIES
   spinners
   spring
   sqlite3
+  testikus!
   tools!
   unf (>= 0.2.0beta2)
   web-console (~> 3.0)

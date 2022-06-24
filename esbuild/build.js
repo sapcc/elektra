@@ -52,6 +52,7 @@ require("esbuild")
     inject: ["esbuild/react-shim.js"],
     // map global this to window
     define: { this: "window" },
+    loader: { ".css": "text" },
   })
   .then(() => {
     if (watch) console.log("watching...")

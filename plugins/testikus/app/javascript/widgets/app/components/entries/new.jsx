@@ -20,7 +20,7 @@ const New = () => {
   const onSubmit = React.useCallback(
     (values) => {
       client
-        .post("%{PLUGIN_NAME}/entries", { entry: values })
+        .post("testikus/entries", { entry: values })
         .then(
           (item) =>
             mounted.current && dispatch({ type: "@entries/receive", item })
