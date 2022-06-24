@@ -5,6 +5,11 @@ module AccessProfile
     authorization_context 'access_profile'
     authorization_required
 
+    module Action
+      TAG_CREATE=1
+      TAG_DESTROY=2
+    end
+
     # Returns project tags relevant to access profiles
     # tags are filtered with the configuration file provided
     def index
@@ -20,10 +25,16 @@ module AccessProfile
     def create
       tag = params[:tag]
       tags = cloud_admin.identity.list_tags(@scoped_project_id)
-      ok, err = validate_tag(tag, filter_tags(tags), "create")
+      ok, err = validate_tag(tag, filter_tags(tags), Action::TAG_CREATE)
       unless ok
         return render json: {errors: err, tagSpec: GalvaniConfig["access_profiles"]}, status: 422        
       end
+      # ensure base prefix/tag is also added
+      ok, err = ensure_base_prefix(tag, filter_tags(tags), Action::TAG_CREATE)
+      unless ok
+        return render json: {errors: err}, status: 422        
+      end
+
       cloud_admin.identity.add_single_tag(@scoped_project_id, tag)
       audit_logger.info(current_user, 'has created tag', tag)
       render json: { tag: tag }
@@ -36,11 +47,15 @@ module AccessProfile
     def destroy
       tag = params[:id]
       tags = cloud_admin.identity.list_tags(@scoped_project_id)
-      ok, err = validate_tag(tag, filter_tags(tags), "destroy")
+      ok, err = validate_tag(tag, filter_tags(tags), Action::TAG_DESTROY)
       unless ok
         return render json: {errors: err, tagSpec: GalvaniConfig["access_profiles"]}, status: 422        
       end
-
+      # ensure base prefix/tag is also removed
+      ok, err = ensure_base_prefix(tag, filter_tags(tags), Action::TAG_DESTROY)
+      unless ok
+        return render json: {errors: err}, status: 422        
+      end
       cloud_admin.identity.remove_single_tag(@scoped_project_id, tag)      
       audit_logger.info(current_user, 'has deleted tag', tag)
       render json: { tag: tag }
@@ -69,8 +84,35 @@ module AccessProfile
       tags.select { |n| n.start_with?(*profile_prefixes) }
     end
 
-    # add/remove base prefix from the tags list
-    def ensure_base_prefix()
+    # add base prefix/tag to the tags list when a new tag from this base is added
+    # remove base prefix/tag when last tag from this base is removed
+    # base prefix/tag is being used to filter in the openstack api
+    def ensure_base_prefix(tag, existing_tags, action)
+      # get base prefix 
+      base_prefix = base_prefix(tag)
+      if base_prefix.blank?
+        return false, "no base access profile found"
+      end
+
+      case action
+      when Action::TAG_CREATE
+        if !existing_tags.include?(base_prefix)
+          begin
+            cloud_admin.identity.add_single_tag(@scoped_project_id, base_prefix)
+          rescue Exception => e
+            return false, "Error create base access profile. #{e.message}"
+          end          
+        end
+      when Action::TAG_DESTROY
+        if existing_tags.include?(base_prefix)
+          begin
+            cloud_admin.identity.remove_single_tag(@scoped_project_id, base_prefix)      
+          rescue Exception => e
+            return false, "Error removing base access profile. #{e.message}"
+          end                    
+        end
+      end
+      return true, ""
     end
 
     # validate that tag 
@@ -80,16 +122,12 @@ module AccessProfile
         return false, "access profile is empty!"
       end
 
-      # get for base prefix
-      base_prefixes = GalvaniConfig["access_profiles"].keys.select do|n| 
-        tag.start_with?(n)
+      # get base prefix 
+      base_prefix = base_prefix(tag)
+      if base_prefix.blank?
+        return false, "no base access profile found"
       end
 
-      if base_prefixes.blank?
-        return false, "no access profile found"
-      end
-
-      base_prefix = base_prefixes[0]
       # get the sercice
       services = GalvaniConfig["access_profiles"][base_prefix].keys.select do|k| 
         # service is everyting until the arguments $1, $2...
@@ -115,7 +153,7 @@ module AccessProfile
         return false, "provided arguments mismatch"
       end    
 
-      if action == "create"
+      if action == Action::TAG_CREATE
         # check for duplicates when creating new tags
         if existing_tags.include?(tag)
           return false, "access profile already exists" 
@@ -125,7 +163,23 @@ module AccessProfile
       return true, ""
     end
 
+    # returns base prefix if found
+    def base_prefix(tag)
+      if tag.blank?
+        return ""
+      end
 
+      # get base prefix
+      base_prefixes = GalvaniConfig["access_profiles"].keys.select do|n| 
+        tag.start_with?(n)
+      end
+
+      if base_prefixes.blank?
+        return ""
+      end
+
+      base_prefixes[0]
+    end
 
   end
 end
