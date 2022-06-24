@@ -8,6 +8,16 @@ import EntryItem from "./item"
 import * as client from "../../client"
 import { useGlobalState } from "../StateProvider"
 
+import { DataGrid } from "juno-ui-components/lib/DataGrid"
+import { DataGridHead } from "juno-ui-components/lib/DataGridHead"
+import { DataGridHeadRow } from "juno-ui-components/lib/DataGridHeadRow"
+import { DataGridHeadCell } from "juno-ui-components/lib/DataGridHeadCell"
+import { DataGridBody } from "juno-ui-components/lib/DataGridBody"
+import { DataGridRow } from "juno-ui-components/lib/DataGridRow"
+import { DataGridCell } from "juno-ui-components/lib/DataGridCell"
+
+import { SearchInput, Button } from "juno-ui-components"
+
 const Entries = () => {
   const [filterTerm, setFilterTerm] = React.useState(null)
   const [state, dispatch] = useGlobalState()
@@ -17,7 +27,7 @@ const Entries = () => {
     mounted.current = true
     dispatch({ type: "request" })
     client
-      .get("%{PLUGIN_NAME}/entries")
+      .get("testikus/entries")
       .then(
         (items) =>
           mounted.current && dispatch({ type: "@entries/receive", items })
@@ -35,7 +45,7 @@ const Entries = () => {
     (id) => {
       dispatch({ type: "@entries/requestDelete", id })
       client
-        .del(`%{PLUGIN_NAME}/entries/${id}`)
+        .del(`testikus/entries/${id}`)
         .then(
           () => mounted.current && dispatch({ type: "@entries/delete", id })
         )
@@ -80,7 +90,7 @@ const Entries = () => {
           )}
         </TransitionGroup>
 
-        {policy.isAllowed("%{PLUGIN_NAME}:entry_create") && (
+        {policy.isAllowed("testikus:entry_create") && (
           <div className="main-buttons">
             <Link to="/entries/new" className="btn btn-primary">
               Create new
@@ -89,35 +99,59 @@ const Entries = () => {
         )}
       </div>
 
-      {!policy.isAllowed("%{PLUGIN_NAME}:entry_list") ? (
+      {!policy.isAllowed("testikus:entry_list") ? (
         <span>You are not allowed to see this page</span>
       ) : state.isFetching ? (
         <span className="spinner" />
       ) : (
-        <table className="table entries">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredItems && filteredItems.length > 0 ? (
-              filteredItems.map((entry, index) => (
-                <EntryItem
-                  key={index}
-                  entry={entry}
-                  handleDelete={handleDelete}
-                />
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3">No Entries found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <DataGrid>
+          <DataGridHead>
+            <DataGridHeadRow>
+              <DataGridHeadCell>Name</DataGridHeadCell>
+              <DataGridHeadCell>Description</DataGridHeadCell>
+              <DataGridHeadCell></DataGridHeadCell>
+            </DataGridHeadRow>
+          </DataGridHead>
+          {filteredItems && filteredItems.length > 0 ? (
+            filteredItems.map((entry, index) => (
+              <EntryItem
+                key={index}
+                entry={entry}
+                handleDelete={handleDelete}
+              />
+            ))
+          ) : (
+            <DataGridBody>
+              <DataGridRow>
+                <DataGridCell colspan={3}>No Entries found.</DataGridCell>
+              </DataGridRow>
+            </DataGridBody>
+          )}
+        </DataGrid>
+        // <table className="table entries">
+        //   <thead>
+        //     <tr>
+        //       <th>Name</th>
+        //       <th>Description</th>
+        //       <th></th>
+        //     </tr>
+        //   </thead>
+        //   <tbody>
+        //     {filteredItems && filteredItems.length > 0 ? (
+        //       filteredItems.map((entry, index) => (
+        //         <EntryItem
+        //           key={index}
+        //           entry={entry}
+        //           handleDelete={handleDelete}
+        //         />
+        //       ))
+        //     ) : (
+        //       <tr>
+        //         <td colSpan="3">No Entries found.</td>
+        //       </tr>
+        //     )}
+        //   </tbody>
+        // </table>
       )}
     </div>
   )
