@@ -96,6 +96,7 @@ module AccessProfile
 
       case action
       when Action::TAG_CREATE
+        # check if the prefix is already added as tag
         if !existing_tags.include?(base_prefix)
           begin
             cloud_admin.identity.add_single_tag(@scoped_project_id, base_prefix)
@@ -104,7 +105,9 @@ module AccessProfile
           end          
         end
       when Action::TAG_DESTROY
-        if existing_tags.include?(base_prefix)
+        # check if there is more tags with the same base_prefix
+        # search for tags with "base_prefix" with ":" so not base prefixes can't be matched
+        if existing_tags.grep(/#{base_prefix}:/).count() == 1 && existing_tags.include?(tag)
           begin
             cloud_admin.identity.remove_single_tag(@scoped_project_id, base_prefix)      
           rescue Exception => e

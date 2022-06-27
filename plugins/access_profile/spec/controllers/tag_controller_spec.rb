@@ -83,6 +83,21 @@ describe AccessProfile::TagsController, type: :controller do
         expect(new_tags.include?("xs:internet")).to be true
       end
 
+      it 'no adds base prefix/tag if already exists' do
+        identity = double("identity", list_tags: ["xs:internet"])
+        cloud_admin = double('cloud_admin', identity: identity).as_null_object
+        new_tags = []
+        allow(identity).to receive(:add_single_tag) do |scoped_project_id, tag|
+          new_tags.push(tag)
+        end
+        allow_any_instance_of(::ApplicationController).to receive(:cloud_admin).and_return(cloud_admin)
+
+        post :create, params: default_params.merge({tag: "xs:internet:keppel_account_pull:cc-demo"})
+        expect(new_tags.include?("xs:internet:keppel_account_pull:cc-demo")).to be true
+        expect(new_tags.include?("xs:internet")).to_not be true
+        expect(new_tags.length()).to eq(1)
+      end
+
     end
 
     context 'empty roles' do
@@ -178,7 +193,24 @@ describe AccessProfile::TagsController, type: :controller do
         delete :destroy, params: default_params.merge({id: "xs:internet:keppel_account_pull:cc-demo"})
         expect(all_tags.include?("xs:internet:keppel_account_pull:cc-demo")).to be false
         expect(all_tags.include?("xs:internet")).to be false
+        expect(all_tags.length()).to eq(0)
       end
+
+      it 'keeps base prefix/tag' do
+        all_tags =  ["xs:internet","xs:internet:keppel_account_pull:cc-demo", "xs:internet:keppel_account_pull:miau"]
+        identity = double("identity", list_tags: all_tags)
+        cloud_admin = double('cloud_admin', identity: identity).as_null_object
+        allow(identity).to receive(:remove_single_tag) do |scoped_project_id, tag|
+          all_tags.delete_if {|x| x == tag } 
+        end
+        allow_any_instance_of(::ApplicationController).to receive(:cloud_admin).and_return(cloud_admin)
+
+        delete :destroy, params: default_params.merge({id: "xs:internet:keppel_account_pull:cc-demo"})
+        expect(all_tags.include?("xs:internet:keppel_account_pull:cc-demo")).to be false
+        expect(all_tags.include?("xs:internet")).to be true
+        expect(all_tags.length()).to eq(2)
+      end
+      
     end
 
     context 'empty roles' do
