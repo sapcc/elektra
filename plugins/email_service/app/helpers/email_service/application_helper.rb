@@ -513,7 +513,7 @@ module EmailService
     def get_identity_verification_status(identity, identity_type="EmailAddress")
 
       status = nil
-      identities_list  = list_verified_identities(identity_type)
+      identities_list ||= list_verified_identities(identity_type)
       identities_list.each do | identity_item |
         if identity_item[:identity] == identity
           case identity_item[:status]
@@ -549,7 +549,7 @@ module EmailService
     # find an identity by name
     def find_verified_identity_by_name(identity, id_type)
 
-      id_list = list_verified_identities(id_type)
+      id_list ||= list_verified_identities(id_type)
       found = {}
       id_list.each do |item|
         if identity == item[:identity]
@@ -563,72 +563,83 @@ module EmailService
 
     # verify identities of the types EmailAddress and Domain
     def verify_identity(identity, identity_type)
-
-      resp = Aws::SES::Types::VerifyDomainIdentityResponse.new 
-      status = nil
-      if identity.include?("sap.com") && identity_type == "EmailAddress"
-        status = "sap.com domain email addresses are not allowed to verify as a sender(#{identity})"
-      elsif identity == "" || !identity || identity == nil
-        status = "#{identity_type} can't be empty"
-      elsif identity != nil && identity_type == "Domain"
-        begin
-          resp = ses_client.verify_domain_identity({ domain: identity, })
-          audit_logger.info(current_user.id, 'has initiated to verify domain identity ', identity)
-        rescue Aws::SES::Errors::ServiceError => e
-          resp = "#{identity_type} verification failed. Error message: #{e.message}"
-          Rails.logger.error resp
+      @resp = Aws::SES::Types::VerifyDomainIdentityResponse.new 
+      @status = nil
+      case identity_type
+      when "EmailAddress"
+        unless identity.include?("sap.com")
+          if (identity == "" || !identity || identity == nil || !identity.length.positive?) && status.nil? 
+            @status = "#{identity_type} can't be empty"
+          elsif @status.nil? && !identity.length.positive?
+            begin
+              ses_client.verify_email_identity({ email_address: identity, })
+              audit_logger.info(current_user.id, 'has initiated to verify email identity ', identity)
+              @status = "success"
+            rescue Aws::SES::Errors::ServiceError => e
+              @status = "#{identity_type} verification failed. Error message: #{e.message}" 
+            end
+          end
+        else
+          @status = "sap.com domain email addresses are not allowed to verify as a sender(#{identity})"
+          Rails.logger.info "**************SAP.COM ADDRESS ************** #{@status}"
         end
-      elsif identity != nil && identity.length.positive? && identity_type == "EmailAddress"
-        begin
-          ses_client.verify_email_identity({ email_address: identity, })
-          audit_logger.info(current_user.id, 'has initiated to verify email identity ', identity)
-          status = "success"
-        rescue Aws::SES::Errors::ServiceError => e
-          status = "#{identity_type} verification failed. Error message: #{e.message}" 
-          Rails.logger.error status
+        return @status
+      when "Domain"
+        if !identity.nil?
+          begin
+            @resp = ses_client.verify_domain_identity({ domain: identity, })
+            audit_logger.info(current_user.id, 'has initiated to verify domain identity ', identity)
+          rescue Aws::SES::Errors::ServiceError => e
+            @resp = "#{identity_type} verification failed. Error message: #{e.message}"
+            Rails.logger.error @resp
+          end
         end
+        return @resp
       end
-
-      return identity_type == "Domain" ? resp : status 
-
+      # return identity_type == "Domain" ? @resp : @status 
     end
 
     # list all verified identities
     def list_verified_identities(id_type)
-
+      Rails.logger.info "list_verified_identities is called"
       attrs = Hash.new
-      verified_identities = []
+      @verified_identities = []
+      Rails.logger.info "ses_client is #{ses_client}"
 
-      begin
-        # Get up to 1000 identities
-        ids = ses_client.list_identities({
-          identity_type: id_type
-        })
-        id = 0
-        ids.identities.each do |identity|
-          attrs = ses_client.get_identity_verification_attributes({
-            identities: [identity]
+      if !ses_client || ses_client.nil?
+        Rails.logger.error "*********** SES_client is Empty ************"
+        return @verified_identities
+      else    
+        begin
+          # Get up to 1000 identities
+          ids = ses_client.list_identities({
+            identity_type: id_type
           })
-          status = attrs.verification_attributes[identity].verification_status
-          token = attrs.verification_attributes[identity].verification_token
-          dkim_err, dkim_attr = get_dkim_attributes([identity])
-          if dkim_attr
-            dkim_enabled = dkim_attr[:dkim_attributes][identity][:dkim_enabled]
-            dkim_tokens = dkim_attr[:dkim_attributes][identity][:dkim_tokens]
-            dkim_verification_status = dkim_attr[:dkim_attributes][identity][:dkim_verification_status]
+          id = 0
+          ids.identities.each do |identity|
+            attrs = ses_client.get_identity_verification_attributes({
+              identities: [identity]
+            })
+            status = attrs.verification_attributes[identity].verification_status
+            token = attrs.verification_attributes[identity].verification_token
+            dkim_err, dkim_attr = get_dkim_attributes([identity])
+            if dkim_attr
+              dkim_enabled = dkim_attr[:dkim_attributes][identity][:dkim_enabled]
+              dkim_tokens = dkim_attr[:dkim_attributes][identity][:dkim_tokens]
+              dkim_verification_status = dkim_attr[:dkim_attributes][identity][:dkim_verification_status]
+            end
+            id += 1
+            identity_hash = {id: id, identity: identity, status: status,\
+            verification_token: token, dkim_enabled: dkim_enabled, \
+            dkim_tokens: dkim_tokens, dkim_verification_status: dkim_verification_status }
+            @verified_identities.push(identity_hash)
           end
-          id += 1
-          identity_hash = {id: id, identity: identity, status: status,\
-           verification_token: token, dkim_enabled: dkim_enabled, \
-           dkim_tokens: dkim_tokens, dkim_verification_status: dkim_verification_status }
-          verified_identities.push(identity_hash)
+        rescue Aws::SES::Errors::ServiceError => e
+          Rails.logger.error "error while listing verified identities. #{e.message}"
         end
-      rescue Aws::SES::Errors::ServiceError => e
-        Rails.logger.error "error while listing verified identities. #{e.message}"
+        Rails.logger.info "Fetched identities are #{@verified_identities}"
+        return @verified_identities
       end
-
-      return verified_identities
-
     end
 
     # delete a verified identity
