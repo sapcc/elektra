@@ -29,7 +29,6 @@ ALLOWED_ROLES = %w[
   resource_viewer
   sharedfilesystem_admin
   sharedfilesystem_viewer
-  swiftoperator
   volume_admin
   volume_viewer
   securitygroup_viewer
