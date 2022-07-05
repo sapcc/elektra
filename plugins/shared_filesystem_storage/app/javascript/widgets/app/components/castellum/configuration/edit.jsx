@@ -68,10 +68,10 @@ const FormBody = ({close, errors}) => {
           <Form.Input elementType='input' type='number' min='1' max='100' disabled={values.size_step_single == 'true'} />
         </Form.ElementHorizontal>
 
-        <Form.ElementHorizontal label='Never resize to less than (GiB):' name='size_minimum' labelWidth={5} labelClass='control-label secondary-label'>
+        <Form.ElementHorizontal label='Never resize to a total size below (GiB):' name='size_minimum' labelWidth={5} labelClass='control-label secondary-label'>
           <Form.Input elementType='input' type='number' min='0' />
         </Form.ElementHorizontal>
-        <Form.ElementHorizontal label='Never resize to more than (GiB):' name='size_maximum' labelWidth={5} labelClass='control-label secondary-label'>
+        <Form.ElementHorizontal label='Never resize to a total size above (GiB):' name='size_maximum' labelWidth={5} labelClass='control-label secondary-label'>
           <Form.Input elementType='input' type='number' min='0' />
         </Form.ElementHorizontal>
         <Form.ElementHorizontal label='Ensure this much free space (GiB):' name='free_minimum' labelWidth={5} labelClass='control-label secondary-label'>
