@@ -52,8 +52,8 @@ export default class CastellumConfigurationView extends React.Component {
         </p>
         {config.size_constraints && (
           <ul>
-            {config.size_constraints.minimum && <li>...never below <strong>{config.size_constraints.minimum} GiB</strong>.</li>}
-            {config.size_constraints.maximum && <li>...never above <strong>{config.size_constraints.maximum} GiB</strong>.</li>}
+            {config.size_constraints.minimum && <li>...never to a total size below <strong>{config.size_constraints.minimum} GiB</strong>.</li>}
+            {config.size_constraints.maximum && <li>...never to a total size above <strong>{config.size_constraints.maximum} GiB</strong>.</li>}
             {config.size_constraints.minimum_free && <li>...never below <strong>{config.size_constraints.minimum_free} GiB</strong> of free space.</li>}
           </ul>
         )}
