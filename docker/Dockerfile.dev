@@ -85,7 +85,7 @@ RUN echo -e 'echo "Welcome to elektra dev container"\n\
   alias start-rails="cd /app && bin/rails s -b 0.0.0.0 -p $APP_PORT"\n\
   alias start-js="cd /app && yarn build --watch"\n\
   alias rebuild-npm="cd /app && rm -rf node_modules && yarn"\n\
-  alias rebuild-gems="cd /app && rm -rf vendor && bundle install"\n\
+  alias rebuild-gems="cd /app && rm -rf vendor/bundle && bundle install"\n\
   alias rebuild-db="rm -rf /app/tmp/postgresql/data/* && echo Done! please exit elektra and start again..."' >> /root/.profile
 
 ENTRYPOINT [ "/usr/local/bin/start-db" ]  
