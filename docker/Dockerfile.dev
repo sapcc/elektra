@@ -72,15 +72,20 @@ RUN echo -e '#!/bin/bash\n\n\
   su - postgres -c "pg_ctl -D $PGDATA -w start"\n\
   DISABLE_SPRING=1 bin/rails db:create && DISABLE_SPRING=1 bin/rails db:migrate\n\
   clear \n\
-  /bin/bash -login' >> /usr/local/bin/start_db && chmod +x /usr/local/bin/start_db
+  /bin/bash -login' >> /usr/local/bin/start-db && chmod +x /usr/local/bin/start-db
 
 RUN echo -e 'echo "Welcome to elektra dev container"\n\
-  echo " - start rails run: start_rails"\n\
-  echo " - start javascript run: start_js"\n\
-  alias start_rails="cd /app && bin/start-rails"\n\
-  alias start_js="cd /app && yarn build --watch"\n' >> /root/.profile
+  echo " - start rails run: start-rails"\n\
+  echo " - start javascript run: start-js"\n\
+  echo " - rebuild database run: rebuild-db"\n\
+  echo " - rebuild npm run: rebuild-npm"\n\
+  echo " - rebuild gems run: rebuild-gems"\n\
+  echo ""\n\
+  echo " Note: elektra database are located in /app/tmp/postgresql/data/"\n\
+  alias start-rails="cd /app && bin/rails s -b 0.0.0.0 -p $APP_PORT"\n\
+  alias start-js="cd /app && yarn build --watch"\n\
+  alias rebuild-npm="cd /app && rm -rf node_modules && yarn"\n\
+  alias rebuild-gems="cd /app && rm -rf vendor && bundle install"\n\
+  alias rebuild-db="rm -rf /app/tmp/postgresql/data/* && echo Done! please exit elektra and start again..."' >> /root/.profile
 
-RUN echo -e  '#!/bin/bash\n/app/bin/rails s -b 0.0.0.0 -p $APP_PORT' >> /usr/local/bin/start && \
-  chmod +x /usr/local/bin/start
-
-ENTRYPOINT [ "/usr/local/bin/start_db" ]  
+ENTRYPOINT [ "/usr/local/bin/start-db" ]  
