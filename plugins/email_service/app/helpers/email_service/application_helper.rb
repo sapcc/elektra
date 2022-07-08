@@ -567,21 +567,16 @@ module EmailService
       @status = nil
       case identity_type
       when "EmailAddress"
-        unless identity.include?("sap.com")
-          if (identity == "" || !identity || identity == nil || !identity.length.positive?) && status.nil? 
-            @status = "#{identity_type} can't be empty"
-          elsif @status.nil? && !identity.length.positive?
-            begin
-              ses_client.verify_email_identity({ email_address: identity, })
-              audit_logger.info(current_user.id, 'has initiated to verify email identity ', identity)
-              @status = "success"
-            rescue Aws::SES::Errors::ServiceError => e
-              @status = "#{identity_type} verification failed. Error message: #{e.message}" 
-            end
+        if (identity == "" || !identity || identity == nil || !identity.length.positive?) && status.nil? 
+          @status = "#{identity_type} can't be empty"
+        elsif @status.nil? && !identity.length.positive?
+          begin
+            ses_client.verify_email_identity({ email_address: identity, })
+            audit_logger.info(current_user.id, 'has initiated to verify email identity ', identity)
+            @status = "success"
+          rescue Aws::SES::Errors::ServiceError => e
+            @status = "#{identity_type} verification failed. Error message: #{e.message}" 
           end
-        else
-          @status = "sap.com domain email addresses are not allowed to verify as a sender(#{identity})"
-          Rails.logger.info "**************SAP.COM ADDRESS ************** #{@status}"
         end
         return @status
       when "Domain"
@@ -596,7 +591,6 @@ module EmailService
         end
         return @resp
       end
-      # return identity_type == "Domain" ? @resp : @status 
     end
 
     # list all verified identities
