@@ -47,7 +47,7 @@ const renderLabel = (key, value) => {
   }
   //the labels have `white-space:nowrap` inside, so some extra whitespace is
   //required to allow long lines with lots of labels to break
-  return <React.Fragment>label{" "}</React.Fragment>
+  return <React.Fragment>{label}{" "}</React.Fragment>
 }
 
 export default class ImageRow extends React.Component {
