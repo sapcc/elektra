@@ -1,3 +1,4 @@
+import React from "react"
 import { Modal, Button } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 
@@ -153,106 +154,128 @@ const FormBody = ({
   )
 }
 
-export default class NewVolumeForm extends React.Component {
-  state = {
-    show: true,
-    typeDescription: null,
-  }
+const NewVolumeForm = ({
+  volumes,
+  images,
+  availabilityZones,
+  loadAvailabilityZonesOnce,
+  loadImagesOnce,
+  loadVolumeTypesOnce,
+  handleSubmit,
+  history,
+}) => {
+  const [show, setShow] = React.useState(true)
+  const [typeDescription, updateTypeDescription] =
+    React.useState(defaultVolumeType)
+  // state = {
+  //   show: true,
+  //   typeDescription: null,
+  // }
 
-  componentDidMount() {
-    this.loadDependencies(this.props)
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.loadDependencies(nextProps)
-    this.setTypesDescription(defaultVolumeType)
-  }
-
-  loadDependencies = (props) => {
-    props.loadAvailabilityZonesOnce()
-    props.loadImagesOnce()
-    props.loadVolumeTypesOnce()
-  }
-
-  validate = ({
-    name,
-    size,
-    volume_type,
-    availability_zone,
-    description,
-    bootable,
-    imageRef,
-  }) => {
-    this.setTypesDescription(volume_type)
-    return (
-      name &&
-      size &&
-      volume_type &&
-      availability_zone &&
-      description &&
-      (!bootable || imageRef) &&
-      true
-    )
-  }
-
-  close = (e) => {
-    if (e) e.stopPropagation()
-    this.setState({ show: false })
-  }
-
-  restoreUrl = (e) => {
-    if (!this.state.show) this.props.history.replace(`/volumes`)
-  }
-
-  onSubmit = (values) => {
-    return this.props.handleSubmit(values).then(() => this.close())
-  }
+  React.useEffect(() => {
+    loadAvailabilityZonesOnce()
+    loadImagesOnce()
+    loadVolumeTypesOnce()
+  }, [])
 
   //NOTE: at the moment this is not used because description is used as name in the volume type dropdown
-  setTypesDescription = (name) => {
-    if (name && this.props.volumes.types) {
-      this.props.volumes.types.map((vt, index) => {
-        if (vt.name === name) {
-          this.setState({ typeDescription: vt.description })
-        }
-      })
-    }
-  }
+  const setTypesDescription = React.useCallback(
+    (name) => {
+      if (name && volumes.types) {
+        volumes.types.map((vt, index) => {
+          if (vt.name === name) {
+            updateTypeDescription(vt.description)
+          }
+        })
+      }
+    },
+    [volumes.types, updateTypeDescription]
+  )
 
-  render() {
-    const initialValues = { volume_type: defaultVolumeType }
-    return (
-      <Modal
-        show={this.state.show}
-        onHide={this.close}
-        bsSize="large"
-        backdrop="static"
-        onExited={this.restoreUrl}
-        aria-labelledby="contained-modal-title-lg"
+  const validate = React.useCallback(
+    ({
+      name,
+      size,
+      volume_type,
+      availability_zone,
+      description,
+      bootable,
+      imageRef,
+    }) => {
+      setTypesDescription(volume_type)
+      return (
+        name &&
+        size &&
+        volume_type &&
+        availability_zone &&
+        description &&
+        (!bootable || imageRef) &&
+        true
+      )
+    },
+    [setTypesDescription]
+  )
+
+  const close = React.useCallback(
+    (e) => {
+      if (e) e.stopPropagation()
+      setShow(false)
+    },
+    [setShow]
+  )
+
+  const restoreUrl = React.useCallback(
+    (e) => {
+      if (!show) history.replace(`/volumes`)
+    },
+    [show, history]
+  )
+
+  const onSubmit = React.useCallback(
+    (values) => {
+      return handleSubmit(values).then(() => close())
+    },
+    [handleSubmit, close]
+  )
+
+  const initialValues = React.useMemo(
+    () => ({ volume_type: defaultVolumeType }),
+    []
+  )
+
+  return (
+    <Modal
+      show={show}
+      onHide={close}
+      bsSize="large"
+      backdrop="static"
+      onExited={restoreUrl}
+      aria-labelledby="contained-modal-title-lg"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-lg">New Volume</Modal.Title>
+      </Modal.Header>
+
+      <Form
+        className="form form-horizontal"
+        validate={validate}
+        onSubmit={onSubmit}
+        initialValues={initialValues}
       >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">New Volume</Modal.Title>
-        </Modal.Header>
+        <FormBody
+          availabilityZones={availabilityZones}
+          images={images}
+          volumes={volumes}
+          typeDescription={typeDescription}
+        />
 
-        <Form
-          className="form form-horizontal"
-          validate={this.validate}
-          onSubmit={this.onSubmit}
-          initialValues={initialValues}
-        >
-          <FormBody
-            availabilityZones={this.props.availabilityZones}
-            images={this.props.images}
-            volumes={this.props.volumes}
-            typeDescription={this.state.typeDescription}
-          />
-
-          <Modal.Footer>
-            <Button onClick={this.close}>Cancel</Button>
-            <Form.SubmitButton label="Save" />
-          </Modal.Footer>
-        </Form>
-      </Modal>
-    )
-  }
+        <Modal.Footer>
+          <Button onClick={close}>Cancel</Button>
+          <Form.SubmitButton label="Save" />
+        </Modal.Footer>
+      </Form>
+    </Modal>
+  )
 }
+
+export default NewVolumeForm
