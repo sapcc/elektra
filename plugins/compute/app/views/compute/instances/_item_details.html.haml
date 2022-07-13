@@ -2,28 +2,35 @@
 - if @instance.task_state
   - data[:update_url]=plugin('compute').update_item_instance_path(id:@instance.id, target_state: @target_state, action_from_show:true)
   - data[:interval]=10000
-
-#item_details{data:data}
+#item_details{data: data}
   - if @instance.blank?
     .alert.alert-info
       = "Couldn't find instance #{params[:id]}. This can happen if the instance was just created. In this case please wait a bit and try again"
-
   - else
     - attached_volumes = @instance.attached_volumes
     - content_for (:details) do
       %ul.nav.nav-tabs
-        %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
-        %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}
-        %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}
-        %li{role: "presentation"}= link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
-        %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
-        %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
-        %li{role: "presentation"}= link_to 'Volumes Attached', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
+        %li.active{role: "presentation"}
+          = link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}
+          = link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}
+          = link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}
+          = link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}
+          = link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}
+          = link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}
+          = link_to 'Volumes Attached', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}
+          = link_to 'Tags', '#tags', aria: {controls:"tags"}, role: "tab", data: {toggle:"tab"}
         - if current_user.is_allowed?("compute:all_projects")
-          %li{ role: 'presentation' }= link_to 'Actions', '#actions', aria: { controls: 'actions' }, role: 'tab', data: { toggle: 'tab' }
-
+          %li{role: "presentation"}
+            = link_to 'Actions', '#actions', aria: { controls: 'actions' }, role: 'tab', data: { toggle: 'tab' }
       .tab-content
-        .tab-pane.active{role:"tabpanel", id:"information"}
+        .tab-pane.active{role: "tabpanel", id: "information"}
           %table.table.datatable
             %tbody
               %tr
@@ -37,18 +44,16 @@
                 - state_text = @instance.status.humanize
                 - if state_text == "Error"
                   - unless @instance.fault.nil?
-                    - state_text += ": "+@instance.fault["message"] 
+                    - state_text += ": "+@instance.fault["message"]
                   - else
                     - state_text += "Sorry but for some reason there was no error message found :-/"
-
                   %td.text-danger
                     %strong= state_text
-                - else 
+                - else
                   %td
                     - if @instance.task_state
                       %span.spinner
                     = @instance.task_state.nil? ? @instance.status.humanize : @instance.task_state.humanize
-
               %tr
                 %th Availability Zone
                 %td= @instance.availability_zone
@@ -65,7 +70,7 @@
               %tr
                 %th Project
                 %td
-                  -if @instance.tenant_id != @scoped_project_id
+                  - if @instance.tenant_id != @scoped_project_id
                     - project_id_and_name(@instance.tenant_id)
                   - else
                     = project_name(@instance.tenant_id)
@@ -73,31 +78,31 @@
                 %th VMware Guest Tools
                 %td{id: "guest_tools"}
                   %span.spinner
-                  %span.no_guest_tools{style:"display: none;"}
+                  %span.no_guest_tools{style: "display: none;"}
                     %span.text-warning
                       = icon('exclamation-triangle')
-                      not found -> 
+                      not found ->
                     = link_to "how to install", "https://documentation.global.cloud.sap/compute/image-vmware-tools", target: "_blank"
-                  %span.guest_tools_not_uptodate{style:"display: none;"}
+                  %span.guest_tools_not_uptodate{style: "display: none;"}
                     %span.text-warning
                       = icon('wrench')
-                      outdated -> 
+                      outdated ->
                     = link_to "how to update", "https://documentation.global.cloud.sap/compute/image-vmware-tools", target: "_blank"
                     .small
-                      ( Installed version: 
+                      ( Installed version:
                       %span.guest_tools_not_uptodate_current_version
-                      Target version: 
+                      Target version:
                       %span.guest_tools_not_uptodate_target_version
                       )
-                  %span.guest_tools_uptodate{style:"display: none;"}
+                  %span.guest_tools_uptodate{style: "display: none;"}
                     %span.text-success
                       = icon('check')
                       up to date
                     .small
-                      ( Installed version: 
+                      ( Installed version:
                       %span.guest_tools_uptodate_current_version
                       )
-                  %span.guest_tools_problem{style:"display: none;"}
+                  %span.guest_tools_problem{style: "display: none;"}
                     %span.text-danger
                       = icon('exclamation-triangle')
                       %span.guest_tools_problem_text
@@ -105,38 +110,45 @@
                 %th Sizing recommendation
                 %td
                   %span.spinner
-                  %span.sizing_cpu_recommendation{style:"display: none;"}
+                  %span.sizing_cpu_recommendation{style: "display: none;"}
                     %span.text-info
                       = icon('microchip')
                       vCPUs ->
                       %span.sizing_cpu_recommendation_value
-                  %span.sizing_cpu_recommendation_not_found{style:"display: none;"}
+                  %span.sizing_cpu_recommendation_not_found{
+                    style: "display: none;"
+                  }
                     %span.text-success
                       = icon('microchip')
                       vCPU Sizing is OK
-                  %span.sizing_cpu_recommendation_problem{style:"display: none;"}
+                  %span.sizing_cpu_recommendation_problem{
+                    style: "display: none;"
+                  }
                     %span.text-danger
                       = icon('exclamation-triangle')
                       %span.sizing_cpu_recommendation_problem_text
               %tr
-                %th{style: 'border-top:0px'}
-                %td{style: 'border-top:0px; padding-top:0px;'}
+                %th{style: "border-top:0px"}
+                %td{style: "border-top:0px; padding-top:0px;"}
                   %span.spinner
-                  %span.sizing_memory_recommendation{style:"display: none;"}
+                  %span.sizing_memory_recommendation{style: "display: none;"}
                     %span.text-info
                       = icon('database')
                       Memory ->
                       %span.sizing_memory_recommendation_value
-                  %span.sizing_memory_recommendation_not_found{style:"display: none;"}
+                  %span.sizing_memory_recommendation_not_found{
+                    style: "display: none;"
+                  }
                     %span.text-success
                       = icon('database')
                       Memory Sizing is OK
-                  %span.sizing_memory_recommendation_problem{style:"display: none;"}
+                  %span.sizing_memory_recommendation_problem{
+                    style: "display: none;"
+                  }
                     %span.text-danger
                       = icon('exclamation-triangle')
                       %span.sizing_memory_recommendation_problem_text
-
-        .tab-pane{role:"tabpanel", id:"specs"}
+        .tab-pane{role: "tabpanel", id: "specs"}
           - if @instance.flavor
             - root_disk_size = @instance.flavor['disk']
             - unless attached_volumes.empty?
@@ -150,22 +162,21 @@
                   %td= @instance.flavor['original_name']
                 %tr
                   %th RAM
-                  %td= "#{@instance.flavor['ram']}MB"
+                  %td #{@instance.flavor['ram']}MB
                 %tr
                   %th VCPUs
-                  %td= "#{@instance.flavor['vcpus']} VCPU"
+                  %td #{@instance.flavor['vcpus']} VCPU
                 %tr
                   %th Root Disk
                   %td
                     = root_disk_size
                     GB
                     %p
-                      %small 
-                        =@instance.root_disk_device_name
+                      %small
+                        = @instance.root_disk_device_name
           - else
             No instance specifications
-
-        .tab-pane{role:"tabpanel", id:"ip_addresses"}
+        .tab-pane{role: "tabpanel", id: "ip_addresses"}
           %table.table.datatable
             %tbody
               - network_ips = network_ips_map(instance_ips(@instance))
@@ -173,8 +184,7 @@
                 %tr
                   %th= network_name
                   %td= render_fixed_floating_ips(ips)
-
-        .tab-pane{role:"tabpanel", id:"sec_groups"}
+        .tab-pane{role: "tabpanel", id: "sec_groups"}
           %table.table.datatable
             %tbody
               - security_groups = services.networking.security_groups
@@ -182,15 +192,15 @@
               - (@instance_security_groups.compact || []).each do |sg|
                 %tr
                   %th
-                    ="#{sg.name}"
-                    %br
+                    = "#{sg.name}"
+                    %br/
                     .info-text
-                      ="ID: #{sg.id}"
-                      - if cached_projects[sg.project_id] 
-                        %br
+                      = "ID: #{sg.id}"
+                      - if cached_projects[sg.project_id]
+                        %br/
                         - if cached_projects[sg.project_id].domain
                           = "Scope: #{cached_projects[sg.project_id].domain.name}/#{cached_projects[sg.project_id].name}"
-                        - else 
+                        - else
                           = "Project: #{cached_projects[sg.project_id].name}"
                   %td
                     - if sg.security_group_rules.empty?
@@ -199,38 +209,36 @@
                       %ul
                         - sg.rule_objects.each do |rule|
                           %li= rule.to_s(security_groups)
-
-        .tab-pane{role:"tabpanel", id:"keypairs"}
+        .tab-pane{role: "tabpanel", id: "keypairs"}
           %table.table.datatable
             %tbody
               %tr
                 %th Keypair
-                %td= @instance.key_name.blank? ? "No keypair" : @instance.key_name
-
-        .tab-pane{role:"tabpanel", id:"metadata"}
+                %td
+                  = @instance.key_name.blank? ? "No keypair" : @instance.key_name
+        .tab-pane{role: "tabpanel", id: "metadata"}
           %table.table.datatable
             %tbody
-              %tr 
+              %tr
                 %th Image name
                 %td
                   - if @instance.metadata && @instance.metadata.image_name
                     = @instance.metadata.image_name
-                  - elsif @instance.image_object 
+                  - elsif @instance.image_object
                     = render_image_name(@instance.image_object)
-                  - else 
-                    -  
-              - if @instance.image 
+                  - else
+                    -
+              - if @instance.image
                 %tr
                   %th Image ID
-                  %td= @instance.image.is_a?(Hash) ? @instance.image[:id] : @instance.image
-                
+                  %td
+                    = @instance.image.is_a?(Hash) ? @instance.image[:id] : @instance.image
               - @instance.metadata.attributes.each do |k,v|
                 - next if k.to_s == 'id' || k.to_s == 'image_name'
                 %tr
                   %th= k.to_s.humanize
                   %td= v.blank? ? "N/A" : v
-
-        .tab-pane{role:"tabpanel", id:"volumes"}
+        .tab-pane{role: "tabpanel", id: "volumes"}
           %table.table.datatable
             %thead
               %tr
@@ -247,11 +255,11 @@
                     %tr
                       %td
                         = vol.name
-                        %br
+                        %br/
                         %span.info-text= vol.id
                       %td= vol.attachments.first['device']
                       %td
-                        =vol.size
+                        = vol.size
                         GB
               - else
                 %tr
@@ -261,12 +269,34 @@
                     - if involved_roles
                       Please check (role assignments) if you have one of the following roles:
                       = involved_roles.join(', ')
-
+        .tab-pane{role: "tabpanel", id: "tags"}
+          %table.table.datatable
+            %thead
+              %tr
+                %th Name
+            %tbody
+              - if current_user.is_allowed?("role:compute_viewer")
+                - if @instance.tags.empty?
+                  %tr
+                    %td No tags found.
+                - else
+                  - @instance.tags.each do |tag|
+                    %tr
+                      %td
+                        = tag
+              - else
+                %tr
+                  %td{colspan: 2}
+                    - involved_roles = policy.try(:involved_roles, "role:compute_viewer")
+                    You are not authorized to view tags.
+                    - if involved_roles
+                      Please check (role assignments) if you have one of the following roles:
+                      = involved_roles.join(', ')
         - if current_user.is_allowed?("compute:all_projects")
-          .tab-pane{role: 'tabpanel', id: 'actions'}
+          .tab-pane{role: "tabpanel", id: "actions"}
             %ul.plain-list.plain-list-widespaced
-              %li= link_to 'Terminate', plugin('compute').instance_path(id: @instance.id), class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: 'Yes, terminate it', confirmed: :loading_status}
-
+              %li
+                = link_to 'Terminate', plugin('compute').instance_path(id: @instance.id), class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: 'Yes, terminate it', confirmed: :loading_status}
     - if modal? && !@action_from_show
       = yield :details
     - else
