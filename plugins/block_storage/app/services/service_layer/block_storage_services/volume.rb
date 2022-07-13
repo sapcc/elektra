@@ -72,7 +72,7 @@ module ServiceLayer
       end
 
       def extend_volume_size(id, size)
-        elektron_volumes.post("volumes/#{id}/action") do
+        elektron_volumesv3.post("volumes/#{id}/action",{headers: {"OpenStack-API-Version": "volume 3.42"}}) do
           {
             'os-extend': {
               'new_size': size
