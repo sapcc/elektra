@@ -44,7 +44,9 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
 
 # Installing and Running Elektra
 
-## Steps for locally development on mac
+## Steps to setup a local development environemnt
+
+### MacOS
 
 1.  Install **postgres** database (actual version is 12).
 
@@ -83,7 +85,7 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
 6.  Clone this repository to your machine.
 
     ```bash
-    git clone git@github.com:sapcc/elektra.git
+    git clone https://github.com/sapcc/elektra.git
     ```
 
 7.  Install **bundler**
@@ -133,6 +135,39 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
     ```
 
     Browser access for Elektra: http://localhost:3000
+
+### Linux
+
+1. Clone the repository with `git clone https://github.com/sapcc/elektra.git`
+2. Install Yarn and PostgreSQL via package manager
+3. Check if the ruby version in your package manager matches the version number in `.ruby-version`.
+   If yes then install ruby via your package manager. If no then follow the extra steps:
+   1. Set up [rbenv](https://github.com/rbenv/rbenv) and [ruby-build](https://github.com/rbenv/ruby-build) according to their documentation.
+   2. Install Ruby with `rbenv install 2.7.6` (substitute the Ruby version with the one from the aforementioned file).
+4. Install Ruby gems with `bundle install`.
+5. Install JavaScript packages with `yarn`.
+6. Create database if not already done `./testing/with-postgres-db.sh bin/rails db:prepare`
+7. In one terminal or tmux, run `yarn build --watch` to compile the JavaScript assets. Leave this running until you're done with development.
+8. In a second terminal or tmux, run `./testing/with-postgres-db.sh bin/rails server -p 3000` to run the Ruby application. Leave this running, too.
+9. Now you can access the GUI at `http://localhost:3000`. When coming in from a different machine, you need to set up forwarding for ports 3000, e.g. `ssh -L 3000:127.0.0.1:8180 -L 8081:127.0.0.1:8081`.
+
+After each pull, you may have to repeat steps 4-5 if the Ruby version or any package versions were changed.
+
+#### NixOS notes
+
+Step 2 and 3 should be replaced with the following commands and the nix-shell must be kept open for the steps afterwards.
+
+```bash
+nix-shell
+bundle config build.sqlite3 --with-sqlite3-include="$(nix-store -r "$(nix-instantiate '<nixpkgs>' -A sqlite.dev)")/include" --with-sqlite3-lib="$(nix-store -r "$(nix-instantiate '<nixpkgs>' -A sqlite.out)"'!out')/lib"
+```
+
+or with nix-command enabled:
+
+```bash
+nix shell -f shell.nix
+bundle config build.sqlite3 --with-sqlite3-include="$(nix eval nixpkgs#sqlite.dev)/include" --with-sqlite3-lib="$(nix eval nixpkgs#sqlite.out)/lib"
+```
 
 ## Use Elektra Request Management
 
