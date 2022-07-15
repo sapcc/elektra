@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  
   mount MonsoonOpenstackAuth::Engine => '/:domain_fid/auth'
 
   # "jump to" routes
@@ -9,7 +10,7 @@ Rails.application.routes.draw do
   get '/_/:project_id(/*rest)', to: 'jump#index'
   # jump to a specific object like instance or network
   get '/_jump_to/:object_id', to: 'jump#show'
-
+  
   scope '/system' do
     # check without db connection
     get :liveliness, to: 'health#liveliness'
@@ -22,8 +23,11 @@ Rails.application.routes.draw do
     "/#{Rails.application.config.cloud_admin_domain}/" \
     "#{Rails.configuration.cloud_admin_project}/cloudops"
   )
-
+  
   scope '/:domain_id(/:project_id)(/:plugin)' do
+    
+    match 'os-api(/*path)', to: 'os_api#reverse_proxy', via: :all
+
     resources :cache, only: %i[index show] do
       collection do
         get 'csv'
