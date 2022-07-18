@@ -107,6 +107,8 @@ module Compute
       end
     end
 
+    def tags; end
+
     def new
       # get usage from db
       @quota_data = []

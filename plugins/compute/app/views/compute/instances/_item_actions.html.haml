@@ -1,65 +1,77 @@
 .btn-group
-  %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+  %button.btn.btn-default.btn-sm.dropdown-toggle{
+    type: "button",
+    data: { toggle: "dropdown" },
+    aria: { expanded: true }
+  }
     %span.fa.fa-cog
     -# %span.spinner
-
-  %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+  %ul.dropdown-menu.dropdown-menu-right{role: "menu"}
     - if current_user.is_allowed?("compute:instance_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-      %li= link_to 'Web Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
+      %li
+        = link_to 'Web Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
       / / Disabled until Serial LOg from nova side again %li= link_to 'Serial Log', console_log_instance_path(id: instance.id), data: {modal: true }
       %li.divider
-
     -# Add other actions only if instance is not in a transitioning state (creating, starting, ...)
     - unless instance.os_ext_sts_task_state
       - unless instance.locked?
         - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-          %li= link_to 'Edit', edit_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true }
-          %li= link_to 'Attach Floating IP', new_floatingip_instance_path(id: instance.id, action_from_show: show_view), data: {modal: true }
-          %li= link_to 'Detach Floating IP', plugin('compute').remove_floatingip_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true }
+          %li
+            = link_to 'Edit', edit_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true }
+          %li
+            = link_to 'Attach Floating IP', new_floatingip_instance_path(id: instance.id, action_from_show: show_view), data: {modal: true }
+          %li
+            = link_to 'Detach Floating IP', plugin('compute').remove_floatingip_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true }
           %li.divider
-          %li= link_to 'Attach Interface', plugin('compute').attach_interface_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
-          %li= link_to 'Detach Interface', plugin('compute').remove_interface_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
-
+          %li
+            = link_to 'Attach Interface', plugin('compute').attach_interface_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
+          %li
+            = link_to 'Detach Interface', plugin('compute').remove_interface_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
           %li.divider
           - if [Compute::Server::SUSPENDED,Compute::Server::PAUSED,Compute::Server::SHUT_DOWN,Compute::Server::SHUT_OFF].include? instance.power_state
-            %li= link_to 'Start', start_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: {loading_status: true}, remote: true
-
+            %li
+              = link_to 'Start', start_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: {loading_status: true}, remote: true
           - if instance.status=='ACTIVE' or instance.status=='SHUTOFF'
-            %li= link_to 'Resize', new_size_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
-
+            %li
+              = link_to 'Resize', new_size_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
           - if ['ACTIVE', 'SHUTOFF', 'PAUSED', 'SUSPENDED.'].include?(instance.status)
-            %li= link_to 'Create Snapshot', new_snapshot_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
-
+            %li
+              = link_to 'Create Snapshot', new_snapshot_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
           - if instance.status=='VERIFY_RESIZE'
-            %li= link_to 'Confirm Resize', plugin('compute').confirm_resize_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: {loading_status: true}, remote: true
-            %li= link_to 'Revert Resize', plugin('compute').revert_resize_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: {loading_status: true}, remote: true
-
-
+            %li
+              = link_to 'Confirm Resize', plugin('compute').confirm_resize_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: {loading_status: true}, remote: true
+            %li
+              = link_to 'Revert Resize', plugin('compute').revert_resize_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: {loading_status: true}, remote: true
           - if instance.power_state==Compute::Server::RUNNING
             %li.divider
-            %li= link_to 'Stop', plugin('compute').stop_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to stop this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true
-
-            %li= link_to 'Reboot', plugin('compute').reboot_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to reboot this instance?', ok: "Yes, reboot it", confirmed: :loading_status}, remote: true
-
-            %li= link_to 'Pause', plugin('compute').pause_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to pause this instance?', ok: "Yes, stop it", confirmed: :loading_status }, remote: true
-
-            %li= link_to 'Suspend', plugin('compute').suspend_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to suspend this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true
+            %li
+              = link_to 'Stop', plugin('compute').stop_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to stop this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true
+            %li
+              = link_to 'Reboot', plugin('compute').reboot_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to reboot this instance?', ok: "Yes, reboot it", confirmed: :loading_status}, remote: true
+            %li
+              = link_to 'Pause', plugin('compute').pause_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to pause this instance?', ok: "Yes, stop it", confirmed: :loading_status }, remote: true
+            %li
+              = link_to 'Suspend', plugin('compute').suspend_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to suspend this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true
         - if current_user.is_allowed?("compute:instance_edit_securitygroups", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li.divider
-          %li= link_to 'Edit Security Groups', plugin('compute').edit_securitygroups_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
+          %li
+            = link_to 'Edit Security Groups', plugin('compute').edit_securitygroups_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
+          %li
+            = link_to 'Edit Tags', plugin('compute').tags_instance_path(id: instance.id), data: { modal: true}
           %li.divider
-
         - if current_user.is_allowed?("compute:instance_reset_status")
-          %li= link_to 'Reset Status', plugin('compute').new_status_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true }
-
+          %li
+            = link_to 'Reset Status', plugin('compute').new_status_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true }
         - if current_user.is_allowed?("compute:instance_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-          %li= link_to 'Terminate', plugin('compute').instance_path(id: instance.id, action_from_show: show_view), method: :delete, data: { confirm: "Are you sure you want to terminate instance '#{instance.name}'?", ok: "Yes, terminate it", confirmed: :loading_status}, remote: true
-
+          %li
+            = link_to 'Terminate', plugin('compute').instance_path(id: instance.id, action_from_show: show_view), method: :delete, data: { confirm: "Are you sure you want to terminate instance '#{instance.name}'?", ok: "Yes, terminate it", confirmed: :loading_status}, remote: true
       -# Needs Microversion 2.9 to show locked status in UI and to react appropriate to it.
       -# We simulate for now the locked status and save it in metadata
       - if current_user.is_allowed?("compute:instance_lock") || current_user.is_allowed?("compute:instance_unlock")
         %li.divider
           - if current_user.is_allowed?("compute:instance_lock")
-            %li= link_to 'Lock', plugin('compute').lock_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to lock this instance?', ok: "Yes, lock it", confirmed: :loading_status }, remote: true
+            %li
+              = link_to 'Lock', plugin('compute').lock_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to lock this instance?', ok: "Yes, lock it", confirmed: :loading_status }, remote: true
           - if current_user.is_allowed?("compute:instance_unlock")
-            %li= link_to 'Unlock', plugin('compute').unlock_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to unlock this instance?', ok: "Yes, unlock it", confirmed: :loading_status }, remote: true
+            %li
+              = link_to 'Unlock', plugin('compute').unlock_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to unlock this instance?', ok: "Yes, unlock it", confirmed: :loading_status }, remote: true
