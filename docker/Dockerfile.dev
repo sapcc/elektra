@@ -81,15 +81,17 @@ RUN echo -e 'echo "Welcome to elektra dev container"\n\
   echo " - rebuild npm:       rebuild-npm"\n\
   echo " - rebuild gems:      rebuild-gems"\n\
   echo " - postgres console:  pg-console"\n\
-  echo " - proxy (port:8888): dev-proxy"\n\
+  echo " - proxy:             dev-proxy"\n\
   echo ""\n\
-  echo " Note: elektra database are located in /app/tmp/postgresql/data/"\n\
+  echo " [DB]    elektra database are located in /app/tmp/postgresql/data/"\n\
+  echo " [Proxy] to use the dev-proxy you need to uncomment proxy vars in .env"\n\
+  echo "         and set ELEKTRA_SSL_VERIFY_PEER to false"\n\
   alias start-rails="cd /app && bin/rails s -b 0.0.0.0 -p $APP_PORT"\n\
   alias start-js="cd /app && yarn build --watch"\n\
   alias rebuild-npm="cd /app && rm -rf node_modules && yarn"\n\
   alias rebuild-gems="cd /app && rm -rf vendor/bundle && bundle install"\n\
   alias pg-console="su - postgres -c \"pgcli\""\n\
-  alias dev-proxy="mitmproxy -p 8888"\n\
+  alias dev-proxy="mitmproxy -p 8888 --ssl-insecure"\n\
   alias rebuild-db="rm -rf /app/tmp/postgresql/data/* && echo Done! please exit elektra and start again..."' >> /root/.profile
 
 ENTRYPOINT [ "/usr/local/bin/start-db" ]  
