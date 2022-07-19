@@ -1,22 +1,20 @@
 import React from "react"
-import { createAjaxHelper } from "lib/ajax_helper"
 import TagItem from "./Item"
-
-const ajaxClient = createAjaxHelper()
+import apiClient from "./apiClient"
 
 const TagsList = ({ instanceId }) => {
+  // init local state for TagsList
   const [items, setItems] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState(null)
 
+  // because of empty relation array this function is called once the component is mounted
   React.useEffect(() => {
     setIsLoading(true)
-    ajaxClient
-      .get(`os-api/compute/servers/${instanceId}/tags`, {
-        params: { headers: { "X-OpenStack-Nova-API-Version": "2.26" } },
-      })
+    apiClient
+      .get(`servers/${instanceId}/tags`)
       .then((response) => {
-        console.log(response.data)
+        //console.log(response.data)
         setItems(response.data.tags)
       })
       .catch((error) => {
@@ -29,20 +27,12 @@ const TagsList = ({ instanceId }) => {
 
   const save = React.useCallback(
     (index, newTagValue) => {
+      // write the new value into the items
       items[index] = newTagValue
-      ajaxClient
-        .put(
-          `os-api/compute/servers/${instanceId}/tags`,
-          { body: JSON.stringify({ tags: items }) },
-          {
-            params: {
-              headers: {
-                "X-OpenStack-Nova-API-Version": "2.26",
-                "Content-Type": "application/json",
-              },
-            },
-          }
-        )
+      // send change request to the api
+      apiClient
+        .put(`servers/${instanceId}/tags`, { tags: items })
+        // if success set items state
         .then((response) => setItems(response.data.tags))
         .catch((error) => {
           setError(error.message)
@@ -54,14 +44,19 @@ const TagsList = ({ instanceId }) => {
   return (
     <>
       <div className="modal-body">
-        {error && <span>{error}</span>}
-        {isLoading && (
-          <span>
-            <span className="spinner"></span> Loading...
-          </span>
-        )}
+        {
+          // show error
+          error && <span>{error}</span>
+        }
+        {
+          // show loading spinner
+          isLoading && (
+            <span>
+              <span className="spinner"></span> Loading...
+            </span>
+          )
+        }
         <table className="table">
-          {" "}
           <thead>
             <tr>
               <th>Name</th>
@@ -69,13 +64,16 @@ const TagsList = ({ instanceId }) => {
             </tr>
           </thead>
           <tbody>
-            {items.map((item, index) => (
-              <TagItem
-                item={item}
-                onSave={(newTagValue) => save(index, newTagValue)}
-                key={index}
-              />
-            ))}
+            {
+              // render tags list
+              items.map((item, index) => (
+                <TagItem
+                  item={item}
+                  onSave={(newTagValue) => save(index, newTagValue)}
+                  key={index}
+                />
+              ))
+            }
           </tbody>
         </table>
       </div>
