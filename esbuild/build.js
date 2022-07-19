@@ -46,14 +46,26 @@ require("esbuild")
     ],
     //loader: { ".js": "jsx" },
     target: ["es6", "chrome58", "firefox57", "safari11", "edge18"],
-    watch,
+    watch: watch && {
+      onRebuild(error, result) {
+        if (!error) {
+          console.log("\033[2J")
+          console.log(
+            "\x1b[32m%s\x1b[0m",
+            "Rebuild completed successfully with no errors! Don't worry Be Happy :)"
+          ) //cyan
+          console.log("watching...")
+        }
+      },
+    },
     minify: production,
     sourcemap: !production,
     inject: ["esbuild/react-shim.js"],
     // map global this to window
     define: { this: "window" },
+    allowOverwrite: true,
   })
-  .then(() => {
+  .then((result) => {
     if (watch) console.log("watching...")
     else console.log("done")
   })
