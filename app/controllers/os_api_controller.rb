@@ -15,26 +15,18 @@ class OsApiController < ::AjaxController
     # the rest is the current path
     path = path_tokens.join("/")
 
-    # byebug
-    # headers are provided as a parameter as JSON string. So we have to parse it.
-    headers = begin 
-      JSON.parse(params[:headers]) 
-    rescue StandardError => e
-      Rails.logger.error("\033[31m\033[1mOSApiController: Could not parse headers parameter\033[0m")
-      pp e
-      {}  
+    headers = {}
+    request.headers.each do |name,value| 
+      if name.start_with?("HTTP_OS_API") 
+        headers[name.gsub("HTTP_OS_API_","").gsub("_","-")] = value 
+      end
     end
+   
     # get api client for the given service name
     service = services.os_api.service(service_name)
 
     # filter the relevant params for the api client
-    elektronParams = {}
-    params.each do |k,v| 
-      if !["domain_id","project_id","controller","action","path","headers"].include?(k)
-        elektronParams[k] = v
-      end
-    end 
-    
+    elektronParams = request.query_parameters
     # call the openstack api endpoint with given path, params and headers
     # for http methods POST, PUT, PATCH we have to consider the body parameter
     response = if ["post","put","patch"].include?(method)
