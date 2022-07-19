@@ -15,13 +15,13 @@ class OsApiController < ::AjaxController
     # the rest is the current path
     path = path_tokens.join("/")
 
-    headers = {}
+    headers = {"Content-Type" => request.headers["Content-Type"] || "application/json"}
     request.headers.each do |name,value| 
       if name.start_with?("HTTP_OS_API") 
         headers[name.gsub("HTTP_OS_API_","").gsub("_","-")] = value 
       end
     end
-   
+    
     # get api client for the given service name
     service = services.os_api.service(service_name)
 
@@ -30,8 +30,10 @@ class OsApiController < ::AjaxController
     # call the openstack api endpoint with given path, params and headers
     # for http methods POST, PUT, PATCH we have to consider the body parameter
     response = if ["post","put","patch"].include?(method)
-      body = JSON.parse(request.body.read )
-      service.public_send(method,path,body,elektronParams, headers: headers).body      
+      body = JSON.parse(request.body.read ) rescue request.body.read 
+      service.public_send(method,path,elektronParams, headers: headers) do 
+        body 
+      end.body      
     else
       # GET, HEAD, DELETE case
       service.public_send(method,path, elektronParams, headers: headers).body      
