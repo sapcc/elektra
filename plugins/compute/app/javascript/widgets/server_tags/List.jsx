@@ -27,8 +27,13 @@ const TagsList = ({ instanceId }) => {
 
   const save = React.useCallback(
     (index, newTagValue) => {
-      // write the new value into the items
-      items[index] = newTagValue
+      if (newTagValue === "") {
+        // delete tag if empty
+        items.splice(index, 1)
+      } else {
+        // write the new value into the items
+        items[index] = newTagValue
+      }
       // send change request to the api
       apiClient
         .put(`servers/${instanceId}/tags`, { tags: items })
@@ -60,7 +65,7 @@ const TagsList = ({ instanceId }) => {
           <thead>
             <tr>
               <th>Name</th>
-              <th className="snug"></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
