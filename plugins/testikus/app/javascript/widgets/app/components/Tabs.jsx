@@ -5,8 +5,7 @@ import {
   Tabs,
   TabPanel,
   TabList,
-  ContentAreaToolbar,
-  Button,
+  Container
 } from "juno-ui-components"
 
 const TabsComponent = ({ tabsConfig, ...otherProps }) => {
@@ -26,12 +25,9 @@ const TabsComponent = ({ tabsConfig, ...otherProps }) => {
       // collect tab panels
       tabPanels.push(
         <TabPanel key={index}>
-          <ContentAreaToolbar>
-            <Button onClick={() => history.push("/entries/new")}>
-              Create new
-            </Button>
-          </ContentAreaToolbar>
-          <Component>{otherProps}</Component>
+          <Container px={false}>
+            <Component>{otherProps}</Component>
+          </Container>
         </TabPanel>
       )
     }
