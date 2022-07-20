@@ -1,6 +1,6 @@
 module Compute
   module Flavors
-    class MembersController < ::ApplicationController
+    class MembersController < ::DashboardController
 
       def index
         @flavor = services.compute.find_flavor(params[:flavor_id])
