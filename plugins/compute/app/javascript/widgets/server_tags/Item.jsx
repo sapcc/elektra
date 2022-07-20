@@ -1,6 +1,6 @@
 import React from "react"
 
-const TagItem = ({ item, onSave }) => {
+const TagItem = ({ item, onSave, isNew, index }) => {
   // set local state got ZahItem
   const [isEditing, setIsEditing] = React.useState(false)
   const [newTagValue, setNewTagValue] = React.useState(item)
@@ -14,26 +14,47 @@ const TagItem = ({ item, onSave }) => {
     setIsEditing(false)
   }, [newTagValue])
 
-  const delete_tag = React.useCallback(() => {
-    setIsEditing(true)
-  }, [])
+  const deleteTag = React.useCallback(() => {
+    onSave("")
+    setIsEditing(false)
+  }, [newTagValue])
+
+  const editing = (isEditing, isNew, index) => {
+    //console.log(isEditing,isNew,index)
+    if (isNew === index) {
+      return true
+    }
+    if (isEditing) {
+      return true
+    }
+    return false
+  }
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      save()
+    }
+  }
 
   return (
     <tr>
       <td>
-        {isEditing ? (
+        {editing(isEditing, isNew, index) ? (
           <input
+            type="text"
+            style={{ width: "100%" }}
             value={newTagValue}
             onChange={(e) => setNewTagValue(e.target.value)}
+            onKeyPress={(e) => handleKeyPress(e)}
           />
         ) : (
           item
         )}
       </td>
       <td className="snug">
-        {isEditing ? (
+        {editing(isEditing, -1, index) ? (
           <button
-            className="btn btn-default"
+            className="btn btn-sm btn-default"
             onClick={() => setIsEditing(false)}
           >
             Cancel
@@ -44,18 +65,20 @@ const TagItem = ({ item, onSave }) => {
       </td>
       <td className="snug">
         <button
-          className="btn btn-primary"
-          onClick={() => (isEditing ? save() : edit())}
+          className="btn btn-sm btn-primary"
+          onClick={() => (editing(isEditing, isNew, index) ? save() : edit())}
         >
-          {isEditing ? "Save" : "Edit"}
+          {editing(isEditing, isNew, index) ? "Save" : "Edit"}
         </button>
       </td>
       <td className="snug">
         <button
           className={
-            isEditing ? "btn btn-warning  disabled" : "btn btn-warning"
+            editing(isEditing, isNew, index)
+              ? "btn btn-sm btn-warning  disabled"
+              : "btn btn-sm btn-warning"
           }
-          onClick={() => (isEditing ? "" : delete_tag())}
+          onClick={() => (editing(isEditing, isNew, index) ? "" : deleteTag())}
         >
           Delete
         </button>

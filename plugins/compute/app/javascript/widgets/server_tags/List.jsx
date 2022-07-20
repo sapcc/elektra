@@ -7,6 +7,8 @@ const TagsList = ({ instanceId }) => {
   const [items, setItems] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState(null)
+  const [isNew, setIsNew] = React.useState(-1)
+  const [addNewTagCount, setAddNewTagCount] = React.useState(0)
 
   // because of empty relation array this function is called once the component is mounted
   React.useEffect(() => {
@@ -34,6 +36,7 @@ const TagsList = ({ instanceId }) => {
         // write the new value into the items
         items[index] = newTagValue
       }
+      setIsNew(-1)
       // send change request to the api
       apiClient
         .put(`servers/${instanceId}/tags`, { tags: items })
@@ -45,6 +48,17 @@ const TagsList = ({ instanceId }) => {
     },
     [items]
   )
+
+  const addItem = React.useCallback(() => {
+    if (isNew <= 1) {
+      setItems((items) => [
+        ...items,
+        `please edit your new tag ${addNewTagCount}`,
+      ])
+      setIsNew(items.length)
+      setAddNewTagCount((c) => c + 1)
+    }
+  }, [items, isNew])
 
   return (
     <>
@@ -65,7 +79,12 @@ const TagsList = ({ instanceId }) => {
           <thead>
             <tr>
               <th>Name</th>
-              <th></th>
+              <th colSpan={2}></th>
+              <th className="snug">
+                <button className="btn btn-primary" onClick={() => addItem()}>
+                  Add
+                </button>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -75,6 +94,8 @@ const TagsList = ({ instanceId }) => {
                 <TagItem
                   item={item}
                   onSave={(newTagValue) => save(index, newTagValue)}
+                  isNew={isNew}
+                  index={index}
                   key={index}
                 />
               ))
