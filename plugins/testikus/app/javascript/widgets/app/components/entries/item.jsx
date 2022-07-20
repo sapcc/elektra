@@ -1,8 +1,7 @@
 import React from "react"
 import { Link } from "react-router-dom"
 import { policy } from "lib/policy"
-import { DataGridRow } from "juno-ui-components/lib/DataGridRow"
-import { DataGridCell } from "juno-ui-components/lib/DataGridCell"
+import { DataGridRow, DataGridCell } from "juno-ui-components"
 
 const Item = ({ entry, handleDelete }) => {
   return (
