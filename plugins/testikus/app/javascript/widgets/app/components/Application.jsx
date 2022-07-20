@@ -24,7 +24,7 @@ const Application = () => {
   return (
     <HashRouter /*hashType="noslash"*/>
       <StateProvider>
-        <StyleProvider theme="theme-dark" stylesWrapper="shadowRoot">
+        <StyleProvider theme="theme-light" stylesWrapper="shadowRoot">
           <style>{styles}</style>
           {/* redirect root to shares tab */}
           <AppShell embedded>

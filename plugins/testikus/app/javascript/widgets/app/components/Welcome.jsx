@@ -1,23 +1,24 @@
 import React from "react"
 
-const Welcome = () => (
-  <div className="p-4">
-    <h4>Welcome to testikus</h4>
-    <p>This is an example how to build simple react app inside elektra.</p>
+import { IntroBox } from "juno-ui-components"
 
-    <h5>Folder structure</h5>
+const Welcome = () => (
+  <IntroBox variant="hero" title="Welcome to testikus">
+    <p>This is an example for how to build a simple react app inside Elektra.</p>
+
+    <h5>Folder structure:</h5>
 
     <ul>
       <li>
-        components: contains jsx components which can be state-full or
-        state-less.
+        <strong>components:</strong> contains jsx components which can be stateful or
+        stateless.
       </li>
       <li>
-        reducers: contains all the methods which are responsible for
-        manipulationg the state.
+        <strong>reducers:</strong> contains all the methods which are responsible for
+        manipulating the state.
       </li>
     </ul>
-  </div>
+  </IntroBox>
 )
 
 export default Welcome

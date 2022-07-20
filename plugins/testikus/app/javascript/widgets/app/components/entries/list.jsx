@@ -8,15 +8,7 @@ import EntryItem from "./item"
 import * as client from "../../client"
 import { useGlobalState } from "../StateProvider"
 
-import { DataGrid } from "juno-ui-components/lib/DataGrid"
-import { DataGridHead } from "juno-ui-components/lib/DataGridHead"
-import { DataGridHeadRow } from "juno-ui-components/lib/DataGridHeadRow"
-import { DataGridHeadCell } from "juno-ui-components/lib/DataGridHeadCell"
-import { DataGridBody } from "juno-ui-components/lib/DataGridBody"
-import { DataGridRow } from "juno-ui-components/lib/DataGridRow"
-import { DataGridCell } from "juno-ui-components/lib/DataGridCell"
-
-import { SearchInput, Button } from "juno-ui-components"
+import { Button, DataGrid, DataGridRow, DataGridCell, DataGridHeadCell, DataGridToolbar, Filters } from "juno-ui-components"
 
 const Entries = () => {
   const [filterTerm, setFilterTerm] = React.useState(null)
@@ -73,45 +65,39 @@ const Entries = () => {
   }, [state.entries.items, filterTerm])
 
   return (
-    <div>
-      <div className="toolbar">
-        <TransitionGroup>
-          {state.entries.items.length >= 4 && (
-            <FadeTransition>
-              <SearchField
-                onChange={setFilterTerm}
-                placeholder="name or description"
-                text="Searches by name or description in visible entries list only.
-                      Entering a search term will automatically start loading the next pages
-                      and filter the loaded items using the search term. Emptying the search
-                      input field will show all currently loaded items."
-              />
-            </FadeTransition>
-          )}
-        </TransitionGroup>
+    <>
+      <Filters
+        search={ <SearchField
+                    variant="juno"
+                    onChange={setFilterTerm}
+                    placeholder="name or description"
+                    text="Searches by name or description in visible entries list only.
+                          Entering a search term will automatically start loading the next pages
+                          and filter the loaded items using the search term. Emptying the search
+                          input field will show all currently loaded items."
+                  />}
+      >
 
+      </Filters>
+      <DataGridToolbar>
         {policy.isAllowed("testikus:entry_create") && (
-          <div className="main-buttons">
-            <Link to="/entries/new" className="btn btn-primary">
-              Create new
-            </Link>
-          </div>
+          <Link to="/entries/new">
+            <Button>Create new</Button>
+          </Link>
         )}
-      </div>
+      </DataGridToolbar>
 
       {!policy.isAllowed("testikus:entry_list") ? (
         <span>You are not allowed to see this page</span>
       ) : state.isFetching ? (
         <span className="spinner" />
       ) : (
-        <DataGrid>
-          <DataGridHead>
-            <DataGridHeadRow>
-              <DataGridHeadCell>Name</DataGridHeadCell>
-              <DataGridHeadCell>Description</DataGridHeadCell>
-              <DataGridHeadCell></DataGridHeadCell>
-            </DataGridHeadRow>
-          </DataGridHead>
+        <DataGrid columns={3}>
+          <DataGridRow>
+            <DataGridHeadCell>Name</DataGridHeadCell>
+            <DataGridHeadCell>Description</DataGridHeadCell>
+            <DataGridHeadCell></DataGridHeadCell>
+          </DataGridRow>
           {filteredItems && filteredItems.length > 0 ? (
             filteredItems.map((entry, index) => (
               <EntryItem
@@ -121,11 +107,9 @@ const Entries = () => {
               />
             ))
           ) : (
-            <DataGridBody>
-              <DataGridRow>
-                <DataGridCell colspan={3}>No Entries found.</DataGridCell>
-              </DataGridRow>
-            </DataGridBody>
+            <DataGridRow>
+              <DataGridCell colSpan={3}>No Entries found.</DataGridCell>
+            </DataGridRow>
           )}
         </DataGrid>
         // <table className="table entries">
@@ -153,7 +137,7 @@ const Entries = () => {
         //   </tbody>
         // </table>
       )}
-    </div>
+    </>
   )
 }
 
