@@ -24,23 +24,24 @@ class OsApiController < ::AjaxController
     
     # get api client for the given service name
     service = services.os_api.service(service_name)
-
     # filter the relevant params for the api client
-    elektronParams = request.query_parameters
+    elektron_params = request.query_parameters
     # call the openstack api endpoint with given path, params and headers
     # for http methods POST, PUT, PATCH we have to consider the body parameter
-    response = if ["post","put","patch"].include?(method)
+    elektron_response = if ["post","put","patch"].include?(method)
       body = JSON.parse(request.body.read ) rescue request.body.read 
-      service.public_send(method,path,elektronParams, headers: headers) do 
+      service.public_send(method,path,elektron_params, headers: headers) do 
         body 
-      end.body      
+      end      
     else
       # GET, HEAD, DELETE case
-      service.public_send(method,path, elektronParams, headers: headers).body      
+      service.public_send(method,path, elektron_params, headers: headers)   
     end
     
-    # byebug
     # render response as json
-    render json: response
+    elektron_response.header.each_header do |key, value|
+      response.headers[key] = value if key.start_with? "x-"
+    end
+    render json: elektron_response.body
   end
 end
