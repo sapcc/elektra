@@ -1,4 +1,6 @@
 import { Popover, OverlayTrigger } from 'react-bootstrap';
+import { SearchInput } from "juno-ui-components"
+import React from 'react';
 
 let counter = 0;
 
@@ -38,6 +40,7 @@ export class SearchField extends React.Component {
 
 
   render() {
+    const variant = this.props.variant
     const empty = this.state.searchTerm.trim().length==0
     const showSearchIcon = (this.props.searchIcon != false)
     let iconClassName = empty ? (showSearchIcon ? 'fa fa-search' : '') : 'fa fa-times-circle'
@@ -45,32 +48,45 @@ export class SearchField extends React.Component {
 
     return (
       <React.Fragment>
-        <div className='has-feedback has-feedback-searchable'>
-          <input
-            data-test="search"
-            type="text"
-            className="form-control"
+        { variant === "juno" ?
+          <SearchInput 
             value={this.state.searchTerm}
             placeholder={this.props.placeholder}
+            disabled={this.props.disabled === true}
             onChange={this.onChangeTerm}
-            disabled={this.props.disabled==true}
+            onClear={(e) => this.reset(e)}
           />
-          <span
-            className={`form-control-feedback ${!empty && 'not-empty'}`}
-            onClick={(e) => iconClassName!='spinner' && !empty && this.reset(e)}>
-            <i className={iconClassName}/>
-          </span>
-        </div>
-        {this.props.text &&
-          <div className="has-feedback-help">
-            <OverlayTrigger trigger="click" placement="top" rootClose overlay={this.infoText}>
-              <a className='help-link' href='#' onClick={() => null}>
-                <i className="fa fa-question-circle"></i>
-              </a>
-            </OverlayTrigger>
-          </div>
+        :
+          <React.Fragment>
+            <div className='has-feedback has-feedback-searchable'>
+              <input
+                data-test="search"
+                type="text"
+                className="form-control"
+                value={this.state.searchTerm}
+                placeholder={this.props.placeholder}
+                onChange={this.onChangeTerm}
+                disabled={this.props.disabled==true}
+              />
+              <span
+                className={`form-control-feedback ${!empty && 'not-empty'}`}
+                onClick={(e) => iconClassName!='spinner' && !empty && this.reset(e)}>
+                <i className={iconClassName}/>
+              </span>
+            </div>
+            {this.props.text &&
+              <div className="has-feedback-help">
+                <OverlayTrigger trigger="click" placement="top" rootClose overlay={this.infoText}>
+                  <a className='help-link' href='#' onClick={() => null}>
+                    <i className="fa fa-question-circle"></i>
+                  </a>
+                </OverlayTrigger>
+              </div>
+            }
+          </React.Fragment>
         }
       </React.Fragment>
+
     )
   }
 }
