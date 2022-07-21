@@ -1,8 +1,8 @@
 import React from "react"
 
-const TagItem = ({ item, onSave, isNew, index }) => {
+const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
   // set local state got ZahItem
-  const [isEditing, setIsEditing] = React.useState(false)
+  const [isEditing, setIsEditing] = React.useState(isNew)
   const [newTagValue, setNewTagValue] = React.useState(item)
 
   const edit = React.useCallback(() => {
@@ -10,37 +10,30 @@ const TagItem = ({ item, onSave, isNew, index }) => {
   }, [])
 
   const save = React.useCallback(() => {
-    onSave(newTagValue)
+    onUpdate(newTagValue)
     setIsEditing(false)
   }, [newTagValue])
 
   const deleteTag = React.useCallback(() => {
-    onSave("")
+    onRemove()
     setIsEditing(false)
-  }, [newTagValue])
+  }, [setIsEditing])
 
-  const editing = (isEditing, isNew, index) => {
-    //console.log(isEditing,isNew,index)
-    if (isNew === index) {
-      return true
-    }
-    if (isEditing) {
-      return true
-    }
-    return false
-  }
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      save()
-    }
-  }
+  const handleKeyPress = React.useCallback(
+    (e) => {
+      if (e.key === "Enter") {
+        save()
+      }
+    },
+    [save]
+  )
 
   return (
     <tr>
       <td>
-        {editing(isEditing, isNew, index) ? (
+        {isEditing ? (
           <input
+            className="form-control"
             type="text"
             style={{ width: "100%" }}
             value={newTagValue}
@@ -51,34 +44,33 @@ const TagItem = ({ item, onSave, isNew, index }) => {
           item
         )}
       </td>
-      <td className="snug">
-        {editing(isEditing, -1, index) ? (
+      <td className="text-right">
+        {isEditing ? (
           <button
             className="btn btn-sm btn-default"
-            onClick={() => setIsEditing(false)}
+            onClick={() => {
+              if (isNew) onRemove()
+              setIsEditing(false)
+            }}
           >
             Cancel
           </button>
         ) : (
           ""
-        )}
-      </td>
-      <td className="snug">
+        )}{" "}
         <button
           className="btn btn-sm btn-primary"
-          onClick={() => (editing(isEditing, isNew, index) ? save() : edit())}
+          onClick={() => (isEditing ? save() : edit())}
         >
-          {editing(isEditing, isNew, index) ? "Save" : "Edit"}
-        </button>
-      </td>
-      <td className="snug">
+          {isEditing ? "Save" : "Edit"}
+        </button>{" "}
         <button
           className={
-            editing(isEditing, isNew, index)
+            isEditing
               ? "btn btn-sm btn-warning  disabled"
               : "btn btn-sm btn-warning"
           }
-          onClick={() => (editing(isEditing, isNew, index) ? "" : deleteTag())}
+          onClick={() => (isEditing ? "" : deleteTag())}
         >
           Delete
         </button>

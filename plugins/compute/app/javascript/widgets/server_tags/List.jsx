@@ -7,8 +7,7 @@ const TagsList = ({ instanceId }) => {
   const [items, setItems] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState(null)
-  const [isNew, setIsNew] = React.useState(-1)
-  const [addNewTagCount, setAddNewTagCount] = React.useState(0)
+  const [newTagItem, setNewTagItem] = React.useState(null)
 
   // because of empty relation array this function is called once the component is mounted
   React.useEffect(() => {
@@ -27,38 +26,56 @@ const TagsList = ({ instanceId }) => {
       })
   }, [])
 
-  const save = React.useCallback(
-    (index, newTagValue) => {
-      if (newTagValue === "") {
-        // delete tag if empty
-        items.splice(index, 1)
-      } else {
-        // write the new value into the items
-        items[index] = newTagValue
-      }
-      setIsNew(-1)
-      // send change request to the api
-      apiClient
-        .put(`servers/${instanceId}/tags`, { tags: items })
-        // if success set items state
-        .then((response) => setItems(response.data.tags))
-        .catch((error) => {
-          setError(error.message)
-        })
+  React.useEffect(() => {
+    console.log("itemListIsMounted")
+    // send change request to the api
+    apiClient
+      .put(`servers/${instanceId}/tags`, { tags: items })
+      .catch((error) => {
+        setError(error.message)
+      })
+    return () => {
+      console.log("ItemListUnMounted")
+    }
+  }, [items])
+
+  // add temporary new item
+  const addNewItem = React.useCallback(() => {
+    setNewTagItem(`please edit your new tag ${items.length + 1}`)
+  }, [setNewTagItem, items])
+  // remove temporary new item
+  const cancelNewItem = React.useCallback(() => {
+    setNewTagItem(null)
+  }, [setNewTagItem])
+  // save new item to item state
+  const saveNewItem = React.useCallback(
+    (newTagValue) => {
+      const newItems = items.slice()
+      newItems.push(newTagValue)
+      setNewTagItem(null)
+      setItems(newItems)
     },
-    [items]
+    [items, setItems, setNewTagItem]
   )
 
-  const addItem = React.useCallback(() => {
-    if (isNew <= 1) {
-      setItems((items) => [
-        ...items,
-        `please edit your new tag ${addNewTagCount}`,
-      ])
-      setIsNew(items.length)
-      setAddNewTagCount((c) => c + 1)
-    }
-  }, [items, isNew])
+  const updateItem = React.useCallback(
+    (index, newTagValue) => {
+      const newItems = items.slice()
+      newItems[index] = newTagValue
+      setItems(newItems)
+    },
+    [items, setItems]
+  )
+
+  const removeItem = React.useCallback(
+    (index) => {
+      console.log(index)
+      const newItems = items.slice()
+      newItems.splice(index, 1)
+      setItems(newItems)
+    },
+    [items, setItems]
+  )
 
   return (
     <>
@@ -79,10 +96,13 @@ const TagsList = ({ instanceId }) => {
           <thead>
             <tr>
               <th>Name</th>
-              <th colSpan={2}></th>
-              <th className="snug">
-                <button className="btn btn-primary" onClick={() => addItem()}>
-                  Add
+              <th className="text-right">
+                <button
+                  className="btn btn-primary"
+                  disabled={newTagItem}
+                  onClick={() => addNewItem()}
+                >
+                  New Tag
                 </button>
               </th>
             </tr>
@@ -93,13 +113,20 @@ const TagsList = ({ instanceId }) => {
               items.map((item, index) => (
                 <TagItem
                   item={item}
-                  onSave={(newTagValue) => save(index, newTagValue)}
-                  isNew={isNew}
-                  index={index}
-                  key={index}
+                  onUpdate={(newTagValue) => updateItem(index, newTagValue)}
+                  onRemove={() => removeItem(index)}
+                  key={Math.random() * Math.pow(10, 16)}
                 />
               ))
             }
+            {newTagItem && (
+              <TagItem
+                isNew
+                item={newTagItem}
+                onUpdate={(newTagValue) => saveNewItem(newTagValue)}
+                onRemove={cancelNewItem}
+              />
+            )}
           </tbody>
         </table>
       </div>
