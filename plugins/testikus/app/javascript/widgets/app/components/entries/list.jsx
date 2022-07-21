@@ -92,7 +92,7 @@ const Entries = () => {
       ) : state.isFetching ? (
         <span className="spinner" />
       ) : (
-        <DataGrid columns={3}>
+        <DataGrid columns={3} minContentColumns={[2]}>
           <DataGridRow>
             <DataGridHeadCell>Name</DataGridHeadCell>
             <DataGridHeadCell>Description</DataGridHeadCell>
