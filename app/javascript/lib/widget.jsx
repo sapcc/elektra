@@ -107,12 +107,10 @@ class Widget {
   }
 }
 
-export const getWidgetName = (dirname) => {
-  if (!dirname) return null
-  const name_regex = /.*plugins\/([^\/]+)\/app\/javascript\/([^\.]+)/
-  const name_tokens = dirname.match(name_regex)
-  if (name_tokens.length < 2) return null
-  return `${name_tokens[1]}_${name_tokens[2]}`
+export const getWidgetName = ({ pluginName, widgetName }) => {
+  if (!pluginName || !widgetName) return null
+
+  return `${pluginName}_${widgetName}_widget`
 }
 
 const getCurrentScript = (widgetName) => {
@@ -182,9 +180,9 @@ export const createWidget = (dirname, options = {}) => {
 
 export const getContainerFromCurrentScript = (widgetName) => {
   const currentScript = getCurrentScript(widgetName)
+  // get data attributes that are given from the javascript import tag
   const scriptParams = JSON.parse(JSON.stringify(currentScript.dataset))
   const reactContainer = window.document.createElement("div")
-
   currentScript.parentNode.replaceChild(reactContainer, currentScript)
   return {
     reactContainer,
