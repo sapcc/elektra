@@ -11,9 +11,6 @@ const TagsList = ({ instanceId }) => {
 
   // because of empty relation array this function is called once the component is mounted
   React.useEffect(() => {
-    if (!instanceId) {
-      return
-    }
     setIsLoading(true)
     apiClient
       .get(`servers/${instanceId}/tags`)
@@ -27,30 +24,27 @@ const TagsList = ({ instanceId }) => {
       .finally(() => {
         setIsLoading(false)
       })
-  }, [instanceId])
-
-  const save = React.useCallback((newItems) => {
-    console.log("itemListIsMounted")
-    // send change request to the api
-    apiClient
-      .put(`servers/${instanceId}/tags`, { tags: newItems })
-      .catch((error) => {
-        setError(error.message)
-      })
-    return () => {
-      console.log("ItemListUnMounted")
-    }
   }, [])
 
-  // add temporary new item
+  const save = React.useCallback(
+    (newItems) => {
+      // send change request to the api
+      apiClient
+        .put(`servers/${instanceId}/tags`, { tags: newItems })
+        .catch((error) => {
+          setError(error.message)
+        })
+    },
+    [setError]
+  )
+
+  // handle new tag items temporary in own state
   const addNewItem = React.useCallback(() => {
     setNewTagItem(`please edit your new tag ${items.length + 1}`)
   }, [setNewTagItem, items])
-  // remove temporary new item
   const cancelNewItem = React.useCallback(() => {
     setNewTagItem(null)
   }, [setNewTagItem])
-  // save new item to item state
   const saveNewItem = React.useCallback(
     (newTagValue) => {
       const newItems = items.slice()
@@ -61,7 +55,7 @@ const TagsList = ({ instanceId }) => {
     },
     [items, setItems, setNewTagItem, save]
   )
-
+  //// handle tag items
   const updateItem = React.useCallback(
     (index, newTagValue) => {
       const newItems = items.slice()
@@ -71,13 +65,12 @@ const TagsList = ({ instanceId }) => {
     },
     [items, setItems, save]
   )
-
   const removeItem = React.useCallback(
     (index) => {
-      console.log(index)
       const newItems = items.slice()
       newItems.splice(index, 1)
       setItems(newItems)
+      save(newItems)
     },
     [items, setItems]
   )
@@ -120,7 +113,13 @@ const TagsList = ({ instanceId }) => {
                   item={item}
                   onUpdate={(newTagValue) => updateItem(index, newTagValue)}
                   onRemove={() => removeItem(index)}
-                  key={Math.random() * Math.pow(10, 16)}
+                  key={
+                    // Note: we do not use index here because of caching problems
+                    //       when a tag is deleted from the list the whole order
+                    //       can be is corrupted and the wrong tags are deleted
+                    //       or updated if the values have the same value
+                    Math.random() * Math.pow(10, 16)
+                  }
                 />
               ))
             }
