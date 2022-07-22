@@ -143,12 +143,15 @@ export const createConfig = (widgetName, params) => {
 }
 
 export const createWidget = (dirname, options = {}) => {
+  if (!dirname) dirname = { pluginName: null, widgetName: null }
   const widgetName = getWidgetName(dirname)
+  //console.log(widgetName)
   let reactContainers = options.containers
   let params = options.params || {}
 
   if (!reactContainers) {
     let scriptTagContainer = getContainerFromCurrentScript(widgetName)
+    //console.log(scriptTagContainer)
     reactContainers = [scriptTagContainer.reactContainer]
     params = scriptTagContainer.scriptParams
   }
