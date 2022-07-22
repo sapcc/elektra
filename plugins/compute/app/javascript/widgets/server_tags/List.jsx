@@ -11,6 +11,9 @@ const TagsList = ({ instanceId }) => {
 
   // because of empty relation array this function is called once the component is mounted
   React.useEffect(() => {
+    if (!instanceId) {
+      return
+    }
     setIsLoading(true)
     apiClient
       .get(`servers/${instanceId}/tags`)
@@ -24,20 +27,20 @@ const TagsList = ({ instanceId }) => {
       .finally(() => {
         setIsLoading(false)
       })
-  }, [])
+  }, [instanceId])
 
-  React.useEffect(() => {
+  const save = React.useCallback((newItems) => {
     console.log("itemListIsMounted")
     // send change request to the api
     apiClient
-      .put(`servers/${instanceId}/tags`, { tags: items })
+      .put(`servers/${instanceId}/tags`, { tags: newItems })
       .catch((error) => {
         setError(error.message)
       })
     return () => {
       console.log("ItemListUnMounted")
     }
-  }, [items])
+  }, [])
 
   // add temporary new item
   const addNewItem = React.useCallback(() => {
@@ -54,8 +57,9 @@ const TagsList = ({ instanceId }) => {
       newItems.push(newTagValue)
       setNewTagItem(null)
       setItems(newItems)
+      save(newItems)
     },
-    [items, setItems, setNewTagItem]
+    [items, setItems, setNewTagItem, save]
   )
 
   const updateItem = React.useCallback(
@@ -63,8 +67,9 @@ const TagsList = ({ instanceId }) => {
       const newItems = items.slice()
       newItems[index] = newTagValue
       setItems(newItems)
+      save(newItems)
     },
-    [items, setItems]
+    [items, setItems, save]
   )
 
   const removeItem = React.useCallback(
