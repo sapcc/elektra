@@ -172,6 +172,7 @@ html {
   position: relative;
   min-height: 100%;
   font-size: 16px; // important to set the base font-size to the current industry standard of 16px. rem units are sized off of this value, even inside a shadow DOM
+  background: rgb(249, 249, 249);
 
   &.flex-layout {
     height: 100%;
@@ -179,6 +180,7 @@ html {
 }
 
 body {
+  background: rgb(249, 249, 249);
   padding-top: $navbar-height + $context-breadcrumb-height;
   margin-bottom: $footer-height + $footer-margin-top; // needed for sticky footer
 
@@ -186,6 +188,10 @@ body {
   &.onboarding {
     padding-top: $navbar-height;
   }
+}
+
+.container.main-content-container {
+  background: #fff;
 }
 
 // FLEX LAYOUT /w sticky header and footer
