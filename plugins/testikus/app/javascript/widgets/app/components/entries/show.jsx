@@ -8,19 +8,18 @@ import { useGlobalState } from "../StateProvider"
 import {
   Panel,
   PanelBody,
-  PanelFooter,
-  Button,
-  DataList,
-  DataListRow,
-  DataListCell,
+  DataGrid,
+  DataGridRow,
+  DataGridCell,
+  DataGridHeadCell
 } from "juno-ui-components"
 
 const Row = ({ label, value, children }) => {
   return (
-    <DataListRow>
-      <DataListCell>{label}</DataListCell>
-      <DataListCell>{value || children}</DataListCell>
-    </DataListRow>
+    <DataGridRow>
+      <DataGridHeadCell>{label}</DataGridHeadCell>
+      <DataGridCell>{value || children}</DataGridCell>
+    </DataGridRow>
   )
 }
 
@@ -59,19 +58,13 @@ const Show = () => {
       onClose={close}
       heading={`Entry ${entry ? entry.name : ""}`}
     >
-      <PanelBody
-        footer={
-          <PanelFooter>
-            <Button onClick={close}>Close</Button>
-          </PanelFooter>
-        }
-      >
+      <PanelBody>
         {entry ? (
-          <DataList>
+          <DataGrid columns={2}>
             <Row label="Name" value={entry.name} />
             <Row label="Description" value={entry.description} />
             <Row label="ID" value={entry.id} />
-          </DataList>
+          </DataGrid>
         ) : (
           <span>Entry {params.id} not found</span>
         )}

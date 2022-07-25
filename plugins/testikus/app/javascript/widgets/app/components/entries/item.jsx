@@ -1,9 +1,15 @@
 import React from "react"
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 import { policy } from "lib/policy"
-import { Icon, DataGridRow, DataGridCell } from "juno-ui-components"
+import { ButtonRow, Icon, DataGridRow, DataGridCell } from "juno-ui-components"
+
 
 const Item = ({ entry, handleDelete }) => {
+  // manually push a path onto the react router history
+  // once we run on react-router-dom v6 this should be replaced with the useNavigate hook, and the push function with a navigate function
+  // like this: const navigate = useNavigate(), the use navigate('this/is/the/path') in the onClick handler of the edit button below
+  const { push } = useHistory() 
+
   return (
     <DataGridRow className={entry.isDeleting ? "updating" : ""}>
       <DataGridCell>
@@ -12,18 +18,21 @@ const Item = ({ entry, handleDelete }) => {
         <span className="info-text small">{entry.id}</span>
       </DataGridCell>
       <DataGridCell>{entry.description}</DataGridCell>
-      <DataGridCell wrap={false}>
-        {policy.isAllowed("testikus:entry_delete") && (
-          <Icon
-            icon="deleteForever"
-            onClick={(e) => handleDelete(entry.id)}
-          />
-        )}
-        {policy.isAllowed("testikus:entry_update") && (
-            <Link to={`/entries/${entry.id}/edit`}>
-              <Icon icon="edit" />
-            </Link>
-        )}
+      <DataGridCell nowrap>
+        <ButtonRow>
+          {policy.isAllowed("testikus:entry_delete") && (
+            <Icon
+              icon="deleteForever"
+              onClick={() => handleDelete(entry.id)}
+            />
+          )}
+          {policy.isAllowed("testikus:entry_update") && (
+            <Icon
+              icon="edit"
+              onClick={() => push(`/entries/${entry.id}/edit`)}
+            />
+          )}
+        </ButtonRow>
       </DataGridCell>
     </DataGridRow>
   )
