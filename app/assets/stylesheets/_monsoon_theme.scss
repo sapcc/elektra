@@ -171,6 +171,7 @@ html {
   /* Needed for sticky footer */
   position: relative;
   min-height: 100%;
+  font-size: 16px; // important to set the base font-size to the current industry standard of 16px. rem units are sized off of this value, even inside a shadow DOM
 
   &.flex-layout {
     height: 100%;
