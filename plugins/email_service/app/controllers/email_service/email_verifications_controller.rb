@@ -61,13 +61,15 @@ module EmailService
           if status == "success"
             identities << { identity: id, status: status, message: "#{id} is already verfied" }
           elsif status == "pending"
-            identities << { identity: id, status: status, message: "verification email is already send to : #{id}, please click on the activation link" }
+            identities << { identity: id, status: status, message: "Verification email is already sent to : #{id}. Please click on the activation link" }
           elsif status == "failed"
             status = verify_identity(id, "EmailAddress")
-            identities << { identity: id, status: status, message: "verification is failed for #{id}. Another verification link is sent to #{id}." }
-          else
+            identities << { identity: id, status: status, message: "Verification is failed for #{id}. Another verification link is sent to #{id}. Please click on the activation link" }
+          else 
             status = verify_identity(id, "EmailAddress")
-            identities << { identity: id, status: status, message: "verification email is sent to #{id}. Please click on the activation link." }
+            unless status.nil?
+              identities << { identity: id, status: status, message: "Verification email is sent to #{id}. Please click on the activation link." }
+            end
           end
         end
       end

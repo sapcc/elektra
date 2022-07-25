@@ -72,15 +72,6 @@
     "date":       "2017"
   },
   {
-    "country":    "Russia",
-    "regionkey":  "eu-ru-1",
-    "regionname": "EU-RU-1",
-    "lat":        55.75,
-    "lon":        37.62,
-    "available":  true,
-    "date":       "2017"
-  },
-  {
     "country":    "United Arab Emirates",
     "regionkey":  "ap-ae-1",
     "regionname": "AP-AE-1",

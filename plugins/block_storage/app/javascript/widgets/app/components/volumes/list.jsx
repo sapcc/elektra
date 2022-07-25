@@ -1,3 +1,4 @@
+import React from "react"
 import { useEffect, useMemo } from "react"
 import { DefeatableLink } from "lib/components/defeatable_link"
 import { policy } from "lib/policy"
@@ -5,7 +6,7 @@ import { Form, Pagination } from "lib/components/searchComponents"
 import Item from "./item"
 import { scope } from "lib/ajax_helper"
 
-export default ({
+const VolumesList = ({
   active,
   volumes,
   fetchVolumes,
@@ -112,3 +113,4 @@ export default ({
     </React.Fragment>
   )
 }
+export default VolumesList

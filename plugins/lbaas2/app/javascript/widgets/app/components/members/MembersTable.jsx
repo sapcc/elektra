@@ -1,7 +1,7 @@
-import React from "react";
-import { Table } from "react-bootstrap";
-import MembersTableItem from "./MembersTableItem";
-import { Tooltip, OverlayTrigger } from "react-bootstrap";
+import React from "react"
+import { Table } from "react-bootstrap"
+import MembersTableItem from "./MembersTableItem"
+import { Tooltip, OverlayTrigger } from "react-bootstrap"
 
 const MembersTable = ({
   members,
@@ -13,7 +13,7 @@ const MembersTable = ({
   displayActions,
 }) => {
   return (
-    <Table className="table members" responsive>
+    <Table className="table table-hover members" responsive>
       <thead>
         <tr>
           <th>
@@ -39,9 +39,9 @@ const MembersTable = ({
           <th>IPs</th>
           <th style={{ width: "8%" }}>Weight</th>
           <th style={{ width: "8%" }}>Backup</th>
-          <th style={{ width: "8%" }}>
+          <th>
             <span>Admin </span>
-            <span className="nowrap">State Up</span>
+            <span>State Up</span>
           </th>
           {displayActions && <th className="snug"></th>}
         </tr>
@@ -68,7 +68,7 @@ const MembersTable = ({
         )}
       </tbody>
     </Table>
-  );
-};
+  )
+}
 
-export default MembersTable;
+export default MembersTable

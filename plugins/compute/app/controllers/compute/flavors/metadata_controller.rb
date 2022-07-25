@@ -2,7 +2,7 @@
 
 module Compute
   module Flavors
-    class MetadataController < ::ApplicationController
+    class MetadataController < ::DashboardController
       def index
         @flavor = services.compute.find_flavor(params[:flavor_id])
         @metadata = services.compute.find_flavor_metadata!(params[:flavor_id])

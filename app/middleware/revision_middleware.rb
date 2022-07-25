@@ -9,8 +9,6 @@ class RevisionMiddleware
       @revision ||= begin
         if revision_file.exist?
           revision_file.read.strip
-        elsif revision_from_git.present?
-          revision_from_git
         else
           "unknown"
         end
@@ -18,10 +16,6 @@ class RevisionMiddleware
     end
 
     private
-
-    def revision_from_git
-      @revision_from_git ||= `git rev-parse HEAD`.strip
-    end
 
     def revision_file
       @root.join("REVISION")

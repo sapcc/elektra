@@ -58,27 +58,40 @@ VOLUME /app
 ################### POSTGRESQL
 ENV PGDATA /app/tmp/postgresql/data
 
+RUN gem install bundler && bundle config set --local path 'vendor/bundle'
 RUN echo -e '#!/bin/bash\n\n\
-mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA"\n\
-PGDATA_FILES=$(ls -A $PGDATA)\n\
-if [ -z "$PGDATA_FILES" ]; then\n\
+  bundle install \n\
+  yarn \n\
+  mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA"\n\
+  PGDATA_FILES=$(ls -A $PGDATA)\n\
+  if [ -z "$PGDATA_FILES" ]; then\n\
   echo "INFO: setup database"\n\
   su - postgres -c "initdb $PGDATA" && chmod 700 $PGDATA\n\
-fi\n\
-mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql\n\
-su - postgres -c "pg_ctl -D $PGDATA -w start"\n\
-if [ -z "$PGDATA_FILES" ]; then\n\ 
-  echo "INFO: create user \"dev\" with password \"dev\" and grant permissions"\n\
-  su - postgres -c "createuser -dl dev"\n\
-  su - postgres -c "psql -c \"ALTER USER dev WITH ENCRYPTED PASSWORD '"'"'dev'"'"';\""\n\
-  bin/rails db:create && bin/rails db:migrate\n\
-fi\n\   
-/bin/sh -c $@' >> /usr/local/bin/start_db && chmod +x /usr/local/bin/start_db
+  fi\n\
+  mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql\n\
+  su - postgres -c "pg_ctl -D $PGDATA -w start"\n\
+  DISABLE_SPRING=1 bin/rails db:create && DISABLE_SPRING=1 bin/rails db:migrate\n\
+  clear \n\
+  /bin/bash -login' >> /usr/local/bin/start-db && chmod +x /usr/local/bin/start-db
 
+RUN echo -e 'echo "Welcome to elektra dev container"\n\
+  echo " - start rails:   start-rails"\n\
+  echo " - start javascript:  start-js"\n\
+  echo " - rebuild database:  rebuild-db"\n\
+  echo " - rebuild npm:       rebuild-npm"\n\
+  echo " - rebuild gems:      rebuild-gems"\n\
+  echo " - postgres console:  pg-console"\n\
+  echo " - proxy:             dev-proxy"\n\
+  echo ""\n\
+  echo " [DB]    elektra database are located in /app/tmp/postgresql/data/"\n\
+  echo " [Proxy] to use the dev-proxy you need to uncomment proxy vars in .env"\n\
+  echo "         and set ELEKTRA_SSL_VERIFY_PEER to false"\n\
+  alias start-rails="cd /app && bin/rails s -b 0.0.0.0 -p $APP_PORT"\n\
+  alias start-js="cd /app && yarn build --watch"\n\
+  alias rebuild-npm="cd /app && rm -rf node_modules && yarn"\n\
+  alias rebuild-gems="cd /app && rm -rf vendor/bundle && bundle install"\n\
+  alias pg-console="su - postgres -c \"pgcli\""\n\
+  alias dev-proxy="mitmproxy -p 8888 --ssl-insecure"\n\
+  alias rebuild-db="rm -rf /app/tmp/postgresql/data/* && echo Done! please exit elektra and start again..."' >> /root/.profile
 
-RUN gem install bundler && bundle config set --local path 'vendor/bundle'
-
-RUN echo -e  '#!/bin/bash\n/app/bin/rails s -b 0.0.0.0 -p $APP_PORT' >> /usr/local/bin/start && \
-  chmod +x /usr/local/bin/start
-
-ENTRYPOINT [ "/usr/local/bin/start_db" ]  
+ENTRYPOINT [ "/usr/local/bin/start-db" ]  

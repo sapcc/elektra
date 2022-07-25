@@ -29,7 +29,7 @@ const mediaTypes = {
 
 const renderLabel = (key, value) => {
   const isLink = /^https?:\/\//.test(value)
-  const label = (
+  let label = (
     <span
       key={key}
       className={isLink ? "label label-primary" : "label label-default"}
@@ -39,14 +39,15 @@ const renderLabel = (key, value) => {
     </span>
   )
   if (isLink) {
-    return (
+    label = (
       <a key={key} href={value}>
         {label}
       </a>
     )
-  } else {
-    return label
   }
+  //the labels have `white-space:nowrap` inside, so some extra whitespace is
+  //required to allow long lines with lots of labels to break
+  return <React.Fragment>{label}{" "}</React.Fragment>
 }
 
 export default class ImageRow extends React.Component {

@@ -18,156 +18,116 @@ credentials:
 # If you change the TOU in a way that requires us to force users to re-accept them
 # be sure to change the version number below
 actual_terms:
-  version: v2
+  version: v3
   terms: >
     ### Overview
 
-    #### Service Description
+    In this document the terms "provider" and "platform" are used to represent the Converged Cloud platform and provided services. The term "user" is used to represent the SAP employees and contractors (including technical user accounts) using the SAP Converged Cloud platform.
+    Converged Cloud is intended for the use of employees of SAP SE along with all subsidiaries on behalf of any organizational unit with legitimate interest.
+    Converged Cloud aims to ensure the availability of all provided services with reasonable effort. The SAP Converged Cloud team will use all reasonable efforts to preserve and protect any stored confidential data within the platform.
+    In case of violation of these terms of use, Converged Cloud remains the right to implement adequate measures including disabling/deleting services or assets or even deactivating the users.
 
-    SAP GCS enables the capability to provide standalone virtual operating systems as well as software automation 
-    (IaaS + PaaS). This is the automated provisioning of physical and virtual servers, virtual networks, routers 
-    and load-balancers via a self-service using GCS’s Converged Cloud platform.
+    #### Service Charge
 
-    #### Definitions
+    Converged Cloud systems are subject to reoccurring fees agreed upon requesting resource quotas and consuming burst capacity for specific services.
+    Converged Cloud publishes the service charges in the user documentation.
+    These fees are transparently updated and accessible to the user and the user's designated cost object will be used for charging these fees for the duration of quota allocation. It is the user's responsibility to maintain a correct cost object per organization. If the cost object is not valid, the services will be charged against the personal Cost Center.
+    Converged Cloud reserves the right to reasonably adjust fees based on current conditions.
 
-    In this document the terms "provider" and "platform" are used to represent the Converged Cloud platform and provided services.
-    The term "user" is used to represent the SAP employees and contractors (including technical user accounts) using the SAP Converged Cloud platform.
+    #### Service Maintenance
 
-    #### Usage Guidelines
+    From time to time, the platform team may apply upgrades, patches, bug fixes or other maintenance to the service offerings, operating systems or software.
+    Converged Cloud will make reasonable efforts to avoid disruption during such maintenance.
+    The platform will inform users of any scheduled maintenance which may result in service disruption, except for emergency maintenance and users agree to use reasonable efforts to comply with any maintenance announced timely and/or without undue delay.
 
-    Converged Cloud is intended for the use of Employees of SAP SE along with all subsidiaries.
-    The user is solely responsible for all content, development and use of content.
-    You may use Converged Cloud to store, retrieve, query, serve and execute your content.
-    Your content must follow SAP’s Acceptable Use Policy, the Converged Cloud teams reserves the right to remove any content that falls outside this policy.
-    The end user is responsible for maintaining all installed software licenses that are not centrally provided by the Converged Cloud Service.
-
-    ### Disclaimers
-
-    #### Litigation Hold
-
-    As content is decommissioned from Converged Cloud the end user must note if any relevant content is subject to Litigation Hold.
-    Litigation Hold Reminder identifies the materials that must continue to be preserved.
-    As noted in that Litigation Hold Reminder, “this obligation shall continue for as long as the Lawsuit and any related appeals
-    are ongoing and for as long thereafter as our counsel advises is appropriate.” Therefore, please continue to comply with
-    the directive described in the corporate portal.
-
-    #### Confidential Information
-
-    The SAP Converged Cloud Team will use all reasonable efforts to preserve and protect any stored confidential data within the platform.
-    Converged Cloud team is working with IT Security and Data Privacy to ensure CI.
-    SAP will ensure that all employees and agents that have access to the data are legally bound not to disclose this information.
-    Confidential Information shall mean all trade secrets and other information or Services which SAP or third parties protect
-    against unrestricted disclosure to others which is labeled Confidential.
-
-    #### Global Conditions
-
-    Converged Cloud Infrastructure is provided in multiple global locations. The user has the authorization to select a location
-    based on their specific needs. Once the system is located in a specific region the data privacy, CI, and legal terms
-    follow the laws of that residing company. End users should be aware of this when determining a specific location for deployment.
-
-    ### Terms
-
-    #### Fees
-
-    Converged Cloud systems are subject to reoccurring fees agreed upon requesting resource quotas for specific services.
-    These fees are transparently updated and accessible to the user and the user's designated cost object will be used
-    for charging these fees for the duration of quota allocation. It is the user's responsibility to maintain a correct
-    cost object per organization. If the cost object is not valid we have to bill the personal Cost Center.
-    SAP reserves the right to reasonably adjust fees based on current conditions.
-    SAP will provide timely notice on any planned adjustments.
-
-    #### Cookbooks
-
-    Cookbooks are created and maintained by Open Community Standards. Cookbook owner is responsible for the maintenance and
-    support of cookbooks. The platform team does not provide cookbook support.
-
-    #### Security Zones
-
-    The platform provides the capability to expose systems to different Network Zones: Internal Prod Biz, Internal and External.
-    The user is required to create and maintain applicable Security Concepts according to the policies established within SAP.
-    The submission and approval of the security concept is the responsibility of the user.
-
-    #### Software Upgrades
-
-    From time to time, the platform team may apply upgrades, patches, bug fixes or other maintenance to the Service Offerings,
-    Operating Systems or Software. We agree to use reasonable efforts to avoid disruption during such maintenance. The platform will
-    inform users of any scheduled Maintenance which may result in Service disruption, except for emergency maintenance and users agree
-    to use reasonable efforts to comply with any maintenance announced timely and/or without undue delay.
-
+    #### User Data Processing
+    
+    Converged Cloud will capture and process user data to ensure the operational stability and regulatory compliance of the platform.
+    The protection and retention of the user data is performed according to legal and regulatory requirements.
+    
     ### User Obligations
 
+    The user may use Converged Cloud to store, retrieve, query, serve and execute the user’s content. The user is solely responsible for all content, development, and use of content.
+    The user’s content must follow the SAP Acceptable Use Policy. Converged Cloud reserves the right to remove any content that falls outside this policy.
+    The user is responsible for maintaining all installed software licenses that are not centrally provided by the Converged Cloud Service.
+    The user of Converged Cloud is responsible to report major incidents without undue delay.
+    The user is also responsible for implementing SGS Security Policies and Procedures applicable to them.
+
+    #### Shared Responsibility
+
+    Converged Cloud operates as an Infrastructure as a Service provider. As such, accountability and responsibility for aspects of cybersecurity and compliance are shared between the user of Converged Cloud and Converged Cloud, as well as other SAP parties. By using Converged Cloud, the user confirms that they are familiar with the Shared Responsibility Model for Converged Cloud and agree to it.
+    Furthermore, Converged Cloud complies with certain norms and standards within its scope of accountability and responsibility, which is detailed in the Converged Cloud documentation. The user must consult the documentation before using Converged Cloud for any prerequisites for certain norms and standards. Moreover, the user agrees to only use Converged Cloud services within the context and scope of norms and standards Converged Cloud complies with. Some of these norms and standards might have a dedicated Shared Responsibility Matrix. It is the users’ obligation to inform themselves and adhere to it.
+    Converged Cloud Infrastructure is provided in multiple global locations. The user has the authorization to select a location based on their specific needs.
+    Once the system is in a specific region the data privacy, CI (confidential information), and legal terms follow the laws of that residing country.
+    Users should consider this when determining a specific location for deployment.
+
     #### Platform Services
+    
+    Users must comply with current technical documentation applicable to the Services (including applicable developer guides) as published on the platform documentation site.
 
-    Users must comply with current technical documentation applicable to the Services (including applicable developer guides) 
-    as published on the platform documentation site.
+    #### Masterdata
 
+    The user of Converged Cloud is responsible to provide valid, complete, and correct master data for their projects, as well as regularly check and maintain the master data. 
+    
     #### Capacity Management
-
-    The user is required to manage the resources and capacity within his projects and raise requests for additional capacity
-    timely and accurately in order to avoid delays in processing expansion and scalability.
-    Users of the Bare-metal service are additionally required to manage spare capacity within their projects to compensate
-    hardware failure of the platform's Bare-metal servers.
+    
+    The user is required to manage the resources and capacity within his projects and raise requests for additional capacity timely and accurately to avoid delays in processing expansion and scalability.
+    Users of the Bare-metal service are additionally required to manage spare capacity within their projects to compensate hardware failure of the platform's Bare-metal servers.
 
     #### Network Configuration
-
-    The user is responsible for the network configuration within his projects. This includes but is not limited to the exposure of
-    services, the maintenance of internal Security Groups and the integrity and confidentiality of network traffic.
+    
+    The user is responsible for the network configuration within their projects. This includes but is not limited to the exposure of services, the maintenance of internal Security Groups and the integrity and confidentiality of network traffic. 
+    The user of Converged Cloud may not expose internal services or API endpoints to external parties or end users. 
+    The user must ensure the proper design and accurate implementation of network ACLs requested by them and ensure the timely removal of network ACLs after deactivating of related network services.  
+    The user is required to create and maintain applicable Security Concepts according to the policies established within SAP. The submission and approval of the security concept is also the responsibility of the user.
 
     #### Operating System Access and Responsibility
-
+    
     The user is responsible to setup and operate the operating systems provisioned on the platform.
-    The platform may provide the users operating system images which can be used to deploy system, this does not limit the
-    responsibilities of the user to configure, operate and maintain the instances according to SAP Security Policies and Procedures.
-    Users are encouraged to create, maintain and use custom images to fulfill regulatory, corporate, legal and contractual requirements.
+    The platform may provide the users operating system images which can be used to deploy system, this does not limit the responsibilities of the user to configure, operate and maintain the instances according to SAP Security Policies and Procedures.
+    Users are encouraged to create, maintain, and use custom images to fulfill regulatory, corporate, legal, and contractual requirements.
     Administrative access to OS should not be granted to external parties. The platform team cannot guarantee to resolve any OS issue.
-    Converged Cloud team will fully support all infrastructure issues, the platform APIs and orchestration layers.
-
+    
     #### Access Control
-
-    The user is responsible to oversee user access and role based access control within their respective platform projects. 
-
+    
+    The user is responsible to oversee user access and role-based access control within their respective platform projects.
+    
     #### Software Approval
-
-    In case software is not available either via Converged Cloud Standard OS or Recipe you may have to order it via SRM.
-    Note that all software installed on SAP hardware has to be “SWAP” approved.
-    That means that the software has to pass the Software Approval Process and has to be rated white or grey in the
-    SWAP Catalog before it can be ordered via SRM.
+    
+    In case software is not available either via Converged Cloud Standard OS.
+    Note that all software installed on SAP hardware must be “SWAP” approved. That means that the software must pass the Software Approval Process and must be rated white or grey in the SWAP Catalog before it can be ordered via SRM.
 
     #### Security Patching
-
-    It is the user's responsibility to ensure installation of all OS / Security patches that are requested by SAP Guidelines 
-    and to comply with their guidance / requests and timelines.
+    
+    It is the user's responsibility to ensure installation of all OS / Security patches that are requested by SAP Guidelines and to comply with their guidance / requests and timelines.
 
     #### Change Management
-
+    
     Any request for a system change within the user area of responsibility must follow applicable Change Management processes.
     Please note that certain Change Management processes can incur additional effort.
+    
+    #### Data Processing
+    
+    Users must ensure applicable confidentiality of any data stored and processed within their area of responsibility, this includes but is not limited to access credentials, cryptographic secrets and enforcing applicable server-side encryption of data.
+    Users processing personal data of End Users or other identifiable individuals in their use of a Service are responsible for providing legally adequate privacy notices and obtaining necessary consents for the processing of such data. Users ensure that they provided all necessary privacy notices and obtained all necessary consents. Users are responsible for processing such data in accordance with SAP policies and applicable law.
 
-    #### Data processing
-
-    Users must ensure applicable confidentiality of any data stored and processed within their area of responsibility,
-    this includes but is not limited to access credentials, cryptographic secrets and enforcing applicable server-side encryption 
-    of data.
-    Users processing personal data of End Users or other identifiable individuals in their use of a Service are responsible for 
-    providing legally adequate privacy notices and obtaining necessary consents for the processing of such data. Users ensure 
-    that they provided all necessary privacy notices and obtained all necessary consents. Users are responsible for processing such 
-    data in accordance with SAP policies and applicable law.
-
+    #### Litigation Hold
+    
+    As content is decommissioned from Converged Cloud the end user must note if any relevant content is subject to Litigation Hold. Litigation Hold Reminder identifies the materials that must continue to be preserved.
+    As noted in that Litigation Hold Reminder, “this obligation shall continue for as long as the Lawsuit and any related appeals are ongoing and for as long thereafter as our counsel advises is appropriate.” Therefore, please continue to comply with the directive described in the corporate portal.
+    
     #### Backup
-
+    
     Converged Cloud offers the standard File system (FS) and DB Backup / Restore service of the Global Backup Team.
     Users are responsible for requesting to enable backups on their systems. Backups are not enabled by default.
-    The user is required to ensure that business critical data is properly protected against dataloss caused by infrastructure failure.
-    The platform cannot guarantee the recovery of data lost due to any reason including but not limited to hardware defects, deliberate
-    sabotage or human error.
-
+    The user is required to ensure that business critical data is properly protected against data loss caused by infrastructure failure.
+    The platform cannot guarantee the recovery of data lost due to any reason including but not limited to hardware defects, deliberate sabotage, or human error.
+    
     #### High Availability and Disaster Recovery
-
-    The platform provides means to increase the resilience of the users workload through documented measures for the implementation of 
-    high availability (HA). The platform does not provide inherent high availability for the user application. 
-    Disaster Recovery (DR) can be implemented by the user and shall be established according to their respective need to recover from
-    infrastructure outages.
-
+    
+    The platform provides means to increase the resilience of the user’s workload through documented measures for the implementation of high availability (HA). The platform does not provide inherent high availability for the user application.
+    Disaster Recovery (DR) can be implemented by the user and shall be established according to their respective need to recover from infrastructure outages.
+    
     ### LIMITATION OF LIABILITY
 
     TO THE EXTENT ALLOWABLE BY APPLICABLE LAW, SAP AND ITS AFFILIATES, SUBSIDIARIES, OFFICERS, EMPLOYEES, AGENTS, PARTNERS,

@@ -145,5 +145,80 @@ export const createAjaxHelper = (options = {}) => {
     }
   )
 
+  axiosInstance.interceptors.request.use((config) => {
+    // console.log("=============CONFIG BEFORE", config, "OPTIONS", options)
+
+    if (config.url.startsWith("os-api")) {
+      const headersToIgnore = [
+        "common",
+        "delete",
+        "get",
+        "head",
+        "patch",
+        "post",
+        "put",
+        "Content-Type",
+        "content-type",
+        "x-csrf-token",
+      ]
+
+      // merge service headers with given headers
+      const headers = { ...options.headers, ...config.headers }
+      Object.keys(headers).forEach((name) => {
+        if (headersToIgnore.indexOf(name) < 0) {
+          const value = headers[name]
+          delete headers[name]
+          headers[`OS-API-${name}`] = value
+        }
+      })
+
+      config.headers = headers
+    }
+
+    // console.log("=============CONFIG AFTER", config)
+    return config
+  })
+
+  const mergeServiceOptions = (serviceOptions = {}, options = {}) => {
+    const { headers, ...rest } = options
+    const { headers: serviceHeaders } = serviceOptions
+    return { headers: { ...serviceHeaders, ...headers }, ...rest }
+  }
+
+  axiosInstance.osApi = (serviceName, serviceOptions = {}) => {
+    const serviceEndpoint = `os-api/${serviceName}`
+
+    return {
+      get: (path, options = {}) =>
+        axiosInstance.get(
+          `${serviceEndpoint}/${path}`,
+          mergeServiceOptions(serviceOptions, options)
+        ),
+      head: (path, options = {}) =>
+        axiosInstance.head(
+          `${serviceEndpoint}/${path}`,
+          mergeServiceOptions(serviceOptions, options)
+        ),
+      post: (path, values = {}, options = {}) =>
+        axiosInstance.post(
+          `${serviceEndpoint}/${path}`,
+          values,
+          mergeServiceOptions(serviceOptions, options)
+        ),
+      put: (path, values = {}, options = {}) =>
+        axiosInstance.put(
+          `${serviceEndpoint}/${path}`,
+          values,
+          mergeServiceOptions(serviceOptions, options)
+        ),
+      patch: (path, values = {}, options = {}) =>
+        axiosInstance.patch(
+          `${serviceEndpoint}/${path}`,
+          values,
+          mergeServiceOptions(serviceOptions, options)
+        ),
+    }
+  }
+
   return axiosInstance
 }
