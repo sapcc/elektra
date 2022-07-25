@@ -5118,8 +5118,8 @@ jsx-to-string@^1.4.0:
     react "^0.14.0"
 
 "juno-ui-components@https://github.com/sapcc/juno/releases/latest/download/juno-ui-components.tgz":
-  version "0.3.2"
-  resolved "https://github.com/sapcc/juno/releases/latest/download/juno-ui-components.tgz#0b05658ec75ca5160203a2edb4f2a8059970ba26"
+  version "0.3.5"
+  resolved "https://github.com/sapcc/juno/releases/latest/download/juno-ui-components.tgz#3af8d3f906c5cbb4c41fcf178c8fd7d50810cded"
 
 keycode@^2.1.2:
   version "2.2.1"

@@ -66,20 +66,17 @@ const Entries = () => {
 
   return (
     <>
-      <Filters
+      <DataGridToolbar
         search={ <SearchField
-                    variant="juno"
-                    onChange={setFilterTerm}
-                    placeholder="name or description"
-                    text="Searches by name or description in visible entries list only.
-                          Entering a search term will automatically start loading the next pages
-                          and filter the loaded items using the search term. Emptying the search
-                          input field will show all currently loaded items."
-                  />}
+          variant="juno"
+          onChange={setFilterTerm}
+          placeholder="name or description"
+          text="Searches by name or description in visible entries list only.
+                Entering a search term will automatically start loading the next pages
+                and filter the loaded items using the search term. Emptying the search
+                input field will show all currently loaded items."
+        />}
       >
-
-      </Filters>
-      <DataGridToolbar>
         {policy.isAllowed("testikus:entry_create") && (
           <Link to="/entries/new">
             <Button>Create new</Button>
