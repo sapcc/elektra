@@ -122,7 +122,7 @@ module MonsoonDashboard
       enable_starttls_auto: false
     }
     config.action_mailer.default_options = {
-      from: 'Converged Cloud <noreply+ConvergedCloud@sap.corp>'
+      from: 'Converged Cloud <do.not.reply@sap.com>'
     }
 
     config.middleware.use SessionCookiePathMiddleware
