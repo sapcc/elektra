@@ -84,7 +84,8 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
             placeholder="add your tag here"
             ref={inputElement}
           />
-        ) : confirmDeleting ? (
+        ) : (
+          /* : confirmDeleting ? (
           <span>
             Do you realy want to delete this tag?&nbsp;
             <button
@@ -100,9 +101,10 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
               <i className="fa fa-times"></i>
             </button>
           </span>
-        ) : (
+        )*/
           <span>
-            <li className="fa fa-tag"></li> {item}
+            <li className="fa fa-tag"></li>{" "}
+            <span className="label label-default">{item}</span>
           </span>
         )}
       </td>

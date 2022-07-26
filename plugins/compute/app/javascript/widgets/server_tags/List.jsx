@@ -84,14 +84,12 @@ const TagsList = ({ instanceId }) => {
           // show error
           error && <div className="alert alert-error">{error}</div>
         }
-        {
-          // show loading spinner
-          isLoading && (
-            <span>
-              <span className="spinner"></span> Loading...
-            </span>
-          )
-        }
+
+        {/*isLoading && (
+          <span>
+            <span className="spinner"></span> Loading...
+          </span>
+        )*/}
         <table className="table">
           <thead>
             <tr>
@@ -109,7 +107,11 @@ const TagsList = ({ instanceId }) => {
             </tr>
           </thead>
           <tbody>
-            {
+            {items.length === 0 && !isLoading && !newTagItem ? (
+              <tr>
+                <td>No items found.</td>
+              </tr>
+            ) : (
               // render tags list
               items.map((item, index) => (
                 <TagItem
@@ -125,7 +127,7 @@ const TagsList = ({ instanceId }) => {
                   }
                 />
               ))
-            }
+            )}
             {newTagItem && (
               <TagItem
                 isNew
@@ -133,6 +135,13 @@ const TagsList = ({ instanceId }) => {
                 onUpdate={(newTagValue) => saveNewItem(newTagValue)}
                 onRemove={cancelNewItem}
               />
+            )}
+            {isLoading && (
+              <tr>
+                <td>
+                  <span className="spinner"></span> Loading...
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
