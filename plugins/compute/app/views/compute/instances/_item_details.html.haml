@@ -271,9 +271,6 @@
                       = involved_roles.join(', ')
         .tab-pane{role: "tabpanel", id: "tags"}
           %table.table.datatable
-            %thead
-              %tr
-                %th Name
             %tbody
               - if current_user.is_allowed?("role:compute_viewer")
                 - if @instance.tags.empty?
@@ -282,8 +279,10 @@
                 - else
                   - @instance.tags.each do |tag|
                     %tr
-                      %td
-                        = tag
+                      %td.h4
+                        %li.fa.fa-tag
+                          %span.label.label-default
+                            = tag
               - else
                 %tr
                   %td{colspan: 2}

@@ -109,7 +109,7 @@ const TagsList = ({ instanceId }) => {
           <tbody>
             {items.length === 0 && !isLoading && !newTagItem ? (
               <tr>
-                <td>No items found.</td>
+                <td>No tags found.</td>
               </tr>
             ) : (
               // render tags list
