@@ -1,11 +1,11 @@
 import React from "react"
-import { confirm } from "lib/dialogs"
 
 const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
   // set local state got ZahItem
   const [isEditing, setIsEditing] = React.useState(isNew)
   const [confirmDeleting, setConfirmDeleting] = React.useState(false)
   const [newTagValue, setNewTagValue] = React.useState(item)
+  const [isToSmall, setIsToSmall] = React.useState(false)
   const inputElement = React.useRef()
 
   React.useEffect(() => {
@@ -14,6 +14,9 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
     if (isEditing && inputElement.current) {
       inputElement.current.focus()
     }
+
+    handleEmptyTagValue(item)
+
     //return () => {
     // this is called when the component is unmounted
     // can be used for cleanup
@@ -33,10 +36,11 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
   const deleteTag = React.useCallback(() => {
     setConfirmDeleting(true)
     setIsEditing(false)
-    if (timer) clearTimeout(timer)
+    //if (timer) clearTimeout(timer)
     onRemove()
   }, [setIsEditing, setConfirmDeleting])
 
+  /*
   let timer
   const getDeleteConfirmation = React.useCallback(() => {
     if (timer) clearTimeout(timer)
@@ -46,15 +50,25 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
       setConfirmDeleting(false)
     }, 15000)
   }, [timer])
+  */
 
   const handleKeyPress = React.useCallback(
-    (e) => {
-      if (e.key === "Enter") {
+    (key) => {
+      if (key === "Enter") {
         save()
       }
     },
     [save]
   )
+
+  const handleEmptyTagValue = React.useCallback((value) => {
+    if (value.length === 0) {
+      setIsToSmall(true)
+    } else {
+      setIsToSmall(false)
+    }
+    setNewTagValue(value)
+  })
 
   return (
     <tr>
@@ -65,8 +79,9 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
             type="text"
             style={{ width: "100%" }}
             value={newTagValue}
-            onChange={(e) => setNewTagValue(e.target.value)}
-            onKeyPress={(e) => handleKeyPress(e)}
+            onChange={(e) => handleEmptyTagValue(e.target.value)}
+            onKeyPress={(e) => handleKeyPress(e.key)}
+            placeholder="add your tag here"
             ref={inputElement}
           />
         ) : confirmDeleting ? (
@@ -107,7 +122,11 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
         )}{" "}
         <button
           className={
-            isEditing ? "btn btn-success btn-sm" : "btn btn-default btn-sm"
+            !isEditing
+              ? "btn btn-default btn-sm"
+              : isToSmall
+              ? "btn btn-success btn-sm disabled"
+              : "btn btn-success btn-sm"
           }
           onClick={() => (isEditing ? save() : edit())}
         >
@@ -119,7 +138,8 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
               ? "btn btn-sm btn-warning  disabled"
               : "btn btn-sm btn-warning"
           }
-          onClick={() => (isEditing ? "" : getDeleteConfirmation())}
+          //onClick={() => (isEditing ? "" : getDeleteConfirmation())}
+          onClick={() => (isEditing ? "" : deleteTag())}
         >
           <i className="fa fa-trash"></i>
         </button>

@@ -40,13 +40,15 @@ const TagsList = ({ instanceId }) => {
 
   // handle new tag items temporary in own state
   const addNewItem = React.useCallback(() => {
-    setNewTagItem(`please edit your new tag ${items.length + 1}`)
+    setNewTagItem("this is a placeholder")
   }, [setNewTagItem, items])
   const cancelNewItem = React.useCallback(() => {
     setNewTagItem(null)
   }, [setNewTagItem])
   const saveNewItem = React.useCallback(
     (newTagValue) => {
+      // push new placeholder tag value on the state
+      // this will overwritten by the users new tag
       const newItems = items.slice()
       newItems.push(newTagValue)
       setNewTagItem(null)
@@ -55,7 +57,7 @@ const TagsList = ({ instanceId }) => {
     },
     [items, setItems, setNewTagItem, save]
   )
-  //// handle tag items
+  // handle tag items
   const updateItem = React.useCallback(
     (index, newTagValue) => {
       const newItems = items.slice()
@@ -127,7 +129,7 @@ const TagsList = ({ instanceId }) => {
             {newTagItem && (
               <TagItem
                 isNew
-                item={newTagItem}
+                item=""
                 onUpdate={(newTagValue) => saveNewItem(newTagValue)}
                 onRemove={cancelNewItem}
               />
