@@ -14,6 +14,7 @@ class OsApiController < ::AjaxController
     service_name = path_tokens.shift
     # the rest is the current path
     path = path_tokens.join("/")
+    path += ".#{params[:format]}" if params[:format]
 
     headers = {"Content-Type" => request.headers["Content-Type"] || "application/json"}
     request.headers.each do |name,value| 
@@ -26,6 +27,7 @@ class OsApiController < ::AjaxController
     service = services.os_api.service(service_name)
     # filter the relevant params for the api client
     elektron_params = request.query_parameters
+
     # call the openstack api endpoint with given path, params and headers
     # for http methods POST, PUT, PATCH we have to consider the body parameter
     elektron_response = if ["post","put","patch"].include?(method)
