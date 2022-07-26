@@ -73,19 +73,20 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
   return (
     <tr>
       <td>
-        {isEditing ? (
-          <input
-            className="form-control"
-            type="text"
-            style={{ width: "100%" }}
-            value={newTagValue}
-            onChange={(e) => handleEmptyTagValue(e.target.value)}
-            onKeyPress={(e) => handleKeyPress(e.key)}
-            placeholder="add your tag here"
-            ref={inputElement}
-          />
-        ) : (
-          /* : confirmDeleting ? (
+        <div className="h4">
+          {isEditing ? (
+            <input
+              className="form-control"
+              type="text"
+              style={{ width: "100%" }}
+              value={newTagValue}
+              onChange={(e) => handleEmptyTagValue(e.target.value)}
+              onKeyPress={(e) => handleKeyPress(e.key)}
+              placeholder="add your tag here"
+              ref={inputElement}
+            />
+          ) : (
+            /* : confirmDeleting ? (
           <span>
             Do you realy want to delete this tag?&nbsp;
             <button
@@ -102,49 +103,52 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
             </button>
           </span>
         )*/
-          <span>
-            <li className="fa fa-tag"></li>{" "}
-            <span className="label label-default">{item}</span>
-          </span>
-        )}
+            <span>
+              <li className="fa fa-tag"></li>{" "}
+              <span className="label label-default">{item}</span>
+            </span>
+          )}
+        </div>
       </td>
       <td className="text-right">
-        {isEditing ? (
+        <div className="btn-group">
+          {isEditing ? (
+            <button
+              className="btn btn-sm btn-default"
+              onClick={() => {
+                if (isNew) onRemove()
+                setIsEditing(false)
+              }}
+            >
+              <i className="fa fa-times"></i>
+            </button>
+          ) : (
+            ""
+          )}{" "}
           <button
-            className="btn btn-sm btn-default"
-            onClick={() => {
-              if (isNew) onRemove()
-              setIsEditing(false)
-            }}
+            className={
+              !isEditing
+                ? "btn btn-default btn-sm"
+                : isToSmall
+                ? "btn btn-success btn-sm disabled"
+                : "btn btn-success btn-sm"
+            }
+            onClick={() => (isEditing ? save() : edit())}
           >
-            <i className="fa fa-times"></i>
+            <i className={isEditing ? "fa fa-floppy-o" : "fa fa-pencil"}></i>
+          </button>{" "}
+          <button
+            className={
+              isEditing || confirmDeleting
+                ? "btn btn-sm btn-warning  disabled"
+                : "btn btn-sm btn-warning"
+            }
+            //onClick={() => (isEditing ? "" : getDeleteConfirmation())}
+            onClick={() => (isEditing ? "" : deleteTag())}
+          >
+            <i className="fa fa-trash"></i>
           </button>
-        ) : (
-          ""
-        )}{" "}
-        <button
-          className={
-            !isEditing
-              ? "btn btn-default btn-sm"
-              : isToSmall
-              ? "btn btn-success btn-sm disabled"
-              : "btn btn-success btn-sm"
-          }
-          onClick={() => (isEditing ? save() : edit())}
-        >
-          <i className={isEditing ? "fa fa-floppy-o" : "fa fa-pencil"}></i>
-        </button>{" "}
-        <button
-          className={
-            isEditing || confirmDeleting
-              ? "btn btn-sm btn-warning  disabled"
-              : "btn btn-sm btn-warning"
-          }
-          //onClick={() => (isEditing ? "" : getDeleteConfirmation())}
-          onClick={() => (isEditing ? "" : deleteTag())}
-        >
-          <i className="fa fa-trash"></i>
-        </button>
+        </div>
       </td>
     </tr>
   )
