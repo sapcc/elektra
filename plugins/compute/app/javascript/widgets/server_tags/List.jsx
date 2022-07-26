@@ -80,7 +80,7 @@ const TagsList = ({ instanceId }) => {
       <div className="modal-body">
         {
           // show error
-          error && <span>{error}</span>
+          error && <div className="alert alert-error">{error}</div>
         }
         {
           // show loading spinner
@@ -96,10 +96,11 @@ const TagsList = ({ instanceId }) => {
               <th>Name</th>
               <th className="text-right">
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-sm btn-primary"
                   disabled={newTagItem}
                   onClick={() => addNewItem()}
                 >
+                  <i className="fa fa-plus fa-fw"></i>
                   New Tag
                 </button>
               </th>
