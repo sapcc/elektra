@@ -107,12 +107,13 @@ class Widget {
   }
 }
 
-export const getWidgetName = (dirname) => {
-  if (!dirname) return null
-  const name_regex = /.*plugins\/([^\/]+)\/app\/javascript\/([^\.]+)/
-  const name_tokens = dirname.match(name_regex)
-  if (name_tokens.length < 2) return null
-  return `${name_tokens[1]}_${name_tokens[2]}`
+export const getWidgetName = (options = {}) => {
+  if (!options || !options.pluginName || !options.widgetName) return null
+  return `${options.pluginName}_${options.widgetName}_widget`
+  // const name_regex = /.*plugins\/([^\/]+)\/app\/javascript\/widgets\/([^\.]+)/
+  // const name_tokens = dirname.match(name_regex)
+  // if (name_tokens.length < 2) return null
+  // return `${name_tokens[1]}_${name_tokens[2]}`
 }
 
 const getCurrentScript = (widgetName) => {

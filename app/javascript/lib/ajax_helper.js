@@ -199,18 +199,32 @@ export const createAjaxHelper = (options = {}) => {
           `${serviceEndpoint}/${path}`,
           mergeServiceOptions(serviceOptions, options)
         ),
+      del: (path, options = {}) =>
+        axiosInstance.delete(
+          `${serviceEndpoint}/${path}`,
+          mergeServiceOptions(serviceOptions, options)
+        ),
       post: (path, values = {}, options = {}) =>
         axiosInstance.post(
           `${serviceEndpoint}/${path}`,
           values,
           mergeServiceOptions(serviceOptions, options)
         ),
-      put: (path, values = {}, options = {}) =>
-        axiosInstance.put(
-          `${serviceEndpoint}/${path}`,
+      put: (path, values = {}, options = {}) => {
+        console.log(
+          "-----------PUT",
+          path,
           values,
           mergeServiceOptions(serviceOptions, options)
-        ),
+        )
+        return axiosInstance
+          .put(
+            `${serviceEndpoint}/${path}`,
+            values,
+            mergeServiceOptions(serviceOptions, options)
+          )
+          .catch((e) => console.error(e))
+      },
       patch: (path, values = {}, options = {}) =>
         axiosInstance.patch(
           `${serviceEndpoint}/${path}`,
