@@ -1,7 +1,7 @@
 import React from "react"
 import { Link, useHistory } from "react-router-dom"
 import { policy } from "lib/policy"
-import { ButtonRow, Icon, DataGridRow, DataGridCell } from "juno-ui-components"
+import { Badge, ButtonRow, Icon, DataGridRow, DataGridCell } from "juno-ui-components"
 
 
 const Item = ({ entry, handleDelete }) => {
@@ -15,7 +15,7 @@ const Item = ({ entry, handleDelete }) => {
       <DataGridCell>
         <Link to={`/entries/${entry.id}/show`}>{entry.name || entry.id}</Link>
         <br />
-        <span className="info-text small">{entry.id}</span>
+        <Badge className="info-text small">{entry.id}</Badge>
       </DataGridCell>
       <DataGridCell>{entry.description}</DataGridCell>
       <DataGridCell nowrap>
