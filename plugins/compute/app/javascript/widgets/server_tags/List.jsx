@@ -48,7 +48,7 @@ const TagsList = ({ instanceId }) => {
   const saveNewItem = React.useCallback(
     (newTagValue) => {
       // push new placeholder tag value on the state
-      // this will overwritten by the users new tag
+      // this will be overwritten by the users new tag
       const newItems = items.slice()
       newItems.push(newTagValue)
       setNewTagItem(null)
@@ -84,7 +84,6 @@ const TagsList = ({ instanceId }) => {
           // show error
           error && <div className="alert alert-error">{error}</div>
         }
-
         {/*isLoading && (
           <span>
             <span className="spinner"></span> Loading...

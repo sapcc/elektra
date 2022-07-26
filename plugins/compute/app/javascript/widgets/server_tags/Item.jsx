@@ -54,7 +54,7 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
 
   const handleKeyPress = React.useCallback(
     (key) => {
-      if (key === "Enter") {
+      if (key === "Enter" && !isToSmall && newTagValue) {
         save()
       }
     },
