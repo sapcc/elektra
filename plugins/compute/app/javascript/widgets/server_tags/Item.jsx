@@ -1,8 +1,10 @@
 import React from "react"
+import { confirm } from "lib/dialogs"
 
 const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
   // set local state got ZahItem
   const [isEditing, setIsEditing] = React.useState(isNew)
+  const [confirmDeleting, setConfirmDeleting] = React.useState(false)
   const [newTagValue, setNewTagValue] = React.useState(item)
   const inputElement = React.useRef()
 
@@ -29,9 +31,21 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
   }, [newTagValue])
 
   const deleteTag = React.useCallback(() => {
-    onRemove()
+    setConfirmDeleting(true)
     setIsEditing(false)
-  }, [setIsEditing])
+    if (timer) clearTimeout(timer)
+    onRemove()
+  }, [setIsEditing, setConfirmDeleting])
+
+  let timer
+  const getDeleteConfirmation = React.useCallback(() => {
+    if (timer) clearTimeout(timer)
+    setConfirmDeleting(true)
+    timer = setTimeout(() => {
+      //console.log("#", confirmDeleting)
+      setConfirmDeleting(false)
+    }, 15000)
+  }, [timer])
 
   const handleKeyPress = React.useCallback(
     (e) => {
@@ -55,8 +69,26 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
             onKeyPress={(e) => handleKeyPress(e)}
             ref={inputElement}
           />
+        ) : confirmDeleting ? (
+          <span>
+            Do you realy want to delete this tag?&nbsp;
+            <button
+              className="btn btn-sm btn-danger"
+              onClick={() => deleteTag()}
+            >
+              <i className="fa fa-check"></i>
+            </button>
+            <button
+              className="btn btn-sm btn-success"
+              onClick={() => setConfirmDeleting(false)}
+            >
+              <i className="fa fa-times"></i>
+            </button>
+          </span>
         ) : (
-          item
+          <span>
+            <li className="fa fa-tag"></li> {item}
+          </span>
         )}
       </td>
       <td className="text-right">
@@ -74,18 +106,20 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
           ""
         )}{" "}
         <button
-          className="btn btn-default btn-sm"
+          className={
+            isEditing ? "btn btn-success btn-sm" : "btn btn-default btn-sm"
+          }
           onClick={() => (isEditing ? save() : edit())}
         >
           <i className={isEditing ? "fa fa-floppy-o" : "fa fa-pencil"}></i>
         </button>{" "}
         <button
           className={
-            isEditing
-              ? "btn btn-sm btn-default  disabled"
+            isEditing || confirmDeleting
+              ? "btn btn-sm btn-warning  disabled"
               : "btn btn-sm btn-warning"
           }
-          onClick={() => (isEditing ? "" : deleteTag())}
+          onClick={() => (isEditing ? "" : getDeleteConfirmation())}
         >
           <i className="fa fa-trash"></i>
         </button>
