@@ -15,7 +15,7 @@ const Item = ({ entry, handleDelete }) => {
       <DataGridCell>
         <Link to={`/entries/${entry.id}/show`}>{entry.name || entry.id}</Link>
         <br />
-        <Badge className="info-text small">{entry.id}</Badge>
+        <Badge>{entry.id}</Badge>
       </DataGridCell>
       <DataGridCell>{entry.description}</DataGridCell>
       <DataGridCell nowrap>
