@@ -73,40 +73,40 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
   return (
     <tr>
       <td className="h4">
-          {isEditing ? (
-            <input
-              className="form-control"
-              type="text"
-              style={{ width: "100%" }}
-              value={newTagValue}
-              onChange={(e) => handleEmptyTagValue(e.target.value)}
-              onKeyPress={(e) => handleKeyPress(e.key)}
-              placeholder="add your tag here"
-              ref={inputElement}
-            />
-          ) : (
-            /* : confirmDeleting ? (
+        {isEditing ? (
+          <input
+            className="form-control"
+            type="text"
+            style={{ width: "100%" }}
+            value={newTagValue}
+            onChange={(e) => handleEmptyTagValue(e.target.value)}
+            onKeyPress={(e) => handleKeyPress(e.key)}
+            placeholder="add your tag here"
+            ref={inputElement}
+          />
+        ) : (
+          /* : confirmDeleting ? (
+        <span>
+          Do you realy want to delete this tag?&nbsp;
+          <button
+            className="btn btn-sm btn-danger"
+            onClick={() => deleteTag()}
+          >
+            <i className="fa fa-check"></i>
+          </button>
+          <button
+            className="btn btn-sm btn-success"
+            onClick={() => setConfirmDeleting(false)}
+          >
+            <i className="fa fa-times"></i>
+          </button>
+        </span>
+      )*/
           <span>
-            Do you realy want to delete this tag?&nbsp;
-            <button
-              className="btn btn-sm btn-danger"
-              onClick={() => deleteTag()}
-            >
-              <i className="fa fa-check"></i>
-            </button>
-            <button
-              className="btn btn-sm btn-success"
-              onClick={() => setConfirmDeleting(false)}
-            >
-              <i className="fa fa-times"></i>
-            </button>
+            <li className="fa fa-tag"></li>{" "}
+            <span className="label label-default">{item}</span>
           </span>
-        )*/
-            <span>
-              <li className="fa fa-tag"></li>{" "}
-              <span className="label label-default">{item}</span>
-            </span>
-          )}
+        )}
       </td>
       <td className="text-right">
         <div className="btn-group">
