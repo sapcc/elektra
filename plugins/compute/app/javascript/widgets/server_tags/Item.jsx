@@ -72,8 +72,7 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
 
   return (
     <tr>
-      <td>
-        <div className="h4">
+      <td className="h4">
           {isEditing ? (
             <input
               className="form-control"
@@ -108,7 +107,6 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
               <span className="label label-default">{item}</span>
             </span>
           )}
-        </div>
       </td>
       <td className="text-right">
         <div className="btn-group">
