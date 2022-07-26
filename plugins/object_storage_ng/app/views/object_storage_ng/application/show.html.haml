@@ -1,0 +1,6 @@
+:javascript 
+  if(window.location.href.indexOf('?r=') < 0)  {
+      window.history.replaceState(null, "Object Storage", window.location.href+'/?r=');
+  }
+  
+= javascript_include_tag "object_storage_ng_app_widget", data: {object_store_endpoint:  services.os_api.service("object-store").endpoint_url}
