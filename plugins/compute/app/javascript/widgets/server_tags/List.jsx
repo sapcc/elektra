@@ -89,10 +89,10 @@ const TagsList = ({ instanceId }) => {
             <span className="spinner"></span> Loading...
           </span>
         )*/}
-        <table className="table">
+        <table className="table table-striped">
           <thead>
             <tr>
-              <th>Name</th>
+              <th></th>
               <th className="text-right">
                 <button
                   className="btn btn-sm btn-primary"

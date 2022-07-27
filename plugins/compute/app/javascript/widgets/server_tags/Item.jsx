@@ -72,7 +72,7 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
 
   return (
     <tr>
-      <td className="h4">
+      <td>
         {isEditing ? (
           <input
             className="form-control"
@@ -103,8 +103,7 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
         </span>
       )*/
           <span>
-            <li className="fa fa-tag"></li>{" "}
-            <span className="label label-default">{item}</span>
+            <li className="fa fa-tag"></li> <span>{item}</span>
           </span>
         )}
       </td>
