@@ -4,7 +4,7 @@ import { IntroBox } from "juno-ui-components"
 
 const Welcome = () => (
   <>
-    <IntroBox variant="hero" title="Welcome to testikus">
+    <IntroBox variant="hero" title="Welcome to %{PLUGIN_NAME}">
       <p>
         This is an example for how to build a simple react app inside Elektra.
       </p>

@@ -20,7 +20,7 @@ const New = () => {
   const onSubmit = React.useCallback(
     (values) => {
       apiClient
-        .post("testikus-api/entries", { entry: values })
+        .post("%{PLUGIN_NAME}-api/entries", { entry: values })
         .then((response) => response.data)
         .then(
           (item) =>

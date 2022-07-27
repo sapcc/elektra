@@ -25,10 +25,10 @@ const Item = ({ entry, handleDelete }) => {
       <DataGridCell>{entry.description}</DataGridCell>
       <DataGridCell nowrap>
         <ButtonRow>
-          {policy.isAllowed("testikus:entry_delete") && (
+          {policy.isAllowed("%{PLUGIN_NAME}:entry_delete") && (
             <Icon icon="deleteForever" onClick={() => handleDelete(entry.id)} />
           )}
-          {policy.isAllowed("testikus:entry_update") && (
+          {policy.isAllowed("%{PLUGIN_NAME}:entry_update") && (
             <Icon
               icon="edit"
               onClick={() => push(`/entries/${entry.id}/edit`)}

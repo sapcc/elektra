@@ -23,7 +23,7 @@ const tabsConfig = [
   { to: "/catalog", label: "Services catalog", component: Catalog },
 ]
 
-const baseName = widgetBasePath("testikus")
+const baseName = widgetBasePath("%{PLUGIN_NAME}")
 
 // render all components inside a hash router
 const Application = () => {

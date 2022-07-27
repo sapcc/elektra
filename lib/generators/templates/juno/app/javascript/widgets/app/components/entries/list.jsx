@@ -31,7 +31,7 @@ const Entries = () => {
 
     dispatch({ type: "@entries/request" })
     apiClient
-      .get("testikus-api/entries")
+      .get("%{PLUGIN_NAME}-api/entries")
       .then((response) => response.data)
       .then(
         (items) =>
@@ -48,7 +48,7 @@ const Entries = () => {
     (id) => {
       dispatch({ type: "@entries/requestDelete", id })
       apiClient
-        .delete(`testikus-api/entries/${id}`)
+        .delete(`%{PLUGIN_NAME}-api/entries/${id}`)
         .then(
           () => mounted.current && dispatch({ type: "@entries/delete", id })
         )
@@ -90,14 +90,14 @@ const Entries = () => {
           />
         }
       >
-        {policy.isAllowed("testikus:entry_create") && (
+        {policy.isAllowed("%{PLUGIN_NAME}:entry_create") && (
           <Link to="/entries/new">
             <Button>Create new</Button>
           </Link>
         )}
       </DataGridToolbar>
 
-      {!policy.isAllowed("testikus:entry_list") ? (
+      {!policy.isAllowed("%{PLUGIN_NAME}:entry_list") ? (
         <span>You are not allowed to see this page</span>
       ) : entriesState.isFetching ? (
         <Spinner variant="primary" />

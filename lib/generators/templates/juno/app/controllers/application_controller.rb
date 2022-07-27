@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Testikus
+module %{PLUGIN_NAME_CAMELIZE}
   class ApplicationController < AjaxController
   end
 end

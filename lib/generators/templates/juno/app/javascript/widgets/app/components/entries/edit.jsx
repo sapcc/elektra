@@ -26,7 +26,7 @@ const Edit = () => {
   const onSubmit = React.useCallback(
     (values) => {
       apiClient
-        .put(`testikus-api/entries/${params.id}`, { entry: values })
+        .put(`%{PLUGIN_NAME}-api/entries/${params.id}`, { entry: values })
         .then((response) => response.data)
         .then(
           (item) =>
