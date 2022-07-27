@@ -1,14 +1,19 @@
 import React from "react"
 import { Link } from "react-router-dom"
-import { TransitionGroup } from "react-transition-group"
-import { FadeTransition } from "lib/components/transitions"
 import { policy } from "lib/policy"
 import { SearchField } from "lib/components/search_field"
 import EntryItem from "./item"
-import * as client from "../../client"
+import apiClient from "../../apiClient"
 import { useGlobalState } from "../StateProvider"
 
-import { Button, DataGrid, DataGridRow, DataGridCell, DataGridHeadCell, DataGridToolbar, Filters } from "juno-ui-components"
+import {
+  Button,
+  DataGrid,
+  DataGridRow,
+  DataGridCell,
+  DataGridHeadCell,
+  DataGridToolbar,
+} from "juno-ui-components"
 
 const Entries = () => {
   const [filterTerm, setFilterTerm] = React.useState(null)
@@ -18,8 +23,9 @@ const Entries = () => {
   React.useEffect(() => {
     mounted.current = true
     dispatch({ type: "request" })
-    client
+    apiClient
       .get("testikus/entries")
+      .then((response) => response.data)
       .then(
         (items) =>
           mounted.current && dispatch({ type: "@entries/receive", items })
@@ -36,8 +42,8 @@ const Entries = () => {
   const handleDelete = React.useCallback(
     (id) => {
       dispatch({ type: "@entries/requestDelete", id })
-      client
-        .del(`testikus/entries/${id}`)
+      apiClient
+        .delete(`testikus/entries/${id}`)
         .then(
           () => mounted.current && dispatch({ type: "@entries/delete", id })
         )
@@ -67,15 +73,17 @@ const Entries = () => {
   return (
     <>
       <DataGridToolbar
-        search={ <SearchField
-          variant="juno"
-          onChange={setFilterTerm}
-          placeholder="name or description"
-          text="Searches by name or description in visible entries list only.
+        search={
+          <SearchField
+            variant="juno"
+            onChange={setFilterTerm}
+            placeholder="name or description"
+            text="Searches by name or description in visible entries list only.
                 Entering a search term will automatically start loading the next pages
                 and filter the loaded items using the search term. Emptying the search
                 input field will show all currently loaded items."
-        />}
+          />
+        }
       >
         {policy.isAllowed("testikus:entry_create") && (
           <Link to="/entries/new">
@@ -109,30 +117,6 @@ const Entries = () => {
             </DataGridRow>
           )}
         </DataGrid>
-        // <table className="table entries">
-        //   <thead>
-        //     <tr>
-        //       <th>Name</th>
-        //       <th>Description</th>
-        //       <th></th>
-        //     </tr>
-        //   </thead>
-        //   <tbody>
-        //     {filteredItems && filteredItems.length > 0 ? (
-        //       filteredItems.map((entry, index) => (
-        //         <EntryItem
-        //           key={index}
-        //           entry={entry}
-        //           handleDelete={handleDelete}
-        //         />
-        //       ))
-        //     ) : (
-        //       <tr>
-        //         <td colSpan="3">No Entries found.</td>
-        //       </tr>
-        //     )}
-        //   </tbody>
-        // </table>
       )}
     </>
   )

@@ -2,7 +2,7 @@ import React from "react"
 import { Modal, Button } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import { useHistory, useLocation } from "react-router-dom"
-import * as client from "../../client"
+import apiClient from "../../apiClient"
 import { useGlobalState } from "../StateProvider"
 
 const New = () => {
@@ -19,8 +19,9 @@ const New = () => {
 
   const onSubmit = React.useCallback(
     (values) => {
-      client
+      apiClient
         .post("testikus/entries", { entry: values })
+        .then((response) => response.data)
         .then(
           (item) =>
             mounted.current && dispatch({ type: "@entries/receive", item })

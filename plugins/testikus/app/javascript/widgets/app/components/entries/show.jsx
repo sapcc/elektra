@@ -1,8 +1,6 @@
 import React from "react"
 // import { Modal, Button } from "react-bootstrap"
-import { Form } from "lib/elektra-form"
 import { useHistory, useLocation, useParams } from "react-router-dom"
-import * as client from "../../client"
 import { useGlobalState } from "../StateProvider"
 
 import {
@@ -11,7 +9,7 @@ import {
   DataGrid,
   DataGridRow,
   DataGridCell,
-  DataGridHeadCell
+  DataGridHeadCell,
 } from "juno-ui-components"
 
 const Row = ({ label, value, children }) => {

@@ -5,6 +5,7 @@ import { HashRouter, Route, Redirect } from "react-router-dom"
 import Tabs from "./Tabs"
 import Welcome from "./Welcome"
 
+import Catalog from "./catalog/show"
 import Entries from "./entries/list"
 import EditEntryModal from "./entries/edit"
 import ShowEntryModal from "./entries/show"
@@ -17,6 +18,7 @@ import StyleProvider, { AppShell } from "juno-ui-components"
 const tabsConfig = [
   { to: "/welcome", label: "Welcome", component: Welcome },
   { to: "/entries", label: "Entries", component: Entries },
+  { to: "/catalog", label: "Services catalog", component: Catalog },
 ]
 
 // render all components inside a hash router
