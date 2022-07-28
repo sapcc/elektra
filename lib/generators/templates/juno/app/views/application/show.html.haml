@@ -1,0 +1,4 @@
+= content_for :main_toolbar do
+  %{PLUGIN_NAME_HUMANIZE}
+
+= javascript_include_tag "%{PLUGIN_NAME}_app_widget", data: { url: plugin("%{PLUGIN_NAME}").root_path }

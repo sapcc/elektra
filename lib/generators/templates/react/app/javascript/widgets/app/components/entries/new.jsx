@@ -20,7 +20,7 @@ const New = () => {
   const onSubmit = React.useCallback(
     (values) => {
       client
-        .post("key-manager-ng/entries", { entry: values })
+        .post("%{PLUGIN_NAME}/entries", { entry: values })
         .then(
           (item) =>
             mounted.current && dispatch({ type: "@entries/receive", item })

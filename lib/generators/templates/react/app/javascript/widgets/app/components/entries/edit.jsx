@@ -26,7 +26,7 @@ const Edit = () => {
   const onSubmit = React.useCallback(
     (values) => {
       client
-        .put(`key-manager-ng/entries/${params.id}`, { entry: values })
+        .put(`%{PLUGIN_NAME}/entries/${params.id}`, { entry: values })
         .then(
           (item) =>
             mounted.current && dispatch({ type: "@entries/receive", item })

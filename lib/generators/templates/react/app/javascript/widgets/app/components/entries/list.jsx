@@ -17,7 +17,7 @@ const Entries = () => {
     mounted.current = true
     dispatch({ type: "request" })
     client
-      .get("key-manager-ng/entries")
+      .get("%{PLUGIN_NAME}/entries")
       .then(
         (items) =>
           mounted.current && dispatch({ type: "@entries/receive", items })
@@ -35,7 +35,7 @@ const Entries = () => {
     (id) => {
       dispatch({ type: "@entries/requestDelete", id })
       client
-        .del(`key-manager-ng/entries/${id}`)
+        .del(`%{PLUGIN_NAME}/entries/${id}`)
         .then(
           () => mounted.current && dispatch({ type: "@entries/delete", id })
         )
