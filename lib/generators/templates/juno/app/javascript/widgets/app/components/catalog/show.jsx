@@ -1,5 +1,5 @@
 import React from "react"
-import { CodeBlock, Message, Spinner, SearchInput } from "juno-ui-components"
+import { CodeBlock, ContentAreaToolbar, Message, Spinner, SearchInput } from "juno-ui-components"
 import apiClient from "../../apiClient"
 import { useGlobalState } from "../StateProvider"
 
@@ -35,32 +35,35 @@ const Catalog = () => {
   }, [catalogState.catalog, catalogState.searchTerm])
 
   return (
-    <CodeBlock>
-      {catalogState.error && (
-        <Message
-          onDismiss={function noRefCheck() {}}
-          text={state.error}
-          variant="error"
+    <>
+      <ContentAreaToolbar>
+        <SearchInput
+          value={catalogState.searchTerm || ""}
+          onChange={(e) =>
+            dispatch({ type: "@catalog/search", value: e.target.value })
+          }
+          onClear={() => dispatch({ type: "@catalog/search", value: null })}
         />
-      )}
-      {catalogState.isFetching ? (
-        <Spinner variant="primary" />
-      ) : services ? (
-        <>
-          <SearchInput
-            value={catalogState.searchTerm || ""}
-            onChange={(e) =>
-              dispatch({ type: "@catalog/search", value: e.target.value })
-            }
-            onClear={() => dispatch({ type: "@catalog/search", value: null })}
+      </ContentAreaToolbar>
+      <CodeBlock size="large">
+        {catalogState.error && (
+          <Message
+            onDismiss={function noRefCheck() {}}
+            text={state.error}
+            variant="error"
           />
-          <br />
-          {JSON.stringify(services, null, 2)}
-        </>
-      ) : (
-        "No catalog available"
-      )}
-    </CodeBlock>
+        )}
+        {catalogState.isFetching ? (
+          <Spinner variant="primary" />
+        ) : services ? (
+          <>
+            {JSON.stringify(services, null, 2)}
+          </>
+        ) : (
+          "No catalog available"
+        )}
+      </CodeBlock>
+    </>
   )
 }
 
