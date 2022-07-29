@@ -10,20 +10,20 @@ const TabsComponent = ({ tabsConfig, ...otherProps }) => {
     let tabItems = []
     let tabPanels = []
     let activeIndex = 0
-    for (let index in tabsConfig) {
-      let tab = tabsConfig[index]
-      if (location.pathname.indexOf(tab.to) === 0) activeIndex = index
+  
+    for (let [i, tab] of tabsConfig.entries()) {
+      if (location.pathname.indexOf(tab.to) === 0) activeIndex = i
       let Component = tab.component
 
       // collect tab items
       tabItems.push(
-        <Tab key={index} onClick={() => history.push(tab.to)}>
+        <Tab key={i} onClick={() => history.push(tab.to)}>
           {tab.label}
         </Tab>
       )
       // collect tab panels
       tabPanels.push(
-        <TabPanel key={index}>
+        <TabPanel key={i}>
           <Container px={false}>
             <Component>{otherProps}</Component>
           </Container>
