@@ -85,33 +85,17 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
             ref={inputElement}
           />
         ) : (
-          /* : confirmDeleting ? (
-        <span>
-          Do you realy want to delete this tag?&nbsp;
-          <button
-            className="btn btn-sm btn-danger"
-            onClick={() => deleteTag()}
-          >
-            <i className="fa fa-check"></i>
-          </button>
-          <button
-            className="btn btn-sm btn-success"
-            onClick={() => setConfirmDeleting(false)}
-          >
-            <i className="fa fa-times"></i>
-          </button>
-        </span>
-      )*/
-          <span>
-            <li className="fa fa-tag"></li> <span>{item}</span>
+          <span className="juno-badge juno-badge-info juno-badge-lg">
+            <i className="fa fa-tag"/>
+            {item}
           </span>
         )}
       </td>
       <td className="text-right">
         <div className="btn-group">
-          {isEditing ? (
+          {isEditing && (
             <button
-              className="btn btn-sm btn-default"
+              className="btn btn-default"
               onClick={() => {
                 if (isNew) onRemove()
                 setIsEditing(false)
@@ -119,32 +103,32 @@ const TagItem = ({ item, onUpdate, onRemove, isNew }) => {
             >
               <i className="fa fa-times"></i>
             </button>
-          ) : (
-            ""
-          )}{" "}
+          )}
           <button
             className={
               !isEditing
-                ? "btn btn-default btn-sm"
+                ? "btn btn-default"
                 : isToSmall
-                ? "btn btn-success btn-sm disabled"
-                : "btn btn-success btn-sm"
+                ? "btn btn-success disabled"
+                : "btn btn-success"
             }
             onClick={() => (isEditing ? save() : edit())}
           >
-            <i className={isEditing ? "fa fa-floppy-o" : "fa fa-pencil"}></i>
-          </button>{" "}
-          <button
-            className={
-              isEditing || confirmDeleting
-                ? "btn btn-sm btn-warning  disabled"
-                : "btn btn-sm btn-warning"
-            }
-            //onClick={() => (isEditing ? "" : getDeleteConfirmation())}
-            onClick={() => (isEditing ? "" : deleteTag())}
-          >
-            <i className="fa fa-trash"></i>
+            <i className={isEditing ? "fa fa-check" : "fa fa-pencil"}></i>
           </button>
+          { !isEditing &&
+            <button
+              className={
+                confirmDeleting
+                  ? "btn btn-warning  disabled"
+                  : "btn btn-warning"
+              }
+              //onClick={() => (isEditing ? "" : getDeleteConfirmation())}
+              onClick={() => (isEditing ? "" : deleteTag())}
+            >
+              <i className="fa fa-trash"></i>
+            </button>
+          }
         </div>
       </td>
     </tr>

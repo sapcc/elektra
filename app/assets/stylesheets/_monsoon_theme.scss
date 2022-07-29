@@ -655,6 +655,34 @@ section {
 }
 
 // ---------------------------------------------------------------------------------
+// Juno Badge
+// ---------------------------------------------------------------------------------
+
+.juno-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: fit-content;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+
+  &.juno-badge-lg {
+    font-size: $font-size-medium;
+    padding: 0.25rem 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  &.juno-badge-info {
+    color: rgb(76,76,76);
+    background: rgba(67, 162, 208, 0.25);
+    
+    .fa {
+      color: rgb(67, 162, 208);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------------
 // Labels
 // ---------------------------------------------------------------------------------
 
@@ -1730,6 +1758,10 @@ th {
   }
 }
 
+.table.table-align-center > tbody > tr > td {
+  vertical-align: middle;
+}
+
 .title-row {
   th,
   td {
@@ -2605,6 +2637,10 @@ label {
 .u-flex-container {
   display: flex;
   align-items: center;
+}
+
+.u-flex-gap-small {
+  gap: 1rem;
 }
 
 .u-flex-pos-right {

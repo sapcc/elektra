@@ -24,8 +24,6 @@
           = link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
         %li{role: "presentation"}
           = link_to 'Volumes Attached', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
-        %li{role: "presentation"}
-          = link_to 'Tags', '#tags', aria: {controls:"tags"}, role: "tab", data: {toggle:"tab"}
         - if current_user.is_allowed?("compute:all_projects")
           %li{role: "presentation"}
             = link_to 'Actions', '#actions', aria: { controls: 'actions' }, role: 'tab', data: { toggle: 'tab' }
@@ -74,6 +72,26 @@
                     - project_id_and_name(@instance.tenant_id)
                   - else
                     = project_name(@instance.tenant_id)
+              %tr
+                %th Tags
+                %td
+                  - if current_user.is_allowed?("role:compute_viewer")
+                    - if @instance.tags.empty?
+                      none
+                    - else
+                      %div.u-flex-container.u-flex-gap-small
+                        - @instance.tags.each do |tag|
+                          %span.juno-badge.juno-badge-info
+                            %i.fa.fa-tag
+                            = tag
+                  - else
+                    - involved_roles = policy.try(:involved_roles, "role:compute_viewer")
+                    You are not authorized to view tags.
+                    - if involved_roles
+                      Please check (role assignments) if you have one of the following roles:
+                      = involved_roles.join(', ')
+
+
               %tr
                 %th VMware Guest Tools
                 %td{id: "guest_tools"}
@@ -269,28 +287,7 @@
                     - if involved_roles
                       Please check (role assignments) if you have one of the following roles:
                       = involved_roles.join(', ')
-        .tab-pane{role: "tabpanel", id: "tags"}
-          %table.table.datatable
-            %tbody
-              - if current_user.is_allowed?("role:compute_viewer")
-                - if @instance.tags.empty?
-                  %tr
-                    %td No tags found.
-                - else
-                  - @instance.tags.each do |tag|
-                    %tr
-                      %td.h4
-                        %li.fa.fa-tag
-                          %span
-                            = tag
-              - else
-                %tr
-                  %td{colspan: 2}
-                    - involved_roles = policy.try(:involved_roles, "role:compute_viewer")
-                    You are not authorized to view tags.
-                    - if involved_roles
-                      Please check (role assignments) if you have one of the following roles:
-                      = involved_roles.join(', ')
+
         - if current_user.is_allowed?("compute:all_projects")
           .tab-pane{role: "tabpanel", id: "actions"}
             %ul.plain-list.plain-list-widespaced

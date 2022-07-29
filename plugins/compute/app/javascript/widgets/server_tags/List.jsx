@@ -89,22 +89,19 @@ const TagsList = ({ instanceId }) => {
             <span className="spinner"></span> Loading...
           </span>
         )*/}
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th></th>
-              <th className="text-right">
-                <button
-                  className="btn btn-sm btn-primary"
-                  disabled={newTagItem}
-                  onClick={() => addNewItem()}
-                >
-                  <i className="fa fa-plus fa-fw"></i>
-                  New Tag
-                </button>
-              </th>
-            </tr>
-          </thead>
+        <div className="toolbar">
+          <div className="main-buttons">
+            <button
+              className="btn btn-primary"
+              disabled={newTagItem}
+              onClick={() => addNewItem()}
+            >
+              <i className="fa fa-plus fa-fw"></i>
+              New Tag
+            </button>
+          </div>
+        </div>
+        <table className="table table-striped table-align-center">
           <tbody>
             {items.length === 0 && !isLoading && !newTagItem ? (
               <tr>
