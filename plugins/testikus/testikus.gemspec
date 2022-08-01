@@ -1,7 +1,6 @@
-require_relative "lib/testikus/version"
 Gem::Specification.new do |spec|
   spec.name        = "testikus"
-  spec.version     = Testikus::VERSION
+  spec.version     = "0.1.0"
   spec.authors     = ["Elektra UI team"]
   spec.summary     = "An Elektra plugin"
   spec.license     = "MIT"

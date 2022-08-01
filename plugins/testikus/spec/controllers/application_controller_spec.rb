@@ -3,6 +3,7 @@
 require 'spec_helper'
 
 describe Testikus::ApplicationController, type: :controller do
+=begin
   routes { Testikus::Engine.routes }
 
   default_params = { domain_id: AuthenticationStub.domain_id,
@@ -27,4 +28,5 @@ describe Testikus::ApplicationController, type: :controller do
       expect(response).to be_successful
     end
   end
+=end
 end
