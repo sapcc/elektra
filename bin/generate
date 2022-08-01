@@ -7,4 +7,4 @@
 full_path=$(realpath "$0")
 dir=$(dirname "$full_path")
 
-DISABLE_SPRING=1 "$dir"/rails generate dashboard_plugin "$@" && bundle
+DISABLE_SPRING=1 "$dir"/rails generate "$@"

@@ -71,6 +71,7 @@ class Widget {
 
   render(container) {
     // const Container = React.createElement(container, this.config.params)
+
     for (let reactContainer of this.reactContainers) {
       let dataset = getDataset(reactContainer)
       let wrappedComponent = React.createElement(
@@ -190,14 +191,4 @@ export const getContainerFromCurrentScript = (widgetName) => {
     reactContainer,
     scriptParams,
   }
-}
-
-export const widgetBasePath = (widgetPathName) => {
-  const regex = new RegExp(`^(.*/${widgetPathName}).*$`)
-  const baseNameMatch = window.location.pathname.match(regex)
-  if (baseNameMatch) return baseNameMatch[1]
-  let baseNamePath = ""
-  if (window.scopedDomainFid) baseNamePath += "/" + window.scopedDomainFid
-  if (window.scopedProjectFid) baseNamePath += "/" + window.scopedProjectFid
-  return baseNamePath
 }

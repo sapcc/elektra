@@ -64,7 +64,6 @@ require("esbuild")
     // map global this to window
     define: { this: "window" },
     allowOverwrite: true,
-    //loader: { ".css": "text" },
   })
   .then((result) => {
     if (watch) console.log("watching...")

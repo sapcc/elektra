@@ -1,7 +1,10 @@
 {
-  "%{PLUGIN_NAME}:entry_list": "@",
-  "%{PLUGIN_NAME}:entry_get": "@",
-  "%{PLUGIN_NAME}:entry_create": "@",
-  "%{PLUGIN_NAME}:entry_delete": "@",
-  "%{PLUGIN_NAME}:entry_update": "@"
+  "member": "role:member or role:Member",
+  "admin": "role:admin",
+
+  "%{PLUGIN_NAME}:entry_list": "rule:admin or rule:member",
+  "%{PLUGIN_NAME}:entry_get": "rule:admin or rule:member",
+  "%{PLUGIN_NAME}:entry_create": "rule:admin or rule:member",
+  "%{PLUGIN_NAME}:entry_delete": "rule:admin or rule:member",
+  "%{PLUGIN_NAME}:entry_update": "rule:admin or rule:member"
 }
