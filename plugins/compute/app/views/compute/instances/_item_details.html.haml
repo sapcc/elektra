@@ -75,23 +75,21 @@
               %tr
                 %th Tags
                 %td
-                  - if current_user.is_allowed?("role:compute_viewer")
+                  - if current_user.is_allowed?("compute_viewer") || current_user.is_allowed?("member")
                     - if @instance.tags.empty?
                       none
                     - else
-                      %div.u-flex-container.u-flex-gap-small
+                      .u-flex-container.u-flex-gap-small
                         - @instance.tags.each do |tag|
                           %span.juno-badge.juno-badge-info
                             %i.fa.fa-tag
                             = tag
                   - else
-                    - involved_roles = policy.try(:involved_roles, "role:compute_viewer")
+                    - involved_roles = policy.try(:involved_roles, "compute_viewer")
                     You are not authorized to view tags.
                     - if involved_roles
                       Please check (role assignments) if you have one of the following roles:
                       = involved_roles.join(', ')
-
-
               %tr
                 %th VMware Guest Tools
                 %td{id: "guest_tools"}
@@ -287,7 +285,6 @@
                     - if involved_roles
                       Please check (role assignments) if you have one of the following roles:
                       = involved_roles.join(', ')
-
         - if current_user.is_allowed?("compute:all_projects")
           .tab-pane{role: "tabpanel", id: "actions"}
             %ul.plain-list.plain-list-widespaced
