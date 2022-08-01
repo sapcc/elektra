@@ -74,7 +74,7 @@ gem "puma", "4.3.12"
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
-black_list = [] # e.g. ['compute']
+black_list = ['testikus'] # e.g. ['compute']
 if ENV.key?('BLACK_LIST_PLUGINS')
   ENV['BLACK_LIST_PLUGINS'].split(',').each { |plugin_name| black_list << plugin_name.strip }
 end
