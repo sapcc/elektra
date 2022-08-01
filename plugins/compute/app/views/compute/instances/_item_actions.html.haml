@@ -17,7 +17,10 @@
       - unless instance.locked?
         - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li
-            = link_to 'Edit', edit_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true }
+            = link_to 'Edit Name', edit_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true }
+          %li
+            = link_to 'Edit Tags', plugin('compute').tags_instance_path(id: instance.id), data: { modal: true}
+          %li.divider
           %li
             = link_to 'Attach Floating IP', new_floatingip_instance_path(id: instance.id, action_from_show: show_view), data: {modal: true }
           %li
@@ -56,8 +59,6 @@
           %li.divider
           %li
             = link_to 'Edit Security Groups', plugin('compute').edit_securitygroups_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true}
-          %li
-            = link_to 'Edit Tags', plugin('compute').tags_instance_path(id: instance.id), data: { modal: true}
           %li.divider
         - if current_user.is_allowed?("compute:instance_reset_status")
           %li
