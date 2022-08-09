@@ -116,6 +116,8 @@ module DnsService
 
     def new
       @zone = services.dns_service.new_zone
+      # this needs to be removed when migration is done
+      @pools.reject!{|pool| pool.attributes["attributes"]["label"] == "New External SAP Hosted Zone" }
     end
 
     def create

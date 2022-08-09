@@ -13,6 +13,9 @@ module DnsService
       @zone_resource = get_zone_resource
       @recordset_resource = get_recordset_resource
 
+      # this needs to be removed when migration is done
+      @pools.reject!{|pool| pool.attributes["attributes"]["label"] == "New External SAP Hosted Zone" }
+
     end
 
     def create
