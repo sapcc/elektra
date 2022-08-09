@@ -107,6 +107,8 @@ module Compute
       end
     end
 
+    def tags; end
+
     def new
       # get usage from db
       @quota_data = []
@@ -195,7 +197,7 @@ module Compute
       params[:server].delete(:vmware_image_id)
 
       @instance = services.compute.new_server
-     
+
       # remove empty security groups from params
       if params[:server] && !params[:server][:security_groups].blank?
         params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?}

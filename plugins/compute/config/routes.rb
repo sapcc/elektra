@@ -5,6 +5,7 @@ Compute::Engine.routes.draw do
       get 'console_log'
       get 'update_item'
       get 'new_size'
+      get 'tags'
       get 'new_snapshot'
       get 'new_status'
       get 'attach_interface'

@@ -145,12 +145,15 @@ export const createConfig = (widgetName, params) => {
 }
 
 export const createWidget = (dirname, options = {}) => {
+  if (!dirname) dirname = { pluginName: null, widgetName: null }
   const widgetName = getWidgetName(dirname)
+  //console.log(widgetName)
   let reactContainers = options.containers
   let params = options.params || {}
 
   if (!reactContainers) {
     let scriptTagContainer = getContainerFromCurrentScript(widgetName)
+    //console.log(scriptTagContainer)
     reactContainers = [scriptTagContainer.reactContainer]
     params = scriptTagContainer.scriptParams
   }
@@ -182,9 +185,9 @@ export const createWidget = (dirname, options = {}) => {
 
 export const getContainerFromCurrentScript = (widgetName) => {
   const currentScript = getCurrentScript(widgetName)
+  // get data attributes that are given from the javascript import tag
   const scriptParams = JSON.parse(JSON.stringify(currentScript.dataset))
   const reactContainer = window.document.createElement("div")
-
   currentScript.parentNode.replaceChild(reactContainer, currentScript)
   return {
     reactContainer,
