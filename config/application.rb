@@ -120,9 +120,13 @@ module MonsoonDashboard
       address: ENV['MONSOON_DASHBOARD_MAIL_SERVER'],
       port: ENV['MONSOON_DASHBOARD_MAIL_SERVER_PORT'] || 25,
       enable_starttls_auto: false
+      user_name: ENV['MONSOON_DASHBOARD_MAIL_USER'],
+      password: ENV['MONSOON_DASHBOARD_MAIL_PASSWORD'],
+      authentication: 'plain',
+      enable_starttls_auto: true
     }
     config.action_mailer.default_options = {
-      from: 'Converged Cloud <do.not.reply@sap.com>'
+      from: ENV['MONSOON_DASHBOARD_MAIL_SENDER']
     }
 
     config.middleware.use SessionCookiePathMiddleware
