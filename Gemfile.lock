@@ -525,7 +525,6 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    sqlite3 (1.4.4)
     stringio (3.0.2)
     syntax_tree (2.7.1)
       prettier_print
@@ -633,11 +632,10 @@ DEPENDENCIES
   simple_form
   spinners
   spring
-  sqlite3
   tools!
   unf (>= 0.2.0beta2)
   web-console (~> 3.0)
   webconsole!
 
 BUNDLED WITH
-   2.3.15
+   2.3.18
