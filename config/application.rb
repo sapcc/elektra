@@ -119,7 +119,6 @@ module MonsoonDashboard
     config.action_mailer.smtp_settings = {
       address: ENV['MONSOON_DASHBOARD_MAIL_SERVER'],
       port: ENV['MONSOON_DASHBOARD_MAIL_SERVER_PORT'] || 25,
-      enable_starttls_auto: false
       user_name: ENV['MONSOON_DASHBOARD_MAIL_USER'],
       password: ENV['MONSOON_DASHBOARD_MAIL_PASSWORD'],
       authentication: 'plain',
