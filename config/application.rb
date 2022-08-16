@@ -117,9 +117,13 @@ module MonsoonDashboard
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
+      domain: ENV['MONSOON_DASHBOARD_MAIL_DOMAIN'],
       address: ENV['MONSOON_DASHBOARD_MAIL_SERVER'],
       port: ENV['MONSOON_DASHBOARD_MAIL_SERVER_PORT'] || 25,
-      enable_starttls_auto: false
+      user_name: ENV['MONSOON_DASHBOARD_MAIL_USER'],
+      password: ENV['MONSOON_DASHBOARD_MAIL_PASSWORD'],
+      authentication: ENV['MONSOON_DASHBOARD_MAIL_AUTHENTICATION'] || "plain",
+      enable_starttls_auto: true
     }
     config.action_mailer.default_options = {
       from: 'Converged Cloud <do.not.reply@sap.com>'
