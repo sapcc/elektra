@@ -126,7 +126,7 @@ module MonsoonDashboard
       enable_starttls_auto: true
     }
     config.action_mailer.default_options = {
-      from: 'Converged Cloud <' + ENV['MONSOON_DASHBOARD_MAIL_SERVER'].to_s + '>'
+      from: ENV['MONSOON_DASHBOARD_MAIL_SENDER'].to_s 
     }
 
     config.middleware.use SessionCookiePathMiddleware
