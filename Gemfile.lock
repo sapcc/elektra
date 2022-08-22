@@ -160,7 +160,7 @@ PATH
 PATH
   remote: plugins/testikus
   specs:
-    testikus (0.1.0)
+    testikus (0.0.1)
 
 PATH
   remote: plugins/tools
@@ -644,4 +644,4 @@ DEPENDENCIES
   webconsole!
 
 BUNDLED WITH
-   2.3.18
+   2.3.20
