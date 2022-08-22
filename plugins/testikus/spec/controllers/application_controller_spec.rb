@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-describe testikus::ApplicationController, type: :controller do
-  routes { testikus::Engine.routes }
+describe Testikus::ApplicationController, type: :controller do
+  routes { Testikus::Engine.routes }
 
   default_params = { domain_id: AuthenticationStub.domain_id,
                      project_id: AuthenticationStub.project_id }
