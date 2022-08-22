@@ -36,6 +36,9 @@ class PluginSkeletonGenerator
   end
 
   def update_dependencies_to_gemspec
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /require_relative "lib\/.+\/version"/, "$:.push File.expand_path(\"../lib\", __FILE__)"
+
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.version[^\n]*/, "spec.version     = \"0.0.1\""
     gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.authors[^\n]*/, "spec.authors     = [\"Elektra UI team\"]"
     gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.description[^\n]*/, ""
     gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /spec.summary[^\n]*/, 'spec.summary     = "An Elektra plugin"'

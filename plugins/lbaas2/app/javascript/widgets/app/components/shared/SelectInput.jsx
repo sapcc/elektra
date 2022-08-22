@@ -48,7 +48,6 @@ const SelectInput = ({
     <Select
       className="basic-single"
       classNamePrefix="select"
-      isDisabled={false}
       isLoading={isLoading}
       isClearable={isClearable}
       isRtl={false}

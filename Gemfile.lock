@@ -158,6 +158,11 @@ PATH
     shared_filesystem_storage (0.0.1)
 
 PATH
+  remote: plugins/testikus
+  specs:
+    testikus (0.0.1)
+
+PATH
   remote: plugins/tools
   specs:
     tools (0.0.1)
@@ -560,7 +565,6 @@ GEM
     zeitwerk (2.6.0)
 
 PLATFORMS
-  ruby
   x86_64-darwin-21
   x86_64-linux-musl
 
@@ -632,10 +636,11 @@ DEPENDENCIES
   simple_form
   spinners
   spring
+  testikus!
   tools!
   unf (>= 0.2.0beta2)
-  web-console (~> 3.0)
+  web-console
   webconsole!
 
 BUNDLED WITH
-   2.3.18
+   2.3.20

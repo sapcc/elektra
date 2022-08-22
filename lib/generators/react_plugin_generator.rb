@@ -19,6 +19,7 @@ class ReactPluginGenerator
     modify_app
     add_routes
     update_assets
+    add_controller_spec
   end
 
   private
@@ -43,5 +44,10 @@ class ReactPluginGenerator
   def add_routes
     remove_file "#{plugin_path}/#{name}/config/routes.rb"
     copy_file 'react/config/routes.rb', "#{plugin_path}/#{name}/config/routes.rb"
+  end
+
+  def add_controller_spec
+    remove_file "#{plugin_path}/#{name}/spec/controllers/application_controller_spec.rb"
+    copy_file 'react/spec/controllers/application_controller_spec.rb', "#{plugin_path}/#{name}/spec/controllers/application_controller_spec.rb"
   end
 end
