@@ -1,7 +1,7 @@
 import React from "react"
 import { Modal, Button } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
-import * as client from "../../client"
+import apiClient from "../../apiClient"
 import { useGlobalState } from "../StateProvider"
 import { useHistory, useLocation, useParams } from "react-router-dom"
 
@@ -25,8 +25,9 @@ const Edit = () => {
 
   const onSubmit = React.useCallback(
     (values) => {
-      client
-        .put(`testikus/entries/${params.id}`, { entry: values })
+      apiClient
+        .put(`testikus-api/entries/${params.id}`, { entry: values })
+        .then((response) => response.data)
         .then(
           (item) =>
             mounted.current && dispatch({ type: "@entries/receive", item })

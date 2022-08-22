@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Testikus
-  class EntriesController < DashboardController
+  class EntriesController < AjaxController
     def index
       render json: [
         { id: SecureRandom.uuid, name: 'Entry1', description: 'Test Entry 1'},

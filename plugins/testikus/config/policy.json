@@ -1,10 +1,7 @@
 {
-  "member": "role:member or role:Member",
-  "admin": "role:admin",
-
-  "testikus:entry_list": "rule:admin or rule:member",
-  "testikus:entry_get": "rule:admin or rule:member",
-  "testikus:entry_create": "rule:admin or rule:member",
-  "testikus:entry_delete": "rule:admin or rule:member",
-  "testikus:entry_update": "rule:admin or rule:member"
+  "testikus:entry_list": "@",
+  "testikus:entry_get": "@",
+  "testikus:entry_create": "@",
+  "testikus:entry_delete": "@",
+  "testikus:entry_update": "@"
 }

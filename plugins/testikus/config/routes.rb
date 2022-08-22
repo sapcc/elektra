@@ -1,5 +1,10 @@
 Testikus::Engine.routes.draw do
-  root to: 'application#show', as: :start
+  root to: 'application#show', as: :root
 
-  resources :entries, only: %i[index create update destroy] 
+  scope '/testikus-api' do
+    resources :entries, only: %i[index create update destroy] 
+  end
+
+  get '/*path', to: 'application#show', via: :all
 end
+

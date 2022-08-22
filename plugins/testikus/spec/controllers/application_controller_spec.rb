@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-describe Testikus::ApplicationController, type: :controller do
-  routes { Testikus::Engine.routes }
+describe testikus::ApplicationController, type: :controller do
+  routes { testikus::Engine.routes }
 
   default_params = { domain_id: AuthenticationStub.domain_id,
                      project_id: AuthenticationStub.project_id }
@@ -23,7 +23,7 @@ describe Testikus::ApplicationController, type: :controller do
 
   describe 'GET index' do
     it 'returns http success' do
-      get :index, default_params
+      get :show, params: default_params
       expect(response).to be_successful
     end
   end

@@ -1,20 +1,25 @@
-const initialState = { items: [] }
+const initialState = {
+  items: [],
+  isFetching: false,
+  error: null,
+  loaded: false,
+}
 
-const reducer = (state, action) => {
+const sortByName = (a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
+
+const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "@entries/request":
-      return { ...state, isFetching: true }
+      return { ...state, isFetching: true, error: null }
     case "@entries/receive":
       {
-        console.log(action)
-        const sortByName = (a, b) =>
-          a.name < b.name ? -1 : a.name > b.name ? 1 : 0
         if (action.items) {
           return {
             ...state,
             isFetching: false,
             error: null,
             items: action.items.sort(sortByName),
+            loaded: true,
           }
         } else if (action.item) {
           const items = state.items.slice()
@@ -57,7 +62,7 @@ const reducer = (state, action) => {
       return { ...state, items, error: action.error }
     }
     default:
-      return initialState
+      return state
   }
 }
 

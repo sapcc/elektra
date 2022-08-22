@@ -1,17 +1,21 @@
 import entries from "./entries"
+import catalog from "./catalog"
 
-const combineReducers = (slices) => (state, action) =>
-  Object.keys(slices).reduce(
-    // use for..in loop, if you prefer it
-    (acc, prop) => ({
-      ...acc,
-      [prop]: slices[prop](acc[prop], action),
-    }),
-    state
-  )
+// we use the react hook useReducer to provide global state
+// for that we have to combine all reducers to one global reducer.
+const combineReducers =
+  (reducers) =>
+  (state = {}, action = {}) => {
+    console.log(action)
+    const newState = { ...state }
+    Object.keys(reducers).forEach((name) => {
+      newState[name] = reducers[name](state[name], action)
+    })
+    return newState
+  }
 
-const initialState = { entries: entries({}, {}) } // some state for props a, b
-const rootReducer = combineReducers({ entries })
+const rootReducer = combineReducers({ entries, catalog })
+const initialState = rootReducer()
 
 export default rootReducer
 export { initialState }

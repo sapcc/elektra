@@ -167,7 +167,6 @@ const LoadbalancerList = (props) => {
                     className="btn btn-primary"
                     disabled={isLoading}
                     to="/loadbalancers/new"
-                    className="btn btn-primary"
                     isAllowed={canCreate}
                     notAllowedText="Not allowed to create. Please check with your administrator."
                   >

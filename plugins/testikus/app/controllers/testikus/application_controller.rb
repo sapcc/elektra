@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 module Testikus
-  class ApplicationController < DashboardController
+  class ApplicationController < AjaxController
   end
 end
