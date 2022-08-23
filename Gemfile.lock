@@ -278,6 +278,8 @@ GEM
       deep_merge (~> 1.2, >= 1.2.1)
       dry-validation (~> 1.0, >= 1.0.0)
     crass (1.0.6)
+    cssbundling-rails (1.1.1)
+      railties (>= 6.0.0)
     database_cleaner (2.0.1)
       database_cleaner-active_record (~> 2.0.0)
     database_cleaner-active_record (2.0.1)
@@ -582,6 +584,7 @@ DEPENDENCIES
   colorize
   compute!
   config (~> 2.2.1)
+  cssbundling-rails
   database_cleaner
   dns_service!
   dotenv-rails

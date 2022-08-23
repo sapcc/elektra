@@ -1,4 +1,4 @@
 import "./core/jquery"
 import "jquery-ujs"
-import "bootstrap"
+import "bootstrap-sass"
 import "./core/dialogs.coffee"

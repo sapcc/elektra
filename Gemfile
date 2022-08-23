@@ -13,8 +13,9 @@ gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '6.1.5.1'
 gem 'jsbundling-rails'
+gem 'cssbundling-rails'
 
-gem 'bootstrap-sass'
+# gem 'bootstrap-sass'
 gem 'haml-rails'
 gem 'simple_form'
 gem 'redcarpet'
