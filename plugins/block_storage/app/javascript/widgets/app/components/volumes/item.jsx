@@ -19,7 +19,6 @@ const VolumeItem = ({
   volume,
   searchTerm,
 }) => {
-  console.log(volume)
   const pending = React.useMemo(
     () => constants.VOLUME_PENDING_STATUS.indexOf(volume.status) >= 0,
     [volume.status]
