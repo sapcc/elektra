@@ -24,6 +24,7 @@ const QuotaTooltip = (props) => {
 }
 
 const quotaInfos = document.querySelector("[data-react-quota-usage]")
+
 const App = (props) => {
   const [usage, updateUsage] = useState([])
   const [loading, updateLoading] = useState(false)
