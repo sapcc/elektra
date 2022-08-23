@@ -2,53 +2,50 @@
 // BRAND COLORS
 // --------------------------------------------------
 
-$sapgold:        #f0ab00;
-$light-sapgold:  #fcb913;
-$dark-sapgold:   #fc8613;
+$sapgold: #f0ab00;
+$light-sapgold: #fcb913;
+$dark-sapgold: #fc8613;
 
-$light-gray:     #ccc;
-$medium-gray:    #999;
-$dark-gray:      #666;
+$light-gray: #ccc;
+$medium-gray: #999;
+$dark-gray: #666;
 
-$bright-blue:    #008fcc;
-$medium-blue:    #226ca9;
-$deep-blue:      #2b3f7b;
+$bright-blue: #008fcc;
+$medium-blue: #226ca9;
+$deep-blue: #2b3f7b;
 
-$bright-purple:  #9c277b;
-$medium-purple:  #6b2982;
-$deep-purple:    #522a67;
+$bright-purple: #9c277b;
+$medium-purple: #6b2982;
+$deep-purple: #522a67;
 
-$bright-orange:  #de8a2e;
-$medium-orange:  #d4652d;
-$deep-orange:    #b34a2a;
+$bright-orange: #de8a2e;
+$medium-orange: #d4652d;
+$deep-orange: #b34a2a;
 
-$bright-green:   #b4ca48;
-$medium-green:   #8ab54e;
-$deep-green:     #2a7b44;
+$bright-green: #b4ca48;
+$medium-green: #8ab54e;
+$deep-green: #2a7b44;
 
-
-/* OTHER COLORS */
-$hover-blue:       #00a1e5;
+// OTHER COLORS
+$hover-blue: #00a1e5;
 $hover-light-blue: #e5f4fa;
-$hover-orange:     #FFECCD;
-$white-gray:       #eee;
-$alarm-red:        #e22;
-$help-info-blue:   lighten($medium-blue, 10%);
+$hover-orange: #ffeccd;
+$white-gray: #eee;
+$alarm-red: #e22;
+$help-info-blue: lighten($medium-blue, 10%);
 $emphasize-info-border-color: #e2e8ea;
 
-$label-danger-greyscale-bg:   #333;
-$label-warning-greyscale-bg:  $medium-gray;
-
+$label-danger-greyscale-bg: #333;
+$label-warning-greyscale-bg: $medium-gray;
 
 // --------------------------------------------------
 // BUTTONS
 // --------------------------------------------------
 
-$btn-outline-color:       $medium-blue;
-$btn-outline-bg:          transparent;
-$btn-outline-border:      $medium-blue;
+$btn-outline-color: $medium-blue;
+$btn-outline-bg: transparent;
+$btn-outline-border: $medium-blue;
 $btn-outline-hover-color: #fff;
-
 
 // --------------------------------------------------
 // FONTS
@@ -58,12 +55,11 @@ $font-family-sap-light: "BentonSans Light";
 $font-family-sap-regular: "BentonSans Regular";
 $font-family-sap-medium: "BentonSans Medium";
 
-
 // --------------------------------------------------
 // COMPONENTS
 // --------------------------------------------------
 
-$padding-medium-vertical:   8px;
+$padding-medium-vertical: 8px;
 $padding-medium-horizontal: 14px;
 
 // --------------------------------------------------
@@ -71,21 +67,24 @@ $padding-medium-horizontal: 14px;
 // --------------------------------------------------
 
 $context-breadcrumb-bg: #efefef;
-$context-breadcrumb-fancy-bg: linear-gradient(darken($bright-blue, 5%), $bright-blue);
-$context-breadcrumb-fancy-bg-danger: linear-gradient(darken($alarm-red, 5%), $alarm-red);
+$context-breadcrumb-fancy-bg: linear-gradient(
+  darken($bright-blue, 5%),
+  $bright-blue
+);
+$context-breadcrumb-fancy-bg-danger: linear-gradient(
+  darken($alarm-red, 5%),
+  $alarm-red
+);
 $context-breadcrumb-height: 42px;
 $context-breadcrumb-padding-horizontal: 15px;
-
 
 // --------------------------------------------------
 // DROPDOWN
 // --------------------------------------------------
 
-
 $inverse-dropdown-bg: #090909;
 $inverse-dropdown-divider-bg: #444;
 $inverse-dropdown-link-color: #fff;
-
 
 // --------------------------------------------------
 // TOOLBAR
@@ -100,8 +99,6 @@ $toolbar-vertical-padding: 5px;
 $footer-height: 60px;
 $footer-margin-top: 100px;
 
-
-
 // --------------------------------------------------
 // LOGIN
 // --------------------------------------------------
@@ -113,27 +110,30 @@ $login-max-width: 360px;
 // --------------------------------------------------
 
 // Buttons
-$btn-primary-border:  $medium-blue;
-$btn-primary-bg:      $medium-blue;
+$btn-primary-border: $medium-blue;
+$btn-primary-bg: $medium-blue;
 
-$btn-info-border:     lighten($bright-blue, 10%);
-$btn-info-bg:         lighten($bright-blue, 10%);
+$btn-info-border: lighten($bright-blue, 10%);
+$btn-info-bg: lighten($bright-blue, 10%);
 
-$btn-success-border:  $medium-green;
-$btn-success-bg:      $medium-green;
+$btn-success-border: $medium-green;
+$btn-success-bg: $medium-green;
 
-$btn-warning-border:  lighten($bright-orange, 5%);
-$btn-warning-bg:      lighten($bright-orange, 5%);
+$btn-warning-border: lighten($bright-orange, 5%);
+$btn-warning-bg: lighten($bright-orange, 5%);
 
-$btn-danger-border:   #e22;
-$btn-danger-bg:       #e22;
+$btn-danger-border: #e22;
+$btn-danger-bg: #e22;
 
 // Fonts
-$font-family-sans-serif: $font-family-sap-regular, "Segoe UI",Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-sans-serif-medium: $font-family-sap-medium, "Segoe UI",Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-sans-serif-light: $font-family-sap-light, "Segoe UI",Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
-$headings-font-family: $font-family-sap-regular, "Segoe UI",Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
-
+$font-family-sans-serif: $font-family-sap-regular, "Segoe UI", Roboto,
+  "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-sans-serif-medium: $font-family-sap-medium, "Segoe UI", Roboto,
+  "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-sans-serif-light: $font-family-sap-light, "Segoe UI", Roboto,
+  "Helvetica Neue", Helvetica, Arial, sans-serif;
+$headings-font-family: $font-family-sap-regular, "Segoe UI", Roboto,
+  "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 // List group
 $list-group-hover-bg: $medium-blue;
