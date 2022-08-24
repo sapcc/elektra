@@ -1,0 +1,147 @@
+// Entry point for your Sass build
+@import "variables";
+
+// load from node_modules
+@import "spinners/stylesheets/spinners";
+
+@import "bootstrap-sass/assets/stylesheets/bootstrap";
+@import "bootstrap-sass/assets/stylesheets/bootstrap/theme";
+
+@import "bootstrap-multiselect/dist/scss/bootstrap-multiselect";
+@import "bootstrap-slider/src/sass/bootstrap-slider";
+@import "bootstrap-select/sass/bootstrap-select";
+@import "bootstrap-datetimepicker";
+
+// @import "nv.d3";
+
+// @import "font-awesome-sass/assets/stylesheets/font-awesome";
+$fa-font-path: "../assets";
+@import "font-awesome/scss/font-awesome";
+
+@import "mixins";
+@import "monsoon_theme";
+@import "react_css_transitions";
+
+@import "login";
+
+@import "snippets";
+@import "forms";
+@import "datatable";
+@import "tables";
+
+@import "pagination_spinner";
+@import "visualization";
+
+@import "topology";
+
+@import "jsoneditor";
+
+@import "rules_for_resources_plugin";
+
+/* start_access_profile_plugin */
+.access_profile { @import '/app/plugins/access_profile/app/assets/stylesheets/access_profile/_application.scss'; }
+/* end_access_profile_plugin */
+
+/* start_audit_plugin */
+.audit { @import '/app/plugins/audit/app/assets/stylesheets/audit/_application.scss'; }
+/* end_audit_plugin */
+
+/* start_automation_plugin */
+.automation { @import '/app/plugins/automation/app/assets/stylesheets/automation/_application.scss'; }
+/* end_automation_plugin */
+
+/* start_block_storage_plugin */
+.block_storage { @import '/app/plugins/block_storage/app/assets/stylesheets/block_storage/_application.scss'; }
+/* end_block_storage_plugin */
+
+/* start_cloudops_plugin */
+.cloudops { @import '/app/plugins/cloudops/app/assets/stylesheets/cloudops/_application.scss'; }
+/* end_cloudops_plugin */
+
+/* start_compute_plugin */
+.compute { @import '/app/plugins/compute/app/assets/stylesheets/compute/_application.scss'; }
+/* end_compute_plugin */
+
+/* start_dns_service_plugin */
+.dns_service { @import '/app/plugins/dns_service/app/assets/stylesheets/dns_service/_application.scss'; }
+/* end_dns_service_plugin */
+
+/* start_email_service_plugin */
+.email_service { @import '/app/plugins/email_service/app/assets/stylesheets/email_service/_application.scss'; }
+/* end_email_service_plugin */
+
+/* start_identity_plugin */
+.identity { @import '/app/plugins/identity/app/assets/stylesheets/identity/_application.scss'; }
+/* end_identity_plugin */
+
+/* start_image_plugin */
+.image { @import '/app/plugins/image/app/assets/stylesheets/image/_application.scss'; }
+/* end_image_plugin */
+
+/* start_inquiry_plugin */
+.inquiry { @import '/app/plugins/inquiry/app/assets/stylesheets/inquiry/_application.scss'; }
+/* end_inquiry_plugin */
+
+/* start_keppel_plugin */
+.keppel { @import '/app/plugins/keppel/app/assets/stylesheets/keppel/_application.scss'; }
+/* end_keppel_plugin */
+
+/* start_key_manager_plugin */
+.key_manager { @import '/app/plugins/key_manager/app/assets/stylesheets/key_manager/_application.scss'; }
+/* end_key_manager_plugin */
+
+/* start_kubernetes_plugin */
+.kubernetes { @import '/app/plugins/kubernetes/app/assets/stylesheets/kubernetes/_application.scss'; }
+/* end_kubernetes_plugin */
+
+/* start_lbaas2_plugin */
+.lbaas2 { @import '/app/plugins/lbaas2/app/assets/stylesheets/lbaas2/_application.scss'; }
+/* end_lbaas2_plugin */
+
+/* start_lookup_plugin */
+.lookup { @import '/app/plugins/lookup/app/assets/stylesheets/lookup/_application.scss'; }
+/* end_lookup_plugin */
+
+/* start_masterdata_cockpit_plugin */
+.masterdata_cockpit { @import '/app/plugins/masterdata_cockpit/app/assets/stylesheets/masterdata_cockpit/_application.scss'; }
+/* end_masterdata_cockpit_plugin */
+
+/* start_metrics_plugin */
+.metrics { @import '/app/plugins/metrics/app/assets/stylesheets/metrics/_application.scss'; }
+/* end_metrics_plugin */
+
+/* start_networking_plugin */
+.networking { @import '/app/plugins/networking/app/assets/stylesheets/networking/_application.scss'; }
+/* end_networking_plugin */
+
+/* start_object_storage_plugin */
+.object_storage { @import '/app/plugins/object_storage/app/assets/stylesheets/object_storage/_application.scss'; }
+/* end_object_storage_plugin */
+
+/* start_reports_plugin */
+.reports { @import '/app/plugins/reports/app/assets/stylesheets/reports/_application.scss'; }
+/* end_reports_plugin */
+
+/* start_resource_management_plugin */
+.resource_management { @import '/app/plugins/resource_management/app/assets/stylesheets/resource_management/_application.scss'; }
+/* end_resource_management_plugin */
+
+/* start_resources_plugin */
+.resources { @import '/app/plugins/resources/app/assets/stylesheets/resources/_application.scss'; }
+/* end_resources_plugin */
+
+/* start_shared_filesystem_storage_plugin */
+.shared_filesystem_storage { @import '/app/plugins/shared_filesystem_storage/app/assets/stylesheets/shared_filesystem_storage/_application.scss'; }
+/* end_shared_filesystem_storage_plugin */
+
+/* start_testikus_plugin */
+.testikus { @import '/app/plugins/testikus/app/assets/stylesheets/testikus/_application.scss'; }
+/* end_testikus_plugin */
+
+/* start_tools_plugin */
+.tools { @import '/app/plugins/tools/app/assets/stylesheets/tools/_application.scss'; }
+/* end_tools_plugin */
+
+/* start_webconsole_plugin */
+.webconsole { @import '/app/plugins/webconsole/app/assets/stylesheets/webconsole/_application.scss'; }
+/* end_webconsole_plugin */

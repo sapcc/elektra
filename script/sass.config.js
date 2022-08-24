@@ -9,132 +9,85 @@ const watch = args.indexOf("--watch") >= 0
 const production =
   args.indexOf("--production") >= 0 || process.env.RAILS_ENV === "production"
 
+const style = production ? "compressed" : "expanded"
 const globalAppPath = path.resolve(__dirname, `../`)
+const tempFilePath = path.join(
+  globalAppPath,
+  "app/assets/stylesheets/application_tmp.sass.scss"
+)
 
-// sass.compile(
-//   path.join(globalAppPath, "app/assets/stylesheets/application.bootstrap.scss")
-// )
+try {
+  fs.unlinkSync(tempFilePath)
+} catch (e) {
+  console.log("could not delete file " + tempFilePath)
+}
 
-// console.log(
-//   ":::::::::",
-//   path.join(globalAppPath, "app/assets/stylesheets/application.bootstrap.scss")
-// )
-
-// sass.render(
-//   {
-//     file: path.join(
-//       globalAppPath,
-//       "app/assets/stylesheets/application.bootstrap.scss"
-//     ),
-//     importer: function (url, prev, done) {
-//       console.log("===URL", url)
-//       console.log("===PREV", prev)
-//       console.log("===DONE", done)
-//       // ...
-//     },
-//     includePaths: ["node_modules"],
-//   },
-//   function (err, result) {
-//     console.log("===============", result)
-//     console.log(err)
-//     // ...
-//   }
-// )
-
-const result = sass.compile(
+fs.copyFileSync(
   path.join(globalAppPath, "app/assets/stylesheets/application.sass.scss"),
-  {
-    // importers: [
-    //   {
-    //     findFileUrl(url) {
-    //       if (!url.match(/\*+/)) return null
-    //       const files = sync(url)
-    //       let base = globalAppPath
-    //       if (base && base[0] === "/") base = base.slice(1)
+  tempFilePath
+)
 
-    //       console.log("::::", files)
-    //       console.log(base)
-    //       console.log(files[0])
-    //       // console.log(files[0].replace(".scss", "").replace("_", ""))
-
-    //       // return new URL(files[0])
-    //       const newUrl = new URL(files[0], pathToFileURL(base))
-
-    //       console.log("::::url", newUrl)
-    //       return newUrl
-    //     },
-    //   },
-    // ],
-
-    // importers: [
-    //   {
-    //     canonicalize(url) {
-    //       console.log("=================Canonicalize", url)
-
-    //       if (url.match(/\*+/)) {
-    //         let base = globalAppPath
-    //         if (base && base[0] === "/") base = base.slice(1)
-
-    //         return new URL(url, pathToFileURL(base))
-    //       } else return null
-    //       // return new URL(url)
-    //     },
-    //     load(canonicalUrl) {
-    //       console.log("=================Load", canonicalUrl)
-    //       const files = sync(canonicalUrl.pathname)
-    //       console.log(":::::::::::::::::files", files)
-
-    //       let content = ""
-    //       files.forEach((f) => {
-    //         content += "\n" + fs.readFileSync(f).toString()
-    //       })
-    //       // console.log(content)
-    //       return {
-    //         contents: content,
-    //         syntax: "scss",
-    //       }
-    //     },
-    //   },
-    // ],
-
-    importers: [
-      {
-        canonicalize(url) {
-          if (url.match(/\*+/)) {
-            // import statement contains a wildcard
-            let base = globalAppPath
-            if (base && base[0] === "/") base = base.slice(1)
-
-            // return URL containing the wildcard path
-            return new URL(url, pathToFileURL(base))
-          } else return null
-        },
-        load(canonicalUrl) {
-          // return a new content containing the import statement with
-          // all files found by wildcard path
-          const files = sync(canonicalUrl.pathname)
-
-          // combine all files to an import statement.
-          // @import 'file1', 'file2', ... 'fileX';
-          let content = "@import " + files.map((f) => `'${f}'`).join(",") + ";"
-          return {
-            contents: content,
-            syntax: "scss",
-          }
-        },
-      },
-    ],
-
-    loadPaths: ["node_modules"],
+const pluginFiles = sync("plugins/*/**/stylesheets/*/_application.scss").map(
+  (f) => {
+    const nameMatch = f.match(/plugins\/([^/]+)\/.*/)
+    return { name: nameMatch[1], file: f }
   }
 )
+
+pluginFiles.forEach((plugin) => {
+  fs.appendFileSync(
+    tempFilePath,
+    "\n" +
+      `/* start_${plugin.name}_plugin */` +
+      "\n" +
+      `.${plugin.name} { @import '${path.join(
+        globalAppPath,
+        plugin.file
+      )}'; }` +
+      "\n" +
+      `/* end_${plugin.name}_plugin */` +
+      "\n"
+  )
+})
+
+const result = sass.compile(tempFilePath, {
+  loadPaths: ["node_modules"],
+  // style: "compressed",
+})
+let css = result.css
+
+/* expose individual plugin css files */
+
+// pluginFiles.forEach((plugin) => {
+//   console.log(plugin)
+//   const regex = new RegExp(
+//     `/\\* start_${plugin.name}_plugin \\*/((.|[\r\n])*)/\\* end_${plugin.name}_plugin \\*/`
+//   )
+//   console.log(regex)
+//   const pluginCssMatch = css.match(regex)
+//   css = css.replace(regex, "")
+//   if (pluginCssMatch) {
+//     fs.writeFile(
+//       path.resolve(
+//         globalAppPath,
+//         "app/assets/builds",
+//         `${plugin.name}_plugin.css`
+//       ),
+//       sass.compileString(pluginCssMatch[1], { style }).css,
+//       function (err) {
+//         if (err) return console.log(err)
+//       }
+//     )
+//   }
+// })
+
 fs.writeFile(
   path.resolve(globalAppPath, "app/assets/builds", `application.css`),
-  result.css,
+  sass.compileString(css, { style }).css,
   function (err) {
     if (err) return console.log(err)
     console.log("===DONE")
   }
 )
 
-// }
+console.log("===DONE")
