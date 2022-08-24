@@ -23,8 +23,6 @@ const QuotaTooltip = (props) => {
   )
 }
 
-const quotaInfos = document.querySelector("[data-react-quota-usage]")
-
 const App = (props) => {
   const [usage, updateUsage] = useState([])
   const [loading, updateLoading] = useState(false)
@@ -62,14 +60,19 @@ const App = (props) => {
   //                = link_to "Remaining Quota: #{@quota_data.collect(&:available_as_display_string).join(', ')}", plugin('resources').project_path, data: {toggle: "tooltip", placement: "right"}, title: "Click to manage quotas"
 }
 
-if (scope.project && scope.project !== "home") {
-  createWidget(null, {
-    html: { class: "flex-body" },
-    params: { flashescontainer: "custom" },
-    containers: [quotaInfos],
-  }).then((widget) => {
-    widget.configureAjaxHelper()
-    widget.setPolicy()
-    widget.render(App)
-  })
+window.onload = function () {
+  if (scope.project && scope.project !== "home") {
+    // load plugins global scripts after the page has been loaded
+    const quotaInfos = document.querySelector("[data-react-quota-usage]")
+
+    createWidget(null, {
+      html: { class: "flex-body" },
+      params: { flashescontainer: "custom" },
+      containers: [quotaInfos],
+    }).then((widget) => {
+      widget.configureAjaxHelper()
+      widget.setPolicy()
+      widget.render(App)
+    })
+  }
 }
