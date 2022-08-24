@@ -60,7 +60,7 @@ require("esbuild")
     },
     minify: production,
     sourcemap: !production,
-    inject: ["esbuild/react-shim.js"],
+    inject: ["script/esbuild/react-shim.js"],
     // map global this to window
     define: { this: "window" },
     allowOverwrite: true,

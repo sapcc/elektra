@@ -1,4 +1,4 @@
 //= link_tree ../images
-//= link application.css
 //= link_tree ../builds
 //= link_tree ../fonts
+//= link_tree ../../../node_modules/font-awesome/fonts

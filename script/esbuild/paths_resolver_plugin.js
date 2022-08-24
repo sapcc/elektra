@@ -1,6 +1,6 @@
 const path = require("path")
 
-const globalAppPath = path.resolve(__dirname, `../`)
+const globalAppPath = path.resolve(__dirname, `../../`)
 
 // resolves global paths
 // paths = {"name": "global_path"}

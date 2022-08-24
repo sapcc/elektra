@@ -39,7 +39,9 @@ $help-content-width: 420px;
     font-size: $font-size-medium;
     margin-left: 10px;
 
-    &:hover, &:active, &.active {
+    &:hover,
+    &:active,
+    &.active {
       i {
         color: $help-info-blue;
       }
@@ -47,7 +49,7 @@ $help-content-width: 420px;
   }
 }
 
-&.popup {
+.popup {
   display: none;
   position: fixed;
   bottom: 0;
@@ -64,9 +66,9 @@ $help-content-width: 420px;
     display: flex;
     align-items: center;
     width: 100%;
-    height: $line-height-computed + $toolbar-vertical-padding*2;
+    height: $line-height-computed + $toolbar-vertical-padding * 2;
     position: absolute;
-    top: -($line-height-computed + $toolbar-vertical-padding*2);
+    top: -($line-height-computed + $toolbar-vertical-padding * 2);
 
     .main-buttons {
       margin-right: 15px;
@@ -74,12 +76,10 @@ $help-content-width: 420px;
   }
 }
 
-
 #webconsole-container {
   background: #222;
   color: #fff;
   position: relative;
-
 
   .webconsole-holder {
     width: 100%;
@@ -94,7 +94,6 @@ $help-content-width: 420px;
       position: relative;
       width: 100%;
       height: 100%;
-
     }
   }
 
@@ -114,7 +113,6 @@ $help-content-width: 420px;
     overflow-y: auto;
     overflow-x: hidden;
 
-
     .toggle {
       color: #333;
       position: absolute;
@@ -125,14 +123,23 @@ $help-content-width: 420px;
       }
     }
 
-    .webconsole-help-content{
+    .webconsole-help-content {
       padding: 15px 20px 15px 20px;
-      color: #333 ;
+      color: #333;
       width: $help-content-width;
 
-      h1 { font-size: $font-size-h3; }
-      h2 { font-size: $font-size-h4; }
-      h3, h4, h5 { font-size: $font-size-h5; font-weight: bold;}
+      h1 {
+        font-size: $font-size-h3;
+      }
+      h2 {
+        font-size: $font-size-h4;
+      }
+      h3,
+      h4,
+      h5 {
+        font-size: $font-size-h5;
+        font-weight: bold;
+      }
 
       ul {
         @extend .content-list;
@@ -141,14 +148,12 @@ $help-content-width: 420px;
       .metadata-table {
         margin-top: 10px;
         tr:last-child {
-          td, th {
+          td,
+          th {
             border-bottom: 1px solid $table-border-color;
           }
         }
       }
-
-
-
     }
   }
 }
