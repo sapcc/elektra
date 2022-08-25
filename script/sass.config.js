@@ -82,7 +82,7 @@ let css = result.css
 // })
 
 fs.writeFile(
-  path.resolve(globalAppPath, "app/assets/builds", `application.css`),
+  path.resolve(globalAppPath, "app/assets/builds", `application.scss`),
   sass.compileString(css, { style }).css,
   function (err) {
     if (err) return console.log(err)

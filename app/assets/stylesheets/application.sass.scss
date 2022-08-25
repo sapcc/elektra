@@ -14,9 +14,8 @@
 
 // @import "nv.d3";
 
-// @import "font-awesome-sass/assets/stylesheets/font-awesome";
-$fa-font-path: "../assets";
-@import "font-awesome/scss/font-awesome";
+@import "font-awesome-sass/assets/stylesheets/font-awesome-sprockets";
+@import "font-awesome-sass/assets/stylesheets/font-awesome";
 
 @import "mixins";
 @import "monsoon_theme";
