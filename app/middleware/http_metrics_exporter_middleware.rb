@@ -9,10 +9,14 @@ class HttpMetricsExporterMiddleware < Prometheus::Middleware::Exporter
   def call(env)
     result = super(env)
 
+    
+    # byebug
     if env['PATH_INFO'] == "/metrics"
+      request = ActionDispatch::Request.new env
       # current path is /metrics
-      # delete csp from env -> prometheus is able to call this endpoint without host header
-      env.delete("action_dispatch.content_security_policy")
+      # disable csp from env -> prometheus is able to call this endpoint without host header
+      request.content_security_policy = false if request.content_security_policy
+      # env.delete("action_dispatch.content_security_policy")
     end
     return result
   end
