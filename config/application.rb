@@ -9,9 +9,6 @@ require_relative File.expand_path("../app/middleware/middlewares", __dir__)
 # Require sassc custom functions
 require_relative File.expand_path("../lib/sassc", __dir__)
 
-require "prometheus/middleware/collector"
-require "prometheus/middleware/exporter"
-
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -69,10 +66,10 @@ module MonsoonDashboard
     Core::PluginsManager.available_plugins.each { |plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point }
 
     # rack middlewares
-    config.middleware.use HttpMetricsMiddleware
+    config.middleware.use HttpMetricsCollectorMiddleware
     config.middleware.use InquiryMetricsMiddleware
     config.middleware.use SLIMetricsMiddleware
-    config.middleware.use Prometheus::Middleware::Exporter
+    config.middleware.use HttpMetricsExporterMiddleware
     config.middleware.use RevisionMiddleware
 
     ############# ENSURE EDGE MODE FOR IE ###############

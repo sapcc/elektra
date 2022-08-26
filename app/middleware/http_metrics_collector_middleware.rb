@@ -4,7 +4,7 @@ require 'prometheus/middleware/collector'
 
 # HttpMetricsMiddleware is a Rack middleware that provides an implementation of a
 # elektra HTTP tracer.
-class HttpMetricsMiddleware < Prometheus::Middleware::Collector
+class HttpMetricsCollectorMiddleware < Prometheus::Middleware::Collector
   def initialize(app, options = {}) 
     options[:counter_label_builder] ||= proc do |env, code|
       path_params = env['action_dispatch.request.path_parameters'] || {}
@@ -29,6 +29,7 @@ class HttpMetricsMiddleware < Prometheus::Middleware::Collector
         plugin: ['health'].include?(controller_name) ? controller_name : controller_name[%r{^([^/]+)/}, 1]
       }
     end
+
     super(app, options)
   end
 
