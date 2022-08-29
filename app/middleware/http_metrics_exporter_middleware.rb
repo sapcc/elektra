@@ -3,23 +3,13 @@
 require 'prometheus/middleware/exporter'
 
 # This middleware exports metrics under /metrics (default) path
+# If you want to expand the exporter, this would be the right place for it 
 class HttpMetricsExporterMiddleware < Prometheus::Middleware::Exporter
-  
-  # we unset csp for this endpoint (/metrics)
-  def call(env)
-    # env["HTTP_HOST"] = env["HTTP_HOST"] || "elektra.cloud.sap" if env['PATH_INFO'] == "/metrics"
-    
-    return super(env)
-    # result = super(env)
+  # def initialize(app, options = {})
+  #   super(app, options = {})
+  # end
 
-    
-    # if env['PATH_INFO'] == "/metrics"
-    #   request = ActionDispatch::Request.new env
-    #   # current path is /metrics
-    #   # disable csp from env -> prometheus is able to call this endpoint without host header
-    #   request.content_security_policy = false if request.content_security_policy
-    #   # env.delete("action_dispatch.content_security_policy")
-    # end
-    # return result
-  end
+  # def call(env)
+  #   super(env)
+  # end
 end

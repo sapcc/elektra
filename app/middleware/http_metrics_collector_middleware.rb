@@ -1,36 +1,60 @@
 # frozen_string_literal: true
 
 require 'prometheus/middleware/collector'
+require_relative '../../lib/core/plugins_manager'
 
 # HttpMetricsMiddleware is a Rack middleware that provides an implementation of a
 # elektra HTTP tracer.
 class HttpMetricsCollectorMiddleware < Prometheus::Middleware::Collector
-  def initialize(app, options = {}) 
-    options[:counter_label_builder] ||= proc do |env, code|
-      path_params = env['action_dispatch.request.path_parameters'] || {}
-      controller_name = path_params[:controller] || ''
-      is_health_controller = ['health'].include?(controller_name)
+  LABELS =  %i[code method host domain project controller action plugin]
+  EXCLUDE_PATHS = ["/metrics", "/system", "/assets"]
 
-      {
-        code: code,
-        method: env['REQUEST_METHOD'].downcase,
-        host: env['HTTP_HOST'].to_s,
-        # just take the first component of the path as a label
-        path: is_health_controller ? env['REQUEST_PATH'] : env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/', 1) || 20],
-        controller: controller_name,
-        action: path_params[:action] || '',
-        plugin: is_health_controller ? controller_name : controller_name[%r{^([^/]+)/}, 1]
-      }
-    end
-    options[:duration_label_builder] ||= proc do |env, _code|
-      controller_name = (env['action_dispatch.request.path_parameters'] || {})[:controller] || ''
-      {
-        method: env['REQUEST_METHOD'].downcase,
-        plugin: ['health'].include?(controller_name) ? controller_name : controller_name[%r{^([^/]+)/}, 1]
-      }
-    end
+  def init_request_metrics
+    @requests = @registry.counter(
+      :"#{@metrics_prefix}_requests_total",
+      docstring:
+        'The total number of HTTP requests handled by the Rack application.',
+      labels: LABELS
+    )
+    @durations = @registry.histogram(
+      :"#{@metrics_prefix}_request_duration_seconds",
+      docstring: 'The HTTP response duration of the Rack application.',
+      labels: LABELS
+    )
+  end
 
-    super(app, options)
+
+  def record(env, code, duration)
+    path = generate_path(env)
+    return if path.starts_with? *EXCLUDE_PATHS
+    
+    path_params = env['action_dispatch.request.path_parameters'] || {}
+    plugin_name = (path_params[:controller] || '').split("/").first
+    
+    custom_labels = {
+      code:   code,
+      method: env['REQUEST_METHOD'].downcase,
+      host: env['HTTP_HOST'].to_s,
+      # path is not needed cause we have the domain, project and action and plugin
+      domain: path_params[:domain_id] || '',
+      project: path_params[:project_id] || '',
+      controller: path_params[:controller] || '',
+      action: path_params[:action] || '',
+      plugin: Core::PluginsManager.has?(plugin_name) ? plugin_name : ''
+    }
+      
+  #  byebug
+
+    # pp custom_labels
+    # pp path_params
+
+    @requests.increment(labels: custom_labels)
+    @durations.observe(duration, labels: custom_labels)
+  rescue => e
+    # TODO: log unexpected exception during request recording
+    pp "======================================ERROR"
+    pp e
+    nil
   end
 
 end
