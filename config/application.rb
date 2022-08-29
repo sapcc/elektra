@@ -16,8 +16,6 @@ Bundler.require(*Rails.groups)
 module MonsoonDashboard
   class Application < Rails::Application
     config.load_defaults 6.1
-
-    config.hosts << /.*\.cloud\.sap/
     
     def self.module_parent_name
       super 
