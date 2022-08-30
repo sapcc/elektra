@@ -6,7 +6,7 @@ require_relative '../../lib/core/plugins_manager'
 # HttpMetricsMiddleware is a Rack middleware that provides an implementation of a
 # elektra HTTP tracer.
 class HttpMetricsCollectorMiddleware < Prometheus::Middleware::Collector
-  LABELS =  %i[code method host domain project controller action plugin]
+  LABELS =  %i[code method host domain project controller action plugin xhr]
   EXCLUDE_PATHS = ["/metrics", "/system", "/assets"]
 
   def init_request_metrics
@@ -30,7 +30,8 @@ class HttpMetricsCollectorMiddleware < Prometheus::Middleware::Collector
     
     path_params = env['action_dispatch.request.path_parameters'] || {}
     plugin_name = (path_params[:controller] || '').split("/").first
-    
+    request = ActionDispatch::Request.new env
+
     custom_labels = {
       code:   code,
       method: env['REQUEST_METHOD'].downcase,
@@ -40,10 +41,11 @@ class HttpMetricsCollectorMiddleware < Prometheus::Middleware::Collector
       project: path_params[:project_id] || '',
       controller: path_params[:controller] || '',
       action: path_params[:action] || '',
-      plugin: Core::PluginsManager.has?(plugin_name) ? plugin_name : ''
+      plugin: Core::PluginsManager.has?(plugin_name) ? plugin_name : '',
+      xhr: request.xhr?
     }
       
-  #  byebug
+    # byebug
 
     # pp custom_labels
     # pp path_params
