@@ -28,7 +28,7 @@ const ObjectItem = ({ item, currentPath }) => {
       setError(null)
 
       Promise.resolve()
-        .then(() => {
+        .then(async() => {
           if (options.keepSegments) {
             return deleteObject(name, item.name)
           } else {

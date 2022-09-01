@@ -204,6 +204,12 @@ export const createAjaxHelper = (options = {}) => {
           `${serviceEndpoint}/${path}`,
           mergeServiceOptions(serviceOptions, options)
         ),
+      delete: (path, options = {}) =>
+        axiosInstance.delete(
+          `${serviceEndpoint}/${path}`,
+          mergeServiceOptions(serviceOptions, options)
+        ),
+
       post: (path, values = {}, options = {}) =>
         axiosInstance.post(
           `${serviceEndpoint}/${path}`,
@@ -211,12 +217,6 @@ export const createAjaxHelper = (options = {}) => {
           mergeServiceOptions(serviceOptions, options)
         ),
       put: (path, values = {}, options = {}) => {
-        console.log(
-          "-----------PUT",
-          path,
-          values,
-          mergeServiceOptions(serviceOptions, options)
-        )
         return axiosInstance
           .put(
             `${serviceEndpoint}/${path}`,

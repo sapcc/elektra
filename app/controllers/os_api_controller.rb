@@ -22,6 +22,8 @@ class OsApiController < ::AjaxController
         headers[name.gsub("HTTP_OS_API_","").gsub("_","-")] = value 
       end
     end
+
+    byebug
     
     # get api client for the given service name
     service = services.os_api.service(service_name)
