@@ -72,11 +72,17 @@ RUN echo -e '#!/bin/bash\n\n\
   mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql\n\
   su - postgres -c "pg_ctl -D $PGDATA -w start"\n\
   DISABLE_SPRING=1 bin/rails db:create && DISABLE_SPRING=1 bin/rails db:migrate\n\
-  clear \n\
-  /bin/bash -login' >> /usr/local/bin/start-db && chmod +x /usr/local/bin/start-db
+  /bin/bash -login' >> /usr/local/bin/prepare-elektra && chmod +x /usr/local/bin/prepare-elektra
 
-RUN echo -e 'echo "Welcome to elektra dev container 👷🛠️"\n\
-  echo " - start rails:       start-rails"\n\
+RUN echo -e '\n\
+  GREEN="\033[0;32m" \n\
+  YELLOW="\033[0;33m" \n\
+  BLUE="\033[0;34m" \n\
+  NC="\033[0m" \n\
+  clear \n\
+  echo -e "${YELLOW}Welcome to elektra dev container 👷🛠️"\n\
+  echo "" \n\
+  echo -e "${GREEN} - start rails:       start-rails"\n\
   echo " - start javascript:  start-js"\n\
   echo " - rebuild database:  rebuild-db"\n\
   echo " - rebuild npm:       rebuild-npm"\n\
@@ -84,9 +90,10 @@ RUN echo -e 'echo "Welcome to elektra dev container 👷🛠️"\n\
   echo " - postgres console:  pg-console"\n\
   echo " - proxy:             dev-proxy"\n\
   echo ""\n\
-  echo " [database] elektra database are located in /app/tmp/postgresql/data/"\n\
+  echo -e " [database] elektra database are located in /app/tmp/postgresql/data/"\n\
   echo " [proxy]    to use the dev-proxy you need to uncomment proxy vars in .env"\n\
   echo "            and set ELEKTRA_SSL_VERIFY_PEER to false"\n\
+  echo -e ${NC} \n\
   alias start-rails="cd /app && bin/rails s -b 0.0.0.0 -p $APP_PORT"\n\
   alias start-js="cd /app && yarn build --watch"\n\
   alias rebuild-npm="cd /app && rm -rf node_modules && yarn"\n\
@@ -95,4 +102,4 @@ RUN echo -e 'echo "Welcome to elektra dev container 👷🛠️"\n\
   alias dev-proxy="mitmproxy -p 8888 --ssl-insecure"\n\
   alias rebuild-db="rm -rf /app/tmp/postgresql/data/* && echo Done! please exit elektra and start again..."' >> /root/.profile
 
-ENTRYPOINT [ "/usr/local/bin/start-db" ]  
+ENTRYPOINT [ "/usr/local/bin/prepare-elektra" ]  
