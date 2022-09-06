@@ -74,7 +74,7 @@ RUN echo -e '#!/bin/bash\n\n\
   /bin/bash -login' >> /usr/local/bin/start-db && chmod +x /usr/local/bin/start-db
 
 RUN echo -e 'echo "Welcome to elektra dev container"\n\
-  echo " - start rails:   start-rails"\n\
+  echo " - start rails:       start-rails"\n\
   echo " - start javascript:  start-js"\n\
   echo " - rebuild database:  rebuild-db"\n\
   echo " - rebuild npm:       rebuild-npm"\n\
@@ -82,9 +82,9 @@ RUN echo -e 'echo "Welcome to elektra dev container"\n\
   echo " - postgres console:  pg-console"\n\
   echo " - proxy:             dev-proxy"\n\
   echo ""\n\
-  echo " [DB]    elektra database are located in /app/tmp/postgresql/data/"\n\
-  echo " [Proxy] to use the dev-proxy you need to uncomment proxy vars in .env"\n\
-  echo "         and set ELEKTRA_SSL_VERIFY_PEER to false"\n\
+  echo " [database] elektra database are located in /app/tmp/postgresql/data/"\n\
+  echo " [proxy]    to use the dev-proxy you need to uncomment proxy vars in .env"\n\
+  echo "            and set ELEKTRA_SSL_VERIFY_PEER to false"\n\
   alias start-rails="cd /app && bin/rails s -b 0.0.0.0 -p $APP_PORT"\n\
   alias start-js="cd /app && yarn build --watch"\n\
   alias rebuild-npm="cd /app && rm -rf node_modules && yarn"\n\
