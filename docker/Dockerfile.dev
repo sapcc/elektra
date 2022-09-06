@@ -57,7 +57,9 @@ VOLUME /app
 ################### POSTGRESQL
 ENV PGDATA /app/tmp/postgresql/data
 
-RUN gem install bundler && bundle config set --local path 'vendor/bundle'
+# fixed bundler version because latest version 2.3.21 produces errors when resolving dependencies 
+# or an endless loop when the gem directory needs to be rebuilt
+RUN gem install bundler -v 2.3.20 && bundle config set --local path 'vendor/bundle'
 RUN echo -e '#!/bin/bash\n\n\
   bundle install \n\
   yarn \n\

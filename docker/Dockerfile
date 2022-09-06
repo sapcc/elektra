@@ -29,7 +29,7 @@ RUN apk --no-cache add git curl nodejs yarn shared-mime-info
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
 RUN apk --no-cache add build-base postgresql-dev ruby-sassc --virtual .builddeps \
-      && gem install bundler:2.3.9 \
+      && gem install bundler:2.3.20 \
       && gem install byebug -v 11.1.3 \
       && gem install ffi -v 1.15.5 \
       && gem install json -v 1.8.6 \
