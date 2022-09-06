@@ -3,10 +3,11 @@ import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
 import { Form } from "lib/elektra-form"
 import { useGlobalState } from "../../stateProvider"
-import apiClient from "../../lib/apiClient"
 
 import { createUseStyles } from "react-jss"
 import AclResolution from "./aclResolution"
+
+const apiClient = {}
 
 const useStyles = createUseStyles({
   infoCallout: {

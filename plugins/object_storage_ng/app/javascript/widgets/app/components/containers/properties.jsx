@@ -5,8 +5,8 @@ import { useGlobalState } from "../../stateProvider"
 import React from "react"
 import { Unit } from "lib/unit"
 const unit = new Unit("B")
-import apiClient from "../../lib/apiClient"
 
+const apiClient = {}
 /**
  * This Component renders custom metadata tags.
  * the name of custom tags starts with meta_

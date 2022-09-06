@@ -5,7 +5,7 @@ import Router from "./router"
 import Breadcrumb from "./breadcrumb"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 import { Alert } from "react-bootstrap"
-import apiClient from "../../lib/apiClient"
+// import apiClient from "../../lib/apiClient"
 import { SearchField } from "lib/components/search_field"
 import { useGlobalState } from "../../stateProvider"
 import useActions from "../../hooks/useActions"
@@ -22,38 +22,38 @@ const itemsChunks = (items, chunkSize) => {
   }
 }
 
-const deleteObjects = (objects, options = {}) => {
-  const containerName = options.containerName
-  const prefix = containerName ? containerName + "/" : ""
-  let promises = []
+// const deleteObjects = (objects, options = {}) => {
+//   const containerName = options.containerName
+//   const prefix = containerName ? containerName + "/" : ""
+//   let promises = []
 
-  if (options.bulkDeleteSupported) {
-    const chunks = itemsChunks(objects, options.maxDeletePerRequest)
-    // console.log("chunks", chunks)
+//   if (options.bulkDeleteSupported) {
+//     const chunks = itemsChunks(objects, options.maxDeletePerRequest)
+//     // console.log("chunks", chunks)
 
-    promises = chunks.map((objects) => {
-      const list = objects.reduce((list, item) => {
-        list += prefix + item + "\n"
-        return list
-      }, "")
-      console.log(list)
+//     promises = chunks.map((objects) => {
+//       const list = objects.reduce((list, item) => {
+//         list += prefix + item + "\n"
+//         return list
+//       }, "")
+//       console.log(list)
 
-      return apiClient
-        .osApi("object-store")
-        .delete("", list, { headers: { "Content-Type": "text/plain" } })
-        .then((response) => console.log(response))
-    })
-  } else {
-    promises = objects.map((o) =>
-      apiClient
-        .osApi("object-store")
-        .delete(prefix + o)
-        .then((response) => console.log(response))
-    )
-  }
+//       return apiClient
+//         .osApi("object-store")
+//         .delete("", list, { headers: { "Content-Type": "text/plain" } })
+//         .then((response) => console.log(response))
+//     })
+//   } else {
+//     promises = objects.map((o) =>
+//       apiClient
+//         .osApi("object-store")
+//         .delete(prefix + o)
+//         .then((response) => console.log(response))
+//     )
+//   }
 
-  return Promise.all(promises)
-}
+//   return Promise.all(promises)
+// }
 
 const Objects = () => {
   let { url } = useRouteMatch()

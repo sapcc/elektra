@@ -71,6 +71,77 @@ span.highlight {
   background-color: $hover-orange;
 }
 
+// Data Grid Table
+.flex-grid {
+  .flex-grid-row {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .flex-grid-header-row {
+    border-bottom-width: 2px;
+
+    .flex-grid-cell {
+      font-weight: bold;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+  }
+  .flex-grid-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    flex: 0 0 auto;
+
+    &.snug {
+      width: min-content;
+    }
+
+    &.flex-grid-cell-width-10 {
+      width: 10%;
+    }
+
+    &.flex-grid-cell-width-20 {
+      width: 20%;
+    }
+    &.flex-grid-cell-width-30 {
+      width: 30%;
+    }
+    &.flex-grid-cell-width-40 {
+      width: 40%;
+    }
+    &.flex-grid-cell-width-50 {
+      width: 50%;
+    }
+    &.flex-grid-cell-width-60 {
+      width: 60%;
+    }
+    &.flex-grid-cell-width-70 {
+      width: 70%;
+    }
+    &.flex-grid-cell-width-80 {
+      width: 80%;
+    }
+    &.flex-grid-cell-width-90 {
+      width: 90%;
+    }
+    &.flex-grid-cell-width-100 {
+      width: 100%;
+    }
+
+    &.flex-grid-cell-width-context-menu {
+      width: 60px;
+    }
+
+    &.flex-grid-cell-auto-width {
+      flex-grow: 1;
+      flex-basis: 0;
+    }
+  }
+}
+
 //
 // Flashes React
 //
@@ -672,11 +743,11 @@ section {
     padding: 0.25rem 0.75rem;
     gap: 0.5rem;
   }
-  
+
   &.juno-badge-info {
-    color: rgb(76,76,76);
+    color: rgb(76, 76, 76);
     background: rgba(67, 162, 208, 0.25);
-    
+
     .fa {
       color: rgb(67, 162, 208);
     }

@@ -3,7 +3,6 @@ import { Unit } from "lib/unit"
 import { Dropdown, MenuItem } from "react-bootstrap"
 import { useRouteMatch, useHistory, useParams } from "react-router-dom"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
-import apiClient from "../../lib/apiClient"
 import TimeAgo from "../shared/TimeAgo"
 import ItemsCount from "../shared/ItemsCount"
 import FileIcon from "./FileIcon"
@@ -28,7 +27,7 @@ const ObjectItem = ({ item, currentPath }) => {
       setError(null)
 
       Promise.resolve()
-        .then(async() => {
+        .then(async () => {
           if (options.keepSegments) {
             return deleteObject(name, item.name)
           } else {

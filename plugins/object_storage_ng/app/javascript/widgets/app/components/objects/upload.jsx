@@ -2,7 +2,6 @@ import React from "react"
 import { Modal, Button } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import { useHistory, useParams, useRouteMatch } from "react-router-dom"
-import apiClient from "../../lib/apiClient"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 
 const NewObject = () => {

@@ -2,8 +2,8 @@ import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
 import { useGlobalState, useDispatch } from "../../stateProvider"
-import apiClient from "../../lib/apiClient"
 
+const apiClient = {}
 const DelteContainer = ({}) => {
   const { name } = useParams()
   const history = useHistory()

@@ -1,7 +1,7 @@
 import React from "react"
 import Capabilities from "./list"
-import { useDispatch, useGlobalState } from "../../stateProvider"
-import apiClient from "../../lib/apiClient"
+import { useGlobalState } from "../../stateProvider"
+import useActions from "../../hooks/useActions"
 import { createUseStyles } from "react-jss"
 import { Popover, OverlayTrigger } from "react-bootstrap"
 
@@ -15,20 +15,11 @@ const useStyles = createUseStyles({
 const CapabilitiesPopover = () => {
   const classes = useStyles()
   const capabilities = useGlobalState("capabilities")
-  const dispatch = useDispatch()
+  const { loadCapabilitiesOnce } = useActions()
 
   React.useEffect(() => {
-    dispatch({ type: "REQUEST_CAPABILITIES" })
-    apiClient
-      .osApi("object-store")
-      .get("info", { params: { path_prefix: "/" } })
-      .then((response) =>
-        dispatch({ type: "RECEIVE_CAPABILITIES", data: response.data })
-      )
-      .catch((error) =>
-        dispatch({ type: "RECEIVE_CAPABILITIES_ERROR", error: error.message })
-      )
-  }, [])
+    loadCapabilitiesOnce()
+  }, [loadCapabilitiesOnce])
 
   return (
     <OverlayTrigger

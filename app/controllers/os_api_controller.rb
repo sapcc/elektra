@@ -23,7 +23,7 @@ class OsApiController < ::AjaxController
       end
     end
 
-    byebug
+    # byebug
     
     # get api client for the given service name
     service = services.os_api.service(service_name)

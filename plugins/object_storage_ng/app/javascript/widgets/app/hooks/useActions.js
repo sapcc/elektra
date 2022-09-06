@@ -1,14 +1,44 @@
 import React from "react"
-import apiClient from "../lib/apiClient"
+import { useLocation } from "react-router-dom"
 import { useDispatch, useGlobalState } from "../stateProvider"
 
+import { createAjaxHelper } from "lib/ajax_helper"
+
 const useActions = () => {
-  const { containers, objects } = useGlobalState()
+  const location = useLocation()
+  const apiClient = React.useMemo(
+    () =>
+      createAjaxHelper({
+        baseURL: window.location.pathname.replace(location.pathname, ""),
+      }),
+    [location.pathname]
+  )
+
+  const { capabilities, containers, objects } = useGlobalState()
   const dispatch = useDispatch()
+
+  const loadCapabilitiesOnce = React.useCallback(
+    (options = {}) => {
+      if (capabilities.updatedAt && !options.reload) return
+
+      dispatch({ type: "REQUEST_CAPABILITIES" })
+      apiClient
+        .osApi("object-store")
+        .get("info", { params: { path_prefix: "/" } })
+        .then((response) =>
+          dispatch({ type: "RECEIVE_CAPABILITIES", data: response.data })
+        )
+        .catch((error) =>
+          dispatch({ type: "RECEIVE_CAPABILITIES_ERROR", error: error.message })
+        )
+    },
+    [dispatch, capabilities.updatedAt]
+  )
 
   const loadContainersOnce = React.useCallback(
     (options = {}) => {
       if (containers.updatedAt && !options.reload) return
+
       dispatch({ type: "REQUEST_CONTAINERS" })
       apiClient
         .osApi("object-store")
@@ -68,6 +98,7 @@ const useActions = () => {
   )
 
   return {
+    loadCapabilitiesOnce,
     loadContainersOnce,
     loadContainerObjectsOnce,
     loadObjectMetadata,

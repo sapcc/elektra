@@ -1,4 +1,5 @@
 import React from "react"
+import PropTypes from "prop-types"
 import { createUseStyles } from "react-jss"
 
 const useStyles = createUseStyles({
@@ -145,6 +146,10 @@ const Capabilities = ({ data }) => {
       </p>
     </div>
   )
+}
+
+Capabilities.propTypes = {
+  data: PropTypes.object.isRequired,
 }
 
 export default Capabilities

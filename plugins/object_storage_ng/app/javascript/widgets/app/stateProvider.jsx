@@ -1,5 +1,7 @@
 import React from "react"
 
+import { reducer, initialState } from "./reducers"
+
 const StateContext = React.createContext()
 const DispatchContext = React.createContext()
 
@@ -10,7 +12,7 @@ export const useGlobalState = (name) => {
 
 export const useDispatch = () => React.useContext(DispatchContext)
 
-const StateProvider = ({ children, reducer, initialState }) => {
+const StateProvider = ({ children }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
   return (

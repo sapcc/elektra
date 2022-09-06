@@ -9,6 +9,7 @@ const reducers = { capabilities, containers, objects }
 const reducer = (state = {}, action = {}) => {
   const newState = { ...state }
 
+  console.log("===ACTION: ", action)
   Object.keys(reducers).forEach((name) => {
     newState[name] = reducers[name](state[name], action)
   })
