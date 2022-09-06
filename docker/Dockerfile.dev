@@ -90,7 +90,7 @@ RUN echo -e '\n\
   echo " - postgres console:  pg-console"\n\
   echo " - proxy:             dev-proxy"\n\
   echo ""\n\
-  echo -e " [database] elektra database are located in /app/tmp/postgresql/data/"\n\
+  echo -e " [database] elektra database are located in /elektra/tmp/postgresql/data/"\n\
   echo " [proxy]    to use the dev-proxy you need to uncomment proxy vars in .env"\n\
   echo "            and set ELEKTRA_SSL_VERIFY_PEER to false"\n\
   echo -e ${NC} \n\
