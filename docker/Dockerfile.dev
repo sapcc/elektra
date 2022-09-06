@@ -75,7 +75,7 @@ RUN echo -e '#!/bin/bash\n\n\
   clear \n\
   /bin/bash -login' >> /usr/local/bin/start-db && chmod +x /usr/local/bin/start-db
 
-RUN echo -e 'echo "Welcome to elektra dev container"\n\
+RUN echo -e 'echo "Welcome to elektra dev container 🛠️👷"\n\
   echo " - start rails:       start-rails"\n\
   echo " - start javascript:  start-js"\n\
   echo " - rebuild database:  rebuild-db"\n\
