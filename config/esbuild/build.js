@@ -99,7 +99,7 @@ function compile(options = {}) {
     .then(() => {
       log(
         green,
-        " ◻️ Compile completed successfully with no errors! Don't worry Be Happy 🙂"
+        "◻️ Compile completed successfully with no errors! Don't worry Be Happy 🙂"
       )
     })
     .catch((error) => {
@@ -128,37 +128,37 @@ if (watch) {
     // Add event listeners.
     watcher
       .on("ready", () => {
-        log(blue, " ◻️ Watching for changes 👀")
+        log(blue, "◻️ Watching for changes 👀")
       })
       .on("add", (path) => {
         watcher.add(path)
         compile({ clear: true, change: true }).then(() => {
-          log(grey, "  ◻️ Reason: file has been added 🚀")
-          log(grey, `  ◻️ File: ${path}`)
+          log(grey, " ◻️ Reason: file has been added 🚀")
+          log(grey, ` ◻️ File: ${path}`)
         })
       })
       .on("change", (path) => {
         compile({ clear: true, change: true }).then(() => {
-          log(grey, "  ◻️ Reason: file has been changed 🔄")
+          log(grey, " ◻️ Reason: file has been changed ⚙️")
           log(grey, `  ◻️ File: ${path}`)
         })
       })
       .on("unlink", (path) => {
         compile({ clear: true, change: true }).then(() => {
-          log(grey, "  ◻️ Reason: file has been removed 💀")
-          log(grey, `  ◻️ File: ${path}`)
+          log(grey, " ◻️ Reason: file has been removed 💀")
+          log(grey, ` ◻️ File: ${path}`)
         })
       })
       .on("addDir", (path) => {
         watch.add(`${path}*.{js,jsx,coffee}`)
         compile({ clear: true, change: true })
-        log(grey, "  ◻️ Reason: directory has been added 🚀")
-        log(grey, `  ◻️ Directory: ${path}`)
+        log(grey, " ◻️ Reason: directory has been added 🚀")
+        log(grey, ` ◻️ Directory: ${path}`)
       })
       .on("unlinkDir", (path) => {
         compile({ clear: true, change: true })
-        log(grey, "  ◻️ Reason: directory has been removed 💀")
-        log(grey, `  ◻️ Directory: ${path}`)
+        log(grey, " ◻️ Reason: directory has been removed 💀")
+        log(grey, ` ◻️ Directory: ${path}`)
       })
       .on("error", (error) => log(red, `Watcher error: ${error} 👎`))
   })
