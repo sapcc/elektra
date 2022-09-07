@@ -80,30 +80,32 @@ const config = {
 //   })
 // }
 
+const grey = "\x1b[30m%s\x1b[0m"
+const red = "\x1b[31m%s\x1b[0m"
+const green = "\x1b[32m%s\x1b[0m"
+const yellow = "\x1b[33m%s\x1b[0m"
+const blue = "\x1b[34m%s\x1b[0m"
+
 function compile(options = {}) {
-  if (options.clear) console.clear() // log("\033[2J")
-  log("Compiling...")
+  if (options.clear) console.clear()
+  if (options.change) {
+    log(yellow, "◻️ Change detected -> compile")
+  } else {
+    log(yellow, "◻️ First compile...")
+  }
 
-  // return esbuild
-  //   .serve(
-  //     {
-  //       servedir: "www",
-  //       port: 8080,
-  //     },
-  //     { ...config, outdir: "www/js" }
-  //   )
-  //   .then((server) => {
-  //     log("Stop", server)
-  //     // Call "stop" on the web server to stop serving
-  //     //server.stop()
-  //   })
-
-  return esbuild.build(config).then(() => {
-    log(
-      "\x1b[32m%s\x1b[0m",
-      "Rebuild completed successfully with no errors! Don't worry Be Happy :)"
-    ) //cyan
-  })
+  return esbuild
+    .build(config)
+    .then(() => {
+      log(
+        green,
+        " ◻️ Compile completed successfully with no errors! Don't worry Be Happy 🙂"
+      )
+    })
+    .catch((error) => {
+      log(red, "Compile completed with error 😐")
+      console.error(error)
+    })
 }
 
 if (watch) {
@@ -111,38 +113,54 @@ if (watch) {
     //******************************************** */
     const chokidar = require("chokidar")
     // Initialize watcher.
-    const watcher = chokidar.watch(Object.values(config.entryPoints), {
-      ignored: /(^|[\/\\])\../, // ignore dotfiles
-      persistent: true,
-      ignoreInitial: true,
-    })
+    const watcher = chokidar.watch(
+      Object.values([
+        "app/javascript/**/*.{js,jsx,coffee}",
+        "plugins/*/app/javascript/**/*.{js,jsx,coffee}",
+      ]),
+      {
+        ignored: /(^|[\/\\])\../, // ignore dotfiles
+        persistent: true,
+        ignoreInitial: true,
+      }
+    )
 
     // Add event listeners.
     watcher
-      .on("ready", () => log("Watching..."))
+      .on("ready", () => {
+        log(blue, " ◻️ Watching for changes 👀")
+      })
       .on("add", (path) => {
-        log(`File ${path} has been added`)
         watcher.add(path)
-        compile({ clear: true })
+        compile({ clear: true, change: true }).then(() => {
+          log(grey, "  ◻️ Reason: file has been added 🚀")
+          log(grey, `  ◻️ File: ${path}`)
+        })
       })
       .on("change", (path) => {
-        log(`File ${path} has been changed`)
-        compile({ clear: true })
+        compile({ clear: true, change: true }).then(() => {
+          log(grey, "  ◻️ Reason: file has been changed 🔄")
+          log(grey, `  ◻️ File: ${path}`)
+        })
       })
       .on("unlink", (path) => {
-        log(`File ${path} has been removed`)
-        compile({ clear: true })
+        compile({ clear: true, change: true }).then(() => {
+          log(grey, "  ◻️ Reason: file has been removed 💀")
+          log(grey, `  ◻️ File: ${path}`)
+        })
       })
       .on("addDir", (path) => {
-        log(`Directory ${path} has been added`)
         watch.add(`${path}*.{js,jsx,coffee}`)
-        compile({ clear: true })
+        compile({ clear: true, change: true })
+        log(grey, "  ◻️ Reason: directory has been added 🚀")
+        log(grey, `  ◻️ Directory: ${path}`)
       })
       .on("unlinkDir", (path) => {
-        log(`Directory ${path} has been removed`)
-        compile({ clear: true })
+        compile({ clear: true, change: true })
+        log(grey, "  ◻️ Reason: directory has been removed 💀")
+        log(grey, `  ◻️ Directory: ${path}`)
       })
-      .on("error", (error) => log(`Watcher error: ${error}`))
+      .on("error", (error) => log(red, `Watcher error: ${error} 👎`))
   })
 } else {
   compile()
