@@ -75,12 +75,11 @@ RUN echo -e '#!/bin/bash\n\n\
   /bin/bash -login' >> /usr/local/bin/prepare-elektra && chmod +x /usr/local/bin/prepare-elektra
 
 RUN echo -e '\n\
+  #!/bin/bash\n\n\
   GREEN="\033[0;32m" \n\
   YELLOW="\033[0;33m" \n\
   BLUE="\033[0;34m" \n\
   NC="\033[0m" \n\
-  clear \n\
-  echo -e "${YELLOW}Welcome to elektra dev container 👷🛠️"\n\
   echo "" \n\
   echo -e "${GREEN} - start rails:       start-rails"\n\
   echo " - start javascript:  start-js"\n\
@@ -89,11 +88,19 @@ RUN echo -e '\n\
   echo " - rebuild gems:      rebuild-gems"\n\
   echo " - postgres console:  pg-console"\n\
   echo " - proxy:             dev-proxy"\n\
+  echo " - show this help:    help-elektra"\n\
   echo ""\n\
   echo -e " [database] elektra database are located in /elektra/tmp/postgresql/data/"\n\
   echo " [proxy]    to use the dev-proxy you need to uncomment proxy vars in .env"\n\
   echo "            and set ELEKTRA_SSL_VERIFY_PEER to false"\n\
-  echo -e ${NC} \n\
+  echo -e ${NC}' >> /usr/local/bin/help-elektra && chmod +x /usr/local/bin/help-elektra
+
+RUN echo -e '\n\
+  YELLOW="\033[0;33m" \n\
+  NC="\033[0m" \n\
+  clear \n\
+  echo -e "${YELLOW}Welcome to elektra development 👷🛠️${NC}"\n\
+  /usr/local/bin/help-elektra \n\
   alias start-rails="cd /app && bin/rails s -b 0.0.0.0 -p $APP_PORT"\n\
   alias start-js="cd /app && yarn build --watch"\n\
   alias rebuild-npm="cd /app && rm -rf node_modules && yarn"\n\
