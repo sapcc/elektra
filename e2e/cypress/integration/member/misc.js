@@ -1,5 +1,4 @@
 describe("miscellaneous", () => {
-
   it("load member project via id shortcut", () => {
     cy.elektraLogin(
       Cypress.env("TEST_DOMAIN"),
@@ -19,14 +18,12 @@ describe("miscellaneous", () => {
       Cypress.env("TEST_PASSWORD")
     )
 
-    cy.visit("/_jump_to/df628236-e1a5-4dcd-9715-e204e184fe71")
-    cy.contains("df628236-e1a5-4dcd-9715-e204e184fe71")
+    cy.visit("/_jump_to/0b327741-8e12-4e92-b9ad-edf7a5d0594d")
+    cy.contains("0b327741-8e12-4e92-b9ad-edf7a5d0594d")
     cy.contains("elektra-test-vm")
   })
 
   it("load metrics", () => {
-    cy.request("/metrics")
-      .its('status')
-      .should('eq', 200)
+    cy.request("/metrics").its("status").should("eq", 200)
   })
 })
