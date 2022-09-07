@@ -71,75 +71,31 @@ span.highlight {
   background-color: $hover-orange;
 }
 
-// Data Grid Table
-.flex-grid {
-  .flex-grid-row {
-    display: flex;
-    border-bottom: 1px solid #ddd;
+// Virtualized Table
+.virtualized-table-tr {
+  border-top: 1px solid #ddd;
+}
+
+.virtualized-table-tr.virtualized-table-tr-head {
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+  border-top: none;
+
+  a {
+    text-decoration: none;
+    color: rgb(51, 51, 51);
   }
 
-  .flex-grid-header-row {
-    border-bottom-width: 2px;
-
-    .flex-grid-cell {
-      font-weight: bold;
-      padding-top: 8px;
-      padding-bottom: 8px;
-    }
+  .virtualized-table-sort-icon {
+    padding-left: 8px;
   }
-  .flex-grid-cell {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    flex: 0 0 auto;
-
-    &.snug {
-      width: min-content;
-    }
-
-    &.flex-grid-cell-width-10 {
-      width: 10%;
-    }
-
-    &.flex-grid-cell-width-20 {
-      width: 20%;
-    }
-    &.flex-grid-cell-width-30 {
-      width: 30%;
-    }
-    &.flex-grid-cell-width-40 {
-      width: 40%;
-    }
-    &.flex-grid-cell-width-50 {
-      width: 50%;
-    }
-    &.flex-grid-cell-width-60 {
-      width: 60%;
-    }
-    &.flex-grid-cell-width-70 {
-      width: 70%;
-    }
-    &.flex-grid-cell-width-80 {
-      width: 80%;
-    }
-    &.flex-grid-cell-width-90 {
-      width: 90%;
-    }
-    &.flex-grid-cell-width-100 {
-      width: 100%;
-    }
-
-    &.flex-grid-cell-width-context-menu {
-      width: 60px;
-    }
-
-    &.flex-grid-cell-auto-width {
-      flex-grow: 1;
-      flex-basis: 0;
-    }
-  }
+}
+.virtualized-table-td,
+.virtualized-table-th {
+  padding: 5px 8px;
+}
+.virtualized-table-sortable-icon-disabled {
+  opacity: 0.45;
 }
 
 //
