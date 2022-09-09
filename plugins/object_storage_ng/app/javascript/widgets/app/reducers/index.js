@@ -1,11 +1,10 @@
 import capabilities from "./capabilities"
 import containers from "./containers"
-import objects from "./objects"
 
 // combine reducers!
 // we use the react hook useReducer to provide global state
 // for that we have to combine all reducers to one global reducer.
-const reducers = { capabilities, containers, objects }
+const reducers = { capabilities, containers }
 const reducer = (state = {}, action = {}) => {
   const newState = { ...state }
 

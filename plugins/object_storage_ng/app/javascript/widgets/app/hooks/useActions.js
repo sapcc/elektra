@@ -79,6 +79,18 @@ const useActions = () => {
     [dispatch, objects]
   )
 
+  const loadSubObjects = React.useCallback(
+    (containerName, options = {}) =>
+      apiClient
+        .osApi("object-store")
+        .get(containerName, { params: options })
+        .then((response) => ({
+          data: response.data,
+          headers: response.headers,
+        })),
+    [dispatch, objects]
+  )
+
   const loadObjectMetadata = React.useCallback(
     (containerName, name) =>
       apiClient
@@ -130,6 +142,7 @@ const useActions = () => {
     loadContainerMetadata,
     updateContainerMetadata,
     getAcls,
+    loadSubObjects,
   }
 }
 

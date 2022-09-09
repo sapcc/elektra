@@ -63,12 +63,7 @@ const itemsChunks = (items, chunkSize) => {
 //   return Promise.all(promises)
 // }
 
-const Table = ({ data, containerName, onMenuAction, currentPath }) => {
-  let { url } = useRouteMatch()
-  let history = useHistory()
-  let objectsRoot = url.replace(/([^/])\/objects.*/, "$1/objects")
-  let { encode } = useUrlParamEncoder()
-
+const Table = ({ data, onMenuAction, onNameClick }) => {
   const columns = React.useMemo(
     () => [
       {
@@ -89,63 +84,47 @@ const Table = ({ data, containerName, onMenuAction, currentPath }) => {
         width: "20%",
         sortable: true,
       },
-      { width: "60" },
+      {
+        width: "60",
+        label: <span className="info-text">{`#${data.length}`}</span>,
+      },
     ],
-    []
+    [data.length]
   )
 
   const Row = React.useCallback(
     ({ Row, item }) => (
       <Row>
         <Row.Column>
+          {item.isProcessing && <span className="spinner" />}
           <FileIcon item={item} />{" "}
-          {item.folder ? (
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault()
+              item.subdir ? onNameClick(item) : onMenuAction("download", item)
+            }}
+          >
+            {item.display_name}
+          </a>
+          {item.error && (
             <>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault()
-                  console.log("objectsRoot", objectsRoot, "item", item)
-                  history.push(`${objectsRoot}/${encode(item.path)}`)
-                }}
-              >
-                {item.display_name || item.name}
-              </a>{" "}
               <br />
-              <ItemsCount count={item.count} />{" "}
+              <span className="text-danger">{item.error}</span>
             </>
-          ) : (
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault()
-                onMenuAction("download", item)
-              }}
-            >
-              {item.display_name || item.name}
-            </a>
           )}
         </Row.Column>
         <Row.Column>
-          {item.isProcessing ? (
-            <span>
-              <span className="spinner" />
-              {item.isProcessing}
-            </span>
-          ) : item.error ? (
-            <span className="text-danger">{item.error}</span>
-          ) : (
-            <TimeAgo date={item.last_modified} originDate />
-          )}
+          {!item.subdir && <TimeAgo date={item.last_modified} originDate />}
         </Row.Column>
-        <Row.Column>{unit.format(item.bytes)}</Row.Column>
+        <Row.Column>{!item.subdir && unit.format(item.bytes)}</Row.Column>
         <Row.Column>
           <Dropdown id={`object-dropdown-${item.path}-${item.name}`} pullRight>
             <Dropdown.Toggle noCaret className="btn-sm">
               <span className="fa fa-cog" />
             </Dropdown.Toggle>
 
-            {item.folder ? (
+            {item.subdir ? (
               <Dropdown.Menu>
                 <MenuItem
                   onClick={() => onMenuAction("deleteRecursively", item)}
@@ -185,7 +164,7 @@ const Table = ({ data, containerName, onMenuAction, currentPath }) => {
         </Row.Column>
       </Row>
     ),
-    [objectsRoot]
+    []
   )
 
   return (
@@ -201,115 +180,137 @@ const Table = ({ data, containerName, onMenuAction, currentPath }) => {
   )
 }
 
+Table.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onMenuAction: PropTypes.func.isRequired,
+  onNameClick: PropTypes.func.isRequired,
+}
+
+const initialState = { items: [], isFetching: false, error: null }
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "REQUEST_ITEMS":
+      return { ...state, isFetching: true, error: null }
+    case "RECEIVE_ITEMS":
+      return { ...state, isFetching: false, error: null, items: action.items }
+    case "RECEIVE_ERROR":
+      return { ...state, isFetching: false, error: action.error }
+    default:
+      throw new Error()
+  }
+}
+
 const Objects = () => {
   let { url } = useRouteMatch()
+  let objectsRoot = url.replace(/([^/])\/objects.*/, "$1/objects")
+  let history = useHistory()
+  let { encode } = useUrlParamEncoder()
   let { name, objectPath } = useParams()
   const { value: currentPath } = useUrlParamEncoder(objectPath)
   const [searchTerm, setSearchTerm] = React.useState(null)
-  const { objects: containerObjects, capabilities } = useGlobalState()
-  const { loadContainerObjectsOnce, loadObjectMetadata } = useActions()
+
+  const { loadSubObjects } = useActions()
+  const [objects, dispatch] = React.useReducer(reducer, initialState)
 
   React.useEffect(() => {
-    loadContainerObjectsOnce(name)
-  }, [name])
+    // Load objects
+    // For objects beginning with a slash, this function is called recursively
+    // until there are no objects beginning with a slash
 
-  const objects = React.useMemo(
-    () => containerObjects[name] || {},
-    [containerObjects, name]
+    /** Normally, slashes are intended as delimiters for the directories. 
+     * However, it is also allowed to create objects with leading slashes in names. 
+     * This leads to a problem when we call the API with prefix and delimiter.
+     * Example:
+     * Given: [
+     *  {name: "test/sub_test/image.pmg"},
+     *  {name: "/test1/image.png"},
+     *  {name: "//test3/sub_test3/a/b.png"}
+     * ]
+     * API Call: prefix: "", delimiter: "/" => ["test/", "/", "//"]
+     * API Call: prefix: "/", delimiter: "/" => ["/test1/", "//"]
+     * API Call: prefix: "//", delimiter: "/" => ["//test3/"]
+
+    * As you can see, all calls deliver different results. To get all objects, 
+    * even those starting with multiple slashes, we start with the empty prefix and 
+    * * load the objects. After that, we search the results for names that only contain slashes. 
+    * Remove these and recursively load with the prefix of the removed items, etc. 
+    * until the results contain no objects with leading slashes.
+    */
+    const loadAllObjects = async (prefix = "") => {
+      let objects = await loadSubObjects(name, { prefix, delimiter: "/" }).then(
+        ({ data }) => data
+      )
+      // find index of the first object which name starts with a slash
+      let regex = new RegExp(`^${prefix}/+$`)
+      const startingWithSlashIndex = objects.findIndex(
+        (o) => o.subdir && o.subdir.match(regex)
+      )
+
+      // index not found -> end of recursion
+      if (startingWithSlashIndex < 0)
+        return objects.filter((o) => o.name !== prefix)
+
+      // get the new prefix based on the found object
+      const newPrefix = objects[startingWithSlashIndex].subdir
+      // remove all objects which names start with multiple slashes
+      objects = objects.filter((o) => !(o.name || o.subdir).match(regex))
+      // load objects recursively based on the new prefix
+      let objectsStartingWithSlash = await loadAllObjects(newPrefix)
+      // add new objects to the root objects
+      let newObjects = objects.concat(objectsStartingWithSlash)
+
+      // remove duplicates
+      return newObjects.filter(
+        (item, index) => newObjects.indexOf(item) === index
+      )
+    }
+
+    dispatch({ type: "REQUEST_ITEMS" })
+    loadAllObjects(currentPath)
+      .then((items) => {
+        // extend items with display_name and sort
+        items.forEach((i) => {
+          // display name
+          let dn = (i.name || i.subdir).replace(currentPath, "")
+          if (dn[dn.length - 1] === "/") dn = dn.slice(0, -1)
+          i.display_name = dn
+        })
+        items = items.sort((a, b) =>
+          a.display_name > b.display_name
+            ? 1
+            : a.display_name < b.display_name
+            ? -1
+            : 0
+        )
+        dispatch({ type: "RECEIVE_ITEMS", items })
+      })
+      .catch((error) =>
+        dispatch({ type: "RECEIVE_ERROR", error: error.message })
+      )
+  }, [name, currentPath, dispatch])
+
+  const handleMenuAction = React.useCallback(
+    (action, item) => {
+      console.log("action", action, item)
+      switch (action) {
+        case "changePath":
+          history.push(`${objectsRoot}/${encode(item.path)}`)
+      }
+    },
+    [objectsRoot]
   )
 
-  const handleMenuAction = React.useCallback((action, item) => {
-    console.log("action", action, item)
-  }, [])
-
-  // const emptyContainer = React.useCallback(
-  //   (containerName) => {
-  //     const maxDeletePerRequest =
-  //       capabilities.data?.bulk_delete?.max_deletes_per_request
-
-  //     deleteObjects([], {
-  //       bulkDeleteSupported: !!maxDeletePerRequest,
-  //       maxDeletePerRequest,
-  //       containerName,
-  //     })
-  //   },
-  //   [capabilities]
-  // )
-
-  // Filter visible items.
-  // Filter out items that are in "directories" and show only the directories and files.
-  const visibleItems = React.useMemo(() => {
-    if (objects.isFetching || !objects.items || objects.items.length === 0)
-      return []
-
-    let prefix = currentPath || ""
-    if (prefix[0] === "/") prefix = prefix.slice(1)
-    if (prefix.length > 0 && prefix[prefix.length - 1] !== "/")
-      prefix = prefix + "/"
-
-    const itemRegex = new RegExp("^/?" + prefix + "(/*[^/]+/?)(/*[^/]*)")
-
-    const filteredItems = objects.items.reduce((items, item) => {
-      const itemMatch = item.name.match(itemRegex)
-
-      // only items witch matches the regex
-      if (itemMatch) {
-        // console.log(itemMatch)
-        const path = itemMatch[1]
-        const subItemName = itemMatch[2]
-        // if path ends with a slash then it is a folder
-        const isFolder = path && path[path.length - 1] === "/"
-        const displayName = path.match(/^(\/*[^/]*)\/?/)[1]
-
-        if (items[displayName]) {
-          // item with displayName is already registered
-          // sum up the size
-          items[displayName].bytes += item.bytes
-
-          // last modified date should be the newest one
-          const currentItemDate = Date.parse(item.last_modified)
-          const lastItemDate = Date.parse(items[displayName].last_modified)
-          if (currentItemDate > lastItemDate)
-            items[displayName].last_modified = item.last_modified
-          // update folder value
-          items[displayName].folder = items[displayName].folder || isFolder
-        } else {
-          // register item
-          items[displayName] = {
-            name: item.name,
-            display_name: displayName,
-            folder: isFolder,
-            bytes: item.bytes,
-            last_modified: item.last_modified,
-            path: currentPath + path,
-            sub_items: {},
-          }
-        }
-
-        // count subitems
-        if (subItemName && subItemName.length > 0) {
-          items[displayName].sub_items[subItemName] = true
-          items[displayName].count = Object.keys(
-            items[displayName].sub_items
-          ).length
-        }
-      }
-      return items
-    }, {})
-
-    return Object.values(filteredItems).sort((a, b) =>
-      (a.folder && !b.folder) || a.display_name < b.display_name
-        ? -1
-        : (!a.folder && b.folder) || a.display_name > b.display_name
-        ? 1
-        : 0
-    )
-  }, [currentPath, objects])
+  const handleNameClick = React.useCallback(
+    (item) =>
+      item.subdir && history.push(`${objectsRoot}/${encode(item.subdir)}`),
+    [history, objectsRoot]
+  )
 
   const filteredItems = React.useMemo(() => {
-    if (!searchTerm || searchTerm.length === 0) return visibleItems
-    return visibleItems.filter((i) => i.display_name.indexOf(searchTerm) >= 0)
-  }, [visibleItems, searchTerm])
+    if (!searchTerm || searchTerm.length === 0) return objects.items
+    return objects.items.filter((i) => i.display_name.indexOf(searchTerm) >= 0)
+  }, [objects.items, searchTerm])
 
   return (
     <React.Fragment>
@@ -332,23 +333,21 @@ const Objects = () => {
         </div>
       </div>
 
+      <Breadcrumb />
       {objects.isFetching ? (
         <span>
           <span className="spinner" /> Loading...
         </span>
       ) : objects.error ? (
-        <Alert bsStyle="danger">{error}</Alert>
-      ) : !objects || objects.length === 0 ? (
+        <Alert bsStyle="danger">{objects.error}</Alert>
+      ) : !objects || objects.items.length === 0 ? (
         <span>No entries found.</span>
       ) : (
         <>
-          {" "}
-          <Breadcrumb />
           {filteredItems.length > 0 ? (
             <Table
               data={filteredItems}
-              containerName={name}
-              currentPath={currentPath}
+              onNameClick={handleNameClick}
               onMenuAction={handleMenuAction}
             />
           ) : (

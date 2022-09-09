@@ -34,9 +34,12 @@ const Table = ({ data, onMenuAction }) => {
         width: "20%",
         sortable: true,
       },
-      { width: "60px" },
+      {
+        width: "60px",
+        label: <span className="info-text">#{data.length}</span>,
+      },
     ],
-    []
+    [data.length]
   )
 
   const permissions = React.useMemo(() => {
@@ -96,38 +99,6 @@ const Table = ({ data, onMenuAction }) => {
               </ContextMenu.Item>
             )}
           </ContextMenu>
-
-          {/* <Dropdown key={3} id={`container-dropdown-${item.name}`} pullRight>
-            <Dropdown.Toggle noCaret className="btn-sm">
-              <span className="fa fa-cog" />
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu className="super-colors">
-              {permissions.canShow && (
-                <MenuItem onClick={() => onMenuAction("properties", item)}>
-                  Properties
-                </MenuItem>
-              )}
-              {permissions.canShowAccessControl && (
-                <MenuItem onClick={() => onMenuAction("accessControl", item)}>
-                  Access Control
-                </MenuItem>
-              )}
-              {(permissions.canShow || permissions.canShowAccessControl) && (
-                <MenuItem divider />
-              )}
-              {item.count > 0 && permissions.canEmpty && (
-                <MenuItem onClick={() => onMenuAction("empty", item)}>
-                  Empty
-                </MenuItem>
-              )}
-              {permissions.canDelete && (
-                <MenuItem onClick={() => onMenuAction("delete", item)}>
-                  Delete
-                </MenuItem>
-              )}
-            </Dropdown.Menu>
-          </Dropdown> */}
         </Row.Column>
       </Row>
     )
@@ -155,6 +126,7 @@ const List = () => {
   const containers = useGlobalState("containers")
   const { loadContainersOnce } = useActions()
   const history = useHistory()
+  const [searchTerm, updateSearchTerm] = React.useState("")
 
   React.useEffect(() => {
     loadContainersOnce()
@@ -176,34 +148,38 @@ const List = () => {
     [history.push]
   )
 
-  const items = containers.items
+  const items = React.useMemo(
+    () =>
+      containers.items.filter(
+        (i) => !searchTerm || (i.name && i.name.indexOf(searchTerm) >= 0)
+      ),
+    [searchTerm, containers.items]
+  )
 
   return (
     <React.Fragment>
       <div className="toolbar">
         <SearchField
-          onChange={(term) => null /* setSearchTerm(term)*/}
+          onChange={(term) => updateSearchTerm(term)}
           placeholder="name"
           text="Filters by name"
         />
 
         <div className="main-buttons">
-          {
-            /*policy.isAllowed("object_storage_ng:container_create")*/ true && (
-              <React.Fragment>
-                <CapabilitiesPopover />
-                <button
-                  className="btn btn-link"
-                  onClick={(e) => null /*load()*/}
-                >
-                  <i className="fa fa-refresh" />
-                </button>
-                <Link to="/containers/new" className="btn btn-primary">
-                  Create new
-                </Link>
-              </React.Fragment>
-            )
-          }
+          {policy.isAllowed("object_storage_ng:container_create") && (
+            <React.Fragment>
+              <CapabilitiesPopover />
+              <button
+                className="btn btn-link"
+                onClick={() => loadContainersOnce({ reload: true })}
+              >
+                <i className="fa fa-refresh" />
+              </button>
+              <Link to="/containers/new" className="btn btn-primary">
+                Create new
+              </Link>
+            </React.Fragment>
+          )}
         </div>
       </div>
       {!policy.isAllowed("object_storage_ng:container_list") ? (
@@ -217,7 +193,7 @@ const List = () => {
         <span>No Containers found.</span>
       ) : (
         <div style={{ marginTop: 15 }}>
-          <Table data={containers.items} onMenuAction={handleMenuAction} />
+          <Table data={items} onMenuAction={handleMenuAction} />
         </div>
       )}
     </React.Fragment>

@@ -466,7 +466,7 @@ VirtualizedTable.propTypes = {
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   columns: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string,
+      label: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
       accessor: PropTypes.string,
       width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       sortable: PropTypes.oneOf([true, false, "amount", "text", "date"]),
