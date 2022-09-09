@@ -4,9 +4,9 @@ import { useHistory, useParams, Link } from "react-router-dom"
 import { useGlobalState } from "../../stateProvider"
 import React from "react"
 import { Unit } from "lib/unit"
+import useActions from "../../hooks/useActions"
 const unit = new Unit("B")
 
-const apiClient = {}
 /**
  * This Component renders custom metadata tags.
  * the name of custom tags starts with meta_
@@ -285,6 +285,7 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
 
   const [metadata, setMetadata] = React.useState()
   const [isFetchingMetadata, setIsFetchingMetadata] = React.useState(false)
+  const { loadContainerMetadata, updateContainerMetadata } = useActions()
 
   const customMetadataTags = React.useMemo(() => {
     if (!metadata) return []
@@ -307,10 +308,8 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
 
   React.useEffect(() => {
     setIsFetchingMetadata(true)
-    apiClient
-      .osApi("object-store")
-      .head(name)
-      .then((response) => setMetadata(response.headers))
+    loadContainerMetadata(name)
+      .then((headers) => setMetadata(headers))
       .catch((error) => {
         setError(error.message)
       })
@@ -369,16 +368,9 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
         }
       })
 
-      return (
-        apiClient
-          .osApi("object-store")
-          .post(name, {}, { headers: newValues })
-          // close modal window
-          .then(close)
-          .catch((error) => {
-            setError(error.message)
-          })
-      )
+      return updateContainerMetadata.then(close).catch((error) => {
+        setError(error.message)
+      })
     },
     [metadata, close, name]
   )

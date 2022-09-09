@@ -17,38 +17,40 @@ const Router = ({ baseName, objectStoreEndpoint }) => (
     <Route exact path="/">
       <Redirect to="/containers" />
     </Route>
-    <Route path="/containers" component={Containers} />
-    <Switch>
-      <Route exact path="/containers/new" component={NewContainer} />
 
+    <Switch>
       <Route
         path="/containers/:name/objects/:objectPath?"
         component={Objects}
       />
+      <Route path="/containers" component={Containers} />
+      <Switch>
+        <Route exact path="/containers/new" component={NewContainer} />
 
-      <Route
-        exact
-        path={`/containers/:name/properties`}
-        render={() => (
-          <ContainerProperties objectStoreEndpoint={objectStoreEndpoint} />
-        )}
-      />
+        <Route
+          exact
+          path={`/containers/:name/properties`}
+          render={() => (
+            <ContainerProperties objectStoreEndpoint={objectStoreEndpoint} />
+          )}
+        />
 
-      <Route
-        exact
-        path={`/containers/:name/delete`}
-        component={DeleteContainer}
-      />
-      <Route
-        exact
-        path={`/containers/:name/access-control`}
-        component={ContainerAccessControl}
-      />
-      <Route
-        exact
-        path={`/containers/:name/empty`}
-        component={EmptyContainer}
-      />
+        <Route
+          exact
+          path={`/containers/:name/delete`}
+          component={DeleteContainer}
+        />
+        <Route
+          exact
+          path={`/containers/:name/access-control`}
+          component={ContainerAccessControl}
+        />
+        <Route
+          exact
+          path={`/containers/:name/empty`}
+          component={EmptyContainer}
+        />
+      </Switch>
     </Switch>
   </BrowserRouter>
 )

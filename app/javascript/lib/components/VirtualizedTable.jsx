@@ -128,6 +128,7 @@ const Header = ({
   renderHeader,
   onFilterChange,
   onSortChange,
+  itemsCount,
 }) => {
   const [sort, updateSort] = React.useState({ direction: "asc" })
   const [filter, updateFilter] = React.useState({})
@@ -222,7 +223,7 @@ const Header = ({
               )}
             </div>
             {/* Add filter Input unless renderHeader is defined. renderHeader is used for custom header Component */}
-            {column.filterable && column.accessor && (
+            {column.filterable && column.accessor && itemsCount > 1 && (
               <FilterInput
                 className={`${classNamePrefix}-filter`}
                 name={column.label}
@@ -239,6 +240,7 @@ const Header = ({
 
 Header.displayName = "Header"
 Header.propTypes = {
+  itemsCount: PropTypes.number,
   width: PropTypes.number.isRequired,
   columns: PropTypes.arrayOf(PropTypes.object),
   classNamePrefix: PropTypes.string,
@@ -430,6 +432,7 @@ const VirtualizedTable = ({
         <>
           {(showHeader || renderHeader) && (
             <Header
+              itemsCount={items.length}
               width={width}
               columns={columns}
               classNamePrefix={className}

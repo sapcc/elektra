@@ -97,12 +97,39 @@ const useActions = () => {
     []
   )
 
+  const loadContainerMetadata = React.useCallback(
+    (containerName) =>
+      apiClient
+        .osApi("object-store")
+        .head(containerName)
+        .then((response) => response.headers),
+    []
+  )
+  const updateContainerMetadata = React.useCallback(
+    (containerName, headers) =>
+      apiClient
+        .osApi("object-store")
+        .post(containerName, {}, { headers: headers }),
+    []
+  )
+
+  const getAcls = React.useCallback(
+    ({ read, write }) =>
+      apiClient
+        .get("check-acls", { params: { read, write } })
+        .then((result) => result.data),
+    []
+  )
+
   return {
     loadCapabilitiesOnce,
     loadContainersOnce,
     loadContainerObjectsOnce,
     loadObjectMetadata,
     deleteObject,
+    loadContainerMetadata,
+    updateContainerMetadata,
+    getAcls,
   }
 }
 

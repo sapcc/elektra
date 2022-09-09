@@ -2,16 +2,16 @@ import React from "react"
 import PropTypes from "prop-types"
 import { useGlobalState } from "../../stateProvider"
 import useActions from "../../hooks/useActions"
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 import ItemsCount from "../shared/ItemsCount"
 import TimeAgo from "../shared/TimeAgo"
 import { Unit } from "lib/unit"
 const unit = new Unit("B")
 import { policy } from "lib/policy"
-import { MenuItem, Dropdown } from "react-bootstrap"
 import { SearchField } from "lib/components/search_field"
 import CapabilitiesPopover from "../capabilities/popover"
 import VirtualizedTable from "lib/components/VirtualizedTable"
+import ContextMenu from "lib/components/ContextMenuPopover"
 
 const Table = ({ data, onMenuAction }) => {
   const columns = React.useMemo(
@@ -34,7 +34,7 @@ const Table = ({ data, onMenuAction }) => {
         width: "20%",
         sortable: true,
       },
-      { width: "60" },
+      { width: "60px" },
     ],
     []
   )
@@ -67,10 +67,41 @@ const Table = ({ data, onMenuAction }) => {
         </Row.Column>
         <Row.Column>{unit.format(item.bytes)}</Row.Column>
         <Row.Column>
-          <Dropdown key={3} id={`container-dropdown-${item.name}`} pullRight>
+          <ContextMenu>
+            {permissions.canShow && (
+              <ContextMenu.Item
+                onClick={() => onMenuAction("properties", item)}
+              >
+                Properties
+              </ContextMenu.Item>
+            )}
+            {permissions.canShowAccessControl && (
+              <ContextMenu.Item
+                onClick={() => onMenuAction("accessControl", item)}
+              >
+                Access Control
+              </ContextMenu.Item>
+            )}
+            {(permissions.canShow || permissions.canShowAccessControl) && (
+              <ContextMenu.Item divider />
+            )}
+            {item.count > 0 && permissions.canEmpty && (
+              <ContextMenu.Item onClick={() => onMenuAction("empty", item)}>
+                Empty
+              </ContextMenu.Item>
+            )}
+            {permissions.canDelete && (
+              <ContextMenu.Item onClick={() => onMenuAction("delete", item)}>
+                Delete
+              </ContextMenu.Item>
+            )}
+          </ContextMenu>
+
+          {/* <Dropdown key={3} id={`container-dropdown-${item.name}`} pullRight>
             <Dropdown.Toggle noCaret className="btn-sm">
               <span className="fa fa-cog" />
             </Dropdown.Toggle>
+
             <Dropdown.Menu className="super-colors">
               {permissions.canShow && (
                 <MenuItem onClick={() => onMenuAction("properties", item)}>
@@ -96,7 +127,7 @@ const Table = ({ data, onMenuAction }) => {
                 </MenuItem>
               )}
             </Dropdown.Menu>
-          </Dropdown>
+          </Dropdown> */}
         </Row.Column>
       </Row>
     )
@@ -123,13 +154,26 @@ Table.propTypes = {
 const List = () => {
   const containers = useGlobalState("containers")
   const { loadContainersOnce } = useActions()
+  const history = useHistory()
 
   React.useEffect(() => {
     loadContainersOnce()
   }, [loadContainersOnce])
 
-  const handleMenuAction = React.useCallback((action) =>
-    console.log("handle ", action)
+  const handleMenuAction = React.useCallback(
+    (action, item) => {
+      switch (action) {
+        case "accessControl":
+          return history.push(`/containers/${item.name}/access-control`)
+        case "empty":
+          return history.push(`/containers/${item.name}/empty`)
+        case "delete":
+          return history.push(`/containers/${item.name}/delete`)
+        case "properties":
+          return history.push(`/containers/${item.name}/properties`)
+      }
+    },
+    [history.push]
   )
 
   const items = containers.items

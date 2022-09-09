@@ -1,6 +1,12 @@
 import React from "react"
-import { useParams, Link, useRouteMatch } from "react-router-dom"
-import ObjectItem from "./item"
+import PropTypes from "prop-types"
+import VirtualizedTable from "lib/components/VirtualizedTable"
+import { Dropdown, MenuItem } from "react-bootstrap"
+import TimeAgo from "../shared/TimeAgo"
+import ItemsCount from "../shared/ItemsCount"
+import { Unit } from "lib/unit"
+import { useParams, Link, useRouteMatch, useHistory } from "react-router-dom"
+import FileIcon from "./FileIcon"
 import Router from "./router"
 import Breadcrumb from "./breadcrumb"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
@@ -9,6 +15,8 @@ import { Alert } from "react-bootstrap"
 import { SearchField } from "lib/components/search_field"
 import { useGlobalState } from "../../stateProvider"
 import useActions from "../../hooks/useActions"
+
+const unit = new Unit("B")
 
 const itemsChunks = (items, chunkSize) => {
   if (chunkSize) {
@@ -55,6 +63,144 @@ const itemsChunks = (items, chunkSize) => {
 //   return Promise.all(promises)
 // }
 
+const Table = ({ data, containerName, onMenuAction, currentPath }) => {
+  let { url } = useRouteMatch()
+  let history = useHistory()
+  let objectsRoot = url.replace(/([^/])\/objects.*/, "$1/objects")
+  let { encode } = useUrlParamEncoder()
+
+  const columns = React.useMemo(
+    () => [
+      {
+        label: "Object name",
+        accessor: "name",
+        sortable: "text",
+        // filterable: true,
+      },
+      {
+        label: "Last modified",
+        accessor: "last_modified",
+        width: "20%",
+        sortable: "date",
+      },
+      {
+        label: "Size",
+        accessor: "bytes",
+        width: "20%",
+        sortable: true,
+      },
+      { width: "60" },
+    ],
+    []
+  )
+
+  const Row = React.useCallback(
+    ({ Row, item }) => (
+      <Row>
+        <Row.Column>
+          <FileIcon item={item} />{" "}
+          {item.folder ? (
+            <>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  console.log("objectsRoot", objectsRoot, "item", item)
+                  history.push(`${objectsRoot}/${encode(item.path)}`)
+                }}
+              >
+                {item.display_name || item.name}
+              </a>{" "}
+              <br />
+              <ItemsCount count={item.count} />{" "}
+            </>
+          ) : (
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                onMenuAction("download", item)
+              }}
+            >
+              {item.display_name || item.name}
+            </a>
+          )}
+        </Row.Column>
+        <Row.Column>
+          {item.isProcessing ? (
+            <span>
+              <span className="spinner" />
+              {item.isProcessing}
+            </span>
+          ) : item.error ? (
+            <span className="text-danger">{item.error}</span>
+          ) : (
+            <TimeAgo date={item.last_modified} originDate />
+          )}
+        </Row.Column>
+        <Row.Column>{unit.format(item.bytes)}</Row.Column>
+        <Row.Column>
+          <Dropdown id={`object-dropdown-${item.path}-${item.name}`} pullRight>
+            <Dropdown.Toggle noCaret className="btn-sm">
+              <span className="fa fa-cog" />
+            </Dropdown.Toggle>
+
+            {item.folder ? (
+              <Dropdown.Menu>
+                <MenuItem
+                  onClick={() => onMenuAction("deleteRecursively", item)}
+                >
+                  Delete recursively
+                </MenuItem>
+              </Dropdown.Menu>
+            ) : (
+              <Dropdown.Menu className="super-colors">
+                <MenuItem onClick={() => onMenuAction("download", item)}>
+                  Download
+                </MenuItem>
+
+                <MenuItem divider />
+                <MenuItem onClick={() => onMenuAction("properties", item)}>
+                  Properties
+                </MenuItem>
+                <MenuItem divider />
+
+                <MenuItem onClick={() => onMenuAction("copy", item)}>
+                  Copy
+                </MenuItem>
+                <MenuItem onClick={() => onMenuAction("move", item)}>
+                  Move/Rename
+                </MenuItem>
+                <MenuItem onClick={() => onMenuAction("delete", item)}>
+                  Delete
+                </MenuItem>
+                <MenuItem
+                  onClick={() => onMenuAction("deleteKeepSegments", item)}
+                >
+                  Delete (keep segments)
+                </MenuItem>
+              </Dropdown.Menu>
+            )}
+          </Dropdown>
+        </Row.Column>
+      </Row>
+    ),
+    [objectsRoot]
+  )
+
+  return (
+    <VirtualizedTable
+      height="max"
+      rowHeight={50}
+      columns={columns}
+      data={data || []}
+      renderRow={Row}
+      showHeader
+      bottomOffset={160} // footer height
+    />
+  )
+}
+
 const Objects = () => {
   let { url } = useRouteMatch()
   let { name, objectPath } = useParams()
@@ -71,6 +217,10 @@ const Objects = () => {
     () => containerObjects[name] || {},
     [containerObjects, name]
   )
+
+  const handleMenuAction = React.useCallback((action, item) => {
+    console.log("action", action, item)
+  }, [])
 
   // const emptyContainer = React.useCallback(
   //   (containerName) => {
@@ -195,21 +345,12 @@ const Objects = () => {
           {" "}
           <Breadcrumb />
           {filteredItems.length > 0 ? (
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Object name</th>
-                  <th>Last Modified</th>
-                  <th>Size</th>
-                  <th className="snug"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredItems.map((item, i) => (
-                  <ObjectItem item={item} key={i} currentPath={currentPath} />
-                ))}
-              </tbody>
-            </table>
+            <Table
+              data={filteredItems}
+              containerName={name}
+              currentPath={currentPath}
+              onMenuAction={handleMenuAction}
+            />
           ) : (
             <span>This folder is empty</span>
           )}

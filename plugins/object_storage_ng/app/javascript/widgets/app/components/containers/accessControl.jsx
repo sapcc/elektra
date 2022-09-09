@@ -6,8 +6,7 @@ import { useGlobalState } from "../../stateProvider"
 
 import { createUseStyles } from "react-jss"
 import AclResolution from "./aclResolution"
-
-const apiClient = {}
+import useActions from "../../hooks/useActions"
 
 const useStyles = createUseStyles({
   infoCallout: {
@@ -144,35 +143,62 @@ const ContainerAccessControl = () => {
   const [isFetchingMetadata, setIsFetchingMetadata] = React.useState(false)
   const [aclCheckResult, setAclCheckResult] = React.useState()
   const [isCheckingAcls, setIsCheckingAcls] = React.useState(false)
+  const { loadContainerMetadata, updateContainerMetadata, getAcls } =
+    useActions()
+
+  // React.useEffect(() => {
+  //   setIsFetchingMetadata(true)
+  //   apiClient
+  //     .osApi("object-store")
+  //     .head(name)
+  //     .then((response) => {
+  //       setMetadata(response.headers)
+  //     })
+  //     .catch((error) => {
+  //       setError(error.message)
+  //     })
+  //     .finally(() => setIsFetchingMetadata(false))
+
+  //   return () => setMetadata(null)
+  // }, [name])
+
+  // const checkAcls = React.useCallback(
+  //   ({ read, write }) => {
+  //     setIsCheckingAcls(true)
+  //     apiClient
+  //       .get("check-acls", { params: { read, write } })
+  //       .then((result) => setAclCheckResult(result.data))
+  //       .catch((error) => {
+  //         setError(error.message)
+  //       })
+  //       .finally(() => setIsCheckingAcls(false))
+  //   },
+  //   [name]
+  // )
 
   React.useEffect(() => {
     setIsFetchingMetadata(true)
-    apiClient
-      .osApi("object-store")
-      .head(name)
-      .then((response) => {
-        setMetadata(response.headers)
-      })
+    loadContainerMetadata(name)
+      .then((headers) => setMetadata(headers))
       .catch((error) => {
         setError(error.message)
       })
       .finally(() => setIsFetchingMetadata(false))
 
     return () => setMetadata(null)
-  }, [name])
+  }, [name, loadContainerMetadata, setMetadata, setIsFetchingMetadata])
 
   const checkAcls = React.useCallback(
     ({ read, write }) => {
       setIsCheckingAcls(true)
-      apiClient
-        .get("check-acls", { params: { read, write } })
-        .then((result) => setAclCheckResult(result.data))
+      getAcls({ read, write })
+        .then((data) => setAclCheckResult(data))
         .catch((error) => {
           setError(error.message)
         })
         .finally(() => setIsCheckingAcls(false))
     },
-    [name]
+    [getAcls, setAclCheckResult, setIsCheckingAcls]
   )
 
   const close = React.useCallback((e) => {
@@ -201,18 +227,13 @@ const ContainerAccessControl = () => {
         "x-container-write": (values.write || "").replace(newLineRegex, ""),
       }
 
-      return (
-        apiClient
-          .osApi("object-store")
-          .post(name, {}, { headers: newValues })
-          // close modal window
-          .then(close)
-          .catch((error) => {
-            setError(error.message)
-          })
-      )
+      return updateContainerMetadata(name, newValues)
+        .then(close)
+        .catch((error) => {
+          setError(error.message)
+        })
     },
-    [metadata, close, name, setError]
+    [metadata, close, name, setError, updateContainerMetadata]
   )
 
   return (
