@@ -20,11 +20,12 @@ const Router = ({ baseName, objectStoreEndpoint }) => (
 
     <Switch>
       <Route
+        exact
         path="/containers/:name/objects/:objectPath?"
         component={Objects}
       />
-      <Route path="/containers" component={Containers} />
-      <Switch>
+      <Route path="/containers">
+        <Route path="/" component={Containers} />
         <Route exact path="/containers/new" component={NewContainer} />
 
         <Route
@@ -50,7 +51,7 @@ const Router = ({ baseName, objectStoreEndpoint }) => (
           path={`/containers/:name/empty`}
           component={EmptyContainer}
         />
-      </Switch>
+      </Route>
     </Switch>
   </BrowserRouter>
 )

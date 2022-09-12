@@ -148,7 +148,7 @@ const FormBody = ({ containerName, otherContainers }) => {
         <React.Fragment>
           <label className="control-label">
             URL for public access{" "}
-            <a href={values.public_url} target="_blank">
+            <a href={values.public_url} target="_blank" rel="noreferrer">
               (Open in new tab)
             </a>
           </label>
@@ -368,9 +368,11 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
         }
       })
 
-      return updateContainerMetadata.then(close).catch((error) => {
-        setError(error.message)
-      })
+      return updateContainerMetadata(name, newValues)
+        .then(close)
+        .catch((error) => {
+          setError(error.message)
+        })
     },
     [metadata, close, name]
   )
