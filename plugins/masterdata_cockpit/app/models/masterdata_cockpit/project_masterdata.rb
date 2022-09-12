@@ -44,7 +44,10 @@ module MasterdataCockpit
     validates_presence_of :responsible_controller_email, unless: -> { responsible_controller_id.blank? }, message: "can't be blank if controller is defined"
     validates_presence_of :responsible_primary_contact_email, unless: -> { responsible_primary_contact_id.blank? }, message: "can't be blank if primary contact is defined"
 
+    validates_presence_of :customer, :supervisor, :inventory_role, :biso, :infrastructure_coordinator
+
     validates_presence_of :additional_information, if: -> { business_criticality == 'prod_tc' }, message: "can't be blank if business criticality is Productive Time Critical"
+    validates_presence_of :environment, :type_of_data, :soft_license_mode
 
     validates :number_of_endusers, numericality: { greater_than_or_equal_to: -1 }, allow_nil: true, allow_blank: true
 
@@ -60,6 +63,10 @@ module MasterdataCockpit
               :responsible_product_owner_email,
               :responsible_controller_email,
               :responsible_primary_contact_email,
+              :biso_email,
+              :supervisor_email,
+              :infrastructure_coordinator_email,
+              :inventory_role_email,
               format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: 'please use a valid email address' },
               allow_nil: true,
               allow_blank: true
@@ -69,6 +76,10 @@ module MasterdataCockpit
               :responsible_primary_contact_id,
               :responsible_product_owner_id,
               :responsible_controller_id,
+              :biso,
+              :supervisor,
+              :inventory_role,
+              :infrastructure_coordinator,
               format: { with: /\A[DCIdci]\d*\z/, message: 'please use a C/D/I user id' },
               allow_nil: true,
               allow_blank: true
@@ -99,8 +110,44 @@ module MasterdataCockpit
       end
     end
 
+    def combine_external_certifications
+      {
+        "iso" => read('ext_cert_iso'),
+        "c5" => read('ext_cert_c5'),
+        "pci" => read('ext_cert_pci'),
+        "soc1" => read('ext_cert_soc1'),
+        "soc2" => read('ext_cert_soc2'),
+        "sox" => read('ext_cert_sox'),
+      }
+    end
+
+    def ext_cert_iso
+      read('ExtCertification')["iso"]
+    end
+
+    def ext_cert_c5
+      read('ExtCertification')["c5"]
+    end
+
+    def ext_cert_pci
+      read('ExtCertification')["pci"]
+    end
+
+    def ext_cert_soc1
+      read('ExtCertification')["soc1"]
+    end
+
+    def ext_cert_soc2
+      read('ExtCertification')["soc2"]
+    end
+
+    def ext_cert_sox
+      read('ExtCertification')["sox"]
+    end
+
     def attributes_for_create
       params = {
+        'customer' => read('customer'),
         'project_id' => read('project_id'),
         'project_name' => read('project_name'),
         'parent_id' => read('domain_id'),
@@ -116,7 +163,18 @@ module MasterdataCockpit
         'responsible_product_owner_email' => read('responsible_product_owner_email'),
         'responsible_controller_id' => read('responsible_controller_id'),
         'responsible_controller_email' => read('responsible_controller_email'),
+        'biso' => read('biso'),
+        'supervisor' => read('supervisor'),
+        'inventory_role' => read('inventory_role'),
+        'infrastructure_coordinator' => read('infrastructure_coordinator'),
         'additional_information' => read('additional_information'),
+        'gpu_enabled' => read('gpu_enabled'),
+        'contains_pii_dpp_hr' => read('contains_pii_dpp_hr'),
+        'contains_external_customer_data' => read('contains_external_customer_data'),
+        'environment' => read('environment'),
+        'ExtCertification' => combine_external_certifications,
+        'type_of_data' => read('type_of_data'),
+        'soft_license_mode' => read('soft_license_mode'),
         'revenue_relevance' => read('revenue_relevance'),
         'business_criticality' => read('business_criticality'),
         'number_of_endusers' => read('number_of_endusers')
