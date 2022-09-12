@@ -12,6 +12,7 @@ import { SearchField } from "lib/components/search_field"
 import CapabilitiesPopover from "../capabilities/popover"
 import VirtualizedTable from "lib/components/VirtualizedTable"
 import ContextMenu from "lib/components/ContextMenuPopover"
+import Breadcrumb from "../shared/breadcrumb"
 
 const Table = ({ data, onMenuAction }) => {
   const columns = React.useMemo(
@@ -36,10 +37,9 @@ const Table = ({ data, onMenuAction }) => {
       },
       {
         width: "60px",
-        label: <span className="info-text">#{data.length}</span>,
       },
     ],
-    [data.length]
+    []
   )
 
   const permissions = React.useMemo(() => {
@@ -192,7 +192,8 @@ const List = () => {
       ) : items.length === 0 ? (
         <span>No Containers found.</span>
       ) : (
-        <div style={{ marginTop: 15 }}>
+        <div>
+          <Breadcrumb count={items.length} />
           <Table data={items} onMenuAction={handleMenuAction} />
         </div>
       )}

@@ -8,7 +8,7 @@ import { Unit } from "lib/unit"
 import { useParams, Link, useRouteMatch, useHistory } from "react-router-dom"
 import FileIcon from "./FileIcon"
 import Router from "./router"
-import Breadcrumb from "./breadcrumb"
+import Breadcrumb from "../shared/breadcrumb"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 import { Alert } from "react-bootstrap"
 // import apiClient from "../../lib/apiClient"
@@ -86,10 +86,9 @@ const Table = ({ data, onMenuAction, onNameClick }) => {
       },
       {
         width: "60",
-        label: <span className="info-text">{`#${data.length}`}</span>,
       },
     ],
-    [data.length]
+    []
   )
 
   const Row = React.useCallback(
@@ -333,7 +332,7 @@ const Objects = () => {
         </div>
       </div>
 
-      <Breadcrumb />
+      <Breadcrumb count={filteredItems.length} />
       {objects.isFetching ? (
         <span>
           <span className="spinner" /> Loading...
