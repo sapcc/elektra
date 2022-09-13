@@ -71,7 +71,7 @@
       .row
         .col-md-6.operator-id
           = f.input :responsible_primary_contact_id, 
-            label: "Primary Contact (Asset Owner)", 
+            label: "Asset Owner", 
             placeholder: "C/D/I User",
             input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
         .col-md-6.operator-email
@@ -85,7 +85,7 @@
       .row
         .col-sm-6.operator-id
           = f.input :responsible_security_expert_id, 
-            label: "Security Expert (Security Contact)", 
+            label: "Security Contact", 
             placeholder: "C/D/I User", 
             :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
@@ -109,11 +109,11 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_supervisor_help')
+          = t('masterdata_cockpit.supervisor_help')
       .row
         .col-md-6.operator-id
           = f.input :biso, 
-            label: "Business Information Security Officer", 
+            label: "BIS Officer", 
             placeholder: "C/D/I User",
             input_html: { class: 'operator-id-input' }
         .col-md-6.operator-email
@@ -123,7 +123,7 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_bsio_help')
+          = t('masterdata_cockpit.biso_help')
       .row
         .col-md-6.operator-id
           = f.input :inventory_role, 
@@ -137,7 +137,7 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_inventory_role_help')
+          = t('masterdata_cockpit.inventory_role_help')
       .row
         .col-md-6.operator-id
           = f.input :infrastructure_coordinator, 
@@ -151,11 +151,11 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_infrastructure_coordinator_help')
+          = t('masterdata_cockpit.infrastructure_coordinator_help')
       .row
         .col-md-6.operator-id
           = f.input :responsible_operator_id, 
-            label: "Operator (Run Team)", 
+            label: "Run Team", 
             placeholder: "C/D/I User", 
             :input_html => { class: 'operator-id-input' }
         .col-md-6.operator-email
@@ -276,7 +276,7 @@
           as: :boolean
         .col-md-4
           = f.input :contains_external_customer_data,
-          label: "Contains External Customer data",
+          label: "External Customer Data",
           checked_value: '1', unchecked_value: '0',
           as: :boolean
       .row
@@ -328,7 +328,7 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          = t('masterdata_cockpit.ext_certification_help')
+          = t('masterdata_cockpit.external_certification_info')
 
 :javascript
   $(function(){

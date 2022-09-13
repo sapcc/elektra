@@ -28,9 +28,9 @@ module MasterdataCockpit
     def self.soft_license_mode 
       {
         'Revenue Generating' => 'Revenue Generating',
-        'Training and Demo' => 'Training and Demo',
+        'Training and Demo' => 'Training & Demo',
         'Development' => 'Development',
-        'Test and QS' => 'Test and QS',
+        'Test and QS' => 'Test & QS',
         'Administration' => 'Administration',
         'Make' => 'Make',
         'Virtualization-Host' => 'Virtualization-Host',
@@ -57,7 +57,7 @@ module MasterdataCockpit
         'SAP Business Proces' => 'SAP Business Process',
         'Customer Cloud Service' => 'Customer Cloud Service',
         'Customer Business Process' => 'Customer Business Process',
-        'Training & Demo' => 'Training & Demo',
+        'Training and Demo' => 'Training & Demo',
         'Cloud' => 'Cloud'
       }
     end
