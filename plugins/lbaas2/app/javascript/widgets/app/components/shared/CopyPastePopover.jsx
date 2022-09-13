@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import uniqueId from "lodash/uniqueId"
-import { Overlay, Popover, Tooltip } from "react-bootstrap"
+import { Popover, Tooltip } from "react-bootstrap"
 import Clipboard from "react-clipboard.js"
 import { Highlighter } from "react-bootstrap-typeahead"
 

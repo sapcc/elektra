@@ -4,7 +4,7 @@
 - unless modal?
   %h3 Run details
 
-- data = {update_path: plugin('automation').run_path(params.to_unsafe_hash.merge(partial:true, format: 'js')), update_interval: 10} if run_polling?(@run.state)
+- data = {update_path: plugin('automation').run_path(params.to_unsafe_hash.merge(partial:true, format: 'js')), update_interval: 30} if run_polling?(@run.state)
 .modal-body#run-detail-view{  data: data }
 
   .modal-section.first
