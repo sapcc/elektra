@@ -103,66 +103,6 @@
 
   .row
     .col-sm-4.details-label
-      Supervisor
-      %a.help-link{data:{content: t('masterdata_cockpit.supervisor_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-        = icon('info-circle')
-    .col-sm-2.details-value
-      - unless @project_masterdata.supervisor
-        \-
-      = @project_masterdata.supervisor
-    - if @project_masterdata.supervisor_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @project_masterdata.responsible_supervisor_email
-
-  .row
-    .col-sm-4.details-label
-      BIS Offficer
-      %a.help-link{data:{content: t('masterdata_cockpit.biso_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-        = icon('info-circle')
-    .col-sm-2.details-value
-      - unless @project_masterdata.biso
-        \-
-      = @project_masterdata.biso
-    - if @project_masterdata.biso_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @project_masterdata.biso_email
-
-  .row
-    .col-sm-4.details-label
-      Inventory Role
-      %a.help-link{data:{content: t('masterdata_cockpit.inventory_role_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-        = icon('info-circle')
-    .col-sm-2.details-value
-      - unless @project_masterdata.inventory_role
-        \-
-      = @project_masterdata.inventory_role
-    - if @project_masterdata.inventory_role_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @project_masterdata.inventory_role_email
-
-  .row
-    .col-sm-4.details-label
-      Infrastructure Coordinator
-      %a.help-link{data:{content: t('masterdata_cockpit.infrastructure_coordinator_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-        = icon('info-circle')
-    .col-sm-2.details-value
-      - unless @project_masterdata.infrastructure_coordinator
-        \-
-      = @project_masterdata.infrastructure_coordinator
-    - if @project_masterdata.infrastructure_coordinator_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @project_masterdata.infrastructure_coordinator_email
-
-  .row
-    .col-sm-4.details-label
       Run Team
       %a.help-link{data:{content: t('masterdata_cockpit.responsible_operator_help'), popover: {type: "help-hint"}, toggle: "popover"}}
         = icon('info-circle')
@@ -206,6 +146,53 @@
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_controller_email
 
+
+.masterdata-group
+  %h5.masterdata-heading
+    Other Contacts
+    %a.help-link{data:{content: t('masterdata_cockpit.other_contacts_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+      = icon('question-circle-o')
+
+  .row
+    .col-sm-4.details-label
+      Supervisor
+      %a.help-link{data:{content: t('masterdata_cockpit.supervisor_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.supervisor
+        \-
+      = @project_masterdata.supervisor
+
+  .row
+    .col-sm-4.details-label
+      BIS Offficer
+      %a.help-link{data:{content: t('masterdata_cockpit.biso_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.biso
+        \-
+      = @project_masterdata.biso
+
+  .row
+    .col-sm-4.details-label
+      Inventory Role
+      %a.help-link{data:{content: t('masterdata_cockpit.inventory_role_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.inventory_role
+        \-
+      = @project_masterdata.inventory_role
+
+  .row
+    .col-sm-4.details-label
+      Infrastructure Coordinator
+      %a.help-link{data:{content: t('masterdata_cockpit.infrastructure_coordinator_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.infrastructure_coordinator
+        \-
+      = @project_masterdata.infrastructure_coordinator
+
 .masterdata-group
   %h5.masterdata-heading
     Cost Info
@@ -244,7 +231,7 @@
 .masterdata-group
   %h5.masterdata-heading
     Project Info
-    %a.help-link{data:{content: t('masterdata_cockpit.project_info_info'), popover: {type: "help-hint"}, toggle: "popover"}}
+    %a.help-link{data:{content: t('masterdata_cockpit.project_info_help'), popover: {type: "help-hint"}, toggle: "popover"}}
       = icon('question-circle-o')
   .row
     .col-sm-4.details-label
@@ -310,7 +297,7 @@
 .masterdata-group
   %h5.masterdata-heading
     External Certification
-    %a.help-link{data:{content: t('masterdata_cockpit.external_certification_info'), popover: {type: "help-hint"}, toggle: "popover"}}
+    %a.help-link{data:{content: t('masterdata_cockpit.external_certification_help'), popover: {type: "help-hint"}, toggle: "popover"}}
       = icon('question-circle-o')
   .row
     .col-sm-4.details-label

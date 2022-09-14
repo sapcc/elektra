@@ -98,62 +98,6 @@
           = t('masterdata_cockpit.responsible_security_expert_help') 
       .row
         .col-md-6.operator-id
-          = f.input :supervisor, 
-            label: "Supervisor", 
-            placeholder: "C/D/I User",
-            input_html: { class: 'operator-id-input' }
-        .col-md-6.operator-email
-          = f.input :supervisor_email, 
-            placeholder: "Email/Distribution list", 
-            input_html: { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.supervisor_help')
-      .row
-        .col-md-6.operator-id
-          = f.input :biso, 
-            label: "BIS Officer", 
-            placeholder: "C/D/I User",
-            input_html: { class: 'operator-id-input' }
-        .col-md-6.operator-email
-          = f.input :biso_email, 
-            placeholder: "Email/Distribution list", 
-            input_html: { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.biso_help')
-      .row
-        .col-md-6.operator-id
-          = f.input :inventory_role, 
-            label: "Inventory Role", 
-            placeholder: "C/D/I User",
-            input_html: { class: 'operator-id-input' }
-        .col-md-6.operator-email
-          = f.input :inventory_role_email, 
-            placeholder: "Email/Distribution list", 
-            input_html: { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.inventory_role_help')
-      .row
-        .col-md-6.operator-id
-          = f.input :infrastructure_coordinator, 
-            label: "Infrastructure Coordinator", 
-            placeholder: "C/D/I User",
-            input_html: { class: 'operator-id-input' }
-        .col-md-6.operator-email
-          = f.input :infrastructure_coordinator_email, 
-            placeholder: "Email/Distribution list", 
-            input_html: { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.infrastructure_coordinator_help')
-      .row
-        .col-md-6.operator-id
           = f.input :responsible_operator_id, 
             label: "Run Team", 
             placeholder: "C/D/I User", 
@@ -194,6 +138,48 @@
         .col-md-12.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.responsible_controller_help')
+
+
+  %label.control-label Other Contacts
+  .loading-place.loading-right
+  .panel.panel-default
+    .panel-body
+      .row
+        .col-md-6.operator-id
+          = f.input :supervisor, 
+            label: "Supervisor", 
+            placeholder: "C/D/I User",
+            input_html: { class: 'operator-id-input' }
+        .col-md-6.operator-id
+          = f.input :biso, 
+            label: "BIS Officer", 
+            placeholder: "C/D/I User",
+            input_html: { class: 'operator-id-input' }
+      .row
+        .col-md-6.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.supervisor_help')
+        .col-md-6.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.biso_help')
+      .row
+        .col-md-6.operator-id
+          = f.input :inventory_role, 
+            label: "Inventory Role", 
+            placeholder: "C/D/I User",
+            input_html: { class: 'operator-id-input' }
+        .col-md-6.operator-id
+          = f.input :infrastructure_coordinator, 
+            label: "Infrastructure Coordinator", 
+            placeholder: "C/D/I User",
+            input_html: { class: 'operator-id-input' }
+      .row
+        .col-md-6.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.inventory_role_help')
+        .col-md-6.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.infrastructure_coordinator_help')
 
   %label.control-label Cost Info
   .loading-place.loading-right
@@ -328,7 +314,7 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          = t('masterdata_cockpit.external_certification_info')
+          = t('masterdata_cockpit.external_certification_help')
 
 :javascript
   $(function(){

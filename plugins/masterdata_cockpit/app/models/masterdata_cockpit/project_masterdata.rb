@@ -122,27 +122,51 @@ module MasterdataCockpit
     end
 
     def ext_cert_iso
-      read('ExtCertification')["iso"]
+      if read('ext_cert_iso') # from submit form
+        read('ext_cert_iso')
+      else
+        read('ExtCertification')["iso"] # from api
+      end
     end
 
     def ext_cert_c5
-      read('ExtCertification')["c5"]
+      if read('ext_cert_c5') # from submit form
+        read('ext_cert_c5')
+      else
+        read('ExtCertification')["c5"] # from api
+      end
     end
 
     def ext_cert_pci
-      read('ExtCertification')["pci"]
+      if read('ext_cert_pci') # from submit form
+        read('ext_cert_pci')
+      else
+        read('ExtCertification')["pci"] # from api
+      end
     end
 
     def ext_cert_soc1
-      read('ExtCertification')["soc1"]
+      if read('ext_cert_soc1') # from submit form
+        read('ext_cert_soc1')
+      else
+        read('ExtCertification')["soc1"] # from api
+      end
     end
 
     def ext_cert_soc2
-      read('ExtCertification')["soc2"]
+      if read('ext_cert_soc2') # from submit form
+        read('ext_cert_soc2')
+      else
+        read('ExtCertification')["soc2"] # from api
+      end
     end
 
     def ext_cert_sox
-      read('ExtCertification')["sox"]
+      if read('ext_cert_sox') # from submit form
+        read('ext_cert_sox')
+      else
+        read('ExtCertification')["sox"] # from api
+      end
     end
 
     def attributes_for_create
