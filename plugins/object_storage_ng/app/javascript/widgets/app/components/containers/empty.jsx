@@ -1,18 +1,69 @@
 import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
+import useActions from "../../hooks/useActions"
 import { useGlobalState, useDispatch } from "../../stateProvider"
+import cancelablePromise from "lib/tools/cancelable_promise"
 const apiClient = {}
+
+const deleteObjects = (items, options = {}) => {
+  const limit = options.limit || 10000
+
+  if (options.bulkDelete) {
+    // https://docs.openstack.org/swift/latest/middleware.html#bulk-delete
+    // assemble the request object_list containing the paths to all targets
+
+    // if targets more than the defined max deletes per request cut targest into half and try recursively
+    if (items.length > limit) {
+      const [left, right] = items.each_slice((targets.size / 2.0).round).to_a
+      bulkDelete(left)
+      targets = right
+    }
+
+    let objectList = ""
+    items.forEach((target) => {
+      if (!target.container) {
+        throw new Error(`malformed target ${target.inspect}`)
+      }
+      objectList += target.container
+      if (target.object) {
+        objectList += "/" + target.object
+      }
+      objectList += "\n"
+    })
+
+    // apiClinet.post(
+    //   '',
+    //   'bulk-delete' => true, headers: { 'Content-Type' => 'text/plain' },
+    // { objectList })
+  } else {
+    items.forEach((target) => {
+      if (!target.container) {
+        throw new Error(`malformed target ${target.inspect}`)
+      }
+
+      if (target.object) {
+        //delete_object(target[:container], target[:object])
+      } else {
+        //delete_container(target[:container])
+      }
+    })
+  }
+}
 
 const EmptyContainer = ({}) => {
   const { name } = useParams()
   const history = useHistory()
   const [show, setShow] = React.useState(!!name)
   const [confirmation, setConfirmation] = React.useState("")
-  const [isEmpting, setIsEmpting] = React.useState(false)
+  const [beingEmptied, setBeingEmptied] = React.useState(false)
   const [error, setError] = React.useState()
-  const containers = useGlobalState("containers")
+  const { containers, capabilities } = useGlobalState()
   const dispatch = useDispatch()
+  const { loadContainerObjects, deleteObjects } = useActions()
+  const [progress, setProgress] = React.useState(0)
+  const headerRef = React.createRef()
+  const confirmationRef = React.createRef()
 
   const container = React.useMemo(() => {
     if (!containers?.items) return
@@ -27,28 +78,66 @@ const EmptyContainer = ({}) => {
     history.replace("/containers")
   }, [])
 
-  const submit = React.useCallback(
-    (e) => {
+  const [empty, cancelEmpty] = React.useMemo(() => {
+    let active = true
+
+    // this is the function which deletes all objects inside the container
+    const action = (e) => {
       if (e && e.preventDefault) e.preventDefault()
       if (!container || container.name !== confirmation) return
 
+      // This function deletes all objects of the container.
+      // Since the number of objects to be loaded and deleted is limited,
+      // we delete the objects in chunks.
+      const deleteAllObjects = async () => {
+        let marker
+        let deletedCount = 0
+        let processing = true
+        // We load objects, delete them and repeat this process until there are no more objects
+        while (active && processing) {
+          await loadContainerObjects(container.name, {
+            marker,
+          }).then(async ({ data }) => {
+            if (data.length > 0 && active) {
+              await deleteObjects(container.name, data)
+              setProgress((deletedCount += data.length))
+              marker = data.pop().name
+            } else {
+              processing = false
+            }
+          })
+        }
+      }
+
+      setProgress(0)
+      setBeingEmptied(true)
       setError(null)
-      apiClient
-        .osApi("object-store")
-        .put(`${container.name}/empty`)
-        // reload containers
-        .then(() => apiClient.osApi("object-store").get(""))
-        .then((items) =>
-          Promise.resolve(dispatch({ type: "RECEIVE_CONTAINERS", items }))
-        )
-        // close modal window
-        .then(close)
+      deleteAllObjects()
+        .then(() => active && close())
         .catch((error) => {
+          if (!active) return
           setError(error.message)
+          setBeingEmptied(false)
         })
-    },
-    [confirmation, container]
-  )
+    }
+
+    // return the actual action and a cancel function to cancel the delete process for large containers
+    return [action, () => (active = false)]
+  }, [
+    confirmation,
+    setProgress,
+    setError,
+    setBeingEmptied,
+    loadContainerObjects,
+    deleteObjects,
+    capabilities,
+  ])
+
+  React.useEffect(() => {
+    return () => {
+      if (cancelEmpty) cancelEmpty()
+    }
+  }, [cancelEmpty])
 
   return (
     <Modal
@@ -60,7 +149,20 @@ const EmptyContainer = ({}) => {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">
-          Empty container: {container?.name}
+          Empty container: <span ref={headerRef}>{container?.name}</span>{" "}
+          <small>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                if (!headerRef.current || !confirmationRef.current) return
+                confirmationRef.current.value = headerRef.current.textContent
+                setConfirmation(headerRef.current.textContent)
+              }}
+            >
+              <i className="fa fa-clone" />
+            </a>
+          </small>
         </Modal.Title>
       </Modal.Header>
 
@@ -112,6 +214,7 @@ const EmptyContainer = ({}) => {
                           confirm
                         </label>
                         <input
+                          ref={confirmationRef}
                           className="form-control string required"
                           autoFocus
                           type="text"
@@ -121,6 +224,21 @@ const EmptyContainer = ({}) => {
                         />
                       </div>
                     </fieldset>
+                    {beingEmptied && progress >= 0 && container && (
+                      <>
+                        <span>
+                          Deleted:{" "}
+                          {parseFloat(
+                            (progress / container.count) * 100
+                          ).toFixed(2)}
+                          %{" "}
+                          <small className="info-text">
+                            ( {progress} / {container.count} )
+                          </small>{" "}
+                          <span className="spinner" />
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
               </React.Fragment>
@@ -133,10 +251,12 @@ const EmptyContainer = ({}) => {
 
         <Button
           bsStyle="primary"
-          onClick={submit}
-          disabled={!container || container.name !== confirmation}
+          onClick={empty}
+          disabled={
+            !container || container.name !== confirmation || beingEmptied
+          }
         >
-          {isEmpting ? "Empting..." : "Empty"}
+          {beingEmptied ? "Empting..." : "Empty"}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -175,7 +175,6 @@ export const createAjaxHelper = (options = {}) => {
       config.headers = headers
     }
 
-    // console.log("=============CONFIG AFTER", config)
     return config
   })
 

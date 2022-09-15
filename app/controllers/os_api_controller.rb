@@ -33,7 +33,8 @@ class OsApiController < ::AjaxController
     # call the openstack api endpoint with given path, params and headers
     # for http methods POST, PUT, PATCH we have to consider the body parameter
     elektron_response = if ["post","put","patch"].include?(method)
-      body = JSON.parse(request.body.read ) rescue request.body.read 
+      body = request.body.read 
+      body = JSON.parse(body ) rescue body 
       service.public_send(method,path,elektron_params, headers: headers) do 
         body 
       end      

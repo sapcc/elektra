@@ -1,9 +1,9 @@
 import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
+import useActions from "../../hooks/useActions"
 import { useGlobalState, useDispatch } from "../../stateProvider"
 
-const apiClient = {}
 const DelteContainer = ({}) => {
   const { name } = useParams()
   const history = useHistory()
@@ -12,7 +12,9 @@ const DelteContainer = ({}) => {
   const [isDeleteing, setIsDeleting] = React.useState(false)
   const [error, setError] = React.useState()
   const containers = useGlobalState("containers")
-  const dispatch = useDispatch()
+  const headerRef = React.createRef()
+  const confirmationRef = React.createRef()
+  const { deleteContainer } = useActions()
 
   const container = React.useMemo(() => {
     if (!containers?.items) return
@@ -33,14 +35,8 @@ const DelteContainer = ({}) => {
       if (!container || container.name !== confirmation) return
 
       setError(null)
-      apiClient
-        .osApi("object-store")
-        .del(`${container.name}`)
-        // reload containers
-        .then(() => apiClient.osApi("object-store").get(""))
-        .then((items) =>
-          Promise.resolve(dispatch({ type: "RECEIVE_CONTAINERS", items }))
-        )
+      setIsDeleting(true)
+      deleteContainer(container.name)
         // close modal window
         .then(close)
         .catch((error) => {
@@ -48,9 +44,11 @@ const DelteContainer = ({}) => {
             setError(
               "Cannot delete container because it contains objects. Please empty it first."
             )
+          else setError(error.message)
+          setIsDeleting(false)
         })
     },
-    [confirmation, container]
+    [confirmation, container, deleteContainer]
   )
 
   return (
@@ -63,7 +61,20 @@ const DelteContainer = ({}) => {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">
-          Delete container: {container?.name}
+          Delete container: <span ref={headerRef}>{container?.name}</span>{" "}
+          <small>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                if (!headerRef.current || !confirmationRef.current) return
+                confirmationRef.current.value = headerRef.current.textContent
+                setConfirmation(headerRef.current.textContent)
+              }}
+            >
+              <i className="fa fa-clone" />
+            </a>
+          </small>
         </Modal.Title>
       </Modal.Header>
 
@@ -107,6 +118,7 @@ const DelteContainer = ({}) => {
                           confirm
                         </label>
                         <input
+                          ref={confirmationRef}
                           className="form-control string required"
                           autoFocus
                           type="text"
@@ -116,6 +128,12 @@ const DelteContainer = ({}) => {
                         />
                       </div>
                     </fieldset>
+
+                    {isDeleteing && (
+                      <span>
+                        Deleting <span className="spinner" />{" "}
+                      </span>
+                    )}
                   </div>
                 </div>
               </React.Fragment>
@@ -132,7 +150,9 @@ const DelteContainer = ({}) => {
               <Button
                 bsStyle="primary"
                 onClick={submit}
-                disabled={!container || container.name !== confirmation}
+                disabled={
+                  !container || container.name !== confirmation || isDeleteing
+                }
               >
                 {isDeleteing ? "Deleting..." : "Delete"}
               </Button>

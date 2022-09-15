@@ -25,8 +25,6 @@ const Breadcrumb = ({ count }) => {
     history.push(`${objectsRoot}/${encode(newPath)}`)
   })
 
-  console.log(items, name)
-
   return (
     <div className="breadrumb-with-details">
       <ol className="breadcrumb">

@@ -53,33 +53,7 @@ const useActions = () => {
     [dispatch, containers.updatedAt]
   )
 
-  const loadContainerObjectsOnce = React.useCallback(
-    (containerName, options = {}) => {
-      if (objects[containerName]?.updatedAt && !options.reload) return
-
-      dispatch({ type: "REQUEST_CONTAINER_OBJECTS", containerName })
-      apiClient
-        .osApi("object-store")
-        .get(containerName)
-        .then((response) => {
-          dispatch({
-            type: "RECEIVE_CONTAINER_OBJECTS",
-            containerName,
-            items: response.data,
-          })
-        })
-        .catch((error) => {
-          dispatch({
-            type: "RECEIVE_CONTAINER_OBJECTS_ERROR",
-            containerName,
-            error: error.message,
-          })
-        })
-    },
-    [dispatch, objects]
-  )
-
-  const loadSubObjects = React.useCallback(
+  const loadContainerObjects = React.useCallback(
     (containerName, options = {}) =>
       apiClient
         .osApi("object-store")
@@ -109,6 +83,61 @@ const useActions = () => {
     []
   )
 
+  const deleteObjects = React.useCallback(
+    (containerName, objects) => {
+      const bulkDeleteOptions = capabilities?.data?.bulk_delete
+      let promises = []
+
+      // Deleting objects can be done in chunks if the API supports bulk delete options
+      if (bulkDeleteOptions && bulkDeleteOptions.max_deletes_per_request) {
+        // bulk delete!
+        const chunkSize = bulkDeleteOptions.max_deletes_per_request
+        for (let i = 0; i < objects.length; i += chunkSize) {
+          const chunk = objects.slice(i, i + chunkSize)
+          const body = chunk
+            .map((o) => encodeURIComponent(`${containerName}/${o.name}`))
+            .join("\n")
+          // collect all delete promises
+          promises.push(
+            apiClient
+              .osApi("object-store")
+              .post("", body, {
+                params: { "bulk-delete": true },
+                headers: { "Content-Type": "text/plain" },
+              })
+              .then((response) => {
+                const data = response.data || {}
+                const status = data["Response Status"] || ""
+                if (status.indexOf("200") < 0)
+                  throw new Error(data["Response Body"])
+                else return data
+              })
+          )
+        }
+      } else {
+        // Delete each object individually
+        // collect delete promises
+        promises = objects.map((object) =>
+          deleteObject(containerName, object.name)
+        )
+      }
+      // Promise.all allows us to delete objects or object chunks in parallel
+      return Promise.all(promises)
+    },
+    [capabilities, deleteObject]
+  )
+
+  const deleteContainer = React.useCallback(
+    (containerName) =>
+      apiClient
+        .osApi("object-store")
+        .delete(containerName)
+        .then(() => {
+          dispatch({ type: "REMOVE_CONTAINER", name: containerName })
+        }),
+    [dispatch]
+  )
+
   const loadContainerMetadata = React.useCallback(
     (containerName) =>
       apiClient
@@ -136,13 +165,14 @@ const useActions = () => {
   return {
     loadCapabilitiesOnce,
     loadContainersOnce,
-    loadContainerObjectsOnce,
     loadObjectMetadata,
     deleteObject,
+    deleteObjects,
     loadContainerMetadata,
     updateContainerMetadata,
     getAcls,
-    loadSubObjects,
+    loadContainerObjects,
+    deleteContainer,
   }
 }
 

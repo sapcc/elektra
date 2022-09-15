@@ -209,7 +209,7 @@ const Objects = () => {
   const { value: currentPath } = useUrlParamEncoder(objectPath)
   const [searchTerm, setSearchTerm] = React.useState(null)
 
-  const { loadSubObjects } = useActions()
+  const { loadContainerObjects } = useActions()
   const [objects, dispatch] = React.useReducer(reducer, initialState)
 
   React.useEffect(() => {
@@ -237,9 +237,10 @@ const Objects = () => {
     * until the results contain no objects with leading slashes.
     */
     const loadAllObjects = async (prefix = "") => {
-      let objects = await loadSubObjects(name, { prefix, delimiter: "/" }).then(
-        ({ data }) => data
-      )
+      let objects = await loadContainerObjects(name, {
+        prefix,
+        delimiter: "/",
+      }).then(({ data }) => data)
       // find index of the first object which name starts with a slash
       let regex = new RegExp(`^${prefix}/+$`)
       const startingWithSlashIndex = objects.findIndex(
@@ -287,7 +288,7 @@ const Objects = () => {
       .catch((error) =>
         dispatch({ type: "RECEIVE_ERROR", error: error.message })
       )
-  }, [name, currentPath, dispatch])
+  }, [name, currentPath, dispatch, loadContainerObjects])
 
   const handleMenuAction = React.useCallback(
     (action, item) => {
