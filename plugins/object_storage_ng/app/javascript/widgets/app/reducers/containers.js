@@ -34,6 +34,16 @@ export default (state = initialState, action = {}) => {
       }
     }
 
+    case "RECEIVE_CONTAINER": {
+      const items = state.items.slice()
+      items.unshift(action.item)
+      return {
+        ...state,
+        items,
+        isFetching: false,
+        updatedAt: Date.now(),
+      }
+    }
     default:
       return state
   }

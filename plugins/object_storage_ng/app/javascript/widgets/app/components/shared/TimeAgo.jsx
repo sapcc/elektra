@@ -21,7 +21,7 @@ import React from "react"
 
 const TimeAgo = ({ date, originDate }) => {
   if (typeof date === "string") {
-    if (date[DataTransfer.length - 1] !== "Z") date += "Z"
+    if (date[date.length - 1] !== "Z") date += "Z"
     date = new Date(date)
   }
   let ago = (Date.now() - date.getTime()) / 1000

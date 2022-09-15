@@ -88,7 +88,7 @@ const Table = ({ data, onMenuAction }) => {
             {(permissions.canShow || permissions.canShowAccessControl) && (
               <ContextMenu.Item divider />
             )}
-            {item.count > 0 && permissions.canEmpty && (
+            {permissions.canEmpty && (
               <ContextMenu.Item onClick={() => onMenuAction("empty", item)}>
                 Empty
               </ContextMenu.Item>

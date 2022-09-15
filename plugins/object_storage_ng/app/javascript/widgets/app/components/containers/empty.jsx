@@ -183,10 +183,10 @@ const EmptyContainer = ({}) => {
               </Alert>
             )}
             {container.count <= 0 ? (
-              <Alert bsStyle="warning">
-                <strong>Cannot empty</strong>
-                <p>The container is already empty.</p>
-              </Alert>
+              <div className="bs-callout bs-callout-info">
+                <span className="fa fa-exclamation-circle"></span> Nothing to
+                do. Container is already empty.
+              </div>
             ) : (
               <React.Fragment>
                 <div className="bs-callout bs-callout-danger">
@@ -247,17 +247,23 @@ const EmptyContainer = ({}) => {
         )}
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={close}>Cancel</Button>
+        {container.count === 0 ? (
+          <Button onClick={close}>Got it!</Button>
+        ) : (
+          <>
+            <Button onClick={close}>Cancel</Button>
 
-        <Button
-          bsStyle="primary"
-          onClick={empty}
-          disabled={
-            !container || container.name !== confirmation || beingEmptied
-          }
-        >
-          {beingEmptied ? "Empting..." : "Empty"}
-        </Button>
+            <Button
+              bsStyle="primary"
+              onClick={empty}
+              disabled={
+                !container || container.name !== confirmation || beingEmptied
+              }
+            >
+              {beingEmptied ? "Empting..." : "Empty"}
+            </Button>
+          </>
+        )}
       </Modal.Footer>
     </Modal>
   )

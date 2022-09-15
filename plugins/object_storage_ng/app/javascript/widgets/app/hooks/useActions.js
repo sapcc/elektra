@@ -138,6 +138,25 @@ const useActions = () => {
     [dispatch]
   )
 
+  const createContainer = React.useCallback(
+    (containerName) =>
+      apiClient
+        .osApi("object-store")
+        .put(containerName, {}, { headers: { "Content-Length": "0" } })
+        .then(() => {
+          dispatch({
+            type: "RECEIVE_CONTAINER",
+            item: {
+              name: containerName,
+              count: 0,
+              bytes: 0,
+              last_modified: new Date().toISOString(),
+            },
+          })
+        }),
+    [dispatch]
+  )
+
   const loadContainerMetadata = React.useCallback(
     (containerName) =>
       apiClient
@@ -173,6 +192,7 @@ const useActions = () => {
     getAcls,
     loadContainerObjects,
     deleteContainer,
+    createContainer,
   }
 }
 

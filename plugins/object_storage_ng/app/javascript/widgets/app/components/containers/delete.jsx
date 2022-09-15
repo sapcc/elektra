@@ -95,10 +95,10 @@ const DelteContainer = ({}) => {
               </Alert>
             )}
             {container.count > 0 ? (
-              <Alert bsStyle="warning">
-                <strong>Cannot delete</strong>
-                <p>Container contains objects. Please empty it first.</p>
-              </Alert>
+              <div className="bs-callout bs-callout-danger">
+                <span className="fa fa-exclamation-circle"></span> Cannot delete
+                Container contains objects. Please empty it first.
+              </div>
             ) : (
               <React.Fragment>
                 <div className="bs-callout bs-callout-danger">
