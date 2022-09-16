@@ -315,6 +315,22 @@
         .col-md-12.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.external_certification_help')
+      .alert.alert-info{style: "margin:0"}
+        %p
+          %strong ISO:
+          = t('masterdata_cockpit.external_certification_iso_help')
+        %p
+          %strong C5:
+          = t('masterdata_cockpit.external_certification_c5_help')
+        %p
+          %strong PCI:
+          = t('masterdata_cockpit.external_certification_pci_help')
+        %p
+          %strong SOC:
+          = t('masterdata_cockpit.external_certification_soc_help')
+        %p
+          %strong SOX:
+          = t('masterdata_cockpit.external_certification_sox_help')
 
 :javascript
   $(function(){

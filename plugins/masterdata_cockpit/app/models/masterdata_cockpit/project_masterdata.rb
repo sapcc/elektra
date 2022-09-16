@@ -125,7 +125,7 @@ module MasterdataCockpit
       if read('ext_cert_iso') # from submit form
         read('ext_cert_iso')
       else
-        read('ExtCertification')["iso"] # from api
+        read('ext_certification')["iso"] # from api
       end
     end
 
@@ -133,7 +133,7 @@ module MasterdataCockpit
       if read('ext_cert_c5') # from submit form
         read('ext_cert_c5')
       else
-        read('ExtCertification')["c5"] # from api
+        read('ext_certification')["c5"] # from api
       end
     end
 
@@ -141,7 +141,7 @@ module MasterdataCockpit
       if read('ext_cert_pci') # from submit form
         read('ext_cert_pci')
       else
-        read('ExtCertification')["pci"] # from api
+        read('ext_certification')["pci"] # from api
       end
     end
 
@@ -149,7 +149,7 @@ module MasterdataCockpit
       if read('ext_cert_soc1') # from submit form
         read('ext_cert_soc1')
       else
-        read('ExtCertification')["soc1"] # from api
+        read('ext_certification')["soc1"] # from api
       end
     end
 
@@ -157,7 +157,7 @@ module MasterdataCockpit
       if read('ext_cert_soc2') # from submit form
         read('ext_cert_soc2')
       else
-        read('ExtCertification')["soc2"] # from api
+        read('ext_certification')["soc2"] # from api
       end
     end
 
@@ -165,7 +165,7 @@ module MasterdataCockpit
       if read('ext_cert_sox') # from submit form
         read('ext_cert_sox')
       else
-        read('ExtCertification')["sox"] # from api
+        read('ext_certification')["sox"] # from api
       end
     end
 
@@ -196,7 +196,7 @@ module MasterdataCockpit
         'contains_pii_dpp_hr' => read('contains_pii_dpp_hr'),
         'contains_external_customer_data' => read('contains_external_customer_data'),
         'environment' => read('environment'),
-        'ExtCertification' => combine_external_certifications,
+        'ext_certification' => combine_external_certifications,
         'type_of_data' => read('type_of_data'),
         'soft_license_mode' => read('soft_license_mode'),
         'revenue_relevance' => read('revenue_relevance'),
