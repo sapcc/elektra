@@ -10,10 +10,10 @@ class OsApiController < ::AjaxController
     # get path from request
     path = params[:path]
     # we remove the first part of path. It is the openstack service name
-    path_tokens = path.split("/")
-    service_name = path_tokens.shift
+    service_path = path.split("/",2)
+    service_name = service_path[0]
     # the rest is the current path
-    path = path_tokens.join("/")
+    path = service_path[1]
     path += ".#{params[:format]}" if params[:format]
 
     headers = {"Content-Type" => request.headers["Content-Type"] || "application/json"}

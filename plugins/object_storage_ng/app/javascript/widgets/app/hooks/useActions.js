@@ -78,7 +78,7 @@ const useActions = () => {
     (containerName, name) =>
       apiClient
         .osApi("object-store")
-        .delete(containerName + "/" + name)
+        .delete(encodeURIComponent(containerName + "/" + name))
         .then((response) => response.data),
     []
   )
@@ -157,6 +157,24 @@ const useActions = () => {
     [dispatch]
   )
 
+  const createFolder = React.useCallback((containerName, path, name) => {
+    let fullPath = path ? path : ""
+    if (fullPath[fullPath.length - 1] !== "/") fullPath += "/"
+    fullPath += name + "/"
+    const contentType = "application/directory"
+
+    return apiClient
+      .osApi("object-store")
+      .put(
+        encodeURIComponent(containerName + "/" + fullPath),
+        {},
+        { headers: { "Content-Type": contentType } }
+      )
+      .then(() => ({
+        subdir: fullPath,
+      }))
+  }, [])
+
   const loadContainerMetadata = React.useCallback(
     (containerName) =>
       apiClient
@@ -193,6 +211,7 @@ const useActions = () => {
     loadContainerObjects,
     deleteContainer,
     createContainer,
+    createFolder,
   }
 }
 

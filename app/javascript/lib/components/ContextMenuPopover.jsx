@@ -10,7 +10,7 @@ contextMenuHost.setAttribute("id", "context-menu-host")
 // add contextMenuHost at the end of body after the page has been loaded
 window.addEventListener("load", () => document.body.append(contextMenuHost))
 
-const ContextMenu = ({ children }) => {
+const ContextMenu = ({ children, disabled }) => {
   const [show, setShow] = React.useState(false)
   const wrapperRef = React.useRef()
   const [referenceElement, setReferenceElement] = React.useState(null)
@@ -37,6 +37,7 @@ const ContextMenu = ({ children }) => {
     <div>
       <button
         type="button"
+        disabled={disabled}
         ref={setReferenceElement}
         className="btn btn-sm btn-default"
         onClick={() => setShow(!show)}
@@ -57,6 +58,8 @@ const ContextMenu = ({ children }) => {
                   ? React.cloneElement(child, {
                       hideMenu: () => setShow(false),
                     })
+                  : child.type.displayName === "ContextMenu.Divider"
+                  ? React.cloneElement(child)
                   : null
               )}
             </ul>
@@ -69,10 +72,11 @@ const ContextMenu = ({ children }) => {
 
 ContextMenu.propTypes = {
   children: PropTypes.any,
+  disabled: PropTypes.bool,
 }
 
-const Item = ({ className, onClick, children, hideMenu }) => (
-  <li className={className}>
+const Item = ({ className, onClick, children, hideMenu, disabled }) => (
+  <li className={`${disabled ? "disabled" : ""} ${className || ""}`}>
     {onClick ? (
       <a
         href="#"
@@ -97,8 +101,13 @@ Item.propTypes = {
   children: PropTypes.any,
   onClick: PropTypes.func,
   hideMenu: PropTypes.func,
+  disabled: PropTypes.bool,
 }
 
+const Divider = () => <li role="separator" className="divider" />
+Divider.displayName = "ContextMenu.Divider"
+
 ContextMenu.Item = Item
+ContextMenu.Divider = Divider
 
 export default ContextMenu

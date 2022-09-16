@@ -1,34 +1,38 @@
 import React from "react"
 import PropTypes from "prop-types"
 import VirtualizedTable from "lib/components/VirtualizedTable"
-import { Dropdown, MenuItem } from "react-bootstrap"
+import ContextMenu from "lib/components/ContextMenuPopover"
 import TimeAgo from "../shared/TimeAgo"
-import ItemsCount from "../shared/ItemsCount"
 import { Unit } from "lib/unit"
-import { useParams, Link, useRouteMatch, useHistory } from "react-router-dom"
+import {
+  useParams,
+  Link,
+  useRouteMatch,
+  useHistory,
+  Route,
+} from "react-router-dom"
 import FileIcon from "./FileIcon"
-import Router from "./router"
 import Breadcrumb from "../shared/breadcrumb"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 import { Alert } from "react-bootstrap"
-// import apiClient from "../../lib/apiClient"
 import { SearchField } from "lib/components/search_field"
-import { useGlobalState } from "../../stateProvider"
 import useActions from "../../hooks/useActions"
+import NewObject from "./new"
+import UploadFile from "./upload"
 
 const unit = new Unit("B")
 
-const itemsChunks = (items, chunkSize) => {
-  if (chunkSize) {
-    const chunks = []
-    for (let i = 0; i < items.length; i += chunkSize) {
-      chunks.push(items.slice(i, i + chunkSize))
-    }
-    return chunks
-  } else {
-    return [items]
-  }
-}
+// const itemsChunks = (items, chunkSize) => {
+//   if (chunkSize) {
+//     const chunks = []
+//     for (let i = 0; i < items.length; i += chunkSize) {
+//       chunks.push(items.slice(i, i + chunkSize))
+//     }
+//     return chunks
+//   } else {
+//     return [items]
+//   }
+// }
 
 // const deleteObjects = (objects, options = {}) => {
 //   const containerName = options.containerName
@@ -95,7 +99,9 @@ const Table = ({ data, onMenuAction, onNameClick }) => {
     ({ Row, item }) => (
       <Row>
         <Row.Column>
-          {item.isProcessing && <span className="spinner" />}
+          {(item.isProcessing || item.isDeleting) && (
+            <span className="spinner" />
+          )}
           <FileIcon item={item} />{" "}
           <a
             href="#"
@@ -118,48 +124,44 @@ const Table = ({ data, onMenuAction, onNameClick }) => {
         </Row.Column>
         <Row.Column>{!item.subdir && unit.format(item.bytes)}</Row.Column>
         <Row.Column>
-          <Dropdown id={`object-dropdown-${item.path}-${item.name}`} pullRight>
-            <Dropdown.Toggle noCaret className="btn-sm">
-              <span className="fa fa-cog" />
-            </Dropdown.Toggle>
+          {item.subdir ? (
+            <ContextMenu>
+              <ContextMenu.Item
+                onClick={() => onMenuAction("deleteRecursively", item)}
+              >
+                Delete recursively
+              </ContextMenu.Item>
+            </ContextMenu>
+          ) : (
+            <ContextMenu>
+              <ContextMenu.Item onClick={() => onMenuAction("download", item)}>
+                Download
+              </ContextMenu.Item>
 
-            {item.subdir ? (
-              <Dropdown.Menu>
-                <MenuItem
-                  onClick={() => onMenuAction("deleteRecursively", item)}
-                >
-                  Delete recursively
-                </MenuItem>
-              </Dropdown.Menu>
-            ) : (
-              <Dropdown.Menu className="super-colors">
-                <MenuItem onClick={() => onMenuAction("download", item)}>
-                  Download
-                </MenuItem>
+              <ContextMenu.Divider />
+              <ContextMenu.Item
+                onClick={() => onMenuAction("properties", item)}
+              >
+                Properties
+              </ContextMenu.Item>
+              <ContextMenu.Item divider />
 
-                <MenuItem divider />
-                <MenuItem onClick={() => onMenuAction("properties", item)}>
-                  Properties
-                </MenuItem>
-                <MenuItem divider />
-
-                <MenuItem onClick={() => onMenuAction("copy", item)}>
-                  Copy
-                </MenuItem>
-                <MenuItem onClick={() => onMenuAction("move", item)}>
-                  Move/Rename
-                </MenuItem>
-                <MenuItem onClick={() => onMenuAction("delete", item)}>
-                  Delete
-                </MenuItem>
-                <MenuItem
-                  onClick={() => onMenuAction("deleteKeepSegments", item)}
-                >
-                  Delete (keep segments)
-                </MenuItem>
-              </Dropdown.Menu>
-            )}
-          </Dropdown>
+              <ContextMenu.Item onClick={() => onMenuAction("copy", item)}>
+                Copy
+              </ContextMenu.Item>
+              <ContextMenu.Item onClick={() => onMenuAction("move", item)}>
+                Move/Rename
+              </ContextMenu.Item>
+              <ContextMenu.Item onClick={() => onMenuAction("delete", item)}>
+                Delete
+              </ContextMenu.Item>
+              <ContextMenu.Item
+                onClick={() => onMenuAction("deleteKeepSegments", item)}
+              >
+                Delete (keep segments)
+              </ContextMenu.Item>
+            </ContextMenu>
+          )}
         </Row.Column>
       </Row>
     ),
@@ -188,13 +190,32 @@ Table.propTypes = {
 const initialState = { items: [], isFetching: false, error: null }
 
 function reducer(state, action) {
-  switch (action.type) {
+  const { type, ...props } = action
+  switch (type) {
     case "REQUEST_ITEMS":
       return { ...state, isFetching: true, error: null }
     case "RECEIVE_ITEMS":
-      return { ...state, isFetching: false, error: null, items: action.items }
+      return { ...state, isFetching: false, error: null, items: props.items }
+    case "RECEIVE_ITEM": {
+      const items = state.items.slice()
+      items.unshift(props.item)
+      return { ...state, items }
+    }
+    case "REMOVE_ITEM": {
+      const items = state.items.slice()
+      const index = items.findIndex((i) => i.name === props.name)
+      if (index >= 0) items.splice(index, 1)
+      return { ...state, items }
+    }
+    case "UPDATE_ITEM": {
+      const items = state.items.slice()
+      const index = items.findIndex((i) => i.name === props.name)
+      if (index < 0) return state
+      items[index] = { ...items[index], ...props }
+      return { ...state, items }
+    }
     case "RECEIVE_ERROR":
-      return { ...state, isFetching: false, error: action.error }
+      return { ...state, isFetching: false, error: props.error }
     default:
       throw new Error()
   }
@@ -204,12 +225,11 @@ const Objects = () => {
   let { url } = useRouteMatch()
   let objectsRoot = url.replace(/([^/])\/objects.*/, "$1/objects")
   let history = useHistory()
-  let { encode } = useUrlParamEncoder()
   let { name, objectPath } = useParams()
-  const { value: currentPath } = useUrlParamEncoder(objectPath)
+  const { value: currentPath, encode } = useUrlParamEncoder(objectPath)
   const [searchTerm, setSearchTerm] = React.useState(null)
 
-  const { loadContainerObjects } = useActions()
+  const { loadContainerObjects, deleteObject } = useActions()
   const [objects, dispatch] = React.useReducer(reducer, initialState)
 
   React.useEffect(() => {
@@ -296,15 +316,37 @@ const Objects = () => {
       switch (action) {
         case "changePath":
           history.push(`${objectsRoot}/${encode(item.path)}`)
+          break
+        case "delete": {
+          dispatch({ type: "UPDATE_ITEM", name: item.name, isDeleting: true })
+          deleteObject(name, item.name)
+            .then(() => dispatch({ type: "REMOVE_ITEM", name: item.name }))
+            .catch((error) =>
+              dispatch({
+                type: "UPDATE_ITEM",
+                name: item.name,
+                isDeleting: false,
+                error: error.message,
+              })
+            )
+          break
+        }
       }
     },
-    [objectsRoot]
+    [name, objectsRoot, deleteObject, dispatch]
   )
 
   const handleNameClick = React.useCallback(
     (item) =>
       item.subdir && history.push(`${objectsRoot}/${encode(item.subdir)}`),
     [history, objectsRoot]
+  )
+
+  const handleFolderCreated = React.useCallback(
+    (values) => {
+      dispatch({ type: "RECEIVE_ITEM", item: values })
+    },
+    [dispatch]
   )
 
   const filteredItems = React.useMemo(() => {
@@ -314,7 +356,12 @@ const Objects = () => {
 
   return (
     <React.Fragment>
-      <Router />
+      <Route exact path="/containers/:name/objects/:objectPath?/new">
+        <NewObject onCreated={handleFolderCreated} />
+      </Route>
+      <Route exact path="/containers/:name/objects/:objectPath?/upload">
+        <UploadFile />
+      </Route>
 
       <div className="toolbar">
         <SearchField
@@ -332,7 +379,6 @@ const Objects = () => {
           </Link>
         </div>
       </div>
-
       <Breadcrumb count={filteredItems.length} />
       {objects.isFetching ? (
         <span>

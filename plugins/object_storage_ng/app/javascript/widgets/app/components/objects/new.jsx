@@ -1,45 +1,39 @@
-import { Modal, Button } from "react-bootstrap"
-import { Form } from "lib/elektra-form"
-import { useHistory, useParams, useRouteMatch } from "react-router-dom"
+import React from "react"
+import PropTypes from "prop-types"
+import { Modal, Button, Alert } from "react-bootstrap"
+import { useHistory, useParams } from "react-router-dom"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
+import useActions from "../../hooks/useActions"
 
-const NewObject = () => {
-  let { url } = useRouteMatch()
+const NewObject = ({ onCreated }) => {
   const history = useHistory()
-  let { name, objectPath } = useParams()
+  let { name: containerName, objectPath } = useParams()
   const { value: currentPath } = useUrlParamEncoder(objectPath)
   const [show, setShow] = React.useState(true)
+  const [processing, setProcessing] = React.useState(false)
+  const [error, setError] = React.useState()
+  const [name, setName] = React.useState("")
+  const { createFolder } = useActions()
 
-  const validate = React.useCallback((values) => !!values.name, [])
+  const close = React.useCallback(() => setShow(false), [])
 
-  const close = React.useCallback((e) => {
-    setShow(false)
-  }, [])
+  const back = React.useCallback(() => {
+    let path = `/containers/${containerName}/objects`
+    if (objectPath) path += `/${objectPath}`
+    history.replace(path)
+  }, [containerName, objectPath])
 
-  const back = React.useCallback(
-    (e) => {
-      history.replace(`/containers/${name}/objects/${objectPath}`)
-    },
-    [objectPath]
-  )
-
-  const submit = React.useCallback(
-    (values) => null,
-
-    // apiClient
-    //   .post("containers", { container: values })
-    //   .then(() => apiClient.get("containers"))
-    //   // reload containers
-    //   .then((items) =>
-    //     Promise.resolve(dispatch({ type: "RECEIVE_CONTAINERS", items }))
-    //   )
-    //   // close modal window
-    //   .then(close)
-    //   .catch((error) => {
-    //     throw { errors: error.message }
-    //   }),
-    [(close, dispatch)]
-  )
+  const submit = React.useCallback(() => {
+    setError(null)
+    setProcessing(true)
+    createFolder(containerName, currentPath, name)
+      .then((item) => onCreated && onCreated({ ...item, display_name: name }))
+      .then(close)
+      .catch((error) => {
+        setError(error.message)
+        setProcessing(false)
+      })
+  }, [close, containerName, currentPath, name])
 
   return (
     <Modal
@@ -55,21 +49,53 @@ const NewObject = () => {
         </Modal.Title>
       </Modal.Header>
 
-      <Form className="form" validate={validate} onSubmit={submit}>
-        <Modal.Body>
-          <Form.Errors />
+      <Modal.Body>
+        {error && (
+          <Alert bsStyle="danger">
+            <strong>An error has occurred</strong>
+            <p>{error}</p>
+          </Alert>
+        )}
 
-          <Form.Element label="Folder name" name="name" inline required>
-            <Form.Input elementType="input" type="text" name="name" />
-          </Form.Element>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={close}>Cancel</Button>
-          <Form.SubmitButton label="Create folder" />
-        </Modal.Footer>
-      </Form>
+        <div className="row">
+          <div className="col-md-6">
+            <fieldset>
+              <div className="form-group string required forms_confirm_container_action_name">
+                <label
+                  className="control-label string required"
+                  htmlFor="confirmation"
+                >
+                  <abbr title="required">*</abbr> Type container name to confirm
+                </label>
+                <input
+                  className="form-control string required"
+                  autoFocus
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+            </fieldset>
+            {processing && <span className="spinner" />}
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={close}>Cancel</Button>
+        <Button
+          bsStyle="primary"
+          onClick={submit}
+          disabled={!name || processing}
+        >
+          {processing ? "Creating..." : "Create folder"}
+        </Button>
+      </Modal.Footer>
     </Modal>
   )
+}
+
+NewObject.propTypes = {
+  onCreated: PropTypes.func,
 }
 
 export default NewObject
