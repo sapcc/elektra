@@ -13,7 +13,7 @@ class OsApiController < ::AjaxController
     service_path = path.split("/",2)
     service_name = service_path[0]
     # the rest is the current path
-    path = service_path[1]
+    path = service_path[1] || ""
     path += ".#{params[:format]}" if params[:format]
 
     headers = {"Content-Type" => request.headers["Content-Type"] || "application/json"}
