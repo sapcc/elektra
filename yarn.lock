@@ -5168,7 +5168,7 @@ jsx-to-string@^1.4.0:
 
 "juno-ui-components@https://github.com/sapcc/juno/releases/latest/download/juno-ui-components.tgz":
   version "0.5.0"
-  resolved "https://github.com/sapcc/juno/releases/latest/download/juno-ui-components.tgz#b541758cd9d80e0e2092b4d1666969a4535232a2"
+  resolved "https://github.com/sapcc/juno/releases/latest/download/juno-ui-components.tgz#ce9d3d095cd7df3508babc309b11e38935503965"
 
 keycode@^2.1.2:
   version "2.2.1"
