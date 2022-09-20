@@ -83,30 +83,59 @@ RUN echo -e '\n\
   echo "" \n\
   echo -e "${GREEN} - start rails:       start-rails"\n\
   echo " - start javascript:  start-js"\n\
+  echo " - dev-proxy:         start-dev-proxy"\n\
+  echo " - postgres console:  start-pg-console"\n\
   echo " - rebuild database:  rebuild-db"\n\
-  echo " - rebuild npm:       rebuild-npm"\n\
+  echo " - rebuild npms:       rebuild-npms"\n\
   echo " - rebuild gems:      rebuild-gems"\n\
-  echo " - postgres console:  pg-console"\n\
-  echo " - proxy:             dev-proxy"\n\
   echo " - show this help:    help-elektra"\n\
   echo ""\n\
   echo -e " [database] elektra database are located in /elektra/tmp/postgresql/data/"\n\
-  echo " [proxy]    to use the dev-proxy you need to uncomment proxy vars in .env"\n\
-  echo "            and set ELEKTRA_SSL_VERIFY_PEER to false"\n\
+  echo " [proxy]    to use the dev-proxy you need to uncomment proxy vars"\n\
+  echo "            and set ELEKTRA_SSL_VERIFY_PEER to false in .env"\n\
   echo -e ${NC}' >> /usr/local/bin/help-elektra && chmod +x /usr/local/bin/help-elektra
+
+RUN echo -e '\n\
+  #!/bin/bash\n\n\
+  cd /app && bin/rails s -b 0.0.0.0 -p $APP_PORT\n\
+  ' >> /usr/local/bin/start-rails && chmod +x /usr/local/bin/start-rails
+
+RUN echo -e '\n\
+  #!/bin/bash\n\n\
+  cd /app && yarn build --watch\n\
+  ' >> /usr/local/bin/start-js && chmod +x /usr/local/bin/start-js
+
+RUN echo -e '\n\
+  #!/bin/bash\n\n\
+  mitmproxy -p 8888 --ssl-insecure\n\
+  ' >> /usr/local/bin/start-dev-proxy && chmod +x /usr/local/bin/start-dev-proxy
+
+RUN echo -e '\n\
+  #!/bin/bash\n\n\
+  su - postgres -c \"pgcli\"\n\
+  ' >> /usr/local/bin/start-pg-console && chmod +x /usr/local/bin/start-pg-console
+
+RUN echo -e '\n\
+  #!/bin/bash\n\n\
+  cd /app && rm -rf node_modules && yarn\n\
+  ' >> /usr/local/bin/rebuild-npms && chmod +x /usr/local/bin/rebuild-npms
+
+RUN echo -e '\n\
+  #!/bin/bash\n\n\
+  cd /app && rm -rf vendor/bundle && bundle install\n\
+  ' >> /usr/local/bin/rebuild-gems && chmod +x /usr/local/bin/rebuild-gems
+
+RUN echo -e '\n\
+  #!/bin/bash\n\n\
+  rm -rf /app/tmp/postgresql/data/* && echo Done! please exit elektra and start again...\n\
+  ' >> /usr/local/bin/rebuild-db && chmod +x /usr/local/bin/rebuild-db
 
 RUN echo -e '\n\
   YELLOW="\033[0;33m" \n\
   NC="\033[0m" \n\
   clear \n\
-  echo -e "${YELLOW}Welcome to elektra development 👷🛠️${NC}"\n\
+  echo -e "${YELLOW}Welcome to elektra development 👷 - 🛠️${NC}"\n\
   /usr/local/bin/help-elektra \n\
-  alias start-rails="cd /app && bin/rails s -b 0.0.0.0 -p $APP_PORT"\n\
-  alias start-js="cd /app && yarn build --watch"\n\
-  alias rebuild-npm="cd /app && rm -rf node_modules && yarn"\n\
-  alias rebuild-gems="cd /app && rm -rf vendor/bundle && bundle install"\n\
-  alias pg-console="su - postgres -c \"pgcli\""\n\
-  alias dev-proxy="mitmproxy -p 8888 --ssl-insecure"\n\
-  alias rebuild-db="rm -rf /app/tmp/postgresql/data/* && echo Done! please exit elektra and start again..."' >> /root/.profile
+  ' >> /root/.profile
 
 ENTRYPOINT [ "/usr/local/bin/prepare-elektra" ]  
