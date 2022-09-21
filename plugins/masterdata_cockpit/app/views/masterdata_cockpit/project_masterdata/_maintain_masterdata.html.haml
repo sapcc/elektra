@@ -248,6 +248,16 @@
               as:           :select, 
               collection:   soft_license_mode.keys, 
               label_method: -> (k) { soft_license_mode[k] }
+      .row
+        .col-md-4.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.environment_help')
+        .col-md-4.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.type_of_data_help')
+        .col-md-4.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.soft_license_mode_help')
       %hr
       .row
         .col-md-4
