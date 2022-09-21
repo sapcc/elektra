@@ -9,8 +9,6 @@ import NewContainer from "./components/containers/new"
 import ContainerAccessControl from "./components/containers/accessControl"
 import Containers from "./components/containers/list"
 import Objects from "./components/objects/list"
-// import NewObject from "./components/objects/new"
-// import UploadFile from "./components/objects/upload"
 
 const Router = ({ baseName, objectStoreEndpoint }) => (
   <BrowserRouter basename={baseName}>
@@ -20,17 +18,8 @@ const Router = ({ baseName, objectStoreEndpoint }) => (
     </Route>
 
     <Switch>
-      <Route path="/containers/:name/objects/:objectPath?" component={Objects}>
-        {/* <Route
-          exact
-          path="/containers/:name/objects/:objectPath?/new"
-          component={NewObject}
-        />
-        <Route
-          exact
-          path="/containers/:name/objects/:objectPath?/upload"
-          component={UploadFile}
-        /> */}
+      <Route path="/containers/:name/objects/:objectPath?">
+        <Objects objectStoreEndpoint={objectStoreEndpoint} />
       </Route>
 
       <Route path="/containers">

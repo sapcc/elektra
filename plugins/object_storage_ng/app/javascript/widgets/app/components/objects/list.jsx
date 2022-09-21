@@ -1,9 +1,4 @@
 import React from "react"
-import PropTypes from "prop-types"
-import VirtualizedTable from "lib/components/VirtualizedTable"
-import ContextMenu from "lib/components/ContextMenuPopover"
-import TimeAgo from "../shared/TimeAgo"
-import { Unit } from "lib/unit"
 import {
   useParams,
   Link,
@@ -11,7 +6,6 @@ import {
   useHistory,
   Route,
 } from "react-router-dom"
-import FileIcon from "./FileIcon"
 import Breadcrumb from "../shared/breadcrumb"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 import { Alert } from "react-bootstrap"
@@ -19,217 +13,26 @@ import { SearchField } from "lib/components/search_field"
 import useActions from "../../hooks/useActions"
 import NewObject from "./new"
 import UploadFile from "./upload"
+import ShowProperties from "./show"
 
-const unit = new Unit("B")
+import { reducer, initialState } from "./reducer"
+import Table from "./table"
 
-// const itemsChunks = (items, chunkSize) => {
-//   if (chunkSize) {
-//     const chunks = []
-//     for (let i = 0; i < items.length; i += chunkSize) {
-//       chunks.push(items.slice(i, i + chunkSize))
-//     }
-//     return chunks
-//   } else {
-//     return [items]
-//   }
-// }
-
-// const deleteObjects = (objects, options = {}) => {
-//   const containerName = options.containerName
-//   const prefix = containerName ? containerName + "/" : ""
-//   let promises = []
-
-//   if (options.bulkDeleteSupported) {
-//     const chunks = itemsChunks(objects, options.maxDeletePerRequest)
-//     // console.log("chunks", chunks)
-
-//     promises = chunks.map((objects) => {
-//       const list = objects.reduce((list, item) => {
-//         list += prefix + item + "\n"
-//         return list
-//       }, "")
-//       console.log(list)
-
-//       return apiClient
-//         .osApi("object-store")
-//         .delete("", list, { headers: { "Content-Type": "text/plain" } })
-//         .then((response) => console.log(response))
-//     })
-//   } else {
-//     promises = objects.map((o) =>
-//       apiClient
-//         .osApi("object-store")
-//         .delete(prefix + o)
-//         .then((response) => console.log(response))
-//     )
-//   }
-
-//   return Promise.all(promises)
-// }
-
-const Table = ({ data, onMenuAction, onNameClick }) => {
-  const columns = React.useMemo(
-    () => [
-      {
-        label: "Object name",
-        accessor: "name",
-        sortable: "text",
-        // filterable: true,
-      },
-      {
-        label: "Last modified",
-        accessor: "last_modified",
-        width: "20%",
-        sortable: "date",
-      },
-      {
-        label: "Size",
-        accessor: "bytes",
-        width: "20%",
-        sortable: true,
-      },
-      {
-        width: "60",
-      },
-    ],
-    []
-  )
-
-  const Row = React.useCallback(
-    ({ Row, item }) => (
-      <Row>
-        <Row.Column>
-          {(item.isProcessing || item.isDeleting) && (
-            <span className="spinner" />
-          )}
-          <FileIcon item={item} />{" "}
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              item.subdir ? onNameClick(item) : onMenuAction("download", item)
-            }}
-          >
-            {item.display_name}
-          </a>
-          {item.error && (
-            <>
-              <br />
-              <span className="text-danger">{item.error}</span>
-            </>
-          )}
-        </Row.Column>
-        <Row.Column>
-          {!item.subdir && <TimeAgo date={item.last_modified} originDate />}
-        </Row.Column>
-        <Row.Column>{!item.subdir && unit.format(item.bytes)}</Row.Column>
-        <Row.Column>
-          {item.subdir ? (
-            <ContextMenu>
-              <ContextMenu.Item
-                onClick={() => onMenuAction("deleteRecursively", item)}
-              >
-                Delete recursively
-              </ContextMenu.Item>
-            </ContextMenu>
-          ) : (
-            <ContextMenu>
-              <ContextMenu.Item onClick={() => onMenuAction("download", item)}>
-                Download
-              </ContextMenu.Item>
-
-              <ContextMenu.Divider />
-              <ContextMenu.Item
-                onClick={() => onMenuAction("properties", item)}
-              >
-                Properties
-              </ContextMenu.Item>
-              <ContextMenu.Item divider />
-
-              <ContextMenu.Item onClick={() => onMenuAction("copy", item)}>
-                Copy
-              </ContextMenu.Item>
-              <ContextMenu.Item onClick={() => onMenuAction("move", item)}>
-                Move/Rename
-              </ContextMenu.Item>
-              <ContextMenu.Item onClick={() => onMenuAction("delete", item)}>
-                Delete
-              </ContextMenu.Item>
-              <ContextMenu.Item
-                onClick={() => onMenuAction("deleteKeepSegments", item)}
-              >
-                Delete (keep segments)
-              </ContextMenu.Item>
-            </ContextMenu>
-          )}
-        </Row.Column>
-      </Row>
-    ),
-    []
-  )
-
-  return (
-    <VirtualizedTable
-      height="max"
-      rowHeight={50}
-      columns={columns}
-      data={data || []}
-      renderRow={Row}
-      showHeader
-      bottomOffset={160} // footer height
-    />
-  )
-}
-
-Table.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onMenuAction: PropTypes.func.isRequired,
-  onNameClick: PropTypes.func.isRequired,
-}
-
-const initialState = { items: [], isFetching: false, error: null }
-
-function reducer(state, action) {
-  const { type, ...props } = action
-  switch (type) {
-    case "REQUEST_ITEMS":
-      return { ...state, isFetching: true, error: null }
-    case "RECEIVE_ITEMS":
-      return { ...state, isFetching: false, error: null, items: props.items }
-    case "RECEIVE_ITEM": {
-      const items = state.items.slice()
-      items.unshift(props.item)
-      return { ...state, items }
-    }
-    case "REMOVE_ITEM": {
-      const items = state.items.slice()
-      const index = items.findIndex((i) => i.name === props.name)
-      if (index >= 0) items.splice(index, 1)
-      return { ...state, items }
-    }
-    case "UPDATE_ITEM": {
-      const items = state.items.slice()
-      const index = items.findIndex((i) => i.name === props.name)
-      if (index < 0) return state
-      items[index] = { ...items[index], ...props }
-      return { ...state, items }
-    }
-    case "RECEIVE_ERROR":
-      return { ...state, isFetching: false, error: props.error }
-    default:
-      throw new Error()
-  }
-}
-
-const Objects = () => {
+const Objects = ({ objectStoreEndpoint }) => {
   let { url } = useRouteMatch()
   let objectsRoot = url.replace(/([^/])\/objects.*/, "$1/objects")
   let history = useHistory()
-  let { name, objectPath } = useParams()
+  let { name: containerName, objectPath } = useParams()
   const { value: currentPath, encode } = useUrlParamEncoder(objectPath)
   const [searchTerm, setSearchTerm] = React.useState(null)
 
-  const { loadContainerObjects, deleteObject } = useActions()
+  const {
+    loadContainerObjects,
+    deleteObject,
+    deleteObjects,
+    loadAccountMetadataOnce,
+  } = useActions()
+
   const [objects, dispatch] = React.useReducer(reducer, initialState)
 
   React.useEffect(() => {
@@ -257,7 +60,7 @@ const Objects = () => {
     * until the results contain no objects with leading slashes.
     */
     const loadAllObjects = async (prefix = "") => {
-      let objects = await loadContainerObjects(name, {
+      let objects = await loadContainerObjects(containerName, {
         prefix,
         delimiter: "/",
       }).then(({ data }) => data)
@@ -308,38 +111,209 @@ const Objects = () => {
       .catch((error) =>
         dispatch({ type: "RECEIVE_ERROR", error: error.message })
       )
-  }, [name, currentPath, dispatch, loadContainerObjects])
+  }, [containerName, currentPath, dispatch, loadContainerObjects])
 
-  const handleMenuAction = React.useCallback(
-    (action, item) => {
-      console.log("action", action, item)
-      switch (action) {
-        case "changePath":
-          history.push(`${objectsRoot}/${encode(item.path)}`)
-          break
-        case "delete": {
-          dispatch({ type: "UPDATE_ITEM", name: item.name, isDeleting: true })
-          deleteObject(name, item.name)
-            .then(() => dispatch({ type: "REMOVE_ITEM", name: item.name }))
-            .catch((error) =>
-              dispatch({
-                type: "UPDATE_ITEM",
-                name: item.name,
-                isDeleting: false,
-                error: error.message,
-              })
-            )
-          break
-        }
-      }
+  // Delete a single file
+  const deleteFile = React.useCallback(
+    (name) => {
+      dispatch({ type: "UPDATE_ITEM", name, isDeleting: true })
+      deleteObject(containerName, name)
+        .then(() => dispatch({ type: "REMOVE_ITEM", name }))
+        .catch((error) =>
+          dispatch({
+            type: "UPDATE_ITEM",
+            name,
+            isDeleting: false,
+            error: error.message,
+          })
+        )
     },
-    [name, objectsRoot, deleteObject, dispatch]
+    [containerName, dispatch, deleteObject]
   )
 
-  const handleNameClick = React.useCallback(
-    (item) =>
-      item.subdir && history.push(`${objectsRoot}/${encode(item.subdir)}`),
+  // Return the delete function and a cancel function
+  const [deleteFolder, cancelDeleteFolder] = React.useMemo(() => {
+    // this variable indicates whether deletion is active
+    let active
+
+    // this is the function which deletes all objects inside a folder
+    const action = (name) => {
+      if (!containerName || !name) return
+      active = true
+
+      // This function deletes all objects of a folder.
+      // Since the number of objects to be loaded and deleted is limited,
+      // we delete the objects in chunks.
+      const deleteAllObjects = async () => {
+        let marker
+        let deletedCount = 0
+        let processing = true
+        // We load objects, delete them and repeat this process until there are no more objects
+        while (active && processing) {
+          // use prefix to limit the deletion to current folder
+          await loadContainerObjects(containerName, {
+            marker,
+            prefix: name,
+          }).then(async ({ data }) => {
+            if (data.length > 0 && active) {
+              // delete objects
+              await deleteObjects(containerName, data)
+              // update progress
+              dispatch({
+                type: "UPDATE_ITEM",
+                name,
+                progress: (deletedCount += data.length),
+              })
+              // marker is the last item. Marker is used to load the next chunk of items.
+              marker = data.pop().name
+            } else {
+              processing = false
+            }
+          })
+        }
+      }
+
+      dispatch({ type: "UPDATE_ITEM", name, isDeleting: true })
+      deleteAllObjects()
+        .then(() => dispatch({ type: "REMOVE_ITEM", name }))
+        .catch((error) => {
+          if (!active) return
+          dispatch({
+            type: "UPDATE_ITEM",
+            name,
+            isDeleting: false,
+            error: error.message,
+          })
+        })
+    }
+
+    // return the actual action and a cancel function to cancel the delete process for large containers
+    return [action, () => (active = false)]
+  }, [
+    containerName,
+    loadContainerObjects,
+    deleteObjects,
+    deleteObjects,
+    dispatch,
+  ])
+
+  const downloadFile = React.useCallback(
+    (name) => {
+      const createTmpUrl = async () => {
+        const account = await loadAccountMetadataOnce()
+        const endpointURL = new URL(objectStoreEndpoint)
+        console.log("::::::", objectStoreEndpoint, endpointURL)
+        console.log("====================account data", account)
+
+        // return url
+      }
+
+      createTmpUrl().then((url) => {
+        console.log("====================url", url)
+        window.open(url, "_blank").focus()
+      })
+      //const url = `${objectStoreEndpoint}/${containerName}/${name}`
+
+      // window
+      //   .open(`${objectStoreEndpoint}/${containerName}/${name}`, "_blank")
+
+      //   .focus()
+
+      // window.open(
+      //   url +
+      //     `?temp_url_sig=732fcac368abb10c78a4cbe95c3fab7f311584532bf779abd5074e13cbe8b88b
+      // &temp_url_expires=1323479485
+      // &filename=${name}`,
+      //   "_blank"
+      // )
+
+      // const startTime = new Date().getTime()
+
+      // let request = new XMLHttpRequest()
+
+      // request.responseType = "blob"
+      // request.open("get", url, true)
+      // request.send()
+
+      // request.onreadystatechange = function () {
+      //   if (this.readyState == 4 && this.status == 200) {
+      //     const imageURL = window.URL.createObjectURL(this.response)
+
+      //     const anchor = document.createElement("a")
+      //     anchor.href = imageURL
+      //     anchor.download = name
+      //     document.body.appendChild(anchor)
+      //     anchor.click()
+      //   }
+      // }
+
+      // request.onprogress = function (e) {
+      //   const percent_complete = Math.floor((e.loaded / e.total) * 100)
+
+      //   const duration = (new Date().getTime() - startTime) / 1000
+      //   const bps = e.loaded / duration
+
+      //   const kbps = Math.floor(bps / 1024)
+
+      //   const time = (e.total - e.loaded) / bps
+      //   const seconds = Math.floor(time % 60)
+      //   const minutes = Math.floor(time / 60)
+
+      //   console.log(
+      //     `${percent_complete}% - ${kbps} Kbps - ${minutes} min ${seconds} sec remaining`
+      //   )
+      // }
+
+      // fetch(`${objectStoreEndpoint}/${containerName}/${name}`, {
+      //   method: "get",
+      //   // mode: "no-cors",
+      //   referrerPolicy: "no-referrer",
+      // })
+      //   .then((res) => {
+      //     console.log(res)
+      //     return res
+      //   })
+      //   .then((res) => res.blob())
+      //   .then((res) => {
+      //     console.log("====res", res)
+      //     const aElement = document.createElement("a")
+      //     aElement.setAttribute("download", name)
+      //     const href = URL.createObjectURL(res)
+      //     aElement.href = href
+      //     aElement.setAttribute("target", "_blank")
+      //     aElement.click()
+      //     URL.revokeObjectURL(href)
+      //   })
+    },
+    [containerName, loadAccountMetadataOnce]
+  )
+
+  // cancel current deletion process
+  React.useEffect(() => {
+    return () => cancelDeleteFolder && cancelDeleteFolder()
+  }, [cancelDeleteFolder])
+
+  const changeDir = React.useCallback(
+    (subdir) => history.push(`${objectsRoot}/${encode(subdir)}`),
     [history, objectsRoot]
+  )
+
+  const showProperties = React.useCallback(
+    (name) => {
+      history.push(
+        `${url}/${objectPath ? "" : encode("") + "/"}${encodeURIComponent(
+          name
+        )}/show`
+      )
+    },
+    [history, objectPath, url]
+  )
+
+  const moveFile = React.useCallback(
+    (name) => {
+      history.push(`${url}/${objectPath ? "" : encode("") + "/"}/move`)
+    },
+    [history, objectPath, url]
   )
 
   const handleFolderCreated = React.useCallback(
@@ -361,6 +335,12 @@ const Objects = () => {
       </Route>
       <Route exact path="/containers/:name/objects/:objectPath?/upload">
         <UploadFile />
+      </Route>
+      <Route exact path="/containers/:name/objects/:objectPath?/move">
+        <UploadFile />
+      </Route>
+      <Route exact path="/containers/:name/objects/:objectPath?/:object/show">
+        <ShowProperties objectStoreEndpoint={objectStoreEndpoint} />
       </Route>
 
       <div className="toolbar">
@@ -393,8 +373,11 @@ const Objects = () => {
           {filteredItems.length > 0 ? (
             <Table
               data={filteredItems}
-              onNameClick={handleNameClick}
-              onMenuAction={handleMenuAction}
+              changeDir={(item) => changeDir(item.subdir)}
+              deleteFile={(item) => deleteFile(item.name)}
+              deleteFolder={(item) => deleteFolder(item.subdir)}
+              downloadFile={(item) => downloadFile(item.name)}
+              showProperties={(item) => showProperties(item.name)}
             />
           ) : (
             <span>This folder is empty</span>

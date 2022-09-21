@@ -9,12 +9,14 @@ const useActions = () => {
   const apiClient = React.useMemo(
     () =>
       createAjaxHelper({
-        baseURL: window.location.pathname.replace(location.pathname, ""),
+        baseURL: decodeURIComponent(window.location.pathname).replace(
+          decodeURIComponent(location.pathname, "")
+        ),
       }),
     [location.pathname]
   )
 
-  const { capabilities, containers, objects } = useGlobalState()
+  const { capabilities, containers, objects, account } = useGlobalState()
   const dispatch = useDispatch()
 
   const loadCapabilitiesOnce = React.useCallback(
@@ -25,14 +27,36 @@ const useActions = () => {
       apiClient
         .osApi("object-store")
         .get("info", { params: { path_prefix: "/" } })
-        .then((response) =>
+        .then((response) => {
           dispatch({ type: "RECEIVE_CAPABILITIES", data: response.data })
-        )
+        })
         .catch((error) =>
           dispatch({ type: "RECEIVE_CAPABILITIES_ERROR", error: error.message })
         )
     },
     [dispatch, capabilities.updatedAt]
+  )
+
+  const loadAccountMetadataOnce = React.useCallback(
+    (options = {}) => {
+      if (account.updatedAt && !options.reload) return account.data
+
+      dispatch({ type: "REQUEST_ACCOUNT_METADATA" })
+      return apiClient
+        .osApi("object-store")
+        .head("")
+        .then((response) => {
+          dispatch({ type: "RECEIVE_ACCOUNT_METADATA", data: response.headers })
+          return response.headers
+        })
+        .catch((error) =>
+          dispatch({
+            type: "RECEIVE_ACCOUNT_METADATA_ERROR",
+            error: error.message,
+          })
+        )
+    },
+    [dispatch, account]
   )
 
   const loadContainersOnce = React.useCallback(
@@ -57,7 +81,7 @@ const useActions = () => {
     (containerName, options = {}) =>
       apiClient
         .osApi("object-store")
-        .get(containerName, { params: options })
+        .get(encodeURIComponent(containerName), { params: options })
         .then((response) => ({
           data: response.data,
           headers: response.headers,
@@ -69,7 +93,9 @@ const useActions = () => {
     (containerName, name) =>
       apiClient
         .osApi("object-store")
-        .head(containerName + "/" + name)
+        .head(
+          encodeURIComponent(containerName) + "/" + encodeURIComponent(name)
+        )
         .then((response) => response.headers),
     []
   )
@@ -131,7 +157,7 @@ const useActions = () => {
     (containerName) =>
       apiClient
         .osApi("object-store")
-        .delete(containerName)
+        .delete(encodeURIComponent(containerName))
         .then(() => {
           dispatch({ type: "REMOVE_CONTAINER", name: containerName })
         }),
@@ -142,7 +168,11 @@ const useActions = () => {
     (containerName) =>
       apiClient
         .osApi("object-store")
-        .put(containerName, {}, { headers: { "Content-Length": "0" } })
+        .put(
+          encodeURIComponent(containerName),
+          {},
+          { headers: { "Content-Length": "0" } }
+        )
         .then(() => {
           dispatch({
             type: "RECEIVE_CONTAINER",
@@ -159,7 +189,8 @@ const useActions = () => {
 
   const createFolder = React.useCallback((containerName, path, name) => {
     let fullPath = path ? path : ""
-    if (fullPath[fullPath.length - 1] !== "/") fullPath += "/"
+    if (fullPath.length > 0 && fullPath[fullPath.length - 1] !== "/")
+      fullPath += "/"
     fullPath += name + "/"
     const contentType = "application/directory"
 
@@ -176,18 +207,36 @@ const useActions = () => {
   }, [])
 
   const loadContainerMetadata = React.useCallback(
-    (containerName) =>
-      apiClient
+    (containerName) => {
+      let container = containers.items.find((c) => c.name === containerName)
+      if (container && container.metadata)
+        return Promise.resolve(container.metadata)
+
+      return apiClient
         .osApi("object-store")
-        .head(containerName)
-        .then((response) => response.headers),
-    []
+        .head(encodeURIComponent(containerName))
+        .then((response) => {
+          const metadata = response.headers
+          dispatch({
+            type: "RECEIVE_CONTAINER",
+            item: {
+              name: containerName,
+              bytes: metadata["x-container-bytes-used"],
+              count: metadata["x-container-object-count"],
+              last_modified: metadata["x-last-modified"],
+              metadata,
+            },
+          })
+          return metadata
+        })
+    },
+    [containers, dispatch]
   )
   const updateContainerMetadata = React.useCallback(
     (containerName, headers) =>
       apiClient
         .osApi("object-store")
-        .post(containerName, {}, { headers: headers }),
+        .post(encodeURIComponent(containerName), {}, { headers: headers }),
     []
   )
 
@@ -202,6 +251,7 @@ const useActions = () => {
   return {
     loadCapabilitiesOnce,
     loadContainersOnce,
+    loadAccountMetadataOnce,
     loadObjectMetadata,
     deleteObject,
     deleteObjects,

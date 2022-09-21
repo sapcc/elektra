@@ -30,18 +30,21 @@ export default (state = initialState, action = {}) => {
         ...state,
         items,
         isFetching: false,
-        updatedAt: Date.now(),
       }
     }
 
     case "RECEIVE_CONTAINER": {
       const items = state.items.slice()
-      items.unshift(action.item)
+      const index = state.items.findIndex((i) => i.name === action.item.name)
+      if (index >= 0) {
+        items[index] = action.item
+      } else {
+        items.unshift(action.item)
+      }
       return {
         ...state,
         items,
         isFetching: false,
-        updatedAt: Date.now(),
       }
     }
     default:

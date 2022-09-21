@@ -5,6 +5,7 @@ module ObjectStorageNg
 
     def show; end 
 
+  
     def check_acls 
       read_acl_string = params[:read] || ""
       write_acl_string = params[:write] || ""

@@ -45,8 +45,10 @@ class OsApiController < ::AjaxController
     
     # render response as json
     elektron_response.header.each_header do |key, value|
-      response.headers[key] = value if key.start_with? "x-"
+      new_key = key.start_with?("x-") ? key : "x-#{key}"
+      response.set_header(new_key,value)#if key.start_with? "x-"
     end
+
     render json: elektron_response.body
   end
 end
