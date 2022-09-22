@@ -157,8 +157,6 @@ export const createAjaxHelper = (options = {}) => {
         "patch",
         "post",
         "put",
-        "Content-Type",
-        "content-type",
         "x-csrf-token",
       ]
 
@@ -198,6 +196,13 @@ export const createAjaxHelper = (options = {}) => {
           `${serviceEndpoint}/${path}`,
           mergeServiceOptions(serviceOptions, options)
         ),
+      copy: (path, options = {}) => {
+        return axiosInstance({
+          method: "COPY",
+          url: `${serviceEndpoint}/${path}`,
+          ...mergeServiceOptions(serviceOptions, options),
+        })
+      },
       del: (path, options = {}) =>
         axiosInstance.delete(
           `${serviceEndpoint}/${path}`,

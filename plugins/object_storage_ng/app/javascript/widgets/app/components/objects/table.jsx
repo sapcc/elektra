@@ -16,6 +16,8 @@ const Table = ({
   deleteFolder,
   downloadFile,
   showProperties,
+  moveFile,
+  copyFile,
 }) => {
   const columns = React.useMemo(
     () => [
@@ -98,10 +100,10 @@ const Table = ({
               </ContextMenu.Item>
               <ContextMenu.Item divider />
 
-              <ContextMenu.Item onClick={() => console.log("click copy", item)}>
+              <ContextMenu.Item onClick={() => copyFile(item)}>
                 Copy
               </ContextMenu.Item>
-              <ContextMenu.Item onClick={() => console.log("click move", item)}>
+              <ContextMenu.Item onClick={() => moveFile(item)}>
                 Move/Rename
               </ContextMenu.Item>
               <ContextMenu.Item onClick={() => deleteFile(item)}>

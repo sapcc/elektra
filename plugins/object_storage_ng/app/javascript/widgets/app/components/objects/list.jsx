@@ -14,6 +14,7 @@ import useActions from "../../hooks/useActions"
 import NewObject from "./new"
 import UploadFile from "./upload"
 import ShowProperties from "./show"
+import CopyFile from "./copy"
 
 import { reducer, initialState } from "./reducer"
 import Table from "./table"
@@ -35,7 +36,7 @@ const Objects = ({ objectStoreEndpoint }) => {
 
   const [objects, dispatch] = React.useReducer(reducer, initialState)
 
-  React.useEffect(() => {
+  const loadObjects = React.useCallback(() => {
     // Load objects
     // For objects beginning with a slash, this function is called recursively
     // until there are no objects beginning with a slash
@@ -113,9 +114,34 @@ const Objects = ({ objectStoreEndpoint }) => {
       )
   }, [containerName, currentPath, dispatch, loadContainerObjects])
 
+  React.useEffect(() => {
+    loadObjects()
+  }, [loadObjects])
+
   // Delete a single file
   const deleteFile = React.useCallback(
-    (name) => {
+    (name, options = {}) => {
+      // let deleteFunc
+
+      // if (options.keepSegments !== false) {
+      //   deleteFunc = deleteObject(containerName,name)
+      // } else {
+      //   if(metadata["x-object-manifest"])
+      // }
+      //   if keep_segments
+      //   elektron_object_storage.delete("#{container_name}/#{object.path}")
+      // else
+      //   if object.slo
+      //     elektron_object_storage.delete("#{container_name}/#{object.path}?multipart-manifest=delete")
+      //   elsif object.dlo
+      //     # delete dlo manifest
+      //     elektron_object_storage.delete("#{container_name}/#{object.path}")
+      //     # delete segments container
+      //     delete_folder(object.dlo_segments_container,object.dlo_segments_folder_path)
+      //   else
+      //     elektron_object_storage.delete("#{container_name}/#{object.path}")
+      //   end
+      // end
       dispatch({ type: "UPDATE_ITEM", name, isDeleting: true })
       deleteObject(containerName, name)
         .then(() => dispatch({ type: "REMOVE_ITEM", name }))
@@ -311,7 +337,22 @@ const Objects = ({ objectStoreEndpoint }) => {
 
   const moveFile = React.useCallback(
     (name) => {
-      history.push(`${url}/${objectPath ? "" : encode("") + "/"}/move`)
+      history.push(
+        `${url}/${objectPath ? "" : encode("") + "/"}${encodeURIComponent(
+          name
+        )}/move`
+      )
+    },
+    [history, objectPath, url]
+  )
+
+  const copyFile = React.useCallback(
+    (name) => {
+      history.push(
+        `${url}/${objectPath ? "" : encode("") + "/"}${encodeURIComponent(
+          name
+        )}/copy`
+      )
     },
     [history, objectPath, url]
   )
@@ -336,8 +377,11 @@ const Objects = ({ objectStoreEndpoint }) => {
       <Route exact path="/containers/:name/objects/:objectPath?/upload">
         <UploadFile />
       </Route>
-      <Route exact path="/containers/:name/objects/:objectPath?/move">
-        <UploadFile />
+      <Route exact path="/containers/:name/objects/:objectPath?/:object/move">
+        <CopyFile refresh={loadObjects} deleteAfter />
+      </Route>
+      <Route exact path="/containers/:name/objects/:objectPath?/:object/copy">
+        <CopyFile refresh={loadObjects} showCopyMetadata />
       </Route>
       <Route exact path="/containers/:name/objects/:objectPath?/:object/show">
         <ShowProperties objectStoreEndpoint={objectStoreEndpoint} />
@@ -378,6 +422,8 @@ const Objects = ({ objectStoreEndpoint }) => {
               deleteFolder={(item) => deleteFolder(item.subdir)}
               downloadFile={(item) => downloadFile(item.name)}
               showProperties={(item) => showProperties(item.name)}
+              copyFile={(item) => copyFile(item.name)}
+              moveFile={(item) => moveFile(item.name)}
             />
           ) : (
             <span>This folder is empty</span>

@@ -2,7 +2,6 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
-import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 import useActions from "../../hooks/useActions"
 import { Unit } from "lib/unit"
 import CustomMetaTags from "../shared/CustomMetatags"
@@ -10,28 +9,34 @@ import CustomMetaTags from "../shared/CustomMetatags"
 const unit = new Unit("B")
 
 const dateToString = (date) => {
+  if (!date) return ""
   const leadingZero = (value) => `${value < 10 ? "0" + value : value}`
-  let month = leadingZero(date.getMonth() + 1)
-  let day = leadingZero(date.getDate())
-  let hours = leadingZero(date.getHours())
-  let minutes = leadingZero(date.getMinutes())
-  let seconds = leadingZero(date.getSeconds())
+  let month = leadingZero(date.getUTCMonth() + 1)
+  let day = leadingZero(date.getUTCDate())
+  let hours = leadingZero(date.getUTCHours())
+  let minutes = leadingZero(date.getUTCMinutes())
+  let seconds = leadingZero(date.getUTCSeconds())
 
-  return `${date.getFullYear()}-${month}-${day} ${hours}:${minutes}:${seconds}`
+  return `${date.getUTCFullYear()}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
+const dateRegex = /^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):?(\d{2})?$/
 const stringToDate = (string) => {
-  const dateTime = string.split(" ")
-  const dateParts = dateTime[0].split("-")
-  const timeParts = dateTime[1].split(":")
-  return new Date(
-    dateParts[0],
-    dateParts[1],
-    dateParts[2],
-    timeParts[0],
-    timeParts[1],
-    timeParts[2]
-  )
+  const match = string.match(dateRegex)
+  if (!match) return null
+  try {
+    const date = new Date()
+    date.setUTCFullYear(match[1])
+    date.setUTCMonth(parseInt(match[2]) - 1)
+    date.setUTCDate(match[3])
+    date.setUTCHours(match[4])
+    date.setUTCMinutes(match[5])
+    if (match[6]) date.setSeconds(match[6])
+    return date
+  } catch (e) {
+    console.log(e)
+    return null
+  }
 }
 
 const ShowObject = ({ objectStoreEndpoint }) => {
@@ -39,13 +44,20 @@ const ShowObject = ({ objectStoreEndpoint }) => {
   let { name: containerName, objectPath, object } = useParams()
   const { loadContainerMetadata, loadObjectMetadata } = useActions()
   const [containerMetadata, setContainerMetadata] = React.useState()
-  const { value: currentPath } = useUrlParamEncoder(objectPath)
+  const { updateObjectMetadata } = useActions()
 
   const [show, setShow] = React.useState(true)
   const [error, setError] = React.useState()
-  const [processing, setProcessing] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
+  const [submitting, setSubmitting] = React.useState(false)
   const [metadata, setMetadata] = React.useState({})
   const [customTags, setCustomTags] = React.useState([])
+  const [expiresAt, setExpiresAt] = React.useState("")
+
+  const expiresAtDate = React.useMemo(
+    () => stringToDate(expiresAt),
+    [expiresAt]
+  )
 
   React.useEffect(() => {
     loadContainerMetadata(containerName).then((metadata) => {
@@ -66,7 +78,7 @@ const ShowObject = ({ objectStoreEndpoint }) => {
   }, [containerMetadata, containerName, object])
 
   React.useEffect(() => {
-    setProcessing(true)
+    setLoading(true)
     setError(null)
     loadObjectMetadata(containerName, object)
       .then((metadata) => {
@@ -75,19 +87,29 @@ const ShowObject = ({ objectStoreEndpoint }) => {
         for (let key in metadata) {
           const match = key.match(/^x-object-meta-(.+)$/)
           if (match) {
-            customTags.push({ key: match[1], value: metadata[key] })
+            customTags.push({
+              key: match[1],
+              value: decodeURIComponent(metadata[key]),
+            })
           }
+        }
+
+        if (metadata["x-delete-at"]) {
+          setExpiresAt(
+            dateToString(new Date(parseInt(metadata["x-delete-at"]) * 1000))
+          )
         }
         setCustomTags(customTags)
       })
       .catch((error) => setError(error.message))
-      .finally(() => setProcessing(false))
+      .finally(() => setLoading(false))
   }, [containerName, object, loadObjectMetadata])
 
   const close = React.useCallback(() => {
     setError(null)
-    setProcessing(false)
+    setLoading(false)
     setMetadata({})
+    setSubmitting(false)
     setShow(false)
   }, [])
 
@@ -96,12 +118,6 @@ const ShowObject = ({ objectStoreEndpoint }) => {
     if (objectPath && objectPath !== "") path += `/${objectPath}`
     history.replace(path)
   }, [containerName, objectPath])
-
-  const submit = React.useCallback(() => {}, [
-    close,
-    containerName,
-    currentPath,
-  ])
 
   const createdAt = React.useMemo(() => {
     let timestamp = metadata["x-timestamp"]
@@ -130,8 +146,38 @@ const ShowObject = ({ objectStoreEndpoint }) => {
     )}" to schedule automatic deletion`
   }, [])
 
-  console.log("===containerMetadata", containerMetadata)
-  console.log("===metadata", metadata)
+  const submit = React.useCallback(() => {
+    if (!containerName || !object) return
+
+    const values = {
+      "content-type": metadata["x-content-type"] || metadata["content-type"],
+    }
+    if (expiresAtDate)
+      values["x-delete-at"] = parseInt(expiresAtDate.getTime() / 1000)
+
+    customTags
+      .filter((t) => t.key !== "")
+      .forEach(
+        (t) => (values[`x-object-meta-${t.key}`] = encodeURIComponent(t.value))
+      )
+
+    setSubmitting(true)
+    setError(null)
+    updateObjectMetadata(containerName, object, values)
+      .then(close)
+      .catch((error) => {
+        setError(error.message)
+        setSubmitting(false)
+      })
+  }, [
+    containerName,
+    object,
+    expiresAtDate,
+    customTags,
+    updateObjectMetadata,
+    close,
+    metadata,
+  ])
 
   return (
     <Modal
@@ -155,13 +201,13 @@ const ShowObject = ({ objectStoreEndpoint }) => {
             <p>{error}</p>
           </Alert>
         )}
-        {processing ? (
+        {loading ? (
           <>
             <span className="spinner" /> Loading...
           </>
         ) : (
           <>
-            <form className="form-horizontal">
+            <div className="form-horizontal">
               <div className="form-group">
                 <label className="col-sm-2 control-label">Content type</label>
                 <div className="col-sm-10">
@@ -195,6 +241,7 @@ const ShowObject = ({ objectStoreEndpoint }) => {
                 </div>
               </div>
 
+              {/* Public URL */}
               {publicUrl && (
                 <div className="form-group string ">
                   <label className="control-label col-sm-2 string">
@@ -214,116 +261,91 @@ const ShowObject = ({ objectStoreEndpoint }) => {
                 </div>
               )}
 
+              {/* Upload date */}
+              <div className="form-group">
+                <label className="col-sm-2 control-label">Uploaded (UTC)</label>
+                <div className="col-sm-10">
+                  <p className="form-control-static">{createdAt}</p>
+                </div>
+              </div>
+
+              {/* Last modification date */}
+              <div className="form-group">
+                <label className="col-sm-2 control-label">
+                  Last modified (UTC)
+                </label>
+                <div className="col-sm-10">
+                  <p className="form-control-static">{lastModifiedAt}</p>
+                </div>
+              </div>
+
+              {/* Expiration until deletion */}
+              <div
+                className={`form-group ${
+                  expiresAt === "" || expiresAtDate
+                    ? ""
+                    : "has-error has-feedback"
+                }`}
+              >
+                <label className="col-sm-2 control-label">
+                  Expires at (UTC)
+                </label>
+                <div className="col-sm-5">
+                  <input
+                    id="expiresat"
+                    className="form-control string"
+                    value={expiresAt}
+                    placeholder={expiresAtPlaceholder}
+                    type="text"
+                    onChange={(e) => setExpiresAt(e.target.value)}
+                  />
+                  {expiresAt && expiresAt.length > 0 && (
+                    <small className="info-text fade-in-info-text">
+                      {expiresAtPlaceholder}
+                    </small>
+                  )}
+                </div>
+              </div>
+
+              {/* DLO */}
+              {metadata["x-object-manifest"] && (
+                <div className="form-group">
+                  <label className="col-sm-2 control-label">
+                    Dynamic Large Object Manifest
+                  </label>
+                  <div className="col-sm-10">
+                    <p className="form-control-static">
+                      {metadata["x-object-manifest"]}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {/* SLO */}
+              {metadata["x-static-large-object"] && (
+                <div className="form-group">
+                  <label className="col-sm-2 control-label">
+                    Static Large Object
+                  </label>
+                  <div className="col-sm-10">
+                    <p className="form-control-static">
+                      {metadata["x-static-large-object"]}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="form-group">
                 <label className="control-label col-sm-2 string">
                   Metadata
                 </label>
                 <div className="col-sm-10">
                   <CustomMetaTags
-                    values={customTags} //{values.customMetadataTags}
-                    onChange={
-                      (values) => setContainerMetadata(values) //onChange("customMetadataTags", newValues)
-                    }
+                    values={customTags}
+                    onChange={setCustomTags}
                   />
                 </div>
               </div>
-            </form>
-
-            {/* 
-            <div className="row">
-              <div className="col-md-4">
-                <div className="form-group string">
-                  <label className="control-label string">Content type</label>
-                  <p className="form-control-static">
-                    {metadata["x-content-type"] ||
-                      metadata["content-type"] ||
-                      ""}
-                  </p>
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="form-group string readonly">
-                  <label className="control-label string">Size</label>
-
-                  <p className="form-control-static">
-                    {unit.format(
-                      metadata["x-content-length"] ||
-                        metadata["content-length"] ||
-                        0
-                    )}
-                  </p>
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="form-group string readonly">
-                  <label className="control-label string">MD5 checksum</label>
-                  <p className="form-control-static">
-                    {metadata["x-etag"] || metadata["etag"] || ""}
-                  </p>
-                </div>
-              </div>
-            </div> */}
-            {/* {publicUrl && (
-              <div className="form-group string ">
-                <label className="control-label string">
-                  URL for public access (
-                  <a target="_blank" href={publicUrl} rel="noreferrer">
-                    Open in new tab
-                  </a>
-                  )
-                </label>
-                <p className="form-control-static">{publicUrl}</p>
-              </div>
-            )}
-            <div className="row">
-              <div className="col-md-6">
-                <div className="form-group string">
-                  <label className="control-label string">
-                    Expires at (UTC)
-                  </label>
-                  <input
-                    className="form-control string"
-                    value=""
-                    placeholder={expiresAtPlaceholder}
-                    type="text"
-                  />
-                </div>
-              </div>
-
-              <div className="col-md-3">
-                <div className="form-group string">
-                  <label className="control-label string">Uploaded (UTC)</label>
-                  <p className="form-control-static">{createdAt}</p>
-                </div>
-              </div>
-              <div className="col-md-3">
-                <div className="form-group string">
-                  <label className="control-label string">
-                    Last modified (UTC)
-                  </label>
-                  <p className="form-control-static">{lastModifiedAt}</p>
-                </div>
-              </div>
-            </div> */}
-
-            {/* <div className="form-group string">
-              <label className="control-label string">Expires at (UTC)</label>
-              <input
-                className="form-control string"
-                value=""
-                placeholder={expiresAtPlaceholder}
-                type="text"
-              />
-            </div> */}
-            {/* <div className="form-group">
-              <label>Metadata</label>
-              <CustomMetaTags
-                values={[]} //{values.customMetadataTags}
-                onChange={
-                  (newValues) => null //onChange("customMetadataTags", newValues)
-                }
-              />
-            </div> */}
+            </div>
           </>
         )}
       </Modal.Body>
@@ -332,13 +354,23 @@ const ShowObject = ({ objectStoreEndpoint }) => {
         <Button
           bsStyle="primary"
           onClick={submit}
-          disabled={!containerName || !object || processing}
+          disabled={
+            !containerName ||
+            !object ||
+            loading ||
+            submitting ||
+            (expiresAt !== "" && !expiresAtDate)
+          }
         >
-          {processing ? "Updating..." : "Update object"}
+          {submitting ? "Updating..." : "Update object"}
         </Button>
       </Modal.Footer>
     </Modal>
   )
+}
+
+ShowObject.propTypes = {
+  objectStoreEndpoint: PropTypes.string,
 }
 
 export default ShowObject

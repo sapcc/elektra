@@ -61,14 +61,16 @@ const useActions = () => {
 
   const loadContainersOnce = React.useCallback(
     (options = {}) => {
-      if (containers.updatedAt && !options.reload) return
+      if (containers.updatedAt && !options.reload) return Promise.resolve()
 
       dispatch({ type: "REQUEST_CONTAINERS" })
-      apiClient
+
+      return apiClient
         .osApi("object-store")
         .get("")
         .then((response) => {
           dispatch({ type: "RECEIVE_CONTAINERS", items: response.data })
+          return response.data
         })
         .catch((error) =>
           dispatch({ type: "RECEIVE_CONTAINERS_ERROR", error: error.message })
@@ -100,14 +102,17 @@ const useActions = () => {
     []
   )
 
-  const deleteObject = React.useCallback(
-    (containerName, name) =>
-      apiClient
-        .osApi("object-store")
-        .delete(encodeURIComponent(containerName + "/" + name))
-        .then((response) => response.data),
-    []
-  )
+  const deleteObject = React.useCallback((containerName, name, params = {}) => {
+    let query =
+      "?" +
+      Object.keys(params)
+        .map((key) => `${key}=${params[key]}`)
+        .join("&")
+    return apiClient
+      .osApi("object-store")
+      .delete(encodeURIComponent(containerName + "/" + name + query))
+      .then((response) => response.data)
+  }, [])
 
   const deleteObjects = React.useCallback(
     (containerName, objects) => {
@@ -240,6 +245,36 @@ const useActions = () => {
     []
   )
 
+  const updateObjectMetadata = React.useCallback(
+    (containerName, name, headers) =>
+      apiClient
+        .osApi("object-store")
+        .post(
+          encodeURIComponent(containerName + "/" + name),
+          {},
+          { headers: headers }
+        ),
+    []
+  )
+
+  const copyObject = React.useCallback(
+    (containerName, name, target = {}, options = {}) => {
+      let copyMetadata = options.withMetadata !== false
+
+      return apiClient
+        .osApi("object-store")
+        .copy(encodeURIComponent(containerName + "/" + name), {
+          headers: {
+            destination: encodeURIComponent(
+              `/${target.container}/${target.path}`
+            ),
+            "x-fresh-metadata": copyMetadata ? undefined : true,
+          },
+        })
+    },
+    []
+  )
+
   const getAcls = React.useCallback(
     ({ read, write }) =>
       apiClient
@@ -255,6 +290,8 @@ const useActions = () => {
     loadObjectMetadata,
     deleteObject,
     deleteObjects,
+    copyObject,
+    updateObjectMetadata,
     loadContainerMetadata,
     updateContainerMetadata,
     getAcls,

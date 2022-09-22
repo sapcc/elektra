@@ -16,7 +16,7 @@ class OsApiController < ::AjaxController
     path = service_path[1] || ""
     path += ".#{params[:format]}" if params[:format]
 
-    headers = {"Content-Type" => request.headers["Content-Type"] || "application/json"}
+    headers = {}
     request.headers.each do |name,value| 
       if name.start_with?("HTTP_OS_API") 
         headers[name.gsub("HTTP_OS_API_","").gsub("_","-")] = value 
