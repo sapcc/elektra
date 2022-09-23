@@ -186,6 +186,7 @@ export const createAjaxHelper = (options = {}) => {
     const serviceEndpoint = `os-api/${serviceName}`
 
     return {
+      endpointURL: axiosInstance.defaults.baseURL + "/" + serviceEndpoint,
       get: (path, options = {}) =>
         axiosInstance.get(
           `${serviceEndpoint}/${path}`,

@@ -1,48 +1,94 @@
 import React from "react"
-import { Modal, Button } from "react-bootstrap"
-import { Form } from "lib/elektra-form"
-import { useHistory, useParams, useRouteMatch } from "react-router-dom"
+import PropTypes from "prop-types"
+import { Modal, Button, Alert } from "react-bootstrap"
+import { useHistory, useParams } from "react-router-dom"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
+import { Unit } from "lib/unit"
+import useActions from "../../hooks/useActions"
 
-const NewObject = () => {
-  let { url } = useRouteMatch()
+const unit = new Unit("B")
+const LIMIT = unit.parse("5Mib") // Bytes
+
+const UploadFile = ({ refresh, objectStoreEndpoint }) => {
   const history = useHistory()
-  let { name, objectPath } = useParams()
+  let { name: containerName, objectPath } = useParams()
   const { value: currentPath } = useUrlParamEncoder(objectPath)
   const [show, setShow] = React.useState(true)
+  const [error, setError] = React.useState()
+  const [submitting, setSubmitting] = React.useState(false)
+  const [file, setFile] = React.useState()
+  const [fileName, setFileName] = React.useState()
+  const { getAuthToken, uploadObject } = useActions()
+  const codeRef = React.createRef()
+  const [authToken, setAuthToken] = React.useState()
 
-  const validate = React.useCallback((values) => !!values.name, [])
+  React.useEffect(() => {
+    if (!file || file.size <= LIMIT || !!authToken) return
+    getAuthToken().then((token) => setAuthToken(token))
+  }, [authToken, file, getAuthToken])
 
-  const close = React.useCallback((e) => {
+  const close = React.useCallback(() => {
+    setError(null)
+    setSubmitting(false)
     setShow(false)
   }, [])
 
-  const back = React.useCallback(
-    (e) => {
-      history.replace(`/containers/${name}/objects/${objectPath}`)
+  const back = React.useCallback(() => {
+    let path = `/containers/${containerName}/objects`
+    if (objectPath && objectPath !== "") path += `/${objectPath}`
+    history.replace(path)
+  }, [containerName, objectPath])
+
+  const valid = React.useMemo(
+    () => file && fileName && file.size <= LIMIT,
+    [file, fileName]
+  )
+
+  const handleFileSelect = React.useCallback(
+    (file) => {
+      setFile(file)
+      setFileName(file.name)
     },
-    [objectPath]
+    [setFile, setFileName]
   )
 
-  const submit = React.useCallback(
-    (values) =>
-      null[
-        // apiClient
-        //   .post("containers", { container: values })
-        //   .then(() => apiClient.get("containers"))
-        //   // reload containers
-        //   .then((items) =>
-        //     Promise.resolve(dispatch({ type: "RECEIVE_CONTAINERS", items }))
-        //   )
-        //   // close modal window
-        //   .then(close)
-        //   .catch((error) => {
-        //     throw { errors: error.message }
-        //   }),
-        (close, dispatch)
-      ]
-  )
+  const copyToClipboard = React.useCallback(() => {
+    console.log(codeRef)
+    if (!codeRef.current || !authToken) return
+    var text = (codeRef.current.innerText || "").replace("$token", authToken)
+    navigator.clipboard.writeText(text).then(
+      function () {
+        console.log("Async: Copying to clipboard was successful!", text)
+      },
+      function (err) {
+        console.error("Async: Could not copy text: ", err)
+      }
+    )
+  }, [codeRef, authToken])
 
+  const submit = React.useCallback(() => {
+    if (!file) return
+
+    setSubmitting(true)
+    console.log("====", containerName, currentPath, fileName)
+    uploadObject(containerName, currentPath, fileName, file)
+      .then(() => refresh && refresh())
+      .then(close)
+      .catch((error) => {
+        setError(error.message)
+        setSubmitting(false)
+      })
+  }, [
+    containerName,
+    fileName,
+    file,
+    close,
+    uploadObject,
+    setSubmitting,
+    setError,
+  ])
+
+  console.log("===================file", file, valid)
   return (
     <Modal
       show={show}
@@ -50,28 +96,101 @@ const NewObject = () => {
       onExit={back}
       bsSize="large"
       aria-labelledby="contained-modal-title-lg"
+      // dialogClassName="modal-xl"
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">
-          Upload file to /{currentPath}
+          Upload file to /{containerName}/{currentPath}
         </Modal.Title>
       </Modal.Header>
 
-      <Form className="form" validate={validate} onSubmit={submit}>
-        <Modal.Body>
-          <Form.Errors />
+      <Modal.Body>
+        {error && (
+          <Alert bsStyle="danger">
+            <strong>An error has occurred</strong>
+            <p>{error}</p>
+          </Alert>
+        )}
+        <div className="bs-callout bs-callout-info">
+          {!file || file.size <= LIMIT ? (
+            <p>
+              This dialog only accepts files{" "}
+              <strong>smaller than {unit.format(LIMIT)}.</strong> To upload
+              larger files, please use a different client.
+            </p>
+          ) : (
+            <>
+              <p>
+                This file is larger than <strong>{unit.format(LIMIT)}</strong> (
+                {unit.format(file.size)}). You can upload it using:
+              </p>
+              <p ref={codeRef}>
+                <code>
+                  curl -T {file.name} -X PUT {objectStoreEndpoint}/
+                  {containerName}/{fileName} -H "X-Auth-Token: $token"
+                </code>
+              </p>
 
-          <Form.Element label="Folder name" name="name" inline required>
-            <Form.Input elementType="input" type="text" name="name" />
-          </Form.Element>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={close}>Cancel</Button>
-          <Form.SubmitButton label="Create folder" />
-        </Modal.Footer>
-      </Form>
+              <div className="text-right">
+                {authToken && (
+                  <button
+                    className="btn btn-xs"
+                    onClick={(e) => copyToClipboard()}
+                  >
+                    Copy
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="form-horizontal">
+          <div className="form-group">
+            <label className="col-sm-2 control-label">
+              <abbr title="required">*</abbr> Select file
+            </label>
+            <div className="col-sm-10">
+              <input
+                className="file required"
+                type="file"
+                onChange={(e) => handleFileSelect(e.target.files[0])}
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="col-sm-2 control-label">
+              <abbr title="required">*</abbr> File name
+            </label>
+            <div className="col-sm-10">
+              <input
+                className="form-control string required"
+                type="text"
+                value={fileName || ""}
+                onChange={(e) => setFileName(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={close}>Cancel</Button>
+        <Button
+          bsStyle="primary"
+          onClick={submit}
+          disabled={!valid || submitting}
+        >
+          Upload
+        </Button>
+      </Modal.Footer>
     </Modal>
   )
 }
 
-export default NewObject
+UploadFile.propTypes = {
+  refresh: PropTypes.func,
+  objectStoreEndpoint: PropTypes.string,
+}
+
+export default UploadFile

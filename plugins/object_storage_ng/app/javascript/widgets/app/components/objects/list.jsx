@@ -29,9 +29,11 @@ const Objects = ({ objectStoreEndpoint }) => {
 
   const {
     loadContainerObjects,
+    loadObjectMetadata,
     deleteObject,
     deleteObjects,
     loadAccountMetadataOnce,
+    downloadObject,
   } = useActions()
 
   const [objects, dispatch] = React.useReducer(reducer, initialState)
@@ -118,53 +120,15 @@ const Objects = ({ objectStoreEndpoint }) => {
     loadObjects()
   }, [loadObjects])
 
-  // Delete a single file
-  const deleteFile = React.useCallback(
-    (name, options = {}) => {
-      // let deleteFunc
-
-      // if (options.keepSegments !== false) {
-      //   deleteFunc = deleteObject(containerName,name)
-      // } else {
-      //   if(metadata["x-object-manifest"])
-      // }
-      //   if keep_segments
-      //   elektron_object_storage.delete("#{container_name}/#{object.path}")
-      // else
-      //   if object.slo
-      //     elektron_object_storage.delete("#{container_name}/#{object.path}?multipart-manifest=delete")
-      //   elsif object.dlo
-      //     # delete dlo manifest
-      //     elektron_object_storage.delete("#{container_name}/#{object.path}")
-      //     # delete segments container
-      //     delete_folder(object.dlo_segments_container,object.dlo_segments_folder_path)
-      //   else
-      //     elektron_object_storage.delete("#{container_name}/#{object.path}")
-      //   end
-      // end
-      dispatch({ type: "UPDATE_ITEM", name, isDeleting: true })
-      deleteObject(containerName, name)
-        .then(() => dispatch({ type: "REMOVE_ITEM", name }))
-        .catch((error) =>
-          dispatch({
-            type: "UPDATE_ITEM",
-            name,
-            isDeleting: false,
-            error: error.message,
-          })
-        )
-    },
-    [containerName, dispatch, deleteObject]
-  )
-
   // Return the delete function and a cancel function
   const [deleteFolder, cancelDeleteFolder] = React.useMemo(() => {
     // this variable indicates whether deletion is active
     let active
 
     // this is the function which deletes all objects inside a folder
-    const action = (name) => {
-      if (!containerName || !name) return
+    const action = (name, options = {}) => {
+      const currentContainerName = options.containerName || containerName
+      if (!currentContainerName || !name) return
       active = true
 
       // This function deletes all objects of a folder.
@@ -177,13 +141,13 @@ const Objects = ({ objectStoreEndpoint }) => {
         // We load objects, delete them and repeat this process until there are no more objects
         while (active && processing) {
           // use prefix to limit the deletion to current folder
-          await loadContainerObjects(containerName, {
+          await loadContainerObjects(currentContainerName, {
             marker,
             prefix: name,
           }).then(async ({ data }) => {
             if (data.length > 0 && active) {
               // delete objects
-              await deleteObjects(containerName, data)
+              await deleteObjects(currentContainerName, data)
               // update progress
               dispatch({
                 type: "UPDATE_ITEM",
@@ -223,95 +187,73 @@ const Objects = ({ objectStoreEndpoint }) => {
     dispatch,
   ])
 
-  const downloadFile = React.useCallback(
-    (name) => {
-      const createTmpUrl = async () => {
-        const account = await loadAccountMetadataOnce()
-        const endpointURL = new URL(objectStoreEndpoint)
-        console.log("::::::", objectStoreEndpoint, endpointURL)
-        console.log("====================account data", account)
-
-        // return url
+  // Delete a single file
+  const deleteFile = React.useCallback(
+    (name, options = {}) => {
+      const deleteFunc = async () => {
+        if (options.keepSegments !== false) {
+          return deleteObject(containerName, name)
+        } else {
+          const metadata = await loadObjectMetadata(containerName, name)
+          if (metadata["x-static-large-object"]) {
+            // SLO
+            return deleteObject(containerName, name, {
+              "multipart-manifest": "delete",
+            })
+          } else if (metadata["x-object-manifest"]) {
+            // DLO
+            // delete dlo manifest
+            const [segmentContainer, segmentObject] =
+              metadata["x-object-manifest"].split("/")
+            return deleteObject(containerName, name).then(() =>
+              deleteFolder(segmentObject, { containerName: segmentContainer })
+            )
+          } else {
+            return deleteObject(containerName, name)
+          }
+        }
       }
 
-      createTmpUrl().then((url) => {
-        console.log("====================url", url)
-        window.open(url, "_blank").focus()
-      })
-      //const url = `${objectStoreEndpoint}/${containerName}/${name}`
-
-      // window
-      //   .open(`${objectStoreEndpoint}/${containerName}/${name}`, "_blank")
-
-      //   .focus()
-
-      // window.open(
-      //   url +
-      //     `?temp_url_sig=732fcac368abb10c78a4cbe95c3fab7f311584532bf779abd5074e13cbe8b88b
-      // &temp_url_expires=1323479485
-      // &filename=${name}`,
-      //   "_blank"
-      // )
-
-      // const startTime = new Date().getTime()
-
-      // let request = new XMLHttpRequest()
-
-      // request.responseType = "blob"
-      // request.open("get", url, true)
-      // request.send()
-
-      // request.onreadystatechange = function () {
-      //   if (this.readyState == 4 && this.status == 200) {
-      //     const imageURL = window.URL.createObjectURL(this.response)
-
-      //     const anchor = document.createElement("a")
-      //     anchor.href = imageURL
-      //     anchor.download = name
-      //     document.body.appendChild(anchor)
-      //     anchor.click()
-      //   }
-      // }
-
-      // request.onprogress = function (e) {
-      //   const percent_complete = Math.floor((e.loaded / e.total) * 100)
-
-      //   const duration = (new Date().getTime() - startTime) / 1000
-      //   const bps = e.loaded / duration
-
-      //   const kbps = Math.floor(bps / 1024)
-
-      //   const time = (e.total - e.loaded) / bps
-      //   const seconds = Math.floor(time % 60)
-      //   const minutes = Math.floor(time / 60)
-
-      //   console.log(
-      //     `${percent_complete}% - ${kbps} Kbps - ${minutes} min ${seconds} sec remaining`
-      //   )
-      // }
-
-      // fetch(`${objectStoreEndpoint}/${containerName}/${name}`, {
-      //   method: "get",
-      //   // mode: "no-cors",
-      //   referrerPolicy: "no-referrer",
-      // })
-      //   .then((res) => {
-      //     console.log(res)
-      //     return res
-      //   })
-      //   .then((res) => res.blob())
-      //   .then((res) => {
-      //     console.log("====res", res)
-      //     const aElement = document.createElement("a")
-      //     aElement.setAttribute("download", name)
-      //     const href = URL.createObjectURL(res)
-      //     aElement.href = href
-      //     aElement.setAttribute("target", "_blank")
-      //     aElement.click()
-      //     URL.revokeObjectURL(href)
-      //   })
+      dispatch({ type: "UPDATE_ITEM", name, isDeleting: true })
+      //deleteObject(containerName, name)
+      deleteFunc()
+        .then(() => dispatch({ type: "REMOVE_ITEM", name }))
+        .catch((error) =>
+          dispatch({
+            type: "UPDATE_ITEM",
+            name,
+            isDeleting: false,
+            error: error.message,
+          })
+        )
     },
-    [containerName, loadAccountMetadataOnce]
+    [containerName, dispatch, deleteObject, deleteFolder, loadObjectMetadata]
+  )
+
+  const downloadFile = React.useCallback(
+    (name, size = 0) => {
+      console.log(":::::::::::::::::::::::::::::", size)
+      if (size < 1024 * 10) {
+        // less than 10 Mib
+        console.log("===DOWNLOAD VIA API PROXY")
+        dispatch({ type: "UPDATE_ITEM", name, isProcessing: true })
+        downloadObject(containerName, name)
+          .then(() =>
+            dispatch({ type: "UPDATE_ITEM", name, isProcessing: false })
+          )
+          .catch((error) =>
+            dispatch({
+              type: "UPDATE_ITEM",
+              name,
+              isProcessing: false,
+              error: error.message,
+            })
+          )
+      } else {
+        console.log("===SHOW DOWNLOAD INSTRACTIONS")
+      }
+    },
+    [containerName, loadAccountMetadataOnce, downloadObject, dispatch]
   )
 
   // cancel current deletion process
@@ -375,7 +317,10 @@ const Objects = ({ objectStoreEndpoint }) => {
         <NewObject onCreated={handleFolderCreated} />
       </Route>
       <Route exact path="/containers/:name/objects/:objectPath?/upload">
-        <UploadFile />
+        <UploadFile
+          refresh={loadObjects}
+          objectStoreEndpoint={objectStoreEndpoint}
+        />
       </Route>
       <Route exact path="/containers/:name/objects/:objectPath?/:object/move">
         <CopyFile refresh={loadObjects} deleteAfter />
@@ -420,7 +365,7 @@ const Objects = ({ objectStoreEndpoint }) => {
               changeDir={(item) => changeDir(item.subdir)}
               deleteFile={(item) => deleteFile(item.name)}
               deleteFolder={(item) => deleteFolder(item.subdir)}
-              downloadFile={(item) => downloadFile(item.name)}
+              downloadFile={(item) => downloadFile(item.name, item.bytes)}
               showProperties={(item) => showProperties(item.name)}
               copyFile={(item) => copyFile(item.name)}
               moveFile={(item) => moveFile(item.name)}

@@ -90,7 +90,9 @@ const Table = ({
             </ContextMenu>
           ) : (
             <ContextMenu>
-              <ContextMenu.Item onClick={() => downloadFile(item)}>
+              <ContextMenu.Item
+                onClick={() => downloadFile(item, { keepSegments: false })}
+              >
                 Download
               </ContextMenu.Item>
 
@@ -110,7 +112,7 @@ const Table = ({
                 Delete
               </ContextMenu.Item>
               <ContextMenu.Item
-                onClick={() => console.log("click deleteKeepSegments", item)}
+                onClick={() => deleteFile(item, { keepSegments: true })}
               >
                 Delete (keep segments)
               </ContextMenu.Item>
@@ -141,6 +143,8 @@ Table.propTypes = {
   downloadFile: PropTypes.func.isRequired,
   deleteFile: PropTypes.func.isRequired,
   deleteFolder: PropTypes.func.isRequired,
+  copyFile: PropTypes.func.isRequired,
+  moveFile: PropTypes.func.isRequired,
   showProperties: PropTypes.func.isRequired,
 }
 

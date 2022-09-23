@@ -44,12 +44,6 @@ const CopyObject = ({ showCopyMetadata, deleteAfter, refresh }) => {
   const submit = React.useCallback(() => {
     if (!containerName || !objectName) return
 
-    console.log("========================copyMetadata", copyMetadata)
-    console.log("========================refresh", refresh)
-    console.log("========================containerName", containerName)
-    console.log("========================targetContainer", targetContainer)
-    console.log("========================newObjectPath", newObjectPath)
-    console.log("========================deleteAfter", deleteAfter)
     setError(null)
     setSubmitting(true)
     copyObject(

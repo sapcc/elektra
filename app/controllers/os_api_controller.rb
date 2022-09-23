@@ -1,5 +1,9 @@
 class OsApiController < ::AjaxController
 
+  def auth_token
+    render plain: current_user.token
+  end
+  
   # Example how to use in browser
   # fetch("os-api/SERVICE_NAME/SERVICE_PATH?headers=HEADERS_AS_JSON")
 

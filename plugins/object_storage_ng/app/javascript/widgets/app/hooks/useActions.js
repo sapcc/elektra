@@ -10,7 +10,8 @@ const useActions = () => {
     () =>
       createAjaxHelper({
         baseURL: decodeURIComponent(window.location.pathname).replace(
-          decodeURIComponent(location.pathname, "")
+          decodeURIComponent(location.pathname),
+          ""
         ),
       }),
     [location.pathname]
@@ -282,8 +283,77 @@ const useActions = () => {
         .then((result) => result.data),
     []
   )
+  const endpointURL = React.useCallback(
+    (containerName, name) =>
+      `${apiClient.osApi("object-store").endpointURL}/${encodeURIComponent(
+        containerName + "/" + name
+      )}`,
+    [apiClient]
+  )
+
+  const downloadObject = React.useCallback(
+    (containerName, name) => {
+      return fetch(endpointURL(containerName, name))
+        .then((response) => response.blob())
+        .then((blob) => {
+          const downloadUrl = URL.createObjectURL(blob)
+          const anchor = document.createElement("a")
+          anchor.href = downloadUrl
+          anchor.download = name
+
+          // Append to the DOM
+          document.body.appendChild(anchor)
+
+          // Trigger `click` event
+          anchor.click()
+
+          // Remove element from DOM
+          document.body.removeChild(anchor)
+          URL.revokeObjectURL(downloadUrl)
+        })
+    },
+    [endpointURL, apiClient]
+  )
+
+  const uploadObject = React.useCallback(
+    (containerName, path, name, file) => {
+      if (!path || path === "") path = name
+      else {
+        if (path[path.length - 1] !== "/") path += "/"
+        path += name
+      }
+
+      const reader = new FileReader()
+
+      return new Promise((resolve, reject) => {
+        reader.onload = (evt) => {
+          console.log("::::::::::::::::.", evt.target.result)
+          resolve(evt.target.result)
+        }
+        reader.readAsBinaryString(file)
+      }).then((content) =>
+        apiClient
+          .osApi("object-store")
+          .put(encodeURIComponent(containerName + "/" + path), content, {
+            headers: {
+              "Content-Type": file.type,
+            },
+          })
+      )
+    },
+    [endpointURL, apiClient]
+  )
+
+  const getAuthToken = React.useCallback(() => {
+    return apiClient
+      .osApi("__auth_token")
+      .get("")
+      .then((response) => response.data)
+  }, [apiClient])
 
   return {
+    endpointURL,
+    getAuthToken,
     loadCapabilitiesOnce,
     loadContainersOnce,
     loadAccountMetadataOnce,
@@ -299,6 +369,8 @@ const useActions = () => {
     deleteContainer,
     createContainer,
     createFolder,
+    downloadObject,
+    uploadObject,
   }
 }
 

@@ -146,36 +146,6 @@ const ContainerAccessControl = () => {
   const { loadContainerMetadata, updateContainerMetadata, getAcls } =
     useActions()
 
-  // React.useEffect(() => {
-  //   setIsFetchingMetadata(true)
-  //   apiClient
-  //     .osApi("object-store")
-  //     .head(name)
-  //     .then((response) => {
-  //       setMetadata(response.headers)
-  //     })
-  //     .catch((error) => {
-  //       setError(error.message)
-  //     })
-  //     .finally(() => setIsFetchingMetadata(false))
-
-  //   return () => setMetadata(null)
-  // }, [name])
-
-  // const checkAcls = React.useCallback(
-  //   ({ read, write }) => {
-  //     setIsCheckingAcls(true)
-  //     apiClient
-  //       .get("check-acls", { params: { read, write } })
-  //       .then((result) => setAclCheckResult(result.data))
-  //       .catch((error) => {
-  //         setError(error.message)
-  //       })
-  //       .finally(() => setIsCheckingAcls(false))
-  //   },
-  //   [name]
-  // )
-
   React.useEffect(() => {
     setIsFetchingMetadata(true)
     loadContainerMetadata(name)
