@@ -328,7 +328,7 @@ const useActions = () => {
         (tag) => tag.getAttribute("name") == "csrf-token"
       )
 
-      return fetch(endpointURL(containerName + "/" + path), {
+      return fetch(endpointURL(containerName, path), {
         method: "PUT",
         headers: {
           "OS-API-Content-Type": "",
