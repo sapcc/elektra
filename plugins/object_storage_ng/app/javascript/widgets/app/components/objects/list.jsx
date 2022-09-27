@@ -21,6 +21,7 @@ import DownloadInstructions from "./DownloadInstructions"
 import { reducer, initialState } from "./reducer"
 import Table from "./table"
 import { LIMIT } from "./config"
+import { confirm } from "lib/dialogs"
 
 const Objects = ({ objectStoreEndpoint }) => {
   let { url } = useRouteMatch()
@@ -130,54 +131,61 @@ const Objects = ({ objectStoreEndpoint }) => {
 
     // this is the function which deletes all objects inside a folder
     const action = (name, options = {}) => {
-      const currentContainerName = options.containerName || containerName
-      if (!currentContainerName || !name) return
-      active = true
+      confirm("This folder will be irrevocably deleted", {
+        confirmLabel: "Confirm",
+        abortLabel: "Cancel",
+      })
+        .then(() => {
+          const currentContainerName = options.containerName || containerName
+          if (!currentContainerName || !name) return
+          active = true
 
-      // This function deletes all objects of a folder.
-      // Since the number of objects to be loaded and deleted is limited,
-      // we delete the objects in chunks.
-      const deleteAllObjects = async () => {
-        let marker
-        let deletedCount = 0
-        let processing = true
-        // We load objects, delete them and repeat this process until there are no more objects
-        while (active && processing) {
-          // use prefix to limit the deletion to current folder
-          await loadContainerObjects(currentContainerName, {
-            marker,
-            prefix: name,
-          }).then(async ({ data }) => {
-            if (data.length > 0 && active) {
-              // delete objects
-              await deleteObjects(currentContainerName, data)
-              // update progress
+          // This function deletes all objects of a folder.
+          // Since the number of objects to be loaded and deleted is limited,
+          // we delete the objects in chunks.
+          const deleteAllObjects = async () => {
+            let marker
+            let deletedCount = 0
+            let processing = true
+            // We load objects, delete them and repeat this process until there are no more objects
+            while (active && processing) {
+              // use prefix to limit the deletion to current folder
+              await loadContainerObjects(currentContainerName, {
+                marker,
+                prefix: name,
+              }).then(async ({ data }) => {
+                if (data.length > 0 && active) {
+                  // delete objects
+                  await deleteObjects(currentContainerName, data)
+                  // update progress
+                  dispatch({
+                    type: "UPDATE_ITEM",
+                    name,
+                    progress: (deletedCount += data.length),
+                  })
+                  // marker is the last item. Marker is used to load the next chunk of items.
+                  marker = data.pop().name
+                } else {
+                  processing = false
+                }
+              })
+            }
+          }
+
+          dispatch({ type: "UPDATE_ITEM", name, isDeleting: true })
+          deleteAllObjects()
+            .then(() => dispatch({ type: "REMOVE_ITEM", name }))
+            .catch((error) => {
+              if (!active) return
               dispatch({
                 type: "UPDATE_ITEM",
                 name,
-                progress: (deletedCount += data.length),
+                isDeleting: false,
+                error: error.message,
               })
-              // marker is the last item. Marker is used to load the next chunk of items.
-              marker = data.pop().name
-            } else {
-              processing = false
-            }
-          })
-        }
-      }
-
-      dispatch({ type: "UPDATE_ITEM", name, isDeleting: true })
-      deleteAllObjects()
-        .then(() => dispatch({ type: "REMOVE_ITEM", name }))
-        .catch((error) => {
-          if (!active) return
-          dispatch({
-            type: "UPDATE_ITEM",
-            name,
-            isDeleting: false,
-            error: error.message,
-          })
+            })
         })
+        .catch(() => null)
     }
 
     // return the actual action and a cancel function to cancel the delete process for large containers
@@ -193,42 +201,51 @@ const Objects = ({ objectStoreEndpoint }) => {
   // Delete a single file
   const deleteFile = React.useCallback(
     (name, options = {}) => {
-      const deleteFunc = async () => {
-        if (options.keepSegments !== false) {
-          return deleteObject(containerName, name)
-        } else {
-          const metadata = await loadObjectMetadata(containerName, name)
-          if (metadata["x-static-large-object"]) {
-            // SLO
-            return deleteObject(containerName, name, {
-              "multipart-manifest": "delete",
-            })
-          } else if (metadata["x-object-manifest"]) {
-            // DLO
-            // delete dlo manifest
-            const [segmentContainer, segmentObject] =
-              metadata["x-object-manifest"].split("/")
-            return deleteObject(containerName, name).then(() =>
-              deleteFolder(segmentObject, { containerName: segmentContainer })
-            )
-          } else {
-            return deleteObject(containerName, name)
+      confirm("This object will be irrevocably deleted", {
+        confirmLabel: "Confirm",
+        abortLabel: "Cancel",
+      })
+        .then(() => {
+          const deleteFunc = async () => {
+            if (options.keepSegments !== false) {
+              return deleteObject(containerName, name)
+            } else {
+              const metadata = await loadObjectMetadata(containerName, name)
+              if (metadata["x-static-large-object"]) {
+                // SLO
+                return deleteObject(containerName, name, {
+                  "multipart-manifest": "delete",
+                })
+              } else if (metadata["x-object-manifest"]) {
+                // DLO
+                // delete dlo manifest
+                const [segmentContainer, segmentObject] =
+                  metadata["x-object-manifest"].split("/")
+                return deleteObject(containerName, name).then(() =>
+                  deleteFolder(segmentObject, {
+                    containerName: segmentContainer,
+                  })
+                )
+              } else {
+                return deleteObject(containerName, name)
+              }
+            }
           }
-        }
-      }
 
-      dispatch({ type: "UPDATE_ITEM", name, isDeleting: true })
-      //deleteObject(containerName, name)
-      deleteFunc()
-        .then(() => dispatch({ type: "REMOVE_ITEM", name }))
-        .catch((error) =>
-          dispatch({
-            type: "UPDATE_ITEM",
-            name,
-            isDeleting: false,
-            error: error.message,
-          })
-        )
+          dispatch({ type: "UPDATE_ITEM", name, isDeleting: true })
+          //deleteObject(containerName, name)
+          deleteFunc()
+            .then(() => dispatch({ type: "REMOVE_ITEM", name }))
+            .catch((error) =>
+              dispatch({
+                type: "UPDATE_ITEM",
+                name,
+                isDeleting: false,
+                error: error.message,
+              })
+            )
+        })
+        .catch(() => null)
     },
     [containerName, dispatch, deleteObject, deleteFolder, loadObjectMetadata]
   )
