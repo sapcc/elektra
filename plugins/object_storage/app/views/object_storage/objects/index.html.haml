@@ -1,6 +1,8 @@
 =content_for :main_toolbar do
   Object Storage
 
+= render partial: 'new_version'
+
 - encoded_container_name = URI.encode_www_form_component(@container_name)
 - encoded_path = URI.encode_www_form_component(params[:path])
 %ol.breadcrumb
