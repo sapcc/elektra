@@ -18,7 +18,7 @@ module ObjectStorage
     end
 
     def dlo_segments_container
-      return .split('/')dlo_manifest.first if read(:dlo_manifest)
+      return dlo_manifest.split('/').first if read(:dlo_manifest)
     end
 
     def dlo_segments_folder_path

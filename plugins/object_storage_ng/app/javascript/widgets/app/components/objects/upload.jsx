@@ -5,9 +5,8 @@ import { useHistory, useParams } from "react-router-dom"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 import { Unit } from "lib/unit"
 import useActions from "../../hooks/useActions"
-
+import { LIMIT } from "./config"
 const unit = new Unit("B")
-const LIMIT = unit.parse("5Mib") // Bytes
 
 const UploadFile = ({ refresh, objectStoreEndpoint }) => {
   const history = useHistory()
@@ -70,7 +69,6 @@ const UploadFile = ({ refresh, objectStoreEndpoint }) => {
     if (!file) return
 
     setSubmitting(true)
-    console.log("====", containerName, currentPath, fileName)
     uploadObject(containerName, currentPath, fileName, file)
       .then(() => refresh && refresh())
       .then(close)
@@ -88,7 +86,6 @@ const UploadFile = ({ refresh, objectStoreEndpoint }) => {
     setError,
   ])
 
-  console.log("===================file", file, valid)
   return (
     <Modal
       show={show}

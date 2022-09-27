@@ -26,6 +26,11 @@ class OsApiController < ::AjaxController
         headers[name.gsub("HTTP_OS_API_","").gsub("_","-")] = value 
       end
     end
+    # rename content type to fit elektron's key :(
+    if headers["CONTENT-TYPE"]
+      headers["Content-Type"] = headers["CONTENT-TYPE"]
+      headers.delete("CONTENT-TYPE")
+    end
 
     # byebug
     
@@ -37,22 +42,27 @@ class OsApiController < ::AjaxController
     # call the openstack api endpoint with given path, params and headers
     # for http methods POST, PUT, PATCH we have to consider the body parameter
     elektron_response = if ["post","put","patch"].include?(method)
-      body = request.body.read 
-      body = JSON.parse(body ) rescue body 
+      body = request.body.read
       service.public_send(method,path,elektron_params, headers: headers) do 
         body 
-      end      
-    else
+      end 
       # GET, HEAD, DELETE case
+    else
       service.public_send(method,path, elektron_params, headers: headers)   
     end
-    
+
     # render response as json
     elektron_response.header.each_header do |key, value|
       new_key = key.start_with?("x-") ? key : "x-#{key}"
-      response.set_header(new_key,value)#if key.start_with? "x-"
+      response.set_header(new_key,value)
     end
 
-    render json: elektron_response.body
+    render json: elektron_response.body, status: elektron_response.header.code
+
+  rescue => e 
+    # pp "......................................ERROR"
+    # pp e
+    # byebug
+    render json: {error: e.message}, status: e.code 
   end
 end

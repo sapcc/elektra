@@ -323,23 +323,31 @@ const useActions = () => {
         path += name
       }
 
-      const reader = new FileReader()
-
-      return new Promise((resolve, reject) => {
-        reader.onload = (evt) => {
-          console.log("::::::::::::::::.", evt.target.result)
-          resolve(evt.target.result)
-        }
-        reader.readAsBinaryString(file)
-      }).then((content) =>
-        apiClient
-          .osApi("object-store")
-          .put(encodeURIComponent(containerName + "/" + path), content, {
-            headers: {
-              "Content-Type": file.type,
-            },
-          })
+      const metaTags = [].slice.call(document.getElementsByTagName("meta"))
+      const csrfToken = metaTags.find(
+        (tag) => tag.getAttribute("name") == "csrf-token"
       )
+
+      return fetch(endpointURL(containerName + "/" + path), {
+        method: "PUT",
+        headers: {
+          "OS-API-Content-Type": "",
+          "x-csrf-token": csrfToken.getAttribute("content"),
+        },
+        body: file,
+      }).then(async (response) => {
+        console.log(response)
+        let data
+        try {
+          data = await response.json()
+        } catch (e) {}
+
+        if (response.status >= 400)
+          throw new Error(
+            data ? data.errors || data.error : response.statusText
+          )
+        else return data
+      })
     },
     [endpointURL, apiClient]
   )

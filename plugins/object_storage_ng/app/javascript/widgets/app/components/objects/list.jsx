@@ -1,4 +1,5 @@
 import React from "react"
+import PropTypes from "prop-types"
 import {
   useParams,
   Link,
@@ -15,9 +16,11 @@ import NewObject from "./new"
 import UploadFile from "./upload"
 import ShowProperties from "./show"
 import CopyFile from "./copy"
+import DownloadInstructions from "./DownloadInstructions"
 
 import { reducer, initialState } from "./reducer"
 import Table from "./table"
+import { LIMIT } from "./config"
 
 const Objects = ({ objectStoreEndpoint }) => {
   let { url } = useRouteMatch()
@@ -232,10 +235,8 @@ const Objects = ({ objectStoreEndpoint }) => {
 
   const downloadFile = React.useCallback(
     (name, size = 0) => {
-      console.log(":::::::::::::::::::::::::::::", size)
-      if (size < 1024 * 10) {
-        // less than 10 Mib
-        console.log("===DOWNLOAD VIA API PROXY")
+      if (size < LIMIT) {
+        // less than LIMIT
         dispatch({ type: "UPDATE_ITEM", name, isProcessing: true })
         downloadObject(containerName, name)
           .then(() =>
@@ -250,10 +251,21 @@ const Objects = ({ objectStoreEndpoint }) => {
             })
           )
       } else {
-        console.log("===SHOW DOWNLOAD INSTRACTIONS")
+        history.replace(
+          `${url}/${objectPath ? "" : encode("") + "/"}${encodeURIComponent(
+            name
+          )}/download-instructions`
+        )
       }
     },
-    [containerName, loadAccountMetadataOnce, downloadObject, dispatch]
+    [
+      containerName,
+      objectPath,
+      loadAccountMetadataOnce,
+      downloadObject,
+      dispatch,
+      history,
+    ]
   )
 
   // cancel current deletion process
@@ -331,6 +343,12 @@ const Objects = ({ objectStoreEndpoint }) => {
       <Route exact path="/containers/:name/objects/:objectPath?/:object/show">
         <ShowProperties objectStoreEndpoint={objectStoreEndpoint} />
       </Route>
+      <Route
+        exact
+        path="/containers/:name/objects/:objectPath?/:object/download-instructions"
+      >
+        <DownloadInstructions objectStoreEndpoint={objectStoreEndpoint} />
+      </Route>
 
       <div className="toolbar">
         <SearchField
@@ -377,6 +395,10 @@ const Objects = ({ objectStoreEndpoint }) => {
       )}
     </React.Fragment>
   )
+}
+
+Objects.propTypes = {
+  objectStoreEndpoint: PropTypes.string,
 }
 
 export default Objects
