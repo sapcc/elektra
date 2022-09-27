@@ -38,6 +38,7 @@ const config = {
   plugins: [
     envFilePlugin,
     pathsResolverPlugin({
+      // see also in jest.config.js
       lib: "app/javascript/lib",
       core: "app/javascript/core",
       plugins: "plugins",

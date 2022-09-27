@@ -19,7 +19,8 @@ const FileIcon = ({ item }) => {
     title = "Image"
   } else if (
     item.content_type &&
-    item.content_type === "application/octet-stream"
+    item.content_type === "application/octet-stream" &&
+    /^.*\.docx?$/.test(item.name)
   ) {
     iconName = "fa-file-word-o"
     title = "Word"

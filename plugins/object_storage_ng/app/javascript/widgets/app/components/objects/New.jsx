@@ -65,7 +65,7 @@ const NewObject = ({ onCreated }) => {
                   className="control-label string required"
                   htmlFor="confirmation"
                 >
-                  <abbr title="required">*</abbr> Type container name to confirm
+                  <abbr title="required">*</abbr> Type container name
                 </label>
                 <input
                   className="form-control string required"

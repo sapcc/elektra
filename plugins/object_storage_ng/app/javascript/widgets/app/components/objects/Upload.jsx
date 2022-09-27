@@ -20,11 +20,19 @@ const UploadFile = ({ refresh, objectStoreEndpoint }) => {
   const { getAuthToken, uploadObject } = useActions()
   const codeRef = React.createRef()
   const [authToken, setAuthToken] = React.useState()
+  const [showCopyInfo, setShowCopyInfo] = React.useState(false)
 
   React.useEffect(() => {
     if (!file || file.size <= LIMIT || !!authToken) return
     getAuthToken().then((token) => setAuthToken(token))
   }, [authToken, file, getAuthToken])
+
+  React.useEffect(() => {
+    if (!showCopyInfo) return
+    let active = true
+    setTimeout(() => active && setShowCopyInfo(false), 2000)
+    return () => (active = false)
+  }, [showCopyInfo, setShowCopyInfo])
 
   const close = React.useCallback(() => {
     setError(null)
@@ -58,12 +66,13 @@ const UploadFile = ({ refresh, objectStoreEndpoint }) => {
     navigator.clipboard.writeText(text).then(
       function () {
         console.log("Async: Copying to clipboard was successful!", text)
+        setShowCopyInfo(true)
       },
       function (err) {
         console.error("Async: Could not copy text: ", err)
       }
     )
-  }, [codeRef, authToken])
+  }, [codeRef, setShowCopyInfo, authToken])
 
   const submit = React.useCallback(() => {
     if (!file) return
@@ -129,6 +138,13 @@ const UploadFile = ({ refresh, objectStoreEndpoint }) => {
               </p>
 
               <div className="text-right">
+                {showCopyInfo && (
+                  <>
+                    <span className="fade-in-info-text reverse">
+                      copied to clipboard
+                    </span>{" "}
+                  </>
+                )}
                 {authToken && (
                   <button
                     className="btn btn-xs"

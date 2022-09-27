@@ -2300,6 +2300,11 @@ tr.task-state {
   -moz-animation: fadeIn50 2s;
   -o-animation: fadeIn50 2s;
   -ms-animation: fadeIn50 2s;
+
+  &.reverse {
+    opacity: 0;
+    animation-direction: reverse;
+  }
 }
 
 @keyframes fadeIn50 {

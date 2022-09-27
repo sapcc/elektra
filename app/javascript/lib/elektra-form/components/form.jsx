@@ -1,3 +1,4 @@
+import React from "react"
 import PropTypes from "prop-types"
 import makeCancelable from "lib/tools/cancelable_promise"
 import { FormContext } from "./form_context"
