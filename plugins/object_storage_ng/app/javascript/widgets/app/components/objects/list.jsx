@@ -28,7 +28,11 @@ const Objects = ({ objectStoreEndpoint }) => {
   let objectsRoot = url.replace(/([^/])\/objects.*/, "$1/objects")
   let history = useHistory()
   let { name: containerName, objectPath } = useParams()
-  const { value: currentPath, encode } = useUrlParamEncoder(objectPath)
+  const {
+    value: currentPath,
+    encode,
+    getFileName,
+  } = useUrlParamEncoder(objectPath)
   const [searchTerm, setSearchTerm] = React.useState(null)
 
   const {
@@ -254,8 +258,9 @@ const Objects = ({ objectStoreEndpoint }) => {
     (name, size = 0) => {
       if (size < LIMIT) {
         // less than LIMIT
+        let fileName = getFileName(name)
         dispatch({ type: "UPDATE_ITEM", name, isProcessing: true })
-        downloadObject(containerName, name)
+        downloadObject(containerName, name, { fileName })
           .then(() =>
             dispatch({ type: "UPDATE_ITEM", name, isProcessing: false })
           )
@@ -280,6 +285,7 @@ const Objects = ({ objectStoreEndpoint }) => {
       objectPath,
       loadAccountMetadataOnce,
       downloadObject,
+      getFileName,
       dispatch,
       history,
     ]

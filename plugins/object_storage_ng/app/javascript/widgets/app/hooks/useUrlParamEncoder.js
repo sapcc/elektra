@@ -8,7 +8,14 @@ const decodeUrlParam = (hash) => {
   return content.replace(`${KEY}=`, "")
 }
 
-export default (value) => ({
-  value: decodeUrlParam(value),
-  encode: encodeUrlParam,
-})
+const parse = (encodedValue) => {
+  const value = encodedValue ? decodeUrlParam(encodedValue) : ""
+  return {
+    value,
+    getFileName: (filePath) =>
+      filePath ? decodeURIComponent(filePath).replace(value, "") : filePath,
+    encode: encodeUrlParam,
+  }
+}
+
+export default parse

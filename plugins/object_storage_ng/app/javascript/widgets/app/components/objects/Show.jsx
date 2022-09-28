@@ -5,6 +5,7 @@ import { useHistory, useParams } from "react-router-dom"
 import useActions from "../../hooks/useActions"
 import { Unit } from "lib/unit"
 import CustomMetaTags from "../shared/CustomMetatags"
+import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 
 const unit = new Unit("B")
 
@@ -53,6 +54,11 @@ const ShowObject = ({ objectStoreEndpoint }) => {
   const [metadata, setMetadata] = React.useState({})
   const [customTags, setCustomTags] = React.useState([])
   const [expiresAt, setExpiresAt] = React.useState("")
+  const { getFileName } = useUrlParamEncoder(objectPath)
+  const fileName = React.useMemo(
+    () => getFileName(object),
+    [object, getFileName]
+  )
 
   const expiresAtDate = React.useMemo(
     () => stringToDate(expiresAt),
@@ -190,7 +196,7 @@ const ShowObject = ({ objectStoreEndpoint }) => {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">
-          Properties of {object}
+          Properties of {fileName}
         </Modal.Title>
       </Modal.Header>
 

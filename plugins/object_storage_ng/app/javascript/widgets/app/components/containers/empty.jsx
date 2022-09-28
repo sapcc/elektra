@@ -150,19 +150,21 @@ const EmptyContainer = ({}) => {
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">
           Empty container: <span ref={headerRef}>{container?.name}</span>{" "}
-          <small>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault()
-                if (!headerRef.current || !confirmationRef.current) return
-                confirmationRef.current.value = headerRef.current.textContent
-                setConfirmation(headerRef.current.textContent)
-              }}
-            >
-              <i className="fa fa-clone" />
-            </a>
-          </small>
+          {container.count > 0 && (
+            <small>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (!headerRef.current || !confirmationRef.current) return
+                  confirmationRef.current.value = headerRef.current.textContent
+                  setConfirmation(headerRef.current.textContent)
+                }}
+              >
+                <i className="fa fa-clone" />
+              </a>
+            </small>
+          )}
         </Modal.Title>
       </Modal.Header>
 

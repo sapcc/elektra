@@ -20,6 +20,19 @@ const useActions = () => {
   const { capabilities, containers, objects, account } = useGlobalState()
   const dispatch = useDispatch()
 
+  const containerPath = React.useCallback(
+    (containerName) => encodeURIComponent(decodeURIComponent(containerName)),
+    []
+  )
+
+  const objectPath = React.useCallback(
+    (containerName, object) =>
+      encodeURIComponent(decodeURIComponent(containerName)) +
+      "/" +
+      encodeURIComponent(decodeURIComponent(object)),
+    []
+  )
+
   const loadCapabilitiesOnce = React.useCallback(
     (options = {}) => {
       if (capabilities.updatedAt && !options.reload) return
@@ -84,7 +97,7 @@ const useActions = () => {
     (containerName, options = {}) =>
       apiClient
         .osApi("object-store")
-        .get(encodeURIComponent(containerName), { params: options })
+        .get(containerPath(containerName), { params: options })
         .then((response) => ({
           data: response.data,
           headers: response.headers,
@@ -96,9 +109,7 @@ const useActions = () => {
     (containerName, name) =>
       apiClient
         .osApi("object-store")
-        .head(
-          encodeURIComponent(containerName) + "/" + encodeURIComponent(name)
-        )
+        .head(objectPath(containerName, name))
         .then((response) => response.headers),
     []
   )
@@ -111,7 +122,7 @@ const useActions = () => {
         .join("&")
     return apiClient
       .osApi("object-store")
-      .delete(encodeURIComponent(containerName + "/" + name + query))
+      .delete(objectPath(containerName, name) + encodeURIComponent(query))
       .then((response) => response.data)
   }, [])
 
@@ -127,7 +138,7 @@ const useActions = () => {
         for (let i = 0; i < objects.length; i += chunkSize) {
           const chunk = objects.slice(i, i + chunkSize)
           const body = chunk
-            .map((o) => encodeURIComponent(`${containerName}/${o.name}`))
+            .map((o) => objectPath(containerName, o.name))
             .join("\n")
           // collect all delete promises
           promises.push(
@@ -163,7 +174,7 @@ const useActions = () => {
     (containerName) =>
       apiClient
         .osApi("object-store")
-        .delete(encodeURIComponent(containerName))
+        .delete(containerPath(containerName))
         .then(() => {
           dispatch({ type: "REMOVE_CONTAINER", name: containerName })
         }),
@@ -175,7 +186,7 @@ const useActions = () => {
       apiClient
         .osApi("object-store")
         .put(
-          encodeURIComponent(containerName),
+          containerPath(containerName),
           {},
           { headers: { "Content-Length": "0" } }
         )
@@ -203,7 +214,7 @@ const useActions = () => {
     return apiClient
       .osApi("object-store")
       .put(
-        encodeURIComponent(containerName + "/" + fullPath),
+        objectPath(containerName, fullPath),
         {},
         { headers: { "Content-Type": contentType } }
       )
@@ -220,7 +231,7 @@ const useActions = () => {
 
       return apiClient
         .osApi("object-store")
-        .head(encodeURIComponent(containerName))
+        .head(containerPath(containerName))
         .then((response) => {
           const metadata = response.headers
           dispatch({
@@ -242,7 +253,7 @@ const useActions = () => {
     (containerName, headers) =>
       apiClient
         .osApi("object-store")
-        .post(encodeURIComponent(containerName), {}, { headers: headers }),
+        .post(containerPath(containerName), {}, { headers: headers }),
     []
   )
 
@@ -250,11 +261,7 @@ const useActions = () => {
     (containerName, name, headers) =>
       apiClient
         .osApi("object-store")
-        .post(
-          encodeURIComponent(containerName + "/" + name),
-          {},
-          { headers: headers }
-        ),
+        .post(objectPath(containerName, name), {}, { headers: headers }),
     []
   )
 
@@ -264,11 +271,9 @@ const useActions = () => {
 
       return apiClient
         .osApi("object-store")
-        .copy(encodeURIComponent(containerName + "/" + name), {
+        .copy(objectPath(containerName, name), {
           headers: {
-            destination: encodeURIComponent(
-              `/${target.container}/${target.path}`
-            ),
+            destination: objectPath(`/${target.container}`, target.path),
             "x-fresh-metadata": copyMetadata ? undefined : true,
           },
         })
@@ -292,14 +297,14 @@ const useActions = () => {
   )
 
   const downloadObject = React.useCallback(
-    (containerName, name) => {
+    (containerName, name, options = {}) => {
       return fetch(endpointURL(containerName, name))
         .then((response) => response.blob())
         .then((blob) => {
           const downloadUrl = URL.createObjectURL(blob)
           const anchor = document.createElement("a")
           anchor.href = downloadUrl
-          anchor.download = name
+          anchor.download = options.fileName || name
 
           // Append to the DOM
           document.body.appendChild(anchor)
