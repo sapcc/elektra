@@ -7,7 +7,7 @@ import {
   useHistory,
   Route,
 } from "react-router-dom"
-import Breadcrumb from "../shared/breadcrumb"
+import Breadcrumb from "../shared/Breadcrumb"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 import { Alert } from "react-bootstrap"
 import { SearchField } from "lib/components/search_field"

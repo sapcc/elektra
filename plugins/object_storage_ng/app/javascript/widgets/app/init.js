@@ -1,5 +1,5 @@
 import { createWidget } from "lib/widget"
-import App from "./application"
+import App from "./App"
 
 createWidget({ pluginName: "object_storage_ng", widgetName: "app" }).then(
   (widget) => {

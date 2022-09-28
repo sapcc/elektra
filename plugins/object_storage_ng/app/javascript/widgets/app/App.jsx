@@ -1,8 +1,8 @@
 /* eslint no-console:0 */
 import React from "react"
 import PropTypes from "prop-types"
-import StateProvider from "./stateProvider"
-import Router from "./router"
+import StateProvider from "./StateProvider"
+import Router from "./Router"
 
 const App = (props) => (
   <StateProvider>

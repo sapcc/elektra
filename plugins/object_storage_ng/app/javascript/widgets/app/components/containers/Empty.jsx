@@ -2,56 +2,9 @@ import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
 import useActions from "../../hooks/useActions"
-import { useGlobalState, useDispatch } from "../../stateProvider"
-import cancelablePromise from "lib/tools/cancelable_promise"
-const apiClient = {}
+import { useGlobalState } from "../../StateProvider"
 
-const deleteObjects = (items, options = {}) => {
-  const limit = options.limit || 10000
-
-  if (options.bulkDelete) {
-    // https://docs.openstack.org/swift/latest/middleware.html#bulk-delete
-    // assemble the request object_list containing the paths to all targets
-
-    // if targets more than the defined max deletes per request cut targest into half and try recursively
-    if (items.length > limit) {
-      const [left, right] = items.each_slice((targets.size / 2.0).round).to_a
-      bulkDelete(left)
-      targets = right
-    }
-
-    let objectList = ""
-    items.forEach((target) => {
-      if (!target.container) {
-        throw new Error(`malformed target ${target.inspect}`)
-      }
-      objectList += target.container
-      if (target.object) {
-        objectList += "/" + target.object
-      }
-      objectList += "\n"
-    })
-
-    // apiClinet.post(
-    //   '',
-    //   'bulk-delete' => true, headers: { 'Content-Type' => 'text/plain' },
-    // { objectList })
-  } else {
-    items.forEach((target) => {
-      if (!target.container) {
-        throw new Error(`malformed target ${target.inspect}`)
-      }
-
-      if (target.object) {
-        //delete_object(target[:container], target[:object])
-      } else {
-        //delete_container(target[:container])
-      }
-    })
-  }
-}
-
-const EmptyContainer = ({}) => {
+const EmptyContainer = () => {
   const { name } = useParams()
   const history = useHistory()
   const [show, setShow] = React.useState(!!name)
@@ -59,15 +12,15 @@ const EmptyContainer = ({}) => {
   const [beingEmptied, setBeingEmptied] = React.useState(false)
   const [error, setError] = React.useState()
   const { containers, capabilities } = useGlobalState()
-  const dispatch = useDispatch()
-  const { loadContainerObjects, deleteObjects } = useActions()
+  const { loadContainerObjects, deleteObjects, loadContainerMetadata } =
+    useActions()
   const [progress, setProgress] = React.useState(0)
   const headerRef = React.createRef()
   const confirmationRef = React.createRef()
 
   const container = React.useMemo(() => {
-    if (!containers?.items) return
-    return containers.items.find((c) => c.name === name)
+    if (!containers?.items) return {}
+    return containers.items.find((c) => c.name === name) || {}
   }, [containers, name])
 
   const close = React.useCallback((e) => {

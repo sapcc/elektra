@@ -2,10 +2,10 @@ import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
 import { Form } from "lib/elektra-form"
-import { useGlobalState } from "../../stateProvider"
+import { useGlobalState } from "../../StateProvider"
 
 import { createUseStyles } from "react-jss"
-import AclResolution from "./aclResolution"
+import AclResolution from "./AclResolution"
 import useActions from "../../hooks/useActions"
 
 const useStyles = createUseStyles({

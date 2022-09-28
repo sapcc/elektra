@@ -2,13 +2,13 @@ import React from "react"
 import PropTypes from "prop-types"
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom"
 
-import ContainerProperties from "./components/containers/properties"
-import DeleteContainer from "./components/containers/delete"
-import EmptyContainer from "./components/containers/empty"
-import NewContainer from "./components/containers/new"
-import ContainerAccessControl from "./components/containers/accessControl"
-import Containers from "./components/containers/list"
-import Objects from "./components/objects/list"
+import ContainerProperties from "./components/containers/Properties"
+import DeleteContainer from "./components/containers/Delete"
+import EmptyContainer from "./components/containers/Empty"
+import NewContainer from "./components/containers/New"
+import ContainerAccessControl from "./components/containers/AccessControl"
+import Containers from "./components/containers/List"
+import Objects from "./components/objects/List"
 
 const Router = ({ baseName, objectStoreEndpoint }) => (
   <BrowserRouter basename={baseName}>

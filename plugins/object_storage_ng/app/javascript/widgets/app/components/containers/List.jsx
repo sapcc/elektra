@@ -1,6 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
-import { useGlobalState } from "../../stateProvider"
+import { useGlobalState } from "../../StateProvider"
 import useActions from "../../hooks/useActions"
 import { Link, useHistory } from "react-router-dom"
 import ItemsCount from "../shared/ItemsCount"
@@ -9,10 +9,10 @@ import { Unit } from "lib/unit"
 const unit = new Unit("B")
 import { policy } from "lib/policy"
 import { SearchField } from "lib/components/search_field"
-import CapabilitiesPopover from "../capabilities/popover"
+import CapabilitiesPopover from "../capabilities/Popover"
 import VirtualizedTable from "lib/components/VirtualizedTable"
 import ContextMenu from "lib/components/ContextMenuPopover"
-import Breadcrumb from "../shared/breadcrumb"
+import Breadcrumb from "../shared/Breadcrumb"
 
 const Table = ({ data, onMenuAction }) => {
   const columns = React.useMemo(

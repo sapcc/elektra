@@ -1,6 +1,6 @@
 import React from "react"
 import { useLocation } from "react-router-dom"
-import { useDispatch, useGlobalState } from "../stateProvider"
+import { useDispatch, useGlobalState } from "../StateProvider"
 
 import { createAjaxHelper } from "lib/ajax_helper"
 
@@ -234,13 +234,14 @@ const useActions = () => {
         .head(containerPath(containerName))
         .then((response) => {
           const metadata = response.headers
+          const date = new Date(metadata["x-last-modified"])
           dispatch({
             type: "RECEIVE_CONTAINER",
             item: {
               name: containerName,
               bytes: metadata["x-container-bytes-used"],
               count: metadata["x-container-object-count"],
-              last_modified: metadata["x-last-modified"],
+              last_modified: date || metadata["x-last-modified"],
               metadata,
             },
           })
@@ -290,8 +291,9 @@ const useActions = () => {
   )
   const endpointURL = React.useCallback(
     (containerName, name) =>
-      `${apiClient.osApi("object-store").endpointURL}/${encodeURIComponent(
-        containerName + "/" + name
+      `${apiClient.osApi("object-store").endpointURL}/${objectPath(
+        containerName,
+        name
       )}`,
     [apiClient]
   )

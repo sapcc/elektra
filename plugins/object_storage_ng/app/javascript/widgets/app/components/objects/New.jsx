@@ -14,7 +14,7 @@ const NewObject = ({ onCreated }) => {
   const [error, setError] = React.useState()
   const [name, setName] = React.useState("")
   const { createFolder } = useActions()
-
+  const [valid, setValid] = React.useState(true)
   const close = React.useCallback(() => setShow(false), [])
 
   const back = React.useCallback(() => {
@@ -22,6 +22,15 @@ const NewObject = ({ onCreated }) => {
     if (objectPath) path += `/${objectPath}`
     history.replace(path)
   }, [containerName, objectPath])
+
+  const validateAndSetName = React.useCallback(
+    (value) => {
+      const match = value.match(/^(\/*)([^/]*)(\/*)$/)
+      setValid(match && match[1] === "" && match[3] === "")
+      setName(match ? match[2] : value)
+    },
+    [setName, setValid]
+  )
 
   const submit = React.useCallback(() => {
     setError(null)
@@ -72,8 +81,13 @@ const NewObject = ({ onCreated }) => {
                   autoFocus
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => validateAndSetName(e.target.value)}
                 />
+                {!valid && (
+                  <span className="fade-in-text  text-danger">
+                    Slashes at the beginning or end are not allowed.
+                  </span>
+                )}
               </div>
             </fieldset>
             {processing && <span className="spinner" />}

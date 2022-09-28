@@ -4,7 +4,8 @@ import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
 import useActions from "../../hooks/useActions"
 import Select from "react-select"
-import { useGlobalState } from "../../stateProvider"
+import { useGlobalState } from "../../StateProvider"
+import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 
 const CopyObject = ({ showCopyMetadata, deleteAfter, refresh }) => {
   const history = useHistory()
@@ -18,7 +19,14 @@ const CopyObject = ({ showCopyMetadata, deleteAfter, refresh }) => {
   const [loading, setLoading] = React.useState(false)
   const [submitting, setSubmitting] = React.useState(false)
   const [targetContainer, setTargetContainer] = React.useState(containerName)
-  const [newObjectPath, setNewObjectPath] = React.useState(objectName)
+  const [newObjectPath, setNewObjectPath] = React.useState(
+    decodeURIComponent(objectName)
+  )
+  const { getFileName } = useUrlParamEncoder(objectPath)
+  const fileName = React.useMemo(
+    () => getFileName(objectName),
+    [objectName, getFileName]
+  )
 
   React.useEffect(() => {
     setLoading(true)
@@ -104,7 +112,7 @@ const CopyObject = ({ showCopyMetadata, deleteAfter, refresh }) => {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">
-          Properties of {objectName}
+          Properties of {fileName}
         </Modal.Title>
       </Modal.Header>
 
@@ -141,7 +149,7 @@ const CopyObject = ({ showCopyMetadata, deleteAfter, refresh }) => {
                     onChange={(item) => setTargetContainer(item.value)}
                     options={containers.items.map((i) => ({
                       value: i.name,
-                      label: i.name,
+                      label: decodeURIComponent(i.name),
                     }))}
                     closeMenuOnSelect={true}
                     placeholder="Select the target container"

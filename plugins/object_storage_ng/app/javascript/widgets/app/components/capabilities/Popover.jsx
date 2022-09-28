@@ -1,6 +1,6 @@
 import React from "react"
-import Capabilities from "./list"
-import { useGlobalState } from "../../stateProvider"
+import Capabilities from "./List"
+import { useGlobalState } from "../../StateProvider"
 import useActions from "../../hooks/useActions"
 import { createUseStyles } from "react-jss"
 import { Popover, OverlayTrigger } from "react-bootstrap"

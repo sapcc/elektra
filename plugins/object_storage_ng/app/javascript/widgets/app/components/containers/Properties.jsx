@@ -1,7 +1,7 @@
 import { Modal, Button, Alert } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import { useHistory, useParams, Link } from "react-router-dom"
-import { useGlobalState } from "../../stateProvider"
+import { useGlobalState } from "../../StateProvider"
 import React from "react"
 import { Unit } from "lib/unit"
 import useActions from "../../hooks/useActions"
