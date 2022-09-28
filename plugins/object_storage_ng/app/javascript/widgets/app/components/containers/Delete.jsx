@@ -2,9 +2,9 @@ import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
 import useActions from "../../hooks/useActions"
-import { useGlobalState, useDispatch } from "../../StateProvider"
+import { useGlobalState } from "../../StateProvider"
 
-const DelteContainer = ({}) => {
+const DelteContainer = () => {
   const { name } = useParams()
   const history = useHistory()
   const [show, setShow] = React.useState(!!name)

@@ -176,7 +176,7 @@ const List = () => {
                 <i className="fa fa-refresh" />
               </button>
               <Link to="/containers/new" className="btn btn-primary">
-                Create new
+                Create container
               </Link>
             </React.Fragment>
           )}

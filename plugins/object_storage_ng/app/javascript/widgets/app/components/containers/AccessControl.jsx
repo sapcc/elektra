@@ -1,4 +1,5 @@
 import React from "react"
+import PropTypes from "prop-types"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useHistory, useParams } from "react-router-dom"
 import { Form } from "lib/elektra-form"
@@ -132,6 +133,8 @@ const FormBody = ({ staticweb, checkAcls }) => {
     </React.Fragment>
   )
 }
+
+FormBody.propTypes = { staticweb: PropTypes.object, checkAcls: PropTypes.func }
 
 const ContainerAccessControl = () => {
   const { name } = useParams()

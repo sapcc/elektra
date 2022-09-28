@@ -1,4 +1,5 @@
 import React from "react"
+import PropTypes from "prop-types"
 import { createUseStyles } from "react-jss"
 
 const useStyles = createUseStyles({
@@ -97,6 +98,11 @@ const AclsResolution = ({ title, acls }) => {
       </div>
     </React.Fragment>
   )
+}
+
+AclsResolution.propTypes = {
+  title: PropTypes.string,
+  acls: PropTypes.object,
 }
 
 export default AclsResolution

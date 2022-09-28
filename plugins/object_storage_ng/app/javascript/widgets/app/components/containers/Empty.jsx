@@ -12,8 +12,7 @@ const EmptyContainer = () => {
   const [beingEmptied, setBeingEmptied] = React.useState(false)
   const [error, setError] = React.useState()
   const { containers, capabilities } = useGlobalState()
-  const { loadContainerObjects, deleteObjects, loadContainerMetadata } =
-    useActions()
+  const { loadContainerObjects, deleteObjects } = useActions()
   const [progress, setProgress] = React.useState(0)
   const headerRef = React.createRef()
   const confirmationRef = React.createRef()

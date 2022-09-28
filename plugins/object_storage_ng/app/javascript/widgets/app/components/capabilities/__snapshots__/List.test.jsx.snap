@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`router routes 1`] = `
+<div
+  style={
+    Object {
+      "color": "#666",
+    }
+  }
+>
+  <h5>
+    Limits
+  </h5>
+  <ul
+    className="fa-ul"
+    id="limits"
+  />
+  <h5>
+    Capabilities
+  </h5>
+  <ul
+    className="fa-ul"
+    id="capabilities_list"
+  >
+    <li
+      className="missingCapability-0-2-1"
+    >
+      <span
+        className="fa-li fa fa-area-chart"
+      />
+      <strong>
+        Account quotas 
+      </strong>
+    </li>
+    <li
+      className="missingCapability-0-2-1"
+    >
+      <span
+        className="fa-li fa fa-area-chart"
+      />
+      <strong>
+        Container quotas 
+      </strong>
+    </li>
+    <li
+      className="missingCapability-0-2-1"
+    >
+      <span
+        className="fa-li fa fa-hand-stop-o"
+      />
+      API
+      <strong>
+         rate limiting 
+      </strong>
+    </li>
+    <li
+      className="missingCapability-0-2-1"
+    >
+      <span
+        className="fa-li fa fa-file-archive-o"
+      />
+      <strong>
+        Bulk upload 
+      </strong>
+      of archive files
+    </li>
+    <li
+      className="missingCapability-0-2-1"
+    >
+      <span
+        className="fa-li fa fa-eraser"
+      />
+      Efficient
+      <strong>
+         bulk deletion 
+      </strong>
+    </li>
+    <li
+      className="missingCapability-0-2-1"
+    >
+      <span
+        className="fa-li fa fa-refresh"
+      />
+      <strong>
+        Container syncing 
+      </strong>
+    </li>
+    <li
+      className="missingCapability-0-2-1"
+    >
+      <span
+        className="fa-li fa fa-object-group"
+      />
+      Handling of large objects using
+      <strong>
+         static large object 
+      </strong>
+      manifests
+    </li>
+    <li
+      className="missingCapability-0-2-1"
+    >
+      <span
+        className="fa-li fa fa-globe"
+      />
+      Distribution of container contents as
+      <strong>
+         static websites 
+      </strong>
+    </li>
+    <li
+      className="missingCapability-0-2-1"
+    >
+      <span
+        className="fa-li fa fa-clock-o"
+      />
+      Sharing of objects using
+      <strong>
+         temporary URLs 
+      </strong>
+    </li>
+  </ul>
+  <p
+    className="help-block"
+  >
+    For a more detailed report, use the
+    <code>
+      swift info
+    </code>
+    command on the
+    <a
+      href="#"
+    >
+      Web Shell
+    </a>
+    .
+  </p>
+</div>
+`;

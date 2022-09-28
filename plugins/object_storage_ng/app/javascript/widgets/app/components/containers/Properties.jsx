@@ -1,8 +1,9 @@
+import React from "react"
+import PropTypes from "prop-types"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import { useHistory, useParams, Link } from "react-router-dom"
 import { useGlobalState } from "../../StateProvider"
-import React from "react"
 import { Unit } from "lib/unit"
 import useActions from "../../hooks/useActions"
 import CustomMetaTags from "../shared/CustomMetatags"
@@ -192,6 +193,11 @@ const FormBody = ({ containerName, otherContainers }) => {
   )
 }
 
+FormBody.propTypes = {
+  containerName: PropTypes.string,
+  otherContainers: PropTypes.array,
+}
+
 const ContainerProperties = ({ objectStoreEndpoint }) => {
   const { name } = useParams()
   const history = useHistory()
@@ -364,5 +370,7 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
     </Modal>
   )
 }
+
+ContainerProperties.propTypes = { objectStoreEndpoint: PropTypes.string }
 
 export default ContainerProperties
