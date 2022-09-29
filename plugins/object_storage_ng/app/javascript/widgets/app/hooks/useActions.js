@@ -225,15 +225,14 @@ const useActions = () => {
 
   const loadContainerMetadata = React.useCallback(
     (containerName) => {
-      let container = containers.items.find((c) => c.name === containerName)
-      if (container && container.metadata)
-        return Promise.resolve(container.metadata)
-
       return apiClient
         .osApi("object-store")
         .head(containerPath(containerName))
         .then((response) => {
           const metadata = response.headers
+          Object.keys(metadata).forEach(
+            (k) => (metadata[k] = decodeURIComponent(metadata[k]))
+          )
           const date = new Date(metadata["x-last-modified"])
           dispatch({
             type: "RECEIVE_CONTAINER",
@@ -251,10 +250,15 @@ const useActions = () => {
     [containers, dispatch]
   )
   const updateContainerMetadata = React.useCallback(
-    (containerName, headers) =>
-      apiClient
+    (containerName, headers) => {
+      const newHeaders = { ...headers }
+      Object.keys(newHeaders).forEach(
+        (k) => (newHeaders[k] = encodeURIComponent(newHeaders[k]))
+      )
+      return apiClient
         .osApi("object-store")
-        .post(containerPath(containerName), {}, { headers: headers }),
+        .post(containerPath(containerName), {}, { headers: newHeaders })
+    },
     []
   )
 

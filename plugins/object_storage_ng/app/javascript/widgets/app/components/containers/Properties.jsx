@@ -231,7 +231,9 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
   React.useEffect(() => {
     setIsFetchingMetadata(true)
     loadContainerMetadata(name)
-      .then((headers) => setMetadata(headers))
+      .then((headers) => {
+        setMetadata(headers)
+      })
       .catch((error) => {
         setError(error.message)
       })

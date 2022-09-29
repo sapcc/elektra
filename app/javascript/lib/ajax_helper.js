@@ -6,7 +6,8 @@ let globalOptions = {}
 export let scope = {}
 
 // find scope and store it in the scope variable
-const foundScope = window.location.pathname.match(/\/([^\/]+)\/([^\/|\?|&]+)/i)
+const foundScope = window.location.pathname.match(/\/([^/]+)\/([^/|?|&]+)/i)
+
 if (foundScope) {
   scope = { domain: foundScope[1], project: foundScope[2] }
 }
@@ -14,10 +15,11 @@ if (foundScope) {
 export let ajaxHelper
 
 // configure and create the default ajax client
-export const configureAjaxHelper = (options) => {
+export const configureAjaxHelper = (options = {}) => {
   // store options in globalOptions
   if (options) globalOptions = options
   ajaxHelper = createAjaxHelper()
+  return ajaxHelper
 }
 
 // this method creates a special ajax client for a given plugin name
