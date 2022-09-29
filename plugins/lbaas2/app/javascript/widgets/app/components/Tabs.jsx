@@ -11,7 +11,11 @@ const Tabs = ({ match, location, history, tabsConfig, ...otherProps }) => {
 
     // collect tab items
     tabItems.push(
-      <li className={active ? "active" : ""} key={`tab_${index}`}>
+      <li
+        className={active ? "active" : ""}
+        key={`tab_${index}`}
+        data-target={`tab-${index}`}
+      >
         <Link to={tab.to} replace={true}>
           {tab.label}
         </Link>

@@ -179,6 +179,7 @@ const LoadbalancerList = (props) => {
             <TransitionGroup>
               <TableFadeTransition key={loadbalancers.length}>
                 <table
+                  data-target="table-loadbalancers"
                   className={
                     selected
                       ? "table table-section loadbalancers"
