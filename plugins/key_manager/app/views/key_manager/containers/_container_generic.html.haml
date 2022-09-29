@@ -8,7 +8,7 @@
       = select_tag "", options_for_select(@secrets.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, type: #{secret.secret_type}, status: #{secret.status})", secret.uuid, {data: {name: secret.name, secret_ref: secret.secret_ref, uuid: secret.uuid}}]}, selected: @selected_secrets.keys),
         data: {toggle: 'selectMultiple', selected: @selected_secrets}, multiple: true, id: 'generic_select'
     .col-sm-1
-      = link_to 'Add', "#", class: 'btn btn-primary btn-sm js-add-generic-secrets'
+      = link_to 'Add', "#", class: 'btn btn-primary btn-sm js-add-generic-secrets', data: { target: 'add-secret-to-a-new-generic-container' }
 
   %section
     .js-secrets-naming.hide
