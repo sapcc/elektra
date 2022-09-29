@@ -18,7 +18,7 @@
         Slack channel
 
   %p
-    = link_to 'Read more about Kubernetes as a Service in our documentation', "#{sap_url_for('documentation')}docs/containers/kubernetes/", target: '_blank'
+    = link_to 'Read more about Kubernetes as a Service in our documentation', "#{sap_url_for('documentation')}docs/customer/containers/kubernetes/overview/", target: '_blank'
 
 - if current_user.is_allowed?('kubernetes:application_list')
   - unless @kubernikus_endpoint.blank?

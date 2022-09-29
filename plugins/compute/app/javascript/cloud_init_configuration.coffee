@@ -59,7 +59,7 @@ CloudInit.checkOsType = (button, os_image_option, action_path) ->
     return
   # check image
   if os_image == "" || os_image == null || typeof os_image == "undefined"
-    CloudInit.attachPopover(button, 'Warning', "Missing property 'vmware_ostype' on the image provided. Please follow the steps described in the documentation to upload a compatible image. <a href='https://documentation.global.cloud.sap/docs/image/start/customer.html'>See customer images documentation</a>. Please choose manually.")
+    CloudInit.attachPopover(button, 'Warning', "Missing property 'vmware_ostype' on the image provided. Please follow the steps described in the documentation to upload a compatible image. <a href='https://documentation.global.cloud.sap/docs/customer/compute/os-image/customer-image/'>See customer images documentation</a>. Please choose manually.")
     CloudInit.addEventListenerOnSelect(button)
     CloudInit.addOsTypeButtons(button, action_path)
 
