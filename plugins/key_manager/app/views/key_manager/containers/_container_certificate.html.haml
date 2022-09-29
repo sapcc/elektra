@@ -11,7 +11,7 @@
           = secret.input :certificate, label: "Certificate", as: :select,
           collection: @certificates.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", secret.secret_ref]},
           icon_hint: 'Expected to be a PEM formatted x509 certificate.', prompt: "Choose a certificate", disabled: @selected_type != ::KeyManager::Container::Type::CERTIFICATE,
-          selected: @selected_secrets.fetch('certificate', [])
+          selected: @selected_secrets.fetch('certificate', []),  input_html: {data: {target: "certificate-input"}}
 
           = secret.input :private_key, label: "Private key", as: :select, required: false,
           collection: @private_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", secret.secret_ref]},
