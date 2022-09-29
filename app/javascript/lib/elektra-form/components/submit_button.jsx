@@ -9,6 +9,7 @@ export const SubmitButton = ({ label = "Save" }) => {
     <Button
       bsStyle="primary"
       type="submit"
+      data-test={label}
       disabled={!context.isFormValid || context.isFormSubmitting}
     >
       {context.isFormSubmitting ? "Please Wait ..." : label}

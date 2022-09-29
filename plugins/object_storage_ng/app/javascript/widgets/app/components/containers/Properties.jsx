@@ -365,7 +365,7 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={close}>Cancel</Button>
-            {metadata && <Form.SubmitButton label="Save" />}
+            {metadata && <Form.SubmitButton label="Update container" />}
           </Modal.Footer>
         </Form>
       )}

@@ -360,6 +360,7 @@ const ShowObject = ({ objectStoreEndpoint }) => {
         <Button
           bsStyle="primary"
           onClick={submit}
+          data-test="Update object"
           disabled={
             !containerName ||
             !object ||

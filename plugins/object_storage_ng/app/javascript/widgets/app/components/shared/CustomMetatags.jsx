@@ -63,6 +63,7 @@ const CustomMetaTags = ({ values, onChange, reservedKeys }) => {
           <div className="input-group">
             <input
               type="text"
+              data-test={`metaDataKey_${i}`}
               value={tag ? tag.key : ""}
               placeholder="Key"
               onChange={(e) => {
@@ -74,6 +75,7 @@ const CustomMetaTags = ({ values, onChange, reservedKeys }) => {
             <div className="input-group-addon">=</div>
             <input
               type="text"
+              data-test={`metaDataValue_${i}`}
               value={tag.value || ""}
               onChange={(e) => {
                 e.preventDefault()

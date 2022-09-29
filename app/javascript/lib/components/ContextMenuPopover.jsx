@@ -40,6 +40,7 @@ const ContextMenu = ({ children, disabled }) => {
         disabled={disabled}
         ref={setReferenceElement}
         className="btn btn-sm btn-default"
+        data-test="dropdown"
         onClick={() => setShow(!show)}
       >
         <span className="fa fa-cog" />
