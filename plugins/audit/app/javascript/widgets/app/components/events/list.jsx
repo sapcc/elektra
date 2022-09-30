@@ -12,14 +12,14 @@ const isValidDate = (date) =>
   !moment(date).isAfter()
 
 const ATTRIBUTES = [
-  {key: 'observer_type',  name: 'Source'},
+  {key: 'observer_type',  name: 'Observer Type / Source'},
   {key: 'action',         name: 'Action' },
-  {key: 'target_type',    name: 'Resource Type' },
-  {key: 'target_id',      name: 'Resource ID' },
-  {key: 'initiator_id',   name: 'Initiator/User ID' },
-  {key: 'initiator_name', name: 'User Name' },
+  {key: 'target_type',    name: 'Target Resource Type' },
+  {key: 'target_id',      name: 'Target Resource ID' },
+  {key: 'initiator_id',   name: 'Initiator ID / User ID' },
+  {key: 'initiator_name', name: 'Initiator Name / User Name' },
   {key: 'initiator_type', name: 'Initiator Type' },
-  {key: 'outcome',        name: 'Result' }
+  {key: 'outcome',        name: 'Outcome' }
 ]
 
 export default ({
