@@ -2,7 +2,7 @@
 
 module MasterdataCockpit
   class ProjectMasterdata < Core::ServiceLayer::Model
-    # https://billing.staging.cloud.sap:23000/masterdata/#api-Object_Types-OBJECTprojectMasterdata
+    # https://billing.eu-de-2.cloud.sap:64000/masterdata/
     # the following attributes ar known
     # "project_id":"ABCD1234",
     # "project_name":"MyProject0815",
@@ -44,7 +44,7 @@ module MasterdataCockpit
     validates_presence_of :responsible_controller_email, unless: -> { responsible_controller_id.blank? }, message: "can't be blank if controller is defined"
     validates_presence_of :responsible_primary_contact_email, unless: -> { responsible_primary_contact_id.blank? }, message: "can't be blank if primary contact is defined"
 
-    validates_presence_of :customer, :supervisor, :inventory_role, :biso, :infrastructure_coordinator
+    validates_presence_of :customer, :supervisor, :inventory_role, :biso, :infrastructure_coordinator, :responsible_operator_id
 
     validates_presence_of :additional_information, if: -> { business_criticality == 'prod_tc' }, message: "can't be blank if business criticality is Productive Time Critical"
     validates_presence_of :environment, :type_of_data, :soft_license_mode

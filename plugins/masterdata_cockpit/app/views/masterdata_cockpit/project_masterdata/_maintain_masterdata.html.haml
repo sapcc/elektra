@@ -71,7 +71,7 @@
       .row
         .col-md-6.operator-id
           = f.input :responsible_primary_contact_id, 
-            label: "Asset Owner", 
+            label: "Primary Contact (Asset Owner)", 
             placeholder: "C/D/I User",
             input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
         .col-md-6.operator-email
@@ -85,7 +85,7 @@
       .row
         .col-sm-6.operator-id
           = f.input :responsible_security_expert_id, 
-            label: "Security Contact", 
+            label: "Security Expert", 
             placeholder: "C/D/I User", 
             :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
@@ -99,7 +99,7 @@
       .row
         .col-md-6.operator-id
           = f.input :responsible_operator_id, 
-            label: "Run Team", 
+            label: "Operator (Run Team)", 
             placeholder: "C/D/I User", 
             :input_html => { class: 'operator-id-input' }
         .col-md-6.operator-email

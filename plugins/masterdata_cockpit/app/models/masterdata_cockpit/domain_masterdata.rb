@@ -1,6 +1,7 @@
 module MasterdataCockpit
   class DomainMasterdata < Core::ServiceLayer::Model
     # the following attributes ar known
+    # https://billing.eu-de-2.cloud.sap:64000/masterdata/
     #"domain_id":"ABCD1234",
     #"domain_name":"MyDomain0815",
     #"description":"MyDomain is about providing important things",
