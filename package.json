@@ -80,7 +80,6 @@
     "js-yaml": "^4.1.0",
     "juno-ui-components": "https://github.com/sapcc/juno/releases/download/v0_6_0/juno-ui-components.tgz",
     "jsdom": "^20.0.0",
-    "postcss": "^8.4.14",
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.14.0",
     "redux-mock-store": "1.5.4",
