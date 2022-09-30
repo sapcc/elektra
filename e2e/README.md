@@ -91,4 +91,4 @@ for password check `secrets/qa-de-1/values/domain-seeds.yaml`
 
 * at the moment we cannot test keppel-ui and cloudops tools, because our test admin user has no permission
 * we need our own project with a test member and admin user
-* https://documentation.global.cloud.sap/access-management/identity-usage-technical-user
+* https://documentation.global.cloud.sap/docs/customer/access-management/identity-service/overview/identity-usage/#technical-users

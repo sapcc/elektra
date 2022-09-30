@@ -13,7 +13,7 @@
       %p.help-block
         %i.fa.fa-info-circle
         Default is "Internal SAP Hosted Zone" 
-        #{link_to 'See the documentation for more information','https://documentation.global.cloud.sap/docs/dns/'}
+        #{link_to 'See the documentation for more information','https://documentation.global.cloud.sap/docs/customer/networking/dns/'}
     = f.input :email, required: true
     = f.input :ttl,   required: false, as: :integer, input_html: {value: @zone.ttl || 7200}
     = f.input :description, required: false, as: :text

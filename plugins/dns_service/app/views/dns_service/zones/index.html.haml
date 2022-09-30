@@ -43,7 +43,7 @@
         %td{colspa: 6}
           = 'No zones available...'
           - unless current_user.is_allowed?("dns_service:zone_create") or current_user.is_allowed?("dns_service:request_zone")
-            = link_to "#{sap_url_for('documentation')}docs/learn/network/how-to-create-dns-zone.html", class: "btn", title: "Open documentation in new window.", target: "_blank" do
+            = link_to "#{sap_url_for('documentation')}docs/customer/networking/dns/how-to-guides-2/dns-start-create-dns-zone/", class: "btn", title: "Open documentation in new window.", target: "_blank" do
               %i.fa.fa-external-link
               How to get a DNS zone
     - else
