@@ -4,15 +4,19 @@ window.location = {
   pathname: "/monsoon3/cc-demo/object-storage-ng/containers",
 }
 
-const createRequest = () => ({
-  open: jest.fn((method, path, rest) =>
-    console.log("===open", method, path, rest)
-  ),
-  send: jest.fn((a, b, c) => console.log("===send", a, b, c)),
-  setRequestHeader: jest.fn((a, b, c) =>
-    console.log("===set headers", a, b, c)
-  ),
-})
+// const request = {
+//   open: jest.fn((method, path, rest) =>
+//     console.log("===open", method, path, rest)
+//   ),
+//   send: jest.fn((a, b, c) => console.log("===send", a, b, c)),
+//   setRequestHeader: jest.fn((a, b, c) => console.log("===set header", a, b, c)),
+// }
+
+// let open = jest.fn((...props) => console.log("====================", props)),
+//   send = jest.fn(),
+//   setRequestHeader = jest.fn()
+// const xhrMockClass = () => ({ open, send, setRequestHeader })
+// window.XMLHttpRequest = jest.fn(xhrMockClass)
 
 // use require instead of import because of the window object.
 // we want to mock this object before loading the ajax helper
@@ -27,28 +31,20 @@ const {
 
 const clientMethods = (client, baseURL) => {
   describe(`client methods ${baseURL}`, () => {
-    let request = null
-
-    beforeEach(() => {
-      request = createRequest()
-      window.XMLHttpRequest = jest.fn(() => request)
-    })
-
-    expect(client).toBeDefined()
-
     describe("GET", () => {
       test("should be defined", () => {
         expect(client.get).toBeDefined()
       })
       test("request without options", async () => {
-        client.get("test")
-        client.get("test")
-        expect(request.open).toHaveBeenCalled()
-        // expect(open).toHaveBeenCalledWith(
+        //axios.create().get("test")
+        // expect(interceptor).toHaveBeenCalledWith(
+        //   expect.objectContaining({ config: { method: "get" } })
+        // )
+        // expect(client.interceptors.request.use((config) => {).toHaveBeenCalledWith(
         //   "GET",
         //   baseURL + "test",
         //   expect.anything()
-        // )
+        //
       })
     })
     describe("POST", () => {
@@ -99,16 +95,14 @@ describe("Ajax Helper", () => {
   })
 
   describe("createAjaxHelper", () => {
-    let client = createAjaxHelper()
-
     it("should be defined", () => {
       expect(createAjaxHelper).toBeDefined()
     })
 
-    clientMethods(client, "")
-    // clientMethods(
-    //   createAjaxHelper().osApi("object-store"),
-    //   "os-api/object-store/"
-    // )
+    clientMethods(createAjaxHelper(), "")
+    clientMethods(
+      createAjaxHelper().osApi("object-store"),
+      "os-api/object-store/"
+    )
   })
 })
