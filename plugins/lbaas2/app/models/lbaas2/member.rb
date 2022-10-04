@@ -3,8 +3,8 @@ module Lbaas2
     validates :name, presence: true
     validates :address, presence: true
     validates :weight, presence: true, inclusion: {
-      in: 1..256,
-      message: 'Choose a weight between 1 and 256'
+      in: 0..256,
+      message: 'Choose a weight between 0 and 256'
     }
     validates :protocol_port, presence: true, inclusion: {
       in: 1..65535,
