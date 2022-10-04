@@ -247,7 +247,7 @@ const useActions = () => {
           return metadata
         })
     },
-    [containers, dispatch]
+    [dispatch]
   )
   const updateContainerMetadata = React.useCallback(
     (containerName, headers) => {

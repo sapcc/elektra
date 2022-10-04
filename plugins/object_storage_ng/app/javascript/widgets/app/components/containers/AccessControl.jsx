@@ -157,8 +157,6 @@ const ContainerAccessControl = () => {
         setError(error.message)
       })
       .finally(() => setIsFetchingMetadata(false))
-
-    return () => setMetadata(null)
   }, [name, loadContainerMetadata, setMetadata, setIsFetchingMetadata])
 
   const checkAcls = React.useCallback(
