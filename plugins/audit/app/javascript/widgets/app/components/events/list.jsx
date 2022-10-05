@@ -12,12 +12,12 @@ const isValidDate = (date) =>
   !moment(date).isAfter()
 
 const ATTRIBUTES = [
-  {key: 'observer_type',  name: 'Observer Type / Source'},
+  {key: 'observer_type',  name: 'Observer TypeURI'},
   {key: 'action',         name: 'Action' },
-  {key: 'target_type',    name: 'Target Resource Type' },
-  {key: 'target_id',      name: 'Target Resource ID' },
-  {key: 'initiator_id',   name: 'Initiator ID / User ID' },
-  {key: 'initiator_name', name: 'Initiator Name / User Name' },
+  {key: 'target_type',    name: 'Target TypeURI' },
+  {key: 'target_id',      name: 'Target ID' },
+  {key: 'initiator_id',   name: 'Initiator ID' },
+  {key: 'initiator_name', name: 'Initiator Name' },
   {key: 'initiator_type', name: 'Initiator Type' },
   {key: 'outcome',        name: 'Outcome' }
 ]
@@ -145,10 +145,10 @@ export default ({
         <tr>
           <th className='icon-cell'></th>
           <th>Time</th>
-          <th>Source</th>
+          <th>Observer TypeURI</th>
           <th>Action</th>
-          <th>Target Resource</th>
-          <th>Initiator/User</th>
+          <th>Target TypeURI/ID</th>
+          <th>Initiator Name/ID</th>
         </tr>
       </thead>
 
