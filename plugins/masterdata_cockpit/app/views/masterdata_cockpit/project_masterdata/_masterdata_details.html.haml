@@ -40,7 +40,16 @@
           Unlimited
         - else
           = @project_masterdata.number_of_endusers
-
+  .row
+    .col-sm-4.details-label
+      Customer
+      %a.help-link{data:{content: t('masterdata_cockpit.customer_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.customer
+        = @project_masterdata.customer
+      - else
+        \-
 
 .masterdata-group
   %h5.masterdata-heading 
@@ -61,9 +70,10 @@
     Roles
     %a.help-link{data:{content: t('masterdata_cockpit.roles'), popover: {type: "help-hint"}, toggle: "popover"}}
       = icon('question-circle-o')
+
   .row
     .col-sm-4.details-label
-      Primary Contact
+      Asset Owner
       %a.help-link{data:{content: t('masterdata_cockpit.responsible_primary_contact_help'), popover: {type: "help-hint"}, toggle: "popover"}}
         = icon('info-circle')
     .col-sm-2.details-value
@@ -75,9 +85,10 @@
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_primary_contact_email
+
   .row
     .col-sm-4.details-label
-      Security Expert
+      Security Contact
       %a.help-link{data:{content: t('masterdata_cockpit.responsible_security_expert_help'), popover: {type: "help-hint"}, toggle: "popover"}}
         = icon('info-circle')
     .col-sm-2.details-value
@@ -89,9 +100,10 @@
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_security_expert_email
+
   .row
     .col-sm-4.details-label
-      Operator
+      Run Team
       %a.help-link{data:{content: t('masterdata_cockpit.responsible_operator_help'), popover: {type: "help-hint"}, toggle: "popover"}}
         = icon('info-circle')
     .col-sm-2.details-value
@@ -103,6 +115,7 @@
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_operator_email
+
   .row
     .col-sm-4.details-label
       Product Owner
@@ -117,6 +130,7 @@
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_product_owner_email
+
   .row
     .col-sm-4.details-label
       Controller
@@ -132,6 +146,52 @@
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_controller_email
 
+
+.masterdata-group
+  %h5.masterdata-heading
+    Other Contacts
+    %a.help-link{data:{content: t('masterdata_cockpit.other_contacts_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+      = icon('question-circle-o')
+
+  .row
+    .col-sm-4.details-label
+      Supervisor
+      %a.help-link{data:{content: t('masterdata_cockpit.supervisor_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.supervisor
+        \-
+      = @project_masterdata.supervisor
+
+  .row
+    .col-sm-4.details-label
+      BIS Offficer
+      %a.help-link{data:{content: t('masterdata_cockpit.biso_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.biso
+        \-
+      = @project_masterdata.biso
+
+  .row
+    .col-sm-4.details-label
+      Inventory Role
+      %a.help-link{data:{content: t('masterdata_cockpit.inventory_role_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.inventory_role
+        \-
+      = @project_masterdata.inventory_role
+
+  .row
+    .col-sm-4.details-label
+      Infrastructure Coordinator
+      %a.help-link{data:{content: t('masterdata_cockpit.infrastructure_coordinator_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.infrastructure_coordinator
+        \-
+      = @project_masterdata.infrastructure_coordinator
 
 .masterdata-group
   %h5.masterdata-heading
@@ -167,3 +227,135 @@
         = @project_masterdata.cost_object_name
       - else
         \-
+
+.masterdata-group
+  %h5.masterdata-heading
+    Project Info
+    %a.help-link{data:{content: t('masterdata_cockpit.project_info_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+      = icon('question-circle-o')
+  .row
+    .col-sm-4.details-label
+      Environment
+      %a.help-link{data:{content: t('masterdata_cockpit.environment_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.environment
+        = MasterdataCockpit::Config.environment[@project_masterdata.environment]      
+      - else
+        \-
+  .row
+    .col-sm-4.details-label
+      Type of Data
+      %a.help-link{data:{content: t('masterdata_cockpit.type_of_data_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.type_of_data
+        = MasterdataCockpit::Config.type_of_data[@project_masterdata.type_of_data]      
+      - else
+        \-
+  .row
+    .col-sm-4.details-label
+      Software License
+      %a.help-link{data:{content: t('masterdata_cockpit.soft_license_mode_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.soft_license_mode
+        = MasterdataCockpit::Config.soft_license_mode[@project_masterdata.soft_license_mode]      
+      - else
+        \-
+  .row
+    .col-sm-4.details-label
+      GPU Enabled
+      %a.help-link{data:{content: t('masterdata_cockpit.gpu_enabled_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.gpu_enabled == 1
+        = icon('check-square-o')
+      -else
+        = icon('times')
+  .row
+    .col-sm-4.details-label
+      Contains PII DPP HR
+      %a.help-link{data:{content: t('masterdata_cockpit.contains_pii_dpp_hr_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.contains_pii_dpp_hr == 1
+        = icon('check-square-o')
+      -else
+        = icon('times')
+  .row
+    .col-sm-4.details-label
+      External Customer Data
+      %a.help-link{data:{content: t('masterdata_cockpit.contains_external_customer_data_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.contains_external_customer_data == 1
+        = icon('check-square-o')
+      -else
+        = icon('times')
+
+.masterdata-group
+  %h5.masterdata-heading
+    External Certification
+    %a.help-link{data:{content: t('masterdata_cockpit.external_certification_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+      = icon('question-circle-o')
+  .row
+    .col-sm-4.details-label
+      ISO
+      %a.help-link{data:{content: t('masterdata_cockpit.external_certification_iso_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.ext_cert_iso == 1
+        = icon('check-square-o')
+      -else
+        = icon('times')
+  .row
+    .col-sm-4.details-label
+      C5
+      %a.help-link{data:{content: t('masterdata_cockpit.external_certification_c5_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.ext_cert_c5 == 1
+        = icon('check-square-o')
+      -else
+        = icon('times')
+  .row
+    .col-sm-4.details-label
+      PCI
+      %a.help-link{data:{content: t('masterdata_cockpit.external_certification_pci_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.ext_cert_pci == 1
+        = icon('check-square-o')
+      -else
+        = icon('times')
+  .row
+    .col-sm-4.details-label
+      SOC1
+      %a.help-link{data:{content: t('masterdata_cockpit.external_certification_soc_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.ext_cert_soc1 == 1
+        = icon('check-square-o')
+      -else
+        = icon('times')
+  .row
+    .col-sm-4.details-label
+      SOC2
+      %a.help-link{data:{content: t('masterdata_cockpit.external_certification_soc_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.ext_cert_soc2 == 1
+        = icon('check-square-o')
+      -else
+        = icon('times')
+  .row
+    .col-sm-4.details-label
+      SOX
+      %a.help-link{data:{content: t('masterdata_cockpit.external_certification_sox_help'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('info-circle')
+    .col-sm-8.details-value
+      - if @project_masterdata.ext_cert_sox == 1
+        = icon('check-square-o')
+      -else
+        = icon('times')
