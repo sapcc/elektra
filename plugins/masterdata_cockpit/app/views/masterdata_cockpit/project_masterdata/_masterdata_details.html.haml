@@ -155,26 +155,6 @@
 
   .row
     .col-sm-4.details-label
-      Supervisor
-      %a.help-link{data:{content: t('masterdata_cockpit.supervisor_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-        = icon('info-circle')
-    .col-sm-2.details-value
-      - unless @project_masterdata.supervisor
-        \-
-      = @project_masterdata.supervisor
-
-  .row
-    .col-sm-4.details-label
-      BIS Offficer
-      %a.help-link{data:{content: t('masterdata_cockpit.biso_help'), popover: {type: "help-hint"}, toggle: "popover"}}
-        = icon('info-circle')
-    .col-sm-2.details-value
-      - unless @project_masterdata.biso
-        \-
-      = @project_masterdata.biso
-
-  .row
-    .col-sm-4.details-label
       Inventory Role
       %a.help-link{data:{content: t('masterdata_cockpit.inventory_role_help'), popover: {type: "help-hint"}, toggle: "popover"}}
         = icon('info-circle')

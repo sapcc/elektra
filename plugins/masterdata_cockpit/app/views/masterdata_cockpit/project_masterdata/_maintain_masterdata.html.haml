@@ -146,24 +146,6 @@
     .panel-body
       .row
         .col-md-6.operator-id
-          = f.input :supervisor, 
-            label: "Supervisor", 
-            placeholder: "C/D/I User",
-            input_html: { class: 'operator-id-input' }
-        .col-md-6.operator-id
-          = f.input :biso, 
-            label: "BIS Officer", 
-            placeholder: "C/D/I User",
-            input_html: { class: 'operator-id-input' }
-      .row
-        .col-md-6.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.supervisor_help')
-        .col-md-6.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.biso_help')
-      .row
-        .col-md-6.operator-id
           = f.input :inventory_role, 
             label: "Inventory Role", 
             placeholder: "C/D/I User",

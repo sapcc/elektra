@@ -44,7 +44,7 @@ module MasterdataCockpit
     validates_presence_of :responsible_controller_email, unless: -> { responsible_controller_id.blank? }, message: "can't be blank if controller is defined"
     validates_presence_of :responsible_primary_contact_email, unless: -> { responsible_primary_contact_id.blank? }, message: "can't be blank if primary contact is defined"
 
-    validates_presence_of :customer, :supervisor, :inventory_role, :biso, :infrastructure_coordinator, :responsible_operator_id
+    validates_presence_of :customer, :inventory_role, :infrastructure_coordinator, :responsible_operator_id
 
     validates_presence_of :additional_information, if: -> { business_criticality == 'prod_tc' }, message: "can't be blank if business criticality is Productive Time Critical"
     validates_presence_of :environment, :type_of_data, :soft_license_mode
@@ -63,10 +63,6 @@ module MasterdataCockpit
               :responsible_product_owner_email,
               :responsible_controller_email,
               :responsible_primary_contact_email,
-              :biso_email,
-              :supervisor_email,
-              :infrastructure_coordinator_email,
-              :inventory_role_email,
               format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: 'please use a valid email address' },
               allow_nil: true,
               allow_blank: true
@@ -76,8 +72,6 @@ module MasterdataCockpit
               :responsible_primary_contact_id,
               :responsible_product_owner_id,
               :responsible_controller_id,
-              :biso,
-              :supervisor,
               :inventory_role,
               :infrastructure_coordinator,
               format: { with: /\A[DCIdci]\d*\z/, message: 'please use a C/D/I user id' },
