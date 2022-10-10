@@ -6,7 +6,8 @@ let globalOptions = {}
 export let scope = {}
 
 // find scope and store it in the scope variable
-const foundScope = window.location.pathname.match(/\/([^\/]+)\/([^\/|\?|&]+)/i)
+const foundScope = window.location.pathname.match(/\/([^/]+)\/([^/|?|&]+)/i)
+
 if (foundScope) {
   scope = { domain: foundScope[1], project: foundScope[2] }
 }
@@ -14,10 +15,11 @@ if (foundScope) {
 export let ajaxHelper
 
 // configure and create the default ajax client
-export const configureAjaxHelper = (options) => {
+export const configureAjaxHelper = (options = {}) => {
   // store options in globalOptions
   if (options) globalOptions = options
   ajaxHelper = createAjaxHelper()
+  return ajaxHelper
 }
 
 // this method creates a special ajax client for a given plugin name
@@ -157,8 +159,6 @@ export const createAjaxHelper = (options = {}) => {
         "patch",
         "post",
         "put",
-        "Content-Type",
-        "content-type",
         "x-csrf-token",
       ]
 
@@ -175,7 +175,6 @@ export const createAjaxHelper = (options = {}) => {
       config.headers = headers
     }
 
-    // console.log("=============CONFIG AFTER", config)
     return config
   })
 
@@ -189,6 +188,7 @@ export const createAjaxHelper = (options = {}) => {
     const serviceEndpoint = `os-api/${serviceName}`
 
     return {
+      endpointURL: axiosInstance.defaults.baseURL + "/" + serviceEndpoint,
       get: (path, options = {}) =>
         axiosInstance.get(
           `${serviceEndpoint}/${path}`,
@@ -199,11 +199,24 @@ export const createAjaxHelper = (options = {}) => {
           `${serviceEndpoint}/${path}`,
           mergeServiceOptions(serviceOptions, options)
         ),
+      copy: (path, options = {}) => {
+        return axiosInstance({
+          method: "COPY",
+          url: `${serviceEndpoint}/${path}`,
+          ...mergeServiceOptions(serviceOptions, options),
+        })
+      },
       del: (path, options = {}) =>
         axiosInstance.delete(
           `${serviceEndpoint}/${path}`,
           mergeServiceOptions(serviceOptions, options)
         ),
+      delete: (path, options = {}) =>
+        axiosInstance.delete(
+          `${serviceEndpoint}/${path}`,
+          mergeServiceOptions(serviceOptions, options)
+        ),
+
       post: (path, values = {}, options = {}) =>
         axiosInstance.post(
           `${serviceEndpoint}/${path}`,
@@ -211,12 +224,6 @@ export const createAjaxHelper = (options = {}) => {
           mergeServiceOptions(serviceOptions, options)
         ),
       put: (path, values = {}, options = {}) => {
-        console.log(
-          "-----------PUT",
-          path,
-          values,
-          mergeServiceOptions(serviceOptions, options)
-        )
         return axiosInstance
           .put(
             `${serviceEndpoint}/${path}`,

@@ -1,0 +1,6 @@
+.bs-callout.bs-callout-info
+  %p
+    This is the new version of Shared Object Storage. If you prefer to use the previous version, click 
+    =link_to "here", plugin('object_storage').entry_path
+
+= javascript_include_tag "object_storage_ng_app_widget", data: {base_name: plugin('object_storage_ng').widget_path, object_store_endpoint:  services.os_api.service("object-store").endpoint_url}

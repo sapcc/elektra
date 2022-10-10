@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   
   scope '/:domain_id(/:project_id)(/:plugin)' do
     
+    get 'os-api/__auth_token', to: 'os_api#auth_token'
     match 'os-api(/*path)', to: 'os_api#reverse_proxy', via: :all
 
     resources :cache, only: %i[index show] do

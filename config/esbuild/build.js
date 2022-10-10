@@ -38,6 +38,7 @@ const config = {
   plugins: [
     envFilePlugin,
     pathsResolverPlugin({
+      // see also in jest.config.js
       lib: "app/javascript/lib",
       core: "app/javascript/core",
       plugins: "plugins",
@@ -119,6 +120,7 @@ if (watch) {
         "plugins/*/app/javascript/**/*.{js,jsx,coffee}",
       ]),
       {
+        // eslint-disable-next-line no-useless-escape
         ignored: /(^|[\/\\])\../, // ignore dotfiles
         persistent: true,
         ignoreInitial: true,
@@ -140,7 +142,7 @@ if (watch) {
       .on("change", (path) => {
         compile({ clear: true, change: true }).then(() => {
           log(grey, " ◻️ Reason: file has been changed ⚙️")
-          log(grey, `  ◻️ File: ${path}`)
+          log(grey, ` ◻️ File: ${path}`)
         })
       })
       .on("unlink", (path) => {

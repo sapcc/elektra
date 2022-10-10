@@ -1,5 +1,9 @@
 class OsApiController < ::AjaxController
 
+  def auth_token
+    render plain: current_user.token
+  end
+  
   # Example how to use in browser
   # fetch("os-api/SERVICE_NAME/SERVICE_PATH?headers=HEADERS_AS_JSON")
 
@@ -10,18 +14,25 @@ class OsApiController < ::AjaxController
     # get path from request
     path = params[:path]
     # we remove the first part of path. It is the openstack service name
-    path_tokens = path.split("/")
-    service_name = path_tokens.shift
+    service_path = path.split("/",2)
+    service_name = service_path[0]
     # the rest is the current path
-    path = path_tokens.join("/")
+    path = service_path[1] || ""
     path += ".#{params[:format]}" if params[:format]
 
-    headers = {"Content-Type" => request.headers["Content-Type"] || "application/json"}
+    headers = {}
     request.headers.each do |name,value| 
       if name.start_with?("HTTP_OS_API") 
         headers[name.gsub("HTTP_OS_API_","").gsub("_","-")] = value 
       end
     end
+    # rename content type to fit elektron's key :(
+    if headers["CONTENT-TYPE"]
+      headers["Content-Type"] = headers["CONTENT-TYPE"]
+      headers.delete("CONTENT-TYPE")
+    end
+
+    # byebug
     
     # get api client for the given service name
     service = services.os_api.service(service_name)
@@ -31,19 +42,27 @@ class OsApiController < ::AjaxController
     # call the openstack api endpoint with given path, params and headers
     # for http methods POST, PUT, PATCH we have to consider the body parameter
     elektron_response = if ["post","put","patch"].include?(method)
-      body = JSON.parse(request.body.read ) rescue request.body.read 
+      body = request.body.read
       service.public_send(method,path,elektron_params, headers: headers) do 
         body 
-      end      
-    else
+      end 
       # GET, HEAD, DELETE case
+    else
       service.public_send(method,path, elektron_params, headers: headers)   
     end
-    
+
     # render response as json
     elektron_response.header.each_header do |key, value|
-      response.headers[key] = value if key.start_with? "x-"
+      new_key = key.start_with?("x-") ? key : "x-#{key}"
+      response.set_header(new_key,value)
     end
-    render json: elektron_response.body
+
+    render json: elektron_response.body, status: elektron_response.header.code
+
+  rescue => e 
+    # pp "......................................ERROR"
+    # pp e
+    # byebug
+    render json: {error: e.message}, status: e.code 
   end
 end

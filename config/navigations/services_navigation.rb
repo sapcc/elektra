@@ -80,7 +80,7 @@ SimpleNavigation::Configuration.run do |navigation|
                        lambda {
                          Gem::Version.new(services.image.current_version.gsub('v','')) >= Gem::Version.new('2.5') ? plugin('image').ng_path+'?r=' : plugin('image').os_images_public_index_path
                        },
-                       if: -> { services.available?(:image, :os_images) },
+                       if: -> {current_user.has_service? "image" },
                        highlights_on: proc { params[:controller][%r{image/.*}] }
       compute_nav.item :flavors,
                        'Flavors',
@@ -227,9 +227,9 @@ SimpleNavigation::Configuration.run do |navigation|
                  if: -> { services.available?(:object_storage, :containers) } do |storage_nav|
       storage_nav.item :shared_storage,
                        'Shared Object Storage',
-                       -> { plugin('object_storage').entry_path },
-                       if: -> { services.available?(:object_storage, :containers) },
-                       highlights_on: proc { params[:controller][%r{object_storage/.*}] }
+                       -> { plugin('object_storage_ng').widget_path },
+                       if: -> { current_user.has_service? "object-store" },
+                       highlights_on: proc { params[:controller][%r{object_storage_ng/.*}] }
       storage_nav.item :shared_filesystem_storage,
                        'Shared File System Storage',
                        -> { plugin('shared_filesystem_storage').start_path('shares')+'?r=' },
