@@ -7,4 +7,4 @@
     - if recordset.type!='NS' && current_user.is_allowed?("dns_service:recordset_update", zone: zone)
       %li= link_to 'Edit', plugin('dns_service').edit_zone_recordset_path(zone_id:zone.id,id: recordset.id, action_from_show: show_view), data: {modal: true}
     - if current_user.is_allowed?("dns_service:recordset_delete", zone: zone)
-      %li= link_to 'Delete', plugin('dns_service').zone_recordset_path(zone_id:zone.id,id:recordset.id, action_from_show: show_view), method: :delete, data: { confirm: 'Are you sure you want to delete this record?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
+      %li= link_to 'Delete', plugin('dns_service').zone_recordset_path(zone_id:zone.id,id:recordset.id, action_from_show: show_view), method: :delete, data: { confirm: "Are you sure you want to delete the record #{recordset.name}?", ok: "Yes, delete it", confirmed: :loading_status}, remote: true

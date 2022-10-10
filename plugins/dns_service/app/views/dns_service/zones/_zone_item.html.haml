@@ -54,4 +54,4 @@
           - if current_user.is_allowed?("dns_service:maintain_shared_zones", zone: zone.attributes) && !zone.shared
             %li= link_to 'Share this Zone', plugin('dns_service').new_zone_shared_zone_path(zone_id: zone.id), data: {modal: true}
           - if current_user.is_allowed?("dns_service:zone_delete", zone: zone.attributes) && !zone.shared
-            %li= link_to 'Delete', plugin('dns_service').zone_path(zone.id), method: :delete, data: { confirm: 'Are you sure you want to delete this zone?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
+            %li= link_to 'Delete', plugin('dns_service').zone_path(zone.id), method: :delete, data: { confirm: "Are you sure you want to delete the zone #{zone.name}?", ok: "Yes, delete it", confirmed: :loading_status}, remote: true
