@@ -1,0 +1,33 @@
+!!!
+%html
+  %head
+    %meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    %meta(name="viewport" content="width=device-width, initial-scale=1")
+
+    %title= page_title
+
+    = favicon_png
+    = favicon_ico
+    = apple_touch_icon
+
+    = csrf_meta_tags
+
+    %style{type: 'text/css'}
+      :css
+        html {
+          height: 100vh;
+          background: rgb(13, 20, 28);
+        }
+        body {
+          height: 100vh;
+          margin: 0;
+        }
+        #root {
+          height: 100vh;
+        }
+    
+
+  %body{class: "#{body_class}"}
+    #root
+      = yield
+
