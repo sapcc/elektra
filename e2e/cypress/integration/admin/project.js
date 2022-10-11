@@ -37,8 +37,8 @@ describe("project landing page", () => {
     cy.contains('a.navbar-identity','Technical User').click()
     cy.contains('a','Log out').click()
     // check not in one string because it can be different order
-    cy.contains('SAP Converged Cloud')
-    cy.contains('a','Enter the cloud')
+    cy.contains("SAP Converged Cloud")
+    cy.contains('button','Log in')
   })
 
   /*
