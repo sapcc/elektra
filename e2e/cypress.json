@@ -4,5 +4,6 @@
   "viewportWidth":1300,
   "viewportHeight":1100,
   "videoCompression":20,
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "includeShadowDom": true
 }
