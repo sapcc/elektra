@@ -252,9 +252,11 @@ const useActions = () => {
   const updateContainerMetadata = React.useCallback(
     (containerName, headers) => {
       const newHeaders = { ...headers }
-      Object.keys(newHeaders).forEach(
-        (k) => (newHeaders[k] = encodeURIComponent(newHeaders[k]))
-      )
+      // Object.keys(newHeaders).forEach(
+      //   (k) => (newHeaders[k] = encodeURIComponent(newHeaders[k]))
+      // )
+
+      console.log("========================", newHeaders)
       return apiClient
         .osApi("object-store")
         .post(containerPath(containerName), {}, { headers: newHeaders })
