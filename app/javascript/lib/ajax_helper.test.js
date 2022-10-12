@@ -72,7 +72,9 @@ describe("client", () => {
             expect.objectContaining({
               status: 200,
               data: { name: "test" },
-              headers: { test: "test" },
+              headers: {
+                test: "test",
+              },
             })
           )
         })
@@ -138,7 +140,9 @@ describe("client", () => {
               ok: false,
               status: 400,
               statusText: "bad request",
-              headers: { test: "test" },
+              headers: {
+                test: "test",
+              },
             })
           )
         })
@@ -395,6 +399,7 @@ describe("client", () => {
                 "X-test1": "test1",
                 "X-test2": "test2",
                 "x-csrf-token": "CSRF-TOKEN",
+                Accept: "application/json; charset=utf-8",
               },
             })
           )
@@ -417,6 +422,7 @@ describe("client", () => {
                 test2: "test2",
                 "X-test3": "test3",
                 "x-csrf-token": "CSRF-TOKEN",
+                Accept: "application/json; charset=utf-8",
               },
             })
           )
@@ -436,6 +442,7 @@ describe("client", () => {
               headers: {
                 "Y-test1": "test1",
                 "x-csrf-token": "CSRF-TOKEN",
+                Accept: "application/json; charset=utf-8",
               },
             })
           )
@@ -448,7 +455,12 @@ describe("client", () => {
           })
           if (["post", "put", "patch"].indexOf(action) >= 0)
             client[action]("test", {}, { headers: { test2: "test2" } })
-          else client[action]("test", { headers: { test2: "test2" } })
+          else
+            client[action]("test", {
+              headers: {
+                test2: "test2",
+              },
+            })
           expect(fetch).toHaveBeenLastCalledWith(
             expect.anything(),
             expect.objectContaining({
@@ -456,6 +468,7 @@ describe("client", () => {
                 "X-test1": "test1",
                 "X-test2": "test2",
                 "x-csrf-token": "CSRF-TOKEN",
+                Accept: "application/json; charset=utf-8",
               },
             })
           )
