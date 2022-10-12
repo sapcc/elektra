@@ -87,10 +87,13 @@ const handleResponse = async (response) => {
     if (currentUrl != redirectToUrl) window.location.replace(redirectToUrl)
   }
 
+  const headers = []
+  response.headers.forEach((value, key) => (headers[key] = value))
+
   if (!response.ok) {
     const error = new Error(response.statusText || response.status)
     error.status = response.status
-    error.headers = response.headers
+    error.headers = headers
     error.data = await response.json().catch((e) => null)
     error.response = response
 
@@ -98,10 +101,11 @@ const handleResponse = async (response) => {
   }
 
   const data = await response.json().catch((e) => null)
+
   return {
     data,
     response: response,
-    headers: response.headers,
+    headers,
     status: response.status,
   }
 }
