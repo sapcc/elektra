@@ -71,6 +71,14 @@ span.highlight {
   background-color: $hover-orange;
 }
 
+.blink {
+  padding-top: 10px;
+  transition: 0.2s all;
+
+  &:active {
+    transform: scale(1.2);
+  }
+}
 // Virtualized Table
 .virtualized-table-tr {
   border-top: 1px solid #ddd;
@@ -1093,14 +1101,13 @@ footer,
   margin-top: 20px;
   margin-bottom: 20px;
   border-radius: 4px;
+  justify-content: space-between;
   .breadcrumb {
-    flex: 1;
     background-color: transparent;
     margin-top: 0px;
     margin-bottom: 0px;
   }
   .details {
-    flex: 0;
     padding-right: 15px;
     color: $medium-gray;
   }
