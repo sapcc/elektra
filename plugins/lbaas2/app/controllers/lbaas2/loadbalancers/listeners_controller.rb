@@ -92,7 +92,7 @@ module Lbaas2
       end
 
       def containers
-        containers = services.key_manager.containers(limit: 100)
+        containers = services.key_manager.containers(sort: 'created:desc', limit: 3000)
         containers = {items: []} if containers.blank?
         selectContainers = containers[:items].map { |c| {"label": "#{c.name} (#{c.id})", "value": c.container_ref} }
         
@@ -104,12 +104,18 @@ module Lbaas2
       end
 
       def secrets
-        secrets = services.key_manager.secrets(limit: 100)
+        # collect secrets by type
+        secretsCertificate = services.key_manager.secrets(sort: 'created:desc', secret_type: ::KeyManager::Secret::Type::CERTIFICATE, limit: 50)
+        secretsOpaque = services.key_manager.secrets(sort: 'created:desc', secret_type: ::KeyManager::Secret::Type::OPAQUE, limit: 50)
+
+        total = secretsCertificate.fetch(:total, 0).to_i + secretsOpaque.fetch(:total, 0).to_i        
+        secrets = secretsCertificate.fetch(:items, []) + secretsOpaque.fetch(:items, [])
         secrets = {items: []} if secrets.blank?
-        selectSecrets = secrets[:items].keep_if{|i| i.secret_type == ::KeyManager::Secret::Type::CERTIFICATE || i.secret_type == ::KeyManager::Secret::Type::OPAQUE}.map{ |c| {"label": "#{c.name} (#{c.id})", "value": c.secret_ref} }
+        selectSecrets = secrets.map{ |c| {"label": "#{c.name} (#{c.secret_ref})", "value": c.secret_ref} }
 
         render json: {
-          secrets: selectSecrets
+          secrets: selectSecrets,
+          total: total
         }
       rescue Exception => e
         render json: { errors: e.message }, status: "500"
