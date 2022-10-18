@@ -1,6 +1,12 @@
 import React from "react"
-import { Modal, Button } from "react-bootstrap"
-import { Form, TextInputRow, SelectRow, SelectOption } from "juno-ui-components"
+import { Button } from "react-bootstrap"
+import {
+  Modal,
+  Form,
+  TextInputRow,
+  SelectRow,
+  SelectOption,
+} from "juno-ui-components"
 import { useHistory, useLocation } from "react-router-dom"
 import apiClient from "../../apiClient"
 import { useGlobalState } from "../StateProvider"
@@ -42,6 +48,7 @@ const NewContainer = () => {
 
   const close = React.useCallback(() => {
     setShow(false)
+    history.replace(location.pathname.replace("/new", "")), [history, location]
   }, [])
 
   const restoreURL = React.useCallback(
@@ -53,40 +60,33 @@ const NewContainer = () => {
 
   return (
     <Modal
-      show={show}
-      onHide={close}
-      onExited={restoreURL}
-      bsSize="large"
+      title="New Container"
+      open={show}
+      onCancel={close}
+      confirmButtonLabel="Save"
+      cancelButtonLabel="Cancel"
+      size="large"
       aria-labelledby="contained-modal-title-lg"
     >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-lg">New Container</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form
-          className="form form-horizontal"
-          validate={validate}
-          onSubmit={onSubmit}
-        >
-          <TextInputRow
-            label="Name"
-            name="name"
-            required="true"
-            variant="stacked"
-            placeholder="Enter name"
-          />
-          <SelectRow label="Container Type">
-            <SelectOption label="Certificate" value="" />
-            <SelectOption label="Generic" value="" />
-            <SelectOption label="Rsa" value="" />
-          </SelectRow>
-          <SelectRow label="Secrets" items=""></SelectRow>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={close}>Cancel</Button>
-        <Button onClick={onSubmit}>Create</Button>
-      </Modal.Footer>
+      <Form
+        className="form form-horizontal"
+        validate={validate}
+        onSubmit={onSubmit}
+      >
+        <TextInputRow
+          label="Name"
+          name="name"
+          required="true"
+          variant="stacked"
+          placeholder="Enter name"
+        />
+        <SelectRow label="Container Type">
+          <SelectOption label="Certificate" value="" />
+          <SelectOption label="Generic" value="" />
+          <SelectOption label="Rsa" value="" />
+        </SelectRow>
+        <SelectRow label="Secrets" items=""></SelectRow>
+      </Form>
     </Modal>
   )
 }
