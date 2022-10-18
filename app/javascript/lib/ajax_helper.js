@@ -65,13 +65,17 @@ const checkClientConfig = (config = {}) => {
 }
 
 const handleResponse = async (response) => {
+  const headers = {}
+  if (response.headers)
+    response.headers.forEach((value, key) => (headers[key] = value))
+
   // handle location header (redirect to login)
-  if (response && response.headers && response.headers.location) {
+  if (headers && headers.location) {
     // location is presented -> build the redirect url
     let currentUrl = encodeURIComponent(window.location.href)
     // console.log('currentUrl',currentUrl)
 
-    let redirectToUrl = response.headers.location
+    let redirectToUrl = headers.location
 
     if (redirectToUrl.match(/after_login=(.*)/i)) {
       redirectToUrl = redirectToUrl.replace(
@@ -86,9 +90,6 @@ const handleResponse = async (response) => {
     // Promisse catch block in each request.
     if (currentUrl != redirectToUrl) window.location.replace(redirectToUrl)
   }
-
-  const headers = []
-  response.headers.forEach((value, key) => (headers[key] = value))
 
   if (!response.ok) {
     const error = new Error(response.statusText || response.status)

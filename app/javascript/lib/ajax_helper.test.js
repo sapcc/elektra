@@ -34,7 +34,7 @@ describe("client", () => {
         ok: true,
         status: 200,
         statusText: "success",
-        headers: { test: "test" },
+        headers: new Headers({ test: "test" }),
       })
     )
   })
@@ -92,10 +92,10 @@ describe("client", () => {
                 ok: true,
                 status: 200,
                 statusText: "success",
-                headers: {
+                headers: new Headers({
                   location:
                     "https://server1.com/login?after_login=http://test1.com",
-                },
+                }),
               })
             )
 
@@ -115,9 +115,9 @@ describe("client", () => {
               ok: true,
               status: 200,
               statusText: "success",
-              headers: {
+              headers: new Headers({
                 location: "https://server1.com/auth/login",
-              },
+              }),
             })
           )
 
@@ -140,9 +140,9 @@ describe("client", () => {
               ok: false,
               status: 400,
               statusText: "bad request",
-              headers: {
+              headers: new Headers({
                 test: "test",
-              },
+              }),
             })
           )
         })
@@ -392,15 +392,21 @@ describe("client", () => {
             headers: { test1: "test1", test2: "test2" },
           })
           client[action]("test")
+
+          const expectedHeaders = {
+            "X-test1": "test1",
+            "X-test2": "test2",
+            "x-csrf-token": "CSRF-TOKEN",
+            "X-Requested-With": "XMLHttpRequest",
+            Accept: "application/json; charset=utf-8",
+          }
+          if (["post", "put", "patch"].indexOf(action) >= 0)
+            expectedHeaders["X-Content-Type"] = "application/json"
+
           expect(fetch).toHaveBeenLastCalledWith(
             expect.anything(),
             expect.objectContaining({
-              headers: {
-                "X-test1": "test1",
-                "X-test2": "test2",
-                "x-csrf-token": "CSRF-TOKEN",
-                Accept: "application/json; charset=utf-8",
-              },
+              headers: expectedHeaders,
             })
           )
         })
@@ -411,21 +417,38 @@ describe("client", () => {
             headers: { test1: "test1" },
             nonPrefixHeaders: { test2: "test2" },
           })
-          if (["post", "put", "patch"].indexOf(action) >= 0)
+          if (["post", "put", "patch"].indexOf(action) >= 0) {
             client[action]("test", {}, { headers: { test3: "test3" } })
-          else client[action]("test", { headers: { test3: "test3" } })
-          expect(fetch).toHaveBeenLastCalledWith(
-            expect.anything(),
-            expect.objectContaining({
-              headers: {
-                "X-test1": "test1",
-                test2: "test2",
-                "X-test3": "test3",
-                "x-csrf-token": "CSRF-TOKEN",
-                Accept: "application/json; charset=utf-8",
-              },
-            })
-          )
+            expect(fetch).toHaveBeenLastCalledWith(
+              expect.anything(),
+              expect.objectContaining({
+                headers: {
+                  "X-test1": "test1",
+                  test2: "test2",
+                  "X-test3": "test3",
+                  "x-csrf-token": "CSRF-TOKEN",
+                  "X-Requested-With": "XMLHttpRequest",
+                  Accept: "application/json; charset=utf-8",
+                  "X-Content-Type": "application/json",
+                },
+              })
+            )
+          } else {
+            client[action]("test", { headers: { test3: "test3" } })
+            expect(fetch).toHaveBeenLastCalledWith(
+              expect.anything(),
+              expect.objectContaining({
+                headers: {
+                  "X-test1": "test1",
+                  test2: "test2",
+                  "X-test3": "test3",
+                  "x-csrf-token": "CSRF-TOKEN",
+                  "X-Requested-With": "XMLHttpRequest",
+                  Accept: "application/json; charset=utf-8",
+                },
+              })
+            )
+          }
         })
 
         it(action + ": " + "should override header prefix ", () => {
@@ -433,19 +456,34 @@ describe("client", () => {
             headerPrefix: "X-",
             headers: { test1: "test1" },
           })
-          if (["post", "put", "patch"].indexOf(action) >= 0)
+          if (["post", "put", "patch"].indexOf(action) >= 0) {
             client[action]("test", {}, { headerPrefix: "Y-" })
-          else client[action]("test", { headerPrefix: "Y-" })
-          expect(fetch).toHaveBeenLastCalledWith(
-            expect.anything(),
-            expect.objectContaining({
-              headers: {
-                "Y-test1": "test1",
-                "x-csrf-token": "CSRF-TOKEN",
-                Accept: "application/json; charset=utf-8",
-              },
-            })
-          )
+            expect(fetch).toHaveBeenLastCalledWith(
+              expect.anything(),
+              expect.objectContaining({
+                headers: {
+                  "Y-test1": "test1",
+                  "x-csrf-token": "CSRF-TOKEN",
+                  "X-Requested-With": "XMLHttpRequest",
+                  Accept: "application/json; charset=utf-8",
+                  "Y-Content-Type": "application/json",
+                },
+              })
+            )
+          } else {
+            client[action]("test", { headerPrefix: "Y-" })
+            expect(fetch).toHaveBeenLastCalledWith(
+              expect.anything(),
+              expect.objectContaining({
+                headers: {
+                  "Y-test1": "test1",
+                  "x-csrf-token": "CSRF-TOKEN",
+                  "X-Requested-With": "XMLHttpRequest",
+                  Accept: "application/json; charset=utf-8",
+                },
+              })
+            )
+          }
         })
 
         it(action + ": " + "should ignore non proxy headers", () => {
@@ -453,25 +491,40 @@ describe("client", () => {
             headerPrefix: "X-",
             headers: { test1: "test1" },
           })
-          if (["post", "put", "patch"].indexOf(action) >= 0)
+          if (["post", "put", "patch"].indexOf(action) >= 0) {
             client[action]("test", {}, { headers: { test2: "test2" } })
-          else
+            expect(fetch).toHaveBeenLastCalledWith(
+              expect.anything(),
+              expect.objectContaining({
+                headers: {
+                  "X-test1": "test1",
+                  "X-test2": "test2",
+                  "x-csrf-token": "CSRF-TOKEN",
+                  "X-Requested-With": "XMLHttpRequest",
+                  Accept: "application/json; charset=utf-8",
+                  "X-Content-Type": "application/json",
+                },
+              })
+            )
+          } else {
             client[action]("test", {
               headers: {
                 test2: "test2",
               },
             })
-          expect(fetch).toHaveBeenLastCalledWith(
-            expect.anything(),
-            expect.objectContaining({
-              headers: {
-                "X-test1": "test1",
-                "X-test2": "test2",
-                "x-csrf-token": "CSRF-TOKEN",
-                Accept: "application/json; charset=utf-8",
-              },
-            })
-          )
+            expect(fetch).toHaveBeenLastCalledWith(
+              expect.anything(),
+              expect.objectContaining({
+                headers: {
+                  "X-test1": "test1",
+                  "X-test2": "test2",
+                  "x-csrf-token": "CSRF-TOKEN",
+                  "X-Requested-With": "XMLHttpRequest",
+                  Accept: "application/json; charset=utf-8",
+                },
+              })
+            )
+          }
         })
       })
 
