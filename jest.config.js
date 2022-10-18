@@ -1,4 +1,6 @@
 module.exports = {
+  automock: false,
+  setupFiles: ["./setupJestMock.js"],
   verbose: true,
   testRegex: "\\.test\\.jsx?$",
   transform: {
