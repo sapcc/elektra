@@ -35,7 +35,7 @@ cancel() // cancel request now
 import { createAjaxHelper } from "lib/ajax_helper"
 ```
 
-###_createAjaxHelper_`(OPTIONS)` -> `Object`
+### _createAjaxHelper_`(OPTIONS)` -> `Object`
 
 <a name="options"></a>_Available options:_
 
@@ -104,6 +104,24 @@ client.delete("users/1")
 ```
 
 Options: look at [Available options](#options). Action options override client options!!!
+
+Promise resolved returns the response object containing data and headers. Promise rejected returns an error.
+
+```js
+client
+  .get("test")
+  .then((response) => {
+    console.log(response.headers)
+    console.log(response.data)
+  })
+  .catch((error) => {
+    console.log(error.message)
+    console.log(error.status)
+    console.log(error.headers)
+    console.log(error.data)
+    console.log(error.response)
+  })
+```
 
 ## Cancelable
 
