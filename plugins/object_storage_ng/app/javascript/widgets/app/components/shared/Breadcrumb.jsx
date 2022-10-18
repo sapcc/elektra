@@ -1,8 +1,25 @@
 import React from "react"
 import { useParams, useHistory, Link, useRouteMatch } from "react-router-dom"
+import { Tooltip, OverlayTrigger } from "react-bootstrap"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 
 const regex = new RegExp("(/*[^/]+/)", "g")
+
+export const CopyIcon = () => {
+  const tooltip = <Tooltip id="ownerIconTooltip">Copy to clipboard</Tooltip>
+
+  return (
+    <OverlayTrigger
+      overlay={tooltip}
+      placement="top"
+      delayShow={300}
+      delayHide={150}
+    >
+      <i className="fa fa-clone" />
+    </OverlayTrigger>
+  )
+}
+
 const Breadcrumb = ({ count }) => {
   let { url } = useRouteMatch()
   let { name, objectPath } = useParams()
@@ -15,6 +32,7 @@ const Breadcrumb = ({ count }) => {
     let match = currentPath.match(regex)
     if (!match) return []
     return match.map((i) => (i[i.length - 1] === "/" ? i.slice(0, -1) : i))
+    //.concat(match.map((i) => (i[i.length - 1] === "/" ? i.slice(0, -1) : i)))
 
     //return currentPath.split("/").filter((p) => !!p && p !== "")
   }, [currentPath])
@@ -27,47 +45,66 @@ const Breadcrumb = ({ count }) => {
 
   return (
     <div className="breadrumb-with-details">
-      <ol className="breadcrumb">
-        <li>
-          {name ? (
-            <Link to="/containers">All containers</Link>
-          ) : (
-            <>All containers</>
-          )}
-        </li>
-        {name && (
+      <div style={{ display: "flex" }}>
+        <ol className="breadcrumb">
           <li>
-            {items.length === 0 ? (
-              name && (
-                <>
+            {name ? (
+              <Link to="/containers">All containers</Link>
+            ) : (
+              <>All containers</>
+            )}
+          </li>
+          {name && (
+            <li>
+              {items.length === 0 ? (
+                name && (
+                  <>
+                    <span className="fa fa-fw fa-hdd-o" title="Container" />{" "}
+                    {name}
+                  </>
+                )
+              ) : (
+                <a href="#" onClick={(e) => handleClick(e, 0)}>
                   <span className="fa fa-fw fa-hdd-o" title="Container" />{" "}
                   {name}
-                </>
-              )
-            ) : (
-              <a href="#" onClick={(e) => handleClick(e, 0)}>
-                <span className="fa fa-fw fa-hdd-o" title="Container" /> {name}
-              </a>
-            )}
-          </li>
-        )}
+                </a>
+              )}
+            </li>
+          )}
 
-        {items.map((p, i) => (
-          <li className={i === items.length - 1 ? "active" : ""} key={i}>
-            {i < items.length - 1 ? (
-              <a href="#" onClick={(e) => handleClick(e, i + 1)}>
-                <span className="fa fa-fw fa-folder" title="Directory" />
-                {p}
-              </a>
-            ) : (
-              <>
-                <span className="fa fa-fw fa-folder-open" title="Directory" />{" "}
-                {p}
-              </>
-            )}
-          </li>
-        ))}
-      </ol>
+          {items.map((p, i) => (
+            <li className={i === items.length - 1 ? "active" : ""} key={i}>
+              {i < items.length - 1 ? (
+                <a href="#" onClick={(e) => handleClick(e, i + 1)}>
+                  <span className="fa fa-fw fa-folder" title="Directory" />
+                  {p}
+                </a>
+              ) : (
+                <>
+                  <span className="fa fa-fw fa-folder-open" title="Directory" />{" "}
+                  {p}
+                </>
+              )}
+            </li>
+          ))}
+        </ol>
+
+        {items && items.length > 0 && (
+          <small className="breadcrumb-copy-button blink">
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                navigator.clipboard
+                  .writeText(name + "/" + currentPath)
+                  .then(() => console.info("copied"))
+              }}
+            >
+              <CopyIcon />
+            </a>
+          </small>
+        )}
+      </div>
       {count !== undefined && <div className="details">#{count}</div>}
     </div>
   )

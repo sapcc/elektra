@@ -342,8 +342,20 @@ const Objects = ({ objectStoreEndpoint }) => {
   )
 
   const filteredItems = React.useMemo(() => {
-    if (!searchTerm || searchTerm.length === 0) return objects.items
-    return objects.items.filter((i) => i.display_name.indexOf(searchTerm) >= 0)
+    let items = objects.items
+
+    if (searchTerm && searchTerm.length > 0) {
+      items = objects.items.filter(
+        (i) => i.display_name.indexOf(searchTerm) >= 0
+      )
+    }
+    return items.sort((a, b) => {
+      if (a.subdir && !b.subdir) return -1
+      if (!a.subdir && b.subdir) return 1
+      if (a.display_name > b.display_name) return 1
+      if (a.display_name < b.display_name) return -1
+      return 0
+    })
   }, [objects.items, searchTerm])
 
   return (
