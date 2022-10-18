@@ -101,13 +101,16 @@ const renderShard = (
                       return (
                         <div className="row" key={subcapacityIndex}>
                           <div
-                            className="col-md-2 text-left shard-name"
+                            className="col-md-3 text-left shard-name"
                             title={"resource pool " + subcapacity.aggregate}
                           >
-                            {"rp - " + subcapacity.aggregate}
+                            {
+                              // rp stands for resource-pool
+                              "rp - " + subcapacity.aggregate
+                            }
                           </div>
                           <div
-                            className="col-md-10"
+                            className="col-md-9"
                             style={{ paddingLeft: "8px" }}
                           >
                             <ResourceBar
@@ -129,14 +132,17 @@ const renderShard = (
                       return (
                         <div className="row" key={subcapacityIndex}>
                           <div
-                            className="col-md-2 text-left shard-name"
+                            className="col-md-3 text-left shard-name"
                             title={"resource pool " + subcapacity.aggregate}
                             style={opacity}
                           >
-                            {"rp - " + subcapacity.aggregate}
+                            {
+                              // rp stands for resource-pool
+                              "rp - " + subcapacity.aggregate
+                            }
                           </div>
                           <div
-                            className="col-md-10"
+                            className="col-md-9"
                             style={{ paddingLeft: "8px" }}
                           >
                             <ResourceBar
