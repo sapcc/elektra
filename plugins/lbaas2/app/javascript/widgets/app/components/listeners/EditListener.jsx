@@ -1,31 +1,19 @@
 import React, { useState, useEffect } from "react"
 import { Modal, Button, Collapse } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
+import useCommons, {
+  toManySecretsWarning,
+  secretRefLabel,
+} from "../../lib/hooks/useCommons"
 import { Form } from "lib/elektra-form"
 import useListener from "../../lib/hooks/useListener"
 import SelectInput from "../shared/SelectInput"
+import SelectInputCreatable from "../shared/SelectInputCreatable"
 import ErrorPage from "../ErrorPage"
 import TagsInput from "../shared/TagsInput"
 import HelpPopover from "../shared/HelpPopover"
 import { addNotice } from "lib/flashes"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import Log from "../shared/logger"
-import SelectInputCreatable from "../shared/SelectInputCreatable"
-
-const toManySecretsWarning = (total, length) => {
-  total = total || 0
-  length = length || 0
-  if (total > length) {
-    return (
-      <div className="alert alert-warning">
-        This project has <b>{total}</b> secrets and it is not possible to
-        display all of them. If you don't find the secret you are looking for
-        enter the secret ref manually. <br />
-        Ex: https://keymanager-3.region.cloud.sap:443/v1/secrets/secretID
-      </div>
-    )
-  }
-}
 
 const SECRETS_ARE_CONTAINERS_WARNING = (
   <div className="alert alert-warning">
@@ -33,11 +21,6 @@ const SECRETS_ARE_CONTAINERS_WARNING = (
     the warning shown above
   </div>
 )
-
-const secretRefLabel = (secretRef) => {
-  const label = secretRef || ""
-  return label.replace(/.*\/\/[^\/]*/, "https://...")
-}
 
 const EditListener = (props) => {
   const {

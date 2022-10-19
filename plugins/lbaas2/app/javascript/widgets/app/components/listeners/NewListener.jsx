@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import useCommons from "../../lib/hooks/useCommons"
+import useCommons, { toManySecretsWarning } from "../../lib/hooks/useCommons"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import useListener from "../../lib/hooks/useListener"
@@ -10,21 +10,6 @@ import HelpPopover from "../shared/HelpPopover"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
-
-const toManySecretsWarning = (total, length) => {
-  total = total || 0
-  length = length || 0
-  if (total > length) {
-    return (
-      <div className="alert alert-warning">
-        This project has <b>{total}</b> secrets and it is not possible to
-        display all of them. If you don't find the secret you are looking for
-        enter the secret ref manually. <br />
-        Ex: https://keymanager-3.region.cloud.sap:443/v1/secrets/secretID
-      </div>
-    )
-  }
-}
 
 const NewListener = (props) => {
   const {
