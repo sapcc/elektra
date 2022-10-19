@@ -2,8 +2,7 @@ import { ajaxHelper } from "lib/ajax_helper"
 
 import * as constants from "../constants"
 
-const errorMessage = (error) =>
-  (error.response && error.response.data) || error.message
+const errorMessage = (error) => error.data || error.message
 
 ////////////////////////////////////////////////////////////////////////////////
 

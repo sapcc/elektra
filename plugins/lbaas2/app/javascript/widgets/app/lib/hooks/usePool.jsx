@@ -14,7 +14,7 @@ const usePool = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(error.data)
         })
     })
   }
@@ -52,7 +52,7 @@ const usePool = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(error.data)
         })
     })
   }

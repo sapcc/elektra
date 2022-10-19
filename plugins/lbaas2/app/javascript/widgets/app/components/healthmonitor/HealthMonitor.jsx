@@ -131,7 +131,7 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.response),
+            errors: errorMessage(error.data),
           })
         )
       })

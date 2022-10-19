@@ -4,7 +4,10 @@ const mockFetchPromise = Promise.resolve({
   ok: true,
   status: 200,
   statusText: "success",
-  headers: new Headers({ test: "test" }),
+  headers: new Headers({
+    test: "test",
+    "Content-Type": "application/json; charset=utf-8",
+  }),
 })
 
 global.fetch = jest.fn(() => mockFetchPromise)

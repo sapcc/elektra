@@ -23,7 +23,7 @@ const useCommons = () => {
   }
 
   const formErrorMessage = (error) => {
-    const err = error.response || error
+    const err = error
     if (
       err &&
       err.data &&
@@ -50,7 +50,7 @@ const useCommons = () => {
   }
 
   const errorMessage = (error) => {
-    const err = error.response || error
+    const err = error
     return (err.data && (err.data.errors || err.data.error)) || err.message
   }
 

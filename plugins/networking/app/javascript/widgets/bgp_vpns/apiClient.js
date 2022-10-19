@@ -46,7 +46,6 @@ const checkStatus = async (response) => {
       .catch(() => status)
     var error = new Error(message || status)
     error.status = status
-    error.response = response
     throw error
   }
 }

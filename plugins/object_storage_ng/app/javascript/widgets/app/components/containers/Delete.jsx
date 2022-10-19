@@ -40,7 +40,7 @@ const DelteContainer = () => {
         // close modal window
         .then(close)
         .catch((error) => {
-          if (error.response.status === 409)
+          if (error.status === 409)
             setError(
               "Cannot delete container because it contains objects. Please empty it first."
             )

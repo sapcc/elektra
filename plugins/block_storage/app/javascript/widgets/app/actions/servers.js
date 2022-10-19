@@ -5,9 +5,7 @@ import { addNotice, addError } from "lib/flashes"
 
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 
-const errorMessage = (error) =>
-  (error.response && error.response.data && error.response.data.errors) ||
-  error.message
+const errorMessage = (error) => error.data?.errors || error.message
 
 // #################### Availability Zones ################
 const requestServers = () => ({
