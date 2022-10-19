@@ -34,7 +34,10 @@ describe("client", () => {
         ok: true,
         status: 200,
         statusText: "success",
-        headers: new Headers({ test: "test" }),
+        headers: new Headers({
+          test: "test",
+          "Content-Type": "application/json; charset=utf-8",
+        }),
       })
     )
   })
@@ -74,6 +77,7 @@ describe("client", () => {
               data: { name: "test" },
               headers: {
                 test: "test",
+                "content-type": "application/json; charset=utf-8",
               },
             })
           )

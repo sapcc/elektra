@@ -65,6 +65,9 @@ const checkClientConfig = (config = {}) => {
 }
 
 const handleResponse = async (response) => {
+  // we have to convert fetch headers object to hash map
+  // to ensure (axios) backwards compatibility.
+  // Important: the Headers object from fetch makes all keys lower case.
   const headers = {}
   if (response.headers)
     response.headers.forEach((value, key) => (headers[key] = value))
@@ -91,17 +94,29 @@ const handleResponse = async (response) => {
     if (currentUrl != redirectToUrl) window.location.replace(redirectToUrl)
   }
 
+  // Important: the Headers object from fetch makes all keys lower case.
+  const ResponseContentType = headers["content-type"] || ""
+
+  // we try to convert data to json if content-type is application/json
+  let data =
+    ResponseContentType.indexOf("application/json") >= 0
+      ? await response.json().catch((e) => e)
+      : null
+
   if (!response.ok) {
     const error = new Error(response.statusText || response.status)
+
     error.status = response.status
     error.headers = headers
-    error.data = await response.json().catch((e) => null)
+    // data is set if response is a json. Otherwise it is null
+    // to ensure (axios) backwards compatibility
+    error.data = data
+    // store origin fetch response
+    // it allows us to call other functions like blob() or text()
     error.response = response
 
     throw error
   }
-
-  const data = await response.json().catch((e) => null)
 
   return {
     data,

@@ -6,10 +6,7 @@ import Log from "../../components/shared/logger"
 const useStatusTree = ({ lbId }) => {
   const dispatch = useDispatch()
   const errorMessage = (error) =>
-    (error.response &&
-      error.response.data &&
-      (error.response.data.errors || error.response.data.error)) ||
-    error.message
+    error.data?.errors || error.data?.error || error.message
 
   let polling = null
 

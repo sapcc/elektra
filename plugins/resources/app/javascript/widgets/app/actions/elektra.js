@@ -16,9 +16,7 @@ const ajaxHelper = pluginAjaxHelper("resources", {
   },
 })
 
-const elektraErrorMessage = (error) =>
-  (error.response && error.response.data && error.response.data.errors) ||
-  error.message
+const elektraErrorMessage = (error) => error.data?.errors || error.message
 
 export const sendQuotaRequest = (scopeData, requestBody) => {
   const scope = new Scope(scopeData)

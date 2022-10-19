@@ -7,9 +7,7 @@ import { ErrorsList } from "lib/elektra-form/components/errors_list"
 
 const ajaxHelper = pluginAjaxHelper("networking")
 
-const errorMessage = (error) =>
-  (error.response && error.response.data && error.response.data.errors) ||
-  error.message
+const errorMessage = (error) => error.data?.errors || error.message
 
 //################### SECURITY GROUP RULE #########################
 const receiveSecurityGroupRule = (securityGroupId, securityGroupRule) => ({

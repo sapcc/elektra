@@ -6,8 +6,7 @@ import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import { fetchCastellumProjectConfig } from "./castellum"
 import { Scope } from "../scope"
 
-const limesErrorMessage = (error) =>
-  (error.response && error.response.data) || error.message
+const limesErrorMessage = (error) => error.data || error.message
 
 const showLimesError = (error) =>
   addError(
