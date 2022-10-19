@@ -85,4 +85,24 @@ const useCommons = () => {
   }
 }
 
+export const secretRefLabel = (secretRef) => {
+  const label = secretRef || ""
+  return label.replace(/.*\/\/[^\/]*/, "https://...")
+}
+
+export const toManySecretsWarning = (total, length) => {
+  total = total || 0
+  length = length || 0
+  if (total > length) {
+    return (
+      <div className="alert alert-warning">
+        This project has <b>{total}</b> secrets and it is not possible to
+        display all of them. If you don't find the secret you are looking for
+        enter the secret ref manually. <br />
+        Ex: https://keymanager-3.region.cloud.sap:443/v1/secrets/secretID
+      </div>
+    )
+  }
+}
+
 export default useCommons
