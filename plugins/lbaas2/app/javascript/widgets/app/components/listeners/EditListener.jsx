@@ -34,6 +34,11 @@ const SECRETS_ARE_CONTAINERS_WARNING = (
   </div>
 )
 
+const secretRefLabel = (secretRef) => {
+  const label = secretRef || ""
+  return label.replace(/.*\/\/[^\/]*/, "https://...")
+}
+
 const EditListener = (props) => {
   const {
     matchParams,
@@ -66,18 +71,13 @@ const EditListener = (props) => {
   const [protocolType, setProtocolType] = useState(null)
   const [insetHeaders, setInsertHeaders] = useState(null)
   const [certificateContainer, setCertificateContainer] = useState(null)
-  const [CertificateContainerNotFound, setCertificateContainerNotFound] =
-    useState(null)
   const [CertificateContainerDeprecated, setCertificateContainerDeprecated] =
     useState(false)
   const [SNIContainers, setSNIContainers] = useState(null)
-  const [SNIContainersNotFound, setSNIContainersNotFound] = useState(null)
   const [SNIContainersDeprecated, setSNIContainersDeprecated] = useState(false)
   const [clientAuthType, setClientAuthType] = useState(null)
   const [defaultPool, setDefaultPool] = useState(null)
   const [clientCATLScontainer, setClientCATLScontainer] = useState(null)
-  const [clientCATLScontainerNotFound, setClientCATLScontainerNotFound] =
-    useState(null)
   const [clientCATLScontainerDeprecated, setClientCATLScontainerDeprecated] =
     useState(false)
   const [predPolicies, setPredPolicies] = useState([])
@@ -120,6 +120,7 @@ const EditListener = (props) => {
   useEffect(() => {
     if (loadbalancerID) {
       loadPools(loadbalancerID)
+      loadSecrets(loadbalancerID)
     }
   }, [loadbalancerID])
 
@@ -152,7 +153,6 @@ const EditListener = (props) => {
     setListener({ ...listener, isLoading: true, error: null })
     fetchListener(loadbalancerID, listenerID)
       .then((data) => {
-        loadSecrets(loadbalancerID)
         setListener({
           ...listener,
           isLoading: false,
@@ -255,7 +255,7 @@ const EditListener = (props) => {
       if (isSecretAContainer(selectedCertificateContainer))
         setCertificateContainerDeprecated(true)
       setCertificateContainer({
-        label: selectedCertificateContainer,
+        label: secretRefLabel(selectedCertificateContainer),
         value: selectedCertificateContainer,
       })
     }
@@ -271,7 +271,7 @@ const EditListener = (props) => {
     // - check if the given secret still exists (do tue the mapping)
     selectedSNIContainers.forEach((item) => {
       if (isSecretAContainer(item)) setSNIContainersDeprecated(true)
-      selectedOptions.push({ label: item, value: item })
+      selectedOptions.push({ label: secretRefLabel(item), value: item })
     })
     setSNIContainers(selectedOptions)
   }
@@ -285,7 +285,7 @@ const EditListener = (props) => {
       if (isSecretAContainer(selectedCATLSContainer))
         setClientCATLScontainerDeprecated(true)
       setClientCATLScontainer({
-        label: selectedCATLSContainer,
+        label: secretRefLabel(selectedCATLSContainer),
         value: selectedCATLSContainer,
       })
     }
@@ -639,21 +639,8 @@ const EditListener = (props) => {
                                   {secrets.error}
                                 </span>
                               )}
-                              {CertificateContainerNotFound && (
-                                <>
-                                  <p>
-                                    <b className="text-danger">
-                                      Secret not found:{" "}
-                                    </b>
-                                  </p>
-                                  <ul className="secrets-not-found">
-                                    <li>{CertificateContainerNotFound}</li>
-                                  </ul>
-                                  {CertificateContainerDeprecated && (
-                                    <p>{SECRETS_ARE_CONTAINERS_WARNING}</p>
-                                  )}
-                                </>
-                              )}
+                              {CertificateContainerDeprecated &&
+                                SECRETS_ARE_CONTAINERS_WARNING}
                             </Form.ElementHorizontal>
                           </div>
                         </>
@@ -771,24 +758,8 @@ const EditListener = (props) => {
                                 {secrets.error}
                               </span>
                             )}
-                            {SNIContainersNotFound &&
-                              SNIContainersNotFound.length > 0 && (
-                                <React.Fragment>
-                                  <p>
-                                    <b className="text-danger">
-                                      Secret(s) not found:{" "}
-                                    </b>
-                                  </p>
-                                  <ul className="secrets-not-found">
-                                    {SNIContainersNotFound.map((s, index) => (
-                                      <li key={index}>{s}</li>
-                                    ))}
-                                  </ul>
-                                  {SNIContainersDeprecated && (
-                                    <p>{SECRETS_ARE_CONTAINERS_WARNING}</p>
-                                  )}
-                                </React.Fragment>
-                              )}
+                            {SNIContainersDeprecated &&
+                              SECRETS_ARE_CONTAINERS_WARNING}
                           </Form.ElementHorizontal>
                         </>
                       )}
@@ -840,7 +811,7 @@ const EditListener = (props) => {
                       )}
 
                       {showCATLSContainer && (
-                        <div>
+                        <>
                           <Form.ElementHorizontal
                             label="Client Authentication Secret"
                             name="client_ca_tls_container_ref"
@@ -870,7 +841,7 @@ const EditListener = (props) => {
                             {clientCATLScontainerDeprecated &&
                               SECRETS_ARE_CONTAINERS_WARNING}
                           </Form.ElementHorizontal>
-                        </div>
+                        </>
                       )}
                     </div>
                   </div>
