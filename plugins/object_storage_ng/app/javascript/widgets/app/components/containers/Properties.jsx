@@ -232,6 +232,7 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
     setIsFetchingMetadata(true)
     loadContainerMetadata(name)
       .then((headers) => {
+        // console.log("============================metadata", headers)
         setMetadata(headers)
       })
       .catch((error) => {

@@ -13,21 +13,20 @@ import { configureAjaxHelper } from "ajax_helper"
 
 describe("fetchProject action", () => {
   let store
-  let httpMock
-
+  let client
   const flushAllPromises = () => new Promise((resolve) => setTimeout(resolve))
 
   beforeEach(() => {
-    httpMock = new MockAdapter(axios)
     store = setupStore({ object: { searchedValue: "a_project_id" } })
-    const ajaxHelper = configureAjaxHelper({ baseURL: "" })
+    client = configureAjaxHelper({ baseURL: "" })
   })
 
   it("fetches a project", async () => {
     const projectId = "a_project_id"
-    httpMock.onGet(`/reverselookup/project/${projectId}`).reply(200, {
-      id: "a_project_id",
-    })
+    client.get = jest
+      .fn()
+      .mockResolvedValue({ data: { id: projectId }, headers: [] })
+
     // when
     store.dispatch(fetchProject("a_project_id", projectId))
     await flushAllPromises()
@@ -40,9 +39,9 @@ describe("fetchProject action", () => {
 
   it("reject project if it is not the same as was requested because of asynchronous requests", async () => {
     const projectId = "b_project_id"
-    httpMock.onGet(`/reverselookup/project/${projectId}`).reply(200, {
-      id: "a_project_id",
-    })
+    client.get = jest
+      .fn()
+      .mockResolvedValue({ data: { id: "a_project_id" }, headers: [] })
     // when
     store.dispatch(fetchProject("b_project_id", projectId))
     await flushAllPromises()

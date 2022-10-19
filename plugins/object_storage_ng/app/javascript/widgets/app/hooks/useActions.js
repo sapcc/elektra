@@ -253,8 +253,12 @@ const useActions = () => {
     (containerName, headers) => {
       const newHeaders = { ...headers }
       Object.keys(newHeaders).forEach(
-        (k) => (newHeaders[k] = encodeURIComponent(newHeaders[k]))
+        (k) =>
+          k &&
+          k.indexOf("x-container-meta") === 0 &&
+          (newHeaders[k] = encodeURIComponent(newHeaders[k]))
       )
+
       return apiClient
         .osApi("object-store")
         .post(containerPath(containerName), {}, { headers: newHeaders })

@@ -78,9 +78,9 @@ const ShowObject = ({ objectStoreEndpoint }) => {
     )
       return null
 
-    return `${objectStoreEndpoint}/${encodeURIComponent(
+    return `${objectStoreEndpoint}/${decodeURIComponent(
       containerName
-    )}/${encodeURIComponent(object)}`
+    )}/${decodeURIComponent(object)}`
   }, [containerMetadata, containerName, object])
 
   React.useEffect(() => {
