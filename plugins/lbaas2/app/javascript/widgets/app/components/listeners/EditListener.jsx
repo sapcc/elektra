@@ -12,47 +12,27 @@ import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import Log from "../shared/logger"
 import SelectInputCreatable from "../shared/SelectInputCreatable"
 
-const toManySecretsWarning = (count, isArray) => {
-  return (
-    <span className="text-danger">
-      This project have <b>{count}</b> secrets and it is not possible to display
-      all of them. To edit this field enter the secret ref you would like to
-      use. Ex: https://keymanager-3.region.cloud.sap:443/v1/secrets/secretID
-    </span>
-  )
+const toManySecretsWarning = (total, length) => {
+  total = total || 0
+  length = length || 0
+  if (total > length) {
+    return (
+      <div className="alert alert-warning">
+        This project has <b>{total}</b> secrets and it is not possible to
+        display all of them. If you don't find the secret you are looking for
+        enter the secret ref manually. <br />
+        Ex: https://keymanager-3.region.cloud.sap:443/v1/secrets/secretID
+      </div>
+    )
+  }
 }
 
-const defaultTLSContainerRefHint = () => {
-  return (
-    <span className="help-block">
-      <i className="fa fa-info-circle"></i>
-      The secret containing a PKCS12 format certificate/key bundles.
-    </span>
-  )
-}
-
-const sniContainerRefsHint = () => {
-  return (
-    <span className="help-block">
-      <i className="fa fa-info-circle"></i>A list of secrets containing PKCS12
-      format certificate/key bundles used for Server Name Indication (SNI).
-    </span>
-  )
-}
-
-const clientCaTLSContainerRefHint = () => {
-  return (
-    <span className="help-block">
-      <i className="fa fa-info-circle"></i>
-      The secret containing a PEM format client CA certificate bundle.
-    </span>
-  )
-}
-
-const SECRETS_ARE_CONTAINERS_WARNING =
-  "It looks like one or more of your secrets are containers. Please consider the warning shown above."
-
-const MAX_DISPLAY_SECRETS = 100
+const SECRETS_ARE_CONTAINERS_WARNING = (
+  <div className="alert alert-warning">
+    It looks like one or more of your secrets are containers. Please consider
+    the warning shown above
+  </div>
+)
 
 const EditListener = (props) => {
   const {
@@ -119,7 +99,7 @@ const EditListener = (props) => {
     isLoading: false,
     error: null,
     items: [],
-    count: 0,
+    total: 0,
   })
 
   useEffect(() => {
@@ -173,28 +153,6 @@ const EditListener = (props) => {
     fetchListener(loadbalancerID, listenerID)
       .then((data) => {
         loadSecrets(loadbalancerID)
-          .then((availableSecrets) => {
-            console.log("SECRETS: ", availableSecrets)
-            // setSelectedCertificateContainer(
-            //   data.listener.protocol,
-            //   availableSecrets,
-            //   data.listener.default_tls_container_ref
-            // )
-            // setSelectedSNIContainers(
-            //   data.listener.sni_container_refs
-            // )
-            // setSelectedClientCATLScontainer(
-            //   data.listener.protocol,
-            //   availableSecrets,
-            //   data.listener.client_ca_tls_container_ref
-            // )
-          })
-          .catch((error) => {
-            // if error fetching secrets the fields should still be shown with an error
-            // setSelectedCertificateContainer([], "")
-            // setSelectedSNIContainers([])
-            // setSelectedClientCATLScontainer(data.listener.protocol, [], "")
-          })
         setListener({
           ...listener,
           isLoading: false,
@@ -225,9 +183,9 @@ const EditListener = (props) => {
 
   useEffect(() => {
     if (secrets.items && listener.item) {
-      // setSelectedCertificateContainer(null, "")
+      setSelectedCertificateContainer(listener.item.default_tls_container_ref)
       setSelectedSNIContainers(listener.item.sni_container_refs)
-      // setSelectedClientCATLScontainer(listener.item.protocol, null, "")
+      setSelectedClientCATLScontainer(listener.item.client_ca_tls_container_ref)
     }
   }, [secrets.items])
 
@@ -288,88 +246,49 @@ const EditListener = (props) => {
     setDefaultPool(selectedOption)
   }
 
-  const setSelectedCertificateContainer = (
-    availableSecrets,
-    selectedCertificateContainer
-  ) => {
-    const selectedOption =
-      availableSecrets &&
-      availableSecrets.find(
-        (i) => i.value === (selectedCertificateContainer || "").trim()
-      )
-
-    if (availableSecrets && availableSecrets.length > 0)
-      if (!selectedOption && selectedCertificateContainer && availableSecrets) {
-        // save the secret in a different var if not found
-        // given the user has choose before a secret (selectedCertificateContainer)
-        // and the secrets are laoded (availableSecrets)
-        setCertificateContainerNotFound(selectedCertificateContainer)
-        setCertificateContainerDeprecated(
-          isSecretAContainer(selectedCertificateContainer)
-        )
-      }
-
-    setCertificateContainer(selectedOption)
+  const setSelectedCertificateContainer = (selectedCertificateContainer) => {
+    // there is no more mapping between the selected secret and the options displayed
+    // in the dropdown. Since it is not possible to display all secrets we show the
+    // selected secrets directly on the field. We just check if the given secret ref
+    // is deprecated
+    if (selectedCertificateContainer) {
+      if (isSecretAContainer(selectedCertificateContainer))
+        setCertificateContainerDeprecated(true)
+      setCertificateContainer({
+        label: selectedCertificateContainer,
+        value: selectedCertificateContainer,
+      })
+    }
   }
 
   const setSelectedSNIContainers = (selectedSNIContainers) => {
     let selectedOptions = []
-    // if (availableSecrets && availableSecrets.length > 0) {
-    //   // get from the available secrets the selected ones
-    //   selectedOptions = availableSecrets.filter((i) =>
-    //     selectedSNIContainers.includes(i.value)
-    //   )
-    //   // get the difference from the selected secrets to the ones found
-    //   const foundOptions = selectedOptions || []
-    //   const selectedSecrets = selectedSNIContainers || []
-    //   const difference = selectedSecrets.filter(
-    //     (x) => !foundOptions.some((opt) => opt.value === x)
-    //   )
-    //   // if secrets not found in options collect them and check if it is a secret
-    //   if (difference.length > 0) {
-    //     setSNIContainersNotFound(difference)
-    //     difference.forEach((s) => {
-    //       if (isSecretAContainer(s)) {
-    //         setSNIContainersDeprecated(true)
-    //       }
-    //     })
-    //   }
-    // } else {
-    //   selectedSNIContainers.forEach((item) => {
-    //     selectedOptions.push({ label: item, value: item })
-    //   })
-    // }
-
+    // there is no more mapping between selected secrets and the options displayed
+    // in the dropdown. Since it is not possible to display all secrets we show the
+    // selected secrets directly on the field. We just check if the given secret ref
+    // is deprecated
+    // Features dropped:
+    // - check if the given secret still exists (do tue the mapping)
     selectedSNIContainers.forEach((item) => {
       if (isSecretAContainer(item)) setSNIContainersDeprecated(true)
       selectedOptions.push({ label: item, value: item })
     })
-
     setSNIContainers(selectedOptions)
   }
 
-  const setSelectedClientCATLScontainer = (
-    selectedProtocolType,
-    availableSecrets,
-    selectedCATLSContainer
-  ) => {
-    const selectedOption =
-      availableSecrets &&
-      availableSecrets.find(
-        (i) => i.value == (selectedCATLSContainer || "").trim()
-      )
-
-    // save the secret in a different var if not found
-    // given the user has choose before a secret (selectedCertificateContainer)
-    // and the secrets are laoded (availableSecrets)
-    if (!selectedOption && selectedProtocolType && availableSecrets) {
-      setClientCATLScontainerNotFound(selectedCATLSContainer)
-      setClientCATLScontainerDeprecated(
-        isSecretAContainer(selectedCATLSContainer)
-      )
+  const setSelectedClientCATLScontainer = (selectedCATLSContainer) => {
+    // there is no more mapping between the selected secret and the options displayed
+    // in the dropdown. Since it is not possible to display all secrets we show the
+    // selected secrets directly on the field. We just check if the given secret ref
+    // is deprecated
+    if (selectedCATLSContainer) {
+      if (isSecretAContainer(selectedCATLSContainer))
+        setClientCATLScontainerDeprecated(true)
+      setClientCATLScontainer({
+        label: selectedCATLSContainer,
+        value: selectedCATLSContainer,
+      })
     }
-
-    setClientCATLScontainer(selectedOption)
   }
 
   const setSelectedPredPoliciesAndTags = () => {
@@ -432,7 +351,7 @@ const EditListener = (props) => {
             isLoading: false,
             items: data.secrets,
             error: null,
-            count: data.total,
+            total: data.total,
           })
           handleSuccess(data.secrets)
         })
@@ -520,19 +439,6 @@ const EditListener = (props) => {
     newValues.tags = [...newPredPolicies, ...newTags].map((item, index) => {
       return item.value || item
     })
-
-    // in case of sniContainerRefs is being added per input field text with coma separated
-    // refs then we have to make an array
-    if (secrets.count && secrets.count > MAX_DISPLAY_SECRETS) {
-      // convert string to array
-      if (
-        newValues.sni_container_refs &&
-        !Array.isArray(newValues.sni_container_refs)
-      ) {
-        const newSniContainerRefs = newValues.sni_container_refs.split(",")
-        newValues.sni_container_refs = newSniContainerRefs
-      }
-    }
 
     return updateListener(loadbalancerID, listenerID, newValues)
       .then((response) => {
@@ -704,63 +610,53 @@ const EditListener = (props) => {
                   <div className="advanced-options-section">
                     <div className="advanced-options">
                       {showCertificateContainer && (
-                        <React.Fragment>
+                        <>
                           <div>
                             <Form.ElementHorizontal
                               label="Certificate Secret"
                               name="default_tls_container_ref"
                               required
                             >
-                              {secrets.count &&
-                              secrets.count > MAX_DISPLAY_SECRETS ? (
+                              <SelectInputCreatable
+                                name="default_tls_container_ref"
+                                isLoading={secrets.isLoading}
+                                items={secrets.items}
+                                onChange={onSelectCertificateContainer}
+                                value={certificateContainer}
+                                isClearable
+                              />
+                              <span className="help-block">
+                                <i className="fa fa-info-circle"></i>
+                                The secret containing a PKCS12 format
+                                certificate/key bundles.
+                              </span>
+                              {toManySecretsWarning(
+                                secrets.total,
+                                secrets.items?.length
+                              )}
+                              {secrets.error && (
+                                <span className="text-danger">
+                                  {secrets.error}
+                                </span>
+                              )}
+                              {CertificateContainerNotFound && (
                                 <>
-                                  <Form.Input
-                                    elementType="input"
-                                    type="text"
-                                    name="default_tls_container_ref"
-                                  />
-                                  {defaultTLSContainerRefHint()}
-                                  {toManySecretsWarning(secrets.count)}
-                                </>
-                              ) : (
-                                <>
-                                  <SelectInput
-                                    name="default_tls_container_ref"
-                                    isLoading={secrets.isLoading}
-                                    items={secrets.items}
-                                    onChange={onSelectCertificateContainer}
-                                    value={certificateContainer}
-                                    isClearable
-                                  />
-                                  {defaultTLSContainerRefHint()}
-                                  {secrets.error && (
-                                    <span className="text-danger">
-                                      {secrets.error}
-                                    </span>
-                                  )}
-                                  {CertificateContainerNotFound && (
-                                    <>
-                                      <p>
-                                        <b className="text-danger">
-                                          Secret not found:{" "}
-                                        </b>
-                                      </p>
-                                      <ul className="secrets-not-found">
-                                        <li>{CertificateContainerNotFound}</li>
-                                      </ul>
-                                      {CertificateContainerDeprecated && (
-                                        <p>{SECRETS_ARE_CONTAINERS_WARNING}</p>
-                                      )}
-                                    </>
+                                  <p>
+                                    <b className="text-danger">
+                                      Secret not found:{" "}
+                                    </b>
+                                  </p>
+                                  <ul className="secrets-not-found">
+                                    <li>{CertificateContainerNotFound}</li>
+                                  </ul>
+                                  {CertificateContainerDeprecated && (
+                                    <p>{SECRETS_ARE_CONTAINERS_WARNING}</p>
                                   )}
                                 </>
                               )}
                             </Form.ElementHorizontal>
                           </div>
-                          <div>
-                            <p>Optional attributes:</p>
-                          </div>
-                        </React.Fragment>
+                        </>
                       )}
 
                       {showPredefinedPolicies && (
@@ -827,16 +723,16 @@ const EditListener = (props) => {
                       )}
 
                       {showSNIContainer && (
-                        <div>
+                        <>
+                          <h4>Server Name Indication (SNI)</h4>
                           <div className="row">
-                            <div className="col-sm-8 col-sm-push-4">
+                            <div className="col-sm-12">
                               <div className="bs-callout bs-callout-info bs-callout-emphasize">
                                 <p>
                                   {" "}
-                                  Use <b>SNI</b> if you have multiple TLS
+                                  Use <b>SNI</b> when having multiple TLS
                                   certificates that you would like to use on the
-                                  same listener using Server Name Indication
-                                  (SNI) technology. Please also visit{" "}
+                                  same listener. Please also visit{" "}
                                   <a
                                     href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-sni"
                                     target="_blank"
@@ -861,18 +757,15 @@ const EditListener = (props) => {
                               onChange={onSelectSNIContainers}
                               value={SNIContainers}
                             />
-                            {sniContainerRefsHint()}
-                            {toManySecretsWarning(secrets.count)}
-
-                            <SelectInput
-                              name="sni_container_refs"
-                              isLoading={secrets.isLoading}
-                              isMulti
-                              items={secrets.items}
-                              onChange={onSelectSNIContainers}
-                              value={SNIContainers}
-                            />
-                            {sniContainerRefsHint()}
+                            <span className="help-block">
+                              <i className="fa fa-info-circle"></i>A list of
+                              secrets containing PKCS12 format certificate/key
+                              bundles used for Server Name Indication (SNI).
+                            </span>
+                            {toManySecretsWarning(
+                              secrets.total,
+                              secrets.items?.length
+                            )}
                             {secrets.error && (
                               <span className="text-danger">
                                 {secrets.error}
@@ -897,13 +790,14 @@ const EditListener = (props) => {
                                 </React.Fragment>
                               )}
                           </Form.ElementHorizontal>
-                        </div>
+                        </>
                       )}
 
-                      {showClientAuthentication && (
-                        <div>
+                      {(showClientAuthentication || showCATLSContainer) && (
+                        <>
+                          <h4>Client authentication</h4>
                           <div className="row">
-                            <div className="col-sm-8 col-sm-push-4">
+                            <div className="col-sm-12">
                               <div className="bs-callout bs-callout-info bs-callout-emphasize">
                                 <p>
                                   <b>Client authentication</b> allows users to
@@ -921,7 +815,11 @@ const EditListener = (props) => {
                               </div>
                             </div>
                           </div>
+                        </>
+                      )}
 
+                      {showClientAuthentication && (
+                        <>
                           <Form.ElementHorizontal
                             label="Client Authentication Mode"
                             name="client_authentication"
@@ -938,7 +836,7 @@ const EditListener = (props) => {
                               The TLS client authentication mode.
                             </span>
                           </Form.ElementHorizontal>
-                        </div>
+                        </>
                       )}
 
                       {showCATLSContainer && (
@@ -947,50 +845,30 @@ const EditListener = (props) => {
                             label="Client Authentication Secret"
                             name="client_ca_tls_container_ref"
                           >
-                            {secrets.count &&
-                            secrets.count > MAX_DISPLAY_SECRETS ? (
-                              <>
-                                <Form.Input
-                                  elementType="input"
-                                  type="text"
-                                  name="client_ca_tls_container_ref"
-                                />
-                                {clientCaTLSContainerRefHint()}
-                                {toManySecretsWarning(secrets.count)}
-                              </>
-                            ) : (
-                              <>
-                                <SelectInput
-                                  name="client_ca_tls_container_ref"
-                                  isLoading={secrets.isLoading}
-                                  items={secrets.items}
-                                  onChange={onSelectCATLSContainers}
-                                  value={clientCATLScontainer}
-                                  isClearable
-                                />
-                                {clientCaTLSContainerRefHint()}
-                                {secrets.error && (
-                                  <span className="text-danger">
-                                    {secrets.error}
-                                  </span>
-                                )}
-                                {clientCATLScontainerNotFound && (
-                                  <React.Fragment>
-                                    <p>
-                                      <b className="text-danger">
-                                        Secret(s) not found:{" "}
-                                      </b>
-                                    </p>
-                                    <ul className="secrets-not-found">
-                                      <li>{clientCATLScontainerNotFound}</li>
-                                    </ul>
-                                    {clientCATLScontainerDeprecated && (
-                                      <p>{SECRETS_ARE_CONTAINERS_WARNING}</p>
-                                    )}
-                                  </React.Fragment>
-                                )}
-                              </>
+                            <SelectInputCreatable
+                              name="client_ca_tls_container_ref"
+                              isLoading={secrets.isLoading}
+                              items={secrets.items}
+                              onChange={onSelectCATLSContainers}
+                              value={clientCATLScontainer}
+                              isClearable
+                            />
+                            <span className="help-block">
+                              <i className="fa fa-info-circle"></i>
+                              The secret containing a PEM format client CA
+                              certificate bundle.
+                            </span>
+                            {toManySecretsWarning(
+                              secrets.total,
+                              secrets.items?.length
                             )}
+                            {secrets.error && (
+                              <span className="text-danger">
+                                {secrets.error}
+                              </span>
+                            )}
+                            {clientCATLScontainerDeprecated &&
+                              SECRETS_ARE_CONTAINERS_WARNING}
                           </Form.ElementHorizontal>
                         </div>
                       )}
