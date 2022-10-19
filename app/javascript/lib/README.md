@@ -123,65 +123,24 @@ client
   })
 ```
 
-## Cancelable
+## Openstack API Proxy
 
-`client.cancelable`
+`client.osApi(...)`
+`client.osApi(...).cancelable`
 
-#### get(`url,options`) ⇒ `{ request: promise, cancel: func }`
+### osApi(`serviceName, options`) ⇒ `client`
 
 ```js
 // Example
-client.cancelable
-  .get("test", { params: { name: "foo" }, headers: { "X-Test": "test" } })
+client
+  .osApi("identity", { pathPrefix: "auth" })
+  .get("token")
   .then((res) => res.data)
-```
 
-#### head(`url_or_path, options`) ⇒ `{ request: promise, cancel: func }`
-
-```js
-// Example
-client.cancelable
-  .head("https://test.com")
-  .then((response) => console.log(response.headers))
-```
-
-#### post(`url_or_path, values, options`) ⇒ `{ request: promise, cancel: func }`
-
-```js
-// Example
-client.cancelable.post(
-  "test",
-  { key: "value" },
-  { baseURL: "https://test.com" }
-)
-```
-
-#### put(`url_or_path, values, options`) ⇒ `{ request: promise, cancel: func }`
-
-```js
-// Example
-client.cancelable.put("test", { key: "value" }).then((res) => res.data)
-```
-
-#### patch(`url_or_path, values, options`) ⇒ `{ request: promise, cancel: func }`
-
-```js
-// Example
-client.cancelable.patch("test", { key: "value" }).then((res) => res.data)
-```
-
-#### copy(`url_or_path, options`) ⇒ `{ request: promise, cancel: func }`
-
-```js
-// Example
-client.cancelable.copy("test", { headers: { "X-TARGET": "test2" } })
-```
-
-#### delete(`url_or_path, options`) ⇒ `{ request: promise, cancel: func }`
-
-```js
-// Example
-client.cancelable.delete("users/1")
+// using os api proxy
+const { request, cancel } = await client
+  .osApi("identity")
+  .cancelable.get("auth/projects")
 ```
 
 Options: look at [Available options](#options). Action options override client options!!!
