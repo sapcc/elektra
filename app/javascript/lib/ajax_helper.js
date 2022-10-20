@@ -196,6 +196,10 @@ const prepareRequest = (path, config = {}) => {
   // set timer for cancellation if timeout is set
   const timer = timeout && setTimeout(() => controller.abort(), timeout * 1000)
 
+  if (url.indexOf("http") === 0 && url.indexOf(location.origin) < 0) {
+    delete headers["X-Requested-With"]
+  }
+
   const request = window
     .fetch(url, {
       headers,
