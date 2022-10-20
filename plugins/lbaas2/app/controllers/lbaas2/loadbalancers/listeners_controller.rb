@@ -110,7 +110,6 @@ module Lbaas2
 
         total = secretsCertificate.fetch(:total, 0).to_i + secretsOpaque.fetch(:total, 0).to_i        
         secrets = secretsCertificate.fetch(:items, []) + secretsOpaque.fetch(:items, [])
-        secrets = {items: []} if secrets.blank?
         selectSecrets = secrets.map{ |c| {"label": "#{c.name} (#{c.secret_ref})", "value": c.secret_ref} }
 
         render json: {
