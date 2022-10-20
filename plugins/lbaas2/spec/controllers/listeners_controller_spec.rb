@@ -114,7 +114,7 @@ describe Lbaas2::Loadbalancers::ListenersController, type: :controller do
 
   describe "GET 'secrets'" do
     before :each do
-      allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:secrets).and_return([])
+      allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:secrets).and_return({items:[], total:0})      
     end
 
     it_behaves_like 'GET action with editor context' do
