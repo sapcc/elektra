@@ -1,3 +1,4 @@
+import React from "react"
 import ResourceName from "../resource_name"
 import ResourceBar from "../resource_bar"
 
@@ -25,6 +26,35 @@ const renderBar = (resource, serviceType, azName) => {
   )
 }
 
+// aggregate capa from hypervisor the total sub capacities
+const calculateTotalSubCapacity = (subcapacities) => {
+  let totalSubcapa = {}
+  subcapacities.map((subcapacity) => {
+    // only aggregates with vc are used as shards
+    if (subcapacity.aggregate.startsWith("vc")) {
+      // he total capacity and usage for each vCenter can be obtained by summing up the respective values for all hypervisors
+      // with the same values for az and aggregate.
+      let key = subcapacity.aggregate + "-" + subcapacity.az
+      if (totalSubcapa[key]) {
+        // summing up capacity and usage
+        totalSubcapa[key].capacity =
+          totalSubcapa[key].capacity + subcapacity.capacity
+
+        totalSubcapa[key].usage = totalSubcapa[key].usage + subcapacity.usage
+      } else {
+        totalSubcapa[key] = {
+          az: subcapacity.az,
+          aggregate: subcapacity.aggregate,
+          capacity: subcapacity.capacity,
+          usage: subcapacity.usage,
+        }
+      }
+    }
+  })
+
+  return Object.values(totalSubcapa)
+}
+
 const renderShard = (
   resource,
   azColumnWidth,
@@ -36,105 +66,56 @@ const renderShard = (
 ) => {
   // check for over commit factor
   let ocFactor = resource.capacity / resource.raw_capacity
+  //console.log(resource)
   if ("subcapacities" in resource) {
     let subcapacities = resource.subcapacities
+    let totalSubCapacities = calculateTotalSubCapacity(subcapacities)
     return (
       <div className="row usage-only" key={resource.name}>
         <ResourceName name="" flavorData={flavorData} />
-        {availabilityZones.map((azName, index) => (
+        {availabilityZones.map((azName, azIndex) => (
           <div
             className={`col-md-${azColumnWidth}`}
             style={{ marginBottom: 5 }}
-            key={index}
+            key={azIndex}
           >
-            {subcapacities
+            {totalSubCapacities
               .sort(function (a, b) {
                 // to sort shards -> https://stackoverflow.com/questions/47998188/how-to-sort-an-object-alphabetically-within-an-array-in-react-js
-                if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
-                if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
+                if (a.aggregate.toLowerCase() < b.aggregate.toLowerCase())
+                  return -1
+                if (a.aggregate.toLowerCase() > b.aggregate.toLowerCase())
+                  return 1
                 return 0
               })
-              .map((item, index2) => {
-                if (item.name.startsWith("vc")) {
-                  if (item.metadata.availability_zone == azName) {
-                    // calculate data with over commit factor if exist
-                    let capa = item.capacity
-                    if (ocFactor) {
-                      capa = item.capacity * ocFactor
-                    }
-
-                    if (projectScope) {
-                      if (projectShards.indexOf(item.name) > -1) {
-                        return (
-                          <div className="row" key={index2}>
-                            <div
-                              className="col-md-2 text-left shard-name"
-                              title={"resource pool " + item.name}
-                            >
-                              {"rp - " + item.name}
-                            </div>
-                            <div
-                              className="col-md-10"
-                              style={{ paddingLeft: "8px" }}
-                            >
-                              <ResourceBar
-                                capacity={capa || 0}
-                                fill={item.usage || 0}
-                                unitName={resource.unit}
-                                isDanger={false}
-                                showsCapacity={true}
-                              />
-                            </div>
-                          </div>
-                        )
-                      } else {
-                        let opacity = {}
-                        if (!shardingEnabled) {
-                          opacity = { opacity: 0.5 }
-                        }
-                        // disable resourceBar if sharding are disabled and the shard is not part of the project
-                        return (
-                          <div className="row" key={index2}>
-                            <div
-                              className="col-md-2 text-left shard-name"
-                              title={"resource pool " + item.name}
-                              style={opacity}
-                            >
-                              {"rp - " + item.name}
-                            </div>
-                            <div
-                              className="col-md-10"
-                              style={{ paddingLeft: "8px" }}
-                            >
-                              <ResourceBar
-                                capacity={capa || 0}
-                                fill={item.usage || 0}
-                                unitName={resource.unit}
-                                isDanger={false}
-                                showsCapacity={true}
-                                disabled={!shardingEnabled}
-                              />
-                            </div>
-                          </div>
-                        )
-                      }
-                    } else {
-                      // Domain scope
+              .map((subcapacity, subcapacityIndex) => {
+                //console.log(subcapacity)
+                if (subcapacity.az == azName) {
+                  // calculate data with over commit factor if exist
+                  let capa = subcapacity.capacity
+                  if (ocFactor) {
+                    capa = subcapacity.capacity * ocFactor
+                  }
+                  if (projectScope) {
+                    if (projectShards.indexOf(subcapacity.aggregate) > -1) {
                       return (
-                        <div className="row" key={capa}>
+                        <div className="row" key={subcapacityIndex}>
                           <div
-                            className="col-md-2 text-left shard-name"
-                            title={"resource pool " + item.name}
+                            className="col-md-3 text-left shard-name"
+                            title={"resource pool " + subcapacity.aggregate}
                           >
-                            {"rp - " + item.name}
+                            {
+                              // rp stands for resource-pool
+                              "rp - " + subcapacity.aggregate
+                            }
                           </div>
                           <div
-                            className="col-md-10"
+                            className="col-md-9"
                             style={{ paddingLeft: "8px" }}
                           >
                             <ResourceBar
                               capacity={capa || 0}
-                              fill={item.usage || 0}
+                              fill={subcapacity.usage || 0}
                               unitName={resource.unit}
                               isDanger={false}
                               showsCapacity={true}
@@ -142,7 +123,64 @@ const renderShard = (
                           </div>
                         </div>
                       )
+                    } else {
+                      let opacity = {}
+                      if (!shardingEnabled) {
+                        opacity = { opacity: 0.5 }
+                      }
+                      // disable resourceBar if sharding are disabled and the shard is not part of the project
+                      return (
+                        <div className="row" key={subcapacityIndex}>
+                          <div
+                            className="col-md-3 text-left shard-name"
+                            title={"resource pool " + subcapacity.aggregate}
+                            style={opacity}
+                          >
+                            {
+                              // rp stands for resource-pool
+                              "rp - " + subcapacity.aggregate
+                            }
+                          </div>
+                          <div
+                            className="col-md-9"
+                            style={{ paddingLeft: "8px" }}
+                          >
+                            <ResourceBar
+                              capacity={capa || 0}
+                              fill={subcapacity.usage || 0}
+                              unitName={resource.unit}
+                              isDanger={false}
+                              showsCapacity={true}
+                              disabled={!shardingEnabled}
+                            />
+                          </div>
+                        </div>
+                      )
                     }
+                  } else {
+                    // Domain scope
+                    return (
+                      <div className="row" key={capa}>
+                        <div
+                          className="col-md-2 text-left shard-name"
+                          title={"resource pool " + subcapacity.aggregate}
+                        >
+                          {"rp - " + subcapacity.aggregate}
+                        </div>
+                        <div
+                          className="col-md-10"
+                          style={{ paddingLeft: "8px" }}
+                        >
+                          <ResourceBar
+                            capacity={capa || 0}
+                            fill={subcapacity.usage || 0}
+                            unitName={resource.unit}
+                            isDanger={false}
+                            showsCapacity={true}
+                          />
+                        </div>
+                      </div>
+                    )
                   }
                 }
               })}
