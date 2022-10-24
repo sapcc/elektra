@@ -64,7 +64,8 @@
     "uuid": "^3.4.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.7",
+    "@deanc/esbuild-plugin-postcss": "^1.0.2",
+    "autoprefixer": "^10.4.12",
     "axios-mock-adapter": "1.18.2",
     "chokidar": "^3.5.3",
     "cypress": "9.0.0",
@@ -80,11 +81,11 @@
     "js-yaml": "^4.1.0",
     "jsdom": "^20.0.1",
     "juno-ui-components": "https://github.com/sapcc/juno/releases/latest/download/juno-ui-components.tgz",
-    "postcss": "^8.4.14",
+    "postcss": "^8.4.18",
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.14.0",
     "redux-mock-store": "1.5.4",
-    "tailwindcss": "^3.1.6"
+    "tailwindcss": "^3.2.1"
   },
   "scripts": {
     "test": "NODE_ENV=test jest --config jest.config.js",
