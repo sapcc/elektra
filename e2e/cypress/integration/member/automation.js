@@ -12,7 +12,7 @@ describe("automation", () => {
       url: `/${Cypress.env("TEST_DOMAIN")}/test/automation/nodes/`,
       failOnStatusCode: false,
     }).should((response) => {
-      expect(response.status).to.eq(403)
+      expect(response.status).to.eq(401)
     })
   })
 })
