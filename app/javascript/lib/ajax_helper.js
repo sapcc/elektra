@@ -97,15 +97,27 @@ const handleResponse = async (response) => {
   // Important: the Headers object from fetch makes all keys lower case.
   const ResponseContentType = headers["content-type"] || ""
 
-  // we try to convert data to json if content-type is application/json
+  // we try to convert data to form-data if content-type contains form-data,
+  // to json if content-type contains json,
+  // to text if contain-type contains text and
+  // to blob otherwise
   let data =
-    ResponseContentType.indexOf("json") >= 0
-      ? await response.json()
-      : ResponseContentType.indexOf("text") >= 0
-      ? await response.text()
-      : ResponseContentType.indexOf("form-data") >= 0
+    ResponseContentType.indexOf("form-data") >= 0
       ? await response.formData()
-      : await response.blob()
+      : await response.blob().then(async (blob) => {
+          const isText = /.*text.*/.test(blob.type)
+          const isJson = /.*json.*/.test(blob.type)
+
+          if (!isJson && !isText) return blob
+          const text = await blob.text()
+          if (!isJson) return text
+
+          try {
+            return JSON.parse(text)
+          } catch (e) {
+            return text
+          }
+        })
 
   if (!response.ok) {
     const error = new Error(response.statusText || response.status)
