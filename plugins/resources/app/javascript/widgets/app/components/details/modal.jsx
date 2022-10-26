@@ -14,6 +14,7 @@ const clusterDataTableColumns = [
     key: "id",
     label: "Domain",
     sortStrategy: "text",
+    searchKey: (props) => `${props.metadata.name} ${props.metadata.id}` || "",
     sortKey: (props) => props.metadata.name || "",
   },
   {

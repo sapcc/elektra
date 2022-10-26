@@ -2,6 +2,9 @@
 const coffeeScriptPlugin = require("./coffeescript_loader_plugin")
 const pathsResolverPlugin = require("./paths_resolver_plugin")
 const globImportPlugin = require("./glob_import_plugin")
+// const postCssPlugin = require("esbuild-style-plugin")
+const postCssPlugin = require("@deanc/esbuild-plugin-postcss")
+
 // const envFilePlugin = require("esbuild-envfile-plugin")
 const envFilePlugin = require("./esbuild-plugin-env")
 const entryPoints = require("./entrypoints")
@@ -38,6 +41,7 @@ const config = {
   plugins: [
     envFilePlugin,
     pathsResolverPlugin({
+      // see also in jest.config.js
       lib: "app/javascript/lib",
       core: "app/javascript/core",
       plugins: "plugins",
@@ -45,6 +49,9 @@ const config = {
     }),
     globImportPlugin(),
     coffeeScriptPlugin(),
+    postCssPlugin({
+      plugins: [require("tailwindcss"), require("autoprefixer")],
+    }),
   ],
   //loader: { ".js": "jsx" },
   target: ["es6", "chrome58", "firefox57", "safari11", "edge18"],
@@ -66,19 +73,17 @@ const config = {
   // map global this to window
   define: { this: "window" },
   allowOverwrite: true,
-  loader: { ".css": "text" },
+  loader: {
+    // built-in loaders: js, jsx, ts, tsx, css, json, text, base64, dataurl, file, binary
+    ".ttf": "file",
+    ".otf": "file",
+    ".svg": "file",
+    ".eot": "file",
+    ".woff": "file",
+    ".woff2": "file",
+    ".inline.css": "text",
+  },
 }
-
-// function compile(options = {}) {
-//   if (options.clear) console.clear() // log("\033[2J")
-//   log("Compiling...")
-//   return esbuild.build(config).then(() => {
-//     log(
-//       "\x1b[32m%s\x1b[0m",
-//       "Rebuild completed successfully with no errors! Don't worry Be Happy :)"
-//     ) //cyan
-//   })
-// }
 
 const grey = "\x1b[30m%s\x1b[0m"
 const red = "\x1b[31m%s\x1b[0m"
@@ -115,10 +120,12 @@ if (watch) {
     // Initialize watcher.
     const watcher = chokidar.watch(
       Object.values([
-        "app/javascript/**/*.{js,jsx,coffee}",
-        "plugins/*/app/javascript/**/*.{js,jsx,coffee}",
+        "app/assets/stylesheets/**/*.css",
+        "app/javascript/**/*.{js,jsx,coffee,css}",
+        "plugins/*/app/javascript/**/*.{js,jsx,coffee,css}",
       ]),
       {
+        // eslint-disable-next-line no-useless-escape
         ignored: /(^|[\/\\])\../, // ignore dotfiles
         persistent: true,
         ignoreInitial: true,
@@ -140,7 +147,7 @@ if (watch) {
       .on("change", (path) => {
         compile({ clear: true, change: true }).then(() => {
           log(grey, " ◻️ Reason: file has been changed ⚙️")
-          log(grey, `  ◻️ File: ${path}`)
+          log(grey, ` ◻️ File: ${path}`)
         })
       })
       .on("unlink", (path) => {

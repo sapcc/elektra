@@ -10,10 +10,9 @@ describe("masterdata", () => {
   it("open masterdata", () => {
     cy.request({
       url: `/${Cypress.env("TEST_DOMAIN")}/test/masterdata-cockpit/project`,
-      failOnStatusCode: false
+      failOnStatusCode: false,
     }).should((response) => {
-      expect(response.status).to.eq(401)
+      expect(response.status).to.eq(403)
     })
   })
-
 })

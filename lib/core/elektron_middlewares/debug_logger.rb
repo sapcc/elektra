@@ -51,6 +51,8 @@ module Core
 
           return response
         rescue StandardError => e
+          pp "===============ERROR"
+          pp e
           output =  '<- Error'
           output =  "<- #{e.code_type}" if e.respond_to?(:code_type)
           output += " (#{e.code})" if e.respond_to?(:code)

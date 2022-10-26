@@ -106,9 +106,9 @@ RSpec.shared_examples 'index action' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get :index, params: @default_params
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -224,9 +224,9 @@ RSpec.shared_examples 'show action' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get :show, params: @default_params.merge(id: 'obj_test_id')
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -301,9 +301,9 @@ RSpec.shared_examples 'post action' do
         token
       end
     end
-    it 'return 401 error' do
+    it 'return 403 error' do
       post :create, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -316,9 +316,9 @@ RSpec.shared_examples 'post action' do
         token
       end
     end
-    it 'return 401 error' do
+    it 'return 403 error' do
       post :create, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -331,9 +331,9 @@ RSpec.shared_examples 'post action' do
         token
       end
     end
-    it 'return 401 error' do
+    it 'return 403 error' do
       post :create, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -345,9 +345,9 @@ RSpec.shared_examples 'post action' do
       end
     end
 
-    it 'return 401 error' do
+    it 'return 403 error' do
       post :create, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -419,9 +419,9 @@ RSpec.shared_examples 'PUT action' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       put @put_action.to_s, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -433,9 +433,9 @@ RSpec.shared_examples 'PUT action' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       put @put_action.to_s, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -447,9 +447,9 @@ RSpec.shared_examples 'PUT action' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       put @put_action.to_s, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -462,9 +462,9 @@ RSpec.shared_examples 'PUT action' do
       end
     end
 
-    it 'return 401 error' do
+    it 'return 403 error' do
       put @put_action.to_s, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -549,9 +549,9 @@ RSpec.shared_examples 'destroy action' do
       end
     end
 
-    it 'return 401 error' do
+    it 'return 403 error' do
       delete :destroy, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -566,9 +566,9 @@ RSpec.shared_examples 'destroy action' do
       end
     end
 
-    it 'return 401 error' do
+    it 'return 403 error' do
       delete :destroy, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -583,9 +583,9 @@ RSpec.shared_examples 'destroy action' do
       end
     end
 
-    it 'return 401 error' do
+    it 'return 403 error' do
       delete :destroy, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -599,9 +599,9 @@ RSpec.shared_examples 'destroy action' do
       end
     end
 
-    it 'return 401 error' do
+    it 'return 403 error' do
       delete :destroy, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -689,9 +689,9 @@ RSpec.shared_examples 'GET action with editor context' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -704,9 +704,9 @@ RSpec.shared_examples 'GET action with editor context' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -719,9 +719,9 @@ RSpec.shared_examples 'GET action with editor context' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -733,9 +733,9 @@ RSpec.shared_examples 'GET action with editor context' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -811,7 +811,7 @@ RSpec.shared_examples 'GET action with viewer context' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
     end
@@ -825,7 +825,7 @@ RSpec.shared_examples 'GET action with viewer context' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
     end
@@ -839,7 +839,7 @@ RSpec.shared_examples 'GET action with viewer context' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
     end
@@ -852,9 +852,9 @@ RSpec.shared_examples 'GET action with viewer context' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -934,9 +934,9 @@ RSpec.shared_examples 'GET action with lbaas_admin rule.' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -950,9 +950,9 @@ RSpec.shared_examples 'GET action with lbaas_admin rule.' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -966,9 +966,9 @@ RSpec.shared_examples 'GET action with lbaas_admin rule.' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -981,9 +981,9 @@ RSpec.shared_examples 'GET action with lbaas_admin rule.' do
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -1060,9 +1060,9 @@ RSpec.shared_examples 'GET action with editor context including loadbalancer_poo
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -1075,9 +1075,9 @@ RSpec.shared_examples 'GET action with editor context including loadbalancer_poo
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end
@@ -1090,7 +1090,7 @@ RSpec.shared_examples 'GET action with editor context including loadbalancer_poo
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
       expect(response).to be_successful
     end
@@ -1103,9 +1103,9 @@ RSpec.shared_examples 'GET action with editor context including loadbalancer_poo
         token
       end
     end
-    it 'returns 401 error' do
+    it 'returns 403 error' do
       get @path, params: @default_params.merge(@extra_params)
-      expect(response.code).to be == ("401")
+      expect(response.code).to be == ("403")
       expect(response).to_not be_successful
     end
   end

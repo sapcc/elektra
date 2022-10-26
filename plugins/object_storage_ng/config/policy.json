@@ -1,0 +1,34 @@
+{
+  "object_storage_admin": "role:admin or role:swiftoperator",
+  "object_storage_ng:entry_list": "not project_id:nil",
+
+  "object_storage_ng:capabilities_list": "rule:object_storage_admin",
+
+  "object_storage_ng:container_get": "rule:object_storage_admin",
+  "object_storage_ng:container_list": "rule:object_storage_admin",
+  "object_storage_ng:container_new": "rule:object_storage_admin",
+  "object_storage_ng:container_create": "rule:object_storage_admin",
+  "object_storage_ng:container_update": "rule:object_storage_admin",
+  "object_storage_ng:container_delete": "rule:object_storage_admin",
+  "object_storage_ng:container_empty": "rule:object_storage_admin",
+  "object_storage_ng:container_pre_empty": "rule:object_storage_admin",
+  "object_storage_ng:container_confirm_deletion": "rule:object_storage_admin",
+  "object_storage_ng:container_confirm_emptying": "rule:object_storage_admin",
+  "object_storage_ng:container_show_access_control": "rule:object_storage_admin",
+  "object_storage_ng:container_update_access_control": "rule:object_storage_admin",
+
+  "object_storage_ng:object_get": "rule:object_storage_admin",
+  "object_storage_ng:object_list": "rule:object_storage_admin",
+  "object_storage_ng:object_update": "rule:object_storage_admin",
+  "object_storage_ng:object_delete": "rule:object_storage_admin",
+  "object_storage_ng:object_download": "rule:object_storage_admin",
+  "object_storage_ng:object_new_copy": "rule:object_storage_admin",
+  "object_storage_ng:object_create_copy": "rule:object_storage_admin",
+  "object_storage_ng:object_move": "rule:object_storage_admin",
+
+  "object_storage_ng:folder_new_object": "rule:object_storage_admin",
+  "object_storage_ng:folder_create_object": "rule:object_storage_admin",
+  "object_storage_ng:folder_new_folder": "rule:object_storage_admin",
+  "object_storage_ng:folder_create_folder": "rule:object_storage_admin",
+  "object_storage_ng:folder_delete": "rule:object_storage_admin"
+}

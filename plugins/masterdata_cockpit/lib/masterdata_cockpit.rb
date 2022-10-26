@@ -42,7 +42,7 @@ module MasterdataCockpit
       {
         'Prod' => 'Production',
         'QA' => 'QA',
-        'Admin' => 'Admininstation',
+        'Admin' => 'Admininstration',
         'DEV' => 'Development',
         'Demo' => 'Demo',
         'Train' => 'Training',

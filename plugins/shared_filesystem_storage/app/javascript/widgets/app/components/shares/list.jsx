@@ -103,9 +103,11 @@ export default class List extends React.Component {
     if (!this.props.searchTerm) return this.props.items
 
     // filter items
-    const regex = new RegExp(this.props.searchTerm.trim(), "i")
     return this.props.items.filter(
-      (i) => `${i.name} ${i.id} ${i.share_proto} ${i.status}`.search(regex) >= 0
+      (i) =>
+        `${i.name} ${i.id} ${i.share_proto} ${i.status}`.indexOf(
+          this.props.searchTerm.trim()
+        ) >= 0
     )
   }
 

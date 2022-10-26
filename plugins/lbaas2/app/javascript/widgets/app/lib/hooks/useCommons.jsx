@@ -23,7 +23,7 @@ const useCommons = () => {
   }
 
   const formErrorMessage = (error) => {
-    const err = error.response || error
+    const err = error
     if (
       err &&
       err.data &&
@@ -50,7 +50,7 @@ const useCommons = () => {
   }
 
   const errorMessage = (error) => {
-    const err = error.response || error
+    const err = error
     return (err.data && (err.data.errors || err.data.error)) || err.message
   }
 
@@ -82,6 +82,26 @@ const useCommons = () => {
     errorMessage,
     helpBlockTextForSelect,
     sortObjectByKeys,
+  }
+}
+
+export const secretRefLabel = (secretRef) => {
+  const label = secretRef || ""
+  return label.replace(/.*\/\/[^\/]*/, "https://...")
+}
+
+export const toManySecretsWarning = (total, length) => {
+  total = total || 0
+  length = length || 0
+  if (total > length) {
+    return (
+      <div className="alert alert-warning">
+        This project has <b>{total}</b> secrets and it is not possible to
+        display all of them. If you don't find the secret you are looking for
+        enter the secret ref manually. <br />
+        Ex: https://keymanager-3.region.cloud.sap:443/v1/secrets/secretID
+      </div>
+    )
   }
 }
 

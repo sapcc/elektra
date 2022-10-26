@@ -95,7 +95,7 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.response),
+            errors: errorMessage(error.data),
           })
         )
       })

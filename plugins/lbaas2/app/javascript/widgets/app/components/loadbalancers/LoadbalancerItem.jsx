@@ -109,7 +109,7 @@ const LoadbalancerItem = ({
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.response),
+            errors: errorMessage(error.data),
           })
         )
       })

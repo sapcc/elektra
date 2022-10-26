@@ -42,7 +42,7 @@ const useL7Rule = () => {
         })
         .catch((error) => {
           dispatch({ type: "REQUEST_L7RULES_FAILURE", error: error })
-          handleError(error.response)
+          handleError(error.data)
         })
     })
   }
@@ -57,7 +57,7 @@ const useL7Rule = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(error.data)
         })
     })
   }
@@ -73,7 +73,7 @@ const useL7Rule = () => {
           if (error && error.status == 404) {
             dispatch({ type: "REMOVE_L7RULE", id: l7RuleID })
           }
-          handleError(error.response)
+          handleError(error.data)
         })
     })
   }
@@ -166,7 +166,7 @@ const useL7Rule = () => {
             .catch((error) => {
               addError(
                 React.createElement(ErrorsList, {
-                  errors: errorMessage(error.response),
+                  errors: errorMessage(error.data),
                 })
               )
               handleErrors()

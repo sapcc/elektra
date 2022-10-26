@@ -17,7 +17,7 @@ const useHealthMonitor = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(error.data)
         })
     })
   }
@@ -39,7 +39,7 @@ const useHealthMonitor = () => {
           if (error && error.status == 404) {
             dispatch({ type: "REMOVE_HEALTHMONITOR", id: healthmonitorID })
           }
-          handleError(error.response)
+          handleError(error.data)
         })
     })
   }
@@ -59,7 +59,7 @@ const useHealthMonitor = () => {
           if (error && error.status == 404) {
             dispatch({ type: "REMOVE_HEALTHMONITOR", id: healthmonitorID })
           }
-          handleError(error.response)
+          handleError(error.data)
         })
     })
   }
