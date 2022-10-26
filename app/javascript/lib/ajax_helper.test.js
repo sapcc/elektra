@@ -28,18 +28,19 @@ const originFetch = global.fetch || window.fetch
 describe("client", () => {
   beforeEach(() => {
     // mock fetch function
-    window.fetch = jest.fn(() =>
-      Promise.resolve({
-        json: jest.fn(() => Promise.resolve({ name: "test" })),
-        blob: jest.fn(() =>
-          Promise.resolve(
-            new Blob([JSON.stringify({ name: "test" }, null, 2)]),
-            {
-              type: "application/json",
-            }
-          )
-        ),
-        text: jest.fn(() => Promise.resolve("test")),
+    window.fetch = jest.fn(() => {
+      const data = { name: "test" }
+
+      return Promise.resolve({
+        json: jest.fn(() => Promise.resolve(data)),
+        blob: jest.fn(() => {
+          const blob = new Blob([JSON.stringify(data)], {
+            type: "application/json",
+          })
+          blob.text = jest.fn().mockResolvedValue(JSON.stringify(data))
+          return Promise.resolve(blob)
+        }),
+        text: jest.fn().mockResolvedValue(JSON.stringify(data)),
         formData: jest.fn(() => Promise.resolve(new FormData())),
         ok: true,
         status: 200,
@@ -49,7 +50,7 @@ describe("client", () => {
           "Content-Type": "application/json; charset=utf-8",
         }),
       })
-    )
+    })
   })
 
   afterAll(() => (global.fetch = window.fetch = originFetch))
@@ -103,15 +104,14 @@ describe("client", () => {
             window.fetch = jest.fn(() =>
               Promise.resolve({
                 json: jest.fn(() => Promise.resolve(null)),
-                blob: jest.fn(() =>
-                  Promise.resolve(
-                    new Blob([JSON.stringify({ name: "test" }, null, 2)]),
-                    {
-                      type: "application/json",
-                    }
-                  )
-                ),
-                text: jest.fn(() => Promise.resolve("test")),
+                blob: jest.fn(() => {
+                  const blob = new Blob([JSON.stringify(null)], {
+                    type: "application/json",
+                  })
+                  blob.text = jest.fn().mockResolvedValue(JSON.stringify(null))
+                  return Promise.resolve(blob)
+                }),
+                text: jest.fn(() => Promise.resolve(null)),
                 formData: jest.fn(() => Promise.resolve(new FormData())),
                 ok: true,
                 status: 200,
@@ -136,15 +136,14 @@ describe("client", () => {
           window.fetch = jest.fn(() =>
             Promise.resolve({
               json: jest.fn(() => Promise.resolve(null)),
-              blob: jest.fn(() =>
-                Promise.resolve(
-                  new Blob([JSON.stringify({ name: "test" }, null, 2)]),
-                  {
-                    type: "application/json",
-                  }
-                )
-              ),
-              text: jest.fn(() => Promise.resolve("test")),
+              blob: jest.fn(() => {
+                const blob = new Blob([JSON.stringify(null)], {
+                  type: "application/json",
+                })
+                blob.text = jest.fn().mockResolvedValue(JSON.stringify(null))
+                return Promise.resolve(blob)
+              }),
+              text: jest.fn().mockResolvedValue(JSON.stringify(null)),
               formData: jest.fn(() => Promise.resolve(new FormData())),
               ok: true,
               status: 200,
@@ -166,21 +165,19 @@ describe("client", () => {
 
       describe("error", () => {
         beforeEach(() => {
-          window.fetch = jest.fn(() =>
-            Promise.resolve({
-              json: jest.fn(() =>
-                Promise.resolve({ error: "name can not be empty" })
-              ),
-              blob: jest.fn(() =>
-                Promise.resolve(
-                  new Blob([JSON.stringify({ name: "test" }, null, 2)]),
-                  {
-                    type: "application/json",
-                  }
-                )
-              ),
-              text: jest.fn(() => Promise.resolve("test")),
-              formData: jest.fn(() => Promise.resolve(new FormData())),
+          window.fetch = jest.fn(() => {
+            const data = { error: "name can not be empty" }
+            return Promise.resolve({
+              json: jest.fn().mockResolvedValue(JSON.stringify(data)),
+              blob: jest.fn(() => {
+                const blob = new Blob([JSON.stringify(data)], {
+                  type: "application/json",
+                })
+                blob.text = jest.fn().mockResolvedValue(JSON.stringify(data))
+                return Promise.resolve(blob)
+              }),
+              text: jest.fn().mockResolvedValue(JSON.stringify(data)),
+              formData: jest.fn().mockResolvedValue(new FormData()),
               ok: false,
               status: 400,
               statusText: "bad request",
@@ -188,7 +185,7 @@ describe("client", () => {
                 test: "test",
               }),
             })
-          )
+          })
         })
 
         it(action + ": " + "should throw an error", async () => {
