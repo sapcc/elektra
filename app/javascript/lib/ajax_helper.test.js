@@ -31,6 +31,16 @@ describe("client", () => {
     window.fetch = jest.fn(() =>
       Promise.resolve({
         json: jest.fn(() => Promise.resolve({ name: "test" })),
+        blob: jest.fn(() =>
+          Promise.resolve(
+            new Blob([JSON.stringify({ name: "test" }, null, 2)]),
+            {
+              type: "application/json",
+            }
+          )
+        ),
+        text: jest.fn(() => Promise.resolve("test")),
+        formData: jest.fn(() => Promise.resolve(new FormData())),
         ok: true,
         status: 200,
         statusText: "success",
@@ -93,6 +103,16 @@ describe("client", () => {
             window.fetch = jest.fn(() =>
               Promise.resolve({
                 json: jest.fn(() => Promise.resolve(null)),
+                blob: jest.fn(() =>
+                  Promise.resolve(
+                    new Blob([JSON.stringify({ name: "test" }, null, 2)]),
+                    {
+                      type: "application/json",
+                    }
+                  )
+                ),
+                text: jest.fn(() => Promise.resolve("test")),
+                formData: jest.fn(() => Promise.resolve(new FormData())),
                 ok: true,
                 status: 200,
                 statusText: "success",
@@ -116,6 +136,16 @@ describe("client", () => {
           window.fetch = jest.fn(() =>
             Promise.resolve({
               json: jest.fn(() => Promise.resolve(null)),
+              blob: jest.fn(() =>
+                Promise.resolve(
+                  new Blob([JSON.stringify({ name: "test" }, null, 2)]),
+                  {
+                    type: "application/json",
+                  }
+                )
+              ),
+              text: jest.fn(() => Promise.resolve("test")),
+              formData: jest.fn(() => Promise.resolve(new FormData())),
               ok: true,
               status: 200,
               statusText: "success",
@@ -141,6 +171,16 @@ describe("client", () => {
               json: jest.fn(() =>
                 Promise.resolve({ error: "name can not be empty" })
               ),
+              blob: jest.fn(() =>
+                Promise.resolve(
+                  new Blob([JSON.stringify({ name: "test" }, null, 2)]),
+                  {
+                    type: "application/json",
+                  }
+                )
+              ),
+              text: jest.fn(() => Promise.resolve("test")),
+              formData: jest.fn(() => Promise.resolve(new FormData())),
               ok: false,
               status: 400,
               statusText: "bad request",
