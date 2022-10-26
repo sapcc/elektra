@@ -103,7 +103,9 @@ const handleResponse = async (response) => {
       ? await response.json()
       : ResponseContentType.indexOf("text/plain") >= 0
       ? await response.text()
-      : null
+      : ResponseContentType.indexOf("form-data") >= 0
+      ? await response.formData()
+      : await response.blob()
 
   if (!response.ok) {
     const error = new Error(response.statusText || response.status)
