@@ -100,7 +100,9 @@ const handleResponse = async (response) => {
   // we try to convert data to json if content-type is application/json
   let data =
     ResponseContentType.indexOf("application/json") >= 0
-      ? await response.json().catch((e) => e)
+      ? await response.json()
+      : ResponseContentType.indexOf("text/plain") >= 0
+      ? await response.text()
       : null
 
   if (!response.ok) {
@@ -158,6 +160,12 @@ const prepareRequest = (path, config = {}) => {
     debug,
     ...otherOptions
   } = config
+
+  // convert headers keys to lower case
+  headers = Object.keys(headers).reduce((map, key) => {
+    map[key.toLowerCase()] = headers[key]
+    return map
+  }, {})
 
   // try to convert body to json until it is a file, form data or string
   if (

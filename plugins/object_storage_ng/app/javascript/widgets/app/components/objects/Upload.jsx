@@ -132,8 +132,9 @@ const UploadFile = ({ refresh, objectStoreEndpoint }) => {
               </p>
               <p ref={codeRef}>
                 <code>
-                  curl -T {file.name} -X PUT {objectStoreEndpoint}/
-                  {containerName}/{fileName} -H "X-Auth-Token: $token"
+                  curl -T {file.name} -X PUT "{objectStoreEndpoint}/
+                  {decodeURIComponent(containerName)}/
+                  {decodeURIComponent(fileName)}" -H "X-Auth-Token: $token"
                 </code>
               </p>
 
