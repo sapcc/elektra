@@ -99,9 +99,9 @@ const handleResponse = async (response) => {
 
   // we try to convert data to json if content-type is application/json
   let data =
-    ResponseContentType.indexOf("application/json") >= 0
+    ResponseContentType.indexOf("json") >= 0
       ? await response.json()
-      : ResponseContentType.indexOf("text/plain") >= 0
+      : ResponseContentType.indexOf("text") >= 0
       ? await response.text()
       : ResponseContentType.indexOf("form-data") >= 0
       ? await response.formData()
