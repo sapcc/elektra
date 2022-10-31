@@ -117,7 +117,7 @@ const ListenerItem = ({
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.data),
+            errors: errorMessage(error),
           })
         )
       })

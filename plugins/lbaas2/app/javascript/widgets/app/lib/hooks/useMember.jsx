@@ -109,7 +109,7 @@ const useMember = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.data)
+          handleError(error)
         })
     })
   }
@@ -125,7 +125,7 @@ const useMember = () => {
         })
         .catch((error) => {
           dispatch({ type: "REQUEST_MEMBERS_FAILURE", error: error })
-          handleError(error.data)
+          handleError(error)
         })
     })
   }
@@ -141,7 +141,7 @@ const useMember = () => {
           if (error && error.status == 404) {
             dispatch({ type: "REMOVE_MEMBER", id: memberID })
           }
-          handleError(error.data)
+          handleError(error)
         })
     })
   }
@@ -193,7 +193,7 @@ const useMember = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.data)
+          handleError(error)
         })
     })
   }

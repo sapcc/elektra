@@ -11,7 +11,7 @@ export const fetchAvailabilityZones = () => {
         handleSuccess(response.data.availability_zones)
       })
       .catch((error) => {
-        handleErrors(error.data)
+        handleErrors(error)
       })
   })
 }
@@ -27,7 +27,7 @@ const useLoadbalancer = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.data)
+          handleError(error)
         })
     })
   }
@@ -40,7 +40,7 @@ const useLoadbalancer = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.data)
+          handleError(error)
         })
     })
   }
@@ -53,7 +53,7 @@ const useLoadbalancer = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.data)
+          handleError(error)
         })
     })
   }
@@ -189,7 +189,7 @@ const useLoadbalancer = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleErrors(error.data)
+          handleErrors(error)
         })
     })
   }
@@ -202,7 +202,7 @@ const useLoadbalancer = () => {
           handleSuccess(response.data.subnets)
         })
         .catch((error) => {
-          handleErrors(error.data)
+          handleErrors(error)
         })
     })
   }
@@ -215,7 +215,7 @@ const useLoadbalancer = () => {
           handleSuccess(response.data.fips)
         })
         .catch((error) => {
-          handleErrors(error.data)
+          handleErrors(error)
         })
     })
   }
@@ -233,7 +233,7 @@ const useLoadbalancer = () => {
           handleSuccess(response)
         })
         .catch((error) => {
-          handleErrors(error.data)
+          handleErrors(error)
         })
     })
   }
@@ -251,7 +251,7 @@ const useLoadbalancer = () => {
           handleSuccess(response)
         })
         .catch((error) => {
-          handleErrors(error.data)
+          handleErrors(error)
         })
     })
   }

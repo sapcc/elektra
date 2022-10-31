@@ -18,7 +18,7 @@ const useL7Policy = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.data)
+          handleError(error)
         })
     })
   }
@@ -33,7 +33,7 @@ const useL7Policy = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.data)
+          handleError(error)
         })
     })
   }

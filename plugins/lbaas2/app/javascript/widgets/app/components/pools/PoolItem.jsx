@@ -99,7 +99,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.data),
+            errors: errorMessage(error),
           })
         )
       })
