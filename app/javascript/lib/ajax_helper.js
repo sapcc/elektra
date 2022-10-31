@@ -123,6 +123,7 @@ const handleResponse = async (response) => {
     const error = new Error(response.statusText || response.status)
 
     error.status = response.status
+    error.statusText = response.statusText
     error.headers = headers
     // data is set if response is a json. Otherwise it is null
     // to ensure (axios) backwards compatibility
