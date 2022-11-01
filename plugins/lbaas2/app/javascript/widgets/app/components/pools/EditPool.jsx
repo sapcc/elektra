@@ -10,11 +10,15 @@ import { Form } from "lib/elektra-form"
 import SelectInput from "../shared/SelectInput"
 import SelectInputCreatable from "../shared/SelectInputCreatable"
 import HelpPopover from "../shared/HelpPopover"
-import useListener from "../../lib/hooks/useListener"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
+import {
+  fetchListnersForSelect,
+  fetchSecretsForSelect,
+} from "../../actions/listener"
+import { errorMessage } from "../helpers/commonHelpers"
 
 const EditPool = (props) => {
   const {
@@ -32,7 +36,6 @@ const EditPool = (props) => {
     updatePool,
   } = usePool()
   const { persistLoadbalancer } = useLoadbalancer()
-  const { fetchListnersForSelect, fetchSecretsForSelect } = useListener()
 
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [poolID, setPoolID] = useState(null)
@@ -112,7 +115,11 @@ const EditPool = (props) => {
         setListenersLoaded(true)
       })
       .catch((error) => {
-        setListeners({ ...listeners, isLoading: false, error: error })
+        setListeners({
+          ...listeners,
+          isLoading: false,
+          error: errorMessage(error),
+        })
       })
   }
 
@@ -129,7 +136,7 @@ const EditPool = (props) => {
         })
       })
       .catch((error) => {
-        setSecrets({ ...secrets, isLoading: false, error: error })
+        setSecrets({ ...secrets, isLoading: false, error: errorMessage(error) })
       })
   }
 

@@ -6,6 +6,7 @@ import CopyPastePopover from "../shared/CopyPastePopover"
 import CachedInfoPopover from "../shared/CachedInforPopover"
 import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
 import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
+import { certificateContainerRelation } from "../../helpers/listenerHelper"
 import useListener from "../../lib/hooks/useListener"
 import useCommons from "../../lib/hooks/useCommons"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
@@ -27,13 +28,8 @@ const ListenerItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const {
-    persistListener,
-    certificateContainerRelation,
-    deleteListener,
-    onSelectListener,
-    reset,
-  } = useListener()
+  const { persistListener, removeListener, onSelectListener, reset } =
+    useListener()
   const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
     useCommons()
   const { persistLoadbalancer } = useLoadbalancer()
@@ -104,12 +100,12 @@ const ListenerItem = ({
     }
     const listenerID = listener.id
     const listenerName = listener.name
-    return deleteListener(loadbalancerID, listenerID, listenerName)
-      .then((response) => {
+    return removeListener(loadbalancerID, listenerID, listenerName)
+      .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Listener <b>{listenerName}</b> ({listenerID}) is being deleted.
-          </React.Fragment>
+          </>
         )
         // fetch the lb again containing the new listener so it gets updated fast
         persistLoadbalancer(loadbalancerID).catch((error) => {})

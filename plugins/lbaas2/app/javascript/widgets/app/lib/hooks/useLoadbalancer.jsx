@@ -2,6 +2,7 @@ import React from "react"
 import { useDispatch } from "../../components/StateProvider"
 import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
+import { createNameTag } from "../../helpers/commonHelpers"
 
 export const fetchAvailabilityZones = () => {
   return new Promise((handleSuccess, handleErrors) => {
@@ -141,16 +142,6 @@ const useLoadbalancer = () => {
           handleErrors(error)
         })
     })
-  }
-
-  const createNameTag = (name) => {
-    return name ? (
-      <React.Fragment>
-        <b>name:</b> {name} <br />
-      </React.Fragment>
-    ) : (
-      ""
-    )
   }
 
   const deleteLoadbalancer = (name, id) => {

@@ -2,6 +2,7 @@ import React from "react"
 import { ajaxHelper } from "lib/ajax_helper"
 import { useDispatch } from "../../components/StateProvider"
 import { confirm } from "lib/dialogs"
+import { createNameTag } from "../../helpers/commonHelpers"
 
 const usePool = () => {
   const dispatch = useDispatch()
@@ -109,16 +110,6 @@ const usePool = () => {
       }
     }
     return null
-  }
-
-  const createNameTag = (name) => {
-    return name ? (
-      <React.Fragment>
-        <b>name:</b> {name} <br />
-      </React.Fragment>
-    ) : (
-      ""
-    )
   }
 
   const deletePool = (lbID, poolID, poolName) => {
