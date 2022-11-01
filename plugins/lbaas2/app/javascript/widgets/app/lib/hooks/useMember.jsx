@@ -3,7 +3,6 @@ import { useDispatch } from "../../components/StateProvider"
 import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { regexString } from "lib/tools/regex_string"
-import { createNameTag } from "../../helpers/commonHelpers"
 
 export const formAttrForSubmit = (items, action) => {
   if (!items || !Array.isArray(items)) return null
@@ -145,6 +144,16 @@ const useMember = () => {
           handleError(error)
         })
     })
+  }
+
+  const createNameTag = (name) => {
+    return name ? (
+      <React.Fragment>
+        <b>name:</b> {name} <br />
+      </React.Fragment>
+    ) : (
+      ""
+    )
   }
 
   const deleteMember = (lbID, poolID, memberID, memberName) => {

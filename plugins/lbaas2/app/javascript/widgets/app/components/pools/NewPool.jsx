@@ -6,19 +6,16 @@ import usePool from "../../lib/hooks/usePool"
 import SelectInput from "../shared/SelectInput"
 import SelectInputCreatable from "../shared/SelectInputCreatable"
 import HelpPopover from "../shared/HelpPopover"
+import useListener from "../../lib/hooks/useListener"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import Log from "../shared/logger"
-import {
-  fetchListnersNoDefaultPoolForSelect,
-  fetchSecretsForSelect,
-} from "../../actions/listener"
-import { errorMessage } from "../helpers/commonHelpers"
 
 const NewPool = (props) => {
   const {
     searchParamsToString,
+    queryStringSearchValues,
     matchParams,
     formErrorMessage,
     helpBlockTextForSelect,
@@ -30,6 +27,8 @@ const NewPool = (props) => {
     createPool,
     filterListeners,
   } = usePool()
+  const { fetchListnersNoDefaultPoolForSelect, fetchSecretsForSelect } =
+    useListener()
   const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [availableListeners, setAvailableListeners] = useState([])
@@ -80,11 +79,7 @@ const NewPool = (props) => {
           setListenersLoading(false)
         })
         .catch((error) => {
-          setListeners({
-            ...listeners,
-            isLoading: false,
-            error: errorMessage(error),
-          })
+          setListeners({ ...listeners, isLoading: false, error: error })
         })
     })
   }
@@ -107,9 +102,9 @@ const NewPool = (props) => {
           setSecrets({
             ...secrets,
             isLoading: false,
-            error: errorMessage(error),
+            error: error,
           })
-          handleErrors(errorMessage(error))
+          handleErrors(error)
         })
     })
   }
