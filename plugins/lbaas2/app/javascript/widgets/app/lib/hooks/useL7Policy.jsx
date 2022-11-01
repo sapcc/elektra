@@ -2,7 +2,7 @@ import React from "react"
 import { ajaxHelper } from "lib/ajax_helper"
 import { useDispatch } from "../../components/StateProvider"
 import { confirm } from "lib/dialogs"
-import useListener from "./useListener"
+import { createNameTag } from "../../helpers/commonHelpers"
 
 const useL7Policy = () => {
   const dispatch = useDispatch()
@@ -111,16 +111,6 @@ const useL7Policy = () => {
           handleErrors(error)
         })
     })
-  }
-
-  const createNameTag = (name) => {
-    return name ? (
-      <React.Fragment>
-        <b>name:</b> {name} <br />
-      </React.Fragment>
-    ) : (
-      ""
-    )
   }
 
   const deleteL7Policy = (lbID, listenerID, l7policyID, l7policyName) => {

@@ -2,6 +2,20 @@ import React, { useState, useEffect } from "react"
 import useCommons, { toManySecretsWarning } from "../../lib/hooks/useCommons"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
+import {
+  listenerProtocolTypes,
+  httpHeaderInsertions,
+  advancedSectionRelation,
+  tlsPoolRelation,
+  protocolHeaderInsertionRelation,
+  clientAuthenticationRelation,
+  certificateContainerRelation,
+  SNIContainerRelation,
+  CATLSContainerRelation,
+  helpBlockItems,
+  predefinedPolicies,
+} from "../../helpers/listenerHelper"
+import { fetchCiphers, fetchSecretsForSelect } from "../../actions/listener"
 import useListener from "../../lib/hooks/useListener"
 import SelectInput from "../shared/SelectInput"
 import SelectInputCreatable from "../shared/SelectInputCreatable"
@@ -10,6 +24,7 @@ import HelpPopover from "../shared/HelpPopover"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
+import { errorMessage } from "../helpers/commonHelpers"
 
 const NewListener = (props) => {
   const {
@@ -20,21 +35,7 @@ const NewListener = (props) => {
     helpBlockTextForSelect,
     errorMessage,
   } = useCommons()
-  const {
-    protocolTypes,
-    tlsPoolRelation,
-    protocolHeaderInsertionRelation,
-    clientAuthenticationRelation,
-    fetchSecretsForSelect,
-    certificateContainerRelation,
-    SNIContainerRelation,
-    CATLSContainerRelation,
-    createListener,
-    advancedSectionRelation,
-    predefinedPolicies,
-    httpHeaderInsertions,
-    helpBlockItems,
-  } = useListener()
+  const { createListener } = useListener()
   const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [pools, setPools] = useState({
@@ -49,6 +50,11 @@ const NewListener = (props) => {
     error: null,
     items: [],
     total: 0,
+  })
+  const [ciphers, setCiphers] = useState({
+    isLoading: false,
+    error: null,
+    items: [],
   })
   const [predPolicies, setPredPolicies] = useState([])
   const [tags, setTags] = useState([])
@@ -119,9 +125,31 @@ const NewListener = (props) => {
           setSecrets({
             ...secrets,
             isLoading: false,
+            error: errorMessage(error),
+          })
+          handleErrors(errorMessage(error))
+        })
+    })
+  }
+
+  const loadCiphers = (lbID) => {
+    return new Promise((handleSuccess, handleErrors) => {
+      setCiphers({ ...secrets, isLoading: true })
+      fetchCiphers(lbID)
+        .then((data) => {
+          setCiphers({
+            ...ciphers,
+            isLoading: false,
+            items: data.ciphers,
+            error: null,
+          })
+        })
+        .catch((error) => {
+          setCiphers({
+            ...ciphers,
+            isLoading: false,
             error: error,
           })
-          handleErrors(error)
         })
     })
   }
@@ -230,11 +258,10 @@ const NewListener = (props) => {
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     return createListener(lbID, newValues)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Listener <b>{response.data.name}</b> ({response.data.id}) is being
-            created.
+            Listener <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // fetch the lb again containing the new listener so it gets updated fast
@@ -324,7 +351,7 @@ const NewListener = (props) => {
 
   const protocolTypesFiltered = () => {
     // do not show types disabled
-    return protocolTypes().filter((t) => !t.state?.includes("disabled"))
+    return listenerProtocolTypes().filter((t) => !t.state?.includes("disabled"))
   }
 
   Log.debug("RENDER new listener")

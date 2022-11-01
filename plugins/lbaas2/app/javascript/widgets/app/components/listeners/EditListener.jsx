@@ -5,6 +5,20 @@ import useCommons, {
   secretRefLabel,
 } from "../../lib/hooks/useCommons"
 import { Form } from "lib/elektra-form"
+import {
+  listenerProtocolTypes,
+  httpHeaderInsertions,
+  advancedSectionRelation,
+  tlsPoolRelation,
+  protocolHeaderInsertionRelation,
+  clientAuthenticationRelation,
+  certificateContainerRelation,
+  SNIContainerRelation,
+  CATLSContainerRelation,
+  helpBlockItems,
+  predefinedPolicies,
+  isSecretAContainer,
+} from "../../helpers/listenerHelper"
 import useListener from "../../lib/hooks/useListener"
 import SelectInput from "../shared/SelectInput"
 import SelectInputCreatable from "../shared/SelectInputCreatable"
@@ -14,6 +28,8 @@ import HelpPopover from "../shared/HelpPopover"
 import { addNotice } from "lib/flashes"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import Log from "../shared/logger"
+import { fetchListener, fetchSecretsForSelect } from "../../actions/listener"
+import { errorMessage } from "../helpers/commonHelpers"
 
 const SECRETS_ARE_CONTAINERS_WARNING = (
   <div className="alert alert-warning">
@@ -30,23 +46,7 @@ const EditListener = (props) => {
     fetchPoolsForSelect,
     helpBlockTextForSelect,
   } = useCommons()
-  const {
-    fetchListener,
-    protocolTypes,
-    tlsPoolRelation,
-    protocolHeaderInsertionRelation,
-    clientAuthenticationRelation,
-    fetchSecretsForSelect,
-    isSecretAContainer,
-    certificateContainerRelation,
-    SNIContainerRelation,
-    CATLSContainerRelation,
-    updateListener,
-    httpHeaderInsertions,
-    predefinedPolicies,
-    advancedSectionRelation,
-    helpBlockItems,
-  } = useListener()
+  const { updateListener } = useListener()
   const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [listenerID, setListenerID] = useState(null)
@@ -182,7 +182,7 @@ const EditListener = (props) => {
   }
 
   const setSelectedProtocolType = () => {
-    const selectedOption = protocolTypes().find(
+    const selectedOption = listenerProtocolTypes().find(
       (i) => i.value == (listener.item.protocol || "").trim()
     )
     setProtocolType(selectedOption)
@@ -342,9 +342,9 @@ const EditListener = (props) => {
           setSecrets({
             ...secrets,
             isLoading: false,
-            error: error,
+            error: errorMessage(error),
           })
-          handleErrors(error)
+          handleErrors(errorMessage(error))
         })
     })
   }
@@ -424,12 +424,11 @@ const EditListener = (props) => {
     })
 
     return updateListener(loadbalancerID, listenerID, newValues)
-      .then((response) => {
+      .then((data) => {
         addNotice(
-          <React.Fragment>
-            Listener <b>{response.data.name}</b> ({response.data.id}) is being
-            updated.
-          </React.Fragment>
+          <>
+            Listener <b>{data.name}</b> ({data.id}) is being updated.
+          </>
         )
         // fetch the lb again containing the new listener so it gets updated fast
         persistLoadbalancer(loadbalancerID).catch((error) => {})
@@ -578,7 +577,7 @@ const EditListener = (props) => {
                 >
                   <SelectInput
                     name="protocol"
-                    items={protocolTypes()}
+                    items={listenerProtocolTypes()}
                     value={protocolType}
                     isDisabled={true}
                   />
