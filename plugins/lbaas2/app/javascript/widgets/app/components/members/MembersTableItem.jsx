@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from "react"
 import CopyPastePopover from "../shared/CopyPastePopover"
-import useCommons from "../../lib/hooks/useCommons"
 import useStatus from "../../lib/hooks/useStatus"
 import StaticTags from "../StaticTags"
 import useMember from "../../lib/hooks/useMember"
@@ -15,6 +14,11 @@ import DropDownMenu from "../shared/DropdownMenu"
 import { MemberIpIcon, MemberMonitorIcon } from "./MemberIpIcons"
 import usePolling from "../../lib/hooks/usePolling"
 import BooleanLabel from "../shared/BooleanLabel"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const MembersTableItem = ({
   props,
@@ -24,7 +28,6 @@ const MembersTableItem = ({
   shouldPoll,
   displayActions,
 }) => {
-  const { matchParams, searchParamsToString, errorMessage } = useCommons()
   const { persistPool } = usePool()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { persistMember, deleteMember } = useMember()

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import ErrorPage from "../ErrorPage"
 import { Form } from "lib/elektra-form"
@@ -9,10 +8,14 @@ import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
+import {
+  errorMessage,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const EditLoadbalancer = (props) => {
-  const { matchParams, searchParamsToString, formErrorMessage, errorMessage } =
-    useCommons()
   const { fetchLoadbalancer, fetchPrivateNetworks, updateLoadbalancer } =
     useLoadbalancer()
   const [loadbalancer, setLoadbalancer] = useState({

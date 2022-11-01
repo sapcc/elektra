@@ -1,8 +1,4 @@
 import React, { useState, useEffect } from "react"
-import useCommons, {
-  toManySecretsWarning,
-  secretRefLabel,
-} from "../../lib/hooks/useCommons"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import usePool from "../../lib/hooks/usePool"
 import ErrorPage from "../ErrorPage"
@@ -18,23 +14,25 @@ import {
   fetchListnersForSelect,
   fetchSecretsForSelect,
 } from "../../actions/listener"
-import { errorMessage } from "../helpers/commonHelpers"
+import {
+  errorMessage,
+  secretRefLabel,
+  toManySecretsWarning,
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import {
+  lbAlgorithmTypes,
+  poolProtocolTypes,
+  poolPersistenceTypes,
+  filterListeners,
+} from "../../helpers/poolHelper"
+import { fetchPool } from "../../actions/pool"
 
 const EditPool = (props) => {
-  const {
-    matchParams,
-    searchParamsToString,
-    formErrorMessage,
-    helpBlockTextForSelect,
-  } = useCommons()
-  const {
-    lbAlgorithmTypes,
-    poolPersistenceTypes,
-    protocolTypes,
-    fetchPool,
-    filterListeners,
-    updatePool,
-  } = usePool()
+  const { updatePool } = usePool()
   const { persistLoadbalancer } = useLoadbalancer()
 
   const [loadbalancerID, setLoadbalancerID] = useState(null)
@@ -172,7 +170,7 @@ const EditPool = (props) => {
   }
 
   const setSelectedProtocol = (selectedProtocol) => {
-    const selectedOption = protocolTypes().find(
+    const selectedOption = poolProtocolTypes().find(
       (i) => i.value == (selectedProtocol || "").trim()
     )
     setProtocol(selectedOption)
@@ -259,7 +257,7 @@ const EditPool = (props) => {
    * Form stuff
    */
   const [formErrors, setFormErrors] = useState(null)
-  const [protocols, setProtocols] = useState(protocolTypes())
+  const [protocols, setProtocols] = useState(poolProtocolTypes())
   const [showCookieName, setShowCookieName] = useState(false)
   const [showTLSSettings, setShowTLSSettings] = useState(false)
 
@@ -306,11 +304,10 @@ const EditPool = (props) => {
 
     setFormErrors(null)
     return updatePool(loadbalancerID, poolID, newValues)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Pool <b>{response.data.name}</b> ({response.data.id}) is being
-            updated.
+            Pool <b>{data.name}</b> ({data.id}) is being updated.
           </React.Fragment>
         )
         // fetch the lb again containing the new listener so it gets updated fast

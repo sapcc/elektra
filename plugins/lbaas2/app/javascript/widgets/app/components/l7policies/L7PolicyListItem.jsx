@@ -1,5 +1,4 @@
 import { useEffect, useState, useMemo } from "react"
-import useCommons from "../../lib/hooks/useCommons"
 import { Link } from "react-router-dom"
 import StaticTags from "../StaticTags"
 import useL7Policy from "../../lib/hooks/useL7Policy"
@@ -16,6 +15,12 @@ import Log from "../shared/logger"
 import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+  MyHighlighter,
+} from "../../helpers/commonHelpers"
 
 const L7PolicyListItem = ({
   props,
@@ -25,8 +30,6 @@ const L7PolicyListItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons()
   const {
     actionRedirect,
     deleteL7Policy,

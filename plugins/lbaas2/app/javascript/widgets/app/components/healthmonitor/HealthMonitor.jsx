@@ -1,20 +1,24 @@
 import { useEffect, useState, useMemo } from "react"
 import HelpPopover from "../shared/HelpPopover"
 import { useGlobalState } from "../StateProvider"
-import useCommons from "../../lib/hooks/useCommons"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import useHealthMonitor from "../../lib/hooks/useHealthMonitor"
-import { DefeatableLink } from "lib/components/defeatable_link"
 import usePool from "../../lib/hooks/usePool"
 import ErrorPage from "../ErrorPage"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import { Link } from "react-router-dom"
 import HealthmonitorDetails from "./HealthmonitorDetails"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
+import { fetchPool } from "../../actions/pool"
+import { findPool } from "../../helpers/poolHelper"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const HealthMonitor = ({ props, loadbalancerID }) => {
   const { deleteHealthmonitor, persistHealthmonitor, resetState } =
@@ -22,8 +26,7 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
   const poolID = useGlobalState().pools.selected
   const poolError = useGlobalState().pools.error
   const pools = useGlobalState().pools.items
-  const { findPool, fetchPool, persistPool } = usePool()
-  const { searchParamsToString, matchParams, errorMessage } = useCommons()
+  const { persistPool } = usePool()
   const state = useGlobalState().healthmonitors
   const { findLoadbalancer } = useLoadbalancer()
   const loadbalancers = useGlobalState().loadbalancers.items

@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from "react"
-import { DefeatableLink } from "lib/components/defeatable_link"
 import useL7Policy from "../../lib/hooks/useL7Policy"
-import useCommons from "../../lib/hooks/useCommons"
 import HelpPopover from "../shared/HelpPopover"
 import L7PolicyListItem from "./L7PolicyListItem"
 import { Table } from "react-bootstrap"
@@ -10,13 +8,13 @@ import L7PolicySelected from "./L7PolicySelected"
 import queryString from "query-string"
 import ErrorPage from "../ErrorPage"
 import { Tooltip, OverlayTrigger } from "react-bootstrap"
-import { addError } from "lib/flashes"
 import { SearchField } from "lib/components/search_field"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
 import { regexString } from "lib/tools/regex_string"
+import { searchParamsToString } from "../../helpers/commonHelpers"
 
 const L7PolicyList = ({ props, loadbalancerID }) => {
   const dispatch = useDispatch()
@@ -28,7 +26,6 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
     reset,
     onSelectL7Policy,
   } = useL7Policy()
-  const { searchParamsToString } = useCommons()
   const state = useGlobalState().l7policies
   const listenerID = useGlobalState().listeners.selected
   const listenerError = useGlobalState().listeners.error

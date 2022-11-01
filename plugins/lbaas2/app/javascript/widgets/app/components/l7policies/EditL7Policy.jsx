@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
-import useCommons from "../../lib/hooks/useCommons"
 import useL7Policy from "../../lib/hooks/useL7Policy"
 import useListener from "../../lib/hooks/useListener"
 import ErrorPage from "../ErrorPage"
@@ -9,14 +8,15 @@ import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
+import { fetchPoolsForSelect } from "../../actions/pool"
+import {
+  errorMessage,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const EditL7Policy = (props) => {
-  const {
-    matchParams,
-    searchParamsToString,
-    formErrorMessage,
-    fetchPoolsForSelect,
-  } = useCommons()
   const {
     fetchL7Policy,
     actionTypes,
@@ -93,7 +93,7 @@ const EditL7Policy = (props) => {
         setPools({ ...pools, isLoading: false, items: data.pools, error: null })
       })
       .catch((error) => {
-        setPools({ ...pools, isLoading: false, error: error })
+        setPools({ ...pools, isLoading: false, error: errorMessage(error) })
       })
   }
 

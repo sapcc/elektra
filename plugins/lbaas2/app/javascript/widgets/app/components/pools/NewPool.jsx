@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { Modal, Button, Collapse } from "react-bootstrap"
-import useCommons, { toManySecretsWarning } from "../../lib/hooks/useCommons"
 import { Form } from "lib/elektra-form"
 import usePool from "../../lib/hooks/usePool"
 import SelectInput from "../shared/SelectInput"
@@ -14,22 +13,23 @@ import {
   fetchListnersNoDefaultPoolForSelect,
   fetchSecretsForSelect,
 } from "../../actions/listener"
-import { errorMessage } from "../helpers/commonHelpers"
+import {
+  errorMessage,
+  toManySecretsWarning,
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import {
+  lbAlgorithmTypes,
+  poolProtocolTypes,
+  poolPersistenceTypes,
+  filterListeners,
+} from "../../helpers/poolHelper"
 
 const NewPool = (props) => {
-  const {
-    searchParamsToString,
-    matchParams,
-    formErrorMessage,
-    helpBlockTextForSelect,
-  } = useCommons()
-  const {
-    lbAlgorithmTypes,
-    poolPersistenceTypes,
-    protocolTypes,
-    createPool,
-    filterListeners,
-  } = usePool()
+  const { createPool } = usePool()
   const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [availableListeners, setAvailableListeners] = useState([])
@@ -189,11 +189,10 @@ const NewPool = (props) => {
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     return createPool(lbID, newValues)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Pool <b>{response.data.name}</b> ({response.data.id}) is being
-            created.
+            Pool <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // fetch the lb again containing the new listener so it gets updated fast
@@ -227,7 +226,7 @@ const NewPool = (props) => {
 
   const protocolTypesFiltered = () => {
     // do not show types disabled
-    return protocolTypes().filter((t) => !t.state?.includes("disabled"))
+    return poolProtocolTypes().filter((t) => !t.state?.includes("disabled"))
   }
 
   Log.debug("RENDER new pool")

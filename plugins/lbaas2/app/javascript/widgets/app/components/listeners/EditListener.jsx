@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { Modal, Button, Collapse } from "react-bootstrap"
-import useCommons, {
-  toManySecretsWarning,
-  secretRefLabel,
-} from "../../lib/hooks/useCommons"
 import { Form } from "lib/elektra-form"
 import {
   listenerProtocolTypes,
@@ -29,7 +25,16 @@ import { addNotice } from "lib/flashes"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import Log from "../shared/logger"
 import { fetchListener, fetchSecretsForSelect } from "../../actions/listener"
-import { errorMessage } from "../helpers/commonHelpers"
+import { fetchPoolsForSelect } from "../../actions/pool"
+import {
+  errorMessage,
+  secretRefLabel,
+  toManySecretsWarning,
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const SECRETS_ARE_CONTAINERS_WARNING = (
   <div className="alert alert-warning">
@@ -39,13 +44,6 @@ const SECRETS_ARE_CONTAINERS_WARNING = (
 )
 
 const EditListener = (props) => {
-  const {
-    matchParams,
-    searchParamsToString,
-    formErrorMessage,
-    fetchPoolsForSelect,
-    helpBlockTextForSelect,
-  } = useCommons()
   const { updateListener } = useListener()
   const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
@@ -318,8 +316,8 @@ const EditListener = (props) => {
           handleSuccess(data.pools)
         })
         .catch((error) => {
-          setPools({ ...pools, isLoading: false, error: error })
-          handleErrors(error)
+          setPools({ ...pools, isLoading: false, error: errorMessage(error) })
+          handleErrors(errorMessage(error))
         })
     })
   }

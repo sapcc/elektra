@@ -5,6 +5,7 @@ import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import BooleanLabel from "../../components/shared/BooleanLabel"
+import { errorMessage } from "../../helpers/commonHelpers"
 
 const useL7Rule = () => {
   const dispatch = useDispatch()
@@ -114,10 +115,6 @@ const useL7Rule = () => {
 
   const setSearchTerm = (searchTerm) => {
     dispatch({ type: "SET_L7RULES_SEARCH_TERM", searchTerm: searchTerm })
-  }
-
-  const errorMessage = (err) => {
-    return (err.data && (err.data.errors || err.data.error)) || err.message
   }
 
   const confirmMessageOnDelete = (l7Rule) => {

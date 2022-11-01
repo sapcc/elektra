@@ -1,5 +1,4 @@
 import { useEffect, useState, useMemo } from "react"
-import useCommons from "../../lib/hooks/useCommons"
 import CopyPastePopover from "../shared/CopyPastePopover"
 import StaticTags from "../StaticTags"
 import useL7Rule from "../../lib/hooks/useL7Rule"
@@ -11,6 +10,11 @@ import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
 import BooleanLabel from "../shared/BooleanLabel"
+import {
+  matchParams,
+  searchParamsToString,
+  MyHighlighter,
+} from "../../helpers/commonHelpers"
 
 const L7RuleListItem = ({
   props,
@@ -20,8 +24,6 @@ const L7RuleListItem = ({
   searchTerm,
   shouldPoll,
 }) => {
-  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons()
   const { deleteL7Rule, persistL7Rule } = useL7Rule()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(

@@ -8,7 +8,6 @@ import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
 import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
 import { certificateContainerRelation } from "../../helpers/listenerHelper"
 import useListener from "../../lib/hooks/useListener"
-import useCommons from "../../lib/hooks/useCommons"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
@@ -20,6 +19,12 @@ import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
 import BooleanLabel from "../shared/BooleanLabel"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+  MyHighlighter,
+} from "../../helpers/commonHelpers"
 
 const ListenerItem = ({
   props,
@@ -30,8 +35,6 @@ const ListenerItem = ({
 }) => {
   const { persistListener, removeListener, onSelectListener, reset } =
     useListener()
-  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons()
   const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(

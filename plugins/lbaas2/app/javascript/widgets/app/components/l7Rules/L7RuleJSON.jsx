@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react"
 import useL7Rule from "../../lib/hooks/useL7Rule"
-import useCommons from "../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 import JsonView from "../shared/JsonView"
+import {
+  sortObjectByKeys,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const L7RuleJSON = (props) => {
   const { fetchL7Rule } = useL7Rule()
-  const { matchParams, searchParamsToString, sortObjectByKeys } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
     error: null,

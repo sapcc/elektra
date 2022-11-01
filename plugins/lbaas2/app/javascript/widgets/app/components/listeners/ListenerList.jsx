@@ -5,10 +5,8 @@ import ListenerItem from "./ListenerItem"
 import queryString from "query-string"
 import { Link } from "react-router-dom"
 import HelpPopover from "../shared/HelpPopover"
-import { CSSTransition, TransitionGroup } from "react-transition-group"
 import { useDispatch, useGlobalState } from "../StateProvider"
 import ErrorPage from "../ErrorPage"
-import useCommons from "../../lib/hooks/useCommons"
 import { Tooltip, OverlayTrigger, Table } from "react-bootstrap"
 import { addError } from "lib/flashes"
 import Pagination from "../shared/Pagination"
@@ -18,6 +16,7 @@ import { scope } from "lib/ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
 import { regexString } from "lib/tools/regex_string"
+import { searchParamsToString } from "../../helpers/commonHelpers"
 
 const ListenerList = ({ props, loadbalancerID }) => {
   const dispatch = useDispatch()
@@ -29,7 +28,6 @@ const ListenerList = ({ props, loadbalancerID }) => {
     onSelectListener,
   } = useListener()
   const state = useGlobalState().listeners
-  const { searchParamsToString } = useCommons()
   const [initialLoadDone, setInitialLoadDone] = useState(false)
   const [triggerFindSelectedListener, setTriggerFindSelectedListener] =
     useState(false)

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"
-import useCommons, { toManySecretsWarning } from "../../lib/hooks/useCommons"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import {
@@ -16,6 +15,7 @@ import {
   predefinedPolicies,
 } from "../../helpers/listenerHelper"
 import { fetchCiphers, fetchSecretsForSelect } from "../../actions/listener"
+import { fetchPoolsForSelect } from "../../actions/pool"
 import useListener from "../../lib/hooks/useListener"
 import SelectInput from "../shared/SelectInput"
 import SelectInputCreatable from "../shared/SelectInputCreatable"
@@ -24,17 +24,16 @@ import HelpPopover from "../shared/HelpPopover"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
-import { errorMessage } from "../helpers/commonHelpers"
+import {
+  errorMessage,
+  toManySecretsWarning,
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const NewListener = (props) => {
-  const {
-    searchParamsToString,
-    matchParams,
-    fetchPoolsForSelect,
-    formErrorMessage,
-    helpBlockTextForSelect,
-    errorMessage,
-  } = useCommons()
   const { createListener } = useListener()
   const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
@@ -101,8 +100,8 @@ const NewListener = (props) => {
           handleSuccess(data.pools)
         })
         .catch((error) => {
-          setPools({ ...pools, isLoading: false, error: error })
-          handleErrors(error)
+          setPools({ ...pools, isLoading: false, error: errorMessage(error) })
+          handleErrors(errorMessage(error))
         })
     })
   }

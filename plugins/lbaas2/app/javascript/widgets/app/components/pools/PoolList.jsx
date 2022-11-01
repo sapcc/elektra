@@ -5,7 +5,6 @@ import PoolItem from "./PoolItem"
 import queryString from "query-string"
 import { Link } from "react-router-dom"
 import HelpPopover from "../shared/HelpPopover"
-import useCommons from "../../lib/hooks/useCommons"
 import { Tooltip, OverlayTrigger, Table } from "react-bootstrap"
 import { addError } from "lib/flashes"
 import Pagination from "../shared/Pagination"
@@ -16,6 +15,7 @@ import SmartLink from "../shared/SmartLink"
 import ErrorPage from "../ErrorPage"
 import Log from "../shared/logger"
 import { regexString } from "lib/tools/regex_string"
+import { searchParamsToString } from "../../helpers/commonHelpers"
 
 const PoolList = ({ props, loadbalancerID }) => {
   const dispatch = useDispatch()
@@ -26,7 +26,6 @@ const PoolList = ({ props, loadbalancerID }) => {
     setSelected,
     onSelectPool,
   } = usePool()
-  const { searchParamsToString } = useCommons()
   const state = useGlobalState().pools
   const [initialLoadDone, setInitialLoadDone] = useState(false)
   const [triggerFindSelected, setTriggerFindSelected] = useState(false)

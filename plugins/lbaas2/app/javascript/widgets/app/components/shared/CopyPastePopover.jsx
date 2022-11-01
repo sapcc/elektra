@@ -2,12 +2,7 @@ import React, { useState, useEffect } from "react"
 import uniqueId from "lodash/uniqueId"
 import { Popover, Tooltip, Overlay } from "react-bootstrap"
 import Clipboard from "react-clipboard.js"
-import { Highlighter } from "react-bootstrap-typeahead"
-
-const MyHighlighter = ({ search, children }) => {
-  if (!search || !children) return children
-  return <Highlighter search={search}>{children + ""}</Highlighter>
-}
+import { MyHighlighter } from "../../helpers/commonHelpers"
 
 /**
  *

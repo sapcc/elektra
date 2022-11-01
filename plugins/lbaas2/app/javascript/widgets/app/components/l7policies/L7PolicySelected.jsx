@@ -5,7 +5,6 @@ import useL7Policy from "../../lib/hooks/useL7Policy"
 import { Link } from "react-router-dom"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import useCommons from "../../lib/hooks/useCommons"
 import useListener from "../../lib/hooks/useListener"
 import SmartLink from "../shared/SmartLink"
 import { policy } from "lib/policy"
@@ -13,11 +12,15 @@ import { scope } from "lib/ajax_helper"
 import Log from "../shared/logger"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
   const { actionRedirect, deleteL7Policy, persistL7Policy, reset } =
     useL7Policy()
-  const { matchParams, errorMessage, searchParamsToString } = useCommons()
   const { persistListener } = useListener()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(

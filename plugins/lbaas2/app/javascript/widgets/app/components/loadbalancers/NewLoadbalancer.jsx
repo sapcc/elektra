@@ -7,13 +7,12 @@ import useLoadbalancer, {
 } from "../../lib/hooks/useLoadbalancer"
 import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
-import useCommons from "../../lib/hooks/useCommons"
 import Log from "../shared/logger"
+import { errorMessage } from "../../helpers/commonHelpers"
 
 const NewLoadbalancer = (props) => {
   const { createLoadbalancer, fetchSubnets, fetchPrivateNetworks } =
     useLoadbalancer()
-  const { errorMessage } = useCommons()
 
   const [privateNetworks, setPrivateNetworks] = useState({
     isLoading: false,

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
 import useHealthmonitor from "../../lib/hooks/useHealthMonitor"
 import usePool from "../../lib/hooks/usePool"
 import { Form } from "lib/elektra-form"
@@ -9,9 +8,13 @@ import { addNotice } from "lib/flashes"
 import TagsInput from "../shared/TagsInput"
 import ErrorPage from "../ErrorPage"
 import Log from "../shared/logger"
+import {
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const EditHealthMonitor = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
   const {
     fetchHealthmonitor,
     updateHealthmonitor,

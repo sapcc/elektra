@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import useCommons from "../../lib/hooks/useCommons"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import HelpPopover from "../shared/HelpPopover"
@@ -8,14 +7,14 @@ import useL7Rule from "../../lib/hooks/useL7Rule"
 import TagsInput from "../shared/TagsInput"
 import useL7Policy from "../../lib/hooks/useL7Policy"
 import { addNotice } from "lib/flashes"
+import {
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const NewL7Rule = (props) => {
-  const {
-    searchParamsToString,
-    matchParams,
-    formErrorMessage,
-    helpBlockTextForSelect,
-  } = useCommons()
   const { ruleTypes, ruleCompareTypes, createL7Rule, ruleTypeKeyRelation } =
     useL7Rule()
   const { persistL7Policy } = useL7Policy()

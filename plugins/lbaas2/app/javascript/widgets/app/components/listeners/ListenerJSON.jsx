@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react"
-import useCommons from "../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 import JsonView from "../shared/JsonView"
 import { fetchListener } from "../../actions/listener"
+import {
+  sortObjectByKeys,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const ListenerJSON = (props) => {
-  const { matchParams, searchParamsToString, sortObjectByKeys } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
     error: null,

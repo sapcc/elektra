@@ -11,10 +11,10 @@ import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import SmartLink from "../shared/SmartLink"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
-import useCommons from "../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
+import { errorMessage, searchParamsToString } from "../../helpers/commonHelpers"
 
 const LoadbalancerItem = ({
   props,
@@ -25,7 +25,6 @@ const LoadbalancerItem = ({
 }) => {
   const { persistLoadbalancer, deleteLoadbalancer, detachFIP } =
     useLoadbalancer()
-  const { errorMessage, searchParamsToString } = useCommons()
   const { entityStatus } = useStatus(
     loadbalancer.operating_status,
     loadbalancer.provisioning_status

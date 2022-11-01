@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from "react"
 import HelpPopover from "../shared/HelpPopover"
 import { useGlobalState } from "../StateProvider"
-import useCommons from "../../lib/hooks/useCommons"
 import useMember from "../../lib/hooks/useMember"
 import ErrorPage from "../ErrorPage"
 import { SearchField } from "lib/components/search_field"
@@ -11,11 +10,11 @@ import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
 import { regexString } from "lib/tools/regex_string"
 import MembersTable from "./MembersTable"
+import { searchParamsToString } from "../../helpers/commonHelpers"
 
 const MemberList = ({ props, loadbalancerID }) => {
   const poolID = useGlobalState().pools.selected
   const poolError = useGlobalState().pools.error
-  const { searchParamsToString } = useCommons()
   const { persistMembers, setSearchTerm } = useMember()
   const state = useGlobalState().members
 
