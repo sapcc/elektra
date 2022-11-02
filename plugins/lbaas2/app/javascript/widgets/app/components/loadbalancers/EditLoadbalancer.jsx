@@ -14,10 +14,13 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import {
+  fetchLoadbalancer,
+  fetchPrivateNetworks,
+} from "../../actions/loadbalancer"
 
 const EditLoadbalancer = (props) => {
-  const { fetchLoadbalancer, fetchPrivateNetworks, updateLoadbalancer } =
-    useLoadbalancer()
+  const { updateLoadbalancer } = useLoadbalancer()
   const [loadbalancer, setLoadbalancer] = useState({
     isLoading: false,
     error: null,
@@ -121,11 +124,10 @@ const EditLoadbalancer = (props) => {
     setFormErrors(null)
 
     return updateLoadbalancer(loadbalancerID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Load Balancer <b>{response.data.name}</b> ({response.data.id}) is
-            being updated.
+            Load Balancer <b>{data.name}</b> ({data.id}) is being updated.
           </React.Fragment>
         )
         close()

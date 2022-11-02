@@ -3,61 +3,18 @@ import { useDispatch } from "../../components/StateProvider"
 import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { createNameTag } from "../../helpers/commonHelpers"
-
-export const fetchAvailabilityZones = () => {
-  return new Promise((handleSuccess, handleErrors) => {
-    ajaxHelper
-      .get(`/loadbalancers/availability-zones`)
-      .then((response) => {
-        handleSuccess(response.data.availability_zones)
-      })
-      .catch((error) => {
-        handleErrors(error)
-      })
-  })
-}
+import {
+  fetchLoadbalancers,
+  fetchLoadbalancer,
+  postLoadbalancer,
+  putLoadbalancer,
+  deleteLoadbalancer,
+  putAttachFIP,
+  putDetachFIP,
+} from "../../actions/loadbalancer"
 
 const useLoadbalancer = () => {
   const dispatch = useDispatch()
-
-  const fetchLoadbalancers = (options) => {
-    return new Promise((handleSuccess, handleError) => {
-      ajaxHelper
-        .get(`/loadbalancers`, { params: options })
-        .then((response) => {
-          handleSuccess(response.data)
-        })
-        .catch((error) => {
-          handleError(error)
-        })
-    })
-  }
-
-  const fetchLoadbalancer = (id) => {
-    return new Promise((handleSuccess, handleError) => {
-      ajaxHelper
-        .get(`/loadbalancers/${id}`)
-        .then((response) => {
-          handleSuccess(response.data)
-        })
-        .catch((error) => {
-          handleError(error)
-        })
-    })
-  }
-
-  const fetchLoadbalancerDevice = (id) => {
-    return new Promise((handleSuccess, handleError) => {
-      ajaxHelper
-        .get(`/loadbalancers/${id}/device`)
-        .then((response) => {
-          handleSuccess(response.data)
-        })
-        .catch((error) => {
-          handleError(error)
-        })
-    })
-  }
 
   const persistLoadbalancers = (options) => {
     dispatch({ type: "REQUEST_LOADBALANCERS", requestedAt: Date.now() })
@@ -100,26 +57,15 @@ const useLoadbalancer = () => {
     })
   }
 
-  const findLoadbalancer = (loadbalancers, lbID) => {
-    if (loadbalancers) {
-      const index = loadbalancers.findIndex((item) => item.id == lbID)
-      if (index >= 0) {
-        return loadbalancers[index]
-      }
-    }
-    return null
-  }
-
   const createLoadbalancer = (values) => {
     return new Promise((handleSuccess, handleErrors) => {
-      ajaxHelper
-        .post("/loadbalancers/", { loadbalancer: values })
-        .then((response) => {
+      postLoadbalancer(values)
+        .then((data) => {
           dispatch({
             type: "RECEIVE_LOADBALANCER",
-            loadbalancer: response.data,
+            loadbalancer: data,
           })
-          handleSuccess(response)
+          handleSuccess(data)
         })
         .catch((error) => {
           handleErrors(error)
@@ -129,14 +75,13 @@ const useLoadbalancer = () => {
 
   const updateLoadbalancer = (lbID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
-      ajaxHelper
-        .put(`/loadbalancers/${lbID}`, { loadbalancer: values })
-        .then((response) => {
+      putLoadbalancer(lbID, values)
+        .then((data) => {
           dispatch({
             type: "RECEIVE_LOADBALANCER",
-            loadbalancer: response.data,
+            loadbalancer: data,
           })
-          handleSuccess(response)
+          handleSuccess(data)
         })
         .catch((error) => {
           handleErrors(error)
@@ -144,7 +89,7 @@ const useLoadbalancer = () => {
     })
   }
 
-  const deleteLoadbalancer = (name, id) => {
+  const removeLoadbalancer = (name, id) => {
     return new Promise((handleSuccess, handleErrors) => {
       confirm(
         <React.Fragment>
@@ -158,11 +103,10 @@ const useLoadbalancer = () => {
         </React.Fragment>
       )
         .then(() => {
-          return ajaxHelper
-            .delete(`/loadbalancers/${id}`)
-            .then((response) => {
+          return deleteLoadbalancer(id)
+            .then((data) => {
               dispatch({ type: "REQUEST_REMOVE_LOADBALANCER", id: id })
-              handleSuccess(response)
+              handleSuccess(data)
             })
             .catch((error) => {
               handleErrors(error)
@@ -172,56 +116,16 @@ const useLoadbalancer = () => {
     })
   }
 
-  const fetchPrivateNetworks = () => {
-    return new Promise((handleSuccess, handleErrors) => {
-      ajaxHelper
-        .get(`/loadbalancers/private-networks`)
-        .then((response) => {
-          handleSuccess(response.data)
-        })
-        .catch((error) => {
-          handleErrors(error)
-        })
-    })
-  }
-
-  const fetchSubnets = (id) => {
-    return new Promise((handleSuccess, handleErrors) => {
-      ajaxHelper
-        .get(`/loadbalancers/private-networks/${id}/subnets`)
-        .then((response) => {
-          handleSuccess(response.data.subnets)
-        })
-        .catch((error) => {
-          handleErrors(error)
-        })
-    })
-  }
-
-  const fetchFloatingIPs = () => {
-    return new Promise((handleSuccess, handleErrors) => {
-      ajaxHelper
-        .get(`/loadbalancers/fips`)
-        .then((response) => {
-          handleSuccess(response.data.fips)
-        })
-        .catch((error) => {
-          handleErrors(error)
-        })
-    })
-  }
-
   const attachFIP = (lbID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
       dispatch({ type: "REQUEST_FLOATINGIP_LOADBALANCER", id: lbID })
-      ajaxHelper
-        .put(`/loadbalancers/${lbID}/attach_fip`, values)
-        .then((response) => {
+      putAttachFIP(lbID, values)
+        .then((data) => {
           dispatch({
             type: "RECEIVE_LOADBALANCER",
-            loadbalancer: response.data,
+            loadbalancer: data,
           })
-          handleSuccess(response)
+          handleSuccess(data)
         })
         .catch((error) => {
           handleErrors(error)
@@ -232,14 +136,13 @@ const useLoadbalancer = () => {
   const detachFIP = (lbID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
       dispatch({ type: "REQUEST_FLOATINGIP_LOADBALANCER", id: lbID })
-      ajaxHelper
-        .put(`/loadbalancers/${lbID}/detach_fip`, values)
-        .then((response) => {
+      putDetachFIP(lbID, values)
+        .then((data) => {
           dispatch({
             type: "RECEIVE_LOADBALANCER",
-            loadbalancer: response.data,
+            loadbalancer: data,
           })
-          handleSuccess(response)
+          handleSuccess(data)
         })
         .catch((error) => {
           handleErrors(error)
@@ -253,18 +156,11 @@ const useLoadbalancer = () => {
   }
 
   return {
-    fetchLoadbalancers,
-    fetchLoadbalancer,
-    fetchLoadbalancerDevice,
     persistLoadbalancers,
     persistLoadbalancer,
-    findLoadbalancer,
-    deleteLoadbalancer,
+    removeLoadbalancer,
     createLoadbalancer,
     updateLoadbalancer,
-    fetchPrivateNetworks,
-    fetchSubnets,
-    fetchFloatingIPs,
     attachFIP,
     detachFIP,
     reset,

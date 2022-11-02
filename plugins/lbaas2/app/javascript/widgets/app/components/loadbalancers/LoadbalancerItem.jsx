@@ -23,7 +23,7 @@ const LoadbalancerItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const { persistLoadbalancer, deleteLoadbalancer, detachFIP } =
+  const { persistLoadbalancer, removeLoadbalancer, detachFIP } =
     useLoadbalancer()
   const { entityStatus } = useStatus(
     loadbalancer.operating_status,
@@ -96,8 +96,8 @@ const LoadbalancerItem = ({
     }
     const ladbalancerID = loadbalancer.id
     const loadbalancerName = loadbalancer.name
-    return deleteLoadbalancer(loadbalancerName, ladbalancerID)
-      .then((response) => {
+    return removeLoadbalancer(loadbalancerName, ladbalancerID)
+      .then((data) => {
         addNotice(
           <React.Fragment>
             Load Balancer <b>{loadbalancerName}</b> ({ladbalancerID}) is being

@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react"
 import HelpPopover from "../shared/HelpPopover"
 import { useGlobalState } from "../StateProvider"
-import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import useHealthMonitor from "../../lib/hooks/useHealthMonitor"
 import usePool from "../../lib/hooks/usePool"
 import ErrorPage from "../ErrorPage"
@@ -19,6 +18,7 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import { findLoadbalancer } from "../../helpers/loadbalancerHelpers"
 
 const HealthMonitor = ({ props, loadbalancerID }) => {
   const { deleteHealthmonitor, persistHealthmonitor, resetState } =
@@ -28,7 +28,6 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
   const pools = useGlobalState().pools.items
   const { persistPool } = usePool()
   const state = useGlobalState().healthmonitors
-  const { findLoadbalancer } = useLoadbalancer()
   const loadbalancers = useGlobalState().loadbalancers.items
 
   const [triggerInitialLoad, setTriggerInitialLoad] = useState(false)

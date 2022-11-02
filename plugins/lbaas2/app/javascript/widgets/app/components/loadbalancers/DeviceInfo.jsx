@@ -4,9 +4,9 @@ import { matchPath } from "react-router-dom"
 import Log from "../shared/logger"
 import JsonView from "../shared/JsonView"
 import { matchParams, searchParamsToString } from "../../helpers/commonHelpers"
+import { fetchLoadbalancerDevice } from "../../actions/loadbalancer"
 
 const DeviceInfo = (props) => {
-  const { fetchLoadbalancerDevice } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
 
   const [deviceInfo, setDeviceInfo] = useState({

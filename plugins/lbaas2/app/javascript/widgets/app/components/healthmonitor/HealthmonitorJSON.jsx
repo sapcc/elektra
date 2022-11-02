@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useGlobalState } from "../StateProvider"
 import useHealthmonitor from "../../lib/hooks/useHealthMonitor"
-import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import Log from "../shared/logger"
 import JsonView from "../shared/JsonView"
 import {
@@ -9,10 +8,10 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import { findLoadbalancer } from "../../helpers/loadbalancerHelpers"
 
 const HealthmonitorJSON = (props) => {
   const loadbalancers = useGlobalState().loadbalancers.items
-  const { findLoadbalancer } = useLoadbalancer()
   const { fetchHealthmonitor } = useHealthmonitor()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,

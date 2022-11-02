@@ -8,9 +8,9 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import { fetchLoadbalancer } from "../../actions/loadbalancer"
 
 const LoadbalancerJSON = (props) => {
-  const { fetchLoadbalancer } = useLoadbalancer()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
     error: null,
