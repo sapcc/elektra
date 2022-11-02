@@ -110,6 +110,10 @@ function compile(options = {}) {
     .catch((error) => {
       log(red, "Compile completed with error 😐")
       console.error(error)
+      if (process.env.RAILS_ENV === "production") {
+        // exit if we have an error on production build
+        process.exit(1)
+      }
     })
 }
 
