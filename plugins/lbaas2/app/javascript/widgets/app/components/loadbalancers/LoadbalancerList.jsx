@@ -37,7 +37,7 @@ const TableFadeTransition = ({ children, ...props }) => (
 const LoadbalancerList = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
-  const { persistLoadbalancers, persistAll } = useLoadbalancer()
+  const { persistLoadbalancers } = useLoadbalancer()
 
   const [shouldFetchNext, setShouldFetchNext] = useState(false)
   const [fetchingAllItems, setFetchingAllItems] = useState(false)

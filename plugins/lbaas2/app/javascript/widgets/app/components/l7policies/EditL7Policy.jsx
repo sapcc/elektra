@@ -20,9 +20,10 @@ import {
   codeTypes,
   actionRedirect,
 } from "../../helpers/l7PolicyHelpers"
+import { fetchL7Policy } from "../../actions/l7Policy"
 
 const EditL7Policy = (props) => {
-  const { fetchL7Policy, updateL7Policy } = useL7Policy()
+  const { updateL7Policy } = useL7Policy()
   const { persistListener } = useListener()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [listenerID, setListenerID] = useState(null)

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"
-import useL7Policy from "../../lib/hooks/useL7Policy"
 import Log from "../shared/logger"
 import JsonView from "../shared/JsonView"
 import {
@@ -7,10 +6,9 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import { fetchL7Policy } from "../../actions/l7Policy"
 
 const L7PolicyJSON = (props) => {
-  const { fetchL7Policy } = useL7Policy()
-
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
     error: null,
