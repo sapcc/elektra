@@ -21,6 +21,7 @@ import {
   searchParamsToString,
   MyHighlighter,
 } from "../../helpers/commonHelpers"
+import { actionRedirect } from "../../helpers/l7PolicyHelpers"
 
 const L7PolicyListItem = ({
   props,
@@ -30,13 +31,8 @@ const L7PolicyListItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const {
-    actionRedirect,
-    deleteL7Policy,
-    persistL7Policy,
-    onSelectL7Policy,
-    reset,
-  } = useL7Policy()
+  const { removeL7Policy, persistL7Policy, onSelectL7Policy, reset } =
+    useL7Policy()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { persistListener } = useListener()
   const { entityStatus } = useStatus(
@@ -98,8 +94,8 @@ const L7PolicyListItem = ({
     }
     const l7policyID = l7Policy.id
     const l7policyName = l7Policy.name
-    return deleteL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
-      .then((response) => {
+    return removeL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
+      .then((data) => {
         addNotice(
           <React.Fragment>
             L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.

@@ -17,10 +17,10 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import { actionRedirect } from "../../helpers/l7PolicyHelpers"
 
 const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
-  const { actionRedirect, deleteL7Policy, persistL7Policy, reset } =
-    useL7Policy()
+  const { removeL7Policy, persistL7Policy, reset } = useL7Policy()
   const { persistListener } = useListener()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(
@@ -81,8 +81,8 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
     }
     const l7policyID = l7Policy.id
     const l7policyName = l7Policy.name
-    return deleteL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
-      .then((response) => {
+    return removeL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
+      .then((data) => {
         addNotice(
           <React.Fragment>
             L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.

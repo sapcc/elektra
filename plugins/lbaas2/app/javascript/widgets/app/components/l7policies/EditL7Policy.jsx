@@ -15,15 +15,14 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import {
+  actionTypes,
+  codeTypes,
+  actionRedirect,
+} from "../../helpers/l7PolicyHelpers"
 
 const EditL7Policy = (props) => {
-  const {
-    fetchL7Policy,
-    actionTypes,
-    actionRedirect,
-    codeTypes,
-    updateL7Policy,
-  } = useL7Policy()
+  const { fetchL7Policy, updateL7Policy } = useL7Policy()
   const { persistListener } = useListener()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [listenerID, setListenerID] = useState(null)
@@ -220,11 +219,11 @@ const EditL7Policy = (props) => {
       l7policyID,
       filteredValues
     )
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Policy <b>{response.data.l7policy.name}</b> (
-            {response.data.l7policy.id}) is being updated.
+            L7 Policy <b>{data.l7policy.name}</b> ({data.l7policy.id}) is being
+            updated.
           </React.Fragment>
         )
         // fetch the lb again containing the new listener so it gets updated fast

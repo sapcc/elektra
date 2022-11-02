@@ -1,42 +1,17 @@
 import React from "react"
-import { ajaxHelper } from "lib/ajax_helper"
 import { useDispatch } from "../../components/StateProvider"
 import { confirm } from "lib/dialogs"
 import { createNameTag } from "../../helpers/commonHelpers"
+import {
+  fetchL7Policies,
+  fetchL7Policy,
+  postL7Policy,
+  putL7Policy,
+  deleteL7Policy,
+} from "../../actions/l7Policy"
 
 const useL7Policy = () => {
   const dispatch = useDispatch()
-
-  const fetchL7Policies = (lbID, listenerID, options) => {
-    return new Promise((handleSuccess, handleError) => {
-      const params = {}
-      ajaxHelper
-        .get(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies`, {
-          params: options,
-        })
-        .then((response) => {
-          handleSuccess(response.data)
-        })
-        .catch((error) => {
-          handleError(error)
-        })
-    })
-  }
-
-  const fetchL7Policy = (lbID, listenerID, l7PolicyID) => {
-    return new Promise((handleSuccess, handleError) => {
-      ajaxHelper
-        .get(
-          `/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7PolicyID}`
-        )
-        .then((response) => {
-          handleSuccess(response.data)
-        })
-        .catch((error) => {
-          handleError(error)
-        })
-    })
-  }
 
   const persistL7Policies = (lbID, listenerID, options) => {
     dispatch({ type: "RESET_L7POLICIES" })
@@ -76,16 +51,13 @@ const useL7Policy = () => {
 
   const createL7Policy = (lbID, listenerID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
-      ajaxHelper
-        .post(`/loadbalancers/${lbID}/listeners/${listenerID}/l7policies`, {
-          l7policy: values,
-        })
-        .then((response) => {
+      postL7Policy(lbID, listenerID, values)
+        .then((data) => {
           dispatch({
             type: "RECEIVE_L7POLICY",
-            l7Policy: response.data.l7policy,
+            l7Policy: data.l7policy,
           })
-          handleSuccess(response)
+          handleSuccess(data)
         })
         .catch((error) => {
           handleErrors(error)
@@ -95,17 +67,13 @@ const useL7Policy = () => {
 
   const updateL7Policy = (lbID, listenerID, l7policyID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
-      ajaxHelper
-        .put(
-          `/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7policyID}`,
-          { l7policy: values }
-        )
-        .then((response) => {
+      putL7Policy(lbID, listenerID, l7policyID, values)
+        .then((data) => {
           dispatch({
             type: "RECEIVE_L7POLICY",
-            l7Policy: response.data.l7policy,
+            l7Policy: data.l7policy,
           })
-          handleSuccess(response)
+          handleSuccess(data)
         })
         .catch((error) => {
           handleErrors(error)
@@ -113,7 +81,7 @@ const useL7Policy = () => {
     })
   }
 
-  const deleteL7Policy = (lbID, listenerID, l7policyID, l7policyName) => {
+  const removeL7Policy = (lbID, listenerID, l7policyID, l7policyName) => {
     return new Promise((handleSuccess, handleErrors) => {
       confirm(
         <React.Fragment>
@@ -124,13 +92,10 @@ const useL7Policy = () => {
         </React.Fragment>
       )
         .then(() => {
-          return ajaxHelper
-            .delete(
-              `/loadbalancers/${lbID}/listeners/${listenerID}/l7policies/${l7policyID}`
-            )
-            .then((response) => {
+          return deleteL7Policy(lbID, listenerID, l7policyID)
+            .then((data) => {
               dispatch({ type: "REQUEST_REMOVE_L7POLICY", id: l7policyID })
-              handleSuccess(response)
+              handleSuccess(data)
             })
             .catch((error) => {
               handleErrors(error)
@@ -169,58 +134,15 @@ const useL7Policy = () => {
     dispatch({ type: "SET_L7POLICIES_SELECTED_ITEM", selected: null })
   }
 
-  const actionTypes = () => {
-    return [
-      { value: "REDIRECT_PREFIX", label: "REDIRECT_PREFIX" },
-      { value: "REDIRECT_TO_POOL", label: "REDIRECT_TO_POOL" },
-      { value: "REDIRECT_TO_URL", label: "REDIRECT_TO_URL" },
-      { value: "REJECT", label: "REJECT" },
-    ]
-  }
-
-  const codeTypes = () => {
-    return [
-      { value: "301", label: "301" },
-      { value: "302", label: "302" },
-      { value: "303", label: "303" },
-      { value: "307", label: "307" },
-      { value: "308", label: "308" },
-    ]
-  }
-
-  const actionRedirect = (action) => {
-    switch (action) {
-      case "REDIRECT_PREFIX":
-        return [
-          { value: "redirect_http_code", label: "HTTP Code" },
-          { value: "redirect_prefix", label: "Prefix" },
-        ]
-      case "REDIRECT_TO_POOL":
-        return [{ value: "redirect_pool_id", label: "Pool ID" }]
-      case "REDIRECT_TO_URL":
-        return [
-          { value: "redirect_http_code", label: "HTTP Code" },
-          { value: "redirect_url", label: "URL" },
-        ]
-      default:
-        return []
-    }
-  }
-
   return {
-    fetchL7Policies,
-    fetchL7Policy,
     createL7Policy,
     updateL7Policy,
-    deleteL7Policy,
+    removeL7Policy,
     onSelectL7Policy,
-    actionRedirect,
     persistL7Policies,
     persistL7Policy,
     setSearchTerm,
     setSelected,
-    actionTypes,
-    codeTypes,
     reset,
   }
 }
