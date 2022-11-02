@@ -1,19 +1,18 @@
 = content_for :title do
-  New Verified Domain
+  Edit Verified Domain
 
-- url = plugin('email_service').domain_verifications_path
+- url: plugin('email_service').domain_verification_path(id: params[:id], identity: params[:identity_name])
 
-= simple_form_for @verified_domain, as: :verified_domain, url: url, method: :post, remote: request.xhr?, html: {id: 'form_verified_domain', data: {modal: true}, class: 'form-horizontal' } do |f|
+- unless modal?
+  %h3 Verified Domain
+
+= simple_form_for @verified_domain, as: :verified_domain, url: url, method: :put, remote: request.xhr?, html: {id: 'form_verified_domain', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   .modal-body
     %div{class: modal? ? 'modal-body' : ''}
-
-      = render partial: 'form', locals: { f: f, form_type: 'new' }
-
+      = render partial: 'form', locals: { f: f, form_type: 'edit' }
     %div.buttons{class: modal? ? 'modal-footer' : ''}
-
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
       = link_to "Cancel", plugin('email_service').domain_verifications_path(), class: 'btn btn-default'
-
     = button_tag "Verify domain", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

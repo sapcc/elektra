@@ -8,19 +8,33 @@ module EmailService
       include ActiveModel::Validations::Callbacks
       include ::EmailService::Helpers
 
-      attribute :identity, String
+      attribute :domain, String
+      attribute :identity_type, String
+      attribute :sending_enabled, Boolean
+      attribute :verification_status, Boolean
       attribute :dkim_enabled, Boolean
       attribute :tags, Array[Hash]
       attribute :domain_signing_selector, String
       attribute :domain_signing_private_key, String
       attribute :next_signing_key_length, String
-      attribute :configset_name, String
+      attribute :configuration_set_name, String
+      attribute :feedback_forwarding_status, Boolean
+      attribute :verified_for_sending_status, Boolean
+      attribute :tags, Array[Hash]
+      attribute :domain_signing_selector, String
+      attribute :domain_signing_private_key, String
+      attribute :next_signing_key_length, String
+      attribute :configuration_set_name, String
+      attribute :dkim_attributes, Hash
+      attribute :mail_from_attributes, String
+      attribute :policies, Hash
+
 
       strip_attributes
 
       # validation
-      validates_presence_of :identity, message: "domain can't be empty"
-      validates :identity, presence: true, email: true
+      validates_presence_of :domain, message: "domain can't be empty"
+      validates :domain, presence: true, email: true
 
       def to_model
         self

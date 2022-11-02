@@ -208,8 +208,8 @@ module EmailService
 
     def list_email_identities(nextToken="", page_size=1000)
       id=0
-      identities = []
-      identity = {}
+      domains = []
+      domain = {}
       if nebula_active? &&  ec2_creds && ses_client_v2
         Rails.logger.debug "\n **** LIST_EMAIL_IDENTITIES: CALLED **** \n"
         resp = ses_client_v2.list_email_identities({
@@ -228,15 +228,15 @@ module EmailService
 
         # puts "*** resp.email_identities Array Size = #{resp.email_identities.size} ** "
         resp.email_identities.each do |item|
-          identity = { id: id, identity_type: item.identity_type, identity_name: item.identity_name, sending_enabled: item.sending_enabled  }
+          identity = { id: id, identity_type: item.identity_type, domain: item.domain, sending_enabled: item.sending_enabled  }
           id+=1
           # puts "\n Identity: #{identity} \n"
           unless item.identity_name.include?("@activation.email.global.cloud.sap")
             details = ses_client_v2.get_email_identity({
-              email_identity: item.identity_name, # required
+              email_identity: item.domain, # required
             })
             puts "\n list_email_identity_details \n Identity details: #{details.inspect} \n"
-            identity.merge!({
+            domain.merge!({
               feedback_forwarding_status: details.feedback_forwarding_status,  #=> Boolean
               verified_for_sending_status: details.verified_for_sending_status, #=> Boolean
               dkim_attributes: details.dkim_attributes, #=> Boolean
@@ -269,7 +269,7 @@ module EmailService
             # puts "\n ** IDENTITY : #{identity.inspect} **** \n"
           end
 
-          identities.push identity
+          identities.push domain
         end
         puts "\n identities.inspect: #{identities.inspect} \n"
       end
@@ -493,6 +493,27 @@ module EmailService
       end
       return status
 
+    end
+
+    # find a template with name or returns an empty template object
+    def find_verified_domain(identity)
+
+      @verified_domains = domains
+      @verified_domain = new_verified_domain({})
+      unless @verified_domains.empty?
+        @verified_domains.each do |v|
+          if v[:identity_name] == identity
+            @verified_domain = new_verified_domain(v)
+          end
+        end
+      end
+
+      return @verified_domain
+
+    end
+
+    def new_verified_domain(attributes = {})
+      verified_domain = EmailService::VerifiedDomain.new(attributes)
     end
 
     # TO_DO
