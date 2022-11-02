@@ -87,7 +87,7 @@ RUN echo -e '\n\
   echo " - dev-proxy:         start-dev-proxy"\n\
   echo " - postgres console:  start-pg-console"\n\
   echo " - rebuild database:  rebuild-db"\n\
-  echo " - rebuild npms:       rebuild-npms"\n\
+  echo " - rebuild npms:      rebuild-npms"\n\
   echo " - rebuild gems:      rebuild-gems"\n\
   echo " - show this help:    help-elektra"\n\
   echo ""\n\
