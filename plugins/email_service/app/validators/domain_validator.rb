@@ -7,5 +7,5 @@ class DomainValidator < ActiveModel::EachValidator
       record.errors.add attribute, (options[:message] || "domain name: #{value} is invalid" )
     end
   end
-  
+
 end

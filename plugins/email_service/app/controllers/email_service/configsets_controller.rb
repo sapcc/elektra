@@ -1,14 +1,16 @@
 module EmailService
   class ConfigsetsController < ::EmailService::ApplicationController
-    # before_action :restrict_access
+
     before_action :check_ec2_creds_cronus_status
+    before_action :check_verified_identity
+
     before_action :set_configset, only: %i[edit, destroy, update]
-    
+
     authorization_context 'email_service'
     authorization_required
 
     def index
-      
+
       items_per_page = 10
       @paginatable_configsets = Kaminari.paginate_array(configsets, total_count: configsets.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
@@ -33,7 +35,7 @@ module EmailService
         else
           flash.now[:warning] = status
           render 'edit', local: {configset: @configset } and return
-        end 
+        end
       end
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
@@ -55,7 +57,7 @@ module EmailService
     end
 
     def destroy
-      
+
       status = ""
       name = params[:name] ?  params[:name] : ""
       configset = find_configset(params[:name])
@@ -72,7 +74,7 @@ module EmailService
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
       rescue Exception => e
         flash[:error] = "Status Code: 500 : Error: #{e}"
-      
+
     end
 
 

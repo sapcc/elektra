@@ -4,7 +4,7 @@
 
 # describe EmailService::WebController, type: :controller do
 #   routes { EmailService::Engine.routes }
- 
+
 #   default_params = { domain_id: AuthenticationStub.domain_id,
 #                      project_id: AuthenticationStub.project_id }
 #   before(:all) do
@@ -14,6 +14,11 @@
 #                                          default_params[:domain_id],
 #                                          default_params[:project_id],
 #                                          default_params[:project_id])
+
+#     puts "\n ==============================================================\n"
+#     puts "\n [WebController] \n"
+#     puts "\n ==============================================================\n"
+
 #   end
 
 #   before :each do
@@ -29,7 +34,7 @@
 #       before :each do
 #         stub_authentication do |token|
 #           token['roles'] = []
-#           token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }         
+#           token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
 #           token
 #         end
 #       end

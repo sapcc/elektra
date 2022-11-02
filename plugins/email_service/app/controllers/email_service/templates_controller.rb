@@ -1,7 +1,9 @@
 module EmailService
   class TemplatesController < ::EmailService::ApplicationController
-    # before_action :restrict_access
+
     before_action :check_ec2_creds_cronus_status
+    # before_action :check_verified_identity
+
     before_action :set_template, only: %i[new show edit]
 
     authorization_context 'email_service'
@@ -10,7 +12,6 @@ module EmailService
     def index
       @templates = templates
       items_per_page = 10
-      # = !@templates && @templates.count == 0 ? [] :
       @paginatable_templates  = Kaminari.paginate_array(@templates, total_count: @templates.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
         flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
@@ -63,10 +64,10 @@ module EmailService
         return render action: 'edit', data: {modal: true}
       end
       if status == "success"
-        flash[:success] = "eMail template [#{@template.name}] is updated" 
+        flash[:success] = "eMail template [#{@template.name}] is updated"
         redirect_to plugin('email_service').templates_path and return
-      else 
-        flash.now[:error] = "Error: #{status}; eMail template [#{@template.name}] is not updated" 
+      else
+        flash.now[:error] = "Error: #{status}; eMail template [#{@template.name}] is not updated"
         render 'edit', data: {modal: true}
       end
     end
@@ -90,7 +91,7 @@ module EmailService
     def set_template
       @template = find_template(params[:name])
     end
-    
+
     def template_params
       if params.include?(:template)
         return params.require(:template).permit(:name, :subject, :html_part, :text_part)

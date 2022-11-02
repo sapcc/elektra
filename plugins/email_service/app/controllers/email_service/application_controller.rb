@@ -2,7 +2,7 @@
 
 module EmailService
   class ApplicationController < ::DashboardController
-    
+
     include ::EmailService::ApplicationHelper
 
     authorization_context 'email_service'
@@ -13,21 +13,30 @@ module EmailService
     #     redirect_to emails_path
     #   end
     # end
- 
+
     # def restrict_access
     #   unless current_user.has_role?('cloud_support_tools_viewer')
     #     redirect_to index_path
     #   end
-    # end 
+    # end
 
     def check_ec2_creds_cronus_status
-      if ( !ec2_creds && ec2_creds.nil? ) || !nebula_active? || ( !email_addresses || email_addresses.empty? )
+      Rails.logger.debug "\n ****** CHECK check_ec2_creds_cronus_status CHECK ******  \n"
+      if ( !ec2_creds && ec2_creds.nil? ) || !nebula_active?
+        render '/email_service/shared/setup.html'
+      end
+    end
+
+    def check_verified_identity
+      Rails.logger.debug "\n ****** CHECK check_verified_identity CHECK ******  \n"
+      if email_addresses.empty?
+        Rails.logger.debug "\n ****** check_verified_identity  [ email_addresses.empty? ] ******  \n"
         render '/email_service/shared/setup.html'
       end
     end
 
     protected
-    
+
     helper_method :release_state
 
     # Overwrite this method in your controller if you want to set the release

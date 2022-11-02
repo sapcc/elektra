@@ -13,7 +13,7 @@ module EmailService
     attribute :source_email, String
     attribute :source_domain, String
     attribute :source_domain_name_part, String
-    
+
     attribute :to_addr, String
     attribute :cc_addr, String
     attribute :bcc_addr, String
@@ -45,7 +45,7 @@ module EmailService
     def process(plain_email_instance)
       process!(plain_email_instance)
     end
-    
+
     private
 
     def process!(plain_email_instance)

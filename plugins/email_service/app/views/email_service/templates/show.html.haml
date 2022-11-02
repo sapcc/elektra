@@ -14,26 +14,26 @@
         %tr
           %td
             %strong Name:
-          %td 
+          %td
             =@template.name
         %tr
           %td
             %strong Subject:
-          %td 
+          %td
             =@template.subject
         %tr
           %td
             %strong HTML part:
           %td.html-part
-            = @template.html_part 
+            = @template.html_part
         %tr
           %td
             %strong Text part:
           %td.text-part
             =@template.text_part
-    - else 
+    - else
       Template not found.
-      
+
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close

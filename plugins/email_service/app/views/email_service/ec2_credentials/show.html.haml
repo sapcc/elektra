@@ -14,26 +14,26 @@
         %tr
           %td
             %strong Access Key:
-          %td 
+          %td
             =ec2_creds.access
         %tr
           %td
             Secret Key:
-          %td 
+          %td
             =ec2_creds.secret
         %tr
           %td
             User ID:
-          %td 
+          %td
             =current_user.id
         %tr
           %td
             Project ID:
-          %td 
+          %td
             =project_id
-    - else 
+    - else
       EC2 Credential found.
-      
+
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
