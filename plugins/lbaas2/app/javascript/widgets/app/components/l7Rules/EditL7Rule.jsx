@@ -15,15 +15,15 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import { fetchL7Rule } from "../../actions/l7Rule"
+import {
+  ruleTypes,
+  ruleTypeKeyRelation,
+  ruleCompareTypes,
+} from "../../helpers/l7RuleHelpers"
 
 const EditL7Rule = (props) => {
-  const {
-    fetchL7Rule,
-    ruleTypes,
-    ruleCompareTypes,
-    updateL7Rule,
-    ruleTypeKeyRelation,
-  } = useL7Rule()
+  const { updateL7Rule } = useL7Rule()
   const { persistL7Policy } = useL7Policy()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [listenerID, setListenerID] = useState(null)
@@ -148,11 +148,11 @@ const EditL7Rule = (props) => {
       l7ruleID,
       newValues
     )
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Rule <b>{response.data.l7rule.type}</b> (
-            {response.data.l7rule.id}) is being updated.
+            L7 Rule <b>{data.l7rule.type}</b> ({data.l7rule.id}) is being
+            updated.
           </React.Fragment>
         )
         // fetch the policy again containing the new l7rule

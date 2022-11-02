@@ -27,7 +27,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
   const initialLoad = () => {
     if (l7PolicyID) {
       Log.debug("FETCH L7 RULES")
-      persistL7Rules(loadbalancerID, listenerID, l7PolicyID, null)
+      persistL7Rules(loadbalancerID, listenerID, l7PolicyID, {})
         .then((data) => {})
         .catch((error) => {})
     }

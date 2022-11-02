@@ -24,7 +24,7 @@ const L7RuleListItem = ({
   searchTerm,
   shouldPoll,
 }) => {
-  const { deleteL7Rule, persistL7Rule } = useL7Rule()
+  const { removeL7Rule, persistL7Rule } = useL7Rule()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(
     l7Rule.operating_status,
@@ -75,7 +75,7 @@ const L7RuleListItem = ({
       e.stopPropagation()
       e.preventDefault()
     }
-    deleteL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule).then(() => {})
+    removeL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule).then(() => {})
   }
 
   return (

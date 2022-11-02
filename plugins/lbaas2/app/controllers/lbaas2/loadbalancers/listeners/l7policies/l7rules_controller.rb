@@ -42,7 +42,9 @@ module Lbaas2
             l7rule = services.lbaas2.new_l7rule(l7ruleParams)
             if l7rule.save
               audit_logger.info(current_user, 'has created', l7rule)
-              render json: l7rule
+              render json: {
+                l7rule: l7rule
+              }
             else
               render json: {errors: l7rule.errors}, status: 422
             end

@@ -13,10 +13,14 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import {
+  ruleTypes,
+  ruleTypeKeyRelation,
+  ruleCompareTypes,
+} from "../../helpers/l7RuleHelpers"
 
 const NewL7Rule = (props) => {
-  const { ruleTypes, ruleCompareTypes, createL7Rule, ruleTypeKeyRelation } =
-    useL7Rule()
+  const { createL7Rule } = useL7Rule()
   const { persistL7Policy } = useL7Policy()
   const [showKeyAttribute, setShowKeyAttribute] = useState(false)
 
@@ -67,10 +71,10 @@ const NewL7Rule = (props) => {
     const listenerID = params.listenerID
     const l7policyID = params.l7policyID
     return createL7Rule(lbID, listenerID, l7policyID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Rule <b>{response.data.type}</b> ({response.data.id}) is being
+            L7 Rule <b>{data.l7rule.type}</b> ({data.l7rule.id}) is being
             created.
           </React.Fragment>
         )

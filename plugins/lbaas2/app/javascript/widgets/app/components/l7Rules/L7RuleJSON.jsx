@@ -7,9 +7,9 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import { fetchL7Rule } from "../../actions/l7Rule"
 
 const L7RuleJSON = (props) => {
-  const { fetchL7Rule } = useL7Rule()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
     error: null,
