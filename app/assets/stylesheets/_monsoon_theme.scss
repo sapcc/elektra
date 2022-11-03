@@ -936,9 +936,18 @@ section {
   color: #fff;
 }
 
-.navbar-identity {
-  .avatar {
-    margin-top: -5px;
+.navbar-identity.dropdown-toggle {
+  padding-top: 9px;
+  padding-bottom: 9px;
+  .navbar-identity-container {
+    display: flex;
+    align-items: center;
+    .avatar {
+      height: 2rem;
+      width: 2rem;
+      border-radius: 9999px;
+      margin-right: 0.5rem;
+    }
   }
 }
 
