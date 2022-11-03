@@ -9,10 +9,10 @@ import {
   searchParamsToString,
 } from "../../helpers/commonHelpers"
 import { findLoadbalancer } from "../../helpers/loadbalancerHelpers"
+import { fetchHealthmonitor } from "../../actions/healthMonitor"
 
 const HealthmonitorJSON = (props) => {
   const loadbalancers = useGlobalState().loadbalancers.items
-  const { fetchHealthmonitor } = useHealthmonitor()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
     error: null,

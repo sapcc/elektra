@@ -12,16 +12,16 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import {
+  healthMonitorTypes,
+  httpMethodRelation,
+  expectedCodesRelation,
+  urlPathRelation,
+  httpMethods,
+} from "../../helpers/healthMonitorHelpers"
 
 const NewHealthMonitor = (props) => {
-  const {
-    createHealthMonitor,
-    healthMonitorTypes,
-    httpMethodRelation,
-    expectedCodesRelation,
-    urlPathRelation,
-    httpMethods,
-  } = useHealthmonitor()
+  const { createHealthMonitor } = useHealthmonitor()
   const { persistPool } = usePool()
 
   /**
@@ -67,11 +67,10 @@ const NewHealthMonitor = (props) => {
     const poolID = params.poolID
 
     return createHealthMonitor(lbID, poolID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Health Monitor <b>{response.data.name}</b> ({response.data.id}) is
-            being created.
+            Health Monitor <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // fetch the pool again containing the new healthmonitor so it gets updated fast

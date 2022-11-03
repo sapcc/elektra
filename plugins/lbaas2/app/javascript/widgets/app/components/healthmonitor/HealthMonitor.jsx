@@ -21,7 +21,7 @@ import {
 import { findLoadbalancer } from "../../helpers/loadbalancerHelpers"
 
 const HealthMonitor = ({ props, loadbalancerID }) => {
-  const { deleteHealthmonitor, persistHealthmonitor, resetState } =
+  const { removeHealthmonitor, persistHealthmonitor, resetState } =
     useHealthMonitor()
   const poolID = useGlobalState().pools.selected
   const poolError = useGlobalState().pools.error
@@ -117,8 +117,8 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
     const lbID = params.loadbalancerID
     const healthmonitorID = healthmonitor.id.slice()
     const healthmonitorName = healthmonitor.name.slice()
-    return deleteHealthmonitor(lbID, poolID, healthmonitorID, healthmonitorName)
-      .then((response) => {
+    return removeHealthmonitor(lbID, poolID, healthmonitorID, healthmonitorName)
+      .then((data) => {
         addNotice(
           <React.Fragment>
             Health Monitor <b>{healthmonitorName}</b> ({healthmonitorID}) is

@@ -6,14 +6,14 @@ import Log from "../shared/logger"
 import HelpPopover from "../shared/HelpPopover"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
+import {
+  httpMethodRelation,
+  expectedCodesRelation,
+  urlPathRelation,
+} from "../../helpers/healthMonitorHelpers"
 
 const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
-  const {
-    pollHealthmonitor,
-    httpMethodRelation,
-    expectedCodesRelation,
-    urlPathRelation,
-  } = useHealthMonitor()
+  const { pollHealthmonitor } = useHealthMonitor()
   const { entityStatus } = useStatus(
     healthmonitor.operating_status,
     healthmonitor.provisioning_status

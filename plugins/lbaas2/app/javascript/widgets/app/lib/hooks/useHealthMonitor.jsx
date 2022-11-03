@@ -1,27 +1,16 @@
 import React from "react"
-import { ajaxHelper } from "lib/ajax_helper"
 import { useDispatch } from "../../components/StateProvider"
 import { confirm } from "lib/dialogs"
 import { createNameTag } from "../../helpers/commonHelpers"
+import {
+  fetchHealthmonitor,
+  postHealthMonitor,
+  putHealthmonitor,
+  deleteHealthmonitor,
+} from "../../actions/healthMonitor"
 
 const useHealthMonitor = () => {
   const dispatch = useDispatch()
-
-  const fetchHealthmonitor = (lbID, poolID, healthmonitorID, options) => {
-    return new Promise((handleSuccess, handleError) => {
-      ajaxHelper
-        .get(
-          `/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`,
-          { params: options }
-        )
-        .then((response) => {
-          handleSuccess(response.data)
-        })
-        .catch((error) => {
-          handleError(error)
-        })
-    })
-  }
 
   const persistHealthmonitor = (lbID, poolID, healthmonitorID, options) => {
     dispatch({ type: "RESET_HEALTHMONITOR" })
@@ -67,16 +56,13 @@ const useHealthMonitor = () => {
 
   const createHealthMonitor = (lbID, poolID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
-      ajaxHelper
-        .post(`/loadbalancers/${lbID}/pools/${poolID}/healthmonitors`, {
-          healthmonitor: values,
-        })
-        .then((response) => {
+      postHealthMonitor(lbID, poolID, values)
+        .then((data) => {
           dispatch({
             type: "RECEIVE_HEALTHMONITOR",
-            healthmonitor: response.data,
+            healthmonitor: data,
           })
-          handleSuccess(response)
+          handleSuccess(data)
         })
         .catch((error) => {
           handleErrors(error)
@@ -86,17 +72,13 @@ const useHealthMonitor = () => {
 
   const updateHealthmonitor = (lbID, poolID, healthmonitorID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
-      ajaxHelper
-        .put(
-          `/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`,
-          { healthmonitor: values }
-        )
-        .then((response) => {
+      putHealthmonitor(lbID, poolID, healthmonitorID, values)
+        .then((data) => {
           dispatch({
             type: "RECEIVE_HEALTHMONITOR",
-            healthmonitor: response.data,
+            healthmonitor: data,
           })
-          handleSuccess(response)
+          handleSuccess(data)
         })
         .catch((error) => {
           handleErrors(error)
@@ -104,7 +86,7 @@ const useHealthMonitor = () => {
     })
   }
 
-  const deleteHealthmonitor = (
+  const removeHealthmonitor = (
     lbID,
     poolID,
     healthmonitorID,
@@ -120,13 +102,10 @@ const useHealthMonitor = () => {
         </React.Fragment>
       )
         .then(() => {
-          return ajaxHelper
-            .delete(
-              `/loadbalancers/${lbID}/pools/${poolID}/healthmonitors/${healthmonitorID}`
-            )
-            .then((response) => {
+          return deleteHealthmonitor(lbID, poolID, healthmonitorID)
+            .then((data) => {
               dispatch({ type: "REQUEST_REMOVE_HEALTHMONITOR" })
-              handleSuccess(response)
+              handleSuccess(data)
             })
             .catch((error) => {
               handleErrors(error)
@@ -140,77 +119,12 @@ const useHealthMonitor = () => {
     dispatch({ type: "RESET_HEALTHMONITOR" })
   }
 
-  // HTTP, HTTPS, PING, TCP, TLS-HELLO, or UDP-CONNECT
-  const healthMonitorTypes = () => {
-    return [
-      { label: "HTTP", value: "HTTP" },
-      { label: "HTTPS", value: "HTTPS" },
-      { label: "PING", value: "PING" },
-      { label: "TCP", value: "TCP" },
-      { label: "TLS-HELLO", value: "TLS-HELLO" },
-      { label: "UDP-CONNECT", value: "UDP-CONNECT" },
-    ]
-  }
-
-  const httpMethodRelation = (type) => {
-    switch (type) {
-      case "HTTP":
-        return true
-      case "HTTPS":
-        return true
-      default:
-        return false
-    }
-  }
-
-  const expectedCodesRelation = (type) => {
-    switch (type) {
-      case "HTTP":
-        return true
-      case "HTTPS":
-        return true
-      default:
-        return false
-    }
-  }
-
-  const urlPathRelation = (type) => {
-    switch (type) {
-      case "HTTP":
-        return true
-      case "HTTPS":
-        return true
-      default:
-        return false
-    }
-  }
-
-  const httpMethods = () => {
-    return [
-      { label: "CONNECT", value: "CONNECT" },
-      { label: "DELETE", value: "DELETE" },
-      { label: "GET", value: "GET" },
-      { label: "HEAD", value: "HEAD" },
-      { label: "OPTIONS", value: "OPTIONS" },
-      { label: "PATCH", value: "PATCH" },
-      { label: "POST", value: "POST" },
-      { label: "PUT", value: "PUT" },
-      { label: "TRACE", value: "TRACE" },
-    ]
-  }
-
   return {
-    fetchHealthmonitor,
     persistHealthmonitor,
     pollHealthmonitor,
     createHealthMonitor,
     updateHealthmonitor,
-    deleteHealthmonitor,
-    healthMonitorTypes,
-    httpMethodRelation,
-    expectedCodesRelation,
-    urlPathRelation,
-    httpMethods,
+    removeHealthmonitor,
     resetState,
   }
 }
