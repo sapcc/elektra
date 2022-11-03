@@ -138,8 +138,7 @@ const NewL7Policy = (props) => {
       .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Policy <b>{data.l7policy.name}</b> ({data.l7policy.id}) is being
-            created.
+            L7 Policy <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // load the listener again containing the new policy

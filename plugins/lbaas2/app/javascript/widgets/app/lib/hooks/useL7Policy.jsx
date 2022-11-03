@@ -55,7 +55,7 @@ const useL7Policy = () => {
         .then((data) => {
           dispatch({
             type: "RECEIVE_L7POLICY",
-            l7Policy: data.l7policy,
+            l7Policy: data,
           })
           handleSuccess(data)
         })
@@ -71,7 +71,7 @@ const useL7Policy = () => {
         .then((data) => {
           dispatch({
             type: "RECEIVE_L7POLICY",
-            l7Policy: data.l7policy,
+            l7Policy: data,
           })
           handleSuccess(data)
         })

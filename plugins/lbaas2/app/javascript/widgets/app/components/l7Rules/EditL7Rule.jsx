@@ -151,8 +151,7 @@ const EditL7Rule = (props) => {
       .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Rule <b>{data.l7rule.type}</b> ({data.l7rule.id}) is being
-            updated.
+            L7 Rule <b>{data.type}</b> ({data.id}) is being updated.
           </React.Fragment>
         )
         // fetch the policy again containing the new l7rule

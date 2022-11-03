@@ -74,8 +74,7 @@ const NewL7Rule = (props) => {
       .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Rule <b>{data.l7rule.type}</b> ({data.l7rule.id}) is being
-            created.
+            L7 Rule <b>{data.type}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // fetch the policy again containing the new l7rule

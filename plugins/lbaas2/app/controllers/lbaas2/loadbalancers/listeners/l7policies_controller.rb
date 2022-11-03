@@ -47,9 +47,7 @@ module Lbaas2
           if l7policy.save
             audit_logger.info(current_user, 'has created', l7policy)
             extend_l7policies_data([l7policy])
-            render json: {
-              l7policy: l7policy
-            }   
+            render json: l7policy 
           else
             render json: {errors: l7policy.errors}, status: 422
           end
@@ -65,9 +63,7 @@ module Lbaas2
           if l7policy.update
             audit_logger.info(current_user, 'has updated', l7policy)
             extend_l7policies_data([l7policy])
-            render json: {
-              l7policy: l7policy
-            }   
+            render json: l7policy   
           else
             render json: {errors: l7policy.errors}, status: 422
           end

@@ -223,8 +223,7 @@ const EditL7Policy = (props) => {
       .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Policy <b>{data.l7policy.name}</b> ({data.l7policy.id}) is being
-            updated.
+            L7 Policy <b>{data.name}</b> ({data.id}) is being updated.
           </React.Fragment>
         )
         // fetch the lb again containing the new listener so it gets updated fast

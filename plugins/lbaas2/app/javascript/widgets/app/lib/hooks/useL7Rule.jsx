@@ -57,7 +57,7 @@ const useL7Rule = () => {
     return new Promise((handleSuccess, handleErrors) => {
       postL7Rule(lbID, listenerID, l7PolicyID, values)
         .then((data) => {
-          dispatch({ type: "RECEIVE_L7RULE", l7Rule: data.l7rule })
+          dispatch({ type: "RECEIVE_L7RULE", l7Rule: data })
           handleSuccess(data)
         })
         .catch((error) => {
@@ -70,7 +70,7 @@ const useL7Rule = () => {
     return new Promise((handleSuccess, handleErrors) => {
       putL7Rule(lbID, listenerID, l7PolicyID, l7ruleID, values)
         .then((data) => {
-          dispatch({ type: "RECEIVE_L7RULE", l7Rule: data.l7rule })
+          dispatch({ type: "RECEIVE_L7RULE", l7Rule: data })
           handleSuccess(data)
         })
         .catch((error) => {
