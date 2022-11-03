@@ -57,7 +57,6 @@ const usePool = () => {
   const createPool = (lbID, values) => {
     return new Promise((handleSuccess, handleErrors) => {
       postPool(lbID, values)
-        .post(`/loadbalancers/${lbID}/pools`, { pool: values })
         .then((data) => {
           dispatch({ type: "RECEIVE_POOL", pool: data })
           handleSuccess(data)
