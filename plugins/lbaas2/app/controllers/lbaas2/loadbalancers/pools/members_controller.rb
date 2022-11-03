@@ -42,17 +42,17 @@ module Lbaas2
           # OS Bug, Subnet not optional, has to be set to VIP subnet
           loadbalancer = services.lbaas2.find_loadbalancer(params[:loadbalancer_id])
           vip_subnet_id = loadbalancer.vip_subnet_id
-          newParams = membersParams.merge(pool_id: params[:pool_id], subnet_id: vip_subnet_id, project_id: @scoped_project_id)
-          member = services.lbaas2.new_member(newParams)       
+          newParams = membersParams.merge(pool_id: params[:pool_id], subnet_id: vip_subnet_id,
+                                          project_id: @scoped_project_id)
+          member = services.lbaas2.new_member(newParams)
 
           # empty attributes will be removed on submitting with the model
           if member.save
             audit_logger.info(current_user, 'has created', member)
             render json: member
           else
-            render json: {errors: member.errors}, status: 422
+            render json: { errors: member.errors }, status: 422
           end
-
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
@@ -70,29 +70,29 @@ module Lbaas2
             audit_logger.info(current_user, 'has updated', member)
             render json: member
           else
-            render json: {errors: member.errors}, status: 422
+            render json: { errors: member.errors }, status: 422
           end
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
-          render json: { errors: e.message }, status: "500"
+          render json: { errors: e.message }, status: '500'
         end
 
         def batch_update
-          members = {members: []}
+          members = { members: [] }
           # get subnet from loadbalancer
           loadbalancer = services.lbaas2.find_loadbalancer(params[:loadbalancer_id])
           vip_subnet_id = loadbalancer.vip_subnet_id
 
           membersParams = JSON.parse(params[:members].to_json)
-          membersParams.each do |member|    
+          membersParams.each do |member|
             # OS Bug, Subnet not optional, has to be set to VIP subnet
-            member.merge!("subnet_id" => vip_subnet_id, "project_id" => @scoped_project_id)
+            member.merge!('subnet_id' => vip_subnet_id, 'project_id' => @scoped_project_id)
             members[:members].push(member)
           end
-          services.lbaas2.batch_update_members(params[:pool_id], members)          
+          services.lbaas2.batch_update_members(params[:pool_id], members)
           audit_logger.info(current_user, 'has created', membersParams.to_json)
-          render json: { results: "members are being created" }
+          render json: { results: 'members are being created' }
         rescue Elektron::Errors::ApiResponse => e
           render json: { errors: e.message }, status: e.code
         rescue Exception => e
@@ -164,7 +164,6 @@ module Lbaas2
         rescue Exception => e
           render json: { errors: e.message }, status: '500'
         end
-
       end
     end
   end
