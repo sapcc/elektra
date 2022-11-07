@@ -123,7 +123,6 @@ const handleResponse = async (response) => {
     const error = new Error(response.statusText || response.status)
 
     error.status = response.status
-    error.statusText = response.statusText
     error.headers = headers
     // data is set if response is a json. Otherwise it is null
     // to ensure (axios) backwards compatibility
@@ -258,6 +257,13 @@ const Client = (config = {}) => {
   // and
   //   client.cancelable.get("PATH",options) -> {request, cancel}
   return {
+    url: (path, options = {}) => {
+      const mergedOptions = mergeConfigs(config, options)
+      return toPath(
+        [mergedOptions.baseURL, mergedOptions.pathPrefix, path],
+        mergedOptions.params
+      )
+    },
     cancelable: {
       head: (path, options = {}) =>
         prepareRequest(

@@ -55,6 +55,13 @@ describe("client", () => {
 
   afterAll(() => (global.fetch = window.fetch = originFetch))
 
+  describe("url", () => {
+    it("respond to", () => {
+      const client = createAjaxHelper()
+      expect(client.url).toBeDefined()
+    })
+  })
+
   describe("bad config keys", () => {
     it("should throw an error", () => {
       expect(() => {

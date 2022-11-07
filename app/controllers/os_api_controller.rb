@@ -57,7 +57,13 @@ class OsApiController < ::AjaxController
       response.set_header(new_key,value)
     end
 
-    render json: elektron_response.body, status: elektron_response.header.code
+
+    if params[:inline]
+      headers['Content-Disposition'] = "inline"
+      render inline: elektron_response.body
+    else
+      render json: elektron_response.body, status: elektron_response.header.code
+    end
 
   rescue => e 
     # pp "......................................ERROR"
