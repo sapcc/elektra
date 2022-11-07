@@ -32,15 +32,22 @@ module EmailService
 
       begin
         domain_name = params[:verified_domain][:identity_name] || nil
-        dkim_enabled = params[:verified_domain][:dkim_enabled] || false
+        # dkim_enabled = params[:verified_domain][:dkim_enabled] || false
+
+        # domain_signing_selector = params[:verified_domain][:dkim_signing_attributes][:domain_signing_selector] || nil
+        # domain_signing_private_key = params[:verified_domain][:dkim_signing_attributes][:domain_signing_private_key] || nil
+        # next_signing_key_length = params[:verified_domain][:dkim_signing_attributes][:next_signing_key_length] || 'RSA_1024_BIT'
+
         domain_signing_selector = params[:verified_domain][:domain_signing_selector] || nil
         domain_signing_private_key = params[:verified_domain][:domain_signing_private_key] || nil
         next_signing_key_length = params[:verified_domain][:next_signing_key_length] || 'RSA_1024_BIT'
+
         dkim_signing_attributes = {
           domain_signing_selector: domain_signing_selector,
           domain_signing_private_key: domain_signing_private_key,
           next_signing_key_length: next_signing_key_length,
         }
+        tags = [{ "key1" => "value1"}, { "key2" => "value2"}]
         configset_name = params[:verified_domain][:configset_name] || nil
 
         Rails.logger.debug "\n **************** ---- INPUTS (create method) STARTS ---- **************** \n"
@@ -55,7 +62,7 @@ module EmailService
 
 
         if @verified_domain.valid?
-          msg = process_domain_verification(domain_name, dkim_enabled, tags, dkim_signing_attributes, configset_name)
+          msg = process_domain_verification(domain_name, tags, dkim_signing_attributes, configset_name)
           flash[:info] = msg
           redirect_to plugin('email_service').domain_verifications_path and return
         else
@@ -176,7 +183,7 @@ module EmailService
     end
 
 
-    def process_domain_verification(domain, dkim_enabled=false, tags=[], dkim_signing_attributes={}, configuration_set_name="")
+    def process_domain_verification(domain, tags=[], dkim_signing_attributes={}, configuration_set_name="")
 
       status = nil
       status = create_email_identity_domain(domain, tags, dkim_signing_attributes, configuration_set_name)

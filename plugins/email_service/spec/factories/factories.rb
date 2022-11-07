@@ -249,14 +249,6 @@ module EmailService
       }
     end
 
-    # def verfied_email_opts
-    #   { id: 0, identity: "abc@ghi.com" }
-    # end
-    #
-    # def verfied_domain_opts
-    #   { id: 0, identity: "test.ghi.com", dkim_enabled: true }
-    # end
-
   end
 
 end

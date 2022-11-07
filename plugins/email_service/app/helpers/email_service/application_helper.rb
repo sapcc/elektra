@@ -208,8 +208,8 @@ module EmailService
 
     def list_email_identities(nextToken="", page_size=1000)
       id=0
-      domains = []
-      domain = {}
+      identities = []
+      identity = {}
       if nebula_active? &&  ec2_creds && ses_client_v2
         Rails.logger.debug "\n **** LIST_EMAIL_IDENTITIES: CALLED **** \n"
         resp = ses_client_v2.list_email_identities({
@@ -228,15 +228,15 @@ module EmailService
 
         # puts "*** resp.email_identities Array Size = #{resp.email_identities.size} ** "
         resp.email_identities.each do |item|
-          identity = { id: id, identity_type: item.identity_type, domain: item.domain, sending_enabled: item.sending_enabled  }
+          identity = { id: id, identity_type: item.identity_type, identity_name: item.identity_name, sending_enabled: item.sending_enabled  }
           id+=1
           # puts "\n Identity: #{identity} \n"
           unless item.identity_name.include?("@activation.email.global.cloud.sap")
             details = ses_client_v2.get_email_identity({
-              email_identity: item.domain, # required
+              email_identity: item.identity_name, # required
             })
             puts "\n list_email_identity_details \n Identity details: #{details.inspect} \n"
-            domain.merge!({
+            identity.merge!({
               feedback_forwarding_status: details.feedback_forwarding_status,  #=> Boolean
               verified_for_sending_status: details.verified_for_sending_status, #=> Boolean
               dkim_attributes: details.dkim_attributes, #=> Boolean
@@ -269,7 +269,7 @@ module EmailService
             # puts "\n ** IDENTITY : #{identity.inspect} **** \n"
           end
 
-          identities.push domain
+          identities.push identity
         end
         puts "\n identities.inspect: #{identities.inspect} \n"
       end
@@ -782,8 +782,8 @@ module EmailService
           #   topic_name: "TopicName",
           # },
         })
-        status = "success - email sent to #{plain_email.to_addr} ,#{plain_email.cc_addr}, #{plain_email.to_addr}"
-        Rails.logger.debug "[cronus][send_plain_email] : success - email sent to #{plain_email.to_addr},#{plain_email.cc_addr},#{plain_email.to_addr}"
+        status = "success - email sent to #{plain_email.to_addr} ,#{plain_email.cc_addr}, #{plain_email.bcc_addresses_addr}"
+        Rails.logger.debug "[cronus][send_plain_email] : success - email sent to #{plain_email.to_addr},#{plain_email.cc_addr},#{plain_email.bcc_addr}"
         audit_logger.info("[cronus][send_plain_email]", current_user.id, 'has sent email to', plain_email.to_addr,plain_email.cc_addr, plain_email.bcc_addr)
       rescue Aws::SESV2::Errors::ServiceError => e
         status = e.message

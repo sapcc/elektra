@@ -40,41 +40,42 @@ Verified Identity
             %strong Verified_for_sending_status:
           %td
             =@verified_identity[:verified_for_sending_status]
-        %tr
-          %td
-            %strong dkim_attributes:
-          %td
-            =@verified_identity[:dkim_attributes].inspect
-        %tr
-          %td
-            %strong status:
-          %td
-            =@verified_identity[:dkim_attributes][:status]
-        %tr
-          %td
-            %strong tokens:
-          %td
-            =@verified_identity[:dkim_attributes][:tokens]
-        %tr
-          %td
-            %strong signing_attributes_origin:
-          %td
-            =@verified_identity[:dkim_attributes][:signing_attributes_origin]
-        %tr
-          %td
-            %strong current_signing_key_length:
-          %td
-            =@verified_identity[:dkim_attributes][:current_signing_key_length].inspect
-        %tr
-          %td
-            %strong next_signing_key_length:
-          %td
-            =@verified_identity[:dkim_attributes][:next_signing_key_length].inspect
-        %tr
-          %td
-            %strong last_key_generation_timestamp:
-          %td
-            =@verified_identity[:dkim_attributes][:last_key_generation_timestamp].inspect
+        - if @verified_identity[:dkim_attributes]
+          %tr
+            %td
+              %strong dkim_attributes:
+            %td
+              =@verified_identity[:dkim_attributes].inspect
+          %tr
+            %td
+              %strong status:
+            %td
+              =@verified_identity[:dkim_attributes][:status]
+          %tr
+            %td
+              %strong tokens:
+            %td
+              =@verified_identity[:dkim_attributes][:tokens]
+          %tr
+            %td
+              %strong signing_attributes_origin:
+            %td
+              =@verified_identity[:dkim_attributes][:signing_attributes_origin]
+          %tr
+            %td
+              %strong current_signing_key_length:
+            %td
+              =@verified_identity[:dkim_attributes][:current_signing_key_length].inspect
+          %tr
+            %td
+              %strong next_signing_key_length:
+            %td
+              =@verified_identity[:dkim_attributes][:next_signing_key_length].inspect
+          %tr
+            %td
+              %strong last_key_generation_timestamp:
+            %td
+              =@verified_identity[:dkim_attributes][:last_key_generation_timestamp].inspect
         %tr
           %td
             %strong mail_from_attributes:

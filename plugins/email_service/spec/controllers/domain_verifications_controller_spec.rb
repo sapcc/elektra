@@ -24,6 +24,16 @@ describe EmailService::DomainVerificationsController, type: :controller do
 
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:_nebula_request).and_return(double('response').as_null_object)
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:nebula_details).and_return(double('nebula_details').as_null_object)
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:nebula_active?).and_return(double('nebula_active').as_null_object)
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:ses_client).and_return(double('ses_client').as_null_object)
+
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_email_identities).and_return(double('identities').as_null_object)
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:email_addresses).and_return(double('email_addresses').as_null_object)
+    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:check_verified_identity).and_return(double('check_verified_identity').as_null_object)
+
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_configsets).and_return(double('configsets').as_null_object)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:ses_client_v2).and_return(double('ses_client_v2').as_null_object)
@@ -36,9 +46,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:delete_email_identity).and_return(double('status').as_null_object)
-    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:verify_dkim).and_return(double('status').as_null_object)
-    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:activate_dkim).and_return(double('status').as_null_object)
-    allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:deactivate_dkim).and_return(double('status').as_null_object)
+    # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:verify_dkim).and_return(double('status').as_null_object)
+    # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:activate_dkim).and_return(double('status').as_null_object)
+    # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:deactivate_dkim).and_return(double('status').as_null_object)
 
   end
 
@@ -293,7 +303,8 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http success' do
         delete :destroy, params: default_params.merge(id: @opts[:id])
-        expect(response).to be_successful
+        expect(response).to have_http_status(302)
+        # expect(response).to be_successful
       end
     end
 
@@ -309,7 +320,8 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it 'returns http success' do
         delete :destroy, params: default_params.merge(id: @opts[:id])
-        expect(response).to be_successful
+        expect(response).to have_http_status(302)
+        # expect(response).to be_successful
       end
     end
 
@@ -343,7 +355,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
   end
 
   # check verify_dkim route
-  describe "verify_dkim" do
+  xdescribe "verify_dkim" do
 
     puts "\n ==============================================================\n"
     puts "\n [DomainVerificationsController][verify_dkim] \n"
@@ -414,7 +426,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
   end
 
   # check post#activate_dkim route
-  describe "POST#activate_dkim" do
+  xdescribe "POST#activate_dkim" do
 
     puts "\n ==============================================================\n"
     puts "\n [DomainVerificationsController][activate_dkim] \n"
@@ -485,7 +497,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
   end
 
   # check post#deactivate_dkim route
-  describe "POST#deactivate_dkim" do
+  xdescribe "POST#deactivate_dkim" do
 
     puts "\n ==============================================================\n"
     puts "\n [DomainVerificationsController][deactivate_dkim] \n"

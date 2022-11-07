@@ -28,7 +28,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
     allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:ses_client_v2).and_return(double('ses_client_v2').as_null_object)
     allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:ses_client).and_return(double('ses_client').as_null_object)
-    allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:list_configsets).and_return(double('redirect_path').as_null_object)
+    allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:list_configset_names).and_return(double('configsets_collection').as_null_object)
     allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::EmailVerificationsController).to receive(:delete_email_identity).and_return(double('status').as_null_object)
@@ -168,7 +168,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
   describe "POST 'create'" do
 
     before :each do
-      @opts = EmailService::FakeFactory.new.verfied_email_opts
+      @opts = EmailService::FakeFactory.new.verified_email_opts
     end
 
     # check email admin role
@@ -182,7 +182,8 @@ describe EmailService::EmailVerificationsController, type: :controller do
         end
       end
       it 'returns http success' do
-        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(302)
+        # expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(302)
+        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(200)
       end
     end
 
@@ -197,7 +198,8 @@ describe EmailService::EmailVerificationsController, type: :controller do
         end
       end
       it 'returns http success' do
-        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(302)
+        # expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(302)
+        expect(post(:create, params: default_params.merge(verified_email: @opts))).to have_http_status(200)
       end
     end
 
@@ -232,7 +234,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
   # check create route
   describe "DELETE#destroy" do
     before :each do
-      @opts = EmailService::FakeFactory.new.verfied_email_opts
+      @opts = EmailService::FakeFactory.new.verified_email_opts
     end
     # check email admin role
     context 'email_admin' do
