@@ -41,7 +41,7 @@ const SmartLink = ({
         >
           <Link
             to={to || ""}
-            className={className}
+            className={`${className ? className : ""} smart-link-disabled`}
             disabled={true}
             onClick={(e) => {
               e.preventDefault()
