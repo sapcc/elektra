@@ -1,39 +1,58 @@
-import React from 'react';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
-import uniqueId from 'lodash/uniqueId'
-import { Link } from 'react-router-dom';
+import React from "react"
+import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import uniqueId from "lodash/uniqueId"
+import { Link } from "react-router-dom"
 
-const SmartLink = ({to, className, disabled, children, onClick, isAllowed, notAllowedText}) => {
+const SmartLink = ({
+  to,
+  className,
+  disabled,
+  children,
+  onClick,
+  isAllowed,
+  notAllowedText,
+}) => {
   const shouldRenderLink = isAllowed == false ? false : true
   return (
     <React.Fragment>
-      {shouldRenderLink ?
+      {shouldRenderLink ? (
         <Link
           to={to || ""}
           className={className}
           disabled={disabled}
-          onClick={(e) => { 
-            if(disabled) {
+          onClick={(e) => {
+            if (disabled) {
               e.preventDefault()
-            } else {                
-              if (onClick) {onClick(e)}
+            } else {
+              if (onClick) {
+                onClick(e)
+              }
             }
-          } }>
+          }}
+        >
           {children}
         </Link>
-      :
-        <OverlayTrigger placement="top" overlay={<Tooltip id={uniqueId("smart-link-")}>{notAllowedText}</Tooltip>}>
+      ) : (
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip id={uniqueId("smart-link-")}>{notAllowedText}</Tooltip>
+          }
+        >
           <Link
             to={to || ""}
             className={className}
             disabled={true}
-            onClick={(e) => {e.preventDefault()}}>
+            onClick={(e) => {
+              e.preventDefault()
+            }}
+          >
             {children}
           </Link>
-        </OverlayTrigger>  
-      }
+        </OverlayTrigger>
+      )}
     </React.Fragment>
-  );
+  )
 }
- 
-export default SmartLink;
+
+export default SmartLink
