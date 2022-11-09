@@ -10,11 +10,15 @@ import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
 import BooleanLabel from "../shared/BooleanLabel"
+import { addNotice, addError } from "lib/flashes"
+import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import {
   matchParams,
   searchParamsToString,
   MyHighlighter,
+  errorMessage,
 } from "../../helpers/commonHelpers"
+import useL7Policy from "../../lib/hooks/useL7Policy"
 
 const L7RuleListItem = ({
   props,
@@ -25,6 +29,7 @@ const L7RuleListItem = ({
   shouldPoll,
 }) => {
   const { removeL7Rule, persistL7Rule } = useL7Rule()
+  const { persistL7Policy } = useL7Policy()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(
     l7Rule.operating_status,
@@ -75,7 +80,26 @@ const L7RuleListItem = ({
       e.stopPropagation()
       e.preventDefault()
     }
-    removeL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule).then(() => {})
+    const l7ruleID = l7Rule.id
+    removeL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule)
+      .then(() => {
+        addNotice(
+          <React.Fragment>
+            L7 Rule <b>{l7ruleID}</b> is being deleted.
+          </React.Fragment>
+        )
+        // fetch the listener again containing the new policy so it gets updated fast
+        persistL7Policy(loadbalancerID, listenerID, l7PolicyID)
+          .then(() => {})
+          .catch((error) => {})
+      })
+      .catch((error) => {
+        addError(
+          React.createElement(ErrorsList, {
+            errors: errorMessage(error),
+          })
+        )
+      })
   }
 
   return (

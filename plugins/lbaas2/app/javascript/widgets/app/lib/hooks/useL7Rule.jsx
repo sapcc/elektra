@@ -1,10 +1,6 @@
 import React from "react"
-import { ajaxHelper } from "lib/ajax_helper"
 import { useDispatch } from "../../components/StateProvider"
 import { confirm } from "lib/dialogs"
-import { addNotice, addError } from "lib/flashes"
-import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import { errorMessage } from "../../helpers/commonHelpers"
 import {
   fetchL7Rules,
   fetchL7Rule,
@@ -90,35 +86,13 @@ const useL7Rule = () => {
           return deleteL7Rule(lbID, listenerID, l7PolicyID, l7Rule.id)
             .then((data) => {
               dispatch({ type: "REQUEST_REMOVE_L7RULE", id: l7Rule.id })
-              addNotice(
-                <React.Fragment>
-                  <span>
-                    L7 Rule <b>{l7Rule.id}</b> will be deleted.
-                  </span>
-                </React.Fragment>
-              )
-              handleSuccess()
+              handleSuccess(data)
             })
             .catch((error) => {
-              addError(
-                React.createElement(ErrorsList, {
-                  errors: errorMessage(error),
-                })
-              )
-              handleErrors()
+              handleErrors(error)
             })
         })
-        .catch((cancel) => {
-          if (cancel !== true) {
-            addError(
-              React.createElement(ErrorsList, {
-                errors: cancel.toString(),
-              })
-            )
-          }
-
-          return true
-        })
+        .catch((cancel) => true)
     })
   }
   return {
