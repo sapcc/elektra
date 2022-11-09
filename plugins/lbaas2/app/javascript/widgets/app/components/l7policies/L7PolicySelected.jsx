@@ -92,8 +92,6 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
         persistListener(loadbalancerID, listenerID)
           .then(() => {})
           .catch((error) => {})
-        // on remove go back to policy list
-        onBackLink()
       })
       .catch((error) => {
         addError(
