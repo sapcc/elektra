@@ -23,7 +23,7 @@ const LoadbalancerItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const { persistLoadbalancer, removeLoadbalancer, detachFIP } =
+  const { persistLoadbalancer, removeLoadbalancer, detachFIP, reset } =
     useLoadbalancer()
   const { entityStatus } = useStatus(
     loadbalancer.operating_status,
@@ -31,7 +31,14 @@ const LoadbalancerItem = ({
   )
 
   const pollingCallback = () => {
-    return persistLoadbalancer(loadbalancer.id)
+    return persistLoadbalancer(loadbalancer.id).catch((error) => {
+      if (error && error.status == 404) {
+        // check if the loadbalancer is selected and if yes deselect the item
+        if (disabled) {
+          reset()
+        }
+      }
+    })
   }
 
   usePolling({
