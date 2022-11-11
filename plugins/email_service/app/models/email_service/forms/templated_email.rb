@@ -48,7 +48,7 @@ module EmailService
     def process(templated_email_instance)
       process!(templated_email_instance)
     end
-    
+
     private
 
     def process!(templated_email_instance)

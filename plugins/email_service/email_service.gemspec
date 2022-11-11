@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
   spec.add_dependency "aws-sdk-ses"
+  spec.add_dependency "aws-sdk-sesv2"
   spec.add_dependency 'virtus'
 
 end

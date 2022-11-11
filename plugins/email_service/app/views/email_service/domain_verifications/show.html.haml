@@ -1,52 +1,133 @@
 = content_for :title do
   Identity details
+Verified Identity
+=@verified_identity.inspect
 .modal-body.static-columns
 
   .modal-section.first
     %h3
       Details
+
     - if @verified_identity
       %table.table
         %tr
           %td
             %strong ID:
-          %td 
+          %td
             =@verified_identity[:id]
         %tr
           %td
             %strong Identity:
-          %td 
-            =@verified_identity[:identity]
+          %td
+            =@verified_identity[:identity_name]
         %tr
           %td
-            %strong Verification Token:
-            %a{ href: "#", title: "You need to create a TXT record for your domain using this token displayed here.", data: { toggle: "tooltip", html: true} }
-              %i.fa.fa-question-circle-o
-          %td 
-            =@verified_identity[:verification_token]
+            %strong Identity type:
+          %td
+            =@verified_identity[:identity_type]
         %tr
           %td
-            %strong Status:
-          %td 
-            =@verified_identity[:status]
+            %strong sending_enabled:
+          %td
+            =@verified_identity[:sending_enabled]
         %tr
           %td
-            %strong DKIM Tokens:
-          %td 
-            =@verified_identity[:dkim_tokens]
+            %strong feedback_forwarding_status:
+          %td
+            =@verified_identity[:feedback_forwarding_status]
         %tr
           %td
-            %strong DKIM Enabled:
-          %td 
-            =@verified_identity[:dkim_enabled]
+            %strong Verified_for_sending_status:
+          %td
+            =@verified_identity[:verified_for_sending_status]
+        - if @verified_identity[:dkim_attributes]
+          %tr
+            %td
+              %strong dkim_attributes:
+            %td
+              =@verified_identity[:dkim_attributes].inspect
+          %tr
+            %td
+              %strong status:
+            %td
+              =@verified_identity[:dkim_attributes][:status]
+          %tr
+            %td
+              %strong tokens:
+            %td
+              =@verified_identity[:dkim_attributes][:tokens]
+          %tr
+            %td
+              %strong signing_attributes_origin:
+            %td
+              =@verified_identity[:dkim_attributes][:signing_attributes_origin]
+          %tr
+            %td
+              %strong current_signing_key_length:
+            %td
+              =@verified_identity[:dkim_attributes][:current_signing_key_length].inspect
+          %tr
+            %td
+              %strong next_signing_key_length:
+            %td
+              =@verified_identity[:dkim_attributes][:next_signing_key_length].inspect
+          %tr
+            %td
+              %strong last_key_generation_timestamp:
+            %td
+              =@verified_identity[:dkim_attributes][:last_key_generation_timestamp].inspect
         %tr
           %td
-            %strong DKIM Verification Status:
-          %td 
-            =@verified_identity[:dkim_verification_status]
+            %strong mail_from_attributes:
+          %td
+            =@verified_identity[:mail_from_attributes].inspect
+        %tr
+          %td
+            %strong policies:
+          %td
+            =@verified_identity[:policies]
+        %tr
+          %td
+            %strong tags:
+          %td
+            =@verified_identity[:tags].inspect
+        %tr
+          %td
+            %strong configuration_set_name:
+          %td
+            =@verified_identity[:configuration_set_name].inspect
+        %hr
+        -#
+          %tr
+            %td
+              %strong Verification Token:
+              %a{ href: "#", title: "You need to create a TXT record for your domain using this token displayed here.", data: { toggle: "tooltip", html: true} }
+                %i.fa.fa-question-circle-o
+            %td
+              =@verified_identity[:tokens]
+          %tr
+            %td
+              %strong Status:
+            %td
+              =@verified_identity[:status]
+          %tr
+            %td
+              %strong DKIM Tokens:
+            %td
+              =@verified_identity.dkim_tokens
+          %tr
+            %td
+              %strong DKIM Enabled:
+            %td
+              =@verified_identity.dkim_enabled
+          %tr
+            %td
+              %strong DKIM Verification Status:
+            %td
+              =@verified_identity.dkim_verification_status
 
 %hr
-- if @verified_identity[:dkim_tokens]
+-# if @verified_identity[:dkim_tokens]
   Create the following CNAME DNS records.
   %table.table.table-striped
     %th Name
@@ -54,9 +135,9 @@
     %th Content
   - @verified_identity[:dkim_tokens].each  do |token|
     %tr
-      %td 
+      %td
       = "#{token}._domainkey.#{@verified_identity[:identity]}"
-      %td 
+      %td
         CNAME
       %td
       = "#{token}.dkim.amazonses.com."

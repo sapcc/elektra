@@ -1,6 +1,9 @@
 module EmailService
   class MulticloudAccountsController < ::EmailService::ApplicationController
-    # before_action :restrict_access
+
+    before_action :check_ec2_creds_cronus_status
+    before_action :check_verified_identity
+
     before_action :set_multicloud_account, only: %i[new destroy]
 
     authorization_context 'email_service'
@@ -42,7 +45,7 @@ module EmailService
     def destroy
       @multicloud_account.provider = "aws"
       status = nebula_deactivate(@multicloud_account)
-      # @nebula_status : returns error 	failed to get a Nebula account status: account is marked as terminated 
+      # @nebula_status : returns error 	failed to get a Nebula account status: account is marked as terminated
       if status == "success"
         flash[:success] = "Cronus is disabled for your project"
       else
@@ -64,11 +67,10 @@ module EmailService
       def multicloud_account_params
         if params.include?(:multicloud_account)
           return params.require(:multicloud_account).permit(:account_env, :identity, :mail_type, :provider, :security_officer, :endpoint_url)
-        else 
+        else
           return {}
         end
       end
 
   end
 end
-

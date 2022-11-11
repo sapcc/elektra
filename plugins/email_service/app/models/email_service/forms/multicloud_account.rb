@@ -36,7 +36,7 @@ module EmailService
     def process(multicloud_account_instance)
       process!(multicloud_account_instance)
     end
-    
+
     private
 
     def process!(multicloud_account_instance)

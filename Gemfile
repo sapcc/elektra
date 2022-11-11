@@ -88,7 +88,7 @@ end
 
 # email_service
 gem 'aws-sdk-ses'
-
+gem 'aws-sdk-sesv2'
 ######################## END #######################
 
 group :api_client do
@@ -104,7 +104,7 @@ group :production do
   gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
 end
 
-group :development, :production do 
+group :development, :production do
   # Views and Assets
   gem 'sass-rails'
 end

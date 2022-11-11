@@ -16,7 +16,7 @@
 
 - configset_name_hint = "The name of the configuration set to use when you send an email (optional)"
 
-- if !verified_emails_collection || verified_emails_collection.empty? 
+- if !email_addresses || email_addresses.empty?
   %p.alert.alert-warning
     There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
     You can get verified your eMail address
@@ -28,7 +28,7 @@
 %hr
 
   = render partial: 'domain_list', locals: {f:f}
-  
+
   = render partial: 'email_list', locals: {f:f}
 
 = f.input :to_addr,  required: true, label: 'To', placeholder: 'Enter To Addresses', as: :text, icon_hint: email_addr_hint

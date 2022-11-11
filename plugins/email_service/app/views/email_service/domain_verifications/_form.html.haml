@@ -1,0 +1,17 @@
+- is_edit_form = form_type == 'edit' ? true : false
+
+- domain_name_hint = form_type == 'edit' ? "enter name" : "cannot edit domain name. delete and create another domain if name is to be changed."
+
+= f.input :domain, required: true, icon_hint: domain_name_hint
+
+= f.input :dkim_enabled,  as: :boolean, input_html: {}, checked_value: true, unchecked_value: false, label: "Enable DKIM"
+
+#-= f.input :tags, as: :text, input_html: {}, label: "Tags"
+
+= f.input :domain_signing_selector, input_html: {}, label: "Domain Signing Selector"
+
+= f.input :domain_signing_private_key, as: :text, input_html: {}, label: "Domain Signing Private Key"
+
+= f.input :next_signing_key_length, label: "Next Signing Key Length", input_html: {}, as: :select, collection: @rsa_key_length
+
+= f.input :configuration_set_name, label: "Configset Name", input_html: {}, as: :select, collection: configset_names

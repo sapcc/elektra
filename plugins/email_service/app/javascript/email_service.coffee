@@ -29,10 +29,10 @@ set_domain_suffix=(event) ->
 
 # plain_email
 sourceDomainNamePart = 'input[id="plain_email_source_domain_name_part"]'
-switch_domain_name=(event) -> 
+switch_domain_name=(event) ->
   value = event.target.value
-update_name_part=(event) -> 
-  value = event.target.value 
+update_name_part=(event) ->
+  value = event.target.value
 
 # templated_email
 emailSource  = 'select[id="templated_email_source"]'
@@ -48,11 +48,11 @@ labelSource = 'label[for="templated_email_source"]'
 labelTemplateData = 'label[for="templated_email_template_data"]'
 
 # Test data
-source = "development.solution03@gmail.com"
-replyTo = "development.solution03@gmail.com"
-toAddresses = "sirajudheenam@gmail.com, buzzmesam@gmail.com" 
-ccAddresses = "sirajudheenam@gmail.com, buzzmesam@gmail.com"
-bccAddresses = "sirajudheenam@gmail.com, buzzmesam@gmail.com"
+source = "fake3@gmail.com"
+replyTo = "fake3@gmail.com"
+toAddresses = "fake1@gmail.com, fake2@gmail.com"
+ccAddresses = "fake1@gmail.com, fake2@gmail.com"
+bccAddresses = "fake1@gmail.com, fake2@gmail.com"
 templateName = "Preferences"
 configsetName = "config_set_5"
 sampleTemplateData = """
@@ -92,14 +92,22 @@ loadTestData = () ->
 
 switch_template=(event) ->
   value = event.target.value
-  if value == 'Preferences'
+  if value == 'Preferences_template'
     $(txtTemplateData).val sampleTemplateData
 
-# TODO
-validate_template_data=(event) ->
+validateTemplateData=(event) ->
   value = event.target.value
-  if value == "" 
-    console.log value
+  if value == ""
+    console.log "Template data can't be empty"
+
+loadSampleToAddress=(event) ->
+  value = event.target.value
+  if value == "fake2@gmail.com"
+    $(emailToAddr).val "fake1@gmail.com"
+    console.log "fake2@gmail.com is loaded"
+    console.log "fake1@gmail.com is populated"
+
+
 
 # verify identity
 verify_identity = 'input[id="verified_email_identity"]'
@@ -122,10 +130,11 @@ $(document).on 'modal:contentUpdated', () ->
 
   # templated_email
   $(document).on 'change','select[data-toggle="templateSwitch"]', switch_template
-  $(document).on 'blur','textarea[id="templated_email_template_data"]', validate_template_data
+  $(document).on 'change','select[data-toggle="emailSelect"]', loadSampleToAddress
+  $(document).on 'blur','textarea[id="templated_email_template_data"]', validateTemplateData
   # verify identity
   $(document).on 'change click', 'input[id="verified_email_identity"]', validate_identity
-  console.log "inside model content updated"
+  # console.log "inside model content updated"
 
 
 
@@ -143,7 +152,7 @@ $(
     eye.show()
     eye_slash.hide()
     $(secret_key).html(secret_key_x_val)
-    $(btn_tg_secret).on('click', 
+    $(btn_tg_secret).on('click',
       () =>
         if isHidden
           $(secret_key).html(secret_key_val)
@@ -183,7 +192,7 @@ $(
       {{#each subscription}}
         {{interest}}
       {{/each}}
-      You can change these settings at any time by visiting 
+      You can change these settings at any time by visiting
       the Preference Center https://www.abc.xyz/preferences/i.aspx?id={{meta.userId}}.
     """
 
@@ -220,17 +229,21 @@ $(
     text_input = 'textarea[id="template_text_part"]'
     labelTemplateName = 'label[for="template_name"]'
 
-    loadTestData = () -> 
+    loadTestData = () ->
       $(name).val template_name
       $(subject).val template_name
       $(html_input).val template_html_part
       $(text_input).val template_text_part
-      
+
     $(templatesModal).on('click', () ->
-      $(labelTemplateName).on( "click", () -> 
+      $(labelTemplateName).on( "click", () ->
         loadTestData()
       )
     )
+
+
+
+
 
 # plain_email
 #     # regular expression to separate the email addresses (comma and space)
@@ -264,46 +277,46 @@ $(
 #     fg_email_textbody = '.form-group.plain_email_text_body'
 
 #     # Test data
-#     sender = "development.solution03@gmail.com"
+#     sender = "fake3@gmail.com"
 #     subject = "Cronus eMail Service - from Elektra UI Plugin - #{currentDate}"
 #     htmlBody = "<h1>Email Sent by Cronus </h1><p><h2>AWS SES Proxy Service</h2> <p> #{currentDate}</p>"
 #     textBody = "Email Sent by Cronus - AWS SES Proxy Service #{currentDate}"
-#     toRealAddresses = "sirajudheenam@gmail.com, buzzmesam@gmail.com"
-#     ccRealAddresses = "sirajudheenam@gmail.com, buzzmesam@gmail.com"
-#     bccRealAddresses = "sirajudheenam@gmail.com, buzzmesam@gmail.com"
+#     toRealAddresses = "fake1@gmail.com, fake2@gmail.com"
+#     ccRealAddresses = "fake1@gmail.com, fake2@gmail.com"
+#     bccRealAddresses = "fake1@gmail.com, fake2@gmail.com"
 
-#     toFakeAddresses = """ 
-#       rjones@sbcglobal.net, doormat@comcast.net, less mfburgo@me.com, 
+#     toFakeAddresses = """
+#       rjones@sbcglobal.net, doormat@comcast.net, less mfburgo@me.com,
 #       alfred@outlook.com, mfleming@comcast.net, verymuch hermanab@comcast.net,
-#       dpitts@sbcglobal.net, care,fairbank@aol.com, moxfulder@live.com, 
+#       dpitts@sbcglobal.net, care,fairbank@aol.com, moxfulder@live.com,
 #       simone@sbcglobal.net, tarreau@comcast.net,so much mal@verizon.net,
 #       I,bahwi@outlook.com, jonas@optonline.net,  zeller@yahoo.ca, alias@me.com,
 #       policies@att.net,froodian@hotmail.com, fmerges@att.net, tmccarth@yahoo.com,
 #       curly@comcast.net, plover@me.com, jmcnamara@icloud.com, random,
-#       dgriffith@comcast.net, invalid,elmer@optonline.net, lamky@yahoo.ca, 
-#       barlow@sbcglobal.net,timlinux@optonline.net, anicolao@me.com, 
-#       jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com, 
-#       benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com, 
-#       pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon.net, 
+#       dgriffith@comcast.net, invalid,elmer@optonline.net, lamky@yahoo.ca,
+#       barlow@sbcglobal.net,timlinux@optonline.net, anicolao@me.com,
+#       jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com,
+#       benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com,
+#       pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon.net,
 #       globalcampbell@verizon.net, notaprguy@verizon.net
-      
+
 #     """
-#     ccFakeAddresses = """ 
+#     ccFakeAddresses = """
 #       curly@comcast.net, plover@me.com, jmcnamara@icloud.com, random,
-#       dgriffith@comcast.net, invalid,elmer@optonline.net, lamky@yahoo.ca, 
-#       barlow@sbcglobal.net,timlinux@optonline.net, anicolao@me.com, 
-#       jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com, 
-#       benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com, 
-#       pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon., 
+#       dgriffith@comcast.net, invalid,elmer@optonline.net, lamky@yahoo.ca,
+#       barlow@sbcglobal.net,timlinux@optonline.net, anicolao@me.com,
+#       jaesenj@yahoo.ca, some,cgcra@yahoo.com, guialbu@msn.com,
+#       benits@verizon.net, entries,bwcarty@icloud.com, pavel@msn.com,
+#       pplinux@mac.com, verizon,rmcfarla@mac.com, bjornk@verizon.,
 #       globalcampbell@verizon.net, notaprguy@verizon.net
 #     """
 #     bccFakeAddresses = """
-#       greear@icloud.com, major,ranasta@gmail.com, forsberg@sbcglobal.net, 
-#       pdbaby@verizon.net, afifi@aol.com, ninenine@verizon.net, potato 
+#       greear@icloud.com, major,ranasta@gmail.com, forsberg@sbcglobal.net,
+#       pdbaby@verizon.net, afifi@aol.com, ninenine@verizon.net, potato
 #       mbswan@live.com, galbra@mac.com, vsprintf@hotmail.com, ducasse@att.net,
 #       tomato sopwith@yahoo.ca, wildfire@yahoo.ca, donev@mac.com, minor
 #       pdbaby@msn.com, gfody@hotmail.com,frederic@hotmail.com, xnormal@live.com,
-#        ardagna@optonline.net, citizenl@yahoo.com, makarow@gmail.com, 
+#        ardagna@optonline.net, citizenl@yahoo.com, makarow@gmail.com,
 #     """
 
 #     loadFakeData = () ->
@@ -315,7 +328,7 @@ $(
 #       $(emailHtmlBody).val htmlBody
 #       $(emailTextBody).val textBody
 
-#     loadRealData = () -> 
+#     loadRealData = () ->
 #       $(emailSource).val sender
 #       $(emailToAddr).val toRealAddresses
 #       $(emailCcAddr).val ccRealAddresses
@@ -332,7 +345,7 @@ $(
 #       subject_help = $(".form-group.email_subject p").filter(".help-block")
 #       htmlbody_help = $(".form-group.email_htmlbody p").filter(".help-block")
 #       textbody_help = $(".form-group.email_textbody p").filter(".help-block")
-      
+
 #     increaseTextArea = (textField ,textLength) ->
 #       rows =   Math.round(textLength / 35)
 #       $(textField).prop("rows", "#{rows}")
@@ -344,7 +357,7 @@ $(
 
 #     getTotalEmailAddresses = () ->
 #       totalEmailAddresses = validToAddressCount + validCcAddressCount + validBccAddressCount
-#       if totalEmailAddresses > 50 
+#       if totalEmailAddresses > 50
 #         errorText = "emails count : #{totalEmailAddresses} is exceeding the allowed 50"
 
 #     validateEmails = (inputElement) ->
@@ -355,13 +368,13 @@ $(
 #       if not inputText or inputText.length is 0 and totalEmailAddresses is 0
 #         errorText = "At least one valid email address is required."
 #       else
-#         inputText.split(re).forEach (emailItem, index) => 
+#         inputText.split(re).forEach (emailItem, index) =>
 #           emElement = emailItem.trimEnd().trimStart()
-#           if regex.test String(emElement).toLowerCase() 
+#           if regex.test String(emElement).toLowerCase()
 #             validEmails.push emElement
 #           else
 #             invalidEmails.push emailItem
-#         if invalidEmails.length > 0 
+#         if invalidEmails.length > 0
 #           errorText = "Invalid entries: <b><em> #{invalidEmails}</em></b>."
 #         if validEmails.length <= 50
 #           helperText = "<b> #{validEmails.length} </b>valid email recipients of #{ (validEmails.length + invalidEmails.length) } entries."
@@ -377,13 +390,13 @@ $(
 #           else
 #             $(to_help).html( getHelpText "", helperText  )
 #             $(fg_email_to_addr).removeClass('has-error')
-#           if validEmails.length > 0 and invalidEmails.length is 0 
+#           if validEmails.length > 0 and invalidEmails.length is 0
 #             $(to_help).hide(1000)
 #         when emailCcAddr
 #           $(cc_help).show()
 #           validCcAddresses = validEmails
 #           validCcAddressCount = validEmails.length
-#           if invalidEmails.length > 0 or errorText 
+#           if invalidEmails.length > 0 or errorText
 #             $(cc_help).html( getHelpText errorText, helperText )
 #             $(fg_email_cc_addr).addClass('has-error')
 #           else
@@ -410,19 +423,19 @@ $(
 #       # initializeData()
 
 #       # # load real valid data to form, when source label is clicked
-#       # $(labelPlainEmailSource).on("click", () -> 
+#       # $(labelPlainEmailSource).on("click", () ->
 #       #   loadRealData()
 #       # )
 
 #       # # load fake data to form to validate when to addr label is clicked
-#       # $(labelPlainEmailToAddr).on("click", () -> 
+#       # $(labelPlainEmailToAddr).on("click", () ->
 #       #   loadFakeData()
 #       # )
 
-#       # $(emailSource).on("change blur", 
+#       # $(emailSource).on("change blur",
 #       # () ->
 #       #   source_value = $(this).val()
-#       #   if not source_value and source_value.length is 0 
+#       #   if not source_value and source_value.length is 0
 #       #     $(fg_email_source).addClass('has-error');
 #       #     source_help.html( getHelpText "Source email can\'t be empty", "" );
 #       #     source_help.show();
@@ -456,7 +469,7 @@ $(
 #       # $(emailBccAddr).on("change", () ->
 #       #   increaseTextArea emailBccAddr, $(this).val().length
 #       # )
-#       # $(emailSubject).on("blur click", 
+#       # $(emailSubject).on("blur click",
 #       #   () ->
 #       #     $(this).addClass("u-text-monospace")
 #       #     $(this).css("color", "blue")
@@ -469,20 +482,20 @@ $(
 #       #       $(subject_help).html( getHelpText "", "valid" )
 #       #       $(subject_help).hide(1000)
 #       # )
-#       # $(emailHtmlBody).on("blur click", 
+#       # $(emailHtmlBody).on("blur click",
 #       #   () ->
 #       #     $(this).addClass("u-text-monospace")
 #       #     $(this).css("color", "blue")
-#       #     if $(this).val().length is 0 
+#       #     if $(this).val().length is 0
 #       #       $(fg_email_htmlbody).addClass('has-error')
 #       #       $(htmlbody_help).html( getHelpText "<b>HTML Body</b> can't be empty", "" )
 #       #       $(htmlbody_help).show()
-#       #     else 
+#       #     else
 #       #       $(fg_email_htmlbody).removeClass('has-error')
 #       #       $(htmlbody_help).html( getHelpText "", "valid" )
 #       #       $(htmlbody_help).hide(1500)
 #       # )
-#       # $(emailTextBody).on("blur click", 
+#       # $(emailTextBody).on("blur click",
 #       #   () ->
 #       #     $(this).addClass("u-text-monospace")
 #       #     $(this).css("color", "blue")
