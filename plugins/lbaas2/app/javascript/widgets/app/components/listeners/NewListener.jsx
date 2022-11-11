@@ -32,6 +32,7 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import { useQuery } from "react-query"
 
 const NewListener = (props) => {
   const { createListener } = useListener()
@@ -50,13 +51,16 @@ const NewListener = (props) => {
     items: [],
     total: 0,
   })
-  const [ciphers, setCiphers] = useState({
-    isLoading: false,
-    error: null,
-    items: [],
-  })
   const [predPolicies, setPredPolicies] = useState([])
   const [tags, setTags] = useState([])
+
+  useQuery(["ciphers"], fetchCiphers, {
+    // The data from the last successful fetch available while new data is being requested, even though the query key has changed.
+    // When the new data arrives, the previous data is seamlessly swapped to show the new data.
+    // isPreviousData is made available to know what data the query is currently providing you
+    // keepPreviousData: true,
+    staleTime: Infinity,
+  })
 
   useEffect(() => {
     const params = matchParams(props)
@@ -127,28 +131,6 @@ const NewListener = (props) => {
             error: errorMessage(error),
           })
           handleErrors(errorMessage(error))
-        })
-    })
-  }
-
-  const loadCiphers = (lbID) => {
-    return new Promise((handleSuccess, handleErrors) => {
-      setCiphers({ ...secrets, isLoading: true })
-      fetchCiphers(lbID)
-        .then((data) => {
-          setCiphers({
-            ...ciphers,
-            isLoading: false,
-            items: data.ciphers,
-            error: null,
-          })
-        })
-        .catch((error) => {
-          setCiphers({
-            ...ciphers,
-            isLoading: false,
-            error: error,
-          })
         })
     })
   }

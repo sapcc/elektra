@@ -10,13 +10,14 @@ Lbaas2::Engine.routes.draw do
       put ':id/attach_fip' => 'loadbalancers#attach_fip'
       put ':id/detach_fip' => 'loadbalancers#detach_fip'
       get 'availability-zones' => 'loadbalancers#availability_zones'
+      get 'ciphers' => 'loadbalancers#ciphers'
     end
 
     resources :listeners, module: :loadbalancers, only: [:index, :show, :create, :update, :destroy] do
 
       collection do
         get 'containers' => 'listeners#containers'
-        get 'secrets' => 'listeners#secrets'
+        get 'secrets' => 'listeners#secrets'        
         get 'items_for_select' => 'listeners#itemsForSelect'
         get 'items_no_def_pool_for_select' => 'listeners#itemsWithoutDefaultPoolForSelect'
       end
