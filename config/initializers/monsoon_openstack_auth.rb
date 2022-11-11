@@ -27,6 +27,8 @@ MonsoonOpenstackAuth.configure do |auth|
   # optional, default=false
   auth.access_key_auth_allowed = false
 
+  auth.enforce_natural_user = true
+
   # authorization policy file
   auth.authorization.policy_file_path = policy_paths
   # auth.authorization.context = "identity"
@@ -49,6 +51,7 @@ MonsoonOpenstackAuth.configure do |auth|
   auth.debug=auth.debug_api_calls=Rails.configuration.debug_api_calls
 
   auth.two_factor_enabled = (ENV['TWO_FACTOR_AUTHENTICATION']=='on')
+  auth.rsa_dns = "dashboard-rsa"
   auth.two_factor_authentication_method = -> username,passcode {
     # place here the code to authenticate against a rsa securID Server.
     servers = ENV['TWO_FACTOR_RADIUS_SERVERS'].split(',')
