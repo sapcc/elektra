@@ -13,7 +13,7 @@ import ProjectResource from './components/project/resource';
 //Instead of "resources", we can also match "identity", to support the
 //"Initialize Project Resources" modal that is triggered from the project
 //wizard.
-const urlBaseRx = new RegExp("(.*?)\/(?:resources|identity)\/");
+const urlBaseRx = new RegExp("(.*?)/(?:resources|identity)/");
 
 export const getBaseURL = () => {
   return urlBaseRx.exec(window.location.pathname)[1] + '/resources/';
@@ -73,6 +73,13 @@ export class Scope {
   }
   capacityUrlPath() {
     return `/v1/clusters/current?detail`;
+  }
+
+  uiPathAsCloudAdmin() {
+    let base = "/ccadmin/cloud_admin/resources";
+    if (this.projectID) return `${base}/project/current/${this.domainID}/${this.projectID}`;
+    if (this.domainID)  return `${base}/domain/current/${this.domainID}`;
+    return `${base}/cluster/current`;
   }
 
   descendIntoSubscope(id) {
