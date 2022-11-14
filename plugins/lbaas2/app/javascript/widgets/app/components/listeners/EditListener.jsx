@@ -11,6 +11,7 @@ import {
   certificateContainerRelation,
   SNIContainerRelation,
   CATLSContainerRelation,
+  tlsCiphersRelation,
   helpBlockItems,
   predefinedPolicies,
   isSecretAContainer,
@@ -24,7 +25,11 @@ import HelpPopover from "../shared/HelpPopover"
 import { addNotice } from "lib/flashes"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import Log from "../shared/logger"
-import { fetchListener, fetchSecretsForSelect } from "../../actions/listener"
+import {
+  fetchCiphers,
+  fetchListener,
+  fetchSecretsForSelect,
+} from "../../actions/listener"
 import { fetchPoolsForSelect } from "../../actions/pool"
 import {
   errorMessage,
@@ -35,6 +40,7 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
+import { useQuery } from "react-query"
 
 const SECRETS_ARE_CONTAINERS_WARNING = (
   <div className="alert alert-warning">
@@ -81,6 +87,11 @@ const EditListener = (props) => {
     error: null,
     items: [],
     total: 0,
+  })
+
+  const ciphers = useQuery(["ciphers"], fetchCiphers, {
+    // If set to Infinity, the data will never be considered stale
+    staleTime: Infinity,
   })
 
   useEffect(() => {
@@ -153,12 +164,14 @@ const EditListener = (props) => {
       setSelectedClientAuthenticationType()
       setSelectedPredPoliciesAndTags()
       setAdvancedSection()
+      setSelectedTlsCiphers()
       // show already fields that depend on secrets (but with loading state), It just looks better.
       setShowCertificateContainer(
         certificateContainerRelation(listener.item.protocol)
       )
       setShowSNIContainer(SNIContainerRelation(listener.item.protocol))
       setShowCATLSContainer(CATLSContainerRelation(listener.item.protocol))
+      setShowTLSCiphers(tlsCiphersRelation(listener.item.protocol))
     }
   }, [listener.item])
 
@@ -272,6 +285,18 @@ const EditListener = (props) => {
     }
   }
 
+  // initial assigment of the ciphers
+  const setSelectedTlsCiphers = () => {
+    const selectedTlsCiphers = listener.item?.tls_ciphers
+    // split string colon separated to select options
+    if (selectedTlsCiphers && typeof selectedTlsCiphers == "string") {
+      const options = selectedTlsCiphers
+        .split(":")
+        .map((item) => ({ value: item, label: item }))
+      setTlsCiphers(options)
+    }
+  }
+
   const setSelectedPredPoliciesAndTags = () => {
     const predPolicies = predefinedPolicies(listener.item.protocol)
     // set available pred policies depending on the protocol
@@ -379,6 +404,7 @@ const EditListener = (props) => {
     useState(null)
   const [helpBlockItemsPredPolicies, setHelpBlockItemsPredPolicies] =
     useState(null)
+  const [tlsCiphers, setTlsCiphers] = useState(null)
 
   const [showInsertHeaders, setShowInsertHeaders] = useState(false)
   const [showClientAuthentication, setShowClientAuthentication] =
@@ -390,21 +416,9 @@ const EditListener = (props) => {
   const [showPredefinedPolicies, setShowPredefinedPolicies] = useState(false)
   const [showAdvancedSection, setShowAdvancedSection] = useState(false)
   const [showTLSPoolWarning, setShowTLSPoolWarning] = useState(false)
+  const [showTLSCiphers, setShowTLSCiphers] = useState(false)
 
-  const validate = ({
-    name,
-    description,
-    protocol_port,
-    protocol,
-    default_pool_id,
-    connection_limit,
-    insert_headers,
-    default_tls_container_ref,
-    sni_container_refs,
-    client_authentication,
-    client_ca_tls_container_ref,
-    tags,
-  }) => {
+  const validate = ({ name, protocol_port, protocol }) => {
     return name && protocol_port && protocol && true
   }
 
@@ -420,6 +434,12 @@ const EditListener = (props) => {
     newValues.tags = [...newPredPolicies, ...newTags].map((item, index) => {
       return item.value || item
     })
+
+    // add/update ciphers
+    if (showTLSCiphers && tlsCiphers) {
+      // convert to string colon-separated
+      newValues.tls_ciphers = tlsCiphers.map((item) => item.value).join(":")
+    }
 
     return updateListener(loadbalancerID, listenerID, newValues)
       .then((data) => {
@@ -454,6 +474,9 @@ const EditListener = (props) => {
   }
   const onSelectCATLSContainers = (props) => {
     setClientCATLScontainer(props)
+  }
+  const onSelectTlsCiphers = (options) => {
+    setTlsCiphers(options)
   }
 
   const onSelectPredPolicies = (options) => {
@@ -820,6 +843,50 @@ const EditListener = (props) => {
                             )}
                             {clientCATLScontainerDeprecated &&
                               SECRETS_ARE_CONTAINERS_WARNING}
+                          </Form.ElementHorizontal>
+                        </>
+                      )}
+                      {showTLSCiphers && (
+                        <>
+                          <h4>TLS Ciphers Suites</h4>
+                          <div className="row">
+                            <div className="col-sm-12">
+                              <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+                                <p>
+                                  This setting is for advanced use cases that
+                                  require more control over the network
+                                  configuration of the listener. <br />
+                                  The following lists the default cipher suites
+                                  attached to a listener. This should only be
+                                  changed by expert users who know why they need
+                                  to make a change. For the majority of
+                                  scenarios no change is necessary.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <Form.ElementHorizontal
+                            label="TLS Ciphers Suites"
+                            name="tls_ciphers"
+                          >
+                            <SelectInput
+                              name="tls_ciphers"
+                              isLoading={ciphers.isLoading}
+                              items={ciphers?.data?.allowCiphers || []}
+                              onChange={onSelectTlsCiphers}
+                              value={tlsCiphers}
+                              isMulti
+                              useFormContext={false}
+                            />
+                            <span className="help-block">
+                              <i className="fa fa-info-circle"></i>
+                              The TLS cipher suites.
+                            </span>
+                            {ciphers.isError && (
+                              <span className="text-danger">
+                                {ciphers.error.message}
+                              </span>
+                            )}
                           </Form.ElementHorizontal>
                         </>
                       )}
