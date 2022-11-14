@@ -91,7 +91,7 @@ const NewListener = (props) => {
   // ciphers assignment once loaded
   useEffect(() => {
     if (!ciphers.data) return
-    setSelectedCiphers(ciphers?.data?.listenerDefaultCiphers)
+    setTlsCiphers(ciphers?.data?.listenerDefaultCiphers)
   }, [ciphers.data])
 
   const loadPools = (lbID) => {
@@ -179,7 +179,7 @@ const NewListener = (props) => {
     useState(null)
   const [helpBlockItemsPredPolicies, setHelpBlockItemsPredPolicies] =
     useState(null)
-  const [selectedCiphers, setSelectedCiphers] = useState(null)
+  const [tlsCiphers, setTlsCiphers] = useState(null)
 
   const [showInsertHeaders, setShowInsertHeaders] = useState(false)
   const [showClientAuthentication, setShowClientAuthentication] =
@@ -219,11 +219,9 @@ const NewListener = (props) => {
     if (showCATLSContainer && CATLSContainer) {
       newValues.client_ca_tls_container_ref = CATLSContainer.value
     }
-    if (showTLSCiphers && selectedCiphers) {
+    if (showTLSCiphers && tlsCiphers) {
       // convert to string colon-separated
-      newValues.tls_ciphers = selectedCiphers
-        .map((item) => item.value)
-        .join(":")
+      newValues.tls_ciphers = tlsCiphers.map((item) => item.value).join(":")
     }
 
     const newTags = [...predPolicies, ...tags]
@@ -261,9 +259,9 @@ const NewListener = (props) => {
     setCertificateContainer(null)
     setSNIContainers(null)
     setCATLSContainer(null)
-    setSelectedCiphers()
+    setTlsCiphers()
     // set default ciphers on protocol change
-    if (ciphers.data) setSelectedCiphers(ciphers?.data?.listenerDefaultCiphers)
+    if (ciphers.data) setTlsCiphers(ciphers?.data?.listenerDefaultCiphers)
   }
 
   const onSelectProtocolType = (props) => {
@@ -325,7 +323,7 @@ const NewListener = (props) => {
     setCATLSContainer(props)
   }
   const onSelectTlsCiphers = (options) => {
-    setSelectedCiphers(options)
+    setTlsCiphers(options)
   }
 
   const onSelectPredPolicies = (options) => {
@@ -684,7 +682,7 @@ const NewListener = (props) => {
                         isLoading={ciphers.isLoading}
                         items={ciphers?.data?.allowCiphers || []}
                         onChange={onSelectTlsCiphers}
-                        value={selectedCiphers}
+                        value={tlsCiphers}
                         isMulti
                         useFormContext={false}
                       />
