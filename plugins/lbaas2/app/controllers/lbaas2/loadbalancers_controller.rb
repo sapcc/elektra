@@ -251,6 +251,18 @@ module Lbaas2
       render json: { errors: e.message }, status: '500'
     end
 
+    def ciphers
+      allow_ciphers = OctaviaConfig["tls"]["cipher_suites"]["allow_list"]
+      litener_default_ciphers = OctaviaConfig["tls"]["cipher_suites"]["default"]["listeners"]
+      pool_default_ciphers = OctaviaConfig["tls"]["cipher_suites"]["default"]["pools"]
+      select_allow_ciphers = allow_ciphers.map{ |c| {"label": c, "value": c} }
+      select_listener_ciphers = litener_default_ciphers.map{ |c| {"label": c, "value": c} }
+      select_pool_ciphers = pool_default_ciphers.map{ |c| {"label": c, "value": c} }
+      render json: { allowCiphers:  select_allow_ciphers, listenerDefaultCiphers: select_listener_ciphers, poolDefaultCiphers: select_pool_ciphers}        
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
     protected
 
     def extend_lb_data(lbs)

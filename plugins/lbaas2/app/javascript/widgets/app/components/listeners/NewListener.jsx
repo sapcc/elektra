@@ -13,6 +13,7 @@ import {
   CATLSContainerRelation,
   helpBlockItems,
   predefinedPolicies,
+  tlsCiphersRelation,
 } from "../../helpers/listenerHelper"
 import { fetchCiphers, fetchSecretsForSelect } from "../../actions/listener"
 import { fetchPoolsForSelect } from "../../actions/pool"
@@ -54,11 +55,8 @@ const NewListener = (props) => {
   const [predPolicies, setPredPolicies] = useState([])
   const [tags, setTags] = useState([])
 
-  useQuery(["ciphers"], fetchCiphers, {
-    // The data from the last successful fetch available while new data is being requested, even though the query key has changed.
-    // When the new data arrives, the previous data is seamlessly swapped to show the new data.
-    // isPreviousData is made available to know what data the query is currently providing you
-    // keepPreviousData: true,
+  const ciphers = useQuery(["ciphers"], fetchCiphers, {
+    // If set to Infinity, the data will never be considered stale
     staleTime: Infinity,
   })
 
@@ -89,6 +87,12 @@ const NewListener = (props) => {
     }
     setNonSelectableTlsPools(newItems)
   }, [pools])
+
+  // ciphers assignment once loaded
+  useEffect(() => {
+    if (!ciphers.data) return
+    setSelectedCiphers(ciphers?.data?.listenerDefaultCiphers)
+  }, [ciphers.data])
 
   const loadPools = (lbID) => {
     return new Promise((handleSuccess, handleErrors) => {
@@ -175,6 +179,7 @@ const NewListener = (props) => {
     useState(null)
   const [helpBlockItemsPredPolicies, setHelpBlockItemsPredPolicies] =
     useState(null)
+  const [selectedCiphers, setSelectedCiphers] = useState(null)
 
   const [showInsertHeaders, setShowInsertHeaders] = useState(false)
   const [showClientAuthentication, setShowClientAuthentication] =
@@ -186,21 +191,9 @@ const NewListener = (props) => {
   const [showPredefinedPolicies, setShowPredefinedPolicies] = useState(false)
   const [showAdvancedSection, setShowAdvancedSection] = useState(false)
   const [showTLSPoolWarning, setShowTLSPoolWarning] = useState(false)
+  const [showTLSCiphers, setShowTLSCiphers] = useState(false)
 
-  const validate = ({
-    name,
-    description,
-    protocol_port,
-    protocol,
-    default_pool_id,
-    connection_limit,
-    insert_headers,
-    default_tls_container_ref,
-    sni_container_refs,
-    client_authentication,
-    client_ca_tls_container_ref,
-    tags,
-  }) => {
+  const validate = ({ name, protocol_port, protocol }) => {
     return name && protocol_port && protocol && true
   }
 
@@ -226,6 +219,13 @@ const NewListener = (props) => {
     if (showCATLSContainer && CATLSContainer) {
       newValues.client_ca_tls_container_ref = CATLSContainer.value
     }
+    if (showTLSCiphers && selectedCiphers) {
+      // convert to string colon-separated
+      newValues.tls_ciphers = selectedCiphers
+        .map((item) => item.value)
+        .join(":")
+    }
+
     const newTags = [...predPolicies, ...tags]
     if (newTags) {
       newValues.tags = newTags.map((item, index) => item.value)
@@ -261,6 +261,9 @@ const NewListener = (props) => {
     setCertificateContainer(null)
     setSNIContainers(null)
     setCATLSContainer(null)
+    setSelectedCiphers()
+    // set default ciphers on protocol change
+    if (ciphers.data) setSelectedCiphers(ciphers?.data?.listenerDefaultCiphers)
   }
 
   const onSelectProtocolType = (props) => {
@@ -286,6 +289,7 @@ const NewListener = (props) => {
       setShowCATLSContainer(CATLSContainerRelation(props.value))
       setShowPredefinedPolicies(predefinedPolicies(props.value).length > 0)
       setShowAdvancedSection(advancedSectionRelation(props.value))
+      setShowTLSCiphers(tlsCiphersRelation(props.value))
 
       // TLS-enabled pool can only be attached to a TERMINATED_HTTPS type listener
       // so on change protocol the the default pool will be reseted
@@ -319,6 +323,9 @@ const NewListener = (props) => {
   }
   const onSelectCATLSContainers = (props) => {
     setCATLSContainer(props)
+  }
+  const onSelectTlsCiphers = (options) => {
+    setSelectedCiphers(options)
   }
 
   const onSelectPredPolicies = (options) => {
@@ -644,6 +651,51 @@ const NewListener = (props) => {
                       )}
                       {secrets.error && (
                         <span className="text-danger">{secrets.error}</span>
+                      )}
+                    </Form.ElementHorizontal>
+                  </>
+                )}
+
+                {showTLSCiphers && (
+                  <>
+                    <h4>TLS Ciphers Suites</h4>
+                    <div className="row">
+                      <div className="col-sm-12">
+                        <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+                          <p>
+                            This setting is for advanced use cases that require
+                            more control over the network configuration of the
+                            listener. <br />
+                            The following lists the default cipher suites
+                            attached to a listener. This should only be changed
+                            by expert users who know why they need to make a
+                            change. For the majority of scenarios no change is
+                            necessary.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <Form.ElementHorizontal
+                      label="TLS Ciphers Suites"
+                      name="tls_ciphers"
+                    >
+                      <SelectInput
+                        name="tls_ciphers"
+                        isLoading={ciphers.isLoading}
+                        items={ciphers?.data?.allowCiphers || []}
+                        onChange={onSelectTlsCiphers}
+                        value={selectedCiphers}
+                        isMulti
+                        useFormContext={false}
+                      />
+                      <span className="help-block">
+                        <i className="fa fa-info-circle"></i>
+                        The TLS cipher suites.
+                      </span>
+                      {ciphers.isError && (
+                        <span className="text-danger">
+                          {ciphers.error.message}
+                        </span>
                       )}
                     </Form.ElementHorizontal>
                   </>
