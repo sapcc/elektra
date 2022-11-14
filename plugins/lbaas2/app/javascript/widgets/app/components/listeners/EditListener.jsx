@@ -40,7 +40,7 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
-import { useQuery } from "react-query"
+import { queryTlsCiphers } from "../../../../queries/listener"
 
 const SECRETS_ARE_CONTAINERS_WARNING = (
   <div className="alert alert-warning">
@@ -88,11 +88,7 @@ const EditListener = (props) => {
     items: [],
     total: 0,
   })
-
-  const ciphers = useQuery(["ciphers"], fetchCiphers, {
-    // If set to Infinity, the data will never be considered stale
-    staleTime: Infinity,
-  })
+  const ciphers = queryTlsCiphers()
 
   useEffect(() => {
     // get the lb

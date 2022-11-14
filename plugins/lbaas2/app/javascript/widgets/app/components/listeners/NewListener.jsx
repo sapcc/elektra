@@ -33,7 +33,7 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
-import { useQuery } from "react-query"
+import { queryTlsCiphers } from "../../../../queries/listener"
 
 const NewListener = (props) => {
   const { createListener } = useListener()
@@ -54,11 +54,7 @@ const NewListener = (props) => {
   })
   const [predPolicies, setPredPolicies] = useState([])
   const [tags, setTags] = useState([])
-
-  const ciphers = useQuery(["ciphers"], fetchCiphers, {
-    // If set to Infinity, the data will never be considered stale
-    staleTime: Infinity,
-  })
+  const ciphers = queryTlsCiphers()
 
   useEffect(() => {
     const params = matchParams(props)
