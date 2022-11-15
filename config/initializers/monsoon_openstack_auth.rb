@@ -27,7 +27,7 @@ MonsoonOpenstackAuth.configure do |auth|
   # optional, default=false
   auth.access_key_auth_allowed = false
 
-  auth.enforce_natural_user = true
+  auth.enforce_natural_user = ENV["ENFORCE_NATURAL_USER_LOGIN"].to_s == "true"
 
   # authorization policy file
   auth.authorization.policy_file_path = policy_paths
