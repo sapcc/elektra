@@ -83,11 +83,11 @@ export const validateForm = (cfg, { profile, service, attrs }) => {
 }
 
 export const errorMessage = (error) => {
-  const err = error.response || error
+  const err = error
   if (
     err &&
     err.data &&
-    err.data.errors &&
+    err.data?.errors &&
     Object.keys(err.data.errors).length
   ) {
     return err.data.errors

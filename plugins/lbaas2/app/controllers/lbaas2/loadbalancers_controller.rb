@@ -12,7 +12,7 @@ module Lbaas2
       sort_dir = (params[:sort_dir] || 'asc')
       pagination_options = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
       pagination_options[:marker] = params[:marker] if params[:marker]
-      loadbalancers = services.lbaas2.loadbalancers({ project_id: @scoped_project_id}.merge(pagination_options))      
+      loadbalancers = services.lbaas2.loadbalancers({ project_id: @scoped_project_id }.merge(pagination_options))
 
       extend_lb_data(loadbalancers)
 
@@ -24,9 +24,9 @@ module Lbaas2
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
-    
+
     def show
       loadbalancer = services.lbaas2.find_loadbalancer(params[:id])
       extend_lb_data([loadbalancer])
@@ -37,7 +37,7 @@ module Lbaas2
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def device
@@ -49,7 +49,7 @@ module Lbaas2
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def destroy
@@ -59,13 +59,13 @@ module Lbaas2
       if loadbalancer.destroy
         audit_logger.info(current_user, 'has deleted', loadbalancer)
         head 202
-      else  
+      else
         render json: { errors: loadbalancer.errors }, status: 422
       end
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def status_tree
@@ -76,7 +76,7 @@ module Lbaas2
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def private_networks
@@ -86,25 +86,25 @@ module Lbaas2
       ).delete_if { |n| n.attributes['router:external'] == true }
 
       # transform data for a select input
-      select_private_networks = private_networks.map {|pn| {"label": pn.name, "value": pn.id}}
+      select_private_networks = private_networks.map { |pn| { "label": pn.name, "value": pn.id } }
 
       render json: { private_networks: select_private_networks }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
-    end    
+      render json: { errors: e.message }, status: '500'
+    end
 
     def subnets
       private_network = services.networking.find_network!(params[:id])
       subnets = private_network.subnet_objects || []
-      select_subnets = subnets.map {|sb| {"label": "#{sb.name} (#{sb.cidr})", "value": sb.id}}
+      select_subnets = subnets.map { |sb| { "label": "#{sb.name} (#{sb.cidr})", "value": sb.id } }
 
       render json: { subnets: select_subnets }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def create
@@ -117,12 +117,12 @@ module Lbaas2
         extend_lb_data([loadbalancer])
         render json: loadbalancer
       else
-        render json: {errors: loadbalancer.errors}, status: 422
+        render json: { errors: loadbalancer.errors }, status: 422
       end
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def update
@@ -134,12 +134,12 @@ module Lbaas2
         extend_lb_data([loadbalancer])
         render json: loadbalancer
       else
-        render json: {errors: loadbalancer.errors}, status: 422
+        render json: { errors: loadbalancer.errors }, status: 422
       end
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def attach_fip
@@ -148,7 +148,7 @@ module Lbaas2
       vip_port_id = loadbalancer.vip_port_id
 
       # update floating ip with the new assigned interface ip
-      floating_ip = services.networking.new_floating_ip()
+      floating_ip = services.networking.new_floating_ip
       floating_ip.id = params[:floating_ip]
       floating_ip.port_id = vip_port_id
 
@@ -161,14 +161,14 @@ module Lbaas2
         loadbalancer.floating_ip = floating_ip
         # extend lb data with chached data
         extend_lb_data([loadbalancer])
-        render json: { loadbalancer: loadbalancer}
+        render json: { loadbalancer: loadbalancer }
       else
-        render json: {errors: floating_ip.errors}, status: 422
+        render json: { errors: floating_ip.errors }, status: 422
       end
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def detach_fip
@@ -182,11 +182,11 @@ module Lbaas2
       )
       # extend lb data with chached data
       extend_lb_data([loadbalancer])
-      render json: { loadbalancer: loadbalancer}
+      render json: { loadbalancer: loadbalancer }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def fips
@@ -204,9 +204,7 @@ module Lbaas2
         net = networks[fip.floating_network_id]
         if !net.subnets.blank?
           net.subnets.each do |subid|
-            unless subnets[subid]
-              subnets[subid] = services.networking.find_subnet(subid)
-            end
+            subnets[subid] = services.networking.find_subnet(subid) unless subnets[subid]
             sub = subnets[subid]
             cidr = NetAddr.parse_net(sub.cidr)
             next unless cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
@@ -215,7 +213,7 @@ module Lbaas2
             # add the description to the label ip
             label = fip.floating_ip_address
             label = "#{label} (#{fip.description})" unless fip.description.blank?
-            grouped_fips[sub.name] << {label: label, value: fip.id}
+            grouped_fips[sub.name] << { label: label, value: fip.id }
             break
           end
         else
@@ -223,24 +221,26 @@ module Lbaas2
           # add the description to the label ip
           label = fip.floating_ip_address
           label = "#{label} (#{fip.description})" unless fip.description.blank?
-          grouped_fips[net.name] << {label: label, value: fip.id}
+          grouped_fips[net.name] << { label: label, value: fip.id }
         end
       end
 
       # transform to grouped select options
-      selectGroupedIPs = grouped_fips.sort.map {|k,v| {label: k, options: v}}
+      selectGroupedIPs = grouped_fips.sort.map { |k, v| { label: k, options: v } }
 
-      render json: { fips: selectGroupedIPs }      
+      render json: { fips: selectGroupedIPs }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     def availability_zones
       availability_zones = services.lbaas2.availability_zones()
       # transform to select options
-      select_availability_zones = availability_zones.map { |az| { "label": az["name"], "value": az["name"], "enabled": az["enabled"]} }
+      select_availability_zones = availability_zones.map do |az|
+        { "label": az['name'], "value": az['name'], "enabled": az['enabled'] }
+      end
 
       render json: {
         availability_zones: select_availability_zones
@@ -248,7 +248,7 @@ module Lbaas2
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
-      render json: { errors: e.message }, status: "500"
+      render json: { errors: e.message }, status: '500'
     end
 
     protected
@@ -257,10 +257,10 @@ module Lbaas2
       # get project fips per api
       fips = services.networking.project_floating_ips(@scoped_project_id)
 
-      # attach fips and subnets 
+      # attach fips and subnets
       lbs.each do |lb|
         # fips
-        lb.floating_ip = fips.select{|fip| fip.port_id == lb.vip_port_id}.first
+        lb.floating_ip = fips.select { |fip| fip.port_id == lb.vip_port_id }.first
         # get subnet from cache if exists
         unless lb.vip_subnet_id.blank?
           lb.subnet_from_cache true
@@ -273,18 +273,16 @@ module Lbaas2
 
         # get cached listeners
         lb.listeners = [] if lb.listeners.blank?
-        lb.cached_listeners = ObjectCache.where(id: lb.listeners.map{|l| l[:id]}).each_with_object({}) do |l,map|
+        lb.cached_listeners = ObjectCache.where(id: lb.listeners.map { |l| l[:id] }).each_with_object({}) do |l, map|
           map[l[:id]] = l
         end
 
         # get cached pools
         lb.pools = [] if lb.pools.blank?
-        lb.cached_pools = ObjectCache.where(id: lb.pools.map{|p| p[:id]}).each_with_object({}) do |p,map|
+        lb.cached_pools = ObjectCache.where(id: lb.pools.map { |p| p[:id] }).each_with_object({}) do |p, map|
           map[p[:id]] = p
         end
-
       end
     end
-
   end
 end

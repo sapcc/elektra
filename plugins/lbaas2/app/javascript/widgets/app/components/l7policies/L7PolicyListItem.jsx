@@ -1,5 +1,4 @@
 import { useEffect, useState, useMemo } from "react"
-import useCommons from "../../lib/hooks/useCommons"
 import { Link } from "react-router-dom"
 import StaticTags from "../StaticTags"
 import useL7Policy from "../../lib/hooks/useL7Policy"
@@ -16,6 +15,13 @@ import Log from "../shared/logger"
 import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+  MyHighlighter,
+} from "../../helpers/commonHelpers"
+import { actionRedirect } from "../../helpers/l7PolicyHelpers"
 
 const L7PolicyListItem = ({
   props,
@@ -25,15 +31,8 @@ const L7PolicyListItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons()
-  const {
-    actionRedirect,
-    deleteL7Policy,
-    persistL7Policy,
-    onSelectL7Policy,
-    reset,
-  } = useL7Policy()
+  const { removeL7Policy, persistL7Policy, onSelectL7Policy, reset } =
+    useL7Policy()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { persistListener } = useListener()
   const { entityStatus } = useStatus(
@@ -95,8 +94,8 @@ const L7PolicyListItem = ({
     }
     const l7policyID = l7Policy.id
     const l7policyName = l7Policy.name
-    return deleteL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
-      .then((response) => {
+    return removeL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
+      .then((data) => {
         addNotice(
           <React.Fragment>
             L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.
@@ -110,7 +109,7 @@ const L7PolicyListItem = ({
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.response),
+            errors: errorMessage(error),
           })
         )
       })

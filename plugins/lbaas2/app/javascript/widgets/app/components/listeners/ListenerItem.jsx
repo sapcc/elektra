@@ -6,8 +6,8 @@ import CopyPastePopover from "../shared/CopyPastePopover"
 import CachedInfoPopover from "../shared/CachedInforPopover"
 import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
 import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
+import { certificateContainerRelation } from "../../helpers/listenerHelper"
 import useListener from "../../lib/hooks/useListener"
-import useCommons from "../../lib/hooks/useCommons"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
@@ -19,6 +19,12 @@ import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
 import BooleanLabel from "../shared/BooleanLabel"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+  MyHighlighter,
+} from "../../helpers/commonHelpers"
 
 const ListenerItem = ({
   props,
@@ -27,15 +33,8 @@ const ListenerItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const {
-    persistListener,
-    certificateContainerRelation,
-    deleteListener,
-    onSelectListener,
-    reset,
-  } = useListener()
-  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons()
+  const { persistListener, removeListener, onSelectListener, reset } =
+    useListener()
   const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(
@@ -104,12 +103,12 @@ const ListenerItem = ({
     }
     const listenerID = listener.id
     const listenerName = listener.name
-    return deleteListener(loadbalancerID, listenerID, listenerName)
-      .then((response) => {
+    return removeListener(loadbalancerID, listenerID, listenerName)
+      .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Listener <b>{listenerName}</b> ({listenerID}) is being deleted.
-          </React.Fragment>
+          </>
         )
         // fetch the lb again containing the new listener so it gets updated fast
         persistLoadbalancer(loadbalancerID).catch((error) => {})
@@ -117,7 +116,7 @@ const ListenerItem = ({
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.response),
+            errors: errorMessage(error),
           })
         )
       })

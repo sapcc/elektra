@@ -34,7 +34,6 @@ describe("masterdata", () => {
     cy.contains('[data-test=page-title]','Home')
     cy.contains('a','Masterdata').click()
     cy.contains('[data-test=page-title]','Domain Masterdata')
-    cy.contains('Complete')
     cy.contains('a','Edit').click()
     cy.contains('Edit masterdata for domain: cc3test')
   })

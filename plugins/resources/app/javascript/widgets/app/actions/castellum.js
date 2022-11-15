@@ -11,8 +11,8 @@ export const configureCastellumAjaxHelper = (opts) => {
 
 const castellumErrorMessage = (error) => {
   let msg = error.message
-  if (error.response && error.response.data) {
-    return `${msg}: ${error.response.data}`
+  if (error.data) {
+    return `${msg}: ${error.data}`
   }
   return msg
 }
@@ -68,7 +68,7 @@ export const deleteCastellumProjectResource =
         })
         .catch((error) => {
           //404 is not a problem
-          const isNotFound = error.response && error.response.status == 404
+          const isNotFound = error.status == 404
           if (!isNotFound) {
             showCastellumError(error)
           }

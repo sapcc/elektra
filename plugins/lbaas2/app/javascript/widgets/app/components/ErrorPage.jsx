@@ -26,12 +26,20 @@ const serverError = (errorText, onReload) => {
 }
 
 const subTitle = (error) => {
-  if (error && error.status && error.statusText) {
+  if (error?.status && error?.statusText) {
     return (
       <p>
         <b>{error.status}</b> {error.statusText}
       </p>
     )
+  } else {
+    if (error?.status) {
+      return (
+        <p>
+          Error <b>{error.status}</b>
+        </p>
+      )
+    }
   }
   return null
 }

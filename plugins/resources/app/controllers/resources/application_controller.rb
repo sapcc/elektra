@@ -52,6 +52,7 @@ module Resources
       auth_params = { selected: @js_data }
       enforce_permissions('::resources:project:show', auth_params)
       @js_data[:can_edit] = current_user.is_allowed?('resources:project:edit', auth_params)
+      @js_data[:can_goto_cluster] = current_user.is_allowed?('resources:project:goto_cluster', auth_params)
 
       # p "======================================================"
       # # {"qa-de-1a"=>{"3.0"=>"1.5TiB, 2TiB, 3TiB"}}
@@ -81,6 +82,7 @@ module Resources
       auth_params = { selected: @js_data }
       enforce_permissions('::resources:domain:show', auth_params)
       @js_data[:can_edit] = current_user.is_allowed?('resources:domain:edit', auth_params)
+      @js_data[:can_goto_cluster] = current_user.is_allowed?('resources:domain:goto_cluster', auth_params)
 
       render action: 'show'
     end

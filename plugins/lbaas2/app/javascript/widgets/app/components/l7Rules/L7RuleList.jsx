@@ -1,6 +1,4 @@
 import { useState, useEffect, useMemo } from "react"
-import { DefeatableLink } from "lib/components/defeatable_link"
-import useCommons from "../../lib/hooks/useCommons"
 import HelpPopover from "../shared/HelpPopover"
 import useL7Rule from "../../lib/hooks/useL7Rule"
 import { useGlobalState } from "../StateProvider"
@@ -14,9 +12,9 @@ import { scope } from "lib/ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
 import { regexString } from "lib/tools/regex_string"
+import { searchParamsToString } from "../../helpers/commonHelpers"
 
 const L7RulesList = ({ props, loadbalancerID }) => {
-  const { searchParamsToString } = useCommons()
   const { persistL7Rules, setSearchTerm } = useL7Rule()
   const listenerID = useGlobalState().listeners.selected
   const l7PolicyID = useGlobalState().l7policies.selected
@@ -29,7 +27,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
   const initialLoad = () => {
     if (l7PolicyID) {
       Log.debug("FETCH L7 RULES")
-      persistL7Rules(loadbalancerID, listenerID, l7PolicyID, null)
+      persistL7Rules(loadbalancerID, listenerID, l7PolicyID, {})
         .then((data) => {})
         .catch((error) => {})
     }

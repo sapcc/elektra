@@ -81,11 +81,11 @@ const LargeFileInstruction = ({ objectStoreEndpoint }) => {
               </p>
               <p ref={codeRef}>
                 <code>
-                  curl -i{" "}
+                  curl "
                   {objectStoreEndpoint +
                     "/" +
-                    encodeURIComponent(containerName + "/" + name)}{" "}
-                  -X GET -H "X-Auth-Token: $token" --output {name}
+                    decodeURIComponent(containerName + "/" + name)}
+                  " -X GET -H "X-Auth-Token: $token" --output {name}
                 </code>
               </p>
 

@@ -95,10 +95,10 @@ module Rescue
     rescue_and_render_exception_page [
       {
         'MonsoonOpenstackAuth::Authorization::SecurityViolation' => {
-          title: 'Unauthorized',
+          title: 'Forbidden',
           sentry: false,
           warning: true,
-          status: 401,
+          status: 403,
           description: lambda do |e, _c|
             m = 'You are not authorized to view this page.'
             if e.involved_roles && e.involved_roles.length.positive?

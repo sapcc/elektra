@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
 import useMember from "../../lib/hooks/useMember"
 import Log from "../shared/logger"
 import { FormStateProvider } from "./FormState"
 import NewMemberForm from "./NewMemberForm"
 import SaveButton from "../shared/SaveButton"
 import ExistingMembersDropDown from "./ExistingMembersDropDown"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const NewMember = (props) => {
-  const { searchParamsToString, matchParams, errorMessage } = useCommons()
   const { fetchServers } = useMember()
   const [servers, setServers] = useState({
     isLoading: false,

@@ -1,34 +1,37 @@
 import React, { useState, useEffect } from "react"
 import { Modal, Button, Collapse } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
 import { Form } from "lib/elektra-form"
 import usePool from "../../lib/hooks/usePool"
 import SelectInput from "../shared/SelectInput"
+import SelectInputCreatable from "../shared/SelectInputCreatable"
 import HelpPopover from "../shared/HelpPopover"
-import useListener from "../../lib/hooks/useListener"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import Log from "../shared/logger"
+import {
+  fetchListnersNoDefaultPoolForSelect,
+  fetchSecretsForSelect,
+} from "../../actions/listener"
+import {
+  errorMessage,
+  toManySecretsWarning,
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import {
+  lbAlgorithmTypes,
+  poolProtocolTypes,
+  poolPersistenceTypes,
+  filterListeners,
+} from "../../helpers/poolHelper"
 
 const NewPool = (props) => {
-  const {
-    searchParamsToString,
-    queryStringSearchValues,
-    matchParams,
-    formErrorMessage,
-    helpBlockTextForSelect,
-  } = useCommons()
-  const {
-    lbAlgorithmTypes,
-    poolPersistenceTypes,
-    protocolTypes,
-    createPool,
-    filterListeners,
-  } = usePool()
-  const { fetchListnersNoDefaultPoolForSelect, fetchSecretsForSelect } =
-    useListener()
+  const { createPool } = usePool()
   const { persistLoadbalancer } = useLoadbalancer()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [availableListeners, setAvailableListeners] = useState([])
   const [listenersLoading, setListenersLoading] = useState(true)
   const [listeners, setListeners] = useState({
@@ -40,43 +43,21 @@ const NewPool = (props) => {
     isLoading: false,
     error: null,
     items: [],
+    total: 0,
   })
 
   useEffect(() => {
-    Log.debug("fetching listeners for select")
     const params = matchParams(props)
     const lbID = params.loadbalancerID
-    // get listeners for the select
-    setListeners({ ...listeners, isLoading: true })
-    fetchListnersNoDefaultPoolForSelect(lbID)
-      .then((data) => {
-        setListeners({
-          ...listeners,
-          isLoading: false,
-          items: data.listeners,
-          error: null,
-        })
-        setListenersLoading(false)
-      })
-      .catch((error) => {
-        setListeners({ ...listeners, isLoading: false, error: error })
-      })
-
-    // get the containers for the select
-    setSecrets({ ...secrets, isLoading: true })
-    fetchSecretsForSelect(lbID)
-      .then((data) => {
-        setSecrets({
-          ...secrets,
-          isLoading: false,
-          items: data.secrets,
-          error: null,
-        })
-      })
-      .catch((error) => {
-        setSecrets({ ...secrets, isLoading: false, error: error })
-      })
+    setLoadbalancerID(lbID)
   }, [])
+
+  useEffect(() => {
+    if (loadbalancerID) {
+      loadListeners(loadbalancerID)
+      loadSecrets(loadbalancerID)
+    }
+  }, [loadbalancerID])
 
   useEffect(() => {
     if (!listenersLoading) {
@@ -84,6 +65,54 @@ const NewPool = (props) => {
       setAvailableListeners(filterListeners(listeners.items, selectedProtocol))
     }
   }, [listenersLoading])
+
+  const loadListeners = (lbID) => {
+    return new Promise((handleSuccess, handleErrors) => {
+      setListeners({ ...listeners, isLoading: true })
+      fetchListnersNoDefaultPoolForSelect(lbID)
+        .then((data) => {
+          setListeners({
+            ...listeners,
+            isLoading: false,
+            items: data.listeners,
+            error: null,
+          })
+          setListenersLoading(false)
+        })
+        .catch((error) => {
+          setListeners({
+            ...listeners,
+            isLoading: false,
+            error: errorMessage(error),
+          })
+        })
+    })
+  }
+
+  const loadSecrets = (lbID) => {
+    return new Promise((handleSuccess, handleErrors) => {
+      setSecrets({ ...secrets, isLoading: true })
+      fetchSecretsForSelect(lbID)
+        .then((data) => {
+          setSecrets({
+            ...secrets,
+            isLoading: false,
+            items: data.secrets,
+            error: null,
+            total: data.total,
+          })
+          handleSuccess(data.secrets)
+        })
+        .catch((error) => {
+          setSecrets({
+            ...secrets,
+            isLoading: false,
+            error: errorMessage(error),
+          })
+          handleErrors(errorMessage(error))
+        })
+    })
+  }
 
   /**
    * Modal stuff
@@ -160,11 +189,10 @@ const NewPool = (props) => {
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     return createPool(lbID, newValues)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Pool <b>{response.data.name}</b> ({response.data.id}) is being
-            created.
+            Pool <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // fetch the lb again containing the new listener so it gets updated fast
@@ -198,7 +226,7 @@ const NewPool = (props) => {
 
   const protocolTypesFiltered = () => {
     // do not show types disabled
-    return protocolTypes().filter((t) => !t.state?.includes("disabled"))
+    return poolProtocolTypes().filter((t) => !t.state?.includes("disabled"))
   }
 
   Log.debug("RENDER new pool")
@@ -390,7 +418,7 @@ const NewPool = (props) => {
                   label="Certificate Secret"
                   name="tls_container_ref"
                 >
-                  <SelectInput
+                  <SelectInputCreatable
                     name="tls_container_ref"
                     isClearable
                     isLoading={secrets.isLoading}
@@ -402,6 +430,7 @@ const NewPool = (props) => {
                     certificate/key bundle for TLS client authentication to the
                     member servers.
                   </span>
+                  {toManySecretsWarning(secrets.total, secrets.items?.length)}
                   {secrets.error && (
                     <span className="text-danger">{secrets.error}</span>
                   )}
@@ -411,7 +440,7 @@ const NewPool = (props) => {
                   label="Authentication Secret (CA)"
                   name="ca_tls_container_ref"
                 >
-                  <SelectInput
+                  <SelectInputCreatable
                     name="ca_tls_container_ref"
                     isClearable
                     isLoading={secrets.isLoading}
@@ -422,6 +451,7 @@ const NewPool = (props) => {
                     The reference secret containing a PEM format CA certificate
                     bundle.
                   </span>
+                  {toManySecretsWarning(secrets.total, secrets.items?.length)}
                   {secrets.error && (
                     <span className="text-danger">{secrets.error}</span>
                   )}

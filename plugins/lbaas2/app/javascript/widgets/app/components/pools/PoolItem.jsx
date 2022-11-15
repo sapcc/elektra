@@ -7,7 +7,6 @@ import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
 import CachedInfoPopoverContentListeners from "./CachedInfoPopoverContentListeners"
 import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
 import usePool from "../../lib/hooks/usePool"
-import useCommons from "../../lib/hooks/useCommons"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
@@ -19,11 +18,15 @@ import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
 import BooleanLabel from "../shared/BooleanLabel"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+  MyHighlighter,
+} from "../../helpers/commonHelpers"
 
 const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
-  const { persistPool, deletePool, onSelectPool, reset } = usePool()
-  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons()
+  const { persistPool, removePool, onSelectPool, reset } = usePool()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { persistLoadbalancer } = useLoadbalancer()
   const { entityStatus } = useStatus(
@@ -85,7 +88,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
     }
     const poolID = pool.id
     const poolName = pool.name
-    return deletePool(loadbalancerID, poolID, poolName)
+    return removePool(loadbalancerID, poolID, poolName)
       .then((response) => {
         addNotice(
           <React.Fragment>
@@ -99,7 +102,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.response),
+            errors: errorMessage(error),
           })
         )
       })

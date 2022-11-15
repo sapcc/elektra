@@ -11,7 +11,7 @@ import EditEntryModal from "./entries/edit"
 import ShowEntryModal from "./entries/show"
 import NewEntryModal from "./entries/new"
 import StateProvider from "./StateProvider"
-import styles from "../styles.css"
+import styles from "../styles.inline.css"
 
 import StyleProvider, { AppShell } from "juno-ui-components"
 import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min"
@@ -30,7 +30,7 @@ const Application = () => {
   return (
     <StateProvider>
       <StyleProvider theme="theme-light" stylesWrapper="shadowRoot">
-        <style>{styles}</style>
+        <style>{styles.toString()}</style>
         {/* redirect root to shares tab */}
         <AppShell embedded>
           {/* <BrowserRouter basename={`${window.location.pathname}?r=`}> */}

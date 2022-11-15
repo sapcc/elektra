@@ -103,7 +103,7 @@ describe Lbaas2::LoadbalancersController, type: :controller do
       allow_any_instance_of(ServiceLayer::Lbaas2Service).to receive(:elektron).and_return(lbs)
     end
 
-    it_behaves_like 'GET action with lbaas_admin rule.' do
+    it_behaves_like 'GET action with cloud_network_admin rule' do
       subject do
         @default_params = default_params
         @extra_params = {id: 'lb_id'}

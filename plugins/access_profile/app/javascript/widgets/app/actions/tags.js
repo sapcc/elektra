@@ -8,7 +8,7 @@ const fetchTags = () => {
         handleSuccess(response.data)
       })
       .catch((error) => {
-        handleErrors(error.response)
+        handleErrors(error)
       })
   )
 }
@@ -21,7 +21,7 @@ const createTag = (tag) => {
         handleSuccess(response.data)
       })
       .catch((error) => {
-        handleErrors(error.response)
+        handleErrors(error)
       })
   })
 }
@@ -34,7 +34,7 @@ const removeTag = (tag) => {
         handleSuccess(response.data)
       })
       .catch((error) => {
-        handleErrors(error.response)
+        handleErrors(error)
       })
   })
 }
@@ -47,7 +47,7 @@ const fetchConfig = () => {
         handleSuccess(response.data)
       })
       .catch((error) => {
-        handleErrors(error.response)
+        handleErrors(error)
       })
   )
 }

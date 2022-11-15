@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
-import useCommons from "../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 import { matchPath } from "react-router-dom"
 import JsonView from "../shared/JsonView"
+import {
+  sortObjectByKeys,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import { fetchLoadbalancer } from "../../actions/loadbalancer"
 
 const LoadbalancerJSON = (props) => {
-  const { fetchLoadbalancer } = useLoadbalancer()
-  const { matchParams, searchParamsToString, sortObjectByKeys } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
     error: null,

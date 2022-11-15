@@ -12,11 +12,13 @@ function withOpacity(variableName) {
 }
 
 module.exports = {
-  presets: [
-    require('juno-ui-components/tailwind.config')
+  presets: [require("juno-ui-components/tailwind.config")],
+  prefix: "", // important, do not change
+  content: [
+    "./plugins/**/*.{js,html,haml}",
+    "./app/javascript/**/*.{js,haml}",
+    "./app/views/**/*.haml",
   ],
-  prefix: '', // important, do not change
-  content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   theme: {
     extend: {},
   },

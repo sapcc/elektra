@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import useCommons from "../../lib/hooks/useCommons"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import HelpPopover from "../shared/HelpPopover"
@@ -8,16 +7,20 @@ import useL7Rule from "../../lib/hooks/useL7Rule"
 import TagsInput from "../shared/TagsInput"
 import useL7Policy from "../../lib/hooks/useL7Policy"
 import { addNotice } from "lib/flashes"
+import {
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import {
+  ruleTypes,
+  ruleTypeKeyRelation,
+  ruleCompareTypes,
+} from "../../helpers/l7RuleHelpers"
 
 const NewL7Rule = (props) => {
-  const {
-    searchParamsToString,
-    matchParams,
-    formErrorMessage,
-    helpBlockTextForSelect,
-  } = useCommons()
-  const { ruleTypes, ruleCompareTypes, createL7Rule, ruleTypeKeyRelation } =
-    useL7Rule()
+  const { createL7Rule } = useL7Rule()
   const { persistL7Policy } = useL7Policy()
   const [showKeyAttribute, setShowKeyAttribute] = useState(false)
 
@@ -68,11 +71,10 @@ const NewL7Rule = (props) => {
     const listenerID = params.listenerID
     const l7policyID = params.l7policyID
     return createL7Rule(lbID, listenerID, l7policyID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Rule <b>{response.data.type}</b> ({response.data.id}) is being
-            created.
+            L7 Rule <b>{data.type}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // fetch the policy again containing the new l7rule

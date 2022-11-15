@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: 01347fe32eb9b9680c9ec699fed17293aeed3d3b
-  tag: v2.2.1
+  revision: f97fd15b91c8ba584d62caa20798bdd727705fb5
+  tag: v2.2.2
   specs:
-    elektron (2.2.1)
+    elektron (2.2.2)
 
 GIT
   remote: https://github.com/sapcc/lyra-client.git
@@ -22,7 +22,7 @@ GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
   revision: 1598d2a9d214d3e5fb9baa7cd3f56a42c79f4f06
   specs:
-    monsoon-openstack-auth (2.0.7)
+    monsoon-openstack-auth (2.0.8)
       excon
       hashie
       rails

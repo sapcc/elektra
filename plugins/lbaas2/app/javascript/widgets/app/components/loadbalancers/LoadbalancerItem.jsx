@@ -11,10 +11,10 @@ import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import SmartLink from "../shared/SmartLink"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
-import useCommons from "../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
+import { errorMessage, searchParamsToString } from "../../helpers/commonHelpers"
 
 const LoadbalancerItem = ({
   props,
@@ -23,16 +23,22 @@ const LoadbalancerItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const { persistLoadbalancer, deleteLoadbalancer, detachFIP } =
+  const { persistLoadbalancer, removeLoadbalancer, detachFIP, reset } =
     useLoadbalancer()
-  const { errorMessage, searchParamsToString } = useCommons()
   const { entityStatus } = useStatus(
     loadbalancer.operating_status,
     loadbalancer.provisioning_status
   )
 
   const pollingCallback = () => {
-    return persistLoadbalancer(loadbalancer.id)
+    return persistLoadbalancer(loadbalancer.id).catch((error) => {
+      if (error && error.status == 404) {
+        // check if the loadbalancer is selected and if yes deselect the item
+        if (disabled) {
+          reset()
+        }
+      }
+    })
   }
 
   usePolling({
@@ -97,8 +103,8 @@ const LoadbalancerItem = ({
     }
     const ladbalancerID = loadbalancer.id
     const loadbalancerName = loadbalancer.name
-    return deleteLoadbalancer(loadbalancerName, ladbalancerID)
-      .then((response) => {
+    return removeLoadbalancer(loadbalancerName, ladbalancerID)
+      .then((data) => {
         addNotice(
           <React.Fragment>
             Load Balancer <b>{loadbalancerName}</b> ({ladbalancerID}) is being
@@ -109,7 +115,7 @@ const LoadbalancerItem = ({
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.response),
+            errors: errorMessage(error),
           })
         )
       })

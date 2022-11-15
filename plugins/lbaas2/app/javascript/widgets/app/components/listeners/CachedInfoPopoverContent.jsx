@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import useL7Policy from "../../lib/hooks/useL7Policy"
 import CopyPastePopover from "../shared/CopyPastePopover"
 import useListener from "../../lib/hooks/useListener"
+import { actionRedirect } from "../../helpers/l7PolicyHelpers"
 
 const CachedInfoPopoverContent = ({
   props,
@@ -15,7 +16,6 @@ const CachedInfoPopoverContent = ({
   const listenerSetSearchTerm = useListener().setSearchTerm
   const l7policySetSelected = useL7Policy().setSelected
   const l7policySetSearchTerm = useL7Policy().setSearchTerm
-  const { actionRedirect } = useL7Policy()
 
   const onClick = (e, id) => {
     if (e) {

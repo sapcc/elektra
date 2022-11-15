@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react"
-import usePool from "../../lib/hooks/usePool"
-import useCommons from "../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 import JsonView from "../shared/JsonView"
+import {
+  sortObjectByKeys,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import { fetchPool } from "../../actions/pool"
 
 const PoolJSON = (props) => {
-  const { fetchPool } = usePool()
-  const { matchParams, searchParamsToString, sortObjectByKeys } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
     error: null,

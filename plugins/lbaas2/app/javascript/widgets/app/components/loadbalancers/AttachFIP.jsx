@@ -3,14 +3,18 @@ import { Modal, Button } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import SelectInput from "../shared/SelectInput"
-import useCommons from "../../lib/hooks/useCommons"
 import { addNotice } from "lib/flashes"
 import { matchPath } from "react-router-dom"
 import Log from "../shared/logger"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import { fetchFloatingIPs } from "../../actions/loadbalancer"
 
 const AttachFIP = (props) => {
-  const { fetchFloatingIPs, attachFIP } = useLoadbalancer()
-  const { matchParams, errorMessage, searchParamsToString } = useCommons()
+  const { attachFIP } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
 
   const [floatingIPs, setFloatingIPs] = useState({
@@ -30,7 +34,7 @@ const AttachFIP = (props) => {
         setFloatingIPs({
           ...floatingIPs,
           isLoading: false,
-          items: data,
+          items: data.fips,
           error: null,
         })
       })
@@ -86,12 +90,12 @@ const AttachFIP = (props) => {
     setInitialValues(values)
 
     return attachFIP(loadbalancerID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
             Floating IP{" "}
-            <b>{response.data.loadbalancer.floating_ip.floating_ip_address}</b>{" "}
-            ({response.data.loadbalancer.floating_ip.id}) is being attached.
+            <b>{data.loadbalancer.floating_ip.floating_ip_address}</b> (
+            {data.loadbalancer.floating_ip.id}) is being attached.
           </React.Fragment>
         )
         close()

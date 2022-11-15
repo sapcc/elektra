@@ -253,8 +253,12 @@ const useActions = () => {
     (containerName, headers) => {
       const newHeaders = { ...headers }
       Object.keys(newHeaders).forEach(
-        (k) => (newHeaders[k] = encodeURIComponent(newHeaders[k]))
+        (k) =>
+          k &&
+          k.indexOf("x-container-meta") === 0 &&
+          (newHeaders[k] = encodeURIComponent(newHeaders[k]))
       )
+
       return apiClient
         .osApi("object-store")
         .post(containerPath(containerName), {}, { headers: newHeaders })
@@ -294,12 +298,18 @@ const useActions = () => {
     []
   )
   const endpointURL = React.useCallback(
-    (containerName, name) =>
-      `${apiClient.osApi("object-store").endpointURL}/${objectPath(
-        containerName,
-        name
-      )}`,
+    (containerName, name, params = {}) => {
+      return apiClient
+        .osApi("object-store")
+        .url(objectPath(containerName, name), { params })
+    },
     [apiClient]
+  )
+
+  const rawObjectUrl = React.useCallback(
+    (containerName, name, params = {}) =>
+      endpointURL(containerName, name, params),
+    [endpointURL]
   )
 
   const downloadObject = React.useCallback(
@@ -390,6 +400,7 @@ const useActions = () => {
     createFolder,
     downloadObject,
     uploadObject,
+    rawObjectUrl,
   }
 }
 

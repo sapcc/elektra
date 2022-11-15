@@ -2,8 +2,7 @@ import { ajaxHelper } from "lib/ajax_helper"
 
 import * as constants from "../constants"
 
-const errorMessage = (error) =>
-  (error.response && error.response.data) || error.message
+const errorMessage = (error) => error.data || error.message
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -14,8 +13,14 @@ const fetchErrors = (errorType) => (dispatch) => {
     requestedAt: Date.now(),
   })
 
+  // rate scrape errors have moved from `/v1/admin/rate-scrape-errors` to `/rates/v1/admin/scrape-errors`
+  const errorsURL =
+    errorType == "rate-scrape-errors"
+      ? "/rates/v1/admin/scrape-errors"
+      : `/v1/admin/${errorType}`
+
   return ajaxHelper
-    .get(`/v1/admin/${errorType}`)
+    .get(errorsURL)
     .then((response) => {
       const jsonKey = errorType.replace(/-/g, "_") //e.g. "asset-scrape-errors" -> "asset_scrape_errors"
       dispatch({

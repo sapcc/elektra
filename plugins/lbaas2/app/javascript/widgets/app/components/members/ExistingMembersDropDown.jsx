@@ -3,10 +3,9 @@ import { SearchField } from "lib/components/search_field"
 import MembersTable from "./MembersTable"
 import { filterItems } from "../../lib/hooks/useMember"
 import { useGlobalState } from "../StateProvider"
-import useCommons from "../../lib/hooks/useCommons"
+import { formErrorMessage } from "../../helpers/commonHelpers"
 
 const ExistingMembersDropDown = (props, poolID) => {
-  const { formErrorMessage } = useCommons()
   const state = useGlobalState().members
   const [showExistingMembers, setShowExistingMembers] = useState(false)
   const [searchTerm, setSearchTerm] = useState(null)

@@ -146,7 +146,7 @@ export default class Overview extends React.Component {
       currentArea = allAreas[0]
     }
 
-    const { canEdit, canAutoscale, scopeData } = this.props
+    const { canEdit, canAutoscale, canGotoCluster, isForeignScope, scopeData } = this.props
     const scope = new Scope(scopeData)
 
     let currentTab
@@ -165,6 +165,10 @@ export default class Overview extends React.Component {
         break
     }
 
+    const hasGotoClusterButton = canGotoCluster && !isForeignScope
+    const hasSettingsButton = canEdit && scope.isProject() &&
+      this.props.metadata.bursting !== null
+
     return (
       <React.Fragment>
         <nav className="nav-with-buttons">
@@ -179,18 +183,27 @@ export default class Overview extends React.Component {
               </li>
             ))}
           </ul>
-          {canEdit &&
-            scope.isProject() &&
-            this.props.metadata.bursting !== null && (
-              <div className="nav-main-buttons">
+          {(hasGotoClusterButton || hasSettingsButton) && (
+            <div className="nav-main-buttons">
+              {hasGotoClusterButton && (
+                <a
+                  href={scope.uiPathAsCloudAdmin()}
+                  className="btn btn-danger btn-sm"
+                >
+                  Open as cloud admin
+                </a>
+              )}
+              {(hasGotoClusterButton && hasSettingsButton) && " "}
+              {hasSettingsButton && (
                 <Link
                   to={`/${currentArea}/settings`}
                   className="btn btn-primary btn-sm"
                 >
                   Settings
                 </Link>
-              </div>
-            )}
+              )}
+            </div>
+          )}
         </nav>
         {currentTab}
       </React.Fragment>

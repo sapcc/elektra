@@ -6,9 +6,7 @@ import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 
 const ajaxHelper = pluginAjaxHelper("block-storage")
-const errorMessage = (error) =>
-  (error.response && error.response.data && error.response.data.errors) ||
-  error.message
+const errorMessage = (error) => error.data?.errors || error.message
 
 // #################### Availability Zones ################
 const requestAvailabilityZones = () => ({
@@ -177,7 +175,7 @@ const fetchVolume = (id) => (dispatch) => {
         handleSuccess(response.data.volume)
       })
       .catch((error) => {
-        if (error.response.status == 404) {
+        if (error.status == 404) {
           dispatch(removeVolume(id))
         } else {
           handleError(errorMessage(error))

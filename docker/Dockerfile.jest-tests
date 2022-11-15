@@ -5,6 +5,8 @@ LABEL source_repository="https://github.com/sapcc/elektra"
 
 WORKDIR /tmp/elektra-node
 ADD package.json yarn.lock ./
+
+RUN yarn upgrade juno-ui-components
 RUN yarn
 
 # docker build -t elektra-jest-tests -f docker/Dockerfile.jest-tests

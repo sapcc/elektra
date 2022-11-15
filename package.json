@@ -54,7 +54,7 @@
     "react-popper": "^2.3.0",
     "react-redux": "^7.0.0",
     "react-router-dom": "^5.1.2",
-    "react-select": "^3.0.8",
+    "react-select": "^5.5.2",
     "react-transition-group": "^4.3.0",
     "react-window": "^1.8.7",
     "redux": "^4.0.0",
@@ -64,7 +64,8 @@
     "uuid": "^3.4.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.7",
+    "@deanc/esbuild-plugin-postcss": "^1.0.2",
+    "autoprefixer": "^10.4.12",
     "axios-mock-adapter": "1.18.2",
     "chokidar": "^3.5.3",
     "cypress": "9.0.0",
@@ -78,17 +79,18 @@
     "jest": "28.0",
     "jest-environment-jsdom": "^28.0.0",
     "js-yaml": "^4.1.0",
-    "jsdom": "^20.0.0",
-    "juno-ui-components": "https://github.com/sapcc/juno/releases/download/v0_5_0/juno-ui-components.tgz",
-    "postcss": "^8.4.14",
+    "jsdom": "^20.0.1",
+    "juno-ui-components": "https://github.com/sapcc/juno/releases/latest/download/juno-ui-components.tgz",
+    "postcss": "^8.4.18",
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.14.0",
     "redux-mock-store": "1.5.4",
-    "tailwindcss": "^3.1.6"
+    "tailwindcss": "^3.2.1"
   },
   "scripts": {
     "test": "NODE_ENV=test jest --config jest.config.js",
-    "build": "node ./config/esbuild/build.js"
+    "build": "node ./config/esbuild/build.js",
+    "fix-juno": "yarn upgrade juno-ui-components && yarn install"
   },
   "name": "elektra-cc-dashboard",
   "license": "SEE LICENSE IN LICENSE",

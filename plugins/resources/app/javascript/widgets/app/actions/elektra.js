@@ -16,9 +16,7 @@ const ajaxHelper = pluginAjaxHelper("resources", {
   },
 })
 
-const elektraErrorMessage = (error) =>
-  (error.response && error.response.data && error.response.data.errors) ||
-  error.message
+const elektraErrorMessage = (error) => error.data?.errors || error.message
 
 export const sendQuotaRequest = (scopeData, requestBody) => {
   const scope = new Scope(scopeData)
@@ -27,8 +25,8 @@ export const sendQuotaRequest = (scopeData, requestBody) => {
     ajaxHelper
       .post(`/request/${scope.level()}`, requestBody)
       .then((response) => {
-        if (response.data.errors) {
-          reject(response.data.errors)
+        if (response.data?.errors) {
+          reject(response.data?.errors)
         } else {
           resolve(response.data)
         }
@@ -42,8 +40,8 @@ export const getBigvmResources = () => {
     ajaxHelper
       .get(`/project/bigvm_resources`)
       .then((response) => {
-        if (response.data.errors) {
-          reject(response.data.errors)
+        if (response.data?.errors) {
+          reject(response.data?.errors)
         } else {
           resolve(response.data)
         }

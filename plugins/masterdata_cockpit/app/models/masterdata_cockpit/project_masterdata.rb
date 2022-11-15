@@ -72,7 +72,6 @@ module MasterdataCockpit
               :responsible_primary_contact_id,
               :responsible_product_owner_id,
               :responsible_controller_id,
-              :inventory_role,
               :infrastructure_coordinator,
               format: { with: /\A[DCIdci]\d*\z/, message: 'please use a C/D/I user id' },
               allow_nil: true,

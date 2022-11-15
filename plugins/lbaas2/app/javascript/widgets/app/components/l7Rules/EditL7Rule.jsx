@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
-import useCommons from "../../lib/hooks/useCommons"
 import useL7Rule from "../../lib/hooks/useL7Rule"
 import ErrorPage from "../ErrorPage"
 import HelpPopover from "../shared/HelpPopover"
@@ -10,21 +9,21 @@ import TagsInput from "../shared/TagsInput"
 import useL7Policy from "../../lib/hooks/useL7Policy"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
+import {
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import { fetchL7Rule } from "../../actions/l7Rule"
+import {
+  ruleTypes,
+  ruleTypeKeyRelation,
+  ruleCompareTypes,
+} from "../../helpers/l7RuleHelpers"
 
 const EditL7Rule = (props) => {
-  const {
-    matchParams,
-    searchParamsToString,
-    formErrorMessage,
-    helpBlockTextForSelect,
-  } = useCommons()
-  const {
-    fetchL7Rule,
-    ruleTypes,
-    ruleCompareTypes,
-    updateL7Rule,
-    ruleTypeKeyRelation,
-  } = useL7Rule()
+  const { updateL7Rule } = useL7Rule()
   const { persistL7Policy } = useL7Policy()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [listenerID, setListenerID] = useState(null)
@@ -149,11 +148,10 @@ const EditL7Rule = (props) => {
       l7ruleID,
       newValues
     )
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Rule <b>{response.data.l7rule.type}</b> (
-            {response.data.l7rule.id}) is being updated.
+            L7 Rule <b>{data.type}</b> ({data.id}) is being updated.
           </React.Fragment>
         )
         // fetch the policy again containing the new l7rule

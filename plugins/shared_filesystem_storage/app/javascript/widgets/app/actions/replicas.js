@@ -173,7 +173,7 @@ const resyncReplica = (id) => (dispatch) =>
         }
       })
       .catch((error) => {
-        addError(error.response?.data?.error || error.message)
+        addError(error.data?.error || error.message)
         handleErrors({ errors: error.message })
         dispatch(resetFetchingState(id))
       })
@@ -200,7 +200,7 @@ const promoteReplica = (id) => (dispatch) =>
         }
       })
       .catch((error) => {
-        addError(error.response?.data?.error || error.message)
+        addError(error.data?.error || error.message)
         handleErrors({ errors: error.message })
         dispatch(requestReplicaFailure(id))
       })

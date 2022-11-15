@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
 import useHealthmonitor from "../../lib/hooks/useHealthMonitor"
 import usePool from "../../lib/hooks/usePool"
 import { Form } from "lib/elektra-form"
@@ -8,17 +7,21 @@ import SelectInput from "../shared/SelectInput"
 import FormInput from "../shared/FormInput"
 import { addNotice } from "lib/flashes"
 import TagsInput from "../shared/TagsInput"
+import {
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import {
+  healthMonitorTypes,
+  httpMethodRelation,
+  expectedCodesRelation,
+  urlPathRelation,
+  httpMethods,
+} from "../../helpers/healthMonitorHelpers"
 
 const NewHealthMonitor = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
-  const {
-    createHealthMonitor,
-    healthMonitorTypes,
-    httpMethodRelation,
-    expectedCodesRelation,
-    urlPathRelation,
-    httpMethods,
-  } = useHealthmonitor()
+  const { createHealthMonitor } = useHealthmonitor()
   const { persistPool } = usePool()
 
   /**
@@ -64,11 +67,10 @@ const NewHealthMonitor = (props) => {
     const poolID = params.poolID
 
     return createHealthMonitor(lbID, poolID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Health Monitor <b>{response.data.name}</b> ({response.data.id}) is
-            being created.
+            Health Monitor <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // fetch the pool again containing the new healthmonitor so it gets updated fast

@@ -42,6 +42,7 @@ const Objects = ({ objectStoreEndpoint }) => {
     deleteObjects,
     loadAccountMetadataOnce,
     downloadObject,
+    rawObjectUrl,
   } = useActions()
 
   const [objects, dispatch] = React.useReducer(reducer, initialState)
@@ -342,8 +343,20 @@ const Objects = ({ objectStoreEndpoint }) => {
   )
 
   const filteredItems = React.useMemo(() => {
-    if (!searchTerm || searchTerm.length === 0) return objects.items
-    return objects.items.filter((i) => i.display_name.indexOf(searchTerm) >= 0)
+    let items = objects.items
+
+    if (searchTerm && searchTerm.length > 0) {
+      items = objects.items.filter(
+        (i) => i.display_name.indexOf(searchTerm) >= 0
+      )
+    }
+    return items.sort((a, b) => {
+      if (a.subdir && !b.subdir) return -1
+      if (!a.subdir && b.subdir) return 1
+      if (a.display_name > b.display_name) return 1
+      if (a.display_name < b.display_name) return -1
+      return 0
+    })
   }, [objects.items, searchTerm])
 
   return (
@@ -408,6 +421,11 @@ const Objects = ({ objectStoreEndpoint }) => {
               deleteFolder={(item) => deleteFolder(item.subdir)}
               downloadFile={(item) => downloadFile(item.name, item.bytes)}
               showProperties={(item) => showProperties(item.name)}
+              rawUrl={(item) =>
+                rawObjectUrl(containerName, item.name, {
+                  inline: 1,
+                })
+              }
               copyFile={(item) => copyFile(item.name)}
               moveFile={(item) => moveFile(item.name)}
             />

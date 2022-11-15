@@ -77,6 +77,7 @@ Rails.application.configure do
   # Mailer configuration for inquiries/requests
   config.action_mailer.perform_deliveries = false
 
+  puts "=> Region: #{ENV['MONSOON_DASHBOARD_REGION']}" if ENV['MONSOON_DASHBOARD_REGION']
   puts "=> Auth Endpoint #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}" if ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
 
   # reduce active record logging
