@@ -1,12 +1,15 @@
-tls:
-  versions:
-    minimum: TLSv1.2
-    default:
-      # TLSv1.3 not supported yet
-      listeners: ["TLSv1.2"]
-      pools: ["TLSv1.2"]
-  cipher_suites:
-    allow_list:
+cipher_suites:
+  allow_list:
+    [
+      "ECDHE-RSA-AES128-GCM-SHA256",
+      "ECDHE-RSA-AES128-CBC-SHA",
+      "ECDHE-RSA-AES128-SHA256",
+      "ECDHE-RSA-AES256-GCM-SHA384",
+      "ECDHE-RSA-AES256-CBC-SHA",
+      "ECDHE-RSA-AES256-SHA384",
+    ]
+  default:
+    listeners:
       [
         "ECDHE-RSA-AES128-GCM-SHA256",
         "ECDHE-RSA-AES128-CBC-SHA",
@@ -14,65 +17,13 @@ tls:
         "ECDHE-RSA-AES256-GCM-SHA384",
         "ECDHE-RSA-AES256-CBC-SHA",
         "ECDHE-RSA-AES256-SHA384",
-        "AES128-GCM-SHA256",
-        "AES128-SHA",
-        "AES128-SHA256",
-        "AES256-GCM-SHA384",
-        "AES256-SHA",
-        "AES256-SHA256",
-        "CAMELLIA128-SHA",
-        "CAMELLIA256-SHA",
-        "ECDHE-ECDSA-AES128-GCM-SHA256",
-        "ECDHE-ECDSA-AES128-SHA",
-        "ECDHE-ECDSA-AES128-SHA256",
-        "ECDHE-ECDSA-AES256-GCM-SHA384",
-        "ECDHE-ECDSA-AES256-SHA",
-        "ECDHE-ECDSA-AES256-SHA384",
       ]
-    default:
-      listeners:
-        [
-          "ECDHE-RSA-AES128-GCM-SHA256",
-          "ECDHE-RSA-AES128-CBC-SHA",
-          "ECDHE-RSA-AES128-SHA256",
-          "ECDHE-RSA-AES256-GCM-SHA384",
-          "ECDHE-RSA-AES256-CBC-SHA",
-          "ECDHE-RSA-AES256-SHA384",
-          "AES128-GCM-SHA256",
-          "AES128-SHA",
-          "AES128-SHA256",
-          "AES256-GCM-SHA384",
-          "AES256-SHA",
-          "AES256-SHA256",
-          "CAMELLIA128-SHA",
-          "CAMELLIA256-SHA",
-          "ECDHE-ECDSA-AES128-GCM-SHA256",
-          "ECDHE-ECDSA-AES128-SHA",
-          "ECDHE-ECDSA-AES128-SHA256",
-          "ECDHE-ECDSA-AES256-GCM-SHA384",
-          "ECDHE-ECDSA-AES256-SHA",
-          "ECDHE-ECDSA-AES256-SHA384",
-        ]
-      pools:
-        [
-          "ECDHE-RSA-AES128-GCM-SHA256",
-          "ECDHE-RSA-AES128-CBC-SHA",
-          "ECDHE-RSA-AES128-SHA256",
-          "ECDHE-RSA-AES256-GCM-SHA384",
-          "ECDHE-RSA-AES256-CBC-SHA",
-          "ECDHE-RSA-AES256-SHA384",
-          "AES128-GCM-SHA256",
-          "AES128-SHA",
-          "AES128-SHA256",
-          "AES256-GCM-SHA384",
-          "AES256-SHA",
-          "AES256-SHA256",
-          "CAMELLIA128-SHA",
-          "CAMELLIA256-SHA",
-          "ECDHE-ECDSA-AES128-GCM-SHA256",
-          "ECDHE-ECDSA-AES128-SHA",
-          "ECDHE-ECDSA-AES128-SHA256",
-          "ECDHE-ECDSA-AES256-GCM-SHA384",
-          "ECDHE-ECDSA-AES256-SHA",
-          "ECDHE-ECDSA-AES256-SHA384",
-        ]
+    pools:
+      [
+        "ECDHE-RSA-AES128-GCM-SHA256",
+        "ECDHE-RSA-AES128-CBC-SHA",
+        "ECDHE-RSA-AES128-SHA256",
+        "ECDHE-RSA-AES256-GCM-SHA384",
+        "ECDHE-RSA-AES256-CBC-SHA",
+        "ECDHE-RSA-AES256-SHA384",
+      ]

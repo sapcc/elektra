@@ -252,9 +252,9 @@ module Lbaas2
     end
 
     def ciphers
-      allow_ciphers = OctaviaConfig["tls"]["cipher_suites"]["allow_list"]
-      litener_default_ciphers = OctaviaConfig["tls"]["cipher_suites"]["default"]["listeners"]
-      pool_default_ciphers = OctaviaConfig["tls"]["cipher_suites"]["default"]["pools"]
+      allow_ciphers = OctaviaConfig["cipher_suites"]["allow_list"]
+      litener_default_ciphers = OctaviaConfig["cipher_suites"]["default"]["listeners"]
+      pool_default_ciphers = OctaviaConfig["cipher_suites"]["default"]["pools"]
       select_allow_ciphers = allow_ciphers.map{ |c| {"label": c, "value": c} }
       select_listener_ciphers = litener_default_ciphers.map{ |c| {"label": c, "value": c} }
       select_pool_ciphers = pool_default_ciphers.map{ |c| {"label": c, "value": c} }
