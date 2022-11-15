@@ -6,7 +6,7 @@ import CopyPastePopover from "../shared/CopyPastePopover"
 import useListener from "../../lib/hooks/useListener"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import CachedInfoPopover from "../shared/CachedInforPopover"
+import PopoverInfo from "../shared/PopoverInfo"
 import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
@@ -217,7 +217,7 @@ const L7PolicyListItem = ({
         {disabled ? (
           <span className="info-text">{l7Policy.rules.length}</span>
         ) : (
-          <CachedInfoPopover
+          <PopoverInfo
             popoverId={"l7rules-popover-" + l7Policy.id}
             buttonName={l7RuleIDs.length}
             title={
@@ -242,6 +242,7 @@ const L7PolicyListItem = ({
                 cachedl7RuleIDs={l7Policy.cached_rules}
               />
             }
+            footer="Preview from cache"
           />
         )}
       </td>
