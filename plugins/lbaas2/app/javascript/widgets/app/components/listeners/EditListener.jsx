@@ -25,11 +25,7 @@ import HelpPopover from "../shared/HelpPopover"
 import { addNotice } from "lib/flashes"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import Log from "../shared/logger"
-import {
-  fetchCiphers,
-  fetchListener,
-  fetchSecretsForSelect,
-} from "../../actions/listener"
+import { fetchListener, fetchSecretsForSelect } from "../../actions/listener"
 import { fetchPoolsForSelect } from "../../actions/pool"
 import {
   errorMessage,
