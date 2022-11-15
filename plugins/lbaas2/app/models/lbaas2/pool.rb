@@ -28,8 +28,8 @@ module Lbaas2
         'tls_enabled'               => read('tls_enabled'),
         'tls_container_ref'         => read('tls_container_ref'),
         'ca_tls_container_ref'      => read('ca_tls_container_ref'),
-        'tags'                      => read('tags')
-
+        'tags'                      => read('tags'),
+        'tls_ciphers'               => read('tls_ciphers')
       }.delete_if { |_k, v| v.blank? }
     end
 
@@ -42,7 +42,8 @@ module Lbaas2
         'tls_enabled'               => read('tls_enabled'),
         'tls_container_ref'         => read('tls_container_ref'),
         'ca_tls_container_ref'      => read('ca_tls_container_ref'),
-        'tags'                      => read('tags')
+        'tags'                      => read('tags'),
+        'tls_ciphers'               => read('tls_ciphers')
       }
     end
 
