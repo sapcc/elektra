@@ -24,10 +24,10 @@
 
   "resources:project:show": "rule:limes_project_viewer",
   "resources:project:edit": "rule:limes_project_editor",
-  "resources:project:goto_cluster": "limes_can_goto_cluster",
+  "resources:project:goto_cluster": "rule:limes_can_goto_cluster",
   "resources:domain:show": "rule:limes_domain_viewer",
   "resources:domain:edit": "rule:limes_domain_editor",
-  "resources:domain:goto_cluster": "limes_can_goto_cluster",
+  "resources:domain:goto_cluster": "rule:limes_can_goto_cluster",
   "resources:cluster:show": "rule:limes_cluster_viewer",
   "resources:cluster:edit": "rule:limes_cluster_editor",
 
