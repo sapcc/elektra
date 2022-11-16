@@ -22,6 +22,7 @@
   "lbaas2:loadbalancer_private_networks": "rule:lbaas2_context_is_editor",
   "lbaas2:loadbalancer_subnets": "rule:lbaas2_context_is_editor",
   "lbaas2:loadbalancer_availability_zones": "rule:lbaas2_context_is_editor",
+  "lbaas2:loadbalancer_ciphers": "rule:lbaas2_context_is_editor",
 
   "lbaas2:listener_list": "rule:lbaas2_context_is_viewer",
   "lbaas2:listener_get": "rule:lbaas2_context_is_viewer",

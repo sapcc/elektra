@@ -259,6 +259,15 @@ export const CATLSContainerRelation = (protocol) => {
   }
 }
 
+export const tlsCiphersRelation = (protocol) => {
+  switch (protocol) {
+    case "TERMINATED_HTTPS":
+      return true
+    default:
+      return false
+  }
+}
+
 export const predPolicyDesc = (policy) => {
   switch (policy) {
     case "proxy_protocol_2edF_v1_0":

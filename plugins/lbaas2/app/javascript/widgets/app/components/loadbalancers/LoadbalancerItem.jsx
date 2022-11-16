@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react"
 import { Link } from "react-router-dom"
-import CachedInforPopover from "../shared/CachedInforPopover"
+import PopoverInfo from "../shared/PopoverInfo"
 import CachedInfoPopoverListenerContent from "./CachedInfoPopoverListenerContent"
 import CachedInfoPopoverPoolContent from "./CachedInfoPopoverPoolContent"
 import StaticTags from "../StaticTags"
@@ -268,7 +268,7 @@ const LoadbalancerItem = ({
         {disabled ? (
           <span className="info-text">{listenerIds.length}</span>
         ) : (
-          <CachedInforPopover
+          <PopoverInfo
             popoverId={"listener-popover-" + loadbalancer.id}
             buttonName={listenerIds.length}
             title={
@@ -289,6 +289,7 @@ const LoadbalancerItem = ({
                 cachedListeners={loadbalancer.cached_listeners}
               />
             }
+            footer="Preview from cache"
           />
         )}
       </td>
@@ -296,7 +297,7 @@ const LoadbalancerItem = ({
         {disabled ? (
           <span className="info-text">{poolIds.length}</span>
         ) : (
-          <CachedInforPopover
+          <PopoverInfo
             popoverId={"pools-popover-" + loadbalancer.id}
             buttonName={poolIds.length}
             title={
@@ -317,6 +318,7 @@ const LoadbalancerItem = ({
                 cachedPools={loadbalancer.cached_pools}
               />
             }
+            footer="Preview from cache"
           />
         )}
       </td>

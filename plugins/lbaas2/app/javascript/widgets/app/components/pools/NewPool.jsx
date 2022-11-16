@@ -27,6 +27,7 @@ import {
   poolPersistenceTypes,
   filterListeners,
 } from "../../helpers/poolHelper"
+import { queryTlsCiphers } from "../../../../queries/listener"
 
 const NewPool = (props) => {
   const { createPool } = usePool()
@@ -45,6 +46,7 @@ const NewPool = (props) => {
     items: [],
     total: 0,
   })
+  const ciphers = queryTlsCiphers()
 
   useEffect(() => {
     const params = matchParams(props)
@@ -65,6 +67,12 @@ const NewPool = (props) => {
       setAvailableListeners(filterListeners(listeners.items, selectedProtocol))
     }
   }, [listenersLoading])
+
+  // ciphers assignment once loaded
+  useEffect(() => {
+    if (!ciphers.data) return
+    setTlsCiphers(ciphers?.data?.poolDefaultCiphers)
+  }, [ciphers.data])
 
   const loadListeners = (lbID) => {
     return new Promise((handleSuccess, handleErrors) => {
@@ -147,20 +155,9 @@ const NewPool = (props) => {
 
   const [showTLSSettings, setShowTLSSettings] = useState(false)
   const [showCookieName, setShowCookieName] = useState(false)
+  const [tlsCiphers, setTlsCiphers] = useState(null)
 
-  const validate = ({
-    name,
-    description,
-    lb_algorithm,
-    protocol,
-    session_persistence_type,
-    session_persistence_cookie_name,
-    listener_id,
-    tls_enabled,
-    tls_container_ref,
-    ca_tls_container_ref,
-    tags,
-  }) => {
+  const validate = ({ name, lb_algorithm, protocol }) => {
     return name && lb_algorithm && protocol && true
   }
 
@@ -183,6 +180,12 @@ const NewPool = (props) => {
       // remove tls attributes just in case they still in context but tls not anymore enabled
       delete newValues.tls_container_ref
       delete newValues.ca_tls_container_ref
+    }
+
+    // add manually ciphers since they are not in the context
+    if (showTLSSettings && tlsCiphers) {
+      // convert to string colon-separated
+      newValues.tls_ciphers = tlsCiphers.map((item) => item.value).join(":")
     }
 
     // get the lb id
@@ -222,6 +225,10 @@ const NewPool = (props) => {
       const value = e.target.checked
       setTimeout(() => setShowTLSSettings(value), 200)
     }
+  }
+
+  const onSelectTlsCiphers = (options) => {
+    setTlsCiphers(options)
   }
 
   const protocolTypesFiltered = () => {
@@ -404,7 +411,7 @@ const NewPool = (props) => {
             <div className="advanced-options-section">
               <div className="advanced-options">
                 <div className="row">
-                  <div className="col-sm-8 col-sm-push-4">
+                  <div className="col-sm-12">
                     <div className="bs-callout bs-callout-warning bs-callout-emphasize">
                       <p>
                         {" "}
@@ -414,6 +421,7 @@ const NewPool = (props) => {
                     </div>
                   </div>
                 </div>
+
                 <Form.ElementHorizontal
                   label="Certificate Secret"
                   name="tls_container_ref"
@@ -454,6 +462,43 @@ const NewPool = (props) => {
                   {toManySecretsWarning(secrets.total, secrets.items?.length)}
                   {secrets.error && (
                     <span className="text-danger">{secrets.error}</span>
+                  )}
+                </Form.ElementHorizontal>
+                <h4>TLS Ciphers Suites</h4>
+                <div className="row">
+                  <div className="col-sm-12">
+                    <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+                      <p>
+                        This setting is for advanced use cases that require more
+                        control over the network configuration of the listener.{" "}
+                        <br />
+                        The following lists the default cipher suites attached
+                        to a listener. This should only be changed by expert
+                        users who know why they need to make a change. For the
+                        majority of scenarios no change is necessary.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <Form.ElementHorizontal
+                  label="TLS Ciphers Suites"
+                  name="tls_ciphers"
+                >
+                  <SelectInput
+                    name="tls_ciphers"
+                    isLoading={ciphers.isLoading}
+                    items={ciphers?.data?.allowCiphers || []}
+                    onChange={onSelectTlsCiphers}
+                    value={tlsCiphers}
+                    isMulti
+                    useFormContext={false}
+                  />
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    The TLS cipher suites.
+                  </span>
+                  {ciphers.isError && (
+                    <span className="text-danger">{ciphers.error.message}</span>
                   )}
                 </Form.ElementHorizontal>
               </div>

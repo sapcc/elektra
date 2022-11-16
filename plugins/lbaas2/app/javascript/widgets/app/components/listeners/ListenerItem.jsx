@@ -1,12 +1,15 @@
 import { useEffect, useState, useMemo } from "react"
 import { Link } from "react-router-dom"
 import StaticTags from "../StaticTags"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
 import CopyPastePopover from "../shared/CopyPastePopover"
-import CachedInfoPopover from "../shared/CachedInforPopover"
+import PopoverInfo from "../shared/PopoverInfo"
 import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
 import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
-import { certificateContainerRelation } from "../../helpers/listenerHelper"
+import {
+  certificateContainerRelation,
+  clientAuthenticationRelation,
+  tlsCiphersRelation,
+} from "../../helpers/listenerHelper"
 import useListener from "../../lib/hooks/useListener"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addNotice, addError } from "lib/flashes"
@@ -205,6 +208,7 @@ const ListenerItem = ({
 
   const displayProtocol = () => {
     const containers = collectContainers()
+    const ciphersList = listener.tls_ciphers?.split(":") || []
     const numberOfElements = containers.reduce(
       (numberOfElements, container) => {
         if (container.ref) {
@@ -221,7 +225,7 @@ const ListenerItem = ({
     return (
       <React.Fragment>
         <MyHighlighter search={searchTerm}>{listener.protocol}</MyHighlighter>
-        {certificateContainerRelation(listener.protocol) && (
+        {clientAuthenticationRelation(listener.protocol) && (
           <div className="display-flex">
             <span>Client Auth: </span>
             <span className="label-right">
@@ -233,13 +237,27 @@ const ListenerItem = ({
           <div className="display-flex">
             <span>Secrets: </span>
             <div className="label-right">
-              <CachedInfoPopover
+              <PopoverInfo
                 popoverId={"listeners-secrets-popover-" + listener.id}
                 buttonName={numberOfElements}
                 title={<React.Fragment>Secrets</React.Fragment>}
                 content={
                   <CachedInfoPopoverContentContainers containers={containers} />
                 }
+                footer="Preview from cache"
+              />
+            </div>
+          </div>
+        )}
+        {tlsCiphersRelation(listener.protocol) && (
+          <div className="display-flex">
+            <span>TLS ciphers: </span>
+            <div className="label-right">
+              <PopoverInfo
+                popoverId={"tls-ciphers-popover-" + listener.id}
+                buttonName={ciphersList.length}
+                title="TLS ciphers"
+                content={<StaticTags tags={ciphersList} />}
               />
             </div>
           </div>
@@ -286,11 +304,11 @@ const ListenerItem = ({
         {disabled ? (
           <span className="info-text">{l7PolicyIDs.length}</span>
         ) : (
-          <CachedInfoPopover
+          <PopoverInfo
             popoverId={"l7policies-popover-" + listener.id}
             buttonName={l7PolicyIDs.length}
             title={
-              <React.Fragment>
+              <>
                 L7 Policies
                 <Link
                   to="#"
@@ -299,7 +317,7 @@ const ListenerItem = ({
                 >
                   Show all
                 </Link>
-              </React.Fragment>
+              </>
             }
             content={
               <CachedInfoPopoverContent
@@ -310,6 +328,7 @@ const ListenerItem = ({
                 cachedl7PolicyIDs={listener.cached_l7policies}
               />
             }
+            footer="Preview from cache"
           />
         )}
       </td>

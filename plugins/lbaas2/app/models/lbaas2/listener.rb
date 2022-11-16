@@ -27,7 +27,8 @@ module Lbaas2
         'insert_headers' => read('insert_headers'),
         'client_authentication' => read('client_authentication'),
         'client_ca_tls_container_ref' => read('client_ca_tls_container_ref'),
-        'tags'                      => read('tags')
+        'tags'                      => read('tags'),
+        'tls_ciphers'                      => read('tls_ciphers')
       }.delete_if { |_k, v| v.blank? }
     end
 
@@ -42,7 +43,8 @@ module Lbaas2
         'insert_headers' => read('insert_headers'),
         'client_authentication' => read('client_authentication'),
         'client_ca_tls_container_ref' => read('client_ca_tls_container_ref'),
-        'tags'                      => read('tags')
+        'tags'                      => read('tags'),
+        'tls_ciphers'                      => read('tls_ciphers')
       }
     end
 

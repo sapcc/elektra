@@ -52,6 +52,7 @@
     "react-jss": "^10.9.0",
     "react-native-dotenv": "^2.3.0",
     "react-popper": "^2.3.0",
+    "react-query": "^3.39.2",
     "react-redux": "^7.0.0",
     "react-router-dom": "^5.1.2",
     "react-select": "^5.5.2",

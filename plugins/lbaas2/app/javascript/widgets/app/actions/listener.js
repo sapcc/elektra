@@ -106,12 +106,12 @@ export const fetchSecretsForSelect = (lbID) => {
   })
 }
 
-export const fetchCiphers = (lbID) => {
+export const fetchCiphers = () => {
   return new Promise((handleSuccess, handleErrors) => {
     ajaxHelper
-      .get(`/loadbalancers/${lbID}/listeners/ciphers`)
+      .get(`/loadbalancers/ciphers`)
       .then((response) => {
-        handleSuccess(response.data.ciphers)
+        handleSuccess(response.data)
       })
       .catch((error) => {
         handleErrors(error)
