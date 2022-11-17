@@ -9,9 +9,9 @@ import ProjectSettingsModal from '../../containers/project/settings';
 
 const routesForProjectLevel = (props) => {
   // this are the static data that comes from elektra rails controller and was initilized in init.js
-  const { domainId, projectId, flavorData, docsUrl, canEdit, canGotoCluster, isForeignScope, hasCastellum, bigVmResources, projectShards, shardingEnabled, projectScope, pathToEnableSharding } = props;
+  const { domainId, projectId, flavorData, docsUrl, canEdit, canEditCQD, canGotoCluster, isForeignScope, hasCastellum, bigVmResources, projectShards, shardingEnabled, projectScope, pathToEnableSharding } = props;
   const scopeData = { domainID: domainId, projectID: projectId };
-  const rootProps = { flavorData, scopeData, bigVmResources, projectShards, shardingEnabled, projectScope, pathToEnableSharding, canGotoCluster };
+  const rootProps = { flavorData, scopeData, bigVmResources, projectShards, shardingEnabled, projectScope, pathToEnableSharding, canEditCQD, canGotoCluster };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
@@ -31,9 +31,9 @@ const routesForProjectLevel = (props) => {
 }
 
 const routesForDomainLevel = (props) => {
-  const { domainId, flavorData, canEdit, canGotoCluster, isForeignScope, hasCastellum, bigVmResources } = props;
+  const { domainId, flavorData, canEdit, canEditCQD, canGotoCluster, isForeignScope, hasCastellum, bigVmResources } = props;
   const scopeData = { domainID: domainId };
-  const rootProps = { flavorData, scopeData, bigVmResources, canGotoCluster };
+  const rootProps = { flavorData, scopeData, bigVmResources, canEditCQD, canGotoCluster };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
@@ -51,9 +51,9 @@ const routesForDomainLevel = (props) => {
 }
 
 const routesForClusterLevel = (props) => {
-  const { flavorData, canEdit, hasCastellum, bigVmResources } = props;
+  const { flavorData, canEdit, canEditCQD, hasCastellum, bigVmResources } = props;
   const scopeData = {};
-  const rootProps = { flavorData, scopeData, bigVmResources };
+  const rootProps = { flavorData, scopeData, bigVmResources, canEditCQD };
 
   return <Loader scopeData={scopeData} hasCastellum={hasCastellum}>
     <HashRouter>
