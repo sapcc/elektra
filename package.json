@@ -91,7 +91,7 @@
   "scripts": {
     "test": "NODE_ENV=test jest --config jest.config.js",
     "build": "node ./config/esbuild/build.js",
-    "fix-juno": "yarn upgrade juno-ui-components && yarn install"
+    "fix-juno": "yarn cache clean && yarn upgrade juno-ui-components --latest && yarn install"
   },
   "name": "elektra-cc-dashboard",
   "license": "SEE LICENSE IN LICENSE",

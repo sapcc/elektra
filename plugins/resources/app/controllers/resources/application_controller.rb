@@ -52,6 +52,7 @@ module Resources
       auth_params = { selected: @js_data }
       enforce_permissions('::resources:project:show', auth_params)
       @js_data[:can_edit] = current_user.is_allowed?('resources:project:edit', auth_params)
+      @js_data[:can_edit_c_q_d] = current_user.is_allowed?('resources:cluster:edit', auth_params) # project quota for CQD resources can only be adjusted by cloud admins
       @js_data[:can_goto_cluster] = current_user.is_allowed?('resources:project:goto_cluster', auth_params)
 
       # p "======================================================"
@@ -82,6 +83,7 @@ module Resources
       auth_params = { selected: @js_data }
       enforce_permissions('::resources:domain:show', auth_params)
       @js_data[:can_edit] = current_user.is_allowed?('resources:domain:edit', auth_params)
+      @js_data[:can_edit_c_q_d] = current_user.is_allowed?('resources:cluster:edit', auth_params) # project quota for CQD resources can only be adjusted by cloud admins
       @js_data[:can_goto_cluster] = current_user.is_allowed?('resources:domain:goto_cluster', auth_params)
 
       render action: 'show'
@@ -94,6 +96,7 @@ module Resources
       auth_params = { selected: @js_data }
       enforce_permissions('::resources:cluster:show', auth_params)
       @js_data[:can_edit] = current_user.is_allowed?('resources:cluster:edit', auth_params)
+      @js_data[:can_edit_c_q_d] = current_user.is_allowed?('resources:cluster:edit', auth_params) # same as can_edit here; only needed for consistency
 
       render action: 'show'
     end
