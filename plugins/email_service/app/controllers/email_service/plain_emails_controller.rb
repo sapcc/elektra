@@ -29,6 +29,8 @@ module EmailService
         @plain_email.source = @plain_email.source_email
       end
 
+      Rails.logger.debug "\n [email_service][plain_emails_controller][create] : \n @plain_email.source : #{@plain_email.source} \n"
+
       if @plain_email.return_path == ""
         @plain_email.return_path = @plain_email.source
       end
@@ -38,17 +40,20 @@ module EmailService
       if @plain_email.valid?
         begin
           status = send_plain_email(plain_email_values)
+          Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][STATUS]\n : #{status}"
           if status.include?("success")
+            Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][@plain_email.valid?]"
             flash[:success] = status
             redirect_to plugin('email_service').emails_path and return
           else
+            Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][@plain_email.valid?] : STATUS : #{status} \n"
             flash[:error] = status
             render "edit", locals: {data: {modal: true} } and return
           end
         rescue Elektron::Errors::ApiResponse => e
-          flash[:error] = "Status Code: #{e.code}; elektron error: #{e.message}"
+          flash.now[:error] = "#{I18n.t('email_service.errors.plain_email_send_error')} #{e.message}"
         rescue Exception => e
-          flash[:error] = "Status Code: 500; other error: #{e.message}"
+          flash.now[:error] = "#{I18n.t('email_service.errors.plain_email_send_error')} #{e.message}"
         end
       else
         render "edit", locals: {data: {modal: true} } and return

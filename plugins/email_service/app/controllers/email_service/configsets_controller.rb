@@ -14,12 +14,12 @@ module EmailService
       items_per_page = 10
       @paginatable_configsets = Kaminari.paginate_array(configsets, total_count: configsets.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.configset_list_error')} #{e.message}"
       rescue Exception => e
-        flash[:error] = "Status Code: 500: Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.configset_list_error')} #{e.message}"
+
     end
 
-    # current
     def new; end
 
     def create
@@ -38,22 +38,23 @@ module EmailService
         end
       end
       rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.configset_create_error')} #{e.message}"
       rescue Exception => e
-        flash[:error] = "Status Code: 500 : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.configset_create_error')} #{e.message}"
       redirect_to plugin('email_service').configsets_path
     end
 
-
     def show
+
       @id = params[:id] if params[:id]
       @name = params[:name] if params[:name]
       @configset_description = describe_configset(@name)
       render "show", locals: { data: { modal: true } }
       rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.configset_show_error')} #{e.message}"
       rescue Exception => e
-        flash[:error] = "Status Code: 500 : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.configset_show_error')} #{e.message}"
+    
     end
 
     def destroy
@@ -71,9 +72,9 @@ module EmailService
       end
       redirect_to plugin('email_service').configsets_path and return
       rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.configset_delete_error')} #{e.message}"
       rescue Exception => e
-        flash[:error] = "Status Code: 500 : Error: #{e}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.configset_delete_error')} #{e.message}"
 
     end
 
@@ -84,6 +85,11 @@ module EmailService
     def update
       # # Add code to modify with other props here.
       # redirect_to plugin('email_service').configsets_path
+      # rescue Elektron::Errors::ApiResponse => e
+      #   flash.now[:error] = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
+      # rescue Exception => e
+      #   flash.now[:error] = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
+
     end
 
     private

@@ -8,7 +8,7 @@ module EmailService
 
     authorization_context 'email_service'
     authorization_required
-
+    
     def new
       @source_types = ::EmailService::Email.source_types
     end
@@ -38,29 +38,20 @@ module EmailService
 
       Rails.logger.debug "\n===================================================\n"
       Rails.logger.debug "\n [TemplatedEmailsController][create] \n"
-      Rails.logger.debug "\n @templated_email.inspect : #{@templated_email.inspect} \n"
+      # Rails.logger.debug "\n @templated_email.inspect : #{@templated_email.inspect} \n"
       Rails.logger.debug "\n===================================================\n"
 
       if @templated_email.valid?
         begin
           status = send_templated_email(templated_email_values)
-
-          Rails.logger.debug "\n===================================================\n"
-          Rails.logger.debug "\n [TemplatedEmailsController][create] \n"
-          Rails.logger.debug "\n status : #{status} \n"
-          Rails.logger.debug "\n===================================================\n"
-
           if status == "success"
             flash[:success] = "eMail sent successfully"
             redirect_to plugin('email_service').emails_path and return
-          # else
-          #   flash[:error] = status
-          #   render "edit", locals: {data: {modal: true} } and return
           end
         rescue Elektron::Errors::ApiResponse => e
-          flash[:error] = "Status Code: #{e.code}; elektron error: #{e.message}"
+          flash.now[:error] = "#{I18n.t('email_service.errors.templated_email_send_error')} #{e.message}"
         rescue Exception => e
-          flash[:error] = "Status Code: 500; other error: #{e.message}"
+          flash.now[:error] = "#{I18n.t('email_service.errors.templated_email_send_error')} #{e.message}"
         end
       else
         render "edit", locals: {data: {modal: true} } and return

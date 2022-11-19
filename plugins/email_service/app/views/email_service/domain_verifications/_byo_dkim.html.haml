@@ -1,0 +1,3 @@
+#byo_dkim{class: ('hide' if hide_easy_dkim(@verified_domain.dkim_type))}
+  = f.input :domain_signing_selector, required: true, input_html: {}, label: "Domain Signing Selector (Public key identifier)", hint: domain_signing_selector_hint
+  = f.input :domain_signing_private_key, required: true, as: :text, input_html: {}, label: "Domain Signing Private Key", hint: domain_signing_private_key_hint

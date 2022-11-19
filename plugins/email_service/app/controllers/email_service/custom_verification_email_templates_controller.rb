@@ -9,6 +9,8 @@ module EmailService
     authorization_context 'email_service'
     authorization_required
 
+    flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_delete_error')} #{e.message}"
+
     def index
 
       @custom_templates = custom_templates
@@ -18,17 +20,17 @@ module EmailService
         @paginatable_templates =  Kaminari.paginate_array(@custom_templates, total_count: @custom_templates.count).page(params[:page]).per(items_per_page)
       end
       rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: (INDEX) #{e.code} : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_list_error')} #{e.message}"
       rescue Exception => e
-        flash[:error] = "Status Code: (INDEX) 500 : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_list_error')} #{e.message}"
     end
 
     def show
       render "show", locals: { data: { modal: true } }
       rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: (SHOW) #{e.code} : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_show_error')} #{e.message}"
       rescue Exception => e
-        flash[:error] = "Status Code: (SHOW) 500 : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_show_error')} #{e.message}"
     end
 
     def new
@@ -40,30 +42,29 @@ module EmailService
     end
 
     def create
-      @custom_template = custom_verification_email_template_form(custom_verification_email_template_params)
-
-      if @custom_template.valid?
-        status = create_custom_verification_email_template(@custom_template)
-        if status == "success"
-          flash[:success] = "eMail custom_template #{@custom_template.template_name} is saved"
-          redirect_to plugin('email_service').custom_verification_email_templates_path and return
+      begin
+        @custom_template = custom_verification_email_template_form(custom_verification_email_template_params)
+        if @custom_template.valid?
+          status = create_custom_verification_email_template(@custom_template)
+          if status == "success"
+            flash[:success] = "eMail custom_template #{@custom_template.template_name} is saved"
+            redirect_to plugin('email_service').custom_verification_email_templates_path and return
+          else
+            flash[:error] = status
+            render "new", locals: {data: {modal: true} } and return
+          end
         else
-          flash[:error] = status
           render "new", locals: {data: {modal: true} } and return
         end
-      else
-        render "new", locals: {data: {modal: true} } and return
-      end
-      redirect_to plugin('email_service').custom_verification_email_templates_path
-      rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: (CREATE - E) #{e.code} : Error: #{e.message}"
-      rescue Aws::SES::Errors::LimitExceeded => e
-        flash.now[:error] = "#{e.code} : Error: #{e.message}; \n Maximum Custom verification email templates are only 50."
-      rescue Exception => e
-        flash[:error] = "Status Code: (CREATE - G) 500 : Error: #{e.message}"
-
-    end
-
+        redirect_to plugin('email_service').custom_verification_email_templates_path
+        rescue Elektron::Errors::ApiResponse => e
+          flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_create_error')} #{e.message}"
+        rescue Aws::SES::Errors::LimitExceeded => e
+          flash.now[:error] = "#{I18n.t('email_service.errors.endcustom_email_verification_limit_error')} #{e.message}"
+        rescue Exception => e
+          flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_create_error')} #{e.message}"
+        end
+     end
     def show
       @custom_template = find_custom_verification_email_template(params[:template_name])
     end
@@ -81,7 +82,7 @@ module EmailService
         flash[:success] = "eMail custom_template [#{@custom_template.template_name}] is updated"
         redirect_to plugin('email_service').custom_verification_email_templates_path and return
       else
-        flash.now[:error] = "Error: #{status}; eMail custom_template [#{@custom_template.template_name}] is not updated"
+        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_update_error')} #{e.message}"
         render 'edit', data: {modal: true}
       end
     end

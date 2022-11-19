@@ -3,7 +3,7 @@
 
 - url = plugin('email_service').domain_verifications_path
 
-= simple_form_for @verified_domain, as: :verified_domain, url: url, method: :post, remote: request.xhr?, html: {id: 'form_verified_domain', data: {modal: true}, class: 'form-horizontal' } do |f|
+= simple_form_for @verified_domain, as: :verified_domain, url: url, method: :post, remote: request.xhr?, html: {id: 'form_verified_domain_new', data: {modal: true}, class: 'form-horizontal' } do |f|
   .modal-body
     %div{class: modal? ? 'modal-body' : ''}
 

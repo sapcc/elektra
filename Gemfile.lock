@@ -20,7 +20,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 1598d2a9d214d3e5fb9baa7cd3f56a42c79f4f06
+  revision: bbd454406f63e37e848912bb8dcd2b2591c7f265
   specs:
     monsoon-openstack-auth (2.0.8)
       excon
@@ -337,7 +337,7 @@ GEM
       dry-schema (~> 1.8, >= 1.8.0)
     erubi (1.10.0)
     erubis (2.7.0)
-    excon (0.93.1)
+    excon (0.94.0)
     execjs (2.8.1)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
@@ -413,6 +413,8 @@ GEM
     netaddr (2.0.4)
     netrc (0.11.0)
     nio4r (2.5.8)
+    nokogiri (1.13.6-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.13.6-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.13.6-x86_64-linux)

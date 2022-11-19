@@ -23,9 +23,8 @@ module EmailService
 
     # fetch first credential for the current user with current project scope
     def ec2_creds
-      Rails.logger.debug "\n ****** EC2_CREDS CALLED  ******  \n"
+      Rails.logger.debug "\n [email_service][application_helper][ec2_creds]  \n"
       @ec2_creds = services.identity.ec2_credentials(user_id, { tenant_id: project_id })&.first
-      Rails.logger.debug "\n ****** EC2 CREDS : [ #{@ec2_creds.inspect} ]******  \n"
       return @ec2_creds
     end
 
@@ -49,7 +48,7 @@ module EmailService
     end
 
     def map_region(region)
-      Rails.logger.debug "\n **** map_region: CALLED **** \n"
+      # Rails.logger.debug "\n [email_service][application_helper][map_region]  \n"
       aws_region = 'eu-central-1'
       case region
       when 'na-us-1'
@@ -98,6 +97,9 @@ module EmailService
       if region.nil?
         region = current_region
       end
+      Rails.logger.debug "\n *********** NEBULA ENDPOINT \n"
+      @nebula_endpoint = current_user.service_url('nebula')
+      Rails.logger.debug "\n *********** NEBULA ENDPOINT #{@nebula_endpoint.inspect} \n"
       return "https://nebula.#{region}.cloud.sap/v1"
     end
 
@@ -119,14 +121,12 @@ module EmailService
         ])
     end
 
-    # old version
+    # need to keep for a while for backward compatibility
     def ses_client
+
+      Rails.logger.debug "\n [email_service][application_helper][ses_client]  \n"
       @region ||= map_region(@cronus_region)
       @endpoint ||= service_url
-
-      Rails.logger.debug "\n **** SES_CLIENT: INVOKE **** \n"
-      Rails.logger.debug "\n **** REGION: #{@region.inspect} **** \n"
-      Rails.logger.debug "\n **** ENDPOINT: #{@endpoint.inspect} **** \n"
 
       unless !ec2_creds || ec2_creds.nil?
         begin
@@ -145,29 +145,20 @@ module EmailService
 
     end
 
-    # v3 Conversion starts
     def ses_client_v2
 
       @region ||= map_region(@cronus_region)
       @endpoint ||= service_url
 
-      Rails.logger.debug "\n **** SES_CLIENT_V2: INVOKE **** \n"
-      Rails.logger.debug "\n **** REGION: #{@region.inspect} **** \n"
-      Rails.logger.debug "\n **** ENDPOINT: #{@endpoint.inspect} **** \n"
-
+      Rails.logger.debug "\n [email_service][application_helper][ses_client_v2]  \n"
 
       unless !ec2_creds || ec2_creds.nil?
         begin
           @credentials ||= Aws::Credentials.new(ec2_creds.access, ec2_creds.secret)
           @ses_client_v2 ||= Aws::SESV2::Client.new(region: @region, endpoint: @endpoint, credentials: @credentials)
-
-          Rails.logger.debug "\n **** EC2_ACCESS: #{ec2_creds.access} **** \n**** EC2_SECRET: #{ec2_creds.secret} **** \n"
-          Rails.logger.debug "\n **** CREDENTIALS: #{@credentials.inspect} **** \n"
-          Rails.logger.debug "\n **** SES_CLIENT_V2: #{@ses_client_v2.inspect} **** \n"
-
         rescue Aws::SESV2::Errors::ServiceError => e
           Rails.logger.error e.message
-          return e.message
+          return "\n [email_service][application_helper][ses_client_v2][:error] #{e.message}  \n" 
         end
       end
 
@@ -178,11 +169,10 @@ module EmailService
     # Get Account Details
 
     def get_account
-      Rails.logger.debug "\n **** GET_ACCOUNT: CALLED **** \n"
+      Rails.logger.debug "\n [email_service][application_helper][get_account]  \n"
       if nebula_active? &&  ec2_creds && ses_client_v2
         @account ||= ses_client_v2.get_account(params = {})
-        Rails.logger.debug "\n Account Details (inspect) #{@account.inspect} \n"
-        Rails.logger.debug "\n Account Details (plain) #{@account} \n"
+        # Rails.logger.debug "\n [email_service][application_helper][get_account] Account Details (inspect) #{@account.inspect} \n"
       end
       #get_account(params = {}) ⇒ Types::GetAccountResponse
       # Response structure
@@ -211,31 +201,23 @@ module EmailService
       identities = []
       identity = {}
       if nebula_active? &&  ec2_creds && ses_client_v2
-        Rails.logger.debug "\n **** LIST_EMAIL_IDENTITIES: CALLED **** \n"
+        Rails.logger.debug "\n [email_service][application_helper][list_email_identities] \n"
         resp = ses_client_v2.list_email_identities({
             next_token: nextToken,
             page_size: page_size,
         })
-        Rails.logger.debug "\n ****** list_email_identities \n RESPONSE: #{resp.inspect} ******  \n"
-        # Response
-        # resp.email_identities #=> Array
-        # resp.email_identities[0].identity_type #=> String, one of "EMAIL_ADDRESS", "DOMAIN", "MANAGED_DOMAIN"
-        # resp.email_identities[0].identity_name #=> String
-        # resp.email_identities[0].sending_enabled #=> Boolean
-        # resp.next_token #=> String
-
         # Adding ID to each element
 
         # Rails.logger.debug "*** resp.email_identities Array Size = #{resp.email_identities.size} ** "
         resp.email_identities.each do |item|
-          identity = { id: id, identity_type: item.identity_type, identity_name: item.identity_name, sending_enabled: item.sending_enabled  }
+          identity = { id: id, identity_type: item.identity_type, identity_name: item.identity_name, sending_enabled: item.sending_enabled, verification_status: item.verification_status }
           id+=1
-          # Rails.logger.debug "\n Identity: #{identity} \n"
+          
           unless item.identity_name.include?("@activation.email.global.cloud.sap")
             details = ses_client_v2.get_email_identity({
               email_identity: item.identity_name, # required
             })
-            Rails.logger.debug "\n list_email_identity_details \n Identity details: #{details.inspect} \n"
+            # Rails.logger.debug "\n [email_service][application_helper][list_email_identities] : details #{details} \n"
             identity.merge!({
               feedback_forwarding_status: details.feedback_forwarding_status,  #=> Boolean
               verified_for_sending_status: details.verified_for_sending_status, #=> Boolean
@@ -245,46 +227,23 @@ module EmailService
               tags: details.tags, #=> Array
               configuration_set_name: details.configuration_set_name #=> String
             })
-            # resp.identity_type #=> String, one of "EMAIL_ADDRESS", "DOMAIN", "MANAGED_DOMAIN"
-            # resp.feedback_forwarding_status #=> Boolean
-            # resp.verified_for_sending_status #=> Boolean
-            # resp.dkim_attributes.signing_enabled #=> Boolean
-            # resp.dkim_attributes.status #=> String, one of "PENDING", "SUCCESS", "FAILED", "TEMPORARY_FAILURE", "NOT_STARTED"
-            # resp.dkim_attributes.tokens #=> Array
-            # resp.dkim_attributes.tokens[0] #=> String
-            # resp.dkim_attributes.signing_attributes_origin #=> String, one of "AWS_SES", "EXTERNAL"
-            # resp.dkim_attributes.next_signing_key_length #=> String, one of "RSA_1024_BIT", "RSA_2048_BIT"
-            # resp.dkim_attributes.current_signing_key_length #=> String, one of "RSA_1024_BIT", "RSA_2048_BIT"
-            # resp.dkim_attributes.last_key_generation_timestamp #=> Time
-            # resp.mail_from_attributes.mail_from_domain #=> String
-            # resp.mail_from_attributes.mail_from_domain_status #=> String, one of "PENDING", "SUCCESS", "FAILED", "TEMPORARY_FAILURE"
-            # resp.mail_from_attributes.behavior_on_mx_failure #=> String, one of "USE_DEFAULT_VALUE", "REJECT_MESSAGE"
-            # resp.policies #=> Hash
-            # resp.policies["PolicyName"] #=> String
-            # resp.tags #=> Array
-            # resp.tags[0].key #=> String
-            # resp.tags[0].value #=> String
-            # resp.configuration_set_name #=> String
-
-            # Rails.logger.debug "\n ** IDENTITY : #{identity.inspect} **** \n"
           end
 
           identities.push identity
         end
-        Rails.logger.debug "\n identities.inspect: #{identities.inspect} \n"
       end
+      # Rails.logger.debug "\n [email_service][application_helper][list_email_identities] : identities.inspect : #{identities.inspect} \n"
       return identities
     end
 
     def email_addresses
 
-      Rails.logger.debug "\n **** [email_addresses]: INVOKED **** \n"
+      Rails.logger.debug "\n [email_service][application_helper][email_addresses] \n"
       @email_addresses ||= list_email_identities
       identities = []
-      Rails.logger.debug "\n **** #{@email_addresses.inspect} **** \n"
+      # Rails.logger.debug "\n **** #{@email_addresses.inspect} **** \n"
       if @email_addresses
         @email_addresses.each do |item|
-          # Rails.logger.debug "\n method email_addresses item: #{item} \n"
           if item[:identity_type] == "EMAIL_ADDRESS" && !item[:identity_name].include?("@activation.email.global.cloud.sap")
             identities.push item
           end
@@ -296,7 +255,8 @@ module EmailService
 
     def email_addresses_collection
 
-      Rails.logger.debug "\n **** [email_addresses_collection]: INVOKED **** \n"
+      Rails.logger.debug "\n [email_service][application_helper][email_addresses_collection] \n"
+
       @email_addresses ||= email_addresses
       identities_collection = []
       if @email_addresses
@@ -313,7 +273,8 @@ module EmailService
     def domains
 
       @domains ||= list_email_identities
-      Rails.logger.debug "\n [domains][@domains.inspect]: #{@domains.inspect} \n"
+      Rails.logger.debug "\n [email_service][application_helper][domains] \n"
+      # Rails.logger.debug "\n [domains][@domains.inspect]: #{@domains.inspect} \n"
       identities = []
       if @domains
         @domains.each do |item|
@@ -328,7 +289,7 @@ module EmailService
 
     def domains_collection
 
-      Rails.logger.debug "\n **** [domains_collection]: INVOKED **** \n"
+      Rails.logger.debug "\n [email_service][application_helper][domains_collection] \n"
       @domains ||= domains
       domains_collection = []
       if @domains
@@ -343,11 +304,12 @@ module EmailService
 
     def managed_domains
 
+      Rails.logger.debug "\n [email_service][application_helper][managed_domains] \n"
       @domains ||= list_email_identities
       identities = []
       if @domains
         @domains.each do |item|
-          Rails.logger.debug "\n method managed_domain item: #{item} \n"
+          # Rails.logger.debug "\n method managed_domain item: #{item} \n"
           if item[:identity_type] == "MANAGED_DOMAIN"
             identities.push item
           end
@@ -359,6 +321,8 @@ module EmailService
 
     # find an identity by name
     def find_verified_identity_by_name(identity, id_type="EMAIL_ADDRESS")
+
+      Rails.logger.debug "\n [email_service][application_helper][find_verified_identity_by_name] \n"
 
       if id_type == "EMAIL_ADDRESS"
         @id_list ||= email_addresses
@@ -378,13 +342,14 @@ module EmailService
           end
         end
       end
-      Rails.logger.debug "\n[find_verified_identity_by_name]:[#{identity}]:[#{id_type}]\n"
-      Rails.logger.debug "\n[find_verified_identity_by_name]:[found]:[#{found.inspect}]\n"
+      Rails.logger.debug "\n [email_service][application_helper][find_verified_identity_by_name] identity:[#{identity}]:id_type:[#{id_type}] \n"
+      Rails.logger.debug "\n [email_service][application_helper][find_verified_identity_by_name] :[found.inspect]:[#{found.inspect}] \n"
       return found
 
     end
 
     def send_data
+      Rails.logger.debug "\n [email_service][application_helper][send_data] \n"
       @send_data ||= get_account.send_quota
       # resp.send_quota.max_24_hour_send #=> Float
       # resp.send_quota.max_send_rate #=> Float
@@ -392,7 +357,7 @@ module EmailService
     end
 
     def get_send_stats
-
+      Rails.logger.debug "\n [email_service][application_helper][get_send_stats] \n"
       #get_account(params = {}) ⇒ Types::GetAccountResponse
       # Response structure
       # resp.dedicated_ip_auto_warmup_enabled #=> Boolean
@@ -428,6 +393,7 @@ module EmailService
 
     # v3 Conversion
     def create_email_identity_email(verified_email, tags=[{ key: "Tagkey", value: "TagValue"}], configset_name=nil)
+      Rails.logger.debug "\n [email_service][application_helper][create_email_identity_email] \n"
       begin
         resp = ses_client_v2.create_email_identity({
           email_identity: verified_email, # "Identity", # required
@@ -448,7 +414,7 @@ module EmailService
     end
 
     def delete_email_identity(identity)
-
+      Rails.logger.debug "\n [email_service][application_helper][delete_email_identity] \n"
       status = nil
       begin
         resp = ses_client_v2.delete_email_identity({
@@ -467,22 +433,46 @@ module EmailService
 
     end
 
-    def create_email_identity_domain(verified_domain, tags, dkim_signing_attributes, configset_name)
+    def create_email_identity_domain(verified_domain)
+      
+      Rails.logger.debug "\n [email_service][application_helper][create_email_identity_domain] \n"
+      # https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dkim-bring-your-own.html
+      dkim_signing_attributes = {
+        domain_signing_selector: verified_domain.domain_signing_selector,
+        domain_signing_private_key: verified_domain.domain_signing_private_key,
+        next_signing_key_length: verified_domain.next_signing_key_length,
+      }
+      
+      Rails.logger.debug "\n dkim_signing_attributes:  #{dkim_signing_attributes} \n"
 
-      Rails.logger.debug "\n [create_email_identity_domain] : inspect \n #{dkim_signing_attributes.inspect} \n"
       status = nil
+
       begin
         resp = ses_client_v2.create_email_identity({
-          email_identity: verified_domain, # "Identity", # required
-          tags: tags, # Array of Hashes
-          dkim_signing_attributes: {
-            domain_signing_selector: dkim_signing_attributes[:domain_signing_selector], # "Selector",
-            domain_signing_private_key: dkim_signing_attributes[:domain_signing_private_key], #"PrivateKey",
-            next_signing_key_length: dkim_signing_attributes[:next_signing_key_length], #"RSA_1024_BIT", # accepts RSA_1024_BIT, RSA_2048_BIT
-          },
-          configuration_set_name: configset_name,
+          email_identity: verified_domain.identity_name, # "Identity", # required
+          tags: verified_domain.tags, # Array of Hashes
+          dkim_signing_attributes: dkim_signing_attributes,
+          configuration_set_name: verified_domain.configuration_set_name,
         })
-        audit_logger.info(current_user.id, 'has added an email identity (type: domain) ', identity)
+        Rails.logger.debug "\n [email_service][application_helper][create_email_identity_domain] : resp.inspect #{resp.inspect}  \n"
+
+        # 5 validation errors detected: 
+        # Value '' at 'dkimSigningAttributes.domainSigningSelector' 
+        # failed to satisfy constraint: Member must satisfy regular expression pattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]))$; 
+        # Value '' at 'dkimSigningAttributes.domainSigningSelector' 
+        # failed to satisfy constraint: Member must have length greater than or equal to 1; 
+        # Value '' at 'dkimSigningAttributes.nextSigningKeyLength' 
+        # failed to satisfy constraint: Member must satisfy enum value set: [RSA_1024_BIT, RSA_2048_BIT]; 
+        # Value at 'dkimSigningAttributes.domainSigningPrivateKey' 
+        # failed to satisfy constraint: Member must satisfy regular expression pattern: ^[a-zA-Z0-9+\/]+={0,2}$;
+        # Value at 'dkimSigningAttributes.domainSigningPrivateKey' 
+        # failed to satisfy constraint: Member must have length greater than or equal to 1
+
+
+
+
+
+        audit_logger.info(current_user.id, 'has added an email identity (type: domain) ', verified_domain.identity_name)
         status = "success"
       rescue Aws::SESV2::Errors::ServiceError => e
         status = "[create_email_identity_domain] : error: #{e.message}"
@@ -491,19 +481,22 @@ module EmailService
         status = "[create_email_identity_domain] : exception : #{e.message}"
         Rails.logger.error " [create_email_identity_domain] : Status Code:[500] #{e.message}"
       end
+
       return status
 
     end
 
     # find a template with name or returns an empty template object
-    def find_verified_domain(identity)
+    def find_identity_name(identity)
 
+      Rails.logger.debug "\n [email_service][application_helper][find_identity_name] \n"
       @verified_domains = domains
       @verified_domain = new_verified_domain({})
       unless @verified_domains.empty?
         @verified_domains.each do |v|
           if v[:identity_name] == identity
             @verified_domain = new_verified_domain(v)
+            # Rails.logger.debug "\n **** @verified_domain.inspect #{@verified_domain.inspect} **** \n"
           end
         end
       end
@@ -518,13 +511,16 @@ module EmailService
 
     # TO_DO
     def domain_statistics_report(identity, report_start_date=Time.now, report_end_date=Time.now)
-
-      @domain_statistics_report = ses_client_v2.get_domain_statistics_report({
-        domain: identity, # required
-        start_date: report_start_date, # required
-        end_date: report_end_date, # required
-      })
-
+      begin 
+        @domain_statistics_report = ses_client_v2.get_domain_statistics_report({
+          domain: identity, # required
+          start_date: report_start_date, # required
+          end_date: report_end_date, # required
+        })
+      rescue AWS::SESV2::Errors::ServiceError => e
+        @resp = "\n[domain_statistics_report][error]: #{e.message} \n"
+        Rails.logger.error @resp
+      end
       # Statistics
       # resp.overall_volume.volume_statistics.inbox_raw_count #=> Integer
       # resp.overall_volume.volume_statistics.spam_raw_count #=> Integer
@@ -632,7 +628,7 @@ module EmailService
             end
           end
         end
-        Rails.logger.debug "[get_dkim_attributes]: DEBUG : #{found.inspect}"
+        # Rails.logger.debug "[get_dkim_attributes]: DEBUG : #{found.inspect}"
       rescue AWS::SESV2::Errors::ServiceError => e
         Rails.logger.error "[get_dkim_attributes]: ERROR : #{e.message}"
       rescue Exception => e
@@ -719,7 +715,6 @@ module EmailService
     end
 
 
-
     def configsets
       @configsets ||= list_configsets
     end
@@ -727,11 +722,6 @@ module EmailService
     def configset_names
       @configset_names ||= list_configset_names
     end
-
-
-
-    #
-    # https://docs.aws.amazon.com/sdk-for-ruby/v2/api/Aws/SES/Client.html#update_configuration_set_event_destination-instance_method
 
     #
     # PlainEmail
@@ -782,16 +772,17 @@ module EmailService
           #   topic_name: "TopicName",
           # },
         })
-        status = "success - email sent to #{plain_email.to_addr} ,#{plain_email.cc_addr}, #{plain_email.bcc_addresses_addr}"
-        Rails.logger.debug "[cronus][send_plain_email] : success - email sent to #{plain_email.to_addr},#{plain_email.cc_addr},#{plain_email.bcc_addr}"
-        audit_logger.info("[cronus][send_plain_email]", current_user.id, 'has sent email to', plain_email.to_addr,plain_email.cc_addr, plain_email.bcc_addr)
+        status = "success - email sent to #{plain_email.to_addr} "
+        Rails.logger.debug "[cronus][send_plain_email] : success - #{status}"
+        audit_logger.info("[cronus][send_plain_email] : ", current_user.id, 'has sent email to', "#{status}")
       rescue Aws::SESV2::Errors::ServiceError => e
         status = e.message
-        Rails.logger.error "[cronus][send_plain_email] : sending plain email  #{e.message}"
+        Rails.logger.error "[cronus][send_plain_email][Aws::SESV2::Errors::ServiceError] : sending plain email  #{e.message}"
       rescue StandardError => e
-        Rails.logger.error "[cronus][send_plain_email] : sending plain email  #{e.message}"
         status = e.message
+        Rails.logger.error "[cronus][send_plain_email][StandardError] : sending plain email  #{e.message}"
       end
+      Rails.logger.error "[cronus][send_plain_email] : RETURNING #{status} to controller"
       return status
 
     end
@@ -827,6 +818,37 @@ module EmailService
     end
 
 
+    # switch between EASYDKIM and BYODKIM
+    def selected_dkim_type(type)
+      if type.blank?
+        'easy_dkim'
+      else
+        type.downcase
+      end
+    end
+
+    def hide_easy_dkim(type)
+      if type.blank?
+        return true
+      else
+        return false if type.casecmp('easy_dkim').zero?
+      end
+      false
+    end
+
+    def hide_byo_dkim(type)
+      if type.blank?
+        return true
+      else
+        return false if type.casecmp('byo_dkim').zero?
+      end
+
+      true
+    end
+
+    # def dkim_types
+
+    # end
 
     #
     # TemplatedEmail
@@ -860,12 +882,13 @@ module EmailService
               value: "sample_tag_value", # required
             }
           ],
-          configuration_set_name: templated_email.configset_name,
+          # configuration_set_name: templated_email.configset_name,
           # list_management_options: {
           #   contact_list_name: "ContactListName", # required
           #   topic_name: "TopicName",
           # },
         })
+        # Rails.logger.debug "\n***** [cronus][send_templated_email] : RESPONSE : #{resp.inspect} *****\n"
         status = "success - email sent to #{templated_email.to_addr} ,#{templated_email.cc_addr}, #{templated_email.bcc_addr}"
         audit_logger.info(current_user.id, 'has sent templated email from the template', \
           templated_email.template_name,  'to', templated_email.to_addr, \
@@ -878,7 +901,7 @@ module EmailService
         Rails.logger.error "\n[cronus][send_templated_email][StandardError] : sending templated email  #{e.message}\n"
         error = e.message
       end
-      Rails.logger.debug "\n[cronus][send_templated_email][message_id] : MESSAGE_ID  (response.inspect) #{resp.inspect}\n"
+      # Rails.logger.debug "\n[cronus][send_templated_email][message_id] : MESSAGE_ID  (response.inspect) #{resp.inspect}\n"
       return resp && resp.successful? ? "success" : error
 
     end
@@ -1069,188 +1092,6 @@ module EmailService
       html_output = Nokogiri::HTML(input)
     end
 
-    # #
-    # # verifications
-    # #
-
-    # # get verified identities collection for form rendering
-    # def get_verified_identities_collection(verified_identities, identity_type)
-
-    #   verified_identities_collection = []
-    #   if identity_type == "EmailAddress" && !verified_identities.empty?
-    #     verified_identities.each do |element|
-    #       verified_identities_collection << element[:identity] \
-    #         unless element[:identity].include?('@activation.email.global.cloud.sap')
-    #     end
-    #   elsif identity_type == "Domain" && !verified_identities.empty?
-    #     verified_identities.each do |element|
-    #       verified_identities_collection << element[:identity]
-    #     end
-    #   end
-
-    #   return verified_identities_collection
-
-    # end
-
-
-
-    # #get a list of verified identities by status
-    # def get_verified_identities_by_status(identities, status)
-
-    #   result = []
-    #   identities.each do | item |
-    #     if item[:status] == status
-    #       result.push(item)
-    #     end
-    #   end
-
-    #   return result
-
-    # end
-
-    # # find an identity by name
-    # def find_verified_identity_by_name(identity, id_type)
-
-    #   id_list ||= list_verified_identities(id_type)
-    #   found = {}
-    #   id_list.each do |item|
-    #     if identity == item[:identity]
-    #       found = item
-    #     end
-    #   end
-
-    #   return found
-
-    # end
-
-    # # verify identities of the types EmailAddress and Domain
-    # def verify_identity(identity, identity_type)
-    #   @resp = Aws::SES::Types::VerifyDomainIdentityResponse.new
-    #   @status = nil
-    #   case identity_type
-    #   when "EmailAddress"
-    #     if (identity == "" || !identity || identity == nil || !identity.length.positive?) && status.nil?
-    #       @status = "#{identity_type} can't be empty"
-    #     elsif @status.nil? && !identity.length.positive?
-    #       begin
-    #         ses_client.verify_email_identity({ email_address: identity, })
-    #         audit_logger.info(current_user.id, 'has initiated to verify email identity ', identity)
-    #         @status = "success"
-    #       rescue Aws::SES::Errors::ServiceError => e
-    #         @status = "#{identity_type} verification failed. Error message: #{e.message}"
-    #       end
-    #     end
-    #     return @status
-    #   when "Domain"
-    #     if !identity.nil?
-    #       begin
-    #         @resp = ses_client.verify_domain_identity({ domain: identity, })
-    #         audit_logger.info(current_user.id, 'has initiated to verify domain identity ', identity)
-    #       rescue Aws::SES::Errors::ServiceError => e
-    #         @resp = "#{identity_type} verification failed. Error message: #{e.message}"
-    #         Rails.logger.error @resp
-    #       end
-    #     end
-    #     return @resp
-    #   end
-    # end
-
-    # # list all verified identities
-    # def list_verified_identities(id_type)
-    #   Rails.logger.info "list_verified_identities is called"
-    #   attrs = Hash.new
-    #   @verified_identities = []
-    #   Rails.logger.info "ses_client is #{ses_client}"
-
-    #   if !ses_client || ses_client.nil?
-    #     Rails.logger.error "*********** SES_client is Empty ************"
-    #     return @verified_identities
-    #   else
-    #     begin
-    #       # Get up to 1000 identities
-    #       ids = ses_client.list_identities({
-    #         identity_type: id_type
-    #       })
-    #       id = 0
-    #       ids.identities.each do |identity|
-    #         attrs = ses_client.get_identity_verification_attributes({
-    #           identities: [identity]
-    #         })
-    #         status = attrs.verification_attributes[identity].verification_status
-    #         token = attrs.verification_attributes[identity].verification_token
-    #         dkim_err, dkim_attr = get_dkim_attributes([identity])
-    #         if dkim_attr
-    #           dkim_enabled = dkim_attr[:dkim_attributes][identity][:dkim_enabled]
-    #           dkim_tokens = dkim_attr[:dkim_attributes][identity][:dkim_tokens]
-    #           dkim_verification_status = dkim_attr[:dkim_attributes][identity][:dkim_verification_status]
-    #         end
-    #         id += 1
-    #         identity_hash = {id: id, identity: identity, status: status,\
-    #         verification_token: token, dkim_enabled: dkim_enabled, \
-    #         dkim_tokens: dkim_tokens, dkim_verification_status: dkim_verification_status }
-    #         @verified_identities.push(identity_hash)
-    #       end
-    #     rescue Aws::SES::Errors::ServiceError => e
-    #       Rails.logger.error "error while listing verified identities. #{e.message}"
-    #     end
-    #     Rails.logger.info "Fetched identities are #{@verified_identities}"
-    #     return @verified_identities
-    #   end
-    # end
-
-    # # list dkim attributes
-    # def get_dkim_attributes(identities=[])
-
-    #   err = nil
-    #   dkim_attributes = {}
-
-    #   begin
-    #     dkim_attributes = ses_client.get_identity_dkim_attributes({
-    #       identities: identities,
-    #     })
-    #   rescue Aws::SES::Errors::ServiceError => e
-    #     err = "#{e.message}"
-    #     Rails.logger.error "CRONUS: DEBUG: DKIM Attributes: #{err}"
-    #   end
-
-    #   return err, dkim_attributes
-
-    # end
-
-    # def get_dkim_tokens(resp, identity)
-    #   dkim_token = resp[:dkim_attributes][identity][:dkim_tokens]
-    #   return dkim_token
-    # end
-
-    # def is_dkim_enabled(resp, identity)
-    #   dkim_enabled = resp[:dkim_attributes][identity][:dkim_enabled]
-    # end
-
-    # def get_dkim_verification_status(resp, identity)
-    #   verification_status = resp[:dkim_attributes][identity][:dkim_verification_status] if resp
-
-    #   return verification_status if verification_status
-    # end
-
-    # def start_dkim_verification(identity)
-
-    #   status = nil
-
-    #   begin
-    #     resp = ses_client.verify_domain_dkim({
-    #       domain: identity,
-    #     })
-    #     audit_logger.info(current_user.id, ' has initiated DKIM verification ', identity)
-    #     status = "success"
-    #   rescue Aws::SES::Errors::ServiceError => e
-    #     status = "#{e.message}"
-    #     Rails.logger.error "CRONUS: DEBUG: DKIM VERIFY: #{e.message}"
-    #   end
-
-    #   return status, resp
-
-    # end
-
     def toggle_dkim(identity, dkim_enabled=true)
 
       status = nil
@@ -1336,6 +1177,9 @@ module EmailService
 
     # v2
     def list_configsets(token=nil, page_size=1000)
+
+      Rails.logger.debug "\n[email_service][application_helper][list_configsets]\n"
+
       configset_hash = Hash.new
       configsets = []
       next_token = nil
@@ -1346,16 +1190,16 @@ module EmailService
           page_size: page_size
         })
 
-        Rails.logger.debug "\n *************** Array:  #{resp.inspect} \n Size: #{resp.configuration_sets.size}}********************\n"
+        # Rails.logger.debug "\n *************** Array:  #{resp.inspect} \n Size: #{resp.configuration_sets.size}}********************\n"
 
         next_token = resp.next_token
         if resp.configuration_sets.size > 0
           for index in 0 ... resp.configuration_sets.size
-            Rails.logger.debug "\n *************** LOOP INSIDE : #{resp.configuration_sets[index].inspect} ************ \n"
+            # Rails.logger.debug "\n *************** LOOP INSIDE : #{resp.configuration_sets[index].inspect} ************ \n"
             item = ses_client_v2.get_configuration_set({
               configuration_set_name: resp.configuration_sets[index],
             })
-            Rails.logger.debug "\n *************** LOOP INSIDE (ITEM) : #{item.inspect} ************ \n"
+            # Rails.logger.debug "\n *************** LOOP INSIDE (ITEM) : #{item.inspect} ************ \n"
             configset_hash = {
                 :id => index,
                 :name => item.configuration_set_name,
@@ -1393,9 +1237,10 @@ module EmailService
     # get an array of configset names up to 1000 entries
     def list_configset_names(token="")
 
+      Rails.logger.debug "\n[email_service][application_helper][list_configset_names]\n"
       configset_names = []
       configsets = list_configsets(token)
-      Rails.logger.debug "\n [application_helper][list_configset_names] : #{configsets.inspect} \n"
+      # Rails.logger.debug "\n [application_helper][list_configset_names] : #{configsets.inspect} \n"
       unless configsets.empty?
         configsets.each do | cfg |
           configset_names << cfg[:name]
@@ -1407,12 +1252,13 @@ module EmailService
     end
 
     def new_configset(attributes = {})
+      Rails.logger.debug "\n[email_service][application_helper][new_configset]\n"
       return ::EmailService::Configset.new(attributes)
     end
 
     # find existing config set
     def find_configset(name)
-
+      Rails.logger.debug "\n[email_service][application_helper][find_configset]\n"
       configsets = list_configsets
       configset = new_configset({})
       unless configsets.empty?
@@ -1611,6 +1457,7 @@ module EmailService
     ##
 
     def _nebula_request(uri, method, headers = nil, body = nil )
+      Rails.logger.debug "\n [email_service][application_helper][_nebula_request] \n"
       # Rails.logger.debug "Parsing URL: #{uri}"
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = true
@@ -1649,9 +1496,9 @@ module EmailService
     end
 
     def nebula_details
-      Rails.logger.debug "\n ---- nebula_details  ------- \n "
+      Rails.logger.debug "\n [email_service][application_helper][nebula_details] \n"
       url = URI("https://nebula.#{cronus_region}.cloud.sap/v1/aws/#{project_id}")
-      Rails.logger.debug "\nNEBULA DETAILS CALL: \n #{url} \n "
+      # Rails.logger.debug "\n URL : \n #{url} \n "
 
       headers =  nil # JSON.dump({ "sample-head1": "head1", "sample-head2": "head2" })
       body = nil # JSON.dump({ "sample-body2": "body1", "sample-body2": "body2", })
@@ -1659,7 +1506,8 @@ module EmailService
 
       begin
         status = JSON.parse(response.read_body)
-        Rails.logger.debug "\nNEBULA DETAILS CALL STATUS: \n #{status} \n "
+        Rails.logger.debug "\n [email_service][application_helper][nebula_details] \n"
+        # Rails.logger.debug "\n Json Parse STATUS: \n #{status} \n "
       rescue JSON::ParserError => e
         status = "{\"error\" => \"#{e.message}\"}"
       end
@@ -1667,9 +1515,8 @@ module EmailService
       return status
     end
 
-
-
     def nebula_status
+      Rails.logger.debug "\n [email_service][application_helper][nebula_status] \n"
       if nebula_details
         if nebula_details.is_a?(Hash)
           if nebula_details.has_key?("status")
@@ -1683,7 +1530,7 @@ module EmailService
           return JSON.parse(nebula_details).has_key?("error") ? "ERROR" : "" rescue nil
         end
       end
-      Rails.logger.debug "\nNEBULA DETAILS CALL STATUS: \n #{status} \n "
+      Rails.logger.debug "\n [email_service][application_helper][nebula_status] STATUS: \n #{status} \n"
       return status ? status : nil
       # {"production"=>true, "status"=>"GRANTED", "security_attributes"=>"security officer David Halimi (I349172), environment DEV, valid until 2022-11-22", "compliant"=>true}
       # debugger
@@ -1691,12 +1538,15 @@ module EmailService
 
     # check if cronus service is enabled for the project
     def nebula_active?
-      Rails.logger.debug "\n ******** NEBULA ACTIVE? Details :  \n #{nebula_details.inspect}"
+
+      Rails.logger.debug "\n [email_service][application_helper][nebula_active?] \n"
       @nebula_active ||= nebula_details && nebula_details["status"] == "GRANTED" ? true : false
-      # false
+
     end
 
     def get_nebula_uri(provider = nil, custom_url = nil)
+      Rails.logger.debug "\n [email_service][application_helper][get_nebula_uri] \n"
+      Rails.logger.debug "\n [email_service][application_helper][get_nebula_uri][:call][nebula_endpoint_url]  #{nebula_endpoint_url.inspect} \n" 
       unless custom_url == nil
         @nebula_url ||= URI("#{custom_url}/v1/#{provider}/#{project_id}")
       else
@@ -1707,6 +1557,7 @@ module EmailService
     end
 
     def nebula_activate(multicloud_account = nil)
+      Rails.logger.debug "\n [email_service][application_helper][nebula_activate] \n"
       return "nebula details are invalid " if multicloud_account.nil?
       # multicloud_account.account_env
       # multicloud_account.identity
@@ -1738,6 +1589,7 @@ module EmailService
     end
 
     def nebula_available?(uri)
+      Rails.logger.debug "\n [email_service][application_helper][nebula_available?] \n"
       require "resolv"
       dns_resolver = Resolv::DNS.new()
       begin
@@ -1749,6 +1601,7 @@ module EmailService
     end
 
     def nebula_deactivate(multicloud_account = nil)
+      Rails.logger.debug "\n [email_service][application_helper][nebula_deactivate] \n"
       url = get_nebula_uri("aws", custom_endpoint_url)
       response = _nebula_request(url, "DELETE", nil, nil)
       if response.code.to_i < 300
@@ -1758,34 +1611,6 @@ module EmailService
       end
       return status
     end
-
-
-    # --- OLDER VERSION -- TEMPORARY BACKWARD COMPATIBILITY ---- STARTS #
-    def ses_client
-      # calling_function
-      Rails.logger.debug "\n **** SES_CLIENT: CALLED **** \n"
-      @region ||= map_region(@cronus_region)
-      @endpoint ||= service_url
-
-      Rails.logger.debug "\n **** EC2_ACCESS: #{ec2_creds.access} **** \n"
-      Rails.logger.debug "\n **** EC2_SECRET: #{ec2_creds.secret} **** \n"
-
-      unless !ec2_creds || ec2_creds.nil?
-        begin
-          @credentials ||= Aws::Credentials.new(ec2_creds.access, ec2_creds.secret)
-          @ses_client ||= Aws::SES::Client.new(region: @region, endpoint: @endpoint, credentials: @credentials)
-        rescue Aws::SES::Errors::ServiceError => e
-          Rails.logger.error e.message
-          return e.message
-        end
-      end
-
-      @ses_client ? @ses_client : nil
-
-    end
-
-
-     # --- OLDER VERSION -- TEMPORARY BACKWARD COMPATIBILITY ENDS ---- #
 
  end
 end

@@ -1,17 +1,16 @@
 - is_edit_form = form_type == 'edit' ? true : false
+- domain_name_hint = is_edit_form ? "cannot edit domain name. delete and create another domain if name is to be changed." : "enter name" 
+- domain_signing_selector_hint = "A string that's used to identify a public key in the DNS configuration for a domain."
+- next_signing_key_length_hint = "The key length of the future DKIM key pair to be generated."
+- domain_signing_private_key_hint = "A private key that's used to generate a DKIM signature."
 
-- domain_name_hint = form_type == 'edit' ? "enter name" : "cannot edit domain name. delete and create another domain if name is to be changed."
-
-= f.input :domain, required: true, icon_hint: domain_name_hint
-
-= f.input :dkim_enabled,  as: :boolean, input_html: {}, checked_value: true, unchecked_value: false, label: "Enable DKIM"
-
-#-= f.input :tags, as: :text, input_html: {}, label: "Tags"
-
-= f.input :domain_signing_selector, input_html: {}, label: "Domain Signing Selector"
-
-= f.input :domain_signing_private_key, as: :text, input_html: {}, label: "Domain Signing Private Key"
-
-= f.input :next_signing_key_length, label: "Next Signing Key Length", input_html: {}, as: :select, collection: @rsa_key_length
+= f.input :identity_name, required: true, icon_hint: domain_name_hint
+= f.input :dkim_type,  as: :select, input_html: {}, collection: @dkim_types, label: "DKIM type"
+-# = f.input :dkim_enabled,  as: :boolean, input_html: {}, checked_value: true, unchecked_value: false, label: "Enable DKIM"
+-# = f.input :tags, as: :text, input_html: {}, label: "Tags"
+-# = f.input :domain_signing_selector, input_html: {}, label: "Domain Signing Selector (Public key identifier)", hint: domain_signing_selector_hint
+-# = f.input :domain_signing_private_key, as: :text, input_html: {}, label: "Domain Signing Private Key", hint: domain_signing_private_key_hint
 
 = f.input :configuration_set_name, label: "Configset Name", input_html: {}, as: :select, collection: configset_names
+
+

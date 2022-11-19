@@ -7,14 +7,21 @@ module EmailService
     authorization_context 'email_service'
     authorization_required
 
+    
+    
+    
+    flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_update_error')} #{e.message}"
+    
+
+
     def index
       # ids = list_email_identity_details
       items_per_page = 10
       @paginatable_emails = Kaminari.paginate_array(email_addresses, total_count: email_addresses.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_list_error')} #{e.message}"
       rescue Exception => e
-        flash[:error] = "Status Code: 500 : Error: #{e.message}"
+        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_list_error')} #{e.message}"
     end
 
     def new
@@ -26,6 +33,7 @@ module EmailService
 
 
     def create
+
       identity_values = @verified_email.process(EmailService::VerifiedEmail)
       msg = ""
       if !@verified_email.valid?
@@ -38,9 +46,15 @@ module EmailService
         flash[:warning] = msg
         redirect_to plugin('email_service').email_verifications_path and return
       end
+      rescue Elektron::Errors::ApiResponse => e
+        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_create_error')} #{e.message}"
+      rescue Exception => e
+        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_create_error')} #{e.message}"
+        
     end
 
     def destroy
+      
       identity = params[:identity] unless params[:identity].nil?
       status = delete_email_identity(identity)
       if status == "success"
@@ -51,13 +65,18 @@ module EmailService
         flash[:error] = msg
       end
       redirect_to plugin('email_service').email_verifications_path
+      rescue Elektron::Errors::ApiResponse => e
+        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_delete_error')} #{e.message}"
+      rescue Exception => e
+        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_delete_error')} #{e.message}"
+
     end
 
 
     def process_email_verification(identity_values)
 
-      Rails.logger.debug "\n ************** PROCESS EMAIL VERIFICATION #{identity_values} **************\n"
-      Rails.logger.debug "\n ************** PROCESS EMAIL VERIFICATION #{identity_values.inspect} **************\n"
+      # Rails.logger.debug "\n ************** PROCESS EMAIL VERIFICATION #{identity_values} **************\n"
+      # Rails.logger.debug "\n ************** PROCESS EMAIL VERIFICATION #{identity_values.inspect} **************\n"
       identities = []
       if identity_values['identity'].length.positive?
         identity_values['identity'].each do | id |
