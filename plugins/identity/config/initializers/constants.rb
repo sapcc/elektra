@@ -54,5 +54,4 @@ BLACKLISTED_ROLES = %w[
   resource_service
   cloud_objectstore_admin
   cloud_objectstore_viewer
-  swiftreseller
 ].freeze
