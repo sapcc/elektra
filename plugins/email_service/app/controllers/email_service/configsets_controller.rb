@@ -14,10 +14,13 @@ module EmailService
       items_per_page = 10
       @paginatable_configsets = Kaminari.paginate_array(configsets, total_count: configsets.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.configset_list_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.configset_list_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.configset_list_error')} #{e.message}"
-
+        error = "#{I18n.t('email_service.errors.configset_list_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
     end
 
     def new; end
@@ -38,9 +41,13 @@ module EmailService
         end
       end
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.configset_create_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.configset_create_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.configset_create_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.configset_create_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       redirect_to plugin('email_service').configsets_path
     end
 
@@ -51,9 +58,13 @@ module EmailService
       @configset_description = describe_configset(@name)
       render "show", locals: { data: { modal: true } }
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.configset_show_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.configset_show_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.configset_show_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.configset_show_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
     
     end
 
@@ -72,9 +83,13 @@ module EmailService
       end
       redirect_to plugin('email_service').configsets_path and return
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.configset_delete_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.configset_delete_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.configset_delete_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.configset_delete_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
 
     end
 
@@ -86,9 +101,13 @@ module EmailService
       # # Add code to modify with other props here.
       # redirect_to plugin('email_service').configsets_path
       # rescue Elektron::Errors::ApiResponse => e
-      #   flash.now[:error] = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
+      #   error = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
+      #   Rails.logger.error error
+      #   flash[:error] = error
       # rescue Exception => e
-      #   flash.now[:error] = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
+      #   error = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
+      #   Rails.logger.error error
+      #   flash[:error] = error
 
     end
 

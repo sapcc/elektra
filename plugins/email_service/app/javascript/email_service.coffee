@@ -107,7 +107,15 @@ loadSampleToAddress=(event) ->
     console.log "fake2@example.com is loaded"
     console.log "fake1@example.com is populated"
 
-
+# switch DKIM type
+switch_dkim_type=(event) ->
+  value = event.target.value
+  if value == 'byo_dkim'
+    $('#byo_dkim').removeClass('hide')
+    $('#easy_dkim').addClass('hide')
+  else if value == 'easy_dkim'
+    $('#easy_dkim').removeClass('hide')
+    $('#byo_dkim').addClass('hide')
 
 # verify identity
 verify_identity = 'input[id="verified_email_identity"]'
@@ -136,6 +144,9 @@ $(document).on 'modal:contentUpdated', () ->
   $(document).on 'change click', 'input[id="verified_email_identity"]', validate_identity
   # console.log "inside model content updated"
 
+  # create_email_identity_domain
+  # handler to switch source type between email and domain
+  $(document).on 'change','select[data-toggle="dkimTypeSwitch"]', switch_dkim_type
 
 
 $(

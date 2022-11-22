@@ -59,7 +59,7 @@ module EmailService
         messages = plain_email.errors.blank? ? {} : plain_email.errors
         assign_errors(messages)
       end
-      puts "\n **** PLAIN EMAIL FORM (:process) : plain_email.inspect : #{plain_email.inspect} \n"
+      
       plain_email
     end
 

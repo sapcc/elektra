@@ -3,6 +3,11 @@ en:
     messages:
       configset_removed_successfully: 'Configset %{name} removed successfully.'
       domain_verification_initiated: 'Domain verification is initiated'
+      multicloud_accoount_created: 'Multicloud account created successfully.'
+      multicloud_accoount_removed: 'Multicloud account removed successfully.'
+      plain_email_sent: 'Plain email sent successfully.'
+      templated_email_sent: 'Templated email sent successfully.'
+      raw_email_sent: 'Raw email sent successfully.'
     help_hint:
       template_name: "template name should not contain space"
       configset_name: "configset name should not contain space"
@@ -46,3 +51,5 @@ en:
       template_show_error: "Template show failed."
       template_update_error: "Template update failed."
       template_delete_error: "Template delete failed."
+      multicloud_account_create: "MultiCloud account create failed"
+      multicloud_account_delete: "MultiCloud account delete failed"

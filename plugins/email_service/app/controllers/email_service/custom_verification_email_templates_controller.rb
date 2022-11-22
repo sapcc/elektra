@@ -9,8 +9,6 @@ module EmailService
     authorization_context 'email_service'
     authorization_required
 
-    flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_delete_error')} #{e.message}"
-
     def index
 
       @custom_templates = custom_templates
@@ -20,17 +18,26 @@ module EmailService
         @paginatable_templates =  Kaminari.paginate_array(@custom_templates, total_count: @custom_templates.count).page(params[:page]).per(items_per_page)
       end
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_list_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.custom_email_verification_list_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_list_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.custom_email_verification_list_error')} #{e.message}"    
+        Rails.logger.error error
+        flash[:error] = error
+
     end
 
     def show
       render "show", locals: { data: { modal: true } }
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_show_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.custom_email_verification_show_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_show_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.custom_email_verification_show_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
     end
 
     def new
@@ -58,11 +65,17 @@ module EmailService
         end
         redirect_to plugin('email_service').custom_verification_email_templates_path
         rescue Elektron::Errors::ApiResponse => e
-          flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_create_error')} #{e.message}"
+          error = "#{I18n.t('email_service.errors.custom_email_verification_create_error')} #{e.message}"
+          Rails.logger.error error
+          flash[:error] = error
         rescue Aws::SES::Errors::LimitExceeded => e
-          flash.now[:error] = "#{I18n.t('email_service.errors.endcustom_email_verification_limit_error')} #{e.message}"
+          error = "#{I18n.t('email_service.errors.endcustom_email_verification_limit_error')} #{e.message}"
+          Rails.logger.error error
+          flash[:error] = error
         rescue Exception => e
-          flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_create_error')} #{e.message}"
+          error = "#{I18n.t('email_service.errors.custom_email_verification_create_error')} #{e.message}"
+          Rails.logger.error error
+          flash[:error] = error
         end
      end
     def show
@@ -82,7 +95,9 @@ module EmailService
         flash[:success] = "eMail custom_template [#{@custom_template.template_name}] is updated"
         redirect_to plugin('email_service').custom_verification_email_templates_path and return
       else
-        flash.now[:error] = "#{I18n.t('email_service.errors.custom_email_verification_update_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.custom_email_verification_update_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
         render 'edit', data: {modal: true}
       end
     end
@@ -93,7 +108,9 @@ module EmailService
       if status == "success"
         flash[:success] = "Custom verification template #{params[:template_name]} is deleted."
       else
-        flash[:warning] = "Unable to delete custom_template [#{params[:template_name]}] : #{status} "
+        error = "Unable to delete custom_template [#{params[:template_name]}] : #{status} "
+        Rails.logger.error error
+        flash[:error] = error
       end
       redirect_to plugin('email_service').custom_verification_email_templates_path
     end

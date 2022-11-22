@@ -9,6 +9,8 @@ module EmailService
     authorization_context 'email_service'
     authorization_required
 
+    PLAIN_EMAIL_SENT = "#{I18n.t('email_service.messages.plain_email_sent')}"
+
     def new
       @source_types = ::EmailService::Email.source_types
     end
@@ -43,17 +45,23 @@ module EmailService
           Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][STATUS]\n : #{status}"
           if status.include?("success")
             Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][@plain_email.valid?]"
-            flash[:success] = status
+            # flash[:success] = status
+            flash[:success] = PLAIN_EMAIL_SENT
             redirect_to plugin('email_service').emails_path and return
           else
             Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][@plain_email.valid?] : STATUS : #{status} \n"
+            Rails.logger.error status
             flash[:error] = status
             render "edit", locals: {data: {modal: true} } and return
           end
         rescue Elektron::Errors::ApiResponse => e
-          flash.now[:error] = "#{I18n.t('email_service.errors.plain_email_send_error')} #{e.message}"
+          error = "#{I18n.t('email_service.errors.plain_email_send_error')} #{e.message}"
+          Rails.logger.error error
+          flash[:error] = error
         rescue Exception => e
-          flash.now[:error] = "#{I18n.t('email_service.errors.plain_email_send_error')} #{e.message}"
+          error = "#{I18n.t('email_service.errors.plain_email_send_error')} #{e.message}"
+          Rails.logger.error error
+          flash[:error] = error
         end
       else
         render "edit", locals: {data: {modal: true} } and return

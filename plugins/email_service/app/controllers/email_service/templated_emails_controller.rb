@@ -8,6 +8,9 @@ module EmailService
 
     authorization_context 'email_service'
     authorization_required
+
+    TEMPLATED_EMAIL_SENT = "#{I18n.t('email_service.messages.templated_email_sent')}"
+    # RAW_EMAIL_SENT = "#{I18n.t('email_service.messages.raw_email_sent')}"
     
     def new
       @source_types = ::EmailService::Email.source_types
@@ -33,27 +36,42 @@ module EmailService
         @templated_email.return_path = @templated_email.source
       end
 
+      if @templated_email.tags.empty?
+        @templated_email.tags = [
+          {
+            name: "name1", # required
+            value: "value1", # required
+          }
+        ]
+      end
+
       templated_email_values = @templated_email.process(EmailService::TemplatedEmail)
 
-
-      Rails.logger.debug "\n===================================================\n"
-      Rails.logger.debug "\n [TemplatedEmailsController][create] \n"
+      # Rails.logger.debug "\n===================================================\n"
+      # Rails.logger.debug "\n [TemplatedEmailsController][create] \n"
       # Rails.logger.debug "\n @templated_email.inspect : #{@templated_email.inspect} \n"
-      Rails.logger.debug "\n===================================================\n"
+      # Rails.logger.debug "\n===================================================\n"
 
       if @templated_email.valid?
         begin
           status = send_templated_email(templated_email_values)
           if status == "success"
-            flash[:success] = "eMail sent successfully"
+            flash[:success] = TEMPLATED_EMAIL_SENT
             redirect_to plugin('email_service').emails_path and return
           end
         rescue Elektron::Errors::ApiResponse => e
-          flash.now[:error] = "#{I18n.t('email_service.errors.templated_email_send_error')} #{e.message}"
+          error = "#{I18n.t('email_service.errors.templated_email_send_error')} #{e.message}"
+          Rails.logger.error error
+          flash[:error] = error
         rescue Exception => e
-          flash.now[:error] = "#{I18n.t('email_service.errors.templated_email_send_error')} #{e.message}"
+          error = "#{I18n.t('email_service.errors.templated_email_send_error')} #{e.message}"
+          Rails.logger.error error
+          flash[:error] = error
         end
       else
+        # error = @templated_email.errors
+        # Rails.logger.error error
+        # flash[:error] = error
         render "edit", locals: {data: {modal: true} } and return
       end
       redirect_to plugin('email_service').emails_path
@@ -72,7 +90,7 @@ module EmailService
 
     def templated_email_params
       if params.include?(:templated_email)
-        return params.require(:templated_email).permit(:source, :source_domain, :source_domain_name_part, :source_email, :source_type, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :return_path, :template_name, :template_data, :configset_name)
+        return params.require(:templated_email).permit(:source, :source_domain, :source_domain_name_part, :source_email, :source_type, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :return_path, :template_name, :template_data, :configset_name, :tags)
       else
         return {}
       end

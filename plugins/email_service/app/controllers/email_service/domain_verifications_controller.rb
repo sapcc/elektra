@@ -8,28 +8,32 @@ module EmailService
     authorization_context 'email_service'
     authorization_required
 
-    DOMIAN_VERIFICATION_INITIATED = "#{I18n.t('email_service.errors.domain_verification_initiated')}"
+    DOMIAN_VERIFICATION_INITIATED = "#{I18n.t('email_service.messages.domain_verification_initiated')}"
     
     def index
-      Rails.logger.debug "\n[email_service][domain_verifications_controller][index]\n"
-      # Rails.logger.debug "\n ============= domains.inspect : #{domains.inspect}\n"
+      # Rails.logger.debug "\n[email_service][domain_verifications_controller][index]\n"
+      # # Rails.logger.debug "\n ============= domains.inspect : #{domains.inspect}\n"
 
       items_per_page = 10
       @paginatable_domains = Kaminari.paginate_array(domains, total_count: domains.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_list_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.domain_verification_list_error')} #{e.message}"
+        Rails.logger.debug error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_list_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.domain_verification_list_error')} #{e.message}"
+        Rails.logger.debug error
+        flash[:error] = error
     end
 
     def new
-      Rails.logger.debug "\n[email_service][domain_verifications_controller][new]\n"
-      Rails.logger.debug "\n@verified_domain.inspect #{@verified_domain.inspect} \n"
+      # Rails.logger.debug "\n[email_service][domain_verifications_controller][new]\n"
+      # Rails.logger.debug "\n@verified_domain.inspect #{@verified_domain.inspect} \n"
       @dkim_types = ::EmailService::VerifiedDomain.dkim_types
       @rsa_key_length = ::EmailService::VerifiedDomain.key_length
       @configsets_collection = configset_names
-      Rails.logger.debug "\n ============= rsa_key_length : #{@rsa_key_length.inspect}\n"
-      Rails.logger.debug "\n ============= configsets_collection : #{@configsets_collection.inspect}\n"
+      # Rails.logger.debug "\n ============= rsa_key_length : #{@rsa_key_length.inspect}\n"
+      # Rails.logger.debug "\n ============= configsets_collection : #{@configsets_collection.inspect}\n"
     end
 
     def create
@@ -37,14 +41,14 @@ module EmailService
       @dkim_types = ::EmailService::VerifiedDomain.dkim_types
       @rsa_key_length = ::EmailService::VerifiedDomain.key_length
       
-      Rails.logger.debug "\n[email_service][domain_verifications_controller][create]\n"
+      # Rails.logger.debug "\n[email_service][domain_verifications_controller][create]\n"
       begin
         # domain_verification_params
         @verified_domain = domain_verification_form(domain_verification_params)
 
-        Rails.logger.debug "\n ************ domain_verification_params.inspect #{domain_verification_params.inspect} ************ \n "
-        Rails.logger.debug "\n ************ @verified_domain.inspect #{ @verified_domain.inspect } ************ \n "
-        Rails.logger.debug "\n ************ @verified_domain.valid? #{ @verified_domain.valid? } ************ \n "
+        # Rails.logger.debug "\n ************ domain_verification_params.inspect #{domain_verification_params.inspect} ************ \n "
+        # Rails.logger.debug "\n ************ @verified_domain.inspect #{ @verified_domain.inspect } ************ \n "
+        # Rails.logger.debug "\n ************ @verified_domain.valid? #{ @verified_domain.valid? } ************ \n "
         # # https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/SESV2/Types/DkimSigningAttributes.html
 
         # # TODO tags
@@ -56,7 +60,7 @@ module EmailService
 
         if @verified_domain.valid?
           msg = process_domain_verification(@verified_domain)
-          Rails.logger.debug "\n ****** domain_verification_values.inspect #{@verified_domain.inspect} \n @verified_domain.nil? : STATUS MESSAGE : #{msg} ************ \n"
+          # Rails.logger.debug "\n ****** domain_verification_values.inspect #{@verified_domain.inspect} \n @verified_domain.nil? : STATUS MESSAGE : #{msg} ************ \n"
           if msg == "success"
             flash[:info] = DOMIAN_VERIFICATION_INITIATED
           end
@@ -65,48 +69,56 @@ module EmailService
           render :new and return
         end
         rescue Elektron::Errors::ApiResponse => e
-          Rails.logger.error e.message
-          flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_create_error')} #{e.message}"
+          error = "#{I18n.t('email_service.errors.domain_verification_create_error')} #{e.message}"
+          Rails.logger.error error
+          flash[:error] = error
         rescue Exception => e
-          Rails.logger.error e.message
-          flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_create_error')} #{e.message}"
+          error = "#{I18n.t('email_service.errors.domain_verification_create_error')} #{e.message}"
+          Rails.logger.error error
+          flash[:error] = error
         redirect_to plugin('email_service').domain_verifications_path
       end
 
     end
 
     def show
-      Rails.logger.debug "\n[email_service][domain_verifications_controller][show]\n"
+      # Rails.logger.debug "\n[email_service][domain_verifications_controller][show]\n"
       begin
         @verified_identity = find_verified_identity_by_name(params[:identity_name], "DOMAIN")
-        Rails.logger.debug "\n [DomainVerificationsController][find_verified_identity_by_name]:[params.inspect: \n [#{params.inspect}] \n"
-        Rails.logger.debug "\n [DomainVerificationsController][find_verified_identity_by_name]:[@verified_identity.inspect] \n [#{@verified_identity.inspect}] \n"
+        # Rails.logger.debug "\n [DomainVerificationsController][find_verified_identity_by_name]:[params.inspect: \n [#{params.inspect}] \n"
+        # Rails.logger.debug "\n [DomainVerificationsController][find_verified_identity_by_name]:[@verified_identity.inspect] \n [#{@verified_identity.inspect}] \n"
       rescue Elektron::Errors::ApiResponse => e
-        Rails.logger.error e.message
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_show_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.domain_verification_show_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        Rails.logger.error e.message
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_show_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.domain_verification_show_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       end
     end
 
     def destroy
       identity = params[:identity_name] unless params[:identity_name].nil?
-      status = delete_email_identity(domain)
+      status = delete_email_identity(identity)
       if status == "success"
-        msg = "The identity #{domain} is removed"
+        msg = "The identity #{identity} is removed"
         flash[:success] = msg
         redirect_to plugin('email_service').domain_verifications_path and return
       else
-        msg = "Identity #{domain} removal failed : #{status}"
+        msg = "Identity #{identity} removal failed : #{status}"
         flash[:error] = msg
+        redirect_to plugin('email_service').domain_verifications_path and return
       end
+
       rescue Elektron::Errors::ApiResponse => e
-        Rails.logger.error e.message
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_delete_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.domain_verification_delete_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        Rails.logger.error e.message
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_delete_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.domain_verification_delete_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       redirect_to plugin('email_service').domain_verifications_path
     end
 
@@ -130,41 +142,41 @@ module EmailService
       @dkim_enabled = is_dkim_enabled(dkim_attributes, domain)
       Rails.logger.info  "@dkim_enabled : #{@dkim_enabled} "
       if @dkim_enabled == false
-        st = toggle_dkim(domain, true)
+        st = toggle_dkim(identity, true)
       end
-      flash[:success] = "DKIM for #{domain} is activated"
-      Rails.logger.debug   "DKIM for #{domain} is activated"
+      flash[:success] = "DKIM for #{identity} is activated"
+      # Rails.logger.debug  "DKIM for #{identity} is activated"
       redirect_to plugin('email_service').domain_verifications_path and return
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_enable_dkim_error')} #{e.message}"
+        flash[:error] = "#{I18n.t('email_service.errors.domain_verification_enable_dkim_error')} #{e.message}"
         Rails.logger.error  "#{I18n.t('email_service.errors.domain_verification_enable_dkim_error')} #{e.message}"
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_enable_dkim_error')} #{e.message}"
+        flash[:error] = "#{I18n.t('email_service.errors.domain_verification_enable_dkim_error')} #{e.message}"
         Rails.logger.error "#{I18n.t('email_service.errors.domain_verification_enable_dkim_error')} #{e.message}"
     end
 
     def deactivate_dkim
 
-      Rails.logger.debug "\n ==========================================================================\n"
-      Rails.logger.debug "\n ======[deactivate_dkim]=======PARAMS : #{params.inspect}=============================\n"
-      Rails.logger.debug "\n ==========================================================================\n"
+      # Rails.logger.debug "\n ==========================================================================\n"
+      # Rails.logger.debug "\n ======[deactivate_dkim]=======PARAMS : #{params.inspect}=============================\n"
+      # Rails.logger.debug "\n ==========================================================================\n"
 
-      domain = params[:identity_name]
+      identity = params[:identity_name]
       begin
-        sending_enabled, dkim_attributes = get_dkim_attributes(domain)
+        sending_enabled, dkim_attributes = get_dkim_attributes(identity)
         if dkim_status
-          toggle_dkim(domain, false)
+          toggle_dkim(identity, false)
           # @dkim_enabled = is_dkim_enabled(dkim_attributes, domain)
         end
         # if @dkim_enabled
         #   toggle_dkim(domain, false)
         # end
-        flash[:success] = "DKIM for #{domain} is deactivated"
+        flash[:success] = "DKIM for #{identity} is deactivated"
 
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_disable_dkim_error')} #{e.message}"
+        flash[:error] = "#{I18n.t('email_service.errors.domain_verification_disable_dkim_error')} #{e.message}"
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.domain_verification_disable_dkim_error')} #{e.message}"
+        flash[:error] = "#{I18n.t('email_service.errors.domain_verification_disable_dkim_error')} #{e.message}"
       end
       redirect_to plugin('email_service').domain_verifications_path and return
     end
@@ -172,7 +184,7 @@ module EmailService
 
     def process_domain_verification(verified_domain)
 
-      Rails.logger.debug "\n[email_service][domain_verifications_controller][process_domain_verification]\n"
+      # Rails.logger.debug "\n[email_service][domain_verifications_controller][process_domain_verification]\n"
       status = nil
       status = create_email_identity_domain(verified_domain)
       return status
@@ -182,9 +194,9 @@ module EmailService
     private
 
       def domain_verification_form(attributes={})
-        Rails.logger.debug "\n[email_service][domain_verifications_controller][domain_verification_form]\n"
+        # Rails.logger.debug "\n[email_service][domain_verifications_controller][domain_verification_form]\n"
         verified_domain = EmailService::VerifiedDomain.new(attributes)
-        Rails.logger.debug "\n verified_domain.inspect : \n  #{verified_domain.inspect} \n"
+        # Rails.logger.debug "\n verified_domain.inspect : \n  #{verified_domain.inspect} \n"
         return verified_domain
       end
 
@@ -194,7 +206,7 @@ module EmailService
 
       def domain_verification_params
         if params.include?(:verified_domain)
-          return params.require(:verified_domain).permit(:identity_name, :tags, :domain_signing_private_key, :domain_signing_selector, :next_signing_key_length, :configuration_set_name)
+          return params.require(:verified_domain).permit(:identity_name, :dkim_type, :tags, :domain_signing_private_key, :domain_signing_selector, :next_signing_key_length, :configuration_set_name)
         else
           {}
         end

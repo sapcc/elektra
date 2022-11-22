@@ -1,11 +1,7 @@
 = content_for :title do
   Identity details
-Verified Identity
 .modal-body.static-columns
   .modal-section.first
-    %h3
-      Details
-
     - if @verified_domain
       %table.table
         %tr
@@ -89,12 +85,13 @@ Verified Identity
             %strong tags:
           %td
             =@verified_domain[:tags].inspect
-        %tr
-          %td
-            %strong configuration_set_name:
-          %td
-            =@verified_domain[:configuration_set_name].inspect
-        %hr
+        - if @verified_domain[:configuration_set_name]
+          %tr
+            %td
+              %strong configuration_set_name:
+            %td
+              =@verified_domain[:configuration_set_name]
+          %hr
         -#
           %tr
             %td
@@ -124,7 +121,7 @@ Verified Identity
             %td
               =@verified_domain.dkim_verification_status
 
-%hr
+-# %hr
 -# if @verified_domain[:dkim_tokens]
   Create the following CNAME DNS records.
   %table.table.table-striped

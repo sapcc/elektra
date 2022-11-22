@@ -16,7 +16,9 @@ module EmailService
       if @ec2_creds.access && @ec2_creds.secret
         flash[:info] = "ec2 credentials are created"
       else
-        flash.now[:error] = "#{I18n.t('email_service.errors.ec2_credentials_create_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.ec2_credentials_create_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       end
 
       redirect_to ec2_credentials_path
@@ -31,7 +33,9 @@ module EmailService
         delete_credentials(@ec2_creds.access)
         flash.now[:info] = "ec2 credentials are deleted"
       else
-        flash.now[:error] = "#{I18n.t('email_service.errors.ec2_credentials_delete_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.ec2_credentials_delete_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       end
 
       redirect_to ec2_credentials_path

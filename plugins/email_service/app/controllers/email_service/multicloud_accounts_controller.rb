@@ -9,6 +9,9 @@ module EmailService
     authorization_context 'email_service'
     authorization_required
 
+    MULTICLOUD_ACCOUNT_CREATED = "#{I18n.t('email_service.messages.multicloud_accoount_created')}"
+    MULTICLOUD_ACCOUNT_DELETED = "#{I18n.t('email_service.messages.multicloud_accoount_removed')}"
+
     def index
       @nebula_status = nebula_status
     end
@@ -25,7 +28,7 @@ module EmailService
       if @multicloud_account.valid?
         status = nebula_activate(multicloud_account_values)
         if status == "success"
-          flash[:success] = "Cronus is enabled for your project"
+          flash[:success] = MULTICLOUD_ACCOUNT_CREATED
           redirect_to plugin('email_service').emails_path and return
         else
           flash.now[:error] = status
@@ -35,7 +38,9 @@ module EmailService
         render "new", locals: {data: {modal: true} } and return
       end
       rescue Elektron::Errors::ApiResponse => e
-        flash[:error] = "Status Code: #{e.code} : Error: #{e.message}"
+        error = "#{I18n.t('email_service.errors.multicloud_account_create')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
         flash[:error] = "Status Code: 500 : Error: #{e.message}"
       redirect_to plugin('email_service').emails_path
@@ -47,9 +52,11 @@ module EmailService
       status = nebula_deactivate(@multicloud_account)
       # @nebula_status : returns error 	failed to get a Nebula account status: account is marked as terminated
       if status == "success"
-        flash[:success] = "Cronus is disabled for your project"
+        flash[:success] = MULTICLOUD_ACCOUNT_DELETED
       else
-        flash[:error] = status
+        error = "#{I18n.t('email_service.errors.multicloud_account_delete')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       end
       redirect_to plugin('email_service').settings_url
     end

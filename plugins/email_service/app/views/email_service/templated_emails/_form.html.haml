@@ -10,6 +10,8 @@
 
 - return_path_hint = "The email address that bounces and complaints will be forwarded to when feedback forwarding is enabled. If the message cannot be delivered to the recipient, then an error message will be returned from the recipient's ISP; this message will then be forwarded to the email address specified by the ReturnPath parameter."
 
+- tags_hint = "key value pair as an array eg., [{\"name\": \"NAME1\", \"value\": \"VALUE1\"}, {\"name\": \"NAME2\", \"value\": \"VALUE2\"}]"
+
 - template_name_hint = "The template to use when sending this email."
 
 - template_data_hint = "A list of replacement values to apply to the template. This parameter is a JSON object, typically consisting of key-value pairs in which the keys correspond to replacement tags in the email template."
@@ -45,6 +47,8 @@
 = f.input :bcc_addr, required: false, label: 'Bcc address(es)', placeholder: 'Enter Bcc Addresses', input_html: { rows: "10", class: "u-text-monospace" }, icon_hint: bcc_addr_hint
 
 = f.input :reply_to_addr, required: false, label: 'Reply To', placeholder: 'Enter Reply-To Address', input_html: {rows: "5", class: "u-text-monospace"}, as: :text, icon_hint: reply_to_addr_hint
+
+= f.input :tags, required: false, as: :hidden, label: "Tags", icon_hint: tags_hint, input_html: { value: "[ {name: 'name1', value: 'value1', } ]" }
 
 = f.input :return_path, required: false, label: 'Return Path', placeholder: 'Enter Return-Path Address', icon_hint: return_path_hint
 

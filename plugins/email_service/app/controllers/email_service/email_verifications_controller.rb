@@ -7,21 +7,18 @@ module EmailService
     authorization_context 'email_service'
     authorization_required
 
-    
-    
-    
-    flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_update_error')} #{e.message}"
-    
-
-
     def index
       # ids = list_email_identity_details
       items_per_page = 10
       @paginatable_emails = Kaminari.paginate_array(email_addresses, total_count: email_addresses.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_list_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.email_verification_list_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_list_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.email_verification_list_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
     end
 
     def new
@@ -47,9 +44,13 @@ module EmailService
         redirect_to plugin('email_service').email_verifications_path and return
       end
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_create_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.email_verification_create_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_create_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.email_verification_create_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
         
     end
 
@@ -66,9 +67,13 @@ module EmailService
       end
       redirect_to plugin('email_service').email_verifications_path
       rescue Elektron::Errors::ApiResponse => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_delete_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.email_verification_delete_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       rescue Exception => e
-        flash.now[:error] = "#{I18n.t('email_service.errors.email_verification_delete_error')} #{e.message}"
+        error = "#{I18n.t('email_service.errors.email_verification_delete_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
 
     end
 
