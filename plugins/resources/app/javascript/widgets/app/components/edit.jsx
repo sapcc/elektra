@@ -59,14 +59,26 @@ export default class EditModal extends React.Component {
       inputs[res.name] = {
         value: res.quota,
         text: unit.format(res.quota, { ascii: true }),
+        readonlyReason: '',
       };
       hasResource[res.name] = true;
     }
+    const scope = new Scope(this.props.scopeData);
     for (let res of resourcesWithQuota) {
       //can only use scaling relations between resources in the same service+category
       if (res.scales_with && res.scales_with.service_type == props.category.serviceType) {
         if (hasResource[res.scales_with.resource_name]) {
           inputs[res.name].isFollowing = true;
+        }
+      }
+      //disable editing for CQD resources if the respective permission is not given
+      if (res.quota_distribution_model === 'centralized') {
+        if (scope.isProject() && !props.canEditCQD) {
+          //project quota can only be edited with the canEditCQD permission
+          inputs[res.name].readonlyReason = 'cqd';
+        } else if (scope.isDomain()) {
+          //domain quota cannot be edited at all
+          inputs[res.name].readonlyReason = 'cqd';
         }
       }
     }
@@ -142,7 +154,7 @@ export default class EditModal extends React.Component {
     for (let res of this.props.category.resources.filter(tracksQuota)) {
       const unit = new Unit(res.unit);
       const oldInput = this.state.inputs[res.name];
-      const input = { text: oldInput.text, isFollowing: oldInput.isFollowing };
+      const input = { text: oldInput.text, isFollowing: oldInput.isFollowing, readonlyReason: oldInput.readonlyReason };
       newState.inputs[res.name] = input;
 
       //if the user has not modified the input text, always use the original
@@ -194,6 +206,7 @@ export default class EditModal extends React.Component {
         text: (new Unit(res.unit)).format(value, { ascii: true }),
         isFollowing: true,
         isFlashing: value != previousValue,
+        readonlyReason: newState.inputs[res.name].readonlyReason,
       };
     }
 
@@ -220,7 +233,9 @@ export default class EditModal extends React.Component {
       if (input.error) {
         return;
       }
-      resourcesForRequest.push({ name: res.name, quota: input.value });
+      if (input.readonlyReason !== '') {
+        resourcesForRequest.push({ name: res.name, quota: input.value });
+      }
     }
     const requestBody = {};
     requestBody[scope.level()] = {
@@ -384,6 +399,8 @@ export default class EditModal extends React.Component {
     const Resource = scope.resourceComponent();
 
     let hasInputErrors = false;
+    let hasAllReadonly = true;
+    let showCQDExplainer = false;
     let canSubmit = true;
     let hasCheckErrors = false;
     let requestRequiredCount = 0;
@@ -391,6 +408,12 @@ export default class EditModal extends React.Component {
       const input = (this.state.inputs || {})[res.name] || {};
       if (input.error) {
         hasInputErrors = true;
+      }
+      if (input.readonlyReason === '') {
+        hasAllReadonly = false;
+      }
+      if (input.readonlyReason === 'cqd') {
+        showCQDExplainer = true;
       }
       if (!input.checkResult) {
         canSubmit = false;
@@ -415,6 +438,25 @@ export default class EditModal extends React.Component {
       </span>;
     }
 
+    let cqdExplainer = null;
+    if (showCQDExplainer) {
+      if (scope.isDomain()) {
+        cqdExplainer = <span className='cqd-explanation'>
+          Some or all resources in this category operate under the <strong>centralized quota distribution</strong> model.
+          For those resources, all projects are provided with a generous amount of default quota, but extensions can
+          only be approved by cloud admins. Domain quota <strong>cannot be edited</strong> for those resources: It is
+          always set equal to the sum of all project quotas.
+        </span>;
+      } else if (scope.isProject()) {
+        cqdExplainer = <span className='cqd-explanation'>
+          Some or all resources in this category operate under the <strong>centralized quota distribution</strong> model.
+          For those resources, all projects are provided with a generous amount of default quota, but extensions can
+          only be approved by cloud admins. To request a quota extension, please <strong>open a ServiceNow ticket</strong>
+          and include a technical justification why your project needs more quota than the default amount.
+        </span>;
+      }
+    }
+
     //NOTE: className='resources' on Modal ensures that plugin-specific CSS rules get applied
     return (
       <Modal className='resources' backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
@@ -425,6 +467,7 @@ export default class EditModal extends React.Component {
         </Modal.Header>
 
         <Modal.Body>
+          {showCQDExplainer && <div className="bs-callout bs-callout-warning bs-callout-emphasize">{cqdExplainer}</div>}
           {this.state.apiErrors && <FormErrors errors={this.state.apiErrors}/>}
           <div className='row edit-quota-form-header'>
             <div className='col-md-offset-6 col-md-6'><strong>New Quota</strong></div>
@@ -442,22 +485,24 @@ export default class EditModal extends React.Component {
         </Modal.Body>
         <Modal.Footer>
           { footerMessage }
-          { showSubmitButton ? (
-            <Button
-              bsStyle='primary'
-              onClick={this.handleSubmit}
-              disabled={ajaxInProgress}>
-                {buttonCaption('Submit', ajaxInProgress)}
-            </Button>
-          ) : (
-            <Button
-              bsStyle='primary'
-              onClick={this.handleCheck}
-              disabled={hasInputErrors || ajaxInProgress}>
-                {buttonCaption('Check', ajaxInProgress)}
-            </Button>
+          { !hasAllReadonly && (
+            showSubmitButton ? (
+              <Button
+                bsStyle='primary'
+                onClick={this.handleSubmit}
+                disabled={ajaxInProgress}>
+                  {buttonCaption('Submit', ajaxInProgress)}
+              </Button>
+            ) : (
+              <Button
+                bsStyle='primary'
+                onClick={this.handleCheck}
+                disabled={hasInputErrors || ajaxInProgress}>
+                  {buttonCaption('Check', ajaxInProgress)}
+              </Button>
+            )
           )}
-          <Button onClick={this.close}>Cancel</Button>
+          <Button onClick={this.close}>{hasAllReadonly ? 'Close' : 'Cancel'}</Button>
         </Modal.Footer>
       </Modal>
     );

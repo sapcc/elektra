@@ -3,7 +3,7 @@ import { Unit, valueWithUnit } from '../unit';
 import { t } from '../utils';
 
 const ResourceEditor = (props) => {
-  const { text: editQuotaText, value: newQuota, error: editError, isFlashing, isFollowing, checkResult: cr } = props.edit;
+  const { text: editQuotaText, value: newQuota, error: editError, isFlashing, isFollowing, checkResult: cr, readonlyReason } = props.edit;
   const { name: resourceName, unit: unitName, quota: oldQuota, scales_with: scalesWith } = props.resource;
   const scope = new Scope(props.scopeData);
   const unit = new Unit(unitName);
@@ -26,6 +26,8 @@ const ResourceEditor = (props) => {
         message = <div className='col-md-4 text-muted'>Unchanged</div>;
       }
     }
+  } else if (readonlyReason === 'cqd') {
+    message = <div className='col-md-4'>Centralized quota distribution</div>;
   } else if (isFollowing) {
     message = <div className='col-md-4'>Adds {valueWithUnit(scalesWith.factor, unit)} per extra {t(scalesWith.resource_name+'_single')}</div>;
   } else if (scalesWith) {
@@ -37,7 +39,7 @@ const ResourceEditor = (props) => {
       <div className={`col-md-2 edit-quota-input ${isFlashing ? 'edit-quota-input-is-flashing' : ''}`}>
         <input
           className='form-control input-sm' type='text' value={editQuotaText}
-          disabled={props.disabled ? true : false}
+          disabled={(props.disabled || readonlyReason !== '') ? true : false}
           onChange={(e) => props.handleInput(resourceName, e.target.value)}
           onBlur={(e) => { props.triggerParseInputs(); return true; }}
           onMouseOut={(e) => { props.triggerParseInputs(); return true; }}
