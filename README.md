@@ -422,5 +422,5 @@ From 19.08.2022 Elektra is using our own email service (Cronus) to send emails w
 ## Contributing
 
 Please read
-[CONTRIBUTING.md](https://github.com/sapcc/elektra/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://github.com/sapcc/elektra/blob/master/CONTRIBUTING.md)
 for details and the process for submitting pull requests to us.
