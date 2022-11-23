@@ -16,9 +16,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
       default_params[:project_id]
     )
 
-    Rails.logger.debug "\n ==============================================================\n"
-    Rails.logger.debug "\n [DomainVerificationsController] \n"
-    Rails.logger.debug "\n ==============================================================\n"
+    puts "\n ==============================================================\n"
+    puts "\n [DomainVerificationsController] \n"
+    puts "\n ==============================================================\n"
 
   end
 

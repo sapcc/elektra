@@ -15,9 +15,9 @@ describe EmailService::ConfigsetsController, type: :controller do
       'Project', default_params[:domain_id], default_params[:project_id],
       default_params[:project_id]
     )
-    Rails.logger.debug "\n ==============================================================\n"
-    Rails.logger.debug "\n [ConfigsetsController] \n"
-    Rails.logger.debug "\n ==============================================================\n"
+    puts "\n ==============================================================\n"
+    puts "\n [ConfigsetsController] \n"
+    puts "\n ==============================================================\n"
   end
 
   before :each do
@@ -29,6 +29,7 @@ describe EmailService::ConfigsetsController, type: :controller do
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:ses_client).and_return(double('ses_client').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:list_configsets).and_return(double('config_sets').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:new_configset).and_return(double('config_set').as_null_object)
+    allow_any_instance_of(EmailService::ConfigsetsController).to receive(:describe_configset).and_return(double('config_set').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:store_configset).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(:delete_configset).and_return(double('status').as_null_object)
 
@@ -143,8 +144,13 @@ describe EmailService::ConfigsetsController, type: :controller do
   describe "POST 'create'" do
 
     before :each do
-      @opts = ::EmailService::FakeFactory.new.configset_opts
+      @configset_opts = ::EmailService::FakeFactory.new.configset_opts
     end
+
+    puts "\n ==============================================================\n"
+    puts "\n [ConfigsetsController][create] \n"
+    puts "\n  @configset_opts : #{@configset_opts} \n"
+    puts "\n ==============================================================\n"
 
     context 'email_admin' do
       before :each do
@@ -156,7 +162,7 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns http 302 status' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(302)
+        expect(post(:create, params: default_params.merge(opts: @configset_opts))).to have_http_status(302)
       end
     end
 
@@ -170,7 +176,7 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns http 302 status' do
-        expect(post(:create, params: default_params.merge(opts: @opts))).to have_http_status(302)
+        expect(post(:create, params: default_params.merge(opts: @configset_opts))).to have_http_status(302)
       end
     end
 
@@ -183,7 +189,7 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns http 401 status' do
-        post(:create, params: default_params.merge(opts: @opts))
+        post(:create, params: default_params.merge(opts: @configset_opts))
         expect(response).to render_template('application/exceptions/warning.html')
       end
     end
@@ -196,8 +202,13 @@ describe EmailService::ConfigsetsController, type: :controller do
   describe "DELETE 'destroy'" do
 
     before :each do
-      @opts = ::EmailService::FakeFactory.new.configset_opts
+      @configset_opts = ::EmailService::FakeFactory.new.configset_opts
     end
+
+    puts "\n ==============================================================\n"
+    puts "\n [ConfigsetsController][delete] \n"
+    puts "\n  @configset_opts : #{@configset_opts} \n"
+    puts "\n ==============================================================\n"
 
     context 'email_admin' do
       before :each do
@@ -209,7 +220,7 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns http 302 status' do
-        delete(:destroy, params: default_params.merge(id: @opts[:id]))
+        delete(:destroy, params: default_params.merge(id: @configset_opts[:id]))
         expect(response).to redirect_to(configsets_path(default_params))
         expect(response.code).to eq("302")
       end
@@ -225,7 +236,7 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns http 302 status' do
-        delete(:destroy, params: default_params.merge(id: @opts[:id]))
+        delete(:destroy, params: default_params.merge(id: @configset_opts[:id]))
         expect(response).to redirect_to(configsets_path(default_params))
         expect(response.code).to eq("302")
       end
@@ -240,7 +251,7 @@ describe EmailService::ConfigsetsController, type: :controller do
         end
       end
       it 'returns http 401 status' do
-        delete(:destroy, params: default_params.merge(id: @opts[:id]))
+        delete(:destroy, params: default_params.merge(id: @configset_opts[:id]))
         expect(response).to render_template('application/exceptions/warning.html')
       end
     end

@@ -16,9 +16,9 @@ describe EmailService::SettingsController, type: :controller do
       default_params[:project_id]
     )
 
-    Rails.logger.debug "\n ==============================================================\n"
-    Rails.logger.debug "\n [SettingsController] \n"
-    Rails.logger.debug "\n ==============================================================\n"
+    puts "\n ==============================================================\n"
+    puts "\n [SettingsController] \n"
+    puts "\n ==============================================================\n"
 
   end
 

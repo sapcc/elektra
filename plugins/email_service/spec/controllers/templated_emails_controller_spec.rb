@@ -16,9 +16,9 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       default_params[:project_id]
     )
 
-    Rails.logger.debug "\n ==============================================================\n"
-    Rails.logger.debug "\n [TemplatedEmailsController] \n"
-    Rails.logger.debug "\n ==============================================================\n"
+    puts "\n ==============================================================\n"
+    puts "\n [TemplatedEmailsController] \n"
+    puts "\n ==============================================================\n"
 
   end
 

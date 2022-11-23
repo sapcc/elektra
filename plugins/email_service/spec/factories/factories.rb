@@ -245,7 +245,15 @@ module EmailService
     def configset_opts
       {
         id: 0,
-        name: "NewConfigSet"
+        name: "NewConfigSet",
+        tls_policy: "tls_policy",
+        custom_redirect_domain: "custom_redirect_domain",
+        sending_pool_name: "sending_pool_name",
+        reputation_metrics_enabled: true,
+        last_fresh_start: "", #DateTime
+        sending_enabled: true,
+        tags: ["valid", "tag", "list"],
+        suppressed_reasons: ["reason1", "reason2"],
       }
     end
 

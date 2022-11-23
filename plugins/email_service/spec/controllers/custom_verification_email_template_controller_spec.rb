@@ -15,9 +15,9 @@ describe EmailService::CustomVerificationEmailTemplatesController, type: :contro
       'Project', default_params[:domain_id], default_params[:project_id],
       default_params[:project_id]
     )
-    Rails.logger.debug "\n ==============================================================\n"
-    Rails.logger.debug "\n [CustomVerificationEmailTemplatesController] \n"
-    Rails.logger.debug "\n ==============================================================\n"
+    puts "\n ==============================================================\n"
+    puts "\n [CustomVerificationEmailTemplatesController] \n"
+    puts "\n ==============================================================\n"
   end
 
   before :each do
