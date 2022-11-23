@@ -418,3 +418,9 @@ end
 ## Mailer
 
 From 19.08.2022 Elektra is using our own email service (Cronus) to send emails when users must be notified. This is the case for example when managing quota requests or creating new projects. Refer to [config/mailer.md](config/mailer.md) for details on how the mailer is setup.
+
+## Contributing
+
+Please read
+[CONTRIBUTING.md](https://github.com/sapcc/elektra/CONTRIBUTING.md)
+for details and the process for submitting pull requests to us.
