@@ -1,68 +1,48 @@
 = inside_layout 'login' do
   .container
 
+    = form_tag(sessions_path(after_login: params[:after_login]), class: "form-signin") do
+      = hidden_field_tag :domain_id, @domain_id
+      = hidden_field_tag :domain_name, @domain_name
+      = hidden_field_tag :two_factor, @two_factor
 
-    - if ENV["PASSWORD_LOGIN_ENABLED"] == "true"
-      - # LOGIN FORM 
-      = form_tag(sessions_path(after_login: params[:after_login]), class: "form-signin") do
-        = hidden_field_tag :domain_id, @domain_id
-        = hidden_field_tag :domain_name, @domain_name
-        = hidden_field_tag :two_factor, @two_factor
+      %h2.form-signin-heading
+        = params[:password_sync] ? 'Sync Password' : 'Please sign in'
 
-        %h2.form-signin-heading
-          = params[:password_sync] ? 'Sync Password' : 'Please sign in'
+      .flashes
+        - flash.each do |name, msg|
+          .alert{class: "alert-#{name}"}= msg
 
-        .flashes
-          - flash.each do |name, msg|
-            .alert{class: "alert-#{name}"}= msg
+      %label.sr-only{:for => "domain"} Domain
+      - if @domain_name
+        = text_field_tag :domain, @domain_name, placeholder: "Domain", class: "form-control top-input", disabled: "true"
 
-        %label.sr-only{:for => "domain"} Domain
-        - if @domain_name
-          = text_field_tag :domain, @domain_name, placeholder: "Domain", class: "form-control top-input", disabled: "true"
+      %label.sr-only{:for => "username"} User ID
+      = text_field_tag :username, @username, autofocus: "", placeholder: "User ID", required: "", class: "form-control"
 
-        %label.sr-only{:for => "username"} User ID
-        = text_field_tag :username, @username, autofocus: "", placeholder: "User ID", required: "", class: "form-control"
+      %label.sr-only{:for => "password"} Password
+      = password_field_tag :password, nil, placeholder: "Password", required: "", class: "form-control bottom-input"
 
-        %label.sr-only{:for => "password"} Password
-        = password_field_tag :password, nil, placeholder: "Password", required: "", class: "form-control bottom-input"
-
-        %button.btn.btn-lg.btn-primary.btn-block{:type => "submit"} Sign in
+      %button.btn.btn-lg.btn-primary.btn-block{:type => "submit"} Sign in
 
 
-        %section
-          - if params[:password_sync]
-            .bs-callout.bs-callout-info.bs-callout-emphasize
-              Log in with your new global SAP Password
-          - else
-            .bs-callout.bs-callout-info.bs-callout-emphasize
-              %h4 Don't have access yet?
-              %p
-                Request the profile
-                %i= "\"CC #{@domain_name.blank? ? "<domain-name>" : @domain_name.upcase} Openstack Domain Access\""
-                in Cloud Access Manager (CAM)
-              %p
-                - if @domain_name.blank?
-                  = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request", target: '_blank' do
-                    %i.fa.fa-external-link.fa-fw
-                    Request access in CAM
-                - else
-                  = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request&profile=CC%20#{@domain_name.upcase}%20Openstack%20Domain%20Access", target: '_blank' do
-                    %i.fa.fa-external-link.fa-fw
-                    Request access in CAM
-
-    - else 
-      - # BAD SSO NOTICE
-      - redirect_url = landing_page_url(domain_id: params[:domain_fid] ) 
-      - button_title = "Go to the landing page"
-      - if params[:after_login] 
-        - redirect_url = params[:after_login]
-        - button_title = "Try again"
-
-      .form-signin
-        .bs-callout.bs-callout-info.bs-callout-emphasize
-          %h4 Oops
-          %p
-            = "If you see this page, something might be wrong with your SSO certificate. Please click below to #{button_title.downcase}. If the error persists, please open a support ticket."
-        
-
-        %a.btn.btn-lg.btn-primary.btn-block{href: redirect_url}= button_title
+      %section
+        - if params[:password_sync]
+          .bs-callout.bs-callout-info.bs-callout-emphasize
+            Log in with your new global SAP Password
+        - else
+          .bs-callout.bs-callout-info.bs-callout-emphasize
+            %h4 Don't have access yet?
+            %p
+              Request the profile
+              %i= "\"CC #{@domain_name.blank? ? "<domain-name>" : @domain_name.upcase} Openstack Domain Access\""
+              in Cloud Access Manager (CAM)
+            %p
+              - if @domain_name.blank?
+                = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request", target: '_blank' do
+                  %i.fa.fa-external-link.fa-fw
+                  Request access in CAM
+              - else
+                = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request&profile=CC%20#{@domain_name.upcase}%20Openstack%20Domain%20Access", target: '_blank' do
+                  %i.fa.fa-external-link.fa-fw
+                  Request access in CAM
