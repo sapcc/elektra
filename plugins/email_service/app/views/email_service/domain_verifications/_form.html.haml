@@ -8,10 +8,6 @@
   = render partial: 'byo_dkim', locals: {f:f}
   = render partial: 'easy_dkim', locals: {f:f}
 
--# = f.input :dkim_enabled,  as: :boolean, input_html: {}, checked_value: true, unchecked_value: false, label: "Enable DKIM"
--# = f.input :tags, as: :text, input_html: {}, label: "Tags"
--# = f.input :domain_signing_selector, input_html: {}, label: "Domain Signing Selector (Public key identifier)", hint: domain_signing_selector_hint
--# = f.input :domain_signing_private_key, as: :text, input_html: {}, label: "Domain Signing Private Key", hint: domain_signing_private_key_hint
 - if configset_names && !configset_names.empty?
   = f.input :configuration_set_name, label: "Configset Name", input_html: {}, as: :select, collection: configset_names
 

@@ -16,8 +16,6 @@ module EmailService
       @source_types = ::EmailService::Email.source_types
     end
 
-    def edit;end
-
     def create
 
       @source_types = ::EmailService::Email.source_types

@@ -5,6 +5,6 @@
   %li{class: ('active' if pane == 'templates'), role: "presentation"}= link_to 'Templates', plugin('email_service').templates_path, aria: {controls:"templates-pane"}, role: "tab"
   -# %li{class: ('active' if pane == 'custom-templates'), role: "presentation"}= link_to 'Custom Templates', plugin('email_service').custom_verification_email_templates_path, aria: {controls:"custom-templates-pane"}, role: "tab"
   -# %li{class: ('active' if pane == 'configsets'), role: "presentation"}= link_to 'Configsets', plugin('email_service').configsets_path, aria: {controls:"configsets-pane"}, role: "tab"
-  %li{class: ('active' if pane == 'stats'), role: "presentation"}= link_to 'Statistics', plugin('email_service').stats_path, aria: {controls:"stats-pane"}, role: "tab"
+  -# %li{class: ('active' if pane == 'stats'), role: "presentation"}= link_to 'Statistics', plugin('email_service').stats_path, aria: {controls:"stats-pane"}, role: "tab"
   %li{class: ('active' if pane == 'ec2'), role: "presentation"}= link_to 'EC2 Credentials', plugin('email_service').ec2_credentials_path, aria: {controls:"settings-pane"}, role: "tab"
   %li{class: ('active' if pane == 'settings'), role: "presentation"}= link_to 'Settings', plugin('email_service').settings_path, aria: {controls:"settings-pane"}, role: "tab"

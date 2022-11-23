@@ -98,17 +98,19 @@ module EmailService
     end
 
     def update
-      # # Add code to modify with other props here.
-      # redirect_to plugin('email_service').configsets_path
-      # rescue Elektron::Errors::ApiResponse => e
-      #   error = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
-      #   Rails.logger.error error
-      #   flash[:error] = error
-      # rescue Exception => e
-      #   error = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
-      #   Rails.logger.error error
-      #   flash[:error] = error
-
+      status = store_configset(@configset)
+      unless status.include?("success")
+        render "edit", locals: {data: {modal: true} } and return
+      end
+      rescue Elektron::Errors::ApiResponse => e
+        error = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
+      rescue Exception => e
+        error = "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
+      redirect_to plugin('email_service').configsets_path
     end
 
     private

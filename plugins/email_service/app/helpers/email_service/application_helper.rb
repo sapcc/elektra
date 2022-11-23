@@ -85,25 +85,6 @@ module EmailService
       ["MARKETING", "TRANSACTIONAL"]
     end
 
-    def custom_endpoint_url
-      return nil
-    end
-
-    def nebula_provider_collection
-      ["aws", "int"]
-    end
-
-    def nebula_endpoint_url(region = nil)
-      if region.nil?
-        region = current_region
-      end
-      # Rails.logger.debug "\n *********** NEBULA ENDPOINT \n"
-      @nebula_endpoint = current_user.service_url('nebula')
-      Rails.logger.debug "\n *********** NEBULA ENDPOINT #{@nebula_endpoint.inspect} \n"
-      # return "https://nebula.#{region}.cloud.sap/v1"
-      return @nebula_endpoint
-    end
-
     #
     # Raw email
     #
@@ -170,31 +151,43 @@ module EmailService
     # Get Account Details
 
     def get_account
-      # Rails.logger.debug "\n [email_service][application_helper][get_account]  \n"
+      
       if nebula_active? &&  ec2_creds && ses_client_v2
         @account ||= ses_client_v2.get_account(params = {})
-        # # Rails.logger.debug "\n [email_service][application_helper][get_account] Account Details (inspect) #{@account.inspect} \n"
       end
-      #get_account(params = {}) ⇒ Types::GetAccountResponse
-      # Response structure
-      # resp.dedicated_ip_auto_warmup_enabled #=> Boolean
-      # resp.enforcement_status #=> String
-      # resp.production_access_enabled #=> Boolean
-      # resp.send_quota.max_24_hour_send #=> Float
-      # resp.send_quota.max_send_rate #=> Float
-      # resp.send_quota.sent_last_24_hours #=> Float
-      # resp.sending_enabled #=> Boolean
-      # resp.suppression_attributes.suppressed_reasons #=> Array
-      # resp.suppression_attributes.suppressed_reasons[0] #=> String, one of "BOUNCE", "COMPLAINT"
-      # resp.details.mail_type #=> String, one of "MARKETING", "TRANSACTIONAL"
-      # resp.details.website_url #=> String
-      # resp.details.contact_language #=> String, one of "EN", "JA"
-      # resp.details.use_case_description #=> String
-      # resp.details.additional_contact_email_addresses #=> Array
-      # resp.details.additional_contact_email_addresses[0] #=> String
-      # resp.details.review_details.status #=> String, one of "PENDING", "FAILED", "GRANTED", "DENIED"
-      # resp.details.review_details.case_id #=> String
       return @account
+
+    end
+
+    # Get metrics data
+    def batch_get_metric_data(identity, start_date=Time.now-86400, end_date=Time.now)
+
+      begin
+        resp = ses_client_v2.batch_get_metric_data({
+          queries: [ # required
+            {
+              id: "QueryIdentifier", # required
+              namespace: "VDM", # required, accepts VDM
+              metric: "SEND", # required, accepts SEND, COMPLAINT, PERMANENT_BOUNCE, TRANSIENT_BOUNCE, OPEN, CLICK, DELIVERY, DELIVERY_OPEN, DELIVERY_CLICK, DELIVERY_COMPLAINT
+              dimensions: {
+                "EMAIL_IDENTITY" => identity, # "MetricDimensionValue",
+              },
+              start_date: start_date, # Time.now, # required
+              end_date: end_date, # Time.now, # required
+            },
+          ],
+        })
+        audit_logger.info(current_user.id, ' has fetched metric data ')
+        Rails.logger.debug "\n #{current_user.id} has fetched metric data  \n"
+      rescue Aws::SESV2::Errors::ServiceError => e
+        error = "[email_service][application_helper][batch_get_metric_data] #{e.message}"
+        Rails.logger.error "\n #{error} \n"
+      rescue Exception => e
+        error = "[email_service][application_helper][batch_get_metric_data] #{e.message}"
+        Rails.logger.error "\n #{error} \n"
+      end
+
+      return error ? error : resp
     end
 
     def list_email_identities(nextToken="", page_size=1000)
@@ -362,39 +355,10 @@ module EmailService
     end
 
     def get_send_stats
-      # Rails.logger.debug "\n [email_service][application_helper][get_send_stats] \n"
-      #get_account(params = {}) ⇒ Types::GetAccountResponse
-      # Response structure
-      # resp.dedicated_ip_auto_warmup_enabled #=> Boolean
-      # resp.enforcement_status #=> String
-      # resp.production_access_enabled #=> Boolean
-      # resp.send_quota.max_24_hour_send #=> Float
-      # resp.send_quota.max_send_rate #=> Float
-      # resp.send_quota.sent_last_24_hours #=> Float
-      # resp.sending_enabled #=> Boolean
-      # resp.suppression_attributes.suppressed_reasons #=> Array
-      # resp.suppression_attributes.suppressed_reasons[0] #=> String, one of "BOUNCE", "COMPLAINT"
-      # resp.details.mail_type #=> String, one of "MARKETING", "TRANSACTIONAL"
-      # resp.details.website_url #=> String
-      # resp.details.contact_language #=> String, one of "EN", "JA"
-      # resp.details.use_case_description #=> String
-      # resp.details.additional_contact_email_addresses #=> Array
-      # resp.details.additional_contact_email_addresses[0] #=> String
-      # resp.details.review_details.status #=> String, one of "PENDING", "FAILED", "GRANTED", "DENIED"
-      # resp.details.review_details.case_id #=> String
-
-      # =stat[:timestamp]
-      # %td
-      #   =stat[:delivery_attempts]
-      # %td
-      #   =stat[:bounces]
-      # %td
-      #   =stat[:rejects]
-      # %td
-      #   =stat[:complaints]
-
-
     end
+
+
+
 
     # v3 Conversion
     def create_email_identity_email(verified_email, tags=[{ key: "Tagkey", value: "TagValue"}], configset_name=nil)
@@ -513,7 +477,7 @@ module EmailService
     end
 
     # TO_DO
-    def domain_statistics_report(identity, report_start_date=Time.now, report_end_date=Time.now)
+    def domain_statistics_report(identity, report_start_date=Time.now-86400, report_end_date=Time.now)
       begin 
         @domain_statistics_report = ses_client_v2.get_domain_statistics_report({
           domain: identity, # required
@@ -521,33 +485,9 @@ module EmailService
           end_date: report_end_date, # required
         })
       rescue AWS::SESV2::Errors::ServiceError => e
-        @resp = "\n[domain_statistics_report][error]: #{e.message} \n"
+        @error = "\n[domain_statistics_report][error]: #{e.message} \n"
         Rails.logger.error @resp
       end
-      # Statistics
-      # resp.overall_volume.volume_statistics.inbox_raw_count #=> Integer
-      # resp.overall_volume.volume_statistics.spam_raw_count #=> Integer
-      # resp.overall_volume.volume_statistics.projected_inbox #=> Integer
-      # resp.overall_volume.volume_statistics.projected_spam #=> Integer
-      # resp.overall_volume.read_rate_percent #=> Float
-      # resp.overall_volume.domain_isp_placements #=> Array
-      # resp.overall_volume.domain_isp_placements[0].isp_name #=> String
-      # resp.overall_volume.domain_isp_placements[0].inbox_raw_count #=> Integer
-      # resp.overall_volume.domain_isp_placements[0].spam_raw_count #=> Integer
-      # resp.overall_volume.domain_isp_placements[0].inbox_percentage #=> Float
-      # resp.overall_volume.domain_isp_placements[0].spam_percentage #=> Float
-      # resp.daily_volumes #=> Array
-      # resp.daily_volumes[0].start_date #=> Time
-      # resp.daily_volumes[0].volume_statistics.inbox_raw_count #=> Integer
-      # resp.daily_volumes[0].volume_statistics.spam_raw_count #=> Integer
-      # resp.daily_volumes[0].volume_statistics.projected_inbox #=> Integer
-      # resp.daily_volumes[0].volume_statistics.projected_spam #=> Integer
-      # resp.daily_volumes[0].domain_isp_placements #=> Array
-      # resp.daily_volumes[0].domain_isp_placements[0].isp_name #=> String
-      # resp.daily_volumes[0].domain_isp_placements[0].inbox_raw_count #=> Integer
-      # resp.daily_volumes[0].domain_isp_placements[0].spam_raw_count #=> Integer
-      # resp.daily_volumes[0].domain_isp_placements[0].inbox_percentage #=> Float
-      # resp.daily_volumes[0].domain_isp_placements[0].spam_percentage #=> Float
 
     end
 
@@ -566,26 +506,9 @@ module EmailService
     end
 
     def send_stats
-      # @send_stats ||= get_send_stats
+
       @send_stats ||= domain_statistics_report
     end
-
-    # v3 Conversion ends
-
-    # # get verified identities collection for form rendering
-    # def get_verified_identities_collection(verified_identities, identity_type="EMAIL_ADDRESS")
-    #     verified_identities_collection = []
-    #     if identity_type == "EMAIL_ADDRESS" && !verified_identities.empty?
-    #         verified_identities.each do |element|
-    #             verified_identities_collection << element[:identity_name] unless element[:identity_name].include?('@activation.email.global.cloud.sap')
-    #         end
-    #     elsif identity_type == "DOMAIN" && !verified_identities.empty?
-    #         verified_identities.each do |element|
-    #             verified_identities_collection << element[:identity_name]
-    #         end
-    #     end
-    #     return verified_identities_collection
-    # end
 
 
 
@@ -631,7 +554,7 @@ module EmailService
             end
           end
         end
-        # # Rails.logger.debug "[get_dkim_attributes]: DEBUG : #{found.inspect}"
+        
       rescue AWS::SESV2::Errors::ServiceError => e
         Rails.logger.error "[get_dkim_attributes]: ERROR : #{e.message}"
       rescue Exception => e
@@ -744,7 +667,6 @@ module EmailService
           },
           reply_to_addresses: plain_email.reply_to_addr,
           feedback_forwarding_email_address: plain_email.return_path,
-          # feedback_forwarding_email_address_identity_arn: "AmazonResourceName",
           content: {
             simple: {
               subject: {
@@ -849,9 +771,6 @@ module EmailService
       true
     end
 
-    # def dkim_types
-
-    # end
 
     #
     # TemplatedEmail
@@ -1120,7 +1039,6 @@ module EmailService
 
     end
 
-    # create a template instance used by find_template to return empty one
     def new_template(attributes = {})
       template = EmailService::Template.new(attributes)
     end
@@ -1212,10 +1130,7 @@ module EmailService
 
     end
 
-    # v2
     def list_configsets(token=nil, page_size=1000)
-
-      # Rails.logger.debug "\n[email_service][application_helper][list_configsets]\n"
 
       configset_hash = Hash.new
       configsets = []
@@ -1227,16 +1142,14 @@ module EmailService
           page_size: page_size
         })
 
-        # # Rails.logger.debug "\n *************** Array:  #{resp.inspect} \n Size: #{resp.configuration_sets.size}}********************\n"
-
         next_token = resp.next_token
         if resp.configuration_sets.size > 0
           for index in 0 ... resp.configuration_sets.size
-            # # Rails.logger.debug "\n *************** LOOP INSIDE : #{resp.configuration_sets[index].inspect} ************ \n"
+            
             item = ses_client_v2.get_configuration_set({
               configuration_set_name: resp.configuration_sets[index],
             })
-            # # Rails.logger.debug "\n *************** LOOP INSIDE (ITEM) : #{item.inspect} ************ \n"
+            
             configset_hash = {
                 :id => index,
                 :name => item.configuration_set_name,
@@ -1246,18 +1159,6 @@ module EmailService
                 :sending_options => item.reputation_options,
                 :tags => item.tags,
                 :suppression_options => item.suppression_options,
-                # resp.configuration_set_name #=> String
-                # resp.tracking_options.custom_redirect_domain #=> String
-                # resp.delivery_options.tls_policy #=> String, one of "REQUIRE", "OPTIONAL"
-                # resp.delivery_options.sending_pool_name #=> String
-                # resp.reputation_options.reputation_metrics_enabled #=> Boolean
-                # resp.reputation_options.last_fresh_start #=> Time
-                # resp.sending_options.sending_enabled #=> Boolean
-                # resp.tags #=> Array
-                # resp.tags[0].key #=> String
-                # resp.tags[0].value #=> String
-                # resp.suppression_options.suppressed_reasons #=> Array
-                # resp.suppression_options.suppressed_reasons[0] #=> String, one of "BOUNCE", "COMPLAINT"
               }
             configsets.push(configset_hash)
           end
@@ -1274,10 +1175,9 @@ module EmailService
     # get an array of configset names up to 1000 entries
     def list_configset_names(token="")
 
-      # Rails.logger.debug "\n[email_service][application_helper][list_configset_names]\n"
       configset_names = []
       configsets = list_configsets(token)
-      # # Rails.logger.debug "\n [application_helper][list_configset_names] : #{configsets.inspect} \n"
+      
       unless configsets.empty?
         configsets.each do | cfg |
           configset_names << cfg[:name]
@@ -1289,13 +1189,11 @@ module EmailService
     end
 
     def new_configset(attributes = {})
-      # Rails.logger.debug "\n[email_service][application_helper][new_configset]\n"
       return ::EmailService::Configset.new(attributes)
     end
 
-    # find existing config set
     def find_configset(name)
-      # Rails.logger.debug "\n[email_service][application_helper][find_configset]\n"
+      
       configsets = list_configsets
       configset = new_configset({})
       unless configsets.empty?
@@ -1309,14 +1207,6 @@ module EmailService
 
     end
 
-
-    # To be tested
-
-      # :rule_set_name (required, String) — The name of the rule set to create. The name must:
-      # This value can only contain ASCII letters (a-z, A-Z), numbers (0-9), underscores (_), or dashes (-).
-      # Start and end with a letter or number.
-      # Contain less than 64 characters.
-      # :original_rule_set_name (required, String) — The name of the rule set to clone.
     def clone_receipt_rule_set # return empty response.
       resp = ses_client.clone_receipt_rule_set({
         rule_set_name: "ReceiptRuleSetName", # required
@@ -1375,7 +1265,7 @@ module EmailService
     def create_custom_verification_email_template(custom_template)
 
       begin
-        # empty response
+
         resp = ses_client.create_custom_verification_email_template({
           template_name: custom_template.template_name, #params[:template_name],
           from_email_address:  custom_template.from_email_address, #params[:from_email_address],
@@ -1395,7 +1285,6 @@ module EmailService
     def delete_custom_verification_email_template(name)
 
       begin
-        # empty response
         resp = ses_client.delete_custom_verification_email_template({
           template_name: name,
         })
@@ -1491,11 +1380,20 @@ module EmailService
 
     ### nebula
 
-    ##
+    def custom_endpoint_url
+      return nil
+    end
+
+    def nebula_provider_collection
+      ["aws", "int"]
+    end
+
+    def nebula_endpoint_url
+      @nebula_endpoint = current_user.service_url('nebula')
+    end
 
     def _nebula_request(uri, method, headers = nil, body = nil )
-      # Rails.logger.debug "\n [email_service][application_helper][_nebula_request] \n"
-      # # Rails.logger.debug "Parsing URL: #{uri}"
+
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = true
       request = Net::HTTP::Get.new(uri)
@@ -1525,35 +1423,30 @@ module EmailService
         response = https.request(request)
       rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
              Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-        # Rails.logger.debug e
         Rails.logger.error e.message
         return e.message
       end
       return response
+
     end
 
     def nebula_details
-      # Rails.logger.debug "\n [email_service][application_helper][nebula_details] \n"
-      url = URI("https://nebula.#{cronus_region}.cloud.sap/v1/aws/#{project_id}")
-      # # Rails.logger.debug "\n URL : \n #{url} \n "
-
+      
+      url = URI("#{nebula_endpoint_url}/v1/aws/#{project_id}")
       headers =  nil # JSON.dump({ "sample-head1": "head1", "sample-head2": "head2" })
       body = nil # JSON.dump({ "sample-body2": "body1", "sample-body2": "body2", })
       response = _nebula_request(url, "GET", headers, body)
-
       begin
         status = JSON.parse(response.read_body)
-        # Rails.logger.debug "\n [email_service][application_helper][nebula_details] \n"
-        # # Rails.logger.debug "\n Json Parse STATUS: \n #{status} \n "
       rescue JSON::ParserError => e
         status = "{\"error\" => \"#{e.message}\"}"
       end
-
       return status
+
     end
 
     def nebula_status
-      # Rails.logger.debug "\n [email_service][application_helper][nebula_status] \n"
+      
       if nebula_details
         if nebula_details.is_a?(Hash)
           if nebula_details.has_key?("status")
@@ -1567,27 +1460,23 @@ module EmailService
           return JSON.parse(nebula_details).has_key?("error") ? "ERROR" : "" rescue nil
         end
       end
-      # Rails.logger.debug "\n [email_service][application_helper][nebula_status] STATUS: \n #{status} \n"
+      
       return status ? status : nil
-      # {"production"=>true, "status"=>"GRANTED", "security_attributes"=>"security officer David Halimi (I349172), environment DEV, valid until 2022-11-22", "compliant"=>true}
-      # debugger
+
     end
 
     # check if cronus service is enabled for the project
     def nebula_active?
-
-      # Rails.logger.debug "\n [email_service][application_helper][nebula_active?] \n"
+      
       @nebula_active ||= nebula_details && nebula_details["status"] == "GRANTED" ? true : false
 
     end
 
     def get_nebula_uri(provider = nil, custom_url = nil)
-      # Rails.logger.debug "\n [email_service][application_helper][get_nebula_uri] \n"
-      # Rails.logger.debug "\n [email_service][application_helper][get_nebula_uri][:call][nebula_endpoint_url]  #{nebula_endpoint_url.inspect} \n" 
+
       unless custom_url == nil
         @nebula_url ||= URI("#{custom_url}/v1/#{provider}/#{project_id}")
       else
-        # TODO : findout if URI is valid
         provider = "aws" unless provider
         @nebula_url ||= URI("https://nebula.#{cronus_region}.cloud.sap/v1/#{provider}/#{project_id}")
       end
@@ -1625,20 +1514,14 @@ module EmailService
       # "{\"error\":\"failed to create a Nebula account: account already activated\"}\n"
     end
 
-    def nebula_available?(uri)
-      # Rails.logger.debug "\n [email_service][application_helper][nebula_available?] \n"
-      require "resolv"
-      dns_resolver = Resolv::DNS.new()
-      begin
-        dns_resolver.getaddress(uri)
-        return true
-      rescue Resolv::ResolvError => e
-        return false
-      end
+    def nebula_available?
+
+      return services.available?(:nebula)
+
     end
 
     def nebula_deactivate(multicloud_account = nil)
-      # Rails.logger.debug "\n [email_service][application_helper][nebula_deactivate] \n"
+      
       url = get_nebula_uri("aws", custom_endpoint_url)
       response = _nebula_request(url, "DELETE", nil, nil)
       if response.code.to_i < 300
@@ -1647,6 +1530,7 @@ module EmailService
         status ="#{response.code} : #{response.read_body}"
       end
       return status
+      
     end
 
  end

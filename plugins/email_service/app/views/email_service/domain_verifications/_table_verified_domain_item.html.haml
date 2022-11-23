@@ -5,8 +5,6 @@
 - dkim_type = domain_item[:dkim_type]
 
 %tr
-  -# %td
-  -#   = domain_item[:id]
   %td
     = link_to identity, plugin('email_service').domain_verification_path(id: domain_item[:id], identity_name: identity), data: {modal: true}
   %td
@@ -15,23 +13,8 @@
     - elsif sending_status == false
       %a{ href: "#", title: "You need to create a TXT record for your domain. Click on the domain link for more details.", data: { toggle: "tooltip", html: true} }
         %i.fa.far.fa-pause-circle
-      -# %a{ href: "#", title: "verified_for_sending_status: failed; Time limited to verification is expired. Please initiate verification again.", data: { toggle: "tooltip", html: true} }
-      -#   %i.fa.fas.fa-exclamation-triangle
   %td
     = dkim_type
-    -# - if dkim_enabled
-    -#   %i.fa.fa-check-circle
-    -# - else
-    -#   %i.fa.fa-times-circle
-  -# %td
-  -#   -if verification_status == "PENDING"
-  -#     %a{ href: "#", title: "You need to create a TXT record for your domain. Click on the domain link for more details.", data: { toggle: "tooltip", html: true} }
-  -#       %i.fa.far.fa-pause-circle
-  -#   -elsif verification_status == "SUCCESS"
-  -#     %i.fa.far.fa-check-circle
-  -#   -elsif verification_status == "FAILED"
-  -#     %a{ href: "#", title: "Status: failed; Time limited to verification is expired. Please initiate verification again.", data: { toggle: "tooltip", html: true} }
-  -#       %i.fa.fas.fa-exclamation-triangle
   %td.snug
     - if current_user.is_allowed?("email_service:verified_domain_delete", {target: { domain_item: domain_item, project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("email_service:verified_domain_update", {})
       = render partial: 'domain_item_actions', locals: { domain_item: domain_item, show_view: false }

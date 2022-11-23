@@ -120,10 +120,7 @@
               %strong DKIM Verification Status:
             %td
               =@verified_domain.dkim_verification_status
-
--# %hr
--# if @verified_domain[:dkim_tokens]
-  Create the following CNAME DNS records.
+              
   %table.table.table-striped
     %th Name
     %th Type

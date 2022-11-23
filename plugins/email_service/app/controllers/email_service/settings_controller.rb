@@ -10,8 +10,8 @@ module EmailService
     def index
       @nebula_details = nebula_details
       @nebula_status = nebula_status
-      Rails.logger.debug @nebula_status
-      Rails.logger.debug @nebula_details
+      # Rails.logger.debug @nebula_status
+      # Rails.logger.debug @nebula_details
       @nebula_endpoint = "https://nebula.#{current_region}.cloud.sap"
       # debugger
 
