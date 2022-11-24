@@ -233,7 +233,7 @@ export default class EditModal extends React.Component {
       if (input.error) {
         return;
       }
-      if (input.readonlyReason !== '') {
+      if (input.readonlyReason === '') {
         resourcesForRequest.push({ name: res.name, quota: input.value });
       }
     }
@@ -326,6 +326,9 @@ export default class EditModal extends React.Component {
       const input = this.state.inputs[res.name];
       if (input.error) {
         return;
+      }
+      if (input.readonlyReason !== '') {
+        continue;
       }
       const cr = input.checkResult;
       if (!cr || cr.unacceptable) {
