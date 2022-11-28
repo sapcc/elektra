@@ -15,9 +15,6 @@ describe EmailService::EmailVerificationsController, type: :controller do
       'Project', default_params[:domain_id], default_params[:project_id],
       default_params[:project_id]
     )
-    puts "\n ==============================================================\n"
-    puts "\n [EmailVerificationsController] \n"
-    puts "\n ==============================================================\n"
 
   end
 

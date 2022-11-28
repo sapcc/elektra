@@ -16,10 +16,6 @@ describe EmailService::StatsController, type: :controller do
       default_params[:project_id]
     )
 
-    puts "\n ==============================================================\n"
-    puts "\n [StatsController] \n"
-    puts "\n ==============================================================\n"
-
   end
 
   before :each do

@@ -1429,14 +1429,8 @@ module EmailService
       @nebula_active ||= nebula_details && nebula_details["status"] == "GRANTED" ? true : false
     end
 
-    def get_nebula_uri(provider = nil, custom_url = nil)
-
-      unless custom_url == nil
-        @nebula_url ||= URI("#{custom_url}/v1/#{provider}/#{project_id}")
-      else
-        provider = "aws" unless provider
-        @nebula_url ||= URI("https://nebula.#{cronus_region}.cloud.sap/v1/#{provider}/#{project_id}")
-      end
+    def get_nebula_uri(provider = "aws", custom_url = nil)
+      @nebula_uri = (provider == "aws" && custom_url == nil) ? URI("#{nebula_endpoint_url}/v1/#{provider}/#{project_id}") : URI("#{custom_url}/v1/#{provider}/#{project_id}")
     end
 
     def nebula_activate(multicloud_account = nil)

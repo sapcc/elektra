@@ -128,7 +128,7 @@
   - @verified_domain[:dkim_tokens].each  do |token|
     %tr
       %td
-      = "#{token}._domainkey.#{@verified_domain[:identity]}"
+      = "#{token}._domainkey.#{@verified_domain[:identity_name]}"
       %td
         CNAME
       %td

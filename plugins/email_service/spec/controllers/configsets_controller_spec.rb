@@ -205,11 +205,6 @@ describe EmailService::ConfigsetsController, type: :controller do
       @configset_opts = ::EmailService::FakeFactory.new.configset_opts
     end
 
-    puts "\n ==============================================================\n"
-    puts "\n [ConfigsetsController][delete] \n"
-    puts "\n  @configset_opts : #{@configset_opts} \n"
-    puts "\n ==============================================================\n"
-
     context 'email_admin' do
       before :each do
         stub_authentication do |token|

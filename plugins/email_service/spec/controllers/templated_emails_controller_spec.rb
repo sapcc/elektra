@@ -16,10 +16,6 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       default_params[:project_id]
     )
 
-    puts "\n ==============================================================\n"
-    puts "\n [TemplatedEmailsController] \n"
-    puts "\n ==============================================================\n"
-
   end
 
   before :each do

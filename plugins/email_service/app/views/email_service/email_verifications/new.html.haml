@@ -5,7 +5,7 @@
 = simple_form_for @verified_email, as: :verified_email, url: plugin('email_service').email_verifications_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' } do |f|
   .modal-body
     %div{class: modal? ? 'modal-body' : ''}
-      = f.input :identity, required: true, icon_hint: identity_hint, default: "fake1@gmail.com"
+      = f.input :identity, required: true, icon_hint: identity_hint
       -#= f.text :tags, required: true
       = f.input :configset_name, required: false, label: "Configset Name", input_html: {}, as: :select, collection: @configsets_collection
     %div.buttons{class: modal? ? 'modal-footer' : ''}

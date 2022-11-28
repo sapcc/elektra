@@ -16,10 +16,6 @@ describe EmailService::PlainEmailsController, type: :controller do
       default_params[:project_id]
     )
 
-    puts "\n ==============================================================\n"
-    puts "\n [PlainEmailsController] \n"
-    puts "\n ==============================================================\n"
-
   end
 
   before :each do

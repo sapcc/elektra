@@ -16,10 +16,6 @@ describe EmailService::DomainVerificationsController, type: :controller do
       default_params[:project_id]
     )
 
-    puts "\n ==============================================================\n"
-    puts "\n [DomainVerificationsController] \n"
-    puts "\n ==============================================================\n"
-
   end
 
   before :each do
