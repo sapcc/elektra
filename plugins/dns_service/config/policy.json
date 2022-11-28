@@ -25,7 +25,7 @@
   "dns_service:zone_create": "rule:context_is_dns_ops",
   "dns_service:zone_update": "rule:context_is_dns_support",
   "dns_service:zone_delete": "rule:context_is_master",
-  "dns_service:maintain_shared_zones": "rule:context_is_zonemaster",
+  "dns_service:maintain_shared_zones": "rule:context_is_master",
   "dns_service:recordset_list": "rule:context_is_dns_viewer",
   "dns_service:recordset_get": "rule:context_is_dns_viewer",
   "dns_service:recordset_create": "rule:context_is_master_and_shared or rule:context_is_master",
