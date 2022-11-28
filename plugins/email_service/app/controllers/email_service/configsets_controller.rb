@@ -23,8 +23,6 @@ module EmailService
         flash[:error] = error
     end
 
-    def new; end
-
     def create
       status = ""
       @configset = new_configset(configset_params)

@@ -2,8 +2,6 @@ module EmailService
   class TemplatesController < ::EmailService::ApplicationController
 
     before_action :check_ec2_creds_cronus_status
-    # before_action :check_verified_identity
-
     before_action :set_template, only: %i[new show edit]
 
     authorization_context 'email_service'
@@ -59,7 +57,6 @@ module EmailService
       @template.name = params[:name]
       form_params = template_params
       if @template.valid?
-        # update the original template
         status = update_template(@template.name, @template.subject, @template.html_part, @template.text_part)
       else
         return render action: 'edit', data: {modal: true}

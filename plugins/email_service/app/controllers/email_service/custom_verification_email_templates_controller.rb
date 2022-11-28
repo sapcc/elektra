@@ -44,10 +44,6 @@ module EmailService
       @custom_template = custom_verification_email_template_form(custom_verification_email_template_params)
     end
 
-    def edit
-
-    end
-
     def create
       begin
         @custom_template = custom_verification_email_template_form(custom_verification_email_template_params)

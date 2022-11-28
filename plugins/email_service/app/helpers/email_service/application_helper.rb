@@ -21,34 +21,28 @@ module EmailService
       @cronus_region ||= current_user.default_services_region
     end
 
-    # fetch first credential for the current user with current project scope
     def ec2_creds
-      # Rails.logger.debug "\n [email_service][application_helper][ec2_creds]  \n"
       @ec2_creds = services.identity.ec2_credentials(user_id, { tenant_id: project_id })&.first
-      return @ec2_creds
     end
 
     def ec2_creds_collection
       @ec2_creds_collection ||= services.identity.ec2_credentials(user_id, { tenant_id: project_id })
     end
 
-    # create ec2 credentials
     def create_credentials
       @new_creds ||= services.identity.create_ec2_credentials(user_id, { tenant_id: project_id })
     end
 
-    # find credentials for current user by access key
     def find_credentials(access_id)
       @found ||= services.identity.find_ec2_credential(user_id, access_id)
     end
 
-    # delete credential for current user identified by access key
     def delete_credentials(access_id)
       services.identity.delete_ec2_credential(user_id, access_id)
     end
 
     def map_region(region)
-      # # Rails.logger.debug "\n [email_service][application_helper][map_region]  \n"
+  
       aws_region = 'eu-central-1'
       case region
       when 'na-us-1'
@@ -106,7 +100,6 @@ module EmailService
     # need to keep for a while for backward compatibility
     def ses_client
 
-      # Rails.logger.debug "\n [email_service][application_helper][ses_client]  \n"
       @region ||= map_region(@cronus_region)
       @endpoint ||= service_url
 
@@ -131,8 +124,6 @@ module EmailService
 
       @region ||= map_region(@cronus_region)
       @endpoint ||= service_url
-
-      # Rails.logger.debug "\n [email_service][application_helper][ses_client_v2]  \n"
 
       unless !ec2_creds || ec2_creds.nil?
         begin
@@ -195,7 +186,7 @@ module EmailService
       identities = []
       identity = {}
       if nebula_active? &&  ec2_creds && ses_client_v2
-        # Rails.logger.debug "\n [email_service][application_helper][list_email_identities] \n"
+        
         resp = ses_client_v2.list_email_identities({
             next_token: nextToken,
             page_size: page_size,
@@ -208,7 +199,7 @@ module EmailService
             details = ses_client_v2.get_email_identity({
               email_identity: item.identity_name, # required
             })
-            # # Rails.logger.debug "\n [email_service][application_helper][list_email_identities] : details #{details} \n"
+            
             identity.merge!({
               # dkim_type: dkim_type, # constructed based on dkim_attributes
               feedback_forwarding_status: details.feedback_forwarding_status,  #=> Boolean
@@ -221,25 +212,21 @@ module EmailService
             })
             if details.dkim_attributes.next_signing_key_length.nil?
               identity.merge!({dkim_type: 'byo_dkim' })
-              # # Rails.logger.debug "\n [email_service][application_helper][list_email_identities] : item.dkim_type = 'byo_dkim' \n"
             else
               identity.merge!({dkim_type: 'easy_dkim' })
-              # # Rails.logger.debug "\n [email_service][application_helper][list_email_identities] : item.dkim_type = 'easy_dkim' \n"
             end
           end
           identities.push identity
         end
       end
-      # # Rails.logger.debug "\n [email_service][application_helper][list_email_identities] : identities.inspect : #{identities.inspect} \n"
+      
       return identities
     end
 
     def email_addresses
 
-      # Rails.logger.debug "\n [email_service][application_helper][email_addresses] \n"
       @email_addresses ||= list_email_identities
       identities = []
-      # # Rails.logger.debug "\n **** #{@email_addresses.inspect} **** \n"
       if @email_addresses
         @email_addresses.each do |item|
           if item[:identity_type] == "EMAIL_ADDRESS" && !item[:identity_name].include?("@activation.email.global.cloud.sap")
@@ -252,8 +239,6 @@ module EmailService
     end
 
     def email_addresses_collection
-
-      # Rails.logger.debug "\n [email_service][application_helper][email_addresses_collection] \n"
 
       @email_addresses ||= email_addresses
       identities_collection = []
@@ -271,8 +256,6 @@ module EmailService
     def domains
 
       @domains ||= list_email_identities
-      # Rails.logger.debug "\n [email_service][application_helper][domains] \n"
-      # # Rails.logger.debug "\n [domains][@domains.inspect]: #{@domains.inspect} \n"
       identities = []
       if @domains
         @domains.each do |item|
@@ -287,7 +270,6 @@ module EmailService
 
     def domains_collection
 
-      # Rails.logger.debug "\n [email_service][application_helper][domains_collection] \n"
       @domains ||= domains
       domains_collection = []
       if @domains
@@ -302,12 +284,10 @@ module EmailService
 
     def managed_domains
 
-      # Rails.logger.debug "\n [email_service][application_helper][managed_domains] \n"
       @domains ||= list_email_identities
       identities = []
       if @domains
         @domains.each do |item|
-          # # Rails.logger.debug "\n method managed_domain item: #{item} \n"
           if item[:identity_type] == "MANAGED_DOMAIN"
             identities.push item
           end
@@ -319,8 +299,6 @@ module EmailService
 
     # find an identity by name
     def find_verified_identity_by_name(identity, id_type="EMAIL_ADDRESS")
-
-      # Rails.logger.debug "\n [email_service][application_helper][find_verified_identity_by_name] \n"
 
       if id_type == "EMAIL_ADDRESS"
         @id_list ||= email_addresses
@@ -340,29 +318,18 @@ module EmailService
           end
         end
       end
-      # Rails.logger.debug "\n [email_service][application_helper][find_verified_identity_by_name] identity:[#{identity}]:id_type:[#{id_type}] \n"
-      # Rails.logger.debug "\n [email_service][application_helper][find_verified_identity_by_name] :[found.inspect]:[#{found.inspect}] \n"
+
       return found
 
     end
 
     def send_data
-      # Rails.logger.debug "\n [email_service][application_helper][send_data] \n"
       @send_data ||= get_account.send_quota
-      # resp.send_quota.max_24_hour_send #=> Float
-      # resp.send_quota.max_send_rate #=> Float
-      # resp.send_quota.sent_last_24_hours #=> Float
     end
-
-    def get_send_stats
-    end
-
-
-
 
     # v3 Conversion
     def create_email_identity_email(verified_email, tags=[{ key: "Tagkey", value: "TagValue"}], configset_name=nil)
-      # Rails.logger.debug "\n [email_service][application_helper][create_email_identity_email] \n"
+      
       begin
         resp = ses_client_v2.create_email_identity({
           email_identity: verified_email, # "Identity", # required
@@ -383,14 +350,14 @@ module EmailService
     end
 
     def delete_email_identity(identity)
-      # Rails.logger.debug "\n [email_service][application_helper][delete_email_identity] \n"
+      
       status = nil
       begin
         resp = ses_client_v2.delete_email_identity({
           email_identity: identity,
         })
         audit_logger.info(current_user.id, ' has removed verified identity ', identity)
-        # Rails.logger.debug "\n #{current_user.id} has removed verified identity #{identity} \n"
+        
         status = "success"
       rescue Aws::SESV2::Errors::ServiceError => e
         status = "[email_service][application_helper][delete_email_identity] #{e.message}"
@@ -405,9 +372,6 @@ module EmailService
 
     def create_email_identity_domain(verified_domain)
       
-      # Rails.logger.debug "\n [email_service][application_helper][create_email_identity_domain] \n"
-      # https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dkim-bring-your-own.html
-
       dkim_signing_attributes = {}
 
       if verified_domain.dkim_type == 'easy_dkim'
@@ -437,8 +401,6 @@ module EmailService
 
       begin
         resp = ses_client_v2.create_email_identity(email_identity_attributes)
-        # Rails.logger.debug "\n [email_service][application_helper][create_email_identity_domain] : resp.inspect #{resp.inspect}  \n"
-
         audit_logger.info(current_user.id, 'has added an email identity (type: domain) ', verified_domain.identity_name)
         status = "success"
       rescue Aws::SESV2::Errors::ServiceError => e
@@ -453,17 +415,14 @@ module EmailService
 
     end
 
-    # find a template with name or returns an empty template object
     def find_identity_name(identity)
 
-      # Rails.logger.debug "\n [email_service][application_helper][find_identity_name] \n"
       @verified_domains = domains
       @verified_domain = new_verified_domain({})
       unless @verified_domains.empty?
         @verified_domains.each do |v|
           if v[:identity_name] == identity
             @verified_domain = new_verified_domain(v)
-            # # Rails.logger.debug "\n **** @verified_domain.inspect #{@verified_domain.inspect} **** \n"
           end
         end
       end
@@ -506,7 +465,6 @@ module EmailService
     end
 
     def send_stats
-
       @send_stats ||= domain_statistics_report
     end
 
@@ -561,7 +519,7 @@ module EmailService
         Rails.logger.error " [get_dkim_attributes] : ERROR : Status Code:[500] #{e.message}"
       end
 
-      return found.empty? ? found : nil
+      return found.empty? ? nil : found
 
     end
 
@@ -593,7 +551,7 @@ module EmailService
           status = "success"
       rescue Aws::SES::Errors::ServiceError => e
           status = "#{e.message}"
-          Rails.logger.error "CRONUS: DEBUG: DKIM VERIFY: #{e.message}"
+          Rails.logger.error " DKIM VERIFY: #{e.message}"
       end
 
       return status, resp
@@ -613,7 +571,7 @@ module EmailService
           status = "success"
       rescue Aws::SES::Errors::ServiceError => e
           status = "#{e.message}"
-          Rails.logger.error "CRONUS: DEBUG: enable dkim: #{e.message}"
+          Rails.logger.error " enable dkim: #{e.message}"
       end
 
       return status
@@ -633,7 +591,7 @@ module EmailService
           status = "success"
       rescue Aws::SES::Errors::ServiceError => e
           status = "#{e.message}"
-          Rails.logger.error "CRONUS: DEBUG: DKIM Disable: #{e.message}"
+          Rails.logger.error " DKIM Disable: #{e.message}"
       end
 
       return status
@@ -659,7 +617,6 @@ module EmailService
       begin
         resp = ses_client_v2.send_email({
           from_email_address: plain_email.source,
-          # from_email_address_identity_arn: "AmazonResourceName",
           destination: {
             to_addresses: plain_email.to_addr,
             cc_addresses: plain_email.cc_addr,
@@ -698,7 +655,6 @@ module EmailService
           # },
         })
         status = "success - email sent to #{plain_email.to_addr} "
-        # Rails.logger.debug "[cronus][send_plain_email] : success - #{status}"
         audit_logger.info("[cronus][send_plain_email] : ", current_user.id, 'has sent email to', "#{status}")
       rescue Aws::SESV2::Errors::ServiceError => e
         status = e.message
@@ -840,16 +796,16 @@ module EmailService
           },
         },
       })
-      Rails.logger.debug "\n***** [cronus][send_templated_email] : send_email_hash.inspect : #{send_email_hash.inspect} *****\n"
+      
 
       begin
         resp = ses_client_v2.send_email(send_email_hash)
-        Rails.logger.debug "\n***** [cronus][send_templated_email] : RESPONSE : #{resp.inspect} *****\n"
+        
         status = "success - email sent to #{templated_email.to_addr} ,#{templated_email.cc_addr}, #{templated_email.bcc_addr}"
         audit_logger.info(current_user.id, 'has sent templated email from the template', \
           templated_email.template_name,  'to', templated_email.to_addr, \
           templated_email.cc_addr, templated_email.bcc_addr, 'with the template data', templated_email.template_data )
-        # Rails.logger.debug "[cronus][send_templated_email] : success - email sent to #{templated_email.to_addr},#{templated_email.cc_addr},#{templated_email.bcc_addr}"
+        
       rescue Aws::SESV2::Errors::ServiceError => e
         error = e.message
         Rails.logger.error "\n[cronus][send_templated_email][ServiceError] : sending templated email  #{e.message}\n"
@@ -857,7 +813,7 @@ module EmailService
         Rails.logger.error "\n[cronus][send_templated_email][StandardError] : sending templated email  #{e.message}\n"
         error = e.message
       end
-      # # Rails.logger.debug "\n[cronus][send_templated_email][message_id] : MESSAGE_ID  (response.inspect) #{resp.inspect}\n"
+      
       return resp && resp.successful? ? "success" : error
 
     end
@@ -946,7 +902,7 @@ module EmailService
             index = index + 1
         end
       rescue Aws::SES::Errors::ServiceError => e
-        Rails.logger.error "CRONUS: DEBUG: Unable to fetch templates. Error message: #{e.message}"
+        Rails.logger.error " Unable to fetch templates. Error message: #{e.message}"
       end
 
       return next_token, templates
@@ -990,7 +946,7 @@ module EmailService
         status = "success"
       rescue Aws::SES::Errors::ServiceError => e
         status = "Unable to save template: #{e.message}"
-        Rails.logger.error "CRONUS: DEBUG: #{status}."
+        Rails.logger.error " #{status}."
       end
 
       return status
@@ -1060,7 +1016,7 @@ module EmailService
         status = "success"
       rescue AWS::SESV2::Errors::ServiceError => e
         status = "#{e.message}"
-        Rails.logger.error "CRONUS: DEBUG: enable dkim: #{e.message}"
+        Rails.logger.error " enable dkim: #{e.message}"
       end
 
       return status
@@ -1105,7 +1061,7 @@ module EmailService
         status = "success"
       rescue AWS::SESV2::Errors::ServiceError => e
         status = "#{e.message}"
-        Rails.logger.error "CRONUS: DEBUG: store configset (v2): #{e.message}"
+        Rails.logger.error " store configset (v2): #{e.message}"
       end
 
       return status
@@ -1163,11 +1119,12 @@ module EmailService
             configsets.push(configset_hash)
           end
         else
-          status = "configset is empty"
+          status = "#{I18n.t('email_service.errors.configset_list_empty')}"
+          Rails.logger.debug status
         end
       rescue AWS::SESV2::Errors::ServiceError => e
-        status = "#{e.message}"
-        Rails.logger.error "CRONUS: DEBUG: LIST CONFIGSETS (v2): #{status}"
+        error = "#{I18n.t('email_service.errors.configset_list_error')} :  #{e.message}"
+        Rails.logger.error error
       end
       return configsets
     end
@@ -1277,7 +1234,7 @@ module EmailService
         status = "success"
       rescue Aws::SES::Errors::ServiceError => e
         status = "#{e.message}"
-        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+        Rails.logger.error "Create custom verification template failed: #{e.message}"
       end
       return status
     end
@@ -1291,12 +1248,12 @@ module EmailService
         return "success"
       rescue Aws::SES::Errors::ServiceError => e
         status = "#{e.message}"
-        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+        Rails.logger.error "Delete custom verification template: #{e.message}"
       end
 
     end
 
-    # create a template instance used by find_template to return empty one
+    
     def new_custom_verification_email_template(attributes = {})
       template = EmailService::CustomVerificationEmailTemplate.new(attributes)
     end
@@ -1314,7 +1271,7 @@ module EmailService
         return "success"
       rescue Aws::SES::Errors::ServiceError => e
         status = "#{e.message}"
-        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+        Rails.logger.error "Create custom verification template: #{e.message}"
       end
 
     end
@@ -1342,7 +1299,6 @@ module EmailService
           :success_redirection_url => item[:success_redirection_url],
           :failure_redirection_url => item[:failure_redirection_url],
         }
-      # @custom_verification_email_templates.push(new_custom_verification_email_template(item))
       @custom_verification_email_templates.push(template_item)
       index += 1
       end
@@ -1355,7 +1311,7 @@ module EmailService
         @all_templates ||= ses_client.list_custom_verification_email_templates(params)
       rescue Aws::SES::Errors::ServiceError => e
         status = "#{e.message}"
-        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+        Rails.logger.error " Create custom verification template: #{status}"
         return e
       end
     end
@@ -1369,7 +1325,7 @@ module EmailService
         })
       rescue Aws::SES::Errors::ServiceError => e
         status = "#{e.message}"
-        Rails.logger.error "CRONUS: DEBUG: Create custom verification template: #{e.message}"
+        Rails.logger.error " Create custom verification template: #{status}"
       end
 
       return template ? template : new_custom_verification_email_template
@@ -1377,9 +1333,8 @@ module EmailService
     end
 
     #
-
     ### nebula
-
+    
     def custom_endpoint_url
       return nil
     end
@@ -1421,6 +1376,7 @@ module EmailService
 
       begin
         response = https.request(request)
+        JSON.parse(response.read_body)
       rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
              Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
         Rails.logger.error e.message
@@ -1430,12 +1386,47 @@ module EmailService
 
     end
 
+    # Work in Progress
+    
+    def _nebula_request1(uri, method, headers = nil, body = nil )
+
+      Rails.logger.debug "services.available?('email_service') : #{services.available?('email_service')} "
+      # Rails.logger.debug "services.available?(:email-aws) : #{services.available?('email-aws')} "
+
+      Rails.logger.debug "\n email service methods : #{services.email_service.inspect} \n "
+
+      headers = {
+        "X-Auth-Token": current_user.token,
+        "Content-Type": "application/json",
+      }
+
+      options ={
+        project_id: current_user.project_id,
+        token: current_user.token,
+      }
+      Rails.logger.debug "\n current_user.project_id : #{current_user.project_id }\n"
+      Rails.logger.debug "\n current_user.token : #{current_user.token }\n"
+
+      auth_conf = { url: nebula_endpoint_url , token: current_user.token}
+      options = { "X-Auth-Token":  current_user.token }
+
+      Rails.logger.debug "\n get_nebula_account_details : #{services.email_service.get_nebula_account_details(auth_conf, options) }\n"
+      
+
+      debugger
+
+    end
+
     def nebula_details
       
       url = URI("#{nebula_endpoint_url}/v1/aws/#{project_id}")
       headers =  nil # JSON.dump({ "sample-head1": "head1", "sample-head2": "head2" })
       body = nil # JSON.dump({ "sample-body2": "body1", "sample-body2": "body2", })
+
       response = _nebula_request(url, "GET", headers, body)
+
+      # response = _nebula_request1(url, "GET", headers, body)
+
       begin
         status = JSON.parse(response.read_body)
       rescue JSON::ParserError => e
@@ -1465,11 +1456,8 @@ module EmailService
 
     end
 
-    # check if cronus service is enabled for the project
     def nebula_active?
-      
       @nebula_active ||= nebula_details && nebula_details["status"] == "GRANTED" ? true : false
-
     end
 
     def get_nebula_uri(provider = nil, custom_url = nil)
@@ -1483,14 +1471,7 @@ module EmailService
     end
 
     def nebula_activate(multicloud_account = nil)
-      # Rails.logger.debug "\n [email_service][application_helper][nebula_activate] \n"
       return "nebula details are invalid " if multicloud_account.nil?
-      # multicloud_account.account_env
-      # multicloud_account.identity
-      # multicloud_account.mail_type
-      # multicloud_account.provider
-      # multicloud_account.security_officer
-      # multicloud_account.custom_endpoint_url
       provider = multicloud_account.provider || "aws"
       endpoint_url = multicloud_account.custom_endpoint_url ? multicloud_account.custom_endpoint_url : nil
       url = get_nebula_uri(provider, endpoint_url)
@@ -1509,15 +1490,11 @@ module EmailService
         status ="#{response.code} : #{response.read_body}"
       end
       return status
-      # This is shown after deleting and activating again.
-      # response.code "409"
-      # "{\"error\":\"failed to create a Nebula account: account already activated\"}\n"
+
     end
 
     def nebula_available?
-
       return services.available?(:nebula)
-
     end
 
     def nebula_deactivate(multicloud_account = nil)

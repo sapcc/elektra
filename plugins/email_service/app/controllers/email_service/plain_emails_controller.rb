@@ -42,10 +42,8 @@ module EmailService
       if @plain_email.valid?
         begin
           status = send_plain_email(plain_email_values)
-          Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][STATUS]\n : #{status}"
           if status.include?("success")
             Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][@plain_email.valid?]"
-            # flash[:success] = status
             flash[:success] = PLAIN_EMAIL_SENT
             redirect_to plugin('email_service').emails_path and return
           else

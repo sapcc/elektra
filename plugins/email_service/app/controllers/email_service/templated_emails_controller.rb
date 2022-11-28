@@ -10,8 +10,7 @@ module EmailService
     authorization_required
 
     TEMPLATED_EMAIL_SENT = "#{I18n.t('email_service.messages.templated_email_sent')}"
-    # RAW_EMAIL_SENT = "#{I18n.t('email_service.messages.raw_email_sent')}"
-    
+
     def new
       @source_types = ::EmailService::Email.source_types
     end
@@ -45,11 +44,6 @@ module EmailService
 
       templated_email_values = @templated_email.process(EmailService::TemplatedEmail)
 
-      # Rails.logger.debug "\n===================================================\n"
-      # Rails.logger.debug "\n [TemplatedEmailsController][create] \n"
-      # Rails.logger.debug "\n @templated_email.inspect : #{@templated_email.inspect} \n"
-      # Rails.logger.debug "\n===================================================\n"
-
       if @templated_email.valid?
         begin
           status = send_templated_email(templated_email_values)
@@ -67,9 +61,6 @@ module EmailService
           flash[:error] = error
         end
       else
-        # error = @templated_email.errors
-        # Rails.logger.error error
-        # flash[:error] = error
         render "edit", locals: {data: {modal: true} } and return
       end
       redirect_to plugin('email_service').emails_path

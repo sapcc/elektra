@@ -30,7 +30,6 @@ describe EmailService::EmailsController, type: :controller do
     allow_any_instance_of(EmailService::EmailsController).to receive(:check_verified_identity).and_return(double('render').as_null_object)
     allow_any_instance_of(EmailService::EmailsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::EmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)
-    allow_any_instance_of(EmailService::EmailsController).to receive(:get_send_stats).and_return(double('stats').as_null_object)
     allow_any_instance_of(EmailService::EmailsController).to receive(:get_send_data).and_return(double('data').as_null_object)
   end
 

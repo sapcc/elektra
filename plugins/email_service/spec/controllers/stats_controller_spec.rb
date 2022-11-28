@@ -29,7 +29,7 @@ describe EmailService::StatsController, type: :controller do
     allow_any_instance_of(EmailService::StatsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::StatsController).to receive(:ses_client_v2).and_return(double('ses_client_v2').as_null_object)
     allow_any_instance_of(EmailService::StatsController).to receive(:ses_client).and_return(double('ses_client').as_null_object)
-    allow_any_instance_of(EmailService::StatsController).to receive(:get_send_stats).and_return(double('send_stats').as_null_object)
+    
   end
 
   describe "GET 'index'" do

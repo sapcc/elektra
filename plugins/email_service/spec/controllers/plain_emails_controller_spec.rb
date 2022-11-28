@@ -31,7 +31,6 @@ describe EmailService::PlainEmailsController, type: :controller do
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(:check_verified_identity).and_return(double('render').as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)
-    allow_any_instance_of(EmailService::PlainEmailsController).to receive(:get_send_stats).and_return(double('stats').as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(:get_send_data).and_return(double('data').as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(:send_plain_email).and_return(double('status').as_null_object)

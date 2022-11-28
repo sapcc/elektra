@@ -4,13 +4,3 @@
   = f.input :source_domain, required: true, label: "Sender domain", input_html: {data: {toggle: 'sourceDomainSelect'}}, collection: domains_collection, as: :select, icon_hint: domain_source_hint
 #domain-source-name{class: ('hide' if hide_domain_source(@plain_email.source_type))}
   = f.input :source_domain_name_part, required: false, label: "local name", icon_hint: name_hint
-.form-group.string.domain_source_name
-  -# = label_tag :name, class: 'string col-sm-4 control-label' do
-    Name
-    .col-sm-8
-      .input-group
-        = f.text_field :name, id: "domain-name-input", class: 'string required form-control', placeholder: "#{@plain_email.source_domain_name_part}"
-        %span.input-group-addon.domain-name-addon= ".#{@plain_email.source_domain_name_part}"
-      %p.help-block
-        %i.fa.fa-info-circle
-        You can leave this field empty, test@selected_domain will be used to send email.

@@ -53,3 +53,7 @@ en:
       template_delete_error: "Template delete failed."
       multicloud_account_create: "MultiCloud account create failed"
       multicloud_account_delete: "MultiCloud account delete failed"
+      cronus_account_activation: "Cronus is not activated"
+      cronus_account_details_list: "Nebula Account fetching failed"
+      configset_list_error: "Configuration Set list failed."
+      configset_list_empty: "Configuration Set list is empty."

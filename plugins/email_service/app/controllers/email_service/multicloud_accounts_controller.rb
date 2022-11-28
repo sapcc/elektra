@@ -19,9 +19,6 @@ module EmailService
     def new
     end
 
-    def edit
-    end
-
     def create
       @multicloud_account = multicloud_account_form(multicloud_account_params)
       multicloud_account_values = @multicloud_account.process(EmailService::MulticloudAccount)

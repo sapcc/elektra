@@ -8,7 +8,7 @@ module EmailService
     authorization_required
 
     def index
-      # ids = list_email_identity_details
+      
       items_per_page = 10
       @paginatable_emails = Kaminari.paginate_array(email_addresses, total_count: email_addresses.count).page(params[:page]).per(items_per_page)
       rescue Elektron::Errors::ApiResponse => e
@@ -24,9 +24,6 @@ module EmailService
     def new
       @configsets_collection = list_configset_names
     end
-
-    def show;end
-
 
 
     def create
@@ -80,8 +77,6 @@ module EmailService
 
     def process_email_verification(identity_values)
 
-      # Rails.logger.debug "\n ************** PROCESS EMAIL VERIFICATION #{identity_values} **************\n"
-      # Rails.logger.debug "\n ************** PROCESS EMAIL VERIFICATION #{identity_values.inspect} **************\n"
       identities = []
       if identity_values['identity'].length.positive?
         identity_values['identity'].each do | id |
