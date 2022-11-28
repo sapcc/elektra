@@ -42,18 +42,11 @@ describe EmailService::DomainVerificationsController, type: :controller do
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)
     allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:delete_email_identity).and_return(double('status').as_null_object)
-    # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:verify_dkim).and_return(double('status').as_null_object)
-    # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:activate_dkim).and_return(double('status').as_null_object)
-    # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:deactivate_dkim).and_return(double('status').as_null_object)
 
   end
 
   # check index route
   describe "GET 'index'" do
-
-    Rails.logger.debug "\n ==============================================================\n"
-    Rails.logger.debug "\n [DomainVerificationsController][index] \n"
-    Rails.logger.debug "\n ==============================================================\n"
 
     # check email admin role
     context 'email_admin' do
@@ -62,7 +55,6 @@ describe EmailService::DomainVerificationsController, type: :controller do
           token['roles'] = []
           token['roles'] << { 'id' => 'email_service_role', 'name' => 'email_admin' }
           token['roles'] << { 'id' => 'cloud_support_tools_viewer_role', 'name' => 'cloud_support_tools_viewer' }
-          # Rails.logger.debug "\n Token Inspect:  #{token.inspect} \n"
           token
         end
       end

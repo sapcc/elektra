@@ -15,9 +15,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       'Project', default_params[:domain_id], default_params[:project_id],
       default_params[:project_id]
     )
-    puts "\n ==============================================================\n"
-    puts "\n [ConfigsetsController] \n"
-    puts "\n ==============================================================\n"
+
   end
 
   before :each do
@@ -146,11 +144,6 @@ describe EmailService::ConfigsetsController, type: :controller do
     before :each do
       @configset_opts = ::EmailService::FakeFactory.new.configset_opts
     end
-
-    puts "\n ==============================================================\n"
-    puts "\n [ConfigsetsController][create] \n"
-    puts "\n  @configset_opts : #{@configset_opts} \n"
-    puts "\n ==============================================================\n"
 
     context 'email_admin' do
       before :each do

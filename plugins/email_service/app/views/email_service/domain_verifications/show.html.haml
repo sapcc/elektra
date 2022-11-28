@@ -91,36 +91,7 @@
               %strong configuration_set_name:
             %td
               =@verified_domain[:configuration_set_name]
-          %hr
-        -#
-          %tr
-            %td
-              %strong Verification Token:
-              %a{ href: "#", title: "You need to create a TXT record for your domain using this token displayed here.", data: { toggle: "tooltip", html: true} }
-                %i.fa.fa-question-circle-o
-            %td
-              =@verified_domain[:tokens]
-          %tr
-            %td
-              %strong Status:
-            %td
-              =@verified_domain[:status]
-          %tr
-            %td
-              %strong DKIM Tokens:
-            %td
-              =@verified_domain.dkim_tokens
-          %tr
-            %td
-              %strong DKIM Enabled:
-            %td
-              =@verified_domain.dkim_enabled
-          %tr
-            %td
-              %strong DKIM Verification Status:
-            %td
-              =@verified_domain.dkim_verification_status
-              
+          %hr 
   %table.table.table-striped
     %th Name
     %th Type
