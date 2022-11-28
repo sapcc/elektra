@@ -11,7 +11,7 @@ class EmailValidator < ActiveModel::EachValidator
         @parse_errors_items= @parse_errors_items ?  "#{@parse_errors_items}, #{e}," : "#{e},"
       end
       @parse_error_message = "#{@parse_error_message}: #{@parse_errors_items}"
-      record.errors.add attribute, (options[:message] || @parse_error_message ) 
+      record.errors.add attribute, (options[:message] || @parse_error_message )
     end
     if @invalid_addresses.count > 0
       @invalid_error_message = "INVALID:"
@@ -19,28 +19,28 @@ class EmailValidator < ActiveModel::EachValidator
         @invalid_entries = " #{a[:name]} #{a[:address]}"
       end
       @invalid_error_message = "#{@invalid_error_message} [ #{@invalid_entries} ] invalid entries found."
-      record.errors.add attribute, (options[:message] || @invalid_error_message ) 
+      record.errors.add attribute, (options[:message] || @invalid_error_message )
     end
     if @valid_addresses.count > 50
       @exceeded_error_message = "EXCEEDED LIMIT:"
-      @exceeded_error_message = "#{@exceeded_error_message} Too many (#{@valid_addresses.count}) email addresses. AWS SES allows only in total of 50." 
+      @exceeded_error_message = "#{@exceeded_error_message} Too many (#{@valid_addresses.count}) email addresses. AWS SES allows only in total of 50."
       record.errors.add attribute, (options[:message] || @exceeded_error_message )
     end
   end
 
   def validate_email_array(raw_str)
-    
+
     errors = []
     addresses = []
     valid_addresses = []
     invalid_addresses = []
 
-    begin 
+    begin
       raw_addresses = Mail::AddressList.new(raw_str)
     rescue Mail::Field::IncompleteParseError => e
       errors << e.value
     end
-    
+
     unless raw_addresses.nil? || !raw_addresses
       raw_addresses.addresses.each do |a|
         address = {}
@@ -53,14 +53,14 @@ class EmailValidator < ActiveModel::EachValidator
     unless addresses.empty?
       addresses.each do | a |
         if /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i.match?(a[:address])
-          valid_addresses.push(a) 
+          valid_addresses.push(a)
         else
           invalid_addresses.push(a)
         end
-      end 
+      end
     end
 
     return errors, addresses, valid_addresses, invalid_addresses
   end
-  
+
 end

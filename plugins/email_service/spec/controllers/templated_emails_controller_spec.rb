@@ -3,10 +3,10 @@ require_relative '../factories/factories'
 
 describe EmailService::TemplatedEmailsController, type: :controller do
   routes { EmailService::Engine.routes }
- 
+
   default_params = { domain_id: AuthenticationStub.domain_id,
                      project_id: AuthenticationStub.project_id }
- 
+
   before(:all) do
     FriendlyIdEntry.find_or_create_entry(
       'Domain', nil, default_params[:domain_id], 'default'
@@ -15,19 +15,24 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       'Project', default_params[:domain_id], default_params[:project_id],
       default_params[:project_id]
     )
+
   end
- 
+
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:ec2_creds).and_return(double('creds').as_null_object)
+    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:ses_client_v2).and_return(double('ses_client_v2').as_null_object)
+    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:ses_client).and_return(double('ses_client').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:check_ec2_creds_cronus_status).and_return(double('redirect_path').as_null_object)
+    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:check_verified_identity).and_return(double('render').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)           
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_send_data).and_return(double('data').as_null_object)            
+    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_verified_identities_by_status).and_return(double('statuses').as_null_object)
+    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_send_data).and_return(double('data').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_verified_identities_collection).and_return(double('verified_identities').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_all_templates).and_return(double('templates').as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:get_templates_collection).and_return(double('templates').as_null_object)
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:list_configset_names).and_return(double('configsets').as_null_object) 
-    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:send_templated_email).and_return(double('status').as_null_object) 
+    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:list_configset_names).and_return(double('configsets').as_null_object)
+    allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(:send_templated_email).and_return(double('status').as_null_object)
   end
 
   # GET New

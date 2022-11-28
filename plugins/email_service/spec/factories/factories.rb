@@ -14,7 +14,7 @@ module EmailService
       EmailService::Forms::CustomVerificationEmailTemplate.new(custom_verification_email_template_opts)
     end
 
-    def configset 
+    def configset
       EmailService::Configset.new(configset_opts)
     end
 
@@ -22,41 +22,111 @@ module EmailService
       EmailService::Template.new(template_opts)
     end
 
+    def verified_domain
+      EmailService::VerifiedDomain.new(verified_domain_opts)
+    end
+
+    def verified_email
+      EmailService::VerifiedEmail.new(verified_email_opts)
+    end
+
+    def verified_domain_opts
+
+      domain_signing_selector = "some_selector"
+      domain_signing_private_key = "domain_signing_private_key"
+      next_signing_key_length = "RSA_1024_BIT"
+      {
+        id: "000002",
+        identity: "identity.domain",
+        domain_name: "abc.def",
+        dkim_enabled: true,
+        dkim_signing_attributes: {
+          "domain_signing_selector" => domain_signing_selector,
+          "domain_signing_private_key" => domain_signing_private_key,
+          "next_signing_key_length" => next_signing_key_length,
+        },
+        tags: [
+          {
+            "key1"=> "value1"
+          },
+          {
+            "key2"=> "value2"
+          }
+        ],
+        configset_name: "configset_domain_name"
+      }
+    end
+
+    def verified_email_opts
+      domain_signing_selector = "some_selector"
+      domain_signing_private_key = "domain_signing_private_key"
+      next_signing_key_length = "RSA_1024_BIT"
+      {
+        id: "000001",
+        identity: "identity.email",
+        domain_name: "abc.def",
+        dkim_enabled: true,
+        dkim_signing_attributes: {
+          "domain_signing_selector" => domain_signing_selector,
+          "domain_signing_private_key" => domain_signing_private_key,
+          "next_signing_key_length" => next_signing_key_length,
+        },
+        tags: [
+          {
+            "key1"=> "value1"
+          },
+          {
+            "key2"=> "value2"
+          }
+        ],
+        configset_name: "configset_email_name"
+      }
+    end
+
+    def rsa_key_length
+      @rsa_key_length = "RSA_1024_BIT"
+    end
+
+    def configsets_collection
+      @configsets_collection = ["configset1", "configset2"]
+    end
+
+
     def ec2_creds
       {
-        "user_id"=>"xxxxxx_user_id_xxxxxx", 
-        "tenant_id"=>"xxxxxx_project_id_xxxxxxx", 
-        "access"=>"xxxxxx_access_id_xxxxxx1", 
-        "secret"=>"xxxxxx_secret_id_xxxxxx1", 
-        "trust_id"=>nil, 
+        "user_id"=>"xxxxxx_user_id_xxxxxx",
+        "tenant_id"=>"xxxxxx_project_id_xxxxxxx",
+        "access"=>"xxxxxx_access_id_xxxxxx1",
+        "secret"=>"xxxxxx_secret_id_xxxxxx1",
+        "trust_id"=>nil,
         "links"=>{
           "self"=>"https://identity_v3_url/users/xxxxxx_user_id_xxxxxxx/credentials/OS-EC2/xxxxxx_access_id_xxxxxxx"
-        }, 
+        },
         "id"=>nil
       }
     end
 
     def ec2_creds_collection
       [{
-        "user_id"=>"xxxxxx_user_id_xxxxxxx", 
-        "tenant_id"=>"xxxxxx_project_id_xxxxxxx", 
-        "access"=>"xxxxxx_access_id_xxxxxx1", 
-        "secret"=>"xxxxxx_secret_id_xxxxxx1", 
-        "trust_id"=>nil, 
+        "user_id"=>"xxxxxx_user_id_xxxxxxx",
+        "tenant_id"=>"xxxxxx_project_id_xxxxxxx",
+        "access"=>"xxxxxx_access_id_xxxxxx1",
+        "secret"=>"xxxxxx_secret_id_xxxxxx1",
+        "trust_id"=>nil,
         "links"=>{
           "self"=>"https://identity_v3_url/users/xxxxxx_user_id_xxxxxxx/credentials/OS-EC2/xxxxxx_access_id_xxxxxx1"
-        }, 
+        },
         "id"=>nil
       },
       {
-        "user_id"=>"xxxxxx_user_id_xxxxxxx", 
-        "tenant_id"=>"xxxxxx_project_id_xxxxxx2", 
-        "access"=>"xxxxxx_access_id_xxxxxx2", 
-        "secret"=>"xxxxxx_secret_id_xxxxxx2", 
-        "trust_id"=>nil, 
+        "user_id"=>"xxxxxx_user_id_xxxxxxx",
+        "tenant_id"=>"xxxxxx_project_id_xxxxxx2",
+        "access"=>"xxxxxx_access_id_xxxxxx2",
+        "secret"=>"xxxxxx_secret_id_xxxxxx2",
+        "trust_id"=>nil,
         "links"=>{
           "self"=>"https://identity_v3_url/users/xxxxxx_user_id_xxxxxxx/credentials/OS-EC2/xxxxxx_access_id_xxxxxx2"
-        }, 
+        },
         "id"=>nil
       }]
     end
@@ -65,10 +135,10 @@ module EmailService
       {
         source: "abc@def.com",
         to_addr: "abc@def.com, ghi@rbss.de",
-        cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk", 
-        bcc_addr: "abc@xyz.mn.rb, kd@mr.jq.lk", 
-        subject: "Sample Subject", 
-        htmlbody: "<html><head><title>TEST</title><body><h1>Body of the HTML email<h1></body></html>", 
+        cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk",
+        bcc_addr: "abc@xyz.mn.rb, kd@mr.jq.lk",
+        subject: "Sample Subject",
+        htmlbody: "<html><head><title>TEST</title><body><h1>Body of the HTML email<h1></body></html>",
         textbody: "Body of the PLAIN email"
       }
     end
@@ -125,10 +195,10 @@ module EmailService
       {
         source: "abc@def.com",
         to_addr: "abc@def.com, ghi@rbss.de",
-        cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk", 
-        bcc_addr: "abc@xyz.mn.rb, kd@mr.jq.lk", 
-        template_name: "MyTemplate", 
-        template_data: '{ "abc": { "def": "klm"}}', 
+        cc_addr: "klm@yur.kr, rjuhu@hyrtyd.co.uk",
+        bcc_addr: "abc@xyz.mn.rb, kd@mr.jq.lk",
+        template_name: "MyTemplate",
+        template_data: '{ "abc": { "def": "klm"}}',
         configset: "MyConfigSet"
       }
     end
@@ -172,19 +242,19 @@ module EmailService
         }
     end
 
-    def configset_opts 
+    def configset_opts
       {
-        id: 0, 
-        name: "NewConfigSet"
+        id: 0,
+        name: "NewConfigSet",
+        tls_policy: "tls_policy",
+        custom_redirect_domain: "custom_redirect_domain",
+        sending_pool_name: "sending_pool_name",
+        reputation_metrics_enabled: true,
+        last_fresh_start: "", #DateTime
+        sending_enabled: true,
+        tags: ["valid", "tag", "list"],
+        suppressed_reasons: ["reason1", "reason2"],
       }
-    end
-
-    def verfied_email_opts
-      { id: 0, identity: "abc@ghi.com" }
-    end
-
-    def verfied_domain_opts
-      { id: 0, identity: "test.ghi.com", dkim_enabled: true }
     end
 
   end

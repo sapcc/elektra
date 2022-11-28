@@ -21,6 +21,7 @@ module EmailService
     attribute :return_path, String
     attribute :template_name, String
     attribute :template_data, String
+    attribute :tags, Array
     attribute :configset_name, String
 
     strip_attributes
@@ -30,6 +31,7 @@ module EmailService
     validates_presence_of :template_name, message: "Template name can't be empty"
     validates_presence_of :to_addr, message: "To address can't be empty"
     validates_presence_of :template_data, message: "Template data can't be empty"
+    validates_presence_of :tags, message: "Atleast one tag [{\"name\": \"Name\", {\"value\": \"Value\"}] is needed"
 
     validates :to_addr, presence: true, email: true
     validates :cc_addr, allow_nil: true, email: true
@@ -48,7 +50,7 @@ module EmailService
     def process(templated_email_instance)
       process!(templated_email_instance)
     end
-    
+
     private
 
     def process!(templated_email_instance)

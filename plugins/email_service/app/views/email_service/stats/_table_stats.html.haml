@@ -13,7 +13,7 @@
 
   -if send_stats
     - send_stats.each do | stat |
-      %tr        
+      %tr
         %td
           =stat[:timestamp]
         %td
@@ -24,3 +24,4 @@
           =stat[:rejects]
         %td
           =stat[:complaints]
+

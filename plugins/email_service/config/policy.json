@@ -2,6 +2,7 @@
   "email_service_user": "role:email_user",
   "email_service_admin": "role:email_admin or role:cloud_email_admin",
   "email_role_required": "role:email_user or role:email_admin or role:cloud_email_admin",
+  "cloud_support_tools_viewer": "role:cloud_support_tools_viewer",
   "email_service:email_list": "rule:email_role_required",
   "email_service:plain_email_list": "rule:email_role_required",
   "email_service:plain_email_get": "rule:email_role_required",
@@ -46,6 +47,6 @@
   "email_service:setting_list": "rule:email_role_required",
   "email_service:setting_delete": "rule:email_service_admin",
   "email_service:stat_list": "rule:email_role_required",
-  "email_service:web_list": "rule:email_role_required"
-  
+  "email_service:web_list": "rule:email_role_required",
+  "email_service:web_test": "rule:cloud_support_tools_viewer"
 }

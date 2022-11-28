@@ -8,14 +8,14 @@ RSpec.describe EmailService::ApplicationHelper, :type => :helper do
   #   @creds_collection = ::EmailService::FakeFactory.new.ec2_creds_collection
   # end
 
-  # describe "#ec2_creds" do 
-  #   it "#check_ec2_data" do 
+  # describe "#ec2_creds" do
+  #   it "#check_ec2_data" do
   #     expect(@creds.class).to eq(Hash)
   #   end
   # end
 
-  # describe "#ec2_creds_collection" do 
-  #   it "#ec2_creds_collection" do 
+  # describe "#ec2_creds_collection" do
+  #   it "#ec2_creds_collection" do
   #     expect(@creds_collection.class).to eq(Array)
   #   end
   # end
