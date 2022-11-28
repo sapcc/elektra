@@ -1349,6 +1349,7 @@ module EmailService
 
     def _nebula_request(uri, method, headers = nil, body = nil )
 
+      # TODO Replace with Elektron Calls.
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = true
       request = Net::HTTP::Get.new(uri)
@@ -1386,46 +1387,14 @@ module EmailService
 
     end
 
-    # Work in Progress
-    
-    def _nebula_request1(uri, method, headers = nil, body = nil )
-
-      Rails.logger.debug "services.available?('email_service') : #{services.available?('email_service')} "
-      # Rails.logger.debug "services.available?(:email-aws) : #{services.available?('email-aws')} "
-
-      Rails.logger.debug "\n email service methods : #{services.email_service.inspect} \n "
-
-      headers = {
-        "X-Auth-Token": current_user.token,
-        "Content-Type": "application/json",
-      }
-
-      options ={
-        project_id: current_user.project_id,
-        token: current_user.token,
-      }
-      Rails.logger.debug "\n current_user.project_id : #{current_user.project_id }\n"
-      Rails.logger.debug "\n current_user.token : #{current_user.token }\n"
-
-      auth_conf = { url: nebula_endpoint_url , token: current_user.token}
-      options = { "X-Auth-Token":  current_user.token }
-
-      Rails.logger.debug "\n get_nebula_account_details : #{services.email_service.get_nebula_account_details(auth_conf, options) }\n"
-      
-
-      debugger
-
-    end
-
     def nebula_details
       
       url = URI("#{nebula_endpoint_url}/v1/aws/#{project_id}")
       headers =  nil # JSON.dump({ "sample-head1": "head1", "sample-head2": "head2" })
       body = nil # JSON.dump({ "sample-body2": "body1", "sample-body2": "body2", })
 
+      # TODO replace _nebula_request with Elektron API Calls
       response = _nebula_request(url, "GET", headers, body)
-
-      # response = _nebula_request1(url, "GET", headers, body)
 
       begin
         status = JSON.parse(response.read_body)
