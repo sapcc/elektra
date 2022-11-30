@@ -6,6 +6,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const ReactHelpers = {}
+import React from "react"
 
 ReactHelpers.mergeObjects = function (obj1, obj2, obj3) {
   if (obj3 == null) {

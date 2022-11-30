@@ -1,7 +1,7 @@
 /* eslint no-console:0 */
 import { HashRouter, Route, Redirect } from "react-router-dom"
 import { withRouter } from "react-router"
-
+import React from "react"
 import { FlashMessages } from "lib/flashes"
 
 import Menu from "../containers/menu"

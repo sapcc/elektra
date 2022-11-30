@@ -1,3 +1,4 @@
+import React from "react"
 import * as constants from "../constants"
 import { createAjaxHelper } from "lib/ajax_helper"
 import { addError } from "lib/flashes"

@@ -1,6 +1,6 @@
 /* eslint no-console:0 */
 import { BrowserRouter, Route, Switch } from "react-router-dom"
-
+import React from "react"
 import SecurityGroups from "../containers/security_groups/list"
 import NewSecurityGroupModal from "../containers/security_groups/new"
 import EditSecurityGroupModal from "../containers/security_groups/edit"

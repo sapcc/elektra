@@ -1,6 +1,6 @@
 /* eslint no-console:0 */
 import { BrowserRouter, Route, Redirect } from "react-router-dom"
-
+import React from "react"
 import Tabs from "./tabs"
 
 import Shares from "../containers/shares/list"

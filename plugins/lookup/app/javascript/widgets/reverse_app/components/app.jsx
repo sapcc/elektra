@@ -1,5 +1,6 @@
 import ObjectDetails from "../containers/objectDetails"
 import { Form } from "lib/elektra-form"
+import React from "react"
 
 class App extends React.Component {
   state = {

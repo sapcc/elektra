@@ -55,7 +55,6 @@ const config = {
   target: ["es6", "chrome58", "firefox57", "safari11", "edge18"],
   minify: production,
   sourcemap: !production,
-  inject: [path.resolve(__dirname, "./react-shim.js")],
   // map global this to window
   define: { this: "window" },
   allowOverwrite: true,

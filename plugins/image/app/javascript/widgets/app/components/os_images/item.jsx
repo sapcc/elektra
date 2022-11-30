@@ -4,6 +4,7 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap"
 import { PrettyDate } from "lib/components/pretty_date"
 import { PrettySize } from "lib/components/pretty_size"
 import { ImageIcon } from "./icon"
+import React from "react"
 
 export const OwnerIcon = () => {
   const tooltip = <Tooltip id="ownerIconTooltip">Owned by this project</Tooltip>

@@ -1,37 +1,40 @@
-import { Modal, Button } from 'react-bootstrap';
-import { Form } from 'lib/elektra-form';
-import { Link } from 'react-router-dom';
-import * as constants from '../../constants';
+import { Modal, Button } from "react-bootstrap"
+import { Form } from "lib/elektra-form"
+import { Link } from "react-router-dom"
+import * as constants from "../../constants"
+import React from "react"
 
-const FormBody = ({values}) =>
+const FormBody = ({ values }) => (
   <Modal.Body>
-    <Form.Errors/>
+    <Form.Errors />
 
     <div className="alert alert-warning">
       Administrator only. Explicitly updates the state of a share.
     </div>
 
-    <Form.ElementHorizontal label='Status' name="status" required>
+    <Form.ElementHorizontal label="Status" name="status" required>
       <Form.Input
-        elementType='select'
+        elementType="select"
         className="select required form-control"
-        name='status'>
+        name="status"
+      >
         <option></option>
-        {constants.SHARE_RESET_STATUS.map((state,index) =>
+        {constants.SHARE_RESET_STATUS.map((state, index) => (
           <option value={state} key={index}>
             {state}
           </option>
-        )}
+        ))}
       </Form.Input>
     </Form.ElementHorizontal>
   </Modal.Body>
+)
 
 export default class ResetShareStatusForm extends React.Component {
   state = { show: true }
 
   componentDidMount() {
-    if(!this.props.share) {
-      this.props.loadShare().catch((loadError) => this.setState({loadError}))
+    if (!this.props.share) {
+      this.props.loadShare().catch((loadError) => this.setState({ loadError }))
     }
   }
 
@@ -40,8 +43,8 @@ export default class ResetShareStatusForm extends React.Component {
   }
 
   close = (e) => {
-    if(e) e.stopPropagation()
-    this.setState({show: false})
+    if (e) e.stopPropagation()
+    this.setState({ show: false })
   }
 
   restoreUrl = (e) => {
@@ -49,15 +52,17 @@ export default class ResetShareStatusForm extends React.Component {
       this.props.history.replace(`/${this.props.match.params.parent}`)
   }
 
-  onSubmit = (values) =>{
-    return this.props.handleSubmit(values).then(() => this.close());
+  onSubmit = (values) => {
+    return this.props.handleSubmit(values).then(() => this.close())
   }
 
-  render(){
-    const {share} = this.props
-    const initialValues = share ? {
-      status: share.status
-    } : {}
+  render() {
+    const { share } = this.props
+    const initialValues = share
+      ? {
+          status: share.status,
+        }
+      : {}
 
     return (
       <Modal
@@ -65,34 +70,38 @@ export default class ResetShareStatusForm extends React.Component {
         onHide={this.close}
         bsSize="large"
         onExited={this.restoreUrl}
-        aria-labelledby="contained-modal-title-lg">
+        aria-labelledby="contained-modal-title-lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
-            Reset Share Status <span className="info-text">{share && share.name || this.props.id}</span>
+            Reset Share Status{" "}
+            <span className="info-text">
+              {(share && share.name) || this.props.id}
+            </span>
           </Modal.Title>
         </Modal.Header>
 
         <Form
-          className='form form-horizontal'
+          className="form form-horizontal"
           validate={this.validate}
           onSubmit={this.onSubmit}
-          initialValues={initialValues}>
-
-          {this.props.share ?
-            <FormBody/>
-            :
+          initialValues={initialValues}
+        >
+          {this.props.share ? (
+            <FormBody />
+          ) : (
             <Modal.Body>
-              <span className='spinner'></span>
+              <span className="spinner"></span>
               Loading...
             </Modal.Body>
-          }
+          )}
 
           <Modal.Footer>
             <Button onClick={this.close}>Cancel</Button>
-            <Form.SubmitButton label='Save'/>
+            <Form.SubmitButton label="Save" />
           </Modal.Footer>
         </Form>
       </Modal>
-    );
+    )
   }
 }

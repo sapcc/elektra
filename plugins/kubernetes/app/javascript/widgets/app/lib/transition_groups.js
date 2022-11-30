@@ -4,10 +4,10 @@
  * DS208: Avoid top-level this
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import React from "react"
 const ReactCSSTransitionGroup = React.createFactory(
   React.addons.CSSTransitionGroup
 )
+import React from "react"
 
 this.ReactTransitionGroups = {}
 

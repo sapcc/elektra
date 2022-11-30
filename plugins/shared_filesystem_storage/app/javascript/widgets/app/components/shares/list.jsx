@@ -7,6 +7,7 @@ import { policy } from "lib/policy"
 import { SearchField } from "lib/components/search_field"
 import ShareItem from "./item"
 import { AjaxPaginate } from "lib/components/ajax_paginate"
+import React from "react"
 
 const azTooltip = <Tooltip id="azTooltip">Availability Zone</Tooltip>
 

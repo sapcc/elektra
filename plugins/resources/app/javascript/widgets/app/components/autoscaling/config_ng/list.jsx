@@ -1,3 +1,4 @@
+import React from "react"
 import { Table, FormControl, Row, Col } from "react-bootstrap"
 import Item from "./list_item"
 import Subscopes from "./subscopes"

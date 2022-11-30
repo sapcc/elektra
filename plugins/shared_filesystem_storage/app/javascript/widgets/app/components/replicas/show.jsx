@@ -1,6 +1,7 @@
 import { Modal, Button } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { titleCase } from "lib/tools/utils"
+import React from "react"
 
 const ShowReplica = ({ history, replica }) => {
   const [isOpen, setIsOpen] = React.useState(true)

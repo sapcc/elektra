@@ -1,3 +1,4 @@
+import React from "react"
 import { Link } from "react-router-dom"
 import { DefeatableLink } from "lib/components/defeatable_link"
 import { Popover, OverlayTrigger, Tooltip } from "react-bootstrap"

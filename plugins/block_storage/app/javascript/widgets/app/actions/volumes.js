@@ -1,3 +1,4 @@
+import React from "react"
 import * as constants from "../constants"
 import { pluginAjaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"

@@ -1,5 +1,5 @@
 import { useDispatch, useGlobalState } from "../StateProvider"
-import { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import LoadbalancerItem from "./LoadbalancerItem"
 import ErrorPage from "../ErrorPage"
 import { DefeatableLink } from "lib/components/defeatable_link"

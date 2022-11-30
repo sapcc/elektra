@@ -1,11 +1,14 @@
+import React from "react"
 export default (props) => {
   return (
-    <a href='#' onClick={(e) => { e.preventDefault(); props.toggleModal()}}>
-      {props.iconClass ?
-        <i className={props.iconClass}></i>
-        :
-        'Auth Projects'
-      }
+    <a
+      href="#"
+      onClick={(e) => {
+        e.preventDefault()
+        props.toggleModal()
+      }}
+    >
+      {props.iconClass ? <i className={props.iconClass}></i> : "Auth Projects"}
     </a>
   )
 }

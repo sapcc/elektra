@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import HelpPopover from "../shared/HelpPopover"
 import useL7Rule from "../../lib/hooks/useL7Rule"
 import { useGlobalState } from "../StateProvider"

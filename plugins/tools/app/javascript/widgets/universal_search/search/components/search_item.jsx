@@ -6,6 +6,7 @@ import {
   vCenterUrl,
 } from "../../shared/object_link_helper"
 import moment from "moment"
+import React from "react"
 
 const ObjectLink = ({ id, name, term }) => (
   <React.Fragment>

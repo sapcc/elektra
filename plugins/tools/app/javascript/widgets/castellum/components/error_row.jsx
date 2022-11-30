@@ -1,4 +1,5 @@
 import { PrettyDate } from "lib/components/pretty_date"
+import React from "react"
 
 export default (props) => {
   const {

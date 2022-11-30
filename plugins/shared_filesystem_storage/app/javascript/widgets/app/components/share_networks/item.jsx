@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { Popover, Tooltip, OverlayTrigger } from "react-bootstrap"
 import { policy } from "lib/policy"
+import React from "react"
 
 const emptyNetwork = (
   <Popover id="popover-empty-share-network" title="Empty Network">

@@ -4,6 +4,7 @@ import SearchItem from "./search_item"
 // import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Pagination } from "lib/components/pagination"
 import { scope } from "lib/ajax_helper"
+import React from "react"
 
 export default class Search extends React.Component {
   componentDidMount() {

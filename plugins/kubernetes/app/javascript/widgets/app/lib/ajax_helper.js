@@ -103,4 +103,4 @@ class ReactAjaxHelper {
   }
 }
 
-window.ReactAjaxHelper = ReactAjaxHelper
+export default ReactAjaxHelper

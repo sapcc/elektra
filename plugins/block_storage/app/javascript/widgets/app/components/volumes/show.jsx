@@ -1,3 +1,4 @@
+import React from "react"
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { PrettyDate } from "lib/components/pretty_date"

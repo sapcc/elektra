@@ -6,6 +6,7 @@ import { AutocompleteField } from "lib/components/autocomplete_field"
 import ProjectRoleAssignmentForm from "../containers/project_role_assignments_form"
 import { OverlayTrigger, Tooltip } from "react-bootstrap"
 import { policy } from "lib/policy"
+import React from "react"
 
 const isMemberTooltip = (type) => (
   <Tooltip id="removeMemberTooltip">

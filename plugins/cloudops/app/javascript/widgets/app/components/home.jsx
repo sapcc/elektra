@@ -1,2 +1,1 @@
-export default () =>
-  <p>Welcome to Cloudops</p>
+export default () => <p>Welcome to Cloudops</p>

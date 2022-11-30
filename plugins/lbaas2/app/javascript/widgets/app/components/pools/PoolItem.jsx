@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { Link } from "react-router-dom"
 import StaticTags from "../StaticTags"
 import CopyPastePopover from "../shared/CopyPastePopover"

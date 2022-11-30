@@ -1,6 +1,7 @@
 /* eslint no-console:0 */
 import { BrowserRouter, Route, Redirect } from "react-router-dom"
 import { scope } from "lib/ajax_helper"
+import React from "react"
 
 import Tabs from "./tabs"
 

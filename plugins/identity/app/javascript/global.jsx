@@ -5,7 +5,7 @@ import Modal from "./widgets/auth_projects/containers/modal"
 import ModalLink from "./widgets/auth_projects/containers/modal_link"
 import List from "./widgets/auth_projects/containers/list"
 import * as reducers from "./widgets/auth_projects/reducers"
-
+import React from "react"
 // console.log('This widget is always loaded')
 
 const App = (props) => {

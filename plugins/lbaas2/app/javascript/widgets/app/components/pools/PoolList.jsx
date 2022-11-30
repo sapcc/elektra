@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { useDispatch, useGlobalState } from "../StateProvider"
 import usePool from "../../lib/hooks/usePool"
 import PoolItem from "./PoolItem"

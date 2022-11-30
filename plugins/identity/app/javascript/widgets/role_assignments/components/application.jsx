@@ -1,6 +1,7 @@
 import { useCallback } from "react"
 import { Tabs, Tab } from "react-bootstrap"
 import ProjectRoleAssignments from "../containers/project_role_assignments"
+import React from "react"
 
 export default ({ activeTab, projectId, domainId }) => {
   // update browser address bar

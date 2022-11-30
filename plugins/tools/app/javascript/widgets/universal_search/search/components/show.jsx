@@ -6,6 +6,7 @@ import {
   objectUrl,
   vCenterUrl,
 } from "../../shared/object_link_helper"
+import React from "react"
 
 import ProjectRoleAssignments from "plugins/identity/app/javascript/widgets/role_assignments/containers/project_role_assignments"
 import UserRoleAssignments from "plugins/identity/app/javascript/widgets/role_assignments/containers/user_role_assignments"

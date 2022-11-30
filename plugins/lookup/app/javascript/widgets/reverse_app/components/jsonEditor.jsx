@@ -1,4 +1,5 @@
-import "lib/jsoneditor"
+import init_json_editor from "lib/jsoneditor"
+import React from "react"
 
 class JsonEditor extends React.Component {
   componentDidMount() {

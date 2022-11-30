@@ -1,14 +1,15 @@
-import { SearchField } from 'lib/components/search_field';
-import { AjaxPaginate } from 'lib/components/ajax_paginate';
-import { Highlighter } from 'react-bootstrap-typeahead';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import makeCancelable from 'lib/tools/cancelable_promise';
+import { SearchField } from "lib/components/search_field"
+import { AjaxPaginate } from "lib/components/ajax_paginate"
+import { Highlighter } from "react-bootstrap-typeahead"
+import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import makeCancelable from "lib/tools/cancelable_promise"
+import React from "react"
 
 const removeMemberTooltip = (type) => (
   <Tooltip id="removeMemberTooltip">
     {`This will remove ${type} from project role assignments. This may take several minutes.`}
   </Tooltip>
-);
+)
 
 // This class renders edit form for project role assignments
 export default class ProjectRoleAssignmentsInlineForm extends React.Component {
@@ -17,7 +18,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
     newMemberRoleIDs: [], //stores the edited version of member roles
     availableRoles: [],
     saving: false,
-    errors: null
+    errors: null,
   }
 
   componentDidMount() {
@@ -28,8 +29,10 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
       newMemberRoleIDs: currentMemberRoleIDs,
     }
 
-    if(this.props.availableRoles) {
-      newState['availableRoles'] = this.sortRoles(this.props.availableRoles.items)
+    if (this.props.availableRoles) {
+      newState["availableRoles"] = this.sortRoles(
+        this.props.availableRoles.items
+      )
     }
     // save current member roles in the state, change edit mode and trigger
     // the loadRoles method to get all available roles
@@ -38,47 +41,56 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
 
   componentWillUnmount() {
     // cancel submit promis if already created
-    if(this.submitPromise) this.submitPromise.cancel();
+    if (this.submitPromise) this.submitPromise.cancel()
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if(this.state.availableRoles.length==0 && nextProps.availableRoles) {
-      this.setState({availableRoles: this.sortRoles(nextProps.availableRoles.items)})
+    if (this.state.availableRoles.length == 0 && nextProps.availableRoles) {
+      this.setState({
+        availableRoles: this.sortRoles(nextProps.availableRoles.items),
+      })
     }
   }
 
   // This method sorts roles by name
   sortRoles = (roles) =>
-    roles.sort((r1,r2) => {
-      if(r1.name < r2.name) return -1
-      if(r1.name > r2.name) return 1
+    roles.sort((r1, r2) => {
+      if (r1.name < r2.name) return -1
+      if (r1.name > r2.name) return 1
       return 0
     })
 
   // This method renders the edit view for project member role assignments
   renderEditView = () => {
     // create list items
-    const lis = this.state.availableRoles.map((role,index) => {
-      const checked = this.state.newMemberRoleIDs.indexOf(role.id)>=0
-      const isNew = (checked && this.state.currentMemberRoleIDs.indexOf(role.id)<0)
-      const removed = (!checked && this.state.currentMemberRoleIDs.indexOf(role.id)>=0)
-      const roleDescription = role.description ? '('+role.description.replace(/(.+)\s+\(.+\)/,"$1")+')' : ''
-      let labelClassName = ''
+    const lis = this.state.availableRoles.map((role, index) => {
+      const checked = this.state.newMemberRoleIDs.indexOf(role.id) >= 0
+      const isNew =
+        checked && this.state.currentMemberRoleIDs.indexOf(role.id) < 0
+      const removed =
+        !checked && this.state.currentMemberRoleIDs.indexOf(role.id) >= 0
+      const roleDescription = role.description
+        ? "(" + role.description.replace(/(.+)\s+\(.+\)/, "$1") + ")"
+        : ""
+      let labelClassName = ""
       if (isNew) {
-        labelClassName = 'bg-info'
+        labelClassName = "bg-info"
       }
       if (removed) {
-        labelClassName = 'u-text-remove-highlight'
+        labelClassName = "u-text-remove-highlight"
       }
 
-      return(
+      return (
         <li key={index}>
           <label className={labelClassName}>
             <input
               type="checkbox"
               checked={checked}
               value={role.id}
-              onChange={(e) => this.updateMemberRole(e.target.value, e.target.checked)}/>
+              onChange={(e) =>
+                this.updateMemberRole(e.target.value, e.target.checked)
+              }
+            />
             &nbsp;
             <span key={index}>
               <React.Fragment>
@@ -90,51 +102,55 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
       )
     })
 
-    return <div className='role-assignments'><ul role="menu">{lis}</ul></div>
+    return (
+      <div className="role-assignments">
+        <ul role="menu">{lis}</ul>
+      </div>
+    )
   }
 
   // This method updates the state of newUserRoles
   updateMemberRole = (roleId, checked) => {
     const index = this.state.newMemberRoleIDs.indexOf(roleId)
 
-    if( (index>=0 && checked) || (index<0 && !checked)) return;
+    if ((index >= 0 && checked) || (index < 0 && !checked)) return
 
     let newMemberRoleIDs = this.state.newMemberRoleIDs.slice()
-    if(index>=0 && !checked) newMemberRoleIDs.splice(index,1)
-    if(index<0 && checked) newMemberRoleIDs.push(roleId)
+    if (index >= 0 && !checked) newMemberRoleIDs.splice(index, 1)
+    if (index < 0 && checked) newMemberRoleIDs.push(roleId)
 
-    this.setState({newMemberRoleIDs})
+    this.setState({ newMemberRoleIDs })
   }
 
   hasChanged = () => {
-    const oldRoles = this.state.currentMemberRoleIDs.sort().join('')
-    const newRoles = this.state.newMemberRoleIDs.sort().join('')
+    const oldRoles = this.state.currentMemberRoleIDs.sort().join("")
+    const newRoles = this.state.newMemberRoleIDs.sort().join("")
 
     return oldRoles != newRoles
   }
 
   // Called by save button
   saveChanges = () => {
-    this.setState({saving: true})
+    this.setState({ saving: true })
 
     this.submitPromise = makeCancelable(
       this.props.updateProjectMemberRoleAssignments(
         this.props.projectId,
         this.props.memberId,
         this.state.newMemberRoleIDs
-     )
+      )
     )
 
-    this.submitPromise
-        .promise
-        .then(() => {
-          this.setState({saving: false, error: null}, this.props.onSave)
-        })
-        .catch(reason => {
-          if (!reason.isCanceled) { // promise is not canceled
-            // handle errors
-            this.setState({saving: false, errors: reason})
-          }
+    this.submitPromise.promise
+      .then(() => {
+        this.setState({ saving: false, error: null }, this.props.onSave)
+      })
+      .catch((reason) => {
+        if (!reason.isCanceled) {
+          // promise is not canceled
+          // handle errors
+          this.setState({ saving: false, errors: reason })
+        }
       })
   }
 
@@ -142,83 +158,93 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
   cancelEdit = () => this.props.onCancel()
 
   selectAdminRoles = () => {
-    const newMemberRoleIDs = this.state.availableRoles.filter((r) =>
-      r.name.indexOf('cloud')<0
-    ).map((r) => r.id)
-    this.setState({newMemberRoleIDs})
+    const newMemberRoleIDs = this.state.availableRoles
+      .filter((r) => r.name.indexOf("cloud") < 0)
+      .map((r) => r.id)
+    this.setState({ newMemberRoleIDs })
   }
 
   selectEndUserAdminRoles = () => {
-    const newMemberRoleIDs = this.state.availableRoles.filter((r) =>
-      r.name.indexOf('cloud')<0 && !r.restricted
-    ).map((r) => r.id)
-    this.setState({newMemberRoleIDs})
+    const newMemberRoleIDs = this.state.availableRoles
+      .filter((r) => r.name.indexOf("cloud") < 0 && !r.restricted)
+      .map((r) => r.id)
+    this.setState({ newMemberRoleIDs })
   }
 
   selectAllRoles = () => {
-    this.setState({newMemberRoleIDs: this.state.availableRoles.map((r) => r.id)})
+    this.setState({
+      newMemberRoleIDs: this.state.availableRoles.map((r) => r.id),
+    })
   }
 
   removeAllRoles = () => {
-    this.setState({newMemberRoleIDs: []})
+    this.setState({ newMemberRoleIDs: [] })
   }
 
   render() {
     const hasChanged = this.hasChanged()
-    const isEmpty = this.state.newMemberRoleIDs.length==0
-    const isFetching = (!this.props.availableRoles || this.props.availableRoles.isFetching)
+    const isEmpty = this.state.newMemberRoleIDs.length == 0
+    const isFetching =
+      !this.props.availableRoles || this.props.availableRoles.isFetching
 
-    return(
+    return (
       <React.Fragment>
         <div className="toolbar toolbar-inline">
           <div className="toolbar-container">
-            { isFetching ?
+            {isFetching ? (
               <React.Fragment>
-                <span className='spinner'/>Loading ...
+                <span className="spinner" />
+                Loading ...
               </React.Fragment>
-              :
+            ) : (
               <React.Fragment>
                 <button
-                  className='btn btn-default btn-sm hover-danger'
+                  className="btn btn-default btn-sm hover-danger"
                   onClick={this.removeAllRoles}
-                  disabled={this.state.saving}>
+                  disabled={this.state.saving}
+                >
                   Remove All
                 </button>
               </React.Fragment>
-            }
+            )}
           </div>
 
           <div className="main-buttons">
             <button
-              className='btn btn-default btn-sm'
+              className="btn btn-default btn-sm"
               onClick={this.cancelEdit}
-              disabled={this.state.saving}>
+              disabled={this.state.saving}
+            >
               Cancel
             </button>
-            { !isFetching &&
-              isEmpty ?
-              <OverlayTrigger placement="top" overlay={removeMemberTooltip(this.props.memberType)}>
+            {!isFetching && isEmpty ? (
+              <OverlayTrigger
+                placement="top"
+                overlay={removeMemberTooltip(this.props.memberType)}
+              >
                 <button
-                  className='btn btn-danger btn-sm'
+                  className="btn btn-danger btn-sm"
                   disabled={this.state.saving}
-                  onClick={this.saveChanges}>
-                  { this.state.saving ? 'Please Wait ...'  : 'Remove Member'}
+                  onClick={this.saveChanges}
+                >
+                  {this.state.saving ? "Please Wait ..." : "Remove Member"}
                 </button>
               </OverlayTrigger>
-              :
+            ) : (
               <button
-                className='btn btn-primary btn-sm'
+                className="btn btn-primary btn-sm"
                 onClick={this.saveChanges}
-                disabled={!hasChanged || this.state.saving}>
-                { this.state.saving ? 'Please Wait ...'  : 'Save'}
+                disabled={!hasChanged || this.state.saving}
+              >
+                {this.state.saving ? "Please Wait ..." : "Save"}
               </button>
-            }
+            )}
           </div>
         </div>
-        { this.state.errors &&
-          <div className='alert alert-error'>{this.state.errors}</div>
-        }
-        { !isFetching && this.renderEditView()}
+        {this.state.errors && (
+          <div className="alert alert-error">{this.state.errors}</div>
+        )}
+        {!isFetching && this.renderEditView()}
       </React.Fragment>
     )
   }

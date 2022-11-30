@@ -3,6 +3,7 @@ import { DefeatableLink } from "lib/components/defeatable_link"
 import { SearchField } from "lib/components/search_field"
 import SecurityGroupRuleItem from "./item"
 import { policy } from "lib/policy"
+import React from "react"
 
 export default class List extends React.Component {
   state = { searchTerm: "", sortByProtocol: null, sortByPort: null }
