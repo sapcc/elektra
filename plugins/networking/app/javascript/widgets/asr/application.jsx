@@ -64,14 +64,14 @@ export default class Asr extends React.Component {
   }
 
   handleSyncRouter = () => {
-    this.setState({ router: { ...this.state[router], isFetching: true } })
+    this.setState({ router: { ...this.state["router"], isFetching: true } })
     syncRouter(this.props.routerId)
       .then(() => {
-        loadData("router")
+        this.loadData("router")
       })
       .catch((error) =>
         this.setState({
-          router: { ...this.state[router], isFetching: false, error },
+          router: { ...this.state["router"], isFetching: false, error },
         })
       )
   }

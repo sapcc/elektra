@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import { DefeatableLink } from "lib/components/defeatable_link"
 import { SearchField } from "lib/components/search_field"

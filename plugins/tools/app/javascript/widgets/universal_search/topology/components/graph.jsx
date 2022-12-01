@@ -1,3 +1,4 @@
+/* eslint-disable react/no-string-refs */
 import { scaleLinear } from "d3-scale"
 import { max } from "d3-array"
 import { select, event, mouse } from "d3-selection"
@@ -11,6 +12,7 @@ import {
 } from "d3-force"
 import { drag } from "d3-drag"
 import { zoom } from "d3-zoom"
+import React from "react"
 
 export class Graph extends React.Component {
   static defaultProps = {
@@ -32,12 +34,15 @@ export class Graph extends React.Component {
   componentDidMount() {
     this.zoomScale = 1
 
+    // eslint-disable-next-line react/no-find-dom-node, no-undef, react/no-string-refs
     const svg = select(ReactDOM.findDOMNode(this.refs.svg))
     // add zoom capabilities
     zoom().on("zoom", this.zoomActions)(svg)
-
+    // eslint-disable-next-line react/no-find-dom-node, no-undef, react/no-string-refs
     this.graph = select(ReactDOM.findDOMNode(this.refs.graph))
+    // eslint-disable-next-line react/no-find-dom-node, no-undef, react/no-string-refs
     this.tooltip = select(ReactDOM.findDOMNode(this.refs.tooltip))
+    // eslint-disable-next-line react/no-find-dom-node, no-undef, react/no-string-refs
     this.details = select(ReactDOM.findDOMNode(this.refs.details))
 
     // we use svg groups to logically group the elements together

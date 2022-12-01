@@ -27,7 +27,7 @@ export default class LiveSearchModal extends React.Component {
     // this is the path before /live
     // for example /universal-search/live -> /universal-search
     if (this.props.match && this.props.match.path) {
-      const found = this.props.match.path.match(/(\/[^\/]+)\/live/)
+      const found = this.props.match.path.match(/(\/[^/]+)\/live/)
       if (found) {
         this.props.history.replace(found[1])
         return

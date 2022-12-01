@@ -1,5 +1,5 @@
 import React from "react"
-export default ({ page, label, disabled, currentPage, handlePageChange }) => {
+const Page = ({ page, label, disabled, currentPage, handlePageChange }) => {
   let className = ""
   if (disabled) className += "disabled "
   if (page == currentPage) className += "active "
@@ -18,3 +18,5 @@ export default ({ page, label, disabled, currentPage, handlePageChange }) => {
     </li>
   )
 }
+
+export default Page

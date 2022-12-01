@@ -13,7 +13,7 @@ import RepositoryList from "../containers/repositories/list"
 import ImageList from "../containers/images/list"
 import ImageDetailsModal from "../containers/images/details"
 
-export default (props) => {
+const KeppelApp = (props) => {
   const { projectId, canEdit, isAdmin, hasExperimentalFeatures, dockerInfo } =
     props
   const rootProps = {
@@ -111,3 +111,5 @@ export default (props) => {
     </Loader>
   )
 }
+
+export default KeppelApp

@@ -480,7 +480,7 @@ export default class EditModal extends React.Component {
       const nextScope = scope.isProject() ? "domain" : "cloud"
       footerMessage = (
         <span className="request-explanation">
-          When you click "Submit", {countStr} will be sent to the {nextScope}{" "}
+          When you click Submit, {countStr} will be sent to the {nextScope}{" "}
           resource admins for approval.
         </span>
       )

@@ -22,7 +22,7 @@ export default class List extends React.Component {
       let direction = this.state.sortByProtocol || "desc"
       direction == "asc" ? (direction = "desc") : (direction = "asc")
       this.setState({ sortByProtocol: direction, sortByPort: null })
-    } else if ((name = "port")) {
+    } else if (name == "port") {
       let direction = this.state.sortByPort || "desc"
       direction == "asc" ? (direction = "desc") : (direction = "asc")
       this.setState({ sortByPort: direction, sortByProtocol: null })

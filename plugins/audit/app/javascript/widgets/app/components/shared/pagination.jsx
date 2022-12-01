@@ -1,6 +1,13 @@
 import Page from "../../containers/shared/page"
+import React from "react"
 
-export default ({ offset, limit, total, currentPage, handlePageChange }) => {
+const Pagination = ({
+  offset,
+  limit,
+  total,
+  currentPage,
+  handlePageChange,
+}) => {
   let pages = Math.ceil(total / limit)
   // how many pages do we want to show around the current page. should be an
   // odd number, the current page will take the middle spot and the remainder
@@ -90,3 +97,5 @@ export default ({ offset, limit, total, currentPage, handlePageChange }) => {
     </nav>
   )
 }
+
+export default Pagination

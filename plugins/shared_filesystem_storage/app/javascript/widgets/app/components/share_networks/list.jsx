@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { DefeatableLink } from "lib/components/defeatable_link"
 import { policy } from "lib/policy"
 import { Popover, OverlayTrigger } from "react-bootstrap"

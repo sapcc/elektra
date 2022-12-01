@@ -82,6 +82,7 @@ export default class CastellumConfigurationView extends React.Component {
               <a
                 href="https://github.com/sapcc/castellum/blob/master/docs/api-spec.md#stepping-strategies"
                 target="_blank"
+                rel="noreferrer"
               >
                 single-step resizing
               </a>

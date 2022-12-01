@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React from "react"
 import { Link } from "react-router-dom"
 import {
@@ -6,7 +7,7 @@ import {
   SECURITY_GROUP_RULE_PROTOCOLS,
 } from "../../constants"
 
-export default ({ rule, handleDelete, securityGroups }) => {
+const Item = ({ rule, handleDelete, securityGroups }) => {
   const displayPort = () => {
     let port = rule.port_range_min || rule.port_range_max
     if (
@@ -74,3 +75,5 @@ export default ({ rule, handleDelete, securityGroups }) => {
     </tr>
   )
 }
+
+export default Item

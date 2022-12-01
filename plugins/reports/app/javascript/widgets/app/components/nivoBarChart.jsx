@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { ResponsiveBar } from "@nivo/bar"
 import Legend from "./legend"
 require("d3-transition")

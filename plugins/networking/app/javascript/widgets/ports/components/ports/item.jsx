@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import { truncate } from "lib/tools/helpers"
 import { OverlayTrigger, Tooltip } from "react-bootstrap"
@@ -19,7 +20,7 @@ export const AttachedIcon = ({ port }) => {
   )
 }
 
-export default ({
+const Item = ({
   port,
   instancesPath,
   network,
@@ -130,3 +131,5 @@ export default ({
     </tr>
   )
 }
+
+export default Item

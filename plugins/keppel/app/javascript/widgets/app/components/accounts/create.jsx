@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useContext } from "react"
 import { Modal, Button } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
@@ -252,7 +253,7 @@ export default class AccountCreateModal extends React.Component {
         newAccount.name = name
         break
 
-      case "replica":
+      case "replica": {
         const t = decodeSubleaseToken(token)
         if (!isValidSubleaseToken(t)) {
           return invalid("token", "is not valid")
@@ -264,7 +265,7 @@ export default class AccountCreateModal extends React.Component {
         }
         reqHeaders["X-Keppel-Sublease-Token"] = token
         break
-
+      }
       case "external_replica":
         newAccount.name = name
         newAccount.replication = {

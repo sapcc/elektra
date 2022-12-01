@@ -3,6 +3,7 @@ import React from "react"
 class Parents extends React.Component {
   renderParent = (parentsList) => {
     if (parentsList.length > 0) {
+      // eslint-disable-next-line no-global-assign
       parent = parentsList[0]
       parentsList.shift()
       return (
@@ -20,6 +21,7 @@ class Parents extends React.Component {
 
   renderParentRoot = (parentsList) => {
     if (parentsList.length > 0) {
+      // eslint-disable-next-line no-global-assign
       parent = parentsList[0]
       parentsList.shift()
       return (

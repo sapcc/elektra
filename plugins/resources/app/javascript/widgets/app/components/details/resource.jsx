@@ -170,6 +170,7 @@ export default class DetailsResource extends React.Component {
                 target="_blank"
                 className="btn btn-default btn-sm"
                 title={`Go to Resource Management for this ${scope.level()} in a new tab`}
+                rel="noreferrer"
               >
                 Jump
               </a>

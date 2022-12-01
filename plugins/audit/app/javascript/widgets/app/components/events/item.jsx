@@ -1,7 +1,7 @@
 import moment from "moment"
 import React from "react"
 
-export default ({ event, toggleDetails }) => {
+const EventItem = ({ event, toggleDetails }) => {
   let showDetailsClassName = event.detailsVisible
     ? "fa fa-caret-down"
     : "fa fa-caret-right"
@@ -39,3 +39,5 @@ export default ({ event, toggleDetails }) => {
     </tr>
   )
 }
+
+export default EventItem

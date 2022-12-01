@@ -1,3 +1,5 @@
+/* eslint-disable react/no-children-prop */
+/* eslint-disable no-undef */
 /* eslint no-console:0 */
 import { BrowserRouter, Route, Redirect } from "react-router-dom"
 import { scope } from "lib/ajax_helper"
@@ -28,7 +30,7 @@ const tabsConfig = [
 ]
 
 // render all components inside a hash router
-export default (props) => {
+const BlockStorageApp = (props) => {
   //console.log(props)
   return (
     <BrowserRouter basename={`${window.location.pathname}?r=`}>
@@ -146,3 +148,5 @@ export default (props) => {
     </BrowserRouter>
   )
 }
+
+export default BlockStorageApp

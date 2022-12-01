@@ -2,7 +2,7 @@ import React from "react"
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import List from "./list"
 
-export default (props) => (
+const ModalAuth = (props) => (
   <Modal
     show={props.showModal}
     onHide={props.toggleModal}
@@ -32,3 +32,5 @@ export default (props) => (
     </Modal.Footer>
   </Modal>
 )
+
+export default ModalAuth

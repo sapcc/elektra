@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import SecurityServiceItem from "./item"
 import { policy } from "lib/policy"
 import { DefeatableLink } from "lib/components/defeatable_link"

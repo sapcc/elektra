@@ -1,11 +1,10 @@
 /* eslint no-console:0 */
 import { HashRouter, Route, Redirect } from "react-router-dom"
-import { withRouter } from "react-router"
-
 import SearchRoutes from "./search/components/routes"
+import React from "react"
 
 // render all components inside a hash router
-export default (props) => (
+const UniversalSearchApp = (props) => (
   <HashRouter /*hashType="noslash"*/>
     <React.Fragment>
       <Route
@@ -17,3 +16,5 @@ export default (props) => (
     </React.Fragment>
   </HashRouter>
 )
+
+export default UniversalSearchApp

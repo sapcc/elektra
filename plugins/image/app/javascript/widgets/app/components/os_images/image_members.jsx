@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Modal, Button } from "react-bootstrap"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import ImageMemberItem from "./image_member_item"

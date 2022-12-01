@@ -3,7 +3,7 @@ import React from "react"
 /***********************************
  * This component renders a tabed content
  **********************************/
-export default ({ match, location, history, tabsConfig, ...otherProps }) => {
+const Tabs = ({ match, location, history, tabsConfig, ...otherProps }) => {
   let tabItems = []
   let tabPanels = []
   for (let index in tabsConfig) {
@@ -40,3 +40,5 @@ export default ({ match, location, history, tabsConfig, ...otherProps }) => {
     </div>
   )
 }
+
+export default Tabs

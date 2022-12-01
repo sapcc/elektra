@@ -3,9 +3,7 @@ import * as reducers from "./reducers"
 import App from "./application"
 
 createWidget(null, { html: { class: "flex-body" } }).then((widget) => {
-  const foundScope = window.location.pathname.match(
-    /\/([^\/]+)\/([^\/|\?|&]+)/i
-  )
+  const foundScope = window.location.pathname.match(/\/([^/]+)\/([^/|?|&]+)/i)
 
   // prevent baseURL to contain cc-tools as project on domain scoped urls
   if (foundScope && foundScope[2] == "cc-tools") {

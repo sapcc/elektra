@@ -1,6 +1,6 @@
 import React from "react"
 
-export default ({ handleDelete, rule }) => {
+const AccessControlItem = ({ handleDelete, rule }) => {
   const humanizeAccessLevel = () => {
     switch (rule.access_level) {
       case "ro":
@@ -39,3 +39,5 @@ export default ({ handleDelete, rule }) => {
     </tr>
   )
 }
+
+export default AccessControlItem

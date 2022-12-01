@@ -1,5 +1,6 @@
 import React from "react"
-export default (props) => {
+
+const ModalLink = (props) => {
   return (
     <a
       href="#"
@@ -12,3 +13,5 @@ export default (props) => {
     </a>
   )
 }
+
+export default ModalLink

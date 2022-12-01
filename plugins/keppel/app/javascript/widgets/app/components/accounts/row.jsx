@@ -124,7 +124,7 @@ export default class AccountRow extends React.Component {
           )}
           <div>
             Backed by Swift container{" "}
-            <a href={swiftContainerURL} target="_blank">
+            <a href={swiftContainerURL} target="_blank" rel="noreferrer">
               {containerName}
             </a>
           </div>

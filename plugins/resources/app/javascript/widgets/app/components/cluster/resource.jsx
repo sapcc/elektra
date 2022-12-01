@@ -6,7 +6,7 @@ import { t } from "../../utils"
 import ResourceBar from "../resource_bar"
 import ResourceName from "../resource_name"
 
-export default (props) => {
+const ClusterResource = (props) => {
   const displayName = t(props.resource.name)
   const flavorData = props.flavorData[displayName] || {}
 
@@ -92,3 +92,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default ClusterResource

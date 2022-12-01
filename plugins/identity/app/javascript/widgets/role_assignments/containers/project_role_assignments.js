@@ -20,7 +20,7 @@ export default connect(
       if (projectRoleAssignments && projectRoleAssignments.items) {
         isFetching = projectRoleAssignments.isFetching
         items = projectRoleAssignments.items.filter((i) =>
-          i.hasOwnProperty(type)
+          Object.prototype.hasOwnProperty.call(i, type)
         )
       }
     }

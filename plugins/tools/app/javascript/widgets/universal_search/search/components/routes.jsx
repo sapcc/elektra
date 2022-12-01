@@ -5,7 +5,7 @@ import Projects from "../containers/project_role_assignments/projects"
 import LiveSearchModal from "../containers/live_search"
 import ShowItemModal from "../containers/show"
 
-export default () => (
+const Routes = () => (
   <React.Fragment>
     <Route path="/universal-search" component={Home} />
     <Route exact path="/universal-search/:id/show" component={ShowItemModal} />
@@ -17,3 +17,5 @@ export default () => (
     />
   </React.Fragment>
 )
+
+export default Routes

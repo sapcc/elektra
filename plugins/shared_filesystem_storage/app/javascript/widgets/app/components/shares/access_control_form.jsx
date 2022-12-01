@@ -96,7 +96,7 @@ const AccessControlForm = (props) => {
   )
 }
 
-export default ({ share, shareNetwork, handleSubmit }) => {
+const AccessControlFormWrapper = ({ share, shareNetwork, handleSubmit }) => {
   const validate = (values) => {
     return values.access_type && values.access_level && values.access_to && true
   }
@@ -111,3 +111,5 @@ export default ({ share, shareNetwork, handleSubmit }) => {
     </Form>
   )
 }
+
+export default AccessControlFormWrapper

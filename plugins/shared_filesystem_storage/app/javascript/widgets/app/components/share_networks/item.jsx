@@ -19,7 +19,7 @@ const tooltipSharedNetwork = (
   <Tooltip id="tooltip-shared-network">Shared Network</Tooltip>
 )
 
-export default ({
+const Item = ({
   shareNetwork,
   handleDelete,
   handleShareNetworkSecurityServices,
@@ -163,3 +163,5 @@ export default ({
     </tr>
   )
 }
+
+export default Item

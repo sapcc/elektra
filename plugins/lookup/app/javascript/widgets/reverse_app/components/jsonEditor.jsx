@@ -3,6 +3,7 @@ import React from "react"
 
 class JsonEditor extends React.Component {
   componentDidMount() {
+    // eslint-disable-next-line no-undef
     init_json_editor()
   }
 

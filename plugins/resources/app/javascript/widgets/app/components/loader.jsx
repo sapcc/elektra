@@ -26,6 +26,7 @@ export default class Loader extends React.Component {
     if (this.props.receivedAt && !this.props.isIncomplete) {
       return (
         <ReloadIndicator
+          // eslint-disable-next-line react/no-children-prop
           children={this.props.children}
           isReloading={this.props.isFetching}
         />

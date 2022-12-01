@@ -4,7 +4,7 @@ import React from "react"
 /***********************************
  * This component renders a tabed content
  **********************************/
-export default ({ match, location, history, tabsConfig, ...otherProps }) => {
+const Tabs = ({ match, location, history, tabsConfig, ...otherProps }) => {
   const tabItems = []
   let tabPanel
 
@@ -44,3 +44,5 @@ export default ({ match, location, history, tabsConfig, ...otherProps }) => {
     </div>
   )
 }
+
+export default Tabs

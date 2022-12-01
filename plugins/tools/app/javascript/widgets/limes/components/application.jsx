@@ -3,7 +3,7 @@ import { LIMES_ERROR_TYPES } from "../constants"
 import ErrorList from "../containers/error_list"
 import React from "react"
 
-export default (props) => {
+const LimesApp = (props) => {
   return (
     <HashRouter>
       <React.Fragment>
@@ -26,3 +26,5 @@ export default (props) => {
     </HashRouter>
   )
 }
+
+export default LimesApp

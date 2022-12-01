@@ -12,7 +12,7 @@ import uniqueId from "lodash/uniqueId"
  * @param {object} props
  * @returns a react component
  */
-const MinFreeInput = ({ unit, isDisabled, minFree, onChange }) => {
+const MinFreeInput = ({ unit, isDisabled, minFree, onChange, save }) => {
   const [value, setValue] = React.useState()
   // minFree ? unit.format(minFree) : minFree
 
@@ -192,6 +192,7 @@ const AutoscalingConfigSubscopeItem = ({
                     minFree={minFree}
                     onChange={updateMinFree}
                     isDisabled={isSaving || isUnset(value)}
+                    save={save}
                   />{" "}
                   <br />
                   <div className="pull-right">

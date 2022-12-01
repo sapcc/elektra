@@ -1,7 +1,7 @@
 import { PrettyDate } from "lib/components/pretty_date"
 import React from "react"
 
-export default (props) => {
+const ErrorRow = (props) => {
   const {
     project_id: projectID,
     asset_type: assetType,
@@ -24,6 +24,7 @@ export default (props) => {
             href={`/_/${projectID}/home`}
             target="_blank"
             title="Jump to project"
+            rel="noreferrer"
           >
             {projectID}
           </a>
@@ -48,3 +49,5 @@ export default (props) => {
     </React.Fragment>
   )
 }
+
+export default ErrorRow

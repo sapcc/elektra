@@ -23,7 +23,7 @@ const ATTRIBUTES = [
   { key: "outcome", name: "Result" },
 ]
 
-export default ({
+const EventList = ({
   events,
   isFetching,
   loadEvents,
@@ -206,3 +206,5 @@ export default ({
     <Pagination offset={offset} limit={limit} total={total} />
   </div>
 )
+
+export default EventList

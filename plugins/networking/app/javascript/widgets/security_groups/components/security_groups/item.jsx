@@ -1,7 +1,8 @@
+/* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import React from "react"
 
-export default ({ securityGroup, handleDelete, project }) => {
+const Item = ({ securityGroup, handleDelete, project }) => {
   const canDelete = policy.isAllowed("networking:security_group_delete")
   const canUpdate = false //policy.isAllowed("networking:security_group_update")
   const canManagePermissions = policy.isAllowed(
@@ -85,3 +86,5 @@ export default ({ securityGroup, handleDelete, project }) => {
     </tr>
   )
 }
+
+export default Item

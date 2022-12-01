@@ -220,7 +220,7 @@ export default class ImageRow extends React.Component {
         </tr>
         {labelKeys.length > 0 ? (
           <tr className="image-labels explains-previous-line">
-            <td colspan="7">
+            <td colSpan="7">
               {labelKeys.map((key) => renderLabel(key, labels[key]))}
             </td>
           </tr>

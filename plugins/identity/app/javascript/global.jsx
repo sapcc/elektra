@@ -1,5 +1,6 @@
 // The contents of this file are executed globally on every page load.
 // see /app/javascript/packs/application.js for more infos!
+
 import { createWidget } from "lib/widget"
 import Modal from "./widgets/auth_projects/containers/modal"
 import ModalLink from "./widgets/auth_projects/containers/modal_link"
@@ -25,6 +26,7 @@ const App = (props) => {
   return <List {...listProps} />
 }
 
+// eslint-disable-next-line no-undef
 $(() => {
   let authProjectsModalLinks = [
     ...document.querySelectorAll("[data-react-auth-projects-link]"),

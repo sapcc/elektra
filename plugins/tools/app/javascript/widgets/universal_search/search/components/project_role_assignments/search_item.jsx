@@ -23,7 +23,7 @@ const ObjectLink = ({ id, name, term }) => (
   </React.Fragment>
 )
 
-export default ({ item, domain, project }) => {
+const SearchItem = ({ item, domain, project }) => {
   const scope = item.payload.scope || {}
   const projectLink = projectUrl(item)
 
@@ -54,7 +54,7 @@ export default ({ item, domain, project }) => {
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
             {projectLink && (
               <li>
-                <a href={projectLink} target="_blank">
+                <a href={projectLink} target="_blank" rel="noreferrer">
                   <i className="fa fa-fw fa-external-link" /> Switch to Project
                 </a>
               </li>
@@ -70,3 +70,5 @@ export default ({ item, domain, project }) => {
     </tr>
   )
 }
+
+export default SearchItem

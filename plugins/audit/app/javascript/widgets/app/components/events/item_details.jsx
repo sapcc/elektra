@@ -1,5 +1,6 @@
 import React from "react"
-export default ({ event }) => (
+
+const ItemDetails = ({ event }) => (
   <tr className="explains-previous-line">
     <td colSpan="6">
       {event.isFetchingDetails ? (
@@ -10,3 +11,5 @@ export default ({ event }) => (
     </td>
   </tr>
 )
+
+export default ItemDetails

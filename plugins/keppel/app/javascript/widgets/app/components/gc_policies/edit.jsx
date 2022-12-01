@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Modal, Button } from "react-bootstrap"
 import { v4 as uuidv4 } from "uuid"
 import { FormErrors } from "lib/elektra-form/components/form_errors"
@@ -125,7 +126,7 @@ export default class GCPoliciesEditModal extends React.Component {
           }
         }
         break
-      case "time_constraint":
+      case "time_constraint": {
         const defaultValues = {
           oldest: 5,
           newest: 5,
@@ -143,6 +144,7 @@ export default class GCPoliciesEditModal extends React.Component {
           }
         }
         break
+      }
       case "oldest":
       case "newest":
         policies[idx].time_constraint = {
@@ -160,7 +162,7 @@ export default class GCPoliciesEditModal extends React.Component {
           },
         }
         break
-      case "time_unit":
+      case "time_unit": {
         const tc = {
           ...policies[idx].time_constraint,
         }
@@ -172,6 +174,7 @@ export default class GCPoliciesEditModal extends React.Component {
         }
         policies[idx].time_constraint = tc
         break
+      }
     }
     this.setState({ ...this.state, policies })
   }

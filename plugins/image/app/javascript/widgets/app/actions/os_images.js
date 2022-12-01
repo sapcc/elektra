@@ -55,6 +55,7 @@ export default (type) => {
               React.createElement(ErrorsList, { errors: response.data.errors })
             )
           } else {
+            // eslint-disable-next-line no-undef
             let osImages = $.isEmptyObject(response.data.os_images)
               ? []
               : response.data.os_images

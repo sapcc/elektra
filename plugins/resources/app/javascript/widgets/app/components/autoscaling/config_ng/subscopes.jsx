@@ -97,7 +97,7 @@ function subscopesReducer(state, action) {
       return { ...state, items }
 
     case "error":
-      items[index] = { ...item, isSaving: false, error }
+      items[index] = { ...item, isSaving: false, error: action.error }
       return { ...state, items }
 
     case "edit":
@@ -242,7 +242,11 @@ const AutoscalingConfigNgSubscopes = ({
 
       promises.push(
         submit(subscope.assetType, newValue, newMinFree).catch((error) =>
-          dispatch({ type: "error", assetType, error: error.message })
+          dispatch({
+            type: "error",
+            assetType: subscope.assetType,
+            error: error.message,
+          })
         )
       )
     }

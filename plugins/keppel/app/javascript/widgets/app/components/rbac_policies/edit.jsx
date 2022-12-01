@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Modal, Button } from "react-bootstrap"
 import { FormErrors } from "lib/elektra-form/components/form_errors"
 import React from "react"

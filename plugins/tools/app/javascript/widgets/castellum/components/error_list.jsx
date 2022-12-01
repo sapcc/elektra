@@ -122,7 +122,5 @@ export default class Loader extends React.Component {
         ))}
       </DataTable>
     )
-
-    return <pre>{JSON.stringify(data, null, 2)}</pre>
   }
 }

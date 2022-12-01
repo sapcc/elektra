@@ -39,7 +39,7 @@ let Breadcrumb = (props) => {
 Breadcrumb = withRouter(Breadcrumb)
 
 // render all components inside a hash router
-export default (props) => (
+const CloudOpsApp = (props) => (
   <HashRouter /*hashType="noslash"*/>
     <React.Fragment>
       <Menu />
@@ -57,3 +57,5 @@ export default (props) => (
     </React.Fragment>
   </HashRouter>
 )
+
+export default CloudOpsApp

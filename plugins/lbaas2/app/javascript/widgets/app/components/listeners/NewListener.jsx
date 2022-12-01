@@ -375,6 +375,7 @@ const NewListener = (props) => {
               <a
                 href="https://github.com/openstack/octavia/blob/master/doc/source/user/guides/basic-cookbook.rst"
                 target="_blank"
+                rel="noreferrer"
               >
                 Basic Load Balancing Cookbook
               </a>
@@ -534,6 +535,7 @@ const NewListener = (props) => {
                             <a
                               href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-sni"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               the Octavia SNI section
                             </a>{" "}
@@ -586,6 +588,7 @@ const NewListener = (props) => {
                             <a
                               href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-client-authentication"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               the Octavia client authentication section
                             </a>{" "}

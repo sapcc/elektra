@@ -2,7 +2,7 @@ import ReactJson from "react-json-view"
 import { syncRouter } from "../actions"
 import React from "react"
 
-export default ({ routerId, isFetching, data, error }) => {
+const Router = ({ routerId, isFetching, data, error }) => {
   if (isFetching) return <span className="spinner" />
   if (error) return <div className="alert alert-danger">{error}</div>
   if (data) {
@@ -26,3 +26,5 @@ export default ({ routerId, isFetching, data, error }) => {
   }
   return null
 }
+
+export default Router

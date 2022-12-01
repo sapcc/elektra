@@ -65,16 +65,14 @@ const deleteFilter = (state, { filterType }) =>
     ),
   })
 
-const clearAllFilters = (state, {}) =>
-  Object.assign(state, { activeFilters: [] })
+const clearAllFilters = (state) => Object.assign(state, { activeFilters: [] })
 
 const updateOffset = (state, { offset }) => Object.assign({}, state, { offset })
 
 const updateCurrentPage = (state, { page }) =>
   Object.assign({}, state, { currentPage: page })
 
-const requestEvents = (state, {}) =>
-  Object.assign({}, state, { isFetching: true })
+const requestEvents = (state) => Object.assign({}, state, { isFetching: true })
 
 const requestEventsFailure = (state, { error }) =>
   Object.assign({}, state, { isFetching: false, error })
@@ -87,7 +85,7 @@ const receiveEvents = (state, { events, total }) =>
     error: null,
   })
 
-const requestAttributeValues = (state, {}) =>
+const requestAttributeValues = (state) =>
   Object.assign({}, state, {
     isFetchingAttributeValues: true,
   })

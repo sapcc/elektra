@@ -74,7 +74,7 @@ const getVulnerabilitiesForLayer = (digest, vulnReport) => {
     const vulns = vulnsBySeverity[severity]
     folders.push([
       SEVERITY_ORDER[severity] || 0,
-      <VulnerabilityFolder severity={severity} vulns={vulns} />,
+      <VulnerabilityFolder key={severity} severity={severity} vulns={vulns} />,
     ])
   }
 

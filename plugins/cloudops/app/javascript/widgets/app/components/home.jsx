@@ -1,1 +1,3 @@
-export default () => <p>Welcome to Cloudops</p>
+import React from "react"
+const Home = () => <p>Welcome to Cloudops</p>
+export default Home

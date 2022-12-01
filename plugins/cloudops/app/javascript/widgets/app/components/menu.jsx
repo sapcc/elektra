@@ -3,7 +3,7 @@ import { NavLink, withRouter } from "react-router-dom"
 import { SearchField } from "lib/components/search_field"
 import React from "react"
 // render all components inside a hash router
-export default (props) => {
+const Menu = (props) => {
   const search = (term) => {
     // if(term==null|| term.trim().length==0) return
 
@@ -53,3 +53,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Menu

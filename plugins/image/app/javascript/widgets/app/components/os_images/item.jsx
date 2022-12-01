@@ -36,7 +36,7 @@ export const SnapshotIcon = () => {
   )
 }
 
-export default (props) => {
+const Item = (props) => {
   let { image } = props
   const canCreateInstance = policy.isAllowed("compute:instance_create", {
     target: {
@@ -217,3 +217,5 @@ export default (props) => {
     </tr>
   )
 }
+
+export default Item

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import React from "react"
 import queryString from "query-string"
 import { Highlighter } from "react-bootstrap-typeahead"
@@ -33,7 +34,7 @@ export const createNameTag = (name) => {
 
 export const secretRefLabel = (secretRef) => {
   const label = secretRef || ""
-  return label.replace(/.*\/\/[^\/]*/, "https://...")
+  return label.replace(/.*\/\/[^/]*/, "https://...")
 }
 
 export const toManySecretsWarning = (total, length) => {

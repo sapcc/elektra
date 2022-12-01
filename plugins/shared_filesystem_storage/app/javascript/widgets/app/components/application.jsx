@@ -1,3 +1,5 @@
+/* eslint-disable react/no-children-prop */
+/* eslint-disable no-undef */
 /* eslint no-console:0 */
 import { BrowserRouter, Route, Redirect } from "react-router-dom"
 import React from "react"
@@ -54,7 +56,7 @@ const tabsConfigWithCastellum = [
 ]
 
 // render all components inside a hash router
-export default (props) => {
+const SharedFilesystemApp = (props) => {
   const { hasCastellum } = props
   const tabsConfig = hasCastellum ? tabsConfigWithCastellum : tabsConfigDefault
 
@@ -231,3 +233,5 @@ export default (props) => {
     </BrowserRouter>
   )
 }
+
+export default SharedFilesystemApp

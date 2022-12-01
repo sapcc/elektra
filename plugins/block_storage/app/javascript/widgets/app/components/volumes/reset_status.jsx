@@ -14,7 +14,7 @@ const FormBody = ({ values }) => (
       compute host or instance and can result in an unusable volume. Being a
       database change only, this has no impact on the true state of the volume
       and may not match the actual state. This can render a volume unusable in
-      the case of change to the "available" state.
+      the case of change to the available state.
     </div>
 
     <Form.ElementHorizontal label="Status" name="status" required>

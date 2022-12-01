@@ -16,6 +16,7 @@ class ObjectDetails extends React.Component {
     if (!objectInfo || object.id != objectInfo.searchObjectId) {
       this.props.fetchObjectInfo(object.searchValue, object.id, object.searchBy)
     } else {
+      // eslint-disable-next-line no-undef
       $("#jsoneditor").removeClass("hide")
     }
   }

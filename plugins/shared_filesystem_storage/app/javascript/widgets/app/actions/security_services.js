@@ -86,7 +86,7 @@ const reloadSecurityService = (securityServiceId) =>
     ajaxHelper
       .get(`/security-services/${securityServiceId}`)
       .then((response) => {
-        dispatch(receiveSecurityService(data))
+        dispatch(receiveSecurityService(response.data))
       })
       .catch((error) => {
         dispatch(requestSecurityServiceFailure())
@@ -108,18 +108,6 @@ const removeSecurityService = (securityServiceId) => ({
 const deleteSecurityService = (securityServiceId) =>
   function (dispatch, getState) {
     const dependentSecurityServiceNetworks = []
-    // check if there are dependent securityService networks.
-    // Problem: the securityService networks may not be loaded yet
-    let state = getState()
-    const { securityServiceNetworks } = state
-    if (securityServiceNetworks && securityServiceNetworks.items) {
-      for (let securityServiceNetwork of securityServiceNetworks.items) {
-        if (false) {
-          dependentSecurityServiceNetworks.push(securityServiceNetwork)
-        }
-      }
-    }
-
     if (dependentSecurityServiceNetworks.length > 0) {
       addNotice(
         `Please remove thi security service from securityService networks (${dependentSecurityServiceNetworks.length}) first!`

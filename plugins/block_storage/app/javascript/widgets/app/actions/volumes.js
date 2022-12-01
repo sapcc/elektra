@@ -151,7 +151,9 @@ const removeVolume = (id) => ({
 })
 
 const listenToVolumes = () => (dispatch) => {
+  // eslint-disable-next-line no-undef
   if (App && App.cable) {
+    // eslint-disable-next-line no-undef
     App.cable.subscriptions.create(
       { channel: "VolumesChannel", project_id: window.scopedProjectId },
       {

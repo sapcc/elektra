@@ -7,7 +7,7 @@ import ResourceBar from "../resource_bar"
 import ResourceEditor from "../resource_editor"
 import ResourceName from "../resource_name"
 
-export default (props) => {
+const DomainResource = (props) => {
   const displayName = t(props.resource.name)
   const flavorData = props.flavorData[displayName] || {}
 
@@ -92,3 +92,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default DomainResource

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { useState, useEffect } from "react"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
@@ -544,6 +545,7 @@ const EditListener = (props) => {
                     <a
                       href="https://github.com/openstack/octavia/blob/master/doc/source/user/guides/basic-cookbook.rst"
                       target="_blank"
+                      rel="noreferrer"
                     >
                       Basic Load Balancing Cookbook
                     </a>
@@ -718,6 +720,7 @@ const EditListener = (props) => {
                                   <a
                                     href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-sni"
                                     target="_blank"
+                                    rel="noreferrer"
                                   >
                                     the Octavia SNI section
                                   </a>{" "}
@@ -773,6 +776,7 @@ const EditListener = (props) => {
                                   <a
                                     href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-client-authentication"
                                     target="_blank"
+                                    rel="noreferrer"
                                   >
                                     the Octavia client authentication section
                                   </a>{" "}

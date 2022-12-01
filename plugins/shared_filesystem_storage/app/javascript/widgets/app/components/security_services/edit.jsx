@@ -1,4 +1,7 @@
+import React from "react"
 import SecurityServiceForm from "./form"
-export default (props) => (
+const Edit = (props) => (
   <SecurityServiceForm title="Edit Security Service" {...props} />
 )
+
+export default Edit

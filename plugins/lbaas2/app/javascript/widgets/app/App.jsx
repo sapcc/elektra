@@ -19,8 +19,10 @@ const App = () => {
   )
 }
 
-export default () => (
+const LbassApp = () => (
   <StateProvider reducers={reducers}>
     <App />
   </StateProvider>
 )
+
+export default LbassApp

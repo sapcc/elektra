@@ -12,7 +12,7 @@ const requestSnapshots = (state, { requestedAt }) =>
   Object.assign({}, state, { isFetching: true, requestedAt })
 
 const requestSnapshotsFailure = function (state) {
-  return ReactHelpers.mergeObjects({}, state, { isFetching: false })
+  return { ...state, isFetching: false }
 }
 
 const receiveSnapshots = (state, { snapshots, receivedAt }) =>

@@ -188,6 +188,7 @@ export default class InitProjectModal extends React.Component {
     const requestBody = this.makeRequestBody(this.props, this.state.isSelected)
     this.props
       .setQuota(this.props.scopeData, requestBody)
+      // eslint-disable-next-line no-undef
       .then(() => Dashboard.hideModal())
       .catch((response) => this.handleAPIErrors(response.errors))
     console.log()
@@ -289,6 +290,7 @@ export default class InitProjectModal extends React.Component {
           </div>
           <div
             className="btn btn-default"
+            // eslint-disable-next-line no-undef
             onClick={() => Dashboard.hideModal()}
           >
             Cancel

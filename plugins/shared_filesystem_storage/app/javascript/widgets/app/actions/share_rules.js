@@ -3,6 +3,7 @@ import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
 import React from "react"
+import { ErrorsList } from "lib/elektra-form/components/errors_list"
 
 //################ SHARE RULES (ACCESS CONTROL) ################
 const receiveShareRule = (shareId, rule) => ({
@@ -73,7 +74,9 @@ const deleteShareRule = (shareId, ruleId) =>
       .then((response) => {
         if (response.data && response.data.errors) {
           dispatch(deleteShareRuleFailure(shareId, ruleId))
-          addError(React.createElement(ErrorsList, { errors }))
+          addError(
+            React.createElement(ErrorsList, { errors: response.data.errors })
+          )
         } else {
           dispatch(removeShareRule(shareId, ruleId))
         }

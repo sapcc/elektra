@@ -1,7 +1,7 @@
 import ReactJson from "react-json-view"
 import React from "react"
 
-export default ({ isFetching, data, error }) => {
+const Config = ({ isFetching, data, error }) => {
   if (isFetching) return <span className="spinner" />
   if (error) return <div className="alert alert-danger">{error}</div>
   if (data) {
@@ -9,3 +9,5 @@ export default ({ isFetching, data, error }) => {
   }
   return null
 }
+
+export default Config

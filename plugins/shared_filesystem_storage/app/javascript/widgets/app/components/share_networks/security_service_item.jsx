@@ -1,5 +1,5 @@
 import React from "react"
-export default ({ handleDelete, securityService }) => (
+const SecurityServiceItem = ({ handleDelete, securityService }) => (
   <tr className={securityService.isDeleting ? "updating" : ""}>
     <td>{securityService.name}</td>
     <td>{securityService.id}</td>
@@ -18,3 +18,5 @@ export default ({ handleDelete, securityService }) => (
     </td>
   </tr>
 )
+
+export default SecurityServiceItem

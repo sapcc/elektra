@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import React from "react"
 
 export const listenerProtocolTypes = () => {
@@ -283,6 +284,7 @@ export const predPolicyDesc = (policy) => {
             <a
               href="https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt"
               target="_blank"
+              rel="noreferrer"
             >
               the Proxy Protocol Specification.
             </a>
@@ -303,6 +305,7 @@ export const predPolicyDesc = (policy) => {
             <a
               href="https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt"
               target="_blank"
+              rel="noreferrer"
             >
               the Proxy Protocol Specification.
             </a>
@@ -321,6 +324,7 @@ export const predPolicyDesc = (policy) => {
             <a
               href="https://support.f5.com/csp/article/K55185917"
               target="_blank"
+              rel="noreferrer"
             >
               (F5 Documentation)
             </a>
@@ -343,7 +347,11 @@ export const predPolicyDesc = (policy) => {
           <React.Fragment>
             Disables the OneConnect Profile on listeners (used for member
             connection reuse){" "}
-            <a href="https://support.f5.com/csp/article/K7208" target="_blank">
+            <a
+              href="https://support.f5.com/csp/article/K7208"
+              target="_blank"
+              rel="noreferrer"
+            >
               (F5 Documentation)
             </a>
           </React.Fragment>

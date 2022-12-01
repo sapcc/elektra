@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import ReactJson from "react-json-view"

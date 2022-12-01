@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable react/no-children-prop */
 /* eslint no-console:0 */
 import { BrowserRouter, Route, Redirect } from "react-router-dom"
 import React from "react"
@@ -22,7 +24,7 @@ const tabsConfig = [
 ]
 
 // render all components inside a hash router
-export default (props) => {
+const ImageApp = (props) => {
   //console.log(props)
   return (
     <BrowserRouter basename={`${window.location.pathname}?r=`}>
@@ -63,3 +65,5 @@ export default (props) => {
     </BrowserRouter>
   )
 }
+
+export default ImageApp

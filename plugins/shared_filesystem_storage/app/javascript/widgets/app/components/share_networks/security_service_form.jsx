@@ -1,7 +1,7 @@
 import { Form } from "lib/elektra-form"
 import React from "react"
 
-export default (props) => {
+const SecurityServiceForm = (props) => {
   return (
     <Form
       validate={() => true}
@@ -31,3 +31,5 @@ export default (props) => {
     </Form>
   )
 }
+
+export default SecurityServiceForm
