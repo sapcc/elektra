@@ -79,7 +79,7 @@ module EmailService
 
     def templated_email_params
       if params.include?(:templated_email)
-        return params.require(:templated_email).permit(:source, :source_domain, :source_domain_name_part, :source_email, :source_type, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :return_path, :template_name, :template_data, :configset_name, :tags)
+        return params.require(:templated_email).permit(:source, :source_domain, :source_domain_name_part, :source_email, :source_type, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :return_path, :template_name, :template_data, :configuration_set_name, :tags)
       else
         return {}
       end

@@ -56,4 +56,5 @@
 
 = f.input :template_data, required: true, label: 'Template data - JSON', placeholder: 'Enter valid JSON', input_html: {class: 'auto-text-field u-text-monospace', :rows => 5}, as: :text, icon_hint: template_data_hint
 
--# = f.input :configset_name, required: false, label: "ConfigSet", collection: configset_names, as: :select, icon_hint: configset_name_hint
+- if configset_names && !configset_names.empty?
+  = f.input :configuration_set_name, required: false, label: "Configuration Set", collection: configset_names, as: :select, icon_hint: configset_name_hint

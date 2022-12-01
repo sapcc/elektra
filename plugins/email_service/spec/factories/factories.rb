@@ -53,7 +53,7 @@ module EmailService
             "key2"=> "value2"
           }
         ],
-        configset_name: "configset_domain_name"
+        configuration_set_name: "configset_domain_name"
       }
     end
 
@@ -79,7 +79,7 @@ module EmailService
             "key2"=> "value2"
           }
         ],
-        configset_name: "configset_email_name"
+        configuration_set_name: "configset_email_name"
       }
     end
 
