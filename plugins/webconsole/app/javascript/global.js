@@ -1,2 +1,2 @@
-import "./global/webconsole_container.coffee"
-import "./global/init.coffee"
+import "./global/webconsole_container"
+import "./global/init"
