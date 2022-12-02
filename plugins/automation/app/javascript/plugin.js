@@ -6,7 +6,7 @@ import "./plugin/jquery.caret.min"
 import "./plugin/jquery.tag-editor"
 import "./plugin/node.js"
 
-import "lib/jsoneditor.coffee"
+import init_json_editor from "lib/jsoneditor"
 window.$(document).ready(init_json_editor)
 
 window.onload = function () {

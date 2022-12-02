@@ -1,4 +1,4 @@
-import "lib/jsoneditor.coffee"
+import "lib/jsoneditor"
 
 class JsonEditor extends React.Component {
   componentDidMount() {
