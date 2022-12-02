@@ -1,10 +1,10 @@
 import { AnsiUp } from "ansi-up"
-import "./plugin/automation_search.coffee"
-import "./plugin/automation.coffee"
-import "./plugin/inline_form_node_tag.coffee"
+import "./plugin/automation_search.js"
+import "./plugin/automation.js"
+import "./plugin/inline_form_node_tag.js"
 import "./plugin/jquery.caret.min"
 import "./plugin/jquery.tag-editor"
-import "./plugin/node.coffee"
+import "./plugin/node.js"
 
 import "lib/jsoneditor.coffee"
 window.$(document).ready(init_json_editor)
