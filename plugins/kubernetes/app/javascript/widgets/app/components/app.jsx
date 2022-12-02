@@ -1,20 +1,20 @@
 import React from "react"
 import { connect } from "react-redux"
 
-import "./clusters/new.coffee"
-import "./clusters/edit.coffee"
-import "./clusters/list.coffee"
-import "./clusters/credentials.coffee"
-import "./clusters/setup.coffee"
-import "../lib/dialogs.coffee"
-import "../lib/modal"
+import "./clusters/setup"
+import {
+  ReactConfirmDialog,
+  ReactInfoDialog,
+  ReactErrorDialog,
+} from "../lib/dialogs"
+import ReactModal from "../lib/modal"
 
-import ClusterList from "./clusters/list.coffee"
-import NewClusterModal from "./clusters/new.coffee"
-import EditClusterModal from "./clusters/edit.coffee"
-import SetupInfoModal from "./clusters/setup.coffee"
+import ClusterList from "./clusters/list"
+import NewClusterModal from "./clusters/new"
+import EditClusterModal from "./clusters/edit"
+import SetupInfoModal from "./clusters/setup"
 
-modalComponents = {
+const modalComponents = {
   NEW_CLUSTER: NewClusterModal,
   EDIT_CLUSTER: EditClusterModal,
   SETUP_INFO: SetupInfoModal,
@@ -25,7 +25,8 @@ modalComponents = {
 
 const Modal = ReactModal.Container("modals", modalComponents)
 
-const App = ({ permissions, kubernikusBaseUrl }) => (
+// eslint-disable-next-line react/prop-types
+const App = ({ kubernikusBaseUrl }) => (
   <div>
     <ClusterList kubernikusBaseUrl={kubernikusBaseUrl} />
     <Modal />

@@ -1,6 +1,4 @@
-import "../lib/ajax_helper"
-
-export * from "./clusters.coffee"
-export * from "./dialogs.coffee"
+export * from "./clusters"
+export * from "./dialogs"
 export * from "./info"
 export * from "./meta_data"

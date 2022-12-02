@@ -1,8 +1,8 @@
-import clusters from "./clusters.coffee"
-import clusterForm from "./cluster_form.coffee"
-import info from "./info.coffee"
-import metaData from "./meta_data.coffee"
-import "../lib/modal"
+import clusters from "./clusters"
+import clusterForm from "./cluster_form"
+import info from "./info"
+import metaData from "./meta_data"
+import ReactModal from "../lib/modal"
 
 import { combineReducers } from "redux"
 
