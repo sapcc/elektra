@@ -2,8 +2,8 @@ import { saveAs } from 'file-saver';
 import * as constants from "../constants"
 import { ajaxHelper, backendAjaxClient } from "./ajax_helper"
 import "../lib/modal"
-import {loadMetaData} from "./meta_data.coffee"
-import {loadInfo} from "./info.coffee"
+import {loadMetaData} from "./meta_data"
+import {loadInfo} from "./info"
 import {showConfirmDialog} from "./dialogs.coffee"
 #################### CLUSTERS #########################
 # ---- list ----

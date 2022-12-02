@@ -1,4 +1,4 @@
-import "../lib/ajax_helper.coffee"
+import "../lib/ajax_helper"
 let ajaxHelper, backendAjaxClient
 
 const setAjaxHelper = (helper) => {
