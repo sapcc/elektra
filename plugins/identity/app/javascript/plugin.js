@@ -1,3 +1,3 @@
-import "./plugin/identity.coffee"
-import "./plugin/project_members.coffee"
-import "./plugin/wizard.coffee"
+import "./plugin/identity"
+import "./plugin/project_members"
+import "./plugin/wizard"
