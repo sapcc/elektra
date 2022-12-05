@@ -3,6 +3,7 @@ import { AjaxPaginate } from "lib/components/ajax_paginate"
 import { Highlighter } from "react-bootstrap-typeahead"
 import { policy } from "lib/policy"
 import ProjectRoleAssignmentsInlineEdit from "../containers/project_role_assignments_form"
+import React from "react"
 
 // This class renders project user role assignments
 export default class ProjectRoleAssignmentsItem extends React.Component {

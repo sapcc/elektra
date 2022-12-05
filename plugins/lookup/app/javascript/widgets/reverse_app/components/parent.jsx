@@ -1,8 +1,10 @@
-const Parent = props => (
+import React from "react"
+
+const Parent = (props) => (
   <span>
     <span>{props.name}</span>
     <small className="text-muted"> ( {props.id} )</small>
   </span>
-);
+)
 
-export default Parent;
+export default Parent

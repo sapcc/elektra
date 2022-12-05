@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { policy } from "lib/policy"
+import React from "react"
 
 // availability_zone: "qa-de-1a"
 // cached_object_type: "share_replica"

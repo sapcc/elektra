@@ -4,6 +4,7 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap"
 import { PrettyDate } from "lib/components/pretty_date"
 import { PrettySize } from "lib/components/pretty_size"
 import { ImageIcon } from "./icon"
+import React from "react"
 
 export const OwnerIcon = () => {
   const tooltip = <Tooltip id="ownerIconTooltip">Owned by this project</Tooltip>
@@ -35,7 +36,7 @@ export const SnapshotIcon = () => {
   )
 }
 
-export default (props) => {
+const Item = (props) => {
   let { image } = props
   const canCreateInstance = policy.isAllowed("compute:instance_create", {
     target: {
@@ -216,3 +217,5 @@ export default (props) => {
     </tr>
   )
 }
+
+export default Item

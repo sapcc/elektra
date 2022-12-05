@@ -1,6 +1,6 @@
 import moment from "moment"
 import { Link } from "react-router-dom"
-
+import React from "react"
 import { addSuccess } from "lib/flashes"
 import { byteToHuman } from "lib/tools/size_formatter"
 
@@ -47,7 +47,7 @@ const renderLabel = (key, value) => {
   }
   //the labels have `white-space:nowrap` inside, so some extra whitespace is
   //required to allow long lines with lots of labels to break
-  return <React.Fragment>{label}{" "}</React.Fragment>
+  return <React.Fragment>{label} </React.Fragment>
 }
 
 export default class ImageRow extends React.Component {
@@ -220,7 +220,7 @@ export default class ImageRow extends React.Component {
         </tr>
         {labelKeys.length > 0 ? (
           <tr className="image-labels explains-previous-line">
-            <td colspan="7">
+            <td colSpan="7">
               {labelKeys.map((key) => renderLabel(key, labels[key]))}
             </td>
           </tr>

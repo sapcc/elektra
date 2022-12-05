@@ -1,26 +1,22 @@
-import PropTypes from 'prop-types';
-
+import PropTypes from "prop-types"
+import React from "react"
 export class Alert extends React.Component {
-
   componentDidMount() {
-    this.timer = setTimeout(
-      this.props.onClose,
-      this.props.timeout
-    );
+    this.timer = setTimeout(this.props.onClose, this.props.timeout)
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timer);
+    clearTimeout(this.timer)
   }
 
-  alertClass (type) {
+  alertClass(type) {
     let classes = {
-      error: 'alert-danger',
-      alert: 'alert-warning',
-      notice: 'alert-info',
-      success: 'alert-success'
-    };
-    return classes[type] || classes.success;
+      error: "alert-danger",
+      alert: "alert-warning",
+      notice: "alert-info",
+      success: "alert-success",
+    }
+    return classes[type] || classes.success
   }
 
   renderMessageBody(message) {
@@ -29,7 +25,7 @@ export class Alert extends React.Component {
         if (!child) return null
         return React.cloneElement(child)
       })
-    } else if (typeof message.text == 'object') {
+    } else if (typeof message.text == "object") {
       return React.cloneElement(message.text)
     } else {
       return <div>{message.text}</div>
@@ -37,27 +33,26 @@ export class Alert extends React.Component {
   }
 
   render() {
-    const message = this.props.message;
-    const alertClassName = `alert ${ this.alertClass(message.type) }`;
+    const message = this.props.message
+    const alertClassName = `alert ${this.alertClass(message.type)}`
 
-    return(
-      <div className={ alertClassName }>
-        <button className='close'
-          onClick={ this.props.onClose }>
+    return (
+      <div className={alertClassName}>
+        <button className="close" onClick={this.props.onClose}>
           &times;
         </button>
-        { this.renderMessageBody(message) }
+        {this.renderMessageBody(message)}
       </div>
-    );
+    )
   }
 }
 
 Alert.propTypes = {
   onClose: PropTypes.func,
   timeout: PropTypes.number,
-  message: PropTypes.object.isRequired
-};
+  message: PropTypes.object.isRequired,
+}
 
 Alert.defaultProps = {
-  timeout: 15000
-};
+  timeout: 15000,
+}

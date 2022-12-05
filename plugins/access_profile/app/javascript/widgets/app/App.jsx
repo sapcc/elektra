@@ -3,6 +3,7 @@ import reducers from "./reducers"
 import AccessProfilesList from "./components/AccessProfilesList"
 import Config from "./components/Config"
 import FloatingFlashMessages from "./components/shared/FloatingFlashMessages"
+import React from "react"
 
 const App = () => {
   return (
@@ -26,8 +27,10 @@ const App = () => {
   )
 }
 
-export default () => (
+const AccessProfilesApp = () => (
   <StateProvider reducers={reducers}>
     <App />
   </StateProvider>
 )
+
+export default AccessProfilesApp

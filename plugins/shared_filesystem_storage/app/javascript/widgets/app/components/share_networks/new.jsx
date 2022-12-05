@@ -1,5 +1,6 @@
 import { Modal, Button } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
+import React from "react"
 
 export default class NewShareNetworkForm extends React.Component {
   constructor(props) {

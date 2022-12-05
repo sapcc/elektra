@@ -18,6 +18,7 @@ class FloatingFlashMessages extends React.Component {
         show={true}
         placement="right"
         container={this}
+        // eslint-disable-next-line react/no-find-dom-node, no-undef
         target={() => ReactDOM.findDOMNode(this.target)}
       >
         {popOver}

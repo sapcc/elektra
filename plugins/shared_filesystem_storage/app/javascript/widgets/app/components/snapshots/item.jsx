@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { policy } from "lib/policy"
+import React from "react"
 
 export default class SnapshotItem extends React.Component {
   constructor(props) {

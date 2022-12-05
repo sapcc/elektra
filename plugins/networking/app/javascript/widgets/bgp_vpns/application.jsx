@@ -4,6 +4,7 @@ import BgpVpns from "./components/bgp_vpns/list"
 import ShowBgpVpn from "./components/bgp_vpns/show"
 import NewBgpVpn from "./components/bgp_vpns/new"
 import StateProvider from "./stateProvider"
+import React from "react"
 
 // render all components inside a hash router
 const App = () => {

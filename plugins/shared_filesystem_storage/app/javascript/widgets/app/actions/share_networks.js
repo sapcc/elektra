@@ -3,6 +3,7 @@ import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form"
+import React from "react"
 
 //################### SHARE_NETWORKS #########################
 const requestShareNetworks = () => ({

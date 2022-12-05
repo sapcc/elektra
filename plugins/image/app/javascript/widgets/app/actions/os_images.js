@@ -2,6 +2,7 @@ import { imageConstants } from "../constants"
 import { pluginAjaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
+import React from "react"
 
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 
@@ -54,6 +55,7 @@ export default (type) => {
               React.createElement(ErrorsList, { errors: response.data.errors })
             )
           } else {
+            // eslint-disable-next-line no-undef
             let osImages = $.isEmptyObject(response.data.os_images)
               ? []
               : response.data.os_images

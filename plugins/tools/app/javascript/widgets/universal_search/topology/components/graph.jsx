@@ -1,18 +1,26 @@
-import { scaleLinear } from 'd3-scale'
-import { max } from 'd3-array'
-import { select, event, mouse } from 'd3-selection'
-import { forceSimulation, forceLink, forceCenter, forceManyBody, forceX, forceY } from 'd3-force';
-import { drag } from 'd3-drag'
-import { zoom } from 'd3-zoom'
-
+/* eslint-disable react/no-string-refs */
+import { scaleLinear } from "d3-scale"
+import { max } from "d3-array"
+import { select, event, mouse } from "d3-selection"
+import {
+  forceSimulation,
+  forceLink,
+  forceCenter,
+  forceManyBody,
+  forceX,
+  forceY,
+} from "d3-force"
+import { drag } from "d3-drag"
+import { zoom } from "d3-zoom"
+import React from "react"
 
 export class Graph extends React.Component {
   static defaultProps = {
     width: 1138,
     height: 600,
     zoomScale: 1,
-    nodeColor: '#00b3ff',
-    linkColor: '#bbb',
+    nodeColor: "#00b3ff",
+    linkColor: "#bbb",
     nominalBaseNodeSize: 18,
     nominalTextSize: 12,
     maxTextSize: 12,
@@ -20,36 +28,39 @@ export class Graph extends React.Component {
     maxStroke: 4.5,
     maxBaseNodeSize: 36,
     minZoom: 0.1,
-    maxZoom: 7
+    maxZoom: 7,
   }
 
   componentDidMount() {
     this.zoomScale = 1
 
+    // eslint-disable-next-line react/no-find-dom-node, no-undef, react/no-string-refs
     const svg = select(ReactDOM.findDOMNode(this.refs.svg))
     // add zoom capabilities
     zoom().on("zoom", this.zoomActions)(svg)
-
+    // eslint-disable-next-line react/no-find-dom-node, no-undef, react/no-string-refs
     this.graph = select(ReactDOM.findDOMNode(this.refs.graph))
+    // eslint-disable-next-line react/no-find-dom-node, no-undef, react/no-string-refs
     this.tooltip = select(ReactDOM.findDOMNode(this.refs.tooltip))
+    // eslint-disable-next-line react/no-find-dom-node, no-undef, react/no-string-refs
     this.details = select(ReactDOM.findDOMNode(this.refs.details))
 
     // we use svg groups to logically group the elements together
-    this.linkGroup = this.graph.append('g').attr('class', 'links')
-    this.nodeGroup = this.graph.append('g').attr('class', 'nodes')
-    this.textGroup = this.graph.append('g').attr('class', 'texts')
+    this.linkGroup = this.graph.append("g").attr("class", "links")
+    this.nodeGroup = this.graph.append("g").attr("class", "nodes")
+    this.textGroup = this.graph.append("g").attr("class", "texts")
 
     this.simulation = this.createSimulation(this.props.width, this.props.height)
-    this.simulation.on('tick', this.handleTick)
+    this.simulation.on("tick", this.handleTick)
     this.nodes = []
     this.links = []
   }
 
-  static nodeLabel(node){
+  static nodeLabel(node) {
     switch (node.cached_object_type) {
-      case 'port':
-        return node.payload.fixed_ips.map(ip => ip.ip_address).join(', ')
-      case 'floatingip':
+      case "port":
+        return node.payload.fixed_ips.map((ip) => ip.ip_address).join(", ")
+      case "floatingip":
         return node.payload.floating_ip_address
       default:
         return node.name
@@ -59,38 +70,52 @@ export class Graph extends React.Component {
   shouldComponentUpdate(nextProps) {
     if (!nextProps.nodes) return false
 
-    const nodesToBeAdded = nextProps.nodes.filter(newNode =>
-      this.nodes.findIndex(node => node.id == newNode.id) < 0
+    const nodesToBeAdded = nextProps.nodes.filter(
+      (newNode) => this.nodes.findIndex((node) => node.id == newNode.id) < 0
     )
-    const nodesToBeRemoved = this.nodes.filter(oldNode =>
-      nextProps.nodes.findIndex(newNode => newNode.id == oldNode.id) < 0
-    )
-
-    const linksToBeAdded = nextProps.links.filter(newLink =>
-      this.links.findIndex(link =>
-        link.source.id == newLink.source && link.target.id == newLink.target
-      ) < 0
+    const nodesToBeRemoved = this.nodes.filter(
+      (oldNode) =>
+        nextProps.nodes.findIndex((newNode) => newNode.id == oldNode.id) < 0
     )
 
-    const linksToBeRemoved = this.links.filter(oldLink =>
-      nextProps.links.findIndex(newLink =>
-        newLink.source == oldLink.source.id && newLink.target == oldLink.target.id
-      ) < 0
+    const linksToBeAdded = nextProps.links.filter(
+      (newLink) =>
+        this.links.findIndex(
+          (link) =>
+            link.source.id == newLink.source && link.target.id == newLink.target
+        ) < 0
     )
 
-    for(let n of nodesToBeRemoved) {
-      let index = this.nodes.findIndex(i=>i.id==n.id)
-      if(index>=0) this.nodes.splice(index,1)
+    const linksToBeRemoved = this.links.filter(
+      (oldLink) =>
+        nextProps.links.findIndex(
+          (newLink) =>
+            newLink.source == oldLink.source.id &&
+            newLink.target == oldLink.target.id
+        ) < 0
+    )
+
+    for (let n of nodesToBeRemoved) {
+      let index = this.nodes.findIndex((i) => i.id == n.id)
+      if (index >= 0) this.nodes.splice(index, 1)
     }
-    for(let l of linksToBeRemoved) {
-      let index = this.links.findIndex(i=>i.source.id==l.source.id && i.target.id==l.target.id)
-      if(index>=0) this.links.splice(index,1)
+    for (let l of linksToBeRemoved) {
+      let index = this.links.findIndex(
+        (i) => i.source.id == l.source.id && i.target.id == l.target.id
+      )
+      if (index >= 0) this.links.splice(index, 1)
     }
-    nodesToBeAdded.forEach(n => this.nodes.push({...n, x: this.props.width/2, y: this.props.height/2}))
-    linksToBeAdded.forEach(l => this.links.push(l))
+    nodesToBeAdded.forEach((n) =>
+      this.nodes.push({
+        ...n,
+        x: this.props.width / 2,
+        y: this.props.height / 2,
+      })
+    )
+    linksToBeAdded.forEach((l) => this.links.push(l))
 
-    for(let node of this.nodes) {
-      let n = nextProps.nodes.find(newNode => node.id == newNode.id)
+    for (let node of this.nodes) {
+      let n = nextProps.nodes.find((newNode) => node.id == newNode.id)
       node.isFetching = n.isFetching
       node.receivedAt = n.receivedAt
     }
@@ -105,7 +130,7 @@ export class Graph extends React.Component {
 
   handleToggleEvent = (node) => {
     // console.log(node)
-    if(node.receivedAt) {
+    if (node.receivedAt) {
       this.props.removeRelatedObjects(node.id)
     } else {
       this.props.loadRelatedObjects(node.id)
@@ -113,7 +138,7 @@ export class Graph extends React.Component {
   }
 
   showDetails = (node) => {
-    this.props.showDetails(event,node)
+    this.props.showDetails(event, node)
     // console.log(this.details.style('display'))
     // this.details.transition()
     //   .duration(200)
@@ -128,29 +153,33 @@ export class Graph extends React.Component {
   }
 
   handleTick = () => {
-    if(this.nodeElements) this.nodeElements
-      .attr("transform", (d) => "translate(" + d.x + "," + d.y + ")")
+    if (this.nodeElements)
+      this.nodeElements.attr(
+        "transform",
+        (d) => "translate(" + d.x + "," + d.y + ")"
+      )
     // if(this.textElements) this.textElements
     //   .attr('x', node => node.x)
     //   .attr('y', node => node.y)
-    if(this.linkElements) this.linkElements
-      .attr('x1', link => link.source.x)
-      .attr('y1', link => link.source.y)
-      .attr('x2', link => link.target.x)
-      .attr('y2', link => link.target.y)
+    if (this.linkElements)
+      this.linkElements
+        .attr("x1", (link) => link.source.x)
+        .attr("y1", (link) => link.source.y)
+        .attr("x2", (link) => link.target.x)
+        .attr("y2", (link) => link.target.y)
   }
 
   dragDrop = drag()
-    .on('start', node => {
+    .on("start", (node) => {
       node.fx = node.x
       node.fy = node.y
     })
-    .on('drag', node => {
+    .on("drag", (node) => {
       this.simulation.alphaTarget(0.7).restart()
       node.fx = event.x
       node.fy = event.y
     })
-    .on('end', node => {
+    .on("end", (node) => {
       if (!event.active) {
         this.simulation.alphaTarget(0)
       }
@@ -167,26 +196,26 @@ export class Graph extends React.Component {
       stroke = this.props.maxStroke / this.zoomScale
     }
 
-    this.linkGroup.selectAll('line').style("stroke-width", stroke)
-    this.nodeGroup.selectAll('circle').style("stroke-width", stroke)
+    this.linkGroup.selectAll("line").style("stroke-width", stroke)
+    this.nodeGroup.selectAll("circle").style("stroke-width", stroke)
 
     // var baseRadius = this.props.nominalBaseNodeSize
     // if (this.props.nominalBaseNodeSize * scale > this.props.maxBaseNodeSize) {
     //   baseRadius = this.props.maxBaseNodeSize / scale
     // }
 
-    var textSize = this.zoomScale > 1 ? 5+this.zoomScale*this.zoomScale : 0
-    if(textSize > this.props.maxTextSize) {
+    var textSize = this.zoomScale > 1 ? 5 + this.zoomScale * this.zoomScale : 0
+    if (textSize > this.props.maxTextSize) {
       textSize = this.props.maxTextSize
     }
-    this.textGroup.selectAll('text').style("font-size", textSize + "px")
+    this.textGroup.selectAll("text").style("font-size", textSize + "px")
 
     this.graph.attr("transform", event.transform)
   }
 
   createSimulation = (width, height) => {
     const linkForce = forceLink()
-      .id( link => link.id )
+      .id((link) => link.id)
       .distance(80)
       // .distance( link => {
       //   const targetOutgoingLinks = this.links.filter(l =>
@@ -198,153 +227,172 @@ export class Graph extends React.Component {
       .iterations(5)
 
     return forceSimulation()
-      .force('link', linkForce)
-      .force('center', forceCenter(width / 2, height / 2))
-      .force('charge', forceManyBody().strength(-80))
+      .force("link", linkForce)
+      .force("center", forceCenter(width / 2, height / 2))
+      .force("charge", forceManyBody().strength(-80))
   }
 
   updateGraph = () => {
     // links
-    this.linkElements = this.linkGroup.selectAll('line').data(
-      this.links, link => link.target.id + link.source.id
-    )
+    this.linkElements = this.linkGroup
+      .selectAll("line")
+      .data(this.links, (link) => link.target.id + link.source.id)
 
     this.linkElements.exit().remove()
 
     let linkEnter = this.linkElements
-      .enter().append('line')
-      .attr('stroke-width', 1)
-      .attr('stroke', this.props.linkColor)
+      .enter()
+      .append("line")
+      .attr("stroke-width", 1)
+      .attr("stroke", this.props.linkColor)
 
     this.linkElements = linkEnter.merge(this.linkElements)
 
     // nodes
-    this.nodeElements = this.nodeGroup.selectAll('.node').data(
-      this.nodes, node => node.id
-    )
+    this.nodeElements = this.nodeGroup
+      .selectAll(".node")
+      .data(this.nodes, (node) => node.id)
 
     this.nodeElements.exit().remove()
 
     const nodeEnter = this.nodeElements
-      .enter().append("g")
-      .attr('class', 'node')
-      .style('cursor','pointer')
+      .enter()
+      .append("g")
+      .attr("class", "node")
+      .style("cursor", "pointer")
       .call(this.dragDrop)
-      .on('mouseover', (d) => {
+      .on("mouseover", (d) => {
         // nodeGroup.selectAll()
-        this.nodeGroup.selectAll('circle')
-          .filter(n => n.id==d.id)
-          .attr('fill', '#eee')
-          .attr('stroke', this.props.nodeColor)
-        this.linkGroup.selectAll('line')
-          .filter(l => l.source.id == d.id || l.target.id==d.id)
+        this.nodeGroup
+          .selectAll("circle")
+          .filter((n) => n.id == d.id)
+          .attr("fill", "#eee")
+          .attr("stroke", this.props.nodeColor)
+        this.linkGroup
+          .selectAll("line")
+          .filter((l) => l.source.id == d.id || l.target.id == d.id)
           .style("stroke", this.props.nodeColor)
 
-        this.tooltip.transition()
+        this.tooltip
+          .transition()
           .duration(200)
-          .style("opacity", .9)
-          .style('display','inline')
-        this.tooltip.html(
-          d.cached_object_type + "<br/>"  + d.label +
-          '<br/><small>'+d.id+'</small>'
-        )
-        .style("left", (event.offsetX + 10 ) + "px")
-        .style("top", (event.offsetY) + "px")
-
+          .style("opacity", 0.9)
+          .style("display", "inline")
+        this.tooltip
+          .html(
+            d.cached_object_type +
+              "<br/>" +
+              d.label +
+              "<br/><small>" +
+              d.id +
+              "</small>"
+          )
+          .style("left", event.offsetX + 10 + "px")
+          .style("top", event.offsetY + "px")
       })
-      .on('mouseout', (d) => {
-        this.nodeGroup.selectAll('circle')
-          .filter(n => n.id==d.id)
-          .attr('fill', 'white')
-          .attr('stroke', this.props.linkColor)
+      .on("mouseout", (d) => {
+        this.nodeGroup
+          .selectAll("circle")
+          .filter((n) => n.id == d.id)
+          .attr("fill", "white")
+          .attr("stroke", this.props.linkColor)
 
-        this.linkGroup.selectAll('line')
-          .filter(l => l.source.id == d.id || l.target.id==d.id)
+        this.linkGroup
+          .selectAll("line")
+          .filter((l) => l.source.id == d.id || l.target.id == d.id)
           .style("stroke", this.props.linkColor)
 
-        this.tooltip.transition()
+        this.tooltip
+          .transition()
           .duration(500)
           .style("opacity", 0)
-          .style('display','none')
+          .style("display", "none")
       })
 
     nodeEnter
-      .append('circle')
-      .attr('r', (d) => this.props.nominalBaseNodeSize)
-      .attr('fill', 'white')
-      .attr('stroke-width', 1)
-      .attr('stroke', this.props.linkColor)
+      .append("circle")
+      .attr("r", (d) => this.props.nominalBaseNodeSize)
+      .attr("fill", "white")
+      .attr("stroke-width", 1)
+      .attr("stroke", this.props.linkColor)
 
     nodeEnter
-      .append('circle')
-      .attr('r', 5)
-      .attr("cx", -(this.props.nominalBaseNodeSize / 2+1)-7).attr("cy",this.props.nominalBaseNodeSize / 2 -7)
-      .attr('fill','white')
-      .attr('stroke-width', 1)
-      .attr('stroke', this.props.linkColor)
+      .append("circle")
+      .attr("r", 5)
+      .attr("cx", -(this.props.nominalBaseNodeSize / 2 + 1) - 7)
+      .attr("cy", this.props.nominalBaseNodeSize / 2 - 7)
+      .attr("fill", "white")
+      .attr("stroke-width", 1)
+      .attr("stroke", this.props.linkColor)
 
     // children
     nodeEnter
-      .append('text')
-      .attr("dx", -(this.props.nominalBaseNodeSize / 2+1)-13).attr("dy",this.props.nominalBaseNodeSize / 2 -2)
-      .attr('class','icon toggle')
-      .style('fill', '#666')
-      .style('font-family', 'FontAwesome')
-      .style('font-size', this.props.nominalBaseNodeSize-4)
-      .text('\uf055')
-      .on('click', (node) => this.handleToggleEvent(node))
+      .append("text")
+      .attr("dx", -(this.props.nominalBaseNodeSize / 2 + 1) - 13)
+      .attr("dy", this.props.nominalBaseNodeSize / 2 - 2)
+      .attr("class", "icon toggle")
+      .style("fill", "#666")
+      .style("font-family", "FontAwesome")
+      .style("font-size", this.props.nominalBaseNodeSize - 4)
+      .text("\uf055")
+      .on("click", (node) => this.handleToggleEvent(node))
 
     // details
     nodeEnter
-      .append('text')
-      .attr('class','icon details')
-      .style('fill', '#666')
-      .style('font-family', 'FontAwesome')
-      .style('font-size', this.props.nominalBaseNodeSize-4)
-      .attr("dx", -6).attr("dy",-12)
-      .text('\uf05a')
-      .on('click', (node) => this.showDetails(node))
+      .append("text")
+      .attr("class", "icon details")
+      .style("fill", "#666")
+      .style("font-family", "FontAwesome")
+      .style("font-size", this.props.nominalBaseNodeSize - 4)
+      .attr("dx", -6)
+      .attr("dy", -12)
+      .text("\uf05a")
+      .on("click", (node) => this.showDetails(node))
 
-    var icons = nodeEnter.append('text')
-      .attr('class', (d) => d.isFetching ? 'icon symbol spinner' : 'icon symbol')
-      .style('fill', this.props.nodeColor)
-      .style('font-family', 'FontAwesome')
-      .style('font-size', (d) => {
+    var icons = nodeEnter
+      .append("text")
+      .attr("class", (d) =>
+        d.isFetching ? "icon symbol spinner" : "icon symbol"
+      )
+      .style("fill", this.props.nodeColor)
+      .style("font-family", "FontAwesome")
+      .style("font-size", (d) => {
         switch (d.cached_object_type) {
-          case 'floatingip':
+          case "floatingip":
             return this.props.nominalBaseNodeSize - 4
           default:
             return this.props.nominalBaseNodeSize
         }
       })
-      .attr("dx", -this.props.nominalBaseNodeSize / 2+1).attr("dy",this.props.nominalBaseNodeSize / 2 -2)
+      .attr("dx", -this.props.nominalBaseNodeSize / 2 + 1)
+      .attr("dy", this.props.nominalBaseNodeSize / 2 - 2)
 
     this.nodeElements = nodeEnter.merge(this.nodeElements)
 
-    this.nodeElements.selectAll('.symbol').text((d) => {
-      if (d.isFetching) return '\uf110'
+    this.nodeElements.selectAll(".symbol").text((d) => {
+      if (d.isFetching) return "\uf110"
 
       switch (d.cached_object_type) {
-        case 'network':
-          if(d['router:external']) return '\uf0ac'
-          else return '\uf0c2'
-        case 'server':
-          return '\uf0a0'
-        case 'router':
-          return '\uf0e8'
-        case 'port':
-          return '\uf0ec'
-        case 'security_group':
-          return '\uf132'
-        case 'volume':
-          return '\uf1c0'
-        case 'project':
-          return '\uf288'
-        case 'floatingip':
+        case "network":
+          if (d["router:external"]) return "\uf0ac"
+          else return "\uf0c2"
+        case "server":
+          return "\uf0a0"
+        case "router":
+          return "\uf0e8"
+        case "port":
+          return "\uf0ec"
+        case "security_group":
+          return "\uf132"
+        case "volume":
+          return "\uf1c0"
+        case "project":
+          return "\uf288"
+        case "floatingip":
           //return '\uf0ac'
-          return 'FIP'
+          return "FIP"
         default:
-          return '\uf013'
+          return "\uf013"
       }
     })
 
@@ -368,17 +416,21 @@ export class Graph extends React.Component {
 
     // Update simulation
     this.simulation.nodes(this.nodes)
-    this.simulation.force('link').links(this.links)
+    this.simulation.force("link").links(this.links)
     this.simulation.alphaTarget(0.02).restart()
   }
 
   render() {
     return (
       <React.Fragment>
-        <svg ref='svg' width={this.props.width} height={this.props.height}>
-          <g ref='graph' />
+        <svg ref="svg" width={this.props.width} height={this.props.height}>
+          <g ref="graph" />
         </svg>
-        <div className='topology-tooltip' ref='tooltip' style={{display: 'none'}}></div>
+        <div
+          className="topology-tooltip"
+          ref="tooltip"
+          style={{ display: "none" }}
+        ></div>
       </React.Fragment>
     )
   }

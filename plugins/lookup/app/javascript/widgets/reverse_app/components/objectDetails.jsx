@@ -1,30 +1,31 @@
-import Parents from './parents';
-import Users from './users';
-import Groups from '../containers/groups';
-import ObjectInfo from './objectInfo';
-import JsonEditor from './jsonEditor';
+import Parents from "./parents"
+import Users from "./users"
+import Groups from "../containers/groups"
+import ObjectInfo from "./objectInfo"
+import JsonEditor from "./jsonEditor"
+import React from "react"
 
 class ObjectDetails extends React.Component {
-
   state = {
-    objectInfoVisible: false
-  };
+    objectInfoVisible: false,
+  }
 
   fetchObjectInfo = () => {
     const object = this.props.object.data
     const objectInfo = this.props.object.info.data
-    if (!objectInfo || (object.id != objectInfo.searchObjectId)) {
+    if (!objectInfo || object.id != objectInfo.searchObjectId) {
       this.props.fetchObjectInfo(object.searchValue, object.id, object.searchBy)
     } else {
-      $('#jsoneditor').removeClass('hide')
+      // eslint-disable-next-line no-undef
+      $("#jsoneditor").removeClass("hide")
     }
   }
 
   toggleObjectInfoShow = (event) => {
     if (this.state.objectInfoVisible) {
-      this.setState({objectInfoVisible: false});
+      this.setState({ objectInfoVisible: false })
     } else {
-      this.setState({objectInfoVisible: true});
+      this.setState({ objectInfoVisible: true })
       this.fetchObjectInfo()
     }
   }
@@ -33,9 +34,12 @@ class ObjectDetails extends React.Component {
     const object = this.props.object.data
     const objectInfo = this.props.object.info
     const { project, domain, parents, users, groups } = this.props
-    return(
+    return (
       <div className="searchResults">
-        <p>Searched by <b>{object.searchBy}</b>. Details for <b>{object.searchValue}</b>:</p>
+        <p>
+          Searched by <b>{object.searchBy}</b>. Details for{" "}
+          <b>{object.searchValue}</b>:
+        </p>
         <table className="table">
           <tbody>
             <tr>
@@ -46,110 +50,89 @@ class ObjectDetails extends React.Component {
                 <button
                   className="btn-xs btn-default pull-right"
                   disabled={objectInfo.isFetching}
-                  onClick={(e)=>this.toggleObjectInfoShow(e)}>
-                  {
-                    objectInfo.isFetching &&
+                  onClick={(e) => this.toggleObjectInfoShow(e)}
+                >
+                  {objectInfo.isFetching && (
                     <i className="loading-spinner-button" />
-                  }
-                  {
-                    this.state.objectInfoVisible ? 'Hide details' : 'Show details'
-                  }
+                  )}
+                  {this.state.objectInfoVisible
+                    ? "Hide details"
+                    : "Show details"}
                 </button>
-                {
-                  objectInfo.error &&
+                {objectInfo.error && (
                   <div className="text-danger">{objectInfo.error.error}</div>
-                }
-                {
-                  objectInfo.data && this.state.objectInfoVisible &&
-                  <JsonEditor details={objectInfo.data.details} title={objectInfo.data.detailsTitle}/>
-                }
+                )}
+                {objectInfo.data && this.state.objectInfoVisible && (
+                  <JsonEditor
+                    details={objectInfo.data.details}
+                    title={objectInfo.data.detailsTitle}
+                  />
+                )}
               </td>
             </tr>
             <tr>
               <th>Project Name:</th>
               <td>
-                {project.isFetching &&
-                  <span className="spinner" />
-                }
-                {
-                  project.error &&
+                {project.isFetching && <span className="spinner" />}
+                {project.error && (
                   <span className="text-danger">{project.error.error}</span>
-                }
-                {
-                  project.data &&
+                )}
+                {project.data && (
                   <React.Fragment>
                     {project.data.name}
-                    {project.data.id &&
-                      <small className="text-muted"> ( {project.data.id} )</small>}
-                  </ React.Fragment>
-                }
+                    {project.data.id && (
+                      <small className="text-muted">
+                        {" "}
+                        ( {project.data.id} )
+                      </small>
+                    )}
+                  </React.Fragment>
+                )}
               </td>
             </tr>
             <tr>
               <th>Project Domain:</th>
               <td>
-                {domain.isFetching &&
-                  <span className="spinner" />
-                }
-                {
-                  domain.error &&
+                {domain.isFetching && <span className="spinner" />}
+                {domain.error && (
                   <span className="text-danger">{domain.error.error}</span>
-                }
-                {
-                  domain.data &&
+                )}
+                {domain.data && (
                   <React.Fragment>
                     {domain.data.name}
                     <small className="text-muted"> ( {domain.data.id} )</small>
                   </React.Fragment>
-                }
+                )}
               </td>
             </tr>
             <tr>
               <th>Parents:</th>
               <td>
-                {parents.isFetching &&
-                  <span className="spinner" />
-                }
-                {
-                  parents.error &&
+                {parents.isFetching && <span className="spinner" />}
+                {parents.error && (
                   <span className="text-danger">{parents.error.error}</span>
-                }
-                {
-                  parents.data &&
-                  <Parents parents={parents.data} />
-                }
+                )}
+                {parents.data && <Parents parents={parents.data} />}
               </td>
             </tr>
             <tr>
               <th>Admin Users:</th>
               <td>
-                {users.isFetching &&
-                  <span className="spinner" />
-                }
-                {
-                  users.error &&
+                {users.isFetching && <span className="spinner" />}
+                {users.error && (
                   <span className="text-danger">{users.error.error}</span>
-                }
-                {
-                  users.data &&
-                  <Users users={users.data} />
-                }
+                )}
+                {users.data && <Users users={users.data} />}
               </td>
             </tr>
             <tr>
               <th>Groups:</th>
               <td>
-                {groups.isFetching &&
-                  <span className="spinner" />
-                }
-                {
-                  groups.error &&
+                {groups.isFetching && <span className="spinner" />}
+                {groups.error && (
                   <span className="text-danger">{groups.error.error}</span>
-                }
-                {
-                  groups.data &&
-                  <Groups groups={groups.data} />
-                }
+                )}
+                {groups.data && <Groups groups={groups.data} />}
               </td>
             </tr>
           </tbody>
@@ -159,5 +142,4 @@ class ObjectDetails extends React.Component {
   }
 }
 
-
-export default ObjectDetails;
+export default ObjectDetails

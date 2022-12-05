@@ -1,5 +1,6 @@
-import "./cloud_init_configuration.coffee"
-import "./fixed_ip.coffee"
+/* eslint-disable no-undef */
+import "./cloud_init_configuration"
+import "./fixed_ip"
 
 // This is always executed on page load.
 $(document).ready(function () {

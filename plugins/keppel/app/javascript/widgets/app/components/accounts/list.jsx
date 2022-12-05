@@ -1,41 +1,51 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom"
+import React from "react"
+import { DataTable } from "lib/components/datatable"
 
-import { DataTable } from 'lib/components/datatable';
-
-import AccountRow from './row';
+import AccountRow from "./row"
 
 const columns = [
-  { key: 'name', label: 'Global account name', sortStrategy: 'text',
-    sortKey: props => props.account.name || '' },
-  { key: 'config', label: 'Configuration' },
-  { key: 'status', label: 'Status' },
-  { key: 'actions', label: '' },
-];
+  {
+    key: "name",
+    label: "Global account name",
+    sortStrategy: "text",
+    sortKey: (props) => props.account.name || "",
+  },
+  { key: "config", label: "Configuration" },
+  { key: "status", label: "Status" },
+  { key: "actions", label: "" },
+]
 
 const byName = (account1, account2) => {
-  return account1.name.localeCompare(account2.name);
+  return account1.name.localeCompare(account2.name)
 }
 
 export default class AccountList extends React.Component {
   render() {
-    const { isAdmin, hasExperimentalFeatures } = this.props;
-    const forwardProps = { isAdmin, hasExperimentalFeatures };
+    const { isAdmin, hasExperimentalFeatures } = this.props
+    const forwardProps = { isAdmin, hasExperimentalFeatures }
 
     return (
       <React.Fragment>
         {this.props.isAdmin && (
-          <div className='toolbar'>
-            <div className='main-buttons'>
-              <Link to='/accounts/new' className='btn btn-primary'>New Account</Link>
+          <div className="toolbar">
+            <div className="main-buttons">
+              <Link to="/accounts/new" className="btn btn-primary">
+                New Account
+              </Link>
             </div>
           </div>
         )}
         <DataTable columns={columns} pageSize={10}>
-          {this.props.accounts.sort(byName).map(account => (
-            <AccountRow key={account.name} account={account} {...forwardProps} />
+          {this.props.accounts.sort(byName).map((account) => (
+            <AccountRow
+              key={account.name}
+              account={account}
+              {...forwardProps}
+            />
           ))}
         </DataTable>
       </React.Fragment>
-    );
+    )
   }
-};
+}

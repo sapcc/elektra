@@ -1,76 +1,86 @@
+import React from "react"
+
 const display = (msg) => (
   <React.Fragment>
-    <span className='spinner' /> {msg}...
+    <span className="spinner" /> {msg}...
   </React.Fragment>
-);
+)
 
 export default class RepositoryDeleter extends React.Component {
   state = {
     manifestCount: null,
     currentDeleteTarget: null,
-  };
+  }
 
   componentDidMount() {
-    this.deleteNext();
+    this.deleteNext()
   }
   componentDidUpdate() {
-    this.deleteNext();
+    this.deleteNext()
   }
 
   deleteNext() {
     //phase 1: wait for manifests to be fetched, then initialize this.state.manifestCount
-    const { data: manifests, isFetching, requestedAt, receivedAt } = this.props.manifests;
+    const {
+      data: manifests,
+      isFetching,
+      requestedAt,
+      receivedAt,
+    } = this.props.manifests
     if (isFetching || !requestedAt) {
-      return;
+      return
     }
     if (receivedAt === null) {
       //when isFetching becomes false, but receivedAt stays null, there was an error
-      this.props.handleDoneDeleting();
-      return;
+      this.props.handleDoneDeleting()
+      return
     }
     if (this.state.manifestCount === null) {
-      this.setState({ ...this.state, manifestCount: manifests.length });
+      this.setState({ ...this.state, manifestCount: manifests.length })
     }
 
     //phase 2: delete manifests until there are none left (we delete one
     //manifest in each step, then the change in the Redux store will trigger
     //componentDidUpdate() which calls this function again)
     if (manifests.length > 0) {
-      const digest = manifests[0].digest;
+      const digest = manifests[0].digest
       if (this.state.currentDeleteTarget === digest) {
         //do not call deleteManifest() twice for same manifest
-        return;
+        return
       }
-      this.setState({ ...this.state, currentDeleteTarget: digest });
+      this.setState({ ...this.state, currentDeleteTarget: digest })
 
-      this.props.deleteManifest(digest)
-        .catch(this.props.handleDoneDeleting);
-      return;
+      this.props.deleteManifest(digest).catch(this.props.handleDoneDeleting)
+      return
     }
 
     //phase 3: delete repository once empty
-    if (this.state.currentDeleteTarget === 'repo') {
+    if (this.state.currentDeleteTarget === "repo") {
       //do not call deleteRepository() twice
-      return;
+      return
     }
-    this.setState({ ...this.state, currentDeleteTarget: 'repo' });
-    this.props.deleteRepository().finally(this.props.handleDoneDeleting);
+    this.setState({ ...this.state, currentDeleteTarget: "repo" })
+    this.props.deleteRepository().finally(this.props.handleDoneDeleting)
   }
 
   render() {
     //display for phase 1 (see above)
-    const { data: manifests, receivedAt } = this.props.manifests;
+    const { data: manifests, receivedAt } = this.props.manifests
     if (receivedAt == null) {
-      return display('Calculating');
+      return display("Calculating")
     }
 
     //display for phase 2 (see above)
     if (manifests.length > 0) {
-      const { manifestCount } = this.state;
-      return display(`Deleting manifests (${manifestCount-manifests.length+1}/${manifestCount})`);
+      const { manifestCount } = this.state
+      return display(
+        `Deleting manifests (${
+          manifestCount - manifests.length + 1
+        }/${manifestCount})`
+      )
     }
 
     //display for phase 3 (see above)
-    return display(`Deleting repository`);
+    return display(`Deleting repository`)
   }
 }

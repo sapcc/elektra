@@ -1,1 +1,1 @@
-import "./inquiries.coffee"
+import "./inquiries"

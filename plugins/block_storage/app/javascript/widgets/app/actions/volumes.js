@@ -1,3 +1,4 @@
+import React from "react"
 import * as constants from "../constants"
 import { pluginAjaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
@@ -150,7 +151,9 @@ const removeVolume = (id) => ({
 })
 
 const listenToVolumes = () => (dispatch) => {
+  // eslint-disable-next-line no-undef
   if (App && App.cable) {
+    // eslint-disable-next-line no-undef
     App.cable.subscriptions.create(
       { channel: "VolumesChannel", project_id: window.scopedProjectId },
       {

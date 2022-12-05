@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState, useMemo } from "react"
+
 import CopyPastePopover from "../shared/CopyPastePopover"
 import StaticTags from "../StaticTags"
 import useL7Policy from "../../lib/hooks/useL7Policy"
