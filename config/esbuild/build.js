@@ -9,7 +9,6 @@ const envFilePlugin = require("./esbuild-plugin-env")
 const entryPoints = require("./entrypoints")
 
 const esbuild = require("esbuild")
-const path = require("path")
 const args = process.argv.slice(2)
 const watch = args.indexOf("--watch") >= 0
 const production =
