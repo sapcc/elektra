@@ -10,7 +10,7 @@ module EmailService
 
     attribute :identity, String
     # attribute :tags, Array[Hash]
-    attribute :configset_name, String
+    attribute :configuration_set_name, String
 
     strip_attributes
 

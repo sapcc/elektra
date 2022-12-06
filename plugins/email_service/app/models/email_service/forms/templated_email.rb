@@ -22,7 +22,7 @@ module EmailService
     attribute :template_name, String
     attribute :template_data, String
     attribute :tags, Array
-    attribute :configset_name, String
+    attribute :configuration_set_name, String
 
     strip_attributes
 

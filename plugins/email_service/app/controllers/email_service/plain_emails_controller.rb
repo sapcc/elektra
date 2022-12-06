@@ -79,7 +79,7 @@ module EmailService
 
       def plain_email_params
         if params.include?(:plain_email)
-          return params.require(:plain_email).permit(:source, :source_domain, :source_domain_name_part, :source_email, :source_type, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :return_path, :subject, :html_body, :text_body)
+          return params.require(:plain_email).permit(:source, :source_domain, :source_domain_name_part, :source_email, :source_type, :to_addr, :cc_addr, :bcc_addr, :reply_to_addr, :return_path, :subject, :html_body, :text_body, :configuration_set_name)
         else
           return {}
         end

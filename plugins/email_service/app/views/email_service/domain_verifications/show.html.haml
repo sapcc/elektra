@@ -92,19 +92,6 @@
             %td
               =@verified_domain[:configuration_set_name]
           %hr 
-  %table.table.table-striped
-    %th Name
-    %th Type
-    %th Content
-  - @verified_domain[:dkim_tokens].each  do |token|
-    %tr
-      %td
-      = "#{token}._domainkey.#{@verified_domain[:identity_name]}"
-      %td
-        CNAME
-      %td
-      = "#{token}.dkim.amazonses.com."
-
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close

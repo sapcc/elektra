@@ -6,8 +6,8 @@
   .modal-body
     %div{class: modal? ? 'modal-body' : ''}
       = f.input :identity, required: true, icon_hint: identity_hint
-      -#= f.text :tags, required: true
-      = f.input :configset_name, required: false, label: "Configset Name", input_html: {}, as: :select, collection: @configsets_collection
+      - if configset_names && !configset_names.empty?
+        = f.input :configuration_set_name, required: false, label: "Configuration Set Name", input_html: {}, as: :select, collection: configset_names
     %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel

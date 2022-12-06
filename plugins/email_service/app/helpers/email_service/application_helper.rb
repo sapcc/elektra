@@ -523,16 +523,6 @@ module EmailService
 
     end
 
-
-    def get_dkim_tokens(resp, identity)
-        dkim_token = resp[:dkim_attributes][identity][:dkim_tokens]
-        return dkim_token
-    end
-
-    def is_dkim_enabled(resp, identity)
-        dkim_enabled = resp[:dkim_attributes][identity][:dkim_enabled]
-    end
-
     def get_dkim_verification_status(resp, identity)
         verification_status = resp[:dkim_attributes][identity][:dkim_verification_status] if resp
 

@@ -95,7 +95,7 @@ module EmailService
 
       def email_verification_params
         if params.include?(:verified_email)
-          return params.require(:verified_email).permit(:identity, :tags, :configset_name)
+          return params.require(:verified_email).permit(:identity, :tags, :configuration_set_name)
         else
           {}
         end

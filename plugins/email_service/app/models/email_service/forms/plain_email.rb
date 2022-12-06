@@ -23,6 +23,7 @@ module EmailService
     attribute :subject, String
     attribute :html_body, String
     attribute :text_body, String
+    attribute :configuration_set_name, String
 
     strip_attributes
 
