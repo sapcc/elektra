@@ -29,12 +29,9 @@ module Automation
       job_ids.each do |job_id|
         job = begin
           @jobs << services.automation.job(job_id)
-        rescue ArcClient::ApiError => exception
-          if exception.code == 404
-            # do nothing
-          else
-            raise exception
-          end
+        rescue ArcClient::ApiError => e
+          raise e unless e.code == 404
+          # do nothing
         end
       end
     end

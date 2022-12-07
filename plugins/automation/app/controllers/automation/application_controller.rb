@@ -34,7 +34,7 @@ module Automation
         sentry: false,
         warning: true,
         status: 404,
-        description: "The resource you are looking for cannot be found."
+        description: 'The resource you are looking for cannot be found.'
       }
 
       if params[:polling_service]

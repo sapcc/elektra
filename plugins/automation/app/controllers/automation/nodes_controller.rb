@@ -10,15 +10,15 @@ module Automation
     before_action :automations, only: %i[index]
 
     def index
-      if request.xhr?
-        if params[:polling_service]
-          # polling
-          render partial: 'table_nodes', locals: { nodes: @nodes, jobs: @jobs }, layout: false
-        elsif params[:search_service]
-          # search
-          params.delete(:search_service) # remove param to not be rendered in the pagination links
-          render partial: 'table_nodes_pagination', layout: false
-        end
+      return unless request.xhr?
+
+      if params[:polling_service]
+        # polling
+        render partial: 'table_nodes', locals: { nodes: @nodes, jobs: @jobs }, layout: false
+      elsif params[:search_service]
+        # search
+        params.delete(:search_service) # remove param to not be rendered in the pagination links
+        render partial: 'table_nodes_pagination', layout: false
       end
 
       # plain index page
@@ -35,8 +35,8 @@ module Automation
 
     def install
       @compute_instances = services.compute.servers
-    rescue StandardError => exception
-      logger.error exception.message
+    rescue StandardError => e
+      logger.error e.message
       @compute_instances = []
       @errors = [{ key: 'danger', message: I18n.t('automation.errors.node_install_compute_unavailable') }]
     end
@@ -47,31 +47,30 @@ module Automation
       @instance_os = params[:instance_os]
       @os_types = ::Automation::Node.os_types
 
-      result = InstallNodeService.new.process_request(@instance_id, @instance_type, @instance_os, services.compute, services.automation)
+      result = InstallNodeService.new.process_request(@instance_id, @instance_type, @instance_os, services.compute,
+                                                      services.automation)
 
       @instance = result[:instance]
       @login_info = result[:log_info]
       @script = result[:script]
       @messages = result[:messages]
-    rescue InstallNodeParamError => exception
-      @messages = exception.options[:messages]
-      @errors = [{ key: 'warning', message: exception.message }]
-    rescue InstallNodeInstanceOSNotFound => exception
-      @messages = exception.options[:messages]
-      @instance = exception.options[:instance]
-      if params[:from] == 'select_os'
-        return @errors = [{ key: 'warning', message: exception.message }]
-      end
-    rescue InstallNodeError => exception
-      @messages = exception.options[:messages]
-      @errors = [{ key: 'danger', message: exception.message }]
-    rescue StandardError => exception
-      @messages = if exception.respond_to?(:options)
-                    exception.options[:messages]
+    rescue InstallNodeParamError => e
+      @messages = e.options[:messages]
+      @errors = [{ key: 'warning', message: e.message }]
+    rescue InstallNodeInstanceOSNotFound => e
+      @messages = e.options[:messages]
+      @instance = e.options[:instance]
+      @errors = [{ key: 'warning', message: e.message }] if params[:from] == 'select_os'
+    rescue InstallNodeError => e
+      @messages = e.options[:messages]
+      @errors = [{ key: 'danger', message: e.message }]
+    rescue StandardError => e
+      @messages = if e.respond_to?(:options)
+                    e.options[:messages]
                   else
-                    ['error' => exception.message]
+                    ['error' => e.message]
                   end
-      logger.error "Automation-plugin: show_instructions: #{exception.message}"
+      logger.error "Automation-plugin: show_instructions: #{e.message}"
       @errors = [{ key: 'danger', message: I18n.t('automation.errors.node_install_show_instructions_error') }]
     end
 
@@ -90,8 +89,8 @@ module Automation
       # get the updated node tags data
       @node = services.automation.node(@node_form.agent_id, ['all'])
       @node_form_read = ::Automation::Forms::NodeTags.new(@node.attributes_to_form)
-    rescue StandardError => exception
-      Rails.logger.error exception.message
+    rescue StandardError => e
+      Rails.logger.error e.message
       flash.now[:error] = I18n.t('automation.errors.node_update_error')
 
       # get the original node tags
@@ -113,12 +112,16 @@ module Automation
       # run the automation
       run = services.automation.automation_execute(automation_id, "@identity='#{node_id}'")
       if run.save
-        flash.now[:keep_success_htmlsafe] = "<b>#{automation_name}</b> successfully executed. See all runs on the Automations tab. #{view_context.link_to('Show details for this run.', plugin('automation').run_path(id: run.id), data: { modal: true }).html_safe}"
+        flash.now[:keep_success_htmlsafe] =
+          "<b>#{automation_name}</b> successfully executed. See all runs on the Automations tab. #{view_context.link_to(
+            'Show details for this run.', plugin('automation').run_path(id: run.id), data: { modal: true }
+          ).html_safe}"
       else
-        flash.now[:error] = I18n.t('automation.errors.node_executing_automation_error', name: automation_name, errors: run.errors)
+        flash.now[:error] =
+          I18n.t('automation.errors.node_executing_automation_error', name: automation_name, errors: run.errors)
       end
-    rescue StandardError => exception
-      logger.error "Automation-plugin: run_automation: #{exception.message}"
+    rescue StandardError => e
+      logger.error "Automation-plugin: run_automation: #{e.message}"
       flash.now[:error] = I18n.t('automation.errors.node_executing_automation_error', name: automation_name)
     end
 
@@ -126,9 +129,9 @@ module Automation
       node_id = params[:id]
       node = begin
         services.automation.node(node_id, ['all'])
-             rescue StandardError => exception
-               Rails.logger.error exception.message
-               nil
+      rescue StandardError => e
+        Rails.logger.error e.message
+        nil
       end
       name = node.nil? ? node_id : node.name
       services.automation.node_delete(node_id)
@@ -153,11 +156,11 @@ module Automation
     def search_options
       search_text = params[:search]
       search_query = SearchNodesService.search_query(search_text)
-      if !search_text.nil? && search_query != params[:filter]
-        params[:page] = 1
-        # name tag, hostname or id
-        params[:filter] = search_query
-      end
+      return unless !search_text.nil? && search_query != params[:filter]
+
+      params[:page] = 1
+      # name tag, hostname or id
+      params[:filter] = search_query
     end
 
     def automations
@@ -174,7 +177,8 @@ module Automation
       service = IndexNodesService.new(services.automation)
       result = service.list_nodes_with_jobs(@node_page, per_page, @filter)
 
-      @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(@node_page).per(per_page)
+      @nodes = Kaminari.paginate_array(result[:elements],
+                                       total_count: result[:total_elements]).page(@node_page).per(per_page)
       @jobs = result[:jobs]
     end
   end

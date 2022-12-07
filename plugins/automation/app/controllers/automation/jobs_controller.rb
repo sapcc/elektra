@@ -9,12 +9,10 @@ module Automation
       # get node name
       @node = begin
         services.automation.node(@job.to, ['hostname'])
-      rescue ArcClient::ApiError => exception
-        if exception.code == 404
-          nil
-        else
-          raise exception
-        end
+      rescue ArcClient::ApiError => e
+        raise e unless e.code == 404
+
+        nil
       end
 
       # payload truncation
@@ -23,12 +21,10 @@ module Automation
       # log truncation
       log =  begin
         services.automation.job_log(params[:id])
-      rescue ArcClient::ApiError => exception
-        if exception.code == 404
-          nil
-        else
-          raise exception
-        end
+      rescue ArcClient::ApiError => e
+        raise e unless e.code == 404
+
+        nil
       end
       @truncated_log = ::Automation::DataTruncation.new(log)
     end
@@ -42,23 +38,19 @@ module Automation
           job = services.automation.job(@job_id)
           data = job.payload
           prettify(data)
-        rescue ArcClient::ApiError => exception
-          if exception.code == 404
-            ::Automation::DataTruncation::NO_DATA_FOUND
-          else
-            raise exception
-          end
+        rescue ArcClient::ApiError => e
+          raise e unless e.code == 404
+
+          ::Automation::DataTruncation::NO_DATA_FOUND
         end
       elsif params[:attr] == 'log'
         @data =  begin
           data = services.automation.job_log(@job_id)
           prettify(data)
-        rescue ArcClient::ApiError => exception
-          if exception.code == 404
-            ::Automation::DataTruncation::NO_DATA_FOUND
-          else
-            raise exception
-          end
+        rescue ArcClient::ApiError => e
+          raise e unless e.code == 404
+
+          ::Automation::DataTruncation::NO_DATA_FOUND
         end
       end
 

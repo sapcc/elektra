@@ -3,7 +3,9 @@ module Automation
     authorization_context 'automation'
     authorization_required
 
-    before_action :automation, only: %i[show edit edit_repository_credentials update_repository_credentials remove_repository_credentials]
+    before_action :automation,
+                  only: %i[show edit edit_repository_credentials update_repository_credentials
+                           remove_repository_credentials]
 
     PER_PAGE = 10
     AUTOMATION_TYPE_UNKNOWN = I18n.t('automation.errors.automation_type_unknown')
@@ -121,10 +123,10 @@ module Automation
 
     def update_item
       @automation = begin
-                      services.automation.automation(params[:id])
-                    rescue StandardError
-                      nil
-                    end
+        services.automation.automation(params[:id])
+      rescue StandardError
+        nil
+      end
     end
 
     private
@@ -145,16 +147,11 @@ module Automation
 
         run.attributes['jobs_states'] = { 'queued' => 0, 'failed' => 0, 'complete' => 0, 'executing' => 0 }
         run.attributes['jobs'].each do |job_id|
-          begin
-            job = services.automation.job(job_id)
-            run.attributes['jobs_states'][job.status] += 1
-          rescue ArcClient::ApiError => exception
-            if exception.code == 404
-              # do nothing
-            else
-              raise exception
-            end
-          end
+          job = services.automation.job(job_id)
+          run.attributes['jobs_states'][job.status] += 1
+        rescue ArcClient::ApiError => e
+          raise e unless e.code == 404
+          # do nothing
         end
       end
       @runs = runs
@@ -171,12 +168,8 @@ module Automation
     def automation_params
       p = params.to_unsafe_hash
       return p.fetch('forms_automation', {}) unless p['forms_automation'].blank?
-      unless p['forms_chef_automation'].blank?
-        return p.fetch('forms_chef_automation', {})
-      end
-      unless p['forms_script_automation'].blank?
-        return p.fetch('forms_script_automation', {})
-      end
+      return p.fetch('forms_chef_automation', {}) unless p['forms_chef_automation'].blank?
+      return p.fetch('forms_script_automation', {}) unless p['forms_script_automation'].blank?
 
       {}
     end
