@@ -36,9 +36,7 @@ module KeyManager
       @container = services.key_manager.new_container
       @container.id = params[:id]
 
-      if @container.destroy
-        flash.now[:success] = "Container #{params[:id]} was successfully removed."
-      end
+      flash.now[:success] = "Container #{params[:id]} was successfully removed." if @container.destroy
       # grap a new list of secrets
       @containers = containers
 
@@ -88,17 +86,16 @@ module KeyManager
       @certificates = []
       @secrets.each do |element|
         case element.secret_type
-          when Secret::Type::SYMMETRIC
-            @symmetrics << element
-          when Secret::Type::PUBLIC
-            @public_keys << element
-          when Secret::Type::PRIVATE
-            @private_keys << element
-          when Secret::Type::PASSPHRASE
-            @passphrases << element
-          when Secret::Type::CERTIFICATE
-            @certificates << element
-          else
+        when Secret::Type::SYMMETRIC
+          @symmetrics << element
+        when Secret::Type::PUBLIC
+          @public_keys << element
+        when Secret::Type::PRIVATE
+          @private_keys << element
+        when Secret::Type::PASSPHRASE
+          @passphrases << element
+        when Secret::Type::CERTIFICATE
+          @certificates << element
         end
       end
     end
@@ -108,44 +105,44 @@ module KeyManager
         container = params.clone.fetch('container', {})
 
         # remove if blank
-        container.delete_if { |key, value| value.blank? }
+        container.delete_if { |_key, value| value.blank? }
 
         # add secrets
         case container['type']
-          when Container::Type::CERTIFICATE
-            secrets = container.fetch('secrets', {}).fetch(Container::Type::CERTIFICATE, {})
-            unless secrets.blank?
-              secrets.delete_if { |key, value| value.blank? }
-              container['secret_refs'] = []
-              secrets.each do |key, value|
-                container['secret_refs'] << {name: key, secret_ref: value}
-              end
+        when Container::Type::CERTIFICATE
+          secrets = container.fetch('secrets', {}).fetch(Container::Type::CERTIFICATE, {})
+          unless secrets.blank?
+            secrets.delete_if { |_key, value| value.blank? }
+            container['secret_refs'] = []
+            secrets.each do |key, value|
+              container['secret_refs'] << { name: key, secret_ref: value }
             end
-            @selected_secrets = secrets
-          when Container::Type::RSA
-            secrets = container.fetch('secrets', {}).fetch(Container::Type::RSA, {})
-            unless secrets.blank?
-              secrets.delete_if { |key, value| value.blank? }
-              container['secret_refs'] = []
-              secrets.each do |key,value|
-                container['secret_refs'] << {name: key, secret_ref: value}
-              end
+          end
+          @selected_secrets = secrets
+        when Container::Type::RSA
+          secrets = container.fetch('secrets', {}).fetch(Container::Type::RSA, {})
+          unless secrets.blank?
+            secrets.delete_if { |_key, value| value.blank? }
+            container['secret_refs'] = []
+            secrets.each do |key, value|
+              container['secret_refs'] << { name: key, secret_ref: value }
             end
-            @selected_secrets = secrets
-          when Container::Type::GENERIC
-            secrets = container.fetch('secrets', {}).fetch(Container::Type::GENERIC, {})
-            unless secrets.blank?
-              container['secret_refs'] = []
-              secrets.each do |key, value|
-                container['secret_refs'] << value
-              end
+          end
+          @selected_secrets = secrets
+        when Container::Type::GENERIC
+          secrets = container.fetch('secrets', {}).fetch(Container::Type::GENERIC, {})
+          unless secrets.blank?
+            container['secret_refs'] = []
+            secrets.each do |_key, value|
+              container['secret_refs'] << value
             end
-            @selected_secrets = secrets
+          end
+          @selected_secrets = secrets
         end
 
         return container
       end
-      return {}
+      {}
     end
   end
 end

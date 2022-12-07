@@ -17,12 +17,12 @@ module KeyManager
     def show
       @secret = services.key_manager
                         .secret_with_metadata_payload(params[:id])
-      unless @secret
-        flash[:warning] = "Secret #{params[:id]} not found. Please check ACLs."
-        redirect_to plugin('key_manager').secrets_path
-      else
+      if @secret
         # get the user name from the openstack id
         @user = service_user.identity.find_user(@secret.creator_id).try(:name)
+      else
+        flash[:warning] = "Secret #{params[:id]} not found. Please check ACLs."
+        redirect_to plugin('key_manager').secrets_path
       end
     end
 
@@ -56,9 +56,7 @@ module KeyManager
       # delete secret
       @secret = services.key_manager.new_secret
       @secret.id = params[:id]
-      if @secret.destroy
-        flash.now[:success] = "Secret #{params[:id]} was successfully removed."
-      end
+      flash.now[:success] = "Secret #{params[:id]} was successfully removed." if @secret.destroy
       # grap a new list of secrets
       @secrets = secrets
       # render
@@ -89,7 +87,9 @@ module KeyManager
                                .relation_to_type[@selected_type.to_sym]
 
       @selected_payload_content_type = secrets_params[:payload_content_type] ||
-                                       @payload_content_types.find { |r| r == ::KeyManager::Secret::PayloadContentType::TEXTPLAIN } ||
+                                       @payload_content_types.find do |r|
+                                         r == ::KeyManager::Secret::PayloadContentType::TEXTPLAIN
+                                       end ||
                                        @payload_content_types.first
 
       @payload_encoding_relation = ::KeyManager::Secret::Encoding
@@ -98,6 +98,7 @@ module KeyManager
 
     def secrets_params
       return {} if params['secret'].blank?
+
       secret = params.clone.fetch('secret', {})
 
       # remove if blank
