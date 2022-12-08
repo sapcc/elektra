@@ -17,13 +17,13 @@ module KeyManager
     def show
       @secret = services.key_manager
                         .secret_with_metadata_payload(params[:id])
-      if @secret
-        # get the user name from the openstack id
-        @user = service_user.identity.find_user(@secret.creator_id).try(:name)
-      else
-        flash[:warning] = "Secret #{params[:id]} not found. Please check ACLs."
-        redirect_to plugin('key_manager').secrets_path
+      unless @secret
+        @error = "Secret #{params[:id]} not found. Please check ACLs."
+        return
       end
+
+      # get the user name from the openstack id
+      @user = service_user.identity.find_user(@secret.creator_id).try(:name)
     end
 
     def new
