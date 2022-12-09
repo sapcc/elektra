@@ -80,7 +80,7 @@
     "jest-environment-jsdom": "^28.0.0",
     "js-yaml": "^4.1.0",
     "jsdom": "^20.0.1",
-    "juno-ui-components": "https://github.com/sapcc/juno/releases/latest/download/juno-ui-components.tgz",
+    "juno-ui-components": "https://github.com/sapcc/juno/releases/download/v0_8_4/juno-ui-components.tgz",
     "postcss": "^8.4.18",
     "react-autocomplete-cli": "0.0.3",
     "react-test-renderer": "16.14.0",

@@ -1,10 +1,11 @@
-import React from "react"
+import React, { useEffect, useState, useCallback, useRef, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { policy } from "lib/policy"
 import { SearchField } from "lib/components/search_field"
 import SecretListItem from "./secretListItem"
-import apiClient from "../../apiClient"
 import { useGlobalState } from "../StateProvider"
+import { deleteSecret } from "../../secretActions"
+import { getSecretUuid } from "../../../lib/secretHelper"
 // import { QueryClient, QueryClientProvider } from "react-query"
 
 import {
@@ -16,61 +17,44 @@ import {
   DataGridToolbar,
   Spinner,
 } from "juno-ui-components"
-import Pagination from "../Pagination"
 
-const Secrets = () => {
-  const [filterTerm, setFilterTerm] = React.useState(null)
+const SecretList = () => {
+  const [filterTerm, setFilterTerm] = useState(null)
   const [{ secrets: secretsState }, dispatch] = useGlobalState()
-  const mounted = React.useRef(false)
+  const mounted = useRef(false)
 
-  React.useEffect(() => {
+  useEffect(() => {
     mounted.current = true
     return () => (mounted.current = false)
   }, [])
 
-  React.useEffect(() => {
-    if (secretsState.loaded || secretsState.isFetching) return
+  // useEffect(() => {
+  //   //Initial load
+  //   if (secretsState.loaded || secretsState.isFetching) return
+  //   loadSecrets()
+  // }, [dispatch])
 
-    dispatch({ type: "REQUEST_SECRETS" })
-    apiClient
-      .osApi("key-manager")
-      .get("/v1/secrets")
-      .then((response) => response.data)
-      .then(
-        (data) =>
-          mounted.current &&
-          dispatch({ type: "RECEIVE_SECRETS", secrets: data.secrets })
-      )
-      .catch(
-        (error) =>
-          mounted.current &&
-          dispatch({ type: "REQUEST_SECRETS_FAILURE", error: error.message })
-      )
-  }, [dispatch, secretsState])
+  // const handleDelete = useCallback(
+  //   (id) => {
+  //     dispatch({ type: "REQUEST_DELETE_SECRETS", id })
+  //     deleteSecret(id)
+  //       .then(() => {
+  //         return mounted.current && dispatch({ type: "DELETE_SECRETS", id })
+  //       })
+  //       .catch(
+  //         (error) =>
+  //           mounted.current &&
+  //           dispatch({
+  //             type: "DELETE_SECRETS_FAILURE",
+  //             id,
+  //             error: error.message,
+  //           })
+  //       )
+  //   },
+  //   [dispatch]
+  // )
 
-  const handleDelete = React.useCallback(
-    (id) => {
-      dispatch({ type: "REQUEST_DELETE_SECRETS", id })
-      apiClient
-        .osApi("key-manager")
-        .del(`v1/secrets/${id}`)
-        .then(() => {
-          return mounted.current && dispatch({ type: "DELETE_SECRETS", id })
-        })
-        .catch(
-          (error) =>
-            mounted.current &&
-            dispatch({
-              type: "DELETE_SECRETS_FAILURE",
-              id,
-              error: error.message,
-            })
-        )
-    },
-    [dispatch]
-  )
-
-  const filteredSecrets = React.useMemo(() => {
+  const filteredSecrets = useMemo(() => {
     if (!secretsState.items || secretsState.items.length === 0) return []
     if (!filterTerm || filterTerm === "") return secretsState.items
     return secretsState.items.filter(
@@ -83,6 +67,12 @@ const Secrets = () => {
     )
   }, [secretsState.items, filterTerm])
 
+  useEffect(() => {
+    console.log("secrets component")
+  })
+
+  console.log("totalSecrets: ", secretsState.totalNumOfSecrets)
+  console.log("secretState: ", secretsState)
   return (
     <>
       <DataGridToolbar
@@ -123,7 +113,6 @@ const Secrets = () => {
               <SecretListItem
                 key={index}
                 secret={secret}
-                handleDelete={handleDelete}
               />
             ))
           ) : (
@@ -137,4 +126,4 @@ const Secrets = () => {
   )
 }
 
-export default Secrets
+export default SecretList

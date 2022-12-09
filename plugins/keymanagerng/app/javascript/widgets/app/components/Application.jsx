@@ -3,14 +3,15 @@ import React from "react"
 import { HashRouter, Route, Redirect } from "react-router-dom"
 
 import Tabs from "./Tabs"
-import Secrets from "./secrets/secretList"
-import SecretDetailsModal from "./secrets/secretDetailsForm"
+// import SecretList from "./secrets/secretList"
+import Secrets from "./secrets/secrets"
+import SecretDetails from "./secrets/secretDetails"
 import NewSecret from "./secrets/newSecret"
 import Containers from "./containers/containerList"
 import ContainerDetailsModal from "./containers/containerDetailsForm"
 import NewContainer from "./containers/newContainer"
 import StateProvider from "./StateProvider"
-import styles from "../styles.css"
+import styles from "../styles.inline.css"
 
 import StyleProvider, { AppShell } from "juno-ui-components"
 import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min"
@@ -37,11 +38,7 @@ const Application = () => {
               <Tabs tabsConfig={tabsConfig} />
             </Route>
             <Route exact path="/secrets/newSecret" component={NewSecret} />
-            <Route
-              exact
-              path="/secrets/:id/show"
-              component={SecretDetailsModal}
-            />
+            <Route exact path="/secrets/:id/show" component={SecretDetails} />
             <Route
               exact
               path="/containers/newContainer"

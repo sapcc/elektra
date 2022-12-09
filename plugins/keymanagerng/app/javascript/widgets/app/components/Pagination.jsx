@@ -3,7 +3,7 @@ import { Stack, Button } from "juno-ui-components"
 
 const Pagination = ({ count, limit, onChanged, isFetching, disabled }) => {
   const [offset, setOffset] = useState(0)
-  const [actualPage, setactualPage] = useState(1)
+  const [actualPage, setActualPage] = useState(1)
 
   useEffect(() => {
     if (onChanged) onChanged(offset)
@@ -26,14 +26,18 @@ const Pagination = ({ count, limit, onChanged, isFetching, disabled }) => {
   const onPrevChanged = () => {
     if (actualPage === 1) return
     setOffset(offset - limit)
-    setactualPage(actualPage - 1)
+    setActualPage(actualPage - 1)
   }
 
   const onNextChanged = () => {
     if (actualPage === pages) return
     setOffset(offset + limit)
-    setactualPage(actualPage + 1)
+    setActualPage(actualPage + 1)
   }
+
+  useEffect(() => {
+    console.log("pagination component")
+  })
 
   return (
     <>

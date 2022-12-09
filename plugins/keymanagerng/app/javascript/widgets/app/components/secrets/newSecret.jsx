@@ -1,5 +1,4 @@
-import React from "react"
-import { Button } from "react-bootstrap"
+import React, { useEffect, useState, useCallback, useRef } from "react"
 import {
   Modal,
   Form,
@@ -8,173 +7,325 @@ import {
   SelectRow,
   SelectOption,
   Message,
+  Box,
 } from "juno-ui-components"
-// import { Form } from "lib/elektra-form"
+// import { Box } from "juno-ui-components/components/Box/index"
 import { useHistory, useLocation } from "react-router-dom"
-import apiClient from "../../apiClient"
 import { useGlobalState } from "../StateProvider"
+import { createSecret, fetchSecrets } from "../../secretActions"
+// import DateTimePicker from "react-datetime-picker"
+
+const TYPE_SYMMETRIC = "symmetric"
+const TYPE_PUBLIC = "public"
+const TYPE_PRIVATE = "private"
+const TYPE_PASSPHRASE = "passphrase"
+const TYPE_CERTIFICATE = "certificate"
+const TYPE_OPAQUE = "opaque"
+
+const selectTypes = (secretType) => {
+  switch (secretType) {
+    case TYPE_CERTIFICATE:
+      return [{ value: TYPE_CERTIFICATE, label: TYPE_CERTIFICATE }]
+    case TYPE_OPAQUE:
+      return [{ value: TYPE_OPAQUE, label: TYPE_OPAQUE }]
+    case TYPE_PASSPHRASE:
+      return [{ value: TYPE_PASSPHRASE, label: TYPE_PASSPHRASE }]
+    case TYPE_PRIVATE:
+      return [{ value: TYPE_PRIVATE, label: TYPE_PRIVATE }]
+    case TYPE_PUBLIC:
+      return [{ value: TYPE_PUBLIC, label: TYPE_PUBLIC }]
+    case TYPE_SYMMETRIC:
+      return [{ value: TYPE_SYMMETRIC, label: TYPE_SYMMETRIC }]
+    case "all":
+      return [
+        { value: TYPE_CERTIFICATE, label: TYPE_CERTIFICATE },
+        { value: TYPE_OPAQUE, label: TYPE_OPAQUE },
+        { value: TYPE_PASSPHRASE, label: TYPE_PASSPHRASE },
+        { value: TYPE_PRIVATE, label: TYPE_PRIVATE },
+        { value: TYPE_PUBLIC, label: TYPE_PUBLIC },
+        { value: TYPE_SYMMETRIC, label: TYPE_SYMMETRIC },
+      ]
+    default:
+      return []
+  }
+}
+
+const TYPE_TEXTPLAIN = "text/plain"
+const TYPE_PKCS8 = "application/pkcs8"
+const TYPE_PKIX_CERT = "application/pkix-cert"
+const TYPE_OCTET_STREAM = "application/octet-stream"
+const TYPE_TEXTPLAIN_CHARSET_UTF8 = "text/plain;charset=utf-8"
+
+const secretTypeRelToPayloadContentType = (secretType) => {
+  switch (secretType) {
+    case TYPE_SYMMETRIC:
+      return [
+        { value: "", label: "Please select a payload content type" },
+        { value: TYPE_OCTET_STREAM, label: TYPE_OCTET_STREAM },
+      ]
+    case TYPE_PUBLIC:
+    case TYPE_PRIVATE:
+      return [
+        { value: TYPE_TEXTPLAIN, label: TYPE_TEXTPLAIN },
+        { value: TYPE_OCTET_STREAM, label: TYPE_OCTET_STREAM },
+      ]
+    case TYPE_PASSPHRASE:
+      return [
+        { value: TYPE_TEXTPLAIN, label: TYPE_TEXTPLAIN },
+        {
+          value: TYPE_TEXTPLAIN_CHARSET_UTF8,
+          label: TYPE_TEXTPLAIN_CHARSET_UTF8,
+        },
+      ]
+    case TYPE_CERTIFICATE:
+      return [
+        {
+          value: TYPE_TEXTPLAIN,
+          label: TYPE_TEXTPLAIN,
+        },
+        { value: TYPE_PKCS8, label: TYPE_PKCS8 },
+        { value: TYPE_PKIX_CERT, label: TYPE_PKIX_CERT },
+      ]
+    case TYPE_OPAQUE:
+      return [
+        { value: TYPE_TEXTPLAIN, label: TYPE_TEXTPLAIN },
+        { value: TYPE_OCTET_STREAM, label: TYPE_OCTET_STREAM },
+      ]
+    default:
+      return []
+  }
+}
+
+const formValidation = (formData) => {
+  let errors = {}
+  if (!formData.name) {
+    errors.name = "Name can't be empty!"
+  }
+  if (!formData.expiration) {
+    errors.expiration = "Expiration date can't be empty!"
+  }
+  if (!formData.secret_type) {
+    errors.secret_type = "Secret type can't be empty!"
+  }
+  if (!formData.payload) {
+    errors.payload = "Payload can't be empty!"
+  }
+  if (!formData.payload_content_type) {
+    errors.payload_content_type = "Payload content type can't be empty!"
+  }
+  return errors
+}
 
 const NewSecret = () => {
   const location = useLocation()
   const history = useHistory()
   const [_, dispatch] = useGlobalState()
-  const [show, setShow] = React.useState(true)
-  const [encodingVis, setEncodingVis] = React.useState(true)
-  const mounted = React.useRef(false)
+  const [show, setShow] = useState(true)
+  const mounted = useRef(false)
+  const [formData, setFormData] = useState({})
+  const [validationState, setValidationState] = useState({})
+  const [payloadContentTypeOptions, setPayloadContentTypeOptions] = useState([])
+  // const [value, onChange] = useState(new Date())
 
-  React.useEffect(() => {
+  useEffect(() => {
     mounted.current = true
     return () => (mounted.current = false)
   }, [])
 
-  const onSubmit = React.useCallback(
-    (values) => {
-      apiClient
-        .post("keymanagerng-api/secrets", { entry: values })
-        .then((response) => response.data)
-        .then(
-          (item) =>
-            mounted.current && dispatch({ type: "RECEIVE_SECRETS", item })
-        )
+  const onConfirm = useCallback(() => {
+    const errors = formValidation(formData)
+    if (Object.keys(errors).length > 0) {
+      setValidationState(errors)
+    } else {
+      createSecret(formData)
+        .then((data) => {
+          mounted.current && dispatch({ type: "RECEIVE_SECRET", data })
+        })
+        .then(() => {
+          fetchSecrets().then((data) =>
+            dispatch({
+              type: "RECEIVE_SECRETS",
+              secrets: data.secrets,
+              totalNumOfSecrets: data.total,
+            })
+          )
+        })
         .then(close)
-        .catch(
-          (error) =>
-            mounted.current &&
-            dispatch({ type: "REQUEST_SECRETS_FAILURE", error: error.message })
-        )
-    },
-    [dispatch]
-  )
+        .catch((error) => {
+          console.log(error.data)
+          mounted.current &&
+            dispatch({
+              type: "REQUEST_SECRETS_FAILURE",
+              error: error.data,
+            })
+        })
+    }
+  }, [dispatch, formData, validationState])
 
-  const close = React.useCallback(() => {
+  const close = useCallback(() => {
     setShow(false)
-    setEncodingVis(false)
     history.replace(location.pathname.replace("/new", "")), [history, location]
   }, [])
 
-  const validate = React.useCallback(
-    (values) =>
-      !!values.name &&
-      !!values.expiration &&
-      !!values.secretType &&
-      !!values.payload &&
-      !!values.payloadContentType
-  )
-  const onSecretTypeChange = React.useCallback((value) => {
-    if (
-      value ===
-      "symmetric - Used for storing byte arrays such as keys suitable for symmetric encryption"
-    ) {
-      setEncodingVis(true)
+  const onSecretTypeChange = (oEvent) => {
+    const secretType = oEvent.target.value
+    let options = { secret_type: secretType }
+
+    if (secretType === "symmetric") {
+      options["payload_content_encoding"] = "base64"
     }
-  })
+    console.log("secret type: ", secretType)
+    setPayloadContentTypeOptions(secretTypeRelToPayloadContentType(secretType))
+    return setFormData({ ...formData, ...options })
+  }
 
   return (
     <Modal
       title="New Secret"
       open={show}
+      size="large"
       onCancel={close}
+      onConfirm={onConfirm}
       confirmButtonLabel="Save"
       cancelButtonLabel="Cancel"
-      size="large"
-      aria-labelledby="contained-modal-title-lg"
     >
-      <Form
-        className="form form-horizontal"
-        validate={validate}
-        onSubmit={onSubmit}
-      >
+      <Form className="form form-horizontal">
         <TextInputRow
           label="Name"
           name="name"
-          placeholder="Enter name"
+          onChange={(oEvent) => {
+            setFormData({ ...formData, name: oEvent.target.value })
+          }}
+          invalid={validationState?.name ? true : false}
+          helptext={validationState?.name}
           required
         />
         <TextInputRow
           label="Expiration"
           name="expiration"
-          helptext="If set, the secret will not be available after this time."
+          onChange={(oEvent) => {
+            setFormData({ ...formData, expiration: oEvent.target.value })
+          }}
+          invalid={validationState?.expiration ? true : false}
+          helptext={
+            validationState?.expiration
+              ? validationState.expiration
+              : "If set, the secret will not be available after this time"
+          }
           required
         />
+        {/* <DateTimePicker onChange={onChange} value={value} /> */}
         <TextInputRow
           label="Bit length"
           name="Bit length"
-          variant="stacked"
-          placeholder="Enter bit length"
-          helptext="Metadata for informational purposes. Value must be greater than zero."
+          onChange={(oEvent) => {
+            setFormData({
+              ...formData,
+              bit_length: parseInt(oEvent.target.value),
+            })
+          }}
+          helptext="Metadata for informational purposes. Value must be greater than zero"
         />
         <TextInputRow
           label="Algorithm"
           name="algorithm"
-          variant="stacked"
-          placeholder="Enter algorithm"
-          helptext="Metadata for informational purposes."
+          onChange={(oEvent) => {
+            setFormData({ ...formData, algorithm: oEvent.target.value })
+          }}
+          helptext="Metadata for informational purposes"
         />
         <TextInputRow
           label="Mode"
           name="mode"
-          variant="stacked"
-          placeholder="Enter mode"
-          helptext="Metadata for informational purposes."
+          onChange={(oEvent) => {
+            setFormData({ ...formData, mode: oEvent.target.value })
+          }}
+          helptext="Metadata for informational purposes"
         />
+        <Box>
+          <p>
+            certificate - Used for storing cryptographic certificates such as
+            X.509 certificates
+          </p>
+          <p>
+            opaque - Used for backwards compatibility with previous versions of
+            the API without typed secrets{" "}
+          </p>
+          <p>passphrase - Used for storing plain text passphrases </p>
+          <p>
+            private - Used for storing the private key of an asymmetric keypair{" "}
+          </p>
+          <p>
+            public - Used for storing the public key of an asymmetric keypair{" "}
+          </p>
+          <p>
+            symmetric - Used for storing byte arrays such as keys suitable for
+            symmetric encryption
+          </p>
+        </Box>
         <SelectRow
           label="Secret Type"
           name="secretType"
           onChange={onSecretTypeChange}
           required
         >
-          <SelectOption
-            label="certificate - Used for storing cryptographic certificates such as X.509 certificates"
-            value="certificate - Used for storing cryptographic certificates such as X.509 certificates"
-          />
-          <SelectOption
-            label="opaque - Used for backwards compatibility with previous versions of the API without typed secrets"
-            value=""
-          />
-          <SelectOption
-            label="passphrase - Used for storing plain text passphrases"
-            value=""
-          />
-          <SelectOption
-            label="private - Used for storing the private key of an asymmetric keypair"
-            value=""
-          />
-          <SelectOption
-            label="public - Used for storing the public key of an asymmetric keypair"
-            value=""
-          />
-          <SelectOption
-            label="symmetric - Used for storing byte arrays such as keys suitable for symmetric encryption"
-            value=""
-          />
+          <SelectOption label="" value="" />
+          {selectTypes("all").map((item, index) => (
+            <SelectOption key={index} label={item.label} value={item.value} />
+          ))}
         </SelectRow>
-        <TextareaRow label="Payload" name="payload" required />
+        <TextareaRow
+          label="Payload"
+          name="payload"
+          onChange={(oEvent) => {
+            setFormData({ ...formData, payload: oEvent.target.value })
+          }}
+          helptext={
+            validationState?.payload
+              ? validationState.payload
+              : "The secret’s data to be stored"
+          }
+          required
+        />
         <SelectRow
           label="Payload Content Type"
           name="payloadContentType"
+          onChange={(oEvent) => {
+            setFormData({
+              ...formData,
+              payload_content_type: oEvent.target.value,
+            })
+          }}
+          helptext={validationState?.payload_content_type}
           required
         >
-          <SelectOption label="text/plain" value="" />
-          <SelectOption label="text/plain;charset=utf-8" value="" />
+          {!formData.secret_type && (
+            <SelectOption label="Please first select a secret type" value="" />
+          )}
+          <SelectOption label="" value="" />
+          {payloadContentTypeOptions.map((item, index) => (
+            <SelectOption key={index} label={item.label} value={item.value} />
+          ))}
         </SelectRow>
-        <Message
-          title="Warning"
-          name="warningForSymmetricSecretType"
-          text="Please encode the payload according to the choosen content encoding below."
-          visible={encodingVis}
-        />
-        <TextInputRow
-          label="PayloadContentEncoding"
-          name="payloadContentEncoding"
-          value="base64"
-          helptext="The encoding used for the payload. Currently only base64 is supported."
-          required
-          disabled
-          visible={encodingVis}
-        />
+        {formData.secret_type === "symmetric" && (
+          <>
+            <Message
+              variant="warning"
+              name="warningForSymmetricSecretType"
+              text="Please encode the payload according to the chosen content encoding below"
+            />
+            <TextInputRow
+              label="PayloadContentEncoding"
+              name="payloadContentEncoding"
+              value="base64"
+              helptext="The encoding used for the payload. Currently only base64 is supported"
+              required
+              disabled
+            />
+          </>
+        )}
       </Form>
     </Modal>
   )
 }
-
 export default NewSecret
