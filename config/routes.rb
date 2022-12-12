@@ -10,11 +10,22 @@ Rails.application.routes.draw do
   # jump to a specific object like instance or network
   get '/_jump_to/:object_id', to: 'jump#show'
 
+  # https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   scope '/system' do
+    # The kubelet uses liveness probes to know when to restart a container. For example,
+    # liveness probes could catch a deadlock, where an application is running, but unable
+    # to make progress.
     # check without db connection
     get :liveliness, to: 'health#liveliness'
+    # The kubelet uses readiness probes to know when a container is ready to start accepting traffic.
+    # A Pod is considered ready when all of its containers are ready.
     # check with db connection
     get :readiness, to: 'health#readiness'
+    # The kubelet uses startup probes to know when a container application has started. If such a
+    # probe is configured, it disables liveness and readiness checks until it succeeds, making sure
+    # those probes don't interfere with the application startup.
+    # check with db connection and js
+    get :startprobe, to: 'health#startprobe'
   end
 
   # mount Cloudops::Engine => '/ccadmin/cloud_admin/cloudops', as: 'cloudops'
