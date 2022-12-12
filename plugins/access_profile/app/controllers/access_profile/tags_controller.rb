@@ -2,6 +2,7 @@
 
 module AccessProfile
   class TagsController < ::AjaxController
+    before_action :restrict_access
     authorization_context 'access_profile'
     authorization_required
 
@@ -160,6 +161,16 @@ module AccessProfile
       return '' if base_prefixes.blank?
 
       base_prefixes[0]
+    end
+
+    def restrict_access
+      # just for production regions
+      return if current_region.start_with?('qa-')
+      # if user hasn't the cloud_support_tools_viewer should be redirected
+      return if current_user.has_role?('cloud_support_tools_viewer')
+
+      @access_error = 'You are not allowed to see this page.'
+      render status: :unauthorized
     end
   end
 end
