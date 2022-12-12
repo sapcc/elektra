@@ -83,7 +83,8 @@ Rails.application.routes.draw do
     get '/:domain_id/:project_id/home' => 'projects#show', as: :project_home
   end
 
-  get '/:domain_id/:project_id', to: redirect('/%<domain_id>s/%<project_id>s/home')
+  # in case someone tries to call a project url without the trailing '/home'
+  get '/:domain_id/:project_id', to: redirect('/%{domain_id}/%{project_id}/home') 
 
   # route for overwritten High Voltage Pages controller
   get '/pages/*id' => 'pages#show', as: :core_page, format: false
