@@ -6,10 +6,10 @@
 
     %title= page_title
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
-    -# = content_for :javascripts do
+
     :javascript
       window.policyConfig = #{policy.try(:to_js).try(:html_safe) || {}}
-      window.pluginName = "#{plugin_name}";
+      // ====> window.pluginName is removed
       window.scopedDomainId = "#{@scoped_domain_id}";
       window.scopedDomainFid = "#{@scoped_domain_fid}";
       window.scopedProjectId = "#{@scoped_project_id}";
@@ -26,10 +26,7 @@
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = javascript_include_tag 'plugins', 'data-turbolinks-track' => true
 
-    / Load plugin js (plugin_name/plugin.js)
-    - plugin = Core::PluginsManager.plugin(plugin_name)
-    - if plugin and plugin.has_plugin_js?
-      = javascript_include_tag "#{plugin.name}_plugin"
+    / ====> Load plugin JS is removed
 
     = favicon_png
     = favicon_ico
@@ -38,22 +35,19 @@
     = csrf_meta_tags
 
   %body{class: "#{body_class} #{domain_class}"}
-    = render "nav"
-    = render "breadcrumb"
-    = render "main_toolbar"
+
+    -# ====> render "nav", "breadcrumb" and "main_toolbar" is removed
 
     = yield :page_lead
 
     .container
-      .content{class: "#{plugin_name if plugin_name}"}
+      .content
         = render "application/help_text"
         .flashes
           = render "application/flashes"
         = yield
 
-
-    = render "application/footer"
-    = render "application/user_profile"
+    -# ====> render "application/footer" and "application/user_profile" is removed
 
     = yield :templates
     = yield :javascripts
