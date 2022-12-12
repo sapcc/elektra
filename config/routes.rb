@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  
   mount MonsoonOpenstackAuth::Engine => '/:domain_fid/auth'
 
   # "jump to" routes
-  # if project_id is known then the domain name or id is unnecessary 
-  # the jump controller will try to redirect to the requested url 
+  # if project_id is known then the domain name or id is unnecessary
+  # the jump controller will try to redirect to the requested url
   get '/_/:project_id(/*rest)', to: 'jump#index'
   # jump to a specific object like instance or network
   get '/_jump_to/:object_id', to: 'jump#show'
-  
+
   scope '/system' do
     # check without db connection
     get :liveliness, to: 'health#liveliness'
@@ -23,9 +22,8 @@ Rails.application.routes.draw do
     "/#{Rails.application.config.cloud_admin_domain}/" \
     "#{Rails.configuration.cloud_admin_project}/cloudops"
   )
-  
+
   scope '/:domain_id(/:project_id)(/:plugin)' do
-    
     get 'os-api/__auth_token', to: 'os_api#auth_token'
     match 'os-api(/*path)', to: 'os_api#reverse_proxy', via: :all
 
@@ -56,7 +54,8 @@ Rails.application.routes.draw do
 
       ###################### MOUNT PLUGINS #####################
       Core::PluginsManager.mountable_plugins.each do |plugin|
-        next if ['docs','cloudops','tools'].include?(plugin.name)
+        next if %w[docs cloudops tools].include?(plugin.name)
+
         Logger.new(STDOUT).debug(
           "Mount plugin #{plugin.mount_point} as #{plugin.name}_plugin"
         )
@@ -66,17 +65,17 @@ Rails.application.routes.draw do
       end
       ######################## END ############################
       Logger.new(STDOUT).debug(
-        "Mount plugin tools as cc_tools_plugin"
+        'Mount plugin tools as cc_tools_plugin'
       )
       mount Tools::Engine => '/cc-tools', as: :cc_tools_plugin
     end
 
     Logger.new(STDOUT).debug(
-      "Mount plugin cloudops as cloudops_plugin"
+      'Mount plugin cloudops as cloudops_plugin'
     )
     mount Cloudops::Engine => "/#{Rails.configuration.cloud_admin_project}" \
-                              "/cloudops", as: 'cloudops_plugin', defaults: { project_id: Rails.configuration.cloud_admin_project },
-                              constraints: { domain_id: Rails.application.config.cloud_admin_domain }
+                              '/cloudops', as: 'cloudops_plugin', defaults: { project_id: Rails.configuration.cloud_admin_project },
+          constraints: { domain_id: Rails.application.config.cloud_admin_domain }
   end
 
   scope module: 'identity' do
@@ -84,7 +83,7 @@ Rails.application.routes.draw do
     get '/:domain_id/:project_id/home' => 'projects#show', as: :project_home
   end
 
-  get '/:domain_id/:project_id', to: redirect('/%{domain_id}/%{project_id}/home') 
+  get '/:domain_id/:project_id', to: redirect('/%<domain_id>s/%<project_id>s/home')
 
   # route for overwritten High Voltage Pages controller
   get '/pages/*id' => 'pages#show', as: :core_page, format: false
