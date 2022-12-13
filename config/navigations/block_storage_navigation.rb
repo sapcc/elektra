@@ -7,11 +7,11 @@ SimpleNavigation::Configuration.run do |navigation|
   #navigation.renderer = Your::Custom::Renderer
 
   # Specify the class that will be applied to active navigation items. Defaults to 'selected'
-  navigation.selected_class = 'active'
+  navigation.selected_class = "active"
 
   # Specify the class that will be applied to the current leaf of
   # active navigation items. Defaults to 'simple-navigation-active-leaf'
-  navigation.active_leaf_class = 'nav-active-leaf'
+  navigation.active_leaf_class = "nav-active-leaf"
 
   # Specify if item keys are added to navigation items as id. Defaults to true
   # navigation.autogenerate_item_ids = true
@@ -57,16 +57,24 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
 
-  primary.item :block_storage,    'Volumes',          -> {plugin('block_storage').volumes_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage\/volumes/] }
-  primary.item :block_storage,    'Volume Snapshots',        -> {plugin('block_storage').snapshots_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage\/snapshots/] }
-
+    primary.item :block_storage,
+                 "Volumes",
+                 -> { plugin("block_storage").volumes_path },
+                 if: -> { plugin_available?(:block_storage) },
+                 highlights_on:
+                   Proc.new { params[:controller][%r{block_storage/volumes}] }
+    primary.item :block_storage,
+                 "Volume Snapshots",
+                 -> { plugin("block_storage").snapshots_path },
+                 if: -> { plugin_available?(:block_storage) },
+                 highlights_on:
+                   Proc.new { params[:controller][%r{block_storage/snapshots}] }
 
     # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
     #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
     #
     #   account_nav.dom_attributes = {class: 'content-list'}
     # end
-
 
     # Add an item which has a sub navigation (same params, but with block)
     # primary.item :key_2, 'name', url, options do |sub_nav|
@@ -82,7 +90,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     # you can also specify html attributes to attach to this particular level
     # works for all levels of the menu
-    primary.dom_attributes = {class: 'nav nav-tabs', role: 'menu'}
+    primary.dom_attributes = { class: "nav nav-tabs", role: "menu" }
 
     # You can turn off auto highlighting for a specific level
     #primary.auto_highlight = false
