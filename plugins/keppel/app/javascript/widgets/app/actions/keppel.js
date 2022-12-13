@@ -123,9 +123,10 @@ const fetchRepositoryPage = (accountName, marker) => (dispatch) => {
     })
   }
 
-  const opts = marker == null ? {} : { marker }
   ajaxHelper
-    .get(`/keppel/v1/accounts/${accountName}/repositories`, opts)
+    .get(`/keppel/v1/accounts/${accountName}/repositories`, {
+      params: { marker },
+    })
     .then((response) => {
       const repos = response.data.repositories
       dispatch({
@@ -195,11 +196,10 @@ const fetchManifestPage = (accountName, repoName, marker) => (dispatch) => {
     })
   }
 
-  const opts = marker == null ? {} : { marker }
   ajaxHelper
     .get(
       `/keppel/v1/accounts/${accountName}/repositories/${repoName}/_manifests`,
-      opts
+      { params: { marker } }
     )
     .then((response) => {
       const manifests = response.data.manifests
