@@ -1,8 +1,8 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-require 'sassc'
-require 'cgi'
+require "sassc"
+require "cgi"
 
 module SassC
   module Script
@@ -18,15 +18,22 @@ module SassC
       def read_file(path)
         return find_rails_asset(path) if defined?(Rails) && ::Rails.application
 
-        raise ::SassC::SyntaxError, "File not found or cannot be read (native): #{path}" unless File.readable?(path)
+        unless File.readable?(path)
+          raise ::SassC::SyntaxError,
+                "File not found or cannot be read (native): #{path}"
+        end
 
-        File.open(path, 'rb') { |f| f.read }.strip
+        File.open(path, "rb") { |f| f.read }.strip
       end
 
       def find_rails_asset(path)
-        source = ::Rails.application.assets || ::Sprockets::Railtie.build_environment(::Rails.application)
+        source =
+          ::Rails.application.assets ||
+            ::Sprockets::Railtie.build_environment(::Rails.application)
         asset = source.find_asset(path)
-        raise "File not found or cannot be read (Sprockets): #{path}" if asset.nil?
+        if asset.nil?
+          raise "File not found or cannot be read (Sprockets): #{path}"
+        end
         asset.to_s
       end
 
@@ -40,9 +47,9 @@ module SassC
       end
 
       def encode_url(svg)
-        encoded = CGI::escape(svg).gsub("+", "%20")
+        encoded = CGI.escape(svg).gsub("+", "%20")
         "url('data:image/svg+xml;charset=utf-8," + encoded + "')"
       end
     end
-    end
+  end
 end

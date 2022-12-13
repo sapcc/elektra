@@ -1,1 +1,1 @@
-require_relative 'sassc/script/functions'
+require_relative "sassc/script/functions"
