@@ -20,7 +20,7 @@ module CurrentUserWrapper
 
     def initialize(current_user, session, service_user)
       @current_user = current_user
-      @session      = session
+      @session = session
 
       # already saved user details in session
       old_user_details = (@session[:current_user_details] || {})
