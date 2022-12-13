@@ -2,9 +2,9 @@ class ProjectProfile < ApplicationRecord
   serialize :wizard_payload
   before_save :write_wizard_status
 
-  STATUS_DONE = 'done'
-  STATUS_SKIPPED = 'skipped'
-  STATUS_PENDING = 'pending'
+  STATUS_DONE = "done"
+  STATUS_SKIPPED = "skipped"
+  STATUS_PENDING = "pending"
 
   def self.find_project_id(project_id)
     self.where(project_id: project_id).first
@@ -20,7 +20,7 @@ class ProjectProfile < ApplicationRecord
 
   def wizard_payload
     return @wizard_payload if @wizard_payload
-    @wizard_payload = read_attribute('wizard_payload') || {}
+    @wizard_payload = read_attribute("wizard_payload") || {}
   end
 
   def wizard_status(key)
@@ -29,9 +29,7 @@ class ProjectProfile < ApplicationRecord
 
   def wizard_data(key)
     hash = wizard_payload[key]
-    if hash and hash["data"]
-      return hash["data"].with_indifferent_access
-    end
+    return hash["data"].with_indifferent_access if hash and hash["data"]
   end
 
   def wizard_finished?(*service_names)
@@ -39,28 +37,38 @@ class ProjectProfile < ApplicationRecord
     service_names = service_names.first if service_names.first.is_a?(Array)
 
     service_names.each do |service_name|
-      status &= (wizard_payload[service_name] and
-        ( wizard_payload[service_name]["status"]==STATUS_DONE or wizard_payload[service_name]["status"]==STATUS_SKIPPED )
-      )
+      status &=
+        (
+          wizard_payload[service_name] and
+            (
+              wizard_payload[service_name]["status"] == STATUS_DONE or
+                wizard_payload[service_name]["status"] == STATUS_SKIPPED
+            )
+        )
     end
     status
   end
 
   def wizard_skipped?(service_name)
     status = true
-    status &= (wizard_payload[service_name] and wizard_payload[service_name]["status"]==STATUS_SKIPPED)
+    status &=
+      (
+        wizard_payload[service_name] and
+          wizard_payload[service_name]["status"] == STATUS_SKIPPED
+      )
     status
   end
 
-  def update_wizard_status(service_name, status, data=nil)
+  def update_wizard_status(service_name, status, data = nil)
     wizard_payload[service_name] ||= {}
     wizard_payload[service_name]["status"] = status
     wizard_payload[service_name]["data"] = data
-    update_attribute(:wizard_payload,wizard_payload)
+    update_attribute(:wizard_payload, wizard_payload)
   end
 
   private
+
   def write_wizard_status
-    write_attribute('wizard_payload',wizard_payload)
+    write_attribute("wizard_payload", wizard_payload)
   end
 end
