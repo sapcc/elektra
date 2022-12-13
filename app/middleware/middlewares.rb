@@ -1,14 +1,14 @@
-require_relative 'debug_env_middleware'
-require_relative 'debug_headers_middleware'
-require_relative 'revision_middleware'
-require_relative 'tagged_exceptions_middleware'
-require_relative 'session_cookie_path_middleware'
-require_relative 'inquiry_metrics_middleware'
-require_relative 'http_metrics_collector_middleware'
-require_relative 'sli_metrics_middleware'
-require_relative 'http_metrics_exporter_middleware'
-require_relative 'same_site_cookie_middleware'
-require_relative 'secure_cookies'
+require_relative "debug_env_middleware"
+require_relative "debug_headers_middleware"
+require_relative "revision_middleware"
+require_relative "tagged_exceptions_middleware"
+require_relative "session_cookie_path_middleware"
+require_relative "inquiry_metrics_middleware"
+require_relative "http_metrics_collector_middleware"
+require_relative "sli_metrics_middleware"
+require_relative "http_metrics_exporter_middleware"
+require_relative "same_site_cookie_middleware"
+require_relative "secure_cookies"
 
-module Middlewares 
+module Middlewares
 end
