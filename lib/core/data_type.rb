@@ -1,6 +1,5 @@
 module Core
   class DataType
-
     # This class provides formatting for values presented to the user, and
     # parsing of user input for the same data types.
     #
@@ -33,15 +32,19 @@ module Core
     # To add a new datatype (e.g. "foo"), add the private methods "parse_foo"
     # and "format_foo", and extend ALLOWED_DATATYPES accordingly.
 
-    ALLOWED_DATA_TYPES      = %i( number bytes ).freeze
-    ALLOWED_SUB_TYPES       = %i( bytes kilo mega giga tera peta exa ).freeze
-    PRETTY_FORMAT_BYTES     = %w( Bytes KiB  MiB  GiB  TiB  PiB  EiB ).freeze
-    SUB_BYTES_SHORT         = %w( b     k    m    g    t    p    e   ).freeze
+    ALLOWED_DATA_TYPES = %i[number bytes].freeze
+    ALLOWED_SUB_TYPES = %i[bytes kilo mega giga tera peta exa].freeze
+    PRETTY_FORMAT_BYTES = %w[Bytes KiB MiB GiB TiB PiB EiB].freeze
+    SUB_BYTES_SHORT = %w[b k m g t p e].freeze
 
     def initialize(data_type, sub_type = nil)
-      raise ArgumentError, "unknown data type: #{data_type.inspect}" unless ALLOWED_DATA_TYPES.include?(data_type)
+      unless ALLOWED_DATA_TYPES.include?(data_type)
+        raise ArgumentError, "unknown data type: #{data_type.inspect}"
+      end
       @type = data_type
-      raise ArgumentError, "unknown sub type: #{sub_type.inspect}" if sub_type && !ALLOWED_SUB_TYPES.include?(sub_type)
+      if sub_type && !ALLOWED_SUB_TYPES.include?(sub_type)
+        raise ArgumentError, "unknown sub type: #{sub_type.inspect}"
+      end
       initialize_sub_type(sub_type)
     end
 
@@ -70,12 +73,10 @@ module Core
       raise ArgumentError, "unknown unit name: #{unit_name}"
     end
 
-    def format(value, options = {delimiter: true})
-      return '-' + format(-value, options) if value < 0
+    def format(value, options = { delimiter: true })
+      return "-" + format(-value, options) if value < 0
       formated_value = send("format_#{@type}", value)
-      unless options[:delimiter]
-        formated_value.gsub!(/\u202F/,'')
-      end
+      formated_value.gsub!(/\u202F/, "") unless options[:delimiter]
       formated_value
     end
 
@@ -104,7 +105,10 @@ module Core
       # digit grouping separator: the SI/ISO 31-0 standard recommends to
       # separate each block of three digits by a thin space; Unicode offers the
       # narrow no-break space U+202F for this purpose
-      ActiveSupport::NumberHelper.number_to_delimited(value.to_i, delimiter: "\u202F")
+      ActiveSupport::NumberHelper.number_to_delimited(
+        value.to_i,
+        delimiter: "\u202F",
+      )
     end
 
     def format_bytes(value)
@@ -120,7 +124,7 @@ module Core
         # is this unit large enough? or have we reached the biggest known format?
         if value < 1024 || unit == PRETTY_FORMAT_BYTES.last
           str = "%.2f" % value
-          str.sub!(/[.]?0+$/, '') if str =~ /[.]/ # strip trailing zeros after dot
+          str.sub!(/[.]?0+$/, "") if str =~ /[.]/ # strip trailing zeros after dot
           return "#{str} #{unit}"
         end
         # if not, obtain the value for the next unit
@@ -129,17 +133,19 @@ module Core
     end
 
     def parse_number(value)
-      value = value.sub(/\A\s+/, '').sub(/\s+\Z/, '')
-      raise ArgumentError, "value #{value} is not numeric" unless value =~ /\A\d+\Z/
+      value = value.sub(/\A\s+/, "").sub(/\s+\Z/, "")
+      unless value =~ /\A\d+\Z/
+        raise ArgumentError, "value #{value} is not numeric"
+      end
       return value.to_i
     end
 
     def parse_bytes(value)
       # get rid of all whitespace, e.g. "  12 GiBytes " => "12GiBytes"
-      value = value.gsub(/\s*/, '')
+      value = value.gsub(/\s*/, "")
 
       # remove 'ytes' ending, e.g. "12GiBytes" => "12GiB"
-      value = value.gsub(/((?:ytes)?)\Z/i, '')
+      value = value.gsub(/((?:ytes)?)\Z/i, "")
       # remove 'i' in the middle, e.g. "12GiB" => "12GB"
       value = value.gsub(/(\A\d+?([.,]\d+)?(k|m|g|t|p|e)?)i+/i, '\1')
       # remove b at the end, if it is redundant, e.g. "12GB" => "12G"
@@ -149,7 +155,7 @@ module Core
 
       # recognize units that actually change the value (e.g. "23G" -> "23" with unit = 1<<30)
       unit = 1
-      SUB_BYTES_SHORT.each_with_index do |letter,idx|
+      SUB_BYTES_SHORT.each_with_index do |letter, idx|
         next if idx < @target_unit_index
         if value[-1].downcase == letter
           value = value[0, value.size - 1] # cut off that letter
@@ -159,8 +165,10 @@ module Core
       end
 
       # now only a positive number should be left
-      raise ArgumentError, "value #{value} is not numeric" unless value =~ /\A\d+?([.,]\d+)?\Z/
-      return (value.gsub(',', '.').to_f * unit).to_i
+      unless value =~ /\A\d+?([.,]\d+)?\Z/
+        raise ArgumentError, "value #{value} is not numeric"
+      end
+      return (value.gsub(",", ".").to_f * unit).to_i
     end
 
     def normalize_number(value)
