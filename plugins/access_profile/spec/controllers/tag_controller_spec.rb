@@ -22,48 +22,179 @@ describe AccessProfile::TagsController, type: :controller do
       allow(controller.cloud_admin).to receive(:list_tags).and_return(@existing_tags)
     end
 
-    context 'project_admin' do
+    context 'QA regions' do
       before :each do
-        stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
-          token
+        Rails.configuration.default_region = 'qa-de-1'
+      end
+
+      context 'just project_admin' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token
+          end
+        end
+        it 'returns http success' do
+          get :index, params: default_params.merge({})
+          expect(response).to be_successful
         end
       end
-      it 'returns http success' do
-        get :index, params: default_params.merge({})
-        expect(response).to be_successful
+
+      context 'empty roles' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token
+          end
+        end
+        it 'returns http success' do
+          get :index, params: default_params.merge({})
+          expect(response).to_not be_successful
+        end
       end
     end
 
-    context 'empty roles' do
+    context 'PROD regions' do
       before :each do
-        stub_authentication do |token|
-          token['roles'] = []
-          token
+        Rails.configuration.default_region = 'eu-de-1'
+      end
+
+      context 'project_admin and cloud_support_tools_viewer' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
+            token
+          end
+        end
+        it 'returns http success' do
+          get :index, params: default_params.merge({})
+          expect(response).to be_successful
         end
       end
-      it 'returns http success' do
-        get :index, params: default_params.merge({})
-        expect(response).to_not be_successful
+
+      context 'project_admin' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token
+          end
+        end
+        it 'returns http success' do
+          get :index, params: default_params.merge({})
+          expect(response).to_not be_successful
+        end
+      end
+
+      context 'empty roles' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token
+          end
+        end
+        it 'returns http success' do
+          get :index, params: default_params.merge({})
+          expect(response).to_not be_successful
+        end
       end
     end
   end
 
   describe "PUT 'create a tag'" do
-    context 'project_admin' do
+    context 'QA regions' do
       before :each do
+        Rails.configuration.default_region = 'qa-de-1'
+      end
+
+      context 'project_admin' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            # token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
+            token
+          end
+        end
+        it 'returns http success' do
+          post :create, params: default_params.merge({ tag: 'xs:internet:keppel_account_pull:cc-demo' })
+          expect(response).to be_successful
+        end
+      end
+
+      context 'empty roles' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token
+          end
+        end
+        it 'returns http success' do
+          post :create, params: default_params.merge({ tag: 'xs:internet:keppel_account_pull:cc-demo' })
+          expect(response).to_not be_successful
+        end
+      end
+    end
+
+    context 'PROD regions' do
+      before :each do
+        Rails.configuration.default_region = 'eu-de-1'
+      end
+
+      context 'project_admin and cloud_support_tools_viewer' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
+            token
+          end
+        end
+        it 'returns http success' do
+          post :create, params: default_params.merge({ tag: 'xs:internet:keppel_account_pull:cc-demo' })
+          expect(response).to be_successful
+        end
+      end
+
+      context 'just project_admin' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token
+          end
+        end
+        it 'returns http success' do
+          post :create, params: default_params.merge({ tag: 'xs:internet:keppel_account_pull:cc-demo' })
+          expect(response).to_not be_successful
+        end
+      end
+
+      context 'empty roles' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token
+          end
+        end
+        it 'returns http success' do
+          post :create, params: default_params.merge({ tag: 'xs:internet:keppel_account_pull:cc-demo' })
+          expect(response).to_not be_successful
+        end
+      end
+    end
+
+    context 'base prefixes' do
+      before :each do
+        Rails.configuration.default_region = 'qa-de-1'
         stub_authentication do |token|
           token['roles'] = []
           token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
           token
         end
-      end
-      it 'returns http success' do
-        post :create, params: default_params.merge({ tag: 'xs:internet:keppel_account_pull:cc-demo' })
-        expect(response).to be_successful
       end
 
       it 'adds base prefix/tag' do
@@ -96,25 +227,12 @@ describe AccessProfile::TagsController, type: :controller do
       end
     end
 
-    context 'empty roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'] = []
-          token
-        end
-      end
-      it 'returns http success' do
-        post :create, params: default_params.merge({ tag: 'xs:internet:keppel_account_pull:cc-demo' })
-        expect(response).to_not be_successful
-      end
-    end
-
     context 'validation' do
       before :each do
         stub_authentication do |token|
+          Rails.configuration.default_region = 'qa-de-1'
           token['roles'] = []
           token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
           token
         end
         @existing_tag = 'xs:internet:keppel_account_pull:d063222'
@@ -163,19 +281,97 @@ describe AccessProfile::TagsController, type: :controller do
       allow(controller.cloud_admin).to receive(:remove_single_tag).and_return('succeed')
     end
 
-    context 'project_admin' do
+    context 'QA regions' do
+      before :each do
+        Rails.configuration.default_region = 'qa-de-1'
+      end
+
+      context 'just project_admin' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token
+          end
+        end
+        it 'returns http success' do
+          delete :destroy, params: default_params.merge({ id: 'xs:internet:keppel_account_pull:d063222' })
+          expect(response).to be_successful
+        end
+      end
+
+      context 'empty roles' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token
+          end
+        end
+        it 'returns http success' do
+          delete :destroy, params: default_params.merge({ id: 'xs:internet:keppel_account_pull:d063222' })
+          expect(response).to_not be_successful
+        end
+      end
+    end
+
+    context 'PROD regions' do
+      before :each do
+        Rails.configuration.default_region = 'eu-de-1'
+      end
+
+      context 'project_admin and cloud_support_tools_viewer' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
+            token
+          end
+        end
+        it 'returns http success' do
+          delete :destroy, params: default_params.merge({ id: 'xs:internet:keppel_account_pull:d063222' })
+          expect(response).to be_successful
+        end
+      end
+
+      context 'just project_admin' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token
+          end
+        end
+        it 'returns http success' do
+          delete :destroy, params: default_params.merge({ id: 'xs:internet:keppel_account_pull:d063222' })
+          expect(response).to_not be_successful
+        end
+      end
+
+      context 'empty roles' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token
+          end
+        end
+        it 'returns http success' do
+          delete :destroy, params: default_params.merge({ id: 'xs:internet:keppel_account_pull:d063222' })
+          expect(response).to_not be_successful
+        end
+      end
+    end
+
+    context 'remove action' do
       before :each do
         stub_authentication do |token|
+          Rails.configuration.default_region = 'qa-de-1'
           token['roles'] = []
           token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
-      it 'returns http success' do
-        delete :destroy, params: default_params.merge({ id: 'xs:internet:keppel_account_pull:d063222' })
-        expect(response).to be_successful
-      end
+
       it 'removes base prefix/tag' do
         all_tags = ['xs:internet', 'xs:internet:keppel_account_pull:cc-demo']
         identity = double('identity', list_tags: all_tags)
@@ -207,25 +403,12 @@ describe AccessProfile::TagsController, type: :controller do
       end
     end
 
-    context 'empty roles' do
-      before :each do
-        stub_authentication do |token|
-          token['roles'] = []
-          token
-        end
-      end
-      it 'returns http success' do
-        delete :destroy, params: default_params.merge({ id: 'xs:internet:keppel_account_pull:d063222' })
-        expect(response).to_not be_successful
-      end
-    end
-
     context 'validation' do
       before :each do
         stub_authentication do |token|
+          Rails.configuration.default_region = 'qa-de-1'
           token['roles'] = []
           token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
           token
         end
       end
@@ -248,31 +431,85 @@ describe AccessProfile::TagsController, type: :controller do
   end
 
   describe "get 'profiles_config'" do
-    context 'project_admin' do
+    context 'QA regions' do
       before :each do
-        stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
-          token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
-          token
+        Rails.configuration.default_region = 'qa-de-1'
+      end
+
+      context 'just project_admin' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            # token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
+            token
+          end
+        end
+        it 'returns http success' do
+          get :profiles_config, params: default_params.merge({})
+          expect(response).to be_successful
         end
       end
-      it 'returns http success' do
-        get :profiles_config, params: default_params.merge({})
-        expect(response).to be_successful
+
+      context 'empty roles' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token
+          end
+        end
+        it 'returns http success' do
+          get :profiles_config, params: default_params.merge({})
+          expect(response).to_not be_successful
+        end
       end
     end
 
-    context 'empty roles' do
+    context 'PROD regions' do
       before :each do
-        stub_authentication do |token|
-          token['roles'] = []
-          token
+        Rails.configuration.default_region = 'eu-de-1'
+      end
+
+      context 'project_admin and cloud_support_tools_viewer' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token['roles'] << { 'id' => 'cloud_support_tools_viewer', 'name' => 'cloud_support_tools_viewer' }
+            token
+          end
+        end
+        it 'returns http success' do
+          get :profiles_config, params: default_params.merge({})
+          expect(response).to be_successful
         end
       end
-      it 'returns http success' do
-        get :profiles_config, params: default_params.merge({})
-        expect(response).to_not be_successful
+
+      context 'just project_admin' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token['roles'] << { 'id' => 'project_admin_role', 'name' => 'admin' }
+            token
+          end
+        end
+        it 'returns http success' do
+          get :profiles_config, params: default_params.merge({})
+          expect(response).to_not be_successful
+        end
+      end
+
+      context 'empty roles' do
+        before :each do
+          stub_authentication do |token|
+            token['roles'] = []
+            token
+          end
+        end
+        it 'returns http success' do
+          get :profiles_config, params: default_params.merge({})
+          expect(response).to_not be_successful
+        end
       end
     end
   end
