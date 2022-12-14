@@ -3,13 +3,13 @@ module Image
     def publish
       @image = services.image.new_image
       @image.id = params[:private_id]
-      @image.update_visibility('public')
+      @image.update_visibility("public")
     end
 
     protected
 
     def filter_params
-      { sort_key: 'name', visibility: 'private' }
+      { sort_key: "name", visibility: "private" }
     end
   end
 end
