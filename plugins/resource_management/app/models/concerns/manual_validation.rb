@@ -9,15 +9,12 @@ module ManualValidation
   # only works during validate(), we need to save these errors if we want to
   # present these errors in a simple_form.
   def add_validation_error(field, error)
-    (@early_errors ||= []).push([ field, error ])
+    (@early_errors ||= []).push([field, error])
   end
 
   protected
 
   def validate_early_errors
-    (@early_errors || []).each do |field, error|
-      errors.add(field, error)
-    end
+    (@early_errors || []).each { |field, error| errors.add(field, error) }
   end
-
 end

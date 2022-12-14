@@ -11,17 +11,19 @@ module ServiceLayer
       def keypairs
         # keypair structure different to others, so manual effort needed
         return @user_keypairs if @user_keypairs
-        keypairs = elektron_compute.get('os-keypairs').body['keypairs']
+        keypairs = elektron_compute.get("os-keypairs").body["keypairs"]
 
-        @user_keypairs = keypairs.each_with_object([]) do |k, array|
-          array << keypair_map.call(k['keypair']) if k['keypair']
-        end
+        @user_keypairs =
+          keypairs.each_with_object([]) do |k, array|
+            array << keypair_map.call(k["keypair"]) if k["keypair"]
+          end
       end
 
       def find_keypair!(keypair_name)
         return nil if keypair_name.blank?
         elektron_compute.get("os-keypairs/#{keypair_name}").map_to(
-          'body.keypair', &keypair_map
+          "body.keypair",
+          &keypair_map
         )
       end
 
@@ -38,9 +40,11 @@ module ServiceLayer
 
       ################## MODEL INTERFACE #################
       def create_keypair(attributes = {})
-        elektron_compute.post('os-keypairs') do
-          { 'keypair' => attributes }
-        end.body['keypair']
+        elektron_compute
+          .post("os-keypairs") { { "keypair" => attributes } }
+          .body[
+          "keypair"
+        ]
       end
 
       def delete_keypair(keypair_name)

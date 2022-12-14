@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
 # rspec does not load sassc gem. I don't why, but this hack helps!
-require File.join(Gem.loaded_specs['sassc'].full_gem_path,'lib/sassc')
+require File.join(Gem.loaded_specs["sassc"].full_gem_path, "lib/sassc")
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV['RAILS_ENV'] ||= 'test'
-require File.expand_path('../config/environment', __dir__)
-require 'rspec/rails'
+ENV["RAILS_ENV"] ||= "test"
+require File.expand_path("../config/environment", __dir__)
+require "rspec/rails"
 
-require File.join(Gem.loaded_specs['monsoon-openstack-auth'].full_gem_path,
-                  'spec/support/authentication_stub')
-
+require File.join(
+          Gem.loaded_specs["monsoon-openstack-auth"].full_gem_path,
+          "spec/support/authentication_stub",
+        )
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -19,14 +20,13 @@ require File.join(Gem.loaded_specs['monsoon-openstack-auth'].full_gem_path,
 # run twice. It is recommended that you do not name files matching this glob to
 # end with _spec.rb. You can configure this pattern with with the --pattern
 # option on the command line or in ~/.rspec, .rspec or `.rspec-local`.
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
-
   config.full_backtrace = false
 
   # ## Mock Framework
@@ -54,7 +54,7 @@ RSpec.configure do |config|
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = 'random'
+  config.order = "random"
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
@@ -75,68 +75,79 @@ RSpec.configure do |config|
 
   config.include AuthenticationStub
 
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation
-  end
+  config.before(:suite) { DatabaseCleaner.strategy = :truncation }
 
   config.before(:all) do
     DatabaseCleaner.start
 
     # set test config variables
-    Rails.configuration.keystone_endpoint = 'http://localhost:8183/v3/auth/tokens'
-    Rails.configuration.default_region = 'europe'
-    Rails.configuration.service_user_id = 'test'
-    Rails.configuration.service_user_password = 'test'
-    Rails.configuration.service_user_domain_name = 'test'
+    Rails.configuration.keystone_endpoint =
+      "http://localhost:8183/v3/auth/tokens"
+    Rails.configuration.default_region = "europe"
+    Rails.configuration.service_user_id = "test"
+    Rails.configuration.service_user_password = "test"
+    Rails.configuration.service_user_domain_name = "test"
   end
-  config.after(:all) do
-    DatabaseCleaner.clean
-  end
+  config.after(:all) { DatabaseCleaner.clean }
 
   config.before(:each) do
     stub_authentication
 
     # stub region detection
-    region = (AuthenticationStub.test_token['catalog']
-                                .first['endpoints']
-                                .first['region'] ||
-              AuthenticationStub.test_token['catalog']
-                                .first['endpoints']
-                                .first['region_id'])
+    region =
+      (
+        AuthenticationStub.test_token["catalog"].first["endpoints"].first[
+          "region"
+        ] ||
+          AuthenticationStub.test_token["catalog"].first["endpoints"].first[
+            "region_id"
+          ]
+      )
     allow(Core).to receive(:locate_region).and_return(region)
 
     # stub service user and cloud admin
-    service_user = double('service_user', id: '123', name: 'service_user_name', email: 'service_user_email', full_name: 'service_user_fullname').as_null_object
-    cloud_admin = double('cloud_admin').as_null_object
+    service_user =
+      double(
+        "service_user",
+        id: "123",
+        name: "service_user_name",
+        email: "service_user_email",
+        full_name: "service_user_fullname",
+      ).as_null_object
+    cloud_admin = double("cloud_admin").as_null_object
 
     # allow_any_instance_of(ServiceLayer::IdentityService)
     #   .to receive(:has_domain_access).and_return true
     # allow_any_instance_of(ServiceLayer::IdentityService)
     #   .to receive(:has_project_access).and_return true
 
-    user_identity = double('user identity service').as_null_object
-    allow_any_instance_of(::ApplicationController)
-      .to receive(:services)
-      .and_wrap_original do |m|
-        services = m.call
-        allow(services).to receive(:identity).and_return user_identity
-        services
-      end
+    user_identity = double("user identity service").as_null_object
+    allow_any_instance_of(::ApplicationController).to receive(
+      :services,
+    ).and_wrap_original do |m|
+      services = m.call
+      allow(services).to receive(:identity).and_return user_identity
+      services
+    end
 
     allow(user_identity).to receive(:has_domain_access).and_return true
     allow(user_identity).to receive(:has_project_access).and_return true
 
-    allow_any_instance_of(::ApplicationController)
-      .to receive(:service_user).and_return(service_user)
-    allow_any_instance_of(::ApplicationController)
-      .to receive(:cloud_admin).and_return(cloud_admin)
+    allow_any_instance_of(::ApplicationController).to receive(
+      :service_user,
+    ).and_return(service_user)
+    allow_any_instance_of(::ApplicationController).to receive(
+      :cloud_admin,
+    ).and_return(cloud_admin)
 
     # stub user_projects which is called in each request
-    allow_any_instance_of(::DashboardController)
-      .to receive(:load_active_project).and_return([])
-    
+    allow_any_instance_of(::DashboardController).to receive(
+      :load_active_project,
+    ).and_return([])
+
     # stub check_terms_of_use which is called in each request
-    allow_any_instance_of(::DashboardController)
-      .to receive(:check_terms_of_use).and_return(true)
+    allow_any_instance_of(::DashboardController).to receive(
+      :check_terms_of_use,
+    ).and_return(true)
   end
 end

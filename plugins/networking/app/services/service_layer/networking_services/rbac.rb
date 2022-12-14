@@ -9,15 +9,17 @@ module ServiceLayer
       end
 
       def rbacs(filter = {})
-        elektron_networking.get('rbac-policies', filter).map_to(
-          'body.rbac_policies', &rbac_map
+        elektron_networking.get("rbac-policies", filter).map_to(
+          "body.rbac_policies",
+          &rbac_map
         )
       end
 
       def find_rbac!(id)
         return nil unless id
         elektron_networking.get("rbac-policies/#{id}").map_to(
-          'body.rbac_policy', &rbac_map
+          "body.rbac_policy",
+          &rbac_map
         )
       end
 
@@ -33,9 +35,11 @@ module ServiceLayer
 
       # Model Interface
       def create_rbac(attributes)
-        elektron_networking.post('rbac-policies') do
-          { rbac_policy: attributes }
-        end.body['rbac_policy']
+        elektron_networking
+          .post("rbac-policies") { { rbac_policy: attributes } }
+          .body[
+          "rbac_policy"
+        ]
       end
 
       def delete_rbac(id)
@@ -43,9 +47,11 @@ module ServiceLayer
       end
 
       def update_rbac(id, attributes)
-        elektron_networking.put("rbac-policies/#{id}") do
-          { rbac_policy: attributes }
-        end.body['rbac_policy']
+        elektron_networking
+          .put("rbac-policies/#{id}") { { rbac_policy: attributes } }
+          .body[
+          "rbac_policy"
+        ]
       end
     end
   end

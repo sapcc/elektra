@@ -4,16 +4,19 @@ module Cloudops
       object_topology = {}
       object = ObjectCache.where(id: params[:topology_object_id]).first
       if object
-        object_topology['id'] = object.id
-        object_topology['name'] = object.name
+        object_topology["id"] = object.id
+        object_topology["name"] = object.name
 
-        children = ObjectCache.where.not(cached_object_type: ['error','message']).where(
-          [
-            'project_id ILIKE :term OR domain_id ILIKE :term OR search_label ILIKE :term',
-            term: "%#{object.id}%"
-          ]
-        )
-        object_topology['children'] = children
+        children =
+          ObjectCache
+            .where.not(cached_object_type: %w[error message])
+            .where(
+              [
+                "project_id ILIKE :term OR domain_id ILIKE :term OR search_label ILIKE :term",
+                term: "%#{object.id}%",
+              ],
+            )
+        object_topology["children"] = children
       end
 
       # objects = [

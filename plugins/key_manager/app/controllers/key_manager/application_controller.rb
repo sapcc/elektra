@@ -3,8 +3,6 @@
 module KeyManager
   # application controller
   class ApplicationController < ::DashboardController
-
-     private
-
+    private
   end
 end

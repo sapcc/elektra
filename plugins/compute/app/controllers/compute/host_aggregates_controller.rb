@@ -1,6 +1,6 @@
 module Compute
   class HostAggregatesController < Compute::ApplicationController
-    authorization_context 'compute'
+    authorization_context "compute"
     authorization_required
 
     def index

@@ -4,7 +4,7 @@ module SharedFilesystemStorage
   # Application controller for SharedFilesystemStorage
   class ApplicationController < ::DashboardController
     # set policy context
-    authorization_context 'shared_filesystem_storage'
+    authorization_context "shared_filesystem_storage"
     # enforce permission checks. This will automatically
     # investigate the rule name.
     authorization_required

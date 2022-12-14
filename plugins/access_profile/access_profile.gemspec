@@ -2,14 +2,14 @@ $:.push File.expand_path("lib", __dir__)
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |spec|
-  spec.name        = "access_profile"
-  spec.version     = "0.0.1"
-  spec.authors     = [" Write your name"]
-  spec.email       = [" Write your email address"]
-  spec.homepage    = ""
-  spec.summary     = " Summary of AccessProfile."
+  spec.name = "access_profile"
+  spec.version = "0.0.1"
+  spec.authors = [" Write your name"]
+  spec.email = [" Write your email address"]
+  spec.homepage = ""
+  spec.summary = " Summary of AccessProfile."
   spec.description = " Description of access_profile."
-  spec.license     = "MIT"
+  spec.license = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
@@ -17,10 +17,11 @@ Gem::Specification.new do |spec|
     spec.metadata["allowed_push_host"] = " Set to 'http://mygemserver.com'"
   else
     raise "RubyGems 2.0 or newer is required to protect against " \
-      "public gem pushes."
+            "public gem pushes."
   end
 
-  spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+  spec.files =
+    Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
   spec.add_dependency "rails"
 end

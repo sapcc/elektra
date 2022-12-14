@@ -1,6 +1,6 @@
 module Compute
   class KeypairsController < ::DashboardController
-    authorization_context 'compute'
+    authorization_context "compute"
     authorization_required
 
     def index
@@ -13,14 +13,15 @@ module Compute
 
     def create
       @keypair = services.compute.new_keypair
-      @keypair.attributes = params.fetch(:keypair, {}).merge(user_id: current_user.id)
+      @keypair.attributes =
+        params.fetch(:keypair, {}).merge(user_id: current_user.id)
 
       if @keypair.save
         flash[:notice] = "Key pair created."
         audit_logger.info(current_user, "has created", @keypair)
         redirect_to action: :index
       else
-        render action: :new, layout: 'modal'
+        render action: :new, layout: "modal"
       end
     end
 

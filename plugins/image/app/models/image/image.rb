@@ -6,8 +6,8 @@ module Image
       unless VISIBILITY_VALUES.include?(new_visibility)
         errors.add(
           :visibility,
-          'Wrong value for visibility. Allowed values are: ' \
-          "#{VISIBILITY_VALUES.join(', ')}"
+          "Wrong value for visibility. Allowed values are: " \
+            "#{VISIBILITY_VALUES.join(", ")}",
         )
       end
 

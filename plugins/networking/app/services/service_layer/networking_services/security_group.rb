@@ -9,8 +9,9 @@ module ServiceLayer
       end
 
       def security_groups(filter = {})
-        elektron_networking.get('security-groups', filter).map_to(
-          'body.security_groups', &security_group_map
+        elektron_networking.get("security-groups", filter).map_to(
+          "body.security_groups",
+          &security_group_map
         )
       end
 
@@ -21,7 +22,8 @@ module ServiceLayer
       def find_security_group!(id)
         return nil unless id
         elektron_networking.get("security-groups/#{id}").map_to(
-          'body.security_group', &security_group_map
+          "body.security_group",
+          &security_group_map
         )
       end
 
@@ -33,15 +35,19 @@ module ServiceLayer
 
       ########### Model Interface ###################
       def create_security_group(attributes)
-        elektron_networking.post('security-groups') do
-          { security_group: attributes }
-        end.body['security_group']
+        elektron_networking
+          .post("security-groups") { { security_group: attributes } }
+          .body[
+          "security_group"
+        ]
       end
 
       def update_security_group(id, attributes)
-        elektron_networking.put("security-groups/#{id}") do
-          { security_group: attributes }
-        end.body['security_group']
+        elektron_networking
+          .put("security-groups/#{id}") { { security_group: attributes } }
+          .body[
+          "security_group"
+        ]
       end
 
       def delete_security_group(id)

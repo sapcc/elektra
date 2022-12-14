@@ -3,16 +3,14 @@
 module Networking
   # Implements Security Group actions
   class SecurityGroupsController < DashboardController
-    authorization_context 'networking'
+    authorization_context "networking"
     authorization_required
 
     def index
       security_groups = services.networking.security_groups
 
       # byebug
-      render json: {
-        security_groups: security_groups
-      }
+      render json: { security_groups: security_groups }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     end

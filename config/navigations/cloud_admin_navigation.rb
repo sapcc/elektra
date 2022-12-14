@@ -7,11 +7,11 @@ SimpleNavigation::Configuration.run do |navigation|
   #navigation.renderer = Your::Custom::Renderer
 
   # Specify the class that will be applied to active navigation items. Defaults to 'selected'
-  navigation.selected_class = 'active'
+  navigation.selected_class = "active"
 
   # Specify the class that will be applied to the current leaf of
   # active navigation items. Defaults to 'simple-navigation-active-leaf'
-  navigation.active_leaf_class = 'nav-active-leaf'
+  navigation.active_leaf_class = "nav-active-leaf"
 
   # Specify if item keys are added to navigation items as id. Defaults to true
   # navigation.autogenerate_item_ids = true
@@ -57,52 +57,136 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
 
-  primary.item :ccadmin, 'Cloud Administration', nil,
-    html: { class: 'fancy-nav-header', 'data-icon': 'cloud-admin-icon' },
-    if: -> { current_user and current_user.is_allowed?('cloud_admin') || current_user and current_user.is_allowed?('context_is_cloud_compute_admin') || current_user and current_user.is_allowed?('context_is_cloud_sharedfilesystem_viewer')} do |ccadmin_nav|
-    ccadmin_nav.item :requests, 'Manage Requests', plugin('inquiry').admin_inquiries_path
-    ccadmin_nav.item :resources, 'Resource Management', -> {plugin('resources').cluster_path(cluster_id: 'current')}, if: -> { services.available?(:resources) }
-    ccadmin_nav.item :flavors, 'Manage Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
-    ccadmin_nav.item :hypervisors, 'Compute Host Aggregates & Hypervisors', -> { plugin('compute').host_aggregates_path }, if: -> { plugin_available?(:compute) || current_user and current_user.is_allowed?('context_is_cloud_compute_admin') }, highlights_on: -> { params[:controller][%r{host_aggregates/?.*}] }
-    ccadmin_nav.item :network_stats, 'Share Aggregates', lambda {
-      plugin('shared_filesystem_storage').cloud_admin_pools_path
-    }, highlights_on: -> { params[:controller][%r{pools/?.*}] }, if: -> { current_user.is_allowed?('context_is_cloud_sharedfilesystem_viewer') }
-    ccadmin_nav.item :lookup, 'OpenStack Object Lookup', -> { plugin('lookup').root_path }, highlights_on: -> { params[:controller][%r{lookup/?.*}] }
-  end
+    primary.item :ccadmin,
+                 "Cloud Administration",
+                 nil,
+                 html: {
+                   class: "fancy-nav-header",
+                   "data-icon": "cloud-admin-icon",
+                 },
+                 if: -> {
+                   current_user and
+                     current_user.is_allowed?("cloud_admin") || current_user and
+                     current_user.is_allowed?(
+                       "context_is_cloud_compute_admin",
+                     ) || current_user and
+                     current_user.is_allowed?(
+                       "context_is_cloud_sharedfilesystem_viewer",
+                     )
+                 } do |ccadmin_nav|
+      ccadmin_nav.item :requests,
+                       "Manage Requests",
+                       plugin("inquiry").admin_inquiries_path
+      ccadmin_nav.item :resources,
+                       "Resource Management",
+                       -> {
+                         plugin("resources").cluster_path(cluster_id: "current")
+                       },
+                       if: -> { services.available?(:resources) }
+      ccadmin_nav.item :flavors,
+                       "Manage Flavors",
+                       -> { plugin("compute").flavors_path },
+                       if: -> { plugin_available?(:compute) },
+                       highlights_on: -> {
+                         params[:controller][%r{flavors/?.*}]
+                       }
+      ccadmin_nav.item :hypervisors,
+                       "Compute Host Aggregates & Hypervisors",
+                       -> { plugin("compute").host_aggregates_path },
+                       if: -> {
+                         plugin_available?(:compute) || current_user and
+                           current_user.is_allowed?(
+                             "context_is_cloud_compute_admin",
+                           )
+                       },
+                       highlights_on: -> {
+                         params[:controller][%r{host_aggregates/?.*}]
+                       }
+      ccadmin_nav.item :network_stats,
+                       "Share Aggregates",
+                       lambda {
+                         plugin(
+                           "shared_filesystem_storage",
+                         ).cloud_admin_pools_path
+                       },
+                       highlights_on: -> { params[:controller][%r{pools/?.*}] },
+                       if: -> {
+                         current_user.is_allowed?(
+                           "context_is_cloud_sharedfilesystem_viewer",
+                         )
+                       }
+      ccadmin_nav.item :lookup,
+                       "OpenStack Object Lookup",
+                       -> { plugin("lookup").root_path },
+                       highlights_on: -> { params[:controller][%r{lookup/?.*}] }
+    end
 
-  primary.item :cloudops, "Cloudops", nil,
-    html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon" },
-    if: -> { true } do |cloudops_nav|
-      cloudops_nav.item :user_role_assignments, 'Cloudops Tools', -> {plugin('cloudops').start_path}
-      cloudops_nav.item :castellum_errors, 'Castellum Errors', -> { plugin('cc_tools').castellum_errors_path }, if: -> { services.tools.has_castellum? and current_user and current_user.is_allowed?('tools:show_castellum_errors') }, highlights_on: -> { params[:controller][%r{cc-tools/castellum/?.*}] }
-      cloudops_nav.item :limes_errors, 'Limes Errors', -> { plugin('cc_tools').limes_errors_path }, if: -> { services.tools.has_limes? and current_user and current_user.is_allowed?('tools:show_limes_errors') }, highlights_on: -> { params[:controller][%r{cc-tools/limes/?.*}] }
-      cloudops_nav.item :keppel_admin, 'All Keppel Accounts', -> { plugin('keppel').start_path }, if: -> { services.available?('keppel') and current_user and current_user.is_allowed?('keppel_cloud_viewer') }, highlights_on: -> { params[:controller][%r{keppel/?.*}] }
-  end
+    primary.item :cloudops,
+                 "Cloudops",
+                 nil,
+                 html: {
+                   class: "fancy-nav-header",
+                   "data-icon": "cloud-admin-icon",
+                 },
+                 if: -> { true } do |cloudops_nav|
+      cloudops_nav.item :user_role_assignments,
+                        "Cloudops Tools",
+                        -> { plugin("cloudops").start_path }
+      cloudops_nav.item :castellum_errors,
+                        "Castellum Errors",
+                        -> { plugin("cc_tools").castellum_errors_path },
+                        if: -> {
+                          services.tools.has_castellum? and current_user and
+                            current_user.is_allowed?(
+                              "tools:show_castellum_errors",
+                            )
+                        },
+                        highlights_on: -> {
+                          params[:controller][%r{cc-tools/castellum/?.*}]
+                        }
+      cloudops_nav.item :limes_errors,
+                        "Limes Errors",
+                        -> { plugin("cc_tools").limes_errors_path },
+                        if: -> {
+                          services.tools.has_limes? and current_user and
+                            current_user.is_allowed?("tools:show_limes_errors")
+                        },
+                        highlights_on: -> {
+                          params[:controller][%r{cc-tools/limes/?.*}]
+                        }
+      cloudops_nav.item :keppel_admin,
+                        "All Keppel Accounts",
+                        -> { plugin("keppel").start_path },
+                        if: -> {
+                          services.available?("keppel") and current_user and
+                            current_user.is_allowed?("keppel_cloud_viewer")
+                        },
+                        highlights_on: -> {
+                          params[:controller][%r{keppel/?.*}]
+                        }
+    end
 
+    # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
+    #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
+    #
+    #   account_nav.dom_attributes = {class: 'content-list'}
+    # end
 
+    # Add an item which has a sub navigation (same params, but with block)
+    # primary.item :key_2, 'name', url, options do |sub_nav|
+    #   # Add an item to the sub navigation (same params again)
+    #   sub_nav.item :key_2_1, 'name', url, options
+    # end
 
-  # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
-  #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
-  #
-  #   account_nav.dom_attributes = {class: 'content-list'}
-  # end
+    # You can also specify a condition-proc that needs to be fullfilled to display an item.
+    # Conditions are part of the options. They are evaluated in the context of the views,
+    # thus you can use all the methods and vars you have available in the views.
+    # primary.item :key_3, 'Admin', url, class: 'special', if: -> { current_user.admin? }
+    # primary.item :key_4, 'Account', url, unless: -> { logged_in? }
 
-
-  # Add an item which has a sub navigation (same params, but with block)
-  # primary.item :key_2, 'name', url, options do |sub_nav|
-  #   # Add an item to the sub navigation (same params again)
-  #   sub_nav.item :key_2_1, 'name', url, options
-  # end
-
-  # You can also specify a condition-proc that needs to be fullfilled to display an item.
-  # Conditions are part of the options. They are evaluated in the context of the views,
-  # thus you can use all the methods and vars you have available in the views.
-  # primary.item :key_3, 'Admin', url, class: 'special', if: -> { current_user.admin? }
-  # primary.item :key_4, 'Account', url, unless: -> { logged_in? }
-
-  # you can also specify html attributes to attach to this particular level
-  # works for all levels of the menu
-  primary.dom_attributes = {class: 'fancy-nav', role: 'menu'}
+    # you can also specify html attributes to attach to this particular level
+    # works for all levels of the menu
+    primary.dom_attributes = { class: "fancy-nav", role: "menu" }
 
     # You can turn off auto highlighting for a specific level
     #primary.auto_highlight = false

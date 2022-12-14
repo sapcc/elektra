@@ -1,4 +1,4 @@
-require 'elektron'
+require "elektron"
 
 module Core
   module ElektronMiddlewares
@@ -9,7 +9,7 @@ module Core
         end
         # Blue
         Rails.logger.debug(
-          "\033[33m\033[1m########## Service User Client ##########\033[0m"
+          "\033[33m\033[1m########## Service User Client ##########\033[0m",
         )
         response = @next_middleware.call(request_context)
         response

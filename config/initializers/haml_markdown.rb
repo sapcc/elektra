@@ -1,9 +1,7 @@
 module Haml::Filters
-
   remove_filter("Markdown") #remove the existing Markdown filter
 
   module Markdown # the contents of this are as before, but without the lazy_require call
-
     include Haml::Filters::Base
 
     def render(text)
@@ -13,14 +11,13 @@ module Haml::Filters
     private
 
     def markdown
-
       render_options = {
         filter_html: false,
         hard_wrap: true,
         no_styles: true,
         prettify: true,
         safe_links_only: true,
-        with_toc_data: true
+        with_toc_data: true,
       }
 
       extensions = {
@@ -36,13 +33,11 @@ module Haml::Filters
         strikethrough: true,
         superscript: true,
         tables: true,
-        underline: true
+        underline: true,
       }
 
       renderer = Redcarpet::Render::HTML.new(render_options)
       @markdown ||= Redcarpet::Markdown.new(renderer, extensions)
-
     end
   end
-
 end

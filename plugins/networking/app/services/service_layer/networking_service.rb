@@ -17,13 +17,11 @@ module ServiceLayer
     include NetworkingServices::BgpVpn
 
     def available?(_action_name_sym = nil)
-      elektron.service?('network')
+      elektron.service?("network")
     end
 
     def elektron_networking
-      @elektron_networking ||= elektron.service(
-        'network', path_prefix: '/v2.0'
-      )
+      @elektron_networking ||= elektron.service("network", path_prefix: "/v2.0")
     end
   end
 end

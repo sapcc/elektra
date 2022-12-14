@@ -7,9 +7,12 @@ module Identity
         respond_to do |format|
           format.html {}
           format.json do
-            role_assignments = services.identity.origin_role_assignments(
-              'user.id' => params[:user_id], include_names: true, effective: true
-            )
+            role_assignments =
+              services.identity.origin_role_assignments(
+                "user.id" => params[:user_id],
+                :include_names => true,
+                :effective => true,
+              )
             render json: { roles: role_assignments }
           end
         end

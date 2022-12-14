@@ -10,9 +10,7 @@ module EmailService
 
     def form_to_attributes(attrs)
       attrs.keys.each do |key|
-        if array_attr.include? key
-          attrs[key] = string_to_array(attrs[key])
-        end
+        attrs[key] = string_to_array(attrs[key]) if array_attr.include? key
       end
       self.attributes.merge! attrs.stringify_keys
     end
@@ -20,9 +18,7 @@ module EmailService
     def attributes_to_form
       attr = self.attributes.clone
       attr.keys.each do |key|
-        if array_attr.include? key.to_sym
-          attr[key] = array_to_string(attr[key])
-        end
+        attr[key] = array_to_string(attr[key]) if array_attr.include? key.to_sym
       end
       attr
     end
@@ -46,7 +42,5 @@ module EmailService
     def array_attr
       [:identity]
     end
-
   end
-
 end

@@ -18,16 +18,38 @@ module ServiceLayer
       Delegates::Inquiry.new(inquiry)
     end
 
-    def create_inquiry(kind, description, requester_user, payload, processor_users, callbacks = {}, domain_id = nil, tags = {}, approver_domain_id = nil)
+    def create_inquiry(
+      kind,
+      description,
+      requester_user,
+      payload,
+      processor_users,
+      callbacks = {},
+      domain_id = nil,
+      tags = {},
+      approver_domain_id = nil
+    )
       # override request domain_id explicit by parameter or take it from the user scope
-      domain_id = domain_id || requester_user.domain_id || requester_user.project_domain_id || requester_user.user_domain_id
+      domain_id =
+        domain_id || requester_user.domain_id ||
+          requester_user.project_domain_id || requester_user.user_domain_id
       approver_domain_id ||= domain_id
       project_id = requester_user.project_id
       requester = Inquiry::Processor.from_users([requester_user]).first
       processors = Inquiry::Processor.from_users(processor_users).uniq
-      inquiry = Inquiry::Inquiry.new(domain_id: domain_id, project_id: project_id, kind: kind, description: description, \
-                                     requester: requester, payload: payload, processors: processors, callbacks: callbacks, \
-                                     tags: tags, approver_domain_id: approver_domain_id)
+      inquiry =
+        Inquiry::Inquiry.new(
+          domain_id: domain_id,
+          project_id: project_id,
+          kind: kind,
+          description: description,
+          requester: requester,
+          payload: payload,
+          processors: processors,
+          callbacks: callbacks,
+          tags: tags,
+          approver_domain_id: approver_domain_id,
+        )
       inquiry.save!
       Delegates::Inquiry.new(inquiry)
     end

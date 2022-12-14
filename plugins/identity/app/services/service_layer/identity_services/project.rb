@@ -19,7 +19,8 @@ module ServiceLayer
       def find_project!(id = nil, options = {})
         return nil if id.blank?
         elektron_identity.get("projects/#{id}", options).map_to(
-          'body.project', &project_map
+          "body.project",
+          &project_map
         )
       end
 
@@ -31,7 +32,8 @@ module ServiceLayer
 
       def user_projects!(user_id, filter = {})
         elektron_identity.get("users/#{user_id}/projects", filter).map_to(
-          'body.projects', &project_map
+          "body.projects",
+          &project_map
         )
       end
 
@@ -42,29 +44,36 @@ module ServiceLayer
       end
 
       def has_project_access(project_id)
-        user_projects = elektron_identity.get('/auth/projects').map_to(
-          'body.projects', &project_map
-        )
-        !user_projects.find { |user_project| user_project.id == project_id }.nil?
+        user_projects =
+          elektron_identity.get("/auth/projects").map_to(
+            "body.projects",
+            &project_map
+          )
+        !user_projects
+          .find { |user_project| user_project.id == project_id }
+          .nil?
       end
 
       def cached_project(id, filter = {})
-        project_attrs = Rails.cache.fetch(
-          "project/#{id}", expires_in: 1.minute
-        ) do
-          elektron_identity.get("projects/#{id}", filter).body['project']
-        end
-        project_attrs.collect do |data|
-          project_map.call(data)
-        end
+        project_attrs =
+          Rails
+            .cache
+            .fetch("project/#{id}", expires_in: 1.minute) do
+              elektron_identity.get("projects/#{id}", filter).body["project"]
+            end
+        project_attrs.collect { |data| project_map.call(data) }
       end
 
       def cached_user_projects(user_id, filter = {})
         key = "user/#{user_id}/user_domain_projects-#{filter}"
-        user_domain_projects = Rails.cache.fetch(key, expires_in: 10.minutes) do
-          elektron_identity.get("users/#{user_id}/projects", filter)
-                           .body['projects']
-        end || []
+        user_domain_projects =
+          Rails
+            .cache
+            .fetch(key, expires_in: 10.minutes) do
+              elektron_identity.get("users/#{user_id}/projects", filter).body[
+                "projects"
+              ]
+            end || []
         user_domain_projects.collect do |project_attrs|
           project_map.call(project_attrs)
         end
@@ -72,15 +81,18 @@ module ServiceLayer
 
       def projects_by_user_id(user_id)
         elektron_identity.get("users/#{user_id}/projects").map_to(
-          'body.projects', &project_map
+          "body.projects",
+          &project_map
         )
       end
 
       def auth_projects(domain_id = nil)
         # caching
-        @auth_projects ||= elektron_identity.get('auth/projects').map_to(
-          'body.projects', &project_map
-        )
+        @auth_projects ||=
+          elektron_identity.get("auth/projects").map_to(
+            "body.projects",
+            &project_map
+          )
         return @auth_projects if domain_id.nil?
         @auth_projects.select { |project| project.domain_id == domain_id }
       end
@@ -90,8 +102,9 @@ module ServiceLayer
       end
 
       def projects(filter = {})
-        elektron_identity.get('projects', filter).map_to(
-          'body.projects', &project_map
+        elektron_identity.get("projects", filter).map_to(
+          "body.projects",
+          &project_map
         )
       end
 
@@ -104,17 +117,17 @@ module ServiceLayer
       # This method is used by model.
       # It has to return the data hash.
       def create_project(params)
-        elektron_identity.post('projects') do
-          { project: params }
-        end.body['project']
+        elektron_identity.post("projects") { { project: params } }.body[
+          "project"
+        ]
       end
 
       # This method is used by model.
       # It has to return the data hash.
       def update_project(id, params)
-        elektron_identity.patch("projects/#{id}") do
-          { project: params }
-        end.body['project']
+        elektron_identity.patch("projects/#{id}") { { project: params } }.body[
+          "project"
+        ]
       end
 
       # This method is used by model.

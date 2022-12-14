@@ -4,11 +4,13 @@ module SimpleForm
     module IconHint
       # Name of the component method
       def icon_hint(wrapper_options = nil)
-        @icon_hint ||= begin
-          if options[:icon_hint].present?
-            '<i class="fa fa-info-circle"></i>'.html_safe + options[:icon_hint].to_s.html_safe
+        @icon_hint ||=
+          begin
+            if options[:icon_hint].present?
+              '<i class="fa fa-info-circle"></i>'.html_safe +
+                options[:icon_hint].to_s.html_safe
+            end
           end
-        end
       end
 
       # Used when is optional

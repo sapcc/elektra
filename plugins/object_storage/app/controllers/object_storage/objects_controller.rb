@@ -1,13 +1,16 @@
 module ObjectStorage
   class ObjectsController < ObjectStorage::ApplicationController
-
     authorization_required
     before_action :load_params
-    before_action :load_object, except: [ :index ]
-    before_action :load_quota_data, only: [ :index, :show ]
+    before_action :load_object, except: [:index]
+    before_action :load_quota_data, only: %i[index show]
 
     def index
-      @objects = services.object_storage.list_objects_at_path(@container_name, params[:path])
+      @objects =
+        services.object_storage.list_objects_at_path(
+          @container_name,
+          params[:path],
+        )
       render formats: [:html]
     end
 
@@ -17,37 +20,44 @@ module ObjectStorage
     end
 
     def download
-      headers['Content-Type'] = @object.content_type
-      if params[:inline] == '1'
-        headers['Content-Disposition'] = "inline"
+      headers["Content-Type"] = @object.content_type
+      if params[:inline] == "1"
+        headers["Content-Disposition"] = "inline"
         render inline: @object.file_contents
         #render html: @object.file_contents
       else
-        headers['Content-Disposition'] = "attachment; filename=\"#{@object.basename}\""
+        headers[
+          "Content-Disposition"
+        ] = "attachment; filename=\"#{@object.basename}\""
         render body: @object.file_contents
       end
     end
 
     def move
       # this only renders the form, the move is performed in update()
-      @form = ObjectStorage::Forms::EditObjectPath.new(
-        container_name: @container_name,
-        path:           @object.path,
-      )
+      @form =
+        ObjectStorage::Forms::EditObjectPath.new(
+          container_name: @container_name,
+          path: @object.path,
+        )
       @all_container_names = services.object_storage.containers.map(&:name).sort
     end
 
     def update
       if params.has_key?(:forms_edit_object_path)
         # option 1: coming from move() -> update path
-        @form = ObjectStorage::Forms::EditObjectPath.new(params.require(:forms_edit_object_path).merge(
-          source_container_name: @container_name,
-          source_path:           @object.path,
-        ))
+        @form =
+          ObjectStorage::Forms::EditObjectPath.new(
+            params.require(:forms_edit_object_path).merge(
+              source_container_name: @container_name,
+              source_path: @object.path,
+            ),
+          )
 
         unless @form.validate
-          @all_container_names = services.object_storage.containers.map(&:name).sort
-          render action: 'move'
+          @all_container_names =
+            services.object_storage.containers.map(&:name).sort
+          render action: "move"
           return
         end
 
@@ -57,7 +67,7 @@ module ObjectStorage
         @object.metadata = self.metadata_params
         attrs = params.require(:object).permit(:expires_at, :content_type)
         unless @object.update_attributes(attrs)
-          render action: 'show' # "edit" view is covered by "show"
+          render action: "show" # "edit" view is covered by "show"
           return
         end
       end
@@ -69,32 +79,45 @@ module ObjectStorage
       # instead of @object.destroy we need to call the delete function directly
       # because we need to give more than one parameter
       keep_segments = params[:keep_segments] == "true"
-      services.object_storage.delete_object(@container_name,@object,keep_segments)
+      services.object_storage.delete_object(
+        @container_name,
+        @object,
+        keep_segments,
+      )
       back_to_object_list
     end
 
     def new_copy
-      @form = ObjectStorage::Forms::EditObjectPath.new(
-        container_name: @container_name,
-        path:           @object.path,
-        with_metadata:  true,
-      )
+      @form =
+        ObjectStorage::Forms::EditObjectPath.new(
+          container_name: @container_name,
+          path: @object.path,
+          with_metadata: true,
+        )
       @all_container_names = services.object_storage.containers.map(&:name).sort
     end
 
     def create_copy
-      @form = ObjectStorage::Forms::EditObjectPath.new(params.require(:forms_edit_object_path).merge(
-        source_container_name: @container_name,
-        source_path:           @object.path,
-      ))
+      @form =
+        ObjectStorage::Forms::EditObjectPath.new(
+          params.require(:forms_edit_object_path).merge(
+            source_container_name: @container_name,
+            source_path: @object.path,
+          ),
+        )
 
       unless @form.validate
-        @all_container_names = services.object_storage.containers.map(&:name).sort
-        render action: 'new_copy'
+        @all_container_names =
+          services.object_storage.containers.map(&:name).sort
+        render action: "new_copy"
         return
       end
 
-      @object.copy_to(@form.container_name, @form.path, with_metadata: @form.with_metadata == "1")
+      @object.copy_to(
+        @form.container_name,
+        @form.path,
+        with_metadata: @form.with_metadata == "1",
+      )
       back_to_object_list
     end
 
@@ -108,14 +131,16 @@ module ObjectStorage
 
       # params[:path] is optional in some controllers to account for the "/"
       # path (which Rails routing recognizes as empty), but then it is given as nil
-      params[:path] ||= ''
+      params[:path] ||= ""
       params[:path] = URI.decode_www_form_component(params[:path])
     end
 
     def load_object
-      @object = services.object_storage.object_metadata(@container_name, params[:path])
+      @object =
+        services.object_storage.object_metadata(@container_name, params[:path])
       if (not @object) or @object.is_directory?
-        raise ActiveRecord::RecordNotFound, "object #{params[:path]} not found in container #{@container_name}"
+        raise ActiveRecord::RecordNotFound,
+              "object #{params[:path]} not found in container #{@container_name}"
       end
       @original_dirname = @object.dirname
     end
@@ -126,12 +151,20 @@ module ObjectStorage
       # could result in an object listing for a different location.
       respond_to do |format|
         format.js do
-          @objects = services.object_storage.list_objects_at_path(@container_name, @original_dirname)
-          render template: '/object_storage/objects/reload_index'
+          @objects =
+            services.object_storage.list_objects_at_path(
+              @container_name,
+              @original_dirname,
+            )
+          render template: "/object_storage/objects/reload_index"
         end
-        format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @original_dirname) }
+        format.html do
+          redirect_to plugin("object_storage").list_objects_path(
+                        @container_name,
+                        @original_dirname,
+                      )
+        end
       end
     end
-
   end
 end

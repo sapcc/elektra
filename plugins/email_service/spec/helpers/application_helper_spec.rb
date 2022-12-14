@@ -1,8 +1,7 @@
 require "spec_helper"
-require_relative '../factories/factories'
+require_relative "../factories/factories"
 
-RSpec.describe EmailService::ApplicationHelper, :type => :helper do
-
+RSpec.describe EmailService::ApplicationHelper, type: :helper do
   # before :each do
   #   @creds = ::EmailService::FakeFactory.new.ec2_creds
   #   @creds_collection = ::EmailService::FakeFactory.new.ec2_creds_collection
@@ -19,5 +18,4 @@ RSpec.describe EmailService::ApplicationHelper, :type => :helper do
   #     expect(@creds_collection.class).to eq(Array)
   #   end
   # end
-
 end

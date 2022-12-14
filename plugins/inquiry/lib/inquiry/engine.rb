@@ -2,7 +2,7 @@ module Inquiry
   class Engine < ::Rails::Engine
     isolate_namespace Inquiry
 
-    initializer 'inquiry.action_controller' do |app|
+    initializer "inquiry.action_controller" do |app|
       ActiveSupport.on_load :action_controller do
         helper Inquiry::InquiriesHelper
       end
@@ -10,9 +10,5 @@ module Inquiry
   end
 
   class InquiryError < StandardError
-
   end
-
 end
-
-

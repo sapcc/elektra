@@ -13,7 +13,7 @@ Rails.application.configure do
   config.eager_load = true
 
   # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local       = false
+  config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
 
   # Disable Rendered XXX partial messages to reduce log volume
@@ -27,7 +27,7 @@ Rails.application.configure do
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
-    'Cache-Control' => 'public, max-age=31536000'
+    "Cache-Control" => "public, max-age=31536000",
   }
 
   # Compress JavaScripts and CSS.
@@ -98,10 +98,10 @@ Rails.application.configure do
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
-  if ENV['RAILS_LOG_TO_STDOUT'].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
+  if ENV["RAILS_LOG_TO_STDOUT"].present?
+    logger = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
-    config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
 
   # Do not dump schema after migrations.
