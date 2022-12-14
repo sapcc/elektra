@@ -1,6 +1,5 @@
 module ObjectStorage
   class Container < Core::ServiceLayer::Model
-
     # The following properties are known:
     #   - name
     #   - public_url
@@ -13,26 +12,38 @@ module ObjectStorage
     # The id() is identical to the name() if the container is persisted.
 
     validates_presence_of :name
-    validates_numericality_of :object_count_quota, greater_than_or_equal_to: 0, allow_nil: true
+    validates_numericality_of :object_count_quota,
+                              greater_than_or_equal_to: 0,
+                              allow_nil: true
     validate do
       # http://developer.openstack.org/api-ref-objectstorage-v1.html#createContainer
-      errors[:name] << 'may not contain slashes' if name.include?('/')
-      errors[:name] << 'may not contain more than 256 characters' if name.size > 256
-      errors[:bytes_quota] << "is invalid: #{@bytes_quota_validation_error}" if @bytes_quota_validation_error
-      errors[:read_acl] << 'may not be disabled because static website serving is enabled' if !public_read_access? && (web_index.present? || web_file_listing?)
+      errors[:name] << "may not contain slashes" if name.include?("/")
+      if name.size > 256
+        errors[:name] << "may not contain more than 256 characters"
+      end
+      if @bytes_quota_validation_error
+        errors[:bytes_quota] << "is invalid: #{@bytes_quota_validation_error}"
+      end
+      if !public_read_access? && (web_index.present? || web_file_listing?)
+        errors[
+          :read_acl
+        ] << "may not be disabled because static website serving is enabled"
+      end
 
       # check all containers
       if versions_location.present? or has_versions_location.present?
-        errors[:versions_location] << 'is missing' if versions_location.blank?
-        errors[:versions_location] << 'may not be the same container' if versions_location == name
+        errors[:versions_location] << "is missing" if versions_location.blank?
+        if versions_location == name
+          errors[:versions_location] << "may not be the same container"
+        end
         unless @service.containers.any? { |c| c.name == versions_location }
-          errors[:versions_location] << 'is not a container name'
+          errors[:versions_location] << "is not a container name"
         end
       end
     end
 
     def after_create
-      id ||= read('name')
+      id ||= read("name")
     end
 
     def web_file_listing?
@@ -45,7 +56,7 @@ module ObjectStorage
 
     def allows_public_access?
       # checks whether there is any form of public enablement
-      (read_acl || '').match(/[.]r:/)
+      (read_acl || "").match(/[.]r:/)
     end
 
     def object_count
@@ -88,20 +99,20 @@ module ObjectStorage
       super(new_value)
     end
 
-    def initialize(driver, attributes={})
+    def initialize(driver, attributes = {})
       super(driver, attributes)
       # the driver needs the previous set of metadata to calculate the changes during update_container()
       @original_metadata = metadata
     end
 
     def attributes_for_update
-      super.merge('original_metadata' => @original_metadata).
-        reject { |k,_| k.to_s == 'has_versions_location' }
+      super
+        .merge("original_metadata" => @original_metadata)
+        .reject { |k, _| k.to_s == "has_versions_location" }
     end
 
     def empty?
       @driver.objects(name, limit: 1).count == 0
     end
-
   end
 end
