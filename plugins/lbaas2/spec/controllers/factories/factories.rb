@@ -1,66 +1,123 @@
 module Lbaas2
-
   class FakeFactory
-
     def loadbalancer(params = {})
-      {vip_subnet_id: "456", vip_network_id: "123", name: "test lb"}.merge(params) 
+      { vip_subnet_id: "456", vip_network_id: "123", name: "test lb" }.merge(
+        params,
+      )
     end
 
     def update_loadbalancer(params = {})
-      {id: "update_loadbalancer", vip_subnet_id: "456", vip_network_id: "123", name: "test lb"}.merge(params) 
+      {
+        id: "update_loadbalancer",
+        vip_subnet_id: "456",
+        vip_network_id: "123",
+        name: "test lb",
+      }.merge(params)
     end
 
-    def listener(params={})
-      {name: "listener_test", protocol: "HTTP", protocol_port: "8080"}.merge(params)
+    def listener(params = {})
+      { name: "listener_test", protocol: "HTTP", protocol_port: "8080" }.merge(
+        params,
+      )
     end
 
-    def update_listener(params={})
-      {id: "update_listener", name: "listener_test", protocol: "HTTP", protocol_port: "8080"}.merge(params)
+    def update_listener(params = {})
+      {
+        id: "update_listener",
+        name: "listener_test",
+        protocol: "HTTP",
+        protocol_port: "8080",
+      }.merge(params)
     end
 
-    def pool(params={})
-      {name: "pool_test", lb_algorithm: "ROUND_ROBIN", protocol: "HTTP"}.merge(params)
+    def pool(params = {})
+      {
+        name: "pool_test",
+        lb_algorithm: "ROUND_ROBIN",
+        protocol: "HTTP",
+      }.merge(params)
     end
 
-    def update_pool(params={})
-      {id: "update_pool", name: "pool_test", lb_algorithm: "ROUND_ROBIN", protocol: "HTTP"}.merge(params)
+    def update_pool(params = {})
+      {
+        id: "update_pool",
+        name: "pool_test",
+        lb_algorithm: "ROUND_ROBIN",
+        protocol: "HTTP",
+      }.merge(params)
     end
 
-    def l7policy(params={})
-      {name: "lypolicy_test", action: "REDIRECT_PREFIX"}.merge(params)
+    def l7policy(params = {})
+      { name: "lypolicy_test", action: "REDIRECT_PREFIX" }.merge(params)
     end
 
-    def update_policy(params={})
-      {id: "update_policy", name: "lypolicy_test", action: "REDIRECT_PREFIX"}.merge(params)
+    def update_policy(params = {})
+      {
+        id: "update_policy",
+        name: "lypolicy_test",
+        action: "REDIRECT_PREFIX",
+      }.merge(params)
     end
 
-    def l7rule(params={})
-      {type: "PATH", value: "test_value", compare_type: "CONTAINS"}.merge(params)
+    def l7rule(params = {})
+      { type: "PATH", value: "test_value", compare_type: "CONTAINS" }.merge(
+        params,
+      )
     end
 
-    def update_l7rule(params={})
-      {id: "update_test_l7rule", type: "PATH", value: "test_value", compare_type: "CONTAINS"}.merge(params)
+    def update_l7rule(params = {})
+      {
+        id: "update_test_l7rule",
+        type: "PATH",
+        value: "test_value",
+        compare_type: "CONTAINS",
+      }.merge(params)
     end
 
-    def healthmonitor(params={})
-      {name: "healthmonitor_test", type: "HTTP", delay: "10", max_retries: "5", timeout: "5"}.merge(params)
+    def healthmonitor(params = {})
+      {
+        name: "healthmonitor_test",
+        type: "HTTP",
+        delay: "10",
+        max_retries: "5",
+        timeout: "5",
+      }.merge(params)
     end
 
-    def update_healthmonitor(params={})
-      {id: "update_test_healthmonitor", type: "HTTP", name: "healthmonitor_test", delay: "10", max_retries: "5", timeout: "5"}.merge(params)
+    def update_healthmonitor(params = {})
+      {
+        id: "update_test_healthmonitor",
+        type: "HTTP",
+        name: "healthmonitor_test",
+        delay: "10",
+        max_retries: "5",
+        timeout: "5",
+      }.merge(params)
     end
 
-    def member(params={})
-      {"name"=>"bmc_test", "address"=>"10.180.0.240",  "protocol_port"=>8889, "tags"=>'["kak"]', "weight"=>1}.merge(params)
+    def member(params = {})
+      {
+        "name" => "bmc_test",
+        "address" => "10.180.0.240",
+        "protocol_port" => 8889,
+        "tags" => '["kak"]',
+        "weight" => 1,
+      }.merge(params)
     end
 
-    def update_member(params={})
-      {id: "update_member", "name"=>"bmc_test", "address"=>"10.180.0.240",  "protocol_port"=>8889, "tags"=>'["kak"]', "weight"=>1}.merge(params)
+    def update_member(params = {})
+      {
+        :id => "update_member",
+        "name" => "bmc_test",
+        "address" => "10.180.0.240",
+        "protocol_port" => 8889,
+        "tags" => '["kak"]',
+        "weight" => 1,
+      }.merge(params)
     end
 
     def member_params
-      member()
+      member
     end
-
   end
 end

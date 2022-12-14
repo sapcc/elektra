@@ -3,29 +3,40 @@
 module Lbaas2
   module Loadbalancers
     class PoolsController < ::AjaxController
-      authorization_context 'lbaas2'
+      authorization_context "lbaas2"
       authorization_required
 
       def index
         limit = (params[:limit] || 9).to_i
-        sort_key = (params[:sort_key] || 'name')
-        sort_dir = (params[:sort_dir] || 'asc')
-        pagination_options = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
+        sort_key = (params[:sort_key] || "name")
+        sort_dir = (params[:sort_dir] || "asc")
+        pagination_options = {
+          sort_key: sort_key,
+          sort_dir: sort_dir,
+          limit: limit + 1,
+        }
         pagination_options[:marker] = params[:marker] if params[:marker]
-        pools = services.lbaas2.pools({ loadbalancer_id: params[:loadbalancer_id] }.merge(pagination_options))
+        pools =
+          services.lbaas2.pools(
+            { loadbalancer_id: params[:loadbalancer_id] }.merge(
+              pagination_options,
+            ),
+          )
 
         # extend pool data with chached members
         extend_pool_data(pools)
 
         render json: {
-          pools: pools,
-          has_next: pools.length > limit,
-          limit: limit, sort_key: sort_key, sort_dir: sort_dir
-        }
+                 pools: pools,
+                 has_next: pools.length > limit,
+                 limit: limit,
+                 sort_key: sort_key,
+                 sort_dir: sort_dir,
+               }
       rescue Elektron::Errors::ApiResponse => e
         render json: { errors: e.message }, status: e.code
       rescue Exception => e
-        render json: { errors: e.message }, status: '500'
+        render json: { errors: e.message }, status: "500"
       end
 
       def show
@@ -34,23 +45,25 @@ module Lbaas2
         # extend pool data with chached members
         extend_pool_data([pool])
 
-        render json: {
-          pool: pool
-        }
+        render json: { pool: pool }
       rescue Elektron::Errors::ApiResponse => e
         render json: { errors: e.message }, status: e.code
       rescue Exception => e
-        render json: { errors: e.message }, status: '500'
+        render json: { errors: e.message }, status: "500"
       end
 
       def create
         poolParams = params[:pool]
         composeSessionPersistence(poolParams)
-        newParams = poolParams.merge(project_id: @scoped_project_id, loadbalancer_id: params[:loadbalancer_id])
+        newParams =
+          poolParams.merge(
+            project_id: @scoped_project_id,
+            loadbalancer_id: params[:loadbalancer_id],
+          )
         pool = services.lbaas2.new_pool(newParams)
 
         if pool.save
-          audit_logger.info(current_user, 'has created', pool)
+          audit_logger.info(current_user, "has created", pool)
           extend_pool_data([pool])
           render json: pool
         else
@@ -59,7 +72,7 @@ module Lbaas2
       rescue Elektron::Errors::ApiResponse => e
         render json: { errors: e.message }, status: e.code
       rescue Exception => e
-        render json: { errors: e.message }, status: '500'
+        render json: { errors: e.message }, status: "500"
       end
 
       def update
@@ -68,7 +81,7 @@ module Lbaas2
         pool = services.lbaas2.new_pool(poolParams)
 
         if pool.update
-          audit_logger.info(current_user, 'has updated', pool)
+          audit_logger.info(current_user, "has updated", pool)
           extend_pool_data([pool])
           render json: pool
         else
@@ -77,14 +90,14 @@ module Lbaas2
       rescue Elektron::Errors::ApiResponse => e
         render json: { errors: e.message }, status: e.code
       rescue Exception => e
-        render json: { errors: e.message }, status: '500'
+        render json: { errors: e.message }, status: "500"
       end
 
       def destroy
         pool = services.lbaas2.new_pool
         pool.id = params[:id]
         if pool.destroy
-          audit_logger.info(current_user, 'has deleted', pool)
+          audit_logger.info(current_user, "has deleted", pool)
           head 202
         else
           render json: { errors: pool.errors }, status: 422
@@ -92,33 +105,47 @@ module Lbaas2
       rescue Elektron::Errors::ApiResponse => e
         render json: { errors: e.message }, status: e.code
       rescue Exception => e
-        render json: { errors: e.message }, status: '500'
+        render json: { errors: e.message }, status: "500"
       end
 
       def itemsForSelect
-        pools = services.lbaas2.pools({ loadbalancer_id: params[:loadbalancer_id], sort_key: 'name', sort_dir: 'asc' })
-        select_pools = pools.map do |pool|
-          { "label": "#{pool.name} (#{pool.id} #{pool.tls_enabled ? '- TLS enabled' : ''})", "value": pool.id,
-            "tls_enabled": pool.tls_enabled }
-        end
+        pools =
+          services.lbaas2.pools(
+            {
+              loadbalancer_id: params[:loadbalancer_id],
+              sort_key: "name",
+              sort_dir: "asc",
+            },
+          )
+        select_pools =
+          pools.map do |pool|
+            {
+              label:
+                "#{pool.name} (#{pool.id} #{pool.tls_enabled ? "- TLS enabled" : ""})",
+              value: pool.id,
+              tls_enabled: pool.tls_enabled,
+            }
+          end
 
         render json: { pools: select_pools }
       rescue Elektron::Errors::ApiResponse => e
         render json: { errors: e.message }, status: e.code
       rescue Exception => e
-        render json: { errors: e.message }, status: '500'
+        render json: { errors: e.message }, status: "500"
       end
 
       protected
 
       def composeSessionPersistence(poolParams)
         session_persistence = {}
-        persistenceType = poolParams['session_persistence_type']
+        persistenceType = poolParams["session_persistence_type"]
         return if persistenceType.blank?
 
         session_persistence[:type] = persistenceType
-        if persistenceType == 'APP_COOKIE'
-          session_persistence[:cookie_name] = poolParams['session_persistence_cookie_name']
+        if persistenceType == "APP_COOKIE"
+          session_persistence[:cookie_name] = poolParams[
+            "session_persistence_cookie_name"
+          ]
         end
         poolParams.merge!(session_persistence: session_persistence)
       end
@@ -127,17 +154,17 @@ module Lbaas2
         pools.each do |pool|
           # get cached members
           pool.members = [] if pool.members.blank?
-          pool.cached_members = ObjectCache.where(id: pool.members.map { |l| l[:id] }).each_with_object({}) do |l, map|
-            map[l[:id]] = l
-          end
+          pool.cached_members =
+            ObjectCache
+              .where(id: pool.members.map { |l| l[:id] })
+              .each_with_object({}) { |l, map| map[l[:id]] = l }
 
           # get chached listeners
           pool.listeners = [] if pool.listeners.blank?
-          pool.cached_listeners = ObjectCache.where(id: pool.listeners.map do |l|
-                                                          l[:id]
-                                                        end).each_with_object({}) do |l, map|
-            map[l[:id]] = l
-          end
+          pool.cached_listeners =
+            ObjectCache
+              .where(id: pool.listeners.map { |l| l[:id] })
+              .each_with_object({}) { |l, map| map[l[:id]] = l }
         end
       end
     end
