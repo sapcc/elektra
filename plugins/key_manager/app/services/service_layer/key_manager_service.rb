@@ -7,13 +7,12 @@ module ServiceLayer
     include KeyManagerServices::Container
 
     def available?(_action_name_sym = nil)
-      elektron.service?('key-manager')
+      elektron.service?("key-manager")
     end
 
     def elektron_key_manager
-      @elektron_key_manager ||= elektron.service(
-        'key-manager', path_prefix: '/v1'
-      )
+      @elektron_key_manager ||=
+        elektron.service("key-manager", path_prefix: "/v1")
     end
   end
 end

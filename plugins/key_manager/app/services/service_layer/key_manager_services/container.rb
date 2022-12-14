@@ -13,16 +13,17 @@ module ServiceLayer
       end
 
       def containers(filter = {})
-        response = elektron_key_manager.get('containers', filter)
+        response = elektron_key_manager.get("containers", filter)
         {
-          items: response.map_to('body.containers', &container_map),
-          total: response.body['total']
+          items: response.map_to("body.containers", &container_map),
+          total: response.body["total"],
         }
       end
 
       def find_container!(uuid)
         elektron_key_manager.get("containers/#{uuid}").map_to(
-          'body', &container_map
+          "body",
+          &container_map
         )
       end
 
@@ -34,9 +35,8 @@ module ServiceLayer
 
       ################ MODEL INTERFACE ###################
       def create_container(attributes = {})
-        container_ref = elektron_key_manager.post('containers') do
-          attributes
-        end.body
+        container_ref =
+          elektron_key_manager.post("containers") { attributes }.body
         attributes.merge(container_ref)
       end
 
