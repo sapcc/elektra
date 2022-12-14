@@ -1,10 +1,8 @@
-require 'spec_helper'
-require_relative '../factories/factories'
+require "spec_helper"
+require_relative "../factories/factories"
 
 describe Automation::Run do
-
-  describe 'snapshot' do
-
+  describe "snapshot" do
     it "should return an empty hash if no data available" do
       run = ::Automation::FakeFactory.new.run(automation_attributes: {})
       expect(run.snapshot).to eq({})
@@ -15,43 +13,55 @@ describe Automation::Run do
 
     it "should return a hash if data available" do
       run = ::Automation::FakeFactory.new.run
-      expect(run.snapshot.to_json).to match(::Automation::FakeFactory.new.automation.attributes.to_json)
+      expect(run.snapshot.to_json).to match(
+        ::Automation::FakeFactory.new.automation.attributes.to_json,
+      )
     end
-
   end
 
-  describe 'revision_from_github?' do
-
+  describe "revision_from_github?" do
     it "should return true if it is from github" do
       run = ::Automation::FakeFactory.new.run
       expect(run.revision_from_github?).to be_truthy
     end
 
     it "should return false for the other cases" do
-      automation = ::Automation::FakeFactory.new.automation({repository: 'https://server.com/test/chef-test.git'})
-      run = ::Automation::FakeFactory.new.run({automation_attributes: automation.attributes})
+      automation =
+        ::Automation::FakeFactory.new.automation(
+          { repository: "https://server.com/test/chef-test.git" },
+        )
+      run =
+        ::Automation::FakeFactory.new.run(
+          { automation_attributes: automation.attributes },
+        )
       expect(run.revision_from_github?).to be_falsey
     end
-
   end
 
-  describe 'revision_link' do
-
+  describe "revision_link" do
     it "should return a link" do
       run = ::Automation::FakeFactory.new.run
-      expect(run.revision_link).to eq('https://github.com/sapcc/chef-test/commit/c7b3ee00635673294619070fafbccf27a23bcbd4')
+      expect(run.revision_link).to eq(
+        "https://github.com/sapcc/chef-test/commit/c7b3ee00635673294619070fafbccf27a23bcbd4",
+      )
     end
 
     it "should return just the revision sha if no github repo" do
-      automation = ::Automation::FakeFactory.new.automation({repository: 'https://server.com/sapcc/chef-test.git'})
-      run = ::Automation::FakeFactory.new.run({automation_attributes: automation.attributes})
-      expect(run.revision_link).to eq('c7b3ee00635673294619070fafbccf27a23bcbd4')
+      automation =
+        ::Automation::FakeFactory.new.automation(
+          { repository: "https://server.com/sapcc/chef-test.git" },
+        )
+      run =
+        ::Automation::FakeFactory.new.run(
+          { automation_attributes: automation.attributes },
+        )
+      expect(run.revision_link).to eq(
+        "c7b3ee00635673294619070fafbccf27a23bcbd4",
+      )
     end
-
   end
 
-  describe 'loading nested hashes' do
-
+  describe "loading nested hashes" do
     # it "should create a run" do
     #   # automation
     #   environment = {'test' => {'miau' => 'bup'}}
@@ -71,22 +81,37 @@ describe Automation::Run do
 
     it "should create a run with no valid keys" do
       # automation
-      environment = {'test%64' => {'miau' => 'bup'}}
-      chef_attributes = {'docker-compos' => {'miau' => 'bup'}}
-      tags = {'öäü' => {'miau' => 'bup'}}
-      automation = {environment:environment, chef_attributes: chef_attributes, tags: tags}
+      environment = { "test%64" => { "miau" => "bup" } }
+      chef_attributes = { "docker-compos" => { "miau" => "bup" } }
+      tags = { "öäü" => { "miau" => "bup" } }
+      automation = {
+        environment: environment,
+        chef_attributes: chef_attributes,
+        tags: tags,
+      }
 
       # owner
-      owner = {"äüß"=>{'miau' => 'bup'},
-               "name-test"=>{'miau' => 'bup'},
-               "domain_id"=>{'miau' => 'bup'},
-               "domain_name"=>{'miau' => 'bup'}}
+      owner = {
+        "äüß" => {
+          "miau" => "bup",
+        },
+        "name-test" => {
+          "miau" => "bup",
+        },
+        "domain_id" => {
+          "miau" => "bup",
+        },
+        "domain_name" => {
+          "miau" => "bup",
+        },
+      }
 
-      run = ::Automation::FakeFactory.new.run({automation_attributes: automation, owner: owner})
+      run =
+        ::Automation::FakeFactory.new.run(
+          { automation_attributes: automation, owner: owner },
+        )
       expect(run.automation_attributes.to_json).to eq(automation.to_json)
       expect(run.owner.to_json).to eq(owner.to_json)
     end
-
   end
-
 end
