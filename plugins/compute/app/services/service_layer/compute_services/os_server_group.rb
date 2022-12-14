@@ -9,14 +9,16 @@ module ServiceLayer
       end
 
       def os_server_groups(filter = {})
-        elektron_compute.get('os-server-groups', filter).map_to(
-          'body.server_groups', &os_server_group_map
+        elektron_compute.get("os-server-groups", filter).map_to(
+          "body.server_groups",
+          &os_server_group_map
         )
       end
 
       def find_os_server_group!(id)
         elektron_compute.get("os-server-groups/#{id}").map_to(
-          'body.server_group', &os_server_group_map
+          "body.server_group",
+          &os_server_group_map
         )
       end
 
@@ -28,9 +30,11 @@ module ServiceLayer
 
       ################### MODEL INTERFACE ##################
       def create_os_server_group(params = {})
-        elektron_compute.post('os-server-groups') do
-          { 'server_group' => params }
-        end.body['server_group']
+        elektron_compute
+          .post("os-server-groups") { { "server_group" => params } }
+          .body[
+          "server_group"
+        ]
       end
 
       def delete_os_server_group(id)

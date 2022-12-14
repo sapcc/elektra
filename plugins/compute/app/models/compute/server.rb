@@ -1,86 +1,107 @@
 # frozen_string_literal: true
 
-require 'base64'
+require "base64"
 
 module Compute
   # Represents the Openstack Server
   class Server < Core::ServiceLayer::Model
-    validates :name, presence: { message: 'Please provide a name' }
-    validates :image_id, presence: { message: 'Please select an image' }, if: :new?
-    validates :flavor_id, presence: { message: 'Please select a flavor' }, if: :new?
-    validates :custom_root_disk_size,  if: :custom_root_disk? ,numericality: { only_integer: true }
+    validates :name, presence: { message: "Please provide a name" }
+    validates :image_id,
+              presence: {
+                message: "Please select an image",
+              },
+              if: :new?
+    validates :flavor_id,
+              presence: {
+                message: "Please select a flavor",
+              },
+              if: :new?
+    validates :custom_root_disk_size,
+              if: :custom_root_disk?,
+              numericality: {
+                only_integer: true,
+              }
     validate :validate_network, if: :new?
-    validates :keypair_id, presence: {
-      message: "Please choose a keypair for us to provision to the server.
-      Otherwise you will not be able to log in."
-    }, if: :new?
+    validates :keypair_id,
+              presence: {
+                message:
+                  "Please choose a keypair for us to provision to the server.
+      Otherwise you will not be able to log in.",
+              },
+              if: :new?
 
     validates_format_of :name, without: /\A.*\.\d+\Z/
 
-    NO_STATE    = 0
-    RUNNING     = 1
-    BLOCKED     = 2
-    PAUSED      = 3
-    SHUT_DOWN   = 4
-    SHUT_OFF    = 5
-    CRASHED     = 6
-    SUSPENDED   = 7
-    FAILED      = 8
-    BUILDING    = 9
+    NO_STATE = 0
+    RUNNING = 1
+    BLOCKED = 2
+    PAUSED = 3
+    SHUT_DOWN = 4
+    SHUT_OFF = 5
+    CRASHED = 6
+    SUSPENDED = 7
+    FAILED = 8
+    BUILDING = 9
 
     def power_state_string
       case power_state
-      when RUNNING then 'Running'
-      when BLOCKED then 'Blocked'
-      when PAUSED then 'Paused'
-      when SHUT_DOWN then 'Shut down'
-      when SHUT_OFF then 'Shut off'
-      when CRASHED then 'Crashed'
-      when SUSPENDED then 'Suspended'
-      when FAILED then 'Failed'
-      when BUILDING then 'Building'
+      when RUNNING
+        "Running"
+      when BLOCKED
+        "Blocked"
+      when PAUSED
+        "Paused"
+      when SHUT_DOWN
+        "Shut down"
+      when SHUT_OFF
+        "Shut off"
+      when CRASHED
+        "Crashed"
+      when SUSPENDED
+        "Suspended"
+      when FAILED
+        "Failed"
+      when BUILDING
+        "Building"
       else
-        'No State'
+        "No State"
       end
     end
 
     def attributes_for_create
-      params = {
-        'name'              => read('name'),
-        'imageRef'          => read('image_id'),
-        'flavorRef'         => read('flavor_id'),
-        'max_count'         => read('max_count'),
-        'min_count'         => read('min_count'),
-        # Optional
-        'availability_zone' => read('availability_zone_id'),
-        'key_name'          => read('keypair_id'),
-        'metadata'          => read('metadata'),
-        'user_data'         => Base64.encode64(read('user_data')),
-        'block_device_mapping_v2' => read('block_device_mapping_v2')
-      }.delete_if { |_k, v| v.blank? }
+      params =
+        {
+          "name" => read("name"),
+          "imageRef" => read("image_id"),
+          "flavorRef" => read("flavor_id"),
+          "max_count" => read("max_count"),
+          "min_count" => read("min_count"),
+          # Optional
+          "availability_zone" => read("availability_zone_id"),
+          "key_name" => read("keypair_id"),
+          "metadata" => read("metadata"),
+          "user_data" => Base64.encode64(read("user_data")),
+          "block_device_mapping_v2" => read("block_device_mapping_v2"),
+        }.delete_if { |_k, v| v.blank? }
 
-      if params['block_device_mapping_v2'] 
-        params.delete('imageRef')
-      end
+      params.delete("imageRef") if params["block_device_mapping_v2"]
 
-      security_group_names = read('security_groups')
+      security_group_names = read("security_groups")
       if security_group_names && security_group_names.is_a?(Array)
-        params['security_groups'] = security_group_names.collect do |sg|
-          { 'name' => sg }
+        params["security_groups"] = security_group_names.collect do |sg|
+          { "name" => sg }
         end
       end
 
-      networks = read('network_ids')
+      networks = read("network_ids")
       if networks && networks.is_a?(Array)
-        params['networks'] = {
-
-        }
-        params['networks'] = networks.collect do |n|
+        params["networks"] = {}
+        params["networks"] = networks.collect do |n|
           network = {}
-          network['uuid'] = n['id'] if n['port'].blank?
-          network['fixed_ip'] = n['fixed_ip'] if n['port'].blank?
-          network['port'] = n['port']
-          network['tag'] = n['tag']
+          network["uuid"] = n["id"] if n["port"].blank?
+          network["fixed_ip"] = n["fixed_ip"] if n["port"].blank?
+          network["port"] = n["port"]
+          network["tag"] = n["tag"]
           network.delete_if { |_k, v| v.blank? }
           network
         end
@@ -88,23 +109,21 @@ module Compute
       params
     end
 
-    def custom_root_disk_size 
-      read('custom_root_disk_size')
+    def custom_root_disk_size
+      read("custom_root_disk_size")
     end
 
-    def custom_root_disk? 
-      return true if read('custom_root_disk').to_i == 1
+    def custom_root_disk?
+      return true if read("custom_root_disk").to_i == 1
       return false
     end
 
     def attributes_for_update
-      {
-        'name'              => read('name')
-      }.delete_if { |_k, v| v.blank? }
+      { "name" => read("name") }.delete_if { |_k, v| v.blank? }
     end
 
     def security_groups
-      read('security_groups') || []
+      read("security_groups") || []
     end
 
     def security_groups_details
@@ -112,44 +131,45 @@ module Compute
     end
 
     def availability_zone
-      read('OS-EXT-AZ:availability_zone')
+      read("OS-EXT-AZ:availability_zone")
     end
 
     def power_state
-      read('OS-EXT-STS:power_state')
+      read("OS-EXT-STS:power_state")
     end
 
     def vm_state
-      read('OS-EXT-STS:vm_state')
+      read("OS-EXT-STS:vm_state")
     end
 
     def attr_host
-      read('OS-EXT-SRV-ATTR:host')
+      read("OS-EXT-SRV-ATTR:host")
     end
 
     def volumes_attached
-      read('os-extended-volumes:volumes_attached')
+      read("os-extended-volumes:volumes_attached")
     end
 
     def root_disk_device_name
-      read('OS-EXT-SRV-ATTR:root_device_name')
+      read("OS-EXT-SRV-ATTR:root_device_name")
     end
 
     def task_state
-      task_state = read('OS-EXT-STS:task_state')
-      return nil if task_state.blank? || task_state.casecmp('none').zero?
+      task_state = read("OS-EXT-STS:task_state")
+      return nil if task_state.blank? || task_state.casecmp("none").zero?
       task_state
     end
 
     # borrowed from fog
     def ip_addresses
-      addresses ? addresses.values.flatten.map { |x| x['addr'] } : []
+      addresses ? addresses.values.flatten.map { |x| x["addr"] } : []
     end
 
     def floating_ips
-      @floating_ips ||= addresses.values.flatten.select do |ip|
-        ip['OS-EXT-IPS:type'] == 'floating'
-      end
+      @floating_ips ||=
+        addresses.values.flatten.select do |ip|
+          ip["OS-EXT-IPS:type"] == "floating"
+        end
     end
 
     # This methods converts addresses to a map between fixed and floating ips.
@@ -170,60 +190,69 @@ module Compute
 
       addresses.each do |network_name, ips|
         ips.each do |ip|
-          ip_network_names[ip['addr']] = network_name
-          if ip['OS-EXT-IPS:type'] == 'floating'
-            server_floating_ips << ip['addr']
+          ip_network_names[ip["addr"]] = network_name
+          if ip["OS-EXT-IPS:type"] == "floating"
+            server_floating_ips << ip["addr"]
           end
         end
       end
 
-      fixed_floating_map = project_floating_ips.each_with_object({}) do |fip, map|
-        next unless server_floating_ips.include?(fip.floating_ip_address)
-        map[fip.fixed_ip_address] = fip
-      end
-
-      @ip_maps = addresses.values.flatten.each_with_object([]) do |ip, array|
-        next if ip['OS-EXT-IPS:type'] == 'floating'
-
-        fixed_address = ip['addr']
-        floating_ip = fixed_floating_map[fixed_address]
-        data = {
-          'fixed' => {
-            'addr' => fixed_address,
-            'network_name' => ip_network_names[fixed_address]
-          }
-        }
-        if floating_ip
-          data['floating'] = {
-            'addr' => floating_ip.floating_ip_address,
-            'id' => floating_ip.id,
-            'network_name' => ip_network_names[floating_ip.floating_ip_address]
-          }
+      fixed_floating_map =
+        project_floating_ips.each_with_object({}) do |fip, map|
+          next unless server_floating_ips.include?(fip.floating_ip_address)
+          map[fip.fixed_ip_address] = fip
         end
-        array << data
-      end
+
+      @ip_maps =
+        addresses
+          .values
+          .flatten
+          .each_with_object([]) do |ip, array|
+            next if ip["OS-EXT-IPS:type"] == "floating"
+
+            fixed_address = ip["addr"]
+            floating_ip = fixed_floating_map[fixed_address]
+            data = {
+              "fixed" => {
+                "addr" => fixed_address,
+                "network_name" => ip_network_names[fixed_address],
+              },
+            }
+            if floating_ip
+              data["floating"] = {
+                "addr" => floating_ip.floating_ip_address,
+                "id" => floating_ip.id,
+                "network_name" =>
+                  ip_network_names[floating_ip.floating_ip_address],
+              }
+            end
+            array << data
+          end
     end
 
     def fixed_ips
-      ip_addresses_by_type('fixed')
+      ip_addresses_by_type("fixed")
     end
 
     def floating_ip_addresses
-      ip_addresses_by_type('floating')
+      ip_addresses_by_type("floating")
     end
 
     # borrowed from fog
     def ip_addresses_by_type(type)
-      ips = if addresses
-              addresses.values.flatten.select do |data|
-                data['OS-EXT-IPS:type'] == 'floating'
-              end.map { |addr| addr['addr'] }
-            else
-              []
-            end
+      ips =
+        if addresses
+          addresses
+            .values
+            .flatten
+            .select { |data| data["OS-EXT-IPS:type"] == "floating" }
+            .map { |addr| addr["addr"] }
+        else
+          []
+        end
       return [] if ips.empty?
       # Return them all, leading with manually assigned addresses
-      manual = ips.map { |addr| addr['ip'] }
+      manual = ips.map { |addr| addr["ip"] }
 
       ips.sort do |a, b|
         a_manual = manual.include? a
@@ -241,18 +270,18 @@ module Compute
     end
 
     def image_object
-      return nil unless image['id']
-      @image_object ||= @service.find_image(image['id'], true)
-    rescue 
+      return nil unless image["id"]
+      @image_object ||= @service.find_image(image["id"], true)
+    rescue StandardError
       nil
     end
 
     def metadata
-      attribute_to_object('metadata', Compute::Metadata)
+      attribute_to_object("metadata", Compute::Metadata)
     end
 
     def networks
-      attribute_to_object('networks', Compute::Metadata)
+      attribute_to_object("networks", Compute::Metadata)
     end
 
     def attached_volumes
@@ -263,51 +292,54 @@ module Compute
     ####################### ACTIONS #####################
     def add_fixed_ip(network_id)
       requires :id
-      rescue_api_errors do
-        @service.add_fixed_ip(id,network_id)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.add_fixed_ip(id, network_id) }
+      return false unless errors.blank?
       true
     end
 
     def remove_fixed_ip(ip_address)
       requires :id
-      rescue_api_errors do
-        @service.remove_fixed_ip(id,ip_address)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.remove_fixed_ip(id, ip_address) }
+      return false unless errors.blank?
     end
 
     def terminate
       requires :id
-      rescue_api_errors do
-        @service.delete_server id
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.delete_server id }
+      return false unless errors.blank?
     end
 
-    def rebuild(image_ref, name, admin_pass = nil, metadata = nil, personality = nil)
+    def rebuild(
+      image_ref,
+      name,
+      admin_pass = nil,
+      metadata = nil,
+      personality = nil
+    )
       requires :id
-      @service.rebuild_server(id, image_ref, name, admin_pass, metadata, personality)
+      @service.rebuild_server(
+        id,
+        image_ref,
+        name,
+        admin_pass,
+        metadata,
+        personality,
+      )
       true
     end
 
     def resize(flavor_ref)
       requires :id
-      rescue_api_errors do
-        @service.resize_server(id, flavor_ref)
-      end
+      rescue_api_errors { @service.resize_server(id, flavor_ref) }
       # handle special errors
       unless errors.blank?
-        if errors.full_messages.to_sentence == "Api No valid host was found. No valid host found for resize"
+        if errors.full_messages.to_sentence ==
+             "Api No valid host was found. No valid host found for resize"
           errors.delete(:api)
-          errors.add(:api, 'Instance resize not possible at this time: there is not enough free capacity for an automatic resize. please open an ITSM ticket for Service Offering "GCS-CCloud API Services"')
+          errors.add(
+            :api,
+            'Instance resize not possible at this time: there is not enough free capacity for an automatic resize. please open an ITSM ticket for Service Offering "GCS-CCloud API Services"',
+          )
         end
         return false
       else
@@ -317,65 +349,47 @@ module Compute
 
     def revert_resize
       requires :id
-      rescue_api_errors do
-        @service.revert_resize_server(id)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.revert_resize_server(id) }
+      return false unless errors.blank?
       true
     end
 
     def confirm_resize
       requires :id
-      rescue_api_errors do
-        @service.confirm_resize_server(id)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.confirm_resize_server(id) }
+      return false unless errors.blank?
       true
     end
 
-    def reboot(type = 'SOFT')
+    def reboot(type = "SOFT")
       requires :id
-      rescue_api_errors do
-        @service.reboot_server(id, type)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.reboot_server(id, type) }
+      return false unless errors.blank?
       true
     end
 
     def stop
       requires :id
-      rescue_api_errors do
-        @service.stop_server(id)
-      end
+      rescue_api_errors { @service.stop_server(id) }
     end
 
     def pause
       requires :id
-      rescue_api_errors do
-        @service.pause_server(id)
-      end
+      rescue_api_errors { @service.pause_server(id) }
     end
 
     def suspend
       requires :id
-      rescue_api_errors do
-        @service.suspend_server(id)
-      end
+      rescue_api_errors { @service.suspend_server(id) }
     end
 
     def start
       requires :id
       rescue_api_errors do
         case status.downcase
-        when 'paused'
+        when "paused"
           @service.unpause_server(id)
-        when 'suspended'
+        when "suspended"
           @service.resume_server(id)
         else
           @service.start_server(id)
@@ -384,7 +398,7 @@ module Compute
     end
 
     def locked?
-      metadata.locked == true || metadata.locked == 'true'
+      metadata.locked == true || metadata.locked == "true"
     end
 
     def lock
@@ -396,7 +410,7 @@ module Compute
       begin
         # try to update locked attribute in server metadata.
         # It can fail with 409 if server already locked.
-        @service.update_metadata_key(id, 'locked', 'true')
+        @service.update_metadata_key(id, "locked", "true")
         @service.lock_server(id)
       rescue Elektron::Errors::ApiResponse => e
         if e.code == 409 && !locked? && tries > 0
@@ -414,7 +428,7 @@ module Compute
       requires :id
       begin
         @service.unlock_server(id)
-        @service.update_metadata_key(id, 'locked', 'false')
+        @service.update_metadata_key(id, "locked", "false")
       ensure
         self.attributes = @service.find_server(id).attributes
         true
@@ -423,67 +437,43 @@ module Compute
 
     def create_image(name, metadata = {})
       requires :id
-      rescue_api_errors do
-        @service.create_image(id, name, metadata)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.create_image(id, name, metadata) }
+      return false unless errors.blank?
       true
     end
 
     def reset_vm_state(vm_state)
       requires :id
-      rescue_api_errors do
-        @service.reset_server_state id, vm_state
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.reset_server_state id, vm_state }
+      return false unless errors.blank?
       true
     end
 
     def attach_volume(volume_id, device_name)
       requires :id
-      rescue_api_errors do
-        @service.attach_volume(volume_id, id, device_name)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.attach_volume(volume_id, id, device_name) }
+      return false unless errors.blank?
       true
     end
 
     def detach_volume(volume_id)
       requires :id
-      rescue_api_errors do
-        @service.detach_volume(id, volume_id)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.detach_volume(id, volume_id) }
+      return false unless errors.blank?
       true
     end
 
     def assign_security_group(sg_id)
       requires :id
-      rescue_api_errors do
-        @service.add_security_group(id, sg_id)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.add_security_group(id, sg_id) }
+      return false unless errors.blank?
       true
     end
 
     def unassign_security_group(sg_id)
       requires :id
-      rescue_api_errors do
-        @service.remove_security_group(id, sg_id)
-      end
-      unless errors.blank? 
-        return false
-      end
+      rescue_api_errors { @service.remove_security_group(id, sg_id) }
+      return false unless errors.blank?
       true
     end
 
@@ -494,12 +484,15 @@ module Compute
     end
 
     def validate_network
-      ids = network_ids.each_with_object([]) do |n, a|
-        a << n['id'] unless n['id'].blank?
-      end
+      ids =
+        network_ids.each_with_object([]) do |n, a|
+          a << n["id"] unless n["id"].blank?
+        end
 
-      return if network_ids && network_ids.length.positive? && ids.length.positive?
-      errors.add(:network_ids, 'Please select a network')
+      if network_ids && network_ids.length.positive? && ids.length.positive?
+        return
+      end
+      errors.add(:network_ids, "Please select a network")
     end
   end
 end
