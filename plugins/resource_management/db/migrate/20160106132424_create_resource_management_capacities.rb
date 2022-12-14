@@ -8,6 +8,9 @@ class CreateResourceManagementCapacities < ActiveRecord::Migration[4.2]
 
       t.timestamps null: false
     end
-    add_index :resource_management_capacities, [:service, :resource], name: "resource_management_capacities_master_index", using: :btree
+    add_index :resource_management_capacities,
+              %i[service resource],
+              name: "resource_management_capacities_master_index",
+              using: :btree
   end
 end
