@@ -5,9 +5,12 @@ module Identity
     # This controller implemnts the workflow to create a project request
     class RequestWizardController < ::DashboardController
       before_action do
-         enforce_permissions('identity:project_request',domain_id: @scoped_domain_id)
+        enforce_permissions(
+          "identity:project_request",
+          domain_id: @scoped_domain_id,
+        )
       end
-      before_action :generate_lob_list, only:  [:new, :create]
+      before_action :generate_lob_list, only: %i[new create]
 
       def new
         @project = services.identity.new_project
@@ -21,36 +24,41 @@ module Identity
 
       def create
         @project = services.identity.new_project
-        @project.attributes = params.fetch(:project, {})
-                                    .merge(domain_id: @scoped_domain_id)
+        @project.attributes =
+          params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
         if @project.valid?
           begin
-            inquiry = services.inquiry.create_inquiry(
-              'project',
-              "#{@project.name} - #{@project.description}",
-              current_user,
-              @project.attributes.to_json,
-              service_user.identity.list_scope_resource_admins(
-                domain_id: @scoped_domain_id
-              ),
-              {
-                'approved': {
-                  'name': 'Approve',
-                  'action': "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').domains_create_project_path(project_id: nil)}"
-                }
-              },
-              nil, # no domain override
-              { domain_name: @scoped_domain_name, region: current_region }
-            )
+            inquiry =
+              services.inquiry.create_inquiry(
+                "project",
+                "#{@project.name} - #{@project.description}",
+                current_user,
+                @project.attributes.to_json,
+                service_user.identity.list_scope_resource_admins(
+                  domain_id: @scoped_domain_id,
+                ),
+                {
+                  approved: {
+                    name: "Approve",
+                    action:
+                      "#{plugin("identity").domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin("identity").domains_create_project_path(project_id: nil)}",
+                  },
+                },
+                nil, # no domain override
+                { domain_name: @scoped_domain_name, region: current_region },
+              )
             if inquiry.errors?
               render action: :new
             else
-              flash.now[:notice] = 'Project request successfully created'
-              audit_logger.info(current_user, "has requested project #{@project.attributes}")
-              render template: 'identity/projects/request_wizard/create.js'
+              flash.now[:notice] = "Project request successfully created"
+              audit_logger.info(
+                current_user,
+                "has requested project #{@project.attributes}",
+              )
+              render template: "identity/projects/request_wizard/create.js"
             end
           rescue StandardError => e
-            @project.errors.add('message', e.message)
+            @project.errors.add("message", e.message)
             render action: :new
           end
         else
@@ -62,20 +70,20 @@ module Identity
 
       def generate_lob_list
         @show_lob_list = true
-        lob_list = ENV['MONSOON_LOB_LIST'] || "no lob list found"
-        lobs_and_board_area = lob_list.split(',') if lob_list
+        lob_list = ENV["MONSOON_LOB_LIST"] || "no lob list found"
+        lobs_and_board_area = lob_list.split(",") if lob_list
         lob_hash = {}
-        lobs_and_board_area.each do |lob_and_ba |
-          lob,ba = lob_and_ba.split('|')
+        lobs_and_board_area.each do |lob_and_ba|
+          lob, ba = lob_and_ba.split("|")
           lob_hash[ba] ||= []
           lob_hash[ba] << lob
         end
         @lobs ||= []
-        lob_hash.keys.sort.each do | board_area | 
+        lob_hash.keys.sort.each do |board_area|
           @lobs << [board_area, lob_hash[board_area].sort]
-        end 
+        end
       end
-    # end RequestWizardController
+      # end RequestWizardController
     end
 
     # begin Projects class!!!
@@ -83,10 +91,10 @@ module Identity
       payload = @inquiry.payload
       @project = Identity::Project.new(nil, {})
       if services.available?(:cost_control)
-        @cost_control_masterdata = services.cost_control
-                                           .new_project_masterdata(
-                                             payload.delete(:cost_control)
-                                           )
+        @cost_control_masterdata =
+          services.cost_control.new_project_masterdata(
+            payload.delete(:cost_control),
+          )
       end
       @project.attributes = payload
     end
@@ -95,18 +103,19 @@ module Identity
       # user is not allowed to create a project (maybe)
       # so use admin identity for that!
       @project = Identity::Project.new(nil, {})
-      @project.attributes = params.fetch(:project, {})
-                                  .merge(domain_id: @scoped_domain_id)
+      @project.attributes =
+        params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
       if @project.valid?
-        inquiry = services.inquiry.change_inquiry(
-          id: @inquiry.id,
-          description: @project.description,
-          payload: @project.attributes.to_json
-        )
+        inquiry =
+          services.inquiry.change_inquiry(
+            id: @inquiry.id,
+            description: @project.description,
+            payload: @project.attributes.to_json,
+          )
         if inquiry.errors?
           render action: :edit
         else
-          render template: 'identity/projects/request_wizard/create.js'
+          render template: "identity/projects/request_wizard/create.js"
         end
       else
         render action: :edit
@@ -117,14 +126,15 @@ module Identity
       @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
 
       if @inquiry
-        unless current_user.is_allowed?('identity:project_request',
-                                        domain_id: @scoped_domain_id)
-          render template: '/dashboard/not_authorized'
+        unless current_user.is_allowed?(
+                 "identity:project_request",
+                 domain_id: @scoped_domain_id,
+               )
+          render template: "/dashboard/not_authorized"
         end
       else
-        render template: '/identity/projects/create_wizard/not_found'
+        render template: "/identity/projects/create_wizard/not_found"
       end
     end
-
   end
 end

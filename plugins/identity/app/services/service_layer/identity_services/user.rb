@@ -9,11 +9,11 @@ module ServiceLayer
       end
 
       def users(filter = {})
-        elektron_identity.get('users', filter).map_to('body.users', &user_map)
+        elektron_identity.get("users", filter).map_to("body.users", &user_map)
       end
 
       def find_user!(id)
-        elektron_identity.get("users/#{id}").map_to('body.user', &user_map)
+        elektron_identity.get("users/#{id}").map_to("body.user", &user_map)
       end
 
       def find_user(id)
@@ -37,13 +37,19 @@ module ServiceLayer
       def list_cloud_resource_admins
         domain = domains(name: Rails.configuration.cloud_admin_domain).first
         return [] unless domain
-        project = projects(domain_id: domain.id,
-                           name: Rails.configuration.cloud_admin_project).first
+        project =
+          projects(
+            domain_id: domain.id,
+            name: Rails.configuration.cloud_admin_project,
+          ).first
         return [] unless project
-        list_scope_resource_admins({project_id: project.id}, 'cloud_resource_admin')
+        list_scope_resource_admins(
+          { project_id: project.id },
+          "cloud_resource_admin",
+        )
       end
 
-      def list_scope_resource_admins(scope = {}, role_name = 'resource_admin')
+      def list_scope_resource_admins(scope = {}, role_name = "resource_admin")
         role = find_role_by_name(role_name)
         list_scope_assigned_users(scope.merge(role: role))
       end
@@ -54,14 +60,14 @@ module ServiceLayer
       # domain admins until it finds at least one.
       # It should always return a non empty list (at least the domain admins).
       def list_scope_admins(scope = {})
-        role = find_role_by_name('admin')
+        role = find_role_by_name("admin")
         list_scope_assigned_users(scope.merge(role: role))
       end
 
       def role_assignments_to_users(ras)
         ras.each_with_object([]) do |r, array|
-          next if r.user['id'] == Rails.application.config.service_user_id
-          admin = find_user(r.user['id'])
+          next if r.user["id"] == Rails.application.config.service_user_id
+          admin = find_user(r.user["id"])
           array << admin if admin
         end
       end
@@ -81,31 +87,40 @@ module ServiceLayer
         return admins if role.nil?
 
         begin
-          if project_id # project_id is presented
+          if project_id
             # get role_assignments for this project_id
-            ras = role_assignments(
-              'scope.project.id' => project_id, 'role.id' => role.id,
-              effective: true, include_subtree: true
-            )
+            ras =
+              role_assignments(
+                "scope.project.id" => project_id,
+                "role.id" => role.id,
+                :effective => true,
+                :include_subtree => true,
+              )
 
             # load users (not very performant but there is no other option
             # to get users by ids)
             admins.concat(role_assignments_to_users(ras))
 
-            if admins.length.zero? # no admins for this project_id found
+            if admins.length.zero?
               # load project
               project = find_project(project_id)
               if project
                 # try to get admins recursively by parent_id
-                admins = list_scope_assigned_users(
-                  project_id: project.parent_id, role: role
-                )
+                admins =
+                  list_scope_assigned_users(
+                    project_id: project.parent_id,
+                    role: role,
+                  )
               end
             end
-          elsif domain_id # project_id is nil but domain_id is presented
+          elsif domain_id
             # get role_assignments for this domain_id
-            ras = role_assignments('scope.domain.id' => domain_id,
-                                   'role.id' => role.id, effective: true)
+            ras =
+              role_assignments(
+                "scope.domain.id" => domain_id,
+                "role.id" => role.id,
+                :effective => true,
+              )
             # load users
             admins.concat(role_assignments_to_users(ras))
           end
@@ -121,17 +136,15 @@ module ServiceLayer
       # This method is used by model.
       # It has to return the data hash.
       def create_user(attributes = {})
-        elektron_identity.post('users') do
-          { user: attributes }
-        end.body['user']
+        elektron_identity.post("users") { { user: attributes } }.body["user"]
       end
 
       # This method is used by model.
       # It has to return the data hash.
       def update_user(id, attributes)
-        elektron_identity.put("users/#{id}") do
-          { user: attributes }
-        end.body['user']
+        elektron_identity.put("users/#{id}") { { user: attributes } }.body[
+          "user"
+        ]
       end
 
       # This method is used by model.
