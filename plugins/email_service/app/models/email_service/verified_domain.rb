@@ -1,6 +1,5 @@
 module EmailService
   class VerifiedDomain
-
     include Virtus.model
     extend ActiveModel::Naming
     include ActiveModel::Conversion
@@ -35,22 +34,27 @@ module EmailService
     # validates :next_signing_key_length, allow_nil: true, next_signing_key_length: true
 
     module KeyLength
-      RSA_1024_BIT = 'RSA_1024_BIT'
-      RSA_2048_BIT = 'RSA_2048_BIT'
+      RSA_1024_BIT = "RSA_1024_BIT"
+      RSA_2048_BIT = "RSA_2048_BIT"
     end
 
     def self.key_length
-      {RSA_1024_BIT: ::EmailService::VerifiedDomain::KeyLength::RSA_1024_BIT, RSA_2048_BIT: ::EmailService::VerifiedDomain::KeyLength::RSA_2048_BIT}
+      {
+        RSA_1024_BIT: ::EmailService::VerifiedDomain::KeyLength::RSA_1024_BIT,
+        RSA_2048_BIT: ::EmailService::VerifiedDomain::KeyLength::RSA_2048_BIT,
+      }
     end
 
     module DKIMType
-      EASYDKIM = 'easy_dkim'
-      BYODKIM  = 'byo_dkim'
+      EASYDKIM = "easy_dkim"
+      BYODKIM = "byo_dkim"
     end
 
     def self.dkim_types
-      { easy_dkim: ::EmailService::VerifiedDomain::DKIMType::EASYDKIM, byo_dkim: ::EmailService::VerifiedDomain::DKIMType::BYODKIM  }
+      {
+        easy_dkim: ::EmailService::VerifiedDomain::DKIMType::EASYDKIM,
+        byo_dkim: ::EmailService::VerifiedDomain::DKIMType::BYODKIM,
+      }
     end
-
   end
 end

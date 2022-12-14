@@ -9,19 +9,20 @@ module EmailService
     attr_accessor :attributes
 
     module SourceType
-      DOMAIN = 'Domain'
-      EMAIL  = 'Email'
+      DOMAIN = "Domain"
+      EMAIL = "Email"
     end
 
     def self.source_types
-      { domain: ::EmailService::Email::SourceType::DOMAIN, email: ::EmailService::Email::SourceType::EMAIL  }
+      {
+        domain: ::EmailService::Email::SourceType::DOMAIN,
+        email: ::EmailService::Email::SourceType::EMAIL,
+      }
     end
 
     def form_to_attributes(attrs)
       attrs.keys.each do |key|
-        if array_attr.include? key
-          attrs[key] = string_to_array(attrs[key])
-        end
+        attrs[key] = string_to_array(attrs[key]) if array_attr.include? key
       end
       self.attributes.merge! attrs.stringify_keys
     end
@@ -29,9 +30,7 @@ module EmailService
     def attributes_to_form
       attr = self.attributes.clone
       attr.keys.each do |key|
-        if array_attr.include? key.to_sym
-          attr[key] = array_to_string(attr[key])
-        end
+        attr[key] = array_to_string(attr[key]) if array_attr.include? key.to_sym
       end
       attr
     end
@@ -53,9 +52,7 @@ module EmailService
     private
 
     def array_attr
-      [:to_addr, :cc_addr, :bcc_addr, :reply_to_addr]
+      %i[to_addr cc_addr bcc_addr reply_to_addr]
     end
-
   end
-
 end

@@ -1,6 +1,5 @@
 module EmailService
   class Forms::VerifiedEmail
-
     include Virtus.model
     extend ActiveModel::Naming
     include ActiveModel::Conversion
@@ -33,27 +32,21 @@ module EmailService
     private
 
     def process!(email_identity_instance)
-
       email_identity = email_identity_instance.new
       begin
         identity_array = email_identity.form_to_attributes(attributes)
       rescue StandardError => e
-        errors.add 'email_identity_attributes'.to_sym, e.inspect
+        errors.add "email_identity_attributes".to_sym, e.inspect
       end
       identity_array ? identity_array : self.errors
-
     end
-
 
     private
 
     def assign_errors(messages)
       messages.each do |key, value|
-        value.each do |item|
-          errors.add key.to_sym, item
-        end
+        value.each { |item| errors.add key.to_sym, item }
       end
     end
-
   end
 end
