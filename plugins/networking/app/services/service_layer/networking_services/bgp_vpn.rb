@@ -4,60 +4,63 @@ module ServiceLayer
   module NetworkingServices
     # Implements Openstack Network
     module BgpVpn
-
       def bgp_vpns(filter = {})
-        return 200, elektron_networking.get('bgpvpn/bgpvpns', filter).body
+        return 200, elektron_networking.get("bgpvpn/bgpvpns", filter).body
       rescue Elektron::Errors::ApiResponse => e
-        return e.code, e.messages.join(', ')
+        return e.code, e.messages.join(", ")
       end
 
       def create_bgp_vpn(name)
-        return 201, elektron_networking.post("bgpvpn/bgpvpns") do 
-          {
-            "bgpvpn": {
-              "name": name,
-            }
-          }
-        end
+        return [
+          201,
+          elektron_networking.post("bgpvpn/bgpvpns") do
+            { bgpvpn: { name: name } }
+          end
+        ]
       rescue Elektron::Errors::ApiResponse => e
-        return e.code, e.messages.join(', ')
+        return e.code, e.messages.join(", ")
       end
 
       def delete_bgp_vpn(id)
         return 201, elektron_networking.delete("bgpvpn/bgpvpns/#{id}")
       rescue Elektron::Errors::ApiResponse => e
-        return e.code, e.messages.join(', ')
+        return e.code, e.messages.join(", ")
       end
 
       def router_associations(bgpvpn_id)
         # byebug
-        return 200, elektron_networking.get("bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations").body
+        return [
+          200,
+          elektron_networking.get(
+            "bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations",
+          ).body
+        ]
       rescue Elektron::Errors::ApiResponse => e
-        return e.code, e.messages.join(', ')
+        return e.code, e.messages.join(", ")
       end
 
-      def create_router_association(bgpvpn_id,router_id)
-        return 201, elektron_networking.post("bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations") do 
-          {
-            "router_association": {
-              "router_id": router_id
-            }
-          }
-        end.body
+      def create_router_association(bgpvpn_id, router_id)
+        return [
+          201,
+          elektron_networking
+            .post("bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations") do
+              { router_association: { router_id: router_id } }
+            end
+            .body
+        ]
       rescue Elektron::Errors::ApiResponse => e
-        return e.code, e.messages.join(', ')
+        return e.code, e.messages.join(", ")
       end
 
-      def delete_router_association(bgpvpn_id,router_association_id)
+      def delete_router_association(bgpvpn_id, router_association_id)
         elektron_networking.delete(
-          "bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations/#{router_association_id}"
+          "bgpvpn/bgpvpns/#{bgpvpn_id}/router_associations/#{router_association_id}",
         )
         return 204
       rescue Elektron::Errors::ApiResponse => e
-        return e.code, e.messages.join(', ')
+        return e.code, e.messages.join(", ")
       end
 
-     
       # def new_network(attributes = {})
       #   network_map.call(attributes)
       # end

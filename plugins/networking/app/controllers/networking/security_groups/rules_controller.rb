@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'ipaddr'
+require "ipaddr"
 
 module Networking
   module SecurityGroups
     # Implements Security Group Rule actions
     class RulesController < ::DashboardController
-      authorization_context 'networking'
+      authorization_context "networking"
       authorization_required
 
       def create

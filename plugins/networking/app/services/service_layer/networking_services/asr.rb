@@ -60,9 +60,7 @@ module ServiceLayer
       # to enable or disable a specific device.
       # Disabled means config will not be applied to the device
       def asr_update_device(agent_host, data)
-        elektron_networking.put("/asr1k/devices/#{agent_host}") do
-          data
-        end.body
+        elektron_networking.put("/asr1k/devices/#{agent_host}") { data }.body
       end
     end
   end

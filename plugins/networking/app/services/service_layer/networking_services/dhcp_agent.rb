@@ -9,14 +9,16 @@ module ServiceLayer
       end
 
       def dhcp_agents
-        elektron_networking.get('agents', agent_type: 'DHCP agent').map_to(
-          'body.agents', &dhcp_agent_map
+        elektron_networking.get("agents", agent_type: "DHCP agent").map_to(
+          "body.agents",
+          &dhcp_agent_map
         )
       end
 
       def network_dhcp_agents(network_id)
         elektron_networking.get("networks/#{network_id}/dhcp-agents").map_to(
-          'body.agents', &dhcp_agent_map
+          "body.agents",
+          &dhcp_agent_map
         )
       end
 
@@ -26,7 +28,7 @@ module ServiceLayer
 
       def delete_dhcp_agent(agent_id, network_id)
         elektron_networking.delete(
-          "agents/#{agent_id}/dhcp-networks/#{network_id}"
+          "agents/#{agent_id}/dhcp-networks/#{network_id}",
         )
       end
 
