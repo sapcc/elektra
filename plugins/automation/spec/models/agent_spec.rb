@@ -1,8 +1,7 @@
-require 'spec_helper'
-require 'ostruct'
+require "spec_helper"
+require "ostruct"
 
 RSpec.describe Automation::Node do
-
   # describe 'create_agents' do
   #
   #   it "should create nodes from the api" do
@@ -24,12 +23,11 @@ RSpec.describe Automation::Node do
   #
   # end
 
-  describe 'os_types' do
-
+  describe "os_types" do
     it "should return the os types" do
-      expect(Automation::Node.os_types).to match( {"linux" => 'Linux', 'windows' => 'Windows'} )
+      expect(Automation::Node.os_types).to match(
+        { "linux" => "Linux", "windows" => "Windows" },
+      )
     end
-
   end
-
 end

@@ -11,7 +11,7 @@ module Identity
       end
 
       def name
-        @project.nil? ? 'ROOT' : @project.name
+        @project.nil? ? "ROOT" : @project.name
       end
 
       def parent_id
@@ -36,13 +36,14 @@ module Identity
     end
 
     # root identifier
-    ROOT = 'root'.freeze
+    ROOT = "root".freeze
 
     def initialize(projects = [])
       # create nodes hash where key is the project_id and value a Node object
-      @nodes = projects.each_with_object(ROOT => Node.new) do |project, hash|
-        hash[project.id] = Node.new(project)
-      end
+      @nodes =
+        projects.each_with_object(ROOT => Node.new) do |project, hash|
+          hash[project.id] = Node.new(project)
+        end
       # build tree by adding children to projects
       build_tree
     end
@@ -84,7 +85,7 @@ module Identity
       end
     end
 
-    def print_tree(nodes = [], prefix = '')
+    def print_tree(nodes = [], prefix = "")
       nodes.each do |node|
         puts "#{prefix}#{node.name}\n"
         print_tree(node.children, "#{prefix}\t")
@@ -92,13 +93,13 @@ module Identity
     end
 
     def build_tree_hash(node, result = {})
-      result['id'] = node.id if node.respond_to?(:id)
+      result["id"] = node.id if node.respond_to?(:id)
       result.merge!(node.attributes) if node.respond_to?(:attributes)
 
       if node.children.length.positive?
-        result['nodes'] = []
+        result["nodes"] = []
         node.children.each do |subnode|
-          result['nodes'] << build_tree_hash(subnode)
+          result["nodes"] << build_tree_hash(subnode)
         end
       end
       result

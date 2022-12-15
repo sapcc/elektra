@@ -4,6 +4,7 @@ import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import { toggleShareNetworkIsNewStatus } from "./share_networks"
+import React from "react"
 
 //################ SHARE NETWORK SECURITY SERVICES
 const receiveShareNetworkSecurityService = (

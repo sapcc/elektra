@@ -9,18 +9,24 @@ module ServiceLayer
       end
 
       def snapshots(filter = {})
-        elektron_shares.get('snapshots', filter)
-                       .map_to('body.snapshots', &snapshot_map)
+        elektron_shares.get("snapshots", filter).map_to(
+          "body.snapshots",
+          &snapshot_map
+        )
       end
 
       def snapshots_detail(filter = {})
-        elektron_shares.get('snapshots/detail', filter)
-                       .map_to('body.snapshots', &snapshot_map)
+        elektron_shares.get("snapshots/detail", filter).map_to(
+          "body.snapshots",
+          &snapshot_map
+        )
       end
 
       def find_snapshot!(id)
-        elektron_shares.get("snapshots/#{id}")
-                       .map_to('body.snapshot', &share_map)
+        elektron_shares.get("snapshots/#{id}").map_to(
+          "body.snapshot",
+          &share_map
+        )
       end
 
       def find_snapshot(id)
@@ -35,15 +41,15 @@ module ServiceLayer
 
       ################# INTERFACE METHODS ######################
       def create_snapshot(params)
-        elektron_shares.post('snapshots') do
-          { snapshot: params }
-        end.body['snapshot']
+        elektron_shares.post("snapshots") { { snapshot: params } }.body[
+          "snapshot"
+        ]
       end
 
       def update_snapshot(id, params)
-        elektron_shares.put("snapshots/#{id}") do
-          { snapshot: params }
-        end.body['snapshot']
+        elektron_shares.put("snapshots/#{id}") { { snapshot: params } }.body[
+          "snapshot"
+        ]
       end
 
       def delete_snapshot(id)

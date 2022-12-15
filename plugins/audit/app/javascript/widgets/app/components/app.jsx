@@ -1,8 +1,8 @@
-import EventList from '../containers/events/list'
-
+import EventList from "../containers/events/list"
+import React from "react"
 export default class App extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
   }
 
   componentDidMount() {
@@ -14,7 +14,8 @@ export default class App extends React.Component {
       <EventList
         events={this.props.events}
         isFetching={this.props.isFetching}
-        loadEvents={this.props.loadEvents}/>
+        loadEvents={this.props.loadEvents}
+      />
     )
   }
 }

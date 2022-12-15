@@ -1,5 +1,10 @@
 = content_for :title do
   Access Profiles
 
-= javascript_include_tag "access_profile_app_widget",
+- unless @access_error
+  = javascript_include_tag "access_profile_app_widget",
     data: { url: plugin("access_profile").root_path }
+- else
+  .modal-body
+    .alert.alert-danger
+      = @access_error

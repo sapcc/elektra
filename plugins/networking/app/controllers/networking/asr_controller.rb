@@ -18,25 +18,36 @@ module Networking
     # and that expected by Neutron.
 
     def show_router
-      render json: { router: services.networking.asr_router(params[:router_id]) }
+      render json: {
+               router: services.networking.asr_router(params[:router_id]),
+             }
     rescue Elektron::Errors::ApiResponse => e
       render json: { error: e.message }
     end
 
     def sync_router
-      render json: { router: services.networking.asr_sync_router(params[:router_id]) }
+      render json: {
+               router: services.networking.asr_sync_router(params[:router_id]),
+             }
     rescue Elektron::Errors::ApiResponse => e
       render json: { error: e.message }
     end
 
     def show_config
-      render json: { config: services.networking.ars_config(params[:router_id]) }
+      render json: {
+               config: services.networking.ars_config(params[:router_id]),
+             }
     rescue Elektron::Errors::ApiResponse => e
       render json: { error: e.message }
     end
 
     def show_statistics
-      render json: { statistics: services.networking.asr_interface_statistics(params[:router_id]) }
+      render json: {
+               statistics:
+                 services.networking.asr_interface_statistics(
+                   params[:router_id],
+                 ),
+             }
     rescue Elektron::Errors::ApiResponse => e
       render json: { error: e.message }
     end

@@ -1,41 +1,43 @@
-import { Link } from "react-router-dom";
+/* eslint-disable no-undef */
+import React from "react"
+import { Link } from "react-router-dom"
 import {
   SECURITY_GROUP_RULE_DESCRIPTIONS,
   SECURITY_GROUP_RULE_PREDEFINED_TYPES,
   SECURITY_GROUP_RULE_PROTOCOLS,
-} from "../../constants";
+} from "../../constants"
 
-export default ({ rule, handleDelete, securityGroups }) => {
+const Item = ({ rule, handleDelete, securityGroups }) => {
   const displayPort = () => {
-    let port = rule.port_range_min || rule.port_range_max;
+    let port = rule.port_range_min || rule.port_range_max
     if (
       rule.port_range_min &&
       rule.port_range_max &&
       rule.port_range_min != rule.port_range_max
     ) {
-      port = `${rule.port_range_min} - ${rule.port_range_max}`;
+      port = `${rule.port_range_min} - ${rule.port_range_max}`
     }
-    if (!port) port = "Any";
+    if (!port) port = "Any"
 
     let ruleType = SECURITY_GROUP_RULE_PREDEFINED_TYPES.find(
       (r) => r.portRange == port && r.protocol == rule.protocol
-    );
-    if (ruleType) port = port + ` (${ruleType.label})`;
-    return port;
-  };
+    )
+    if (ruleType) port = port + ` (${ruleType.label})`
+    return port
+  }
 
   const remoteSecurityGroup = () => {
-    let nameOrId = rule.remote_group_id;
-    let group = securityGroups.find((g) => g.id == rule.remote_group_id);
-    if (group) nameOrId = group.name;
+    let nameOrId = rule.remote_group_id
+    let group = securityGroups.find((g) => g.id == rule.remote_group_id)
+    if (group) nameOrId = group.name
     return (
       <Link to={`/security-groups/${rule.remote_group_id}/rules`}>
         {nameOrId}
       </Link>
-    );
-  };
+    )
+  }
 
-  const canDelete = policy.isAllowed("networking:rule_delete");
+  const canDelete = policy.isAllowed("networking:rule_delete")
 
   return (
     <tr className={rule.status == "deleting" ? "updating" : ""}>
@@ -62,8 +64,8 @@ export default ({ rule, handleDelete, securityGroups }) => {
             className="btn btn-default btn-sm hover-danger"
             href="#"
             onClick={(e) => {
-              e.preventDefault();
-              handleDelete(rule.id);
+              e.preventDefault()
+              handleDelete(rule.id)
             }}
           >
             <i className="fa fa-trash fa-fw"></i>
@@ -71,5 +73,7 @@ export default ({ rule, handleDelete, securityGroups }) => {
         )}
       </td>
     </tr>
-  );
-};
+  )
+}
+
+export default Item

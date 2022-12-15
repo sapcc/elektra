@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../strip_attributes'
+require_relative "../strip_attributes"
 
 module Core
   module ServiceLayer
     # Describes the Openstack Model
     class Model
-      class MissingAttributeError < StandardError; end
+      class MissingAttributeError < StandardError
+      end
 
       extend ActiveModel::Naming
       extend ActiveModel::Translation
@@ -23,7 +24,7 @@ module Core
       def initialize(service, params = nil)
         @service = service
         # get just the name of class without namespaces
-        @class_name = self.class.name.split('::').last.underscore
+        @class_name = self.class.name.split("::").last.underscore
         self.attributes = params || {}
         # create errors object
         @errors = ActiveModel::Errors.new(self)
@@ -40,15 +41,13 @@ module Core
       end
 
       def as_json(_options = nil)
-        attributes.each_with_object({}) do |(k,v),hash|
-          hash[k] = sanitize(v)
-        end
+        attributes.each_with_object({}) { |(k, v), hash| hash[k] = sanitize(v) }
       end
 
       # look in attributes if a method is missing
       def method_missing(method_sym, *arguments, &block)
         attribute_name = method_sym.to_s
-        attribute_name = attribute_name.chop if attribute_name.ends_with?('=')
+        attribute_name = attribute_name.chop if attribute_name.ends_with?("=")
 
         if arguments.count > 1
           write(attribute_name, arguments)
@@ -61,10 +60,8 @@ module Core
 
       def respond_to?(method_name, include_private = false)
         keys = @attributes.keys
-        method_name.to_s == 'id' ||
-          keys.include?(method_name.to_s) ||
-          keys.include?(method_name.to_sym) ||
-          super
+        method_name.to_s == "id" || keys.include?(method_name.to_s) ||
+          keys.include?(method_name.to_sym) || super
       end
 
       def requires(*attrs)
@@ -82,9 +79,7 @@ module Core
 
         success = valid?
 
-        if success
-          success = id.nil? ? perform_create : perform_update
-        end
+        success = id.nil? ? perform_create : perform_update if success
         success & after_save
       end
 
@@ -114,7 +109,7 @@ module Core
         new_attributes = new_attributes.blank? ? {} : new_attributes.clone
         @attributes = action_controller_params_to_hash(new_attributes)
         # delete id from attributes!
-        new_id = (@attributes.delete('id') || @attributes.delete(:id))
+        new_id = (@attributes.delete("id") || @attributes.delete(:id))
         # if current_id is nil then overwrite it with new_id.
         @id = new_id if @id.nil? || (@id.is_a?(String) && @id.empty?)
         @attributes
@@ -132,9 +127,7 @@ module Core
         end
         if params.is_a?(Hash)
           params = params.with_indifferent_access
-          params.each do |k, v|
-            params[k] = action_controller_params_to_hash(v)
-          end
+          params.each { |k, v| params[k] = action_controller_params_to_hash(v) }
         end
         params
       end
@@ -170,7 +163,7 @@ module Core
       end
 
       def created_at
-        value = read('created') || read('created_at')
+        value = read("created") || read("created_at")
         DateTime.parse(value) if value
       end
 
@@ -179,7 +172,7 @@ module Core
       end
 
       def updated_at
-        value = read('updated') || read('updated_at')
+        value = read("updated") || read("updated_at")
         DateTime.parse(value) if value
       end
 
@@ -266,8 +259,8 @@ module Core
         yield
         true
       rescue ::Elektron::Errors::ApiResponse => e
-        # "API Error happened :-(" 
-        e.messages.each { |m| errors.add(:api, m) unless m.blank?}
+        # "API Error happened :-("
+        e.messages.each { |m| errors.add(:api, m) unless m.blank? }
         false
       end
     end

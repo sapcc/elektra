@@ -16,14 +16,14 @@ Bundler.require(*Rails.groups)
 module MonsoonDashboard
   class Application < Rails::Application
     config.load_defaults 6.1
-    
+
     def self.module_parent_name
-      super 
+      super
     end
 
-    def self.parent_name 
+    def self.parent_name
       self.module_parent_name
-    end 
+    end
 
     # commented out due to error seen in prod:
     # Cannot render console from 10.XX.XX.XX! Allowed networks: XX.XX.XX.XX, ...
@@ -41,7 +41,6 @@ module MonsoonDashboard
 
     # config.autoload_paths << Rails.root.join('lib')
     config.eager_load_paths << "#{Rails.root}/lib"
-    
 
     # Use memory for caching, file cache needs some work for working with docker
     # Not sure if this really makes sense becasue every passenger thread will have it's own cache
@@ -55,13 +54,15 @@ module MonsoonDashboard
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-    config.action_cable.mount_path = '/:domain_id/(:project_id)/cable'
+    config.action_cable.mount_path = "/:domain_id/(:project_id)/cable"
 
     config.middleware.insert_before Rack::Sendfile, DebugHeadersMiddleware
 
     # build a map from the plugins
     plugin_mount_points = {}
-    Core::PluginsManager.available_plugins.each { |plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point }
+    Core::PluginsManager.available_plugins.each do |plugin|
+      plugin_mount_points[plugin.mount_point] = plugin.mount_point
+    end
 
     # rack middlewares
     config.middleware.use HttpMetricsCollectorMiddleware
@@ -71,24 +72,28 @@ module MonsoonDashboard
     config.middleware.use RevisionMiddleware
 
     ############# ENSURE EDGE MODE FOR IE ###############
-    config.action_dispatch.default_headers['X-UA-Compatible'] = 'IE=edge,chrome=1'
+    config.action_dispatch.default_headers[
+      "X-UA-Compatible"
+    ] = "IE=edge,chrome=1"
 
     ############# KEYSTONE ENDPOINT ##############
-    config.keystone_endpoint = if ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']
-                                 proto = ENV['AUTHORITY_SERVICE_PROTO'] || 'http'
-                                 host  = ENV['AUTHORITY_SERVICE_HOST']
-                                 port  = ENV['AUTHORITY_SERVICE_PORT']
-                                 "#{proto}://#{host}:#{port}/v3"
-                               else
-                                 ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
-          end
+    config.keystone_endpoint =
+      if ENV["AUTHORITY_SERVICE_HOST"] && ENV["AUTHORITY_SERVICE_PORT"]
+        proto = ENV["AUTHORITY_SERVICE_PROTO"] || "http"
+        host = ENV["AUTHORITY_SERVICE_HOST"]
+        port = ENV["AUTHORITY_SERVICE_PORT"]
+        "#{proto}://#{host}:#{port}/v3"
+      else
+        ENV["MONSOON_OPENSTACK_AUTH_API_ENDPOINT"]
+      end
 
-    config.debug_api_calls = ENV.key?('DEBUG_API_CALLS')
-    config.debug_policy_engine = ENV.key?('DEBUG_POLICY_ENGINE')
+    config.debug_api_calls = ENV.key?("DEBUG_API_CALLS")
+    config.debug_policy_engine = ENV.key?("DEBUG_POLICY_ENGINE")
 
     config.ssl_verify_peer = true
     Excon.defaults[:ssl_verify_peer] = true
-    if ENV.key?('ELEKTRA_SSL_VERIFY_PEER') && (ENV['ELEKTRA_SSL_VERIFY_PEER'] == 'false')
+    if ENV.key?("ELEKTRA_SSL_VERIFY_PEER") &&
+         (ENV["ELEKTRA_SSL_VERIFY_PEER"] == "false")
       config.ssl_verify_peer = false
       # set ssl_verify_peer for Excon that is used in FOG to talk with openstack services
       Excon.defaults[:ssl_verify_peer] = false
@@ -96,37 +101,40 @@ module MonsoonDashboard
     puts "=> SSL verify: #{config.ssl_verify_peer}"
 
     ############## REGION ###############
-    config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || ['eu-de-1', 'staging', 'europe']
+    config.default_region =
+      ENV["MONSOON_DASHBOARD_REGION"] || %w[eu-de-1 staging europe]
 
     ############## CLOUD ADMIN ###############
-    config.cloud_admin_domain = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN', 'ccadmin')
-    config.cloud_admin_project = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_PROJECT', 'cloud_admin')
+    config.cloud_admin_domain =
+      ENV.fetch("MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN", "ccadmin")
+    config.cloud_admin_project =
+      ENV.fetch("MONSOON_OPENSTACK_CLOUDADMIN_PROJECT", "cloud_admin")
 
     ############## SERVICE USER #############
-    config.service_user_id = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
-    config.service_user_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
-    config.service_user_domain_name = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
-    config.default_domain = ENV['MONSOON_DASHBOARD_DEFAULT_DOMAIN'] || 'monsoon3'
+    config.service_user_id = ENV["MONSOON_OPENSTACK_AUTH_API_USERID"]
+    config.service_user_password = ENV["MONSOON_OPENSTACK_AUTH_API_PASSWORD"]
+    config.service_user_domain_name = ENV["MONSOON_OPENSTACK_AUTH_API_DOMAIN"]
+    config.default_domain =
+      ENV["MONSOON_DASHBOARD_DEFAULT_DOMAIN"] || "monsoon3"
 
     # Mailer configuration for inquiries/requests
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
-      domain: ENV['MONSOON_DASHBOARD_MAIL_DOMAIN'],
-      address: ENV['MONSOON_DASHBOARD_MAIL_SERVER'],
-      port: ENV['MONSOON_DASHBOARD_MAIL_SERVER_PORT'] || 25,
-      user_name: ENV['MONSOON_DASHBOARD_MAIL_USER'],
-      password: ENV['MONSOON_DASHBOARD_MAIL_PASSWORD'],
-      authentication: ENV['MONSOON_DASHBOARD_MAIL_AUTHENTICATION'] || "plain",
-      enable_starttls_auto: true
+      domain: ENV["MONSOON_DASHBOARD_MAIL_DOMAIN"],
+      address: ENV["MONSOON_DASHBOARD_MAIL_SERVER"],
+      port: ENV["MONSOON_DASHBOARD_MAIL_SERVER_PORT"] || 25,
+      user_name: ENV["MONSOON_DASHBOARD_MAIL_USER"],
+      password: ENV["MONSOON_DASHBOARD_MAIL_PASSWORD"],
+      authentication: ENV["MONSOON_DASHBOARD_MAIL_AUTHENTICATION"] || "plain",
+      enable_starttls_auto: true,
     }
     config.action_mailer.default_options = {
-      from: ENV['MONSOON_DASHBOARD_MAIL_SENDER'].to_s 
+      from: ENV["MONSOON_DASHBOARD_MAIL_SENDER"].to_s,
     }
 
     config.middleware.use SessionCookiePathMiddleware
     config.middleware.insert_after ::Rack::Runtime, SameSiteCookieMiddleware
     config.middleware.insert_after ::Rack::Runtime, SecureCookies
-
   end
 end

@@ -1,6 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { useState, useEffect } from "react"
 import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
 import useHealthmonitor from "../../lib/hooks/useHealthMonitor"
 import usePool from "../../lib/hooks/usePool"
 import { Form } from "lib/elektra-form"
@@ -9,18 +9,22 @@ import { addNotice } from "lib/flashes"
 import TagsInput from "../shared/TagsInput"
 import ErrorPage from "../ErrorPage"
 import Log from "../shared/logger"
+import {
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import { fetchHealthmonitor } from "../../actions/healthMonitor"
+import {
+  healthMonitorTypes,
+  httpMethodRelation,
+  expectedCodesRelation,
+  urlPathRelation,
+  httpMethods,
+} from "../../helpers/healthMonitorHelpers"
 
 const EditHealthMonitor = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
-  const {
-    fetchHealthmonitor,
-    updateHealthmonitor,
-    healthMonitorTypes,
-    httpMethodRelation,
-    expectedCodesRelation,
-    urlPathRelation,
-    httpMethods,
-  } = useHealthmonitor()
+  const { updateHealthmonitor } = useHealthmonitor()
   const { persistPool } = usePool()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [poolID, setPoolID] = useState(null)
@@ -127,11 +131,10 @@ const EditHealthMonitor = (props) => {
     const healthmonitorID = params.healthmonitorID
 
     return updateHealthmonitor(lbID, poolID, healthmonitorID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Health Monitor <b>{response.data.name}</b> ({response.data.id}) is
-            being updated.
+            Health Monitor <b>{data.name}</b> ({data.id}) is being updated.
           </React.Fragment>
         )
         // fetch the pool again containing the new healthmonitor so it gets updated fast

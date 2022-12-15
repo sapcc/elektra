@@ -81,7 +81,7 @@ const LargeFileInstruction = ({ objectStoreEndpoint }) => {
               </p>
               <p ref={codeRef}>
                 <code>
-                  curl -i "
+                  curl "
                   {objectStoreEndpoint +
                     "/" +
                     decodeURIComponent(containerName + "/" + name)}

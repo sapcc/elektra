@@ -5,15 +5,16 @@ module Networking
     # list, create and delete subnets
     class SubnetsController < DashboardController
       def index
-        render json: services.networking.subnets(
-          network_id: params[:network_id]
-        ), status: 200
+        render json:
+                 services.networking.subnets(network_id: params[:network_id]),
+               status: 200
       end
 
       def create
-        subnet = services.networking.new_subnet(
-          params[:subnet].merge(network_id: params[:network_id])
-        )
+        subnet =
+          services.networking.new_subnet(
+            params[:subnet].merge(network_id: params[:network_id]),
+          )
         if subnet.save
           render json: subnet, status: 201
         else

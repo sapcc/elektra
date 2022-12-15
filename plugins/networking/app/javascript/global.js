@@ -1,1 +1,1 @@
-import "./global/floating_ips.coffee"
+import "./global/floating_ips"

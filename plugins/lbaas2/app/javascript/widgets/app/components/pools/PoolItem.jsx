@@ -1,13 +1,12 @@
-import { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { Link } from "react-router-dom"
 import StaticTags from "../StaticTags"
 import CopyPastePopover from "../shared/CopyPastePopover"
-import CachedInfoPopover from "../shared/CachedInforPopover"
+import PopoverInfo from "../shared/PopoverInfo"
 import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
 import CachedInfoPopoverContentListeners from "./CachedInfoPopoverContentListeners"
 import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
 import usePool from "../../lib/hooks/usePool"
-import useCommons from "../../lib/hooks/useCommons"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
@@ -19,11 +18,15 @@ import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
 import BooleanLabel from "../shared/BooleanLabel"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+  MyHighlighter,
+} from "../../helpers/commonHelpers"
 
 const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
-  const { persistPool, deletePool, onSelectPool, reset } = usePool()
-  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons()
+  const { persistPool, removePool, onSelectPool, reset } = usePool()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { persistLoadbalancer } = useLoadbalancer()
   const { entityStatus } = useStatus(
@@ -85,7 +88,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
     }
     const poolID = pool.id
     const poolName = pool.name
-    return deletePool(loadbalancerID, poolID, poolName)
+    return removePool(loadbalancerID, poolID, poolName)
       .then((response) => {
         addNotice(
           <React.Fragment>
@@ -99,7 +102,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.data),
+            errors: errorMessage(error),
           })
         )
       })
@@ -177,7 +180,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
         <div className="display-flex">
           <span>Listeners:</span>
           <div className="label-right">
-            <CachedInfoPopover
+            <PopoverInfo
               popoverId={"pool-listeners-popover-" + listenersIDs.id}
               buttonName={listenersIDs.length}
               title={<React.Fragment>Listeners</React.Fragment>}
@@ -189,6 +192,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
                   cachedListeners={pool.cached_listeners}
                 />
               }
+              footer="Preview from cache"
             />
           </div>
         </div>
@@ -218,23 +222,45 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
   const displaySecrets = () => {
     const containers = collectContainers()
     return (
-      <React.Fragment>
+      <>
         {pool.tls_enabled && (
           <div className="display-flex">
             <span>Secrets: </span>
             <div className="label-right">
-              <CachedInfoPopover
+              <PopoverInfo
                 popoverId={"pool-secrets-popover-" + pool.id}
                 buttonName={containers.length}
                 title={<React.Fragment>Secrets</React.Fragment>}
                 content={
                   <CachedInfoPopoverContentContainers containers={containers} />
                 }
+                footer="Preview from cache"
               />
             </div>
           </div>
         )}
-      </React.Fragment>
+      </>
+    )
+  }
+
+  const displayTlsCiphers = () => {
+    const ciphersList = pool.tls_ciphers?.split(":") || []
+    return (
+      <>
+        {pool.tls_enabled && (
+          <div className="display-flex">
+            <span>TLS ciphers: </span>
+            <div className="label-right">
+              <PopoverInfo
+                popoverId={"tls-ciphers-popover-" + pool.id}
+                buttonName={ciphersList.length}
+                title="TLS ciphers"
+                content={<StaticTags tags={ciphersList} />}
+              />
+            </div>
+          </div>
+        )}
+      </>
     )
   }
 
@@ -271,6 +297,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
       <td>
         <BooleanLabel value={pool.tls_enabled} />
         {displaySecrets()}
+        {displayTlsCiphers()}
       </td>
       <td>
         <BooleanLabel value={pool.healthmonitor_id} />
@@ -279,16 +306,16 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
         {disabled ? (
           <span className="info-text">{memberIDs.length}</span>
         ) : (
-          <CachedInfoPopover
+          <PopoverInfo
             popoverId={"member-popover-" + memberIDs.id}
             buttonName={memberIDs.length}
             title={
-              <React.Fragment>
+              <>
                 Members
                 <Link to="#" onClick={onPoolClick} style={{ float: "right" }}>
                   Show all
                 </Link>
-              </React.Fragment>
+              </>
             }
             content={
               <CachedInfoPopoverContent
@@ -299,6 +326,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
                 cachedMembers={pool.cached_members}
               />
             }
+            footer="Preview from cache"
           />
         )}
       </td>

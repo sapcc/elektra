@@ -15,34 +15,39 @@ module ServiceLayer
     include ComputeServices::Volume
     include ComputeServices::OsServerGroup
 
-    MICROVERSION = '2.60'
+    MICROVERSION = "2.60"
 
     def available?(_action_name_sym = nil)
-      elektron.service?('compute')
+      elektron.service?("compute")
     end
 
     def elektron_compute
-      @elektron_identity ||= elektron.service(
-        'compute', 
-        http_client: { read_timeout: 180 },
-        headers: { 'X-OpenStack-Nova-API-Version' => MICROVERSION }
-      )
+      @elektron_identity ||=
+        elektron.service(
+          "compute",
+          http_client: {
+            read_timeout: 180,
+          },
+          headers: {
+            "X-OpenStack-Nova-API-Version" => MICROVERSION,
+          },
+        )
     end
 
     def usage(filter = {})
-      elektron_compute.get('limits', filter).map_to(
-        'body.limits.absolute'
-      ) do |limits|
-        Compute::Usage.new(self, limits)
-      end
+      elektron_compute
+        .get("limits", filter)
+        .map_to("body.limits.absolute") do |limits|
+          Compute::Usage.new(self, limits)
+        end
     end
 
     def availability_zones
-      elektron_compute.get('os-availability-zone').map_to(
-        'body.availabilityZoneInfo'
-      ) do |data|
-        Compute::AvailabilityZone.new(self, data)
-      end
+      elektron_compute
+        .get("os-availability-zone")
+        .map_to("body.availabilityZoneInfo") do |data|
+          Compute::AvailabilityZone.new(self, data)
+        end
     end
   end
 end

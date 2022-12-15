@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+import React from "react"
 import { Link } from "react-router-dom"
 import { scope } from "lib/ajax_helper"
 import { Highlighter } from "react-bootstrap-typeahead"

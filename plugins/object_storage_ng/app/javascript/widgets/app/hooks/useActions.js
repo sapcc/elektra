@@ -298,12 +298,18 @@ const useActions = () => {
     []
   )
   const endpointURL = React.useCallback(
-    (containerName, name) =>
-      `${apiClient.osApi("object-store").endpointURL}/${objectPath(
-        containerName,
-        name
-      )}`,
+    (containerName, name, params = {}) => {
+      return apiClient
+        .osApi("object-store")
+        .url(objectPath(containerName, name), { params })
+    },
     [apiClient]
+  )
+
+  const rawObjectUrl = React.useCallback(
+    (containerName, name, params = {}) =>
+      endpointURL(containerName, name, params),
+    [endpointURL]
   )
 
   const downloadObject = React.useCallback(
@@ -394,6 +400,7 @@ const useActions = () => {
     createFolder,
     downloadObject,
     uploadObject,
+    rawObjectUrl,
   }
 }
 

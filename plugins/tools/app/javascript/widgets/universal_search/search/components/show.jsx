@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import ReactJson from "react-json-view"
@@ -6,6 +7,7 @@ import {
   objectUrl,
   vCenterUrl,
 } from "../../shared/object_link_helper"
+import React from "react"
 
 import ProjectRoleAssignments from "plugins/identity/app/javascript/widgets/role_assignments/containers/project_role_assignments"
 import UserRoleAssignments from "plugins/identity/app/javascript/widgets/role_assignments/containers/user_role_assignments"
@@ -42,7 +44,7 @@ export default class ShowSearchObjectModal extends React.Component {
     if (this.state.show) return
 
     if (this.props.match && this.props.match.path) {
-      const found = this.props.match.path.match(/(\/[^\/]+)\/:id\/show/)
+      const found = this.props.match.path.match(/(\/[^/]+)\/:id\/show/)
       if (found) {
         this.props.history.replace(found[1])
         return
@@ -66,7 +68,7 @@ export default class ShowSearchObjectModal extends React.Component {
     const projectLink = projectUrl(item)
     const objectLink = objectUrl(item)
     const vCenterLink = vCenterUrl(item, vcAggregates)
-    const found = this.props.location.search.match(/\?tab=([^\&]+)/)
+    const found = this.props.location.search.match(/\?tab=([^&]+)/)
     let activeTab = found ? found[1] : null
     const isProject = item && item.cached_object_type == "project"
     const isUser = item && item.cached_object_type == "user"
@@ -163,20 +165,35 @@ export default class ShowSearchObjectModal extends React.Component {
         </Modal.Body>
         <Modal.Footer>
           {vCenterLink && (
-            <a href={vCenterLink} target="_blank" className="btn btn-primary">
+            <a
+              href={vCenterLink}
+              target="_blank"
+              className="btn btn-primary"
+              rel="noreferrer"
+            >
               Switch to VCenter
             </a>
           )}
 
           {objectLink && (
-            <a href={objectLink} target="_blank" className="btn btn-primary">
+            <a
+              href={objectLink}
+              target="_blank"
+              className="btn btn-primary"
+              rel="noreferrer"
+            >
               Show in Elektra
             </a>
           )}
 
           {projectLink &&
             policy.isAllowed("tools:switch_to_project", { project: item }) && (
-              <a href={projectLink} target="_blank" className="btn btn-primary">
+              <a
+                href={projectLink}
+                target="_blank"
+                className="btn btn-primary"
+                rel="noreferrer"
+              >
                 Switch to Project
               </a>
             )}

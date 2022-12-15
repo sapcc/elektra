@@ -9,25 +9,28 @@ module ServiceLayer
       end
 
       def origin_role_assignments(filter = {})
-        elektron_identity.get('role_assignments', filter).map_to(
-          'body.role_assignments', &role_assignment_map
+        elektron_identity.get("role_assignments", filter).map_to(
+          "body.role_assignments",
+          &role_assignment_map
         )
       end
 
       def role_assignments(filter = {})
-        effective = filter.delete(:effective) || filter.delete('effective')
+        effective = filter.delete(:effective) || filter.delete("effective")
         # if effective is true remove user_id from filter to find also groups.
-        user_id = filter.delete('user.id') if effective
+        user_id = filter.delete("user.id") if effective
 
-        assignments = elektron_identity.get('role_assignments', filter).map_to(
-          'body.role_assignments', &role_assignment_map
-        )
+        assignments =
+          elektron_identity.get("role_assignments", filter).map_to(
+            "body.role_assignments",
+            &role_assignment_map
+          )
         # return if no effective filter required
         return assignments unless effective
 
         result = aggregate_group_role_assignments(assignments)
         # select user role assignments unless user_id is nil
-        result = result.select { |a| a.user['id'] == user_id } if user_id
+        result = result.select { |a| a.user["id"] == user_id } if user_id
         result
       end
 
@@ -36,15 +39,18 @@ module ServiceLayer
           if ra.user.present?
             array << ra
           elsif ra.group.present?
-            group_users = elektron_identity.get(
-              "groups/#{ra.group['id']}/users"
-            ).body['users']
+            group_users =
+              elektron_identity.get("groups/#{ra.group["id"]}/users").body[
+                "users"
+              ]
 
             group_users.each do |user|
               array << role_assignment_map.call(
-                'role' => ra.role,
-                'scope' => ra.scope,
-                'user' => { 'id' => user['id'] }
+                "role" => ra.role,
+                "scope" => ra.scope,
+                "user" => {
+                  "id" => user["id"],
+                },
               )
             end
           end
@@ -58,7 +64,7 @@ module ServiceLayer
 
       def grant_project_user_role!(project_id, user_id, role_id)
         elektron_identity.put(
-          "projects/#{project_id}/users/#{user_id}/roles/#{role_id}"
+          "projects/#{project_id}/users/#{user_id}/roles/#{role_id}",
         )
       end
 
@@ -70,7 +76,7 @@ module ServiceLayer
 
       def revoke_project_user_role!(project_id, user_id, role_id)
         elektron_identity.delete(
-          "projects/#{project_id}/users/#{user_id}/roles/#{role_id}"
+          "projects/#{project_id}/users/#{user_id}/roles/#{role_id}",
         )
       end
 
@@ -82,7 +88,7 @@ module ServiceLayer
 
       def grant_project_group_role!(project_id, group_id, role_id)
         elektron_identity.put(
-          "projects/#{project_id}/groups/#{group_id}/roles/#{role_id}"
+          "projects/#{project_id}/groups/#{group_id}/roles/#{role_id}",
         )
       end
 
@@ -95,7 +101,9 @@ module ServiceLayer
       def revoke_project_group_role!(project_id, group_id, role_id)
         elektron_identity.delete(
           "projects/#{project_id}/groups/#{group_id}/roles/#{role_id}",
-          http_client: { read_timeout: 180 }
+          http_client: {
+            read_timeout: 180,
+          },
         )
       end
 
@@ -107,7 +115,7 @@ module ServiceLayer
 
       def grant_domain_user_role!(domain_id, user_id, role_id)
         elektron_identity.put(
-          "domains/#{domain_id}/users/#{user_id}/roles/#{role_id}"
+          "domains/#{domain_id}/users/#{user_id}/roles/#{role_id}",
         )
       end
 
@@ -119,7 +127,7 @@ module ServiceLayer
 
       def revoke_domain_user_role!(domain_id, user_id, role_id)
         elektron_identity.delete(
-          "domains/#{domain_id}/users/#{user_id}/roles/#{role_id}"
+          "domains/#{domain_id}/users/#{user_id}/roles/#{role_id}",
         )
       end
 

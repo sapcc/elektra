@@ -1,9 +1,11 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Link } from "react-router-dom"
 import { SearchField } from "lib/components/search_field"
 import SearchItem from "./search_item"
 // import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Pagination } from "lib/components/pagination"
 import { scope } from "lib/ajax_helper"
+import React from "react"
 
 export default class Search extends React.Component {
   componentDidMount() {
@@ -16,10 +18,10 @@ export default class Search extends React.Component {
 
     // try to find init search term and type in url
     const searchTermMatch = this.props.location.search.match(
-      /[\?|\&]searchTerm=([^\&]+)/
+      /[?|&]searchTerm=([^&]+)/
     )
     const searchTypeMatch =
-      this.props.location.search.match(/[\?|\&]type=([^\&]+)/)
+      this.props.location.search.match(/[?|&]type=([^&]+)/)
 
     this.searchTerm = searchTermMatch && searchTermMatch[1]
     this.objectType = searchTypeMatch && searchTypeMatch[1]
@@ -102,6 +104,7 @@ export default class Search extends React.Component {
                   this.props.searchTerm || ""
                 }&type=${this.props.searchType || ""}`}
                 target="_blank"
+                rel="noreferrer"
               >
                 Export AS CSV
               </a>
@@ -165,14 +168,6 @@ export default class Search extends React.Component {
             className="pagination-container u-flex-pos-right"
           />
         </div>
-
-        {/*
-        <AjaxPaginate
-          hasNext={this.props.objects.hasNext}
-          isFetching={this.props.objects.isFetching}
-          text={`${this.props.objects.items.length}/${this.props.objects.total}`}
-          onLoadNext={this.props.loadNext}/>
-      */}
       </div>
     )
   }

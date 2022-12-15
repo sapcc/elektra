@@ -17,7 +17,7 @@ module SimpleNavigation
     class FancyList < SimpleNavigation::Renderer::Base
       def render(item_container)
         if skip_if_empty? && item_container.empty?
-          ''
+          ""
         else
           tag = options[:ordered] ? :ol : :ul
           content = list_content(item_container)
@@ -28,22 +28,29 @@ module SimpleNavigation
       private
 
       def list_content(item_container)
-        item_container.items.map { |item|
-          li_options = item.html_options.except(:link)
-          li_content = ""
+        item_container
+          .items
+          .map do |item|
+            li_options = item.html_options.except(:link)
+            li_content = ""
 
-          icon_options = li_options.delete(:"data-icon")
+            icon_options = li_options.delete(:"data-icon")
 
-          if icon_options
-            li_content << content_tag(:span, "", class: icon_options << " fancy-nav-icon")
+            if icon_options
+              li_content << content_tag(
+                :span,
+                "",
+                class: icon_options << " fancy-nav-icon",
+              )
+            end
+
+            li_content << tag_for(item)
+            if include_sub_navigation?(item)
+              li_content << render_sub_navigation_for(item)
+            end
+            content_tag(:li, li_content, li_options)
           end
-
-          li_content << tag_for(item)
-          if include_sub_navigation?(item)
-            li_content << render_sub_navigation_for(item)
-          end
-          content_tag(:li, li_content, li_options)
-        }.join
+          .join
       end
     end
   end

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import { Highlighter } from "react-bootstrap-typeahead"
 import {
@@ -6,6 +7,7 @@ import {
   vCenterUrl,
 } from "../../shared/object_link_helper"
 import moment from "moment"
+import React from "react"
 
 const ObjectLink = ({ id, name, term }) => (
   <React.Fragment>
@@ -40,7 +42,7 @@ const ObjectInfo = ({ id, name, term }) =>
     <Highlighter search={term || ""}>{id || ""}</Highlighter>
   )
 
-export default ({ item, term, aggregates }) => {
+const SearchItem = ({ item, term, aggregates }) => {
   const scope = item.payload.scope || {}
   const projectLink = projectUrl(item)
   const objectLink = objectUrl(item)
@@ -112,21 +114,21 @@ export default ({ item, term, aggregates }) => {
             <ul className="dropdown-menu dropdown-menu-right" role="menu">
               {vCenterLink && (
                 <li>
-                  <a href={vCenterLink} target="_blank">
+                  <a href={vCenterLink} target="_blank" rel="noreferrer">
                     <i className="fa fa-fw fa-external-link" /> Jump to VCenter
                   </a>
                 </li>
               )}
               {objectLink && (
                 <li>
-                  <a href={objectLink} target="_blank">
+                  <a href={objectLink} target="_blank" rel="noreferrer">
                     <i className="fa fa-fw fa-external-link" /> Show in Elektra
                   </a>
                 </li>
               )}
               {projectLink && (
                 <li>
-                  <a href={projectLink} target="_blank">
+                  <a href={projectLink} target="_blank" rel="noreferrer">
                     <i className="fa fa-fw fa-external-link" /> Switch to
                     Project
                   </a>
@@ -139,3 +141,5 @@ export default ({ item, term, aggregates }) => {
     </tr>
   )
 }
+
+export default SearchItem

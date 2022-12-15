@@ -7,18 +7,19 @@ module Networking
 
     def index
       filter_options = {
-        'router:external' => @network_type == 'external',
-        sort_key: 'name'
+        "router:external" => @network_type == "external",
+        :sort_key => "name",
       }
 
-      @networks = paginatable(per_page: 30) do |pagination_options|
-        options = filter_options.merge(pagination_options)
-        unless current_user.has_role?('cloud_network_admin')
-          options.delete(:limit)
-        end
+      @networks =
+        paginatable(per_page: 30) do |pagination_options|
+          options = filter_options.merge(pagination_options)
+          unless current_user.has_role?("cloud_network_admin")
+            options.delete(:limit)
+          end
 
-        services.networking.networks(options)
-      end
+          services.networking.networks(options)
+        end
 
       # cached version
       # @network_subnets = ObjectCache.where(cached_object_type: 'subnet').where(
@@ -29,20 +30,20 @@ module Networking
       #   map[sn['network_id']] << Networking::Subnet.new(nil, sn)
       # end
 
-      @network_subnets = @networks.each_with_object({}) do |nw, map| 
-        map[nw.id] = services.networking.subnets(network_id: nw.id)
-      end
-    
-      @network_projects = ObjectCache.where(
-        id: @networks.collect(&:tenant_id)
-      ).each_with_object({}) do |project, map|
-        map[project.id] = project
-      end
+      @network_subnets =
+        @networks.each_with_object({}) do |nw, map|
+          map[nw.id] = services.networking.subnets(network_id: nw.id)
+        end
+
+      @network_projects =
+        ObjectCache
+          .where(id: @networks.collect(&:tenant_id))
+          .each_with_object({}) { |project, map| map[project.id] = project }
 
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?
-        render partial: 'list', locals: { networks: @networks }
+        render partial: "list", locals: { networks: @networks }
       else
         # comon case, render index page with layout
         render action: :index
@@ -56,16 +57,19 @@ module Networking
     def show
       @network = services.networking.find_network!(params[:id])
       @subnets = services.networking.subnets(network_id: @network.id)
-      @ports   = services.networking.ports(network_id: @network.id)
+      @ports = services.networking.ports(network_id: @network.id)
     end
 
     def new
-      @network = services.networking.new_network(
-        name: "#{@scoped_project_name}_#{@network_type}"
-      )
-      @subnet = services.networking.new_subnet(
-        name: "#{@network.name}_sub", enable_dhcp: true
-      )
+      @network =
+        services.networking.new_network(
+          name: "#{@scoped_project_name}_#{@network_type}",
+        )
+      @subnet =
+        services.networking.new_subnet(
+          name: "#{@network.name}_sub",
+          enable_dhcp: true,
+        )
     end
 
     def create
@@ -81,20 +85,25 @@ module Networking
 
           # FIXME: anti-pattern of doing two things in one action
           if @subnet.save
-            flash[:keep_notice_htmlsafe] = "Network #{@network.name} with subnet #{@subnet.name} successfully created.<br /> <strong>Please note:</strong> If you want to attach floating IPs to objects in this network you will need to #{view_context.link_to('create a router', plugin('networking').routers_path)} connecting this network to the floating IP network."
-            audit_logger.info(current_user, 'has created', @network)
-            audit_logger.info(current_user, 'has created', @subnet)
-            redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
+            flash[
+              :keep_notice_htmlsafe
+            ] = "Network #{@network.name} with subnet #{@subnet.name} successfully created.<br /> <strong>Please note:</strong> If you want to attach floating IPs to objects in this network you will need to #{view_context.link_to("create a router", plugin("networking").routers_path)} connecting this network to the floating IP network."
+            audit_logger.info(current_user, "has created", @network)
+            audit_logger.info(current_user, "has created", @subnet)
+            redirect_to plugin("networking").send(
+                          "networks_#{@network_type}_index_path",
+                        )
           else
             @network.destroy
             @errors = @subnet.errors
             render action: :new
           end
         else
-          audit_logger.info(current_user, 'has created', @network)
-          redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
+          audit_logger.info(current_user, "has created", @network)
+          redirect_to plugin("networking").send(
+                        "networks_#{@network_type}_index_path",
+                      )
         end
-
       else
         @errors = @network.errors
         render action: :new
@@ -102,22 +111,28 @@ module Networking
     end
 
     def edit
-      @action_from_show = params[:action_from_show] || 'false'
+      @action_from_show = params[:action_from_show] || "false"
       @network = services.networking.find_network(params[:id])
     end
 
     def update
-      @action_from_show = params[:network].delete(:action_from_show) == 'true' || false
+      @action_from_show =
+        params[:network].delete(:action_from_show) == "true" || false
       @network = services.networking.new_network(params[:network])
       @network.id = params[:id]
 
       if @network.save
-        flash[:notice] = 'Network successfully updated.'
-        audit_logger.info(current_user, 'has updated', @network)
+        flash[:notice] = "Network successfully updated."
+        audit_logger.info(current_user, "has updated", @network)
         if @action_from_show
-          redirect_to plugin('networking').send("networks_#{@network_type}_path", @network.id)
+          redirect_to plugin("networking").send(
+                        "networks_#{@network_type}_path",
+                        @network.id,
+                      )
         else
-          redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
+          redirect_to plugin("networking").send(
+                        "networks_#{@network_type}_index_path",
+                      )
         end
       else
         render action: :edit
@@ -125,14 +140,14 @@ module Networking
     end
 
     def destroy
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       @network = services.networking.new_network
       @network.id = params[:id]
 
       if @network
         if @network.destroy
-          audit_logger.info(current_user, 'has deleted', @network)
-          flash[:notice] = 'Network successfully deleted.'
+          audit_logger.info(current_user, "has deleted", @network)
+          flash[:notice] = "Network successfully deleted."
         else
           flash[:error] = @network.errors.full_messages.to_sentence
         end
@@ -140,27 +155,30 @@ module Networking
 
       respond_to do |format|
         format.js {}
-        format.html { redirect_to plugin('networking').send("networks_#{@network_type}_index_path") }
+        format.html do
+          redirect_to plugin("networking").send(
+                        "networks_#{@network_type}_index_path",
+                      )
+        end
       end
     end
 
     def ip_availability
-      availability = begin
-        # you need to be network_viewer or network_admin in the project the network is defined in. 
-        # since the floating ip networks are usually shared from other projects we need to use the cloud_admin user. 
-        cloud_admin.networking.network_ip_availability(
-          params[:network_id]
-        )
-      rescue StandardError
-        nil
-      end
+      availability =
+        begin
+          # you need to be network_viewer or network_admin in the project the network is defined in.
+          # since the floating ip networks are usually shared from other projects we need to use the cloud_admin user.
+          cloud_admin.networking.network_ip_availability(params[:network_id])
+        rescue StandardError
+          nil
+        end
       render json: availability.nil? ? [] : availability.subnet_ip_availability
     end
 
     private
 
     def load_type
-      raise 'has to be implemented in subclass'
+      raise "has to be implemented in subclass"
     end
   end
 end

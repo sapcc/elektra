@@ -9,9 +9,7 @@ module ServiceLayer
       end
 
       def roles(filter = {})
-        elektron_identity.get('roles', filter).map_to(
-          'body.roles', &role_map
-        )
+        elektron_identity.get("roles", filter).map_to("body.roles", &role_map)
       end
 
       def find_role(id)

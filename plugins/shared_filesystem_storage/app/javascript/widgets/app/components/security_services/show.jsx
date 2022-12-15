@@ -1,5 +1,6 @@
 import { Modal, Button } from "react-bootstrap"
 import { policy } from "lib/policy"
+import React from "react"
 
 const Row = ({ label, value, children }) => (
   <tr>

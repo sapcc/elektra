@@ -4,11 +4,12 @@ module SimpleForm
     module BeforeFieldHtml
       # Name of the component method
       def before_field_html(wrapper_options = nil)
-        @before_field_html ||= begin
-          if options[:before_field_html].present?
-            options[:before_field_html].to_s
+        @before_field_html ||=
+          begin
+            if options[:before_field_html].present?
+              options[:before_field_html].to_s
+            end
           end
-        end
       end
 
       # Used when is optional

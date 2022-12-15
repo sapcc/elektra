@@ -5,17 +5,15 @@ module SharedFilesystemStorage
   class ShareNetwork < Core::ServiceLayer::Model
     def attributes_for_update
       {
-        'name'              => read('name'),
-        'description'       => read('description')
+        "name" => read("name"),
+        "description" => read("description"),
       }.delete_if { |_k, v| v.blank? }
     end
 
     def add_security_service(security_service_id)
       requires :id
       rescue_api_errors do
-        service.add_security_service_to_share_network(
-          security_service_id, id
-        )
+        service.add_security_service_to_share_network(security_service_id, id)
       end
     end
 
@@ -23,7 +21,8 @@ module SharedFilesystemStorage
       requires :id
       rescue_api_errors do
         service.remove_security_service_from_share_network(
-          security_service_id, id
+          security_service_id,
+          id,
         )
       end
     end

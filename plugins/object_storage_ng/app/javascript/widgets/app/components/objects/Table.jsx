@@ -18,6 +18,7 @@ const Table = ({
   showProperties,
   moveFile,
   copyFile,
+  rawUrl,
 }) => {
   const columns = React.useMemo(
     () => [
@@ -59,17 +60,24 @@ const Table = ({
                 )}%`}
             </>
           )}
-          <FileIcon item={item} />{" "}
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              if (item.subdir) changeDir(item)
-              else downloadFile(item)
-            }}
-          >
-            {item.display_name}
-          </a>
+          <FileIcon item={item} />
+
+          {/^text\/.*$/.test(item.content_type) ? (
+            <a href={rawUrl(item)} target="_blank" rel="noreferrer">
+              {item.display_name}
+            </a>
+          ) : (
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                if (item.subdir) changeDir(item)
+                else downloadFile(item)
+              }}
+            >
+              {item.display_name}
+            </a>
+          )}
           {item.error && (
             <>
               <br />
@@ -146,6 +154,7 @@ Table.propTypes = {
   copyFile: PropTypes.func.isRequired,
   moveFile: PropTypes.func.isRequired,
   showProperties: PropTypes.func.isRequired,
+  rawUrl: PropTypes.func.isRequired,
 }
 
 export default Table

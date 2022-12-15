@@ -1,7 +1,9 @@
+/* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import "lib/policy"
+import React from "react"
 
-export default ({ securityService, handleDelete }) => (
+const Item = ({ securityService, handleDelete }) => (
   <tr className={securityService.isDeleting ? "updating" : ""}>
     <td>
       <Link to={`/security-services/${securityService.id}/show`}>
@@ -67,3 +69,5 @@ export default ({ securityService, handleDelete }) => (
     </td>
   </tr>
 )
+
+export default Item

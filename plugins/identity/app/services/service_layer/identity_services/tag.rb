@@ -4,11 +4,13 @@ module ServiceLayer
   module IdentityServices
     # This module implements Openstack Project Tags API without Rails Model
     module Tag
-
       # GET /v3/projects/{project_id}/tags
       def list_tags(project_id = nil)
         # no check for blank project_id, catch elektron or backend api error
-        elektron_identity.get("projects/#{project_id}/tags").body.fetch("tags", {}) 
+        elektron_identity
+          .get("projects/#{project_id}/tags")
+          .body
+          .fetch("tags", {})
       end
 
       # PUT /v3/projects/{project_id}/tags/{tag}

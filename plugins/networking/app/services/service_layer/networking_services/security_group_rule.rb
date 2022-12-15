@@ -5,19 +5,22 @@ module ServiceLayer
     # Implements Openstack SecurityGroupRule
     module SecurityGroupRule
       def security_group_rule_map
-        @security_group_rule_map ||= class_map_proc(Networking::SecurityGroupRule)
+        @security_group_rule_map ||=
+          class_map_proc(Networking::SecurityGroupRule)
       end
 
       def security_group_rules(filter = {})
-        elektron_networking.get('security-group-rules', filter).map_to(
-          'body.security_group_rules', &security_group_rule_map
+        elektron_networking.get("security-group-rules", filter).map_to(
+          "body.security_group_rules",
+          &security_group_rule_map
         )
       end
 
       def find_security_group_rule!(id)
         return nil unless id
         elektron_networking.get("security-group-rules/#{id}").map_to(
-          'body.security_group_rule', &security_group_rule_map
+          "body.security_group_rule",
+          &security_group_rule_map
         )
       end
 
@@ -33,9 +36,11 @@ module ServiceLayer
 
       ########### Model Interface ###################
       def create_security_group_rule(attributes)
-        elektron_networking.post('security-group-rules') do
-          { security_group_rule: attributes }
-        end.body['security_group_rule']
+        elektron_networking
+          .post("security-group-rules") { { security_group_rule: attributes } }
+          .body[
+          "security_group_rule"
+        ]
       end
 
       def delete_security_group_rule(id)

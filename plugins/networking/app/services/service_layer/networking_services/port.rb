@@ -9,7 +9,7 @@ module ServiceLayer
       end
 
       def ports(filter = {})
-        elektron_networking.get('ports', filter).map_to('body.ports', &port_map)
+        elektron_networking.get("ports", filter).map_to("body.ports", &port_map)
       end
 
       def new_port(attributes = {})
@@ -18,7 +18,7 @@ module ServiceLayer
 
       def find_port!(id)
         return nil unless id
-        elektron_networking.get("ports/#{id}").map_to('body.port', &port_map)
+        elektron_networking.get("ports/#{id}").map_to("body.port", &port_map)
       end
 
       def find_port(id)
@@ -28,9 +28,8 @@ module ServiceLayer
       end
 
       def fixed_ip_ports(filter = {})
-        @fixed_ip_ports ||= ports(
-          { name: Networking::Port::FIXED_IP_PORT_NAME }.merge(filter)
-        )
+        @fixed_ip_ports ||=
+          ports({ name: Networking::Port::FIXED_IP_PORT_NAME }.merge(filter))
         # @fixed_ip_ports ||= ports({status: 'DOWN'}.merge(filter)).select do |port|
         #   port.device_id.blank? &&
         #   port.device_owner.blank? &&
@@ -40,15 +39,17 @@ module ServiceLayer
 
       ################### Model Interface #############
       def create_port(attributes)
-        elektron_networking.post('ports') do
-          { 'port' => attributes }
-        end.body['port']
+        elektron_networking.post("ports") { { "port" => attributes } }.body[
+          "port"
+        ]
       end
 
       def update_port(id, attributes)
-        elektron_networking.put("ports/#{id}") do
-          { 'port' => attributes }
-        end.body['port']
+        elektron_networking
+          .put("ports/#{id}") { { "port" => attributes } }
+          .body[
+          "port"
+        ]
       end
 
       def delete_port(id)

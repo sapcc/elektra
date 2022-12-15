@@ -17,14 +17,17 @@ module ServiceLayer
     MICROVERSION = 2.44
 
     def available?(_action_name_sym = nil)
-      elektron.service?('sharev2')
+      elektron.service?("sharev2")
     end
 
     def elektron_shares
-      @elektron_shares ||= elektron.service(
-        'sharev2',
-        headers: { 'X-OpenStack-Manila-API-Version' => MICROVERSION.to_s }
-      )
+      @elektron_shares ||=
+        elektron.service(
+          "sharev2",
+          headers: {
+            "X-OpenStack-Manila-API-Version" => MICROVERSION.to_s,
+          },
+        )
     end
 
     def microversion_newer_than?(version)

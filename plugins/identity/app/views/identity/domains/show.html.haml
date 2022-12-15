@@ -1,24 +1,24 @@
 
 -# = render "intro_section"
 
-.bs-callout.bs-callout-info-cta.bs-callout-emphasize.bs-callout-announcement
-  - if @two_factor_required
-    %p.emphasized-text
-      %strong 2FA has now been switched to SAP IDS.
-    %p
-      See the
-      %a{href: "https://documentation.global.cloud.sap/docs/blogs/better-two-factor-authentication--2fa--coming-soon/", target: "_blank"} 
-        announcement blog post
-      for further information.
-  - else
-    %p.emphasized-text
-      %strong 
-        2FA has now been activated for all users.
-    %p
-      See the
-      %a{href: "https://documentation.global.cloud.sap/docs/blogs/better-two-factor-authentication--2fa--coming-soon/", target: "_blank"} 
-        announcement blog post
-      for further information.
+-# .bs-callout.bs-callout-info-cta.bs-callout-emphasize.bs-callout-announcement
+-#   - if @two_factor_required
+-#     %p.emphasized-text
+-#       %strong 2FA has now been switched to SAP IDS.
+-#     %p
+-#       See the
+-#       %a{href: "https://documentation.global.cloud.sap/docs/blogs/better-two-factor-authentication--2fa--coming-soon/", target: "_blank"} 
+-#         announcement blog post
+-#       for further information.
+-#   - else
+-#     %p.emphasized-text
+-#       %strong 
+-#         2FA has now been activated for all users.
+-#     %p
+-#       See the
+-#       %a{href: "https://documentation.global.cloud.sap/docs/blogs/better-two-factor-authentication--2fa--coming-soon/", target: "_blank"} 
+-#         announcement blog post
+-#       for further information.
 
 
 .row
@@ -173,8 +173,9 @@
 
       -# Customer Survey
       -# .bs-callout.bs-callout-info-cta.bs-callout-emphasize.u-margin-top-normal
-      -#   = image_tag "CCLoud_Logo_light_250.svg", alt: "Converged Cloud", class: "bs-callout-image"
+      -#   = image_tag "CCloud_Logo_light.svg", alt: "Converged Cloud", class: "bs-callout-image"
       -#   Take our survey now and help us shape the future of Converged Cloud!
-      -#   %a{href: "https://employeeexperience.surveys.sap.com/jfe/form/SV_4ZNnaP3l7ooLfLM", target: "_blank"} 
+      -#   %a{href: "https://employeeexperience.surveys.sap.com/jfe/form/SV_80WgMq7WTBJFdP0", target: "_blank"} 
       -#     %i.fa.fa-fw.fa-arrow-right
       -#     Go to survey
+          

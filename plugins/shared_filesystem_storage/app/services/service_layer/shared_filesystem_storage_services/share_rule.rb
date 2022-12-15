@@ -9,9 +9,9 @@ module ServiceLayer
       end
 
       def share_rules(share_id)
-        elektron_shares.post("shares/#{share_id}/action") do
-          { access_list: nil }
-        end.map_to('body.access_list', &share_rule_map)
+        elektron_shares
+          .post("shares/#{share_id}/action") { { access_list: nil } }
+          .map_to("body.access_list", &share_rule_map)
       end
 
       def new_share_rule(share_id, params = {})
@@ -20,9 +20,11 @@ module ServiceLayer
 
       ################# INTERFACE METHODS ######################
       def create_share_rule(share_id, params)
-        elektron_shares.post("shares/#{share_id}/action") do
-          { allow_access: params }
-        end.body['access']
+        elektron_shares
+          .post("shares/#{share_id}/action") { { allow_access: params } }
+          .body[
+          "access"
+        ]
       end
 
       def delete_share_rule(share_id, rule_id)

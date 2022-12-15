@@ -7,6 +7,7 @@ import { policy } from "lib/policy"
 import { SearchField } from "lib/components/search_field"
 import Item from "./item"
 import { AjaxPaginate } from "lib/components/ajax_paginate"
+import React from "react"
 
 const TableRowFadeTransition = ({ children, ...props }) => (
   <CSSTransition {...props} timeout={200} classNames="css-transition-fade">

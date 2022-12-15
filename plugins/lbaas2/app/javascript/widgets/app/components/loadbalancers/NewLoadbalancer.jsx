@@ -2,18 +2,19 @@ import React, { useState, useEffect } from "react"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import { addNotice } from "lib/flashes"
-import useLoadbalancer, {
-  fetchAvailabilityZones,
-} from "../../lib/hooks/useLoadbalancer"
+import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
-import useCommons from "../../lib/hooks/useCommons"
 import Log from "../shared/logger"
+import { errorMessage } from "../../helpers/commonHelpers"
+import {
+  fetchAvailabilityZones,
+  fetchPrivateNetworks,
+  fetchSubnets,
+} from "../../actions/loadbalancer"
 
 const NewLoadbalancer = (props) => {
-  const { createLoadbalancer, fetchSubnets, fetchPrivateNetworks } =
-    useLoadbalancer()
-  const { errorMessage } = useCommons()
+  const { createLoadbalancer } = useLoadbalancer()
 
   const [privateNetworks, setPrivateNetworks] = useState({
     isLoading: false,
@@ -58,7 +59,7 @@ const NewLoadbalancer = (props) => {
         setAvailabilityZones({
           ...availabilityZones,
           isLoading: false,
-          items: data,
+          items: data.availability_zones,
           error: null,
         })
       })
@@ -120,11 +121,10 @@ const NewLoadbalancer = (props) => {
     // save the entered values in case of error
     setInitialValues(values)
     return createLoadbalancer(newValues)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Loadbalancer <b>{response.data.name}</b> ({response.data.id}) is
-            being created.
+            Loadbalancer <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         close()
@@ -146,13 +146,13 @@ const NewLoadbalancer = (props) => {
       // set the new subnets
       setSubnets({ ...subnets, isLoading: true, error: null, items: [] })
       fetchSubnets(props.value)
-        .then((response) => {
+        .then((data) => {
           // new subnets loaded
           setSubnets({
             ...subnets,
             isLoading: false,
             error: null,
-            items: response,
+            items: data.subnets,
           })
         })
         .catch((error) => {

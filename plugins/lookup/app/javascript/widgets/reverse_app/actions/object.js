@@ -47,7 +47,7 @@ const fetchObject = (value) => (dispatch, getState) =>
       .then((response) => {
         if (response.data.errors) {
           dispatch(
-            requestOjectFailure(
+            requestObjectFailure(
               `Could not load object (${response.data.errors})`
             )
           )

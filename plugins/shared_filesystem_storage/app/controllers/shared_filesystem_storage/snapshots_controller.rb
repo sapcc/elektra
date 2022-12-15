@@ -12,8 +12,8 @@ module SharedFilesystemStorage
     end
 
     def update
-      snapshot = services.shared_filesystem_storage
-                            .new_snapshot(snapshot_params)
+      snapshot =
+        services.shared_filesystem_storage.new_snapshot(snapshot_params)
       snapshot.id = params[:id]
       if snapshot.save
         render json: snapshot
@@ -23,8 +23,8 @@ module SharedFilesystemStorage
     end
 
     def create
-      snapshot = services.shared_filesystem_storage
-                            .new_snapshot(snapshot_params)
+      snapshot =
+        services.shared_filesystem_storage.new_snapshot(snapshot_params)
 
       if snapshot.save
         render json: snapshot

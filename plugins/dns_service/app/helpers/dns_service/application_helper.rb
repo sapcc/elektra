@@ -13,7 +13,9 @@ module DnsService
     private
 
     def select_pool(pool_id, pools = [])
-      pools = services.dns_service.pools[:items] if current_user.is_allowed?("dns_service:pool_list") and pools.empty?
+      pools = services.dns_service.pools[:items] if current_user.is_allowed?(
+        "dns_service:pool_list",
+      ) and pools.empty?
       pools.find { |p| p.id == pool_id }
     end
   end

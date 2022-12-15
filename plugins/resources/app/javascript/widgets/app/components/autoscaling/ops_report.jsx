@@ -1,3 +1,4 @@
+import React from "react"
 import { DataTable } from "lib/components/datatable"
 import { PrettyDate } from "lib/components/pretty_date"
 

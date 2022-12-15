@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom"
 import { useDispatch } from "../../stateProvider"
 import * as apiClient from "../../apiClient"
 import { Form } from "lib/elektra-form"
+import React from "react"
 
 const FormBody = ({ values }) => (
   <Modal.Body>

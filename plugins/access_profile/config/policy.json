@@ -1,5 +1,5 @@
 {
-  "access_profile_admin_required": "rule:project_admin and role:cloud_support_tools_viewer",
+  "access_profile_admin_required": "rule:project_admin",
 
   "access_profile:tag_list": "rule:access_profile_admin_required",
   "access_profile:tag_create": "rule:access_profile_admin_required",

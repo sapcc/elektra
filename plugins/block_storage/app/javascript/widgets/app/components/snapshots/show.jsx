@@ -1,35 +1,37 @@
-import {Modal, Button, Tabs, Tab} from 'react-bootstrap';
-import {Link} from 'react-router-dom';
-import {PrettyDate} from 'lib/components/pretty_date';
-import {PrettySize} from 'lib/components/pretty_size';
+import React from "react"
+import { Modal, Button, Tabs, Tab } from "react-bootstrap"
+import { Link } from "react-router-dom"
+import { PrettyDate } from "lib/components/pretty_date"
+import { PrettySize } from "lib/components/pretty_size"
 
-const Row = ({label, value, children}) => {
-  return (<tr>
-    <th style={ {width: '30%'} }>{label}</th>
-    <td>{value || children}</td>
-  </tr>)
-};
+const Row = ({ label, value, children }) => {
+  return (
+    <tr>
+      <th style={{ width: "30%" }}>{label}</th>
+      <td>{value || children}</td>
+    </tr>
+  )
+}
 
 export default class ShowModal extends React.Component {
-  state = {show: false, loadError: null}
+  state = { show: false, loadError: null }
 
   restoreUrl = (e) => {
-    if (!this.state.show)
-      this.props.history.replace(`/snapshots`)
+    if (!this.state.show) this.props.history.replace(`/snapshots`)
   }
 
   hide = (e) => {
     if (e) e.stopPropagation()
-    this.setState({show: false})
+    this.setState({ show: false })
   }
 
   componentDidMount() {
     this.setState({
-      show: this.props.id != null
+      show: this.props.id != null,
     })
-    if(!this.props.snapshot) {
+    if (!this.props.snapshot) {
       this.props.loadSnapshot().catch((loadError) => {
-        if(!this.props.snapshot) this.setState({loadError})
+        if (!this.props.snapshot) this.setState({ loadError })
       })
     }
   }
@@ -37,12 +39,12 @@ export default class ShowModal extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
       show: nextProps.id != null,
-      loadError: nextProps.snapshot != null ? null : this.state.loadError
+      loadError: nextProps.snapshot != null ? null : this.state.loadError,
     })
   }
 
   render() {
-    let {snapshot} = this.props
+    let { snapshot } = this.props
 
     return (
       <Modal
@@ -50,64 +52,75 @@ export default class ShowModal extends React.Component {
         onExited={this.restoreUrl}
         onHide={this.hide}
         dialogClassName="modal-xl"
-        aria-labelledby="contained-modal-title-lg">
+        aria-labelledby="contained-modal-title-lg"
+      >
         <Modal.Header closeButton={true}>
-          <Modal.Title id="contained-modal-title-lg">Snapshot {
-              snapshot
-                ? snapshot.name
-                : <span className='info-text'>{this.props.id}</span>
-            }
+          <Modal.Title id="contained-modal-title-lg">
+            Snapshot{" "}
+            {snapshot ? (
+              snapshot.name
+            ) : (
+              <span className="info-text">{this.props.id}</span>
+            )}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { this.state.loadError &&
+          {this.state.loadError && (
             <React.Fragment>
-              <div className='text-danger'>
+              <div className="text-danger">
                 <h4>Could not load snapshot!</h4>
                 <p>{this.state.loadError}</p>
               </div>
             </React.Fragment>
-          }
-          {snapshot ?
-            <table className='table no-borders'>
+          )}
+          {snapshot ? (
+            <table className="table no-borders">
               <tbody>
-                <Row label='Name' value={snapshot.name}/>
-                <Row label='ID' value={snapshot.id}/>
-                <Row label='Description' value={snapshot.description}/>
-                <Row label='Size (GB)' value={snapshot.size}/>
-                <Row label='Status' value={snapshot.status}/>
+                <Row label="Name" value={snapshot.name} />
+                <Row label="ID" value={snapshot.id} />
+                <Row label="Description" value={snapshot.description} />
+                <Row label="Size (GB)" value={snapshot.size} />
+                <Row label="Status" value={snapshot.status} />
 
-                <Row label='Progress' value={snapshot['os-extended-snapshot-attributes:progress']}/>
+                <Row
+                  label="Progress"
+                  value={snapshot["os-extended-snapshot-attributes:progress"]}
+                />
 
-                <Row label='Source Volume'>
-                  {snapshot.volume_name ?
+                <Row label="Source Volume">
+                  {snapshot.volume_name ? (
                     <React.Fragment>
                       {snapshot.volume_name}
-                      <br/>
-                      <span className='info-text'>{snapshot.volume_id}</span>
+                      <br />
+                      <span className="info-text">{snapshot.volume_id}</span>
                     </React.Fragment>
-                    :
+                  ) : (
                     snapshot.volume_id
-                  }
-                </Row>
-
-                <Row label='Metadata'>
-                  {snapshot.metadata && Object.keys(snapshot.metadata).map((key, index) =>
-                    <div key={index}>{key}: {snapshot.metadata[key]}</div>
                   )}
                 </Row>
 
-                <Row label='Created At'>
-                  <PrettyDate date={snapshot.created_at}/>
+                <Row label="Metadata">
+                  {snapshot.metadata &&
+                    Object.keys(snapshot.metadata).map((key, index) => (
+                      <div key={index}>
+                        {key}: {snapshot.metadata[key]}
+                      </div>
+                    ))}
                 </Row>
-                <Row label='Updated At'>
-                  <PrettyDate date={snapshot.updated_at}/>
+
+                <Row label="Created At">
+                  <PrettyDate date={snapshot.created_at} />
+                </Row>
+                <Row label="Updated At">
+                  <PrettyDate date={snapshot.updated_at} />
                 </Row>
               </tbody>
             </table>
-            :
-            <React.Fragment><span className='spinner'></span> Loading...</React.Fragment>
-          }
+          ) : (
+            <React.Fragment>
+              <span className="spinner"></span> Loading...
+            </React.Fragment>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.hide}>Close</Button>

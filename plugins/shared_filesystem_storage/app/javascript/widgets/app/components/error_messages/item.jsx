@@ -1,5 +1,6 @@
 import { policy } from "lib/policy"
 import { PrettyDate } from "lib/components/pretty_date"
+import React from "react"
 
 const Row = ({ label, value, children }) => {
   return (

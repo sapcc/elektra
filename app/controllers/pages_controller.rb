@@ -16,7 +16,7 @@ class PagesController < ActionController::Base
   private
 
   def current_region
-    ENV['MONSOON_DASHBOARD_REGION'] || 'eu-de-1'
+    ENV["MONSOON_DASHBOARD_REGION"] || "eu-de-1"
   end
 
   def current_domain
@@ -25,11 +25,10 @@ class PagesController < ActionController::Base
 
   def layout_for_page
     case params[:id]
-    when 'landing'
-      'juno-fullscreen'
+    when "landing"
+      "juno-fullscreen"
     else
-      'noscope'
+      "noscope"
     end
   end
-
 end

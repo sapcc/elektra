@@ -42,6 +42,7 @@ const Objects = ({ objectStoreEndpoint }) => {
     deleteObjects,
     loadAccountMetadataOnce,
     downloadObject,
+    rawObjectUrl,
   } = useActions()
 
   const [objects, dispatch] = React.useReducer(reducer, initialState)
@@ -420,6 +421,11 @@ const Objects = ({ objectStoreEndpoint }) => {
               deleteFolder={(item) => deleteFolder(item.subdir)}
               downloadFile={(item) => downloadFile(item.name, item.bytes)}
               showProperties={(item) => showProperties(item.name)}
+              rawUrl={(item) =>
+                rawObjectUrl(containerName, item.name, {
+                  inline: 1,
+                })
+              }
               copyFile={(item) => copyFile(item.name)}
               moveFile={(item) => moveFile(item.name)}
             />

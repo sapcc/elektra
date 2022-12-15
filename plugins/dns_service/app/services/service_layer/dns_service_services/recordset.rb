@@ -11,15 +11,16 @@ module ServiceLayer
       def recordsets(zone_id, filter = {})
         response = elektron_dns.get("zones/#{zone_id}/recordsets", filter)
         {
-          items: response.map_to('body.recordsets', &recordset_map),
-          total: response.body.fetch('metadata', {}).fetch('total_count', nil)
+          items: response.map_to("body.recordsets", &recordset_map),
+          total: response.body.fetch("metadata", {}).fetch("total_count", nil),
         }
       end
 
       def find_recordset(zone_id, recordset_id, filter = {})
         elektron_dns.get(
-          "zones/#{zone_id}/recordsets/#{recordset_id}", filter
-        ).map_to('body', &recordset_map)
+          "zones/#{zone_id}/recordsets/#{recordset_id}",
+          filter,
+        ).map_to("body", &recordset_map)
       end
 
       def new_recordset(zone_id, attributes = {})
@@ -28,17 +29,15 @@ module ServiceLayer
 
       ######################## MODEL INTERFACE ###########################
       def create_recordset(zone_id, attributes = {})
-        elektron_dns.post("zones/#{zone_id}/recordsets") do
-          attributes
-        end.body
+        elektron_dns.post("zones/#{zone_id}/recordsets") { attributes }.body
       end
 
       def update_recordset(zone_id, id, attributes = {})
-        project_id = attributes.delete('project_id')
+        project_id = attributes.delete("project_id")
         filter = project_id ? { project_id: project_id } : {}
-        elektron_dns.put("zones/#{zone_id}/recordsets/#{id}", filter) do
-          attributes
-        end.body
+        elektron_dns
+          .put("zones/#{zone_id}/recordsets/#{id}", filter) { attributes }
+          .body
       end
 
       def delete_recordset(zone_id, id, options = {})

@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: 01347fe32eb9b9680c9ec699fed17293aeed3d3b
-  tag: v2.2.1
+  revision: f97fd15b91c8ba584d62caa20798bdd727705fb5
+  tag: v2.2.2
   specs:
-    elektron (2.2.1)
+    elektron (2.2.2)
 
 GIT
   remote: https://github.com/sapcc/lyra-client.git
@@ -20,9 +20,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 1598d2a9d214d3e5fb9baa7cd3f56a42c79f4f06
+  revision: bbd454406f63e37e848912bb8dcd2b2591c7f265
   specs:
-    monsoon-openstack-auth (2.0.7)
+    monsoon-openstack-auth (2.0.8)
       excon
       hashie
       rails
@@ -70,6 +70,7 @@ PATH
   specs:
     email_service (0.0.1)
       aws-sdk-ses
+      aws-sdk-sesv2
       virtus
 
 PATH
@@ -264,6 +265,9 @@ GEM
     aws-sdk-ses (1.47.0)
       aws-sdk-core (~> 3, >= 3.127.0)
       aws-sigv4 (~> 1.1)
+    aws-sdk-sesv2 (1.28.0)
+      aws-sdk-core (~> 3, >= 3.127.0)
+      aws-sigv4 (~> 1.1)
     aws-sigv4 (1.5.0)
       aws-eventstream (~> 1, >= 1.0.2)
     axiom-types (0.1.1)
@@ -338,7 +342,7 @@ GEM
       dry-schema (~> 1.8, >= 1.8.0)
     erubi (1.10.0)
     erubis (2.7.0)
-    excon (0.93.1)
+    excon (0.94.0)
     execjs (2.8.1)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
@@ -414,6 +418,8 @@ GEM
     netaddr (2.0.4)
     netrc (0.11.0)
     nio4r (2.5.8)
+    nokogiri (1.13.6-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.13.6-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.13.6-x86_64-linux)
@@ -575,6 +581,7 @@ GEM
     zeitwerk (2.6.0)
 
 PLATFORMS
+  arm64-darwin-21
   x86_64-darwin-21
   x86_64-linux-musl
 
@@ -585,6 +592,7 @@ DEPENDENCIES
   audit!
   automation!
   aws-sdk-ses
+  aws-sdk-sesv2
   block_storage!
   bootstrap-sass
   byebug

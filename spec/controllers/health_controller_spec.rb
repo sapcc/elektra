@@ -1,7 +1,6 @@
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe HealthController, type: :controller do
-
   describe "GET #liveliness" do
     it "returns http success" do
       get :liveliness

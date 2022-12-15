@@ -1,13 +1,16 @@
-import { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { Link } from "react-router-dom"
 import StaticTags from "../StaticTags"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
 import CopyPastePopover from "../shared/CopyPastePopover"
-import CachedInfoPopover from "../shared/CachedInforPopover"
+import PopoverInfo from "../shared/PopoverInfo"
 import CachedInfoPopoverContent from "./CachedInfoPopoverContent"
 import CachedInfoPopoverContentContainers from "../shared/CachedInfoPopoverContentContainers"
+import {
+  certificateContainerRelation,
+  clientAuthenticationRelation,
+  tlsCiphersRelation,
+} from "../../helpers/listenerHelper"
 import useListener from "../../lib/hooks/useListener"
-import useCommons from "../../lib/hooks/useCommons"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
@@ -19,6 +22,12 @@ import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
 import BooleanLabel from "../shared/BooleanLabel"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+  MyHighlighter,
+} from "../../helpers/commonHelpers"
 
 const ListenerItem = ({
   props,
@@ -27,15 +36,8 @@ const ListenerItem = ({
   disabled,
   shouldPoll,
 }) => {
-  const {
-    persistListener,
-    certificateContainerRelation,
-    deleteListener,
-    onSelectListener,
-    reset,
-  } = useListener()
-  const { MyHighlighter, matchParams, errorMessage, searchParamsToString } =
-    useCommons()
+  const { persistListener, removeListener, onSelectListener, reset } =
+    useListener()
   const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(
@@ -104,12 +106,12 @@ const ListenerItem = ({
     }
     const listenerID = listener.id
     const listenerName = listener.name
-    return deleteListener(loadbalancerID, listenerID, listenerName)
-      .then((response) => {
+    return removeListener(loadbalancerID, listenerID, listenerName)
+      .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Listener <b>{listenerName}</b> ({listenerID}) is being deleted.
-          </React.Fragment>
+          </>
         )
         // fetch the lb again containing the new listener so it gets updated fast
         persistLoadbalancer(loadbalancerID).catch((error) => {})
@@ -117,7 +119,7 @@ const ListenerItem = ({
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.data),
+            errors: errorMessage(error),
           })
         )
       })
@@ -206,6 +208,7 @@ const ListenerItem = ({
 
   const displayProtocol = () => {
     const containers = collectContainers()
+    const ciphersList = listener.tls_ciphers?.split(":") || []
     const numberOfElements = containers.reduce(
       (numberOfElements, container) => {
         if (container.ref) {
@@ -222,7 +225,7 @@ const ListenerItem = ({
     return (
       <React.Fragment>
         <MyHighlighter search={searchTerm}>{listener.protocol}</MyHighlighter>
-        {certificateContainerRelation(listener.protocol) && (
+        {clientAuthenticationRelation(listener.protocol) && (
           <div className="display-flex">
             <span>Client Auth: </span>
             <span className="label-right">
@@ -234,13 +237,27 @@ const ListenerItem = ({
           <div className="display-flex">
             <span>Secrets: </span>
             <div className="label-right">
-              <CachedInfoPopover
+              <PopoverInfo
                 popoverId={"listeners-secrets-popover-" + listener.id}
                 buttonName={numberOfElements}
                 title={<React.Fragment>Secrets</React.Fragment>}
                 content={
                   <CachedInfoPopoverContentContainers containers={containers} />
                 }
+                footer="Preview from cache"
+              />
+            </div>
+          </div>
+        )}
+        {tlsCiphersRelation(listener.protocol) && (
+          <div className="display-flex">
+            <span>TLS ciphers: </span>
+            <div className="label-right">
+              <PopoverInfo
+                popoverId={"tls-ciphers-popover-" + listener.id}
+                buttonName={ciphersList.length}
+                title="TLS ciphers"
+                content={<StaticTags tags={ciphersList} />}
               />
             </div>
           </div>
@@ -287,11 +304,11 @@ const ListenerItem = ({
         {disabled ? (
           <span className="info-text">{l7PolicyIDs.length}</span>
         ) : (
-          <CachedInfoPopover
+          <PopoverInfo
             popoverId={"l7policies-popover-" + listener.id}
             buttonName={l7PolicyIDs.length}
             title={
-              <React.Fragment>
+              <>
                 L7 Policies
                 <Link
                   to="#"
@@ -300,7 +317,7 @@ const ListenerItem = ({
                 >
                   Show all
                 </Link>
-              </React.Fragment>
+              </>
             }
             content={
               <CachedInfoPopoverContent
@@ -311,6 +328,7 @@ const ListenerItem = ({
                 cachedl7PolicyIDs={listener.cached_l7policies}
               />
             }
+            footer="Preview from cache"
           />
         )}
       </td>

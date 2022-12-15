@@ -11,12 +11,12 @@ import uniqueId from "lodash/uniqueId"
 import { Link } from "react-router-dom"
 import { ErrorsList } from "lib/elektra-form"
 import { addNotice } from "lib/flashes"
-import useCommons from "../../lib/hooks/useCommons"
 import useMember, {
   validateForm,
   formAttrForSubmit,
 } from "../../lib/hooks/useMember"
 import usePool from "../../lib/hooks/usePool"
+import { errorMessage } from "../../helpers/commonHelpers"
 
 const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
   return (
@@ -66,7 +66,6 @@ const NewMemberForm = (
   const [formErrors, setFormErrors] = useState(null)
   const { create, persistMembers } = useMember()
   const { persistPool } = usePool()
-  const { errorMessage } = useCommons()
 
   useEffect(() => {
     if (loadbalancerID && poolID) {

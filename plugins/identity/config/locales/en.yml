@@ -39,8 +39,6 @@ en:
     service: Service User
     sharedfilesystem_admin: Manila Administrator
     sharedfilesystem_viewer: Manila Read-Only
-    swiftoperator: Object Store Administrator
-    swiftreseller: Object Store Cloud Administrator
     objectstore_admin: Swift Administrator
     objectstore_viewer: Swift Read-Only
     volume_admin: Cinder Administrator

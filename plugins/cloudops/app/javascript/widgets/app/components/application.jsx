@@ -1,7 +1,7 @@
 /* eslint no-console:0 */
 import { HashRouter, Route, Redirect } from "react-router-dom"
 import { withRouter } from "react-router"
-
+import React from "react"
 import { FlashMessages } from "lib/flashes"
 
 import Menu from "../containers/menu"
@@ -39,7 +39,7 @@ let Breadcrumb = (props) => {
 Breadcrumb = withRouter(Breadcrumb)
 
 // render all components inside a hash router
-export default (props) => (
+const CloudOpsApp = (props) => (
   <HashRouter /*hashType="noslash"*/>
     <React.Fragment>
       <Menu />
@@ -57,3 +57,5 @@ export default (props) => (
     </React.Fragment>
   </HashRouter>
 )
+
+export default CloudOpsApp

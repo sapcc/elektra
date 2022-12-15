@@ -19,6 +19,7 @@ class Groups extends React.Component {
   }
 
   toggleMembersShow = (event, groupId) => {
+    // eslint-disable-next-line no-undef
     var li = $(event.target.closest("li"))
     if (li.hasClass("node-expanded")) {
       li.removeClass("node-expanded")

@@ -1,9 +1,11 @@
+/* eslint-disable no-undef */
 import React from "react"
 import { createStore, applyMiddleware, compose } from "redux"
 import { Provider } from "react-redux"
 import ReduxThunk from "redux-thunk"
 import AppReducers from "./reducers/index"
-import App from "./components/app.jsx"
+import ReactAjaxHelper from "./lib/ajax_helper"
+import App from "./components/app"
 import { setAjaxHelper, setBackendAjaxClient } from "./actions/ajax_helper"
 import { createWidget } from "lib/widget"
 

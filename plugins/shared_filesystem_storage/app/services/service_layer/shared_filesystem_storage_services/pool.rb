@@ -9,8 +9,10 @@ module ServiceLayer
       end
 
       def pools(filter = {})
-        elektron_shares.get('scheduler-stats/pools/detail', filter)
-                       .map_to('body.pools', &pool_map)
+        elektron_shares.get("scheduler-stats/pools/detail", filter).map_to(
+          "body.pools",
+          &pool_map
+        )
       end
 
       def find_pool!(id)

@@ -1,6 +1,8 @@
 import * as constants from "../constants"
 import { ajaxHelper } from "lib/ajax_helper"
 import { addNotice, addError } from "lib/flashes"
+import React from "react"
+import { ErrorsList } from "lib/elektra-form/components/errors_list"
 
 //################ SHARE TYPES ################
 const receiveShareTypes = (shareTypes) => ({

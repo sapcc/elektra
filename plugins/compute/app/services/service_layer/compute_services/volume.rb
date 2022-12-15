@@ -13,28 +13,29 @@ module ServiceLayer
         # volumes = elektron_compute.get('os-volumes', filter).body['volumes']
         volumes = service_manager.block_storage.volumes_detail
 
-        server_volumes = volumes.select do |vol|
-          vol.attachments.find do |attachment|
-            attachment['serverId'] == server_id ||
-              attachment['server_id'] == server_id
+        server_volumes =
+          volumes.select do |vol|
+            vol.attachments.find do |attachment|
+              attachment["serverId"] == server_id ||
+                attachment["server_id"] == server_id
+            end
           end
-        end
       end
 
       def attach_volume(volume_id, server_id, device)
         elektron_compute.post("servers/#{server_id}/os-volume_attachments") do
           {
-            'volumeAttachment' => {
-              'volumeId' => volume_id.to_s,
-              'device' => device
-            }
+            "volumeAttachment" => {
+              "volumeId" => volume_id.to_s,
+              "device" => device,
+            },
           }
         end
       end
 
       def detach_volume(volume_id, server_id)
         elektron_compute.delete(
-          "servers/#{server_id}/os-volume_attachments/#{volume_id}"
+          "servers/#{server_id}/os-volume_attachments/#{volume_id}",
         )
       end
     end

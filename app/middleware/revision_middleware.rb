@@ -1,18 +1,14 @@
 class RevisionMiddleware
-
   class Revision
     def initialize(root = Pathname.new(Dir.pwd))
       @root = root
     end
 
     def to_s
-      @revision ||= begin
-        if revision_file.exist?
-          revision_file.read.strip
-        else
-          "unknown"
+      @revision ||=
+        begin
+          revision_file.exist? ? revision_file.read.strip : "unknown"
         end
-      end
     end
 
     private
@@ -34,10 +30,14 @@ class RevisionMiddleware
   def call(env)
     if env["PATH_INFO"] == "/system/revision"
       body = "#{@revision}\n"
-      [200, { "Content-Type" => "text/plain", "Content-Length" => body.size.to_s }, [body]]
+      [
+        200,
+        { "Content-Type" => "text/plain", "Content-Length" => body.size.to_s },
+        [body],
+      ]
     else
       status, headers, body = @app.call(env)
-      headers["X-Revision"]    = @revision.to_s
+      headers["X-Revision"] = @revision.to_s
       headers["X-Server-Addr"] = env["SERVER_ADDR"] if env["SERVER_ADDR"]
       [status, headers, body]
     end

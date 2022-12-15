@@ -8,21 +8,24 @@ module ServiceLayer
       end
 
       def snapshots(filter = {})
-        elektron_volumes.get('snapshots', filter).map_to(
-          'body.snapshots', &snapshot_map
+        elektron_volumes.get("snapshots", filter).map_to(
+          "body.snapshots",
+          &snapshot_map
         )
       end
 
       def snapshots_detail(filter = {})
-        elektron_volumes.get('snapshots/detail', filter).map_to(
-          'body.snapshots', &snapshot_map
+        elektron_volumes.get("snapshots/detail", filter).map_to(
+          "body.snapshots",
+          &snapshot_map
         )
       end
 
       def find_snapshot!(id)
         return nil if id.blank?
         elektron_volumes.get("snapshots/#{id}").map_to(
-          'body.snapshot', &snapshot_map
+          "body.snapshot",
+          &snapshot_map
         )
       end
 
@@ -38,15 +41,15 @@ module ServiceLayer
 
       ################## MODEL INTERFACE METHODS ####################
       def create_snapshot(params = {})
-        elektron_volumes.post('snapshots') do
-          { snapshot: params }
-        end.body['snapshot']
+        elektron_volumes.post("snapshots") { { snapshot: params } }.body[
+          "snapshot"
+        ]
       end
 
       def update_snapshot(id, params = {})
-        elektron_volumes.put("snapshots/#{id}") do
-          { snapshot: params }
-        end.body['snapshot']
+        elektron_volumes.put("snapshots/#{id}") { { snapshot: params } }.body[
+          "snapshot"
+        ]
       end
 
       def delete_snapshot(id)
@@ -57,11 +60,11 @@ module ServiceLayer
         status = status.with_indifferent_access
         elektron_volumes.post("snapshots/#{id}/action") do
           {
-            'os-reset_status' => {
-              'status': status['status'],
-              'attach_status': status['attach_status'],
-              'migration_status': status['migration_status']
-            }
+            "os-reset_status" => {
+              status: status["status"],
+              attach_status: status["attach_status"],
+              migration_status: status["migration_status"],
+            },
           }
         end
       end

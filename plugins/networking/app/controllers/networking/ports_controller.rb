@@ -4,7 +4,7 @@ module Networking
   # Implements Port actions
   class PortsController < DashboardController
     # set policy context
-    authorization_context 'networking'
+    authorization_context "networking"
     # enforce permission checks. This will automatically
     # investigate the rule name.
     authorization_required only: %i[index create delete]
@@ -12,9 +12,12 @@ module Networking
     def index
       per_page = params[:per_page] || 30
 
-      ports = paginatable(per_page: per_page) do |pagination_options|
-        services.networking.ports({ sort_key: 'id' }.merge(pagination_options))
-      end
+      ports =
+        paginatable(per_page: per_page) do |pagination_options|
+          services.networking.ports(
+            { sort_key: "id" }.merge(pagination_options),
+          )
+        end
 
       # render json: { ports: ports, has_next: @pagination_has_next }
       if request.xhr?
@@ -27,7 +30,7 @@ module Networking
 
     def show
       port = services.networking.find_port(params[:id])
-      enforce_permissions('::networking:port_get', port: port)
+      enforce_permissions("::networking:port_get", port: port)
       render json: port
     end
 
@@ -38,14 +41,20 @@ module Networking
       # mark as fixed ip
       port.name = Networking::Port::FIXED_IP_PORT_NAME
       port.network_id = params[:port][:network_id]
-      port.description = params[:port][:description] unless params[:port][:description].blank?
+      port.description = params[:port][:description] unless params[:port][
+        :description
+      ].blank?
       port.fixed_ips = [
         {
           subnet_id: params[:port][:subnet_id],
-          ip_address: params[:port][:ip_address]
-        }
+          ip_address: params[:port][:ip_address],
+        },
       ]
-      port.security_groups = params[:port][:security_groups] unless params[:port][:security_groups].blank?
+      port.security_groups = params[:port][:security_groups] unless params[
+        :port
+      ][
+        :security_groups
+      ].blank?
 
       if port.save
         render json: port
@@ -81,7 +90,10 @@ module Networking
     end
 
     def networks
-      render json: { networks: services.networking.networks('router:external' => false) }
+      render json: {
+               networks:
+                 services.networking.networks("router:external" => false),
+             }
     end
 
     def subnets

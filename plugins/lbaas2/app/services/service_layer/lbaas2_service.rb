@@ -13,15 +13,16 @@ module ServiceLayer
     include Lbaas2Services::AvailabilityZone
 
     def available?(_action_name_sym = nil)
-      elektron.service?('octavia')
+      elektron.service?("octavia")
     end
 
     def elektron_lb2
-      @elektron_lb2 ||= elektron.service('octavia', path_prefix: '/v2.0/lbaas')
+      @elektron_lb2 ||= elektron.service("octavia", path_prefix: "/v2.0/lbaas")
     end
 
     def elektron_amphorae
-      @elektron_lb2 ||= elektron.service('octavia', path_prefix: '/v2.0/octavia/amphorae')
+      @elektron_lb2 ||=
+        elektron.service("octavia", path_prefix: "/v2.0/octavia/amphorae")
     end
   end
 end

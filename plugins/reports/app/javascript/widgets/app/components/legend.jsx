@@ -3,6 +3,7 @@ import { legendColor } from "d3-svg-legend"
 import { select } from "d3-selection"
 import { decompose } from "d3-decompose"
 import jsxToString from "jsx-to-string"
+import React from "react"
 
 class Legend extends React.Component {
   componentDidMount() {

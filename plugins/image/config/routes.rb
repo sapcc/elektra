@@ -1,15 +1,15 @@
 Image::Engine.routes.draw do
-  root to: 'application#index'
+  root to: "application#index"
 
   # next generation plugin
   namespace :ng do
-    get '/', to: 'images#app'
+    get "/", to: "images#app"
     resources :images, except: %i[new edit] do
-      put 'update_visibility'
+      put "update_visibility"
 
       resources :members, except: %i[show new edit] do
-        put 'accept', on: :collection
-        put 'reject', on: :collection
+        put "accept", on: :collection
+        put "reject", on: :collection
       end
     end
   end
@@ -21,7 +21,7 @@ Image::Engine.routes.draw do
 
     resources :private do
       put :publish
-      resources :members, module: :private, except: [:edit, :update, :show]
+      resources :members, module: :private, except: %i[edit update show]
     end
     resources :suggested do
       put :accept

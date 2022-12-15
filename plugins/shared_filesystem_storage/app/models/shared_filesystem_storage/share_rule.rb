@@ -5,7 +5,7 @@ module SharedFilesystemStorage
   class ShareRule < Core::ServiceLayer::Model
     # msp to driver create method
     def perform_service_create(create_attributes)
-      share_id = create_attributes.delete('share_id')
+      share_id = create_attributes.delete("share_id")
       service.create_share_rule(share_id, create_attributes)
     end
 

@@ -1,3 +1,4 @@
+import React from "react"
 import * as constants from "../constants"
 import { ajaxHelper, pluginAjaxHelper } from "lib/ajax_helper"
 import { addError } from "lib/flashes"
@@ -216,7 +217,9 @@ export const pollRunningSyncProject = ({ domainID, projectID }) =>
     //running sync has completed
     ajaxHelper
       .get(`/v1/domains/${domainID}/projects/${projectID}`, {
-        resource: "none",
+        params: {
+          resource: "none",
+        },
       })
       .catch((error) => {
         dispatch(syncProjectFailure())

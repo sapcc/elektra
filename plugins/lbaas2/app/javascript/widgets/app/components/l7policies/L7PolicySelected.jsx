@@ -1,11 +1,11 @@
-import { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState, useMemo } from "react"
+
 import CopyPastePopover from "../shared/CopyPastePopover"
 import StaticTags from "../StaticTags"
 import useL7Policy from "../../lib/hooks/useL7Policy"
 import { Link } from "react-router-dom"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import useCommons from "../../lib/hooks/useCommons"
 import useListener from "../../lib/hooks/useListener"
 import SmartLink from "../shared/SmartLink"
 import { policy } from "lib/policy"
@@ -13,11 +13,15 @@ import { scope } from "lib/ajax_helper"
 import Log from "../shared/logger"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import { actionRedirect } from "../../helpers/l7PolicyHelpers"
 
 const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
-  const { actionRedirect, deleteL7Policy, persistL7Policy, reset } =
-    useL7Policy()
-  const { matchParams, errorMessage, searchParamsToString } = useCommons()
+  const { removeL7Policy, persistL7Policy, reset } = useL7Policy()
   const { persistListener } = useListener()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const { entityStatus } = useStatus(
@@ -78,8 +82,8 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
     }
     const l7policyID = l7Policy.id
     const l7policyName = l7Policy.name
-    return deleteL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
-      .then((response) => {
+    return removeL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
+      .then((data) => {
         addNotice(
           <React.Fragment>
             L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.
@@ -89,13 +93,11 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
         persistListener(loadbalancerID, listenerID)
           .then(() => {})
           .catch((error) => {})
-        // on remove go back to policy list
-        onBackLink()
       })
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.data),
+            errors: errorMessage(error),
           })
         )
       })

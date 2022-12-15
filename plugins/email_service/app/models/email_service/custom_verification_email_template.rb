@@ -1,6 +1,5 @@
 module EmailService
   class CustomVerificationEmailTemplate
-
     include Virtus.model
     extend ActiveModel::Naming
     include ActiveModel::Conversion
@@ -19,17 +18,22 @@ module EmailService
     strip_attributes
 
     # validation
-    validates_presence_of :template_name, message: "template name can't be empty"
-    validates_presence_of :from_email_address, message: "from email address can't be empty"
-    validates_presence_of :template_subject, message: "template subject can't be empty"
-    validates_presence_of :template_content, message: "template content can't be empty"
-    validates_presence_of :success_redirection_url, message: "success_redirection_url can't be empty"
-    validates_presence_of :failure_redirection_url, message: "failure_redirection_url can't be empty"
+    validates_presence_of :template_name,
+                          message: "template name can't be empty"
+    validates_presence_of :from_email_address,
+                          message: "from email address can't be empty"
+    validates_presence_of :template_subject,
+                          message: "template subject can't be empty"
+    validates_presence_of :template_content,
+                          message: "template content can't be empty"
+    validates_presence_of :success_redirection_url,
+                          message: "success_redirection_url can't be empty"
+    validates_presence_of :failure_redirection_url,
+                          message: "failure_redirection_url can't be empty"
 
     validates :from_email_address, presence: true, email: true
     validates :success_redirection_url, presence: true, url: true
     validates :failure_redirection_url, presence: true, url: true
-
 
     def to_model
       self
@@ -43,11 +47,8 @@ module EmailService
 
     def assign_errors(messages)
       messages.each do |key, value|
-        value.each do |item|
-          errors.add key.to_sym, item
-        end
+        value.each { |item| errors.add key.to_sym, item }
       end
     end
-
   end
 end

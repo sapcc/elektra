@@ -3,15 +3,16 @@
 module Lookup
   # Collect project information
   class ReverseLookupController < DashboardController
-    authorization_context 'lookup'
+    authorization_context "lookup"
     authorization_required
 
     before_action :role_assigments, only: %i[users groups]
 
-    SEARCHBY = { ip: 'ip', dns: 'dns', instance: 'instance' }.freeze
+    SEARCHBY = { ip: "ip", dns: "dns", instance: "instance" }.freeze
     SEARCHBY.values.each(&:freeze) # change because of warning{ |v| v.freeze }
 
-    def index; end
+    def index
+    end
 
     def domain
       project_id = params[:reverseLookupProjectId]
@@ -27,11 +28,12 @@ module Lookup
     def parents
       project_id = params[:reverseLookupProjectId]
 
-      identity_project = cloud_admin.identity.find_project(
-        project_id, parents_as_ids: true
-      )
+      identity_project =
+        cloud_admin.identity.find_project(project_id, parents_as_ids: true)
       if identity_project.blank?
-        render json: { projectId: project_id }, status: 404 if identity_project.blank?
+        if identity_project.blank?
+          render json: { projectId: project_id }, status: 404
+        end
         return
       end
 
@@ -42,7 +44,10 @@ module Lookup
       # add parents
       parents.each do |parent|
         parent_project = cloud_admin.identity.find_project(parent)
-        project_parent_list.unshift(name: parent_project.name, id: parent_project.id)
+        project_parent_list.unshift(
+          name: parent_project.name,
+          id: parent_project.id,
+        )
       end
 
       render json: project_parent_list
@@ -51,20 +56,23 @@ module Lookup
     def users
       # get users
       ra_users = []
-      @assigments.reject { |ra| ra.user.blank? }.each_with_object([]) do |ra, _|
-        user_profile = UserProfile.search_by_name(ra.user[:name]).first
-        user = { name: ra.user[:name], id: ra.user[:id] }
-        user[:fullName] = user_profile['full_name'] unless user_profile.blank?
-        ra_users << user
-      end
+      @assigments
+        .reject { |ra| ra.user.blank? }
+        .each_with_object([]) do |ra, _|
+          user_profile = UserProfile.search_by_name(ra.user[:name]).first
+          user = { name: ra.user[:name], id: ra.user[:id] }
+          user[:fullName] = user_profile["full_name"] unless user_profile.blank?
+          ra_users << user
+        end
 
       render json: ra_users
     end
 
     def groups
-      groups = @assigments.reject { |ra| ra.group.blank? }.map do |ra|
-        { id: ra.group[:id], name: ra.group[:name] }
-      end
+      groups =
+        @assigments
+          .reject { |ra| ra.group.blank? }
+          .map { |ra| { id: ra.group[:id], name: ra.group[:name] } }
 
       render json: groups
     end
@@ -76,9 +84,10 @@ module Lookup
         render json: { groupId: group_id }, status: 404 if members_raw.blank?
         return
       end
-      members = members_raw.map do |item|
-        { name: item.name, id: item.id, fullName: item.description }
-      end
+      members =
+        members_raw.map do |item|
+          { name: item.name, id: item.id, fullName: item.description }
+        end
 
       render json: members
     end
@@ -94,7 +103,7 @@ module Lookup
           render json: res, status: 404
           return
         end
-        res[:detailsTitle] = 'Port information'
+        res[:detailsTitle] = "Port information"
         res[:details] = cloud_admin.networking.find_port(floating_ip.port_id)
       elsif search_by == SEARCHBY[:instance]
         server = cloud_admin.compute.find_server(obj_id)
@@ -102,15 +111,19 @@ module Lookup
           render json: res, status: 404
           return
         end
-        res[:detailsTitle] = 'Compute instance information'
+        res[:detailsTitle] = "Compute instance information"
         res[:details] = server
       elsif search_by == SEARCHBY[:dns]
-        recordsets = cloud_admin.dns_service.recordsets(obj_id, all_projects: true).fetch(:items, [])
+        recordsets =
+          cloud_admin
+            .dns_service
+            .recordsets(obj_id, all_projects: true)
+            .fetch(:items, [])
         if recordsets.blank?
           render json: res, status: 404
           return
         end
-        res[:detailsTitle] = 'Recordsets information'
+        res[:detailsTitle] = "Recordsets information"
         res[:details] = recordsets
       end
       render json: res
@@ -140,14 +153,18 @@ module Lookup
 
       # decide if IP, DNS or instance
       if begin
-            IPAddr.new(search_value)
-          rescue StandardError
-            false
-          end
+           IPAddr.new(search_value)
+         rescue StandardError
+           false
+         end
         res[:searchBy] = SEARCHBY[:ip]
 
         # floating IPs
-        floating_ip = cloud_admin.networking.floating_ips(floating_ip_address: search_value).first
+        floating_ip =
+          cloud_admin
+            .networking
+            .floating_ips(floating_ip_address: search_value)
+            .first
         if floating_ip.blank?
           render json: res, status: 404
           return
@@ -159,7 +176,8 @@ module Lookup
 
         # project id
         res[:projectId] = floating_ip.tenant_id
-      elsif search_value.count("^0-9a-z\-").zero? # instance id
+      elsif search_value.count("^0-9a-z\-").zero?
+        # instance id
         res[:searchBy] = SEARCHBY[:instance]
         server = cloud_admin.compute.find_server(search_value)
         if server.blank?
@@ -176,9 +194,14 @@ module Lookup
         res[:searchBy] = SEARCHBY[:dns]
 
         # check if the dns has a point at the end
-        search_value += '.' unless search_value.end_with? '.'
+        search_value += "." unless search_value.end_with? "."
 
-        dns_record = cloud_admin.dns_service.zones(all_projects: true, name: search_value).fetch(:items, []).first
+        dns_record =
+          cloud_admin
+            .dns_service
+            .zones(all_projects: true, name: search_value)
+            .fetch(:items, [])
+            .first
         if dns_record.blank?
           render json: res, status: 404
           return
@@ -201,22 +224,19 @@ module Lookup
       project_id = params[:reverseLookupProjectId]
 
       # role object
-      role = cloud_admin.identity.find_role_by_name('admin')
+      role = cloud_admin.identity.find_role_by_name("admin")
 
       # role assigments
-      @assigments = cloud_admin.identity.role_assignments(
-        'scope.project.id' => project_id,
-        'role.id' => role.id,
-        include_names: true
-      )
+      @assigments =
+        cloud_admin.identity.role_assignments(
+          "scope.project.id" => project_id,
+          "role.id" => role.id,
+          :include_names => true,
+        )
     end
 
     def flatten_nested_hash(hash)
-      if hash.blank?
-        []
-      else
-        hash.flat_map { |k, v| [k, *flatten_nested_hash(v)] }
-      end
+      hash.blank? ? [] : hash.flat_map { |k, v| [k, *flatten_nested_hash(v)] }
     end
   end
 end

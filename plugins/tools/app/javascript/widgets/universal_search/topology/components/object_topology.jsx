@@ -1,91 +1,96 @@
-import { Graph } from './graph'
-import ReactJson from 'react-json-view'
-import { Popover, Modal, Button } from 'react-bootstrap'
+import { Graph } from "./graph"
+import ReactJson from "react-json-view"
+import { Popover, Modal, Button } from "react-bootstrap"
+import React from "react"
 
 export default class App extends React.Component {
   state = {
     filterCollapsed: true,
-    selectedTypes: {}
+    selectedTypes: {},
   }
 
   static defaultProps = {
-    showFilter: true
+    showFilter: true,
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.loadRelatedObjects(this.props.objectId)
     if (this.props.objects) {
       this.setInitialSelectedTypes(this.props.objects)
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.props.resetState()
-    this.setState({filterCollapsed: true, selectedTypes: {}})
+    this.setState({ filterCollapsed: true, selectedTypes: {} })
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if (Object.keys(this.state.selectedTypes).length==0 && nextProps.objects) {
+    if (
+      Object.keys(this.state.selectedTypes).length == 0 &&
+      nextProps.objects
+    ) {
       this.setInitialSelectedTypes(nextProps.objects)
     }
   }
 
-  showDetails = (event,node) => {
-    this.setState({details: {x: event.offsetX, y: event.offsetY, node}})
+  showDetails = (event, node) => {
+    this.setState({ details: { x: event.offsetX, y: event.offsetY, node } })
   }
 
   setInitialSelectedTypes = (objects) => {
     const availableObjectTypes = {}
-    for(let obj of Object.values(objects)) {
-      if(obj.cached_object_type) {
+    for (let obj of Object.values(objects)) {
+      if (obj.cached_object_type) {
         availableObjectTypes[obj.cached_object_type] = true
       }
     }
-    this.setState({selectedTypes: availableObjectTypes})
+    this.setState({ selectedTypes: availableObjectTypes })
   }
 
   convertObjectToNodes = () => {
     let nodes = {}
     let links = []
 
-    if(this.props.objects) {
-      for(let node of Object.values(this.props.objects)) {
-        let newNode = { ...node,
+    if (this.props.objects) {
+      for (let node of Object.values(this.props.objects)) {
+        let newNode = {
+          ...node,
           label: Graph.nodeLabel(node),
-          isFetching: node.isFetching
+          isFetching: node.isFetching,
         }
-        if(this.state.selectedTypes[newNode.cached_object_type]) {
+        if (this.state.selectedTypes[newNode.cached_object_type]) {
           nodes[node.id] = newNode
         }
       }
 
-      for(let node of Object.values(this.props.objects)) {
-        for(let childId of node.children) {
-          if(nodes[node.id] && nodes[childId]) {
-            links.push({source: node.id, target: childId})
+      for (let node of Object.values(this.props.objects)) {
+        for (let childId of node.children) {
+          if (nodes[node.id] && nodes[childId]) {
+            links.push({ source: node.id, target: childId })
           }
         }
       }
     }
 
-    return [Object.values(nodes),links]
+    return [Object.values(nodes), links]
   }
 
   toggleFilter = () => {
-    this.setState({filterCollapsed: !this.state.filterCollapsed})
+    this.setState({ filterCollapsed: !this.state.filterCollapsed })
   }
 
   updateSelectedTypes = (type) => {
-    const selectedTypes = { ...this.state.selectedTypes}
+    const selectedTypes = { ...this.state.selectedTypes }
     selectedTypes[type] = !selectedTypes[type]
-    this.setState({selectedTypes})
+    this.setState({ selectedTypes })
   }
 
   availableObjectTypes = () => {
     if (!this.props.objects) return []
-    return Object.values(this.props.objects).map(obj =>
-      obj.cached_object_type
-    ).filter( (elem, pos,arr) => arr.indexOf(elem) == pos)
+    return Object.values(this.props.objects)
+      .map((obj) => obj.cached_object_type)
+      .filter((elem, pos, arr) => arr.indexOf(elem) == pos)
   }
 
   render() {
@@ -94,29 +99,44 @@ export default class App extends React.Component {
 
     return (
       <React.Fragment>
-        <div className='toolbar'>
+        <div className="toolbar">
           <label>Show:</label>
 
           <div
-            className={`dropdown ${ this.state.filterCollapsed ? '' : 'open'}`}
+            className={`dropdown ${this.state.filterCollapsed ? "" : "open"}`}
             tabIndex="0"
-            onBlur={() => console.log('filter onBlur')}>
+            onBlur={() => console.log("filter onBlur")}
+          >
             <button
               className="btn btn-default"
               type="button"
-              onClick={this.toggleFilter}>
+              onClick={this.toggleFilter}
+            >
               Select ...
               <span className="caret"></span>
             </button>
-            <ul className="dropdown-menu" style={{maxHeight: 300, overflow: 'auto'}} >
-              {options.map((option,index) =>
+            <ul
+              className="dropdown-menu"
+              style={{ maxHeight: 300, overflow: "auto" }}
+            >
+              {options.map((option, index) => (
                 <li key={index}>
-                  <a href='#' onClick={(e) => {e.preventDefault(); this.updateSelectedTypes(option)}}>
-                    <i className={`fa fa-fw fa-${this.state.selectedTypes[option] ? 'check-' : ''}square-o`}></i>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      this.updateSelectedTypes(option)
+                    }}
+                  >
+                    <i
+                      className={`fa fa-fw fa-${
+                        this.state.selectedTypes[option] ? "check-" : ""
+                      }square-o`}
+                    ></i>
                     <span>{option}</span>
                   </a>
                 </li>
-              )}
+              ))}
             </ul>
           </div>
         </div>
@@ -128,28 +148,36 @@ export default class App extends React.Component {
           height={600}
           loadRelatedObjects={this.props.loadRelatedObjects}
           removeRelatedObjects={this.props.removeRelatedObjects}
-          showDetails={this.showDetails}/>
+          showDetails={this.showDetails}
+        />
 
-        {this.state.details &&
+        {this.state.details && (
           <div
             className="popover"
-            style={{top: this.state.details.y, left: this.state.details.x, display: 'block', maxWidth: 700, minWidth: 530}}
-            >
+            style={{
+              top: this.state.details.y,
+              left: this.state.details.x,
+              display: "block",
+              maxWidth: 700,
+              minWidth: 530,
+            }}
+          >
             <h3 className="popover-title">
               {`Details for ${this.state.details.node.cached_object_type} ${this.state.details.node.name}`}
               <button
-                onClick={() => this.setState({details: null})}
+                onClick={() => this.setState({ details: null })}
                 type="button"
                 className="close"
-                aria-label="Close">
+                aria-label="Close"
+              >
                 <span aria-hidden="true">&times;</span>
               </button>
             </h3>
             <div className="popover-content">
-              <ReactJson src={this.state.details.node.payload} collapsed={1}/>
+              <ReactJson src={this.state.details.node.payload} collapsed={1} />
             </div>
           </div>
-        }
+        )}
       </React.Fragment>
     )
   }

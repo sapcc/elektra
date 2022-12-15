@@ -1,3 +1,4 @@
+import React from "react"
 import { arrayFlatMap, objectFromEntries } from "./polyfill"
 
 const bases = {

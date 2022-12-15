@@ -7,7 +7,7 @@ describe("domain landing page", () => {
     )
   })
 
-  it("open reverse lookup  page and search for elektra test vm", () => {
+  it("open reverse lookup page and search for elektra test vm", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/lookup/reverselookup`)
     cy.contains("[data-test=page-title]", "Find Project")
     cy.get("#reverseLookupValue").type("elektra-test-vm (do not delete){enter}")

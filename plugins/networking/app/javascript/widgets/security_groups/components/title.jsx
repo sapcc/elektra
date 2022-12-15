@@ -1,7 +1,7 @@
 /* eslint no-console:0 */
 import ReactDOM from "react-dom"
 import { Link } from "react-router-dom"
-
+import React from "react"
 // replace service breadcrum with this component
 // to avoid to load the whole page
 const Title = () => {

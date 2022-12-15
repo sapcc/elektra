@@ -9,7 +9,7 @@ module ServiceLayer
         # would be added directly to the electron client, this middleware
         # would apply to all services and then we should filter
         # for service name.
-        unless request_context.service_name == 'dns'
+        unless request_context.service_name == "dns"
           return @next_middleware.call(request_context)
         end
 
@@ -18,13 +18,18 @@ module ServiceLayer
 
         # user needs to have admin privileges to impersonate another project
         # don't ask for all and one project at the same time
-        project_id = request_context.params.delete(:project_id) unless all_projects
+        project_id =
+          request_context.params.delete(:project_id) unless all_projects
 
         request_context.options[:headers] ||= {}
         if project_id
-          request_context.options[:headers]['X-Auth-Sudo-Project-Id'] = project_id
+          request_context.options[:headers][
+            "X-Auth-Sudo-Project-Id"
+          ] = project_id
         elsif all_projects
-          request_context.options[:headers]['X-Auth-All-Projects'] = all_projects.to_s
+          request_context.options[:headers][
+            "X-Auth-All-Projects"
+          ] = all_projects.to_s
         end
         @next_middleware.call(request_context)
       end
@@ -36,7 +41,7 @@ module ServiceLayer
     include DnsServiceServices::ZoneTransfer
 
     def available?(_action_name_sym = nil)
-      elektron.service?('dns')
+      elektron.service?("dns")
     end
 
     def elektron_dns
@@ -46,7 +51,7 @@ module ServiceLayer
     private
 
     def create_elektron_service
-      dns = elektron.service('dns', path_prefix: '/v2')
+      dns = elektron.service("dns", path_prefix: "/v2")
       dns.middlewares.add(SetupHeadersMiddleware)
       dns
     end

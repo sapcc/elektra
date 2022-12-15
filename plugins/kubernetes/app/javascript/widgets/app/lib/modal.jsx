@@ -1,28 +1,13 @@
-import "./helpers.coffee"
+/* eslint-disable no-undef */
 import { connect } from "react-redux"
 import React from "react"
+import ReactHelpers from "./helpers"
 
 const ReactModal = {
   SHOW_MODAL: "SHOW_MODAL",
   HIDE_MODAL: "HIDE_MODAL",
   HIDE_ALL: "HIDE_ALL",
 }
-
-// const addModalUrlFragment = ({ modalType, modalProps }) => {
-//   let overlayParams = `&modal=${modalType}`
-//   overlayParams +=
-//     "&" +
-//     Object.keys(modalProps)
-//       .map((k) => `${k}=${modalProps[k]}`)
-//       .join("&")
-
-//   if (window.location.hash.indexOf("&modal") >= 0)
-//     window.location.hash.replace(/&modal.*/, overlayParams)
-//   else window.location.hash += overlayParams
-// }
-
-// const removeModalUrlFragment = ({ modalType, modalProps }) =>
-//   (window.location.hash = window.location.hash.replace(/&modal.*/g, ""))
 
 ReactModal.Wrapper = (title, WrappedComponent, options = {}) =>
   connect((state) => state)((props) => {
@@ -54,20 +39,19 @@ ReactModal.Wrapper = (title, WrappedComponent, options = {}) =>
       $(modalRef.current).on("hidden.bs.modal", handleClose)
     }, [modalRef.current, handleClose])
 
-    options = window.ReactHelpers.mergeObjects({ closeButton: true }, options)
+    options = ReactHelpers.mergeObjects({ closeButton: true }, options)
     let modalProps = props.modalProps || {}
-    let childProps = window.ReactHelpers.mergeObjects(props, { close: close })
+    let childProps = ReactHelpers.mergeObjects(props, { close: close })
     delete childProps.modalProps
-    childProps = window.ReactHelpers.mergeObjects(childProps, modalProps)
+    childProps = ReactHelpers.mergeObjects(childProps, modalProps)
 
     return (
       <div
         className="modal fade"
         data-backdrop={options.static === true ? "static" : true}
-        tab-index="-1"
+        tabIndex="-1"
         ref={modalRef}
         role="dialog"
-        aria-labelledby="myModalLabel"
       >
         <div
           className={`modal-dialog ${options.large ? "modal-lg" : ""} ${
@@ -81,10 +65,10 @@ ReactModal.Wrapper = (title, WrappedComponent, options = {}) =>
                 <button
                   type="button"
                   className="close"
-                  dataDismiss="modal"
-                  ariaLabel="Close"
+                  data-dismiss="modal"
+                  aria-label="Close"
                 >
-                  <span ariaHidden="true">x</span>
+                  <span aria-hidden="true">x</span>
                 </button>
               )}
               <h4 className="modal-title">{title}</h4>
@@ -149,4 +133,4 @@ ReactModal.Container = (reducerName, componentsMap) =>
     ) : null
   )
 
-window.ReactModal = ReactModal
+export default ReactModal

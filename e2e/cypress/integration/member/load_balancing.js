@@ -14,8 +14,6 @@ describe("load balancing", () => {
 
   it("react can load the basics", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/lbaas2/?r=/loadbalancers`)
-    // test at least one tab is loaded
-    cy.get("[data-target='tab-0']").should("have.lengthOf", 1)
     // test the table is being loaded
     cy.get("[data-target='table-loadbalancers']").should("have.lengthOf", 1)
   })

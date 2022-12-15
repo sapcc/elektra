@@ -1,5 +1,7 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Modal, Button } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
+import React from "react"
 
 export default class SecurityServiceForm extends React.Component {
   constructor(props) {
