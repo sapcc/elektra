@@ -7,7 +7,7 @@ module Networking
       private
 
       def load_type
-        @network_type = 'private'
+        @network_type = "private"
       end
     end
   end

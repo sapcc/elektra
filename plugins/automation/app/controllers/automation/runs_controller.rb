@@ -1,10 +1,10 @@
 module Automation
   class RunsController < ::Automation::ApplicationController
-    authorization_context 'automation'
+    authorization_context "automation"
     authorization_required
 
     before_action :run, only: %i[show show_log]
-    NO_DATA_FOUND = 'No log available.'.freeze
+    NO_DATA_FOUND = "No log available.".freeze
     LINES_TRUNCATION = 25
 
     def show
@@ -27,12 +27,13 @@ module Automation
       @jobs = []
       job_ids = @run.jobs || []
       job_ids.each do |job_id|
-        job = begin
-          @jobs << services.automation.job(job_id)
-        rescue ArcClient::ApiError => e
-          raise e unless e.code == 404
-          # do nothing
-        end
+        job =
+          begin
+            @jobs << services.automation.job(job_id)
+          rescue ArcClient::ApiError => e
+            raise e unless e.code == 404
+            # do nothing
+          end
       end
     end
   end

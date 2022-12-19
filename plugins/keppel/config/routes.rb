@@ -1,3 +1,1 @@
-Keppel::Engine.routes.draw do
-  root to: 'application#show', as: :start
-end
+Keppel::Engine.routes.draw { root to: "application#show", as: :start }

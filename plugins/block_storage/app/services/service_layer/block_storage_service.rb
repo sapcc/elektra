@@ -6,19 +6,15 @@ module ServiceLayer
     include BlockStorageServices::Snapshot
 
     def available?(_action_name_sym = nil)
-      elektron.service?('volumev2')
+      elektron.service?("volumev2")
     end
 
     def elektron_volumes
-      @elektron_volumes ||= elektron.service(
-        'volumev2'
-      )
+      @elektron_volumes ||= elektron.service("volumev2")
     end
 
     def elektron_volumesv3
-      @elektron_volumesv3 ||= elektron.service(
-        'volumev3'
-      )
+      @elektron_volumesv3 ||= elektron.service("volumev3")
     end
   end
 end

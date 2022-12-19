@@ -4,11 +4,11 @@ module Compute
   # Represents Openstack AvailabilityZone
   class AvailabilityZone < Core::ServiceLayer::Model
     def id
-      read('zoneName')
+      read("zoneName")
     end
 
     def name
-      read('zoneName')
+      read("zoneName")
     end
   end
 end

@@ -1,8 +1,6 @@
 module BlockStorage
   class Engine < ::Rails::Engine
     isolate_namespace BlockStorage
-    config.generators do |g|
-      g.template_engine :haml
-    end
+    config.generators { |g| g.template_engine :haml }
   end
 end

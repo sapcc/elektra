@@ -8,15 +8,15 @@ module ServiceLayer
       end
 
       def secrets(filter = {})
-        response = elektron_key_manager.get('secrets', filter)
+        response = elektron_key_manager.get("secrets", filter)
         {
-          items: response.map_to('body.secrets', &secret_map),
-          total: response.body['total']
+          items: response.map_to("body.secrets", &secret_map),
+          total: response.body["total"],
         }
       end
 
       def find_secret!(uuid)
-        elektron_key_manager.get("secrets/#{uuid}").map_to('body', &secret_map)
+        elektron_key_manager.get("secrets/#{uuid}").map_to("body", &secret_map)
       end
 
       def find_secret(uuid)
@@ -41,7 +41,10 @@ module ServiceLayer
 
       def secret_payload!(uuid)
         elektron_key_manager.get(
-          "secrets/#{uuid}/payload", headers: { 'Accept' => '*/*' }
+          "secrets/#{uuid}/payload",
+          headers: {
+            "Accept" => "*/*",
+          },
         ).body
       end
 
@@ -53,7 +56,10 @@ module ServiceLayer
 
       def secret_payload_by_url(payload_link)
         elektron_key_manager.get(
-          payload_link, headers: { 'Accept' => '*/*' }
+          payload_link,
+          headers: {
+            "Accept" => "*/*",
+          },
         ).body
       end
 
@@ -69,7 +75,7 @@ module ServiceLayer
 
       #################### MODEL INTERFACE #######################
       def create_secret(attributes = {})
-        elektron_key_manager.post('secrets') { attributes }.body
+        elektron_key_manager.post("secrets") { attributes }.body
       end
 
       def delete_secret(id)

@@ -4,7 +4,7 @@ module Compute
   # Openstack Hypervisor Server
   class HypervisorServer < Core::ServiceLayer::Model
     def id
-      read('uuid')
+      read("uuid")
     end
   end
 end

@@ -1,10 +1,8 @@
-
-
-require 'core/audit_logger'
+require "core/audit_logger"
 # This class implements functionality to support modal views.
 # All subclasses which require modal views should inherit from this class.
 class ApplicationController < ActionController::Base
-  layout 'application'
+  layout "application"
   include ApplicationHelper
 
   # includes services method
@@ -37,28 +35,28 @@ class ApplicationController < ActionController::Base
   def release_state
     "public_release"
   end
-  
+
   # catch all api errors and render exception page
 
-  rescue_from 'Elektron::Errors::Request' do |exception|
+  rescue_from "Elektron::Errors::Request" do |exception|
     options = {
-      title: 'Backend Slowdown Detected',
-      description: 'We are currently experiencing a higher latency in our ' \
-                   'backend calls. This should be fixed momentarily. Please ' \
-                   'try again in a couple of minutes.',
-      warning: true, sentry: false
+      title: "Backend Slowdown Detected",
+      description:
+        "We are currently experiencing a higher latency in our " \
+          "backend calls. This should be fixed momentarily. Please " \
+          "try again in a couple of minutes.",
+      warning: true,
+      sentry: false,
     }
 
     # send to sentry if exception isn't a timeout error
-    options[:sentry] = true unless exception.message == 'Net::ReadTimeout'
+    options[:sentry] = true unless exception.message == "Net::ReadTimeout"
 
     render_exception_page(exception, options)
   end
 
   def modal?
-    if @modal.nil?
-      @modal = request.xhr? && params[:modal] ? true : false
-    end
+    @modal = request.xhr? && params[:modal] ? true : false if @modal.nil?
     @modal
   end
 
@@ -68,13 +66,13 @@ class ApplicationController < ActionController::Base
 
   def render(*args)
     options = args.extract_options!
-    options[:layout] = 'modal' if modal?
+    options[:layout] = "modal" if modal?
     super *args, options
   end
 
   def redirect_to(options = {}, response_status = {})
-    if request.format == Mime[:json] ||
-       modal? || params[:polling_service] || params[:do_not_redirect]
+    if request.format == Mime[:json] || modal? || params[:polling_service] ||
+         params[:do_not_redirect]
       head :ok, location: url_for(options)
     else
       super options, response_status
@@ -83,7 +81,7 @@ class ApplicationController < ActionController::Base
 
   def plugin_name
     if @plugin_name.blank?
-      tokens = self.class.name.split('::').collect(&:underscore)
+      tokens = self.class.name.split("::").collect(&:underscore)
       @plugin_name = tokens.find { |t| Core::PluginsManager.plugin?(t) }
     end
     @plugin_name

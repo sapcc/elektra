@@ -1,5 +1,5 @@
 # X-OpenStack-Request-ID
-require 'securerandom'
+require "securerandom"
 
 module Core
   module ElektronMiddlewares
@@ -12,14 +12,16 @@ module Core
         # add request uuid if internal interface is used
         if request_data.options[:interface] == "internal"
           request_data.options[:headers] ||= {}
-          request_data.options[:headers]["X-OpenStack-Request-ID"] = "req-#{SecureRandom.uuid}"
+          request_data.options[:headers][
+            "X-OpenStack-Request-ID"
+          ] = "req-#{SecureRandom.uuid}"
         end
 
         # call next app
         response = @next_middleware.call(request_data)
         # now we could manipulate the response data
         # return response
-        
+
         response
       end
     end

@@ -9,8 +9,10 @@ module ServiceLayer
       end
 
       def services(filter = {})
-        elektron_shares.get('services', filter)
-                       .map_to('body.services', &service_map)
+        elektron_shares.get("services", filter).map_to(
+          "body.services",
+          &service_map
+        )
       end
     end
   end

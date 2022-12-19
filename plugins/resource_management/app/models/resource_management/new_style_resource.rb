@@ -4,7 +4,8 @@ module ResourceManagement
 
     validates_presence_of :quota, unless: :cluster_id
     validate :validate_quota
-    validates_presence_of :comment, if: Proc.new { |res| res.capacity.try(:>=, 0) }
+    validates_presence_of :comment,
+                          if: Proc.new { |res| res.capacity.try(:>=, 0) }
 
     def name
       read(:name).to_sym
@@ -24,7 +25,7 @@ module ResourceManagement
     end
 
     def data_type
-      Core::DataType.from_unit_name(read(:unit) || '')
+      Core::DataType.from_unit_name(read(:unit) || "")
     end
 
     def externally_managed?
@@ -96,22 +97,30 @@ module ResourceManagement
     end
 
     def perform_update
-      services = [{
-        type: service_type,
-        resources: [{
-          name:     name,
-          quota:    read(:quota),
-          capacity: read(:capacity),
-          comment:  read(:comment),
-        }.reject { |_,v| v.nil? }],
-      }]
+      services = [
+        {
+          type: service_type,
+          resources: [
+            {
+              name: name,
+              quota: read(:quota),
+              capacity: read(:capacity),
+              comment: read(:comment),
+            }.reject { |_, v| v.nil? },
+          ],
+        },
+      ]
 
       if project_id and project_domain_id
-        rescue_api_errors { @service.put_project_data(project_domain_id, project_id, services) }
+        rescue_api_errors do
+          @service.put_project_data(project_domain_id, project_id, services)
+        end
       elsif domain_id
-        rescue_api_errors { @service.put_domain_data(cluster_id, domain_id, services) }
+        rescue_api_errors do
+          @service.put_domain_data(cluster_id, domain_id, services)
+        end
       elsif cluster_id
-        rescue_api_errors { @service.put_cluster_data(cluster_id,services) }
+        rescue_api_errors { @service.put_cluster_data(cluster_id, services) }
       else
         raise ArgumentError, "found nowhere to put quota: #{attributes.inspect}"
       end
@@ -126,7 +135,9 @@ module ResourceManagement
       return quota < 0 ? -1 : quota - usage
     end
     def available_as_display_string
-      return "#{data_type.format(available)} #{I18n.t("resource_management.#{name}")}"
+      return(
+        "#{data_type.format(available)} #{I18n.t("resource_management.#{name}")}"
+      )
     end
 
     # project level: if burst_usage > 0
@@ -139,18 +150,19 @@ module ResourceManagement
     #
 
     def burst_usage
-     read(:burst_usage) || 0
+      read(:burst_usage) || 0
     end
 
     private
 
     def validate_quota
       if project_id
-        errors.add(:quota, 'is below usage') if usage > quota
+        errors.add(:quota, "is below usage") if usage > quota
       elsif domain_id
-        errors.add(:quota, 'is less than sum of project quotas') if projects_quota > quota
+        if projects_quota > quota
+          errors.add(:quota, "is less than sum of project quotas")
+        end
       end
     end
-
   end
 end

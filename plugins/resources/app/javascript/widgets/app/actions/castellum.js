@@ -112,7 +112,7 @@ const fetchOperationsReport = (domainID, reportType) => (dispatch) => {
   })
 
   return ajaxHelper
-    .get(`/v1/operations/${reportType}`, { domain: domainID })
+    .get(`/v1/operations/${reportType}`, { params: { domain: domainID } })
     .then((response) => {
       const data = response.data[operationsReportKeys[reportType]] || []
       dispatch({

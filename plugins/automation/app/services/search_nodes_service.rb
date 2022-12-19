@@ -1,19 +1,14 @@
 class SearchNodesService
-
   def self.search_query(search_text)
-    if search_text.blank?
-      return ""
-    end
+    return "" if search_text.blank?
 
-    if search_text.include?('=')
+    if search_text.include?("=")
       # advance search
-      key_value = search_text.split('=')
+      key_value = search_text.split("=")
       if key_value.length == 2
-        key = key_value[0].delete(' ')
+        key = key_value[0].delete(" ")
         value = key_value[1].strip
-        if key.blank? || value.blank?
-          return ""
-        end
+        return "" if key.blank? || value.blank?
         self.advance_query(key, value)
       else
         return ""
@@ -33,5 +28,4 @@ class SearchNodesService
   def self.advance_query(key, value)
     "#{key} ^ '*#{value}*' OR @#{key} ^ '*#{value}*'"
   end
-
 end

@@ -5,8 +5,8 @@ module SharedFilesystemStorage
   class Share < Core::ServiceLayer::Model
     def attributes_for_update
       {
-        'display_name'              => read('name'),
-        'display_description'       => read('description')
+        "display_name" => read("name"),
+        "display_description" => read("description"),
       }.delete_if { |_k, v| v.blank? }
     end
 
@@ -36,15 +36,11 @@ module SharedFilesystemStorage
     end
 
     def force_delete
-      rescue_api_errors do
-        service.force_delete_share(id)
-      end
+      rescue_api_errors { service.force_delete_share(id) }
     end
 
     def revert_to_snapshot(snapshot_id)
-      rescue_api_errors do
-        service.revert_share_to_snapshot(id,snapshot_id)
-      end
+      rescue_api_errors { service.revert_share_to_snapshot(id, snapshot_id) }
     end
   end
 end

@@ -1,3 +1,1 @@
-Audit::Engine.routes.draw do
-  get '/' => 'application#index', as: :root
-end
+Audit::Engine.routes.draw { get "/" => "application#index", :as => :root }

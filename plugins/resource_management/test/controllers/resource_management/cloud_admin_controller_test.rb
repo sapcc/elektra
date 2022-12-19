@@ -1,10 +1,8 @@
-require 'test_helper'
+require "test_helper"
 
 module ResourceManagement
   class CloudAdminControllerTest < ActionController::TestCase
-    setup do
-      @routes = Engine.routes
-    end
+    setup { @routes = Engine.routes }
 
     # test "the truth" do
     #   assert true

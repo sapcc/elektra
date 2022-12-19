@@ -2,7 +2,7 @@ module Webconsole
   class ApplicationController < DashboardController
     include UrlHelper
 
-    authorization_context 'webconsole'
+    authorization_context "webconsole"
     # enforce permission checks. This will automatically
     # investigate the rule name.
     authorization_required
@@ -23,28 +23,41 @@ module Webconsole
         webcli_endpoint: current_user.service_url("webcli"),
         identity_url: current_user.service_url("identity"),
         region: current_region,
-        user_name: current_user.name
+        user_name: current_user.name,
       }
-      
-      help_file = File.join(Rails.root,"plugins/webconsole/webconsole_help.md")
+
+      help_file = File.join(Rails.root, "plugins/webconsole/webconsole_help.md")
 
       if File.exists?(help_file)
         # load general help content
-        general_help_file = File.join(Rails.root,"plugins/webconsole/webconsole_general_help.md")
-        general_help_source = File.new(general_help_file, "r").read if File.exists?(general_help_file)
+        general_help_file =
+          File.join(Rails.root, "plugins/webconsole/webconsole_general_help.md")
+        general_help_source =
+          File.new(general_help_file, "r").read if File.exists?(
+          general_help_file,
+        )
         # replace placeholders inside this contet
-        general_help_source = general_help_source.gsub('#{@scoped_domain_name}',  @scoped_domain_name)
-                                                 .gsub('#{@scoped_project_name}', @scoped_project_name)
-                                                 .gsub('#{@active_project.id}',   @active_project.id)
-                                                 .gsub('#{@token}',               current_user.token)
-                                                 .gsub('#{@sap_docu_url}',        sap_url_for('documentation'))
+        general_help_source =
+          general_help_source
+            .gsub('#{@scoped_domain_name}', @scoped_domain_name)
+            .gsub('#{@scoped_project_name}', @scoped_project_name)
+            .gsub('#{@active_project.id}', @active_project.id)
+            .gsub('#{@token}', current_user.token)
+            .gsub('#{@sap_docu_url}', sap_url_for("documentation"))
         # load plugin specific help content
         source = File.new(help_file, "r").read
         # create renderer
-        markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
+        markdown =
+          Redcarpet::Markdown.new(
+            Redcarpet::Render::HTML,
+            autolink: true,
+            tables: true,
+          )
 
         # concat and bind general and specific help contents
-        result[:help_html] = "#{markdown.render(general_help_source)}#{markdown.render(source)}"
+        result[
+          :help_html
+        ] = "#{markdown.render(general_help_source)}#{markdown.render(source)}"
       end
 
       render json: result
@@ -57,7 +70,5 @@ module Webconsole
         super options, response_status
       end
     end
-
-
   end
 end

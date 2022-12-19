@@ -1,7 +1,6 @@
-require 'json'
+require "json"
 
 module Automation
-
   class Forms::NodeTags
     include ::Automation::Helpers
     include Virtus.model
@@ -20,19 +19,11 @@ module Automation
     end
 
     def save(service_automation)
-      if valid?
-        update_tags(service_automation)
-      else
-        false
-      end
+      valid? ? update_tags(service_automation) : false
     end
 
     def update(service_automation)
-      if valid?
-        update_tags(service_automation)
-      else
-        false
-      end
+      valid? ? update_tags(service_automation) : false
     end
 
     private
@@ -46,9 +37,7 @@ module Automation
       new_tags = string_to_hash(self.tags)
 
       # return if nothing todo
-      if tags.blank? && old_tags.blank?
-        return true
-      end
+      return true if tags.blank? && old_tags.blank?
 
       # Get just the keys to add or update
       diff_tags = new_tags.to_a - old_tags.to_a
@@ -60,12 +49,11 @@ module Automation
           service_automation.node_add_tags(self.agent_id, add_tags)
         rescue => e
           json_hash = ""
-          unless e.response.blank?
-            json_hash = JSON[e.response]
-          end
+          json_hash = JSON[e.response] unless e.response.blank?
 
-          if !json_hash.fetch('errors', nil).blank? && !json_hash.fetch('errors',{}).fetch('tags',nil).blank?
-            assign_tags_errors(json_hash['errors']['tags'])
+          if !json_hash.fetch("errors", nil).blank? &&
+               !json_hash.fetch("errors", {}).fetch("tags", nil).blank?
+            assign_tags_errors(json_hash["errors"]["tags"])
           end
 
           return false
@@ -78,7 +66,10 @@ module Automation
         # remove keys
         diff_tags.each do |key|
           begin
-            service_automation.node_delete_tag(self.agent_id, ERB::Util.url_encode(key))
+            service_automation.node_delete_tag(
+              self.agent_id,
+              ERB::Util.url_encode(key),
+            )
           rescue => e
             self.errors.add :tags, e.message
 
@@ -93,14 +84,10 @@ module Automation
     def assign_tags_errors(messages)
       error_messages = []
       messages.each do |key, value|
-        value.each do |item|
-          error_messages << item
-        end
+        value.each { |item| error_messages << item }
       end
 
-      self.errors.add :tags, error_messages.join(' ')
+      self.errors.add :tags, error_messages.join(" ")
     end
-
   end
-
 end

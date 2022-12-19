@@ -6,13 +6,23 @@ module Compute
     before_action :all_projects
     before_action :automation_data, only: %i[new create]
 
-    authorization_context 'compute'
-    authorization_required except: %i[new_floatingip attach_floatingip
-                                      detach_floatingip remove_floatingip
-                                      attach_interface create_interface
-                                      remove_interface detach_interface
-                                      detach_floatingip new_snapshot update_item new_size
-                                      automation_script new_status]
+    authorization_context "compute"
+    authorization_required except: %i[
+                             new_floatingip
+                             attach_floatingip
+                             detach_floatingip
+                             remove_floatingip
+                             attach_interface
+                             create_interface
+                             remove_interface
+                             detach_interface
+                             detach_floatingip
+                             new_snapshot
+                             update_item
+                             new_size
+                             automation_script
+                             new_status
+                           ]
 
     def index
       per_page = params[:per_page] || 20
@@ -22,12 +32,11 @@ module Compute
       @search = nil
       @searchfor = nil
 
-      
       if params.include?(:search)
         if not params[:search].blank?
           @search = params[:search]
           @searchfor = "#{params[:searchfor]}"
-          filter = {@searchfor.downcase() => @search}
+          filter = { @searchfor.downcase() => @search }
         else
           params.delete(:search)
           params.delete(:searchfor)
@@ -35,29 +44,31 @@ module Compute
       end
 
       # search with filter or for all
-      if (@searchfor and @searchfor.downcase() != 'id') or filter.empty?
+      if (@searchfor and @searchfor.downcase() != "id") or filter.empty?
         if @scoped_project_id
           # reverse: true changes the order direction
-          @instances = paginatable(per_page: per_page.to_i, reverse: true) do |pagination_options|
-            services.compute.servers(@admin_option.merge(pagination_options).merge(filter))
-          end
-          if @instances.nil?
-            @instances = []
-          end
+          @instances =
+            paginatable(
+              per_page: per_page.to_i,
+              reverse: true,
+            ) do |pagination_options|
+              services.compute.servers(
+                @admin_option.merge(pagination_options).merge(filter),
+              )
+            end
+          @instances = [] if @instances.nil?
         end
-      # search with ID
+        # search with ID
       elsif not @search.blank?
         @instances = []
         instance = services.compute.find_server(@search)
-        if instance
-          @instances << instance
-        end
+        @instances << instance if instance
       end
 
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?
-        render partial: 'list', locals: { instances: @instances }
+        render partial: "list", locals: { instances: @instances }
       else
         # comon case, render index page with layout
         render action: :index
@@ -66,23 +77,27 @@ module Compute
 
     def console
       @instance = services.compute.find_server(params[:id])
-      hypervisor = @instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
-      if hypervisor.to_s.include?('nova-compute-ironic')
-        @console = services.compute.remote_console(params[:id], "serial", "shellinabox")
+      hypervisor = @instance.attributes["OS-EXT-SRV-ATTR:host"] || ""
+      if hypervisor.to_s.include?("nova-compute-ironic")
+        @console =
+          services.compute.remote_console(params[:id], "serial", "shellinabox")
       else
         @console = services.compute.remote_console(params[:id])
       end
       respond_to do |format|
-        format.html { render action: :console, layout: 'compute/console'}
-        format.json { render json: { url: @console.url }}
+        format.html { render action: :console, layout: "compute/console" }
+        format.json { render json: { url: @console.url } }
       end
     end
 
     def pre_hard_reset
       @instance = services.compute.find_server(params[:id])
-      @form = Compute::Forms::ConfirmHardReset.new(params.require(:forms_confirm_hard_reset))
+      @form =
+        Compute::Forms::ConfirmHardReset.new(
+          params.require(:forms_confirm_hard_reset),
+        )
       unless @form.validate
-        render action: 'confirm_hard_reset'
+        render action: "confirm_hard_reset"
         return
       end
     end
@@ -94,40 +109,49 @@ module Compute
 
     def show
       @instance = services.compute.find_server(params[:id])
-      @current_region = ENV['MONSOON_DASHBOARD_REGION']
+      @current_region = ENV["MONSOON_DASHBOARD_REGION"]
       return if @instance.blank?
       load_security_groups(@instance)
     end
 
     def console_log
-      @log = begin 
-        services.compute.console_log(params[:id])
-      rescue
-        nil
-      end
+      @log =
+        begin
+          services.compute.console_log(params[:id])
+        rescue StandardError
+          nil
+        end
     end
 
-    def tags; end
+    def tags
+    end
 
     def new
       # get usage from db
       @quota_data = []
       if current_user.is_allowed?("access_to_project")
-        @quota_data = services.resource_management.quota_data(
-          current_user.domain_id || current_user.project_domain_id,
-          current_user.project_id,[
-            {service_type: :compute, resource_name: :instances},
-            {service_type: :compute, resource_name: :cores},
-            {service_type: :compute, resource_name: :ram}
-          ])
+        @quota_data =
+          services.resource_management.quota_data(
+            current_user.domain_id || current_user.project_domain_id,
+            current_user.project_id,
+            [
+              { service_type: :compute, resource_name: :instances },
+              { service_type: :compute, resource_name: :cores },
+              { service_type: :compute, resource_name: :ram },
+            ],
+          )
       end
 
-      @instance       = services.compute.new_server
-      @flavors        = services.compute.flavors
-      @images         = services.image.all_images
+      @instance = services.compute.new_server
+      @flavors = services.compute.flavors
+      @images = services.image.all_images
       @fixed_ip_ports = services.networking.fixed_ip_ports
-      @subnets        = services.networking.subnets
-      @bootable_volumes = services.block_storage.volumes_detail(bootable:true).select {|v| ['available','downloading'].include?(v.status) } 
+      @subnets = services.networking.subnets
+      @bootable_volumes =
+        services
+          .block_storage
+          .volumes_detail(bootable: true)
+          .select { |v| %w[available downloading].include?(v.status) }
 
       if params[:image_id]
         # preselect image_id
@@ -137,14 +161,17 @@ module Compute
 
       azs = services.compute.availability_zones
       if azs
-        @availability_zones = azs.select { |az| az.zoneState['available'] }
+        @availability_zones = azs.select { |az| az.zoneState["available"] }
         @availability_zones.sort_by!(&:zoneName).reverse!
       else
-        @instance.errors.add :availability_zone, 'not available'
+        @instance.errors.add :availability_zone, "not available"
       end
 
       # prefered_availability_zone
-      index = @availability_zones.index { |az| az.zoneName == prefered_availability_zone }
+      index =
+        @availability_zones.index do |az|
+          az.zoneName == prefered_availability_zone
+        end
       az = @availability_zones.delete_at(index) if index
       @availability_zones.unshift(az) if az
 
@@ -152,43 +179,56 @@ module Compute
       # to get shared security groups the tenant_id filter should be ignored
       @security_groups = services.networking.security_groups
 
-      @private_networks = services.networking.project_networks(@scoped_project_id, "router:external"=>false) if services.networking.available?
+      @private_networks =
+        services.networking.project_networks(
+          @scoped_project_id,
+          "router:external" => false,
+        ) if services.networking.available?
 
-      @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
+      @keypairs =
+        services.compute.keypairs.collect do |kp|
+          Hashie::Mash.new({ id: kp.name, name: kp.name })
+        end
 
-      @instance.errors.add :private_network,  'not available' if @private_networks.blank?
-      @instance.errors.add :image,            'not available' if @images.blank?
+      if @private_networks.blank?
+        @instance.errors.add :private_network, "not available"
+      end
+      @instance.errors.add :image, "not available" if @images.blank?
 
       # @instance.flavor_id             = @flavors.first.try(:id)
       # @instance.image_id              = params[:image_id] || @images.first.try(:id)
-      @instance.availability_zone_id    = @availability_zones.first.try(:id)
+      @instance.availability_zone_id = @availability_zones.first.try(:id)
       #@instance.network_ids            = [{ id: @private_networks.first.try(:id) }]
-      @instance.security_groups         = [@security_groups.find { |sg| sg.name == 'default' }.try(:id)] if @instance.security_groups.blank? # if no security group has been selected force select the default group
-      @instance.keypair_id              = @keypairs.first['name'] unless @keypairs.blank?
+      @instance.security_groups = [
+        @security_groups.find { |sg| sg.name == "default" }.try(:id),
+      ] if @instance.security_groups.blank? # if no security group has been selected force select the default group
+      @instance.keypair_id = @keypairs.first["name"] unless @keypairs.blank?
 
       @instance.max_count = 1
     end
 
     # update instance table row and details view (ajax call)
     def update_item
-      @action_from_show = params[:action_from_show] == 'true' || false
-      @instance = services.compute.find_server(params[:id]) rescue nil
+      @action_from_show = params[:action_from_show] == "true" || false
+      @instance =
+        begin
+          services.compute.find_server(params[:id])
+        rescue StandardError
+          nil
+        end
       @target_state = params[:target_state]
 
-      if @action_from_show
-        load_security_groups(@instance)
-      end
+      load_security_groups(@instance) if @action_from_show
 
       if @instance and @instance.power_state.to_i != @target_state.to_i
         # translate target_state number to human readable string
-        @instance.task_state||=task_state(@target_state)
+        @instance.task_state ||= task_state(@target_state)
       end
     end
 
     def create
-
       # set image_id
-      params[:server][:image_id] = if params[:server][:baremetal_image_id] != ''
+      params[:server][:image_id] = if params[:server][:baremetal_image_id] != ""
         params[:server][:baremetal_image_id]
       else
         params[:server][:vmware_image_id]
@@ -200,31 +240,38 @@ module Compute
 
       # remove empty security groups from params
       if params[:server] && !params[:server][:security_groups].blank?
-        params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?}
+        params[:server][:security_groups] = params[:server][
+          :security_groups
+        ].delete_if { |sg| sg.empty? }
       end
 
       # add all attributes from create dialog to instance
       @instance.attributes = params[@instance.model_name.param_key]
-      @bootable_volumes = services.block_storage.volumes_detail(bootable:true).select {|v| ['available','downloading'].include?(v.status) } 
+      @bootable_volumes =
+        services
+          .block_storage
+          .volumes_detail(bootable: true)
+          .select { |v| %w[available downloading].include?(v.status) }
       @images = services.image.all_images
-      
+
       if @instance.image_id
         # check if image id is a bootable volume
-        if !params[:server][:custom_root_disk] || params[:server][:custom_root_disk] == '0'
+        if !params[:server][:custom_root_disk] ||
+             params[:server][:custom_root_disk] == "0"
           volume = @bootable_volumes.find { |v| v.id == @instance.image_id }
         end
 
         # Bootable Volume as image source
-        if volume 
+        if volume
           # imageRef is a bootable volume!
           @instance.block_device_mapping_v2 = [
             {
-              "boot_index": 0,
-              "uuid": volume.id,
-              "source_type": "volume",
-              "destination_type": "volume",
-              "delete_on_termination": false
-            }
+              boot_index: 0,
+              uuid: volume.id,
+              source_type: "volume",
+              destination_type: "volume",
+              delete_on_termination: false,
+            },
           ]
           @instance.metadata = volume.volume_image_metadata
         else
@@ -232,74 +279,84 @@ module Compute
 
           if image
             @instance.metadata = {
-              image_name: (image.name || '').truncate(255),
-              image_buildnumber:  (image.buildnumber || '').truncate(255)
+              image_name: (image.name || "").truncate(255),
+              image_buildnumber: (image.buildnumber || "").truncate(255),
             }
-            
+
             # Custom root disk -> let nova create a bootable volume on the fly
-            if params[:server][:custom_root_disk] == '1'
+            if params[:server][:custom_root_disk] == "1"
               @instance.block_device_mapping_v2 = [
                 {
-                  "boot_index": 0,
-                  "uuid": image.id,
-                  "volume_size": params[:server][:custom_root_disk_size],
-                  "source_type": "image",
-                  "destination_type": "volume",
-                  "delete_on_termination": true
-                }
+                  boot_index: 0,
+                  uuid: image.id,
+                  volume_size: params[:server][:custom_root_disk_size],
+                  source_type: "image",
+                  destination_type: "volume",
+                  delete_on_termination: true,
+                },
               ]
               # this is only for model check
               @instance.custom_root_disk = 1
-              @instance.custom_root_disk_size = params[:server][:custom_root_disk_size]
+              @instance.custom_root_disk_size =
+                params[:server][:custom_root_disk_size]
             end
           end
         end
       end
 
       if @instance.valid? && @instance.network_ids &&
-          @instance.network_ids.length.positive?
-          
-        if @instance.network_ids.first['port'].present?
+           @instance.network_ids.length.positive?
+        if @instance.network_ids.first["port"].present?
           # port is presented -> pre-resereved fixed IP is selected
           # use provided port id and update security group on port
-          @port = services.networking.new_port(
-            security_groups: @instance.security_groups
-          )
+          @port =
+            services.networking.new_port(
+              security_groups: @instance.security_groups,
+            )
           # set id
-          @port.id = @instance.network_ids.first['port']
-        elsif @instance.network_ids.first['id'].present? &&
-          @instance.network_ids.first['subnet_id'].present?
+          @port.id = @instance.network_ids.first["port"]
+        elsif @instance.network_ids.first["id"].present? &&
+              @instance.network_ids.first["subnet_id"].present?
           # port id isn't given but networkid and subnet id are provided.
           # -> create a port with network and subnet
-          @port = services.networking.new_port(
-            network_id: @instance.network_ids.first['id'],
-            fixed_ips: [{subnet_id: @instance.network_ids.first['subnet_id']}],
-            security_groups: @instance.security_groups
-          )
+          @port =
+            services.networking.new_port(
+              network_id: @instance.network_ids.first["id"],
+              fixed_ips: [
+                { subnet_id: @instance.network_ids.first["subnet_id"] },
+              ],
+              security_groups: @instance.security_groups,
+            )
         end
 
         if @port
           # create or update port
           if @port.id || @port.save
-            @instance.network_ids.first['port'] = @port.id
+            @instance.network_ids.first["port"] = @port.id
           else
             @port.errors.each { |k, v| @instance.errors.add(k, v) }
           end
         elsif @instance.security_groups.present?
           @security_groups = services.networking.security_groups
-          @instance.security_groups = @instance.security_groups.each_with_object([]) do |sg_id, array|
-            security_group = @security_groups.find { |sg| sg_id == sg.id }
-            array << security_group.name if security_group
-          end
+          @instance.security_groups =
+            @instance
+              .security_groups
+              .each_with_object([]) do |sg_id, array|
+                security_group = @security_groups.find { |sg| sg_id == sg.id }
+                array << security_group.name if security_group
+              end
         end
       end
 
-      if @instance.errors.empty? && @instance.save 
-        flash.now[:notice] = 'Instance successfully created.'
+      if @instance.errors.empty? && @instance.save
+        flash.now[:notice] = "Instance successfully created."
         audit_logger.info(current_user, "has created", @instance)
         @instance = services.compute.find_server(@instance.id)
       else
-        @port.destroy if @port && @port.id && !@port.fixed_ip_port? && params[:server][:network_ids].first['port'].blank?
+        if @port && @port.id && !@port.fixed_ip_port? &&
+             params[:server][:network_ids].first["port"].blank?
+          @port.destroy
+        end
         @flavors = services.compute.flavors
         # @images = services.image.images
         @availability_zones = services.compute.availability_zones
@@ -307,37 +364,42 @@ module Compute
         @fixed_ip_ports = services.networking.fixed_ip_ports
         @subnets = services.networking.subnets
 
-        @private_networks = services.networking.project_networks(
-          @scoped_project_id
-        ).delete_if { |n| n.attributes['router:external'] == true }
-        @keypairs = services.compute.keypairs.collect do |kp|
-          Hashie::Mash.new({ id: kp.name, name: kp.name })
-        end
+        @private_networks =
+          services
+            .networking
+            .project_networks(@scoped_project_id)
+            .delete_if { |n| n.attributes["router:external"] == true }
+        @keypairs =
+          services.compute.keypairs.collect do |kp|
+            Hashie::Mash.new({ id: kp.name, name: kp.name })
+          end
         render action: :new
       end
     end
 
     def edit
       @instance = services.compute.find_server(params[:id])
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       if @instance.blank?
-        flash.now[:error] = "We couldn't retrieve the instance details. Please try again."
+        flash.now[
+          :error
+        ] = "We couldn't retrieve the instance details. Please try again."
       end
     end
 
     def update
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       @instance = services.compute.new_server(params[:server])
       @instance.id = params[:id]
       if @instance.save
-        flash.now[:notice] = 'Server successfully updated.'
+        flash.now[:notice] = "Server successfully updated."
         if @action_from_show
           @instance = services.compute.find_server(params[:id])
           load_security_groups(@instance)
         end
         respond_to do |format|
           format.html { redirect_to instances_url }
-          format.js { render 'update.js' }
+          format.js { render "update.js" }
         end
       else
         render action: :edit
@@ -345,8 +407,8 @@ module Compute
     end
 
     def new_floatingip
-      @action_from_show = params[:action_from_show] == 'true' || false
-      enforce_permissions('::networking:floating_ip_associate')
+      @action_from_show = params[:action_from_show] == "true" || false
+      enforce_permissions("::networking:floating_ip_associate")
       @instance = services.compute.find_server(params[:id])
       collect_available_ips
 
@@ -355,17 +417,20 @@ module Compute
 
     # attach existing floating ip to a server interface.
     def attach_floatingip
-      @action_from_show = params[:action_from_show] == 'true' || false
-      enforce_permissions('::networking:floating_ip_associate')
+      @action_from_show = params[:action_from_show] == "true" || false
+      enforce_permissions("::networking:floating_ip_associate")
 
       # get instance
       @instance = services.compute.find_server(params[:id])
 
       # first ensure that both floating ip and fixed ip have been provided
-      if params[:floating_ip][:id].blank? || params[:floating_ip][:fixed_ip_address].blank?
+      if params[:floating_ip][:id].blank? ||
+           params[:floating_ip][:fixed_ip_address].blank?
         collect_available_ips
         @floating_ip = services.networking.new_floating_ip
-        flash.now[:error] = "Please specify both a floating IP and the interface to attach to."
+        flash.now[
+          :error
+        ] = "Please specify both a floating IP and the interface to attach to."
 
         render action: :new_floatingip and return
       end
@@ -374,21 +439,22 @@ module Compute
       ports = services.networking.ports(device_id: params[:id])
       # find port which contains the fixed ip or take the first one.
 
-      port = ports.find do |prt|
-        prt.fixed_ips.collect { |ip| ip['ip_address'] }.include?(
-          params[:floating_ip][:fixed_ip_address]
-        )
-      end || ports.first
+      port =
+        ports.find do |prt|
+          prt
+            .fixed_ips
+            .collect { |ip| ip["ip_address"] }
+            .include?(params[:floating_ip][:fixed_ip_address])
+        end || ports.first
 
       # update floating ip with the new assigned interface ip
-      @floating_ip = services.networking.find_floating_ip!(params[:floating_ip][:id])
+      @floating_ip =
+        services.networking.find_floating_ip!(params[:floating_ip][:id])
       @floating_ip.port_id = port.id
       @floating_ip.fixed_ip_address = params[:floating_ip][:fixed_ip_address]
 
       if @floating_ip.save
-        if @action_from_show
-          load_security_groups(@instance)
-        end
+        load_security_groups(@instance) if @action_from_show
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js {}
@@ -400,25 +466,24 @@ module Compute
     end
 
     def remove_floatingip
-      @action_from_show = params[:action_from_show] == 'true' || false
-      enforce_permissions('::networking:floating_ip_disassociate')
+      @action_from_show = params[:action_from_show] == "true" || false
+      enforce_permissions("::networking:floating_ip_disassociate")
       @instance = services.compute.find_server(params[:id])
       @floating_ip = services.networking.new_floating_ip
     end
 
     def detach_floatingip
-      @action_from_show = params[:action_from_show] == 'true' || false
-      enforce_permissions('::networking:floating_ip_disassociate')
+      @action_from_show = params[:action_from_show] == "true" || false
+      enforce_permissions("::networking:floating_ip_disassociate")
 
-      @floating_ip = services.networking.find_floating_ip(
-        params[:floating_ip][:floating_ip_id]
-      )
+      @floating_ip =
+        services.networking.find_floating_ip(
+          params[:floating_ip][:floating_ip_id],
+        )
 
       if @floating_ip && @floating_ip.detach
         @instance = services.compute.find_server(params[:id])
-        if @action_from_show
-          load_security_groups(@instance)
-        end
+        load_security_groups(@instance) if @action_from_show
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js {}
@@ -429,43 +494,43 @@ module Compute
     end
 
     def attach_interface
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       @instance = services.compute.find_server(params[:id])
       @os_interface = services.compute.new_os_interface(params[:id])
       @os_interface.fixed_ips = []
-      @networks = services.networking.networks('router:external' => false)
+      @networks = services.networking.networks("router:external" => false)
       @security_groups = services.networking.security_groups
 
-      @fixed_ip_ports = services.networking.fixed_ip_ports.select do |ip|
-        ip.device_id.blank?
-      end
+      @fixed_ip_ports =
+        services.networking.fixed_ip_ports.select { |ip| ip.device_id.blank? }
       @subnets = services.networking.subnets
     end
 
     def create_interface
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       if params[:os_interface][:security_groups].present?
-        params[:os_interface][:security_groups] =
-          params[:os_interface][:security_groups].delete_if(&:blank?)
+        params[:os_interface][:security_groups] = params[:os_interface][
+          :security_groups
+        ].delete_if(&:blank?)
       end
 
-      @os_interface = services.compute.new_os_interface(
-        params[:id], params[:os_interface]
-      )
+      @os_interface =
+        services.compute.new_os_interface(params[:id], params[:os_interface])
 
       if @os_interface.valid? && @os_interface.net_id.present?
         if @os_interface.port_id.present?
-          @port = services.networking.new_port(
-            security_groups: @os_interface.security_groups
-          )
+          @port =
+            services.networking.new_port(
+              security_groups: @os_interface.security_groups,
+            )
           @port.id = @os_interface.port_id
-        elsif @os_interface.net_id.present? &&
-          @os_interface.subnet_id.present?
-          @port = services.networking.new_port(
-            network_id: @os_interface.net_id,
-            fixed_ips: [{subnet_id: @os_interface.subnet_id}],
-            security_groups: @os_interface.security_groups
-          )
+        elsif @os_interface.net_id.present? && @os_interface.subnet_id.present?
+          @port =
+            services.networking.new_port(
+              network_id: @os_interface.net_id,
+              fixed_ips: [{ subnet_id: @os_interface.subnet_id }],
+              security_groups: @os_interface.security_groups,
+            )
         end
 
         if @port
@@ -479,16 +544,17 @@ module Compute
 
       if @os_interface.errors.empty? && @os_interface.save
         @instance = services.compute.find_server(params[:id])
-        if @action_from_show
-          load_security_groups(@instance)
-        end
+        load_security_groups(@instance) if @action_from_show
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js {}
         end
       else
-        @port.destroy if @port && @port.id && !@port.fixed_ip_port? && params[:os_interface][:port_id].blank?
-        @networks = services.networking.networks('router:external' => false)
+        if @port && @port.id && !@port.fixed_ip_port? &&
+             params[:os_interface][:port_id].blank?
+          @port.destroy
+        end
+        @networks = services.networking.networks("router:external" => false)
         @fixed_ip_ports = services.networking.fixed_ip_ports
         @subnets = services.networking.subnets
         @security_groups = services.networking.security_groups
@@ -497,37 +563,38 @@ module Compute
     end
 
     def remove_interface
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       @instance = services.compute.find_server(params[:id])
       @os_interface = services.compute.new_os_interface(params[:id])
       # keep only fixed ip
       @instance.addresses.each do |_network_name, ips|
-        ips.keep_if { |ip| ip['OS-EXT-IPS:type'] == 'fixed'}
+        ips.keep_if { |ip| ip["OS-EXT-IPS:type"] == "fixed" }
       end
     end
 
     def detach_interface
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       # create a new os_interface model based on params
-      @os_interface = services.compute.new_os_interface(
-        params[:id], params[:os_interface]
-      )
+      @os_interface =
+        services.compute.new_os_interface(params[:id], params[:os_interface])
 
       # load all attached server interfaces
       all_server_interfaces = services.compute.server_os_interfaces(params[:id])
       # find the one which should be deleted
-      interface = all_server_interfaces.find do |i|
-        i.fixed_ips.first['ip_address'] == @os_interface.ip_address
-      end
+      interface =
+        all_server_interfaces.find do |i|
+          i.fixed_ips.first["ip_address"] == @os_interface.ip_address
+        end
 
-      success = if interface
-                  # destroy
-                  @os_interface.id = @os_interface.port_id = interface.port_id
-                  @os_interface.destroy
-                else
-                  @os_interface.errors.add(:address, 'Not found.')
-                  false
-                end
+      success =
+        if interface
+          # destroy
+          @os_interface.id = @os_interface.port_id = interface.port_id
+          @os_interface.destroy
+        else
+          @os_interface.errors.add(:address, "Not found.")
+          false
+        end
 
       if success
         # load instance after deleting os interface!!!
@@ -537,17 +604,16 @@ module Compute
         sleep_time = 3
         loop do
           @instance = services.compute.find_server(params[:id])
-          interfaces = @instance.addresses.values.flatten.select do |ip|
-            ip['addr'] == @os_interface.ip_address
-          end
+          interfaces =
+            @instance.addresses.values.flatten.select do |ip|
+              ip["addr"] == @os_interface.ip_address
+            end
           break if timeout <= 0 || interfaces.length.zero?
           timeout -= sleep_time
           sleep(sleep_time)
         end
 
-        if @action_from_show
-          load_security_groups(@instance)
-        end
+        load_security_groups(@instance) if @action_from_show
 
         respond_to do |format|
           format.html { redirect_to instances_url }
@@ -561,14 +627,14 @@ module Compute
     end
 
     def new_size
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       @instance = services.compute.find_server(params[:id])
-      @flavors  = services.compute.flavors
+      @flavors = services.compute.flavors
     end
 
     def resize
       @close_modal = true
-      execute_instance_action('resize',params[:server][:flavor_id])
+      execute_instance_action("resize", params[:server][:flavor_id])
     end
 
     def new_status
@@ -581,19 +647,21 @@ module Compute
     end
 
     def new_snapshot
-      @quota_data = services.resource_management.quota_data(
-        @scoped_domain_id, @scoped_project_id,
-        [{service_type: :'object-store', resource_name: :capacity}]
-      )
-      @quota = @quota_data.select{|q| q.name == :capacity}.first
+      @quota_data =
+        services.resource_management.quota_data(
+          @scoped_domain_id,
+          @scoped_project_id,
+          [{ service_type: :"object-store", resource_name: :capacity }],
+        )
+      @quota = @quota_data.select { |q| q.name == :capacity }.first
       @free_capa = @quota.quota - @quota.usage
       @free_capa = @free_capa / 1024 / 1024
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
     end
 
     def create_image
-      @close_modal=true
-      execute_instance_action('create_image',params[:snapshot][:name])
+      @close_modal = true
+      execute_instance_action("create_image", params[:snapshot][:name])
     end
 
     def confirm_resize
@@ -629,7 +697,7 @@ module Compute
     end
 
     def destroy
-      execute_instance_action('terminate')
+      execute_instance_action("terminate")
     end
 
     def lock
@@ -641,31 +709,36 @@ module Compute
     end
 
     def hard_reset
-      execute_instance_action('reboot', "HARD")
+      execute_instance_action("reboot", "HARD")
     end
 
     def automation_script
-      accept_header = begin
-                        body = JSON.parse(request.body.read)
-                        os_type = body.fetch('vmwareOstype', '')
-                        if os_type.include? "windows"
-                          "text/x-powershellscript"
-                        else
-                          "text/cloud-config"
-                        end
-                      rescue => exception
-                        Rails.logger.error "Compute-plugin: automation_script: error getting os_type: #{exception.message}"
-                      end
-      script = services.automation.node_install_script("", {"headers" => { "Accept" => accept_header }})
-      render :json => {script: script}
+      accept_header =
+        begin
+          body = JSON.parse(request.body.read)
+          os_type = body.fetch("vmwareOstype", "")
+          if os_type.include? "windows"
+            "text/x-powershellscript"
+          else
+            "text/cloud-config"
+          end
+        rescue => exception
+          Rails.logger.error "Compute-plugin: automation_script: error getting os_type: #{exception.message}"
+        end
+      script =
+        services.automation.node_install_script(
+          "",
+          { "headers" => { "Accept" => accept_header } },
+        )
+      render json: { script: script }
     end
 
     def automation_data
-      @automation_script_action = automation_script_instances_path()
+      @automation_script_action = automation_script_instances_path
     end
 
     def two_factor_required?
-      if action_name=='console'
+      if action_name == "console"
         true
       else
         super
@@ -673,7 +746,7 @@ module Compute
     end
 
     def edit_securitygroups
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       @instance = services.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_keys = []
@@ -681,17 +754,16 @@ module Compute
       @instance_security_groups.each do |sg|
         @instance_security_groups_keys << sg.id
         # delete existing groups from security groups list
-        @security_groups.delete_if{ |group| group.id == sg.id}
+        @security_groups.delete_if { |group| group.id == sg.id }
         # then re-add existing groups to the beginning of the list
         # have to retrieve the group from nova because the groups obtained via @instance.security_groups_details don't contain all the info
         grp = services.networking.find_security_group!(sg.id)
         @security_groups.unshift(grp)
       end
-
     end
 
     def assign_securitygroups
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
       @instance = services.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_ids = []
@@ -702,9 +774,11 @@ module Compute
       to_be_assigned = []
       to_be_unassigned = []
 
-      sgs = params['sgs']
+      sgs = params["sgs"]
       if sgs.blank?
-        flash.now[:error] = "Please assign at least one security group to the server"
+        flash.now[
+          :error
+        ] = "Please assign at least one security group to the server"
         @instance = services.compute.find_server(params[:id])
         @instance_security_groups = @instance.security_groups_details
         @instance_security_groups_keys = []
@@ -723,23 +797,22 @@ module Compute
 
         begin
           to_be_assigned.uniq.each do |sg|
-            execute_instance_action('assign_security_group',sg, false)
+            execute_instance_action("assign_security_group", sg, false)
           end
 
           to_be_unassigned.uniq.each do |sg|
-            execute_instance_action('unassign_security_group',sg, false)
+            execute_instance_action("unassign_security_group", sg, false)
           end
 
           if @action_from_show
             respond_to do |format|
-              format.html{ redirect_to plugin('compute').instance_path(id: @instance.id) }
+              format.html do
+                redirect_to plugin("compute").instance_path(id: @instance.id)
+              end
             end
           else
-            respond_to do |format|
-              format.html{ redirect_to instances_url }
-            end
-          end 
-
+            respond_to { |format| format.html { redirect_to instances_url } }
+          end
         rescue => e
           @instance = services.compute.find_server(params[:id])
           @instance_security_groups = @instance.security_groups_details
@@ -748,25 +821,27 @@ module Compute
             @instance_security_groups_keys << sg.id
           end
           @security_groups = services.networking.security_groups
-          flash.now[:error] = "An error happend while assigning/unassigned security groups to the server. Error: #{e}"
+          flash.now[
+            :error
+          ] = "An error happend while assigning/unassigned security groups to the server. Error: #{e}"
           render action: :edit_securitygroups and return
         end
       end
-
-
     end
 
     private
 
     def load_security_groups(instance)
-      
       # @instance_security_groups = instance.security_groups_details
 
-      @instance_security_groups = instance.security_groups_details
-        .each_with_object({}) do |sg, map|
-        next if map[sg.id]
-        map[sg.id] = services.networking.find_security_group(sg.id)
-      end.values
+      @instance_security_groups =
+        instance
+          .security_groups_details
+          .each_with_object({}) do |sg, map|
+            next if map[sg.id]
+            map[sg.id] = services.networking.find_security_group(sg.id)
+          end
+          .values
 
       # byebug
     end
@@ -774,33 +849,48 @@ module Compute
     # It use the elektra object cache.
     def prefered_availability_zone
       # load host aggregates from cache and build a map host -> availability_zone
-      aggregates = ObjectCache.where(cached_object_type: 'aggregate').pluck("payload")
-      host_az_map = aggregates.each_with_object({}) do |payload, map|
-        payload['hosts'].each { |host| map[host] = payload['availability_zone'] }
-      end
+      aggregates =
+        ObjectCache.where(cached_object_type: "aggregate").pluck("payload")
+      host_az_map =
+        aggregates.each_with_object({}) do |payload, map|
+          payload["hosts"].each do |host|
+            map[host] = payload["availability_zone"]
+          end
+        end
 
       # load hypervisor data from elektra object cache
-      hypervisor_data = ObjectCache.where(cached_object_type: 'hypervisor').pluck(
-        "payload->'service'->'host'",
-        "payload->'memory_mb'",
-        "payload->'memory_mb_used'"
-      )
+      hypervisor_data =
+        ObjectCache.where(cached_object_type: "hypervisor").pluck(
+          "payload->'service'->'host'",
+          "payload->'memory_mb'",
+          "payload->'memory_mb_used'",
+        )
 
       # build sums for used and available RAM per availability zone
-      az_capacities = hypervisor_data.each_with_object({}) do |(host,memory_mb,memory_mb_used), map|
-        az = host_az_map[host]
-        if !host.blank? && az
-          map[az] ||= {availability_zone: az, memory_mb: 0, memory_mb_used: 0}
-          map[az][:memory_mb] += (memory_mb || 0)
-          map[az][:memory_mb_used] += (memory_mb_used || 0)
+      az_capacities =
+        hypervisor_data.each_with_object(
+          {},
+        ) do |(host, memory_mb, memory_mb_used), map|
+          az = host_az_map[host]
+          if !host.blank? && az
+            map[az] ||= {
+              availability_zone: az,
+              memory_mb: 0,
+              memory_mb_used: 0,
+            }
+            map[az][:memory_mb] += (memory_mb || 0)
+            map[az][:memory_mb_used] += (memory_mb_used || 0)
+          end
         end
-      end
 
-      # sort by most available RAM 
-      azs = az_capacities.values.sort_by! { |data| data[:memory_mb] - data[:memory_mb_used]}
+      # sort by most available RAM
+      azs =
+        az_capacities.values.sort_by! do |data|
+          data[:memory_mb] - data[:memory_mb_used]
+        end
       # return last element
       azs.last[:availability_zone]
-    rescue StandardError 
+    rescue StandardError
       nil
     end
     ################################ END ####################################
@@ -809,45 +899,81 @@ module Compute
       @grouped_fips = {}
       networks = {}
       subnets = {}
-      services.networking.project_floating_ips(@scoped_project_id).each do |fip|
-        if fip.fixed_ip_address.nil?
-          networks[fip.floating_network_id] = services.networking.find_network(fip.floating_network_id) unless networks[fip.floating_network_id]
-          net = networks[fip.floating_network_id]
-          next unless net
-          unless net.subnets.blank?
-            net.subnets.each do |subid|
-              subnets[subid] = services.networking.find_subnet(subid) unless subnets[subid]
-              sub = subnets[subid]
-              cidr = NetAddr.parse_net(sub.cidr)
-              if cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
-                @grouped_fips[sub.name] ||= []
-                @grouped_fips[sub.name] << fip#[fip.floating_ip_address, fip.id]
-                break
+      services
+        .networking
+        .project_floating_ips(@scoped_project_id)
+        .each do |fip|
+          if fip.fixed_ip_address.nil?
+            networks[
+              fip.floating_network_id
+            ] = services.networking.find_network(
+              fip.floating_network_id,
+            ) unless networks[fip.floating_network_id]
+            net = networks[fip.floating_network_id]
+            next unless net
+            unless net.subnets.blank?
+              net.subnets.each do |subid|
+                subnets[subid] = services.networking.find_subnet(
+                  subid,
+                ) unless subnets[subid]
+                sub = subnets[subid]
+                cidr = NetAddr.parse_net(sub.cidr)
+                if cidr.contains(NetAddr.parse_ip(fip.floating_ip_address))
+                  @grouped_fips[sub.name] ||= []
+                  @grouped_fips[sub.name] << fip #[fip.floating_ip_address, fip.id]
+                  break
+                end
               end
+            else
+              @grouped_fips[net.name] ||= []
+              @grouped_fips[net.name] << fip #[fip.floating_ip_address, fip.id]
             end
-          else
-            @grouped_fips[net.name] ||= []
-            @grouped_fips[net.name] << fip#[fip.floating_ip_address, fip.id]
           end
         end
-      end
     end
 
-    def execute_instance_action(action=action_name,options=nil, with_rendering=true)
+    def execute_instance_action(
+      action = action_name,
+      options = nil,
+      with_rendering = true
+    )
       instance_id = params[:id]
-      @instance = services.compute.find_server(instance_id) rescue nil
+      @instance =
+        begin
+          services.compute.find_server(instance_id)
+        rescue StandardError
+          nil
+        end
       # reload view if action was trigered from instances show view
-      @action_from_show = params[:action_from_show] == 'true' || false
+      @action_from_show = params[:action_from_show] == "true" || false
 
-      @target_state=nil
-      if @instance and (@instance.task_state || '')!='deleting'
+      @target_state = nil
+      if @instance and (@instance.task_state || "") != "deleting"
         # trigger the instance action
-        result = options.nil? ? @instance.send(action) : @instance.send(action,options)
+        result =
+          (
+            if options.nil?
+              @instance.send(action)
+            else
+              @instance.send(action, options)
+            end
+          )
         if result
-          audit_logger.info(current_user, "has triggered action", action, "on", @instance)
+          audit_logger.info(
+            current_user,
+            "has triggered action",
+            action,
+            "on",
+            @instance,
+          )
           # cool down and wait a little ;-)
           sleep(2)
-          @instance = services.compute.find_server(instance_id) rescue nil
+          @instance =
+            begin
+              services.compute.find_server(instance_id)
+            rescue StandardError
+              nil
+            end
           # translate taget state
           @target_state = target_state_for_action(action)
           @instance.task_state ||= task_state(@target_state) if @instance
@@ -855,58 +981,70 @@ module Compute
       end
 
       if @action_from_show
-        @terminate = action == 'terminate'
+        @terminate = action == "terminate"
         load_security_groups(@instance)
       end
-      render template: 'compute/instances/update_item.js' if with_rendering
-
+      render template: "compute/instances/update_item.js" if with_rendering
     end
 
     def target_state_for_action(action)
       case action
-      when 'start' then Compute::Server::RUNNING
-      when 'stop' then Compute::Server::SHUT_DOWN
-      when 'shut_off' then Compute::Server::SHUT_OFF
-      when 'pause' then Compute::Server::PAUSED
-      when 'suspend' then Compute::Server::SUSPENDED
-      when 'block' then Compute::Server::BLOCKED
+      when "start"
+        Compute::Server::RUNNING
+      when "stop"
+        Compute::Server::SHUT_DOWN
+      when "shut_off"
+        Compute::Server::SHUT_OFF
+      when "pause"
+        Compute::Server::PAUSED
+      when "suspend"
+        Compute::Server::SUSPENDED
+      when "block"
+        Compute::Server::BLOCKED
       end
     end
 
-    # translate taget state that is vissible during the action 
+    # translate taget state that is vissible during the action
     # is in progress
     def task_state(target_state)
       target_state = target_state.to_i if target_state.is_a?(String)
       case target_state
-      when Compute::Server::RUNNING then 'starting'
-      when Compute::Server::SHUT_DOWN then 'powering-off'
-      when Compute::Server::SHUT_OFF then 'powering-off'
-      when Compute::Server::PAUSED then 'pausing'
-      when Compute::Server::SUSPENDED then 'suspending'
-      when Compute::Server::BLOCKED then 'blocking'
-      when Compute::Server::BUILDING then 'creating'
+      when Compute::Server::RUNNING
+        "starting"
+      when Compute::Server::SHUT_DOWN
+        "powering-off"
+      when Compute::Server::SHUT_OFF
+        "powering-off"
+      when Compute::Server::PAUSED
+        "pausing"
+      when Compute::Server::SUSPENDED
+        "suspending"
+      when Compute::Server::BLOCKED
+        "blocking"
+      when Compute::Server::BUILDING
+        "creating"
       end
     end
 
     def active_project_id
       unless @active_project_id
-        local_project = Project.find_by_domain_fid_and_fid(@scoped_domain_fid,@scoped_project_fid)
+        local_project =
+          Project.find_by_domain_fid_and_fid(
+            @scoped_domain_fid,
+            @scoped_project_fid,
+          )
         @active_project_id = local_project.key if local_project
       end
       return @active_project_id
     end
 
     def all_projects
-      @all_projects = current_user.is_allowed?('compute:all_projects')
+      @all_projects = current_user.is_allowed?("compute:all_projects")
       @admin_option = @all_projects ? { all_tenants: 1 } : {}
     end
 
     def instance_params
       params.require(:instance).permit(:q)
     end
-
-
-
   end
-
 end

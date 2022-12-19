@@ -1,6 +1,5 @@
 module ObjectStorage
   class Object < Core::ServiceLayer::Model
-
     # The following properties are known:
     #   - path
     #   - public_url
@@ -18,7 +17,7 @@ module ObjectStorage
     end
 
     def dlo_segments_container
-      return dlo_manifest.split('/').first if read(:dlo_manifest)
+      return dlo_manifest.split("/").first if read(:dlo_manifest)
     end
 
     def dlo_segments_folder_path
@@ -39,11 +38,11 @@ module ObjectStorage
 
     # Same as path(), but removes the trailing slash for directories.
     def clean_path
-      path.end_with?('/') ? path.chop : path
+      path.end_with?("/") ? path.chop : path
     end
 
     def is_directory?
-      path.end_with?('/')
+      path.end_with?("/")
     end
 
     def is_file?
@@ -53,13 +52,13 @@ module ObjectStorage
     # Returns the basename portion of `self.path`, i.e. the name of this
     # object. For directories, this will include a trailing slash.
     def basename
-      /[^\/]*\/?$/.match(path)[0]
+      %r{[^/]*/?$}.match(path)[0]
     end
 
     # Returns the dirname portion of `self.path`, i.e. the path to the
     # directory that contains this object.
     def dirname
-      path.sub(/\/?[^\/]*\/?$/, '')
+      path.sub(%r{/?[^/]*/?$}, "")
     end
 
     # Returns the actual file contents, using a separate API call.
@@ -69,7 +68,7 @@ module ObjectStorage
 
     def ui_sort_order
       # sort directories above files
-      (is_directory? ? 'a' : 'b') + self.basename
+      (is_directory? ? "a" : "b") + self.basename
     end
 
     ############################################################################
@@ -78,7 +77,9 @@ module ObjectStorage
     validates_presence_of :content_type
 
     validate do
-      errors[:expires_at] << "is invalid: #{@expires_at_validation_error}" if @expires_at_validation_error
+      if @expires_at_validation_error
+        errors[:expires_at] << "is invalid: #{@expires_at_validation_error}"
+      end
     end
 
     def expires_at=(new_value)
@@ -87,7 +88,7 @@ module ObjectStorage
           if new_value.empty?
             new_value = nil
           else
-            new_value = Time.parse(new_value + ' UTC') # force UTC
+            new_value = Time.parse(new_value + " UTC") # force UTC
           end
           @expires_at_validation_error = nil
         rescue => e
@@ -101,31 +102,37 @@ module ObjectStorage
     ############################################################################
     # actions
 
-    def copy_to(target_container_name, target_path, options={})
+    def copy_to(target_container_name, target_path, options = {})
       @service.copy_object(
-        container_name, path, target_container_name, target_path,
+        container_name,
+        path,
+        target_container_name,
+        target_path,
         with_metadata: options[:with_metadata],
         # need to reuse Content-Type from original file, or else Fog inserts
         # its standard "Content-Type: application/json" which Swift then
         # interprets as our take on the object's content type
-        content_type:  content_type,
+        content_type: content_type,
       )
       return
     end
 
     def move_to!(target_container_name, target_path)
       @service.move_object(
-        container_name, path, target_container_name, target_path,
+        container_name,
+        path,
+        target_container_name,
+        target_path,
         content_type: content_type, # see above for why this is needed
       )
       # after successful move, update attributes to point towards the new location
-      self.attributes = attributes.merge(
-        "container_name" => target_container_name,
-        "id"             => target_path,
-        "path"           => target_path,
-      )
+      self.attributes =
+        attributes.merge(
+          "container_name" => target_container_name,
+          "id" => target_path,
+          "path" => target_path,
+        )
       return
     end
-
   end
 end

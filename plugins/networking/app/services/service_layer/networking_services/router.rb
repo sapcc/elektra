@@ -9,15 +9,17 @@ module ServiceLayer
       end
 
       def routers(filter = {})
-        elektron_networking.get('routers', filter).map_to(
-          'body.routers', &router_map
+        elektron_networking.get("routers", filter).map_to(
+          "body.routers",
+          &router_map
         )
       end
 
       def find_router!(id)
         return nil unless id
         elektron_networking.get("routers/#{id}").map_to(
-          'body.router', &router_map
+          "body.router",
+          &router_map
         )
       end
 
@@ -34,42 +36,40 @@ module ServiceLayer
       def add_router_interfaces(router_id, interface_ids)
         interface_ids.each do |interface_id|
           elektron_networking.put(
-            "routers/#{router_id}/add_router_interface"
-          ) do
-            { subnet_id: interface_id }
-          end
+            "routers/#{router_id}/add_router_interface",
+          ) { { subnet_id: interface_id } }
         end
       end
 
       def remove_router_interfaces(router_id, interface_ids)
         interface_ids.each do |interface_id|
           elektron_networking.put(
-            "routers/#{router_id}/remove_router_interface"
-          ) do
-            { subnet_id: interface_id }
-          end
+            "routers/#{router_id}/remove_router_interface",
+          ) { { subnet_id: interface_id } }
         end
       end
 
       ################### Model Interface ###################
       def create_router(attributes)
-        elektron_networking.post('routers') do
-          { 'router' => attributes }
-        end.body['router']
+        elektron_networking.post("routers") { { "router" => attributes } }.body[
+          "router"
+        ]
       end
 
       def update_router(id, attributes)
-        elektron_networking.put("routers/#{id}") do
-        { 'router' => attributes }
-      end.body['router']
-    rescue Elektron::Errors::ApiResponse => e
+        elektron_networking
+          .put("routers/#{id}") { { "router" => attributes } }
+          .body[
+          "router"
+        ]
+      rescue Elektron::Errors::ApiResponse => e
         # regarding the issue https://github.com/sapcc/elektra/issues/879
-        # If the external network is outside of this scope (other owner project), 
-        # update of the router will throw the error "Port ... could not be found". 
-        # This has to do with the fact that the associated port also exists 
+        # If the external network is outside of this scope (other owner project),
+        # update of the router will throw the error "Port ... could not be found".
+        # This has to do with the fact that the associated port also exists
         # outside of this scope and therefore cannot be found from this scope (current user).
         # We handle this case by catching the appropriate error and doing nothing.
-        raise e if !(e.message =~ /Port .+ could not be found/i) 
+        raise e if !(e.message =~ /Port .+ could not be found/i)
       end
 
       def delete_router(id)

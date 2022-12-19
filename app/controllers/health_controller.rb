@@ -1,11 +1,11 @@
 class HealthController < ActionController::Base
   def liveliness
-    render plain: 'Alive!'
+    render plain: "Alive!"
   end
 
   def readiness
     FriendlyIdEntry.count
-    render plain: 'OK'
+    render plain: "OK"
   end
 
   def startprobe

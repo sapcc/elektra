@@ -1,13 +1,11 @@
 module Automation
-
   class DataTruncation
-
     LINES_TRUNCATION = 25
-    NO_DATA_FOUND = 'No data available.'
+    NO_DATA_FOUND = "No data available."
 
     attr_reader :data_lines, :data_truncated, :data_output
 
-    def initialize(data=nil)
+    def initialize(data = nil)
       @data_lines = 1
       @data_truncated = false
       @data_output = NO_DATA_FOUND
@@ -38,5 +36,4 @@ module Automation
       end
     end
   end
-
 end

@@ -3,7 +3,7 @@ module Networking
     validates :name, presence: true
 
     def external
-      read('router:external')
+      read("router:external")
     end
 
     def external?
@@ -15,15 +15,15 @@ module Networking
     end
 
     def provider_network_type
-      read('provider:network_type')
+      read("provider:network_type")
     end
 
     def provider_physical_network
-      read('provider:physical_network')
+      read("provider:physical_network")
     end
 
     def provider_segmentation_id
-      read('provider:segmentation_id')
+      read("provider:segmentation_id")
     end
 
     def subnet_objects

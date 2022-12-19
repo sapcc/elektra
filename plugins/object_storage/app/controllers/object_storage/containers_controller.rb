@@ -1,24 +1,29 @@
 module ObjectStorage
   class ContainersController < ObjectStorage::ApplicationController
     authorization_required
-    before_action :load_container, except: [ :index, :new, :create ]
-    before_action :load_quota_data, only: [ :index, :show ]
+    before_action :load_container, except: %i[index new create]
+    before_action :load_quota_data, only: %i[index show]
 
     def index
       @capabilities = services.object_storage.list_capabilities
-      @containers   = services.object_storage.containers
+      @containers = services.object_storage.containers
     end
 
     def show
       # for the "Object versioning" feature, we need to offer a selection of container names,
       # but to avoid confusion, the archive container should be different from the current one
-      @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
+      @other_container_names =
+        services
+          .object_storage
+          .containers
+          .map(&:name)
+          .reject { |n| n == @container.name }
     end
 
     def check_acls
       read_acl_string = params[:read_acl] || ""
       write_acl_string = params[:write_acl] || ""
-      
+
       @read_acls = parse_acl(read_acl_string)
       @write_acls = parse_acl(write_acl_string)
     end
@@ -41,7 +46,7 @@ module ObjectStorage
       attrs["read_acl"].delete!("\r\n")
       attrs["write_acl"].delete!("\r\n")
       unless @container.update_attributes(attrs)
-        render action: 'show_access_control'
+        render action: "show_access_control"
         return
       end
       back_to_container_list
@@ -56,9 +61,12 @@ module ObjectStorage
       @container_id = Digest::SHA1.hexdigest(@container.name)
       @encoded_container_name = params[:id]
 
-      @form = ObjectStorage::Forms::ConfirmContainerAction.new(params.require(:forms_confirm_container_action))
+      @form =
+        ObjectStorage::Forms::ConfirmContainerAction.new(
+          params.require(:forms_confirm_container_action),
+        )
       unless @form.validate
-        render action: 'confirm_emptying'
+        render action: "confirm_emptying"
         return
       end
     end
@@ -72,9 +80,10 @@ module ObjectStorage
     end
 
     def create
-      @container = services.object_storage.new_container(params.require(:container))
+      @container =
+        services.object_storage.new_container(params.require(:container))
       unless @container.save
-        render action: 'new'
+        render action: "new"
         return
       end
 
@@ -83,22 +92,36 @@ module ObjectStorage
 
     def update
       @container.metadata = self.metadata_params
-      attrs = params.require(:container).permit(:object_count_quota, :bytes_quota, :versions_location, :has_versions_location, :has_web_index, :web_index, :web_file_listing)
+      attrs =
+        params.require(:container).permit(
+          :object_count_quota,
+          :bytes_quota,
+          :versions_location,
+          :has_versions_location,
+          :has_web_index,
+          :web_index,
+          :web_file_listing,
+        )
 
       # normalize "has_versions_location" to Boolean
-      attrs[:has_versions_location] = attrs[:has_versions_location] == '1'
+      attrs[:has_versions_location] = attrs[:has_versions_location] == "1"
       # clear "versions_location" if disabled
-      attrs[:versions_location]     = '' unless attrs[:has_versions_location]
+      attrs[:versions_location] = "" unless attrs[:has_versions_location]
 
-      if attrs.delete(:has_web_index) != '1'
-        attrs[:web_index] = '' # disable web_index if unselected in UI
+      if attrs.delete(:has_web_index) != "1"
+        attrs[:web_index] = "" # disable web_index if unselected in UI
       end
 
-      attrs[:web_file_listing] = attrs[:web_file_listing] == '1'
+      attrs[:web_file_listing] = attrs[:web_file_listing] == "1"
 
       unless @container.update_attributes(attrs)
-        @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
-        render action: 'show' # "edit" view is covered by "show"
+        @other_container_names =
+          services
+            .object_storage
+            .containers
+            .map(&:name)
+            .reject { |n| n == @container.name }
+        render action: "show" # "edit" view is covered by "show"
         return
       end
 
@@ -106,9 +129,12 @@ module ObjectStorage
     end
 
     def destroy
-      @form = ObjectStorage::Forms::ConfirmContainerAction.new(params.require(:forms_confirm_container_action))
+      @form =
+        ObjectStorage::Forms::ConfirmContainerAction.new(
+          params.require(:forms_confirm_container_action),
+        )
       unless @form.validate
-        render action: 'confirm_deletion'
+        render action: "confirm_deletion"
         return
       end
 
@@ -124,32 +150,32 @@ module ObjectStorage
       # https://docs.openstack.org/swift/latest/overview_acl.html#container-acls
       @acl_parse_error = false
       acl_data = {}
-      acls = acl_string.split(',')
+      acls = acl_string.split(",")
       acls.each do |acl|
-        case acl 
+        case acl
         # standard reading cases
         when ".rlistings"
-          acl_data[acl] = { 
+          acl_data[acl] = {
             type: ".rlistings",
             operation: "access",
-            user: "Listing", 
-            project: "ANY", 
+            user: "Listing",
+            project: "ANY",
             token: false,
           }
         when ".r:*"
-          acl_data[acl] = { 
-            type: ".r:*", 
+          acl_data[acl] = {
+            type: ".r:*",
             operation: "referer",
             user: "ANY",
             project: "ANY",
             token: false,
-          } 
+          }
         else
           # all other special cases
-          acl_parts = acl.split(':',2) # use split limit 2, this is needed because of "http://" in referer
+          acl_parts = acl.split(":", 2) # use split limit 2, this is needed because of "http://" in referer
           if acl_parts.length == 2
             case acl_parts[0]
-            when ".r" 
+            when ".r"
               type = ".r:<referer>"
               user = acl_parts[1]
               operation = "referer"
@@ -160,82 +186,93 @@ module ObjectStorage
                 operation = "referer denied"
               end
 
-              acl_data[acl] = { 
-                type: type, 
+              acl_data[acl] = {
+                type: type,
                 operation: operation,
                 user: user,
                 project: "ANY",
                 referer: acl_parts[1],
                 token: false,
-              } 
+              }
             else
               # *:*
-              if acl_parts[0] == '*' && acl_parts[1] == '*'
-                acl_data[acl] = { 
-                  type: ".*:*", 
+              if acl_parts[0] == "*" && acl_parts[1] == "*"
+                acl_data[acl] = {
+                  type: ".*:*",
                   operation: nil,
                   user: "ANY user",
                   project: "ANY",
                   token: true,
-                } 
-              # <project-id>:<user-id>
-              elsif acl_parts[0] != '*' and acl_parts[1] != '*'
+                }
+                # <project-id>:<user-id>
+              elsif acl_parts[0] != "*" and acl_parts[1] != "*"
                 project = cloud_admin.identity.find_project(acl_parts[0])
                 user = cloud_admin.identity.find_user(acl_parts[1])
                 unless user.nil? || project.nil?
-                  user_domain =  cloud_admin.identity.find_domain(user.domain_id)
+                  user_domain = cloud_admin.identity.find_domain(user.domain_id)
                   domain = cloud_admin.identity.find_domain(project.domain_id)
-                  acl_data[acl] = { 
-                    type: "<project-id>:<user-id>", 
+                  acl_data[acl] = {
+                    type: "<project-id>:<user-id>",
                     operation: nil,
                     user: "#{user.description} (#{user_domain.name})",
                     project: "#{project.name} (#{domain.name})",
                     token: true,
-                  } 
+                  }
                 else
                   if user.nil? && project.nil?
-                    acl_data[acl] = { error: "cannot find project with ID #{acl_parts[0]} and user with ID #{acl_parts[1]}" }
+                    acl_data[acl] = {
+                      error:
+                        "cannot find project with ID #{acl_parts[0]} and user with ID #{acl_parts[1]}",
+                    }
                   elsif project.nil?
-                    acl_data[acl] = { error: "cannot find project with ID #{acl_parts[0]}"}
+                    acl_data[acl] = {
+                      error: "cannot find project with ID #{acl_parts[0]}",
+                    }
                   elsif user.nil?
-                    acl_data[acl] = { error: "cannot find user with ID #{acl_parts[1]}"}
+                    acl_data[acl] = {
+                      error: "cannot find user with ID #{acl_parts[1]}",
+                    }
                   else
-                    acl_data[acl] = { error: "unknown parse error"}
+                    acl_data[acl] = { error: "unknown parse error" }
                   end
                   acl_data[:error_happened] = true
                   @acl_parse_error = true
                 end
-                  # <project-id>:*
-              elsif acl_parts[0] != '*' and acl_parts[1] == '*'
+                # <project-id>:*
+              elsif acl_parts[0] != "*" and acl_parts[1] == "*"
                 project = cloud_admin.identity.find_project(acl_parts[0])
                 unless project.nil?
                   domain = cloud_admin.identity.find_domain(project.domain_id)
-                  acl_data[acl] = { 
-                    type: "<project-id>:*", 
+                  acl_data[acl] = {
+                    type: "<project-id>:*",
                     operation: nil,
                     user: "ANY user",
                     project: "#{project.name} (#{domain.name})",
                     token: true,
                   }
                 else
-                  acl_data[acl] = { error: "cannot find project with ID #{acl_parts[0]}" }
+                  acl_data[acl] = {
+                    error: "cannot find project with ID #{acl_parts[0]}",
+                  }
                   acl_data[:error_happened] = true
                   @acl_parse_error = true
                 end
-                  # *:<user-id>
-              elsif acl_parts[0] == '*' and acl_parts[1] != '*'
+                # *:<user-id>
+              elsif acl_parts[0] == "*" and acl_parts[1] != "*"
                 user = cloud_admin.identity.find_user(acl_parts[1])
                 unless user.nil?
-                  user_domain =  cloud_admin.identity.find_domain(user.domain_id)
-                  acl_data[acl] = { 
-                    type: "*:<user-id>", 
+                  user_domain = cloud_admin.identity.find_domain(user.domain_id)
+                  acl_data[acl] = {
+                    type: "*:<user-id>",
                     operation: nil,
                     user: "#{user.description} (#{user_domain.name})",
                     project: "ANY",
                     token: true,
                   }
                 else
-                  acl_data[acl] = { error: "cannot find user with ID #{acl_parts[1]}" }
+                  acl_data[acl] = {
+                    error: "cannot find user with ID #{acl_parts[1]}",
+                  }
                   acl_data[:error_happened] = true
                   @acl_parse_error = true
                 end
@@ -244,8 +281,8 @@ module ObjectStorage
           else
             unless acl.include? ":" or acl.include? "*"
               # <role_name>
-              acl_data[acl] = { 
-                type: "<role_name>", 
+              acl_data[acl] = {
+                type: "<role_name>",
                 operation: nil,
                 user: "ANY user with role #{acl}",
                 project: "#{@scoped_project_name} (#{@scoped_domain_name})",
@@ -256,7 +293,7 @@ module ObjectStorage
               acl_data[:error_happened] = true
               @acl_parse_error = true
             end
-          end          
+          end
         end
       end
 
@@ -268,18 +305,19 @@ module ObjectStorage
       # the name is form encoded and must be decoded here
       @container_name = URI.decode_www_form_component(params[:id])
       @container = services.object_storage.container_metadata(@container_name)
-      raise ActiveRecord::RecordNotFound, "container #{params[:id]} not found" unless @container
+      unless @container
+        raise ActiveRecord::RecordNotFound, "container #{params[:id]} not found"
+      end
     end
 
     def back_to_container_list
       respond_to do |format|
         format.js do
           @containers = services.object_storage.containers
-          render action: 'reload_container_list'
+          render action: "reload_container_list"
         end
-        format.html { redirect_to plugin('object_storage').containers_path }
+        format.html { redirect_to plugin("object_storage").containers_path }
       end
     end
-
   end
 end

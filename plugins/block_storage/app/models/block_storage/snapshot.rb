@@ -6,18 +6,18 @@ module BlockStorage
 
     def attributes_for_create
       {
-        'name'              => read('name'),
-        'description'       => read('description'),
-        'volume_id'         => read('volume_id'),
-        'force'             => read('force'),
-        'metadata'          => read('metadata')
+        "name" => read("name"),
+        "description" => read("description"),
+        "volume_id" => read("volume_id"),
+        "force" => read("force"),
+        "metadata" => read("metadata"),
       }.delete_if { |_k, v| v.blank? }
     end
 
     def attributes_for_update
       {
-        'name'              => read('name'),
-        'description'       => read('description')
+        "name" => read("name"),
+        "description" => read("description"),
       }.delete_if { |_k, v| v.blank? }
     end
 

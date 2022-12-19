@@ -40,36 +40,46 @@ module Compute
       if images.blank?
         [["Couldn't retrieve images. Please try again", []]]
       else
-
         # prepare images map: { visibility => { hypervisor => [images] } }
-        groupd_images_map = images.each_with_object({}) do |image, map|
-          next if image.name.nil?
+        groupd_images_map =
+          images
+            .each_with_object({}) do |image, map|
+              next if image.name.nil?
 
-          hypervisor_type = image.hypervisor_type || 'baremetal'
-          visibility = image.visibility
-          visibility = 'snapshot' if image.image_type == 'snapshot'
-          map[visibility] ||= {}
-          map[visibility][hypervisor_type] ||= []
-          map[visibility][hypervisor_type] << image
-        end.sort
+              hypervisor_type = image.hypervisor_type || "baremetal"
+              visibility = image.visibility
+              visibility = "snapshot" if image.image_type == "snapshot"
+              map[visibility] ||= {}
+              map[visibility][hypervisor_type] ||= []
+              map[visibility][hypervisor_type] << image
+            end
+            .sort
 
         # build an array with labels
-        groups = groupd_images_map.each_with_object([]) do |(visibility, hypervisors), container|
-          container << [visibility, []]
+        groups =
+          groupd_images_map.each_with_object(
+            [],
+          ) do |(visibility, hypervisors), container|
+            container << [visibility, []]
 
-          hypervisors.each do |hypervisor_type, images|
-            images = images.sort_by { |image| [image.name, image.created_at] }
-            items = images.collect do |image|
-              [
-                image_label_for_select(image),
-                image.id,
-                data: { vmware_ostype: image.vmware_ostype }
-              ]
+            hypervisors.each do |hypervisor_type, images|
+              images = images.sort_by { |image| [image.name, image.created_at] }
+              items =
+                images.collect do |image|
+                  [
+                    image_label_for_select(image),
+                    image.id,
+                    data: {
+                      vmware_ostype: image.vmware_ostype,
+                    },
+                  ]
+                end
+
+              if hv_type == hypervisor_type || hv_type == "all"
+                container << ["--#{hypervisor_type}", items]
+              end
             end
-
-            container << ["--#{hypervisor_type}", items] if hv_type == hypervisor_type || hv_type == 'all'
           end
-        end
 
         # [
         #  ["public", []],
@@ -85,18 +95,20 @@ module Compute
         #  ]
         # ]
 
-        if hv_type == 'vmware'
+        if hv_type == "vmware"
           if bootable_volumes && !bootable_volumes.empty?
-            volume_items = @bootable_volumes.collect do |v|
-              infos = []
-              infos << "Size: #{v.size}GB" if v.size
+            volume_items =
+              @bootable_volumes.collect do |v|
+                infos = []
+                infos << "Size: #{v.size}GB" if v.size
 
-              format = (v.volume_image_metadata || {}).fetch('disk_format', nil)
-              infos << "Format: #{format}" if format
-              infos_string = !infos.empty? ? "(#{infos.join(', ')})" : ''
-              ["#{v.name.present? ? v.name : v.id} #{infos_string}", v.id]
-            end
-            groups.unshift(['--bootable volumes', volume_items])
+                format =
+                  (v.volume_image_metadata || {}).fetch("disk_format", nil)
+                infos << "Format: #{format}" if format
+                infos_string = !infos.empty? ? "(#{infos.join(", ")})" : ""
+                ["#{v.name.present? ? v.name : v.id} #{infos_string}", v.id]
+              end
+            groups.unshift(["--bootable volumes", volume_items])
           end
         end
         groups
@@ -106,14 +118,17 @@ module Compute
     def js_images_data(images)
       js_data = []
       unless images.empty?
-        js_data = images.map do |flavor|
-          { flavor.id => {
-            'name' => flavor.name,
-            'ram' => flavor.ram,
-            'vcpus' => flavor.vcpus,
-            'disk' => flavor.disk
-          } }
-        end
+        js_data =
+          images.map do |flavor|
+            {
+              flavor.id => {
+                "name" => flavor.name,
+                "ram" => flavor.ram,
+                "vcpus" => flavor.vcpus,
+                "disk" => flavor.disk,
+              },
+            }
+          end
       end
 
       js_data.to_json
@@ -121,16 +136,18 @@ module Compute
 
     def image_label_for_select(image)
       owner = image.private ? image.owner : nil
-      label = "#{image.name} (Size: #{byte_to_human(image.size)}, Format: #{image.disk_format}"
-      label += !image.buildnumber.blank? ? ", Build: #{image.buildnumber})" : ')'
+      label =
+        "#{image.name} (Size: #{byte_to_human(image.size)}, Format: #{image.disk_format}"
+      label +=
+        !image.buildnumber.blank? ? ", Build: #{image.buildnumber})" : ")"
       label += ". Project: #{project_name(image.owner)}" if owner
       label
     end
 
     def render_image_name(image)
-      return '-' if image.blank?
+      return "-" if image.blank?
 
-      build_number = image.buildnumber.blank? ? '' : "(#{image.buildnumber})"
+      build_number = image.buildnumber.blank? ? "" : "(#{image.buildnumber})"
       "#{image.name} #{build_number}"
     end
 
@@ -164,7 +181,8 @@ module Compute
       private_flavors = []
       flavors.each do |flavor|
         if flavor.public?
-          if flavor.name =~ /^baremetal/ || flavor.name =~ /^zh/ || flavor.name =~ /^zg/
+          if flavor.name =~ /^baremetal/ || flavor.name =~ /^zh/ ||
+               flavor.name =~ /^zg/
             public_flavors_baremetal << flavor
           else
             public_flavors_vmware << flavor
@@ -175,43 +193,59 @@ module Compute
       end
 
       # group to public and private
-      result = [['public', []]]
+      result = [["public", []]]
       unless public_flavors_baremetal.empty?
-        result << ['--bare metal', public_flavors_baremetal.sort_by { |a| [a.ram, a.vcpus] }]
+        result << [
+          "--bare metal",
+          public_flavors_baremetal.sort_by { |a| [a.ram, a.vcpus] },
+        ]
       end
-      result << ['--vmware', public_flavors_vmware.sort_by { |a| [a.ram, a.vcpus] }] unless public_flavors_vmware.empty?
-      result << ['private', private_flavors.sort_by { |a| [a.ram, a.vcpus] }] unless private_flavors.empty?
+      unless public_flavors_vmware.empty?
+        result << [
+          "--vmware",
+          public_flavors_vmware.sort_by { |a| [a.ram, a.vcpus] },
+        ]
+      end
+      unless private_flavors.empty?
+        result << ["private", private_flavors.sort_by { |a| [a.ram, a.vcpus] }]
+      end
       result
     end
 
     def cached_projects_by_project_id(objects)
       return {} unless objects
       project_ids = objects.map(&:project_id)
-      return ObjectCache.where(id:project_ids).includes(:domain).each_with_object({})do |pr, map|
-        map[pr.id] = pr
-      end
+      return(
+        ObjectCache
+          .where(id: project_ids)
+          .includes(:domain)
+          .each_with_object({}) { |pr, map| map[pr.id] = pr }
+      )
     end
 
     def grouped_security_groups(security_groups)
       # get project names from cache
       cached_projects = cached_projects_by_project_id(security_groups)
 
-      grouped_by_project = security_groups.each_with_object({}) do |sg,map|
-        key = sg.project_id
-        if cached_projects[sg.project_id]
-          if cached_projects[sg.project_id].domain
-            key = "#{cached_projects[sg.project_id].domain.name}/" 
-          end
-          key += cached_projects[sg.project_id].name
-        end
+      grouped_by_project =
+        security_groups
+          .each_with_object({}) do |sg, map|
+            key = sg.project_id
+            if cached_projects[sg.project_id]
+              if cached_projects[sg.project_id].domain
+                key = "#{cached_projects[sg.project_id].domain.name}/"
+              end
+              key += cached_projects[sg.project_id].name
+            end
 
-        map[key] ||= [] 
-        map[key] << sg
-      end.sort_by{|key,_| key}
+            map[key] ||= []
+            map[key] << sg
+          end
+          .sort_by { |key, _| key }
 
       result = []
-      grouped_by_project.each do |key,values|
-        result << [key,values.sort{|a,b| a.name <=> b.name}]
+      grouped_by_project.each do |key, values|
+        result << [key, values.sort { |a, b| a.name <=> b.name }]
       end
 
       result
@@ -220,14 +254,17 @@ module Compute
     def js_flavor_data(flavors)
       js_data = []
       unless flavors.empty?
-        js_data = flavors.map do |flavor|
-          { flavor.id => {
-            'name' => flavor.name,
-            'ram' => flavor.ram,
-            'vcpus' => flavor.vcpus,
-            'disk' => flavor.disk
-          } }
-        end
+        js_data =
+          flavors.map do |flavor|
+            {
+              flavor.id => {
+                "name" => flavor.name,
+                "ram" => flavor.ram,
+                "vcpus" => flavor.vcpus,
+                "disk" => flavor.disk,
+              },
+            }
+          end
       end
 
       js_data.to_json
@@ -242,24 +279,32 @@ module Compute
     # Floating IPs
     ########################################################################
     def network_ips_map(ips)
-      network_ips = ips.each_with_object({}) do |ip_data, map|
-        map[ip_data['fixed']['network_name']] ||= []
-        map[ip_data['fixed']['network_name']] << ip_data
-      end
+      network_ips =
+        ips.each_with_object({}) do |ip_data, map|
+          map[ip_data["fixed"]["network_name"]] ||= []
+          map[ip_data["fixed"]["network_name"]] << ip_data
+        end
     end
 
     def instance_ips(instance)
-      @project_floating_ips ||= ObjectCache.where(
-        project_id: @scoped_project_id, cached_object_type: 'floatingip'
-      ).map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
+      @project_floating_ips ||=
+        ObjectCache
+          .where(
+            project_id: @scoped_project_id,
+            cached_object_type: "floatingip",
+          )
+          .map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
 
-      available_floating_ips = @project_floating_ips.collect(&:floating_ip_address)
+      available_floating_ips =
+        @project_floating_ips.collect(&:floating_ip_address)
 
-      instance_floating_ips = instance.floating_ips.collect { |f| f['addr'] }
+      instance_floating_ips = instance.floating_ips.collect { |f| f["addr"] }
 
-      if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
+      if (available_floating_ips & instance_floating_ips).sort !=
+           instance_floating_ips.sort
         # p '::::::::::::::::::: REFRESH CACHE ::::::::::::::::::'
-        @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
+        @project_floating_ips =
+          services.networking.project_floating_ips(@scoped_project_id)
       end
       instance.ip_maps(@project_floating_ips)
     end
@@ -267,19 +312,27 @@ module Compute
     def render_fixed_floating_ips(ips)
       capture_haml do
         ips.each do |ip_data|
-          fixed = ip_data['fixed']
-          floating = ip_data['floating']
+          fixed = ip_data["fixed"]
+          floating = ip_data["floating"]
 
-          haml_tag :p, class: 'list-group-item-text' do
-            haml_tag :span, data: { toggle: 'tooltip' }, title: "Fixed IP (#{fixed['network_name']})" do
-              haml_tag :i, '', class: 'fa fa-desktop fa-fw'
-              haml_concat fixed['addr']
+          haml_tag :p, class: "list-group-item-text" do
+            haml_tag :span,
+                     data: {
+                       toggle: "tooltip",
+                     },
+                     title: "Fixed IP (#{fixed["network_name"]})" do
+              haml_tag :i, "", class: "fa fa-desktop fa-fw"
+              haml_concat fixed["addr"]
             end
             if floating
-              haml_tag :span, data: { toggle: 'tooltip' }, title: "Floating IP (#{floating['network_name']})" do
-                haml_tag(:i, '', class: 'fa fa-arrows-h')
-                haml_tag(:i, '', class: 'fa fa-globe fa-fw')
-                haml_concat floating['addr']
+              haml_tag :span,
+                       data: {
+                         toggle: "tooltip",
+                       },
+                       title: "Floating IP (#{floating["network_name"]})" do
+                haml_tag(:i, "", class: "fa fa-arrows-h")
+                haml_tag(:i, "", class: "fa fa-globe fa-fw")
+                haml_concat floating["addr"]
               end
             end
           end

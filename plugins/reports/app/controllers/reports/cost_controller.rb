@@ -2,7 +2,7 @@
 
 module Reports
   class CostController < DashboardController
-    authorization_context 'reports'
+    authorization_context "reports"
     authorization_required
 
     before_action :role_assigments, only: %i[users groups]

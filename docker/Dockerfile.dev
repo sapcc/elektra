@@ -39,16 +39,10 @@ RUN apk --no-cache add --update \
   zlib-dev \
   tshark 
 
-RUN pip3 install --upgrade pip
-RUN pip3 install mitmproxy
+RUN pip install --upgrade pip
+# --use-pep517 -> https://github.com/pypa/pip/issues/8559
+RUN pip install --use-pep517 mitmproxy==8.1.1 pgcli
 ENV LANG=en_US.UTF-8
-
-RUN pip3 install -U pip
-
-# https://stackoverflow.com/questions/57284921/error-in-setting-up-mitmproxy-on-alpine-3-9
-RUN pip3 install mitmproxy
-
-RUN pip3 install pgcli
 
 RUN mkdir /app
 WORKDIR /app

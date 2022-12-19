@@ -1,6 +1,5 @@
 module EmailService
   class Forms::PlainEmail
-
     include Virtus.model
     extend ActiveModel::Naming
     include ActiveModel::Conversion
@@ -54,23 +53,20 @@ module EmailService
       begin
         plain_email.form_to_attributes(attributes)
       rescue StandardError => e
-        errors.add 'plain_email_attributes'.to_sym, e.inspect
+        errors.add "plain_email_attributes".to_sym, e.inspect
       end
       if !plain_email.errors.blank?
         messages = plain_email.errors.blank? ? {} : plain_email.errors
         assign_errors(messages)
       end
-      
+
       plain_email
     end
 
     def assign_errors(messages)
       messages.each do |key, value|
-        value.each do |item|
-          errors.add key.to_sym, item
-        end
+        value.each { |item| errors.add key.to_sym, item }
       end
     end
-
   end
 end

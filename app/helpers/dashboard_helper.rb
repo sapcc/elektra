@@ -1,3 +1,2 @@
 module DashboardHelper
-    
 end

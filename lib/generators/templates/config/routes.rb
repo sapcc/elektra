@@ -1,3 +1,1 @@
-%{PLUGIN_NAME}::Engine.routes.draw do
-  get '/' => 'application#index'
-end
+"PLUGIN_NAME"::Engine.routes.draw { get "/" => "application#index" }
