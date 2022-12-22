@@ -1,10 +1,10 @@
 #!/bin/bash
 
 function help() {
-  help_txt="$(basename -- $0) REGION* ENV_FILE* KUBE_CMD*
-      REGION:   where to logon?                      default: qa-de-1
-      ENV_FILE: where the elektra .env is located?   default: /workspace/elektra/.env
-      KUBE_CMD: replace the kubectl command          default: kubectl
+  help_txt="$(basename -- $0) -r|--region qa-de-1 -e|--env /home/user/elektra/.env -kc|--kubecmd kubectl
+      --region:  where to logon?                      default: qa-de-1
+      --env:     where the elektra .env is located?   default: /workspace/elektra/.env
+      --kubecmd: replace the kubectl command          default: kubectl
       "
 
   if [[ -n "${WS_USER}" ]]; then
@@ -27,19 +27,8 @@ function enable_internal_endpoint() {
   echo 'MONSOON_OPENSTACK_AUTH_API_ENDPOINT="http://localhost:5000/v3/"' >>"$ENV_FILE"
 }
 
-if [[ "$1" == "--help" ]]; then
-  help
-fi
-
-REGION="${1-"qa-de-1"}"
-ENV_FILE="${2-"/workspace/elektra/.env"}"
-KUBE_CMD="${3-"kubectl"}"
-
 # ctrl_c is not allowed
 trap ctrl_c INT
-
-CONNECT="$KUBE_CMD port-forward -n monsoon3 service/keystone 5000:5000"
-PID=$(pidof $KUBE_CMD)
 
 function ctrl_c() {
   echo ""
@@ -47,10 +36,49 @@ function ctrl_c() {
   echo "and will run in background forever 😶"
 }
 
+while [[ $# -gt 0 ]]; do
+  case $1 in
+  -h | --help)
+    help
+    exit 0
+    ;;
+  -r | --region)
+    REGION=$2
+    shift # past argument
+    shift # past value
+    ;;
+  -kc | --kubecmd)
+    KUBE_CMD=$2
+    shift # past argument
+    shift # past value
+    ;;
+  -e | --env)
+    ENV_FILE=$2
+    shift # past argument
+    shift # past value
+    ;;
+  *)
+    msg_error "Unknown option $1"
+    help
+    exit 1
+    ;;
+  esac
+done
+
 if [[ -z "${REGION}" ]]; then
-  echo "ERROR: no REGION given"
-  help
+  REGION="qa-de-1"
 fi
+
+if [[ -z "${KUBE_CMD}" ]]; then
+  KUBE_CMD="kubectl"
+fi
+
+if [[ -z "${ENV_FILE}" ]]; then
+  ENV_FILE="/workspace/elektra/.env"
+fi
+
+CONNECT="$KUBE_CMD port-forward -n monsoon3 service/keystone 5000:5000"
+PID=$(pidof $KUBE_CMD)
 
 if [[ -n "${WS_USER}" ]]; then
   # shellcheck source=/dev/null
