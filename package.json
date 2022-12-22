@@ -66,7 +66,7 @@
   },
   "devDependencies": {
     "@deanc/esbuild-plugin-postcss": "^1.0.2",
-    "autoprefixer": "^10.4.12",
+    "autoprefixer": "10.4.13",
     "axios-mock-adapter": "1.18.2",
     "chokidar": "^3.5.3",
     "cypress": "9.0.0",
