@@ -66,6 +66,7 @@
   },
   "devDependencies": {
     "@deanc/esbuild-plugin-postcss": "^1.0.2",
+    "@floating-ui/react": "^0.14.0",
     "autoprefixer": "^10.4.12",
     "axios-mock-adapter": "1.18.2",
     "chokidar": "^3.5.3",

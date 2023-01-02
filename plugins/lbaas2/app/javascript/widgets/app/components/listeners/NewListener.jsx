@@ -34,6 +34,7 @@ import {
   searchParamsToString,
 } from "../../helpers/commonHelpers"
 import { queryTlsCiphers } from "../../../../queries/listener"
+import SmartSelectInput from "../shared/SmartSelectInput"
 
 const NewListener = (props) => {
   const { createListener } = useListener()
@@ -359,6 +360,7 @@ const NewListener = (props) => {
         resetForm={false}
       >
         <Modal.Body>
+          <SmartSelectInput />
           <div className="bs-callout bs-callout-warning bs-callout-emphasize">
             <h4>
               Switched to using PKCS12 for TLS Term certs (New in API version

@@ -275,6 +275,38 @@ module Lbaas2
       render json: { errors: e.message }, status: "500"
     end
 
+    def secrets
+      # collect secrets by type
+      secretsCertificate =
+        services.key_manager.secrets(
+          sort: "created:desc",
+          secret_type: ::KeyManager::Secret::Type::CERTIFICATE,
+          limit: params[:limit] || 10,
+          offset: params[:offset] || 0,
+        )
+      secretsOpaque =
+        services.key_manager.secrets(
+          sort: "created:desc",
+          secret_type: ::KeyManager::Secret::Type::OPAQUE,
+          limit: params[:limit] || 10,
+          offset: params[:offset] || 0,
+        )
+
+      total =
+        secretsCertificate.fetch(:total, 0).to_i +
+          secretsOpaque.fetch(:total, 0).to_i
+      secrets =
+        secretsCertificate.fetch(:items, []) + secretsOpaque.fetch(:items, [])
+      selectSecrets =
+        secrets.map do |c|
+          { label: "#{c.name} (#{c.secret_ref})", value: c.secret_ref }
+        end
+
+      render json: { secrets: selectSecrets, total: total }
+    rescue Exception => e
+      render json: { errors: e.message }, status: "500"
+    end
+
     def ciphers
       allow_ciphers = OctaviaConfig["cipher_suites"]["allow_list"]
       litener_default_ciphers =

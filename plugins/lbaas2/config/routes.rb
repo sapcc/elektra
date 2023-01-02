@@ -10,6 +10,7 @@ Lbaas2::Engine.routes.draw do
       put ":id/attach_fip" => "loadbalancers#attach_fip"
       put ":id/detach_fip" => "loadbalancers#detach_fip"
       get "availability-zones" => "loadbalancers#availability_zones"
+      get "secrets" => "loadbalancers#secrets"
       get "ciphers" => "loadbalancers#ciphers"
     end
 

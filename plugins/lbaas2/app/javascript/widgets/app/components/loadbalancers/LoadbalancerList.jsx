@@ -23,6 +23,9 @@ import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
 import { errorMessage } from "../../helpers/commonHelpers"
 
+import { querySecretsForSelect } from "../../../../queries/listener"
+import SmartSelectInput from "../shared/SmartSelectInput"
+
 const TableFadeTransition = ({ children, ...props }) => (
   <CSSTransition
     {...props}
@@ -41,6 +44,8 @@ const LoadbalancerList = (props) => {
 
   const [shouldFetchNext, setShouldFetchNext] = useState(false)
   const [fetchingAllItems, setFetchingAllItems] = useState(false)
+
+  const secrets = querySecretsForSelect({}, true)
 
   useEffect(() => {
     initLoad()
@@ -132,6 +137,9 @@ const LoadbalancerList = (props) => {
       )
     }
   }
+
+  console.log("secrets: ", secrets.data)
+
   const loadbalancers = filterItems(searchTerm, items)
   return useMemo(() => {
     Log.debug("RENDER loadbalancer list")
@@ -140,11 +148,19 @@ const LoadbalancerList = (props) => {
         {error && !fetchingAllItems ? (
           <ErrorPage
             headTitle="Load Balancers"
-            error={error}
+            error={error?.message}
             onReload={initLoad}
           />
         ) : (
           <React.Fragment>
+            <div className="container">
+              <SmartSelectInput
+                options={secrets.data?.secrets}
+                isLoading={secrets.isLoading}
+                error={secrets.error && errorMessage(secrets.error)}
+              />
+            </div>
+
             <div className="toolbar searchToolbar">
               {selected ? (
                 <Link className="back-link" to={`/loadbalancers`}>
@@ -260,6 +276,7 @@ const LoadbalancerList = (props) => {
     isLoading,
     searchTerm,
     hasNext,
+    secrets,
   ])
 }
 export default LoadbalancerList
