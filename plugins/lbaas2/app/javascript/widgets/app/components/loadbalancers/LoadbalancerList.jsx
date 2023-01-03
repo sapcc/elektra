@@ -24,6 +24,7 @@ import Log from "../shared/logger"
 import { errorMessage } from "../../helpers/commonHelpers"
 
 import { querySecretsForSelect } from "../../../../queries/listener"
+import { fetchSecretsForSelect } from "../../actions/listener"
 import SmartSelectInput from "../shared/SmartSelectInput"
 
 const TableFadeTransition = ({ children, ...props }) => (
@@ -45,7 +46,7 @@ const LoadbalancerList = (props) => {
   const [shouldFetchNext, setShouldFetchNext] = useState(false)
   const [fetchingAllItems, setFetchingAllItems] = useState(false)
 
-  const secrets = querySecretsForSelect({}, true)
+  const secrets = querySecretsForSelect({ limit: 10 })
 
   useEffect(() => {
     initLoad()
@@ -138,8 +139,6 @@ const LoadbalancerList = (props) => {
     }
   }
 
-  console.log("secrets: ", secrets.data)
-
   const loadbalancers = filterItems(searchTerm, items)
   return useMemo(() => {
     Log.debug("RENDER loadbalancer list")
@@ -155,9 +154,10 @@ const LoadbalancerList = (props) => {
           <React.Fragment>
             <div className="container">
               <SmartSelectInput
-                options={secrets.data?.secrets}
+                options={secrets.data?.options}
                 isLoading={secrets.isLoading}
                 error={secrets.error && errorMessage(secrets.error)}
+                fetchPromise={fetchSecretsForSelect}
               />
             </div>
 

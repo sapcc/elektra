@@ -11,9 +11,11 @@ export const queryTlsCiphers = () => {
   })
 }
 
-export const querySecretsForSelect = (options, ready) => {
-  return useQuery(["secretsSelect", options], fetchSecretsForSelect, {
-    // The query will not execute until the bearerToken exists
-    enabled: !!ready,
-  })
+const fetchSecretsForSelectAction = ({ queryKey }) => {
+  const [_key, fetchParams] = queryKey
+  return fetchSecretsForSelect(fetchParams)
+}
+
+export const querySecretsForSelect = (options) => {
+  return useQuery(["secretsSelect", options], fetchSecretsForSelectAction, {})
 }

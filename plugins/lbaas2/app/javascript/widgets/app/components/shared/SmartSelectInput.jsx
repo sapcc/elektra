@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, CSSProperties } from "react"
+import React, { useMemo, useState, useEffect } from "react"
 import {
   useFloating,
   autoUpdate,
@@ -21,7 +21,10 @@ import {
   LoadingIndicator,
   Stack,
   Message,
+  Button,
+  Spinner,
 } from "juno-ui-components"
+import { useQuery } from "react-query"
 
 // const optionsContainer = `
 //   overflow-y: scroll,
@@ -35,11 +38,20 @@ import {
 //   bg-theme-background-lvl-2
 //   sticky
 //   top-0
+//   w-full
 // `
 
 // const optionsRow = `
 //   smart-select-options-row
 //   hover:text-theme-accent
+// `
+
+// const optionsNotFoundStatus = `
+//   whitespace-nowrap
+// `
+
+// const optionsNotFoundFetchMore = `
+//   whitespace-nowrap
 // `
 
 // const fakeInputText = (isOpen) => {
@@ -69,27 +81,87 @@ import {
 const regexString = (string) => string.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
 
 /*  
-  - @options: fix small amount (max 50) of options to display at the beginning
+  - @options: fix small amount (max 50) of options to display
+    Ex: 
+        [{
+          "label": "HN_TEST_1",
+          "value": "df7e-48c1-aca2-5c700d5382b6"
+        },
+        {
+          "label": "HN_TEST_4",
+          "value": "e11a-4e8a-ba90-7ecf02858342"
+        }]
   - @isLoading: display a loading element to wait until the options are ready to display
   - @error: display an error when fetching options fails
-  - @fetchCallback: if set will be called to fetch more options when filtering
+  - @fetchQuery(params): promise called when fetching more options while filtering
+    Return object ex:
+        {
+          options: [...],
+          total: 1345,
+        }
 */
-const SmartSelectInput = ({ options, isLoading, error, fetchCallback }) => {
+const SmartSelectInput = ({ options, isLoading, error, fetchPromise }) => {
   const [open, setOpen] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState([])
   const [displayOptions, setDisplayOptions] = useState(false)
+  const [fetchedOptions, setFetchedOptions] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
+  const [isFetching, setIsFetching] = useState(false)
+  const [fetchParams, setFetchParams] = useState({ offset: 0, limit: 1 })
+  const [fetchStatus, setFetchStatus] = useState({ total: 0 })
 
-  // options = useMemo(() => {
-  //   if (!options) return []
-  //   return options
-  // }, [options])
+  const fetchAction = ({ queryKey }) => {
+    const [_key, fetchParams] = queryKey
+    console.log("key: ", queryKey)
+    return fetchPromise(fetchParams)
+  }
 
-  // compute difference between the given default options or the fetched by callback
+  const newFetchedOptions = useQuery(
+    ["fetchOptions", fetchParams],
+    fetchAction,
+    {
+      // The query will not execute until it is triggered
+      enabled: !!isFetching,
+      // do not refetch on focus since it would add existing items to the fetched options array
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        console.log("DATA: ", data)
+        if (data?.options && data?.options?.length > 0) {
+          setFetchedOptions([...fetchedOptions, ...data.options])
+        } else {
+          // if no more options stop fetching
+          setIsFetching(false)
+        }
+        if (data?.total) {
+          setFetchStatus({ ...fetchStatus, total: data?.total })
+        }
+      },
+    }
+  )
+
+  // recalculate the offset when we get new fetched options
+  useEffect(() => {
+    if (fetchedOptions.length > 0) {
+      const offset = (options.length || 0) + fetchedOptions.length
+      console.log("offset: ", offset)
+      if (offset < fetchStatus.total) {
+        console.log("continue!! FETCHING")
+        setFetchParams({ ...fetchParams, offset: offset, limit: 100 })
+      } else {
+        console.log("close FETCHING")
+        setIsFetching(false)
+      }
+    }
+  }, [fetchedOptions])
+
+  // compute difference between the given default options with the fetched from api
   // and the selected so the same option can't be selected more then one time
   useEffect(() => {
-    if (options) {
-      const difference = options.filter(
+    // collect options
+    const newOptions = options || []
+    const collectedOptions = [...newOptions, ...fetchedOptions]
+    if (collectedOptions) {
+      const difference = collectedOptions.filter(
         ({ value: id1 }) =>
           !selectedOptions.some(({ value: id2 }) => id2 === id1)
       )
@@ -98,9 +170,10 @@ const SmartSelectInput = ({ options, isLoading, error, fetchCallback }) => {
       const filteredOptions = difference.filter(
         (i) => `${i.label}`.search(regex) >= 0
       )
+      console.log("setDisplayOptions: ", filteredOptions)
       setDisplayOptions(filteredOptions)
     }
-  }, [selectedOptions, options, searchTerm])
+  }, [selectedOptions, options, fetchedOptions, searchTerm])
 
   const { x, y, reference, floating, strategy, context } = useFloating({
     open,
@@ -139,6 +212,9 @@ const SmartSelectInput = ({ options, isLoading, error, fetchCallback }) => {
 
   const headingId = useId()
 
+  //
+  // Callbacks
+  //
   const onOptionClicked = (option) => {
     setSelectedOptions([...selectedOptions, option])
   }
@@ -157,6 +233,16 @@ const SmartSelectInput = ({ options, isLoading, error, fetchCallback }) => {
 
   const onSearchTermChanges = (event) => {
     setSearchTerm(event.target.value)
+  }
+
+  const onFetchMore = () => {
+    setIsFetching(true)
+    const offset = options.length || 0 + fetchedOptions.length
+    setFetchParams({ ...fetchParams, offset: offset, limit: 1 })
+  }
+
+  const onFetchCancel = () => {
+    setIsFetching(false)
   }
 
   return (
@@ -198,11 +284,41 @@ const SmartSelectInput = ({ options, isLoading, error, fetchCallback }) => {
             {...getFloatingProps()}
           >
             <div className="optionFilter">
-              <TextInputRow
-                label="Filter"
-                value={searchTerm}
-                onChange={onSearchTermChanges}
-              />
+              <Stack alignment="center">
+                <TextInputRow
+                  className="optionFilterInput"
+                  label="Filter"
+                  value={searchTerm}
+                  onChange={onSearchTermChanges}
+                  disabled={!options || options.length === 0}
+                />
+                {searchTerm && fetchPromise && (
+                  <Stack alignment="center" className="optionFilterActions">
+                    {!isFetching ? (
+                      <Button
+                        className="optionsNotFoundFetchMore"
+                        icon="widgets"
+                        label="Fetch more"
+                        onClick={onFetchMore}
+                        size="small"
+                      />
+                    ) : (
+                      <>
+                        <span className="optionsNotFoundStatus">{`${fetchParams.offset} / ${fetchStatus.total}`}</span>
+                        <Spinner variant="primary" />
+                        <Button
+                          className="optionsNotFoundFetchMore"
+                          icon="cancel"
+                          label="Cancel"
+                          onClick={onFetchCancel}
+                          variant="primary-danger"
+                          size="small"
+                        />
+                      </>
+                    )}
+                  </Stack>
+                )}
+              </Stack>
             </div>
             <DataGrid id={headingId} columns={1}>
               {error && (
@@ -212,6 +328,7 @@ const SmartSelectInput = ({ options, isLoading, error, fetchCallback }) => {
                   </DataGridCell>
                 </DataGridRow>
               )}
+
               {isLoading && (
                 <DataGridRow>
                   <DataGridCell>
@@ -222,6 +339,7 @@ const SmartSelectInput = ({ options, isLoading, error, fetchCallback }) => {
                   </DataGridCell>
                 </DataGridRow>
               )}
+
               {displayOptions.length > 0 && (
                 <>
                   {displayOptions.map((option, i) => (
@@ -235,9 +353,20 @@ const SmartSelectInput = ({ options, isLoading, error, fetchCallback }) => {
                   ))}
                 </>
               )}
-              {displayOptions.length === 0 && searchTerm && (
+
+              {searchTerm && displayOptions.length === 0 && (
                 <DataGridRow>
-                  <DataGridCell>No options found</DataGridCell>
+                  <DataGridCell>
+                    <span>No options found</span>
+                  </DataGridCell>
+                </DataGridRow>
+              )}
+
+              {(!options || options.length === 0) && (
+                <DataGridRow>
+                  <DataGridCell>
+                    <span>No options available</span>
+                  </DataGridCell>
                 </DataGridRow>
               )}
             </DataGrid>
