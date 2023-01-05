@@ -82,8 +82,7 @@ module MasterdataCockpit
                           message:
                             "can't be blank if primary contact is defined"
 
-    validates_presence_of :customer,
-                          :inventory_role,
+    validates_presence_of :inventory_role,
                           :infrastructure_coordinator,
                           :responsible_operator_id
 
@@ -120,17 +119,13 @@ module MasterdataCockpit
               :responsible_primary_contact_email,
               format: {
                 with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i,
-                message: "please use a valid email address",
+                message: "please use a valid email/DL address",
               },
               allow_nil: true,
               allow_blank: true
 
-    validates :responsible_operator_id,
-              :responsible_security_expert_id,
-              :responsible_primary_contact_id,
-              :responsible_product_owner_id,
-              :responsible_controller_id,
-              :infrastructure_coordinator,
+    validates :infrastructure_coordinator,
+              :inventory_role,
               format: {
                 with: /\A[DCIdci]\d*\z/,
                 message: "please use a C/D/I user id",
