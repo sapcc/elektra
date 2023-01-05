@@ -199,7 +199,7 @@ const EditHealthMonitor = (props) => {
                 </p>
                 <Form.Errors errors={formErrors} />
 
-                <Form.ElementHorizontal label="Name" name="name" required>
+                <Form.ElementHorizontal label="Name" name="name">
                   <Form.Input elementType="input" type="text" name="name" />
                 </Form.ElementHorizontal>
 
