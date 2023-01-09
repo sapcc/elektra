@@ -9,8 +9,10 @@ describe("landing page", () => {
 
   it("user is not logged, tries to visit domain", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}`)
-    cy.contains('button', 'Log in')
-  }) 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.contains("button", "Log in")
+  })
 
   describe("Content", () => {
     before(() => {
