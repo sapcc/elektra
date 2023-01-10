@@ -92,19 +92,30 @@ const regexString = (string) => string.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
           "value": "e11a-4e8a-ba90-7ecf02858342"
         }]
   - @isLoading: display a loading element to wait until the options are ready to display
-  - @error: display an error when fetching options fails
-  - @fetchPromise(params): promise called when fetching more options while filtering
+    Ex: used when the default options are being fetched and the select is already displayed
+  - @error: display a custom error
+    Ex: used when getting an error while fetching the default options
+  - @fetchPromise(params): promise called when fetching more options
     Return object ex:
         {
           options: [...],
           total: 1345,
         }
+  - @onSelectedChange: callback function called when the selected options changed
 */
 
 // TODO: show message on api error
 // TODO: just display default options when not filtering
-const SmartSelectInput = ({ options, isLoading, error, fetchPromise }) => {
+// TODO: callback to return the options selected
+const SmartSelectInput = ({
+  options,
+  isLoading,
+  error,
+  fetchPromise,
+  onSelectedChange,
+}) => {
   const [open, setOpen] = useState(false)
+  const [callbackEnabled, setCallbackEnabled] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState([])
   const [displayOptions, setDisplayOptions] = useState(false)
   const [fetchedOptions, setFetchedOptions] = useState([])
@@ -113,10 +124,9 @@ const SmartSelectInput = ({ options, isLoading, error, fetchPromise }) => {
   const [fetchParams, setFetchParams] = useState({ offset: 0, limit: 1 })
   const [fetchStatus, setFetchStatus] = useState({ total: 0 })
 
-  // create the query action used by useQuery. Needed to get access to the fetchParams
+  // create the query action with the promise used by useQuery. Needed to get access to the fetchParams
   const fetchAction = ({ queryKey }) => {
     const [_key, fetchParams] = queryKey
-    console.log("key: ", queryKey)
     return fetchPromise(fetchParams)
   }
 
@@ -176,11 +186,20 @@ const SmartSelectInput = ({ options, isLoading, error, fetchPromise }) => {
       const filteredOptions = difference.filter(
         (i) => `${i.label}`.search(regex) >= 0
       )
-      console.log("setDisplayOptions: ", filteredOptions)
       setDisplayOptions(filteredOptions)
     }
   }, [selectedOptions, options, fetchedOptions, searchTerm])
 
+  // notify when selectedOptions changes
+  useEffect(() => {
+    if (callbackEnabled && onSelectedChange) {
+      console.log("selectedOptions changed: ", selectedOptions)
+    }
+  }, [selectedOptions])
+
+  //
+  // Set up Floating ui
+  //
   const { x, y, reference, floating, strategy, context } = useFloating({
     open,
     placement: "bottom-start",
@@ -222,6 +241,7 @@ const SmartSelectInput = ({ options, isLoading, error, fetchPromise }) => {
   // Callbacks
   //
   const onOptionClicked = (option) => {
+    setCallbackEnabled(true)
     setSelectedOptions([...selectedOptions, option])
   }
 
@@ -385,7 +405,7 @@ const SmartSelectInput = ({ options, isLoading, error, fetchPromise }) => {
 
 const SmartSelect = (props) => {
   // Create an own query client
-  let queryClient = new QueryClient()
+  const queryClient = new QueryClient()
 
   return (
     <QueryClientProvider client={queryClient}>
