@@ -53,6 +53,35 @@ const receiveSecret = (secretsState, action) => {
   }
   return secretsState
 }
+const receiveSecretMetadata = (secretsState, action) => {
+  debugger
+  if (action.data) {
+    const secrets = secretsState.items.slice()
+    const index = secrets.findIndex(
+      (i) => i.secret_ref.indexOf(action.data.secret_ref) >= 0
+    )
+    if (index >= 0) {
+      secrets[index] = { ...secrets[index], ...action.data }
+    } else {
+      secrets.push(action.data)
+      return {
+        ...secretsState,
+        // isFetching: false,
+        // error: null,
+        totalNumOfSecrets: secretsState.totalNumOfSecrets + 1,
+        items: secrets.sort(sortByCreationDate),
+      }
+    }
+    return {
+      ...secretsState,
+      // isFetching: false,
+      // error: null,
+      // totalNumOfSecrets: secretsState.totalNumOfSecrets + 1,
+      items: secrets.sort(sortByCreationDate),
+    }
+  }
+  return secretsState
+}
 
 const receiveSecrets = (secretsState, action) => {
   if (action.secrets) {
@@ -121,6 +150,8 @@ export default (secretsState = initialState, action) => {
       return receiveSecrets(secretsState, action)
     case "RECEIVE_SECRET":
       return receiveSecret(secretsState, action)
+    case "RECEIVE_SECRET_Metadata":
+      return receiveSecretMetadata(secretsState, action)
     case "UPDATE_SECRET":
       return updateSecrets(secretsState, action)
     case "REQUEST_SECRETS_FAILURE":

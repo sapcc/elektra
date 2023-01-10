@@ -10,8 +10,9 @@ import {
   DataGridRow,
   DataGridCell,
   DataGridHeadCell,
+  CodeBlock,
 } from "juno-ui-components"
-import { fetchSecret } from "../../secretActions"
+import { fetchSecret, fetchSecretMetadata } from "../../secretActions"
 
 const Row = ({ label, value, children }) => {
   return (
@@ -44,6 +45,7 @@ const SecretDetails = () => {
       const newSecretId = getSecretUuid(secret)
       setSecretId(newSecretId)
       loadSecret(newSecretId)
+      // loadSecretMetadata(newSecretId)
     }
   }, [secret?.secret_ref])
 
@@ -53,6 +55,19 @@ const SecretDetails = () => {
         console.log("dispatch:", data)
         dispatch({
           type: "RECEIVE_SECRET",
+          data,
+        })
+      })
+      .catch((error) => setError(error.data))
+  }
+
+  const loadSecretMetadata = (secretId) => {
+    fetchSecretMetadata(secretId)
+      .then((data) => {
+        debugger
+        console.log("dispatch:", data)
+        dispatch({
+          type: "RECEIVE_SECRET_Metadata",
           data,
         })
       })
@@ -103,27 +118,32 @@ const SecretDetails = () => {
     >
       <PanelBody>
         {secret ? (
-          <DataGrid columns={2}>
-            <Row label="Name" value={secret.name} />
-            <Row label="Secret Ref" value={secret.secret_ref} />
-            <Row label="Type" value={secret.secret_type} />
-            <Row label="Created at" value={secret.created} />
-            <Row label="Owner" value={secret.creator_id} />
-            <Row label="Content Types" value={secret.content_types.default} />
-            <Row label="Bit Length" value={secret.bit_length} />
-            <Row label="Algorithm" value={secret.algorithm} />
-            <Row label="Mode" value={secret.mode} />
-            <Row label="Status" value={secret.status} />
-            <Row label="Expiration" value={secret.expiration} />
-            <DataGridRow>
-              <DataGridHeadCell>{"Payload"}</DataGridHeadCell>
-              <DataGridCell>
-                <Link to={`/secrets/${secretId}/payload`}>
-                  Payload of {secret.name}
-                </Link>
-              </DataGridCell>
-            </DataGridRow>
-          </DataGrid>
+          <>
+            <DataGrid columns={2}>
+              <Row label="Name" value={secret.name} />
+              <Row label="Secret Ref" value={secret.secret_ref} />
+              <Row label="Type" value={secret.secret_type} />
+              <Row label="Created at" value={secret.created} />
+              <Row label="Owner" value={secret.creator_id} />
+              <Row label="Content Types" value={secret.content_types.default} />
+              <Row label="Bit Length" value={secret.bit_length} />
+              <Row label="Algorithm" value={secret.algorithm} />
+              <Row label="Mode" value={secret.mode} />
+              <Row label="Status" value={secret.status} />
+              <Row label="Expiration" value={secret.expiration} />
+              <DataGridRow>
+                <DataGridHeadCell>{"Payload"}</DataGridHeadCell>
+                <DataGridCell>
+                  <Link to={`/secrets/${secretId}/payload`}>
+                    Payload of {secret.name}
+                  </Link>
+                </DataGridCell>
+              </DataGridRow>
+            </DataGrid>
+            <CodeBlock heading="Metadata">
+              Metadata will be shown here
+            </CodeBlock>
+          </>
         ) : (
           <span>Secret {params.id} not found</span>
         )}

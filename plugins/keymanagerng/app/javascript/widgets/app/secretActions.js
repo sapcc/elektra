@@ -18,6 +18,15 @@ export const fetchSecret = (uuid) => {
     .catch((error) => console.log(error.data))
 }
 
+export const fetchSecretMetadata = (uuid) => {
+  console.log("fetchSecretMetadata uuid: ", uuid)
+  return apiClient
+    .osApi("key-manager")
+    .get("/v1/secrets/" + uuid + "/metadata")
+    .then((response) => response.data)
+    .catch((error) => console.log(error.data))
+}
+
 export const deleteSecret = (id) => {
   return apiClient
     .osApi("key-manager")
