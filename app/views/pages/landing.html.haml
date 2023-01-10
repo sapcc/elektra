@@ -1,9 +1,7 @@
 %noscript
   %h1 SAP Converged Cloud
   = link_to "Enter the cloud", main_app.domain_home_path(domain_id: params[:domain_id], project_id:nil)
-  = link_to "Log in with password", monsoon_openstack_auth.login_path(domain_fid: @scoped_domain_fid || params[:domain_id],
-                    domain_name: (params[:domain_id] || Rails.configuration.default_domain),
-                    after_login: main_app.domain_home_path(domain_id:params[:domain_id]))
-  
+  = link_to "Log in with password", monsoon_openstack_auth.login_path(domain_fid: @scoped_domain_fid || params[:domain_id], domain_name: (params[:domain_id] || Rails.configuration.default_domain), after_login: main_app.domain_home_path(domain_id:params[:domain_id]))
 -# global landing page with preselected region/domain
-= javascript_include_tag 'https://cdn.juno.global.cloud.sap/widget-loader/latest/app.js', defer: true, data: {name: "dashboard", version: "latest", "props-region": "#{current_region}", "props-domain": "#{current_domain}", "props-prodmode": Rails.env.production?}
+- juno_region = current_region.start_with?("qa-de") ? "qa-de-1" : "eu-nl-1"
+= javascript_include_tag "https://assets.juno.#{juno_region}.cloud.sap/apps/widget-loader@latest/build/app.js", defer: true, data: {"show-loading": "true", name: "dashboard", version: "latest", "props-region": "#{current_region}", "props-domain": "#{current_domain}", "props-prodmode": Rails.env.production?}
