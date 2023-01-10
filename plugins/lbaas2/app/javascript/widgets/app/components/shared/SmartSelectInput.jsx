@@ -24,7 +24,7 @@ import {
   Button,
   Spinner,
 } from "juno-ui-components"
-import { useQuery } from "react-query"
+import { QueryClient, QueryClientProvider, useQuery } from "react-query"
 
 // const optionsContainer = `
 //   overflow-y: scroll,
@@ -93,13 +93,16 @@ const regexString = (string) => string.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
         }]
   - @isLoading: display a loading element to wait until the options are ready to display
   - @error: display an error when fetching options fails
-  - @fetchQuery(params): promise called when fetching more options while filtering
+  - @fetchPromise(params): promise called when fetching more options while filtering
     Return object ex:
         {
           options: [...],
           total: 1345,
         }
 */
+
+// TODO: show message on api error
+// TODO: just display default options when not filtering
 const SmartSelectInput = ({ options, isLoading, error, fetchPromise }) => {
   const [open, setOpen] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState([])
@@ -110,20 +113,23 @@ const SmartSelectInput = ({ options, isLoading, error, fetchPromise }) => {
   const [fetchParams, setFetchParams] = useState({ offset: 0, limit: 1 })
   const [fetchStatus, setFetchStatus] = useState({ total: 0 })
 
+  // create the query action used by useQuery. Needed to get access to the fetchParams
   const fetchAction = ({ queryKey }) => {
     const [_key, fetchParams] = queryKey
     console.log("key: ", queryKey)
     return fetchPromise(fetchParams)
   }
 
+  // Query to used to fetch more options
   const newFetchedOptions = useQuery(
     ["fetchOptions", fetchParams],
     fetchAction,
     {
-      // The query will not execute until it is triggered
+      // The query will not execute until it is triggered by the isFetching boolean
       enabled: !!isFetching,
       // do not refetch on focus since it would add existing items to the fetched options array
       refetchOnWindowFocus: false,
+      // use the callback to add the fetched options
       onSuccess: (data) => {
         console.log("DATA: ", data)
         if (data?.options && data?.options?.length > 0) {
@@ -377,4 +383,15 @@ const SmartSelectInput = ({ options, isLoading, error, fetchPromise }) => {
   )
 }
 
-export default SmartSelectInput
+const SmartSelect = (props) => {
+  // Create an own query client
+  let queryClient = new QueryClient()
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SmartSelectInput {...props} />
+    </QueryClientProvider>
+  )
+}
+
+export default SmartSelect
