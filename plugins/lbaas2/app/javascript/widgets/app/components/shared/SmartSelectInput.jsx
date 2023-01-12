@@ -11,7 +11,6 @@ import {
   FloatingFocusManager,
   useId,
   size,
-  useInnerOffset,
 } from "@floating-ui/react"
 import {
   TextInputRow,
@@ -78,32 +77,6 @@ import {
 //   mr-1
 // `
 
-const regexString = (string) => string.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
-
-/*  
-  - @options: fix small amount (max 50) of options to display
-    Ex: 
-        [{
-          "label": "HN_TEST_1",
-          "value": "df7e-48c1-aca2-5c700d5382b6"
-        },
-        {
-          "label": "HN_TEST_4",
-          "value": "e11a-4e8a-ba90-7ecf02858342"
-        }]
-  - @isLoading: display a loading element to wait until the options are ready to display
-    Ex: used when the default options are being fetched and the select is already displayed
-  - @error: display a custom error
-    Ex: used when getting an error while fetching the default options
-  - @fetchPromise(params): promise called when fetching more options
-    Return object ex:
-        {
-          options: [...],
-          total: 1345,
-        }
-  - @value: preselected options
-*/
-
 const SmartSelectInput = ({
   options,
   isLoading,
@@ -119,72 +92,6 @@ const SmartSelectInput = ({
   onSearchTermChange,
 }) => {
   const [open, setOpen] = useState(false)
-
-  // create the query action with the promise used by useQuery. Needed to get access to the fetchParams
-  // const fetchAction = ({ queryKey }) => {
-  //   const [_key, fetchParams] = queryKey
-  //   return fetchPromise(fetchParams)
-  // }
-
-  // // Query to used to fetch more options
-  // const newFetchedOptions = useQuery(
-  //   ["fetchOptions", fetchParams],
-  //   fetchAction,
-  //   {
-  //     // The query will not execute until it is triggered by the isFetching boolean
-  //     enabled: !!isFetching,
-  //     // do not refetch on focus since it would add existing items to the fetched options array
-  //     refetchOnWindowFocus: false,
-  //     // use the callback to add the fetched options
-  //     onSuccess: (data) => {
-  //       console.log("DATA: ", data)
-  //       if (data?.options && data?.options?.length > 0) {
-  //         setFetchedOptions([...fetchedOptions, ...data.options])
-  //       } else {
-  //         // if no more options stop fetching
-  //         // setIsFetching(false)
-  //       }
-  //       if (data?.total) {
-  //         setFetchStatus({ ...fetchStatus, total: data?.total })
-  //       }
-  //     },
-  //   }
-  // )
-
-  // // recalculate the offset when we get new fetched options
-  // useEffect(() => {
-  //   if (fetchedOptions.length > 0) {
-  //     const offset = (options.length || 0) + fetchedOptions.length
-  //     console.log("offset: ", offset)
-  //     if (offset < fetchStatus.total) {
-  //       console.log("continue!! FETCHING")
-  //       setFetchParams({ ...fetchParams, offset: offset, limit: 100 })
-  //     } else {
-  //       console.log("close FETCHING")
-  //       // setIsFetching(false)
-  //     }
-  //   }
-  // }, [fetchedOptions])
-
-  // // compute difference between the given default options with the fetched from api
-  // // and the selected so the same option can't be selected more then one time
-  // useEffect(() => {
-  //   // collect options
-  //   const newOptions = options || []
-  //   const collectedOptions = [...newOptions, ...fetchedOptions]
-  //   if (collectedOptions) {
-  //     const difference = collectedOptions.filter(
-  //       ({ value: id1 }) =>
-  //         !selectedOptions.some(({ value: id2 }) => id2 === id1)
-  //     )
-  //     // filter the difference with the filter string given by the user
-  //     const regex = new RegExp(regexString(searchTerm.trim()), "i")
-  //     const filteredOptions = difference.filter(
-  //       (i) => `${i.label}`.search(regex) >= 0
-  //     )
-  //     setDisplayOptions(filteredOptions)
-  //   }
-  // }, [selectedOptions, options, fetchedOptions, searchTerm])
 
   // set default to empty string if not given
   options = useMemo(() => {
@@ -254,16 +161,6 @@ const SmartSelectInput = ({
   const onOptionDeselected = (option) => {
     if (onOptionRemove) onOptionRemove(option)
   }
-
-  // const onFetchMoreClick = (event) => {
-  //   if (onFetchClick) onFetchClick(event)
-  //   const offset = options.length || 0 + fetchedOptions.length
-  //   setFetchParams({ ...fetchParams, offset: offset, limit: 1 })
-  // }
-
-  // const onFetchMoreCancel = (event) => {
-  //   if (onFetchCancel) onFetchCancel(event)
-  // }
 
   return (
     <div>
@@ -378,6 +275,8 @@ import { querySecretsForSelect } from "../../../../queries/listener"
 import { fetchSecretsForSelect } from "../../actions/listener"
 import { useQuery } from "react-query"
 import { errorMessage } from "../../helpers/commonHelpers"
+
+const regexString = (string) => string.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
 
 const SmartSelectWrapper = () => {
   const [isFetching, setIsFetching] = useState(false)
