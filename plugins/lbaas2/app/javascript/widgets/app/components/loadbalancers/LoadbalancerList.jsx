@@ -23,9 +23,7 @@ import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
 import { errorMessage } from "../../helpers/commonHelpers"
 
-import { querySecretsForSelect } from "../../../../queries/listener"
-import { fetchSecretsForSelect } from "../../actions/listener"
-import SmartSelectInput from "../shared/SmartSelectInput"
+import SmartSelectWrapper from "../shared/SmartSelectInput"
 
 const TableFadeTransition = ({ children, ...props }) => (
   <CSSTransition
@@ -45,8 +43,6 @@ const LoadbalancerList = (props) => {
 
   const [shouldFetchNext, setShouldFetchNext] = useState(false)
   const [fetchingAllItems, setFetchingAllItems] = useState(false)
-
-  const secrets = querySecretsForSelect({ limit: 10 })
 
   useEffect(() => {
     initLoad()
@@ -153,12 +149,7 @@ const LoadbalancerList = (props) => {
         ) : (
           <React.Fragment>
             <div className="container">
-              <SmartSelectInput
-                options={secrets.data?.options}
-                isLoading={secrets.isLoading}
-                error={secrets.error && errorMessage(secrets.error)}
-                fetchPromise={fetchSecretsForSelect}
-              />
+              <SmartSelectWrapper />
             </div>
 
             <div className="toolbar searchToolbar">
@@ -276,7 +267,6 @@ const LoadbalancerList = (props) => {
     isLoading,
     searchTerm,
     hasNext,
-    secrets,
   ])
 }
 export default LoadbalancerList

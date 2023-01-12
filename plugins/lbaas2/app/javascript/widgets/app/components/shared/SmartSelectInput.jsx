@@ -11,6 +11,7 @@ import {
   FloatingFocusManager,
   useId,
   size,
+  useInnerOffset,
 } from "@floating-ui/react"
 import {
   TextInputRow,
@@ -24,7 +25,6 @@ import {
   Button,
   Spinner,
 } from "juno-ui-components"
-import { QueryClient, QueryClientProvider, useQuery } from "react-query"
 
 // const optionsContainer = `
 //   overflow-y: scroll,
@@ -101,100 +101,107 @@ const regexString = (string) => string.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
           options: [...],
           total: 1345,
         }
-  - @onSelectedChange: callback function called when the selected options changed
+  - @value: preselected options
 */
 
-// TODO: show message on api error
-// TODO: just display default options when not filtering
-// TODO: callback to return the options selected
 const SmartSelectInput = ({
   options,
   isLoading,
   error,
   fetchPromise,
-  onSelectedChange,
+  isFetching,
+  fetchStatus,
+  fetchButton,
+  onOptionClick,
+  onOptionRemove,
+  selectedOptions,
+  searchTerm,
+  onSearchTermChange,
 }) => {
   const [open, setOpen] = useState(false)
-  const [callbackEnabled, setCallbackEnabled] = useState(false)
-  const [selectedOptions, setSelectedOptions] = useState([])
-  const [displayOptions, setDisplayOptions] = useState(false)
-  const [fetchedOptions, setFetchedOptions] = useState([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [isFetching, setIsFetching] = useState(false)
-  const [fetchParams, setFetchParams] = useState({ offset: 0, limit: 1 })
-  const [fetchStatus, setFetchStatus] = useState({ total: 0 })
 
   // create the query action with the promise used by useQuery. Needed to get access to the fetchParams
-  const fetchAction = ({ queryKey }) => {
-    const [_key, fetchParams] = queryKey
-    return fetchPromise(fetchParams)
-  }
+  // const fetchAction = ({ queryKey }) => {
+  //   const [_key, fetchParams] = queryKey
+  //   return fetchPromise(fetchParams)
+  // }
 
-  // Query to used to fetch more options
-  const newFetchedOptions = useQuery(
-    ["fetchOptions", fetchParams],
-    fetchAction,
-    {
-      // The query will not execute until it is triggered by the isFetching boolean
-      enabled: !!isFetching,
-      // do not refetch on focus since it would add existing items to the fetched options array
-      refetchOnWindowFocus: false,
-      // use the callback to add the fetched options
-      onSuccess: (data) => {
-        console.log("DATA: ", data)
-        if (data?.options && data?.options?.length > 0) {
-          setFetchedOptions([...fetchedOptions, ...data.options])
-        } else {
-          // if no more options stop fetching
-          setIsFetching(false)
-        }
-        if (data?.total) {
-          setFetchStatus({ ...fetchStatus, total: data?.total })
-        }
-      },
-    }
-  )
+  // // Query to used to fetch more options
+  // const newFetchedOptions = useQuery(
+  //   ["fetchOptions", fetchParams],
+  //   fetchAction,
+  //   {
+  //     // The query will not execute until it is triggered by the isFetching boolean
+  //     enabled: !!isFetching,
+  //     // do not refetch on focus since it would add existing items to the fetched options array
+  //     refetchOnWindowFocus: false,
+  //     // use the callback to add the fetched options
+  //     onSuccess: (data) => {
+  //       console.log("DATA: ", data)
+  //       if (data?.options && data?.options?.length > 0) {
+  //         setFetchedOptions([...fetchedOptions, ...data.options])
+  //       } else {
+  //         // if no more options stop fetching
+  //         // setIsFetching(false)
+  //       }
+  //       if (data?.total) {
+  //         setFetchStatus({ ...fetchStatus, total: data?.total })
+  //       }
+  //     },
+  //   }
+  // )
 
-  // recalculate the offset when we get new fetched options
-  useEffect(() => {
-    if (fetchedOptions.length > 0) {
-      const offset = (options.length || 0) + fetchedOptions.length
-      console.log("offset: ", offset)
-      if (offset < fetchStatus.total) {
-        console.log("continue!! FETCHING")
-        setFetchParams({ ...fetchParams, offset: offset, limit: 100 })
-      } else {
-        console.log("close FETCHING")
-        setIsFetching(false)
-      }
-    }
-  }, [fetchedOptions])
+  // // recalculate the offset when we get new fetched options
+  // useEffect(() => {
+  //   if (fetchedOptions.length > 0) {
+  //     const offset = (options.length || 0) + fetchedOptions.length
+  //     console.log("offset: ", offset)
+  //     if (offset < fetchStatus.total) {
+  //       console.log("continue!! FETCHING")
+  //       setFetchParams({ ...fetchParams, offset: offset, limit: 100 })
+  //     } else {
+  //       console.log("close FETCHING")
+  //       // setIsFetching(false)
+  //     }
+  //   }
+  // }, [fetchedOptions])
 
-  // compute difference between the given default options with the fetched from api
-  // and the selected so the same option can't be selected more then one time
-  useEffect(() => {
-    // collect options
-    const newOptions = options || []
-    const collectedOptions = [...newOptions, ...fetchedOptions]
-    if (collectedOptions) {
-      const difference = collectedOptions.filter(
-        ({ value: id1 }) =>
-          !selectedOptions.some(({ value: id2 }) => id2 === id1)
-      )
-      // filter the difference with the filter string given by the user
-      const regex = new RegExp(regexString(searchTerm.trim()), "i")
-      const filteredOptions = difference.filter(
-        (i) => `${i.label}`.search(regex) >= 0
-      )
-      setDisplayOptions(filteredOptions)
-    }
-  }, [selectedOptions, options, fetchedOptions, searchTerm])
+  // // compute difference between the given default options with the fetched from api
+  // // and the selected so the same option can't be selected more then one time
+  // useEffect(() => {
+  //   // collect options
+  //   const newOptions = options || []
+  //   const collectedOptions = [...newOptions, ...fetchedOptions]
+  //   if (collectedOptions) {
+  //     const difference = collectedOptions.filter(
+  //       ({ value: id1 }) =>
+  //         !selectedOptions.some(({ value: id2 }) => id2 === id1)
+  //     )
+  //     // filter the difference with the filter string given by the user
+  //     const regex = new RegExp(regexString(searchTerm.trim()), "i")
+  //     const filteredOptions = difference.filter(
+  //       (i) => `${i.label}`.search(regex) >= 0
+  //     )
+  //     setDisplayOptions(filteredOptions)
+  //   }
+  // }, [selectedOptions, options, fetchedOptions, searchTerm])
 
-  // notify when selectedOptions changes
-  useEffect(() => {
-    if (callbackEnabled && onSelectedChange) {
-      console.log("selectedOptions changed: ", selectedOptions)
-    }
+  // set default to empty string if not given
+  options = useMemo(() => {
+    if (!options) return []
+    return options
+  }, [options])
+
+  // set default to empty string if not given
+  searchTerm = useMemo(() => {
+    if (!searchTerm) return ""
+    return searchTerm
+  }, [searchTerm])
+
+  // set default to empty array if not given
+  selectedOptions = useMemo(() => {
+    if (!selectedOptions) return []
+    return selectedOptions
   }, [selectedOptions])
 
   //
@@ -241,35 +248,22 @@ const SmartSelectInput = ({
   // Callbacks
   //
   const onOptionClicked = (option) => {
-    setCallbackEnabled(true)
-    setSelectedOptions([...selectedOptions, option])
+    if (onOptionClick) onOptionClick(option)
   }
 
   const onOptionDeselected = (option) => {
-    const index = selectedOptions.findIndex(
-      (item) => item.value == option.value
-    )
-    if (index < 0) {
-      return
-    }
-    let newOptions = selectedOptions.slice()
-    newOptions.splice(index, 1)
-    setSelectedOptions(newOptions)
+    if (onOptionRemove) onOptionRemove(option)
   }
 
-  const onSearchTermChanges = (event) => {
-    setSearchTerm(event.target.value)
-  }
+  // const onFetchMoreClick = (event) => {
+  //   if (onFetchClick) onFetchClick(event)
+  //   const offset = options.length || 0 + fetchedOptions.length
+  //   setFetchParams({ ...fetchParams, offset: offset, limit: 1 })
+  // }
 
-  const onFetchMore = () => {
-    setIsFetching(true)
-    const offset = options.length || 0 + fetchedOptions.length
-    setFetchParams({ ...fetchParams, offset: offset, limit: 1 })
-  }
-
-  const onFetchCancel = () => {
-    setIsFetching(false)
-  }
+  // const onFetchMoreCancel = (event) => {
+  //   if (onFetchCancel) onFetchCancel(event)
+  // }
 
   return (
     <div>
@@ -315,33 +309,18 @@ const SmartSelectInput = ({
                   className="optionFilterInput"
                   label="Filter"
                   value={searchTerm}
-                  onChange={onSearchTermChanges}
-                  disabled={!options || options.length === 0}
+                  onChange={onSearchTermChange}
+                  // disabled={!options || options.length === 0}
                 />
                 {searchTerm && fetchPromise && (
                   <Stack alignment="center" className="optionFilterActions">
-                    {!isFetching ? (
-                      <Button
-                        className="optionsNotFoundFetchMore"
-                        icon="widgets"
-                        label="Fetch more"
-                        onClick={onFetchMore}
-                        size="small"
-                      />
-                    ) : (
-                      <>
-                        <span className="optionsNotFoundStatus">{`${fetchParams.offset} / ${fetchStatus.total}`}</span>
-                        <Spinner variant="primary" />
-                        <Button
-                          className="optionsNotFoundFetchMore"
-                          icon="cancel"
-                          label="Cancel"
-                          onClick={onFetchCancel}
-                          variant="primary-danger"
-                          size="small"
-                        />
-                      </>
+                    {fetchStatus && (
+                      <span className="optionsNotFoundStatus">
+                        {fetchStatus}
+                      </span>
                     )}
+                    {isFetching && <Spinner variant="primary" />}
+                    {fetchButton && fetchButton}
                   </Stack>
                 )}
               </Stack>
@@ -366,9 +345,9 @@ const SmartSelectInput = ({
                 </DataGridRow>
               )}
 
-              {displayOptions.length > 0 && (
+              {options.length > 0 && (
                 <>
-                  {displayOptions.map((option, i) => (
+                  {options.map((option, i) => (
                     <DataGridRow
                       key={i}
                       onClick={() => onOptionClicked(option)}
@@ -378,14 +357,6 @@ const SmartSelectInput = ({
                     </DataGridRow>
                   ))}
                 </>
-              )}
-
-              {searchTerm && displayOptions.length === 0 && (
-                <DataGridRow>
-                  <DataGridCell>
-                    <span>No options found</span>
-                  </DataGridCell>
-                </DataGridRow>
               )}
 
               {(!options || options.length === 0) && (
@@ -403,15 +374,169 @@ const SmartSelectInput = ({
   )
 }
 
-const SmartSelect = (props) => {
-  // Create an own query client
-  const queryClient = new QueryClient()
+import { querySecretsForSelect } from "../../../../queries/listener"
+import { fetchSecretsForSelect } from "../../actions/listener"
+import { useQuery } from "react-query"
+import { errorMessage } from "../../helpers/commonHelpers"
+
+const SmartSelectWrapper = () => {
+  const [isFetching, setIsFetching] = useState(false)
+  const [selectedOptions, setSelectedOptions] = useState([])
+  const [displayOptions, setDisplayOptions] = useState(false)
+  const [fetchedOptions, setFetchedOptions] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [showFetchMore, setShowMore] = useState(false)
+  const [fetchStatus, setFetchStatus] = useState({})
+  const [fetchParams, setFetchParams] = useState({ offset: 0, limit: 1 })
+
+  const secrets = querySecretsForSelect({ limit: 10 })
+
+  // create the query action with the promise used by useQuery. Needed to get access to the fetchParams
+  const fetchAction = ({ queryKey }) => {
+    const [_key, fetchParams] = queryKey
+    return fetchSecretsForSelect(fetchParams)
+  }
+
+  // Query to used to fetch more options
+  const newFetchedOptions = useQuery(
+    ["fetchOptions", fetchParams],
+    fetchAction,
+    {
+      // The query will not execute until it is triggered by the isFetching boolean
+      enabled: !!isFetching,
+      // do not refetch on focus since it would add existing items to the fetched options array
+      refetchOnWindowFocus: false,
+      // use the callback to add the fetched options
+      onSuccess: (data) => {
+        console.log("DATA: ", data)
+        if (data?.options && data?.options?.length > 0) {
+          setFetchedOptions([...fetchedOptions, ...data.options])
+        } else {
+          // if no more options stop fetching
+          setIsFetching(false)
+        }
+        if (data?.total) {
+          setFetchStatus({ ...fetchStatus, total: data?.total })
+        }
+      },
+    }
+  )
+
+  // recalculate the offset when we get new fetched options
+  useEffect(() => {
+    if (fetchedOptions.length > 0) {
+      const offset =
+        (secrets.data?.options?.length || 0) + fetchedOptions.length
+      console.log("offset: ", offset)
+      if (offset < fetchStatus.total) {
+        console.log("continue!! FETCHING")
+        setFetchParams({ ...fetchParams, offset: offset, limit: 100 })
+        setFetchStatus({
+          ...fetchStatus,
+          message: `${offset} / ${fetchStatus.total}`,
+        })
+      } else {
+        console.log("close FETCHING")
+        setIsFetching(false)
+      }
+    }
+  }, [fetchedOptions])
+
+  // compute difference between the given default options with the fetched from api
+  // and the selected so the same option can't be selected more then one time
+  useEffect(() => {
+    // collect options
+    const newOptions = secrets.data?.options || []
+    const collectedOptions = [...newOptions, ...fetchedOptions]
+    if (collectedOptions) {
+      const difference = collectedOptions.filter(
+        ({ value: id1 }) =>
+          !selectedOptions.some(({ value: id2 }) => id2 === id1)
+      )
+      // filter the difference with the filter string given by the user
+      const regex = new RegExp(regexString(searchTerm.trim()), "i")
+      const filteredOptions = difference.filter(
+        (i) => `${i.label}`.search(regex) >= 0
+      )
+      setDisplayOptions(filteredOptions)
+    }
+  }, [selectedOptions, secrets.data?.options, fetchedOptions, searchTerm])
+
+  const onFetchClick = (event) => {
+    setIsFetching(true)
+    const offset = secrets.data?.options?.length || 0 + fetchedOptions.length
+    setFetchParams({ ...fetchParams, offset: offset, limit: 1 })
+  }
+  const onFetchCancel = (event) => {
+    setIsFetching(false)
+  }
+
+  const onOptionClick = (option) => {
+    setSelectedOptions([...selectedOptions, option])
+  }
+
+  const onOptionRemove = (option) => {
+    const index = selectedOptions.findIndex(
+      (item) => item.value == option.value
+    )
+    if (index < 0) {
+      return
+    }
+    let newOptions = selectedOptions.slice()
+    newOptions.splice(index, 1)
+    setSelectedOptions(newOptions)
+  }
+
+  const onSearchTermChange = (event) => {
+    setSearchTerm(event.target.value)
+  }
+
+  const fetchButton = useMemo(() => {
+    if (!isFetching) {
+      return (
+        <Button
+          className="optionsNotFoundFetchMore"
+          icon="widgets"
+          label="Fetch more"
+          onClick={onFetchClick}
+          size="small"
+        />
+      )
+    } else {
+      return (
+        <Button
+          className="optionsNotFoundFetchMore"
+          icon="cancel"
+          label="Cancel"
+          onClick={onFetchCancel}
+          variant="primary-danger"
+          size="small"
+        />
+      )
+    }
+  }, [isFetching])
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SmartSelectInput {...props} />
-    </QueryClientProvider>
+    <SmartSelectInput
+      // options
+      options={displayOptions}
+      onOptionClick={onOptionClick}
+      onOptionRemove={onOptionRemove}
+      selectedOptions={selectedOptions}
+      // fetch
+      showFetchMore={showFetchMore}
+      isFetching={isFetching}
+      fetchStatus={fetchStatus?.message}
+      fetchButton={fetchButton}
+      // searchTerm
+      onSearchTermChange={onSearchTermChange}
+      searchTerm={searchTerm}
+      // states
+      isLoading={secrets.isLoading}
+      error={secrets.error && errorMessage(secrets.error)}
+      fetchPromise={fetchSecretsForSelect}
+    />
   )
 }
 
-export default SmartSelect
+export default SmartSelectWrapper
