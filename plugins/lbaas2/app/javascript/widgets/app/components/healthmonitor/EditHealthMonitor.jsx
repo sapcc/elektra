@@ -242,25 +242,6 @@ const EditHealthMonitor = (props) => {
                   </span>
                 </Form.ElementHorizontal>
 
-                <Form.ElementHorizontal
-                  label="Probe Timeout"
-                  name="timeout"
-                  required
-                >
-                  <Form.Input
-                    elementType="input"
-                    type="number"
-                    min="1"
-                    name="timeout"
-                  />
-                  <span className="help-block">
-                    <i className="fa fa-info-circle"></i>
-                    The time, in seconds, after which a single health check
-                    probe times out (fails). This value must be less than the
-                    interval value.
-                  </span>
-                </Form.ElementHorizontal>
-
                 <Form.ElementHorizontal label="Interval" name="delay" required>
                   <Form.Input
                     elementType="input"
