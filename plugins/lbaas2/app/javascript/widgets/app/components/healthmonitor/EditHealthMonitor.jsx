@@ -233,7 +233,7 @@ const EditHealthMonitor = (props) => {
                     type="number"
                     min="1"
                     max="10"
-                    name="max_retries"
+                    name="max_retries_down"
                   />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
