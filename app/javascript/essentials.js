@@ -1,4 +1,4 @@
-import "./tailwind.scss"
+// import "./tailwind.scss"
 
 import "./core/jquery"
 import "jquery-ujs"
