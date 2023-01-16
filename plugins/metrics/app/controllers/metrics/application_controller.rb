@@ -14,14 +14,16 @@ module Metrics
     end
 
     def grafana_available
-      require "resolv"
-      dns_resolver = Resolv::DNS.new()
-      begin
-        dns_resolver.getaddress("api.grafana-svc.#{current_region}.cloud.sap")
-        return true
-      rescue Resolv::ResolvError => e
-        return false
-      end
+      # require "resolv"
+      # dns_resolver = Resolv::DNS.new()
+      # begin
+      #   dns_resolver.getaddress("api.grafana-svc.#{current_region}.cloud.sap")
+      #   return true
+      # rescue Resolv::ResolvError => e
+      #   return false
+      # end
+      # grafana as a service development is on hold
+      return false
     end
 
     def gaas
