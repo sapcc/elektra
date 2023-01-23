@@ -54,6 +54,8 @@ const config = {
     sassPlugin({
       filter: /.*[^.inline]\.(s[ac]ss|css)$/,
       type: "style",
+      includePaths: ["./node_modules"],
+      cssImports: true,
       async transform(source, _resolveDir) {
         const { css } = await postcss(postcssPlugins).process(source)
         return css
@@ -131,7 +133,8 @@ if (watch) {
       Object.values([
         "app/javascript/**/*.{js,jsx}",
         "plugins/*/app/javascript/**/*.{js,jsx}",
-        "**/*.{sass,scss,css,haml,html}",
+        "app/**/*.{scss,sass,css,haml,html}",
+        "plugins/**/*.{scss,sass,css,haml,html}",
       ]),
       {
         // eslint-disable-next-line no-useless-escape

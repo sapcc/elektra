@@ -1,6 +1,6 @@
 module.exports = {
   // use juno tailwindcss as default
-  presets: [require("juno-ui-components/tailwind.config")],
+  presets: [require("juno-ui-components/build/lib/tailwind.config")],
   prefix: "", // important, do not change
   content: [
     "./plugins/**/*.{js,jsx,html,haml}",
@@ -15,4 +15,6 @@ module.exports = {
     preflight: false,
   },
   plugins: [],
+
+  darkMode: "class",
 }
