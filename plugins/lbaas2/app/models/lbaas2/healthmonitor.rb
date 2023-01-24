@@ -7,7 +7,7 @@ module Lbaas2
               inclusion: {
                 in: 1..10,
                 message: "A valid value is from 1 to 10",
-                allow_blank: true
+                allow_blank: true,
               }
 
     # max_retries fix default to 1 https://github.com/sapcc/elektra/pull/1175
@@ -29,7 +29,7 @@ module Lbaas2
       }.delete_if { |_k, v| v.blank? }
     end
 
-    # http_method should be removed of the update object if "nil" and not empty string    
+    # http_method should be removed of the update object if "nil" and not empty string
     # max_retries fix default to 1 https://github.com/sapcc/elektra/pull/1175
     # timeout fix default to 0 https://github.com/sapcc/elektra/pull/1176
     def attributes_for_update
