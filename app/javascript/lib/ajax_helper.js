@@ -265,7 +265,7 @@ const prepareRequest = (path, config = {}) => {
   ) {
     try {
       body = JSON.stringify(body)
-      headers["Content-Type"] = headers["Content-Type"] || "application/json"
+      headers["content-type"] = (headers["content-type"] || "application/json")
     } catch (e) {}
   }
 
@@ -297,6 +297,7 @@ const prepareRequest = (path, config = {}) => {
     delete headers["X-Requested-With"]
   }
 
+  console.log("===",headers)
   const request = window
     .fetch(url, {
       headers,
