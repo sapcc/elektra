@@ -48,14 +48,14 @@ const NewHealthMonitor = (props) => {
   /**
    * Form stuff
    */
-  const [initialValues, setInitialValues] = useState({})
+  const [initialValues, setInitialValues] = useState({ max_retries_down: 3 })
   const [formErrors, setFormErrors] = useState(null)
   const [showHttpMethods, setShowHttpMethods] = useState(false)
   const [showExpectedCodes, setShowExpectedCodes] = useState(false)
   const [showUrlPath, setShowUrlPath] = useState(false)
 
-  const validate = ({ name, type, max_retries, delay }) => {
-    return name && type && max_retries && delay && true
+  const validate = ({ name, type, delay, timeout }) => {
+    return name && type && delay && timeout && true
   }
 
   const onSubmit = (values) => {
@@ -141,22 +141,19 @@ const NewHealthMonitor = (props) => {
             </span>
           </Form.ElementHorizontal>
 
-          <Form.ElementHorizontal
-            label="Max Retries"
-            name="max_retries"
-            required
-          >
+          <Form.ElementHorizontal label="Max Retries" name="max_retries_down">
             <Form.Input
               elementType="input"
               type="number"
               min="1"
               max="10"
-              name="max_retries"
+              name="max_retries_down"
             />
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
-              Number of failed health checks before pool member is marked
-              OFFLINE. A valid value is from 1 to 10.
+              The number of allowed check failures before changing the operating
+              status of the member to ERROR. A valid value is from 1 to 10. The
+              default is 3.
             </span>
           </Form.ElementHorizontal>
 
