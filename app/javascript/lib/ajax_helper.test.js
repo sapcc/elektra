@@ -449,7 +449,7 @@ describe("client", () => {
             Accept: "application/json; charset=utf-8",
           }
           if (["post", "put", "patch"].indexOf(action) >= 0)
-            expectedHeaders["X-Content-Type"] = "application/json"
+            expectedHeaders["X-content-type"] = "application/json"
 
           expect(fetch).toHaveBeenLastCalledWith(
             expect.anything(),
@@ -477,7 +477,7 @@ describe("client", () => {
                   "x-csrf-token": "CSRF-TOKEN",
                   "X-Requested-With": "XMLHttpRequest",
                   Accept: "application/json; charset=utf-8",
-                  "X-Content-Type": "application/json",
+                  "X-content-type": "application/json",
                 },
               })
             )
@@ -514,7 +514,7 @@ describe("client", () => {
                   "x-csrf-token": "CSRF-TOKEN",
                   "X-Requested-With": "XMLHttpRequest",
                   Accept: "application/json; charset=utf-8",
-                  "Y-Content-Type": "application/json",
+                  "Y-content-type": "application/json",
                 },
               })
             )
@@ -550,7 +550,7 @@ describe("client", () => {
                   "x-csrf-token": "CSRF-TOKEN",
                   "X-Requested-With": "XMLHttpRequest",
                   Accept: "application/json; charset=utf-8",
-                  "X-Content-Type": "application/json",
+                  "X-content-type": "application/json",
                 },
               })
             )

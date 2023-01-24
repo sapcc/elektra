@@ -297,7 +297,7 @@ const prepareRequest = (path, config = {}) => {
     delete headers["X-Requested-With"]
   }
 
-  console.log("===",headers)
+  // console.log("===",headers)
   const request = window
     .fetch(url, {
       headers,
