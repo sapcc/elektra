@@ -448,8 +448,6 @@ describe("client", () => {
             "X-Requested-With": "XMLHttpRequest",
             Accept: "application/json; charset=utf-8",
           }
-          if (["post", "put", "patch"].indexOf(action) >= 0)
-            expectedHeaders["X-content-type"] = "application/json"
 
           expect(fetch).toHaveBeenLastCalledWith(
             expect.anything(),

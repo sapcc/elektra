@@ -265,7 +265,7 @@ const prepareRequest = (path, config = {}) => {
   ) {
     try {
       body = JSON.stringify(body)
-      headers["content-type"] = (headers["content-type"] || "application/json")
+      headers["content-type"] = headers["content-type"] || "application/json"
     } catch (e) {}
   }
 
@@ -350,17 +350,17 @@ const Client = (config = {}) => {
         ),
       get: (path, options = {}) =>
         prepareRequest(path, mergeConfigs(config, options, { method: "GET" })),
-      put: (path, values = {}, options = {}) =>
+      put: (path, values = null, options = {}) =>
         prepareRequest(
           path,
           mergeConfigs(config, options, { method: "PUT", body: values })
         ),
-      post: (path, values = {}, options = {}) =>
+      post: (path, values = null, options = {}) =>
         prepareRequest(
           path,
           mergeConfigs(config, options, { method: "POST", body: values })
         ),
-      patch: (path, values = {}, options = {}) =>
+      patch: (path, values = null, options = {}) =>
         prepareRequest(
           path,
           mergeConfigs(config, options, { method: "PATCH", body: values })
@@ -383,17 +383,17 @@ const Client = (config = {}) => {
     get: (path, options = {}) =>
       prepareRequest(path, mergeConfigs(config, options, { method: "GET" }))
         .request,
-    put: (path, values = {}, options = {}) =>
+    put: (path, values = null, options = {}) =>
       prepareRequest(
         path,
         mergeConfigs(config, options, { method: "PUT", body: values })
       ).request,
-    post: (path, values = {}, options = {}) =>
+    post: (path, values = null, options = {}) =>
       prepareRequest(
         path,
         mergeConfigs(config, options, { method: "POST", body: values })
       ).request,
-    patch: (path, values = {}, options = {}) =>
+    patch: (path, values = null, options = {}) =>
       prepareRequest(
         path,
         mergeConfigs(config, options, { method: "PATCH", body: values })
