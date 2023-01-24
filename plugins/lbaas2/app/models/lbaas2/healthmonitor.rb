@@ -3,11 +3,11 @@ module Lbaas2
     validates :name, presence: true
     validates :type, presence: true
     validates :delay, presence: true, numericality: { greater_than: 0 }
-    validates :max_retries,
-              presence: true,
+    validates :max_retries_down,
               inclusion: {
                 in: 1..10,
-                message: "You can have between 1 and 10 retries",
+                message: "A valid value is from 1 to 10",
+                allow_blank: true
               }
     validate :timeout_check
 
@@ -24,11 +24,13 @@ module Lbaas2
       end
     end
 
+    # max_retries fix default to 1 https://github.com/sapcc/elektra/pull/1175
     def attributes_for_create
       {
         "name" => read("name"),
         "type" => read("type"),
-        "max_retries" => read("max_retries"),
+        "max_retries" => 1,
+        "max_retries_down" => read("max_retries_down"),
         "timeout" => read("timeout"),
         "delay" => read("delay"),
         "http_method" => read("http_method"),
@@ -44,7 +46,8 @@ module Lbaas2
     def attributes_for_update
       {
         "name" => read("name"),
-        "max_retries" => read("max_retries"),
+        "max_retries" => 1,
+        "max_retries_down" => read("max_retries_down"),
         "timeout" => read("timeout"),
         "delay" => read("delay"),
         "http_method" => read("http_method"),
