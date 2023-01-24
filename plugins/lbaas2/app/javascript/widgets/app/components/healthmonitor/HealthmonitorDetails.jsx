@@ -114,13 +114,12 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
       <div className="list-entry">
         <div className="row">
           <div className="col-md-12">
-            <b>Retries/Probe Timeout/Interval:</b>
+            <b>Retries/Interval:</b>
           </div>
         </div>
         <div className="row">
           <div className="col-md-12">
-            {healthmonitor.max_retries_down} / {healthmonitor.timeout} /{" "}
-            {healthmonitor.delay}
+            {healthmonitor.max_retries_down} / {healthmonitor.delay}
           </div>
         </div>
       </div>

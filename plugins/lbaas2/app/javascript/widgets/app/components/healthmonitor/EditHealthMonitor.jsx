@@ -116,8 +116,8 @@ const EditHealthMonitor = (props) => {
   const [showExpectedCodes, setShowExpectedCodes] = useState(false)
   const [showUrlPath, setShowUrlPath] = useState(false)
 
-  const validate = ({ name, delay, timeout }) => {
-    return name && delay && timeout && true
+  const validate = ({ name, delay }) => {
+    return name && delay && true
   }
 
   const onSubmit = (values) => {
@@ -239,25 +239,6 @@ const EditHealthMonitor = (props) => {
                     The number of allowed check failures before changing the
                     operating status of the member to ERROR. A valid value is
                     from 1 to 10. The default is 3.
-                  </span>
-                </Form.ElementHorizontal>
-
-                <Form.ElementHorizontal
-                  label="Probe Timeout"
-                  name="timeout"
-                  required
-                >
-                  <Form.Input
-                    elementType="input"
-                    type="number"
-                    min="1"
-                    name="timeout"
-                  />
-                  <span className="help-block">
-                    <i className="fa fa-info-circle"></i>
-                    The time, in seconds, after which a single health check
-                    probe times out (fails). This value must be less than the
-                    interval value.
                   </span>
                 </Form.ElementHorizontal>
 

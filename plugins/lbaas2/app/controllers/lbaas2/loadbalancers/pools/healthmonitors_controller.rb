@@ -93,7 +93,6 @@ module Lbaas2
             :max_retries_down
           ].blank?
           hp[:delay] = hp[:delay].to_i unless hp[:delay].blank?
-          hp[:timeout] = hp[:timeout].to_i unless hp[:timeout].blank?
           unless hp[:type] == "HTTP" || hp[:type] == "HTTPS"
             hp.delete(:url_path)
             hp.delete(:http_method)

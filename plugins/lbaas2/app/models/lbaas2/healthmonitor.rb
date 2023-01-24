@@ -7,31 +7,18 @@ module Lbaas2
               inclusion: {
                 in: 1..10,
                 message: "A valid value is from 1 to 10",
-                allow_blank: true
+                allow_blank: true,
               }
-    validate :timeout_check
-
-    def timeout_check
-      new_timeout = read("timeout")
-      new_delay = read("delay")
-      if new_timeout.to_i <= 0
-        errors.add(:timeout, "Please enter a timeout greater 0")
-      elsif new_timeout.to_i >= new_delay.to_i
-        errors.add(
-          :timeout,
-          'Please enter a timeout less than the "Delays" value',
-        )
-      end
-    end
 
     # max_retries fix default to 1 https://github.com/sapcc/elektra/pull/1175
+    # timeout fix default to 0 https://github.com/sapcc/elektra/pull/1176
     def attributes_for_create
       {
         "name" => read("name"),
         "type" => read("type"),
         "max_retries" => 1,
         "max_retries_down" => read("max_retries_down"),
-        "timeout" => read("timeout"),
+        "timeout" => 0,
         "delay" => read("delay"),
         "http_method" => read("http_method"),
         "expected_codes" => read("expected_codes"),
@@ -43,12 +30,14 @@ module Lbaas2
     end
 
     # http_method should be removed of the update object if "nil" and not empty string
+    # max_retries fix default to 1 https://github.com/sapcc/elektra/pull/1175
+    # timeout fix default to 0 https://github.com/sapcc/elektra/pull/1176
     def attributes_for_update
       {
         "name" => read("name"),
         "max_retries" => 1,
         "max_retries_down" => read("max_retries_down"),
-        "timeout" => read("timeout"),
+        "timeout" => 0,
         "delay" => read("delay"),
         "http_method" => read("http_method"),
         "expected_codes" => read("expected_codes"),
