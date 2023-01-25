@@ -17,7 +17,8 @@
     %fieldset.collapse{id: "collapseExample", class: "#{"in" if !@subnet.nil?}"}
       = f.simple_fields_for :subnets do |subnets|
         = subnets.input :name, { label: "#{Networking::Subnet.human_attribute_name(:name)}", input_html: { value: @subnet.try(:name) } }
-        = subnets.input :cidr, icon_hint: "Allowed network ranges please check here #{link_to 'here', "https://netbox.global.cloud.sap/ipam/prefixes/?mask_length__lte=&q=&within_include=&fami[…]ngth=&present_in_vrf_id=&is_pool=&tag=cc-net-tenant-range", {target: :_blank}}", label: "#{Networking::Subnet.human_attribute_name(:cidr)}", input_html: { value: @subnet.try(:cidr) }
+        = # subnets.input :cidr, icon_hint: "Allowed network ranges please check #{link_to 'here', "https://netbox.global.cloud.sap/ipam/prefixes/?mask_length__lte=&q=&within_include=&fami[…]ngth=&present_in_vrf_id=&is_pool=&tag=cc-net-tenant-range", {target: :_blank}}", label: "#{Networking::Subnet.human_attribute_name(:cidr)}", input_html: { value: @subnet.try(:cidr) }
+        = subnets.input :cidr, icon_hint: "must be in cidr range like 10.180.0.0/16", label: "#{Networking::Subnet.human_attribute_name(:cidr)}", input_html: { value: @subnet.try(:cidr) }
   .buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{
