@@ -237,7 +237,7 @@ const EditHealthMonitor = (props) => {
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
                     The number of allowed check failures before changing the
-                    operating status of the member to ERROR. A valid value is
+                    operating status of the member to OFFLINE. A valid value is
                     from 1 to 10. The default is 3.
                   </span>
                 </Form.ElementHorizontal>
