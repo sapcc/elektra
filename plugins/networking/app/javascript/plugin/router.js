@@ -16,7 +16,15 @@ const showSubnets = function (subnets) {
   $select.empty()
 
   $select.append('<option value=""></option>')
-  for (var subnet of Array.from(subnets)) {
+
+  // sort subnets by count of available IPs
+  const sortedSubnets = Array.from(subnets).sort((a, b) => {
+    const ac = a.total_ips - a.used_ips
+    const bc = b.total_ips - b.used_ips
+    return ac > bc ? -1 : ac < bc ? 1 : 0
+  })
+
+  for (var subnet of sortedSubnets) {
     var available_ips = subnet.total_ips - subnet.used_ips
     var isSelectedInfo =
       $.inArray(subnet.subnet_id, selected) > -1 ? "selected" : ""

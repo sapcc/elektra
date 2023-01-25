@@ -125,7 +125,6 @@ module MasterdataCockpit
               allow_blank: true
 
     validates :infrastructure_coordinator,
-              :inventory_role,
               format: {
                 with: /\A[DCIdci]\d*\z/,
                 message: "please use a C/D/I user id",

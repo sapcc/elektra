@@ -89,11 +89,10 @@ module Lbaas2
           hp = params[:healthmonitor].to_unsafe_hash.symbolize_keys if params[
             :healthmonitor
           ]
-          hp[:max_retries] = hp[:max_retries].to_i unless hp[
-            :max_retries
+          hp[:max_retries_down] = hp[:max_retries_down].to_i unless hp[
+            :max_retries_down
           ].blank?
           hp[:delay] = hp[:delay].to_i unless hp[:delay].blank?
-          hp[:timeout] = hp[:timeout].to_i unless hp[:timeout].blank?
           unless hp[:type] == "HTTP" || hp[:type] == "HTTPS"
             hp.delete(:url_path)
             hp.delete(:http_method)

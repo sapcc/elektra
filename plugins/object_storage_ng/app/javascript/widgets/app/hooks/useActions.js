@@ -213,11 +213,9 @@ const useActions = () => {
 
     return apiClient
       .osApi("object-store")
-      .put(
-        objectPath(containerName, fullPath),
-        {},
-        { headers: { "Content-Type": contentType } }
-      )
+      .put(objectPath(containerName, fullPath), null, {
+        headers: { "Content-Type": contentType },
+      })
       .then(() => ({
         subdir: fullPath,
       }))
