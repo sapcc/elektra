@@ -119,7 +119,7 @@ const NewHealthMonitor = (props) => {
         <Modal.Body>
           <p>
             Checks the health of the pool members. Unhealthy members will be
-            taken out of traffic schedule. Set's a load balancer to OFFLINE when
+            taken out of traffic schedule. Sets a load balancer to OFFLINE when
             all members are unhealthy.
           </p>
           <Form.Errors errors={formErrors} />
@@ -151,9 +151,9 @@ const NewHealthMonitor = (props) => {
             />
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
-              The number of allowed check failures before changing the operating
-              status of the member to ERROR. A valid value is from 1 to 10. The
-              default is 3.
+              The number of allowed check failures before marking the
+              member as OFFLINE. A valid value is from 1 to 10.
+              The default is 3.
             </span>
           </Form.ElementHorizontal>
 
