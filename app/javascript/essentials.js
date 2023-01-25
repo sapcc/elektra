@@ -1,3 +1,5 @@
+import "./tailwind.scss"
+
 import "./core/jquery"
 import "jquery-ujs"
 import "bootstrap"

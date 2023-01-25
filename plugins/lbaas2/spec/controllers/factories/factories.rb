@@ -79,7 +79,7 @@ module Lbaas2
         name: "healthmonitor_test",
         type: "HTTP",
         delay: "10",
-        max_retries: "5",
+        max_retries_down: "5",
         timeout: "5",
       }.merge(params)
     end
@@ -90,7 +90,7 @@ module Lbaas2
         type: "HTTP",
         name: "healthmonitor_test",
         delay: "10",
-        max_retries: "5",
+        max_retries_down: "5",
         timeout: "5",
       }.merge(params)
     end
