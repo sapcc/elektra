@@ -23,8 +23,6 @@ import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
 import { errorMessage } from "../../helpers/commonHelpers"
 
-import SmartSelectWrapper from "../shared/SmartSelectInput"
-
 const TableFadeTransition = ({ children, ...props }) => (
   <CSSTransition
     {...props}
@@ -134,7 +132,6 @@ const LoadbalancerList = (props) => {
       )
     }
   }
-
   const loadbalancers = filterItems(searchTerm, items)
   return useMemo(() => {
     Log.debug("RENDER loadbalancer list")
@@ -143,15 +140,11 @@ const LoadbalancerList = (props) => {
         {error && !fetchingAllItems ? (
           <ErrorPage
             headTitle="Load Balancers"
-            error={error?.message}
+            error={error}
             onReload={initLoad}
           />
         ) : (
           <React.Fragment>
-            <div className="container">
-              <SmartSelectWrapper />
-            </div>
-
             <div className="toolbar searchToolbar">
               {selected ? (
                 <Link className="back-link" to={`/loadbalancers`}>
