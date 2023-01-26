@@ -34,7 +34,8 @@ import {
   searchParamsToString,
 } from "../../helpers/commonHelpers"
 import { queryTlsCiphers } from "../../../../queries/listener"
-import SmartSelectInput from "../shared/SmartSelectInput"
+import StyleProvider from "juno-ui-components"
+import SmartSelectWrapper from "../shared/SmartSelectInput"
 
 const NewListener = (props) => {
   const { createListener } = useListener()
@@ -360,7 +361,6 @@ const NewListener = (props) => {
         resetForm={false}
       >
         <Modal.Body>
-          <SmartSelectInput />
           <div className="bs-callout bs-callout-warning bs-callout-emphasize">
             <h4>
               Switched to using PKCS12 for TLS Term certs (New in API version
@@ -429,36 +429,45 @@ const NewListener = (props) => {
             <div className="advanced-options-section">
               <div className="advanced-options">
                 {showCertificateContainer && (
-                  <>
+                  <div>
+                    <span className="tw-text-red-900">
+                      Text with tw classes
+                    </span>
                     <div>
-                      <Form.ElementHorizontal
-                        label="Certificate Secret"
-                        name="default_tls_container_ref"
-                        required
+                      <StyleProvider
+                        theme="theme-dark"
+                        stylesWrapper="shadowRoot"
                       >
-                        <SelectInputCreatable
-                          name="default_tls_container_ref"
-                          isLoading={secrets.isLoading}
-                          items={secrets.items}
-                          onChange={onSelectCertificateContainer}
-                          value={certificateContainer}
-                          useFormContext={false}
-                        />
-                        <span className="help-block">
-                          <i className="fa fa-info-circle"></i>
-                          The secret containing a PKCS12 format certificate/key
-                          bundles.
-                        </span>
-                        {toManySecretsWarning(
-                          secrets.total,
-                          secrets.items?.length
-                        )}
-                        {secrets.error && (
-                          <span className="text-danger">{secrets.error}</span>
-                        )}
-                      </Form.ElementHorizontal>
+                        <SmartSelectWrapper />
+                      </StyleProvider>
                     </div>
-                  </>
+                    <Form.ElementHorizontal
+                      label="Certificate Secret"
+                      name="default_tls_container_ref"
+                      required
+                    >
+                      <SelectInputCreatable
+                        name="default_tls_container_ref"
+                        isLoading={secrets.isLoading}
+                        items={secrets.items}
+                        onChange={onSelectCertificateContainer}
+                        value={certificateContainer}
+                        useFormContext={false}
+                      />
+                      <span className="help-block">
+                        <i className="fa fa-info-circle"></i>
+                        The secret containing a PKCS12 format certificate/key
+                        bundles.
+                      </span>
+                      {toManySecretsWarning(
+                        secrets.total,
+                        secrets.items?.length
+                      )}
+                      {secrets.error && (
+                        <span className="text-danger">{secrets.error}</span>
+                      )}
+                    </Form.ElementHorizontal>
+                  </div>
                 )}
 
                 {showPredefinedPolicies && (

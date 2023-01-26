@@ -25,57 +25,63 @@ import {
   Spinner,
 } from "juno-ui-components"
 
-// const optionsContainer = `
-//   overflow-y: scroll,
-//   border-radius: 0.25rem,
-//   box-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color),
-//   `
+const optionsContainer = `
+  smart-select-options-container
+  tw-z-[100]
+  tw-overflow-y-scroll
+  tw-rounded-3px
+  tw-ring-2
+  jn-ring-theme-focus
+  jn-bg-theme-textinput
+  `
 
-// const optionFilter = `
-//   smart-select-options-filter
-//   p-3
-//   bg-theme-background-lvl-2
-//   sticky
-//   top-0
-//   w-full
-// `
+const optionFilter = `
+  smart-select-options-filter
+  tw-p-3 
+  jn-bg-theme-background-lvl-2
+  tw-sticky
+  tw-top-0
+`
+const optionFilterInput = `
+  tw-w-full
+`
 
-// const optionsRow = `
-//   smart-select-options-row
-//   hover:text-theme-accent
-// `
+const optionFilterActions = `
+  tw-pl-4
+`
 
-// const optionsNotFoundStatus = `
-//   whitespace-nowrap
-// `
+const optionsNotFoundStatus = `
+  tw-whitespace-nowrap
+`
 
-// const optionsNotFoundFetchMore = `
-//   whitespace-nowrap
-// `
+const optionsRow = `
+  smart-select-options-row
+  tw-hover:text-theme-accent
+`
 
-// const fakeInputText = (isOpen) => {
-//   return `
-//     smart-select-input
-//     text-theme-textinput
-//     bg-theme-textinput
-//     min-h-[2.5rem]
-//     rounded-3px
-//     p-2
-//     ${isOpen && `ring-2 ring-theme-focus`}
-//     `
-//     .replace(/\n/g, " ")
-//     .replace(/\s+/g, " ")
-// }
+const fakeInputText = (isOpen) => {
+  return `
+    smart-select-input
+    jn-text-theme-textinput
+    jn-bg-theme-textinput
+    tw-min-h-[2.5rem]
+    tw-rounded-3px
+    tw-p-2
+    ${isOpen && `tw-ring-2 jn-ring-theme-focus`}
+    `
+    .replace(/\n/g, " ")
+    .replace(/\s+/g, " ")
+}
 
-// const fakeInputTextPlaceholder = `
-//   smart-select-input-placeholder
-//   opacity-50
-// `
+const fakeInputTextPlaceholder = `
+  smart-select-input-placeholder
+  tw-opacity-50
+`
 
-// const fakeInputTextOptions = `
-//   smart-select-input-selected-option
-//   mr-1
-// `
+const fakeInputTextOptions = `
+  smart-select-input-selected-option
+  tw-mr-1
+`
 
 const SmartSelectInput = ({
   options,
@@ -165,7 +171,7 @@ const SmartSelectInput = ({
   return (
     <div>
       <div
-        className={`fakeInputText ${open ? "fakeInputText-focus" : ""}`}
+        className={fakeInputText(open)}
         ref={reference}
         {...getReferenceProps()}
       >
@@ -173,7 +179,7 @@ const SmartSelectInput = ({
           <>
             {selectedOptions.map((item, index) => (
               <Badge
-                className="fakeInputTextOptions"
+                className={fakeInputTextOptions}
                 key={index}
                 icon="deleteForever"
                 text={item.label}
@@ -183,7 +189,7 @@ const SmartSelectInput = ({
             ))}
           </>
         ) : (
-          <div className="fakeInputTextPlaceholder">Select...</div>
+          <div className={fakeInputTextPlaceholder}>Select...</div>
         )}
       </div>
 
@@ -191,7 +197,7 @@ const SmartSelectInput = ({
         <FloatingFocusManager context={context} modal={false}>
           <div
             ref={floating}
-            className="optionsContainer"
+            className={optionsContainer}
             style={{
               position: strategy,
               top: y ?? 0,
@@ -200,19 +206,19 @@ const SmartSelectInput = ({
             aria-labelledby={headingId}
             {...getFloatingProps()}
           >
-            <div className="optionFilter">
+            <div className={optionFilter}>
               <Stack alignment="center">
                 <TextInputRow
-                  className="optionFilterInput"
+                  className={optionFilterInput}
                   label="Filter"
                   value={searchTerm}
                   onChange={onSearchTermChange}
                   // disabled={!options || options.length === 0}
                 />
                 {searchTerm && fetchPromise && (
-                  <Stack alignment="center" className="optionFilterActions">
+                  <Stack alignment="center" className={optionFilterActions}>
                     {fetchStatus && (
-                      <span className="optionsNotFoundStatus">
+                      <span className={optionsNotFoundStatus}>
                         {fetchStatus}
                       </span>
                     )}
@@ -248,7 +254,7 @@ const SmartSelectInput = ({
                     <DataGridRow
                       key={i}
                       onClick={() => onOptionClicked(option)}
-                      className="optionsRow"
+                      className={optionsRow}
                     >
                       <DataGridCell>{option.label}</DataGridCell>
                     </DataGridRow>
