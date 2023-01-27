@@ -35,6 +35,7 @@ module Networking
       @@semaphore.synchronize do
         @@allowed_ranges_last_updated = Time.now
 
+        @@allowed_ranges = []
         begin
           uri =
             URI.parse(
@@ -49,54 +50,42 @@ module Networking
           request = Net::HTTP::Get.new(uri.request_uri)
           response = http.request(request)
           json_data = JSON.parse(response.read_body)
+          results = json_data["results"]
+          results.each do |ip_data|
+            prefix = ip_data["prefix"]
+            @@allowed_ranges.push(prefix)
+          end
         rescue e
-          return e.message
+          errors.add(
+            :cidr,
+            "Could not load the list of allowed cidr ranges: #{e.message}",
+          )
+          @@allowed_ranges = ["10.180.0.0/16"]
         end
-
-        @@allowed_ranges = []
-        results = json_data["results"]
-        results.each do |ip_data|
-          prefix = ip_data["prefix"]
-          @@allowed_ranges.push(prefix)
-        end
-
-        #@@allowed_ranges =
-        #  [10.180.0.0/16],
-        #  [100.66.0.0/16],
-        #  [100.67.0.0/16]
       end
 
       return @@allowed_ranges
     end
 
     def cidr_must_be_in_reserved_range
-      cidr_array = cidr.split(".")
-      given_cidr_range_found = false
-      allowed_ranges.each do |range_raw|
-        # [100.67.0.0/16] -> ["100","67"."0"."0"."16"]
-        range = range_raw.split(%r{\.|/})
-        # check the first two digits if the choosen cidr is supported
-        if (range[0].to_s == cidr_array[0].to_s) &&
-             (range[1].to_s == cidr_array[1].to_s)
-          #puts "found cidr range"
-          given_cidr_range_found = true
-          # check validity of the given cidr
-          # https://blog.markhatton.co.uk/2011/03/15/regular-expressions-for-ip-addresses-cidr-ranges-and-hostnames/
-          unless cidr.match(
-                   /^(#{range[0].to_s}\.#{range[1].to_s}\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$/,
-                 )
-            errors.add(:cidr, "must be within the #{range_raw} range.")
-          end
-        end
+      unless cidr.match(
+               /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(3[0-2]|[1-2][0-9]|[0-9]))$/,
+             )
+        errors.add(:cidr, "must be a valid cidr adress like 10.180.1.0/16")
+        return
       end
 
-      unless given_cidr_range_found
-        errors.add(:cidr, "#{cidr} is not a valid cidr or range.")
-        errors.add(
-          :cidr,
-          "#{cidr} Allowed ranges are #{allowed_ranges.join(", ")}",
-        )
+      allowed_ranges.each do |allowed_range|
+        allowed_network = IPAddr.new(allowed_range)
+        given_cidr_range = IPAddr.new(cidr)
+        return if allowed_network === given_cidr_range
       end
+
+      errors.add(:cidr, "#{cidr} is not a valid cidr or range.")
+      errors.add(
+        :cidr,
+        "#{cidr} Allowed ranges are #{allowed_ranges.join(", ")}",
+      )
     end
   end
 end

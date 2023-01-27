@@ -85,7 +85,7 @@ class SubnetForm {
 
   render() {
     if (!this.$form) {
-      const cidrHelpText = "must be within 10.180.0.0/16 range"
+      const cidrHelpText = "must be a valid cidr adress like 10.180.1.0/16"
 
       this.$form = $('<form class="form-inline"></form>')
       this.$form.submit((e) => {

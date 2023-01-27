@@ -159,7 +159,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
         expect(response.body).to eq(
           {
             errors: {
-              cidr: ["must be within the 10.180.0.0/16 range."],
+              cidr: ["must be a valid cidr adress like 10.180.1.0/16"],
             },
           }.to_json,
         )
@@ -174,7 +174,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
             errors: {
               cidr: [
                 "can't be blank",
-                "must be within the 10.180.0.0/16 range.",
+                "must be a valid cidr adress like 10.180.1.0/16",
               ],
             },
           }.to_json,
