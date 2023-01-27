@@ -264,18 +264,18 @@ module Resources
       # get flavors with NUMASIZE trait
       @flavors = @flavors || cloud_admin.compute.flavors
       relevant_flavors =
-        @flavors.select do |f|
-          f
-            .extra_specs
-            .select do |key, value|
-              key == "trait:#{hana_trait}" && value == "required"
-            end
-            .length > 0 && f.name.starts_with?("hana_")
+      @flavors.select do |f|
+        f
+        .extra_specs
+        .select do |key, value|
+          key == "trait:#{hana_trait}" && value == "required"
         end
-
+        .length > 0 && f.name.starts_with?("hana_")
+      end
+      
       # return unless region supports NUMASIZE flavors
       return [] if relevant_flavors.empty?
-
+      
       # group flavors by trait
       # { trait => flavors }
       flavors_by_numa =
@@ -361,11 +361,14 @@ module Resources
             # should not happen. broken nova-compute
             raise "could not find host memory of #{rp["uuid"]}"
           end
-          possible_flavors =
-            flavors_by_numa[trait].select do |f|
+          
+          possible_flavors = if flavors_by_numa[trait].present?
+          flavors_by_numa[trait].select do |f|
               f.ram <= free && f.ram <= host_mb
             end
-
+          else 
+            {}
+          end
           result << {
             az: rp["az"],
             shard: rp["shard"],
