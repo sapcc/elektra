@@ -2,15 +2,22 @@
 
 module ServiceLayer
   module SharedFilesystemStorageServices
-    # This module implements Openstack Designate Pool API
+    # This module implements Openstack Manila Share Access API
     module ShareRule
       def share_rule_map
         @share_rule_map ||= class_map_proc(SharedFilesystemStorage::ShareRule)
       end
 
       def share_rules(share_id)
-        elektron_shares
-          .post("shares/#{share_id}/action") { { access_list: nil } }
+        # share-access-rules endpoint was added with microversion 2.45
+        elektron
+          .service(
+            "sharev2",
+            headers: {
+              "X-OpenStack-Manila-API-Version" => "2.45",
+            },
+          )
+          .get("share-access-rules?share_id=#{share_id}")
           .map_to("body.access_list", &share_rule_map)
       end
 
