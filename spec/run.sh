@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ELEKTRA_PORT=$(wb elektra 'echo $APP_PORT' | tail -1 | tr -d '\r')
+ELEKTRA_PORT=$(wb elektra 'echo $PORT' | tail -1 | tr -d '\r')
 
 if [[ -n "$ELEKTRA_PORT" ]]; then
   echo "Workspaces and Elektra found :-)"
@@ -13,4 +13,3 @@ else
   yarn test
   exit
 fi
-
