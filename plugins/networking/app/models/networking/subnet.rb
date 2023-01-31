@@ -26,11 +26,15 @@ module Networking
     end
 
     def allowed_ranges
+      return if cidr.nil?
       if !@@allowed_ranges.nil? &&
            @@allowed_ranges_last_updated > Time.now - 1.day
         return @@allowed_ranges
       end
 
+      if ENV.key?("RAILS_ENV") && (ENV["RAILS_ENV"] == "test")
+        return ["10.180.0.0/16"]
+      end
       # prevent double loading if two user are creating a subnet at the same time
       @@semaphore.synchronize do
         @@allowed_ranges_last_updated = Time.now
@@ -68,6 +72,7 @@ module Networking
     end
 
     def cidr_must_be_in_reserved_range
+      return if cidr.nil?
       unless cidr.match(
                /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(3[0-2]|[1-2][0-9]|[0-9]))$/,
              )
@@ -81,11 +86,8 @@ module Networking
         return if allowed_network === given_cidr_range
       end
 
-      errors.add(:cidr, "#{cidr} is not a valid cidr or range.")
-      errors.add(
-        :cidr,
-        "#{cidr} Allowed ranges are #{allowed_ranges.join(", ")}",
-      )
+      errors.add(:cidr, "The given cidr #{cidr} is not a valid cidr or range")
+      errors.add(:cidr, "Allowed ranges are #{allowed_ranges.join(", ")}")
     end
   end
 end
