@@ -38,7 +38,7 @@ const ErrorRow = (props) => {
           </td>
         )}
         <td className={hasSizeColumn ? "col-md-2" : "col-md-3"}>
-          <PrettyDate date={result.at} />
+          {result.at ? <PrettyDate date={result.at} /> : 'None'}
         </td>
       </tr>
       <tr className="explains-previous-line">
