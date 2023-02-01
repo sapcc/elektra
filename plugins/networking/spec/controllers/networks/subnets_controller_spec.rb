@@ -65,7 +65,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
     subnet_params = {
       name: "test",
       ip_version: 4,
-      cidr: "10.180.0.0/8",
+      cidr: "10.180.1.0/16",
       network_id: "123",
       enable_dhcp: true,
       segment_id: nil,
@@ -159,7 +159,10 @@ describe Networking::Networks::SubnetsController, type: :controller do
         expect(response.body).to eq(
           {
             errors: {
-              cidr: ["must be within the 10.180.0.0/16 range."],
+              cidr: [
+                "The given cidr 192.168.199.0/24 is not a valid cidr or range",
+                "Allowed ranges are 10.180.0.0/16",
+              ],
             },
           }.to_json,
         )
@@ -173,8 +176,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
           {
             errors: {
               cidr: [
-                "can't be blank",
-                "must be within the 10.180.0.0/16 range.",
+                "can't be blank"
               ],
             },
           }.to_json,
@@ -191,7 +193,14 @@ describe Networking::Networks::SubnetsController, type: :controller do
                  },
                )
         expect(response.body).to eq(
-          { errors: { name: ["can't be blank"] } }.to_json,
+          { errors: { 
+            name: ["can't be blank"], 
+            cidr: [
+              "The given cidr 10.180.0.0/8 is not a valid cidr or range",
+              "Allowed ranges are 10.180.0.0/16"
+            ] 
+            } 
+          }.to_json,
         )
       end
     end
