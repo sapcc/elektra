@@ -31,27 +31,29 @@ const calculateTotalSubCapacity = (subcapacities) => {
   let totalSubcapa = {}
   subcapacities.map((subcapacity) => {
     // only aggregates with vc are used as shards
-    if (subcapacity.aggregate.startsWith("vc")) {
-      // he total capacity and usage for each vCenter can be obtained by summing up the respective values for all hypervisors
-      // with the same values for az and aggregate.
-      let key = subcapacity.aggregate + "-" + subcapacity.az
-      if (totalSubcapa[key]) {
-        // summing up capacity and usage
-        totalSubcapa[key].capacity =
-          totalSubcapa[key].capacity + subcapacity.capacity
+    if(typeof(subcapacity.aggregate) != "undefined") {
+      if (subcapacity.aggregate.startsWith("vc")) {
+        // he total capacity and usage for each vCenter can be obtained by summing up the respective values for all hypervisors
+        // with the same values for az and aggregate.
+        let key = subcapacity.aggregate + "-" + subcapacity.az
+        if (totalSubcapa[key]) {
+          // summing up capacity and usage
+          totalSubcapa[key].capacity =
+            totalSubcapa[key].capacity + subcapacity.capacity
 
-        totalSubcapa[key].usage = totalSubcapa[key].usage + subcapacity.usage
-      } else {
-        totalSubcapa[key] = {
-          az: subcapacity.az,
-          aggregate: subcapacity.aggregate,
-          capacity: subcapacity.capacity,
-          usage: subcapacity.usage,
+          totalSubcapa[key].usage = totalSubcapa[key].usage + subcapacity.usage
+        } else {
+          totalSubcapa[key] = {
+            az: subcapacity.az,
+            aggregate: subcapacity.aggregate,
+            capacity: subcapacity.capacity,
+            usage: subcapacity.usage,
+          }
         }
       }
     }
   })
-
+  //console.log(totalSubcapa)
   return Object.values(totalSubcapa)
 }
 
