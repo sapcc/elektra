@@ -42,8 +42,17 @@
   .panel.panel-default
     .panel-body
       .row
+        .col-sm-6.operator-id
+          = f.input :responsible_infrastructure_coordinator_id, label: "Security Expert", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
+        .col-sm-6.operator-email
+          = f.input :responsible_infrastructure_coordinator_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.responsible_infrastructure_coordinator_help')
+      .row
         .col-md-6.operator-id
-          = f.input :responsible_primary_contact_id, label: "Primary Contact (Asset Owner)", placeholder: "User or Name", input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
+          = f.input :responsible_primary_contact_id, label: "Asset Owner (Primary Contact)", placeholder: "User or Name", input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
         .col-md-6.operator-email
           = f.input :responsible_primary_contact_email, placeholder: "Email/Distribution list", input_html: { class: 'operator-email-input',  value: f.object.responsible_primary_contact_email || current_user.email }
       .row
@@ -51,17 +60,8 @@
           = icon ('info-circle')
           = t('masterdata_cockpit.responsible_primary_contact_help')
       .row
-        .col-sm-6.operator-id
-          = f.input :responsible_security_expert_id, label: "Security Expert", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
-        .col-sm-6.operator-email
-          = f.input :responsible_security_expert_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_security_expert_help')
-      .row
         .col-md-6.operator-id
-          = f.input :responsible_operator_id, label: "Operator (Run Team)", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
+          = f.input :responsible_operator_id, label: "Run Team (Operator)", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
         .col-md-6.operator-email
           = f.input :responsible_operator_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
       .row
@@ -70,38 +70,13 @@
           = t('masterdata_cockpit.responsible_operator_help')
       .row
         .col-sm-6.operator-id
-          = f.input :responsible_product_owner_id, label: "Product Owner", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
+          = f.input :responsible_inventory_role_id, label: "Product Owner", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
-          = f.input :responsible_product_owner_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
+          = f.input :responsible_inventory_role_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_product_owner_help')
-      .row
-        .col-sm-6.operator-id
-          = f.input :responsible_controller_id, label: "Controller", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
-        .col-sm-6.operator-email
-          = f.input :responsible_controller_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_controller_help')
-  %label.control-label Other Contacts
-  .loading-place.loading-right
-  .panel.panel-default
-    .panel-body
-      .row
-        .col-md-6.operator-id
-          = f.input :inventory_role, label: "Inventory Role", placeholder: "User", input_html: { class: 'operator-id-input' }
-        .col-md-6.operator-id
-          = f.input :infrastructure_coordinator, label: "Infrastructure Coordinator", placeholder: "User", input_html: { class: 'operator-id-input' }
-      .row
-        .col-md-6.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.inventory_role_help')
-        .col-md-6.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.infrastructure_coordinator_help')
+          = t('masterdata_cockpit.responsible_inventory_role_help')
   %label.control-label Cost Info
   .loading-place.loading-right
   .panel.panel-default
@@ -116,10 +91,10 @@
           - else
             %label.control-label Inherited from #{inheritance_from}
             %input.form-control{
-              disabled: true,
-              type: "text",
-              value: "Not allowed"
-            }/
+disabled: true,
+type: "text",
+value: "Not allowed"
+}/
             = # to be sure that :cost_object_inherited is in any case false
             = f.input :cost_object_inherited, :as => :hidden, :input_html => { :value => "false" }
         .col-md-3
