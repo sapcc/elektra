@@ -91,13 +91,13 @@
           - else
             %label.control-label Inherited from #{inheritance_from}
             %input.form-control{
-disabled: true,
-type: "text",
-value: "Not allowed"
-}/
+              disabled: true,
+              type: "text",
+              value: "Not allowed"
+            }/
             = # to be sure that :cost_object_inherited is in any case false
             = f.input :cost_object_inherited, :as => :hidden, :input_html => { :value => "false" }
-        .col-md-3
+        .col-md-3 
           - types = MasterdataCockpit::Config.cost_object_types
           = f.input :cost_object_type, label: "Type", as:           :select, collection:   types.keys, label_method: -> (k) { types[k] }, required: true
         .col-md-6
