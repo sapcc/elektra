@@ -38,7 +38,7 @@ module Resources
         inquiry =
           services.inquiry.create_inquiry(
             "project_quota",
-            "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{data_type.format(new_quota - old_quota)} #{srv_type}/#{res_name}",
+            "project #{@scoped_domain_name}/#{@scoped_project_name}: #{new_quota - old_quota >= 0 ? "add" : "reduce by"} #{data_type.format((new_quota - old_quota).abs)} #{srv_type}/#{res_name}",
             current_user,
             { service: srv_type, resource: res_name, desired_quota: new_quota },
             service_user.identity.list_scope_resource_admins(
@@ -104,7 +104,7 @@ module Resources
         inquiry =
           services.inquiry.create_inquiry(
             "domain_quota",
-            "domain #{@scoped_domain_name}: add #{data_type.format(new_quota - old_quota)} #{srv_type}/#{res_name}",
+            "domain #{@scoped_domain_name}: #{new_quota - old_quota >= 0 ? "add" : "reduce by"} #{data_type.format((new_quota - old_quota).abs)} #{srv_type}/#{res_name}",
             current_user,
             { service: srv_type, resource: res_name, desired_quota: new_quota },
             cloud_admin.identity.list_cloud_resource_admins,

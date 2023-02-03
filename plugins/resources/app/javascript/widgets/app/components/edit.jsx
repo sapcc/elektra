@@ -310,7 +310,7 @@ export default class EditModal extends React.Component {
               input.checkResult = { unacceptable: `Raising quotas not allowed` }
             } else {
               input.checkResult = {
-                requestRequired: `Raising quotas requires approval`,
+                requestRequired: `Changing quotas requires approval`,
               }
             }
           }

@@ -14,12 +14,14 @@
     %p
       The domain
       %strong= @domain_resource.domain_name
-      requests that their quota be extended from
+      requests that their quota be 
+      = @desired_quota - @domain_resource.quota >= 0 ? "extended" : "reduced"
+      from
       %strong= @domain_resource.data_type.format(@domain_resource.quota)
       to
       = succeed '.' do
         %strong>= @domain_resource.data_type.format(@desired_quota)
-      This will increase quota usage to:
+      This will change quota usage to:
 
     .row
       .col-md-2.quota-label.text-muted Preview
