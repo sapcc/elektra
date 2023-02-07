@@ -115,21 +115,6 @@
       = icon('question-circle-o')
   .row
     .col-sm-4.details-label
-      Infrastructure Coordinator
-      %a.help-link{
-        data: {
-        content: t('masterdata_cockpit.responsible_infrastructure_coordinator_help'),
-        popover: { type: "help-hint" },
-        toggle: "popover"
-        }
-      }
-        = icon('info-circle')
-    .col-sm-2.details-value
-      - unless @project_masterdata.responsible_infrastructure_coordinator
-        \-
-      = @project_masterdata.responsible_infrastructure_coordinator
-  .row
-    .col-sm-4.details-label
       Asset Owner (Primary Contact)
       %a.help-link{
         data: {
@@ -180,9 +165,34 @@
       }
         = icon('info-circle')
     .col-sm-2.details-value
-      - unless @project_masterdata.responsible_inventory_role
+      - unless @project_masterdata.responsible_inventory_role_id
         \-
-      = @project_masterdata.responsible_inventory_role
+      = @project_masterdata.responsible_inventory_role_id
+    - if @project_masterdata.responsible_inventory_role_email
+      .col-sm-1.details-label
+      .col-sm-4.details-value
+        = icon('envelope-o')
+        = mail_to @project_masterdata.responsible_inventory_role_email
+  .row
+    .col-sm-4.details-label
+      Infrastructure Coordinator
+      %a.help-link{
+        data: {
+        content: t('masterdata_cockpit.responsible_infrastructure_coordinator_help'),
+        popover: { type: "help-hint" },
+        toggle: "popover"
+        }
+      }
+        = icon('info-circle')
+    .col-sm-2.details-value
+      - unless @project_masterdata.responsible_infrastructure_coordinator_id
+        \-
+      = @project_masterdata.responsible_infrastructure_coordinator_id
+    - if @project_masterdata.responsible_infrastructure_coordinator_email
+      .col-sm-1.details-label
+      .col-sm-4.details-value
+        = icon('envelope-o')
+        = mail_to @project_masterdata.responsible_infrastructure_coordinator_email
 .masterdata-group
   %h5.masterdata-heading
     Cost Info

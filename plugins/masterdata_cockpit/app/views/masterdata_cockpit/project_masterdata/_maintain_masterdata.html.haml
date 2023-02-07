@@ -42,15 +42,6 @@
   .panel.panel-default
     .panel-body
       .row
-        .col-sm-6.operator-id
-          = f.input :responsible_infrastructure_coordinator_id, label: "Security Expert", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
-        .col-sm-6.operator-email
-          = f.input :responsible_infrastructure_coordinator_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
-      .row
-        .col-md-12.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.responsible_infrastructure_coordinator_help')
-      .row
         .col-md-6.operator-id
           = f.input :responsible_primary_contact_id, label: "Asset Owner (Primary Contact)", placeholder: "User or Name", input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
         .col-md-6.operator-email
@@ -70,13 +61,23 @@
           = t('masterdata_cockpit.responsible_operator_help')
       .row
         .col-sm-6.operator-id
-          = f.input :responsible_inventory_role_id, label: "Product Owner", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
+          = f.input :responsible_inventory_role_id, label: "Inventory Role", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
           = f.input :responsible_inventory_role_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.responsible_inventory_role_help')
+      .row
+        .col-sm-6.operator-id
+          = f.input :responsible_infrastructure_coordinator_id, label: "Infrastructure Coordinator", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
+        .col-sm-6.operator-email
+          = f.input :responsible_infrastructure_coordinator_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          = t('masterdata_cockpit.responsible_infrastructure_coordinator_help')
+
   %label.control-label Cost Info
   .loading-place.loading-right
   .panel.panel-default

@@ -11,12 +11,8 @@ module MasterdataCockpit
     # "additional_information": null,
     # "responsible_controller_id":"D000000",
     # "responsible_operator_email":"DL1337@sap.com",
-    # "responsible_security_expert_id":"D000000",
-    # "responsible_security_expert_email": "myName@sap.com",
     # "responsible_primary_contact_email": myName@sap.com,
     # "responsible_primary_contact_id": "D000000",
-    # "responsible_product_owner_id":"D000000",
-    # "responsible_product_owner_email": "myName@sap.com",
     # "responsible_controller_id":"D0000",
     # "responsible_controller_email": "myName@sap.com",
     # "revenue_relevance": "generating",
@@ -27,70 +23,48 @@ module MasterdataCockpit
     #     "name": "myIO"
     # }
 
+    validates_presence_of :environment, :type_of_data, :soft_license_mode
+
     validates_presence_of :cost_object_type,
                           :cost_object_name,
                           unless: :cost_object_inherited
+
     validates_presence_of :business_criticality,
                           message:
                             "please choose the level of business criticality for your project"
+
     validates_presence_of :responsible_primary_contact_id,
+                          if: -> { responsible_primary_contact_email.blank? },
                           message:
-                            "please provide the primary contact information for this project. This is needed in case of emergency"
-    validates_presence_of :responsible_security_expert_id,
+                            "please provide name or user. This is needed in case of emergency."
+    validates_presence_of :responsible_primary_contact_email,
+                          if: -> { responsible_primary_contact_id.blank? },
                           message:
-                            "please provide the contact information for your security expert that is responsibly for the project"
+                            "please provide contact information for this project (like a Email or DL). This is needed in case of emergency."
 
     validates_presence_of :responsible_operator_id,
-                          unless: -> { responsible_operator_email.blank? },
-                          message: "can't be blank if operator email is defined"
-    validates_presence_of :responsible_security_expert_id,
-                          unless: -> {
-                            responsible_security_expert_email.blank?
-                          },
+                          if: -> { responsible_operator_email.blank? },
                           message:
-                            "can't be blank if security expert email is defined"
-    validates_presence_of :responsible_product_owner_id,
-                          unless: -> { responsible_product_owner_email.blank? },
-                          message:
-                            "can't be blank if product owner email is defined"
-    validates_presence_of :responsible_controller_id,
-                          unless: -> { responsible_controller_email.blank? },
-                          message:
-                            "can't be blank if controller email is defined"
-    validates_presence_of :responsible_primary_contact_id,
-                          unless: -> {
-                            responsible_primary_contact_email.blank?
-                          },
-                          message:
-                            "can't be blank primary contact email is defined"
-
+                            "please provide name or user. This is needed in case of emergency."
     validates_presence_of :responsible_operator_email,
-                          unless: -> { responsible_operator_id.blank? },
-                          message: "can't be blank if operator is defined"
-    validates_presence_of :responsible_security_expert_email,
-                          unless: -> { responsible_security_expert_id.blank? },
+                          if: -> { responsible_operator_id.blank? },
                           message:
-                            "can't be blank if security expert is defined"
-    validates_presence_of :responsible_product_owner_email,
-                          unless: -> { responsible_product_owner_id.blank? },
-                          message: "can't be blank if product owner is defined"
-    validates_presence_of :responsible_controller_email,
-                          unless: -> { responsible_controller_id.blank? },
-                          message: "can't be blank if controller is defined"
-    validates_presence_of :responsible_primary_contact_email,
-                          unless: -> { responsible_primary_contact_id.blank? },
-                          message:
-                            "can't be blank if primary contact is defined"
+                            "please provide contact information for this project (like a Email or DL). This is needed in case of emergency."
 
-    validates_presence_of :inventory_role,
-                          :infrastructure_coordinator,
-                          :responsible_operator_id
+    validates_presence_of :responsible_inventory_role_id,
+                          if: -> { responsible_inventory_role_email.blank? },
+                          message:
+                            "please provide name or user. This is needed in case of emergency."
+
+    validates_presence_of :responsible_inventory_role_email,
+                          if: -> { responsible_inventory_role_id.blank? },
+                          message:
+                            "please provide contact information for this project (like a Email or DL). This is needed in case of emergency."
 
     validates_presence_of :additional_information,
                           if: -> { business_criticality == "prod_tc" },
                           message:
                             "can't be blank if business criticality is Productive Time Critical"
-    validates_presence_of :environment, :type_of_data, :soft_license_mode
 
     validates :number_of_endusers,
               numericality: {
@@ -112,22 +86,13 @@ module MasterdataCockpit
                 too_long: "255 characters is the maximum allowed",
               }
 
-    validates :responsible_operator_email,
-              :responsible_security_expert_email,
-              :responsible_product_owner_email,
-              :responsible_controller_email,
-              :responsible_primary_contact_email,
+    validates :responsible_primary_contact_email,
+              :responsible_operator_email,
+              :responsible_inventory_role_email,
+              :responsible_infrastructure_coordinator_email,
               format: {
                 with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i,
                 message: "please use a valid email/DL address",
-              },
-              allow_nil: true,
-              allow_blank: true
-
-    validates :infrastructure_coordinator,
-              format: {
-                with: /\A[DCIdci]\d*\z/,
-                message: "please use a C/D/I user id",
               },
               allow_nil: true,
               allow_blank: true
@@ -230,49 +195,41 @@ module MasterdataCockpit
     end
 
     def attributes_for_create
-      params =
-        {
-          "customer" => read("customer"),
-          "project_id" => read("project_id"),
-          "project_name" => read("project_name"),
-          "parent_id" => read("domain_id"),
-          "domain_id" => read("parent_id"),
-          "description" => read("description"),
-          "responsible_operator_id" => read("responsible_operator_id"),
-          "responsible_operator_email" => read("responsible_operator_email"),
-          "responsible_security_expert_id" =>
-            read("responsible_security_expert_id"),
-          "responsible_security_expert_email" =>
-            read("responsible_security_expert_email"),
-          "responsible_primary_contact_id" =>
-            read("responsible_primary_contact_id"),
-          "responsible_primary_contact_email" =>
-            read("responsible_primary_contact_email"),
-          "responsible_product_owner_id" =>
-            read("responsible_product_owner_id"),
-          "responsible_product_owner_email" =>
-            read("responsible_product_owner_email"),
-          "responsible_controller_id" => read("responsible_controller_id"),
-          "responsible_controller_email" =>
-            read("responsible_controller_email"),
-          "biso" => read("biso"),
-          "supervisor" => read("supervisor"),
-          "inventory_role" => read("inventory_role"),
-          "infrastructure_coordinator" => read("infrastructure_coordinator"),
-          "additional_information" => read("additional_information"),
-          "gpu_enabled" => read("gpu_enabled"),
-          "contains_pii_dpp_hr" => read("contains_pii_dpp_hr"),
-          "contains_external_customer_data" =>
-            read("contains_external_customer_data"),
-          "environment" => read("environment"),
-          "ext_certification" => combine_external_certifications,
-          "type_of_data" => read("type_of_data"),
-          "soft_license_mode" => read("soft_license_mode"),
-          "revenue_relevance" => read("revenue_relevance"),
-          "business_criticality" => read("business_criticality"),
-          "number_of_endusers" => read("number_of_endusers"),
-        }.delete_if { |_k, v| v.blank? }
-
+      params = {
+        "customer" => read("customer"),
+        "project_id" => read("project_id"),
+        "project_name" => read("project_name"),
+        "parent_id" => read("domain_id"),
+        "domain_id" => read("parent_id"),
+        "description" => read("description"),
+        "responsible_primary_contact_id" =>
+          read("responsible_primary_contact_id"),
+        "responsible_primary_contact_email" =>
+          read("responsible_primary_contact_email"),
+        "responsible_operator_id" => read("responsible_operator_id"),
+        "responsible_operator_email" => read("responsible_operator_email"),
+        "responsible_inventory_role_id" =>
+          read("responsible_inventory_role_id"),
+        "responsible_inventory_role_email" => "",
+        "responsible_infrastructure_coordinator_id" =>
+          read("responsible_infrastructure_coordinator_id"),
+        "responsible_infrastructure_coordinator_email" =>
+          read("responsible_infrastructure_coordinator_email"),
+        "additional_information" => read("additional_information"),
+        "gpu_enabled" => read("gpu_enabled"),
+        "contains_pii_dpp_hr" => read("contains_pii_dpp_hr"),
+        "contains_external_customer_data" =>
+          read("contains_external_customer_data"),
+        "environment" => read("environment"),
+        "ext_certification" => combine_external_certifications,
+        "type_of_data" => read("type_of_data"),
+        "soft_license_mode" => read("soft_license_mode"),
+        "revenue_relevance" => read("revenue_relevance"),
+        "business_criticality" => read("business_criticality"),
+        "number_of_endusers" => read("number_of_endusers"),
+      }
+      #.delete_if { |_k, v| v.blank? }
+      #byebug
       params["cost_object"] = if cost_object_inherited
         { "inherited" => true }
       else
@@ -282,7 +239,8 @@ module MasterdataCockpit
           "inherited" => cost_object_inherited,
         }
       end
-
+      puts "#######################"
+      pp params
       params
     end
   end
