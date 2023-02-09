@@ -1,16 +1,22 @@
 import React, { useMemo, useState, useEffect } from "react"
 import { Stack, Pagination } from "juno-ui-components"
 
-const PaginationComp = ({ count, limit, onChanged, isFetching, disabled }) => {
+const PaginationComp = ({
+  count,
+  limit,
+  onChanged,
+  isFetching,
+  disabled,
+  currentPage,
+}) => {
   const [offset, setOffset] = useState(0)
-  const [actualPage, setActualPage] = useState(1)
 
-  useEffect(() => {
-    if (onChanged && offset > 0) {
-      onChanged(offset)
-      console.log("SECRETS_0: ", offset)
-    }
-  }, [offset])
+  // useEffect(() => {
+  //   if (onChanged && offset > 0) {
+  //     onChanged(offset)
+  //     // console.log("SECRETS_0: ", offset)
+  //   }
+  // }, [offset])
 
   count = useMemo(() => {
     if (!count) return 0
@@ -27,23 +33,25 @@ const PaginationComp = ({ count, limit, onChanged, isFetching, disabled }) => {
   }, [count, limit])
 
   const onPrevChanged = () => {
-    console.log("onPrevChanged actualPage:", actualPage)
-    if (actualPage === 1) return
-    setOffset(offset - limit)
-    setActualPage(actualPage - 1)
+    // console.log("onPrevChanged actualPage:", actualPage)
+    if (currentPage < 1) return
+    // setOffset(offset - limit)
+    // setActualPage(actualPage - 1)
+    onChanged(currentPage - 1)
   }
 
   const onNextChanged = () => {
-    console.log("onNext Before Changed actualPage:", actualPage)
-    if (actualPage === pages) return
-    setOffset(offset + limit)
-    setActualPage(actualPage + 1)
+    // console.log("onNext Before Changed actualPage:", actualPage)
+    if (currentPage === pages) return
+    // setOffset(offset + limit)
+    // setActualPage(actualPage + 1)
+    onChanged(currentPage + 1)
   }
-  console.log("onNext After Changed actualPage:", actualPage)
+  // console.log("onNext After Changed actualPage:", actualPage)
 
   const onPageInputChanged = (page) => {
     //TODO: update offset and limit
-    setActualPage(page)
+    // setActualPage(page)
   }
 
   useEffect(() => {
@@ -57,7 +65,7 @@ const PaginationComp = ({ count, limit, onChanged, isFetching, disabled }) => {
         <Pagination
           className="tw-mt-4"
           distribution="end"
-          currentPage={actualPage}
+          currentPage={currentPage}
           onKeyPress={onPageInputChanged}
           onPressNext={onNextChanged}
           onPressPrevious={onPrevChanged}

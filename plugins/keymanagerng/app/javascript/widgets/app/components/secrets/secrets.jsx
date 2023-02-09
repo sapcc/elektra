@@ -10,35 +10,26 @@ import { Message, Container } from "juno-ui-components"
 const ITEMS_PER_PAGE = 10
 
 const Secrets = () => {
-  const [{ secrets: secretsState }, dispatch] = useGlobalState()
+  const [currentPage, setCurrentPage] = useState(1)
   const [paginationOptions, setPaginationOptions] = useState({
     limit: ITEMS_PER_PAGE,
     offset: 0,
   })
 
-  const onPaginationChanged = (offset) => {
-    setPaginationOptions({ ...paginationOptions, offset: offset })
+  const onPaginationChanged = (page) => {
+    // todo check if page < 0
+    setCurrentPage(page)
+    const newOffset = (page - 1) * ITEMS_PER_PAGE
+    setPaginationOptions({ ...paginationOptions, offset: newOffset })
   }
+
   const { isLoading, isError, data, error } = useQuery(
     ["secrets", paginationOptions],
     getSecrets,
-    {
-      onSuccess: (data) => {
-        console.log("SECRETS: ", paginationOptions)
-        dispatch({
-          type: "RECEIVE_SECRETS",
-          secrets: data?.secrets,
-          totalNumOfSecrets: data?.total,
-          paginationOptions: paginationOptions,
-        })
-      },
-      onError: () => {
-        //TODO: Ask why in case of error, here is error null but in line 50 works correct
-        console.log("fetchSecrets onError:", error)
-        dispatch({ type: "REQUEST_SECRETS_FAILURE", error: error })
-      },
-    }
+    {}
   )
+
+  console.log("DATA: ", data)
 
   return isLoading && !data ? (
     <Container py px={false}>
@@ -53,15 +44,18 @@ const Secrets = () => {
           </Message>
         </Container>
       ) : (
-        <SecretList />
+        <>
+          <SecretList secrets={data?.secrets} />
+          <Pagination
+            count={data?.total}
+            limit={ITEMS_PER_PAGE}
+            onChanged={onPaginationChanged}
+            isFetching={isLoading}
+            disabled={error}
+            currentPage={currentPage}
+          />
+        </>
       )}
-      <Pagination
-        count={secretsState.totalNumOfSecrets}
-        limit={ITEMS_PER_PAGE}
-        onChanged={onPaginationChanged}
-        isFetching={secretsState.isFetching}
-        disabled={secretsState.error}
-      />
     </>
   )
 }

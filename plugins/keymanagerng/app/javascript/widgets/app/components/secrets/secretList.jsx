@@ -16,35 +16,22 @@ import {
   Spinner,
 } from "juno-ui-components"
 
-const SecretList = () => {
+const SecretList = ({ secrets, isLoading }) => {
   const [filterTerm, setFilterTerm] = useState(null)
-  const [{ secrets: secretsState }, dispatch] = useGlobalState()
-  const mounted = useRef(false)
 
-  useEffect(() => {
-    mounted.current = true
-    return () => (mounted.current = false)
-  }, [])
+  // const filteredSecrets = useMemo(() => {
+  //   if (!secretsState.items || secretsState.items.length === 0) return []
+  //   if (!filterTerm || filterTerm === "") return secretsState.items
+  //   return secretsState.items.filter(
+  //     (item) =>
+  //       (item.name && item.name.indexOf(filterTerm) >= 0) ||
+  //       (item.secret_type && item.secret_type.indexOf(filterTerm) >= 0) ||
+  //       (item.content_types.default &&
+  //         item.content_types.default.indexOf(filterTerm) >= 0) ||
+  //       (item.status && item.status.indexOf(filterTerm) >= 0)
+  //   )
+  // }, [secretsState.items, filterTerm])
 
-  const filteredSecrets = useMemo(() => {
-    if (!secretsState.items || secretsState.items.length === 0) return []
-    if (!filterTerm || filterTerm === "") return secretsState.items
-    return secretsState.items.filter(
-      (item) =>
-        (item.name && item.name.indexOf(filterTerm) >= 0) ||
-        (item.secret_type && item.secret_type.indexOf(filterTerm) >= 0) ||
-        (item.content_types.default &&
-          item.content_types.default.indexOf(filterTerm) >= 0) ||
-        (item.status && item.status.indexOf(filterTerm) >= 0)
-    )
-  }, [secretsState.items, filterTerm])
-
-  useEffect(() => {
-    console.log("secrets component")
-  })
-
-  console.log("totalSecrets: ", secretsState.totalNumOfSecrets)
-  console.log("secretState: ", secretsState)
   return (
     <>
       <DataGridToolbar
@@ -69,7 +56,7 @@ const SecretList = () => {
 
       {!policy.isAllowed("keymanagerng:secret_list") ? (
         <span>You are not allowed to see this page</span>
-      ) : secretsState.isFetching ? (
+      ) : isLoading ? (
         <Spinner variant="primary" />
       ) : (
         <DataGrid columns={5} minContentColumns={[4]}>
@@ -80,8 +67,8 @@ const SecretList = () => {
             <DataGridHeadCell>Status</DataGridHeadCell>
             <DataGridHeadCell></DataGridHeadCell>
           </DataGridRow>
-          {filteredSecrets && filteredSecrets.length > 0 ? (
-            filteredSecrets.map((secret, index) => (
+          {secrets && secrets.length > 0 ? (
+            secrets.map((secret, index) => (
               <SecretListItem key={index} secret={secret} />
             ))
           ) : (
