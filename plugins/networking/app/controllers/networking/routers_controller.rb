@@ -148,7 +148,6 @@ module Networking
             [{ service_type: :network, resource_name: :routers }],
           )
       end
-
       # build new router object (no api call done yet!)
       @router = services.networking.new_router("admin_state_up" => true)
     end
@@ -339,6 +338,63 @@ module Networking
             @internal_subnets << subnet
           end
         end
+      end
+
+      # aggregate highest usage for ports
+
+      # We have external networks in which the FIPs live (in the corresponding subnets).
+      # Some fill us up, i.e. no longer have FIPs. However, due to a limitation on the ASR1k,
+      # we cannot simply plug any number of subnets into the external networks.
+
+      # So we would like to suggest customers who create new routers in the drop down menu FIP
+      # networks that are not yet so full from our point of view
+
+      # Since it is not enough to count the FIPs (otherwise you could simply have every port
+      # belonging to a FIP given). But we have an additional limitation on the ASR that says we
+      # only have 100 BD-VIF (broadcast domain - virtual interfaces) per asr1k agent (to put it simply).
+
+      # for each port of the type "network:router_gateway" we look on which asr1k agent (binding_host_id) lives
+
+      # and then we want to prefer the networks that have the lowest count of routers per asr1k agent
+      # this sorting is done routers/new.html.haml -> field -> network_id
+
+      @external_networks.each do |external_network|
+        asr_agents_count = {}
+        ports = []
+        highest_asr_agents_count = 0
+        ports =
+          begin
+            cloud_admin.networking.ports(
+              {
+                "network_id" => external_network.id,
+                "status" => "ACTIVE",
+                "device_owner" => "network:router_gateway",
+              },
+            )
+          rescue StandardError
+            highest_asr_agents_count = "Error"
+          end
+
+        unless highest_asr_agents_count == "Error"
+          ports.each do |port|
+            unless asr_agents_count.key?(port.binding_host_id)
+              asr_agents_count[port.binding_host_id] = 0
+            end
+            asr_agents_count[port.binding_host_id] += 1
+            if highest_asr_agents_count < asr_agents_count[port.binding_host_id]
+              highest_asr_agents_count = asr_agents_count[port.binding_host_id]
+            end
+          end
+        end
+
+        #puts "##################"
+        #puts highest_asr_agents_count
+        #pp asr_agents_count
+
+        external_network.name(
+          "#{external_network.name} (router usage:#{highest_asr_agents_count})",
+        )
+        external_network.set_highest_asr_agents_count(highest_asr_agents_count)
       end
     end
   end
