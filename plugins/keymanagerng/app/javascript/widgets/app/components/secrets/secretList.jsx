@@ -4,8 +4,6 @@ import { policy } from "lib/policy"
 import { SearchField } from "lib/components/search_field"
 import SecretListItem from "./secretListItem"
 import { useGlobalState } from "../StateProvider"
-import { deleteSecret } from "../../secretActions"
-import { getSecretUuid } from "../../../lib/secretHelper"
 // import { QueryClient, QueryClientProvider } from "react-query"
 
 import {
@@ -27,32 +25,6 @@ const SecretList = () => {
     mounted.current = true
     return () => (mounted.current = false)
   }, [])
-
-  // useEffect(() => {
-  //   //Initial load
-  //   if (secretsState.loaded || secretsState.isFetching) return
-  //   loadSecrets()
-  // }, [dispatch])
-
-  // const handleDelete = useCallback(
-  //   (id) => {
-  //     dispatch({ type: "REQUEST_DELETE_SECRETS", id })
-  //     deleteSecret(id)
-  //       .then(() => {
-  //         return mounted.current && dispatch({ type: "DELETE_SECRETS", id })
-  //       })
-  //       .catch(
-  //         (error) =>
-  //           mounted.current &&
-  //           dispatch({
-  //             type: "DELETE_SECRETS_FAILURE",
-  //             id,
-  //             error: error.message,
-  //           })
-  //       )
-  //   },
-  //   [dispatch]
-  // )
 
   const filteredSecrets = useMemo(() => {
     if (!secretsState.items || secretsState.items.length === 0) return []
@@ -110,10 +82,7 @@ const SecretList = () => {
           </DataGridRow>
           {filteredSecrets && filteredSecrets.length > 0 ? (
             filteredSecrets.map((secret, index) => (
-              <SecretListItem
-                key={index}
-                secret={secret}
-              />
+              <SecretListItem key={index} secret={secret} />
             ))
           ) : (
             <DataGridRow>

@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import SecretList from "./secretList"
 import Pagination from "../Pagination"
-import { fetchSecrets } from "../../secretActions"
+import { getSecrets } from "../../secretActions"
 import { useGlobalState } from "../StateProvider"
+import { useQuery } from "react-query"
+import HintLoading from "../HintLoading"
+import { Message, Container } from "juno-ui-components"
 
 const ITEMS_PER_PAGE = 10
 
@@ -14,36 +17,44 @@ const Secrets = () => {
   })
 
   const onPaginationChanged = (offset) => {
-    console.log("offset: ", offset)
     setPaginationOptions({ ...paginationOptions, offset: offset })
   }
-
-  useEffect(() => {
-    //Reload secrets while pagination and after create and delete a secret
-    if (!paginationOptions) return
-    loadSecrets()
-  }, [paginationOptions])
-
-  const loadSecrets = () => {
-    dispatch({ type: "REQUEST_SECRETS" })
-    fetchSecrets(paginationOptions)
-      .then((data) => {
-        console.log("dispatch:", data)
+  const { isLoading, isError, data, error } = useQuery(
+    ["secrets", paginationOptions],
+    getSecrets,
+    {
+      onSuccess: (data) => {
+        console.log("SECRETS: ", paginationOptions)
         dispatch({
           type: "RECEIVE_SECRETS",
-          secrets: data.secrets,
-          totalNumOfSecrets: data.total,
+          secrets: data?.secrets,
+          totalNumOfSecrets: data?.total,
           paginationOptions: paginationOptions,
         })
-      })
-      .catch((error) =>
-        dispatch({ type: "REQUEST_SECRETS_FAILURE", error: error.message })
-      )
-  }
+      },
+      onError: () => {
+        //TODO: Ask why in case of error, here is error null but in line 50 works correct
+        console.log("fetchSecrets onError:", error)
+        dispatch({ type: "REQUEST_SECRETS_FAILURE", error: error })
+      },
+    }
+  )
 
-  return (
+  return isLoading && !data ? (
+    <Container py px={false}>
+      <HintLoading text="Loading secrets..." />
+    </Container>
+  ) : (
     <>
-      <SecretList />
+      {isError ? (
+        <Container py px={false}>
+          <Message variant="danger">
+            {`${error?.statusCode}, ${error?.message}`}
+          </Message>
+        </Container>
+      ) : (
+        <SecretList />
+      )}
       <Pagination
         count={secretsState.totalNumOfSecrets}
         limit={ITEMS_PER_PAGE}

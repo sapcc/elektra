@@ -13,6 +13,8 @@ import {
 import { useHistory, useLocation } from "react-router-dom"
 import { useGlobalState } from "../StateProvider"
 import { createSecret, fetchSecrets } from "../../secretActions"
+import { useMutation, useQueryClient, useQuery } from "react-query"
+
 // import DateTimePicker from "react-datetime-picker"
 
 const TYPE_SYMMETRIC = "symmetric"
@@ -127,40 +129,73 @@ const NewSecret = () => {
   const [payloadContentTypeOptions, setPayloadContentTypeOptions] = useState([])
   // const [value, onChange] = useState(new Date())
 
-  useEffect(() => {
-    mounted.current = true
-    return () => (mounted.current = false)
-  }, [])
+  const queryClient = useQueryClient()
 
-  const onConfirm = useCallback(() => {
+  const { isLoading, isError, error, data, isSuccess, mutate } = useMutation(
+    ({ formState }) => createSecret(formState)
+  )
+
+  // useEffect(() => {
+  //   mounted.current = true
+  //   return () => (mounted.current = false)
+  // }, [])
+
+  // const onConfirm = useCallback(() => {
+  //   const errors = formValidation(formData)
+  //   if (Object.keys(errors).length > 0) {
+  //     setValidationState(errors)
+  //   } else {
+  //     createSecret(formData)
+  //       .then((data) => {
+  //         mounted.current && dispatch({ type: "RECEIVE_SECRET", data })
+  //       })
+  //       .then(() => {
+  //         fetchSecrets().then((data) =>
+  //           dispatch({
+  //             type: "RECEIVE_SECRETS",
+  //             secrets: data.secrets,
+  //             totalNumOfSecrets: data.total,
+  //           })
+  //         )
+  //       })
+  //       .then(close)
+  //       .catch((error) => {
+  //         console.log(error.data)
+  //         mounted.current &&
+  //           dispatch({
+  //             type: "REQUEST_SECRETS_FAILURE",
+  //             error: error.data,
+  //           })
+  //       })
+  //   }
+  // }, [dispatch, formData, validationState])
+
+  const onConfirm = () => {
     const errors = formValidation(formData)
     if (Object.keys(errors).length > 0) {
       setValidationState(errors)
     } else {
-      createSecret(formData)
-        .then((data) => {
-          mounted.current && dispatch({ type: "RECEIVE_SECRET", data })
-        })
-        .then(() => {
-          fetchSecrets().then((data) =>
+      mutate(
+        {
+          formState: formData,
+        },
+        {
+          onSuccess: (data, variables, context) => {
             dispatch({
               type: "RECEIVE_SECRETS",
               secrets: data.secrets,
               totalNumOfSecrets: data.total,
             })
-          )
-        })
-        .then(close)
-        .catch((error) => {
-          console.log(error.data)
-          mounted.current &&
-            dispatch({
-              type: "REQUEST_SECRETS_FAILURE",
-              error: error.data,
-            })
-        })
+            close()
+            queryClient.invalidateQueries("secrets")
+          },
+          onError: (error, variables, context) => {
+            // TODO display error
+          },
+        }
+      )
     }
-  }, [dispatch, formData, validationState])
+  }
 
   const close = useCallback(() => {
     setShow(false)

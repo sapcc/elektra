@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from "react"
-import { deleteSecret, fetchSecrets } from "../../secretActions"
+import { deleteSecret } from "../../secretActions"
 import { Link, useHistory } from "react-router-dom"
 import { policy } from "lib/policy"
 import { useGlobalState } from "../StateProvider"
@@ -11,6 +11,9 @@ import {
   DataGridCell,
 } from "juno-ui-components"
 import { getSecretUuid } from "../../../lib/secretHelper"
+import { useMutation, useQueryClient } from "react-query"
+import HintLoading from "../HintLoading"
+import { Message } from "juno-ui-components"
 
 const SecretListItem = ({ secret }) => {
   // manually push a path onto the react router history
@@ -19,41 +22,39 @@ const SecretListItem = ({ secret }) => {
   const { push } = useHistory()
   const secretUuid = getSecretUuid(secret)
   const [{ secrets: secretsState }, dispatch] = useGlobalState()
-  const mounted = useRef(false)
+  const queryClient = useQueryClient()
 
-  const handleDelete = useCallback(
-    (id) => {
-      dispatch({ type: "REQUEST_DELETE_SECRETS", id })
-      deleteSecret(id)
-        .then(() => {
-          return mounted.current && dispatch({ type: "DELETE_SECRETS", id })
-        })
-        .then(() => {
-          fetchSecrets().then((data) =>
-            dispatch({
-              type: "RECEIVE_SECRETS",
-              secrets: data.secrets,
-              totalNumOfSecrets: data.total,
-            })
-          )
-        })
-        .catch(
-          (error) =>
-            mounted.current &&
-            dispatch({
-              type: "DELETE_SECRETS_FAILURE",
-              id,
-              error: error.message,
-            })
-        )
-    },
-    [dispatch]
+  const { isLoading, isError, error, data, mutate } = useMutation(
+    deleteSecret,
+    100,
+    secretUuid
   )
 
-  return (
-    <DataGridRow className={secret.isDeleting ? "updating" : ""}>
+  const handleDelete = () => {
+    mutate(
+      {
+        id: secretUuid,
+      },
+      {
+        onSuccess: () => {
+          console.log("deleteMutate id: ", secretUuid)
+          dispatch({ type: "DELETE_SECRETS", secretUuid })
+          queryClient.invalidateQueries("secrets")
+        },
+      }
+    )
+  }
+
+  return isLoading && !data ? (
+    <HintLoading />
+  ) : isError ? (
+    <Message variant="danger">
+      {`${error.statusCode}, ${error.message}`}
+    </Message>
+  ) : (
+    <DataGridRow>
       <DataGridCell>
-        <Link to={`/secrets/${secretUuid}/show`}>
+        <Link className="tw-break-all" to={`/secrets/${secretUuid}/show`}>
           {secret.name || secretUuid}
         </Link>
         <br />

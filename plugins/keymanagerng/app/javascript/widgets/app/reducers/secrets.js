@@ -84,17 +84,16 @@ const receiveSecretMetadata = (secretsState, action) => {
 }
 
 const receiveSecrets = (secretsState, action) => {
-  if (action.secrets) {
-    return {
-      ...secretsState,
-      isFetching: false,
-      error: null,
-      items: action.secrets.sort(sortByCreationDate),
-      totalNumOfSecrets: action.totalNumOfSecrets,
-      loaded: true,
-    }
+  console.log("receiveSecrets: ", action)
+  if (!action.secrets) return secretsState
+  return {
+    ...secretsState,
+    isFetching: false,
+    error: null,
+    items: action.secrets.sort(sortByCreationDate),
+    totalNumOfSecrets: action.totalNumOfSecrets,
+    loaded: true,
   }
-  return secretsState
 }
 
 const requestSecretsFailure = (secretsState, action) => {
@@ -106,9 +105,8 @@ const requestSecretFailure = (secretsState, action) => {
 }
 
 const deleteSecrets = (secretsState, action) => {
-  debugger
   const index = secretsState.items.findIndex(
-    (i) => i.secret_ref.indexOf(action.id) >= 0
+    (i) => i.secret_ref.indexOf(action.secretUuid) >= 0
   )
   if (index < 0) return secretsState
   const secrets = secretsState.items.slice()
@@ -124,7 +122,7 @@ const deleteSecrets = (secretsState, action) => {
 
 const requestDeleteSecrets = (secretsState, action) => {
   const index = secretsState.items.findIndex(
-    (i) => i.secret_ref.indexOf(action.id) >= 0
+    (i) => i.secret_ref.indexOf(action.secretUuid) >= 0
   )
   if (index < 0) return secretsState
   const secrets = secretsState.items.slice()

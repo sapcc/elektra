@@ -1,12 +1,15 @@
 import React, { useMemo, useState, useEffect } from "react"
-import { Stack, Button } from "juno-ui-components"
+import { Stack, Pagination } from "juno-ui-components"
 
-const Pagination = ({ count, limit, onChanged, isFetching, disabled }) => {
+const PaginationComp = ({ count, limit, onChanged, isFetching, disabled }) => {
   const [offset, setOffset] = useState(0)
   const [actualPage, setActualPage] = useState(1)
 
   useEffect(() => {
-    if (onChanged) onChanged(offset)
+    if (onChanged && offset > 0) {
+      onChanged(offset)
+      console.log("SECRETS_0: ", offset)
+    }
   }, [offset])
 
   count = useMemo(() => {
@@ -24,45 +27,46 @@ const Pagination = ({ count, limit, onChanged, isFetching, disabled }) => {
   }, [count, limit])
 
   const onPrevChanged = () => {
+    console.log("onPrevChanged actualPage:", actualPage)
     if (actualPage === 1) return
     setOffset(offset - limit)
     setActualPage(actualPage - 1)
   }
 
   const onNextChanged = () => {
+    console.log("onNext Before Changed actualPage:", actualPage)
     if (actualPage === pages) return
     setOffset(offset + limit)
     setActualPage(actualPage + 1)
   }
+  console.log("onNext After Changed actualPage:", actualPage)
+
+  const onPageInputChanged = (page) => {
+    //TODO: update offset and limit
+    setActualPage(page)
+  }
 
   useEffect(() => {
-    console.log("pagination component")
+    // console.log("pagination component")
   })
-
+  // console.log("Limit:", limit)
   return (
     <>
       <Stack alignment="center" className="mt-4" distribution="end">
         {isFetching ? <span> Loading...</span> : null}{" "}
-        <Button
-          className="ml-4"
-          disabled={actualPage === 1 || disabled}
-          label="<"
-          onClick={onPrevChanged}
-          size="small"
-        />
-        <p className="ml-4">
-          {actualPage} / {pages}
-        </p>
-        <Button
-          disabled={actualPage === pages || disabled}
-          className="ml-4"
-          label=">"
-          onClick={onNextChanged}
-          size="small"
+        <Pagination
+          className="tw-mt-4"
+          distribution="end"
+          currentPage={actualPage}
+          onKeyPress={onPageInputChanged}
+          onPressNext={onNextChanged}
+          onPressPrevious={onPrevChanged}
+          pages={pages}
+          variant="input"
         />
       </Stack>
     </>
   )
 }
 
-export default Pagination
+export default PaginationComp

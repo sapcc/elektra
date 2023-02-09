@@ -1,12 +1,23 @@
 import apiClient from "./apiClient"
 
+export const getSecrets = ({ queryKey }) => {
+  const [_key, paginationOptions] = queryKey
+  return fetchSecrets(paginationOptions)
+}
+
 export const fetchSecrets = (options) => {
   console.log("fetchSecrets options: ", options)
   return apiClient
     .osApi("key-manager")
     .get("/v1/secrets", { params: { ...options, limit: 10 } })
-    .then((response) => response.data)
-    .catch((error) => console.log(error.data))
+    .then((response) => {
+      return response?.data
+    })
+}
+
+export const getSecret = ({ queryKey }) => {
+  const [_key, uuid] = queryKey
+  return fetchSecret(uuid)
 }
 
 export const fetchSecret = (uuid) => {
@@ -14,8 +25,17 @@ export const fetchSecret = (uuid) => {
   return apiClient
     .osApi("key-manager")
     .get("/v1/secrets/" + uuid)
-    .then((response) => response.data)
-    .catch((error) => console.log(error.data))
+    .then((response) => {
+      return response?.data
+    })
+    .catch((error) => {
+      return error
+    })
+}
+
+export const getSecretMetadata = ({ queryKey }) => {
+  const [_key, uuid] = queryKey
+  return fetchSecretMetadata(uuid)
 }
 
 export const fetchSecretMetadata = (uuid) => {
@@ -23,21 +43,36 @@ export const fetchSecretMetadata = (uuid) => {
   return apiClient
     .osApi("key-manager")
     .get("/v1/secrets/" + uuid + "/metadata")
-    .then((response) => response.data)
-    .catch((error) => console.log(error.data))
+    .then((response) => {
+      return response?.data
+    })
 }
 
-export const deleteSecret = (id) => {
+export const delSecret = ({ queryKey }) => {
+  const [_key, uuid] = queryKey
+  return deleteSecret(uuid)
+}
+
+export const deleteSecret = (delObj) => {
+  console.log("deleteSecrets id:", delObj.id)
   return apiClient
     .osApi("key-manager")
-    .delete(`v1/secrets/${id}`)
-    .then((response) => response.data)
-    .catch((error) => console.log(error.data))
+    .delete(`v1/secrets/${delObj.id}`)
+    .then((response) => {
+      return response?.data
+    })
+}
+
+export const addSecret = ({ queryKey }) => {
+  const [_key, formData] = queryKey
+  return createSecret(formData)
 }
 
 export const createSecret = (formData) => {
   return apiClient
     .osApi("key-manager")
     .post("v1/secrets", formData)
-    .then((response) => response.data)
+    .then((response) => {
+      return response?.data
+    })
 }

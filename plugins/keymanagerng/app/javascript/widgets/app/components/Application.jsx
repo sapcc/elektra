@@ -1,5 +1,7 @@
 /* eslint no-console:0 */
 import React from "react"
+import { QueryClient, QueryClientProvider } from "react-query"
+import { ReactQueryDevtools } from "react-query-devtools"
 import { HashRouter, Route, Redirect } from "react-router-dom"
 
 import Tabs from "./Tabs"
@@ -24,35 +26,40 @@ const tabsConfig = [
 
 const baseName = widgetBasePath("keymanagerng")
 
+const queryClient = new QueryClient()
+
 // render all components inside a hash router
 const Application = () => {
   return (
-    <StateProvider>
-      <StyleProvider theme="theme-light" stylesWrapper="shadowRoot">
-        <style>{styles}</style>
-        {/* redirect root to shares tab */}
-        <AppShell embedded>
-          {/* <BrowserRouter basename={`${window.location.pathname}?r=`}> */}
-          <BrowserRouter basename={baseName}>
-            <Route path="/:activeTab">
-              <Tabs tabsConfig={tabsConfig} />
-            </Route>
-            <Route exact path="/secrets/newSecret" component={NewSecret} />
-            <Route exact path="/secrets/:id/show" component={SecretDetails} />
-            <Route
-              exact
-              path="/containers/newContainer"
-              component={NewContainer}
-            />
-            <Route
-              exact
-              path="/containers/:id/show"
-              component={ContainerDetailsModal}
-            />
-          </BrowserRouter>
-        </AppShell>
-      </StyleProvider>
-    </StateProvider>
+    <QueryClientProvider client={queryClient}>
+      <StateProvider>
+        <StyleProvider theme="theme-light" stylesWrapper="shadowRoot">
+          <style>{styles}</style>
+          {/* redirect root to shares tab */}
+          <AppShell embedded>
+            {/* <BrowserRouter basename={`${window.location.pathname}?r=`}> */}
+            <BrowserRouter basename={baseName}>
+              <Route path="/:activeTab">
+                <Tabs tabsConfig={tabsConfig} />
+              </Route>
+              <Route exact path="/secrets/newSecret" component={NewSecret} />
+              <Route exact path="/secrets/:id/show" component={SecretDetails} />
+              <Route
+                exact
+                path="/containers/newContainer"
+                component={NewContainer}
+              />
+              <Route
+                exact
+                path="/containers/:id/show"
+                component={ContainerDetailsModal}
+              />
+            </BrowserRouter>
+          </AppShell>
+        </StyleProvider>
+      </StateProvider>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   )
 }
 
