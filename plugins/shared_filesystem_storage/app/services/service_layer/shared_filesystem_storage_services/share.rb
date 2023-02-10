@@ -47,7 +47,7 @@ module ServiceLayer
             {
               is_public: "all",
               headers: {
-                "X-OpenStack-Manila-API-Version" => "2.8",
+                "X-OpenStack-Manila-API-Version" => "2.46",
               },
             },
           )
