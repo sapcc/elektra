@@ -25,6 +25,8 @@
           = fixed_ips.input :subnet_id,
             as: :select,
             collection: []
+      -# Note: this field is hidden by default and the values are filled with an ajax call, 
+      -#       check also router.js -> init() and showSubnets() 
 
     = f.input :internal_subnets, {label: "Private Network Subnets",
       input_html:         {multiple: true, data: { multiselect_box: true }},
