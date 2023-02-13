@@ -372,10 +372,10 @@ module Networking
               },
             )
           rescue StandardError
-            highest_asr_agents_count = "Error"
+            highest_asr_agents_count = -1
           end
 
-        unless highest_asr_agents_count == "Error"
+        unless highest_asr_agents_count == -1
           ports.each do |port|
             unless asr_agents_count.key?(port.binding_host_id)
               asr_agents_count[port.binding_host_id] = 0
@@ -391,9 +391,9 @@ module Networking
         #puts highest_asr_agents_count
         #pp asr_agents_count
 
-        external_network.name(
-          "#{external_network.name} (router usage:#{highest_asr_agents_count})",
-        )
+        #external_network.name(
+        #  "#{external_network.name} (router usage:#{highest_asr_agents_count})",
+        #)
         external_network.set_highest_asr_agents_count(highest_asr_agents_count)
       end
     end

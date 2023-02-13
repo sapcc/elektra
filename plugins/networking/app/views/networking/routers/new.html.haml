@@ -18,7 +18,7 @@
         collection:         @external_networks.sort{ |a,b| a.highest_asr_agents_count<=>b.highest_asr_agents_count},
         selected:           @router.external_gateway_info.fetch("network_id",nil),
         required:           true,
-        icon_hint:          "Please prefer the network with the lowest router usage"}
+        icon_hint:          "Please prefer in your choise the networks from top to bottom"}
 
       %fieldset#subnets
         = info.simple_fields_for :external_fixed_ips do |fixed_ips|
