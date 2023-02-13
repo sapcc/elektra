@@ -106,9 +106,10 @@ export default class List extends React.Component {
     // filter items
     return this.props.items.filter(
       (i) =>
-        `${i.name} ${i.id} ${i.share_proto} ${i.status}`.indexOf(
-          this.props.searchTerm.trim()
-        ) >= 0
+        `${i.name} ${i.id} ${i.share_proto} ${
+          i.status
+        } ${i.export_locations.join()}`.indexOf(this.props.searchTerm.trim()) >=
+        0
     )
   }
 

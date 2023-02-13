@@ -28,19 +28,6 @@ export default class ShowShareModal extends React.Component {
     )
   }
 
-  componentDidMount() {
-    if (this.props.share)
-      this.props.loadExportLocationsOnce(this.props.share.id)
-    this.props.loadShareTypesOnce()
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({ show: nextProps.share != null })
-    if (nextProps.share && !nextProps.share.export_locations) {
-      this.props.loadExportLocationsOnce(nextProps.share.id)
-    }
-  }
-
   overview(share) {
     return (
       <table className="table no-borders">
@@ -50,16 +37,9 @@ export default class ShowShareModal extends React.Component {
           <Row label="ID" value={share.id} />
           <Row label="Status" value={share.status} />
           <Row label="Export Locations">
-            {share.export_locations ? (
-              share.export_locations.map(
-                (location) =>
-                  location.preferred && (
-                    <div key={location.id}>{location.path}</div>
-                  )
-              )
-            ) : (
-              <span className="spinner"></span>
-            )}
+            {share.export_locations.map((location, index) => (
+              <div key={index}>{location}</div>
+            ))}
           </Row>
           <Row label="Availability zone" value={share.availability_zone} />
           <Row label="Size" value={share.size + " GiB"} />
