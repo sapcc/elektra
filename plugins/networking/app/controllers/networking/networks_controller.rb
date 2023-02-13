@@ -172,6 +172,7 @@ module Networking
         rescue StandardError
           nil
         end
+
       render json: availability.nil? ? [] : availability.subnet_ip_availability
     end
 

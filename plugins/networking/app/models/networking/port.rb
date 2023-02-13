@@ -51,6 +51,10 @@ module Networking
       }.delete_if { |_k, v| v.nil? }
     end
 
+    def binding_host_id
+      read("binding:host_id") || ""
+    end
+
     def attributes_for_update
       {
         # 'admin_state_up' => read('admin_state_up'),
