@@ -203,19 +203,21 @@ module MasterdataCockpit
         "domain_id" => read("parent_id"),
         "description" => read("description"),
         "responsible_primary_contact_id" =>
-          read("responsible_primary_contact_id"),
+          read("responsible_primary_contact_id") || "",
         "responsible_primary_contact_email" =>
-          read("responsible_primary_contact_email"),
-        "responsible_operator_id" => read("responsible_operator_id"),
-        "responsible_operator_email" => read("responsible_operator_email"),
+          read("responsible_primary_contact_email") || "",
+        "responsible_operator_id" => read("responsible_operator_id") || "",
+        "responsible_operator_email" =>
+          read("responsible_operator_email") || "",
         "responsible_inventory_role_id" =>
-          read("responsible_inventory_role_id"),
-        "responsible_inventory_role_email" => "",
+          read("responsible_inventory_role_id") || "",
+        "responsible_inventory_role_email" =>
+          read("responsible_inventory_role_email") || "",
         "responsible_infrastructure_coordinator_id" =>
-          read("responsible_infrastructure_coordinator_id"),
+          read("responsible_infrastructure_coordinator_id") || "",
         "responsible_infrastructure_coordinator_email" =>
-          read("responsible_infrastructure_coordinator_email"),
-        "additional_information" => read("additional_information"),
+          read("responsible_infrastructure_coordinator_email") || "",
+        "additional_information" => read("additional_information") || "",
         "gpu_enabled" => read("gpu_enabled"),
         "contains_pii_dpp_hr" => read("contains_pii_dpp_hr"),
         "contains_external_customer_data" =>
@@ -228,8 +230,7 @@ module MasterdataCockpit
         "business_criticality" => read("business_criticality"),
         "number_of_endusers" => read("number_of_endusers"),
       }
-      #.delete_if { |_k, v| v.blank? }
-      #byebug
+
       params["cost_object"] = if cost_object_inherited
         { "inherited" => true }
       else
