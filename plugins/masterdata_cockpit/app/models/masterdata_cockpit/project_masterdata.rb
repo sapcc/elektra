@@ -240,9 +240,6 @@ module MasterdataCockpit
           "inherited" => cost_object_inherited,
         }
       end
-      puts "#######################"
-      pp params
-      params
     end
   end
 end
