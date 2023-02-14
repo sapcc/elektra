@@ -1,10 +1,10 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import Log from "../shared/logger";
-import BooleanLabel from "../shared/BooleanLabel";
+import React from "react"
+import { Link } from "react-router-dom"
+import Log from "../shared/logger"
+import BooleanLabel from "../shared/BooleanLabel"
 
 const LbPopoverListenerContent = ({ lbID, listenerIds, cachedListeners }) => {
-  Log.debug("RENDER lbPoopover CONTENT");
+  Log.debug("RENDER lbPoopover CONTENT")
   return listenerIds.length > 0 ? (
     listenerIds.map((id, index) => (
       <div key={id}>
@@ -58,7 +58,7 @@ const LbPopoverListenerContent = ({ lbID, listenerIds, cachedListeners }) => {
         ) : (
           <div className="row">
             <div className="col-md-12 text-nowrap">
-              <Link to={`/listeners/${id}/show`}>
+              <Link to={`/loadbalancers/${lbID}/show?listener=${id}`}>
                 <small>{id}</small>
               </Link>
             </div>
@@ -69,7 +69,7 @@ const LbPopoverListenerContent = ({ lbID, listenerIds, cachedListeners }) => {
     ))
   ) : (
     <p>No listeners found</p>
-  );
-};
+  )
+}
 
-export default LbPopoverListenerContent;
+export default LbPopoverListenerContent

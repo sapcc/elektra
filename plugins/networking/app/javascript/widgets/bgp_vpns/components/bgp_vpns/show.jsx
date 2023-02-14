@@ -84,7 +84,11 @@ const Show = () => {
                   <Row label="Project">
                     {cachedProjectsData[item.project_id] ? (
                       <React.Fragment>
-                        <a href={`/_/${item.project_id}`} target="_blank">
+                        <a
+                          href={`/_/${item.project_id}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
                           {
                             cachedProjectsData[item.project_id].payload?.scope
                               ?.domain_name

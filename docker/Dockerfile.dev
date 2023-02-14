@@ -39,16 +39,10 @@ RUN apk --no-cache add --update \
   zlib-dev \
   tshark 
 
-RUN pip3 install --upgrade pip
-RUN pip3 install mitmproxy
+RUN pip install --upgrade pip
+# --use-pep517 -> https://github.com/pypa/pip/issues/8559
+RUN pip install --use-pep517 mitmproxy==8.1.1 pgcli
 ENV LANG=en_US.UTF-8
-
-RUN pip3 install -U pip
-
-# https://stackoverflow.com/questions/57284921/error-in-setting-up-mitmproxy-on-alpine-3-9
-RUN pip3 install mitmproxy
-
-RUN pip3 install pgcli
 
 RUN mkdir /app
 WORKDIR /app
@@ -62,6 +56,7 @@ ENV PGDATA /app/tmp/postgresql/data
 RUN gem install bundler -v 2.3.20 && bundle config set --local path 'vendor/bundle'
 RUN echo -e '#!/bin/bash\n\n\
   bundle install \n\
+  yarn upgrade juno-ui-components \n\
   yarn \n\
   mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA"\n\
   PGDATA_FILES=$(ls -A $PGDATA)\n\
@@ -86,7 +81,7 @@ RUN echo -e '\n\
   echo " - dev-proxy:         start-dev-proxy"\n\
   echo " - postgres console:  start-pg-console"\n\
   echo " - rebuild database:  rebuild-db"\n\
-  echo " - rebuild npms:       rebuild-npms"\n\
+  echo " - rebuild npms:      rebuild-npms"\n\
   echo " - rebuild gems:      rebuild-gems"\n\
   echo " - show this help:    help-elektra"\n\
   echo ""\n\

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { SearchField } from "lib/components/search_field"
 import { Alert, MenuItem, Dropdown } from "react-bootstrap"
 import { Link } from "react-router-dom"
@@ -141,7 +142,11 @@ const BgpVpns = () => {
                 <td>
                   {cachedProjectsData[item.project_id] ? (
                     <React.Fragment>
-                      <a href={`/_/${item.project_id}`} target="_blank">
+                      <a
+                        href={`/_/${item.project_id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         {
                           cachedProjectsData[item.project_id].payload?.scope
                             ?.domain_name

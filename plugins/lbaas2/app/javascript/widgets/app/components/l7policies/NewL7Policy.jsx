@@ -1,23 +1,28 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { useState, useEffect, useMemo } from "react"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
-import useCommons from "../../lib/hooks/useCommons"
 import useL7Policy from "../../lib/hooks/useL7Policy"
 import useListener from "../../lib/hooks/useListener"
 import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
+import { fetchPoolsForSelect } from "../../actions/pool"
+import {
+  errorMessage,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import {
+  actionTypes,
+  codeTypes,
+  actionRedirect,
+} from "../../helpers/l7PolicyHelpers"
 
 const NewL7Policy = (props) => {
-  const {
-    searchParamsToString,
-    matchParams,
-    formErrorMessage,
-    fetchPoolsForSelect,
-  } = useCommons()
-  const { createL7Policy, actionTypes, actionRedirect, codeTypes } =
-    useL7Policy()
+  const { createL7Policy } = useL7Policy()
   const { persistListener } = useListener()
   const [pools, setPools] = useState({
     isLoading: false,
@@ -36,7 +41,7 @@ const NewL7Policy = (props) => {
         setPools({ ...pools, isLoading: false, items: data.pools, error: null })
       })
       .catch((error) => {
-        setPools({ ...pools, isLoading: false, error: error })
+        setPools({ ...pools, isLoading: false, error: errorMessage(error) })
       })
   }, [])
 
@@ -131,11 +136,10 @@ const NewL7Policy = (props) => {
     const lbID = params.loadbalancerID
     const listenerID = params.listenerID
     return createL7Policy(lbID, listenerID, filteredValues)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            L7 Policy <b>{response.data.l7policy.name}</b> (
-            {response.data.l7policy.id}) is being created.
+            L7 Policy <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // load the listener again containing the new policy

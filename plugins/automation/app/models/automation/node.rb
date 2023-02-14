@@ -1,5 +1,4 @@
 module Automation
-
   class Node < ArcClient::Agent
     include ::Automation::Helpers
 
@@ -10,13 +9,13 @@ module Automation
 
     attr_accessor :id, :name
 
-    def self.create_nodes(_agents={})
+    def self.create_nodes(_agents = {})
       nodesMap = []
       _agents.data.each do |_agent|
         node = ::Automation::Node.new(_agent)
         nodesMap << node
       end
-      {elements: nodesMap, total_elements: _agents.pagination.total_elements}
+      { elements: nodesMap, total_elements: _agents.pagination.total_elements }
     end
 
     def id
@@ -28,23 +27,19 @@ module Automation
     end
 
     def self.os_types
-      {OsTypes::LINUX => 'Linux', OsTypes::WINDOWS => 'Windows'}
+      { OsTypes::LINUX => "Linux", OsTypes::WINDOWS => "Windows" }
     end
 
     def attributes_to_form
       attr = self.marshal_dump.clone
       attr.keys.each do |key|
         if key == :tags
-          unless attr[key].blank?
-            attr[key] = json_to_string( attr[key] )
-          end
+          attr[key] = json_to_string(attr[key]) unless attr[key].blank?
         end
       end
       attr
     end
 
     private
-
   end
-
 end

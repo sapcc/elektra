@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import { DefeatableLink } from "lib/components/defeatable_link"
 import { SearchField } from "lib/components/search_field"
@@ -5,6 +6,7 @@ import SecurityGroupItem from "./item"
 import { AjaxPaginate } from "lib/components/ajax_paginate"
 import { pluginAjaxHelper } from "lib/ajax_helper"
 const ajaxHelper = pluginAjaxHelper("networking")
+import React from "react"
 
 const List = ({ loadSecurityGroupsOnce, securityGroups, handleDelete }) => {
   const [searchTerm, setSearchTerm] = React.useState("")

@@ -1,40 +1,44 @@
 import React, { useState, useEffect } from "react"
-import useCommons from "../../lib/hooks/useCommons"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
+import {
+  listenerProtocolTypes,
+  httpHeaderInsertions,
+  advancedSectionRelation,
+  tlsPoolRelation,
+  protocolHeaderInsertionRelation,
+  clientAuthenticationRelation,
+  certificateContainerRelation,
+  SNIContainerRelation,
+  CATLSContainerRelation,
+  helpBlockItems,
+  predefinedPolicies,
+  tlsCiphersRelation,
+} from "../../helpers/listenerHelper"
+import { fetchCiphers, fetchSecretsForSelect } from "../../actions/listener"
+import { fetchPoolsForSelect } from "../../actions/pool"
 import useListener from "../../lib/hooks/useListener"
 import SelectInput from "../shared/SelectInput"
+import SelectInputCreatable from "../shared/SelectInputCreatable"
 import TagsInput from "../shared/TagsInput"
 import HelpPopover from "../shared/HelpPopover"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
+import {
+  errorMessage,
+  toManySecretsWarning,
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import { queryTlsCiphers } from "../../../../queries/listener"
 
 const NewListener = (props) => {
-  const {
-    searchParamsToString,
-    matchParams,
-    fetchPoolsForSelect,
-    formErrorMessage,
-    helpBlockTextForSelect,
-    errorMessage,
-  } = useCommons()
-  const {
-    protocolTypes,
-    tlsPoolRelation,
-    protocolHeaderInsertionRelation,
-    clientAuthenticationRelation,
-    fetchSecretsForSelect,
-    certificateContainerRelation,
-    SNIContainerRelation,
-    CATLSContainerRelation,
-    createListener,
-    advancedSectionRelation,
-    predefinedPolicies,
-    httpHeaderInsertions,
-    helpBlockItems,
-  } = useListener()
+  const { createListener } = useListener()
   const { persistLoadbalancer } = useLoadbalancer()
+  const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [pools, setPools] = useState({
     isLoading: false,
     error: null,
@@ -46,48 +50,24 @@ const NewListener = (props) => {
     isLoading: false,
     error: null,
     items: [],
+    total: 0,
   })
   const [predPolicies, setPredPolicies] = useState([])
   const [tags, setTags] = useState([])
+  const ciphers = queryTlsCiphers()
 
   useEffect(() => {
-    Log.debug("fetching pools and secrets for select")
     const params = matchParams(props)
     const lbID = params.loadbalancerID
-    // get pools for the select
-    setPools({ ...pools, isLoading: true })
-    fetchPoolsForSelect(lbID)
-      .then((data) => {
-        setPools({
-          ...pools,
-          isLoading: false,
-          items: data.pools,
-          error: null,
-        })
-      })
-      .catch((error) => {
-        setPools({ ...pools, isLoading: false, error: error })
-      })
-
-    // get the secrets for the select
-    setSecrets({ ...secrets, isLoading: true })
-    fetchSecretsForSelect(lbID)
-      .then((data) => {
-        setSecrets({
-          ...secrets,
-          isLoading: false,
-          items: data.secrets,
-          error: null,
-        })
-      })
-      .catch((error) => {
-        setSecrets({
-          ...secrets,
-          isLoading: false,
-          error: errorMessage(error),
-        })
-      })
+    setLoadbalancerID(lbID)
   }, [])
+
+  useEffect(() => {
+    if (loadbalancerID) {
+      loadPools(loadbalancerID)
+      loadSecrets(loadbalancerID)
+    }
+  }, [loadbalancerID])
 
   useEffect(() => {
     setDisplayPools(pools.items)
@@ -103,6 +83,57 @@ const NewListener = (props) => {
     }
     setNonSelectableTlsPools(newItems)
   }, [pools])
+
+  // ciphers assignment once loaded
+  useEffect(() => {
+    if (!ciphers.data) return
+    setTlsCiphers(ciphers?.data?.listenerDefaultCiphers)
+  }, [ciphers.data])
+
+  const loadPools = (lbID) => {
+    return new Promise((handleSuccess, handleErrors) => {
+      setPools({ ...pools, isLoading: true })
+      fetchPoolsForSelect(lbID)
+        .then((data) => {
+          setPools({
+            ...pools,
+            isLoading: false,
+            items: data.pools,
+            error: null,
+          })
+          handleSuccess(data.pools)
+        })
+        .catch((error) => {
+          setPools({ ...pools, isLoading: false, error: errorMessage(error) })
+          handleErrors(errorMessage(error))
+        })
+    })
+  }
+
+  const loadSecrets = (lbID) => {
+    return new Promise((handleSuccess, handleErrors) => {
+      setSecrets({ ...secrets, isLoading: true })
+      fetchSecretsForSelect(lbID)
+        .then((data) => {
+          setSecrets({
+            ...secrets,
+            isLoading: false,
+            items: data.secrets,
+            error: null,
+            total: data.total,
+          })
+          handleSuccess(data.secrets)
+        })
+        .catch((error) => {
+          setSecrets({
+            ...secrets,
+            isLoading: false,
+            error: errorMessage(error),
+          })
+          handleErrors(errorMessage(error))
+        })
+    })
+  }
 
   /**
    * Modal stuff
@@ -144,6 +175,7 @@ const NewListener = (props) => {
     useState(null)
   const [helpBlockItemsPredPolicies, setHelpBlockItemsPredPolicies] =
     useState(null)
+  const [tlsCiphers, setTlsCiphers] = useState(null)
 
   const [showInsertHeaders, setShowInsertHeaders] = useState(false)
   const [showClientAuthentication, setShowClientAuthentication] =
@@ -155,21 +187,9 @@ const NewListener = (props) => {
   const [showPredefinedPolicies, setShowPredefinedPolicies] = useState(false)
   const [showAdvancedSection, setShowAdvancedSection] = useState(false)
   const [showTLSPoolWarning, setShowTLSPoolWarning] = useState(false)
+  const [showTLSCiphers, setShowTLSCiphers] = useState(false)
 
-  const validate = ({
-    name,
-    description,
-    protocol_port,
-    protocol,
-    default_pool_id,
-    connection_limit,
-    insert_headers,
-    default_tls_container_ref,
-    sni_container_refs,
-    client_authentication,
-    client_ca_tls_container_ref,
-    tags,
-  }) => {
+  const validate = ({ name, protocol_port, protocol }) => {
     return name && protocol_port && protocol && true
   }
 
@@ -195,6 +215,11 @@ const NewListener = (props) => {
     if (showCATLSContainer && CATLSContainer) {
       newValues.client_ca_tls_container_ref = CATLSContainer.value
     }
+    if (showTLSCiphers && tlsCiphers) {
+      // convert to string colon-separated
+      newValues.tls_ciphers = tlsCiphers.map((item) => item.value).join(":")
+    }
+
     const newTags = [...predPolicies, ...tags]
     if (newTags) {
       newValues.tags = newTags.map((item, index) => item.value)
@@ -208,11 +233,10 @@ const NewListener = (props) => {
     const params = matchParams(props)
     const lbID = params.loadbalancerID
     return createListener(lbID, newValues)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Listener <b>{response.data.name}</b> ({response.data.id}) is being
-            created.
+            Listener <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // fetch the lb again containing the new listener so it gets updated fast
@@ -231,6 +255,9 @@ const NewListener = (props) => {
     setCertificateContainer(null)
     setSNIContainers(null)
     setCATLSContainer(null)
+    setTlsCiphers()
+    // set default ciphers on protocol change
+    if (ciphers.data) setTlsCiphers(ciphers?.data?.listenerDefaultCiphers)
   }
 
   const onSelectProtocolType = (props) => {
@@ -256,6 +283,7 @@ const NewListener = (props) => {
       setShowCATLSContainer(CATLSContainerRelation(props.value))
       setShowPredefinedPolicies(predefinedPolicies(props.value).length > 0)
       setShowAdvancedSection(advancedSectionRelation(props.value))
+      setShowTLSCiphers(tlsCiphersRelation(props.value))
 
       // TLS-enabled pool can only be attached to a TERMINATED_HTTPS type listener
       // so on change protocol the the default pool will be reseted
@@ -290,6 +318,9 @@ const NewListener = (props) => {
   const onSelectCATLSContainers = (props) => {
     setCATLSContainer(props)
   }
+  const onSelectTlsCiphers = (options) => {
+    setTlsCiphers(options)
+  }
 
   const onSelectPredPolicies = (options) => {
     const newOptions = options || []
@@ -302,7 +333,7 @@ const NewListener = (props) => {
 
   const protocolTypesFiltered = () => {
     // do not show types disabled
-    return protocolTypes().filter((t) => !t.state?.includes("disabled"))
+    return listenerProtocolTypes().filter((t) => !t.state?.includes("disabled"))
   }
 
   Log.debug("RENDER new listener")
@@ -344,6 +375,7 @@ const NewListener = (props) => {
               <a
                 href="https://github.com/openstack/octavia/blob/master/doc/source/user/guides/basic-cookbook.rst"
                 target="_blank"
+                rel="noreferrer"
               >
                 Basic Load Balancing Cookbook
               </a>
@@ -395,14 +427,14 @@ const NewListener = (props) => {
             <div className="advanced-options-section">
               <div className="advanced-options">
                 {showCertificateContainer && (
-                  <React.Fragment>
+                  <>
                     <div>
                       <Form.ElementHorizontal
                         label="Certificate Secret"
                         name="default_tls_container_ref"
                         required
                       >
-                        <SelectInput
+                        <SelectInputCreatable
                           name="default_tls_container_ref"
                           isLoading={secrets.isLoading}
                           items={secrets.items}
@@ -415,15 +447,16 @@ const NewListener = (props) => {
                           The secret containing a PKCS12 format certificate/key
                           bundles.
                         </span>
+                        {toManySecretsWarning(
+                          secrets.total,
+                          secrets.items?.length
+                        )}
                         {secrets.error && (
                           <span className="text-danger">{secrets.error}</span>
                         )}
                       </Form.ElementHorizontal>
                     </div>
-                    <div>
-                      <p>Optional attributes:</p>
-                    </div>
-                  </React.Fragment>
+                  </>
                 )}
 
                 {showPredefinedPolicies && (
@@ -489,19 +522,20 @@ const NewListener = (props) => {
                 )}
 
                 {showSNIContainers && (
-                  <div>
+                  <>
+                    <h4>Server Name Indication (SNI)</h4>
                     <div className="row">
-                      <div className="col-sm-8 col-sm-push-4">
+                      <div className="col-sm-12">
                         <div className="bs-callout bs-callout-info bs-callout-emphasize">
                           <p>
                             {" "}
-                            Use <b>SNI</b> if you have multiple TLS certificates
-                            that you would like to use on the same listener
-                            using Server Name Indication (SNI) technology.
+                            Use <b>SNI</b> when having multiple TLS certificates
+                            that you would like to use on the same listener.
                             Please also visit{" "}
                             <a
                               href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-sni"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               the Octavia SNI section
                             </a>{" "}
@@ -515,7 +549,7 @@ const NewListener = (props) => {
                       label="SNI Secrets"
                       name="sni_container_refs"
                     >
-                      <SelectInput
+                      <SelectInputCreatable
                         name="sni_container_refs"
                         isLoading={secrets.isLoading}
                         isMulti
@@ -529,17 +563,22 @@ const NewListener = (props) => {
                         containing PKCS12 format certificate/key bundles used
                         for Server Name Indication (SNI).
                       </span>
+                      {toManySecretsWarning(
+                        secrets.total,
+                        secrets.items?.length
+                      )}
                       {secrets.error && (
                         <span className="text-danger">{secrets.error}</span>
                       )}
                     </Form.ElementHorizontal>
-                  </div>
+                  </>
                 )}
 
-                {showClientAuthentication && (
-                  <div>
+                {(showClientAuthentication || showCATLSContainer) && (
+                  <>
+                    <h4>Client authentication</h4>
                     <div className="row">
-                      <div className="col-sm-8 col-sm-push-4">
+                      <div className="col-sm-12">
                         <div className="bs-callout bs-callout-info bs-callout-emphasize">
                           <p>
                             <b>Client authentication</b> allows users to
@@ -549,6 +588,7 @@ const NewListener = (props) => {
                             <a
                               href="https://docs.openstack.org/octavia/latest/user/guides/basic-cookbook.html#deploy-a-tls-terminated-https-load-balancer-with-client-authentication"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               the Octavia client authentication section
                             </a>{" "}
@@ -557,7 +597,11 @@ const NewListener = (props) => {
                         </div>
                       </div>
                     </div>
+                  </>
+                )}
 
+                {showClientAuthentication && (
+                  <>
                     <Form.ElementHorizontal
                       label="Client Authentication Mode"
                       name="client_authentication"
@@ -575,16 +619,16 @@ const NewListener = (props) => {
                         The TLS client authentication mode.
                       </span>
                     </Form.ElementHorizontal>
-                  </div>
+                  </>
                 )}
 
                 {showCATLSContainer && (
-                  <div>
+                  <>
                     <Form.ElementHorizontal
                       label="Client Authentication Secret"
                       name="client_ca_tls_container_ref"
                     >
-                      <SelectInput
+                      <SelectInputCreatable
                         name="client_ca_tls_container_ref"
                         isLoading={secrets.isLoading}
                         items={secrets.items}
@@ -598,11 +642,60 @@ const NewListener = (props) => {
                         The secret containing a PEM format client CA certificate
                         bundle.
                       </span>
+                      {toManySecretsWarning(
+                        secrets.total,
+                        secrets.items?.length
+                      )}
                       {secrets.error && (
                         <span className="text-danger">{secrets.error}</span>
                       )}
                     </Form.ElementHorizontal>
-                  </div>
+                  </>
+                )}
+
+                {showTLSCiphers && (
+                  <>
+                    <h4>TLS Ciphers Suites</h4>
+                    <div className="row">
+                      <div className="col-sm-12">
+                        <div className="bs-callout bs-callout-warning bs-callout-emphasize">
+                          <p>
+                            This setting is for advanced use cases that require
+                            more control over the network configuration of the
+                            listener. <br />
+                            The following lists the default cipher suites
+                            attached to a listener. This should only be changed
+                            by expert users who know why they need to make a
+                            change. For the majority of scenarios no change is
+                            necessary.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <Form.ElementHorizontal
+                      label="TLS Ciphers Suites"
+                      name="tls_ciphers"
+                    >
+                      <SelectInput
+                        name="tls_ciphers"
+                        isLoading={ciphers.isLoading}
+                        items={ciphers?.data?.allowCiphers || []}
+                        onChange={onSelectTlsCiphers}
+                        value={tlsCiphers}
+                        isMulti
+                        useFormContext={false}
+                      />
+                      <span className="help-block">
+                        <i className="fa fa-info-circle"></i>
+                        The TLS cipher suites.
+                      </span>
+                      {ciphers.isError && (
+                        <span className="text-danger">
+                          {ciphers.error.message}
+                        </span>
+                      )}
+                    </Form.ElementHorizontal>
+                  </>
                 )}
               </div>
             </div>

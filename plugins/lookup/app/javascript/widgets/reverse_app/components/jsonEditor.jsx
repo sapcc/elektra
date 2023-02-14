@@ -1,7 +1,9 @@
-import "lib/jsoneditor.coffee"
+import init_json_editor from "lib/jsoneditor"
+import React from "react"
 
 class JsonEditor extends React.Component {
   componentDidMount() {
+    // eslint-disable-next-line no-undef
     init_json_editor()
   }
 

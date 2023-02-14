@@ -9,7 +9,6 @@
     -# = content_for :javascripts do
     :javascript
       window.policyConfig = #{policy.try(:to_js).try(:html_safe) || {}}
-      //window.History = { options: { html4Mode: true} };
       window.pluginName = "#{plugin_name}";
       window.scopedDomainId = "#{@scoped_domain_id}";
       window.scopedDomainFid = "#{@scoped_domain_fid}";

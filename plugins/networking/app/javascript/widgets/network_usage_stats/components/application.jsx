@@ -1,4 +1,5 @@
 /* eslint no-console:0 */
+import React from "react"
 
 // render all components inside a hash router
 export default class NetworkStats extends React.Component {

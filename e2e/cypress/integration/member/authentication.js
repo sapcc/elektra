@@ -24,8 +24,8 @@ describe("authentication", () => {
   })
 
   it("user is not logged in and tries to visit BAD DOMAIN ans sees Unsupported Domain", () => {
-    cy.visit(`/BAD_DOMAIN/`)
-    cy.contains('a','Enter the cloud').click()
+    cy.visit(`/BAD_DOMAIN/home`, { failOnStatusCode: false })
+    // cy.contains('button','Log in').click()
     cy.contains('Unsupported Domain')
   })
 

@@ -1,6 +1,5 @@
 module ResourceManagement
   class NewStyleService < Core::ServiceLayer::Model
-
     def type
       read(:type).to_sym
     end
@@ -33,19 +32,26 @@ module ResourceManagement
     end
 
     def resources
-      metadata = {
-        service_type:      read(:type).to_sym,
-        service_area:      read(:area).to_sym,
-        service_shared:    shared?,
-        project_id:        read(:project_id),
-        project_name:      read(:project_name),
-        project_domain_id: read(:project_domain_id),
-        domain_id:         read(:domain_id),
-        domain_name:       read(:domain_name),
-        cluster_id:        read(:cluster_id),
-      }.reject { |k,v| v.nil? }
+      metadata =
+        {
+          service_type: read(:type).to_sym,
+          service_area: read(:area).to_sym,
+          service_shared: shared?,
+          project_id: read(:project_id),
+          project_name: read(:project_name),
+          project_domain_id: read(:project_domain_id),
+          domain_id: read(:domain_id),
+          domain_name: read(:domain_name),
+          cluster_id: read(:cluster_id),
+        }.reject { |k, v| v.nil? }
 
-      @resources ||= read(:resources).map { |data| ResourceManagement::NewStyleResource.new(@service, data.merge(metadata)) }
+      @resources ||=
+        read(:resources).map do |data|
+          ResourceManagement::NewStyleResource.new(
+            @service,
+            data.merge(metadata),
+          )
+        end
     end
 
     def updated_at
@@ -61,6 +67,5 @@ module ResourceManagement
       tst = read(:max_scraped_at) || read(:scraped_at)
       tst ? Time.at(tst) : nil
     end
-
   end
 end

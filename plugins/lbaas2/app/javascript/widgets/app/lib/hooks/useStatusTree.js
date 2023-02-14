@@ -2,14 +2,10 @@ import { useEffect } from "react"
 import { useDispatch } from "../../components/StateProvider"
 import { ajaxHelper } from "lib/ajax_helper"
 import Log from "../../components/shared/logger"
+import { errorMessage } from "../../helpers/commonHelpers"
 
 const useStatusTree = ({ lbId }) => {
   const dispatch = useDispatch()
-  const errorMessage = (error) =>
-    (error.response &&
-      error.response.data &&
-      (error.response.data.errors || error.response.data.error)) ||
-    error.message
 
   let polling = null
 

@@ -1,6 +1,5 @@
 module Kubernetes
   module ApplicationHelper
-
     def render_contact_for_beta_access(contact = {})
       if contact[:email]
         if contact[:name]
@@ -11,9 +10,8 @@ module Kubernetes
       elsif contact[:name]
         "#{contact[:name]}"
       else
-        'us'
+        "us"
       end
     end
-
   end
 end

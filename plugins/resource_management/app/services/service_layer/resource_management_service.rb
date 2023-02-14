@@ -3,13 +3,12 @@
 module ServiceLayer
   class ResourceManagementService < Core::ServiceLayer::Service
     def available?(_action_name_sym = nil)
-      elektron.service?('limes')
+      elektron.service?("limes")
     end
 
     def elektron_limes
-      @elektron_limes ||= elektron.service(
-        'limes', path_prefix: '/v1', interface: 'public'
-      )
+      @elektron_limes ||=
+        elektron.service("limes", path_prefix: "/v1", interface: "public")
     end
 
     def cluster_map
@@ -23,17 +22,19 @@ module ServiceLayer
     ############################################################################
     # cloud-admin level
 
-    def find_cluster(id = 'current', query = {})
-      elektron_limes.get("clusters/#{id}", query)
-                    .map_to('body.cluster', &cluster_map)
+    def find_cluster(id = "current", query = {})
+      elektron_limes.get("clusters/#{id}", query).map_to(
+        "body.cluster",
+        &cluster_map
+      )
     end
 
     def list_clusters(query = {})
       # Returns a pair of cluster list and ID of current cluster.
-      response = elektron_limes.get('clusters', query)
+      response = elektron_limes.get("clusters", query)
       [
-        response.map_to('body.clusters', &cluster_map),
-        response.body['current_cluster']
+        response.map_to("body.clusters", &cluster_map),
+        response.body["current_cluster"],
       ]
     end
 
@@ -44,7 +45,7 @@ module ServiceLayer
     end
 
     def get_inconsistencies
-      elektron_limes.get("inconsistencies").body['inconsistencies']
+      elektron_limes.get("inconsistencies").body["inconsistencies"]
     end
 
     ############################################################################
@@ -52,19 +53,24 @@ module ServiceLayer
 
     def find_domain(id, query = {})
       cluster_id = query[:cluster_id]
-      result = elektron_limes.get("domains/#{id}", query, prepare_headers(query))
-                             .map_to('body.domain', &domain_map)
+      result =
+        elektron_limes.get(
+          "domains/#{id}",
+          query,
+          prepare_headers(query),
+        ).map_to("body.domain", &domain_map)
       result.cluster_id = cluster_id if cluster_id
       result
     end
 
     def list_domains(query = {})
       cluster_id = query[:cluster_id]
-      result = elektron_limes.get('domains', query, prepare_headers(query))
-                    .map_to('body.domains', &domain_map)
-      if cluster_id
-        result.each { |d| d.cluster_id = cluster_id }
-      end
+      result =
+        elektron_limes.get("domains", query, prepare_headers(query)).map_to(
+          "body.domains",
+          &domain_map
+        )
+      result.each { |d| d.cluster_id = cluster_id } if cluster_id
       result
     end
 
@@ -85,19 +91,26 @@ module ServiceLayer
 
     def find_project(domain_id, project_id, query = {})
       # give the domain_id to enrich the Project object with domain_id
-      elektron_limes.get("domains/#{domain_id}/projects/#{project_id}", query)
-                    .map_to('body.project') do |data|
-        ResourceManagement::Project.new(self, data.merge(domain_id: domain_id))
-      end
+      elektron_limes
+        .get("domains/#{domain_id}/projects/#{project_id}", query)
+        .map_to("body.project") do |data|
+          ResourceManagement::Project.new(
+            self,
+            data.merge(domain_id: domain_id),
+          )
+        end
     end
 
     def list_projects(domain_id, query = {})
       # give the domain_id to enrich the Project object with domain_id
-      elektron_limes.get("domains/#{domain_id}/projects", query).map_to(
-        'body.projects'
-      ) do |data|
-        ResourceManagement::Project.new(self, data.merge(domain_id: domain_id))
-      end
+      elektron_limes
+        .get("domains/#{domain_id}/projects", query)
+        .map_to("body.projects") do |data|
+          ResourceManagement::Project.new(
+            self,
+            data.merge(domain_id: domain_id),
+          )
+        end
     end
 
     def sync_project_asynchronously(domain_id, project_id)
@@ -119,28 +132,31 @@ module ServiceLayer
 
     ############################################################################
 
-    def quota_data(domain_id,project_id,options=[])
+    def quota_data(domain_id, project_id, options = [])
       # TODO: When moving this into plugins/resources/, refactor as follows.
       #
       # 1. Use the Elektra service user to make the request.
       # 2. Remove the policy check for "access_to_project" from all callsites.
       return [] if options.empty?
 
-      project = find_project(
-        domain_id,
-        project_id,
-        service: options.collect { |values| values[:service_type] },
-        resource: options.collect { |values| values[:resource_name] }
-      )
+      project =
+        find_project(
+          domain_id,
+          project_id,
+          service: options.collect { |values| values[:service_type] },
+          resource: options.collect { |values| values[:resource_name] },
+        )
 
       options.each_with_object([]) do |values, result|
-        service = project.services.find do |srv|
-          srv.type == values[:service_type].to_sym
-        end
+        service =
+          project.services.find do |srv|
+            srv.type == values[:service_type].to_sym
+          end
         next if service.nil?
-        resource = service.resources.find do |res|
-          res.name == values[:resource_name].to_sym
-        end
+        resource =
+          service.resources.find do |res|
+            res.name == values[:resource_name].to_sym
+          end
         next if resource.nil?
 
         if values[:usage] && values[:usage].is_a?(Integer)
@@ -163,6 +179,5 @@ module ServiceLayer
         {}
       end
     end
-
   end
 end

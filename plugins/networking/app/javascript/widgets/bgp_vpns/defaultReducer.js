@@ -19,7 +19,7 @@ const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case "request":
       return { ...state, isFetching: true, error: null }
-    case "receive":
+    case "receive": {
       const { type, ...payload } = action
       return {
         ...state,
@@ -27,7 +27,7 @@ const reducer = (state = initialState, action = {}) => {
         isFetching: false,
         updatedAt: Date.now(),
       }
-
+    }
     case "update": {
       const attrName = action.name
       const payload = state[attrName]

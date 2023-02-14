@@ -1,30 +1,35 @@
-require 'singleton'
+require "singleton"
 
 module Core
   class PluginsManager
     # Core::PluginsManager is a singleton
     include Singleton
 
-    attr_reader :plugins_path, :mountable_plugins, :plugins_with_plugin_js, :plugins_with_global_js, :plugins_with_application_css
+    attr_reader :plugins_path,
+                :mountable_plugins,
+                :plugins_with_plugin_js,
+                :plugins_with_global_js,
+                :plugins_with_application_css
 
     class << self
       # delegate methods to instance
       def method_missing(name, *args, &block)
         if instance.respond_to?(name)
-          instance.send(name,*args,&block)
+          instance.send(name, *args, &block)
         else
-          super(name,*args,&block)
+          super(name, *args, &block)
         end
       end
     end
 
     def initialize
-      @plugins_path = File.expand_path('../../../plugins',__FILE__)
+      @plugins_path = File.expand_path("../../../plugins", __FILE__)
 
       # load gems which path starts with ROOT/plugins -> plugins
-      available_plugin_specs = Gem.loaded_specs.values.select do |gemspec|
-        gemspec.full_gem_path.start_with?(@plugins_path)
-      end
+      available_plugin_specs =
+        Gem.loaded_specs.values.select do |gemspec|
+          gemspec.full_gem_path.start_with?(@plugins_path)
+        end
 
       @available_plugins = {}
       @mountable_plugins = []
@@ -59,23 +64,22 @@ module Core
       @available_plugins.values
     end
 
-
     # Plugin class
     class Plugin
       attr_reader :name, :path, :mount_path
 
-      PLUGIN_JS_FILE_NAME = 'plugin'
-      GLOBAL_JS_FILE_NAME = 'global'
+      PLUGIN_JS_FILE_NAME = "plugin"
+      GLOBAL_JS_FILE_NAME = "global"
 
       def initialize(gemspec)
         @name = gemspec.name
         @path = gemspec.full_gem_path
-        @mount_path = gemspec.metadata['mount_path']
+        @mount_path = gemspec.metadata["mount_path"]
       end
 
       def mount_point
         return mount_path if mount_path
-        name.gsub('_','-')
+        name.gsub("_", "-")
       end
 
       # is mountable if engine class exists
@@ -84,34 +88,40 @@ module Core
       end
 
       def has_plugin_js?
-        !Dir.glob(File.join(path,"app/javascript/plugin.{js,jsx}")).empty?
+        !Dir.glob(File.join(path, "app/javascript/plugin.{js,jsx}")).empty?
       end
 
       def has_global_js?
-        !Dir.glob(File.join(path,"app/javascript/global.{js,jsx}")).empty?
+        !Dir.glob(File.join(path, "app/javascript/global.{js,jsx}")).empty?
       end
 
       def has_application_css?
-        return false unless File.exists?(File.join(path,"app/assets/stylesheets/#{name}"))
-        entries = Dir.entries(File.join(path,"app/assets/stylesheets/#{name}"))
-        entries.any?{|e| e=~/.*application\..+/}
+        unless File.exists?(File.join(path, "app/assets/stylesheets/#{name}"))
+          return false
+        end
+        entries = Dir.entries(File.join(path, "app/assets/stylesheets/#{name}"))
+        entries.any? { |e| e =~ /.*application\..+/ }
       end
 
       # engine_class looks like Compute::Engine
       def engine_class
         class_name = @name.camelize
-        class_name.constantize.const_get(:Engine) rescue nil
+        begin
+          class_name.constantize.const_get(:Engine)
+        rescue StandardError
+          nil
+        end
       end
 
       # returns true if policy file exists inside plugin
       def has_policy_file?
-        File.exists?(File.join(path,'config/policy.json'))
+        File.exists?(File.join(path, "config/policy.json"))
       end
 
       # returns policy file path or nil
       def policy_file_path
         return nil unless has_policy_file?
-        File.join(path,'config/policy.json')
+        File.join(path, "config/policy.json")
       end
     end
   end

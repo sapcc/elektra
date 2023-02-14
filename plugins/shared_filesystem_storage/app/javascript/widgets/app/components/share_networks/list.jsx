@@ -1,7 +1,9 @@
+/* eslint-disable react/no-unescaped-entities */
 import { DefeatableLink } from "lib/components/defeatable_link"
 import { policy } from "lib/policy"
 import { Popover, OverlayTrigger } from "react-bootstrap"
 import ShareNetworkItem from "./item"
+import React from "react"
 
 const CreateNewButton = () => {
   if (!policy.isAllowed("shared_filesystem_storage:share_network_create")) {

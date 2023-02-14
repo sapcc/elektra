@@ -39,8 +39,7 @@ ALLOWED_ROLES = %w[
   email_user
 ].freeze
 
-BETA_ROLES = %w[
-].freeze
+BETA_ROLES = %w[].freeze
 
 # not even cloud admins are allowed to assign these, they're intentionally
 # restricted to a few technical users and CAM-managed groups (and those
@@ -54,5 +53,4 @@ BLACKLISTED_ROLES = %w[
   resource_service
   cloud_objectstore_admin
   cloud_objectstore_viewer
-  swiftreseller
 ].freeze

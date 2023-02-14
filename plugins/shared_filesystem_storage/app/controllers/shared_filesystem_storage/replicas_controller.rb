@@ -6,7 +6,7 @@ module SharedFilesystemStorage
     skip_authorization only: %i[promote resync destroy]
 
     def index
-      render json: services.shared_filesystem_storage.replicas_detail 
+      render json: services.shared_filesystem_storage.replicas_detail
     end
 
     def show
@@ -14,8 +14,7 @@ module SharedFilesystemStorage
     end
 
     def update
-      replica = services.shared_filesystem_storage
-                            .new_replica(replica_params)
+      replica = services.shared_filesystem_storage.new_replica(replica_params)
       replica.id = params[:id]
       if replica.save
         render json: replica
@@ -38,7 +37,6 @@ module SharedFilesystemStorage
       replica = services.shared_filesystem_storage.new_replica
       replica.id = params[:id]
 
-
       if replica.promote
         render json: replica
       else
@@ -56,7 +54,6 @@ module SharedFilesystemStorage
         render json: { errors: replica.errors }
       end
     end
-
 
     def destroy
       replica = services.shared_filesystem_storage.new_replica

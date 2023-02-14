@@ -1,3 +1,4 @@
+import React from "react"
 import * as constants from "../constants"
 import { ajaxHelper, pluginAjaxHelper } from "lib/ajax_helper"
 import { addError } from "lib/flashes"
@@ -6,8 +7,7 @@ import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import { fetchCastellumProjectConfig } from "./castellum"
 import { Scope } from "../scope"
 
-const limesErrorMessage = (error) =>
-  (error.response && error.response.data) || error.message
+const limesErrorMessage = (error) => error.data || error.message
 
 const showLimesError = (error) =>
   addError(
@@ -217,7 +217,9 @@ export const pollRunningSyncProject = ({ domainID, projectID }) =>
     //running sync has completed
     ajaxHelper
       .get(`/v1/domains/${domainID}/projects/${projectID}`, {
-        resource: "none",
+        params: {
+          resource: "none",
+        },
       })
       .catch((error) => {
         dispatch(syncProjectFailure())

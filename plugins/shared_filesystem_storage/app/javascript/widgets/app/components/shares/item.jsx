@@ -3,6 +3,7 @@ import { policy } from "lib/policy"
 import { OverlayTrigger, Tooltip } from "react-bootstrap"
 import * as constants from "../../constants"
 import ShareActions from "./actions"
+import React from "react"
 
 class RuleTooltip extends React.Component {
   render() {

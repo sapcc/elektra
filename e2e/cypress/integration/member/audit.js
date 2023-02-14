@@ -10,10 +10,9 @@ describe("audit", () => {
   it("open audit and should see unauthorized", () => {
     cy.request({
       url: `/${Cypress.env("TEST_DOMAIN")}/test/audit/`,
-      failOnStatusCode: false
+      failOnStatusCode: false,
     }).should((response) => {
-      expect(response.status).to.eq(401)
+      expect(response.status).to.eq(403)
     })
   })
-
 })

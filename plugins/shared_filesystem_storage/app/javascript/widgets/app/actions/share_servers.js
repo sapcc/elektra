@@ -4,9 +4,7 @@ import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form"
 
-const errorMessage = (error) =>
-  (error.response && error.response.data && error.response.data.errors) ||
-  error.message
+const errorMessage = (error) => error.data?.errors || error.message
 
 //################### SHARE SERVERS #########################
 const requestShareServers = () => ({

@@ -1,0 +1,98 @@
+# This is the default env template
+
+# HowTo use this template?
+# ========================
+# Plan A: To create a running .env you have to check the secrets in our vault
+# Plan B: When you are luckily working on workspaces you can run "render-env elektra" 
+
+# On workspaces enter elektra environment in two terminals and start elektra components 
+# 1. start-rails 
+# 2. start-js
+
+# NOTE: if this file is changed please update also the env.proxy.template file
+
+# RAILS
+PORT=3000
+RAILS_ENV="development"
+
+# DATABASE
+POSTGRES_SERVICE_HOST="localhost"
+POSTGRES_SERVICE_PORT=5432
+MONSOON_DB_USER="postgres"
+MONSOON_DB_PASSWORD="this-is-secure-because-this-db-runs-on-localhost"
+
+# OPENSTACK
+MONSOON_DASHBOARD_REGION="###REGION###"
+MONSOON_OPENSTACK_AUTH_API_ENDPOINT="https://identity-3.###REGION###.cloud.sap/v3/"
+MONSOON_OPENSTACK_AUTH_API_USERID="dashboard"
+MONSOON_OPENSTACK_AUTH_API_PASSWORD="*vault(path: ###REGION###/elektra/keystone-user/service, field: password)"
+MONSOON_OPENSTACK_AUTH_API_DOMAIN="Default"
+
+# openstack service endpoint interface, default internal (for local development you most likely need to set this to public)
+DEFAULT_SERVICE_INTERFACE="public"
+
+# Retrieve avatar from Gravatar.com based on hashed user emails
+MONSOON_DASHBOARD_AVATAR_URL='https://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(current_user.email)}?d=mm&size=24x24'
+
+# to access better errors and web console
+# should be changed if you accessing the dashboard not from localhost
+# TRUSTED_IP=localhost
+
+# SAP Arc Automation settings
+# ARC_UPDATES_URL=<your-arc-update-server-url>
+# ARC_PKI_URL=<your-arc-pki-server-url>
+# ARC_BROKER_URL=<your-arc-broker-server-url>
+
+# defaults to true, should not be disabled in production
+# disable SSL if you use dev-proxy!
+# ELEKTRA_SSL_VERIFY_PEER=false
+
+# enable proxy for backend api calls
+# to start proxy run "start-dev-proxy" in the development environment
+# http_proxy=http://localhost:8888
+# HTTP_PROXY=http://localhost:8888
+# https_proxy=http://localhost:8888
+# HTTPS_PROXY=http://localhost:8888
+
+# debug excon api communication, default false.
+# EXCON_DEBUG=true
+# ELEKTRON_QUIET=true
+
+# debug permission checks in policy engine, default false.
+# DEBUG_POLICY_ENGINE=true
+
+# reduce logging
+ELEKTRON_QUIET=true
+ACTIVE_RECORD_QUIET=true
+
+# see full errors of caught exceptions in dev, default: key not set i.e. false
+# NO_EXCEPTION_PAGE=true
+
+# TWO_FACTOR_AUTHENTICATION = on|off
+# TWO_FACTOR_AUTH_DOMAINS = domain1,domain2|empty
+# TWO_FACTOR_RADIUS_SERVERS = <jump-server>
+# TWO_FACTOR_RADIUS_SECRET = SECRET
+
+# these domains (list is comma separated) cannot inherit their masterdata to projects
+DOMAIN_MASTERDATA_INHERITANCE_BLACKLIST=monsoon3
+
+# used for cypress e2e tests
+TEST_DOMAIN="cc3test"
+TEST_MEMBER_USER="###TEST_USER###_TM"
+TEST_MEMBER_PASSWORD="*vault(path: shared/cc3test/ldap-user/###TEST_USER###_TM, field: password)"
+TEST_ADMIN_USER="###TEST_USER###_TA"
+TEST_ADMIN_PASSWORD="*vault(path: shared/cc3test/ldap-user/###TEST_USER###_TA, field: password)"
+
+# load elektra extensions, see also gemfile
+ELEKTRA_EXTENSION=true
+
+# this is only used in the create project request to know where new projects where created
+# format can be LOB1|Board1,LOB2|Board1,LOB3|Board2 or just LOB1,LOB2,LOB3
+MONSOON_LOB_LIST="bla,blub"
+# what DL should be informed if a new project was created? 
+MONSOON_NEW_PROJECT_DL=""
+
+# MONSOON_DASHBOARD_MAIL_SERVER="<your-server>"
+
+# CAM base URL
+# MONSOON_DASHBOARD_CAM_URL="<cam-url>"

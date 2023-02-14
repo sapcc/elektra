@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react"
 import useMember from "../../lib/hooks/useMember"
-import useCommons from "../../lib/hooks/useCommons"
 import Log from "../shared/logger"
 import JsonView from "../shared/JsonView"
+import {
+  sortObjectByKeys,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
 
 const MemberJSON = (props) => {
   const { fetchMember } = useMember()
-  const { matchParams, searchParamsToString, sortObjectByKeys } = useCommons()
   const [jsonObject, setJsonObject] = useState({
     isLoading: false,
     error: null,

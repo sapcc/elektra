@@ -4,7 +4,7 @@ module DnsService
     before_action :load_pools, only: %i[index show update create new]
     before_action :load_shared_zones, only: %i[index update create]
 
-    authorization_context 'dns_service'
+    authorization_context "dns_service"
     authorization_required
 
     def index
@@ -18,34 +18,45 @@ module DnsService
         if not params[:search].blank?
           @search = params[:search]
           @searchfor = "#{params[:searchfor]}"
-          filter = {@searchfor.downcase() => @search}
+          filter = { @searchfor.downcase() => @search }
         else
           params.delete(:search)
           params.delete(:searchfor)
         end
       end
 
-      @zones = paginatable(per_page: per_page.to_i) do |pagination_options|
-        services.dns_service.zones(
-          @admin_option.merge(pagination_options).merge(filter)
-        )[:items]
-      end
-      
-      active_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
+      @zones =
+        paginatable(per_page: per_page.to_i) do |pagination_options|
+          services.dns_service.zones(
+            @admin_option.merge(pagination_options).merge(filter),
+          )[
+            :items
+          ]
+        end
 
-      @zone_transfer_requests = active_requests.select do |r|
-        r.project_id.nil? or r.project_id != @scoped_project_id
-      end
+      active_requests =
+        services.dns_service.zone_transfer_requests(status: "ACTIVE")
 
-      @active_zone_transfer_requests = active_requests.inject({}) do |hash,r|
-        hash[r.zone_id] = r if r.project_id == @scoped_project_id
-        hash
-      end
+      @zone_transfer_requests =
+        active_requests.select do |r|
+          r.project_id.nil? or r.project_id != @scoped_project_id
+        end
+
+      @active_zone_transfer_requests =
+        active_requests.inject({}) do |hash, r|
+          hash[r.zone_id] = r if r.project_id == @scoped_project_id
+          hash
+        end
 
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?
-        render partial: 'list', locals: { zones: @zones, active_zone_transfer_requests: @active_zone_transfer_requests, pools: @pools}
+        render partial: "list",
+               locals: {
+                 zones: @zones,
+                 active_zone_transfer_requests: @active_zone_transfer_requests,
+                 pools: @pools,
+               }
       else
         # comon case, render index page with layout
         render action: :index
@@ -53,7 +64,6 @@ module DnsService
     end
 
     def show
-
       per_page = params[:per_page] || 20
 
       filter = {}
@@ -64,19 +74,21 @@ module DnsService
         if not params[:search].blank?
           @search = params[:search]
           @searchfor = "#{params[:searchfor]}"
-          filter = {@searchfor.downcase() => @search}
+          filter = { @searchfor.downcase() => @search }
         else
           params.delete(:search)
           params.delete(:searchfor)
         end
       end
 
-      @zone = services.dns_service.find_zone(params[:id], all_projects: @all_projects)
+      @zone =
+        services.dns_service.find_zone(params[:id], all_projects: @all_projects)
       all_shared_zones = services.dns_service.shared_zones()
 
       @shared_with_projects = []
-      all_shared_zones.each do | shared_zone |
-        if @zone.id == shared_zone.zone_id && @scoped_project_id != shared_zone.target_project_id
+      all_shared_zones.each do |shared_zone|
+        if @zone.id == shared_zone.zone_id &&
+             @scoped_project_id != shared_zone.target_project_id
           project = ObjectCache.where(id: shared_zone.target_project_id).first
           if project
             @shared_with_projects << project.name
@@ -86,28 +98,38 @@ module DnsService
         end
       end
 
-      @recordsets = paginatable(per_page: per_page.to_i) do |pagination_options|
-        services.dns_service.recordsets(
-          params[:id],
-          {
-            sort_key: 'name'
-          }.merge(@impersonate_option).merge(pagination_options).merge(filter)
-        )[:items]
-      end
+      @recordsets =
+        paginatable(per_page: per_page.to_i) do |pagination_options|
+          services.dns_service.recordsets(
+            params[:id],
+            { sort_key: "name" }.merge(@impersonate_option)
+              .merge(pagination_options)
+              .merge(filter),
+          )[
+            :items
+          ]
+        end
 
-      ns_options = { type: 'NS' }
+      ns_options = { type: "NS" }
       ns_options[:name] = @zone.name if @zone
 
-      @nameservers = services.dns_service.recordsets(
-        params[:id],
-        ns_options.merge(@impersonate_option)
-      )[:items]
+      @nameservers =
+        services.dns_service.recordsets(
+          params[:id],
+          ns_options.merge(@impersonate_option),
+        )[
+          :items
+        ]
 
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?
         zone = services.dns_service.find_zone(params[:id], @impersonate_option)
-        render partial: 'dns_service/zones/recordsets/recordsets', locals: { recordsets: @recordsets, zone: zone }
+        render partial: "dns_service/zones/recordsets/recordsets",
+               locals: {
+                 recordsets: @recordsets,
+                 zone: zone,
+               }
       else
         # comon case, render index page with layout
         render action: :show
@@ -117,16 +139,17 @@ module DnsService
     def new
       @zone = services.dns_service.new_zone
       # this needs to be removed when migration is done
-      @pools.reject!{|pool| pool.attributes["attributes"]["label"] == "New External SAP Hosted Zone" }
+      @pools.reject! do |pool|
+        pool.attributes["attributes"]["label"] == "New External SAP Hosted Zone"
+      end
     end
 
     def create
-
       # check for existing zone
       zone_name = params[:zone][:name]
       @zone = services.dns_service.zones(name: zone_name)[:items].first
       if @zone
-        @zone.errors.add('Error', 'Zone already existing')
+        @zone.errors.add("Error", "Zone already existing")
         render action: :new
         return
       else
@@ -134,15 +157,19 @@ module DnsService
       end
 
       update_limes_data(@scoped_domain_id, @scoped_project_id)
-      # check that subzones are not exsisting in other projects 
-      zone_transfer = check_parent_zone(zone_name,@scoped_project_id)
-      # check and increase zone quota for destination project 
-      check_and_increase_quota(@scoped_domain_id, @scoped_project_id, 'zones')
+      # check that subzones are not exsisting in other projects
+      zone_transfer = check_parent_zone(zone_name, @scoped_project_id)
+      # check and increase zone quota for destination project
+      check_and_increase_quota(@scoped_domain_id, @scoped_project_id, "zones")
       # make sure that recordset quota is increased at least by 2 as there are two recrodsets are created (NS + SOA)
-      check_and_increase_quota(@scoped_domain_id, @scoped_project_id, 'recordsets', 2)
+      check_and_increase_quota(
+        @scoped_domain_id,
+        @scoped_project_id,
+        "recordsets",
+        2,
+      )
 
       if @zone.save
-
         # if zone_transfer
         #   # try to find existing zone transfer request
         #   @zone_transfer_request = services.dns_service.zone_transfer_requests(
@@ -166,8 +193,8 @@ module DnsService
 
         flash.now[:notice] = "Zone successfully created."
         respond_to do |format|
-          format.html{redirect_to zones_url}
-          format.js {render 'create.js'}
+          format.html { redirect_to zones_url }
+          format.js { render "create.js" }
         end
       else
         render action: :new
@@ -183,8 +210,8 @@ module DnsService
       if @zone.save
         flash.now[:notice] = "Zone successfully updated."
         respond_to do |format|
-          format.html{redirect_to zones_url}
-          format.js {render 'update.js'}
+          format.html { redirect_to zones_url }
+          format.js { render "update.js" }
         end
       else
         render action: :edit
@@ -193,7 +220,8 @@ module DnsService
 
     def destroy
       # TODO: if zone cannot be deleted like subzones are existing the error is not handled
-      @deleted = services.dns_service.delete_zone(params[:id], @impersonate_option)
+      @deleted =
+        services.dns_service.delete_zone(params[:id], @impersonate_option)
       respond_to do |format|
         format.js {}
         format.html { redirect_to zones_url }

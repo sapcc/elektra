@@ -1,4 +1,5 @@
 import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import React from "react"
 
 export const ImageIcon = ({ image }) => {
   const tooltip = <Tooltip id="imageIconTooltip">{image.visibility}</Tooltip>

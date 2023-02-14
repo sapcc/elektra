@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { Popover, Tooltip, OverlayTrigger } from "react-bootstrap"
 import { policy } from "lib/policy"
+import React from "react"
 
 const emptyNetwork = (
   <Popover id="popover-empty-share-network" title="Empty Network">
@@ -18,7 +19,7 @@ const tooltipSharedNetwork = (
   <Tooltip id="tooltip-shared-network">Shared Network</Tooltip>
 )
 
-export default ({
+const Item = ({
   shareNetwork,
   handleDelete,
   handleShareNetworkSecurityServices,
@@ -162,3 +163,5 @@ export default ({
     </tr>
   )
 }
+
+export default Item

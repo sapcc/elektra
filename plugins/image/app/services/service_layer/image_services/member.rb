@@ -8,10 +8,11 @@ module ServiceLayer
       end
 
       def add_member_to_image(image_id, project_id)
-        response = elektron_images.post("images/#{image_id}/members") do
-          { member: project_id }
-        end
-        response.map_to('body', &member_map)
+        response =
+          elektron_images.post("images/#{image_id}/members") do
+            { member: project_id }
+          end
+        response.map_to("body", &member_map)
       end
 
       def remove_member_from_image(image_id, member_id)
@@ -23,30 +24,30 @@ module ServiceLayer
       end
 
       def members(image_id)
-        elektron_images.get("images/#{image_id}/members")
-                       .map_to('body.members', &member_map)
+        elektron_images.get("images/#{image_id}/members").map_to(
+          "body.members",
+          &member_map
+        )
       end
 
       def accept_member(member)
         return false if member.nil?
-        response = elektron_images.put(
-          "images/#{member.image_id}/members/#{member.member_id}"
-        ) do
-          { status: 'accepted' }
-        end
+        response =
+          elektron_images.put(
+            "images/#{member.image_id}/members/#{member.member_id}",
+          ) { { status: "accepted" } }
 
-        response.map_to('body', &member_map)
+        response.map_to("body", &member_map)
       end
 
       def reject_member(member)
         return false if member.nil?
-        response = elektron_images.put(
-          "images/#{member.image_id}/members/#{member.member_id}"
-        ) do
-          { status: 'rejected' }
-        end
+        response =
+          elektron_images.put(
+            "images/#{member.image_id}/members/#{member.member_id}",
+          ) { { status: "rejected" } }
 
-        response.map_to('body', &member_map)
+        response.map_to("body", &member_map)
       end
     end
   end

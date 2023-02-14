@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { useParams, useHistory } from "react-router-dom"
@@ -153,11 +154,7 @@ const RBACs = ({ securityGroup }) => {
         dispatch({ type: "remove", id })
       })
       .catch((error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.errors) ||
-          error.message
+        const message = error.data?.errors || error.message
         dispatch({ type: "remove_failure", id, error: message })
       })
   }, [])

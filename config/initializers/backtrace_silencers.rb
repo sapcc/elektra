@@ -11,5 +11,5 @@ Rails.backtrace_cleaner.remove_silencers!
 plugin_root_regex = Regexp.escape ("plugins" + File::SEPARATOR)
 Rails.backtrace_cleaner.add_silencer do |line|
   (line !~ Rails::BacktraceCleaner::APP_DIRS_PATTERN) &&
-      (line !~ /^#{plugin_root_regex}/  )
+    (line !~ /^#{plugin_root_regex}/)
 end

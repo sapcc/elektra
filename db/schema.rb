@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2018_05_30_081339) do
-
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,7 +20,8 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
     t.string "tou_version"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_profile_id"], name: "index_domain_profiles_on_user_profile_id"
+    t.index ["user_profile_id"],
+            name: "index_domain_profiles_on_user_profile_id"
   end
 
   create_table "friendly_id_entries", id: :serial, force: :cascade do |t|
@@ -33,8 +33,10 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "endpoint"
-    t.index ["class_name", "key"], name: "index_friendly_id_entries_on_class_name_and_key"
-    t.index ["class_name", "scope", "key"], name: "index_friendly_id_entries_on_class_name_and_scope_and_key"
+    t.index %w[class_name key],
+            name: "index_friendly_id_entries_on_class_name_and_key"
+    t.index %w[class_name scope key],
+            name: "index_friendly_id_entries_on_class_name_and_scope_and_key"
     t.index ["class_name"], name: "index_friendly_id_entries_on_class_name"
     t.index ["key"], name: "index_friendly_id_entries_on_key"
     t.index ["scope"], name: "index_friendly_id_entries_on_scope"
@@ -59,8 +61,8 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
   create_table "inquiry_inquiries_processors", id: false, force: :cascade do |t|
     t.integer "inquiry_id", null: false
     t.integer "processor_id", null: false
-    t.index ["inquiry_id", "processor_id"], name: "index_inquiry_processor"
-    t.index ["processor_id", "inquiry_id"], name: "index_processor_inquiry"
+    t.index %w[inquiry_id processor_id], name: "index_inquiry_processor"
+    t.index %w[processor_id inquiry_id], name: "index_processor_inquiry"
   end
 
   create_table "inquiry_process_steps", id: :serial, force: :cascade do |t|
@@ -93,7 +95,8 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "search_label"
-    t.index ["cached_object_type"], name: "index_object_cache_on_cached_object_type"
+    t.index ["cached_object_type"],
+            name: "index_object_cache_on_cached_object_type"
     t.index ["id"], name: "index_object_cache_on_id"
     t.index ["name"], name: "index_object_cache_on_name"
     t.index ["project_id"], name: "index_object_cache_on_project_id"

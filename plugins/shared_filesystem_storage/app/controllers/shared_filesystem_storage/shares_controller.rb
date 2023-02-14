@@ -7,17 +7,23 @@ module SharedFilesystemStorage
       per_page = (params[:per_page] || 10).to_i
       current_page = (params[:page] || 1).to_i
 
-      shares = services.shared_filesystem_storage.shares_detail(
-        limit: per_page + 1,
-        offset: (current_page - 1) * per_page
-      )
+      shares =
+        services.shared_filesystem_storage.shares_detail(
+          limit: per_page + 1,
+          offset: (current_page - 1) * per_page,
+        )
 
-      render json: { shares: shares[0..per_page - 1], has_next: shares.length > per_page }
+      render json: {
+               shares: shares[0..per_page - 1],
+               has_next: shares.length > per_page,
+             }
     end
 
     def export_locations
-      render json: services.shared_filesystem_storage
-                           .share_export_locations(params[:id])
+      render json:
+               services.shared_filesystem_storage.share_export_locations(
+                 params[:id],
+               )
     end
 
     def show
@@ -51,7 +57,7 @@ module SharedFilesystemStorage
 
     def create
       share = services.shared_filesystem_storage.new_share(share_params)
-      share.share_type ||= 'default'
+      share.share_type ||= "default"
 
       if share.save
         render json: share
@@ -124,7 +130,7 @@ module SharedFilesystemStorage
         :metadata,
         :share_network_id,
         :consistency_group_id,
-        :availability_zone
+        :availability_zone,
       )
     end
   end

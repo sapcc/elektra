@@ -1,5 +1,5 @@
 import { useDispatch, useGlobalState } from "../StateProvider"
-import { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import LoadbalancerItem from "./LoadbalancerItem"
 import ErrorPage from "../ErrorPage"
 import { DefeatableLink } from "lib/components/defeatable_link"
@@ -8,8 +8,6 @@ import { CSSTransition, TransitionGroup } from "react-transition-group"
 import { Link } from "react-router-dom"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addError } from "lib/flashes"
-import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import useCommons from "../../lib/hooks/useCommons"
 import { regexString } from "lib/tools/regex_string"
 import {
   Tooltip,
@@ -23,6 +21,7 @@ import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
+import { errorMessage } from "../../helpers/commonHelpers"
 
 const TableFadeTransition = ({ children, ...props }) => (
   <CSSTransition
@@ -38,8 +37,7 @@ const TableFadeTransition = ({ children, ...props }) => (
 const LoadbalancerList = (props) => {
   const dispatch = useDispatch()
   const state = useGlobalState().loadbalancers
-  const { persistLoadbalancers, persistAll } = useLoadbalancer()
-  const { errorMessage } = useCommons()
+  const { persistLoadbalancers } = useLoadbalancer()
 
   const [shouldFetchNext, setShouldFetchNext] = useState(false)
   const [fetchingAllItems, setFetchingAllItems] = useState(false)

@@ -1,7 +1,8 @@
 import { useMemo, useEffect } from "react"
 import { Modal } from "react-bootstrap"
-import "lib/jsoneditor.coffee"
+import "lib/jsoneditor"
 import ErrorPage from "../ErrorPage"
+import React from "react"
 
 const JsonView = ({
   show,

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import ErrorPage from "../ErrorPage"
 import { Form } from "lib/elektra-form"
@@ -9,12 +8,19 @@ import SelectInput from "../shared/SelectInput"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
+import {
+  errorMessage,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import {
+  fetchLoadbalancer,
+  fetchPrivateNetworks,
+} from "../../actions/loadbalancer"
 
 const EditLoadbalancer = (props) => {
-  const { matchParams, searchParamsToString, formErrorMessage, errorMessage } =
-    useCommons()
-  const { fetchLoadbalancer, fetchPrivateNetworks, updateLoadbalancer } =
-    useLoadbalancer()
+  const { updateLoadbalancer } = useLoadbalancer()
   const [loadbalancer, setLoadbalancer] = useState({
     isLoading: false,
     error: null,
@@ -118,11 +124,10 @@ const EditLoadbalancer = (props) => {
     setFormErrors(null)
 
     return updateLoadbalancer(loadbalancerID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Load Balancer <b>{response.data.name}</b> ({response.data.id}) is
-            being updated.
+            Load Balancer <b>{data.name}</b> ({data.id}) is being updated.
           </React.Fragment>
         )
         close()

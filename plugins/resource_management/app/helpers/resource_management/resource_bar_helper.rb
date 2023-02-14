@@ -1,6 +1,5 @@
 module ResourceManagement
   module ResourceBarHelper
-
     # GUI component for a resource usage bar.
     #
     # Accepts the following options:
@@ -20,20 +19,39 @@ module ResourceManagement
     # If the threshold is not given, the maximum value is used for the threshold, but without displaying it as threshold.
     # In all the label fields, a placeholder of $VALUE will be replaced with the value.
     def resource_bar(options = {})
-
       # delete threshold if value is 0
       options.delete(:threshold) if options[:threshold] == 0
-      options.delete(:threshold) if options[:threshold].is_a?(Hash) &&  options[:threshold][:value] == 0
+      if options[:threshold].is_a?(Hash) && options[:threshold][:value] == 0
+        options.delete(:threshold)
+      end
 
-      fill, maximum, threshold, upper_bound, warning_level, danger_level, marker = resbar_prepare_options(options)
-      bars = resbar_compile_bars(fill, maximum, threshold, warning_level, danger_level, marker)
+      fill,
+      maximum,
+      threshold,
+      upper_bound,
+      warning_level,
+      danger_level,
+      marker =
+        resbar_prepare_options(options)
+      bars =
+        resbar_compile_bars(
+          fill,
+          maximum,
+          threshold,
+          warning_level,
+          danger_level,
+          marker,
+        )
 
-      return render('resource_bar_helper',
-        bars:        bars,
-        maximum:     maximum,
-        threshold:   threshold,
-        upper_bound: upper_bound,
-        marker:      marker,
+      return(
+        render(
+          "resource_bar_helper",
+          bars: bars,
+          maximum: maximum,
+          threshold: threshold,
+          upper_bound: upper_bound,
+          marker: marker,
+        )
       )
     end
 
@@ -42,44 +60,55 @@ module ResourceManagement
     # Reads and validates the arguments given to resource_bar(), and performs
     # some pre-computations.
     def resbar_prepare_options(options)
-      raise ArgumentError, "missing required argument 'fill'" unless options.has_key?(:fill)
+      unless options.has_key?(:fill)
+        raise ArgumentError, "missing required argument 'fill'"
+      end
 
       # default values
-      fill          = options[:fill]
-      maximum       = options.fetch(:maximum,       fill)
-      threshold     = options.fetch(:threshold,     maximum)
-      data_type     = options.fetch(:data_type,     nil) || Core::DataType.new(:number)
+      fill = options[:fill]
+      maximum = options.fetch(:maximum, fill)
+      threshold = options.fetch(:threshold, maximum)
+      data_type = options.fetch(:data_type, nil) || Core::DataType.new(:number)
       warning_level = options.fetch(:warning_level, 0.8)
-      danger_level  = options.fetch(:danger_level,  1.0)
-      marker        = options.fetch(:marker,        maximum)
+      danger_level = options.fetch(:danger_level, 1.0)
+      marker = options.fetch(:marker, maximum)
 
       # when only a number is given for some parameter, use the default label "$VALUE
-      fill        = { value: fill,      label: "$VALUE" } unless fill.is_a?(Hash)
-      maximum     = { value: maximum,   label: "$VALUE" } unless maximum.is_a?(Hash)
-      threshold   = { value: threshold, label: "$VALUE" } unless threshold.is_a?(Hash)
-      marker    =   { value: marker,    label: "$VALUE" } unless marker.is_a?(Hash)
+      fill = { value: fill, label: "$VALUE" } unless fill.is_a?(Hash)
+      maximum = { value: maximum, label: "$VALUE" } unless maximum.is_a?(Hash)
+      threshold = { value: threshold, label: "$VALUE" } unless threshold.is_a?(
+        Hash,
+      )
+      marker = { value: marker, label: "$VALUE" } unless marker.is_a?(Hash)
 
       # choose upper_bound, the value that corresponds to the full width of the bar
       upper_bound = maximum[:value]
-      if maximum[:value] < 0
-        upper_bound = [ fill[:value], threshold[:value] ].max
-      end
+      upper_bound = [fill[:value], threshold[:value]].max if maximum[:value] < 0
 
       # prepare labels
       #[ fill, maximum, threshold ].each do |param|
-      [ fill, maximum, threshold, marker ].each do |param|
+      [fill, maximum, threshold, marker].each do |param|
         display_value = data_type.format(param[:value])
-        param[:label] = (param[:label] || '$VALUE').gsub("$VALUE", display_value)
+        param[:label] = (param[:label] || "$VALUE").gsub(
+          "$VALUE",
+          display_value,
+        )
       end
 
       # calculate percentages relative to maximum (for CSS)
       # percentages are calculated in relation to "maximum"
       # "maximum" can be the fill or the maximum level
-      [ fill, threshold, marker].each do |param|
+      [fill, threshold, marker].each do |param|
         if upper_bound == 0
           param[:percent] = param[:value] <= 0 ? 0 : (param[:value].to_i << 10) # avoid division by zero, just scale very large
         else
-          param[:percent] = param[:value] <= 0 ? 0 : (param[:value].to_f / upper_bound * 100).to_i
+          param[:percent] = (
+            if param[:value] <= 0
+              0
+            else
+              (param[:value].to_f / upper_bound * 100).to_i
+            end
+          )
         end
       end
 
@@ -117,14 +146,30 @@ module ResourceManagement
           marker[:percent] = value.round(1)
         end
       end
-      return [ fill, maximum, threshold, upper_bound, warning_level, danger_level, marker ]
+      return [
+        fill,
+        maximum,
+        threshold,
+        upper_bound,
+        warning_level,
+        danger_level,
+        marker
+      ]
     end
 
     # This prepares a list of all the progress bars that we're placing in the
     # resource bar (i.e. all the <div class="progress-bar">).
-    def resbar_compile_bars(fill, maximum, threshold, warning_level, danger_level, marker)
+    def resbar_compile_bars(
+      fill,
+      maximum,
+      threshold,
+      warning_level,
+      danger_level,
+      marker
+    )
       bars = []
 
+      # stree-ignore
       if fill[:value] > 0
         # render normal bar
         fill_level = fill[:value].to_f / [ threshold[:value], maximum[:value] ].select { |x| x > 0 }.min.to_f
@@ -149,18 +194,23 @@ module ResourceManagement
         # for finite maximum, mark empty area beyond the threshold as "overcommit"
         if threshold[:value] < maximum[:value]
           if fill[:value] >= threshold[:value]
-            bars << { type: 'empty-overcommit', percent:                 100 - fill[:percent] }
+            bars << { type: "empty-overcommit", percent: 100 - fill[:percent] }
           else
-            bars << { type: 'empty',            percent: threshold[:percent] - fill[:percent] }
-            bars << { type: 'empty-overcommit', percent: 100 - threshold[:percent] }
+            bars << {
+              type: "empty",
+              percent: threshold[:percent] - fill[:percent],
+            }
+            bars << {
+              type: "empty-overcommit",
+              percent: 100 - threshold[:percent],
+            }
           end
         else
-          bars << { type: 'empty', percent: 100 - fill[:percent] }
+          bars << { type: "empty", percent: 100 - fill[:percent] }
         end
-
       else
         # for infinite maximum, mark all empty area as "overcommit"
-        bars << { type: 'empty-overcommit', percent: 100 - fill[:percent] }
+        bars << { type: "empty-overcommit", percent: 100 - fill[:percent] }
       end
 
       # remove all bars with fixed width that was calculated to be non-positive
@@ -168,11 +218,12 @@ module ResourceManagement
 
       # place the fill label on the first bar that is not small
       required_size_for_label = 1.5 * fill[:label].size
-      bar_for_label = bars.find { |bar| bar[:percent] > required_size_for_label }
+      bar_for_label =
+        bars.find { |bar| bar[:percent] > required_size_for_label }
       bar_for_label[:label] = fill[:label]
 
       # remove unused trailing spacer
-      bars.pop if bars.last[:type] == 'empty' and not bars.last.has_key?(:label)
+      bars.pop if bars.last[:type] == "empty" and not bars.last.has_key?(:label)
 
       # if all the bars add up to 100%, make the last one ever so slightly
       # slimmer to avoid a line break (which might occur if there are rounding
@@ -181,6 +232,5 @@ module ResourceManagement
 
       return bars
     end
-
   end
 end

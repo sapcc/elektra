@@ -3,6 +3,7 @@ import { DefeatableLink } from "lib/components/defeatable_link"
 import { SearchField } from "lib/components/search_field"
 import SecurityGroupRuleItem from "./item"
 import { policy } from "lib/policy"
+import React from "react"
 
 export default class List extends React.Component {
   state = { searchTerm: "", sortByProtocol: null, sortByPort: null }
@@ -21,7 +22,7 @@ export default class List extends React.Component {
       let direction = this.state.sortByProtocol || "desc"
       direction == "asc" ? (direction = "desc") : (direction = "asc")
       this.setState({ sortByProtocol: direction, sortByPort: null })
-    } else if ((name = "port")) {
+    } else if (name == "port") {
       let direction = this.state.sortByPort || "desc"
       direction == "asc" ? (direction = "desc") : (direction = "asc")
       this.setState({ sortByPort: direction, sortByProtocol: null })

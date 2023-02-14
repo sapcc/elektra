@@ -418,3 +418,17 @@ end
 ## Mailer
 
 From 19.08.2022 Elektra is using our own email service (Cronus) to send emails when users must be notified. This is the case for example when managing quota requests or creating new projects. Refer to [config/mailer.md](config/mailer.md) for details on how the mailer is setup.
+
+## Contributing
+
+Please read
+[CONTRIBUTING.md](https://github.com/sapcc/elektra/blob/master/CONTRIBUTING.md)
+for details and the process for submitting pull requests to us.
+
+## Tailwind CSS Support
+
+We use esbuild to build javascript bundles. In `/app/javascript/essentials.js` (which is referenced in the layout files) we import `/app/javascript/tailwind.css` file. This file also imports styles from _juno-ui-components_ to use the juno color variables.
+
+```sass
+@import "https://assets.juno.qa-de-1.cloud.sap/libs/juno-ui-components@latest/build/styles.css";
+```

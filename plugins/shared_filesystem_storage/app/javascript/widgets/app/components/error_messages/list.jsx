@@ -2,6 +2,7 @@ import { DefeatableLink } from "lib/components/defeatable_link"
 import { policy } from "lib/policy"
 import { Modal, Button } from "react-bootstrap"
 import ErrorMessageItem from "./item"
+import React from "react"
 
 export default class ErrorMessageList extends React.Component {
   state = { show: true }

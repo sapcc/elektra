@@ -1,3 +1,1 @@
-Config.setup do |config|
-  config.const_name = "Settings"
-end
+Config.setup { |config| config.const_name = "Settings" }

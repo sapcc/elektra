@@ -1,4 +1,5 @@
 import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import React from "react"
 
 export const MemberIpIcon = () => {
   return (

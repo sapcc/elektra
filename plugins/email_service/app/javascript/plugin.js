@@ -1,1 +1,1 @@
-import "./email_service.coffee"
+import "./email_service"

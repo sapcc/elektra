@@ -2,14 +2,13 @@ import * as constants from "../constants"
 import { pluginAjaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
+import React from "react"
 
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
 
 const ajaxHelper = pluginAjaxHelper("networking")
 
-const errorMessage = (error) =>
-  (error.response && error.response.data && error.response.data.errors) ||
-  error.message
+const errorMessage = (error) => error.data?.errors || error.message
 
 //################### SECURITY GROUPS #########################
 const requestSecurityGroups = () => ({
@@ -81,7 +80,7 @@ const fetchSecurityGroup = (id) => (dispatch) => {
         handleSuccess(response.data.security_group)
       })
       .catch((error) => {
-        if (error.response.status == 404) {
+        if (error.status == 404) {
           // remove from state
           dispatch(removeSecurityGroup(id))
         }

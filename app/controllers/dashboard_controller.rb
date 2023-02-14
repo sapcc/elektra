@@ -149,13 +149,13 @@ class DashboardController < ::ScopeController
         .create_with(
           name: current_user.name,
           email: current_user.email,
-          full_name: current_user.full_name
+          full_name: current_user.full_name,
         )
         .find_or_create_by(uid: current_user.id)
         .domain_profiles
         .create!(
           tou_version: Settings.actual_terms.version,
-          domain_id: current_user.user_domain_id
+          domain_id: current_user.user_domain_id,
         )
 
       reset_last_request_cache
@@ -178,7 +178,7 @@ class DashboardController < ::ScopeController
         UserProfile.tou(
           current_user.id,
           current_user.user_domain_id,
-          Settings.actual_terms.version
+          Settings.actual_terms.version,
         )
     end
     render action: :terms_of_use
@@ -198,8 +198,6 @@ class DashboardController < ::ScopeController
 
   protected
 
-
-
   def show_beta?
     params[:betafeatures] == "showme"
   end
@@ -214,7 +212,7 @@ class DashboardController < ::ScopeController
         email: current_user.email,
         username: current_user.name,
         domain: current_user.user_domain_name,
-        name: current_user.full_name
+        name: current_user.full_name,
       }.reject { |_, v| v.nil? }
 
     Raven.user_context(@sentry_user_context)
@@ -252,7 +250,7 @@ class DashboardController < ::ScopeController
       services.identity.find_project(
         @scoped_project_id,
         subtree_as_ids: true,
-        parents_as_ids: true
+        parents_as_ids: true,
       )
     FriendlyIdEntry.update_project_entry(@active_project)
   end
@@ -276,7 +274,7 @@ class DashboardController < ::ScopeController
       session[:tou_accepted] = UserProfile.tou_accepted?(
         current_user.id,
         current_user.user_domain_id,
-        Settings.actual_terms.version
+        Settings.actual_terms.version,
       )
     end
 

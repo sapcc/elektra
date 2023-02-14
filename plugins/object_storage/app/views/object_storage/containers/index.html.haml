@@ -1,6 +1,8 @@
 =content_for :main_toolbar do
   Object Storage
 
+= render partial: 'new_version'    
+
 .toolbar
   .main-buttons
     = link_to 'javascript:void(0)', id: 'capabilities_btn', title: 'Cluster limits and capabilities', data: { content: render(partial: 'capabilities') } do

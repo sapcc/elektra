@@ -87,18 +87,8 @@ const updateProjectMemberRoleAssignments =
           }
         })
         .catch((error) => {
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.error
-          ) {
-            handleErrors(error.response.data.error)
-          } else if (
-            error.response &&
-            error.response.data &&
-            error.response.data.errors
-          ) {
-            handleErrors(error.response.data.errors)
+          if (error.data?.error || error.data?.errors) {
+            handleErrors(error.data?.error || error.data?.errors)
           } else handleErrors(error.message)
         })
     )

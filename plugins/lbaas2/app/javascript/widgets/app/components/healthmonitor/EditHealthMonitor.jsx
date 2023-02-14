@@ -1,6 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { useState, useEffect } from "react"
 import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
 import useHealthmonitor from "../../lib/hooks/useHealthMonitor"
 import usePool from "../../lib/hooks/usePool"
 import { Form } from "lib/elektra-form"
@@ -9,18 +9,22 @@ import { addNotice } from "lib/flashes"
 import TagsInput from "../shared/TagsInput"
 import ErrorPage from "../ErrorPage"
 import Log from "../shared/logger"
+import {
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import { fetchHealthmonitor } from "../../actions/healthMonitor"
+import {
+  healthMonitorTypes,
+  httpMethodRelation,
+  expectedCodesRelation,
+  urlPathRelation,
+  httpMethods,
+} from "../../helpers/healthMonitorHelpers"
 
 const EditHealthMonitor = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
-  const {
-    fetchHealthmonitor,
-    updateHealthmonitor,
-    healthMonitorTypes,
-    httpMethodRelation,
-    expectedCodesRelation,
-    urlPathRelation,
-    httpMethods,
-  } = useHealthmonitor()
+  const { updateHealthmonitor } = useHealthmonitor()
   const { persistPool } = usePool()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [poolID, setPoolID] = useState(null)
@@ -112,8 +116,8 @@ const EditHealthMonitor = (props) => {
   const [showExpectedCodes, setShowExpectedCodes] = useState(false)
   const [showUrlPath, setShowUrlPath] = useState(false)
 
-  const validate = ({ name, max_retries, delay }) => {
-    return name && max_retries && delay && true
+  const validate = ({ name, delay }) => {
+    return name && delay && true
   }
 
   const onSubmit = (values) => {
@@ -127,11 +131,10 @@ const EditHealthMonitor = (props) => {
     const healthmonitorID = params.healthmonitorID
 
     return updateHealthmonitor(lbID, poolID, healthmonitorID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Health Monitor <b>{response.data.name}</b> ({response.data.id}) is
-            being updated.
+            Health Monitor <b>{data.name}</b> ({data.id}) is being updated.
           </React.Fragment>
         )
         // fetch the pool again containing the new healthmonitor so it gets updated fast
@@ -191,7 +194,7 @@ const EditHealthMonitor = (props) => {
               <Modal.Body>
                 <p>
                   Checks the health of the pool members. Unhealthy members will
-                  be taken out of traffic schedule. Set's a load balancer to
+                  be taken out of traffic schedule. Sets a load balancer to
                   OFFLINE when all members are unhealthy.
                 </p>
                 <Form.Errors errors={formErrors} />
@@ -222,39 +225,20 @@ const EditHealthMonitor = (props) => {
 
                 <Form.ElementHorizontal
                   label="Max Retries"
-                  name="max_retries"
-                  required
+                  name="max_retries_down"
                 >
                   <Form.Input
                     elementType="input"
                     type="number"
                     min="1"
                     max="10"
-                    name="max_retries"
+                    name="max_retries_down"
                   />
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
-                    Number of failed health checks before pool member is marked
-                    OFFLINE. A valid value is from 1 to 10.
-                  </span>
-                </Form.ElementHorizontal>
-
-                <Form.ElementHorizontal
-                  label="Probe Timeout"
-                  name="timeout"
-                  required
-                >
-                  <Form.Input
-                    elementType="input"
-                    type="number"
-                    min="1"
-                    name="timeout"
-                  />
-                  <span className="help-block">
-                    <i className="fa fa-info-circle"></i>
-                    The time, in seconds, after which a single health check
-                    probe times out (fails). This value must be less than the
-                    interval value.
+                    The number of allowed check failures before marking the
+                    member as OFFLINE. A valid value is from 1 to 10.
+                    The default is 3.
                   </span>
                 </Form.ElementHorizontal>
 

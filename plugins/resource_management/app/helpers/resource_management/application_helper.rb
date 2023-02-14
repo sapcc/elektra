@@ -1,6 +1,5 @@
 module ResourceManagement
   module ApplicationHelper
-
     include ResourceBarHelper
 
     def userfriendly_resource_name(resource)
@@ -13,7 +12,7 @@ module ResourceManagement
       # special case: for per-flavor instance quotas, do not attempt to
       # translate the flavor ID
       if resource_name =~ /^instances_/
-        return resource_name.sub(/^instances_/, '')
+        return resource_name.sub(/^instances_/, "")
       end
 
       # standard case: retrieve the resource name from the locale file
@@ -32,14 +31,22 @@ module ResourceManagement
       # special case: for per-flavor instance quotas, there is a description of
       # the flavor in the "catalog:description" extra-spec
       if resource_name =~ /^instances_/
-        flavor_name = resource_name.sub(/^instances_/, '')
+        flavor_name = resource_name.sub(/^instances_/, "")
         # map flavor name to ID
-        flavor = (@flavor_cache ||= cloud_admin.compute.flavors).find { |f| f.name == flavor_name }
-        return '', '' if flavor.nil?
+        flavor =
+          (@flavor_cache ||= cloud_admin.compute.flavors).find do |f|
+            f.name == flavor_name
+          end
+        return "", "" if flavor.nil?
         # retrieve extraspecs
         @flavor_metadata_cache ||= {}
-        m = (@flavor_metadata_cache[flavor.id] ||= cloud_admin.compute.find_flavor_metadata(flavor.id))
-        return '', '' if m.nil?
+        m =
+          (
+            @flavor_metadata_cache[
+              flavor.id
+            ] ||= cloud_admin.compute.find_flavor_metadata(flavor.id)
+          )
+        return "", "" if m.nil?
 
         mib = Core::DataType.new(:bytes, :mega)
         gib = Core::DataType.new(:bytes, :giga)
@@ -49,12 +56,12 @@ module ResourceManagement
         primary << "#{flavor.vcpus} cores" if flavor.vcpus
         primary << "#{mib.format(flavor.ram.to_i)} RAM" if flavor.ram
         primary << "#{gib.format(flavor.disk.to_i)} disk" if flavor.disk
-        secondary = m.attributes['catalog:description'] || ''
+        secondary = m.attributes["catalog:description"] || ""
         return primary.join(", "), secondary
       end
 
       # standard case: most stuff does not have a description
-      return '', ''
+      return "", ""
     end
 
     # Given a number of timestamps from ResourceManagement::Resource#updated_at,
@@ -72,7 +79,7 @@ module ResourceManagement
         min_age_unit = min_age.split(/\s+/).last # NOTE: may be singular
         max_age_unit = max_age.split(/\s+/).last
         if min_age_unit == max_age_unit || "#{min_age_unit}s" == max_age_unit
-          min_age = min_age.gsub(/(?<=\d)\s+\S+$/, '')
+          min_age = min_age.gsub(/(?<=\d)\s+\S+$/, "")
         end
         return "between #{min_age} and #{max_age} ago"
       end
@@ -87,19 +94,18 @@ module ResourceManagement
 
       # case 2: less than an hour (round to 5 minutes if > 10 minutes)
       minutes = (seconds / 60).round
-      return "1 minute"                           if minutes == 1
-      return "#{minutes} minutes"                 if minutes < 10
-      return "#{(seconds/300).round * 5} minutes" if minutes < 58
+      return "1 minute" if minutes == 1
+      return "#{minutes} minutes" if minutes < 10
+      return "#{(seconds / 300).round * 5} minutes" if minutes < 58
 
       # case 3: less than half a day (round to 1 hour)
       hours = (seconds / 3600).round
-      return "1 hour"         if hours ==  1
+      return "1 hour" if hours == 1
       return "#{hours} hours" if hours <= 12
 
       # case 4: count days
-      days = (seconds / 86400).round
+      days = (seconds / 86_400).round
       return days == 1 ? "1 day" : "#{days} days"
     end
-
   end
 end

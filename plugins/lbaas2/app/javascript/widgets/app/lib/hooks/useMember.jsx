@@ -3,6 +3,7 @@ import { useDispatch } from "../../components/StateProvider"
 import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { regexString } from "lib/tools/regex_string"
+import { createNameTag } from "../../helpers/commonHelpers"
 
 export const formAttrForSubmit = (items, action) => {
   if (!items || !Array.isArray(items)) return null
@@ -109,7 +110,7 @@ const useMember = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(error)
         })
     })
   }
@@ -125,7 +126,7 @@ const useMember = () => {
         })
         .catch((error) => {
           dispatch({ type: "REQUEST_MEMBERS_FAILURE", error: error })
-          handleError(error.response)
+          handleError(error)
         })
     })
   }
@@ -141,19 +142,9 @@ const useMember = () => {
           if (error && error.status == 404) {
             dispatch({ type: "REMOVE_MEMBER", id: memberID })
           }
-          handleError(error.response)
+          handleError(error)
         })
     })
-  }
-
-  const createNameTag = (name) => {
-    return name ? (
-      <React.Fragment>
-        <b>name:</b> {name} <br />
-      </React.Fragment>
-    ) : (
-      ""
-    )
   }
 
   const deleteMember = (lbID, poolID, memberID, memberName) => {
@@ -193,7 +184,7 @@ const useMember = () => {
           handleSuccess(response.data)
         })
         .catch((error) => {
-          handleError(error.response)
+          handleError(error)
         })
     })
   }

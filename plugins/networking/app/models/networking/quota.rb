@@ -4,7 +4,7 @@ module Networking
   # Implements Openstack Port
   class Quota < Core::ServiceLayer::Model
     def id
-      read('project_id')
+      read("project_id")
     end
   end
 end

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React from "react"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { AutocompleteField } from "lib/components/autocomplete_field"

@@ -10,8 +10,7 @@ export const configureCastellumAjaxHelper = (opts) => {
   ajaxHelper = createAjaxHelper(opts)
 }
 
-const castellumErrorMessage = (error) =>
-  (error.response && error.response.data) || error.message
+const castellumErrorMessage = (error) => error.data || error.message
 
 const fetchCastellumData =
   (projectID, path, jsonKey = null) =>
@@ -44,12 +43,7 @@ const fetchCastellumData =
       .catch((error) => {
         //for the resource config, a 404 response is not an error; it just shows
         //that autoscaling is disabled on this project resource
-        if (
-          path == "resources/nfs-shares" &&
-          error.response &&
-          error.response.status &&
-          error.response.status == 404
-        ) {
+        if (path == "resources/nfs-shares" && error.status === 404) {
           dispatch({
             type: constants.RECEIVE_CASTELLUM_DATA,
             path,
@@ -58,8 +52,8 @@ const fetchCastellumData =
           })
         } else {
           let msg = error.message
-          if (error.response && error.response.data) {
-            msg = `${msg}: ${error.response.data}`
+          if (error.data) {
+            msg = `${msg}: ${error.data}`
           }
           dispatch({
             type: constants.REQUEST_CASTELLUM_DATA_FAILURE,

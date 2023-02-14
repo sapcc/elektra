@@ -1,30 +1,16 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
-import { Form } from "lib/elektra-form"
-import useMember, { parseNestedValues } from "../../lib/hooks/useMember"
-import ErrorPage from "../ErrorPage"
-import NewEditMemberListItem from "./NewEditMemberListItem"
-import usePool from "../../lib/hooks/usePool"
-import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
 import ExistingMembersDropDown from "./ExistingMembersDropDown"
 import EditMemberForm from "./EditMemberForm"
 import { FormStateProvider } from "./FormState"
 import SaveButton from "../shared/SaveButton"
+import { matchParams, searchParamsToString } from "../../helpers/commonHelpers"
 
 const EditMember = (props) => {
-  const { matchParams, searchParamsToString, formErrorMessage } = useCommons()
-  const { fetchMember, updateMember } = useMember()
-  const { persistPool } = usePool()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [poolID, setPoolID] = useState(null)
   const [memberID, setMemberID] = useState(null)
-  const [member, setMember] = useState({
-    isLoading: false,
-    error: null,
-    item: null,
-  })
 
   useEffect(() => {
     // get the lb
@@ -36,29 +22,6 @@ const EditMember = (props) => {
     setPoolID(plID)
     setMemberID(mID)
   }, [])
-
-  // useEffect(() => {
-  //   if (memberID) {
-  //     loadMember()
-  //   }
-  // }, [memberID])
-
-  // const loadMember = () => {
-  //   Log.debug("fetching member to edit")
-  //   setMember({ ...member, isLoading: true, error: null })
-  //   fetchMember(loadbalancerID, poolID, memberID)
-  //     .then((data) => {
-  //       setMember({
-  //         ...member,
-  //         isLoading: false,
-  //         item: data.member,
-  //         error: null,
-  //       })
-  //     })
-  //     .catch((error) => {
-  //       setMember({ ...member, isLoading: false, error: error })
-  //     })
-  // }
 
   /*
    * Modal stuff

@@ -1,42 +1,37 @@
 module EmailService
   class Ec2CredentialsController < ::EmailService::ApplicationController
-
-    # before_action :restrict_access
-    
-    authorization_context 'email_service'
+    authorization_context "email_service"
     authorization_required
 
-
-    def show;end
-
     def create
-
       @ec2_creds = create_credentials
 
       if @ec2_creds.access && @ec2_creds.secret
         flash[:info] = "ec2 credentials are created"
       else
-        flash.now[:error] = "Something went wrong while creating ec2 credentials!"
+        error =
+          "#{I18n.t("email_service.errors.ec2_credentials_create_error")} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       end
-      
+
       redirect_to ec2_credentials_path
-      
     end
 
     def destroy
-
       @ec2_creds = ec2_creds
 
-      if @ec2_creds && @ec2_creds.access && @ec2_creds.secret 
+      if @ec2_creds && @ec2_creds.access && @ec2_creds.secret
         delete_credentials(@ec2_creds.access)
-        flash.now[:warning] = "ec2 credentials are deleted"
+        flash.now[:info] = "ec2 credentials are deleted"
       else
-        flash.now[:error] = "ec2 credentials were not deleted"
+        error =
+          "#{I18n.t("email_service.errors.ec2_credentials_delete_error")} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
       end
-      
+
       redirect_to ec2_credentials_path
-
     end
-
   end
 end

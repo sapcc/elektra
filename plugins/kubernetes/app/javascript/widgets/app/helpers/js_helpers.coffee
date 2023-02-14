@@ -1,5 +1,0 @@
-JsHelpers = {}
-
-
-
-@JsHelpers = JsHelpers

@@ -2,12 +2,13 @@
 
 module AccessProfile
   class TagsController < ::AjaxController
-    authorization_context 'access_profile'
+    before_action :restrict_access
+    authorization_context "access_profile"
     authorization_required
 
     module Action
-      TAG_CREATE=1
-      TAG_DESTROY=2
+      TAG_CREATE = 1
+      TAG_DESTROY = 2
     end
 
     # Returns project tags relevant to access profiles
@@ -16,7 +17,6 @@ module AccessProfile
       tags = cloud_admin.identity.list_tags(@scoped_project_id)
       render json: { tags: filter_tags(tags) }
     rescue Elektron::Errors::ApiResponse => e
-      puts "error elektron"
       render json: { errors: e.message }, status: e.code
     rescue Exception => e
       render json: { errors: e.message }, status: "500"
@@ -27,16 +27,21 @@ module AccessProfile
       tags = cloud_admin.identity.list_tags(@scoped_project_id)
       ok, err = validate_tag(tag, filter_tags(tags), Action::TAG_CREATE)
       unless ok
-        return render json: {errors: err, tagSpec: GalvaniConfig["access_profiles"]}, status: 422        
-      end
-      # ensure base prefix/tag is also added
-      ok, err = ensure_base_prefix(tag, filter_tags(tags), Action::TAG_CREATE)
-      unless ok
-        return render json: {errors: err}, status: 422        
+        return(
+          render json: {
+                   errors: err,
+                   tagSpec: GalvaniConfig["access_profiles"],
+                 },
+                 status: 422
+        )
       end
 
+      # ensure base prefix/tag is also added
+      ok, err = ensure_base_prefix(tag, filter_tags(tags), Action::TAG_CREATE)
+      return render json: { errors: err }, status: 422 unless ok
+
       cloud_admin.identity.add_single_tag(@scoped_project_id, tag)
-      audit_logger.info(current_user, 'has created tag', tag)
+      audit_logger.info(current_user, "has created tag", tag)
       render json: { tag: tag }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
@@ -49,15 +54,21 @@ module AccessProfile
       tags = cloud_admin.identity.list_tags(@scoped_project_id)
       ok, err = validate_tag(tag, filter_tags(tags), Action::TAG_DESTROY)
       unless ok
-        return render json: {errors: err, tagSpec: GalvaniConfig["access_profiles"]}, status: 422        
+        return(
+          render json: {
+                   errors: err,
+                   tagSpec: GalvaniConfig["access_profiles"],
+                 },
+                 status: 422
+        )
       end
+
       # ensure base prefix/tag is also removed
       ok, err = ensure_base_prefix(tag, filter_tags(tags), Action::TAG_DESTROY)
-      unless ok
-        return render json: {errors: err}, status: 422        
-      end
-      cloud_admin.identity.remove_single_tag(@scoped_project_id, tag)      
-      audit_logger.info(current_user, 'has deleted tag', tag)
+      return render json: { errors: err }, status: 422 unless ok
+
+      cloud_admin.identity.remove_single_tag(@scoped_project_id, tag)
+      audit_logger.info(current_user, "has deleted tag", tag)
       render json: { tag: tag }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
@@ -76,9 +87,8 @@ module AccessProfile
     # return all access profile tags --> prefixes from config file xs:internet, ...
     # the base prefixes should be removed
     def filter_tags(tags)
-      if tags.blank?
-        return []
-      end
+      return [] if tags.blank?
+
       profile_prefixes = GalvaniConfig["access_profiles"].keys || []
       # array with splat operator(*), select returns a new array
       tags.select { |n| n.start_with?(*profile_prefixes) }
@@ -88,59 +98,56 @@ module AccessProfile
     # remove base prefix/tag when last tag from this base is removed
     # base prefix/tag is being used to filter in the openstack api
     def ensure_base_prefix(tag, existing_tags, action)
-      # get base prefix 
+      # get base prefix
       base_prefix = base_prefix(tag)
-      if base_prefix.blank?
-        return false, "no base access profile found"
-      end
+      return false, "no base access profile found" if base_prefix.blank?
 
       case action
       when Action::TAG_CREATE
         # check if the prefix is already added as tag
-        if !existing_tags.include?(base_prefix)
+        unless existing_tags.include?(base_prefix)
           begin
             cloud_admin.identity.add_single_tag(@scoped_project_id, base_prefix)
           rescue Exception => e
             return false, "Error create base access profile. #{e.message}"
-          end          
+          end
         end
       when Action::TAG_DESTROY
         # check if there is more tags with the same base_prefix
         # search for tags with "base_prefix" with ":" so not base prefixes can't be matched
-        if existing_tags.grep(/#{base_prefix}:/).count() == 1 && existing_tags.include?(tag)
+        if existing_tags.grep(/#{base_prefix}:/).count == 1 &&
+             existing_tags.include?(tag)
           begin
-            cloud_admin.identity.remove_single_tag(@scoped_project_id, base_prefix)      
+            cloud_admin.identity.remove_single_tag(
+              @scoped_project_id,
+              base_prefix,
+            )
           rescue Exception => e
             return false, "Error removing base access profile. #{e.message}"
-          end                    
+          end
         end
       end
-      return true, ""
+      [true, ""]
     end
 
-    # validate that tag 
+    # validate that tag
     def validate_tag(tag, existing_tags, action)
       # check for empty tags
-      if tag.blank?
-        return false, "access profile is empty!"
-      end
+      return false, "access profile is empty!" if tag.blank?
 
-      # get base prefix 
+      # get base prefix
       base_prefix = base_prefix(tag)
-      if base_prefix.blank?
-        return false, "no base access profile found"
-      end
+      return false, "no base access profile found" if base_prefix.blank?
 
       # get the sercice
-      services = GalvaniConfig["access_profiles"][base_prefix].keys.select do|k| 
-        # service is everyting until the arguments $1, $2...
-        serviceKey = k.split(":$").first
-        tag.start_with?(base_prefix + ":" + serviceKey)
-      end
+      services =
+        GalvaniConfig["access_profiles"][base_prefix].keys.select do |k|
+          # service is everyting until the arguments $1, $2...
+          serviceKey = k.split(":$").first
+          tag.start_with?(base_prefix + ":" + serviceKey)
+        end
 
-      if services.blank?
-        return false, "no service found"
-      end
+      return false, "no service found" if services.blank?
 
       service = services[0]
       # get the service args
@@ -154,35 +161,37 @@ module AccessProfile
       # check for required args from the config
       if service_args.length != tag_args.length
         return false, "provided arguments mismatch"
-      end    
-
-      if action == Action::TAG_CREATE
-        # check for duplicates when creating new tags
-        if existing_tags.include?(tag)
-          return false, "access profile already exists" 
-        end
       end
 
-      return true, ""
+      if action == Action::TAG_CREATE && existing_tags.include?(tag)
+        # check for duplicates when creating new tags
+        return false, "access profile already exists"
+      end
+
+      [true, ""]
     end
 
     # returns base prefix if found
     def base_prefix(tag)
-      if tag.blank?
-        return ""
-      end
+      return "" if tag.blank?
 
       # get base prefix
-      base_prefixes = GalvaniConfig["access_profiles"].keys.select do|n| 
-        tag.start_with?(n)
-      end
+      base_prefixes =
+        GalvaniConfig["access_profiles"].keys.select { |n| tag.start_with?(n) }
 
-      if base_prefixes.blank?
-        return ""
-      end
+      return "" if base_prefixes.blank?
 
       base_prefixes[0]
     end
 
+    def restrict_access
+      # just for production regions
+      return if current_region.start_with?("qa-")
+      # if user hasn't the cloud_support_tools_viewer should be redirected
+      return if current_user.has_role?("cloud_support_tools_viewer")
+
+      @access_error = "You are not allowed to see this page."
+      render status: :unauthorized
+    end
   end
 end

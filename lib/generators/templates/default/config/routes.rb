@@ -1,3 +1,1 @@
-%{PLUGIN_NAME_CAMELIZE}::Engine.routes.draw do
-  get '/' => 'application#index'
-end
+"PLUGIN_NAME_CAMELIZE"::Engine.routes.draw { get "/" => "application#index" }

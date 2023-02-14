@@ -7,11 +7,9 @@ import React, {
 import { Form, Tooltip, OverlayTrigger } from "react-bootstrap"
 import { useFormState, useFormDispatch, generateMemberItem } from "./FormState"
 import NewEditMemberListItem from "./NewEditMemberListItem"
-import uniqueId from "lodash/uniqueId"
-import { Link } from "react-router-dom"
+
 import { ErrorsList } from "lib/elektra-form"
 import { addNotice } from "lib/flashes"
-import useCommons from "../../lib/hooks/useCommons"
 import useMember, {
   validateForm,
   formAttrForSubmit,
@@ -19,6 +17,7 @@ import useMember, {
 import usePool from "../../lib/hooks/usePool"
 import Log from "../shared/logger"
 import ErrorPage from "../ErrorPage"
+import { errorMessage } from "../../helpers/commonHelpers"
 
 const EditMemberForm = (
   { loadbalancerID, poolID, memberID, onFormCallback },
@@ -27,12 +26,10 @@ const EditMemberForm = (
   const state = useFormState()
   const dispatch = useFormDispatch()
   const [formErrors, setFormErrors] = useState(null)
-  const { create, persistMembers } = useMember()
   const { persistPool } = usePool()
-  const { errorMessage } = useCommons()
   const { fetchMember, updateMember } = useMember()
   const [isLoading, setIsLoading] = useState(false)
-  const [errorMerssage, setErrorMessage] = useState(null)
+  const [errorMsg, setErrorMsg] = useState(null)
 
   useEffect(() => {
     if (memberID && loadbalancerID && poolID) {
@@ -43,11 +40,11 @@ const EditMemberForm = (
   const loadMember = () => {
     Log.debug("fetching member to edit")
     setIsLoading(true)
-    setErrorMessage(null)
+    setErrorMsg(null)
     fetchMember(loadbalancerID, poolID, memberID)
       .then((data) => {
         setIsLoading(false)
-        setErrorMessage(null)
+        setErrorMsg(null)
         dispatch({
           type: "ADD_ITEM",
           item: data.member,
@@ -55,7 +52,7 @@ const EditMemberForm = (
       })
       .catch((error) => {
         setIsLoading(false)
-        setErrorMessage(error)
+        setErrorMsg(error)
       })
   }
 
@@ -95,10 +92,10 @@ const EditMemberForm = (
 
   return (
     <>
-      {errorMerssage ? (
+      {errorMsg ? (
         <ErrorPage
           headTitle="Edit Member"
-          error={errorMerssage}
+          error={errorMsg}
           onReload={loadMember}
         />
       ) : (

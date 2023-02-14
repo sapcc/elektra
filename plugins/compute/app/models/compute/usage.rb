@@ -4,15 +4,15 @@ module Compute
   # Represents the Compute Usage
   class Usage < Core::ServiceLayer::Model
     def cores
-      read('totalCoresUsed')
+      read("totalCoresUsed")
     end
 
     def instances
-      read('totalInstancesUsed')
+      read("totalInstancesUsed")
     end
 
     def ram
-      read('totalRAMUsed')
+      read("totalRAMUsed")
     end
   end
 end

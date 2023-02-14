@@ -1,5 +1,6 @@
-import "./recordsets.coffee"
-import "./transfer_requests.coffee"
+/* eslint-disable no-undef */
+import "./recordsets"
+import "./transfer_requests"
 
 window.dns_service = window.dns_service || {}
 

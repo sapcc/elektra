@@ -10,7 +10,7 @@ describe("project landing page", () => {
   it("open project landing page and cannot see edit project button", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/identity/project/home`)
     cy.contains("Test Project")
-    cy.get('div.dropdown.header-action').should('not.exist')
+    cy.get("div.dropdown.header-action").should("not.exist")
   })
 
   /*
@@ -34,33 +34,36 @@ describe("project landing page", () => {
 
   it("open project landing page and check user profile and SSH keys", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/identity/project/home`)
-    cy.contains('a.navbar-identity','Technical User').click()
-    cy.contains('a','Profile').click()
+    cy.contains("a.navbar-identity", "Technical User").click()
+    cy.contains("a", "Profile").click()
     // check not in one string because it can be different order
-    cy.contains('td','member')
-    cy.contains('td','reader')
-    cy.contains('button','Close').click()
+    cy.contains("td", "member")
+    cy.contains("td", "reader")
+    cy.contains("button", "Close").click()
 
-    cy.contains('a.navbar-identity','Technical User').click()
-    cy.contains('a','Key Pairs').click()
-    cy.contains('a.btn','Create new').click()
-    cy.contains('h4','New Keypair')
-    cy.get('input#keypair_name').type('test')
-    cy.get('textarea#keypair_public_key').type('test')
-    cy.contains('button','Save').click()
-    cy.contains('Public key test is not a valid ssh public key')
-    cy.contains('button','Cancel').should('be.visible').then(($btn) => {
-      cy.wrap($btn).click()
-    })
+    cy.contains("a.navbar-identity", "Technical User").click()
+    cy.contains("a", "Key Pairs").click()
+    cy.contains("a.btn", "Create new").click()
+    cy.contains("h4", "New Keypair")
+    cy.get("input#keypair_name").type("test")
+    cy.get("textarea#keypair_public_key").type("test")
+    cy.contains("button", "Save").click()
+    cy.contains("Public key test is not a valid ssh public key")
+    cy.contains("button", "Cancel")
+      .should("be.visible")
+      .then(($btn) => {
+        cy.wrap($btn).click()
+      })
   })
 
   it("open project landing page and check logout button", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/test/identity/project/home`)
-    cy.contains('a.navbar-identity','Technical User').click()
-    cy.contains('a','Log out').click()
+    cy.contains("a.navbar-identity", "Technical User").click()
+    cy.contains("a", "Log out").click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
     // check not in one string because it can be different order
-    cy.contains('SAP Converged Cloud')
-    cy.contains('a','Enter the cloud')
+    cy.contains("SAP Converged Cloud")
+    cy.contains("button", "Log in")
   })
-
 })

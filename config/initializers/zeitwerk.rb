@@ -4,4 +4,4 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "UUID"
 end
 
-Rails.autoloaders.main.ignore(Rails.root.join('lib/generators/*'))
+Rails.autoloaders.main.ignore(Rails.root.join("lib/generators/*"))

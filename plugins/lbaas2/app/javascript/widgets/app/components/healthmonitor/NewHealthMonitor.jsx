@@ -1,6 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { useState, useEffect } from "react"
 import { Modal, Button } from "react-bootstrap"
-import useCommons from "../../lib/hooks/useCommons"
 import useHealthmonitor from "../../lib/hooks/useHealthMonitor"
 import usePool from "../../lib/hooks/usePool"
 import { Form } from "lib/elektra-form"
@@ -8,17 +8,21 @@ import SelectInput from "../shared/SelectInput"
 import FormInput from "../shared/FormInput"
 import { addNotice } from "lib/flashes"
 import TagsInput from "../shared/TagsInput"
+import {
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import {
+  healthMonitorTypes,
+  httpMethodRelation,
+  expectedCodesRelation,
+  urlPathRelation,
+  httpMethods,
+} from "../../helpers/healthMonitorHelpers"
 
 const NewHealthMonitor = (props) => {
-  const { searchParamsToString, matchParams, formErrorMessage } = useCommons()
-  const {
-    createHealthMonitor,
-    healthMonitorTypes,
-    httpMethodRelation,
-    expectedCodesRelation,
-    urlPathRelation,
-    httpMethods,
-  } = useHealthmonitor()
+  const { createHealthMonitor } = useHealthmonitor()
   const { persistPool } = usePool()
 
   /**
@@ -44,14 +48,14 @@ const NewHealthMonitor = (props) => {
   /**
    * Form stuff
    */
-  const [initialValues, setInitialValues] = useState({})
+  const [initialValues, setInitialValues] = useState({ max_retries_down: 3 })
   const [formErrors, setFormErrors] = useState(null)
   const [showHttpMethods, setShowHttpMethods] = useState(false)
   const [showExpectedCodes, setShowExpectedCodes] = useState(false)
   const [showUrlPath, setShowUrlPath] = useState(false)
 
-  const validate = ({ name, type, max_retries, delay }) => {
-    return name && type && max_retries && delay && true
+  const validate = ({ name, type, delay }) => {
+    return name && type && delay && true
   }
 
   const onSubmit = (values) => {
@@ -64,11 +68,10 @@ const NewHealthMonitor = (props) => {
     const poolID = params.poolID
 
     return createHealthMonitor(lbID, poolID, values)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Health Monitor <b>{response.data.name}</b> ({response.data.id}) is
-            being created.
+            Health Monitor <b>{data.name}</b> ({data.id}) is being created.
           </React.Fragment>
         )
         // fetch the pool again containing the new healthmonitor so it gets updated fast
@@ -116,7 +119,7 @@ const NewHealthMonitor = (props) => {
         <Modal.Body>
           <p>
             Checks the health of the pool members. Unhealthy members will be
-            taken out of traffic schedule. Set's a load balancer to OFFLINE when
+            taken out of traffic schedule. Sets a load balancer to OFFLINE when
             all members are unhealthy.
           </p>
           <Form.Errors errors={formErrors} />
@@ -138,37 +141,19 @@ const NewHealthMonitor = (props) => {
             </span>
           </Form.ElementHorizontal>
 
-          <Form.ElementHorizontal
-            label="Max Retries"
-            name="max_retries"
-            required
-          >
+          <Form.ElementHorizontal label="Max Retries" name="max_retries_down">
             <Form.Input
               elementType="input"
               type="number"
               min="1"
               max="10"
-              name="max_retries"
+              name="max_retries_down"
             />
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
-              Number of failed health checks before pool member is marked
-              OFFLINE. A valid value is from 1 to 10.
-            </span>
-          </Form.ElementHorizontal>
-
-          <Form.ElementHorizontal label="Probe Timeout" name="timeout" required>
-            <Form.Input
-              elementType="input"
-              type="number"
-              min="1"
-              name="timeout"
-            />
-            <span className="help-block">
-              <i className="fa fa-info-circle"></i>
-              The time, in seconds, after which a single health check probe
-              times out (fails). This value must be less than the interval
-              value.
+              The number of allowed check failures before marking the
+              member as OFFLINE. A valid value is from 1 to 10.
+              The default is 3.
             </span>
           </Form.ElementHorizontal>
 

@@ -1,8 +1,10 @@
 module Core
   # implements service layer
   module ServiceLayer
-    class ServiceNotFoundError < StandardError; end
-    class ServiceParentError < StandardError; end
+    class ServiceNotFoundError < StandardError
+    end
+    class ServiceParentError < StandardError
+    end
 
     # This class manages services
     class ServicesManager
@@ -10,9 +12,7 @@ module Core
 
       class << self
         def service_class(service_name)
-          @service_classes_mutex.synchronize do
-            @service_classes ||= {}
-          end
+          @service_classes_mutex.synchronize { @service_classes ||= {} }
 
           unless @service_classes[service_name]
             # construct the class name of requested service.
@@ -21,7 +21,7 @@ module Core
             class_name = service_name.to_s.classify
             # if service_name contains a "s" at the end then add a s
             # to the class_name
-            class_name += 's' if service_name.to_s.last == 's'
+            class_name += "s" if service_name.to_s.last == "s"
             # build the complete class name
             class_name = "::ServiceLayer::#{class_name}Service"
             # try to evaluate the class

@@ -5,8 +5,7 @@ import { ErrorsList } from "lib/elektra-form/components/errors_list"
 
 import * as constants from "../constants"
 
-const errorMessage = (error) =>
-  (error.response && error.response.data) || error.message
+const errorMessage = (error) => error.data || error.message
 
 /* global React */
 const showError = (error) =>
@@ -84,10 +83,10 @@ export const deleteAccount = (accountName) => (dispatch) => {
         resolve({ success: true })
       })
       .catch((error) => {
-        if (error.response && error.response.status == 409) {
-          const body = error.response.data
-          if (body.error) {
-            showError({ message: body.error })
+        if (error.status == 409) {
+          const body = error.data
+          if (body?.error) {
+            showError({ message: body?.error })
             reject()
           } else {
             //response contains instructions about how to proceed with
@@ -124,9 +123,10 @@ const fetchRepositoryPage = (accountName, marker) => (dispatch) => {
     })
   }
 
-  const opts = marker == null ? {} : { marker }
   ajaxHelper
-    .get(`/keppel/v1/accounts/${accountName}/repositories`, opts)
+    .get(`/keppel/v1/accounts/${accountName}/repositories`, {
+      params: { marker },
+    })
     .then((response) => {
       const repos = response.data.repositories
       dispatch({
@@ -196,11 +196,10 @@ const fetchManifestPage = (accountName, repoName, marker) => (dispatch) => {
     })
   }
 
-  const opts = marker == null ? {} : { marker }
   ajaxHelper
     .get(
       `/keppel/v1/accounts/${accountName}/repositories/${repoName}/_manifests`,
-      opts
+      { params: { marker } }
     )
     .then((response) => {
       const manifests = response.data.manifests

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { PrettyDate } from "lib/components/pretty_date"
+import React from "react"
 
 import * as constants from "../../constants"
 import ShareActions from "../shares/actions"

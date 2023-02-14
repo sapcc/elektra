@@ -4,24 +4,31 @@ module Identity
   # This class implements project actions
   class ProjectsController < ::DashboardController
     before_action :project_id_required, except: %i[index create new]
-    before_action :get_project_id,  except: %i[index create new show view show_wizard]
+    before_action :get_project_id,
+                  except: %i[index create new show view show_wizard]
 
     # load @project because we do not want to use the @active_project from the object cache
     # in case the description was changed we want to show the user the changes immediately
-    before_action :get_project, only: %i[show view show_wizard enable_sharding sharding_skip_wizard_confirm]
+    before_action :get_project,
+                  only: %i[
+                    show
+                    view
+                    show_wizard
+                    enable_sharding
+                    sharding_skip_wizard_confirm
+                  ]
 
     # check wizard state and redirect unless finished
     before_action :check_wizard_status, only: [:show]
     before_action :load_project_resource, only: %i[show show_wizard]
 
-    before_action do
-      @scoped_project_fid = params[:project_id] || @project_id
-    end
+    before_action { @scoped_project_fid = params[:project_id] || @project_id }
 
     authorization_required(
-      context: 'identity', additional_policy_params: {
-        project: proc { { id: @project_id, domain_id: @scoped_domain_id } }
-      }
+      context: "identity",
+      additional_policy_params: {
+        project: proc { { id: @project_id, domain_id: @scoped_domain_id } },
+      },
     )
 
     def show
@@ -31,7 +38,8 @@ module Identity
       end
     end
 
-    def view; end
+    def view
+    end
 
     def show_wizard
       load_and_update_wizard_status if request.xhr?
@@ -45,78 +53,92 @@ module Identity
 
     def enable_sharding
       @project_wizard = false
-      @project_wizard = true if params['project_wizard'] == 'true'
-      if params['enable'] == 'true'
+      @project_wizard = true if params["project_wizard"] == "true"
+      if params["enable"] == "true"
         service_user_project = service_user.identity.find_project(@project_id)
         tags = service_user_project.tags
-        tags << 'sharding_enabled'
+        tags << "sharding_enabled"
         service_user_project.tags = tags
-        if service_user_project.save && audit_logger.info(current_user, 'sharding enabled', service_user_project)
+        if service_user_project.save &&
+             audit_logger.info(
+               current_user,
+               "sharding enabled",
+               service_user_project,
+             )
           unless @project_wizard
-            flash[:notice] = 'Sharding activation was successfull. You can now use all available shards.'
+            flash[
+              :notice
+            ] = "Sharding activation was successfull. You can now use all available shards."
           end
         else
-          flash[:error] = service_user_project.errors.full_messages.to_sentence unless params['modal']
+          flash[:error] = service_user_project
+            .errors
+            .full_messages
+            .to_sentence unless params["modal"]
         end
-        redirect_to "#{plugin('resources').project_path}#/availability_zones" unless @project_wizard
+        unless @project_wizard
+          redirect_to "#{plugin("resources").project_path}#/availability_zones"
+        end
       end
       # if project_wizard just load enable_sharding.js.erb that is closing the modal window
     end
 
     def api_endpoints
       @token = current_user.token
-      @webcli_endpoint = current_user.service_url('webcli')
-      @identity_url = current_user.service_url('identity')
+      @webcli_endpoint = current_user.service_url("webcli")
+      @identity_url = current_user.service_url("identity")
     end
 
     def download_openrc
       @token = current_user.token
-      @webcli_endpoint = current_user.service_url('webcli')
-      @identity_url = current_user.service_url('identity')
+      @webcli_endpoint = current_user.service_url("webcli")
+      @identity_url = current_user.service_url("identity")
 
-      out_data = "export OS_AUTH_URL=#{@identity_url}\n" \
-        "export OS_IDENTITY_API_VERSION=3\n" \
-        "export OS_PROJECT_NAME=\"#{@scoped_project_name}\"\n" \
-        "export OS_PROJECT_DOMAIN_NAME=\"#{@scoped_domain_name}\"\n" \
-        "export OS_USERNAME=#{current_user.name}\n" \
-        "export OS_USER_DOMAIN_NAME=\"#{@scoped_domain_name}\"\n" \
-        "echo \"Please enter your OpenStack Password: \"\n" \
-        "read -sr OS_PASSWORD_INPUT\n" \
-        "export OS_PASSWORD=$OS_PASSWORD_INPUT\n" \
-        "export OS_REGION_NAME=#{current_region}\n" \
-        "export OS_COMPUTE_API_VERSION=2.60\n" \
+      out_data =
+        "export OS_AUTH_URL=#{@identity_url}\n" \
+          "export OS_IDENTITY_API_VERSION=3\n" \
+          "export OS_PROJECT_NAME=\"#{@scoped_project_name}\"\n" \
+          "export OS_PROJECT_DOMAIN_NAME=\"#{@scoped_domain_name}\"\n" \
+          "export OS_USERNAME=#{current_user.name}\n" \
+          "export OS_USER_DOMAIN_NAME=\"#{@scoped_domain_name}\"\n" \
+          "echo \"Please enter your OpenStack Password: \"\n" \
+          "read -sr OS_PASSWORD_INPUT\n" \
+          "export OS_PASSWORD=$OS_PASSWORD_INPUT\n" \
+          "export OS_REGION_NAME=#{current_region}\n" \
+          "export OS_COMPUTE_API_VERSION=2.60\n"
 
       send_data(
         out_data,
-        type: 'text/plain',
+        type: "text/plain",
         filename: "openrc-#{@scoped_domain_name}-#{@scoped_project_name}",
-        dispostion: 'inline',
-        status: :ok
+        dispostion: "inline",
+        status: :ok,
       )
     end
 
     def download_openrc_ps1
       @token = current_user.token
-      @webcli_endpoint = current_user.service_url('webcli')
-      @identity_url = current_user.service_url('identity')
+      @webcli_endpoint = current_user.service_url("webcli")
+      @identity_url = current_user.service_url("identity")
 
-      out_data = "$env:OS_AUTH_URL=\"#{@identity_url}\"\r\n" \
-        "$env:OS_IDENTITY_API_VERSION=\"3\"\r\n" \
-        "$env:OS_PROJECT_NAME=\"#{@scoped_project_name}\"\r\n" \
-        "$env:OS_PROJECT_DOMAIN_NAME=\"#{@scoped_domain_name}\"\r\n" \
-        "$env:OS_USERNAME=\"#{current_user.name}\"\r\n" \
-        "$env:OS_USER_DOMAIN_NAME=\"#{@scoped_domain_name}\"\r\n" \
-        "$Password = Read-Host -Prompt \"Please enter your OpenStack Password\" -AsSecureString\r\n" \
-        "$env:OS_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))\r\n" \
-        "$env:OS_REGION_NAME=\"#{current_region}\"\r\n" \
-        "$env:OS_COMPUTE_API_VERSION=\"2.60\"\r\n" \
+      out_data =
+        "$env:OS_AUTH_URL=\"#{@identity_url}\"\r\n" \
+          "$env:OS_IDENTITY_API_VERSION=\"3\"\r\n" \
+          "$env:OS_PROJECT_NAME=\"#{@scoped_project_name}\"\r\n" \
+          "$env:OS_PROJECT_DOMAIN_NAME=\"#{@scoped_domain_name}\"\r\n" \
+          "$env:OS_USERNAME=\"#{current_user.name}\"\r\n" \
+          "$env:OS_USER_DOMAIN_NAME=\"#{@scoped_domain_name}\"\r\n" \
+          "$Password = Read-Host -Prompt \"Please enter your OpenStack Password\" -AsSecureString\r\n" \
+          "$env:OS_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))\r\n" \
+          "$env:OS_REGION_NAME=\"#{current_region}\"\r\n" \
+          "$env:OS_COMPUTE_API_VERSION=\"2.60\"\r\n"
 
       send_data(
         out_data,
-        type: 'text/plain',
+        type: "text/plain",
         filename: "openrc-#{@scoped_domain_name}-#{@scoped_project_name}.ps1",
-        dispostion: 'inline',
-        status: :ok
+        dispostion: "inline",
+        status: :ok,
       )
     end
 
@@ -126,25 +148,37 @@ module Identity
 
     def sharding_skip_wizard
       skip_wizard = params[:project][:skip_wizard] || false
-      project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
-      project_profile.update_wizard_status('sharding', ProjectProfile::STATUS_SKIPPED) if skip_wizard
+      project_profile =
+        ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+      if skip_wizard
+        project_profile.update_wizard_status(
+          "sharding",
+          ProjectProfile::STATUS_SKIPPED,
+        )
+      end
     end
 
     private
 
     def get_project
       get_project_id
-      @project = services.identity.find_project(
-        @project_id, subtree_as_ids: true, parents_as_ids: true
-      )
+      @project =
+        services.identity.find_project(
+          @project_id,
+          subtree_as_ids: true,
+          parents_as_ids: true,
+        )
       @sharding_enabled = @project.sharding_enabled if @project
     end
 
     def get_project_id
       @project_id = params[:id] || params[:project_id]
-      entry = FriendlyIdEntry.find_by_class_scope_and_key_or_slug(
-        'Project', @scoped_domain_id, @project_id
-      )
+      entry =
+        FriendlyIdEntry.find_by_class_scope_and_key_or_slug(
+          "Project",
+          @scoped_domain_id,
+          @project_id,
+        )
       @project_id = entry.key if entry
     end
 
@@ -154,36 +188,44 @@ module Identity
 
       # for all services that implements a wizard integration do
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
-      service_names = %w[masterdata_cockpit networking resource_management].keep_if do |name|
-        if name == 'resource_management'
-          services.available?(:resources)
-        else
-          services.available?(name.to_sym)
+      service_names =
+        %w[masterdata_cockpit networking resource_management].keep_if do |name|
+          if name == "resource_management"
+            services.available?(:resources)
+          else
+            services.available?(name.to_sym)
+          end
         end
-      end
 
       # ProjectProfile /elektra/app/models
-      project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+      project_profile =
+        ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
       # check the status in the project_profiles database
       # if all is done do not show the wizard
       return if project_profile.wizard_finished?(service_names)
 
-      redirect_to plugin('identity').project_wizard_url
+      redirect_to plugin("identity").project_wizard_url
     end
 
     # show the status of all implented wizard steps
     def load_and_update_wizard_status
       @wizard_finished = true
-      @project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+      @project_profile =
+        ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
       # for all services that implements a wizard integration do
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
-      %w[resource_management sharding masterdata_cockpit networking].each do |service_name|
-        if service_name == 'resource_management'
+      %w[
+        resource_management
+        sharding
+        masterdata_cockpit
+        networking
+      ].each do |service_name|
+        if service_name == "resource_management"
           next unless services.available?(:resources)
-        elsif service_name == 'sharding'
-          puts 'INFO: sharding is no service'
+        elsif service_name == "sharding"
+          puts "INFO: sharding is no service"
         else
           next unless services.available?(service_name.to_sym)
         end
@@ -192,15 +234,19 @@ module Identity
         # check database for finished wizard step otherwise check update_SERVICE_wizard_status()
         # Note: if the wizard done state is set disable this for debugging
         #       or just delete the entry in the database "DELETE from project_profiles WHERE project_id=''"
-        next if @project_profile.wizard_finished?(service_name) || @project_profile.wizard_skipped?(service_name)
+        if @project_profile.wizard_finished?(service_name) ||
+             @project_profile.wizard_skipped?(service_name)
+          next
+        end
 
         # check wizard status for service_name
-        @wizard_finished &= begin
-          send("update_#{service_name}_wizard_status")
-        rescue StandardError => _e
-          instance_variable_set("@#{service_name}_service_available", false)
-          false
-        end
+        @wizard_finished &=
+          begin
+            send("update_#{service_name}_wizard_status")
+          rescue StandardError => _e
+            instance_variable_set("@#{service_name}_service_available", false)
+            false
+          end
       end
     end
 
@@ -208,12 +254,18 @@ module Identity
     # this functions are called from load_and_update_wizard_status()
     # RESOURCE MANAGEMENT
     def update_resource_management_wizard_status
-      if services.resources.has_project_quotas?(@scoped_domain_id, @scoped_project_id)
-        @project_profile.update_wizard_status('resource_management', ProjectProfile::STATUS_DONE)
+      if services.resources.has_project_quotas?(
+           @scoped_domain_id,
+           @scoped_project_id,
+         )
+        @project_profile.update_wizard_status(
+          "resource_management",
+          ProjectProfile::STATUS_DONE,
+        )
       else
-        @project_profile.update_wizard_status('resource_management', nil)
+        @project_profile.update_wizard_status("resource_management", nil)
       end
-      @project_profile.wizard_finished?('resource_management')
+      @project_profile.wizard_finished?("resource_management")
     end
 
     # MASTERDATA
@@ -222,7 +274,8 @@ module Identity
       @project_masterda_is_complete = false
       @project_masterdata_missing_attributes = nil
       begin
-        project_masterdata = services.masterdata_cockpit.get_project(@scoped_project_id)
+        project_masterdata =
+          services.masterdata_cockpit.get_project(@scoped_project_id)
         # @project_masterda_is_complete is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml
         @project_masterda_is_complete = project_masterdata.is_complete
       rescue StandardError
@@ -236,17 +289,19 @@ module Identity
 
       if project_masterdata && @project_masterda_is_complete
         @project_profile.update_wizard_status(
-          'masterdata_cockpit', ProjectProfile::STATUS_DONE
+          "masterdata_cockpit",
+          ProjectProfile::STATUS_DONE,
         )
       elsif project_masterdata && !@project_masterda_is_complete
         # @project_masterdata_missing_attributes is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml
-        @project_masterdata_missing_attributes = project_masterdata.missing_attributes
-        @project_profile.update_wizard_status('masterdata_cockpit', nil)
+        @project_masterdata_missing_attributes =
+          project_masterdata.missing_attributes
+        @project_profile.update_wizard_status("masterdata_cockpit", nil)
       else
-        @project_profile.update_wizard_status('masterdata_cockpit', nil)
+        @project_profile.update_wizard_status("masterdata_cockpit", nil)
       end
 
-      @project_profile.wizard_finished?('masterdata_cockpit')
+      @project_profile.wizard_finished?("masterdata_cockpit")
     end
 
     # SHARDING
@@ -256,40 +311,56 @@ module Identity
 
       if sharding_enabled == true
         @project_profile.update_wizard_status(
-          'sharding', ProjectProfile::STATUS_DONE
+          "sharding",
+          ProjectProfile::STATUS_DONE,
         )
       else
-        @project_profile.update_wizard_status('sharding', nil)
+        @project_profile.update_wizard_status("sharding", nil)
       end
 
-      @project_profile.wizard_finished?('sharding')
+      @project_profile.wizard_finished?("sharding")
     end
 
     # NETWORKING
     def update_networking_wizard_status
       # ensure current user has the network admin role (UNTREATED EDGE CASE: current user isn't admin. Might have to add some stuff for this)
-      if current_user.has_role?('admin') && !current_user.has_role?('network_admin')
-        network_admin_role = services.identity.grant_project_user_role_by_role_name(@scoped_project_id,
-                                                                                    current_user.id, 'network_admin')
+      if current_user.has_role?("admin") &&
+           !current_user.has_role?("network_admin")
+        network_admin_role =
+          services.identity.grant_project_user_role_by_role_name(
+            @scoped_project_id,
+            current_user.id,
+            "network_admin",
+          )
         # HACK: extend current_user context to add the new assigned role
-        current_user.context['roles'] << { 'id' => network_admin_role.id, 'name' => network_admin_role.name }
+        current_user.context["roles"] << {
+          "id" => network_admin_role.id,
+          "name" => network_admin_role.name,
+        }
       end
 
       # get external networks for this project (using the current user context -> this will retrieve both self-owned and shared networks)
-      external_nets = services.networking.networks('router:external' => true)
+      external_nets = services.networking.networks("router:external" => true)
 
       # mark wizard done if project has at least one external network. Either shared or owned
       if external_nets.blank?
-        @project_profile.update_wizard_status('networking', nil)
+        @project_profile.update_wizard_status("networking", nil)
       else
-        @project_profile.update_wizard_status('networking', ProjectProfile::STATUS_DONE)
+        @project_profile.update_wizard_status(
+          "networking",
+          ProjectProfile::STATUS_DONE,
+        )
       end
 
-      @project_profile.wizard_finished?('networking')
+      @project_profile.wizard_finished?("networking")
     end
 
     def load_project_resource
-      @project_resource = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
+      @project_resource =
+        services.resource_management.find_project(
+          @scoped_domain_id,
+          @scoped_project_id,
+        )
     rescue StandardError
       # do not fail when Limes is down
       @project_resource = nil

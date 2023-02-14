@@ -5,7 +5,7 @@ if [ ! -f "cypress.json" ]; then
   exit 1
 fi
 
-function help_me () {
+function help_me() {
 
   echo "Usage: run.sh --host HOST --profile member|admin --e2e_path /path/to/e2e --record* --browser chrome|firefox|electron* --debug CYPRESS-DEBUG-FLAG* TESTNAME* "
   echo "       run.sh --help                                                   # will print out this message"
@@ -40,52 +40,51 @@ CY_CMD="cypress"
 if [[ "$1" == "--help" ]]; then
   help_me
 else
-  while [[ $# -gt 0 ]]
-  do
+  while [[ $# -gt 0 ]]; do
     key="$1"
 
     case $key in
-        -h|--host)
-        HOST="$2"
-        shift # past argument
-        shift # past value
-        ;;
-        -p|--profile)
-        PROFILE="$2"
-        SPECS_FOLDER="cypress/integration/$PROFILE/**/*"
-        shift # past argument
-        shift # past value
-        ;;
-        -d|--debug)
-        DEBUG="$2"
-        shift # past argument
-        shift # past value
-        ;;
-        -e2e|--e2e_path) # local path for e2e
-        E2E_PATH="$2"
-        shift # past argument
-        shift # past value
-        ;;
-        -b|--browser) 
-        CYPRESS_BROWSER="$2"
-        shift # past argument
-        shift # past value
-        ;;
-        -i|--info) 
-        docker run -it --rm --entrypoint=cypress keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest info
-        exit
-        ;;
-        -r|--record) 
-        hostname=$(hostname)
-        CI_BUID_ID="$(date) - DEV - $hostname"
-        CY_CMD="cy2"
-        CY_RECORD="https://director.cypress.qa-de-1.cloud.sap"
-        shift # past argument
-        ;;
-        *)    # test folder
-        SPECS_FOLDER="cypress/integration/$PROFILE/$1.js"
-        shift # past argument
-        ;;
+    -h | --host)
+      HOST="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -p | --profile)
+      PROFILE="$2"
+      SPECS_FOLDER="cypress/integration/$PROFILE/**/*"
+      shift # past argument
+      shift # past value
+      ;;
+    -d | --debug)
+      DEBUG="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -e2e | --e2e_path) # local path for e2e
+      E2E_PATH="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -b | --browser)
+      CYPRESS_BROWSER="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -i | --info)
+      docker run -it --rm --entrypoint=cypress keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest info
+      exit
+      ;;
+    -r | --record)
+      hostname=$(hostname)
+      CI_BUID_ID="$(date) - DEV - $hostname"
+      CY_CMD="cy2"
+      CY_RECORD="https://director.cypress.qa-de-1.cloud.sap"
+      shift # past argument
+      ;;
+    *) # test folder
+      SPECS_FOLDER="cypress/integration/$PROFILE/$1.js"
+      shift # past argument
+      ;;
     esac
   done
 fi
@@ -117,7 +116,7 @@ fi
 if [[ -z "${HOST}" ]]; then
   if [ -f "/usr/local/bin/wb" ]; then
     # this runs only in workspaces!!!
-    APP_PORT=$(wb elektra 'echo $APP_PORT' | tail -1 | tr -d '\r')
+    APP_PORT=$(wb elektra 'echo $PORT' | tail -1 | tr -d '\r')
     SHOW_APP_PORT="APP_PORT      => $APP_PORT"
     HOST="http://localhost:$APP_PORT"
   fi
@@ -148,7 +147,9 @@ if [[ -z "${HOST}" ]]; then
 fi
 
 # get test user and password
-set -o allexport; source ../.env; set +o allexport
+set -o allexport
+source ../.env
+set +o allexport
 
 TEST_USER=$TEST_MEMBER_USER
 TEST_PASSWORD=$TEST_MEMBER_PASSWORD
@@ -187,7 +188,6 @@ fi
 # https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 # echo $HOST | cat -A
 
-
 echo "$SHOW_APP_PORT"
 echo "HOST          => $HOST"
 echo "BROWSER       => $CYPRESS_BROWSER"
@@ -219,5 +219,5 @@ docker run --rm -it \
   --entrypoint $CY_CMD \
   --network=host \
   keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest run "${CY_OPTIONS[@]}" --spec "$SPECS_FOLDER" --browser $CYPRESS_BROWSER
-  # https://github.wdf.sap.corp/cc/secrets/tree/master/ci/cypress-dashboard/Dockerfile
-  # https://main.ci.eu-de-2.cloud.sap/teams/services/pipelines/cypress-dashboard/jobs/build-cypress-client-image/
+# https://github.wdf.sap.corp/cc/secrets/tree/master/ci/cypress-dashboard/Dockerfile
+# https://main.ci.eu-de-2.cloud.sap/teams/services/pipelines/cypress-dashboard/jobs/build-cypress-client-image/

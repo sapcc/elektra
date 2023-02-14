@@ -1,8 +1,9 @@
 import { useCallback } from "react"
 import { Tabs, Tab } from "react-bootstrap"
 import ProjectRoleAssignments from "../containers/project_role_assignments"
+import React from "react"
 
-export default ({ activeTab, projectId, domainId }) => {
+const RoleAssignments = ({ activeTab, projectId, domainId }) => {
   // update browser address bar
   const handleSelect = useCallback((tab) => {
     const newHref = window.location.href.replace(
@@ -35,3 +36,5 @@ export default ({ activeTab, projectId, domainId }) => {
     </Tabs>
   )
 }
+
+export default RoleAssignments

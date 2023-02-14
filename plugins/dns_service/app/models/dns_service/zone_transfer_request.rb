@@ -5,11 +5,11 @@ module DnsService
   class ZoneTransferRequest < Core::ServiceLayer::Model
     def attributes_for_update
       {
-        'target_project_id'   => read('target_project_id'),
-        'description'         => read('description')
+        "target_project_id" => read("target_project_id"),
+        "description" => read("description"),
       }.delete_if { |_k, v| v.blank? }
     end
-    
+
     # this method creates a request accept
     def accept(target_project_id = nil)
       rescue_api_errors do

@@ -1,6 +1,7 @@
+/* eslint-disable no-undef */
 /* eslint no-console:0 */
 import { BrowserRouter, Route, Switch } from "react-router-dom"
-
+import React from "react"
 import SecurityGroups from "../containers/security_groups/list"
 import NewSecurityGroupModal from "../containers/security_groups/new"
 import EditSecurityGroupModal from "../containers/security_groups/edit"
@@ -12,7 +13,7 @@ import RBACs from "../containers/rbacs/list"
 import Title from "./title"
 
 // render all components inside a hash router
-export default (props) => {
+const SecurityGroupApp = (props) => {
   //console.log(props)
   return (
     <BrowserRouter basename={`${window.location.pathname}?r=`}>
@@ -50,3 +51,5 @@ export default (props) => {
     </BrowserRouter>
   )
 }
+
+export default SecurityGroupApp

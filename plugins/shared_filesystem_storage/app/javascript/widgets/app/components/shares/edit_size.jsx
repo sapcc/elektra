@@ -1,17 +1,18 @@
-import { Modal, Button } from 'react-bootstrap';
-import { Form } from 'lib/elektra-form';
+import { Modal, Button } from "react-bootstrap"
+import { Form } from "lib/elektra-form"
+import React from "react"
 
 export default class EditShareSizeForm extends React.Component {
   state = {
-    show: false
+    show: false,
   }
 
   componentDidMount() {
-    this.setState({show: this.props.share!=null})
+    this.setState({ show: this.props.share != null })
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({show: nextProps.share!=null})
+    this.setState({ show: nextProps.share != null })
   }
 
   restoreUrl = (e) => {
@@ -21,14 +22,14 @@ export default class EditShareSizeForm extends React.Component {
 
   hide = (e) => {
     if (e) e.stopPropagation()
-    this.setState({show: false})
+    this.setState({ show: false })
   }
 
   onSubmit = (values) => {
-    return this.props.handleSubmit(values).then(() => this.hide());
+    return this.props.handleSubmit(values).then(() => this.hide())
   }
 
-  render(){
+  render() {
     // console.log(this.props.share)
     return (
       <Modal
@@ -36,35 +37,43 @@ export default class EditShareSizeForm extends React.Component {
         onHide={this.hide}
         onExited={this.restoreUrl}
         bsSize="large"
-        aria-labelledby="contained-modal-title-lg">
+        aria-labelledby="contained-modal-title-lg"
+      >
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Extend / Shrink Share Size</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">
+            Extend / Shrink Share Size
+          </Modal.Title>
         </Modal.Header>
 
         <Form
           onSubmit={this.onSubmit}
-          className='form form-horizontal'
-          validate={values => true}
-          initialValues={this.props.share}>
+          className="form form-horizontal"
+          validate={(values) => true}
+          initialValues={this.props.share}
+        >
           <Modal.Body>
-            <Form.Errors/>
+            <Form.Errors />
 
-            <Form.ElementHorizontal label='Name' name="name">
-              <Form.Input elementType='input' type='text' name='name' disabled/>
+            <Form.ElementHorizontal label="Name" name="name">
+              <Form.Input
+                elementType="input"
+                type="text"
+                name="name"
+                disabled
+              />
             </Form.ElementHorizontal>
 
-            <Form.ElementHorizontal label='ID' name="id">
-              <Form.Input elementType='input' type='text' name='id' disabled/>
+            <Form.ElementHorizontal label="ID" name="id">
+              <Form.Input elementType="input" type="text" name="id" disabled />
             </Form.ElementHorizontal>
 
-            <Form.ElementHorizontal label='Size (GB)' name="size">
-              <Form.Input elementType='input' type='number' name='size'/>
+            <Form.ElementHorizontal label="Size (GB)" name="size">
+              <Form.Input elementType="input" type="number" name="size" />
             </Form.ElementHorizontal>
-
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.hide}>Cancel</Button>
-            <Form.SubmitButton label='Save'/>
+            <Form.SubmitButton label="Save" />
           </Modal.Footer>
         </Form>
       </Modal>

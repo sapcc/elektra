@@ -9,9 +9,13 @@ describe("project landing page", () => {
 
   it("open project landing page and edit project description", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/identity/project/home`)
-    cy.get('div.dropdown.header-action').click()
-    cy.get(`a[href*="${Cypress.env("TEST_DOMAIN")}/admin/masterdata-cockpit/project/edit_project?load_project_root=true"]`).click()
-    cy.contains('h4','Edit Project')
+    cy.get("div.dropdown.header-action").click()
+    cy.get(
+      `a[href*="${Cypress.env(
+        "TEST_DOMAIN"
+      )}/admin/masterdata-cockpit/project/edit_project?load_project_root=true"]`
+    ).click()
+    cy.contains("h4", "Edit Project")
     // disabled that test because it causes problems with friendlyID
     //let currenDate = Date.now()
     //cy.get('textarea#project_description').type(`{selectall}This project is used by TEST_D021500_TM user for elektra e2e tests added by e2e test ${currenDate}`)
@@ -21,24 +25,26 @@ describe("project landing page", () => {
 
   it("open project landing page and check user profile", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/identity/project/home`)
-    cy.contains('a.navbar-identity','Technical User').click()
-    cy.contains('a','Profile').click()
+    cy.contains("a.navbar-identity", "Technical User").click()
+    cy.contains("a", "Profile").click()
     // check not in one string because it can be different order
-    cy.contains('td','network_admin')
-    cy.contains('td','admin')
-    cy.contains('td','resource_admin')
-    cy.contains('td','member')
-    cy.contains('a','edit role assignments').click()
-    cy.contains('button','Add New Member')
+    cy.contains("td", "network_admin")
+    cy.contains("td", "admin")
+    cy.contains("td", "resource_admin")
+    cy.contains("td", "member")
+    cy.contains("a", "edit role assignments").click()
+    cy.contains("button", "Add New Member")
   })
 
   it("open project landing page and check logout button", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/identity/project/home`)
-    cy.contains('a.navbar-identity','Technical User').click()
-    cy.contains('a','Log out').click()
+    cy.contains("a.navbar-identity", "Technical User").click()
+    cy.contains("a", "Log out").click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
     // check not in one string because it can be different order
-    cy.contains('SAP Converged Cloud')
-    cy.contains('a','Enter the cloud')
+    cy.contains("SAP Converged Cloud")
+    cy.contains("button", "Log in")
   })
 
   /*
@@ -61,5 +67,4 @@ describe("project landing page", () => {
     cy.contains('button','Cancel').click()
   })
   */
-
 })

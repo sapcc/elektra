@@ -3,6 +3,7 @@ import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
+import React from "react"
 
 //################### SNAPSHOTS #########################
 const requestSnapshots = () => ({

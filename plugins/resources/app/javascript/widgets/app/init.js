@@ -59,6 +59,10 @@ createWidget(null).then((widget) => {
 
   widget.config.scriptParams.canEdit =
     widget.config.scriptParams.canEdit == "true"
+  widget.config.scriptParams.canEditCQD =
+    widget.config.scriptParams.canEditCQD == "true"
+  widget.config.scriptParams.canGotoCluster =
+    widget.config.scriptParams.canGotoCluster == "true"
   widget.config.scriptParams.isForeignScope =
     widget.config.scriptParams.isForeignScope == "true"
 

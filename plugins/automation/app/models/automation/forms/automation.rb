@@ -13,7 +13,7 @@ module Automation
     attribute :repository_credentials, String
     attribute :repository_credentials_removed, Boolean
     attribute :repository_authentication_enabled, Boolean
-    attribute :repository_revision, String, default: 'master'
+    attribute :repository_revision, String, default: "master"
     attribute :tags, String # JSON
     attribute :timeout, Integer, default: 3600
 
@@ -32,26 +32,22 @@ module Automation
     strip_attributes
 
     # validation
-    validates_presence_of :name, :repository, :repository_revision, :type, :timeout
+    validates_presence_of :name,
+                          :repository,
+                          :repository_revision,
+                          :type,
+                          :timeout
 
     def persisted?
       false
     end
 
     def save(automation_service)
-      if valid?
-        persist!(automation_service)
-      else
-        false
-      end
+      valid? ? persist!(automation_service) : false
     end
 
     def update(automation_service)
-      if valid?
-        update!(automation_service)
-      else
-        false
-      end
+      valid? ? update!(automation_service) : false
     end
 
     # def update_repository_credentials(automation_service)
@@ -67,10 +63,10 @@ module Automation
         automation.form_to_attributes(attributes)
       rescue JSON::ParserError => e
         # catch chef attributes json parse error
-        errors.add 'chef_attributes'.to_sym, e.inspect
+        errors.add "chef_attributes".to_sym, e.inspect
         return false
       end
-      
+
       success = automation.save!
       if !success || !automation.errors.blank?
         messages = automation.errors.blank? ? {} : automation.errors
@@ -88,18 +84,27 @@ module Automation
         if automation.repository_credentials_removed
           # credentials should be removed
           automation.attributes[:repository_credentials] = ""
-          automation.attributes.reject!{ |k,v| k == 'repository_authentication_enabled' || k == 'repository_credentials_removed'}
+          automation.attributes.reject! do |k, v|
+            k == "repository_authentication_enabled" ||
+              k == "repository_credentials_removed"
+          end
         elsif automation.repository_credentials.blank?
           # credentials hasn't been changed
-          automation.attributes.reject!{ |k,v| k == 'repository_authentication_enabled' || k == 'repository_credentials' || k == 'repository_credentials_removed'}
+          automation.attributes.reject! do |k, v|
+            k == "repository_authentication_enabled" ||
+              k == "repository_credentials" ||
+              k == "repository_credentials_removed"
+          end
         else
           # credentials has been changed
-          automation.attributes.reject!{ |k,v| k == 'repository_authentication_enabled' || k == 'repository_credentials_removed'}
+          automation.attributes.reject! do |k, v|
+            k == "repository_authentication_enabled" ||
+              k == "repository_credentials_removed"
+          end
         end
-
       rescue JSON::ParserError => e
         # catch chef attributes json parse error
-        errors.add 'chef_attributes'.to_sym, e.inspect
+        errors.add "chef_attributes".to_sym, e.inspect
         return false
       end
       success = automation.save!
@@ -112,9 +117,7 @@ module Automation
 
     def assign_errors(messages)
       messages.each do |key, value|
-        value.each do |item|
-          errors.add key.to_sym, item
-        end
+        value.each { |item| errors.add key.to_sym, item }
       end
     end
   end

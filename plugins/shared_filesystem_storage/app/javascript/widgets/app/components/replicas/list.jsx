@@ -1,4 +1,5 @@
 import ReplicaItem from "./item"
+import React from "react"
 
 export default class ReplicaList extends React.Component {
   constructor(props) {

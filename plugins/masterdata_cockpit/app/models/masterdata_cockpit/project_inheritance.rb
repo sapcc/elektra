@@ -7,6 +7,5 @@ module MasterdataCockpit
     #     "name": "myIO",
     #     "inherited": true
     # }
-
   end
 end

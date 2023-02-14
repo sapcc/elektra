@@ -3,6 +3,7 @@ import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
+import React from "react"
 
 //################### REPLICAS #########################
 const requestReplicas = () => ({
@@ -173,7 +174,7 @@ const resyncReplica = (id) => (dispatch) =>
         }
       })
       .catch((error) => {
-        addError(error.response?.data?.error || error.message)
+        addError(error.data?.error || error.message)
         handleErrors({ errors: error.message })
         dispatch(resetFetchingState(id))
       })
@@ -200,7 +201,7 @@ const promoteReplica = (id) => (dispatch) =>
         }
       })
       .catch((error) => {
-        addError(error.response?.data?.error || error.message)
+        addError(error.data?.error || error.message)
         handleErrors({ errors: error.message })
         dispatch(requestReplicaFailure(id))
       })

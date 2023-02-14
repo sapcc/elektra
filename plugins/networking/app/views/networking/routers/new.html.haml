@@ -15,16 +15,18 @@
       = info.input :network_id, {label: "Floating IP Network",
         input_html:         {},
         as:                 :select,
-        collection:         @external_networks,
+        collection:         @external_networks.sort{ |a,b| a.highest_asr_agents_count<=>b.highest_asr_agents_count},
         selected:           @router.external_gateway_info.fetch("network_id",nil),
-        required:           true}
+        required:           true,
+        icon_hint:          "Please prefer in your choise the networks from top to bottom"}
 
       %fieldset#subnets
         = info.simple_fields_for :external_fixed_ips do |fixed_ips|
           = fixed_ips.input :subnet_id,
             as: :select,
-            input_html: { name: "router[external_gateway_info][external_fixed_ips][][subnet_id]", data: { selected: @router.external_subnet_ids } },
-            collection: @subnets
+            collection: []
+      -# Note: this field is hidden by default and the values are filled with an ajax call, 
+      -#       check also router.js -> init() and showSubnets() 
 
     = f.input :internal_subnets, {label: "Private Network Subnets",
       input_html:         {multiple: true, data: { multiselect_box: true }},

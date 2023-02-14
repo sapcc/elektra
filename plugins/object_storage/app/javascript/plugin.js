@@ -1,4 +1,6 @@
-import "./object_storage.coffee"
+/* eslint-disable no-undef */
+
+import "./object_storage"
 
 // This is always executed on page load.
 $(document).ready(function () {

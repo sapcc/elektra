@@ -76,6 +76,12 @@
           $("span.sizing_memory_recommendation_problem_text").html("Problem to get memory recommendation: " + error.message)
         })
 
+      // https://stackoverflow.com/questions/55466274/simplify-semver-version-compare-logic
+      const isGreaterSemversion = (a, b) => {
+        //console.log(a,b)
+        return a.localeCompare(b, undefined, { numeric: true }) === 1;
+      };
+
       var virtualmachine_guest_tools_target_version = "0";
       fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=group by (guest_tools_target_version) (vrops_virtualmachine_guest_tools_target_version_info)')
         .then(catchErrors)
@@ -83,9 +89,7 @@
         .then((json) => {
           // get the target version
           //console.log(json)
-          var virtualMachineGuestToolsTargetVersionRaw = json.data.result[0].metric.guest_tools_target_version
-          var virtualMachineGuestToolsTargetVersion = parseInt(virtualMachineGuestToolsTargetVersionRaw.replace(/\./g,""))
-          // console.log(virtualMachineGuestToolsTargetVersion)
+          var virtualMachineGuestToolsTargetVersion = json.data.result[0].metric.guest_tools_target_version
           fetch('https://prometheus-vmware.#{@current_region}.cloud.sap/api/v1/query?query=group by (instance_uuid, project, guest_tools_version) (vrops_virtualmachine_guest_tools_version{instance_uuid="#{@instance.id}"}) AND on (instance_uuid) (vrops_virtualmachine_runtime_powerstate{state="Powered On"})')
             .then(catchErrors)
             .then(response => response.json())
@@ -96,18 +100,17 @@
               if (json.data.result.length == 0 ) {
                 $("span.no_guest_tools").show()
               } else {
-                var guestToolsVersionRaw = json.data.result[0].metric.guest_tools_version
-                var guestToolsVersion = parseInt(guestToolsVersionRaw.replace(/\./g,""))
+                var guestToolsVersion = json.data.result[0].metric.guest_tools_version
                 if ( guestToolsVersion == 0 ) {
                   $("span.no_guest_tools").show()
                 }
-                else if (guestToolsVersion < virtualMachineGuestToolsTargetVersion ) {
-                  $("span.guest_tools_not_uptodate_current_version").html(guestToolsVersionRaw)
-                  $("span.guest_tools_not_uptodate_target_version").html(virtualMachineGuestToolsTargetVersionRaw)
+                else if (isGreaterSemversion(virtualMachineGuestToolsTargetVersion,guestToolsVersion)) {
+                  $("span.guest_tools_not_uptodate_current_version").html(guestToolsVersion)
+                  $("span.guest_tools_not_uptodate_target_version").html(virtualMachineGuestToolsTargetVersion)
                   $("span.guest_tools_not_uptodate").show()
                 }
                 else {
-                  $("span.guest_tools_uptodate_current_version").html(guestToolsVersionRaw)
+                  $("span.guest_tools_uptodate_current_version").html(guestToolsVersion)
                   $("span.guest_tools_uptodate").show()
                 }
               }

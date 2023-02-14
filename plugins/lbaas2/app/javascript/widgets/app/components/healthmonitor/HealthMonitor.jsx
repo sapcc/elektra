@@ -1,31 +1,33 @@
-import { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import HelpPopover from "../shared/HelpPopover"
 import { useGlobalState } from "../StateProvider"
-import useCommons from "../../lib/hooks/useCommons"
-import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import useHealthMonitor from "../../lib/hooks/useHealthMonitor"
-import { DefeatableLink } from "lib/components/defeatable_link"
 import usePool from "../../lib/hooks/usePool"
 import ErrorPage from "../ErrorPage"
 import { addNotice, addError } from "lib/flashes"
 import { ErrorsList } from "lib/elektra-form/components/errors_list"
-import { Link } from "react-router-dom"
 import HealthmonitorDetails from "./HealthmonitorDetails"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
 import SmartLink from "../shared/SmartLink"
 import Log from "../shared/logger"
+import { fetchPool } from "../../actions/pool"
+import { findPool } from "../../helpers/poolHelper"
+import {
+  errorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import { findLoadbalancer } from "../../helpers/loadbalancerHelpers"
 
 const HealthMonitor = ({ props, loadbalancerID }) => {
-  const { deleteHealthmonitor, persistHealthmonitor, resetState } =
+  const { removeHealthmonitor, persistHealthmonitor, resetState } =
     useHealthMonitor()
   const poolID = useGlobalState().pools.selected
   const poolError = useGlobalState().pools.error
   const pools = useGlobalState().pools.items
-  const { findPool, fetchPool, persistPool } = usePool()
-  const { searchParamsToString, matchParams, errorMessage } = useCommons()
+  const { persistPool } = usePool()
   const state = useGlobalState().healthmonitors
-  const { findLoadbalancer } = useLoadbalancer()
   const loadbalancers = useGlobalState().loadbalancers.items
 
   const [triggerInitialLoad, setTriggerInitialLoad] = useState(false)
@@ -115,8 +117,8 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
     const lbID = params.loadbalancerID
     const healthmonitorID = healthmonitor.id.slice()
     const healthmonitorName = healthmonitor.name.slice()
-    return deleteHealthmonitor(lbID, poolID, healthmonitorID, healthmonitorName)
-      .then((response) => {
+    return removeHealthmonitor(lbID, poolID, healthmonitorID, healthmonitorName)
+      .then((data) => {
         addNotice(
           <React.Fragment>
             Health Monitor <b>{healthmonitorName}</b> ({healthmonitorID}) is
@@ -131,7 +133,7 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
       .catch((error) => {
         addError(
           React.createElement(ErrorsList, {
-            errors: errorMessage(error.response),
+            errors: errorMessage(error),
           })
         )
       })
@@ -159,7 +161,7 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
               <div className="healthmonitor subtable multiple-subtable-left">
                 <div className="display-flex multiple-subtable-header">
                   <h4>Health Monitor</h4>
-                  <HelpPopover text="Checks the health of the pool members. Unhealthy members will be taken out of traffic schedule. Set's a load balancer to OFFLINE when all members are unhealthy." />
+                  <HelpPopover text="Checks the health of the pool members. Unhealthy members will be taken out of traffic schedule. Sets a load balancer to OFFLINE when all members are unhealthy." />
                 </div>
 
                 <div className="toolbar searchToolbar">

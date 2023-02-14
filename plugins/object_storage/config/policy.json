@@ -1,5 +1,5 @@
 {
-  "object_storage_admin": "role:admin or role:swiftoperator or role:objectstore_admin",
+  "object_storage_admin": "role:admin or role:objectstore_admin",
   "object_storage_viewer": "role:objectstore_viewer or rule:object_storage_admin",
   "object_storage:entry_list": "not project_id:nil",
 

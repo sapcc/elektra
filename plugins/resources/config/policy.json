@@ -14,6 +14,7 @@
   "limes_domain_viewer":  "rule:limes_cluster_viewer or (rule:limes_domain_scope and role:resource_viewer) or rule:limes_domain_editor",
   "limes_project_editor": "rule:limes_domain_editor or (rule:limes_project_scope and role:resource_admin)",
   "limes_project_viewer": "rule:limes_domain_viewer or (rule:limes_project_scope and rule:limes_project_view_roles) or rule:limes_project_editor",
+  "limes_can_goto_cluster": "role:cloud_support_tools_viewer",
 
   /*****************************************************************************
    * All these rules expect a hash in auth_params[:selected] containing a
@@ -23,8 +24,10 @@
 
   "resources:project:show": "rule:limes_project_viewer",
   "resources:project:edit": "rule:limes_project_editor",
+  "resources:project:goto_cluster": "rule:limes_can_goto_cluster",
   "resources:domain:show": "rule:limes_domain_viewer",
   "resources:domain:edit": "rule:limes_domain_editor",
+  "resources:domain:goto_cluster": "rule:limes_can_goto_cluster",
   "resources:cluster:show": "rule:limes_cluster_viewer",
   "resources:cluster:edit": "rule:limes_cluster_editor",
 

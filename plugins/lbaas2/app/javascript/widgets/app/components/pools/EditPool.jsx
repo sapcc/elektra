@@ -1,34 +1,40 @@
 import React, { useState, useEffect } from "react"
-import useCommons from "../../lib/hooks/useCommons"
 import { Modal, Button, Collapse } from "react-bootstrap"
 import usePool from "../../lib/hooks/usePool"
 import ErrorPage from "../ErrorPage"
 import { Form } from "lib/elektra-form"
 import SelectInput from "../shared/SelectInput"
+import SelectInputCreatable from "../shared/SelectInputCreatable"
 import HelpPopover from "../shared/HelpPopover"
-import useListener from "../../lib/hooks/useListener"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import TagsInput from "../shared/TagsInput"
 import { addNotice } from "lib/flashes"
 import Log from "../shared/logger"
+import {
+  fetchListnersForSelect,
+  fetchSecretsForSelect,
+} from "../../actions/listener"
+import {
+  errorMessage,
+  secretRefLabel,
+  toManySecretsWarning,
+  helpBlockTextForSelect,
+  formErrorMessage,
+  matchParams,
+  searchParamsToString,
+} from "../../helpers/commonHelpers"
+import {
+  lbAlgorithmTypes,
+  poolProtocolTypes,
+  poolPersistenceTypes,
+  filterListeners,
+} from "../../helpers/poolHelper"
+import { fetchPool } from "../../actions/pool"
+import { queryTlsCiphers } from "../../../../queries/listener"
 
 const EditPool = (props) => {
-  const {
-    matchParams,
-    searchParamsToString,
-    formErrorMessage,
-    helpBlockTextForSelect,
-  } = useCommons()
-  const {
-    lbAlgorithmTypes,
-    poolPersistenceTypes,
-    protocolTypes,
-    fetchPool,
-    filterListeners,
-    updatePool,
-  } = usePool()
+  const { updatePool } = usePool()
   const { persistLoadbalancer } = useLoadbalancer()
-  const { fetchListnersForSelect, fetchSecretsForSelect } = useListener()
 
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [poolID, setPoolID] = useState(null)
@@ -36,22 +42,14 @@ const EditPool = (props) => {
   const [availableListenersLoading, setAvailableListenersLoading] =
     useState(true)
   const [listenersLoaded, setListenersLoaded] = useState(false)
-  const [secretsLoaded, setSecretsLoaded] = useState(false)
 
   const [lbAlgorithm, setLbAlgorithm] = useState(null)
   const [protocol, setProtocol] = useState(null)
   const [sessionPersistenceType, setSessionPersistenceType] = useState(null)
-  const [sessionPersistenceCookieName, setSessionPersistenceCookieName] =
-    useState(null)
   const [listener, setListener] = useState(null)
   const [certificateContainer, setCertificateContainer] = useState(null)
-  const [certificateContainerDeprecated, setCertificateContainerDeprecated] =
-    useState(null)
   const [authenticationContainer, setAuthenticationContainer] = useState(null)
-  const [
-    authenticationContainerDeprecated,
-    setAuthenticationContainerDeprecated,
-  ] = useState(null)
+  const ciphers = queryTlsCiphers()
 
   const [pool, setPool] = useState({
     isLoading: false,
@@ -67,6 +65,7 @@ const EditPool = (props) => {
     isLoading: false,
     error: null,
     items: [],
+    total: 0,
   })
 
   useEffect(() => {
@@ -116,7 +115,11 @@ const EditPool = (props) => {
         setListenersLoaded(true)
       })
       .catch((error) => {
-        setListeners({ ...listeners, isLoading: false, error: error })
+        setListeners({
+          ...listeners,
+          isLoading: false,
+          error: errorMessage(error),
+        })
       })
   }
 
@@ -129,11 +132,11 @@ const EditPool = (props) => {
           isLoading: false,
           items: data.secrets,
           error: null,
+          total: data.total,
         })
-        setSecretsLoaded(true)
       })
       .catch((error) => {
-        setSecrets({ ...secrets, isLoading: false, error: error })
+        setSecrets({ ...secrets, isLoading: false, error: errorMessage(error) })
       })
   }
 
@@ -153,24 +156,11 @@ const EditPool = (props) => {
   }, [listenersLoaded, protocol, pool])
 
   useEffect(() => {
-    // for testing
-    // if(pool.item) {
-    //   setSelectedCertificateContainer(containers.items, "https://keymanager-3.qa-de-1.cloud.sap:443/v1/containers/9cb71563-3ce3-4642-a93a-a027f7d48776")
-    //   setSelectedAuthenticationContainer(containers.items, "https://keymanager-3.qa-de-1.cloud.sap:443/v1/containers/9cb71563-3ce3-4642-a93a-a027f7d48776")
-    // }
-    if (pool.item && pool.item.tls_container_ref) {
-      setSelectedCertificateContainer(
-        secrets.items,
-        pool.item.tls_container_ref
-      )
-    }
-    if (pool.item && pool.item.ca_tls_container_ref) {
-      setSelectedAuthenticationContainer(
-        secrets.items,
-        pool.item.ca_tls_container_ref
-      )
-    }
-  }, [secretsLoaded, pool])
+    if (!pool.item) return
+    setSelectedCertificateContainer(pool.item?.tls_container_ref)
+    setSelectedAuthenticationContainer(pool.item?.ca_tls_container_ref)
+    setSelectedTlsCiphers()
+  }, [pool.item])
 
   const setSelectedLbAlgorithm = (selectedLbAlgorithm) => {
     const selectedOption = lbAlgorithmTypes().find(
@@ -180,7 +170,7 @@ const EditPool = (props) => {
   }
 
   const setSelectedProtocol = (selectedProtocol) => {
-    const selectedOption = protocolTypes().find(
+    const selectedOption = poolProtocolTypes().find(
       (i) => i.value == (selectedProtocol || "").trim()
     )
     setProtocol(selectedOption)
@@ -214,47 +204,44 @@ const EditPool = (props) => {
     setShowTLSSettings(selectedUseTLS)
   }
 
-  const setSelectedCertificateContainer = (
-    availableSecrets,
-    selectedCertificateContainer
-  ) => {
-    const selectedOption = availableSecrets.find(
-      (i) => i.value == (selectedCertificateContainer || "").trim()
-    )
-
-    // save the secret in a different var if not found
-    // given the user has choose before a secret (selectedCertificateContainer)
-    // and the secrets are laoded (availableSecrets)
-    if (!selectedOption && selectedCertificateContainer && availableSecrets) {
-      setCertificateContainerDeprecated(selectedCertificateContainer)
-    }
-
-    setCertificateContainer(selectedOption)
+  const setSelectedCertificateContainer = (selectedCertificateContainer) => {
+    // there is no more mapping between the selected secret and the options displayed
+    // in the dropdown. Since it is not possible to display all secrets we show the
+    // selected secrets directly on the field.
+    if (selectedCertificateContainer)
+      setCertificateContainer({
+        label: secretRefLabel(selectedCertificateContainer),
+        value: selectedCertificateContainer,
+      })
   }
 
   const setSelectedAuthenticationContainer = (
-    availableSecrets,
     selectedAuthenticationContainer
   ) => {
-    const selectedOption = availableSecrets.find(
-      (i) => i.value == (selectedAuthenticationContainer || "").trim()
-    )
-    // save the secret in a different var if not found
-    // given the user has choose before a secret (selectedCertificateContainer)
-    // and the secrets are laoded (availableSecrets)
-    if (
-      !selectedOption &&
-      selectedAuthenticationContainer &&
-      availableSecrets
-    ) {
-      setAuthenticationContainerDeprecated(selectedAuthenticationContainer)
-    }
-
-    setAuthenticationContainer(selectedOption)
+    // there is no more mapping between the selected secret and the options displayed
+    // in the dropdown. Since it is not possible to display all secrets we show the
+    // selected secrets directly on the field.
+    if (selectedAuthenticationContainer)
+      setAuthenticationContainer({
+        label: secretRefLabel(selectedAuthenticationContainer),
+        value: selectedAuthenticationContainer,
+      })
   }
 
   const setShowPersistenceCookieName = (option) => {
     setShowCookieName(option && option.value == "APP_COOKIE")
+  }
+
+  // initial assigment of the ciphers
+  const setSelectedTlsCiphers = () => {
+    const selectedTlsCiphers = pool.item?.tls_ciphers
+    // split string colon separated to select options
+    if (selectedTlsCiphers && typeof selectedTlsCiphers == "string") {
+      const options = selectedTlsCiphers
+        .split(":")
+        .map((item) => ({ value: item, label: item }))
+      setTlsCiphers(options)
+    }
   }
 
   /*
@@ -282,9 +269,10 @@ const EditPool = (props) => {
    * Form stuff
    */
   const [formErrors, setFormErrors] = useState(null)
-  const [protocols, setProtocols] = useState(protocolTypes())
+  const [protocols, setProtocols] = useState(poolProtocolTypes())
   const [showCookieName, setShowCookieName] = useState(false)
   const [showTLSSettings, setShowTLSSettings] = useState(false)
+  const [tlsCiphers, setTlsCiphers] = useState(null)
 
   const validate = ({
     name,
@@ -327,13 +315,18 @@ const EditPool = (props) => {
       delete newValues.ca_tls_container_ref
     }
 
+    // add manually ciphers since they are not in the context
+    if (showTLSSettings && tlsCiphers) {
+      // convert to string colon-separated
+      newValues.tls_ciphers = tlsCiphers.map((item) => item.value).join(":")
+    }
+
     setFormErrors(null)
     return updatePool(loadbalancerID, poolID, newValues)
-      .then((response) => {
+      .then((data) => {
         addNotice(
           <React.Fragment>
-            Pool <b>{response.data.name}</b> ({response.data.id}) is being
-            updated.
+            Pool <b>{data.name}</b> ({data.id}) is being updated.
           </React.Fragment>
         )
         // fetch the lb again containing the new listener so it gets updated fast
@@ -363,6 +356,10 @@ const EditPool = (props) => {
   }
   const onAuthenticationContainerChange = (option) => {
     setAuthenticationContainer(option)
+  }
+
+  const onSelectTlsCiphers = (options) => {
+    setTlsCiphers(options)
   }
 
   Log.debug("RENDER edit pool")
@@ -579,7 +576,7 @@ const EditPool = (props) => {
                         label="Certificate Secret"
                         name="tls_container_ref"
                       >
-                        <SelectInput
+                        <SelectInputCreatable
                           name="tls_container_ref"
                           isClearable
                           isLoading={secrets.isLoading}
@@ -593,20 +590,12 @@ const EditPool = (props) => {
                           certificate/key bundle for TLS client authentication
                           to the member servers.
                         </span>
+                        {toManySecretsWarning(
+                          secrets.total,
+                          secrets.items?.length
+                        )}
                         {secrets.error && (
                           <span className="text-danger">{secrets.error}</span>
-                        )}
-                        {certificateContainerDeprecated && (
-                          <React.Fragment>
-                            <p>
-                              <b className="text-danger">
-                                Secret(s) not found:{" "}
-                              </b>
-                            </p>
-                            <ul className="secrets-not-found">
-                              <li>{certificateContainerDeprecated}</li>
-                            </ul>
-                          </React.Fragment>
                         )}
                       </Form.ElementHorizontal>
 
@@ -614,7 +603,7 @@ const EditPool = (props) => {
                         label="Authentication Secret (CA)"
                         name="ca_tls_container_ref"
                       >
-                        <SelectInput
+                        <SelectInputCreatable
                           name="ca_tls_container_ref"
                           isClearable
                           isLoading={secrets.isLoading}
@@ -627,20 +616,53 @@ const EditPool = (props) => {
                           The reference secret containing a PEM format CA
                           certificate bundle.
                         </span>
+                        {toManySecretsWarning(
+                          secrets.total,
+                          secrets.items?.length
+                        )}
                         {secrets.error && (
                           <span className="text-danger">{secrets.error}</span>
                         )}
-                        {authenticationContainerDeprecated && (
-                          <React.Fragment>
+                      </Form.ElementHorizontal>
+
+                      <h4>TLS Ciphers Suites</h4>
+                      <div className="row">
+                        <div className="col-sm-12">
+                          <div className="bs-callout bs-callout-warning bs-callout-emphasize">
                             <p>
-                              <b className="text-danger">
-                                Secret(s) not found:{" "}
-                              </b>
+                              This setting is for advanced use cases that
+                              require more control over the network
+                              configuration of the listener. <br />
+                              The following lists the default cipher suites
+                              attached to a listener. This should only be
+                              changed by expert users who know why they need to
+                              make a change. For the majority of scenarios no
+                              change is necessary.
                             </p>
-                            <ul className="secrets-not-found">
-                              <li>{authenticationContainerDeprecated}</li>
-                            </ul>
-                          </React.Fragment>
+                          </div>
+                        </div>
+                      </div>
+                      <Form.ElementHorizontal
+                        label="TLS Ciphers Suites"
+                        name="tls_ciphers"
+                      >
+                        <SelectInput
+                          name="tls_ciphers"
+                          isLoading={ciphers.isLoading}
+                          items={ciphers?.data?.allowCiphers || []}
+                          onChange={onSelectTlsCiphers}
+                          value={tlsCiphers}
+                          isMulti
+                          useFormContext={false}
+                        />
+                        <span className="help-block">
+                          <i className="fa fa-info-circle"></i>
+                          The TLS cipher suites.
+                        </span>
+                        {ciphers.isError && (
+                          <span className="text-danger">
+                            {ciphers.error.message}
+                          </span>
                         )}
                       </Form.ElementHorizontal>
                     </div>
