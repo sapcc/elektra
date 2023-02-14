@@ -9,7 +9,6 @@ module MasterdataCockpit
       {
         "CC" => "Cost Center",
         "IO" => "Internal Order",
-        "SO" => "Sales Order",
         "WBS" => "WBS Element",
       }
     end
