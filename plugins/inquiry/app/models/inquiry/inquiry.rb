@@ -5,6 +5,7 @@ module Inquiry
     paginates_per 20
     default_scope { order(updated_at: :desc) } # default sort order
 
+    attr_accessor :additional_receivers
     has_many :process_steps, -> { order(:created_at) }, dependent: :destroy
 
     belongs_to :requester, class_name: "Inquiry::Processor"
