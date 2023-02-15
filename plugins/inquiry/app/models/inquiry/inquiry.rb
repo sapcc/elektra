@@ -118,6 +118,16 @@ module Inquiry
       state :approved
       state :rejected
       state :closed
+      state :reviewing
+
+      event :review,
+            after: %i[notify_requester notify_processors],
+            error: :error_on_event do
+        transitions from: %i[reviewing open],
+                    to: :reviewing,
+                    after: Proc.new { |*args| log_process_step(*args) }
+      end
+
       event :open,
             after: %i[notify_requester notify_processors],
             error: :error_on_event do
@@ -133,7 +143,7 @@ module Inquiry
         before do
           #run_automatically('approved')
         end
-        transitions from: :open,
+        transitions from: %i[reviewing open],
                     to: :approved,
                     after: Proc.new { |*args| log_process_step(*args) },
                     guards: Proc.new { |*args| can_approve?(*args) }
@@ -146,7 +156,7 @@ module Inquiry
         before do
           #run_automatically('rejected')
         end
-        transitions from: :open,
+        transitions from: %i[reviewing open],
                     to: :rejected,
                     after: Proc.new { |*args| log_process_step(*args) }
       end
@@ -164,7 +174,7 @@ module Inquiry
       event :close,
             error: :error_on_event,
             guards: Proc.new { |*args| can_close?(*args) } do
-        transitions from: %i[approved rejected open],
+        transitions from: %i[approved rejected open reviewing],
                     to: :closed,
                     after: Proc.new { |*args| log_process_step(*args) },
                     guards: [:can_close?]
@@ -320,6 +330,9 @@ module Inquiry
           result =
             self.close!({ user: user, description: description }) if sstate ==
             :closed
+          result =
+            self.review!({ user: user, description: description }) if sstate ==
+            :reviewing
         end
       rescue => e
         self.errors.add(:aasm_state, e.message)
