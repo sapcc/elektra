@@ -357,6 +357,7 @@ module Inquiry
       end
     rescue => e
       self.errors.add(:aasm_state, e.message)
+      # raise e
       return false
     end
 

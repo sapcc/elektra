@@ -75,23 +75,24 @@ describe Inquiry::InquiriesController, type: :controller do
         controller.services.inquiry.get_inquiries({ state: "approved" }).count,
       ).to eq 1
 
-      expect {
+      new_inq =
         controller.services.inquiry.set_inquiry_state(
           inq.id,
           "rejected",
           "Set state to rejected",
           controller.current_user,
         )
-      }.to raise_error Exception
 
-      expect {
+      expect(new_inq.errors.key?(:aasm_state)).to eq true
+
+      new_inq =
         controller.services.inquiry.set_inquiry_state(
           inq.id,
           "open",
           "Set state to open",
           controller.current_user,
         )
-      }.to raise_error Exception
+      expect(new_inq.errors.key?(:aasm_state)).to eq true
 
       controller.services.inquiry.set_inquiry_state(
         inq.id,
@@ -154,14 +155,14 @@ describe Inquiry::InquiriesController, type: :controller do
         controller.services.inquiry.get_inquiries({ state: "rejected" }).count,
       ).to eq 1
 
-      expect {
+      new_inq =
         controller.services.inquiry.set_inquiry_state(
           inq.id,
           "approved",
           "Set state to approved",
           controller.current_user,
         )
-      }.to raise_error Exception
+      expect(new_inq.errors.key?(:aasm_state)).to eq true
 
       controller.services.inquiry.set_inquiry_state(
         inq.id,
