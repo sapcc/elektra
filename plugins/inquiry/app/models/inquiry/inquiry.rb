@@ -5,10 +5,21 @@ module Inquiry
     paginates_per 20
     default_scope { order(updated_at: :desc) } # default sort order
 
+    attr_accessor :process_step_description,
+                  :current_user,
+                  :additional_receivers
+
     has_many :process_steps, -> { order(:created_at) }, dependent: :destroy
 
     belongs_to :requester, class_name: "Inquiry::Processor"
     has_and_belongs_to_many :processors
+
+    validates :additional_receivers,
+              format: {
+                with: /\A([^@\s,+]+@[-a-z0-9]+\.[a-z]{2,},?)+\z/i,
+                message: "please enter a comma separated email address list",
+              },
+              allow_blank: true
 
     validates :processors,
               presence: {
@@ -16,7 +27,6 @@ module Inquiry
               }
     validates :description, presence: true
 
-    attr_accessor :process_step_description, :current_user
     validates :process_step_description,
               presence: {
                 message: "Please provide a description for the process action",
@@ -118,6 +128,17 @@ module Inquiry
       state :approved
       state :rejected
       state :closed
+      state :reviewing
+
+      event :review,
+            after: %i[notify_requester notify_processors],
+            error: :error_on_event,
+            guards: Proc.new { |*args| can_review?(*args) } do
+        transitions from: %i[reviewing open],
+                    to: :reviewing,
+                    after: Proc.new { |*args| log_process_step(*args) }
+      end
+
       event :open,
             after: %i[notify_requester notify_processors],
             error: :error_on_event do
@@ -133,7 +154,7 @@ module Inquiry
         before do
           #run_automatically('approved')
         end
-        transitions from: :open,
+        transitions from: %i[reviewing open],
                     to: :approved,
                     after: Proc.new { |*args| log_process_step(*args) },
                     guards: Proc.new { |*args| can_approve?(*args) }
@@ -146,7 +167,7 @@ module Inquiry
         before do
           #run_automatically('rejected')
         end
-        transitions from: :open,
+        transitions from: %i[reviewing open],
                     to: :rejected,
                     after: Proc.new { |*args| log_process_step(*args) }
       end
@@ -164,7 +185,7 @@ module Inquiry
       event :close,
             error: :error_on_event,
             guards: Proc.new { |*args| can_close?(*args) } do
-        transitions from: %i[approved rejected open],
+        transitions from: %i[approved rejected open reviewing],
                     to: :closed,
                     after: Proc.new { |*args| log_process_step(*args) },
                     guards: [:can_close?]
@@ -205,8 +226,16 @@ module Inquiry
       else
         step.processor = self.requester
       end
+      # additional_emails = self.additional_receivers.split(",")
+
       step.description = options[:description]
+      if self.additional_receivers.present?
+        step.description +=
+          " additional receivers: #{self.additional_receivers}"
+      end
       self.process_steps << step
+
+      notify_additional_receivers if self.additional_receivers.present?
     end
 
     def is_resource_admin?(user)
@@ -219,12 +248,17 @@ module Inquiry
 
     def can_approve?(options = {})
       return(
-        self.open? &&
+        (self.open? || self.reviewing?) &&
           (
             user_is_processor?(get_user_id(options[:user])) ||
               is_resource_admin?(options[:user])
           )
       )
+    end
+
+    def can_review?(options = {})
+      user_is_processor?(get_user_id(options[:user])) ||
+        is_resource_admin?(options[:user])
     end
 
     def can_reopen?(options = {})
@@ -233,7 +267,7 @@ module Inquiry
 
     def can_reject?(options = {})
       return(
-        self.open? &&
+        (self.open? || self.reviewing?) &&
           (
             user_is_processor?(get_user_id(options[:user])) ||
               is_resource_admin?(options[:user])
@@ -302,31 +336,29 @@ module Inquiry
       return states
     end
 
-    def change_state(state, description, user)
-      sstate = state.to_sym
-      self.process_step_description = description
-      result = false
-      begin
-        if self.valid?
-          result =
-            self.reject!({ user: user, description: description }) if sstate ==
-            :rejected
-          result =
-            self.approve!({ user: user, description: description }) if sstate ==
-            :approved
-          result =
-            self.reopen!({ user: user, description: description }) if sstate ==
-            :open
-          result =
-            self.close!({ user: user, description: description }) if sstate ==
-            :closed
-        end
-      rescue => e
-        self.errors.add(:aasm_state, e.message)
-        raise e
-      end
+    def proceed_state_change(new_state, user)
+      return false unless self.valid?
+      description = self.process_step_description
 
-      return result
+      case new_state.to_sym
+      when :rejected
+        return self.reject!({ user: user, description: description })
+      when :approved
+        return self.approve!({ user: user, description: description })
+      when :open
+        return self.reopen!({ user: user, description: description })
+      when :closed
+        return self.close!({ user: user, description: description })
+      when :reviewing
+        return self.review!({ user: user, description: description })
+      else
+        self.errors.add(:aasm_state, "Unknown state #{new_state}")
+        return false
+      end
+    rescue => e
+      self.errors.add(:aasm_state, e.message)
+      # raise e
+      return false
     end
 
     def get_user_id(user)
@@ -375,6 +407,24 @@ module Inquiry
           ).deliver_later
         rescue Net::SMTPFatalError => e
           Rails.logger.error "InquiryMailer: Could not send email to #{inform_new_project_dl} Exception: #{e.message}"
+        end
+      end
+    end
+
+    # Note: for testing use 'deliver_now'
+    def notify_additional_receivers
+      puts "######### NOTIFY ADDITIONAL RECEIVERS #########"
+      emails = self.additional_receivers.split(",")
+      emails.each do |email|
+        begin
+          InquiryMailer.notification_email_requester(
+            email,
+            email,
+            self,
+            self.process_steps.last,
+          ).deliver_later
+        rescue Net::SMTPFatalError => e
+          Rails.logger.error "InquiryMailer: Could not send email to #{email} Exception: #{e.message}"
         end
       end
     end

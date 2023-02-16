@@ -14,7 +14,8 @@ module ServiceLayer
 
     def set_inquiry_state(id, state, description, user)
       inquiry = ::Inquiry::Inquiry.find_by_id(id)
-      inquiry.change_state(state, description, user)
+      inquiry.process_step_description = description
+      inquiry.proceed_state_change(state, user)
       Delegates::Inquiry.new(inquiry)
     end
 

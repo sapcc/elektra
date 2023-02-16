@@ -1,6 +1,7 @@
 .modal-body
   %ul.nav.nav-tabs
-    %li.active{role: "presentation"}= link_to 'Process', '#process', aria: {controls:"process"}, role: "tab", data: {toggle:"tab"}
+    %li.active{role: "presentation"}
+      = link_to 'Process', '#process', aria: {controls:"process"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}
       = link_to '#payload', aria: {controls:"payload"}, role: "tab", data: {toggle:"tab"} do
         Payload
@@ -9,39 +10,45 @@
         Process Steps
         %span.badge= @inquiry.process_steps.length
   .tab-content
-    .tab-pane.active{role:"tabpanel", id:"process"}
+    .tab-pane.active{role: "tabpanel", id: "process"}
       = simple_form_for @inquiry, url: plugin('inquiry').inquiry_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid, id:@inquiry.id), method: :put, remote: request.xhr?, html: {data: {modal: true} } do |f|
-
         %div{class: modal? ? 'modal-body' : ''}
           - unless @inquiry.errors["message"].blank?
             %p.alert.alert-error= @inquiry.errors.full_messages.to_sentence
-
           %fieldset
             %fieldset
             = f.input :kind, label: "This is a request for a ", disabled: true
             = f.fields_for :requester, @inquiry.requester do |requester_fields|
               = requester_fields.input :full_name, label: "Request user", disabled: true, required: false
               = requester_fields.input :email, label: "Email", disabled: true, required: false
+            = f.input :additional_receivers, label: "Additional receivers", placeholder: "Comma separated email addresses", hint: "Additional email addresses to which notifications about the request status will be sent", required: false
             = f.input :description, label: "The reason for request", as: :text, disabled: true
             = f.input :aasm_state, readonly: true, label: "New State"
-            -#= f.input :aasm_state, { label: "Please set a new State",
+            -#
+              = f.input :aasm_state, { label: "Please set a new State",
               as: :select,
               :include_blank => false,
               collection: @inquiry.states_allowed(current_user),
               label_method: Proc.new { |s| s[:name] },
               value_method: Proc.new { |s| s[:state] } }
             = f.input :process_step_description, label: "Reason for your state decision", as: :text, required: true
-
-        %div.buttons{class: modal? ? 'modal-footer' : ''}
+        .buttons{class: modal? ? 'modal-footer' : ''}
           - if modal?
-            %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+            %button.btn.btn-default{
+type: "button",
+data: { dismiss: "modal" },
+aria: { label: "Cancel" }
+}
+              Cancel
           - else
             = link_to "Cancel", plugin('inquiry').inquiries_url(), class: 'btn btn-default'
-
-          %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Save
-
-    .tab-pane{role:"tabpanel", id:"payload"}
+          %button{
+type: "submit",
+class: "btn btn-primary",
+data: { disable_with: "Please wait..." }
+}
+            Save
+    .tab-pane{role: "tabpanel", id: "payload"}
       = render partial: 'payload', locals: {inquiry: @inquiry}
-
-    .tab-pane{role:"tabpanel", id:"process_steps"}
+    .tab-pane{role: "tabpanel", id: "process_steps"}
       = render partial: 'process_steps', locals: {inquiry: @inquiry}

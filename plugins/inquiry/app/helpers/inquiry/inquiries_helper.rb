@@ -2,6 +2,7 @@ module Inquiry
   module InquiriesHelper
     def get_allowed_actions(inquiry)
       aasm_allowed_states = inquiry.states_allowed(current_user)
+      # byebug
       callbacks = HashWithIndifferentAccess.new inquiry.callbacks
       actions = []
       aasm_allowed_states.each do |state|

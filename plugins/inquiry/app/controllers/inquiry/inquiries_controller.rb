@@ -100,13 +100,15 @@ module Inquiry
 
     def update
       #@inquiry.change_state(inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description], current_user)
-      result =
-        @inquiry.change_state(
-          inquiry_params[:aasm_state].to_sym,
-          inquiry_params[:process_step_description],
-          current_user,
-        )
-      if result
+
+      @inquiry.process_step_description =
+        inquiry_params[:process_step_description]
+      @inquiry.additional_receivers = inquiry_params[:additional_receivers]
+
+      valid =
+        @inquiry.proceed_state_change(inquiry_params[:aasm_state], current_user)
+
+      if valid
         flash.now[:notice] = "Request successfully updated."
         render "inquiry/inquiries/update.js"
       else
@@ -135,6 +137,7 @@ module Inquiry
         :aasm_state,
         :new_state,
         :process_step_description,
+        :additional_receivers,
       )
     end
 
