@@ -231,6 +231,10 @@ module MasterdataCockpit
         "number_of_endusers" => read("number_of_endusers"),
       }
 
+      puts "##################"
+      puts params
+      puts cost_object_inherited
+
       params["cost_object"] = if cost_object_inherited
         { "inherited" => true }
       else
@@ -240,6 +244,8 @@ module MasterdataCockpit
           "inherited" => cost_object_inherited,
         }
       end
+
+      params
     end
   end
 end

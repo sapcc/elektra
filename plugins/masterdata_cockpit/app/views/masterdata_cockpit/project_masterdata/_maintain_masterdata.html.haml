@@ -45,9 +45,9 @@
     .panel-body
       .row
         .col-md-6.operator-id 
-          = f.input :responsible_primary_contact_id, label: "Asset Owner (Primary Contact)", placeholder: "User or Name", required: true, input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
+          = f.input :responsible_primary_contact_id, label: "Asset Owner (Primary Contact)", placeholder: "User or Name", required: true, input_html: { class: 'operator-id-input' }
         .col-md-6.operator-email
-          = f.input :responsible_primary_contact_email, placeholder: "Email/Distribution list", input_html: { class: 'operator-email-input',  value: f.object.responsible_primary_contact_email || current_user.email }
+          = f.input :responsible_primary_contact_email, placeholder: "Email/Distribution list", input_html: { class: 'operator-email-input' }
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
