@@ -107,6 +107,8 @@ export const STRINGS = {
     "shares_hypervisor_storage_single":          "Share",
     "sharev2":                                   "Shared Filesystem Storage (Premium SSD)",
     "sharev2_hypervisor_storage":                "Shared Filesystem Storage (Hypervisor Storage)",
+    "snapmirror_capacity":                       "Snapmirror Capacity",
+    "snapmirror_capacity_hypervisor_storage":    "Snapmirror Capacity",
     "snapshot_capacity":                         "Share Snapshot Capacity",
     "snapshot_capacity_hypervisor_storage":      "Share Snapshot Capacity",
     "snapshots":                                 "Snapshots",
