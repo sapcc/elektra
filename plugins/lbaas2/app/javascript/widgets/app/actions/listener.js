@@ -93,12 +93,15 @@ export const fetchListnersForSelect = (lbID) => {
   })
 }
 
-export const fetchSecretsForSelect = (lbID) => {
+export const fetchSecretsForSelect = (options) => {
   return new Promise((handleSuccess, handleError) => {
     ajaxHelper
-      .get(`/loadbalancers/${lbID}/listeners/secrets`)
+      .get(`/loadbalancers/secrets`, { params: options })
       .then((response) => {
-        handleSuccess(response.data)
+        handleSuccess({
+          options: response.data?.secrets,
+          total: response.data?.total,
+        })
       })
       .catch((error) => {
         handleError(error)

@@ -137,6 +137,7 @@ const LoadbalancerList = (props) => {
     Log.debug("RENDER loadbalancer list")
     return (
       <React.Fragment>
+        <span className="tw-text-red-900">Text with tw classes</span>
         {error && !fetchingAllItems ? (
           <ErrorPage
             headTitle="Load Balancers"
