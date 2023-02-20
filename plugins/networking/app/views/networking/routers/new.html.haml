@@ -24,6 +24,7 @@
         = info.simple_fields_for :external_fixed_ips do |fixed_ips|
           = fixed_ips.input :subnet_id,
             as: :select,
+            input_html: { name: "router[external_gateway_info][external_fixed_ips][][subnet_id]", data: { selected: @router.external_subnet_ids } },
             collection: []
       -# Note: this field is hidden by default and the values are filled with an ajax call, 
       -#       check also router.js -> init() and showSubnets() 
