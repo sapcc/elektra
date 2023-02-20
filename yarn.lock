@@ -5608,8 +5608,8 @@ jsx-to-string@^1.4.0:
     react "^0.14.0"
 
 "juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@latest/package.tgz":
-  version "1.1.6"
-  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@latest/package.tgz#906a794df2a7d4325b489cb1d8f6067e22d6a010"
+  version "1.1.8"
+  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@latest/package.tgz#c58fd6f9a0fa864d40b82aba264a4a69335045fe"
 
 keycode@^2.1.2:
   version "2.2.1"
