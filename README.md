@@ -165,7 +165,7 @@ bundle config build.sqlite3 --with-sqlite3-include="$(nix-store -r "$(nix-instan
 or with nix-command enabled:
 
 ```bash
-nix shell -f shell.nix
+nix develop -f shell.nix
 bundle config build.sqlite3 --with-sqlite3-include="$(nix eval nixpkgs#sqlite.dev)/include" --with-sqlite3-lib="$(nix eval nixpkgs#sqlite.out)/lib"
 ```
 
