@@ -21,7 +21,8 @@
             = f.fields_for :requester, @inquiry.requester do |requester_fields|
               = requester_fields.input :full_name, label: "Request user", disabled: true, required: false
               = requester_fields.input :email, label: "Email", disabled: true, required: false
-            = f.input :additional_receivers, label: "Additional receivers", placeholder: "Comma separated email addresses", hint: "Additional email addresses to which notifications about the request status will be sent", required: false
+            - # TODO: activate this line after review state has been approved
+            = # f.input :additional_receivers, label: "Additional receivers", placeholder: "Comma separated email addresses", hint: "Additional email addresses to which notifications about the request status will be sent", required: false            
             = f.input :description, label: "The reason for request", as: :text, disabled: true
             = f.input :aasm_state, readonly: true, label: "New State"
             -#
