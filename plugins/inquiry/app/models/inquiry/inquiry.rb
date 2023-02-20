@@ -315,6 +315,7 @@ module Inquiry
             }
           end
         end
+
       return events
     end
 
@@ -411,20 +412,28 @@ module Inquiry
       end
     end
 
-    # Note: for testing use 'deliver_now'
     def notify_additional_receivers
       puts "######### NOTIFY ADDITIONAL RECEIVERS #########"
-      emails = self.additional_receivers.split(",")
-      emails.each do |email|
-        begin
-          InquiryMailer.notification_email_requester(
-            email,
-            email,
-            self,
-            self.process_steps.last,
-          ).deliver_later
-        rescue Net::SMTPFatalError => e
-          Rails.logger.error "InquiryMailer: Could not send email to #{email} Exception: #{e.message}"
+      begin
+        emails = self.additional_receivers.split(",")
+        InquiryMailer.notification_email_processors(
+          emails,
+          self,
+          self.process_steps.last,
+          self.requester,
+        ).deliver_later
+      rescue Net::SMTPFatalError => e
+        emails.each do |email|
+          begin
+            InquiryMailer.notification_email_processors(
+              [email],
+              self,
+              self.process_steps.last,
+              self.requester,
+            ).deliver_later
+          rescue Net::SMTPFatalError => ex
+            Rails.logger.error "InquiryMailer: Could not send email to #{email} Exception: #{e.message}"
+          end
         end
       end
     end

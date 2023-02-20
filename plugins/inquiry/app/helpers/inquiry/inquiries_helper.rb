@@ -2,6 +2,10 @@ module Inquiry
   module InquiriesHelper
     def get_allowed_actions(inquiry)
       aasm_allowed_states = inquiry.states_allowed(current_user)
+
+      # TODO: remove this line after review state has been approved
+      aasm_allowed_states.filter! { |s| s[:state] != :reviewing }
+
       # byebug
       callbacks = HashWithIndifferentAccess.new inquiry.callbacks
       actions = []
@@ -21,6 +25,7 @@ module Inquiry
           action += "&state=#{state[:name]}"
           link =
             link_to state[:events].first[:name], action, data: { modal: modal }
+
           actions << { name: state[:state].to_s, action: action, link: link }
         else
           action =
