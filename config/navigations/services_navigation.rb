@@ -324,9 +324,12 @@ SimpleNavigation::Configuration.run do |navigation|
                    class: "fancy-nav-header",
                    "data-icon": "storage-icon",
                  },
-                 if: -> {
-                   services.available?(:object_storage, :containers)
-                 } do |storage_nav|
+                 if:
+                   lambda {
+                     plugin_available?(:object_storage) ||
+                       plugin_available?(:keppel) ||
+                       plugin_available?(:shared_filesystem_storage)
+                   } do |storage_nav|
       storage_nav.item :shared_storage,
                        "Shared Object Storage",
                        -> { plugin("object_storage_ng").widget_path },
