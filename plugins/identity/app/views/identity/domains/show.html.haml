@@ -29,7 +29,6 @@
       = @domain.description if @domain
 
 
-
     -# ADMIN ACTIONS
     - if current_user and current_user.admin?
       %h4.heading-whitespace Domain Administration
@@ -57,12 +56,13 @@
           %i.inquiry-icon
           Domain Admin Requests
 
-        - if current_user.is_allowed?("inquiry:manage_requests")
+        - # revert to IF when done
+        - unless current_user.is_allowed?("inquiry:manage_requests")
           %ul.plain-list
             %li
               = link_to plugin('inquiry').admin_inquiries_path do
                 Manage Requests
-                = " (#{::Inquiry::Inquiry.processor_open_requests_count(@scoped_domain_id)})"
+                = " (#{::Inquiry::Inquiry.processor_requests_count(@scoped_domain_id)})"
 
       - if plugin_available?('cc_tools') && current_user.is_allowed?('tools:application_get')
         %h5
@@ -118,7 +118,7 @@
       %li
         = link_to plugin('inquiry').inquiries_path do
           My Requests
-          = " (#{::Inquiry::Inquiry.requestor_open_requests(@scoped_domain_id, current_user.id).length})"
+          = " (#{::Inquiry::Inquiry.requestor_requests_count(@scoped_domain_id, current_user.id)})"
 
 
     - if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id)

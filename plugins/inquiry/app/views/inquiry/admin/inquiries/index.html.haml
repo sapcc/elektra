@@ -7,7 +7,7 @@
   = render partial: "inquiry/shared/tabs", locals: {admin_view: true}
 
   - container_id = SecureRandom.hex
-  - state = params[:show_only] == "processed" ? ['closed','approved','rejected'] : ['open']
+  - state = params[:show_only] == "processed" ? ['closed','approved','rejected'] : ['open','reviewing']
   = render partial: 'inquiry/shared/index_toolbar', locals: {container_id: container_id, admin_view: true, state: state}
 
   .inquiries.spinner
