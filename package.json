@@ -71,7 +71,7 @@
     "chokidar": "^3.5.3",
     "cypress": "9.0.0",
     "enzyme": "3.11.0",
-    "enzyme-adapter-react-16": "1.15.6",
+    "enzyme-adapter-react-16": "1.15.7",
     "esbuild-jest": "^0.5.0",
     "esbuild-sass-plugin": "^2.4.5",
     "eslint": "^8.14.0",
