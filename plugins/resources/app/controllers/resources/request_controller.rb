@@ -30,15 +30,23 @@ module Resources
             domain_id: @scoped_domain_id,
             project_id: nil,
           )
+
         overlay_url =
           plugin("resource_management").admin_review_request_path(
             project_id: nil,
           )
 
+        kind = "project_quota"
+        title = "add"
+        if (new_quota - old_quota) <= 0
+          kind = "reduce_project_quota"
+          title = "reduce by"
+        end
+
         inquiry =
           services.inquiry.create_inquiry(
-            "project_quota",
-            "project #{@scoped_domain_name}/#{@scoped_project_name}: #{new_quota - old_quota >= 0 ? "add" : "reduce by"} #{data_type.format((new_quota - old_quota).abs)} #{srv_type}/#{res_name}",
+            kind,
+            "project #{@scoped_domain_name}/#{@scoped_project_name}: #{title} #{data_type.format((new_quota - old_quota).abs)} #{srv_type}/#{res_name}",
             current_user,
             { service: srv_type, resource: res_name, desired_quota: new_quota },
             service_user.identity.list_scope_resource_admins(
@@ -101,10 +109,17 @@ module Resources
             project_id: Rails.configuration.cloud_admin_project,
           )
 
+        kind = "domain_quota"
+        title = "add"
+        if (new_quota - old_quota) <= 0
+          kind = "reduce_domain_quota"
+          title = "reduce by"
+        end
+
         inquiry =
           services.inquiry.create_inquiry(
-            "domain_quota",
-            "domain #{@scoped_domain_name}: #{new_quota - old_quota >= 0 ? "add" : "reduce by"} #{data_type.format((new_quota - old_quota).abs)} #{srv_type}/#{res_name}",
+            kind,
+            "domain #{@scoped_domain_name}: #{title} #{data_type.format((new_quota - old_quota).abs)} #{srv_type}/#{res_name}",
             current_user,
             { service: srv_type, resource: res_name, desired_quota: new_quota },
             cloud_admin.identity.list_cloud_resource_admins,
