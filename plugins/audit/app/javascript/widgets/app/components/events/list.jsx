@@ -13,14 +13,14 @@ const isValidDate = (date) =>
   !moment(date).isAfter()
 
 const ATTRIBUTES = [
-  { key: "observer_type", name: "Source" },
-  { key: "action", name: "Action" },
-  { key: "target_type", name: "Resource Type" },
-  { key: "target_id", name: "Resource ID" },
-  { key: "initiator_id", name: "Initiator/User ID" },
-  { key: "initiator_name", name: "User Name" },
-  { key: "initiator_type", name: "Initiator Type" },
-  { key: "outcome", name: "Result" },
+  {key: 'observer_type',  name: 'Observer Type'},
+  {key: 'action',         name: 'Action' },
+  {key: 'target_type',    name: 'Target Type' },
+  {key: 'target_id',      name: 'Target ID' },
+  {key: 'initiator_id',   name: 'Initiator ID' },
+  {key: 'initiator_name', name: 'Initiator Name' },
+  {key: 'initiator_type', name: 'Initiator Type' },
+  {key: 'outcome',        name: 'Outcome' }
 ]
 
 const EventList = ({
@@ -166,10 +166,10 @@ const EventList = ({
         <tr>
           <th className="icon-cell"></th>
           <th>Time</th>
-          <th>Source</th>
+          <th>Observer Type</th>
           <th>Action</th>
-          <th>Target Resource</th>
-          <th>Initiator/User</th>
+          <th>Target Type</th>
+          <th>Initiator Name</th>
         </tr>
       </thead>
 

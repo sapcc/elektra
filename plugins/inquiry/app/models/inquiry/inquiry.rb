@@ -436,7 +436,7 @@ module Inquiry
       puts "######### NOTIFY ADDITIONAL RECEIVERS #########"
       begin
         emails = self.additional_receivers.split(",")
-        InquiryMailer.notification_email_additional_receivers(
+        InquiryMailer.notification_email_processors(
           emails,
           self,
           self.process_steps.last,

@@ -65,6 +65,7 @@ yarn-debug.log*
 yarn-debug.log*
 .yarn-integrity
 /testing/postgresql-data
+/testing/postgresql-run/
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
