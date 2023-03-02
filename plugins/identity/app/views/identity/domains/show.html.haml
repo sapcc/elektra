@@ -56,8 +56,7 @@
           %i.inquiry-icon
           Domain Admin Requests
 
-        - # revert to IF when done
-        - unless current_user.is_allowed?("inquiry:manage_requests")
+        - if current_user.is_allowed?("inquiry:manage_requests")
           %ul.plain-list
             %li
               = link_to plugin('inquiry').admin_inquiries_path do
