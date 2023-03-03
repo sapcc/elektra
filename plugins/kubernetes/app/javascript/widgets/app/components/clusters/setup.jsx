@@ -34,9 +34,9 @@ let SetupInfo = ({ close, setupData, kubernikusBaseUrl }) =>
                   rel="noreferrer"
                 >{`Download for ${
                   link.link.match(/darwin_amd64/g)
-                    ? "darwin for amd64"
+                    ? "darwin amd64"
                     : link.link.match(/darwin_arm64/g)
-                    ? "darwin for arm64"
+                    ? "darwin arm64"
                     : link.platform
                 }`}</a>
               </li>
