@@ -3,7 +3,7 @@
 # HowTo use this template?
 # ========================
 # Plan A: To create a running .env you have to check the secrets in our vault
-# Plan B: When you are luckily working on workspaces you can run "render-env elektra" 
+# Plan B: When you are luckily working on workspaces you can run "render-dotenv --env elektra --region qa-de-1" 
 
 # On workspaces enter elektra environment in two terminals and start elektra components 
 # 1. start-rails 
