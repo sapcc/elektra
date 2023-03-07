@@ -84,10 +84,30 @@ module Inquiry
       where(aasm_state: "open", approver_domain_id: domain_id).count
     end
 
+    def self.processor_review_requests_count(domain_id)
+      where(aasm_state: "reviewing", approver_domain_id: domain_id).count
+    end
+
+    def self.processor_requests_count(domain_id)
+      self.processor_review_requests_count(domain_id) +
+        self.processor_open_requests_count(domain_id)
+    end
+
     def self.requestor_open_requests(domain_id, user_id)
       where(aasm_state: "open", domain_id: domain_id).to_a.keep_if do |r|
         r.requester.uid == user_id
       end
+    end
+
+    def self.requestor_review_requests(domain_id, user_id)
+      where(aasm_state: "reviewing", domain_id: domain_id).to_a.keep_if do |r|
+        r.requester.uid == user_id
+      end
+    end
+
+    def self.requestor_requests_count(domain_id, user_id)
+      self.requestor_open_requests(domain_id, user_id).length +
+        self.requestor_review_requests(domain_id, user_id).length
     end
 
     def self.to_csv
@@ -315,6 +335,7 @@ module Inquiry
             }
           end
         end
+
       return events
     end
 
@@ -424,7 +445,7 @@ module Inquiry
       rescue Net::SMTPFatalError => e
         emails.each do |email|
           begin
-            InquiryMailer.notification_email_processors(
+            InquiryMailer.notification_email_additional_receivers(
               [email],
               self,
               self.process_steps.last,

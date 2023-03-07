@@ -1,0 +1,57 @@
+!!!
+%html
+  %head
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+
+  %body
+    %p The following request requires review:
+
+    %p
+      - if @inquiry.tags && @inquiry.tags['region']
+        %br
+        %b Converged Cloud Region:
+        = @inquiry.tags['region']
+
+      %br
+      %b Converged Cloud Domain:
+      - if (@inquiry.tags && @inquiry.tags['domain_name'])
+        = "#{@inquiry.tags['domain_name']} (#{@inquiry.domain_id})"
+      - else
+        = @inquiry.domain_id
+
+      %br
+      %b Request for:
+      = @inquiry.kind
+
+      %br
+      %b Requestor:
+      = @requester_name
+
+      %br
+      %b Request Status:
+      = @inquiry.aasm.human_state
+
+
+    %p
+      %b Request details:
+      %br
+      = "---"
+      %br
+      %b Resource:
+      = @inquiry.kind
+      %br
+      %b Request reason:
+      %br
+      %pre= @inquiry.description
+      %br
+      %b Request specific data:
+      %pre= JSON.pretty_generate(@inquiry.payload) rescue "Error during rendering of JSON payload!"
+      = "---"
+      %b Additional data:
+      %pre= JSON.pretty_generate(@inquiry.tags) rescue "None"
+      = "---"
+
+    %p
+      Kind regards,
+      %br
+      The SAP Converged Cloud Team
