@@ -251,7 +251,7 @@ module Inquiry
       step.description = options[:description]
       if self.additional_receivers.present?
         step.description +=
-          " additional receivers: #{self.additional_receivers}"
+          "; additional receivers: #{self.additional_receivers}"
       end
       self.process_steps << step
 
