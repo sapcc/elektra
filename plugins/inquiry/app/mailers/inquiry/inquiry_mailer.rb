@@ -53,7 +53,8 @@ module Inquiry
       @inquiry_step = inquiry_step
       @inquiry = inquiry
       @requester_name = "#{requester.full_name} (#{requester.name})"
-      subject = "Converged Cloud: Please review a resource request "
+      subject =
+        "Converged Cloud: Additional Review, A request needs your attention!"
       if @inquiry.tags
         if @inquiry.tags["region"]
           subject += " for region #{@inquiry.tags["region"]}"
