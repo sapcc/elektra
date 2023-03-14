@@ -2,12 +2,13 @@
 
 with pkgs;
 
-mkShellNoCC {
+mkShell {
   buildInputs = [
     bintools
     gcc
     libffi.dev
     nodejs
+    postgresql
     ruby
     yarn
   ];

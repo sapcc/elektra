@@ -6,5 +6,5 @@
 
   "keppel:account:show":  "(rule:keppel_project_viewer or rule:keppel_cloud_viewer)",
   "keppel:account:edit":  "(rule:keppel_project_editor or rule:keppel_cloud_editor)",
-  "keppel:account:admin": "(rule:keppel_project_editor or rule:keppel_cloud_editor) and role:admin"
+  "keppel:account:admin": "(rule:keppel_project_editor or rule:keppel_cloud_editor)"
 }

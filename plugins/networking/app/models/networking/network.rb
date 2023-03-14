@@ -1,6 +1,7 @@
 module Networking
   class Network < Core::ServiceLayer::Model
     validates :name, presence: true
+    @highest_asr_agents_count = 0
 
     def external
       read("router:external")
@@ -32,6 +33,10 @@ module Networking
 
     def port_objects
       @port_objects ||= @service.ports(network_id: id)
+    end
+
+    def set_highest_asr_agents_count(highest_asr_agents_count)
+      self.highest_asr_agents_count = highest_asr_agents_count
     end
   end
 end

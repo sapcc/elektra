@@ -32,7 +32,13 @@ let SetupInfo = ({ close, setupData, kubernikusBaseUrl }) =>
                   target="_blank"
                   href={link.link}
                   rel="noreferrer"
-                >{`Download for ${link.platform}`}</a>
+                >{`Download for ${
+                  link.link.match(/darwin_amd64/g)
+                    ? "darwin amd64"
+                    : link.link.match(/darwin_arm64/g)
+                    ? "darwin arm64"
+                    : link.platform
+                }`}</a>
               </li>
             ))}
           </ul>

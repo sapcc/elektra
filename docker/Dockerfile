@@ -110,6 +110,7 @@ COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 COPY --from=builder $APP_PATH $APP_PATH
 COPY --from=builder /usr/bin/dumb-init /usr/bin/dumb-init  
 
+# Note: in our k8s this will be overwriten from deployment
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
 

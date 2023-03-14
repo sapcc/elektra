@@ -71,8 +71,9 @@ const loadSubnets = function (networkId) {
     $("fieldset#subnets").append($loader)
     return $.ajax({
       //url: "networks/#{networkId}/ip_availability"
+      // get subnets if nothing was found
       url: `${window.location.protocol}//${window.location.host}/${scopedDomainFid}/${scopedProjectFid}/networking/networks/${networkId}/ip_availability`,
-      success(data, textStatus, jqXHR) {
+      success(data) {
         subnets[networkId] = data
         $loader.remove()
         return showSubnets(subnets[networkId])
