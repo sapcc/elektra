@@ -53,11 +53,10 @@ module MasterdataCockpit
 
     def self.type_of_data
       {
-        "SAP Business Proces" => "SAP Business Process",
+        "SAP Business Process" => "SAP Business Process",
         "Customer Cloud Service" => "Customer Cloud Service",
         "Customer Business Process" => "Customer Business Process",
-        "Training and Demo" => "Training & Demo",
-        "Cloud" => "Cloud",
+        "Training and Demo Cloud" => "Training & Demo Cloud",
       }
     end
 

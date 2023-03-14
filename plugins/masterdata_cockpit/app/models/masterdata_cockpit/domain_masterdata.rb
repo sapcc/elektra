@@ -7,8 +7,6 @@ module MasterdataCockpit
     #"description":"MyDomain is about providing important things",
     #"responsible_primary_contact_id": "D000000",
     #"responsible_primary_contact_email": "myDL@sap.com",
-    #"responsible_controller_id": "D000000",
-    #"responsible_controller_email": "myDL@sap.com",
     #"cost_object": {
     #    "type": "IO",
     #    "name": "myIO",
@@ -18,16 +16,6 @@ module MasterdataCockpit
     validates_presence_of :cost_object_type,
                           :cost_object_name,
                           :responsible_primary_contact_id
-
-    validates_presence_of :responsible_controller_id,
-                          unless:
-                            lambda { self.responsible_controller_email.blank? },
-                          message:
-                            "can't be blank if controller email is defined"
-    validates_presence_of :responsible_controller_email,
-                          unless:
-                            lambda { self.responsible_controller_id.blank? },
-                          message: "can't be blank if controller is defined"
 
     validates_presence_of :responsible_primary_contact_id,
                           unless:
@@ -57,7 +45,7 @@ module MasterdataCockpit
                 too_long: "255 characters is the maximum allowed",
               }
 
-    validates :responsible_controller_email,
+    validates :responsible_primary_contact_email,
               format: {
                 with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i,
                 message: "please use a valid email address",
@@ -65,7 +53,7 @@ module MasterdataCockpit
               allow_nil: true,
               allow_blank: true
 
-    validates :responsible_controller_id,
+    validates :responsible_primary_contact_id,
               format: {
                 with: /\A[DCIdci]\d*\z/,
                 message: "please use a C/D/I user id",
@@ -117,9 +105,6 @@ module MasterdataCockpit
           "domain_name" => read("domain_name"),
           "description" => read("description"),
           "additional_information" => read("additional_information"),
-          "responsible_controller_id" => read("responsible_controller_id"),
-          "responsible_controller_email" =>
-            read("responsible_controller_email"),
           "responsible_primary_contact_id" =>
             read("responsible_primary_contact_id"),
           "responsible_primary_contact_email" =>

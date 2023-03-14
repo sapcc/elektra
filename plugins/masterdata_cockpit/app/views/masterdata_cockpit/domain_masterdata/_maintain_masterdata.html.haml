@@ -40,7 +40,7 @@
     .row
       .col-sm-6.operator-id
         = f.input :responsible_primary_contact_id, 
-            label: "Primary Contact", 
+            label: "Asset Owner (Primary Contact)", 
             placeholder: "C/D/I User", 
             required: true, 
             input_html: { class: 'operator-id-input', value: f.object.responsible_primary_contact_id || current_user.name }
@@ -51,15 +51,6 @@
       .col-md-12.op-help-block
         = icon ('info-circle')
         = t('masterdata_cockpit.responsible_primary_contact_help')
-    .row
-      .col-sm-6.operator-id
-        = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
-      .col-sm-6.operator-email
-        = f.input :responsible_controller_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
-    .row
-      .col-md-12.op-help-block
-        = icon ('info-circle')
-        = t('masterdata_cockpit.responsible_controller_help')
 
 :javascript
   $(function(){

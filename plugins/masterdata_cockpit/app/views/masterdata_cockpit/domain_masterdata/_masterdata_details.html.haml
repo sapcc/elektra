@@ -60,7 +60,7 @@
   %h5.masterdata-heading Responsibilities
   .row
     .col-sm-4.details-label
-      Primary Contact
+      Asset Owner (Primary Contact)
     .col-sm-2.details-value
       - unless @domain_masterdata.responsible_primary_contact_id
         \-
@@ -70,16 +70,3 @@
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @domain_masterdata.responsible_primary_contact_email
-
-  .row
-    .col-sm-4.details-label
-      Controller
-    .col-sm-2.details-value
-      - unless @domain_masterdata.responsible_controller_id
-        \-
-      = @domain_masterdata.responsible_controller_id
-    - if @domain_masterdata.responsible_controller_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @domain_masterdata.responsible_controller_email
