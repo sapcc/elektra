@@ -32,6 +32,12 @@
       %b Request Status:
       = @inquiry.aasm.human_state
 
+    - unless @inquiry_step.description.blank?
+      %p
+        %Strong Note from the processor:
+        %br
+        %pre= @inquiry_step.description
+
     %p
       %b Request details:
       %br

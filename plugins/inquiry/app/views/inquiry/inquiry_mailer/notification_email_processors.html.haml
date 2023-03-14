@@ -36,6 +36,12 @@
       %a(href="#{inquiries_url}") Click here to enter the request processing.
 
 
+    - unless @inquiry_step.description.blank?
+      %p
+        %Strong Note from the processor:
+        %br
+        %pre= @inquiry_step.description
+
     %p
       Details on the request can be found below. The requestor will be informed automatically on status changes.
 
