@@ -103,7 +103,7 @@ module Inquiry
 
       @inquiry.process_step_description =
         inquiry_params[:process_step_description]
-      @inquiry.additional_receivers = inquiry_params[:additional_receivers]
+      @inquiry.additional_recipients = inquiry_params[:additional_recipients]
 
       valid =
         @inquiry.proceed_state_change(inquiry_params[:aasm_state], current_user)
@@ -137,7 +137,7 @@ module Inquiry
         :aasm_state,
         :new_state,
         :process_step_description,
-        :additional_receivers,
+        :additional_recipients,
       )
     end
 

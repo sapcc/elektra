@@ -42,7 +42,7 @@ module Inquiry
       mail(to: processor_emails, subject: subject, content_type: "text/html")
     end
 
-    def notification_email_additional_receivers(
+    def notification_email_additional_recipients(
       receiver_emails,
       inquiry,
       inquiry_step,

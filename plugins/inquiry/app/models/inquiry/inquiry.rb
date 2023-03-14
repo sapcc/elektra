@@ -7,14 +7,14 @@ module Inquiry
 
     attr_accessor :process_step_description,
                   :current_user,
-                  :additional_receivers
+                  :additional_recipients
 
     has_many :process_steps, -> { order(:created_at) }, dependent: :destroy
 
     belongs_to :requester, class_name: "Inquiry::Processor"
     has_and_belongs_to_many :processors
 
-    validates :additional_receivers,
+    validates :additional_recipients,
               format: {
                 with: /\A([^@\s,+]+@[-a-z0-9]+\.[a-z]{2,},?)+\z/i,
                 message: "please enter a comma separated email address list",
@@ -246,16 +246,16 @@ module Inquiry
       else
         step.processor = self.requester
       end
-      # additional_emails = self.additional_receivers.split(",")
+      # additional_emails = self.additional_recipients.split(",")
 
       step.description = options[:description]
-      if self.additional_receivers.present?
+      if self.additional_recipients.present?
         step.description +=
-          "; additional receivers: #{self.additional_receivers}"
+          "; additional recipients: #{self.additional_recipients}"
       end
       self.process_steps << step
 
-      notify_additional_receivers if self.additional_receivers.present?
+      notify_additional_recipients if self.additional_recipients.present?
     end
 
     def is_resource_admin?(user)
@@ -432,11 +432,11 @@ module Inquiry
       end
     end
 
-    def notify_additional_receivers
+    def notify_additional_recipients
       puts "######### NOTIFY ADDITIONAL RECEIVERS #########"
       begin
-        emails = self.additional_receivers.split(",")
-        InquiryMailer.notification_email_additional_receivers(
+        emails = self.additional_recipients.split(",")
+        InquiryMailer.notification_email_additional_recipients(
           emails,
           self,
           self.process_steps.last,
@@ -445,7 +445,7 @@ module Inquiry
       rescue Net::SMTPFatalError => e
         emails.each do |email|
           begin
-            InquiryMailer.notification_email_additional_receivers(
+            InquiryMailer.notification_email_additional_recipients(
               [email],
               self,
               self.process_steps.last,
