@@ -14,12 +14,7 @@ module Inquiry
     belongs_to :requester, class_name: "Inquiry::Processor"
     has_and_belongs_to_many :processors
 
-    validates :additional_recipients,
-              format: {
-                with: /\A([^@\s,+]+@[-a-z0-9]+\.[a-z]{2,},?)+\z/i,
-                message: "please enter a comma separated email address list",
-              },
-              allow_blank: true
+    validate :validate_additional_recipients
 
     validates :processors,
               presence: {
@@ -434,6 +429,7 @@ module Inquiry
 
     def notify_additional_recipients
       puts "######### NOTIFY ADDITIONAL RECEIVERS #########"
+
       begin
         emails = self.additional_recipients.split(",")
         InquiryMailer.notification_email_additional_recipients(
@@ -497,6 +493,25 @@ module Inquiry
       rescue => e
       ensure
         data
+      end
+    end
+
+    private
+
+    def validate_additional_recipients
+      emails = self.additional_recipients.split(/,|, /)
+      all_ok = true
+      emails.each do |email|
+        all_ok = false unless (
+          email.strip =~ /\A([^@\s,+]+@[-a-z0-9]+\.[a-z]{2,})+\z/
+        )
+      end
+      puts all_ok
+      unless all_ok
+        errors.add(
+          :additional_recipients,
+          "Please enter a comma separated email address list",
+        )
       end
     end
   end
