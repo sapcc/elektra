@@ -397,7 +397,7 @@ module Inquiry
 
     # Note: for testing use 'deliver_now'
     def notify_requester
-      puts "######### NOTIFY REQUESTER #########"
+      # puts "######### NOTIFY REQUESTER #########"
       begin
         InquiryMailer.notification_email_requester(
           self.requester.email,
@@ -412,7 +412,7 @@ module Inquiry
 
     def notify_new_project
       if self.kind == "project"
-        puts "######### NOTIFY NEW PROJECT #########"
+        # puts "######### NOTIFY NEW PROJECT #########"
         inform_new_project_dl =
           ENV["MONSOON_NEW_PROJECT_DL"] || "dl_not_set@sap.com"
         begin
@@ -428,8 +428,7 @@ module Inquiry
     end
 
     def notify_additional_recipients
-      puts "######### NOTIFY ADDITIONAL RECEIVERS #########"
-
+      # puts "######### NOTIFY ADDITIONAL RECEIVERS #########"
       begin
         emails = self.additional_recipients.split(",")
         InquiryMailer.notification_email_additional_recipients(
@@ -455,7 +454,7 @@ module Inquiry
     end
 
     def notify_processors
-      puts "######### NOTIFY PROCESSORS #########"
+      # puts "######### NOTIFY PROCESSORS #########"
       begin
         InquiryMailer.notification_email_processors(
           (self.processors.map { |p| p.email }).compact,
@@ -506,7 +505,6 @@ module Inquiry
           email.strip =~ /\A([^@\s,+]+@[-a-z0-9]+\.[a-z]{2,})+\z/
         )
       end
-      puts all_ok
       unless all_ok
         errors.add(
           :additional_recipients,
