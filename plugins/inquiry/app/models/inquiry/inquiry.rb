@@ -498,6 +498,7 @@ module Inquiry
     private
 
     def validate_additional_recipients
+      return if self.additional_recipients.nil?
       emails = self.additional_recipients.split(/,|, /)
       all_ok = true
       emails.each do |email|
