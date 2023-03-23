@@ -103,6 +103,11 @@ PATH
     key_manager (0.0.1)
 
 PATH
+  remote: plugins/keymanagerng
+  specs:
+    keymanagerng (0.1.0)
+
+PATH
   remote: plugins/kubernetes
   specs:
     kubernetes (0.0.1)
@@ -615,6 +620,7 @@ DEPENDENCIES
   kaminari
   keppel!
   key_manager!
+  keymanagerng!
   kubernetes!
   lbaas2!
   listen
