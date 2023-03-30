@@ -41,11 +41,21 @@ const Secrets = () => {
           </Message>
         </Container>
       ) : (
-         <Container py px={false}>
-          <IntroBox text="The secrets resource is the heart of the Barbican service. It provides access to the secret/keying material stored in the system. Barbican supports the secure storage of data for various content types. For more information, visit the Barbican OpenStack documentation." />
-          <SecretList
-            secrets={data?.secrets}
+        <Container py px={false}>
+          <IntroBox
+            text={
+              <p>
+                The secrets resource is the heart of the Barbican service. It
+                provides access to the secret/keying material stored in the
+                system. Barbican supports the secure storage of data for various
+                content types. For more information, visit the&nbsp;
+                <a href="http://developer.openstack.org/api-guide/key-manager/secrets.html">
+                  Barbican OpenStack documentation.
+                </a>
+              </p>
+            }
           />
+          <SecretList secrets={data?.secrets} />
           <Pagination
             count={data?.total}
             limit={ITEMS_PER_PAGE}

@@ -3,7 +3,6 @@ import React from "react"
 import { BrowserRouter, Route, Redirect } from "react-router-dom"
 
 import Tabs from "./Tabs"
-// import SecretList from "./secrets/secretList"
 import Secrets from "./secrets/secrets"
 import SecretDetails from "./secrets/secretDetails"
 import NewSecret from "./secrets/newSecret"
