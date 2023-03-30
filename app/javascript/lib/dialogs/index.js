@@ -1,5 +1,5 @@
 import { ModalDialog } from "./dialog"
-import ReactDOM from "react-dom"
+import { createRoot } from "react-dom/client"
 import React from "react"
 
 const showDialog = function (type, message, options) {
@@ -37,7 +37,9 @@ const showDialog = function (type, message, options) {
 
   // props = Object.assign({ message, type, onHide: cleanup}, options);
   props = Object.assign({ message, type }, options)
-  component = ReactDOM.render(React.createElement(ModalDialog, props), wrapper)
+  component = createRoot(wrapper).render(
+    React.createElement(ModalDialog, props)
+  )
   return component.promise
 }
 

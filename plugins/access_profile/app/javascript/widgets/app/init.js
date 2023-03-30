@@ -1,5 +1,5 @@
 import React from "react"
-import ReactDOM from "react-dom"
+import { createRoot } from "react-dom/client"
 import App from "./App"
 import {
   getWidgetName,
@@ -34,5 +34,5 @@ createNewConfig(widgetName, scriptTagContainer.scriptParams).then((config) => {
     baseURL: scriptTagContainer.scriptParams.url,
   })
   setPolicy(config.policy)
-  ReactDOM.render(React.createElement(App), scriptTagContainer.reactContainer)
+  createRoot(scriptTagContainer.reactContainer).render(React.createElement(App))
 })

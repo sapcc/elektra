@@ -1,7 +1,7 @@
 /* eslint no-console:0 */
 
 import React from "react"
-import ReactDOM from "react-dom"
+import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
 import { FlashMessages } from "./flashes"
 import { createStore, combineReducers, applyMiddleware } from "redux"
@@ -80,7 +80,7 @@ class Widget {
 
       if (!reactContainer) continue
       if (this.store) {
-        ReactDOM.render(
+        createRoot(reactContainer).render(
           <Provider store={this.store}>
             <React.Fragment>
               {this.config.params.flashescontainer !== "custom" && (
@@ -88,18 +88,16 @@ class Widget {
               )}
               {wrappedComponent}
             </React.Fragment>
-          </Provider>,
-          reactContainer
+          </Provider>
         )
       } else {
-        ReactDOM.render(
+        createRoot(reactContainer).render(
           <React.Fragment>
             {this.config.params.flashescontainer !== "custom" && (
               <FlashMessages />
             )}
             {wrappedComponent}
-          </React.Fragment>,
-          reactContainer
+          </React.Fragment>
         )
       }
     }
