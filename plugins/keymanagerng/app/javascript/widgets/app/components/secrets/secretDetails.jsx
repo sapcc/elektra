@@ -152,13 +152,13 @@ const SecretDetails = () => {
               <DataGridRow>
                 <DataGridHeadCell>Owner</DataGridHeadCell>
                 <DataGridCell>
-                  {creatorName && (
+                  {creatorName ? (
                     <>
                       {creatorName}
                       <br />
                     </>
-                  )}
-                  <Badge>{secret.data?.creator_id}</Badge>
+                  ) : (
+                  <Badge className="tw-display-inline">{secret.data?.creator_id}</Badge>)}
                 </DataGridCell>
               </DataGridRow>
               <Row

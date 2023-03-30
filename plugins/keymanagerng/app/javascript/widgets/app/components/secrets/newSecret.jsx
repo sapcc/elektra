@@ -7,6 +7,7 @@ import {
   SelectRow,
   SelectOption,
   Message,
+  Container,
   Box,
 } from "juno-ui-components"
 import { useHistory, useLocation } from "react-router-dom"
@@ -148,6 +149,9 @@ const NewSecret = () => {
         },
         {
           onSuccess: (data, variables, context) => {
+              <Container py px={false}>
+                <Message dismissible test="Secret was successfully added."/>
+              </Container>
             close()
             queryClient.invalidateQueries("secrets")
           },
@@ -263,6 +267,8 @@ const NewSecret = () => {
           label="Secret Type"
           name="secretType"
           onChange={onSecretTypeChange}
+          helptext={validationState?.secret_type}
+          invalid={validationState?.secret_type ? true : false}
           required
         >
           <SelectOption label="" value="" />
@@ -281,6 +287,7 @@ const NewSecret = () => {
               ? validationState.payload
               : "The secret’s data to be stored"
           }
+          invalid={validationState?.payload ? true : false}
           required
         />
         <SelectRow
@@ -293,6 +300,7 @@ const NewSecret = () => {
             })
           }}
           helptext={validationState?.payload_content_type}
+          invalid={validationState?.payload_content_type ? true : false}
           required
         >
           {!formData.secret_type && (

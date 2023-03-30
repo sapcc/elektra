@@ -23,7 +23,7 @@ const SecretListItem = ({ secret, hideAction }) => {
   const secretUuid = getSecretUuid(secret)
   const queryClient = useQueryClient()
 
-  const { isLoading, isError, error, data, mutate } = useMutation(
+  const { isLoading, isError, error, data, isSuccess, mutate } = useMutation(
     deleteSecret,
     100,
     secretUuid
@@ -36,8 +36,7 @@ const SecretListItem = ({ secret, hideAction }) => {
       },
       {
         onSuccess: () => {
-          console.log("deleteMutate id: ", secretUuid)
-          dispatch({ type: "DELETE_SECRETS", secretUuid })
+          //TODO: Confirm remove modal
           queryClient.invalidateQueries("secrets")
         },
       }
@@ -45,10 +44,8 @@ const SecretListItem = ({ secret, hideAction }) => {
   }
 
   const handleSecretSelected = (oEvent) => {
-    console.log("secret selected oEvent: ", oEvent)
   }
 
-  console.log("secretListItem hideActions: ", hideAction)
 
   return isLoading && !data ? (
     <HintLoading />
@@ -67,7 +64,9 @@ const SecretListItem = ({ secret, hideAction }) => {
         <Link className="tw-break-all" to={`/secrets/${secretUuid}/show`}>
           {secret.name || secretUuid}
         </Link>
-        <Badge className="tw-text-xs">{secretUuid}</Badge>
+        <small>
+        <Badge className="tw-display-inline">{secretUuid}</Badge>
+        </small>
       </DataGridCell>
       <DataGridCell>{secret.secret_type}</DataGridCell>
       {!hideAction && (

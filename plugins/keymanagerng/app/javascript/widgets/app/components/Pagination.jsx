@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react"
+import React, { useMemo, useState } from "react"
 import { Stack, Pagination } from "juno-ui-components"
 
 const PaginationComp = ({
@@ -9,8 +9,6 @@ const PaginationComp = ({
   disabled,
   currentPage,
 }) => {
-  const [offset, setOffset] = useState(0)
-
   count = useMemo(() => {
     if (!count) return 0
     return count

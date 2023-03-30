@@ -291,6 +291,7 @@ const NewContainer = () => {
           required
         />
         <SelectRow
+          className="tw-mb-6"
           defaultValue="generic"
           label="Container Type"
           onChange={(oEvent) => {
@@ -311,7 +312,6 @@ const NewContainer = () => {
           invalid={validationState?.type ? true : false}
           helptext={validationState?.type}
           required
-          className="tw-mb-6"
         >
           <SelectOption label="" value="" />
           {selectContainerTypes("all").map((item, index) => (
@@ -438,7 +438,6 @@ const NewContainer = () => {
                   onChange={onPrivateKeyChange}
                   isSearchable
                   isClearable
-                  className="tw-mt-6"
                   isMulti
                   styles={styles}
                 />

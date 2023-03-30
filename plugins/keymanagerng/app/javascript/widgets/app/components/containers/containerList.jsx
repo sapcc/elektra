@@ -12,6 +12,7 @@ import {
   DataGridHeadCell,
   DataGridToolbar,
   Spinner,
+  Label
 } from "juno-ui-components"
 
 const ContainerList = ({ containers, isLoading }) => {
@@ -33,6 +34,7 @@ const ContainerList = ({ containers, isLoading }) => {
       //   />
       // }
       >
+        {/* <Label text="Available Containers"/> */}
         {policy.isAllowed("keymanagerng:container_create") && (
           <Link to="/containers/newContainer">
             <Button>New Container</Button>

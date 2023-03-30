@@ -2,12 +2,10 @@ import apiClient from "./apiClient"
 
 export const getContainers = ({ queryKey }) => {
   const [_key, paginationOptions] = queryKey
-  console.log("getContainers queryKey: ", queryKey)
   return fetchContainers(paginationOptions)
 }
 
 export const fetchContainers = (options) => {
-  console.log("fetchContainers options: ", options)
   return apiClient
     .osApi("key-manager")
     .get("/v1/containers", {
@@ -17,7 +15,6 @@ export const fetchContainers = (options) => {
       },
     })
     .then((response) => {
-      console.log("fetchContainers data: ", response?.data)
       return response?.data
     })
 }
@@ -28,7 +25,6 @@ export const getContainer = ({ queryKey }) => {
 }
 
 export const fetchContainer = (uuid) => {
-  console.log("fetchContainer uuid: ", uuid)
   return apiClient
     .osApi("key-manager")
     .get("/v1/containers/" + uuid)

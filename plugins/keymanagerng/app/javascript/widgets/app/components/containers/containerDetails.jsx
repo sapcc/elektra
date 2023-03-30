@@ -123,13 +123,15 @@ const ContainerDetails = () => {
               <DataGridRow>
                 <DataGridHeadCell>Owner</DataGridHeadCell>
                 <DataGridCell>
-                  {creatorName && (
+                  <div>
+                  {creatorName ? (
                     <>
                       {creatorName}
-                      <br />
                     </>
+                  ):(
+                  <Badge className="tw-text-xs">{container.data?.creator_id}</Badge>
                   )}
-                  <Badge>{container.data?.creator_id}</Badge>
+                  </div>
                 </DataGridCell>
               </DataGridRow>
               <Row label="Status" value={container.data?.status} />
@@ -145,16 +147,18 @@ const ContainerDetails = () => {
                   <>
                     <DataGridCell key={index}>{index}</DataGridCell>
                     <DataGridCell key={index}>
+                      <div>
                       <Link
                         className="tw-break-all"
                         to={`/secrets/${getSecretUuid(secret)}/show`}
                       >
                         {secret.name}
                       </Link>
-                      <br />
+                      <br/>
                       <Badge className="tw-text-xs">
                         {getSecretUuid(secret)}
                       </Badge>
+                      </div>
                     </DataGridCell>
                   </>
                 ))

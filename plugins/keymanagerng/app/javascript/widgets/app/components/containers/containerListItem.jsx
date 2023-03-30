@@ -1,5 +1,5 @@
 import React from "react"
-import { Link, useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { policy } from "lib/policy"
 import {
   Badge,
@@ -15,10 +15,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
 
 const ContainerListItem = ({ container }) => {
-  // manually push a path onto the react router history
-  // once we run on react-router-dom v6 this should be replaced with the useNavigate hook, and the push function with a navigate function
-  // like this: const navigate = useNavigate(), the use navigate('this/is/the/path') in the onClick handler of the edit button below
-  const { push } = useHistory()
   const containerUuid = getContainerUuid(container)
 
   const queryClient = useQueryClient()
@@ -36,7 +32,6 @@ const ContainerListItem = ({ container }) => {
       },
       {
         onSuccess: () => {
-          console.log("deleteMutate id: ", containerUuid)
           queryClient.invalidateQueries("containers")
         },
       }
@@ -52,10 +47,13 @@ const ContainerListItem = ({ container }) => {
   ) : (
     <DataGridRow>
       <DataGridCell>
-        <Link className="tw-break-all" to={`/containers/${containerUuid}/show`}>
-          {container.name || containerUuid}
-        </Link>
-        <Badge className="tw-text-xs">{containerUuid}</Badge>
+        <div>
+          <Link className="tw-break-all" to={`/containers/${containerUuid}/show`}>
+            {container.name || containerUuid}
+          </Link>
+          <br/>
+            <Badge className="tw-text-xs">{containerUuid}</Badge>
+        </div>
       </DataGridCell>
       <DataGridCell>{container.type}</DataGridCell>
       <DataGridCell>{container.status}</DataGridCell>

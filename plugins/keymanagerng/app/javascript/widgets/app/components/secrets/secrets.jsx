@@ -4,7 +4,7 @@ import Pagination from "../Pagination"
 import { getSecrets } from "../../secretActions"
 import { useQuery } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
-import { Message, Container } from "juno-ui-components"
+import { Message, Container, IntroBox } from "juno-ui-components"
 
 const ITEMS_PER_PAGE = 20
 
@@ -41,7 +41,8 @@ const Secrets = () => {
           </Message>
         </Container>
       ) : (
-        <>
+         <Container py px={false}>
+          <IntroBox text="The secrets resource is the heart of the Barbican service. It provides access to the secret/keying material stored in the system. Barbican supports the secure storage of data for various content types. For more information, visit the Barbican OpenStack documentation." />
           <SecretList
             secrets={data?.secrets}
           />
@@ -53,7 +54,7 @@ const Secrets = () => {
             disabled={error}
             currentPage={currentPage}
           />
-        </>
+        </Container>
       )}
     </>
   )

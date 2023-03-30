@@ -8,7 +8,7 @@ import { Message, Container } from "juno-ui-components"
 
 const ITEMS_PER_PAGE = 20
 
-const Containers = (options) => {
+const Containers = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [paginationOptions, setPaginationOptions] = useState({
     limit: ITEMS_PER_PAGE,
@@ -41,7 +41,7 @@ const Containers = (options) => {
           </Message>
         </Container>
       ) : (
-        <>
+        <Container py px={false}>
           <ContainerList containers={data?.containers} />
           <Pagination
             count={data?.total}
@@ -51,7 +51,7 @@ const Containers = (options) => {
             disabled={error}
             currentPage={currentPage}
           />
-        </>
+        </Container>
       )}
     </>
   )
