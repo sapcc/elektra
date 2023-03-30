@@ -149,9 +149,6 @@ const NewSecret = () => {
         },
         {
           onSuccess: (data, variables, context) => {
-              <Container py px={false}>
-                <Message dismissible test="Secret was successfully added."/>
-              </Container>
             close()
             queryClient.invalidateQueries("secrets")
           },

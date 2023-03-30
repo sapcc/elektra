@@ -1,6 +1,6 @@
 /* eslint no-console:0 */
 import React from "react"
-import { BrowserRouter, Route } from "react-router-dom"
+import { BrowserRouter, Route, Redirect } from "react-router-dom"
 
 import Tabs from "./Tabs"
 // import SecretList from "./secrets/secretList"
@@ -17,11 +17,12 @@ const tabsConfig = [
   { to: "/containers", label: "Containers", component: Containers },
 ]
 
-const baseName = widgetBasePath("keymanagerng")
+const baseName = widgetBasePath("keymanagerng") 
 
 const AppRouter = () => {
   return (
     <BrowserRouter basename={baseName}>
+      <Route exact path="/" render={() => <Redirect to="/secrets" />} />
       <Route path="/:activeTab">
         <Tabs tabsConfig={tabsConfig} />
       </Route>
