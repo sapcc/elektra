@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react"
+import React, { useCallback, useRef, useEffect } from "react"
 import { deleteSecret } from "../../secretActions"
 import { Link, useHistory } from "react-router-dom"
 import { policy } from "lib/policy"
@@ -14,6 +14,7 @@ import {
 import { getSecretUuid } from "../../../lib/secretHelper"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
+import { useMessageStore } from "messages-provider"
 
 const SecretListItem = ({ secret, hideAction }) => {
   // manually push a path onto the react router history
@@ -22,6 +23,7 @@ const SecretListItem = ({ secret, hideAction }) => {
   const { push } = useHistory()
   const secretUuid = getSecretUuid(secret)
   const queryClient = useQueryClient()
+  const addMessage = useMessageStore((state) => state.addMessage)
 
   const { isLoading, isError, error, data, isSuccess, mutate } = useMutation(
     deleteSecret,
@@ -38,21 +40,27 @@ const SecretListItem = ({ secret, hideAction }) => {
         onSuccess: () => {
           //TODO: Confirm remove modal
           queryClient.invalidateQueries("secrets")
+          addMessage({
+            variant: "success",
+            text: `The secret ${secretUuid} is successfully deleted.`,
+          })
         },
       }
     )
   }
 
-  const handleSecretSelected = (oEvent) => {
-  }
+  useEffect(() => {
+    if (!isError) return
+    addMessage({
+      variant: "error",
+      text: JSON.stringify(error),
+    })
+  }, [isError])
 
+  const handleSecretSelected = (oEvent) => {}
 
   return isLoading && !data ? (
     <HintLoading />
-  ) : isError ? (
-    <Message variant="danger">
-      {`${error.statusCode}, ${error.message}`}
-    </Message>
   ) : (
     <DataGridRow>
       {hideAction && (
@@ -64,9 +72,9 @@ const SecretListItem = ({ secret, hideAction }) => {
         <Link className="tw-break-all" to={`/secrets/${secretUuid}/show`}>
           {secret.name || secretUuid}
         </Link>
-        <small>
-        <Badge className="tw-display-inline">{secretUuid}</Badge>
-        </small>
+        <div>
+          <Badge className="tw-text-xs">{secretUuid}</Badge>
+        </div>
       </DataGridCell>
       <DataGridCell>{secret.secret_type}</DataGridCell>
       {!hideAction && (

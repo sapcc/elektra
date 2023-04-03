@@ -60,19 +60,16 @@ const ContainerDetails = () => {
     {
       enabled: !!container.data?.creator_id,
       onSuccess: (data) => {
-        console.log("containerCreator onSuccess:", data)
         setCreatorName(data)
       },
-      onError: (error) => {
+      onError: () => {
         setCreatorName(null)
-        console.log("containerCreator onError:", error)
       },
     }
   )
 
   useEffect(() => {
     setShow(!!params.id)
-    console.log("show container", params.id)
   }, [params.id])
 
   const restoreURL = useCallback(() => {
@@ -124,13 +121,13 @@ const ContainerDetails = () => {
                 <DataGridHeadCell>Owner</DataGridHeadCell>
                 <DataGridCell>
                   <div>
-                  {creatorName ? (
-                    <>
-                      {creatorName}
-                    </>
-                  ):(
-                  <Badge className="tw-text-xs">{container.data?.creator_id}</Badge>
-                  )}
+                    {creatorName ? (
+                      <>{creatorName}</>
+                    ) : (
+                      <Badge className="tw-text-xs">
+                        {container.data?.creator_id}
+                      </Badge>
+                    )}
                   </div>
                 </DataGridCell>
               </DataGridRow>
@@ -148,16 +145,16 @@ const ContainerDetails = () => {
                     <DataGridCell key={index}>{index}</DataGridCell>
                     <DataGridCell key={index}>
                       <div>
-                      <Link
-                        className="tw-break-all"
-                        to={`/secrets/${getSecretUuid(secret)}/show`}
-                      >
-                        {secret.name}
-                      </Link>
-                      <br/>
-                      <Badge className="tw-text-xs">
-                        {getSecretUuid(secret)}
-                      </Badge>
+                        <Link
+                          className="tw-break-all"
+                          to={`/secrets/${getSecretUuid(secret)}/show`}
+                        >
+                          {secret.name}
+                        </Link>
+                        <br />
+                        <Badge className="tw-text-xs">
+                          {getSecretUuid(secret)}
+                        </Badge>
                       </div>
                     </DataGridCell>
                   </>

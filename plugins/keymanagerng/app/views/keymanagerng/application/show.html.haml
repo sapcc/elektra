@@ -1,4 +1,6 @@
 = content_for :main_toolbar do
   Key Manager
 
+%script{"data-importmap-only" => "true", :src => "https://assets.juno.global.cloud.sap/apps/widget-loader@latest/build/app.js"}
+
 = javascript_include_tag "keymanagerng_app_widget", data: { url: plugin("keymanagerng").root_path }

@@ -5,6 +5,7 @@ import AppRouter from "./AppRouter"
 import CustomCacheProvider from "./CustomCacheProvider"
 import styles from "../styles.inline.css"
 import StyleProvider, { AppShell } from "juno-ui-components"
+import { MessagesProvider } from "messages-provider"
 
 const queryClient = new QueryClient()
 
@@ -15,9 +16,11 @@ const Application = () => {
       <StyleProvider theme="theme-light" stylesWrapper="shadowRoot">
         <style>{styles}</style>
         <CustomCacheProvider>
-          <AppShell embedded>
-            <AppRouter />
-          </AppShell>
+          <MessagesProvider>
+            <AppShell embedded>
+              <AppRouter />
+            </AppShell>
+          </MessagesProvider>
         </CustomCacheProvider>
       </StyleProvider>
     </QueryClientProvider>

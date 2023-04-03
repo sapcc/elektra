@@ -17,9 +17,7 @@ import {
   getSecretMetadata,
   getSecretPayload,
 } from "../../secretActions"
-import {
-  getUsername,
-} from "../../helperActions"
+import { getUsername } from "../../helperActions"
 import { useQuery } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
 import { Message } from "juno-ui-components"
@@ -44,16 +42,9 @@ const SecretDetails = () => {
 
   const secret = useQuery(["secret", params.id], getSecret, {
     enabled: !!params.id,
-    onSuccess: (data) => {
-      console.log("fetchSecret onSuccess:", data)
-    },
-    onError: (error) => {
-      console.log("fetchSecret onError:", error)
-    },
   })
   //Todo: find how to can rename data directly there as secret
 
-  console.log("secretDetails: ", secret.data)
   const [show, setShow] = useState(!!secret.data)
 
   useEffect(() => {
@@ -69,12 +60,10 @@ const SecretDetails = () => {
     {
       enabled: !!secret.data?.creator_id,
       onSuccess: (data) => {
-        console.log("secretCreator onSuccess:", data)
         setCreatorName(data)
       },
-      onError: (error) => {
+      onError: () => {
         setCreatorName(null)
-        console.log("secretCreator onError:", error)
       },
     }
   )
@@ -82,14 +71,12 @@ const SecretDetails = () => {
   const metadata = useQuery(["secretMetadata", secretId], getSecretMetadata, {
     enabled: !!secretId,
     onSuccess: (data) => {
-      console.log("secretMetadata onSuccess:", data)
       if (data) return setSecretMetadata(data)
     },
   })
 
   useEffect(() => {
     setShow(!!params.id)
-    console.log("show secret", params.id)
   }, [params.id])
 
   const secretPlayload = useQuery(
@@ -98,7 +85,6 @@ const SecretDetails = () => {
     {
       enabled: !!payloadRequested,
       onSuccess: (data) => {
-        console.log("secretPayload data:", data)
         const fileData = JSON.stringify(data)
         const blob = new Blob([fileData], { type: "text/plain" })
         const url = URL.createObjectURL(blob)
@@ -158,7 +144,10 @@ const SecretDetails = () => {
                       <br />
                     </>
                   ) : (
-                  <Badge className="tw-display-inline">{secret.data?.creator_id}</Badge>)}
+                    <Badge className="tw-display-inline">
+                      {secret.data?.creator_id}
+                    </Badge>
+                  )}
                 </DataGridCell>
               </DataGridRow>
               <Row
@@ -176,15 +165,15 @@ const SecretDetails = () => {
               <DataGridRow>
                 <DataGridHeadCell>{"Payload"}</DataGridHeadCell>
                 <DataGridCell>
-                  <a
-                    className="tw-text-theme-link"
-                    to={`/secrets/${secretId}/payload`}
-                    onClick={() => {
-                      return setPayloadRequested(true)
-                    }}
-                  >
-                    Download Payload
-                  </a>
+                  <div>
+                    <Button
+                      icon="download"
+                      label="Download"
+                      onClick={() => {
+                        return setPayloadRequested(true)
+                      }}
+                    />
+                  </div>
                 </DataGridCell>
               </DataGridRow>
             </DataGrid>

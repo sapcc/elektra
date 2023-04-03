@@ -13,6 +13,7 @@ import { getContainerUuid } from "../../../lib/containerHelper"
 import { deleteContainer } from "../../containerActions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
+import { useEffect } from "react"
 
 const ContainerListItem = ({ container }) => {
   const containerUuid = getContainerUuid(container)
@@ -37,6 +38,7 @@ const ContainerListItem = ({ container }) => {
       }
     )
   }
+
 
   return isLoading && !data ? (
     <HintLoading />
