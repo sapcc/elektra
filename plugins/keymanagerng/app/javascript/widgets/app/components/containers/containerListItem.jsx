@@ -14,6 +14,7 @@ import { deleteContainer } from "../../containerActions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
 import { useEffect } from "react"
+import { useMessageStore } from "messages-provider"
 
 const ContainerListItem = ({ container }) => {
   const containerUuid = getContainerUuid(container)
@@ -25,6 +26,7 @@ const ContainerListItem = ({ container }) => {
     100,
     containerUuid
   )
+  const addMessage = useMessageStore((state) => state.addMessage)
 
   const handleDelete = () => {
     mutate(
@@ -33,12 +35,15 @@ const ContainerListItem = ({ container }) => {
       },
       {
         onSuccess: () => {
+          addMessage({
+            variant: "success",
+            text: `The container ${containerUuid} is successfully deleted.`,
+          })
           queryClient.invalidateQueries("containers")
         },
       }
     )
   }
-
 
   return isLoading && !data ? (
     <HintLoading />
@@ -50,11 +55,14 @@ const ContainerListItem = ({ container }) => {
     <DataGridRow>
       <DataGridCell>
         <div>
-          <Link className="tw-break-all" to={`/containers/${containerUuid}/show`}>
+          <Link
+            className="tw-break-all"
+            to={`/containers/${containerUuid}/show`}
+          >
             {container.name || containerUuid}
           </Link>
-          <br/>
-            <Badge className="tw-text-xs">{containerUuid}</Badge>
+          <br />
+          <Badge className="tw-text-xs">{containerUuid}</Badge>
         </div>
       </DataGridCell>
       <DataGridCell>{container.type}</DataGridCell>
