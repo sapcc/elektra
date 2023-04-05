@@ -303,7 +303,7 @@ const NewSecret = () => {
           {!formData.secret_type && (
             <SelectOption label="Please first select a secret type" value="" />
           )}
-          <SelectOption label="" value="" />
+          {formData.secret_type && <SelectOption label="" value="" />}
           {payloadContentTypeOptions.map((item, index) => (
             <SelectOption key={index} label={item.label} value={item.value} />
           ))}
