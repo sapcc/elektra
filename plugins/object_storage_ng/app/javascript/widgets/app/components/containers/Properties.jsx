@@ -140,40 +140,45 @@ const FormBody = ({ containerName, otherContainers }) => {
         </div>
       )}
       <div className="form-group">
-        <label>Object versioning</label>
+        {/* support new versioning. If enabled then hide old versioning method  */}
+        {!values.versions_enabled && (
+          <>
+            <label>Object versioning</label>
 
-        <div className="row">
-          <div className="col-md-6">
-            <div className="checkbox">
-              <label>
-                <Form.Input
-                  elementType="input"
-                  type="checkbox"
-                  name="versions_location_enabled"
-                />{" "}
-                Store old object versions{" "}
-                {values.versions_location_enabled && " in container:"}
-              </label>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="checkbox">
+                  <label>
+                    <Form.Input
+                      elementType="input"
+                      type="checkbox"
+                      name="versions_location_enabled"
+                    />{" "}
+                    Store old object versions{" "}
+                    {values.versions_location_enabled && " in container:"}
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                {values.versions_location_enabled && (
+                  <Form.Input
+                    elementType="select"
+                    className="select required form-control"
+                    name="versions_location"
+                  >
+                    <option></option>
+                    {otherContainers.map((c, i) => (
+                      <option key={i} value={c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </Form.Input>
+                )}
+              </div>
             </div>
-          </div>
-
-          <div className="col-md-6">
-            {values.versions_location_enabled && (
-              <Form.Input
-                elementType="select"
-                className="select required form-control"
-                name="versions_location"
-              >
-                <option></option>
-                {otherContainers.map((c, i) => (
-                  <option key={i} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </Form.Input>
-            )}
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
       <div className="form-group">
@@ -317,6 +322,10 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
       meta_quota_count: metadata["x-container-meta-quota-count"],
       meta_quota_bytes: metadata["x-container-meta-quota-bytes"],
       read: metadata["x-container-read"],
+      versions_enabled:
+        metadata["x-versions-enabled"] === "True" ||
+        metadata["x-versions-enabled"] === "true" ||
+        metadata["x-versions-enabled"] === "1",
       customMetadataTags,
     }
   }, [metadata, customMetadataTags, capabilities, name])

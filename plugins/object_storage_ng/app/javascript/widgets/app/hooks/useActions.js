@@ -170,14 +170,29 @@ const useActions = () => {
     [capabilities, deleteObject]
   )
 
+  const getVersions = React.useCallback((containerName) =>
+    apiClient
+      .osApi("object-store")
+      .get(containerName, { params: { versions: true } })
+      .then((result) => result?.data)
+  )
+
+  const deleteVersion = React.useCallback(
+    (containerName, { name, version_id }) =>
+      apiClient.osApi("object-store").delete(objectPath(containerName, name), {
+        params: { "version-id": version_id },
+      })
+  )
+
   const deleteContainer = React.useCallback(
-    (containerName) =>
-      apiClient
+    (containerName) => {
+      return apiClient
         .osApi("object-store")
         .delete(containerPath(containerName))
         .then(() => {
           dispatch({ type: "REMOVE_CONTAINER", name: containerName })
-        }),
+        })
+    },
     [dispatch]
   )
 
@@ -394,6 +409,8 @@ const useActions = () => {
     getAcls,
     loadContainerObjects,
     deleteContainer,
+    getVersions,
+    deleteVersion,
     createContainer,
     createFolder,
     downloadObject,
