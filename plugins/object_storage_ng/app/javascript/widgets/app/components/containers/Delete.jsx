@@ -20,6 +20,13 @@ const DelteContainer = () => {
     useActions()
   const [metadata, setMetadata] = React.useState()
   const [isFetchingMetadata, setIsFetchingMetadata] = React.useState(false)
+  const versioningEnabled = React.useMemo(
+    () =>
+      metadata?.["x-versions-enabled"] === "True" ||
+      metadata?.["x-versions-enabled"] === "true" ||
+      metadata?.["x-versions-enabled"] === "1",
+    [metadata]
+  )
 
   const [versionsCount, setVersionsCount] = React.useState(0)
   const [deletedVersionsCount, setDeletedVersionsCount] = React.useState(0)
@@ -78,8 +85,8 @@ const DelteContainer = () => {
           // to preserve performance, we allow up to 1000 versions to be deleted via UI
           if (versions.length > 1000) {
             setError(
-              `There are more than 1000 versions. Deleting all versions would lead to performance problems. Please use the swift client for this  
-              "swift delete ${container.name} --versions"`
+              `There are more than 1000 versions. Please use the swift client instead (easiest way is to use our webconsole):   
+              "swift delete ${container.name} --versions" `
             )
             // reset deleting state
             setIsDeleting(false)
@@ -180,9 +187,7 @@ const DelteContainer = () => {
                 </div>
 
                 {/* support the new versioning method. Delete versions if x-versions-enabled header is set. */}
-                {(metadata?.["x-versions-enabled"] === "True" ||
-                  metadata?.["x-versions-enabled"] === "true" ||
-                  metadata?.["x-versions-enabled"] === "1") && (
+                {versioningEnabled && (
                   <div className="row">
                     <div
                       className={`col-md-6 ${
@@ -269,7 +274,7 @@ const DelteContainer = () => {
                   !container ||
                   container.name !== confirmation ||
                   isDeleteing ||
-                  !confirmDeleteVersions
+                  (versioningEnabled && !confirmDeleteVersions)
                 }
               >
                 {isDeleteing ? "Deleting..." : "Delete"}

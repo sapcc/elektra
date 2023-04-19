@@ -141,7 +141,13 @@ const FormBody = ({ containerName, otherContainers }) => {
       )}
       <div className="form-group">
         {/* support new versioning. If enabled then hide old versioning method  */}
-        {!values.versions_enabled && (
+        {values.versions_enabled ? (
+          <div className="row">
+            <div className="col-md-6">
+              <i className="fa fa-check-square-o" /> Versioning is enabled
+            </div>
+          </div>
+        ) : (
           <>
             <label>Object versioning</label>
 
