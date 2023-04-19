@@ -192,6 +192,7 @@ const handleResponse = async (response) => {
 
   if (!response.ok) {
     const statusText =
+      data?.error ||
       response.statusText ||
       HTTP_CODE_STATUS[response.status] ||
       response.status

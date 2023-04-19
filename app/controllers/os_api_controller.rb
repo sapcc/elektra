@@ -67,6 +67,6 @@ class OsApiController < ::AjaxController
     # pp "......................................ERROR"
     # pp e
     # byebug
-    render json: { error: e.message }, status: e.code
+    render json: { error: e.response.body || e.message }, status: e.code
   end
 end
