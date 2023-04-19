@@ -374,7 +374,9 @@ const useActions = () => {
         let data
         try {
           data = await response.json()
-        } catch (e) {}
+        } catch (e) {
+          // do nothing
+        }
 
         if (response.status >= 400)
           throw new Error(
