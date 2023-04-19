@@ -9,17 +9,41 @@ const DelteContainer = () => {
   const history = useHistory()
   const [show, setShow] = React.useState(!!name)
   const [confirmation, setConfirmation] = React.useState("")
+  const [confirmDeleteVersions, setConfirmDeleteVersions] =
+    React.useState(false)
   const [isDeleteing, setIsDeleting] = React.useState(false)
   const [error, setError] = React.useState()
   const containers = useGlobalState("containers")
   const headerRef = React.createRef()
   const confirmationRef = React.createRef()
-  const { deleteContainer } = useActions()
+  const { deleteContainer, getVersions, deleteVersion, loadContainerMetadata } =
+    useActions()
+  const [metadata, setMetadata] = React.useState()
+  const [isFetchingMetadata, setIsFetchingMetadata] = React.useState(false)
+
+  const [versionsCount, setVersionsCount] = React.useState(0)
+  const [deletedVersionsCount, setDeletedVersionsCount] = React.useState(0)
+  const mounted = React.useRef()
 
   const container = React.useMemo(() => {
     if (!containers?.items) return
     return containers.items.find((c) => c.name === name)
   }, [containers, name])
+
+  React.useEffect(() => {
+    mounted.current = true
+    return () => (mounted.current = false)
+  }, [])
+
+  React.useEffect(() => {
+    setIsFetchingMetadata(true)
+    loadContainerMetadata(name)
+      .then((headers) => setMetadata(headers))
+      .catch((error) => {
+        setError(error.message)
+      })
+      .finally(() => setIsFetchingMetadata(false))
+  }, [name, loadContainerMetadata, setMetadata, setIsFetchingMetadata])
 
   const close = React.useCallback((e) => {
     setShow(false)
@@ -34,21 +58,69 @@ const DelteContainer = () => {
       if (e && e.preventDefault) e.preventDefault()
       if (!container || container.name !== confirmation) return
 
-      setError(null)
-      setIsDeleting(true)
-      deleteContainer(container.name)
-        // close modal window
-        .then(close)
-        .catch((error) => {
-          if (error.status === 409)
+      // Since the switch to the new version management in Swift API ("x-versions-enabled" header),
+      // versions are stored hidden. If the customer has activated this option, he can no longer
+      // delete the container via the UI.
+      // Solution: we check whether this option is enabled and delete the corresponding versions
+      // individually (n+1 problem :( )
+      const deleteContainerAndVersions = async () => {
+        // reset error
+        setError(null)
+        // mark as deleting
+        setIsDeleting(true)
+
+        // check if delete versions was confirmed
+        // we also check if this component still mounted to prevent update errors
+        if (confirmDeleteVersions && mounted.current) {
+          // if versions have to be deleted then replace promise with api call
+          // wait until versions are deleted
+          const versions = await getVersions(container.name)
+          // to preserve performance, we allow up to 1000 versions to be deleted via UI
+          if (versions.length > 1000) {
             setError(
-              "Cannot delete container because it contains objects. Please empty it first."
+              `There are more than 1000 versions. Deleting all versions would lead to performance problems. Please use the swift client for this  
+              "swift delete ${container.name} --versions"`
             )
-          else setError(error.message)
-          setIsDeleting(false)
-        })
+            // reset deleting state
+            setIsDeleting(false)
+            // stop here
+            return
+          }
+          // set count of all versions
+          setVersionsCount(versions.length)
+          for (let i = 0; i < versions.length; i++) {
+            if (!mounted.current) continue
+            // wait for deleting this version
+            await deleteVersion(container.name, versions[i])
+            // increase deleted count
+            setDeletedVersionsCount(i + 1)
+          }
+        }
+        if (mounted.current) {
+          // delete container
+          await deleteContainer(container.name)
+            .then(close)
+            .catch((error) => {
+              if (error.status === 409)
+                setError(
+                  "Cannot delete container because it contains objects. Please empty it first."
+                )
+              else mounted.current && setError(error.message)
+              mounted.current && setIsDeleting(false)
+            })
+        }
+      }
+
+      deleteContainerAndVersions()
     },
-    [confirmation, container, deleteContainer]
+    [
+      confirmation,
+      container,
+      deleteContainer,
+      getVersions,
+      deleteVersion,
+      confirmDeleteVersions,
+    ]
   )
 
   return (
@@ -79,7 +151,7 @@ const DelteContainer = () => {
       </Modal.Header>
 
       <Modal.Body>
-        {containers.isFetching ? (
+        {containers.isFetching || isFetchingMetadata ? (
           <span>
             <span className="spinner" />
             Loading...
@@ -106,8 +178,43 @@ const DelteContainer = () => {
                   <strong>Are you sure?</strong> The container will be deleted.
                   This cannot be undone.
                 </div>
+
+                {/* support the new versioning method. Delete versions if x-versions-enabled header is set. */}
+                {(metadata?.["x-versions-enabled"] === "True" ||
+                  metadata?.["x-versions-enabled"] === "true" ||
+                  metadata?.["x-versions-enabled"] === "1") && (
+                  <div className="row">
+                    <div
+                      className={`col-md-6 ${
+                        confirmation && confirmDeleteVersions
+                          ? "has-success"
+                          : "has-error"
+                      }`}
+                    >
+                      <div className="checkbox">
+                        <label>
+                          <input
+                            type="checkbox"
+                            onChange={(e) =>
+                              setConfirmDeleteVersions(e.target.checked)
+                            }
+                          />{" "}
+                          I confirm that all existing versions will also be
+                          deleted
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="row">
-                  <div className="col-md-6">
+                  <div
+                    className={`col-md-6 ${
+                      confirmation && container?.name !== confirmation
+                        ? "has-error"
+                        : ""
+                    }`}
+                  >
                     <fieldset>
                       <div className="form-group string required forms_confirm_container_action_name">
                         <label
@@ -132,6 +239,14 @@ const DelteContainer = () => {
                     {isDeleteing && (
                       <span>
                         Deleting <span className="spinner" />{" "}
+                        {versionsCount > 0 && (
+                          <>
+                            {Math.round(
+                              (deletedVersionsCount / versionsCount) * 100
+                            )}
+                            %
+                          </>
+                        )}
                       </span>
                     )}
                   </div>
@@ -151,7 +266,10 @@ const DelteContainer = () => {
                 bsStyle="primary"
                 onClick={submit}
                 disabled={
-                  !container || container.name !== confirmation || isDeleteing
+                  !container ||
+                  container.name !== confirmation ||
+                  isDeleteing ||
+                  !confirmDeleteVersions
                 }
               >
                 {isDeleteing ? "Deleting..." : "Delete"}
