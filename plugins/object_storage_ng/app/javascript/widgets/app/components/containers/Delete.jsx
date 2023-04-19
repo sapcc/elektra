@@ -58,31 +58,46 @@ const DelteContainer = () => {
       if (e && e.preventDefault) e.preventDefault()
       if (!container || container.name !== confirmation) return
 
+      // Since the switch to the new version management in Swift API ("x-versions-enabled" header),
+      // versions are stored hidden. If the customer has activated this option, he can no longer
+      // delete the container via the UI.
+      // Solution: we check whether this option is enabled and delete the corresponding versions
+      // individually (n+1 problem :( )
       const deleteContainerAndVersions = async () => {
+        // reset error
         setError(null)
+        // mark as deleting
         setIsDeleting(true)
 
-        // create a resolved promise object
+        // check if delete versions was confirmed
+        // we also check if this component still mounted to prevent update errors
         if (confirmDeleteVersions && mounted.current) {
           // if versions have to be deleted then replace promise with api call
           // wait until versions are deleted
           const versions = await getVersions(container.name)
+          // to preserve performance, we allow up to 1000 versions to be deleted via UI
           if (versions.length > 1000) {
             setError(
               `There are more than 1000 versions. Deleting all versions would lead to performance problems. Please use the swift client for this  
               "swift delete ${container.name} --versions"`
             )
+            // reset deleting state
             setIsDeleting(false)
+            // stop here
             return
           }
+          // set count of all versions
           setVersionsCount(versions.length)
           for (let i = 0; i < versions.length; i++) {
             if (!mounted.current) continue
+            // wait for deleting this version
             await deleteVersion(container.name, versions[i])
+            // increase deleted count
             setDeletedVersionsCount(i + 1)
           }
         }
         if (mounted.current) {
+          // delete container
           await deleteContainer(container.name)
             .then(close)
             .catch((error) => {
