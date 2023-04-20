@@ -267,7 +267,9 @@ const prepareRequest = (path, config = {}) => {
     try {
       body = JSON.stringify(body)
       headers["content-type"] = headers["content-type"] || "application/json"
-    } catch (e) {}
+    } catch (e) {
+      /* */
+    }
   }
 
   // add header prefix to all keys if presented

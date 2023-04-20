@@ -197,7 +197,7 @@ describe("client", () => {
 
         it(action + ": " + "should throw an error", async () => {
           await expect(client[action]("test")).rejects.toThrow({
-            message: "bad request",
+            message: "name can not be empty",
             status: 400,
             statusText: "bad request",
             data: { error: "name can not be empty" },
