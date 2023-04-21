@@ -10,10 +10,13 @@ import {
   DataGridToolbar,
   ButtonRow,
   Button,
+  Stack,
+  Spinner,
 } from "juno-ui-components"
 import { Link } from "react-router-dom"
 import { useMessageStore } from "messages-provider"
 import { parseError } from "../../helpers"
+import useSecretsSearch from "../../hooks/useSecretsSearch"
 
 const ITEMS_PER_PAGE = 20
 
@@ -21,6 +24,7 @@ const Secrets = () => {
   const addMessage = useMessageStore((state) => state.addMessage)
   const [currentPage, setCurrentPage] = useState(1)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState(null)
   const [paginationOptions, setPaginationOptions] = useState({
     limit: ITEMS_PER_PAGE,
     offset: 0,
@@ -31,6 +35,8 @@ const Secrets = () => {
     getSecrets,
     {}
   )
+
+  const search = useSecretsSearch()
 
   // dispatch error with useEffect because error variable will first set once all retries did not succeed
   useEffect(() => {
@@ -49,6 +55,24 @@ const Secrets = () => {
     setPaginationOptions({ ...paginationOptions, offset: newOffset })
   }
 
+  useEffect(() => {
+    if (!searchTerm) return
+    search.searchFor(searchTerm)
+  }, [searchTerm])
+
+  const onSearch = (text) => {
+    setSearchTerm(text)
+  }
+
+  const onSearchCancel = () => {
+    search.cancel()
+  }
+
+  const onClear = () => {
+    search.cancel()
+    setSearchTerm(null)
+  }
+
   return (
     <Container py px={false}>
       <IntroBox>
@@ -64,7 +88,23 @@ const Secrets = () => {
       </IntroBox>
 
       <DataGridToolbar
-        search={<SearchInput onSearch={function noRefCheck() {}} />}
+        search={
+          <Stack alignment="center">
+            <SearchInput onSearch={onSearch} onClear={onClear} />
+            {search.isFetching && (
+              <>
+                <Button
+                  icon="cancel"
+                  label="Cancel"
+                  onClick={onSearchCancel}
+                  variant="primary-danger"
+                  size="small"
+                />
+                <Spinner variant="primary" />
+              </>
+            )}
+          </Stack>
+        }
       >
         <ButtonRow>
           <Link to="/secrets/newSecret">
@@ -73,8 +113,11 @@ const Secrets = () => {
         </ButtonRow>
       </DataGridToolbar>
 
-      <SecretList secrets={data?.secrets} isLoading={isLoading} />
-      {data?.secrets?.length > 0 && (
+      <SecretList
+        secrets={searchTerm ? search.displayResults : data?.secrets}
+        isLoading={isLoading}
+      />
+      {!searchTerm && data?.secrets?.length > 0 && (
         <Pagination
           count={data?.total}
           limit={ITEMS_PER_PAGE}

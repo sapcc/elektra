@@ -6,7 +6,6 @@ export const getSecrets = ({ queryKey }) => {
 }
 
 export const fetchSecrets = (options) => {
-  console.log("fetchSecrets options: ", options)
   return apiClient
     .osApi("key-manager")
     .get("/v1/secrets", {
@@ -16,7 +15,6 @@ export const fetchSecrets = (options) => {
       },
     })
     .then((response) => {
-      console.log("fetchSecrets data: ", response?.data)
       return response?.data
     })
 }
