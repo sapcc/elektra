@@ -24,7 +24,7 @@ const Secrets = () => {
   const addMessage = useMessageStore((state) => state.addMessage)
   const [currentPage, setCurrentPage] = useState(1)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState(null)
+  const [isSearching, setIsSearching] = useState(false)
   const [paginationOptions, setPaginationOptions] = useState({
     limit: ITEMS_PER_PAGE,
     offset: 0,
@@ -55,13 +55,9 @@ const Secrets = () => {
     setPaginationOptions({ ...paginationOptions, offset: newOffset })
   }
 
-  useEffect(() => {
-    if (!searchTerm) return
-    search.searchFor(searchTerm)
-  }, [searchTerm])
-
   const onSearch = (text) => {
-    setSearchTerm(text)
+    setIsSearching(true)
+    search.searchFor(text)
   }
 
   const onSearchCancel = () => {
@@ -70,7 +66,7 @@ const Secrets = () => {
 
   const onClear = () => {
     search.cancel()
-    setSearchTerm(null)
+    setIsSearching(false)
   }
 
   return (
@@ -114,10 +110,10 @@ const Secrets = () => {
       </DataGridToolbar>
 
       <SecretList
-        secrets={searchTerm ? search.displayResults : data?.secrets}
+        secrets={isSearching ? search.displayResults : data?.secrets}
         isLoading={isLoading}
       />
-      {!searchTerm && data?.secrets?.length > 0 && (
+      {!isSearching && data?.secrets?.length > 0 && (
         <Pagination
           count={data?.total}
           limit={ITEMS_PER_PAGE}
