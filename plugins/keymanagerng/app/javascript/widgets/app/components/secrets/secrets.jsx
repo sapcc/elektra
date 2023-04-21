@@ -10,6 +10,7 @@ const ITEMS_PER_PAGE = 20
 
 const Secrets = () => {
   const [currentPage, setCurrentPage] = useState(1)
+  const [isPanelOpen, setIsPanelOpen] = useState(false)
   const [paginationOptions, setPaginationOptions] = useState({
     limit: ITEMS_PER_PAGE,
     offset: 0,

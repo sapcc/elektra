@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useCallback } from "react"
 import { Link } from "react-router-dom"
 import { policy } from "lib/policy"
 import {
@@ -15,6 +15,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
 import { useEffect } from "react"
 import { useMessageStore } from "messages-provider"
+import useStore from "../../store"
 
 const ContainerListItem = ({ container }) => {
   const containerUuid = getContainerUuid(container)
@@ -27,6 +28,7 @@ const ContainerListItem = ({ container }) => {
     containerUuid
   )
   const addMessage = useMessageStore((state) => state.addMessage)
+  const showNewContainer = useStore(useCallback((state) => state.showNewContainer))
 
   const handleDelete = () => {
     mutate(
@@ -41,16 +43,18 @@ const ContainerListItem = ({ container }) => {
           })
           queryClient.invalidateQueries("containers")
         },
+        onError: (error) => {
+          addMessage({
+            variant: "error",
+            text: error.data.error,
+          })
+        }
       }
     )
   }
 
   return isLoading && !data ? (
     <HintLoading />
-  ) : isError ? (
-    <Message variant="danger">
-      {`${error.statusCode}, ${error.message}`}
-    </Message>
   ) : (
     <DataGridRow>
       <DataGridCell>
@@ -58,6 +62,7 @@ const ContainerListItem = ({ container }) => {
           <Link
             className="tw-break-all"
             to={`/containers/${containerUuid}/show`}
+            onClick={ (event) => showNewContainer && event.preventDefault()}
           >
             {container.name || containerUuid}
           </Link>

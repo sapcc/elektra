@@ -48,7 +48,7 @@ const SecretList = ({ secrets, isLoading, hideActions }) => {
       ) : isLoading ? (
         <Spinner variant="primary" />
       ) : (
-        <DataGrid columns={hideActions ? 4 : 5} minContentColumns={[4]}>
+        <DataGrid columns={hideActions ? 4 : 5} minContentColumns={[4]} >
           <DataGridRow>
             {hideActions && <DataGridHeadCell></DataGridHeadCell>}
             <DataGridHeadCell>Name</DataGridHeadCell>

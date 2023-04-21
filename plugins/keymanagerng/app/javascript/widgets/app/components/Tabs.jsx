@@ -15,8 +15,9 @@ const TabsComponent = ({ tabsConfig, ...otherProps }) => {
       let Component = tab.component
 
       // collect tab items
+      console.log("tab disabled:", tab.disabled)
       tabItems.push(
-        <Tab key={i} onClick={() => history.push(tab.to)}>
+        <Tab key={i} onClick={() => history.push(tab.to)} disabled={tab.disabled}>
           {tab.label}
         </Tab>
       )
