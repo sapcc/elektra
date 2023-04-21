@@ -28,15 +28,12 @@ const useSecretsSearch = () => {
     refetchOnWindowFocus: false,
     // use the callback to add the fetched options
     onSuccess: (data) => {
-      console.log("DATA: ", data, data?.total)
       if (data?.total) {
         setFetchStatus({ ...fetchStatus, total: data.total })
       }
       if (data?.secrets && data?.secrets?.length > 0) {
-        console.log("setFetchedOptions: ", [...fetchedOptions, ...data.secrets])
         setFetchedOptions([...fetchedOptions, ...data.secrets])
       } else {
-        console.log("no more options stop fetching")
         // if no more options stop fetching
         setIsFetching(false)
       }
@@ -47,19 +44,13 @@ const useSecretsSearch = () => {
   useEffect(() => {
     if (fetchedOptions.length > 0) {
       const offset = fetchedOptions.length
-      console.log("offset: ", offset)
-
-      console.log("offset < fetchStatus.total: ", fetchStatus.total)
-
       if (offset < fetchStatus.total) {
-        console.log("continue!! FETCHING")
         setFetchParams({ ...fetchParams, offset: offset, limit: FETCH_LIMIT })
         setFetchStatus({
           ...fetchStatus,
           message: `${offset} / ${fetchStatus.total}`,
         })
       } else {
-        console.log("close FETCHING")
         setIsFetching(false)
       }
     }
