@@ -8,7 +8,7 @@ const FETCH_LIMIT = 10
 const useSecretsSearch = () => {
   const [isFetching, setIsFetching] = useState(false)
   const [fetchParams, setFetchParams] = useState({ offset: 0, limit: 1 })
-  const [fetchedOptions, setFetchedOptions] = useState([])
+  const [fetchedData, setFetchedData] = useState([])
   const [fetchStatus, setFetchStatus] = useState({})
   const [displayResults, setDisplayResults] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
@@ -32,7 +32,7 @@ const useSecretsSearch = () => {
         setFetchStatus({ ...fetchStatus, total: data.total })
       }
       if (data?.secrets && data?.secrets?.length > 0) {
-        setFetchedOptions([...fetchedOptions, ...data.secrets])
+        setFetchedData([...fetchedData, ...data.secrets])
       } else {
         // if no more options stop fetching
         setIsFetching(false)
@@ -42,8 +42,8 @@ const useSecretsSearch = () => {
 
   // recalculate the offset when we get new fetched options
   useEffect(() => {
-    if (fetchedOptions.length > 0) {
-      const offset = fetchedOptions.length
+    if (fetchedData.length > 0) {
+      const offset = fetchedData.length
       if (offset < fetchStatus.total) {
         setFetchParams({ ...fetchParams, offset: offset, limit: FETCH_LIMIT })
         setFetchStatus({
@@ -54,14 +54,14 @@ const useSecretsSearch = () => {
         setIsFetching(false)
       }
     }
-  }, [fetchedOptions])
+  }, [fetchedData])
 
   // compute difference between the fetched from api
   // and the selected so the same option can't be selected more then one time
   useEffect(() => {
-    if (fetchedOptions) {
+    if (fetchedData) {
       // remove selected options
-      const difference = fetchedOptions.filter(
+      const difference = fetchedData.filter(
         ({ secret_ref: id1 }) =>
           !selectedOptions.some(({ secret_ref: id2 }) => id2 === id1)
       )
@@ -72,12 +72,12 @@ const useSecretsSearch = () => {
       )
       setDisplayResults(filteredOptions)
     }
-  }, [selectedOptions, fetchedOptions, searchTerm])
+  }, [selectedOptions, fetchedData, searchTerm])
 
   const searchFor = (text) => {
     setSearchTerm(text)
     setIsFetching(true)
-    const offset = fetchedOptions.length
+    const offset = fetchedData.length
     setFetchParams({ ...fetchParams, offset: offset, limit: 1 })
   }
   const setMoreSelectedOptions = (options) => {
