@@ -23,7 +23,7 @@ const SecretList = ({ secrets, isLoading, hideActions }) => {
             <DataGrid columns={hideActions ? 4 : 5} minContentColumns={[4]}>
               <DataGridRow>
                 {hideActions && <DataGridHeadCell></DataGridHeadCell>}
-                <DataGridHeadCell>Name</DataGridHeadCell>
+                <DataGridHeadCell>Name/ID</DataGridHeadCell>
                 <DataGridHeadCell>Type</DataGridHeadCell>
                 {!hideActions && (
                   <DataGridHeadCell>Content Types</DataGridHeadCell>

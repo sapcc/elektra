@@ -5,8 +5,9 @@ import { useQuery } from "@tanstack/react-query"
 const regexString = (string) => string.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
 const FETCH_LIMIT = 10
 
-const useSecretsSearch = () => {
+const useSecretsSearch = ({ text }) => {
   const [isFetching, setIsFetching] = useState(false)
+  const [isFiltering, setIsFiltering] = useState(false)
   const [fetchParams, setFetchParams] = useState({ offset: 0, limit: 1 })
   const [fetchedData, setFetchedData] = useState([])
   const [fetchStatus, setFetchStatus] = useState({})
@@ -68,19 +69,30 @@ const useSecretsSearch = () => {
       // filter the difference with the filter string given by the user
       const regex = new RegExp(regexString(searchTerm.trim()), "i")
       const filteredOptions = difference.filter(
-        (i) => `${i.name}`.search(regex) >= 0
+        (i) => `${i?.name} ${i.secret_ref}`?.search(regex) >= 0
       )
       setDisplayResults(filteredOptions)
     }
   }, [selectedOptions, fetchedData, searchTerm])
 
-  const searchFor = (text) => {
+  useEffect(() => {
+    if (!text || text?.length <= 3) {
+      setIsFiltering(false)
+      setIsFetching(false)
+      setSearchTerm("")
+      return
+    }
     setSearchTerm(text)
-    setIsFetching(true)
-    const offset = fetchedData.length
-    setFetchParams({ ...fetchParams, offset: offset, limit: 1 })
-  }
-  const setMoreSelectedOptions = (options) => {
+    setIsFiltering(true)
+
+    // start fetching
+    if (!isFetching) {
+      setIsFetching(true)
+      setFetchParams({ ...fetchParams, offset: fetchedData.length, limit: 1 })
+    }
+  }, [text])
+
+  const updateSelectedOptions = (options) => {
     setSelectedOptions(options)
   }
   const cancel = () => {
@@ -90,9 +102,9 @@ const useSecretsSearch = () => {
   return {
     displayResults,
     isFetching,
+    isFiltering,
     fetchStatus,
-    searchFor,
-    setMoreSelectedOptions,
+    updateSelectedOptions,
     cancel,
   }
 }

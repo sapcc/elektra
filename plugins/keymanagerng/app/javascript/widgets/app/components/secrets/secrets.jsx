@@ -24,7 +24,8 @@ const Secrets = () => {
   const addMessage = useMessageStore((state) => state.addMessage)
   const [currentPage, setCurrentPage] = useState(1)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const [isSearching, setIsSearching] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+
   const [paginationOptions, setPaginationOptions] = useState({
     limit: ITEMS_PER_PAGE,
     offset: 0,
@@ -36,7 +37,7 @@ const Secrets = () => {
     {}
   )
 
-  const search = useSecretsSearch()
+  const search = useSecretsSearch({ text: searchTerm })
 
   // dispatch error with useEffect because error variable will first set once all retries did not succeed
   useEffect(() => {
@@ -55,9 +56,8 @@ const Secrets = () => {
     setPaginationOptions({ ...paginationOptions, offset: newOffset })
   }
 
-  const onSearch = (text) => {
-    setIsSearching(true)
-    search.searchFor(text)
+  const onChangeInput = (event) => {
+    setSearchTerm(event.target.value)
   }
 
   const onSearchCancel = () => {
@@ -66,7 +66,7 @@ const Secrets = () => {
 
   const onClear = () => {
     search.cancel()
-    setIsSearching(false)
+    setSearchTerm("")
   }
 
   return (
@@ -86,18 +86,19 @@ const Secrets = () => {
       <DataGridToolbar
         search={
           <Stack alignment="center">
-            <SearchInput onSearch={onSearch} onClear={onClear} />
+            <SearchInput
+              placeholder="Search by name or ID"
+              onChange={onChangeInput}
+              onClear={onClear}
+            />
             {search.isFetching && (
-              <>
-                <Button
-                  icon="cancel"
-                  label="Cancel"
-                  onClick={onSearchCancel}
-                  variant="primary-danger"
-                  size="small"
-                />
-                <Spinner variant="primary" />
-              </>
+              <Button
+                label="Cancel fetching..."
+                onClick={onSearchCancel}
+                progress
+                progressLabel="Cancel fetching..."
+                variant="subdued"
+              />
             )}
           </Stack>
         }
@@ -110,10 +111,10 @@ const Secrets = () => {
       </DataGridToolbar>
 
       <SecretList
-        secrets={isSearching ? search.displayResults : data?.secrets}
+        secrets={search.isFiltering ? search.displayResults : data?.secrets}
         isLoading={isLoading}
       />
-      {!isSearching && data?.secrets?.length > 0 && (
+      {!search.isFiltering && data?.secrets?.length > 0 && (
         <Pagination
           count={data?.total}
           limit={ITEMS_PER_PAGE}
