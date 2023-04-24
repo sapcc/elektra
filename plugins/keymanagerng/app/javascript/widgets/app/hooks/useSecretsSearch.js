@@ -3,7 +3,7 @@ import { fetchSecrets } from "../secretActions"
 import { useQuery } from "@tanstack/react-query"
 
 const regexString = (string) => string.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
-const FETCH_LIMIT = 10
+const FETCH_LIMIT = 20
 
 const useSecretsSearch = ({ text }) => {
   const [isFetching, setIsFetching] = useState(false)
