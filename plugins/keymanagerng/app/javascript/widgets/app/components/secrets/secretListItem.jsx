@@ -8,10 +8,7 @@ import {
   Icon,
   DataGridRow,
   DataGridCell,
-  Message,
-  Checkbox,
-  Modal,
-  Form,
+  Container,
 } from "juno-ui-components"
 import { getSecretUuid } from "../../../lib/secretHelper"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -20,85 +17,81 @@ import ConfirmationModal from "../ConfirmationModal"
 import { useMessageStore } from "messages-provider"
 import useStore from "../../store"
 
-const SecretListItem = ({ secret, hideAction }) => {
+const SecretListItem = ({ secret }) => {
   // manually push a path onto the react router history
   // once we run on react-router-dom v6 this should be replaced with the useNavigate hook, and the push function with a navigate function
   // like this: const navigate = useNavigate(), the use navigate('this/is/the/path') in the onClick handler of the edit button below
-  const { push } = useHistory()
   const secretUuid = getSecretUuid(secret)
   const queryClient = useQueryClient()
   const addMessage = useMessageStore((state) => state.addMessage)
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(false)
 
-  const { isLoading, isError, error, data, isSuccess, mutate } = useMutation(
-    deleteSecret,
-    100,
-    secretUuid
-  )
+  const { isLoading, data, mutate } = useMutation(deleteSecret, 100, secretUuid)
   const showNewSecret = useStore(useCallback((state) => state.showNewSecret))
 
   const handleDelete = () => {
-    return (
-      <ConfirmationModal
-        text="Are you sure that you want to delete this secret?"
-        show={show}
-        close={close}
-        onConfirm={() => {
-          return mutate(
-            {
-              id: secretUuid,
-            },
-            {
-              onSuccess: () => {
-                //TODO: Confirm remove modal
-                queryClient.invalidateQueries("secrets")
-                addMessage({
-                  variant: "success",
-                  text: `The secret ${secretUuid} is successfully deleted.`,
-                })
-              },
-              onError: (error) => {
-                addMessage({
-                  variant: "error",
-                  text: error.data.error,
-                })
-              },
-            }
-          )
-        }}
-      />
+    setShow(true)
+  }
+
+  const onConfirm = () => {
+    return mutate(
+      {
+        id: secretUuid,
+      },
+      {
+        onSuccess: () => {
+          setShow(false)
+          queryClient.invalidateQueries("secrets")
+          addMessage({
+            variant: "success",
+            text: `The secret ${secretUuid} is successfully deleted.`,
+          })
+        },
+        onError: (error) => {
+          setShow(false)
+          addMessage({
+            variant: "error",
+            text: error.data.error,
+          })
+        },
+      }
     )
   }
 
+  const close = () => {
+    setShow(false)
+  }
+  
   const handleSecretSelected = (oEvent) => {}
 
   return isLoading && !data ? (
-    <HintLoading />
-  ) : (
     <DataGridRow>
-      {hideAction && (
-        <DataGridCell>
-          <Checkbox onChange={(oEvent) => handleSecretSelected(oEvent)} />
-        </DataGridCell>
-      )}
       <DataGridCell>
-        <Link
-          className="tw-break-all"
-          to={`/secrets/${secretUuid}/show`}
-          onClick={(event) => showNewSecret && event.preventDefault()}
-        >
-          {secret.name || secretUuid}
-        </Link>
-        <div>
-          <Badge className="tw-text-xs">{secretUuid}</Badge>
-        </div>
+        <HintLoading />
       </DataGridCell>
-      <DataGridCell>{secret.secret_type}</DataGridCell>
-      {!hideAction && (
+      <DataGridCell></DataGridCell>
+      <DataGridCell></DataGridCell>
+      <DataGridCell></DataGridCell>
+      <DataGridCell></DataGridCell>
+    </DataGridRow>
+  ) : (
+    <>
+      <DataGridRow>
+        <DataGridCell>
+          <Link
+            className="tw-break-all"
+            to={`/secrets/${secretUuid}/show`}
+            onClick={(event) => showNewSecret && event.preventDefault()}
+          >
+            {secret.name || secretUuid}
+          </Link>
+          <div>
+            <Badge className="tw-text-xs">{secretUuid}</Badge>
+          </div>
+        </DataGridCell>
+        <DataGridCell>{secret.secret_type}</DataGridCell>
         <DataGridCell>{secret?.content_types?.default}</DataGridCell>
-      )}
-      <DataGridCell>{secret.status}</DataGridCell>
-      {!hideAction && (
+        <DataGridCell>{secret.status}</DataGridCell>
         <DataGridCell nowrap>
           <ButtonRow>
             {policy.isAllowed("keymanagerng:secret_delete") && (
@@ -108,23 +101,17 @@ const SecretListItem = ({ secret, hideAction }) => {
               />
             )}
           </ButtonRow>
-          {/* <Modal
-            title="Warning"
-            open={show}
-            onCancel={close}
-            onConfirm={onConfirm}
-            confirmButtonLabel="Save"
-            cancelButtonLabel="Cancel"
-          >
-            <Form className="form form-horizontal">
-              <p>
-                ` Are you sure you want to delete the secret ${secretUuid}?`
-              </p>
-            </Form>
-          </Modal> */}
         </DataGridCell>
-      )}
-    </DataGridRow>
+      </DataGridRow>
+      <ConfirmationModal
+        text={`Are you sure you want to delete the secret ${
+          secret.name || secretUuid
+        }?`}
+        show={show}
+        close={close}
+        onConfirm={onConfirm}
+      />
+    </>
   )
 }
 

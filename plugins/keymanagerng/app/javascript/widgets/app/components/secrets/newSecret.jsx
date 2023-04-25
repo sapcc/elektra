@@ -211,13 +211,6 @@ const NewSecret = () => {
           </PanelFooter>
         }>
         <Form className="form form-horizontal">
-        {/* {isError && (
-          <Container py px={false}>
-            <Message variant="danger">
-              {`${error?.status}, ${error?.data.error}`}
-            </Message>
-          </Container>
-        )} */}
           <Messages/>
           <TextInputRow
             label="Name"

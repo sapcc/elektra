@@ -11,7 +11,6 @@ import {
   ButtonRow,
   Button,
   Stack,
-  Spinner,
 } from "juno-ui-components"
 import { Link } from "react-router-dom"
 import { useMessageStore } from "messages-provider"
@@ -23,7 +22,6 @@ const ITEMS_PER_PAGE = 20
 const Secrets = () => {
   const addMessage = useMessageStore((state) => state.addMessage)
   const [currentPage, setCurrentPage] = useState(1)
-  const [isPanelOpen, setIsPanelOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
 
   const [paginationOptions, setPaginationOptions] = useState({

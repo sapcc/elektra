@@ -2,7 +2,6 @@ import React from "react"
 import {  Modal, Form } from "juno-ui-components"
 
 const ConfirmationModal = ({ text, show, close, onConfirm }) => {
-  debugger
   return (
     <Modal
       title="Warning"

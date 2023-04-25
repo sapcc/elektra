@@ -147,7 +147,7 @@ const NewContainer = () => {
   useEffect(() => {
     const a = []
     const b = secrets.data?.secrets
-    if (!b) return 
+    if (!b) return
     b.map((secret) => {
       a.push({
         label: `${secret.name} (${secret.secret_type})`,
