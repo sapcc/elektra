@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { policy } from "lib/policy"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import * as constants from "../../constants"
 import ShareActions from "./actions"
 import React from "react"
@@ -8,22 +8,15 @@ import React from "react"
 class RuleTooltip extends React.Component {
   render() {
     let al = this.props.rule.access_level
-    let tooltip = (
-      <Tooltip id="ruleTooltip">
-        Access Level:{" "}
-        {al == "ro" ? "read only" : al == "rw" ? "read/write" : al}
-      </Tooltip>
-    )
 
     return (
-      <OverlayTrigger
-        overlay={tooltip}
+      <Tooltip
+        content={`Access Level: 
+        ${al == "ro" ? "read only" : al == "rw" ? "read/write" : al}`}
         placement="top"
-        delayShow={300}
-        delayHide={150}
       >
         {this.props.children}
-      </OverlayTrigger>
+      </Tooltip>
     )
   }
 }

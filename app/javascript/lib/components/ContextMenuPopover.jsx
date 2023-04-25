@@ -34,14 +34,16 @@ const ContextMenu = ({ children, disabled }) => {
   // we use the portal feature of react and host the popover
   // container outside of relative elements
   return (
-    <div>
+    <div ref={wrapperRef}>
       <button
         type="button"
         disabled={disabled}
         ref={setReferenceElement}
         className="btn btn-sm btn-default"
         data-test="dropdown"
-        onClick={() => setShow(!show)}
+        onClick={() => {
+          setShow(!show)
+        }}
       >
         <span className="fa fa-cog" />
       </button>
@@ -52,7 +54,7 @@ const ContextMenu = ({ children, disabled }) => {
             style={styles.popper}
             {...attributes.popper}
           >
-            <ul className="dropdown-menu show super-colors" ref={wrapperRef}>
+            <ul className="dropdown-menu show super-colors">
               {React.Children.map(children, (child) =>
                 React.isValidElement(child) &&
                 child.type.displayName === "ContextMenu.Item"

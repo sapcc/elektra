@@ -3,7 +3,8 @@ import Capabilities from "./List"
 import { useGlobalState } from "../../StateProvider"
 import useActions from "../../hooks/useActions"
 import { createUseStyles } from "react-jss"
-import { Popover, OverlayTrigger } from "react-bootstrap"
+import { Popover } from "lib/components/Overlay"
+import { renderToString } from "react-dom/server"
 
 const useStyles = createUseStyles({
   popoverCapabilities: {
@@ -22,15 +23,13 @@ const CapabilitiesPopover = () => {
   }, [loadCapabilitiesOnce])
 
   return (
-    <OverlayTrigger
+    <Popover
       trigger="click"
       placement="left"
-      overlay={
-        <Popover
-          className={classes.popoverCapabilities}
-          id="popover-capabilities"
-          title="Cluster limits and capabilities"
-        >
+      html
+      title="Cluster limits and capabilities"
+      content={renderToString(
+        <>
           {capabilities.isFetching ? (
             <span>
               <span className="spinner" />
@@ -39,13 +38,13 @@ const CapabilitiesPopover = () => {
           ) : (
             <Capabilities data={capabilities.data} />
           )}
-        </Popover>
-      }
+        </>
+      )}
     >
       <a href="#">
         <i className="fa fa-info-circle" />
       </a>
-    </OverlayTrigger>
+    </Popover>
   )
 }
 export default CapabilitiesPopover

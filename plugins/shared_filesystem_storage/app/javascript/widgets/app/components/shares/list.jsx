@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { DefeatableLink } from "lib/components/defeatable_link"
-import { Popover, OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Popover, Tooltip } from "lib/components/Overlay"
 import { TransitionGroup, CSSTransition } from "react-transition-group"
 import { FadeTransition } from "lib/components/transitions"
 import { policy } from "lib/policy"
@@ -8,8 +8,6 @@ import { SearchField } from "lib/components/search_field"
 import ShareItem from "./item"
 import { AjaxPaginate } from "lib/components/ajax_paginate"
 import React from "react"
-
-const azTooltip = <Tooltip id="azTooltip">Availability Zone</Tooltip>
 
 const TableRowFadeTransition = ({ children, ...props }) => (
   <CSSTransition {...props} timeout={200} classNames="css-transition-fade">
@@ -19,37 +17,28 @@ const TableRowFadeTransition = ({ children, ...props }) => (
 
 const CreateNewButton = ({ fetchingShareNetworks, hasShareNetworks }) => {
   if (fetchingShareNetworks) {
-    const popover = (
-      <Popover id="loadingNetworksPopover" title="Loading Share Networks">
-        Please wait...
-      </Popover>
-    )
-
     return (
-      <OverlayTrigger
-        overlay={popover}
+      <Popover
+        title="Loading Share Networks"
+        content=" Please wait..."
         placement="top"
-        delayShow={300}
-        delayHide={150}
       >
         <button className="btn btn-primary disabled loading">Create New</button>
-      </OverlayTrigger>
+      </Popover>
     )
   }
 
   if (!hasShareNetworks) {
-    const popover = (
-      <Popover id="popover-no-share-networks" title="No Share Network found">
-        Please create a Share Network first.
-      </Popover>
-    )
-
     return (
-      <OverlayTrigger overlay={popover} placement="top">
+      <Popover
+        title="No Share Network found"
+        content="Please create a Share Network first."
+        placement="top"
+      >
         <button className="btn btn-primary disabled">
           <i className="fa fa-fw fa-exclamation-triangle fa-2"></i> Create New
         </button>
-      </OverlayTrigger>
+      </Popover>
     )
   }
 
@@ -158,9 +147,9 @@ export default class List extends React.Component {
               <th>Name</th>
               <th>
                 AZ
-                <OverlayTrigger placement="top" overlay={azTooltip}>
+                <Tooltip placement="top" content="Availability Zone">
                   <i className="fa fa-fw fa-info-circle" />
-                </OverlayTrigger>
+                </Tooltip>
               </th>
               <th>Protocol</th>
               <th>Size</th>
