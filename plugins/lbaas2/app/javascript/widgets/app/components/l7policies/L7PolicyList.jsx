@@ -7,7 +7,7 @@ import { useDispatch, useGlobalState } from "../StateProvider"
 import L7PolicySelected from "./L7PolicySelected"
 import queryString from "query-string"
 import ErrorPage from "../ErrorPage"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { SearchField } from "lib/components/search_field"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
@@ -230,16 +230,13 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
                             <div className="display-flex">
                               Position
                               <div className="margin-left">
-                                <OverlayTrigger
+                                <Tooltip
                                   placement="top"
-                                  overlay={
-                                    <Tooltip id="defalult-pool-tooltip">
-                                      Sorted by Position ASC
-                                    </Tooltip>
-                                  }
+                                  container="body"
+                                  content="Sorted by Position ASC"
                                 >
                                   <i className="fa fa-sort-asc" />
-                                </OverlayTrigger>
+                                </Tooltip>
                               </div>
                             </div>
                           </th>

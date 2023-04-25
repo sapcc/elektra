@@ -1,5 +1,5 @@
 import React from "react"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import uniqueId from "lodash/uniqueId"
 import { Link } from "react-router-dom"
 
@@ -33,12 +33,7 @@ const SmartLink = ({
           {children}
         </Link>
       ) : (
-        <OverlayTrigger
-          placement="top"
-          overlay={
-            <Tooltip id={uniqueId("smart-link-")}>{notAllowedText}</Tooltip>
-          }
-        >
+        <Tooltip placement="top" content={notAllowedText}>
           <Link
             to={to || ""}
             className={`${className ? className : ""} smart-link-disabled`}
@@ -49,7 +44,7 @@ const SmartLink = ({
           >
             {children}
           </Link>
-        </OverlayTrigger>
+        </Tooltip>
       )}
     </>
   )

@@ -3,16 +3,20 @@ import React from "react"
 
 // This Components uses the bootstrap 3 jQuery approach to place the tooltip
 export const Tooltip = ({
+  container,
   content,
   children,
   placement = "top",
   html = false,
   delay,
+  trigger = "hover",
 }) => {
   const ref = React.useRef()
   React.useEffect(() => {
     if (!ref.current) return
-    window.$(ref.current).tooltip({ html, placement, title: content, delay })
+    window
+      .$(ref.current)
+      .tooltip({ html, placement, title: content, delay, trigger, container })
     return () => window.$(ref.current).tooltip("destroy")
   }, [])
 

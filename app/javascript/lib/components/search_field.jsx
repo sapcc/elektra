@@ -1,4 +1,4 @@
-import { SearchInput } from "juno-ui-components"
+import { SearchInput } from "juno-ui-components/build/SearchInput"
 import React from "react"
 import { Popover } from "./Overlay"
 
@@ -81,7 +81,11 @@ export class SearchField extends React.Component {
                   rootClose
                   content={this.props.text}
                 >
-                  <a className="help-link" href="#" onClick={() => null}>
+                  <a
+                    className="help-link"
+                    href="#"
+                    onClick={(e) => e.preventDefault()}
+                  >
                     <i className="fa fa-question-circle"></i>
                   </a>
                 </Popover>

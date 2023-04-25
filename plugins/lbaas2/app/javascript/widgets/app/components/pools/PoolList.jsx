@@ -5,7 +5,8 @@ import PoolItem from "./PoolItem"
 import queryString from "query-string"
 import { Link } from "react-router-dom"
 import HelpPopover from "../shared/HelpPopover"
-import { Tooltip, OverlayTrigger, Table } from "react-bootstrap"
+import { Table } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { addError } from "lib/flashes"
 import Pagination from "../shared/Pagination"
 import { SearchField } from "lib/components/search_field"
@@ -223,16 +224,13 @@ const PoolList = ({ props, loadbalancerID }) => {
                       <div className="display-flex">
                         Name
                         <div className="margin-left">
-                          <OverlayTrigger
+                          <Tooltip
                             placement="top"
-                            overlay={
-                              <Tooltip id="defalult-pool-tooltip">
-                                Sorted by Name ASC
-                              </Tooltip>
-                            }
+                            container="body"
+                            content="Sorted by Name ASC"
                           >
                             <i className="fa fa-sort-asc" />
-                          </OverlayTrigger>
+                          </Tooltip>
                         </div>
                         /ID/Description
                       </div>

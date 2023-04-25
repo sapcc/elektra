@@ -32,7 +32,7 @@ const App = (props) => {
   return (
     <div className="info-text info-clickable">
       <i className="monitoring-icon" />{" "}
-      <Tooltip overlay="Click to manage quotas" placement="top" delay={300}>
+      <Tooltip content="Click to manage quotas" placement="top">
         <a href={`/${scope.domain}/${scope.project}/resources/project`}>
           Remaining Quota: {usage.map((quota) => quota.label).join(", ")}
         </a>

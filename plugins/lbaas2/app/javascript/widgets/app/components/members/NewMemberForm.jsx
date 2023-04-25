@@ -4,7 +4,8 @@ import React, {
   useImperativeHandle,
   useEffect,
 } from "react"
-import { Form, Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Form } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { useFormState, useFormDispatch, generateMemberItem } from "./FormState"
 import NewEditMemberListItem from "./NewEditMemberListItem"
 import uniqueId from "lodash/uniqueId"
@@ -22,13 +23,9 @@ const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
   return (
     <>
       {disabled ? (
-        <OverlayTrigger
+        <Tooltip
           placement="top"
-          overlay={
-            <Tooltip id={uniqueId("tooltip-")}>
-              You reach the maximum of 5 new members
-            </Tooltip>
-          }
+          content="You reach the maximum of 5 new members"
         >
           <Link
             to={""}
@@ -40,7 +37,7 @@ const AddNewMemberButton = ({ disabled, addMembersCallback }) => {
           >
             Add another
           </Link>
-        </OverlayTrigger>
+        </Tooltip>
       ) : (
         <Link
           to={""}

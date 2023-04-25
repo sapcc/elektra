@@ -1,8 +1,6 @@
 //
 // Add to your .env following variable LBAAS2_LOGGER and restart yarn build
-
-import env from "env"
-const LBAAS2_LOGGER = env.LBAAS2_LOGGER || "LBAAS2_LOGGER"
+const LBAAS2_LOGGER = false
 
 const BASE = "lbaas2"
 const COLOURS = {

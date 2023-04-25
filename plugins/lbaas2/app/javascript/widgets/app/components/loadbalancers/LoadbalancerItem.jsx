@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react"
+import React, { useMemo } from "react"
 import { Link } from "react-router-dom"
 import PopoverInfo from "../shared/PopoverInfo"
 import CachedInfoPopoverListenerContent from "./CachedInfoPopoverListenerContent"

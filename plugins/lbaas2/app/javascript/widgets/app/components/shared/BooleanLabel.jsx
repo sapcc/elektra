@@ -1,6 +1,6 @@
 import React from "react"
 import { useMemo } from "react"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import uniqueId from "lodash/uniqueId"
 
 const BooleanLabel = ({ value, tooltipText }) => {
@@ -11,14 +11,9 @@ const BooleanLabel = ({ value, tooltipText }) => {
           <>
             {tooltipText ? (
               <>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip id={uniqueId("tooltip-")}>{tooltipText}</Tooltip>
-                  }
-                >
+                <Tooltip placement="top" content={tooltipText}>
                   <i className="fa fa-check" />
-                </OverlayTrigger>
+                </Tooltip>
               </>
             ) : (
               <i className="fa fa-check" />

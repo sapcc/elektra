@@ -1,7 +1,7 @@
 import React from "react"
 import { Table } from "react-bootstrap"
 import MembersTableItem from "./MembersTableItem"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 
 const MembersTable = ({
   members,
@@ -20,16 +20,13 @@ const MembersTable = ({
             <div className="display-flex">
               Name
               <div className="margin-left">
-                <OverlayTrigger
+                <Tooltip
                   placement="top"
-                  overlay={
-                    <Tooltip id="defalult-pool-tooltip">
-                      Sorted by Name ASC
-                    </Tooltip>
-                  }
+                  container="body"
+                  content="Sorted by Name ASC"
                 >
                   <i className="fa fa-sort-asc" />
-                </OverlayTrigger>
+                </Tooltip>
               </div>
               /ID
             </div>
