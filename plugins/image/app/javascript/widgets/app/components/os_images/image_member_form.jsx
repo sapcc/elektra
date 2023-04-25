@@ -24,7 +24,7 @@ export default class ImageMemberForm extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         {this.state.errors && <FormErrors errors={this.state.errors} />}
         <div className="input-group">
           <AutocompleteField
@@ -49,7 +49,7 @@ export default class ImageMemberForm extends React.Component {
           <i className="fa fa-info-circle"></i>
           Project (name or ID) with whom the image is shared
         </p>
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -38,11 +38,7 @@ class Parents extends React.Component {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        {this.renderParentRoot([...this.props.parents])}
-      </React.Fragment>
-    )
+    return <>{this.renderParentRoot([...this.props.parents])}</>
   }
 }
 

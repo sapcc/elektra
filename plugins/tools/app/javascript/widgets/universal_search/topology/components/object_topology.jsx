@@ -98,7 +98,7 @@ export default class App extends React.Component {
     const graphData = this.convertObjectToNodes()
 
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar">
           <label>Show:</label>
 
@@ -178,7 +178,7 @@ export default class App extends React.Component {
             </div>
           </div>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

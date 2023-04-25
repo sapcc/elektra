@@ -97,9 +97,9 @@ const L7PolicyListItem = ({
     return removeL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.
-          </React.Fragment>
+          </>
         )
         // fetch the listener again containing the new policy so it gets updated fast
         persistListener(loadbalancerID, listenerID)
@@ -221,7 +221,7 @@ const L7PolicyListItem = ({
             popoverId={"l7rules-popover-" + l7Policy.id}
             buttonName={l7RuleIDs.length}
             title={
-              <React.Fragment>
+              <>
                 L7 Rules
                 <Link
                   to="#"
@@ -230,7 +230,7 @@ const L7PolicyListItem = ({
                 >
                   Show all
                 </Link>
-              </React.Fragment>
+              </>
             }
             content={
               <CachedInfoPopoverContent

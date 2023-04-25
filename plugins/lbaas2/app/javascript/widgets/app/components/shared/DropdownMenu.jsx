@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
-import { DropdownButton, MenuItem } from 'react-bootstrap'
-import uniqueId from 'lodash/uniqueId'
-
+import { DropdownButton, MenuItem } from "react-bootstrap"
+import uniqueId from "lodash/uniqueId"
 
 // Custom Bootstrap Dropdown
 // This dropdown is made to be used in scroll containers where the dropdown menu
@@ -12,29 +11,35 @@ const DropDownMenu = ({ buttonIcon, children }) => {
 
   useEffect(() => {
     if (componentID) {
-      var $component = $("#"+componentID)
-      var $table = $component.closest('.table-responsive'),
-          $menu = $component.find('.dropdown-menu')
+      var $component = $("#" + componentID)
+      var $table = $component.closest(".table-responsive"),
+        $menu = $component.find(".dropdown-menu")
 
       if ($table) {
         // add padding and animation on open dropdown
-        $component.on('show.bs.dropdown', function () {
+        $component.on("show.bs.dropdown", function () {
           var tableOffsetHeight = $table.offset().top + $table.height(),
-              menuOffsetHeight = $component.offset().top + $component.outerHeight(true) + $menu.outerHeight(true)
+            menuOffsetHeight =
+              $component.offset().top +
+              $component.outerHeight(true) +
+              $menu.outerHeight(true)
 
           if (menuOffsetHeight > tableOffsetHeight) {
             var padding = menuOffsetHeight - tableOffsetHeight
             var scrollTarget = $table.scrollTop() + padding
             $table.css("padding-bottom", padding)
-            $table.animate({
-              scrollTop: scrollTarget
-              }, 500)
+            $table.animate(
+              {
+                scrollTop: scrollTarget,
+              },
+              500
+            )
           }
-        });
-        
+        })
+
         // remove padding on close dropdown
-        $component.on('hide.bs.dropdown', function () {
-          $table.css("padding-bottom", 0);
+        $component.on("hide.bs.dropdown", function () {
+          $table.css("padding-bottom", 0)
         })
 
         // clean up
@@ -43,7 +48,7 @@ const DropDownMenu = ({ buttonIcon, children }) => {
         }
       }
     }
-  }, [componentID]);
+  }, [componentID])
 
   useEffect(() => {
     const cpID = uniqueId("drop-down-menu")
@@ -51,8 +56,8 @@ const DropDownMenu = ({ buttonIcon, children }) => {
   }, [])
 
   return (
-    <React.Fragment>
-      <div className="btn-group custom-dropdown" id={componentID} >
+    <>
+      <div className="btn-group custom-dropdown" id={componentID}>
         <button
           className="btn btn-default btn-sm dropdown-toggle"
           type="button"
@@ -62,10 +67,10 @@ const DropDownMenu = ({ buttonIcon, children }) => {
           {buttonIcon}
         </button>
         <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            {children}
-          </ul>
+          {children}
+        </ul>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

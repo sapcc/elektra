@@ -3,7 +3,7 @@ import BooleanLabel from "../components/shared/BooleanLabel"
 
 export const confirmMessageOnDelete = (l7Rule) => {
   return (
-    <React.Fragment>
+    <>
       <p>Do you really want to delete following L7 Rule?</p>
       <p>
         <b>ID:</b> {l7Rule.id}
@@ -21,7 +21,7 @@ export const confirmMessageOnDelete = (l7Rule) => {
           ? `${l7Rule.value.slice(0, 50)}...`
           : l7Rule.value}
       </p>
-    </React.Fragment>
+    </>
   )
 }
 

@@ -57,7 +57,7 @@ export class FormMultiselect extends React.Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         <div
           className={`dropdown ${this.state.collapsed ? "" : "open"}`}
           tabIndex="0"
@@ -100,7 +100,7 @@ export class FormMultiselect extends React.Component {
             ))}
           </ul>
         </div>
-      </React.Fragment>
+      </>
     )
   }
 }

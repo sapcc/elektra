@@ -43,13 +43,13 @@ export default class NetworkStats extends React.Component {
 
     if (isFetching)
       return (
-        <React.Fragment>
+        <>
           <span className="spinner"></span> Loading ...
-        </React.Fragment>
+        </>
       )
 
     return (
-      <React.Fragment>
+      <>
         {items && (
           <table className="table">
             <thead>
@@ -98,7 +98,7 @@ export default class NetworkStats extends React.Component {
             </tbody>
           </table>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

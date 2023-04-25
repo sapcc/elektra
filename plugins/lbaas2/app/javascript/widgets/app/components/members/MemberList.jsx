@@ -65,9 +65,9 @@ const MemberList = ({ props, loadbalancerID }) => {
   return useMemo(() => {
     Log.debug("RENDER member list")
     return (
-      <React.Fragment>
+      <>
         {poolID && !poolError && (
-          <React.Fragment>
+          <>
             {error ? (
               <div className="members subtable multiple-subtable-right">
                 <ErrorPage
@@ -83,7 +83,7 @@ const MemberList = ({ props, loadbalancerID }) => {
                   <HelpPopover text="Members are servers that serve traffic behind a load balancer. Each member is specified by the IP address and port that it uses to serve traffic." />
                 </div>
 
-                <React.Fragment>
+                <>
                   <div className="toolbar searchToolbar">
                     <SearchField
                       value={searchTerm}
@@ -106,7 +106,7 @@ const MemberList = ({ props, loadbalancerID }) => {
                       </SmartLink>
                     </div>
                   </div>
-                </React.Fragment>
+                </>
 
                 <MembersTable
                   members={members}
@@ -119,9 +119,9 @@ const MemberList = ({ props, loadbalancerID }) => {
                 />
               </div>
             )}
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }, [
     poolID,

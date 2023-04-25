@@ -48,20 +48,20 @@ export default class ShowModal extends React.Component {
   renderOverview(volume) {
     if (this.state.loadError) {
       return (
-        <React.Fragment>
+        <>
           <div className="text-danger">
             <h4>Could not load volume!</h4>
             <p>{this.state.loadError}</p>
           </div>
-        </React.Fragment>
+        </>
       )
     }
 
     if (!volume) {
       return (
-        <React.Fragment>
+        <>
           <span className="spinner"></span> Loading...
-        </React.Fragment>
+        </>
       )
     }
 
@@ -88,11 +88,11 @@ export default class ShowModal extends React.Component {
 
           <Row label="User">
             {volume.user_name ? (
-              <React.Fragment>
+              <>
                 {volume.user_name}
                 <br />
                 <span className="info-text">{volume.user_id}</span>
-              </React.Fragment>
+              </>
             ) : (
               volume.user_id
             )}
@@ -137,11 +137,11 @@ export default class ShowModal extends React.Component {
               <td>{attachment.attachment_id}</td>
               <td>
                 {attachment.server_name ? (
-                  <React.Fragment>
+                  <>
                     {attachment.server_name}
                     <br />
                     <span className="info-text">{attachment.server_id}</span>
-                  </React.Fragment>
+                  </>
                 ) : (
                   attachment.server_id
                 )}

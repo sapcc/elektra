@@ -78,7 +78,7 @@ export default class Overview extends React.Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         {currentServices.sort(byUIString).map((serviceType) => (
           <React.Fragment key={serviceType}>
             {categories[serviceType]
@@ -102,7 +102,7 @@ export default class Overview extends React.Component {
             )}
           </div>
         </div>
-      </React.Fragment>
+      </>
     )
   }
 
@@ -172,7 +172,7 @@ export default class Overview extends React.Component {
       canEdit && scope.isProject() && this.props.metadata.bursting !== null
 
     return (
-      <React.Fragment>
+      <>
         <nav className="nav-with-buttons">
           <ul className="nav nav-tabs">
             {allAreas.map((area) => (
@@ -208,7 +208,7 @@ export default class Overview extends React.Component {
           )}
         </nav>
         {currentTab}
-      </React.Fragment>
+      </>
     )
   }
 }

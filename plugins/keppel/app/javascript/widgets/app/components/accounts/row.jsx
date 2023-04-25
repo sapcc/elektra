@@ -159,7 +159,7 @@ export default class AccountRow extends React.Component {
                 </li>
               )}
               {this.props.isAdmin && (
-                <React.Fragment>
+                <>
                   <li className="divider"></li>
                   {isEditable &&
                     replication &&
@@ -188,7 +188,7 @@ export default class AccountRow extends React.Component {
                       Delete
                     </a>
                   </li>
-                </React.Fragment>
+                </>
               )}
             </ul>
           </div>

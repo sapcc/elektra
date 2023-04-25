@@ -13,7 +13,7 @@ const FormBody = ({ containerName, otherContainers }) => {
   const { formValues: values, onChange } = React.useContext(Form.Context)
 
   return (
-    <React.Fragment>
+    <>
       <div className="row">
         <div className="col-md-6">
           <Form.Element label="Object count" name="object_count" inline>
@@ -62,7 +62,7 @@ const FormBody = ({ containerName, otherContainers }) => {
         </div>
       </div>
       {/[.]r:/.test(values.read) && (
-        <React.Fragment>
+        <>
           <label className="control-label">
             URL for public access{" "}
             <a href={values.public_url} target="_blank" rel="noreferrer">
@@ -77,13 +77,13 @@ const FormBody = ({ containerName, otherContainers }) => {
               defaultValue={values.public_url}
             />
           </div>
-        </React.Fragment>
+        </>
       )}
       {values.cap_staticweb && (
         <div className="form-group">
           <label>Static website serving</label>
           {values.read == ".r:*,.rlistings" ? (
-            <React.Fragment>
+            <>
               <div className="row">
                 <div className="col-md-6">
                   <div className="checkbox">
@@ -127,7 +127,7 @@ const FormBody = ({ containerName, otherContainers }) => {
                   </div>
                 </div>
               </div>
-            </React.Fragment>
+            </>
           ) : (
             <div className="bs-callout bs-callout-info">
               Before configuring static website serving, go to{" "}
@@ -200,7 +200,7 @@ const FormBody = ({ containerName, otherContainers }) => {
           onChange={(newValues) => onChange("customMetadataTags", newValues)}
         />
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

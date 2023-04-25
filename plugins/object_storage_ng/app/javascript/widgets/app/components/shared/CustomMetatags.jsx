@@ -53,7 +53,7 @@ const CustomMetaTags = ({ values, onChange, reservedKeys }) => {
   )
 
   return (
-    <React.Fragment>
+    <>
       {reservedKeys && reservedKeys.length > 0 && (
         <div className="small">Reserved keys: {reservedKeys.join(", ")}</div>
       )}
@@ -87,7 +87,7 @@ const CustomMetaTags = ({ values, onChange, reservedKeys }) => {
           </div>
         </React.Fragment>
       ))}
-    </React.Fragment>
+    </>
   )
 }
 

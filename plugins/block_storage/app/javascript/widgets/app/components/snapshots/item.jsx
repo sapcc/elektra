@@ -75,13 +75,13 @@ export default class Snapshot extends React.Component {
         </td>
         <td>
           {snapshot.volume_name ? (
-            <React.Fragment>
+            <>
               <Link to={`/snapshots/volumes/${snapshot.volume_id}/show`}>
                 {snapshot.volume_name}
               </Link>
               <br />
               <span className="info-text">{snapshot.volume_id}</span>
-            </React.Fragment>
+            </>
           ) : (
             snapshot.volume_id
           )}
@@ -127,24 +127,24 @@ export default class Snapshot extends React.Component {
                 {policy.isAllowed("block_storage:snapshot_delete", {
                   target: { scoped_domain_name: scope.domain },
                 }) && (
-                  <React.Fragment>
+                  <>
                     <li className="divider"></li>
                     <li>
                       <a href="#" onClick={this.handleDelete}>
                         Delete
                       </a>
                     </li>
-                  </React.Fragment>
+                  </>
                 )}
                 {policy.isAllowed("block_storage:snapshot_reset_status") && (
-                  <React.Fragment>
+                  <>
                     <li className="divider"></li>
                     <li>
                       <Link to={`/snapshots/${snapshot.id}/reset-status`}>
                         Reset Status
                       </Link>
                     </li>
-                  </React.Fragment>
+                  </>
                 )}
               </ul>
             </div>

@@ -24,9 +24,9 @@ export const formErrorMessage = (error) => {
 
 export const createNameTag = (name) => {
   return name ? (
-    <React.Fragment>
+    <>
       <b>name:</b> {name} <br />
-    </React.Fragment>
+    </>
   ) : (
     ""
   )

@@ -17,7 +17,7 @@ const ErrorRow = (props) => {
   const hasSizeColumn = oldSize || newSize ? true : false
 
   return (
-    <React.Fragment>
+    <>
       <tr>
         <td className={hasSizeColumn ? "col-md-3" : "col-md-4"}>
           <a
@@ -38,7 +38,7 @@ const ErrorRow = (props) => {
           </td>
         )}
         <td className={hasSizeColumn ? "col-md-2" : "col-md-3"}>
-          {result.at ? <PrettyDate date={result.at} /> : 'None'}
+          {result.at ? <PrettyDate date={result.at} /> : "None"}
         </td>
       </tr>
       <tr className="explains-previous-line">
@@ -46,7 +46,7 @@ const ErrorRow = (props) => {
           {result.error}
         </td>
       </tr>
-    </React.Fragment>
+    </>
   )
 }
 

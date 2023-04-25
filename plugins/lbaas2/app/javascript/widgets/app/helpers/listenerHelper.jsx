@@ -298,7 +298,7 @@ export const predPolicyDesc = (policy) => {
       return {
         label: "Set Proxy Protocol V2 (proxy_protocol_V2_e8f6_v1_0)",
         description: (
-          <React.Fragment>
+          <>
             Adds client IP information to the TCP request{" "}
             <b>strong in binary format</b>.<br />
             For more information please take a look at{" "}
@@ -311,14 +311,14 @@ export const predPolicyDesc = (policy) => {
             </a>
             <br /> All backend members have to have Proxy Protocol Version 2
             support enabled.
-          </React.Fragment>
+          </>
         ),
       }
     case "standard_tcp_a3de_v1_0":
       return {
         label: "Use Standard Profile (standard_tcp_a3de_v1_0)",
         description: (
-          <React.Fragment>
+          <>
             Switch listener from FastL4 to standard profile on F5 device. Use it
             only when FastL4 profile doesn't work for your application!!!{" "}
             <a
@@ -328,23 +328,19 @@ export const predPolicyDesc = (policy) => {
             >
               (F5 Documentation)
             </a>
-          </React.Fragment>
+          </>
         ),
       }
     case "x_forward_5b6e_v1_0":
       return {
         label: "Set X-Forwarded Headers (x_forward_5b6e_v1_0)",
-        description: (
-          <React.Fragment>
-            Adds X-FORWARDED-FOR/PROTO/PORT to HTTP header.
-          </React.Fragment>
-        ),
+        description: <>Adds X-FORWARDED-FOR/PROTO/PORT to HTTP header.</>,
       }
     case "no_one_connect_3caB_v1_0":
       return {
         label: "Disable OneConnect (no_one_connect_3caB_v1_0)",
         description: (
-          <React.Fragment>
+          <>
             Disables the OneConnect Profile on listeners (used for member
             connection reuse){" "}
             <a
@@ -354,51 +350,51 @@ export const predPolicyDesc = (policy) => {
             >
               (F5 Documentation)
             </a>
-          </React.Fragment>
+          </>
         ),
       }
     case "http_compression_e4a2_v1_0":
       return {
         label: "Enable HTTP compression (http_compression_e4a2_v1_0)",
         description: (
-          <React.Fragment>
+          <>
             Enables HTTP compression profile on listener. Compression is done
             with gzip for content types text/* and
             application/(xml|x-javascript).
-          </React.Fragment>
+          </>
         ),
       }
     case "cookie_encryption_b82a_v1_0":
       return {
         label: "Enable Cookie Encryption (cookie_encryption_b82a_v1_0)",
         description: (
-          <React.Fragment>
+          <>
             All cookies are encrypted when sent to client and decrypted when
             passed to backend members.
-          </React.Fragment>
+          </>
         ),
       }
     case "sso_22b0_v1_0":
       return {
         label: "Enable Client Authentication (SSO) (sso_22b0_v1_0)",
         description: (
-          <React.Fragment>
+          <>
             Prompts clients for certificates. Validates Client Ceritificates and
             adds various X-SSL-Client-Cert-* attributes to HTTP header. Expects
             listener (TERMINATED_HTTPS) certificate name used for SSL offloading
             starts with CATrust*
-          </React.Fragment>
+          </>
         ),
       }
     case "http_redirect_a26c_v1_0":
       return {
         label: "Redirect HTTP to HTTPS (http_redirect_a26c_v1_0)",
         description: (
-          <React.Fragment>
+          <>
             Redirects all HTTP calls to HTTPS protocol on port 443. A given path
             will also be added to the https redirect, i.e. http://sap.com/hana
             would result in https://sap.com/hana.
-          </React.Fragment>
+          </>
         ),
       }
     default:

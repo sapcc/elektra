@@ -28,7 +28,7 @@ export default class SecurityServiceForm extends React.Component {
 
   renderForm({ values }) {
     return (
-      <React.Fragment>
+      <>
         <Modal.Body>
           <Form.Errors />
 
@@ -92,7 +92,7 @@ export default class SecurityServiceForm extends React.Component {
           <Button onClick={this.close}>Cancel</Button>
           <Form.SubmitButton label="Save" />
         </Modal.Footer>
-      </React.Fragment>
+      </>
     )
   }
 

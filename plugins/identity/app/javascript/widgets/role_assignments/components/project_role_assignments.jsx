@@ -112,10 +112,10 @@ export default class ProjectRoleAssignments extends React.Component {
         : policy.isAllowed("identity:project_group_create")
 
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar">
           {!this.state.showNewMemberInput && hasItems && (
-            <React.Fragment>
+            <>
               <SearchField
                 onChange={(term) => this.setState({ filterString: term })}
                 placeholder={`Name ${
@@ -126,7 +126,7 @@ export default class ProjectRoleAssignments extends React.Component {
                 text={`Filter ${this.props.type}s by name or id`}
               />
               <span className="toolbar-input-divider"></span>
-            </React.Fragment>
+            </>
           )}
 
           {(!this.props.items || this.props.isFetching) && (
@@ -211,7 +211,7 @@ export default class ProjectRoleAssignments extends React.Component {
                 <tr>
                   <td className="user-name-cell">
                     {this.state.newMember && (
-                      <React.Fragment>
+                      <>
                         {this.state.newMember.description
                           ? `${this.state.newMember.description} (${this.state.newMember.name})`
                           : this.state.newMember.name}
@@ -219,7 +219,7 @@ export default class ProjectRoleAssignments extends React.Component {
                         <span className="info-text">
                           {this.state.newMember.id}
                         </span>
-                      </React.Fragment>
+                      </>
                     )}
                   </td>
 
@@ -256,7 +256,7 @@ export default class ProjectRoleAssignments extends React.Component {
           text={`${this.props.projects.items.length}/${this.props.projects.total}`}
           onLoadNext={() => this.props.loadNext({domain: this.state.domain, project: this.state.project})}/>
         */}
-      </React.Fragment>
+      </>
     )
   }
 }

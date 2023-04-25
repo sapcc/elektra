@@ -14,7 +14,7 @@ const SmartLink = ({
 }) => {
   const shouldRenderLink = isAllowed == false ? false : true
   return (
-    <React.Fragment>
+    <>
       {shouldRenderLink ? (
         <Link
           to={to || ""}
@@ -51,7 +51,7 @@ const SmartLink = ({
           </Link>
         </OverlayTrigger>
       )}
-    </React.Fragment>
+    </>
   )
 }
 

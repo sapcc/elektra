@@ -67,10 +67,10 @@ const EditMemberForm = (
       return updateMember(loadbalancerID, poolID, memberID, memberItems)
         .then((response) => {
           addNotice(
-            <React.Fragment>
+            <>
               Member <b>{response.data.name}</b> ({response.data.id}) is being
               updated.
-            </React.Fragment>
+            </>
           )
           // update pool
           persistPool(loadbalancerID, poolID)

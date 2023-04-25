@@ -59,7 +59,7 @@ export default class ProjectRoleAssignmentsItem extends React.Component {
           </td>
         ) : (
           // view mode
-          <React.Fragment>
+          <>
             <td>
               {
                 /* show role names with descriptions comma separated in a row */
@@ -85,7 +85,7 @@ export default class ProjectRoleAssignmentsItem extends React.Component {
                 </button>
               )}
             </td>
-          </React.Fragment>
+          </>
         )}
       </tr>
     )

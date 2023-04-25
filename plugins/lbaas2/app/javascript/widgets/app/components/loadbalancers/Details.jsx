@@ -91,7 +91,7 @@ const Details = (props) => {
   return useMemo(() => {
     Log.debug("RENDER Details list")
     return (
-      <React.Fragment>
+      <>
         {error ? (
           <ErrorPage
             headTitle="Load Balancers Details"
@@ -99,11 +99,11 @@ const Details = (props) => {
             onReload={connect}
           />
         ) : (
-          <React.Fragment>
+          <>
             {headerTitle(loading, loadbalancer)}
 
             {loadbalancer && (
-              <React.Fragment>
+              <>
                 <ListenerList props={props} loadbalancerID={loadbalancer.id} />
 
                 <div className="multiple-subtable">
@@ -122,11 +122,11 @@ const Details = (props) => {
                   />
                   <MemberList props={props} loadbalancerID={loadbalancer.id} />
                 </div>
-              </React.Fragment>
+              </>
             )}
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }, [error, loading, loadbalancer, props])
 }

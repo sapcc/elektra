@@ -114,7 +114,7 @@ export default class List extends React.Component {
         />
 
         {this.state.filters.length > 1 && ( // show filter checkboxes
-          <React.Fragment>
+          <>
             <span className="toolbar-input-divider"></span>
             <label>Show:</label>
             {this.state.filters.map((name, index) => (
@@ -127,7 +127,7 @@ export default class List extends React.Component {
                 {name}
               </label>
             ))}
-          </React.Fragment>
+          </>
         )}
         {this.state.activeFilter == "fixed ip ports" && (
           <div className="main-buttons">

@@ -87,26 +87,26 @@ const columnDefs = [
 const cellContents = {
   //This contains functions rendering individual cells in the inconsistency table.
   domain: ({ domain }) => (
-    <React.Fragment>
+    <>
       {domain.name || domain.id}
       {domain.name && <div className="small text-muted">{domain.id}</div>}
-    </React.Fragment>
+    </>
   ),
   project: ({ project }) => {
     const domain = project.domain || {}
     return (
-      <React.Fragment>
+      <>
         <span className="text-muted">{domain.name || domain.id}</span>/
         {project.name || project.id}
         {project.name && <div className="small text-muted">{project.id}</div>}
-      </React.Fragment>
+      </>
     )
   },
   resource: ({ service, resource }) => (
-    <React.Fragment>
+    <>
       {t(resource)}
       <div className="small text-muted">{t(service)}</div>
-    </React.Fragment>
+    </>
   ),
   quota: ({ quota: value, unit }) => valueWithUnit(value, unit),
   domain_quota: ({ domain_quota: value, unit }) => valueWithUnit(value, unit),

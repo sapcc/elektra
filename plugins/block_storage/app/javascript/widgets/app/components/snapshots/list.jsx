@@ -47,7 +47,7 @@ export default class List extends React.Component {
     const items = this.filterItems()
 
     return (
-      <React.Fragment>
+      <>
         {this.props.snapshots.items.length > 5 && (
           <div className="toolbar">
             <SearchField
@@ -102,7 +102,7 @@ export default class List extends React.Component {
           isFetching={isFetching}
           onLoadNext={this.props.loadNext}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -82,22 +82,22 @@ class Widget {
       if (this.store) {
         createRoot(reactContainer).render(
           <Provider store={this.store}>
-            <React.Fragment>
+            <>
               {this.config.params.flashescontainer !== "custom" && (
                 <FlashMessages />
               )}
               {wrappedComponent}
-            </React.Fragment>
+            </>
           </Provider>
         )
       } else {
         createRoot(reactContainer).render(
-          <React.Fragment>
+          <>
             {this.config.params.flashescontainer !== "custom" && (
               <FlashMessages />
             )}
             {wrappedComponent}
-          </React.Fragment>
+          </>
         )
       }
     }

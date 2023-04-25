@@ -50,7 +50,7 @@ export default class Category extends React.Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         <h3>
           <div className="row">
             <div className="col-md-6">{t(categoryName)}</div>
@@ -78,7 +78,7 @@ export default class Category extends React.Component {
             />
           )
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

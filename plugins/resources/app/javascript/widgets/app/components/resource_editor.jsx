@@ -76,7 +76,7 @@ const ResourceEditor = (props) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <div
         className={`col-md-2 edit-quota-input ${
           isFlashing ? "edit-quota-input-is-flashing" : ""
@@ -106,7 +106,7 @@ const ResourceEditor = (props) => {
         />
       </div>
       {message}
-    </React.Fragment>
+    </>
   )
 }
 

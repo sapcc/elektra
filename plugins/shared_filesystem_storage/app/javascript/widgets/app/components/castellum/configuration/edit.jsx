@@ -19,7 +19,7 @@ const FormBody = ({ close, errors }) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Modal.Body>
         <Form.Errors errors={errors} />
 
@@ -197,7 +197,7 @@ const FormBody = ({ close, errors }) => {
         <Form.SubmitButton label="Save" />
         <Button onClick={close}>Cancel</Button>
       </Modal.Footer>
-    </React.Fragment>
+    </>
   )
 }
 

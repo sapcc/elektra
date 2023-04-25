@@ -93,9 +93,9 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
             />
             &nbsp;
             <span key={index}>
-              <React.Fragment>
+              <>
                 <strong>{role.name}</strong> {roleDescription}
-              </React.Fragment>
+              </>
             </span>
           </label>
         </li>
@@ -188,16 +188,16 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
       !this.props.availableRoles || this.props.availableRoles.isFetching
 
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar toolbar-inline">
           <div className="toolbar-container">
             {isFetching ? (
-              <React.Fragment>
+              <>
                 <span className="spinner" />
                 Loading ...
-              </React.Fragment>
+              </>
             ) : (
-              <React.Fragment>
+              <>
                 <button
                   className="btn btn-default btn-sm hover-danger"
                   onClick={this.removeAllRoles}
@@ -205,7 +205,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
                 >
                   Remove All
                 </button>
-              </React.Fragment>
+              </>
             )}
           </div>
 
@@ -245,7 +245,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
           <div className="alert alert-error">{this.state.errors}</div>
         )}
         {!isFetching && this.renderEditView()}
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -88,18 +88,18 @@ export default class ShowSearchObjectModal extends React.Component {
           <Modal.Title id="contained-modal-title-lg">
             Show{" "}
             {item && (
-              <React.Fragment>
+              <>
                 {item.cached_object_type} {item.name} ({item.id})
-              </React.Fragment>
+              </>
             )}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {this.state.isFetching && (
-            <React.Fragment>
+            <>
               <span className="spinner" />
               Loading...
-            </React.Fragment>
+            </>
           )}
           {this.state.error && <span>{this.state.error}</span>}
           {item && (

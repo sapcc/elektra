@@ -66,12 +66,12 @@ export default class ShowModal extends React.Component {
         </Modal.Header>
         <Modal.Body>
           {this.state.loadError && (
-            <React.Fragment>
+            <>
               <div className="text-danger">
                 <h4>Could not load snapshot!</h4>
                 <p>{this.state.loadError}</p>
               </div>
-            </React.Fragment>
+            </>
           )}
           {snapshot ? (
             <table className="table no-borders">
@@ -89,11 +89,11 @@ export default class ShowModal extends React.Component {
 
                 <Row label="Source Volume">
                   {snapshot.volume_name ? (
-                    <React.Fragment>
+                    <>
                       {snapshot.volume_name}
                       <br />
                       <span className="info-text">{snapshot.volume_id}</span>
-                    </React.Fragment>
+                    </>
                   ) : (
                     snapshot.volume_id
                   )}
@@ -117,9 +117,9 @@ export default class ShowModal extends React.Component {
               </tbody>
             </table>
           ) : (
-            <React.Fragment>
+            <>
               <span className="spinner"></span> Loading...
-            </React.Fragment>
+            </>
           )}
         </Modal.Body>
         <Modal.Footer>

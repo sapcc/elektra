@@ -251,7 +251,7 @@ export default class InitProjectModal extends React.Component {
 
     return (
       //NOTE: class='resources' is needed for CSS rules from plugins/resources/ to apply
-      <React.Fragment>
+      <>
         <div className="modal-body resources">
           {this.state.apiErrors && <FormErrors errors={this.state.apiErrors} />}
           <p>
@@ -296,7 +296,7 @@ export default class InitProjectModal extends React.Component {
             Cancel
           </div>
         </div>
-      </React.Fragment>
+      </>
     )
   }
 

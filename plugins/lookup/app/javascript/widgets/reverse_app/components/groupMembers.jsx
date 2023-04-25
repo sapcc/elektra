@@ -1,6 +1,6 @@
 import React from "react"
 const GroupMembers = (props) => (
-  <React.Fragment>
+  <>
     {props.members.isFetching && <span className="spinner" />}
     {props.members.error && (
       <span className="text-danger">{props.members.error.error}</span>
@@ -21,7 +21,7 @@ const GroupMembers = (props) => (
         ))}
       </ul>
     )}
-  </React.Fragment>
+  </>
 )
 
 export default GroupMembers

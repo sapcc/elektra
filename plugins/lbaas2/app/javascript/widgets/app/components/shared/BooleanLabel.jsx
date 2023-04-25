@@ -1,7 +1,7 @@
-import React from "react";
-import { useMemo } from "react";
-import { Tooltip, OverlayTrigger } from "react-bootstrap";
-import uniqueId from "lodash/uniqueId";
+import React from "react"
+import { useMemo } from "react"
+import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import uniqueId from "lodash/uniqueId"
 
 const BooleanLabel = ({ value, tooltipText }) => {
   return useMemo(() => {
@@ -10,7 +10,7 @@ const BooleanLabel = ({ value, tooltipText }) => {
         {value ? (
           <>
             {tooltipText ? (
-              <React.Fragment>
+              <>
                 <OverlayTrigger
                   placement="top"
                   overlay={
@@ -19,7 +19,7 @@ const BooleanLabel = ({ value, tooltipText }) => {
                 >
                   <i className="fa fa-check" />
                 </OverlayTrigger>
-              </React.Fragment>
+              </>
             ) : (
               <i className="fa fa-check" />
             )}
@@ -28,8 +28,8 @@ const BooleanLabel = ({ value, tooltipText }) => {
           <i className="fa fa-minus custom-fa-minus" />
         )}
       </>
-    );
-  }, [value, tooltipText]);
-};
+    )
+  }, [value, tooltipText])
+}
 
-export default BooleanLabel;
+export default BooleanLabel

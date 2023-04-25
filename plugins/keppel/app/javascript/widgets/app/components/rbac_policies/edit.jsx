@@ -161,7 +161,7 @@ export default class RBACPoliciesEditModal extends React.Component {
             to. You can also use access policies to enable anonymous pulling,
             thereby making matching repositories publicly readable.
             {isExternalReplica && (
-              <React.Fragment>
+              <>
                 <br />
                 <br />
                 Since this is an external replica account, anonymous users are
@@ -170,7 +170,7 @@ export default class RBACPoliciesEditModal extends React.Component {
                 replication with the "Pull Anonymously (even new images)"
                 permission, but make sure to only enable this permission for
                 trusted source IPs.
-              </React.Fragment>
+              </>
             )}
           </p>
           {isAdmin && !isEditable && (
@@ -231,7 +231,7 @@ export default class RBACPoliciesEditModal extends React.Component {
 
         <Modal.Footer>
           {isEditable ? (
-            <React.Fragment>
+            <>
               <Button
                 onClick={this.handleSubmit}
                 bsStyle="primary"
@@ -240,7 +240,7 @@ export default class RBACPoliciesEditModal extends React.Component {
                 {isSubmitting ? "Saving..." : "Save"}
               </Button>
               <Button onClick={this.close}>Cancel</Button>
-            </React.Fragment>
+            </>
           ) : (
             <Button onClick={this.close}>Close</Button>
           )}

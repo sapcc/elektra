@@ -27,7 +27,7 @@ export default class Search extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar">
           <SearchField
             onChange={(domain) => this.search({ domain })}
@@ -79,7 +79,7 @@ export default class Search extends React.Component {
             })
           }
         />
-      </React.Fragment>
+      </>
     )
   }
 }

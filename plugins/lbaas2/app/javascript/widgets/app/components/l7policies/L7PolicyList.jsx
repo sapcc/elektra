@@ -148,9 +148,9 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
   return useMemo(() => {
     Log.debug("RENDER L7 POLICIES")
     return (
-      <React.Fragment>
+      <>
         {listenerID && !listenerError && (
-          <React.Fragment>
+          <>
             {error ? (
               <div
                 className={
@@ -190,7 +190,7 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
                     </div>
                   ))
                 ) : (
-                  <React.Fragment>
+                  <>
                     <div className="toolbar searchToolbar">
                       <SearchField
                         value={searchTerm}
@@ -274,13 +274,13 @@ const L7PolicyList = ({ props, loadbalancerID }) => {
                         )}
                       </tbody>
                     </Table>
-                  </React.Fragment>
+                  </>
                 )}
               </div>
             )}
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }, [
     listenerID,

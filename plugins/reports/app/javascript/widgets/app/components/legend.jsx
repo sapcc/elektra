@@ -226,7 +226,7 @@ const Legend = ({
 
 //   render() {
 //     return (
-//       <React.Fragment>
+//       <>
 //         <div className="barChartLegend">
 //           <svg
 //             ref={(node) => (this.node = node)}
@@ -234,7 +234,7 @@ const Legend = ({
 //             height={this.props.height}
 //           ></svg>
 //         </div>
-//       </React.Fragment>
+//       </>
 //     )
 //   }
 // }

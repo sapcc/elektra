@@ -2,7 +2,7 @@ import React from "react"
 import { Link } from "react-router-dom"
 import { scope } from "lib/ajax_helper"
 import { Highlighter } from "react-bootstrap-typeahead"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { policy } from "lib/policy"
 import * as constants from "../../constants"
 
@@ -63,12 +63,9 @@ const VolumeItem = ({
     <tr className={`state-${volume.status}`}>
       <td>
         {(volume.bootable === true || volume.bootable === "true") && (
-          <OverlayTrigger
-            placement="top"
-            overlay={<Tooltip id="bootable-volume">Bootable Volume</Tooltip>}
-          >
+          <Tooltip placement="top" content="Bootable Volume">
             <i className="fa fa-hdd-o"></i>
-          </OverlayTrigger>
+          </Tooltip>
         )}
       </td>
       <td>
@@ -82,12 +79,12 @@ const VolumeItem = ({
           <MyHighlighter search={searchTerm}>{volume.name}</MyHighlighter>
         )}
         {volume.name && (
-          <React.Fragment>
+          <>
             <br />
             <span className="info-text">
               <MyHighlighter search={searchTerm}>{volume.id}</MyHighlighter>
             </span>
-          </React.Fragment>
+          </>
         )}
       </td>
       <td>{volume.availability_zone}</td>
@@ -107,10 +104,10 @@ const VolumeItem = ({
               </a>
               &nbsp;on {attachment.device}
               {attachment.server_name && (
-                <React.Fragment>
+                <>
                   <br />
                   <span className="info-text">{attachment.server_id}</span>
-                </React.Fragment>
+                </>
               )}
             </div>
           ))}
@@ -164,44 +161,44 @@ const VolumeItem = ({
               policy.isAllowed("compute:attach_volume", {
                 target: { scoped_domain_name: scope.domain },
               }) ? (
-                <React.Fragment>
+                <>
                   <li className="divider"></li>
                   <li>
                     <Link to={`/volumes/${volume.id}/attachments/new`}>
                       Attach
                     </Link>
                   </li>
-                </React.Fragment>
+                </>
               ) : (
                 policy.isAllowed("compute:detach_volume", {
                   target: { scoped_domain_name: scope.domain },
                 }) && (
-                  <React.Fragment>
+                  <>
                     <li className="divider"></li>
                     <li>
                       <a href="#" onClick={handleDetach}>
                         Detach
                       </a>
                     </li>
-                  </React.Fragment>
+                  </>
                 )
               )}
               {policy.isAllowed("block_storage:volume_delete", {
                 target: { scoped_domain_name: scope.domain },
               }) &&
                 volume.status != "in-use" && (
-                  <React.Fragment>
+                  <>
                     <li className="divider"></li>
                     <li>
                       <a href="#" onClick={handleDelete}>
                         Delete
                       </a>
                     </li>
-                  </React.Fragment>
+                  </>
                 )}
               {(policy.isAllowed("block_storage:volume_reset_status") ||
                 policy.isAllowed("block_storage:volume_extend_size")) && (
-                <React.Fragment>
+                <>
                   <li className="divider"></li>
                   {policy.isAllowed("block_storage:volume_reset_status") && (
                     <li>
@@ -217,7 +214,7 @@ const VolumeItem = ({
                       </Link>
                     </li>
                   )}
-                </React.Fragment>
+                </>
               )}
               {policy.isAllowed("image:image_create") && (
                 <li>

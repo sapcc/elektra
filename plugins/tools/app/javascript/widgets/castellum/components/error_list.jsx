@@ -70,7 +70,7 @@ export default class Loader extends React.Component {
     const { errorType: currentErrorType } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <nav className="nav-with-buttons">
           <ul className="nav nav-tabs">
             {CASTELLUM_ERROR_TYPES.map((errorType) => (
@@ -87,7 +87,7 @@ export default class Loader extends React.Component {
           </ul>
         </nav>
         {this.renderContent()}
-      </React.Fragment>
+      </>
     )
   }
 

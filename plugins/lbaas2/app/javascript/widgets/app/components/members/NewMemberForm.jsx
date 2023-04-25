@@ -97,15 +97,13 @@ const NewMemberForm = (
           if (response && response.data) {
             if (state.items.length == 1) {
               addNotice(
-                <React.Fragment>
+                <>
                   Member <b>{response.data.name}</b> ({response.data.id}) is
                   being created.
-                </React.Fragment>
+                </>
               )
             } else {
-              addNotice(
-                <React.Fragment>Members are being created.</React.Fragment>
-              )
+              addNotice(<>Members are being created.</>)
             }
           }
           // update pool info

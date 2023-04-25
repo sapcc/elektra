@@ -5610,7 +5610,7 @@ jsx-to-string@^1.4.0:
 
 "juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@latest/package.tgz":
   version "1.5.4"
-  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@latest/package.tgz#e5e8af1f8af232a8c5cb3626ce498acf7ab62f47"
+  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@latest/package.tgz#804801fb756ede8339d1baa51d40dc045bd037a8"
 
 keycode@^2.2.0:
   version "2.2.1"

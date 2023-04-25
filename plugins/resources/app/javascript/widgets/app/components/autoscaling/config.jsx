@@ -186,7 +186,7 @@ export default class AutoscalingConfig extends React.Component {
     options.sort((a, b) => a.label.localeCompare(b.label))
 
     return (
-      <React.Fragment>
+      <>
         <div className="row">
           <div className="col-md-8">
             <select
@@ -214,10 +214,10 @@ export default class AutoscalingConfig extends React.Component {
                   onClick={() => this.save()}
                 >
                   {isSubmitting ? (
-                    <React.Fragment>
+                    <>
                       <span className="spinner" />
                       {" Saving..."}
-                    </React.Fragment>
+                    </>
                   ) : (
                     "Save"
                   )}
@@ -245,7 +245,7 @@ export default class AutoscalingConfig extends React.Component {
         {currentFullResource != "" && (
           <DataTable columns={columns}>{this.renderRows()}</DataTable>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

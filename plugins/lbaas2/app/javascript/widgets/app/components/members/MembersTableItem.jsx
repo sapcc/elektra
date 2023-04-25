@@ -85,9 +85,9 @@ const MembersTableItem = ({
     return deleteMember(loadbalancerID, poolID, memberID, memberName)
       .then((response) => {
         addNotice(
-          <React.Fragment>
+          <>
             Member <b>{memberName}</b> ({memberID}) is being deleted.
-          </React.Fragment>
+          </>
         )
         // fetch the listener again containing the new policy so it gets updated fast
         persistPool(loadbalancerID, poolID)

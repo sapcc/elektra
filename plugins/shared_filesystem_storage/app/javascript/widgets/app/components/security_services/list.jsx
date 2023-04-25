@@ -53,7 +53,7 @@ export default class SecurityServiceList extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar">
           <div className="main-buttons">
             <CreateNewButton />
@@ -93,7 +93,7 @@ export default class SecurityServiceList extends React.Component {
             </tbody>
           </table>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

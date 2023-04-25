@@ -23,7 +23,7 @@ const CachedInfoPopoverContent = ({
     memberIDs.map((id, index) => (
       <div key={id}>
         {cachedMembers[id] ? (
-          <React.Fragment>
+          <>
             <div className="row">
               <div className="col-md-12">
                 <Link onClick={(e) => onClick(e, id)} to="#">
@@ -53,7 +53,7 @@ const CachedInfoPopoverContent = ({
                 <b>Weight:</b> {cachedMembers[id].payload.weight}
               </div>
             </div>
-          </React.Fragment>
+          </>
         ) : (
           <div className="row">
             <div className="col-md-12 text-nowrap">

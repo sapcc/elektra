@@ -12,7 +12,7 @@ const ErrorRow = (props) => {
   const projectCount = props.error.affected_projects || 1
 
   return (
-    <React.Fragment>
+    <>
       <tr>
         <td className="col-md-2">{serviceType}</td>
         <td className="col-md-2">
@@ -28,10 +28,10 @@ const ErrorRow = (props) => {
             {domainName}/{projectName}
           </a>
           {projectCount > 1 && (
-            <React.Fragment>
+            <>
               {` and `}
               <strong>{projectCount - 1} more projects</strong>
-            </React.Fragment>
+            </>
           )}
           <div className="text-small text-muted">{projectID}</div>
         </td>
@@ -41,7 +41,7 @@ const ErrorRow = (props) => {
           {errorMessage}
         </td>
       </tr>
-    </React.Fragment>
+    </>
   )
 }
 

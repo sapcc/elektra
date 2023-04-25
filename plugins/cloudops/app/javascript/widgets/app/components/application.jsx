@@ -41,7 +41,7 @@ Breadcrumb = withRouter(Breadcrumb)
 // render all components inside a hash router
 const CloudOpsApp = (props) => (
   <HashRouter /*hashType="noslash"*/>
-    <React.Fragment>
+    <>
       <Menu />
       <Breadcrumb />
 
@@ -54,7 +54,7 @@ const CloudOpsApp = (props) => (
         />
         <SearchRoutes />
       </div>
-    </React.Fragment>
+    </>
   </HashRouter>
 )
 

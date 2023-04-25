@@ -1,12 +1,12 @@
-import React from "react";
-import { useMemo } from "react";
-import { Label, Tooltip, OverlayTrigger } from "react-bootstrap";
+import React from "react"
+import { useMemo } from "react"
+import { Label, Tooltip, OverlayTrigger } from "react-bootstrap"
 
 // label for the operating_status
 const StateLabel = ({ label, labelClassName, tooltipContent }) => {
   return useMemo(() => {
     return (
-      <React.Fragment>
+      <>
         <OverlayTrigger
           placement="top"
           overlay={
@@ -19,9 +19,9 @@ const StateLabel = ({ label, labelClassName, tooltipContent }) => {
         >
           <Label className={labelClassName}>{label}</Label>
         </OverlayTrigger>
-      </React.Fragment>
-    );
-  }, [label]);
-};
+      </>
+    )
+  }, [label])
+}
 
-export default StateLabel;
+export default StateLabel

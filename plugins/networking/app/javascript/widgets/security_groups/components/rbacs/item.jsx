@@ -24,11 +24,11 @@ const Item = ({ item, onDelete, canDelete, cachedProject }) => {
       </td>
       <td>
         {cachedProject ? (
-          <React.Fragment>
+          <>
             {cachedProject.name}
             <br />
             <span className="info-text">ID: {item.target_tenant}</span>
-          </React.Fragment>
+          </>
         ) : (
           item.target_tenant
         )}

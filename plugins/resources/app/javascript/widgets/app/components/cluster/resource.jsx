@@ -39,10 +39,10 @@ const ClusterResource = (props) => {
     barProps.fill = usage
     if (burstUsage > 0) {
       barProps.labelOverride = (
-        <React.Fragment>
+        <>
           {valueWithUnit(usage - burstUsage, unit)} +{" "}
           {valueWithUnit(burstUsage, unit)} burst
-        </React.Fragment>
+        </>
       )
     }
   }

@@ -61,7 +61,7 @@ const FormInput = ({
   }
 
   return (
-    <React.Fragment>
+    <>
       <input
         type={inputType}
         defaultValue={defaultValue}
@@ -74,7 +74,7 @@ const FormInput = ({
         onChange={onTextChanged}
         disabled={disabled}
       />
-    </React.Fragment>
+    </>
   )
 }
 

@@ -325,9 +325,9 @@ const EditPool = (props) => {
     return updatePool(loadbalancerID, poolID, newValues)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Pool <b>{data.name}</b> ({data.id}) is being updated.
-          </React.Fragment>
+          </>
         )
         // fetch the lb again containing the new listener so it gets updated fast
         persistLoadbalancer(loadbalancerID).catch((error) => {})
@@ -386,7 +386,7 @@ const EditPool = (props) => {
           />
         </Modal.Body>
       ) : (
-        <React.Fragment>
+        <>
           {pool.isLoading ? (
             <Modal.Body>
               <span className="spinner" />
@@ -688,7 +688,7 @@ const EditPool = (props) => {
               </Modal.Footer>
             </Form>
           )}
-        </React.Fragment>
+        </>
       )}
     </Modal>
   )

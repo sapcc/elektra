@@ -9,7 +9,7 @@ const FormBody = ({ values, snapshot }) => (
     <Form.Errors />
 
     {snapshot ? (
-      <React.Fragment>
+      <>
         <p className="alert alert-notice">
           Reverts a share to the specified snapshot, which must be the most
           recent one known to manila.
@@ -21,7 +21,7 @@ const FormBody = ({ values, snapshot }) => (
             name="snapshot_id"
           ></Form.Input>
         </Form.ElementHorizontal>
-      </React.Fragment>
+      </>
     ) : (
       <p className="alert alert-notice">
         No snapshot found to which you can revert.

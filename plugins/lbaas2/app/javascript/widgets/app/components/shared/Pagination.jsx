@@ -4,18 +4,18 @@ const Pagination = ({ isLoading, items, hasNext, handleClick }) => {
   return (
     <div className="pagination">
       {isLoading ? (
-        <React.Fragment>
+        <>
           <span>{items.length} Items</span>
           <span> | </span>
           <span className="main-buttons">
             <span className="spinner"></span> Loading...
           </span>
-        </React.Fragment>
+        </>
       ) : (
-        <React.Fragment>
+        <>
           <span>{items.length} Items</span>
           {hasNext && (
-            <React.Fragment>
+            <>
               <span> | </span>
               <button
                 onClick={(e) => handleClick(e, "next")}
@@ -32,9 +32,9 @@ const Pagination = ({ isLoading, items, hasNext, handleClick }) => {
               >
                 All
               </button>
-            </React.Fragment>
+            </>
           )}
-        </React.Fragment>
+        </>
       )}
     </div>
   )

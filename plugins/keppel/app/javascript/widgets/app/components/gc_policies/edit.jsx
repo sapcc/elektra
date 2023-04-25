@@ -330,7 +330,7 @@ export default class GCPoliciesEditModal extends React.Component {
 
         <Modal.Footer>
           {isEditable ? (
-            <React.Fragment>
+            <>
               <Button
                 onClick={this.handleSubmit}
                 bsStyle="primary"
@@ -339,7 +339,7 @@ export default class GCPoliciesEditModal extends React.Component {
                 {isSubmitting ? "Saving..." : "Save"}
               </Button>
               <Button onClick={this.close}>Cancel</Button>
-            </React.Fragment>
+            </>
           ) : (
             <Button onClick={this.close}>Close</Button>
           )}

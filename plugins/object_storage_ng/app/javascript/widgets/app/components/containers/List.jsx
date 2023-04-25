@@ -157,7 +157,7 @@ const List = () => {
   )
 
   return (
-    <React.Fragment>
+    <>
       <div className="toolbar">
         <SearchField
           onChange={(term) => updateSearchTerm(term)}
@@ -167,7 +167,7 @@ const List = () => {
 
         <div className="main-buttons">
           {policy.isAllowed("object_storage_ng:container_create") && (
-            <React.Fragment>
+            <>
               <CapabilitiesPopover />
               <button
                 className="btn btn-link"
@@ -178,7 +178,7 @@ const List = () => {
               <Link to="/containers/new" className="btn btn-primary">
                 Create container
               </Link>
-            </React.Fragment>
+            </>
           )}
         </div>
       </div>
@@ -197,7 +197,7 @@ const List = () => {
           <Table data={items} onMenuAction={handleMenuAction} />
         </div>
       )}
-    </React.Fragment>
+    </>
   )
 }
 

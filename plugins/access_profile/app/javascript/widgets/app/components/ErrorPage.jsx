@@ -8,9 +8,9 @@ const serverError = (errorText, onReload) => {
       <p>
         Please try later again
         {onReload && (
-          <React.Fragment>
+          <>
             <span> or try reloading.</span>
-          </React.Fragment>
+          </>
         )}
       </p>
       {onReload && (

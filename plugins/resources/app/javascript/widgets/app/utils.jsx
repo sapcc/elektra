@@ -91,9 +91,9 @@ const participles = {
 //"Save" -> "Saving...") while an AJAX request is in progress.
 export const buttonCaption = (verb, ajaxInProgress) =>
   ajaxInProgress ? (
-    <React.Fragment>
+    <>
       <span className="spinner" /> {participles[verb]}...
-    </React.Fragment>
+    </>
   ) : (
     verb
   )

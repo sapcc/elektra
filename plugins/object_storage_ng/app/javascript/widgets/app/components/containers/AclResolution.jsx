@@ -48,7 +48,7 @@ const AclsResolution = ({ title, acls }) => {
   )
 
   return (
-    <React.Fragment>
+    <>
       <h5>{title}</h5>
       <div className={`panel ${error ? "panel-danger" : "panel-success"}`}>
         <div className="panel-body">
@@ -96,7 +96,7 @@ const AclsResolution = ({ title, acls }) => {
               ))}
         </div>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

@@ -120,10 +120,10 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
     return removeHealthmonitor(lbID, poolID, healthmonitorID, healthmonitorName)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Health Monitor <b>{healthmonitorName}</b> ({healthmonitorID}) is
             being deleted.
-          </React.Fragment>
+          </>
         )
         // fetch the pool again containing the new healthmonitor so it gets updated fast
         persistPool(lbID, poolID)
@@ -146,9 +146,9 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
   return useMemo(() => {
     Log.debug("RENDER healthmonitor")
     return (
-      <React.Fragment>
+      <>
         {poolID && !poolError && (
-          <React.Fragment>
+          <>
             {error ? (
               <div className="healthmonitor subtable multiple-subtable-left">
                 <ErrorPage
@@ -248,9 +248,9 @@ const HealthMonitor = ({ props, loadbalancerID }) => {
                 )}
               </div>
             )}
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }, [
     poolID,

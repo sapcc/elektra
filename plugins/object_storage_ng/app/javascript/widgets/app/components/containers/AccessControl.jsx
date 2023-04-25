@@ -36,7 +36,7 @@ const FormBody = ({ staticweb, checkAcls }) => {
   }, [])
 
   return (
-    <React.Fragment>
+    <>
       <div className="row">
         <div className="col-md-6">
           <div className="loading-place loading-right">
@@ -130,7 +130,7 @@ const FormBody = ({ staticweb, checkAcls }) => {
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 
@@ -251,10 +251,10 @@ const ContainerAccessControl = () => {
             </span>
           ) : (
             aclCheckResult && (
-              <React.Fragment>
+              <>
                 <AclResolution acls={aclCheckResult.read} title="Read ACLs" />
                 <AclResolution acls={aclCheckResult.write} title="Write ACLs" />
-              </React.Fragment>
+              </>
             )
           )}
         </Modal.Body>

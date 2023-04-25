@@ -82,7 +82,7 @@ const FormBody = ({ values, securityGroups }) => {
           </Form.ElementInline>
 
           {values.protocol == "icmp" ? (
-            <React.Fragment>
+            <>
               <Form.ElementInline label="ICMP Type" name="icmp_type">
                 <Form.Input elementType="input" type="text" name="icmp_type" />
                 <p className="help-block">
@@ -96,7 +96,7 @@ const FormBody = ({ values, securityGroups }) => {
                   ICMP Code is a number between 0 and 15
                 </p>
               </Form.ElementInline>
-            </React.Fragment>
+            </>
           ) : (
             <Form.ElementInline label="Port Range" name="port_range">
               <Form.Input elementType="input" type="text" name="port_range" />
@@ -129,7 +129,7 @@ const FormBody = ({ values, securityGroups }) => {
               {!securityGroups || securityGroups.isFetching ? (
                 <span className="spinner" />
               ) : (
-                <React.Fragment>
+                <>
                   <Form.Input
                     elementType="select"
                     className="select required form-control"
@@ -152,11 +152,11 @@ const FormBody = ({ values, securityGroups }) => {
                       recommendations for security group design
                     </a>
                   </p>
-                </React.Fragment>
+                </>
               )}
             </Form.ElementInline>
           ) : (
-            <React.Fragment>
+            <>
               <Form.ElementInline
                 label="IP Address"
                 name="remote_ip_prefix"
@@ -183,7 +183,7 @@ const FormBody = ({ values, securityGroups }) => {
                   <option value="ipv6">IPv6</option>
                 </Form.Input>
               </Form.ElementInline>
-            </React.Fragment>
+            </>
           )}
 
           <Form.ElementInline label="Description" name="description">

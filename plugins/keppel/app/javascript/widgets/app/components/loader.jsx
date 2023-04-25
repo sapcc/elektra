@@ -14,7 +14,7 @@ export default class Loader extends React.Component {
         <span className="spinner" /> Loading accounts...
       </p>
     ) : isLoaded ? (
-      <React.Fragment>{children}</React.Fragment>
+      <>{children}</>
     ) : (
       <p className="alert alert-error">Could not load accounts.</p>
     )

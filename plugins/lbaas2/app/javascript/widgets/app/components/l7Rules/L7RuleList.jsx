@@ -67,9 +67,9 @@ const L7RulesList = ({ props, loadbalancerID }) => {
   const l7Rules = filterItems(searchTerm, items)
   return useMemo(() => {
     return (
-      <React.Fragment>
+      <>
         {l7PolicyID && (
-          <React.Fragment>
+          <>
             {error ? (
               <div className="l7rules subtable multiple-subtable-right">
                 <ErrorPage
@@ -86,7 +86,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
                 </div>
 
                 {!selected && (
-                  <React.Fragment>
+                  <>
                     <div className="toolbar searchToolbar">
                       <SearchField
                         value={searchTerm}
@@ -109,7 +109,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
                         </SmartLink>
                       </div>
                     </div>
-                  </React.Fragment>
+                  </>
                 )}
 
                 <Table
@@ -177,9 +177,9 @@ const L7RulesList = ({ props, loadbalancerID }) => {
                 </Table>
               </div>
             )}
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }, [
     l7PolicyID,

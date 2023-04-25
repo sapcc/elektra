@@ -116,7 +116,7 @@ const CopyPastePopover = ({
   }
 
   const popoverOverlay = (
-    <React.Fragment>
+    <>
       <a className="cp-help-link" onClick={handlePopoverClick}>
         <b>...</b>
       </a>
@@ -132,11 +132,11 @@ const CopyPastePopover = ({
       >
         {popOver}
       </Overlay>
-    </React.Fragment>
+    </>
   )
 
   return (
-    <React.Fragment>
+    <>
       {text && text.length > size ? (
         <span
           className={baseClass}
@@ -144,7 +144,7 @@ const CopyPastePopover = ({
           onMouseLeave={onMouseLeave}
         >
           {shouldPopoverText ? (
-            <React.Fragment>
+            <>
               <span>
                 <span className="cp-substring">
                   <MyHighlighter search={searchTerm}>
@@ -158,7 +158,7 @@ const CopyPastePopover = ({
                   {textSliced()[1]}
                 </MyHighlighter>
               </span>
-            </React.Fragment>
+            </>
           ) : (
             <span className="cp-string">
               <MyHighlighter search={searchTerm}>
@@ -182,7 +182,7 @@ const CopyPastePopover = ({
           )}
         </span>
       ) : (
-        <React.Fragment>
+        <>
           {text && text.toString().length > 0 && (
             <span
               className={baseClass}
@@ -208,9 +208,9 @@ const CopyPastePopover = ({
               </span>
             </span>
           )}
-        </React.Fragment>
+        </>
       )}
-    </React.Fragment>
+    </>
   )
 }
 

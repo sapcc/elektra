@@ -47,13 +47,13 @@ const JsonView = ({
                 <span className="spinner" />
               </Modal.Body>
             ) : (
-              <React.Fragment>
+              <>
                 <div
                   id="jsoneditor"
                   data-mode="view"
                   data-content={JSON.stringify(jsonObject.item)}
                 />
-              </React.Fragment>
+              </>
             )}
           </Modal.Body>
         )}

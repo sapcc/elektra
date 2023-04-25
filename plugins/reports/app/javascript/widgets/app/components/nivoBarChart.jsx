@@ -163,7 +163,7 @@ class NivoBarChart extends React.Component {
   render() {
     const { data, services, isFetching, serviceMap } = this.props.cost
     return (
-      <React.Fragment>
+      <>
         {isFetching && (
           <div>
             Loading
@@ -222,7 +222,7 @@ class NivoBarChart extends React.Component {
             </div>
           </div>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

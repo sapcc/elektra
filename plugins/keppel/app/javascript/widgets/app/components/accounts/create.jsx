@@ -77,17 +77,17 @@ const FormBody = ({ values }) => {
       </Form.ElementHorizontal>
 
       {(values.role == "primary" || values.role == "external_replica") && (
-        <React.Fragment>
+        <>
           <Form.ElementHorizontal label="Name" name="name" required>
             <Form.Input elementType="input" type="text" name="name" />
           </Form.ElementHorizontal>
 
           {accountName ? (
-            <React.Fragment>
+            <>
               <BackingStorageInfo accountName={accountName} />
 
               {values.role == "external_replica" && (
-                <React.Fragment>
+                <>
                   <Form.ElementHorizontal
                     label="Upstream source"
                     name="url"
@@ -139,7 +139,7 @@ const FormBody = ({ values }) => {
                       directly.
                     </p>
                   </Form.ElementHorizontal>
-                </React.Fragment>
+                </>
               )}
 
               <Form.ElementHorizontal label="Advanced" name="advanced">
@@ -148,13 +148,13 @@ const FormBody = ({ values }) => {
                   account has been created.
                 </p>
               </Form.ElementHorizontal>
-            </React.Fragment>
+            </>
           ) : null}
-        </React.Fragment>
+        </>
       )}
 
       {values.role == "replica" && (
-        <React.Fragment>
+        <>
           <Form.ElementHorizontal label="Sublease token" name="token" required>
             <Form.Input elementType="input" type="text" name="token" />
             {!isValidToken && (
@@ -174,7 +174,7 @@ const FormBody = ({ values }) => {
           </Form.ElementHorizontal>
 
           {isValidToken && (
-            <React.Fragment>
+            <>
               <Form.ElementHorizontal label="Name" name="name">
                 <p className="form-control-static">
                   <strong>{accountNameFromToken}</strong>
@@ -199,9 +199,9 @@ const FormBody = ({ values }) => {
                   created.
                 </p>
               </Form.ElementHorizontal>
-            </React.Fragment>
+            </>
           )}
-        </React.Fragment>
+        </>
       )}
     </Modal.Body>
   )

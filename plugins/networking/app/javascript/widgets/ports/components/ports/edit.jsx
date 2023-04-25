@@ -12,9 +12,9 @@ const FormBody = ({ values, networks, subnets, securityGroups }) => {
     let subnet = subnets && subnets.items.find((i) => i.id == ip.subnet_id)
     if (subnet)
       return (
-        <React.Fragment>
+        <>
           {ip.ip_address} <span className="info-text">{subnet.name}</span>
-        </React.Fragment>
+        </>
       )
     else return ip.ip_address
   }

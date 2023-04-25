@@ -88,7 +88,7 @@ export default class List extends React.Component {
                 input field will show all currently loaded items."
         />
         {this.state.visibilityFilters.length > 1 && ( // show filter checkboxes
-          <React.Fragment>
+          <>
             <span className="toolbar-input-divider"></span>
             <label>Show:</label>
             {this.state.visibilityFilters.map((name, index) => (
@@ -101,7 +101,7 @@ export default class List extends React.Component {
                 {name}
               </label>
             ))}
-          </React.Fragment>
+          </>
         )}
       </div>
     )

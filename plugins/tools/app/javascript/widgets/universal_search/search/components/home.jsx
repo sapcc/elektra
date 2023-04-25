@@ -42,13 +42,13 @@ export default class Search extends React.Component {
     const length = searchTerm.length
 
     return (
-      <React.Fragment>
+      <>
         {string.substring(0, index)}
         <span className="highlight">
           {string.substring(index, index + length)}
         </span>
         {string.substring(index + string.length)}
-      </React.Fragment>
+      </>
     )
   }
 
@@ -91,10 +91,10 @@ export default class Search extends React.Component {
             text="Searches by ID, name or description."
           />
           {this.props.objects.total > 0 && (
-            <React.Fragment>
+            <>
               <span className="toolbar-input-divider"></span>
               total: {this.props.objects.total}
-            </React.Fragment>
+            </>
           )}
           {this.props.objects.total > 0 && !this.props.objects.isFetching && (
             <div className="main-buttons">
@@ -136,17 +136,17 @@ export default class Search extends React.Component {
             </tbody>
           </table>
         ) : (
-          <React.Fragment>
+          <>
             {this.props.objects.receivedAt && (
               <div className="search-result-empty">Nothing found</div>
             )}
-          </React.Fragment>
+          </>
         )}
 
         <div className="u-flex-container pagination-container">
           {this.props.objects.receivedAt && (
             // show this only after we have searched at least once (don't want this to be visible on initial load)
-            <React.Fragment>
+            <>
               <div className="alert alert-info">
                 Please note that this search operates on cached data. It might
                 not be 100% in sync with live data.
@@ -158,7 +158,7 @@ export default class Search extends React.Component {
                 <i className="fa fa-fw fa-arrow-circle-right"></i>
                 Couldn't find what you were looking for? Try a live search
               </Link>
-            </React.Fragment>
+            </>
           )}
           <Pagination
             currentPage={this.props.objects.currentPage}

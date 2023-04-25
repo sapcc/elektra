@@ -86,7 +86,7 @@ export default class ShareNetworkList extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar">
           <div className="main-buttons">
             <CreateNewButton />
@@ -128,7 +128,7 @@ export default class ShareNetworkList extends React.Component {
             </tbody>
           </table>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

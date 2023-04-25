@@ -105,7 +105,7 @@ const LoadbalancerList = (props) => {
       })
       .catch((error) => {
         setFetchingAllItems(false)
-        addError(<React.Fragment>{errorMessage(error)}</React.Fragment>)
+        addError(<>{errorMessage(error)}</>)
       })
   }
 
@@ -136,7 +136,7 @@ const LoadbalancerList = (props) => {
   return useMemo(() => {
     Log.debug("RENDER loadbalancer list")
     return (
-      <React.Fragment>
+      <>
         {error && !fetchingAllItems ? (
           <ErrorPage
             headTitle="Load Balancers"
@@ -144,7 +144,7 @@ const LoadbalancerList = (props) => {
             onReload={initLoad}
           />
         ) : (
-          <React.Fragment>
+          <>
             <div className="toolbar searchToolbar">
               {selected ? (
                 <Link className="back-link" to={`/loadbalancers`}>
@@ -249,9 +249,9 @@ const LoadbalancerList = (props) => {
                   handleClick={handlePaginateClick}
                 />
               )}
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }, [
     JSON.stringify(loadbalancers),

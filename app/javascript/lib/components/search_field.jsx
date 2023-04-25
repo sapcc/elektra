@@ -1,8 +1,6 @@
-import { Popover, OverlayTrigger, Button } from "react-bootstrap"
 import { SearchInput } from "juno-ui-components"
 import React from "react"
-
-let counter = 0
+import { Popover } from "./Overlay"
 
 /**
  * This component implements a serach field.
@@ -12,12 +10,6 @@ export class SearchField extends React.Component {
   state = {
     searchTerm: "",
   }
-
-  infoText = (
-    <Popover id={`search_field_${this.props.id || counter++}`}>
-      {this.props.text}
-    </Popover>
-  )
 
   onChangeTerm = (e) => {
     const value = e.target.value || ""
@@ -51,7 +43,7 @@ export class SearchField extends React.Component {
     if (this.props.isFetching) iconClassName = "spinner"
 
     return (
-      <React.Fragment>
+      <>
         {variant === "juno" ? (
           <SearchInput
             value={this.state.searchTerm}
@@ -61,7 +53,7 @@ export class SearchField extends React.Component {
             onClear={(e) => this.reset(e)}
           />
         ) : (
-          <React.Fragment>
+          <>
             <div className="has-feedback has-feedback-searchable">
               <input
                 data-test="search"
@@ -83,25 +75,21 @@ export class SearchField extends React.Component {
             </div>
             {this.props.text && (
               <div className="has-feedback-help">
-                <OverlayTrigger
+                <Popover
                   trigger="click"
                   placement="top"
                   rootClose
-                  overlay={this.infoText}
+                  content={this.props.text}
                 >
-                  <a
-                    className="help-link"
-                    href="javascript:void(0)"
-                    onClick={() => null}
-                  >
+                  <a className="help-link" href="#" onClick={() => null}>
                     <i className="fa fa-question-circle"></i>
                   </a>
-                </OverlayTrigger>
+                </Popover>
               </div>
             )}
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

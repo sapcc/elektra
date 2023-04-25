@@ -166,7 +166,7 @@ const DelteContainer = () => {
         ) : !container ? (
           <span>Container not found!</span>
         ) : (
-          <React.Fragment>
+          <>
             {error && (
               <Alert bsStyle="danger">
                 <strong>An error has occurred</strong>
@@ -179,7 +179,7 @@ const DelteContainer = () => {
                 Container contains objects. Please empty it first.
               </div>
             ) : (
-              <React.Fragment>
+              <>
                 <div className="bs-callout bs-callout-danger">
                   <span className="fa fa-exclamation-circle" />{" "}
                   <strong>Are you sure?</strong> The container will be deleted.
@@ -256,15 +256,15 @@ const DelteContainer = () => {
                     )}
                   </div>
                 </div>
-              </React.Fragment>
+              </>
             )}
-          </React.Fragment>
+          </>
         )}
       </Modal.Body>
       <Modal.Footer>
         {container ? (
           container.count <= 0 ? (
-            <React.Fragment>
+            <>
               <Button onClick={close}>Cancel</Button>
 
               <Button
@@ -279,7 +279,7 @@ const DelteContainer = () => {
               >
                 {isDeleteing ? "Deleting..." : "Delete"}
               </Button>
-            </React.Fragment>
+            </>
           ) : (
             <Button onClick={close}>Got it!</Button>
           )

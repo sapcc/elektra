@@ -73,7 +73,7 @@ const Item = ({
       <td>
         {port.device_owner}
         {port.device_id && (
-          <React.Fragment>
+          <>
             <br />
             <span className="info-text">
               {port.device_owner &&
@@ -88,7 +88,7 @@ const Item = ({
                 truncate(port.device_id, 20)
               )}
             </span>
-          </React.Fragment>
+          </>
         )}
       </td>
       <td>{port.status}</td>

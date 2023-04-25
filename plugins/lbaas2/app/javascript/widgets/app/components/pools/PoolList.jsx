@@ -99,9 +99,9 @@ const PoolList = ({ props, loadbalancerID }) => {
     } else {
       // something weird happend. We just show an error
       addError(
-        <React.Fragment>
+        <>
           Pool <b>{selected}</b> not found.
-        </React.Fragment>
+        </>
       )
     }
   }
@@ -175,7 +175,7 @@ const PoolList = ({ props, loadbalancerID }) => {
         {error ? (
           <ErrorPage headTitle="Pools" error={error} onReload={initialLoad} />
         ) : (
-          <React.Fragment>
+          <>
             <div className="toolbar">
               {selected ? (
                 <Link className="back-link" to="#" onClick={restoreUrl}>
@@ -284,7 +284,7 @@ const PoolList = ({ props, loadbalancerID }) => {
                 handleClick={handlePaginateClick}
               />
             )}
-          </React.Fragment>
+          </>
         )}
       </div>
     )

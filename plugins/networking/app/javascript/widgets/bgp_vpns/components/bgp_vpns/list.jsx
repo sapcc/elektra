@@ -93,7 +93,7 @@ const BgpVpns = () => {
   }, [bgpvpns.items, filter])
 
   return (
-    <React.Fragment>
+    <>
       <div className="toolbar">
         <SearchField
           onChange={(term) => setFilter(term)}
@@ -141,7 +141,7 @@ const BgpVpns = () => {
                 </td>
                 <td>
                   {cachedProjectsData[item.project_id] ? (
-                    <React.Fragment>
+                    <>
                       <a
                         href={`/_/${item.project_id}`}
                         target="_blank"
@@ -155,7 +155,7 @@ const BgpVpns = () => {
                       </a>
                       <br />
                       <span className="info-text">{item.project_id}</span>
-                    </React.Fragment>
+                    </>
                   ) : (
                     item.project_id
                   )}
@@ -164,11 +164,11 @@ const BgpVpns = () => {
                   {(item.routers || []).map((r, i) => (
                     <div key={i}>
                       {cachedRoutersData[r] ? (
-                        <React.Fragment>
+                        <>
                           {cachedRoutersData[r].name}
                           <br />
                           <span className="info-text">{r}</span>
-                        </React.Fragment>
+                        </>
                       ) : (
                         r
                       )}
@@ -206,7 +206,7 @@ const BgpVpns = () => {
           </tbody>
         </table>
       )}
-    </React.Fragment>
+    </>
   )
 }
 

@@ -129,7 +129,7 @@ const EmptyContainer = () => {
         ) : !container ? (
           <span>Container not found!</span>
         ) : (
-          <React.Fragment>
+          <>
             {error && (
               <Alert bsStyle="danger">
                 <strong>An error has occurred</strong>
@@ -142,7 +142,7 @@ const EmptyContainer = () => {
                 do. Container is already empty.
               </div>
             ) : (
-              <React.Fragment>
+              <>
                 <div className="bs-callout bs-callout-danger">
                   <span className="fa fa-exclamation-circle" />
                   <strong> Are you sure?</strong> All objects in the container
@@ -195,9 +195,9 @@ const EmptyContainer = () => {
                     )}
                   </div>
                 </div>
-              </React.Fragment>
+              </>
             )}
-          </React.Fragment>
+          </>
         )}
       </Modal.Body>
       <Modal.Footer>

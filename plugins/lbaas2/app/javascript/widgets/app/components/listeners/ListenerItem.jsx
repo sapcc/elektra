@@ -223,7 +223,7 @@ const ListenerItem = ({
     )
 
     return (
-      <React.Fragment>
+      <>
         <MyHighlighter search={searchTerm}>{listener.protocol}</MyHighlighter>
         {clientAuthenticationRelation(listener.protocol) && (
           <div className="display-flex">
@@ -240,7 +240,7 @@ const ListenerItem = ({
               <PopoverInfo
                 popoverId={"listeners-secrets-popover-" + listener.id}
                 buttonName={numberOfElements}
-                title={<React.Fragment>Secrets</React.Fragment>}
+                title={<>Secrets</>}
                 content={
                   <CachedInfoPopoverContentContainers containers={containers} />
                 }
@@ -262,7 +262,7 @@ const ListenerItem = ({
             </div>
           </div>
         )}
-      </React.Fragment>
+      </>
     )
   }
 

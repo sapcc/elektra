@@ -208,7 +208,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
     )
 
   return (
-    <React.Fragment>
+    <>
       {associations.error && (
         <Alert bsStyle="danger">{associations.error.toString()}</Alert>
       )}
@@ -232,7 +232,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
               </td>
             </tr>
           ) : (
-            <React.Fragment>
+            <>
               {associations.items.map((association, i) => (
                 <AssociationItem
                   key={i}
@@ -254,7 +254,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
                   cachedData={cachedRoutersData[routerId]}
                 />
               ))}
-            </React.Fragment>
+            </>
           )}
         </tbody>
       </table>
@@ -290,7 +290,7 @@ const BgpVpnRouters = ({ bgpvpn }) => {
         </tbody>
       </table>
       {/* <pre>{JSON.stringify(routersDeepData, null, 2)}</pre> */}
-    </React.Fragment>
+    </>
   )
 }
 

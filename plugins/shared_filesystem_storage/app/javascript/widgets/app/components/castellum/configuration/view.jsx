@@ -27,19 +27,19 @@ export default class CastellumConfigurationView extends React.Component {
 
     if (config == null) {
       return (
-        <React.Fragment>
+        <>
           <p>Autoscaling is not enabled for this project.</p>
           <p>
             <Link to="/autoscaling/configure" className="btn btn-primary">
               Configure
             </Link>
           </p>
-        </React.Fragment>
+        </>
       )
     }
 
     return (
-      <React.Fragment>
+      <>
         <p>Autoscaling is enabled:</p>
         <ul>
           {config.low_threshold && (
@@ -55,10 +55,10 @@ export default class CastellumConfigurationView extends React.Component {
               <strong>{percent(config.high_threshold.usage_percent)}</strong>{" "}
               {config.size_constraints &&
                 config.size_constraints.minimum_free && (
-                  <React.Fragment>
+                  <>
                     (or when free space is below{" "}
                     <strong>{config.size_constraints.minimum_free} GiB</strong>)
-                  </React.Fragment>
+                  </>
                 )}{" "}
               for{" "}
               <strong>{duration(config.high_threshold.delay_seconds)}</strong>.
@@ -77,7 +77,7 @@ export default class CastellumConfigurationView extends React.Component {
         <p>
           Shares will be resized{" "}
           {config.size_steps.single ? (
-            <React.Fragment>
+            <>
               using{" "}
               <a
                 href="https://github.com/sapcc/castellum/blob/master/docs/api-spec.md#stepping-strategies"
@@ -86,11 +86,11 @@ export default class CastellumConfigurationView extends React.Component {
               >
                 single-step resizing
               </a>
-            </React.Fragment>
+            </>
           ) : (
-            <React.Fragment>
+            <>
               in steps of <strong>{percent(config.size_steps.percent)}</strong>
-            </React.Fragment>
+            </>
           )}
           {config.size_constraints ? ", but..." : "."}
         </p>
@@ -128,7 +128,7 @@ export default class CastellumConfigurationView extends React.Component {
             Disable autoscaling
           </button>
         </p>
-      </React.Fragment>
+      </>
     )
   }
 }
