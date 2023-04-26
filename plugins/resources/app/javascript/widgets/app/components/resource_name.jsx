@@ -1,5 +1,5 @@
 import React from "react"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 
 const ResourceName = ({ name, flavorData, small }) => {
   let columnClasses = "col-md-2 text-right"
@@ -11,21 +11,11 @@ const ResourceName = ({ name, flavorData, small }) => {
     return <div className={columnClasses}>{name}</div>
   }
 
-  let tooltip = (
-    <Tooltip id={`tooltip-${name}`} className="tooltip-no-break">
-      {flavorData.secondary}
-    </Tooltip>
-  )
   return (
     <div className={columnClasses}>
-      <OverlayTrigger
-        overlay={tooltip}
-        placement="right"
-        delayShow={300}
-        delayHide={150}
-      >
+      <Tooltip content={flavorData.secondary} placement="right">
         <span>{name}</span>
-      </OverlayTrigger>
+      </Tooltip>
       <div className="small text-muted flavor-data">
         {flavorData.primary.map((text) => (
           <span key={text}>{text}</span>

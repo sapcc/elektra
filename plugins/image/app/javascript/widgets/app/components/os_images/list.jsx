@@ -1,8 +1,4 @@
-import { Link } from "react-router-dom"
-import { DefeatableLink } from "lib/components/defeatable_link"
-import { Popover, OverlayTrigger, Tooltip } from "react-bootstrap"
 import { TransitionGroup, CSSTransition } from "react-transition-group"
-import { FadeTransition } from "lib/components/transitions"
 import { policy } from "lib/policy"
 import { SearchField } from "lib/components/search_field"
 import Item from "./item"
