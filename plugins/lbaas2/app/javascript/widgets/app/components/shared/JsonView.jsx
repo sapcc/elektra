@@ -1,8 +1,8 @@
 import { useMemo, useEffect } from "react"
 import { Modal } from "react-bootstrap"
-import "lib/jsoneditor"
 import ErrorPage from "../ErrorPage"
 import React from "react"
+import { JsonViewer } from "juno-ui-components/build/JsonViewer"
 
 const JsonView = ({
   show,
@@ -12,11 +12,6 @@ const JsonView = ({
   jsonObject,
   loadObject,
 }) => {
-  useEffect(() => {
-    if (!jsonObject.item) return
-    window.init_json_editor()
-  }, [jsonObject])
-
   return useMemo(() => {
     return (
       <Modal
@@ -48,11 +43,13 @@ const JsonView = ({
               </Modal.Body>
             ) : (
               <>
-                <div
-                  id="jsoneditor"
-                  data-mode="view"
-                  data-content={JSON.stringify(jsonObject.item)}
-                />
+                {jsonObject.item && (
+                  <JsonViewer
+                    data={jsonObject.item}
+                    theme="light"
+                    expanded={2}
+                  />
+                )}
               </>
             )}
           </Modal.Body>
