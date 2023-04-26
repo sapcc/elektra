@@ -66,12 +66,11 @@
     "uuid": "^3.4.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^14.0.0",
     "autoprefixer": "^10.4.12",
     "axios-mock-adapter": "1.18.2",
     "chokidar": "^3.5.3",
     "cypress": "9.0.0",
-    "enzyme": "3.11.0",
-    "enzyme-adapter-react-16": "1.15.6",
     "esbuild-jest": "^0.5.0",
     "esbuild-sass-plugin": "^2.4.5",
     "eslint": "^8.14.0",
@@ -86,7 +85,6 @@
     "postcss": "^8.4.21",
     "postcss-minify": "^1.1.0",
     "react-autocomplete-cli": "0.0.3",
-    "react-test-renderer": "16.14.0",
     "redux-mock-store": "1.5.4",
     "tailwindcss": "^3.0.24"
   },
