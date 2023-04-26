@@ -104,7 +104,7 @@ class InstallNodeService
           { "headers" => { "Accept" => accept_header(instance_os) } },
         )
       rescue StandardError
-        Rails.logger.error "Automation-plugin: show_instructions: process_request_compute: #{exception.message}"
+        # Rails.logger.error "Automation-plugin: show_instructions: process_request_compute: #{exception.message}"
         raise InstallNodeError.new(
                 "Internal Server Error. Something went wrong while processing your request. Please try again later.",
                 { instance: instance, messages: messages },
@@ -144,7 +144,7 @@ class InstallNodeService
           { "headers" => { "Accept" => accept_header(instance_os) } },
         )
       rescue => exception
-        Rails.logger.error "Automation-plugin: show_instructions: process_request_external: #{exception.message}"
+        # Rails.logger.error "Automation-plugin: show_instructions: process_request_external: #{exception.message}"
         raise InstallNodeError.new(
                 "Internal Server Error. Something went wrong while processing your request. Please try again later.",
               )
@@ -186,7 +186,7 @@ class InstallNodeService
 
   def node_exists?(instance_id, automation_service)
     begin
-      automation_service.node(URI.escape(instance_id))
+      automation_service.node(CGI.escape(instance_id))
     rescue ArcClient::ApiError => exception
       if exception.code == 404
         return false

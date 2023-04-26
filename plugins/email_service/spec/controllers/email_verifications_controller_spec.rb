@@ -70,6 +70,12 @@ describe EmailService::EmailVerificationsController, type: :controller do
     allow_any_instance_of(
       EmailService::EmailVerificationsController,
     ).to receive(:verify_identity).and_return(double("status").as_null_object)
+
+    allow_any_instance_of(
+      EmailService::EmailVerificationsController,
+    ).to receive(:nebula_details).and_return(
+      double("http_response").as_null_object,
+    )
   end
 
   # check index route
@@ -129,9 +135,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       end
       it "returns http 401 status" do
         get :index, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
 
@@ -144,9 +148,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       end
       it "not allowed" do
         get :index, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -206,9 +208,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       end
       it "returns http 401 status" do
         get :new, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
 
@@ -221,9 +221,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       end
       it "not allowed" do
         get :new, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -296,7 +294,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       it "returns http 401 status" do
         expect(
           post(:create, params: default_params.merge(verified_email: @opts)),
-        ).to render_template("application/exceptions/warning.html")
+        ).to render_template("application/exceptions/warning")
       end
     end
 
@@ -310,7 +308,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       it "not allowed" do
         expect(
           post(:create, params: default_params.merge(verified_email: @opts)),
-        ).to render_template("application/exceptions/warning.html")
+        ).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -380,7 +378,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       it "returns http 401 status" do
         expect(
           delete(:destroy, params: default_params.merge(id: @opts[:id])),
-        ).to render_template("application/exceptions/warning.html")
+        ).to render_template("application/exceptions/warning")
       end
     end
 
@@ -394,7 +392,7 @@ describe EmailService::EmailVerificationsController, type: :controller do
       it "not allowed" do
         expect(
           delete(:destroy, params: default_params.merge(id: @opts[:id])),
-        ).to render_template("application/exceptions/warning.html")
+        ).to render_template("application/exceptions/warning")
       end
     end
   end

@@ -11,7 +11,7 @@ module Core
 
         # log debug output
         begin
-          path = URI(URI.escape(request_context.path))
+          path = URI(CGI.escape(request_context.path))
           if request_context.params && request_context.params.size.positive?
             path.query = URI.encode_www_form(request_context.params)
           end

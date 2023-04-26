@@ -117,9 +117,7 @@ describe EmailService::PlainEmailsController, type: :controller do
       end
       it "returns http 401 status" do
         get :new, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
 
@@ -132,9 +130,7 @@ describe EmailService::PlainEmailsController, type: :controller do
       end
       it "not allowed" do
         get :new, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -204,7 +200,7 @@ describe EmailService::PlainEmailsController, type: :controller do
       it "returns http 401 status" do
         expect(
           post(:create, params: default_params.merge(opts: @opts)),
-        ).to render_template("application/exceptions/warning.html")
+        ).to render_template("application/exceptions/warning")
       end
     end
 
@@ -218,7 +214,7 @@ describe EmailService::PlainEmailsController, type: :controller do
       it "not allowed" do
         expect(
           post(:create, params: default_params.merge(opts: @opts)),
-        ).to render_template("application/exceptions/warning.html")
+        ).to render_template("application/exceptions/warning")
       end
     end
   end

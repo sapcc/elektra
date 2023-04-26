@@ -52,7 +52,7 @@ describe EmailService::ConfigsetsController, type: :controller do
     ).and_return(double("config_set").as_null_object)
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(
       :store_configset,
-    ).and_return(double("status").as_null_object)
+    ).and_return("success")
     allow_any_instance_of(EmailService::ConfigsetsController).to receive(
       :delete_configset,
     ).and_return(double("status").as_null_object)
@@ -117,9 +117,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it "returns http status 401" do
         get :index, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -183,9 +181,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it "returns http 401 status" do
         get :new, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -213,7 +209,10 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it "returns http 302 status" do
         expect(
-          post(:create, params: default_params.merge(opts: @configset_opts)),
+          post(
+            :create,
+            params: default_params.merge(configset: @configset_opts),
+          ),
         ).to have_http_status(302)
       end
     end
@@ -235,7 +234,10 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it "returns http 302 status" do
         expect(
-          post(:create, params: default_params.merge(opts: @configset_opts)),
+          post(
+            :create,
+            params: default_params.merge(configset: @configset_opts),
+          ),
         ).to have_http_status(302)
       end
     end
@@ -253,9 +255,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it "returns http 401 status" do
         post(:create, params: default_params.merge(opts: @configset_opts))
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -323,9 +323,7 @@ describe EmailService::ConfigsetsController, type: :controller do
       end
       it "returns http 401 status" do
         delete(:destroy, params: default_params.merge(id: @configset_opts[:id]))
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end

@@ -110,9 +110,7 @@ describe EmailService::EmailsController, type: :controller do
       end
       it "returns http status 401" do
         get :index, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
 
@@ -125,9 +123,7 @@ describe EmailService::EmailsController, type: :controller do
       end
       it "not allowed" do
         get :index, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end

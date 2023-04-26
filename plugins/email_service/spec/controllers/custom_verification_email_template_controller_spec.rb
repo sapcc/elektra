@@ -56,7 +56,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
     allow_any_instance_of(
       EmailService::CustomVerificationEmailTemplatesController,
     ).to receive(:delete_custom_verification_email_template).and_return(
-      double("status").as_null_object,
+      "success",
     )
     allow_any_instance_of(
       EmailService::CustomVerificationEmailTemplatesController,
@@ -146,9 +146,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
       end
       it "returns http status 401" do
         get :index, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -212,9 +210,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
       end
       it "returns http 401 status" do
         get :new, params: default_params
-        expect(response).to render_template(
-          "application/exceptions/warning.html",
-        )
+        expect(response).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -284,7 +280,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
       it "returns http 401 status" do
         expect(
           post(:create, params: default_params.merge(opts: @opts)),
-        ).to render_template("application/exceptions/warning.html")
+        ).to render_template("application/exceptions/warning")
       end
     end
   end
@@ -360,7 +356,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
       it "returns http 401 status" do
         expect(
           delete(:destroy, params: default_params.merge(id: @opts[:id])),
-        ).to render_template("application/exceptions/warning.html")
+        ).to render_template("application/exceptions/warning")
       end
     end
   end

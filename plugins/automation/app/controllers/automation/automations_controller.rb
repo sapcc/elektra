@@ -84,7 +84,7 @@ module Automation
         render action: "new"
       end
     rescue Exception => e
-      Rails.logger.error e
+      # Rails.logger.error e
       flash.now[
         :error
       ] = "#{I18n.t("automation.errors.automation_creation_error")} #{e.message}"
@@ -128,7 +128,7 @@ module Automation
         render action: "edit"
       end
     rescue Exception => e
-      Rails.logger.error e.message
+      # Rails.logger.error e.message
       flash[:error] = I18n.t("automation.errors.automation_update_error")
       render action: "edit"
     end
@@ -142,13 +142,13 @@ module Automation
         "automation.messages.automation_removed_successfully",
         name: automation.name,
       )
-      render template: "automation/automations/update_item.js"
+      render template: "automation/automations/update_item", formats: :js
     rescue Exception => e
-      Rails.logger.error e.message
+      # Rails.logger.error e.message
       flash.now[:error] = I18n.t("automation.errors.automation_remove_error")
       automations(1)
       runs_with_jobs(1)
-      render template: "automation/automations/update_item.js"
+      render template: "automation/automations/update_item", formats: :js
     end
 
     def update_item
