@@ -91,9 +91,9 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
     return removePool(loadbalancerID, poolID, poolName)
       .then((response) => {
         addNotice(
-          <React.Fragment>
+          <>
             Pool <b>{poolName}</b> ({poolID}) is being deleted.
-          </React.Fragment>
+          </>
         )
         // fetch the lb again containing the new listener so it gets updated fast
         persistLoadbalancer(loadbalancerID).catch((error) => {})
@@ -183,7 +183,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
             <PopoverInfo
               popoverId={"pool-listeners-popover-" + listenersIDs.id}
               buttonName={listenersIDs.length}
-              title={<React.Fragment>Listeners</React.Fragment>}
+              title={<>Listeners</>}
               content={
                 <CachedInfoPopoverContentListeners
                   props={props}
@@ -198,7 +198,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
         </div>
       )
     } else {
-      return <React.Fragment>Load Balancer</React.Fragment>
+      return <>Load Balancer</>
     }
   }
 
@@ -230,7 +230,7 @@ const PoolItem = ({ props, pool, searchTerm, disabled, shouldPoll }) => {
               <PopoverInfo
                 popoverId={"pool-secrets-popover-" + pool.id}
                 buttonName={containers.length}
-                title={<React.Fragment>Secrets</React.Fragment>}
+                title={<>Secrets</>}
                 content={
                   <CachedInfoPopoverContentContainers containers={containers} />
                 }

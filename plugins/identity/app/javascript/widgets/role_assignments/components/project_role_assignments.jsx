@@ -1,18 +1,11 @@
 import { SearchField } from "lib/components/search_field"
-import { AjaxPaginate } from "lib/components/ajax_paginate"
 import ProjectRoleAssignment from "./project_role_assignment"
 import { regexString } from "lib/tools/regex_string"
 import { AutocompleteField } from "lib/components/autocomplete_field"
 import ProjectRoleAssignmentForm from "../containers/project_role_assignments_form"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { policy } from "lib/policy"
 import React from "react"
-
-const isMemberTooltip = (type) => (
-  <Tooltip id="removeMemberTooltip">
-    {`This ${type} is already a member of this project!`}
-  </Tooltip>
-)
 
 export default class ProjectRoleAssignments extends React.Component {
   state = {
@@ -112,10 +105,10 @@ export default class ProjectRoleAssignments extends React.Component {
         : policy.isAllowed("identity:project_group_create")
 
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar">
           {!this.state.showNewMemberInput && hasItems && (
-            <React.Fragment>
+            <>
               <SearchField
                 onChange={(term) => this.setState({ filterString: term })}
                 placeholder={`Name ${
@@ -126,7 +119,7 @@ export default class ProjectRoleAssignments extends React.Component {
                 text={`Filter ${this.props.type}s by name or id`}
               />
               <span className="toolbar-input-divider"></span>
-            </React.Fragment>
+            </>
           )}
 
           {(!this.props.items || this.props.isFetching) && (
@@ -165,12 +158,12 @@ export default class ProjectRoleAssignments extends React.Component {
                       onClick={() => this.setState({ showNewMemberForm: true })}
                     >
                       {isMember ? (
-                        <OverlayTrigger
+                        <Tooltip
                           placement="top"
-                          overlay={isMemberTooltip(this.props.type)}
+                          content={`This ${this.props.type} is already a member of this project!`}
                         >
                           <span>Add</span>
-                        </OverlayTrigger>
+                        </Tooltip>
                       ) : (
                         <span>Add</span>
                       )}
@@ -211,7 +204,7 @@ export default class ProjectRoleAssignments extends React.Component {
                 <tr>
                   <td className="user-name-cell">
                     {this.state.newMember && (
-                      <React.Fragment>
+                      <>
                         {this.state.newMember.description
                           ? `${this.state.newMember.description} (${this.state.newMember.name})`
                           : this.state.newMember.name}
@@ -219,7 +212,7 @@ export default class ProjectRoleAssignments extends React.Component {
                         <span className="info-text">
                           {this.state.newMember.id}
                         </span>
-                      </React.Fragment>
+                      </>
                     )}
                   </td>
 
@@ -256,7 +249,7 @@ export default class ProjectRoleAssignments extends React.Component {
           text={`${this.props.projects.items.length}/${this.props.projects.total}`}
           onLoadNext={() => this.props.loadNext({domain: this.state.domain, project: this.state.project})}/>
         */}
-      </React.Fragment>
+      </>
     )
   }
 }

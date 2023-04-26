@@ -17,7 +17,7 @@ const SecurityGroupApp = (props) => {
   //console.log(props)
   return (
     <BrowserRouter basename={`${window.location.pathname}?r=`}>
-      <React.Fragment>
+      <>
         <Title />
         <Switch>
           {policy.isAllowed("networking:rule_list") && (
@@ -47,7 +47,7 @@ const SecurityGroupApp = (props) => {
         )}
 
         <Route exact path="/:securityGroupId/rbacs" component={RBACs} />
-      </React.Fragment>
+      </>
     </BrowserRouter>
   )
 }

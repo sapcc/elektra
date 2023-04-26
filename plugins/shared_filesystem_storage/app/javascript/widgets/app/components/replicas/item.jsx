@@ -44,10 +44,10 @@ const ReplicaItem = ({
           {replica.name || replica.id}
         </Link>
         {replica.name && (
-          <React.Fragment>
+          <>
             <br />
             <span className="info-text">{replica.id}</span>
-          </React.Fragment>
+          </>
         )}
       </td>
       <td>

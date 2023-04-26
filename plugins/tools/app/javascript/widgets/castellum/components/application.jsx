@@ -6,7 +6,7 @@ import React from "react"
 const CastellumApp = (props) => {
   return (
     <HashRouter>
-      <React.Fragment>
+      <>
         {/* entry point */}
         <Route
           exact
@@ -22,7 +22,7 @@ const CastellumApp = (props) => {
             <ErrorList errorType={props.match.params.errorType} />
           )}
         />
-      </React.Fragment>
+      </>
     </HashRouter>
   )
 }

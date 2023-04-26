@@ -134,7 +134,7 @@ export default class DetailsResource extends React.Component {
         </td>
         <td className="col-md-3">
           {isEditing ? (
-            <React.Fragment>
+            <>
               <a
                 key="save"
                 onClick={() => this.submit()}
@@ -151,9 +151,9 @@ export default class DetailsResource extends React.Component {
               >
                 Cancel
               </a>
-            </React.Fragment>
+            </>
           ) : (
-            <React.Fragment>
+            <>
               {canEdit && (
                 <a
                   key="edit"
@@ -174,7 +174,7 @@ export default class DetailsResource extends React.Component {
               >
                 Jump
               </a>
-            </React.Fragment>
+            </>
           )}
         </td>
       </tr>

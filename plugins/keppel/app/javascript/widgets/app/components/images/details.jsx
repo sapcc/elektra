@@ -279,7 +279,7 @@ export default class ImageDetailsModal extends React.Component {
     if (gcStatus.protected_by_parent) {
       const digest = gcStatus.protected_by_parent
       const caption = (
-        <React.Fragment>
+        <>
           {"Protected from garbage collection because of reference in "}
           <Digest digest={digest} repositoryURL={repositoryURL} />
           {" ("}
@@ -289,7 +289,7 @@ export default class ImageDetailsModal extends React.Component {
             Details
           </Link>
           {")"}
-        </React.Fragment>
+        </>
       )
       return <GCPolicyFolder caption={caption} />
     }
@@ -356,11 +356,7 @@ export default class ImageDetailsModal extends React.Component {
         <tr key={`status-${manifest.digest}`}>
           <th>Status</th>
           <td>
-            {manifestInfo ? (
-              <React.Fragment>Available ({detailsLink})</React.Fragment>
-            ) : (
-              "Not available"
-            )}
+            {manifestInfo ? <>Available ({detailsLink})</> : "Not available"}
           </td>
         </tr>
       )

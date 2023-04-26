@@ -138,9 +138,9 @@ const NewL7Policy = (props) => {
     return createL7Policy(lbID, listenerID, filteredValues)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             L7 Policy <b>{data.name}</b> ({data.id}) is being created.
-          </React.Fragment>
+          </>
         )
         // load the listener again containing the new policy
         persistListener(lbID, listenerID).catch((error) => {})

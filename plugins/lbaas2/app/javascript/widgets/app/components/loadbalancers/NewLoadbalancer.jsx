@@ -123,9 +123,9 @@ const NewLoadbalancer = (props) => {
     return createLoadbalancer(newValues)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Loadbalancer <b>{data.name}</b> ({data.id}) is being created.
-          </React.Fragment>
+          </>
         )
         close()
       })

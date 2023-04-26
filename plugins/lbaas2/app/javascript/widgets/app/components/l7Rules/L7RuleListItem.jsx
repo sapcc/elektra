@@ -84,9 +84,9 @@ const L7RuleListItem = ({
     removeL7Rule(loadbalancerID, listenerID, l7PolicyID, l7Rule)
       .then(() => {
         addNotice(
-          <React.Fragment>
+          <>
             L7 Rule <b>{l7ruleID}</b> is being deleted.
-          </React.Fragment>
+          </>
         )
         // fetch the listener again containing the new policy so it gets updated fast
         persistL7Policy(loadbalancerID, listenerID, l7PolicyID)

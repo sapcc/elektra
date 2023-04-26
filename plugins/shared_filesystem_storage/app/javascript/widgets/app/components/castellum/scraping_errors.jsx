@@ -49,7 +49,7 @@ const AssetWithScrapingError = ({
   } = asset
 
   return (
-    <React.Fragment>
+    <>
       <tr>
         <td className="col-md-4">
           {share ? (
@@ -95,7 +95,7 @@ const AssetWithScrapingError = ({
           {checked.error}
         </td>
       </tr>
-    </React.Fragment>
+    </>
   )
 }
 

@@ -150,12 +150,12 @@ const useMember = () => {
   const deleteMember = (lbID, poolID, memberID, memberName) => {
     return new Promise((handleSuccess, handleErrors) => {
       confirm(
-        <React.Fragment>
+        <>
           <p>Do you really want to delete following Member?</p>
           <p>
             {createNameTag(memberName)} <b>id:</b> {memberID}
           </p>
-        </React.Fragment>
+        </>
       )
         .then(() => {
           return ajaxHelper

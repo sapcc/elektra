@@ -42,7 +42,6 @@ module Automation
     def install
       @compute_instances = services.compute.servers
     rescue StandardError => e
-      logger.error e.message
       @compute_instances = []
       @errors = [
         {
@@ -89,7 +88,7 @@ module Automation
         else
           ["error" => e.message]
         end
-      logger.error "Automation-plugin: show_instructions: #{e.message}"
+      # logger.error "Automation-plugin: show_instructions: #{e.message}"
       @errors = [
         {
           key: "danger",
@@ -121,7 +120,7 @@ module Automation
       @node_form_read =
         ::Automation::Forms::NodeTags.new(@node.attributes_to_form)
     rescue StandardError => e
-      Rails.logger.error e.message
+      # Rails.logger.error e.message
       flash.now[:error] = I18n.t("automation.errors.node_update_error")
 
       # get the original node tags
@@ -170,7 +169,7 @@ module Automation
         )
       end
     rescue StandardError => e
-      logger.error "Automation-plugin: run_automation: #{e.message}"
+      # logger.error "Automation-plugin: run_automation: #{e.message}"
       flash.now[:error] = I18n.t(
         "automation.errors.node_executing_automation_error",
         name: automation_name,
@@ -183,7 +182,7 @@ module Automation
         begin
           services.automation.node(node_id, ["all"])
         rescue StandardError => e
-          Rails.logger.error e.message
+          # Rails.logger.error e.message
           nil
         end
       name = node.nil? ? node_id : node.name

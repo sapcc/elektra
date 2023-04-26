@@ -137,7 +137,7 @@ export default class List extends React.Component {
       this.props.items && this.state.hierarchicalProjects.length > 9
 
     return (
-      <React.Fragment>
+      <>
         {this.props.title && (
           <h4 className="action-heading heading-top">
             {this.props.title}
@@ -185,9 +185,9 @@ export default class List extends React.Component {
         )}
 
         {this.props.isFetching ? (
-          <React.Fragment>
+          <>
             <span className="spinner"></span> Loading...
-          </React.Fragment>
+          </>
         ) : this.state.hierarchicalProjects &&
           this.state.hierarchicalProjects.length > 0 ? (
           <ul className={`tree tree-expandable`}>
@@ -196,7 +196,7 @@ export default class List extends React.Component {
         ) : (
           "None available."
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

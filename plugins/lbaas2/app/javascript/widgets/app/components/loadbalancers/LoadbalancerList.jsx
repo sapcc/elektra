@@ -2,20 +2,13 @@ import { useDispatch, useGlobalState } from "../StateProvider"
 import React, { useEffect, useMemo, useState } from "react"
 import LoadbalancerItem from "./LoadbalancerItem"
 import ErrorPage from "../ErrorPage"
-import { DefeatableLink } from "lib/components/defeatable_link"
 import { SearchField } from "lib/components/search_field"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import { Link } from "react-router-dom"
 import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 import { addError } from "lib/flashes"
 import { regexString } from "lib/tools/regex_string"
-import {
-  Tooltip,
-  OverlayTrigger,
-  ToggleButton,
-  ToggleButtonGroup,
-  ButtonToolbar,
-} from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import Pagination from "../shared/Pagination"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
@@ -105,7 +98,7 @@ const LoadbalancerList = (props) => {
       })
       .catch((error) => {
         setFetchingAllItems(false)
-        addError(<React.Fragment>{errorMessage(error)}</React.Fragment>)
+        addError(<>{errorMessage(error)}</>)
       })
   }
 
@@ -136,7 +129,7 @@ const LoadbalancerList = (props) => {
   return useMemo(() => {
     Log.debug("RENDER loadbalancer list")
     return (
-      <React.Fragment>
+      <>
         {error && !fetchingAllItems ? (
           <ErrorPage
             headTitle="Load Balancers"
@@ -144,7 +137,7 @@ const LoadbalancerList = (props) => {
             onReload={initLoad}
           />
         ) : (
-          <React.Fragment>
+          <>
             <div className="toolbar searchToolbar">
               {selected ? (
                 <Link className="back-link" to={`/loadbalancers`}>
@@ -190,16 +183,12 @@ const LoadbalancerList = (props) => {
                         <div className="display-flex">
                           Name
                           <div className="margin-left">
-                            <OverlayTrigger
+                            <Tooltip
                               placement="top"
-                              overlay={
-                                <Tooltip id="defalult-pool-tooltip">
-                                  Sorted by Name ASC
-                                </Tooltip>
-                              }
+                              content="Sorted by Name ASC"
                             >
                               <i className="fa fa-sort-asc" />
-                            </OverlayTrigger>
+                            </Tooltip>
                           </div>
                           /ID/Description
                         </div>
@@ -249,9 +238,9 @@ const LoadbalancerList = (props) => {
                   handleClick={handlePaginateClick}
                 />
               )}
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }, [
     JSON.stringify(loadbalancers),

@@ -72,10 +72,10 @@ export default class UserRoleAssignments extends React.Component {
     const data = this.sortData()
 
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar">
           {this.props.items && this.props.items.length > 0 && (
-            <React.Fragment>
+            <>
               <SearchField
                 onChange={(term) => this.setState({ filterString: term })}
                 placeholder={`Name ${
@@ -86,7 +86,7 @@ export default class UserRoleAssignments extends React.Component {
                 text={`Filter ${this.props.type}s by name or id`}
               />
               <span className="toolbar-input-divider"></span>
-            </React.Fragment>
+            </>
           )}
 
           {this.props.isFetching && (
@@ -140,7 +140,7 @@ export default class UserRoleAssignments extends React.Component {
           !this.props.isFetching &&
           data.length == 0 && <p>No role assignments found</p>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

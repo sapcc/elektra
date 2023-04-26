@@ -110,7 +110,7 @@ const AutoscalingOperation = ({ operation, projectName, unit: unitName }) => {
   const { serviceType, resourceName } = parseAssetType(assetType)
 
   return (
-    <React.Fragment>
+    <>
       <tr>
         <td className="col-md-3">
           {projectName || projectID}
@@ -157,7 +157,7 @@ const AutoscalingOperation = ({ operation, projectName, unit: unitName }) => {
           </td>
         </tr>
       )}
-    </React.Fragment>
+    </>
   )
 }
 

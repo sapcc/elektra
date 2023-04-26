@@ -126,9 +126,9 @@ const EditLoadbalancer = (props) => {
     return updateLoadbalancer(loadbalancerID, values)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Load Balancer <b>{data.name}</b> ({data.id}) is being updated.
-          </React.Fragment>
+          </>
         )
         close()
       })
@@ -163,7 +163,7 @@ const EditLoadbalancer = (props) => {
           />
         </Modal.Body>
       ) : (
-        <React.Fragment>
+        <>
           {loadbalancer.isLoading ? (
             <Modal.Body>
               <span className="spinner" />
@@ -242,7 +242,7 @@ const EditLoadbalancer = (props) => {
               </Modal.Footer>
             </Form>
           )}
-        </React.Fragment>
+        </>
       )}
     </Modal>
   )

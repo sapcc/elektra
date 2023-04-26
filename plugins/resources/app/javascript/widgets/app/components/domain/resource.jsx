@@ -52,10 +52,10 @@ const DomainResource = (props) => {
     fillProps.fill = usage
     if (burstUsage > 0) {
       fillProps.labelOverride = (
-        <React.Fragment>
+        <>
           {valueWithUnit(usage - burstUsage, unit)} +{" "}
           {valueWithUnit(burstUsage, unit)} burst
-        </React.Fragment>
+        </>
       )
     }
   }

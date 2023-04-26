@@ -505,7 +505,7 @@ const EditListener = (props) => {
           />
         </Modal.Body>
       ) : (
-        <React.Fragment>
+        <>
           {listener.isLoading ? (
             <Modal.Body>
               <span className="spinner" />
@@ -964,7 +964,7 @@ const EditListener = (props) => {
               </Modal.Footer>
             </Form>
           )}
-        </React.Fragment>
+        </>
       )}
     </Modal>
   )

@@ -88,7 +88,7 @@ const SharedFilesystemApp = (props) => {
           />
         )}
         {policy.isAllowed("shared_filesystem_storage:share_update") && (
-          <React.Fragment>
+          <>
             <Route
               exact
               path="/:parent(shares|autoscaling)/:id/edit"
@@ -99,7 +99,7 @@ const SharedFilesystemApp = (props) => {
               path="/:parent(shares|autoscaling)/:id/edit-size"
               component={EditShareSizeModal}
             />
-          </React.Fragment>
+          </>
         )}
         {policy.isAllowed("shared_filesystem_storage:share_update") && (
           <Route

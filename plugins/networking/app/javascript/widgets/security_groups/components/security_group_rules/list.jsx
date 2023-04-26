@@ -198,7 +198,7 @@ export default class List extends React.Component {
         </h4>
 
         {this.props.securityGroup ? (
-          <React.Fragment>
+          <>
             <hr />
             <p>
               <b>Name: </b>
@@ -218,7 +218,7 @@ export default class List extends React.Component {
               <b>Rules: </b>
               {this.props.securityGroupRules.length}
             </p>
-          </React.Fragment>
+          </>
         ) : (
           <span className="spinner" />
         )}

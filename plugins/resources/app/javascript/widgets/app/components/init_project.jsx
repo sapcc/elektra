@@ -1,5 +1,5 @@
 import React from "react"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { FormErrors } from "lib/elektra-form/components/form_errors"
 
 import { WIZARD_RESOURCES } from "../constants"
@@ -251,7 +251,7 @@ export default class InitProjectModal extends React.Component {
 
     return (
       //NOTE: class='resources' is needed for CSS rules from plugins/resources/ to apply
-      <React.Fragment>
+      <>
         <div className="modal-body resources">
           {this.state.apiErrors && <FormErrors errors={this.state.apiErrors} />}
           <p>
@@ -296,7 +296,7 @@ export default class InitProjectModal extends React.Component {
             Cancel
           </div>
         </div>
-      </React.Fragment>
+      </>
     )
   }
 
@@ -365,17 +365,16 @@ export default class InitProjectModal extends React.Component {
     if (isAvailable) {
       return box
     } else {
-      const tooltip = (
-        <Tooltip id={`package-unavailable-${categoryName}`}>
-          This package is not available right now, most likely because of
-          missing domain quota. If you cannot proceed without it, please get in
-          touch with your domain resource admin.
-        </Tooltip>
-      )
       return (
-        <OverlayTrigger overlay={tooltip} placement="top" key={categoryName}>
+        <Tooltip
+          content="This package is not available right now, most likely because of
+        missing domain quota. If you cannot proceed without it, please get in
+        touch with your domain resource admin."
+          placement="top"
+          key={categoryName}
+        >
           {box}
-        </OverlayTrigger>
+        </Tooltip>
       )
     }
   }

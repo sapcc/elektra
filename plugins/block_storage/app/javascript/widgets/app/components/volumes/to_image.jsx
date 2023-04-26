@@ -11,11 +11,11 @@ const FormBody = ({ values, volume, availabilityZones }) => (
     <Form.ElementHorizontal label="Source Volume" name="source_volid">
       <p className="form-control-static">
         {volume ? (
-          <React.Fragment>
+          <>
             {volume.name}
             <br />
             <span className="info-text">ID: {volume.id}</span>
-          </React.Fragment>
+          </>
         ) : (
           volume.id
         )}

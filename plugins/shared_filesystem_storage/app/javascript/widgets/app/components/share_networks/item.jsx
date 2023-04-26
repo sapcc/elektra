@@ -1,23 +1,13 @@
 import { Link } from "react-router-dom"
-import { Popover, Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { policy } from "lib/policy"
 import React from "react"
 
-const emptyNetwork = (
-  <Popover id="popover-empty-share-network" title="Empty Network">
+const emptyNetwork = `
     This network does not contain any shares or security services. Please note
     that once a share is created on this network, you will no longer be able to
     add a security service. Please add the security service first if necessary.
-  </Popover>
-)
-
-const tooltipExternalNetwork = (
-  <Tooltip id="tooltip-external-network">External Network</Tooltip>
-)
-
-const tooltipSharedNetwork = (
-  <Tooltip id="tooltip-shared-network">Shared Network</Tooltip>
-)
+  `
 
 const Item = ({
   shareNetwork,
@@ -37,16 +27,11 @@ const Item = ({
     <tr className={className}>
       <td>
         {shareNetwork.isNew && (
-          <OverlayTrigger
-            trigger="click"
-            placement="top"
-            rootClose
-            overlay={emptyNetwork}
-          >
+          <Tooltip trigger="click" placement="top" content={emptyNetwork}>
             <a href="javascript:void(0)">
               <i className="fa fa-fw fa-info-circle" />
             </a>
-          </OverlayTrigger>
+          </Tooltip>
         )}
       </td>
       <td>
@@ -66,20 +51,14 @@ const Item = ({
             <div>
               {network.name}
               {network["router:external"] && (
-                <OverlayTrigger
-                  placement="right"
-                  overlay={tooltipExternalNetwork}
-                >
+                <Tooltip placement="right" content="External Network">
                   <i className="fa fa-fw fa-globe" />
-                </OverlayTrigger>
+                </Tooltip>
               )}
               {network.shared && (
-                <OverlayTrigger
-                  placement="right"
-                  overlay={tooltipSharedNetwork}
-                >
+                <Tooltip placement="right" content="Shared Network">
                   <i className="fa fa-fw fa-share-alt" />
-                </OverlayTrigger>
+                </Tooltip>
               )}
             </div>
           )

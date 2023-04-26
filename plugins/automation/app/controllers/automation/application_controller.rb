@@ -76,7 +76,7 @@ module Automation
           @description +=
             " Please check (role assignments) if you have one of the following roles: #{exception.involved_roles.flatten.join(", ")}."
         end
-        render "/automation/shared/warning.html", status: @status
+        render "/automation/shared/warning", status: @status
       end
 
       options = {

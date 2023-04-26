@@ -26,7 +26,7 @@ export default class AccountList extends React.Component {
     const forwardProps = { isAdmin, hasExperimentalFeatures }
 
     return (
-      <React.Fragment>
+      <>
         {this.props.isAdmin && (
           <div className="toolbar">
             <div className="main-buttons">
@@ -45,7 +45,7 @@ export default class AccountList extends React.Component {
             />
           ))}
         </DataTable>
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -92,7 +92,7 @@ const useLoadbalancer = () => {
   const removeLoadbalancer = (name, id) => {
     return new Promise((handleSuccess, handleErrors) => {
       confirm(
-        <React.Fragment>
+        <>
           <p>
             Do you really want to delete following Load Balancer and all related
             objects?
@@ -100,7 +100,7 @@ const useLoadbalancer = () => {
           <p>
             {createNameTag(name)} <b>id:</b> {id}
           </p>
-        </React.Fragment>
+        </>
       )
         .then(() => {
           return deleteLoadbalancer(id)

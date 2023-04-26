@@ -150,9 +150,9 @@ const EditL7Rule = (props) => {
     )
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             L7 Rule <b>{data.type}</b> ({data.id}) is being updated.
-          </React.Fragment>
+          </>
         )
         // fetch the policy again containing the new l7rule
         persistL7Policy(loadbalancerID, listenerID, l7policyID).catch(
@@ -199,7 +199,7 @@ const EditL7Rule = (props) => {
           />
         </Modal.Body>
       ) : (
-        <React.Fragment>
+        <>
           {l7rule.isLoading ? (
             <Modal.Body>
               <span className="spinner" />
@@ -329,7 +329,7 @@ const EditL7Rule = (props) => {
               </Modal.Footer>
             </Form>
           )}
-        </React.Fragment>
+        </>
       )}
     </Modal>
   )

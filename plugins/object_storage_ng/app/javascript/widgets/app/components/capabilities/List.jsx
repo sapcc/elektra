@@ -34,7 +34,7 @@ const Capabilities = ({ data }) => {
       <h5>Limits</h5>
       <ul className="fa-ul" id="limits">
         {data.swift && (
-          <React.Fragment>
+          <>
             <li>
               <span className="fa-li fa fa-check" />
               <strong>Max file size: </strong>
@@ -55,7 +55,7 @@ const Capabilities = ({ data }) => {
               <strong>Container listing limit: </strong>
               {data.swift["container_listing_limit"]}
             </li>
-          </React.Fragment>
+          </>
         )}
 
         {data.bulk_upload && (

@@ -1,22 +1,15 @@
 /* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import { truncate } from "lib/tools/helpers"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import React from "react"
 export const AttachedIcon = ({ port }) => {
   if (!port.device_id) return null
 
-  const tooltip = <Tooltip id="attachedIconTooltip">Port is attached</Tooltip>
-
   return (
-    <OverlayTrigger
-      overlay={tooltip}
-      placement="top"
-      delayShow={300}
-      delayHide={150}
-    >
+    <Tooltip content="Port is attached" placement="top">
       <i className="fa fa-fw fa-paperclip" />
-    </OverlayTrigger>
+    </Tooltip>
   )
 }
 
@@ -73,7 +66,7 @@ const Item = ({
       <td>
         {port.device_owner}
         {port.device_id && (
-          <React.Fragment>
+          <>
             <br />
             <span className="info-text">
               {port.device_owner &&
@@ -88,7 +81,7 @@ const Item = ({
                 truncate(port.device_id, 20)
               )}
             </span>
-          </React.Fragment>
+          </>
         )}
       </td>
       <td>{port.status}</td>

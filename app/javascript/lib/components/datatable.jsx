@@ -281,7 +281,7 @@ export class DataTable extends React.Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         <table
           className={`table elektraDataTable ${this.props.className || ""}`}
         >
@@ -301,7 +301,7 @@ export class DataTable extends React.Component {
             set={(page) => this.setCurrentPage(page)}
           />
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

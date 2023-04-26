@@ -26,15 +26,15 @@ class App extends React.Component {
 
   loadingDetails = () => {
     return (
-      <React.Fragment>
+      <>
         Loading details for <b>{this.state.searchedValue}</b>
-      </React.Fragment>
+      </>
     )
   }
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <div className={this.props.modal ? "modal-body" : ""}>
           <form action="" className="form-horizontal">
             <Form.Errors errors={this.state.error} />
@@ -74,10 +74,10 @@ class App extends React.Component {
             </div>
           )}
           {this.props.object.error && (
-            <React.Fragment>
+            <>
               <div className="searchResults">{this.loadingDetails()}</div>
               <span className="text-danger">{this.props.object.error}</span>
-            </React.Fragment>
+            </>
           )}
           {this.props.object.data && (
             <ObjectDetails object={this.props.object} />
@@ -95,7 +95,7 @@ class App extends React.Component {
             </button>
           </div>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react"
+import React, { useMemo } from "react"
 import { Link } from "react-router-dom"
 import PopoverInfo from "../shared/PopoverInfo"
 import CachedInfoPopoverListenerContent from "./CachedInfoPopoverListenerContent"
@@ -106,10 +106,10 @@ const LoadbalancerItem = ({
     return removeLoadbalancer(loadbalancerName, ladbalancerID)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Load Balancer <b>{loadbalancerName}</b> ({ladbalancerID}) is being
             deleted.
-          </React.Fragment>
+          </>
         )
       })
       .catch((error) => {
@@ -132,10 +132,10 @@ const LoadbalancerItem = ({
     return detachFIP(ladbalancerID, { floating_ip: floatingIP })
       .then((response) => {
         addNotice(
-          <React.Fragment>
+          <>
             Floating IP <b>{loadbalancer.floating_ip.floating_ip_address}</b> (
             {floatingIP}) is being detached.
-          </React.Fragment>
+          </>
         )
       })
       .catch((error) => {
@@ -225,14 +225,14 @@ const LoadbalancerItem = ({
       </td>
       <td className="snug-nowrap">
         {loadbalancer.subnet && (
-          <React.Fragment>
+          <>
             <p
               className="list-group-item-text list-group-item-text-copy"
               data-is-from-cache={loadbalancer.subnet_from_cache}
             >
               {loadbalancer.subnet.name}
             </p>
-          </React.Fragment>
+          </>
         )}
         {loadbalancer.availability_zone && (
           <p className="list-group-item-text list-group-item-text-copy">
@@ -240,7 +240,7 @@ const LoadbalancerItem = ({
           </p>
         )}
         {loadbalancer.vip_address && (
-          <React.Fragment>
+          <>
             <p className="list-group-item-text list-group-item-text-copy display-flex">
               <i className="fa fa-desktop fa-fw" />
               <CopyPastePopover
@@ -249,10 +249,10 @@ const LoadbalancerItem = ({
                 searchTerm={searchTerm}
               />
             </p>
-          </React.Fragment>
+          </>
         )}
         {loadbalancer.floating_ip && (
-          <React.Fragment>
+          <>
             <p className="list-group-item-text list-group-item-text-copy display-flex">
               <i className="fa fa-globe fa-fw" />
               <CopyPastePopover
@@ -261,7 +261,7 @@ const LoadbalancerItem = ({
                 searchTerm={searchTerm}
               />
             </p>
-          </React.Fragment>
+          </>
         )}
       </td>
       <td>
@@ -272,7 +272,7 @@ const LoadbalancerItem = ({
             popoverId={"listener-popover-" + loadbalancer.id}
             buttonName={listenerIds.length}
             title={
-              <React.Fragment>
+              <>
                 Listeners
                 <Link
                   to={`/loadbalancers/${loadbalancer.id}/show`}
@@ -280,7 +280,7 @@ const LoadbalancerItem = ({
                 >
                   Show all
                 </Link>
-              </React.Fragment>
+              </>
             }
             content={
               <CachedInfoPopoverListenerContent
@@ -301,7 +301,7 @@ const LoadbalancerItem = ({
             popoverId={"pools-popover-" + loadbalancer.id}
             buttonName={poolIds.length}
             title={
-              <React.Fragment>
+              <>
                 Pools
                 <Link
                   to={`/loadbalancers/${loadbalancer.id}/show`}
@@ -309,7 +309,7 @@ const LoadbalancerItem = ({
                 >
                   Show all
                 </Link>
-              </React.Fragment>
+              </>
             }
             content={
               <CachedInfoPopoverPoolContent

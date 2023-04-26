@@ -133,9 +133,9 @@ const EditHealthMonitor = (props) => {
     return updateHealthmonitor(lbID, poolID, healthmonitorID, values)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Health Monitor <b>{data.name}</b> ({data.id}) is being updated.
-          </React.Fragment>
+          </>
         )
         // fetch the pool again containing the new healthmonitor so it gets updated fast
         persistPool(lbID, poolID)
@@ -178,7 +178,7 @@ const EditHealthMonitor = (props) => {
           />
         </Modal.Body>
       ) : (
-        <React.Fragment>
+        <>
           {healthmonitor.isLoading ? (
             <Modal.Body>
               <span className="spinner" />
@@ -237,8 +237,8 @@ const EditHealthMonitor = (props) => {
                   <span className="help-block">
                     <i className="fa fa-info-circle"></i>
                     The number of allowed check failures before marking the
-                    member as OFFLINE. A valid value is from 1 to 10.
-                    The default is 3.
+                    member as OFFLINE. A valid value is from 1 to 10. The
+                    default is 3.
                   </span>
                 </Form.ElementHorizontal>
 
@@ -338,7 +338,7 @@ const EditHealthMonitor = (props) => {
               </Modal.Footer>
             </Form>
           )}
-        </React.Fragment>
+        </>
       )}
     </Modal>
   )

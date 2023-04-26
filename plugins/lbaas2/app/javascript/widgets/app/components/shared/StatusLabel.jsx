@@ -1,26 +1,23 @@
-import React from "react";
-import { useMemo } from "react";
-import { Tooltip, OverlayTrigger } from "react-bootstrap";
+import React from "react"
+import { useMemo } from "react"
+import { Tooltip } from "lib/components/Overlay"
 
 const StatusLabel = ({ label, textClassName, title }) => {
   return useMemo(() => {
     return (
-      <React.Fragment>
-        <OverlayTrigger
+      <>
+        <Tooltip
           placement="top"
-          overlay={
-            <Tooltip id="static-label-tooltip">
-              <b>Provisioning Status</b>
+          content={`<b>Provisioning Status</b>
               <br />
-              {title}
-            </Tooltip>
-          }
+              ${title}`}
+          html
         >
           <b className={`small ${textClassName}`}>{label}</b>
-        </OverlayTrigger>
-      </React.Fragment>
-    );
-  }, [label]);
-};
+        </Tooltip>
+      </>
+    )
+  }, [label])
+}
 
-export default StatusLabel;
+export default StatusLabel

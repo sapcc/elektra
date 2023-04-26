@@ -85,9 +85,9 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
     return removeL7Policy(loadbalancerID, listenerID, l7policyID, l7policyName)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             L7 Policy <b>{l7policyName}</b> ({l7policyID}) is being deleted.
-          </React.Fragment>
+          </>
         )
         // fetch the listener again containing the new policy so it gets updated fast
         persistListener(loadbalancerID, listenerID)
@@ -104,7 +104,7 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <div className="selected-l7policy-head">
         <div className="row selected-l7policy-head-content">
           <div className="col-md-12">
@@ -274,7 +274,7 @@ const L7PolicySelected = ({ props, listenerID, l7Policy, onBackLink }) => {
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

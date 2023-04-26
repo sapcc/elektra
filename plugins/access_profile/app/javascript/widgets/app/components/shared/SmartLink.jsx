@@ -1,5 +1,6 @@
 import React from "react"
-import { Tooltip, OverlayTrigger, Button } from "react-bootstrap"
+import { Button } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import uniqueId from "lodash/uniqueId"
 
 const SmartLink = ({
@@ -14,7 +15,7 @@ const SmartLink = ({
   const isAllowedToClick = isAllowed == false ? false : true
 
   return (
-    <React.Fragment>
+    <>
       {isAllowedToClick ? (
         <Button
           bsStyle={style}
@@ -33,12 +34,7 @@ const SmartLink = ({
           {children}
         </Button>
       ) : (
-        <OverlayTrigger
-          placement="top"
-          overlay={
-            <Tooltip id={uniqueId("smart-link-")}>{notAllowedText}</Tooltip>
-          }
-        >
+        <Tooltip placement="top" content={notAllowedText}>
           <div style={{ display: "inline-block", cursor: "not-allowed" }}>
             <Button
               style={{ pointerEvents: "none" }}
@@ -52,9 +48,9 @@ const SmartLink = ({
               {children}
             </Button>
           </div>
-        </OverlayTrigger>
+        </Tooltip>
       )}
-    </React.Fragment>
+    </>
   )
 }
 

@@ -1,38 +1,24 @@
 import { Link } from "react-router-dom"
 import { policy } from "lib/policy"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { PrettyDate } from "lib/components/pretty_date"
 import { PrettySize } from "lib/components/pretty_size"
 import { ImageIcon } from "./icon"
 import React from "react"
 
 export const OwnerIcon = () => {
-  const tooltip = <Tooltip id="ownerIconTooltip">Owned by this project</Tooltip>
-
   return (
-    <OverlayTrigger
-      overlay={tooltip}
-      placement="top"
-      delayShow={300}
-      delayHide={150}
-    >
+    <Tooltip content="Owned by this project" placement="top">
       <i className="text-primary fa fa-fw fa-user" />
-    </OverlayTrigger>
+    </Tooltip>
   )
 }
 
 export const SnapshotIcon = () => {
-  const tooltip = <Tooltip id="snapshotIconTooltip">Snapshot</Tooltip>
-
   return (
-    <OverlayTrigger
-      overlay={tooltip}
-      placement="top"
-      delayShow={300}
-      delayHide={150}
-    >
+    <Tooltip content="Snapshot" placement="top">
       <i className="fa fa-fw fa-camera" />
-    </OverlayTrigger>
+    </Tooltip>
   )
 }
 
@@ -98,32 +84,34 @@ const Item = (props) => {
                   </a>
                 </li>
               )}
-              {props.activeTab == "suggested" && image.visibility == "shared" && (
-                <li>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      props.handleAccept(image.id)
-                    }}
-                  >
-                    Accept
-                  </a>
-                </li>
-              )}
-              {props.activeTab == "suggested" && image.visibility == "shared" && (
-                <li>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      props.handleReject(image.id)
-                    }}
-                  >
-                    Reject
-                  </a>
-                </li>
-              )}
+              {props.activeTab == "suggested" &&
+                image.visibility == "shared" && (
+                  <li>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        props.handleAccept(image.id)
+                      }}
+                    >
+                      Accept
+                    </a>
+                  </li>
+                )}
+              {props.activeTab == "suggested" &&
+                image.visibility == "shared" && (
+                  <li>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        props.handleReject(image.id)
+                      }}
+                    >
+                      Reject
+                    </a>
+                  </li>
+                )}
               {props.activeTab == "available" && (
                 <li>
                   <Link

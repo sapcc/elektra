@@ -9,7 +9,7 @@ const LbPopoverListenerContent = ({ lbID, listenerIds, cachedListeners }) => {
     listenerIds.map((id, index) => (
       <div key={id}>
         {cachedListeners[id] ? (
-          <React.Fragment>
+          <>
             <div className="row">
               <div className="col-md-12">
                 <Link to={`/loadbalancers/${lbID}/show?listener=${id}`}>
@@ -54,7 +54,7 @@ const LbPopoverListenerContent = ({ lbID, listenerIds, cachedListeners }) => {
                 {cachedListeners[id].payload.connection_limit}
               </div>
             </div>
-          </React.Fragment>
+          </>
         ) : (
           <div className="row">
             <div className="col-md-12 text-nowrap">

@@ -6,7 +6,7 @@ const LbPopoverPoolContent = ({ lbID, poolIds, cachedPools }) => {
     poolIds.map((id, index) => (
       <div key={id}>
         {cachedPools[id] ? (
-          <React.Fragment>
+          <>
             <div className="row">
               <div className="col-md-12">
                 <Link to={`/loadbalancers/${lbID}/show?pool=${id}`}>
@@ -36,7 +36,7 @@ const LbPopoverPoolContent = ({ lbID, poolIds, cachedPools }) => {
                 <b>Protocol:</b> {cachedPools[id].payload.protocol}
               </div>
             </div>
-          </React.Fragment>
+          </>
         ) : (
           <div className="row">
             <div className="col-md-12 text-nowrap">

@@ -48,7 +48,7 @@ const CachedInfoPopoverContent = ({
     l7PolicyIDs.map((id, index) => (
       <div key={id}>
         {cachedl7PolicyIDs[id] ? (
-          <React.Fragment>
+          <>
             <div className="row">
               <div className="col-md-12">
                 <Link onClick={(e) => onClick(e, id)} to="#">
@@ -102,7 +102,7 @@ const CachedInfoPopoverContent = ({
                 )}
               </div>
             </div>
-          </React.Fragment>
+          </>
         ) : (
           <div className="row">
             <div className="col-md-12 text-nowrap">

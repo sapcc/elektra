@@ -36,7 +36,7 @@ const AccessControlForm = (props) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       {props.shareNetwork && <div>{`Network: ${props.shareNetwork.cidr}`}</div>}
       <Form.Errors />
 
@@ -92,7 +92,7 @@ const AccessControlForm = (props) => {
           {accessToInfo()}
         </p>
       )}
-    </React.Fragment>
+    </>
   )
 }
 

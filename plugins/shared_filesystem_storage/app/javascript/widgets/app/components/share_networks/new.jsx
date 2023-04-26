@@ -53,7 +53,7 @@ export default class NewShareNetworkForm extends React.Component {
     let networkSubnets = this.networkSubnets(values.neutron_net_id)
 
     return (
-      <React.Fragment>
+      <>
         <Modal.Body>
           <Form.Errors />
 
@@ -121,7 +121,7 @@ export default class NewShareNetworkForm extends React.Component {
           <Button onClick={this.close}>Cancel</Button>
           <Form.SubmitButton label="Save" />
         </Modal.Footer>
-      </React.Fragment>
+      </>
     )
   }
 

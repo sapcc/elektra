@@ -1,92 +1,82 @@
 import NivoBarChart from "./nivoBarChart"
 import Details from "./details"
-import React from "react"
-class App extends React.Component {
-  state = {
-    hover: "none",
-    clickBarData: null,
-    clickedBar: "none",
-    filter: "",
-    showDetails: false,
-    clickService: "all",
-  }
+import React, { useState, useEffect } from "react"
 
-  componentDidMount() {
-    this.props.fetchCostReport().then(() => {
-      // init chart selecting actual month
-      if (Object.keys(this.props.cost.chartData).length > 0) {
-        var { [Object.keys(this.props.cost.chartData)[0]]: selectedInitBar } =
-          this.props.cost.chartData
-        this.setState({
-          clickBarData: selectedInitBar,
-          showDetails: true,
-          clickedBar: selectedInitBar.date,
-        })
-      }
-    })
-  }
+const App = ({ cost, fetchCostReport }) => {
+  const [clickBarData, setClickBarData] = useState(null)
+  const [clickedBar, setClickedBar] = useState("none")
+  const [showDetails, setShowDetails] = useState(false)
+  const [clickService, setClickService] = useState("all")
 
-  onHoverRect = (d) => {
-    this.setState({ hover: d.data.id })
-  }
+  useEffect(() => {
+    if (!fetchCostReport) return
+    fetchCostReport()
+  }, [fetchCostReport])
 
-  onClickBarChart = (data) => {
-    if (this.state.clickedBar == data.date) {
-      this.setState({ showDetails: false, clickedBar: "none" })
+  useEffect(() => {
+    if (!cost?.chartData) return
+    // init chart selecting actual month
+    if (Object.keys(cost?.chartData)?.length > 0) {
+      const { [Object.keys(cost.chartData)[0]]: selectedInitBar } =
+        cost.chartData
+      setClickBarData(selectedInitBar)
+      setShowDetails(true)
+      setClickedBar(selectedInitBar?.date)
+    }
+  }, [cost])
+
+  const onClickBarChart = (data) => {
+    if (clickedBar == data.date) {
+      setShowDetails(false)
+      setClickedBar("none")
     } else {
-      this.setState({
-        clickBarData: data,
-        showDetails: true,
-        clickedBar: data.date,
-      })
+      setClickBarData(data)
+      setShowDetails(true)
+      setClickedBar(data.date)
     }
   }
 
-  onClickLegendRect = (service) => {
-    this.setState({ clickService: service })
+  const onClickLegendRect = (service) => {
+    setClickService(service)
   }
 
-  onCloseDetails = () => {
-    this.setState({
-      showDetails: false,
-      clickedBar: "none",
-      clickService: "all",
-    })
+  const onCloseDetails = () => {
+    setShowDetails(false)
+    setClickedBar("none")
+    setClickService("all")
   }
 
-  render() {
-    const colors = ["#008fd3", "#be008c", "#fa9100", "#93c939", "#ccc"]
-    return (
-      <React.Fragment>
-        {this.props.cost.error && (
-          <React.Fragment>
-            <span className="text-danger">{this.props.cost.error.error}</span>
-          </React.Fragment>
-        )}
+  const colors = ["#008fd3", "#be008c", "#fa9100", "#93c939", "#ccc"]
+  return (
+    <>
+      {cost?.error && (
+        <>
+          <span className="text-danger">{cost?.error?.error}</span>
+        </>
+      )}
 
-        <NivoBarChart
-          cost={this.props.cost}
+      <NivoBarChart
+        cost={cost}
+        colors={colors}
+        onClick={onClickBarChart}
+        clickedBar={clickedBar}
+        onClickLegend={onClickLegendRect}
+        clickService={clickService}
+      />
+
+      <div className="cost-details">
+        <Details
+          data={clickBarData}
           colors={colors}
-          onClick={this.onClickBarChart}
-          clickedBar={this.state.clickedBar}
-          onClickLegend={this.onClickLegendRect}
-          clickService={this.state.clickService}
+          services={cost?.services}
+          serviceMap={cost?.serviceMap}
+          onClose={onCloseDetails}
+          showDetails={showDetails}
+          clickService={clickService}
         />
-
-        <div className="cost-details">
-          <Details
-            data={this.state.clickBarData}
-            colors={colors}
-            services={this.props.cost.services}
-            serviceMap={this.props.cost.serviceMap}
-            onClose={this.onCloseDetails}
-            showDetails={this.state.showDetails}
-            clickService={this.state.clickService}
-          />
-        </div>
-      </React.Fragment>
-    )
-  }
+      </div>
+    </>
+  )
 }
 
 export default App

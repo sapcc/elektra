@@ -45,7 +45,7 @@ const CachedInfoPopoverContentListeners = ({
     listenerIDs.map((id, index) => (
       <div key={id}>
         {cachedListeners[id] ? (
-          <React.Fragment>
+          <>
             <div className="row">
               <div className="col-md-12">
                 <Link onClick={(e) => onClick(e, id)} to="#">
@@ -60,7 +60,7 @@ const CachedInfoPopoverContentListeners = ({
                 </div>
               </div>
             )}
-          </React.Fragment>
+          </>
         ) : (
           <div className="row">
             <div className="col-md-12 text-nowrap">

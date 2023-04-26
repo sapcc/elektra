@@ -1,22 +1,15 @@
 import React from "react"
 import { useParams, useHistory, Link, useRouteMatch } from "react-router-dom"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 
 const regex = new RegExp("(/*[^/]+/)", "g")
 
 export const CopyIcon = () => {
-  const tooltip = <Tooltip id="ownerIconTooltip">Copy to clipboard</Tooltip>
-
   return (
-    <OverlayTrigger
-      overlay={tooltip}
-      placement="top"
-      delayShow={300}
-      delayHide={150}
-    >
+    <Tooltip content="Copy to clipboard" placement="top">
       <i className="fa fa-clone" />
-    </OverlayTrigger>
+    </Tooltip>
   )
 }
 

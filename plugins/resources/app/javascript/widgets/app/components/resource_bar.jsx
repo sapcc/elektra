@@ -1,5 +1,5 @@
 import React from "react"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 
 import { Scope } from "../scope"
 import { Unit, valueWithUnit } from "../unit"
@@ -84,11 +84,10 @@ export default class ResourceBar extends React.Component {
       )
 
       if (afterOvercommitTooltip) {
-        const tooltip = <Tooltip>{afterOvercommitTooltip}</Tooltip>
         afterOcMark = (
-          <OverlayTrigger overlay={tooltip} placement="top">
+          <Tooltip content={afterOvercommitTooltip} placement="top">
             {afterOcMark}
-          </OverlayTrigger>
+          </Tooltip>
         )
       }
       if (beforeOvercommitTooltip) {
@@ -98,11 +97,10 @@ export default class ResourceBar extends React.Component {
             style={{ right: `${100 - ocStartPerc}%` }}
           />
         )
-        const tooltip = <Tooltip>{beforeOvercommitTooltip}</Tooltip>
         beforeOcMark = (
-          <OverlayTrigger overlay={tooltip} placement="top">
+          <Tooltip content={beforeOvercommitTooltip} placement="top">
             {beforeOcMark}
-          </OverlayTrigger>
+          </Tooltip>
         )
       }
     }

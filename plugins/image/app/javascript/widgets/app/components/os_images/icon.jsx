@@ -1,8 +1,7 @@
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import React from "react"
 
 export const ImageIcon = ({ image }) => {
-  const tooltip = <Tooltip id="imageIconTooltip">{image.visibility}</Tooltip>
   let iconType
   switch (image.visibility) {
     case "public":
@@ -20,13 +19,8 @@ export const ImageIcon = ({ image }) => {
   }
 
   return (
-    <OverlayTrigger
-      overlay={tooltip}
-      placement="top"
-      delayShow={300}
-      delayHide={150}
-    >
+    <Tooltip content={image.visibility} placement="top">
       <i className={`text-primary fa fa-fw ${iconType}`} />
-    </OverlayTrigger>
+    </Tooltip>
   )
 }

@@ -21,10 +21,10 @@ const Item = ({ securityGroup, handleDelete, project }) => {
           securityGroup.name || securityGroup.id
         )}
         {securityGroup.name && (
-          <React.Fragment>
+          <>
             <br />
             <span className="info-text">{securityGroup.id}</span>
-          </React.Fragment>
+          </>
         )}
       </td>
       <td>{securityGroup.description}</td>

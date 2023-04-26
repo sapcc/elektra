@@ -86,7 +86,7 @@ export default class Asr extends React.Component {
     componentProps["routerId"] = this.props.routerId
 
     return (
-      <React.Fragment>
+      <>
         <div className="row">
           <div className="col-sm-2">
             <ul className="nav nav-pills nav-stacked">
@@ -115,7 +115,7 @@ export default class Asr extends React.Component {
             </div>
           </div>
         </div>
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
-import ReactJson from "react-json-view"
+import { JsonViewer } from "juno-ui-components/build/JsonViewer"
 import React from "react"
 
 const Row = ({ label, value, children }) => {
@@ -80,7 +80,7 @@ export default class ShowShareNetwork extends React.Component {
       return <p className="alert">No share servers found!</p>
     }
 
-    return <ReactJson src={shareServerItems} collapsed={3} />
+    return <JsonViewer data={shareServerItems} expanded={3} />
   }
 
   renderSubnet(subnet) {

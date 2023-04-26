@@ -5,6 +5,7 @@ require("d3-transition")
 import { scaleOrdinal } from "d3-scale"
 import Numeral from "numeral"
 import React from "react"
+
 class NivoBarChart extends React.Component {
   componentDidMount() {
     this.chartIsRendered()
@@ -162,7 +163,7 @@ class NivoBarChart extends React.Component {
   render() {
     const { data, services, isFetching, serviceMap } = this.props.cost
     return (
-      <React.Fragment>
+      <>
         {isFetching && (
           <div>
             Loading
@@ -221,7 +222,7 @@ class NivoBarChart extends React.Component {
             </div>
           </div>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

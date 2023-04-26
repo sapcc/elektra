@@ -10,7 +10,7 @@ import moment from "moment"
 import React from "react"
 
 const ObjectLink = ({ id, name, term }) => (
-  <React.Fragment>
+  <>
     <Link to={`/universal-search/${id}/show`} state={{ test: "ok" }}>
       {name ? (
         <Highlighter search={term || ""}>{name || ""}</Highlighter>
@@ -19,25 +19,25 @@ const ObjectLink = ({ id, name, term }) => (
       )}
     </Link>
     {name && (
-      <React.Fragment>
+      <>
         <br />
         <span className="info-text u-text-monospace u-text-small">
           <Highlighter search={term || ""}>{id || ""}</Highlighter>
         </span>
-      </React.Fragment>
+      </>
     )}
-  </React.Fragment>
+  </>
 )
 
 const ObjectInfo = ({ id, name, term }) =>
   name ? (
-    <React.Fragment>
+    <>
       <Highlighter search={term || ""}>{name}</Highlighter>
       <br />
       <span className="info-text u-text-monospace u-text-small">
         <Highlighter search={term || ""}>{id || ""}</Highlighter>
       </span>
-    </React.Fragment>
+    </>
   ) : (
     <Highlighter search={term || ""}>{id || ""}</Highlighter>
   )
@@ -57,12 +57,12 @@ const SearchItem = ({ item, term, aggregates }) => {
       </td>
       <td className="big-data-cell">
         {item.search_label && item.search_label.trim().length > 0 && (
-          <React.Fragment>
+          <>
             <span className="info-text">
               <Highlighter search={term || ""}>{item.search_label}</Highlighter>
             </span>
             <br />
-          </React.Fragment>
+          </>
         )}
         <span className="info-text">
           Last Updated: {moment(item.updated_at).fromNow()}

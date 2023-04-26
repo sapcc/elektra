@@ -4,7 +4,7 @@
       Development News
       %span.badge.alert-info#news_badge
 
-    #news.modal.fade
+    .modal.fade#news
       .modal-dialog.modal-lg
         .modal-content
           .modal-header
@@ -16,13 +16,13 @@
             = link_to 'Close', '#', data: {dismiss: "modal"}, class: "btn"
 
     - content_for :javascripts do
-      %script{:type=>"text/javascript"}
+      %script{type: "text/javascript"}
         = render 'layouts/dev_tools_script.js'
 
   %li
     = link_to 'Debug info', '#', data: { toggle: "modal", target: "#debug" } if current_user
 
-    #debug.modal.fade
+    .modal.fade#debug
       .modal-dialog.modal-lg
         .modal-content
           .modal-header
@@ -30,8 +30,8 @@
             %h4 Debug Info
           .modal-body
             - if plugin_name
-              %pre= "Plugin Name: #{plugin_name}"
-            %pre= "Current region: #{current_region}" 
-            %pre= JSON.pretty_generate(current_user.context) if current_user
+              %pre< Plugin Name: #{plugin_name}
+            %pre< Current region: #{current_region}
+            %pre<= JSON.pretty_generate(current_user.context) if current_user
           .modal-footer
             = link_to 'Close', '#', data: {dismiss: "modal"}, class: "btn"

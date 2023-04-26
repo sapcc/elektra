@@ -80,7 +80,7 @@ export default class RepositoryList extends React.Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         <ol className="breadcrumb followed-by-search-box">
           <li>
             <Link to="/accounts">All accounts</Link>
@@ -120,7 +120,7 @@ export default class RepositoryList extends React.Component {
             ))}
           </DataTable>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -1,15 +1,9 @@
 import { SearchField } from "lib/components/search_field"
 import { AjaxPaginate } from "lib/components/ajax_paginate"
 import { Highlighter } from "react-bootstrap-typeahead"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import makeCancelable from "lib/tools/cancelable_promise"
 import React from "react"
-
-const removeMemberTooltip = (type) => (
-  <Tooltip id="removeMemberTooltip">
-    {`This will remove ${type} from project role assignments. This may take several minutes.`}
-  </Tooltip>
-)
 
 // This class renders edit form for project role assignments
 export default class ProjectRoleAssignmentsInlineForm extends React.Component {
@@ -93,9 +87,9 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
             />
             &nbsp;
             <span key={index}>
-              <React.Fragment>
+              <>
                 <strong>{role.name}</strong> {roleDescription}
-              </React.Fragment>
+              </>
             </span>
           </label>
         </li>
@@ -188,16 +182,16 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
       !this.props.availableRoles || this.props.availableRoles.isFetching
 
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar toolbar-inline">
           <div className="toolbar-container">
             {isFetching ? (
-              <React.Fragment>
+              <>
                 <span className="spinner" />
                 Loading ...
-              </React.Fragment>
+              </>
             ) : (
-              <React.Fragment>
+              <>
                 <button
                   className="btn btn-default btn-sm hover-danger"
                   onClick={this.removeAllRoles}
@@ -205,7 +199,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
                 >
                   Remove All
                 </button>
-              </React.Fragment>
+              </>
             )}
           </div>
 
@@ -218,9 +212,9 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
               Cancel
             </button>
             {!isFetching && isEmpty ? (
-              <OverlayTrigger
+              <Tooltip
                 placement="top"
-                overlay={removeMemberTooltip(this.props.memberType)}
+                content={`This will remove ${this.props.memberType} from project role assignments. This may take several minutes.`}
               >
                 <button
                   className="btn btn-danger btn-sm"
@@ -229,7 +223,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
                 >
                   {this.state.saving ? "Please Wait ..." : "Remove Member"}
                 </button>
-              </OverlayTrigger>
+              </Tooltip>
             ) : (
               <button
                 className="btn btn-primary btn-sm"
@@ -245,7 +239,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
           <div className="alert alert-error">{this.state.errors}</div>
         )}
         {!isFetching && this.renderEditView()}
-      </React.Fragment>
+      </>
     )
   }
 }

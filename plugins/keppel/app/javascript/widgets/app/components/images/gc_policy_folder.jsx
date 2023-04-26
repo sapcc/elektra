@@ -35,41 +35,41 @@ const GCPolicyFolder = ({ caption, policies }) => {
             <strong>{actionStrings[policy.action] || policy.action}</strong>
             {" image "}
             {rx("match_repository") != ".*" && (
-              <React.Fragment>
+              <>
                 <strong>only if</strong>
                 {" in repository "}
                 <code>{rx("match_repository")}</code>{" "}
-              </React.Fragment>
+              </>
             )}
             {rx("except_repository") != "" && (
-              <React.Fragment>
+              <>
                 <strong>except if</strong>
                 {" in repository "}
                 <code>{rx("except_repository")}</code>{" "}
-              </React.Fragment>
+              </>
             )}
             {rx("match_tag") != "" && (
-              <React.Fragment>
+              <>
                 <strong>only if</strong>
                 {" tagged as "}
                 <code>{rx("match_tag")}</code>{" "}
-              </React.Fragment>
+              </>
             )}
             {rx("except_tag") != "" && (
-              <React.Fragment>
+              <>
                 <strong>except if</strong>
                 {" tagged as "}
                 <code>{rx("except_tag")}</code>{" "}
-              </React.Fragment>
+              </>
             )}
             {policy.only_untagged && (
-              <React.Fragment>
+              <>
                 <strong>only if</strong>
                 {" image does not have tags "}
-              </React.Fragment>
+              </>
             )}
             {tc.on && (
-              <React.Fragment>
+              <>
                 <strong>only if</strong>
                 {` ${timeFieldStrings[tc.on] || tc.on} timestamp of image `}
                 {tc.older_than &&
@@ -84,7 +84,7 @@ const GCPolicyFolder = ({ caption, policies }) => {
                   `is among the oldest ${tc.oldest} in this repository`}
                 {tc.newest &&
                   `is among the newest ${tc.newest} in this repository`}
-              </React.Fragment>
+              </>
             )}
           </td>
         </tr>
@@ -93,7 +93,7 @@ const GCPolicyFolder = ({ caption, policies }) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <tr>
         <th rowSpan={1 + rows.length}>Result of last GC</th>
         <td
@@ -106,7 +106,7 @@ const GCPolicyFolder = ({ caption, policies }) => {
         </td>
       </tr>
       {rows}
-    </React.Fragment>
+    </>
   )
 }
 

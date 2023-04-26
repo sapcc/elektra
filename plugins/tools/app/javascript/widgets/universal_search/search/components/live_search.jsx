@@ -107,14 +107,14 @@ export default class LiveSearchModal extends React.Component {
                 {this.props.types.isFetching ? (
                   <option>Loading Types...</option>
                 ) : (
-                  <React.Fragment>
+                  <>
                     <option value="">All</option>
                     {availableTypes.map((type, index) => (
                       <option key={index} value={type}>
                         {type}
                       </option>
                     ))}
-                  </React.Fragment>
+                  </>
                 )}
               </select>
             </div>
@@ -146,10 +146,10 @@ export default class LiveSearchModal extends React.Component {
               Found <b>{responseData.items}</b> item
               {responseData.items != 1 ? "s" : ""}
               {responseData.service_call && (
-                <React.Fragment>
+                <>
                   {" "}
                   by calling <b>{responseData.service_call}</b>
-                </React.Fragment>
+                </>
               )}
             </p>
           )}

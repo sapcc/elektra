@@ -83,12 +83,12 @@ const usePool = () => {
   const removePool = (lbID, poolID, poolName) => {
     return new Promise((handleSuccess, handleErrors) => {
       confirm(
-        <React.Fragment>
+        <>
           <p>Do you really want to delete following Pool?</p>
           <p>
             {createNameTag(poolName)} <b>id:</b> {poolID}
           </p>
-        </React.Fragment>
+        </>
       )
         .then(() => {
           deletePool(lbID, poolID)

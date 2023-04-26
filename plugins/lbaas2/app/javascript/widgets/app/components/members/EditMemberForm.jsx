@@ -4,8 +4,8 @@ import React, {
   useImperativeHandle,
   useEffect,
 } from "react"
-import { Form, Tooltip, OverlayTrigger } from "react-bootstrap"
-import { useFormState, useFormDispatch, generateMemberItem } from "./FormState"
+import { Form } from "react-bootstrap"
+import { useFormState, useFormDispatch } from "./FormState"
 import NewEditMemberListItem from "./NewEditMemberListItem"
 
 import { ErrorsList } from "lib/elektra-form"
@@ -67,10 +67,10 @@ const EditMemberForm = (
       return updateMember(loadbalancerID, poolID, memberID, memberItems)
         .then((response) => {
           addNotice(
-            <React.Fragment>
+            <>
               Member <b>{response.data.name}</b> ({response.data.id}) is being
               updated.
-            </React.Fragment>
+            </>
           )
           // update pool
           persistPool(loadbalancerID, poolID)

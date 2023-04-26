@@ -1,33 +1,23 @@
 /* eslint-disable react/no-unescaped-entities */
 import { DefeatableLink } from "lib/components/defeatable_link"
 import { policy } from "lib/policy"
-import { Popover, OverlayTrigger } from "react-bootstrap"
+import { Popover } from "lib/components/Overlay"
 import ShareNetworkItem from "./item"
 import React from "react"
 
 const CreateNewButton = () => {
   if (!policy.isAllowed("shared_filesystem_storage:share_network_create")) {
-    const popover = (
-      <Popover
-        id="popover-no-create-permission"
-        title="Missing Create Permission"
-      >
-        You don't have permission to create a share network. Please check if you
-        have the role sharedfilesystem_admin.
-      </Popover>
-    )
-
     return (
-      <OverlayTrigger
-        overlay={popover}
+      <Popover
+        title="Missing Create Permission"
+        content="You don't have permission to create a share network. Please check if you
+        have the role sharedfilesystem_admin."
         placement="top"
-        delayShow={300}
-        delayHide={150}
       >
         <button className="btn btn-primary disabled">
           <i className="fa fa-fw fa-exclamation-triangle fa-2"></i> Create New
         </button>
-      </OverlayTrigger>
+      </Popover>
     )
   }
 
@@ -86,7 +76,7 @@ export default class ShareNetworkList extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <div className="toolbar">
           <div className="main-buttons">
             <CreateNewButton />
@@ -128,7 +118,7 @@ export default class ShareNetworkList extends React.Component {
             </tbody>
           </table>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

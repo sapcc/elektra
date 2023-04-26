@@ -5,7 +5,7 @@ import { useGlobalState } from "../StateProvider"
 import { Table } from "react-bootstrap"
 import ErrorPage from "../ErrorPage"
 import L7RuleListItem from "./L7RuleListItem"
-import { Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { SearchField } from "lib/components/search_field"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
@@ -67,9 +67,9 @@ const L7RulesList = ({ props, loadbalancerID }) => {
   const l7Rules = filterItems(searchTerm, items)
   return useMemo(() => {
     return (
-      <React.Fragment>
+      <>
         {l7PolicyID && (
-          <React.Fragment>
+          <>
             {error ? (
               <div className="l7rules subtable multiple-subtable-right">
                 <ErrorPage
@@ -86,7 +86,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
                 </div>
 
                 {!selected && (
-                  <React.Fragment>
+                  <>
                     <div className="toolbar searchToolbar">
                       <SearchField
                         value={searchTerm}
@@ -109,7 +109,7 @@ const L7RulesList = ({ props, loadbalancerID }) => {
                         </SmartLink>
                       </div>
                     </div>
-                  </React.Fragment>
+                  </>
                 )}
 
                 <Table
@@ -129,16 +129,13 @@ const L7RulesList = ({ props, loadbalancerID }) => {
                         <div className="display-flex">
                           Type
                           <div className="margin-left">
-                            <OverlayTrigger
+                            <Tooltip
                               placement="top"
-                              overlay={
-                                <Tooltip id="defalult-pool-tooltip">
-                                  Sorted by Type ASC
-                                </Tooltip>
-                              }
+                              container="body"
+                              content="Sorted by Type ASC"
                             >
                               <i className="fa fa-sort-asc" />
-                            </OverlayTrigger>
+                            </Tooltip>
                           </div>
                           /Compare Type
                         </div>
@@ -177,9 +174,9 @@ const L7RulesList = ({ props, loadbalancerID }) => {
                 </Table>
               </div>
             )}
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }, [
     l7PolicyID,

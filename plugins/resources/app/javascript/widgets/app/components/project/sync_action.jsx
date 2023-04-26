@@ -38,26 +38,26 @@ export default class ProjectSyncAction extends React.Component {
     switch (this.props.syncStatus) {
       case "requested":
         msg = (
-          <React.Fragment>
+          <>
             <span className="spinner" />
             Syncing...
-          </React.Fragment>
+          </>
         )
         break
       case "started":
         msg = (
-          <React.Fragment>
+          <>
             <span className="spinner" />
             Sync in progress...
-          </React.Fragment>
+          </>
         )
         break
       case "reloading":
         msg = (
-          <React.Fragment>
+          <>
             <span className="spinner" />
             Reloading project...
-          </React.Fragment>
+          </>
         )
         break
       default:

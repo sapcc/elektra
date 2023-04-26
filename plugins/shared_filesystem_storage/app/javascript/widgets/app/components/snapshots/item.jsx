@@ -46,10 +46,10 @@ export default class SnapshotItem extends React.Component {
             {snapshot.name || snapshot.id}
           </Link>
           {snapshot.name && (
-            <React.Fragment>
+            <>
               <br />
               <span className="info-text">{snapshot.id}</span>
-            </React.Fragment>
+            </>
           )}
         </td>
         <td>

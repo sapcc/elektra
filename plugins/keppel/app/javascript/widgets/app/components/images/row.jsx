@@ -47,7 +47,7 @@ const renderLabel = (key, value) => {
   }
   //the labels have `white-space:nowrap` inside, so some extra whitespace is
   //required to allow long lines with lots of labels to break
-  return <React.Fragment>{label} </React.Fragment>
+  return <>{label} </>
 }
 
 export default class ImageRow extends React.Component {
@@ -112,11 +112,11 @@ export default class ImageRow extends React.Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         <tr>
           <td className="col-md-4">
             {tagName ? (
-              <React.Fragment>
+              <>
                 <div>
                   <TagName
                     name={tagName}
@@ -129,7 +129,7 @@ export default class ImageRow extends React.Component {
                     repositoryURL={this.props.repositoryURL}
                   />
                 </div>
-              </React.Fragment>
+              </>
             ) : (
               <Digest
                 digest={digest}
@@ -167,13 +167,13 @@ export default class ImageRow extends React.Component {
           {(this.props.canEdit || mediaTypeInfo.hasDetails) && (
             <td className="snug text-right text-nobreak">
               {this.state.isUntagging ? (
-                <React.Fragment>
+                <>
                   <span className="spinner" /> Deleting tag...
-                </React.Fragment>
+                </>
               ) : this.state.isDeleting ? (
-                <React.Fragment>
+                <>
                   <span className="spinner" /> Deleting image...
-                </React.Fragment>
+                </>
               ) : (
                 <div className="btn-group">
                   <button
@@ -225,7 +225,7 @@ export default class ImageRow extends React.Component {
             </td>
           </tr>
         ) : null}
-      </React.Fragment>
+      </>
     )
   }
 }

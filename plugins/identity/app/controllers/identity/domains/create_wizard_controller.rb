@@ -61,7 +61,7 @@ module Identity
               inquiry.requester.uid,
               "admin",
             )
-            render "identity/domains/create_wizard/create.js"
+            render "identity/domains/create_wizard/create", formats: :js
           else
             # there is no requiry -> current user is the creator of this
             # project. give current user all needed roles

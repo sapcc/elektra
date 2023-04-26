@@ -3,25 +3,10 @@
 import React, { useState, useEffect } from "react"
 import { createWidget } from "lib/widget"
 import { pluginAjaxHelper, scope } from "lib/ajax_helper"
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { policy } from "lib/policy"
 
 const ajaxHelper = pluginAjaxHelper("resources", { timeout: 120000 })
-
-const QuotaTooltip = (props) => {
-  let tooltip = <Tooltip id="quotaTooltip">Click to manage quotas</Tooltip>
-
-  return (
-    <OverlayTrigger
-      overlay={tooltip}
-      placement="top"
-      delayShow={300}
-      delayHide={150}
-    >
-      {props.children}
-    </OverlayTrigger>
-  )
-}
 
 const App = (props) => {
   const [usage, updateUsage] = useState([])
@@ -47,11 +32,11 @@ const App = (props) => {
   return (
     <div className="info-text info-clickable">
       <i className="monitoring-icon" />{" "}
-      <QuotaTooltip>
+      <Tooltip content="Click to manage quotas" placement="top">
         <a href={`/${scope.domain}/${scope.project}/resources/project`}>
           Remaining Quota: {usage.map((quota) => quota.label).join(", ")}
         </a>
-      </QuotaTooltip>
+      </Tooltip>
     </div>
   )
   // - if @quota_data and @quota_data.length>0

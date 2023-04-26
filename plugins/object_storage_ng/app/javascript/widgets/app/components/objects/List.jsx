@@ -360,7 +360,7 @@ const Objects = ({ objectStoreEndpoint }) => {
   }, [objects.items, searchTerm])
 
   return (
-    <React.Fragment>
+    <>
       <Route exact path="/containers/:name/objects/:objectPath?/new">
         <NewObject onCreated={handleFolderCreated} />
       </Route>
@@ -434,7 +434,7 @@ const Objects = ({ objectStoreEndpoint }) => {
           )}
         </>
       )}
-    </React.Fragment>
+    </>
   )
 }
 

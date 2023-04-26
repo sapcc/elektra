@@ -1,9 +1,9 @@
 import React from "react"
 
 const display = (msg) => (
-  <React.Fragment>
+  <>
     <span className="spinner" /> {msg}...
-  </React.Fragment>
+  </>
 )
 
 export default class AccountDeleter extends React.Component {

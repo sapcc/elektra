@@ -1,6 +1,6 @@
 // ***********Use React Hooks*************
 import React from "react"
-import { Popover, OverlayTrigger } from "react-bootstrap"
+import { Popover } from "lib/components/Overlay"
 import { useMemo, useState } from "react"
 
 const capitalize = (string) => string[0].toUpperCase() + string.slice(1)
@@ -88,16 +88,11 @@ const Form = ({ helpText, searchFor, onSubmit, isLoading }) => {
       <div className="form-group">
         {helpText && (
           <div className="has-feedback-help">
-            <OverlayTrigger
-              trigger="click"
-              placement="top"
-              rootClose
-              overlay={<Popover id="help">{helpText}</Popover>}
-            >
-              <button className="btn btn-link">
+            <Popover trigger="click" placement="top" content={helpText}>
+              <button type="button" className="btn btn-link">
                 <i className="fa fa-question-circle" />
               </button>
-            </OverlayTrigger>
+            </Popover>
           </div>
         )}
       </div>
@@ -126,7 +121,7 @@ const Pagination = ({
         {(page - 1) * limit + 1} - {page * limit}
       </span>
       {page > 1 && (
-        <React.Fragment>
+        <>
           |
           <button
             onClick={(e) => handleClick(e, page - 1)}
@@ -135,10 +130,10 @@ const Pagination = ({
           >
             Previous Page
           </button>
-        </React.Fragment>
+        </>
       )}
       {hasNext && (
-        <React.Fragment>
+        <>
           |
           <button
             onClick={(e) => handleClick(e, page + 1)}
@@ -147,10 +142,10 @@ const Pagination = ({
           >
             Next Page
           </button>
-        </React.Fragment>
+        </>
       )}
       {(page > 1 || hasNext) && all && (
-        <React.Fragment>
+        <>
           |
           <button
             onClick={(e) => handleClick(e, "all")}
@@ -159,7 +154,7 @@ const Pagination = ({
           >
             All
           </button>
-        </React.Fragment>
+        </>
       )}
     </div>
   )

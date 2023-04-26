@@ -83,7 +83,7 @@ const Show = () => {
                   <Row label="Name" value={item.name} />
                   <Row label="Project">
                     {cachedProjectsData[item.project_id] ? (
-                      <React.Fragment>
+                      <>
                         <a
                           href={`/_/${item.project_id}`}
                           target="_blank"
@@ -97,7 +97,7 @@ const Show = () => {
                         </a>
                         <br />
                         <span className="info-text">{item.project_id}</span>
-                      </React.Fragment>
+                      </>
                     ) : (
                       item.project_id
                     )}

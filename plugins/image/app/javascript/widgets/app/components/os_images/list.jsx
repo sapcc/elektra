@@ -1,8 +1,4 @@
-import { Link } from "react-router-dom"
-import { DefeatableLink } from "lib/components/defeatable_link"
-import { Popover, OverlayTrigger, Tooltip } from "react-bootstrap"
 import { TransitionGroup, CSSTransition } from "react-transition-group"
-import { FadeTransition } from "lib/components/transitions"
 import { policy } from "lib/policy"
 import { SearchField } from "lib/components/search_field"
 import Item from "./item"
@@ -88,7 +84,7 @@ export default class List extends React.Component {
                 input field will show all currently loaded items."
         />
         {this.state.visibilityFilters.length > 1 && ( // show filter checkboxes
-          <React.Fragment>
+          <>
             <span className="toolbar-input-divider"></span>
             <label>Show:</label>
             {this.state.visibilityFilters.map((name, index) => (
@@ -101,7 +97,7 @@ export default class List extends React.Component {
                 {name}
               </label>
             ))}
-          </React.Fragment>
+          </>
         )}
       </div>
     )

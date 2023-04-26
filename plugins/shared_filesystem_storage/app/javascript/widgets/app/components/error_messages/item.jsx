@@ -42,7 +42,7 @@ export default class ErrorMessageItem extends React.Component {
   render() {
     const { errorMessage } = this.props
     return (
-      <React.Fragment>
+      <>
         <tr>
           <td>
             <a
@@ -69,7 +69,7 @@ export default class ErrorMessageItem extends React.Component {
             <td colSpan="3">{this.detailsView()}</td>
           </tr>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

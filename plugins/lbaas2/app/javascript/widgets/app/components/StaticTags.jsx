@@ -5,7 +5,7 @@ import Log from "./shared/logger"
 const StaticTags = ({ tags, shouldPopover }) => {
   Log.debug("render tags")
   return (
-    <React.Fragment>
+    <>
       <div className="static-tags clearfix">
         {tags &&
           tags.map((tag, index) => (
@@ -20,7 +20,7 @@ const StaticTags = ({ tags, shouldPopover }) => {
             </div>
           ))}
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

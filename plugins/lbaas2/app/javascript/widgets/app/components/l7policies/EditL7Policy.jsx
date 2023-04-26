@@ -223,9 +223,9 @@ const EditL7Policy = (props) => {
     )
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             L7 Policy <b>{data.name}</b> ({data.id}) is being updated.
-          </React.Fragment>
+          </>
         )
         // fetch the lb again containing the new listener so it gets updated fast
         persistListener(loadbalancerID, listenerID).catch((error) => {})
@@ -293,7 +293,7 @@ const EditL7Policy = (props) => {
           />
         </Modal.Body>
       ) : (
-        <React.Fragment>
+        <>
           {l7policy.isLoading ? (
             <Modal.Body>
               <span className="spinner" />
@@ -466,7 +466,7 @@ const EditL7Policy = (props) => {
               </Modal.Footer>
             </Form>
           )}
-        </React.Fragment>
+        </>
       )}
     </Modal>
   )

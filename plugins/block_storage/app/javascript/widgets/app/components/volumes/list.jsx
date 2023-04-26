@@ -48,7 +48,7 @@ const VolumesList = ({
   }
 
   return (
-    <React.Fragment>
+    <>
       {(volumes.items.length > 5 || canCreate) && (
         <div className="toolbar toolbar-controlcenter">
           <Form
@@ -110,7 +110,7 @@ const VolumesList = ({
         </tbody>
       </table>
       <Pagination {...volumes} onPageRequest={handlePaginateClick} />
-    </React.Fragment>
+    </>
   )
 }
 export default VolumesList

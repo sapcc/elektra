@@ -84,12 +84,12 @@ const useL7Policy = () => {
   const removeL7Policy = (lbID, listenerID, l7policyID, l7policyName) => {
     return new Promise((handleSuccess, handleErrors) => {
       confirm(
-        <React.Fragment>
+        <>
           <p>Do you really want to delete following L7 Policy?</p>
           <p>
             {createNameTag(l7policyName)} <b>id:</b> {l7policyID}
           </p>
-        </React.Fragment>
+        </>
       )
         .then(() => {
           return deleteL7Policy(lbID, listenerID, l7policyID)

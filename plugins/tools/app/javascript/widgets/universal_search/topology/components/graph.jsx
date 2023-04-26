@@ -422,7 +422,7 @@ export class Graph extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <svg ref="svg" width={this.props.width} height={this.props.height}>
           <g ref="graph" />
         </svg>
@@ -431,7 +431,7 @@ export class Graph extends React.Component {
           ref="tooltip"
           style={{ display: "none" }}
         ></div>
-      </React.Fragment>
+      </>
     )
   }
 }

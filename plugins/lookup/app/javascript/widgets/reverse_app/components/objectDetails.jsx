@@ -78,7 +78,7 @@ class ObjectDetails extends React.Component {
                   <span className="text-danger">{project.error.error}</span>
                 )}
                 {project.data && (
-                  <React.Fragment>
+                  <>
                     {project.data.name}
                     {project.data.id && (
                       <small className="text-muted">
@@ -86,7 +86,7 @@ class ObjectDetails extends React.Component {
                         ( {project.data.id} )
                       </small>
                     )}
-                  </React.Fragment>
+                  </>
                 )}
               </td>
             </tr>
@@ -98,10 +98,10 @@ class ObjectDetails extends React.Component {
                   <span className="text-danger">{domain.error.error}</span>
                 )}
                 {domain.data && (
-                  <React.Fragment>
+                  <>
                     {domain.data.name}
                     <small className="text-muted"> ( {domain.data.id} )</small>
-                  </React.Fragment>
+                  </>
                 )}
               </td>
             </tr>

@@ -225,7 +225,7 @@ module Identity
         if service_name == "resource_management"
           next unless services.available?(:resources)
         elsif service_name == "sharding"
-          puts "INFO: sharding is no service"
+          logger.info "sharding is no service"
         else
           next unless services.available?(service_name.to_sym)
         end

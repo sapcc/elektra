@@ -22,7 +22,6 @@ module.exports = {
     "^plugins/(.*)$": "<rootDir>/plugins/$1",
     "^config/(.*)$": "<rootDir>/config/$1",
   },
-  setupFilesAfterEnv: ["<rootDir>/app/javascript/test/support/setupEnzyme.js"],
   testEnvironment: "jsdom",
   // include juno-ui-components into the transform process
   transformIgnorePatterns: ["node_modules/(?!juno-ui-components)"],

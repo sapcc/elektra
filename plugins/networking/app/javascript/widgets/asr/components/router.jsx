@@ -1,4 +1,4 @@
-import ReactJson from "react-json-view"
+import { JsonViewer } from "juno-ui-components/build/JsonViewer"
 import { syncRouter } from "../actions"
 import React from "react"
 
@@ -9,7 +9,7 @@ const Router = ({ routerId, isFetching, data, error }) => {
     return (
       <div className="row">
         <div className="col-sm-10">
-          <ReactJson src={data} collapsed={3} />
+          <JsonViewer data={data} expanded={3} />
         </div>
         <div className="col-sm-2">
           {data.diffs && Object.keys(data.diffs).length > 0 && (

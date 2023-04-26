@@ -1,11 +1,11 @@
 import React from "react"
-import renderer from "react-test-renderer"
+import { render } from "@testing-library/react"
+import { screen } from "@testing-library/dom"
 import List from "./List"
 
-describe("router", () => {
-  test("routes", () => {
-    const component = renderer.create(<List data={{}} />)
-    let tree = component.toJSON()
-    expect(tree).toMatchSnapshot()
+describe("object_storage", () => {
+  test("capabilities", async () => {
+    await render(<List data={{}} />)
+    expect(screen.getByText("Capabilities")).toBeDefined()
   })
 })

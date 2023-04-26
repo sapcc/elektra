@@ -41,7 +41,7 @@ const AvailabilityZoneCategory = ({
   }
 
   return (
-    <React.Fragment>
+    <>
       <h3>{t(categoryName)}</h3>
       <div className="row">
         <div className="col-md-2"> </div>
@@ -58,7 +58,7 @@ const AvailabilityZoneCategory = ({
           {...forwardProps}
         />
       ))}
-    </React.Fragment>
+    </>
   )
 }
 

@@ -92,11 +92,11 @@ const AttachFIP = (props) => {
     return attachFIP(loadbalancerID, values)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Floating IP{" "}
             <b>{data.loadbalancer.floating_ip.floating_ip_address}</b> (
             {data.loadbalancer.floating_ip.id}) is being attached.
-          </React.Fragment>
+          </>
         )
         close()
       })

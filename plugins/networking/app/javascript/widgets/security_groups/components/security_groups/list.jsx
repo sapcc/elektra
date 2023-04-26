@@ -58,7 +58,7 @@ const List = ({ loadSecurityGroupsOnce, securityGroups, handleDelete }) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <div className="toolbar">
         {securityGroups.items && securityGroups.items.length >= 10 && (
           <SearchField
@@ -121,7 +121,7 @@ const List = ({ loadSecurityGroupsOnce, securityGroups, handleDelete }) => {
           isFetching={this.props.securityGroups.isFetching}
           onLoadNext={this.props.securityGroups.loadNext}/>
         */}
-    </React.Fragment>
+    </>
   )
 }
 

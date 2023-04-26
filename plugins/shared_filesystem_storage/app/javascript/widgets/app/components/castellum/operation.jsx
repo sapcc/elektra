@@ -95,7 +95,7 @@ export const CastellumOperation = ({
   } = operation
 
   return (
-    <React.Fragment>
+    <>
       <tr>
         <td className="col-md-4">
           {share ? (
@@ -157,6 +157,6 @@ export const CastellumOperation = ({
           </td>
         </tr>
       )}
-    </React.Fragment>
+    </>
   )
 }

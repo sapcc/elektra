@@ -83,12 +83,12 @@ const useListener = () => {
   const removeListener = (lbID, listenerID, listenerName) => {
     return new Promise((handleSuccess, handleErrors) => {
       confirm(
-        <React.Fragment>
+        <>
           <p>Do you really want to delete following Listener?</p>
           <p>
             {createNameTag(listenerName)} <b>id:</b> {listenerID}
           </p>
-        </React.Fragment>
+        </>
       )
         .then(() => {
           deleteListener(lbID, listenerID)

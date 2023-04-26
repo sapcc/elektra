@@ -1,10 +1,5 @@
 import React from "react"
-import { Link } from "react-router-dom"
-import { DefeatableLink } from "lib/components/defeatable_link"
-import { Popover, OverlayTrigger, Tooltip } from "react-bootstrap"
-import { TransitionGroup, CSSTransition } from "react-transition-group"
-import { FadeTransition } from "lib/components/transitions"
-import { policy } from "lib/policy"
+import { CSSTransition } from "react-transition-group"
 import { SearchField } from "lib/components/search_field"
 import Item from "./item"
 import { AjaxPaginate } from "lib/components/ajax_paginate"
@@ -52,7 +47,7 @@ export default class List extends React.Component {
     const items = this.filterItems()
 
     return (
-      <React.Fragment>
+      <>
         {this.props.snapshots.items.length > 5 && (
           <div className="toolbar">
             <SearchField
@@ -107,7 +102,7 @@ export default class List extends React.Component {
           isFetching={isFetching}
           onLoadNext={this.props.loadNext}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

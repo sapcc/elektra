@@ -90,7 +90,7 @@ export default class ImageMembersModal extends React.Component {
               )}
             </div>
           ) : (
-            <React.Fragment>
+            <>
               {this.state.error && <FormErrors errors={this.state.error} />}
               {!imageMembers || imageMembers.isFetching ? (
                 <div>
@@ -165,7 +165,7 @@ export default class ImageMembersModal extends React.Component {
                   </tbody>
                 </table>
               )}
-            </React.Fragment>
+            </>
           )}
         </Modal.Body>
         <Modal.Footer>

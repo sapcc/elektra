@@ -1,4 +1,4 @@
-import { OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Tooltip } from "lib/components/Overlay"
 import { Link } from "react-router-dom"
 import React from "react"
 
@@ -78,20 +78,11 @@ export default class AccountRow extends React.Component {
       const infoText = replication
         ? "No new images will be replicated while the account is in maintenance. Replicated images can still be pulled."
         : "No new images may be pushed while the account is in maintenance. Existing images can still be pulled."
-      const tooltip = (
-        <Tooltip id={`tooltip-in-maintenance-${accountName}`}>
-          {infoText}
-        </Tooltip>
-      )
+
       statusDisplay = (
-        <OverlayTrigger
-          overlay={tooltip}
-          placement="top"
-          delayShow={300}
-          delayHide={150}
-        >
+        <Tooltip content={infoText} placement="top">
           <div className="text-warning">In maintenance</div>
-        </OverlayTrigger>
+        </Tooltip>
       )
     }
 
@@ -159,7 +150,7 @@ export default class AccountRow extends React.Component {
                 </li>
               )}
               {this.props.isAdmin && (
-                <React.Fragment>
+                <>
                   <li className="divider"></li>
                   {isEditable &&
                     replication &&
@@ -188,7 +179,7 @@ export default class AccountRow extends React.Component {
                       Delete
                     </a>
                   </li>
-                </React.Fragment>
+                </>
               )}
             </ul>
           </div>

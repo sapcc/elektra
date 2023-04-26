@@ -94,12 +94,12 @@ const useHealthMonitor = () => {
   ) => {
     return new Promise((handleSuccess, handleErrors) => {
       confirm(
-        <React.Fragment>
+        <>
           <p>Do you really want to delete following Health Monitor?</p>
           <p>
             {createNameTag(healthmonitorName)} <b>id:</b> {healthmonitorID}
           </p>
-        </React.Fragment>
+        </>
       )
         .then(() => {
           return deleteHealthmonitor(lbID, poolID, healthmonitorID)

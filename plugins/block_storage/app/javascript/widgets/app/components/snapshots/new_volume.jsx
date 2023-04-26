@@ -10,11 +10,11 @@ const FormBody = ({ values, snapshot, volume }) => (
     <Form.ElementHorizontal label="Source Snapshot" name="snapshot_id" required>
       <p className="form-control-static">
         {snapshot ? (
-          <React.Fragment>
+          <>
             {snapshot.name}
             <br />
             <span className="info-text">ID: {snapshot.id}</span>
-          </React.Fragment>
+          </>
         ) : (
           values.snapshot_id
         )}
@@ -23,13 +23,13 @@ const FormBody = ({ values, snapshot, volume }) => (
             <br />
             Source Volume:&nbsp;
             {volume ? (
-              <React.Fragment>
+              <>
                 {volume.name}
                 <br />
                 Availability Zone: {volume.availability_zone}
                 <br />
                 Size: {volume.size} GB
-              </React.Fragment>
+              </>
             ) : (
               snapshot && snapshot.volume_id
             )}

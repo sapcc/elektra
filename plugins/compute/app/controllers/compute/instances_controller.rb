@@ -984,7 +984,9 @@ module Compute
         @terminate = action == "terminate"
         load_security_groups(@instance)
       end
-      render template: "compute/instances/update_item.js" if with_rendering
+      if with_rendering
+        render template: "compute/instances/update_item", formats: :js
+      end
     end
 
     def target_state_for_action(action)

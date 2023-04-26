@@ -235,9 +235,9 @@ const NewListener = (props) => {
     return createListener(lbID, newValues)
       .then((data) => {
         addNotice(
-          <React.Fragment>
+          <>
             Listener <b>{data.name}</b> ({data.id}) is being created.
-          </React.Fragment>
+          </>
         )
         // fetch the lb again containing the new listener so it gets updated fast
         persistLoadbalancer(lbID).catch((error) => {})

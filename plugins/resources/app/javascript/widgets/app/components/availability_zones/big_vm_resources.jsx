@@ -83,7 +83,7 @@ const AvailableBigVmResources = () => {
   // flavors  |
   // ...
   return (
-    <React.Fragment>
+    <>
       <h3>Available HANA VM resources</h3>
       {loading ? (
         <span>
@@ -137,7 +137,7 @@ const AvailableBigVmResources = () => {
           </React.Fragment>
         ))
       )}
-    </React.Fragment>
+    </>
   )
 }
 

@@ -6,7 +6,7 @@ import LiveSearchModal from "../containers/live_search"
 import ShowItemModal from "../containers/show"
 
 const Routes = () => (
-  <React.Fragment>
+  <>
     <Route path="/universal-search" component={Home} />
     <Route exact path="/universal-search/:id/show" component={ShowItemModal} />
     <Route path="/universal-search/live" component={LiveSearchModal} />
@@ -15,7 +15,7 @@ const Routes = () => (
       path="/project-role-assignments/:id/show"
       component={ShowItemModal}
     />
-  </React.Fragment>
+  </>
 )
 
 export default Routes

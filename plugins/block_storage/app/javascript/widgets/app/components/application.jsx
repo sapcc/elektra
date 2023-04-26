@@ -50,14 +50,14 @@ const BlockStorageApp = (props) => {
         />
 
         {policy.isAllowed("block_storage:volume_get") && (
-          <React.Fragment>
+          <>
             <Route exact path="/volumes/:id/show" component={ShowVolumeModal} />
             <Route
               exact
               path="/snapshots/volumes/:id/show"
               component={ShowVolumeModal}
             />
-          </React.Fragment>
+          </>
         )}
         {policy.isAllowed("image:image_create") && (
           <Route
@@ -69,10 +69,10 @@ const BlockStorageApp = (props) => {
         {policy.isAllowed("block_storage:volume_create", {
           target: { scoped_domain_name: scope.domain },
         }) && (
-          <React.Fragment>
+          <>
             <Route exact path="/volumes/new" component={NewVolumeModal} />
             <Route exact path="/volumes/:id/new" component={CloneVolumeModal} />
-          </React.Fragment>
+          </>
         )}
         {policy.isAllowed("block_storage:snapshot_create", {
           target: { scoped_domain_name: scope.domain },

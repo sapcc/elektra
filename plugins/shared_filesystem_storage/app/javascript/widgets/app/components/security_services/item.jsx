@@ -10,10 +10,10 @@ const Item = ({ securityService, handleDelete }) => (
         {securityService.name || securityService.id}
       </Link>
       {securityService.name && (
-        <React.Fragment>
+        <>
           <br />
           <span className="info-text">{securityService.id}</span>
-        </React.Fragment>
+        </>
       )}
     </td>
     <td>{securityService.type}</td>
