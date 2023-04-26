@@ -239,9 +239,15 @@ module BlockStorage
     end
 
     def images
+      # byebug
       # render json: { images: cloud_admin.image.images }
       render json: {
-               images: services.image.all_images.sort_by { |image| image.name },
+               images:
+                 services
+                   .image
+                   .all_images
+                   .select { |i| !i.name.nil? }
+                   .sort_by { |image| image.name || "" },
              }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
