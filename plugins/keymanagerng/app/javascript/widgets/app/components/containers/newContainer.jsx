@@ -1,13 +1,10 @@
 import React, { useState, useCallback, useEffect } from "react"
 import {
-  Modal,
   Form,
   TextInputRow,
   SelectRow,
   SelectOption,
   Label,
-  Container,
-  Message,
   Panel,
   PanelBody,
   PanelFooter,
@@ -62,13 +59,12 @@ const formValidation = (formData) => {
 const NewContainer = () => {
   const location = useLocation()
   const history = useHistory()
-  const [show, setShow] = useState(true)
   const [containerType, setContainerType] = useState("generic")
   const [formData, setFormData] = useState({ type: "generic" })
   const [validationState, setValidationState] = useState({})
   const [secret_refs, setSecret_refs] = useState([])
   const [secretsForSelect, setSecretsForSelect] = useState([])
-  const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const [isSavePressed, setIsSavePressed] = useState(false)
 
   const [certContainerCertificates, setCertContainerCertificates] = useState([])
   const [certContainerPrivatekeys, setCertContainerPrivatekeys] = useState(null)
@@ -98,7 +94,7 @@ const NewContainer = () => {
   )
 
   const onConfirm = () => {
-    console.log("new container formData: ", formData)
+    setIsSavePressed(true)
     const errors = formValidation(formData)
     if (Object.keys(errors).length > 0) {
       setValidationState(errors)
@@ -110,12 +106,12 @@ const NewContainer = () => {
         {
           onSuccess: (data) => {
             const containerUuid = getContainerUuid(data)
-            close()
             queryClient.invalidateQueries("containers")
             addMessage({
               variant: "success",
               text: `The container ${containerUuid} is successfully created.`,
             })
+            close()
           },
           onError: (error) => {
             addMessage({
@@ -128,21 +124,11 @@ const NewContainer = () => {
     }
   }
 
-  const secrets = useQuery(["secrets", { limit: 500, offset: 0 }], getSecrets, {
-    // onSuccess: (data) => {
-    //   const a = []
-    //   const secrets = data?.secrets
-    //   secrets.map((secret) => {
-    //     a.push({
-    //       label: `${secret.name} (${secret.secret_type})`,
-    //       value: secret.secret_ref,
-    //       secret_ref: { name: secret.name, secret_ref: secret.secret_ref },
-    //       type: secret.secret_type,
-    //     })
-    //   })
-    //   setSecretsForSelect(a)
-    // },
-  })
+  const secrets = useQuery(
+    ["secrets", { limit: 500, offset: 0 }],
+    getSecrets,
+    {}
+  )
 
   useEffect(() => {
     const a = []
@@ -199,7 +185,6 @@ const NewContainer = () => {
   }, [secretsForSelect])
 
   const close = useCallback(() => {
-    setShow(false)
     setShowNewContainer(false)
     history.replace(location.pathname.replace("/new", "")), [history, location]
     resetMessages()
@@ -214,6 +199,14 @@ const NewContainer = () => {
     container: (base) => ({
       ...base,
       flex: 1,
+    }),
+    control: (baseStyles, state) => ({
+      ...baseStyles,
+      borderColor:
+        (validationState?.secret_refs || certContainerPrivatekeys) &&
+        isSavePressed
+          ? "red"
+          : "grey",
     }),
     menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
     menu: (provided) => ({ ...provided, zIndex: 9999 }),
