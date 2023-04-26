@@ -1,5 +1,5 @@
 import { Graph } from "./graph"
-import ReactJson from "react-json-view"
+import { JsonViewer } from "juno-ui-components/build/JsonViewer"
 import { Popover, Modal, Button } from "react-bootstrap"
 import React from "react"
 
@@ -174,7 +174,7 @@ export default class App extends React.Component {
               </button>
             </h3>
             <div className="popover-content">
-              <ReactJson src={this.state.details.node.payload} collapsed={1} />
+              <JsonViewer data={this.state.details.node.payload} expanded={1} />
             </div>
           </div>
         )}

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import ReactJson from "react-json-view"
+import { JsonViewer } from "juno-ui-components/build/JsonViewer"
 import {
   projectUrl,
   objectUrl,
@@ -109,7 +109,7 @@ export default class ShowSearchObjectModal extends React.Component {
               mountOnEnter
             >
               <Tab eventKey="data" title="Data">
-                <ReactJson src={item.payload} collapsed={1} />
+                <JsonViewer data={item.payload} expanded={1} />
               </Tab>
               {isProject &&
                 policy.isAllowed("tools:universal_search_role_assignments") && (

@@ -1,7 +1,7 @@
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import { PrettyDate } from "lib/components/pretty_date"
 import { PrettySize } from "lib/components/pretty_size"
-import ReactJson from "react-json-view"
+import { JsonViewer } from "juno-ui-components/build/JsonViewer"
 import { ImageIcon } from "./icon"
 import React from "react"
 
@@ -164,7 +164,7 @@ const ShowModal = ({ activeTab, image, loadImage, ...props }) => {
               </table>
             </Tab>
             <Tab eventKey="raw" title="RAW">
-              <ReactJson src={image} />
+              <JsonViewer data={image} theme="light" showRoot />
             </Tab>
           </Tabs>
         )}

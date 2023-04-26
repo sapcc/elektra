@@ -193,7 +193,9 @@ describe("shared object storage", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage-ng/`)
     cy.contains("[data-test=page-title]", "Object Storage")
     cy.contains("a", "elektra-test").click()
-    cy.contains("a", "big file").click()
+    // force: true prevents this error:
+    // "This DOM element likely became detached somewhere between the previous and current command."
+    cy.contains("a", "big file").click({ force: true })
     cy.contains("Instructions for downloading large file")
   })
 

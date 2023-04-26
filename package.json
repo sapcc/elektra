@@ -50,7 +50,6 @@
     "react-clipboard.js": "^2.0.16",
     "react-datetime": "*",
     "react-dom": "^18.2.0",
-    "react-json-view": "^1.16.6",
     "react-jss": "^10.9.0",
     "react-native-dotenv": "^2.3.0",
     "react-popper": "^2.3.0",
