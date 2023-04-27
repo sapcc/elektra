@@ -3,6 +3,7 @@ module.exports = {
   setupFiles: ["./setupJestMock.js"],
   verbose: true,
   testRegex: "\\.test\\.jsx?$",
+  modulePathIgnorePatterns: ["vendor"],
   transform: {
     "^.+\\.jsx?$": [
       "esbuild-jest",
