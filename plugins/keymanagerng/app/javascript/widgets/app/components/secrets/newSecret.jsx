@@ -138,14 +138,16 @@ const NewSecret = () => {
   const [formData, setFormData] = useState({})
   const [validationState, setValidationState] = useState({})
   const [payloadContentTypeOptions, setPayloadContentTypeOptions] = useState([])
-  
+
   const queryClient = useQueryClient()
 
   const { isLoading, isError, error, data, isSuccess, mutate } = useMutation(
     ({ formState }) => createSecret(formState)
   )
   const addMessage = useMessageStore((state) => state.addMessage)
-  const setShowNewSecret = useStore(useCallback((state) => state.setShowNewSecret))
+  const setShowNewSecret = useStore(
+    useCallback((state) => state.setShowNewSecret)
+  )
   const resetMessages = useMessageStore((state) => state.resetMessages)
 
   const onConfirm = () => {
@@ -172,7 +174,7 @@ const NewSecret = () => {
               variant: "error",
               text: error.data.error,
             })
-          }
+          },
         }
       )
     }
@@ -185,8 +187,7 @@ const NewSecret = () => {
     resetMessages()
   }, [])
 
-  const onSecretTypeChange = (oEvent) => {
-    const secretType = oEvent.target.value
+  const onSecretTypeChange = (secretType) => {
     let options = { secret_type: secretType }
 
     if (secretType === "symmetric") {
@@ -205,13 +206,14 @@ const NewSecret = () => {
     <Panel opened={true} onClose={close} heading="New Secret" size="large">
       <PanelBody
         footer={
-        <PanelFooter>
-          <Button label="Save" onClick={onConfirm}  variant="primary" />
-          <Button label="Cancel" onClick={close} />
+          <PanelFooter>
+            <Button label="Save" onClick={onConfirm} variant="primary" />
+            <Button label="Cancel" onClick={close} />
           </PanelFooter>
-        }>
+        }
+      >
         <Form className="form form-horizontal">
-          <Messages/>
+          <Messages />
           <TextInputRow
             label="Name"
             name="name"
@@ -288,7 +290,7 @@ const NewSecret = () => {
           <SelectRow
             label="Secret Type"
             name="secretType"
-            onChange={onSecretTypeChange}
+            onValueChange={onSecretTypeChange}
             helptext={validationState?.secret_type}
             invalid={validationState?.secret_type ? true : false}
             required
@@ -315,10 +317,10 @@ const NewSecret = () => {
           <SelectRow
             label="Payload Content Type"
             name="payloadContentType"
-            onChange={(oEvent) => {
+            onValueChange={(value) => {
               setFormData({
                 ...formData,
-                payload_content_type: oEvent.target.value,
+                payload_content_type: value,
               })
             }}
             helptext={validationState?.payload_content_type}

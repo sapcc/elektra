@@ -131,18 +131,18 @@ const NewContainer = () => {
   )
 
   useEffect(() => {
-    const a = []
-    const b = secrets.data?.secrets
-    if (!b) return
-    b.map((secret) => {
-      a.push({
+    const secretsOfSelect = []
+    const fetchedSecrets = secrets.data?.secrets
+    if (!fetchedSecrets) return
+    fetchedSecrets.map((secret) => {
+      secretsOfSelect.push({
         label: `${secret.name} (${secret.secret_type})`,
         value: secret.secret_ref,
         secret_ref: { name: secret.name, secret_ref: secret.secret_ref },
         type: secret.secret_type,
       })
     })
-    setSecretsForSelect(a)
+    setSecretsForSelect(secretsOfSelect)
   }, [secrets.data])
 
   useEffect(() => {
@@ -195,23 +195,24 @@ const NewContainer = () => {
     [history, location]
   )
 
-  const styles = {
+  const commonCreatableStyles = {
     container: (base) => ({
       ...base,
       flex: 1,
-    }),
-    control: (baseStyles, state) => ({
-      ...baseStyles,
-      borderColor:
-        (validationState?.secret_refs || certContainerPrivatekeys) &&
-        isSavePressed
-          ? "red"
-          : "grey",
     }),
     menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
     menu: (provided) => ({ ...provided, zIndex: 9999 }),
   }
 
+  const invalidateReactSelect = (value) => {
+    return {
+      ...commonCreatableStyles,
+      control: (baseStyles, state) => ({
+        ...baseStyles,
+        borderColor: !value && isSavePressed ? "red" : "grey",
+      }),
+    }
+  }
   const onSecretsChange = (props) => {
     if (props) {
       props?.map((prop) => {
@@ -226,6 +227,7 @@ const NewContainer = () => {
         })
       })
       setFormData({ ...formData, secret_refs: secret_refs })
+      setSecret_refs(secret_refs)
     }
   }
 
@@ -243,6 +245,7 @@ const NewContainer = () => {
         })
       })
       setFormData({ ...formData, secret_refs: secret_refs })
+      setSecret_refs(secret_refs)
     }
   }
 
@@ -260,6 +263,7 @@ const NewContainer = () => {
         })
       })
       setFormData({ ...formData, secret_refs: secret_refs })
+      setSecret_refs(secret_refs)
     }
   }
   const onPublicKeyChange = (props) => {
@@ -276,6 +280,7 @@ const NewContainer = () => {
         })
       })
       setFormData({ ...formData, secret_refs: secret_refs })
+      setSecret_refs(secret_refs)
     }
   }
   const onPrivateKeyPassphraseChange = (props) => {
@@ -292,6 +297,7 @@ const NewContainer = () => {
         })
       })
       setFormData({ ...formData, secret_refs: secret_refs })
+      setSecret_refs(secret_refs)
     }
   }
   const onIntermediatesChange = (props) => {
@@ -308,6 +314,7 @@ const NewContainer = () => {
         })
       })
       setFormData({ ...formData, secret_refs: secret_refs })
+      setSecret_refs(secret_refs)
     }
   }
 
@@ -319,6 +326,8 @@ const NewContainer = () => {
   useEffect(() => {
     setShowNewContainer(true)
   }, [])
+
+  console.log("certContainerCertificates: ", certContainerCertificates)
 
   return (
     <Panel
@@ -352,20 +361,12 @@ const NewContainer = () => {
             className="tw-mb-6"
             defaultValue="generic"
             label="Container Type"
-            onChange={(oEvent) => {
-              setContainerType(oEvent.target.value)
-              setCertContainerCertificates(null)
+            onValueChange={(value) => {
+              setContainerType(value)
               setSecret_refs([])
-              setCertContainerIntermediates(null)
-              setCertContainerPrivatekeyPassphrases(null)
-              setCertContainerPrivatekeys(null)
-              setGenContainerSecrets(null)
-              setRsaContainerPrivatekeyPassphrases(null)
-              setRsaContainerPrivatekeys(null)
-              setRsaContainerPublickeys(null)
               setValidationState({})
 
-              setFormData({ ...formData, type: oEvent.target.value })
+              setFormData({ ...formData, type: value })
             }}
             invalid={validationState?.type ? true : false}
             helptext={validationState?.type}
@@ -390,11 +391,6 @@ const NewContainer = () => {
                   ? "An RSA container is used for storing RSA public keys, private keys, and private key pass phrases"
                   : ""}
               </div>
-              {/* {validationState?.secret_refs && (
-              <Container py px={false}>
-                <Message variant="error" text={validationState?.secret_refs} />
-              </Container>
-            )} */}
               {containerType === "certificate" && (
                 <>
                   <div className="tw-mt-6" />
@@ -412,8 +408,12 @@ const NewContainer = () => {
                     name="cert_container_type_certificates"
                     onChange={onCertificatesChange}
                     options={certContainerCertificates}
-                    styles={styles}
+                    styles={invalidateReactSelect(certContainerCertificates)}
                   />
+                  {!certContainerCertificates &&
+                    !validationState?.secret_refs(
+                      <div>{validationState?.secret_refs}</div>
+                    )}
                   <Label text="Private key" />
                   <CreatableSelect
                     className="basic-single"
@@ -427,7 +427,7 @@ const NewContainer = () => {
                     isSearchable
                     isClearable
                     isMulti
-                    styles={styles}
+                    styles={commonCreatableStyles}
                   />
                   <Label text="Private key passphrase" />
                   <CreatableSelect
@@ -442,7 +442,7 @@ const NewContainer = () => {
                     isSearchable
                     isClearable
                     isMulti
-                    styles={styles}
+                    styles={commonCreatableStyles}
                   />
                   <Label text="Intermediates" />
                   <CreatableSelect
@@ -457,7 +457,7 @@ const NewContainer = () => {
                     isSearchable
                     isClearable
                     isMulti
-                    styles={styles}
+                    styles={commonCreatableStyles}
                   />
                 </>
               )}
@@ -476,7 +476,7 @@ const NewContainer = () => {
                     isLoading={secrets?.isLoading}
                     options={genContainerSecrets}
                     onChange={onSecretsChange}
-                    styles={styles}
+                    styles={invalidateReactSelect(genContainerSecrets)}
                     clearValue={onClearValue}
                   />
                 </>
@@ -497,7 +497,7 @@ const NewContainer = () => {
                     isSearchable
                     isClearable
                     isMulti
-                    styles={styles}
+                    styles={invalidateReactSelect(rsaContainerPrivatekeys)}
                   />
                   <Label text="Private key passphrase" required />
                   <CreatableSelect
@@ -512,7 +512,9 @@ const NewContainer = () => {
                     isSearchable
                     isClearable
                     isMulti
-                    styles={styles}
+                    styles={invalidateReactSelect(
+                      rsaContainerPrivatekeyPassphrases
+                    )}
                   />
                   <Label text="Public key" required />
                   <CreatableSelect
@@ -527,7 +529,7 @@ const NewContainer = () => {
                     isSearchable
                     isClearable
                     isMulti
-                    styles={styles}
+                    styles={invalidateReactSelect(rsaContainerPublickeys)}
                   />
                 </>
               )}
