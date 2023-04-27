@@ -5521,9 +5521,21 @@ jsx-to-string@^1.4.0:
     json-stringify-pretty-compact "^1.0.1"
     react "^0.14.0"
 
+<<<<<<< HEAD
 "juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.5.6/package.tgz":
   version "1.5.6"
   resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.5.6/package.tgz#b48e714a73c6e5ef686aa1f7a6e5fa9adc7fd51a"
+=======
+<<<<<<< Updated upstream
+"juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@latest/package.tgz":
+  version "1.2.10"
+  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@latest/package.tgz#729475cd283111c70b711843b88ad33e1f24e598"
+=======
+"juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.5.7/package.tgz":
+  version "1.5.7"
+  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.5.7/package.tgz#f65a7a14a89c2632c37ee1a35c6180001d378a00"
+>>>>>>> Stashed changes
+>>>>>>> 2a09b8650 (update juno-ui-components to 1.5.7)
 
 keycode@^2.2.0:
   version "2.2.1"
