@@ -136,43 +136,20 @@ const NewContainerForm = ({onCloseForm}) => {
     setSecretsForSelect(secretsOfSelect)
   }, [secrets.data])
 
+  const filterSecrets = (secretType) => {
+    return secretsForSelect.filter((secret) => {
+      return secret.type == secretType
+    })
+  }
   useEffect(() => {
-    setCertContainerCertificates(
-      secretsForSelect.filter((secret) => {
-        return secret.type == "certificate"
-      })
-    )
-    setCertContainerPrivatekeys(
-      secretsForSelect.filter((secret) => {
-        return secret.type == "private"
-      })
-    )
-    setCertContainerPrivatekeyPassphrases(
-      secretsForSelect.filter((secret) => {
-        return secret.type == "passphrase"
-      })
-    )
-    setCertContainerIntermediates(
-      secretsForSelect.filter((secret) => {
-        return secret.type == "certificate"
-      })
-    )
+    setCertContainerCertificates(filterSecrets("certificate"))
+    setCertContainerPrivatekeys(filterSecrets("private"))
+    setCertContainerPrivatekeyPassphrases(filterSecrets("passphrase"))
+    setCertContainerIntermediates(filterSecrets("certificate"))
     setGenContainerSecrets(secretsForSelect)
-    setRsaContainerPrivatekeys(
-      secretsForSelect.filter((secret) => {
-        return secret.type == "private"
-      })
-    )
-    setRsaContainerPrivatekeyPassphrases(
-      secretsForSelect.filter((secret) => {
-        return secret.type == "passphrase"
-      })
-    )
-    setRsaContainerPublickeys(
-      secretsForSelect.filter((secret) => {
-        return secret.type == "public"
-      })
-    )
+    setRsaContainerPrivatekeys(filterSecrets("private"))
+    setRsaContainerPrivatekeyPassphrases(filterSecrets("passphrase"))
+    setRsaContainerPublickeys(filterSecrets("public"))
   }, [secretsForSelect])
 
 
@@ -194,7 +171,7 @@ const NewContainerForm = ({onCloseForm}) => {
       }),
     }
   }
-  const onSecretsChange = (props) => {
+  const updateSecretRefs = (props, secretRefName) => {
     if (props) {
       props?.map((prop) => {
         if (secret_refs) {
@@ -203,100 +180,33 @@ const NewContainerForm = ({onCloseForm}) => {
           }
         }
         secret_refs.push({
-          name: prop.secret_ref.name,
+          name: secretRefName ? secretRefName : prop.secret_ref.name,
           secret_ref: prop.secret_ref.secret_ref,
         })
       })
       setFormData({ ...formData, secret_refs: secret_refs })
       setSecret_refs(secret_refs)
     }
+  }
+  
+  const onSecretsChange = (props, actionType) => {
+    updateSecretRefs(props)
   }
 
   const onCertificatesChange = (props) => {
-    if (props) {
-      props?.map((prop) => {
-        if (secret_refs) {
-          for (let i = 0; i < secret_refs.length; i++) {
-            if (secret_refs[i].secret_ref === prop.secret_ref.secret_ref) return
-          }
-        }
-        secret_refs.push({
-          name: "certificate",
-          secret_ref: prop.secret_ref.secret_ref,
-        })
-      })
-      setFormData({ ...formData, secret_refs: secret_refs })
-      setSecret_refs(secret_refs)
-    }
+    updateSecretRefs(props, "certificate")
   }
-
   const onPrivateKeyChange = (props) => {
-    if (props) {
-      props?.map((prop) => {
-        if (secret_refs) {
-          for (let i = 0; i < secret_refs.length; i++) {
-            if (secret_refs[i].secret_ref === prop.secret_ref.secret_ref) return
-          }
-        }
-        secret_refs.push({
-          name: "private_key",
-          secret_ref: prop.secret_ref.secret_ref,
-        })
-      })
-      setFormData({ ...formData, secret_refs: secret_refs })
-      setSecret_refs(secret_refs)
-    }
+    updateSecretRefs(props, "private_key")
   }
   const onPublicKeyChange = (props) => {
-    if (props) {
-      props?.map((prop) => {
-        if (secret_refs) {
-          for (let i = 0; i < secret_refs.length; i++) {
-            if (secret_refs[i].secret_ref === prop.secret_ref.secret_ref) return
-          }
-        }
-        secret_refs.push({
-          name: "public_key",
-          secret_ref: prop.secret_ref.secret_ref,
-        })
-      })
-      setFormData({ ...formData, secret_refs: secret_refs })
-      setSecret_refs(secret_refs)
-    }
+    updateSecretRefs(props, "public_key")
   }
   const onPrivateKeyPassphraseChange = (props) => {
-    if (props) {
-      props?.map((prop) => {
-        if (secret_refs) {
-          for (let i = 0; i < secret_refs.length; i++) {
-            if (secret_refs[i].secret_ref === prop.secret_ref.secret_ref) return
-          }
-        }
-        secret_refs.push({
-          name: "private_key_passphrase",
-          secret_ref: prop.secret_ref.secret_ref,
-        })
-      })
-      setFormData({ ...formData, secret_refs: secret_refs })
-      setSecret_refs(secret_refs)
-    }
+    updateSecretRefs(props, "private_key_passphrase")
   }
   const onIntermediatesChange = (props) => {
-    if (props) {
-      props?.map((prop) => {
-        if (secret_refs) {
-          for (let i = 0; i < secret_refs.length; i++) {
-            if (secret_refs[i].secret_ref === prop.secret_ref.secret_ref) return
-          }
-        }
-        secret_refs.push({
-          name: "intermediates",
-          secret_ref: prop.secret_ref.secret_ref,
-        })
-      })
-      setFormData({ ...formData, secret_refs: secret_refs })
-      setSecret_refs(secret_refs)
-    }
+    updateSecretRefs(props, "intermediates")
   }
 
   const onClearValue = (props) => {
