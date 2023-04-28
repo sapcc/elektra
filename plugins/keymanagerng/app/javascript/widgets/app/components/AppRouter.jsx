@@ -19,8 +19,6 @@ const baseName = widgetBasePath("keymanagerng")
 const AppRouter = () => {
   const showNewContainer = useStore(useCallback((state) => state.showNewContainer))
   const showNewSecret = useStore(useCallback((state) => state.showNewSecret))
-  console.log("appRouter showNewSecret: ", showNewSecret)
-  console.log("appRouter showNewContainer: ", showNewContainer)
   const tabsDisabled = showNewSecret || showNewContainer ? true : false
 
   const tabsConfig = [
