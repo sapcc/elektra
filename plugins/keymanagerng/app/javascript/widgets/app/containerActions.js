@@ -42,7 +42,6 @@ export const delContainer = ({ queryKey }) => {
 }
 
 export const deleteContainer = (delObj) => {
-  console.log("deleteContainers id:", delObj.id)
   return apiClient
     .osApi("key-manager")
     .delete(`v1/containers/${delObj.id}`)

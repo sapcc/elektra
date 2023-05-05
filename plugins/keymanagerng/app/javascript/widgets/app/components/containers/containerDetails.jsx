@@ -36,15 +36,12 @@ const ContainerDetails = () => {
   const container = useQuery(["container", params.id], getContainer, {
     enabled: !!params.id,
     onSuccess: (data) => {
-      console.log("fetchContainer onSuccess:", data)
     },
     onError: (error) => {
-      console.log("fetchContainer onError:", error)
     },
   })
   //Todo: find how to can rename data directly there as container
 
-  console.log("containerDetails: ", container.data)
   const [show, setShow] = useState(!!container.data)
 
   useEffect(() => {

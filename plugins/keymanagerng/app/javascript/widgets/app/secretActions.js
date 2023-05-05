@@ -25,7 +25,6 @@ export const getSecret = ({ queryKey }) => {
 }
 
 export const fetchSecret = (uuid) => {
-  console.log("fetchSecret uuid: ", uuid)
   return apiClient
     .osApi("key-manager")
     .get("/v1/secrets/" + uuid)
@@ -43,7 +42,6 @@ export const getSecretMetadata = ({ queryKey }) => {
 }
 
 export const fetchSecretMetadata = (uuid) => {
-  console.log("fetchSecretMetadata uuid: ", uuid)
   return apiClient
     .osApi("key-manager")
     .get("/v1/secrets/" + uuid + "/metadata")
@@ -73,7 +71,6 @@ export const delSecret = ({ queryKey }) => {
 }
 
 export const deleteSecret = (delObj) => {
-  console.log("deleteSecrets id:", delObj.id)
   return apiClient
     .osApi("key-manager")
     .delete(`v1/secrets/${delObj.id}`)
