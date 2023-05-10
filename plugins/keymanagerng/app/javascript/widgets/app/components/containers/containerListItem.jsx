@@ -12,7 +12,7 @@ import { getContainerUuid } from "../../../lib/containerHelper"
 import { deleteContainer } from "../../containerActions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
-import { useMessageStore } from "messages-provider"
+import { useActions } from "messages-provider"
 import useStore from "../../store"
 import ConfirmationModal from "../ConfirmationModal"
 
@@ -26,7 +26,7 @@ const ContainerListItem = ({ container }) => {
     100,
     containerUuid
   )
-  const addMessage = useMessageStore((state) => state.addMessage)
+  const { addMessage } = useActions()
   const showNewContainer = useStore(
     useCallback((state) => state.showNewContainer)
   )

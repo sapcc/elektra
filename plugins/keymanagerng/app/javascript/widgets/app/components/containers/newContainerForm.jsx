@@ -1,11 +1,10 @@
-import React, { useState, useCallback, useEffect, useLayoutEffect } from "react"
+import React, { useState, useEffect, useLayoutEffect } from "react"
 import {
   Form,
   TextInputRow,
   SelectRow,
   SelectOption,
   Label,
-  Panel,
   PanelBody,
   PanelFooter,
   Button,
@@ -14,9 +13,8 @@ import { createContainer } from "../../containerActions"
 import { getSecrets } from "../../secretActions"
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
 import CreatableSelect from "react-select/creatable"
-import { useMessageStore, Messages } from "messages-provider"
+import { useActions, Messages } from "messages-provider"
 import { getContainerUuid } from "../../../lib/containerHelper"
-import useStore from "../../store"
 
 const TYPE_CERTIFICATE = "certificate"
 const TYPE_GENERIC = "generic"
@@ -81,11 +79,10 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
 
   const queryClient = useQueryClient()
 
-  const { isLoading, isError, error, data, isSuccess, mutate } = useMutation(
+  const { mutate } = useMutation(
     ({ formState }) => createContainer(formState)
   )
-  const addMessage = useMessageStore((state) => state.addMessage)
-  const resetMessages = useMessageStore((state) => state.resetMessages)
+  const { addMessage, resetMessages } = useActions()
 
   const onConfirm = () => {
     debugger
@@ -221,7 +218,11 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
     <PanelBody
       footer={
         <PanelFooter>
-          <Button label="Save" onClick={onSuccessfullyCloseForm} variant="primary" />
+          <Button
+            label="Save"
+            onClick={onSuccessfullyCloseForm}
+            variant="primary"
+          />
           <Button label="Cancel" onClick={onClose} />
         </PanelFooter>
       }

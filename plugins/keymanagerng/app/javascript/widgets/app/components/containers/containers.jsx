@@ -14,14 +14,14 @@ import {
   Spinner,
 } from "juno-ui-components"
 import { Link } from "react-router-dom"
-import { useMessageStore } from "messages-provider"
+import { useActions } from "messages-provider"
 import { parseError } from "../../helpers"
 import useContainersSearch from "../../hooks/useContainersSearch"
 
 const ITEMS_PER_PAGE = 20
 
 const Containers = () => {
-  const addMessage = useMessageStore((state) => state.addMessage)
+  const { addMessage } = useActions()
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
   const [paginationOptions, setPaginationOptions] = useState({

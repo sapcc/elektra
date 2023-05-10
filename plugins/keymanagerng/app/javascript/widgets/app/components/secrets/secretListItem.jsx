@@ -1,6 +1,6 @@
-import React, { useCallback, useRef, useEffect, useState } from "react"
+import React, { useCallback, useState } from "react"
 import { deleteSecret } from "../../secretActions"
-import { Link, useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { policy } from "lib/policy"
 import {
   Badge,
@@ -8,13 +8,12 @@ import {
   Icon,
   DataGridRow,
   DataGridCell,
-  Container,
 } from "juno-ui-components"
 import { getSecretUuid } from "../../../lib/secretHelper"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
 import ConfirmationModal from "../ConfirmationModal"
-import { useMessageStore } from "messages-provider"
+import { useActions } from "messages-provider"
 import useStore from "../../store"
 
 const SecretListItem = ({ secret }) => {
@@ -23,7 +22,7 @@ const SecretListItem = ({ secret }) => {
   // like this: const navigate = useNavigate(), the use navigate('this/is/the/path') in the onClick handler of the edit button below
   const secretUuid = getSecretUuid(secret)
   const queryClient = useQueryClient()
-  const addMessage = useMessageStore((state) => state.addMessage)
+  const { addMessage } = useActions()
   const [show, setShow] = useState(false)
 
   const { isLoading, data, mutate } = useMutation(deleteSecret, 100, secretUuid)
@@ -62,8 +61,6 @@ const SecretListItem = ({ secret }) => {
     setShow(false)
   }
   
-  const handleSecretSelected = (oEvent) => {}
-
   return isLoading && !data ? (
     <DataGridRow>
       <DataGridCell>

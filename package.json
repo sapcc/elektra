@@ -39,7 +39,7 @@
     "jsoneditor": "5.5.6",
     "jsx-to-string": "^1.4.0",
     "juno-ui-components": "https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.5.7/package.tgz",
-    "messages-provider": "https://assets.juno.global.cloud.sap/libs/messages-provider@latest/package.tgz",
+    "messages-provider": "https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.6/package.tgz",
     "moment": "^2.29.2",
     "numeral": "^2.0.6",
     "prop-types": "^15.5.7",

@@ -16,6 +16,8 @@ import { getContainerUuid } from "../../../lib/containerHelper"
 import { useQuery } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
 import { Message } from "juno-ui-components"
+import { useActions } from "messages-provider"
+import { parseError } from "../../helpers"
 
 const Row = ({ label, value, children }) => {
   return (
@@ -32,13 +34,10 @@ const ContainerDetails = () => {
   const params = useParams()
   const [containerId, setContainerId] = useState(null)
   const [creatorName, setCreatorName] = useState(null)
+  const { addMessage } = useActions()
 
   const container = useQuery(["container", params.id], getContainer, {
     enabled: !!params.id,
-    onSuccess: (data) => {
-    },
-    onError: (error) => {
-    },
   })
   //Todo: find how to can rename data directly there as container
 
@@ -59,8 +58,12 @@ const ContainerDetails = () => {
       onSuccess: (data) => {
         setCreatorName(data)
       },
-      onError: () => {
+      onError: (error) => {
         setCreatorName(null)
+        addMessage({
+          variant: "error",
+          text: parseError(error),
+        })
       },
     }
   )

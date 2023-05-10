@@ -1,5 +1,5 @@
-import React, { useMemo, useEffect, useState, useCallback, useRef } from "react"
-import { useHistory, useLocation, useParams, Link } from "react-router-dom"
+import React, { useEffect, useState, useCallback } from "react"
+import { useHistory, useLocation, useParams } from "react-router-dom"
 import { getSecretUuid } from "../../../lib/secretHelper"
 import {
   Panel,
