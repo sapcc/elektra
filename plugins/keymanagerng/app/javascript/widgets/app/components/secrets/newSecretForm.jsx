@@ -130,7 +130,7 @@ const formValidation = (formData) => {
   return errors
 }
 
-const NewSecretForm = ({onCloseForm}) => {
+const NewSecretForm = ({onSuccessfullyCloseForm, onClose}) => {
   const location = useLocation()
   const history = useHistory()
   const [show, setShow] = useState(true)
@@ -159,7 +159,7 @@ const NewSecretForm = ({onCloseForm}) => {
           onSuccess: (data, variables, context) => {
             const secretUuid = getSecretUuid(data)
             queryClient.invalidateQueries("secrets")
-            onCloseForm(secretUuid)
+            onSuccessfullyCloseForm(secretUuid)
           },
           onError: (error) => {
             addMessage({
@@ -191,7 +191,7 @@ const NewSecretForm = ({onCloseForm}) => {
         footer={
           <PanelFooter>
             <Button label="Save" onClick={onConfirm} variant="primary" />
-            <Button label="Cancel" onClick={onCloseForm} />
+            <Button label="Cancel" onClick={onClose} />
           </PanelFooter>
         }
       >

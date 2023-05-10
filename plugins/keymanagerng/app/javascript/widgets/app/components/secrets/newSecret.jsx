@@ -35,7 +35,7 @@ const NewSecret = () => {
     history.replace(location.pathname.replace("/newSecret", "")), [history, location]
   }, [])
 
-  const onCloseForm = useCallback((secretUuid) => {
+  const onSuccessfullyCloseForm = useCallback((secretUuid) => {
     close()
     addMessage({
       variant: "success",
@@ -50,7 +50,7 @@ const NewSecret = () => {
   return (
     <Panel opened={showNewSecret} onClose={close} heading="New Secret" size="large">
       <MessagesProvider>
-        <NewSecretForm onCloseForm={onCloseForm}/>
+        <NewSecretForm onSuccessfullyCloseForm={onSuccessfullyCloseForm} onClose={close}/>
       </MessagesProvider>
     </Panel>
   )

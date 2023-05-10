@@ -36,7 +36,7 @@ const NewContainer = () => {
     history.replace(location.pathname.replace("/newContainer", "")), [history, location]
   }, [])
 
-  const onCloseForm = useCallback((secretUuid) => {
+  const onSuccessfullyCloseForm = useCallback((secretUuid) => {
     close()
     addMessage({
       variant: "success",
@@ -57,7 +57,7 @@ const NewContainer = () => {
       aria-labelledby="contained-modal-title-lg"
     >
       <MessagesProvider>
-        <NewContainerForm onCloseForm={onCloseForm}/>
+        <NewContainerForm onSuccessfullyCloseForm={onSuccessfullyCloseForm} onClose={close}/>
       </MessagesProvider>
     </Panel>
   )

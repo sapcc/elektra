@@ -55,7 +55,7 @@ const formValidation = (formData) => {
   return errors
 }
 
-const NewContainerForm = ({onCloseForm}) => {
+const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const [containerType, setContainerType] = useState("generic")
   const [formData, setFormData] = useState({ type: "generic" })
   const [validationState, setValidationState] = useState({})
@@ -86,9 +86,9 @@ const NewContainerForm = ({onCloseForm}) => {
   )
   const addMessage = useMessageStore((state) => state.addMessage)
   const resetMessages = useMessageStore((state) => state.resetMessages)
-  
 
   const onConfirm = () => {
+    debugger
     setIsSavePressed(true)
     const errors = formValidation(formData)
     if (Object.keys(errors).length > 0) {
@@ -102,7 +102,7 @@ const NewContainerForm = ({onCloseForm}) => {
           onSuccess: (data) => {
             const containerUuid = getContainerUuid(data)
             queryClient.invalidateQueries("containers")
-            onCloseForm(containerUuid)
+            onSuccessfullyCloseForm(containerUuid)
           },
           onError: (error) => {
             addMessage({
@@ -152,7 +152,6 @@ const NewContainerForm = ({onCloseForm}) => {
     setRsaContainerPublickeys(filterSecrets("public"))
   }, [secretsForSelect])
 
-
   const commonCreatableStyles = {
     container: (base) => ({
       ...base,
@@ -188,7 +187,7 @@ const NewContainerForm = ({onCloseForm}) => {
       setSecret_refs(secret_refs)
     }
   }
-  
+
   const onSecretsChange = (props, actionType) => {
     updateSecretRefs(props)
   }
@@ -219,206 +218,206 @@ const NewContainerForm = ({onCloseForm}) => {
   }, [])
 
   return (
-      <PanelBody
-        footer={
-          <PanelFooter>
-            <Button label="Save" onClick={onConfirm} variant="primary" />
-            <Button label="Cancel" onClick={onCloseForm} />
-          </PanelFooter>
-        }
-      >
-        <Form className="form form-horizontal">
+    <PanelBody
+      footer={
+        <PanelFooter>
+          <Button label="Save" onClick={onSuccessfullyCloseForm} variant="primary" />
+          <Button label="Cancel" onClick={onClose} />
+        </PanelFooter>
+      }
+    >
+      <Form className="form form-horizontal">
         <Messages className="tw-mb-6" />
-          <TextInputRow
-            label="Name"
-            name="name"
-            onChange={(oEvent) => {
-              setFormData({ ...formData, name: oEvent.target.value })
-            }}
-            invalid={validationState?.name ? true : false}
-            helptext={validationState?.name}
-            required
-          />
-          <SelectRow
-            className="tw-mb-6"
-            defaultValue="generic"
-            label="Container Type"
-            onValueChange={(value) => {
-              setContainerType(value)
-              setSecret_refs([])
-              setValidationState({})
+        <TextInputRow
+          label="Name"
+          name="name"
+          onChange={(oEvent) => {
+            setFormData({ ...formData, name: oEvent.target.value })
+          }}
+          invalid={validationState?.name ? true : false}
+          helptext={validationState?.name}
+          required
+        />
+        <SelectRow
+          className="tw-mb-6"
+          defaultValue="generic"
+          label="Container Type"
+          onValueChange={(value) => {
+            setContainerType(value)
+            setSecret_refs([])
+            setValidationState({})
 
-              setFormData({ ...formData, type: value })
-            }}
-            invalid={validationState?.type ? true : false}
-            helptext={validationState?.type}
-            required
-          >
-            <SelectOption label="" value="" />
-            {selectContainerTypes("all").map((item, index) => (
-              <SelectOption key={index} label={item.label} value={item.value} />
-            ))}
-          </SelectRow>
-          {containerType !== "" && (
-            <>
-              <Label text="Secrets" />
-              <div className="tw-text-xs">
-                {containerType === "certificate"
-                  ? "A certificate container is used for storing the following secrets that are relevant to certificates: certificate, private_key (optional), " +
-                    "private_key_passphrase (optional), intermediates (optional):"
-                  : containerType === "generic"
-                  ? "A generic container is used for any type of container that a user may wish to create. " +
-                    "There are no restrictions on the type or amount of secrets that can be held within a container:"
-                  : containerType === "rsa"
-                  ? "An RSA container is used for storing RSA public keys, private keys, and private key pass phrases"
-                  : ""}
-              </div>
-              {containerType === "certificate" && (
-                <>
-                  <div className="tw-mt-6" />
-                  <Label text="Certificate" required />
-                  <CreatableSelect
-                    className="basic-single"
-                    classNamePrefix="select"
-                    isRtl={false}
-                    closeMenuOnSelect={false}
-                    createLabel="Certificate"
-                    isLoading={secrets?.isLoading}
-                    isSearchable
-                    isMulti
-                    isClearable
-                    name="cert_container_type_certificates"
-                    onChange={onCertificatesChange}
-                    options={certContainerCertificates}
-                    styles={invalidateReactSelect(certContainerCertificates)}
-                  />
-                  {!certContainerCertificates &&
-                    !validationState?.secret_refs(
-                      <div>{validationState?.secret_refs}</div>
-                    )}
-                  <Label text="Private key" />
-                  <CreatableSelect
-                    className="basic-single"
-                    classNamePrefix="select"
-                    isRtl={false}
-                    closeMenuOnSelect={false}
-                    name="cert_container_type_private_key"
-                    isLoading={secrets?.isLoading}
-                    options={certContainerPrivatekeys}
-                    onChange={onPrivateKeyChange}
-                    isSearchable
-                    isClearable
-                    isMulti
-                    styles={commonCreatableStyles}
-                  />
-                  <Label text="Private key passphrase" />
-                  <CreatableSelect
-                    className="basic-single"
-                    classNamePrefix="select"
-                    isRtl={false}
-                    closeMenuOnSelect={false}
-                    name="cert_container_type_private_key_passphrases"
-                    isLoading={secrets?.isLoading}
-                    options={certContainerPrivatekeyPassphrases}
-                    onChange={onPrivateKeyPassphraseChange}
-                    isSearchable
-                    isClearable
-                    isMulti
-                    styles={commonCreatableStyles}
-                  />
-                  <Label text="Intermediates" />
-                  <CreatableSelect
-                    className="basic-single"
-                    classNamePrefix="select"
-                    isRtl={false}
-                    closeMenuOnSelect={false}
-                    name="cert_container_type_intermediates"
-                    isLoading={secrets?.isLoading}
-                    options={certContainerIntermediates}
-                    onChange={onIntermediatesChange}
-                    isSearchable
-                    isClearable
-                    isMulti
-                    styles={commonCreatableStyles}
-                  />
-                </>
-              )}
-              {containerType === "generic" && (
-                <>
-                  <div className="tw-mt-6" />
-                  <CreatableSelect
-                    className="basic-single"
-                    classNamePrefix="select"
-                    isRtl={false}
-                    closeMenuOnSelect={false}
-                    isSearchable
-                    isClearable
-                    isMulti
-                    name="generic_container_type_secrets"
-                    isLoading={secrets?.isLoading}
-                    options={genContainerSecrets}
-                    onChange={onSecretsChange}
-                    styles={invalidateReactSelect(genContainerSecrets)}
-                    clearValue={onClearValue}
-                  />
-                </>
-              )}
-              {containerType === "rsa" && (
-                <>
-                  <div className="tw-mt-6" />
-                  <Label text="Private key" required />
-                  <CreatableSelect
-                    className="basic-single"
-                    classNamePrefix="select"
-                    isRtl={false}
-                    closeMenuOnSelect={false}
-                    name="rsa_container_type_private_keys"
-                    isLoading={secrets?.isLoading}
-                    options={rsaContainerPrivatekeys}
-                    onChange={onPrivateKeyChange}
-                    isSearchable
-                    isClearable
-                    isMulti
-                    styles={invalidateReactSelect(rsaContainerPrivatekeys)}
-                  />
-                  <Label text="Private key passphrase" required />
-                  <CreatableSelect
-                    className="basic-single"
-                    classNamePrefix="select"
-                    isRtl={false}
-                    closeMenuOnSelect={false}
-                    name="rsa_container_type_private_key_passphrases"
-                    isLoading={secrets?.isLoading}
-                    options={rsaContainerPrivatekeyPassphrases}
-                    onChange={onPrivateKeyPassphraseChange}
-                    isSearchable
-                    isClearable
-                    isMulti
-                    styles={invalidateReactSelect(
-                      rsaContainerPrivatekeyPassphrases
-                    )}
-                  />
-                  <Label text="Public key" required />
-                  <CreatableSelect
-                    className="basic-single"
-                    classNamePrefix="select"
-                    isRtl={false}
-                    closeMenuOnSelect={false}
-                    name="rsa_container_type_public_key"
-                    isLoading={secrets?.isLoading}
-                    options={rsaContainerPublickeys}
-                    onChange={onPublicKeyChange}
-                    isSearchable
-                    isClearable
-                    isMulti
-                    styles={invalidateReactSelect(rsaContainerPublickeys)}
-                  />
-                </>
-              )}
-            </>
-          )}
-        </Form>
-      </PanelBody>
+            setFormData({ ...formData, type: value })
+          }}
+          invalid={validationState?.type ? true : false}
+          helptext={validationState?.type}
+          required
+        >
+          <SelectOption label="" value="" />
+          {selectContainerTypes("all").map((item, index) => (
+            <SelectOption key={index} label={item.label} value={item.value} />
+          ))}
+        </SelectRow>
+        {containerType !== "" && (
+          <>
+            <Label text="Secrets" />
+            <div className="tw-text-xs">
+              {containerType === "certificate"
+                ? "A certificate container is used for storing the following secrets that are relevant to certificates: certificate, private_key (optional), " +
+                  "private_key_passphrase (optional), intermediates (optional):"
+                : containerType === "generic"
+                ? "A generic container is used for any type of container that a user may wish to create. " +
+                  "There are no restrictions on the type or amount of secrets that can be held within a container:"
+                : containerType === "rsa"
+                ? "An RSA container is used for storing RSA public keys, private keys, and private key pass phrases"
+                : ""}
+            </div>
+            {containerType === "certificate" && (
+              <>
+                <div className="tw-mt-6" />
+                <Label text="Certificate" required />
+                <CreatableSelect
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isRtl={false}
+                  closeMenuOnSelect={false}
+                  createLabel="Certificate"
+                  isLoading={secrets?.isLoading}
+                  isSearchable
+                  isMulti
+                  isClearable
+                  name="cert_container_type_certificates"
+                  onChange={onCertificatesChange}
+                  options={certContainerCertificates}
+                  styles={invalidateReactSelect(certContainerCertificates)}
+                />
+                {!certContainerCertificates &&
+                  !validationState?.secret_refs(
+                    <div>{validationState?.secret_refs}</div>
+                  )}
+                <Label text="Private key" />
+                <CreatableSelect
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isRtl={false}
+                  closeMenuOnSelect={false}
+                  name="cert_container_type_private_key"
+                  isLoading={secrets?.isLoading}
+                  options={certContainerPrivatekeys}
+                  onChange={onPrivateKeyChange}
+                  isSearchable
+                  isClearable
+                  isMulti
+                  styles={commonCreatableStyles}
+                />
+                <Label text="Private key passphrase" />
+                <CreatableSelect
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isRtl={false}
+                  closeMenuOnSelect={false}
+                  name="cert_container_type_private_key_passphrases"
+                  isLoading={secrets?.isLoading}
+                  options={certContainerPrivatekeyPassphrases}
+                  onChange={onPrivateKeyPassphraseChange}
+                  isSearchable
+                  isClearable
+                  isMulti
+                  styles={commonCreatableStyles}
+                />
+                <Label text="Intermediates" />
+                <CreatableSelect
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isRtl={false}
+                  closeMenuOnSelect={false}
+                  name="cert_container_type_intermediates"
+                  isLoading={secrets?.isLoading}
+                  options={certContainerIntermediates}
+                  onChange={onIntermediatesChange}
+                  isSearchable
+                  isClearable
+                  isMulti
+                  styles={commonCreatableStyles}
+                />
+              </>
+            )}
+            {containerType === "generic" && (
+              <>
+                <div className="tw-mt-6" />
+                <CreatableSelect
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isRtl={false}
+                  closeMenuOnSelect={false}
+                  isSearchable
+                  isClearable
+                  isMulti
+                  name="generic_container_type_secrets"
+                  isLoading={secrets?.isLoading}
+                  options={genContainerSecrets}
+                  onChange={onSecretsChange}
+                  styles={invalidateReactSelect(genContainerSecrets)}
+                  clearValue={onClearValue}
+                />
+              </>
+            )}
+            {containerType === "rsa" && (
+              <>
+                <div className="tw-mt-6" />
+                <Label text="Private key" required />
+                <CreatableSelect
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isRtl={false}
+                  closeMenuOnSelect={false}
+                  name="rsa_container_type_private_keys"
+                  isLoading={secrets?.isLoading}
+                  options={rsaContainerPrivatekeys}
+                  onChange={onPrivateKeyChange}
+                  isSearchable
+                  isClearable
+                  isMulti
+                  styles={invalidateReactSelect(rsaContainerPrivatekeys)}
+                />
+                <Label text="Private key passphrase" required />
+                <CreatableSelect
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isRtl={false}
+                  closeMenuOnSelect={false}
+                  name="rsa_container_type_private_key_passphrases"
+                  isLoading={secrets?.isLoading}
+                  options={rsaContainerPrivatekeyPassphrases}
+                  onChange={onPrivateKeyPassphraseChange}
+                  isSearchable
+                  isClearable
+                  isMulti
+                  styles={invalidateReactSelect(
+                    rsaContainerPrivatekeyPassphrases
+                  )}
+                />
+                <Label text="Public key" required />
+                <CreatableSelect
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isRtl={false}
+                  closeMenuOnSelect={false}
+                  name="rsa_container_type_public_key"
+                  isLoading={secrets?.isLoading}
+                  options={rsaContainerPublickeys}
+                  onChange={onPublicKeyChange}
+                  isSearchable
+                  isClearable
+                  isMulti
+                  styles={invalidateReactSelect(rsaContainerPublickeys)}
+                />
+              </>
+            )}
+          </>
+        )}
+      </Form>
+    </PanelBody>
   )
 }
 
