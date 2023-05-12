@@ -36,7 +36,9 @@ const ContainerDetails = () => {
   const [creatorName, setCreatorName] = useState(null)
   const { addMessage } = useActions()
 
-  const container = useQuery(["container", params.id], getContainer, {
+  const container = useQuery({
+    queryKey: ["container", params.id], 
+    queryFn: getContainer,
     enabled: !!params.id,
   })
   //Todo: find how to can rename data directly there as container
@@ -50,23 +52,21 @@ const ContainerDetails = () => {
     }
   }, [container.data?.container_ref])
 
-  const containerCreator = useQuery(
-    ["containerCreator", container.data?.creator_id],
-    getUsername,
-    {
-      enabled: !!container.data?.creator_id,
-      onSuccess: (data) => {
-        setCreatorName(data)
-      },
-      onError: (error) => {
-        setCreatorName(null)
-        addMessage({
-          variant: "error",
-          text: parseError(error),
-        })
-      },
-    }
-  )
+  const containerCreator = useQuery({
+    queryKey: ["containerCreator", container.data?.creator_id],
+    queryFn: getUsername,
+    enabled: !!container.data?.creator_id,
+    onSuccess: (data) => {
+      setCreatorName(data)
+    },
+    onError: (error) => {
+      setCreatorName(null)
+      addMessage({
+        variant: "error",
+        text: parseError(error),
+      })
+    },
+  })
 
   useEffect(() => {
     setShow(!!params.id)

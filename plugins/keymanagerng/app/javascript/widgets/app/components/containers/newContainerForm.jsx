@@ -85,7 +85,6 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const { addMessage, resetMessages } = useActions()
 
   const onConfirm = () => {
-    debugger
     setIsSavePressed(true)
     const errors = formValidation(formData)
     if (Object.keys(errors).length > 0) {
@@ -112,11 +111,10 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
     }
   }
 
-  const secrets = useQuery(
-    ["secrets", { limit: 500, offset: 0 }],
-    getSecrets,
-    {}
-  )
+  const secrets = useQuery({
+    queryKey: ["secrets", { limit: 500, offset: 0 }],
+    queryFn: getSecrets,
+  })
 
   useEffect(() => {
     const secretsOfSelect = []
@@ -220,7 +218,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
         <PanelFooter>
           <Button
             label="Save"
-            onClick={onSuccessfullyCloseForm}
+            onClick={onConfirm}
             variant="primary"
           />
           <Button label="Cancel" onClick={onClose} />

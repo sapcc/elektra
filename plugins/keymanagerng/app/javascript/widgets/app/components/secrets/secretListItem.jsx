@@ -25,7 +25,11 @@ const SecretListItem = ({ secret }) => {
   const { addMessage } = useActions()
   const [show, setShow] = useState(false)
 
-  const { isLoading, data, mutate } = useMutation(deleteSecret, 100, secretUuid)
+  const { isLoading, data, mutate } = useMutation({
+    mutationFn: deleteSecret,
+    cacheTime: 100,
+    mutationKey: secretUuid,
+  })
   const showNewSecret = useStore(useCallback((state) => state.showNewSecret))
 
   const handleDelete = () => {
@@ -60,7 +64,7 @@ const SecretListItem = ({ secret }) => {
   const close = () => {
     setShow(false)
   }
-  
+
   return isLoading && !data ? (
     <DataGridRow>
       <DataGridCell>

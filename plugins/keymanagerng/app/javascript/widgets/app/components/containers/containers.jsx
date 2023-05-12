@@ -29,11 +29,10 @@ const Containers = () => {
     offset: 0,
   })
   const search = useContainersSearch({ text: searchTerm })
-  const { isLoading, isFetching, data, error } = useQuery(
-    ["containers", paginationOptions],
-    getContainers,
-    {}
-  )
+  const { isLoading, isFetching, data, error } = useQuery({
+    queryKey: ["containers", paginationOptions],
+    queryFn: getContainers
+  })
 
   // dispatch error with useEffect because error variable will first set once all retries did not succeed
   useEffect(() => {

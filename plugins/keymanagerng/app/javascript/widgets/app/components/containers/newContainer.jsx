@@ -22,11 +22,11 @@ const NewContainer = () => {
       [history, location]
   }, [])
 
-  const onSuccessfullyCloseForm = useCallback((secretUuid) => {
+  const onSuccessfullyCloseForm = useCallback((containerUuid) => {
     close()
     addMessage({
       variant: "success",
-      text: `The secret ${secretUuid} is successfully created.`,
+      text: `The container ${containerUuid} is successfully created.`,
     })
   }, [])
 

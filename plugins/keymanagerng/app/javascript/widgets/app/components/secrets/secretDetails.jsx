@@ -68,7 +68,9 @@ const SecretDetails = () => {
     }
   )
 
-  const metadata = useQuery(["secretMetadata", secretId], getSecretMetadata, {
+  const metadata = useQuery({
+    queryKey: ["secretMetadata", secretId], 
+    queryFn: getSecretMetadata,
     enabled: !!secretId,
     onSuccess: (data) => {
       if (data) return setSecretMetadata(data)
@@ -79,22 +81,20 @@ const SecretDetails = () => {
     setShow(!!params.id)
   }, [params.id])
 
-  const secretPlayload = useQuery(
-    ["secretPlayload", secretId, secret.data?.content_types?.default],
-    getSecretPayload,
-    {
-      enabled: !!payloadRequested,
-      onSuccess: (data) => {
-        const fileData = JSON.stringify(data)
-        const blob = new Blob([fileData], { type: "text/plain" })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.download = secret.data?.name + ".json"
-        link.href = url
-        link.click()
-      },
-    }
-  )
+  const secretPlayload = useQuery({
+    queryKey: ["secretPlayload", secretId, secret.data?.content_types?.default],
+    queryFn: getSecretPayload,
+    enabled: !!payloadRequested,
+    onSuccess: (data) => {
+      const fileData = JSON.stringify(data)
+      const blob = new Blob([fileData], { type: "text/plain" })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.download = secret.data?.name + ".json"
+      link.href = url
+      link.click()
+    },
+  })
 
   const restoreURL = useCallback(() => {
     history.replace(

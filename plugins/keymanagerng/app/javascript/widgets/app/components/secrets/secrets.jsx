@@ -29,11 +29,10 @@ const Secrets = () => {
     offset: 0,
   })
 
-  const { isLoading, isFetching, data, error } = useQuery(
-    ["secrets", paginationOptions],
-    getSecrets,
-    {}
-  )
+  const { isLoading, isFetching, data, error } = useQuery({
+    queryKey: ["secrets", paginationOptions],
+    queryFn: getSecrets,
+  })
 
   const search = useSecretsSearch({ text: searchTerm })
 

@@ -21,11 +21,11 @@ const ContainerListItem = ({ container }) => {
 
   const queryClient = useQueryClient()
 
-  const { isLoading, data, mutate } = useMutation(
-    deleteContainer,
-    100,
-    containerUuid
-  )
+  const { isLoading, data, mutate } = useMutation({
+    mutationFn: deleteContainer,
+    cacheTime: 100,
+    mutationKey: containerUuid
+  })
   const { addMessage } = useActions()
   const showNewContainer = useStore(
     useCallback((state) => state.showNewContainer)
