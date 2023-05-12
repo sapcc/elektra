@@ -1,0 +1,324 @@
+// --------------------------------
+// LAYOUT
+// --------------------------------
+
+// html {
+
+//   min-height: 100%;
+//   font-size: 16px; // important to set the base font-size to the current industry standard of 16px. rem units are sized off of this value, even inside a shadow DOM
+
+//   // &.flex-layout {
+//   //   height: 100%;
+//   // }
+// }
+
+html {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 16px; // important to set the base font-size to the current industry standard of 16px. rem units are sized off of this value, even inside a shadow DOM
+}
+
+body {
+  margin: 0;
+  padding: 0;
+
+  &.landing,
+  &.onboarding {
+    padding-top: $navbar-height;
+  }
+}
+
+// body {
+//   // padding-top: $navbar-height + $context-breadcrumb-height;
+//   // margin-bottom: $footer-height + $footer-margin-top; // needed for sticky footer
+
+//   &.landing,
+//   &.onboarding {
+//     padding-top: $navbar-height;
+//   }
+// }
+
+// FLEX LAYOUT /w sticky header and footer
+// ---------------------------------------------------------------------------
+
+.flex-layout body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+main.container {
+  flex-grow: 1;
+  // height: 100%;
+}
+
+.flex-header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.flex-header-sticky,
+.flex-footer-sticky {
+  flex: 0 0 auto;
+}
+
+.flex-body {
+  flex: 1 0 auto;
+}
+
+
+// ---------------------------------------------------------------------------------
+// Page Header
+// ---------------------------------------------------------------------------------
+
+.main-pageheader {
+  background: var(--color-juno-grey-blue-11);
+
+  .navbar-brand, .navbar-brand a, .navbar-nav a {
+    color: var(--color-text-high);
+  }
+
+  .nav > li > a:hover, .nav > li > a:focus {
+    background: var(--color-juno-grey-blue-2);
+  }
+
+  .navbar-right {
+    margin-right: 0;
+  }
+
+  .container {
+    padding: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------------
+// Footer
+// ---------------------------------------------------------------------------------
+
+footer,
+.footer {
+  // @include pie-clearfix;
+  background: var(--color-global-bg) inline_svg("ccloud_shape.svg") bottom right no-repeat;
+  margin-top: 2rem;
+  padding: 8px 0;
+  // position: absolute;
+  // bottom: 0;
+  width: 100%;
+  height: $footer-height;
+}
+
+.flex-footer-sticky .footer {
+  position: static;
+  height: auto;
+}
+
+.footer-nav {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  a {
+    color: #555;
+  }
+}
+
+.context-breadcrumb {
+  z-index: 1029;
+  padding: 0.5rem 0;
+
+  // Setup for megaflyout so that it can be positioned relative to the container rather than the dropdown parent
+  .context-container {
+    position: relative;
+    display: flex;
+
+    .dropdown-mega {
+      position: static;
+    }
+  }
+
+  .context-breadcrumb-context {
+    display: flex;
+    
+    .context-home {
+      background: var(--color-background-lvl-4);
+      border-right: 1px solid #fff;
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+    }
+
+    .context-project {
+      background: inline_svg("context_arrow_bg.svg") top right no-repeat;
+      background-size: 100% 100%;
+
+      > li {
+        padding-right: 1.25rem;
+        padding-left: 0.75rem;
+      }
+    }
+  }
+
+  .special-crumb {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+
+    > * {
+      margin-left: 8px;
+    }
+
+    // .context-list {
+    //   margin-left: $context-breadcrumb-padding-horizontal;
+    // }
+  }
+
+  .universal-search-input {
+    input {
+      height: 26px;
+      background-color: #efefef;
+      width: 260px;
+      padding-left: 10px;
+      padding-right: 30px;
+    }
+
+    .form-control-feedback {
+      line-height: 26px;
+      height: 26px;
+    }
+  }
+
+  .solo-icon-link {
+    display: block;
+    // float: left;
+    // padding: ($context-breadcrumb-height - $font-size-small * 2)/2 0;
+
+    &:hover,
+    &.active {
+      .fa-stack-2x {
+        opacity: 0.8;
+      }
+    }
+
+    .fa-stack {
+      font-size: $font-size-small;
+    }
+
+    .fa-stack-2x {
+      opacity: 0.3;
+      color: #000;
+    }
+
+    .fa-inverse {
+      color: #fff;
+    }
+  }
+
+  .context-list {
+    // @include pie-clearfix;
+    display: flex;
+    list-style-type: none;
+    // margin-left: -$context-breadcrumb-padding-horizontal;
+    // margin-right: $context-breadcrumb-padding-horizontal;
+    margin-bottom: 0;
+    padding: 0;
+
+    > li {
+      border-right: 1px solid rgba(51, 51, 51, 0.4);
+      display: block;
+      font-size: $context-breadcrumb-font-size;
+      position: relative;
+      padding: 0.3rem 0.6rem; 
+      // float: left;
+      // padding: 0 0.5rem;
+
+      &.context-admin {
+        background: rgba(255, 255, 255, 0.2);
+        border-right: none;
+
+        > .dropdown-menu {
+          right: -1px;
+          left: auto;
+        }
+      }
+
+      &.open,
+      &:hover {
+        // background-color: $dropdown-bg;
+        // border-color: $dropdown-border;
+      }
+
+      .fa,
+      .icon-monsoon {
+        margin-right: 5px;
+
+        &.icon-link {
+          margin-right: 0;
+        }
+      }
+
+      > .dropdown-menu {
+        @include border-top-radius(0);
+        left: -1px;
+        border-top: none;
+        margin-top: 0;
+      }
+
+      > .fancy-nav {
+        @extend .dropdown-menu; // extend TWBS dropdown-menu class
+
+        // Megaflyout (full-width, requires context-container wrapper)
+        @include container-width-responsive;
+        column-count: 3;
+
+        left: -1px;
+        padding: $line-height-computed 0;
+
+        > li {
+          padding-left: $grid-gutter-width * 1.5;
+        }
+
+        .fancy-nav-header {
+          > span {
+            font-size: $font-size-base;
+
+            &.fancy-nav-icon {
+              background-size: $font-size-medium;
+              font-size: $font-size-medium;
+              left: $grid-gutter-width / 2;
+              width: $font-size-medium;
+            }
+          }
+        }
+      }
+
+      > a {
+        color: #333;
+        display: inline-block;
+        padding: 0; 
+        // padding-right: $context-breadcrumb-padding-horizontal;
+
+        &:active,
+        &:focus {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+
+  &.context-breadcrumb-fancy {
+    // background: $context-breadcrumb-fancy-bg;
+    background: #fff;
+
+    .context-list {
+      > li {
+        border-right: none;
+      }
+    }
+  }
+}

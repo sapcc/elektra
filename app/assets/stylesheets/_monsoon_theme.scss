@@ -202,47 +202,77 @@ span.highlight {
 // General
 // ---------------------------------------------------------------------------------
 
-html {
-  /* Needed for sticky footer */
-  position: relative;
-  min-height: 100%;
-  font-size: 16px; // important to set the base font-size to the current industry standard of 16px. rem units are sized off of this value, even inside a shadow DOM
+// html {
+//   /* Needed for sticky footer */
+//   // position: relative;
+//   min-height: 100%;
+//   font-size: 16px; // important to set the base font-size to the current industry standard of 16px. rem units are sized off of this value, even inside a shadow DOM
 
-  &.flex-layout {
-    height: 100%;
-  }
-}
+//   &.flex-layout {
+//     height: 100%;
+//   }
+// }
 
-body {
-  padding-top: $navbar-height + $context-breadcrumb-height;
-  margin-bottom: $footer-height + $footer-margin-top; // needed for sticky footer
+// body {
+//   padding-top: $navbar-height + $context-breadcrumb-height;
+//   margin-bottom: $footer-height + $footer-margin-top; // needed for sticky footer
 
-  &.landing,
-  &.onboarding {
-    padding-top: $navbar-height;
-  }
-}
+//   &.landing,
+//   &.onboarding {
+//     padding-top: $navbar-height;
+//   }
+// }
 
-// FLEX LAYOUT /w sticky header and footer
-// ---------------------------------------------------------------------------
+// // FLEX LAYOUT /w sticky header and footer
+// // ---------------------------------------------------------------------------
 
-.flex-layout body {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 100%;
-  padding: 0;
-  margin: 0;
-}
+// .flex-layout body {
+//   display: flex;
+//   flex-direction: column;
+//   height: 100%;
+//   min-height: 100%;
+//   padding: 0;
+//   margin: 0;
+// }
 
-.flex-header-sticky,
-.flex-footer-sticky {
-  flex: 0 0 auto;
-}
+// main.container {
+//   flex-grow: 1;
+// }
 
-.flex-body {
-  flex: 1 0 auto;
-}
+// .flex-header-sticky {
+//   position: sticky;
+//   top: 0;
+//   z-index: 50;
+// }
+
+// .flex-header-sticky,
+// .flex-footer-sticky {
+//   flex: 0 0 auto;
+// }
+
+// .flex-body {
+//   flex: 1 0 auto;
+// }
+
+// .main-pageheader {
+//   background: var(--color-juno-grey-blue-11);
+
+//   .navbar-brand, .navbar-brand a, .navbar-nav a {
+//     color: var(--color-text-high);
+//   }
+
+//   .nav > li > a:hover, .nav > li > a:focus {
+//     background: var(--color-juno-grey-blue-2);
+//   }
+
+//   .navbar-right {
+//     margin-right: 0;
+//   }
+
+//   .container {
+//     padding: 0;
+//   }
+// }
 
 // ---------------------------------------------------------------------------
 
@@ -1040,36 +1070,36 @@ section {
   width: 62px;
 }
 
-// ---------------------------------------------------------------------------------
-// Footer
-// ---------------------------------------------------------------------------------
+// // ---------------------------------------------------------------------------------
+// // Footer
+// // ---------------------------------------------------------------------------------
 
-footer,
-.footer {
-  @include pie-clearfix;
-  background: #e9e9e9;
-  margin-top: $footer-margin-top;
-  padding: 8px 0;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: $footer-height;
-}
+// footer,
+// .footer {
+//   @include pie-clearfix;
+//   background: #e9e9e9;
+//   margin-top: $footer-margin-top;
+//   padding: 8px 0;
+//   position: absolute;
+//   bottom: 0;
+//   width: 100%;
+//   height: $footer-height;
+// }
 
-.flex-footer-sticky .footer {
-  position: static;
-  height: auto;
-}
+// .flex-footer-sticky .footer {
+//   position: static;
+//   height: auto;
+// }
 
-.footer-nav {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+// .footer-nav {
+//   list-style-type: none;
+//   margin: 0;
+//   padding: 0;
 
-  a {
-    color: #555;
-  }
-}
+//   a {
+//     color: #555;
+//   }
+// }
 
 // ---------------------------------------------------------------------------------
 // Breadcrumb
@@ -1113,208 +1143,215 @@ footer,
   }
 }
 
-.context-breadcrumb {
-  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 5px;
-  @include pie-clearfix;
-  background: $context-breadcrumb-bg;
-  border-bottom: 1px solid #ddd;
-  height: $context-breadcrumb-height;
-  position: fixed;
-  top: $navbar-height + 1;
-  left: 0;
-  right: 0;
-  z-index: 1029;
+// .context-breadcrumb {
+//   // box-shadow: rgba(0, 0, 0, 0.2) 0 1px 5px;
+//   @include pie-clearfix;
+//   // background: $context-breadcrumb-bg;
+//   // border-bottom: 1px solid #ddd;
+//   // height: $context-breadcrumb-height;
+//   // position: fixed;
+//   // top: $navbar-height + 1;
+//   // left: 0;
+//   // right: 0;
+//   z-index: 1029;
 
-  // Setup for megaflyout so that it can be positioned relative to the container rather than the dropdown parent
-  .context-container {
-    position: relative;
-    display: flex;
+//   // Setup for megaflyout so that it can be positioned relative to the container rather than the dropdown parent
+//   .context-container {
+//     position: relative;
+//     display: flex;
 
-    .dropdown-mega {
-      position: static;
-    }
-  }
+//     .dropdown-mega {
+//       position: static;
+//     }
+//   }
 
-  .special-crumb {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
+//   .special-crumb {
+//     margin-left: auto;
+//     display: flex;
+//     align-items: center;
 
-    > * {
-      margin-left: 8px;
-    }
+//     > * {
+//       margin-left: 8px;
+//     }
 
-    .context-list {
-      margin-left: $context-breadcrumb-padding-horizontal;
-    }
-  }
+//     .context-list {
+//       margin-left: $context-breadcrumb-padding-horizontal;
+//     }
+//   }
 
-  .universal-search-input {
-    input {
-      height: 26px;
-      background-color: #efefef;
-      width: 260px;
-      padding-left: 10px;
-      padding-right: 30px;
-    }
+//   .universal-search-input {
+//     input {
+//       height: 26px;
+//       background-color: #efefef;
+//       width: 260px;
+//       padding-left: 10px;
+//       padding-right: 30px;
+//     }
 
-    .form-control-feedback {
-      line-height: 26px;
-      height: 26px;
-    }
-  }
+//     .form-control-feedback {
+//       line-height: 26px;
+//       height: 26px;
+//     }
+//   }
 
-  .solo-icon-link {
-    display: block;
-    float: left;
-    padding: ($context-breadcrumb-height - $font-size-small * 2)/2 0;
+//   .solo-icon-link {
+//     display: block;
+//     float: left;
+//     padding: ($context-breadcrumb-height - $font-size-small * 2)/2 0;
 
-    &:hover,
-    &.active {
-      .fa-stack-2x {
-        opacity: 0.8;
-      }
-    }
+//     &:hover,
+//     &.active {
+//       .fa-stack-2x {
+//         opacity: 0.8;
+//       }
+//     }
 
-    .fa-stack {
-      font-size: $font-size-small;
-    }
+//     .fa-stack {
+//       font-size: $font-size-small;
+//     }
 
-    .fa-stack-2x {
-      opacity: 0.3;
-      color: #000;
-    }
+//     .fa-stack-2x {
+//       opacity: 0.3;
+//       color: #000;
+//     }
 
-    .fa-inverse {
-      color: #fff;
-    }
-  }
+//     .fa-inverse {
+//       color: #fff;
+//     }
+//   }
 
-  .context-list {
-    @include pie-clearfix;
-    list-style-type: none;
-    margin-left: -$context-breadcrumb-padding-horizontal;
-    margin-right: $context-breadcrumb-padding-horizontal;
-    margin-bottom: 0;
-    padding: 0;
+//   .context-list {
+//     @include pie-clearfix;
+//     list-style-type: none;
+//     margin-left: -$context-breadcrumb-padding-horizontal;
+//     margin-right: $context-breadcrumb-padding-horizontal;
+//     margin-bottom: 0;
+//     padding: 0;
 
-    > li {
-      border-right: 1px solid rgba(51, 51, 51, 0.4);
-      display: block;
-      font-size: $context-breadcrumb-font-size;
-      position: relative;
-      float: left;
-      padding: 0 0 0 $context-breadcrumb-padding-horizontal;
+//     > li {
+//       border-right: 1px solid rgba(51, 51, 51, 0.4);
+//       display: block;
+//       font-size: $context-breadcrumb-font-size;
+//       position: relative;
+//       float: left;
+//       padding: 0 0 0 $context-breadcrumb-padding-horizontal;
 
-      &.context-admin {
-        background: rgba(255, 255, 255, 0.2);
-        border-right: none;
+//       &.context-admin {
+//         background: rgba(255, 255, 255, 0.2);
+//         border-right: none;
 
-        > .dropdown-menu {
-          right: -1px;
-          left: auto;
-        }
-      }
+//         > .dropdown-menu {
+//           right: -1px;
+//           left: auto;
+//         }
+//       }
 
-      &.open,
-      &:hover {
-        background-color: $dropdown-bg;
-        border-color: $dropdown-border;
-      }
+//       &.open,
+//       &:hover {
+//         background-color: $dropdown-bg;
+//         border-color: $dropdown-border;
+//       }
 
-      .fa,
-      .icon-monsoon {
-        margin-right: 5px;
+//       .fa,
+//       .icon-monsoon {
+//         margin-right: 5px;
 
-        &.icon-link {
-          margin-right: 0;
-        }
-      }
+//         &.icon-link {
+//           margin-right: 0;
+//         }
+//       }
 
-      > .dropdown-menu {
-        @include border-top-radius(0);
-        left: -1px;
-        border-top: none;
-        margin-top: 0;
-      }
+//       > .dropdown-menu {
+//         @include border-top-radius(0);
+//         left: -1px;
+//         border-top: none;
+//         margin-top: 0;
+//       }
 
-      > .fancy-nav {
-        @extend .dropdown-menu; // extend TWBS dropdown-menu class
+//       > .fancy-nav {
+//         @extend .dropdown-menu; // extend TWBS dropdown-menu class
 
-        // Megaflyout (full-width, requires context-container wrapper)
-        @include container-width-responsive;
-        column-count: 3;
+//         // Megaflyout (full-width, requires context-container wrapper)
+//         @include container-width-responsive;
+//         column-count: 3;
 
-        left: -1px;
-        padding: $line-height-computed 0;
+//         left: -1px;
+//         padding: $line-height-computed 0;
 
-        > li {
-          padding-left: $grid-gutter-width * 1.5;
-        }
+//         > li {
+//           padding-left: $grid-gutter-width * 1.5;
+//         }
 
-        .fancy-nav-header {
-          > span {
-            font-size: $font-size-base;
+//         .fancy-nav-header {
+//           > span {
+//             font-size: $font-size-base;
 
-            &.fancy-nav-icon {
-              background-size: $font-size-medium;
-              font-size: $font-size-medium;
-              left: $grid-gutter-width / 2;
-              width: $font-size-medium;
-            }
-          }
-        }
-      }
+//             &.fancy-nav-icon {
+//               background-size: $font-size-medium;
+//               font-size: $font-size-medium;
+//               left: $grid-gutter-width / 2;
+//               width: $font-size-medium;
+//             }
+//           }
+//         }
+//       }
 
-      > a {
-        color: #333;
-        display: inline-block;
-        padding: (
-            (
-                $context-breadcrumb-height -
-                  ($context-breadcrumb-font-size - $font-size-base) -
-                  $line-height-computed
-              ) / 2
-          )
-          0; // to calculate the correct padding subtract from the total height the actual line-height (computed + adjustment for font size (if other than base size)), then divide by 2
-        padding-right: $context-breadcrumb-padding-horizontal;
+//       > a {
+//         color: #333;
+//         display: inline-block;
+//         padding: (
+//             (
+//                 $context-breadcrumb-height -
+//                   ($context-breadcrumb-font-size - $font-size-base) -
+//                   $line-height-computed
+//               ) / 2
+//           )
+//           0; // to calculate the correct padding subtract from the total height the actual line-height (computed + adjustment for font size (if other than base size)), then divide by 2
+//         padding-right: $context-breadcrumb-padding-horizontal;
 
-        &:active,
-        &:focus {
-          text-decoration: none;
-        }
-      }
-    }
-  }
+//         &:active,
+//         &:focus {
+//           text-decoration: none;
+//         }
+//       }
+//     }
+//   }
 
-  &.context-breadcrumb-fancy {
-    background: $context-breadcrumb-fancy-bg;
+//   &.context-breadcrumb-fancy {
+//     // background: $context-breadcrumb-fancy-bg;
+//     background: #fff;
 
-    .context-list {
-      > li {
-        border-right-color: rgba(255, 255, 255, 0.4);
+//     .context-list {
+//       > li {
+//         border-right: none;
+//       }
+//     }
 
-        &.open,
-        &:hover {
-          > .glyphicon {
-            color: #333;
-          }
-          > a {
-            color: #333;
-          }
-        }
+//     // .context-list {
+//     //   > li {
+//     //     border-right-color: rgba(255, 255, 255, 0.4);
 
-        > .glyphicon {
-          color: #fff;
-        }
+//     //     &.open,
+//     //     &:hover {
+//     //       > .glyphicon {
+//     //         color: #333;
+//     //       }
+//     //       > a {
+//     //         color: #333;
+//     //       }
+//     //     }
 
-        > a {
-          color: #fff;
-        }
-      }
-    }
-  }
-}
+//     //     > .glyphicon {
+//     //       color: #fff;
+//     //     }
+
+//     //     > a {
+//     //       color: #fff;
+//     //     }
+//     //   }
+//     // }
+//   }
+// }
 
 // ---------------------------------------------------------------------------------
 // Main Toolbar Mega Nav
@@ -1387,7 +1424,6 @@ footer,
 // ---------------------------------------------------------------------------------
 
 .main-toolbar {
-  // border-bottom: 1px solid $bright-blue;
   padding: $line-height-computed;
 
   h1 {

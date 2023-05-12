@@ -12,7 +12,7 @@ const ModalAuth = (props) => (
   >
     <Modal.Header closeButton={true}>
       <Modal.Title id="contained-modal-title-lg">
-        {props.title ? props.title : `Your Projects (${props.items.length})`}
+        {props.title ? props.title : `Your Projects (${props.items?.length})`}
       </Modal.Title>
     </Modal.Header>
     <Modal.Body>

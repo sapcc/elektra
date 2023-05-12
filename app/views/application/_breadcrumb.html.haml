@@ -1,18 +1,26 @@
 .context-breadcrumb.context-breadcrumb-fancy
   .container.context-container
     - if @can_access_domain
-      %ol.context-list
-        %li.dropdown
-          = link_to main_app.domain_home_path(domain_id: @scoped_domain_fid, project_id:nil) do
-            %i.icon-link.fa.fa-home
+      .context-breadcrumb-context
+        %ol.context-list.context-home
+          %li
+            = link_to main_app.domain_home_path(domain_id: @scoped_domain_fid, project_id:nil) do
+              %i.icon-link.fa.fa-home
 
-      - unless @domain_switch
-        %ol.context-list
-          %li.dropdown{id: 'projects_list', data: {react_auth_projects_link: 'true', icon_class: 'icon-link fa fa-th-list'}}
+        - unless @domain_switch
+          %ol.context-list.context-project
+            %li.dropdown{id: 'projects_list', data: {react_auth_projects_link: 'true'}}
+        
 
     - if @can_access_project && !@domain_switch
       %ol.context-list
-        %li= link_to @scoped_project_name.try(:html_safe), main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid)
+        %li
+          = link_to main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid) do
+            = @scoped_project_name.try(:html_safe)
+      
+      %ol.context-list
+        %li
+          %i.fa.fa-angle-right
 
       %ol.context-list
         %li.dropdown.dropdown-mega

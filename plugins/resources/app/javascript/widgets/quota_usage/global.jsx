@@ -51,7 +51,7 @@ window.onload = function () {
     const quotaInfos = document.querySelector("[data-react-quota-usage]")
 
     createWidget(null, {
-      html: { class: "flex-body" },
+      html: { class: "" },
       params: { flashescontainer: "custom" },
       containers: [quotaInfos],
     }).then((widget) => {

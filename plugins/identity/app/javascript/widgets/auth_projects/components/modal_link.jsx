@@ -9,7 +9,7 @@ const ModalLink = (props) => {
         props.toggleModal()
       }}
     >
-      {props.iconClass ? <i className={props.iconClass}></i> : "Auth Projects"}
+    <i className="fa fa-th-list"></i> Projects
     </a>
   )
 }

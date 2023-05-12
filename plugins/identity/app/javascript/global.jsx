@@ -45,7 +45,7 @@ $(() => {
   }
 
   createWidget(null, {
-    html: { class: "flex-body" },
+    html: { class: "" },
     params: { flashescontainer: "custom" },
     containers: reactContainers,
   })
