@@ -1,6 +1,5 @@
 import React from "react"
 import { Modal, Button } from "react-bootstrap"
-import Deferred from "lib/tools/deferred"
 
 export class ModalDialog extends React.Component {
   constructor(props) {
@@ -9,6 +8,7 @@ export class ModalDialog extends React.Component {
     this.state = { show: false }
     this.abort = this.abort.bind(this)
     this.confirm = this.confirm.bind(this)
+    this.promise = props.promise
   }
 
   static defaultProps = {
@@ -28,10 +28,8 @@ export class ModalDialog extends React.Component {
   }
 
   componentDidMount() {
-    this.promise = new Deferred()
     this.setState({ show: true }, () => {
-      //ReactDOM.findDOMNode(this.refs.confirm).focus()
-      // if (this.confirmButton) this.confirmButton.focus()
+      if (this.confirmButton) this.confirmButton.focus()
     })
   }
 
@@ -58,15 +56,15 @@ export class ModalDialog extends React.Component {
           {this.props.showAbortButton && (
             <Button onClick={this.abort}>{this.props.abortLabel}</Button>
           )}
-          <Button
-            bsStyle="primary"
+          <button
+            className="btn btn-primary"
             onClick={this.confirm}
             ref={(confirm) => {
-              // this.confirmButton = confirm
+              this.confirmButton = confirm
             }}
           >
             {this.props.confirmLabel}
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
     )

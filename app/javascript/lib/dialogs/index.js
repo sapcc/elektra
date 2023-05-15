@@ -1,5 +1,6 @@
 import { ModalDialog } from "./dialog"
-import ReactDOM from "react-dom"
+import { createRoot } from "react-dom/client"
+import Deferred from "lib/tools/deferred"
 import React from "react"
 
 const showDialog = function (type, message, options) {
@@ -37,8 +38,13 @@ const showDialog = function (type, message, options) {
 
   // props = Object.assign({ message, type, onHide: cleanup}, options);
   props = Object.assign({ message, type }, options)
-  component = ReactDOM.render(React.createElement(ModalDialog, props), wrapper)
-  return component.promise
+  const promise = new Deferred()
+  component = React.createElement(ModalDialog, {
+    ...props,
+    promise: promise,
+  })
+  createRoot(wrapper).render(component)
+  return promise
 }
 
 export const confirm = function (message, options) {
