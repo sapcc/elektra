@@ -1,6 +1,6 @@
 /* eslint no-console:0 */
 import React from "react"
-import { HashRouter, Route, Redirect } from "react-router-dom"
+import { Route, Redirect } from "react-router-dom"
 
 import Tabs from "./Tabs"
 import Welcome from "./Welcome"
@@ -11,7 +11,7 @@ import EditEntryModal from "./entries/edit"
 import ShowEntryModal from "./entries/show"
 import NewEntryModal from "./entries/new"
 import StateProvider from "./StateProvider"
-import styles from "../styles.inline.css"
+import styles from "../styles.css?inline"
 
 import StyleProvider, { AppShell } from "juno-ui-components"
 import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min"

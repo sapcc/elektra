@@ -2,7 +2,9 @@
 const pathsResolverPlugin = require("./paths_resolver_plugin")
 const globImportPlugin = require("./glob_import_plugin")
 const postcss = require("postcss")
-const { sassPlugin } = require("esbuild-sass-plugin")
+const sass = require("sass")
+const url = require("postcss-url")
+const fs = require("fs")
 
 // const envFilePlugin = require("esbuild-envfile-plugin")
 const envFilePlugin = require("./esbuild-plugin-env")
@@ -14,9 +16,6 @@ const watch = args.indexOf("--watch") >= 0
 const production =
   args.indexOf("--production") >= 0 || process.env.RAILS_ENV === "production"
 const log = console.log.bind(console)
-
-const postcssPlugins = [require("tailwindcss"), require("autoprefixer")]
-if (production) postcssPlugins.push(require("postcss-minify"))
 
 const config = {
   entryPoints: entryPoints(
@@ -50,27 +49,59 @@ const config = {
     }),
     globImportPlugin(),
 
-    // use default type (css) for all sass, scss and css files which don't start with .inline
-    sassPlugin({
-      filter: /.*[^.inline]\.(s[ac]ss|css)$/,
-      type: "style",
-      includePaths: ["./node_modules"],
-      cssImports: true,
-      async transform(source, _resolveDir) {
-        const { css } = await postcss(postcssPlugins).process(source)
-        return css
+    {
+      // custom plugin to handle css imports
+      name: "inline-styles",
+      setup(build) {
+        build.onLoad(
+          // consider only .scss and .css files
+          {
+            filter: /.*\.(css|scss)$/,
+            namespace: "file",
+          },
+          async (args) => {
+            let content
+            // handle scss, convert to css
+            if (args.path.endsWith(".scss")) {
+              const result = sass.compile(args.path, {
+                loadPaths: ["./node_modules"], // required for imported styles from node_modules
+              }) //sass.renderSync({ file: args.path })
+              content = result.css
+            } else {
+              // read file content
+              content = await fs.readFileSync(args.path)
+            }
+
+            // postcss plugins
+            const plugins = [
+              require("tailwindcss"),
+              require("autoprefixer"),
+              // rewrite urls inside css
+              url({
+                url: "inline",
+                maxSize: 10, // use dataurls if files are smaller than 10k
+                fallback: "copy", // if files are bigger use copy method
+                assetsPath: "./app/images",
+                useHash: true,
+                optimizeSvgEncode: true,
+              }),
+            ]
+            // minify in production mode
+            if (production) plugins.push(require("postcss-minify"))
+
+            const { css } = await postcss(plugins).process(content, {
+              from: args.path,
+              to: "",
+            })
+            // built-in loaders: js, jsx, ts, tsx, css, json, text, base64, dataurl, file, binary
+            return {
+              contents: css,
+              loader: args.suffix === "?inline" ? "text" : "css", // as text if inline, as style tag in head otherwise
+            }
+          }
+        )
       },
-    }),
-    // for all sass, scss and css files starting with .inline use the css-text type
-    // This means that all .inline.(s)css files are loaded as text
-    sassPlugin({
-      filter: /.*\.inline\.(s[ac]ss|css)$/,
-      type: "css-text",
-      async transform(source, _resolveDir) {
-        const { css } = await postcss(postcssPlugins).process(source)
-        return css
-      },
-    }),
+    },
   ],
   //loader: { ".js": "jsx" },
   target: ["es6", "chrome58", "firefox57", "safari11", "edge18"],
