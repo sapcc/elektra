@@ -180,9 +180,9 @@ const SecretDetails = () => {
             {metadata.isLoading && !metadata.data ? (
               <HintLoading />
             ) : metadata.data ? (
-              <CodeBlock
+              <CodeBlockgit 
                 heading="Metadata"
-                content={secretMetadata}
+                content={secretMetadata || {}}
                 lang="json"
                 className="tw-mt-6"
               />

@@ -141,9 +141,9 @@ const ContainerDetails = () => {
               {container.data?.secret_refs &&
               container.data?.secret_refs.length > 0 ? (
                 container.data?.secret_refs.map((secret, index) => (
-                  <>
-                    <DataGridCell key={index}>{index}</DataGridCell>
-                    <DataGridCell key={index}>
+                  <React.Fragment key={index}>
+                    <DataGridCell>{index}</DataGridCell>
+                    <DataGridCell>
                       <div>
                         <Link
                           className="tw-break-all"
@@ -157,7 +157,7 @@ const ContainerDetails = () => {
                         </Badge>
                       </div>
                     </DataGridCell>
-                  </>
+                  </React.Fragment>
                 ))
               ) : (
                 <DataGridRow>
