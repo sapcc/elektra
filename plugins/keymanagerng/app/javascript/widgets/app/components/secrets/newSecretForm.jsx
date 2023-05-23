@@ -15,6 +15,9 @@ import { createSecret } from "../../secretActions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useActions, Messages } from "messages-provider"
 import { getSecretUuid } from "../../../lib/secretHelper"
+import { format } from 'date-fns'
+import { DayPicker } from 'react-day-picker';
+// import 'react-day-picker/dist/style.css';
 
 const TYPE_SYMMETRIC = "symmetric"
 const TYPE_PUBLIC = "public"
@@ -134,6 +137,13 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const { mutate } = useMutation(({ formState }) => createSecret(formState))
   const { addMessage, resetMessages } = useActions()
 
+  const [selected, setSelected] = React.useState(null);
+
+  let footer = <p>Please pick a day.</p>;
+  if (selected) {
+    footer = <p>You picked {format(selected, 'PP')}.</p>;
+  }
+
   const onConfirm = () => {
     const errors = formValidation(formData)
     if (Object.keys(errors).length > 0) {
@@ -195,6 +205,12 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           helptext={validationState?.name}
           required
         />
+        <DayPicker
+      mode="single"
+      selected={selected}
+      onSelect={setSelected}
+      footer={footer}
+    />
         <TextInputRow
           label="Expiration"
           name="expiration"
