@@ -17,6 +17,10 @@ const production =
   args.indexOf("--production") >= 0 || process.env.RAILS_ENV === "production"
 const log = console.log.bind(console)
 
+const { sassPlugin } = require("esbuild-sass-plugin")
+const postcssPlugins = [require("tailwindcss"), require("autoprefixer")]
+if (production) postcssPlugins.push(require("postcss-minify"))
+
 const config = {
   entryPoints: entryPoints(
     [
@@ -49,6 +53,27 @@ const config = {
     }),
     globImportPlugin(),
 
+    // // use default type (css) for all sass, scss and css files which don't start with .inline
+    // sassPlugin({
+    //   filter: /.*[^.inline]\.(s[ac]ss|css)$/,
+    //   type: "style",
+    //   includePaths: ["./node_modules"],
+    //   cssImports: true,
+    //   async transform(source, _resolveDir) {
+    //     const { css } = await postcss(postcssPlugins).process(source)
+    //     return css
+    //   },
+    // }),
+    // // for all sass, scss and css files starting with .inline use the css-text type
+    // // This means that all .inline.(s)css files are loaded as text
+    // sassPlugin({
+    //   filter: /.*\.inline\.(s[ac]ss|css).*$/,
+    //   type: "css-text",
+    //   async transform(source, _resolveDir) {
+    //     const { css } = await postcss(postcssPlugins).process(source)
+    //     return css
+    //   },
+    // }),
     {
       // custom plugin to handle css imports
       name: "inline-styles",
@@ -96,7 +121,7 @@ const config = {
             // built-in loaders: js, jsx, ts, tsx, css, json, text, base64, dataurl, file, binary
             return {
               contents: css,
-              loader: args.suffix === "?inline" ? "text" : "css", // as text if inline, as style tag in head otherwise
+              loader: args.suffix === "?inline" ? "text" : "copy", // as text if inline and copy file to builds otherwise
             }
           }
         )
