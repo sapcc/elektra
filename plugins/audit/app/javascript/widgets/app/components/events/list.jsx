@@ -113,7 +113,7 @@ const EventList = ({
 
       <span className="toolbar-input-divider" />
 
-      <label>Time range:</label>
+      <label>Time range (UTC):</label>
       <Datetime
         value={filterStartTime}
         inputProps={{ placeholder: "Select start time" }}
