@@ -17,10 +17,6 @@ const production =
   args.indexOf("--production") >= 0 || process.env.RAILS_ENV === "production"
 const log = console.log.bind(console)
 
-const { sassPlugin } = require("esbuild-sass-plugin")
-const postcssPlugins = [require("tailwindcss"), require("autoprefixer")]
-if (production) postcssPlugins.push(require("postcss-minify"))
-
 const config = {
   entryPoints: entryPoints(
     [
