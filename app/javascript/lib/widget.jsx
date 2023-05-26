@@ -157,7 +157,7 @@ export const createWidget = (dirname, options = {}) => {
   }
 
   let htmlOptions = options.html || {}
-  let defaultHtmlOptions = { class: ".react-widget-content" }
+  let defaultHtmlOptions = { class: "react-widget-content" }
   htmlOptions = Object.assign({}, defaultHtmlOptions, htmlOptions)
   for (let attr in htmlOptions) {
     for (let reactContainer of reactContainers) {

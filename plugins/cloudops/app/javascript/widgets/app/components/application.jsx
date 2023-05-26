@@ -42,10 +42,13 @@ Breadcrumb = withRouter(Breadcrumb)
 const CloudOpsApp = (props) => (
   <HashRouter /*hashType="noslash"*/>
     <>
-      <Menu />
+
+      <div className="flex-header-sticky">
+        <Menu />
+      </div>
       <Breadcrumb />
 
-      <div className="container">
+      <main className="container">
         <FlashMessages />
         <Route
           exact
@@ -53,7 +56,7 @@ const CloudOpsApp = (props) => (
           render={() => <Redirect to="/universal-search" />}
         />
         <SearchRoutes />
-      </div>
+      </main>
     </>
   </HashRouter>
 )

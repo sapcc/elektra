@@ -4,7 +4,6 @@
     %meta(http-equiv="X-UA-Compatible" content="IE=edge")
     %meta(name="viewport" content="width=device-width, initial-scale=1")
 
-
     %title= page_title
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
     -# = content_for :javascripts do
@@ -39,9 +38,11 @@
 
     = csrf_meta_tags
 
-  %body{class: "#{body_class} #{domain_class} #{plugin_name if plugin_name}"}
+  %body{class: "#{body_class} #{domain_class} #{plugin_name if plugin_name} theme-light"}
     .flex-header-sticky
-      = render "cloudops_nav"
+      -# = render "cloudops_nav"
+      = render "page_header"
+
 
     = yield
 

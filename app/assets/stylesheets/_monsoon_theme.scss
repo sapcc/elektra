@@ -389,9 +389,9 @@ section {
   padding: $line-height-computed * 2 0;
 }
 
-.content {
-  margin: ($line-height-computed) 0 0 0;
-}
+// .content {
+//   margin: ($line-height-computed) 0 0 0;
+// }
 
 .lead {
   font-family: $font-family-sans-serif-light;
@@ -2805,11 +2805,11 @@ label {
 // Domain specific styling (only for danger domains)
 // --------------------------------------------------------------------------------------
 
-.ccadmin {
-  .context-breadcrumb.context-breadcrumb-fancy {
-    background: $context-breadcrumb-fancy-bg-danger;
-  }
-}
+// .ccadmin {
+//   .context-breadcrumb.context-breadcrumb-fancy {
+//     background: $context-breadcrumb-fancy-bg-danger;
+//   }
+// }
 
 // ---------------------------------------------------------------------------------
 // Utilities

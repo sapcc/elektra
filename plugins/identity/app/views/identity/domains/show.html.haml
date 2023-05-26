@@ -20,155 +20,156 @@
 -#         announcement blog post
 -#       for further information.
 
+= javascript_include_tag "https://assets.juno.global.cloud.sap/apps/widget-loader@latest/build/app.js", defer: true, data: {"show-loading": "true", name: "volta", version: "latest", "props-region": "#{current_region}", "props-domain": "ccadmin", "props-prodmode": Rails.env.production?}
 
-.row
-  .col-md-3
-    %h4.heading-top= @scoped_domain_name
+-# .row
+-#   .col-md-3
+-#     %h4.heading-top= @scoped_domain_name
 
-    %p
-      = @domain.description if @domain
-
-
-    -# ADMIN ACTIONS
-    - if current_user and current_user.admin?
-      %h4.heading-whitespace Domain Administration
-
-      - if plugin_available?('resources') || plugin_available?('reports') || plugin_available?('masterdata_cockpit')
-        %h5
-          %i.monitoring-icon
-          Resources & Masterdata
-
-        %ul.plain-list
-          - if  plugin_available?('masterdata_cockpit') && current_user.is_allowed?('masterdata_cockpit:masterdata_get')
-            %li
-              = link_to "Masterdata", plugin('masterdata_cockpit').domain_masterdata_path
-
-          - if plugin_available?('resources') && current_user.is_allowed?('resources:domain:access')
-            %li
-              = link_to "Domain Resources Administration", plugin('resources').domain_path
-
-          - if plugin_available?('reports') && current_user.is_allowed?('reports:cost_domain')
-            %li
-              = link_to "Cost Report", plugin('reports').domain_cost_index_path
-
-      - if plugin_available?('inquiry') && current_user.is_allowed?('inquiry:inquiry_all_list')
-        %h5
-          %i.inquiry-icon
-          Domain Admin Requests
-
-        - if current_user.is_allowed?("inquiry:manage_requests")
-          %ul.plain-list
-            %li
-              = link_to plugin('inquiry').admin_inquiries_path do
-                Manage Requests
-                = " (#{::Inquiry::Inquiry.processor_requests_count(@scoped_domain_id)})"
-
-      - if plugin_available?('cc_tools') && current_user.is_allowed?('tools:application_get')
-        %h5
-          %i.cloud-admin-icon
-          Tools
-
-        %ul.plain-list
-          %li
-            = link_to 'Universal Search', plugin('cc_tools').start_path
-
-      - if plugin_available?('identity')
-        %h5
-          %i.access_management-icon
-          Access Management
-
-        %ul.plain-list
-          - if current_user.is_allowed?('identity:group_list', domain_id: @scoped_domain_id)
-            %li
-              = link_to "Group Management", plugin('identity').groups_path
-
-          - if current_user.is_allowed?('identity:user_list', domain_id: @scoped_domain_id)
-            %li
-              = link_to "User Management", plugin('identity').domains_users_path
-
-        -  if current_user.is_allowed?('identity:project_create',{project: {domain_id: @scoped_domain_id}})
-          %h5
-            %i.project-icon
-            Projects
-
-          %ul.plain-list
-            %li
-              = link_to 'Create a New Project', plugin('identity').domains_create_project_path, data: {modal: true}
-
-    - if plugin_available?('lookup') && current_user.is_allowed?('lookup:reverse_lookup_list', domain_id: @scoped_domain_id)
-      %h5
-        %i.lookup-icon
-        Project Lookup
-
-      %ul.plain-list
-        %li
-          = link_to 'Find by Child Objects', plugin('lookup').reverselookup_index_path, data: {modal: true}
-
-  .col-md-3
-    %h4.heading-top
-      = @scoped_domain_name
-      Actions
-
-    %h5
-      %i.inquiry-icon
-      Requests
-
-    %ul.plain-list
-      %li
-        = link_to plugin('inquiry').inquiries_path do
-          My Requests
-          = " (#{::Inquiry::Inquiry.requestor_requests_count(@scoped_domain_id, current_user.id)})"
+-#     %p
+-#       = @domain.description if @domain
 
 
-    - if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id)
-      %h5
-        %i.project-icon
-        Projects
+-#     -# ADMIN ACTIONS
+-#     - if current_user and current_user.admin?
+-#       %h4.heading-whitespace Domain Administration
 
-      %ul.plain-list
-        %li
-          = link_to 'Request a New Project', plugin('identity').projects_request_project_path(project_id: nil), data: {modal: true}
+-#       - if plugin_available?('resources') || plugin_available?('reports') || plugin_available?('masterdata_cockpit')
+-#         %h5
+-#           %i.monitoring-icon
+-#           Resources & Masterdata
+
+-#         %ul.plain-list
+-#           - if  plugin_available?('masterdata_cockpit') && current_user.is_allowed?('masterdata_cockpit:masterdata_get')
+-#             %li
+-#               = link_to "Masterdata", plugin('masterdata_cockpit').domain_masterdata_path
+
+-#           - if plugin_available?('resources') && current_user.is_allowed?('resources:domain:access')
+-#             %li
+-#               = link_to "Domain Resources Administration", plugin('resources').domain_path
+
+-#           - if plugin_available?('reports') && current_user.is_allowed?('reports:cost_domain')
+-#             %li
+-#               = link_to "Cost Report", plugin('reports').domain_cost_index_path
+
+-#       - if plugin_available?('inquiry') && current_user.is_allowed?('inquiry:inquiry_all_list')
+-#         %h5
+-#           %i.inquiry-icon
+-#           Domain Admin Requests
+
+-#         - if current_user.is_allowed?("inquiry:manage_requests")
+-#           %ul.plain-list
+-#             %li
+-#               = link_to plugin('inquiry').admin_inquiries_path do
+-#                 Manage Requests
+-#                 = " (#{::Inquiry::Inquiry.processor_requests_count(@scoped_domain_id)})"
+
+-#       - if plugin_available?('cc_tools') && current_user.is_allowed?('tools:application_get')
+-#         %h5
+-#           %i.cloud-admin-icon
+-#           Tools
+
+-#         %ul.plain-list
+-#           %li
+-#             = link_to 'Universal Search', plugin('cc_tools').start_path
+
+-#       - if plugin_available?('identity')
+-#         %h5
+-#           %i.access_management-icon
+-#           Access Management
+
+-#         %ul.plain-list
+-#           - if current_user.is_allowed?('identity:group_list', domain_id: @scoped_domain_id)
+-#             %li
+-#               = link_to "Group Management", plugin('identity').groups_path
+
+-#           - if current_user.is_allowed?('identity:user_list', domain_id: @scoped_domain_id)
+-#             %li
+-#               = link_to "User Management", plugin('identity').domains_users_path
+
+-#         -  if current_user.is_allowed?('identity:project_create',{project: {domain_id: @scoped_domain_id}})
+-#           %h5
+-#             %i.project-icon
+-#             Projects
+
+-#           %ul.plain-list
+-#             %li
+-#               = link_to 'Create a New Project', plugin('identity').domains_create_project_path, data: {modal: true}
+
+-#     - if plugin_available?('lookup') && current_user.is_allowed?('lookup:reverse_lookup_list', domain_id: @scoped_domain_id)
+-#       %h5
+-#         %i.lookup-icon
+-#         Project Lookup
+
+-#       %ul.plain-list
+-#         %li
+-#           = link_to 'Find by Child Objects', plugin('lookup').reverselookup_index_path, data: {modal: true}
+
+-#   .col-md-3
+-#     %h4.heading-top
+-#       = @scoped_domain_name
+-#       Actions
+
+-#     %h5
+-#       %i.inquiry-icon
+-#       Requests
+
+-#     %ul.plain-list
+-#       %li
+-#         = link_to plugin('inquiry').inquiries_path do
+-#           My Requests
+-#           = " (#{::Inquiry::Inquiry.requestor_requests_count(@scoped_domain_id, current_user.id)})"
 
 
-  .col-md-3
-    -# this is a placeholder for React Component!
-    %div{data: {react_auth_projects: true} }
-      %h4.action-heading.heading-top Your Projects
+-#     - if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id)
+-#       %h5
+-#         %i.project-icon
+-#         Projects
 
-  .col-md-3
-    .infobox
-      %h4 Infobox
-      %table.table
-        %tbody
-          %tr
-            %th.snug-nowrap
-              Region:
-            %td
-              = current_region
-          %tr
-            %th.snug-nowrap
-              Domain:
-            %td
-              = @scoped_domain_name
+-#       %ul.plain-list
+-#         %li
+-#           = link_to 'Request a New Project', plugin('identity').projects_request_project_path(project_id: nil), data: {modal: true}
 
 
-      %h5
-        Helpful Links
-        %i.fa.fa-external-link
+-#   .col-md-3
+-#     -# this is a placeholder for React Component!
+-#     %div{data: {react_auth_projects: true} }
+-#       %h4.action-heading.heading-top Your Projects
 
-      %ul.fa-ul
-        %li
-          %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}" target="_blank") Documentation Main Page
-        %li
-          %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}docs/customer/docs/faq/" target="_blank") Troubleshooting & FAQ
-        %li
-          %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}docs/customer/training/" target="_blank") Tutorials
-        %li
-          %i.fa.fa-li.fa-ambulance
-          %a(href="#{sap_url_for('documentation')}docs/customer/docs/support/" target="_blank") Get Support
+-#   .col-md-3
+-#     .infobox
+-#       %h4 Infobox
+-#       %table.table
+-#         %tbody
+-#           %tr
+-#             %th.snug-nowrap
+-#               Region:
+-#             %td
+-#               = current_region
+-#           %tr
+-#             %th.snug-nowrap
+-#               Domain:
+-#             %td
+-#               = @scoped_domain_name
+
+
+-#       %h5
+-#         Helpful Links
+-#         %i.fa.fa-external-link
+
+-#       %ul.fa-ul
+-#         %li
+-#           %i.fa.fa-li.fa-file-text-o
+-#           %a(href="#{sap_url_for('documentation')}" target="_blank") Documentation Main Page
+-#         %li
+-#           %i.fa.fa-li.fa-file-text-o
+-#           %a(href="#{sap_url_for('documentation')}docs/customer/docs/faq/" target="_blank") Troubleshooting & FAQ
+-#         %li
+-#           %i.fa.fa-li.fa-file-text-o
+-#           %a(href="#{sap_url_for('documentation')}docs/customer/training/" target="_blank") Tutorials
+-#         %li
+-#           %i.fa.fa-li.fa-ambulance
+-#           %a(href="#{sap_url_for('documentation')}docs/customer/docs/support/" target="_blank") Get Support
 
       -# Customer Survey
       -# .bs-callout.bs-callout-info-cta.bs-callout-emphasize.u-margin-top-normal
