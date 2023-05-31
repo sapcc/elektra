@@ -1,14 +1,61 @@
+%style
+  :plain
+    body {
+      background-color: rgb(0, 8, 16);
+      font-family: "BentonSans Regular", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .loader {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid #FFF;
+      border-radius: 50%;
+      display: inline-block;
+      position: relative;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+    .spinner::after {
+      content: '';
+      box-sizing: border-box;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-bottom-color: rgb(21, 208, 224);
+    }
+
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
 %noscript
   %h1 SAP Converged Cloud
   = link_to "Enter the cloud", main_app.domain_home_path(domain_id: params[:domain_id], project_id:nil)
   = link_to "Log in with password", monsoon_openstack_auth.login_path(domain_fid: @scoped_domain_fid || params[:domain_id], domain_name: (params[:domain_id] || Rails.configuration.default_domain), after_login: main_app.domain_home_path(domain_id:params[:domain_id]))
 -# global landing page with preselected region/domain
-= # javascript_include_tag "https://assets.juno.global.cloud.sap/apps/widget-loader@latest/build/app.js", defer: true, data: {"show-loading": "true", name: "dashboard", version: "latest", "props-region": "#{current_region}", "props-domain": "#{current_domain}", "props-prodmode": Rails.env.production?}
 = javascript_include_tag "https://assets.juno.global.cloud.sap/apps/widget-loader@latest/build/app.js", defer: true, data: {"importmap-only": "true"}
 
 #dashboard
-  Loading...
-  %script{type: "module-shim"}
+  .loader
+    %span.spinner
+
+  %script{type: "module"}
     :plain
       // try to load juno app "dashboard" via dynamic import
       // In case of an error or after a timeout, the domain home page will be loaded
@@ -17,11 +64,16 @@
       const domain = (url.pathname || "").split("/",2)[1]
       const homeUrl = new URL(`${domain}/home`,url)
 
-      let timer = setTimeout(()=>window.location.href=homeUrl,timeout*1000)
+      let timer = setTimeout(()=>{
+        console.log("timeout")
+        window.location.href=homeUrl
+      },timeout*1000)
+
       window.addEventListener("JUNO_IMPORTMAP_LOADED",()=>{
-        import("@juno/dashboard@latest").then((app) => {
+        importShim("@juno/dashboard@latest").then((app) => {
           app.mount(document.getElementById("dashboard"),{props: {region: "#{current_region}", domain: "#{current_domain}", prodmode: "#{Rails.env.production?}"}})
         }).catch((error) => {
+          console.log("ERROR",error)
           window.location.href=homeUrl
         }).finally(() => clearTimeout(timer))
       })
