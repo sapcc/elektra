@@ -17,15 +17,15 @@ describe("domain landing page", () => {
     cy.contains("td", "admin")
   })
 
-  // it("open domain landing page and check logout button", () => {
-  //   cy.contains("a.navbar-identity", "Technical User").click()
-  //   cy.contains("a", "Log out").click()
-  //   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  //   cy.wait(500)
-  //   // check not in one string because it can be different order
-  //   cy.contains("SAP Converged Cloud")
-  //   cy.contains("button", "Log in")
-  // })
+  it("open domain landing page and check logout button", () => {
+    cy.contains("a.navbar-identity", "Technical User").click()
+    cy.contains("a", "Log out").click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    // check not in one string because it can be different order
+    cy.contains("SAP Converged Cloud")
+    cy.contains("button", "Log in")
+  })
 
   it("open domain landing page open and create project dialog", () => {
     cy.contains("a", "Create a New Project").click()
