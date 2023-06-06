@@ -65,7 +65,7 @@
     :plain
       // try to load juno app "dashboard" via dynamic import
       // In case of an error or after a timeout, the domain home page will be loaded
-      const timeout = 10 // seconds
+      const timeout = 6 // seconds
       const url = new URL(window.location.href)
       const domain = (url.pathname || "").split("/",2)[1]
       const homeUrl = new URL(`${domain}/home`,url)
@@ -75,10 +75,8 @@
 
       let timer = setTimeout(()=>{
         root.style.setProperty("--timeout", `0s`);
-        document.querySelector(".loader .info").textContent = "Something went wrong, you are being redirected to domain home page."
-        setTimeout(()=>window.location.href=homeUrl,3000)
+        window.location.href=homeUrl
       },timeout*1000)
-
 
       window.addEventListener("JUNO_IMPORTMAP_LOADED",()=>{
         importShim("@juno/dashboard@latest").then((app) => {
