@@ -70,12 +70,13 @@ const FormBody = ({ values, volume, availabilityZones }) => (
       </label>
     </Form.ElementHorizontal>
 
-    <Form.ElementHorizontal label="" name="force">
+    {/* Removing checkbox because force option doesn't work at the moment. */}
+    {/* <Form.ElementHorizontal label="" name="force">
       <label>
         <Form.Input elementType="input" type="checkbox" name="force" />
         Upload even if it is attached to an instance.
       </label>
-    </Form.ElementHorizontal>
+    </Form.ElementHorizontal> */}
   </Modal.Body>
 )
 
