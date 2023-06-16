@@ -507,9 +507,8 @@ export default class EditModal extends React.Component {
             resources, all projects are provided with a generous amount of
             default quota, but extensions can only be approved by cloud admins.
             To request a quota extension, please{" "}
-            <strong>open a ServiceNow ticket</strong>
-            and include a technical justification why your project needs more
-            quota than the default amount.
+            <strong>open a ServiceNow ticket</strong> and include a technical
+            justification why your project needs more quota than the default amount.
           </span>
         )
       }
