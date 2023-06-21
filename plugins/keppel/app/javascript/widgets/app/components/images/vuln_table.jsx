@@ -17,8 +17,8 @@ const columns = [
     key: "severity",
     label: "Severity",
     sortStrategy: "numeric",
-    searchKey: (props) => props.data.severity,
-    sortKey:   (props) => SEVERITY_ORDER[props.data.severity] || 0,
+    searchKey: (props) => props.data.effectiveSeverity,
+    sortKey:   (props) => (SEVERITY_ORDER[props.data.effectiveSeverity] || 0) + 0.0001 * (SEVERITY_ORDER[props.data.severity] || 0),
   },
   //TODO: If sorting for the version columns is desired, a library for version comparisons should be imported.
   {
@@ -35,6 +35,13 @@ const columns = [
 
 const VulnerabilityRow = ({ data }) => {
   const [isOpen, setOpen] = useState(false);
+
+  let severityStr = data.severity;
+  if (data.effectiveSeverity == "Clean") {
+    severityStr += ` -> Ignored`;
+  } else if (data.effectiveSeverity != data.severity) {
+    severityStr += ` -> ${data.effectiveSeverity}`;
+  }
 
   return (
     <>
@@ -53,12 +60,18 @@ const VulnerabilityRow = ({ data }) => {
           </div>
           <div className="small text-muted">{data.title}</div>
         </td>
-        <td className="col-md-1">{data.severity}</td>
+        <td className="col-md-1">
+          {data.effectiveSeverity == "Clean" ? "Ignored" : data.effectiveSeverity}
+          {data.effectiveSeverity == data.severity ? null : (
+            <div className="small text-muted text-nowrap">Was: {data.severity}</div>
+          )}
+        </td>
         <td className="col-md-2">{data.installedVersion}</td>
         <td className="col-md-2">{data.fixedVersion || <span className="text-muted">N/A</span>}</td>
       </tr>
       <tr className="explains-previous-line">
         <td colSpan="5">
+          {data.policyAssessment ? <p>Severity adjusted by security scan policy: {data.policyAssessment}</p> : null}
           {data.description
             ? <p className={isOpen ? "vuln-desc" : "vuln-desc vuln-desc-folded"}>{data.description}</p>
             : null}
@@ -98,11 +111,13 @@ export const VulnerabilityTable = ({ vulnReport }) => {
       primaryURL: null,
       //column 3
       severity: "Rotten",
+      effectiveSeverity: "Rotten",
       //column 4
       installedVersion: osInfo.Name, // e.g. "3.14.1"
       //column 5
       fixedVersion: null,
       //secondary row
+      policyAssessment: null,
       description: `The base image has reached End of Support Life and will not receive further security updates. Please consider updating to a supported version of ${osInfo.Family} as soon as possible.`,
       raw: osInfo,
     });
@@ -110,9 +125,12 @@ export const VulnerabilityTable = ({ vulnReport }) => {
 
   //type 2: generate one problem per vulnerability
   //TODO: X-Keppel-Applicable-Policies
+  const applicablePolicies = vulnReport["X-Keppel-Applicable-Policies"] || {};
   for (const section of (vulnReport.Results || [])) {
     for (const vuln of (section.Vulnerabilities || [])) {
       const severity = vuln.Severity || "UNKNOWN";
+      const keppelSeverity = TRIVY_TO_KEPPEL_SEVERITY[severity] || severity;
+
       // NOTE: `|| null` is for fields that can legitimately be empty.
       const row = {
         //column 1
@@ -123,18 +141,29 @@ export const VulnerabilityTable = ({ vulnReport }) => {
         vulnerabilityID: vuln.VulnerabilityID || "Unknown ID",
         primaryURL: vuln.PrimaryURL || null,
         //column 3
-        severity: TRIVY_TO_KEPPEL_SEVERITY[severity] || severity,
+        severity: keppelSeverity,
+        effectiveSeverity: keppelSeverity,
         //column 4
         installedVersion: vuln.InstalledVersion || "Unknown version",
         //column 5
         fixedVersion: vuln.FixedVersion || null,
         //secondary row
+        policyAssessment: null,
         description: vuln.Description || null,
         raw: vuln,
       };
+
       if (section.Class !== "os-pkgs" && row.objectDescription === null) {
         row.objectDescription = `Found in ${section.Target}`;
       }
+
+      const policy = applicablePolicies[vuln.VulnerabilityID];
+      if (policy) {
+        const { ignore, severity, assessment } = policy.action;
+        row.effectiveSeverity = ignore ? "Clean" : severity;
+        row.policyAssessment = assessment;
+      }
+
       rows.push(row);
     }
   }
