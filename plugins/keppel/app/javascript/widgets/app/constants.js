@@ -33,15 +33,29 @@ export const REQUEST_VULNS          = 'keppel/REQUEST_VULNS';
 export const RECEIVE_VULNS          = 'keppel/RECEIVE_VULNS';
 export const REQUEST_VULNS_FAILURE  = 'keppel/REQUEST_VULNS_FAILURE';
 
-//sorting order for severities in image list and image details views
+//Sorting order for severities in image list and image details views.
+//A vulnerability report is available for all non-negative values.
 export const SEVERITY_ORDER = {
-  "Pending": -2, //pseudo-severity: not scanned yet
-  "Clean": -1,   //pseudo-severity: no vulnerabilities found
-  "Unknown": 0,
-  "Negligible": 1,
+  // pseudo-severities
+  "Error": -3,       // error encountered while scanning
+  "Pending": -2,     // not scanned yet
+  "Unsupported": -1, // Keppel refuses to scan this
+  "Clean": 0,        // no vulnerabilities found
+  // real severity values
+  "Unknown": 1,
   "Low": 2,
   "Medium": 3,
   "High": 4,
   "Critical": 5,
-  "Defcon1": 6,
+  "Rotten": 6, //base OS is out of support
+};
+
+//Keppel uses title-case for vulnerability status strings, but Trivy severities
+//are in full upper case.
+export const TRIVY_TO_KEPPEL_SEVERITY = {
+  "UNKNOWN":  "Unknown",
+  "LOW":      "Low",
+  "MEDIUM":   "Medium",
+  "HIGH":     "High",
+  "CRITICAL": "Critical",
 };

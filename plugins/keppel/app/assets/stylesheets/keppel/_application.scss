@@ -96,8 +96,8 @@ pre.sublease-token > code {
   font-size: 150%;
 }
 
-//image details screen (incl. vulnerability report)
-.modal-body > .datatable:first-child {
+//image details screen
+.modal-body .datatable {
   margin-top: 0;
 
   tr:first-child > * {
@@ -123,12 +123,22 @@ pre.sublease-token > code {
   td.no-top-border {
     border-top: 0;
   }
-  th.vulnerability-folder, td.gcpolicy-folder {
+  td.gcpolicy-folder {
     cursor: pointer;
   }
-  td.vulnerability, td.gcpolicy {
+  td.gcpolicy {
     padding-left: 4em;
   }
+}
+
+//vulnerability report tab on image details screen
+.modal-body .vuln-desc-folded {
+  //truncate text contents to 2 lines
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 //label list on images in image list

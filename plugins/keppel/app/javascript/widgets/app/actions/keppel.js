@@ -423,7 +423,7 @@ const fetchVulns = (accountName, repoName, digest) => (dispatch) => {
 
   ajaxHelper
     .get(
-      `/keppel/v1/accounts/${accountName}/repositories/${repoName}/_manifests/${digest}/vulnerability_report`
+      `/keppel/v1/accounts/${accountName}/repositories/${repoName}/_manifests/${digest}/trivy_report`
     )
     .then((response) => {
       dispatch({
