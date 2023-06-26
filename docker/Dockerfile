@@ -1,5 +1,6 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
 FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.15 AS base 
+LABEL source_repository="https://github.com/sapcc/elektra"
 
 ENV APP_PATH=/home/app
 ENV RAILS_ENV=production
@@ -103,7 +104,6 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
 
 ######################################### FINAL IMAGE ######################################
 FROM base AS elektra
-LABEL source_repository="https://github.com/sapcc/elektra"
 # Copy the already built bundler artifact
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 # Copy the already built js artifact
