@@ -20,7 +20,7 @@ ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
 
 WORKDIR $APP_PATH
 
-RUN apk --no-cache add tzdata postgresql-client
+RUN apk --no-cache add dumb-init tzdata postgresql-client
 
 ################################### BUILDER ################################
 FROM base AS builder 
@@ -54,10 +54,6 @@ RUN apk --no-cache add build-base postgresql-dev ruby-sassc --virtual .builddeps
       && apk del .builddeps \
       && gem sources -c \
       && rm -f /usr/local/bundle/cache/*
-
-RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64 && \
-      chmod +x /usr/bin/dumb-init && \
-      dumb-init -V
 
 # add Gemfile and Gemfile.lock to $APP_PATH/
 ADD Gemfile Gemfile.lock ./
@@ -108,7 +104,6 @@ FROM base AS elektra
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 # Copy the already built js artifact
 COPY --from=builder $APP_PATH $APP_PATH
-COPY --from=builder /usr/bin/dumb-init /usr/bin/dumb-init  
 
 # Note: in our k8s this will be overwriten from deployment
 ENTRYPOINT ["dumb-init", "-c", "--" ]
