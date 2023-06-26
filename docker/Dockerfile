@@ -71,7 +71,7 @@ RUN script/organize_plugins_gemspecs
 # install gems, copy app and run rake tasks
 RUN apk --no-cache add build-base
 RUN bundle config set --local without 'development integration_tests'
-RUN bundle install --jobs=8
+RUN bundle install --jobs=$(nproc)
 
 # add elektra sources into image
 ADD . $APP_PATH
