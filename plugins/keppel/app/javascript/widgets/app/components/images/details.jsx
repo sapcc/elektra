@@ -8,12 +8,21 @@ import { byteToHuman } from "lib/tools/size_formatter"
 import { SEVERITY_ORDER } from "../../constants"
 import Digest from "../digest"
 import TagName from "../tagname"
+import { makeTabBar } from "../utils"
 import GCPolicyFolder from "./gc_policy_folder"
-import VulnerabilityFolder from "./vulnerability_folder"
+import { VulnerabilityTable } from "./vuln_table"
 
 const hasVulnReport = (vulnStatus) => {
-  return vulnStatus !== "Error" && vulnStatus !== "Unsupported"
+  //SEVERITY_ORDER is defined in such a way that all non-negative order values
+  //correspond to the existence of a vulnerability report
+  return SEVERITY_ORDER.hasOwnProperty(vulnStatus) && SEVERITY_ORDER[vulnStatus] > 0
 }
+
+const makeTable = (rows) => (
+  <table className="table datatable">
+    <tbody>{rows}</tbody>
+  </table>
+)
 
 const typeOfManifest = {
   "application/vnd.docker.distribution.manifest.v2+json": "image",
@@ -42,52 +51,15 @@ const formatStepCreatedBy = (input) => {
   return input
 }
 
-const getVulnerabilitiesForLayer = (digest, vulnReport) => {
-  if (!vulnReport) {
-    return []
-  }
-
-  const vulnsBySeverity = {}
-  //for each package introduced in this layer...
-  for (const packageID in vulnReport.environments) {
-    if (
-      vulnReport.environments[packageID].some(
-        (env) => env.introduced_in == digest
-      )
-    ) {
-      //collect each vulnerability affecting that package
-      for (const vulnID of vulnReport.package_vulnerabilities[packageID] ||
-        []) {
-        //...add a <tr> for that vulnerability
-        const pkg = vulnReport.packages[packageID]
-        const vuln = vulnReport.vulnerabilities[vulnID]
-        const severity = vuln.normalized_severity
-
-        vulnsBySeverity[severity] = vulnsBySeverity[severity] || []
-        vulnsBySeverity[severity].push({ ...vuln, pkg })
-      }
-    }
-  }
-
-  const folders = []
-  for (const severity in vulnsBySeverity) {
-    const vulns = vulnsBySeverity[severity]
-    folders.push([
-      SEVERITY_ORDER[severity] || 0,
-      <VulnerabilityFolder key={severity} severity={severity} vulns={vulns} />,
-    ])
-  }
-
-  //`folders` contains pairs of [numerical_severity, folder] -> sort on severity in descending order
-  folders.sort((a, b) => b[0] - a[0])
-  return folders.map((pair) => pair[1])
-}
-
 export default class ImageDetailsModal extends React.Component {
   state = {
     show: true,
+    currentTab: "structure",
   }
 
+  selectTab = (tab) => {
+    this.setState({ ...this.state, currentTab: tab })
+  }
   close = (e) => {
     if (e) {
       e.stopPropagation()
@@ -124,7 +96,7 @@ export default class ImageDetailsModal extends React.Component {
           )
           if (
             manifestInfo &&
-            hasVulnReport(manifestInfo.vulnerability_status)
+            hasVulnReport(manifestInfo.trivy_vulnerability_status)
           ) {
             this.props.loadVulnsOnce()
           }
@@ -180,8 +152,8 @@ export default class ImageDetailsModal extends React.Component {
     const {
       media_type: mediaType,
       tags,
-      vulnerability_status: vulnStatus,
-      vulnerability_scan_error: vulnScanError,
+      trivy_vulnerability_status: vulnStatus,
+      trivy_scan_error: vulnScanError,
       gc_status: gcStatus,
     } = manifests.find((m) => m.digest == digest) || {}
 
@@ -223,49 +195,57 @@ export default class ImageDetailsModal extends React.Component {
       )
     }
 
+    const { currentTab } = this.state
+    const tabs = []
+    if (typeOfManifest[mediaType] == "list" || typeOfManifest[mediaType] == "image") {
+      tabs.push({ label: "Structure", key: "structure" })
+    }
+    if (typeOfManifest[mediaType] == "image" && hasVulnReport(vulnStatus)) {
+      tabs.push({ label: "Vulnerabilities", key: "vulns" })
+    }
+
     return (
-      <table className="table datatable">
-        <tbody>
-          <tr>
-            <th className="preset-width">Canonical digest</th>
-            <td colSpan="2">
-              <Digest
-                digest={digest}
-                wideDisplay={true}
-                repositoryURL={repositoryURL}
-              />
-            </td>
-          </tr>
-          {tags && tags.length > 0 ? (
+      <React.Fragment>
+        <table className="table datatable">
+          <tbody>
             <tr>
-              <th>Tagged as</th>
-              <td colSpan="2">{tagsDisplay}</td>
+              <th className="preset-width">Canonical digest</th>
+              <td colSpan="2">
+                <Digest
+                  digest={digest}
+                  wideDisplay={true}
+                  repositoryURL={repositoryURL}
+                />
+              </td>
             </tr>
-          ) : null}
-          <tr>
-            <th>MIME type</th>
-            <td colSpan="2">{mediaType}</td>
-          </tr>
-          {gcStatus ? this.renderGCStatus(gcStatus, repositoryURL) : null}
-          {typeOfManifest[mediaType] == "list"
-            ? this.renderSubmanifestReferences(
-                manifest.manifests,
-                manifests,
-                repositoryURL
-              )
-            : null}
-          {typeOfManifest[mediaType] == "image"
-            ? this.renderLayers(
-                manifest,
-                imageConfig,
-                vulnReport,
-                vulnStatus,
-                vulnScanError,
-                repositoryURL
-              )
-            : null}
-        </tbody>
-      </table>
+            {tags && tags.length > 0 ? (
+              <tr>
+                <th>Tagged as</th>
+                <td colSpan="2">{tagsDisplay}</td>
+              </tr>
+            ) : null}
+            <tr>
+              <th>MIME type</th>
+              <td colSpan="2">{mediaType}</td>
+            </tr>
+            {gcStatus ? this.renderGCStatus(gcStatus, repositoryURL) : null}
+          </tbody>
+        </table>
+        {tabs.length > 0 && makeTabBar(tabs, currentTab, this.selectTab)}
+        {(typeOfManifest[mediaType] == "list" && currentTab === "structure")
+          ? makeTable(this.renderSubmanifestReferences(
+              manifest.manifests,
+              manifests,
+              repositoryURL
+            ))
+          : null}
+        {(typeOfManifest[mediaType] == "image" && currentTab === "structure")
+          ? makeTable(this.renderLayers(manifest, imageConfig))
+          : null}
+        {(typeOfManifest[mediaType] == "image" && currentTab === "vulns")
+          ? this.renderVulns(vulnReport, vulnStatus, vulnScanError)
+          : null}
+      </React.Fragment>
     )
   }
 
@@ -333,11 +313,13 @@ export default class ImageDetailsModal extends React.Component {
         </Link>
       )
 
-      rows.push(
-        <tr key={`spacer-${manifest.digest}`} className="spacer">
-          <td />
-        </tr>
-      )
+      if (rowIndex > 1) {
+        rows.push(
+          <tr key={`spacer-${manifest.digest}`} className="spacer">
+            <td />
+          </tr>
+        )
+      }
 
       rows.push(
         <tr key={`digest-${manifest.digest}`}>
@@ -366,7 +348,7 @@ export default class ImageDetailsModal extends React.Component {
           <tr key={`vulnstatus-${manifest.digest}`}>
             <th>Vulnerability status</th>
             <td>
-              {manifestInfo.vulnerability_status} ({detailsLink})
+              {manifestInfo.trivy_vulnerability_status} ({detailsLink})
             </td>
           </tr>
         )
@@ -385,7 +367,7 @@ export default class ImageDetailsModal extends React.Component {
     return rows
   }
 
-  renderLayers(manifest, imageConfig, vulnReport, vulnStatus, vulnScanError) {
+  renderLayers(manifest, imageConfig) {
     if (!imageConfig) {
       return (
         <tr className="text-danger">
@@ -394,39 +376,21 @@ export default class ImageDetailsModal extends React.Component {
         </tr>
       )
     }
-    if (hasVulnReport(vulnStatus) && !vulnReport) {
-      return (
-        <tr className="text-danger">
-          <th>Error</th>
-          <td>Cannot load vulnerability report.</td>
-        </tr>
-      )
-    }
 
     const rows = []
-    if (!hasVulnReport(vulnStatus)) {
-      rows.push(
-        <tr className="text-danger">
-          <th>Vulnerability scan error</th>
-          <td>{vulnScanError}</td>
-        </tr>
-      )
-    }
-
     let stepIndex = 0
     let layerIndex = 0
     for (const step of imageConfig.history || []) {
       stepIndex++
       const layer = step.empty_layer ? null : manifest.layers[layerIndex++]
-      const vulnRows = layer
-        ? getVulnerabilitiesForLayer(layer.digest, vulnReport)
-        : null
 
-      rows.push(
-        <tr key={`spacer-${stepIndex}`} className="spacer">
-          <td />
-        </tr>
-      )
+      if (stepIndex > 1) {
+        rows.push(
+          <tr key={`spacer-${stepIndex}`} className="spacer">
+            <td />
+          </tr>
+        )
+      }
 
       rows.push(
         <tr key={`step-${stepIndex}`}>
@@ -461,10 +425,33 @@ export default class ImageDetailsModal extends React.Component {
             </td>
           </tr>
         )
-        Array.prototype.push.apply(rows, vulnRows)
       }
     }
 
     return rows
+  }
+
+  renderVulns(vulnReport, vulnStatus, vulnScanError) {
+    if (vulnScanError) {
+      return makeTable([
+        <tr className="text-danger" key="scan-error">
+          <th>Vulnerability scan error</th>
+          <td>{vulnScanError}</td>
+        </tr>
+      ])
+    }
+    if (!hasVulnReport(vulnStatus)) {
+      return null
+    }
+    if (!vulnReport) {
+      return makeTable([
+        <tr className="text-danger" key="load-failed">
+          <th>Error</th>
+          <td>Cannot load vulnerability report.</td>
+        </tr>
+      ])
+    }
+
+    return <VulnerabilityTable vulnReport={vulnReport} />
   }
 }

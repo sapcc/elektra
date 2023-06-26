@@ -100,7 +100,7 @@ export default class ImageRow extends React.Component {
       size_bytes: sizeBytes,
       pushed_at: pushedAtUnix,
       last_pulled_at: lastPulledAtUnix,
-      vulnerability_status: vulnerabilityStatus,
+      trivy_vulnerability_status: vulnerabilityStatus,
     } = this.props.data
 
     const labelKeys = Object.keys(labels || {}).sort()
