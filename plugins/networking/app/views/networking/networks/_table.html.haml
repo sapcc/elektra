@@ -1,0 +1,46 @@
+- if preview
+  .preview-section
+    .alert.alert-warning.alert-preview
+      %i.fa.fa-info-circle
+      This is a <b>preview from cache</b> of the network list
+    - unless timeout 
+      .fetch
+        This can take a while depending on amount of shared networks. Fetching data... 
+        %span.spinner
+
+- update = {update_path: plugin("networking").networks_external_index_path + ".js", update_interval: 3, remote: true} if (preview && !timeout)
+%table.table.networks.searchable{
+  data: { 
+    search_input: "#search_networks_input"}.merge(update || {})
+}
+  %thead
+    %tr
+      %th Name
+      %th
+        Subnets Associated
+
+      %th Owning Project
+      %th Shared
+      %th Status
+      %th Admin State
+      %th.snug
+  %tbody
+    - if networks.length==0
+      %tr{data: { empty: true }}
+        %td{colspa: 6} No network available
+    - else
+      - networks.each do | network |
+        = render partial: 'item', locals: {network: network, preview: preview}
+
+-# = render_paginatable(@networks)
+-# if has next items (comes from paginate helper in controller) render the
+-# ajax paginate plugin (identified by data-ajax-paginate)
+- if pagination_has_next && !preview
+  .ajax-paginate{
+    data: {
+      ajax_paginate: true,
+      all_button: "true",
+      list_selector: "table.networks tbody",
+      search_input_selector: "#search_networks_input"
+    }
+  }

@@ -1,0 +1,4 @@
+$(".flashes").html("<%= escape_javascript( render "application/flashes.html" ) %>");
+initAutoDismissibleFlash();
+
+$(".js-table-networks").html("<%= escape_javascript(render partial: 'table', locals: {networks: @networks, preview: @preview, timeout: @timeout, pagination_has_next: @pagination_has_next}) %>");

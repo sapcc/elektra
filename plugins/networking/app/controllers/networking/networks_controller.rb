@@ -6,33 +6,30 @@ module Networking
     before_action :load_type, except: %i[ip_availability manage_subnets]
 
     def index
-      @networks = nil
-      if params[:preview] == "true"
-        @preview = true
-        @networks =
-          ObjectCache
-            .where(cached_object_type: "network")
-            .where(project_id: current_user.project_id)
-            .each_with_object([]) do |cached_network, networks|
-              payload = cached_network.payload
-              if payload["router:external"] == (@network_type == "external")
-                networks << Networking::Network.new(nil, payload)
-              end
-            end
-      else
+      @preview = params[:preview] == "true"
+      @networks = cached_networks
+
+      unless @preview
         filter_options = {
           "router:external" => @network_type == "external",
           :sort_key => "name",
         }
-        @networks =
+        begin
+          @networks =
           paginatable(per_page: 30) do |pagination_options|
             options = filter_options.merge(pagination_options)
-            # unless current_user.has_role?("cloud_network_admin")
-            #   options.delete(:limit)
-            # end
+            unless current_user.has_role?("cloud_network_admin")
+              options.delete(:limit)
+            end
 
             services.networking.networks(options)
           end
+        rescue ::Elektron::Errors::Request => exception
+          flash.now[:error] = "Error while fetching networks: #{exception.message}"
+          # if timeout loading data still display the cached networks
+          @timeout = true #disable try to reload with live data
+          @preview = true
+        end 
       end
 
       @network_subnets =
@@ -45,61 +42,19 @@ module Networking
           .where(id: @networks.collect(&:tenant_id))
           .each_with_object({}) { |project, map| map[project.id] = project }
 
-      # this is relevant in case an ajax paginate call is made.
-      # in this case we don't render the layout, only the list!
-      if request.xhr?
-        render partial: "list", locals: { networks: @networks }
-      else
-        # comon case, render index page with layout
-        render action: :index
+      # disable pagination on preview
+      unless @preview
+        # this is relevant in case an ajax paginate call is made.
+        # in this case we don't render the layout, only the list!
+        if request.xhr?
+          render partial: "list", locals: { networks: @networks }
+        else
+          # comon case, render index page with layout
+          render action: :index
+        end
       end
     end
-
-    def index_fetch
-      # filter_options = {
-      #   "router:external" => @network_type == "external",
-      #   :sort_key => "name",
-      # }
-
-      # @networks =
-      #   paginatable(per_page: 30) do |pagination_options|
-      #     options = filter_options.merge(pagination_options)
-      #     # unless current_user.has_role?("cloud_network_admin")
-      #     #   options.delete(:limit)
-      #     # end
-
-      #     services.networking.networks(options)
-      #   end
-
-      # # cached version
-      # # @network_subnets = ObjectCache.where(cached_object_type: 'subnet').where(
-      # #   ["payload ->> 'network_id' IN(?)", @networks.collect(&:id)]
-      # # ).each_with_object({}) do |cached_subnet, map|
-      # #   sn = cached_subnet.payload
-      # #   map[sn['network_id']] ||= []
-      # #   map[sn['network_id']] << Networking::Subnet.new(nil, sn)
-      # # end
-
-      # @network_subnets =
-      #   @networks.each_with_object({}) do |nw, map|
-      #     map[nw.id] = services.networking.subnets(network_id: nw.id)
-      #   end
-
-      # @network_projects =
-      #   ObjectCache
-      #     .where(id: @networks.collect(&:tenant_id))
-      #     .each_with_object({}) { |project, map| map[project.id] = project }
-
-      # # this is relevant in case an ajax paginate call is made.
-      # # in this case we don't render the layout, only the list!
-      # if request.xhr?
-      #   render partial: "list", locals: { networks: @networks }
-      # else
-      #   # comon case, render index page with layout
-      #   render action: :index
-      # end
-    end
-
+    
     def manage_subnets
       @network = services.networking.find_network(params[:network_id])
     end
@@ -231,5 +186,18 @@ module Networking
     def load_type
       raise "has to be implemented in subclass"
     end
+
+    def cached_networks
+      return ObjectCache
+      .where(cached_object_type: "network")
+      .where(project_id: current_user.project_id)
+      .each_with_object([]) do |cached_network, networks|
+        payload = cached_network.payload
+        if payload["router:external"] == (@network_type == "external")
+          networks << Networking::Network.new(nil, payload)
+        end
+      end
+    end
+
   end
 end

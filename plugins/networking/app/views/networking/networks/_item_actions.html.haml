@@ -7,14 +7,14 @@
     %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
       - added = false
       - if current_user.is_allowed?("networking:network_#{@network_type}_update", network: network)
-        %li= link_to 'Edit', plugin('networking').send("edit_networks_#{@network_type}_path", network.id, action_from_show: show_view), data: {modal: true}
-        %li= link_to 'Manage Subnets', plugin('networking').networks_manage_subnets_path(network.id), data: {modal: true}
+        %li= link_to 'Edit', plugin('networking').send("edit_networks_#{@network_type}_path", network.id, action_from_show: show_view), data: {modal: true}, class: ("btn disabled" if preview)
+        %li= link_to 'Manage Subnets', plugin('networking').networks_manage_subnets_path(network.id), data: {modal: true}, class: ("btn disabled" if preview)
         - added = true
       - if current_user.is_allowed?("networking:network_get:dhcp_agents", network: network)
-        %li= link_to 'Manage DHCP Agents', plugin('networking').send("networks_#{@network_type}_dhcp_agents_path", network.id), data: {modal: true}
+        %li= link_to 'Manage DHCP Agents', plugin('networking').send("networks_#{@network_type}_dhcp_agents_path", network.id), data: {modal: true}, class: ("btn disabled" if preview)
         - added = true
       - if current_user.is_allowed?("networking:rbac_policy_list", network: network)
-        %li= link_to 'Access Control', plugin('networking').send("networks_#{@network_type}_access_index_path", network.id), data: {modal: true}
+        %li= link_to 'Access Control', plugin('networking').send("networks_#{@network_type}_access_index_path", network.id), data: {modal: true}, class: ("btn disabled" if preview), class: ("btn disabled" if preview)
         - added = true
       - if current_user.is_allowed?("networking:network_#{@network_type}_delete", network: network)
         %li.divider if added
@@ -22,4 +22,5 @@
         plugin('networking').send("networks_#{@network_type}_path", network.id, action_from_show: show_view),
         method: :delete,
         data: { confirm: 'Are you sure you want to delete this network?', ok: "Yes, delete it", confirmed: :loading_status},
-        remote: true
+        remote: true,
+        class: ("btn disabled" if preview)
