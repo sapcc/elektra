@@ -22,12 +22,12 @@ module Networking
               options.delete(:limit)
             end
 
-            services.networking.networks(options)
+            services.networking.networks(options)            
           end
         rescue ::Elektron::Errors::Request => exception
           flash.now[:error] = "Error while fetching networks: #{exception.message}"
           # if timeout loading data still display the cached networks
-          @timeout = true #disable try to reload with live data
+          @timeout = true #disable reload with live data if error occurs
           @preview = true
         end 
       end
@@ -42,19 +42,15 @@ module Networking
           .where(id: @networks.collect(&:tenant_id))
           .each_with_object({}) { |project, map| map[project.id] = project }
 
-      # disable pagination on preview
-      unless @preview
+      # enable pagination just for live data after the table is rendered without cached data
+      if !@preview && request.xhr? && (params[:page] || params[:marker])
         # this is relevant in case an ajax paginate call is made.
         # in this case we don't render the layout, only the list!
-        if request.xhr?
-          render partial: "list", locals: { networks: @networks }
-        else
-          # comon case, render index page with layout
-          render action: :index
-        end
+        render partial: "list", locals: { networks: @networks, preview: @preview }
       end
     end
-    
+
+
     def manage_subnets
       @network = services.networking.find_network(params[:network_id])
     end
@@ -188,7 +184,7 @@ module Networking
     end
 
     def cached_networks
-      return ObjectCache
+      ObjectCache
       .where(cached_object_type: "network")
       .where(project_id: current_user.project_id)
       .each_with_object([]) do |cached_network, networks|
