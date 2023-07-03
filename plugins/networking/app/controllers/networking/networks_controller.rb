@@ -14,16 +14,29 @@ module Networking
           "router:external" => @network_type == "external",
           :sort_key => "name",
         }
-        begin
-          @networks =
+        begin          
+          live_networks =
           paginatable(per_page: 30) do |pagination_options|
             options = filter_options.merge(pagination_options)
             unless current_user.has_role?("cloud_network_admin")
               options.delete(:limit)
             end
-
             services.networking.networks(options)            
           end
+
+          # merge the live networks with the cached networks mapping by id          
+          new_neworks = []
+          groups = (live_networks + cached_networks).group_by(&:id)
+          groups.flat_map do |_id, items|
+            if items.length > 1
+              # save the item from live data (not cached)
+              merged_item = items.find {|e| !e.local_cache }
+              new_neworks << merged_item
+            else
+              new_neworks << items.first
+            end              
+          end
+          @networks = new_neworks
         rescue ::Elektron::Errors::Request => exception
           flash.now[:error] = "Error while fetching networks: #{exception.message}"
           # if timeout loading data still display the cached networks
@@ -189,6 +202,7 @@ module Networking
       .where(project_id: current_user.project_id)
       .each_with_object([]) do |cached_network, networks|
         payload = cached_network.payload
+        payload[:local_cache] = true
         if payload["router:external"] == (@network_type == "external")
           networks << Networking::Network.new(nil, payload)
         end
