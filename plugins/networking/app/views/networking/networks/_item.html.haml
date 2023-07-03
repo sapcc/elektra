@@ -1,5 +1,8 @@
 %tr{id: "network_#{network.id}", data: {search_name: network.name, marker_id: network.id}, class: "#{'foreign-object' if network.shared}"}
   %td
+    - if network.shared
+      %i.fa.fa-share-alt.fa-fw{data: { toggle: "tooltip", placement: "top", title: "This network is shared"}}
+      
     - if current_user.is_allowed?("networking:network_get", network: network.attributes)
       = link_to network.name, plugin('networking').send("networks_#{@network_type}_path", network.id), data: {modal: true}
     - else
@@ -25,4 +28,4 @@
   %td= network.admin_state_up==true ? 'UP' : 'DOWN'
 
   %td.snug
-    = render partial: 'item_actions', locals: {network:network,show_view:false}
+    = render partial: 'item_actions', locals: {network:network,show_view:false, preview: preview}

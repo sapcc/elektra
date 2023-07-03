@@ -6,29 +6,44 @@ module Networking
     before_action :load_type, except: %i[ip_availability manage_subnets]
 
     def index
-      filter_options = {
-        "router:external" => @network_type == "external",
-        :sort_key => "name",
-      }
+      @preview = params[:preview] == "true"
+      @networks = cached_networks
 
-      @networks =
-        paginatable(per_page: 30) do |pagination_options|
-          options = filter_options.merge(pagination_options)
-          unless current_user.has_role?("cloud_network_admin")
-            options.delete(:limit)
+      unless @preview
+        filter_options = {
+          "router:external" => @network_type == "external",
+          :sort_key => "name",
+        }
+        begin          
+          live_networks =
+          paginatable(per_page: 30) do |pagination_options|
+            options = filter_options.merge(pagination_options)
+            unless current_user.has_role?("cloud_network_admin")
+              options.delete(:limit)
+            end
+            services.networking.networks(options)            
           end
 
-          services.networking.networks(options)
-        end
-
-      # cached version
-      # @network_subnets = ObjectCache.where(cached_object_type: 'subnet').where(
-      #   ["payload ->> 'network_id' IN(?)", @networks.collect(&:id)]
-      # ).each_with_object({}) do |cached_subnet, map|
-      #   sn = cached_subnet.payload
-      #   map[sn['network_id']] ||= []
-      #   map[sn['network_id']] << Networking::Subnet.new(nil, sn)
-      # end
+          # merge the live networks with the cached networks mapping by id          
+          new_neworks = []
+          groups = (live_networks + cached_networks).group_by(&:id)
+          groups.flat_map do |_id, items|
+            if items.length > 1
+              # save the item from live data (not cached)
+              merged_item = items.find {|e| !e.local_cache }
+              new_neworks << merged_item
+            else
+              new_neworks << items.first
+            end              
+          end
+          @networks = new_neworks
+        rescue ::Elektron::Errors::Request => exception
+          flash.now[:error] = "Error while fetching networks: #{exception.message}"
+          # if timeout loading data still display the cached networks
+          @timeout = true #disable reload with live data if error occurs
+          @preview = true
+        end 
+      end
 
       @network_subnets =
         @networks.each_with_object({}) do |nw, map|
@@ -40,15 +55,14 @@ module Networking
           .where(id: @networks.collect(&:tenant_id))
           .each_with_object({}) { |project, map| map[project.id] = project }
 
-      # this is relevant in case an ajax paginate call is made.
-      # in this case we don't render the layout, only the list!
-      if request.xhr?
-        render partial: "list", locals: { networks: @networks }
-      else
-        # comon case, render index page with layout
-        render action: :index
+      # enable pagination just for live data after the table is rendered without cached data
+      if !@preview && request.xhr? && (params[:page] || params[:marker])
+        # this is relevant in case an ajax paginate call is made.
+        # in this case we don't render the layout, only the list!
+        render partial: "list", locals: { networks: @networks, preview: @preview }
       end
     end
+
 
     def manage_subnets
       @network = services.networking.find_network(params[:network_id])
@@ -181,5 +195,19 @@ module Networking
     def load_type
       raise "has to be implemented in subclass"
     end
+
+    def cached_networks
+      ObjectCache
+      .where(cached_object_type: "network")
+      .where(project_id: current_user.project_id)
+      .each_with_object([]) do |cached_network, networks|
+        payload = cached_network.payload
+        payload[:local_cache] = true
+        if payload["router:external"] == (@network_type == "external")
+          networks << Networking::Network.new(nil, payload)
+        end
+      end
+    end
+
   end
 end
