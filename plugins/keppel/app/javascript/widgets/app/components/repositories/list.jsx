@@ -19,7 +19,7 @@ const columns = [
     label: "Contains",
     sortStrategy: "numeric",
     sortKey: (props) =>
-      (props.repo.tag_count || 0) + 0.00001 * (props.repo.manifest_count || 0),
+      (props.repo.manifest_count || 0) + 0.00001 * (props.repo.tag_count || 0),
   },
   {
     key: "size_bytes",
