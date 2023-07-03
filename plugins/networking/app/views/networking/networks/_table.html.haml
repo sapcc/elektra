@@ -9,7 +9,7 @@
       - else
         An error occurred while fetching data from the server. Please proceed with the cached data.
 
-- update = {update_path: plugin("networking").networks_external_index_path + ".js", update_interval: 3, remote: true} if (preview && !timeout)
+- update = {update_path: plugin('networking').send("networks_#{@network_type}_index_path") + ".js", update_interval: 3, remote: true} if (preview && !timeout)
 %table.table.networks.searchable{
   data: { 
     search_input: "#search_networks_input"}.merge(update || {})
