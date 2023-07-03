@@ -1,12 +1,13 @@
 - if preview
   .preview-section
-    .alert.alert-warning.alert-preview
+    .alert{class: (timeout ? 'alert-warning' : 'alert-info')}
       %i.fa.fa-info-circle
-      This is a <b>preview from cache</b> of the network list
-    - unless timeout 
-      .fetch
+      This is a <b>preview from cache</b>.
+      - unless timeout 
         This can take a while depending on amount of shared networks. Fetching data... 
         %span.spinner
+      - else
+        An error occurred while fetching data from the server. Please proceed with the cached data.
 
 - update = {update_path: plugin("networking").networks_external_index_path + ".js", update_interval: 3, remote: true} if (preview && !timeout)
 %table.table.networks.searchable{
