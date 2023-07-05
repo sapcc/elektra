@@ -312,7 +312,7 @@ module EmailService
     def metrics_types
       %w[
         SEND
-        COMPLIANT
+        COMPLAINT
         PERMANENT_BOUNCE
         TRANSIENT_BOUNCE
         OPEN
@@ -320,7 +320,7 @@ module EmailService
         DELIVERY
         DELIVERY_OPEN
         DELIVERY_CLICK
-        DELIVERY_COMPLIANT
+        DELIVERY_COMPLAINT
       ]
     end
 
@@ -1009,7 +1009,7 @@ module EmailService
     end
 
     def matching_event_types_collection
-      %w[send reject bounce compliant delivery open click renderingFailure]
+      %w[send reject bounce complaint delivery open click renderingFailure]
     end
 
     def dimension_value_source_collection
@@ -1158,7 +1158,7 @@ module EmailService
           {
             id: 'QueryIdentifier',
             namespace: 'VDM', # accepts VDM
-            metric: 'SEND', # accepts SEND, COMPLIANT, PERMANENT_BOUNCE, TRANSIENT_BOUNCE, OPEN, CLICK, DELIVERY, DELIVERY_OPEN, DELIVERY_CLICK, DELIVERY_COMPLIANT
+            metric: 'SEND', # accepts SEND, COMPLAINT, PERMANENT_BOUNCE, TRANSIENT_BOUNCE, OPEN, CLICK, DELIVERY, DELIVERY_OPEN, DELIVERY_CLICK, DELIVERY_COMPLAINT
             dimensions: {
               'EMAIL_IDENTITY' => 'MetricDimensionValue',
             },
@@ -1584,7 +1584,7 @@ module EmailService
           event_destination: {
             name: 'EventDestinationName',
             enabled: false,
-            matching_event_types: ['send'], # accepts send, reject, bounce, compliant, delivery, open, click, renderingFailure
+            matching_event_types: ['send'], # accepts send, reject, bounce, complaint, delivery, open, click, renderingFailure
             kinesis_firehose_destination: {
               iam_role_arn: 'AmazonResourceName',
               delivery_stream_arn: 'AmazonResourceName',
@@ -1621,7 +1621,7 @@ module EmailService
         event_destination_name: 'EventDestinationName',
         event_destination: {
           enabled: false,
-          matching_event_types: ['SEND'], # accepts SEND, REJECT, BOUNCE, COMPLIANT, DELIVERY, OPEN, CLICK, RENDERING_FAILURE, DELIVERY_DELAY, SUBSCRIPTION
+          matching_event_types: ['SEND'], # accepts SEND, REJECT, BOUNCE, COMPLAINT, DELIVERY, OPEN, CLICK, RENDERING_FAILURE, DELIVERY_DELAY, SUBSCRIPTION
           kinesis_firehose_destination: {
             iam_role_arn: 'AmazonResourceName',
             delivery_stream_arn: 'AmazonResourceName',
@@ -1667,7 +1667,7 @@ module EmailService
 
     def list_suppressed_destinations(_options = {})
       options = {
-        reasons: ['BOUNCE'], # accepts BOUNCE, COMPLIANT
+        reasons: ['BOUNCE'], # accepts BOUNCE, COMPLAINT
         start_date: Time.now,
         end_date: Time.now,
         next_token: 'NextToken',
@@ -1735,7 +1735,7 @@ module EmailService
     end
 
     def put_account_suppression_attributes(
-      suppressed_reasons = %w[BOUNCE COMPLIANT]
+      suppressed_reasons = %w[BOUNCE COMPLAINT]
     )
       options = { suppressed_reasons: suppressed_reasons }
       ses_client_v2.put_account_suppression_attributes(options)
@@ -1743,7 +1743,7 @@ module EmailService
 
     def put_configuration_set_suppression_options(
       configuration_set_name,
-      suppressed_reasons = %w[BOUNCE COMPLIANT]
+      suppressed_reasons = %w[BOUNCE COMPLAINT]
     )
       options = {
         configuration_set_name: configuration_set_name,
@@ -1883,7 +1883,7 @@ module EmailService
     def put_suppressed_destination(email_address, reason)
       options = {
         email_address: email_address,
-        reason: reason, # accepts BOUNCE, COMPLIANT
+        reason: reason, # accepts BOUNCE, COMPLAINT
       }
       ses_client_v2.put_suppressed_destination(options)
     end
@@ -2006,13 +2006,13 @@ module EmailService
             production = @parsed.key?('production') ? @parsed['production'] : nil
             status = @parsed['status'].nil? ? nil : @parsed['status']  
             allowed_emails = @parsed.key?('allowed_emails') ? @parsed['allowed_emails'] : nil
-            compliant = @parsed.key?('compliant') ? @parsed['compliant'] : nil 
+            complaint = @parsed.key?('complaint') ? @parsed['complaint'] : nil 
             @nebula_details = JSON.dump({ 
               "security_officer": "#{security_officer}",
               "environment": "#{environment}",
               "valid_until": "#{valid_until}",
               "production": "#{production}",
-              "compliant": "#{compliant}",
+              "complaint": "#{complaint}",
               "status": "#{status}"
             })
           end
