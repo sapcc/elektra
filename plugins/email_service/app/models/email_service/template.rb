@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EmailService
   class Template
     include Virtus.model

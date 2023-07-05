@@ -423,7 +423,7 @@ SimpleNavigation::Configuration.run do |navigation|
                  },
                  if: -> { plugin_available?(:email_service) } do |services_nav|
       services_nav.item :email_service,
-                        "eMail",
+                        "Email",
                         -> { plugin("email_service").index_path },
                         if: -> { plugin_available?(:email_service) },
                         highlights_on: -> {

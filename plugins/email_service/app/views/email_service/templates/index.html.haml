@@ -1,5 +1,5 @@
 =content_for :main_toolbar do
-  eMail Service - AWS SES (Cronus)
+  Email Service - AWS SES (Cronus)
 = render partial: 'email_service/shared/nav.html', locals: {pane: 'templates'}
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"templates-pane"}
@@ -31,6 +31,6 @@
                 500 KB
             %br
             %hr
-            Templates are useful when you wish to send customized eMails to your recipients. These templates include a subject line, and the TEXT and HTML parts of the email body. The subject and body sections may also contain unique values that are personalized for each recipient. More on
+            Templates are useful when you wish to send customized Emails to your recipients. These templates include a subject line, and the TEXT and HTML parts of the email body. The subject and body sections may also contain unique values that are personalized for each recipient. More on
             %b
-              = link_to "eMail Templates", "https://docs.aws.amazon.com/ses/latest/dg/send-personalized-email-api.html", :target => "_blank"
+              = link_to "Email Templates", "https://docs.aws.amazon.com/ses/latest/dg/send-personalized-email-api.html", :target => "_blank"

@@ -13,7 +13,31 @@
     %h3= sanitize(@title)
     %p= sanitize(@description, tags: %w(b))
 
-    = render partial: 'email_service/shared/role_attention_box'
+    .bs-callout.bs-callout-info.bs-callout-emphasize
+      %h4
+        Role assignment missing !
+      %p
+        Two new roles,
+        %code
+          email_admin
+        and
+        <code>email_user</code>, are available to manage the email service. 
+        From now on you will need one of the role to be able to access email service.
+        You can assign these roles to your user or the group you belong to.
+        If you do not have permissions, ask your team member who has permissions to assign relevant role to you.
+        %br
+        = link_to "Read more on role from Converged Cloud documentation", "https://documentation.global.cloud.sap/docs/customer/access-management/identity-service/ccroles/", target: :_blank
+      %ul
+        %li
+          %b email_admin:
+          email administrator in the project. Can perform any action in the email service.
+
+        %li
+          %b email_user:
+          email user can send emails, verify identities (domains and email addresses) and manage templates, configsets.
+      %br
+      = link_to "Fix Roles", plugin('identity').projects_role_assignments_path, data: { modal: false }, class: 'btn btn-primary'
+      %br
 
   .modal-footer
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
@@ -23,4 +47,28 @@
   %h3= sanitize(@title)
   %p= sanitize(@description, tags: %w(b))
 
-  = render partial: 'email_service/shared/role_attention_box'
+  .bs-callout.bs-callout-info.bs-callout-emphasize
+    %h4
+      Role assignment missing !
+    %p
+      Two new roles,
+      %code
+        email_admin
+      and
+      <code>email_user</code>, are available to manage the email service. 
+      From now on you will need one of the role to be able to access email service.
+      You can assign these roles to your user or the group you belong to.
+      If you do not have permissions, ask your team member who has permissions to assign relevant role to you.
+      %br
+      = link_to "Read more on role from Converged Cloud documentation", "https://documentation.global.cloud.sap/docs/customer/access-management/identity-service/ccroles/", target: :_blank
+    %ul
+      %li
+        %b email_admin:
+        email administrator in the project. Can perform any action in the email service.
+
+      %li
+        %b email_user:
+        email user can send emails, verify identities (domains and email addresses) and manage templates, configsets.
+    %br
+    = link_to "Fix Roles", plugin('identity').projects_role_assignments_path, data: { modal: false }, class: 'btn btn-primary'
+    %br

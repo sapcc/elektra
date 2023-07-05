@@ -89,6 +89,7 @@ end
 # email_service
 gem 'aws-sdk-ses'
 gem 'aws-sdk-sesv2'
+gem 'aws-sdk-cloudwatch'
 ######################## END #######################
 
 group :api_client do

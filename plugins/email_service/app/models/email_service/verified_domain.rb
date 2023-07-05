@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EmailService
   class VerifiedDomain
     include Virtus.model
@@ -29,25 +31,22 @@ module EmailService
 
     validates_presence_of :identity_name, message: "domain name can't be empty"
     validates :identity_name, presence: true, domain: true
-    # validates :domain_signing_selector, allow_nil: true, domain_signing_selector: true
-    # validates :domain_signing_private_key, allow_nil: true, domain_signing_private_key: true
-    # validates :next_signing_key_length, allow_nil: true, next_signing_key_length: true
 
     module KeyLength
-      RSA_1024_BIT = "RSA_1024_BIT"
-      RSA_2048_BIT = "RSA_2048_BIT"
+      RSA_1024_BIT = 'RSA_1024_BIT'
+      RSA_2048_BIT = 'RSA_2048_BIT'
     end
 
     def self.key_length
       {
         RSA_1024_BIT: ::EmailService::VerifiedDomain::KeyLength::RSA_1024_BIT,
-        RSA_2048_BIT: ::EmailService::VerifiedDomain::KeyLength::RSA_2048_BIT,
+        RSA_2048_BIT: ::EmailService::VerifiedDomain::KeyLength::RSA_2048_BIT
       }
     end
 
     module DKIMType
-      EASYDKIM = "easy_dkim"
-      BYODKIM = "byo_dkim"
+      EASYDKIM = 'easy_dkim'
+      BYODKIM = 'byo_dkim'
     end
 
     def self.dkim_types

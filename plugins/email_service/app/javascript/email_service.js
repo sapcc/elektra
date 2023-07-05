@@ -34,8 +34,6 @@ const set_domain_suffix = function (event) {
   console.log("domain change detected");
   return $('#domain-source-name').val(value);
 };
-// console.log $('textarea[id="plain_email_html_body"]').val
-// console.log $('textarea[id="plain_email_text_body"]').val
 
 // plain_email
 const sourceDomainNamePart = 'input[id="plain_email_source_domain_name_part"]';
@@ -152,9 +150,6 @@ $(document).on('modal:contentUpdated', function () {
   // email_source
   // handler to switch source type between email and domain
   $(document).on('change', 'select[data-toggle="sourceSwitch"]', switch_source_type);
-  // $(document).on 'click','#domain-source-name', set_domain_suffix
-  // $(document).on 'change','select[id="plain_email_source_email"]', populate_email_addresses
-  // $(document).on 'change','select[id="plain_email_source_domain"]', populate_domain_addresses
 
   // plain_email
   $(document).on('change click', sourceDomainNamePart, update_name_part);
@@ -166,7 +161,6 @@ $(document).on('modal:contentUpdated', function () {
   $(document).on('blur', 'textarea[id="templated_email_template_data"]', validateTemplateData);
   // verify identity
   $(document).on('change click', 'input[id="verified_email_identity"]', validate_identity);
-  // console.log "inside model content updated"
 
   // create_email_identity_domain
   // handler to switch source type between email and domain

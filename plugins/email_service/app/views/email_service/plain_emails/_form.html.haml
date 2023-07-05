@@ -18,8 +18,8 @@
 
 - if !email_addresses || email_addresses.empty?
   %p.alert.alert-warning
-    There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
-    You can get verified your eMail address
+    There are no verified Email addresses defined for your account to send email from. Without a verified Email address, you can't send Email.
+    You can get verified your Email address
     = link_to 'here', pl.new_email_verification_path
 
 = f.input :source_type, required: true, label: "Sender Type", input_html: {data: {toggle: 'sourceSwitch'}}, collection: types.sort.map {|k,v| [v,k]}, selected: selected_source_type(plain_email.source_type)

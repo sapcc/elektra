@@ -6,13 +6,12 @@
       %th Subject
       %th.snug
   %tbody
-    - if !@custom_templates || @custom_templates.empty?
+    - unless @paginatable_templates.nil? || @paginatable_templates&.count&.positive?
       %tr
-      %td{ colspan: 3 } No Verification eMail Template available
+      %td{ colspan: 3 } No Verification Email Template available
     - else    
       - @paginatable_templates.each do | item |
         = render partial: 'table_template_item', locals: { item: item }
       
-- if @paginatable_templates && !@paginatable_templates.empty?
+- unless @paginatable_templates.nil? && @paginatable_templates.empty?
   = paginate @paginatable_templates, :theme => 'twitter-bootstrap-3', :remote => false
-
