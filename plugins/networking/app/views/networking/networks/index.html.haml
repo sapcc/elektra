@@ -21,4 +21,4 @@
       = link_to 'Create new', plugin('networking').send("new_networks_#{@network_type}_path"), data: {modal: true}, class: 'btn btn-primary'
 
 .js-table-networks
-  = render partial: 'table', locals: {networks: @networks, preview: @preview, timeout:@timeout, pagination_has_next: @pagination_has_next}
+  = render partial: 'table', locals: {networks: @networks, pagination_has_next: @pagination_has_next}
