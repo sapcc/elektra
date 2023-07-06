@@ -6,7 +6,7 @@
         = link_to network_type.humanize + ' Networks', '#'
     - else
       %li{ role: 'presentation' }
-        = link_to network_type.humanize + ' Networks', plugin('networking').send("networks_#{network_type}_index_path") + (network_type=="external" ? '?preview=true' : '')
+        = link_to network_type.humanize + ' Networks', plugin('networking').send("networks_#{network_type}_index_path")
 
   - if tab == 'routers'
     %li.active{role: 'presentation'}
