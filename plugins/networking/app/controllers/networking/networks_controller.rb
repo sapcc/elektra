@@ -9,6 +9,7 @@ module Networking
       @preview = params[:preview] == "true"
       @networks = cached_networks
 
+      # load live data if preview param not set
       unless @preview
         filter_options = {
           "router:external" => @network_type == "external",
@@ -24,7 +25,8 @@ module Networking
             services.networking.networks(options)            
           end
 
-          # merge the live networks with the cached networks mapping by id          
+          # merge the live networks with the cached networks mapping by id
+          # this is due to the fact that the live networks are incomplete when using limit
           new_neworks = []
           groups = (live_networks + cached_networks).group_by(&:id)
           groups.flat_map do |_id, items|
@@ -36,6 +38,7 @@ module Networking
               new_neworks << items.first
             end              
           end
+
           @networks = new_neworks
         rescue ::Elektron::Errors::Request => exception
           flash.now[:error] = "Error while fetching networks: #{exception.message}"
@@ -197,15 +200,65 @@ module Networking
     end
 
     def cached_networks
-      ObjectCache
-      .where(cached_object_type: "network")
-      .where(project_id: current_user.project_id)
-      .each_with_object([]) do |cached_network, networks|
-        payload = cached_network.payload
-        payload[:local_cache] = true
-        if payload["router:external"] == (@network_type == "external")
-          networks << Networking::Network.new(nil, payload)
+      begin 
+        all_networks = ObjectCache.find_objects(type: "network", include_scope: true) {
+          |scope| scope.where("project_id = ?", (current_user.project_id).to_s)
+        }
+        # extract networks with type external and tag object as local_cache
+        type_network = all_networks.each_with_object([]) do |cached_network, networks|
+          payload = cached_network.payload
+          payload[:local_cache] = true
+          if payload["router:external"] == (@network_type == "external")
+            networks << Networking::Network.new(nil, payload)
+          end
         end
+
+        # find all rbacs with target_tenant = "*" (all projects) or target_tenant = current project and object_type network
+        domain_id = current_user.domain_id || current_user.project_domain_id
+        temp_rbacs = ObjectCache.find_objects(type: "rbac_policy", include_scope: true) {
+          |scope| scope.where("(payload->>'target_tenant' = ? OR payload->>'target_tenant' = ?) AND payload->>'object_type' = ?", "*", current_user.project_id.to_s, "network")
+          # |scope| scope.where("(payload->>'target_tenant' = ? OR payload->>'target_tenant' = ?) AND payload->>'object_type' = ? AND payload->>'domain_id' = ?", "*", current_user.project_id, "network", domain_id)
+        }      
+        # get just rbacs from the same domain
+        external_shared_networks_ids = temp_rbacs.each_with_object([]) do |cached_rbac, rbacs|
+          scope = cached_rbac["payload"].fetch("scope", {})
+          rbacs <<cached_rbac["payload"]["object_id"] if scope["domain_id"] == domain_id
+        end
+
+        # find all shared networks
+        shared_networks = external_shared_networks_ids.each_with_object([]) do |id, array|        
+          # find all networks with id from rbacs and network type
+          objects = ObjectCache.find_objects(type: "network", term: id) {          
+            |scope| scope.where("payload->>'id' = ? AND payload->>'router:external'= ?", id, (@network_type == "external").to_s)
+          }
+          # the shared flag is calculated by the server based on the calling project and the RBAC entries for each network
+          # that means that the flag of the shared object in cache is being overwritten depending from which project is being called.
+          if objects.length == 1
+            net = objects.first
+            net.payload[:local_cache] = true
+            net.payload[:shared] = true
+            array <<  Networking::Network.new(nil, net.payload)
+          end
+        end
+
+        # remove duplicates
+        total_neworks = []
+        groups = (type_network + shared_networks).group_by(&:id)
+        groups.flat_map do |_id, items|
+          if items.length > 1
+            # if a network exists in netowrks and in shared networks means that the project is the owner of the network and should not be displayed as shared
+            net = items.first
+            net.shared = false
+            total_neworks << net
+          else 
+            total_neworks << items.first
+          end        
+        end
+
+        # sort total_neworks by attribute name
+        total_neworks.sort_by!(&:name)
+      rescue StandardError
+        []
       end
     end
 
