@@ -1,5 +1,5 @@
 - is_edit_form = form_type == 'edit' ? true : false
-- domain_name_hint = is_edit_form ? "cannot edit domain name. delete and create another domain if name is to be changed." : "enter name" 
+- domain_name_hint = is_edit_form ? "cannot edit domain name. delete and create another domain if name is to be changed." : "enter name"
 
 = f.input :identity_name, required: true, icon_hint: domain_name_hint
 = f.input :dkim_type,  as: :select, input_html: {data: {toggle: 'dkimTypeSwitch'}}, collection: @dkim_types, label: "DKIM type"

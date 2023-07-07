@@ -2,7 +2,7 @@
 
 module EmailService
   class Ec2CredentialsController < ::EmailService::ApplicationController
-    
+
     authorization_context 'email_service'
     authorization_required
 

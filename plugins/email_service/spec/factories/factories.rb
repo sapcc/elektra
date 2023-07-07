@@ -145,19 +145,19 @@ module EmailService
             "policies@att.net,froodian@hotmail.com, fmerges@att.net",
           ],
         },
-        message: { 
-          subject: { 
-            data: "Winner Notification", 
+        message: {
+          subject: {
+            data: "Winner Notification",
             charset: "UTF-8",
           },
-          body: { 
+          body: {
             text: {
               data:
-                "<h1> Winner Notification </h1><br><p>The winner is ...</p>", 
+                "<h1> Winner Notification </h1><br><p>The winner is ...</p>",
               charset: "UTF-8",
             },
             html: {
-              data: " Winner Notification. The winner is ...", 
+              data: " Winner Notification. The winner is ...",
               charset: "UTF-8",
             },
           },

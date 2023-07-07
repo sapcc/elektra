@@ -28,14 +28,14 @@
           %tr
             %td Cronus endpoint
             %td
-              = @email_service_url   
+              = @email_service_url
           %tr
             %td Nebula activated ?
             %td
               = nebula_active?
       - else
         %p Cronus is not enabled on this project.
-      - if @aws_account_details    
+      - if @aws_account_details
         %h3 AWS SES account details
         %table.table.table-striped
           %tr
@@ -69,7 +69,7 @@
           %tr
             %td Suppression attributes - suppressed reasons
             %td
-              = @aws_account_details[:suppression_attributes][:suppressed_reasons] 
+              = @aws_account_details[:suppression_attributes][:suppressed_reasons]
           %tr
             %td Mail type
             %td
@@ -81,7 +81,7 @@
           %tr
             %td Contact Language
             %td
-              = @aws_account_details[:details][:contact_language]                                
+              = @aws_account_details[:details][:contact_language]
           %tr
             %td Usecase description
             %td

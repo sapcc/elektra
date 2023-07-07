@@ -7,8 +7,7 @@
       border-top-right-radius: 4px;
     }
 
-    # plain_email_source_domain_name_part
-    &.addon-active {
+    # plain_email_source_domain_name_part &.addon-active {
       .form-control:first-child {
         border-bottom-right-radius: 0;
         border-top-right-radius: 0;

@@ -86,7 +86,7 @@ module EmailService
 
     def destroy
       status = delete_email_template(params[:name])
-      flash[:success] = "Template #{params[:name]} is deleted." 
+      flash[:success] = "Template #{params[:name]} is deleted."
       redirect_to plugin('email_service').templates_path
     rescue Elektron::Errors::ApiResponse, StandardError => e
       flash.now[:error] = "#{I18n.t('email_service.errors.template_delete_error')} #{e.message}"

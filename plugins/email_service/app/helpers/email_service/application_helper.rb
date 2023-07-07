@@ -245,7 +245,7 @@ module EmailService
     end
 
     # Get CloudWatch Client
-    def cloud_watch_client 
+    def cloud_watch_client
       @region ||= map_region(@cronus_region)
       @endpoint ||= email_service_url
 
@@ -272,7 +272,7 @@ module EmailService
 
     # put dashboard using CloudWatch
     def cloud_watch_put_dashboard
-      options = 
+      options =
       {
         "DashboardName":"text widget dashboard",
         "DashboardBody":{
@@ -2004,10 +2004,10 @@ module EmailService
             environment = security_attributes[1][12...].strip
             valid_until = security_attributes[2][12...].strip
             production = @parsed.key?('production') ? @parsed['production'] : nil
-            status = @parsed['status'].nil? ? nil : @parsed['status']  
+            status = @parsed['status'].nil? ? nil : @parsed['status']
             allowed_emails = @parsed.key?('allowed_emails') ? @parsed['allowed_emails'] : nil
-            complaint = @parsed.key?('complaint') ? @parsed['complaint'] : nil 
-            @nebula_details = JSON.dump({ 
+            complaint = @parsed.key?('complaint') ? @parsed['complaint'] : nil
+            @nebula_details = JSON.dump({
               "security_officer": "#{security_officer}",
               "environment": "#{environment}",
               "valid_until": "#{valid_until}",
@@ -2025,18 +2025,18 @@ module EmailService
         if @parsed.class == String
           @nebula_details =  JSON.parse(@parsed)
         end
-        
+
       rescue JSON::ParserError, StandardError => e
         @nebula_details = JSON.dump({"error" => "#{e.message}"} )
       end
-      
+
       return @nebula_details
     end
 
     def nebula_status
       @status = nil
       @nebula_details = JSON.parse(nebula_details)
-      if @nebula_details.class == Hash 
+      if @nebula_details.class == Hash
         if @nebula_details.key?('production')
           @status = @nebula_details['production'] == "true" ? 'PRODUCTION' : 'SANDBOX'
         elsif  @nebula_details.key?('error')

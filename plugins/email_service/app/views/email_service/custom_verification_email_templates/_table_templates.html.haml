@@ -9,9 +9,9 @@
     - unless @paginatable_templates.nil? || @paginatable_templates&.count&.positive?
       %tr
       %td{ colspan: 3 } No Verification Email Template available
-    - else    
+    - else
       - @paginatable_templates.each do | item |
         = render partial: 'table_template_item', locals: { item: item }
-      
+
 - unless @paginatable_templates.nil? && @paginatable_templates.empty?
   = paginate @paginatable_templates, :theme => 'twitter-bootstrap-3', :remote => false

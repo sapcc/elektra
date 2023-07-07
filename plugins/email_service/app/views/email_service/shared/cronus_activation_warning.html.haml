@@ -14,20 +14,20 @@
     .bs-callout.bs-callout-info.bs-callout-emphasize
       -# Add edgecase of user terminating AWS account then trying to activate again
       - if nebula_details.key?('error')
-        %h3 ERROR: 
+        %h3 ERROR:
         = nebula_details['error']
         %h4 Contact Cronus Support by creating a ticket
-        %p 
-          Please refer our documetation on our support procedures 
+        %p
+          Please refer our documetation on our support procedures
           = link_to "here", "https://documentation.global.cloud.sap/docs/customer/services/email-service/incident-management/"
-          
+
       - elsif current_user.is_allowed?('email_service:multicloud_account_create')
         %h4 Cronus is not enabled
         = link_to "Enable Cronus (email service)", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-primary'
         %br
         %p
-          Enable cronus by executing this command <code>cronuscli nebula activate --account-env PROD --security-officer EMAIL-ADDRESS OR C/D/I NUMBER --mail-type TRANSACTIONAL</code> on webCLI. 
-          Please refer our documetation on this 
+          Enable cronus by executing this command <code>cronuscli nebula activate --account-env PROD --security-officer EMAIL-ADDRESS OR C/D/I NUMBER --mail-type TRANSACTIONAL</code> on webCLI.
+          Please refer our documetation on this
           = link_to "here", "https://documentation.global.cloud.sap/docs/customer/services/email-service/quick-start-sending-emails/#step-2-activate-email-service"
 
   .modal-footer
@@ -38,11 +38,11 @@
   .bs-callout.bs-callout-info.bs-callout-emphasize
     -# Add edgecase of user terminating AWS account then trying to activate again
     - if nebula_details.class == Hash && nebula_details.key?('error')
-      %h3 ERROR: 
+      %h3 ERROR:
       = nebula_details['error']
       %h4 Contact Cronus Support by creating a ticket
-      %p 
-        Please refer our documetation on our support procedures 
+      %p
+        Please refer our documetation on our support procedures
         = link_to "here", "https://documentation.global.cloud.sap/docs/customer/services/email-service/incident-management/"
 
     - elsif current_user.is_allowed?('email_service:multicloud_account_create')
@@ -50,7 +50,6 @@
       = link_to "Enable Cronus (email service)", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-primary'
       %br
       %p
-        Enable cronus by executing this command <code>cronuscli nebula activate --account-env PROD --security-officer EMAIL-ADDRESS OR C/D/I NUMBER --mail-type TRANSACTIONAL</code> on webCLI. 
-        Please refer our documetation on this 
-        = link_to "here", "https://documentation.global.cloud.sap/docs/customer/services/email-service/quick-start-sending-emails/#step-2-activate-email-service"
-
+        Enable cronus by executing this command <code>cronuscli nebula activate --account-env PROD --security-officer EMAIL-ADDRESS OR C/D/I NUMBER --mail-type TRANSACTIONAL</code> on webCLI.
+        Please refer our documetation on this
+        = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/quick-start-sending-emails/#step-2-activate-email-service"

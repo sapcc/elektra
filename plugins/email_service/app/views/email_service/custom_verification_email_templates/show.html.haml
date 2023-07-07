@@ -14,18 +14,18 @@
         %tr
           %td
             %strong Name:
-          %td 
+          %td
             =@custom_template.template_name
         %tr
           %td
             %strong From Email Address:
-          %td 
+          %td
             =@custom_template.from_email_address
         %tr
           %td
             %strong Template Subject:
           %td.html-part
-            = @custom_template.template_subject 
+            = @custom_template.template_subject
         %tr
           %td
             %strong Template Content:
@@ -40,10 +40,10 @@
           %td
             %strong Failure Redirection URL:
           %td.text-part
-            =@custom_template.failure_redirection_url            
-    - else 
+            =@custom_template.failure_redirection_url
+    - else
       Template not found.
-      
+
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close

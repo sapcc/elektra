@@ -14,10 +14,10 @@
       %h5 Verify an Email address or a domain for this project to enable cronus.
       %p
         You need to have at least a domain or an Email address verified before using email service.
-        = link_to "Read more on domain verification", "https://documentation.global.cloud.sap/docs/customer/services/email-service/email-serv-howto/email-howto-verifydomain/", target: :_blank
+        = link_to "Read more on domain verification", "#{sap_url_for('documentation')}docs/customer/services/email-service/email-serv-howto/email-howto-verifydomain/", target: :_blank
       %br
         - if current_user.is_allowed?('email_service:email_verification_create')
-          = link_to "Verify an Email Address", plugin('email_service').new_email_verification_path, data: {modal: true}, class: 'btn btn-primary' 
+          = link_to "Verify an Email Address", plugin('email_service').new_email_verification_path, data: {modal: true}, class: 'btn btn-primary'
         - if current_user.is_allowed?('email_service:domain_verification_create')
           = link_to "Verify a domain", plugin('email_service').new_domain_verification_path, data: {modal: true}, class: 'btn btn-primary'
 
@@ -26,13 +26,13 @@
 
 - else
   .bs-callout.bs-callout-info.bs-callout-emphasize
-    %h3 Step 3: Verified Identity or Domain check 
+    %h3 Step 3: Verified Identity or Domain check
     %h5 Verify an Email address or a domain for this project to enable cronus.
     %p
       You need to have at least a domain or an Email address verified before using email service.
-      = link_to "Read more on domain verification", "https://documentation.global.cloud.sap/docs/customer/services/email-service/email-serv-howto/email-howto-verifydomain/", target: :_blank
+      = link_to "Read more on domain verification", "#{sap_url_for('documentation')}docs/customer/services/email-service/email-serv-howto/email-howto-verifydomain/", target: :_blank
     %br
       - if current_user.is_allowed?('email_service:email_verification_create')
-        = link_to "Verify an Email Address", plugin('email_service').new_email_verification_path, data: {modal: true}, class: 'btn btn-primary' 
+        = link_to "Verify an Email Address", plugin('email_service').new_email_verification_path, data: {modal: true}, class: 'btn btn-primary'
       - if current_user.is_allowed?('email_service:domain_verification_create')
         = link_to "Verify a domain", plugin('email_service').new_domain_verification_path, data: {modal: true}, class: 'btn btn-primary'

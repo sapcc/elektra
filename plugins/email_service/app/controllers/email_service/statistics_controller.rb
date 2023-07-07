@@ -8,7 +8,7 @@ module EmailService
     authorization_context 'email_service'
     authorization_required
 
-    def index 
+    def index
       domain = domains_collection&.first
       Rails.logger.debug "\n controller : #{domain}"
       seconds_per_day = 24*60*60

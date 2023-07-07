@@ -23,7 +23,7 @@
           %td
             %strong verification_status:
           %td
-            =@verified_domain[:verification_status]     
+            =@verified_domain[:verification_status]
         %tr
           %td
             %strong feedback_forwarding_status:
@@ -91,7 +91,7 @@
               %strong configuration_set_name:
             %td
               =@verified_domain[:configuration_set_name]
-          %hr 
+          %hr
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
