@@ -61,6 +61,7 @@ Identity::Engine.routes.draw do
     end
   end
 
+  get "project/check_delete_project" => "projects#check_delete", :as => :check_delete_project
   get "project/enable_sharding" => "projects#enable_sharding",
       :as => :project_enable_sharding
   get "project/sharding_skip_wizard_confirm" =>

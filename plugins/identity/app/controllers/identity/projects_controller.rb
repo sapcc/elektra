@@ -158,6 +158,42 @@ module Identity
       end
     end
 
+    def check_delete
+      if params["prodel"].nil?
+        # initial load for empty form
+        @prodel = Prodel.new(:project_domain_name => "", :project_name => "")
+        return
+      end
+      project_name_or_id = params["prodel"]["project_name"] || ""
+      project_domain_name_or_id = params["prodel"]["project_domain_name"] || ""
+      @prodel = Prodel.new(:project_domain_name => project_domain_name_or_id, :project_name => project_name_or_id)
+      if @prodel.valid?
+        begin
+          project_domain = services.identity.find_domains_by_name(project_domain_name_or_id)
+        rescue => e
+          flash.now[:error] = "No Domain with name or id '#{project_domain_name_or_id}' found"
+          return
+        end
+        if project_domain.length.zero?
+          begin
+            project_domain = services.identity.find_domain!(project_domain_name_or_id)
+          rescue => e
+            flash.now[:error] = "No Domain with name or id '#{project_domain_name_or_id}' found"
+            return
+          end
+        else
+          project_domain = project_domain[0]
+        end
+        project_to_delete = services.identity.find_project_by_name_or_id(project_domain.id,project_name_or_id)
+        if !project_to_delete.nil?
+          @resources = services.identity.get_project_resources(project_to_delete.id)
+        else
+          flash.now[:error] = "No Project with name or id '#{project_name_or_id}' found in domain '#{project_domain_name_or_id}'"
+          return
+        end
+      end
+    end
+
     private
 
     def get_project
@@ -307,7 +343,6 @@ module Identity
     # SHARDING
     def update_sharding_wizard_status
       sharding_enabled = @project.sharding_enabled
-      puts sharding_enabled
 
       if sharding_enabled == true
         @project_profile.update_wizard_status(
