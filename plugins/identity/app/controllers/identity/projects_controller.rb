@@ -169,29 +169,43 @@ module Identity
       @prodel = Prodel.new(:project_domain_name => project_domain_name_or_id, :project_name => project_name_or_id)
       if @prodel.valid?
         begin
-          project_domain = services.identity.find_domains_by_name(project_domain_name_or_id)
+          @prodel_project_domain = services.identity.find_domains_by_name(project_domain_name_or_id)
         rescue => e
           flash.now[:error] = "No Domain with name or id '#{project_domain_name_or_id}' found"
           return
         end
-        if project_domain.length.zero?
+        if @prodel_project_domain.length.zero?
           begin
-            project_domain = services.identity.find_domain!(project_domain_name_or_id)
+            @prodel_project_domain = services.identity.find_domain!(project_domain_name_or_id)
           rescue => e
             flash.now[:error] = "No Domain with name or id '#{project_domain_name_or_id}' found"
             return
           end
         else
-          project_domain = project_domain[0]
+          @prodel_project_domain = @prodel_project_domain[0]
         end
-        project_to_delete = services.identity.find_project_by_name_or_id(project_domain.id,project_name_or_id)
-        if !project_to_delete.nil?
-          @resources = services.identity.get_project_resources(project_to_delete.id)
+        @project_to_delete = services.identity.find_project_by_name_or_id(@prodel_project_domain.id,project_name_or_id)
+        if !@project_to_delete.nil?
+          @resources = services.identity.get_project_resources(@project_to_delete.id)
         else
           flash.now[:error] = "No Project with name or id '#{project_name_or_id}' found in domain '#{project_domain_name_or_id}'"
           return
         end
       end
+    end
+
+    def delete_with_prodel
+      project_to_delete_id = params["project_to_delete_id"] || ""
+      project_to_delete_name = params["project_to_delete_name"] || ""
+      prodel_project_domain_name = params["prodel_project_domain_name"] || ""
+      if !project_to_delete_id.blank?
+        services.identity.delete_project_with_prodel(project_to_delete_id)
+        flash.now[:success] = "Project '#{project_to_delete_name}' in domain '#{prodel_project_domain_name}' deleted"
+      else
+        flash.now[:error] = "Cannot delete, no project_to_delete_id given!"
+      end
+      @prodel = Prodel.new(:project_domain_name => "", :project_name => "")
+      render action: :check_delete
     end
 
     private

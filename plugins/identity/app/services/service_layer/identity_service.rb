@@ -26,13 +26,6 @@ module ServiceLayer
       @elektron_prodel ||= elektron.service("prodel", path_prefix: "/api/v1")
     end
 
-    def get_project_resources(id = nil)
-      return nil if id.blank?
-      elektron_prodel.get("/projects/#{id}/resources/").body[
-        "resources"
-      ]
-    end
-
     def find_domain_and_project(filter)
       domain =
         if filter[:domain]
