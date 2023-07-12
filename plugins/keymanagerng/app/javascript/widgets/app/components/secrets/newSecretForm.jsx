@@ -10,14 +10,15 @@ import {
   PanelBody,
   PanelFooter,
   Button,
+  Container,
+  Label,
 } from "juno-ui-components"
 import { createSecret } from "../../secretActions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useActions, Messages } from "messages-provider"
 import { getSecretUuid } from "../../../lib/secretHelper"
-import { format } from 'date-fns'
-import { DayPicker } from 'react-day-picker';
-// import 'react-day-picker/dist/style.css';
+import { format } from "date-fns"
+import { DayPicker } from "react-day-picker"
 
 const TYPE_SYMMETRIC = "symmetric"
 const TYPE_PUBLIC = "public"
@@ -106,14 +107,8 @@ const formValidation = (formData) => {
     errors.name = "Name can't be empty!"
   }
   if (!formData.expiration) {
-    errors.expiration = "Expiration date can't be empty!"
-  }
-  if (
-    isNaN(Date.parse(formData.expiration).toString()) ||
-    Date.parse(formData.expiration).toString() < 0
-  ) {
     errors.expiration =
-      "Expiration date has not a valid format!  It should be a UTC timestamp in ISO 8601 format YYYY-MM-DDTHH:MM:SSZ"
+      "Expiration date is not selected! Please select an expiration date."
   }
   if (!formData.secret_type) {
     errors.secret_type = "Secret type can't be empty!"
@@ -137,12 +132,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const { mutate } = useMutation(({ formState }) => createSecret(formState))
   const { addMessage, resetMessages } = useActions()
 
-  const [selected, setSelected] = React.useState(null);
-
-  let footer = <p>Please pick a day.</p>;
-  if (selected) {
-    footer = <p>You picked {format(selected, 'PP')}.</p>;
-  }
+  const [selectedDay, setSelectedDay] = React.useState(null)
 
   const onConfirm = () => {
     const errors = formValidation(formData)
@@ -202,29 +192,34 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             setFormData({ ...formData, name: oEvent.target.value })
           }}
           invalid={validationState?.name ? true : false}
-          helptext={validationState?.name}
+          errortext={validationState?.name}
           required
         />
-        <DayPicker
-      mode="single"
-      selected={selected}
-      onSelect={setSelected}
-      footer={footer}
-    />
-        <TextInputRow
-          label="Expiration"
-          name="expiration"
-          onChange={(oEvent) => {
-            setFormData({ ...formData, expiration: oEvent.target.value })
-          }}
-          invalid={validationState?.expiration ? true : false}
-          helptext={
-            validationState?.expiration
-              ? validationState.expiration
-              : "This is a UTC timestamp in ISO 8601 format YYYY-MM-DDTHH:MM:SSZ. If set, the secret will not be available after this time"
-          }
-          required
-        />
+        <Container py px={false}>
+          <Label required text="Expiration" />
+          <DayPicker
+            mode="single"
+            selected={selectedDay}
+            onSelect={(oEvent) => {
+              setFormData({
+                ...formData,
+                expiration: oEvent.toISOString(),
+              })
+              setSelectedDay(oEvent)
+              setValidationState({ ...validationState, expiration: "" })
+            }}
+          />
+          {selectedDay && <p>Selected date is: {selectedDay.toISOString()}</p>}
+          <p className="tw-text-xs tw-text-theme-light tw-mt-1">
+            {validationState?.expiration
+              ? ""
+              : "This is a UTC timestamp in ISO 8601 format YYYY-MM-DDTHH:MM:SSZ. If set, the secret will not be available after this time"}
+          </p>
+          <p className="tw-text-xs tw-text-theme-error tw-mt-1">
+            {validationState?.expiration ? validationState.expiration : ""}
+          </p>
+        </Container>
+
         <TextInputRow
           label="Bit length"
           name="Bit length"
@@ -277,7 +272,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           label="Secret Type"
           name="secretType"
           onValueChange={onSecretTypeChange}
-          helptext={validationState?.secret_type}
+          errortext={validationState?.secret_type}
           invalid={validationState?.secret_type ? true : false}
           required
         >
@@ -293,10 +288,9 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             setFormData({ ...formData, payload: oEvent.target.value })
           }}
           helptext={
-            validationState?.payload
-              ? validationState.payload
-              : "The secret’s data to be stored"
+            validationState?.payload ? "" : "The secret’s data to be stored"
           }
+          errortext={validationState?.payload}
           invalid={validationState?.payload ? true : false}
           required
         />
@@ -309,7 +303,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
               payload_content_type: value,
             })
           }}
-          helptext={validationState?.payload_content_type}
+          errortext={validationState?.payload_content_type}
           invalid={validationState?.payload_content_type ? true : false}
           required
         >

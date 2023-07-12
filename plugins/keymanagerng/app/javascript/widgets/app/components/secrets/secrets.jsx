@@ -16,6 +16,7 @@ import { Link } from "react-router-dom"
 import { useActions } from "messages-provider"
 import { parseError } from "../../helpers"
 import useSecretsSearch from "../../hooks/useSecretsSearch"
+import { useParams } from "react-router-dom"
 
 const ITEMS_PER_PAGE = 20
 

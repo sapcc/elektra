@@ -41,6 +41,7 @@ const NewContainer = () => {
       heading="New Container"
       size="large"
       aria-labelledby="contained-modal-title-lg"
+      className="tw-z-[1050]"
     >
       <MessagesProvider>
         <NewContainerForm

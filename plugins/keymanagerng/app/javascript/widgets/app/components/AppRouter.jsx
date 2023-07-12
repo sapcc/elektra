@@ -22,8 +22,8 @@ const AppRouter = () => {
   const tabsDisabled = showNewSecret || showNewContainer ? true : false
 
   const tabsConfig = [
-    { to: "/secrets", label: "Secrets", component: Secrets, disabled: tabsDisabled },
-    { to: "/containers", label: "Containers", component: Containers, disabled: tabsDisabled},
+    { to: "/secrets/page/:pageNumber", label: "Secrets", component: Secrets, disabled: tabsDisabled },
+    { to: "/containers/page/:pageNumber", label: "Containers", component: Containers, disabled: tabsDisabled},
   ]
   return (
     <>

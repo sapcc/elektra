@@ -37,6 +37,7 @@ const NewSecret = () => {
       onClose={close}
       heading="New Secret"
       size="large"
+      className="tw-z-[1050]"
     >
       <MessagesProvider>
         <NewSecretForm

@@ -47,7 +47,7 @@ const formValidation = (formData) => {
   if (!formData.type) {
     errors.type = "Container type can't be empty!"
   }
-  if (!formData.secret_refs) {
+  if (formData.secret_refs?.length === 0) {
     errors.secret_refs = "Secrets can't be empty!"
   }
   return errors
@@ -57,31 +57,55 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const [containerType, setContainerType] = useState("generic")
   const [formData, setFormData] = useState({ type: "generic" })
   const [validationState, setValidationState] = useState({})
-  const [secret_refs, setSecret_refs] = useState([])
   const [secretsForSelect, setSecretsForSelect] = useState([])
   const [isSavePressed, setIsSavePressed] = useState(false)
 
   const [certContainerCertificates, setCertContainerCertificates] = useState([])
-  const [certContainerPrivatekeys, setCertContainerPrivatekeys] = useState(null)
+  const [
+    selectedCertContainerCertificates,
+    setSelectedCertContainerCertificates,
+  ] = useState([])
+  const [certContainerPrivatekeys, setCertContainerPrivatekeys] = useState([])
+  const [
+    selectedCertContainerPrivatekeys,
+    setSelectedCertContainerPrivatekeys,
+  ] = useState([])
   const [
     certContainerPrivatekeyPassphrases,
     setCertContainerPrivatekeyPassphrases,
-  ] = useState(null)
-  const [certContainerIntermediates, setCertContainerIntermediates] =
-    useState(null)
-  const [genContainerSecrets, setGenContainerSecrets] = useState(null)
-  const [rsaContainerPrivatekeys, setRsaContainerPrivatekeys] = useState(null)
+  ] = useState([])
+  const [
+    selectedCertContainerPrivatekeyPassphrases,
+    setSelectedCertContainerPrivatekeyPassphrases,
+  ] = useState([])
+  const [certContainerIntermediates, setCertContainerIntermediates] = useState(
+    []
+  )
+  const [
+    selectedCertContainerIntermediates,
+    setSelectedCertContainerIntermediates,
+  ] = useState([])
+  const [genContainerSecrets, setGenContainerSecrets] = useState([])
+  const [selectedGenContainerSecrets, setSelectedGenContainerSecrets] =
+    useState([])
+  const [rsaContainerPrivatekeys, setRsaContainerPrivatekeys] = useState([])
+  const [selectedRsaContainerPrivatekeys, setSelectedRsaContainerPrivatekeys] =
+    useState([])
   const [
     rsaContainerPrivatekeyPassphrases,
     setRsaContainerPrivatekeyPassphrases,
-  ] = useState(null)
-  const [rsaContainerPublickeys, setRsaContainerPublickeys] = useState(null)
+  ] = useState([])
+  const [
+    selectedRsaContainerPrivatekeyPassphrases,
+    setSelectedRsaContainerPrivatekeyPassphrases,
+  ] = useState([])
+  const [rsaContainerPublickeys, setRsaContainerPublickeys] = useState([])
+  const [selectedRsaContainerPublickeys, setSelectedRsaContainerPublickeys] =
+    useState([])
 
   const queryClient = useQueryClient()
 
-  const { mutate } = useMutation(
-    ({ formState }) => createContainer(formState)
-  )
+  const { mutate } = useMutation(({ formState }) => createContainer(formState))
   const { addMessage, resetMessages } = useActions()
 
   const onConfirm = () => {
@@ -157,55 +181,75 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   }
 
   const invalidateReactSelect = (value) => {
-    return {
-      ...commonCreatableStyles,
-      control: (baseStyles, state) => ({
-        ...baseStyles,
-        borderColor: !value && isSavePressed ? "red" : "grey",
-      }),
-    }
+    return value?.length === 0 && !!validationState?.secret_refs
+      ? {
+          ...commonCreatableStyles,
+          control: (provided, state) => ({
+            ...provided,
+            borderColor: state.isFocused ? "red" : "red",
+            boxShadow: state.isFocused ? "0 0 0 1px red" : null,
+            "&:hover": {
+              borderColor: "red",
+            },
+          }),
+        }
+      : commonCreatableStyles
   }
-  const updateSecretRefs = (props, secretRefName) => {
+  const updateSecretRefs = (props, secretRefName, secretsSelect) => {
+    const secretRefs = []
     if (props) {
       props?.map((prop) => {
-        if (secret_refs) {
-          for (let i = 0; i < secret_refs.length; i++) {
-            if (secret_refs[i].secret_ref === prop.secret_ref.secret_ref) return
-          }
-        }
-        secret_refs.push({
+        secretRefs.push({
           name: secretRefName ? secretRefName : prop.secret_ref.name,
           secret_ref: prop.secret_ref.secret_ref,
         })
       })
-      setFormData({ ...formData, secret_refs: secret_refs })
-      setSecret_refs(secret_refs)
+      setFormData({
+        ...formData,
+        secret_refs: secretRefs,
+        secretsSelect: secretsSelect,
+      })
     }
   }
 
-  const onSecretsChange = (props, actionType) => {
+  const onSecretsChange = (props) => {
     updateSecretRefs(props)
+    setSelectedGenContainerSecrets(props)
   }
 
   const onCertificatesChange = (props) => {
     updateSecretRefs(props, "certificate")
+    setSelectedCertContainerCertificates(props)
   }
   const onPrivateKeyChange = (props) => {
     updateSecretRefs(props, "private_key")
   }
+
+  const onCertContainerPrivatekeyChange = (props) => {
+    onPrivateKeyChange(props)
+    setSelectedCertContainerPrivatekeys(props)
+  }
+  const onRsaContainerPrivateKeyChange = (props) => {
+    onPrivateKeyChange(props)
+    setSelectedRsaContainerPrivatekeys(props)
+  }
   const onPublicKeyChange = (props) => {
     updateSecretRefs(props, "public_key")
+    setSelectedRsaContainerPublickeys(props)
   }
   const onPrivateKeyPassphraseChange = (props) => {
     updateSecretRefs(props, "private_key_passphrase")
   }
+  const onCertContainerPrivateKeyPassphraseChange = (props) => {
+    onPrivateKeyPassphraseChange(props)
+    setSelectedCertContainerPrivatekeyPassphrases(props)
+  }
+  const onRsaContainerPrivateKeyPassphraseChange = (props) => {
+    onPrivateKeyPassphraseChange(props)
+    setSelectedRsaContainerPrivatekeyPassphrases(props)
+  }
   const onIntermediatesChange = (props) => {
     updateSecretRefs(props, "intermediates")
-  }
-
-  const onClearValue = (props) => {
-    //TODO: update secret_refs when user clears a value
-    console.log("clear value props: ", props)
   }
 
   useLayoutEffect(() => {
@@ -216,11 +260,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
     <PanelBody
       footer={
         <PanelFooter>
-          <Button
-            label="Save"
-            onClick={onConfirm}
-            variant="primary"
-          />
+          <Button label="Save" onClick={onConfirm} variant="primary" />
           <Button label="Cancel" onClick={onClose} />
         </PanelFooter>
       }
@@ -234,7 +274,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
             setFormData({ ...formData, name: oEvent.target.value })
           }}
           invalid={validationState?.name ? true : false}
-          helptext={validationState?.name}
+          errortext={validationState?.name}
           required
         />
         <SelectRow
@@ -243,13 +283,12 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
           label="Container Type"
           onValueChange={(value) => {
             setContainerType(value)
-            setSecret_refs([])
             setValidationState({})
 
-            setFormData({ ...formData, type: value })
+            setFormData({ ...formData, type: value, secret_refs: [] })
           }}
           invalid={validationState?.type ? true : false}
-          helptext={validationState?.type}
+          errortext={validationState?.type}
           required
         >
           <SelectOption label="" value="" />
@@ -288,12 +327,16 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   name="cert_container_type_certificates"
                   onChange={onCertificatesChange}
                   options={certContainerCertificates}
-                  styles={invalidateReactSelect(certContainerCertificates)}
-                />
-                {!certContainerCertificates &&
-                  !validationState?.secret_refs(
-                    <div>{validationState?.secret_refs}</div>
+                  value={selectedCertContainerCertificates}
+                  styles={invalidateReactSelect(
+                    selectedCertContainerCertificates
                   )}
+                />
+                <p className="tw-text-xs tw-text-theme-error tw-mt-1">
+                  {validationState?.secret_refs
+                    ? "Certificates could not be empty!"
+                    : ""}
+                </p>
                 <Label text="Private key" />
                 <CreatableSelect
                   className="basic-single"
@@ -303,7 +346,8 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   name="cert_container_type_private_key"
                   isLoading={secrets?.isLoading}
                   options={certContainerPrivatekeys}
-                  onChange={onPrivateKeyChange}
+                  value={selectedCertContainerPrivatekeys}
+                  onChange={onCertContainerPrivatekeyChange}
                   isSearchable
                   isClearable
                   isMulti
@@ -318,7 +362,8 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   name="cert_container_type_private_key_passphrases"
                   isLoading={secrets?.isLoading}
                   options={certContainerPrivatekeyPassphrases}
-                  onChange={onPrivateKeyPassphraseChange}
+                  value={selectedCertContainerPrivatekeyPassphrases}
+                  onChange={onCertContainerPrivateKeyPassphraseChange}
                   isSearchable
                   isClearable
                   isMulti
@@ -333,6 +378,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   name="cert_container_type_intermediates"
                   isLoading={secrets?.isLoading}
                   options={certContainerIntermediates}
+                  value={selectedCertContainerIntermediates}
                   onChange={onIntermediatesChange}
                   isSearchable
                   isClearable
@@ -356,9 +402,14 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   isLoading={secrets?.isLoading}
                   options={genContainerSecrets}
                   onChange={onSecretsChange}
-                  styles={invalidateReactSelect(genContainerSecrets)}
-                  clearValue={onClearValue}
+                  value={selectedGenContainerSecrets}
+                  styles={invalidateReactSelect(selectedGenContainerSecrets)}
                 />
+                <p className="tw-text-xs tw-text-theme-error tw-mt-1">
+                  {validationState?.secret_refs
+                    ? validationState?.secret_refs
+                    : ""}
+                </p>
               </>
             )}
             {containerType === "rsa" && (
@@ -373,12 +424,21 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   name="rsa_container_type_private_keys"
                   isLoading={secrets?.isLoading}
                   options={rsaContainerPrivatekeys}
-                  onChange={onPrivateKeyChange}
+                  value={selectedRsaContainerPrivatekeys}
+                  onChange={onRsaContainerPrivateKeyChange}
                   isSearchable
                   isClearable
                   isMulti
-                  styles={invalidateReactSelect(rsaContainerPrivatekeys)}
+                  styles={invalidateReactSelect(
+                    selectedRsaContainerPrivatekeys
+                  )}
                 />
+                <p className="tw-text-xs tw-text-theme-error tw-mt-1">
+                  {selectedRsaContainerPrivatekeys?.length === 0 &&
+                  validationState?.secret_refs
+                    ? "Private keys could not be empty!"
+                    : ""}
+                </p>
                 <Label text="Private key passphrase" required />
                 <CreatableSelect
                   className="basic-single"
@@ -388,14 +448,21 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   name="rsa_container_type_private_key_passphrases"
                   isLoading={secrets?.isLoading}
                   options={rsaContainerPrivatekeyPassphrases}
-                  onChange={onPrivateKeyPassphraseChange}
+                  value={selectedRsaContainerPrivatekeyPassphrases}
+                  onChange={onRsaContainerPrivateKeyPassphraseChange}
                   isSearchable
                   isClearable
                   isMulti
                   styles={invalidateReactSelect(
-                    rsaContainerPrivatekeyPassphrases
+                    selectedRsaContainerPrivatekeyPassphrases
                   )}
                 />
+                <p className="tw-text-xs tw-text-theme-error tw-mt-1">
+                  {selectedRsaContainerPrivatekeyPassphrases?.length === 0 &&
+                  validationState?.secret_refs
+                    ? "Private key passphrases could not be empty!"
+                    : ""}
+                </p>
                 <Label text="Public key" required />
                 <CreatableSelect
                   className="basic-single"
@@ -405,12 +472,18 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   name="rsa_container_type_public_key"
                   isLoading={secrets?.isLoading}
                   options={rsaContainerPublickeys}
+                  value={selectedRsaContainerPublickeys}
                   onChange={onPublicKeyChange}
                   isSearchable
                   isClearable
                   isMulti
-                  styles={invalidateReactSelect(rsaContainerPublickeys)}
+                  styles={invalidateReactSelect(selectedRsaContainerPublickeys)}
                 />
+                <p className="tw-text-xs tw-text-theme-error tw-mt-1">
+                  {validationState?.secret_refs
+                    ? "Public keys could not be empty!"
+                    : ""}
+                </p>
               </>
             )}
           </>

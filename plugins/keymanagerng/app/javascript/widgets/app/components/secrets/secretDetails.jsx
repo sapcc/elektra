@@ -69,7 +69,7 @@ const SecretDetails = () => {
   )
 
   const metadata = useQuery({
-    queryKey: ["secretMetadata", secretId], 
+    queryKey: ["secretMetadata", secretId],
     queryFn: getSecretMetadata,
     enabled: !!secretId,
     onSuccess: (data) => {
@@ -117,6 +117,7 @@ const SecretDetails = () => {
         }`}</span>
       }
       size="large"
+      className="tw-z-[1050]"
     >
       <PanelBody>
         {secret.isLoading && !secret.data ? (

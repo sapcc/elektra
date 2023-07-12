@@ -5468,9 +5468,9 @@ jsx-to-string@^1.4.0:
     json-stringify-pretty-compact "^1.0.1"
     react "^0.14.0"
 
-"juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.5.7/package.tgz":
-  version "1.5.7"
-  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.5.7/package.tgz#f65a7a14a89c2632c37ee1a35c6180001d378a00"
+"juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.7.2/package.tgz":
+  version "1.7.2"
+  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.7.2/package.tgz#ac2b0e2ea56c4b6ff190d68ec1409849c42e63c7"
 
 jxLoader@*:
   version "0.1.1"
@@ -5730,9 +5730,9 @@ merge2@^1.3.0:
   resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
-"messages-provider@https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.7/package.tgz":
-  version "0.1.7"
-  resolved "https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.7/package.tgz#993e19a64b144fe3e8bfaaaa38c6ff1d1852a93a"
+"messages-provider@https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.8/package.tgz":
+  version "0.1.8"
+  resolved "https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.8/package.tgz#63debc5c9d37eac77afe6b37dbf02721dd602550"
   dependencies:
     build "^0.1.4"
     run "^1.4.0"

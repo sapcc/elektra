@@ -37,7 +37,7 @@ const ContainerDetails = () => {
   const { addMessage } = useActions()
 
   const container = useQuery({
-    queryKey: ["container", params.id], 
+    queryKey: ["container", params.id],
     queryFn: getContainer,
     enabled: !!params.id,
   })
@@ -93,6 +93,7 @@ const ContainerDetails = () => {
         }`}</span>
       }
       size="large"
+      className="tw-z-[1050]"
     >
       <PanelBody>
         {container.isLoading && !container.data ? (
