@@ -119,6 +119,14 @@ SimpleNavigation::Configuration.run do |navigation|
                        "OpenStack Object Lookup",
                        -> { plugin("lookup").root_path },
                        highlights_on: -> { params[:controller][%r{lookup/?.*}] }
+      ccadmin_nav.item :delete_project_check,
+                       "OpenStack Delete Project Check",
+                       -> { plugin("identity").check_delete_project_path },
+                       if: -> { services.available?(:identity,:elektron_prodel) }
+                       #highlights_on:
+                       #  proc {
+                       #    params[:controller][%r{check_delete/.*}]
+                       #  }
     end
 
     primary.item :cloudops,

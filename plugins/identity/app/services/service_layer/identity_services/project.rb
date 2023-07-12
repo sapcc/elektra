@@ -30,6 +30,18 @@ module ServiceLayer
         nil
       end
 
+      def get_project_resources(id = nil)
+        return nil if id.blank?
+        elektron_prodel.get("/projects/#{id}/resources/").body[
+          "resources"
+        ]
+      end
+
+      def delete_project_with_prodel(id = nil)
+        return nil if id.blank?
+        elektron_prodel.delete("/projects/#{id}")
+      end
+
       def user_projects!(user_id, filter = {})
         elektron_identity.get("users/#{user_id}/projects", filter).map_to(
           "body.projects",

@@ -39,9 +39,9 @@ const taggedColumns = [
     key: "vuln_status",
     label: "Vulnerability Status",
     sortStrategy: "numeric",
-    searchKey: (props) => props.data.trivy_vulnerability_status || "",
+    searchKey: (props) => props.data.vulnerability_status || "",
     sortKey: (props) =>
-      SEVERITY_ORDER[props.data.trivy_vulnerability_status || ""] || 0,
+      SEVERITY_ORDER[props.data.vulnerability_status || ""] || 0,
   },
   { key: "actions", label: "" },
 ]

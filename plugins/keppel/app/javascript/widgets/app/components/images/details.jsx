@@ -96,7 +96,7 @@ export default class ImageDetailsModal extends React.Component {
           )
           if (
             manifestInfo &&
-            hasVulnReport(manifestInfo.trivy_vulnerability_status)
+            hasVulnReport(manifestInfo.vulnerability_status)
           ) {
             this.props.loadVulnsOnce()
           }
@@ -152,8 +152,8 @@ export default class ImageDetailsModal extends React.Component {
     const {
       media_type: mediaType,
       tags,
-      trivy_vulnerability_status: vulnStatus,
-      trivy_scan_error: vulnScanError,
+      vulnerability_status: vulnStatus,
+      vulnerability_scan_error: vulnScanError,
       gc_status: gcStatus,
     } = manifests.find((m) => m.digest == digest) || {}
 
@@ -348,7 +348,7 @@ export default class ImageDetailsModal extends React.Component {
           <tr key={`vulnstatus-${manifest.digest}`}>
             <th>Vulnerability status</th>
             <td>
-              {manifestInfo.trivy_vulnerability_status} ({detailsLink})
+              {manifestInfo.vulnerability_status} ({detailsLink})
             </td>
           </tr>
         )
