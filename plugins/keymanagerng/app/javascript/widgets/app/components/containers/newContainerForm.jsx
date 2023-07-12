@@ -39,26 +39,11 @@ const selectContainerTypes = (containerType) => {
   }
 }
 
-const formValidation = (formData) => {
-  let errors = {}
-  if (!formData.name) {
-    errors.name = "Name can't be empty!"
-  }
-  if (!formData.type) {
-    errors.type = "Container type can't be empty!"
-  }
-  if (formData.secret_refs?.length === 0) {
-    errors.secret_refs = "Secrets can't be empty!"
-  }
-  return errors
-}
-
 const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const [containerType, setContainerType] = useState("generic")
   const [formData, setFormData] = useState({ type: "generic" })
   const [validationState, setValidationState] = useState({})
   const [secretsForSelect, setSecretsForSelect] = useState([])
-  const [isSavePressed, setIsSavePressed] = useState(false)
 
   const [certContainerCertificates, setCertContainerCertificates] = useState([])
   const [
@@ -108,8 +93,52 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const { mutate } = useMutation(({ formState }) => createContainer(formState))
   const { addMessage, resetMessages } = useActions()
 
+  const formValidation = (formData) => {
+    let errors = {}
+    if (!formData.name) {
+      errors.name = "Name can't be empty!"
+    }
+    if (!formData.type) {
+      errors.type = "Container type can't be empty!"
+    }
+    if (
+      !formData.secret_refs ||
+      formData.secret_refs?.length === 0 ||
+      selectedRsaContainerPrivatekeys?.length === 0 ||
+      selectedRsaContainerPrivatekeyPassphrases?.length === 0 ||
+      selectedRsaContainerPublickeys?.length === 0
+    ) {
+      switch (formData.type) {
+        case "generic":
+          if (selectedGenContainerSecrets?.length === 0) {
+            errors.secret_refs = "Secrets can't be empty!"
+          }
+          break
+        case "certificate":
+          if (selectedCertContainerCertificates?.length === 0) {
+            errors.certContainerCertificates = "Certificates can't be empty!"
+          }
+          break
+        case "rsa":
+          if (selectedRsaContainerPrivatekeys?.length === 0) {
+            errors.rsaContainerPrivatekeys = "Private keys can't be empty!"
+          }
+          if (selectedRsaContainerPrivatekeyPassphrases?.length === 0) {
+            errors.rsaContainerPrivatekeyPassphrases =
+              "Private key passphrases can't be empty!"
+          }
+          if (selectedRsaContainerPublickeys?.length === 0) {
+            errors.rsaContainerPublickeys = "Public keys can't be empty!"
+          }
+          break
+        default:
+          errors.secret_refs = "Secrets can't be empty!"
+      }
+    }
+    return errors
+  }
+
   const onConfirm = () => {
-    setIsSavePressed(true)
     const errors = formValidation(formData)
     if (Object.keys(errors).length > 0) {
       setValidationState(errors)
@@ -181,7 +210,12 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   }
 
   const invalidateReactSelect = (value) => {
-    return value?.length === 0 && !!validationState?.secret_refs
+    return value?.length === 0 &&
+      (!!validationState?.secret_refs ||
+        !!validationState?.certContainerCertificates ||
+        !!validationState?.rsaContainerPrivatekeys ||
+        !!validationState?.rsaContainerPrivatekeyPassphrases ||
+        !!validationState?.rsaContainerPublickeys)
       ? {
           ...commonCreatableStyles,
           control: (provided, state) => ({
@@ -195,7 +229,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
         }
       : commonCreatableStyles
   }
-  const updateSecretRefs = (props, secretRefName, secretsSelect) => {
+  const updateSecretRefs = (props, secretRefName) => {
     const secretRefs = []
     if (props) {
       props?.map((prop) => {
@@ -207,7 +241,6 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
       setFormData({
         ...formData,
         secret_refs: secretRefs,
-        secretsSelect: secretsSelect,
       })
     }
   }
@@ -284,11 +317,10 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
           onValueChange={(value) => {
             setContainerType(value)
             setValidationState({})
-
             setFormData({ ...formData, type: value, secret_refs: [] })
+            resetMessages()
           }}
           invalid={validationState?.type ? true : false}
-          errortext={validationState?.type}
           required
         >
           <SelectOption label="" value="" />
@@ -333,8 +365,8 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   )}
                 />
                 <p className="tw-text-xs tw-text-theme-error tw-mt-1">
-                  {validationState?.secret_refs
-                    ? "Certificates could not be empty!"
+                  {validationState?.certContainerCertificates
+                    ? validationState?.certContainerCertificates
                     : ""}
                 </p>
                 <Label text="Private key" />
@@ -434,9 +466,8 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   )}
                 />
                 <p className="tw-text-xs tw-text-theme-error tw-mt-1">
-                  {selectedRsaContainerPrivatekeys?.length === 0 &&
-                  validationState?.secret_refs
-                    ? "Private keys could not be empty!"
+                  {validationState?.rsaContainerPrivatekeys
+                    ? validationState?.rsaContainerPrivatekeys
                     : ""}
                 </p>
                 <Label text="Private key passphrase" required />
@@ -458,9 +489,8 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   )}
                 />
                 <p className="tw-text-xs tw-text-theme-error tw-mt-1">
-                  {selectedRsaContainerPrivatekeyPassphrases?.length === 0 &&
-                  validationState?.secret_refs
-                    ? "Private key passphrases could not be empty!"
+                  {validationState?.rsaContainerPrivatekeyPassphrases
+                    ? validationState?.rsaContainerPrivatekeyPassphrases
                     : ""}
                 </p>
                 <Label text="Public key" required />
@@ -480,8 +510,8 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   styles={invalidateReactSelect(selectedRsaContainerPublickeys)}
                 />
                 <p className="tw-text-xs tw-text-theme-error tw-mt-1">
-                  {validationState?.secret_refs
-                    ? "Public keys could not be empty!"
+                  {validationState?.rsaContainerPublickeys
+                    ? validationState?.rsaContainerPublickeys
                     : ""}
                 </p>
               </>
