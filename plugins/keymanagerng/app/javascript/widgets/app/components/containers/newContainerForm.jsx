@@ -220,10 +220,12 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
           ...commonCreatableStyles,
           control: (provided, state) => ({
             ...provided,
-            borderColor: state.isFocused ? "#bb3e10" : "#bb3e10",
-            boxShadow: state.isFocused ? "0 0 0 1px #bb3e10" : null,
+            borderColor: state.isFocused
+              ? "var(--color-error)"
+              : "var(--color-error)",
+            boxShadow: state.isFocused ? "0 0 0 1px var(--color-error)" : null,
             "&:hover": {
-              borderColor: "#bb3e10",
+              borderColor: "var(--color-error)",
             },
           }),
         }
