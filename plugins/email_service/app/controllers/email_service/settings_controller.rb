@@ -15,13 +15,6 @@ module EmailService
       @aws_account_details = aws_account_details
       @deliverability_dashboard_options = get_deliverability_dashboard_options
 
-      # unless ec2_creds&.access && ec2_creds&.secret
-      #   error =
-      #     I18n.t('email_service.errors.cronus_account_activation').to_s.freeze
-      #   Rails.logger.error error
-      #   flash[:error] = error
-      #   check_pre_conditions_for_cronus
-      # end
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
         "#{I18n.t('email_service.errors.cronus_account_details_list')} : #{e.message}"

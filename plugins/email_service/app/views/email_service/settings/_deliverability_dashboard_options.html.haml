@@ -4,26 +4,3 @@
       %td dashboard enabled
       %td
         = @deliverability_dashboard_options[:dashboard_enabled]
-    -# - @deliverability_dashboard_options[:dashboard_enabled]
-    -#   %tr
-    -#     %td subscription expiry date
-    -#     %td
-    -#       = @deliverability_dashboard_options[:subscription_expiry_date]
-    -#   %tr
-    -#     %td account_status
-    -#     %td
-    -#       = @deliverability_dashboard_options[:account_status]
-    -#   - unless @deliverability_dashboard_options[:active_subscribed_domains].nil?
-    -#     - @deliverability_dashboard_options[:active_subscribed_domains].each do | ddo |
-    -#       %tr
-    -#         %td domain
-    -#         %td
-    -#           = ddo[:domain]
-    -#       %tr
-    -#         %td subscription_start_date
-    -#         %td
-    -#           = ddo[:subscription_start_date]
-    -#       %tr
-    -#         %td inbox_placement_tracking_option - global
-    -#         %td
-    -#           = ddo[:inbox_placement_tracking_option][:global]
