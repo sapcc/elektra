@@ -31,7 +31,7 @@ const Containers = () => {
   const search = useContainersSearch({ text: searchTerm })
   const { isLoading, isFetching, data, error } = useQuery({
     queryKey: ["containers", paginationOptions],
-    queryFn: getContainers
+    queryFn: getContainers,
   })
 
   // dispatch error with useEffect because error variable will first set once all retries did not succeed
@@ -68,11 +68,12 @@ const Containers = () => {
     <Container py px={false}>
       <IntroBox>
         <p>
-          The secrets resource is the heart of the Barbican service. It provides
-          access to the secret/keying material stored in the system. Barbican
-          supports the secure storage of data for various content types. For
-          more information, visit the&nbsp;
-          <a href="http://developer.openstack.org/api-guide/key-manager/secrets.html">
+          The containers resource is the organizational center piece of
+          barbican. It creates a logical object that can be used to hold secret
+          references. This is helpful when having to deal with tracking and
+          having access to hundreds of secrets. For more information visit
+          the&nbsp;
+          <a href="http://developer.openstack.org/api-guide/key-manager/containers.html">
             Barbican OpenStack documentation.
           </a>
         </p>
