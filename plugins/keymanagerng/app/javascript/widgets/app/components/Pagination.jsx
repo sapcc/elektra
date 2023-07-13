@@ -50,8 +50,8 @@ const PaginationComp = ({
           onPressPrevious={onPrevChanged}
           pages={pages}
           variant="input"
-          isFirstPage={disabled}
-          isLastPage={disabled}
+          isFirstPage={currentPage === 1}
+          isLastPage={currentPage === pages}
         />
       </Stack>
     </>
