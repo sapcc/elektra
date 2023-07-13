@@ -13,11 +13,17 @@ module ServiceLayer
     include IdentityServices::Ec2Credential
 
     def available?(_action_name_sym = nil)
-      elektron.service?("identity")
+      # Note: _action_name_sym uses the funktion that is given in the controller
+      elektron.service?("identity") && (_action_name_sym.nil? || send(_action_name_sym))
     end
 
     def elektron_identity
       @elektron_identity ||= elektron.service("identity", path_prefix: "/v3")
+    end
+
+    def elektron_prodel
+      # https://prodel.qa-de-1.cloud.sap/swagger-ui
+      @elektron_prodel ||= elektron.service("prodel", path_prefix: "/api/v1")
     end
 
     def find_domain_and_project(filter)

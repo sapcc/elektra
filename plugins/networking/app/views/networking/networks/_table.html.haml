@@ -1,0 +1,35 @@
+%table.table.networks.searchable{
+  data: { 
+    search_input: "#search_networks_input"}
+}
+  %thead
+    %tr
+      %th Name
+      %th
+        Subnets Associated
+
+      %th Owning Project
+      %th Shared
+      %th Status
+      %th Admin State
+      %th.snug
+  %tbody
+    - if networks.length==0
+      %tr{data: { empty: true }}
+        %td{colspa: 6} No network available
+    - else
+      - networks.each do | network |
+        = render partial: 'item', locals: {network: network}
+
+-# = render_paginatable(@networks)
+-# if has next items (comes from paginate helper in controller) render the
+-# ajax paginate plugin (identified by data-ajax-paginate)
+- if pagination_has_next
+  .ajax-paginate{
+    data: {
+      ajax_paginate: true,
+      all_button: "true",
+      list_selector: "table.networks tbody",
+      search_input_selector: "#search_networks_input"
+    }
+  }

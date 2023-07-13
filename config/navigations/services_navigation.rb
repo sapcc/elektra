@@ -267,7 +267,7 @@ SimpleNavigation::Configuration.run do |navigation|
       networking_nav.item :networks,
                           "Networks & Routers",
                           -> {
-                            plugin("networking").networks_external_index_path
+                            plugin("networking").networks_external_index_path + "?preview=true"
                           },
                           if: -> { plugin_available?(:networking) },
                           highlights_on:

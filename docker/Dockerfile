@@ -1,5 +1,6 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
 FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.15 AS base 
+LABEL source_repository="https://github.com/sapcc/elektra"
 
 ENV APP_PATH=/home/app
 ENV RAILS_ENV=production
@@ -19,7 +20,7 @@ ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
 
 WORKDIR $APP_PATH
 
-RUN apk --no-cache add tzdata postgresql-client
+RUN apk --no-cache add dumb-init tzdata postgresql-client
 
 ################################### BUILDER ################################
 FROM base AS builder 
@@ -29,19 +30,20 @@ RUN apk --no-cache add git curl nodejs yarn shared-mime-info
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
 RUN apk --no-cache add build-base postgresql-dev ruby-sassc --virtual .builddeps \
-      && gem install bundler:2.3.20 \
-      && gem install byebug -v 11.1.3 \
-      && gem install ffi -v 1.15.5 \
-      && gem install json -v 1.8.6 \
-      && gem install nio4r -v 2.5.8 \
-      && gem install nokogiri -v 1.13.3 \
-      && gem install pg -v 1.3.4 \
-      && gem install puma -v 4.3.12  \
-      && gem install redcarpet -v 3.5.1 \
-      && gem install unf -v 0.2.0.beta2 \
-      && gem install websocket-driver -v 0.7.5 \
-      && gem install bindex -v 0.8.1 \
-      && gem install sassc -v 2.4.0 \
+      && gem install --no-document \
+        bundler:2.3.20 \
+        byebug:11.1.3 \
+        ffi:1.15.5 \
+        json:1.8.6 \
+        nio4r:2.5.8 \
+        nokogiri:1.13.3 \
+        pg:1.3.4 \
+        puma:4.3.12  \
+        redcarpet:3.5.1 \
+        unf:0.2.0.beta2 \
+        websocket-driver:0.7.5 \
+        bindex:0.8.1 \
+        sassc:2.4.0 \
       && runDeps="$( \
       scanelf --needed --nobanner --recursive /usr/local \
       | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
@@ -53,10 +55,6 @@ RUN apk --no-cache add build-base postgresql-dev ruby-sassc --virtual .builddeps
       && apk del .builddeps \
       && gem sources -c \
       && rm -f /usr/local/bundle/cache/*
-
-RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64 && \
-      chmod +x /usr/bin/dumb-init && \
-      dumb-init -V
 
 # add Gemfile and Gemfile.lock to $APP_PATH/
 ADD Gemfile Gemfile.lock ./
@@ -74,7 +72,7 @@ RUN script/organize_plugins_gemspecs
 # install gems, copy app and run rake tasks
 RUN apk --no-cache add build-base
 RUN bundle config set --local without 'development integration_tests'
-RUN bundle install --jobs=8
+RUN bundle install --jobs=$(nproc)
 
 # add elektra sources into image
 ADD . $APP_PATH
@@ -103,12 +101,10 @@ RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/p
 
 ######################################### FINAL IMAGE ######################################
 FROM base AS elektra
-LABEL source_repository="https://github.com/sapcc/elektra"
 # Copy the already built bundler artifact
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 # Copy the already built js artifact
 COPY --from=builder $APP_PATH $APP_PATH
-COPY --from=builder /usr/bin/dumb-init /usr/bin/dumb-init  
 
 # Note: in our k8s this will be overwriten from deployment
 ENTRYPOINT ["dumb-init", "-c", "--" ]

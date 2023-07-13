@@ -25,6 +25,14 @@ module ServiceLayer
         )
       end
 
+      def find_domains_by_name(name)
+        return nil if name.blank?
+        elektron_identity.get("domains?name=#{name}").map_to(
+          "body.domains",
+          &domain_map
+        )
+      end
+
       def find_domain(id)
         find_domain!(id)
       rescue Elektron::Errors::ApiResponse

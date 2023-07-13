@@ -243,7 +243,7 @@ class Cluster extends React.Component {
             <i className="fa fa-fw fa-wrench" />,
             "Setup"
           ),
-          cluster.status.dashboard && (
+          cluster.spec.dashboard && cluster.status.dashboard && (
             <a
               className="btn btn-sm btn-default btn-icon-text"
               disabled={disabled}
