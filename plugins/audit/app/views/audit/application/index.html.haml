@@ -1,5 +1,4 @@
 = content_for :main_toolbar do
   Audit Log
 
-=# react_component 'audit.AppProvider', permissions: {}, token: current_user.token, eventsApi: @events_endpoint
-= javascript_include_tag "audit_app_widget", data: { token: current_user.token, events_api: @events_endpoint }
+= javascript_include_tag "audit_app_widget", data: { get_token_func: "_getCurrentToken", events_api: @events_endpoint }

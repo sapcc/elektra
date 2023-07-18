@@ -27,5 +27,6 @@ import "./core/error_details"
 import "./core/pagination_spinner"
 
 import "./core/cable"
+import "./core/current_user_token"
 
 import "./core/init"
