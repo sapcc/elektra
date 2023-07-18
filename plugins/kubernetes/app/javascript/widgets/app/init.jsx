@@ -12,8 +12,8 @@ import { createWidget } from "lib/widget"
 composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 store = createStore(AppReducers, composeEnhancers(applyMiddleware(ReduxThunk)))
 
-const AppProvider = ({ permissions, token, kubernikusBaseUrl }) => {
-  setAjaxHelper(new ReactAjaxHelper(kubernikusBaseUrl, { authToken: token }))
+const AppProvider = ({ permissions, authToken, kubernikusBaseUrl }) => {
+  setAjaxHelper(new ReactAjaxHelper(kubernikusBaseUrl, { authToken }))
   setBackendAjaxClient(
     new ReactAjaxHelper(
       `${window.location.origin}/${window.scopedDomainFid}/${window.scopedProjectFid}`
@@ -28,7 +28,17 @@ const AppProvider = ({ permissions, token, kubernikusBaseUrl }) => {
 }
 
 createWidget()
-  .then((widget) => {
+  .then(async (widget) => {
+    // get the token from the function passed in the script params
+    const getTokenFunc = globalThis[widget.config.params.getTokenFunc]
+    // wait for the promise to resolve
+    const token = await getTokenFunc()
+
+    // set the token in the widget config
+    widget.config.params.authToken = token.authToken
+    // cleanup, remove getTokenFunc from params
+    delete widget.config.params.getTokenFunc
+
     widget.setPolicy()
     widget.render(AppProvider)
   })

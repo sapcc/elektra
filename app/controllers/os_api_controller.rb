@@ -1,4 +1,7 @@
 class OsApiController < ::AjaxController
+  def token
+    render json: current_user.context
+  end
   def auth_token
     render plain: current_user.token
   end
