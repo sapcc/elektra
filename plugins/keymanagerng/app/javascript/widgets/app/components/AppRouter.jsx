@@ -13,17 +13,28 @@ import { widgetBasePath } from "lib/widget"
 import { Messages } from "messages-provider"
 import useStore from "../store"
 
-
 const baseName = widgetBasePath("keymanagerng")
 
 const AppRouter = () => {
-  const showNewContainer = useStore(useCallback((state) => state.showNewContainer))
+  const showNewContainer = useStore(
+    useCallback((state) => state.showNewContainer)
+  )
   const showNewSecret = useStore(useCallback((state) => state.showNewSecret))
   const tabsDisabled = showNewSecret || showNewContainer ? true : false
 
   const tabsConfig = [
-    { to: "/secrets/page/:pageNumber", label: "Secrets", component: Secrets, disabled: tabsDisabled },
-    { to: "/containers/page/:pageNumber", label: "Containers", component: Containers, disabled: tabsDisabled},
+    {
+      to: "/secrets",
+      label: "Secrets",
+      component: Secrets,
+      disabled: tabsDisabled,
+    },
+    {
+      to: "/containers",
+      label: "Containers",
+      component: Containers,
+      disabled: tabsDisabled,
+    },
   ]
   return (
     <>
@@ -31,7 +42,7 @@ const AppRouter = () => {
       <BrowserRouter basename={baseName}>
         <Route exact path="/" render={() => <Redirect to="/secrets" />} />
         <Route path="/:activeTab">
-          <Tabs tabsConfig={tabsConfig}/>
+          <Tabs tabsConfig={tabsConfig} />
         </Route>
         <Route exact path="/secrets/newSecret" component={NewSecret} />
         <Route exact path="/secrets/:id/show" component={SecretDetails} />

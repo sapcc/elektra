@@ -17,6 +17,7 @@ import { Link } from "react-router-dom"
 import { useActions } from "messages-provider"
 import { parseError } from "../../helpers"
 import useContainersSearch from "../../hooks/useContainersSearch"
+import { useLocation } from "react-router-dom"
 
 const ITEMS_PER_PAGE = 20
 
@@ -24,10 +25,16 @@ const Containers = () => {
   const { addMessage } = useActions()
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
+
+  const location = useLocation()
+  const query = new URLSearchParams(location.search)
+  const page = query.get("page")
+  const offset = (page - 1) * ITEMS_PER_PAGE // calculate the offset based on the page number
   const [paginationOptions, setPaginationOptions] = useState({
     limit: ITEMS_PER_PAGE,
-    offset: 0,
+    offset: 0 || offset,
   })
+
   const search = useContainersSearch({ text: searchTerm })
   const { isLoading, isFetching, data, error } = useQuery({
     queryKey: ["containers", paginationOptions],
