@@ -1,9 +1,0 @@
-{
-  "projectId": "elektra",
-  "defaultCommandTimeout": 20000,
-  "viewportWidth":1300,
-  "viewportHeight":1100,
-  "videoCompression":20,
-  "chromeWebSecurity": false,
-  "includeShadowDom": true
-}
