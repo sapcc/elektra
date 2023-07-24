@@ -21,6 +21,14 @@ const byName = (account1, account2) => {
 }
 
 export default class AccountList extends React.Component {
+  state = {
+    searchText: "",
+  }
+
+  setSearchText(searchText) {
+    this.setState({ ...this.state, searchText })
+  }
+
   render() {
     const { isAdmin, hasExperimentalFeatures } = this.props
     const forwardProps = { isAdmin, hasExperimentalFeatures }
@@ -36,7 +44,20 @@ export default class AccountList extends React.Component {
             </div>
           </div>
         )}
-        <DataTable columns={columns} pageSize={10}>
+        <div className="search-box">
+          <input
+            className="form-control"
+            type="text"
+            value={this.state.searchText}
+            placeholder="Filter accounts"
+            onChange={(e) => this.setSearchText(e.target.value)}
+          />
+        </div>
+        <DataTable
+          columns={columns}
+          pageSize={10}
+          searchText={this.state.searchText}
+        >
           {this.props.accounts.sort(byName).map((account) => (
             <AccountRow
               key={account.name}
