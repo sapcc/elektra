@@ -1,8 +1,8 @@
 = content_for :title do
-  New Templated eMail
+  New Templated Email
 
 - unless modal?
-  %h3 New Templated eMail
+  %h3 New Templated Email
 
 = simple_form_for @templated_email, as: :templated_email, url: plugin('email_service').templated_emails_path(), method: :post, remote: request.xhr?,  html: {id: 'form_templated_email', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 

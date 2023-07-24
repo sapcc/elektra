@@ -1,14 +1,17 @@
-module EmailService
-  class PlainEmailsController < ::EmailService::ApplicationController
-    before_action :check_ec2_creds_cronus_status
-    before_action :check_verified_identity
+# frozen_string_literal: true
 
+module EmailService
+  # PlainEmailsController
+
+  class PlainEmailsController < ::EmailService::ApplicationController
+    before_action :check_pre_conditions_for_cronus
     before_action :plain_email, only: %i[new edit]
 
-    authorization_context "email_service"
+    authorization_context 'email_service'
     authorization_required
 
-    PLAIN_EMAIL_SENT = "#{I18n.t("email_service.messages.plain_email_sent")}"
+    PLAIN_EMAIL_SENT =
+      I18n.t('email_service.messages.plain_email_sent').to_s.freeze
 
     def new
       @source_types = ::EmailService::Email.source_types
@@ -19,58 +22,43 @@ module EmailService
 
     def create
       @source_types = ::EmailService::Email.source_types
-
       @plain_email = plain_email_form(plain_email_params)
 
-      if @plain_email.source_type == "domain"
+      case @plain_email.source_type
+      when 'domain'
         @plain_email.source =
-          (
-            if @plain_email.source_domain_name_part == ""
-              "test@#{@plain_email.source_domain}"
-            else
-              "#{@plain_email.source_domain_name_part}@#{@plain_email.source_domain}"
-            end
-          )
-      elsif @plain_email.source_type == "email"
-        @plain_email.source = @plain_email.source_email
-      end
-
-      Rails.logger.debug "\n [email_service][plain_emails_controller][create] : \n @plain_email.source : #{@plain_email.source} \n"
-
-      if @plain_email.return_path == ""
-        @plain_email.return_path = @plain_email.source
-      end
-
-      plain_email_values = @plain_email.process(EmailService::PlainEmail)
-
-      if @plain_email.valid?
-        begin
-          status = send_plain_email(plain_email_values)
-          if status.include?("success")
-            Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][@plain_email.valid?]"
-            flash[:success] = PLAIN_EMAIL_SENT
-            redirect_to plugin("email_service").emails_path and return
+          if @plain_email.source_domain_name_part.nil?
+            "test@#{@plain_email.source_domain}"
           else
-            Rails.logger.debug "\n [email_service][plain_emails_controller][send_plain_email][@plain_email.valid?] : STATUS : #{status} \n"
-            Rails.logger.error status
-            flash[:error] = status
-            render "edit", locals: { data: { modal: true } } and return
+            "#{@plain_email.source_domain_name_part}@#{@plain_email.source_domain}"
           end
-        rescue Elektron::Errors::ApiResponse => e
-          error =
-            "#{I18n.t("email_service.errors.plain_email_send_error")} #{e.message}"
-          Rails.logger.error error
-          flash[:error] = error
-        rescue Exception => e
-          error =
-            "#{I18n.t("email_service.errors.plain_email_send_error")} #{e.message}"
-          Rails.logger.error error
-          flash[:error] = error
-        end
-      else
-        render "edit", locals: { data: { modal: true } } and return
+      when 'email'
+        @plain_email.source = @plain_email.source_email
+        @plain_email.reply_to_addr = @plain_email.source_email if @plain_email.reply_to_addr.nil?
+        @plain_email.return_path = @plain_email.source_email if @plain_email.return_path.nil?
+        Rails.logger.debug "\n CONTROLLER : **** plain_email.inspect : #{@plain_email.inspect} ***** \n "
       end
-      redirect_to plugin("email_service").emails_path
+      @plain_email.return_path =
+        @plain_email.source if @plain_email.return_path.nil?
+      plain_email_values = @plain_email.process(EmailService::PlainEmail)
+      unless @plain_email.valid?
+        return render action: 'edit', data: { modal: true }
+      end
+      begin
+        status = send_plain_email(plain_email_values)
+        unless status.include?('success')
+          Rails.logger.error status
+          flash[:error] = status
+          render 'edit', locals: { data: { modal: true } } and return
+        end
+      rescue Elektron::Errors::ApiResponse, StandardError => e
+        error =
+          "#{I18n.t('email_service.errors.plain_email_send_error')} #{e.message}"
+        Rails.logger.error error
+        flash[:error] = error
+      end
+      flash[:success] = PLAIN_EMAIL_SENT
+      redirect_to plugin('email_service').emails_path
     end
 
     private
@@ -85,26 +73,24 @@ module EmailService
 
     def plain_email_params
       if params.include?(:plain_email)
-        return(
-          params.require(:plain_email).permit(
-            :source,
-            :source_domain,
-            :source_domain_name_part,
-            :source_email,
-            :source_type,
-            :to_addr,
-            :cc_addr,
-            :bcc_addr,
-            :reply_to_addr,
-            :return_path,
-            :subject,
-            :html_body,
-            :text_body,
-            :configuration_set_name,
-          )
+        params.require(:plain_email).permit(
+          :source,
+          :source_domain,
+          :source_domain_name_part,
+          :source_email,
+          :source_type,
+          :to_addr,
+          :cc_addr,
+          :bcc_addr,
+          :reply_to_addr,
+          :return_path,
+          :subject,
+          :html_body,
+          :text_body,
+          :configuration_set_name
         )
       else
-        return {}
+        {}
       end
     end
   end

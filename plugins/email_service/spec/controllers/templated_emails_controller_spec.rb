@@ -36,7 +36,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       :ses_client,
     ).and_return(double("ses_client").as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(
-      :check_ec2_creds_cronus_status,
+      :check_pre_conditions_for_cronus,
     ).and_return(double("redirect_path").as_null_object)
     allow_any_instance_of(EmailService::TemplatedEmailsController).to receive(
       :check_verified_identity,
@@ -124,7 +124,9 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       end
       it "returns http 401 status" do
         get :new, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
 
@@ -137,7 +139,9 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       end
       it "not allowed" do
         get :new, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
   end
@@ -205,7 +209,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       it "returns http 401 status" do
         expect(
           post(:create, params: default_params.merge(opts: @opts)),
-        ).to render_template("application/exceptions/warning")
+        ).to render_template('application/exceptions/warning')
       end
     end
 
@@ -219,7 +223,7 @@ describe EmailService::TemplatedEmailsController, type: :controller do
       it "not allowed" do
         expect(
           post(:create, params: default_params.merge(opts: @opts)),
-        ).to render_template("application/exceptions/warning")
+        ).to render_template('application/exceptions/warning')
       end
     end
   end

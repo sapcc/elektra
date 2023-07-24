@@ -9,7 +9,7 @@
   %tbody
     - if !email_addresses || email_addresses.empty?
       %tr
-        %td{ colspan: 3 } No verified eMail address available
+        %td{ colspan: 3 } No verified Email address available
     - else
       -@paginatable_emails.each do | email_item |
         = render partial: 'table_verified_email_item', locals: { email_item: email_item }

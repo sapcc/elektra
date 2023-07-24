@@ -5,70 +5,68 @@
  */
 // email_source
 const switch_source_type = function (event) {
-  const { value } = event.target;
+  const { value } = event.target
   if (value === 'email') {
-    $('#email-source').removeClass('hide');
-    $('#domain-source').addClass('hide');
-    return $('#domain-source-name').addClass('hide');
+    $('#email-source').removeClass('hide')
+    $('#domain-source').addClass('hide')
+    return $('#domain-source-name').addClass('hide')
   } else if (value === 'domain') {
-    $('#domain-source').removeClass('hide');
-    $('#domain-source-name').removeClass('hide');
-    return $('#email-source').addClass('hide');
+    $('#domain-source').removeClass('hide')
+    $('#domain-source-name').removeClass('hide')
+    return $('#email-source').addClass('hide')
   }
-};
+}
 
 const populate_email_addresses = function (event) {
-  const { value } = event.target;
-  console.log(`email address is changed: ${value}`);
-  return $('#plain_email_reply_to_addr').val(value);
-};
+  const { value } = event.target
+  console.log(`email address is changed: ${value}`)
+  return $('#plain_email_reply_to_addr').val(value)
+}
 
 const populate_domain_addresses = function (event) {
-  const { value } = event.target;
-  console.log(`domain address is changed: ${value}`);
-  return $('#plain_email_source_domain').val(value);
-};
+  const { value } = event.target
+  console.log(`domain address is changed: ${value}`)
+  return $('#plain_email_source_domain').val(value)
+}
 
 const set_domain_suffix = function (event) {
-  const { value } = event.target;
-  console.log("domain change detected");
-  return $('#domain-source-name').val(value);
-};
-// console.log $('textarea[id="plain_email_html_body"]').val
-// console.log $('textarea[id="plain_email_text_body"]').val
+  const { value } = event.target
+  console.log('domain change detected')
+  return $('#domain-source-name').val(value)
+}
 
 // plain_email
-const sourceDomainNamePart = 'input[id="plain_email_source_domain_name_part"]';
+const sourceDomainNamePart = 'input[id="plain_email_source_domain_name_part"]'
 const switch_domain_name = function (event) {
-  let value;
-  return value = event.target.value;
-};
+  let value
+  return (value = event.target.value)
+}
 const update_name_part = function (event) {
-  let value;
-  return value = event.target.value;
-};
+  let value
+  return (value = event.target.value)
+}
 
 // templated_email
-const emailSource = 'select[id="templated_email_source"]';
-const emailToAddr = 'textarea[id="templated_email_to_addr"]';
-const emailCcAddr = 'input[id="templated_email_cc_addr"]';
-const emailBccAddr = 'input[id="templated_email_bcc_addr"]';
-const emailReplyTo = 'select[id="templated_email_reply_to_addr"]';
-const selectTemplateName = 'select[id="templated_email_template_name"]';
-const txtTemplateData = 'textarea[id="templated_email_template_data"]';
-const emailConfigSetName = 'select[id="templated_email_configset_name"]';
-const templatedEmailForm = 'form[id="form_templated_email"]';
-const labelSource = 'label[for="templated_email_source"]';
-const labelTemplateData = 'label[for="templated_email_template_data"]';
+const emailSource = 'select[id="templated_email_source"]'
+const emailToAddr = 'textarea[id="templated_email_to_addr"]'
+const emailCcAddr = 'input[id="templated_email_cc_addr"]'
+const emailBccAddr = 'input[id="templated_email_bcc_addr"]'
+const emailReplyTo = 'select[id="templated_email_reply_to_addr"]'
+const selectTemplateName = 'select[id="templated_email_template_name"]'
+const txtTemplateData = 'textarea[id="templated_email_template_data"]'
+const emailConfigSetName = 'select[id="templated_email_configset_name"]'
+const templatedEmailForm = 'form[id="form_templated_email"]'
+const labelSource = 'label[for="templated_email_source"]'
+const labelTemplateData = 'label[for="templated_email_template_data"]'
 
 // Test data
-const source = "fake3@example.com";
-const replyTo = "fake3@example.com";
-const toAddresses = "fake1@example.com, fake2@example.com";
-const ccAddresses = "fake1@example.com, fake2@example.com";
-const bccAddresses = "fake1@example.com, fake2@example.com";
-const templateName = "Preferences";
-const configsetName = "config_set_5";
+const source = 'fake3@example.com'
+const replyTo = 'fake3@example.com'
+const toAddresses = 'fake1@example.com, fake2@example.com'
+const ccAddresses = 'fake1@example.com, fake2@example.com'
+const bccAddresses = 'fake1@example.com, fake2@example.com'
+const templateName = 'Preferences'
+const configsetName = 'config_set_5'
 const sampleTemplateData = `\
 {
   "meta":{
@@ -93,116 +91,147 @@ const sampleTemplateData = `\
     }
   ]
 }\
-`;
+`
 
 let loadTestData = function () {
-  $(emailSource).val(source);
-  $(emailToAddr).val(toAddresses);
-  $(emailCcAddr).val(ccAddresses);
-  $(emailBccAddr).val(bccAddresses);
-  $(emailReplyTo).val(replyTo);
-  $(emailTemplateName).val(templateName);
-  return $(emailTemplateData).val(templateData);
-};
+  $(emailSource).val(source)
+  $(emailToAddr).val(toAddresses)
+  $(emailCcAddr).val(ccAddresses)
+  $(emailBccAddr).val(bccAddresses)
+  $(emailReplyTo).val(replyTo)
+  $(emailTemplateName).val(templateName)
+  return $(emailTemplateData).val(templateData)
+}
 
 const switch_template = function (event) {
-  const { value } = event.target;
+  const { value } = event.target
   if (value === 'Preferences_template') {
-    return $(txtTemplateData).val(sampleTemplateData);
+    return $(txtTemplateData).val(sampleTemplateData)
   }
-};
+}
 
 const validateTemplateData = function (event) {
-  const { value } = event.target;
-  if (value === "") {
-    return console.log("Template data can't be empty");
+  const { value } = event.target
+  if (value === '') {
+    return console.log("Template data can't be empty")
   }
-};
+}
 
 const loadSampleToAddress = function (event) {
-  const { value } = event.target;
-  if (value === "fake2@example.com") {
-    $(emailToAddr).val("fake1@example.com");
-    console.log("fake2@example.com is loaded");
-    return console.log("fake1@example.com is populated");
+  const { value } = event.target
+  if (value === 'fake2@example.com') {
+    $(emailToAddr).val('fake1@example.com')
+    console.log('fake2@example.com is loaded')
+    return console.log('fake1@example.com is populated')
   }
-};
+}
 
 // switch DKIM type
 const switch_dkim_type = function (event) {
-  const { value } = event.target;
+  const { value } = event.target
   if (value === 'byo_dkim') {
-    $('#byo_dkim').removeClass('hide');
-    return $('#easy_dkim').addClass('hide');
+    $('#byo_dkim').removeClass('hide')
+    return $('#easy_dkim').addClass('hide')
   } else if (value === 'easy_dkim') {
-    $('#easy_dkim').removeClass('hide');
-    return $('#byo_dkim').addClass('hide');
+    $('#easy_dkim').removeClass('hide')
+    return $('#byo_dkim').addClass('hide')
   }
-};
+}
 
 // verify identity
-const verify_identity = 'input[id="verified_email_identity"]';
+const verify_identity = 'input[id="verified_email_identity"]'
 
 const validate_identity = function (event) {
-  const { value } = event.target;
-  return console.log(`entered email address is : ${value}`);
-};
+  const { value } = event.target
+  return console.log(`entered email address is : ${value}`)
+}
 
 $(document).on('modal:contentUpdated', function () {
   // email_source
   // handler to switch source type between email and domain
-  $(document).on('change', 'select[data-toggle="sourceSwitch"]', switch_source_type);
-  // $(document).on 'click','#domain-source-name', set_domain_suffix
-  // $(document).on 'change','select[id="plain_email_source_email"]', populate_email_addresses
-  // $(document).on 'change','select[id="plain_email_source_domain"]', populate_domain_addresses
+  $(document).on(
+    'change',
+    'select[data-toggle="sourceSwitch"]',
+    switch_source_type
+  )
 
   // plain_email
-  $(document).on('change click', sourceDomainNamePart, update_name_part);
-  $(document).on('change', 'select[data-toggle="sourceDomainSelect"]', switch_domain_name);
+  $(document).on('change click', sourceDomainNamePart, update_name_part)
+  $(document).on(
+    'change',
+    'select[data-toggle="sourceDomainSelect"]',
+    switch_domain_name
+  )
 
   // templated_email
-  $(document).on('change', 'select[data-toggle="templateSwitch"]', switch_template);
-  $(document).on('change', 'select[data-toggle="emailSelect"]', loadSampleToAddress);
-  $(document).on('blur', 'textarea[id="templated_email_template_data"]', validateTemplateData);
+  $(document).on(
+    'change',
+    'select[data-toggle="templateSwitch"]',
+    switch_template
+  )
+  $(document).on(
+    'change',
+    'select[data-toggle="emailSelect"]',
+    loadSampleToAddress
+  )
+  $(document).on(
+    'blur',
+    'textarea[id="templated_email_template_data"]',
+    validateTemplateData
+  )
   // verify identity
-  $(document).on('change click', 'input[id="verified_email_identity"]', validate_identity);
-  // console.log "inside model content updated"
+  $(document).on(
+    'change click',
+    'input[id="verified_email_identity"]',
+    validate_identity
+  )
 
   // create_email_identity_domain
   // handler to switch source type between email and domain
-  return $(document).on('change', 'select[data-toggle="dkimTypeSwitch"]', switch_dkim_type);
-});
+  return $(document).on(
+    'change',
+    'select[data-toggle="dkimTypeSwitch"]',
+    switch_dkim_type
+  )
+})
 
 $(function () {
-
   // settings
-  const secret_key = $("div#settings-pane").find('table').children().find('tr').find('#td_secret_key');
-  const secret_key_val = secret_key.html();
-  const btn_tg_secret = $("div#settings-pane").find('table').children().find('tr').find("button#btn_tg_secret");
-  const secret_key_x_val = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-  const eye = btn_tg_secret.find('#eye');
-  const eye_slash = btn_tg_secret.find('#eye_slash');
-  let isHidden = true;
-  eye.show();
-  eye_slash.hide();
-  $(secret_key).html(secret_key_x_val);
+  const secret_key = $('div#settings-pane')
+    .find('table')
+    .children()
+    .find('tr')
+    .find('#td_secret_key')
+  const secret_key_val = secret_key.html()
+  const btn_tg_secret = $('div#settings-pane')
+    .find('table')
+    .children()
+    .find('tr')
+    .find('button#btn_tg_secret')
+  const secret_key_x_val = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+  const eye = btn_tg_secret.find('#eye')
+  const eye_slash = btn_tg_secret.find('#eye_slash')
+  let isHidden = true
+  eye.show()
+  eye_slash.hide()
+  $(secret_key).html(secret_key_x_val)
   $(btn_tg_secret).on('click', () => {
     if (isHidden) {
-      $(secret_key).html(secret_key_val);
-      eye_slash.show();
-      eye.hide();
-      return isHidden = !isHidden;
+      $(secret_key).html(secret_key_val)
+      eye_slash.show()
+      eye.hide()
+      return (isHidden = !isHidden)
     } else {
-      $(secret_key).html(secret_key_x_val);
-      eye.show();
-      eye_slash.hide();
-      return isHidden = !isHidden;
+      $(secret_key).html(secret_key_x_val)
+      eye.show()
+      eye_slash.hide()
+      return (isHidden = !isHidden)
     }
-  });
+  })
 
   // templates
-  const template_name = "Preference_Template";
-  const template_subject = "Preferences";
+  const template_name = 'Preference_Template'
+  const template_subject = 'Preferences'
   const template_html_part = `\
 <!doctype html>
 <html>
@@ -218,7 +247,7 @@ $(function () {
     <p>You can change these settings at any time by visiting the <a href=https://www.abc.xyz/preferences/i.aspx?id={{meta.userId}}> Preference Center</a>.</p>
   </body>
 </html>\
-`;
+`
   const template_text_part = `\
 Your Preferences
 Dear {{ name.lastName }},
@@ -228,7 +257,7 @@ You have indicated that you are interested in receiving information about the fo
 {{/each}}
 You can change these settings at any time by visiting
 the Preference Center https://www.abc.xyz/preferences/i.aspx?id={{meta.userId}}.\
-`;
+`
 
   const template_json_content = `\
 {
@@ -254,21 +283,23 @@ the Preference Center https://www.abc.xyz/preferences/i.aspx?id={{meta.userId}}.
     }
   ]
 }\
-`;
-  const templatesModal = 'body.templates.modal-open';
-  const templateForm = 'form[id="form_template"]';
-  const name = 'input[id="template_name"]';
-  const subject = 'input[id="template_subject"]';
-  const html_input = 'textarea[id="template_html_part"]';
-  const text_input = 'textarea[id="template_text_part"]';
-  const labelTemplateName = 'label[for="template_name"]';
+`
+  const templatesModal = 'body.templates.modal-open'
+  const templateForm = 'form[id="form_template"]'
+  const name = 'input[id="template_name"]'
+  const subject = 'input[id="template_subject"]'
+  const html_input = 'textarea[id="template_html_part"]'
+  const text_input = 'textarea[id="template_text_part"]'
+  const labelTemplateName = 'label[for="template_name"]'
 
   loadTestData = function () {
-    $(name).val(template_name);
-    $(subject).val(template_name);
-    $(html_input).val(template_html_part);
-    return $(text_input).val(template_text_part);
-  };
+    $(name).val(template_name)
+    $(subject).val(template_name)
+    $(html_input).val(template_html_part)
+    return $(text_input).val(template_text_part)
+  }
 
-  return $(templatesModal).on('click', () => $(labelTemplateName).on("click", () => loadTestData()));
-});
+  return $(templatesModal).on('click', () =>
+    $(labelTemplateName).on('click', () => loadTestData())
+  )
+})

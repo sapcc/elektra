@@ -1,12 +1,15 @@
-module EmailService
-  class EmailsController < ::EmailService::ApplicationController
-    before_action :check_ec2_creds_cronus_status
-    before_action :check_verified_identity
+# frozen_string_literal: true
 
-    authorization_context "email_service"
+module EmailService
+  # EmailService EmailsController
+  class EmailsController < ::EmailService::ApplicationController
+    before_action :check_pre_conditions_for_cronus
+
+    authorization_context 'email_service'
     authorization_required
 
     def index
+      @nebula_details = nebula_details
     end
   end
 end

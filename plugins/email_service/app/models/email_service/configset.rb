@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EmailService
   class Configset
     include Virtus.model
@@ -8,7 +10,6 @@ module EmailService
 
     attribute :name, String
     attribute :event_destinations, String
-    # added with v2 conversion
     attribute :tls_policy, String
     attribute :custom_redirect_domain, String
     attribute :sending_pool_name, String
@@ -35,11 +36,8 @@ module EmailService
 
     def assign_errors(messages)
       messages.each do |key, value|
-        value.each do |item|
-          errors.add key.to_sym, item
-        end
+        value.each { |item| errors.add key.to_sym, item }
       end
     end
-
   end
 end

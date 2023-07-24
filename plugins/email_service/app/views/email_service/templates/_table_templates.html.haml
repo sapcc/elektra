@@ -8,7 +8,7 @@
   %tbody
     - if !@templates || @templates.empty?
       %tr
-        %td{ colspan: 3 } No eMail Template available
+        %td{ colspan: 3 } No Email Template available
     - else
       - @paginatable_templates.each do | template_item |
         = render partial: 'table_template_item', locals: { template_item: template_item }

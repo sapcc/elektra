@@ -1,8 +1,8 @@
 = content_for :title do
-  Edit Custom Verification eMail Templates
+  Edit Custom Verification Email Templates
 - update_url = plugin('email_service').custom_verification_email_template_path(id: params[:id],name: params[:name])
 - unless modal?
-  %h3 Edit Custom Verification eMail Templates
+  %h3 Edit Custom Verification Email Templates
 
 = simple_form_for @custom_template, as: :custom_template, url: update_url , method: :put, remote: request.xhr?,  html: {id: 'form_template', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 

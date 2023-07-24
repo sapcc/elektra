@@ -20,16 +20,16 @@
 
 - if !email_addresses_collection || email_addresses_collection.empty?
   %p.alert.alert-warning
-    There are no verified eMail addresses defined for your account to send email from. Without a verified eMail address, you can't send eMail.
-    You can get verified your eMail address
+    There are no verified Email addresses defined for your account to send email from. Without a verified Email address, you can't send Email.
+    You can get verified your Email address
     = link_to 'here', pl.new_email_verification_path
 
 - if !templates_collection || templates_collection.empty?
   %p.alert.alert-warning
-    There is no eMail template defined for your account to send email from. Without an eMail template, you can't send templated eMail.
-    You can create eMail template from
+    There is no Email template defined for your account to send email from. Without an Email template, you can't send templated Email.
+    You can create Email template from
     = link_to 'here', pl.new_template_path
-    or you can send plain eMail from
+    or you can send plain Email from
     = link_to 'here', pl.new_plain_email_path
 
 

@@ -1,1 +1,1 @@
-import "./email_service"
+import './email_service'

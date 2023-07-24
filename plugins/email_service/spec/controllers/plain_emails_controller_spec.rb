@@ -27,11 +27,8 @@ describe EmailService::PlainEmailsController, type: :controller do
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :check_ec2_creds_cronus_status,
+      :check_pre_conditions_for_cronus,
     ).and_return(double("redirect_path").as_null_object)
-    allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :ec2_creds,
-    ).and_return(double("creds").as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
       :ses_client_v2,
     ).and_return(double("ses_client_v2").as_null_object)
@@ -47,9 +44,6 @@ describe EmailService::PlainEmailsController, type: :controller do
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
       :get_verified_identities_by_status,
     ).and_return(double("statuses").as_null_object)
-    allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :get_send_data,
-    ).and_return(double("data").as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
       :ec2_creds,
     ).and_return(double("creds").as_null_object)
@@ -117,7 +111,9 @@ describe EmailService::PlainEmailsController, type: :controller do
       end
       it "returns http 401 status" do
         get :new, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
 
@@ -130,7 +126,9 @@ describe EmailService::PlainEmailsController, type: :controller do
       end
       it "not allowed" do
         get :new, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
   end
@@ -200,7 +198,7 @@ describe EmailService::PlainEmailsController, type: :controller do
       it "returns http 401 status" do
         expect(
           post(:create, params: default_params.merge(opts: @opts)),
-        ).to render_template("application/exceptions/warning")
+        ).to render_template('application/exceptions/warning')
       end
     end
 
@@ -214,7 +212,7 @@ describe EmailService::PlainEmailsController, type: :controller do
       it "not allowed" do
         expect(
           post(:create, params: default_params.merge(opts: @opts)),
-        ).to render_template("application/exceptions/warning")
+        ).to render_template('application/exceptions/warning')
       end
     end
   end

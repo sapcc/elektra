@@ -1,16 +1,19 @@
+# frozen_string_literal: true
+
 module EmailService
   class Ec2CredentialsController < ::EmailService::ApplicationController
-    authorization_context "email_service"
+
+    authorization_context 'email_service'
     authorization_required
 
     def create
       @ec2_creds = create_credentials
 
       if @ec2_creds.access && @ec2_creds.secret
-        flash[:info] = "ec2 credentials are created"
+        flash[:info] = 'ec2 credentials are created'
       else
         error =
-          "#{I18n.t("email_service.errors.ec2_credentials_create_error")} #{e.message}"
+          "#{I18n.t('email_service.errors.ec2_credentials_create_error')} #{e.message}"
         Rails.logger.error error
         flash[:error] = error
       end
@@ -19,14 +22,15 @@ module EmailService
     end
 
     def destroy
-      @ec2_creds = ec2_creds
-
-      if @ec2_creds && @ec2_creds.access && @ec2_creds.secret
-        delete_credentials(@ec2_creds.access)
-        flash.now[:info] = "ec2 credentials are deleted"
+      if ec2_creds&.access && ec2_creds&.secret
+        delete_credentials(ec2_creds.access)
+        flash.now[:info] = 'ec2 credentials are deleted'
       else
         error =
-          "#{I18n.t("email_service.errors.ec2_credentials_delete_error")} #{e.message}"
+          I18n
+            .t('email_service.errors.ec2_credentials_delete_error')
+            .to_s
+            .freeze
         Rails.logger.error error
         flash[:error] = error
       end

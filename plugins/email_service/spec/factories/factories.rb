@@ -135,8 +135,8 @@ module EmailService
 
     def formatted_email_opts
       {
-        source: "ninenine@verizon.net.dk", # required
-        destination: { # required
+        source: "ninenine@verizon.net.dk",
+        destination: {
           to_addresses: [
             "curly@comcast.net, plover@me.com, jmcnamara@icloud.com",
           ],
@@ -145,19 +145,19 @@ module EmailService
             "policies@att.net,froodian@hotmail.com, fmerges@att.net",
           ],
         },
-        message: { # required
-          subject: { # required
-            data: "Winner Notification", # required
+        message: {
+          subject: {
+            data: "Winner Notification",
             charset: "UTF-8",
           },
-          body: { # required
+          body: {
             text: {
               data:
-                "<h1> Winner Notification </h1><br><p>The winner is ...</p>", # required
+                "<h1> Winner Notification </h1><br><p>The winner is ...</p>",
               charset: "UTF-8",
             },
             html: {
-              data: " Winner Notification. The winner is ...", # required
+              data: " Winner Notification. The winner is ...",
               charset: "UTF-8",
             },
           },
@@ -168,8 +168,8 @@ module EmailService
         return_path_arn: "AmazonResourceName",
         tags: [
           {
-            name: "MessageTagName", # required
-            value: "MessageTagValue", # required
+            name: "MessageTagName",
+            value: "MessageTagValue",
           },
         ],
         configuration_set_name: "ConfigurationSet1",
@@ -181,8 +181,8 @@ module EmailService
         id: 0,
         name: "new template",
         subject: "Subject of the new template",
-        html_part: "<h1>HTML Content of the eMail </h1>",
-        text_part: "Content of the eMail",
+        html_part: "<h1>HTML Content of the Email </h1>",
+        text_part: "Content of the Email",
       }
     end
 
