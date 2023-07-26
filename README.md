@@ -48,7 +48,7 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
 
 ### MacOS
 
-1.  Install **postgres** database (actual version is 12).
+1.  Install **postgres** database (current version is 12.x).
 
     ```bash
     brew install postgresql@12
@@ -56,7 +56,7 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
     createuser -s postgres
     ```
 
-2.  Install **ruby** version 2.7.6 (or check for the actual version).
+2.  Install **ruby** version 2.7.6
 
     ```bash
     brew install ruby-install
