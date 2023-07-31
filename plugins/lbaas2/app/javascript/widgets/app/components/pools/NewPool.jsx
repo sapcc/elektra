@@ -24,6 +24,7 @@ import {
 import {
   lbAlgorithmTypes,
   poolProtocolTypes,
+  POOL_PERSISTENCE_APP_COOKIE,
   poolPersistenceTypes,
   filterListeners,
 } from "../../helpers/poolHelper"
@@ -169,13 +170,18 @@ const NewPool = (props) => {
       // remove just in case protocol changes and the listener list ist rerendered without choosing again a listener
       delete newValues.listener_id
     }
-    if (
-      sessionPersistenceType &&
-      sessionPersistenceType.value != "APP_COOKIE"
-    ) {
-      // remove just in case it still in context but presistence is not anymore app_coockie
-      delete newValues.session_persistence_cookie_name
+
+    // create the persistence object
+    // persistenceCookieName will be added only if persistence type is APP_COOKIE
+    const persistence = {}
+    if (sessionPersistenceType) {
+      persistence.type = sessionPersistenceType.value
+      if (sessionPersistenceType.value == POOL_PERSISTENCE_APP_COOKIE) {
+        persistence.cookie_name = values.session_persistence_cookie_name
+      }
     }
+    newValues.session_persistence = persistence
+
     if (!showTLSSettings) {
       // remove tls attributes just in case they still in context but tls not anymore enabled
       delete newValues.tls_container_ref
@@ -215,7 +221,7 @@ const NewPool = (props) => {
 
   const onPoolPersistenceTypeChanged = (option) => {
     setSessionPersistenceType(option)
-    setShowCookieName(option && option.value == "APP_COOKIE")
+    setShowCookieName(option && option.value == POOL_PERSISTENCE_APP_COOKIE)
   }
   const onSelectListenerChange = (props) => {
     setListener(props)

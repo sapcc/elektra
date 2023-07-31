@@ -26,6 +26,7 @@ import {
 import {
   lbAlgorithmTypes,
   poolProtocolTypes,
+  POOL_PERSISTENCE_APP_COOKIE,
   poolPersistenceTypes,
   filterListeners,
 } from "../../helpers/poolHelper"
@@ -229,7 +230,7 @@ const EditPool = (props) => {
   }
 
   const setShowPersistenceCookieName = (option) => {
-    setShowCookieName(option && option.value == "APP_COOKIE")
+    setShowCookieName(option && option.value == POOL_PERSISTENCE_APP_COOKIE)
   }
 
   // initial assigment of the ciphers
@@ -291,23 +292,17 @@ const EditPool = (props) => {
 
   const onSubmit = (values) => {
     const newValues = { ...values }
-    const persistenceBlob = newValues.session_persistence || {}
-    if (
-      persistenceBlob.type != newValues.session_persistence_type ||
-      persistenceBlob.cookie_name != newValues.session_persistence_cookie_name
-    ) {
-      // the session persistence has been changed. The JSON blob will be overwritten with new attributes
-      // session_persistence_type and/or session_persistence_cookie_name by the rails controller
-      if (newValues.session_persistence_type != "APP_COOKIE") {
-        // remove just in case it still in context but presistence is not anymore app_coockie
-        delete newValues.session_persistence_cookie_name
-      }
-    } else {
-      // the session persistence is the same as in the JSON Blob. Remove the session_persistence_type and/or session_persistence_cookie_name
-      // so it doesn't create a new blob
-      delete newValues.session_persistence_type
-      delete newValues.session_persistence_cookie_name
-    }
+
+    // copy the persistence object or create a new one
+    const persistence = {... newValues.session_persistence} || {}
+    // update the type
+    persistence.type = sessionPersistenceType.value
+    persistence.cookie_name = values.session_persistence_cookie_name
+    // remove the cookie_name if the persistence type is not APP_COOKIE
+    if (persistence.type != POOL_PERSISTENCE_APP_COOKIE) {
+      persistence.cookie_name = null
+    }  
+    newValues.session_persistence = persistence
 
     if (!showTLSSettings) {
       // remove tls attributes just in case they still in context but tls not anymore enabled
