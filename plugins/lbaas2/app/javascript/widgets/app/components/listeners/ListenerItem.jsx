@@ -17,7 +17,6 @@ import { ErrorsList } from "lib/elektra-form/components/errors_list"
 import { policy } from "lib/policy"
 import { scope } from "lib/ajax_helper"
 import SmartLink from "../shared/SmartLink"
-import Log from "../shared/logger"
 import DropDownMenu from "../shared/DropdownMenu"
 import useStatus from "../../lib/hooks/useStatus"
 import usePolling from "../../lib/hooks/usePolling"
@@ -267,6 +266,7 @@ const ListenerItem = ({
   }
 
   const l7PolicyIDs = listener.l7policies.map((l7p) => l7p.id)
+  
   return (
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">
