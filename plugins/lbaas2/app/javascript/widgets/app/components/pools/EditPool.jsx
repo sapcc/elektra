@@ -30,7 +30,7 @@ import {
   filterListeners,
 } from "../../helpers/poolHelper"
 import { fetchPool } from "../../actions/pool"
-import { queryTlsCiphers } from "../../../../queries/listener"
+import { queryTlsCiphers } from "../../queries/listener"
 
 const EditPool = (props) => {
   const { updatePool } = usePool()

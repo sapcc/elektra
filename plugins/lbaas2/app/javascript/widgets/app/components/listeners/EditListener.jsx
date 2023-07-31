@@ -37,7 +37,7 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
-import { queryTlsCiphers } from "../../../../queries/listener"
+import { queryTlsCiphers } from "../../queries/listener"
 
 const SECRETS_ARE_CONTAINERS_WARNING = (
   <div className="alert alert-warning">

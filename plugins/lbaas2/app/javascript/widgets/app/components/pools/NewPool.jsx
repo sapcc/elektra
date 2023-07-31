@@ -27,7 +27,7 @@ import {
   poolPersistenceTypes,
   filterListeners,
 } from "../../helpers/poolHelper"
-import { queryTlsCiphers } from "../../../../queries/listener"
+import { queryTlsCiphers } from "../../queries/listener"
 
 const NewPool = (props) => {
   const { createPool } = usePool()

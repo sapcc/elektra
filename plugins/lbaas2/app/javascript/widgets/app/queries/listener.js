@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchCiphers } from "../widgets/app/actions/listener"
+import { fetchCiphers } from "../actions/listener"
 
 export const queryTlsCiphers = () => {
   return useQuery({

@@ -15,7 +15,7 @@ import {
   predefinedPolicies,
   tlsCiphersRelation,
 } from "../../helpers/listenerHelper"
-import { fetchCiphers, fetchSecretsForSelect } from "../../actions/listener"
+import { fetchSecretsForSelect } from "../../actions/listener"
 import { fetchPoolsForSelect } from "../../actions/pool"
 import useListener from "../../lib/hooks/useListener"
 import SelectInput from "../shared/SelectInput"
@@ -33,7 +33,7 @@ import {
   matchParams,
   searchParamsToString,
 } from "../../helpers/commonHelpers"
-import { queryTlsCiphers } from "../../../../queries/listener"
+import { queryTlsCiphers } from "../../queries/listener"
 
 const NewListener = (props) => {
   const { createListener } = useListener()
