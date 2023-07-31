@@ -29,28 +29,30 @@ export const poolProtocolTypes = () => {
   ]
 }
 
-export const poolPersistenceTypes = () => {
-  return [
+export const POOL_PERSISTENCE_APP_COOKIE = "APP_COOKIE"
+export const POOL_PERSISTENCE_HTTP_COOKIE = "HTTP_COOKIE"
+export const POOL_PERSISTENCE_SOURCE_IP = "SOURCE_IP"
+export const poolPersistenceTypes = () => [
     {
-      label: "APP_COOKIE",
-      value: "APP_COOKIE",
+      label: POOL_PERSISTENCE_APP_COOKIE,
+      value: POOL_PERSISTENCE_APP_COOKIE,
       description:
         "Use the specified cookie_name send future requests to the same member.",
     },
     {
-      label: "HTTP_COOKIE",
-      value: "HTTP_COOKIE",
+      label: POOL_PERSISTENCE_HTTP_COOKIE,
+      value: POOL_PERSISTENCE_HTTP_COOKIE,
       description:
         "The load balancer will generate a cookie that is inserted into the response. This cookie will be used to send future requests to the same member.",
     },
     {
-      label: "SOURCE_IP",
-      value: "SOURCE_IP",
+      label: POOL_PERSISTENCE_SOURCE_IP,
+      value: POOL_PERSISTENCE_SOURCE_IP,
       description:
         "The source IP address on the request will be hashed to send future requests to the same member.",
     },
   ]
-}
+
 
 export const poolProtocolListenerCombinations = (poolProtocol) => {
   switch (poolProtocol) {

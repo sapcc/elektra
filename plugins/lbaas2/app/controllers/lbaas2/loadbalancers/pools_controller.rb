@@ -54,7 +54,6 @@ module Lbaas2
 
       def create
         poolParams = params[:pool]
-        composeSessionPersistence(poolParams)
         newParams =
           poolParams.merge(
             project_id: @scoped_project_id,
@@ -77,7 +76,6 @@ module Lbaas2
 
       def update
         poolParams = params[:pool]
-        composeSessionPersistence(poolParams)
         pool = services.lbaas2.new_pool(poolParams)
 
         if pool.update
@@ -135,20 +133,6 @@ module Lbaas2
       end
 
       protected
-
-      def composeSessionPersistence(poolParams)
-        session_persistence = {}
-        persistenceType = poolParams["session_persistence_type"]
-        return if persistenceType.blank?
-
-        session_persistence[:type] = persistenceType
-        if persistenceType == "APP_COOKIE"
-          session_persistence[:cookie_name] = poolParams[
-            "session_persistence_cookie_name"
-          ]
-        end
-        poolParams.merge!(session_persistence: session_persistence)
-      end
 
       def extend_pool_data(pools)
         pools.each do |pool|
