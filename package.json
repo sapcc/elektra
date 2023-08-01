@@ -33,7 +33,7 @@
     "global": "^4.4.0",
     "ip-range-check": "^0.2.0",
     "ip-regex": "^5.0.0",
-    "jquery": "1.12.4",
+    "jquery": "3.5.0",
     "jquery-ujs": "^1.2.3",
     "jquery.cookie": "1.4.1",
     "js-base64": "^2.1.8",
