@@ -86,13 +86,14 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
   }, [context])
 
   useEffect(() => {
+    // do not filter invalid items for now => itemEditorValue.filter((v) => v.isValid)
     if (itemEditorValue) {
       if (shouldUseContext) {
-        const newValues = itemEditorValue.filter((v) => v.isValid).map((value) => value.value)
+        const newValues = itemEditorValue.map((value) => value.value)
         context.onChange(name, newValues?.length > 0 ? newValues : null)
       }
       if (onChange) {
-        onChange(itemEditorValue.filter((v) => v.isValid))
+        onChange(itemEditorValue)
       }
     }
   }, [itemEditorValue])
@@ -176,7 +177,7 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
       {/* filter cidrs not valid */}      
       {itemEditorValue.filter((v) => !v.isValid).map((v) => (
         <div className="text-danger" key={v.id}>
-          {v.value} is not a valid CIDR and will be ignored
+          {v.value} seems not to be a valid CIDR
         </div>
       ))}      
 
