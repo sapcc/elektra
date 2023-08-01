@@ -7,12 +7,12 @@ import uniqueId from "lodash/uniqueId"
 const styles = {
   multiValue: (base, state) => {
     if (state?.data?.isFixed == false) {
-      return  { ...base, backgroundColor: "gray" }
+      return { ...base, backgroundColor: "gray" }
     } else if (state?.data?.isValid == false) {
       return { ...base, backgroundColor: "#d9534f" }
-    } 
+    }
     return base
-    
+
     // return state.data.isFixed ? { ...base, backgroundColor: "gray" } : base
   },
   multiValueLabel: (base, state) => {
@@ -53,11 +53,10 @@ const createOption = (label) => {
 
 // check if the given value is a valid IPv4 or IPv6 cidr
 const isValidCidr = (value) => {
-  const v4str = `${ipRegex.v4().source}\\/(3[0-2]|[12]?[0-9])`;
-  const v6str = `${ipRegex.v6().source}\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])`;
-  return new RegExp(`(?:^${v4str}$)|(?:^${v6str}$)`).test(value);
+  const v4str = `${ipRegex.v4().source}\\/(3[0-2]|[12]?[0-9])`
+  const v6str = `${ipRegex.v6().source}\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])`
+  return new RegExp(`(?:^${v4str}$)|(?:^${v6str}$)`).test(value)
 }
-
 
 const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
   const [runInit, setRunInit] = useState(false)
@@ -68,10 +67,10 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
 
   // this should run only once
   useEffect(() => {
-    if (!shouldUseContext && !runInit ) {
+    if (!shouldUseContext && !runInit) {
       setRunInit(true)
       initItems(initValue || null)
-    } 
+    }
   }, [initValue])
 
   useEffect(() => {
@@ -82,7 +81,6 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
       setRunInit(true)
       initItems(context?.formValues?.allowed_cidrs || null)
     }
-         
   }, [context])
 
   useEffect(() => {
@@ -120,7 +118,7 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
     }
 
     const newItems = [...itemEditorValue, item]
-    setItemEditorValue(newItems)   
+    setItemEditorValue(newItems)
   }
 
   // on remove item
@@ -157,7 +155,7 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
         setItemEditorInputValue("")
         event.preventDefault()
     }
-  }  
+  }
 
   return (
     <>
@@ -174,13 +172,14 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
         placeholder=""
         value={itemEditorValue}
       />
-      {/* filter cidrs not valid */}      
-      {itemEditorValue.filter((v) => !v.isValid).map((v) => (
-        <div className="text-danger" key={v.id}>
-          {v.value} seems not to be a valid CIDR
-        </div>
-      ))}      
-
+      {/* filter cidrs not valid */}
+      {itemEditorValue
+        .filter((v) => !v.isValid)
+        .map((v) => (
+          <div className="text-danger" key={v.id}>
+            {v.value} seems not to be a valid CIDR
+          </div>
+        ))}
     </>
   )
 }

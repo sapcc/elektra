@@ -266,7 +266,7 @@ const ListenerItem = ({
   }
 
   const l7PolicyIDs = listener.l7policies.map((l7p) => l7p.id)
-  
+
   return (
     <tr className={disabled ? "active" : ""}>
       <td className="snug-nowrap">

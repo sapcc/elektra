@@ -85,39 +85,39 @@ const AllowedCidrs = (props) => {
   /**
    * Form stuff
    */
-    
+
   const onSubmit = (values) => {
     return updateListener(loadbalancerID, listenerID, values)
-    .then((data) => {
-      addNotice(
-        <>
-          Listener <b>{data.name}</b> ({data.id}) is being updated.
-        </>
-      )
-      // fetch the lb again containing the new listener so it gets updated fast
-      persistLoadbalancer(loadbalancerID).catch((error) => {})
-      close()
-    })
-    .catch((error) => {
-      setFormErrors(formErrorMessage(error))
-    })
+      .then((data) => {
+        addNotice(
+          <>
+            Listener <b>{data.name}</b> ({data.id}) is being updated.
+          </>
+        )
+        // fetch the lb again containing the new listener so it gets updated fast
+        persistLoadbalancer(loadbalancerID).catch((error) => {})
+        close()
+      })
+      .catch((error) => {
+        setFormErrors(formErrorMessage(error))
+      })
   }
 
   return (
     <Modal
-    show={show}
-    onHide={close}
-    bsSize="large"
-    backdrop="static"
-    onExited={restoreUrl}
-    aria-labelledby="contained-modal-title-lg"
-    bsClass="lbaas2 modal"
-  >
-    <Modal.Header closeButton>
-      <Modal.Title id="contained-modal-title-lg">Allowed CIDRs</Modal.Title>
-    </Modal.Header>
+      show={show}
+      onHide={close}
+      bsSize="large"
+      backdrop="static"
+      onExited={restoreUrl}
+      aria-labelledby="contained-modal-title-lg"
+      bsClass="lbaas2 modal"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-lg">Allowed CIDRs</Modal.Title>
+      </Modal.Header>
 
-    {listener.error ? (
+      {listener.error ? (
         <Modal.Body>
           <ErrorPage
             headTitle="Allowed CIDRs"
@@ -134,24 +134,29 @@ const AllowedCidrs = (props) => {
           ) : (
             <Form
               className="form form-horizontal"
-              validate={()=> true}
+              validate={() => true}
               onSubmit={onSubmit}
               initialValues={listener.item}
               resetForm={false}
             >
               <Modal.Body>
-              <p>
-                A list of IPv4, IPv6 or mix of both CIDRs. The default is all allowed. When a list of CIDRs is provided, the default switches to deny all.
-              </p>
-              <Form.Errors errors={formErrors} />
-              <Form.ElementHorizontal label="Allowed CIDRs" name="allowed_cidrs">
-                <CidrsInput name="allowed_cidrs" />
-                <span className="help-block">
-                  <i className="fa fa-info-circle"></i>
-                  Start a new CIDR typing a string and hitting the Enter or Tab
-                  key.
-                </span>
-              </Form.ElementHorizontal>
+                <p>
+                  A list of IPv4, IPv6 or mix of both CIDRs. The default is all
+                  allowed. When a list of CIDRs is provided, the default
+                  switches to deny all.
+                </p>
+                <Form.Errors errors={formErrors} />
+                <Form.ElementHorizontal
+                  label="Allowed CIDRs"
+                  name="allowed_cidrs"
+                >
+                  <CidrsInput name="allowed_cidrs" />
+                  <span className="help-block">
+                    <i className="fa fa-info-circle"></i>
+                    Start a new CIDR typing a string and hitting the Enter or
+                    Tab key.
+                  </span>
+                </Form.ElementHorizontal>
               </Modal.Body>
               <Modal.Footer>
                 <Button onClick={close}>Cancel</Button>
@@ -160,10 +165,8 @@ const AllowedCidrs = (props) => {
             </Form>
           )}
         </>
-      )
-    }
-
-  </Modal>
+      )}
+    </Modal>
   )
 }
 
