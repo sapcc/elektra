@@ -365,6 +365,18 @@ const ListenerItem = ({
               JSON
             </SmartLink>
           </li>
+          <li className="divider"></li>
+          <li>
+            <SmartLink
+              to={`/loadbalancers/${loadbalancerID}/listeners/${
+                listener.id
+              }/cidrs?${searchParamsToString(props)}`}
+              isAllowed={canEdit}
+              notAllowedText="Not allowed to edit cidrs. Please check with your administrator."
+            >
+              Allowed CIDRs
+            </SmartLink>
+          </li>
         </DropDownMenu>
       </td>
     </tr>

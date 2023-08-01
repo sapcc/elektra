@@ -48,6 +48,7 @@ module Lbaas2
         "client_ca_tls_container_ref" => read("client_ca_tls_container_ref"),
         "tags" => read("tags"),
         "tls_ciphers" => read("tls_ciphers"),
+        "allowed_cidrs" => read("allowed_cidrs"),
       }
     end
   end
