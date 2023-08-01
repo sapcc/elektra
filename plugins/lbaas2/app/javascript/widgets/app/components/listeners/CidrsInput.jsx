@@ -75,9 +75,10 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
   }, [initValue])
 
   useEffect(() => {
-    if (shouldUseContext && context?.formValues?.allowed_cidrs && !runInit) {
+    // context is available within a form. No need to wait
+    if (shouldUseContext && !runInit) {
       setRunInit(true)
-      initItems(context?.formValues?.allowed_cidrs)
+      initItems(context?.formValues?.allowed_cidrs || null)
     }
          
   }, [context])
