@@ -68,14 +68,16 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
 
   // this should run only once
   useEffect(() => {
-    if (!shouldUseContext && initValue && !runInit ) {
+    if (!shouldUseContext && !runInit ) {
       setRunInit(true)
-      initItems(initValue)
+      initItems(initValue || null)
     } 
   }, [initValue])
 
   useEffect(() => {
     // context is available within a form. No need to wait
+    // do not wait until the context changes to init the items
+    // otherwise it will overwrite the values until runInit changes
     if (shouldUseContext && !runInit) {
       setRunInit(true)
       initItems(context?.formValues?.allowed_cidrs || null)
