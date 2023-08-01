@@ -13,8 +13,13 @@ import { fetchListener } from "../../actions/listener"
 import { Form } from "lib/elektra-form"
 import ErrorPage from "../ErrorPage"
 import CidrsInput from "./CidrsInput"
+import useListener from "../../lib/hooks/useListener"
+import { addNotice } from "lib/flashes"
+import useLoadbalancer from "../../lib/hooks/useLoadbalancer"
 
 const AllowedCidrs = (props) => {
+  const { updateListener } = useListener()
+  const { persistLoadbalancer } = useLoadbalancer()
   const [loadbalancerID, setLoadbalancerID] = useState(null)
   const [listenerID, setListenerID] = useState(null)
   const [listener, setListener] = useState({
@@ -82,7 +87,20 @@ const AllowedCidrs = (props) => {
    */
     
   const onSubmit = (values) => {
-    console.log("onSubmit::::", values)
+    return updateListener(loadbalancerID, listenerID, values)
+    .then((data) => {
+      addNotice(
+        <>
+          Listener <b>{data.name}</b> ({data.id}) is being updated.
+        </>
+      )
+      // fetch the lb again containing the new listener so it gets updated fast
+      persistLoadbalancer(loadbalancerID).catch((error) => {})
+      close()
+    })
+    .catch((error) => {
+      setFormErrors(formErrorMessage(error))
+    })
   }
 
   return (

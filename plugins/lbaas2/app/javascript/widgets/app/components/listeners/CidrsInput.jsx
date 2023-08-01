@@ -68,11 +68,19 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
 
   // this should run only once
   useEffect(() => {
-    if (!runInit) {
+    if (!shouldUseContext && initValue && !runInit ) {
       setRunInit(true)
-      initItems()
+      initItems(initValue)
     } 
   }, [initValue])
+
+  useEffect(() => {
+    if (shouldUseContext && context?.formValues?.allowed_cidrs && !runInit) {
+      setRunInit(true)
+      initItems(context?.formValues?.allowed_cidrs)
+    }
+         
+  }, [context])
 
   useEffect(() => {
     if (itemEditorValue) {
@@ -86,13 +94,13 @@ const CidrsInput = ({ name, initValue, onChange, useFormContext }) => {
     }
   }, [itemEditorValue])
 
-  const initItems = () => {
+  const initItems = (values) => {
     // no need to initialize in case of empty array
-    if (!initValue || initValue.length == 0) {
+    if (!values || values.length == 0) {
       return
     }
     // init input with values
-    const newValues = createOptions(initValue)
+    const newValues = createOptions(values)
     setItemEditorValue(newValues)
     setItemEditorInputValue("")
   }
