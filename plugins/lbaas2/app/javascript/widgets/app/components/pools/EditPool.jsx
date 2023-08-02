@@ -29,6 +29,7 @@ import {
   POOL_PERSISTENCE_APP_COOKIE,
   poolPersistenceTypes,
   filterListeners,
+  POOL_PERSISTENCE_SOURCE_IP,
 } from "../../helpers/poolHelper"
 import { fetchPool } from "../../actions/pool"
 import { queryTlsCiphers } from "../../queries/listener"
@@ -137,7 +138,11 @@ const EditPool = (props) => {
         })
       })
       .catch((error) => {
-        setSecrets({ ...secrets, isLoading: false, error: errorMessage(error) })
+        setSecrets({
+          ...secrets,
+          isLoading: false,
+          error: errorMessage(error),
+        })
       })
   }
 
@@ -293,15 +298,26 @@ const EditPool = (props) => {
   const onSubmit = (values) => {
     const newValues = { ...values }
 
-    // copy the persistence object or create a new one
-    const persistence = {... newValues.session_persistence} || {}
-    // update the type
-    persistence.type = sessionPersistenceType.value
-    persistence.cookie_name = values.session_persistence_cookie_name
-    // remove the cookie_name if the persistence type is not APP_COOKIE
-    if (persistence.type != POOL_PERSISTENCE_APP_COOKIE) {
-      persistence.cookie_name = null
-    }  
+    // start with a null session persistence just in case the user have removed the persistence session
+    let persistence = null
+    if (sessionPersistenceType) {
+      // if the persistence type is the same as the one in the context and the type is SOURCE_IP then we keep the persistence object because of extra attributes like persistence_timeout and persistence_granularity which apply just for SOURCE_IP
+      if (
+        newValues?.session_persistence?.type ===
+          sessionPersistenceType?.value &&
+        newValues?.session_persistence?.type === POOL_PERSISTENCE_SOURCE_IP
+      ) {
+        persistence = { ...newValues.session_persistence }
+      } else {
+        persistence = {}
+        // update the type
+        persistence.type = sessionPersistenceType.value
+        // update the cookie_name if the persistence type is not APP_COOKIE
+        if (persistence.type === POOL_PERSISTENCE_APP_COOKIE) {
+          persistence.cookie_name = values.session_persistence_cookie_name
+        }
+      }
+    }
     newValues.session_persistence = persistence
 
     if (!showTLSSettings) {

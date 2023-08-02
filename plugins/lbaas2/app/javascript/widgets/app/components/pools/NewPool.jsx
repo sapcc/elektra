@@ -173,8 +173,9 @@ const NewPool = (props) => {
 
     // create the persistence object
     // persistenceCookieName will be added only if persistence type is APP_COOKIE
-    const persistence = {}
+    let persistence = null
     if (sessionPersistenceType) {
+      persistence = {}
       persistence.type = sessionPersistenceType.value
       if (sessionPersistenceType.value == POOL_PERSISTENCE_APP_COOKIE) {
         persistence.cookie_name = values.session_persistence_cookie_name
