@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module EmailService
+  # EmailService::ApplicationHelper
   module ApplicationHelper
     def encoding
       @encoding ||= 'utf-8'
@@ -25,8 +26,8 @@ module EmailService
     def ec2_creds
       @ec2_creds =
         services
-          .identity
-          .ec2_credentials(user_id, { tenant_id: project_id })
+        .identity
+        .ec2_credentials(user_id, { tenant_id: project_id })
           &.first
     end
 
@@ -47,7 +48,7 @@ module EmailService
       @create_credentials ||=
         services.identity.create_ec2_credentials(
           user_id,
-          { tenant_id: project_id },
+          { tenant_id: project_id }
         )
     end
 
@@ -208,7 +209,7 @@ module EmailService
             Aws::SES::Client.new(
               region: @region,
               endpoint: @endpoint,
-              credentials: @credentials,
+              credentials: @credentials
             )
         rescue Aws::SES::Errors::ServiceError, StandardError => e
           Rails.logger.error e.message
@@ -231,7 +232,7 @@ module EmailService
             Aws::SESV2::Client.new(
               region: @region,
               endpoint: @endpoint,
-              credentials: @credentials,
+              credentials: @credentials
             )
         rescue Aws::SESV2::Errors::ServiceError, StandardError => e
           Rails.logger.error e.message
@@ -257,9 +258,9 @@ module EmailService
             Aws::CloudWatch::Client.new(
               region: @region,
               endpoint: @endpoint,
-              credentials: @credentials,
+              credentials: @credentials
             )
-        rescue Aws::CloudWatch::Errors::ValidationError, ThrottlingException, ServiceUnavailable, OptInRequired  => e
+        rescue Aws::CloudWatch::Errors::ValidationError, ThrottlingException, ServiceUnavailable, OptInRequired => e
           Rails.logger.error e.message
           return(
             "\n [email_service][application_helper][cloud_watch_client][:error] #{e.message}  \n"
@@ -273,31 +274,31 @@ module EmailService
     # put dashboard using CloudWatch
     def cloud_watch_put_dashboard
       options =
-      {
-        "DashboardName":"text widget dashboard",
-        "DashboardBody":{
-          "widgets":[
+        {
+          DashboardName: 'text widget dashboard',
+          DashboardBody: {
+            widgets: [
               {
-                "type":"text",
-                "x":0,
-                "y":7,
-                "width":3,
-                "height":3,
-                "properties":{
-                    "markdown":"Hello world"
+                type: 'text',
+                x: 0,
+                y: 7,
+                width: 3,
+                height: 3,
+                properties: {
+                  markdown: 'Hello world'
                 }
               }
-          ]
+            ]
+          }
         }
-      }
       Rails.logger.debug "\n [ses_helper][options]: #{options}\n"
       resp = cloud_watch_client.put_dashboard({
-        dashboard_name: options[:DashboardName], # required
-        dashboard_body: options[:DashboardBody].to_s, # required
-      })
-    rescue Exception, Aws::CloudWatch::Errors::InternalServiceError, InvalidParameterInput  => e
+                                                dashboard_name: options[:DashboardName], # required
+                                                dashboard_body: options[:DashboardBody].to_s # required
+                                              })
+    rescue Exception, Aws::CloudWatch::Errors::InternalServiceError, InvalidParameterInput => e
       Rails.logger.error e.message
-      return(
+      (
         "\n [email_service][application_helper][cloud_watch_put_dashboard][:error] #{e.message}  \n"
       )
     end
@@ -306,7 +307,7 @@ module EmailService
 
     def account
       @account ||= ses_client_v2.get_account if nebula_active? && ec2_creds &&
-        ses_client_v2
+                                                ses_client_v2
     end
 
     def metrics_types
@@ -338,12 +339,12 @@ module EmailService
             identity_type: item.identity_type,
             identity_name: item.identity_name,
             sending_enabled: item.sending_enabled,
-            verification_status: item.verification_status,
+            verification_status: item.verification_status
           }
           id += 1
           unless item.identity_name.include?(
-                   '@activation.email.global.cloud.sap',
-                 )
+            '@activation.email.global.cloud.sap'
+          )
             opts = { email_identity: item.identity_name }
             details = ses_client_v2.get_email_identity(opts)
 
@@ -357,8 +358,8 @@ module EmailService
                   details.mail_from_attributes.mail_from_domain,
                 policies: details.policies,
                 tags: details.tags,
-                configuration_set_name: details.configuration_set_name,
-              },
+                configuration_set_name: details.configuration_set_name
+              }
             )
             if details.dkim_attributes.next_signing_key_length.nil?
               identity.merge!({ dkim_type: 'byo_dkim' })
@@ -378,9 +379,9 @@ module EmailService
       identities = []
       @email_addresses&.each do |item|
         if item[:identity_type] == 'EMAIL_ADDRESS' &&
-             !item[:identity_name].include?(
-               '@activation.email.global.cloud.sap',
-             )
+           !item[:identity_name].include?(
+             '@activation.email.global.cloud.sap'
+           )
           identities.push item
         end
       end
@@ -391,9 +392,7 @@ module EmailService
       @email_addresses ||= email_addresses
       identities_collection = []
       @email_addresses&.each do |item|
-        if item[:identity_type] == 'EMAIL_ADDRESS'
-          identities_collection.push item[:identity_name]
-        end
+        identities_collection.push item[:identity_name] if item[:identity_type] == 'EMAIL_ADDRESS'
       end
       identities_collection
     end
@@ -446,10 +445,6 @@ module EmailService
       found
     end
 
-    def send_data
-      @send_data ||= account.send_quota
-    end
-
     def create_email_identity_email(
       verified_email,
       tags = [{ key: 'Tagkey', value: 'TagValue' }],
@@ -460,13 +455,13 @@ module EmailService
           {
             email_identity: verified_email,
             tags: tags,
-            configuration_set_name: configset_name,
-          },
+            configuration_set_name: configset_name
+          }
         )
         audit_logger.info(
           current_user.id,
           'has added an email identity (type: email) ',
-          verified_email,
+          verified_email
         )
         status = 'success'
       rescue Aws::SESV2::Errors::ServiceError, StandardError => e
@@ -486,7 +481,7 @@ module EmailService
         audit_logger.info(
           current_user.id,
           ' has removed verified identity ',
-          identity,
+          identity
         )
 
         status = 'success'
@@ -504,27 +499,27 @@ module EmailService
       case verified_domain.dkim_type
       when 'easy_dkim'
         dkim_signing_attributes.merge!(
-          { next_signing_key_length: verified_domain.next_signing_key_length },
+          { next_signing_key_length: verified_domain.next_signing_key_length }
         )
       when 'byo_dkim'
         dkim_signing_attributes.merge!(
           {
             domain_signing_selector: verified_domain.domain_signing_selector,
             domain_signing_private_key:
-              verified_domain.domain_signing_private_key,
-          },
+              verified_domain.domain_signing_private_key
+          }
         )
       end
 
       email_identity_attributes = {
         email_identity: verified_domain.identity_name,
         tags: verified_domain.tags,
-        dkim_signing_attributes: dkim_signing_attributes,
+        dkim_signing_attributes: dkim_signing_attributes
       }
 
       unless verified_domain.configuration_set_name.nil?
         email_identity_attributes.merge!(
-          { configuration_set_name: verified_domain.configuration_set_name },
+          { configuration_set_name: verified_domain.configuration_set_name }
         )
       end
 
@@ -535,7 +530,7 @@ module EmailService
         audit_logger.info(
           current_user.id,
           'has added an email identity (type: domain) ',
-          verified_domain.identity_name,
+          verified_domain.identity_name
         )
         status = 'success'
       rescue Aws::SESV2::Errors::ServiceError, StandardError => e
@@ -553,7 +548,7 @@ module EmailService
       unless @verified_domains.empty?
         @verified_domains.each do |v|
           @verified_domain = new_verified_domain(v) if v[:identity_name] ==
-            identity
+                                                       identity
         end
       end
 
@@ -582,8 +577,10 @@ module EmailService
     end
 
     def get_dkim_verification_status(resp, identity)
-      verification_status =
-        resp[:dkim_attributes][identity][:dkim_verification_status] if resp
+      if resp
+        verification_status =
+          resp[:dkim_attributes][identity][:dkim_verification_status]
+      end
       return verification_status if verification_status
     end
 
@@ -593,7 +590,6 @@ module EmailService
 
     # send plain email
     def send_plain_email(plain_email)
-
       Rails.logger.debug "\n **** (send_plain_email: helper) plain_email.inspect : #{plain_email.inspect} ***** \n "
       begin
         resp =
@@ -603,7 +599,7 @@ module EmailService
               destination: {
                 to_addresses: plain_email.to_addr,
                 cc_addresses: plain_email.cc_addr,
-                bcc_addresses: plain_email.bcc_addr,
+                bcc_addresses: plain_email.bcc_addr
               },
               reply_to_addresses: plain_email.reply_to_addr,
               feedback_forwarding_email_address: plain_email.return_path,
@@ -611,37 +607,36 @@ module EmailService
                 simple: {
                   subject: {
                     data: plain_email.subject,
-                    charset: @encoding,
+                    charset: @encoding
                   },
                   body: {
                     text: {
                       data: plain_email.text_body,
-                      charset: @encoding,
+                      charset: @encoding
                     },
                     html: {
                       data: plain_email.html_body,
-                      charset: @encoding,
-                    },
-                  },
-                },
+                      charset: @encoding
+                    }
+                  }
+                }
               },
               email_tags: [
-                { name: 'sample_tag_name', value: 'sample_tag_value' },
-              ],
+                { name: 'sample_tag_name', value: 'sample_tag_value' }
+              ]
               # configuration_set_name: "ConfigurationSetName",
               # list_management_options: {
               #   contact_list_name: "ContactListName",
               #   topic_name: "TopicName",
               # },
-            },
+            }
           )
-        Rails.logger.debug " \n *** PLAIN EMAIL SEND RESP INSPECT : #{resp.inspect} \n "
         status = "success - email sent to #{plain_email.to_addr} "
         audit_logger.info(
           '[cronus][send_plain_email] : ',
           current_user.id,
           'has sent email to',
-          status.to_s,
+          status.to_s
         )
       rescue Aws::SESV2::Errors::ServiceError, StandardError => e
         status = e.message
@@ -697,22 +692,18 @@ module EmailService
     def send_templated_email(templated_email)
       destination = { to_addresses: templated_email.to_addr }
 
-      unless templated_email.cc_addr.nil?
-        destination.merge!({ cc_addresses: templated_email.cc_addr })
-      end
+      destination.merge!({ cc_addresses: templated_email.cc_addr }) unless templated_email.cc_addr.nil?
 
-      unless templated_email.bcc_addr.nil?
-        destination.merge!({ cc_addresses: templated_email.bcc_addr })
-      end
+      destination.merge!({ cc_addresses: templated_email.bcc_addr }) unless templated_email.bcc_addr.nil?
 
       send_email_hash = {
         from_email_address: templated_email.source,
-        destination: destination,
+        destination: destination
       }
 
       unless templated_email.configset_name.nil?
         send_email_hash.merge!(
-          { configuration_set_name: templated_email.configset_name },
+          { configuration_set_name: templated_email.configset_name }
         )
       end
 
@@ -722,21 +713,21 @@ module EmailService
             list_management_options: {
               contact_list_name:
                 templated_email.list_management_options.contact_list_name, # "ContactListName",
-              topic_name: templated_email.list_management_options.topic_name,
-            },
-          },
+              topic_name: templated_email.list_management_options.topic_name
+            }
+          }
         )
       end
 
       unless templated_email.reply_to_addr.nil?
         send_email_hash.merge!(
-          { reply_to_addresses: templated_email.reply_to_addr },
+          { reply_to_addresses: templated_email.reply_to_addr }
         )
       end
 
       unless templated_email.return_path.nil?
         send_email_hash.merge!(
-          { feedback_forwarding_email_address: templated_email.return_path },
+          { feedback_forwarding_email_address: templated_email.return_path }
         )
       end
 
@@ -744,9 +735,9 @@ module EmailService
         send_email_hash.merge!(
           {
             email_tags: [
-              { name: 'sample_tag_name', value: 'sample_tag_value' },
-            ],
-          },
+              { name: 'sample_tag_name', value: 'sample_tag_value' }
+            ]
+          }
         )
       end
 
@@ -755,10 +746,10 @@ module EmailService
           content: {
             template: {
               template_name: templated_email.template_name,
-              template_data: templated_email.template_data,
-            },
-          },
-        },
+              template_data: templated_email.template_data
+            }
+          }
+        }
       )
 
       begin
@@ -772,7 +763,7 @@ module EmailService
           templated_email.cc_addr,
           templated_email.bcc_addr,
           'with the template data',
-          templated_email.template_data,
+          templated_email.template_data
         )
       rescue Aws::SESV2::Errors::ServiceError, StandardError => e
         error = e.message
@@ -801,7 +792,7 @@ module EmailService
     # WIP
     # Attempt to parse using regex the template data
     def get_template_items
-      template_regex = /\{{\K[^\s}}]+(?=}})/
+      template_regex = /\{{\K[^\s}]+(?=}})/
       subject =
         'Subscription Preferences for {{contact.firstName}} {{contact.lastName}}'
       html_part =
@@ -819,9 +810,7 @@ module EmailService
     # Get template names as a collection to be rendered on form
     def get_templates_collection(templates)
       templates_collection = []
-      unless templates.empty?
-        templates.each { |template| templates_collection << template[:name] }
-      end
+      templates.each { |template| templates_collection << template[:name] } unless templates.empty?
       templates_collection
     end
 
@@ -864,7 +853,7 @@ module EmailService
           ' has toggled DKIM for [',
           identity,
           '] to : ',
-          signing_enabled,
+          signing_enabled
         )
         status = 'success'
       rescue Aws::SESV2::Errors::ServiceError, StandardError => e
@@ -897,29 +886,29 @@ module EmailService
         configuration_set_params = {
           configuration_set_name: configset.name,
           tracking_options: {
-            custom_redirect_domain: configset.custom_redirect_domain,
+            custom_redirect_domain: configset.custom_redirect_domain
           },
           delivery_options: {
             tls_policy: configset.tls_policy,
-            sending_pool_name: configset.sending_pool_name,
+            sending_pool_name: configset.sending_pool_name
           },
           reputation_options: {
             reputation_metrics_enabled: configset.reputation_metrics_enabled,
-            last_fresh_start: configset.last_fresh_start,
+            last_fresh_start: configset.last_fresh_start
           },
           sending_options: {
-            sending_enabled: configset.sending_enabled,
+            sending_enabled: configset.sending_enabled
           },
           tags: configset.tags,
           suppression_options: {
-            suppressed_reasons: configset.suppressed_reasons,
-          },
+            suppressed_reasons: configset.suppressed_reasons
+          }
         }
         ses_client_v2.create_configuration_set(configuration_set_params)
         audit_logger.info(
           current_user.id,
           'has created configset with following values ',
-          configset.inspect,
+          configset.inspect
         )
         status = 'success'
       rescue Aws::SESV2::Errors::ServiceError, StandardError => e
@@ -951,7 +940,7 @@ module EmailService
         # lists 1000 items by default
         resp =
           ses_client_v2.list_configuration_sets(
-            { next_token: token, page_size: page_size },
+            { next_token: token, page_size: page_size }
           )
 
         next_token = resp.next_token
@@ -959,7 +948,7 @@ module EmailService
           (0...resp.configuration_sets.size).each do |index|
             item =
               ses_client_v2.get_configuration_set(
-                { configuration_set_name: resp.configuration_sets[index] },
+                { configuration_set_name: resp.configuration_sets[index] }
               )
 
             configset_hash = {
@@ -971,7 +960,7 @@ module EmailService
                 item.reputation_options.reputation_metrics_enabled,
               sending_options: item.reputation_options,
               tags: item.tags,
-              suppression_options: item.suppression_options,
+              suppression_options: item.suppression_options
             }
             configsets.push(configset_hash)
           end
@@ -991,9 +980,7 @@ module EmailService
     def list_configset_names(token = '')
       configset_names = []
       configsets = list_configsets(token)
-      unless configsets.empty?
-        configsets.each { |cfg| configset_names << cfg[:name] }
-      end
+      configsets.each { |cfg| configset_names << cfg[:name] } unless configsets.empty?
       configset_names
     end
 
@@ -1044,7 +1031,7 @@ module EmailService
     def delete_custom_verification_email_template(name)
       begin
         ses_client_v2.delete_custom_verification_email_template(
-          { template_name: name },
+          { template_name: name }
         )
         status = 'success'
       rescue Aws::SES::Errors::ServiceError, StandardError => e
@@ -1067,7 +1054,7 @@ module EmailService
           template_content: custom_template.template_content,
           success_redirection_url: custom_template.success_redirection_url,
           failure_redirection_url: custom_template.failure_redirection_url
-        },
+        }
       )
       'success'
     rescue Aws::SES::Errors::ServiceError, StandardError => e
@@ -1101,8 +1088,8 @@ module EmailService
             from_email_address: item.from_email_address,
             template_subject: item.template_subject,
             success_redirection_url: item.success_redirection_url,
-            failure_redirection_url: item.failure_redirection_url,
-          },
+            failure_redirection_url: item.failure_redirection_url
+          }
         )
         @template_items.push(template_item)
         index += 1
@@ -1131,11 +1118,11 @@ module EmailService
     #
     ### domain_statistics_report
 
-    def domain_statistics_report( domain = nil, report_start_date = Time.now - 86_400, report_end_date = Time.now)
+    def domain_statistics_report(domain = nil, report_start_date = Time.now - 86_400, report_end_date = Time.now)
       attrs = {
         domain: domain,
         start_date: report_start_date,
-        end_date: report_end_date,
+        end_date: report_end_date
       }
       Rails.logger.debug "\n attrs #{attrs}"
       report = ses_client_v2.get_domain_statistics_report(attrs)
@@ -1146,7 +1133,7 @@ module EmailService
       error = "[domain_statistics_report][error]: #{e.message}"
       Rails.logger.error error
 
-      return report
+      report
     end
 
     #
@@ -1160,12 +1147,12 @@ module EmailService
             namespace: 'VDM', # accepts VDM
             metric: 'SEND', # accepts SEND, COMPLAINT, PERMANENT_BOUNCE, TRANSIENT_BOUNCE, OPEN, CLICK, DELIVERY, DELIVERY_OPEN, DELIVERY_CLICK, DELIVERY_COMPLAINT
             dimensions: {
-              'EMAIL_IDENTITY' => 'MetricDimensionValue',
+              'EMAIL_IDENTITY' => 'MetricDimensionValue'
             },
             start_date: Time.now - 86_400,
-            end_date: Time.now,
-          },
-        ],
+            end_date: Time.now
+          }
+        ]
       }
       ses_client_v2.batch_get_metric_data(query)
     rescue Aws::SESV2::Errors::ServiceError, StandardError => e
@@ -1184,11 +1171,11 @@ module EmailService
           topic_preferences: [
             {
               topic_name: 'TopicName',
-              subscription_status: 'OPT_IN', # accepts OPT_IN, OPT_OUT
-            },
+              subscription_status: 'OPT_IN' # accepts OPT_IN, OPT_OUT
+            }
           ],
           unsubscribe_all: false,
-          attributes_data: 'AttributesData',
+          attributes_data: 'AttributesData'
         }
       end
       ses_client_v2.create_contact(contact_options)
@@ -1200,7 +1187,7 @@ module EmailService
     def get_contact(_options = {})
       options = {
         contact_list_name: 'ContactListName',
-        email_address: 'EmailAddress',
+        email_address: 'EmailAddress'
       }
       ses_client_v2.get_contact(options)
     end
@@ -1212,11 +1199,11 @@ module EmailService
         topic_preferences: [
           {
             topic_name: 'TopicName',
-            subscription_status: 'OPT_IN', # accepts OPT_IN, OPT_OUT
-          },
+            subscription_status: 'OPT_IN' # accepts OPT_IN, OPT_OUT
+          }
         ],
         unsubscribe_all: false,
-        attributes_data: 'AttributesData',
+        attributes_data: 'AttributesData'
       }
       ses_client_v2.update_contact(options)
     end
@@ -1228,11 +1215,11 @@ module EmailService
           filtered_status: 'OPT_IN', # accepts OPT_IN, OPT_OUT
           topic_filter: {
             topic_name: 'TopicName',
-            use_default_if_preference_unavailable: false,
-          },
+            use_default_if_preference_unavailable: false
+          }
         },
         page_size: 1,
-        next_token: 'NextToken',
+        next_token: 'NextToken'
       }
       ses_client_v2.list_contacts(options)
     end
@@ -1240,7 +1227,7 @@ module EmailService
     def delete_contact(contact_list_name, email_address)
       options = {
         contact_list_name: contact_list_name,
-        email_address: email_address,
+        email_address: email_address
       }
       ses_client_v2.delete_contact(options)
     end
@@ -1266,10 +1253,10 @@ module EmailService
             topic_name: 'TopicName',
             display_name: 'DisplayName',
             description: 'Description',
-            default_subscription_status: 'OPT_IN', # accepts OPT_IN, OPT_OUT
-          },
+            default_subscription_status: 'OPT_IN' # accepts OPT_IN, OPT_OUT
+          }
         ],
-        description: 'Description',
+        description: 'Description'
       }
       ses_client_v2.update_contact_list(options)
     end
@@ -1284,7 +1271,7 @@ module EmailService
         options = {
           pool_name: 'PoolName',
           tags: [{ key: 'TagKey', value: 'TagValue' }],
-          scaling_mode: 'STANDARD', # accepts STANDARD, MANAGED
+          scaling_mode: 'STANDARD' # accepts STANDARD, MANAGED
         }
       end
       ses_client_v2.create_dedicated_ip_pool(options)
@@ -1331,29 +1318,29 @@ module EmailService
             simple: {
               subject: {
                 data: 'MessageData',
-                charset: 'Charset',
+                charset: 'Charset'
               },
               body: {
                 text: {
                   data: 'MessageData',
-                  charset: 'Charset',
+                  charset: 'Charset'
                 },
                 html: {
                   data: 'MessageData',
-                  charset: 'Charset',
-                },
-              },
+                  charset: 'Charset'
+                }
+              }
             },
             raw: {
-              data: 'data',
+              data: 'data'
             },
             template: {
               template_name: 'EmailTemplateName',
               template_arn: 'AmazonResourceName',
-              template_data: 'EmailTemplateData',
-            },
+              template_data: 'EmailTemplateData'
+            }
           },
-          tags: [{ key: 'TagKey', value: 'TagValue' }],
+          tags: [{ key: 'TagKey', value: 'TagValue' }]
         }
       end
       ses_client_v2.create_deliverability_test_report(options)
@@ -1378,10 +1365,10 @@ module EmailService
             subscription_start_date: Time.now,
             inbox_placement_tracking_option: {
               global: false,
-              tracked_isps: ['IspName'],
-            },
-          },
-        ],
+              tracked_isps: ['IspName']
+            }
+          }
+        ]
       }
       ses_client_v2.put_deliverability_dashboard_option(options)
     end
@@ -1401,7 +1388,7 @@ module EmailService
         end_date: Time.now,
         subscribed_domain: 'Domain',
         next_token: 'NextToken',
-        page_size: 1,
+        page_size: 1
       }
       ses_client_v2.list_domain_deliverability_campaigns(options)
     end
@@ -1410,7 +1397,7 @@ module EmailService
       options = {
         email_identity: 'Identity',
         policy_name: 'PolicyName',
-        policy: 'Policy',
+        policy: 'Policy'
       }
       ses_client_v2.create_email_identity_policy(options)
     end
@@ -1424,7 +1411,7 @@ module EmailService
       options = {
         email_identity: 'Identity',
         policy_name: 'PolicyName',
-        policy: 'Policy',
+        policy: 'Policy'
       }
       ses_client_v2.update_email_identity_policy(options)
     end
@@ -1443,14 +1430,14 @@ module EmailService
           template_content: {
             subject: template.subject,
             text: template.text_part,
-            html: template.html_part,
-          },
+            html: template.html_part
+          }
         }
         ses_client_v2.create_email_template(options)
         audit_logger.info(
           current_user.id,
           'has created a template ',
-          template.name,
+          template.name
         )
         status = 'success'
       rescue Aws::SES::Errors::ServiceError, StandardError => e
@@ -1479,20 +1466,20 @@ module EmailService
         next_token = template_list.next_token
         index = 0
         while template_list.size.positive? &&
-                index < template_list.templates_metadata.count
+              index < template_list.templates_metadata.count
           resp =
             ses_client_v2.get_email_template(
               {
                 template_name:
-                  template_list.templates_metadata[index].template_name,
-              },
+                  template_list.templates_metadata[index].template_name
+              }
             )
           tmpl_hash = {
             id: index,
             name: resp.template_name,
             subject: resp.template_content.subject,
             text_part: resp.template_content.text,
-            html_part: resp.template_content.html,
+            html_part: resp.template_content.html
           }
           templates.push(tmpl_hash)
           index += 1
@@ -1511,14 +1498,14 @@ module EmailService
           template_content: {
             subject: template.subject,
             text: template.text_part,
-            html: template.html_part,
-          },
+            html: template.html_part
+          }
         }
         ses_client_v2.update_email_template(options)
         audit_logger.info(
           current_user.id,
           'has updated template ',
-          template.name,
+          template.name
         )
         status = 'success'
       rescue Aws::SES::Errors::ServiceError, StandardError => e
@@ -1537,17 +1524,17 @@ module EmailService
       options = {
         import_destination: { # required
           suppression_list_destination: {
-            suppression_list_import_action: 'DELETE', # accepts DELETE, PUT
+            suppression_list_import_action: 'DELETE' # accepts DELETE, PUT
           },
           contact_list_destination: {
             contact_list_name: 'ContactListName',
-            contact_list_import_action: 'DELETE', # accepts DELETE, PUT
-          },
+            contact_list_import_action: 'DELETE' # accepts DELETE, PUT
+          }
         },
         import_data_source: {
           s3_url: 'S3Url',
-          data_format: 'CSV', # accepts CSV, JSON
-        },
+          data_format: 'CSV' # accepts CSV, JSON
+        }
       }
       ses_client_v2.create_import_job(options)
     end
@@ -1561,7 +1548,7 @@ module EmailService
       options = {
         import_destination_type: 'SUPPRESSION_LIST', # accepts SUPPRESSION_LIST, CONTACT_LIST
         next_token: 'NextToken',
-        page_size: 1,
+        page_size: 1
       }
       ses_client_v2.list_import_jobs(options)
     end
@@ -1569,10 +1556,10 @@ module EmailService
     def list_recommendations(_options = {})
       options = {
         filter: {
-          'TYPE' => 'ListRecommendationFilterValue',
+          'TYPE' => 'ListRecommendationFilterValue'
         },
         next_token: 'NextToken',
-        page_size: 1,
+        page_size: 1
       }
       ses_client_v2.list_recommendations(options)
     end
@@ -1587,21 +1574,21 @@ module EmailService
             matching_event_types: ['send'], # accepts send, reject, bounce, complaint, delivery, open, click, renderingFailure
             kinesis_firehose_destination: {
               iam_role_arn: 'AmazonResourceName',
-              delivery_stream_arn: 'AmazonResourceName',
+              delivery_stream_arn: 'AmazonResourceName'
             },
             cloud_watch_destination: {
               dimension_configurations: [
                 {
                   dimension_name: 'DimensionName',
                   dimension_value_source: 'messageTag', # accepts messageTag, emailHeader, linkTag
-                  default_dimension_value: 'DefaultDimensionValue',
-                },
-              ],
+                  default_dimension_value: 'DefaultDimensionValue'
+                }
+              ]
             },
             sns_destination: {
-              topic_arn: 'AmazonResourceName',
-            },
-          },
+              topic_arn: 'AmazonResourceName'
+            }
+          }
         }
       end
       ses_client_v2.create_configuration_set_event_destination(options)
@@ -1624,24 +1611,24 @@ module EmailService
           matching_event_types: ['SEND'], # accepts SEND, REJECT, BOUNCE, COMPLAINT, DELIVERY, OPEN, CLICK, RENDERING_FAILURE, DELIVERY_DELAY, SUBSCRIPTION
           kinesis_firehose_destination: {
             iam_role_arn: 'AmazonResourceName',
-            delivery_stream_arn: 'AmazonResourceName',
+            delivery_stream_arn: 'AmazonResourceName'
           },
           cloud_watch_destination: {
             dimension_configurations: [
               {
                 dimension_name: 'DimensionName',
                 dimension_value_source: 'MESSAGE_TAG', # accepts MESSAGE_TAG, EMAIL_HEADER, LINK_TAG
-                default_dimension_value: 'DefaultDimensionValue',
-              },
-            ],
+                default_dimension_value: 'DefaultDimensionValue'
+              }
+            ]
           },
           sns_destination: {
-            topic_arn: 'AmazonResourceName',
+            topic_arn: 'AmazonResourceName'
           },
           pinpoint_destination: {
-            application_arn: 'AmazonResourceName',
-          },
-        },
+            application_arn: 'AmazonResourceName'
+          }
+        }
       }
       ses_client_v2.update_configuration_set_event_destination(options)
     rescue Aws::SES::Errors::ServiceError, StandardError => e
@@ -1655,7 +1642,7 @@ module EmailService
     )
       options = {
         configuration_set_name: configuration_set_name,
-        event_destination_name: event_destination_name,
+        event_destination_name: event_destination_name
       }
       ses_client_v2.delete_configuration_set_event_destination(options)
     end
@@ -1671,14 +1658,14 @@ module EmailService
         start_date: Time.now,
         end_date: Time.now,
         next_token: 'NextToken',
-        page_size: 1,
+        page_size: 1
       }
       ses_client_v2.list_suppressed_destinations(options)
     end
 
     def delete_suppressed_destination(email_address)
       ses_client_v2.delete_suppressed_destination(
-        { email_address: email_address },
+        { email_address: email_address }
       )
     end
 
@@ -1692,7 +1679,7 @@ module EmailService
     def tag_resource(_options = {})
       options = {
         resource_arn: 'AmazonResourceName',
-        tags: [{ key: 'TagKey', value: 'TagValue' }],
+        tags: [{ key: 'TagKey', value: 'TagValue' }]
       }
       ses_client_v2.tag_resource(options)
     end
@@ -1724,7 +1711,7 @@ module EmailService
         contact_language: 'EN', # accepts EN, JA
         use_case_description: 'UseCaseDescription',
         additional_contact_email_addresses: ['AdditionalContactEmailAddress'],
-        production_access_enabled: false,
+        production_access_enabled: false
       }
       ses_client_v2.put_account_details(options)
     end
@@ -1747,7 +1734,7 @@ module EmailService
     )
       options = {
         configuration_set_name: configuration_set_name,
-        suppressed_reasons: suppressed_reasons,
+        suppressed_reasons: suppressed_reasons
       }
       ses_client_v2.put_configuration_set_suppression_options(options)
     end
@@ -1757,12 +1744,12 @@ module EmailService
         vdm_attributes: {
           vdm_enabled: 'ENABLED', # accepts ENABLED, DISABLED
           dashboard_attributes: {
-            engagement_metrics: 'ENABLED', # accepts ENABLED, DISABLED
+            engagement_metrics: 'ENABLED' # accepts ENABLED, DISABLED
           },
           guardian_attributes: {
-            optimized_shared_delivery: 'ENABLED', # accepts ENABLED, DISABLED
-          },
-        },
+            optimized_shared_delivery: 'ENABLED' # accepts ENABLED, DISABLED
+          }
+        }
       }
       ses_client_v2.put_account_vdm_attributes(options)
     end
@@ -1775,7 +1762,7 @@ module EmailService
       options = {
         configuration_set_name: configuration_set_name,
         tls_policy: tls_policy, # accepts REQUIRE, OPTIONAL
-        sending_pool_name: sending_pool_name,
+        sending_pool_name: sending_pool_name
       }
       ses_client_v2.put_configuration_set_delivery_options(options)
     end
@@ -1786,7 +1773,7 @@ module EmailService
     )
       options = {
         configuration_set_name: configuration_set_name,
-        reputation_metrics_enabled: reputation_metrics_enabled,
+        reputation_metrics_enabled: reputation_metrics_enabled
       }
       ses_client_v2.put_configuration_set_reputation_options(options)
     end
@@ -1797,7 +1784,7 @@ module EmailService
     )
       options = {
         configuration_set_name: configuration_set_name,
-        sending_enabled: sending_enabled,
+        sending_enabled: sending_enabled
       }
       ses_client_v2.put_configuration_set_sending_options(options)
     end
@@ -1808,7 +1795,7 @@ module EmailService
     )
       options = {
         configuration_set_name: configuration_set_name, # required
-        custom_redirect_domain: custom_redirect_domain,
+        custom_redirect_domain: custom_redirect_domain
       }
       ses_client_v2.put_configuration_set_tracking_options(options)
     end
@@ -1818,12 +1805,12 @@ module EmailService
         configuration_set_name: 'ConfigurationSetName',
         vdm_options: {
           dashboard_options: {
-            engagement_metrics: 'ENABLED', # accepts ENABLED, DISABLED
+            engagement_metrics: 'ENABLED' # accepts ENABLED, DISABLED
           },
           guardian_options: {
-            optimized_shared_delivery: 'ENABLED', # accepts ENABLED, DISABLED
-          },
-        },
+            optimized_shared_delivery: 'ENABLED' # accepts ENABLED, DISABLED
+          }
+        }
       }
       ses_client_v2.put_configuration_set_vdm_options(options)
     end
@@ -1834,7 +1821,7 @@ module EmailService
     )
       options = {
         email_identity: email_identity,
-        configuration_set_name: configuration_set_name,
+        configuration_set_name: configuration_set_name
       }
       ses_client_v2.put_email_identity_configuration_set_attributes(options)
     end
@@ -1842,7 +1829,7 @@ module EmailService
     def put_email_identity_dkim_attributes(email_identity, signing_enabled)
       options = {
         email_identity: email_identity,
-        signing_enabled: signing_enabled,
+        signing_enabled: signing_enabled
       }
       ses_client_v2.put_email_identity_dkim_attributes(options)
     end
@@ -1854,8 +1841,8 @@ module EmailService
         signing_attributes: {
           domain_signing_selector: 'Selector',
           domain_signing_private_key: 'PrivateKey',
-          next_signing_key_length: 'RSA_1024_BIT', # accepts RSA_1024_BIT, RSA_2048_BIT
-        },
+          next_signing_key_length: 'RSA_1024_BIT' # accepts RSA_1024_BIT, RSA_2048_BIT
+        }
       }
       ses_client_v2.put_email_identity_dkim_signing_attributes(options)
     end
@@ -1866,7 +1853,7 @@ module EmailService
     )
       options = {
         email_identity: email_identity,
-        email_forwarding_enabled: email_forwarding_enabled,
+        email_forwarding_enabled: email_forwarding_enabled
       }
       ses_client_v2.put_email_identity_feedback_attributes(options)
     end
@@ -1875,7 +1862,7 @@ module EmailService
       options = {
         email_identity: 'Identity', # required
         mail_from_domain: 'MailFromDomainName',
-        behavior_on_mx_failure: 'USE_DEFAULT_VALUE', # accepts USE_DEFAULT_VALUE, REJECT_MESSAGE
+        behavior_on_mx_failure: 'USE_DEFAULT_VALUE' # accepts USE_DEFAULT_VALUE, REJECT_MESSAGE
       }
       ses_client_v2.put_email_identity_mail_from_attributes(options)
     end
@@ -1883,7 +1870,7 @@ module EmailService
     def put_suppressed_destination(email_address, reason)
       options = {
         email_address: email_address,
-        reason: reason, # accepts BOUNCE, COMPLAINT
+        reason: reason # accepts BOUNCE, COMPLAINT
       }
       ses_client_v2.put_suppressed_destination(options)
     end
@@ -1899,33 +1886,33 @@ module EmailService
         feedback_forwarding_email_address: 'EmailAddress',
         feedback_forwarding_email_address_identity_arn: 'AmazonResourceName',
         default_email_tags: [
-          { name: 'MessageTagName', value: 'MessageTagValue' },
+          { name: 'MessageTagName', value: 'MessageTagValue' }
         ],
         default_content: {
           template: {
             template_name: 'EmailTemplateName',
             template_arn: 'AmazonResourceName',
-            template_data: 'EmailTemplateData',
-          },
+            template_data: 'EmailTemplateData'
+          }
         },
         bulk_email_entries: [
           {
             destination: {
               to_addresses: ['EmailAddress'],
               cc_addresses: ['EmailAddress'],
-              bcc_addresses: ['EmailAddress'],
+              bcc_addresses: ['EmailAddress']
             },
             replacement_tags: [
-              { name: 'MessageTagName', value: 'MessageTagValue' },
+              { name: 'MessageTagName', value: 'MessageTagValue' }
             ],
             replacement_email_content: {
               replacement_template: {
-                replacement_template_data: 'EmailTemplateData',
-              },
-            },
-          },
+                replacement_template_data: 'EmailTemplateData'
+              }
+            }
+          }
         ],
-        configuration_set_name: 'ConfigurationSetName',
+        configuration_set_name: 'ConfigurationSetName'
       }
       ses_client_v2.send_bulk_email(options)
     end
@@ -1952,7 +1939,6 @@ module EmailService
     end
 
     def _nebula_request(uri, method, headers = nil, body = nil)
-      # TODO: Replace with Elektron Calls.
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = true
       request =
@@ -1967,15 +1953,10 @@ module EmailService
           Net::HTTP::Get.new(uri)
         end
 
-      unless headers.nil?
-        JSON.parse(headers).each { |name, value| request[name] = value }
-      end
-
+      JSON.parse(headers).each { |name, value| request[name] = value } unless headers.nil?
       request.body = body unless body.nil?
-
       begin
         response = https.request(request)
-        JSON.parse(response.read_body)
       rescue Timeout::Error,
              Errno::EINVAL,
              Errno::ECONNRESET,
@@ -1991,66 +1972,73 @@ module EmailService
 
     def nebula_details
       url = URI("#{nebula_endpoint_url}/v1/aws/#{project_id}")
-      headers = JSON.dump({ "X-Auth-Token": "#{current_user.token}", "Content-Type": "application/json" })
+      headers = JSON.dump({ 'X-Auth-Token': "#{current_user.token}", 'Content-Type': 'application/json' })
       body = nil
-      # TODO: replace _nebula_request with Elektron API Calls
-      response = _nebula_request(url, 'GET', headers, body)
       begin
+        response = _nebula_request(url, 'GET', headers, body)
         @parsed = JSON.parse(response.read_body)
-        if @parsed.class == Hash
-          if @parsed.key?('security_attributes')
+        if @parsed.instance_of?(Hash)
+          if @parsed.key?('error')
+            @nebula_details = @parsed
+          elsif @parsed.key?('status') && @parsed.key?('security_attributes')
             security_attributes = @parsed['security_attributes']&.split(', ')
-            security_officer = security_attributes[0][16...].strip
-            environment = security_attributes[1][12...].strip
-            valid_until = security_attributes[2][12...].strip
             production = @parsed.key?('production') ? @parsed['production'] : nil
             status = @parsed['status'].nil? ? nil : @parsed['status']
             allowed_emails = @parsed.key?('allowed_emails') ? @parsed['allowed_emails'] : nil
             complaint = @parsed.key?('complaint') ? @parsed['complaint'] : nil
-            @nebula_details = JSON.dump({
-              "security_officer": "#{security_officer}",
-              "environment": "#{environment}",
-              "valid_until": "#{valid_until}",
-              "production": "#{production}",
-              "complaint": "#{complaint}",
-              "status": "#{status}"
-            })
+            @nebula_details = {
+              security_officer: security_attributes[0][16...].strip.to_s,
+              environment: security_attributes[1][12...].strip.to_s,
+              valid_until: security_attributes[2][12...].strip.to_s,
+              production: production.to_s,
+              allowed_emails: allowed_emails.to_s,
+              complaint: complaint.to_s,
+              status: status.to_s
+            }
           end
-          # {"error":"failed to get a Nebula account status: account is marked as terminated"}
-          # To address this error above
-          if @parsed.key?('error')
-            return @parsed
-          end
+        elsif @parsed.instance_of?(String)
+          @nebula_details = JSON.parse(@parsed)
         end
-        if @parsed.class == String
-          @nebula_details =  JSON.parse(@parsed)
-        end
-
-      rescue JSON::ParserError, StandardError => e
-        @nebula_details = JSON.dump({"error" => "#{e.message}"} )
+      rescue JSON::ParserError => e
+        err = JSON.dump({ error: e.message })
+        @nebula_details = JSON.parse(err)
       end
-
-      return @nebula_details
+      @nebula_details
     end
 
     def nebula_status
-      @status = nil
-      @nebula_details = JSON.parse(nebula_details)
-      if @nebula_details.class == Hash
-        if @nebula_details.key?('production')
-          @status = @nebula_details['production'] == "true" ? 'PRODUCTION' : 'SANDBOX'
-        elsif  @nebula_details.key?('error')
-          @status = @nebula_details['error']
+      @nebula_details = JSON.parse(JSON.dump(nebula_details))
+      if @nebula_details.instance_of?(Hash)
+        if @nebula_details.key?('error')
+          err = @nebula_details['error']
+          @status = 'TERMINATED' if err.include?('account is marked as terminated')
+          @status = 'NOT_ACTIVATED' if err.include?("account isn't activated")
+        elsif @nebula_details.key?('status') && @nebula_details['status']
+          case @nebula_details['status']
+          when 'GRANTED'
+            if @nebula_details.key?('production')
+              @status = @nebula_details['production'] == 'true' ? 'PRODUCTION' : 'SANDBOX'
+            end
+          when 'DENIED'
+            @status = 'DENIED'
+          when 'PENDING'
+            @status = 'PENDING'
+          when 'PENDING-CUSTOMER-ACTION'
+            @status = 'PENDING-CUSTOMER-ACTION'
+          when 'CUSTOMER-ACTION-COMPLETED'
+            @status = 'CUSTOMER-ACTION-COMPLETED'
+          end
         end
-      elsif @nebula_details.class == String
+      elsif @nebula_details.instance_of?(String)
         @status = JSON.parse(@nebula_details)
       end
-      return @status
+      @status
     end
 
     def nebula_active?
       @nebula_status = nebula_status
-      return (@nebula_status == 'PRODUCTION' || @nebula_status == 'SANDBOX') ? true : false
+      status_items = %w[PRODUCTION SANDBOX]
+      @nebula_status && status_items.any? { |item| @nebula_status.include? item } ? true : false
     end
 
     def nebula_available?
@@ -2066,32 +2054,50 @@ module EmailService
     end
 
     def nebula_activate(multicloud_account = nil)
-      return 'nebula details are invalid ' if multicloud_account.nil?
+      return 'MultiCloud parameters for activation are invalid' if multicloud_account.nil?
 
       provider = multicloud_account.provider || 'aws'
       endpoint_url = multicloud_account.custom_endpoint_url || nil
       url = get_nebula_uri(provider, endpoint_url)
-      headers = JSON.dump({ "X-Auth-Token": "#{current_user.token}", "Content-Type": "application/json" })
+      headers = JSON.dump({ 'X-Auth-Token': "#{current_user.token}", 'Content-Type': 'application/json' })
       body =
         JSON.dump(
           {
-            "accountEnv": multicloud_account.account_env,
-            "identities": multicloud_account.identity,
-            "mailType": multicloud_account.mail_type || 'TRANSACTIONAL',
-            "securityOfficer": multicloud_account.security_officer,
-          },
+            accountEnv: multicloud_account.account_env,
+            identities: multicloud_account.identity,
+            mailType: multicloud_account.mail_type || 'TRANSACTIONAL',
+            securityOfficer: multicloud_account.security_officer
+          }
         )
       response = _nebula_request(url, 'POST', headers, body)
-      if response.code.to_i < 300
-        'success'
-      else
-        "#{response.code} : #{response.read_body}"
-      end
+
+      audit_logger.info(
+        '[cronus][nebula_activate]: ',
+        current_user.id,
+        'has intiated multicloud account (nebula) activation',
+        'for the project',
+        project_id,
+        response.code
+      )
+
+      response.code.to_i < 300 ? 'success' : "#{response.code} : #{response.read_body}"
     end
 
     def nebula_deactivate(_multicloud_account = nil)
       url = get_nebula_uri('aws', custom_endpoint_url)
-      response = _nebula_request(url, 'DELETE', nil, nil)
+      headers = JSON.dump({ 'X-Auth-Token': "#{current_user.token}", 'Content-Type': 'application/json' })
+      body = nil
+      response = _nebula_request(url, 'DELETE', headers, body)
+
+      audit_logger.info(
+        '[cronus][nebula_deactivate]: ',
+        current_user.id,
+        'has intiated multicloud account (nebula) deletion',
+        'for the project',
+        project_id,
+        response.code
+      )
+
       if response.code.to_i < 300
         'success'
       else
@@ -2100,8 +2106,8 @@ module EmailService
     end
 
     def aws_account_details
-      account_details = ses_client_v2.get_account
+      @aws_account_details ||= ses_client_v2.get_account \
+                                if nebula_active? && ec2_creds && ses_client_v2
     end
-
   end
 end

@@ -20,24 +20,24 @@
     .col-sm-3
       .bs-callout.bs-callout-primary.toolbar-aligment
         %p
-        - if ec2_creds && send_data
+        - if ec2_creds && !@aws_account_details.nil?
           Max Send Quota / 24 hours
           %br
           %center
             %b
-              = send_data[:max_24_hour_send].to_i
+              = @aws_account_details[:send_quota][:max_24_hour_send].to_i
           %br
           Max Send Rate / second
           %br
           %center
             %b
-              = send_data[:max_send_rate].to_i
+              = @aws_account_details[:send_quota][:max_send_rate].to_i
           %br
           Emails Sent (last 24 hours)
           %br
           %center
             %b
-              = send_data[:sent_last_24_hours].to_i
+              = @aws_account_details[:send_quota][:sent_last_24_hours].to_i
           %hr
         You can send Email to maximum 50 email addresses at a time which includes
         %b
@@ -48,4 +48,4 @@
         recipients.
         You can also send
         %b
-          = link_to "templated Emails", "#{sap_url_for('documentation')}docs/customer/email-service/email-serv-howto/email-howto-templates/", :target => "_blank"
+          = link_to "templated Emails", "#{sap_url_for('documentation')}docs/customer/services/email-service/email-service-ui/email-ui-how-to-send-templated-email", :target => "_blank"
