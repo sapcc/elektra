@@ -11,12 +11,16 @@ module EmailService
 
     def index
       @templates = templates
+      Rails.logger.debug "templates count #{@templates.count}"
+      Rails.logger.debug "templates empty? #{@templates.empty?}"
       items_per_page = 10
-      @paginatable_templates =
-        Kaminari
+      unless @templates.empty?
+        @paginatable_templates =
+          Kaminari
           .paginate_array(@templates, total_count: @templates.count)
           .page(params[:page])
           .per(items_per_page)
+      end
     rescue Elektron::Errors::ApiResponse, StandardError => e
       flash.now[
         :error
@@ -31,17 +35,13 @@ module EmailService
       ] = "#{I18n.t('email_service.errors.template_show_error')} #{e.message}"
     end
 
-    def new
-    end
+    def new; end
 
-    def edit
-    end
+    def edit; end
 
     def create
       @template = template_form(template_params)
-      unless @template.valid?
-        return render action: 'new', locals: { data: { modal: true } }
-      end
+      return render action: 'new', locals: { data: { modal: true } } unless @template.valid?
 
       status = create_email_template(@template)
       if status == 'success'
@@ -63,9 +63,7 @@ module EmailService
     def update
       @template = template_form(template_params)
       @template.name = params[:name]
-      unless @template.valid?
-        return render action: 'edit', data: { modal: true }
-      end
+      return render action: 'edit', data: { modal: true } unless @template.valid?
 
       status = update_email_template(@template)
 

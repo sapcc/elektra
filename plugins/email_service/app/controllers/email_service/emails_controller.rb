@@ -10,6 +10,8 @@ module EmailService
 
     def index
       @nebula_details = nebula_details
+      @nebula_status = nebula_status  
+      @aws_account_details = aws_account_details
     end
   end
 end

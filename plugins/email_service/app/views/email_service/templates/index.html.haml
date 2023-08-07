@@ -11,7 +11,7 @@
           - if current_user.is_allowed?('email_service:template_create')
             .main-buttons
               = link_to "New Template", plugin('email_service').new_template_path, data: {modal: true}, class: 'btn btn-primary'
-
+      
         .js-table-templates-list
           = render partial: 'table_templates'#, locals: {templates: @templates}
       .col-sm-3
@@ -33,4 +33,4 @@
             %hr
             Templates are useful when you wish to send customized Emails to your recipients. These templates include a subject line, and the TEXT and HTML parts of the email body. The subject and body sections may also contain unique values that are personalized for each recipient. More on
             %b
-              = link_to "Email Templates", "https://docs.aws.amazon.com/ses/latest/dg/send-personalized-email-api.html", :target => "_blank"
+              = link_to "Email Templates", "#{sap_url_for('documentation')}docs/customer/services/email-service/email-serv-howto/email-howto-templates", :target => "_blank"

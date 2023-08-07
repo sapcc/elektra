@@ -3,8 +3,6 @@
 module EmailService
   # MulticloudAccountsController
   class MulticloudAccountsController < ::EmailService::ApplicationController
-    # before_action :check_pre_conditions_for_cronus
-    # before_action :check_verified_identity
 
     before_action :set_multicloud_account, only: %i[new destroy]
 
@@ -24,17 +22,14 @@ module EmailService
     end
 
     def create
-      Rails.logger.debug "\n [controller] multicloud_account_params : #{multicloud_account_params}"
       @multicloud_account = multicloud_account_form(multicloud_account_params)
       multicloud_account_values =
         @multicloud_account.process(EmailService::MulticloudAccount)
       unless @multicloud_account.valid?
         render 'edit', locals: { data: { modal: true } } and return
       end
-
       status =
         nebula_activate(multicloud_account_values) if @multicloud_account.valid?
-      status = 'error'
       unless status == 'success'
         flash.now[:error] = status
         render 'edit', locals: { data: { modal: true } } and return
@@ -50,7 +45,7 @@ module EmailService
 
     def destroy
       @multicloud_account.provider = 'aws'
-      status = nebula_deactivate(@multicloud_account)
+      status = nebula_deactivate
       if status == 'success'
         flash[:success] = MULTICLOUD_ACCOUNT_DELETED
       else
