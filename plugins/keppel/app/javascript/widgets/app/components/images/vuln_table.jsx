@@ -4,13 +4,21 @@ import { DataTable } from "lib/components/datatable"
 
 import { SEVERITY_ORDER, TRIVY_TO_KEPPEL_SEVERITY } from "../../constants"
 
+//These sortKey implementations are reused in render() for the default sorting, so we give them names here.
+const nameSortKey = (data) => {
+  return `${data.object} ${data.objectDescription || ""}`;
+};
+const severitySortKey = (data) => {
+  return (SEVERITY_ORDER[data.effectiveSeverity] || 0) + 0.0001 * (SEVERITY_ORDER[data.severity] || 0);
+};
+
 const columns = [
   {
     key: "object",
     label: "Affected package/object/file",
     sortStrategy: "text",
     searchKey: (props) => `${props.data.object} ${props.data.objectDescription || ""} ${props.data.description || ""}`,
-    sortKey:   (props) => `${props.data.object} ${props.data.objectDescription || ""}`,
+    sortKey:   (props) => nameSortKey(props.data),
   },
   { key: "title", label: "Title" },
   {
@@ -18,7 +26,7 @@ const columns = [
     label: "Severity",
     sortStrategy: "numeric",
     searchKey: (props) => props.data.effectiveSeverity,
-    sortKey:   (props) => (SEVERITY_ORDER[props.data.effectiveSeverity] || 0) + 0.0001 * (SEVERITY_ORDER[props.data.severity] || 0),
+    sortKey:   (props) => severitySortKey(props.data),
   },
   //TODO: If sorting for the version columns is desired, a library for version comparisons should be imported.
   {
@@ -124,7 +132,6 @@ export const VulnerabilityTable = ({ vulnReport }) => {
   }
 
   //type 2: generate one problem per vulnerability
-  //TODO: X-Keppel-Applicable-Policies
   const applicablePolicies = vulnReport["X-Keppel-Applicable-Policies"] || {};
   for (const section of (vulnReport.Results || [])) {
     for (const vuln of (section.Vulnerabilities || [])) {
@@ -167,6 +174,12 @@ export const VulnerabilityTable = ({ vulnReport }) => {
       rows.push(row);
     }
   }
+
+  //default sorting: first by severity (highest to lowest), then by package name (alphabetically)
+  rows.sort((left, right) => {
+    const diff = severitySortKey(right) - severitySortKey(left);
+    return diff !== 0 ? diff : nameSortKey(left).localeCompare(nameSortKey(right));
+  });
 
   return (
     <>

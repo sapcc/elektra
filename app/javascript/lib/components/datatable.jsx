@@ -292,15 +292,21 @@ export class DataTable extends React.Component {
               )}
             </tr>
           </thead>
-          <tbody>{rows}</tbody>
+          <tbody>
+            {rows}
+            {isPaginated && (
+              <tr>
+                <td colSpan={this.props.columns.length}>
+                  <DataTablePaginationControls
+                    curr={this.state.currentPage}
+                    count={pageCount}
+                    set={(page) => this.setCurrentPage(page)}
+                  />
+                </td>
+              </tr>
+            )}
+          </tbody>
         </table>
-        {isPaginated && (
-          <DataTablePaginationControls
-            curr={this.state.currentPage}
-            count={pageCount}
-            set={(page) => this.setCurrentPage(page)}
-          />
-        )}
       </>
     )
   }
