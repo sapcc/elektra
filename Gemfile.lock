@@ -416,7 +416,7 @@ GEM
     net-ssh (6.1.0)
     netaddr (2.0.4)
     netrc (0.11.0)
-    nio4r (2.5.8)
+    nio4r (2.5.9)
     nokogiri (1.13.6-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.13.6-x86_64-darwin)
@@ -437,7 +437,7 @@ GEM
       pry (>= 0.10.4)
     psych (4.0.4)
       stringio
-    puma (4.3.12)
+    puma (5.6.7)
       nio4r (~> 2.0)
     racc (1.6.0)
     rack (2.2.3.1)
@@ -637,7 +637,7 @@ DEPENDENCIES
   prettier
   prometheus-client
   pry-rails
-  puma (= 4.3.12)
+  puma (= 5.6.7)
   rails (= 6.1.5.1)
   rails-controller-testing
   rails_stdout_logging
