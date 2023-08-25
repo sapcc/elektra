@@ -1,5 +1,5 @@
 =content_for :main_toolbar do
-  eMail Service - AWS SES (Cronus)
+  Email Service - AWS SES (Cronus)
 = render partial: 'email_service/shared/nav.html', locals: {pane: 'settings'}
 
 .tab-content
@@ -8,14 +8,7 @@
       Settings
     .row
       .col-sm-9
-        %h3 Cronus Account
-        .toolbar
-          .main-buttons
-          - if current_user.is_allowed?('email_service:multicloud_account_create') && !nebula_active?
-            = link_to "Enable Cronus", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-primary'
-          - if current_user.is_allowed?('email_service:multicloud_account_delete') && nebula_active?
-            = link_to 'Disable Cronus', plugin('email_service').multicloud_account_path(id: project_id), method: :delete, class: 'btn btn-primary', data: { confirm: "Are you sure you want to disable cronus for this project '#{project_id}'?", ok: "Yes, disable it", confirmed: :loading_status}
-        %br
+        %h3 Multicloud Account
         = render partial: 'multicloud'
         %br
         %h3 EC2 Credentials
@@ -25,11 +18,17 @@
             = link_to "Manage EC2 Credentials", plugin('email_service').ec2_credentials_path, class: 'btn btn-primary'
         %br
         = render partial: 'ec2_creds'
+        %br
+        %h3 AWS Account
+        = render partial: 'aws_account'
+        %br
+        %h3 Deliverability options
+        = render partial: 'deliverability_dashboard_options'
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p
             Here you can find information about Cronus Endpoint and AWS Credentials to interact with cronus programmatically. More information can be found
-            = link_to "here", "https://documentation.global.cloud.sap/services/email-overview", :target => "_blank"
+            = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/overview/", :target => "_blank"
             and you can find How-To guides
-            = link_to "here", "https://documentation.global.cloud.sap/services/email-howto", :target => "_blank"
+            = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/email-serv-howto/", :target => "_blank"
             \.

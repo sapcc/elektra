@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ServiceLayer
   class EmailServiceService < Core::ServiceLayer::Service
     include EmailServiceServices::NebulaAccount
@@ -5,7 +7,7 @@ module ServiceLayer
     # Work in Progress
 
     def available?(_action_name_sym = nil)
-      elektron.service?("nebula")
+      elektron.service?('nebula')
     end
 
     def elektron_nebula(options = {})
@@ -18,7 +20,7 @@ module ServiceLayer
     end
 
     def elektron_email
-      @elektron_cronus ||= elektron.service("email-aws", path_prefix: "/v3")
+      @elektron_cronus ||= elektron.service('email-aws', path_prefix: '/v3')
     end
   end
 end

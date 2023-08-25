@@ -186,7 +186,13 @@ module Identity
         end
         @project_to_delete = services.identity.find_project_by_name_or_id(@prodel_project_domain.id,project_name_or_id)
         if !@project_to_delete.nil?
-          @resources = services.identity.get_project_resources(@project_to_delete.id)
+          begin 
+            @resources = services.identity.get_project_resources(@project_to_delete.id)
+          rescue Elektron::Errors::ApiResponse => e 
+            errorBody = e.response.body.to_h
+            message = errorBody["message"] || errorBody["status"]
+            flash.now[:error] = "Cannot check '#{project_name_or_id}' in domain '#{project_domain_name_or_id}', prodel API: #{message}"
+          end
         else
           flash.now[:error] = "No Project with name or id '#{project_name_or_id}' found in domain '#{project_domain_name_or_id}'"
           return
@@ -199,8 +205,14 @@ module Identity
       project_to_delete_name = params["project_to_delete_name"] || ""
       prodel_project_domain_name = params["prodel_project_domain_name"] || ""
       if !project_to_delete_id.blank?
-        services.identity.delete_project_with_prodel(project_to_delete_id)
-        flash.now[:success] = "Project '#{project_to_delete_name}' in domain '#{prodel_project_domain_name}' deleted"
+        begin 
+          services.identity.delete_project_with_prodel(project_to_delete_id)
+          flash.now[:success] = "Project '#{project_to_delete_name}' in domain '#{prodel_project_domain_name}' deleted"
+        rescue Elektron::Errors::ApiResponse => e 
+          errorBody = e.response.body.to_h
+          message = errorBody["message"] || errorBody["status"]
+          flash.now[:error] = "Cannot delete project '#{project_name_or_id}' in domain '#{project_domain_name_or_id}', prodel API: #{message}"
+        end
       else
         flash.now[:error] = "Cannot delete, no project_to_delete_id given!"
       end

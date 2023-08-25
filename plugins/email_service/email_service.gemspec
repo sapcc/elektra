@@ -7,8 +7,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Sirajudheen Mohamed Ali"]
   spec.email = ["sirajudheen.mohamed.ali@sap.com"]
   spec.homepage = ""
-  spec.summary = "eMailService AWS SES Proxy"
-  spec.description = "eMailService UI elektra plugin for Cronus"
+  spec.summary = "EmailService AWS SES Proxy"
+  spec.description = "EmailService UI elektra plugin for Cronus"
   spec.license = "MIT"
 
   spec.files =
@@ -28,5 +28,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "aws-sdk-ses"
   spec.add_dependency "aws-sdk-sesv2"
+  spec.add_dependency 'aws-sdk-cloudwatch'
   spec.add_dependency "virtus"
 end

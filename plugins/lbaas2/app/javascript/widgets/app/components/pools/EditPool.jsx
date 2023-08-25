@@ -26,11 +26,13 @@ import {
 import {
   lbAlgorithmTypes,
   poolProtocolTypes,
+  POOL_PERSISTENCE_APP_COOKIE,
   poolPersistenceTypes,
   filterListeners,
+  POOL_PERSISTENCE_SOURCE_IP,
 } from "../../helpers/poolHelper"
 import { fetchPool } from "../../actions/pool"
-import { queryTlsCiphers } from "../../../../queries/listener"
+import { queryTlsCiphers } from "../../queries/listener"
 
 const EditPool = (props) => {
   const { updatePool } = usePool()
@@ -136,7 +138,11 @@ const EditPool = (props) => {
         })
       })
       .catch((error) => {
-        setSecrets({ ...secrets, isLoading: false, error: errorMessage(error) })
+        setSecrets({
+          ...secrets,
+          isLoading: false,
+          error: errorMessage(error),
+        })
       })
   }
 
@@ -229,7 +235,7 @@ const EditPool = (props) => {
   }
 
   const setShowPersistenceCookieName = (option) => {
-    setShowCookieName(option && option.value == "APP_COOKIE")
+    setShowCookieName(option && option.value == POOL_PERSISTENCE_APP_COOKIE)
   }
 
   // initial assigment of the ciphers
@@ -291,23 +297,28 @@ const EditPool = (props) => {
 
   const onSubmit = (values) => {
     const newValues = { ...values }
-    const persistenceBlob = newValues.session_persistence || {}
-    if (
-      persistenceBlob.type != newValues.session_persistence_type ||
-      persistenceBlob.cookie_name != newValues.session_persistence_cookie_name
-    ) {
-      // the session persistence has been changed. The JSON blob will be overwritten with new attributes
-      // session_persistence_type and/or session_persistence_cookie_name by the rails controller
-      if (newValues.session_persistence_type != "APP_COOKIE") {
-        // remove just in case it still in context but presistence is not anymore app_coockie
-        delete newValues.session_persistence_cookie_name
+
+    // start with a null session persistence just in case the user have removed the persistence session
+    let persistence = null
+    if (sessionPersistenceType) {
+      // if the persistence type is the same as the one in the context and the type is SOURCE_IP then we keep the persistence object because of extra attributes like persistence_timeout and persistence_granularity which apply just for SOURCE_IP
+      if (
+        newValues?.session_persistence?.type ===
+          sessionPersistenceType?.value &&
+        newValues?.session_persistence?.type === POOL_PERSISTENCE_SOURCE_IP
+      ) {
+        persistence = { ...newValues.session_persistence }
+      } else {
+        persistence = {}
+        // update the type
+        persistence.type = sessionPersistenceType.value
+        // update the cookie_name if the persistence type is not APP_COOKIE
+        if (persistence.type === POOL_PERSISTENCE_APP_COOKIE) {
+          persistence.cookie_name = values.session_persistence_cookie_name
+        }
       }
-    } else {
-      // the session persistence is the same as in the JSON Blob. Remove the session_persistence_type and/or session_persistence_cookie_name
-      // so it doesn't create a new blob
-      delete newValues.session_persistence_type
-      delete newValues.session_persistence_cookie_name
     }
+    newValues.session_persistence = persistence
 
     if (!showTLSSettings) {
       // remove tls attributes just in case they still in context but tls not anymore enabled

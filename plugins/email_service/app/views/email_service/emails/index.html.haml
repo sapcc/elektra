@@ -1,40 +1,45 @@
 =content_for :main_toolbar do
-  eMail Service - AWS SES (Cronus)
+  Email Service - AWS SES (Cronus)
 = render partial: 'email_service/shared/nav.html', locals: {pane: 'emails'}
 
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"emails-pane"}
-    %h3 Send eMail
+    %h3 Send Email
     .col-sm-9
+
       .toolbar
         .main-buttons
           - if current_user.is_allowed?('email_service:plain_email_create')
-            = link_to "New plain eMail", plugin('email_service').new_plain_email_path, data: { modal: true }, class: 'btn btn-primary'
+            = link_to "New plain Email", plugin('email_service').new_plain_email_path, data: { modal: true }, class: 'btn btn-primary'
           - if current_user.is_allowed?('email_service:templated_email_create')
-            = link_to "New templated eMail", plugin('email_service').new_templated_email_path, data: {modal: true}, class: 'btn btn-primary'
+            = link_to "New templated Email", plugin('email_service').new_templated_email_path, data: {modal: true}, class: 'btn btn-primary'
+
+      - if @nebula_status == 'SANDBOX'
+        = render partial: 'email_service/shared/sandbox'
+
     .col-sm-3
       .bs-callout.bs-callout-primary.toolbar-aligment
         %p
-        - if ec2_creds && send_data
+        - if ec2_creds && !@aws_account_details.nil?
           Max Send Quota / 24 hours
           %br
           %center
             %b
-              = send_data[:max_24_hour_send].to_i
+              = @aws_account_details[:send_quota][:max_24_hour_send].to_i
           %br
           Max Send Rate / second
           %br
           %center
             %b
-              = send_data[:max_send_rate].to_i
+              = @aws_account_details[:send_quota][:max_send_rate].to_i
           %br
-          eMails Sent (last 24 hours)
+          Emails Sent (last 24 hours)
           %br
           %center
             %b
-              = send_data[:sent_last_24_hours].to_i
+              = @aws_account_details[:send_quota][:sent_last_24_hours].to_i
           %hr
-        You can send eMail to maximum 50 email addresses at a time which includes
+        You can send Email to maximum 50 email addresses at a time which includes
         %b
           To, Cc
         and
@@ -43,4 +48,4 @@
         recipients.
         You can also send
         %b
-          = link_to "templated eMails", "https://documentation.global.cloud.sap/services/email-howto-templates#send-template-email", :target => "_blank"
+          = link_to "templated Emails", "#{sap_url_for('documentation')}docs/customer/services/email-service/email-service-ui/email-ui-how-to-send-templated-email", :target => "_blank"

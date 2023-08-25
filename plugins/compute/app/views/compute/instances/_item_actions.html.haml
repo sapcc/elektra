@@ -18,7 +18,7 @@
         - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li
             = link_to 'Edit Name', edit_instance_path(id: instance.id, action_from_show: show_view), data: { modal: true }
-        - if current_user.is_allowed?("context_is_compute_editor:", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        - if current_user.is_allowed?("context_is_compute_editor", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li
             = link_to 'Edit Tags', plugin('compute').tags_instance_path(id: instance.id), data: { modal: true}
         - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})

@@ -17,6 +17,7 @@ import LoadbalancerJSON from "./loadbalancers/LoadbalancerJSON"
 import EditLoadbalancer from "./loadbalancers/EditLoadbalancer"
 import EditListener from "./listeners/EditListener"
 import ListenerJSON from "./listeners/ListenerJSON"
+import AllowedCidrs from "./listeners/AllowedCidrs"
 import EditPool from "./pools/EditPool"
 import PoolJSON from "./pools/PoolJSON"
 import EditMember from "./members/EditMember"
@@ -99,6 +100,11 @@ const Router = (props) => {
           exact
           path="/loadbalancers/:loadbalancerID/listeners/:listenerID/json"
           component={ListenerJSON}
+        />
+        <Route
+          exact
+          path="/loadbalancers/:loadbalancerID/listeners/:listenerID/cidrs"
+          component={AllowedCidrs}
         />
 
         <Route

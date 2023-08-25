@@ -200,7 +200,7 @@ export default class ImageDetailsModal extends React.Component {
     if (typeOfManifest[mediaType] == "list" || typeOfManifest[mediaType] == "image") {
       tabs.push({ label: "Structure", key: "structure" })
     }
-    if (typeOfManifest[mediaType] == "image" && hasVulnReport(vulnStatus)) {
+    if (hasVulnReport(vulnStatus)) {
       tabs.push({ label: "Vulnerabilities", key: "vulns" })
     }
 
@@ -242,8 +242,8 @@ export default class ImageDetailsModal extends React.Component {
         {(typeOfManifest[mediaType] == "image" && currentTab === "structure")
           ? makeTable(this.renderLayers(manifest, imageConfig))
           : null}
-        {(typeOfManifest[mediaType] == "image" && currentTab === "vulns")
-          ? this.renderVulns(vulnReport, vulnStatus, vulnScanError)
+        {(currentTab === "vulns")
+          ? this.renderVulns(mediaType, vulnReport, vulnStatus, vulnScanError)
           : null}
       </React.Fragment>
     )
@@ -431,7 +431,18 @@ export default class ImageDetailsModal extends React.Component {
     return rows
   }
 
-  renderVulns(vulnReport, vulnStatus, vulnScanError) {
+  renderVulns(mediaType, vulnReport, vulnStatus, vulnScanError) {
+    if (typeOfManifest[mediaType] !== "image") {
+      return (
+        <p className="bs-callout bs-callout-info bs-callout-emphasize">
+          This is a <strong>multi-arch image</strong>.
+          It does not contain any files by itself, but instead links to one or more images for different architectures that do.
+          Vulnerability reports are only available for those architecture-dependent images.
+          Please navigate to the <q>Structure</q> tab and drill down into one of these images to view its vulnerability report.
+        </p>
+      );
+    }
+
     if (vulnScanError) {
       return makeTable([
         <tr className="text-danger" key="scan-error">

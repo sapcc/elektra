@@ -15,4 +15,9 @@
       }
     }
   }
+
+  ul.pagination {
+    margin: 0; //located in a <tr>, reuses bottom margin of <table class="table"> instead
+    margin-top: 8px; //match padding-right of <td>
+  }
 }

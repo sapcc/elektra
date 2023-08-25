@@ -1,13 +1,13 @@
 #!/bin/bash
 
-if [ ! -f "cypress.json" ]; then
+if [ ! -f "cypress.config.js" ]; then
   echo "ERROR: you need to run this script in e2e folder!"
   exit 1
 fi
 
 function help_me() {
 
-  echo "Usage: run.sh --host HOST --profile member|admin --e2e_path /path/to/e2e --record* --browser chrome|firefox|electron* --debug CYPRESS-DEBUG-FLAG* TESTNAME* "
+  echo "Usage: run.sh --host|-h HOST --profile|-p admin|folder --e2e-path|-e2e  --record|-r --browser|-b chrome|firefox|electron* --debug|-d CYPRESS-DEBUG-FLAG* TESTNAME* "
   echo "       run.sh --help                                                   # will print out this message"
   echo "       run.sh --info                                                   # prints info about used cypress"
   echo "       run.sh --host http://localhost:3000 landingpage                 # will only run landingpage tests"
@@ -36,6 +36,7 @@ function help_me() {
   exit 1
 }
 
+# this is the default cypress command that is used without --record option
 CY_CMD="cypress"
 if [[ "$1" == "--help" ]]; then
   help_me
@@ -60,7 +61,7 @@ else
       shift # past argument
       shift # past value
       ;;
-    -e2e | --e2e_path) # local path for e2e
+    -e2e | --e2e-path) # local path for e2e
       E2E_PATH="$2"
       shift # past argument
       shift # past value
@@ -77,12 +78,11 @@ else
     -r | --record)
       hostname=$(hostname)
       CI_BUID_ID="$(date) - DEV - $hostname"
-      CY_CMD="cy2"
-      CY_RECORD="https://director.cypress.qa-de-1.cloud.sap"
+      CY_CMD="cypress-cloud"
       shift # past argument
       ;;
     *) # test folder
-      SPECS_FOLDER="cypress/integration/$PROFILE/$1.js"
+      SPECS_FOLDER="cypress/integration/$PROFILE/$1*"
       shift # past argument
       ;;
     esac
@@ -102,15 +102,12 @@ docker pull keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest
 
 # https://docs.cypress.io/guides/guides/command-line#cypress-run
 # --ci-build-id https://docs.cypress.io/guides/guides/command-line#cypress-run-ci-build-id-lt-id-gt
-# --key         https://docs.cypress.io/guides/guides/command-line#cypress-run-record-key-lt-record-key-gt
 # --paralell    https://docs.cypress.io/guides/guides/parallelization#Turning-on-parallelization
 # https://docs.sorry-cypress.dev/guide/get-started
+# NOTE: for record you will find all other options in the currents.config.js file
 if [[ -n "${CI_BUID_ID}" ]]; then
-  BROWSER_VERSION=$(docker run -it --rm --entrypoint sh keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest -c "echo \$$CYPRESS_BROWSER")
-  CY_OPTIONS=(--record --key 'elektra' --parallel --ci-build-id "$CI_BUID_ID - $CYPRESS_BROWSER $BROWSER_VERSION")
+  CY_OPTIONS=(--record --parallel --ci-build-id "$CI_BUID_ID - $CYPRESS_BROWSER")
 fi
-#echo "${CY_OPTIONS[@]}"
-#exit
 
 # find the host if nothing was given
 if [[ -z "${HOST}" ]]; then
@@ -196,9 +193,6 @@ echo "E2E_PATH      => $E2E_PATH"
 echo "PROFILE       => $PROFILE"
 echo "TEST_DOMAIN   => $TEST_DOMAIN"
 echo "TEST_USER     => $TEST_USER"
-if [[ -n "$CY_RECORD" ]]; then
-  echo "RECORD        => $CY_RECORD"
-fi
 if [[ -n "$DEBUG" ]]; then
   echo "DEBUG:        => $DEBUG"
 fi
@@ -215,9 +209,9 @@ docker run --rm -it \
   --env CYPRESS_TEST_PASSWORD="$TEST_PASSWORD" \
   --env CYPRESS_TEST_USER="$TEST_USER" \
   --env CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
-  --env CYPRESS_API_URL=$CY_RECORD \
   --entrypoint $CY_CMD \
   --network=host \
-  keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest run "${CY_OPTIONS[@]}" --spec "$SPECS_FOLDER" --browser $CYPRESS_BROWSER
+  keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest run "${CY_OPTIONS[@]}" --spec "$SPECS_FOLDER" --browser "$CYPRESS_BROWSER"
+# NOTE: for testing and debug inside the container use --entrypoint /bin/bash
 # https://github.wdf.sap.corp/cc/secrets/tree/master/ci/cypress-dashboard/Dockerfile
 # https://main.ci.eu-de-2.cloud.sap/teams/services/pipelines/cypress-dashboard/jobs/build-cypress-client-image/

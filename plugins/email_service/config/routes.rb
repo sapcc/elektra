@@ -6,7 +6,7 @@ EmailService::Engine.routes.draw do
   resources :templates, only: %i[index show new edit create destroy update]
   resources :configsets, only: %i[index show new edit create destroy update]
   resources :email_verifications, only: %i[index show new create destroy]
-  resources :stats, only: [:index]
+  resources :statistics, only: %i[index show new]
   resources :domain_verifications, only: %i[index show new create destroy] do
     member do
       post "verify_dkim"

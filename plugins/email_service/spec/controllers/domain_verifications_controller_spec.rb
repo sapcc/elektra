@@ -91,7 +91,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
     )
     allow_any_instance_of(
       EmailService::DomainVerificationsController,
-    ).to receive(:check_ec2_creds_cronus_status).and_return(
+    ).to receive(:check_pre_conditions_for_cronus).and_return(
       double("redirect_path").as_null_object,
     )
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:check_verified_identity).and_return(double('redirect_path').as_null_object)
@@ -105,7 +105,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
   end
 
   # check index route
-  describe "GET 'index'" do
+  describe 'GET index' do
     # check email admin role
     context "email_admin" do
       before :each do
@@ -166,7 +166,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it "returns http 401 status" do
         get :index, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
 
@@ -179,7 +181,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it "not allowed" do
         get :index, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
   end
@@ -256,7 +260,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it "returns http 401 status" do
         get :new, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
 
@@ -269,7 +275,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it "not allowed" do
         get :new, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
   end
@@ -351,7 +359,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it "returns http 401 status" do
         post :create, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
 
@@ -364,7 +374,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it "not allowed" do
         post :create, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
   end
@@ -437,7 +449,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it "returns http 401 status" do
         delete :destroy, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
 
@@ -450,7 +464,9 @@ describe EmailService::DomainVerificationsController, type: :controller do
       end
       it "not allowed" do
         delete :destroy, params: default_params.merge(id: @opts[:id])
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
   end

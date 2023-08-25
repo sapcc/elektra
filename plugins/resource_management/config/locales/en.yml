@@ -57,3 +57,6 @@ en:
     images: Images
     bgpvpns: BGP VPNs
     trunks: Trunks
+    endpoint-services: Endpoint services
+    endpoints: Endpoints
+    services: Services

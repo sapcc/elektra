@@ -20,7 +20,10 @@ describe("landing page", () => {
     })
 
     it("contains Converged Cloud", () => {
-      cy.contains("Converged Cloud")
+      cy.get('[id="dashboard"]')
+        .get('[data-shadow-host="true"]')
+        .shadow()
+        .contains("Converged Cloud")
     })
   })
 })

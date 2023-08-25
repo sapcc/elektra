@@ -1,24 +1,24 @@
 =content_for :main_toolbar do
-  eMail Service - AWS SES (Cronus)
+  Email Service - AWS SES (Cronus)
 = render partial: 'email_service/shared/nav.html', locals: { pane: 'verified-emails' }
 
 .tab-content
   .tab-pane.active{ role:"tabpanel", id:"verified-emails-pane" }
     %h3
-      Verified eMails
+      Verified Emails
     .row
       .col-sm-9
         .toolbar
           - if current_user.is_allowed?('email_service:verified_email_create')
             .main-buttons
-              = link_to "Verify an eMail Address", plugin('email_service').new_email_verification_path, data: {modal: true}, class: 'btn btn-primary'
+              = link_to "Verify an Email Address", plugin('email_service').new_email_verification_path, data: {modal: true}, class: 'btn btn-primary'
         .js-table-verified-email
           = render partial: 'table_verified_emails', locals: { all_emails: email_addresses }
 
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p
-            You need to have atleast one Verified identities (eMail Address) in order to send an eMail from Cronus. More information on Cronus eMail Service can be found
+            You need to have atleast one Verified identities (Email Address) in order to send an Email from Cronus. More information on Cronus Email Service can be found
             %b
-              = link_to "here", "https://documentation.global.cloud.sap/services/email-overview", :target => "_blank"
+              = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service", :target => "_blank"
           \.

@@ -36,7 +36,7 @@ describe EmailService::EmailsController, type: :controller do
       :ses_client,
     ).and_return(double("ses_client").as_null_object)
     allow_any_instance_of(EmailService::EmailsController).to receive(
-      :check_ec2_creds_cronus_status,
+      :check_pre_conditions_for_cronus,
     ).and_return(double("redirect_path").as_null_object)
     allow_any_instance_of(EmailService::EmailsController).to receive(
       :check_verified_identity,
@@ -50,9 +50,21 @@ describe EmailService::EmailsController, type: :controller do
     allow_any_instance_of(EmailService::EmailsController).to receive(
       :get_send_data,
     ).and_return(double("data").as_null_object)
+    allow_any_instance_of(EmailService::EmailsController).to receive(
+      :nebula_details,
+    ).and_return(double('nebula_details').as_null_object)
+    allow_any_instance_of(EmailService::EmailsController).to receive(
+      :nebula_status,
+    ).and_return(double('nebula_status').as_null_object)
+    allow_any_instance_of(EmailService::EmailsController).to receive(
+      :nebula_active?,
+    ).and_return(double('nebula_active?').as_null_object)
+    allow_any_instance_of(EmailService::EmailsController).to receive(
+      :nebula_endpoint_url,
+    ).and_return(double('nebula_endpoint_url').as_null_object)
   end
 
-  describe "GET 'index'" do
+  describe 'GET index' do
     context "email_admin" do
       before :each do
         stub_authentication do |token|
@@ -110,7 +122,9 @@ describe EmailService::EmailsController, type: :controller do
       end
       it "returns http status 401" do
         get :index, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
 
@@ -123,7 +137,9 @@ describe EmailService::EmailsController, type: :controller do
       end
       it "not allowed" do
         get :index, params: default_params
-        expect(response).to render_template("application/exceptions/warning")
+        expect(response).to render_template(
+          'application/exceptions/warning',
+        )
       end
     end
   end
