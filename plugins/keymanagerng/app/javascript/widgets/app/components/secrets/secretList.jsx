@@ -20,7 +20,11 @@ const SecretList = ({ secrets, isLoading }) => {
           {isLoading && !secrets ? (
             <HintLoading className="tw-mt-4" />
           ) : (
-            <DataGrid columns={5} minContentColumns={[4]}>
+            <DataGrid
+              columns={5}
+              minContentColumns={[4]}
+              data-target="secret-list-data-grid"
+            >
               <DataGridRow>
                 <DataGridHeadCell>Name/ID</DataGridHeadCell>
                 <DataGridHeadCell>Type</DataGridHeadCell>

@@ -5477,6 +5477,16 @@ jsx-to-string@^1.4.0:
   version "1.7.2"
   resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@1.7.2/package.tgz#151d67d28cd8b346cf037869a2ef16ac3aae3089"
 
+jxLoader@*:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/jxLoader/-/jxLoader-0.1.1.tgz#0134ea5144e533b594fc1ff25ff194e235c53ecd"
+  integrity sha512-ClEvAj3K68y8uKhub3RgTmcRPo5DfIWvtxqrKQdDPyZ1UVHIIKvVvjrAsJFSVL5wjv0rt5iH9SMCZ0XRKNzeUA==
+  dependencies:
+    js-yaml "0.3.x"
+    moo-server "1.3.x"
+    promised-io "*"
+    walker "1.x"
+
 keycode@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.2.1.tgz#09c23b2be0611d26117ea2501c2c391a01f39eff"
@@ -5727,7 +5737,7 @@ merge2@^1.3.0:
 
 "messages-provider@https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.8/package.tgz":
   version "0.1.8"
-  resolved "https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.8/package.tgz#63debc5c9d37eac77afe6b37dbf02721dd602550"
+  resolved "https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.8/package.tgz#deb57bf782b61b3488523a1e51f8c11064e767cf"
   dependencies:
     build "^0.1.4"
     run "^1.4.0"

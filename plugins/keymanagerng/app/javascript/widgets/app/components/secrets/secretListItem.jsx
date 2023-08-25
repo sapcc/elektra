@@ -77,7 +77,7 @@ const SecretListItem = ({ secret }) => {
     </DataGridRow>
   ) : (
     <>
-      <DataGridRow>
+      <DataGridRow data-target={secret.name}>
         <DataGridCell>
           <Link
             className="tw-break-all"
@@ -87,7 +87,9 @@ const SecretListItem = ({ secret }) => {
             {secret.name || secretUuid}
           </Link>
           <div>
-            <Badge className="tw-text-xs">{secretUuid}</Badge>
+            <Badge className="tw-text-xs" data-target="secret-uuid">
+              {secretUuid}
+            </Badge>
           </div>
         </DataGridCell>
         <DataGridCell>{secret.secret_type}</DataGridCell>
@@ -99,6 +101,7 @@ const SecretListItem = ({ secret }) => {
               <Icon
                 icon="deleteForever"
                 onClick={() => handleDelete(secretUuid)}
+                data-target={secretUuid}
               />
             )}
           </ButtonRow>

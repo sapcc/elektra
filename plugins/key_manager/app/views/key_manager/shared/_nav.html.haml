@@ -19,7 +19,7 @@
 .bs-callout.bs-callout-info
   %p
     There is a new version of Key Manager.
-    =link_to "Try it out", plugin('keymanagerng').root_path
+    =link_to "Try it out", plugin('keymanagerng').root_path, data: { target: 'nav-to-new-key-manager' }
 
 %ul.nav.nav-tabs
   %li{class: ('active' if pane == 'secrets'), role: "presentation"}= link_to 'Secrets', plugin('key_manager').secrets_path, aria: {controls:"secrets-pane"}, role: "tab", data: { target: "secrets"}

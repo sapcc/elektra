@@ -1,5 +1,5 @@
 import React from "react"
-import {  Modal, Form } from "juno-ui-components"
+import { Modal, Form } from "juno-ui-components"
 
 const ConfirmationModal = ({ text, show, close, onConfirm }) => {
   return (
@@ -8,13 +8,11 @@ const ConfirmationModal = ({ text, show, close, onConfirm }) => {
       open={show}
       onCancel={close}
       onConfirm={onConfirm}
-      confirmButtonLabel="Save"
+      confirmButtonLabel="Remove"
       cancelButtonLabel="Cancel"
     >
       <Form className="form form-horizontal">
-        <p>
-          {text}
-        </p>
+        <p>{text}</p>
       </Form>
     </Modal>
   )

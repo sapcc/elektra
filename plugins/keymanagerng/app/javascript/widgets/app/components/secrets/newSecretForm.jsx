@@ -17,7 +17,6 @@ import { createSecret } from "../../secretActions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useActions, Messages } from "messages-provider"
 import { getSecretUuid } from "../../../lib/secretHelper"
-import { format } from "date-fns"
 import { DayPicker } from "react-day-picker"
 
 const TYPE_SYMMETRIC = "symmetric"
@@ -64,10 +63,7 @@ const TYPE_TEXTPLAIN_CHARSET_UTF8 = "text/plain;charset=utf-8"
 const secretTypeRelToPayloadContentType = (secretType) => {
   switch (secretType) {
     case TYPE_SYMMETRIC:
-      return [
-        { value: "", label: "Please select a payload content type" },
-        { value: TYPE_OCTET_STREAM, label: TYPE_OCTET_STREAM },
-      ]
+      return [{ value: TYPE_OCTET_STREAM, label: TYPE_OCTET_STREAM }]
     case TYPE_PUBLIC:
     case TYPE_PRIVATE:
       return [
@@ -105,10 +101,6 @@ const formValidation = (formData) => {
   let errors = {}
   if (!formData.name) {
     errors.name = "Name can't be empty!"
-  }
-  if (!formData.expiration) {
-    errors.expiration =
-      "Expiration date is not selected! Please select an expiration date."
   }
   if (!formData.secret_type) {
     errors.secret_type = "Secret type can't be empty!"
@@ -178,7 +170,12 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
     <PanelBody
       footer={
         <PanelFooter>
-          <Button label="Save" onClick={onConfirm} variant="primary" />
+          <Button
+            label="Save"
+            onClick={onConfirm}
+            variant="primary"
+            data-target="save-secret-btn"
+          />
           <Button label="Cancel" onClick={onClose} />
         </PanelFooter>
       }
@@ -194,9 +191,10 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           invalid={validationState?.name ? true : false}
           errortext={validationState?.name}
           required
+          data-target="name-text-input"
         />
         <Container py px={false}>
-          <Label required text="Expiration" />
+          <Label text="Expiration" />
           <DayPicker
             mode="single"
             selected={selectedDay}
@@ -206,17 +204,13 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
                 expiration: oEvent.toISOString(),
               })
               setSelectedDay(oEvent)
-              setValidationState({ ...validationState, expiration: "" })
             }}
           />
           {selectedDay && <p>Selected date is: {selectedDay.toISOString()}</p>}
           <p className="tw-text-xs tw-text-theme-light tw-mt-1">
-            {validationState?.expiration
-              ? ""
-              : "This is a UTC timestamp in ISO 8601 format YYYY-MM-DDTHH:MM:SSZ. If set, the secret will not be available after this time"}
-          </p>
-          <p className="tw-text-xs tw-text-theme-error tw-mt-1">
-            {validationState?.expiration ? validationState.expiration : ""}
+            {
+              "This is a UTC timestamp in ISO 8601 format YYYY-MM-DDTHH:MM:SSZ. If set, the secret will not be available after this time"
+            }
           </p>
         </Container>
 
@@ -276,7 +270,6 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           invalid={validationState?.secret_type ? true : false}
           required
         >
-          <SelectOption label="" value="" />
           {selectTypes("all").map((item, index) => (
             <SelectOption key={index} label={item.label} value={item.value} />
           ))}
@@ -293,6 +286,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           errortext={validationState?.payload}
           invalid={validationState?.payload ? true : false}
           required
+          data-target="payload-text-area"
         />
         <SelectRow
           label="Payload Content Type"
@@ -308,12 +302,15 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           required
         >
           {!formData.secret_type && (
-            <SelectOption label="Please first select a secret type" value="" />
+            <SelectOption
+              label="Please first select a secret type"
+              value="Please first select a secret type"
+            />
           )}
-          {formData.secret_type && <SelectOption label="" value="" />}
-          {payloadContentTypeOptions.map((item, index) => (
-            <SelectOption key={index} label={item.label} value={item.value} />
-          ))}
+          {formData.secret_type &&
+            payloadContentTypeOptions.map((item, index) => (
+              <SelectOption key={index} label={item.label} value={item.value} />
+            ))}
         </SelectRow>
         {formData.secret_type === "symmetric" && (
           <>
