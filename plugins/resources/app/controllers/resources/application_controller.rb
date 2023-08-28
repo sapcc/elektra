@@ -130,10 +130,26 @@ module Resources
 
     def bigvm_resources
       # render json: fetch_big_vm_data
+      require "net/http"
+      begin
+        uri = URI("https://migration-recommender-service.cca-pro.cerebro.c.#{current_region}.cloud.sap/public/api/v1/placeable-vm/project/#{@scoped_project_id}")
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        if ENV.key?("ELEKTRA_SSL_VERIFY_PEER") &&
+          (ENV["ELEKTRA_SSL_VERIFY_PEER"] == "false")
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+        big_vm_data = http.get(uri).body
+      rescue e
+        errors.add(
+          "Could not load big vm data #{e.message}",
+        )
+      end
+      
       render json:
                (
                  if dedicated_hana_vm_region?
-                   fetch_hana_big_vm_data
+                   big_vm_data
                  else
                    fetch_big_vm_data
                  end
@@ -258,6 +274,8 @@ module Resources
     #    to get the service_host
     # 5. Show the Flavors which would fit.
     def fetch_hana_big_vm_data
+      puts "##############"
+
       hana_trait = "CUSTOM_HANA_EXCLUSIVE_HOST"
       custom_traits = %w[CUSTOM_NUMASIZE_C48_M729 CUSTOM_NUMASIZE_C48_M1459]
 
@@ -389,6 +407,7 @@ module Resources
     # fetches all bigvms taking into account the availability zone, project shards
     # and provider traits
     def fetch_big_vm_data
+      puts "xxxxxxxxxxxxxxxxxxxxx"
       # get flavors with NUMASIZE trait
       @flavors = @flavors ||  cloud_admin.compute.flavors
 

@@ -40,6 +40,7 @@ export const getBigvmResources = () => {
     ajaxHelper
       .get(`/project/bigvm_resources`)
       .then((response) => {
+        console.log(response)
         if (response.data?.errors) {
           reject(response.data?.errors)
         } else {
