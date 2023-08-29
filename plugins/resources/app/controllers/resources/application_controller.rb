@@ -129,7 +129,8 @@ module Resources
     end
 
     def bigvm_resources
-      # render json: fetch_big_vm_data
+      # API Docu
+      # https://migration-recommender-service.cca-pro.cerebro.c.eu-de-1.cloud.sap/public/docs#/default/get_placeable_vm_for_project_api_v1_placeable_vm_project__openstack_project_id__get
       require "net/http"
       begin
         uri = URI("https://migration-recommender-service.cca-pro.cerebro.c.#{current_region}.cloud.sap/public/api/v1/placeable-vm/project/#{@scoped_project_id}")
