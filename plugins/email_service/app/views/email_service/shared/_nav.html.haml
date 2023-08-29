@@ -8,3 +8,4 @@
   -# %li{class: ('active' if pane == 'statistics'), role: "presentation"}= link_to 'Statistics', plugin('email_service').statistics_path, aria: {controls:"statistics-pane"}, role: "tab"
   %li{class: ('active' if pane == 'ec2'), role: "presentation"}= link_to 'EC2 Credentials', plugin('email_service').ec2_credentials_path, aria: {controls:"settings-pane"}, role: "tab"
   %li{class: ('active' if pane == 'settings'), role: "presentation"}= link_to 'Settings', plugin('email_service').settings_path, aria: {controls:"settings-pane"}, role: "tab"
+  %li{class: ('active' if pane == 'suppression-list'), role: "presentation"}= link_to 'Suppression List', plugin('email_service').suppression_lists_path, aria: {controls:"suppression-list-pane"}, role: "tab"

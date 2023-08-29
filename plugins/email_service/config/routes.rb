@@ -1,5 +1,5 @@
 EmailService::Engine.routes.draw do
-  get "/" => "emails#index", :as => :index
+  get '/' => 'emails#index', :as => :index
   resources :plain_emails, only: %i[new create edit]
   resources :templated_emails, only: %i[new create edit]
   resources :emails, only: [:index]
@@ -9,15 +9,15 @@ EmailService::Engine.routes.draw do
   resources :statistics, only: %i[index show new]
   resources :domain_verifications, only: %i[index show new create destroy] do
     member do
-      post "verify_dkim"
-      post "activate_dkim"
-      post "deactivate_dkim"
+      post 'verify_dkim'
+      post 'activate_dkim'
+      post 'deactivate_dkim'
     end
   end
   resources :settings, only: %i[index destroy] do
     member do
-      post "enable_cronus"
-      post "disable_cronus"
+      post 'enable_cronus'
+      post 'disable_cronus'
     end
   end
 
@@ -32,5 +32,7 @@ EmailService::Engine.routes.draw do
 
   # test helper methods with the hidden route
   # get '/web' => 'web#index', as: :web
-  get "/web/test" => "web#test", :as => :test
+  get '/web/test' => 'web#test', :as => :test
+
+  resources :suppression_lists, only: %i[index show new create destroy]
 end
