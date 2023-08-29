@@ -140,10 +140,9 @@ module Resources
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end
         big_vm_data = http.get(uri).body
-      rescue e
-        errors.add(
-          "Could not load big vm data #{e.message}",
-        )
+      rescue StandardError => e
+        render json: { error: "Clould not load bigVMData" }, status: 422
+        return
       end
       render json: big_vm_data
     end

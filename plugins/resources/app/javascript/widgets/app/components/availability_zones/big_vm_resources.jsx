@@ -2,7 +2,6 @@ import React from "react"
 import { getBigvmResources } from "../../actions/elektra"
 
 const columnsPerRow = 3
-
 /**
  * This component shows available HANA Vms
  * @param {Array} bigVmResources a list of vms capable to host HANA instances
@@ -24,9 +23,9 @@ const AvailableBigVmResources = () => {
 
   const columnWidth = React.useMemo(() => {
     if (!placeableVMs || placeableVMs.length === 0) return 1
-    if (placeableVMs.length >= 3) return 4 //more than on line, max 3 columns per row
+    if (placeableVMs.length >= columnsPerRow) return 12 / columnsPerRow //more than on line, max 3 columns per row
     return Math.floor(12 / placeableVMs.length)
-  }, [placeableVMs])
+  }, [placeableVMs, columnsPerRow])
 
   const itemChunks = React.useMemo(() => {
     if (!placeableVMs) return []
@@ -88,7 +87,7 @@ const AvailableBigVmResources = () => {
                         <div key={i3}>
                           {Object.keys(flavor)[0]}&nbsp;
                           <span className="small text-muted">
-                            ({Object.values(flavor)[0]})
+                            ({Object.values(flavor)[0]} VMs available)
                           </span>
                         </div>
                       ))}
