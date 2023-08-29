@@ -14,7 +14,6 @@ module EmailService
       @nebula_endpoint = nebula_endpoint_url
       @aws_account_details = aws_account_details
       @deliverability_dashboard_options = get_deliverability_dashboard_options
-
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
         "#{I18n.t('email_service.errors.cronus_account_details_list')} : #{e.message}"
