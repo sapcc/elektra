@@ -141,7 +141,7 @@ module Resources
         end
         big_vm_data = http.get(uri).body
       rescue StandardError => e
-        render json: { error: "Clould not load bigVMData" }, status: 422
+        render json: { error: "Could not load bigVMData" }, status: 422
         return
       end
       render json: big_vm_data
@@ -230,7 +230,5 @@ module Resources
       end
       return result
     end
-
-
   end
 end
