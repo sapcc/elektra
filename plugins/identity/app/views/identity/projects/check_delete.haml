@@ -2,7 +2,7 @@
 = simple_form_for @prodel, url: plugin("identity").check_delete_project_path, method: :get, remote: request.xhr?, html: {data: {modal: modal?}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   = f.input :project_domain_name, icon_hint: 'domain id is also supported'
-  = f.input :project_name, icon_hint: 'project id is also supported'
+  = f.input :project_name, icon_hint: 'project id is also supported (and should be provided when domain is omited)'
 
   = button_tag "Check", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
 

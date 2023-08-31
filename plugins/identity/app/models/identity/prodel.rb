@@ -4,7 +4,7 @@ module Identity
   class Prodel
     include ActiveModel::Model
     
-    validates_presence_of :project_domain_name, :project_name
+    validates_presence_of :project_name
 
     attr_accessor :project_domain_name, :project_name
   end
