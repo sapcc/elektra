@@ -12,29 +12,24 @@ module KeyManager
         state_class = "state_failed"
       end
 
-      haml_tag :span do
-        haml_tag :i,
-                 {
-                   class: "fa fa-square #{state_class}",
-                   data: {
-                     popover_type: "job-history",
-                   },
-                 }
-        haml_concat status.capitalize
+      content_tag :span do
+        content_tag :i,status.capitalize,
+                {
+                  class: "fa fa-square #{state_class}",
+                  data: {
+                    popover_type: "job-history",
+                  },
+                }
       end
     end
 
     def secret_content_types(data)
       unless data.blank?
-        haml_tag :div, { class: "static-tags clearfix" } do
+        content_tag :div, { class: "static-tags clearfix" } do
           data.each do |key, value|
-            haml_tag :div, { class: "tag" } do
-              haml_tag :div, { class: "key" } do
-                haml_concat key
-              end
-              haml_tag :div, { class: "value" } do
-                haml_concat value
-              end
+            content_tag :div, { class: "tag" } do
+              content_tag :div, key, { class: "key" } 
+              content_tag :div, value, { class: "value" }
             end
           end
         end

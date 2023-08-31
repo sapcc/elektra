@@ -7,28 +7,28 @@
 .modal-body.static-columns
 
   .modal-flashes
-    = render "automation/shared/flashes.html"
+    = render "automation/shared/flashes"
 
   .form-horizontal
-    - form_horizontal_static_input('ID', @automation.id)
-    - form_horizontal_static_input('Name', @automation.name)
-    - form_horizontal_static_input('Repository', @automation.repository)
-    - form_horizontal_static_input('Repository authentication', @automation.repository_authentication_enabled)
-    - form_horizontal_static_input('Repository version', @automation.repository_revision)
-    - form_horizontal_static_input('Timeout', @automation.timeout)
+    = form_horizontal_static_input('ID', @automation.id)
+    = form_horizontal_static_input('Name', @automation.name)
+    = form_horizontal_static_input('Repository', @automation.repository)
+    = form_horizontal_static_input('Repository authentication', @automation.repository_authentication_enabled)
+    = form_horizontal_static_input('Repository version', @automation.repository_revision)
+    = form_horizontal_static_input('Timeout', @automation.timeout)
     -# No use case for automation tags right now
-    -# - form_horizontal_static_hash('Tags', @automation.tags)
-    - form_horizontal_static_input('Type', @automation.type)
+    -# = form_horizontal_static_hash('Tags', @automation.tags)
+    = form_horizontal_static_input('Type', @automation.type)
 
     - if @automation.type == ::Automation::Automation::Types::CHEF
-      - form_horizontal_static_array('Runlist', @automation.run_list)
-      - form_horizontal_static_json_editor('Attributes', @automation.chef_attributes)
-      - form_horizontal_static_input('Chef version', @automation.chef_version.blank? ? 'Latest' : @automation.chef_version)
-      - form_horizontal_static_input('Debug', @automation.debug)
+      = form_horizontal_static_array('Runlist', @automation.run_list)
+      = form_horizontal_static_json_editor('Attributes', @automation.chef_attributes)
+      = form_horizontal_static_input('Chef version', @automation.chef_version.blank? ? 'Latest' : @automation.chef_version)
+      = form_horizontal_static_input('Debug', @automation.debug)
     - elsif @automation.type == ::Automation::Automation::Types::SCRIPT
-      - form_horizontal_static_input('Path', @automation.path)
-      - form_horizontal_static_array('Arguments', @automation.arguments)
-      - form_horizontal_static_hash('Environment', @automation.environment)
+      = form_horizontal_static_input('Path', @automation.path)
+      = form_horizontal_static_array('Arguments', @automation.arguments)
+      = form_horizontal_static_hash('Environment', @automation.environment)
 
 
 %div{class: modal? ? 'modal-footer' : ''}

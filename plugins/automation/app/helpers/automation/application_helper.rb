@@ -13,9 +13,7 @@ module Automation
     end
 
     def flash_box(key, value)
-      haml_tag :p, class: "alert alert-#{key}", role: "alert" do
-        haml_concat html_escape(value)
-      end
+      content_tag :p, html_escape(value), class: "alert alert-#{key}", role: "alert"
     end
 
     def date_humanize(date)
@@ -25,15 +23,11 @@ module Automation
     end
 
     def form_horizontal_static_input(label, value)
-      haml_tag :div, class: "form-group" do
-        haml_tag :label, class: "col-sm-4 control-label" do
-          haml_concat label
-        end
-        haml_tag :div, class: "col-sm-8" do
-          haml_tag :div, class: "form-control-static" do
-            haml_concat html_escape(value)
-          end
-        end
+      content_tag :div, class: "form-group" do
+        concat (content_tag :label, label, class: "col-sm-4 control-label")
+        concat (content_tag :div, class: "col-sm-8" do
+          content_tag :div, html_escape(value), class: "form-control-static"
+        end)
       end
     end
 
@@ -49,39 +43,35 @@ module Automation
     )
       has_error = false
       if !object.blank? && !object.errors.blank? &&
-           !object.errors.messages.blank? &&
-           !object.errors.messages[attribute_name.to_sym].blank?
+          !object.errors.messages.blank? &&
+          !object.errors.messages[attribute_name.to_sym].blank?
         has_error = true
       end
 
-      haml_tag :div,
-               class: "form-group #{has_error ? "has-error" : ""}",
-               id: id do
-        haml_tag :label,
-                 class: "text col-sm-4 control-label #{label_classes}" do
-          haml_concat label
-        end
-        haml_tag :div, class: "col-sm-8" do
-          haml_tag :div, class: "input-wrapper" do
-            haml_tag :div,
-                     id: "jsoneditor",
-                     data: {
-                       mode: "code",
-                       content_id: content,
-                       on_change_update_field: on_change_update_field,
-                     }
+      content_tag :div,
+              class: "form-group #{has_error ? "has-error" : ""}",
+              id: id do
+        content_tag :label, label, class: "text col-sm-4 control-label #{label_classes}"
+        
+        content_tag :div, class: "col-sm-8" do
+          content_tag :div, class: "input-wrapper" do
+            content_tag :div,
+                    id: "jsoneditor",
+                    data: {
+                      mode: "code",
+                      content_id: content,
+                      on_change_update_field: on_change_update_field,
+                    }
           end
           unless help_text.blank?
-            haml_tag :p, class: "help-block" do
-              haml_tag :i, class: "fa fa-info-circle"
-              haml_concat help_text
+            content_tag :p, class: "help-block" do
+              concat content_tag :i, class: "fa fa-info-circle"
+              concat help_text
             end
           end
           if has_error
             object.errors.messages[attribute_name.to_sym].each do |message|
-              haml_tag :span, class: "help-block" do
-                haml_concat message
-              end
+              concat content_tag :span, message, class: "help-block" 
             end
           end
         end
@@ -89,52 +79,37 @@ module Automation
     end
 
     def form_horizontal_static_json_editor(label, value)
-      haml_tag :div, class: "form-group" do
-        haml_tag :label, class: "col-sm-4 control-label" do
-          haml_concat label
-        end
-        haml_tag :div, class: "col-sm-8" do
-          haml_tag :div,
-                   id: "jsoneditor",
-                   data: {
-                     mode: "view",
-                     content: value,
-                   }
-        end
+      content_tag :div, class: "form-group" do
+        concat content_tag :label, label, class: "col-sm-4 control-label"
+        concat (content_tag :div, class: "col-sm-8" do
+          concat (content_tag :div, nil, id: "jsoneditor", data: { mode: "view", content: value })
+        end)
       end
     end
 
     def form_horizontal_static_hash(label, data)
-      haml_tag :div, class: "form-group" do
-        haml_tag :label, class: "col-sm-4 control-label" do
-          haml_concat label
-        end
-        haml_tag :div, class: "col-sm-8" do
+      content_tag :div, class: "form-group" do
+        concat (content_tag :label, label, class: "col-sm-4 control-label")
+        concat (content_tag :div, class: "col-sm-8" do
           unless data.blank?
-            haml_tag :div, class: "form-control-static" do
-              form_static_hash_value(data)
-            end
+            content_tag :div, form_static_hash_value(data), class: "form-control-static" 
           end
-        end
+        end)
       end
     end
 
     def form_static_hash_value(data)
       unless data.blank?
-        haml_tag :div, class: "static-tags clearfix" do
+        content_tag :div, class: "static-tags clearfix" do
           data
             .split(Helpers::TAG_SEPERATOR)
             .each do |element|
               elements_array = element.split(/\:|\=/)
               next unless elements_array.count == 2
 
-              haml_tag :div, class: "tag" do
-                haml_tag :div, class: "key" do
-                  haml_concat elements_array[0]
-                end
-                haml_tag :div, class: "value" do
-                  haml_concat elements_array[1]
-                end
+              content_tag :div, class: "tag" do
+                concat content_tag :div, elements_array[0], class: "key" 
+                concat content_tag :div, elements_array[1], class: "value" 
               end
             end
         end
@@ -142,27 +117,23 @@ module Automation
     end
 
     def form_horizontal_static_array(label, data)
-      haml_tag :div, class: "form-group" do
-        haml_tag :label, class: "col-sm-4 control-label" do
-          haml_concat label
-        end
-        haml_tag :div, class: "col-sm-8" do
+      content_tag :div, class: "form-group" do
+        concat (content_tag :label, label, class: "col-sm-4 control-label")
+        concat (content_tag :div, class: "col-sm-8" do
           unless data.blank?
-            haml_tag :div, class: "form-control-static" do
-              haml_tag :div, class: "static-tags clearfix" do
+            concat (content_tag :div, class: "form-control-static" do
+              content_tag :div, class: "static-tags clearfix" do
                 data
                   .split(Helpers::TAG_SEPERATOR)
                   .each do |value|
-                    haml_tag :div, class: "tag" do
-                      haml_tag :div, class: "value" do
-                        haml_concat html_escape(value)
-                      end
-                    end
+                    concat (content_tag :div, class: "tag" do
+                      content_tag :div, html_escape(value), class: "value"
+                    end)
                   end
               end
-            end
+            end)
           end
-        end
+        end)
       end
     end
 
@@ -172,7 +143,7 @@ module Automation
 
     def node_form_inline_tags(data)
       if data.blank?
-        haml_concat "No tags available"
+        "No tags available"
       else
         form_static_hash_value(data)
       end
@@ -180,15 +151,11 @@ module Automation
 
     def node_table_tags(data)
       unless data.blank?
-        haml_tag :div, class: "static-tags clearfix" do
+        content_tag :div, class: "static-tags clearfix" do
           data.each do |key, value|
-            haml_tag :div, class: "tag" do
-              haml_tag :div, class: "key" do
-                haml_concat key
-              end
-              haml_tag :div, class: "value" do
-                haml_concat value
-              end
+            content_tag :div, class: "tag" do
+              concat content_tag :div, key, class: "key"
+              concat content_tag :div, value, class: "value" 
             end
           end
         end
@@ -208,19 +175,19 @@ module Automation
         addresses.each do |_network_name, ip_values|
           next unless ip_values && !ip_values.empty?
 
-          haml_tag :div, class: "list-group borderless" do
+          content_tag :div, class: "list-group borderless" do
             ip_values.each do |values|
               next if values["addr"].blank?
 
-              haml_tag :p, class: "list-group-item-text" do
+              content_tag :p, class: "list-group-item-text" do
                 if values["OS-EXT-IPS:type"] == "floating"
-                  haml_tag :i, class: "fa fa-globe fa-fw"
+                  content_tag :i, class: "fa fa-globe fa-fw"
                 elsif values["OS-EXT-IPS:type"] == "fixed"
-                  haml_tag :i, class: "fa fa-desktop fa-fw"
+                  content_tag :i, class: "fa fa-desktop fa-fw"
                 end
-                haml_concat values["addr"]
-                haml_tag :span, class: "info-text" do
-                  haml_concat values["OS-EXT-IPS:type"]
+                concat values["addr"]
+                content_tag :span, class: "info-text" do
+                  concat values["OS-EXT-IPS:type"]
                 end
               end
             end
@@ -236,55 +203,51 @@ module Automation
     def job_history_entry(status)
       case status
       when ::Automation::State::Job::QUEUED
-        haml_tag :i,
-                 class: "fa fa-square state_success",
-                 data: {
-                   popover_type: "job-history",
-                 }
+        content_tag :i,
+                class: "fa fa-square state_success",
+                data: {
+                  popover_type: "job-history",
+                }
       when ::Automation::State::Job::EXECUTING
-        haml_tag :i,
-                 class: "fa fa-spinner fa-spin",
-                 data: {
-                   popover_type: "job-history",
-                 }
+        content_tag :i,
+                class: "fa fa-spinner fa-spin",
+                data: {
+                  popover_type: "job-history",
+                }
       when ::Automation::State::Job::FAILED
-        haml_tag :i,
-                 class: "fa fa-square state_failed",
-                 data: {
-                   popover_type: "job-history",
-                 }
+        content_tag :i,
+                class: "fa fa-square state_failed",
+                data: {
+                  popover_type: "job-history",
+                }
       when ::Automation::State::Job::COMPLETED
-        haml_tag :i,
-                 class: "fa fa-square state_success",
-                 data: {
-                   popover_type: "job-history",
-                 }
+        content_tag :i,
+                class: "fa fa-square state_success",
+                data: {
+                  popover_type: "job-history",
+                }
       end
     end
 
     def job_icon_state(status)
       case status
       when ::Automation::State::Job::QUEUED
-        haml_tag :i, class: "fa fa-square state_success"
+        content_tag :i, class: "fa fa-square state_success"
       when ::Automation::State::Job::EXECUTING
-        haml_tag :i, class: "fa fa-spinner fa-spin"
+        content_tag :i, class: "fa fa-spinner fa-spin"
       when ::Automation::State::Job::FAILED
-        haml_tag :i, class: "fa fa-square state_failed"
+        content_tag :i, class: "fa fa-square state_failed"
       when ::Automation::State::Job::COMPLETED
-        haml_tag :i, class: "fa fa-square state_success"
+        content_tag :i, class: "fa fa-square state_success"
       end
     end
 
     def job_state(status)
       case status
       when State::Job::FAILED
-        haml_tag :span, class: "state_failed" do
-          haml_concat status.to_s.humanize
-        end
+        content_tag :span, status.to_s.humanize, class: "state_failed"
       else
-        haml_tag :span do
-          haml_concat status.to_s.humanize
-        end
+        content_tag :span, status.to_s.humanize
       end
     end
 
@@ -294,9 +257,9 @@ module Automation
 
     def displayCheck(option)
       if option
-        haml_tag :i, class: "fa fa-check"
+        content_tag :i, class: "fa fa-check"
       else
-        haml_tag :i, class: "fa fa-times"
+        content_tag :i, class: "fa fa-times"
       end
     end
 
@@ -331,32 +294,27 @@ module Automation
     def run_icon_state(state)
       case state
       when ::Automation::State::Run::PREPARING
-        haml_tag :i, class: "fa fa-square state_success"
+        content_tag :i, nil, class: "fa fa-square state_success"
       when ::Automation::State::Run::EXECUTING
-        haml_tag :i, class: "fa fa-spinner fa-spin"
+        content_tag :i, nil, class: "fa fa-spinner fa-spin"
       when ::Automation::State::Run::FAILED
-        haml_tag :i, class: "fa fa-square state_failed"
+        content_tag :i, nil, class: "fa fa-square state_failed"
       when ::Automation::State::Run::COMPLETED
-        haml_tag :i, class: "fa fa-square state_success"
+        content_tag :i, nil, class: "fa fa-square state_success"
       end
     end
 
     def run_state(state)
       case state
       when State::Run::FAILED
-        haml_tag :span, class: "state_failed" do
-          haml_concat state.to_s.humanize
-        end
+        content_tag :span,  state.to_s.humanize, class: "state_failed"
       else
-        haml_tag :span do
-          haml_concat state.to_s.humanize
-        end
+        content_tag :span, state.to_s.humanize
       end
     end
 
     def run_polling?(state)
-      if state == ::Automation::State::Run::FAILED ||
-           state == ::Automation::State::Run::COMPLETED
+      if state == ::Automation::State::Run::FAILED || state == ::Automation::State::Run::COMPLETED
         false
       else
         true

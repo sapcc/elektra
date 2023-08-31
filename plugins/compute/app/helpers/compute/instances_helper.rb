@@ -310,34 +310,28 @@ module Compute
     end
 
     def render_fixed_floating_ips(ips)
-      capture_haml do
-        ips.each do |ip_data|
+        ips.collect do |ip_data|
           fixed = ip_data["fixed"]
           floating = ip_data["floating"]
-
-          haml_tag :p, class: "list-group-item-text" do
-            haml_tag :span,
-                     data: {
-                       toggle: "tooltip",
-                     },
-                     title: "Fixed IP (#{fixed["network_name"]})" do
-              haml_tag :i, "", class: "fa fa-desktop fa-fw"
-              haml_concat fixed["addr"]
-            end
+          
+        
+          content_tag :p, class: "list-group-item-text" do
+            content = (content_tag :span, data: { toggle: "tooltip" }, title: "Fixed IP (#{fixed["network_name"]})" do
+              concat content_tag :i, "", class: "fa fa-desktop fa-fw"
+              concat fixed["addr"]
+              concat " "
+            end)
             if floating
-              haml_tag :span,
-                       data: {
-                         toggle: "tooltip",
-                       },
-                       title: "Floating IP (#{floating["network_name"]})" do
-                haml_tag(:i, "", class: "fa fa-arrows-h")
-                haml_tag(:i, "", class: "fa fa-globe fa-fw")
-                haml_concat floating["addr"]
-              end
+              content << (content_tag :span, data: { toggle: "tooltip" }, title: "Floating IP (#{floating["network_name"]})" do
+                concat content_tag(:i, "", class: "fa fa-arrows-h")
+                concat " "
+                concat content_tag(:i, "", class: "fa fa-globe fa-fw")
+                concat floating["addr"]
+              end)
             end
+            content
           end
-        end
-      end
+        end.join.html_safe
     end
     #########################################################################
     # End op Floating IPs

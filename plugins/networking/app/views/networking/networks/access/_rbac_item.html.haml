@@ -1,8 +1,7 @@
 %tr{id: "rbac_#{rbac.id}"}
   %td= rbac.action
   %td= rbac.id
-  %td
-    - rbac_target(rbac.target_tenant)
+  %td= rbac_target(rbac.target_tenant)
 
   %td.snug
     - if current_user.is_allowed?("networking:rbac_policy_delete", {network: network })

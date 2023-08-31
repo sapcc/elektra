@@ -5,7 +5,7 @@
 
   .modal-body.static-columns
     .modal-flashes
-      = render "email_service/shared/flashes.html"
+      = render "email_service/shared/flashes"
 
     = render partial: 'form', locals: {statistics: @statistics, f: f, form_type: 'new' }
 

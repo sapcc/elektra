@@ -8,9 +8,7 @@
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
     = javascript_include_tag 'essentials', 'data-turbolinks-track' => true
 
-    = favicon_png
-    = favicon_ico
-    = apple_touch_icon
+    = render "layouts/favicon"
 
     = csrf_meta_tags
 
