@@ -222,7 +222,7 @@ module Identity
         rescue Elektron::Errors::ApiResponse => e
           errorBody = e.response.body.to_h
           message = errorBody["message"] || errorBody["status"]
-          flash.now[:error] = "Cannot delete project '#{project_name_or_id}' in domain '#{project_domain_name_or_id}', prodel API: #{message}"
+          flash.now[:error] = "Cannot delete project '#{project_to_delete_name || project_to_delete_id}' in domain '#{prodel_project_domain_name}', prodel API: #{message}"
         end
       else
         flash.now[:error] = "Cannot delete, no project_to_delete_id given!"
