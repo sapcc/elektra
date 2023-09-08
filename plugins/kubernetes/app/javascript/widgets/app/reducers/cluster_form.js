@@ -15,14 +15,14 @@ const initialClusterFormState = {
   method: "post",
   action: "",
   data: {
-    name: "",
+    name: "my-cluster",
     spec: {
       nodePools: [
         {
           flavor: "m1.small",
           image: "",
-          name: "",
-          size: "",
+          name: "pool-1",
+          size: 1,
           availabilityZone: "",
           new: true,
           config: {
@@ -42,11 +42,59 @@ const initialClusterFormState = {
   },
   isSubmitting: false,
   errors: null,
-  isValid: false,
+  isValid: true,
   nodePoolsValid: false,
   advancedOptionsValid: true,
   updatePending: false,
   advancedOptionsVisible: false,
+}
+
+const NAME_REGEX = /^[a-z]([-a-z0-9]*[a-z0-9])?$/
+export const validateName = (name) => name?.length > 0 && name.match(NAME_REGEX)
+
+// validate the form data
+const validateFormData = (state) => {
+  // console.log("========VALIDATING: ", state)
+  // if there is no state data return false
+  if (!state?.data) return false
+
+  // validate node pools
+  let nodePoolsValid = true
+  // for each node pool
+  for (var nodePool of Array.from(state.data.spec.nodePools)) {
+    // console.log(
+    //   "!validateName(nodePool?.name)",
+    //   !validateName(nodePool?.name),
+    //   "!(nodePool.size >= 0)",
+    //   !(nodePool.size >= 0),
+    //   "!(nodePool.flavor?.length > 0)",
+    //   !(nodePool.flavor?.length > 0),
+    //   "!nodePool.availabilityZone ",
+    //   !nodePool.availabilityZone,
+    //   "!(nodePool.availabilityZone?.length > 0)",
+    //   !(nodePool.availabilityZone?.length > 0)
+    // )
+
+    // if any of the required fields are missing
+    // set nodePoolsValid to false
+    if (
+      !validateName(nodePool?.name) ||
+      !(nodePool.size >= 0) ||
+      !(nodePool.flavor?.length > 0) ||
+      !nodePool.availabilityZone ||
+      !(nodePool.availabilityZone?.length > 0)
+    ) {
+      nodePoolsValid = false
+    }
+  }
+
+  // validate name and node pools and advanced options
+  return (
+    validateName(state?.data?.name) &&
+    state?.data?.spec?.nodePools?.length > 0 &&
+    nodePoolsValid &&
+    state.advancedOptionsValid
+  )
 }
 
 const resetClusterForm = function (state, ...rest) {
@@ -61,10 +109,7 @@ const updateClusterForm = function (state, { name, value }) {
     errors: null,
     isSubmitting: false,
     updatePending: true,
-    isValid:
-      data.name.length > 0 &&
-      state.nodePoolsValid &&
-      state.advancedOptionsValid,
+    isValid: validateFormData({ ...state, data }),
   })
 }
 
@@ -131,14 +176,14 @@ const updateNodePoolForm = function (state, { index, name, value }) {
   stateClone.data.spec.nodePools = nodePoolsClone
   const poolValidity =
     nodePool.name.length > 0 &&
+    nodePool.name.match(NAME_REGEX) &&
     nodePool.size >= 0 &&
     nodePool.flavor.length > 0 &&
     nodePool.availabilityZone.length > 0
 
   return ReactHelpers.mergeObjects(state, stateClone, {
     nodePoolsValid: poolValidity,
-    isValid:
-      state.data.name.length > 0 && poolValidity && state.advancedOptionsValid,
+    isValid: validateFormData(stateClone),
     updatePending: true,
   })
 }
@@ -148,8 +193,8 @@ const addNodePool = function (state, { defaultAZ }) {
   const newPool = {
     flavor: "m1.small",
     image: "",
-    name: "",
-    size: "",
+    name: `pool-${state?.data?.spec?.nodePools?.length + 1}`,
+    size: 1,
     availabilityZone: defaultAZ,
     config: {
       allowReboot: true,
@@ -163,8 +208,8 @@ const addNodePool = function (state, { defaultAZ }) {
   const stateClone = JSON.parse(JSON.stringify(state))
   stateClone.data.spec.nodePools = nodePoolsClone
   stateClone.updatePending = true
-  stateClone.isValid = false
-  stateClone.nodePoolsValid = false
+  stateClone.isValid = validateFormData(stateClone)
+  // stateClone.nodePoolsValid = false
   return ReactHelpers.mergeObjects({}, state, stateClone)
 }
 
@@ -178,6 +223,7 @@ const deleteNodePool = function (state, { index }) {
   const stateClone = JSON.parse(JSON.stringify(state))
   stateClone.data.spec.nodePools = nodePoolsFiltered
   stateClone.updatePending = updateNeeded
+  stateClone.isValid = validateFormData(stateClone)
   return ReactHelpers.mergeObjects({}, state, stateClone)
 }
 
@@ -197,9 +243,8 @@ const prepareClusterForm = function (state, { action, method, data }) {
   }
   if (data) {
     values["data"] = data
-  }
-  // deep copy spec
-  if (data) {
+
+    // deep copy spec
     values.data.spec = ReactHelpers.mergeObjects(
       {},
       initialClusterFormState.data.spec,
@@ -208,23 +253,10 @@ const prepareClusterForm = function (state, { action, method, data }) {
   }
 
   // validity check
-  if (data) {
-    let nodePoolsValid = true
-    for (var nodePool of Array.from(data.spec.nodePools)) {
-      if (
-        !(nodePool.name.length > 0) ||
-        !(nodePool.size >= 0) ||
-        !(nodePool.flavor.length > 0) ||
-        !nodePool.availabilityZone ||
-        !(nodePool.availabilityZone.length > 0)
-      ) {
-        nodePoolsValid = false
-      }
-    }
-
-    values["isValid"] =
-      data.name.length > 0 && nodePoolsValid && state.advancedOptionsValid
-  }
+  values["isValid"] = validateFormData({
+    ...state,
+    data: values.data || state.data,
+  })
 
   return ReactHelpers.mergeObjects({}, initialClusterFormState, values)
 }

@@ -20,11 +20,7 @@ let AdvancedOptions = function ({
   handleVersionChange,
   edit,
 }) {
-  let i, e, version
-  const onChange = function (e) {
-    e.preventDefault()
-    return handleChange(e.target.name, e.target.value)
-  }
+  let i
 
   const isValidVersion = function (currentVersion, newVersion) {
     // if we are not in the edit case there are no rules for which versions are valid, we get the acceptable ones from info.supportedClusterVersions
@@ -346,37 +342,26 @@ let AdvancedOptions = function ({
               </div>
             </div>
           ) : (
-            React.createElement(
-              "div",
-              { className: "input-wrapper" },
-              React.createElement(
-                "select",
-                {
-                  name: "version",
-                  className: "select form-control",
-                  value:
-                    spec.version ||
-                    cluster.status.apiserverVersion ||
-                    info.defaultClusterVersion,
-                  onChange(e) {
-                    return handleVersionChange(e.target.value)
-                  },
-                },
-                (() => {
-                  const result4 = []
-                  for (version of Array.from(
-                    availableVersions(cluster.status.apiserverVersion)
-                  )) {
-                    result4.push(
-                      <option value={version} key={version}>
-                        {version}
-                      </option>
-                    )
-                  }
-                  return result4
-                })()
-              )
-            )
+            <div className="input-wrapper">
+              <select
+                name="version"
+                className="select form-control"
+                value={
+                  spec.version ||
+                  cluster.status.apiserverVersion ||
+                  info.defaultClusterVersion
+                }
+                onChange={(e) => handleVersionChange(e.target.value)}
+              >
+                {Array.from(
+                  availableVersions(cluster.status.apiserverVersion)
+                ).map((version) => (
+                  <option value={version} key={version}>
+                    {version}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
         </div>
       </div>

@@ -10,6 +10,8 @@ import React from "react"
 import ReactFormHelpers from "../../lib/form_helpers"
 import ReactModal from "../../lib/modal"
 import { connect } from "react-redux"
+import { validateName } from "../../reducers/cluster_form"
+import { changeVersion } from "../../actions/clusters"
 
 import {
   updateClusterForm,
@@ -24,7 +26,7 @@ import {
 
 import AdvancedOptions from "./advancedoptions"
 
-let NewCluster = function ({
+let NewCluster = ({
   close,
   clusterForm,
   metaData,
@@ -37,437 +39,383 @@ let NewCluster = function ({
   handleAdvancedOptionsToggle,
   handleSSHKeyChange,
   handleKeyPairChange,
-}) {
-  let defaultAZName
-  let keyPair, flavor
-  const onChange = function (e) {
-    e.preventDefault()
-    return handleChange(e.target.name, e.target.value)
-  }
+  updateVersion,
+}) => {
+  const [defaultAZName, setDefaultAZName] = React.useState()
+
+  const onChange = React.useCallback(
+    (e) => {
+      e.preventDefault()
+      return handleChange(e.target.name, e.target.value)
+    },
+    [handleChange]
+  )
 
   const cluster = clusterForm.data
   const { spec } = cluster
-  if (metaData.loaded) {
-    defaultAZName = metaData.availabilityZones[0].name
-  }
 
-  return React.createElement(
-    "div",
-    null,
-    React.createElement(
-      "div",
-      { className: "modal-body" },
-      clusterForm.errors ? (
-        <div className="alert alert-error">
-          <ReactFormHelpers.Errors errors={clusterForm.errors} />
-        </div>
-      ) : undefined,
-      React.createElement(
-        "form",
-        { className: "form form-horizontal" },
-        // Name
-        <div className="form-group required string  cluster_name">
-          <label
-            className="string required col-sm-4 control-label"
-            htmlFor="name"
+  React.useEffect(() => {
+    if (metaData.loaded) {
+      setDefaultAZName(metaData.availabilityZones[0].name)
+      cluster.spec.nodePools.forEach((_, index) => {
+        handleNodePoolChange(
+          index,
+          "availabilityZone",
+          metaData?.availabilityZones?.[0]?.name
+        )
+      })
+      if (info.supportedClusterVersions?.length > 0) {
+        updateVersion(info.supportedClusterVersions.sort().reverse()[0])
+      }
+    }
+  }, [metaData.loaded])
+
+  return (
+    <div>
+      <div className="modal-body">
+        {clusterForm.errors && (
+          <div className="alert alert-error">
+            <ReactFormHelpers.Errors errors={clusterForm.errors} />
+          </div>
+        )}
+
+        <form className="form form-horizontal">
+          <div
+            className={`form-group required string cluster_name ${
+              !validateName(cluster.name) && "has-error"
+            }`}
           >
-            <abbr title="required">*</abbr> Cluster Name
-          </label>
-          <div className="col-sm-8">
-            <div className="input-wrapper">
-              <input
-                className="string required form-control"
-                type="text"
-                name="name"
-                placeholder="lower case letters and numbers"
-                value={cluster.name || ""}
-                onChange={onChange}
-              />
+            <label
+              className="string required col-sm-4 control-label"
+              htmlFor="name"
+            >
+              <abbr title="required">*</abbr> Cluster Name
+            </label>
+            <div className="col-sm-8">
+              <div className="input-wrapper">
+                <input
+                  className="string required form-control"
+                  type="text"
+                  name="name"
+                  placeholder="lower case letters and numbers"
+                  value={cluster.name || ""}
+                  onChange={onChange}
+                />
+                {!validateName(cluster.name) && (
+                  <p className="help-block">
+                    Name should start with a lowercase letter and can contain
+                    lowercase letters, numbers, and hyphens. It must end with a
+                    lowercase letter or number.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
-        </div>,
-
-        // Keypair
-        React.createElement(
-          "div",
-          null,
-          React.createElement(
-            "div",
-            { className: "form-group string" },
-            <label className="string col-sm-4 control-label" htmlFor="keypair">
-              {" "}
-              Key Pair
-            </label>,
-            React.createElement(
-              "div",
-              { className: "col-sm-8" },
-              React.createElement(
-                "div",
-                { className: "input-wrapper" },
-                React.createElement(
-                  "select",
-                  {
-                    name: "keypair",
-                    className: "select form-control",
-                    value: spec.keyPair || "",
-                    onChange(e) {
-                      return handleKeyPairChange(e.target.value)
-                    },
-                  },
-                  metaData.keyPairs != null ? (
-                    <optgroup label="Choose from personal keys or provide other">
-                      <option value="">None</option>
-                      {(() => {
-                        const result = []
-                        for (keyPair of Array.from(metaData.keyPairs)) {
-                          result.push(
-                            <option
-                              value={keyPair.publicKey}
-                              key={keyPair.name}
-                            >
-                              {keyPair.name}
-                            </option>
-                          )
-                        }
-                        return result
-                      })()}
-                      <option value="other">Other</option>
-                    </optgroup>
-                  ) : (
-                    <option value="">Loading...</option>
-                  )
-                )
-              )
-            )
-          )
-        ),
-
-        // SSH Public Key
-        metaData.keyPairs != null && spec.keyPair === "other"
-          ? React.createElement(
-              "div",
-              null,
-              React.createElement(
-                "div",
-                { className: "form-group required string" },
+          <div>
+            <div className="form-group string">
+              <label
+                className="string col-sm-4 control-label"
+                htmlFor="keypair"
+              >
+                Key Pair
+              </label>
+              <div className="col-sm-8">
+                <div className="input-wrapper">
+                  <select
+                    name="keypair"
+                    className="select form-control"
+                    value={spec.keyPair || ""}
+                    onChange={(e) => handleKeyPairChange(e.target.value)}
+                  >
+                    {metaData.keyPairs != null ? (
+                      <optgroup label="Choose from personal keys or provide other">
+                        <option value="">None</option>
+                        {Array.from(metaData.keyPairs).map((keyPair) => (
+                          <option value={keyPair.publicKey} key={keyPair.name}>
+                            {keyPair.name}
+                          </option>
+                        ))}
+                        <option value="other">Other</option>
+                      </optgroup>
+                    ) : (
+                      <option value="">Loading...</option>
+                    )}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* SSH Public Key */}
+          {metaData.keyPairs != null && spec.keyPair === "other" && (
+            <div>
+              <div className="form-group required string">
                 <label
                   className="string required col-sm-4 control-label"
                   htmlFor="sshkey"
                 >
-                  {" "}
                   SSH Public Key
-                </label>,
-                React.createElement(
-                  "div",
-                  { className: "col-sm-8" },
-                  React.createElement(
-                    "div",
-                    { className: "input-wrapper" },
-                    React.createElement("textarea", {
-                      name: "sshkey",
-                      className: "form-control",
-                      value: spec.sshPublicKey || "",
-                      onChange(e) {
-                        return handleSSHKeyChange(e.target.value)
-                      },
-                      rows: 6,
-                      placeholder: "Please paste any valid SSH public key",
-                    })
-                  )
-                )
-              )
-            )
-          : undefined,
-        <p className="u-clearfix">
-          <a
-            className="pull-right"
-            onClick={(e) => {
-              e.preventDefault()
-              return handleAdvancedOptionsToggle()
-            }}
-            href="#"
-          >{`${
-            clusterForm.advancedOptionsVisible ? "Hide " : ""
-          }Advanced Options`}</a>
-        </p>,
-        clusterForm.advancedOptionsVisible ? (
-          <AdvancedOptions
-            clusterForm={clusterForm}
-            metaData={metaData}
-            info={info}
-          />
-        ) : undefined
-      ),
-
-      // ------- NODEPOOLS --------
-
-      <div className="toolbar">
-        <h4>Nodepools</h4>
-        <div className="main-buttons">
-          {!metaData.loaded ||
-          (metaData.error != null && metaData.errorCount <= 20) ? (
-            <button className="btn btn-default" disabled="disabled">
-              <span className="spinner" />
-            </button>
-          ) : (
-            <button
-              className="btn btn-primary"
+                </label>
+                <div className="col-sm-8">
+                  <div className="input-wrapper">
+                    <textarea
+                      name="sshkey"
+                      className="form-control"
+                      value={spec.sshPublicKey || ""}
+                      onChange={(e) => handleSSHKeyChange(e.target.value)}
+                      rows={6}
+                      placeholder="Please paste any valid SSH public key"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          <p className="u-clearfix">
+            <a
+              className="pull-right"
               onClick={(e) => {
                 e.preventDefault()
-                return handleNodePoolAdd(defaultAZName)
+                return handleAdvancedOptionsToggle()
               }}
+              href="#"
             >
-              Add Pool
-            </button>
+              {clusterForm.advancedOptionsVisible ? "Hide " : ""}
+              Advanced Options
+            </a>
+          </p>
+          {clusterForm.advancedOptionsVisible && (
+            <AdvancedOptions
+              clusterForm={clusterForm}
+              metaData={metaData}
+              info={info}
+            />
           )}
+        </form>
+        {/* ------- NODEPOOLS -------- */}
+
+        <div className="toolbar">
+          <h4>Nodepools</h4>
+          <div className="main-buttons">
+            {!metaData.loaded ||
+            (metaData.error != null && metaData.errorCount <= 20) ? (
+              <button className="btn btn-default" disabled="disabled">
+                <span className="spinner" />
+              </button>
+            ) : (
+              <button
+                className="btn btn-primary"
+                onClick={(e) => {
+                  e.preventDefault()
+                  return handleNodePoolAdd(defaultAZName)
+                }}
+              >
+                Add Pool
+              </button>
+            )}
+          </div>
         </div>
-      </div>,
-      Array.from(cluster.spec.nodePools).map((nodePool, i) =>
-        React.createElement(
-          "div",
-          { className: "nodepool-form", key: `nodepool-${i}` },
-          React.createElement(
-            "form",
-            { className: "form form-inline form-inline-flex" },
-            <h5 className="title">{`Pool ${i + 1}:`}</h5>,
+        {Array.from(cluster.spec.nodePools).map((nodePool, i) => (
+          <div className="nodepool-form" key={`nodepool-${i}`}>
+            <form className="form form-inline form-inline-flex">
+              <h5 className="title">{`Pool ${i + 1}:`}</h5>
 
-            // Nodepool name
-            React.createElement(
-              "div",
-              { className: "form-group required string" },
-              <label className="string required control-label" htmlFor="name">
-                Name <abbr title="required">*</abbr>
-              </label>,
-              React.createElement("input", {
-                className: "string form-control",
-                "data-index": i,
-                type: "text",
-                name: "name",
-                placeholder: "a-z + 0-9",
-                value: nodePool.name || "",
-                onChange(e) {
-                  e.preventDefault
-                  return handleNodePoolChange(
-                    e.target.dataset.index,
-                    e.target.name,
-                    e.target.value
-                  )
-                },
-              })
-            ),
-
-            // Nodepool flavor
-            React.createElement(
-              "div",
-              { className: "form-group string" },
-              <label className="string control-label" htmlFor="flavor">
-                Flavor <abbr title="required">*</abbr>
-              </label>,
-              React.createElement(
-                "select",
-                {
-                  name: "flavor",
-                  "data-index": i,
-                  className: "select required form-control",
-                  value: nodePool.flavor || "",
-                  onChange(e) {
+              {/* Nodepool name */}
+              <div className="form-group required string">
+                <label className="string required control-label" htmlFor="name">
+                  Name <abbr title="required">*</abbr>
+                </label>
+                <input
+                  className="string form-control"
+                  data-index={i}
+                  type="text"
+                  name="name"
+                  placeholder="a-z + 0-9"
+                  value={nodePool.name || ""}
+                  onChange={(e) => {
                     e.preventDefault
                     return handleNodePoolChange(
                       e.target.dataset.index,
                       e.target.name,
                       e.target.value
                     )
-                  },
-                },
-                (() => {
-                  if (
-                    !metaData.loaded ||
-                    (metaData.error != null && metaData.errorCount <= 20)
-                  ) {
-                    return <option value="">Loading...</option>
-                  } else {
-                    if (metaData.flavors != null) {
-                      return (() => {
-                        const result1 = []
-                        for (
-                          let f_index = 0;
-                          f_index < metaData.flavors.length;
-                          f_index++
-                        ) {
-                          flavor = metaData.flavors[f_index]
-                          var flavorMetaData =
-                            flavor.ram != null && flavor.vcpus != null
-                              ? `(ram: ${flavor.ram}, vcpus: ${flavor.vcpus})`
-                              : ""
-                          result1.push(
-                            <option
-                              value={flavor.name}
-                              key={f_index}
-                            >{`${flavor.name} ${flavorMetaData}`}</option>
-                          )
-                        }
-                        return result1
-                      })()
-                    }
-                  }
-                })()
-              )
-            ),
+                  }}
+                />
+              </div>
 
-            // Nodepool Availability Zone
-            React.createElement(
-              "div",
-              { className: "form-group string" },
-              <label className="string control-label" htmlFor="az">
-                Availability Zone <abbr title="required">*</abbr>
-              </label>,
-              React.createElement(
-                "select",
-                {
-                  name: "availabilityZone",
-                  "data-index": i,
-                  className: "string form-control",
-                  disabled:
-                    nodePool.availabilityZone && !nodePool.new
-                      ? "disabled"
-                      : undefined,
-                  value: nodePool.availabilityZone || defaultAZName,
-                  onChange(e) {
+              {/* Nodepool flavor */}
+              <div className="form-group string">
+                <label className="string control-label" htmlFor="flavor">
+                  Flavor <abbr title="required">*</abbr>
+                </label>
+                <select
+                  name="flavor"
+                  data-index={i}
+                  className="select required form-control"
+                  value={nodePool.flavor || ""}
+                  onChange={(e) => {
                     e.preventDefault
                     return handleNodePoolChange(
                       e.target.dataset.index,
                       e.target.name,
                       e.target.value
                     )
-                  },
-                },
-                (() => {
-                  if (
-                    !metaData.loaded ||
-                    (metaData.error != null && metaData.errorCount <= 20)
-                  ) {
-                    return <option value="">Loading...</option>
-                  } else {
-                    if (metaData.availabilityZones != null) {
-                      return Array.from(metaData.availabilityZones).map(
-                        (az) => (
-                          <option
-                            value={az.name}
-                            key={az.name}
-                          >{`${az.name}`}</option>
-                        )
+                  }}
+                >
+                  {!metaData.loaded ||
+                  (metaData.error != null && metaData.errorCount <= 20) ? (
+                    <option value="">Loading...</option>
+                  ) : (
+                    metaData.flavors != null &&
+                    metaData.flavors.map((flavor, f_index) => (
+                      <option value={flavor.name} key={f_index}>
+                        {flavor.name}{" "}
+                        {flavor.ram != null && flavor.vcpus != null
+                          ? `(ram: ${flavor.ram}, vcpus: ${flavor.vcpus})`
+                          : ""}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+
+              {/* Nodepool Availability Zone */}
+              <div className="form-group string">
+                <label className="string control-label" htmlFor="az">
+                  Availability Zone <abbr title="required">*</abbr>
+                </label>
+                <select
+                  name="availabilityZone"
+                  data-index={i}
+                  className="string form-control"
+                  disabled={nodePool.availabilityZone && !nodePool.new}
+                  value={nodePool.availabilityZone || defaultAZName}
+                  onChange={(e) => {
+                    e.preventDefault
+                    return handleNodePoolChange(
+                      e.target.dataset.index,
+                      e.target.name,
+                      e.target.value
+                    )
+                  }}
+                >
+                  {!metaData.loaded ||
+                  (metaData.error != null && metaData.errorCount <= 20) ? (
+                    <option value="">Loading...</option>
+                  ) : (
+                    metaData.availabilityZones != null &&
+                    Array.from(metaData.availabilityZones).map((az) => (
+                      <option
+                        value={az.name}
+                        key={az.name}
+                      >{`${az.name}`}</option>
+                    ))
+                  )}
+                </select>
+              </div>
+
+              {/* Nodepool size */}
+              <div className="form-group form-group-size">
+                <label className="string control-label" htmlFor="size">
+                  Size <abbr title="required">*</abbr>
+                </label>
+                <input
+                  className="form-control"
+                  data-index={i}
+                  type="number"
+                  name="size"
+                  min="0"
+                  placeholder="0"
+                  value={isNaN(nodePool.size) ? "" : nodePool.size}
+                  onChange={(e) => {
+                    e.preventDefault
+                    return handleNodePoolChange(
+                      e.target.dataset.index,
+                      e.target.name,
+                      parseInt(e.target.value, 10)
+                    )
+                  }}
+                />
+              </div>
+
+              {/* Nodepool Allow Reboot */}
+              <div className="checkbox inline-checkbox form-group">
+                <label className="string control-label">
+                  <input
+                    type="checkbox"
+                    data-index={i}
+                    checked={nodePool.config.allowReboot}
+                    onChange={(e) =>
+                      handleNodePoolChange(
+                        e.target.dataset.index,
+                        "allowReboot",
+                        !nodePool.config.allowReboot
                       )
                     }
-                  }
-                })()
-              )
-            ),
+                  />
+                  Allow Reboot
+                </label>
+              </div>
 
-            // Nodepool size
-            React.createElement(
-              "div",
-              { className: "form-group form-group-size" },
-              <label className="string control-label" htmlFor="size">
-                Size <abbr title="required">*</abbr>
-              </label>,
-              React.createElement("input", {
-                className: "form-control",
-                "data-index": i,
-                type: "number",
-                name: "size",
-                min: "0",
-                placeholder: "0",
-                value: isNaN(nodePool.size) ? "" : nodePool.size,
-                onChange(e) {
-                  e.preventDefault
-                  return handleNodePoolChange(
-                    e.target.dataset.index,
-                    e.target.name,
-                    parseInt(e.target.value, 10)
-                  )
-                },
-              })
-            ),
+              {/* Nodepool Allow Replace */}
+              <div className="checkbox inline-checkbox form-group">
+                <label className="string control-label">
+                  <input
+                    type="checkbox"
+                    data-index={i}
+                    checked={nodePool.config.allowReplace}
+                    onChange={(e) =>
+                      handleNodePoolChange(
+                        e.target.dataset.index,
+                        "allowReplace",
+                        !nodePool.config.allowReplace
+                      )
+                    }
+                  />
+                  Allow Replace
+                </label>
+              </div>
+              <button
+                className="btn btn-default"
+                data-index={i}
+                disabled={clusterForm?.data?.spec?.nodePools?.length <= 1}
+                onClick={(e) => {
+                  e.preventDefault()
+                  return handleNodePoolRemove(e.currentTarget.dataset.index)
+                }}
+              >
+                <span className="fa fa-trash" />
+              </button>
+            </form>
+            {!validateName(nodePool.name) && (
+              <div className="has-error">
+                <p className="help-block">
+                  Name should start with a lowercase letter and can contain
+                  lowercase letters, numbers, and hyphens. It must end with a
+                  lowercase letter or number.
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
 
-            // Nodepool Allow Reboot
-            React.createElement(
-              "div",
-              { className: "checkbox inline-checkbox form-group" },
-              React.createElement(
-                "label",
-                { className: "string control-label" },
-                React.createElement("input", {
-                  type: "checkbox",
-                  "data-index": i,
-                  checked: nodePool.config.allowReboot,
-                  onChange(e) {
-                    return handleNodePoolChange(
-                      e.target.dataset.index,
-                      "allowReboot",
-                      !nodePool.config.allowReboot
-                    )
-                  },
-                }),
-                "Allow Reboot"
-              )
-            ),
-
-            // Nodepool Allow Replace
-            React.createElement(
-              "div",
-              { className: "checkbox inline-checkbox form-group" },
-              React.createElement(
-                "label",
-                { className: "string control-label" },
-                React.createElement("input", {
-                  type: "checkbox",
-                  "data-index": i,
-                  checked: nodePool.config.allowReplace,
-                  onChange(e) {
-                    return handleNodePoolChange(
-                      e.target.dataset.index,
-                      "allowReplace",
-                      !nodePool.config.allowReplace
-                    )
-                  },
-                }),
-                "Allow Replace"
-              )
-            ),
-            <button
-              className="btn btn-default"
-              data-index={i}
-              onClick={(e) => {
-                e.preventDefault()
-                return handleNodePoolRemove(e.currentTarget.dataset.index)
-              }}
-            >
-              <span className="fa fa-trash" />
-            </button>
-          )
-        )
-      )
-    ),
-    React.createElement(
-      "div",
-      { className: "modal-footer" },
-      <button
-        role="close"
-        type="button"
-        className="btn btn-default"
-        onClick={close}
-      >
-        Close
-      </button>,
-      React.createElement(ReactFormHelpers.SubmitButton, {
-        label: "Create",
-        loading: clusterForm.isSubmitting,
-        disabled: !clusterForm.isValid,
-        onSubmit() {
-          return handleSubmit(close)
-        },
-      })
-    )
+      <div className="modal-footer">
+        <button
+          role="close"
+          type="button"
+          className="btn btn-default"
+          onClick={close}
+        >
+          Close
+        </button>
+        <ReactFormHelpers.SubmitButton
+          label="Create"
+          loading={clusterForm.isSubmitting}
+          disabled={!clusterForm.isValid}
+          onSubmit={() => handleSubmit(close)}
+        />
+      </div>
+    </div>
   )
 }
 
@@ -500,6 +448,9 @@ NewCluster = connect(
     },
     handleKeyPairChange(value) {
       return dispatch(updateKeyPair(value))
+    },
+    updateVersion(value) {
+      return dispatch(changeVersion(value))
     },
   })
 )(NewCluster)
