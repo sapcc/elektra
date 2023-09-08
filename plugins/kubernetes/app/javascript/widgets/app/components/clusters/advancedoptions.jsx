@@ -32,6 +32,8 @@ let AdvancedOptions = function ({
       return true
     }
 
+    if (!currentVersion) return true
+
     const currentNumbers = currentVersion.split(".").map((n) => Math.trunc(n))
     const newNumbers = newVersion.split(".").map((n) => Math.trunc(n))
 
