@@ -50,7 +50,12 @@ let AdvancedOptions = function ({
     const versions = edit
       ? info.availableClusterVersions
       : info.supportedClusterVersions
-    return versions.filter((v) => isValidVersion(currentVersion, v))
+
+    // filter and sort versions in descending order
+    return versions
+      .filter((v) => isValidVersion(currentVersion, v))
+      .sort()
+      .reverse()
   }
 
   const cluster = clusterForm.data
