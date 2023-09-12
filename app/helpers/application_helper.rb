@@ -397,8 +397,8 @@ module ApplicationHelper
   # ---------------------------------------------------------------------------------------------------
 
   def favicon_png
-    capture_haml do
-      haml_tag :link,
+    capture do
+      content_tag :link,
                rel: "icon",
                type: "image",
                href: image_path("favicon.png")
@@ -406,8 +406,8 @@ module ApplicationHelper
   end
 
   def favicon_ico
-    capture_haml do
-      haml_tag :link,
+    capture do
+      content_tag :link,
                rel: "shortcut icon",
                type: "image/x-icon",
                href: image_path("favicon.ico")
@@ -415,8 +415,8 @@ module ApplicationHelper
   end
 
   def apple_touch_icon
-    capture_haml do
-      haml_tag :link,
+    capture do
+      content_tag :link,
                rel: "apple-touch-icon",
                href: image_path("apple-touch-icon.png")
     end
@@ -507,10 +507,10 @@ module ApplicationHelper
   end
 
   def external_link_to(name, url)
-    haml_tag :a, href: url do
-      # haml_tag :span, class: "glyphicon glyphicon-share-alt"
-      haml_tag :span, class: "fa fa-external-link"
-      haml_concat name
+    content_tag :a, href: url do
+      # content_tag :span, class: "glyphicon glyphicon-share-alt"
+      concat content_tag :span, class: "fa fa-external-link"
+      concat name
     end
   end
 
@@ -527,15 +527,15 @@ module ApplicationHelper
         end
     end
 
-    capture_haml do
-      haml_tag :span,
+    capture do
+      content_tag :span,
                class: "release-state release-state-#{release_state}",
                data: {
                  toggle: "tooltip",
                },
                title: explanation do
-        haml_tag :i, class: "#{release_state}-icon"
-        haml_concat release_state.titleize
+        concat content_tag :i, class: "#{release_state}-icon"
+        concat release_state.titleize
       end
     end
   end

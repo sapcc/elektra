@@ -300,8 +300,7 @@ module Compute
 
       instance_floating_ips = instance.floating_ips.collect { |f| f["addr"] }
 
-      if (available_floating_ips & instance_floating_ips).sort !=
-           instance_floating_ips.sort
+      if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
         # p '::::::::::::::::::: REFRESH CACHE ::::::::::::::::::'
         @project_floating_ips =
           services.networking.project_floating_ips(@scoped_project_id)
@@ -310,34 +309,30 @@ module Compute
     end
 
     def render_fixed_floating_ips(ips)
-      capture_haml do
-        ips.each do |ip_data|
-          fixed = ip_data["fixed"]
-          floating = ip_data["floating"]
+      ips.collect do |ip_data|
+        fixed = ip_data["fixed"]
+        floating = ip_data["floating"]
 
-          haml_tag :p, class: "list-group-item-text" do
-            haml_tag :span,
-                     data: {
-                       toggle: "tooltip",
-                     },
-                     title: "Fixed IP (#{fixed["network_name"]})" do
-              haml_tag :i, "", class: "fa fa-desktop fa-fw"
-              haml_concat fixed["addr"]
-            end
-            if floating
-              haml_tag :span,
-                       data: {
-                         toggle: "tooltip",
-                       },
-                       title: "Floating IP (#{floating["network_name"]})" do
-                haml_tag(:i, "", class: "fa fa-arrows-h")
-                haml_tag(:i, "", class: "fa fa-globe fa-fw")
-                haml_concat floating["addr"]
-              end
-            end
+        content_tag :p, class: "list-group-item-text" do
+          content = (content_tag :span, data: { toggle: "tooltip" }, title: "Fixed IP (#{fixed["network_name"]})" do
+            concat content_tag :i, "", class: "fa fa-desktop fa-fw"
+            concat " "
+            concat fixed["addr"]
+            concat " "
+          end)
+          if floating
+            content << (content_tag :span, data: { toggle: "tooltip" }, title: "Floating IP (#{floating["network_name"]})" do
+              concat content_tag(:i, "", class: "fa fa-arrows-h")
+              concat " "
+              concat content_tag(:i, "", class: "fa fa-globe fa-fw")
+              concat " "
+              concat floating["addr"]
+            end)
           end
+          content
         end
-      end
+      # join all content tags together
+      end.join.html_safe
     end
     #########################################################################
     # End op Floating IPs

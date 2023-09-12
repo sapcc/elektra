@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_30_081339) do
-
+ActiveRecord::Schema[7.0].define(version: 2018_05_30_081339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,8 +18,8 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
     t.string "domain_id"
     t.integer "user_profile_id"
     t.string "tou_version"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["user_profile_id"], name: "index_domain_profiles_on_user_profile_id"
   end
 
@@ -30,8 +29,8 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
     t.string "name"
     t.string "slug"
     t.string "key"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "endpoint"
     t.index ["class_name", "key"], name: "index_friendly_id_entries_on_class_name_and_key"
     t.index ["class_name", "scope", "key"], name: "index_friendly_id_entries_on_class_name_and_scope_and_key"
@@ -46,8 +45,8 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
     t.text "description"
     t.json "payload"
     t.string "aasm_state"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "project_id"
     t.string "domain_id"
     t.json "callbacks"
@@ -69,16 +68,16 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
     t.string "event"
     t.text "description"
     t.integer "inquiry_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "processor_id"
     t.index ["inquiry_id"], name: "index_inquiry_process_steps_on_inquiry_id"
   end
 
   create_table "inquiry_processors", id: :serial, force: :cascade do |t|
     t.string "uid"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "email"
     t.string "full_name"
     t.string "name"
@@ -90,8 +89,8 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
     t.string "domain_id"
     t.string "cached_object_type"
     t.json "payload"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "search_label"
     t.index ["cached_object_type"], name: "index_object_cache_on_cached_object_type"
     t.index ["id"], name: "index_object_cache_on_id"
@@ -103,23 +102,23 @@ ActiveRecord::Schema.define(version: 2018_05_30_081339) do
   create_table "project_profiles", id: :serial, force: :cascade do |t|
     t.string "project_id"
     t.text "wizard_payload"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "sessions", id: :serial, force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
   create_table "user_profiles", id: :serial, force: :cascade do |t|
     t.string "uid"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "name"
     t.string "email"
     t.string "full_name"

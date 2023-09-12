@@ -40,25 +40,23 @@ module ViewHelper
       if current_user.is_allowed?("lookup:os_object_show_project")
         project_name ||= project
         return(
-          haml_concat(
-            link_to(
-              project_name,
-              plugin("lookup").projects_path(query: project),
-            ),
+          link_to(
+            project_name,
+            plugin("lookup").projects_path(query: project),
           )
         )
       end
 
       # "#{project} (#{project_name})"
       unless project_name.blank?
-        haml_concat project_name.to_s
-        haml_tag :br
+        concat project_name.to_s
+        concat content_tag :br
       end
-      haml_tag :span, class: "info-text" do
-        haml_concat project.to_s
+      concat content_tag :span, class: "info-text" do
+        project.to_s
       end
     else
-      haml_concat "N/A"
+      "N/A"
     end
   end
 
@@ -77,14 +75,14 @@ module ViewHelper
       domain_name = remote_domain ? remote_domain.name : ""
       # "#{domain} (#{domain_name})"
       unless domain_name.blank?
-        haml_concat domain_name.to_s
-        haml_tag :br
+        concat domain_name.to_s
+        concat content_tag :br
       end
-      haml_tag :span, class: "info-text" do
-        haml_concat domain.to_s
+      concat content_tag :span, class: "info-text" do
+        domain.to_s
       end
     else
-      haml_concat "N/A"
+      "N/A"
     end
   end
 
@@ -98,17 +96,17 @@ module ViewHelper
 
     # render list with available regions
     unless available_regions.blank?
-      capture_haml do
-        haml_tag :ul, class: "dropdown-menu", role: "menu" do
+      capture do
+        content_tag :ul, class: "dropdown-menu", role: "menu" do
           available_regions.each do |region|
             class_name = current_region == region["regionkey"] ? "active" : ""
-            haml_tag :li, class: class_name do
+            concat content_tag :li, class: class_name do
               # for now use only the base url for the link (i.e. no domain,
               # no project path since those might not exist in the new region)
               region_url =
                 "#{base_url.sub(current_region, region["regionkey"])}/#{domain_path}"
-              haml_tag :a, href: region_url do
-                haml_concat region["regionname"].upcase
+              content_tag :a, href: region_url do
+                region["regionname"].upcase
               end
             end
           end

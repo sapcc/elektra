@@ -1,3 +1,0 @@
-- jobs.reverse_each do |job|
-  %a{href:'#', role: 'button', title: "#{render "job_popover_head"}", id: "#{job.request_id}", data: {popover_type: 'job-history', toggle: 'popover', content: "#{render partial: "job_popover_body", locals: {job: job}}"}}
-    - job_history_entry(job.status)

@@ -13,10 +13,9 @@
         Raven.config('#{$sentry_public_dsn}').install();
         Raven.setUserContext(#{@sentry_user_context ? @sentry_user_context.to_json.html_safe : ''});
     = javascript_include_tag 'essentials', 'data-turbolinks-track' => true
-    = favicon_png
-    = favicon_ico
-    = apple_touch_icon
 
+    = render "layouts/favicon" 
+    
     = csrf_meta_tags
 
   %body{class: "#{body_class}"}
