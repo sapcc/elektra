@@ -529,12 +529,13 @@ module ApplicationHelper
 
     capture do
       content_tag :span,
-               class: "release-state release-state-#{release_state}",
-               data: {
-                 toggle: "tooltip",
-               },
-               title: explanation do
-        concat content_tag :i, class: "#{release_state}-icon"
+              class: "release-state release-state-#{release_state}",
+              data: {
+                toggle: "tooltip",
+              },
+              title: explanation do
+        concat content_tag :i, nil, class: "#{release_state}-icon"
+        concat " "
         concat release_state.titleize
       end
     end

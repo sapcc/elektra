@@ -399,7 +399,7 @@ module Compute
         end
         respond_to do |format|
           format.html { redirect_to instances_url }
-          format.js { render "update.js" }
+          format.js { render "update", formats: :js }
         end
       else
         render action: :edit
