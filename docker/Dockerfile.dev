@@ -1,4 +1,4 @@
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.15
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.17
 
 LABEL source_repository="https://github.wdf.sap.corp/monsoon/workspaces/tree/master/environments/elektra"
 
@@ -13,11 +13,10 @@ RUN apk --no-cache add --update \
   build-base \
   npm \
   --virtual .builddeps \
-  postgresql-dev \
-  postgresql \
-  postgresql-client \
+  postgresql14-dev \
+  postgresql14 \
+  postgresql14-client \
   openssh \
-  python2 \
   yarn \
   bash \
   unzip \

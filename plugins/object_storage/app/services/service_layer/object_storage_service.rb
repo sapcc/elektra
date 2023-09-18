@@ -67,6 +67,10 @@ module ServiceLayer
       url
     end
 
+    def escapeURI(uri)
+      CGI.escapeURIComponent(uri)
+    end
+
     # https://github.com/fog/fog-openstack/blob/bd69c6f3a80bb4a984d6fc67971a496cc923ac98/lib/fog/openstack.rb#L588
     def escape(str, extra_exclude_chars = "")
       str.gsub(%r{([^a-zA-Z0-9_./#{extra_exclude_chars}-]+)}) do
