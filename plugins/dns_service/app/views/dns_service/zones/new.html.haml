@@ -5,7 +5,7 @@
       .alert.alert-error
         = render_errors(@zone.errors)
 
-    = f.input :name,  required: true
+    = f.input :name, label: "Name (TLD)", required: true
     = f.input :pool_id, as: :select, label: 'DNS Provider', required: false do
       = f.select :pool_id, @pools.uniq.collect{|pool| [(pool.attributes.fetch("attributes", {}).fetch("label",nil) || pool.name.humanize), pool.id]},
         { include_blank: true },
@@ -15,7 +15,7 @@
         Default is "Internal SAP Hosted Zone" 
         #{link_to 'See the documentation for more information','https://documentation.global.cloud.sap/docs/customer/networking/dns/'}
     = f.input :email, required: true
-    = f.input :ttl,   required: false, as: :integer, input_html: {value: @zone.ttl || 7200}
+    = f.input :ttl,   required: true, as: :integer, input_html: {value: @zone.ttl || 7200}
     = f.input :description, required: false, as: :text
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
