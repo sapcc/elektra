@@ -24,7 +24,7 @@ const Table = ({
     () => [
       {
         label: "Object name",
-        accessor: "name",
+        accessor: "display_name",
         sortable: "text",
         // filterable: true,
       },
