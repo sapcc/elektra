@@ -14,7 +14,7 @@ RUN apk --no-cache add --update \
   npm \
   --virtual .builddeps \
   postgresql14-dev \
-  postgresql14 \
+  postgresql14-jit \
   postgresql14-client \
   openssh \
   yarn \
