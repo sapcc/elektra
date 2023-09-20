@@ -10,10 +10,8 @@
     = javascript_include_tag 'essentials', 'data-turbolinks-track' => true
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = javascript_include_tag 'plugins', 'data-turbolinks-track' => true
-
-    = favicon_png
-    = favicon_ico
-    = apple_touch_icon
+    
+    = render "layouts/favicon" 
     = csrf_meta_tags
 
     #modal-holder
@@ -25,7 +23,7 @@
         Web Console
         %small (Click the blue bar to focus the console for keyboard input)
       .main-buttons
-        - unless hypervisor.to_s.include?('nova-compute-ironic')
+        - if !hypervisor.to_s.include?('nova-compute-ironic') && current_user.is_allowed?("compute:instance_hard_reset",{target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           .verticalLine
             = link_to confirm_hard_reset_instance_path(id: @instance.id), class: 'btn btn-default hover-danger',data: {modal:true} do
               %i.fa.fa-power-off
