@@ -24,6 +24,7 @@
   "compute:instance_start": "rule:instance_actions",
   "compute:instance_resume": "rule:instance_actions",
   "compute:instance_resize": "rule:instance_actions",
+  "compute:instance_tags": "rule:instance_actions",
   "compute:instance_confirm_resize": "rule:instance_actions",
   "compute:instance_revert_resize": "rule:instance_actions",
   "compute:instance_lock": "rule:context_is_compute_admin",
