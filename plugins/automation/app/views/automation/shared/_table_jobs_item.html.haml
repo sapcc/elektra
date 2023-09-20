@@ -6,5 +6,5 @@
   %td= date_humanize(job.created_at)
   %td= job.duration
   %td
-    - job_state(job.status)
+    = job_state(job.status)
     

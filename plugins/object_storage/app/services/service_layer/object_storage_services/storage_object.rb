@@ -40,14 +40,14 @@ module ServiceLayer
       def object_metadata(container_name, object_path)
         return nil if container_name.blank? || object_path.blank?
         response =
-          elektron_object_storage.head("#{container_name}/#{object_path}")
+          elektron_object_storage.head("#{container_name}/#{escapeURI(object_path)}")
         data = extract_object_header_data(response, container_name, object_path)
         object_map.call(data)
       end
 
       def object_content(container_name, object_path)
         body =
-          elektron_object_storage.get("#{container_name}/#{object_path}").body
+          elektron_object_storage.get("#{container_name}/#{escapeURI(object_path)}").body
         # default behavior from elektron -> converts returned json to an object
         # normaly thats fine but in some cases we want to download a json file
         # from the object storage if thats the case convert it back to json
@@ -150,7 +150,7 @@ module ServiceLayer
           "Destination" => "/#{target_container_name}/#{target_path}",
         }.merge(options)
         elektron_object_storage.copy(
-          "#{source_container_name}/#{source_path}",
+          "#{source_container_name}/#{escapeURI(source_path)}",
           headers: stringify_header_values(header_attrs),
         )
       end
@@ -170,7 +170,7 @@ module ServiceLayer
           options.merge(with_metadata: true),
         )
         elektron_object_storage.delete(
-          "#{source_container_name}/#{source_path}",
+          "#{source_container_name}/#{escapeURI(source_path)}",
         )
       end
 
@@ -234,7 +234,7 @@ module ServiceLayer
         # more clever upload strategies (e.g. SLO); for now, we just send
         # everything at once
         elektron_object_storage.put(
-          "#{container_name}/#{object_path}",
+          "#{container_name}/#{escapeURI(object_path)}",
           headers: stringify_header_values(header_attrs),
         ) { contents.read }
       end
@@ -256,7 +256,7 @@ module ServiceLayer
               object.dlo_segments_folder_path,
             )
           else
-            elektron_object_storage.delete("#{container_name}/#{object.path}")
+            elektron_object_storage.delete("#{container_name}/#{escapeURI(object.path)}")
           end
         end
         # return nil because nothing usable is returned from the API
@@ -282,7 +282,7 @@ module ServiceLayer
         header_attrs.stringify_keys!
 
         elektron_object_storage.post(
-          "#{container_name}/#{object_path}",
+          "#{container_name}/#{escapeURI(object_path)}",
           headers: header_attrs,
         )
         # return nil because nothing usable is returned from the API
@@ -293,7 +293,7 @@ module ServiceLayer
         # a pseudo-folder is created by writing an empty object at its path, with
         # a "/" suffix to indicate the folder-ness
         elektron_object_storage.put(
-          "#{container_name}/#{sanitize_path(object_path)}/",
+          "#{container_name}/#{escapeURI(sanitize_path(object_path))}/",
           headers: {
             "Content-Type" => "application/directory",
           },

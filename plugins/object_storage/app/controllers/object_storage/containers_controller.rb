@@ -57,7 +57,6 @@ module ObjectStorage
     end
 
     def pre_empty
-      # needed to render pre_empty.js
       @container_id = Digest::SHA1.hexdigest(@container.name)
       @encoded_container_name = params[:id]
 
@@ -72,7 +71,6 @@ module ObjectStorage
     end
 
     def empty
-      # needed to render empty.js
       @container_id = Digest::SHA1.hexdigest(@container.name)
 
       # trigger bulk delete

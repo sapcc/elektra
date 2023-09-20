@@ -1,5 +1,5 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:2.7-alpine3.15 AS base 
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.17 AS base 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
 ENV APP_PATH=/home/app
@@ -20,30 +20,30 @@ ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
 
 WORKDIR $APP_PATH
 
-RUN apk --no-cache add dumb-init tzdata postgresql-client
+RUN apk --no-cache add dumb-init tzdata postgresql14-client
 
 ################################### BUILDER ################################
 FROM base AS builder 
+# Note: we need to install git here because bundle needs git in the next step
 RUN apk --no-cache add git curl nodejs yarn shared-mime-info
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
-RUN apk --no-cache add build-base postgresql-dev ruby-sassc --virtual .builddeps \
+RUN apk --no-cache add build-base postgresql14-dev ruby-sassc --virtual .builddeps \
       && gem install --no-document \
-        bundler:2.3.20 \
-        byebug:11.1.3 \
-        ffi:1.15.5 \
-        json:1.8.6 \
-        nio4r:2.5.8 \
-        nokogiri:1.13.3 \
-        pg:1.3.4 \
-        puma:4.3.12  \
-        redcarpet:3.5.1 \
-        unf:0.2.0.beta2 \
-        websocket-driver:0.7.5 \
-        bindex:0.8.1 \
-        sassc:2.4.0 \
+      bundler:2.3.20 \
+      byebug:11.1.3 \
+      ffi:1.15.5 \
+      nio4r:2.5.9 \
+      nokogiri:1.15.4 \
+      pg:1.3.4 \
+      puma:6.3.1  \
+      redcarpet:3.6.0 \
+      unf:0.2.0.beta2 \
+      websocket-driver:0.7.6 \
+      bindex:0.8.1 \
+      sassc:2.4.0 \
       && runDeps="$( \
       scanelf --needed --nobanner --recursive /usr/local \
       | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
@@ -85,7 +85,7 @@ RUN bin/rails assets:precompile && rm -rf node_modules
 RUN echo $(git rev-parse HEAD) > $APP_PATH/REVISION && rm -rf .git
 ############################ TEST IMAGE ##########################
 FROM base AS tests
-RUN apk add --no-cache postgresql bash
+RUN apk add --no-cache postgresql14-jit bash
 ENV RAILS_ENV=test
 # Copy the already built bundler artifact
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/

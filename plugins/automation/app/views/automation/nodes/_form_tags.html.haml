@@ -12,7 +12,7 @@
     tag:db_server
 
 .js-node-tags-read{ data: {node_form_read: node_form_read.tags} }
-  - node_form_inline_tags(node_form_read.tags)
+  = node_form_inline_tags(node_form_read.tags)
 
 .js-node-tags-edit
   = simple_form_for node_form, url: plugin('automation').node_path(node_form.agent_id), method: :put, remote: true,  html: {id: 'form_node_tags'}, wrapper: :inline_form do |f|

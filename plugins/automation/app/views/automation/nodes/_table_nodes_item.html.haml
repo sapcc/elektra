@@ -18,13 +18,15 @@
         = node.facts.metadata_public_ipv4
         %span.info-text floating
   %td
-    - node_table_tags(node.tags)
+    = node_table_tags(node.tags)
 
   %td{class: "#{'automation_status_alarm' if node.automation_facts.online == false}"}
     = node.automation_facts.online_to_string
 
   %td.no-wrap
-    = render partial: "table_nodes_item_jobs", locals: {jobs: jobs}
+    - jobs.reverse_each do |job|
+      %a{href:'#', role: 'button', title: "#{render "job_popover_head"}", id: "#{job.request_id}", data: { popover_type: 'job-history', toggle: 'popover', content: "#{render partial: "job_popover_body", locals: {job: job}}" }}
+        = job_history_entry(job.status)
 
   - if current_user.is_allowed?('automation:node_install') || current_user.is_allowed?('automation:node_delete')
     %td.no-wrap

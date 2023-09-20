@@ -9,7 +9,7 @@
   .modal-body.static-columns
 
     .modal-falshes
-      = render "email_service/shared/flashes.html"
+      = render partial: "email_service/shared/flashes", formats: :html
 
     = render partial: 'form', locals: { templated_email: @templated_email, types: @source_types, f: f, form_type: 'edit'}
 

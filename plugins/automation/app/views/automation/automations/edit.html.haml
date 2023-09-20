@@ -9,7 +9,7 @@
   .modal-body.static-columns
 
     .modal-falshes
-      = render "automation/shared/flashes.html"
+      = render partial: "automation/shared/flashes"
 
     = render partial: 'automation_form', locals: {automation: @automation, f: f, form_type: 'edit'}
 

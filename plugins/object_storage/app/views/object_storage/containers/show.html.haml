@@ -17,7 +17,7 @@
       = f.input :bytes_quota, as: :string, input_html: { value: value }, placeholder: 'Leave empty to disable', label: 'Total size quota'
 
   - if @container.allows_public_access?
-    - label = capture_haml do
+    - label = capture do
       URL for public access
       = link_to '(Open in new tab)', @container.public_url, target: '_blank'
     = f.input :public_url, readonly: true, label: label

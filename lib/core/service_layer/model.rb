@@ -112,6 +112,7 @@ module Core
         new_id = (@attributes.delete("id") || @attributes.delete(:id))
         # if current_id is nil then overwrite it with new_id.
         @id = new_id if @id.nil? || (@id.is_a?(String) && @id.empty?)
+
         @attributes
       end
 

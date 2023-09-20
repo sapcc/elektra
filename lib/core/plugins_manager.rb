@@ -96,7 +96,7 @@ module Core
       end
 
       def has_application_css?
-        unless File.exists?(File.join(path, "app/assets/stylesheets/#{name}"))
+        unless File.exist?(File.join(path, "app/assets/stylesheets/#{name}"))
           return false
         end
         entries = Dir.entries(File.join(path, "app/assets/stylesheets/#{name}"))
@@ -115,7 +115,7 @@ module Core
 
       # returns true if policy file exists inside plugin
       def has_policy_file?
-        File.exists?(File.join(path, "config/policy.json"))
+        File.exist?(File.join(path, "config/policy.json"))
       end
 
       # returns policy file path or nil

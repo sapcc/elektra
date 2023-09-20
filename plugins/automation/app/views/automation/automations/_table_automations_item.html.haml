@@ -7,7 +7,7 @@
   %td= automation.form_attribute('type')
   %td= automation.form_attribute('repository')
   %td
-    - displayCheck(automation.form_attribute('repository_authentication_enabled'))
+    = displayCheck(automation.form_attribute('repository_authentication_enabled'))
 
   %td= automation.form_attribute('repository_revision')
   - if user_allowed

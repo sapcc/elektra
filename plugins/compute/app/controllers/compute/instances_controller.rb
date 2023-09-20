@@ -8,21 +8,21 @@ module Compute
 
     authorization_context "compute"
     authorization_required except: %i[
-                             new_floatingip
-                             attach_floatingip
-                             detach_floatingip
-                             remove_floatingip
-                             attach_interface
-                             create_interface
-                             remove_interface
-                             detach_interface
-                             detach_floatingip
-                             new_snapshot
-                             update_item
-                             new_size
-                             automation_script
-                             new_status
-                           ]
+                            new_floatingip
+                            attach_floatingip
+                            detach_floatingip
+                            remove_floatingip
+                            attach_interface
+                            create_interface
+                            remove_interface
+                            detach_interface
+                            detach_floatingip
+                            new_snapshot
+                            update_item
+                            new_size
+                            automation_script
+                            new_status
+                          ]
 
     def index
       per_page = params[:per_page] || 20
@@ -399,7 +399,7 @@ module Compute
         end
         respond_to do |format|
           format.html { redirect_to instances_url }
-          format.js { render "update.js" }
+          format.js { render "update", formats: :js }
         end
       else
         render action: :edit

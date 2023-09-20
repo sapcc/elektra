@@ -17,7 +17,7 @@
 
     - content_for :javascripts do
       %script{type: "text/javascript"}
-        = render 'layouts/dev_tools_script.js'
+        = render partial: 'layouts/dev_tools_script', formats: :js
 
   %li
     = link_to 'Debug info', '#', data: { toggle: "modal", target: "#debug" } if current_user
