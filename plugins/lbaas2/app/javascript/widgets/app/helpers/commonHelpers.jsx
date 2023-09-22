@@ -4,21 +4,19 @@ import queryString from "query-string"
 import { Highlighter } from "react-bootstrap-typeahead"
 
 export const errorMessage = (error) => {
-  const err = error
-  return (err.data && (err.data.errors || err.data.error)) || err.message
+  return (
+    error?.data?.errors ||
+    error?.data?.error ||
+    error?.message ||
+    JSON.stringify(error)
+  )
 }
 
 export const formErrorMessage = (error) => {
-  const err = error
-  if (
-    err &&
-    err.data &&
-    err.data.errors &&
-    Object.keys(err.data.errors).length
-  ) {
-    return err.data.errors
+  if (error?.data?.errors && Object.keys(error.data.errors).length > 0) {
+    return error.data.errors
   } else {
-    return error.message
+    return error?.message || JSON.stringify(error)
   }
 }
 
