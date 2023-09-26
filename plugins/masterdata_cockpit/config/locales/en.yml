@@ -20,7 +20,6 @@ en:
     dev: "System in development – incident handling via ticketing"
     customer_help: "Name of the customer (CCIR/BPD Key)"
     environment_help: "Describes the type of environment and is used for context of Vulnerability and Incident Risk management "
-    soft_license_mode_help: "The License Mode specifies the use case, and also separates SAP internal and external customer use."
     type_of_data_help: "Is used for SAP or customer processes, and whether or not external customer data is stored"
     gpu_enabled_help: "Specify whether project uses GPUs"
     contains_pii_dpp_hr_help: "Contains sensitive personal data"
