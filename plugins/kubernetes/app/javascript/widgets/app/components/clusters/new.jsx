@@ -10,7 +10,7 @@ import React from "react"
 import ReactFormHelpers from "../../lib/form_helpers"
 import ReactModal from "../../lib/modal"
 import { connect } from "react-redux"
-import { validateName } from "../../reducers/cluster_form"
+import { validateName, validateNodePoolName } from "../../reducers/cluster_form"
 import { changeVersion } from "../../actions/clusters"
 
 import {
@@ -386,7 +386,7 @@ let NewCluster = ({
                 <span className="fa fa-trash" />
               </button>
             </form>
-            {!validateName(nodePool.name) && (
+            {!validateNodePoolName(nodePool.name) && (
               <div className="has-error">
                 <p className="help-block">
                   Name should start with a lowercase letter and can contain

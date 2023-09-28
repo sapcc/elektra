@@ -49,8 +49,12 @@ const initialClusterFormState = {
   advancedOptionsVisible: false,
 }
 
-const NAME_REGEX = /^[a-z]([-a-z0-9]*[a-z0-9])?$/
-export const validateName = (name) => name?.length > 0 && name.match(NAME_REGEX)
+const CLUSTER_NAME_REGEX = /^[a-z]([-a-z0-9]*[a-z0-9])?$/
+const NODE_POOL_NAME_REGEX = /.*/ // all chars are allowed yet
+export const validateName = (name) =>
+  name?.length > 0 && name.match(CLUSTER_NAME_REGEX)
+export const validateNodePoolName = (name) =>
+  name?.length > 0 && name.match(NODE_POOL_NAME_REGEX)
 
 // validate the form data
 const validateFormData = (state) => {
@@ -62,6 +66,7 @@ const validateFormData = (state) => {
   let nodePoolsValid = true
   // for each node pool
   for (var nodePool of Array.from(state.data.spec.nodePools)) {
+    console.log(nodePool)
     // console.log(
     //   "!validateName(nodePool?.name)",
     //   !validateName(nodePool?.name),
@@ -78,7 +83,7 @@ const validateFormData = (state) => {
     // if any of the required fields are missing
     // set nodePoolsValid to false
     if (
-      !validateName(nodePool?.name) ||
+      !validateNodePoolName(nodePool?.name) ||
       !(nodePool.size >= 0) ||
       !(nodePool.flavor?.length > 0) ||
       !nodePool.availabilityZone ||
@@ -88,6 +93,16 @@ const validateFormData = (state) => {
     }
   }
 
+  // console.log(
+  //   "validateName(state?.data?.name)",
+  //   validateName(state?.data?.name),
+  //   "state?.data?.spec?.nodePools?.length",
+  //   state?.data?.spec?.nodePools?.length,
+  //   "nodePoolsValid",
+  //   nodePoolsValid,
+  //   "state.advancedOptionsValid",
+  //   state.advancedOptionsValid
+  // )
   // validate name and node pools and advanced options
   return (
     validateName(state?.data?.name) &&
@@ -176,7 +191,7 @@ const updateNodePoolForm = function (state, { index, name, value }) {
   stateClone.data.spec.nodePools = nodePoolsClone
   const poolValidity =
     nodePool.name.length > 0 &&
-    nodePool.name.match(NAME_REGEX) &&
+    nodePool.name.match(NODE_POOL_NAME_REGEX) &&
     nodePool.size >= 0 &&
     nodePool.flavor.length > 0 &&
     nodePool.availabilityZone.length > 0
