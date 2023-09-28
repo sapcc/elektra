@@ -96,21 +96,17 @@ module ViewHelper
 
     # render list with available regions
     unless available_regions.blank?
-      capture do
-        content_tag :ul, class: "dropdown-menu", role: "menu" do
-          available_regions.each do |region|
-            class_name = current_region == region["regionkey"] ? "active" : ""
-            concat content_tag :li, class: class_name do
-              # for now use only the base url for the link (i.e. no domain,
-              # no project path since those might not exist in the new region)
-              region_url =
-                "#{base_url.sub(current_region, region["regionkey"])}/#{domain_path}"
-              content_tag :a, href: region_url do
-                region["regionname"].upcase
-              end
-            end
+      content_tag :ul, class: "dropdown-menu", role: "menu" do
+        available_regions.collect do |region|
+          class_name = current_region == region["regionkey"] ? "active" : ""
+          content_tag :li, class: class_name do
+            # for now use only the base url for the link (i.e. no domain,
+            # no project path since those might not exist in the new region)
+            region_url =
+              "#{base_url.sub(current_region, region["regionkey"])}/#{domain_path}"
+            content_tag :a, region["regionname"].upcase, href: region_url
           end
-        end
+        end.join("\n").html_safe
       end
     end
   end
