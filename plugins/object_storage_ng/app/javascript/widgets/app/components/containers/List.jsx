@@ -122,14 +122,21 @@ Table.propTypes = {
   onMenuAction: PropTypes.func,
 }
 
+import { getStore } from "../../store/Provider"
+
 const List = () => {
   const containers = useGlobalState("containers")
   const { loadContainersOnce } = useActions()
   const history = useHistory()
   const [searchTerm, updateSearchTerm] = React.useState("")
 
+  const { loadMetadataOnce: loadAccountMetadata } = getStore().account.actions()
+  const setTestData = getStore().test.setData()
+
   React.useEffect(() => {
+    loadAccountMetadata()
     loadContainersOnce()
+    setTestData(["hello", "world"])
   }, [loadContainersOnce])
 
   const handleMenuAction = React.useCallback(

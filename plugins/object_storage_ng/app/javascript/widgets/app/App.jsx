@@ -3,13 +3,16 @@ import React from "react"
 import PropTypes from "prop-types"
 import StateProvider from "./StateProvider"
 import Router from "./Router"
+import StoreProvider from "./store/Provider"
 
 const App = (props) => (
   <StateProvider>
-    <Router
-      baseName={props.baseName}
-      objectStoreEndpoint={props.objectStoreEndpoint}
-    />
+    <StoreProvider>
+      <Router
+        baseName={props.baseName}
+        objectStoreEndpoint={props.objectStoreEndpoint}
+      />
+    </StoreProvider>
   </StateProvider>
 )
 

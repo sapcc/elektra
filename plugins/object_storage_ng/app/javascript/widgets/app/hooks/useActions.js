@@ -1,22 +1,8 @@
 import React from "react"
-import { useLocation } from "react-router-dom"
 import { useDispatch, useGlobalState } from "../StateProvider"
-
-import { createAjaxHelper } from "lib/ajax_helper"
+import { apiClient } from "../lib/apiClient"
 
 const useActions = () => {
-  const location = useLocation()
-  const apiClient = React.useMemo(
-    () =>
-      createAjaxHelper({
-        baseURL: decodeURIComponent(window.location.pathname).replace(
-          decodeURIComponent(location.pathname),
-          ""
-        ),
-      }),
-    [location.pathname]
-  )
-
   const { capabilities, containers, objects, account } = useGlobalState()
   const dispatch = useDispatch()
 
