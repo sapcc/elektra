@@ -3,10 +3,16 @@ import PropTypes from "prop-types"
 import { Modal, Button, Alert } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import { useHistory, useParams, Link } from "react-router-dom"
-import { useGlobalState } from "../../StateProvider"
+// import { useGlobalState } from "../../StateProvider"
 import { Unit } from "lib/unit"
-import useActions from "../../hooks/useActions"
+// import useActions from "../../hooks/useActions"
 import CustomMetaTags from "../shared/CustomMetatags"
+import {
+  useContainersLoadMetadata,
+  useContainersContainer,
+  useContainersActions,
+  useCapabilitiesData,
+} from "../../data/hooks/containers"
 const unit = new Unit("B")
 
 const FormBody = ({ containerName, otherContainers }) => {
@@ -213,15 +219,21 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
   const { name } = useParams()
   const history = useHistory()
   const [show, setShow] = React.useState(!!name)
-  const [error, setError] = React.useState()
-  const { containers, capabilities } = useGlobalState()
 
-  const [metadata, setMetadata] = React.useState()
-  const [isFetchingMetadata, setIsFetchingMetadata] = React.useState(false)
-  const { loadContainerMetadata, updateContainerMetadata } = useActions()
+  const container = useContainersContainer(name)
+  const loadContainerMetadata = useContainersLoadMetadata()
+
+  //const [error, setError] = React.useState()
+  // const { containers, capabilities } = useGlobalState()
+  const capabilities = useCapabilitiesData()
+
+  // const [metadata, setMetadata] = React.useState()
+  // const [isFetchingMetadata, setIsFetchingMetadata] = React.useState(false)
+  // const { loadContainerMetadata, updateContainerMetadata } = useActions()
+  const { receiveItemUpdate } = useContainersActions()
 
   const customMetadataTags = React.useMemo(() => {
-    if (!metadata) return []
+    if (!container.metadata) return []
     const result = []
     const reserved = [
       "x-container-meta-web-index",
@@ -229,35 +241,24 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
       "x-container-meta-quota-count",
       "x-container-meta-quota-bytes",
     ]
-    Object.keys(metadata).forEach((k) => {
+    Object.keys(container.metadata).forEach((k) => {
       if (k.startsWith("x-container-meta-") && reserved.indexOf(k) < 0)
         result.push({
           key: k.replace("x-container-meta-", ""),
-          value: metadata[k],
+          value: container.metadata[k],
         })
     })
     return result
-  }, [metadata])
+  }, [container.metadata])
 
   React.useEffect(() => {
-    setIsFetchingMetadata(true)
     loadContainerMetadata(name)
-      .then((headers) => {
-        // console.log("============================metadata", headers)
-        setMetadata(headers)
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-      .finally(() => setIsFetchingMetadata(false))
-
-    return () => setMetadata(null)
   }, [name])
 
-  const otherContainers = React.useMemo(() => {
-    if (containers.isFetching) return
-    return containers.items.filter((i) => i.name !== name)
-  }, [containers, name])
+  // const otherContainers = React.useMemo(() => {
+  //   if (containers.isFetching) return
+  //   return containers.items.filter((i) => i.name !== name)
+  // }, [containers, name])
 
   const close = React.useCallback((e) => {
     setShow(false)
@@ -269,7 +270,7 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
 
   const submit = React.useCallback(
     (values) => {
-      if (!metadata) return Promise.reject("Could not find container")
+      if (!container.metadata) return Promise.reject("Could not find container")
 
       let newValues = {
         "x-versions-location":
@@ -286,9 +287,9 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
         if (reservedKeys.indexOf(key) < 0) newValues[key] = t.value
       })
 
-      for (let key in metadata) {
+      for (let key in container.metadata) {
         if (!key.startsWith("x-container-meta")) continue
-        if ((metadata[key] && !newValues[key]) || !newValues[key]) {
+        if ((container.metadata[key] && !newValues[key]) || !newValues[key]) {
           newValues[key.replace("x-container", "x-remove-container")] = "1"
           delete newValues[key]
         }
@@ -310,7 +311,7 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
           setError(error.message)
         })
     },
-    [metadata, close, name]
+    [container.metadata, receiveItemUpdate, close, name]
   )
 
   const initialValues = React.useMemo(() => {

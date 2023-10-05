@@ -3,7 +3,7 @@ import React from "react"
 import PropTypes from "prop-types"
 import StateProvider from "./StateProvider"
 import Router from "./Router"
-import StoreProvider from "./store/Provider"
+import StoreProvider from "./data/StoreProvider"
 
 const App = (props) => (
   <StateProvider>

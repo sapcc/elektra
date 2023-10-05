@@ -1,7 +1,13 @@
 import React from "react"
 import PropTypes from "prop-types"
-import { useGlobalState } from "../../StateProvider"
-import useActions from "../../hooks/useActions"
+import {
+  useContainersFilteredItems,
+  useContainersError,
+  useContainersIsFetching,
+  useContainersActions,
+  useContainersLoadOnce,
+} from "../../data/hooks/containers"
+
 import { Link, useHistory } from "react-router-dom"
 import ItemsCount from "../shared/ItemsCount"
 import TimeAgo from "../shared/TimeAgo"
@@ -122,21 +128,16 @@ Table.propTypes = {
   onMenuAction: PropTypes.func,
 }
 
-import { getStore } from "../../store/Provider"
-
 const List = () => {
-  const containers = useGlobalState("containers")
-  const { loadContainersOnce } = useActions()
+  const error = useContainersError()
+  const isFetching = useContainersIsFetching()
+  const items = useContainersFilteredItems()
+  const loadContainersOnce = useContainersLoadOnce()
+  const { setSearchTerm } = useContainersActions()
   const history = useHistory()
-  const [searchTerm, updateSearchTerm] = React.useState("")
-
-  const { loadMetadataOnce: loadAccountMetadata } = getStore().account.actions()
-  const setTestData = getStore().test.setData()
 
   React.useEffect(() => {
-    loadAccountMetadata()
     loadContainersOnce()
-    setTestData(["hello", "world"])
   }, [loadContainersOnce])
 
   const handleMenuAction = React.useCallback(
@@ -155,19 +156,11 @@ const List = () => {
     [history.push]
   )
 
-  const items = React.useMemo(
-    () =>
-      containers.items.filter(
-        (i) => !searchTerm || (i.name && i.name.indexOf(searchTerm) >= 0)
-      ),
-    [searchTerm, containers.items]
-  )
-
   return (
     <>
       <div className="toolbar">
         <SearchField
-          onChange={(term) => updateSearchTerm(term)}
+          onChange={(term) => setSearchTerm(term)}
           placeholder="name"
           text="Filters by name"
         />
@@ -191,10 +184,15 @@ const List = () => {
       </div>
       {!policy.isAllowed("object_storage_ng:container_list") ? (
         <span>You are not allowed to see this page</span>
-      ) : containers.isFetching ? (
+      ) : isFetching ? (
         <span>
           <span className="spinner" />
           Loading...
+        </span>
+      ) : error ? (
+        <span>
+          <span className="danger" />
+          {error?.message || null}
         </span>
       ) : items.length === 0 ? (
         <span>No Containers found.</span>

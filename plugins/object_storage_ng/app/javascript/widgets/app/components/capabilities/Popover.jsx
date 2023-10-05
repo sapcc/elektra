@@ -1,22 +1,13 @@
 import React from "react"
 import Capabilities from "./List"
 import { useGlobalState } from "../../StateProvider"
-import useActions from "../../hooks/useActions"
-import { createUseStyles } from "react-jss"
 import { Popover } from "lib/components/Overlay"
 import { renderToString } from "react-dom/server"
-
-const useStyles = createUseStyles({
-  popoverCapabilities: {
-    width: 500,
-    maxWidth: "none !important",
-  },
-})
+import { useCapabilitiesLoadOnce } from "../../data/hooks/capabilities"
 
 const CapabilitiesPopover = () => {
-  const classes = useStyles()
   const capabilities = useGlobalState("capabilities")
-  const { loadCapabilitiesOnce } = useActions()
+  const loadCapabilitiesOnce = useCapabilitiesLoadOnce()
 
   React.useEffect(() => {
     loadCapabilitiesOnce()

@@ -1,17 +1,25 @@
 // StoreProvider.jsx
 import React, { createContext, useContext } from "react"
-import createStore from "./index"
+import createStore from "./store/index"
 import { useStore as useZustandStore } from "zustand"
 
 // Create a Store Context
 const StoreContext = createContext()
 
-const getStore = () => {
+const useStore = (selector) => {
   const store = useContext(StoreContext)
   if (!store) {
     throw new Error("Missing StoreProvider")
   }
-  return { ...store.use }
+  return useZustandStore(store, selector)
+}
+
+// export const useState = (key) => {
+//   useStore((state) => key.split(".").reduce((acc, curr) => acc[curr], state))
+// }
+
+export const useState = (slice, key) => {
+  useStore((state) => state[slice][key])
 }
 
 // Create the Store Provider component
@@ -23,4 +31,4 @@ const StoreProvider = ({ children }) => (
 )
 
 export default StoreProvider
-export { getStore }
+export { useStore }
