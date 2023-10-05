@@ -1,7 +1,0 @@
-<%
-  msg = "Backend error: " + @exception_msg
-  if @request_dump
-    msg += "\n\nThe request was: " + @request_dump
-  end
-%>
-alert(("<%= escape_javascript(msg) %>").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));

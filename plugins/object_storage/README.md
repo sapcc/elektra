@@ -1,4 +1,4 @@
-# ObjectStorageNg
+# ObjectStorage
 
 Short description and motivation.
 
@@ -11,7 +11,7 @@ How to use my plugin.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'object_storage_ng'
+gem 'object_storage'
 ```
 
 And then execute:
@@ -23,7 +23,7 @@ $ bundle
 Or install it yourself as:
 
 ```bash
-$ gem install object_storage_ng
+$ gem install object_storage
 ```
 
 ## Contributing

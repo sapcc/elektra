@@ -45,11 +45,11 @@ const Table = ({ data, onMenuAction }) => {
   const permissions = React.useMemo(() => {
     if (!policy) return {}
     return {
-      canDelete: policy.isAllowed("object_storage_ng:container_delete"),
-      canEmpty: policy.isAllowed("object_storage_ng:container_empty"),
-      canShow: policy.isAllowed("object_storage_ng:container_get"),
+      canDelete: policy.isAllowed("object_storage:container_delete"),
+      canEmpty: policy.isAllowed("object_storage:container_empty"),
+      canShow: policy.isAllowed("object_storage:container_get"),
       canShowAccessControl: policy.isAllowed(
-        "object_storage_ng:container_show_access_control"
+        "object_storage:container_show_access_control"
       ),
     }
   }, [policy])
@@ -166,7 +166,7 @@ const List = () => {
         />
 
         <div className="main-buttons">
-          {policy.isAllowed("object_storage_ng:container_create") && (
+          {policy.isAllowed("object_storage:container_create") && (
             <>
               <CapabilitiesPopover />
               <button
@@ -182,7 +182,7 @@ const List = () => {
           )}
         </div>
       </div>
-      {!policy.isAllowed("object_storage_ng:container_list") ? (
+      {!policy.isAllowed("object_storage:container_list") ? (
         <span>You are not allowed to see this page</span>
       ) : containers.isFetching ? (
         <span>
