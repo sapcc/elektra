@@ -516,7 +516,7 @@ module Compute
 
       @os_interface =
         services.compute.new_os_interface(params[:id], params[:os_interface])
-
+      
       if @os_interface.valid? && @os_interface.net_id.present?
         if @os_interface.port_id.present?
           @port =
@@ -525,10 +525,17 @@ module Compute
             )
           @port.id = @os_interface.port_id
         elsif @os_interface.net_id.present? && @os_interface.subnet_id.present?
+          ip_adress = { 
+            subnet_id: @os_interface.subnet_id
+          }
+          unless @os_interface.fixed_ips[0]["ip_address"].blank?
+            ip_adress[:ip_address] = @os_interface.fixed_ips[0]["ip_address"]
+          end
+
           @port =
             services.networking.new_port(
               network_id: @os_interface.net_id,
-              fixed_ips: [{ subnet_id: @os_interface.subnet_id }],
+              fixed_ips: [ip_adress],
               security_groups: @os_interface.security_groups,
             )
         end
