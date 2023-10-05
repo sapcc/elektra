@@ -4,6 +4,33 @@ import { useDispatch, useGlobalState } from "../StateProvider"
 
 import { createAjaxHelper } from "lib/ajax_helper"
 
+const decode = (str) => {
+  try {
+    return decodeURIComponent(str)
+  } catch (e) {
+    return str
+  }
+}
+
+const encode = (str) => encodeURIComponent(str)
+
+const containerPath = (containerName) => encode(decode(containerName))
+
+const objectPath = (containerName, object) =>
+  encode(decode(containerName)) + "/" + encode(decode(object))
+
+export const stripHtml = (html) => {
+  // html is <html><h1>TITLE</h1><p>TEXT</p></html>
+  const errorData = html.match(/<html><h1>(.*)<\/h1><p>(.*)<\/p><\/html>/)
+
+  if (errorData && errorData.length > 2)
+    return `${errorData[1]}: ${errorData[2]}`
+
+  let tmp = document.createElement("DIV")
+  tmp.innerHTML = html
+  return tmp.textContent || tmp.innerText || ""
+}
+
 const useActions = () => {
   const location = useLocation()
   const apiClient = React.useMemo(
@@ -20,19 +47,6 @@ const useActions = () => {
   const { capabilities, containers, objects, account } = useGlobalState()
   const dispatch = useDispatch()
 
-  const containerPath = React.useCallback(
-    (containerName) => encodeURIComponent(decodeURIComponent(containerName)),
-    []
-  )
-
-  const objectPath = React.useCallback(
-    (containerName, object) =>
-      encodeURIComponent(decodeURIComponent(containerName)) +
-      "/" +
-      encodeURIComponent(decodeURIComponent(object)),
-    []
-  )
-
   const loadCapabilitiesOnce = React.useCallback(
     (options = {}) => {
       if (capabilities.updatedAt && !options.reload) return
@@ -45,7 +59,10 @@ const useActions = () => {
           dispatch({ type: "RECEIVE_CAPABILITIES", data: response.data })
         })
         .catch((error) =>
-          dispatch({ type: "RECEIVE_CAPABILITIES_ERROR", error: error.message })
+          dispatch({
+            type: "RECEIVE_CAPABILITIES_ERROR",
+            error: stripHtml(error.message),
+          })
         )
     },
     [dispatch, capabilities.updatedAt]
@@ -66,7 +83,7 @@ const useActions = () => {
         .catch((error) =>
           dispatch({
             type: "RECEIVE_ACCOUNT_METADATA_ERROR",
-            error: error.message,
+            error: stripHtml(error.message),
           })
         )
     },
@@ -87,7 +104,10 @@ const useActions = () => {
           return response.data
         })
         .catch((error) =>
-          dispatch({ type: "RECEIVE_CONTAINERS_ERROR", error: error.message })
+          dispatch({
+            type: "RECEIVE_CONTAINERS_ERROR",
+            error: stripHtml(error.message),
+          })
         )
     },
     [dispatch, containers.updatedAt]

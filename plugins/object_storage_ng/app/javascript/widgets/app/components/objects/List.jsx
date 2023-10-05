@@ -23,6 +23,8 @@ import Table from "./Table"
 import { LIMIT } from "./config"
 import { confirm } from "lib/dialogs"
 
+import { stripHtml } from "../../hooks/useActions"
+
 const Objects = ({ objectStoreEndpoint }) => {
   let { url } = useRouteMatch()
   let objectsRoot = url.replace(/([^/])\/objects.*/, "$1/objects")
@@ -121,7 +123,7 @@ const Objects = ({ objectStoreEndpoint }) => {
         dispatch({ type: "RECEIVE_ITEMS", items })
       })
       .catch((error) =>
-        dispatch({ type: "RECEIVE_ERROR", error: error.message })
+        dispatch({ type: "RECEIVE_ERROR", error: stripHtml(error.message) })
       )
   }, [containerName, currentPath, dispatch, loadContainerObjects])
 
@@ -186,7 +188,7 @@ const Objects = ({ objectStoreEndpoint }) => {
                 type: "UPDATE_ITEM",
                 name,
                 isDeleting: false,
-                error: error.message,
+                error: stripHtml(error.message),
               })
             })
         })
@@ -246,7 +248,7 @@ const Objects = ({ objectStoreEndpoint }) => {
                 type: "UPDATE_ITEM",
                 name,
                 isDeleting: false,
-                error: error.message,
+                error: stripHtml(error.message),
               })
             )
         })
@@ -270,7 +272,7 @@ const Objects = ({ objectStoreEndpoint }) => {
               type: "UPDATE_ITEM",
               name,
               isProcessing: false,
-              error: error.message,
+              error: stripHtml(error.message),
             })
           )
       } else {
