@@ -1,4 +1,5 @@
 import React from "react"
+import { JsonViewer } from "juno-ui-components"
 
 const ItemDetails = ({ event }) => (
   <tr className="explains-previous-line">
@@ -6,7 +7,8 @@ const ItemDetails = ({ event }) => (
       {event.isFetchingDetails ? (
         <span className="spinner" />
       ) : (
-        <pre>{JSON.stringify(event.details, null, 2)}</pre>
+        // <pre>{JSON.stringify(event.details, null, 2)}</pre>
+        <JsonViewer data={event.details} theme="light" expanded />
       )}
     </td>
   </tr>
