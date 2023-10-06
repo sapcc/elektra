@@ -53,7 +53,7 @@ const VolumesList = ({
         <div className="toolbar toolbar-controlcenter">
           <Form
             isLoading={volumes.isFetching}
-            searchFor={["name", "id", "status"]}
+            searchFor={["name", "description", "id", "status"]}
             onSubmit={(searchType, searchTerm) =>
               fetchVolumes({ searchType, searchTerm })
             }

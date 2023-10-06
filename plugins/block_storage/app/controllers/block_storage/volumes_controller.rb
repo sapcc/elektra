@@ -25,7 +25,7 @@ module BlockStorage
       else
         filters = { sort_key: sort_key, sort_dir: sort_dir, limit: limit + 1 }
         search_type = params[:search_type]
-        search_type += "~" if search_type == "name"
+        search_type += "~" if ["name","description"].include? search_type
         filters[:marker] = params[:marker] if params[:marker]
         filters[search_type] = params[:search_term] if search_type
         # byebug
