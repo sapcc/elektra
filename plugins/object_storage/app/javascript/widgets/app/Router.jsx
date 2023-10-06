@@ -9,54 +9,116 @@ import NewContainer from "./components/containers/New"
 import ContainerAccessControl from "./components/containers/AccessControl"
 import Containers from "./components/containers/List"
 import Objects from "./components/objects/List"
+import HowToEnable from "./components/app/HowToEnable"
+import NoSwiftAccountAndAccountManagement from "./components/app/NoSwiftAccountAndAccountManagement"
+import NoSwiftAccountBecauseNoQuota from "./components/app/NoSwiftAccountBecauseNoQuota"
 
-const Router = ({ baseName, objectStoreEndpoint }) => (
+import { useGlobalState } from "./StateProvider"
+import useActions from "./hooks/useActions"
+
+const Routes = ({ objectStoreEndpoint, projectPath, resourcesPath }) => {
+  const capabilities = useGlobalState("capabilities")
+  const account = useGlobalState("account")
+  const { loadCapabilitiesOnce, loadAccountMetadataOnce } = useActions()
+
+  React.useEffect(() => {
+    loadCapabilitiesOnce()
+    loadAccountMetadataOnce()
+  }, [])
+
+  if (capabilities.isFetching || account.isFetching) {
+    return (
+      <div>
+        <span className="spinner" />
+        Loading...
+      </div>
+    )
+  }
+
+  if (!account.data || Object.keys(account.data).length === 0) {
+    if (capabilities?.data?.swift?.allow_account_management) {
+      return (
+        <NoSwiftAccountBecauseNoQuota
+          projectPath={projectPath}
+          resourcesPath={resourcesPath}
+        />
+      )
+    } else {
+      return <NoSwiftAccountAndAccountManagement projectPath={projectPath} />
+    }
+  }
+
+  return (
+    <>
+      {/* redirect root to shares tab */}
+      <Route exact path="/">
+        <Redirect to="/containers" />
+      </Route>
+
+      <Switch>
+        <Route path="/containers/:name/objects/:objectPath?">
+          <Objects objectStoreEndpoint={objectStoreEndpoint} />
+        </Route>
+
+        <Route path="/containers">
+          <Containers />
+          <Route exact path="/containers/new" component={NewContainer} />
+
+          <Route
+            exact
+            path={`/containers/:name/properties`}
+            render={() => (
+              <ContainerProperties objectStoreEndpoint={objectStoreEndpoint} />
+            )}
+          />
+
+          <Route
+            exact
+            path={`/containers/:name/delete`}
+            component={DeleteContainer}
+          />
+          <Route
+            exact
+            path={`/containers/:name/access-control`}
+            component={ContainerAccessControl}
+          />
+          <Route
+            exact
+            path={`/containers/:name/empty`}
+            component={EmptyContainer}
+          />
+        </Route>
+      </Switch>
+    </>
+  )
+}
+
+const Router = ({
+  baseName,
+  objectStoreEndpoint,
+  projectPath,
+  resourcesPath,
+}) => (
   <BrowserRouter basename={baseName}>
-    {/* redirect root to shares tab */}
-    <Route exact path="/">
-      <Redirect to="/containers" />
-    </Route>
+    <Route exact path={`/how-to-enable`} component={HowToEnable} />
 
-    <Switch>
-      <Route path="/containers/:name/objects/:objectPath?">
-        <Objects objectStoreEndpoint={objectStoreEndpoint} />
-      </Route>
-
-      <Route path="/containers">
-        <Containers />
-        <Route exact path="/containers/new" component={NewContainer} />
-
-        <Route
-          exact
-          path={`/containers/:name/properties`}
-          render={() => (
-            <ContainerProperties objectStoreEndpoint={objectStoreEndpoint} />
-          )}
-        />
-
-        <Route
-          exact
-          path={`/containers/:name/delete`}
-          component={DeleteContainer}
-        />
-        <Route
-          exact
-          path={`/containers/:name/access-control`}
-          component={ContainerAccessControl}
-        />
-        <Route
-          exact
-          path={`/containers/:name/empty`}
-          component={EmptyContainer}
-        />
-      </Route>
-    </Switch>
+    {policy.isAllowed("object_storage:container_list") ? (
+      <Routes
+        objectStoreEndpoint={objectStoreEndpoint}
+        projectPath={projectPath}
+        resourcesPath={resourcesPath}
+      />
+    ) : (
+      <HowToEnable projectPath={projectPath} />
+    )}
   </BrowserRouter>
 )
 
 Router.propTypes = {
   baseName: PropTypes.string.isRequired,
   objectStoreEndpoint: PropTypes.string.isRequired,
+  projectPath: PropTypes.string.isRequired,
+  resourcesPath: PropTypes.string.isRequired,
 }
 
 export default Router
