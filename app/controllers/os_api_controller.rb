@@ -25,7 +25,6 @@ class OsApiController < ::AjaxController
     service_name = service_path[0]
     # the rest is the current path
     path = service_path[1] || ""
-    path += ".#{params[:format]}" if params[:format]
 
     headers = {}
     request.headers.each do |name, value|

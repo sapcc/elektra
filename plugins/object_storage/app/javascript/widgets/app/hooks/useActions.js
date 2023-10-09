@@ -121,14 +121,21 @@ const useActions = () => {
   )
 
   const deleteObject = React.useCallback((containerName, name, params = {}) => {
+    // params is an object of query parameters
+    // only build query string if params is not empty
     let query =
+      Object.keys(params || {}).length > 0 &&
       "?" +
-      Object.keys(params)
-        .map((key) => `${key}=${params[key]}`)
-        .join("&")
+        Object.keys(params)
+          .map((key) => `${key}=${params[key]}`)
+          .join("&")
+
     return apiClient
       .osApi("object-store")
-      .delete(objectPath(containerName, name) + encodeURIComponent(query))
+      .delete(
+        objectPath(containerName, name) +
+          (query ? encodeURIComponent(query) : "")
+      )
       .then((response) => response.data)
   }, [])
 

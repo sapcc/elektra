@@ -22,7 +22,7 @@ const Breadcrumb = ({ count }) => {
   const { value: currentPath, encode } = useUrlParamEncoder(objectPath)
 
   const items = React.useMemo(() => {
-    let match = currentPath.match(regex)
+    let match = currentPath && currentPath.match(regex)
     if (!match) return []
     return match.map((i) => (i[i.length - 1] === "/" ? i.slice(0, -1) : i))
     //.concat(match.map((i) => (i[i.length - 1] === "/" ? i.slice(0, -1) : i)))
