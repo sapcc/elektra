@@ -52,7 +52,7 @@ const AvailableBigVmResources = () => {
           <span className="spinner"></span> Loading...
         </span>
       ) : error ? (
-        <div className="alert alert-danger">{error.message}</div>
+        <div className="alert alert-warning">{error.message}</div>
       ) : placeableVMs.length === 0 ? (
         <span>No resources available.</span>
       ) : (
