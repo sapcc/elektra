@@ -18,7 +18,13 @@ const EventItem = ({ event, toggleDetails }) => {
           <i className={showDetailsClassName}></i>
         </a>
       </td>
-      <td>{moment(event.eventTime).format("YYYY-MM-DD, HH:mm:ssZZ")}</td>
+      <td>
+        {moment(event.eventTime).format("YYYY-MM-DD, HH:mm:ss")}
+        <br />
+        <small className="info-text">
+          UTC: {moment(event.eventTime).utc().format("YYYY-MM-DD, HH:mm:ss")}
+        </small>
+      </td>
       <td>{event.observer.typeURI}</td>
       <td>{event.action}</td>
       <td className="big-data-cell">

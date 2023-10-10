@@ -45,7 +45,7 @@ module Lookup
       "lb_listener" => %w[lbaas2 find_listener],
       "lb_pool" => %w[lbaas2 find_pool],
       "lb_healthmonitor" => %w[lbaas2 find_healthmonitor],
-      "storage_container" => %w[object_storage container_metadata],
+      # "storage_container" => %w[object_storage container_metadata],
       "share" => %w[shared_filesystem_storage find_share],
       "share_network" => %w[shared_filesystem_storage find_share_network],
       "share_snapshot" => %w[shared_filesystem_storage snapshots_detail],

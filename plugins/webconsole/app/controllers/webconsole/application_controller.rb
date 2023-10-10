@@ -28,12 +28,12 @@ module Webconsole
 
       help_file = File.join(Rails.root, "plugins/webconsole/webconsole_help.md")
 
-      if File.exists?(help_file)
+      if File.exist?(help_file)
         # load general help content
         general_help_file =
           File.join(Rails.root, "plugins/webconsole/webconsole_general_help.md")
         general_help_source =
-          File.new(general_help_file, "r").read if File.exists?(
+          File.new(general_help_file, "r").read if File.exist?(
           general_help_file,
         )
         # replace placeholders inside this contet

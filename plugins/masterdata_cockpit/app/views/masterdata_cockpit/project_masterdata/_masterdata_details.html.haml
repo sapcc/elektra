@@ -277,22 +277,6 @@
         \-
   .row
     .col-sm-4.details-label
-      Software License
-      %a.help-link{
-        data: {
-        content: t('masterdata_cockpit.soft_license_mode_help'),
-        popover: { type: "help-hint" },
-        toggle: "popover"
-        }
-      }
-        = icon('info-circle')
-    .col-sm-8.details-value
-      - if @project_masterdata.soft_license_mode
-        = MasterdataCockpit::Config.soft_license_mode[@project_masterdata.soft_license_mode]
-      - else
-        \-
-  .row
-    .col-sm-4.details-label
       GPU Enabled
       %a.help-link{
         data: {

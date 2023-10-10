@@ -1,3 +1,5 @@
+- pools = @pools.each_with_object({}){ |pool, hash| hash[pool.id] = pool }
+
 = simple_form_for @zone, url: plugin('dns_service').zones_path(@zone.id), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
@@ -5,7 +7,8 @@
       .alert.alert-error
         = render_errors(@zone.errors)
 
-    = f.input :name,  required: true
+    = f.input :name, label: "Name (TLD)", required: true, 
+      icon_hint: "A fully qualified domain name, e.g. example.com."
     = f.input :pool_id, as: :select, label: 'DNS Provider', required: false do
       = f.select :pool_id, @pools.uniq.collect{|pool| [(pool.attributes.fetch("attributes", {}).fetch("label",nil) || pool.name.humanize), pool.id]},
         { include_blank: true },
@@ -14,8 +17,27 @@
         %i.fa.fa-info-circle
         Default is "Internal SAP Hosted Zone" 
         #{link_to 'See the documentation for more information','https://documentation.global.cloud.sap/docs/customer/networking/dns/'}
-    = f.input :email, required: true
-    = f.input :ttl,   required: false, as: :integer, input_html: {value: @zone.ttl || 7200}
+
+    %div{ data: {container: 'rootdomain'} }
+      %div.form-group{ data: {container: 'rootdomain_info'} }
+        .col-sm-4
+        .col-sm-8
+          %p
+            %br
+            Before the Domain Name System can start to route queries for this domain to the correct name servers,
+            you must update the name server records either with the current DNS service or with the registrar for the
+            domain, as applicable. The new name server records are listed below.
+          %ul
+
+
+    = f.input :email, required: true, input_wrapper_html: { style: "width: 70%" } do
+      = f.text_field :email, class: "form-control"
+      %p.help-block{ data: {container: 'email_description'} }
+        %i.fa.fa-info-circle
+        %span Please use always your SAP mail address
+
+    = f.input :ttl,   required: true, as: :integer, input_html: {value: @zone.ttl || 7200}, 
+      icon_hint: 'Time to live in seconds'
     = f.input :description, required: false, as: :text
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
@@ -24,3 +46,35 @@
     - else
       = link_to 'Cancel', zones_url(), class: 'btn btn-default'
     = button_tag 'Create', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait... '} }
+
+
+:javascript
+  var pools = #{pools.to_json.html_safe};
+
+  $('select[name="zone[pool_id]"]').change(function(){
+
+    var attributes = pools[this.value].attributes;
+    if (attributes) {
+      if (attributes['mail']) {
+        $('input[name="zone[email]"]').val(attributes['mail']);
+      } else {
+        $('input[name="zone[email]"]').val('');
+      }
+      if (attributes['mail_description']) {
+        $('[data-container="email_description"]').removeClass('hidden');
+        $('[data-container="email_description"] span').text(attributes['mail_description']);
+      } else {
+        $('[data-container="email_description"] span').text('');
+        $('[data-container="email_description"]').addClass('hidden');
+      }
+    }
+
+    var ns_records = pools[this.value].ns_records;
+    if (ns_records && ns_records.length > 0) {
+      $('[data-container="rootdomain_info"] ul').empty();
+
+      for(var i=0; i<ns_records.length; i++) {
+        $('[data-container="rootdomain_info"] ul').append('<li>'+ns_records[i].hostname+'</li>');
+      }
+    }
+  });

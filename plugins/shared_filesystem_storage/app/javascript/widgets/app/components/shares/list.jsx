@@ -97,8 +97,9 @@ export default class List extends React.Component {
       (i) =>
         `${i.name} ${i.id} ${i.share_proto} ${
           i.status
-        } ${i.export_locations.join()}`.indexOf(this.props.searchTerm.trim()) >=
-        0
+        } ${i.export_locations?.join()}`.indexOf(
+          this.props.searchTerm.trim()
+        ) >= 0
     )
   }
 

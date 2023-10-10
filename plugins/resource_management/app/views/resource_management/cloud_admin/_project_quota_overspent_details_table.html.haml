@@ -30,4 +30,4 @@
 
 = content_for :javascripts do
   :javascript
-    #{render partial: 'sort_details_table_script.js', locals: {sortable_table:"project_overspent", path: plugin('resource_management').cloud_admin_inconsistencies_path()}}
+    #{render partial: 'sort_details_table_script', formats: :js, locals: {sortable_table:"project_overspent", path: plugin('resource_management').cloud_admin_inconsistencies_path()}}

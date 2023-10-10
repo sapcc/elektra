@@ -7,20 +7,21 @@ import EventItem from "../../containers/events/item"
 import EventItemDetail from "./item_details"
 import Pagination from "../../containers/shared/pagination"
 import { isEmpty } from "lib/tools/helpers"
+import { Alert } from "lib/flashes/alert"
 
 const isValidDate = (date) =>
   // do not allow dates that are in the future
   !moment(date).isAfter()
 
 const ATTRIBUTES = [
-  {key: 'observer_type',  name: 'Observer Type'},
-  {key: 'action',         name: 'Action' },
-  {key: 'target_type',    name: 'Target Type' },
-  {key: 'target_id',      name: 'Target ID' },
-  {key: 'initiator_id',   name: 'Initiator ID' },
-  {key: 'initiator_name', name: 'Initiator Name' },
-  {key: 'initiator_type', name: 'Initiator Type' },
-  {key: 'outcome',        name: 'Outcome' }
+  { key: "observer_type", name: "Observer Type" },
+  { key: "action", name: "Action" },
+  { key: "target_type", name: "Target Type" },
+  { key: "target_id", name: "Target ID" },
+  { key: "initiator_id", name: "Initiator ID" },
+  { key: "initiator_name", name: "Initiator Name" },
+  { key: "initiator_type", name: "Initiator Type" },
+  { key: "outcome", name: "Outcome" },
 ]
 
 const EventList = ({
@@ -47,6 +48,15 @@ const EventList = ({
   error,
 }) => (
   <div>
+    {error && (
+      <Alert
+        message={{
+          type: "error",
+          text: "This is a danger alert—check it out!",
+        }}
+      />
+    )}
+
     <div className="toolbar toolbar-controlcenter">
       <label>Filter:</label>
       <div className="inputwrapper">
@@ -113,12 +123,13 @@ const EventList = ({
 
       <span className="toolbar-input-divider" />
 
-      <label>Time range (UTC):</label>
+      <label>Time range:</label>
       <Datetime
         value={filterStartTime}
         inputProps={{ placeholder: "Select start time" }}
         isValidDate={isValidDate}
         timeFormat="HH:mm"
+        utc
         onChange={(e) => handleStartTimeChange(e)}
       />
       <span className="toolbar-input-divider">&ndash;</span>
@@ -126,6 +137,7 @@ const EventList = ({
         value={filterEndTime}
         inputProps={{ placeholder: "Select end time" }}
         timeFormat="HH:mm"
+        utc
         isValidDate={isValidDate}
         onChange={(e) => handleEndTimeChange(e)}
       />
@@ -143,7 +155,6 @@ const EventList = ({
         </a>
       )}
     </div>
-
     {activeFilters.length > 0 && (
       <div className="toolbar-secondary wrapable">
         {activeFilters.map((filter) => (
@@ -161,48 +172,38 @@ const EventList = ({
       </div>
     )}
 
-    <table className="table">
-      <thead>
-        <tr>
-          <th className="icon-cell"></th>
-          <th>Time</th>
-          <th>Observer Type</th>
-          <th>Action</th>
-          <th>Target Type</th>
-          <th>Initiator Name</th>
-        </tr>
-      </thead>
-
-      {error ? (
-        <tbody>
+    {/* No events found */}
+    <div className="loading-container">
+      <table className="table">
+        <thead>
           <tr>
-            <td colSpan="6">{error}</td>
+            <th className="icon-cell"></th>
+            <th>Time</th>
+            <th>Observer Type</th>
+            <th>Action</th>
+            <th>Target Type</th>
+            <th>Initiator Name</th>
           </tr>
-        </tbody>
-      ) : events ? (
-        events.map((event) => (
-          <tbody key={event.id}>
-            <EventItem event={event} />
-            {event.detailsVisible && <EventItemDetail event={event} />}
-          </tbody>
-        ))
-      ) : (
+        </thead>
         <tbody>
-          <tr>
-            <td colSpan="6">No events found</td>
-          </tr>
+          {events &&
+            events.map((event, i) => (
+              <React.Fragment key={i}>
+                <EventItem event={event} />
+                {event.detailsVisible && <EventItemDetail event={event} />}
+              </React.Fragment>
+            ))}
         </tbody>
-      )}
+      </table>
       {isFetching && (
-        <tbody>
-          <tr>
-            <td colSpan="6">
-              <span className="spinner" />
-            </td>
-          </tr>
-        </tbody>
+        <div className="loading-overlay">
+          <div className="spinner-container">
+            <span className="spinner" />
+            Loading...
+          </div>
+        </div>
       )}
-    </table>
+    </div>
     <Pagination offset={offset} limit={limit} total={total} />
   </div>
 )

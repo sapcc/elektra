@@ -25,4 +25,4 @@
 
 = content_for :javascripts do
   :javascript
-    #{ render partial: 'details_table_script.js', locals: { scope: 'admin' } }
+    #{ render partial: 'details_table_script', formats: :js, locals: { scope: 'admin' } }

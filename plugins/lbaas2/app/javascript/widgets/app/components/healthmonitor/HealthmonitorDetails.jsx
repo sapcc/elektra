@@ -114,7 +114,7 @@ const HealthmonitorDetails = ({ loadbalancerID, poolID, healthmonitor }) => {
       <div className="list-entry">
         <div className="row">
           <div className="col-md-12">
-            <b>Max Retries/Interval:</b>
+            <b>Max Retries Down/Interval:</b>
           </div>
         </div>
         <div className="row">

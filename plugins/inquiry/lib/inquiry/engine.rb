@@ -1,3 +1,5 @@
+require_relative "../../app/helpers/inquiry/inquiries_helper.rb"
+
 module Inquiry
   class Engine < ::Rails::Engine
     isolate_namespace Inquiry

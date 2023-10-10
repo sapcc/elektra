@@ -116,25 +116,19 @@
   .panel.panel-default
     .panel-body
       .row
-        .col-md-4
+        .col-md-6
           - environment = MasterdataCockpit::Config.environment
           = f.input :environment, label: "Environment", as:           :select, collection:   environment.keys, label_method: -> (k) { environment[k] }
-        .col-md-4
+        .col-md-6
           - types = MasterdataCockpit::Config.type_of_data
           = f.input :type_of_data, label: "Type of Data", as:           :select, collection:   types.keys, label_method: -> (k) { types[k] }
-        .col-md-4
-          - soft_license_mode = MasterdataCockpit::Config.soft_license_mode
-          = f.input :soft_license_mode, label: "Software License", as:           :select, collection:   soft_license_mode.keys, label_method: -> (k) { soft_license_mode[k] }
       .row
-        .col-md-4.op-help-block
+        .col-md-6.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.environment_help')
-        .col-md-4.op-help-block
+        .col-md-6.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.type_of_data_help')
-        .col-md-4.op-help-block
-          = icon ('info-circle')
-          = t('masterdata_cockpit.soft_license_mode_help')
       %hr/
       .row
         .col-md-4

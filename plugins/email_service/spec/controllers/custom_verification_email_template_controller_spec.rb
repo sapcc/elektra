@@ -305,6 +305,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
         end
       end
       it 'returns http 302 status' do
+        expect(Rails.logger).to receive(:error)
         expect(
           delete(:destroy, params: default_params.merge(id: @opts[:id])),
         ).to redirect_to(
@@ -330,6 +331,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
         end
       end
       it 'returns http 302 status' do
+        expect(Rails.logger).to receive(:error)
         expect(
           delete(:destroy, params: default_params.merge(id: @opts[:id])),
         ).to redirect_to(

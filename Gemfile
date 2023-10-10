@@ -11,7 +11,7 @@ source 'https://rubygems.org'
 # # unf is pulled in by the ruby-arc-client
 gem 'unf', '>= 0.2.0beta2'
 
-gem 'rails', '6.1.5.1'
+gem 'rails', '7.0.8'
 gem 'jsbundling-rails'
 
 gem 'bootstrap-sass'
@@ -70,7 +70,7 @@ gem 'sdoc', '~> 1.1.0', group: :doc
 
 # if you update puma check Dockerfile for Version dependencies!
 # gem 'puma', '= 4.3.9', require: false
-gem "puma", "4.3.12"
+gem "puma", "6.3.1"
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
@@ -93,7 +93,7 @@ gem 'aws-sdk-cloudwatch'
 ######################## END #######################
 
 group :api_client do
-  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.2.2'
+  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.2.3'
   # gem 'elektron', path: '../elektron'
 end
 

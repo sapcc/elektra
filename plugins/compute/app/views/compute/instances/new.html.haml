@@ -140,7 +140,7 @@
         toggleRootDisk($('#server_custom_root_disk').is(':checked'))
       })
 
-      var flavors = "#{js_flavor_data(@flavors)}";
+      var flavors = #{js_flavor_data(@flavors)};
       //flavors = JSON.parse(flavors.replace(/&quot;/g,'"'));
       $('#server_flavor_id').change(function(){
         //console.log($( this ).val())

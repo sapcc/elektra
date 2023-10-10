@@ -15,48 +15,63 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 usage() {
-	>&2 echo "release: ${release}"
-	>&2 echo "usage: pg_tmp [-w timeout] [-t] [-o extra-options] [-d datadir]"
+	echo >&2 "release: ${release}"
+	echo >&2 "usage: pg_tmp [-w timeout] [-t] [-o extra-options] [-d datadir]"
 	exit 1
 }
 
 trap 'printf "$0: exit code $? on line $LINENO\n" >&2; exit 1' ERR \
-	2> /dev/null || exec bash $0 "$@"
+	2>/dev/null || exec bash $0 "$@"
 trap '' HUP
-set +o posix
+#set +o posix
 
 USER_OPTS=""
->/dev/null getopt w:d:o:p:t "$@" || usage
+getopt >/dev/null w:d:o:p:t "$@" || usage
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-w) TIMEOUT="$2"; shift ;;
-		-d) TD="$2"; shift ;;
-		-t) LISTENTO="127.0.0.1"; PGPORT="$(getsocket)" ;;
-		-p) PGPORT="$2"; shift ;;
-		-o) USER_OPTS="$2"; shift ;;
-		 *) CMD=$1 ;;
+	-w)
+		TIMEOUT="$2"
+		shift
+		;;
+	-d)
+		TD="$2"
+		shift
+		;;
+	-t)
+		LISTENTO="127.0.0.1"
+		PGPORT="$(getsocket)"
+		;;
+	-p)
+		PGPORT="$2"
+		shift
+		;;
+	-o)
+		USER_OPTS="$2"
+		shift
+		;;
+	*) CMD=$1 ;;
 	esac
 	shift
 done
 
-initdb -V > /dev/null || exit 1
+initdb -V >/dev/null || exit 1
 PGVER=$(psql -V | awk '{print $NF}')
 
 case ${CMD:-start} in
 initdb)
 	[ -z $TD ] || mkdir -p $TD
 	[ -z $TD ] && TD="$(mktemp -d ${SYSTMP:-/tmp}/ephemeralpg.XXXXXX)"
-	initdb --nosync -D $TD/$PGVER -E UNICODE -A trust > $TD/initdb.out
-	cat <<-EOF >> $TD/$PGVER/postgresql.conf
-	    unix_socket_directories = '$TD'
-	    listen_addresses = ''
-	    shared_buffers = 12MB
-	    fsync = off
-	    synchronous_commit = off
-	    full_page_writes = off
-	    log_min_duration_statement = 0
-	    log_connections = on
-	    log_disconnections = on
+	initdb --nosync -D $TD/$PGVER -E UNICODE -A trust >$TD/initdb.out
+	cat <<-EOF >>$TD/$PGVER/postgresql.conf
+		    unix_socket_directories = '$TD'
+		    listen_addresses = ''
+		    shared_buffers = 12MB
+		    fsync = off
+		    synchronous_commit = off
+		    full_page_writes = off
+		    log_min_duration_statement = 0
+		    log_connections = on
+		    log_disconnections = on
 	EOF
 	touch $TD/NEW
 	echo $TD
@@ -66,16 +81,22 @@ start)
 	# 2. Create a new datadir if nothing was found
 	# 3. Launch a background task to create a datadir for future invocations
 	if [ -z $TD ]; then
-		for d in $(ls -d ${SYSTMP:-/tmp}/ephemeralpg.*/$PGVER 2> /dev/null); do
+		for d in $(ls -d ${SYSTMP:-/tmp}/ephemeralpg.*/$PGVER 2>/dev/null); do
 			td=$(dirname "$d")
-			test -O $td/NEW && rm $td/NEW 2> /dev/null && { TD=$td; break; }
+			test -O $td/NEW && rm $td/NEW 2>/dev/null && {
+				TD=$td
+				break
+			}
 		done
-		[ -z $TD ] && { TD=$($0 initdb); rm $TD/NEW; }
-		nice -n 19 $0 initdb > /dev/null &
+		[ -z $TD ] && {
+			TD=$($0 initdb)
+			rm $TD/NEW
+		}
+		nice -n 19 $0 initdb >/dev/null &
 	else
 		[ -O $TD/$PGVER ] || TD=$($0 initdb -d $TD)
 	fi
-	nice -n 19 $0 -w ${TIMEOUT:-60} -d $TD -p ${PGPORT:-5432} stop > $TD/stop.log 2>&1 &
+	nice -n 19 $0 -w ${TIMEOUT:-60} -d $TD -p ${PGPORT:-5432} stop >$TD/stop.log 2>&1 &
 	[ -n "$PGPORT" ] && OPTS="-c listen_addresses='$LISTENTO' -c port=$PGPORT"
 	LOGFILE="$TD/$PGVER/postgres.log"
 	pg_ctl -W -o "$OPTS $USER_OPTS" -s -D $TD/$PGVER -l $LOGFILE start
@@ -88,14 +109,17 @@ start)
 	fi
 	for n in 1 2 3 4 5; do
 		sleep 0.1
-		createdb -E UNICODE test > /dev/null 2>&1 && break
+		createdb -E UNICODE test >/dev/null 2>&1 && break
 	done
-	[ $? != 0 ] && { >&2 cat $LOGFILE; exit 1; }
+	[ $? != 0 ] && {
+		cat >&2 $LOGFILE
+		exit 1
+	}
 	[ -t 1 ] && echo "$url" || echo -n "$url"
 	;;
 stop)
 	[ -O $TD/$PGVER/postgresql.conf ] || {
-		>&2 echo "Please specify a PostgreSQL data directory using -d"
+		echo >&2 "Please specify a PostgreSQL data directory using -d"
 		exit 1
 	}
 	trap "rm -r $TD" EXIT
@@ -113,12 +137,18 @@ selftest)
 	export SYSTMP=$(mktemp -d /tmp/ephemeralpg-selftest.XXXXXX)
 	trap "rm -r $SYSTMP" EXIT
 	printf "Running: "
-	printf "initdb "; dir=$($0 initdb)
-	printf "start " ; url=$($0 -w 3 -o '-c log_temp_files=100' start)
-	printf "psql "  ; [ "$(psql --no-psqlrc -At -c 'select 5' $url)" == "5" ]
-	printf "stop "  ; sleep 10
-	printf "verify "; ! [ -d dir ]
-	echo; echo "OK"
+	printf "initdb "
+	dir=$($0 initdb)
+	printf "start "
+	url=$($0 -w 3 -o '-c log_temp_files=100' start)
+	printf "psql "
+	[ "$(psql --no-psqlrc -At -c 'select 5' $url)" == "5" ]
+	printf "stop "
+	sleep 10
+	printf "verify "
+	! [ -d $dir ]
+	echo
+	echo "OK"
 	;;
 *)
 	usage

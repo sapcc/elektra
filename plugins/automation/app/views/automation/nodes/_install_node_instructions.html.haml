@@ -7,7 +7,7 @@
   %li
     %p Log in into the instance
     - unless @instance.nil?
-      - compute_ips(@instance.addresses)
+      = compute_ips(@instance.addresses)
 
   %li
     Run the following script in an administrator console as super user:

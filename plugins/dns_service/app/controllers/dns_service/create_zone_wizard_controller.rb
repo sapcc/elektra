@@ -142,7 +142,6 @@ module DnsService
       end
 
       if @zone_request.errors.empty?
-        # render create.js.erb
         render action: :create
       else
         render action: :new

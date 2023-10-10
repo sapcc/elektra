@@ -10,7 +10,7 @@ module Metrics
     end
 
     def maia
-      redirect_to "https://maia.#{current_region}.cloud.sap/#{@scoped_domain_name}?x-auth-token=#{current_user.token}"
+      redirect_to "https://maia.#{current_region}.cloud.sap/#{@scoped_domain_name}?x-auth-token=#{current_user.token}", allow_other_host: true
     end
 
     def grafana_available
