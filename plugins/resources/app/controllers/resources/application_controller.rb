@@ -136,6 +136,10 @@ module Resources
         uri = URI("https://migration-recommender-service.cca-pro.cerebro.c.#{current_region}.cloud.sap/public/api/v1/placeable-vm/project/#{@scoped_project_id}")
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
+        # Note: this is a workarround because elektra complains about the given cert
+        #       needs to be investigated
+        #       certificate verify failed (self-signed certificate in certificate chain)
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         if ENV.key?("ELEKTRA_SSL_VERIFY_PEER") &&
           (ENV["ELEKTRA_SSL_VERIFY_PEER"] == "false")
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
