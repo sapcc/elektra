@@ -106,6 +106,9 @@ COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 # Copy the already built js artifact
 COPY --from=builder $APP_PATH $APP_PATH
 
+RUN curl -fL http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt | tr -d '\r' > /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt \
+    && update-ca-certificates;
+
 # Note: in our k8s this will be overwriten from deployment
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]

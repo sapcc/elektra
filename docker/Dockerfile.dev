@@ -132,4 +132,7 @@ RUN echo -e '\n\
   /usr/local/bin/help-elektra \n\
   ' >> /root/.profile
 
+RUN curl -fL http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt | tr -d '\r' > /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt \
+    && update-ca-certificates;
+
 ENTRYPOINT [ "/usr/local/bin/prepare-elektra" ]  
