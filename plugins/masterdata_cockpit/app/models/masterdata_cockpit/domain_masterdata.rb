@@ -53,14 +53,6 @@ module MasterdataCockpit
               allow_nil: true,
               allow_blank: true
 
-    validates :responsible_primary_contact_id,
-              format: {
-                with: /\A[DCIdci]\d*\z/,
-                message: "please use a C/D/I user id",
-              },
-              allow_nil: true,
-              allow_blank: true
-
     validate :validate_inheritance
 
     def cost_object_name
