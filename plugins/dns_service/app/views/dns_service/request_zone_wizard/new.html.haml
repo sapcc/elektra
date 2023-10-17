@@ -31,7 +31,7 @@
         Please choose your DNS Provider.
         #{link_to 'See the documentation for more information','https://documentation.global.cloud.sap/docs/customer/networking/dns/'}
 
-
+    =# this is for interal SAP Hosted Zone
     %div{ data: {container: 'form_data'}, class: ('hidden' if @zone_request.domain_pool.blank?) }
       %div{ data: {container: 'domain_type' }, class: ('hidden' if subdomains.empty?) }
         = f.input :domain_type, required: true, label: 'Type' do

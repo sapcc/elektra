@@ -8,21 +8,21 @@ module Compute
 
     authorization_context "compute"
     authorization_required except: %i[
-                             new_floatingip
-                             attach_floatingip
-                             detach_floatingip
-                             remove_floatingip
-                             attach_interface
-                             create_interface
-                             remove_interface
-                             detach_interface
-                             detach_floatingip
-                             new_snapshot
-                             update_item
-                             new_size
-                             automation_script
-                             new_status
-                           ]
+                            new_floatingip
+                            attach_floatingip
+                            detach_floatingip
+                            remove_floatingip
+                            attach_interface
+                            create_interface
+                            remove_interface
+                            detach_interface
+                            detach_floatingip
+                            new_snapshot
+                            update_item
+                            new_size
+                            automation_script
+                            new_status
+                          ]
 
     def index
       per_page = params[:per_page] || 20
@@ -399,7 +399,7 @@ module Compute
         end
         respond_to do |format|
           format.html { redirect_to instances_url }
-          format.js { render "update.js" }
+          format.js { render "update", formats: :js }
         end
       else
         render action: :edit
@@ -516,7 +516,7 @@ module Compute
 
       @os_interface =
         services.compute.new_os_interface(params[:id], params[:os_interface])
-
+      
       if @os_interface.valid? && @os_interface.net_id.present?
         if @os_interface.port_id.present?
           @port =
@@ -525,10 +525,17 @@ module Compute
             )
           @port.id = @os_interface.port_id
         elsif @os_interface.net_id.present? && @os_interface.subnet_id.present?
+          ip_adress = { 
+            subnet_id: @os_interface.subnet_id
+          }
+          unless @os_interface.fixed_ips[0]["ip_address"].blank?
+            ip_adress[:ip_address] = @os_interface.fixed_ips[0]["ip_address"]
+          end
+
           @port =
             services.networking.new_port(
               network_id: @os_interface.net_id,
-              fixed_ips: [{ subnet_id: @os_interface.subnet_id }],
+              fixed_ips: [ip_adress],
               security_groups: @os_interface.security_groups,
             )
         end

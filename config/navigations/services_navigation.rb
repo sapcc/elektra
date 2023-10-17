@@ -332,10 +332,10 @@ SimpleNavigation::Configuration.run do |navigation|
                    } do |storage_nav|
       storage_nav.item :shared_storage,
                        "Shared Object Storage",
-                       -> { plugin("object_storage_ng").widget_path },
+                       -> { plugin("object_storage").widget_path },
                        if: -> { current_user.has_service? "object-store" },
                        highlights_on:
-                         proc { params[:controller][%r{object_storage_ng/.*}] }
+                         proc { params[:controller][%r{object_storage/.*}] }
       storage_nav.item :shared_filesystem_storage,
                        "Shared File System Storage",
                        -> {

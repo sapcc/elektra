@@ -1,24 +1,27 @@
 
 -# = render "intro_section"
 
--# .bs-callout.bs-callout-info-cta.bs-callout-emphasize.bs-callout-announcement
--#   - if @two_factor_required
--#     %p.emphasized-text
--#       %strong 2FA has now been switched to SAP IDS.
--#     %p
--#       See the
--#       %a{href: "https://documentation.global.cloud.sap/docs/blogs/better-two-factor-authentication--2fa--coming-soon/", target: "_blank"} 
--#         announcement blog post
--#       for further information.
--#   - else
--#     %p.emphasized-text
--#       %strong 
--#         2FA has now been activated for all users.
--#     %p
--#       See the
--#       %a{href: "https://documentation.global.cloud.sap/docs/blogs/better-two-factor-authentication--2fa--coming-soon/", target: "_blank"} 
--#         announcement blog post
--#       for further information.
+.bs-callout.bs-callout-info-cta.bs-callout-emphasize.bs-callout-announcement
+  %p.emphasized-text
+    %strong Important Update: Change to our Multifactor Authentication Mechanism!
+  %p
+    On November 6 and 7, we will be transitioning to Azure Active Directory (Azure AD) for multifactor authentication in order to align with corporate policy. This means:
+  %ul
+    %li
+      RSA/Radius OTP tokens will no longer be supported for Multifactor Authentication (MFA).
+    %li
+      Use SMS verification, Microsoft Authenticator app or alternative factors for MFA.
+  %p
+    %strong Action Needed: Set up your 2FA on
+    %a{href: "https://mysignins.microsoft.com/security-info", target: "_blank"} 
+      Azure AD
+
+  %p 
+    For full details, 
+    %a{href: "https://documentation.global.cloud.sap/docs/blogs/transition-azure-ad/", target: "_blank"} 
+      read our blog post. 
+    Need help? Contact our support team!
+
 
 
 .row

@@ -128,7 +128,10 @@ class Cluster extends React.Component {
       handlePollingStop,
     } = this.props
     const disabled =
-      cluster.isTerminating || cluster.status.phase === "Terminating"
+      cluster.isTerminating ||
+      cluster.status.phase === "Terminating" ||
+      cluster.status.phase === "Pending" ||
+      cluster.status.phase === "Creating"
 
     return React.createElement(
       "tbody",

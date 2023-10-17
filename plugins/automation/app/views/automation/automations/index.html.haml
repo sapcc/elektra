@@ -1,5 +1,5 @@
 - user_allowed = current_user.is_allowed?('automation:node_install') || current_user.is_allowed?('automation:node_delete')
-= render partial: 'automation/shared/nav.html', locals: {pane: 'automations'}
+= render partial: 'automation/shared/nav', locals: {pane: 'automations'}
 
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"automation-pane"}

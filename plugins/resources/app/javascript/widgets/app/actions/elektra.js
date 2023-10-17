@@ -36,16 +36,30 @@ export const sendQuotaRequest = (scopeData, requestBody) => {
 }
 
 export const getBigvmResources = () => {
-  return new Promise((resolve, reject) =>
-    ajaxHelper
-      .get(`/project/bigvm_resources`)
-      .then((response) => {
-        if (response.data?.errors) {
-          reject(response.data?.errors)
-        } else {
-          resolve(response.data)
-        }
-      })
-      .catch((error) => reject({ errors: elektraErrorMessage(error) }))
-  )
+  return ajaxHelper.get(`/project/bigvm_resources`).then((response) => {
+    let availabilityZones =
+      response.data?.placeable_vms?.result_per_availability_zone
+    if (!availabilityZones) {
+      return []
+    } else {
+      const result = Object.keys(availabilityZones)
+        .sort()
+        .map((az) => {
+          const entry = { availabilityZone: az, flavors: [] }
+          const flavors = availabilityZones[az]?.placeable_vms
+          if (!flavors) {
+            return entry
+          }
+          Object.keys(flavors)
+            .sort()
+            .forEach((fname) => {
+              if (fname.startsWith("hana_") && flavors[fname] > 0) {
+                entry.flavors.push({ [fname]: flavors[fname] })
+              }
+            })
+          return entry
+        })
+      return result
+    }
+  })
 }

@@ -9,20 +9,29 @@ import React from "react"
 
 const buildTimeFilter = (filterStartTime, filterEndTime) => {
   let timeFilter = ""
+  // get offset for local timezone
+  const localOffset = moment().utcOffset()
 
   if (
     filterStartTime != null &&
     (moment.isMoment(filterStartTime) || !isEmpty(filterStartTime))
   )
-    timeFilter += `gte:${filterStartTime.format("YYYY-MM-DD[T]HH:mm:ss")}`
+    // subtract offset from start time to correspond to displayed time
+    timeFilter += `gte:${moment(filterStartTime)
+      .utc()
+      .subtract(localOffset, "minutes")
+      .format("YYYY-MM-DD[T]HH:mm:ss")}`
 
   if (
     filterEndTime != null &&
     (moment.isMoment(filterEndTime) || !isEmpty(filterEndTime))
   )
-    timeFilter += `${
-      timeFilter.length > 0 ? "," : ""
-    }lte:${filterEndTime.format("YYYY-MM-DD[T]HH:mm:ss")}`
+    timeFilter += `${timeFilter.length > 0 ? "," : ""}lte:${moment(
+      filterEndTime
+    )
+      .utc()
+      .subtract(localOffset, "minutes")
+      .format("YYYY-MM-DD[T]HH:mm:ss")}`
 
   return timeFilter
 }
@@ -121,6 +130,7 @@ const updateFilterStartTime = (filterStartTime) => ({
 })
 
 export function filterEventsStartTime(filterStartTime) {
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>", filterStartTime)
   return (dispatch) => {
     // trigger api call only if the given start time is a valid date or an empty string
     if (moment.isMoment(filterStartTime) || isEmpty(filterStartTime)) {

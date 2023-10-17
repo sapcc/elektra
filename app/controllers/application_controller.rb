@@ -70,12 +70,13 @@ class ApplicationController < ActionController::Base
     super *args, options
   end
 
-  def redirect_to(options = {}, response_status = {})
+  def redirect_to(options = {}, response_options = {})
     if request.format == Mime[:json] || modal? || params[:polling_service] ||
          params[:do_not_redirect]
       head :ok, location: url_for(options)
     else
-      super options, response_status
+      # Note: please do not use "allow_other_host: true" here just pass it as an option from the controller where redirect_to is called
+      super options, response_options
     end
   end
 

@@ -194,7 +194,7 @@ module DnsService
         flash.now[:notice] = "Zone successfully created."
         respond_to do |format|
           format.html { redirect_to zones_url }
-          format.js { render "create.js" }
+          format.js { render "create", formats: :js }
         end
       else
         render action: :new
@@ -211,7 +211,7 @@ module DnsService
         flash.now[:notice] = "Zone successfully updated."
         respond_to do |format|
           format.html { redirect_to zones_url }
-          format.js { render "update.js" }
+          format.js { render "update", formats: :js }
         end
       else
         render action: :edit

@@ -49,5 +49,8 @@
   "email_service:statistics_create": "rule:email_role_required",
   "email_service:statistics_list": "rule:email_role_required",
   "email_service:web_list": "rule:email_role_required",
-  "email_service:web_test": "rule:cloud_support_tools_viewer"
+  "email_service:web_test": "rule:cloud_support_tools_viewer",
+  "email_service:suppression_list_list": "rule:email_role_required",
+  "email_service:suppression_list_delete": "rule:email_role_required",
+  "email_service:suppression_list_get": "rule:email_role_required"
 }

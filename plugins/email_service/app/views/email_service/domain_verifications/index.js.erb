@@ -1,4 +1,4 @@
-$(".flashes").html("<%= escape_javascript( render "application/flashes.html" ) %>");
+$(".flashes").html("<%= escape_javascript( render partial: "application/flashes", formats: :html ) %>");
 initAutoDismissibleFlash();
 
 <% unless @verified_domains.nil? %>

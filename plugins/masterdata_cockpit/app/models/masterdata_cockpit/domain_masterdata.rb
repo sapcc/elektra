@@ -48,15 +48,7 @@ module MasterdataCockpit
     validates :responsible_primary_contact_email,
               format: {
                 with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i,
-                message: "please use a valid email address",
-              },
-              allow_nil: true,
-              allow_blank: true
-
-    validates :responsible_primary_contact_id,
-              format: {
-                with: /\A[DCIdci]\d*\z/,
-                message: "please use a C/D/I user id",
+                message: "please use a valid email/DL address",
               },
               allow_nil: true,
               allow_blank: true

@@ -1,27 +1,34 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  # In the development environment your application's code is reloaded on
-  # every request. This slows down response time but is perfect for development
+  # Settings specified here will take precedence over those in config/application.rb.
+
+  # In the development environment your application's code is reloaded any time
+  # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
+  # if the dev enviornemnt not running localy this config is needed e.g. workspaces 
   config.hosts << /.*\.cloud\.sap/
-  
-  # Do not eager load code on boot. If true then all files are loaded on boot.
-  config.eager_load = false #true
+
+  # Do not eager load code on boot.
+  config.eager_load = false
 
   # Show full error reports.
   config.consider_all_requests_local = true
 
+  # Enable server timing
+  config.server_timing = true
+
   # Enable/disable caching. By default caching is disabled.
-  if Rails.root.join('tmp', 'caching-dev.txt').exist?
+  # Run rails dev:cache to toggle caching.
+  if Rails.root.join("tmp/caching-dev.txt").exist?
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
 
     config.cache_store = :memory_store
     config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+      "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
   else
     config.action_controller.perform_caching = false
@@ -29,6 +36,7 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
+  # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
@@ -51,19 +59,11 @@ Rails.application.configure do
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
 
-  # Asset digests allow you to set far-future HTTP expiration dates on all assets,
-  # yet still be able to expire them through the digest params.
-  config.assets.digest = true
-
-  # Adds additional error checking when serving assets at runtime.
-  # Checks for improperly declared sprockets dependencies.
-  # Raises helpful error messages.
-  config.assets.raise_runtime_errors = true
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
-  # Raises error for missing translations
-  # config.action_view.raise_on_missing_translations = true
+  # Raises error for missing translations.
+  # config.i18n.raise_on_missing_translations = true
 
   # web_console is only working when you accessing from localhost
   # if you running the development server on a remote machine use TRUSTED_IP
@@ -94,8 +94,6 @@ Rails.application.configure do
 
   puts "=> Elektron Logging: QUIET" if ENV['ELEKTRON_QUIET']
 
-  # config.exceptions_app = self.routes
-  # config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
-  # config.log_tags = [ :uuid ]
-  # config.middleware.use TaggedExceptionsMiddleware
+  # Uncomment if you wish to allow Action Cable access from any origin.
+  # config.action_cable.disable_request_forgery_protection = true
 end

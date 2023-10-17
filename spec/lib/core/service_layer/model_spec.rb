@@ -316,7 +316,7 @@ describe Core::ServiceLayer::Model do
   describe "create" do
     it "calls driver's create method" do
       @model.attributes = { "a1" => "test1", :a2 => "test2" }
-      expect(@service).to receive(:create_model).with(a1: "test1", a2: "test2")
+      expect(@service).to receive(:create_model).with({a1: "test1", a2: "test2"})
       @model.save
     end
   end
@@ -326,8 +326,10 @@ describe Core::ServiceLayer::Model do
       @model.attributes = { "id" => 1, "a1" => "test1", :a2 => "test2" }
       expect(@service).to receive(:update_model).with(
         1,
-        a1: "test1",
-        a2: "test2",
+        {
+          a1: "test1",
+          a2: "test2"
+        }
       )
       @model.save
     end

@@ -3,9 +3,8 @@
   %head
     %title= "CCloud #{@domain_name if @domain_name}"
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
-    = favicon_link_tag image_path('favicon.png'), rel: 'icon', type: 'image'  
-    = favicon_link_tag image_path('favicon.ico'), rel: 'shortcut icon', type: 'image/x-icon'  
-    = favicon_link_tag image_path('apple-touch-icon.png'), rel: 'apple-touch-icon'  
+    
+    = render "layouts/favicon" 
 
     = csrf_meta_tags
 

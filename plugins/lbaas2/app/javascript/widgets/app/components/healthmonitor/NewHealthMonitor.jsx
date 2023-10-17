@@ -141,7 +141,10 @@ const NewHealthMonitor = (props) => {
             </span>
           </Form.ElementHorizontal>
 
-          <Form.ElementHorizontal label="Max Retries" name="max_retries_down">
+          <Form.ElementHorizontal
+            label="Max Retries Down"
+            name="max_retries_down"
+          >
             <Form.Input
               elementType="input"
               type="number"
@@ -152,7 +155,9 @@ const NewHealthMonitor = (props) => {
             <span className="help-block">
               <i className="fa fa-info-circle"></i>
               The number of allowed check failures before marking the member as
-              OFFLINE. A valid value is from 1 to 10. The default is 3.
+              OFFLINE. A valid value is from 1 to 10. The default is 3.{" "}
+              <b>Note</b>: This parameter differs from the Octavia "Max
+              Retries", which is not supported in CCloud environment.
             </span>
           </Form.ElementHorizontal>
 

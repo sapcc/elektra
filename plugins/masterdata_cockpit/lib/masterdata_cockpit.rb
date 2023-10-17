@@ -24,19 +24,6 @@ module MasterdataCockpit
       }
     end
 
-    def self.soft_license_mode
-      {
-        "Revenue Generating" => "Revenue Generating",
-        "Training and Demo" => "Training & Demo",
-        "Development" => "Development",
-        "Test and QS" => "Test & QS",
-        "Administration" => "Administration",
-        "Make" => "Make",
-        "Virtualization-Host" => "Virtualization-Host",
-        "Productive" => "Productive",
-      }
-    end
-
     def self.environment
       {
         "Prod" => "Production",

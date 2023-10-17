@@ -37,9 +37,10 @@ export default class ShowShareModal extends React.Component {
           <Row label="ID" value={share.id} />
           <Row label="Status" value={share.status} />
           <Row label="Export Locations">
-            {share.export_locations.map((location, index) => (
-              <div key={index}>{location}</div>
-            ))}
+            {share?.export_locations &&
+              share.export_locations.map((location, index) => (
+                <div key={index}>{location}</div>
+              ))}
           </Row>
           <Row label="Availability zone" value={share.availability_zone} />
           <Row label="Size" value={share.size + " GiB"} />

@@ -901,10 +901,10 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.7.tgz#ccab5c8f7dc557a52ca3288c10075c9ccd37fff7"
   integrity sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==
 
-"@rails/actioncable@^6.1.5":
-  version "6.1.7"
-  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-6.1.7.tgz#8b4506925d3f7146a70941e4db7ce9dda99f99ae"
-  integrity sha512-F6S74NGpxhbbDRFsQFGYqefRfZPgYvePNtz9hHKYOqLturrsqrDoG+UcrxEGHsvqDUorMYfx4Wl3K8smmk/u2g==
+"@rails/actioncable@^7":
+  version "7.0.8"
+  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-7.0.8.tgz#f44e7517f2d1570f1eabeea457dbeb17ed3a2d12"
+  integrity sha512-GjYQv89ZOOfbFw8VMNUOG33GXzyAA/TCVoD+742Ob4svm1XXUkd+w+ewqUXd+7VHQtV35y1/O78AGIPeJDTy/g==
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"

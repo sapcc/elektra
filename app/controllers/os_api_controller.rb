@@ -13,14 +13,18 @@ class OsApiController < ::AjaxController
   def reverse_proxy
     # get http method from request
     method = request.method.downcase
+    # get path undecoded from request or from params (decoded)
+    path = request.path.split("os-api")[1] || params[:path]
+    # remove leading slash
+    path = path.gsub(/^\//, "")
+    
     # get path from request
-    path = params[:path]
+    #path = params[:path]
     # we remove the first part of path. It is the openstack service name
     service_path = path.split("/", 2)
     service_name = service_path[0]
     # the rest is the current path
     path = service_path[1] || ""
-    path += ".#{params[:format]}" if params[:format]
 
     headers = {}
     request.headers.each do |name, value|

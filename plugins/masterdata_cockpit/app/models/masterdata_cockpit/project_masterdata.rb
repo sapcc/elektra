@@ -23,7 +23,7 @@ module MasterdataCockpit
     #     "name": "myIO"
     # }
 
-    validates_presence_of :environment, :type_of_data, :soft_license_mode
+    validates_presence_of :environment, :type_of_data
 
     validates_presence_of :cost_object_type,
                           :cost_object_name,
@@ -200,12 +200,6 @@ module MasterdataCockpit
       end
     end
 
-    def soft_license_mode
-      if read("soft_license_mode")
-        read("soft_license_mode").gsub(/(&)/,"and")
-      end
-    end
-
     def attributes_for_create
       params = {
         "customer" => read("customer"),
@@ -237,7 +231,6 @@ module MasterdataCockpit
         "environment" => read("environment"),
         "ext_certification" => combine_external_certifications,
         "type_of_data" => read("type_of_data").gsub(/(and)/,"&"),
-        "soft_license_mode" => read("soft_license_mode").gsub(/(and)/,"&"),
         "revenue_relevance" => read("revenue_relevance"),
         "business_criticality" => read("business_criticality"),
         "number_of_endusers" => read("number_of_endusers"),

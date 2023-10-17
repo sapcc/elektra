@@ -4,11 +4,17 @@ module DnsService
   # Presents the zone model
   class Zone < Core::ServiceLayer::Model
     validates :name,
-              presence: {
-                message: "Please provide the domain name",
-              },
-              on: :create
-    validates :email, presence: { message: "Please provide an email" }
+          presence: {
+            message: "Top-Level Domain (TLD) is required. Please provide a domain name.",
+          }
+    validates :email, presence: {
+            message: "Email address is required. Please provide an email address."
+          }
+
+    validates :ttl, presence: {
+            message: "Time-to-Live (TTL) value is required. Please provide a TTL value."
+          }
+
 
     def attributes_for_create
       zone_attributes = {}
