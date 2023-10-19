@@ -188,7 +188,7 @@ module Automation
                 if values["OS-EXT-IPS:type"] == "floating"
                   concat content_tag :i, nil, class: "fa fa-globe fa-fw"
                 elsif values["OS-EXT-IPS:type"] == "fixed"
-                  concat conent_tag :i, nil, class: "fa fa-desktop fa-fw"
+                  concat content_tag :i, nil, class: "fa fa-desktop fa-fw"
                 end
                 concat values["addr"]
                 concat content_tag :span, values["OS-EXT-IPS:type"], class: "info-text"
