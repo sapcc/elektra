@@ -24,7 +24,7 @@ const ContainerListItem = ({ container }) => {
   const { isLoading, data, mutate } = useMutation({
     mutationFn: deleteContainer,
     cacheTime: 100,
-    mutationKey: containerUuid
+    mutationKey: containerUuid,
   })
   const { addMessage } = useActions()
   const showNewContainer = useStore(
@@ -75,7 +75,7 @@ const ContainerListItem = ({ container }) => {
     </DataGridRow>
   ) : (
     <>
-      <DataGridRow>
+      <DataGridRow data-target={container.name}>
         <DataGridCell>
           <div>
             <Link
@@ -86,7 +86,9 @@ const ContainerListItem = ({ container }) => {
               {container.name || containerUuid}
             </Link>
             <br />
-            <Badge className="tw-text-xs">{containerUuid}</Badge>
+            <Badge className="tw-text-xs" data-target="container-uuid">
+              {containerUuid}
+            </Badge>
           </div>
         </DataGridCell>
         <DataGridCell>{container.type}</DataGridCell>
@@ -97,6 +99,7 @@ const ContainerListItem = ({ container }) => {
               <Icon
                 icon="deleteForever"
                 onClick={() => handleDelete(containerUuid)}
+                data-target={containerUuid}
               />
             )}
           </ButtonRow>

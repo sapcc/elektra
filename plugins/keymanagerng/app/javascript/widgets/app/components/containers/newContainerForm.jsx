@@ -311,6 +311,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
           invalid={validationState?.name ? true : false}
           errortext={validationState?.name}
           required
+          data-target="container-name-text-input"
         />
         <SelectRow
           className="tw-mb-6"
@@ -322,10 +323,11 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
             setFormData({ ...formData, type: value, secret_refs: [] })
             resetMessages()
           }}
+          name="containerType"
+          data-target="container-type-select"
           invalid={validationState?.type ? true : false}
           required
         >
-          <SelectOption label="" value="" />
           {selectContainerTypes("all").map((item, index) => (
             <SelectOption key={index} label={item.label} value={item.value} />
           ))}
