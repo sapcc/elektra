@@ -140,7 +140,13 @@ module Resources
           (ENV["ELEKTRA_SSL_VERIFY_PEER"] == "false")
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end
-        big_vm_data = http.get(uri).body
+        response = http.get(uri)
+        if response.code == "200"
+          big_vm_data = response.body
+        else
+          render json: { error: "Couldn't retrieve placement information. API: #{response.message}" }, status: 422
+          return
+        end
       rescue StandardError => e
         render json: { error: "Could not load bigVMData" }, status: 422
         return
