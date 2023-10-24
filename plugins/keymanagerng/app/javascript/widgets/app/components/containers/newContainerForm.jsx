@@ -2,7 +2,7 @@ import React, { useState, useEffect, useLayoutEffect } from "react"
 import {
   Form,
   TextInputRow,
-  SelectRow,
+  Select,
   SelectOption,
   Label,
   PanelBody,
@@ -177,7 +177,10 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
       secretsOfSelect.push({
         label: `${secret.name} (${secret.secret_type})`,
         value: secret.secret_ref,
-        secret_ref: { name: secret.name, secret_ref: secret.secret_ref },
+        secret_ref: {
+          name: secret.name,
+          secret_ref: secret.secret_ref,
+        },
         type: secret.secret_type,
       })
     })
@@ -231,12 +234,28 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
         }
       : commonCreatableStyles
   }
-  const updateSecretRefs = (props, secretRefName) => {
-    const secretRefs = []
+  const updateSecretRefs = (selectedSecretRef, secretType) => {
+    var secretRef = {}
+    if (selectedSecretRef) {
+      secretRef = {
+        name: secretType,
+        secret_ref: selectedSecretRef,
+      }
+    }
+    setFormData({
+      ...formData,
+      secret_refs: [...formData.secret_refs, secretRef],
+    })
+  }
+
+  const onSecretsChange = (props) => {
+    let secretRefs = []
+    let iRandomNum
     if (props) {
       props?.map((prop) => {
+        iRandomNum = Math.random()
         secretRefs.push({
-          name: secretRefName ? secretRefName : prop.secret_ref.name,
+          name: `${prop.secret_ref.name}-random-num-${iRandomNum}`, //This name should not be duplicated that's why random number is added
           secret_ref: prop.secret_ref.secret_ref,
         })
       })
@@ -245,46 +264,38 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
         secret_refs: secretRefs,
       })
     }
-  }
-
-  const onSecretsChange = (props) => {
-    updateSecretRefs(props)
     setSelectedGenContainerSecrets(props)
   }
 
-  const onCertificatesChange = (props) => {
-    updateSecretRefs(props, "certificate")
-    setSelectedCertContainerCertificates(props)
-  }
-  const onPrivateKeyChange = (props) => {
-    updateSecretRefs(props, "private_key")
+  const onPrivateKeyChange = (selectedSecretRef) => {
+    updateSecretRefs(selectedSecretRef, "private_key")
   }
 
-  const onCertContainerPrivatekeyChange = (props) => {
-    onPrivateKeyChange(props)
-    setSelectedCertContainerPrivatekeys(props)
+  const onCertContainerPrivatekeyChange = (selectedSecretRef) => {
+    onPrivateKeyChange(selectedSecretRef)
+    setSelectedCertContainerPrivatekeys(selectedSecretRef)
   }
-  const onRsaContainerPrivateKeyChange = (props) => {
-    onPrivateKeyChange(props)
-    setSelectedRsaContainerPrivatekeys(props)
+  const onRsaContainerPrivateKeyChange = (selectedSecretRef) => {
+    onPrivateKeyChange(selectedSecretRef)
+    setSelectedRsaContainerPrivatekeys(selectedSecretRef)
   }
-  const onPublicKeyChange = (props) => {
-    updateSecretRefs(props, "public_key")
-    setSelectedRsaContainerPublickeys(props)
+  const onPublicKeyChange = (selectedSecretRef) => {
+    updateSecretRefs(selectedSecretRef, "public_key")
+    setSelectedRsaContainerPublickeys(selectedSecretRef)
   }
-  const onPrivateKeyPassphraseChange = (props) => {
-    updateSecretRefs(props, "private_key_passphrase")
+  const onPrivateKeyPassphraseChange = (selectedSecretRef) => {
+    updateSecretRefs(selectedSecretRef, "private_key_passphrase")
   }
-  const onCertContainerPrivateKeyPassphraseChange = (props) => {
-    onPrivateKeyPassphraseChange(props)
-    setSelectedCertContainerPrivatekeyPassphrases(props)
+  const onCertContainerPrivateKeyPassphraseChange = (selectedSecretRef) => {
+    onPrivateKeyPassphraseChange(selectedSecretRef)
+    setSelectedCertContainerPrivatekeyPassphrases(selectedSecretRef)
   }
-  const onRsaContainerPrivateKeyPassphraseChange = (props) => {
-    onPrivateKeyPassphraseChange(props)
-    setSelectedRsaContainerPrivatekeyPassphrases(props)
+  const onRsaContainerPrivateKeyPassphraseChange = (selectedSecretRef) => {
+    onPrivateKeyPassphraseChange(selectedSecretRef)
+    setSelectedRsaContainerPrivatekeyPassphrases(selectedSecretRef)
   }
-  const onIntermediatesChange = (props) => {
-    updateSecretRefs(props, "intermediates")
+  const onIntermediatesChange = (selectedSecretRef) => {
+    updateSecretRefs(selectedSecretRef, "intermediates")
   }
 
   useLayoutEffect(() => {
@@ -313,7 +324,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
           required
           data-target="container-name-text-input"
         />
-        <SelectRow
+        <Select
           className="tw-mb-6"
           defaultValue="generic"
           label="Container Type"
@@ -331,7 +342,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
           {selectContainerTypes("all").map((item, index) => (
             <SelectOption key={index} label={item.label} value={item.value} />
           ))}
-        </SelectRow>
+        </Select>
         {containerType !== "" && (
           <>
             <Label text="Secrets" />
@@ -350,77 +361,98 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
               <>
                 <div className="tw-mt-6" />
                 <Label text="Certificate" required />
-                <CreatableSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  isRtl={false}
-                  closeMenuOnSelect={false}
-                  createLabel="Certificate"
-                  isLoading={secrets?.isLoading}
-                  isSearchable
-                  isMulti
-                  isClearable
+                <Select
+                  className="tw-mb-2"
+                  label="Certificate"
+                  onValueChange={(selectedSecretRef) => {
+                    updateSecretRefs(selectedSecretRef, "certificate")
+                    setSelectedCertContainerCertificates(selectedSecretRef)
+                    setValidationState({})
+                    resetMessages()
+                  }}
                   name="cert_container_type_certificates"
-                  onChange={onCertificatesChange}
-                  options={certContainerCertificates}
-                  value={selectedCertContainerCertificates}
-                  styles={invalidateReactSelect(
-                    selectedCertContainerCertificates
-                  )}
-                />
-                <p className="tw-text-xs tw-text-theme-error tw-mt-1">
+                  data-target="certificate-container-select"
+                  invalid={
+                    validationState?.certContainerCertificates ? true : false
+                  }
+                  required
+                >
+                  {certContainerCertificates.map((item, index) => (
+                    <SelectOption
+                      key={index}
+                      label={item.label}
+                      value={item.value}
+                    />
+                  ))}
+                </Select>
+                <p className="tw-text-xs tw-text-theme-error">
                   {validationState?.certContainerCertificates
                     ? validationState?.certContainerCertificates
                     : ""}
                 </p>
                 <Label text="Private key" />
-                <CreatableSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  isRtl={false}
-                  closeMenuOnSelect={false}
-                  name="cert_container_type_private_key"
-                  isLoading={secrets?.isLoading}
-                  options={certContainerPrivatekeys}
-                  value={selectedCertContainerPrivatekeys}
-                  onChange={onCertContainerPrivatekeyChange}
-                  isSearchable
-                  isClearable
-                  isMulti
-                  styles={commonCreatableStyles}
-                />
+                <Select
+                  className="tw-mb-2"
+                  label="Private key"
+                  onValueChange={onCertContainerPrivatekeyChange}
+                  name="cert_container_type_private_keys"
+                  data-target="private-key-select"
+                  invalid={
+                    validationState?.certContainerPrivatekeys ? true : false
+                  }
+                >
+                  <SelectOption label="" value="" />
+                  {certContainerPrivatekeys.map((item, index) => (
+                    <SelectOption
+                      key={index}
+                      label={item.label}
+                      value={item.value}
+                    />
+                  ))}
+                </Select>
                 <Label text="Private key passphrase" />
-                <CreatableSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  isRtl={false}
-                  closeMenuOnSelect={false}
+                <Select
+                  className="tw-mb-2"
+                  label="Private key passphrase"
+                  onValueChange={onCertContainerPrivateKeyPassphraseChange}
                   name="cert_container_type_private_key_passphrases"
-                  isLoading={secrets?.isLoading}
-                  options={certContainerPrivatekeyPassphrases}
-                  value={selectedCertContainerPrivatekeyPassphrases}
-                  onChange={onCertContainerPrivateKeyPassphraseChange}
-                  isSearchable
-                  isClearable
-                  isMulti
-                  styles={commonCreatableStyles}
-                />
+                  data-target="private-key-passphrase-select"
+                  loading={secrets?.isLoading}
+                  invalid={
+                    validationState?.certContainerPrivatekeyPassphrases
+                      ? true
+                      : false
+                  }
+                >
+                  <SelectOption label="" value="" />
+                  {certContainerPrivatekeyPassphrases.map((item, index) => (
+                    <SelectOption
+                      key={index}
+                      label={item.label}
+                      value={item.value}
+                    />
+                  ))}
+                </Select>
                 <Label text="Intermediates" />
-                <CreatableSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  isRtl={false}
-                  closeMenuOnSelect={false}
+                <Select
+                  label="Intermediates"
+                  onValueChange={onIntermediatesChange}
                   name="cert_container_type_intermediates"
-                  isLoading={secrets?.isLoading}
-                  options={certContainerIntermediates}
-                  value={selectedCertContainerIntermediates}
-                  onChange={onIntermediatesChange}
-                  isSearchable
-                  isClearable
-                  isMulti
-                  styles={commonCreatableStyles}
-                />
+                  data-target="intermediate-select"
+                  loading={secrets?.isLoading}
+                  invalid={
+                    validationState?.certContainerIntermediates ? true : false
+                  }
+                >
+                  <SelectOption label="" value="" />
+                  {certContainerIntermediates.map((item, index) => (
+                    <SelectOption
+                      key={index}
+                      label={item.label}
+                      value={item.value}
+                    />
+                  ))}
+                </Select>
               </>
             )}
             {containerType === "generic" && (
@@ -452,67 +484,74 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
               <>
                 <div className="tw-mt-6" />
                 <Label text="Private key" required />
-                <CreatableSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  isRtl={false}
-                  closeMenuOnSelect={false}
+                <Select
+                  label="Private key"
+                  onValueChange={onRsaContainerPrivateKeyChange}
                   name="rsa_container_type_private_keys"
-                  isLoading={secrets?.isLoading}
-                  options={rsaContainerPrivatekeys}
-                  value={selectedRsaContainerPrivatekeys}
-                  onChange={onRsaContainerPrivateKeyChange}
-                  isSearchable
-                  isClearable
-                  isMulti
-                  styles={invalidateReactSelect(
-                    selectedRsaContainerPrivatekeys
-                  )}
-                />
+                  data-target="rsa-container-private-key-select"
+                  loading={secrets?.isLoading}
+                  invalid={
+                    validationState?.rsaContainerPrivatekeys ? true : false
+                  }
+                >
+                  {rsaContainerPrivatekeys.map((item, index) => (
+                    <SelectOption
+                      key={index}
+                      label={item.label}
+                      value={item.value}
+                    />
+                  ))}
+                </Select>
                 <p className="tw-text-xs tw-text-theme-error tw-mt-1">
                   {validationState?.rsaContainerPrivatekeys
                     ? validationState?.rsaContainerPrivatekeys
                     : ""}
                 </p>
                 <Label text="Private key passphrase" required />
-                <CreatableSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  isRtl={false}
-                  closeMenuOnSelect={false}
+                <Select
+                  label="Private key passphrase"
+                  onValueChange={onRsaContainerPrivateKeyPassphraseChange}
                   name="rsa_container_type_private_key_passphrases"
-                  isLoading={secrets?.isLoading}
-                  options={rsaContainerPrivatekeyPassphrases}
-                  value={selectedRsaContainerPrivatekeyPassphrases}
-                  onChange={onRsaContainerPrivateKeyPassphraseChange}
-                  isSearchable
-                  isClearable
-                  isMulti
-                  styles={invalidateReactSelect(
-                    selectedRsaContainerPrivatekeyPassphrases
-                  )}
-                />
+                  data-target="rsa-container-private-key-passphrase-select"
+                  loading={secrets?.isLoading}
+                  invalid={
+                    validationState?.rsaContainerPrivatekeyPassphrases
+                      ? true
+                      : false
+                  }
+                >
+                  {rsaContainerPrivatekeyPassphrases.map((item, index) => (
+                    <SelectOption
+                      key={index}
+                      label={item.label}
+                      value={item.value}
+                    />
+                  ))}
+                </Select>
                 <p className="tw-text-xs tw-text-theme-error tw-mt-1">
                   {validationState?.rsaContainerPrivatekeyPassphrases
                     ? validationState?.rsaContainerPrivatekeyPassphrases
                     : ""}
                 </p>
                 <Label text="Public key" required />
-                <CreatableSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  isRtl={false}
-                  closeMenuOnSelect={false}
-                  name="rsa_container_type_public_key"
-                  isLoading={secrets?.isLoading}
-                  options={rsaContainerPublickeys}
-                  value={selectedRsaContainerPublickeys}
-                  onChange={onPublicKeyChange}
-                  isSearchable
-                  isClearable
-                  isMulti
-                  styles={invalidateReactSelect(selectedRsaContainerPublickeys)}
-                />
+                <Select
+                  label="Public key"
+                  onValueChange={onPublicKeyChange}
+                  name="rsa_container_type_public_keys"
+                  data-target="rsa-container-public-key-select"
+                  loading={secrets?.isLoading}
+                  invalid={
+                    validationState?.rsaContainerPublickeys ? true : false
+                  }
+                >
+                  {rsaContainerPublickeys.map((item, index) => (
+                    <SelectOption
+                      key={index}
+                      label={item.label}
+                      value={item.value}
+                    />
+                  ))}
+                </Select>
                 <p className="tw-text-xs tw-text-theme-error tw-mt-1">
                   {validationState?.rsaContainerPublickeys
                     ? validationState?.rsaContainerPublickeys
