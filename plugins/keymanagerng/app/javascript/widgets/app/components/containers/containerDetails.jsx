@@ -150,8 +150,8 @@ const ContainerDetails = () => {
                           className="tw-break-all"
                           to={`/secrets/${getSecretUuid(secret)}/show`}
                         >
-                          {secret.name.match(/^(.*?)(?=-random-num-)/)
-                            ? secret.name.match(/^(.*?)(?=-random-num-)/)[1]
+                          {secret.name.match(/^(.*?)(?=-gen-)/)
+                            ? secret.name.match(/^(.*?)(?=-gen-)/)[1]
                             : secret.name}
                         </Link>
                         <br />

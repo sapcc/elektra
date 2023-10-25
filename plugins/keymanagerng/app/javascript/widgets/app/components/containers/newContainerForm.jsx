@@ -253,9 +253,9 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
     let iRandomNum
     if (props) {
       props?.map((prop) => {
-        iRandomNum = Math.random()
+        iRandomNum = Math.random().toString(16).slice(2)
         secretRefs.push({
-          name: `${prop.secret_ref.name}-random-num-${iRandomNum}`, //This name should not be duplicated that's why random number is added
+          name: `${prop.secret_ref.name}-gen-${iRandomNum}`, //This name should not be duplicated that's why unique random number is added
           secret_ref: prop.secret_ref.secret_ref,
         })
       })
@@ -352,6 +352,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   "private_key_passphrase (optional), intermediates (optional):"
                 : containerType === "generic"
                 ? "A generic container is used for any type of container that a user may wish to create. " +
+                  "To ensure unique referenced secret names, a random number will be appended to selected secrets." +
                   "There are no restrictions on the type or amount of secrets that can be held within a container:"
                 : containerType === "rsa"
                 ? "An RSA container is used for storing RSA public keys, private keys, and private key pass phrases"
