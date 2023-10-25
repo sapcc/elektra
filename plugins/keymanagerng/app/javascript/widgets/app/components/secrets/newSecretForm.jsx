@@ -18,6 +18,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useActions, Messages } from "messages-provider"
 import { getSecretUuid } from "../../../lib/secretHelper"
 import { DayPicker } from "react-day-picker"
+import { format } from "date-fns"
 
 const TYPE_SYMMETRIC = "symmetric"
 const TYPE_PUBLIC = "public"
@@ -206,7 +207,12 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
               setSelectedDay(oEvent)
             }}
           />
-          {selectedDay && <p>Selected date is: {selectedDay.toISOString()}</p>}
+          {selectedDay && (
+            <p>
+              Selected date is:{" "}
+              {format(new Date(selectedDay), "MMMM d, yyyy HH:mm:ss")}
+            </p>
+          )}
           <p className="tw-text-xs tw-text-theme-light tw-mt-1">
             {
               "This is a UTC timestamp in ISO 8601 format YYYY-MM-DDTHH:MM:SSZ. If set, the secret will not be available after this time"
