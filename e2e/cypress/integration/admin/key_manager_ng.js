@@ -8,6 +8,7 @@ describe("keymanagerng", () => {
   let sPrivateSecretName
   let sPublicSecretName
   let sCertificateSecretName
+  let sSymmetricSecretName
   let sSecretPayload
   let sSecretUuid
   let sContainerUuid
@@ -26,7 +27,7 @@ describe("keymanagerng", () => {
         force: true,
       })
       //Save the new secret
-      cy.contains("Save").click()
+      cy.contains("Save").click({ force: true })
 
       //Find the newly created secret in secrets table
       cy.get("[data-target=" + sSecretName + "]").should("have.lengthOf", 1)
@@ -82,6 +83,7 @@ describe("keymanagerng", () => {
     sPrivateSecretName = `test-private-secret-${iRandomNum}`
     sPublicSecretName = `test-public-secret-${iRandomNum}`
     sCertificateSecretName = `test-certificate-secret-${iRandomNum}`
+    sSymmetricSecretName = `test-symmetric-secret-${iRandomNum}`
     sSecretPayload = `test secret`
     sGenericContainerName = `test-generic-container-${iRandomNum}`
     sCertificateContainerName = `test-certificate-container-${iRandomNum}`
@@ -139,6 +141,16 @@ describe("keymanagerng", () => {
     //Delete the newly created secret
     deleteSecret(sPassPhraseSecretName)
   })
+
+  /*it("Create a new 'Symmetric' secret, check 'Payload Content Encoding' is available, then delete the newly created secret", () => {
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/keymanagerng/secrets`)
+
+    //Create a new secret with symmetric type
+    createSecret(sSymmetricSecretName, 6, 1)
+
+    //Delete the newly created secret
+    deleteSecret(sSymmetricSecretName)
+  })*/
 
   it("Create new containers with 'Generic' and 'Certificate' container types and delete them afterwards", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/keymanagerng/secrets`)
@@ -361,5 +373,6 @@ describe("keymanagerng", () => {
     sGenericContainerName = null
     sCertificateContainerName = null
     sRsaContainerName = null
+    sSymmetricSecretName = null
   })
 })

@@ -3,7 +3,7 @@ import {
   Form,
   TextInputRow,
   TextareaRow,
-  SelectRow,
+  Select,
   SelectOption,
   Message,
   Box,
@@ -18,7 +18,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useActions, Messages } from "messages-provider"
 import { getSecretUuid } from "../../../lib/secretHelper"
 import { DayPicker } from "react-day-picker"
-import { format } from "date-fns"
+import { format, isToday, isAfter, isSameDay } from "date-fns"
+import { parseError } from "../../helpers"
 
 const TYPE_SYMMETRIC = "symmetric"
 const TYPE_PUBLIC = "public"
@@ -145,7 +146,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           onError: (error) => {
             addMessage({
               variant: "error",
-              text: error.data.error,
+              text: parseError(error.data.error),
             })
           },
         }
@@ -199,14 +200,40 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           <DayPicker
             mode="single"
             selected={selectedDay}
-            onSelect={(oEvent) => {
-              setFormData({
-                ...formData,
-                expiration: oEvent.toISOString(),
-              })
-              setSelectedDay(oEvent)
+            onSelect={(selectedDate) => {
+              const currentDate = new Date()
+              let selectedDateTime = new Date(selectedDate)
+
+              if (isToday(selectedDate) || isAfter(selectedDate, currentDate)) {
+                if (isSameDay(selectedDate, currentDate)) {
+                  // Set the time to the end of the day (23:59:59) for today
+                  selectedDateTime.setHours(23, 59, 59)
+                }
+
+                setSelectedDay(selectedDate)
+                setFormData({
+                  ...formData,
+                  expiration: selectedDateTime.toISOString(),
+                })
+                setValidationState({
+                  ...validationState,
+                  expiration: null, // Set to null when there is no error
+                })
+              } else {
+                setValidationState({
+                  ...validationState,
+                  expiration:
+                    "Selected date must be greater than the current date and time!",
+                })
+                setSelectedDay(null)
+              }
             }}
           />
+          {validationState?.expiration && (
+            <p className="tw-text-xs tw-text-theme-error tw-mt-1">
+              {validationState?.expiration ? validationState?.expiration : ""}
+            </p>
+          )}
           {selectedDay && (
             <p>
               Selected date is:{" "}
@@ -268,8 +295,10 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             symmetric encryption
           </p>
         </Box>
-        <SelectRow
+        <Label text="Secret Type" className="tw-mt-6" required />
+        <Select
           label="Secret Type"
+          className="tw-mb-2"
           name="secretType"
           onValueChange={onSecretTypeChange}
           errortext={validationState?.secret_type}
@@ -279,7 +308,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           {selectTypes("all").map((item, index) => (
             <SelectOption key={index} label={item.label} value={item.value} />
           ))}
-        </SelectRow>
+        </Select>
         <TextareaRow
           label="Payload"
           name="payload"
@@ -294,7 +323,8 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           required
           data-target="payload-text-area"
         />
-        <SelectRow
+        <Label text="Payload Content Type" className="tw-mt-4" required />
+        <Select
           label="Payload Content Type"
           name="payloadContentType"
           onValueChange={(value) => {
@@ -317,7 +347,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             payloadContentTypeOptions.map((item, index) => (
               <SelectOption key={index} label={item.label} value={item.value} />
             ))}
-        </SelectRow>
+        </Select>
         {formData.secret_type === "symmetric" && (
           <>
             <Message
