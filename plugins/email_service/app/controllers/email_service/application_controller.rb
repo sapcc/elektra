@@ -10,7 +10,7 @@ module EmailService
 
     def check_pre_conditions_for_cronus
       # Step 1: Role Check
-      unless current_user.has_role?('email_user') || current_user.has_role?('email_admin') || current_user.has_role?('cloud_email_admin') # || current_user.has_role?("admin")
+      unless current_user.has_role?('email_user') || current_user.has_role?('email_admin') || current_user.has_role?('cloud_email_admin')
         render 'email_service/shared/role_warning', formats: :html and return
       end
       # Step 2: EC2 Credentials
@@ -20,13 +20,14 @@ module EmailService
       # if (email_addresses&.empty? && domains&.empty?)
       #   render 'email_service/shared/verified_identity_warning', formats: :html and return
       # end
+
       # Step 4: Enable Cronus
 
       return if nebula_active?
 
       @status = nebula_status
       render 'email_service/shared/cronus_activation_warning', formats: :html,
-            locals: { @nebula_status => @status } and return
+                                                               locals: { @nebula_status => @status } and return
     end
 
     protected

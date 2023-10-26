@@ -45,7 +45,7 @@ module EmailService
 
     def destroy
       @multicloud_account.provider = 'aws'
-      status = nebula_deactivate
+      status = nebula_deactivate(@multicloud_account.provider)
       if status == 'success'
         flash[:success] = MULTICLOUD_ACCOUNT_DELETED
       else

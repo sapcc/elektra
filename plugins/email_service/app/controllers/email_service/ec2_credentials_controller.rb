@@ -2,9 +2,11 @@
 
 module EmailService
   class Ec2CredentialsController < ::EmailService::ApplicationController
-
     authorization_context 'email_service'
     authorization_required
+
+    def index; end
+    def show; end
 
     def create
       @ec2_creds = create_credentials
@@ -28,9 +30,9 @@ module EmailService
       else
         error =
           I18n
-            .t('email_service.errors.ec2_credentials_delete_error')
-            .to_s
-            .freeze
+          .t('email_service.errors.ec2_credentials_delete_error')
+          .to_s
+          .freeze
         Rails.logger.error error
         flash[:error] = error
       end

@@ -291,12 +291,11 @@ module EmailService
             ]
           }
         }
-      Rails.logger.debug "\n [ses_helper][options]: #{options}\n"
       resp = cloud_watch_client.put_dashboard({
                                                 dashboard_name: options[:DashboardName], # required
                                                 dashboard_body: options[:DashboardBody].to_s # required
                                               })
-    rescue Exception, Aws::CloudWatch::Errors::InternalServiceError, InvalidParameterInput => e
+    rescue StandardError, Aws::CloudWatch::Errors::InternalServiceError, InvalidParameterInput => e
       Rails.logger.error e.message
       (
         "\n [email_service][application_helper][cloud_watch_put_dashboard][:error] #{e.message}  \n"
@@ -590,7 +589,6 @@ module EmailService
 
     # send plain email
     def send_plain_email(plain_email)
-      Rails.logger.debug "\n **** (send_plain_email: helper) plain_email.inspect : #{plain_email.inspect} ***** \n "
       begin
         resp =
           ses_client_v2.send_email(
@@ -966,7 +964,7 @@ module EmailService
           end
         else
           status = I18n.t('email_service.errors.configset_list_empty').to_s
-          Rails.logger.debug status
+
         end
       rescue Aws::SESV2::Errors::ServiceError, StandardError => e
         error =
@@ -1124,9 +1122,9 @@ module EmailService
         start_date: report_start_date,
         end_date: report_end_date
       }
-      Rails.logger.debug "\n attrs #{attrs}"
+
       report = ses_client_v2.get_domain_statistics_report(attrs)
-      Rails.logger.debug "\n get_domain_statistics_report(attrs) #{report}"
+
       # Unable to find a dashboard account for <1234565789>
       # Check dashboard account is enabled or not
     rescue Aws::SESV2::Errors::ServiceError, StandardError => e
@@ -1953,7 +1951,7 @@ module EmailService
       current_user.service_url('nebula')
     end
 
-    def _nebula_request(uri, method, headers = nil, body = nil)
+    def api_request(uri, method, headers = nil, body = nil)
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = true
       request =
@@ -1969,20 +1967,48 @@ module EmailService
         end
 
       JSON.parse(headers).each { |name, value| request[name] = value } unless headers.nil?
-      request.body = body unless body.nil?
+      request.body = body.to_json if body
       begin
         response = https.request(request)
-      rescue Timeout::Error,
-             Errno::EINVAL,
-             Errno::ECONNRESET,
-             EOFError,
-             Net::HTTPBadResponse,
-             Net::HTTPHeaderSyntaxError,
-             Net::ProtocolError => e
+      rescue StandardError => e
         Rails.logger.error e.message
-        return e.message
+        e.message
       end
       response
+    end
+
+    def format_response(response)
+      "#{response.code} : #{response.read_body}"
+    end
+
+    def handle_parser_error(error)
+      err = JSON.dump({ error: error.message })
+      @nebula_details = JSON.parse(err)
+    end
+
+    def parse_response(parsed)
+      if parsed.instance_of?(Hash)
+        if parsed.key?('error')
+          @nebula_details = parsed
+        elsif parsed.key?('status') && parsed.key?('security_attributes')
+          security_attributes = parsed['security_attributes']&.split(', ')
+          production = parsed.key?('production') ? parsed['production'] : nil
+          status = parsed['status'].nil? ? nil : parsed['status']
+          allowed_emails = parsed.key?('allowed_emails') ? parsed['allowed_emails'] : nil
+          complaint = parsed.key?('complaint') ? parsed['complaint'] : nil
+          @nebula_details = {
+            security_officer: security_attributes[0][16...].strip.to_s,
+            environment: security_attributes[1][12...].strip.to_s,
+            valid_until: security_attributes[2][12...].strip.to_s,
+            production: production.to_s,
+            allowed_emails: allowed_emails.to_s,
+            complaint: complaint.to_s,
+            status: status.to_s
+          }
+        end
+      elsif parsed.instance_of?(String)
+        @nebula_details = JSON.parse(parsed)
+      end
     end
 
     def nebula_details
@@ -1990,34 +2016,14 @@ module EmailService
       headers = JSON.dump({ 'X-Auth-Token': "#{current_user.token}", 'Content-Type': 'application/json' })
       body = nil
       begin
-        response = _nebula_request(url, 'GET', headers, body)
+        response = api_request(url, 'GET', headers, body)
+
         @parsed = JSON.parse(response.read_body)
-        if @parsed.instance_of?(Hash)
-          if @parsed.key?('error')
-            @nebula_details = @parsed
-          elsif @parsed.key?('status') && @parsed.key?('security_attributes')
-            security_attributes = @parsed['security_attributes']&.split(', ')
-            production = @parsed.key?('production') ? @parsed['production'] : nil
-            status = @parsed['status'].nil? ? nil : @parsed['status']
-            allowed_emails = @parsed.key?('allowed_emails') ? @parsed['allowed_emails'] : nil
-            complaint = @parsed.key?('complaint') ? @parsed['complaint'] : nil
-            @nebula_details = {
-              security_officer: security_attributes[0][16...].strip.to_s,
-              environment: security_attributes[1][12...].strip.to_s,
-              valid_until: security_attributes[2][12...].strip.to_s,
-              production: production.to_s,
-              allowed_emails: allowed_emails.to_s,
-              complaint: complaint.to_s,
-              status: status.to_s
-            }
-          end
-        elsif @parsed.instance_of?(String)
-          @nebula_details = JSON.parse(@parsed)
-        end
+        parse_response(@parsed)
       rescue JSON::ParserError => e
-        err = JSON.dump({ error: e.message })
-        @nebula_details = JSON.parse(err)
+        handle_parser_error(e)
       end
+
       @nebula_details
     end
 
@@ -2045,14 +2051,14 @@ module EmailService
           end
         end
       elsif @nebula_details.instance_of?(String)
-        @status = JSON.parse(@nebula_details)
+        @status = @nebula_details
       end
       @status
     end
 
     def nebula_active?
       @nebula_status = nebula_status
-      status_items = %w[PRODUCTION SANDBOX]
+      status_items = %w[GRANTED PENDING PENDING_CUSTOMER_ACTION CUSTOMER_ACTION_COMPLETED PRODUCTION SANDBOX]
       @nebula_status && status_items.any? { |item| @nebula_status.include? item } ? true : false
     end
 
@@ -2061,11 +2067,8 @@ module EmailService
     end
 
     def get_nebula_uri(provider = 'aws', custom_url = nil)
-      if provider == 'aws' && custom_url.nil?
-        URI("#{nebula_endpoint_url}/v1/#{provider}/#{project_id}")
-      else
-        URI("#{custom_url}/v1/#{provider}/#{project_id}")
-      end
+      base_url = provider == 'aws' && custom_url.nil? ? nebula_endpoint_url : custom_url
+      URI("#{base_url}/v1/#{provider}/#{project_id}")
     end
 
     def nebula_activate(multicloud_account = nil)
@@ -2074,7 +2077,7 @@ module EmailService
       provider = multicloud_account.provider || 'aws'
       endpoint_url = multicloud_account.custom_endpoint_url || nil
       url = get_nebula_uri(provider, endpoint_url)
-      headers = JSON.dump({ 'X-Auth-Token': "#{current_user.token}", 'Content-Type': 'application/json' })
+      headers = JSON.dump({ 'X-Auth-Token': current_user.token, 'Content-Type': 'application/json' })
       body =
         JSON.dump(
           {
@@ -2084,7 +2087,8 @@ module EmailService
             securityOfficer: multicloud_account.security_officer
           }
         )
-      response = _nebula_request(url, 'POST', headers, body)
+
+      response = api_request(url, 'POST', headers, body)
 
       audit_logger.info(
         '[cronus][nebula_activate]: ',
@@ -2094,15 +2098,15 @@ module EmailService
         project_id,
         response.code
       )
-
-      response.code.to_i < 300 ? 'success' : "#{response.code} : #{response.read_body}"
+      response.code.to_i < 300 ? 'success' : format_response(response)
     end
 
-    def nebula_deactivate(_multicloud_account = nil)
-      url = get_nebula_uri('aws', custom_endpoint_url)
-      headers = JSON.dump({ 'X-Auth-Token': "#{current_user.token}", 'Content-Type': 'application/json' })
+    def nebula_deactivate(provider = 'aws')
+      url = get_nebula_uri(provider, custom_endpoint_url)
+      headers = JSON.dump({ 'X-Auth-Token': current_user.token.to_s, 'Content-Type': 'application/json' })
       body = nil
-      response = _nebula_request(url, 'DELETE', headers, body)
+
+      response = api_request(url, 'DELETE', headers, body)
 
       audit_logger.info(
         '[cronus][nebula_deactivate]: ',
@@ -2112,12 +2116,7 @@ module EmailService
         project_id,
         response.code
       )
-
-      if response.code.to_i < 300
-        'success'
-      else
-        "#{response.code} : #{response.read_body}"
-      end
+      response.code.to_i < 300 ? 'success' : format_response(response)
     end
 
     def aws_account_details
@@ -2125,10 +2124,10 @@ module EmailService
                                 if nebula_active? && ec2_creds && ses_client_v2
     end
 
-    def get_aws_signer(service, access, secret, region, url)
-      return nil if !service || !access || !secret || !region || !url
+    def aws_signer(service, access, secret, region, url)
+      return nil unless service && access && secret && region && url
 
-      @signer ||= Aws::Sigv4::Signer.new(
+      @aws_signer ||= Aws::Sigv4::Signer.new(
         service: service,
         region: region,
         endpoint: url,
@@ -2140,8 +2139,8 @@ module EmailService
     def _suppressed_email_list(next_token = nil)
       return nil if !ec2_access || !ec2_secret
 
-      access =  ec2_access
-      secret =  ec2_secret
+      access = ec2_access
+      secret = ec2_secret
 
       @suppressed_destination_array = []
 
@@ -2149,7 +2148,7 @@ module EmailService
       @aws_region = map_region(@cronus_region) || 'eu-central-1'
 
       @cronus_endpoint = "https://cronus.#{@cronus_region}.cloud.sap"
-      signer = get_aws_signer('ses', access, secret, @aws_region, @cronus_endpoint)
+      signer = aws_signer('ses', access, secret, @aws_region, @cronus_endpoint)
 
       return nil if signer == nil?
 
@@ -2175,7 +2174,7 @@ module EmailService
         response = https.request(request)
         @parsed = JSON.parse(response.read_body)
       rescue StandardError => e
-        Rails.logger.debug e.message
+        Rails.logger.error e.message
       end
 
       [@parsed['NextToken'], @parsed['SuppressedDestinationSummaries']] if @parsed

@@ -125,7 +125,8 @@ const config = {
     },
   ],
   //loader: { ".js": "jsx" },
-  target: ["es6", "chrome58", "firefox57", "safari11", "edge18"],
+  // target: ["es6", "chrome58", "firefox57", "safari11", "edge18"],
+  target: ["es2020"],
   minify: production,
   sourcemap: !production,
   // map global this to window
