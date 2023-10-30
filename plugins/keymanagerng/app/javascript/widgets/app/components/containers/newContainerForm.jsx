@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useLayoutEffect } from "react"
 import {
   Form,
-  TextInputRow,
+  FormRow,
+  TextInput,
   Select,
   SelectOption,
   Label,
@@ -312,167 +313,179 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
       }
     >
       <Form className="form form-horizontal">
-        <Messages className="tw-mb-6" />
-        <TextInputRow
-          label="Name"
-          name="name"
-          onChange={(oEvent) => {
-            setFormData({ ...formData, name: oEvent.target.value })
-          }}
-          invalid={validationState?.name ? true : false}
-          errortext={validationState?.name}
-          required
-          data-target="container-name-text-input"
-        />
-        <Select
-          className="tw-mb-6"
-          defaultValue="generic"
-          label="Container Type"
-          onValueChange={(value) => {
-            setContainerType(value)
-            setValidationState({})
-            setFormData({ ...formData, type: value, secret_refs: [] })
-            resetMessages()
-          }}
-          name="containerType"
-          data-target="container-type-select"
-          invalid={validationState?.type ? true : false}
-          required
-        >
-          {selectContainerTypes("all").map((item, index) => (
-            <SelectOption key={index} label={item.label} value={item.value} />
-          ))}
-        </Select>
+        <FormRow>
+          <Messages />
+        </FormRow>
+        <FormRow>
+          <TextInput
+            label="Name"
+            name="name"
+            onChange={(oEvent) => {
+              setFormData({ ...formData, name: oEvent.target.value })
+            }}
+            invalid={validationState?.name ? true : false}
+            errortext={validationState?.name}
+            required
+            data-target="container-name-text-input"
+          />
+        </FormRow>
+        <FormRow>
+          <Select
+            defaultValue="generic"
+            label="Container Type"
+            onChange={(value) => {
+              setContainerType(value)
+              setValidationState({})
+              setFormData({ ...formData, type: value, secret_refs: [] })
+              resetMessages()
+            }}
+            name="containerType"
+            data-target="container-type-select"
+            invalid={validationState?.type ? true : false}
+            required
+          >
+            {selectContainerTypes("all")?.map((item, index) => (
+              <SelectOption
+                data-target={"container-type-select-option-" + item.value}
+                key={index}
+                label={item.label}
+                value={item.value}
+              />
+            ))}
+          </Select>
+        </FormRow>
+
         {containerType !== "" && (
           <>
-            <Label text="Secrets" />
-            <div className="tw-text-xs">
-              {containerType === "certificate"
-                ? "A certificate container is used for storing the following secrets that are relevant to certificates: certificate, private_key (optional), " +
-                  "private_key_passphrase (optional), intermediates (optional):"
-                : containerType === "generic"
-                ? "A generic container is used for any type of container that a user may wish to create. " +
-                  "There are no restrictions on the type or amount of secrets that can be held within a container:"
-                : containerType === "rsa"
-                ? "An RSA container is used for storing RSA public keys, private keys, and private key pass phrases"
-                : ""}
-            </div>
+            <FormRow>
+              <Label text="Secrets" />
+            </FormRow>
+            <FormRow>
+              <div className="tw-text-xs">
+                {containerType === "certificate"
+                  ? "A certificate container is used for storing the following secrets that are relevant to certificates: certificate, private_key (optional), " +
+                    "private_key_passphrase (optional), intermediates (optional):"
+                  : containerType === "generic"
+                  ? "A generic container is used for any type of container that a user may wish to create. " +
+                    "There are no restrictions on the type or amount of secrets that can be held within a container:"
+                  : containerType === "rsa"
+                  ? "An RSA container is used for storing RSA public keys, private keys, and private key pass phrases"
+                  : ""}
+              </div>
+            </FormRow>
             {containerType === "certificate" && (
               <>
-                <div className="tw-mt-6" />
-                <Label text="Certificate" required />
-                <Select
-                  className="tw-mb-2"
-                  label="Certificate"
-                  onValueChange={(selectedSecretRef) => {
-                    updateSecretRefs(selectedSecretRef, "certificate")
-                    setSelectedCertContainerCertificates(selectedSecretRef)
-                    setValidationState({})
-                    resetMessages()
-                  }}
-                  name="cert_container_type_certificates"
-                  data-target="certificate-container-select"
-                  invalid={
-                    validationState?.certContainerCertificates ? true : false
-                  }
-                  required
-                >
-                  {certContainerCertificates.map((item, index) => (
-                    <SelectOption
-                      key={index}
-                      label={item.label}
-                      value={item.value}
-                    />
-                  ))}
-                </Select>
-                <p className="tw-text-xs tw-text-theme-error">
-                  {validationState?.certContainerCertificates
-                    ? validationState?.certContainerCertificates
-                    : ""}
-                </p>
-                <Label text="Private key" />
-                <Select
-                  className="tw-mb-2"
-                  label="Private key"
-                  onValueChange={onCertContainerPrivatekeyChange}
-                  name="cert_container_type_private_keys"
-                  data-target="private-key-select"
-                  invalid={
-                    validationState?.certContainerPrivatekeys ? true : false
-                  }
-                >
-                  <SelectOption label="" value="" />
-                  {certContainerPrivatekeys.map((item, index) => (
-                    <SelectOption
-                      key={index}
-                      label={item.label}
-                      value={item.value}
-                    />
-                  ))}
-                </Select>
-                <Label text="Private key passphrase" />
-                <Select
-                  className="tw-mb-2"
-                  label="Private key passphrase"
-                  onValueChange={onCertContainerPrivateKeyPassphraseChange}
-                  name="cert_container_type_private_key_passphrases"
-                  data-target="private-key-passphrase-select"
-                  loading={secrets?.isLoading}
-                  invalid={
-                    validationState?.certContainerPrivatekeyPassphrases
-                      ? true
-                      : false
-                  }
-                >
-                  <SelectOption label="" value="" />
-                  {certContainerPrivatekeyPassphrases.map((item, index) => (
-                    <SelectOption
-                      key={index}
-                      label={item.label}
-                      value={item.value}
-                    />
-                  ))}
-                </Select>
-                <Label text="Intermediates" />
-                <Select
-                  label="Intermediates"
-                  onValueChange={onIntermediatesChange}
-                  name="cert_container_type_intermediates"
-                  data-target="intermediate-select"
-                  loading={secrets?.isLoading}
-                  invalid={
-                    validationState?.certContainerIntermediates ? true : false
-                  }
-                >
-                  <SelectOption label="" value="" />
-                  {certContainerIntermediates.map((item, index) => (
-                    <SelectOption
-                      key={index}
-                      label={item.label}
-                      value={item.value}
-                    />
-                  ))}
-                </Select>
+                <FormRow>
+                  <Select
+                    label="Certificate"
+                    onChange={(selectedSecretRef) => {
+                      updateSecretRefs(selectedSecretRef, "certificate")
+                      setSelectedCertContainerCertificates(selectedSecretRef)
+                      setValidationState({})
+                      resetMessages()
+                    }}
+                    name="cert_container_type_certificates"
+                    data-target="certificate-container-select"
+                    errortext={validationState?.certContainerCertificates}
+                    invalid={
+                      validationState?.certContainerCertificates ? true : false
+                    }
+                    required
+                  >
+                    {certContainerCertificates?.map((item, index) => (
+                      <SelectOption
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                      />
+                    ))}
+                  </Select>
+                </FormRow>
+                <FormRow>
+                  <Select
+                    label="Private key"
+                    onChange={onCertContainerPrivatekeyChange}
+                    name="cert_container_type_private_keys"
+                    data-target="cert-container-private-key-select"
+                    invalid={
+                      validationState?.certContainerPrivatekeys ? true : false
+                    }
+                  >
+                    <SelectOption label="Select..." value="" />
+                    {certContainerPrivatekeys?.map((item, index) => (
+                      <SelectOption
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                      />
+                    ))}
+                  </Select>
+                </FormRow>
+                <FormRow>
+                  <Select
+                    label="Private key passphrase"
+                    onChange={onCertContainerPrivateKeyPassphraseChange}
+                    name="cert_container_type_private_key_passphrases"
+                    data-target="cert-container-private-key-passphrase-select"
+                    loading={secrets?.isLoading}
+                    invalid={
+                      validationState?.certContainerPrivatekeyPassphrases
+                        ? true
+                        : false
+                    }
+                  >
+                    <SelectOption label="Select..." value="" />
+                    {certContainerPrivatekeyPassphrases?.map((item, index) => (
+                      <SelectOption
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                      />
+                    ))}
+                  </Select>
+                </FormRow>
+                <FormRow>
+                  <Select
+                    label="Intermediates"
+                    onChange={onIntermediatesChange}
+                    name="cert_container_type_intermediates"
+                    data-target="intermediate-select"
+                    loading={secrets?.isLoading}
+                    invalid={
+                      validationState?.certContainerIntermediates ? true : false
+                    }
+                  >
+                    <SelectOption label="Select..." value="" />
+                    {certContainerIntermediates?.map((item, index) => (
+                      <SelectOption
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                      />
+                    ))}
+                  </Select>
+                </FormRow>
               </>
             )}
             {containerType === "generic" && (
               <>
-                <div className="tw-mt-6" />
-                <CreatableSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  isRtl={false}
-                  closeMenuOnSelect={false}
-                  isSearchable
-                  isClearable
-                  isMulti
-                  name="generic_container_type_secrets"
-                  isLoading={secrets?.isLoading}
-                  options={genContainerSecrets}
-                  onChange={onSecretsChange}
-                  value={selectedGenContainerSecrets}
-                  styles={invalidateReactSelect(selectedGenContainerSecrets)}
-                />
+                <FormRow>
+                  <CreatableSelect
+                    className="basic-single"
+                    classNamePrefix="select"
+                    isRtl={false}
+                    closeMenuOnSelect={false}
+                    isSearchable
+                    isClearable
+                    isMulti
+                    name="generic_container_type_secrets"
+                    isLoading={secrets?.isLoading}
+                    options={genContainerSecrets}
+                    onChange={onSecretsChange}
+                    value={selectedGenContainerSecrets}
+                    styles={invalidateReactSelect(selectedGenContainerSecrets)}
+                  />
+                </FormRow>
                 <p className="tw-text-xs tw-text-theme-error tw-mt-1">
                   {validationState?.secret_refs
                     ? validationState?.secret_refs
@@ -482,81 +495,76 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
             )}
             {containerType === "rsa" && (
               <>
-                <div className="tw-mt-6" />
-                <Label text="Private key" required />
-                <Select
-                  label="Private key"
-                  onValueChange={onRsaContainerPrivateKeyChange}
-                  name="rsa_container_type_private_keys"
-                  data-target="rsa-container-private-key-select"
-                  loading={secrets?.isLoading}
-                  invalid={
-                    validationState?.rsaContainerPrivatekeys ? true : false
-                  }
-                >
-                  {rsaContainerPrivatekeys.map((item, index) => (
-                    <SelectOption
-                      key={index}
-                      label={item.label}
-                      value={item.value}
-                    />
-                  ))}
-                </Select>
-                <p className="tw-text-xs tw-text-theme-error tw-mt-1">
-                  {validationState?.rsaContainerPrivatekeys
-                    ? validationState?.rsaContainerPrivatekeys
-                    : ""}
-                </p>
-                <Label text="Private key passphrase" required />
-                <Select
-                  label="Private key passphrase"
-                  onValueChange={onRsaContainerPrivateKeyPassphraseChange}
-                  name="rsa_container_type_private_key_passphrases"
-                  data-target="rsa-container-private-key-passphrase-select"
-                  loading={secrets?.isLoading}
-                  invalid={
-                    validationState?.rsaContainerPrivatekeyPassphrases
-                      ? true
-                      : false
-                  }
-                >
-                  {rsaContainerPrivatekeyPassphrases.map((item, index) => (
-                    <SelectOption
-                      key={index}
-                      label={item.label}
-                      value={item.value}
-                    />
-                  ))}
-                </Select>
-                <p className="tw-text-xs tw-text-theme-error tw-mt-1">
-                  {validationState?.rsaContainerPrivatekeyPassphrases
-                    ? validationState?.rsaContainerPrivatekeyPassphrases
-                    : ""}
-                </p>
-                <Label text="Public key" required />
-                <Select
-                  label="Public key"
-                  onValueChange={onPublicKeyChange}
-                  name="rsa_container_type_public_keys"
-                  data-target="rsa-container-public-key-select"
-                  loading={secrets?.isLoading}
-                  invalid={
-                    validationState?.rsaContainerPublickeys ? true : false
-                  }
-                >
-                  {rsaContainerPublickeys.map((item, index) => (
-                    <SelectOption
-                      key={index}
-                      label={item.label}
-                      value={item.value}
-                    />
-                  ))}
-                </Select>
-                <p className="tw-text-xs tw-text-theme-error tw-mt-1">
-                  {validationState?.rsaContainerPublickeys
-                    ? validationState?.rsaContainerPublickeys
-                    : ""}
-                </p>
+                <FormRow>
+                  <Select
+                    label="Private key"
+                    onChange={onRsaContainerPrivateKeyChange}
+                    name="rsa_container_type_private_keys"
+                    data-target="rsa-container-private-key-select"
+                    loading={secrets?.isLoading}
+                    invalid={
+                      validationState?.rsaContainerPrivatekeys ? true : false
+                    }
+                    errortext={validationState?.rsaContainerPrivatekeys}
+                    required
+                  >
+                    {rsaContainerPrivatekeys?.map((item, index) => (
+                      <SelectOption
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                      />
+                    ))}
+                  </Select>
+                </FormRow>
+                <FormRow>
+                  <Select
+                    label="Private key passphrase"
+                    onChange={onRsaContainerPrivateKeyPassphraseChange}
+                    name="rsa_container_type_private_key_passphrases"
+                    data-target="rsa-container-private-key-passphrase-select"
+                    loading={secrets?.isLoading}
+                    invalid={
+                      validationState?.rsaContainerPrivatekeyPassphrases
+                        ? true
+                        : false
+                    }
+                    errortext={
+                      validationState?.rsaContainerPrivatekeyPassphrases
+                    }
+                    required
+                  >
+                    {rsaContainerPrivatekeyPassphrases?.map((item, index) => (
+                      <SelectOption
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                      />
+                    ))}
+                  </Select>
+                </FormRow>
+                <FormRow>
+                  <Select
+                    label="Public key"
+                    onChange={onPublicKeyChange}
+                    name="rsa_container_type_public_keys"
+                    data-target="rsa-container-public-key-select"
+                    loading={secrets?.isLoading}
+                    invalid={
+                      validationState?.rsaContainerPublickeys ? true : false
+                    }
+                    required
+                    errortext={validationState?.rsaContainerPublickeys}
+                  >
+                    {rsaContainerPublickeys?.map((item, index) => (
+                      <SelectOption
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                      />
+                    ))}
+                  </Select>
+                </FormRow>
               </>
             )}
           </>

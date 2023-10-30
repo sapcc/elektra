@@ -1,8 +1,9 @@
 import React, { useState, useLayoutEffect } from "react"
 import {
   Form,
-  TextInputRow,
-  TextareaRow,
+  FormRow,
+  TextInput,
+  Textarea,
   Select,
   SelectOption,
   Message,
@@ -183,186 +184,237 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
       }
     >
       <Form className="form form-horizontal">
-        <Messages />
-        <TextInputRow
-          label="Name"
-          name="name"
-          onChange={(oEvent) => {
-            setFormData({ ...formData, name: oEvent.target.value })
-          }}
-          invalid={validationState?.name ? true : false}
-          errortext={validationState?.name}
-          required
-          data-target="name-text-input"
-        />
-        <Container py px={false}>
-          <Label text="Expiration" />
-          <DayPicker
-            mode="single"
-            selected={selectedDay}
-            onSelect={(selectedDate) => {
-              const currentDate = new Date()
-              let selectedDateTime = new Date(selectedDate)
-
-              if (isToday(selectedDate) || isAfter(selectedDate, currentDate)) {
-                if (isSameDay(selectedDate, currentDate)) {
-                  // Set the time to the end of the day (23:59:59) for today
-                  selectedDateTime.setHours(23, 59, 59)
-                }
-
-                setSelectedDay(selectedDate)
-                setFormData({
-                  ...formData,
-                  expiration: selectedDateTime.toISOString(),
-                })
-                setValidationState({
-                  ...validationState,
-                  expiration: null, // Set to null when there is no error
-                })
-              } else {
-                setValidationState({
-                  ...validationState,
-                  expiration:
-                    "Selected date must be greater than the current date and time!",
-                })
-                setSelectedDay(null)
-              }
+        <FormRow>
+          <Messages />
+        </FormRow>
+        <FormRow>
+          <TextInput
+            label="Name"
+            name="name"
+            onChange={(oEvent) => {
+              setFormData({ ...formData, name: oEvent.target.value })
             }}
+            invalid={validationState?.name ? true : false}
+            errortext={validationState?.name}
+            required
+            data-target="name-text-input"
           />
-          {validationState?.expiration && (
-            <p className="tw-text-xs tw-text-theme-error tw-mt-1">
-              {validationState?.expiration ? validationState?.expiration : ""}
-            </p>
-          )}
-          {selectedDay && (
-            <p>
-              Selected date is:{" "}
-              {format(new Date(selectedDay), "MMMM d, yyyy HH:mm:ss")}
-            </p>
-          )}
-          <p className="tw-text-xs tw-text-theme-light tw-mt-1">
-            {
-              "This is a UTC timestamp in ISO 8601 format YYYY-MM-DDTHH:MM:SSZ. If set, the secret will not be available after this time"
-            }
-          </p>
-        </Container>
+        </FormRow>
+        <FormRow>
+          <Container py px={false}>
+            <FormRow>
+              <Label text="Expiration" />
+            </FormRow>
+            <FormRow>
+              <DayPicker
+                mode="single"
+                selected={selectedDay}
+                onSelect={(selectedDate) => {
+                  const currentDate = new Date()
+                  let selectedDateTime = new Date(selectedDate)
 
-        <TextInputRow
-          label="Bit length"
-          name="Bit length"
-          onChange={(oEvent) => {
-            setFormData({
-              ...formData,
-              bit_length: parseInt(oEvent.target.value),
-            })
-          }}
-          helptext="Metadata for informational purposes. Value must be greater than zero"
-        />
-        <TextInputRow
-          label="Algorithm"
-          name="algorithm"
-          onChange={(oEvent) => {
-            setFormData({ ...formData, algorithm: oEvent.target.value })
-          }}
-          helptext="Metadata for informational purposes"
-        />
-        <TextInputRow
-          label="Mode"
-          name="mode"
-          onChange={(oEvent) => {
-            setFormData({ ...formData, mode: oEvent.target.value })
-          }}
-          helptext="Metadata for informational purposes"
-        />
-        <Box>
-          <p>
-            certificate - Used for storing cryptographic certificates such as
-            X.509 certificates
-          </p>
-          <p>
-            opaque - Used for backwards compatibility with previous versions of
-            the API without typed secrets{" "}
-          </p>
-          <p>passphrase - Used for storing plain text passphrases </p>
-          <p>
-            private - Used for storing the private key of an asymmetric keypair{" "}
-          </p>
-          <p>
-            public - Used for storing the public key of an asymmetric keypair{" "}
-          </p>
-          <p>
-            symmetric - Used for storing byte arrays such as keys suitable for
-            symmetric encryption
-          </p>
-        </Box>
-        <Label text="Secret Type" className="tw-mt-6" required />
-        <Select
-          label="Secret Type"
-          className="tw-mb-2"
-          name="secretType"
-          onValueChange={onSecretTypeChange}
-          errortext={validationState?.secret_type}
-          invalid={validationState?.secret_type ? true : false}
-          required
-        >
-          {selectTypes("all").map((item, index) => (
-            <SelectOption key={index} label={item.label} value={item.value} />
-          ))}
-        </Select>
-        <TextareaRow
-          label="Payload"
-          name="payload"
-          onChange={(oEvent) => {
-            setFormData({ ...formData, payload: oEvent.target.value })
-          }}
-          helptext={
-            validationState?.payload ? "" : "The secret’s data to be stored"
-          }
-          errortext={validationState?.payload}
-          invalid={validationState?.payload ? true : false}
-          required
-          data-target="payload-text-area"
-        />
-        <Label text="Payload Content Type" className="tw-mt-4" required />
-        <Select
-          label="Payload Content Type"
-          name="payloadContentType"
-          onValueChange={(value) => {
-            setFormData({
-              ...formData,
-              payload_content_type: value,
-            })
-          }}
-          errortext={validationState?.payload_content_type}
-          invalid={validationState?.payload_content_type ? true : false}
-          required
-        >
-          {!formData.secret_type && (
-            <SelectOption
-              label="Please first select a secret type"
-              value="Please first select a secret type"
-            />
-          )}
-          {formData.secret_type &&
-            payloadContentTypeOptions.map((item, index) => (
-              <SelectOption key={index} label={item.label} value={item.value} />
+                  if (
+                    isToday(selectedDate) ||
+                    isAfter(selectedDate, currentDate)
+                  ) {
+                    if (isSameDay(selectedDate, currentDate)) {
+                      // Set the time to the end of the day (23:59:59) for today
+                      selectedDateTime.setHours(23, 59, 59)
+                    }
+
+                    setSelectedDay(selectedDate)
+                    setFormData({
+                      ...formData,
+                      expiration: selectedDateTime.toISOString(),
+                    })
+                    setValidationState({
+                      ...validationState,
+                      expiration: null, // Set to null when there is no error
+                    })
+                  } else {
+                    setValidationState({
+                      ...validationState,
+                      expiration:
+                        "Selected date must be greater than the current date and time!",
+                    })
+                    setSelectedDay(null)
+                  }
+                }}
+              />
+            </FormRow>
+
+            {validationState?.expiration && (
+              <FormRow>
+                <p className="tw-text-xs tw-text-theme-error">
+                  {validationState?.expiration
+                    ? validationState?.expiration
+                    : ""}
+                </p>
+              </FormRow>
+            )}
+            {selectedDay && (
+              <FormRow>
+                <p>
+                  Selected date is:{" "}
+                  {format(new Date(selectedDay), "MMMM d, yyyy HH:mm:ss")}
+                </p>
+              </FormRow>
+            )}
+            <FormRow>
+              <p className="tw-text-xs tw-text-theme-light">
+                {
+                  "This is a UTC timestamp in ISO 8601 format YYYY-MM-DDTHH:MM:SSZ. If set, the secret will not be available after this time"
+                }
+              </p>
+            </FormRow>
+          </Container>
+        </FormRow>
+
+        <FormRow>
+          <TextInput
+            label="Bit length"
+            name="Bit length"
+            onChange={(oEvent) => {
+              setFormData({
+                ...formData,
+                bit_length: parseInt(oEvent.target.value),
+              })
+            }}
+            helptext="Metadata for informational purposes. Value must be greater than zero"
+          />
+        </FormRow>
+        <FormRow>
+          <TextInput
+            label="Algorithm"
+            name="algorithm"
+            onChange={(oEvent) => {
+              setFormData({ ...formData, algorithm: oEvent.target.value })
+            }}
+            helptext="Metadata for informational purposes"
+          />
+        </FormRow>
+        <FormRow>
+          <TextInput
+            label="Mode"
+            name="mode"
+            onChange={(oEvent) => {
+              setFormData({ ...formData, mode: oEvent.target.value })
+            }}
+            helptext="Metadata for informational purposes"
+          />
+        </FormRow>
+        <FormRow>
+          <Box>
+            <p>
+              certificate - Used for storing cryptographic certificates such as
+              X.509 certificates
+            </p>
+            <p>
+              opaque - Used for backwards compatibility with previous versions
+              of the API without typed secrets{" "}
+            </p>
+            <p>passphrase - Used for storing plain text passphrases </p>
+            <p>
+              private - Used for storing the private key of an asymmetric
+              keypair{" "}
+            </p>
+            <p>
+              public - Used for storing the public key of an asymmetric keypair{" "}
+            </p>
+            <p>
+              symmetric - Used for storing byte arrays such as keys suitable for
+              symmetric encryption
+            </p>
+          </Box>
+        </FormRow>
+        <FormRow>
+          <Select
+            label="Secret Type"
+            name="secretType"
+            onChange={onSecretTypeChange}
+            errortext={validationState?.secret_type}
+            invalid={validationState?.secret_type ? true : false}
+            required
+            data-target="secret-type-select"
+          >
+            {selectTypes("all").map((item, index) => (
+              <SelectOption
+                data-target={"secret-type-select-option-" + item.label}
+                key={index}
+                label={item.label}
+                value={item.value}
+              />
             ))}
-        </Select>
+          </Select>
+        </FormRow>
+        <FormRow>
+          <Textarea
+            label="Payload"
+            name="payload"
+            onChange={(oEvent) => {
+              setFormData({ ...formData, payload: oEvent.target.value })
+            }}
+            helptext={
+              validationState?.payload ? "" : "The secret’s data to be stored"
+            }
+            errortext={validationState?.payload}
+            invalid={validationState?.payload ? true : false}
+            required
+            data-target="payload-text-area"
+          />
+        </FormRow>
+        <FormRow>
+          <Select
+            label="Payload Content Type"
+            name="payloadContentType"
+            onChange={(value) => {
+              setFormData({
+                ...formData,
+                payload_content_type: value,
+              })
+            }}
+            placeholder={
+              formData.secret_type
+                ? "Select..."
+                : "Please first select a secret type"
+            }
+            errortext={validationState?.payload_content_type}
+            invalid={validationState?.payload_content_type ? true : false}
+            data-target="payload-content-type-select"
+            required
+          >
+            {!!formData.secret_type &&
+              payloadContentTypeOptions.map((item, index) => (
+                <SelectOption
+                  data-target={
+                    "payload-content-type-select-option-" + item.label
+                  }
+                  key={index}
+                  label={item.label}
+                  value={item.value}
+                />
+              ))}
+          </Select>
+        </FormRow>
         {formData.secret_type === "symmetric" && (
           <>
-            <Message
-              variant="warning"
-              name="warningForSymmetricSecretType"
-              text="Please encode the payload according to the chosen content encoding below"
-            />
-            <TextInputRow
-              label="PayloadContentEncoding"
-              name="payloadContentEncoding"
-              value="base64"
-              helptext="The encoding used for the payload. Currently only base64 is supported"
-              required
-              disabled
-            />
+            <FormRow>
+              <Message
+                variant="warning"
+                name="warningForSymmetricSecretType"
+                text="Please encode the payload according to the chosen content encoding below"
+              />
+            </FormRow>
+            <FormRow>
+              <TextInput
+                label="PayloadContentEncoding"
+                name="payloadContentEncoding"
+                value="base64"
+                helptext="The encoding used for the payload. Currently only base64 is supported"
+                required
+                disabled
+              />
+            </FormRow>
           </>
         )}
       </Form>

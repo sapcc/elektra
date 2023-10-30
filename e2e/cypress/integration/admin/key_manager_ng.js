@@ -17,13 +17,23 @@ describe("keymanagerng", () => {
   let sRsaContainerName
 
   before(() => {
-    createSecret = (sSecretName, iSecretType, iPayloadContentType) => {
+    createSecret = (sSecretName, sSecretType, sPayloadContentType) => {
       cy.contains("New Secret").click()
       cy.get("[data-target='name-text-input']").type(sSecretName)
       //Select Secret Type
-      cy.get("select[name='secretType']").select(iSecretType, { force: true })
+      cy.get("[data-target='secret-type-select']").click()
+      cy.get(
+        "[data-target='secret-type-select-option-" + sSecretType + "']"
+      ).click({
+        force: true,
+      })
       cy.get("[data-target='payload-text-area']").type(sSecretPayload)
-      cy.get("select[name='payloadContentType']").select(iPayloadContentType, {
+      cy.get("[data-target='payload-content-type-select']").click()
+      cy.get(
+        "[data-target='payload-content-type-select-option-" +
+          sPayloadContentType +
+          "']"
+      ).click({
         force: true,
       })
       //Save the new secret
@@ -125,9 +135,16 @@ describe("keymanagerng", () => {
 
     //Fill necessary fields to create a new secret
     cy.get("[data-target='name-text-input']").type(sPassPhraseSecretName)
-    cy.get("select[name='secretType']").select(3, { force: true })
+    // cy.get("select[name='secretType']").select(3, { force: true })
+    cy.get("[data-target='secret-type-select']").click()
+    cy.get("[data-target='secret-type-select-option-passphrase']").click({
+      force: true,
+    })
     cy.get("[data-target='payload-text-area']").type(sSecretPayload)
-    cy.get("select[name='payloadContentType']").select(1, {
+    cy.get("[data-target='payload-content-type-select']").click()
+    cy.get(
+      "[data-target='payload-content-type-select-option-text/plain']"
+    ).click({
       force: true,
     })
     cy.contains("Save").click()
@@ -146,7 +163,7 @@ describe("keymanagerng", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/keymanagerng/secrets`)
 
     //Create a new secret with symmetric type
-    createSecret(sSymmetricSecretName, 6, 1)
+    createSecret(sSymmetricSecretName, "symmetric", "application/octet-stream")
 
     //Delete the newly created secret
     deleteSecret(sSymmetricSecretName)
@@ -157,7 +174,7 @@ describe("keymanagerng", () => {
 
     //1. Create a new container with container type 'Generic' and delete it afterwards
     //Create one Passphrase secret to be selected in the new container
-    createSecret(sPassPhraseSecretName, 3, 1)
+    createSecret(sPassPhraseSecretName, "passphrase", "text/plain")
 
     //Select Containers
     cy.contains("Containers").click()
@@ -203,9 +220,8 @@ describe("keymanagerng", () => {
     //2. Create a new container with container type 'Certificate' and delete it afterwards
     cy.contains("Secrets").click()
 
-    // deleteSecret(sPassPhraseSecretName)
     //Create one Certificate secret to be selected in the new container
-    createSecret(sCertificateSecretName, 1, 1)
+    createSecret(sCertificateSecretName, "certificate", "text/plain")
 
     //Select Containers and create a container
     cy.contains("Containers").click()
@@ -217,22 +233,19 @@ describe("keymanagerng", () => {
       sCertificateContainerName
     )
     //Select 'Certificate' as the container type
-    cy.get("select[name='containerType']").select("certificate", {
+    cy.get("[data-target='container-type-select']").click()
+    cy.get("[data-target='container-type-select-option-certificate']").click({
       force: true,
     })
 
     //Select a certificate secret to add it to the new container
-    cy.get("select[name='cert_container_type_certificates']").select(
-      sCertificateSecretName + " (certificate)",
-      {
-        force: true,
-      }
-    )
+    cy.get("[data-target='certificate-container-select'").click()
 
     cy.contains(sCertificateSecretName + " (certificate)").should(
       "have.lengthOf",
       1
     )
+    cy.contains(sCertificateSecretName + " (certificate)").click()
 
     // Create the new container
     cy.contains("Save").click()
@@ -263,13 +276,13 @@ describe("keymanagerng", () => {
 
     //Create three secrets with types passphrase, public and private to be selected in the new container
     //1. Create passphrase secret
-    createSecret(sPassPhraseSecretName, 3, 1)
+    createSecret(sPassPhraseSecretName, "passphrase", "text/plain")
 
     //2. Create private secret
-    createSecret(sPrivateSecretName, 4, 1)
+    createSecret(sPrivateSecretName, "private", "text/plain")
 
     //3. Create public secret
-    createSecret(sPublicSecretName, 5, 1)
+    createSecret(sPublicSecretName, "public", "text/plain")
 
     //Select Containers
     cy.contains("Containers").click()
@@ -279,52 +292,43 @@ describe("keymanagerng", () => {
     cy.contains("New Container").should("have.lengthOf", 1)
     //Fill out name of the new container
     cy.get("[data-target='container-name-text-input']").type(sRsaContainerName)
-    //Select 'Certificate' as the container type
-    cy.get("select[name='containerType']").select("rsa", {
+    //Select 'Rsa' as the container type
+    cy.get("[data-target='container-type-select']").click()
+    cy.get("[data-target='container-type-select-option-rsa']").click({
       force: true,
     })
 
-    //Select a certificate secret to add it to the new container
-    cy.get("select[name='rsa_container_type_private_keys']").select(
-      sPrivateSecretName + " (private)",
-      {
-        force: true,
-      }
-    )
+    //Select a private key secret to add it to the new container
+    cy.get("[data-target='rsa-container-private-key-select']").click()
 
     cy.contains(sPrivateSecretName + " (private)").should("have.lengthOf", 1)
+    cy.contains(sPrivateSecretName + " (private)").click()
 
     // Create the new container
     cy.contains("Save").click()
     cy.contains("Private key passphrases can't be empty!")
     cy.contains("Public keys can't be empty!")
 
-    //Select a certificate secret to add it to the new container
-    cy.get("select[name='rsa_container_type_private_key_passphrases']").select(
-      sPassPhraseSecretName + " (passphrase)",
-      {
-        force: true,
-      }
-    )
+    //Select a private key passphrase secret to add it to the new container
+    cy.get(
+      "[data-target='rsa-container-private-key-passphrase-select']"
+    ).click()
 
     cy.contains(sPassPhraseSecretName + " (passphrase)").should(
       "have.lengthOf",
       1
     )
+    cy.contains(sPassPhraseSecretName + " (passphrase)").click()
 
     // Create the new container
     cy.contains("Save").click()
     cy.contains("Public keys can't be empty!")
 
-    //Select a certificate secret to add it to the new container
-    cy.get("select[name='rsa_container_type_public_keys']").select(
-      sPublicSecretName + " (public)",
-      {
-        force: true,
-      }
-    )
+    //Select a public key secret to add it to the new container
+    cy.get("[data-target='rsa-container-public-key-select']").click()
 
     cy.contains(sPublicSecretName + " (public)").should("have.lengthOf", 1)
+    cy.contains(sPublicSecretName + " (public)").click()
 
     // Create the new container
     cy.contains("Save").click()
