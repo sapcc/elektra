@@ -28,7 +28,7 @@ module EmailService
         services
         .identity
         .ec2_credentials(user_id, { tenant_id: project_id })
-          &.first
+        &.first
     end
 
     def ec2_creds_collection
@@ -52,9 +52,9 @@ module EmailService
         )
     end
 
-    def find_credentials(access_id)
+    def find_credentials(user_id, access_id, options = {})
       @find_credentials ||=
-        services.identity.find_ec2_credential(user_id, access_id)
+        services.identity.find_ec2_credential(user_id, access_id, options)
     end
 
     def delete_credentials(access_id)
@@ -599,8 +599,8 @@ module EmailService
                 cc_addresses: plain_email.cc_addr,
                 bcc_addresses: plain_email.bcc_addr
               },
-              reply_to_addresses: plain_email.reply_to_addr,
-              feedback_forwarding_email_address: plain_email.return_path,
+              reply_to_addresses: plain_email.reply_to_addr || plain_email.source,
+              feedback_forwarding_email_address: plain_email.return_path || plain_email.source,
               content: {
                 simple: {
                   subject: {
@@ -629,7 +629,9 @@ module EmailService
               # },
             }
           )
-        status = "success - email sent to #{plain_email.to_addr} "
+
+        status = "success - email sent to #{plain_email.to_addr} - message id: #{resp}"
+
         audit_logger.info(
           '[cronus][send_plain_email] : ',
           current_user.id,
@@ -1967,13 +1969,17 @@ module EmailService
         end
 
       JSON.parse(headers).each { |name, value| request[name] = value } unless headers.nil?
-      request.body = body.to_json if body
+      # TODO: test except for activation
+      # request.body = body.to_json if body
+      request.body = body if body
+
       begin
         response = https.request(request)
       rescue StandardError => e
         Rails.logger.error e.message
         e.message
       end
+
       response
     end
 
@@ -2053,6 +2059,7 @@ module EmailService
       elsif @nebula_details.instance_of?(String)
         @status = @nebula_details
       end
+      # 'NOT_ACTIVATED'
       @status
     end
 

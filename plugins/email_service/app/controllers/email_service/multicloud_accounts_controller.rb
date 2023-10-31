@@ -3,7 +3,6 @@
 module EmailService
   # MulticloudAccountsController
   class MulticloudAccountsController < ::EmailService::ApplicationController
-
     before_action :set_multicloud_account, only: %i[new destroy]
 
     authorization_context 'email_service'
@@ -18,18 +17,19 @@ module EmailService
       @nebula_status = nebula_status
     end
 
-    def new
-    end
+    def new; end
 
     def create
       @multicloud_account = multicloud_account_form(multicloud_account_params)
+
       multicloud_account_values =
         @multicloud_account.process(EmailService::MulticloudAccount)
-      unless @multicloud_account.valid?
-        render 'edit', locals: { data: { modal: true } } and return
+      render 'edit', locals: { data: { modal: true } } and return unless @multicloud_account.valid?
+
+      if @multicloud_account.valid?
+        status =
+          nebula_activate(multicloud_account_values)
       end
-      status =
-        nebula_activate(multicloud_account_values) if @multicloud_account.valid?
       unless status == 'success'
         flash.now[:error] = status
         render 'edit', locals: { data: { modal: true } } and return
@@ -81,6 +81,5 @@ module EmailService
         {}
       end
     end
-
   end
 end

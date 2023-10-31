@@ -7,7 +7,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
 
   default_params = {
     domain_id: AuthenticationStub.domain_id,
-    project_id: AuthenticationStub.project_id,
+    project_id: AuthenticationStub.project_id
   }
 
   before(:all) do
@@ -15,68 +15,64 @@ describe EmailService::CustomVerificationEmailTemplatesController,
       'Domain',
       nil,
       default_params[:domain_id],
-      'default',
+      'default'
     )
     FriendlyIdEntry.find_or_create_entry(
       'Project',
       default_params[:domain_id],
       default_params[:project_id],
-      default_params[:project_id],
+      default_params[:project_id]
     )
   end
 
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
+      EmailService::CustomVerificationEmailTemplatesController
     ).to receive(:check_pre_conditions_for_cronus).and_return(
-      double('render').as_null_object,
+      double('render').as_null_object
     )
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
+      EmailService::CustomVerificationEmailTemplatesController
     ).to receive(:check_verified_identity).and_return(
-      double('render').as_null_object,
+      double('render').as_null_object
     )
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
+      EmailService::CustomVerificationEmailTemplatesController
     ).to receive(:ec2_creds).and_return(double('creds').as_null_object)
+
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
-    ).to receive(:ses_client_v2).and_return(
-      double('ses_client_v2').as_null_object,
-    )
+      EmailService::CustomVerificationEmailTemplatesController
+    ).to receive(:ses_client_v2).and_return(double('ses_client').as_null_object)
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
-    ).to receive(:ses_client).and_return(double('ses_client').as_null_object)
-    allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
+      EmailService::CustomVerificationEmailTemplatesController
     ).to receive(:create_custom_verification_email_template).and_return(
-      double('status').as_null_object,
+      double('status').as_null_object
     )
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
+      EmailService::CustomVerificationEmailTemplatesController
     ).to receive(:delete_custom_verification_email_template).and_return(
-      double('status').as_null_object,
+      double('status').as_null_object
     )
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
+      EmailService::CustomVerificationEmailTemplatesController
     ).to receive(:update_custom_verification_email_template).and_return(
-      double('status').as_null_object,
+      double('status').as_null_object
     )
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
+      EmailService::CustomVerificationEmailTemplatesController
     ).to receive(:custom_templates).and_return(
-      double('custom_templates').as_null_object,
+      double('custom_templates').as_null_object
     )
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
+      EmailService::CustomVerificationEmailTemplatesController
     ).to receive(:list_custom_verification_email_templates).and_return(
-      double('custom_templates').as_null_object,
+      double('custom_templates').as_null_object
     )
     allow_any_instance_of(
-      EmailService::CustomVerificationEmailTemplatesController,
+      EmailService::CustomVerificationEmailTemplatesController
     ).to receive(:find_custom_verification_email_template).and_return(
-      double('custom_template').as_null_object,
+      double('custom_template').as_null_object
     )
   end
 
@@ -89,11 +85,11 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'email_service_role',
-            'name' => 'email_admin',
+            'name' => 'email_admin'
           }
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
@@ -111,11 +107,11 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'email_service_role',
-            'name' => 'email_user',
+            'name' => 'email_user'
           }
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
@@ -132,7 +128,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
@@ -140,7 +136,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
       it 'returns http status 401' do
         get :index, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          'application/exceptions/warning'
         )
       end
     end
@@ -154,11 +150,11 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'email_service_role',
-            'name' => 'email_admin',
+            'name' => 'email_admin'
           }
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
@@ -176,11 +172,11 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'email_service_role',
-            'name' => 'email_user',
+            'name' => 'email_user'
           }
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
@@ -198,7 +194,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
@@ -206,7 +202,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
       it 'returns http 401 status' do
         get :new, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          'application/exceptions/warning'
         )
       end
     end
@@ -216,7 +212,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
   describe "POST 'create'" do
     before :each do
       @opts =
-        ::EmailService::FakeFactory.new.custom_verification_email_template_opts
+        EmailService::FakeFactory.new.custom_verification_email_template_opts
     end
 
     context 'email_admin' do
@@ -225,18 +221,18 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'email_service_role',
-            'name' => 'email_admin',
+            'name' => 'email_admin'
           }
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
       end
       it 'returns http 302 status' do
         expect(
-          post(:create, params: default_params.merge(opts: @opts)),
+          post(:create, params: default_params.merge(opts: @opts))
         ).to have_http_status(200)
       end
     end
@@ -247,18 +243,18 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'email_service_role',
-            'name' => 'email_user',
+            'name' => 'email_user'
           }
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
       end
       it 'returns http 302 status' do
         expect(
-          post(:create, params: default_params.merge(opts: @opts)),
+          post(:create, params: default_params.merge(opts: @opts))
         ).to have_http_status(200)
       end
     end
@@ -269,14 +265,14 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
       end
       it 'returns http 401 status' do
         expect(
-          post(:create, params: default_params.merge(opts: @opts)),
+          post(:create, params: default_params.merge(opts: @opts))
         ).to render_template('application/exceptions/warning')
       end
     end
@@ -286,7 +282,7 @@ describe EmailService::CustomVerificationEmailTemplatesController,
   describe "DELETE 'destroy'" do
     before :each do
       @opts =
-        ::EmailService::FakeFactory.new.custom_verification_email_template_opts
+        EmailService::FakeFactory.new.custom_verification_email_template_opts
     end
 
     context 'email_admin' do
@@ -295,11 +291,11 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'email_service_role',
-            'name' => 'email_admin',
+            'name' => 'email_admin'
           }
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
@@ -307,9 +303,9 @@ describe EmailService::CustomVerificationEmailTemplatesController,
       it 'returns http 302 status' do
         expect(Rails.logger).to receive(:error)
         expect(
-          delete(:destroy, params: default_params.merge(id: @opts[:id])),
+          delete(:destroy, params: default_params.merge(id: @opts[:id]))
         ).to redirect_to(
-          custom_verification_email_templates_path(default_params),
+          custom_verification_email_templates_path(default_params)
         )
         expect(response.code).to eq('302')
       end
@@ -321,11 +317,11 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'email_service_role',
-            'name' => 'email_user',
+            'name' => 'email_user'
           }
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
@@ -333,9 +329,9 @@ describe EmailService::CustomVerificationEmailTemplatesController,
       it 'returns http 302 status' do
         expect(Rails.logger).to receive(:error)
         expect(
-          delete(:destroy, params: default_params.merge(id: @opts[:id])),
+          delete(:destroy, params: default_params.merge(id: @opts[:id]))
         ).to redirect_to(
-          custom_verification_email_templates_path(default_params),
+          custom_verification_email_templates_path(default_params)
         )
         expect(response.code).to eq('302')
       end
@@ -347,14 +343,14 @@ describe EmailService::CustomVerificationEmailTemplatesController,
           token['roles'] = []
           token['roles'] << {
             'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer',
+            'name' => 'cloud_support_tools_viewer'
           }
           token
         end
       end
       it 'returns http 401 status' do
         expect(
-          delete(:destroy, params: default_params.merge(id: @opts[:id])),
+          delete(:destroy, params: default_params.merge(id: @opts[:id]))
         ).to render_template('application/exceptions/warning')
       end
     end

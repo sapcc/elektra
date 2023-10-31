@@ -18,12 +18,12 @@
         %br 
         %h3 In order to use CRONUS service, you need to activate SAP MultiCloud Account
         %br 
-        -# = link_to "Activate Multicloud account", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-secondary'
+        = link_to "Activate Multicloud account", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-secondary'
         %br
         %br 
         %ul
           %li Activate cronus by executing this command your terminal or command prompt or embedded WebCLI 
-          %li <code>cronuscli nebula activate --account-env <valid environment from this list [PROD QA DEV DEMO TRAIN SANDBOX LAB]> --security-officer <I/C/D userid or email> --mail-type <MARKETING or TRANSACTIONAL></code>.
+          %li <code>cronuscli nebula activate --account-env {valid environment from this list [PROD QA DEV DEMO TRAIN SANDBOX LAB]} --security-officer {I/C/D userid or email} --mail-type {MARKETING or TRANSACTIONAL}</code>.
           %li Please refer to our documetation on this from 
           = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/quick-start-sending-emails/#step-2-activate-email-service"
 
@@ -87,7 +87,7 @@
       %br 
       %h3 In order to use CRONUS service, you need to activate SAP MultiCloud Account
       %br 
-      -# = link_to "Activate Multicloud account", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-secondary'
+      = link_to "Activate Multicloud account", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-secondary'
       %br
       %br 
       %ul
