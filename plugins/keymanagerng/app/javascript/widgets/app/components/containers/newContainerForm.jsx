@@ -52,25 +52,25 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
     setSelectedCertContainerCertificates,
   ] = useState([])
   const [certContainerPrivatekeys, setCertContainerPrivatekeys] = useState([])
-  const [
-    selectedCertContainerPrivatekeys,
-    setSelectedCertContainerPrivatekeys,
-  ] = useState([])
+  // const [
+  //   selectedCertContainerPrivatekeys,
+  //   setSelectedCertContainerPrivatekeys,
+  // ] = useState([])
   const [
     certContainerPrivatekeyPassphrases,
     setCertContainerPrivatekeyPassphrases,
   ] = useState([])
-  const [
-    selectedCertContainerPrivatekeyPassphrases,
-    setSelectedCertContainerPrivatekeyPassphrases,
-  ] = useState([])
+  // const [
+  //   selectedCertContainerPrivatekeyPassphrases,
+  //   setSelectedCertContainerPrivatekeyPassphrases,
+  // ] = useState([])
   const [certContainerIntermediates, setCertContainerIntermediates] = useState(
     []
   )
-  const [
-    selectedCertContainerIntermediates,
-    setSelectedCertContainerIntermediates,
-  ] = useState([])
+  // const [
+  //   selectedCertContainerIntermediates,
+  //   setSelectedCertContainerIntermediates,
+  // ] = useState([])
   const [genContainerSecrets, setGenContainerSecrets] = useState([])
   const [selectedGenContainerSecrets, setSelectedGenContainerSecrets] =
     useState([])
@@ -105,6 +105,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
     if (
       !formData.secret_refs ||
       formData.secret_refs?.length === 0 ||
+      selectedCertContainerCertificates?.length === 0 ||
       selectedRsaContainerPrivatekeys?.length === 0 ||
       selectedRsaContainerPrivatekeyPassphrases?.length === 0 ||
       selectedRsaContainerPublickeys?.length === 0
@@ -235,19 +236,48 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
         }
       : commonCreatableStyles
   }
+
   const updateSecretRefs = (selectedSecretRef, secretType) => {
-    var secretRef = {}
-    if (selectedSecretRef) {
-      secretRef = {
+    if (selectedSecretRef !== undefined) {
+      const newSecretRef = {
         name: secretType,
         secret_ref: selectedSecretRef,
+      };
+  
+      // Check if the new object's name is redundant
+      const isRedundant = formData.secret_refs.some((ref) => ref.name === secretType);
+  
+      if (selectedSecretRef === "" && isRedundant) {
+        // If selectedSecretRef is empty and name is redundant, remove the existing object
+        const updatedSecretRefs = formData.secret_refs.filter((ref) => ref.name !== secretType);
+  
+        setFormData({
+          ...formData,
+          secret_refs: updatedSecretRefs,
+        });
+      } else if (isRedundant) {
+        // If the name is redundant, replace the existing object with the new one
+        const updatedSecretRefs = formData.secret_refs.map((ref) => {
+          if (ref.name === secretType) {
+            return newSecretRef;
+          }
+          return ref;
+        });
+  
+        setFormData({
+          ...formData,
+          secret_refs: updatedSecretRefs,
+        });
+      } else {
+        // If not redundant, add the new object
+        setFormData({
+          ...formData,
+          secret_refs: [...formData.secret_refs, newSecretRef],
+        });
       }
     }
-    setFormData({
-      ...formData,
-      secret_refs: [...formData.secret_refs, secretRef],
-    })
-  }
+  };
+  
 
   const onSecretsChange = (props) => {
     let secretRefs = []
@@ -274,7 +304,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
 
   const onCertContainerPrivatekeyChange = (selectedSecretRef) => {
     onPrivateKeyChange(selectedSecretRef)
-    setSelectedCertContainerPrivatekeys(selectedSecretRef)
+    // setSelectedCertContainerPrivatekeys(selectedSecretRef)
   }
   const onRsaContainerPrivateKeyChange = (selectedSecretRef) => {
     onPrivateKeyChange(selectedSecretRef)
@@ -289,7 +319,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   }
   const onCertContainerPrivateKeyPassphraseChange = (selectedSecretRef) => {
     onPrivateKeyPassphraseChange(selectedSecretRef)
-    setSelectedCertContainerPrivatekeyPassphrases(selectedSecretRef)
+    // setSelectedCertContainerPrivatekeyPassphrases(selectedSecretRef)
   }
   const onRsaContainerPrivateKeyPassphraseChange = (selectedSecretRef) => {
     onPrivateKeyPassphraseChange(selectedSecretRef)
@@ -297,6 +327,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   }
   const onIntermediatesChange = (selectedSecretRef) => {
     updateSecretRefs(selectedSecretRef, "intermediates")
+    // setSelectedCertContainerIntermediates(selectedSecretRef)
   }
 
   useLayoutEffect(() => {
@@ -378,7 +409,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                 <FormRow>
                   <Select
                     label="Certificate"
-                    onChange={(selectedSecretRef) => {
+                    onValueChange={(selectedSecretRef) => {
                       updateSecretRefs(selectedSecretRef, "certificate")
                       setSelectedCertContainerCertificates(selectedSecretRef)
                       setValidationState({})
@@ -392,13 +423,19 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                     }
                     required
                   >
-                    {certContainerCertificates?.map((item, index) => (
-                      <SelectOption
-                        key={index}
-                        label={item.label}
-                        value={item.value}
-                      />
-                    ))}
+                    {certContainerCertificates?.length > 0 ? (
+                      <>
+                        {certContainerCertificates.map((item, index) => (
+                          <SelectOption
+                            key={index}
+                            label={item.label}
+                            value={item.value}
+                          />
+                        ))}
+                      </>
+                    ) : (
+                      <SelectOption label="No secret is available!" value="" />
+                    )}
                   </Select>
                 </FormRow>
                 <FormRow>
@@ -411,14 +448,20 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                       validationState?.certContainerPrivatekeys ? true : false
                     }
                   >
-                    <SelectOption label="Select..." value="" />
-                    {certContainerPrivatekeys?.map((item, index) => (
-                      <SelectOption
-                        key={index}
-                        label={item.label}
-                        value={item.value}
-                      />
-                    ))}
+                    {certContainerPrivatekeys?.length > 0 ? (
+                      <>
+                        <SelectOption label="Select..." value="" />
+                        {certContainerPrivatekeys.map((item, index) => (
+                          <SelectOption
+                            key={index}
+                            label={item.label}
+                            value={item.value}
+                          />
+                        ))}
+                      </>
+                    ) : (
+                      <SelectOption label="No secret is available!" value="" />
+                    )}
                   </Select>
                 </FormRow>
                 <FormRow>
@@ -434,14 +477,22 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                         : false
                     }
                   >
-                    <SelectOption label="Select..." value="" />
-                    {certContainerPrivatekeyPassphrases?.map((item, index) => (
-                      <SelectOption
-                        key={index}
-                        label={item.label}
-                        value={item.value}
-                      />
-                    ))}
+                    {certContainerPrivatekeyPassphrases?.length > 0 ? (
+                      <>
+                        <SelectOption label="Select..." value="" />
+                        {certContainerPrivatekeyPassphrases.map(
+                          (item, index) => (
+                            <SelectOption
+                              key={index}
+                              label={item.label}
+                              value={item.value}
+                            />
+                          )
+                        )}
+                      </>
+                    ) : (
+                      <SelectOption label="No secret is available!" value="" />
+                    )}
                   </Select>
                 </FormRow>
                 <FormRow>
@@ -455,14 +506,20 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                       validationState?.certContainerIntermediates ? true : false
                     }
                   >
-                    <SelectOption label="Select..." value="" />
-                    {certContainerIntermediates?.map((item, index) => (
-                      <SelectOption
-                        key={index}
-                        label={item.label}
-                        value={item.value}
-                      />
-                    ))}
+                    {certContainerIntermediates?.length > 0 ? (
+                      <>
+                        <SelectOption label="Select..." value="" />
+                        {certContainerIntermediates.map((item, index) => (
+                          <SelectOption
+                            key={index}
+                            label={item.label}
+                            value={item.value}
+                          />
+                        ))}
+                      </>
+                    ) : (
+                      <SelectOption label="No secret is available!" value="" />
+                    )}
                   </Select>
                 </FormRow>
               </>
@@ -508,13 +565,17 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                     errortext={validationState?.rsaContainerPrivatekeys}
                     required
                   >
-                    {rsaContainerPrivatekeys?.map((item, index) => (
-                      <SelectOption
-                        key={index}
-                        label={item.label}
-                        value={item.value}
-                      />
-                    ))}
+                    {rsaContainerPrivatekeys?.length > 0 ? (
+                      rsaContainerPrivatekeys.map((item, index) => (
+                          <SelectOption
+                            key={index}
+                            label={item.label}
+                            value={item.value}
+                          />
+                        ))
+                    ) : (
+                      <SelectOption label="No secret is available!" value="" />
+                    )}
                   </Select>
                 </FormRow>
                 <FormRow>
@@ -534,13 +595,17 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                     }
                     required
                   >
-                    {rsaContainerPrivatekeyPassphrases?.map((item, index) => (
-                      <SelectOption
-                        key={index}
-                        label={item.label}
-                        value={item.value}
-                      />
-                    ))}
+                    {rsaContainerPrivatekeyPassphrases?.length > 0 ? (
+                      rsaContainerPrivatekeyPassphrases.map((item, index) => (
+                          <SelectOption
+                            key={index}
+                            label={item.label}
+                            value={item.value}
+                          />
+                        ))
+                    ) : (
+                      <SelectOption label="No secret is available!" value="" />
+                    )}
                   </Select>
                 </FormRow>
                 <FormRow>
@@ -556,13 +621,17 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                     required
                     errortext={validationState?.rsaContainerPublickeys}
                   >
-                    {rsaContainerPublickeys?.map((item, index) => (
-                      <SelectOption
-                        key={index}
-                        label={item.label}
-                        value={item.value}
-                      />
-                    ))}
+                    {rsaContainerPublickeys?.length > 0 ? (
+                      rsaContainerPublickeys.map((item, index) => (
+                          <SelectOption
+                            key={index}
+                            label={item.label}
+                            value={item.value}
+                          />
+                        ))
+                      ) : (
+                      <SelectOption label="No secret is available!" value="" />
+                    )}
                   </Select>
                 </FormRow>
               </>
