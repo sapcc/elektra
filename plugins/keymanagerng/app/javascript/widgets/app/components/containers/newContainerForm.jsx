@@ -409,7 +409,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                 <FormRow>
                   <Select
                     label="Certificate"
-                    onValueChange={(selectedSecretRef) => {
+                    onChange={(selectedSecretRef) => {
                       updateSecretRefs(selectedSecretRef, "certificate")
                       setSelectedCertContainerCertificates(selectedSecretRef)
                       setValidationState({})
