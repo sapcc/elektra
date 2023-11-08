@@ -31,7 +31,7 @@
     %span.info-text= zone.id
   - if @all_projects
     %td
-      - project_id_and_name(zone.project_id)
+      = project_id_and_name(zone.project_id)
     %td= pool_name(zone.pool_id, pools)
   %td= zone.email
   %td= zone.ttl

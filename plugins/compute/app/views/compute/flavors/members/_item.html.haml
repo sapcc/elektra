@@ -1,6 +1,6 @@
 %tr{id: "member_#{member.tenant_id}"}
   %td
-    - project_id_and_name(member.tenant_id)
+    = project_id_and_name(member.tenant_id)
 
   %td.snug
     - if current_user.is_allowed?("compute:flavor_access_delete", {member: member.attributes}) 

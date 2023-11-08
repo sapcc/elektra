@@ -69,7 +69,7 @@
                 %th Project
                 %td
                   - if @instance.tenant_id != @scoped_project_id
-                    - project_id_and_name(@instance.tenant_id)
+                    = project_id_and_name(@instance.tenant_id)
                   - else
                     = project_name(@instance.tenant_id)
               %tr

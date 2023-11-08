@@ -17,7 +17,7 @@
     - else
 
   %td
-    -# project_id_and_name(network.tenant_id)
+    - # = project_id_and_name(network.tenant_id)
     - # improve performance: load project from cache
     - if @network_projects[network.tenant_id]
       = @network_projects[network.tenant_id].name
