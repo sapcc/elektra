@@ -1,0 +1,28 @@
+{
+  "context_is_cloud_keymanager_admin": "role:cloud_keymanager_admin",
+  "member": "role:member or role:Member",
+  "keymanager_viewer": "role:keymanager_viewer",
+  "keymanager_admin": "role:keymanager_admin",
+  "context_is_keymanager_admin": "rule:context_is_cloud_keymanager_admin or rule:keymanager_admin",
+  "context_is_keymanager_editor": "(rule:context_is_keymanager_admin) and not project_id:nil",
+  "context_is_keymanager_viewer": "(rule:context_is_keymanager_editor or rule:keymanager_viewer) and not project_id:nil",
+
+  "keymanagerng:secret_list": "rule:context_is_keymanager_viewer or rule:member",
+  "keymanagerng:secret_get": "rule:context_is_keymanager_viewer or rule:member",
+  "keymanagerng:secret_payload": "rule:context_is_keymanager_viewer or rule:member",
+  "keymanagerng:secret_create": "rule:context_is_keymanager_editor or rule:member",
+  "keymanagerng:secret_delete": "rule:context_is_keymanager_editor or rule:member",
+  "keymanagerng:secret_update": "rule:context_is_keymanager_editor or rule:member",
+
+  "keymanagerng:container_list": "rule:context_is_keymanager_viewer or rule:member",
+  "keymanagerng:container_get": "rule:context_is_keymanager_viewer or rule:member",
+  "keymanagerng:container_create": "rule:context_is_keymanager_editor or rule:member",
+  "keymanagerng:container_delete": "rule:context_is_keymanager_editor or rule:member",
+  "keymanagerng:container_update": "rule:context_is_keymanager_editor or rule:member",
+
+  "keymanagerng:entry_list": "@",
+  "keymanagerng:entry_get": "@",
+  "keymanagerng:entry_create": "@",
+  "keymanagerng:entry_delete": "@",
+  "keymanagerng:entry_update": "@"
+}
