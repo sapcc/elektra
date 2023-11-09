@@ -41,7 +41,7 @@
 
   - if @all_projects
     %td
-      - project_id_and_name(instance.tenant_id)
+      = project_id_and_name(instance.tenant_id)
   -# %td= instance.availability_zone
   %td.snug-nowrap
     .instance-ips{ data: { collapsable: true, collapsed: true } }

@@ -10,7 +10,7 @@
       %tr
         %th Domain
         %td
-          - domain_id_and_name(@project.domain_id)
+          = domain_id_and_name(@project.domain_id)
       %tr
         %th Description
         %td= @project.description
@@ -18,14 +18,14 @@
         %tr
           %th Parent
           %td
-            - project_id_and_name(@project.parent_id)
+            = project_id_and_name(@project.parent_id)
 
       - if @project.subprojects_ids.present?
         - @project.subprojects_ids.each do |sub_id, _|
           %tr
             %th Child
             %td
-              - project_id_and_name(sub_id)
+              = project_id_and_name(sub_id)
 
 - if modal?
   .modal-footer

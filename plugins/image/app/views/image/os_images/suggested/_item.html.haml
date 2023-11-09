@@ -6,7 +6,7 @@
   %td= image.disk_format
   %td= byte_to_human(image.size)
   %td
-    - project_id_and_name(image.owner)
+    = project_id_and_name(image.owner)
   %td.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }
