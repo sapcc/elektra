@@ -1,4 +1,3 @@
-require_relative "lib/keymanagerng/version"
 Gem::Specification.new do |spec|
   spec.name        = "keymanagerng"
   spec.version     = "0.0.1"
