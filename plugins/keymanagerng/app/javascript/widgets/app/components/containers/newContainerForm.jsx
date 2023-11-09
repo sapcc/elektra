@@ -52,25 +52,13 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
     setSelectedCertContainerCertificates,
   ] = useState([])
   const [certContainerPrivatekeys, setCertContainerPrivatekeys] = useState([])
-  // const [
-  //   selectedCertContainerPrivatekeys,
-  //   setSelectedCertContainerPrivatekeys,
-  // ] = useState([])
   const [
     certContainerPrivatekeyPassphrases,
     setCertContainerPrivatekeyPassphrases,
   ] = useState([])
-  // const [
-  //   selectedCertContainerPrivatekeyPassphrases,
-  //   setSelectedCertContainerPrivatekeyPassphrases,
-  // ] = useState([])
   const [certContainerIntermediates, setCertContainerIntermediates] = useState(
     []
   )
-  // const [
-  //   selectedCertContainerIntermediates,
-  //   setSelectedCertContainerIntermediates,
-  // ] = useState([])
   const [genContainerSecrets, setGenContainerSecrets] = useState([])
   const [selectedGenContainerSecrets, setSelectedGenContainerSecrets] =
     useState([])
@@ -196,9 +184,25 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   }
   useEffect(() => {
     setCertContainerCertificates(filterSecrets("certificate"))
-    setCertContainerPrivatekeys(filterSecrets("private"))
-    setCertContainerPrivatekeyPassphrases(filterSecrets("passphrase"))
-    setCertContainerIntermediates(filterSecrets("certificate"))
+    setCertContainerPrivatekeys(
+      filterSecrets("private").length > 0
+        ? [{ label: "Select...", value: "" }].concat(filterSecrets("private"))
+        : filterSecrets("private")
+    )
+    setCertContainerPrivatekeyPassphrases(
+      filterSecrets("passphrase").length > 0
+        ? [{ label: "Select...", value: "" }].concat(
+            filterSecrets("passphrase")
+          )
+        : filterSecrets("passphrase")
+    )
+    setCertContainerIntermediates(
+      filterSecrets("certificate").length > 0
+        ? [{ label: "Select...", value: "" }].concat(
+            filterSecrets("certificate")
+          )
+        : filterSecrets("certificate")
+    )
     setGenContainerSecrets(secretsForSelect)
     setRsaContainerPrivatekeys(filterSecrets("private"))
     setRsaContainerPrivatekeyPassphrases(filterSecrets("passphrase"))
@@ -307,7 +311,6 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
 
   const onCertContainerPrivatekeyChange = (selectedSecretRef) => {
     onPrivateKeyChange(selectedSecretRef)
-    // setSelectedCertContainerPrivatekeys(selectedSecretRef)
   }
   const onRsaContainerPrivateKeyChange = (selectedSecretRef) => {
     onPrivateKeyChange(selectedSecretRef)
@@ -322,7 +325,6 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   }
   const onCertContainerPrivateKeyPassphraseChange = (selectedSecretRef) => {
     onPrivateKeyPassphraseChange(selectedSecretRef)
-    // setSelectedCertContainerPrivatekeyPassphrases(selectedSecretRef)
   }
   const onRsaContainerPrivateKeyPassphraseChange = (selectedSecretRef) => {
     onPrivateKeyPassphraseChange(selectedSecretRef)
@@ -330,7 +332,6 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
   }
   const onIntermediatesChange = (selectedSecretRef) => {
     updateSecretRefs(selectedSecretRef, "intermediates")
-    // setSelectedCertContainerIntermediates(selectedSecretRef)
   }
 
   useLayoutEffect(() => {
@@ -450,7 +451,7 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   >
                     {certContainerPrivatekeys?.length > 0 ? (
                       <>
-                        <SelectOption label="Select..." value="" />
+                        {/* <SelectOption label="Select..." value="" /> */}
                         {certContainerPrivatekeys.map((item, index) => (
                           <SelectOption
                             key={index}
@@ -474,7 +475,6 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   >
                     {certContainerPrivatekeyPassphrases?.length > 0 ? (
                       <>
-                        <SelectOption label="Select..." value="" />
                         {certContainerPrivatekeyPassphrases.map(
                           (item, index) => (
                             <SelectOption
@@ -500,7 +500,6 @@ const NewContainerForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   >
                     {certContainerIntermediates?.length > 0 ? (
                       <>
-                        <SelectOption label="Select..." value="" />
                         {certContainerIntermediates.map((item, index) => (
                           <SelectOption
                             key={index}
