@@ -14,23 +14,12 @@ module MasterdataCockpit
     #}
 
     validates_presence_of :cost_object_type,
-                          :cost_object_name,
-                          :responsible_primary_contact_id
+                          :cost_object_name
 
     validates_presence_of :responsible_primary_contact_id,
-                          unless:
-                            lambda {
-                              self.responsible_primary_contact_email.blank?
-                            },
-                          message:
-                            "can't be blank primary contact email is defined"
-    validates_presence_of :responsible_primary_contact_email,
-                          unless:
-                            lambda {
-                              self.responsible_primary_contact_id.blank?
-                            },
-                          message:
-                            "can't be blank if primary contact is defined"
+    if: -> { responsible_primary_contact_email.blank? },
+    message:
+      "please provide name or user. This is needed in case of emergency."
 
     validates :additional_information,
               length: {

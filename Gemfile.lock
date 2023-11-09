@@ -106,7 +106,7 @@ PATH
 PATH
   remote: plugins/keymanagerng
   specs:
-    keymanagerng (0.1.0)
+    keymanagerng (0.0.1)
 
 PATH
   remote: plugins/kubernetes
