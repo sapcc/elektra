@@ -21,9 +21,14 @@ describe Keymanagerng::ApplicationController, type: :controller do
     stub_authentication
   end
 
-  describe 'GET index' do
+  describe 'GET user_name' do
+    
     it 'returns http success' do
-      get :index, default_params
+      allow(controller.cloud_admin).to receive(:find_user).and_return(
+        double("user", name: "test_user"),
+      )
+      extra_params = { user_id: 'user_123456789' }
+      get :user_name, params: default_params.merge(extra_params)
       expect(response).to be_successful
     end
   end
