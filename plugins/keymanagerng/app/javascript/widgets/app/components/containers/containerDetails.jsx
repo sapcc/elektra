@@ -83,6 +83,7 @@ const ContainerDetails = () => {
     restoreURL()
   }, [restoreURL])
 
+  console.log("container data:", container.data)
   return (
     <Panel
       opened={true}
@@ -110,10 +111,7 @@ const ContainerDetails = () => {
                 label="Container Ref"
                 value={container.data?.container_ref}
               />
-              <Row
-                label="Container Type"
-                value={container.data?.container_type}
-              />
+              <Row label="Container Type" value={container.data?.type} />
               <Row
                 label="Created at"
                 value={new Date(container.data?.created).toUTCString()}
