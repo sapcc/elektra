@@ -83,7 +83,6 @@ const ContainerDetails = () => {
     restoreURL()
   }, [restoreURL])
 
-  console.log("container data:", container.data)
   return (
     <Panel
       opened={true}
