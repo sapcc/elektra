@@ -9,7 +9,7 @@ const capitalize = (string) => string[0].toUpperCase() + string.slice(1)
  * This component implements a serach fform.
  * Usage: <SearchForm helpText='Help Text...' searchFor={['name','id','status']} text='Search by name' onSubmit={(searchType,searchTerm) => handleSearch}/>
  **/
-const Form = ({ helpText, searchFor, onSubmit, isLoading }) => {
+const Form = ({ helpText, searchFor, onSubmit, isLoading, width }) => {
   searchFor = searchFor || []
   const [searchType, setSearchType] = useState(searchFor[0] || "")
   const [searchTerm, setSearchTerm] = useState("")
@@ -39,7 +39,7 @@ const Form = ({ helpText, searchFor, onSubmit, isLoading }) => {
 
   return (
     <form className="form-inline" onSubmit={search}>
-      {options && (
+      {options?.length > 0 && (
         <div className="form-group">
           <select
             value={searchType}

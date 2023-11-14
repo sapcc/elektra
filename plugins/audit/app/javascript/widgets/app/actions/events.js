@@ -62,6 +62,7 @@ const loadEvents = () => (dispatch, getState) => {
   const activeFilters = events.activeFilters
   const filterStartTime = events.filterStartTime
   const filterEndTime = events.filterEndTime
+  const searchTerm = events.searchTerm
 
   // don't fetch if we're already fetching
   if (isFetching) return
@@ -69,6 +70,7 @@ const loadEvents = () => (dispatch, getState) => {
   let params = {
     limit,
     offset,
+    search: searchTerm || "",
     time: buildTimeFilter(filterStartTime, filterEndTime) || "",
   }
   // add all filters
@@ -109,6 +111,21 @@ const updateCurrentPage = (page) => ({
   page: page,
 })
 
+// ----------- SEARCH -------------
+const updateSearchTerm = (searchTerm) => ({
+  type: constants.UPDATE_SEARCH_TERM,
+  searchTerm,
+})
+
+export function searchEvents(searchTerm) {
+  return (dispatch) => {
+    // trigger api call only if the given start time is a valid date or an empty string
+    dispatch(updateSearchTerm(searchTerm))
+    dispatch(fetchEvents(0))
+  }
+  // TODO: Add else case with validation error display for user
+}
+
 // ----------- PAGINATE -----------
 export function paginate(page) {
   return (dispatch, getState) => {
@@ -130,7 +147,6 @@ const updateFilterStartTime = (filterStartTime) => ({
 })
 
 export function filterEventsStartTime(filterStartTime) {
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>", filterStartTime)
   return (dispatch) => {
     // trigger api call only if the given start time is a valid date or an empty string
     if (moment.isMoment(filterStartTime) || isEmpty(filterStartTime)) {

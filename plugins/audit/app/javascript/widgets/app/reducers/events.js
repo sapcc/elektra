@@ -14,9 +14,12 @@ const initialEventState = {
   filterType: "",
   filterTerm: "",
   attributeValues: "",
+  searchTerm: "",
   isFetchingAttributeValues: false,
   activeFilters: [],
 }
+
+const updateSearchTerm = (state, { searchTerm }) => ({ ...state, searchTerm })
 
 const updateItemInList = (state, idKey, idValue, newValues) => {
   const index = state.items.findIndex((item) => item[idKey] === idValue)
@@ -181,6 +184,8 @@ export const events = function (state, action) {
       return requestEventDetailsFailure(state, action)
     case constants.RECEIVE_EVENT_DETAILS:
       return receiveEventDetails(state, action)
+    case constants.UPDATE_SEARCH_TERM:
+      return updateSearchTerm(state, action)
     default:
       return state
   }

@@ -49,3 +49,34 @@
     margin: 10px 0;
   }
 }
+
+.toolbar.audit {
+  display: flex;
+  justify-content: space-between;
+  .tool {
+    display: flex;
+  }
+  &:after {
+    display: none;
+  }
+  .date-picker {
+    width: 8.5rem;
+  }
+}
+
+.toolbar-secondary.audit > div{
+  &:first-child {
+    display:flex;
+    flex-wrap:wrap;
+    flex:1;
+  }
+}
+
+.search-bar {
+  display: flex;
+  justify-content: end;
+
+  input.form-control {
+    width: 16.2rem;
+  }
+}

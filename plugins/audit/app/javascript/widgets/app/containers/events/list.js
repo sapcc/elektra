@@ -8,6 +8,7 @@ import {
   addNewFilter,
   removeFilter,
   clearFilters,
+  searchEvents,
 } from "../../actions/events"
 
 export default connect(
@@ -37,5 +38,7 @@ export default connect(
     handleClearFilters: () => dispatch(clearFilters()),
     addNewFilter: () => dispatch(addNewFilter()),
     handleRemoveFilter: (filterType) => dispatch(removeFilter(filterType)),
+    handleSearch: (searchTerm) =>
+      searchTerm?.length > 0 && dispatch(searchEvents(searchTerm)),
   })
 )(EventList)
