@@ -113,28 +113,28 @@ const SecretDetails = () => {
       onClose={close}
       heading={
         <span className="tw-break-all">{`Secret ${
-          secret.data ? secret.data.name : ""
+          secret?.data ? secret?.data?.name : ""
         }`}</span>
       }
       size="large"
       className="tw-z-[1050]"
     >
       <PanelBody>
-        {secret.isLoading && !secret.data ? (
+        {secret?.isLoading && !secret?.data ? (
           <HintLoading />
-        ) : secret.isError ? (
+        ) : secret?.isError ? (
           <Message variant="danger">
-            {`${secret.error?.statusCode}, ${secret.error?.message}`}
+            {`${secret?.error?.statusCode}, ${secret?.error?.message}`}
           </Message>
-        ) : secret.data ? (
+        ) : secret?.data ? (
           <>
             <DataGrid columns={2}>
-              <Row label="Name" value={secret.data?.name} />
-              <Row label="Secret Ref" value={secret.data?.secret_ref} />
-              <Row label="Type" value={secret.data?.secret_type} />
+              <Row label="Name" value={secret?.data?.name} />
+              <Row label="Secret Ref" value={secret?.data?.secret_ref} />
+              <Row label="Type" value={secret?.data?.secret_type} />
               <Row
                 label="Created at"
-                value={new Date(secret.data?.created).toUTCString()}
+                value={new Date(secret?.data?.created).toUTCString()}
               />
               <DataGridRow>
                 <DataGridHeadCell>Owner</DataGridHeadCell>
@@ -146,22 +146,22 @@ const SecretDetails = () => {
                     </>
                   ) : (
                     <Badge className="tw-display-inline">
-                      {secret.data?.creator_id}
+                      {secret?.data?.creator_id}
                     </Badge>
                   )}
                 </DataGridCell>
               </DataGridRow>
               <Row
                 label="Content Types"
-                value={secret.data?.content_types.default}
+                value={secret?.data?.content_types?.default}
               />
-              <Row label="Bit Length" value={secret.data?.bit_length} />
-              <Row label="Algorithm" value={secret.data?.algorithm} />
-              <Row label="Mode" value={secret.data?.mode} />
-              <Row label="Status" value={secret.data?.status} />
+              <Row label="Bit Length" value={secret?.data?.bit_length} />
+              <Row label="Algorithm" value={secret?.data?.algorithm} />
+              <Row label="Mode" value={secret?.data?.mode} />
+              <Row label="Status" value={secret?.data?.status} />
               <Row
                 label="Expiration"
-                value={new Date(secret.data?.expiration).toUTCString()}
+                value={new Date(secret?.data?.expiration).toUTCString()}
               />
               <DataGridRow>
                 <DataGridHeadCell>{"Payload"}</DataGridHeadCell>
@@ -178,9 +178,9 @@ const SecretDetails = () => {
                 </DataGridCell>
               </DataGridRow>
             </DataGrid>
-            {metadata.isLoading && !metadata.data ? (
+            {metadata?.isLoading && !metadata?.data ? (
               <HintLoading />
-            ) : metadata.data ? (
+            ) : metadata?.data ? (
               <CodeBlock
                 heading="Metadata"
                 content={secretMetadata || {}}
@@ -192,7 +192,7 @@ const SecretDetails = () => {
             )}
           </>
         ) : (
-          <span>Secret {params.id} not found</span>
+          <span>Secret {params?.id} not found</span>
         )}
       </PanelBody>
     </Panel>
