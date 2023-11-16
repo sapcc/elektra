@@ -43,19 +43,19 @@ const ContainerDetails = () => {
   })
   //Todo: find how to can rename data directly there as container
 
-  const [show, setShow] = useState(!!container.data)
+  const [show, setShow] = useState(!!container?.data)
 
   useEffect(() => {
-    if (container.data?.container_ref) {
-      const newContainerId = getContainerUuid(container.data)
+    if (container?.data?.container_ref) {
+      const newContainerId = getContainerUuid(container?.data)
       setContainerId(newContainerId)
     }
-  }, [container.data?.container_ref])
+  }, [container?.data?.container_ref])
 
   const containerCreator = useQuery({
-    queryKey: ["containerCreator", container.data?.creator_id],
+    queryKey: ["containerCreator", container?.data?.creator_id],
     queryFn: getUsername,
-    enabled: !!container.data?.creator_id,
+    enabled: !!container?.data?.creator_id,
     onSuccess: (data) => {
       setCreatorName(data)
     },
@@ -89,31 +89,31 @@ const ContainerDetails = () => {
       onClose={close}
       heading={
         <span className="tw-break-all">{`Container ${
-          container.data ? container.data.name : ""
+          container?.data ? container?.data.name : ""
         }`}</span>
       }
       size="large"
       className="tw-z-[1050]"
     >
       <PanelBody>
-        {container.isLoading && !container.data ? (
+        {container?.isLoading && !container?.data ? (
           <HintLoading />
-        ) : container.isError ? (
+        ) : container?.isError ? (
           <Message variant="danger">
-            {`${container.error?.statusCode}, ${container.error?.message}`}
+            {`${container?.error?.statusCode}, ${container?.error?.message}`}
           </Message>
-        ) : container.data ? (
+        ) : container?.data ? (
           <>
             <DataGrid columns={2}>
-              <Row label="Name" value={container.data?.name} />
+              <Row label="Name" value={container?.data?.name} />
               <Row
                 label="Container Ref"
-                value={container.data?.container_ref}
+                value={container?.data?.container_ref}
               />
-              <Row label="Container Type" value={container.data?.type} />
+              <Row label="Container Type" value={container?.data?.type} />
               <Row
                 label="Created at"
-                value={new Date(container.data?.created).toUTCString()}
+                value={new Date(container?.data?.created).toUTCString()}
               />
               <DataGridRow>
                 <DataGridHeadCell>Owner</DataGridHeadCell>
@@ -123,22 +123,22 @@ const ContainerDetails = () => {
                       <>{creatorName}</>
                     ) : (
                       <Badge className="tw-text-xs">
-                        {container.data?.creator_id}
+                        {container?.data?.creator_id}
                       </Badge>
                     )}
                   </div>
                 </DataGridCell>
               </DataGridRow>
-              <Row label="Status" value={container.data?.status} />
+              <Row label="Status" value={container?.data?.status} />
             </DataGrid>
             <DataGrid columns={2} minContentColumns={[0]} className="tw-mt-6">
               <DataGridRow>
                 <DataGridHeadCell>#</DataGridHeadCell>
                 <DataGridHeadCell>Name</DataGridHeadCell>
               </DataGridRow>
-              {container.data?.secret_refs &&
-              container.data?.secret_refs.length > 0 ? (
-                container.data?.secret_refs.map((secret, index) => (
+              {container?.data?.secret_refs &&
+              container?.data?.secret_refs.length > 0 ? (
+                container?.data?.secret_refs.map((secret, index) => (
                   <React.Fragment key={index}>
                     <DataGridCell>{index}</DataGridCell>
                     <DataGridCell>
