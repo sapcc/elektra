@@ -45,20 +45,20 @@ const SecretDetails = () => {
   })
   //Todo: find how to can rename data directly there as secret
 
-  const [show, setShow] = useState(!!secret.data)
+  const [show, setShow] = useState(!!secret?.data)
 
   useEffect(() => {
-    if (secret.data?.secret_ref) {
-      const newSecretId = getSecretUuid(secret.data)
+    if (secret?.data?.secret_ref) {
+      const newSecretId = getSecretUuid(secret?.data)
       setSecretId(newSecretId)
     }
-  }, [secret.data?.secret_ref])
+  }, [secret?.data?.secret_ref])
 
   const secretCreator = useQuery(
-    ["secretCreator", secret.data?.creator_id],
+    ["secretCreator", secret?.data?.creator_id],
     getUsername,
     {
-      enabled: !!secret.data?.creator_id,
+      enabled: !!secret?.data?.creator_id,
       onSuccess: (data) => {
         setCreatorName(data)
       },
@@ -82,7 +82,11 @@ const SecretDetails = () => {
   }, [params.id])
 
   const secretPlayload = useQuery({
-    queryKey: ["secretPlayload", secretId, secret.data?.content_types?.default],
+    queryKey: [
+      "secretPlayload",
+      secretId,
+      secret?.data?.content_types?.default,
+    ],
     queryFn: getSecretPayload,
     enabled: !!payloadRequested,
     onSuccess: (data) => {
@@ -90,7 +94,7 @@ const SecretDetails = () => {
       const blob = new Blob([fileData], { type: "text/plain" })
       const url = URL.createObjectURL(blob)
       const link = document.createElement("a")
-      link.download = secret.data?.name + ".json"
+      link.download = secret?.data?.name + ".json"
       link.href = url
       link.click()
     },
