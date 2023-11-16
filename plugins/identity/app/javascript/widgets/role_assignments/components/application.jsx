@@ -1,6 +1,7 @@
 import { useCallback } from "react"
 import { Tabs, Tab } from "react-bootstrap"
 import ProjectRoleAssignments from "../containers/project_role_assignments"
+import RoleInfos from "../containers/RoleInfos"
 import React from "react"
 
 const RoleAssignments = ({ activeTab, projectId, domainId }) => {
@@ -32,6 +33,9 @@ const RoleAssignments = ({ activeTab, projectId, domainId }) => {
           projectDomainId={domainId}
           type="group"
         />
+      </Tab>
+      <Tab eventKey="roleInfos" title="Role Infos">
+        <RoleInfos />
       </Tab>
     </Tabs>
   )

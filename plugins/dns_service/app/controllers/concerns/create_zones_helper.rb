@@ -162,51 +162,30 @@ module CreateZonesHelper
 
   def update_limes_data(domain_id, project_id)
     # get last scraped time
-    scraped_at_old =
-      begin
-        cloud_admin
-          .resource_management
-          .find_project(
-            domain_id,
-            project_id,
-            service: "dns",
-            resource: "zones",
-          )
-          .services
-          .first
-          .scraped_at
-      rescue StandardError
-        0
-      end
-
-    # update limes data synchronously
-    cloud_admin.resource_management.sync_project_asynchronously(
-      domain_id,
-      project_id,
-    )
-
-    scraped_at_new = scraped_at_old
+    current_timestamp = Time.now.to_i
+      # update limes data synchronously
+      cloud_admin.resource_management.sync_project_asynchronously(
+        domain_id,
+        project_id,
+      )
+      
+    scraped_at = current_timestamp
     retry_count = 1
-    while scraped_at_new.to_i == scraped_at_old.to_i && retry_count <= 10
+    while scraped_at.to_i <= current_timestamp && retry_count <= 10
       puts "INFO: update limes data for project #{project_id} in domain #{domain_id}, wait 2s to check that update is done"
-      sleep 2
-      scraped_at_new =
+      sleep 3
+      scraped_at =
         begin
           cloud_admin
             .resource_management
-            .find_project(
-              domain_id,
-              project_id,
-              service: "dns",
-              resource: "zones",
-            )
+            .find_project(domain_id, project_id, service: "dns", resource: "zones")
             .services
             .first
             .scraped_at
         rescue StandardError
           0
         end
-      puts "INFO: check limes update. retry_count: #{retry_count}; scraped_at_old: #{scraped_at_old.to_i}; scraped_at_new: #{scraped_at_new.to_i}"
+      puts "INFO: check limes update. retry_count: #{retry_count}; scraped_at_old: #{current_timestamp}; scraped_at_new: #{scraped_at.to_i}"
       retry_count += 1
     end
   end
@@ -214,12 +193,7 @@ module CreateZonesHelper
   def get_zone_resource
     cloud_admin
       .resource_management
-      .find_project(
-        @scoped_domain_id,
-        @scoped_project_id,
-        service: "dns",
-        resource: "zones",
-      )
+      .find_project(@scoped_domain_id, @scoped_project_id, service: "dns", resource: "zones",)
       .resources
       .first or raise ActiveRecord::RecordNotFound
   end
@@ -228,12 +202,7 @@ module CreateZonesHelper
     @recordset_resource =
       cloud_admin
         .resource_management
-        .find_project(
-          @scoped_domain_id,
-          @scoped_project_id,
-          service: "dns",
-          resource: "recordsets",
-        )
+        .find_project(@scoped_domain_id, @scoped_project_id, service: "dns", resource: "recordsets")
         .resources
         .first or raise ActiveRecord::RecordNotFound
   end
