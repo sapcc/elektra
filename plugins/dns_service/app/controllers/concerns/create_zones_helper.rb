@@ -1,73 +1,133 @@
 # frozen_string_literal: true
 module CreateZonesHelper
-  def check_parent_zone(zone_name, destination_project_id)
-    zone_transfer = true
-    # check that subzones are not exsisting in other projects
-    # Example: bla.only.sap
-    # 0) check finds that the zone "only.sap" exists not in the destination project
-    # 1) than the new zone "bla.only.sap" needs to be created created in the project where "only.sap" is located (ccadmin/master)
-    # 2) and than transfered to the destination project
-    # Example: foo.bla.only.sap
-    # 0) check finds that zone bla.only.sap is existing in the same project
-    # 1) the new zone is created directly in the destination project
+
+  def create_zone(zone_name,attributes, domain_id, project_id)
+    # find the project id of this zone name
+    target_project = find_parent_zone_project(zone_name, project_id)
+    
+    zone = services.dns_service.zones(name: zone_name)[:items].first
+    if zone
+      zone.errors.add("Error", "Zone already existing")
+      return zone
+    else
+      adjust_resource_limits(
+        domain_id, project_id, target_project&.domain_id, target_project&.id
+      )
+
+      pool = cloud_admin.dns_service.find_pool(attributes[:domain_pool])
+      pool_attrs = pool.read("attributes")
+      zone = services.dns_service.new_zone(attributes)
+      zone.name = zone_name
+      zone.write("attributes", pool_attrs)
+    end
+    zone.project_id(target_project&.id)
+
+    if zone.save
+      errors = transfer_zone_if_needed(zone, project_id, target_project&.id)
+      if errors&.present? 
+        errors.each do |error|
+          zone.errors.add("Zone Transfer",error)
+        end
+      end 
+    end
+
+    if zone.id.nil?
+      zone.errors.add("Error","Zone could not be created")
+    end
+
+    return zone
+  end
+
+  # this method tries to find the project for a given zone name
+  # We call the project that owns the zone the parent project.
+  # The parent project can be either current project or any other project.
+  def find_parent_zone_project(zone_name, source_project_id) 
+    # cut off the first part of the zone name
     requested_parent_zone_name = zone_name.partition(".").last
+
+    # do this until the zone name is empty
     while requested_parent_zone_name != ""
-      puts "INFO: check requested_parent_zone_name #{requested_parent_zone_name}"
-      # first, check that parent zones of the requested zone are not a existing zone inside the destination project?
-      requested_parent_zone =
-        services.dns_service.zones(
-          project_id: destination_project_id,
+      # first, try to find the parent zone in the same project
+      parent_zone = services.dns_service.zones(
+        project_id: source_project_id,
+        name: requested_parent_zone_name,
+      )[
+        :items
+      ].first
+
+      # if not found, try to find the parent zone in any other project
+      if parent_zone.nil?
+        parent_zone = services.dns_service.zones(
+          all_projects: true,
           name: requested_parent_zone_name,
         )[
           :items
         ].first
-      unless requested_parent_zone
-        # second, check that parent zones of the requested zone are not a existing zone inside another project?
-        requested_parent_zone =
-          services.dns_service.zones(
-            all_projects: true,
-            name: requested_parent_zone_name,
-          )[
-            :items
-          ].first
       end
-      if requested_parent_zone
-        if requested_parent_zone.project_id == destination_project_id
-          puts "INFO: requested zone #{zone_name} is part of existing zone #{requested_parent_zone_name} inside the destination project #{destination_project_id}"
-          # zone will be created in the destination project
-          @zone.project_id(destination_project_id)
-          # no zone transfer is needed
-          zone_transfer = false
-          break
-        else
-          puts "INFO: requested zone #{zone_name} is part of existing zone #{requested_parent_zone_name} inside the project #{requested_parent_zone.project_id}"
-          # this is usualy the case if we found "only.sap" or "c.REGION-cloud.sap" that lives in the ccadmin/master project
-
-          # 0. find project to get domain_id
-          requested_parent_zone_project =
-            services.identity.find_project(requested_parent_zone.project_id)
-
-          update_limes_data(
-            requested_parent_zone_project.domain_id,
-            requested_parent_zone.project_id,
-          )
-          # 1. check zone quota for requested_parent_zone project where the zone is first created that their is in any case enough zone quota free
-          check_and_increase_quota(
-            requested_parent_zone_project.domain_id,
-            requested_parent_zone.project_id,
-            "zones",
-          )
-          # 2. zone will be created inside the project where the parent zone lives
-          @zone.project_id(requested_parent_zone.project_id)
-          # 3. zone transfer to destination project is needed
-          zone_transfer = true
-          break
-        end
+      # if found, return the project of the parent zone
+      if !parent_zone.nil?
+        return services.identity.find_project(parent_zone.project_id)
       end
-      requested_parent_zone_name =
-        requested_parent_zone_name.partition(".").last
+      # if not found, cut off the next part of the zone name and try again
+      requested_parent_zone_name = requested_parent_zone_name.partition(".").last
     end
-    return zone_transfer
+  end
+  
+  # this method checks the zone and recordset limits of the project
+  # and increases them if needed.
+  # If target project is different from this project, the zone has 
+  # to be created in the target project and then transferred to this project.
+  # For this, the limitis for zone of target project and this project should be checked
+  # and increased if needed. Additionally, the recordset limits of this project 
+  # should be checked and increased if needed. 
+  def adjust_resource_limits(
+    source_domain_id,
+    source_project_id,
+    target_domain_id,
+    target_project_id)
+    # first, get the latests state of the limes data for this project
+    update_limes_data(source_domain_id,source_project_id)
+    
+    # update zone limits for this project if needed
+    check_and_increase_quota(source_domain_id,source_project_id, "zones")
+    # update recordset limits for this project if needed
+    check_and_increase_quota(
+      source_domain_id,
+      source_project_id, 
+      "recordsets",
+      2,
+    )
+
+    # update zone limits for destination project if needed
+    if target_project_id.present? && (target_project_id != source_project_id)
+      # first, get the latests state of the limes data for target project
+      update_limes_data(target_domain_id, target_project_id)  
+      # check and increase zone quota for destination project
+      check_and_increase_quota(target_domain_id, target_project_id, "zones")
+    end
+  end
+
+  def transfer_zone_if_needed(zone, source_project_id, target_project_id)
+    if target_project_id != source_project_id
+      # zone should be transferred from target project to this project
+      # try to find existing zone transfer request
+      zone_transfer_request = services.dns_service.zone_transfer_requests(
+        status: 'ACTIVE'
+      ).select do |zone_transfer_request|
+        zone_transfer_request.target_project_id == source_project_id &&
+          zone_transfer_request.zone_id == zone.id
+      end.first
+
+      # create a new zone transfer request if not exists
+      zone_transfer_request ||= services.dns_service.new_zone_transfer_request(
+        zone.id, target_project_id: source_project_id, source_project_id: zone.project_id
+      )
+      zone_transfer_request.description = "create new zone via elektra"
+
+      zone_transfer_request.save && zone_transfer_request.accept(source_project_id)
+      # catch errors for transfer zone request
+      return zone_transfer_request.errors
+    end
   end
 
   def check_and_increase_quota(domain_id, project_id, resource, increase = 1)

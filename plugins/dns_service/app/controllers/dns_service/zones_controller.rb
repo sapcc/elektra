@@ -145,52 +145,40 @@ module DnsService
     end
 
     def create
-      # check for existing zone
-      zone_name = params[:zone][:name]
-      @zone = services.dns_service.zones(name: zone_name)[:items].first
-      if @zone
-        @zone.errors.add("Error", "Zone already existing")
-        render action: :new
-        return
-      else
-        @zone = services.dns_service.new_zone(params[:zone])
-      end
+      # # check for existing zone
+      # zone_name = params[:zone][:name]
+      # # find the project id of this zone name
+      # target_project = find_parent_zone_project(zone_name, @scoped_project_id)
+      
+      # @zone = services.dns_service.zones(name: zone_name)[:items].first
+      # if @zone
+      #   @zone.errors.add("Error", "Zone already existing")
+      #   render action: :new
+      #   return
+      # else
+      #   adjust_resource_limits(
+      #     @scoped_domain_id, @scoped_project_id, target_project&.domain_id, target_project&.id
+      #   )
+      #   @zone = services.dns_service.new_zone(params[:zone])
+      # end
+      # @zone.project_id(target_project&.id)
 
-      update_limes_data(@scoped_domain_id, @scoped_project_id)
-      # check that subzones are not exsisting in other projects
-      zone_transfer = check_parent_zone(zone_name, @scoped_project_id)
-      # check and increase zone quota for destination project
-      check_and_increase_quota(@scoped_domain_id, @scoped_project_id, "zones")
-      # make sure that recordset quota is increased at least by 2 as there are two recrodsets are created (NS + SOA)
-      check_and_increase_quota(
-        @scoped_domain_id,
-        @scoped_project_id,
-        "recordsets",
-        2,
-      )
+      # if @zone.save
+      #   transfer_zone_if_needed(@zone, @scoped_project_id, target_project&.id)
+      #   flash.now[:notice] = "Zone successfully created."
+      #   respond_to do |format|
+      #     format.html { redirect_to zones_url }
+      #     format.js { render "create", formats: :js }
+      #   end
+      # else
+      #   render action: :new
+      # end
 
-      if @zone.save
-        # if zone_transfer
-        #   # try to find existing zone transfer request
-        #   @zone_transfer_request = services.dns_service.zone_transfer_requests(
-        #     status: 'ACTIVE'
-        #   ).select do |zone_transfer_request|
-        #     zone_transfer_request.target_project_id == @scoped_project_id &&
-        #       zone_transfer_request.zone_id == @zone.id
-        #   end.first
-
-        #   # create a new zone transfer request if not exists
-        #   @zone_transfer_request ||= services.dns_service.new_zone_transfer_request(
-        #     @zone.id, target_project_id: @scoped_project_id, source_project_id: @zone.project_id
-        #   )
-        #   @zone_transfer_request.description = "create new zone via elektra"
-
-        #   unless @zone_transfer_request.save && @zone_transfer_request.accept(@scoped_project_id)
-        #     # catch errors for transfer zone request
-        #     @zone_transfer_request.errors.each { |k, m| @zone_request.errors.add(k,m) }
-        #   end
-        # end
-
+      @zone = create_zone(params[:zone][:name],params[:zone], @scoped_domain_id, @scoped_project_id)
+  
+      # do not use @zone.valid? 
+      # it is broken, calling this method will reset errors and return true
+      if @zone.errors.empty? and @zone.id.present?
         flash.now[:notice] = "Zone successfully created."
         respond_to do |format|
           format.html { redirect_to zones_url }

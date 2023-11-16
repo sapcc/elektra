@@ -3,7 +3,7 @@
 - className= 'bg-warning' if zone.status=='PENDING' and zone.action=='UPDATE'
 - className= 'bg-danger' if zone.status=='PENDING' and zone.action=='DELETE'
 
-%tr{id: "zone_#{zone.id}", class: className, data: {search_name: zone.name+'_'+zone.id, marker_id: zone.id} }
+%tr{id: "zone_#{zone&.id}", class: className, data: {search_name: "#{zone&.name}_#{zone&.id}", marker_id: zone&.id} }
   %td
     - if active_zone_transfer_requests[zone.id]
       %i.fa.fa-fw.fa-truck{ data: {toggle:"tooltip", placement:"bottom", title: "There is a transfer request for this zone."}}
