@@ -36,6 +36,7 @@ const SecretDetails = () => {
   const history = useHistory()
   const params = useParams()
   const [secretId, setSecretId] = useState(null)
+  const [payloadString, setPayloadString] = useState("")
   const [creatorName, setCreatorName] = useState(null)
   const [secretMetadata, setSecretMetadata] = useState(null)
   const [payloadRequested, setPayloadRequested] = useState(false)
@@ -88,17 +89,43 @@ const SecretDetails = () => {
       secret?.data?.content_types?.default,
     ],
     queryFn: getSecretPayload,
-    enabled: !!payloadRequested,
+    enabled:
+      payloadRequested || // Enable when download requested
+      (![
+        "application/octet-stream",
+        "application/pkcs8",
+        "application/pkix-cert",
+      ].includes(secret?.data?.content_types?.default) &&
+        show), // Enable for specific content types when panel is shown
     onSuccess: (data) => {
-      const fileData = JSON.stringify(data)
-      const blob = new Blob([fileData], { type: "text/plain" })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement("a")
-      link.download = secret?.data?.name + ".json"
-      link.href = url
-      link.click()
+      if (
+        ![
+          "application/octet-stream",
+          "application/pkcs8",
+          "application/pkix-cert",
+        ].includes(secret?.data?.content_types?.default)
+      ) {
+        // Handle payload types other than specific ones by returning as a string
+        setPayloadString(data)
+      } else {
+        // Handle specific payload types by downloading the content as a file
+        const fileData = JSON.stringify(data)
+        const blob = new Blob([fileData], {
+          type: secret?.data?.content_types?.default,
+        })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.download = secret?.data?.name
+        link.href = url
+        link.click()
+        setPayloadRequested(false)
+      }
     },
   })
+
+  const handleDownload = useCallback(() => {
+    setPayloadRequested(true)
+  }, [])
 
   const restoreURL = useCallback(() => {
     history.replace(
@@ -171,13 +198,23 @@ const SecretDetails = () => {
                 <DataGridHeadCell>{"Payload"}</DataGridHeadCell>
                 <DataGridCell>
                   <div>
-                    <Button
-                      icon="download"
-                      label="Download"
-                      onClick={() => {
-                        return setPayloadRequested(true)
-                      }}
-                    />
+                    {[
+                      "application/octet-stream",
+                      "application/pkcs8",
+                      "application/pkix-cert",
+                    ].includes(secret?.data?.content_types?.default) ? (
+                      <Button
+                        icon="download"
+                        label="Download"
+                        onClick={handleDownload} // Trigger download on button click
+                      />
+                    ) : payloadString ? (
+                      // Show payload text if content types are not for downloading and payload exists
+                      <span>{payloadString}</span>
+                    ) : (
+                      // Show no payload message when no file to download and no payload text available
+                      <span>No payload available</span>
+                    )}
                   </div>
                 </DataGridCell>
               </DataGridRow>
