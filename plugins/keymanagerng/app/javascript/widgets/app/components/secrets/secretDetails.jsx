@@ -100,9 +100,23 @@ const SecretDetails = () => {
     queryFn: getSecretPayload,
     enabled:
       payloadRequested || // Enable when download requested
-      (show && !isDownloadableDataType(secret?.data?.content_types?.default)), // Enable for text/plain content types when panel is shown
+      (![
+        "application/octet-stream",
+        "application/pkcs8",
+        "application/pkix-cert",
+      ].includes(secret?.data?.content_types?.default) &&
+        show), // Enable for specific content types when panel is shown
     onSuccess: (data) => {
-      if (isDownloadableDataType(secret?.data?.content_types?.default)) {
+      if (
+        ![
+          "application/octet-stream",
+          "application/pkcs8",
+          "application/pkix-cert",
+        ].includes(secret?.data?.content_types?.default)
+      ) {
+        // Handle payload types other than specific ones by returning as a string
+        setPayloadString(data)
+      } else {
         // Handle specific payload types by downloading the content as a file
         const fileData = JSON.stringify(data)
         const blob = new Blob([fileData], {
@@ -114,9 +128,6 @@ const SecretDetails = () => {
         link.href = url
         link.click()
         setPayloadRequested(false)
-      } else {
-        // Handle payload types other than specific ones by returning as a string
-        setPayloadString(data)
       }
     },
   })
@@ -196,9 +207,11 @@ const SecretDetails = () => {
                 <DataGridHeadCell>{"Payload"}</DataGridHeadCell>
                 <DataGridCell>
                   <div>
-                    {isDownloadableDataType(
-                      secret?.data?.content_types?.default
-                    ) ? (
+                    {[
+                      "application/octet-stream",
+                      "application/pkcs8",
+                      "application/pkix-cert",
+                    ].includes(secret?.data?.content_types?.default) ? (
                       <Button
                         icon="download"
                         label="Download"
