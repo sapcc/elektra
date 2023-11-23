@@ -1,5 +1,5 @@
 /* eslint no-console:0 */
-import React, { useState } from "react"
+import React from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import AppRouter from "./AppRouter"
 import CustomCacheProvider from "./CustomCacheProvider"
@@ -15,7 +15,9 @@ const Application = () => {
   return (
     <AppShellProvider theme="theme-light">
       <QueryClientProvider client={queryClient}>
-        <style>{styles} {dayPickerStyle}</style>
+        <style>
+          {styles} {dayPickerStyle}
+        </style>
         <CustomCacheProvider>
           <MessagesProvider>
             <AppShell embedded>
