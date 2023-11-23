@@ -95,7 +95,6 @@ const SecretDetails = () => {
     queryFn: getSecretPayload,
     enabled:
       payloadRequested || // Enable when download requested
-<<<<<<< HEAD
       (!!secretId &&
         isPayloadContentTypeTextPlain(secret?.data?.content_types?.default)), // Enable for text/plain content types when panel is shown
     onSuccess: (data) => {
@@ -104,26 +103,6 @@ const SecretDetails = () => {
       }
       if (payloadRequested) {
         //Downloading the payload content as a file
-=======
-      (![
-        "application/octet-stream",
-        "application/pkcs8",
-        "application/pkix-cert",
-      ].includes(secret?.data?.content_types?.default) &&
-        show), // Enable for specific content types when panel is shown
-    onSuccess: (data) => {
-      if (
-        ![
-          "application/octet-stream",
-          "application/pkcs8",
-          "application/pkix-cert",
-        ].includes(secret?.data?.content_types?.default)
-      ) {
-        // Handle payload types other than specific ones by returning as a string
-        setPayloadString(data)
-      } else {
-        // Handle specific payload types by downloading the content as a file
->>>>>>> 716cc4a9b ([keymanagerng] Download payload file as a row file not a json file and show the content directly in the UI if the type is text/plain)
         const fileData = JSON.stringify(data)
         const blob = new Blob([fileData], {
           type: secret?.data?.content_types?.default,
@@ -213,31 +192,11 @@ const SecretDetails = () => {
                 <DataGridHeadCell>{"Payload"}</DataGridHeadCell>
                 <DataGridCell>
                   <div>
-<<<<<<< HEAD
                     <Button
                       icon="download"
                       label="Download"
                       onClick={handleDownload} // Trigger download on button click
                     />
-=======
-                    {[
-                      "application/octet-stream",
-                      "application/pkcs8",
-                      "application/pkix-cert",
-                    ].includes(secret?.data?.content_types?.default) ? (
-                      <Button
-                        icon="download"
-                        label="Download"
-                        onClick={handleDownload} // Trigger download on button click
-                      />
-                    ) : payloadString ? (
-                      // Show payload text if content types are not for downloading and payload exists
-                      <span>{payloadString}</span>
-                    ) : (
-                      // Show no payload message when no file to download and no payload text available
-                      <span>No payload available</span>
-                    )}
->>>>>>> 716cc4a9b ([keymanagerng] Download payload file as a row file not a json file and show the content directly in the UI if the type is text/plain)
                   </div>
                 </DataGridCell>
               </DataGridRow>
