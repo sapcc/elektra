@@ -5478,15 +5478,9 @@ jsx-to-string@^1.4.0:
     json-stringify-pretty-compact "^1.0.1"
     react "^0.14.0"
 
-<<<<<<< HEAD
-"juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@2.6.8/package.tgz":
-  version "2.6.8"
-  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@2.6.8/package.tgz#ddb90bde62c09a2cc1e8eb069faa863e3011f6cb"
-=======
 "juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@2.6.9/package.tgz":
   version "2.6.9"
   resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@2.6.9/package.tgz#5b9b5eee39c5da8d6fe1a88735be4f6b67f05be6"
->>>>>>> 7a37bb338 ([keymanagerng] resolve review comments)
 
 jxLoader@*:
   version "0.1.1"
