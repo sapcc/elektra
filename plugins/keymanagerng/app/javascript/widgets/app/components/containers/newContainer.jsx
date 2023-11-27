@@ -39,7 +39,6 @@ const NewContainer = () => {
       opened={showNewContainer}
       onClose={close}
       heading="New Container"
-      size="large"
       aria-labelledby="contained-modal-title-lg"
       className="tw-z-[1050]"
     >

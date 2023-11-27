@@ -82,13 +82,8 @@ const SecretDetails = () => {
     setShow(!!params.id)
   }, [params.id])
 
-  const isDownloadableDataType = (contentType) => {
-    const downloadableTypes = [
-      "application/octet-stream",
-      "application/pkcs8",
-      "application/pkix-cert",
-    ]
-    return downloadableTypes.includes(contentType)
+  const isPayloadContentTypeTextPlain = (contentType) => {
+    return contentType?.includes("text/plain")
   }
 
   const secretPlayload = useQuery({
@@ -100,10 +95,14 @@ const SecretDetails = () => {
     queryFn: getSecretPayload,
     enabled:
       payloadRequested || // Enable when download requested
-      (show && !isDownloadableDataType(secret?.data?.content_types?.default)), // Enable for text/plain content types when panel is shown
+      (!!secretId &&
+        isPayloadContentTypeTextPlain(secret?.data?.content_types?.default)), // Enable for text/plain content types when panel is shown
     onSuccess: (data) => {
-      if (isDownloadableDataType(secret?.data?.content_types?.default)) {
-        // Handle specific payload types by downloading the content as a file
+      if (isPayloadContentTypeTextPlain(secret?.data?.content_types?.default)) {
+        setPayloadString(data)
+      }
+      if (payloadRequested) {
+        //Downloading the payload content as a file
         const fileData = JSON.stringify(data)
         const blob = new Blob([fileData], {
           type: secret?.data?.content_types?.default,
@@ -114,9 +113,6 @@ const SecretDetails = () => {
         link.href = url
         link.click()
         setPayloadRequested(false)
-      } else {
-        // Handle payload types other than specific ones by returning as a string
-        setPayloadString(data)
       }
     },
   })
@@ -196,25 +192,36 @@ const SecretDetails = () => {
                 <DataGridHeadCell>{"Payload"}</DataGridHeadCell>
                 <DataGridCell>
                   <div>
-                    {isDownloadableDataType(
-                      secret?.data?.content_types?.default
-                    ) ? (
-                      <Button
-                        icon="download"
-                        label="Download"
-                        onClick={handleDownload} // Trigger download on button click
-                      />
-                    ) : payloadString ? (
-                      // Show payload text if content types are not for downloading and payload exists
-                      <span>{payloadString}</span>
-                    ) : (
-                      // Show no payload message when no file to download and no payload text available
-                      <span>No payload available</span>
-                    )}
+                    <Button
+                      icon="download"
+                      label="Download"
+                      onClick={handleDownload} // Trigger download on button click
+                    />
                   </div>
                 </DataGridCell>
               </DataGridRow>
             </DataGrid>
+            {isPayloadContentTypeTextPlain(
+              secret?.data?.content_types?.default
+            ) && (
+              <>
+                {payloadString && (
+                  <>
+                    <CodeBlock
+                      heading="Payload"
+                      content={
+                        payloadString.length > 500
+                          ? payloadString.slice(0, 500) +
+                            "... (To access the complete payload, click on the Download button above)"
+                          : payloadString
+                      }
+                      size="large"
+                      className="tw-mt-6"
+                    />
+                  </>
+                )}
+              </>
+            )}
             {metadata?.isLoading && !metadata?.data ? (
               <HintLoading />
             ) : metadata?.data ? (

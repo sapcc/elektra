@@ -36,7 +36,6 @@ const NewSecret = () => {
       opened={showNewSecret}
       onClose={close}
       heading="New Secret"
-      size="large"
       className="tw-z-[1050]"
     >
       <MessagesProvider>

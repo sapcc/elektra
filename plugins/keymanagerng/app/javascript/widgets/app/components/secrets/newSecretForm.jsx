@@ -7,19 +7,20 @@ import {
   Select,
   SelectOption,
   Message,
-  Box,
   PanelBody,
   PanelFooter,
   Button,
   Container,
   Label,
+  Icon,
+  Stack,
 } from "juno-ui-components"
 import { createSecret } from "../../secretActions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useActions, Messages } from "messages-provider"
 import { getSecretUuid } from "../../../lib/secretHelper"
 import { DayPicker } from "react-day-picker"
-import { format, isToday, isAfter, isSameDay } from "date-fns"
+import { format, isToday, isAfter } from "date-fns"
 import { parseError } from "../../helpers"
 
 const TYPE_SYMMETRIC = "symmetric"
@@ -117,6 +118,49 @@ const formValidation = (formData) => {
   return errors
 }
 
+const SecretTypeHelpText = ({ showMore, handleShowMore }) => {
+  const handleHide = () => {
+    handleShowMore(false)
+  }
+
+  return (
+    <>
+      {!showMore ? (
+        <Stack alignment="center">
+          <p>Show more info about secret types</p>
+          <Icon icon="chevronRight" onClick={() => handleShowMore(true)} />
+        </Stack>
+      ) : (
+        <>
+          <p>
+            certificate - Used for storing cryptographic certificates such as
+            X.509 certificates
+          </p>
+          <p>
+            opaque - Used for backwards compatibility with previous versions of
+            the API without typed secrets
+          </p>
+          <p>passphrase - Used for storing plain text passphrases</p>
+          <p>
+            private - Used for storing the private key of an asymmetric keypair
+          </p>
+          <p>
+            public - Used for storing the public key of an asymmetric keypair
+          </p>
+          <p>
+            symmetric - Used for storing byte arrays such as keys suitable for
+            symmetric encryption
+          </p>
+          <Stack alignment="center">
+            <p>Hide info about secret types</p>
+            <Icon icon="chevronLeft" onClick={handleHide} />
+          </Stack>
+        </>
+      )}
+    </>
+  )
+}
+
 const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const [formData, setFormData] = useState({})
   const [validationState, setValidationState] = useState({})
@@ -128,6 +172,12 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const { addMessage, resetMessages } = useActions()
 
   const [selectedDay, setSelectedDay] = React.useState(null)
+
+  const [showMore, setShowMore] = useState(false)
+
+  const handleShowMore = (value) => {
+    setShowMore(value)
+  }
 
   const onConfirm = () => {
     const errors = formValidation(formData)
@@ -213,15 +263,13 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   const currentDate = new Date()
                   let selectedDateTime = new Date(selectedDate)
 
+                  // Set the time to the end of the day (23:59:59)
+                  selectedDateTime.setHours(23, 59, 59)
+
                   if (
                     isToday(selectedDate) ||
                     isAfter(selectedDate, currentDate)
                   ) {
-                    if (isSameDay(selectedDate, currentDate)) {
-                      // Set the time to the end of the day (23:59:59) for today
-                      selectedDateTime.setHours(23, 59, 59)
-                    }
-
                     setSelectedDay(selectedDate)
                     setFormData({
                       ...formData,
@@ -256,7 +304,10 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
               <FormRow>
                 <p>
                   Selected date is:{" "}
-                  {format(new Date(selectedDay), "MMMM d, yyyy HH:mm:ss")}
+                  {format(
+                    new Date(selectedDay).setHours(23, 59, 59),
+                    "MMMM d, yyyy HH:mm:ss"
+                  )}
                 </p>
               </FormRow>
             )}
@@ -304,30 +355,6 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
           />
         </FormRow>
         <FormRow>
-          <Box>
-            <p>
-              certificate - Used for storing cryptographic certificates such as
-              X.509 certificates
-            </p>
-            <p>
-              opaque - Used for backwards compatibility with previous versions
-              of the API without typed secrets{" "}
-            </p>
-            <p>passphrase - Used for storing plain text passphrases </p>
-            <p>
-              private - Used for storing the private key of an asymmetric
-              keypair{" "}
-            </p>
-            <p>
-              public - Used for storing the public key of an asymmetric keypair{" "}
-            </p>
-            <p>
-              symmetric - Used for storing byte arrays such as keys suitable for
-              symmetric encryption
-            </p>
-          </Box>
-        </FormRow>
-        <FormRow>
           <Select
             label="Secret Type"
             name="secretType"
@@ -336,6 +363,12 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             invalid={validationState?.secret_type ? true : false}
             required
             data-target="secret-type-select"
+            helptext={
+              <SecretTypeHelpText
+                showMore={showMore}
+                handleShowMore={handleShowMore}
+              />
+            }
           >
             {selectTypes("all").map((item, index) => (
               <SelectOption
@@ -359,6 +392,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             }
             errortext={validationState?.payload}
             invalid={validationState?.payload ? true : false}
+            className="tw-h-64"
             required
             data-target="payload-text-area"
           />
