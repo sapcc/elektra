@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def qa?
+    current_region.start_with?("qa-")
+  end
+  
   def cached_object(searchTerm, options = {})
     objects =
       ObjectCache.where(["id = :term OR name = :term", term: searchTerm])

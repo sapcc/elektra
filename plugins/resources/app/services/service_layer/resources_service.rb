@@ -6,6 +6,10 @@ module ServiceLayer
       elektron.service?("resources")
     end
 
+    def v2_enabled?
+      current_user
+    end
+
     def elektron_resources
       @elektron_resources ||=
         elektron.service("resources", path_prefix: "/v1", interface: "public")

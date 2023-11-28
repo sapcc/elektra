@@ -1,18 +1,19 @@
-- if current_region.start_with?("qa-")
+- if current_user.is_allowed?('resources:project:edit', {selected: {domain_id: @scoped_domain_id, project_id: @scoped_project_id} })
   .bs-callout.info.bs-callout-info.bs-callout-emphasize
     This is the 
     %span.label.label-info="new" 
     user interface for managing committed resources. Please note that direct quota editing is only available in the 
     =link_to "old UI", plugin("resources").project_path 
 
+
 :plain
   <script
     defer
-    src="https://assets.juno.#{current_region.start_with?('qa-') ? 'qa-de-1' : 'global'}.cloud.sap/apps/widget-loader@latest/build/app.js"
+    src="https://assets.juno.#{qa? ? 'qa-de-1' : 'global'}.cloud.sap/apps/widget-loader@latest/build/app.js"
     data-name="limesUI"
     data-version="latest"
     data-props-theme="theme-light"
-    data-props-endpoint="https://limes-3.qa-de-1.cloud.sap"
+    data-props-endpoint="https://limes-3.#{current_region}.cloud.sap"
     data-props-project-i-d="#{@scoped_project_id}"
     data-props-domain-i-d="#{@scoped_domain_id}"
     data-props-get-token-func-name="_getCurrentToken"
