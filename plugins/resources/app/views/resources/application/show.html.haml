@@ -3,6 +3,12 @@
   = @scope.titleize
   Resources
 
+- if current_region.start_with?("qa-")
+  .bs-callout.info.bs-callout-info.bs-callout-emphasize
+    This is the old UI, allowing direct editing of quotas. However, for managing committed resources, please use the 
+    =link_to plugin("resources").v2_path  do 
+      %span.label.label-info="new UI"
+  
 - if @project_override || @domain_override || @cluster_override
   .bs-callout.bs-callout-info.bs-callout-emphasize
     This view is for the

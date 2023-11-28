@@ -381,7 +381,13 @@ SimpleNavigation::Configuration.run do |navigation|
                           -> { plugin("resources").project_path },
                           if: -> { services.available?(:resources) },
                           highlights_on:
-                            proc { params[:controller][%r{resources/.*}] }
+                            proc { params[:controller][%r{resources/[^v2].*}] }    
+      monitoring_nav.item :resources,
+                            capture { concat "Resource Management "; concat content_tag(:span, "NEW", class:"label label-info")},
+                            -> { plugin("resources").v2_path },
+                            if: -> { current_region.start_with?("qa-") },
+                            highlights_on:
+                              proc { params[:controller][%r{resources/v2}] }                                            
       monitoring_nav.item :masterdata_cockpit,
                           "Masterdata",
                           -> {
