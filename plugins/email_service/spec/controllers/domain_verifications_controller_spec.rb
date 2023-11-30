@@ -1,23 +1,23 @@
-require 'spec_helper'
-require_relative '../factories/factories'
+require "spec_helper"
+require_relative "../factories/factories"
 
 describe EmailService::DomainVerificationsController, type: :controller do
   routes { EmailService::Engine.routes }
 
   default_params = {
     domain_id: AuthenticationStub.domain_id,
-    project_id: AuthenticationStub.project_id
+    project_id: AuthenticationStub.project_id,
   }
 
   before(:all) do
     FriendlyIdEntry.find_or_create_entry(
-      'Domain',
+      "Domain",
       nil,
       default_params[:domain_id],
-      'default'
+      "default"
     )
     FriendlyIdEntry.find_or_create_entry(
-      'Project',
+      "Project",
       default_params[:domain_id],
       default_params[:project_id],
       default_params[:project_id]
@@ -29,63 +29,58 @@ describe EmailService::DomainVerificationsController, type: :controller do
 
     allow_any_instance_of(
       EmailService::DomainVerificationsController
-    ).to receive(:_nebula_request).and_return(double('response').as_null_object)
+    ).to receive(:_nebula_request).and_return(double("response").as_null_object)
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:nebula_details).and_return(
-      double('nebula_details').as_null_object
-    )
-    allow_any_instance_of(
-      EmailService::DomainVerificationsController
-    ).to receive(:nebula_active?).and_return(
-      double('nebula_active').as_null_object
+      double("nebula_details").as_null_object
     )
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:list_email_identities).and_return(
-      double('identities').as_null_object
+      double("identities").as_null_object
     )
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:email_addresses).and_return(
-      double('email_addresses').as_null_object
+      double("email_addresses").as_null_object
     )
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:check_verified_identity).and_return(
-      double('check_verified_identity').as_null_object
+      double("check_verified_identity").as_null_object
     )
 
     allow_any_instance_of(
       EmailService::DomainVerificationsController
-    ).to receive(:ec2_creds).and_return(double('creds').as_null_object)
+    ).to receive(:ec2_creds).and_return(double("creds").as_null_object)
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:list_configsets).and_return(
-      double('configsets').as_null_object
+      double("configsets").as_null_object
     )
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:ses_client_v2).and_return(
-      double('ses_client_v2').as_null_object
+      double("ses_client_v2").as_null_object
     )
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:verified_domain).and_return(
-      double('verified_domain').as_null_object
+      double("verified_domain").as_null_object
     )
     allow_any_instance_of(
       EmailService::DomainVerificationsController
-    ).to receive(:domains).and_return(double('domains').as_null_object)
+    ).to receive(:domains).and_return(double("domains").as_null_object)
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:list_configset_names).and_return(
-      double('configset_names').as_null_object
+      double("configset_names").as_null_object
     )
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:check_pre_conditions_for_cronus).and_return(
-      double('redirect_path').as_null_object
+      double("redirect_path").as_null_object
     )
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:check_verified_identity).and_return(double('redirect_path').as_null_object)
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
@@ -93,89 +88,88 @@ describe EmailService::DomainVerificationsController, type: :controller do
     allow_any_instance_of(
       EmailService::DomainVerificationsController
     ).to receive(:delete_email_identity).and_return(
-      double('status').as_null_object
+      double("status").as_null_object
     )
   end
 
   # check index route
-  describe 'GET index' do
+  describe "GET index" do
     # check email admin role
-    context 'email_admin' do
+    context "email_admin" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'email_service_role',
-            'name' => 'email_admin'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "email_service_role",
+            "name" => "email_admin",
           }
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http 200 status' do
+      it "returns http 200 status" do
         get :index, params: default_params
         expect(response).to render_template(:index)
         expect(response).to have_http_status(200)
-        
       end
     end
 
     # check email user role
-    context 'email_user' do
+    context "email_user" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'email_service_role',
-            'name' => 'email_user'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "email_service_role",
+            "name" => "email_user",
           }
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http 200 status' do
+      it "returns http 200 status" do
         get :index, params: default_params
         expect(response).to render_template(:index)
         expect(response).to have_http_status(200)
       end
     end
 
-    context 'cloud_support_tools_viewer_role alone' do
+    context "cloud_support_tools_viewer_role alone" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http 401 status' do
+      it "returns http 401 status" do
         get :index, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning'
+          "application/exceptions/warning"
         )
       end
     end
 
-    context 'other roles' do
+    context "other roles" do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token["roles"].delete_if { |h| h["id"] == "email_service_role" }
           token
         end
       end
-      it 'not allowed' do
+      it "not allowed" do
         get :index, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning'
+          "application/exceptions/warning"
         )
       end
     end
@@ -191,22 +185,22 @@ describe EmailService::DomainVerificationsController, type: :controller do
     end
 
     # check email admin role
-    context 'email_admin' do
+    context "email_admin" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'email_service_role',
-            'name' => 'email_admin'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "email_service_role",
+            "name" => "email_admin",
           }
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http success' do
+      it "returns http success" do
         get :new, params: default_params
         expect(response).to be_successful
         expect(response).to render_template(:new)
@@ -214,58 +208,58 @@ describe EmailService::DomainVerificationsController, type: :controller do
     end
 
     # check email user role
-    context 'email_user' do
+    context "email_user" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'email_service_role',
-            'name' => 'email_user'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "email_service_role",
+            "name" => "email_user",
           }
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http success' do
+      it "returns http success" do
         get :new, params: default_params
         expect(response).to be_successful
         expect(response).to render_template(:new)
       end
     end
 
-    context 'cloud_support_tools_viewer_role alone' do
+    context "cloud_support_tools_viewer_role alone" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http 401 status' do
+      it "returns http 401 status" do
         get :new, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning'
+          "application/exceptions/warning"
         )
       end
     end
 
-    context 'other roles' do
+    context "other roles" do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token["roles"].delete_if { |h| h["id"] == "email_service_role" }
           token
         end
       end
-      it 'not allowed' do
+      it "not allowed" do
         get :new, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning'
+          "application/exceptions/warning"
         )
       end
     end
@@ -280,23 +274,23 @@ describe EmailService::DomainVerificationsController, type: :controller do
     end
 
     # check email admin role
-    context 'email_admin' do
+    context "email_admin" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'email_service_role',
-            'name' => 'email_admin'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "email_service_role",
+            "name" => "email_admin",
           }
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
 
-      it 'returns http 200 status' do
+      it "returns http 200 status" do
         assigns(verified_domain: @verified_domain)
         assigns(verified_domain_opts: @verified_domain_opts)
         post(:create, params: default_params.merge(opts: @verified_domain_opts))
@@ -305,90 +299,89 @@ describe EmailService::DomainVerificationsController, type: :controller do
     end
 
     # check email user role
-    context 'email_user' do
+    context "email_user" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'email_service_role',
-            'name' => 'email_user'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "email_service_role",
+            "name" => "email_user",
           }
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http 200 status' do
+      it "returns http 200 status" do
         assigns(verified_domain_opts: @verified_domain_opts)
         expect(
           post(
             :create,
-            params: default_params.merge(verified_email: @verified_domain_opts)
+            params: default_params.merge(verified_email: @verified_domain_opts),
           )
         ).to have_http_status(200)
       end
     end
 
-    context 'cloud_support_tools_viewer_role alone' do
+    context "cloud_support_tools_viewer_role alone" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http 401 status' do
+      it "returns http 401 status" do
         post :create, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning'
+          "application/exceptions/warning"
         )
       end
     end
 
-    context 'other roles' do
+    context "other roles" do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token["roles"].delete_if { |h| h["id"] == "email_service_role" }
           token
         end
       end
-      it 'not allowed' do
+      it "not allowed" do
         post :create, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning'
+          "application/exceptions/warning"
         )
       end
     end
   end
 
   # check delete route
-  describe 'DELETE#destroy' do
-
+  describe "DELETE#destroy" do
     before :each do
       @opts = EmailService::FakeFactory.new.verified_domain_opts
     end
     # check email admin role
-    context 'email_admin' do
+    context "email_admin" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'email_service_role',
-            'name' => 'email_admin'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "email_service_role",
+            "name" => "email_admin",
           }
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http success' do
+      it "returns http success" do
         delete :destroy, params: default_params.merge(id: @opts[:id])
         expect(response).to have_http_status(302)
         # expect(response).to be_successful
@@ -396,58 +389,58 @@ describe EmailService::DomainVerificationsController, type: :controller do
     end
 
     # check email user role
-    context 'email_user' do
+    context "email_user" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'email_service_role',
-            'name' => 'email_user'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "email_service_role",
+            "name" => "email_user",
           }
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http success' do
+      it "returns http success" do
         delete :destroy, params: default_params.merge(id: @opts[:id])
         expect(response).to have_http_status(302)
         # expect(response).to be_successful
       end
     end
 
-    context 'cloud_support_tools_viewer_role alone' do
+    context "cloud_support_tools_viewer_role alone" do
       before :each do
         stub_authentication do |token|
-          token['roles'] = []
-          token['roles'] << {
-            'id' => 'cloud_support_tools_viewer_role',
-            'name' => 'cloud_support_tools_viewer'
+          token["roles"] = []
+          token["roles"] << {
+            "id" => "cloud_support_tools_viewer_role",
+            "name" => "cloud_support_tools_viewer",
           }
           token
         end
       end
-      it 'returns http 401 status' do
+      it "returns http 401 status" do
         delete :destroy, params: default_params.merge(id: @opts[:id])
         expect(response).to render_template(
-          'application/exceptions/warning'
+          "application/exceptions/warning"
         )
       end
     end
 
-    context 'other roles' do
+    context "other roles" do
       before :each do
         stub_authentication do |token|
-          token['roles'].delete_if { |h| h['id'] == 'email_service_role' }
+          token["roles"].delete_if { |h| h["id"] == "email_service_role" }
           token
         end
       end
-      it 'not allowed' do
+      it "not allowed" do
         delete :destroy, params: default_params.merge(id: @opts[:id])
         expect(response).to render_template(
-          'application/exceptions/warning'
+          "application/exceptions/warning"
         )
       end
     end

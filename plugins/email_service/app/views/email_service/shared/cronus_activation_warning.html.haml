@@ -1,8 +1,9 @@
 - @header_title ||= "Application"
 - @title ||= "Warning"
 - @description ||= "MultiCloud Account Status"
-- @nebula_status = nebula_status
-- @nebula_details = nebula_details
+- @nebula_status = nebula_account_details&.status
+- @cronus_account_details = cronus_account_details
+= @cronus_account_details
 
 - if modal?
   = content_for :title do
@@ -67,7 +68,7 @@
           %li Please refer our documetation on our support procedures
           = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/incident-management"
           
-      - if @nebula_status == "TERMINATED"
+      - if @nebula_status == "TERMINATED" || @cronus_account_details == "account is terminated"
         %h2
           Your multicloud (aws) account is either already <b>terminated</b> or <b>marked for termination</b>.
         %ul
@@ -87,7 +88,7 @@
       %br 
       %h3 In order to use CRONUS service, you need to activate SAP MultiCloud Account
       %br 
-      = link_to "Activate Multicloud account", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-secondary'
+      -# = link_to "Activate Multicloud account", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-secondary'
       %br
       %br 
       %ul
@@ -136,10 +137,11 @@
         %li Please refer our documetation on our support procedures
         = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/incident-management"
     
-    - if @nebula_status == "TERMINATED"
+    - if @nebula_status == "TERMINATED" || @cronus_account_details == "account is terminated"
       %h2
         Your multicloud (aws) account is either already <b>terminated</b> or <b>marked for termination</b>.
       %ul
         %li It has to activated by SAP MultiCloud team. Please contact Cronus Support by creating a ticket.
         %li Please refer our documetation on our support procedures
         = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/incident-management"
+

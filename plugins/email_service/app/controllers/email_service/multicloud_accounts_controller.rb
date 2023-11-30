@@ -5,16 +5,16 @@ module EmailService
   class MulticloudAccountsController < ::EmailService::ApplicationController
     before_action :set_multicloud_account, only: %i[new destroy]
 
-    authorization_context 'email_service'
+    authorization_context "email_service"
     authorization_required
 
     MULTICLOUD_ACCOUNT_CREATED =
-      I18n.t('email_service.messages.multicloud_accoount_created').to_s.freeze
+      I18n.t("email_service.messages.multicloud_accoount_created").to_s.freeze
     MULTICLOUD_ACCOUNT_DELETED =
-      I18n.t('email_service.messages.multicloud_accoount_removed').to_s.freeze
+      I18n.t("email_service.messages.multicloud_accoount_removed").to_s.freeze
 
     def index
-      @nebula_status = nebula_status
+      @nebula_status = nebula_account_details
     end
 
     def new; end
@@ -24,37 +24,37 @@ module EmailService
 
       multicloud_account_values =
         @multicloud_account.process(EmailService::MulticloudAccount)
-      render 'edit', locals: { data: { modal: true } } and return unless @multicloud_account.valid?
+      render "edit", locals: { data: { modal: true } } and return unless @multicloud_account.valid?
 
       if @multicloud_account.valid?
         status =
           nebula_activate(multicloud_account_values)
       end
-      unless status == 'success'
+      unless status == "success"
         flash.now[:error] = status
-        render 'edit', locals: { data: { modal: true } } and return
+        render "edit", locals: { data: { modal: true } } and return
       end
       flash[:success] = MULTICLOUD_ACCOUNT_CREATED
-      redirect_to plugin('email_service').emails_path
+      redirect_to plugin("email_service").emails_path
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.multicloud_account_create')} #{e.message}"
+        "#{I18n.t("email_service.errors.multicloud_account_create")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
 
     def destroy
-      @multicloud_account.provider = 'aws'
+      @multicloud_account.provider = "aws"
       status = nebula_deactivate(@multicloud_account.provider)
-      if status == 'success'
+      if status == "success"
         flash[:success] = MULTICLOUD_ACCOUNT_DELETED
       else
         error =
-          "#{I18n.t('email_service.errors.multicloud_account_delete')} #{e.message}"
+          "#{I18n.t("email_service.errors.multicloud_account_delete")} #{e.message}"
         Rails.logger.error error
         flash[:error] = error
       end
-      redirect_to plugin('email_service').settings_url
+      redirect_to plugin("email_service").settings_url
     end
 
     private

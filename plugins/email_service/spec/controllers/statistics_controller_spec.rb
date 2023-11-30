@@ -56,9 +56,6 @@
 #     allow_any_instance_of(EmailService::StatisticsController).to receive(
 #       :nebula_endpoint_url,
 #     ).and_return(double('nebula_endpoint_url').as_null_object)
-#     allow_any_instance_of(EmailService::StatisticsController).to receive(
-#       :nebula_active?,
-#     ).and_return(double('domain_statistics_report').as_null_object)
 #   end
 
 #   describe "GET 'index'" do
