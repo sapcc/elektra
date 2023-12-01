@@ -133,7 +133,16 @@ module Resources
       # https://migration-recommender-service.cca-pro.cerebro.c.eu-de-1.cloud.sap/public/docs#/default/get_placeable_vm_for_project_api_v1_placeable_vm_project__openstack_project_id__get
       require "net/http"
       begin
-        uri = URI("https://migration-recommender-service.cca-pro.cerebro.c.#{current_region}.cloud.sap/public/api/v1/placeable-vm/project/#{@scoped_project_id}")
+        # this is a fallback, the region should set in the helm-charts/openstack/elektra/_env.tpl
+        cerebro_region = current_region
+        # for development this env is not set in the default .env file
+        if ENV.key?("CEREBRO_REGION") 
+          unless ENV["CEREBRO_REGION"].empty? || ENV["CEREBRO_REGION"].blank?
+            cerebro_region = ENV["CEREBRO_REGION"]
+          end
+        end
+        
+        uri = URI("https://migration-recommender-service.cca-pro.cerebro.c.#{cerebro_region}.cloud.sap/public/api/v1/placeable-vm/project/#{@scoped_project_id}")
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
         if ENV.key?("ELEKTRA_SSL_VERIFY_PEER") &&
