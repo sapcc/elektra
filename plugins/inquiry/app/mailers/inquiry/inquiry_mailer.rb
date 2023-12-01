@@ -39,10 +39,8 @@ module Inquiry
           subject += "/#{@inquiry.tags["domain_name"]}"
         end
       end
-      # send single emails to every processor to prevent that the whole email send is not aborted if one email address is invalid
-      while processor_emails.each do |email|
-        mail(to: email, subject: subject, content_type: "text/html")
-      end
+      # this is called from the model, first try with all emails at once, if a error occurs, try to send each email separately
+      mail(to: processor_emails, subject: subject, content_type: "text/html")
     end
 
     def notification_email_additional_recipients(
@@ -66,10 +64,8 @@ module Inquiry
           subject += "/#{@inquiry.tags["domain_name"]}"
         end
       end
-      # send single emails to every processor to prevent that the whole email send is not aborted if one email address is invalid
-      while receiver_emails.each do |email|
-        mail(to: receiver_emails, subject: subject, content_type: "text/html")
-      end
+      # this is called from the model, first try with all emails at once, if a error occurs, try to send each email separately
+      mail(to: receiver_emails, subject: subject, content_type: "text/html")
     end
 
     def notification_new_project(inform_dl, inquiry, user_full_name)
