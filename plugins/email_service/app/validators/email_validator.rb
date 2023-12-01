@@ -28,12 +28,6 @@ class EmailValidator < ActiveModel::EachValidator
       record.errors.add attribute, (options[:message] || @invalid_error_message)
     end
 
-    if value.include?("@sap.com")
-      @restricted_error_message =
-        "#{@restricted_error_message} [ #{value} ] | sending from sap.com email address is restricted."
-      record.errors.add attribute, (options[:message] || @restricted_error_message)
-    end
-
     return unless @valid_addresses.count > 50
 
     @exceeded_error_message = "EXCEEDED LIMIT:"

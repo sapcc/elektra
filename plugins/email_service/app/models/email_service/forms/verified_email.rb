@@ -18,9 +18,9 @@ module EmailService
 
       # validation
       validates_presence_of :identity, message: "email address can't be empty"
-      validates :identity, presence: true, email: true
+      validates :identity, presence: true, restricted_email: true
 
-      def to_model
+      def to_model 
         self
       end
 
@@ -39,7 +39,7 @@ module EmailService
         begin
           identity_array = email_identity.form_to_attributes(attributes)
         rescue StandardError => e
-          errors.add 'email_identity_attributes'.to_sym, e.inspect
+          errors.add "email_identity_attributes".to_sym, e.inspect
         end
         identity_array || errors
       end

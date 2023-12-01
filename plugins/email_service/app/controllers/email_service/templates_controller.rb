@@ -6,7 +6,7 @@ module EmailService
     before_action :check_pre_conditions_for_cronus
     before_action :set_template, only: %i[new show edit]
 
-    authorization_context 'email_service'
+    authorization_context "email_service"
     authorization_required
 
     def index
@@ -17,22 +17,22 @@ module EmailService
       unless @templates.empty?
         @paginatable_templates =
           Kaminari
-          .paginate_array(@templates, total_count: @templates.count)
-          .page(params[:page])
-          .per(items_per_page)
+            .paginate_array(@templates, total_count: @templates.count)
+            .page(params[:page])
+            .per(items_per_page)
       end
     rescue Elektron::Errors::ApiResponse, StandardError => e
       flash.now[
         :error
-      ] = "#{I18n.t('email_service.errors.template_list_error')} #{e.message}"
+      ] = "#{I18n.t("email_service.errors.template_list_error")} #{e.message}"
     end
 
     def show
-      render 'show', locals: { data: { modal: true } }
+      render "show", locals: { data: { modal: true } }
     rescue Elektron::Errors::ApiResponse, StandardError => e
       flash.now[
         :error
-      ] = "#{I18n.t('email_service.errors.template_show_error')} #{e.message}"
+      ] = "#{I18n.t("email_service.errors.template_show_error")} #{e.message}"
     end
 
     def new; end
@@ -41,53 +41,53 @@ module EmailService
 
     def create
       @template = template_form(template_params)
-      return render action: 'new', locals: { data: { modal: true } } unless @template.valid?
+      return render action: "new", locals: { data: { modal: true } } unless @template.valid?
 
       status = create_email_template(@template)
-      if status == 'success'
+      if status == "success"
         flash[:success] = "Email template #{@template.name} is saved"
-        redirect_to plugin('email_service').templates_path and return
+        redirect_to plugin("email_service").templates_path and return
       else
         flash.now[
           :error
-        ] = "#{I18n.t('email_service.errors.template_create_error')} #{status}"
-        render 'new', locals: { data: { modal: true } } and return
+        ] = "#{I18n.t("email_service.errors.template_create_error")} #{status}"
+        render "new", locals: { data: { modal: true } } and return
       end
     rescue Elektron::Errors::ApiResponse, StandardError => e
       flash.now[
         :error
-      ] = "#{I18n.t('email_service.errors.template_create_error')} #{e.message}"
-      redirect_to plugin('email_service').templates_path
+      ] = "#{I18n.t("email_service.errors.template_create_error")} #{e.message}"
+      redirect_to plugin("email_service").templates_path
     end
 
     def update
       @template = template_form(template_params)
       @template.name = params[:name]
-      return render action: 'edit', data: { modal: true } unless @template.valid?
+      return render action: "edit", data: { modal: true } unless @template.valid?
 
       status = update_email_template(@template)
 
-      if status == 'success'
+      if status == "success"
         flash[:success] = "Email template [#{@template.name}] is updated"
-        redirect_to plugin('email_service').templates_path and return
+        redirect_to plugin("email_service").templates_path and return
       else
         flash.now[
           :error
         ] = "Error: #{status}; Email template [#{@template.name}] is not updated"
-        render 'edit', data: { modal: true }
+        render "edit", data: { modal: true }
       end
     rescue Elektron::Errors::ApiResponse, StandardError => e
       flash.now[
         :error
-      ] = "#{I18n.t('email_service.errors.template_update_error')} #{e.message}"
+      ] = "#{I18n.t("email_service.errors.template_update_error")} #{e.message}"
     end
 
     def destroy
       status = delete_email_template(params[:name])
       flash[:success] = "Template #{params[:name]} is deleted."
-      redirect_to plugin('email_service').templates_path
+      redirect_to plugin("email_service").templates_path
     rescue Elektron::Errors::ApiResponse, StandardError => e
-      flash.now[:error] = "#{I18n.t('email_service.errors.template_delete_error')} #{e.message}"
+      flash.now[:error] = "#{I18n.t("email_service.errors.template_delete_error")} #{e.message}"
     end
 
     private

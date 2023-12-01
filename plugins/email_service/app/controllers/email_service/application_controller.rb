@@ -17,8 +17,6 @@ module EmailService
       @nebula_account_details = nebula_account_details
       @cronus_account_details = cronus_account_details
 
-      Rails.logger.debug(" @nebula_account_details: #{@nebula_account_details} \n @cronus_account_details: #{@cronus_account_details} \n")
-
       # Step 2: EC2 Credentials
       render "email_service/shared/ec2_credentials_warning" and return if ec2_creds.nil? || !ec2_creds
 
@@ -29,7 +27,11 @@ module EmailService
 
       # Step 4: Display cronus activation warning if nebula_account status is not 'GRANTED'
 
-      unless @nebula_account_details&.status == "GRANTED"
+      if @nebula_account_details.class != String
+        if @nebula_account_details.class == EmailService::NebulaAccount && @nebula_account_details&.status == "GRANTED"
+          return
+        end
+      else
         render "email_service/shared/cronus_activation_warning", locals: { nebula_account_details: @nebula_account_details, cronus_account_details: @cronus_account_details } and return
       end
     end
