@@ -37,7 +37,7 @@ gem 'activerecord-session_store'
 
 # Openstack
 gem 'net-ssh'
-gem 'netaddr', '2.0.4'
+gem 'netaddr', '2.0.6'
 
 gem 'colorize'
 
