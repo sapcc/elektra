@@ -6,7 +6,7 @@ module EmailService
     before_action :check_pre_conditions_for_cronus
     before_action :set_configset, only: %i[edit destroy update]
 
-    authorization_context 'email_service'
+    authorization_context "email_service"
     authorization_required
 
     def index
@@ -18,7 +18,7 @@ module EmailService
           .per(items_per_page)
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.configset_list_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.configset_list_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
@@ -26,33 +26,33 @@ module EmailService
     def create
       @configset = new_configset(configset_params)
       unless @configset.valid?
-        render 'edit', local: { configset: @configset } and return
+        render "edit", locals: { configset: @configset } and return
       end
 
       status = store_configset(@configset)
-      if status == 'success'
+      if status == "success"
         flash[:success] = "Configset #{@configset.name} is saved"
-        redirect_to plugin('email_service').configsets_path and return
+        redirect_to plugin("email_service").configsets_path and return
       else
         flash.now[:warning] = status
-        render 'edit', local: { configset: @configset } and return
+        render "edit", locals: { configset: @configset } and return
       end
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.configset_create_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.configset_create_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
-      redirect_to plugin('email_service').configsets_path
+      redirect_to plugin("email_service").configsets_path
     end
 
     def show
       @id = params[:id] || nil
       @name = params[:name] || nil
       @configset_description = describe_configset(@name)
-      render 'show', locals: { data: { modal: true } }
+      render "show", locals: { data: { modal: true } }
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.configset_show_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.configset_show_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
@@ -61,31 +61,31 @@ module EmailService
       name = params[:name] || nil
       status = delete_configset(@configset.name) if @configset
 
-      flash[:success] = "Config Set: #{name} is removed" if status == 'success'
+      flash[:success] = "Config Set: #{name} is removed" if status == "success"
       flash[
         :error
       ] = "Config Set #{name} is not removed : #{status}" unless status ==
-        'success'
-      redirect_to plugin('email_service').configsets_path and return
+                                                                 "success"
+      redirect_to plugin("email_service").configsets_path and return
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.configset_delete_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.configset_delete_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
 
     def update
       status = store_configset(@configset)
-      unless status.include?('success')
-        render 'edit', locals: { data: { modal: true } } and return
+      unless status.include?("success")
+        render "edit", locals: { data: { modal: true } } and return
       end
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.configset_update_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.configset_update_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
 
-      redirect_to plugin('email_service').configsets_path
+      redirect_to plugin("email_service").configsets_path
     end
 
     private

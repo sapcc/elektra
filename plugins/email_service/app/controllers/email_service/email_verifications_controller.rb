@@ -6,7 +6,7 @@ module EmailService
     # before_action :check_pre_conditions_for_cronus
     before_action :verified_email, only: %i[new create]
 
-    authorization_context 'email_service'
+    authorization_context "email_service"
     authorization_required
 
     def index
@@ -18,7 +18,7 @@ module EmailService
           .per(items_per_page)
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.email_verification_list_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.email_verification_list_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
@@ -29,16 +29,16 @@ module EmailService
 
     def create
       identity_values = @verified_email.process(EmailService::VerifiedEmail)
-      msg = ''
+      msg = ""
       render :new and return unless @verified_email.valid?
 
       identities = process_email_verification(identity_values)
       identities.each { |id| msg += "#{id[:message]}; " }
       flash[:warning] = msg
-      redirect_to plugin('email_service').email_verifications_path and return
+      redirect_to plugin("email_service").email_verifications_path and return
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.email_verification_create_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.email_verification_create_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
@@ -47,30 +47,29 @@ module EmailService
       identity = params[:identity] unless params[:identity].nil?
       status = delete_email_identity(identity)
       flash[:success] = "The identity #{identity} is removed" if status ==
-        'success'
+                                                                 "success"
       flash[
         :error
       ] = "The identity #{identity} removal failed : #{status}" unless status ==
-        'success'
-      redirect_to plugin('email_service').email_verifications_path and return
+                                                                       "success"
+      redirect_to plugin("email_service").email_verifications_path and return
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.email_verification_delete_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.email_verification_delete_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
 
     def process_email_verification(identity_values)
       identities = []
-      if identity_values['identity'].length.positive?
-        identity_values['identity'].each do |id|
+      if identity_values["identity"].length.positive?
+        identity_values["identity"].each do |id|
           status = create_email_identity_email(id)
-          unless status.nil?
+          if status == "success"
             identities << {
               identity: id,
               status: status,
-              message:
-                "Verification email is sent to #{id}. Please click on the activation link.",
+              message: "Verification email is sent to #{id}. Please click on the activation link.",
             }
           end
         end

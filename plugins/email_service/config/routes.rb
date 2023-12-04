@@ -14,12 +14,7 @@ EmailService::Engine.routes.draw do
       post 'deactivate_dkim'
     end
   end
-  resources :settings, only: %i[index destroy] do
-    member do
-      post 'enable_cronus'
-      post 'disable_cronus'
-    end
-  end
+  resources :settings, only: %i[index destroy]
 
   resources :custom_verification_email_templates,
             only: %i[index show new edit create destroy update]

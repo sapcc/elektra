@@ -1,8 +1,9 @@
 - @header_title ||= "Application"
 - @title ||= "Warning"
 - @description ||= "MultiCloud Account Status"
-- @nebula_status = nebula_status
-- @nebula_details = nebula_details
+- @nebula_status = nebula_account_details
+- @cronus_account_details = cronus_account_details
+= @cronus_account_details
 
 - if modal?
   = content_for :title do
@@ -23,7 +24,7 @@
         %br 
         %ul
           %li Activate cronus by executing this command your terminal or command prompt or embedded WebCLI 
-          %li <code>cronuscli nebula activate --account-env PROD --security-officer <EMAIL-ADDRESS> OR <C/D/I NUMBER> --mail-type TRANSACTIONAL</code>.
+          %li <code>cronuscli nebula activate --account-env {valid environment from this list [PROD QA DEV DEMO TRAIN SANDBOX LAB]} --security-officer {I/C/D userid or email} --mail-type {MARKETING or TRANSACTIONAL}</code>.
           %li Please refer to our documetation on this from 
           = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/quick-start-sending-emails/#step-2-activate-email-service"
 
@@ -32,7 +33,7 @@
           You MultiCloud Account is in <b>PENDING</b> state. It is not ready to use yet.
         %ul
           %li Cronus activation could still be in progress..and could take up to 72 hours.
-          %li Check back again later.. It has to activated by SAP MultiCloud team.
+          %li Check back again later..  Activation Requests are processed by SAP MultiCloud team.
           %li If it is taking longer than 72 hours. Contact Cronus Support by creating a ticket.
           %li Please refer our documetation on our support procedures
           = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/incident-management"
@@ -42,7 +43,7 @@
           You MultiCloud Account is in <b>PENDING-CUSTOMER-ACTION</b> state. It is not ready to use yet.
         %ul
           %li Cronus activation could still be in progress..and could take up to 72 hours.
-          %li Check back again later.. It has to activated by SAP MultiCloud team.
+          %li Check back again later.. Activation Requests are processed by SAP MultiCloud team.
           %li If it is taking longer than 72 hours. Contact Cronus Support by creating a ticket.
           %li Please refer our documetation on our support procedures
           = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/incident-management"
@@ -66,9 +67,8 @@
           %li If it is taking longer than 72 hours. Please contact Cronus Support Team by creating a ticket.
           %li Please refer our documetation on our support procedures
           = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/incident-management"
-      
-      -# Add edgecase of user terminating AWS account then trying to activate again
-      - if @nebula_status == "TERMINATED"
+          
+      - if @nebula_status == "TERMINATED" || @cronus_account_details == "account is terminated"
         %h2
           Your multicloud (aws) account is either already <b>terminated</b> or <b>marked for termination</b>.
         %ul
@@ -88,14 +88,14 @@
       %br 
       %h3 In order to use CRONUS service, you need to activate SAP MultiCloud Account
       %br 
-      = link_to "Activate Multicloud account", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-secondary'
+      -# = link_to "Activate Multicloud account", plugin('email_service').new_multicloud_account_path, data: { modal: true }, class: 'btn btn-secondary'
       %br
       %br 
       %ul
         %li Activate cronus by executing this command your terminal or command prompt or embedded WebCLI 
-        %li <code>cronuscli nebula activate --account-env PROD --security-officer <EMAIL-ADDRESS> OR <C/D/I NUMBER> --mail-type TRANSACTIONAL</code>.
-        %li Please refer to our documetation on this from 
-        = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/quick-start-sending-emails/#step-2-activate-email-service"
+        %li <code>cronuscli nebula activate --account-env {valid environment from this list [PROD QA DEV DEMO TRAIN SANDBOX LAB]} --security-officer {I/C/D userid or email} --mail-type {MARKETING or TRANSACTIONAL}</code>.
+        %li   
+          = link_to "Please refer to our documetation", "#{sap_url_for('documentation')}docs/customer/services/email-service/quick-start-sending-emails/#step-2-activate-email-service"
 
     - if @nebula_status == 'PENDING'
       %h2
@@ -137,11 +137,11 @@
         %li Please refer our documetation on our support procedures
         = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/incident-management"
     
-    -# Add edgecase of user terminating AWS account then trying to activate again
-    - if @nebula_status == "TERMINATED"
+    - if @nebula_status == "TERMINATED" || @cronus_account_details == "account is terminated"
       %h2
         Your multicloud (aws) account is either already <b>terminated</b> or <b>marked for termination</b>.
       %ul
         %li It has to activated by SAP MultiCloud team. Please contact Cronus Support by creating a ticket.
         %li Please refer our documetation on our support procedures
         = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/incident-management"
+

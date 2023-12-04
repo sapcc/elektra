@@ -5,7 +5,10 @@
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"suppression-list-pane"}
     %h3
-      Suppression List
+      - if @suppressed_destinations.length > 0
+        Suppression List
+      - else 
+        No Suppression emails added to your account
     .row
       .col-sm-9
         - if @suppressed_destinations

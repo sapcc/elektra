@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'mail'
-require 'active_model'
+require "mail"
+require "active_model"
 
 # EmailValidator
 class EmailValidator < ActiveModel::EachValidator
@@ -10,7 +10,7 @@ class EmailValidator < ActiveModel::EachValidator
       validate_email_array(value)
     unless @parse_errors.empty?
       @parse_error_message =
-        'PARSE ERROR: Invalid email address found. Please fix'
+        "PARSE ERROR: Invalid email address found. Please fix"
       @parse_errors.each do |e|
         @parse_errors_items =
           @parse_errors_items ? "#{@parse_errors_items}, #{e}," : "#{e},"
@@ -19,7 +19,7 @@ class EmailValidator < ActiveModel::EachValidator
       record.errors.add attribute, (options[:message] || @parse_error_message)
     end
     if @invalid_addresses.count.positive?
-      @invalid_error_message = 'INVALID:'
+      @invalid_error_message = "INVALID:"
       @invalid_addresses.each do |a|
         @invalid_entries = " #{a[:name]} #{a[:address]}"
       end
@@ -27,9 +27,10 @@ class EmailValidator < ActiveModel::EachValidator
         "#{@invalid_error_message} [ #{@invalid_entries} ] invalid entries found."
       record.errors.add attribute, (options[:message] || @invalid_error_message)
     end
+
     return unless @valid_addresses.count > 50
 
-    @exceeded_error_message = 'EXCEEDED LIMIT:'
+    @exceeded_error_message = "EXCEEDED LIMIT:"
     @exceeded_error_message =
       "#{@exceeded_error_message} Too many (#{@valid_addresses.count}) email addresses. AWS SES allows only in total of 50."
     record.errors.add attribute, (options[:message] || @exceeded_error_message)

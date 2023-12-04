@@ -3,24 +3,20 @@
 module ServiceLayer
   class EmailServiceService < Core::ServiceLayer::Service
     include EmailServiceServices::NebulaAccount
-
-    # Work in Progress
+    include EmailServiceServices::CronusAccount
+    # include EmailServiceServices::Template
 
     def available?(_action_name_sym = nil)
-      elektron.service?('nebula')
+      elektron.service?("nebula")
     end
 
-    def elektron_nebula(options = {})
+    def elektron_nebula
       @elektron_nebula ||=
-        elektron_nebula_client.get("/v3/aws/#{options.project_id}")
+        elektron.service("nebula", path_prefix: "/v1")
     end
 
-    def elektron_nebula_client(auth_conf, options = {})
-      @elektron_nebula_client ||= Elektron.client(auth_conf, options)
-    end
-
-    def elektron_email
-      @elektron_cronus ||= elektron.service('email-aws', path_prefix: '/v3')
+    def elektron_cronus
+      @elektron_cronus ||= elektron.service("email-aws", path_prefix: "/v2")
     end
   end
 end

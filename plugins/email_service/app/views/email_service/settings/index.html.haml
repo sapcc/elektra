@@ -9,7 +9,7 @@
     .row
       .col-sm-9
         %h3 Multicloud Account
-        = render partial: 'multicloud'
+        = render partial: 'multicloud',  locals: {nebula_details: @nebula_details}
         %br
         %h3 EC2 Credentials
         .toolbar
@@ -18,12 +18,12 @@
             = link_to "Manage EC2 Credentials", plugin('email_service').ec2_credentials_path, class: 'btn btn-primary'
         %br
         = render partial: 'ec2_creds'
-        %br
-        %h3 AWS Account
-        = render partial: 'aws_account'
-        %br
-        %h3 Deliverability options
-        = render partial: 'deliverability_dashboard_options'
+        -# %br
+        -# %h3 AWS Account
+        -# = render partial: 'aws_account'
+        -# %br
+        -# %h3 Deliverability options
+        -# = render partial: 'deliverability_dashboard_options'
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p
