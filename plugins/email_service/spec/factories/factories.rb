@@ -76,6 +76,13 @@ module EmailService
       @configsets_collection = %w[configset1 configset2]
     end
 
+    def ec2_credential_opts
+      {
+        access: 'xxxxxx_access_id_xxxxxx1',
+        secret: 'xxxxxx_secret_id_xxxxxx1'
+      }
+    end
+
     def ec2_creds
       {
         'user_id' => 'xxxxxx_user_id_xxxxxx',
@@ -87,7 +94,7 @@ module EmailService
           'self' =>
             'https://identity_v3_url/users/xxxxxx_user_id_xxxxxxx/credentials/OS-EC2/xxxxxx_access_id_xxxxxxx'
         },
-        'id' => nil
+        'id' => 10
       }
     end
 

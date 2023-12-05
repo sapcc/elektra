@@ -3,13 +3,13 @@
 = render partial: 'email_service/shared/nav', formats: :html, locals: {pane: 'ec2'}
 
 .tab-content
-  .tab-pane.active{role:"tabpanel", id:"settings-pane"}
+  .tab-pane.active{role:"tabpanel", id:"ec2-pane"}
     %h3
       AWS EC2 Credentials
     .row
       .col-sm-9
         .toolbar
-          - if current_user.is_allowed?('email_service:template_create')
+          - if current_user.is_allowed?('email_service:ec2_credentials_create')
             .main-buttons
               = link_to "New EC2 Credentials", plugin('email_service').ec2_credentials_path, method: :post, class: 'btn btn-primary'
         %br

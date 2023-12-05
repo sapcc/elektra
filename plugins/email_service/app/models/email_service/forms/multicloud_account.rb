@@ -29,7 +29,7 @@ module EmailService
       validates_presence_of :security_officer,
                             message:
                               'A valid sap email address or SAP User ID of Security Officer is needed.'
-      validates :identity, presence: true, email: true
+      validates :identity, presence: true, email_domain: true
 
       def to_model
         self
@@ -50,7 +50,7 @@ module EmailService
         begin
           multicloud_account.form_to_attributes(attributes)
         rescue StandardError => e
-          errors.add 'multicloud_account_attributes'.to_sym, e.inspect
+          errors.add :multicloud_account_attributes, e.inspect
         end
         unless multicloud_account.errors.blank?
           messages =

@@ -5,7 +5,7 @@ module EmailService
     before_action :check_pre_conditions_for_cronus
     before_action :set_custom_verification_email_template, only: %i[show edit]
 
-    authorization_context 'email_service'
+    authorization_context "email_service"
     authorization_required
 
     def index
@@ -24,16 +24,16 @@ module EmailService
            Aws::SES::Errors::ServiceError,
            StandardError => e
       error =
-        "#{I18n.t('email_service.errors.custom_email_verification_list_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.custom_email_verification_list_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
 
     def show
-      render 'show', locals: { data: { modal: true } }
+      render "show", locals: { data: { modal: true } }
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.custom_email_verification_list_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.custom_email_verification_list_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
@@ -52,32 +52,29 @@ module EmailService
         )
 
       unless @custom_template.valid?
-        render 'new', locals: { data: { modal: true } } and return
+        render "new", locals: { data: { modal: true } } and return
       end
 
       status = create_custom_verification_email_template(@custom_template)
-      if status == 'success'
+      if status == "success"
         flash[
           :success
         ] = "Email custom_template #{@custom_template.template_name} is saved"
-        redirect_to plugin(
-                      'email_service',
-                    ).custom_verification_email_templates_path and return
       else
         flash[:error] = status
-        render 'new', locals: { data: { modal: true } } and return
+        render "new", locals: { data: { modal: true } } and return
       end
       redirect_to plugin(
-                    'email_service',
-                  ).custom_verification_email_templates_path
+        "email_service",
+      ).custom_verification_email_templates_path and return
     rescue Elektron::Errors::ApiResponse, StandardError => e
       error =
-        "#{I18n.t('email_service.errors.custom_email_verification_create_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.custom_email_verification_create_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     rescue Aws::SES::Errors::LimitExceeded => e
       error =
-        "#{I18n.t('email_service.errors.endcustom_email_verification_limit_error')} #{e.message}"
+        "#{I18n.t("email_service.errors.endcustom_email_verification_limit_error")} #{e.message}"
       Rails.logger.error error
       flash[:error] = error
     end
@@ -93,30 +90,30 @@ module EmailService
           custom_verification_email_template_params,
         )
       unless @custom_template.valid?
-        return render action: 'edit', data: { modal: true }
+        return render action: "edit", data: { modal: true }
       end
 
       status = update_custom_verification_email_template(@custom_template)
 
-      if status == 'success'
+      if status == "success"
         flash[
           :success
         ] = "Email custom_template [#{@custom_template.template_name}] is updated"
         redirect_to plugin(
-                      'email_service',
+                      "email_service",
                     ).custom_verification_email_templates_path and return
       else
         error =
-          "#{I18n.t('email_service.errors.custom_email_verification_update_error')} #{e.message}"
+          "#{I18n.t("email_service.errors.custom_email_verification_update_error")} #{e.message}"
         Rails.logger.error error
         flash[:error] = error
-        render 'edit', data: { modal: true }
+        render "edit", data: { modal: true }
       end
     end
 
     def destroy
       status = delete_custom_verification_email_template(params[:template_name])
-      if status == 'success'
+      if status == "success"
         flash[
           :success
         ] = "Custom verification template #{params[:template_name]} is deleted."
@@ -127,7 +124,7 @@ module EmailService
         flash[:error] = error
       end
       redirect_to plugin(
-                    'email_service',
+                    "email_service",
                   ).custom_verification_email_templates_path
     end
 

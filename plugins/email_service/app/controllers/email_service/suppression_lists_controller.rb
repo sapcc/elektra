@@ -25,21 +25,20 @@ module EmailService
       ] = "#{I18n.t('email_service.errors.suppression_list_error')} #{e.message}"
     end
 
+    # TODO: placeholder for further development
     def new; end
     def create; end
     def update; end
+    def destroy; end
 
     def show
       @suppressed_destination = find_suppressed_destination(params[:email_address])
-      
       render 'show', locals: { data: { modal: true }, item: @suppressed_destination }
     rescue Elektron::Errors::ApiResponse, StandardError => e
       flash.now[
         :error
       ] = "#{I18n.t('email_service.errors.template_show_error')} #{e.message}"
     end
-
-    def destroy; end
 
     private
 

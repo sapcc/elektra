@@ -29,10 +29,6 @@
             %td Cronus endpoint
             %td
               = @email_service_url
-          %tr
-            %td Nebula activated ?
-            %td
-              = nebula_active?
       - else
         %p Cronus is not enabled on this project.
       - if @aws_account_details

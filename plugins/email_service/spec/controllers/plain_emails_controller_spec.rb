@@ -14,41 +14,41 @@ describe EmailService::PlainEmailsController, type: :controller do
       "Domain",
       nil,
       default_params[:domain_id],
-      "default",
+      "default"
     )
     FriendlyIdEntry.find_or_create_entry(
       "Project",
       default_params[:domain_id],
       default_params[:project_id],
-      default_params[:project_id],
+      default_params[:project_id]
     )
   end
 
   before :each do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :check_pre_conditions_for_cronus,
+      :check_pre_conditions_for_cronus
     ).and_return(double("redirect_path").as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :ses_client_v2,
+      :ses_client_v2
     ).and_return(double("ses_client_v2").as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :ses_client,
+      :ses_client
     ).and_return(double("ses_client").as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :check_verified_identity,
+      :check_verified_identity
     ).and_return(double("render").as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :list_verified_identities,
+      :list_verified_identities
     ).and_return(double("identities").as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :get_verified_identities_by_status,
+      :get_verified_identities_by_status
     ).and_return(double("statuses").as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :ec2_creds,
+      :ec2_creds
     ).and_return(double("creds").as_null_object)
     allow_any_instance_of(EmailService::PlainEmailsController).to receive(
-      :send_plain_email,
+      :send_plain_email
     ).and_return(double("status").as_null_object)
   end
 
@@ -112,7 +112,7 @@ describe EmailService::PlainEmailsController, type: :controller do
       it "returns http 401 status" do
         get :new, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
@@ -127,7 +127,7 @@ describe EmailService::PlainEmailsController, type: :controller do
       it "not allowed" do
         get :new, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
@@ -136,8 +136,8 @@ describe EmailService::PlainEmailsController, type: :controller do
   # POST create
   describe "POST 'create'" do
     before :each do
-      @plain_email = ::EmailService::FakeFactory.new.plain_email
-      @plain_email_opts = ::EmailService::FakeFactory.new.plain_email_opts
+      @plain_email = EmailService::FakeFactory.new.plain_email
+      @plain_email_opts = EmailService::FakeFactory.new.plain_email_opts
     end
 
     context "email_admin" do
@@ -197,8 +197,8 @@ describe EmailService::PlainEmailsController, type: :controller do
       end
       it "returns http 401 status" do
         expect(
-          post(:create, params: default_params.merge(opts: @opts)),
-        ).to render_template('application/exceptions/warning')
+          post(:create, params: default_params.merge(opts: @opts))
+        ).to render_template("application/exceptions/warning")
       end
     end
 
@@ -211,8 +211,8 @@ describe EmailService::PlainEmailsController, type: :controller do
       end
       it "not allowed" do
         expect(
-          post(:create, params: default_params.merge(opts: @opts)),
-        ).to render_template('application/exceptions/warning')
+          post(:create, params: default_params.merge(opts: @opts))
+        ).to render_template("application/exceptions/warning")
       end
     end
   end

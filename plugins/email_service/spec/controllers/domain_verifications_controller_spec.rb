@@ -14,13 +14,13 @@ describe EmailService::DomainVerificationsController, type: :controller do
       "Domain",
       nil,
       default_params[:domain_id],
-      "default",
+      "default"
     )
     FriendlyIdEntry.find_or_create_entry(
       "Project",
       default_params[:domain_id],
       default_params[:project_id],
-      default_params[:project_id],
+      default_params[:project_id]
     )
   end
 
@@ -28,84 +28,72 @@ describe EmailService::DomainVerificationsController, type: :controller do
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
 
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:_nebula_request).and_return(double("response").as_null_object)
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:nebula_details).and_return(
-      double("nebula_details").as_null_object,
+      double("nebula_details").as_null_object
     )
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
-    ).to receive(:nebula_active?).and_return(
-      double("nebula_active").as_null_object,
-    )
-    allow_any_instance_of(
-      EmailService::DomainVerificationsController,
-    ).to receive(:ses_client).and_return(double("ses_client").as_null_object)
-
-    allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:list_email_identities).and_return(
-      double("identities").as_null_object,
+      double("identities").as_null_object
     )
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:email_addresses).and_return(
-      double("email_addresses").as_null_object,
+      double("email_addresses").as_null_object
     )
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:check_verified_identity).and_return(
-      double("check_verified_identity").as_null_object,
+      double("check_verified_identity").as_null_object
     )
 
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:ec2_creds).and_return(double("creds").as_null_object)
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:list_configsets).and_return(
-      double("configsets").as_null_object,
+      double("configsets").as_null_object
     )
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:ses_client_v2).and_return(
-      double("ses_client_v2").as_null_object,
+      double("ses_client_v2").as_null_object
     )
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
-    ).to receive(:ses_client).and_return(double("ses_client").as_null_object)
-    allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:verified_domain).and_return(
-      double("verified_domain").as_null_object,
+      double("verified_domain").as_null_object
     )
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:domains).and_return(double("domains").as_null_object)
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:list_configset_names).and_return(
-      double("configset_names").as_null_object,
+      double("configset_names").as_null_object
     )
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:check_pre_conditions_for_cronus).and_return(
-      double("redirect_path").as_null_object,
+      double("redirect_path").as_null_object
     )
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:check_verified_identity).and_return(double('redirect_path').as_null_object)
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:list_verified_identities).and_return(double('identities').as_null_object)
     # allow_any_instance_of(EmailService::DomainVerificationsController).to receive(:get_verified_identities_by_status).and_return(double('status').as_null_object)
     allow_any_instance_of(
-      EmailService::DomainVerificationsController,
+      EmailService::DomainVerificationsController
     ).to receive(:delete_email_identity).and_return(
-      double("status").as_null_object,
+      double("status").as_null_object
     )
   end
 
   # check index route
-  describe 'GET index' do
+  describe "GET index" do
     # check email admin role
     context "email_admin" do
       before :each do
@@ -126,7 +114,6 @@ describe EmailService::DomainVerificationsController, type: :controller do
         get :index, params: default_params
         expect(response).to render_template(:index)
         expect(response).to have_http_status(200)
-        # Rails.logger.debug "\n The response is #{response.inspect} \n"
       end
     end
 
@@ -167,7 +154,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       it "returns http 401 status" do
         get :index, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
@@ -182,7 +169,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       it "not allowed" do
         get :index, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
@@ -190,15 +177,11 @@ describe EmailService::DomainVerificationsController, type: :controller do
 
   # check new route
   describe "GET 'new'" do
-    Rails.logger.debug "\n ==============================================================\n"
-    Rails.logger.debug "\n [DomainVerificationsController][new] \n"
-    Rails.logger.debug "\n ==============================================================\n"
-
     before :each do
-      @rsa_key_length = ::EmailService::FakeFactory.new.rsa_key_length
+      @rsa_key_length = EmailService::FakeFactory.new.rsa_key_length
       @configsets_collection =
-        ::EmailService::FakeFactory.new.configsets_collection
-      @verified_domain = ::EmailService::FakeFactory.new.verified_domain
+        EmailService::FakeFactory.new.configsets_collection
+      @verified_domain = EmailService::FakeFactory.new.verified_domain
     end
 
     # check email admin role
@@ -261,7 +244,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       it "returns http 401 status" do
         get :new, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
@@ -276,7 +259,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       it "not allowed" do
         get :new, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
@@ -284,14 +267,10 @@ describe EmailService::DomainVerificationsController, type: :controller do
 
   # check create route
   describe "POST 'create'" do
-    Rails.logger.debug "\n ==============================================================\n"
-    Rails.logger.debug "\n [DomainVerificationsController][create] \n"
-    Rails.logger.debug "\n ==============================================================\n"
-
     before :each do
-      @verified_domain = ::EmailService::FakeFactory.new.verified_domain
+      @verified_domain = EmailService::FakeFactory.new.verified_domain
       @verified_domain_opts =
-        ::EmailService::FakeFactory.new.verified_domain_opts
+        EmailService::FakeFactory.new.verified_domain_opts
     end
 
     # check email admin role
@@ -341,7 +320,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
           post(
             :create,
             params: default_params.merge(verified_email: @verified_domain_opts),
-          ),
+          )
         ).to have_http_status(200)
       end
     end
@@ -360,7 +339,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       it "returns http 401 status" do
         post :create, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
@@ -375,7 +354,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       it "not allowed" do
         post :create, params: default_params
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
@@ -383,10 +362,6 @@ describe EmailService::DomainVerificationsController, type: :controller do
 
   # check delete route
   describe "DELETE#destroy" do
-    Rails.logger.debug "\n ==============================================================\n"
-    Rails.logger.debug "\n [DomainVerificationsController][delete] \n"
-    Rails.logger.debug "\n ==============================================================\n"
-
     before :each do
       @opts = EmailService::FakeFactory.new.verified_domain_opts
     end
@@ -450,7 +425,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       it "returns http 401 status" do
         delete :destroy, params: default_params.merge(id: @opts[:id])
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
@@ -465,7 +440,7 @@ describe EmailService::DomainVerificationsController, type: :controller do
       it "not allowed" do
         delete :destroy, params: default_params.merge(id: @opts[:id])
         expect(response).to render_template(
-          'application/exceptions/warning',
+          "application/exceptions/warning"
         )
       end
     end
