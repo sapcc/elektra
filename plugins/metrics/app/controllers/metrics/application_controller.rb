@@ -9,10 +9,6 @@ module Metrics
       enforce_permissions("metrics:application_list")
     end
 
-    def maia
-      redirect_to "https://maia.#{current_region}.cloud.sap/#{@scoped_domain_name}?x-auth-token=#{current_user.token}", allow_other_host: true
-    end
-
     def grafana_available
       # require "resolv"
       # dns_resolver = Resolv::DNS.new()
