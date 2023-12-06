@@ -50,8 +50,8 @@ const ResourceEditor = (props) => {
         message = <div className="col-md-4 text-muted">Unchanged</div>
       }
     }
-  } else if (readonlyReason === "cqd") {
-    message = <div className="col-md-4">Centralized quota distribution</div>
+  } else if (readonlyReason === "qd") {
+    message = <div className="col-md-4">Automatic quota distribution</div>
   } else if (isFollowing) {
     message = (
       <div className="col-md-4">

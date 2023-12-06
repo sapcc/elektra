@@ -229,7 +229,7 @@ export default class DetailsModal extends React.Component {
   }
 
   render() {
-    const { categoryName, resourceName, canEdit, canEditCQD } = this.props
+    const { categoryName, resourceName, canEdit } = this.props
     const { quota_distribution_model: qdModel } = this.props.resource
     const { isFetching, apiErrors } = this.state
 
@@ -239,11 +239,8 @@ export default class DetailsModal extends React.Component {
       ? clusterDataTableColumns
       : domainDataTableColumns
 
-    //for resources under the CQD model (centralized quota distribution), we need to:
-    //- disable editing of domain quota altogether (domain quota is automatically set to sum(project quota) in Limes)
-    //- disable editing of project quota EXCEPT for cloud admins (domain admins are not allowed to edit)
-    const canEditThisResource =
-      canEdit && (qdModel !== "centralized" || (scope.isDomain() && canEditCQD))
+    //only allow editing of resources under the HQD model (hierarchical quota distribution)
+    const canEditThisResource = canEdit && qdModel === "hierarchical"
 
     //these props are passed on to the Resource children verbatim
     const forwardProps = {
@@ -292,19 +289,10 @@ export default class DetailsModal extends React.Component {
             </p>
           ) : (
             <>
-              {canEdit && !canEditThisResource && scope.isCluster() && (
+              {canEdit && !canEditThisResource && (
                 <div className="bs-callout bs-callout-warning bs-callout-emphasize">
-                  Domain quotas are autocomputed because this resource operates
-                  under the <strong>centralized quota distribution</strong>{" "}
-                  model. Jump down into the domain level to edit project quotas
-                  directly.
-                </div>
-              )}
-              {canEdit && !canEditThisResource && scope.isDomain() && (
-                <div className="bs-callout bs-callout-warning bs-callout-emphasize">
-                  Editing of project quotas is restricted to cloud admins
-                  because this resource operates under the{" "}
-                  <strong>centralized quota distribution</strong> model.
+                  This resource uses automatic quota distribution.
+                  Quotas cannot be edited manually.
                 </div>
               )}
 
