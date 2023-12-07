@@ -69,6 +69,12 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
     brew install chruby
     ```
 
+    Ensure to implement the necessary changes in your .bashrc or .zshrc according to brew:
+
+    ```bash
+    https://formulae.brew.sh/formula/chruby
+    ```
+
 4.  [Install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed. (current working version 12.22.6 but higher versions works also fine)
 
     ```bash
