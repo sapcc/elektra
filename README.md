@@ -68,60 +68,65 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
     ```bash
     brew install chruby
     ```
+    Ensure that you update your .bashrc or .zshrc to the entries that homebrew suggests:
 
-4.  [Install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed. (current working version 12.22.6 but higher versions works also fine)
+    ```bash
+    https://formulae.brew.sh/formula/chruby
+    ```
+
+5.  [Install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed. (current working version 12.22.6 but higher versions works also fine)
 
     ```bash
     brew install nodejs@12
     brew link nodejs@12
     ```
 
-5.  [Install](https://yarnpkg.com/en/docs/install) **yarn** (actual version is 1.19.2 but higher works also fine)
+6.  [Install](https://yarnpkg.com/en/docs/install) **yarn** (actual version is 1.19.2 but higher works also fine)
 
     ```bash
     brew install yarn@1.19.2
     ```
 
-6.  Clone this repository to your machine.
+7.  Clone this repository to your machine.
 
     ```bash
     git clone https://github.com/sapcc/elektra.git
     ```
 
-7.  Install **bundler**
+8.  Install **bundler**
     Cd into elektra/ directory and run:
 
     ```bash
     gem install bundler -v 2.3.13 (check for the actual version)
     ```
 
-8.  Compile and install elektra gems
+9.  Compile and install elektra gems
     Cd into elektra/ directory and run:
 
     ```bash
     bundle install
     ```
 
-9.  Compile and install node modules
+10.  Compile and install node modules
     Cd into elektra/ directory and run:
 
     ```bash
     bundle exec yarn
     ```
 
-10. Create, migrate and seed the database
+11. Create, migrate and seed the database
     Cd into elektra/ directory and run:
 
     ```bash
     bundle exec rake db:create db:migrate db:seed
     ```
 
-11. Copy the **env.sample** file to a **.env** file and adjust the values
+12. Copy the **env.sample** file to a **.env** file and adjust the values
 
     - Set the MONSOON*OPENSTACK_AUTH_API*\* values to your devstack/openstack configuration settings
     - Enter the database configuration parameters
 
-12. Start the Elektra dashboard application
+13. Start the Elektra dashboard application
     a. Run rails puma server
 
     ```bash
