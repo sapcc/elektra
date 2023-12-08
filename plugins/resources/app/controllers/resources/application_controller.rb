@@ -133,7 +133,15 @@ module Resources
       # https://migration-recommender-service.cca-pro.cerebro.c.eu-de-1.cloud.sap/public/docs#/default/get_placeable_vm_for_project_api_v1_placeable_vm_project__openstack_project_id__get
       require "net/http"
       begin
-        uri = URI("https://migration-recommender-service.cca-pro.cerebro.c.#{current_region}.cloud.sap/public/api/v1/placeable-vm/project/#{@scoped_project_id}")
+
+        cerebro_endpoint = "https://migration-recommender-service.cca-pro.cerebro.c.#{current_region}.cloud.sap/public/api/v1/placeable-vm/project/#{@scoped_project_id}"
+        if ENV.key?("CEREBRO_CUSTOM_ENDPOINT") 
+          unless ENV["CEREBRO_CUSTOM_ENDPOINT"].empty? || ENV["CEREBRO_CUSTOM_ENDPOINT"].blank?
+            cerebro_endpoint = "#{ENV["CUSTOM_CEREBRO_ENDPOINT"]}/public/api/v1/placeable-vm/project/#{@scoped_project_id}"
+          end
+        end
+        
+        uri = URI(cerebro_endpoint)
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
         if ENV.key?("ELEKTRA_SSL_VERIFY_PEER") &&
