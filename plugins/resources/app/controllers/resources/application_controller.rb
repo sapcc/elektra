@@ -137,7 +137,7 @@ module Resources
         cerebro_endpoint = "https://migration-recommender-service.cca-pro.cerebro.c.#{current_region}.cloud.sap/public/api/v1/placeable-vm/project/#{@scoped_project_id}"
         if ENV.key?("CEREBRO_CUSTOM_ENDPOINT") 
           unless ENV["CEREBRO_CUSTOM_ENDPOINT"].empty? || ENV["CEREBRO_CUSTOM_ENDPOINT"].blank?
-            cerebro_endpoint = "#{ENV["CUSTOM_CEREBRO_ENDPOINT"]}/public/api/v1/placeable-vm/project/#{@scoped_project_id}"
+            cerebro_endpoint = "#{ENV['CEREBRO_CUSTOM_ENDPOINT']}/public/api/v1/placeable-vm/project/#{@scoped_project_id}"
           end
         end
         
