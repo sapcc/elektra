@@ -75,15 +75,9 @@ export default class EditModal extends React.Component {
           inputs[res.name].isFollowing = true
         }
       }
-      //disable editing for CQD resources if the respective permission is not given
-      if (res.quota_distribution_model === "centralized") {
-        if (scope.isProject() && !props.canEditCQD) {
-          //project quota can only be edited with the canEditCQD permission
-          inputs[res.name].readonlyReason = "cqd"
-        } else if (scope.isDomain()) {
-          //domain quota cannot be edited at all
-          inputs[res.name].readonlyReason = "cqd"
-        }
+      //disable editing for non-HQD resources
+      if (res.quota_distribution_model !== "hierarchical") {
+        inputs[res.name].readonlyReason = "qd"
       }
     }
 
@@ -442,7 +436,7 @@ export default class EditModal extends React.Component {
 
     let hasInputErrors = false
     let hasAllReadonly = true
-    let showCQDExplainer = false
+    let showQDExplainer = false
     let canSubmit = true
     let hasCheckErrors = false
     let requestRequiredCount = 0
@@ -454,8 +448,8 @@ export default class EditModal extends React.Component {
       if (input.readonlyReason === "") {
         hasAllReadonly = false
       }
-      if (input.readonlyReason === "cqd") {
-        showCQDExplainer = true
+      if (input.readonlyReason === "qd") {
+        showQDExplainer = true
       }
       if (!input.checkResult) {
         canSubmit = false
@@ -486,34 +480,6 @@ export default class EditModal extends React.Component {
       )
     }
 
-    let cqdExplainer = null
-    if (showCQDExplainer) {
-      if (scope.isDomain()) {
-        cqdExplainer = (
-          <span className="cqd-explanation">
-            Some or all resources in this category operate under the{" "}
-            <strong>centralized quota distribution</strong> model. For those
-            resources, all projects are provided with a generous amount of
-            default quota, but extensions can only be approved by cloud admins.
-            Domain quota <strong>cannot be edited</strong> for those resources:
-            It is always set equal to the sum of all project quotas.
-          </span>
-        )
-      } else if (scope.isProject()) {
-        cqdExplainer = (
-          <span className="cqd-explanation">
-            Some or all resources in this category operate under the{" "}
-            <strong>centralized quota distribution</strong> model. For those
-            resources, all projects are provided with a generous amount of
-            default quota, but extensions can only be approved by cloud admins.
-            To request a quota extension, please{" "}
-            <strong>open a ServiceNow ticket</strong> and include a technical
-            justification why your project needs more quota than the default amount.
-          </span>
-        )
-      }
-    }
-
     //NOTE: className='resources' on Modal ensures that plugin-specific CSS rules get applied
     return (
       <Modal
@@ -531,9 +497,13 @@ export default class EditModal extends React.Component {
         </Modal.Header>
 
         <Modal.Body>
-          {showCQDExplainer && (
+          {showQDExplainer && (
             <div className="bs-callout bs-callout-warning bs-callout-emphasize">
-              {cqdExplainer}
+              <span className="cqd-explanation">
+                Some or all resources in this category operate under an
+                automatic quota distribution model. For those resources, quota
+                cannot be edited manually.
+              </span>
             </div>
           )}
           {this.state.apiErrors && <FormErrors errors={this.state.apiErrors} />}
