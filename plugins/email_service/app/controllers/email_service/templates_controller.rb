@@ -4,15 +4,14 @@ module EmailService
   # TemplatesController
   class TemplatesController < ::EmailService::ApplicationController
     before_action :check_pre_conditions_for_cronus
-    before_action :set_template, only: %i[new show edit]
+    before_action :set_template, only: %i[show edit]
+    before_action :template, only: %i[new create]
 
     authorization_context "email_service"
     authorization_required
 
     def index
       @templates = templates
-      Rails.logger.debug "templates count #{@templates.count}"
-      Rails.logger.debug "templates empty? #{@templates.empty?}"
       items_per_page = 10
       unless @templates.empty?
         @paginatable_templates =
@@ -35,12 +34,11 @@ module EmailService
       ] = "#{I18n.t("email_service.errors.template_show_error")} #{e.message}"
     end
 
-    def new; end
+    def new;end
 
     def edit; end
 
     def create
-      @template = template_form(template_params)
       return render action: "new", locals: { data: { modal: true } } unless @template.valid?
 
       status = create_email_template(@template)
@@ -92,9 +90,6 @@ module EmailService
 
     private
 
-    def template_form(attributes = {})
-      EmailService::Template.new(attributes)
-    end
 
     def set_template
       @template = find_email_template(params[:name])
@@ -112,5 +107,14 @@ module EmailService
         {}
       end
     end
+
+    def template_form(attributes = {})
+      EmailService::Template.new(attributes)
+    end
+
+    def template
+      @template = template_form(template_params)
+    end
+
   end
 end

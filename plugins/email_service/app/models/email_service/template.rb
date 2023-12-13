@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module EmailService
-  class Template < ::Core::ServiceLayer::Model
+  class Template
     include Virtus.model
     extend ActiveModel::Naming
     include ActiveModel::Conversion
@@ -39,3 +39,4 @@ module EmailService
     end
   end
 end
+  

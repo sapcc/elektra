@@ -1410,7 +1410,7 @@ module EmailService
     end
 
     #
-    ### templates v3
+    ### templates v3 -- [START]
     def create_email_template(template)
       begin
         options = {
@@ -1506,6 +1506,8 @@ module EmailService
     def delete_email_template(name)
       ses_client_v2.delete_email_template({ template_name: name })
     end
+
+    ### templates v3 -- [END]
 
     def create_import_job(_options = {})
       options = {
