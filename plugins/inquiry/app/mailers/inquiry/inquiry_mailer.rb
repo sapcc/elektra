@@ -39,6 +39,7 @@ module Inquiry
           subject += "/#{@inquiry.tags["domain_name"]}"
         end
       end
+      # this is called from the model, first try with all emails at once, if a error occurs, try to send each email separately
       mail(to: processor_emails, subject: subject, content_type: "text/html")
     end
 
@@ -63,6 +64,7 @@ module Inquiry
           subject += "/#{@inquiry.tags["domain_name"]}"
         end
       end
+      # this is called from the model, first try with all emails at once, if a error occurs, try to send each email separately
       mail(to: receiver_emails, subject: subject, content_type: "text/html")
     end
 
