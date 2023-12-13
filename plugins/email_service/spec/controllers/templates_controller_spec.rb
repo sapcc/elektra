@@ -244,10 +244,10 @@ describe EmailService::TemplatesController, type: :controller do
           token
         end
       end
-      it "returns http 302 status" do
+      it "returns http 200 status" do
         expect(
           post(:create, params: default_params.merge(opts: @opts)),
-        ).to have_http_status(302)
+        ).to have_http_status(200)
       end
     end
 
@@ -266,10 +266,10 @@ describe EmailService::TemplatesController, type: :controller do
           token
         end
       end
-      it "returns http 302 status" do
+      it "returns http 200 status" do
         expect(
           post(:create, params: default_params.merge(opts: @opts)),
-        ).to have_http_status(302)
+        ).to have_http_status(200)
       end
     end
 
