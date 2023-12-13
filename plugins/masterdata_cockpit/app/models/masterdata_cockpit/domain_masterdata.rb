@@ -84,13 +84,11 @@ module MasterdataCockpit
         {
           "domain_id" => read("domain_id"),
           "domain_name" => read("domain_name"),
-          "description" => read("description"),
-          "additional_information" => read("additional_information"),
-          "responsible_primary_contact_id" =>
-            read("responsible_primary_contact_id"),
-          "responsible_primary_contact_email" =>
-            read("responsible_primary_contact_email"),
-        }.delete_if { |_k, v| v.blank? }
+          "description" => read("description") || "",
+          "additional_information" => read("additional_information") || "",
+          "responsible_primary_contact_id" => read("responsible_primary_contact_id") || "",
+          "responsible_primary_contact_email" => read("responsible_primary_contact_email") || "",
+        }
 
       if read("projects_can_inherit") == "true"
         params["cost_object"] = { "cost_object_projects_can_inherit" => true }
