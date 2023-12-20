@@ -134,8 +134,6 @@ module EmailService
     end
 
     def process_domain_verification(verified_domain)
-      status = nil
-
       create_email_identity_domain(verified_domain)
     end
 

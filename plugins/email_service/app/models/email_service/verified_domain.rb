@@ -30,7 +30,7 @@ module EmailService
     strip_attributes
 
     validates_presence_of :identity_name, message: "domain name can't be empty"
-    validates :identity_name, presence: true, domain: true
+    validates :identity_name, presence: true #, domain: true
 
     module KeyLength
       RSA_1024_BIT = 'RSA_1024_BIT'

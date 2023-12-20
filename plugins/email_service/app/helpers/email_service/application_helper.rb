@@ -574,6 +574,13 @@ module EmailService
       verification_status
     end
 
+    def token_to_instructions(tokens)
+      msg = ""
+      return if tokens.nil? || tokens.empty?
+      tokens.each { |x| msg += "[#{x}._domainkey.example.com CNAME #{x}.dkim.amazonses.com ]" }
+      msg
+    end
+
     #
     # PlainEmail
     #
