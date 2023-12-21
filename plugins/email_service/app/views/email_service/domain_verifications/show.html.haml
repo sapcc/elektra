@@ -3,6 +3,8 @@
 .modal-body.static-columns
   .modal-section.first
     - if @verified_domain
+      - dkim_status = @verified_domain[:dkim_attributes][:status]
+      - dkim_tokens = @verified_domain[:dkim_attributes][:tokens]
       %table.table
         %tr
           %td
@@ -44,7 +46,13 @@
             %td
               %strong status:
             %td
-              =@verified_domain[:dkim_attributes][:status]
+              = dkim_status
+          - if dkim_status == 'PENDING' || 'FAILED' && !dkim_tokens.empty?   
+            %tr
+              %td
+                %strong (PENDING) INSTRUCTIONS:
+              %td
+                = token_to_instructions(dkim_tokens) 
           %tr
             %td
               %strong tokens:
