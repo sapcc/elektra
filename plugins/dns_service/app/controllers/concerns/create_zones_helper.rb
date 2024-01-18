@@ -89,7 +89,12 @@ module CreateZonesHelper
     update_limes_data(source_domain_id,source_project_id)
     
     # update zone limits for this project if needed
-    check_and_increase_quota(source_domain_id,source_project_id, "zones")
+    check_and_increase_quota(
+      source_domain_id,
+      source_project_id, 
+      "zones",
+      2
+    )
     # update recordset limits for this project if needed
     check_and_increase_quota(
       source_domain_id,

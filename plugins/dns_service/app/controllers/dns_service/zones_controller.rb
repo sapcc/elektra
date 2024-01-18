@@ -145,35 +145,8 @@ module DnsService
     end
 
     def create
-      # # check for existing zone
-      # zone_name = params[:zone][:name]
-      # # find the project id of this zone name
-      # target_project = find_parent_zone_project(zone_name, @scoped_project_id)
-      
-      # @zone = services.dns_service.zones(name: zone_name)[:items].first
-      # if @zone
-      #   @zone.errors.add("Error", "Zone already existing")
-      #   render action: :new
-      #   return
-      # else
-      #   adjust_resource_limits(
-      #     @scoped_domain_id, @scoped_project_id, target_project&.domain_id, target_project&.id
-      #   )
-      #   @zone = services.dns_service.new_zone(params[:zone])
-      # end
-      # @zone.project_id(target_project&.id)
 
-      # if @zone.save
-      #   transfer_zone_if_needed(@zone, @scoped_project_id, target_project&.id)
-      #   flash.now[:notice] = "Zone successfully created."
-      #   respond_to do |format|
-      #     format.html { redirect_to zones_url }
-      #     format.js { render "create", formats: :js }
-      #   end
-      # else
-      #   render action: :new
-      # end
-
+      # create_zone is located in the concerns/create_zone_helpers
       @zone = create_zone(params[:zone][:name],params[:zone], @scoped_domain_id, @scoped_project_id)
   
       # do not use @zone.valid? 
