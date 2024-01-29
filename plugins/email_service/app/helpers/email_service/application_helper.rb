@@ -88,6 +88,70 @@ module EmailService
       end
     end
 
+    def available_regions
+      ["na-us-1","na-ca-1","ap-au-1","ap-jp-1","eu-de-1","eu-de-2","la-br-1","ap-sa-2"]
+    end
+
+    def region_details
+      [
+        {
+          "na-us-1": { 
+          "ccloud_location": "Virginia (Sterling)", 
+          "aws_region": "us-east-1",
+          "aws_location": "US East (N. Virginia)",
+          "sending_enabled": "true",
+        }},
+        {
+          "na-ca-1": { 
+          "ccloud_location": "Toronto", 
+          "aws_region": "ca-central-1",
+          "aws_location": "Cananda (Central)",
+          "sending_enabled": "false",
+        }},
+        {
+          "ap-au-1": { 
+          "ccloud_location": "Sydney", 
+          "aws_region": "ap-southeast-2",
+          "aws_location": "Asia Pacific (Sydney)",
+          "sending_enabled": "false",
+        }},
+        {
+          "ap-jp-1": { 
+          "ccloud_location": "Tokyo", 
+          "aws_region": "ap-northeast-1",
+          "aws_location": "Asia Pacific (Tokyo)",
+          "sending_enabled": "false",
+        }},
+        {
+          "eu-de-1": { 
+          "ccloud_location": "Rot", 
+          "aws_region": "eu-west-1",
+          "aws_location": "Europe (Ireland)",
+          "sending_enabled": "true",
+        }},
+        {
+          "eu-de-2": { 
+          "ccloud_location": "Frankfurt", 
+          "aws_region": "eu-central-1",
+          "aws_location": "Europe (Frankfurt)",
+          "sending_enabled": "false",
+        }},
+        {
+          "la-br-1": { 
+          "ccloud_location": "Saõ Paulo", 
+          "aws_region": "sa-east-1",
+          "aws_location": "South America (São Paulo)",
+          "sending_enabled": "false",
+        }},
+        {
+          "ap-sa-2": { 
+          "ccloud_location": "Dammam", 
+          "aws_region": "me-south-1",
+          "aws_location": "Middle East (Bahrain)",
+          "sending_enabled": "false",
+        }},
+      ]
+    end
     def account_env_collection
       %w[PROD QA DEV DEMO TRAIN SANDBOX LAB]
     end
@@ -223,7 +287,8 @@ module EmailService
     def ses_client_v2
       @region ||= map_region(@cronus_region)
       @endpoint ||= email_service_url
-
+      Rails.logger.debug(" [application_helper][ses_client_v2] region: #{@region}")
+      Rails.logger.debug(" [application_helper][ses_client_v2] endpoint: #{@endpoint}")
       unless !ec2_creds || ec2_creds.nil?
         begin
           @credentials ||=

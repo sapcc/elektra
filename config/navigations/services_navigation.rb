@@ -427,7 +427,11 @@ SimpleNavigation::Configuration.run do |navigation|
                    class: "fancy-nav-header",
                    "data-icon": "service-icon",
                  },
-                 if: -> { plugin_available?(:email_service) } do |services_nav|
+                 if: 
+                  lambda {
+                     services.available?(:email_service) and
+                       plugin_available?(:email_service)
+                   } do |services_nav|
       services_nav.item :email_service,
                         "Email",
                         -> { plugin("email_service").index_path },
