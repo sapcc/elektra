@@ -25,10 +25,13 @@ const Tabs = ({ match, location, history, tabsConfig, ...otherProps }) => {
         className={"tab-pane " + (active ? "active" : "")}
         key={`panel_${index}`}
       >
-        {React.createElement(
-          tab.component,
-          Object.assign({}, { active, match, location, history }, otherProps)
-        )}
+        {React.createElement(tab.component, {
+          active,
+          match,
+          location,
+          history,
+          ...otherProps,
+        })}
       </div>
     )
   }
