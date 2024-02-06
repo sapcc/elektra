@@ -8,7 +8,7 @@ module Image
 
       def index
         per_page = (params[:per_page] || 20).to_i
-        options = { sort_key: "name", limit: per_page + 1 }
+        options = { sort: "created_at:desc",limit: per_page + 1 }
         options[:marker] = params[:marker] if params[:marker]
 
         options[:visibility] = params[:visibility] if params[:visibility]
@@ -19,6 +19,7 @@ module Image
 
 
         images = services.image.images(options)
+        
         if params[:type] == "suggested"
           images = images.select { |i| i.owner != @scoped_project_id }
         end
