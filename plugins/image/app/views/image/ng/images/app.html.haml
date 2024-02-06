@@ -5,6 +5,7 @@
     scoped_domain_name: @scoped_domain_name,
     launch_instance_url: plugin('compute').new_instance_path}
 
+
 %div.buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Close

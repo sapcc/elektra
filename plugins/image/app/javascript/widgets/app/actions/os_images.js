@@ -11,6 +11,11 @@ const ajaxHelper = pluginAjaxHelper("image")
 export default (type) => {
   const constants = imageConstants(type)
 
+  const setActiveVisibilityFilter = (visibility) => ({
+    type: constants.SET_ACTIVE_VISIBILITY,
+    visibility,
+  })
+
   //################### IMAGES #########################
   const requestOsImages = () => ({
     type: constants.REQUEST_IMAGES,
@@ -42,9 +47,18 @@ export default (type) => {
   const fetchOsImages = () =>
     function (dispatch, getState) {
       dispatch(requestOsImages())
-      const { items } = getState()[type]
-      const marker = items.length > 0 ? items[items.length - 1] : null
-      const params = { type }
+      const { items, activeVisibilityFilter } = getState()[type]
+
+      let visibilityImages = activeVisibilityFilter
+        ? items.filter((i) => i.visibility === activeVisibilityFilter)
+        : items
+
+      const marker =
+        visibilityImages.length > 0
+          ? visibilityImages[visibilityImages.length - 1]
+          : null
+      const params = { type, per_page: 50 }
+      if (activeVisibilityFilter) params["visibility"] = activeVisibilityFilter
       if (marker) params["marker"] = marker.id
 
       return ajaxHelper
@@ -70,9 +84,10 @@ export default (type) => {
   const loadNext = () =>
     function (dispatch, getState) {
       let state = getState()[type]
+      let hasNext = state.hasNext[state.activeVisibilityFilter]
 
-      if (!state.isFetching && state.hasNext) {
-        dispatch(fetchOsImages(state.currentPage + 1)).then(() => {
+      if (!state.isFetching && hasNext) {
+        dispatch(fetchOsImages()).then(() => {
           // load next if search modus (searchTerm is presented)
           dispatch(loadNextOnSearch(state.searchTerm))
         })
@@ -96,6 +111,10 @@ export default (type) => {
     }
   const shouldFetchOsImages = function (state) {
     const osImages = state[type]
+    const imagesCount =
+      osImages.visibilityCounts?.[osImages.activeVisibilityFilter] || 0
+
+    if (imagesCount === 0 && !osImages.isFetching) return true
     if (osImages.isFetching || osImages.requestedAt) {
       return false
     } else {
@@ -249,5 +268,6 @@ export default (type) => {
     searchOsImages,
     loadNext,
     updateImageVisibility,
+    setActiveVisibilityFilter,
   }
 }

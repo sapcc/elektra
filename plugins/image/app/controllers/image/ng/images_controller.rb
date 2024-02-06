@@ -10,10 +10,13 @@ module Image
         per_page = (params[:per_page] || 20).to_i
         options = { sort_key: "name", limit: per_page + 1 }
         options[:marker] = params[:marker] if params[:marker]
+
+        options[:visibility] = params[:visibility] if params[:visibility]
         if params[:type] == "suggested"
           options[:member_status] = "pending"
           options[:visibility] = "shared"
         end
+
 
         images = services.image.images(options)
         if params[:type] == "suggested"
