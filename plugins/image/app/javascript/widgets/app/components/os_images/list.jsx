@@ -51,6 +51,7 @@ const List = ({
     )
   }, [items, searchTerm, activeVisibilityFilter])
 
+  if (!active) return null
   return (
     <div>
       <div className="toolbar">
