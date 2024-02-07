@@ -33,6 +33,7 @@ const Item = (props) => {
 
   return (
     <tr className={image.isDeleting || image.isFetching ? "updating" : ""}>
+      <td className="info-text small">{props.number}</td>
       <td className="snug">
         <ImageIcon image={image} />
         {policy.isAllowed("image:image_owner", { image }) && <OwnerIcon />}

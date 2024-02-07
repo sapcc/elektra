@@ -78,7 +78,7 @@ const List = ({
             ))}
           </>
         )}
-        <div style={{ display: "flex", flexGrow: 1, justifyContent: "end" }}>
+        {/* <div style={{ display: "flex", flexGrow: 1, justifyContent: "end" }}>
           {isFetching ? (
             <div>
               <span className="spinner" />
@@ -87,7 +87,7 @@ const List = ({
             visibilityCounts[activeVisibilityFilter] || 0
           )}{" "}
           Images
-        </div>
+        </div> */}
       </div>
       {!policy.isAllowed("image:image_list") ? (
         <span>You are not allowed to see this page</span>
@@ -96,6 +96,7 @@ const List = ({
           <table className="table shares">
             <thead>
               <tr>
+                <th>#</th>
                 <th></th>
                 <th>Name</th>
                 <th>Format</th>
@@ -117,6 +118,7 @@ const List = ({
                           handleAccept={handleAccept}
                           handleReject={handleReject}
                           activeTab={activeTab}
+                          number={index + 1}
                         />
                       </TableRowFadeTransition>
                     )

@@ -181,8 +181,7 @@ module Compute
       private_flavors = []
       flavors.each do |flavor|
         if flavor.public?
-          if flavor.name =~ /^baremetal/ || flavor.name =~ /^zh/ ||
-               flavor.name =~ /^zg/
+          if flavor.name =~ /^(baremetal|zg|zh|bg_|bm_)/
             public_flavors_baremetal << flavor
           else
             public_flavors_vmware << flavor
