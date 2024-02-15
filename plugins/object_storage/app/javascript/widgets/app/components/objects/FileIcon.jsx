@@ -11,6 +11,9 @@ const FileIcon = ({ item }) => {
   } else if (item.content_type && item.content_type.startsWith("text/")) {
     iconName = "fa-file-text-o"
     title = "Text"
+  } else if (item.content_type && item.content_type.startsWith("video/")) {
+    iconName = "fa-file-video-o"
+    title = "Video"
   } else if (item.content_type && item.content_type === "application/pdf") {
     iconName = "fa-file-pdf-o"
     title = "PDF"

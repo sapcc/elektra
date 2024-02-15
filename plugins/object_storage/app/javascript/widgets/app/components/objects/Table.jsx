@@ -62,7 +62,9 @@ const Table = ({
           )}
           <FileIcon item={item} />
 
-          {/^text\/.*$/.test(item.content_type) ? (
+          {/(^text\/.*|^video\/.*|^image\/.*|application\/(json|javascript|pdf))$/.test(
+            item.content_type
+          ) ? (
             <a href={rawUrl(item)} target="_blank" rel="noreferrer">
               {item.display_name}
             </a>

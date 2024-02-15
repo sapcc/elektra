@@ -65,8 +65,32 @@ class OsApiController < ::AjaxController
     end
 
     if params[:inline]
-      headers["Content-Disposition"] = "inline"
-      render inline: elektron_response.body
+      # # headers["Content-Disposition"] = "inline"
+      # # headers["Content-Type"] = elektron_response.header["Content-Type"]
+      # # headers["Content-Transfer-Encoding"]="binary"
+      # # headers["Content-Length"]= elektron_response.header["Content-Length"]
+      # # byebug
+      # # if elektron_response.body.is_a?(Hash)
+      # #   return render plain: elektron_response.body.to_json
+      # # end
+      # # render plain: elektron_response.body.to_s
+      # elektron_response.header.each_header do |key, value|
+      #   headers[key] = value
+      # end
+      # send_data elektron_response.body, disposition: "inline"
+      # #render plain: elektron_response.body
+      if elektron_response.header["Content-Type"].include?("application/json")
+        render plain: elektron_response.body.to_json
+      elsif elektron_response.header["Content-Type"].include?("application/octet-stream") ||
+        elektron_response.header["Content-Type"].include?("application/pdf") || 
+        elektron_response.header["Content-Type"].start_with?("audio") || 
+        elektron_response.header["Content-Type"].start_with?("image")  
+        send_data elektron_response.body, disposition: "inline", type: elektron_response.header["Content-Type"]
+      elsif elektron_response.header["Content-Type"].start_with?("video") 
+        send_data elektron_response.body, disposition: "inline", type: elektron_response.header["Content-Type"]
+      else
+        render plain: elektron_response.body 
+      end
     else
       render json: elektron_response.body, status: elektron_response.header.code
     end
