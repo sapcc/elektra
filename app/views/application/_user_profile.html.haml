@@ -8,40 +8,45 @@
 
           %h4.modal-title My Profile
         .modal-body
-          %table.table.no-borders
-            %tbody
-              %tr
-                %th.text-nobreak Name
-                %td= current_user.name
-              %tr
-                %th.text-nobreak Full Name
-                %td= current_user.full_name
-              %tr
-                %th.text-nobreak Current Scope
-                %td
-                  %b Domain:
-                  = current_user.project_domain_name || current_user.domain_name
-                  %br
-                  %b Project:
-                  = current_user.project_name
-                  %br
-                  %b Assigned Roles:
-                  = current_user.role_names.join(', ')
-                  - if @scoped_project_id && current_user.is_allowed?('identity:project_member_list')
-                    %br
-                    = link_to 'edit role assignments', plugin('identity').projects_role_assignments_path
-              %tr
-                %th.text-nobreak Sync password
-                %td
-                  %p
-                    If your global SAP password has changed you can sync it with the dashboard here.
-                    Mostly this is needed if you access your machines via jump server.
-                    Please click on the button below and enter the new password.
-                  %p
-                    = link_to "Sync password", monsoon_openstack_auth.login_path(domain_fid: @scoped_domain_fid || params[:domain_id],
-                      domain_name: @scoped_domain_name,
-                      after_login: (request.base_url + request.original_fullpath),
-                      password_sync: true), class: 'btn btn-primary'
+          .profile
+
+            .info
+              %table.table.no-borders
+                %tbody
+                  %tr
+                    %th.text-nobreak Name
+                    %td= current_user.name
+                  %tr
+                    %th.text-nobreak Full Name
+                    %td= current_user.full_name
+                  %tr
+                    %th.text-nobreak Current Scope
+                    %td
+                      %b Domain:
+                      = current_user.project_domain_name || current_user.domain_name
+                      %br
+                      %b Project:
+                      = current_user.project_name
+                      %br
+                      %b Assigned Roles:
+                      = current_user.role_names.join(', ')
+                      - if @scoped_project_id && current_user.is_allowed?('identity:project_member_list')
+                        %br
+                        = link_to 'edit role assignments', plugin('identity').projects_role_assignments_path
+                  %tr
+                    %th.text-nobreak Sync password
+                    %td
+                      %p
+                        If your global SAP password has changed you can sync it with the dashboard here.
+                        Mostly this is needed if you access your machines via jump server.
+                        Please click on the button below and enter the new password.
+                      %p
+                        = link_to "Sync password", monsoon_openstack_auth.login_path(domain_fid: @scoped_domain_fid || params[:domain_id],
+                          domain_name: @scoped_domain_name,
+                          after_login: (request.base_url + request.original_fullpath),
+                          password_sync: true), class: 'btn btn-primary'
+            .picture
+              %img{src: url_for_avatar(140), async: true, loading:"lazy"}              
 
 
         .modal-footer

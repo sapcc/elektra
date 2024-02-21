@@ -7,11 +7,11 @@ module UrlHelper
     return "https://#{servicename}.#{region}.#{request.domain}/"
   end
 
-  def url_for_avatar
+  def url_for_avatar(size=24)
     begin
-      return eval('"' + ENV["MONSOON_DASHBOARD_AVATAR_URL"] + '"')
+      return eval('"' + ENV["MONSOON_DASHBOARD_AVATAR_URL"] + '"').gsub(/size=24x24/, "s=#{size.to_s}x#{size.to_s}")
     rescue StandardError
-      "https://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(current_user.email ? current_user.email : "")}?d=mm&size=24x24"
+      "https://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(current_user.email ? current_user.email : "")}?d=mm&s=#{size.to_s}"
     end
   end
 end
