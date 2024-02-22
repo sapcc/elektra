@@ -50,11 +50,9 @@ module ViewHelper
       # "#{project} (#{project_name})"
       unless project_name.blank?
         concat project_name.to_s
-        concat content_tag :br
+        concat tag :br
       end
-      concat content_tag :span, class: "info-text" do
-        project.to_s
-      end
+      content_tag :span, project.to_s, class: "info-text"
     else
       "N/A"
     end
@@ -78,7 +76,7 @@ module ViewHelper
         concat domain_name.to_s
         concat content_tag :br
       end
-      concat content_tag :span, class: "info-text" do
+      content_tag :span, class: "info-text" do
         domain.to_s
       end
     else
