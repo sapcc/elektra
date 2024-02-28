@@ -4,15 +4,12 @@
 
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"suppression-list-pane"}
+  - if @suppressed_destinations && @suppressed_destinations.length > 0
     %h3
-      - if @suppressed_destinations.length > 0
-        Suppression List
-      - else 
-        No Suppression emails added to your account
+      Suppression List
     .row
       .col-sm-9
-        - if @suppressed_destinations
-          = render partial: 'table_suppression_list',locals: { suppression_list: @suppressed_destinations }
+        = render partial: 'table_suppression_list',locals: { suppression_list: @suppressed_destinations }
       .col-sm-3
         .bs-callout.bs-callout-primary.toolbar-aligment
           %p
@@ -21,3 +18,6 @@
             and you can find How-To guides
             = link_to "here", "#{sap_url_for('documentation')}docs/customer/services/email-service/email-serv-howto", :target => "_blank"
             \.
+  - else
+    %h3
+      No Suppression emails added to your account

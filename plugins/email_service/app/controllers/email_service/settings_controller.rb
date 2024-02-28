@@ -13,6 +13,7 @@ module EmailService
       # @nebula_status = nebula_status
       # @nebula_endpoint = nebula_endpoint_url
       @aws_account_details = aws_account_details
+      @cronus_account_details = cronus_account_details
       # @deliverability_dashboard_options = get_deliverability_dashboard_options
       # rescue Elektron::Errors::ApiResponse, StandardError => e
       #   error =

@@ -47,9 +47,19 @@ describe EmailService::SettingsController, type: :controller do
     allow_any_instance_of(EmailService::SettingsController).to receive(
       :get_configset,
     ).and_return(double('configset').as_null_object)
+
+    allow_any_instance_of(EmailService::SettingsController).to receive(
+      :aws_account_details,
+    ).and_return(double('aws_details').as_null_object)
+
+    allow_any_instance_of(EmailService::SettingsController).to receive(
+      :cronus_account_details,
+    ).and_return(double('cronus_details').as_null_object)
+
     allow_any_instance_of(EmailService::SettingsController).to receive(
       :check_pre_conditions_for_cronus,
     ).and_return(double('redirect_path').as_null_object)
+
   end
 
   # check index route
