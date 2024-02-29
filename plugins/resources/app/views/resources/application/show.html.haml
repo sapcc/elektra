@@ -6,7 +6,8 @@
 - if qa? && current_user.is_allowed?('resources:project:edit', {selected: {domain_id: @scoped_domain_id, project_id: @scoped_project_id} })
   .bs-callout.info.bs-callout-info.bs-callout-emphasize
     This is the old UI, allowing direct editing of quotas. However, for managing committed resources, please use the 
-    =link_to plugin("resources").v2_path  do 
+    - url = @scope == 'domain' ? plugin("resources").v2_domain_path : plugin("resources").v2_project_path
+    =link_to url  do 
       %span.label.label-info="new UI"
   
 - if @project_override || @domain_override || @cluster_override
