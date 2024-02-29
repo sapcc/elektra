@@ -384,7 +384,7 @@ SimpleNavigation::Configuration.run do |navigation|
                             proc { params[:controller][%r{resources/[^v2].*}] }    
       monitoring_nav.item :resources,
                             capture { concat "Resource Management "; concat content_tag(:span, "NEW", class:"label label-info")},
-                            -> { plugin("resources").v2_path },
+                            -> { plugin("resources").v2_project_path },
                             if: -> { current_region.start_with?("qa-") },
                             highlights_on:
                               proc { params[:controller][%r{resources/v2}] }                                            

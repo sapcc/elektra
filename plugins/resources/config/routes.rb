@@ -19,7 +19,9 @@ Resources::Engine.routes.draw do
   
   get "/cluster/current" => "application#cluster", :as => "cluster"
   
-  get "/v2" => "v2#show", :as => "v2"
+  get "/v2-project" => "v2#project", :as => "v2_project"
+
+  get "/v2-domain" => "v2#domain", :as => "v2_domain"
 
   ##############################################################################
   # quota request workflows
