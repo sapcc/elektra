@@ -3,7 +3,7 @@
   = @scope.titleize
   Resources
 
-- if qa? && current_user.is_allowed?('resources:project:edit', {selected: {domain_id: @scoped_domain_id, project_id: @scoped_project_id} })
+- if current_user.is_allowed?('resources:project:edit', {selected: {domain_id: @scoped_domain_id, project_id: @scoped_project_id} })
   .bs-callout.info.bs-callout-info.bs-callout-emphasize
     This is the old UI, allowing direct editing of quotas. However, for managing committed resources, please use the 
     =link_to plugin("resources").v2_path  do 
