@@ -9,24 +9,33 @@
 -#           = notification.fetch("description", "No description provided")
 
 - if has_global_notifications?
-  .global_notifications        
-    #globalNotifications.carousel.slide{"data-wrap"=> "false"}
-      %ol.carousel-indicators
-        - global_notifications.each_with_index do |notification, index|
-          %li{class: index == 0 ? "active" : "", "data-slide-to" => "#{index}", "data-target" => "#globalNotifications"}
+  .global_notifications
+    -# if just one notification do not use the carousel
+    - if global_notifications.size == 1
+      - notification = global_notifications.first
+      .alert{class: "alert-#{notification.fetch("type", "warning")}", role: "alert"}
+        %h4.alert-heading
+          = notification.fetch("title", "No title provided")
+        %p
+          = notification.fetch("description", "No description provided")
+    - else
+      #globalNotifications.carousel.slide{"data-wrap"=> "false"}
+        %ol.carousel-indicators
+          - global_notifications.each_with_index do |notification, index|
+            %li{class: index == 0 ? "active" : "", "data-slide-to" => "#{index}", "data-target" => "#globalNotifications"}
 
-      .carousel-inner{role: "listbox"}
-        - global_notifications.each_with_index do |notification, index|
-          .item{ class: index == 0 ? "active" : "" }
-            .alert{class: "alert-#{notification.fetch("type", "warning")}", role: "alert"}
-              %h4.alert-heading
-                = notification.fetch("title", "No title provided")
-              %p
-                = notification.fetch("description", "No description provided")
-        
-      %a.left.carousel-control{"data-slide" => "prev", href: "#globalNotifications", role: "button"}
-        %span.glyphicon.glyphicon-chevron-left{"aria-hidden" => "true"}
-        %span.sr-only Previous
-      %a.right.carousel-control{"data-slide" => "next", href: "#globalNotifications", role: "button"}
-        %span.glyphicon.glyphicon-chevron-right{"aria-hidden" => "true"}
-        %span.sr-only Next
+        .carousel-inner{role: "listbox"}
+          - global_notifications.each_with_index do |notification, index|
+            .item{ class: index == 0 ? "active" : "" }
+              .alert{class: "alert-#{notification.fetch("type", "warning")}", role: "alert"}
+                %h4.alert-heading
+                  = notification.fetch("title", "No title provided")
+                %p
+                  = notification.fetch("description", "No description provided")
+          
+        %a.left.carousel-control{"data-slide" => "prev", href: "#globalNotifications", role: "button"}
+          %span.glyphicon.glyphicon-chevron-left{"aria-hidden" => "true"}
+          %span.sr-only Previous
+        %a.right.carousel-control{"data-slide" => "next", href: "#globalNotifications", role: "button"}
+          %span.glyphicon.glyphicon-chevron-right{"aria-hidden" => "true"}
+          %span.sr-only Next
