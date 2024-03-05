@@ -11,12 +11,10 @@
 - if has_global_notifications?
   .global_notifications        
     #globalNotifications.carousel.slide{"data-wrap"=> "false"}
-      / Indicators
+
       %ol.carousel-indicators
         %li.active{"data-slide-to" => "0", "data-target" => "#myCarousel"}
         %li{"data-slide-to" => "1", "data-target" => "#myCarousel"}
-        / Add more indicators as needed
-      / Wrapper for slides
       .carousel-inner{role: "listbox"}
         - global_notifications.each_with_index do |notification, index|
           .item{ class: index == 0 ? "active" : "" }
@@ -25,13 +23,6 @@
                 = notification.fetch("title", "No title provided")
               %p
                 = notification.fetch("description", "No description provided")
-
-        -# .item.active
-        -#   .alert.alert-info{role: "alert"}
-        -#     First alert message
-        -# .item
-        -#   .alert.alert-warning{role: "alert"}
-        -#     Second alert message
         
       / Left and right controls
       %a.left.carousel-control{"data-slide" => "prev", href: "#globalNotifications", role: "button"}
