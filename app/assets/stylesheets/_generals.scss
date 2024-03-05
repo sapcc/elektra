@@ -1,0 +1,27 @@
+$globa-notifications-section-height: 81;
+.has-global-notifications {
+  padding-top: #{$globa-notifications-section-height + 92}px;
+
+  .navbar.navbar-sap {
+    top: #{$globa-notifications-section-height}px;
+  }
+  .context-breadcrumb {
+    top: #{$globa-notifications-section-height + 51}px;
+  }
+
+  .global_notifications {
+    background-color: white;
+    // padding: 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1029;
+    max-height: #{$globa-notifications-section-height}px;
+    overflow-y: scroll;
+  }
+
+  #globalNotifications .alert {
+    margin-bottom: 0;
+  }
+}
