@@ -1,0 +1,22 @@
+# start and end attributes are optional. If you don't specify them, the notification will be displayed indefinitely.
+# The Date.parse() method in JavaScript can understand the following string formats:
+# RFC 2822 format: "Tue, 1 Jan 2019 00:00:00 GMT"
+# ISO 8601 format: "2019-01-01T00:00:00Z"
+# Short dates(MM/DD/YYYY): "01/01/2019"
+# Long dates(Month DD, YYYY): "January 1, 2019"
+# UTC Dates(YYYY-MM-DDTHH:MM:SSZ): "2019-01-01T00:00:00Z"
+
+# type can be "info", "warning", "danger", "success"
+
+global_notifications:
+  - type: "warning"
+    title: "Uparade Maintenance Window:"
+    description: "Our PostgreSQL database upgrade, scheduled from March 11th to 12th, may cause temporary disruptions. We apologize for any inconvenience."
+    start: "2024-03-06T00:00:00Z"
+    end: "2024-03-13T00:00:00Z"
+
+  - type: "success"
+    title: "Successfully Upgraded Database:"
+    description: "Please inform us if you encounter any issues after our PostgreSQL database upgrade, which was completed on March 13th."
+    start: "2024-03-13T00:00:00Z"
+    end: "2024-03-13T18:00:00Z"

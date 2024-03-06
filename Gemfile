@@ -25,6 +25,7 @@ gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
 gem 'font-awesome-sass', '~>4'
 gem 'kaminari'
+gem 'filewatcher'
 
 gem 'responders'
 

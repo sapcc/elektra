@@ -4,6 +4,7 @@ import "./core/jquery"
 import "jquery-ujs"
 import "bootstrap"
 import "./core/dialogs"
+import "./core/global_notifications"
 
 const styles = document.createElement("style")
 styles.setAttribute("type", "text/css")
