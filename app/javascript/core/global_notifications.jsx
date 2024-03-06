@@ -7,55 +7,45 @@ const GlobalNotifications = () => {
 
   const visibleNotifications = React.useMemo(() => {
     return notifications.filter((notification) => {
-      if (!notification.start || !notification.end) return true
-      if (notification.start)
-        console.log(
-          notification.start,
-          new Date(notification.start),
-          Date.now() >= new Date(notification.start)
-        )
-      if (notification.start && Date.now() >= new Date(notification.start))
-        return true
-      if (notification.end && Date.now() <= new Date(notification.end))
-        return true
+      if (!notification.start && !notification.end) return true
+      if (notification.start) {
+        try {
+          if (Date.now() >= Date.parse(notification.start)) return true
+        } catch (e) {
+          return false
+        }
+      }
+      if (notification.end) {
+        try {
+          if (Date.now() <= Date.parse(notification.end)) return true
+        } catch (e) {
+          return false
+        }
+      }
     })
   }, [notifications])
 
+  console.log("====", visibleNotifications)
+
   React.useLayoutEffect(() => {
     if (visibleNotifications?.length > 0)
-      document.body.classList.add("has-global-notifications")
-    else document.body.classList.remove("has-global-notifications")
-    return () => document.body.classList.remove("has-global-notifications")
+      document.body?.classList?.add("has-global-notifications")
+    else document.body?.classList?.remove("has-global-notifications")
+    return () => document.body?.classList?.remove("has-global-notifications")
   }, [visibleNotifications])
 
   React.useEffect(() => {
-    const connect = (options) => {
-      const eventSource = new EventSource("/system/sse")
+    const load = async () => {
+      console.log("fetching global notifications")
+      const response = await fetch("/system/notifications")
+      let data = await response.json()
+      if (typeof data === "string") data = []
 
-      console.log("Global Notifications: SSE connected")
-      eventSource.addEventListener("message", (event) => {
-        const data = JSON.parse(event.data)
-        //console.log("Global Notifications: New Notification", data)
-        setNotifications(data?.message || [])
-      })
-
-      eventSource.addEventListener("error", (event) => {
-        if (event.eventPhase === EventSource.CLOSED) {
-          eventSource.close()
-          console.log("Global Notifications: Event Source Closed")
-          if (options.retry) {
-            setTimeout(() => {
-              console.log("Global Notifications: Reconnecting...")
-              connect({ retry: options.retry })
-            }, options.retry)
-          }
-        }
-      })
-      return eventSource.close
+      setNotifications(data || [])
     }
-
-    const close = connect({ retry: 30000 })
-    return close
+    let timer = setInterval(load, 6 * 1000)
+    load()
+    return () => clearInterval(timer)
   }, [])
 
   if (visibleNotifications?.length === 0) return null
@@ -71,12 +61,18 @@ const GlobalNotifications = () => {
           <p>{visibleNotifications[0]?.description || ""}</p>
         </Alert>
       ) : (
-        <Carousel interval={null} indicators={false}>
+        <Carousel interval={10000} indicators={false} controls={false}>
           {visibleNotifications.map((notification, index) => (
             <Carousel.Item key={index}>
               <Alert bsStyle={notification.type || "info"}>
-                <h4>{notification.title}</h4>
-                <p>{notification.description}</p>
+                <div style={{ display: "flex" }}>
+                  <div>
+                    <i className={`fa fa-${notification.type || "info"}`} />
+                  </div>
+                  <div>
+                    <b>{notification.title}</b> {notification.description}
+                  </div>
+                </div>
               </Alert>
             </Carousel.Item>
           ))}

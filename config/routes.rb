@@ -27,7 +27,7 @@ Rails.application.routes.draw do
     # check with db connection and js
     get :startprobe, to: "health#startprobe"
 
-    get :sse, to: "events#index"
+    get :notifications, to: "global_notifications#index"
   end
 
 
