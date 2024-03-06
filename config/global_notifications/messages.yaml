@@ -10,7 +10,7 @@
 
 global_notifications:
   - type: "warning"
-    title: "Uparade Maintenance Window:"
+    title: "Upgrade Maintenance Window:"
     description: "Our PostgreSQL database upgrade, scheduled from March 11th to 12th, may cause temporary disruptions. We apologize for any inconvenience."
     start: "2024-03-06T00:00:00Z"
     end: "2024-03-13T00:00:00Z"
