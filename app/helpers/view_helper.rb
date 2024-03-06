@@ -84,14 +84,6 @@ module ViewHelper
     end
   end
 
-  def has_global_notifications?
-    ::Core::GlobalNotifications.has_notifications?
-  end
-
-  def global_notifications
-    ::Core::GlobalNotifications.load_notifications
-  end
-
   def render_available_regions
     # read regions config, select only available regions
     regs = ::Core::StaticConfig.regions
