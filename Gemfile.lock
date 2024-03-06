@@ -361,6 +361,8 @@ GEM
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
     ffi (1.15.5)
+    filewatcher (2.1.0)
+      module_methods (~> 0.1.0)
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
     foreman (0.87.2)
@@ -418,6 +420,7 @@ GEM
     mime-types-data (3.2023.0808)
     mini_mime (1.1.5)
     minitest (5.20.0)
+    module_methods (0.1.0)
     multi_json (1.15.0)
     net-imap (0.3.7)
       date
@@ -623,6 +626,7 @@ DEPENDENCIES
   elektron!
   email_service!
   factory_bot_rails
+  filewatcher
   font-awesome-sass (~> 4)
   foreman (~> 0.87.0)
   friendly_id

@@ -26,7 +26,11 @@ Rails.application.routes.draw do
     # those probes don't interfere with the application startup.
     # check with db connection and js
     get :startprobe, to: "health#startprobe"
+
+    get :sse, to: "events#index"
   end
+
+
 
   # mount Cloudops::Engine => '/ccadmin/cloud_admin/cloudops', as: 'cloudops'
   get "/cloudops",

@@ -1,4 +1,4 @@
-$globa-notifications-section-height: 81;
+$globa-notifications-section-height: 100;
 .has-global-notifications {
   padding-top: #{$globa-notifications-section-height + 92}px;
 
@@ -17,11 +17,24 @@ $globa-notifications-section-height: 81;
     left: 0;
     right: 0;
     z-index: 1029;
-    max-height: #{$globa-notifications-section-height}px;
+    height: #{$globa-notifications-section-height}px;
     overflow-y: scroll;
   }
 
-  #globalNotifications .alert {
-    margin-bottom: 0;
+  .global_notifications {
+    .alert {
+      margin-bottom: 0;
+      height: #{$globa-notifications-section-height}px;
+    }
+    .carousel .alert {
+      padding-left: 70px;
+      padding-right: 70px;
+    }
+
+    .carousel-control {
+      width: 80px;
+      background: none;
+      color: #090909;
+    }
   }
 }
