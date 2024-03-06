@@ -62,7 +62,7 @@ const GlobalNotifications = () => {
   if (visibleNotifications?.length === 0) return null
 
   return (
-    <div className="global_notifications">
+    <div className="global-notifications">
       {visibleNotifications?.length === 1 ? (
         <Alert
           className="notification"

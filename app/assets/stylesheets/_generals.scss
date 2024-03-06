@@ -9,19 +9,16 @@ $globa-notifications-section-height: 55;
     top: #{$globa-notifications-section-height + 51}px;
   }
 
-  .global_notifications {
+  .global-notifications {
     background-color: white;
-    // padding: 2rem;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1029;
     height: #{$globa-notifications-section-height}px;
-    overflow-y: scroll;
-  }
+    overflow-y: auto;
 
-  .global_notifications {
     .notification {
       display: flex;
       align-items: center;
