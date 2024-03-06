@@ -1,49 +1,60 @@
-import React from "react"
+import React, { useEffect, useLayoutEffect, useMemo } from "react"
 import { createRoot } from "react-dom/client"
 import { Carousel, Alert } from "react-bootstrap"
+
+const NOTIFICATION_POLLING_INTERVAL = 60 * 60 * 1000
+const CAROUSEL_INTERVAL = 10000
+const ICON_TYPES = {
+  info: "info-circle",
+  warning: "warning",
+  error: "bolt",
+  danger: "bolt",
+  success: "check-circle",
+}
 
 const GlobalNotifications = () => {
   const [notifications, setNotifications] = React.useState([])
 
-  const visibleNotifications = React.useMemo(() => {
+  const visibleNotifications = useMemo(() => {
     return notifications.filter((notification) => {
       if (!notification.start && !notification.end) return true
-      if (notification.start) {
-        try {
-          if (Date.now() >= Date.parse(notification.start)) return true
-        } catch (e) {
-          return false
-        }
+
+      // parse the start and end time to date object and write a warning if not valid date format
+      if (notification.start && !Date.parse(notification.start)) {
+        console.warn(
+          `Invalid start time format for notification: ${notification.title}`
+        )
       }
-      if (notification.end) {
-        try {
-          if (Date.now() <= Date.parse(notification.end)) return true
-        } catch (e) {
-          return false
-        }
+      if (notification.end && !Date.parse(notification.end)) {
+        console.warn(
+          `Invalid end time format for notification: ${notification.title}`
+        )
       }
+
+      // if start time is not set, it is considered as 0
+      // if end time is not set, it is considered as Infinity
+      const start = Date.parse(notification.start) || 0
+      const end = Date.parse(notification.end) || Infinity
+      const now = Date.now()
+      return now > start && now < end
     })
   }, [notifications])
 
-  console.log("====", visibleNotifications)
-
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (visibleNotifications?.length > 0)
       document.body?.classList?.add("has-global-notifications")
     else document.body?.classList?.remove("has-global-notifications")
     return () => document.body?.classList?.remove("has-global-notifications")
   }, [visibleNotifications])
 
-  React.useEffect(() => {
+  useEffect(() => {
     const load = async () => {
       console.log("fetching global notifications")
       const response = await fetch("/system/notifications")
       let data = await response.json()
-      if (typeof data === "string") data = []
-
-      setNotifications(data || [])
+      setNotifications(data?.global_notifications || [])
     }
-    let timer = setInterval(load, 6 * 1000)
+    let timer = setInterval(load, NOTIFICATION_POLLING_INTERVAL)
     load()
     return () => clearInterval(timer)
   }, [])
@@ -53,25 +64,39 @@ const GlobalNotifications = () => {
   return (
     <div className="global_notifications">
       {visibleNotifications?.length === 1 ? (
-        <Alert bsStyle={visibleNotifications[0].type || "info"}>
-          <h4>
-            {visibleNotifications[0]?.title ||
-              "Oh snap! You got a notification!"}
-          </h4>
-          <p>{visibleNotifications[0]?.description || ""}</p>
+        <Alert
+          className="notification"
+          bsStyle={visibleNotifications[0].type || "info"}
+        >
+          <div className="notification-container">
+            <i
+              className={`fa fa-${
+                ICON_TYPES[visibleNotifications[0].type] || "info"
+              }`}
+            />
+            <b>{visibleNotifications[0]?.title}</b>{" "}
+            {visibleNotifications[0]?.description}
+          </div>
         </Alert>
       ) : (
-        <Carousel interval={10000} indicators={false} controls={false}>
+        <Carousel
+          interval={CAROUSEL_INTERVAL}
+          indicators={false}
+          controls={false}
+        >
           {visibleNotifications.map((notification, index) => (
             <Carousel.Item key={index}>
-              <Alert bsStyle={notification.type || "info"}>
-                <div style={{ display: "flex" }}>
-                  <div>
-                    <i className={`fa fa-${notification.type || "info"}`} />
-                  </div>
-                  <div>
-                    <b>{notification.title}</b> {notification.description}
-                  </div>
+              <Alert
+                className="notification"
+                bsStyle={notification.type || "info"}
+              >
+                <div className="notification-container">
+                  <i
+                    className={`fa fa-${
+                      ICON_TYPES[notification?.type] || "info"
+                    }`}
+                  />
+                  <b>{notification?.title}</b> {notification?.description}
                 </div>
               </Alert>
             </Carousel.Item>

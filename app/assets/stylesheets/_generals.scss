@@ -22,18 +22,22 @@ $globa-notifications-section-height: 55;
   }
 
   .global_notifications {
+    .notification {
+      display: flex;
+      align-items: center;
+
+      .notification-container {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+      }
+    }
+
     .alert {
       margin-bottom: 0;
       padding: 5px 15px;
       height: #{$globa-notifications-section-height}px;
     }
-    // .carousel .alert {
-    //   padding-left: 70px;
-    //   padding-right: 70px;
-    // }
-
-    // .carousel-control {
-    //   width: 80px;
-    // }
   }
 }
