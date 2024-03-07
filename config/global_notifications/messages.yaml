@@ -18,7 +18,7 @@ global_notifications:
 # qa
   - type: "warning"
     title: "Upgrade Maintenance Window:"
-    description: "Our PostgreSQL database upgrade, scheduled for March 11th from 9 to 12 PM, may cause temporary disruptions. We apologize for any inconvenience."
+    description: "Our PostgreSQL database upgrade, scheduled for March 11th between 9 AM and 12 PM CET, may cause short temporary disruptions. We apologize for any inconvenience."
     start: "2024-03-06T00:00:00Z"
     end: "2024-03-11T12:00:00Z"
     regions: ["qa-de-1", "qa-de-2", "qa-de-3"]
@@ -31,7 +31,7 @@ global_notifications:
 # bronze
   - type: "warning"
     title: "Upgrade Maintenance Window:"
-    description: "Our PostgreSQL database upgrade, scheduled for March 12th from 9 to 12 PM, may cause temporary disruptions. We apologize for any inconvenience."
+    description: "Our PostgreSQL database upgrade, scheduled for March 12th between 9 AM and 12 PM CET, may cause short temporary disruptions. We apologize for any inconvenience."
     start: "2024-03-06T00:00:00Z"
     end: "2024-03-12T12:00:00Z"
     regions: ["ap-jp-2", "na-ca-1", "na-us-3", "ap-sa-2"]
@@ -44,7 +44,7 @@ global_notifications:
 # silver
   - type: "warning"
     title: "Upgrade Maintenance Window:"
-    description: "Our PostgreSQL database upgrade, scheduled for March 13th from 9 to 12 PM, may cause temporary disruptions. We apologize for any inconvenience."
+    description: "Our PostgreSQL database upgrade, scheduled for March 13th between 9 AM and 12 PM CET, may cause short temporary disruptions. We apologize for any inconvenience."
     start: "2024-03-06T00:00:00Z"
     end: "2024-03-13T12:00:00Z"
     regions: ["ap-ae-1", "ap-au-1", "ap-cn-1", "ap-jp-1", "ap-sa-1", "la-br-1"]
@@ -57,7 +57,7 @@ global_notifications:
 # gold
   - type: "warning"
     title: "Upgrade Maintenance Window:"
-    description: "Our PostgreSQL database upgrade, scheduled for March 14th from 9 to 12 PM, may cause temporary disruptions. We apologize for any inconvenience."
+    description: "Our PostgreSQL database upgrade, scheduled for March 14th between 9 AM and 12 PM CET, may cause short temporary disruptions. We apologize for any inconvenience."
     start: "2024-03-06T00:00:00Z"
     end: "2024-03-14T12:00:00Z"
     regions: ["eu-de-1", "eu-de-2", "eu-nl-1", "na-us-1", "na-us-2"]
