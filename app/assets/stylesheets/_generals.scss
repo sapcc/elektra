@@ -29,6 +29,10 @@ $globa-notifications-section-height: 55;
         width: 100%;
         gap: 10px;
       }
+
+      .notification-counter {
+        white-space: nowrap;
+      }
     }
 
     .alert {
