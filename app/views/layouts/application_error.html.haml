@@ -1,0 +1,30 @@
+!!!
+%html{class: action_name}
+  %head
+    %meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    %meta(name="viewport" content="width=device-width, initial-scale=1")
+
+
+    %title= page_title
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+    = javascript_include_tag 'raven'
+    - if $sentry_public_dsn
+      :javascript
+        Raven.config('#{$sentry_public_dsn}').install();
+        Raven.setUserContext(#{@sentry_user_context ? @sentry_user_context.to_json.html_safe : ''});
+    = javascript_include_tag 'essentials', 'data-turbolinks-track' => true
+
+    = render "layouts/favicon" 
+
+  %body
+
+    .container
+      .content
+        = yield
+
+    %footer.footer
+      .container
+        = image_tag "monsoon_logo.png", class: "pull-right"
+
+    = yield :templates
+    = yield :javascripts
