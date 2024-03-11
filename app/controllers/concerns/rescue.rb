@@ -6,6 +6,18 @@ module Rescue
     base.class_eval do
       # GLOBAL ERROR RESCUE && HANDLING
       ##############################
+
+      rescue_from "ActiveRecord::ConnectionNotEstablished" do |exception|
+        # render error with application_error layout
+        render(
+          template: "application/exceptions/db_error",
+          layout: "application_error",
+          status: 500,
+        )
+      end
+
+    
+
       # handle Missing Template
       rescue_from "ActionView::MissingTemplate" do |exception|
         options = {
