@@ -20,12 +20,12 @@ global_notifications:
     title: "Upgrade Maintenance Window:"
     description: "Our PostgreSQL database upgrade, scheduled for March 11th between 9 AM and 12 PM CET, may cause short temporary disruptions. We apologize for any inconvenience."
     start: "2024-03-06T00:00:00Z"
-    end: "2024-03-11T12:00:00Z"
+    end: "2024-03-11T14:00:00Z"
     regions: ["qa-de-1", "qa-de-2", "qa-de-3"]
   - type: "success"
     title: "Successfully Upgraded Database:"
     description: "Please inform us if you encounter any issues after our PostgreSQL database upgrade."
-    start: "2024-03-11T12:00:00Z"
+    start: "2024-03-11T14:00:00Z"
     end: "2024-03-12T00:00:00Z"
     regions: ["qa-de-1", "qa-de-2", "qa-de-3"]
 # bronze
