@@ -20,7 +20,9 @@ ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
 
 WORKDIR $APP_PATH
 
-RUN apk --no-cache add dumb-init tzdata postgresql14-client
+# upgrade packages since based image is used to build elektra
+RUN apk upgrade --no-cache --no-progress \
+    && apk --no-cache add dumb-init tzdata postgresql15-client
 
 ################################### BUILDER ################################
 FROM base AS builder 
@@ -30,7 +32,7 @@ RUN apk --no-cache add git curl nodejs yarn shared-mime-info
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
-RUN apk --no-cache add build-base postgresql14-dev ruby-sassc --virtual .builddeps \
+RUN apk --no-cache add build-base postgresql15-dev ruby-sassc --virtual .builddeps \
       && gem install --no-document \
       bundler:2.3.20 \
       byebug:11.1.3 \
@@ -85,7 +87,7 @@ RUN bin/rails assets:precompile && rm -rf node_modules
 RUN echo $(git rev-parse HEAD) > $APP_PATH/REVISION && rm -rf .git
 ############################ TEST IMAGE ##########################
 FROM base AS tests
-RUN apk add --no-cache postgresql14-jit bash
+RUN apk add --no-cache postgresql15-jit bash
 ENV RAILS_ENV=test
 # Copy the already built bundler artifact
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
