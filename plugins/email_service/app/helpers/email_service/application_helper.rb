@@ -62,6 +62,10 @@ module EmailService
     end
 
     def map_region(region)
+      unless available_regions.include?(region)
+        Rails.logger.debug(" \n\n **** Invalid Region Detected: #{region} ****")
+        return "invalid_region"
+      end
       case region
       when "na-us-1"
         "us-east-1"
@@ -69,7 +73,7 @@ module EmailService
         "us-east-2"
       when "na-us-3"
         "us-west-2"
-      when "ap-ae-1"
+      when "ap-sa-2"
         "ap-south-1"
       when "ap-jp-1"
         "ap-northeast-1"
@@ -77,8 +81,6 @@ module EmailService
         "ap-northeast-2"
       when "eu-de-1", "qa-de-1", "qa-de-2"
         "eu-central-1"
-      when "eu-nl-1"
-        "eu-west-1"
       when "na-ca-1"
         "ca-central-1"
       when "la-br-1"
@@ -89,7 +91,7 @@ module EmailService
     end
 
     def available_regions
-      ["na-us-1","na-ca-1","ap-au-1","ap-jp-1","eu-de-1","eu-de-2","la-br-1","ap-sa-2"]
+      @available_regions ||= ["na-us-1","na-ca-1","ap-au-1","ap-jp-1","eu-de-1","eu-de-2","la-br-1","ap-sa-2", "qa-de-1", "qa-de-2"]
     end
 
     def region_details
@@ -287,8 +289,6 @@ module EmailService
     def ses_client_v2
       @region ||= map_region(@cronus_region)
       @endpoint ||= email_service_url
-      Rails.logger.debug(" [application_helper][ses_client_v2] region: #{@region}")
-      Rails.logger.debug(" [application_helper][ses_client_v2] endpoint: #{@endpoint}")
       unless !ec2_creds || ec2_creds.nil?
         begin
           @credentials ||=
@@ -383,6 +383,7 @@ module EmailService
       ]
     end
 
+    # https://docs.aws.amazon.com/sdk-for-ruby/v2/api/Aws/SESV2/Client.html#list_email_identities-instance_method
     def list_email_identities(next_token = nil, page_size = 1000)
       id = 0
       identities = []
@@ -2017,187 +2018,178 @@ module EmailService
       current_user.service_url("nebula")
     end
 
-    # def api_request(uri, method, headers = nil, body = nil)
-    #   Rails.logger.debug(" \n api_request : uri: #{uri} \n method: #{method} \n headers: #{headers} \n body: #{body}")
-    #   https = Net::HTTP.new(uri.host, uri.port)
-    #   https.use_ssl = true
+    def api_request(uri, method, headers = nil, body = nil)
+      https = Net::HTTP.new(uri.host, uri.port)
+      https.use_ssl = true
 
-    #   # byebug
+      request = case method
+        when "GET"
+          Net::HTTP::Get.new(uri)
+        when "POST"
+          Net::HTTP::Post.new(uri)
+        when "DELETE"
+          Net::HTTP::Delete.new(uri)
+        else
+          Net::HTTP::Get.new(uri)
+        end
 
-    #   request = case method
-    #     when "GET"
-    #       Net::HTTP::Get.new(uri)
-    #     when "POST"
-    #       Net::HTTP::Post.new(uri)
-    #     when "DELETE"
-    #       Net::HTTP::Delete.new(uri)
-    #     else
-    #       Net::HTTP::Get.new(uri)
-    #     end
+      JSON.parse(headers).each { |name, value| request[name] = value } unless headers.nil?
+      request.body = body if body
 
-    #   JSON.parse(headers).each { |name, value| request[name] = value } unless headers.nil?
-    #   # TODO: test except for activation
-    #   # request.body = body.to_json if body
-    #   request.body = body if body
+      begin
+        response = https.request(request)
+      rescue StandardError => e
+        Rails.logger.error e.message
+        e.message
+      end
 
-    #   begin
-    #     # response = https.request(request)
+      response
+    end
 
-    #     Rails.logger.debug(" \n api_request : response: #{response}")
-    #   rescue StandardError => e
-    #     Rails.logger.error e.message
-    #     e.message
-    #   end
+    def format_response(response)
+      "#{response.code} : #{response.read_body}"
+    end
 
-    #   response
-    # end
+    def handle_parser_error(error)
+      err = JSON.dump({ error: error.message })
+      @nebula_details = JSON.parse(err)
+    end
 
-    # def format_response(response)
-    #   "#{response.code} : #{response.read_body}"
-    # end
+    def parse_response(parsed)
+      if parsed.instance_of?(Hash)
+        if parsed.key?("error")
+          @nebula_details = parsed
+        elsif parsed.key?("status") && parsed.key?("security_attributes")
+          security_attributes = parsed["security_attributes"]&.split(", ")
+          production = parsed.key?("production") ? parsed["production"] : nil
+          status = parsed["status"].nil? ? nil : parsed["status"]
+          allowed_emails = parsed.key?("allowed_emails") ? parsed["allowed_emails"] : nil
+          complaint = parsed.key?("complaint") ? parsed["complaint"] : nil
+          @nebula_details = {
+            security_officer: security_attributes[0][16...].strip.to_s,
+            environment: security_attributes[1][12...].strip.to_s,
+            valid_until: security_attributes[2][12...].strip.to_s,
+            production: production.to_s,
+            allowed_emails: allowed_emails.to_s,
+            complaint: complaint.to_s,
+            status: status.to_s,
+          }
+        end
+      elsif parsed.instance_of?(String)
+        @nebula_details = JSON.parse(parsed)
+      end
+    end
 
-    # def handle_parser_error(error)
-    #   err = JSON.dump({ error: error.message })
-    #   @nebula_details = JSON.parse(err)
-    # end
+    def nebula_details
+      url = URI("#{nebula_endpoint_url}/v1/aws/#{project_id}")
+      Rails.logger.debug(" \n url: #{url}")
+      headers = JSON.dump({ 'X-Auth-Token': "#{current_user.token}", 'Content-Type': "application/json" })
+      body = nil
+      begin
+        response = api_request(url, "GET", headers, body)
+        if response && response&.status == 200
+          @parsed = JSON.parse(response&.read_body)
+          parse_response(@parsed) if @parsed
+        end
+      rescue JSON::ParserError => e
+        handle_parser_error(e)
+      end
 
-    # def parse_response(parsed)
-    #   if parsed.instance_of?(Hash)
-    #     if parsed.key?("error")
-    #       @nebula_details = parsed
-    #     elsif parsed.key?("status") && parsed.key?("security_attributes")
-    #       security_attributes = parsed["security_attributes"]&.split(", ")
-    #       production = parsed.key?("production") ? parsed["production"] : nil
-    #       status = parsed["status"].nil? ? nil : parsed["status"]
-    #       allowed_emails = parsed.key?("allowed_emails") ? parsed["allowed_emails"] : nil
-    #       complaint = parsed.key?("complaint") ? parsed["complaint"] : nil
-    #       @nebula_details = {
-    #         security_officer: security_attributes[0][16...].strip.to_s,
-    #         environment: security_attributes[1][12...].strip.to_s,
-    #         valid_until: security_attributes[2][12...].strip.to_s,
-    #         production: production.to_s,
-    #         allowed_emails: allowed_emails.to_s,
-    #         complaint: complaint.to_s,
-    #         status: status.to_s,
-    #       }
-    #     end
-    #   elsif parsed.instance_of?(String)
-    #     @nebula_details = JSON.parse(parsed)
-    #   end
-    # end
+      @nebula_details
+    end
 
-    # def nebula_details
-    #   url = URI("#{nebula_endpoint_url}/v1/aws/#{project_id}")
-    #   Rails.logger.debug(" \n url: #{url}")
-    #   headers = JSON.dump({ 'X-Auth-Token': "#{current_user.token}", 'Content-Type': "application/json" })
-    #   body = nil
-    #   begin
-    #     response = api_request(url, "GET", headers, body)
-    #     Rails.logger.debug("\n [nebula_details] response: #{response}")
-    #     if response && response&.status == 200
-    #       @parsed = JSON.parse(response&.read_body)
-    #       parse_response(@parsed) if @parsed
-    #     end
-    #   rescue JSON::ParserError => e
-    #     handle_parser_error(e)
-    #   end
+    def nebula_status
+      @nebula_details ||= JSON.parse(JSON.dump(nebula_details))
+      if @nebula_details.instance_of?(Hash)
+        if @nebula_details.key?("error")
+          err = @nebula_details["error"]
+          @status = "TERMINATED" if err.include?("account is marked as terminated")
+          @status = "NOT_ACTIVATED" if err.include?("account isn't activated")
+        elsif @nebula_details.key?("status") && @nebula_details["status"]
+          case @nebula_details["status"]
+          when "GRANTED"
+            if @nebula_details.key?("production")
+              @status = @nebula_details["production"] == "true" ? "PRODUCTION" : "SANDBOX"
+            end
+          when "DENIED"
+            @status = "DENIED"
+          when "PENDING"
+            @status = "PENDING"
+          when "PENDING-CUSTOMER-ACTION"
+            @status = "PENDING-CUSTOMER-ACTION"
+          when "CUSTOMER-ACTION-COMPLETED"
+            @status = "CUSTOMER-ACTION-COMPLETED"
+          end
+        end
+      elsif @nebula_details.instance_of?(String)
+        @status = @nebula_details
+      end
+      @status
+    end
 
-    #   @nebula_details
-    # end
-
-    # def nebula_status
-    #   @nebula_details ||= JSON.parse(JSON.dump(nebula_details))
-    #   if @nebula_details.instance_of?(Hash)
-    #     if @nebula_details.key?("error")
-    #       err = @nebula_details["error"]
-    #       @status = "TERMINATED" if err.include?("account is marked as terminated")
-    #       @status = "NOT_ACTIVATED" if err.include?("account isn't activated")
-    #     elsif @nebula_details.key?("status") && @nebula_details["status"]
-    #       case @nebula_details["status"]
-    #       when "GRANTED"
-    #         if @nebula_details.key?("production")
-    #           @status = @nebula_details["production"] == "true" ? "PRODUCTION" : "SANDBOX"
-    #         end
-    #       when "DENIED"
-    #         @status = "DENIED"
-    #       when "PENDING"
-    #         @status = "PENDING"
-    #       when "PENDING-CUSTOMER-ACTION"
-    #         @status = "PENDING-CUSTOMER-ACTION"
-    #       when "CUSTOMER-ACTION-COMPLETED"
-    #         @status = "CUSTOMER-ACTION-COMPLETED"
-    #       end
-    #     end
-    #   elsif @nebula_details.instance_of?(String)
-    #     @status = @nebula_details
-    #   end
-    #   # 'NOT_ACTIVATED'
-    #   @status
-    # end
-
-    # def nebula_active?
-    #   @nebula_status = nebula_status
-    #   status_items = %w[GRANTED PENDING PENDING_CUSTOMER_ACTION CUSTOMER_ACTION_COMPLETED PRODUCTION SANDBOX]
-    #   @nebula_status && status_items.any? { |item| @nebula_status.include? item } ? true : false
-    # end
+    def nebula_active?
+      @nebula_status = nebula_status
+      status_items = %w[GRANTED PENDING PENDING_CUSTOMER_ACTION CUSTOMER_ACTION_COMPLETED PRODUCTION SANDBOX]
+      @nebula_status && status_items.any? { |item| @nebula_status.include? item } ? true : false
+    end
 
     def nebula_available?
       services.available?(:nebula)
     end
 
-    # def get_nebula_uri(provider = "aws", custom_url = nil)
-    #   base_url = provider == "aws" && custom_url.nil? ? nebula_endpoint_url : custom_url
-    #   URI("#{base_url}/v1/#{provider}/#{project_id}")
-    # end
+    def get_nebula_uri(provider = "aws", custom_url = nil)
+      base_url = provider == "aws" && custom_url.nil? ? nebula_endpoint_url : custom_url
+      URI("#{base_url}/v1/#{provider}/#{project_id}")
+    end
 
-    # def nebula_activate(multicloud_account = nil)
-    #   return "MultiCloud parameters for activation are invalid" if multicloud_account.nil?
+    def nebula_activate(multicloud_account = nil)
+      return "MultiCloud parameters for activation are invalid" if multicloud_account.nil?
 
-    #   provider = multicloud_account.provider || "aws"
-    #   endpoint_url = multicloud_account.custom_endpoint_url || nil
-    #   url = get_nebula_uri(provider, endpoint_url)
-    #   headers = JSON.dump({ 'X-Auth-Token': current_user.token, 'Content-Type': "application/json" })
-    #   body =
-    #     JSON.dump(
-    #       {
-    #         accountEnv: multicloud_account.account_env,
-    #         identities: multicloud_account.identity,
-    #         mailType: multicloud_account.mail_type || "TRANSACTIONAL",
-    #         securityOfficer: multicloud_account.security_officer,
-    #       }
-    #     )
+      provider = multicloud_account.provider || "aws"
+      endpoint_url = multicloud_account.custom_endpoint_url || nil
+      url = get_nebula_uri(provider, endpoint_url)
+      headers = JSON.dump({ 'X-Auth-Token': current_user.token, 'Content-Type': "application/json" })
+      body =
+        JSON.dump(
+          {
+            accountEnv: multicloud_account.account_env,
+            identities: multicloud_account.identity,
+            mailType: multicloud_account.mail_type || "TRANSACTIONAL",
+            securityOfficer: multicloud_account.security_officer,
+          }
+        )
 
-    #   response = api_request(url, "POST", headers, body)
+      response = api_request(url, "POST", headers, body)
 
-    #   audit_logger.info(
-    #     "[cronus][nebula_activate]: ",
-    #     current_user.id,
-    #     "has intiated multicloud account (nebula) activation",
-    #     "for the project",
-    #     project_id,
-    #     response.code
-    #   )
-    #   response.code.to_i < 300 ? "success" : format_response(response)
-    # end
+      audit_logger.info(
+        "[cronus][nebula_activate]: ",
+        current_user.id,
+        "has intiated multicloud account (nebula) activation",
+        "for the project",
+        project_id,
+        response.code
+      )
+      response.code.to_i < 300 ? "success" : format_response(response)
+    end
 
-    # def nebula_deactivate(provider = "aws")
-    #   url = get_nebula_uri(provider, custom_endpoint_url)
-    #   headers = JSON.dump({ 'X-Auth-Token': current_user.token.to_s, 'Content-Type': "application/json" })
-    #   body = nil
+    def nebula_deactivate(provider = "aws")
+      url = get_nebula_uri(provider, custom_endpoint_url)
+      headers = JSON.dump({ 'X-Auth-Token': current_user.token.to_s, 'Content-Type': "application/json" })
+      body = nil
 
-    #   response = api_request(url, "DELETE", headers, body)
+      response = api_request(url, "DELETE", headers, body)
 
-    #   audit_logger.info(
-    #     "[cronus][nebula_deactivate]: ",
-    #     current_user.id,
-    #     "has intiated multicloud account (nebula) deletion",
-    #     "for the project",
-    #     project_id,
-    #     response.code
-    #   )
-    #   response.code.to_i < 300 ? "success" : format_response(response)
-    # end
-
+      audit_logger.info(
+        "[cronus][nebula_deactivate]: ",
+        current_user.id,
+        "has intiated multicloud account (nebula) deletion",
+        "for the project",
+        project_id,
+        response.code
+      )
+      response.code.to_i < 300 ? "success" : format_response(response)
+    end
+    
     def cronus_account_details
       access = ec2_access
       secret = ec2_secret
@@ -2260,8 +2252,8 @@ module EmailService
 
       @suppressed_destination_array = []
 
-      @cronus_region = cronus_region || "eu-de-2"
-      @aws_region = map_region(@cronus_region) || "eu-central-1"
+      @cronus_region = cronus_region
+      @aws_region = map_region(@cronus_region)
 
       @cronus_endpoint = "https://cronus.#{@cronus_region}.cloud.sap"
       signer = aws_signer("ses", access, secret, @aws_region, @cronus_endpoint)
@@ -2297,14 +2289,16 @@ module EmailService
     end
 
     def suppression_destination_list
-      next_token, suppression_list = _suppressed_email_list
-      until next_token.nil?
+      suppressed_destinations = []
+      loop do
         next_token, suppression_list_set = _suppressed_email_list(next_token)
-        suppression_list += suppression_list_set if suppression_list_set
+        suppressed_destinations.concat(suppression_list_set) if suppression_list_set
+        break unless next_token && next_token.size.positive?
       end
-      suppression_list || nil
+      suppressed_destinations.empty? ? nil : suppressed_destinations
     end
 
+    
     def find_suppressed_destination(_email_address)
       @suppressed_destinations = suppression_destination_list
       @found = {}

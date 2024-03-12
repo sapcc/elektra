@@ -14,10 +14,6 @@ module EmailService
     end
 
     def test
-      # @plain_email_with_email = send_plain_email_with_email_source
-      # @plain_email_with_domain = send_plain_email_with_domain_source
-      # flash[:info] = "EMAIL SENT (email): #{@plain_email_with_email}"
-      # flash[:info] = "EMAIL SENT (domain): #{@plain_email_with_domain}"
       @nebula_details = nebula_details
       @nebula_status = nebula_status
       @nebula_endpoint = nebula_endpoint_url
