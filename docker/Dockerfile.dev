@@ -6,16 +6,18 @@ ENV GIT_SSL_NO_VERIFY=true
 ENV GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" 
 ENV TZ="Europe/Berlin"
 
-RUN apk --no-cache add --update \
+# upgrade packages since based image is used to build elektra
+RUN apk upgrade --no-cache --no-progress \
+    && apk --no-cache add --update \
   git \
   curl \
   nodejs \
   build-base \
   npm \
   --virtual .builddeps \
-  postgresql14-dev \
-  postgresql14-jit \
-  postgresql14-client \
+  postgresql15-dev \
+  postgresql15-jit \
+  postgresql15-client \
   openssh \
   yarn \
   bash \
