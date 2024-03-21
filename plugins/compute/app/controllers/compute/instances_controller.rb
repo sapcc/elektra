@@ -22,8 +22,6 @@ module Compute
                             new_size
                             automation_script
                             new_status
-                            confirm_hard_reset
-                            pre_hard_reset
                           ]
 
     def index

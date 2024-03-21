@@ -38,6 +38,10 @@ MonsoonOpenstackAuth.configure do |auth|
   auth.authorization.reload_policy = Rails.configuration.debug_policy_engine
   auth.authorization.trace_enabled = Rails.configuration.debug_policy_engine
 
+  # this is the mapping for controller action name to policy rule name
+  # compute::instances_controller.rb#index -> policy.json -> compute:instance_list
+  # everything else is handled without mapping like:
+  # compute::instances_controller.rb#hard_reset -> policy.json -> compute:instance_hard_reset
   auth.authorization.controller_action_map = {
     index: "list",
     show: "get",
