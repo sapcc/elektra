@@ -151,21 +151,25 @@ module ApiLookup
       "shared_filesystem_storage ",
       'find_share(":term")',
       'shares(name: ":term", all_tenants: true)',
+      'shares(name: ":term")',
     ],
     "share_network" => [
       "shared_filesystem_storage",
       'find_share_network(":term")',
       'share_networks(name: ":term", all_tenants: true)',
+      'share_networks(name: ":term")',
     ],
     "share_snapshot" => [
       "shared_filesystem_storage",
       'snapshots_detail(":term")',
       'snapshots(name: ":term", all_tenants: true)',
+      'snapshots(name: ":term")',
     ],
     "share_security_service" => [
       "shared_filesystem_storage",
       'find_security_service(":term")',
       'security_services(name: ":term", all_tenants: true)',
+      'security_services(name: ":term")',
     ],
   }.freeze
 
