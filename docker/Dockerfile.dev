@@ -8,7 +8,7 @@ ENV TZ="Europe/Berlin"
 
 # upgrade packages since based image is used to build elektra
 RUN apk upgrade --no-cache --no-progress \
-    && apk --no-cache add --update \
+  && apk --no-cache add --update \
   git \
   curl \
   nodejs \
@@ -41,8 +41,8 @@ RUN apk upgrade --no-cache --no-progress \
   tshark 
 
 RUN pip install --upgrade pip
-# --use-pep517 -> https://github.com/pypa/pip/issues/8559
-RUN pip install --use-pep517 mitmproxy==8.1.1 pgcli
+# werkzeug==2.2.2 -> https://stackoverflow.com/questions/77213053/why-did-flask-start-failing-with-importerror-cannot-import-name-url-quote-fr
+RUN pip install mitmproxy==8.1.1 pgcli werkzeug==2.2.2
 ENV LANG=en_US.UTF-8
 
 RUN mkdir /app
@@ -135,6 +135,6 @@ RUN echo -e '\n\
   ' >> /root/.profile
 
 RUN curl -fL http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt | tr -d '\r' > /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt \
-    && update-ca-certificates;
+  && update-ca-certificates;
 
 ENTRYPOINT [ "/usr/local/bin/prepare-elektra" ]  
