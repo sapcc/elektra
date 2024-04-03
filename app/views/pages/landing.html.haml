@@ -53,7 +53,9 @@
   = link_to "Enter the cloud", main_app.domain_home_path(domain_id: params[:domain_id], project_id:nil)
   = link_to "Log in with password", monsoon_openstack_auth.login_path(domain_fid: @scoped_domain_fid || params[:domain_id], domain_name: (params[:domain_id] || Rails.configuration.default_domain), after_login: main_app.domain_home_path(domain_id:params[:domain_id]))
 -# global landing page with preselected region/domain
-= javascript_include_tag "https://assets.juno.global.cloud.sap/apps/widget-loader@latest/build/app.js", defer: true, data: {"importmap-only": "true"}
+- region="assets.juno.global.cloud.sap" 
+- if current_region.start_with?("qa") then region="assets.juno.qa-de-1.cloud.sap" end
+= javascript_include_tag "https://#{region}/apps/widget-loader@latest/build/app.js", defer: true, data: {"importmap-only": "true"}
 
 #dashboard
   .loader
