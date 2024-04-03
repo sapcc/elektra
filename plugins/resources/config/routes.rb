@@ -23,6 +23,8 @@ Resources::Engine.routes.draw do
 
   get "/v2/domain" => "v2#domain", :as => "v2_domain"
 
+  get "/v2/cluster" => "v2#cluster", :as => "v2_cluster"
+
   ##############################################################################
   # quota request workflows
 

@@ -83,6 +83,12 @@ SimpleNavigation::Configuration.run do |navigation|
                          plugin("resources").cluster_path(cluster_id: "current")
                        },
                        if: -> { services.available?(:resources) }
+      ccadmin_nav.item :resources,
+                       capture { concat "Resource Management "; concat content_tag(:span, "NEW", class:"label label-info")},
+                       -> {
+                         plugin("resources").v2_cluster_path(cluster_id: "current")
+                       },
+                       if: -> { services.available?(:resources) }
       ccadmin_nav.item :flavors,
                        "Manage Flavors",
                        -> { plugin("compute").flavors_path },
