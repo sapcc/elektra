@@ -8,18 +8,22 @@ module ServiceLayer
         @volume_map ||= class_map_proc(Compute::OsVolume)
       end
 
-      # DEPRECATED: please use the volumes method from block_storage plugin!
-      def volumes(server_id, _filter = {})
-        # volumes = elektron_compute.get('os-volumes', filter).body['volumes']
-        volumes = service_manager.block_storage.volumes_detail
+      def volumes(server, _filter = {})
 
-        server_volumes =
-          volumes.select do |vol|
-            vol.attachments.find do |attachment|
-              attachment["serverId"] == server_id ||
-                attachment["server_id"] == server_id
-            end
-          end
+      return [] if server.nil? || server.id.nil?
+        if server.attributes.nil? || server.attributes.empty?
+          # server is not loaded yet
+          # load the server
+          server = service_manager.compute.find_server!(server.id)
+        end
+        return [] if server&.attributes.nil? || !server.attributes["os-extended-volumes:volumes_attached"].kind_of?(Array)
+
+        volume_ids = server.attributes["os-extended-volumes:volumes_attached"].map{ |v| v["id"] }
+        volume_ids.map do |volume_id|
+          service_manager.block_storage.find_volume(volume_id)
+        end
+      rescue Elektron::Errors::ApiResponse
+        []
       end
 
       def attach_volume(volume_id, server_id, device)

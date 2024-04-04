@@ -286,7 +286,7 @@ module Compute
 
     def attached_volumes
       return [] if volumes_attached.empty?
-      @service.volumes(id)
+      @service.volumes(self)
     end
 
     ####################### ACTIONS #####################
