@@ -453,7 +453,7 @@ GEM
       method_source (~> 1.0)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
-    psych (5.1.0)
+    psych (5.1.2)
       stringio
     puma (6.4.2)
       nio4r (~> 2.0)
@@ -499,7 +499,7 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     rbs (3.1.3)
-    rdoc (6.5.0)
+    rdoc (6.6.3.1)
       psych (>= 4.0.0)
     redcarpet (3.6.0)
     responders (3.1.0)
@@ -543,7 +543,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    sdoc (1.1.0)
+    sdoc (2.6.1)
       rdoc (>= 5.0)
     sentry-raven (3.1.2)
       faraday (>= 1.0)
@@ -562,7 +562,7 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    stringio (3.0.8)
+    stringio (3.1.0)
     syntax_tree (6.1.1)
       prettier_print (>= 1.2.0)
     syntax_tree-haml (4.0.3)
@@ -670,7 +670,7 @@ DEPENDENCIES
   rspec-rails
   ruby-radius
   sass-rails
-  sdoc (~> 1.1.0)
+  sdoc (~> 2.6.0)
   sentry-raven
   shared_filesystem_storage!
   simple-navigation
