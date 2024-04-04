@@ -4,16 +4,17 @@ module.exports = {
   verbose: true,
   testRegex: "\\.test\\.jsx?$",
   modulePathIgnorePatterns: ["vendor"],
-  transform: {
-    "^.+\\.jsx?$": [
-      "esbuild-jest",
-      {
-        jsx: "preserve",
-        loader: { ".js": "jsx" },
-        sourcemap: true,
-      },
-    ],
-  },
+  transform: { "\\.[jt]sx?$": "babel-jest" },
+  // transform: {
+  //   "^.+\\.jsx?$": [
+  //     "esbuild-jest",
+  //     {
+  //       jsx: "preserve",
+  //       loader: { ".js": "jsx" },
+  //       sourcemap: true,
+  //     },
+  //   ],
+  // },
   // see also in config/esbuild/build.js
   moduleNameMapper: {
     ajax_helper: "<rootDir>/app/javascript/lib/ajax_helper.js",
