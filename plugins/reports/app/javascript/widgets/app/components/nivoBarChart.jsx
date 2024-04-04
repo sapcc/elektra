@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import { ResponsiveBar } from "@nivo/bar"
+import { useTooltip } from "@nivo/tooltip"
 import Legend from "./legend"
 require("d3-transition")
 import { scaleOrdinal } from "d3-scale"
@@ -66,21 +67,14 @@ class NivoBarChart extends React.Component {
     return colorScale.domain()[colorIndex]
   }
 
-  rectBarComponent = ({
-    x,
-    y,
-    width,
-    height,
-    color,
-    data,
-    onClick,
-    tooltip,
-    showTooltip,
-    hideTooltip,
-  }) => {
+  rectBarComponent = ({ onClick, bar }) => {
     const { clickService, clickedBar } = this.props
+    const { x, y, width, height, color, data } = bar
+    const { showTooltipFromEvent, hideTooltip } = useTooltip()
+
     let service = this.getServiceByColor(color)
-    const handleTooltip = (e) => showTooltip(this.customTooltip(data, color), e)
+    const handleTooltip = (e) =>
+      showTooltipFromEvent(this.customTooltip(data, color), e)
 
     let newY = service === clickService ? 240 - height : y
     let opacity = clickService !== "all" && service !== clickService ? 0 : 1
