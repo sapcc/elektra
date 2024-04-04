@@ -33,7 +33,7 @@ const ContainerList = ({ containers, isLoading }) => {
                 ))
               ) : (
                 <DataGridRow>
-                  <DataGridCell colSpan={5}>No Containers found.</DataGridCell>
+                  <DataGridCell colSpan={4}>No Containers found.</DataGridCell>
                 </DataGridRow>
               )}
             </DataGrid>

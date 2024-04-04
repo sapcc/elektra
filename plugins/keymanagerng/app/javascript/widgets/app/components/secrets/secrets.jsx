@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { policy } from "lib/policy"
 import SecretList from "./secretList"
 import Pagination from "../Pagination"
 import { getSecrets } from "../../secretActions"
@@ -11,6 +12,9 @@ import {
   ButtonRow,
   Button,
   Stack,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from "juno-ui-components"
 import { Link } from "react-router-dom"
 import { useActions } from "messages-provider"
@@ -106,9 +110,23 @@ const Secrets = () => {
         }
       >
         <ButtonRow>
-          <Link to="/secrets/newSecret">
-            <Button>New Secret</Button>
-          </Link>
+          {policy.isAllowed("keymanagerng:secret_create") ? (
+            <Link to="/secrets/newSecret">
+              <Button>New Secret</Button>
+            </Link>
+          ) : (
+            <Tooltip triggerEvent="hover">
+              <TooltipTrigger asChild>
+                <span>
+                  <Button disabled>New Secret</Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                You do not have permission to create secrets. Your user account
+                requires the keymanager_admin role.
+              </TooltipContent>
+            </Tooltip>
+          )}
         </ButtonRow>
       </DataGridToolbar>
 

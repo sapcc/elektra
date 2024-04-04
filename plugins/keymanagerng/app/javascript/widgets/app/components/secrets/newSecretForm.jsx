@@ -181,6 +181,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
 
   const onConfirm = () => {
     const errors = formValidation(formData)
+    setValidationState({})
     if (Object.keys(errors).length > 0) {
       setValidationState(errors)
     } else {

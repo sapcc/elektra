@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { policy } from "lib/policy"
 import ContainerList from "./containerList"
 import Pagination from "../Pagination"
 import { getContainers } from "../../containerActions"
@@ -12,6 +13,9 @@ import {
   Button,
   Stack,
   Spinner,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from "juno-ui-components"
 import { Link } from "react-router-dom"
 import { useActions } from "messages-provider"
@@ -109,10 +113,22 @@ const Containers = () => {
         }
       >
         <ButtonRow>
-          {policy.isAllowed("keymanagerng:container_create") && (
+          {policy.isAllowed("keymanagerng:container_create") ? (
             <Link to="/containers/newContainer">
               <Button>New Container</Button>
             </Link>
+          ) : (
+            <Tooltip triggerEvent="hover">
+              <TooltipTrigger asChild>
+                <span>
+                  <Button disabled>New Container</Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                You do not have permission to create containers. Your user
+                account requires the keymanager_admin role.
+              </TooltipContent>
+            </Tooltip>
           )}
         </ButtonRow>
       </DataGridToolbar>

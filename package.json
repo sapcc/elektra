@@ -41,7 +41,7 @@
     "jsoneditor": "5.5.6",
     "jsx-to-string": "^1.4.0",
     "juno-ui-components": "https://assets.juno.global.cloud.sap/libs/juno-ui-components@2.6.9/package.tgz",
-    "messages-provider": "https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.8/package.tgz",
+    "messages-provider": "https://assets.juno.global.cloud.sap/libs/messages-provider@0.1.12/package.tgz",
     "moment": "^2.29.2",
     "numeral": "^2.0.6",
     "prop-types": "^15.5.7",
