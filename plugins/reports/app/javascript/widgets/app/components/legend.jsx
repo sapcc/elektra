@@ -2,6 +2,9 @@ import { scaleOrdinal } from "d3-scale"
 import { select } from "d3-selection"
 import React, { useCallback, useEffect, useRef } from "react"
 
+const LEGEND_ITEM_HEIGHT = 20
+const LEGEND_RECT_SIZE = 14
+
 const Legend = ({ height, onClickLegend, services, colors, serviceMap }) => {
   const node = useRef()
   const tooltip = useRef()
@@ -10,7 +13,8 @@ const Legend = ({ height, onClickLegend, services, colors, serviceMap }) => {
     if (!node.current) return
 
     const color = scaleOrdinal().domain(services).range(colors)
-    const yPos = (d, i) => 176 + i * 20
+    const yStart = height - services.length * LEGEND_ITEM_HEIGHT - 23
+    const yPos = (d, i) => yStart + i * LEGEND_ITEM_HEIGHT
     //===================================================
     // select the svg area
     var Svg = select(node.current)
@@ -55,14 +59,14 @@ const Legend = ({ height, onClickLegend, services, colors, serviceMap }) => {
       .append("rect")
       .attr("x", 0)
       .attr("y", yPos)
-      .attr("width", 14)
-      .attr("height", 14)
+      .attr("width", LEGEND_RECT_SIZE)
+      .attr("height", LEGEND_RECT_SIZE)
       .style("fill", function (d) {
         return color(d)
       })
     legendItems
       .append("text")
-      .attr("x", 20)
+      .attr("x", LEGEND_RECT_SIZE + 5)
       .attr("y", (d, i) => yPos(d, i) + 10)
       .text(function (d) {
         return d
