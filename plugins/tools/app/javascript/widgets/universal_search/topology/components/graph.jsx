@@ -1,4 +1,5 @@
 /* eslint-disable react/no-string-refs */
+import ReactDOM from "react-dom"
 import { scaleLinear } from "d3-scale"
 import { max } from "d3-array"
 import { select, event, mouse } from "d3-selection"
