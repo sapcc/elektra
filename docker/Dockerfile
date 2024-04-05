@@ -33,30 +33,30 @@ RUN apk --no-cache add git curl nodejs yarn shared-mime-info
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
 RUN apk --no-cache add build-base postgresql15-dev ruby-sassc --virtual .builddeps \
-      && gem install --no-document \
-      bundler:2.3.20 \
-      byebug:11.1.3 \
-      ffi:1.15.5 \
-      nio4r:2.5.9 \
-      nokogiri:1.15.4 \
-      pg:1.3.4 \
-      puma:6.3.1  \
-      redcarpet:3.6.0 \
-      unf:0.2.0.beta2 \
-      websocket-driver:0.7.6 \
-      bindex:0.8.1 \
-      sassc:2.4.0 \
-      && runDeps="$( \
-      scanelf --needed --nobanner --recursive /usr/local \
-      | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-      | sort -u \
-      | xargs -r apk info --installed \
-      | sort -u \
-      )" \
-      && apk add --virtual .rundeps $runDeps \
-      && apk del .builddeps \
-      && gem sources -c \
-      && rm -f /usr/local/bundle/cache/*
+    && gem install --no-document \
+    bundler:2.3.20 \
+    byebug:11.1.3 \
+    ffi:1.15.5 \
+    nio4r:2.7.1 \
+    nokogiri:1.15.4 \
+    pg:1.3.4 \
+    puma:6.4.2  \
+    redcarpet:3.6.0 \
+    unf:0.2.0.beta2 \
+    websocket-driver:0.7.6 \
+    bindex:0.8.1 \
+    sassc:2.4.0 \
+    && runDeps="$( \
+    scanelf --needed --nobanner --recursive /usr/local \
+    | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+    | sort -u \
+    | xargs -r apk info --installed \
+    | sort -u \
+    )" \
+    && apk add --virtual .rundeps $runDeps \
+    && apk del .builddeps \
+    && gem sources -c \
+    && rm -f /usr/local/bundle/cache/*
 
 # add Gemfile and Gemfile.lock to $APP_PATH/
 ADD Gemfile Gemfile.lock ./
@@ -95,9 +95,9 @@ COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 COPY --from=builder $APP_PATH $APP_PATH
 
 RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/pg start' \
-      && rake db:create db:migrate \
-      && bundle exec rspec \
-      && su postgres -c 'script/pg_tmp.sh -d /tmp/pg stop'
+    && rake db:create db:migrate \
+    && bundle exec rspec \
+    && su postgres -c 'script/pg_tmp.sh -d /tmp/pg stop'
 # && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
 
 
