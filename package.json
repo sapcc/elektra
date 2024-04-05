@@ -84,7 +84,6 @@
     "postcss": "^8.4.21",
     "postcss-minify": "^1.1.0",
     "postcss-url": "^10.1.3",
-    "react-autocomplete-cli": "0.0.3",
     "redux-mock-store": "1.5.4",
     "sass": "^1.62.1",
     "tailwindcss": "^3.0.24"
