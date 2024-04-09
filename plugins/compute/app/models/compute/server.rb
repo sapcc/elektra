@@ -109,6 +109,11 @@ module Compute
       params
     end
 
+    # overwrite user_data method to get the raw test without html encoding
+    def user_data
+      attributes[:user_data]
+    end 
+
     def custom_root_disk_size
       read("custom_root_disk_size")
     end
