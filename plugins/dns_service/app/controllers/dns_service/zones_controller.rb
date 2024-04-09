@@ -166,7 +166,9 @@ module DnsService
     end
 
     def update
-      @zone.attributes = params[:zone].merge(@impersonate_option)
+      @zone.email = params[:zone][:email]
+      @zone.ttl = params[:zone][:ttl]
+      @zone.description = params[:zone][:description]
 
       if @zone.save
         flash.now[:notice] = "Zone successfully updated."
