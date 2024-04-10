@@ -75,7 +75,7 @@
               %tr
                 %th Tags
                 %td
-                  - if current_user.is_allowed?("compute_viewer") || current_user.is_allowed?("member")
+                  - if current_user.is_allowed?("context_is_compute_viewer")
                     - if @instance.tags.empty?
                       none
                     - else
@@ -85,7 +85,7 @@
                             %i.fa.fa-tag
                             = tag
                   - else
-                    - involved_roles = policy.try(:involved_roles, "compute_viewer")
+                    - involved_roles = policy.try(:involved_roles, "context_is_compute_viewer")
                     You are not authorized to view tags.
                     - if involved_roles
                       Please check (role assignments) if you have one of the following roles:
