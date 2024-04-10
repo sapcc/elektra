@@ -359,6 +359,8 @@ GEM
     faraday (2.7.10)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
+    faraday-httpclient (2.0.1)
+      httpclient (>= 2.2)
     faraday-net_http (3.0.2)
     ffi (1.15.5)
     filewatcher (2.1.0)
@@ -627,6 +629,7 @@ DEPENDENCIES
   elektron!
   email_service!
   factory_bot_rails
+  faraday-httpclient (~> 2.0)
   filewatcher
   font-awesome-sass (~> 4)
   foreman (~> 0.87.0)

@@ -142,3 +142,5 @@ end
 group :test do
   gem 'rails-controller-testing'
 end
+
+gem "faraday-httpclient", "~> 2.0"
