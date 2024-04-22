@@ -101,13 +101,13 @@ module ResourceManagement
       domain_quota = @domain_resource.quota || 0
       quota = @domain_resource.quota || 0
 
-      @maximum_quota_before_overcommit = capacity - domains_quota + quota
+      @maximum_quota_before_overcommit = capacity - domain_quota + quota
 
       # this alias is necessary for rendering view partials from the "details" screen
       @combined_resource = @cluster_resource
       # calculate projected cluster status after approval
       @cluster_resource_projected = @cluster_resource.clone
-      @cluster_resource_projected.domains_quota +=
+      @cluster_resource_projected.domain_quota +=
         @desired_quota - quota
     end
 
