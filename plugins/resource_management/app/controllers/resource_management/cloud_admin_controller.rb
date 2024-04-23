@@ -107,14 +107,15 @@ module ResourceManagement
       @combined_resource = @cluster_resource
       # calculate projected cluster status after approval
       @cluster_resource_projected = @cluster_resource.clone
+      @cluster_resource_projected.domain_quota = 0 if @cluster_resource_projected.domain_quota.nil?
       @cluster_resource_projected.domain_quota +=
-        @desired_quota - quota
+        (@desired_quota || 0)- (quota || 0)
     end
 
     def approve_request
       @maximum_quota_before_overcommit =
-        @cluster_resource.capacity - @cluster_resource.domains_quota +
-          @domain_resource.quota
+        (@cluster_resource.capacity || 0) - (@cluster_resource.domains_quota || 0) +
+          (@domain_resource.quota || 0)
       overcommit_accepted =
         params.require(:new_style_resource).permit(:accept_overcommit)[
           :accept_overcommit
