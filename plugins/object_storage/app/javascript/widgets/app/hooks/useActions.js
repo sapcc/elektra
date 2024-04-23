@@ -39,7 +39,7 @@ const useActions = () => {
 
       dispatch({ type: "REQUEST_CAPABILITIES" })
       apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .get("info", { params: { path_prefix: "/" } })
         .then((response) => {
           dispatch({ type: "RECEIVE_CAPABILITIES", data: response.data })
@@ -60,7 +60,7 @@ const useActions = () => {
 
       dispatch({ type: "REQUEST_ACCOUNT_METADATA" })
       return apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .head("")
         .then((response) => {
           dispatch({ type: "RECEIVE_ACCOUNT_METADATA", data: response.headers })
@@ -83,7 +83,7 @@ const useActions = () => {
       dispatch({ type: "REQUEST_CONTAINERS" })
 
       return apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .get("")
         .then((response) => {
           dispatch({ type: "RECEIVE_CONTAINERS", items: response.data })
@@ -102,7 +102,7 @@ const useActions = () => {
   const loadContainerObjects = React.useCallback(
     (containerName, options = {}) =>
       apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .get(containerPath(containerName), { params: options })
         .then((response) => ({
           data: response.data,
@@ -114,7 +114,7 @@ const useActions = () => {
   const loadObjectMetadata = React.useCallback(
     (containerName, name) =>
       apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .head(objectPath(containerName, name))
         .then((response) => response.headers),
     []
@@ -131,7 +131,7 @@ const useActions = () => {
           .join("&")
 
     return apiClient
-      .osApi("object-store")
+      .osApi("swift")
       .delete(
         objectPath(containerName, name) +
           (query ? encodeURIComponent(query) : "")
@@ -156,7 +156,7 @@ const useActions = () => {
           // collect all delete promises
           promises.push(
             apiClient
-              .osApi("object-store")
+              .osApi("swift")
               .post("", body, {
                 params: { "bulk-delete": true },
                 headers: { "Content-Type": "text/plain" },
@@ -185,14 +185,14 @@ const useActions = () => {
 
   const getVersions = React.useCallback((containerName) =>
     apiClient
-      .osApi("object-store")
+      .osApi("swift")
       .get(containerName, { params: { versions: true } })
       .then((result) => result?.data)
   )
 
   const deleteVersion = React.useCallback(
     (containerName, { name, version_id }) =>
-      apiClient.osApi("object-store").delete(objectPath(containerName, name), {
+      apiClient.osApi("swift").delete(objectPath(containerName, name), {
         params: { "version-id": version_id },
       })
   )
@@ -200,7 +200,7 @@ const useActions = () => {
   const deleteContainer = React.useCallback(
     (containerName) => {
       return apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .delete(containerPath(containerName))
         .then(() => {
           dispatch({ type: "REMOVE_CONTAINER", name: containerName })
@@ -212,7 +212,7 @@ const useActions = () => {
   const createContainer = React.useCallback(
     (containerName) =>
       apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .put(
           containerPath(containerName),
           {},
@@ -240,7 +240,7 @@ const useActions = () => {
     const contentType = "application/directory"
 
     return apiClient
-      .osApi("object-store")
+      .osApi("swift")
       .put(objectPath(containerName, fullPath), null, {
         headers: { "Content-Type": contentType },
       })
@@ -252,7 +252,7 @@ const useActions = () => {
   const loadContainerMetadata = React.useCallback(
     (containerName) => {
       return apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .head(containerPath(containerName))
         .then((response) => {
           const metadata = response.headers
@@ -286,7 +286,7 @@ const useActions = () => {
       )
 
       return apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .post(containerPath(containerName), {}, { headers: newHeaders })
     },
     []
@@ -295,7 +295,7 @@ const useActions = () => {
   const updateObjectMetadata = React.useCallback(
     (containerName, name, headers) =>
       apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .post(objectPath(containerName, name), {}, { headers: headers }),
     []
   )
@@ -304,14 +304,12 @@ const useActions = () => {
     (containerName, name, target = {}, options = {}) => {
       let copyMetadata = options.withMetadata !== false
 
-      return apiClient
-        .osApi("object-store")
-        .copy(objectPath(containerName, name), {
-          headers: {
-            destination: objectPath(`/${target.container}`, target.path),
-            "x-fresh-metadata": copyMetadata ? undefined : true,
-          },
-        })
+      return apiClient.osApi("swift").copy(objectPath(containerName, name), {
+        headers: {
+          destination: objectPath(`/${target.container}`, target.path),
+          "x-fresh-metadata": copyMetadata ? undefined : true,
+        },
+      })
     },
     []
   )
@@ -326,7 +324,7 @@ const useActions = () => {
   const endpointURL = React.useCallback(
     (containerName, name, params = {}) => {
       return apiClient
-        .osApi("object-store")
+        .osApi("swift")
         .url(objectPath(containerName, name), { params })
     },
     [apiClient]
