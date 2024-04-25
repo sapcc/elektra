@@ -1,31 +1,5 @@
 domains:
-  - name: iaas
-    regex: "^iaas-.*$"
+  - name: test
+    regex: "test"
     disabled_plugins:
-      - automation
-      - reports
-    networks: 
-      - name: NetworkA
-        ip_ranges:
-          - "192.168.1.0/24"
-          - "10.0.0.0/16"
-  - name: monsoon2
-    regex: "monsoon2"
-    disabled_plugins:
-      - automation
-    networks: 
-      - name: NetworkA
-        ip_ranges:
-          - "192.168.1.0/24"
-          - "10.0.0.0/16"
-  - name: monsoon
-    regex: "^monsoon.*$"
-    disabled_plugins:
-      - automation
-      - reports
-      - block_storage
-    networks: 
-      - name: NetworkA
-        ip_ranges:
-          - "192.168.1.0/24"
-          - "10.0.0.0/16"
+      - test_plugin
