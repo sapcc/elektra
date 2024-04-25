@@ -58,99 +58,118 @@ SimpleNavigation::Configuration.run do |navigation|
     #
 
     primary.item :ccadmin,
-                 "Cloud Administration",
-                 nil,
-                 html: {
-                   class: "fancy-nav-header",
-                   "data-icon": "cloud-admin-icon",
-                 },
-                 if: -> {
-                   current_user and
-                     current_user.is_allowed?("cloud_admin") || current_user and
-                     current_user.is_allowed?(
-                       "context_is_cloud_compute_admin",
-                     ) || current_user and
-                     current_user.is_allowed?(
-                       "context_is_cloud_sharedfilesystem_viewer",
-                     )
-                 } do |ccadmin_nav|
+                "Cloud Administration",
+                nil,
+                html: {
+                  class: "fancy-nav-header",
+                  "data-icon": "cloud-admin-icon",
+                },
+                if: -> {
+                  (current_user and
+                    current_user.is_allowed?("cloud_admin") || current_user and
+                    current_user.is_allowed?(
+                      "context_is_cloud_compute_admin",
+                    ) || current_user and
+                    current_user.is_allowed?(
+                      "context_is_cloud_sharedfilesystem_viewer",
+                    )
+                  ) ||
+                  plugin_available?(:inquiry) ||
+                  plugin_available?(:resources) ||
+                  plugin_available?(:compute) ||
+                  plugin_available?(:shared_filesystem_storage) ||
+                  plugin_available?(:lookup) ||
+                  plugin_available?(:identity)  
+                } do |ccadmin_nav|
       ccadmin_nav.item :requests,
-                       "Manage Requests",
-                       plugin("inquiry").admin_inquiries_path
+                      "Manage Requests",
+                      plugin("inquiry").admin_inquiries_path,
+                      if: -> { plugin_available?(:inquiry) }
       ccadmin_nav.item :resources,
-                       "Resource Management",
-                       -> {
-                         plugin("resources").cluster_path(cluster_id: "current")
-                       },
-                       if: -> { services.available?(:resources) }
+                      "Resource Management",
+                      -> {
+                        plugin("resources").cluster_path(cluster_id: "current")
+                      },
+                      if: -> { services.available?(:resources) && plugin_available?(:resources) }
       ccadmin_nav.item :resources,
-                       capture { concat "Resource Management "; concat content_tag(:span, "NEW", class:"label label-info")},
-                       -> {
-                         plugin("resources").v2_cluster_path(cluster_id: "current")
-                       },
-                       if: -> { services.available?(:resources) }
+                      capture { concat "Resource Management "; concat content_tag(:span, "NEW", class:"label label-info")},
+                      -> {
+                        plugin("resources").v2_cluster_path(cluster_id: "current")
+                      },
+                      if: -> { services.available?(:resources) && plugin_available?(:resources) }
       ccadmin_nav.item :flavors,
-                       "Manage Flavors",
-                       -> { plugin("compute").flavors_path },
-                       if: -> { plugin_available?(:compute) },
-                       highlights_on: -> {
-                         params[:controller][%r{flavors/?.*}]
-                       }
+                      "Manage Flavors",
+                      -> { plugin("compute").flavors_path },
+                      if: -> { plugin_available?(:compute) },
+                      highlights_on: -> {
+                        params[:controller][%r{flavors/?.*}]
+                      }
       ccadmin_nav.item :hypervisors,
-                       "Compute Host Aggregates & Hypervisors",
-                       -> { plugin("compute").host_aggregates_path },
-                       if: -> {
-                         plugin_available?(:compute) || current_user and
-                           current_user.is_allowed?(
-                             "context_is_cloud_compute_admin",
-                           )
-                       },
-                       highlights_on: -> {
-                         params[:controller][%r{host_aggregates/?.*}]
-                       }
+                      "Compute Host Aggregates & Hypervisors",
+                      -> { plugin("compute").host_aggregates_path },
+                      if: -> {
+                        plugin_available?(:compute) && current_user and
+                          current_user.is_allowed?(
+                            "context_is_cloud_compute_admin",
+                          )
+                      },
+                      highlights_on: -> {
+                        params[:controller][%r{host_aggregates/?.*}]
+                      }
       ccadmin_nav.item :network_stats,
-                       "Share Aggregates",
-                       lambda {
-                         plugin(
-                           "shared_filesystem_storage",
-                         ).cloud_admin_pools_path
-                       },
-                       highlights_on: -> { params[:controller][%r{pools/?.*}] },
-                       if: -> {
-                         current_user.is_allowed?(
-                           "context_is_cloud_sharedfilesystem_viewer",
-                         )
-                       }
+                      "Share Aggregates",
+                      lambda {
+                        plugin(
+                          "shared_filesystem_storage",
+                        ).cloud_admin_pools_path
+                      },
+                      highlights_on: -> { params[:controller][%r{pools/?.*}] },
+                      if: -> {
+                        plugin_available?(:shared_filesystem_storage) &&
+                        current_user.is_allowed?(
+                          "context_is_cloud_sharedfilesystem_viewer",
+                        )
+                      }
       ccadmin_nav.item :lookup,
-                       "OpenStack Object Lookup",
-                       -> { plugin("lookup").root_path },
-                       highlights_on: -> { params[:controller][%r{lookup/?.*}] }
+                      "OpenStack Object Lookup",
+                      -> { plugin("lookup").root_path },
+                      highlights_on: -> { params[:controller][%r{lookup/?.*}] },
+                      if: -> {
+                        plugin_available?(:lookup)
+                      }
       ccadmin_nav.item :delete_project_check,
-                       "OpenStack Delete Project Check",
-                       -> { plugin("identity").check_delete_project_path },
-                       if: -> { services.available?(:identity,:elektron_prodel) }
-                       #highlights_on:
-                       #  proc {
-                       #    params[:controller][%r{check_delete/.*}]
-                       #  }
+                      "OpenStack Delete Project Check",
+                      -> { plugin("identity").check_delete_project_path },
+                      if: -> { services.available?(:identity,:elektron_prodel) && plugin_available?(:identity) }
+                      #highlights_on:
+                      #  proc {
+                      #    params[:controller][%r{check_delete/.*}]
+                      #  }
     end
 
     primary.item :cloudops,
-                 "Cloudops",
-                 nil,
-                 html: {
-                   class: "fancy-nav-header",
-                   "data-icon": "cloud-admin-icon",
-                 },
-                 if: -> { true } do |cloudops_nav|
+                "Cloudops",
+                nil,
+                html: {
+                  class: "fancy-nav-header",
+                  "data-icon": "cloud-admin-icon",
+                },
+                if: -> { 
+                  plugin_available?(:cloudops) ||
+                  plugin_available?(:cc_tools) ||
+                  plugin_available?(:keppel)
+                 } do |cloudops_nav|
       cloudops_nav.item :user_role_assignments,
                         "Cloudops Tools",
-                        -> { plugin("cloudops").start_path }
+                        -> { plugin("cloudops").start_path },
+                        if: -> {
+                          plugin_available?(:cloudops)
+                        }
       cloudops_nav.item :castellum_errors,
                         "Castellum Errors",
                         -> { plugin("cc_tools").castellum_errors_path },
                         if: -> {
-                          services.tools.has_castellum? and current_user and
+                          plugin_available?(:cc_tools) && services.tools.has_castellum? and current_user and
                             current_user.is_allowed?(
                               "tools:show_castellum_errors",
                             )
@@ -162,7 +181,7 @@ SimpleNavigation::Configuration.run do |navigation|
                         "Limes Errors",
                         -> { plugin("cc_tools").limes_errors_path },
                         if: -> {
-                          services.tools.has_limes? and current_user and
+                          plugin_available?(:cc_tools) && services.tools.has_limes? and current_user and
                             current_user.is_allowed?("tools:show_limes_errors")
                         },
                         highlights_on: -> {
@@ -172,7 +191,7 @@ SimpleNavigation::Configuration.run do |navigation|
                         "All Keppel Accounts",
                         -> { plugin("keppel").start_path },
                         if: -> {
-                          services.available?("keppel") and current_user and
+                          plugin_available?(:keppel) && services.available?("keppel") and current_user and
                             current_user.is_allowed?("keppel_cloud_viewer")
                         },
                         highlights_on: -> {

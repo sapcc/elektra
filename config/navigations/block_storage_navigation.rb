@@ -58,17 +58,17 @@ SimpleNavigation::Configuration.run do |navigation|
     #
 
     primary.item :block_storage,
-                 "Volumes",
-                 -> { plugin("block_storage").volumes_path },
-                 if: -> { plugin_available?(:block_storage) },
-                 highlights_on:
-                   Proc.new { params[:controller][%r{block_storage/volumes}] }
+                "Volumes",
+                -> { plugin("block_storage").volumes_path },
+                if: -> { plugin_available?(:block_storage) },
+                highlights_on:
+                  Proc.new { params[:controller][%r{block_storage/volumes}] }
     primary.item :block_storage,
-                 "Volume Snapshots",
-                 -> { plugin("block_storage").snapshots_path },
-                 if: -> { plugin_available?(:block_storage) },
-                 highlights_on:
-                   Proc.new { params[:controller][%r{block_storage/snapshots}] }
+                "Volume Snapshots",
+                -> { plugin("block_storage").snapshots_path },
+                if: -> { plugin_available?(:block_storage) },
+                highlights_on:
+                  Proc.new { params[:controller][%r{block_storage/snapshots}] }
 
     # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
     #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }

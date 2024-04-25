@@ -120,14 +120,15 @@
       %i.inquiry-icon
       Requests
 
-    %ul.plain-list
-      %li
-        = link_to plugin('inquiry').inquiries_path do
-          My Requests
-          = " (#{::Inquiry::Inquiry.requestor_requests_count(@scoped_domain_id, current_user.id)})"
+    - if plugin_available?(:inquiry)
+      %ul.plain-list
+        %li
+          = link_to plugin('inquiry').inquiries_path do
+            My Requests
+            = " (#{::Inquiry::Inquiry.requestor_requests_count(@scoped_domain_id, current_user.id)})"
 
 
-    - if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id)
+    - if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id) && plugin_available?(:identity)
       %h5
         %i.project-icon
         Projects

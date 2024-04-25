@@ -163,9 +163,16 @@ module ApplicationHelper
       @plugin.respond_to? method_name
     end
   end
+  
+  class UnavailablePluginURLHelper
+    def self.method_missing(method, *args, &block)
+      "##{method.to_s}-plugin-not-available"
+    end
+  end
 
   def plugin(name)
-    raise "Plugin #{name} not available!" unless plugin_available?(name)
+    return UnavailablePluginURLHelper unless plugin_available?(name)
+    # raise "Plugin #{name} not available!" unless plugin_available?(name)
     PluginUrlHelper.new(
       self,
       name,

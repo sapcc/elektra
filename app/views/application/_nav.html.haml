@@ -35,7 +35,7 @@
               %li
                 = link_to "Profile", '#', data: { toggle: "modal", target: "#profile"}
 
-              - if current_user.is_allowed?("compute:keypair_list", {target: {scoped_domain_name: @scoped_domain_name}}) && @scoped_project_id
+              - if current_user.is_allowed?("compute:keypair_list", {target: {scoped_domain_name: @scoped_domain_name}}) && @scoped_project_id && plugin_available?(:compute)
                 %li= link_to "Key Pairs", plugin('compute').keypairs_path
 
               %li.divider
