@@ -87,6 +87,8 @@ class ScopeController < ::ApplicationController
 
     @can_access_domain = !@scoped_domain_name.nil?
     @can_access_project = !@scoped_project_name.nil?
+    
+    @bedrockConfig = BedrockConfig.new(@scoped_domain_name)
   end
 
   rescue_from(

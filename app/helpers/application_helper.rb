@@ -182,6 +182,7 @@ module ApplicationHelper
   end
 
   def plugin_available?(name)
+    return if @bedrockConfig.plugin_hidden?(name.to_s)
     self.respond_to?("#{name}_plugin".to_sym)
   end
 
