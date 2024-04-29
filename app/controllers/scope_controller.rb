@@ -4,7 +4,17 @@
 # All subclasses which require a scope (e.g. domain_id/projects or domain_id/project_id/instances)
 # should inherit from this class.
 class ScopeController < ::ApplicationController
+  # keep the before_action with prepend to ensure that the load_scoped_objects method is called first
   prepend_before_action :load_scoped_objects
+  # At this point is the bedrock configuration already loaded and the scoped domain and project are set.
+  # The plugin_name is set by the ApplicationController which is inherited by this class.
+  before_action :bedrock_redirect
+
+  def bedrock_redirect   
+    if @bedrockConfig.plugin_hidden?(plugin_name.to_s)
+      redirect_to "/error-404"
+    end
+  end
 
   def load_scoped_objects
     # initialize scoped domain's and project's friendly id
