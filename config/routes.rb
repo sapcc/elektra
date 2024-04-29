@@ -3,6 +3,8 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => "/:domain_fid/auth"
 
+  get "/error-404", to: "errors#error_404"
+
   # "jump to" routes
   # if project_id is known then the domain name or id is unnecessary
   # the jump controller will try to redirect to the requested url
