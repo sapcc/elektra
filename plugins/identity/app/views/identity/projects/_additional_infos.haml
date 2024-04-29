@@ -30,6 +30,12 @@
           %td
             = link_to plugin('access_profile').root_path(modal_size: "none"), data: {modal: true, modal_size: "none"} do
               Edit
+        %tr
+          %th.snug-nowrap
+            Delete Project:
+          %td
+            = javascript_include_tag :identity_prodel_widget
+
 
 - if current_user.is_allowed?('identity:project_request')
   %h4.action-heading
