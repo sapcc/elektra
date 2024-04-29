@@ -19,4 +19,3 @@ class BedrockConfig
     end || {}
   end
 end
-  
