@@ -1,6 +1,7 @@
 import React from "react"
 import { useDispatch, useGlobalState } from "../StateProvider"
 import { apiClient } from "../lib/apiClient"
+import { serviceName } from "../lib/apiClient"
 
 const decode = (str) => {
   try {
@@ -39,7 +40,7 @@ const useActions = () => {
 
       dispatch({ type: "REQUEST_CAPABILITIES" })
       apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .get("info", { params: { path_prefix: "/" } })
         .then((response) => {
           dispatch({ type: "RECEIVE_CAPABILITIES", data: response.data })
@@ -60,7 +61,7 @@ const useActions = () => {
 
       dispatch({ type: "REQUEST_ACCOUNT_METADATA" })
       return apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .head("")
         .then((response) => {
           dispatch({ type: "RECEIVE_ACCOUNT_METADATA", data: response.headers })
@@ -83,7 +84,7 @@ const useActions = () => {
       dispatch({ type: "REQUEST_CONTAINERS" })
 
       return apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .get("")
         .then((response) => {
           dispatch({ type: "RECEIVE_CONTAINERS", items: response.data })
@@ -102,7 +103,7 @@ const useActions = () => {
   const loadContainerObjects = React.useCallback(
     (containerName, options = {}) =>
       apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .get(containerPath(containerName), { params: options })
         .then((response) => ({
           data: response.data,
@@ -114,7 +115,7 @@ const useActions = () => {
   const loadObjectMetadata = React.useCallback(
     (containerName, name) =>
       apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .head(objectPath(containerName, name))
         .then((response) => response.headers),
     []
@@ -131,7 +132,7 @@ const useActions = () => {
           .join("&")
 
     return apiClient
-      .osApi("swift")
+      .osApi(serviceName)
       .delete(
         objectPath(containerName, name) +
           (query ? encodeURIComponent(query) : "")
@@ -156,7 +157,7 @@ const useActions = () => {
           // collect all delete promises
           promises.push(
             apiClient
-              .osApi("swift")
+              .osApi(serviceName)
               .post("", body, {
                 params: { "bulk-delete": true },
                 headers: { "Content-Type": "text/plain" },
@@ -185,14 +186,14 @@ const useActions = () => {
 
   const getVersions = React.useCallback((containerName) =>
     apiClient
-      .osApi("swift")
+      .osApi(serviceName)
       .get(containerName, { params: { versions: true } })
       .then((result) => result?.data)
   )
 
   const deleteVersion = React.useCallback(
     (containerName, { name, version_id }) =>
-      apiClient.osApi("swift").delete(objectPath(containerName, name), {
+      apiClient.osApi(serviceName).delete(objectPath(containerName, name), {
         params: { "version-id": version_id },
       })
   )
@@ -200,7 +201,7 @@ const useActions = () => {
   const deleteContainer = React.useCallback(
     (containerName) => {
       return apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .delete(containerPath(containerName))
         .then(() => {
           dispatch({ type: "REMOVE_CONTAINER", name: containerName })
@@ -212,7 +213,7 @@ const useActions = () => {
   const createContainer = React.useCallback(
     (containerName) =>
       apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .put(
           containerPath(containerName),
           {},
@@ -240,7 +241,7 @@ const useActions = () => {
     const contentType = "application/directory"
 
     return apiClient
-      .osApi("swift")
+      .osApi(serviceName)
       .put(objectPath(containerName, fullPath), null, {
         headers: { "Content-Type": contentType },
       })
@@ -252,7 +253,7 @@ const useActions = () => {
   const loadContainerMetadata = React.useCallback(
     (containerName) => {
       return apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .head(containerPath(containerName))
         .then((response) => {
           const metadata = response.headers
@@ -286,7 +287,7 @@ const useActions = () => {
       )
 
       return apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .post(containerPath(containerName), {}, { headers: newHeaders })
     },
     []
@@ -295,7 +296,7 @@ const useActions = () => {
   const updateObjectMetadata = React.useCallback(
     (containerName, name, headers) =>
       apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .post(objectPath(containerName, name), {}, { headers: headers }),
     []
   )
@@ -304,12 +305,14 @@ const useActions = () => {
     (containerName, name, target = {}, options = {}) => {
       let copyMetadata = options.withMetadata !== false
 
-      return apiClient.osApi("swift").copy(objectPath(containerName, name), {
-        headers: {
-          destination: objectPath(`/${target.container}`, target.path),
-          "x-fresh-metadata": copyMetadata ? undefined : true,
-        },
-      })
+      return apiClient
+        .osApi(serviceName)
+        .copy(objectPath(containerName, name), {
+          headers: {
+            destination: objectPath(`/${target.container}`, target.path),
+            "x-fresh-metadata": copyMetadata ? undefined : true,
+          },
+        })
     },
     []
   )
@@ -324,7 +327,7 @@ const useActions = () => {
   const endpointURL = React.useCallback(
     (containerName, name, params = {}) => {
       return apiClient
-        .osApi("swift")
+        .osApi(serviceName)
         .url(objectPath(containerName, name), { params })
     },
     [apiClient]

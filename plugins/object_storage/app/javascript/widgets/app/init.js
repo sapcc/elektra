@@ -1,5 +1,5 @@
 import { createWidget } from "lib/widget"
-import { setApiClient } from "./lib/apiClient"
+import { setApiClient, setServiceName } from "./lib/apiClient"
 import { createAjaxHelper } from "lib/ajax_helper"
 import App from "./App"
 
@@ -9,6 +9,7 @@ createWidget({ pluginName: "object_storage", widgetName: "app" }).then(
       baseURL: widget.config.scriptParams.baseName,
     })
     setApiClient(ajaxHelper)
+    setServiceName(widget.config.scriptParams.service || "swift")
     widget.setPolicy()
     widget.render(App)
   }
