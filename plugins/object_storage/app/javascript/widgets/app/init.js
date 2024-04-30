@@ -9,7 +9,7 @@ createWidget({ pluginName: "object_storage", widgetName: "app" }).then(
       baseURL: widget.config.scriptParams.baseName,
     })
     setApiClient(ajaxHelper)
-    setServiceName(widget.config.scriptParams.service || "swift")
+    setServiceName(widget.config.scriptParams.serviceName)
     widget.setPolicy()
     widget.render(App)
   }

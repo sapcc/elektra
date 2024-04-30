@@ -3,6 +3,7 @@
 module ObjectStorage
   class ApplicationController < ::DashboardController
     def show
+      @service_name = params[:serviceName] || "swift"
     end
 
     def check_acls
