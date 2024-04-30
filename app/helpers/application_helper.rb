@@ -185,7 +185,10 @@ module ApplicationHelper
     # bedrock_config is referenced in the scope_controller and initialize on Rails startup
     # this mehtod is used to check if a plugin is available for the current domain when rendering the navigations
     # The server side part is done in the scope_controller
-    return if @bedrock_config.plugin_hidden?(name.to_s)
+    # do not check if @bedrock_config is nil, this is the case for controllers inheriting not from ScopeController 
+    unless @bedrock_config.nil? 
+      return if @bedrock_config.plugin_hidden?(name.to_s)
+    end
     self.respond_to?("#{name}_plugin".to_sym)
   end
 
