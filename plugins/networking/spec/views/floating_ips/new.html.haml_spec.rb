@@ -11,6 +11,7 @@ RSpec.describe "networking/floating_ips/new.html.haml", type: :view do
     assign(:scoped_domain_fid, default_params[:domain_id])
     assign(:floating_ip, Networking::FloatingIp.new(nil))
     assign(:floating_networks, [])
+    assign(:bedrock_config, BedrockConfig.new(default_params[:domain_id]))
 
     allow(view).to receive(:current_user) {
       current_user = double("current_user")

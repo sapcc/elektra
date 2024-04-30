@@ -11,7 +11,7 @@ class ScopeController < ::ApplicationController
   before_action :bedrock_redirect
 
   def bedrock_redirect   
-    if @bedrockConfig.plugin_hidden?(plugin_name.to_s)
+    if @bedrock_config.plugin_hidden?(plugin_name.to_s)
       redirect_to "/error-404"
     end
   end
@@ -98,7 +98,7 @@ class ScopeController < ::ApplicationController
     @can_access_domain = !@scoped_domain_name.nil?
     @can_access_project = !@scoped_project_name.nil?
     
-    @bedrockConfig = BedrockConfig.new(@scoped_domain_name)
+    @bedrock_config = BedrockConfig.new(@scoped_domain_name)
   end
 
   rescue_from(
