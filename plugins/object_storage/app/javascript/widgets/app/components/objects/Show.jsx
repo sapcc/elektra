@@ -6,6 +6,7 @@ import useActions from "../../hooks/useActions"
 import { Unit } from "lib/unit"
 import CustomMetaTags from "../shared/CustomMetatags"
 import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
+import { serviceEndpoint } from "../../lib/apiClient"
 
 const unit = new Unit("B")
 
@@ -40,7 +41,7 @@ const stringToDate = (string) => {
   }
 }
 
-const ShowObject = ({ objectStoreEndpoint }) => {
+const ShowObject = () => {
   const history = useHistory()
   let { name: containerName, objectPath, object } = useParams()
   const { loadContainerMetadata, loadObjectMetadata } = useActions()
@@ -78,7 +79,7 @@ const ShowObject = ({ objectStoreEndpoint }) => {
     )
       return null
 
-    return `${objectStoreEndpoint}/${decodeURIComponent(
+    return `${serviceEndpoint}/${decodeURIComponent(
       containerName
     )}/${decodeURIComponent(object)}`
   }, [containerMetadata, containerName, object])
@@ -374,10 +375,6 @@ const ShowObject = ({ objectStoreEndpoint }) => {
       </Modal.Footer>
     </Modal>
   )
-}
-
-ShowObject.propTypes = {
-  objectStoreEndpoint: PropTypes.string,
 }
 
 export default ShowObject

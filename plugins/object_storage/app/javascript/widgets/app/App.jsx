@@ -8,7 +8,6 @@ const App = (props) => (
   <StateProvider>
     <Router
       baseName={props.baseName}
-      objectStoreEndpoint={props.objectStoreEndpoint}
       resourcesPath={props.resourcesPath}
       projectPath={props.projectPath}
     />
@@ -17,7 +16,6 @@ const App = (props) => (
 
 App.propTypes = {
   baseName: PropTypes.string,
-  objectStoreEndpoint: PropTypes.string,
   projectPath: PropTypes.string,
   resourcesPath: PropTypes.string,
 }

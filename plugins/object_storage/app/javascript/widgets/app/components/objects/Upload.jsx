@@ -6,9 +6,10 @@ import useUrlParamEncoder from "../../hooks/useUrlParamEncoder"
 import { Unit } from "lib/unit"
 import useActions from "../../hooks/useActions"
 import { LIMIT } from "./config"
+import { serviceEndpoint } from "../../lib/apiClient"
 const unit = new Unit("B")
 
-const UploadFile = ({ refresh, objectStoreEndpoint }) => {
+const UploadFile = ({ refresh }) => {
   const history = useHistory()
   let { name: containerName, objectPath } = useParams()
   const { value: currentPath } = useUrlParamEncoder(objectPath)
@@ -132,7 +133,7 @@ const UploadFile = ({ refresh, objectStoreEndpoint }) => {
               </p>
               <p ref={codeRef}>
                 <code>
-                  curl -T {file.name} -X PUT "{objectStoreEndpoint}/
+                  curl -T {file.name} -X PUT "{serviceEndpoint}/
                   {decodeURIComponent(containerName)}/
                   {decodeURIComponent(fileName)}" -H "X-Auth-Token: $token"
                 </code>
@@ -204,7 +205,6 @@ const UploadFile = ({ refresh, objectStoreEndpoint }) => {
 
 UploadFile.propTypes = {
   refresh: PropTypes.func,
-  objectStoreEndpoint: PropTypes.string,
 }
 
 export default UploadFile

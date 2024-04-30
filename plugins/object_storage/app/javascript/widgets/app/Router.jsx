@@ -16,7 +16,7 @@ import NoSwiftAccountBecauseNoQuota from "./components/app/NoSwiftAccountBecause
 import { useGlobalState } from "./StateProvider"
 import useActions from "./hooks/useActions"
 
-const Routes = ({ objectStoreEndpoint, projectPath, resourcesPath }) => {
+const Routes = ({ projectPath, resourcesPath }) => {
   const capabilities = useGlobalState("capabilities")
   const account = useGlobalState("account")
   const { loadCapabilitiesOnce, loadAccountMetadataOnce } = useActions()
@@ -57,7 +57,7 @@ const Routes = ({ objectStoreEndpoint, projectPath, resourcesPath }) => {
 
       <Switch>
         <Route path="/containers/:name/objects/:objectPath?">
-          <Objects objectStoreEndpoint={objectStoreEndpoint} />
+          <Objects />
         </Route>
 
         <Route path="/containers">
@@ -67,9 +67,7 @@ const Routes = ({ objectStoreEndpoint, projectPath, resourcesPath }) => {
           <Route
             exact
             path={`/containers/:name/properties`}
-            render={() => (
-              <ContainerProperties objectStoreEndpoint={objectStoreEndpoint} />
-            )}
+            render={() => <ContainerProperties />}
           />
 
           <Route
@@ -93,21 +91,12 @@ const Routes = ({ objectStoreEndpoint, projectPath, resourcesPath }) => {
   )
 }
 
-const Router = ({
-  baseName,
-  objectStoreEndpoint,
-  projectPath,
-  resourcesPath,
-}) => (
+const Router = ({ baseName, projectPath, resourcesPath }) => (
   <BrowserRouter basename={baseName}>
     <Route exact path={`/how-to-enable`} component={HowToEnable} />
 
     {policy.isAllowed("object_storage:container_list") ? (
-      <Routes
-        objectStoreEndpoint={objectStoreEndpoint}
-        projectPath={projectPath}
-        resourcesPath={resourcesPath}
-      />
+      <Routes projectPath={projectPath} resourcesPath={resourcesPath} />
     ) : (
       <HowToEnable projectPath={projectPath} />
     )}
@@ -116,7 +105,6 @@ const Router = ({
 
 Router.propTypes = {
   baseName: PropTypes.string.isRequired,
-  objectStoreEndpoint: PropTypes.string.isRequired,
   projectPath: PropTypes.string.isRequired,
   resourcesPath: PropTypes.string.isRequired,
 }

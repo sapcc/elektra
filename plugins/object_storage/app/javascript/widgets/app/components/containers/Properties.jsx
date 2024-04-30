@@ -7,6 +7,7 @@ import { useGlobalState } from "../../StateProvider"
 import { Unit } from "lib/unit"
 import useActions from "../../hooks/useActions"
 import CustomMetaTags from "../shared/CustomMetatags"
+import { serviceEndpoint } from "../../lib/apiClient"
 const unit = new Unit("B")
 
 const FormBody = ({ containerName, otherContainers }) => {
@@ -209,7 +210,7 @@ FormBody.propTypes = {
   otherContainers: PropTypes.array,
 }
 
-const ContainerProperties = ({ objectStoreEndpoint }) => {
+const ContainerProperties = () => {
   const { name } = useParams()
   const history = useHistory()
   const [show, setShow] = React.useState(!!name)
@@ -316,7 +317,7 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
   const initialValues = React.useMemo(() => {
     if (!metadata) return {}
     return {
-      public_url: `${objectStoreEndpoint}/${encodeURIComponent(name)}/`,
+      public_url: `${serviceEndpoint}/${encodeURIComponent(name)}/`,
       versions_location: metadata["x-versions-location"],
       versions_location_enabled: !!metadata["x-versions-location"],
       cap_staticweb: capabilities.data?.staticweb && true,
@@ -388,7 +389,5 @@ const ContainerProperties = ({ objectStoreEndpoint }) => {
     </Modal>
   )
 }
-
-ContainerProperties.propTypes = { objectStoreEndpoint: PropTypes.string }
 
 export default ContainerProperties

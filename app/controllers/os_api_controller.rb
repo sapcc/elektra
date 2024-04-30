@@ -14,7 +14,7 @@ class OsApiController < ::AjaxController
     # get http method from request
     method = request.method.downcase
     # get path undecoded from request or from params (decoded)
-    path = request.path.split("os-api")[1] || params[:path]
+    path = request.env["REQUEST_PATH"].split("os-api")[1] || params[:path]
     # remove leading slash
     path = path.gsub(/^\//, "")
     
