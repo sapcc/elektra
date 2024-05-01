@@ -368,7 +368,7 @@ GEM
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
     foreman (0.87.2)
-    friendly_id (5.5.0)
+    friendly_id (5.5.1)
       activerecord (>= 4.0.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
