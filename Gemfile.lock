@@ -372,7 +372,7 @@ GEM
       activerecord (>= 4.0.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    haml (6.1.2)
+    haml (6.1.4)
       temple (>= 0.8.2)
       thor
       tilt
@@ -444,7 +444,7 @@ GEM
     nokogiri (1.15.6-x86_64-linux)
       racc (~> 1.4)
     pg (1.3.4)
-    prettier (4.0.2)
+    prettier (4.0.4)
       syntax_tree (>= 4.0.1)
       syntax_tree-haml (>= 2.0.0)
       syntax_tree-rbs (>= 0.2.0)
@@ -575,7 +575,7 @@ GEM
       prettier_print
       rbs
       syntax_tree (>= 2.0.1)
-    temple (0.10.2)
+    temple (0.10.3)
     thor (1.2.2)
     thread_safe (0.3.6)
     tilt (2.2.0)
