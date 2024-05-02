@@ -20,6 +20,7 @@ import React from "react"
 // }
 
 const TimeAgo = ({ date, originDate }) => {
+  if (!date) return null
   if (typeof date === "string") {
     if (date[date.length - 1] !== "Z") date += "Z"
     date = new Date(date)

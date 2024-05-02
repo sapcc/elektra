@@ -61,7 +61,6 @@ const UploadFile = ({ refresh }) => {
   )
 
   const copyToClipboard = React.useCallback(() => {
-    console.log(codeRef)
     if (!codeRef.current || !authToken) return
     var text = (codeRef.current.innerText || "").replace("$token", authToken)
     navigator.clipboard.writeText(text).then(

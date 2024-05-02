@@ -361,13 +361,29 @@ SimpleNavigation::Configuration.run do |navigation|
                   } do |storage_nav|
       storage_nav.item :shared_storage,
                 "Shared Object Storage",
-                -> { plugin("object_storage").widget_path },
+                -> { plugin("object_storage").service_path(service_name: "swift") },
                 if: -> do
                   current_user.has_service?("object-store") &&
                   plugin_available?(:object_storage)
                 end,
                 highlights_on:
                   proc { params[:controller][%r{object_storage/.*}] }
+      storage_nav.item :shared_storage_ceph,
+                  capture {
+                    concat "Shared Object Storage "
+                    concat content_tag(
+                      :span, "ceph", class: "label label-info"
+                    )
+                  },
+                  -> { plugin("object_storage").service_path(service_name: "ceph") },
+                  if: -> do
+                    current_user.has_service?("object-store-ceph") &&
+                    plugin_available?(:object_storage) && 
+                    @active_project&.tags && @active_project.tags.include?("ceph")
+                  end,
+                  highlights_on:
+                    proc { params[:controller][%r{object_storage/.*}] }
+
       storage_nav.item :shared_filesystem_storage,
                 "Shared File System Storage",
                 -> do

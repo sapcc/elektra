@@ -36,12 +36,15 @@ const useActions = () => {
 
   const loadCapabilitiesOnce = React.useCallback(
     (options = {}) => {
-      if (capabilities.updatedAt && !options.reload) return
+      if ((capabilities.updatedAt || capabilities.error) && !options.reload)
+        return
 
       dispatch({ type: "REQUEST_CAPABILITIES" })
       apiClient
         .osApi(serviceName)
-        .get("info", { params: { path_prefix: "/" } })
+        .get("info", {
+          params: { path_prefix: serviceName === "swift" ? "/" : "/swift" },
+        })
         .then((response) => {
           dispatch({ type: "RECEIVE_CAPABILITIES", data: response.data })
         })
@@ -57,7 +60,8 @@ const useActions = () => {
 
   const loadAccountMetadataOnce = React.useCallback(
     (options = {}) => {
-      if (account.updatedAt && !options.reload) return account.data
+      if ((account.updatedAt || account.error) && !options.reload)
+        return account.data
 
       dispatch({ type: "REQUEST_ACCOUNT_METADATA" })
       return apiClient

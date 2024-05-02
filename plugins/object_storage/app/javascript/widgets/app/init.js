@@ -1,6 +1,5 @@
 import { createWidget } from "lib/widget"
 import {
-  serviceEndpoint,
   setApiClient,
   setServiceName,
   setServiceEndpoint,
@@ -10,15 +9,18 @@ import App from "./App"
 
 createWidget({ pluginName: "object_storage", widgetName: "app" }).then(
   (widget) => {
+    const baseURL = widget.config.scriptParams.baseName
+    // split baseURL by "/" ignoring the trailing slash
+    const parts = baseURL.split("/").filter((part) => part)
+    const [domain, project, plugin, serviceName] = parts
     const ajaxHelper = createAjaxHelper({
-      baseURL: widget.config.scriptParams.baseName,
+      //baseURL: widget.config.scriptParams.baseName,
+      baseURL: `/${domain}/${project}/${plugin}`,
     })
     setApiClient(ajaxHelper)
-    setServiceName(widget.config.scriptParams.serviceName)
+    setServiceName(serviceName)
     setServiceEndpoint(widget.config.scriptParams.serviceEndpoint)
     widget.setPolicy()
     widget.render(App)
-
-    console.log("::::::::::", serviceEndpoint)
   }
 )

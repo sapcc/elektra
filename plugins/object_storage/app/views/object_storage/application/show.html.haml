@@ -1,1 +1,10 @@
-= javascript_include_tag "object_storage_app_widget", data: {base_name: plugin('object_storage').widget_path, service_name: "#{@service_name}", service_endpoint:  services.os_api.service("#{@service_name}").endpoint_url, project_path: plugin('identity').project_path, resources_path: plugin('resources').project_path}
+-# base_name: is used by react router to determine the base path for the app
+-# service_endpoint: is used by the app to determine the endpoint to use in api client
+-# project_path: is used by the app to determine the project path to use in api client
+-# resources_path: is used by the app to link to the resources app
+
+= javascript_include_tag "object_storage_app_widget", data: {                    |
+  base_name: plugin('object_storage').service_path(@service_name),               |
+  service_endpoint:  services.os_api.service("#{@service_name}").endpoint_url,   |
+  project_path: plugin('identity').project_path,                                 |
+  resources_path: plugin('resources').project_path}
