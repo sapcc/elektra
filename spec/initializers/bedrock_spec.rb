@@ -47,4 +47,3 @@ describe BedrockConfig do
     end
   end
 end
-  
