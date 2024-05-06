@@ -169,7 +169,7 @@ export default class Overview extends React.Component {
 
     const hasGotoClusterButton = canGotoCluster && !isForeignScope
     const hasSettingsButton =
-      canEdit && scope.isProject() && this.props.metadata.bursting !== null
+      canEdit && scope.isProject() && !!this.props.metadata.bursting
 
     return (
       <>

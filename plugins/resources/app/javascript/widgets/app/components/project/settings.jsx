@@ -20,7 +20,7 @@ export default class ProjectSettingsModal extends React.Component {
   }
 
   handleSubmit = (values) => {
-    const oldHasBursting = this.props.metadata.bursting.enabled
+    const oldHasBursting = this.props?.metadata?.bursting?.enabled
     const newHasBursting = values.has_bursting === "yes"
     if (oldHasBursting == newHasBursting) {
       this.close()
@@ -36,7 +36,7 @@ export default class ProjectSettingsModal extends React.Component {
 
   render() {
     const initialValues = {
-      has_bursting: this.props.metadata.bursting.enabled ? "yes" : "no",
+      has_bursting: this.props.metadata?.bursting?.enabled ? "yes" : "no",
     }
 
     return (
