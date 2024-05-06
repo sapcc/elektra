@@ -2,7 +2,19 @@
 
 module ObjectStorage
   class ApplicationController < ::DashboardController
+    # def swift
+    #   @service_name = "swift"
+    #   byebug
+    #   render :show
+    # end
+
+    # def ceph
+    #   @service_name = "ceph"
+    #   render :show
+    # end
+
     def show
+      @service_name = params[:service_name]
     end
 
     def check_acls

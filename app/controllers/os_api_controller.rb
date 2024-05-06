@@ -14,7 +14,7 @@ class OsApiController < ::AjaxController
     # get http method from request
     method = request.method.downcase
     # get path undecoded from request or from params (decoded)
-    path = request.path.split("os-api")[1] || params[:path]
+    path = request.env["REQUEST_PATH"].split("os-api")[1] || params[:path]
     # remove leading slash
     path = path.gsub(/^\//, "")
     
@@ -47,6 +47,7 @@ class OsApiController < ::AjaxController
 
     # call the openstack api endpoint with given path, params and headers
     # for http methods POST, PUT, PATCH we have to consider the body parameter
+    
     elektron_response =
       if %w[post put patch].include?(method)
         body = request.body.read
@@ -58,6 +59,7 @@ class OsApiController < ::AjaxController
         service.public_send(method, path, elektron_params, headers: headers)
       end
 
+      # byebug
     # render response as json
     elektron_response.header.each_header do |key, value|
       new_key = key.start_with?("x-") ? key : "x-#{key}"

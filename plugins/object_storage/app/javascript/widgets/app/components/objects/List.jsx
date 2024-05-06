@@ -25,7 +25,7 @@ import { confirm } from "lib/dialogs"
 
 import { stripHtml } from "../../hooks/useActions"
 
-const Objects = ({ objectStoreEndpoint }) => {
+const Objects = () => {
   let { url } = useRouteMatch()
   let objectsRoot = url.replace(/([^/])\/objects.*/, "$1/objects")
   let history = useHistory()
@@ -367,10 +367,7 @@ const Objects = ({ objectStoreEndpoint }) => {
         <NewObject onCreated={handleFolderCreated} />
       </Route>
       <Route exact path="/containers/:name/objects/:objectPath?/upload">
-        <UploadFile
-          refresh={loadObjects}
-          objectStoreEndpoint={objectStoreEndpoint}
-        />
+        <UploadFile refresh={loadObjects} />
       </Route>
       <Route exact path="/containers/:name/objects/:objectPath?/:object/move">
         <CopyFile refresh={loadObjects} deleteAfter />
@@ -379,13 +376,13 @@ const Objects = ({ objectStoreEndpoint }) => {
         <CopyFile refresh={loadObjects} showCopyMetadata />
       </Route>
       <Route exact path="/containers/:name/objects/:objectPath?/:object/show">
-        <ShowProperties objectStoreEndpoint={objectStoreEndpoint} />
+        <ShowProperties />
       </Route>
       <Route
         exact
         path="/containers/:name/objects/:objectPath?/:object/download-instructions"
       >
-        <DownloadInstructions objectStoreEndpoint={objectStoreEndpoint} />
+        <DownloadInstructions />
       </Route>
 
       <div className="toolbar">
@@ -438,10 +435,6 @@ const Objects = ({ objectStoreEndpoint }) => {
       )}
     </>
   )
-}
-
-Objects.propTypes = {
-  objectStoreEndpoint: PropTypes.string,
 }
 
 export default Objects

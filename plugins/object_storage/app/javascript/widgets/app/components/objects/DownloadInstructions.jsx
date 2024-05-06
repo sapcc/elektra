@@ -5,9 +5,10 @@ import { useHistory, useParams } from "react-router-dom"
 import useActions from "../../hooks/useActions"
 import { Unit } from "lib/unit"
 import { LIMIT } from "./config"
+import { serviceEndpoint } from "../../lib/apiClient"
 const unit = new Unit("B")
 
-const LargeFileInstruction = ({ objectStoreEndpoint }) => {
+const LargeFileInstruction = ({}) => {
   const history = useHistory()
   const [show, setShow] = React.useState(true)
   let { name: containerName, objectPath, object: name } = useParams()
@@ -82,7 +83,7 @@ const LargeFileInstruction = ({ objectStoreEndpoint }) => {
               <p ref={codeRef}>
                 <code>
                   curl "
-                  {objectStoreEndpoint +
+                  {serviceEndpoint +
                     "/" +
                     decodeURIComponent(containerName + "/" + name)}
                   " -X GET -H "X-Auth-Token: $token" --output {name}
@@ -115,10 +116,6 @@ const LargeFileInstruction = ({ objectStoreEndpoint }) => {
       </Modal.Footer>
     </Modal>
   )
-}
-
-LargeFileInstruction.propTypes = {
-  objectStoreEndpoint: PropTypes.string,
 }
 
 export default LargeFileInstruction
