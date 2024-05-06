@@ -14,7 +14,7 @@ const DetailsViewHighlightTransition = ({ children, ...props }) => (
 )
 
 const keysNotPrinted = ["region", "year", "month", "project_id", "price_sec"]
-const keysNotFormatted = ["cost_object", "object_id"]
+const keysNotFormatted = ["cost_object", "object_id", "allocation_type"]
 
 const renderValue = (props, key) => {
   if (!keysNotFormatted.includes(key) && Numeral(props.service[key]).value()) {
