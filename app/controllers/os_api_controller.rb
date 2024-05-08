@@ -41,7 +41,14 @@ class OsApiController < ::AjaxController
     # byebug
 
     # get api client for the given service name
-    service = services.os_api.service(service_name)
+    service = services.os_api.service(service_name,interface: "internal")
+    # check if internal interface is available
+    begin 
+      service.endpoint_url(interface: "internal")
+    rescue Elektron::Errors::ServiceEndpointUnavailable
+      service = services.os_api.service(service_name,interface: "public")
+    end
+
     # filter the relevant params for the api client
     elektron_params = request.query_parameters
 
