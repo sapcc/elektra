@@ -2,8 +2,15 @@
 # Use case rever_proxy (see os_api_controller.rb)
 module ServiceLayer
   class OsApiService < Core::ServiceLayer::Service
-    def service(name,options={})
-      elektron.service(name,options)
+    def service(name)
+      begin 
+        service = elektron.service(name,interface: "internal")
+        # check if internal interface is available
+        service.endpoint_url(interface: "internal")
+      rescue Elektron::Errors::ServiceEndpointUnavailable
+        service = elektron.service(name,interface: "public")
+      end
+      service
     end
   end
 end
