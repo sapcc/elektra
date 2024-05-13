@@ -46,12 +46,24 @@ module Compute
             .each_with_object({}) do |image, map|
               next if image.name.nil?
 
-              hypervisor_type = image.hypervisor_type || "baremetal"
               visibility = image.visibility
               visibility = "snapshot" if image.image_type == "snapshot"
               map[visibility] ||= {}
-              map[visibility][hypervisor_type] ||= []
-              map[visibility][hypervisor_type] << image
+              
+              # some years ago we decided to treat images without hypervisor_type as baremetal. 
+              # From now on we will treat them as both baremetal and vmware because 
+              # thus images run on both hypervisors.
+              
+              # images that have no hypervisor_type are treated as both baremetal and vmware
+              if image.hypervisor_type.nil? 
+                map[visibility]["baremetal"] ||= []
+                map[visibility]["vmware"] ||= []
+                map[visibility]["baremetal"] << image
+                map[visibility]["vmware"] << image
+              else
+                map[visibility][image.hypervisor_type] ||= []
+                map[visibility][image.hypervisor_type] << image
+              end
             end
             .sort
 
