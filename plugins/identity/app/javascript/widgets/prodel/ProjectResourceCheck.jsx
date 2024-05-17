@@ -13,12 +13,59 @@ import { Button } from "juno-ui-components/build/Button"
 import { Spinner } from "juno-ui-components/build/Spinner"
 import { Icon } from "juno-ui-components"
 import { IntroBox } from "juno-ui-components/build/IntroBox"
-import { h } from "juno-ui-components/build/floating-ui.dom-a8dd2d87"
+import { SearchInput } from "juno-ui-components/build/SearchInput"
+import DeleteConfirm from "./DeleteConfirm"
 
 export default function ProjectResourceCheck({ opened, onClose }) {
+  // This state is used to store the data fetched from the API
   const [data, setData] = React.useState(null)
+  // This state is used to store the loading state of the component
   const [loading, setLoading] = React.useState(false)
+  // This is a ref to keep track of the mounted state of the component
   const mounted = React.useRef(true)
+  // This state is used to store the search text entered by the user
+  const [searchText, setSearchText] = React.useState("")
+
+  // This is a memoized value that filters the data based on the search text
+  const filteredData = React.useMemo(() => {
+    if (!data) return []
+    return data.filter((entry) => {
+      if (!searchText) return true
+      return (
+        entry.resource?.name?.includes(searchText) ||
+        entry.resource?.id?.includes(searchText) ||
+        entry.type?.includes(searchText) ||
+        entry.service_type?.includes(searchText)
+      )
+    })
+  }, [data, searchText])
+
+  const onConfirm = () => {
+    console.log("Deleting project...")
+    setLoading(true)
+    apiClient
+      .osApi("prodel")
+      .delete(`/api/v1/projects/${window.scopedProjectId}`)
+      .then(() => {
+        setLoading(false)
+        // after success
+        var scopedDomainName = window.location.pathname.split("/")[1]
+        var url =
+          window.location.protocol +
+          "//" +
+          window.location.host +
+          "/" +
+          scopedDomainName
+        window.location.href = url
+      })
+      .catch((error) => {
+        setLoading(false)
+        console.error(error)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }
 
   const fetchData = React.useCallback(() => {
     setLoading(true)
@@ -36,6 +83,9 @@ export default function ProjectResourceCheck({ opened, onClose }) {
         setLoading(false)
         console.error(error)
       })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [])
 
   React.useEffect(() => {
@@ -45,11 +95,12 @@ export default function ProjectResourceCheck({ opened, onClose }) {
   }, [])
 
   React.useEffect(() => {
+    // If the panel is not opened, do not fetch data
     if (!opened) return
     fetchData()
   }, [fetchData, opened])
 
-  const calculateResourceTypeIcon = (resourceType, serviceType) => {
+  const calculateResourceType = (resourceType, serviceType) => {
     let typeHref = undefined
     if (
       resourceType === "default_security_group_rules" ||
@@ -96,7 +147,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
       typeHref = "/object-storage/containers"
     }
 
-    if (!typeHref) return ""
+    if (!typeHref) return <div className="tw-text-gray-400">n/a</div>
     typeHref = `/_/${window.scopedProjectId}${typeHref}`
     return (
       <Icon
@@ -109,6 +160,12 @@ export default function ProjectResourceCheck({ opened, onClose }) {
     )
   }
 
+  const checkProjectCanNotBeDeleted = () => {
+    if (loading) return true
+    if (!data) return false
+    return true
+  }
+
   return (
     <ContentAreaWrapper>
       <Panel
@@ -119,15 +176,32 @@ export default function ProjectResourceCheck({ opened, onClose }) {
         size="large"
       >
         <PanelBody>
-          <ContentAreaToolbar>
+          <ContentAreaToolbar className="tw-space-x-2">
+            <div className="tw-flex tw-w-full">
+              <SearchInput
+                onChange={(e) => setSearchText(e.target.value)}
+                onClear={() => setSearchText("")}
+                variant="default"
+              />
+            </div>
             {loading && <Spinner />}
             <Button disabled={loading} onClick={fetchData}>
               Refresh
             </Button>
+            <DeleteConfirm
+              onConfirm={() => {
+                onConfirm()
+              }}
+              disabled={checkProjectCanNotBeDeleted()}
+            />
           </ContentAreaToolbar>
           {data && !loading ? (
             <>
-              <IntroBox text="You need to clean up the following resources before you can delete the Project. Follow the Link on the end of each line to jump to the related service." />
+              {filteredData.length === 0 ? (
+                <IntroBox text="No resources found. You can delete the Project." />
+              ) : (
+                <IntroBox text="You need to clean up the following resources before you can delete the Project. Follow the Link on the end of each line to jump to the related service." />
+              )}
               <Tabs onSelect={function noRefCheck() {}}>
                 <TabList>
                   <Tab>Styled Data</Tab>
@@ -135,7 +209,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
                 </TabList>
                 <TabPanel>
                   <>
-                    {data.map((entry, index) => (
+                    {filteredData.map((entry, index) => (
                       <div key={index}>
                         <table width="100%">
                           <tbody>
@@ -146,7 +220,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
                               <td width="30%">{entry?.type}</td>
                               <td width="20%">{entry?.service_type}</td>
                               <td width="5%">
-                                {calculateResourceTypeIcon(
+                                {calculateResourceType(
                                   entry?.type,
                                   entry?.service_type
                                 )}

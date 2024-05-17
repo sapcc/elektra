@@ -34,7 +34,7 @@
           %th.snug-nowrap
             Delete Project:
           %td
-            = javascript_include_tag :identity_prodel_widget
+            = javascript_include_tag :identity_prodel_widget, data: {base_url: plugin('identity').root_path}
 
 
 - if current_user.is_allowed?('identity:project_request')
