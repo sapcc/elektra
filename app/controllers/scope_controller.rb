@@ -98,6 +98,7 @@ class ScopeController < ::ApplicationController
     @can_access_domain = !@scoped_domain_name.nil?
     @can_access_project = !@scoped_project_name.nil?
     
+    # the presence of this variable is tested in spec/controllers/scope_controller_spec.rb
     @bedrock_config = BedrockConfig.new(@scoped_domain_name)
   end
 
