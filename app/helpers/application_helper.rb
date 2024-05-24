@@ -187,7 +187,7 @@ module ApplicationHelper
     # The server side part is done in the scope_controller
     # do not check if @bedrock_config is nil, this is the case for controllers inheriting not from ScopeController 
     unless @bedrock_config.nil? 
-      return if @bedrock_config.plugin_hidden?(name.to_s)
+      return false if @bedrock_config.plugin_hidden?(name.to_s)
     end
     self.respond_to?("#{name}_plugin".to_sym)
   end
