@@ -10,6 +10,8 @@ class ScopeController < ::ApplicationController
   # The plugin_name is set by the ApplicationController which is inherited by this class.
   before_action :bedrock_redirect
 
+  # to prevent unauthorized access to hidden plugins we redirect to a 404 page
+  # if the plugin is hidden for the current domain
   def bedrock_redirect   
     if @bedrock_config.plugin_hidden?(plugin_name.to_s)
       redirect_to "/error-404"
