@@ -1,9 +1,9 @@
 import React from "react"
-import { AppShellProvider } from "juno-ui-components"
+import { AppShellProvider, AppShell } from "juno-ui-components"
 import ProjectResourceCheck from "./ProjectResourceCheck"
 import styles from "./styles.scss?inline"
 
-export default function App2() {
+export default function App() {
   const [opened, setOpened] = React.useState(false)
 
   // This function is called when the link `Check` is clicked
@@ -23,10 +23,12 @@ export default function App2() {
       </a>
       <AppShellProvider theme="theme-light">
         <style>{styles}</style>
-        <ProjectResourceCheck
-          opened={opened}
-          onClose={() => setOpened(false)}
-        />
+        <AppShell embedded={true}>
+          <ProjectResourceCheck
+            opened={opened}
+            onClose={() => setOpened(false)}
+          />
+        </AppShell>
       </AppShellProvider>
     </>
   )

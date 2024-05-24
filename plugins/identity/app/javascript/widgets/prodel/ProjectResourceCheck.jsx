@@ -1,19 +1,39 @@
 import React from "react"
-import { ContentAreaWrapper } from "juno-ui-components/build/ContentAreaWrapper"
-import { Panel } from "juno-ui-components/build/Panel"
-import { PanelBody } from "juno-ui-components/build/PanelBody"
+
+//import { ContentAreaWrapper } from "juno-ui-components/build/ContentAreaWrapper"
+//import { Panel } from "juno-ui-components/build/Panel"
+//import { PanelBody } from "juno-ui-components/build/PanelBody"
+// import { JsonViewer } from "juno-ui-components/build/JsonViewer"
+// import { Tab } from "juno-ui-components/build/Tab"
+// import { TabList } from "juno-ui-components/build/TabList"
+// import { TabPanel } from "juno-ui-components/build/TabPanel"
+// import { Tabs } from "juno-ui-components/build/Tabs"
+// import { ContentAreaToolbar } from "juno-ui-components/build/ContentAreaToolbar"
+// import { Button } from "juno-ui-components/build/Button"
+// import { Spinner } from "juno-ui-components/build/Spinner"
+// import { Icon } from "juno-ui-components"
+// import { IntroBox } from "juno-ui-components/build/IntroBox"
+// import { SearchInput } from "juno-ui-components/build/SearchInput"
+
 import { apiClient } from "./lib/apiClient"
-import { JsonViewer } from "juno-ui-components/build/JsonViewer"
-import { Tab } from "juno-ui-components/build/Tab"
-import { TabList } from "juno-ui-components/build/TabList"
-import { TabPanel } from "juno-ui-components/build/TabPanel"
-import { Tabs } from "juno-ui-components/build/Tabs"
-import { ContentAreaToolbar } from "juno-ui-components/build/ContentAreaToolbar"
-import { Button } from "juno-ui-components/build/Button"
-import { Spinner } from "juno-ui-components/build/Spinner"
-import { Icon } from "juno-ui-components"
-import { IntroBox } from "juno-ui-components/build/IntroBox"
-import { SearchInput } from "juno-ui-components/build/SearchInput"
+
+import {
+  ContentAreaWrapper,
+  Panel,
+  PanelBody,
+  JsonViewer,
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs,
+  ContentAreaToolbar,
+  Button,
+  Spinner,
+  Icon,
+  IntroBox,
+  SearchInput,
+} from "juno-ui-components"
+
 import DeleteConfirm from "./DeleteConfirm"
 
 export default function ProjectResourceCheck({ opened, onClose }) {
@@ -56,7 +76,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
           window.location.host +
           "/" +
           scopedDomainName
-        window.location.href = url
+        window.location.href = url + "/home"
       })
       .catch((error) => {
         setLoading(false)
@@ -145,6 +165,12 @@ export default function ProjectResourceCheck({ opened, onClose }) {
       typeHref = "/networking/networks/external"
     } else if (resourceType === "object_store_containers") {
       typeHref = "/object-storage/containers"
+    } else if (resourceType === "key_manager_containers") {
+      typeHref = "/keymanagerng/containers"
+    } else if (resourceType === "key_manager_secrets") {
+      typeHref = "/keymanagerng/secrets"
+    } else if (resourceType === "load_balancers") {
+      typeHref = "/lbaas2/?r=/loadbalancers"
     }
 
     if (!typeHref) return <div className="tw-text-gray-400">n/a</div>
@@ -161,6 +187,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
   }
 
   const checkProjectCanNotBeDeleted = () => {
+    //return false
     if (loading) return true
     if (!data) return false
     return true

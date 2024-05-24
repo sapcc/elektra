@@ -36,7 +36,6 @@
           %td
             = javascript_include_tag :identity_prodel_widget, data: {base_url: plugin('identity').root_path}
 
-
 - if current_user.is_allowed?('identity:project_request')
   %h4.action-heading
     Sub Projects
@@ -49,7 +48,6 @@
         %i.fa.fa-plus-square-o
 
 %div{data: {react_auth_projects: true, root: @scoped_project_id, title: 'false' } }
-
 
 - unless @sharding_enabled || @project.name == "cloud_admin"
   .bs-callout.bs-callout-warning.bs-callout-emphasize.u-margin-top-normal
