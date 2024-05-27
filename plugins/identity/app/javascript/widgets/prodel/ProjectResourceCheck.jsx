@@ -1,38 +1,21 @@
 import React from "react"
 
-//import { ContentAreaWrapper } from "juno-ui-components/build/ContentAreaWrapper"
-//import { Panel } from "juno-ui-components/build/Panel"
-//import { PanelBody } from "juno-ui-components/build/PanelBody"
-// import { JsonViewer } from "juno-ui-components/build/JsonViewer"
-// import { Tab } from "juno-ui-components/build/Tab"
-// import { TabList } from "juno-ui-components/build/TabList"
-// import { TabPanel } from "juno-ui-components/build/TabPanel"
-// import { Tabs } from "juno-ui-components/build/Tabs"
-// import { ContentAreaToolbar } from "juno-ui-components/build/ContentAreaToolbar"
-// import { Button } from "juno-ui-components/build/Button"
-// import { Spinner } from "juno-ui-components/build/Spinner"
-// import { Icon } from "juno-ui-components"
-// import { IntroBox } from "juno-ui-components/build/IntroBox"
-// import { SearchInput } from "juno-ui-components/build/SearchInput"
-
+import { ContentAreaWrapper } from "juno-ui-components/build/ContentAreaWrapper"
+import { Panel } from "juno-ui-components/build/Panel"
+import { PanelBody } from "juno-ui-components/build/PanelBody"
+import { JsonViewer } from "juno-ui-components/build/JsonViewer"
+import { Tab } from "juno-ui-components/build/Tab"
+import { TabList } from "juno-ui-components/build/TabList"
+import { TabPanel } from "juno-ui-components/build/TabPanel"
+import { Tabs } from "juno-ui-components/build/Tabs"
+import { ContentAreaToolbar } from "juno-ui-components/build/ContentAreaToolbar"
+import { Button } from "juno-ui-components/build/Button"
+import { Spinner } from "juno-ui-components/build/Spinner"
+import { Icon } from "juno-ui-components"
+import { IntroBox } from "juno-ui-components/build/IntroBox"
+import { SearchInput } from "juno-ui-components/build/SearchInput"
 import { apiClient } from "./lib/apiClient"
-
-import {
-  ContentAreaWrapper,
-  Panel,
-  PanelBody,
-  JsonViewer,
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs,
-  ContentAreaToolbar,
-  Button,
-  Spinner,
-  Icon,
-  IntroBox,
-  SearchInput,
-} from "juno-ui-components"
+import { Message } from "juno-ui-components/build/Message"
 
 import DeleteConfirm from "./DeleteConfirm"
 
@@ -45,6 +28,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
   const mounted = React.useRef(true)
   // This state is used to store the search text entered by the user
   const [searchText, setSearchText] = React.useState("")
+  const [apiError, setApiError] = React.useState(null)
 
   // This is a memoized value that filters the data based on the search text
   const filteredData = React.useMemo(() => {
@@ -52,6 +36,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
     return data.filter((entry) => {
       if (!searchText) return true
       return (
+        // Check if the search text is present in the resource name, id, type or service type
         entry.resource?.name?.includes(searchText) ||
         entry.resource?.id?.includes(searchText) ||
         entry.type?.includes(searchText) ||
@@ -80,7 +65,8 @@ export default function ProjectResourceCheck({ opened, onClose }) {
       })
       .catch((error) => {
         setLoading(false)
-        console.error(error)
+        setApiError(error.data)
+        console.error(error.data)
       })
       .finally(() => {
         setLoading(false)
@@ -94,6 +80,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
       .get(`/api/v1/projects/${window.scopedProjectId}/resources/`)
       .then((response) => {
         if (!mounted.current) return
+        //console.log(response.data)
         setData(response.data?.resources)
         setLoading(false)
       })
@@ -101,7 +88,8 @@ export default function ProjectResourceCheck({ opened, onClose }) {
         if (!mounted.current) return
         setData(null)
         setLoading(false)
-        console.error(error)
+        setApiError(error.data)
+        console.error(error.data)
       })
       .finally(() => {
         setLoading(false)
@@ -171,6 +159,11 @@ export default function ProjectResourceCheck({ opened, onClose }) {
       typeHref = "/keymanagerng/secrets"
     } else if (resourceType === "load_balancers") {
       typeHref = "/lbaas2/?r=/loadbalancers"
+    } else if (
+      resourceType === "cronus_nebula_aws" ||
+      resourceType === "cronus_nebula_int"
+    ) {
+      typeHref = "/email-service/"
     }
 
     if (!typeHref) return <div className="tw-text-gray-400">n/a</div>
@@ -212,7 +205,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
               />
             </div>
             {loading && <Spinner />}
-            <Button disabled={loading} onClick={fetchData}>
+            <Button disabled={loading} onClick={fetchData} variant="primary">
               Refresh
             </Button>
             <DeleteConfirm
@@ -221,9 +214,23 @@ export default function ProjectResourceCheck({ opened, onClose }) {
               }}
               disabled={checkProjectCanNotBeDeleted()}
             />
+            <Button
+              href="https://documentation.global.cloud.sap/docs/customer/getting-started/tutorials/others/faq-delete-project/"
+              target="blank"
+              variant="default"
+            >
+              Help
+            </Button>
           </ContentAreaToolbar>
           {data && !loading ? (
             <>
+              {apiError && (
+                <Message
+                  onDismiss={function noRefCheck() {}}
+                  text={`An error occurred: ${apiError.error.message}`}
+                  variant="error"
+                />
+              )}
               {filteredData.length === 0 ? (
                 <IntroBox text="No resources found. You can delete the Project." />
               ) : (
@@ -231,7 +238,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
               )}
               <Tabs onSelect={function noRefCheck() {}}>
                 <TabList>
-                  <Tab>Styled Data</Tab>
+                  <Tab>Resources</Tab>
                   <Tab>Raw Data</Tab>
                 </TabList>
                 <TabPanel>
@@ -241,11 +248,18 @@ export default function ProjectResourceCheck({ opened, onClose }) {
                         <table width="100%">
                           <tbody>
                             <tr>
-                              <td width="45%">
+                              <td width="45%" title="Name or ID">
                                 {entry.resource?.name || entry.resource?.id}
                               </td>
-                              <td width="30%">{entry?.type}</td>
-                              <td width="20%">{entry?.service_type}</td>
+                              <td width="25%" title="Type">
+                                {entry?.type}
+                              </td>
+                              <td width="20%" title="Service">
+                                {entry?.service_type}
+                              </td>
+                              <td width="5%" title="Delete order">
+                                {entry?.delete_order}
+                              </td>
                               <td width="5%">
                                 {calculateResourceType(
                                   entry?.type,

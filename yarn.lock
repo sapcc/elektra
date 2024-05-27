@@ -5463,9 +5463,9 @@ jss@10.10.0, jss@^10.10.0:
     array-includes "^3.1.5"
     object.assign "^4.1.3"
 
-"juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@2.13.8/package.tgz":
-  version "2.13.8"
-  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@2.13.8/package.tgz#f855265b74242b5a38d184d3c0dd013fe0c2af67"
+"juno-ui-components@https://assets.juno.global.cloud.sap/libs/juno-ui-components@2.14.2/package.tgz":
+  version "2.14.2"
+  resolved "https://assets.juno.global.cloud.sap/libs/juno-ui-components@2.14.2/package.tgz#eab2406eab5bf873133d04bedee1352b634ca95b"
 
 keycode@^2.2.0:
   version "2.2.1"

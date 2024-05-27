@@ -1,7 +1,8 @@
 import React from "react"
-//import { Button } from "juno-ui-components/build/Button"
-//import { Modal } from "juno-ui-components/build/Modal"
-import { Button, Modal } from "juno-ui-components"
+import { Button } from "juno-ui-components/build/Button"
+import { Modal } from "juno-ui-components/build/Modal"
+
+//import { Button, Modal } from "juno-ui-components"
 
 function DeleteConfirm(props) {
   const [showModal, setShowModal] = React.useState(false)
