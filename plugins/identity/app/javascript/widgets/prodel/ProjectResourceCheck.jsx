@@ -35,10 +35,11 @@ export default function ProjectResourceCheck({ opened, onClose }) {
     if (!data) return []
     return data.filter((entry) => {
       if (!searchText) return true
+      let id = String(entry.resource?.id)
       return (
         // Check if the search text is present in the resource name, id, type or service type
         entry.resource?.name?.includes(searchText) ||
-        entry.resource?.id?.includes(searchText) ||
+        id?.includes(searchText) ||
         entry.type?.includes(searchText) ||
         entry.service_type?.includes(searchText)
       )
@@ -109,61 +110,104 @@ export default function ProjectResourceCheck({ opened, onClose }) {
   }, [fetchData, opened])
 
   const calculateResourceType = (resourceType, serviceType) => {
+    //console.log("R-Type:" + resourceType, "Type:" + serviceType)
     let typeHref = undefined
     if (
-      resourceType === "default_security_group_rules" ||
-      resourceType === "security_groups"
+      (resourceType === "default_security_group_rules" ||
+        resourceType === "security_groups") &&
+      serviceType === "network"
     ) {
       typeHref = "/networking/widget/security-groups/"
-    } else if (resourceType === "floating_ips") {
+    } else if (resourceType === "floating_ips" && serviceType === "network") {
       typeHref = "/networking/floating_ips/"
-    } else if (resourceType === "servers") {
+    } else if (
+      (resourceType === "servers" || resourceType === "server_groups") &&
+      serviceType === "compute"
+    ) {
       typeHref = "/compute/instances/"
     } else if (
-      resourceType === "load_balancer_listeners" ||
-      resourceType === "load_balancer_pools"
+      (resourceType === "load_balancer_listeners" ||
+        resourceType === "load_balancer_pools") &&
+      serviceType === "load-balancer"
     ) {
       typeHref = "/lbaas2/?r=/loadbalancers"
-    } else if (resourceType === "recordsets" || resourceType === "zones") {
+    } else if (
+      (resourceType === "recordsets" || resourceType === "zones") &&
+      serviceType === "dns"
+    ) {
       typeHref = "/dns-service/zones"
-    } else if (resourceType === "volume_snapshots") {
+    } else if (
+      resourceType === "volume_snapshots" &&
+      serviceType === "block-storage"
+    ) {
       typeHref = "/block-storage/?r=/snapshots"
-    } else if (resourceType === "volumes") {
+    } else if (resourceType === "volumes" && serviceType === "block-storage") {
       typeHref = "/image/ng?r=/os-images/volumes"
-    } else if (resourceType === "keppel_accounts") {
+    } else if (resourceType === "keppel_accounts" && serviceType === "keppel") {
       typeHref = "/keppel/#/accounts"
-    } else if (resourceType === "manila_shares") {
+    } else if (
+      resourceType === "manila_shares" &&
+      serviceType === "shared-file-system"
+    ) {
       typeHref = "/shared-filesystem-storage/?r=/shares"
-    } else if (resourceType === "manila_share_networks") {
+    } else if (
+      resourceType === "manila_share_networks" &&
+      serviceType === "shared-file-system"
+    ) {
       typeHref = "/shared-filesystem-storage/?r=/share-networks"
-    } else if (resourceType === "manila_security_services") {
+    } else if (
+      resourceType === "manila_security_services" &&
+      serviceType === "shared-file-system"
+    ) {
       typeHref = "/shared-filesystem-storage/?r=/security-services"
-    } else if (resourceType === "manila_snapshots") {
+    } else if (
+      resourceType === "manila_snapshots" &&
+      serviceType === "shared-file-system"
+    ) {
       typeHref = "/shared-filesystem-storage/?r=/manila_snapshots"
     } else if (resourceType === "manila_replicas") {
       typeHref = "/shared-filesystem-storage/?r=/replicas"
-    } else if (resourceType === "images") {
+    } else if (resourceType === "images" && serviceType === "image") {
       typeHref = "/image/ng?r=/os-images/available"
     } else if (
-      resourceType === "network_ports" ||
-      resourceType === "routers" ||
-      resourceType === "subnets" ||
-      resourceType === "networks"
+      (resourceType === "network_ports" ||
+        resourceType === "routers" ||
+        resourceType === "subnets" ||
+        resourceType === "networks") &&
+      serviceType === "network"
     ) {
       typeHref = "/networking/networks/external"
-    } else if (resourceType === "object_store_containers") {
+    } else if (
+      resourceType === "object_store_containers" &&
+      serviceType === "object-store"
+    ) {
       typeHref = "/object-storage/containers"
     } else if (resourceType === "key_manager_containers") {
       typeHref = "/keymanagerng/containers"
     } else if (resourceType === "key_manager_secrets") {
       typeHref = "/keymanagerng/secrets"
-    } else if (resourceType === "load_balancers") {
+    } else if (
+      resourceType === "load_balancers" &&
+      serviceType === "load-balancer"
+    ) {
       typeHref = "/lbaas2/?r=/loadbalancers"
     } else if (
       resourceType === "cronus_nebula_aws" ||
       resourceType === "cronus_nebula_int"
     ) {
-      typeHref = "/email-service/"
+      typeHref = "/email-service"
+    } else if (
+      (resourceType === "lyra_automations" && serviceType === "automation") ||
+      (resourceType === "arc_agents" && serviceType === "arc")
+    ) {
+      typeHref = "/automation"
+    } else if (
+      resourceType === "kubernikus_clusters" &&
+      serviceType === "kubernikus"
+    ) {
+      typeHref = "/kubernetes"
+    } else if (resourceType === "commitments" && serviceType === "resources") {
+      typeHref = "/resources/v2/project"
     }
 
     if (!typeHref) return <div className="tw-text-gray-400">n/a</div>
@@ -234,7 +278,9 @@ export default function ProjectResourceCheck({ opened, onClose }) {
               {filteredData.length === 0 ? (
                 <IntroBox text="No resources found. You can delete the Project." />
               ) : (
-                <IntroBox text="You need to clean up the following resources before you can delete the Project. Follow the Link on the end of each line to jump to the related service." />
+                <IntroBox
+                  text={`Prodel Service found ${data.length} related objects for the current Project. You need to clean up these resources before you can delete the Project. Follow the Link on the end of each line to jump to the related service. Or click on the Help Button to get more information.`}
+                />
               )}
               <Tabs onSelect={function noRefCheck() {}}>
                 <TabList>
