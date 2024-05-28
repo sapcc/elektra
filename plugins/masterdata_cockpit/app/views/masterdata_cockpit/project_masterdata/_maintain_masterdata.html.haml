@@ -137,9 +137,9 @@
         .col-md-4
           = f.input :gpu_enabled, label: "GPU Enabled", checked_value: '1', unchecked_value: '0', as: :boolean
         .col-md-4
-          = f.input :contains_pii_dpp_hr, label: "Contains PII DPP HR", checked_value: '1', unchecked_value: '0', as: :boolean
+          = f.input :contains_pii_dpp_hr, label: "Contains PII DPP HR Data", checked_value: '1', unchecked_value: '0', as: :boolean
         .col-md-4
-          = f.input :contains_external_customer_data, label: "External Customer Data", checked_value: '1', unchecked_value: '0', as: :boolean
+          = f.input :contains_external_customer_data, label: "Contains external customer generated data", checked_value: '1', unchecked_value: '0', as: :boolean
       .row
         .col-md-4.op-help-block
           = icon ('info-circle')
@@ -150,7 +150,7 @@
         .col-md-4.op-help-block
           = icon ('info-circle')
           = t('masterdata_cockpit.contains_external_customer_data_help')
-  %label.control-label External Certification
+  %label.control-label Audit
   .loading-place.loading-right
   .panel.panel-default
     .panel-body
