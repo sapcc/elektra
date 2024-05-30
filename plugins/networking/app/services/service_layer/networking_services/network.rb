@@ -76,6 +76,9 @@ module ServiceLayer
       end
 
       def domain_floatingip_network(domain_name)
+        # TODO: 
+        # domain_config = DomainConfig.new(domain_name)
+        # name_candidates = domain_config.floatingip_network_candidates 
         # ccadmin, cc3test -> FloatingIP-internal-monsoon3
         domain_name = "monsoon3" if %w[ccadmin cc3test].include?(domain_name)
 

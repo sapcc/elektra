@@ -1,3 +1,5 @@
+# this config is used to control the visibility of plugins in the navigation, 
+# to define floating ip networks.
 domains:
   - name: test
     regex: "__test__"
