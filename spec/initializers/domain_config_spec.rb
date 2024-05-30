@@ -5,7 +5,8 @@ test_config = {
     {
       "name" => "all iaas",
       "regex" => "^iaas-.*$",
-      "disabled_plugins" => ["plugin1", "plugin2"]
+      "disabled_plugins" => ["plugin1", "plugin2"],
+      "floating_ip_networks" => ["FloatingIP-external-%DOMAIN_NAME%-network"]
     },
     {
       "name" => "test domain",
@@ -43,6 +44,20 @@ describe DomainConfig do
 
       it "returns false if the plugin is not disabled" do
         expect(DomainConfig.new("iaas-domain1").plugin_hidden?("plugin3")).to be false
+      end
+    end
+
+    describe "#floating_ip_networks" do
+      it "returns the floating ip networks" do
+        expect(DomainConfig.new("iaas-domain1").floating_ip_networks).to eq([ "FloatingIP-external-iaas-domain1-network" ])
+      end
+
+      it "replaces %DOMAIN_NAME% with the scoped domain name" do
+        expect(DomainConfig.new("iaas-domain1").floating_ip_networks).to eq([ "FloatingIP-external-iaas-domain1-network" ])
+      end
+
+      it "returns an empty array if no floating ip networks are configured" do
+        expect(DomainConfig.new("iaas-test1").floating_ip_networks).to eq([])
       end
     end
   end
