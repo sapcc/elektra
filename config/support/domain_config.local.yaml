@@ -14,7 +14,8 @@ domains:
       - "FloatingIP-external-%DOMAIN_NAME%-02"
       - "FloatingIP-external-%DOMAIN_NAME%-01"
       - "FloatingIP-external-%DOMAIN_NAME%"
-      - "Converged Cloud External"     
+      - "Converged Cloud External"    
+    dns_c_subdomain: true   
 
   - name: iaas
     regex: "^iaas-.*$"
@@ -24,3 +25,4 @@ domains:
       - masterdata_cockpit
     floating_ip_networks:
       -  FloatingIP-external-iaas-01  
+    dns_c_subdomain: false  

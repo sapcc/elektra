@@ -28,13 +28,15 @@
         = f.input :domain_type, required: true, label: 'Type' do
           = f.input :domain_type, as: :hidden, input_html: {value: "rootdomain"}
           %p.description
-          %span.radio
-            %label
-              = f.radio_button :domain_type, "subdomain"
-              Subdomain
-              %p.help-block
-                %i.fa.fa-info-circle
-                %span{ data: {container: 'subdomains'} }= pool_attributes.fetch('subdomains', nil)
+          
+          - if @domain_config.dns_c_subdomain?
+            %span.radio
+              %label
+                = f.radio_button :domain_type, "subdomain"
+                Subdomain
+                %p.help-block
+                  %i.fa.fa-info-circle
+                  %span{ data: {container: 'subdomains'} }= pool_attributes.fetch('subdomains', nil)
           %span.radio
             %label
               = f.radio_button :domain_type, "rootdomain"

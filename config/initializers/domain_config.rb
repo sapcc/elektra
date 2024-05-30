@@ -41,6 +41,10 @@ class DomainConfig
     end
   end
 
+  def dns_c_subdomain?
+    return @domain_config.fetch("dns_c_subdomain", false)
+  end
+
   private
 
   def find_config(domains_config, scoped_domain_name)

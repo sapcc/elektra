@@ -13,80 +13,82 @@
         %td= @active_project.description
 
 -# MASTERDATA
-- if @masterdata_cockpit_service_available
-  - can_setup_masterdata = current_user.is_allowed?("masterdata:create_masterdata")
-  - can_see_masterdata = current_user.is_allowed?("masterdata:show")
+- if !@domain_config.plugin_hidden?("masterdata_cockpit")
+  - if @masterdata_cockpit_service_available
+    - can_setup_masterdata = current_user.is_allowed?("masterdata:create_masterdata")
+    - can_see_masterdata = current_user.is_allowed?("masterdata:show")
 
-  -# this is a special case if some data is missing after the user maintained the masterdata in the first time
-  - if @project_masterdata_missing_attributes
-    = wizard_step({ title: 'Masterdata',
-      mandatory: true,
-      status: @project_profile.wizard_status('masterdata_cockpit'),
-      action_button: ({label: 'Edit Masterdata', url:plugin('masterdata_cockpit').project_masterdata_edit_path()} if can_setup_masterdata),
-      }) do
-      %p
-        Was maintained but there are some data missing.
-        %br
-        Missing attributes: #{@project_masterdata_missing_attributes}
-  - else
-    -# regular case to create new masterdata for the project
-    = wizard_step({ title: 'Masterdata',
-      mandatory: true,
-      status: @project_profile.wizard_status('masterdata_cockpit'),
-      action_button: ({label: 'Create Masterdata', url:plugin('masterdata_cockpit').project_masterdata_new_path} if can_setup_masterdata),
-      }) do
-      - if @project_profile.wizard_finished?('masterdata_cockpit')
+    -# this is a special case if some data is missing after the user maintained the masterdata in the first time
+    - if @project_masterdata_missing_attributes
+      = wizard_step({ title: 'Masterdata',
+        mandatory: true,
+        status: @project_profile.wizard_status('masterdata_cockpit'),
+        action_button: ({label: 'Edit Masterdata', url:plugin('masterdata_cockpit').project_masterdata_edit_path()} if can_setup_masterdata),
+        }) do
         %p
-          Was successfully maintained. 
-          - if can_see_masterdata
-            For more details take a look to the 
-            = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
-      - else
-        %p Please maintain the masterdata for this project
-- else
-  = wizard_step({title: 'Masterdata',
-    mandatory: true,
-    status: 'pending'}) do
-    %p The Masterdata service is currently unavailable.
+          Was maintained but there are some data missing.
+          %br
+          Missing attributes: #{@project_masterdata_missing_attributes}
+    - else
+      -# regular case to create new masterdata for the project
+      = wizard_step({ title: 'Masterdata',
+        mandatory: true,
+        status: @project_profile.wizard_status('masterdata_cockpit'),
+        action_button: ({label: 'Create Masterdata', url:plugin('masterdata_cockpit').project_masterdata_new_path} if can_setup_masterdata),
+        }) do
+        - if @project_profile.wizard_finished?('masterdata_cockpit')
+          %p
+            Was successfully maintained. 
+            - if can_see_masterdata
+              For more details take a look to the 
+              = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
+        - else
+          %p Please maintain the masterdata for this project
+  - else
+    = wizard_step({title: 'Masterdata',
+      mandatory: true,
+      status: 'pending'}) do
+      %p The Masterdata service is currently unavailable.
 
 -# RESOURCE MANAGEMENT
-- if @resource_management_service_available
-  - can_setup_quota = current_user.is_allowed?("resources:project:write_access")
-  - quota_data = @project_profile.wizard_data('resource_management')
-  - required_roles = current_user.required_roles('resources:project:write_access')
-  - required_roles = required_roles && required_roles.join(', ')
+- if !@domain_config.plugin_hidden?("resource_management")
+  - if @resource_management_service_available
+    - can_setup_quota = current_user.is_allowed?("resources:project:write_access")
+    - quota_data = @project_profile.wizard_data('resource_management')
+    - required_roles = current_user.required_roles('resources:project:write_access')
+    - required_roles = required_roles && required_roles.join(', ')
 
-  - if @project_profile.wizard_skipped?('resource_management')
-    -# SKIPPED
-    = wizard_step({title: 'Resource Quotas',
-      mandatory: true,
-      status: 'skipped'}) do
-      %p
-        This project skipped quota request. To manage your quota please use the
-        =link_to 'Resource Management',plugin('resources').project_path()
-  - elsif @project_profile.wizard_finished?('resource_management')
-    -# DONE
-    = wizard_step({title: 'Resource Quotas',
-      mandatory: true,
-      status: 'done'}) do
-      %p This project already has quota.
+    - if @project_profile.wizard_skipped?('resource_management')
+      -# SKIPPED
+      = wizard_step({title: 'Resource Quotas',
+        mandatory: true,
+        status: 'skipped'}) do
+        %p
+          This project skipped quota request. To manage your quota please use the
+          =link_to 'Resource Management',plugin('resources').project_path()
+    - elsif @project_profile.wizard_finished?('resource_management')
+      -# DONE
+      = wizard_step({title: 'Resource Quotas',
+        mandatory: true,
+        status: 'done'}) do
+        %p This project already has quota.
+    - else
+      - action_button = { label: 'Initialize Quotas',
+        url: can_setup_quota ? plugin('resources').init_project_path : nil,
+        tooltip: can_setup_quota ? nil : "You don't have permissions to request quotas. Please check if you have one of the following roles: <b>#{required_roles}</b>"}
+
+      = wizard_step({title: 'Resource Quotas',
+        mandatory: true,
+        action_button: action_button,
+        skip_button:( { label: 'Skip Step', url: plugin('resource_management').resources_skip_wizard_path(), data: {modal: true, wizard_action_button: true}} if can_setup_quota ),
+        status: nil}) do
+        %p Please select an initial allotment of compute, network and storage resources to get started with your project. If you realize at a later stage that you need more of something, you can request more then.
+
   - else
-    - action_button = { label: 'Initialize Quotas',
-      url: can_setup_quota ? plugin('resources').init_project_path : nil,
-      tooltip: can_setup_quota ? nil : "You don't have permissions to request quotas. Please check if you have one of the following roles: <b>#{required_roles}</b>"}
-
     = wizard_step({title: 'Resource Quotas',
       mandatory: true,
-      action_button: action_button,
-      skip_button:( { label: 'Skip Step', url: plugin('resource_management').resources_skip_wizard_path(), data: {modal: true, wizard_action_button: true}} if can_setup_quota ),
-      status: nil}) do
-      %p Please select an initial allotment of compute, network and storage resources to get started with your project. If you realize at a later stage that you need more of something, you can request more then.
-
-- else
-  = wizard_step({title: 'Resource Quotas',
-    mandatory: true,
-    status: 'pending'}) do
-    %p The Resource Management service is currently unavailable.
+      status: 'pending'}) do
+      %p The Resource Management service is currently unavailable.
 
 -# SHARDING
 - can_set_sharding = current_user.is_allowed?("identity:project_update", {target: {project: @active_project}})
@@ -121,27 +123,28 @@
         Please read the description carefully (you can find the information in the dialog to switch resource pooling on) 
 
 
--# NETWORKING
-- if @networking_service_available
-  - can_setup_network = current_user.is_allowed?("networking:network_wizard_get")
-  - action_button = {label: 'Set Network', url: (plugin('networking').new_network_wizard_path ) }
-  = wizard_step({title: 'Configure Your Network',
-    mandatory: true,
-    action_button: (action_button if can_setup_network),
-    skip_button:( { label: 'Skip Step', url: plugin('networking').skip_wizard_path(), data: {modal: true, wizard_action_button: true}} if can_setup_network ),
-    status: @project_profile.wizard_status('networking')}) do
-    - if @project_profile.wizard_finished?('networking')
-      %p The network is set up.
-    - else
-      - unless @project_profile.wizard_finished?('resource_management')
-        %b Please request quota first.
-      %p Here you can configure the network for your project.
+- if !@domain_config.plugin_hidden?("networking")
+  -# NETWORKING
+  - if @networking_service_available
+    - can_setup_network = current_user.is_allowed?("networking:network_wizard_get")
+    - action_button = {label: 'Set Network', url: (plugin('networking').new_network_wizard_path ) }
+    = wizard_step({title: 'Configure Your Network',
+      mandatory: true,
+      action_button: (action_button if can_setup_network),
+      skip_button:( { label: 'Skip Step', url: plugin('networking').skip_wizard_path(), data: {modal: true, wizard_action_button: true}} if can_setup_network ),
+      status: @project_profile.wizard_status('networking')}) do
+      - if @project_profile.wizard_finished?('networking')
+        %p The network is set up.
+      - else
+        - unless @project_profile.wizard_finished?('resource_management')
+          %b Please request quota first.
+        %p Here you can configure the network for your project.
 
-- else
-  = wizard_step({title: 'Set Network',
-    mandatory: true,
-    status: 'pending'}) do
-    %p The Network service is currently unavailable.
+  - else
+    = wizard_step({title: 'Set Network',
+      mandatory: true,
+      status: 'pending'}) do
+      %p The Network service is currently unavailable.
 
 - if @wizard_finished
   %p

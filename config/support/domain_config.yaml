@@ -6,3 +6,10 @@ domains:
     disabled_plugins:
       # following plugins name should be the same as the plugin name in the plugins directory
       - test-plugin
+    floating_ip_networks:
+      - "test_05"
+      - "test_04"
+      - "test_03"
+      - "test_02"
+      - "test_01"  
+    dns_c_subdomain: false

@@ -6,12 +6,14 @@ test_config = {
       "name" => "all iaas",
       "regex" => "^iaas-.*$",
       "disabled_plugins" => ["plugin1", "plugin2"],
-      "floating_ip_networks" => ["FloatingIP-external-%DOMAIN_NAME%-network"]
+      "floating_ip_networks" => ["FloatingIP-external-%DOMAIN_NAME%-network"],
+      "dns_c_subdomain" => true
     },
     {
       "name" => "test domain",
       "regex" => "^iaas-test1$",
-      "disabled_plugins" => ["plugin3"]
+      "disabled_plugins" => ["plugin3"],
+      "dns_c_subdomain" => false
     }
   ]
 }
@@ -58,6 +60,16 @@ describe DomainConfig do
 
       it "returns an empty array if no floating ip networks are configured" do
         expect(DomainConfig.new("iaas-test1").floating_ip_networks).to eq([])
+      end
+    end
+
+    describe "#dns_sap_only?" do
+      it "returns true if the domain is dns_sap_only" do
+        expect(DomainConfig.new("iaas-domain1").dns_c_subdomain?).to be true
+      end
+
+      it "returns false if the domain is not dns_sap_only" do
+        expect(DomainConfig.new("iaas-test1").dns_c_subdomain?).to be false
       end
     end
   end
