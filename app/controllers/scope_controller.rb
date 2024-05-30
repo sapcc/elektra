@@ -6,14 +6,14 @@
 class ScopeController < ::ApplicationController
   # keep the before_action with prepend to ensure that the load_scoped_objects method is called first
   prepend_before_action :load_scoped_objects
-  # At this point is the bedrock configuration already loaded and the scoped domain and project are set.
+  # At this point is the domain configuration already loaded and the scoped domain and project are set.
   # The plugin_name is set by the ApplicationController which is inherited by this class.
-  before_action :bedrock_redirect
+  before_action :hidden_plugin_redirect
 
   # to prevent unauthorized access to hidden plugins we redirect to a 404 page
   # if the plugin is hidden for the current domain
-  def bedrock_redirect   
-    if @bedrock_config.plugin_hidden?(plugin_name.to_s)
+  def hidden_plugin_redirect   
+    if @domain_config.plugin_hidden?(plugin_name.to_s)
       redirect_to "/error-404"
     end
   end
@@ -101,7 +101,7 @@ class ScopeController < ::ApplicationController
     @can_access_project = !@scoped_project_name.nil?
     
     # the presence of this variable is tested in spec/controllers/scope_controller_spec.rb
-    @bedrock_config = BedrockConfig.new(@scoped_domain_name)
+    @domain_config = DomainConfig.new(@scoped_domain_name)
   end
 
   rescue_from(

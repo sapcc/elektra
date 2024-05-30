@@ -79,7 +79,7 @@ describe ScopeController, type: :controller do
     end
   end
 
-  context "bedrock" do 
+  context "domain" do 
     before :each do 
       test_config = {
         "domains" => [
@@ -90,11 +90,11 @@ describe ScopeController, type: :controller do
           }
         ]
       }
-      BedrockConfig.class_variable_set(:@@bedrock_config_file, test_config)
+      DomainConfig.class_variable_set(:@@domain_config_file, test_config)
     end
-    it "test the @bedrock_config is set" do
+    it "test the @domain_config is set" do
       get :index, params: { domain_id: @domain_friendly_id.slug }
-      expect(assigns(:bedrock_config)).to be_a_kind_of(BedrockConfig)
+      expect(assigns(:domain_config)).to be_a_kind_of(DomainConfig)
     end
 
     it "should redirect to error-404" do

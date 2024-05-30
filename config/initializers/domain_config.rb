@@ -1,16 +1,16 @@
 require "yaml"
 
-# there are unit tests for this file. Have a look at elektra/spec/initializers/bedrock_spec.rb
+# there are unit tests for this file. Have a look at elektra/spec/initializers/domain_config_spec.rb
 
-class BedrockConfig
+class DomainConfig
   # the order of the domains is important, the last matching domain will be used
   # we use a class variable to load the config only once
   # and make it possible to override the config in the tests
-  @@bedrock_config_file = YAML.load_file("#{File.dirname(__FILE__)}/../support/bedrock.yaml") || {}
+  @@domain_config_file = YAML.load_file("#{File.dirname(__FILE__)}/../support/domain_config.yaml") || {}
 
   def initialize(scoped_domain_name)
     # initialize the domain config using the find_config method
-    @domain_config = find_config(@@bedrock_config_file, scoped_domain_name)
+    @domain_config = find_config(@@domain_config_file, scoped_domain_name)
   end
 
   # returns true or false if plugin with name is hidden
