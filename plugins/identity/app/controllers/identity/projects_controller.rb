@@ -287,14 +287,19 @@ module Identity
       @project_profile =
         ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
+      domain_config = DomainConfig.new(@scoped_domain_name)
+      
       # for all services that implements a wizard integration do
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
-      %w[
+      plugins = %w[
         resource_management
         sharding
         masterdata_cockpit
         networking
-      ].each do |service_name|
+      ].reject { |name| domain_config.plugin_hidden?(name) }
+
+      
+      plugins.each do |service_name|
         if service_name == "resource_management"
           next unless services.available?(:resources)
         elsif service_name == "sharding"

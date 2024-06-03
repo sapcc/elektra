@@ -13,7 +13,7 @@ class DomainConfig
   # check if file exists
   if File.exist?("#{File.dirname(__FILE__)}/../support/domain_config.local.yaml")
     @@domain_config_file = YAML.load_file("#{File.dirname(__FILE__)}/../support/domain_config.local.yaml") || {}
-  elsif File.exist?("#{File.dirname(__FILE__)}/../support/domain_config_dev.yaml")
+  elsif File.exist?("#{File.dirname(__FILE__)}/../support/domain_config.yaml")
     @@domain_config_file = YAML.load_file("#{File.dirname(__FILE__)}/../support/domain_config.yaml") || {}
   else
     raise "DomainConfig: No domain config file found"
@@ -39,6 +39,10 @@ class DomainConfig
     return @domain_config.fetch("floating_ip_networks", []).map do |network_name|
       network_name.gsub('%DOMAIN_NAME%',@scoped_domain_name)
     end
+  end
+
+  def dns_c_subdomain?
+    return @domain_config.fetch("dns_c_subdomain", false)
   end
 
   private

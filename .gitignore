@@ -70,4 +70,4 @@ yarn-debug.log*
 /app/assets/builds/*
 !/app/assets/builds/.keep
 
-config/support/domain_config_dev.yaml
+config/support/domain_config.local.yaml
