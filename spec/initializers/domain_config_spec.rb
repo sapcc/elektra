@@ -7,13 +7,15 @@ test_config = {
       "regex" => "^iaas-.*$",
       "disabled_plugins" => ["plugin1", "plugin2"],
       "floating_ip_networks" => ["FloatingIP-external-%DOMAIN_NAME%-network"],
-      "dns_c_subdomain" => true
+      "dns_c_subdomain" => true,
+      "check_cidr_range" => true
     },
     {
       "name" => "test domain",
       "regex" => "^iaas-test1$",
       "disabled_plugins" => ["plugin3"],
-      "dns_c_subdomain" => false
+      "dns_c_subdomain" => false,
+      "check_cidr_range" => false
     }
   ]
 }
@@ -70,6 +72,16 @@ describe DomainConfig do
 
       it "returns false if the domain is not dns_sap_only" do
         expect(DomainConfig.new("iaas-test1").dns_c_subdomain?).to be false
+      end
+    end
+
+    describe "#check_cidr_range?" do
+      it "returns true if the domain is check_cidr_range" do
+        expect(DomainConfig.new("iaas-domain1").check_cidr_range?).to be true
+      end
+
+      it "returns false if the domain is not check_cidr_range" do
+        expect(DomainConfig.new("iaas-test1").check_cidr_range?).to be false
       end
     end
   end
