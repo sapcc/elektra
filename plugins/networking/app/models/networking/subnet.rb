@@ -6,6 +6,8 @@ module Networking
     validates :name, presence: true
     validates :cidr, presence: true
     validate :cidr_must_be_in_reserved_range
+    attr_accessor :check_cidr_range
+    
 
     @@allowed_ranges_last_updated = Time.now
     @@allowed_ranges = nil
@@ -74,11 +76,13 @@ module Networking
     def cidr_must_be_in_reserved_range
       return if cidr.nil?
       unless cidr.match(
-               /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(3[0-2]|[1-2][0-9]|[0-9]))$/,
-             )
+        /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(3[0-2]|[1-2][0-9]|[0-9]))$/,
+        )
         errors.add(:cidr, "must be a valid cidr adress like 10.180.1.0/16")
         return
       end
+      
+      return if self.check_cidr_range == false
 
       allowed_ranges.each do |allowed_range|
         allowed_network = IPAddr.new(allowed_range)

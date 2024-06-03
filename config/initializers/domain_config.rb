@@ -45,6 +45,10 @@ class DomainConfig
     return @domain_config.fetch("dns_c_subdomain", false)
   end
 
+  def check_cidr_range?
+    return @domain_config.fetch("check_cidr_range", true)
+  end
+  
   private
 
   def find_config(domains_config, scoped_domain_name)
