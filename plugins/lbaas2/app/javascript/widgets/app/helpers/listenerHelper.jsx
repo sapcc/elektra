@@ -20,7 +20,7 @@ export const httpHeaderInsertions = (header) => {
         label: "X-Forwarded-For",
         value: "X-Forwarded-For",
         description:
-          "When selected, an X-Forwarded-For header containing the clinet IP is inserted into the request to the backend member.",
+          "When selected, an X-Forwarded-For header containing the client IP is inserted into the request to the backend member.",
       }
     case "X-Forwarded-Port":
       return {
@@ -105,7 +105,7 @@ export const httpHeaderInsertions = (header) => {
           label: "X-Forwarded-For",
           value: "X-Forwarded-For",
           description:
-            "When selected, an X-Forwarded-For header containing the clinet IP is inserted into the request to the backend member.",
+            "When selected, an X-Forwarded-For header containing the client IP is inserted into the request to the backend member.",
         },
         {
           label: "X-Forwarded-Port",
