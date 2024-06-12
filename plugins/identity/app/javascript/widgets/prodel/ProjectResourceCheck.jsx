@@ -62,8 +62,8 @@ export default function ProjectResourceCheck({ opened, onClose }) {
           window.location.host +
           "/" +
           scopedDomainName
-        console.log("Redirecting to: " + url + "/home")
-        window.location.href = url + "/home"
+        console.log("Redirecting to: " + url)
+        window.location.href = url
       })
       .catch((error) => {
         setLoading(false)
