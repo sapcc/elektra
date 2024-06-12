@@ -20,23 +20,30 @@ export const httpHeaderInsertions = (header) => {
         label: "X-Forwarded-For",
         value: "X-Forwarded-For",
         description:
-          "When selected a X-Forwarded-For header is inserted into the request to the backend member that specifies the client IP address.",
+          "When selected, an X-Forwarded-For header containing the clinet IP is inserted into the request to the backend member.",
       }
     case "X-Forwarded-Port":
       return {
         label: "X-Forwarded-Port",
         value: "X-Forwarded-Port",
         description:
-          "When selected a X-Forwarded-Port header is inserted into the request to the backend member that specifies the listener port.",
+          "When selected, an X-Forwarded-Port header containing the listener port is inserted into the request to the backend member.",
       }
     case "X-Forwarded-Proto":
       return {
         label: "X-Forwarded-Proto",
         value: "X-Forwarded-Proto",
         description:
-          "When selected a X-Forwarded-Proto header is inserted into the request to the backend member. HTTP for the HTTP listener protocol type, HTTPS for the TERMINATED_HTTPS listener protocol type.",
+          "When selected, an X-Forwarded-Proto header containing the client-side protocol is inserted into the request to the backend member. HTTP for HTTP listener protocol type, HTTPS for TERMINATED_HTTPS listener protocol type.",
       }
-    case "X-SSL-Client-Verify":
+      case "X-Forwarded-Host":
+        return {
+          label: "X-Forwarded-Host",
+          value: "X-Forwarded-Host",
+          description:
+            "When selected, an X-Forwarded-Host header containing the value of the HTTP default Host header is inserted into the request to the backend member. Existing X-Forwarded-Host header is overwritten.",
+        }
+      case "X-SSL-Client-Verify":
       return {
         label: "X-SSL-Client-Verify",
         value: "X-SSL-Client-Verify",
@@ -98,19 +105,25 @@ export const httpHeaderInsertions = (header) => {
           label: "X-Forwarded-For",
           value: "X-Forwarded-For",
           description:
-            "When selected a X-Forwarded-For header is inserted into the request to the backend member that specifies the client IP address.",
+            "When selected, an X-Forwarded-For header containing the clinet IP is inserted into the request to the backend member.",
         },
         {
           label: "X-Forwarded-Port",
           value: "X-Forwarded-Port",
           description:
-            "When selected a X-Forwarded-Port header is inserted into the request to the backend member that specifies the listener port.",
+            "When selected, an X-Forwarded-Port header containing the listener port is inserted into the request to the backend member.",
         },
         {
           label: "X-Forwarded-Proto",
           value: "X-Forwarded-Proto",
           description:
-            "When selected a X-Forwarded-Proto header is inserted into the request to the backend member. HTTP for the HTTP listener protocol type, HTTPS for the TERMINATED_HTTPS listener protocol type.",
+            "When selected, an X-Forwarded-Proto header containing the client-side protocol is inserted into the request to the backend member. HTTP for HTTP listener protocol type, HTTPS for TERMINATED_HTTPS listener protocol type.",
+        },
+        {
+          label: "X-Forwarded-Host",
+          value: "X-Forwarded-Host",
+          description:
+            "When selected, an X-Forwarded-Host header containing the value of the HTTP default Host header is inserted into the request to the backend member. Existing X-Forwarded-Host header is overwritten.",
         },
         {
           label: "X-SSL-Client-Verify",
@@ -200,6 +213,7 @@ export const protocolHeaderInsertionRelation = (protocol) => {
         httpHeaderInsertions("X-Forwarded-For"),
         httpHeaderInsertions("X-Forwarded-Port"),
         httpHeaderInsertions("X-Forwarded-Proto"),
+        httpHeaderInsertions("X-Forwarded-Host"),
       ]
     case "HTTPS":
       return []
@@ -334,7 +348,7 @@ export const predPolicyDesc = (policy) => {
     case "x_forward_5b6e_v1_0":
       return {
         label: "Set X-Forwarded Headers (x_forward_5b6e_v1_0)",
-        description: <>Adds X-FORWARDED-FOR/PROTO/PORT to HTTP header.</>,
+        description: <>Adds X-FORWARDED-FOR/PROTO/PORT/HOST to HTTP header.</>,
       }
     case "no_one_connect_3caB_v1_0":
       return {
