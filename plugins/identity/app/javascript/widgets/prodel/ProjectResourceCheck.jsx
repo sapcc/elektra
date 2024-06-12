@@ -62,6 +62,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
           window.location.host +
           "/" +
           scopedDomainName
+        console.log("Redirecting to: " + url + "/home")
         window.location.href = url + "/home"
       })
       .catch((error) => {
@@ -75,6 +76,8 @@ export default function ProjectResourceCheck({ opened, onClose }) {
   }
 
   const fetchData = React.useCallback(() => {
+    // https://prodel.qa-de-1.cloud.sap/ui
+    // https://prodel.qa-de-1.cloud.sap/swagger-ui
     setLoading(true)
     apiClient
       .osApi("prodel")
@@ -226,7 +229,7 @@ export default function ProjectResourceCheck({ opened, onClose }) {
   const checkProjectCanNotBeDeleted = () => {
     //return false
     if (loading) return true
-    if (!data) return false
+    if (data?.length === 0) return false
     return true
   }
 

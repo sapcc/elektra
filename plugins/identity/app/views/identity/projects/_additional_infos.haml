@@ -30,6 +30,7 @@
           %td
             = link_to plugin('access_profile').root_path(modal_size: "none"), data: {modal: true, modal_size: "none"} do
               Edit
+      - if services.available?(:identity,:elektron_prodel) && current_user.is_allowed?("identity:project_delete", {target: {project: @active_project}})
         %tr
           %th.snug-nowrap
             Delete Project:
