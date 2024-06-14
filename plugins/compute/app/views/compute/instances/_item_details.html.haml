@@ -169,7 +169,7 @@
             - root_disk_size = @instance.flavor['disk']
             - unless attached_volumes.empty?
               - attached_volumes.each do |vol|
-                - if vol.attachments.first['device'] == @instance.root_disk_device_name
+                - if vol.attachments&.first&.[]('device') == @instance.root_disk_device_name
                   - root_disk_size = vol.size
             %table.table.datatable
               %tbody
@@ -273,7 +273,7 @@
                         = vol.name
                         %br/
                         %span.info-text= vol.id
-                      %td= vol.attachments.first['device']
+                      %td= vol.attachments.first['device'] if vol.attachments.first
                       %td
                         = vol.size
                         GB
