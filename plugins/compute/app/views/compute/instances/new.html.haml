@@ -91,6 +91,8 @@
           if ($('#server_flavor_id option:selected').text().match(/^baremetal/) || 
               $('#server_flavor_id option:selected').text().match(/^hv/) ||
               $('#server_flavor_id option:selected').text().match(/^zh/) ||
+              $('#server_flavor_id option:selected').text().match(/^bm_/) ||
+              $('#server_flavor_id option:selected').text().match(/^bg_/) ||
               $('#server_flavor_id option:selected').text().match(/^zg/)) {
           // baremetal
             $('#baremetal_image_id_wrapper').removeClass('hidden');
@@ -147,6 +149,8 @@
         if ($('#server_flavor_id option:selected').text().match(/^baremetal/) || 
             $('#server_flavor_id option:selected').text().match(/^hv/) ||
             $('#server_flavor_id option:selected').text().match(/^zh/) ||
+            $('#server_flavor_id option:selected').text().match(/^bm_/) ||
+            $('#server_flavor_id option:selected').text().match(/^bg_/) ||
             $('#server_flavor_id option:selected').text().match(/^zg/)) {
           // baremetal
           $('#baremetal_image_id_wrapper').removeClass('hidden');

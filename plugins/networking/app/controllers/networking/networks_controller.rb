@@ -73,6 +73,7 @@ module Networking
         if subnets_params.present?
           @subnet = services.networking.new_subnet(subnets_params)
           @subnet.network_id = @network.id
+          @subnet.check_cidr_range = @domain_config.check_cidr_range?
 
           # FIXME: anti-pattern of doing two things in one action
           if @subnet.save

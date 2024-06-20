@@ -13,41 +13,42 @@
         %td= @active_project.description
 
 -# MASTERDATA
-- if @masterdata_cockpit_service_available
-  - can_setup_masterdata = current_user.is_allowed?("masterdata:create_masterdata")
-  - can_see_masterdata = current_user.is_allowed?("masterdata:show")
+- if !@domain_config.plugin_hidden?("masterdata_cockpit")
+  - if @masterdata_cockpit_service_available
+    - can_setup_masterdata = current_user.is_allowed?("masterdata:create_masterdata")
+    - can_see_masterdata = current_user.is_allowed?("masterdata:show")
 
-  -# this is a special case if some data is missing after the user maintained the masterdata in the first time
-  - if @project_masterdata_missing_attributes
-    = wizard_step({ title: 'Masterdata',
-      mandatory: true,
-      status: @project_profile.wizard_status('masterdata_cockpit'),
-      action_button: ({label: 'Edit Masterdata', url:plugin('masterdata_cockpit').project_masterdata_edit_path()} if can_setup_masterdata),
-      }) do
-      %p
-        Was maintained but there are some data missing.
-        %br
-        Missing attributes: #{@project_masterdata_missing_attributes}
-  - else
-    -# regular case to create new masterdata for the project
-    = wizard_step({ title: 'Masterdata',
-      mandatory: true,
-      status: @project_profile.wizard_status('masterdata_cockpit'),
-      action_button: ({label: 'Create Masterdata', url:plugin('masterdata_cockpit').project_masterdata_new_path} if can_setup_masterdata),
-      }) do
-      - if @project_profile.wizard_finished?('masterdata_cockpit')
+    -# this is a special case if some data is missing after the user maintained the masterdata in the first time
+    - if @project_masterdata_missing_attributes
+      = wizard_step({ title: 'Masterdata',
+        mandatory: true,
+        status: @project_profile.wizard_status('masterdata_cockpit'),
+        action_button: ({label: 'Edit Masterdata', url:plugin('masterdata_cockpit').project_masterdata_edit_path()} if can_setup_masterdata),
+        }) do
         %p
-          Was successfully maintained. 
-          - if can_see_masterdata
-            For more details take a look to the 
-            = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
-      - else
-        %p Please maintain the masterdata for this project
-- else
-  = wizard_step({title: 'Masterdata',
-    mandatory: true,
-    status: 'pending'}) do
-    %p The Masterdata service is currently unavailable.
+          Was maintained but there are some data missing.
+          %br
+          Missing attributes: #{@project_masterdata_missing_attributes}
+    - else
+      -# regular case to create new masterdata for the project
+      = wizard_step({ title: 'Masterdata',
+        mandatory: true,
+        status: @project_profile.wizard_status('masterdata_cockpit'),
+        action_button: ({label: 'Create Masterdata', url:plugin('masterdata_cockpit').project_masterdata_new_path} if can_setup_masterdata),
+        }) do
+        - if @project_profile.wizard_finished?('masterdata_cockpit')
+          %p
+            Was successfully maintained. 
+            - if can_see_masterdata
+              For more details take a look to the 
+              = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
+        - else
+          %p Please maintain the masterdata for this project
+  - else
+    = wizard_step({title: 'Masterdata',
+      mandatory: true,
+      status: 'pending'}) do
+      %p The Masterdata service is currently unavailable.
 
 -# SHARDING
 - can_set_sharding = current_user.is_allowed?("identity:project_update", {target: {project: @active_project}})
@@ -96,11 +97,11 @@
     - else
       %p Here you can configure the network for your project.
 
-- else
-  = wizard_step({title: 'Set Network',
-    mandatory: true,
-    status: 'pending'}) do
-    %p The Network service is currently unavailable.
+  - else
+    = wizard_step({title: 'Set Network',
+      mandatory: true,
+      status: 'pending'}) do
+      %p The Network service is currently unavailable.
 
 - if @wizard_finished
   %p

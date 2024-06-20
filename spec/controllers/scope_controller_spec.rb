@@ -61,6 +61,8 @@ describe ScopeController, type: :controller do
           "/#{@domain_friendly_id.slug}/scope?name=test",
         )
       end
+
+
     end
   end
 
@@ -74,6 +76,38 @@ describe ScopeController, type: :controller do
             }
         expect(response).to be_successful
       end
+    end
+  end
+
+  context "domain" do 
+    before :each do 
+      test_config = {
+        "domains" => [
+          {
+            "name" => "test domain",
+            "regex" => "^#{@domain_friendly_id.name}$",
+            "disabled_plugins" => ["compute", "networking"]
+          }
+        ]
+      }
+      DomainConfig.class_variable_set(:@@domain_config_file, test_config)
+    end
+    it "test the @domain_config is set" do
+      get :index, params: { domain_id: @domain_friendly_id.slug }
+      expect(assigns(:domain_config)).to be_a_kind_of(DomainConfig)
+    end
+
+    it "should redirect to error-404" do
+      allow(controller).to receive(:plugin_name).and_return("compute")
+      get :index, params: { domain_id: @domain_friendly_id.slug, project_id: @project_friendly_id.slug}
+      expect(response).to redirect_to("/error-404")
+    end
+
+
+    it "should not redirect to error-404" do
+      allow(controller).to receive(:plugin_name).and_return("some-other-plugin")
+      get :index, params: { domain_id: @domain_friendly_id.slug, project_id: @project_friendly_id.slug}
+      expect(response).not_to redirect_to("/error-404")
     end
   end
 end

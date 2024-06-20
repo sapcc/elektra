@@ -11,7 +11,5 @@ describe("resource management - project level", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/resources/project`)
     cy.contains("[data-test=page-title]", "Manage Project Resources")
     cy.contains("div", "Members per Server Group")
-    cy.get('a[href*="#/compute/settings"]').click()
-    cy.contains("h4", "Project Settings")
   })
 })

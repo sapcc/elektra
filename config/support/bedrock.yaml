@@ -1,6 +1,0 @@
-domains:
-  - name: test
-    regex: "__test__"
-    disabled_plugins:
-      # following plugins name should be the same as the plugin name in the plugins directory
-      - test-plugin

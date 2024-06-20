@@ -321,13 +321,11 @@ const useActions = () => {
     []
   )
 
-  const getAcls = React.useCallback(
-    ({ read, write }) =>
-      apiClient
-        .get("check-acls", { params: { read, write } })
-        .then((result) => result.data),
-    []
-  )
+  const getAcls = React.useCallback(({ read, write }) => {
+    return apiClient
+      .get(`check-acls`, { params: { read, write } })
+      .then((result) => result.data)
+  }, [])
   const endpointURL = React.useCallback(
     (containerName, name, params = {}) => {
       return apiClient

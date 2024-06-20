@@ -283,6 +283,8 @@ module Identity
       @project_profile =
         ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
+      domain_config = DomainConfig.new(@scoped_domain_name)
+      
       # for all services that implements a wizard integration do
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
       %w[

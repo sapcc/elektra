@@ -8,7 +8,7 @@ describe("shared object storage", () => {
   })
 
   it("open object storage and check create container button", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/swift/`)
     cy.contains("[data-test=page-title]", "Object Storage")
     cy.contains("a", "Create container").click()
     cy.contains(
@@ -18,7 +18,7 @@ describe("shared object storage", () => {
   })
 
   it("open object storage and check capabilities dialog", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/swift/`)
     cy.contains("[data-test=page-title]", "Object Storage")
     cy.get("i.fa-info-circle").click()
     cy.contains("Capabilities")
@@ -28,7 +28,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test/access-control`
+      )}/admin/object-storage/swift/containers/elektra-test/access-control`
     )
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000)
@@ -47,7 +47,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test/properties`
+      )}/admin/object-storage/swift/containers/elektra-test/properties`
     )
     cy.get('[data-test="metaDataKey_0"]').type("{selectAll}footestkey")
     cy.get('[data-test="metaDataValue_0"]').type("{selectAll}footestvalue")
@@ -57,7 +57,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test/properties`
+      )}/admin/object-storage/swift/containers/elektra-test/properties`
     )
     // check value and delete
     cy.get('[data-test="metaDataValue_0"]')
@@ -72,7 +72,7 @@ describe("shared object storage", () => {
   })
 
   it("open object storage and elektra-test container and check action buttons", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/swift/`)
     cy.contains("[data-test=page-title]", "Object Storage")
     cy.contains("a", "elektra-test").click()
     cy.contains("a", "Create folder").click()
@@ -87,7 +87,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test/objects/X18kPQ%3D%3D/amiga.jpg/show`
+      )}/admin/object-storage/swift/containers/elektra-test/objects/X18kPQ%3D%3D/amiga.jpg/show`
     )
     cy.get('[data-test="metaDataKey_0"]').type("{selectAll}footestkey")
     cy.get('[data-test="metaDataValue_0"]').type("{selectAll}footestvalue")
@@ -97,7 +97,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test/objects/X18kPQ%3D%3D/amiga.jpg/show`
+      )}/admin/object-storage/swift/containers/elektra-test/objects/X18kPQ%3D%3D/amiga.jpg/show`
     )
     // check value and delete
     cy.get('[data-test="metaDataValue_0"]')
@@ -115,7 +115,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test/objects/X18kPQ%3D%3D/amiga.jpg/copy`
+      )}/admin/object-storage/swift/containers/elektra-test/objects/X18kPQ%3D%3D/amiga.jpg/copy`
     )
     cy.contains("Target container")
     cy.contains("Target path")
@@ -126,7 +126,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test/objects/X18kPQ%3D%3D/amiga.jpg/move`
+      )}/admin/object-storage/swift/containers/elektra-test/objects/X18kPQ%3D%3D/amiga.jpg/move`
     )
     cy.contains("Target container")
     cy.contains("Target path")
@@ -137,7 +137,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test/empty`
+      )}/admin/object-storage/swift/containers/elektra-test/empty`
     )
     cy.contains("button", "Empty").should("be.disabled")
     cy.contains(
@@ -153,7 +153,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test-empty/empty`
+      )}/admin/object-storage/swift/containers/elektra-test-empty/empty`
     )
     cy.contains("Nothing to do. Container is already empty.").click()
   })
@@ -162,7 +162,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test/delete`
+      )}/admin/object-storage/swift/containers/elektra-test/delete`
     )
     cy.contains(
       "Cannot delete Container contains objects. Please empty it first."
@@ -174,7 +174,7 @@ describe("shared object storage", () => {
     cy.visit(
       `/${Cypress.env(
         "TEST_DOMAIN"
-      )}/admin/object-storage/containers/elektra-test-empty/delete`
+      )}/admin/object-storage/swift/containers/elektra-test-empty/delete`
     )
     cy.contains("button", "Delete").should("be.disabled")
     cy.contains(
@@ -190,7 +190,7 @@ describe("shared object storage", () => {
   })
 
   it("open object storage and elektra-test container and check download big files dialog", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/`)
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/swift/`)
     cy.contains("[data-test=page-title]", "Object Storage")
     cy.contains("a", "elektra-test").click()
     // force: true prevents this error:
@@ -201,7 +201,7 @@ describe("shared object storage", () => {
 
   // this is not working because popper is not rendering correctly
   // it("open object storage and search elektra-test to test dialogs", () => {
-  //   cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/`)
+  //   cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/object-storage/swift/`)
   //   cy.get('[data-test="search"]').type("elektra-test-empty")
   //   cy.get('[data-test="dropdown"]').click()
   //   cy.contains("a", "Empty").click()

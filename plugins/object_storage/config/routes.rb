@@ -4,7 +4,7 @@ ObjectStorage::Engine.routes.draw do
 
   # root to: "application#swift", as: :widget
 
-  # get "check-acls" => "application#check_acls"
+  get "check-acls" => "application#check_acls"
 
   # # catch all other paths and point them to root
   # get "swift/*path", to: "application#swift"
