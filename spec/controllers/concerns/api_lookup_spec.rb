@@ -10,8 +10,8 @@ describe ApiLookup do
         "ApiLookup::SERVICE_METHOD_MAP",
         "test_object" => [
           "test_service",
-          'find(":term")',
-          'all(name: ":term", param: true)',
+          {method_name: 'find', params:[":term"]},
+          {method_name: 'all', params: [{name: ":term", param: true}]},
         ],
       )
     end
@@ -50,7 +50,7 @@ describe ApiLookup do
 
         it "should return on find method" do
           expect(@service).to receive(:find).with("test")
-          expect(@service).to receive(:all).with(name: "test", param: true)
+          expect(@service).to receive(:all).with({name: "test", param: true})
           dummy.api_search(service_manager, "test_object", "test")
         end
       end
