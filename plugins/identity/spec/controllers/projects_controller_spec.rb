@@ -159,6 +159,40 @@ describe Identity::ProjectsController, type: :controller do
       end
     end
 
+    context "masterdata_cockpit and networking services are not available" do
+      before :each do
+        allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
+          :available?,
+        ).with(:masterdata_cockpit).and_return(false)
+        allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
+          :available?,
+        ).with(:networking).and_return(false)
+        allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
+          :available?,
+        ).with(:resources).and_return(true)
+      end
+
+      it "should not set networking_service_available" do
+        subject
+        expect(assigns(:networking_service_available)).to be(nil)
+      end
+
+      it "should not set masterdata_cockpit_service_available" do
+        subject
+        expect(assigns(:masterdata_cockpit_service_available)).not_to eq(true)
+      end
+
+      it "sharding is no service" do
+        subject
+        expect(assigns(:sharding_service_available)).not_to eq(false)
+      end
+
+      it "sharding should always available because its not a service" do
+        subject
+        expect(assigns(:wizard_finished)).to eq(true)
+      end
+    end
+
     context "no service is available" do
       before :each do
         allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
