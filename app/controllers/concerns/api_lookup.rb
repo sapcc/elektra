@@ -235,16 +235,18 @@ module ApiLookup
     term = URI.encode_www_form_component(term)
 
     methods.each do |m|
-      params = Marshal.load(Marshal.dump(m[:params]))
-      params.each do |inner_param|
-        if inner_param.is_a?(Hash)
-          inner_param.transform_values! { |value| value == ":term" ? term : value }
-        elsif inner_param.is_a?(String) && inner_param == ":term"
-          inner_param.replace(term)
+      # replace :term in values 
+      transformed_params = m[:params].map do |param|
+        if param.is_a?(Hash)
+          param.transform_values { |value| value == ":term" ? term : value }
+        elsif param.is_a?(String) && param == ":term"
+          term.dup
+        else
+          param
         end
       end
 
-      found_items = service.public_send(m[:method_name], *params)
+      found_items = service.public_send(m[:method_name], *transformed_params)
 
       if found_items
         items =
@@ -255,7 +257,7 @@ module ApiLookup
           else
             [found_items]
           end
-        return { items: items, service_call: "#{service_name}->#{m[:method_name]}(#{params})" }
+        return { items: items, service_call: "#{service_name}->#{m[:method_name]}(#{transformed_params})" }
       end
     end
 
