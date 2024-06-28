@@ -25,7 +25,22 @@
 
                 -# this is called in any view, check plugins/resources/app/controllers/resources/application_controller.rb 
                 -# to prevent loading meaningless data if there is no quota usage like for identity or web-console
-                %div{data: {"react-quota-usage": true, type: plugin_name}} 
+                -# %div{data: {"react-quota-usage": true, type: plugin_name}} 
+
+                .quota-usage
+                  :plain
+                    <script
+                      defer
+                      src="https://assets.juno.#{qa? ? 'qa-de-1' : 'global'}.cloud.sap/apps/widget-loader@latest/build/app.js"
+                      data-url="https://assets.juno.#{qa? ? 'qa-de-1' : 'global'}.cloud.sap/apps/limesUI@latest/build/quotaPlugin.js"
+                      data-props-theme="theme-light"
+                      data-props-endpoint="https://limes-3.#{current_region}.cloud.sap"
+                      data-props-domain-i-d="#{@scoped_domain_id}"
+                      data-props-project-i-d="#{@scoped_project_id}"
+                      data-props-quota-project="#{plugin_name}"
+                      data-props-get-token-func-name="_getCurrentToken"
+                      data-props-embedded="true">
+                    </script>     
                   
                 - if @plugin_help_text
                   %div
