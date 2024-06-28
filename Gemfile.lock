@@ -280,6 +280,7 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
+    base64 (0.2.0)
     bindex (0.8.1)
     bootstrap-kaminari-views (0.0.5)
       kaminari (>= 0.13)
@@ -449,7 +450,8 @@ GEM
       syntax_tree-haml (>= 2.0.0)
       syntax_tree-rbs (>= 0.2.0)
     prettier_print (1.2.1)
-    prometheus-client (4.2.1)
+    prometheus-client (4.2.3)
+      base64
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
