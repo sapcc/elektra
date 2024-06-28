@@ -59,17 +59,6 @@
         %i.fa.fa-arrow-right.fa-fw
         here
 
-- unless @project_resource.nil?
-  - if @project_resource.bursting && !@project_resource.burst_usage.empty? && @active_project.name != "cloud_admin"
-    .bs-callout.bs-callout-warning.bs-callout-emphasize.u-margin-top-normal
-      Your resource usage is bursting.
-      = link_to 'Check details here',plugin('resources').project_path, style: "color:inherit; text-decoration:underline;"
-  - elsif @project_resource.bursting && @project_resource.bursting_enabled && @active_project.name != "cloud_admin"
-    .bs-callout.bs-callout-info.bs-callout-emphasize.u-margin-top-normal
-      Quota bursting is now available. See
-      = link_to 'documentation', sap_url_for('documentation') + "docs/blogs/introduction-of-quota-bursting/", style: "color:inherit; text-decoration:underline;"
-      for details.
-
 -# Customer Survey
 -# .bs-callout.bs-callout-info-cta.bs-callout-emphasize.u-margin-top-normal
 -#   = image_tag "CCloud_Logo_light.svg", alt: "Converged Cloud", class: "bs-callout-image"
@@ -77,4 +66,3 @@
 -#   %a{href: "https://employeeexperience.surveys.sap.com/jfe/form/SV_80WgMq7WTBJFdP0", target: "_blank"} 
 -#     %i.fa.fa-fw.fa-arrow-right
 -#     Go to survey
-    

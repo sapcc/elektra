@@ -20,7 +20,6 @@ module Identity
 
     # check wizard state and redirect unless finished
     before_action :check_wizard_status, only: [:show]
-    before_action :load_project_resource, only: %i[show show_wizard]
 
     before_action { @scoped_project_fid = params[:project_id] || @project_id }
 
@@ -77,6 +76,7 @@ module Identity
             .to_sentence unless params["modal"]
         end
         unless @project_wizard
+          # TODO: This view will be deleted. Where to go to instead?
           redirect_to "#{plugin("resources").project_path}#/availability_zones"
         end
       end
@@ -262,12 +262,8 @@ module Identity
       # for all services that implements a wizard integration do
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
       service_names =
-        %w[masterdata_cockpit networking resource_management].keep_if do |name|
-          if name == "resource_management"
-            services.available?(:resources)
-          else
-            services.available?(name.to_sym)
-          end
+        %w[masterdata_cockpit networking].keep_if do |name|
+          services.available?(name.to_sym)
         end
 
       # ProjectProfile /elektra/app/models
@@ -291,18 +287,12 @@ module Identity
       
       # for all services that implements a wizard integration do
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
-      plugins = %w[
-        resource_management
+      %w[
         sharding
         masterdata_cockpit
         networking
-      ].reject { |name| domain_config.plugin_hidden?(name) }
-
-      
-      plugins.each do |service_name|
-        if service_name == "resource_management"
-          next unless services.available?(:resources)
-        elsif service_name == "sharding"
+      ].each do |service_name|
+        if service_name == "sharding"
           logger.info "sharding is no service"
         else
           next unless services.available?(service_name.to_sym)
@@ -330,21 +320,6 @@ module Identity
 
     ################### HELPER METHODS #########################
     # this functions are called from load_and_update_wizard_status()
-    # RESOURCE MANAGEMENT
-    def update_resource_management_wizard_status
-      if services.resources.has_project_quotas?(
-           @scoped_domain_id,
-           @scoped_project_id,
-         )
-        @project_profile.update_wizard_status(
-          "resource_management",
-          ProjectProfile::STATUS_DONE,
-        )
-      else
-        @project_profile.update_wizard_status("resource_management", nil)
-      end
-      @project_profile.wizard_finished?("resource_management")
-    end
 
     # MASTERDATA
     def update_masterdata_cockpit_wizard_status
@@ -430,17 +405,6 @@ module Identity
       end
 
       @project_profile.wizard_finished?("networking")
-    end
-
-    def load_project_resource
-      @project_resource =
-        services.resource_management.find_project(
-          @scoped_domain_id,
-          @scoped_project_id,
-        )
-    rescue StandardError
-      # do not fail when Limes is down
-      @project_resource = nil
     end
   end
 end

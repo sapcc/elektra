@@ -45,15 +45,11 @@ describe Identity::ProjectsController, type: :controller do
       allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
         :available?,
       ).with(:networking).and_return(true)
-      allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
-        :available?,
-      ).with(:resources).and_return(true)
     end
 
     context "unfinshed wizard state" do
       before :each do
         @profile.update_wizard_status("masterdata_cockpit", nil)
-        @profile.update_wizard_status("resource_management", nil)
         @profile.update_wizard_status("networking", nil)
       end
 
@@ -72,10 +68,6 @@ describe Identity::ProjectsController, type: :controller do
           "masterdata_cockpit",
           ProjectProfile::STATUS_DONE,
         )
-        @profile.update_wizard_status(
-          "resource_management",
-          ProjectProfile::STATUS_DONE,
-        )
         @profile.update_wizard_status("networking", ProjectProfile::STATUS_DONE)
       end
 
@@ -91,12 +83,8 @@ describe Identity::ProjectsController, type: :controller do
       @profile =
         ProjectProfile.find_or_create_by_project_id(default_params[:project_id])
       @profile.update_wizard_status("masterdata_cockpit", nil)
-      @profile.update_wizard_status("resource_management", nil)
       @profile.update_wizard_status("networking", nil)
       @profile.update_wizard_status("sharding", nil)
-      allow(controller).to receive(
-        :update_resource_management_wizard_status,
-      ).and_return(true)
       allow(controller).to receive(:update_networking_wizard_status).and_return(
         true,
       )
@@ -112,9 +100,6 @@ describe Identity::ProjectsController, type: :controller do
       allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
         :available?,
       ).with(:networking).and_return(true)
-      allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
-        :available?,
-      ).with(:resources).and_return(true)
     end
 
     it "should set wizard_finished to true" do
@@ -156,14 +141,6 @@ describe Identity::ProjectsController, type: :controller do
         allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
           :available?,
         ).with(:networking).and_return(true)
-        allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
-          :available?,
-        ).with(:resources).and_return(true)
-      end
-
-      it "should set resource_management_service_available to enabled" do
-        subject
-        expect(assigns(:resource_management_service_available)).to eq(true)
       end
 
       it "should set networking_service_available to enabled" do
@@ -195,11 +172,6 @@ describe Identity::ProjectsController, type: :controller do
         ).with(:resources).and_return(true)
       end
 
-      it "should set resource_management_service_available to enabled" do
-        subject
-        expect(assigns(:resource_management_service_available)).to eq(true)
-      end
-
       it "should not set networking_service_available" do
         subject
         expect(assigns(:networking_service_available)).to be(nil)
@@ -229,14 +201,6 @@ describe Identity::ProjectsController, type: :controller do
         allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
           :available?,
         ).with(:networking).and_return(false)
-        allow_any_instance_of(::Core::ServiceLayer::ServicesManager).to receive(
-          :available?,
-        ).with(:resources).and_return(false)
-      end
-
-      it "should no set resource_management_service_available" do
-        subject
-        expect(assigns(:resource_management_service_available)).to be(nil)
       end
 
       it "should not set networking_service_available" do
