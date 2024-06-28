@@ -1,5 +1,5 @@
 # Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.17 AS base 
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.19 AS base 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
 ENV APP_PATH=/home/app
