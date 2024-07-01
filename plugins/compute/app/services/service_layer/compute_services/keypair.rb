@@ -21,8 +21,6 @@ module ServiceLayer
 
       def find_keypair!(keypair_name)
         return nil if keypair_name.blank?
-        puts "###################"
-        puts keypair_name
         # escape keypair_name
         # for reference encode and escape are not working 
         # keypair_name = URI.encode_www_form_component(keypair_name)
