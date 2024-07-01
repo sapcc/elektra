@@ -21,6 +21,15 @@ module ServiceLayer
 
       def find_keypair!(keypair_name)
         return nil if keypair_name.blank?
+        # escape keypair_name
+        # for reference encode and escape are not working 
+        # keypair_name = URI.encode_www_form_component(keypair_name)
+        # keypair_name -> HGW TEST KEY
+        # keypair_name = CGI.escape(keypair_name)
+        # keypair_name -> HGW+TEST+KEY
+
+        keypair_name = keypair_name.gsub(' ', '%20')
+        # keypair_name -> HGW%20TEST 👍
         elektron_compute.get("os-keypairs/#{keypair_name}").map_to(
           "body.keypair",
           &keypair_map
