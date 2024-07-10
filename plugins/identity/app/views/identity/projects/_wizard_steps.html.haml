@@ -97,11 +97,11 @@
     - else
       %p Here you can configure the network for your project.
 
-  - else
-    = wizard_step({title: 'Set Network',
-      mandatory: true,
-      status: 'pending'}) do
-      %p The Network service is currently unavailable.
+- else
+  = wizard_step({title: 'Set Network',
+    mandatory: true,
+    status: 'pending'}) do
+    %p The Network service is currently unavailable.
 
 - if @wizard_finished
   %p

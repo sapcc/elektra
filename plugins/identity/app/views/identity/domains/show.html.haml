@@ -48,12 +48,8 @@
 
           - if plugin_available?('resources') && current_user.is_allowed?('resources:domain:access')
             %li
-              = link_to "Domain Resources Administration", plugin('resources').domain_path
-              %span 
-                = link_to "Domain Resources Administration", plugin("resources").v2_domain_path
-                %span.label.label-info NEW
+              = link_to "Domain Resources Administration", plugin("resources").v2_domain_path
                 
-
           - if plugin_available?('reports') && current_user.is_allowed?('reports:cost_domain')
             %li
               = link_to "Cost Report", plugin('reports').domain_cost_index_path
