@@ -1,0 +1,19 @@
+=content_for :main_toolbar do
+  Email Service - AWS SES (Cronus)
+= render partial: 'email_service/shared/nav', formats: :html, locals: {pane: 'maillog'}
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"maillog-pane"}
+    :plain
+      <script
+        defer
+        src="https://assets.juno.#{qa? ? 'qa-de-1' : 'global'}.cloud.sap/apps/widget-loader@latest/build/app.js"
+        data-name="maillog"
+        data-version="latest"
+        data-props-get-token-func-name="_getCurrentToken"
+        data-props-theme="theme-light"
+        data-props-endpoint="https://maillog.#{current_region}.cloud.sap"
+        data-props-embedded="true"
+        data-props-project="#{@scoped_project_id}">
+      </script>
+    
