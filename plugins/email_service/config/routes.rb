@@ -30,4 +30,6 @@ EmailService::Engine.routes.draw do
   get '/web/test' => 'web#test', :as => :test
 
   resources :suppression_lists, only: %i[index show new create destroy]
+  get '/maillog' => 'maillog#index', :as => :maillog
+
 end
