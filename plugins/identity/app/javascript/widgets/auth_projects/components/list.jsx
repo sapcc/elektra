@@ -60,6 +60,7 @@ export default class List extends React.Component {
         parent_id: item.parent_id,
         domain_id: item.domain_id,
         id: item.id,
+        description: item.description,
       }
     }
 
@@ -86,6 +87,7 @@ export default class List extends React.Component {
   }
 
   renderHierarchy = (projects) => {
+    console.log("projects", projects)
     const searchMode = this.state.searchTerm && this.state.searchTerm.length > 0
 
     return projects.map((project, index) => {
@@ -123,9 +125,11 @@ export default class List extends React.Component {
           <a
             href={`/${project.domain_id}/${project.id}/home`}
             className={labelClass}
+            title={project.description}
           >
             {project.name}
           </a>
+          <div className="info-text small">{project.description}</div>
           {hasChildren && children.length > 0 && <ul>{children}</ul>}
         </li>
       )
