@@ -76,7 +76,7 @@ module DnsService
 
     def list_ccadmin_master_dns_admins
       cloud_dns_admin_role =
-        cloud_admin.identity.find_role_by_name("cloud_dns_admin")
+        cloud_admin.identity.find_role_by_name("cloud_dns_support")
 
       @cloud_admin_domain =
         cloud_admin
