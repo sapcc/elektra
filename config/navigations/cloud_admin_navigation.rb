@@ -86,13 +86,7 @@ SimpleNavigation::Configuration.run do |navigation|
                       plugin("inquiry").admin_inquiries_path,
                       if: -> { plugin_available?(:inquiry) }
       ccadmin_nav.item :resources,
-                      "Resource Management",
-                      -> {
-                        plugin("resources").cluster_path(cluster_id: "current")
-                      },
-                      if: -> { services.available?(:resources) && plugin_available?(:resources) }
-      ccadmin_nav.item :resources,
-                      capture { concat "Cluster Resources Administration "; concat content_tag(:span, "NEW", class:"label label-info")},
+                      capture { concat "Cluster Resources Administration ";},
                       -> {
                         plugin("resources").v2_cluster_path(cluster_id: "current")
                       },

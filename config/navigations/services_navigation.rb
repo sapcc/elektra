@@ -430,23 +430,7 @@ SimpleNavigation::Configuration.run do |navigation|
                     plugin_available?(:reports)
                   } do |monitoring_nav|
       monitoring_nav.item :resources,
-                          "Resource Management ",
-                          -> { plugin("resources").project_path },
-                          if: -> do
-                            services.available?(:resources) &&
-                              plugin_available?(:resources)
-                          end,
-                          highlights_on:
-                            proc { params[:controller][%r{resources/[^v2].*}] }
-      monitoring_nav.item :resources,
-                          capture {
-                            concat "Resource Management "
-                            concat content_tag(
-                              :span,
-                              "NEW",
-                              class: "label label-info"
-                            )
-                          },
+                          "Resource Management",
                           -> { plugin("resources").v2_project_path },
                           if: -> do
                             # current_region.start_with?("qa-") &&
