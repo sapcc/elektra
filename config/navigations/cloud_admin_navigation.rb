@@ -86,11 +86,11 @@ SimpleNavigation::Configuration.run do |navigation|
                       plugin("inquiry").admin_inquiries_path,
                       if: -> { plugin_available?(:inquiry) }
       ccadmin_nav.item :resources,
-                      capture { concat "Cluster Resources Administration ";},
+                      "Cluster Resources Administration",
                       -> {
                         plugin("resources").v2_cluster_path(cluster_id: "current")
                       },
-                      if: -> { services.available?(:resources) && plugin_available?(:resources) }
+                      if: -> { plugin_available?(:resources) }
       ccadmin_nav.item :flavors,
                       "Manage Flavors",
                       -> { plugin("compute").flavors_path },
