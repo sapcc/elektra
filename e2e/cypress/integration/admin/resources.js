@@ -8,8 +8,7 @@ describe("resource management - project level", () => {
   })
 
   it("start page is reachable, and you can see the project settings", () => {
-    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/resources/project`)
-    cy.contains("[data-test=page-title]", "Manage Project Resources")
-    cy.contains("div", "Members per Server Group")
-  })
+    cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/resources/v2/project`);
+    cy.contains("[data-test=page-title]", "Resource Management");
+  });
 })

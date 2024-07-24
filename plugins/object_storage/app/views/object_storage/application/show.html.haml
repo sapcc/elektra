@@ -6,4 +6,4 @@
   base_name: plugin('object_storage').service_path(@service_name),               |
   service_endpoint:  services.os_api.service("#{@service_name}").endpoint_url,   |
   project_path: plugin('identity').project_path,                                 |
-  resources_path: plugin('resources').project_path}
+  resources_path: plugin('resources').v2_project_path}

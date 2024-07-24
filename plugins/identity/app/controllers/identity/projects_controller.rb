@@ -76,8 +76,7 @@ module Identity
             .to_sentence unless params["modal"]
         end
         unless @project_wizard
-          # TODO: This view will be deleted. Where to go to instead?
-          redirect_to "#{plugin("resources").project_path}#/availability_zones"
+          redirect_to "#{plugin("resources").v2_project_path}#/PAYG%20Availability"
         end
       end
       # if project_wizard just load enable_sharding.js.erb that is closing the modal window

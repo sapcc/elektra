@@ -7,11 +7,11 @@
       - if !@quota
         .alert.alert-danger
           Server image snapshots are stored in your object storage. Your remaining object storage quota is not available. You can request storage
-          = link_to 'here', "#{plugin('resources').project_path()}#/storage", {target: "_blank"}
+          = link_to 'here', "#{plugin('resources').v2_project_path()}#/storage", {target: "_blank"}
       - if @free_capa <= 5120
         .alert.alert-warning
           Server image snapshots are stored in your object storage. Your remaining object storage quota is low. You can request more
-          = link_to 'here', "#{plugin('resources').project_path()}#/storage", {target: "_blank"}
+          = link_to 'here', "#{plugin('resources').v2_project_path()}#/storage", {target: "_blank"}
       = f.input :name, icon_hint: 'A snapshot is an image which preserves the disk state of a running instance.'
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
