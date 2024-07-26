@@ -26,6 +26,7 @@ RUN apk upgrade --no-cache --no-progress \
 
 ################################### BUILDER ################################
 FROM base AS builder 
+RUN echo "Rebuild image 1"
 # Note: we need to install git here because bundle needs git in the next step
 RUN apk --no-cache add git curl nodejs yarn shared-mime-info
 
