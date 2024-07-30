@@ -49,6 +49,7 @@ export default class List extends React.Component {
   }
 
   updateSearchTerm = (e) => {
+    //console.log("updateSearchTerm", e.target.value)
     this.setState({ searchTerm: e.target.value })
   }
 
@@ -87,7 +88,7 @@ export default class List extends React.Component {
   }
 
   renderHierarchy = (projects) => {
-    console.log("projects", projects)
+    //console.log("projects", projects)
     const searchMode = this.state.searchTerm && this.state.searchTerm.length > 0
 
     return projects.map((project, index) => {
@@ -104,6 +105,9 @@ export default class List extends React.Component {
         searchMode &&
         this.state.searchTerm &&
         project.name
+          .toLowerCase()
+          .indexOf(this.state.searchTerm.toLowerCase()) < 0 &&
+        project.description
           .toLowerCase()
           .indexOf(this.state.searchTerm.toLowerCase()) < 0
       ) {
@@ -129,7 +133,9 @@ export default class List extends React.Component {
           >
             {project.name}
           </a>
-          <div className="info-text small">{project.description}</div>
+          <span className="info-text small" style={{ paddingLeft: "5px" }}>
+            {project.description}
+          </span>
           {hasChildren && children.length > 0 && <ul>{children}</ul>}
         </li>
       )
@@ -173,7 +179,7 @@ export default class List extends React.Component {
                 onChange={this.updateSearchTerm}
                 value={this.state.searchTerm || ""}
                 className="form-control"
-                placeholder="Search project name"
+                placeholder="Search name or description"
               />
 
               {this.state.searchTerm && this.state.searchTerm.length > 0 && (
