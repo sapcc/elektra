@@ -75,8 +75,14 @@ module DnsService
     protected
 
     def list_ccadmin_master_dns_admins
-      cloud_dns_admin_role =
-        cloud_admin.identity.find_role_by_name("cloud_dns_support")
+      if ENV["MONSOON_DASHBOARD_REGION"] == "qa-de-1"
+        # NOTE: this is only for testing purposes and will be standard if cloud_dns_support can handle the dns requests
+        cloud_dns_admin_role =
+          cloud_admin.identity.find_role_by_name("cloud_dns_support")
+      else
+        cloud_dns_admin_role =
+        cloud_admin.identity.find_role_by_name("cloud_dns_admin")
+      end
 
       @cloud_admin_domain =
         cloud_admin
@@ -90,6 +96,8 @@ module DnsService
           .projects(name: "master", domain_id: @cloud_admin_domain.id)
           .first
       return [] unless @master_project
+
+      byebug
 
       role_assignments =
         cloud_admin.identity.role_assignments(
