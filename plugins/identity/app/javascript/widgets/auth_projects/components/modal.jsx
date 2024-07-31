@@ -1,5 +1,5 @@
 import React from "react"
-import { Modal, Button, Tabs, Tab } from "react-bootstrap"
+import { Modal, Button } from "react-bootstrap"
 import List from "./list"
 
 const ModalAuth = (props) => (
