@@ -298,24 +298,35 @@ module Compute
     end
 
     def instance_ips(instance)
-      @project_floating_ips ||=
-        ObjectCache
-          .where(
-            project_id: @scoped_project_id,
-            cached_object_type: "floatingip",
-          )
-          .map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
+      # get floating ips from cache if available
+      #puts "############ instance_ips ###########"
+      @project_floating_ips = []
 
-      available_floating_ips =
-        @project_floating_ips.collect(&:floating_ip_address)
+      # Note: disabled caching for now because of inconsistent data if a new floating ip is added to a server (OS command line) 
+      #       it did not show up in elektra until the cache is updated, that confused users.
+      #@project_floating_ips ||=
+      #  ObjectCache
+      #    .where(
+      #      project_id: @scoped_project_id,
+      #      cached_object_type: "floatingip",
+      #    )
+      #    .map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
 
-      instance_floating_ips = instance.floating_ips.collect { |f| f["addr"] }
+      # collect all floating ips addresses from cache
+      #available_floating_ips =
+      #  @project_floating_ips.collect(&:floating_ip_address)
 
-      if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
-        # p '::::::::::::::::::: REFRESH CACHE ::::::::::::::::::'
-        @project_floating_ips =
-          services.networking.project_floating_ips(@scoped_project_id)
-      end
+      #  instance_floating_ips = instance.floating_ips.collect { |f| f["addr"] }
+
+      # check if there are floating ips that are not in the cache
+      # the result is a new array that contains only the elements that are common to both arrays (available_floating_ips and instance_floating_ips).
+      #if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
+      #  puts "############ refresh cache ###########"
+      #  # get floating ips from the project with mapping information between fixed and floating ips
+        @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
+      #end
+
+      # create a map between fixed and floating ips for the instance
       instance.ip_maps(@project_floating_ips)
     end
 

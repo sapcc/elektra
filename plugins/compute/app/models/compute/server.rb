@@ -193,6 +193,7 @@ module Compute
       ip_network_names = {}
       server_floating_ips = []
 
+      # extract the fips for the server
       addresses.each do |network_name, ips|
         ips.each do |ip|
           ip_network_names[ip["addr"]] = network_name
@@ -202,6 +203,9 @@ module Compute
         end
       end
 
+      # iterate over an array of floating IP objects, check if each floating IP address is associated with a server, 
+      # and build a hash that maps fixed IP addresses of the server to corresponding floating IP addresses.
+      # project_floating_ips is an array of floating IP objects and have the information about the fixed IP address
       fixed_floating_map =
         project_floating_ips.each_with_object({}) do |fip, map|
           next unless server_floating_ips.include?(fip.floating_ip_address)
