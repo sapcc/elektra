@@ -170,12 +170,35 @@ module Compute
       addresses ? addresses.values.flatten.map { |x| x["addr"] } : []
     end
 
+    # get all floating ips
     def floating_ips
-      @floating_ips ||=
-        addresses.values.flatten.select do |ip|
+      addresses&.values&.flatten&.select { |ip| ip["OS-EXT-IPS:type"] == "floating" } || []
+    end
+
+    def floating_ips_by_network
+      addresses&.each_with_object({}) do |(network_name, ips), hash|
+        hash[network_name] = ips.select do |ip|
           ip["OS-EXT-IPS:type"] == "floating"
         end
+      end || {}
     end
+
+    def fixed_ips_by_network
+      addresses&.each_with_object({}) do |(network_name, ips), hash|
+        hash[network_name] = ips.select { |ip| ip["OS-EXT-IPS:type"] == "fixed" }
+      end || {}
+    end
+
+    def check_floating_ips_one_to_one
+      floating_ips_by_network.each do |networkname, ips|
+        if ips.length > 1 && fixed_ips_by_network[networkname].length > 1 
+          return false
+        end 
+        puts ips.length
+        puts fixed_ips_by_network[networkname].length
+      end
+      return true
+    end 
 
     # This methods converts addresses to a map between fixed and floating ips.
     # return:
@@ -192,17 +215,56 @@ module Compute
 
       ip_network_names = {}
       server_floating_ips = []
+      server_floating_ips_and_network = {}
+      server_fixed_ips = []
+      server_fixed_ips_and_network = {}
 
-      # extract the fips for the server
+      # extract the ips for the server
       addresses.each do |network_name, ips|
         ips.each do |ip|
           ip_network_names[ip["addr"]] = network_name
           if ip["OS-EXT-IPS:type"] == "floating"
+            # store the floating ips, this is needed if we have multiple floating ips in one network
             server_floating_ips << ip["addr"]
+            # store the floating ips and the network name
+            # this is needed to check if there is only one floating IP and one fixed IP
+            server_floating_ips_and_network[network_name] ||= []
+            server_floating_ips_and_network[network_name] << ip["addr"]
+          end
+
+          if ip["OS-EXT-IPS:type"] == "fixed"
+            # store the fixed ips, this is needed if we have multiple fixed ips in one network
+            server_fixed_ips << ip["addr"]
+            # store the fixed ips and the network name
+            # this is needed to check if there is only one floating IP and one fixed IP
+            server_fixed_ips_and_network[network_name] ||= []
+            server_fixed_ips_and_network[network_name] << ip["addr"]
           end
         end
       end
 
+      # check each network if there is only one floating IP and one fixed IP
+      server_floating_ips_and_network.each do |network_name, ips|
+        # check if there is only one floating IP and one fixed IP
+        if ips.length == 1 && server_fixed_ips_and_network[network_name].length == 1
+          # if there is only one floating IP and one fixed IP, we can assume that the floating IP is associated with the fixed IP
+          @ip_maps = [
+            {
+              "fixed" => {
+                "addr" => server_fixed_ips_and_network[network_name].first,
+                "network_name" => network_name,
+              },
+              "floating" => {
+                "addr" => ips.first,
+                "network_name" => network_name,
+              },
+            },
+          ]
+          return @ip_maps
+        end
+      end
+
+      # if there are multiple floating IPs in the network, we need to check which floating IP is associated with which fixed IP
       # iterate over an array of floating IP objects, check if each floating IP address is associated with a server, 
       # and build a hash that maps fixed IP addresses of the server to corresponding floating IP addresses.
       # project_floating_ips is an array of floating IP objects and have the information about the fixed IP address

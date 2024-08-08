@@ -313,8 +313,7 @@ module Compute
       #    .map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
 
       # collect all floating ips addresses from cache
-      #available_floating_ips =
-      #  @project_floating_ips.collect(&:floating_ip_address)
+      #available_floating_ips = @project_floating_ips.collect(&:floating_ip_address)
 
       #  instance_floating_ips = instance.floating_ips.collect { |f| f["addr"] }
 
@@ -323,8 +322,13 @@ module Compute
       #if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
       #  puts "############ refresh cache ###########"
       #  # get floating ips from the project with mapping information between fixed and floating ips
-        @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
+      #  @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
       #end
+
+      unless instance.check_floating_ips_one_to_one
+        # there are multiple fixed or floating ips so we all project floating ips to map them to the fixed ips of the instance
+        @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
+      end
 
       # create a map between fixed and floating ips for the instance
       instance.ip_maps(@project_floating_ips)
