@@ -143,8 +143,7 @@ export default class List extends React.Component {
   }
 
   render() {
-    const searchEnabled =
-      this.props.items && this.state.hierarchicalProjects.length > 9
+    const searchEnabled = this.props?.items?.length > 10
 
     return (
       <>
