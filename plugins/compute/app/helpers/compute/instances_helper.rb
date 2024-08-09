@@ -298,39 +298,32 @@ module Compute
     end
 
     def instance_ips(instance)
-      # get floating ips from cache if available
-      #puts "############ instance_ips ###########"
       @project_floating_ips = []
+      # check if there are multiple fixed or floating ips so we need all project floating ips to map them to the fixed ips of the instance 
+      unless instance.check_ip_to_floating_ip_one_to_one_relation
+        puts "############ one to many ip-fip relation found - use project_floating_ips ###########"
+        # Note: disabled caching because of inconsistent data if a new floating ip is added to a server 
+        #       it can be that it did not show up in elektra until the cache is updated, that confused users.
+        #@project_floating_ips =
+        #  ObjectCache
+        #    .where(
+        #      project_id: @scoped_project_id,
+        #      cached_object_type: "floatingip",
+        #    )
+        #    .map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
 
-      # Note: disabled caching for now because of inconsistent data if a new floating ip is added to a server (OS command line) 
-      #       it did not show up in elektra until the cache is updated, that confused users.
-      #@project_floating_ips ||=
-      #  ObjectCache
-      #    .where(
-      #      project_id: @scoped_project_id,
-      #      cached_object_type: "floatingip",
-      #    )
-      #    .map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
+        #available_floating_ips = @project_floating_ips.collect(&:floating_ip_address)
+        #instance_floating_ips = instance.floating_ips.collect { |f| f["addr"] }
 
-      # collect all floating ips addresses from cache
-      #available_floating_ips = @project_floating_ips.collect(&:floating_ip_address)
+        #puts (available_floating_ips & instance_floating_ips).sort
+        #puts instance_floating_ips.sort
 
-      #  instance_floating_ips = instance.floating_ips.collect { |f| f["addr"] }
-
-      # check if there are floating ips that are not in the cache
-      # the result is a new array that contains only the elements that are common to both arrays (available_floating_ips and instance_floating_ips).
-      #if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
-      #  puts "############ refresh cache ###########"
-      #  # get floating ips from the project with mapping information between fixed and floating ips
-      #  @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
-      #end
-
-      unless instance.check_floating_ips_one_to_one
-        # there are multiple fixed or floating ips so we all project floating ips to map them to the fixed ips of the instance
-        @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
+        # check if there are floating ips that are not in the cache
+        #if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
+        #  puts '::::::::::::::::::: REFRESH CACHE ::::::::::::::::::'
+          @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
+        #end
       end
-
-      # create a map between fixed and floating ips for the instance
       instance.ip_maps(@project_floating_ips)
     end
 
