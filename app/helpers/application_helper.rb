@@ -41,7 +41,7 @@ module ApplicationHelper
     "CCloud #{@scoped_domain_name if @scoped_domain_name} #{current_region if respond_to?(:current_region) and current_region}"
   end
 
-  def render_paginatable(items, filter = {})
+  def render_paginatable(items, filter = {}, options = {})
     return if !@pagination_enabled || !items || items.length.zero?
     content_tag(:div, class: "pagination") do
       if @pagination_current_page > 1 || @pagination_has_next
@@ -98,18 +98,20 @@ module ApplicationHelper
             )
           end
         end
-        concat(" | ")
-        if filter.key?(:search) and filter.key?(:searchfor)
-          concat(
-            link_to(
-              "All",
-              per_page: 9999,
-              search: filter[:search],
-              searchfor: filter[:searchfor],
-            ),
-          )
-        else
-          concat(link_to("All", per_page: 9999))
+        unless options[:disable_show_all]
+          concat(" | ")
+          if filter.key?(:search) and filter.key?(:searchfor)
+            concat(
+              link_to(
+                "All",
+                per_page: 9999,
+                search: filter[:search],
+                searchfor: filter[:searchfor],
+              ),
+            )
+          else
+            concat(link_to("All", per_page: 9999))
+          end
         end
       end
     end

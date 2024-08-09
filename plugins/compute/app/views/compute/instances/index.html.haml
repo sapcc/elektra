@@ -54,4 +54,4 @@
   .ajax-paginate{ data: { ajax_paginate: false, list_selector: 'table.instances tbody', search_input_selector: '#search_instances_input'} }
 
 
-= render_paginatable(@instances, {searchfor: @searchfor, search: @search})
+= render_paginatable(@instances, {searchfor: @searchfor, search: @search}, {disable_show_all: true})
