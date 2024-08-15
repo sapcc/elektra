@@ -60,7 +60,7 @@ module ServiceLayer
 
       def resync_replica(id)
         elektron_share_replicas
-          .post("share-replicas/#{id}/action") { { resync: true } }
+          .post("share-replicas/#{id}/action") { { resync: nil } }
           .body[
           "share_replica"
         ]
@@ -69,7 +69,7 @@ module ServiceLayer
       def promote_replica(id)
         # byebug
         elektron_share_replicas
-          .post("share-replicas/#{id}/action") { { promote: true } }
+          .post("share-replicas/#{id}/action") { { promote: nil } }
           .body[
           "share_replica"
         ]
