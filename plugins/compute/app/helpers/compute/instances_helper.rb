@@ -301,28 +301,8 @@ module Compute
       @project_floating_ips = []
       # check if there are multiple fixed or floating ips so we need all project floating ips to map them to the fixed ips of the instance 
       unless instance.check_ip_to_floating_ip_one_to_one_relation
-        puts "############ one to many ip-fip relation found - use project_floating_ips ###########"
-        # Note: disabled caching because of inconsistent data if a new floating ip is added to a server 
-        #       it can be that it did not show up in elektra until the cache is updated, that confused users.
-        #@project_floating_ips =
-        #  ObjectCache
-        #    .where(
-        #      project_id: @scoped_project_id,
-        #      cached_object_type: "floatingip",
-        #    )
-        #    .map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
-
-        #available_floating_ips = @project_floating_ips.collect(&:floating_ip_address)
-        #instance_floating_ips = instance.floating_ips.collect { |f| f["addr"] }
-
-        #puts (available_floating_ips & instance_floating_ips).sort
-        #puts instance_floating_ips.sort
-
-        # check if there are floating ips that are not in the cache
-        #if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
-        #  puts '::::::::::::::::::: REFRESH CACHE ::::::::::::::::::'
-          @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
-        #end
+        # puts "############ one to many ip-fip relation found - use project_floating_ips ###########"
+        @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
       end
       instance.ip_maps(@project_floating_ips)
     end
