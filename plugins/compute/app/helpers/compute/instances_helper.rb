@@ -298,23 +298,11 @@ module Compute
     end
 
     def instance_ips(instance)
-      @project_floating_ips ||=
-        ObjectCache
-          .where(
-            project_id: @scoped_project_id,
-            cached_object_type: "floatingip",
-          )
-          .map { |f| Networking::FloatingIp.new(nil, f[:payload]) }
-
-      available_floating_ips =
-        @project_floating_ips.collect(&:floating_ip_address)
-
-      instance_floating_ips = instance.floating_ips.collect { |f| f["addr"] }
-
-      if (available_floating_ips & instance_floating_ips).sort != instance_floating_ips.sort
-        # p '::::::::::::::::::: REFRESH CACHE ::::::::::::::::::'
-        @project_floating_ips =
-          services.networking.project_floating_ips(@scoped_project_id)
+      @project_floating_ips = []
+      # check if there are multiple fixed or floating ips so we need all project floating ips to map them to the fixed ips of the instance 
+      unless instance.check_ip_to_floating_ip_one_to_one_relation
+        # puts "############ one to many ip-fip relation found - use project_floating_ips ###########"
+        @project_floating_ips = services.networking.project_floating_ips(@scoped_project_id)
       end
       instance.ip_maps(@project_floating_ips)
     end
