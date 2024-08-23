@@ -92,6 +92,8 @@ const useActions = () => {
         .get("")
         .then((response) => {
           dispatch({ type: "RECEIVE_CONTAINERS", items: response.data })
+          console.log("###################")
+          console.log(response.data.length)
           return response.data
         })
         .catch((error) =>
@@ -105,14 +107,24 @@ const useActions = () => {
   )
 
   const loadContainerObjects = React.useCallback(
-    (containerName, options = {}) =>
-      apiClient
-        .osApi(serviceName)
-        .get(containerPath(containerName), { params: options })
-        .then((response) => ({
-          data: response.data,
-          headers: response.headers,
-        })),
+    async (containerName, options = {}) => {
+      let data = []
+      let headers = {}
+      let marker = ""
+      let hasMore = true
+
+      do {
+        const response = await apiClient
+          .osApi(serviceName)
+          .get(containerPath(containerName), { params: { ...options, marker } })
+        data = [...data, ...response.data]
+        headers = response.headers
+        marker = response.data[response.data.length - 1].name
+        hasMore = response.data.length > 9999
+      } while (hasMore)
+
+      return { data, headers }
+    },
     [dispatch, objects]
   )
 
