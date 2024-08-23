@@ -82,26 +82,38 @@ const useActions = () => {
   )
 
   const loadContainersOnce = React.useCallback(
-    (options = {}) => {
+    async (options = {}) => {
       if (containers.updatedAt && !options.reload) return Promise.resolve()
 
       dispatch({ type: "REQUEST_CONTAINERS" })
 
-      return apiClient
-        .osApi(serviceName)
-        .get("")
-        .then((response) => {
-          dispatch({ type: "RECEIVE_CONTAINERS", items: response.data })
-          console.log("###################")
-          console.log(response.data.length)
-          return response.data
-        })
-        .catch((error) =>
-          dispatch({
-            type: "RECEIVE_CONTAINERS_ERROR",
-            error: stripHtml(error.message),
+      let data = []
+      let marker = ""
+      let hasMore = true
+
+      do {
+        await apiClient
+          .osApi(serviceName)
+          .get("", { params: { marker } })
+          .then((response) => {
+            data = [...data, ...response.data]
+            marker = response.data[response.data.length - 1].name
+            hasMore = response.data.length > 9999
           })
-        )
+          .catch((error) =>
+            dispatch({
+              type: "RECEIVE_CONTAINERS_ERROR",
+              error: stripHtml(error.message),
+            })
+          )
+      } while (hasMore)
+
+      dispatch({
+        type: "RECEIVE_CONTAINERS",
+        items: data,
+      })
+
+      return data
     },
     [dispatch, containers.updatedAt]
   )
