@@ -114,13 +114,15 @@ const useActions = () => {
       let hasMore = true
 
       do {
-        const response = await apiClient
+        await apiClient
           .osApi(serviceName)
           .get(containerPath(containerName), { params: { ...options, marker } })
-        data = [...data, ...response.data]
-        headers = response.headers
-        marker = response.data[response.data.length - 1].name
-        hasMore = response.data.length > 9999
+          .then((response) => {
+            data = [...data, ...response.data]
+            headers = response.headers
+            marker = response.data[response.data.length - 1].name
+            hasMore = response.data.length > 9999
+          })
       } while (hasMore)
 
       return { data, headers }
