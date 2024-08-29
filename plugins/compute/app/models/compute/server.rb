@@ -229,7 +229,7 @@ module Compute
       server_floating_ips_and_network = {}
       server_fixed_ips = []
       server_fixed_ips_and_network = {}
-      
+      # byebug
       # extract the fips and fixed ips for the server
       addresses.each do |network_name, ips|
         ips.each do |ip|
@@ -262,6 +262,10 @@ module Compute
           # check if there is only one floating IP and one fixed IP
           if fips.length == 1 && server_fixed_ips_and_network[network_name].length == 1
             # if there is only one floating IP and one fixed IP, we can assume that the floating IP is associated with the fixed IP
+            
+            # load the floating IP object to access the floating IP ID
+            floating_ip = @service.service_manager.networking.floating_ips({floating_ip_address: fips.first}).first
+            # byebug
             fip_ip_one_to_one_maps << 
               {
                 "fixed" => {
@@ -271,6 +275,8 @@ module Compute
                 "floating" => {
                   "addr" => fips.first,
                   "network_name" => network_name,
+                  # add floating IP ID to the map
+                  "id" => floating_ip&.id,
                 },
               }
           end
