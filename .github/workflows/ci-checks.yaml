@@ -8,10 +8,10 @@ on:
       - reopened
 
 jobs:
-  rspec:
+  test:
     runs-on: ubuntu-latest
     container:
-      image: ruby:3.2.2
+      image: ruby:3.2
 
     services:
       postgres:
