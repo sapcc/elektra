@@ -64,7 +64,7 @@ jobs:
 
     - name: Setup DB, Run tests
       env:
-        PGHOST: postgres
+        PGHOST: 127.0.0.1
         PGUSER: postgres
         PGPORT: 5432
         RAILS_ENV: test
