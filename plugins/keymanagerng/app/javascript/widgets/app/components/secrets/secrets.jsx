@@ -15,9 +15,9 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 import { Link } from "react-router-dom"
-import { useActions } from "messages-provider"
+import { useActions } from "@cloudoperators/juno-messages-provider"
 import { parseError } from "../../helpers"
 import useSecretsSearch from "../../hooks/useSecretsSearch"
 import { useLocation } from "react-router-dom"

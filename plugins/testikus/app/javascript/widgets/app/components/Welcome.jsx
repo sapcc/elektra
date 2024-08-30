@@ -1,6 +1,6 @@
 import React from "react"
 
-import { IntroBox } from "juno-ui-components"
+import { IntroBox } from "@cloudoperators/juno-ui-components"
 
 const Welcome = () => (
   <>

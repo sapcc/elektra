@@ -1,5 +1,5 @@
 # needs to be in sync with node version in elektra image!
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/node:18-alpine
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/node:20-alpine
 
 LABEL source_repository="https://github.com/sapcc/elektra"
 

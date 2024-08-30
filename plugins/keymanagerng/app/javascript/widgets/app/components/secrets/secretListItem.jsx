@@ -8,12 +8,12 @@ import {
   Icon,
   DataGridRow,
   DataGridCell,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 import { getSecretUuid } from "../../../lib/secretHelper"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
 import ConfirmationModal from "../ConfirmationModal"
-import { useActions } from "messages-provider"
+import { useActions } from "@cloudoperators/juno-messages-provider"
 import useStore from "../../store"
 
 const SecretListItem = ({ secret }) => {

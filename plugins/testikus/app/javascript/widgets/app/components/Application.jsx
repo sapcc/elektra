@@ -13,7 +13,7 @@ import NewEntryModal from "./entries/new"
 import StateProvider from "./StateProvider"
 import styles from "../styles.css?inline"
 
-import StyleProvider, { AppShell } from "juno-ui-components"
+import StyleProvider, { AppShell } from "@cloudoperators/juno-ui-components"
 import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min"
 import { widgetBasePath } from "lib/widget"
 

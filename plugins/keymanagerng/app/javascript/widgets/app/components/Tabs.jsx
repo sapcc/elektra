@@ -1,6 +1,12 @@
 import React from "react"
 import { useHistory, useLocation } from "react-router-dom"
-import { Tab, Tabs, TabPanel, TabList, Container } from "juno-ui-components"
+import {
+  Tab,
+  Tabs,
+  TabPanel,
+  TabList,
+  Container,
+} from "@cloudoperators/juno-ui-components"
 
 const TabsComponent = ({ tabsConfig, ...otherProps }) => {
   const location = useLocation()
@@ -16,7 +22,11 @@ const TabsComponent = ({ tabsConfig, ...otherProps }) => {
 
       // collect tab items
       tabItems.push(
-        <Tab key={i} onClick={() => history.push(tab.to)} disabled={tab.disabled}>
+        <Tab
+          key={i}
+          onClick={() => history.push(tab.to)}
+          disabled={tab.disabled}
+        >
           {tab.label}
         </Tab>
       )
