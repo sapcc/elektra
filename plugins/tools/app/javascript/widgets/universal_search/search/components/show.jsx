@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import { JsonViewer } from "juno-ui-components/build/JsonViewer"
+import { JsonViewer } from "@cloudoperators/juno-ui-components/build/JsonViewer"
 import {
   projectUrl,
   objectUrl,

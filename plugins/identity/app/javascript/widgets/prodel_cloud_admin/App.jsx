@@ -1,5 +1,8 @@
 import React from "react"
-import { JsonViewer, AppShellProvider } from "juno-ui-components"
+import {
+  JsonViewer,
+  AppShellProvider,
+} from "@cloudoperators/juno-ui-components"
 
 const App = ({ jsonData }) => {
   return (

@@ -1,5 +1,5 @@
 import React from "react"
-import { AppShellProvider, AppShell } from "juno-ui-components"
+import { AppShellProvider, AppShell } from "@cloudoperators/juno-ui-components"
 import ProjectResourceCheck from "./ProjectResourceCheck"
 import styles from "./styles.scss?inline"
 

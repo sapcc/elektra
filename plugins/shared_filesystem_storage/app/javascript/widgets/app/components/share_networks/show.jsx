@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { Link } from "react-router-dom"
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
-import { JsonViewer } from "juno-ui-components/build/JsonViewer"
+import { JsonViewer } from "@cloudoperators/juno-ui-components/build/JsonViewer"
 import React from "react"
 
 const Row = ({ label, value, children }) => {

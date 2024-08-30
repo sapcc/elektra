@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react"
-import { Stack, Pagination } from "juno-ui-components"
+import { Stack, Pagination } from "@cloudoperators/juno-ui-components"
 
 const PaginationComp = ({
   count,

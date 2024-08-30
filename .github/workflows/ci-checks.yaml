@@ -50,7 +50,6 @@ jobs:
     - name: Install yarn
       run: npm install -g yarn
 
-    # NOTE: Yarn cache doesn't seem to be working quite yet
     - name: Get yarn cache dir
       id: yarn-cache-dir
       run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -64,7 +63,6 @@ jobs:
 
     - name: Setup DB, Run tests
       env:
-        PGHOST: postgres
         POSTGRES_SERVICE_HOST: postgres
         PGUSER: postgres
         PGPORT: 5432

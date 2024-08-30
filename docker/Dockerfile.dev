@@ -1,4 +1,4 @@
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.17
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.19
 
 LABEL source_repository="https://github.wdf.sap.corp/monsoon/workspaces/tree/master/environments/elektra"
 
@@ -15,9 +15,9 @@ RUN apk upgrade --no-cache --no-progress \
   build-base \
   npm \
   --virtual .builddeps \
-  postgresql15-dev \
-  postgresql15-jit \
-  postgresql15-client \
+  postgresql16-dev \
+  postgresql16-jit \
+  postgresql16-client \
   openssh \
   yarn \
   bash \
@@ -27,22 +27,35 @@ RUN apk upgrade --no-cache --no-progress \
   vim \
   shared-mime-info \
   python3 \
+  python3-dev \
   py3-pip\
+  py3-werkzeug \
   ca-certificates \
   gcc \
   libffi-dev \
-  python3-dev \
   musl-dev \
   openssl-dev \
   g++ libxml2-dev \
   libxslt-dev \
   libjpeg-turbo-dev \
   zlib-dev \
-  tshark 
+  tshark \
+  rust \
+  cargo
+# Create and activate a virtual environment
+RUN python3 -m venv /opt/venv
 
-RUN pip install --upgrade pip
+# Make sure the venv Python is used by default
+ENV PATH="/opt/venv/bin:$PATH"
+RUN echo 'export PATH="/opt/venv/bin:$PATH"' >> /etc/profile
+
+# Install Python packages in the virtual environment
 # werkzeug==2.2.2 -> https://stackoverflow.com/questions/77213053/why-did-flask-start-failing-with-importerror-cannot-import-name-url-quote-fr
-RUN pip install mitmproxy==8.1.1 pgcli werkzeug==2.2.2
+RUN pip install werkzeug==2.2.2 mitmproxy==9.0.0
+
+# Verify installation
+RUN mitmproxy --version
+
 ENV LANG=en_US.UTF-8
 
 RUN mkdir /app
@@ -57,7 +70,6 @@ ENV PGDATA /app/tmp/postgresql/data
 RUN gem install bundler -v 2.3.20 && bundle config set --local path 'vendor/bundle'
 RUN echo -e '#!/bin/bash\n\n\
   bundle install \n\
-  yarn upgrade juno-ui-components \n\
   yarn \n\
   mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA"\n\
   PGDATA_FILES=$(ls -A $PGDATA)\n\
@@ -68,7 +80,7 @@ RUN echo -e '#!/bin/bash\n\n\
   mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql\n\
   su - postgres -c "pg_ctl -D $PGDATA -w start"\n\
   DISABLE_SPRING=1 bin/rails db:create && DISABLE_SPRING=1 bin/rails db:migrate\n\
-  /bin/bash -login' >> /usr/local/bin/prepare-elektra && chmod +x /usr/local/bin/prepare-elektra
+  exec /bin/bash --login' >> /usr/local/bin/prepare-elektra && chmod +x /usr/local/bin/prepare-elektra
 
 RUN echo -e '\n\
   #!/bin/bash\n\n\

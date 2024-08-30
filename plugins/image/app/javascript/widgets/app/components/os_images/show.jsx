@@ -1,7 +1,7 @@
 import { Modal, Button, Tabs, Tab } from "react-bootstrap"
 import { PrettyDate } from "lib/components/pretty_date"
 import { PrettySize } from "lib/components/pretty_size"
-import { JsonViewer } from "juno-ui-components/build/JsonViewer"
+import { JsonViewer } from "@cloudoperators/juno-ui-components/build/JsonViewer"
 import { ImageIcon } from "./icon"
 import React from "react"
 

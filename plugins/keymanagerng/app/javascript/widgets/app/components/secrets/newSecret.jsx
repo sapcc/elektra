@@ -1,7 +1,10 @@
 import React, { useEffect, useCallback } from "react"
-import { Panel } from "juno-ui-components"
+import { Panel } from "@cloudoperators/juno-ui-components"
 import { useHistory, useLocation } from "react-router-dom"
-import { useActions, MessagesProvider } from "messages-provider"
+import {
+  useActions,
+  MessagesProvider,
+} from "@cloudoperators/juno-messages-provider"
 import useStore from "../../store"
 import NewSecretForm from "./newSecretForm"
 
