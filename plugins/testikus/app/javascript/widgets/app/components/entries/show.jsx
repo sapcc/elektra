@@ -10,7 +10,7 @@ import {
   DataGridRow,
   DataGridCell,
   DataGridHeadCell,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 
 const Row = ({ label, value, children }) => {
   return (

@@ -7,7 +7,7 @@ import {
   Icon,
   DataGridRow,
   DataGridCell,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 
 const Item = ({ entry, handleDelete }) => {
   // manually push a path onto the react router history

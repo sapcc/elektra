@@ -1,4 +1,4 @@
-import { JsonViewer } from "juno-ui-components/build/JsonViewer"
+import { JsonViewer } from "@cloudoperators/juno-ui-components/build/JsonViewer"
 import React from "react"
 
 const Statistics = ({ isFetching, data, error }) => {

@@ -454,6 +454,20 @@ module Compute
       @floating_ip.fixed_ip_address = params[:floating_ip][:fixed_ip_address]
 
       if @floating_ip.save
+        # add floating ip to instance to make it visible in the view
+        # example: {\"version\"=>4, \"addr\"=>\"10.237.208.46\", \"OS-EXT-IPS:type\"=>\"floating\", \"OS-EXT-IPS-MAC:mac_addr\"=>\"fa:16:3e:a0:1b:e9\"}
+        @instance.addresses.each do |network, addresses|
+          next unless addresses.find do |addr|
+            addr["OS-EXT-IPS:type"] == "fixed" && addr["addr"] == @floating_ip.fixed_ip_address
+          end
+          addresses << {
+            "version" => 4,
+            "addr" => @floating_ip.floating_ip_address,
+            "OS-EXT-IPS:type" => "floating",
+            "OS-EXT-IPS-MAC:mac_addr" => port.mac_address,
+          }
+        end
+        # byebug
         load_security_groups(@instance) if @action_from_show
         respond_to do |format|
           format.html { redirect_to instances_url }
@@ -483,12 +497,26 @@ module Compute
 
       if @floating_ip && @floating_ip.detach
         @instance = services.compute.find_server(params[:id])
+
+        # because of a delay we have to delete the floating ip from instance manually
+        @instance.addresses.each do |network,addresses|
+          addresses.delete_if do |addr| 
+            addr["OS-EXT-IPS:type"] == "floating" && addr["addr"] == @floating_ip.floating_ip_address
+          end
+        end    
+
         load_security_groups(@instance) if @action_from_show
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js {}
         end
       else
+        if @floating_ip.nil?
+          @floating_ip = services.networking.new_floating_ip
+          @floating_ip.errors.add(:floating_ip, "Not found.")
+        end
+        # create instance to show the form which needs the instance object
+        @instance = services.compute.find_server(params[:id])
         render action: :remove_floatingip
       end
     end

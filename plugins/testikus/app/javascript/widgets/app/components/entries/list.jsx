@@ -14,7 +14,7 @@ import {
   DataGridHeadCell,
   DataGridToolbar,
   Spinner,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 
 const Entries = () => {
   const [filterTerm, setFilterTerm] = React.useState(null)

@@ -14,10 +14,10 @@ import {
   Label,
   Icon,
   Stack,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 import { createSecret } from "../../secretActions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useActions, Messages } from "messages-provider"
+import { useActions, Messages } from "@cloudoperators/juno-messages-provider"
 import { getSecretUuid } from "../../../lib/secretHelper"
 import { DayPicker } from "react-day-picker"
 import { format, isToday, isAfter } from "date-fns"

@@ -7,12 +7,12 @@ import {
   Icon,
   DataGridRow,
   DataGridCell,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 import { getContainerUuid } from "../../../lib/containerHelper"
 import { deleteContainer } from "../../containerActions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
-import { useActions } from "messages-provider"
+import { useActions } from "@cloudoperators/juno-messages-provider"
 import useStore from "../../store"
 import ConfirmationModal from "../ConfirmationModal"
 

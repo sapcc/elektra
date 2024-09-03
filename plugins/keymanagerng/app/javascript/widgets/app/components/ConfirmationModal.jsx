@@ -1,5 +1,5 @@
 import React from "react"
-import { Modal, Form } from "juno-ui-components"
+import { Modal, Form } from "@cloudoperators/juno-ui-components"
 
 const ConfirmationModal = ({ text, show, close, onConfirm }) => {
   return (

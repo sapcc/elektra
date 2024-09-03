@@ -1,5 +1,5 @@
 import React from "react"
-import { Stack } from "juno-ui-components"
+import { Stack } from "@cloudoperators/juno-ui-components"
 
 const HintNotFound = ({ text }) => {
   return (

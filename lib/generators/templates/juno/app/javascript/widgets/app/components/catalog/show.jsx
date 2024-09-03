@@ -1,5 +1,11 @@
 import React from "react"
-import { CodeBlock, ContentAreaToolbar, Message, Spinner, SearchInput } from "juno-ui-components"
+import {
+  CodeBlock,
+  ContentAreaToolbar,
+  Message,
+  Spinner,
+  SearchInput,
+} from "@cloudoperators/juno-ui-components"
 import apiClient from "../../apiClient"
 import { useGlobalState } from "../StateProvider"
 
@@ -56,9 +62,7 @@ const Catalog = () => {
         {catalogState.isFetching ? (
           <Spinner variant="primary" />
         ) : services ? (
-          <>
-            {JSON.stringify(services, null, 2)}
-          </>
+          <>{JSON.stringify(services, null, 2)}</>
         ) : (
           "No catalog available"
         )}
