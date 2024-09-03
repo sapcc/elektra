@@ -1,5 +1,5 @@
 import React from "react"
-import { JsonViewer } from "juno-ui-components"
+import { JsonViewer } from "@cloudoperators/juno-ui-components"
 
 const ItemDetails = ({ event }) => (
   <tr className="explains-previous-line">

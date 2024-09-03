@@ -1,5 +1,5 @@
 import { Graph } from "./graph"
-import { JsonViewer } from "juno-ui-components/build/JsonViewer"
+import { JsonViewer } from "@cloudoperators/juno-ui-components/build/JsonViewer"
 import { Popover, Modal, Button } from "react-bootstrap"
 import React from "react"
 

@@ -2,7 +2,7 @@ import { useMemo, useEffect } from "react"
 import { Modal } from "react-bootstrap"
 import ErrorPage from "../ErrorPage"
 import React from "react"
-import { JsonViewer } from "juno-ui-components/build/JsonViewer"
+import { JsonViewer } from "@cloudoperators/juno-ui-components/build/JsonViewer"
 
 const JsonView = ({
   show,

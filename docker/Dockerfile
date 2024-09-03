@@ -82,7 +82,6 @@ ADD . $APP_PATH
 
 # transpile javascripts
 #RUN yarn install --no-progress && yarn build --production && rm -rf node_modules
-RUN yarn upgrade juno-ui-components
 RUN bin/rails assets:precompile && rm -rf node_modules
 
 RUN echo $(git rev-parse HEAD) > $APP_PATH/REVISION && rm -rf .git

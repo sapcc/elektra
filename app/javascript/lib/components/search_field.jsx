@@ -1,4 +1,4 @@
-import { SearchInput } from "juno-ui-components/build/SearchInput"
+import { SearchInput } from "@cloudoperators/juno-ui-components/build/SearchInput"
 import React from "react"
 import { Popover } from "./Overlay"
 

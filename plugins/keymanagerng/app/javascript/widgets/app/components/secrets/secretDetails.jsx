@@ -11,7 +11,7 @@ import {
   CodeBlock,
   Badge,
   Button,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 import {
   getSecret,
   getSecretMetadata,
@@ -20,7 +20,7 @@ import {
 import { getUsername } from "../../helperActions"
 import { useQuery } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
-import { Message } from "juno-ui-components"
+import { Message } from "@cloudoperators/juno-ui-components"
 
 const Row = ({ label, value, children }) => {
   return (

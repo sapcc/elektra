@@ -10,7 +10,7 @@ import Containers from "./containers/containers"
 import ContainerDetails from "./containers/containerDetails"
 import NewContainer from "./containers/newContainer"
 import { widgetBasePath } from "lib/widget"
-import { Messages } from "messages-provider"
+import { Messages } from "@cloudoperators/juno-messages-provider"
 import useStore from "../store"
 
 const baseName = widgetBasePath("keymanagerng")

@@ -5,7 +5,7 @@ import {
   Message,
   Spinner,
   SearchInput,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 import apiClient from "../../apiClient"
 import { useGlobalState } from "../StateProvider"
 

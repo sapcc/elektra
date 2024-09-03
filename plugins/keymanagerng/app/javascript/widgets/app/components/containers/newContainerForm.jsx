@@ -9,12 +9,12 @@ import {
   PanelBody,
   PanelFooter,
   Button,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 import { createContainer } from "../../containerActions"
 import { getSecrets } from "../../secretActions"
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
 import CreatableSelect from "react-select/creatable"
-import { useActions, Messages } from "messages-provider"
+import { useActions, Messages } from "@cloudoperators/juno-messages-provider"
 import { getContainerUuid } from "../../../lib/containerHelper"
 
 const TYPE_CERTIFICATE = "certificate"

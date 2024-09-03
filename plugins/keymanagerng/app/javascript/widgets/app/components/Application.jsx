@@ -4,8 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import AppRouter from "./AppRouter"
 import CustomCacheProvider from "./CustomCacheProvider"
 import styles from "../styles.scss?inline"
-import { AppShellProvider, AppShell } from "juno-ui-components"
-import { MessagesProvider } from "messages-provider"
+import { AppShellProvider, AppShell } from "@cloudoperators/juno-ui-components"
+import { MessagesProvider } from "@cloudoperators/juno-messages-provider"
 import dayPickerStyle from "react-day-picker/dist/style.css?inline"
 
 const queryClient = new QueryClient()

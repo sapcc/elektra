@@ -9,14 +9,14 @@ import {
   DataGridCell,
   DataGridHeadCell,
   Badge,
-} from "juno-ui-components"
+} from "@cloudoperators/juno-ui-components"
 import { getContainer } from "../../containerActions"
 import { getUsername } from "../../helperActions"
 import { getContainerUuid } from "../../../lib/containerHelper"
 import { useQuery } from "@tanstack/react-query"
 import HintLoading from "../HintLoading"
-import { Message } from "juno-ui-components"
-import { useActions } from "messages-provider"
+import { Message } from "@cloudoperators/juno-ui-components"
+import { useActions } from "@cloudoperators/juno-messages-provider"
 import { parseError } from "../../helpers"
 
 const Row = ({ label, value, children }) => {

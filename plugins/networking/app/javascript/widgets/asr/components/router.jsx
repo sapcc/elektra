@@ -1,4 +1,4 @@
-import { JsonViewer } from "juno-ui-components/build/JsonViewer"
+import { JsonViewer } from "@cloudoperators/juno-ui-components/build/JsonViewer"
 import { syncRouter } from "../actions"
 import React from "react"
 

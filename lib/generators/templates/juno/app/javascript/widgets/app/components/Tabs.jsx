@@ -1,6 +1,12 @@
 import React from "react"
 import { useHistory, useLocation } from "react-router-dom"
-import { Tab, Tabs, TabPanel, TabList, Container } from "juno-ui-components"
+import {
+  Tab,
+  Tabs,
+  TabPanel,
+  TabList,
+  Container,
+} from "@cloudoperators/juno-ui-components"
 
 const TabsComponent = ({ tabsConfig, ...otherProps }) => {
   const location = useLocation()
