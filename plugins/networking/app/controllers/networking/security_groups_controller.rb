@@ -7,10 +7,20 @@ module Networking
     authorization_required
 
     def index
-      security_groups = services.networking.security_groups
-
-      # byebug
-      render json: { security_groups: security_groups }
+      # this function is called when the user opens the security groups page and the ajax call is made
+      all_security_groups = []
+      # get the first 500 security groups
+      security_groups = services.networking.security_groups()
+      all_security_groups = security_groups
+      # get all security groups until the limit of 500 is reached
+      while security_groups.length == 500
+        marker = security_groups.last.id
+        security_groups = services.networking.security_groups({marker: marker})
+        all_security_groups += security_groups
+      end
+      # puts "######### all_security_groups: #{all_security_groups.length}"
+      # render the security groups as json to consume them in the react frontend
+      render json: { security_groups: all_security_groups }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     end
