@@ -8,6 +8,7 @@
   ],
   "unicodeEmoji": true,
   "prHourlyLimit": 15,
+  "labels": ["dependencies"],
 
   "separateMinorPatch": false,
   "separateMajorMinor": true,
@@ -47,4 +48,5 @@
     "enabled": true,
     "labels": ["security"]
   }
+
 }
