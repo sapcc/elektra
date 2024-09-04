@@ -1,5 +1,4 @@
 import React from "react"
-import PropTypes from "prop-types"
 import {
   useParams,
   Link,
@@ -78,6 +77,7 @@ const Objects = () => {
         prefix,
         delimiter: "/",
       }).then(({ data }) => data)
+
       // find index of the first object which name starts with a slash
       let regex = new RegExp(`^${prefix}/+$`)
       const startingWithSlashIndex = objects.findIndex(
