@@ -1,16 +1,14 @@
 /* eslint-disable no-undef */
-import { Link } from "react-router-dom"
 import { DefeatableLink } from "lib/components/defeatable_link"
 import { SearchField } from "lib/components/search_field"
 import SecurityGroupItem from "./item"
-import { AjaxPaginate } from "lib/components/ajax_paginate"
 import { pluginAjaxHelper } from "lib/ajax_helper"
 const ajaxHelper = pluginAjaxHelper("networking")
 import React from "react"
 
 const List = ({ loadSecurityGroupsOnce, securityGroups, handleDelete }) => {
   const [searchTerm, setSearchTerm] = React.useState("")
-  const { isFetching, hasNext, loadNext } = securityGroups
+  const { isFetching } = securityGroups
 
   const [cachedProjects, setCachedProjects] = React.useState()
 
@@ -70,13 +68,21 @@ const List = ({ loadSecurityGroupsOnce, securityGroups, handleDelete }) => {
                     input field will show all currently loaded items."
           />
         )}
+        <div style={{ paddingLeft: "10px" }}>
+          Security Groups found:{filteredItems.length}
+        </div>
 
         <div className="main-buttons">
-          {policy.isAllowed("networking:security_group_create") && (
-            <DefeatableLink to="/new" className="btn btn-primary">
-              New Security Group
-            </DefeatableLink>
-          )}
+          {policy.isAllowed("networking:security_group_create") &&
+            (isFetching ? (
+              <DefeatableLink to="/new" className="btn btn-primary" disabled>
+                New Security Group
+              </DefeatableLink>
+            ) : (
+              <DefeatableLink to="/new" className="btn btn-primary">
+                New Security Group
+              </DefeatableLink>
+            ))}
         </div>
       </div>
 
