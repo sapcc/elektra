@@ -131,13 +131,13 @@ module Compute
       js_data = []
       unless images.empty?
         js_data =
-          images.map do |flavor|
+          images.map do |image|
             {
-              flavor.id => {
-                "name" => flavor.name,
-                "ram" => flavor.ram,
-                "vcpus" => flavor.vcpus,
-                "disk" => flavor.disk,
+              image.id => {
+                "name"  => image.name,
+                "ram"   => image.ram,
+                "vcpus" => image.vcpus,
+                "disk"  => image.disk,
               },
             }
           end
@@ -193,7 +193,7 @@ module Compute
       private_flavors = []
       flavors.each do |flavor|
         if flavor.public?
-          if flavor.name =~ /^(baremetal|zg|zh|bg_|bm_)/
+          if flavor.extra_specs["capabilities:hypervisor_type"] == "ironic"
             public_flavors_baremetal << flavor
           else
             public_flavors_vmware << flavor
@@ -269,21 +269,28 @@ module Compute
           flavors.map do |flavor|
             {
               flavor.id => {
-                "name" => flavor.name,
-                "ram" => flavor.ram,
-                "vcpus" => flavor.vcpus,
-                "disk" => flavor.disk,
+                "name"            => flavor.name,
+                "ram"             => flavor.ram,
+                "vcpus"           => flavor.vcpus,
+                "disk"            => flavor.disk,
+                "hypervisor_type" => flavor.extra_specs["capabilities:hypervisor_type"],
               },
             }
           end
       end
-
       js_data.to_json
     end
 
     # flavor label in dropdown
     def flavor_label_for_select(flavor)
-      "#{flavor.name}  (RAM: #{Core::DataType.new(:bytes, :mega).format(flavor.ram)}, VCPUs: #{flavor.vcpus}, Disk: #{Core::DataType.new(:bytes, :giga).format(flavor.disk)} )"
+
+      label = "#{flavor.name}  (RAM: #{Core::DataType.new(:bytes, :mega).format(flavor.ram)}, VCPUs: #{flavor.vcpus}, Disk: #{Core::DataType.new(:bytes, :giga).format(flavor.disk)} )"
+
+      if flavor.extra_specs["capabilities:hypervisor_type"] == "ironic"
+        label = "#{flavor.name} ironic  (RAM: #{Core::DataType.new(:bytes, :mega).format(flavor.ram)}, VCPUs: #{flavor.vcpus}, Disk: #{Core::DataType.new(:bytes, :giga).format(flavor.disk)} )"
+      end
+
+      return label
     end
 
     ########################################################################
