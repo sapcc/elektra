@@ -1,3 +1,9 @@
+# run local with act
+# Note: the dummy.env file is not optional to prevent act to load the .env file
+#       this is super important because if a proxy is set in the .env file,
+#       because act will use the proxy and the tests will fail
+# act -j test --env-file dummy.env --rm
+
 name: CI Check
 
 on:
@@ -22,56 +28,66 @@ jobs:
           POSTGRES_DB: postgres
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
-        - 5432:5432
+          - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - uses: actions/checkout@v1
+      - name: setup javascript
+        # install nodejs only if running locally with act
+        # otherwise the actions/setup-node@v4 will fails
+        # because it needs a installed nodejs to be able to run
+        if: ${{ env.ACT }}
+        run: |
+          apt-get update
+          apt-get install -y nodejs
 
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '20'
-        registry-url: 'https://registry.npmjs.org'
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-    - name: Gem cache
-      id: cache-bundle
-      uses: actions/cache@v1
-      with:
-        path: vendor/bundle
-        key: bundle-${{ hashFiles('**/Gemfile.lock') }}
+      - name: Gem cache
+        id: cache-bundle
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: bundle-${{ hashFiles('**/Gemfile.lock') }}
 
-    - name: Bundle install
-      env:
-        RAILS_ENV: test
-      run: |
-        gem install bundler
-        bundle install --jobs 4 --retry 3 --path vendor/bundle
-    - name: Install yarn
-      run: npm install -g yarn
+      - name: Bundle install
+        id: bundle-install
+        env:
+          RAILS_ENV: test
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
+      - name: Install yarn
+        run: npm install -g yarn
 
-    - name: Get yarn cache dir
-      id: yarn-cache-dir
-      run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Get yarn cache dir
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
-    - name: Yarn cache
-      id: cache-yarn
-      uses: actions/cache@v1
-      with:
-        path: ${{ steps.yarn-cache-dir.outputs.dir }}
-        key: yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Yarn cache
+        id: cache-yarn
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Setup DB, Run tests
-      env:
-        POSTGRES_SERVICE_HOST: postgres
-        PGUSER: postgres
-        PGPORT: 5432
-        RAILS_ENV: test
-      run: |
-        bin/rails db:create db:schema:load
-        bundle exec rspec
+      - name: Setup DB, Run tests
+        id: test-rails
+        env:
+          POSTGRES_SERVICE_HOST: postgres
+          PGUSER: postgres
+          PGPORT: 5432
+          RAILS_ENV: test
+        run: |
+          bin/rake db:create db:migrate
+          bundle exec rspec
 
-    - name: Yarn install
-      run: |
-        yarn install
-        yarn test
+      - name: Yarn install
+        id: test-js
+        run: |
+          yarn install
+          yarn test
