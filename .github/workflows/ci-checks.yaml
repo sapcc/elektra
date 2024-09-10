@@ -33,7 +33,7 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - name: setup javascript
+      - name: Setup Javascript (act only)
         # install nodejs only if running locally with act
         # otherwise the actions/setup-node@v4 will fails
         # because it needs a installed nodejs to be able to run
