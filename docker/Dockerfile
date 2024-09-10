@@ -1,4 +1,6 @@
-# Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
+# To build the image loacylly run from repository root: docker build -t elektra-prod -f docker/Dockerfile .
+# Note: in case you get an error that the image cannot be pulled logon to keppel
+# You can also pull the image manually: docker pull keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.19
 FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.19 AS base 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
