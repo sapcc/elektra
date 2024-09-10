@@ -1,4 +1,6 @@
-# Note: for local build and to prevent rate limit from docker use keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/
+# To build the image loacylly run from repository root: docker build -t elektra-prod -f docker/Dockerfile .
+# Note: in case you get an error that the image cannot be pulled logon to keppel
+# You can also pull the image manually: docker pull keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.19
 FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.2-alpine3.19 AS base 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
@@ -22,7 +24,7 @@ WORKDIR $APP_PATH
 
 # upgrade packages since based image is used to build elektra
 RUN apk upgrade --no-cache --no-progress \
-    && apk --no-cache add dumb-init tzdata postgresql15-client
+    && apk --no-cache add dumb-init tzdata postgresql16-client
 
 ################################### BUILDER ################################
 FROM base AS builder 
@@ -33,7 +35,7 @@ RUN apk --no-cache add git curl nodejs yarn shared-mime-info
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
-RUN apk --no-cache add build-base postgresql15-dev ruby-sassc --virtual .builddeps \
+RUN apk --no-cache add build-base postgresql16-dev ruby-sassc --virtual .builddeps \
     && gem install --no-document \
     bundler:2.3.20 \
     byebug:11.1.3 \
@@ -85,21 +87,6 @@ ADD . $APP_PATH
 RUN bin/rails assets:precompile && rm -rf node_modules
 
 RUN echo $(git rev-parse HEAD) > $APP_PATH/REVISION && rm -rf .git
-############################ TEST IMAGE ##########################
-FROM base AS tests
-RUN apk add --no-cache postgresql15-jit bash
-ENV RAILS_ENV=test
-# Copy the already built bundler artifact
-COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
-# Copy the already built js artifact
-COPY --from=builder $APP_PATH $APP_PATH
-
-RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/pg start' \
-    && rake db:create db:migrate \
-    && bundle exec rspec \
-    && su postgres -c 'script/pg_tmp.sh -d /tmp/pg stop'
-# && yarn test # we cannot run the react tests here because there are a lot of devDependencies that are not installed
-
 
 ######################################### FINAL IMAGE ######################################
 FROM base AS elektra
