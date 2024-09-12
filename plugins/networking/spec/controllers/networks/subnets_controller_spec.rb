@@ -30,10 +30,6 @@ describe Networking::Networks::SubnetsController, type: :controller do
     allow_any_instance_of(ServiceLayer::NetworkingService).to receive(
       :elektron,
     ).and_return(double("elektron", service: double("network").as_null_object))
-
-    allow_any_instance_of(ServiceLayer::ResourceManagementService).to receive(
-      :quota_data,
-    ).and_return([])
   end
 
   describe "GET 'index'" do

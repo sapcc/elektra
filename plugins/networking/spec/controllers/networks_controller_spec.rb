@@ -29,10 +29,6 @@ describe Networking::Networks::PrivateController, type: :controller do
     allow_any_instance_of(ServiceLayer::NetworkingService).to receive(
       :networks,
     ).and_return []
-
-    allow_any_instance_of(ServiceLayer::ResourceManagementService).to receive(
-      :quota_data,
-    ).and_return([])
   end
 
   describe "GET 'index'" do

@@ -11,11 +11,6 @@
           - else
             = "#{action_name.capitalize} #{controller.controller_name.singularize.humanize}"
 
-        - if @quota_data and @quota_data.length>0
-          .info-text
-            %i.monitoring-icon
-            = "Remaining Quota: #{@quota_data.collect(&:available_as_display_string).join(', ')}"
-
       = yield
 
 = yield :javascripts
