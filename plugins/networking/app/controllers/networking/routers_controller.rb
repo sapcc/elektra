@@ -8,7 +8,6 @@ module Networking
     def index
       ################# NEW
       @routers = []
-      @quota_data = []
 
       if current_user.is_allowed?("context_is_cloud_network_admin")
         @routers =
@@ -139,15 +138,6 @@ module Networking
     end
 
     def new
-      @quota_data = []
-      if current_user.is_allowed?("access_to_project")
-        @quota_data =
-          services.resource_management.quota_data(
-            current_user.domain_id || current_user.project_domain_id,
-            current_user.project_id,
-            [{ service_type: :network, resource_name: :routers }],
-          )
-      end
       # build new router object (no api call done yet!)
       @router = services.networking.new_router("admin_state_up" => true)
     end

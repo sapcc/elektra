@@ -375,36 +375,6 @@ Available attributes:
 - `exception_id` (default is request uuid)
 - `warning` (default false. If true a warning page is rendered instead of error page)
 
-## Display Quota Data
-
-If the variable `@quota_data` is set the view will display all data inside this variable.
-
-### How to set @quota_data
-
-This will load quota data from the database and update the usage attribute.
-
-```ruby
-@quota_data = services.resource_management.quota_data(
-  current_user.domain_id || current_user.project_domain_id,
-  current_user.project_id,[
-  {service_type: 'compute', resource_name: 'instances', usage: @instances.length},
-  {service_type: 'compute', resource_name: 'cores', usage: cores},
-  {service_type: 'compute', resource_name: 'ram', usage: ram}
-])
-```
-
-Same example but without updating the usage attribute. It just loads the values from the database. Note that the database is not always up to date.
-
-```ruby
-@quota_data = services.resource_management.quota_data(
-  current_user.domain_id || current_user.project_domain_id,
-  current_user.project_id,[
-  {service_type: 'compute', resource_name: 'instances'},
-  {service_type: 'compute', resource_name: 'cores'},
-  {service_type: 'compute', resource_name: 'ram'}
-])
-```
-
 ## Pagination
 
 ### Controller

@@ -127,21 +127,6 @@ module Compute
     end
 
     def new
-      # get usage from db
-      @quota_data = []
-      if current_user.is_allowed?("access_to_project")
-        @quota_data =
-          services.resource_management.quota_data(
-            current_user.domain_id || current_user.project_domain_id,
-            current_user.project_id,
-            [
-              { service_type: :compute, resource_name: :instances },
-              { service_type: :compute, resource_name: :cores },
-              { service_type: :compute, resource_name: :ram },
-            ],
-          )
-      end
-
       @instance = services.compute.new_server
       @flavors = services.compute.flavors
       @images = services.image.all_images
@@ -682,15 +667,6 @@ module Compute
     end
 
     def new_snapshot
-      @quota_data =
-        services.resource_management.quota_data(
-          @scoped_domain_id,
-          @scoped_project_id,
-          [{ service_type: :"object-store", resource_name: :capacity }],
-        )
-      @quota = @quota_data.select { |q| q.name == :capacity }.first
-      @free_capa = @quota.quota - @quota.usage
-      @free_capa = @free_capa / 1024 / 1024
       @action_from_show = params[:action_from_show] == "true" || false
     end
 
