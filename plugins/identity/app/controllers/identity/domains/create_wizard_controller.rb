@@ -28,19 +28,6 @@ module Identity
         if @project.save
           audit_logger.info(current_user, "has created", @project)
 
-          if services.available?(:resource_management)
-            # discover newly created projects
-            # use cloud_admin because domain resource admin role is required for this call
-            # rescue in case an exception happens so that the rest of the action is performed
-            begin
-              cloud_admin.resource_management.discover_projects(
-                @scoped_domain_id,
-              )
-            rescue StandardError
-              nil
-            end
-          end
-
           flash.now[:notice] = "Project #{@project.name} successfully created."
           if @inquiry
             if @inquiry.requester && @inquiry.requester.uid
