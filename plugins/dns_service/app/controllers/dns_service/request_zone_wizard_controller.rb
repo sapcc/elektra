@@ -9,9 +9,6 @@ module DnsService
       @zone_request = ::DnsService::ZoneRequest.new(nil)
       @pools = cloud_admin.dns_service.pools[:items]
 
-      @zone_resource = get_zone_resource
-      @recordset_resource = get_recordset_resource
-
       # this needs to be removed when migration is done
       @pools.reject! do |pool|
         pool.attributes["attributes"]["label"] == "New External SAP Hosted Zone"
@@ -66,8 +63,6 @@ module DnsService
         render template: "dns_service/request_zone_wizard/create", formats: :js
       else
         @pools = cloud_admin.dns_service.pools[:items]
-        @zone_resource = get_zone_resource
-        @recordset_resource = get_recordset_resource
         render action: :new
       end
     end
