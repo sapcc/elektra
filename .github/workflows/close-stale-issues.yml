@@ -15,7 +15,7 @@ jobs:
           exempt-pr-labels: "WIP,dependencies"
           stale-issue-message: "This issue has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. If you need to keep this issue open set label of this issue to 'neverstale'. Thank you for your contributions."
           close-issue-message: "This issue has been automatically closed due to inactivity. Thank you for your contributions."
-          stale-pr-message: "This pull request has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. If you need to keep this pull request open set label of this pull request to 'neverstale'. Thank you for your contributions."
+          stale-pr-message: "This pull request has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. If you need to keep this pull request open set label of this pull request to 'WIP'. Thank you for your contributions."
           close-pr-message: "This pull request has been automatically closed due to inactivity. Thank you for your contributions."
           days-before-stale: 60
           days-before-close: 14
