@@ -150,11 +150,6 @@ PATH
     reports (0.0.1)
 
 PATH
-  remote: plugins/resource_management
-  specs:
-    resource_management (0.0.1)
-
-PATH
   remote: plugins/resources
   specs:
     resources (0.0.1)
@@ -673,7 +668,6 @@ DEPENDENCIES
   rails_stdout_logging
   redcarpet
   reports!
-  resource_management!
   resources!
   responders
   rspec-rails
