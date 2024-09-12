@@ -9,35 +9,6 @@ module DnsService
       payload = @inquiry.payload
       @zone_request.attributes = payload
       @pool = load_pool(@zone_request.domain_pool)
-
-      if @inquiry
-        scraped_at =
-          begin
-            cloud_admin
-              .resource_management
-              .find_project(
-                @inquiry.domain_id,
-                @inquiry.project_id,
-                service: "dns",
-                resource: "zones",
-              )
-              .services
-              .first
-              .scraped_at
-          rescue StandardError
-            0
-          end
-
-        # sync if last sync was more than 5 minutes ago
-        if (Time.now.to_i - scraped_at.to_i) > 300
-          Thread.new do
-            cloud_admin.resource_management.sync_project_asynchronously(
-              @inquiry.domain_id,
-              @inquiry.project_id,
-            )
-          end
-        end
-      end
     end
 
     def create
