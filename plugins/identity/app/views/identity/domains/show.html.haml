@@ -119,14 +119,14 @@
             = " (#{::Inquiry::Inquiry.requestor_requests_count(@scoped_domain_id, current_user.id)})"
 
 
-    -# if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id) && plugin_available?(:identity)
-    %h5
-      %i.project-icon
-      Projects
+    - if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id) && plugin_available?(:identity)
+      %h5
+        %i.project-icon
+        Projects
 
-    %ul.plain-list
-      %li
-        = link_to 'Request a New Project', plugin('identity').projects_request_project_path(project_id: nil), data: {modal: true}
+      %ul.plain-list
+        %li
+          = link_to 'Request a New Project', plugin('identity').projects_request_project_path(project_id: nil), data: {modal: true}
 
   .col-md-6
     -# this is a placeholder for React Component!
