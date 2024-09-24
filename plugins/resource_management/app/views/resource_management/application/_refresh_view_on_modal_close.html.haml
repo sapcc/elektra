@@ -1,8 +1,0 @@
-=content_for :javascripts do
-  :javascript
-    // reload/update status bars after closing the modal window
-    $(document).ready(function() {
-      $('#modal-holder').on('hidden.bs.modal', function (e) {
-        $.ajax({ url: "#{url}", dataType: 'script' });
-      });
-    });

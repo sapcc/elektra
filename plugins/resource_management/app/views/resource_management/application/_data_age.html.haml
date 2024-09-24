@@ -1,7 +1,0 @@
-.row
-  -# render the data age only if there is data
-  -if @view_services
-    .col-md-10.col-md-offset-2.small.text-muted
-      Usage data last updated #{data_age_as_string(@view_services.map(&:min_updated_at).reject(&:nil?).min, @view_services.map(&:max_updated_at).reject(&:nil?).max)}
-      -# allow the calling view to embed a "Sync Now" button
-      = yield
