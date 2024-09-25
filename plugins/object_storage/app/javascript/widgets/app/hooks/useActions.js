@@ -97,8 +97,12 @@ const useActions = () => {
           .get("", { params: { marker } })
           .then((response) => {
             data = [...data, ...response.data]
-            marker = response.data[response.data.length - 1].name
-            hasMore = response.data.length > 9999
+            if (response.data.length > 0) {
+              marker = response.data[response.data.length - 1].name
+              hasMore = response.data.length > 9999
+            } else {
+              hasMore = false
+            }
           })
           .catch((error) =>
             dispatch({
@@ -132,8 +136,12 @@ const useActions = () => {
           .then((response) => {
             data = [...data, ...response.data]
             headers = response.headers
-            marker = response.data[response.data.length - 1].name
-            hasMore = response.data.length > 9999
+            if (response.data.length > 0) {
+              marker = response.data[response.data.length - 1].name
+              hasMore = response.data.length > 9999
+            } else {
+              hasMore = false
+            }
           })
       } while (hasMore)
 
