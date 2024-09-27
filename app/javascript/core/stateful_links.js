@@ -14,7 +14,7 @@ const supportHistory = window.history.pushState && true
 
 // This method returns a parameter value for a given parameter name.
 const getParameterByName = function (url, name) {
-  name = name.replace(/[[]/, "\\[").replace(/[\]]/, "\\]")
+  name = name.replace(/\[/g, "\\[").replace(/\]/g, "\\]")
   const regex = new RegExp(`[\\?&]${name}=([^&#]*)`)
   const results = regex.exec(url)
 
