@@ -32,7 +32,7 @@ const PageHead = () => {
 
   return (
     <PageHeader>
-      <Stack className="ml-auto" gap="4" alignment="center">
+      <Stack className="tw-ml-auto" gap="4" alignment="center">
         {selectedDomain === "CC3TEST" && (
           <a
             href={buildPasswordLoginLink(
@@ -40,7 +40,7 @@ const PageHead = () => {
               selectedDomain,
               prodMode
             )}
-            className="text-theme-disabled hover:underline"
+            className="tw-text-theme-disabled hover:tw-underline"
           >
             Log in with password
           </a>

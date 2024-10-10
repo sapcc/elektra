@@ -8,13 +8,13 @@ import useStore from "../../store"
 import { Stack } from "@cloudoperators/juno-ui-components"
 
 const qaRegionStyles = (isSelected) => `
-  py-1 
-  px-2
-  rounded
+  tw-py-1 
+  tw-px-2
+  tw-rounded
   ${
     isSelected
-      ? "bg-theme-accent text-black cursor-default"
-      : "bg-theme-background-lvl-0 text-theme-default"
+      ? "tw-bg-theme-accent tw-text-black tw-cursor-default"
+      : "tw-bg-theme-background-lvl-0 tw-text-theme-default"
   }
 `
 
@@ -39,7 +39,11 @@ const WorldMapQASelect = () => {
   return (
     <>
       {preselectedRegion?.startsWith("QA") && (
-        <Stack direction="vertical" gap="2" className="absolute right-0 top-0">
+        <Stack
+          direction="vertical"
+          gap="2"
+          className="tw-absolute tw-right-0 tw-top-0"
+        >
           {qaRegionKeys.map((qaRegion) => (
             <a
               href="#"

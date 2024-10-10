@@ -61,15 +61,18 @@ const Home = () => {
   }
 
   return (
-    <div className="flex flex-col grow">
+    <div className="tw-flex tw-flex-col tw-grow">
       <LoginOverlay />
-      <div className="max-w-[1280px] w-full mx-auto pt-8">
-        <CCLogo className="mb-4 w-[240px] h-auto" alt="Converged Cloud" />
+      <div className="tw-max-w-[1280px] tw-w-full tw-mx-auto tw-pt-8">
+        <CCLogo
+          className="tw-mb-4 tw-w-[240px] tw-h-auto"
+          alt="Converged Cloud"
+        />
 
         <Stack alignment="center">
-          <div className="text-xl w-3/5 mr-auto">
-            SAP's strategic Infrastructure-as-a-Service (IaaS) stack, optimised
-            for SAP solutions, running purely in SAP datacenters.
+          <div className="tw-text-xl tw-w-3/5 tw-mr-auto">
+            {"SAP's "} strategic Infrastructure-as-a-Service (IaaS) stack,
+            optimised for SAP solutions, running purely in SAP datacenters.
           </div>
           <Stack direction="vertical" alignment="end" gap="1">
             <Button
@@ -80,7 +83,7 @@ const Home = () => {
                   ? `Enter ${selectedDomain}`
                   : "Select region/domain"
               }
-              className="whitespace-nowrap py-1.5 px-3"
+              className="whitespace-nowrap tw-py-1.5 tw-px-3"
               onClick={handleHeroButtonClick}
             >
               {setHeroButtonText()}
@@ -89,9 +92,9 @@ const Home = () => {
               <a
                 href="#"
                 onClick={handleDomainDeselect}
-                className="text-theme-default text-sm underline inline-flex items-center"
+                className="tw-text-theme-default tw-text-sm tw-underline tw-inline-flex tw-items-center"
               >
-                <Icon icon="place" size="16" className="mr-1" />
+                <Icon icon="place" size="16" className="tw-mr-1" />
                 Wrong domain?
               </a>
             )}
@@ -99,17 +102,17 @@ const Home = () => {
         </Stack>
       </div>
       <div
-        className="bg-top bg-no-repeat mt-8 pb-12 grow"
+        className="tw-bg-top tw-bg-no-repeat tw-mt-8 tw-pb-12 tw-grow"
         style={{
           backgroundImage: `url('${
             new URL(backgroundTop, import.meta.url).href
           }')`,
         }}
       >
-        <div className="max-w-[1280px] w-full mx-auto relative">
+        <div className="tw-max-w-[1280px] tw-w-full tw-mx-auto tw-relative">
           <WorldMapQASelect />
           <WorldMap
-            className="worldmap w-[90%] h-auto mx-auto"
+            className="tw-worldmap tw-w-[90%] tw-h-auto tw-mx-auto"
             onClick={handleWorldMapClick}
             data-selected-region={selectedRegion}
           />

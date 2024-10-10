@@ -14,34 +14,34 @@ import DomainSelect from "./DomainSelect"
 
 const overlayStyles = (isOpen) => {
   return `
-    ${isOpen ? "block" : "hidden"}
-    backdrop-blur-xl
-    backdrop-saturate-200
-    bg-theme-background-lvl-0
-    bg-opacity-30
-    border
-    border-theme-background-lvl-0
-    flex
-    flex-col
-    absolute
-    inset-0
-    pt-24
-    z-[99]
-    overflow-y-scroll
+    ${isOpen ? "tw-block" : "tw-hidden"}
+    tw-backdrop-blur-xl
+    tw-backdrop-saturate-200
+    tw-bg-theme-background-lvl-0
+    tw-bg-opacity-30
+    tw-border
+    tw-border-theme-background-lvl-0
+    tw-flex
+    tw-flex-col
+    tw-absolute
+    tw-inset-0
+    tw-pt-24
+    tw-z-[99]
+    tw-overflow-y-scroll
     `
 }
 
 const tabClasses = (isActive) => {
   return `
-    uppercase 
-    text-theme-default
-    text-xl 
-    pb-3 
-    px-24 
-    -mb-0.5
+    tw-uppercase 
+    tw-text-theme-default
+    tw-text-xl 
+    tw-pb-3 
+    tw-px-24 
+    -tw-mb-0.5
     ${
       isActive
-        ? "cursor-default text-theme-high border-b-3 border-theme-accent"
+        ? "tw-cursor-default tw-text-theme-high tw-border-b-3 tw-border-theme-accent"
         : ""
     }
     `
@@ -49,7 +49,7 @@ const tabClasses = (isActive) => {
 
 const tabLinkClasses = (isActive) => {
   return `
-    ${isActive ? "" : "hover:text-theme-accent"}
+    ${isActive ? "" : "tw-hover:text-theme-accent"}
     `
 }
 
@@ -75,17 +75,19 @@ const LoginOverlay = () => {
 
   return (
     <div className={overlayStyles(loginOverlayVisible)}>
-      <div className="w-full max-w-screen-xl mx-auto pb-12">
-        <div className="w-full flex items-center justify-end">
+      <div className="tw-w-full tw-max-w-screen-xl tw-mx-auto tw-pb-12">
+        <div className="tw-w-full tw-flex tw-items-center tw-justify-end">
           <Icon
-            onClick={() => hideLoginOverlay()}
+            onClick={() => {
+              hideLoginOverlay()
+            }}
             icon="close"
-            color="text-theme-accent"
+            color="tw-text-theme-accent"
             size="36"
-            className="-mr-12"
+            className="-tw-mr-12"
           />
         </div>
-        <nav className="w-full border-b-2 border-juno-grey-light-8 mb-8">
+        <nav className="tw-w-full tw-border-b-2 tw-border-juno-grey-light-8 tw-mb-8">
           <Stack distribution="around">
             <a
               href="#"
@@ -101,24 +103,24 @@ const LoginOverlay = () => {
             </div>
           </Stack>
         </nav>
-        <div className="w-full">
+        <div className="tw-w-full">
           {isValidRegionSelected ? <DomainSelect /> : <RegionSelect />}
         </div>
       </div>
 
-      <div className="w-full bg-juno-grey-blue-10 mt-auto">
+      <div className="tw-w-full tw-bg-juno-grey-blue-10 tw-mt-auto">
         <Stack
           alignment="center"
-          className="documentation-banner max-w-screen-xl mx-auto py-10"
+          className="documentation-banner tw-max-w-screen-xl tw-mx-auto tw-py-10"
         >
           <div>
-            <h5 className="text-3xl">New here?</h5>
+            <h5 className="tw-text-3xl">New here?</h5>
             <p>
               Have a look at the <span className="italic">Getting Started</span>{" "}
               section of our documentation
             </p>
           </div>
-          <div className="ml-auto pl-8 pr-20">
+          <div className="tw-ml-auto tw-pl-8 tw-pr-20">
             <Button
               variant="primary"
               title="Go to documentation"
@@ -127,8 +129,8 @@ const LoginOverlay = () => {
             >
               <Icon
                 icon="openInNew"
-                color="text-theme-high"
-                className=" mr-2"
+                color="tw-text-theme-high"
+                className=" tw-mr-2"
               />
               Go to documentation
             </Button>
