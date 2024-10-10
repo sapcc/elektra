@@ -1,0 +1,62 @@
+// SPDX-FileCopyrightText: 2024 SAP SE or an SAP affiliate company and Juno contributors
+// SPDX-License-Identifier: Apache-2.0
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+:host {
+  // --cloud-image-overlap: 2rem; // the distance the cloud image should stick out of the footer banner
+  --cloud-image-overlap: 0rem; // change back to the above once we go back to the fancy four images bg
+}
+
+.documentation-banner {
+  background: url(assets/images/docu_shape.svg) top 1rem right no-repeat;
+}
+
+.footer-wrapper {
+  background: url(assets/images/cloud.png) top right no-repeat;
+}
+
+.footer {
+  // 4 background images stacked on top of each other. To make the cloud shape visually stick out of the banner a sharp linear gradient of
+  // height --cloud-image-overlap and global bg color was used to visually cut off parts of the regular background gradient to give
+  // the appearance that the cloud image sticks outside of the container (which it doesn't)
+  //
+  // background: url(assets/images/cloud.png) top right,
+  //   url(assets/images/background_footer.svg) top var(--cloud-image-overlap) left 0%,
+  //   linear-gradient(180deg, rgb(var(--color-global-bg)) 0%, rgb(var(--color-global-bg)) 100%),
+  //   linear-gradient(90deg, rgb(23, 30, 37) 0%, rgb(19, 25, 31) 100%);
+  // background-size: auto, cover, auto var(--cloud-image-overlap), auto;
+  // background-repeat: no-repeat;
+  background: linear-gradient(90deg, rgb(23, 30, 37) 0%, rgb(19, 25, 31) 100%);
+  background-size: auto;
+  background-repeat: no-repeat;
+}
+
+// Worldmap: show hover info permanently for selected region
+@each $regionName
+  in "EU-DE-1"
+  "EU-DE-2"
+  "EU-NL-1"
+  "AP-AU-1"
+  "AP-AE-1"
+  "AP-CN-1"
+  "AP-JP-1"
+  "AP-JP-2"
+  "AP-SA-1"
+  "AP-SA-2"
+  "NA-CA-1"
+  "NA-US-1"
+  "NA-US-2"
+  "NA-US-3"
+  "LA-BR-1"
+{
+  .worldmap[data-selected-region="#{$regionName}"] {
+    .#{$regionName} {
+      opacity: 1;
+      display: block;
+    }
+  }
+}

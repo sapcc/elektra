@@ -1,0 +1,8 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2024 SAP SE or an SAP affiliate company and Juno contributors
+  ~ SPDX-License-Identifier: Apache-2.0
+-->
+
+<svg xmlns="http://www.w3.org/2000/svg" width="152" height="135" viewBox="0 0 152 135">
+  <path fill="#30363C" d="M114.25,15 L49.25,15 C40.3125,15 33.08125,22.335 33.08125,31.3 L33,161.7 C33,170.665 40.23125,178 49.16875,178 L146.75,178 C155.6875,178 163,170.665 163,161.7 L163,63.9 L114.25,15 Z M130.5,145.4 L65.5,145.4 L65.5,129.1 L130.5,129.1 L130.5,145.4 Z M130.5,112.8 L65.5,112.8 L65.5,96.5 L130.5,96.5 L130.5,112.8 Z M106.125,72.05 L106.125,27.225 L150.8125,72.05 L106.125,72.05 Z" transform="rotate(16 102.73 31.462)"/>
+</svg>
