@@ -2,6 +2,7 @@
 const pathsResolverPlugin = require("./paths_resolver_plugin")
 const globImportPlugin = require("./glob_import_plugin")
 const postcss = require("postcss")
+const { transform } = require("@svgr/core")
 const sass = require("sass")
 const url = require("postcss-url")
 const fs = require("fs")
@@ -30,6 +31,10 @@ const config = {
         path: "plugins/*/app/javascript/widgets/*/init.{js,jsx}",
         suffix: "widget",
       },
+      {
+        path: "app/javascript/widgets/*/init.{js,jsx}",
+        suffix: "widget",
+      },
     ],
     { log: true }
   ),
@@ -49,27 +54,36 @@ const config = {
     }),
     globImportPlugin(),
 
-    // // use default type (css) for all sass, scss and css files which don't start with .inline
-    // sassPlugin({
-    //   filter: /.*[^.inline]\.(s[ac]ss|css)$/,
-    //   type: "style",
-    //   includePaths: ["./node_modules"],
-    //   cssImports: true,
-    //   async transform(source, _resolveDir) {
-    //     const { css } = await postcss(postcssPlugins).process(source)
-    //     return css
-    //   },
-    // }),
-    // // for all sass, scss and css files starting with .inline use the css-text type
-    // // This means that all .inline.(s)css files are loaded as text
-    // sassPlugin({
-    //   filter: /.*\.inline\.(s[ac]ss|css).*$/,
-    //   type: "css-text",
-    //   async transform(source, _resolveDir) {
-    //     const { css } = await postcss(postcssPlugins).process(source)
-    //     return css
-    //   },
-    // }),
+    {
+      name: "svg-loader",
+      setup(build) {
+        build.onLoad(
+          // consider only .svg files
+          { filter: /.\.(svg)$/, namespace: "file" },
+          async (args) => {
+            let contents = fs.readFileSync(args.path)
+            // built-in loaders: js, jsx, ts, tsx, css, json, text, base64, dataurl, file, binary
+            let loader = "text"
+            if (args.suffix === "?url") {
+              // as URL
+              const maxSize = 10240 // 10Kb
+              // use dataurl loader for small files and file loader for big files!
+              loader = contents.length <= maxSize ? "dataurl" : "file"
+            } else {
+              // as react component
+              // use react component loader (jsx)
+              loader = "jsx"
+              contents = await transform(contents, {
+                plugins: ["@svgr/plugin-jsx"],
+              })
+            }
+
+            return { contents, loader }
+          }
+        )
+      },
+    },
+
     {
       // custom plugin to handle css imports
       name: "inline-styles",
@@ -135,10 +149,11 @@ const config = {
     // built-in loaders: js, jsx, ts, tsx, css, json, text, base64, dataurl, file, binary
     ".ttf": "file",
     ".otf": "file",
-    ".svg": "file",
     ".eot": "file",
     ".woff": "file",
     ".woff2": "file",
+    ".png": "dataurl",
+
     // Disable the loader as inline files are handled by sass plugin
     // ".inline.css": "text",
   },
