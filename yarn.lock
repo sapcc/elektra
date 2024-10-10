@@ -7351,6 +7351,11 @@ set-function-name@^2.0.1, set-function-name@^2.0.2:
     functions-have-names "^1.2.3"
     has-property-descriptors "^1.0.2"
 
+shadow-dom-testing-library@^1.11.3:
+  version "1.11.3"
+  resolved "https://registry.yarnpkg.com/shadow-dom-testing-library/-/shadow-dom-testing-library-1.11.3.tgz#438c5d93ab092f10075a65906d79e73464066dad"
+  integrity sha512-+XWK0Ds5eoDmejMFQbyPt5xPaBCd/JodAaZTzRa4/sZMhcO/wokGKMHeQYA3eiiZvtHs0MoJzU0ttfrWtUvbQA==
+
 shallow-equal@^1.2.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/shallow-equal/-/shallow-equal-1.2.1.tgz#4c16abfa56043aa20d050324efa68940b0da79da"
