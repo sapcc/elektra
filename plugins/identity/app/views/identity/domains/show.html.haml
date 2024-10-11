@@ -149,30 +149,21 @@
             %td
               = @scoped_domain_name
 
+      - unless @domain_config.feature_hidden?("documentation")
+        %h5
+          Helpful Links
+          %i.fa.fa-external-link
 
-      %h5
-        Helpful Links
-        %i.fa.fa-external-link
-
-      %ul.fa-ul
-        %li
-          %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}" target="_blank") Documentation Main Page
-        %li
-          %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}docs/customer/docs/faq/" target="_blank") Troubleshooting & FAQ
-        %li
-          %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}docs/customer/training/" target="_blank") Tutorials
-        %li
-          %i.fa.fa-li.fa-ambulance
-          %a(href="#{sap_url_for('documentation')}docs/customer/docs/support/" target="_blank") Get Support
-
-      -# Customer Survey
-      -# .bs-callout.bs-callout-info-cta.bs-callout-emphasize.u-margin-top-normal
-      -#   = image_tag "CCloud_Logo_light.svg", alt: "Converged Cloud", class: "bs-callout-image"
-      -#   Take our survey now and help us shape the future of Converged Cloud!
-      -#   %a{href: "https://employeeexperience.surveys.sap.com/jfe/form/SV_80WgMq7WTBJFdP0", target: "_blank"} 
-      -#     %i.fa.fa-fw.fa-arrow-right
-      -#     Go to survey
-          
+        %ul.fa-ul
+          %li
+            %i.fa.fa-li.fa-file-text-o
+            %a(href="#{sap_url_for('documentation')}" target="_blank") Documentation Main Page
+          %li
+            %i.fa.fa-li.fa-file-text-o
+            %a(href="#{sap_url_for('documentation')}docs/customer/docs/faq/" target="_blank") Troubleshooting & FAQ
+          %li
+            %i.fa.fa-li.fa-file-text-o
+            %a(href="#{sap_url_for('documentation')}docs/customer/training/" target="_blank") Tutorials
+          %li
+            %i.fa.fa-li.fa-ambulance
+            %a(href="#{sap_url_for('documentation')}docs/customer/docs/support/" target="_blank") Get Support

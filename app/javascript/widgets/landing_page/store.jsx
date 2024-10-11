@@ -28,31 +28,13 @@ const DOMAINS = {
     },
     {
       name: "MONSOON3",
-      description:
-        "General purpose domain for SAP-internal applications that cannot be reached from the internet",
+      description: "General purpose domain for SAP-internal applications that cannot be reached from the internet",
     },
   ],
-  special: [
-    "BS",
-    "BTP_FP",
-    "CCADMIN",
-    "CIS",
-    "CP",
-    "FSN",
-    "HCM",
-    "HDA",
-    "HEC",
-    "KYMA",
-    "NEO",
-    "ORA",
-    "S4",
-    "WBS",
-  ],
+  special: ["BS", "BTP_FP", "CCADMIN", "CIS", "CP", "FSN", "HCM", "HDA", "HEC", "KYMA", "NEO", "ORA", "S4", "WBS"],
 }
 
-const DOMAIN_KEYS = DOMAINS.general
-  .map((domain) => domain.name)
-  .concat(DOMAINS.special)
+const DOMAIN_KEYS = DOMAINS.general.map((domain) => domain.name).concat(DOMAINS.special)
 
 // all available regions
 const REGIONS = {
@@ -151,21 +133,15 @@ const REGIONS = {
 const REGIONS_BY_CONTINENT = [
   {
     name: "AMER",
-    regions: Object.values(REGIONS).filter(
-      (region) => region.continent === "AMER"
-    ),
+    regions: Object.values(REGIONS).filter((region) => region.continent === "AMER"),
   },
   {
     name: "EMEA",
-    regions: Object.values(REGIONS).filter(
-      (region) => region.continent === "EMEA"
-    ),
+    regions: Object.values(REGIONS).filter((region) => region.continent === "EMEA"),
   },
   {
     name: "APJ",
-    regions: Object.values(REGIONS).filter(
-      (region) => region.continent === "APJ"
-    ),
+    regions: Object.values(REGIONS).filter((region) => region.continent === "APJ"),
   },
 ]
 
@@ -176,38 +152,30 @@ const QA_REGION_KEYS = ["QA-DE-1", "QA-DE-2", "QA-DE-3"]
 const useStore = create(
   devtools((set) => ({
     loginOverlayVisible: false,
-    toggleLoginOverlay: () =>
-      set((state) => ({ loginOverlayVisible: !state.loginOverlayVisible })),
-    showLoginOverlay: () => set((state) => ({ loginOverlayVisible: true })),
-    hideLoginOverlay: () => set((state) => ({ loginOverlayVisible: false })),
+    toggleLoginOverlay: () => set((state) => ({ loginOverlayVisible: !state.loginOverlayVisible })),
+    showLoginOverlay: () => set(() => ({ loginOverlayVisible: true })),
+    hideLoginOverlay: () => set(() => ({ loginOverlayVisible: false })),
 
     region: null,
     selectRegion: (selectedRegion) => {
       // only set if the given value is valid
-      if (
-        REGION_KEYS.includes(selectedRegion.toUpperCase()) ||
-        selectedRegion.toUpperCase().startsWith("QA-")
-      ) {
-        set((state) => ({ region: selectedRegion.toUpperCase() }))
+      if (REGION_KEYS.includes(selectedRegion.toUpperCase()) || selectedRegion.toUpperCase().startsWith("QA-")) {
+        set(() => ({ region: selectedRegion.toUpperCase() }))
       }
     },
-    deselectRegion: () => set((state) => ({ region: null })),
+    deselectRegion: () => set(() => ({ region: null })),
 
     preselectedRegion: null,
-    setPreselectedRegion: (propRegion) =>
-      set((state) => ({ preselectedRegion: propRegion.toUpperCase() })),
+    setPreselectedRegion: (propRegion) => set(() => ({ preselectedRegion: propRegion.toUpperCase() })),
 
     domain: null,
     selectDomain: (selectedDomain) => {
       // only set if the given value is valid
-      if (
-        DOMAIN_KEYS.includes(selectedDomain.toUpperCase()) ||
-        selectedDomain.toUpperCase() === "CC3TEST"
-      ) {
-        set((state) => ({ domain: selectedDomain.toUpperCase() }))
+      if (DOMAIN_KEYS.includes(selectedDomain.toUpperCase()) || selectedDomain.toUpperCase() === "CC3TEST") {
+        set(() => ({ domain: selectedDomain.toUpperCase() }))
       }
     },
-    deselectDomain: () => set((state) => ({ domain: null })),
+    deselectDomain: () => set(() => ({ domain: null })),
 
     regions: REGIONS,
     regionKeys: REGION_KEYS,
@@ -217,7 +185,12 @@ const useStore = create(
     domainKeys: DOMAIN_KEYS,
 
     prodMode: true,
-    setProdMode: (isProdMode) => set((state) => ({ prodMode: isProdMode })),
+    setProdMode: (isProdMode) => set(() => ({ prodMode: isProdMode })),
+
+    hideSupport: false,
+    hideDocs: false,
+    setHideSupport: (bool) => set(() => ({ hideSupport: bool })),
+    setHideDocs: (bool) => set(() => ({ hideDocs: bool })),
   }))
 )
 

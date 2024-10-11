@@ -1,1 +1,4 @@
-= javascript_include_tag "landing_page_widget", data: { region: "#{current_region}", domain: "#{current_domain}", prodmode: "#{Rails.env.production?}"}
+= javascript_include_tag "landing_page_widget", data: {                     |               
+  hide_support: "#{domain_config.feature_hidden?('support')}",              | 
+  hide_docs: "#{domain_config.feature_hidden?('documentation')}",           | 
+  region: "#{current_region}", domain: "#{current_domain}", prodmode: "#{Rails.env.production?}"}

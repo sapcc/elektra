@@ -33,6 +33,10 @@ class DomainConfig
     return @domain_config.fetch("disabled_plugins", []).include?(name.to_s)
   end
 
+  def feature_hidden?(name)
+    return @domain_config.fetch("disabled_features", []).include?(name.to_s)
+  end
+
   def floating_ip_networks
     # fetch floating_ip_networks from config
     # and replace #{domain_name} in each network name with the scoped domain name

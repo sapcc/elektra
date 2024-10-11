@@ -18,9 +18,7 @@ import { buildDashboardLink } from "../lib/utils"
 import { Button, Icon, Stack } from "@cloudoperators/juno-ui-components"
 
 const Home = () => {
-  const showLoginOverlay = useStore(
-    useCallback((state) => state.showLoginOverlay)
-  )
+  const showLoginOverlay = useStore(useCallback((state) => state.showLoginOverlay))
   const selectedDomain = useStore(useCallback((state) => state.domain))
   const deselectDomain = useStore(useCallback((state) => state.deselectDomain))
   const selectedRegion = useStore(useCallback((state) => state.region))
@@ -36,11 +34,7 @@ const Home = () => {
 
   const handleHeroButtonClick = () => {
     if (selectedRegion && selectedDomain) {
-      window.location.href = buildDashboardLink(
-        selectedRegion,
-        selectedDomain,
-        prodMode
-      )
+      window.location.href = buildDashboardLink(selectedRegion, selectedDomain, prodMode)
     } else {
       showLoginOverlay()
     }
@@ -64,25 +58,18 @@ const Home = () => {
     <div className="tw-flex tw-flex-col tw-grow">
       <LoginOverlay />
       <div className="tw-max-w-[1280px] tw-w-full tw-mx-auto tw-pt-8">
-        <CCLogo
-          className="tw-mb-4 tw-w-[240px] tw-h-auto"
-          alt="Converged Cloud"
-        />
+        <CCLogo className="tw-mb-4 tw-w-[240px] tw-h-auto" alt="Converged Cloud" />
 
         <Stack alignment="center">
           <div className="tw-text-xl tw-w-3/5 tw-mr-auto">
-            {"SAP's "} strategic Infrastructure-as-a-Service (IaaS) stack,
-            optimised for SAP solutions, running purely in SAP datacenters.
+            {"SAP's "} strategic Infrastructure-as-a-Service (IaaS) stack, optimised for SAP solutions, running purely
+            in SAP datacenters.
           </div>
           <Stack direction="vertical" alignment="end" gap="1">
             <Button
               icon={selectedDomain ? "openInBrowser" : "place"}
               variant="primary"
-              title={
-                selectedDomain
-                  ? `Enter ${selectedDomain}`
-                  : "Select region/domain"
-              }
+              title={selectedDomain ? `Enter ${selectedDomain}` : "Select region/domain"}
               className="whitespace-nowrap tw-py-1.5 tw-px-3"
               onClick={handleHeroButtonClick}
             >
@@ -104,9 +91,7 @@ const Home = () => {
       <div
         className="tw-bg-top tw-bg-no-repeat tw-mt-8 tw-pb-12 tw-grow"
         style={{
-          backgroundImage: `url('${
-            new URL(backgroundTop, import.meta.url).href
-          }')`,
+          backgroundImage: `url('${new URL(backgroundTop, import.meta.url).href}')`,
         }}
       >
         <div className="tw-max-w-[1280px] tw-w-full tw-mx-auto tw-relative">

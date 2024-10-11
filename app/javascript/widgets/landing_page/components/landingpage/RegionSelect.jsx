@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback } from "react"
+import React from "react"
 
 import useStore from "../../store"
 import FlagCloud from "../../assets/images/flag_ccloud.svg"
@@ -11,28 +11,17 @@ import FlagCloud from "../../assets/images/flag_ccloud.svg"
 import { Stack } from "@cloudoperators/juno-ui-components"
 
 const RegionSelect = () => {
-  const selectRegion = useStore(useCallback((state) => state.selectRegion))
-  const preselectedRegion = useStore(
-    useCallback((state) => state.preselectedRegion)
-  )
-  const qaRegionKeys = useStore(useCallback((state) => state.qaRegionKeys))
-  const regionsByContinent = useStore(
-    useCallback((state) => state.regionsByContinent)
-  )
+  const selectRegion = useStore((state) => state.selectRegion)
+  const preselectedRegion = useStore((state) => state.preselectedRegion)
+  const qaRegionKeys = useStore((state) => state.qaRegionKeys)
+  const regionsByContinent = useStore((state) => state.regionsByContinent)
 
   return (
     <>
       <Stack gap="6" distribution="center">
         {regionsByContinent.map((continent) => (
-          <Stack
-            direction="vertical"
-            gap="1.5"
-            className="tw-flex-1"
-            key={continent.name}
-          >
-            <div className="tw-text-lg tw-text-theme-high tw-pb-2">
-              {continent.name}
-            </div>
+          <Stack direction="vertical" gap="1.5" className="tw-flex-1" key={continent.name}>
+            <div className="tw-text-lg tw-text-theme-high tw-pb-2">{continent.name}</div>
             {continent.regions.map((region) => (
               <Stack
                 key={region.key}
@@ -52,9 +41,7 @@ const RegionSelect = () => {
         ))}
         {preselectedRegion?.startsWith("QA") && (
           <div>
-            <div className="tw-text-lg tw-text-theme-high tw-pb-2">
-              QA REGIONS
-            </div>
+            <div className="tw-text-lg tw-text-theme-high tw-pb-2">QA REGIONS</div>
             <Stack direction="vertical" gap="1.5" className="tw-flex-1">
               {qaRegionKeys.map((region) => (
                 <Stack
@@ -72,13 +59,6 @@ const RegionSelect = () => {
                     <FlagCloud />
                   </div>
                 </Stack>
-                // <div
-                //   key={region}
-                //   onClick={() => selectRegion(region)}
-                //   className="font-bold bg-juno-grey-blue-9 py-3 px-5 cursor-pointer hover:bg-theme-accent hover:text-black"
-                // >
-                //   {region}
-                // </div>
               ))}
             </Stack>
           </div>

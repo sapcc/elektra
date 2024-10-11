@@ -34,9 +34,7 @@ const setAttributes = (element, attributes) => {
 class Widget {
   constructor(reactContainers, config) {
     // reactContainers should always be an array (support global widgets)
-    this.reactContainers = isIterable(reactContainers)
-      ? reactContainers
-      : [reactContainers]
+    this.reactContainers = isIterable(reactContainers) ? reactContainers : [reactContainers]
     this.config = config
     this.createStore = this.createStore.bind(this)
     this.render = this.render.bind(this)
@@ -73,19 +71,14 @@ class Widget {
     // const Container = React.createElement(container, this.config.params)
     for (let reactContainer of this.reactContainers) {
       let dataset = getDataset(reactContainer)
-      let wrappedComponent = React.createElement(
-        container,
-        Object.assign({}, dataset, this.config.params)
-      )
+      let wrappedComponent = React.createElement(container, Object.assign({}, dataset, this.config.params))
 
       if (!reactContainer) continue
       if (this.store) {
         createRoot(reactContainer).render(
           <Provider store={this.store}>
             <>
-              {this.config.params.flashescontainer !== "custom" && (
-                <FlashMessages />
-              )}
+              {this.config.params.flashescontainer !== "custom" && <FlashMessages />}
               {wrappedComponent}
             </>
           </Provider>
@@ -93,9 +86,7 @@ class Widget {
       } else {
         createRoot(reactContainer).render(
           <>
-            {this.config.params.flashescontainer !== "custom" && (
-              <FlashMessages />
-            )}
+            {this.config.params.flashescontainer !== "custom" && <FlashMessages />}
             {wrappedComponent}
           </>
         )
@@ -157,7 +148,7 @@ export const createWidget = (dirname, options = {}) => {
   }
 
   let htmlOptions = options.html || {}
-  let defaultHtmlOptions = { class: ".react-widget-content" }
+  let defaultHtmlOptions = { class: "react-widget-content", style: "height: 100%;" }
   htmlOptions = Object.assign({}, defaultHtmlOptions, htmlOptions)
   for (let attr in htmlOptions) {
     for (let reactContainer of reactContainers) {
@@ -165,8 +156,7 @@ export const createWidget = (dirname, options = {}) => {
     }
   }
 
-  const loadWidget = () =>
-    new Widget(reactContainers, createConfig(widgetName, params))
+  const loadWidget = () => new Widget(reactContainers, createConfig(widgetName, params))
 
   if (document.readyState === "complete") return Promise.resolve(loadWidget())
 

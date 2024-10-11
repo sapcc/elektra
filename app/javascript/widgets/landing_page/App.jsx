@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback, useEffect } from "react"
+import React, { useEffect } from "react"
+import PropTypes from "prop-types"
 import PageFooter from "./components/layout/PageFooter"
 import PageHead from "./components/layout/PageHead"
 import Home from "./pages/home"
@@ -11,46 +12,47 @@ import styles from "./styles.scss?inline"
 import useStore from "./store"
 import { AppShellProvider } from "@cloudoperators/juno-ui-components"
 
-const App = (props) => {
-  const loginOverlayVisible = useStore(
-    useCallback((state) => state.loginOverlayVisible)
-  )
-  const selectRegion = useStore(useCallback((state) => state.selectRegion))
-  const setPreselectedRegion = useStore(
-    useCallback((state) => state.setPreselectedRegion)
-  )
-  const selectDomain = useStore(useCallback((state) => state.selectDomain))
-  const setProdMode = useStore(useCallback((state) => state.setProdMode))
+const App = ({ region, domain, prodmode, hideDocs, hideSupport }) => {
+  const loginOverlayVisible = useStore((state) => state.loginOverlayVisible)
+  const selectRegion = useStore((state) => state.selectRegion)
+  const setPreselectedRegion = useStore((state) => state.setPreselectedRegion)
+  const selectDomain = useStore((state) => state.selectDomain)
+  const setProdMode = useStore((state) => state.setProdMode)
+  const setHideDocs = useStore((state) => state.setHideDocs)
+  const setHideSupport = useStore((state) => state.setHideSupport)
 
-  // if a preselected region or domain has been passed into the app be sure to set them in the state
   useEffect(() => {
-    if (props.region) {
-      selectRegion(props.region.toUpperCase())
-      setPreselectedRegion(props.region.toUpperCase())
+    if (region) {
+      selectRegion(region.toUpperCase())
+      setPreselectedRegion(region.toUpperCase())
     }
-    if (props.domain) {
-      selectDomain(props.domain.toUpperCase())
+    if (domain) {
+      selectDomain(domain.toUpperCase())
     }
-    if (props.prodmode) {
-      setProdMode(props.prodmode === "true")
-    }
-  }, [props.region, props.domain, props.prodmode])
+    setHideDocs(hideDocs === "true" || hideDocs === true)
+    setHideSupport(hideSupport === "true" || hideSupport === true)
+    setProdMode(prodmode === "true" || prodmode === true)
+  }, [])
 
   return (
     // use custom style cache to avoid conflicts with other apps
-    <div
-      className={`tw-flex tw-flex-col tw-h-full ${
-        loginOverlayVisible ? "tw-overflow-hidden tw-h-full" : ""
-      }`}
-    >
+    <div className={`tw-flex tw-flex-col tw-h-full ${loginOverlayVisible ? "tw-overflow-hidden tw-h-full" : ""}`}>
       <div className="tw-flex tw-flex-col tw-grow">
         <PageHead />
 
         <Home />
-        <PageFooter />
+        {hideSupport !== "true" && hideSupport !== true && <PageFooter />}
       </div>
     </div>
   )
+}
+
+App.propTypes = {
+  region: PropTypes.string,
+  domain: PropTypes.string,
+  prodmode: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  hideDocs: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  hideSupport: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 }
 
 const StyledApp = (props = {}) => {
