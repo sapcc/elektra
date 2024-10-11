@@ -25,7 +25,10 @@ const RegionSelect = () => {
             {continent.regions.map((region) => (
               <Stack
                 key={region.key}
-                onClick={() => selectRegion(region.key)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  selectRegion(region.key)
+                }}
                 alignment="center"
                 className="tw-bg-juno-grey-blue-9 tw-py-3 tw-px-5 tw-cursor-pointer hover:tw-bg-theme-accent hover:tw-text-black"
               >
@@ -46,7 +49,10 @@ const RegionSelect = () => {
               {qaRegionKeys.map((region) => (
                 <Stack
                   key={region}
-                  onClick={() => selectRegion(region)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    selectRegion(region)
+                  }}
                   alignment="center"
                   className="tw-bg-juno-grey-blue-9 tw-py-3 tw-px-5 tw-cursor-pointer tw-hover:bg-theme-accent tw-hover:text-black"
                 >

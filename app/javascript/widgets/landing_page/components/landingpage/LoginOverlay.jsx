@@ -66,7 +66,8 @@ const LoginOverlay = () => {
       <div className="tw-w-full tw-max-w-screen-xl tw-mx-auto tw-pb-12">
         <div className="tw-w-full tw-flex tw-items-center tw-justify-end">
           <Icon
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               hideLoginOverlay()
             }}
             icon="close"
@@ -79,7 +80,10 @@ const LoginOverlay = () => {
           <Stack distribution="around">
             <a
               href="#"
-              onClick={() => deselectRegion()}
+              onClick={(e) => {
+                e.preventDefault()
+                deselectRegion()
+              }}
               className={`${tabClasses(!isValidRegionSelected)} ${tabLinkClasses(!isValidRegionSelected)}`}
             >
               1. Choose your region
