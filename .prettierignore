@@ -1,0 +1,7 @@
+# Ignore the .changeset directory
+.changeset
+
+# You can also ignore other files or directories if needed
+node_modules
+dist
+build
