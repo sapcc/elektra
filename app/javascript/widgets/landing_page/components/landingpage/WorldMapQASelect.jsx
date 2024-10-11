@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback } from "react"
+import React from "react"
 import useStore from "../../store"
 import { Stack } from "@cloudoperators/juno-ui-components"
 
@@ -22,12 +22,10 @@ const qaRegionStyles = (isSelected) => `
 // The reason is that we don't want to show the QA regions on the landing pages of the productive regions
 // so you'll see the QA select only if you started out on a QA region
 const WorldMapQASelect = () => {
-  const selectedRegion = useStore(useCallback((state) => state.region))
-  const preselectedRegion = useStore(
-    useCallback((state) => state.preselectedRegion)
-  )
-  const selectRegion = useStore(useCallback((state) => state.selectRegion))
-  const qaRegionKeys = useStore(useCallback((state) => state.qaRegionKeys))
+  const selectedRegion = useStore((state) => state.region)
+  const preselectedRegion = useStore((state) => state.preselectedRegion)
+  const selectRegion = useStore((state) => state.selectRegion)
+  const qaRegionKeys = useStore((state) => state.qaRegionKeys)
 
   const handleQARegionClick = (e, qaRegion) => {
     e.preventDefault()
@@ -39,20 +37,10 @@ const WorldMapQASelect = () => {
   return (
     <>
       {preselectedRegion?.startsWith("QA") && (
-        <Stack
-          direction="vertical"
-          gap="2"
-          className="tw-absolute tw-right-0 tw-top-0"
-        >
+        <Stack direction="vertical" gap="2" className="tw-absolute tw-right-0 tw-top-0">
           {qaRegionKeys.map((qaRegion) => (
-            <a
-              href="#"
-              key={qaRegion}
-              onClick={(e) => handleQARegionClick(e, qaRegion)}
-            >
-              <div className={qaRegionStyles(qaRegion === selectedRegion)}>
-                {qaRegion}
-              </div>
+            <a href="#" key={qaRegion} onClick={(e) => handleQARegionClick(e, qaRegion)}>
+              <div className={qaRegionStyles(qaRegion === selectedRegion)}>{qaRegion}</div>
             </a>
           ))}
         </Stack>

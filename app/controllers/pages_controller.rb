@@ -3,15 +3,7 @@ class PagesController < ActionController::Base
 
   layout :layout_for_page
 
-  helper_method :current_region, :current_domain
-
-  # after_action do
-  #   cookies['test-cookie'] = {
-  #      :value => 'a yummy cookie',
-  #      :expires => 1.year.from_now,
-  #      :domain => 'domain.com'
-  #    }
-  # end
+  helper_method :current_region, :current_domain, :domain_config
 
   private
 
@@ -21,6 +13,10 @@ class PagesController < ActionController::Base
 
   def current_domain
     params[:domain_id]
+  end
+
+  def domain_config    # the presence of this variable is tested in spec/controllers/scope_controller_spec.rb
+    @domain_config ||= DomainConfig.new(current_domain)
   end
 
   def layout_for_page

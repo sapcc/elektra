@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback, useMemo } from "react"
+import React, { useMemo } from "react"
 
 import useStore from "../../store"
 import { buildDashboardLink } from "../../lib/utils"
@@ -30,10 +30,10 @@ const iconClasses = `
 `
 
 const DomainSelect = () => {
-  const selectedRegionKey = useStore(useCallback((state) => state.region))
-  const regions = useStore(useCallback((state) => state.regions))
-  const domains = useStore(useCallback((state) => state.domains))
-  const prodMode = useStore(useCallback((state) => state.prodMode))
+  const selectedRegionKey = useStore((state) => state.region)
+  const regions = useStore((state) => state.regions)
+  const domains = useStore((state) => state.domains)
+  const prodMode = useStore((state) => state.prodMode)
 
   const selectedRegion = useMemo(() => {
     return regions[selectedRegionKey]
@@ -49,9 +49,7 @@ const DomainSelect = () => {
           {selectedRegion?.country || "QA"}
         </div>
       </Stack>
-      <h4 className="tw-text-lg tw-uppercase tw-mt-10 tw-mb-3">
-        General Purpose
-      </h4>
+      <h4 className="tw-text-lg tw-uppercase tw-mt-10 tw-mb-3">General Purpose</h4>
       <div className="tw-grid tw-grid-cols-3 tw-gap-4">
         {domains.general.map((domain) => (
           <a
@@ -61,14 +59,8 @@ const DomainSelect = () => {
           >
             <h5 className="tw-font-bold tw-pb-1">{domain?.name}</h5>
             <div className="tw-pr-9">{domain?.description}</div>
-            <div
-              className={`${iconClasses} tw-opacity-40 tw-block tw-group-hover:hidden`}
-            >
-              <Icon
-                icon="autoAwesomeMotion"
-                color="tw-text-theme-high"
-                size="36"
-              />
+            <div className={`${iconClasses} tw-opacity-40 tw-block tw-group-hover:hidden`}>
+              <Icon icon="autoAwesomeMotion" color="tw-text-theme-high" size="36" />
             </div>
             <div className={`${iconClasses} tw-hidden group-hover:tw-block`}>
               <Icon icon="openInBrowser" color="text-black" size="36" />
@@ -76,25 +68,13 @@ const DomainSelect = () => {
           </a>
         ))}
       </div>
-      <h4 className="tw-text-lg tw-uppercase tw-mt-12 tw-mb-3">
-        Special Purpose
-      </h4>
+      <h4 className="tw-text-lg tw-uppercase tw-mt-12 tw-mb-3">Special Purpose</h4>
       <div className="tw-grid tw-grid-cols-6 tw-gap-4">
         {domains.special.map((domain) => (
-          <a
-            href={buildDashboardLink(selectedRegionKey, domain, prodMode)}
-            className={domainCardClasses}
-            key={domain}
-          >
+          <a href={buildDashboardLink(selectedRegionKey, domain, prodMode)} className={domainCardClasses} key={domain}>
             <h5 className="tw-font-bold tw-pb-1">{domain}</h5>
-            <div
-              className={`${iconClasses} tw-opacity-40 tw-block group-hover:tw-hidden`}
-            >
-              <Icon
-                icon="autoAwesomeMotion"
-                color="tw-text-theme-high"
-                size="36"
-              />
+            <div className={`${iconClasses} tw-opacity-40 tw-block group-hover:tw-hidden`}>
+              <Icon icon="autoAwesomeMotion" color="tw-text-theme-high" size="36" />
             </div>
             <div className={`${iconClasses} tw-hidden group-hover:tw-block`}>
               <Icon icon="openInBrowser" color="text-black" size="36" />
