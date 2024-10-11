@@ -57,7 +57,6 @@ const LoginOverlay = () => {
   const regionKeys = useStore((state) => state.regionKeys)
   const qaRegionKeys = useStore((state) => state.qaRegionKeys)
   const hideDocs = useStore((state) => state.hideDocs)
-
   const isValidRegionSelected = useMemo(() => {
     return selectedRegion !== null && (regionKeys.includes(selectedRegion) || qaRegionKeys.includes(selectedRegion))
   }, [selectedRegion])

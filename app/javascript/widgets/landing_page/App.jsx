@@ -41,7 +41,7 @@ const App = ({ region, domain, prodmode, hideDocs, hideSupport }) => {
         <PageHead />
 
         <Home />
-        <PageFooter />
+        {hideSupport !== "true" && hideSupport !== true && <PageFooter />}
       </div>
     </div>
   )
