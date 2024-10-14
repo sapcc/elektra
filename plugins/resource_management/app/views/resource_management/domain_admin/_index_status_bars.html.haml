@@ -1,8 +1,0 @@
-- if @critical_resources.blank?
-  .bs-callout.bs-callout-info
-    Nothing to report! Everything is fine.
-- else
-  - @critical_resources.sort_by { |r| [ r.name, r.service_type ] }.each do |res|
-    = render partial: 'bar_row', locals: { overview: true, resource: res }
-
-= render partial: 'data_age'

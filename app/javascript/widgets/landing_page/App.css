@@ -1,0 +1,45 @@
+/*
+ * SPDX-FileCopyrightText: 2024 SAP SE or an SAP affiliate company and Juno contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.App {
+  text-align: center;
+}
+
+.App-name {
+  color: rgb(219, 204, 255);
+  font-size: 2em;
+  text-transform: uppercase;
+}
+
+.App-slogan {
+  color: #666;
+  font-size: 1.5em;
+  text-transform: uppercase;
+}
+
+.App-info {
+  color: #666;
+  font-size: 1em;
+}
+
+.App-header {
+  background-color: rgb(11, 13, 45);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* font-size: calc(10px + 2vmin); */
+  color: white;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
