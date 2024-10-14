@@ -1,7 +1,8 @@
-name: 'Close stale issues and PRs'
+# https://github.com/actions/stale
+name: "Close stale issues and PRs"
 on:
   schedule:
-    - cron: '30 1 * * *'
+    - cron: "30 1 * * *"
 
 jobs:
   stale:
@@ -9,6 +10,13 @@ jobs:
     steps:
       - uses: actions/stale@v9
         with:
-          exempt-issue-labels: 'neverstale'
-          exempt-pr-labels: 'WIP,dependencies'
-          
+          # https://github.com/actions/stale?tab=readme-ov-file#all-options
+          exempt-issue-labels: "neverstale"
+          exempt-pr-labels: "WIP,dependencies"
+          stale-issue-message: "This issue has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. If you need to keep this issue open set label of this issue to 'neverstale'. Thank you for your contributions."
+          close-issue-message: "This issue has been automatically closed due to inactivity. Thank you for your contributions."
+          stale-pr-message: "This pull request has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. If you need to keep this pull request open set label of this pull request to 'WIP'. Thank you for your contributions."
+          close-pr-message: "This pull request has been automatically closed due to inactivity. Thank you for your contributions."
+          days-before-stale: 60
+          days-before-close: 14
+          stale-issue-label: "stale"
