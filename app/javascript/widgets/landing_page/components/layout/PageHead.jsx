@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback } from "react"
+import React from "react"
 
 import useStore from "../../store"
 import { buildDashboardLink, buildPasswordLoginLink } from "../../lib/utils"
@@ -11,20 +11,14 @@ import { buildDashboardLink, buildPasswordLoginLink } from "../../lib/utils"
 import { Button, Stack, PageHeader } from "@cloudoperators/juno-ui-components"
 
 const PageHead = () => {
-  const showLoginOverlay = useStore(
-    useCallback((state) => state.showLoginOverlay)
-  )
-  const selectedDomain = useStore(useCallback((state) => state.domain))
-  const selectedRegion = useStore(useCallback((state) => state.region))
-  const prodMode = useStore(useCallback((state) => state.prodMode))
+  const showLoginOverlay = useStore((state) => state.showLoginOverlay)
+  const selectedDomain = useStore((state) => state.domain)
+  const selectedRegion = useStore((state) => state.region)
+  const prodMode = useStore((state) => state.prodMode)
 
   const handleLoginButtonClick = () => {
     if (selectedRegion && selectedDomain) {
-      window.location.href = buildDashboardLink(
-        selectedRegion,
-        selectedDomain,
-        prodMode
-      )
+      window.location.href = buildDashboardLink(selectedRegion, selectedDomain, prodMode)
     } else {
       showLoginOverlay()
     }
@@ -35,23 +29,13 @@ const PageHead = () => {
       <Stack className="tw-ml-auto" gap="4" alignment="center">
         {selectedDomain === "CC3TEST" && (
           <a
-            href={buildPasswordLoginLink(
-              selectedRegion,
-              selectedDomain,
-              prodMode
-            )}
+            href={buildPasswordLoginLink(selectedRegion, selectedDomain, prodMode)}
             className="tw-text-theme-disabled hover:tw-underline"
           >
             Log in with password
           </a>
         )}
-        <Button
-          variant="primary"
-          size="small"
-          icon="manageAccounts"
-          title="Log in"
-          onClick={handleLoginButtonClick}
-        >
+        <Button variant="primary" size="small" icon="manageAccounts" title="Log in" onClick={handleLoginButtonClick}>
           Log in
         </Button>
       </Stack>
