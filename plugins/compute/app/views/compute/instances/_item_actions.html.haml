@@ -48,6 +48,7 @@
             %li
               = link_to 'Revert Resize', plugin('compute').revert_resize_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: {loading_status: true}, remote: true
           - if instance.power_state==Compute::Server::RUNNING
+            - hypervisor = instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
             %li.divider
             %li
               = link_to 'Stop', plugin('compute').stop_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to stop this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true
@@ -57,6 +58,9 @@
               = link_to 'Pause', plugin('compute').pause_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to pause this instance?', ok: "Yes, stop it", confirmed: :loading_status }, remote: true
             %li
               = link_to 'Suspend', plugin('compute').suspend_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to suspend this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true
+            - if !hypervisor.to_s.include?('nova-compute-ironic') && current_user.is_allowed?("compute:instance_hard_reset",{target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+              %li
+                = link_to 'Hard Reset', confirm_hard_reset_instance_path(id: instance.id), data: {modal:true}
         - if current_user.is_allowed?("compute:instance_edit_securitygroups", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li.divider
           %li
@@ -78,3 +82,4 @@
           - if current_user.is_allowed?("compute:instance_unlock")
             %li
               = link_to 'Unlock', plugin('compute').unlock_instance_path(id: instance.id, action_from_show: show_view), method: :put, data: { confirm: 'Are you sure you want to unlock this instance?', ok: "Yes, unlock it", confirmed: :loading_status }, remote: true
+
