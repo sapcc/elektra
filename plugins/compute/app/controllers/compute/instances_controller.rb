@@ -78,11 +78,15 @@ module Compute
     def console
       @instance = services.compute.find_server(params[:id])
       hypervisor = @instance.attributes["OS-EXT-SRV-ATTR:host"] || ""
-      if hypervisor.to_s.include?("nova-compute-ironic")
-        @console =
-          services.compute.remote_console(params[:id], "serial", "shellinabox")
-      else
-        @console = services.compute.remote_console(params[:id])
+      begin
+        if hypervisor.to_s.include?("nova-compute-ironic")
+          @console = services.compute.remote_console(params[:id], "serial", "shellinabox")
+        else
+          @console = services.compute.remote_console(params[:id])
+        end
+      rescue StandardError => e
+        @console_error = "Failed to get remote console: #{e.message}"
+        @console = nil
       end
       respond_to do |format|
         format.html { render action: :console, layout: "compute/console" }

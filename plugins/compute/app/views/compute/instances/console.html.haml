@@ -6,7 +6,14 @@
   .modal-body.console
     %iframe{src: @console.url, width: '100%', height: '650px'}
 - else
-  %iframe{src: @console.url, width: '100%', height: '850px'}
+  - if @console_error
+    .alert.alert-error
+      #{@console_error}
+  - elsif @console.nil?
+    .alert.alert-warning
+      The console is not available 🙄
+  - else
+    %iframe{src: @console.url, width: '100%', height: '850px'}
 
 - if modal?
   .modal-footer
