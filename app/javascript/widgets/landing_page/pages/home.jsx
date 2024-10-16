@@ -24,6 +24,7 @@ const Home = () => {
   const selectedRegion = useStore(useCallback((state) => state.region))
   const selectRegion = useStore(useCallback((state) => state.selectRegion))
   const prodMode = useStore(useCallback((state) => state.prodMode))
+  const hideDomainSwitcher = useStore(useCallback((state) => state.hideDomainSwitcher))
 
   const handleWorldMapClick = (e) => {
     if (e.target.dataset.region) {
@@ -62,7 +63,7 @@ const Home = () => {
 
         <Stack alignment="center">
           <div className="tw-text-xl tw-w-3/5 tw-mr-auto">
-            {"SAP's "} strategic Infrastructure-as-a-Service (IaaS) stack, optimised for SAP solutions, running purely
+            {"SAP's "} strategic Infrastructure-as-a-Service (IaaS) stack, optimized for SAP solutions, running purely
             in SAP datacenters.
           </div>
           <Stack direction="vertical" alignment="end" gap="1">
@@ -75,7 +76,7 @@ const Home = () => {
             >
               {setHeroButtonText()}
             </Button>
-            {selectedDomain && (
+            {selectedDomain && hideDomainSwitcher !== "true" && hideDomainSwitcher !== true && (
               <a
                 href="#"
                 onClick={handleDomainDeselect}
@@ -95,12 +96,18 @@ const Home = () => {
         }}
       >
         <div className="tw-max-w-[1280px] tw-w-full tw-mx-auto tw-relative">
-          <WorldMapQASelect />
-          <WorldMap
-            className="tw-worldmap tw-w-[90%] tw-h-auto tw-mx-auto"
-            onClick={handleWorldMapClick}
-            data-selected-region={selectedRegion}
-          />
+          {hideDomainSwitcher !== "true" && hideDomainSwitcher !== true && <WorldMapQASelect />}
+          <div className="tw-relative tw-w-[90%] tw-h-auto tw-mx-auto">
+            {hideDomainSwitcher === "true" || hideDomainSwitcher === true ? (
+              // If hideDomainSwitcher is "true" or true, render WorldMap without making it clickable
+              <div className="tw-absolute tw-w-full tw-h-full tw-z-1000" onClick={(e) => e.stopPropagation()}></div>
+            ) : null}
+            <WorldMap
+              className="tw-worldmap tw-w-full tw-h-auto"
+              onClick={handleWorldMapClick}
+              data-selected-region={selectedRegion}
+            />
+          </div>
         </div>
       </div>
     </div>

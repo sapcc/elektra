@@ -189,8 +189,10 @@ const useStore = create(
 
     hideSupport: false,
     hideDocs: false,
+    hideDomainSwitcher: false,
     setHideSupport: (bool) => set(() => ({ hideSupport: bool })),
     setHideDocs: (bool) => set(() => ({ hideDocs: bool })),
+    setHideDomainSwitcher: (bool) => set(() => ({ hideDomainSwitcher: bool })),
   }))
 )
 
