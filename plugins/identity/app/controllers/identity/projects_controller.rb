@@ -294,7 +294,7 @@ module Identity
         if service_name == "sharding"
           logger.info "sharding is no service"
         else
-          next unless services.available?(service_name.to_sym)
+          next unless services.available?(service_name.to_sym) && plugin_available?(service_name)
         end
         # set instance variable service available to true
         instance_variable_set("@#{service_name}_service_available", true)
