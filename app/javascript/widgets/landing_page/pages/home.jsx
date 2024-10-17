@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback } from "react"
+import React from "react"
 
 import useStore from "../store"
 import CCLogo from "../assets/images/CCloud_Logo_light.svg"
@@ -18,14 +18,14 @@ import { buildDashboardLink } from "../lib/utils"
 import { Button, Icon, Stack } from "@cloudoperators/juno-ui-components"
 
 const Home = () => {
-  const showLoginOverlay = useStore(useCallback((state) => state.showLoginOverlay))
-  const selectedDomain = useStore(useCallback((state) => state.domain))
-  const domainOriginal = useStore(useCallback((state) => state.domainOriginal))
-  const deselectDomain = useStore(useCallback((state) => state.deselectDomain))
-  const selectedRegion = useStore(useCallback((state) => state.region))
-  const selectRegion = useStore(useCallback((state) => state.selectRegion))
-  const prodMode = useStore(useCallback((state) => state.prodMode))
-  const hideDomainSwitcher = useStore(useCallback((state) => state.hideDomainSwitcher))
+  const showLoginOverlay = useStore((state) => state.showLoginOverlay)
+  const selectedDomain = useStore((state) => state.domain)
+  const domainOriginal = useStore((state) => state.domainOriginal)
+  const deselectDomain = useStore((state) => state.deselectDomain)
+  const selectedRegion = useStore((state) => state.region)
+  const selectRegion = useStore((state) => state.selectRegion)
+  const prodMode = useStore((state) => state.prodMode)
+  const hideDomainSwitcher = useStore((state) => state.hideDomainSwitcher)
 
   const handleWorldMapClick = (e) => {
     if (e.target.dataset.region) {
