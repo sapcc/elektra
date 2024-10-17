@@ -76,13 +76,6 @@ ACTIVE_RECORD_QUIET=true
 # these domains (list is comma separated) cannot inherit their masterdata to projects
 DOMAIN_MASTERDATA_INHERITANCE_BLACKLIST=monsoon3
 
-# used for cypress e2e tests
-TEST_DOMAIN="cc3test"
-TEST_MEMBER_USER="###TEST_USER###_TM"
-TEST_MEMBER_PASSWORD="*vault(path: shared/cc3test/ldap-user/###TEST_USER###_TM, field: password)"
-TEST_ADMIN_USER="###TEST_USER###_TA"
-TEST_ADMIN_PASSWORD="*vault(path: shared/cc3test/ldap-user/###TEST_USER###_TA, field: password)"
-
 # load elektra extensions, see also gemfile
 ELEKTRA_EXTENSION=true
 
