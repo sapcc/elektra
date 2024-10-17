@@ -150,7 +150,7 @@ const QA_REGION_KEYS = ["QA-DE-1", "QA-DE-2", "QA-DE-3"]
 
 // global store
 const useStore = create(
-  devtools((set) => ({
+  devtools((set, get) => ({
     loginOverlayVisible: false,
     toggleLoginOverlay: () => set((state) => ({ loginOverlayVisible: !state.loginOverlayVisible })),
     showLoginOverlay: () => set(() => ({ loginOverlayVisible: true })),
@@ -168,8 +168,13 @@ const useStore = create(
     preselectedRegion: null,
     setPreselectedRegion: (propRegion) => set(() => ({ preselectedRegion: propRegion.toUpperCase() })),
 
+    domainOriginal: null,
     domain: null,
     selectDomain: (selectedDomain) => {
+      // this is needed to keep track of the original domain if we hideDomainSwitcher is true
+      if (get().domainOriginal !== selectedDomain) {
+        set(() => ({ domainOriginal: selectedDomain }))
+      }
       // only set if the given value is valid
       if (DOMAIN_KEYS.includes(selectedDomain.toUpperCase()) || selectedDomain.toUpperCase() === "CC3TEST") {
         set(() => ({ domain: selectedDomain.toUpperCase() }))
@@ -189,8 +194,10 @@ const useStore = create(
 
     hideSupport: false,
     hideDocs: false,
+    hideDomainSwitcher: false,
     setHideSupport: (bool) => set(() => ({ hideSupport: bool })),
     setHideDocs: (bool) => set(() => ({ hideDocs: bool })),
+    setHideDomainSwitcher: (bool) => set(() => ({ hideDomainSwitcher: bool })),
   }))
 )
 
