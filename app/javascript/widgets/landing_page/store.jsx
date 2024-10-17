@@ -168,9 +168,11 @@ const useStore = create(
     preselectedRegion: null,
     setPreselectedRegion: (propRegion) => set(() => ({ preselectedRegion: propRegion.toUpperCase() })),
 
+    domainOriginal: null,
     domain: null,
     selectDomain: (selectedDomain) => {
       // only set if the given value is valid
+      set(() => ({ domainOriginal: selectedDomain }))
       if (DOMAIN_KEYS.includes(selectedDomain.toUpperCase()) || selectedDomain.toUpperCase() === "CC3TEST") {
         set(() => ({ domain: selectedDomain.toUpperCase() }))
       }

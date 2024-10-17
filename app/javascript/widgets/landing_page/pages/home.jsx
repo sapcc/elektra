@@ -20,6 +20,7 @@ import { Button, Icon, Stack } from "@cloudoperators/juno-ui-components"
 const Home = () => {
   const showLoginOverlay = useStore(useCallback((state) => state.showLoginOverlay))
   const selectedDomain = useStore(useCallback((state) => state.domain))
+  const domainOriginal = useStore(useCallback((state) => state.domainOriginal))
   const deselectDomain = useStore(useCallback((state) => state.deselectDomain))
   const selectedRegion = useStore(useCallback((state) => state.region))
   const selectRegion = useStore(useCallback((state) => state.selectRegion))
@@ -67,16 +68,30 @@ const Home = () => {
             in SAP datacenters.
           </div>
           <Stack direction="vertical" alignment="end" gap="1">
-            <Button
-              icon={selectedDomain ? "openInBrowser" : "place"}
-              variant="primary"
-              title={selectedDomain ? `Enter ${selectedDomain}` : "Select region/domain"}
-              className="whitespace-nowrap tw-py-1.5 tw-px-3"
-              onClick={handleHeroButtonClick}
-            >
-              {setHeroButtonText()}
-            </Button>
-            {selectedDomain && hideDomainSwitcher !== "true" && hideDomainSwitcher !== true && (
+            {hideDomainSwitcher === "true" || hideDomainSwitcher === true ? (
+              <Button
+                icon={"openInBrowser"}
+                variant="primary"
+                className="whitespace-nowrap tw-py-1.5 tw-px-3"
+                onClick={() => {
+                  window.location.href = buildDashboardLink(selectedRegion, domainOriginal, prodMode)
+                }}
+              >
+                {`Enter ${domainOriginal}`}
+              </Button>
+            ) : (
+              <Button
+                icon={selectedDomain ? "openInBrowser" : "place"}
+                variant="primary"
+                title={selectedDomain ? `Enter ${selectedDomain}` : "Select region/domain"}
+                className="whitespace-nowrap tw-py-1.5 tw-px-3"
+                onClick={handleHeroButtonClick}
+              >
+                {setHeroButtonText()}
+              </Button>
+            )}
+
+            {selectedDomain && (hideDomainSwitcher !== "true" || hideDomainSwitcher !== true) && (
               <a
                 href="#"
                 onClick={handleDomainDeselect}
