@@ -28,7 +28,7 @@ const PageHead = () => {
   return (
     <PageHeader>
       <Stack className="tw-ml-auto" gap="4" alignment="center">
-        <div>
+        <>
           {selectedDomain === "CC3TEST" && (
             <a
               href={buildPasswordLoginLink(selectedRegion, selectedDomain, prodMode)}
@@ -37,18 +37,19 @@ const PageHead = () => {
               Log in with password
             </a>
           )}
-          {hideDomainSwitcher !== "true" && hideDomainSwitcher !== true && (
-            <Button
-              variant="primary"
-              size="small"
-              icon="manageAccounts"
-              title="Log in"
-              onClick={handleLoginButtonClick}
-            >
-              Log in
-            </Button>
-          )}
-        </div>
+          {hideDomainSwitcher === "false" ||
+            (hideDomainSwitcher === false && (
+              <Button
+                variant="primary"
+                size="small"
+                icon="manageAccounts"
+                title="Log in"
+                onClick={handleLoginButtonClick}
+              >
+                Log in
+              </Button>
+            ))}
+        </>
       </Stack>
     </PageHeader>
   )

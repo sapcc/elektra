@@ -111,7 +111,7 @@ const Home = () => {
         }}
       >
         <div className="tw-max-w-[1280px] tw-w-full tw-mx-auto tw-relative">
-          {hideDomainSwitcher !== "true" && hideDomainSwitcher !== true && <WorldMapQASelect />}
+          {hideDomainSwitcher === "false" || (hideDomainSwitcher === false && <WorldMapQASelect />)}
           <div className="tw-relative tw-w-[90%] tw-h-auto tw-mx-auto">
             {hideDomainSwitcher === "true" || hideDomainSwitcher === true ? (
               // If hideDomainSwitcher is "true" or true, render WorldMap without making it clickable
