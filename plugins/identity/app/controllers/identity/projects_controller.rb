@@ -255,6 +255,7 @@ module Identity
     end
 
     def check_wizard_status
+
       # disable wizard for cloud_admin project
       return if %w[ccadmin cloud_admin].include?(@scoped_domain_name)
 
@@ -262,7 +263,7 @@ module Identity
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
       service_names =
         %w[masterdata_cockpit networking].keep_if do |name|
-          services.available?(name.to_sym)
+          services.available?(name.to_sym) && plugin_available?(name)
         end
 
       # ProjectProfile /elektra/app/models
@@ -294,7 +295,7 @@ module Identity
         if service_name == "sharding"
           logger.info "sharding is no service"
         else
-          next unless services.available?(service_name.to_sym)
+          next unless services.available?(service_name.to_sym) && plugin_available?(service_name)
         end
         # set instance variable service available to true
         instance_variable_set("@#{service_name}_service_available", true)
