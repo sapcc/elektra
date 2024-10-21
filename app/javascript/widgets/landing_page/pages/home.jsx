@@ -68,7 +68,7 @@ const Home = () => {
             in SAP datacenters.
           </div>
           <Stack direction="vertical" alignment="end" gap="1">
-            {hideDomainSwitcher === "true" || hideDomainSwitcher === true ? (
+            {hideDomainSwitcher ? (
               <Button
                 icon={"openInBrowser"}
                 variant="primary"
