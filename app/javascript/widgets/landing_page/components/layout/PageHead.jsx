@@ -7,6 +7,7 @@ import React from "react"
 
 import useStore from "../../store"
 import { buildDashboardLink, buildPasswordLoginLink } from "../../lib/utils"
+import SapLogo from "../../assets/images/sap_logo.svg"
 
 import { Button, Stack, PageHeader } from "@cloudoperators/juno-ui-components"
 
@@ -25,7 +26,7 @@ const PageHead = () => {
   }
 
   return (
-    <PageHeader>
+    <PageHeader logo={<SapLogo alt="SAP" />}>
       <Stack className="tw-ml-auto" gap="4" alignment="center">
         {selectedDomain === "CC3TEST" && (
           <a
