@@ -12,7 +12,7 @@ import styles from "./styles.scss?inline"
 import useStore from "./store"
 import { AppShellProvider } from "@cloudoperators/juno-ui-components"
 
-const App = ({ region, domain, prodmode, hideDocs, hideSupport }) => {
+const App = ({ region, domain, prodmode, hideDocs, hideSupport, hideDomainSwitcher }) => {
   const loginOverlayVisible = useStore((state) => state.loginOverlayVisible)
   const selectRegion = useStore((state) => state.selectRegion)
   const setPreselectedRegion = useStore((state) => state.setPreselectedRegion)
@@ -20,6 +20,7 @@ const App = ({ region, domain, prodmode, hideDocs, hideSupport }) => {
   const setProdMode = useStore((state) => state.setProdMode)
   const setHideDocs = useStore((state) => state.setHideDocs)
   const setHideSupport = useStore((state) => state.setHideSupport)
+  const setHideDomainSwitcher = useStore((state) => state.setHideDomainSwitcher)
 
   useEffect(() => {
     if (region) {
@@ -31,6 +32,7 @@ const App = ({ region, domain, prodmode, hideDocs, hideSupport }) => {
     }
     setHideDocs(hideDocs === "true" || hideDocs === true)
     setHideSupport(hideSupport === "true" || hideSupport === true)
+    setHideDomainSwitcher(hideDomainSwitcher === "true" || hideDomainSwitcher === true)
     setProdMode(prodmode === "true" || prodmode === true)
   }, [])
 
@@ -53,6 +55,7 @@ App.propTypes = {
   prodmode: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   hideDocs: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   hideSupport: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  hideDomainSwitcher: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 }
 
 const StyledApp = (props = {}) => {
