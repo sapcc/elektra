@@ -91,7 +91,7 @@ const Home = () => {
               </Button>
             )}
 
-            {selectedDomain && (hideDomainSwitcher !== "true" || hideDomainSwitcher !== true) && (
+            {selectedDomain && !hideDomainSwitcher && (
               <a
                 href="#"
                 onClick={handleDomainDeselect}
