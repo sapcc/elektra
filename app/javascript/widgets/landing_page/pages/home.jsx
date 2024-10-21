@@ -28,6 +28,9 @@ const Home = () => {
   const hideDomainSwitcher = useStore((state) => state.hideDomainSwitcher)
 
   const handleWorldMapClick = (e) => {
+    if (hideDomainSwitcher) {
+      return
+    }
     if (e.target.dataset.region) {
       selectRegion(e.target.dataset.region)
       showLoginOverlay()
@@ -111,18 +114,12 @@ const Home = () => {
         }}
       >
         <div className="tw-max-w-[1280px] tw-w-full tw-mx-auto tw-relative">
-          {!hideDomainSwitcher && <WorldMapQASelect />)}
-          <div className="tw-relative tw-w-[90%] tw-h-auto tw-mx-auto">
-            {hideDomainSwitcher === "true" || hideDomainSwitcher === true ? (
-              // If hideDomainSwitcher is "true" or true, render WorldMap without making it clickable
-              <div className="tw-absolute tw-w-full tw-h-full tw-z-1000" onClick={(e) => e.stopPropagation()}></div>
-            ) : null}
-            <WorldMap
-              className="tw-worldmap tw-w-full tw-h-auto"
-              onClick={handleWorldMapClick}
-              data-selected-region={selectedRegion}
-            />
-          </div>
+          {!hideDomainSwitcher && <WorldMapQASelect />}
+          <WorldMap
+            className="tw-worldmap tw-w-full tw-h-auto"
+            onClick={handleWorldMapClick}
+            data-selected-region={selectedRegion}
+          />
         </div>
       </div>
     </div>
