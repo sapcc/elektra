@@ -37,18 +37,17 @@ const PageHead = () => {
               Log in with password
             </a>
           )}
-          {hideDomainSwitcher === "false" ||
-            (hideDomainSwitcher === false && (
-              <Button
-                variant="primary"
-                size="small"
-                icon="manageAccounts"
-                title="Log in"
-                onClick={handleLoginButtonClick}
-              >
-                Log in
-              </Button>
-            ))}
+          {!hideDomainSwitcher && (
+            <Button
+              variant="primary"
+              size="small"
+              icon="manageAccounts"
+              title="Log in"
+              onClick={handleLoginButtonClick}
+            >
+              Log in
+            </Button>
+          )}
         </>
       </Stack>
     </PageHeader>
