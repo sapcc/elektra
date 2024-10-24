@@ -5,7 +5,7 @@
 # should inherit from this class.
 class ScopeController < ::ApplicationController
   # keep the before_action with prepend to ensure that the load_scoped_objects method is called first
-  prepend_before_action :load_scoped_objects
+  before_action :load_scoped_objects
   # At this point is the domain configuration already loaded and the scoped domain and project are set.
   # The plugin_name is set by the ApplicationController which is inherited by this class.
   before_action :hidden_plugin_redirect
@@ -30,16 +30,17 @@ class ScopeController < ::ApplicationController
 
     # try to find or create friendly_id entry for domain
     rescoping_service = Dashboard::RescopingService.new(service_user)
-    domain_friendly_id =
-      rescoping_service.domain_friendly_id(@scoped_domain_fid)
-    unless domain_friendly_id
-      raise Core::Error::DomainNotFound, "Domain #{domain_id} not found!"
+    
+    domain_friendly_id = rescoping_service.domain_friendly_id(@scoped_domain_fid)
+    if domain_friendly_id.present? 
+      # set scoped domain parameters
+      @scoped_domain_id = domain_friendly_id.key
+      @scoped_domain_fid = domain_friendly_id.slug
+      @scoped_domain_name = domain_friendly_id.name
+    else 
+      @scoped_domain_name = domain_id
+      @scoped_domain_id = domain_id
     end
-
-    # set scoped domain parameters
-    @scoped_domain_id = domain_friendly_id.key
-    @scoped_domain_fid = domain_friendly_id.slug
-    @scoped_domain_name = domain_friendly_id.name
 
     # try to load or create friendly_id entry for project
     if @scoped_project_id
@@ -57,9 +58,6 @@ class ScopeController < ::ApplicationController
       @scoped_project_name = project_friendly_id.name
     end
 
-    #puts "SCOPED CONTROLLER"
-    #puts @scoped_domain_id
-    #puts @scoped_project_id
 
     if domain_id != @scoped_domain_fid || project_id != @scoped_project_fid
       # url_for does not work for plugins. Use path instead!
@@ -102,22 +100,5 @@ class ScopeController < ::ApplicationController
     
     # the presence of this variable is tested in spec/controllers/scope_controller_spec.rb
     @domain_config = DomainConfig.new(@scoped_domain_name)
-  end
-
-  rescue_from(
-    "Core::Error::ServiceUserNotAuthenticated",
-    "Core::Error::DomainNotFound",
-  ) do |exception|
-    render_exception_page(
-      exception,
-      title: "Unsupported Domain",
-      description: ->(_e, controller) do
-        "A domain with the name <b>#{controller.params[:domain_id]}</b> doesn't seem to exist. Please check the spelling and try again"
-      end,
-      details: :message,
-      warning: true,
-      sentry: true,
-      status: 404,
-    )
   end
 end

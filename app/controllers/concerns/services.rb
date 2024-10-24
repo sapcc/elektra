@@ -24,7 +24,7 @@ module Services
 
     # re-initialize services if token re-newed or expired
     if @services && @token_expires_at == token_expires_at &&
-         @services_token == token
+        @services_token == token
       return @services
     end
 
@@ -55,10 +55,11 @@ module Services
         Rails.configuration.default_domain
 
     @service_user_loaded = true
-    @service_user ||=
-      Core::ServiceLayer::ServicesManager.new(
-        Core::ApiClientManager.service_user_api_client(scope_domain),
-      )
+    if @service_user.nil? 
+      api_client = Core::ApiClientManager.service_user_api_client(scope_domain)
+      return nil unless api_client
+      @service_user = Core::ServiceLayer::ServicesManager.new(api_client)
+    end
   end
 
   def cloud_admin

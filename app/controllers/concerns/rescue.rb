@@ -109,37 +109,37 @@ module Rescue
 
       # catch all mentioned errors that are note handled and render error page
       rescue_and_render_exception_page [
-                                         {
-                                           "MonsoonOpenstackAuth::Authorization::SecurityViolation" => {
-                                             title: "Forbidden",
-                                             sentry: false,
-                                             warning: true,
-                                             status: 403,
-                                             description:
-                                               lambda do |e, _c|
-                                                 m =
-                                                   "You are not authorized to view this page."
-                                                 if e.involved_roles &&
-                                                      e
-                                                        .involved_roles
-                                                        .length
-                                                        .positive?
-                                                   m +=
-                                                     " Please check (role assignments) if you have one of the \
-            following roles: #{e.involved_roles.flatten.join(", ")}."
-                                                 end
-                                                 m
-                                               end,
-                                           },
-                                         },
-                                         {
-                                           "Core::Error::ProjectNotFound" => {
-                                             title: "Project Not Found",
-                                             sentry: false,
-                                             warning: true,
-                                           },
-                                         },
-                                       ]
+        {
+          "MonsoonOpenstackAuth::Authorization::SecurityViolation" => {
+            title: "Forbidden",
+            sentry: false,
+            warning: true,
+            status: 403,
+            description:
+              lambda do |e, _c|
+                m =
+                  "You are not authorized to view this page."
+                if e.involved_roles &&
+                    e
+                      .involved_roles
+                      .length
+                      .positive?
+                  m +=
+                    " Please check (role assignments) if you have one of the \
+following roles: #{e.involved_roles.flatten.join(", ")}."
+                end
+                m
+              end,
+          },
+        },
+        {
+          "Core::Error::ProjectNotFound" => {
+            title: "Project Not Found",
+            sentry: false,
+            warning: true,
+          },
+        },
+      ]
     end
   end
 end

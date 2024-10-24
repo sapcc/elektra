@@ -3,13 +3,11 @@
 module Identity
   # This class implements domain actions
   class DomainsController < ::DashboardController
-    authorization_required additional_policy_params: {
-                             domain_id: proc { @scoped_domain_id },
-                           },
-                           except: %i[show auth_projects]
+    authorization_required additional_policy_params: { domain_id: proc { @scoped_domain_id } },
+      except: %i[show auth_projects]
 
     def show
-      @domain = service_user.identity.find_domain(@scoped_domain_id)
+      @domain = services.identity.find_domain(@scoped_domain_id)
     end
 
     def index

@@ -3,6 +3,7 @@ require "core/audit_logger"
 # All subclasses which require modal views should inherit from this class.
 class ApplicationController < ActionController::Base
   layout "application"
+  
   include ApplicationHelper
 
   # includes services method

@@ -11,14 +11,14 @@ module CurrentUserWrapper
       return @current_user_wrapper
     end
 
-    @current_user_wrapper = CurrentUserWrapper.new(super, session, service_user)
+    @current_user_wrapper = CurrentUserWrapper.new(super, session)
   end
 
   # Wrapper for current user
   class CurrentUserWrapper
     attr_reader :current_user
 
-    def initialize(current_user, session, service_user)
+    def initialize(current_user, session)
       @current_user = current_user
       @session = session
 
@@ -26,9 +26,12 @@ module CurrentUserWrapper
       old_user_details = (@session[:current_user_details] || {})
       # check if user id from session differs from current_user id
       return if current_user.try(:id) == old_user_details[:id]
-
+      
       # load user details for current_user
-      user = service_user.identity.find_user(current_user.id)
+      api_client = Core::ApiClientManager.user_api_client(current_user)
+      identity = Core::ServiceLayer::ServicesManager.new(api_client).identity 
+      user = identity.find_user(current_user.id)
+
       # save user_details in session
       @session[:current_user_details] = user.try(:attributes) || {}
 

@@ -89,6 +89,11 @@ module Core
     end
 
     def self.create_service_user_api_client(scope_domain)
+      if !Rails.application.config.service_user_id || 
+        !Rails.application.config.service_user_domain_name || 
+        !Rails.application.config.service_user_password
+        return nil
+      end
       auth_config = {
         url: ::Core.keystone_auth_endpoint,
         user_name: Rails.application.config.service_user_id,
@@ -96,6 +101,7 @@ module Core
         password: Rails.application.config.service_user_password,
         scope_domain_name: scope_domain,
       }
+
       begin
         client = ::Elektron.client(auth_config, default_client_params)
         client.middlewares.add(

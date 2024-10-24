@@ -11,12 +11,12 @@ module Dashboard
     # find or create friendly_id entry for domain
     def domain_friendly_id(domain_fid_id_or_key)
       # try to find an entry by given fid or key
-      entry =
-        FriendlyIdEntry.find_by_class_scope_and_key_or_slug(
-          "Domain",
-          nil,
-          domain_fid_id_or_key,
-        )
+      entry =nil
+      #   FriendlyIdEntry.find_by_class_scope_and_key_or_slug(
+      #     "Domain",
+      #     nil,
+      #     domain_fid_id_or_key,
+      #   )
 
       if entry.nil? && @service_user.present?
         domain =
@@ -46,9 +46,8 @@ module Dashboard
           domain_id,
           project_fid_or_key,
         )
-
       # no entry found -> create a new one
-      if entry.nil? && @service_user
+      if entry.nil? && @service_user.present?
         project =
           @service_user
             .identity
