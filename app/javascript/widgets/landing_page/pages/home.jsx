@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback } from "react"
+import React from "react"
 
 import useStore from "../store"
 import CCLogo from "../assets/images/CCloud_Logo_light.svg"
@@ -18,14 +18,19 @@ import { buildDashboardLink } from "../lib/utils"
 import { Button, Icon, Stack } from "@cloudoperators/juno-ui-components"
 
 const Home = () => {
-  const showLoginOverlay = useStore(useCallback((state) => state.showLoginOverlay))
-  const selectedDomain = useStore(useCallback((state) => state.domain))
-  const deselectDomain = useStore(useCallback((state) => state.deselectDomain))
-  const selectedRegion = useStore(useCallback((state) => state.region))
-  const selectRegion = useStore(useCallback((state) => state.selectRegion))
-  const prodMode = useStore(useCallback((state) => state.prodMode))
+  const showLoginOverlay = useStore((state) => state.showLoginOverlay)
+  const selectedDomain = useStore((state) => state.domain)
+  const domainOriginal = useStore((state) => state.domainOriginal)
+  const deselectDomain = useStore((state) => state.deselectDomain)
+  const selectedRegion = useStore((state) => state.region)
+  const selectRegion = useStore((state) => state.selectRegion)
+  const prodMode = useStore((state) => state.prodMode)
+  const hideDomainSwitcher = useStore((state) => state.hideDomainSwitcher)
 
   const handleWorldMapClick = (e) => {
+    if (hideDomainSwitcher) {
+      return
+    }
     if (e.target.dataset.region) {
       selectRegion(e.target.dataset.region)
       showLoginOverlay()
@@ -62,20 +67,34 @@ const Home = () => {
 
         <Stack alignment="center">
           <div className="tw-text-xl tw-w-3/5 tw-mr-auto">
-            {"SAP's "} strategic Infrastructure-as-a-Service (IaaS) stack, optimised for SAP solutions, running purely
+            {"SAP's "} strategic Infrastructure-as-a-Service (IaaS) stack, optimized for SAP solutions, running purely
             in SAP datacenters.
           </div>
           <Stack direction="vertical" alignment="end" gap="1">
-            <Button
-              icon={selectedDomain ? "openInBrowser" : "place"}
-              variant="primary"
-              title={selectedDomain ? `Enter ${selectedDomain}` : "Select region/domain"}
-              className="whitespace-nowrap tw-py-1.5 tw-px-3"
-              onClick={handleHeroButtonClick}
-            >
-              {setHeroButtonText()}
-            </Button>
-            {selectedDomain && (
+            {hideDomainSwitcher ? (
+              <Button
+                icon={"openInBrowser"}
+                variant="primary"
+                className="whitespace-nowrap tw-py-1.5 tw-px-3"
+                onClick={() => {
+                  window.location.href = buildDashboardLink(selectedRegion, domainOriginal, prodMode)
+                }}
+              >
+                {`Enter ${domainOriginal}`}
+              </Button>
+            ) : (
+              <Button
+                icon={selectedDomain ? "openInBrowser" : "place"}
+                variant="primary"
+                title={selectedDomain ? `Enter ${selectedDomain}` : "Select region/domain"}
+                className="whitespace-nowrap tw-py-1.5 tw-px-3"
+                onClick={handleHeroButtonClick}
+              >
+                {setHeroButtonText()}
+              </Button>
+            )}
+
+            {selectedDomain && !hideDomainSwitcher && (
               <a
                 href="#"
                 onClick={handleDomainDeselect}
@@ -95,9 +114,9 @@ const Home = () => {
         }}
       >
         <div className="tw-max-w-[1280px] tw-w-full tw-mx-auto tw-relative">
-          <WorldMapQASelect />
+          {!hideDomainSwitcher && <WorldMapQASelect />}
           <WorldMap
-            className="tw-worldmap tw-w-[90%] tw-h-auto tw-mx-auto"
+            className="tw-worldmap tw-w-full tw-h-auto"
             onClick={handleWorldMapClick}
             data-selected-region={selectedRegion}
           />

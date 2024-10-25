@@ -4,14 +4,8 @@
  */
 
 import React from "react"
-// import { Link } from "react-router-dom"
 
-import {
-  Button,
-  Icon,
-  PageFooter as JunoFooter,
-  Stack,
-} from "@cloudoperators/juno-ui-components"
+import { Button, Icon, PageFooter as JunoFooter, Stack } from "@cloudoperators/juno-ui-components"
 
 import DocumentationIcon from "../../assets/images/icon_documentation.svg"
 import SlackIcon from "../../assets/images/icon_slack.svg"
@@ -39,10 +33,7 @@ const PageFooter = () => {
     <>
       <div className="footer">
         <div className="tw-max-w-[1280px] tw-mx-auto tw-grid tw-grid-rows-[1fr,0.24fr] tw-grid-cols-3 tw-gap-x-20 tw-gap-y-8 tw-pb-12 tw-pt-[calc(2rem+var(--cloud-image-overlap))]">
-          <Stack
-            direction="vertical"
-            className={`tw-row-span-2 tw-bg-juno-grey-blue-11 ${boxStyles}`}
-          >
+          <Stack direction="vertical" className={`tw-row-span-2 tw-bg-juno-grey-blue-11 ${boxStyles}`}>
             <DocumentationIcon className="tw-mb-3" />
             <h5 className={headlineStyles}>
               <span className="tw-text-theme-accent">Documentation</span>
@@ -50,8 +41,8 @@ const PageFooter = () => {
               Detailed information
             </h5>
             <p>
-              The documentation has detailed information about all the services
-              that Converged Cloud offers including how-tos and tutorials.
+              The documentation has detailed information about all the services that Converged Cloud offers including
+              how-tos and tutorials.
             </p>
             <div className="tw-mt-auto">
               <Button
@@ -73,8 +64,7 @@ const PageFooter = () => {
               Ask questions and connect with others
             </h5>
             <p className="tw-pb-6">
-              Join the #sap-cc-users channel on Slack to connect with other
-              users or ask questions.
+              Join the #sap-cc-users channel on Slack to connect with other users or ask questions.
             </p>
             <div className="tw-mt-auto">
               <Button
@@ -97,8 +87,8 @@ const PageFooter = () => {
               Contact our support team *
             </h5>
             <p className="tw-pb-6">
-              Our support team is available during EMEA business hours and for
-              emergencies we offer 24/7 premium support.
+              Our support team is available during EMEA business hours and for emergencies we offer 24/7 premium
+              support.
             </p>
             <div className="tw-mt-auto">
               <Button
@@ -122,9 +112,7 @@ const PageFooter = () => {
             <Stack gap="2">
               <div className="tw-text-2xl tw-font-bold tw-py-2 tw-pl-8">*</div>
               <div className="tw-py-2">
-                <div className="tw-text-2xl tw-font-bold">
-                  Premium 24 hour emergency support
-                </div>
+                <div className="tw-text-2xl tw-font-bold">Premium 24 hour emergency support</div>
                 For emergencies in productive systems.
               </div>
               <Stack
