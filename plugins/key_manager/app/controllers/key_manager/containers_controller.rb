@@ -6,7 +6,7 @@ module KeyManager
 
     helper :all
 
-    authorization_context "key_manager"
+    authorization_context 'key_manager'
     authorization_required except: %i[]
 
     def index
@@ -16,7 +16,7 @@ module KeyManager
     def show
       @container = services.key_manager.find_container(params[:id])
       # get the user name from the openstack id if available
-      user = service_user.identity.find_user(@container.creator_id)
+      user = service_user&.identity&.find_user(@container.creator_id)
       @user = user ? user.name : @container.creator_id
     end
 
@@ -26,7 +26,7 @@ module KeyManager
     def create
       @container = services.key_manager.new_container(container_params)
       if @container.save
-        redirect_to plugin("key_manager").containers_path
+        redirect_to plugin('key_manager').containers_path
       else
         render action: :new
       end
@@ -37,9 +37,11 @@ module KeyManager
       @container = services.key_manager.new_container
       @container.id = params[:id]
 
-      flash.now[
-        :success
-      ] = "Container #{params[:id]} was successfully removed." if @container.destroy
+      if @container.destroy
+        flash.now[
+          :success
+        ] = "Container #{params[:id]} was successfully removed."
+      end
       # grap a new list of secrets
       @containers = containers
 
@@ -55,9 +57,9 @@ module KeyManager
       offset = (page.to_i - 1) * per_page
       result =
         services.key_manager.containers(
-          sort: "created:desc",
+          sort: 'created:desc',
           limit: per_page,
-          offset: offset,
+          offset: offset
         )
       Kaminari
         .paginate_array(result[:items], total_count: result[:total])
@@ -68,8 +70,8 @@ module KeyManager
     def container_form_attr
       @types = ::KeyManager::Container::Type.to_hash
       @selected_type =
-        params.fetch("container", {}).fetch("type", nil) ||
-          params[:container_type] || ::KeyManager::Container::Type::GENERIC
+        params.fetch('container', {}).fetch('type', nil) ||
+        params[:container_type] || ::KeyManager::Container::Type::GENERIC
       @container = services.key_manager.new_container
       @selected_secrets = {}
 
@@ -80,9 +82,9 @@ module KeyManager
       begin
         secrets_chunk =
           services.key_manager.secrets(
-            sort: "created:desc",
+            sort: 'created:desc',
             offset: offset,
-            limit: limit,
+            limit: limit
           )
         @secrets += secrets_chunk[:items] unless secrets_chunk[:items].blank?
         offset += limit
@@ -111,45 +113,45 @@ module KeyManager
     end
 
     def container_params
-      unless params["container"].blank?
-        container = params.clone.fetch("container", {})
+      unless params['container'].blank?
+        container = params.clone.fetch('container', {})
 
         # remove if blank
         container.delete_if { |_key, value| value.blank? }
 
         # add secrets
-        case container["type"]
+        case container['type']
         when Container::Type::CERTIFICATE
           secrets =
-            container.fetch("secrets", {}).fetch(
+            container.fetch('secrets', {}).fetch(
               Container::Type::CERTIFICATE,
-              {},
+              {}
             )
           unless secrets.blank?
             secrets.delete_if { |_key, value| value.blank? }
-            container["secret_refs"] = []
+            container['secret_refs'] = []
             secrets.each do |key, value|
-              container["secret_refs"] << { name: key, secret_ref: value }
+              container['secret_refs'] << { name: key, secret_ref: value }
             end
           end
           @selected_secrets = secrets
         when Container::Type::RSA
           secrets =
-            container.fetch("secrets", {}).fetch(Container::Type::RSA, {})
+            container.fetch('secrets', {}).fetch(Container::Type::RSA, {})
           unless secrets.blank?
             secrets.delete_if { |_key, value| value.blank? }
-            container["secret_refs"] = []
+            container['secret_refs'] = []
             secrets.each do |key, value|
-              container["secret_refs"] << { name: key, secret_ref: value }
+              container['secret_refs'] << { name: key, secret_ref: value }
             end
           end
           @selected_secrets = secrets
         when Container::Type::GENERIC
           secrets =
-            container.fetch("secrets", {}).fetch(Container::Type::GENERIC, {})
+            container.fetch('secrets', {}).fetch(Container::Type::GENERIC, {})
           unless secrets.blank?
-            container["secret_refs"] = []
-            secrets.each { |_key, value| container["secret_refs"] << value }
+            container['secret_refs'] = []
+            secrets.each { |_key, value| container['secret_refs'] << value }
           end
           @selected_secrets = secrets
         end

@@ -2,7 +2,7 @@ module Identity
   module RestrictedRoles
     def available_roles
       roles =
-        if current_user.is_allowed?("cloud_admin")
+        if current_user.is_allowed?('cloud_admin')
           services
             .identity
             .roles
@@ -12,7 +12,7 @@ module Identity
               r
             end
         else
-          service_user.identity.roles.keep_if do |role|
+          service_user&.identity&.roles&.keep_if do |role|
             ALLOWED_ROLES.include?(role.name) ||
               (
                 current_user.has_role?(role.name) &&
@@ -26,7 +26,7 @@ module Identity
       roles.each do |role|
         role.description =
           I18n.t("roles.#{role.name}", default: role.name.try(:titleize)) +
-            " (#{role.name})"
+          " (#{role.name})"
       end
     end
   end

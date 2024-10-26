@@ -15,9 +15,9 @@ module Image
           @member = services.image.new_member(params[:member])
 
           @project =
-            service_user.identity.find_project_by_name_or_id(
+            service_user&.identity&.find_project_by_name_or_id(
               @scoped_domain_id,
-              @member.member_id,
+              @member.member_id
             )
 
           if @project.nil?
@@ -26,11 +26,11 @@ module Image
             begin
               @member =
                 services.image.add_member_to_image(@image.id, @project.id)
-            rescue => e
+            rescue StandardError => e
               @error =
                 Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(
-                  e,
-                ).join(", ")
+                  e
+                ).join(', ')
             end
           end
         end
@@ -39,7 +39,7 @@ module Image
           @success =
             services.image.remove_member_from_image(
               params[:private_id],
-              params[:id],
+              params[:id]
             )
         end
       end

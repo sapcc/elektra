@@ -1,41 +1,39 @@
 # frozen_string_literal: true
 
-require "csv"
+require 'csv'
 
-class CacheController < ::ScopeController
+class CacheController < ::ApplicationController
   include ApiLookup
+  include ScopeHandler
 
   RELATED_OBJECTS_KEYS = {
-    "port" => %w[network_id device_id security_groups],
-    "floatingip" => %w[router_id floating_network_id port_id],
-    "router" => %w[
+    'port' => %w[network_id device_id security_groups],
+    'floatingip' => %w[router_id floating_network_id port_id],
+    'router' => %w[
       network_id
       external_gateway_info.network_id
       external_gateway_info.external_fixed_ips.subnet_id
       subnet_id
       port_id
     ],
-    "subnet" => %w[network_id],
-    "server" => %w[image.id],
+    'subnet' => %w[network_id],
+    'server' => %w[image.id]
   }.freeze
 
   class NotFound < StandardError
   end
-  authentication_required domain: ->(c) {
-                            c.instance_variable_get(:@scoped_domain_id)
-                          },
-                          domain_name: ->(c) {
-                            c.instance_variable_get(:@scoped_domain_name)
-                          },
-                          project: ->(c) {
-                            c.instance_variable_get(:@scoped_project_id)
-                          },
-                          rescope: true #, except: %i[related_objects]
+
+  before_action :identify_scope
+
+  authentication_required domain: ->(c) { c.instance_variable_get(:@scoped_domain_id) },
+                          domain_name: ->(c) { c.instance_variable_get(:@scoped_domain_name) },
+                          project: ->(c) { c.instance_variable_get(:@scoped_project_id) },
+                          rescope: true # , except: %i[related_objects]
 
   before_action do
     @enforce_scope =
       if params[:enforce_scope].nil? ||
-           params[:enforce_scope] =~ (/(false|f|no|n|0)$/i)
+         params[:enforce_scope] =~ (/(false|f|no|n|0)$/i)
         false
       elsif params[:enforce_scope].empty? ||
             params[:enforce_scope] =~ (/(true|t|yes|y|1)$/i)
@@ -54,8 +52,8 @@ class CacheController < ::ScopeController
         include_scope: true,
         paginate: {
           page: page,
-          per_page: per_page,
-        },
+          per_page: per_page
+        }
       ) { |sql| where_current_token_scope(sql).order(:name) }
 
     render json: { items: items, total: items.total, has_next: items.has_next }
@@ -65,7 +63,7 @@ class CacheController < ::ScopeController
 
   def objects_by_ids
     ids = params[:ids]
-    ids = ids.split(",") if ids.kind_of?(String)
+    ids = ids.split(',') if ids.is_a?(String)
 
     objects =
       ObjectCache.find_objects(include_scope: true) do |scope|
@@ -99,42 +97,42 @@ class CacheController < ::ScopeController
         type: params[:type],
         term: params[:term],
         include_scope: true,
-        paginate: false,
+        paginate: false
       ) { |sql| where_current_token_scope(sql).order(:name) }
 
     csv_string =
       CSV.generate do |csv|
         csv << [
-          "Type",
-          "Name",
-          "ID",
-          "Details",
-          "Domain Name",
-          "Domain ID",
-          "(Parent) Project Name",
-          "Project Name",
+          'Type',
+          'Name',
+          'ID',
+          'Details',
+          'Domain Name',
+          'Domain ID',
+          '(Parent) Project Name',
+          'Project Name'
         ]
         items.each do |item|
-          if item.payload["scope"]
-            csv << [
-              item.cached_object_type,
-              item.name,
-              item.id,
-              item.search_label,
-              item.payload["scope"]["domain_name"],
-              item.payload["scope"]["domain_id"],
-              item.payload["scope"]["project_name"],
-              item.payload["scope"]["project_id"],
-            ]
-          end
+          next unless item.payload['scope']
+
+          csv << [
+            item.cached_object_type,
+            item.name,
+            item.id,
+            item.search_label,
+            item.payload['scope']['domain_name'],
+            item.payload['scope']['domain_id'],
+            item.payload['scope']['project_name'],
+            item.payload['scope']['project_id']
+          ]
         end
       end
 
     filename = []
     filename << params[:type].to_s unless params[:type].blank?
     filename << params[:term].to_s unless params[:term].blank?
-    filename = filename.join("_")
-    filename = "all" if filename.blank?
+    filename = filename.join('_')
+    filename = 'all' if filename.blank?
 
     send_data csv_string, filename: "#{filename}.csv"
   end
@@ -167,14 +165,14 @@ class CacheController < ::ScopeController
 
     # filter types by policy rule (see: APP_ROOT/config/policy.json)
     types.select! do |type|
-      current_user.is_allowed?("can_see_cache_type", target: { type: type })
+      current_user.is_allowed?('can_see_cache_type', target: { type: type })
     end
 
     render json: types
   end
 
   def domain_projects
-    unless current_user.is_allowed?("cloud_admin")
+    unless current_user.is_allowed?('cloud_admin')
       render json: { projects: [], has_next: false, total: 0 }
       return
     end
@@ -184,44 +182,46 @@ class CacheController < ::ScopeController
     domain = params[:domain]
     project = params[:project]
 
-    domain_ids =
-      ObjectCache
-        .where(cached_object_type: "domain")
+    unless domain.blank?
+      domain_ids =
+        ObjectCache
+        .where(cached_object_type: 'domain')
         .where(
           [
-            "object_cache.name ILIKE :domain OR object_cache.id ILIKE :domain",
-            domain: "%#{domain}%",
-          ],
+            'object_cache.name ILIKE :domain OR object_cache.id ILIKE :domain',
+            { domain: "%#{domain}%" }
+          ]
         )
-        .pluck(:id) unless domain.blank?
+        .pluck(:id)
+    end
 
     items =
       ObjectCache.find_objects(
         paginate: {
           page: page,
-          per_page: 30,
+          per_page: 30
         },
-        type: "project",
-        include_scope: true,
+        type: 'project',
+        include_scope: true
       ) do |scope|
         projects = domain_ids.nil? ? scope : scope.where(domain_id: domain_ids)
         unless project.blank?
           projects =
             projects.where(
               [
-                "object_cache.name ILIKE :project OR object_cache.id ILIKE :project",
-                project: "%#{project}%",
-              ],
+                'object_cache.name ILIKE :project OR object_cache.id ILIKE :project',
+                { project: "%#{project}%" }
+              ]
             )
         end
         projects
       end
 
     render json: {
-             projects: items,
-             has_next: items.has_next,
-             total: items.total,
-           }
+      projects: items,
+      has_next: items.has_next,
+      total: items.total
+    }
   end
 
   def users
@@ -229,18 +229,18 @@ class CacheController < ::ScopeController
 
     items =
       ObjectCache.find_objects(
-        type: "user",
-        term: params[:name] || params[:term] || "",
+        type: 'user',
+        term: params[:name] || params[:term] || '',
         include_scope: false,
-        paginate: false,
+        paginate: false
       ) do |scope|
         # allow all users from scoped domain.
         # this action is called by autocomplete widget.
-        #if current_user.is_allowed?('cloud_admin')
+        # if current_user.is_allowed?('cloud_admin')
         scope.where(domain_id: params[:domain]).order(:name)
-        #else
+        # else
         #  where_current_token_scope(scope).order(:name)
-        #end
+        # end
       end
 
     raise NotFound if (items.nil? || items.empty?) && retries < 1
@@ -248,12 +248,12 @@ class CacheController < ::ScopeController
     items =
       items.to_a.map do |u|
         {
-          id: u.payload["description"],
+          id: u.payload['description'],
           name: u.name,
           key: u.name,
           uid: u.id,
-          full_name: u.payload["description"],
-          email: u.payload["email"],
+          full_name: u.payload['description'],
+          email: u.payload['email']
         }
       end
 
@@ -261,19 +261,19 @@ class CacheController < ::ScopeController
   rescue NotFound
     retries += 1
     # search live against API and then retry
-    service_user.identity.users(domain_id: params[:domain])
+    service_user&.identity&.users(domain_id: params[:domain])
     retry
   end
 
   def groups
     items =
       ObjectCache.find_objects(
-        type: "group",
-        term: params[:name] || params[:term] || "",
+        type: 'group',
+        term: params[:name] || params[:term] || '',
         include_scope: false,
-        paginate: false,
+        paginate: false
       ) do |scope|
-        if current_user.is_allowed?("cloud_admin")
+        if current_user.is_allowed?('cloud_admin')
           scope.where(domain_id: params[:domain]).order(:name)
         else
           where_current_token_scope(scope).order(:name)
@@ -288,12 +288,12 @@ class CacheController < ::ScopeController
   def projects
     items =
       ObjectCache.find_objects(
-        type: "project",
-        term: params[:name] || params[:term] || "",
+        type: 'project',
+        term: params[:name] || params[:term] || '',
         include_scope: false,
-        paginate: false,
+        paginate: false
       ) do |scope|
-        if current_user.is_allowed?("cloud_admin")
+        if current_user.is_allowed?('cloud_admin')
           scope.where(domain_id: params[:domain]).order(:name)
         else
           where_current_token_scope(scope).order(:name)
@@ -306,12 +306,10 @@ class CacheController < ::ScopeController
   end
 
   def related_object_values(key, payload)
-    if payload.is_a?(Array)
-      return payload.collect { |data| related_object_values(key, data) }
-    end
+    return payload.collect { |data| related_object_values(key, data) } if payload.is_a?(Array)
 
-    if key.include?(".")
-      nested_keys = key.split(".")
+    if key.include?('.')
+      nested_keys = key.split('.')
 
       data = payload
       nested_keys.each do |nested_key|
@@ -325,30 +323,30 @@ class CacheController < ::ScopeController
   end
 
   def related_objects
-    unless current_user.is_allowed?("cloud_admin")
+    unless current_user.is_allowed?('cloud_admin')
       render json: []
       return
     end
 
-    sql = ["payload::text ILIKE ?", "%#{params[:id]}%"]
+    sql = ['payload::text ILIKE ?', "%#{params[:id]}%"]
 
     cached_object = ObjectCache.where(id: params[:id]).first
 
     if cached_object
       if cached_object.project_id
-        sql[0] += " OR id = ?"
+        sql[0] += ' OR id = ?'
         sql << cached_object.project_id
       end
 
       keys = RELATED_OBJECTS_KEYS[cached_object.cached_object_type] || []
       values =
         keys
-          .collect { |key| related_object_values(key, cached_object.payload) }
-          .flatten
-          .uniq
+        .collect { |key| related_object_values(key, cached_object.payload) }
+        .flatten
+        .uniq
 
       if values && values.length.positive?
-        sql[0] += " OR id IN (?)"
+        sql[0] += ' OR id IN (?)'
         sql << values
       end
     end
@@ -363,40 +361,38 @@ class CacheController < ::ScopeController
 
   def where_current_token_scope(scope, enforce_scope = @enforce_scope)
     if !enforce_scope &&
-         current_user.is_allowed?("cloud_admin_or_support_or_dns_ops")
+       current_user.is_allowed?('cloud_admin_or_support_or_dns_ops')
       return scope
     end
 
-    if current_user.project_id && params[:type] == "project"
-      scope = scope.where(id: current_user.project_id)
-    end
+    scope = scope.where(id: current_user.project_id) if current_user.project_id && params[:type] == 'project'
 
     project_id = current_user.project_id
-    domain_id = (current_user.project_domain_id || current_user.domain_id)
+    domain_id = current_user.project_domain_id || current_user.domain_id
 
     if project_id
       scope.where(
         [
-          "project_id = :project_id OR id = :project_id",
-          project_id: project_id,
-        ],
+          'project_id = :project_id OR id = :project_id',
+          { project_id: project_id }
+        ]
       )
     elsif domain_id
       project_ids =
         ObjectCache.where(
-          cached_object_type: "project",
-          domain_id: domain_id,
+          cached_object_type: 'project',
+          domain_id: domain_id
         ).pluck(:id)
 
       scope.where(
         [
-          "domain_id = :domain_id OR id = :domain_id OR project_id IN (:project_ids)",
-          domain_id: domain_id,
-          project_ids: project_ids,
-        ],
+          'domain_id = :domain_id OR id = :domain_id OR project_id IN (:project_ids)',
+          { domain_id: domain_id,
+            project_ids: project_ids }
+        ]
       )
     else
-      scope.where("domain_id IS NULL OR project_id IS NULL")
+      scope.where('domain_id IS NULL OR project_id IS NULL')
     end
   end
 end

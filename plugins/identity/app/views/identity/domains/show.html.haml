@@ -1,6 +1,6 @@
 .row
   .col-md-3
-    %h4.heading-top= @scoped_domain_name
+    %h4.heading-top= @domain.name if @domain
 
     %p
       = @domain.description if @domain

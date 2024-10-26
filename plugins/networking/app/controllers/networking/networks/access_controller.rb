@@ -12,14 +12,15 @@ module Networking
       rbac_target_tenant_ids = @rbacs.collect(&:target_tenant)
 
       @rbac_auth_projects = []
-      @auth_projects = service_user.identity.cached_user_projects(
+      @auth_projects = service_user&.identity&.cached_user_projects(
         current_user.id, domain_id: @scoped_domain_id
-      ).sort_by(&:name)
+      )&.sort_by(&:name)
       @auth_projects.each do |project|
         if project.id == @scoped_project_id ||
            rbac_target_tenant_ids.include?(project.id)
           next
         end
+
         @rbac_auth_projects << "#{project.id} (#{project.name})"
       end
     end
@@ -30,9 +31,7 @@ module Networking
       @rbac.object_type   = 'network'
       @rbac.action        = 'access_as_shared'
 
-      if @rbac.target_tenant.include?('(')
-        @rbac.target_tenant = @rbac.target_tenant.split('(').first.strip
-      end
+      @rbac.target_tenant = @rbac.target_tenant.split('(').first.strip if @rbac.target_tenant.include?('(')
 
       @network = services.networking.find_network(@network_id)
 

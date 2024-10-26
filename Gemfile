@@ -147,3 +147,5 @@ group :test do
 end
 
 gem "faraday-httpclient", "~> 2.0"
+
+gem "rubocop", "~> 1.67"

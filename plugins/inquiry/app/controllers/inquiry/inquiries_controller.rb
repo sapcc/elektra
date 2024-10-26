@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 module Inquiry
   # Implements Requests
   class InquiriesController < DashboardController
-    authorization_context "inquiry"
+    authorization_context 'inquiry'
     authorization_required
 
     before_action :set_inquiry, only: %i[show edit update destroy]
@@ -10,28 +11,28 @@ module Inquiry
     def index
       @domain_id =
         (
-          if current_user.is_allowed?("cloud_admin")
+          if current_user.is_allowed?('cloud_admin')
             nil
           else
             current_user.user_domain_id
           end
         )
       # This is true if an update is made via the PollingService
-      filter = params[:filter] ? params[:filter] : {}
+      filter = params[:filter] || {}
       if params[:partial]
         @page = params[:page] || 1
         @inquiries =
           ::Inquiry::Inquiry
-            .filter(filter)
-            .order(created_at: :desc)
-            .page(@page)
-            .per(params[:per_page])
+          .filter(filter)
+          .order(created_at: :desc)
+          .page(@page)
+          .per(params[:per_page])
         respond_to do |format|
           format.html do
-            render partial: "inquiries",
+            render partial: 'inquiries',
                    locals: {
                      inquiries: @inquiries,
-                     remote_links: true,
+                     remote_links: true
                    },
                    layout: false
           end
@@ -49,7 +50,7 @@ module Inquiry
         # This case is the initial page load
         # get all different types of inquiries from the database
         @kinds_of_inquiries =
-          [["All", ""]] + ::Inquiry::Inquiry.pluck(:kind).uniq.sort
+          [['All', '']] + ::Inquiry::Inquiry.pluck(:kind).uniq.sort
 
         render action: :index
       end
@@ -67,9 +68,9 @@ module Inquiry
       # get the admins
       @inquiry = Inquiry.new
       admins =
-        service_user.identity.list_scope_admins(
+        service_user&.identity&.list_scope_admins(
           domain_id: current_user.domain_id,
-          project_id: current_user.project_id,
+          project_id: current_user.project_id
         )
 
       @inquiry.kind = inquiry_params[:kind]
@@ -83,7 +84,7 @@ module Inquiry
       @inquiry.callbacks = callbacks
 
       if @inquiry.save
-        flash.now[:notice] = "Request successfully created."
+        flash.now[:notice] = 'Request successfully created.'
         redirect_to inquiries_path
       else
         flash.now[
@@ -99,7 +100,7 @@ module Inquiry
     end
 
     def update
-      #@inquiry.change_state(inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description], current_user)
+      # @inquiry.change_state(inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description], current_user)
 
       @inquiry.process_step_description =
         inquiry_params[:process_step_description]
@@ -109,8 +110,8 @@ module Inquiry
         @inquiry.proceed_state_change(inquiry_params[:aasm_state], current_user)
 
       if valid
-        flash.now[:notice] = "Request successfully updated."
-        render "inquiry/inquiries/update", formats: :js
+        flash.now[:notice] = 'Request successfully updated.'
+        render 'inquiry/inquiries/update', formats: :js
       else
         @inquiry.aasm_state = inquiry_params[:aasm_state]
         render action: :edit
@@ -120,8 +121,8 @@ module Inquiry
     def destroy
       if @inquiry.destroy
         @inquiry = nil
-        flash[:notice] = "Request successfully deleted."
-        render template: "inquiry/inquiries/update", formats: :js
+        flash[:notice] = 'Request successfully deleted.'
+        render template: 'inquiry/inquiries/update', formats: :js
       else
         flash.now[:error] = @inquiry.errors.full_messages.to_sentence
         redirect_to :inquiries
@@ -137,7 +138,7 @@ module Inquiry
         :aasm_state,
         :new_state,
         :process_step_description,
-        :additional_recipients,
+        :additional_recipients
       )
     end
 
@@ -145,33 +146,29 @@ module Inquiry
       @inquiry = ::Inquiry::Inquiry.find(params[:id])
     end
 
-    # Todo: Only for testing purpose
+    # TODO: Only for testing purpose
 
     def callbacks
-      return(
-        {
-          approved: {
-            name: "Create",
-            action: "project/compute/instances/new",
-          },
-          rejected: {
-            name: "RejectedAction",
-            action: "rejected",
-          },
+      {
+        approved: {
+          name: 'Create',
+          action: 'project/compute/instances/new'
+        },
+        rejected: {
+          name: 'RejectedAction',
+          action: 'rejected'
         }
-      )
+      }
     end
 
     def payload
-      return(
-        {
-          name: "the name",
-          description: "test",
-          enabled: "true",
-          domain_id: "abc123",
-          id: null,
-        }
-      )
+      {
+        name: 'the name',
+        description: 'test',
+        enabled: 'true',
+        domain_id: 'abc123',
+        id: null
+      }
     end
   end
 end

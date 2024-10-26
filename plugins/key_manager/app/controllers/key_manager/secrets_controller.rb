@@ -7,7 +7,7 @@ module KeyManager
 
     helper :all
 
-    authorization_context "key_manager"
+    authorization_context 'key_manager'
     authorization_required except: %i[new type_update]
 
     def index
@@ -22,7 +22,7 @@ module KeyManager
       end
 
       # get the user name from the openstack id
-      @user = service_user.identity.find_user(@secret.creator_id).try(:name)
+      @user = service_user&.identity&.find_user(@secret.creator_id).try(:name)
     end
 
     def new
@@ -45,9 +45,9 @@ module KeyManager
       # validate and save
       if @secret.save
         flash[:success] = "Secret #{@secret.name} was successfully added."
-        redirect_to plugin("key_manager").secrets_path
+        redirect_to plugin('key_manager').secrets_path
       else
-        render action: "new"
+        render action: 'new'
       end
     end
 
@@ -55,13 +55,15 @@ module KeyManager
       # delete secret
       @secret = services.key_manager.new_secret
       @secret.id = params[:id]
-      flash.now[
-        :success
-      ] = "Secret #{params[:id]} was successfully removed." if @secret.destroy
+      if @secret.destroy
+        flash.now[
+          :success
+        ] = "Secret #{params[:id]} was successfully removed."
+      end
       # grap a new list of secrets
       @secrets = secrets
       # render
-      render action: "index"
+      render action: 'index'
     end
 
     private
@@ -72,9 +74,9 @@ module KeyManager
       offset = (page.to_i - 1) * per_page
       result =
         services.key_manager.secrets(
-          sort: "created:desc",
+          sort: 'created:desc',
           limit: per_page,
-          offset: offset,
+          offset: offset
         )
       Kaminari
         .paginate_array(result[:items], total_count: result[:total])
@@ -85,8 +87,8 @@ module KeyManager
     def secret_form_attr
       @types = ::KeyManager::Secret::Type.to_hash
       @selected_type =
-        params.fetch("secret", {}).fetch("secret_type", nil) ||
-          params[:secret_type] || ::KeyManager::Secret::Type::PASSPHRASE
+        params.fetch('secret', {}).fetch('secret_type', nil) ||
+        params[:secret_type] || ::KeyManager::Secret::Type::PASSPHRASE
 
       @payload_content_types =
         ::KeyManager::Secret::PayloadContentType.relation_to_type[
@@ -95,26 +97,26 @@ module KeyManager
 
       @selected_payload_content_type =
         secrets_params[:payload_content_type] ||
-          @payload_content_types.find do |r|
-            r == ::KeyManager::Secret::PayloadContentType::TEXTPLAIN
-          end || @payload_content_types.first
+        @payload_content_types.find do |r|
+          r == ::KeyManager::Secret::PayloadContentType::TEXTPLAIN
+        end || @payload_content_types.first
 
       @payload_encoding_relation =
         ::KeyManager::Secret::Encoding.relation_to_payload_content_type
     end
 
     def secrets_params
-      return {} if params["secret"].blank?
+      return {} if params['secret'].blank?
 
-      secret = params.clone.fetch("secret", {})
+      secret = params.clone.fetch('secret', {})
 
       # remove if blank
       secret.delete_if { |_key, value| value.blank? }
 
       # correct time
       unless secret.fetch(:expiration, nil).nil?
-        date_time = DateTime.parse(secret["expiration"])
-        secret[:expiration] = date_time.strftime("%FT%TZ")
+        date_time = DateTime.parse(secret['expiration'])
+        secret[:expiration] = date_time.strftime('%FT%TZ')
       end
 
       secret

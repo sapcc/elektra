@@ -10,7 +10,7 @@
       %tr
         %th Domain
         %td
-          = domain_id_and_name(@project.domain_id)
+          = @domain&.name || @project.domain_id
       %tr
         %th Description
         %td= @project.description
