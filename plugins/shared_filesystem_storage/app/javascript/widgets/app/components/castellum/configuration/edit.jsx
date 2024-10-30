@@ -234,6 +234,7 @@ export default class CastellumConfigurationEditModal extends React.Component {
       size_minimum: (cfg.size_constraints || {}).minimum || "",
       size_maximum: (cfg.size_constraints || {}).maximum || "",
       free_minimum: (cfg.size_constraints || {}).minimum_free || "",
+      minimum_free_is_critical: (cfg.size_constraints || {}).minimum_free != "" ? "true" : "false",
     }
   }
 
@@ -290,8 +291,9 @@ export default class CastellumConfigurationEditModal extends React.Component {
     if (values.free_minimum != "") {
       config.size_constraints = config.size_constraints || {}
       config.size_constraints.minimum_free = parseInt(values.free_minimum, 10)
+      config.size_constraints.minimum_free_is_critical = true
     }
-
+    
     this.props
       .configureAutoscaling(this.props.projectID, config)
       .then(this.close)
