@@ -9,13 +9,8 @@ const FormBody = ({ close, errors }) => {
   const values = useContext(Form.Context).formValues
 
   let validationError = ""
-  if (
-    values.low_enabled == "false" &&
-    values.high_enabled == "false" &&
-    values.critical_enabled == "false"
-  ) {
-    validationError =
-      "To use autoscaling, at least one threshold must be enabled."
+  if (values.low_enabled == "false" && values.high_enabled == "false" && values.critical_enabled == "false") {
+    validationError = "To use autoscaling, at least one threshold must be enabled."
   }
 
   return (
@@ -23,11 +18,7 @@ const FormBody = ({ close, errors }) => {
       <Modal.Body>
         <Form.Errors errors={errors} />
 
-        <Form.ElementHorizontal
-          label="When usage is low:"
-          name="low_enabled"
-          labelWidth={5}
-        >
+        <Form.ElementHorizontal label="When usage is low:" name="low_enabled" labelWidth={5}>
           <Form.Input elementType="select">
             <option value="false">Do nothing</option>
             <option value="true">Auto-shrink share</option>
@@ -39,12 +30,7 @@ const FormBody = ({ close, errors }) => {
           labelWidth={5}
           labelClass="control-label secondary-label"
         >
-          <Form.Input
-            elementType="input"
-            type="number"
-            min="5"
-            disabled={values.low_enabled == "false"}
-          />
+          <Form.Input elementType="input" type="number" min="5" disabled={values.low_enabled == "false"} />
         </Form.ElementHorizontal>
         <Form.ElementHorizontal
           label="Usage is low below (%):"
@@ -52,20 +38,10 @@ const FormBody = ({ close, errors }) => {
           labelWidth={5}
           labelClass="control-label secondary-label"
         >
-          <Form.Input
-            elementType="input"
-            type="number"
-            min="0"
-            max="100"
-            disabled={values.low_enabled == "false"}
-          />
+          <Form.Input elementType="input" type="number" min="0" max="100" disabled={values.low_enabled == "false"} />
         </Form.ElementHorizontal>
 
-        <Form.ElementHorizontal
-          label="When usage is high:"
-          name="high_enabled"
-          labelWidth={5}
-        >
+        <Form.ElementHorizontal label="When usage is high:" name="high_enabled" labelWidth={5}>
           <Form.Input elementType="select">
             <option value="false">Do nothing</option>
             <option value="true">Auto-extend share</option>
@@ -77,12 +53,7 @@ const FormBody = ({ close, errors }) => {
           labelWidth={5}
           labelClass="control-label secondary-label"
         >
-          <Form.Input
-            elementType="input"
-            type="number"
-            min="5"
-            disabled={values.high_enabled == "false"}
-          />
+          <Form.Input elementType="input" type="number" min="5" disabled={values.high_enabled == "false"} />
         </Form.ElementHorizontal>
         <Form.ElementHorizontal
           label="Usage is high above (%):"
@@ -90,20 +61,10 @@ const FormBody = ({ close, errors }) => {
           labelWidth={5}
           labelClass="control-label secondary-label"
         >
-          <Form.Input
-            elementType="input"
-            type="number"
-            min="0"
-            max="100"
-            disabled={values.high_enabled == "false"}
-          />
+          <Form.Input elementType="input" type="number" min="0" max="100" disabled={values.high_enabled == "false"} />
         </Form.ElementHorizontal>
 
-        <Form.ElementHorizontal
-          label="When usage is critical:"
-          name="critical_enabled"
-          labelWidth={5}
-        >
+        <Form.ElementHorizontal label="When usage is critical:" name="critical_enabled" labelWidth={5}>
           <Form.Input elementType="select">
             <option value="false">Do nothing</option>
             <option value="true">Auto-extend share immediately</option>
@@ -124,11 +85,7 @@ const FormBody = ({ close, errors }) => {
           />
         </Form.ElementHorizontal>
 
-        <Form.ElementHorizontal
-          label="Stepping strategy:"
-          name="size_step_single"
-          labelWidth={5}
-        >
+        <Form.ElementHorizontal label="Stepping strategy:" name="size_step_single" labelWidth={5}>
           <Form.Input elementType="select">
             <option value="false">Percentage-step resizing</option>
             <option value="true">Single-step resizing</option>
@@ -162,8 +119,7 @@ const FormBody = ({ close, errors }) => {
           />
           <p className="help-block" style={{ marginBottom: 0 }}>
             <i className="fa fa-info-circle" />
-            As an exception, multiple steps can be taken at once to resolve a
-            critical usage level.
+            As an exception, multiple steps can be taken at once to resolve a critical usage level.
           </p>
         </Form.ElementHorizontal>
 
@@ -190,6 +146,17 @@ const FormBody = ({ close, errors }) => {
           labelClass="control-label secondary-label"
         >
           <Form.Input elementType="input" type="number" min="0" />
+          <div className="checkbox">
+            <label>
+              <Form.Input
+                elementType="input"
+                type="checkbox"
+                name="minimum_free_is_critical"
+                disabled={values.free_minimum == ""}
+              />
+              <span>Treat crossings of this constraint as a critical usage level</span>
+            </label>
+          </div>
         </Form.ElementHorizontal>
       </Modal.Body>
       <Modal.Footer>
@@ -234,7 +201,6 @@ export default class CastellumConfigurationEditModal extends React.Component {
       size_minimum: (cfg.size_constraints || {}).minimum || "",
       size_maximum: (cfg.size_constraints || {}).maximum || "",
       free_minimum: (cfg.size_constraints || {}).minimum_free || "",
-      minimum_free_is_critical: (cfg.size_constraints || {}).minimum_free != "" ? "true" : "false",
     }
   }
 
@@ -248,9 +214,7 @@ export default class CastellumConfigurationEditModal extends React.Component {
 
   validate(values) {
     return (
-      (values.low_enabled == "true" ||
-        values.high_enabled == "true" ||
-        values.critical_enabled == "true") &&
+      (values.low_enabled == "true" || values.high_enabled == "true" || values.critical_enabled == "true") &&
       (values.size_step_single == "true" || values.size_step_percent != "")
     )
   }
@@ -291,9 +255,12 @@ export default class CastellumConfigurationEditModal extends React.Component {
     if (values.free_minimum != "") {
       config.size_constraints = config.size_constraints || {}
       config.size_constraints.minimum_free = parseInt(values.free_minimum, 10)
+    }
+    if (values.free_minimum != "" && values.minimum_free_is_critical) {
+      config.size_constraints = config.size_constraints || {}
       config.size_constraints.minimum_free_is_critical = true
     }
-    
+
     this.props
       .configureAutoscaling(this.props.projectID, config)
       .then(this.close)
@@ -319,9 +286,7 @@ export default class CastellumConfigurationEditModal extends React.Component {
         className="shared_filesystem_storage"
       >
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">
-            Configure Autoscaling
-          </Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">Configure Autoscaling</Modal.Title>
         </Modal.Header>
 
         <Form
