@@ -1,7 +1,9 @@
+import Button from "react-bootstrap/lib/Button"
 import { PrettyDate } from "lib/components/pretty_date"
 import React from "react"
 
 const ErrorRow = (props) => {
+  const { label="None", fn=() => {} } = props.action ||{} 
   const {
     project_id: projectID,
     asset_type: assetType,
@@ -40,6 +42,9 @@ const ErrorRow = (props) => {
         <td className={hasSizeColumn ? "col-md-2" : "col-md-3"}>
           {result.at ? <PrettyDate date={result.at} /> : "None"}
         </td>
+        {hasSizeColumn && <td className="col-md-1">
+          <Button onClick={() => {fn(props.error)}}>{label}</Button>
+        </td>}
       </tr>
       <tr className="explains-previous-line">
         <td colSpan={hasSizeColumn ? 4 : 3} className="text-danger">
