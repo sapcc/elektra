@@ -1,10 +1,6 @@
 describe("project landing page", () => {
   beforeEach(() => {
-    cy.elektraLogin(
-      Cypress.env("TEST_DOMAIN"),
-      Cypress.env("TEST_USER"),
-      Cypress.env("TEST_PASSWORD")
-    )
+    cy.elektraLogin(Cypress.env("TEST_DOMAIN"), Cypress.env("TEST_USER"), Cypress.env("TEST_PASSWORD"))
   })
 
   it("open project landing page and cannot see edit project button", () => {
@@ -63,7 +59,6 @@ describe("project landing page", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     // check not in one string because it can be different order
-    cy.contains("SAP Converged Cloud")
-    cy.contains("button", "Log in")
+    cy.contains("button", "Enter CC3TEST")
   })
 })
