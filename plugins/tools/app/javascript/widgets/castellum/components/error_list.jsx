@@ -131,7 +131,7 @@ export default class Loader extends React.Component {
         pageSize={6}
       >
         {data.map((error, idx) => (
-          <ErrorRow key={`error${idx}`} error={error} action={{label: "Clear", fn: this.onAction}}/>
+          <ErrorRow key={`error${idx}`} error={error} action={{label: "Mark as resolved", fn: this.onAction}}/>
         ))}
       </DataTable>
     )
