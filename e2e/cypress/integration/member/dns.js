@@ -17,11 +17,6 @@ describe("dns", () => {
     cy.contains("Request New Zone").click()
     cy.contains("Request New Domain")
     cy.get("#zone_request_domain_pool").select("Internal SAP Hosted Zone")
-    // click Subdomain
-    //cy.get("input#zone_request_domain_type_subdomain")
-    //  .should("be.visible")
-    //  .click()
-    //cy.get("input#zone_request_name").should("be.visible")
     // click Custom Domain
     cy.get("input#zone_request_domain_type_rootdomain").should("be.visible").click()
     cy.get("input#zone_request_name").should("be.visible")
