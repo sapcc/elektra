@@ -154,7 +154,7 @@ const FormBody = ({ close, errors }) => {
                 name="minimum_free_is_critical"
                 disabled={values.free_minimum == ""}
               />
-              <span>Treat crossings of this constraint as a critical usage level</span>
+              <span>When crossing this threshold, resize without delay</span>
             </label>
           </div>
         </Form.ElementHorizontal>
