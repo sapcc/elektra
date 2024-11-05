@@ -39,11 +39,7 @@ const config = {
   ),
   bundle: true,
   platform: "browser",
-  // format: "esm",
-  // splitting: true,
   outdir: "app/assets/builds",
-  // build also a version without hash
-  outExtension: { ".js": ".bundle.js" },
   plugins: [
     envFilePlugin,
     pathsResolverPlugin({

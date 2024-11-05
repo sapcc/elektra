@@ -5,8 +5,6 @@ Rails.application.config.assets.version = "1.0"
 
 # Add all files ending in .bundle.js to the list of assets to be processed during 
 # the precompilation process."
-Rails.application.config.assets.precompile += %w( *.bundle.js )
-
 
 # Add additional assets to the asset load path.
 # Rails.application.config.assets.paths << Emoji.images_path
