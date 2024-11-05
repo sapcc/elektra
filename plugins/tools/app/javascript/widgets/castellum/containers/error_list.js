@@ -1,6 +1,6 @@
 import { connect } from  'react-redux';
 import ErrorList from '../components/error_list';
-import { fetchAllErrorsAsNeeded } from '../actions/castellum';
+import { clearErrorIfNeeded, fetchAllErrorsAsNeeded } from '../actions/castellum';
 
 export default connect(
   (state, props) => {
@@ -13,5 +13,6 @@ export default connect(
   },
   dispatch => ({
     fetchAllErrorsAsNeeded: (...args) => dispatch(fetchAllErrorsAsNeeded(...args)),
+    clearErrorIfNeeded: (error) => dispatch(clearErrorIfNeeded(error))
   }),
 )(ErrorList);

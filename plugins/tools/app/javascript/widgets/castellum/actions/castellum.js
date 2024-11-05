@@ -41,8 +41,31 @@ const fetchErrorsIfNeeded = (errorType) => (dispatch, getState) => {
   return dispatch(fetchErrors(errorType))
 }
 
+const refetchErrorsOnDemand = () => (dispatch) => {
+  for (const errorType of constants.CASTELLUM_ERROR_TYPES) {
+    dispatch(fetchErrors(errorType))
+  }
+}
+
 export const fetchAllErrorsAsNeeded = () => (dispatch) => {
   for (const errorType of constants.CASTELLUM_ERROR_TYPES) {
     dispatch(fetchErrorsIfNeeded(errorType))
   }
+}
+
+const clearError = (error) => (dispatch) => {
+  const { project_id, asset_type, asset_id } = error
+  return new Promise((handleSuccess, handleErrors) =>
+    ajaxHelper
+      .post(`/v1/projects/${project_id}/assets/${asset_type}/${asset_id}/error-resolved`)
+      .then(() => {
+        handleSuccess()
+        dispatch(refetchErrorsOnDemand())
+      })
+      .catch((error) => handleErrors(console.log(errorMessage(error))))
+  )
+}
+
+export const clearErrorIfNeeded = (error) => (dispatch) => {
+  dispatch(clearError(error))
 }
