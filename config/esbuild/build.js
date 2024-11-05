@@ -14,8 +14,7 @@ const entryPoints = require("./entrypoints")
 const esbuild = require("esbuild")
 const args = process.argv.slice(2)
 const watch = args.indexOf("--watch") >= 0
-const production =
-  args.indexOf("--production") >= 0 || process.env.RAILS_ENV === "production"
+const production = args.indexOf("--production") >= 0 || process.env.RAILS_ENV === "production"
 const log = console.log.bind(console)
 
 const config = {
@@ -43,6 +42,8 @@ const config = {
   // format: "esm",
   // splitting: true,
   outdir: "app/assets/builds",
+  // build also a version without hash
+  outExtension: { ".js": ".bundle.js" },
   plugins: [
     envFilePlugin,
     pathsResolverPlugin({
@@ -176,10 +177,7 @@ function compile(options = {}) {
   return esbuild
     .build(config)
     .then(() => {
-      log(
-        green,
-        "◻️ Compile completed successfully with no errors! Don't worry Be Happy 🙂"
-      )
+      log(green, "◻️ Compile completed successfully with no errors! Don't worry Be Happy 🙂")
     })
     .catch((error) => {
       log(red, "Compile completed with error 😐")
