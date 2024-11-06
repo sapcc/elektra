@@ -12,8 +12,8 @@
   "identity:project_update": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
   "identity:project_delete": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
 
-  "identity:project_create": "rule:cloud_admin or rule:admin_and_matching_project_domain_id",
-  "identity:project_request": "not(project_id:nil and role:admin)",
+  "identity:project_create": "@",
+  "identity:project_request": "!",
 
   "identity:project_api_endpoints": "not(project_id:nil)",
   "identity:project_download_openrc": "not(project_id:nil)",
