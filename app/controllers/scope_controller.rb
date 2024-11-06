@@ -22,9 +22,9 @@ class ScopeController < ::ApplicationController
   def load_scoped_objects
     # initialize scoped domain's and project's friendly id
     # use existing, user's or default domain
-    domain_id =
-      params[:domain_id] || Rails.application.config.service_user_domain_name
-    project_id = params[:project_id]
+    domain_id = params[:domain_id] || Rails.application.config.service_user_domain_name
+    domain_id = Regexp.escape(domain_id) if domain_id
+    project_id = Regexp.escape(params[:project_id]) if params[:project_id]
 
     @scoped_domain_fid = @scoped_domain_id = domain_id
     @scoped_project_fid = @scoped_project_id = project_id
