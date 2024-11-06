@@ -6,12 +6,12 @@ module NonDigestAssets
     # check if the file is a _widget.js file
     # copy the file to the public/assets folder
     if filename.end_with?('_widget.js')
-      # without the digest in the file name
-      path = File.join(Rails.public_path, 'assets', File.basename(filename))
-      # Ensure the path directory exists
-      FileUtils.mkdir_p(path)
+      target_dir = File.join(Rails.public_path, 'assets')
+      target_path = File.join(target_dir, File.basename(filename))
+      # Ensure the target directory exists
+      FileUtils.mkdir_p(target_dir)
       # Copy the file
-      FileUtils.cp(filename, path)
+      FileUtils.cp(filename, target_path)
     end
     nil
   end
