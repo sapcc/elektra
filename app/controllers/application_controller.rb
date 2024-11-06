@@ -1,8 +1,8 @@
-require "core/audit_logger"
+require 'core/audit_logger'
 # This class implements functionality to support modal views.
 # All subclasses which require modal views should inherit from this class.
 class ApplicationController < ActionController::Base
-  layout "application"
+  layout 'application'
   include ApplicationHelper
 
   # includes services method
@@ -13,6 +13,8 @@ class ApplicationController < ActionController::Base
   include Core::Paginatable
 
   extend ErrorRenderer
+
+  before_action :load_domain_config
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -33,24 +35,24 @@ class ApplicationController < ActionController::Base
   #                    has several bugs)
   # "beta"            (if it's almost ready for public release)
   def release_state
-    "public_release"
+    'public_release'
   end
 
   # catch all api errors and render exception page
 
-  rescue_from "Elektron::Errors::Request" do |exception|
+  rescue_from 'Elektron::Errors::Request' do |exception|
     options = {
-      title: "Backend Slowdown Detected",
+      title: 'Backend Slowdown Detected',
       description:
-        "We are currently experiencing a higher latency in our " \
-          "backend calls. This should be fixed momentarily. Please " \
-          "try again in a couple of minutes.",
+        'We are currently experiencing a higher latency in our ' \
+          'backend calls. This should be fixed momentarily. Please ' \
+          'try again in a couple of minutes.',
       warning: true,
-      sentry: false,
+      sentry: false
     }
 
     # send to sentry if exception isn't a timeout error
-    options[:sentry] = true unless exception.message == "Net::ReadTimeout"
+    options[:sentry] = true unless exception.message == 'Net::ReadTimeout'
 
     render_exception_page(exception, options)
   end
@@ -61,30 +63,37 @@ class ApplicationController < ActionController::Base
   end
 
   def modal_size
-    params[:modal_size] || "modal-xl"
+    params[:modal_size] || 'modal-xl'
   end
 
   def render(*args)
+    load_domain_config
     options = args.extract_options!
-    options[:layout] = "modal" if modal?
-    super *args, options
+    options[:layout] = 'modal' if modal?
+    super(*args, options)
   end
 
   def redirect_to(options = {}, response_options = {})
     if request.format == Mime[:json] || modal? || params[:polling_service] ||
-         params[:do_not_redirect]
+       params[:do_not_redirect]
       head :ok, location: url_for(options)
     else
-      # Note: please do not use "allow_other_host: true" here just pass it as an option from the controller where redirect_to is called
+      # NOTE: please do not use "allow_other_host: true" here just pass it as an option from the controller where redirect_to is called
       super options, response_options
     end
   end
 
   def plugin_name
     if @plugin_name.blank?
-      tokens = self.class.name.split("::").collect(&:underscore)
+      tokens = self.class.name.split('::').collect(&:underscore)
       @plugin_name = tokens.find { |t| Core::PluginsManager.plugin?(t) }
     end
     @plugin_name
+  end
+
+  private
+
+  def load_domain_config
+    @domain_config = DomainConfig.new(params[:domain_id])
   end
 end
