@@ -65,7 +65,6 @@ class ApplicationController < ActionController::Base
   end
 
   def render(*args)
-    load_domain_config
     options = args.extract_options!
     options[:layout] = 'modal' if modal?
     super(*args, options)
@@ -87,11 +86,5 @@ class ApplicationController < ActionController::Base
       @plugin_name = tokens.find { |t| Core::PluginsManager.plugin?(t) }
     end
     @plugin_name
-  end
-
-  private
-
-  def load_domain_config
-    @domain_config = DomainConfig.new(params[:domain_id])
   end
 end

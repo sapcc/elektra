@@ -6,23 +6,24 @@
 class ScopeController < ::ApplicationController
   # keep the before_action with prepend to ensure that the load_scoped_objects method is called first
   prepend_before_action :load_scoped_objects
+  prepend_before_action :create_default_domain_config
   # At this point is the domain configuration already loaded and the scoped domain and project are set.
   # The plugin_name is set by the ApplicationController which is inherited by this class.
   before_action :hidden_plugin_redirect
 
   # to prevent unauthorized access to hidden plugins we redirect to a 404 page
   # if the plugin is hidden for the current domain
-  def hidden_plugin_redirect   
-    if @domain_config.plugin_hidden?(plugin_name.to_s)
-      redirect_to "/error-404"
-    end
+  def hidden_plugin_redirect
+    return unless @domain_config.plugin_hidden?(plugin_name.to_s)
+
+    redirect_to '/error-404'
   end
 
   def load_scoped_objects
     # initialize scoped domain's and project's friendly id
     # use existing, user's or default domain
     domain_id =
-      (params[:domain_id] || Rails.application.config.service_user_domain_name)
+      params[:domain_id] || Rails.application.config.service_user_domain_name
     project_id = params[:project_id]
 
     @scoped_domain_fid = @scoped_domain_id = domain_id
@@ -32,9 +33,7 @@ class ScopeController < ::ApplicationController
     rescoping_service = Dashboard::RescopingService.new(service_user)
     domain_friendly_id =
       rescoping_service.domain_friendly_id(@scoped_domain_fid)
-    unless domain_friendly_id
-      raise Core::Error::DomainNotFound, "Domain #{domain_id} not found!"
-    end
+    raise Core::Error::DomainNotFound, "Domain #{domain_id} not found!" unless domain_friendly_id
 
     # set scoped domain parameters
     @scoped_domain_id = domain_friendly_id.key
@@ -46,7 +45,7 @@ class ScopeController < ::ApplicationController
       project_friendly_id =
         rescoping_service.project_friendly_id(
           @scoped_domain_id,
-          @scoped_project_fid,
+          @scoped_project_fid
         )
     end
 
@@ -57,40 +56,35 @@ class ScopeController < ::ApplicationController
       @scoped_project_name = project_friendly_id.name
     end
 
-    #puts "SCOPED CONTROLLER"
-    #puts @scoped_domain_id
-    #puts @scoped_project_id
+    # puts "SCOPED CONTROLLER"
+    # puts @scoped_domain_id
+    # puts @scoped_project_id
 
-    if domain_id != @scoped_domain_fid || project_id != @scoped_project_fid
-      # url_for does not work for plugins. Use path instead!
+    # url_for does not work for plugins. Use path instead!
+    if (domain_id != @scoped_domain_fid || project_id != @scoped_project_fid) && @scoped_domain_id
+      # replace domain_id with domain friendly id
 
-      if @scoped_domain_id
-        # replace domain_id with domain friendly id
-
+      new_path =
+        request.path.gsub(
+          %r{^/#{domain_id}/(?<rest>.*)},
+          '/' + @scoped_domain_fid + '/\k<rest>'
+        )
+      new_path = "/#{@scoped_domain_fid}#{new_path}" unless new_path.include?(@scoped_domain_fid)
+      # replace project_id with freindly id if given
+      if @scoped_project_id
         new_path =
-          request.path.gsub(
-            %r{^\/#{domain_id}\/(?<rest>.*)},
-            "/" + @scoped_domain_fid + '/\k<rest>',
+          new_path.gsub(
+            %r{^/(?<domain>.+)/#{project_id}/(?<rest>.*)},
+            '/\k<domain>/' + @scoped_project_fid + '/\k<rest>'
           )
-        unless new_path.include?(@scoped_domain_fid)
-          new_path = "/#{@scoped_domain_fid}#{new_path}"
-        end
-        # replace project_id with freindly id if given
-        if @scoped_project_id
-          new_path =
-            new_path.gsub(
-              %r{^\/(?<domain>.+)\/#{project_id}\/(?<rest>.*)},
-              '/\k<domain>/' + @scoped_project_fid + '/\k<rest>',
-            )
-        end
-
-        url_params = request.query_parameters
-        url_params.delete(:domain_id)
-        url_params.delete(:project_id)
-        new_path += "?#{url_params.to_query}" unless url_params.empty?
-
-        redirect_to new_path unless params[:modal]
       end
+
+      url_params = request.query_parameters
+      url_params.delete(:domain_id)
+      url_params.delete(:project_id)
+      new_path += "?#{url_params.to_query}" unless url_params.empty?
+
+      redirect_to new_path unless params[:modal]
     end
 
     @policy_default_params = { target: {} }
@@ -99,25 +93,32 @@ class ScopeController < ::ApplicationController
 
     @can_access_domain = !@scoped_domain_name.nil?
     @can_access_project = !@scoped_project_name.nil?
-    
-    # the presence of this variable is tested in spec/controllers/scope_controller_spec.rb
-    @domain_config = DomainConfig.new(@scoped_domain_name)
+    # from here the real domain name is known so we can update the domain config with this name
+    @domain_config.update_domain(@scoped_domain_name)
   end
 
   rescue_from(
-    "Core::Error::ServiceUserNotAuthenticated",
-    "Core::Error::DomainNotFound",
+    'Core::Error::ServiceUserNotAuthenticated',
+    'Core::Error::DomainNotFound'
   ) do |exception|
     render_exception_page(
       exception,
-      title: "Unsupported Domain",
-      description: ->(_e, controller) do
+      title: 'Unsupported Domain',
+      description: lambda do |_e, controller|
         "A domain with the name <b>#{controller.params[:domain_id]}</b> doesn't seem to exist. Please check the spelling and try again"
       end,
       details: :message,
       warning: true,
       sentry: true,
-      status: 404,
+      status: 404
     )
+  end
+
+  # this method creates a default domain config object from the domain_id parameter
+  # the domain_id parameter can be the name or the id of the domain
+  # the real name is resolved in the load_scoped_objects method and also updates the domain config
+  # this method called in the prepend_before_action chain as first to ensure that the domain config is available
+  def create_default_domain_config
+    @domain_config = DomainConfig.new(params[:domain_id])
   end
 end
