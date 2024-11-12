@@ -45,8 +45,6 @@ module Identity
     end
 
     def update
-      # NOTE: there is also a edit and update funktion in the masterdata_cockpit/project_masterdata_controller.rb
-      #       to edit the project but with another purpose
       params[:project][:enabled] = params[:project][:enabled] == true || params[:project][:enabled] == 'true'
 
       @project = service_user.identity.new_project(params[:project])
