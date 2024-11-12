@@ -324,11 +324,14 @@ class DashboardController < ::ScopeController
       help_file = File.join(plugin.path, "plugin_help.md")
     end
 
-    # try to find the links file, check first for service specific links file,
-    # next for general plugin links file
-    help_links = File.join(plugin.path, "plugin_#{service_name}_help_links.md")
-    unless File.exist?(help_links)
-      help_links = File.join(plugin.path, "plugin_help_links.md")
+    help_links = ""
+    unless @domain_config.feature_hidden?("documentation")
+      # try to find the links file, check first for service specific links file,
+      # next for general plugin links file
+      help_links = File.join(plugin.path, "plugin_#{service_name}_help_links.md")
+      unless File.exist?(help_links)
+        help_links = File.join(plugin.path, "plugin_help_links.md")
+      end
     end
 
     # load plugin specific help text
@@ -336,7 +339,6 @@ class DashboardController < ::ScopeController
     return unless File.exist?(help_links)
     # load plugin specific help links
     @plugin_help_links = File.new(help_links, "r").read
-    @plugin_help_links =
-      @plugin_help_links.gsub('#{@sap_docu_url}', sap_url_for("documentation"))
+    @plugin_help_links = @plugin_help_links.gsub('#{@sap_docu_url}', sap_url_for("documentation"))
   end
 end

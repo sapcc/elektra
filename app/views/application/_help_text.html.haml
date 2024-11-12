@@ -4,11 +4,15 @@
       %a.close-button{href: "#{}", data: {toggle: "help"}}
         x
 
-      .row
-        .plugin-help-text
+      - unless @plugin_help_links.nil?
+        .row
+          .plugin-help-text
+            :markdown
+              #{@plugin_help_text}
+          .plugin-help-links
+            :markdown
+              #{@plugin_help_links}
+      - else
+        .row{style: "margin: 10px;"}
           :markdown
             #{@plugin_help_text}
-
-        .plugin-help-links
-          :markdown
-            #{@plugin_help_links}
