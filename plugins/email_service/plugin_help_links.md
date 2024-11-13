@@ -1,2 +1,1 @@
-#### Useful Links
-* [CC-Docu](#{@sap_docu_url})
+- [CC-Docu](#{@sap_docu_url})

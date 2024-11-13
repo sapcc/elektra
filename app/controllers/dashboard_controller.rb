@@ -298,6 +298,15 @@ class DashboardController < ::ScopeController
   end
 
   def load_help_text
+    # there are different help files supported:
+    # these files are searched in the related directory of the plugin
+    # 1. plugin specific help file (e.g. plugin_SERVICE_NAME_help.md)
+    # 2. general plugin help file (e.g. plugin_help.md)
+    # 3. plugin specific help links file (e.g. plugin_SERVICE_NAME_help_links.md)
+    # 4. general plugin help links file (e.g. plugin_help_links.md)
+    # 5. plugin specific external help links file (e.g. plugin_SERVICE_NAME_help_links_external.md)
+    # 6. general plugin external help links file (e.g. plugin_help_links_external.md)
+
     plugin_path = params[:controller]
 
     plugin_index =
@@ -310,35 +319,53 @@ class DashboardController < ::ScopeController
     end
 
     return if plugin.blank?
-
+    
     # get name of the specific service inside the plugin
     # remove plugin name from path
     path = plugin_path.split("/")
     path.shift
     service_name = path.join("_")
-
+    
     # try to find the help file, check first for service specific help file,
     # next for general plugin help file
     help_file = File.join(plugin.path, "plugin_#{service_name}_help.md")
+    # second try to find the general help file
     unless File.exist?(help_file)
       help_file = File.join(plugin.path, "plugin_help.md")
     end
 
     help_links = ""
-    unless @domain_config.feature_hidden?("documentation")
-      # try to find the links file, check first for service specific links file,
-      # next for general plugin links file
-      help_links = File.join(plugin.path, "plugin_#{service_name}_help_links.md")
-      unless File.exist?(help_links)
-        help_links = File.join(plugin.path, "plugin_help_links.md")
-      end
+    # try to find the links file, check first for service specific links file,
+    # next for general plugin links file
+    help_links = File.join(plugin.path, "plugin_#{service_name}_help_links.md")
+    # second try to find the general links file
+    unless File.exist?(help_links)
+      help_links = File.join(plugin.path, "plugin_help_links.md")
+    end
+    help_links_external = File.join(plugin.path, "plugin_#{service_name}_help_links_external.md")
+    # second try to find the general links file
+    unless File.exist?(help_links_external)
+      help_links_external = File.join(plugin.path, "plugin_help_links_external.md")
     end
 
     # load plugin specific help text
     @plugin_help_text = File.new(help_file, "r").read if File.exist?(help_file)
-    return unless File.exist?(help_links)
+
     # load plugin specific help links
-    @plugin_help_links = File.new(help_links, "r").read
-    @plugin_help_links = @plugin_help_links.gsub('#{@sap_docu_url}', sap_url_for("documentation"))
+    unless @domain_config.feature_hidden?("documentation")
+      if File.exist?(help_links)
+        @plugin_help_links = File.new(help_links, "r").read
+        # replace internal links with the placeholder of the correct url
+        @plugin_help_links = @plugin_help_links.gsub('#{@sap_docu_url}', sap_url_for("documentation"))
+      end
+    end
+    # load plugin specific help external links
+    return unless File.exist?(help_links_external)
+    plugin_help_links_external = File.new(help_links_external, "r").read
+    if @plugin_help_links
+      @plugin_help_links += plugin_help_links_external
+    else
+      @plugin_help_links = plugin_help_links_external if plugin_help_links_external
+    end
   end
 end
