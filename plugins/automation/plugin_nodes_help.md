@@ -2,8 +2,6 @@
 
 ##### Floating IP reported by the Arc node
 
-Here's an improved English version:
-
 By default, Arc nodes report both the fixed IP and floating IP as facts from the instance they are running on. If the floating IP is not displayed, consider the following possibilities:
 
 1. No floating IP is assigned to the instance. In this case, navigate to the **Servers section** and allocate a floating IP to your instance.

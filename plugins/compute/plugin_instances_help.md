@@ -2,8 +2,6 @@
 
 ##### Creating new servers
 
-Here's an improved English version:
-
 By default, newly created servers are not accessible from outside their deployment network. To create a VM with external access, follow these steps:
 
 1. Create a new VM instance: As you'll likely want to log in via SSH eventually, ensure you create or import an SSH public key (if you haven't already) and specify it during VM creation. Note that you cannot add a key to an existing VM later.
