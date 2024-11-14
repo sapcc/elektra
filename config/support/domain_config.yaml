@@ -1,19 +1,18 @@
 # this config is used to control the visibility of plugins in the navigation,
 # to define floating ip networks.
 domains:
-  - name: test
-    regex: "__test__"
+  - name: iaas
+    regex: "^iaas-.*$"
+    disabled_plugins:
+      - automation
+      - reports
+      - masterdata_cockpit
+      - webconsole
     disabled_features:
       - documentation
       - support
       - domain_switcher
-    disabled_plugins:
-      # following plugins name should be the same as the plugin name in the plugins directory
-      - test-plugin
     floating_ip_networks:
-      - "test_05"
-      - "test_04"
-      - "test_03"
-      - "test_02"
-      - "test_01"
+      - FloatingIP-external-iaas-01
     dns_c_subdomain: false
+    check_cidr_range: false
