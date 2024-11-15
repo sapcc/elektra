@@ -78,7 +78,7 @@ module Networking
       unless cidr.match(
         %r{^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(/(3[0-2]|[1-2][0-9]|[0-9]))$}
       )
-        errors.add(:cidr, 'must be a valid cidr adress like 10.180.1.0/16')
+        errors.add(:cidr, 'Must be within a valid CIDR range starting with 10.180 (e.g., 10.180.0.0/16)')
         return
       end
 
