@@ -1,3 +1,2 @@
-#### Useful Links
-* [Audit Documentation](#{@sap_docu_url}docs/audit/)
-* [Event Attributes](#{@sap_docu_url}docs/audit/events.html)
+- [Audit Documentation](#{@sap_docu_url}docs/audit/)
+- [Event Attributes](#{@sap_docu_url}docs/audit/events.html)

@@ -1,8 +1,3 @@
-## What is project masterdata?
-A project’s masterdata contains different pieces of information about the project. 
-The information provided in the “Cost Object” section is necessary for billing purposes. 
-The information in the other sections helps CCloud operations and support find the correct
-contact persons in case of incidents, problems or questions about the project and indicates
-the importance of the project for your operations so that priorities can be set correctly
-in case of larger incidents (where e.g. it is important to fix productive systems before
-development systems).
+## What is project Masterdata?
+
+A project's master data encompasses various essential details about the project. The information in the "Cost Object" section is crucial for billing purposes. The data provided in other sections assists CCloud operations and support teams in identifying the appropriate contact persons in case of incidents, problems, or project-related inquiries. Additionally, this information indicates the project's significance to your operations, enabling the correct prioritization during major incidents. For example, this helps ensure that production systems are addressed before development systems when issues arise.
