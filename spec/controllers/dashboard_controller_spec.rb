@@ -69,14 +69,6 @@ describe DashboardController, type: :controller do
       #end
 
       context "and project does not exists" do
-        before :each do
-          allow_any_instance_of(Dashboard::RescopingService).to(
-            receive(:project_friendly_id).with(
-              default_params[:domain_id],
-              "BAD_PROJECT",
-            ).and_return(nil),
-          )
-        end
         it "should render project not found page" do
           get :index,
               params: {

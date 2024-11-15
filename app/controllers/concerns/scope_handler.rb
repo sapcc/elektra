@@ -72,24 +72,27 @@ module ScopeHandler
   # to the friendly id of domain.
   def ensure_user_friendly_url
     project_id = current_user.project_id
+    project_name = current_user.project_name
+    domain_id = current_user.domain_id || current_user.project_domain_id
+    domain_name = current_user.domain_name || current_user.project_domain_name
 
-    if project_id
-      project = services.identity.find_project(project_id)
-      domain = services.identity.find_domain(project.domain_id)
-    else
-      domain = services.identity.find_domain(current_user.domain_id)
-    end
+    @domain_config = DomainConfig.new(domain_name || params[:domain_id])
+    byebug
+    # do nothing if domain_id is empty what means there is not scope
+    return unless domain_id
 
     # this config is needed for the bedrock context
-    @domain_config = DomainConfig.new(domain.name)
     # do not allow to access hidden plugins
     redirect_to '/error-404' and return if @domain_config.plugin_hidden?(plugin_name.to_s)
 
-    domain_fid = FriendlyIdEntry.find_or_create_entry('Domain', nil, domain.id, domain.name)
+    if project_id
+      project_fid = FriendlyIdEntry.find_or_create_entry(
+        'Project', domain_id, project_id, project_name
+      )
+    end
 
-    project_fid = FriendlyIdEntry.find_or_create_entry('Project', domain.id, project.id, project.name) if project
-
-    redirect_to_user_friendly_url(domain_fid.slug, project_fid&.slug)
+    domain_fid = FriendlyIdEntry.find_or_create_entry('Domain', nil, domain_id, domain_name)
+    redirect_to_user_friendly_url(domain_fid&.slug, project_fid&.slug)
   end
 
   # load active project based on logged in user
@@ -119,6 +122,7 @@ module ScopeHandler
     elsif params[:domain_id]
       current_path = current_path.gsub(%r{^/#{params[:domain_id]}/}, "/#{domain_fid}/")
     end
+
     redirect_to current_path if current_path != request.path
   end
 

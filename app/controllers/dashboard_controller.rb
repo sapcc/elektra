@@ -59,6 +59,7 @@ class DashboardController < ::ApplicationController
   def rescope_token
     authentication_rescope_token
   rescue MonsoonOpenstackAuth::Authentication::NotAuthorized => e
+    byebug
     if e.message =~ /has no access to the requested scope/
       if @scoped_project_id.present?
         render(template: 'application/exceptions/unauthorized')
