@@ -1194,17 +1194,17 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@cloudoperators/juno-messages-provider@^0.1.18":
-  version "0.1.18"
-  resolved "https://registry.yarnpkg.com/@cloudoperators/juno-messages-provider/-/juno-messages-provider-0.1.18.tgz#84e7a7119e1c376f5b5031ab21a55065020dac17"
-  integrity sha512-3+81Xe9pOOa9uAUb4S4g74gkIVobv3iAH4Pvd2i63zA6qJ7waKy0T2WpVe1p7ZzY/Z9qoClq4Jd6neOJOi6DGA==
+"@cloudoperators/juno-messages-provider@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@cloudoperators/juno-messages-provider/-/juno-messages-provider-0.2.0.tgz#21463ecf9aa541eec1533817ddd6b5d1df154473"
+  integrity sha512-ssu2W2pjsgpgD6wiOnrnxSqPMIkLE+SxBI9GmumMMCyoF44zZLyy1UdfpvHAYHizDqTG7HSKfqdtd3QRY77xEg==
   dependencies:
     "@cloudoperators/juno-ui-components" "*"
 
-"@cloudoperators/juno-ui-components@*", "@cloudoperators/juno-ui-components@^2.17.1":
-  version "2.17.1"
-  resolved "https://registry.yarnpkg.com/@cloudoperators/juno-ui-components/-/juno-ui-components-2.17.1.tgz#c0e8ca5e2d126ff937d6baea30d69bce2a435b4c"
-  integrity sha512-0rHuvKSOu3MW/FG+U5u7lfBte0DYQkYD92za4PyJx2BX062iLIPTOJ7IfncGDiaT/rMWn63luDMePgco681LeA==
+"@cloudoperators/juno-ui-components@*", "@cloudoperators/juno-ui-components@^2.30.0":
+  version "2.30.0"
+  resolved "https://registry.yarnpkg.com/@cloudoperators/juno-ui-components/-/juno-ui-components-2.30.0.tgz#f460175644badc3421e3bb171812e3ec9a3cdb88"
+  integrity sha512-HFarnw/SX1QEUH1vstC5bYWDyLgg/3e/zOa0uFzrdbxR/W5AVyX2h3OlNHYYkDpgWz2p68+UmSHjuFAzviYbhA==
 
 "@colors/colors@1.5.0":
   version "1.5.0"
