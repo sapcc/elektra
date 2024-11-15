@@ -1206,10 +1206,10 @@
   resolved "https://registry.yarnpkg.com/@cloudoperators/juno-ui-components/-/juno-ui-components-2.17.1.tgz#c0e8ca5e2d126ff937d6baea30d69bce2a435b4c"
   integrity sha512-0rHuvKSOu3MW/FG+U5u7lfBte0DYQkYD92za4PyJx2BX062iLIPTOJ7IfncGDiaT/rMWn63luDMePgco681LeA==
 
-"@cloudoperators/juno-ui-components@^2.27.0":
-  version "2.27.0"
-  resolved "https://registry.yarnpkg.com/@cloudoperators/juno-ui-components/-/juno-ui-components-2.27.0.tgz#d22c4249801ca32b89c567521c4fdadec4a32b71"
-  integrity sha512-Shi+N0j/uTETqJ6v6JamgU9OmySbEX3e1h2YkMD9taQUu66nECsSr/08/0fA0Y+ohYykGbSzQVpe6JnazgIcZA==
+"@cloudoperators/juno-ui-components@^2.30.0":
+  version "2.30.0"
+  resolved "https://registry.yarnpkg.com/@cloudoperators/juno-ui-components/-/juno-ui-components-2.30.0.tgz#f460175644badc3421e3bb171812e3ec9a3cdb88"
+  integrity sha512-HFarnw/SX1QEUH1vstC5bYWDyLgg/3e/zOa0uFzrdbxR/W5AVyX2h3OlNHYYkDpgWz2p68+UmSHjuFAzviYbhA==
 
 "@colors/colors@1.5.0":
   version "1.5.0"
