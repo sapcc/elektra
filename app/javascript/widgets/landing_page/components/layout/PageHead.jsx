@@ -16,6 +16,7 @@ const PageHead = () => {
   const selectedDomain = useStore((state) => state.domain)
   const selectedRegion = useStore((state) => state.region)
   const prodMode = useStore((state) => state.prodMode)
+  const hideDomainSwitcher = useStore((state) => state.hideDomainSwitcher)
 
   const handleLoginButtonClick = () => {
     if (selectedRegion && selectedDomain) {
@@ -28,17 +29,27 @@ const PageHead = () => {
   return (
     <PageHeader logo={<SapLogo alt="SAP" />}>
       <Stack className="tw-ml-auto" gap="4" alignment="center">
-        {selectedDomain === "CC3TEST" && (
-          <a
-            href={buildPasswordLoginLink(selectedRegion, selectedDomain, prodMode)}
-            className="tw-text-theme-disabled hover:tw-underline"
-          >
-            Log in with password
-          </a>
-        )}
-        <Button variant="primary" size="small" icon="manageAccounts" title="Log in" onClick={handleLoginButtonClick}>
-          Log in
-        </Button>
+        <>
+          {selectedDomain === "CC3TEST" && (
+            <a
+              href={buildPasswordLoginLink(selectedRegion, selectedDomain, prodMode)}
+              className="tw-text-theme-disabled hover:tw-underline"
+            >
+              Log in with password
+            </a>
+          )}
+          {!hideDomainSwitcher && (
+            <Button
+              variant="primary"
+              size="small"
+              icon="manageAccounts"
+              title="Log in"
+              onClick={handleLoginButtonClick}
+            >
+              Log in
+            </Button>
+          )}
+        </>
       </Stack>
     </PageHeader>
   )

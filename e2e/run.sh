@@ -211,7 +211,6 @@ docker run --rm -it \
   --env CYPRESS_TEST_DOMAIN="$TEST_DOMAIN" \
   --entrypoint $CY_CMD \
   --network=host \
-  keppel.eu-de-1.cloud.sap/ccloud/cypress-client:latest run "${CY_OPTIONS[@]}" --spec "$SPECS_FOLDER" --browser "$CYPRESS_BROWSER"
+  keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/cypress/included:12.17.3 run "${CY_OPTIONS[@]}" --spec "$SPECS_FOLDER" --browser "$CYPRESS_BROWSER"
 # NOTE: for testing and debug inside the container use --entrypoint /bin/bash
-# https://github.wdf.sap.corp/cc/secrets/tree/master/ci/cypress-dashboard/Dockerfile
-# https://main.ci.eu-de-2.cloud.sap/teams/services/pipelines/cypress-dashboard/jobs/build-cypress-client-image/
+# https://hub.docker.com/r/cypress/included/tags?name=12.17.3

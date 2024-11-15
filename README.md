@@ -48,19 +48,54 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
 
 ### MacOS
 
-1.  Install **postgres** database (current version is 12.x).
+1.  Install **postgres** database (current version is 16.4).
+
+    If other versions are running, stop the service:
 
     ```bash
-    brew install postgresql@12
-    brew link postgresql@12
+    brew services stop postgresql@<version>
+    ```
+
+    Install the new version:
+
+    ```bash
+    brew install postgresql@16
+    brew link postgresql@16
+    ```
+
+    Check the postgres version running:
+
+    ```bash
+    postgres --version
+    ```
+
+    Start the postgres service:
+
+    ```bash
+    brew services start postgresql@16
+    ```
+
+    Create a new user and database:
+
+    ```bash
     createuser -s postgres
     ```
 
-2.  Install **ruby** version 2.7.6
+    Check the data directory:
+
+    ```bash
+    ┗➜  psql -U postgres -c 'SHOW data_directory;'
+         data_directory
+    ---------------------------------
+    /opt/homebrew/var/postgresql@16
+    (1 Zeile)
+    ```
+
+2.  Install **ruby** version 3.2.5
 
     ```bash
     brew install ruby-install
-    ruby-install ruby 2.7.6
+    ruby-install ruby 3.2.5
     ```
 
 3.  Install **chruby** to change the current ruby version (optional). This is helpful when having projects with different ruby versions.
@@ -75,17 +110,29 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
     https://formulae.brew.sh/formula/chruby
     ```
 
-4.  [Install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed. (current working version 12.22.6 but higher versions works also fine)
+4.  [Install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed. (current working version 20.15.1 but higher versions works also fine)
 
     ```bash
-    brew install nodejs@12
-    brew link nodejs@12
+    brew install nodejs@20
+    brew link nodejs@20
     ```
 
-5.  [Install](https://yarnpkg.com/en/docs/install) **yarn** (actual version is 1.19.2 but higher works also fine)
+    Check the node version running:
 
     ```bash
-    brew install yarn@1.19.2
+    node --version
+    ```
+
+5.  [Install](https://yarnpkg.com/en/docs/install) **yarn** (actual version is 1.22.22 but higher works also fine)
+
+    ```bash
+    brew install yarn@1.22.22
+    ```
+
+    Check the yarn version running:
+
+    ```bash
+    yarn --version
     ```
 
 6.  Clone this repository to your machine.
@@ -98,7 +145,7 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
     Cd into elektra/ directory and run:
 
     ```bash
-    gem install bundler -v 2.3.13 (check for the actual version)
+    gem install bundler -v 2.3.20 (check for the actual version)
     ```
 
 8.  Compile and install elektra gems

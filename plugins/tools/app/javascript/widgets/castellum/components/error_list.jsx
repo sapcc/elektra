@@ -23,7 +23,7 @@ const sortKeyForTimestamp = (props) => {
 const columnSets = {
   "resource-scrape-errors": ["project", "asset_type", "timestamp"],
   "asset-scrape-errors": ["project", "asset", "timestamp"],
-  "asset-resize-errors": ["project", "asset", "size", "timestamp"],
+  "asset-resize-errors": ["project", "asset", "size", "timestamp", "clear"],
 }
 const columnDefs = [
   {
@@ -56,14 +56,27 @@ const columnDefs = [
     sortStrategy: "numeric",
     sortKey: sortKeyForTimestamp,
   },
+  {
+    key: "clear",
+    label: "Action",
+  },
 ]
 
 export default class Loader extends React.Component {
+  constructor(props) {
+    super(props)
+    this.onAction = this.onAction.bind(this)
+  }
+
   componentDidMount() {
     this.props.fetchAllErrorsAsNeeded()
   }
   componentDidUpdate() {
     this.props.fetchAllErrorsAsNeeded()
+  }
+
+  onAction (error) {
+    this.props.clearErrorIfNeeded(error)
   }
 
   render() {
@@ -118,7 +131,7 @@ export default class Loader extends React.Component {
         pageSize={6}
       >
         {data.map((error, idx) => (
-          <ErrorRow key={`error${idx}`} error={error} />
+          <ErrorRow key={`error${idx}`} error={error} action={{label: "Mark as resolved", fn: this.onAction}}/>
         ))}
       </DataTable>
     )

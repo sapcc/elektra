@@ -1,19 +1,13 @@
 describe("project landing page", () => {
   beforeEach(() => {
-    cy.elektraLogin(
-      Cypress.env("TEST_DOMAIN"),
-      Cypress.env("TEST_USER"),
-      Cypress.env("TEST_PASSWORD")
-    )
+    cy.elektraLogin(Cypress.env("TEST_DOMAIN"), Cypress.env("TEST_USER"), Cypress.env("TEST_PASSWORD"))
   })
 
   it("open project landing page and edit project description", () => {
     cy.visit(`/${Cypress.env("TEST_DOMAIN")}/admin/identity/project/home`)
     cy.get("div.dropdown.header-action").click()
     cy.get(
-      `a[href*="${Cypress.env(
-        "TEST_DOMAIN"
-      )}/admin/masterdata-cockpit/project/edit_project?load_project_root=true"]`
+      `a[href*="${Cypress.env("TEST_DOMAIN")}/admin/masterdata-cockpit/project/edit_project?load_project_root=true"]`
     ).click()
     cy.contains("h4", "Edit Project")
     // disabled that test because it causes problems with friendlyID
@@ -43,8 +37,7 @@ describe("project landing page", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     // check not in one string because it can be different order
-    cy.contains("SAP Converged Cloud")
-    cy.contains("button", "Log in")
+    cy.contains("button", "Enter CC3TEST")
   })
 
   /*

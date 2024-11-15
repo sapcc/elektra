@@ -1,2 +1,1 @@
-#### Useful Links
-* [Image Documentation](#{@sap_docu_url}docs/image)
+- [Image Documentation](#{@sap_docu_url}docs/image)
