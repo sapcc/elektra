@@ -1,2 +1,1 @@
-#### Useful Links
-* [Automation Documentation](#{@sap_docu_url}docs/automation/details.html)
+- [Automation Documentation](#{@sap_docu_url}docs/automation/details.html)

@@ -36,7 +36,7 @@
     - if current_user and current_user.admin?
       %h4.heading-whitespace Domain Administration
 
-      - if plugin_available?('resources') || plugin_available?('reports') || plugin_available?('masterdata_cockpit')
+      - if (plugin_available?('resources') && current_user.is_allowed?('resources:domain:access')) || (plugin_available?('reports') && current_user.is_allowed?('reports:cost_domain')) || (plugin_available?('masterdata_cockpit') && current_user.is_allowed?('masterdata_cockpit:masterdata_get'))    
         %h5
           %i.monitoring-icon
           Resources & Masterdata
@@ -54,7 +54,7 @@
             %li
               = link_to "Cost Report", plugin('reports').domain_cost_index_path
 
-      - if plugin_available?('inquiry') && current_user.is_allowed?('inquiry:inquiry_all_list')
+      - if plugin_available?('inquiry') && current_user.is_allowed?("inquiry:manage_requests")
         %h5
           %i.inquiry-icon
           Domain Admin Requests

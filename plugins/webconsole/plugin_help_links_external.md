@@ -1,0 +1,2 @@
+- [OS CLI help](https://docs.openstack.org/python-openstackclient/latest/cli/command-list.html)
+- [OS Swift CLI](https://docs.openstack.org/ocata/cli-reference/swift.html)
