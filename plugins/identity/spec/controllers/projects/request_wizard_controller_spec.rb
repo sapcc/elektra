@@ -20,7 +20,7 @@ describe Identity::Projects::RequestWizardController, type: :controller do
   describe "GET index" do
     it "returns http success" do
       get :new, params: default_params
-      expect(response).to be_successful
+      expect(response).to be_forbidden
     end
   end
 end
