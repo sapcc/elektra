@@ -7,6 +7,11 @@ module Identity
       def new
         @project = services.identity.new_project
         @project.cost_control = {}
+        # this is only set if the user is in the project context and creates a new sub project
+        if params[:parent_id] && params[:parent_name]
+          @project.parent_id = params[:parent_id]
+          @project.parent_name = params[:parent_name]
+        end
         return unless @inquiry
 
         @project.attributes = @inquiry.payload
@@ -17,10 +22,9 @@ module Identity
           params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
         cost_params = project_params.delete(:cost_control)
 
-        # user is not allowed to create a project (maybe)
-        # so use admin identity for that!
         @project = services.identity.new_project
         @project.attributes = project_params
+        @project.parent_id = @scoped_project_id if @scoped_project_id
 
         @project.enabled = @project.enabled == 'true'
 
@@ -51,7 +55,7 @@ module Identity
             )
             render 'identity/domains/create_wizard/create', formats: :js
           else
-            # there is no requiry -> current user is the creator of this
+            # there is no inquiry -> current user is the creator of this
             # project. give current user all needed roles
             assign_needed_roles(@project.id, current_user.id)
 
@@ -88,6 +92,8 @@ module Identity
 
       def assign_needed_roles(project_id, user_id)
         %w[admin member network_admin resource_admin].each do |role_name|
+          # everyone can create projects but not everyone can add the admin roles to the project
+          # so we need to use the service user to assign the basic admin roles
           service_user.identity.grant_project_user_role_by_role_name(
             project_id,
             user_id,

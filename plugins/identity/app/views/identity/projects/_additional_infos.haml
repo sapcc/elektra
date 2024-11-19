@@ -33,16 +33,15 @@
           %td
             = javascript_include_tag :identity_prodel_widget, data: {base_url: plugin('identity').root_path}
 
-- if current_user.is_allowed?('identity:project_request')
-  %h4.action-heading
-    Sub Projects
-    -# Todo - This is not working because user is always project scoped and can't do domain based actions
-    - if current_user.is_allowed?('identity:project_create',{project: {domain_id: @scoped_domain_id}})
-      = link_to plugin('identity').domains_create_project_path(), class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
-        %i.fa.fa-plus-square-o
-    - else
-      = link_to plugin('identity').projects_request_project_path(), class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
-        %i.fa.fa-plus-square-o
+
+%h4.action-heading
+  Sub Projects
+  - if current_user.is_allowed?('identity:project_create',{project: {domain_id: @scoped_domain_id}})
+    = link_to plugin('identity').domains_create_project_path(parent_id:@project_id, parent_name:@project.name), class: "header-action" , title: "Create new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
+      %i.fa.fa-plus-square-o
+  - else
+    = link_to plugin('identity').projects_request_project_path(), class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
+      %i.fa.fa-plus-square-o
 
 %div{data: {react_auth_projects: true, root: @scoped_project_id, title: 'false' } }
 
