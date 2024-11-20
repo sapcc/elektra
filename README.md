@@ -174,7 +174,9 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
     - Set the MONSOON*OPENSTACK_AUTH_API*\* values to your devstack/openstack configuration settings
     - Enter the database configuration parameters
 
-12. Start the Elektra dashboard application
+12. Copy the **.npmrc.sample** file to **.npmrc** and replace GITHUB_TOKEN with you private access token (PAT)
+
+13. Start the Elektra dashboard application
     a. Run rails puma server
 
     ```bash
@@ -453,5 +455,5 @@ for details and the process for submitting pull requests to us.
 We use esbuild to build javascript bundles. In `/app/javascript/essentials.js` (which is referenced in the layout files) we import `/app/javascript/tailwind.css` file. This file also imports styles from _juno-ui-components_ to use the juno color variables.
 
 ```sass
-@import "https://assets.juno.qa-de-1.cloud.sap/libs/juno-ui-components@latest/build/styles.css";
+@import "@cloudoperators/juno-ui-components/build/styles.css";
 ```
