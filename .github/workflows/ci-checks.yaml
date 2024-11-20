@@ -94,11 +94,6 @@ jobs:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
           key: yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Create .npmrc (if needed)
-        run: |
-          echo "@sapcc:registry=https://npm.pkg.github.com" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
-
       - name: Yarn install
         id: test-js
         run: |
