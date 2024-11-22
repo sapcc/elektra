@@ -40,6 +40,10 @@ class DomainConfig
     @domain_config.fetch('disabled_features', []).include?(name.to_s)
   end
 
+  def terms_of_use_name
+    @domain_config.fetch("terms_of_use_name", "actual_terms")
+  end
+
   def floating_ip_networks
     # fetch floating_ip_networks from config
     # and replace #{domain_name} in each network name with the scoped domain name
