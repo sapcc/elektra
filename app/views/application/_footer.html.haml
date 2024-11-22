@@ -26,12 +26,6 @@
             %li
               %a(href="#{sap_url_for('documentation')}" target='ccdocs') Documentation
 
-      .col-sm-4
-        - if $sentry_public_dsn
-          - unless @domain_config.feature_hidden?("internal_help_links")
-            %span{id: "wish-text"} I wish this page
-            %input{type: 'text', id: 'wish-value', autocomplete: 'off'}
-
       .col-sm-2
         - if Rails.env.development?
           = render partial: 'layouts/dev_tools'
