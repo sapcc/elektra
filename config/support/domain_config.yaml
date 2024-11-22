@@ -8,6 +8,7 @@ domains:
       - support
       - domain_switcher
       - internal_help_links
+      - terms_of_use
     disabled_plugins:
       # following plugins name should be the same as the plugin name in the plugins directory
       - test-plugin
@@ -18,4 +19,3 @@ domains:
       - "test_02"
       - "test_01"
     dns_c_subdomain: false
-

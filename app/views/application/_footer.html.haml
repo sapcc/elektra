@@ -20,16 +20,17 @@
     .row
       .col-sm-3
         %ul.list-unstyled
-          %li= link_to "Terms of Use", main_app.terms_of_use_path, data:{modal: true} unless @scoped_domain_id.blank?
-          - unless @domain_config.feature_hidden?("documentation")
+          - unless  @domain_config.feature_hidden?('terms_of_use')
+            %li= link_to "Terms of Use", main_app.terms_of_use_path, data:{modal: true} unless @scoped_domain_id.blank?
+          - unless  @domain_config.feature_hidden?('documentation')
             %li
               %a(href="#{sap_url_for('documentation')}" target='ccdocs') Documentation
 
-
       .col-sm-4
         - if $sentry_public_dsn
-          %span{id: "wish-text"} I wish this page
-          %input{type: 'text', id: 'wish-value', autocomplete: 'off'}
+          - unless @domain_config.feature_hidden?("internal_help_links")
+            %span{id: "wish-text"} I wish this page
+            %input{type: 'text', id: 'wish-value', autocomplete: 'off'}
 
       .col-sm-2
         - if Rails.env.development?

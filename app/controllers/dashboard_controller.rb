@@ -137,7 +137,9 @@ class DashboardController < ::ScopeController
 
   def check_terms_of_use
     @orginal_url = request.original_url
-    return if tou_accepted?
+    if tou_accepted? || @domain_config.feature_hidden?('terms_of_use')
+      return
+    end 
 
     render action: :accept_terms_of_use
   end
