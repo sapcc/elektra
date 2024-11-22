@@ -157,7 +157,7 @@ class DashboardController < ::ScopeController
         .find_or_create_by(uid: current_user.id)
         .domain_profiles
         .create!(
-          tou_version: Settings.actual_terms.version,
+          tou_version: Settings.send(@domain_config.terms_of_use_name).version,
           domain_id: current_user.user_domain_id
         )
 
@@ -181,7 +181,7 @@ class DashboardController < ::ScopeController
         UserProfile.tou(
           current_user.id,
           current_user.user_domain_id,
-          Settings.actual_terms.version
+          Settings.send(@domain_config.terms_of_use_name).version
         )
     end
     render action: :terms_of_use
@@ -277,7 +277,7 @@ class DashboardController < ::ScopeController
       session[:tou_accepted] = UserProfile.tou_accepted?(
         current_user.id,
         current_user.user_domain_id,
-        Settings.actual_terms.version
+        Settings.send(@domain_config.terms_of_use_name).version
       )
     end
 
