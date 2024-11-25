@@ -44,6 +44,23 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
 
 # Installing and Running Elektra
 
+## Creating a GITHUB_TOKEN for Packages like `@sapcc/limes-ui`
+
+To use packages like `@sapcc/limes-ui`, a **GITHUB_TOKEN** is required. The following steps are necessary:
+
+1. **Create a Personal Access Token (PAT)**
+   1.1. Navigate to **Settings** > **Developer Settings** in your profile.  
+   1.2. Under **Personal access tokens**, select **Tokens (classic)** and generate a new token.  
+   1.3. Assign the permission **read:packages** to allow access to private packages.
+
+2. **Configure the `.npmrc` File**
+   2.1. Copy the `.npmrc.sample` file to `.npmrc`.  
+   2.2. Replace `$GITHUB_TOKEN` with the generated token in the `.npmrc` file.  
+   Alternatively, you can export the token in the terminal: `export GITHUB_TOKEN=your_token_here`
+3. Store the Token in the Concourse Pipeline  
+   3.1. Navigate to vault/concourse-secrets/global/elektra/.
+   3.2. Replace the token content with the generated token.
+
 ## Steps to setup a local development environemnt
 
 ### MacOS
@@ -174,7 +191,7 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
     - Set the MONSOON*OPENSTACK_AUTH_API*\* values to your devstack/openstack configuration settings
     - Enter the database configuration parameters
 
-12. Copy the **.npmrc.sample** file to **.npmrc** and replace GITHUB_TOKEN with you private access token (PAT)
+12. Copy the **.npmrc.sample** file to **.npmrc** and replace `$GITHUB_TOKEN` with you private access token (PAT)
 
 13. Start the Elektra dashboard application
     a. Run rails puma server
