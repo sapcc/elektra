@@ -115,6 +115,11 @@ export default class CastellumConfigurationView extends React.Component {
                 free space.
               </li>
             )}
+            {config.size_constraints.minimum_free_is_critical && (
+              <li>
+                ...resize without delay.
+              </li>
+            )}
           </ul>
         )}
         <p>
