@@ -1,4 +1,0 @@
-= Tools
-
-This plugin implements different tools that do not necessarily interact directly with the
-backend services, but represent Elektra-Added Value to make the lives of support staff easier.

@@ -1,9 +1,9 @@
 #### What is Audit Log?
 
-Audit Log provides an audit trail or change log for Converged Cloud services.
+The Audit Log feature offers a comprehensive audit trail and change log for Converged Cloud services.
 
-It records audit-relevant activities and stores them in a project-specific journal. In the journal, each recorded activity is represented by an audit event. The event describes the performed activity, the outcome and lastly the resources that are affected.
+It captures audit-relevant activities and stores them in a project-specific journal. Within this journal, each recorded activity is represented by an audit event. These events detail the performed action, its outcome, and the affected resources.
 
-This service is not just for auditors! Use it to conduct a root-cause analysis when you run into configuration issues (e.g. downtimes). With the information of the audit events, it is much easier to separate human error from platform malfunctions.
+This service isn't exclusively for auditors. It's a valuable tool for conducting root-cause analysis when encountering configuration issues, such as downtimes. The information provided by audit events significantly simplifies the process of distinguishing between human errors and platform malfunctions.
 
-For now only Keystone events are recorded, additional sources will be added one by one.
+Currently, the system only records Keystone events. However, additional sources will be incorporated incrementally in the future.

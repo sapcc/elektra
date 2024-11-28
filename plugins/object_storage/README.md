@@ -1,6 +1,6 @@
-# ObjectStorage
+# ObjectStorage Plugin
 
-Short description and motivation.
+This README serves as a central location for plugin-specific information, including setup instructions, configurations, usage examples, or any other relevant details specific to this plugin.
 
 ## Usage
 
@@ -29,7 +29,3 @@ $ gem install object_storage
 ## Contributing
 
 Contribution directions go here.
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
