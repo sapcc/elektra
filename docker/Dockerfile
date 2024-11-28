@@ -29,6 +29,7 @@ RUN apk upgrade --no-cache --no-progress \
 
 ################################### BUILDER ################################
 FROM base AS builder 
+
 RUN echo "Rebuild image 1"
 # Note: we need to install git here because bundle needs git in the next step
 RUN apk --no-cache add git curl nodejs yarn shared-mime-info
@@ -81,7 +82,18 @@ RUN bundle config set --local without 'development integration_tests'
 RUN bundle install --jobs=$(nproc)
 
 # add elektra sources into image
+ARG NPM_GITHUB_TOKEN
+# Set the GITHUB_TOKEN environment variable
+ENV GITHUB_TOKEN=$NPM_GITHUB_TOKEN
 ADD . $APP_PATH
+
+# Copy .npmrc.sample file into the container
+ADD .npmrc.sample .npmrc
+# Replace the $GITHUB_TOKEN placeholder with the actual token value
+# this is needed to install npm packages from github
+# the sed is needed because Docker doesn’t expand environment variables in .npmrc files directly, 
+# so writing $GITHUB_TOKEN in the .npmrc file won’t automatically replace it with the environment variable at build time.
+RUN sed -i "s|\$GITHUB_TOKEN|$GITHUB_TOKEN|g" .npmrc
 
 # transpile javascripts
 #RUN yarn install --no-progress && yarn build --production && rm -rf node_modules
