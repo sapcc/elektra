@@ -6,4 +6,3 @@
   "domainID": "#{@scoped_domain_id}",                                  |
   "getTokenFuncName": "_getCurrentToken",                              |
   "canEdit": "#{current_user.is_allowed?('resources:project:edit', {selected: {domain_id: @scoped_domain_id, project_id: @scoped_project_id} })}" } }
-  
