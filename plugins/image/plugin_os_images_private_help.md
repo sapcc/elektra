@@ -2,6 +2,6 @@
 
 ##### Creating new private images
 
-You can bring your own images to deploy instances. We store the data in Swift.
+You have the option to use your own custom images for deploying instances. We store these images in our Swift object storage system.
 
-Therefore you have to **make sure you have object storage enabled** for this project.
+To utilize this feature, please ensure that object storage is activated for your project. This is a prerequisite for storing and accessing your custom images.
