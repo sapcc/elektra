@@ -1,4 +1,4 @@
-name: Check Pull Request Title
+name: Pull Request Lint Check
 
 on:
   pull_request:
