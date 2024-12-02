@@ -1,4 +1,4 @@
-name: CI Check Title
+name: Check Pull request Title
 
 on:
   pull_request:
@@ -43,10 +43,10 @@ jobs:
           wip: true
           # Configure which types are allowed (newline-delimited).
           # Default: https://github.com/commitizen/conventional-commit-types
-          types: | 
-            ${{ env.TYPES }} 
-          scopes: | 
-            ${{ env.SCOPES }} 
+          types: |
+            ${{ env.TYPES }}
+          scopes: |
+            ${{ env.SCOPES }}
 
           # Configure that a scope must always be provided.
           requireScope: true

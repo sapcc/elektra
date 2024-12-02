@@ -4,7 +4,7 @@
 #       because act will use the proxy and the tests will fail
 # act -j test --env-file dummy.env --rm
 
-name: CI Check
+name: Run checks
 
 on:
   pull_request:
