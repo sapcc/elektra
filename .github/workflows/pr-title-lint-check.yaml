@@ -1,4 +1,4 @@
-name: Check Pull request Title
+name: Check Pull Request Title
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   title-lint:
-    name: Validate PR title
+    name: Validate title
     runs-on: ubuntu-latest
 
     steps:
