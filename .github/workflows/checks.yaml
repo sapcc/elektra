@@ -4,7 +4,7 @@
 #       because act will use the proxy and the tests will fail
 # act -j test --env-file dummy.env --rm
 
-name: CI Check
+name: Checks
 
 on:
   pull_request:
@@ -15,6 +15,7 @@ on:
 
 jobs:
   test:
+    name: Run tests
     runs-on: ubuntu-latest
     container:
       image: ruby:3.2
