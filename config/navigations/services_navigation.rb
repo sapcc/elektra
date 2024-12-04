@@ -422,7 +422,7 @@ SimpleNavigation::Configuration.run do |navigation|
                  },
                  if:
                    lambda {
-                     (services.available?(:resources) && plugin_available?(:resources) && current_user.is_allowed?('resources:project:edit')) ||
+                     (services.available?(:resources) && plugin_available?(:resources)) ||
                        (services.available?(:masterdata_cockpit) && plugin_available?(:masterdata_cockpit)) &&
                          plugin_available?(:resources) ||
                        plugin_available?(:metrics) ||
@@ -434,7 +434,7 @@ SimpleNavigation::Configuration.run do |navigation|
                           -> { plugin('resources').v2_project_path },
                           if: lambda {
                             # current_region.start_with?("qa-") &&
-                            plugin_available?(:resources) && current_user.is_allowed?('resources:project:edit')
+                            plugin_available?(:resources)
                           },
                           highlights_on:
                             proc { params[:controller][%r{resources/v2}] }
