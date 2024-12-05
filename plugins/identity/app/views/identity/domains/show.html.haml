@@ -89,15 +89,6 @@
             %li
               = link_to "User Management", plugin('identity').domains_users_path
 
-        -  if current_user.is_allowed?('identity:project_create',{project: {domain_id: @scoped_domain_id}})
-          %h5
-            %i.project-icon
-            Projects
-
-          %ul.plain-list
-            %li
-              = link_to 'Create a New Project', plugin('identity').domains_create_project_path, data: {modal: true}
-
     - if plugin_available?('lookup') && current_user.is_allowed?('lookup:reverse_lookup_list', domain_id: @scoped_domain_id)
       %h5
         %i.lookup-icon
@@ -118,6 +109,15 @@
             My Requests
             = " (#{::Inquiry::Inquiry.requestor_requests_count(@scoped_domain_id, current_user.id)})"
 
+
+    -  if current_user.is_allowed?('identity:project_create',{project: {domain_id: @scoped_domain_id}})
+      %h5
+        %i.project-icon
+        Projects
+
+      %ul.plain-list
+        %li
+          = link_to 'Create a New Project', plugin('identity').domains_create_project_path, data: {modal: true}
 
     - if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id) && plugin_available?(:identity)
       %h5
