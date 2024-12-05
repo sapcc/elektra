@@ -1,3 +1,4 @@
+- domain_config = DomainConfig.new(@domain_name)
 = inside_layout 'login' do
   .container
 
@@ -31,18 +32,19 @@
           .bs-callout.bs-callout-info.bs-callout-emphasize
             Log in with your new global SAP Password
         - else
-          .bs-callout.bs-callout-info.bs-callout-emphasize
-            %h4 Don't have access yet?
-            %p
-              Request the profile
-              %i= "\"CC #{@domain_name.blank? ? "<domain-name>" : @domain_name.upcase} Openstack Domain Access\""
-              in Cloud Access Manager (CAM)
-            %p
-              - if @domain_name.blank?
-                = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request", target: '_blank' do
-                  %i.fa.fa-external-link.fa-fw
-                  Request access in CAM
-              - else
-                = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request&profile=CC%20#{@domain_name.upcase}%20Openstack%20Domain%20Access", target: '_blank' do
-                  %i.fa.fa-external-link.fa-fw
-                  Request access in CAM
+          - unless domain_config.feature_hidden?('internal_help_links')
+            .bs-callout.bs-callout-info.bs-callout-emphasize
+              %h4 Don't have access yet?
+              %p
+                Request the profile
+                %i= "\"CC #{@domain_name.blank? ? "<domain-name>" : @domain_name.upcase} Openstack Domain Access\""
+                in Cloud Access Manager (CAM)
+              %p
+                - if @domain_name.blank?
+                  = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request", target: '_blank' do
+                    %i.fa.fa-external-link.fa-fw
+                    Request access in CAM
+                - else
+                  = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request&profile=CC%20#{@domain_name.upcase}%20Openstack%20Domain%20Access", target: '_blank' do
+                    %i.fa.fa-external-link.fa-fw
+                    Request access in CAM
