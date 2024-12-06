@@ -1,8 +1,9 @@
-# To build the image loacylly run from repository root: docker build -t elektra-prod -f docker/Dockerfile .
+# To build the image locally run from repository root: docker build -t elektra-prod --build-arg "NPM_GITHUB_TOKEN=XXX" --progress=plain -f docker/Dockerfile .
+# to vulnerability scan the image run: trivy image elektra-prod --scanners vuln
 # Note: in case you get an error that the image cannot be pulled logon to keppel
 # You can also pull the image manually: docker pull keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.5-alpine3.20
 # check for latest version https://hub.docker.com/_/ruby/tags
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.5-alpine3.20 AS base 
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.6-alpine3.20 AS base 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
 ENV APP_PATH=/home/app
