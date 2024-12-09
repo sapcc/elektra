@@ -1,11 +1,11 @@
-import { Tooltip } from "lib/components/Overlay"
 import { Link } from "react-router-dom"
 import React from "react"
 
-import { confirm, showErrorModal } from "lib/dialogs"
+import { confirm } from "lib/dialogs"
 import { addSuccess } from "lib/flashes"
 
 import AccountDeleter from "../../containers/accounts/deleter"
+import { apiStateIsValid } from "../utils"
 
 export default class AccountRow extends React.Component {
   state = {
@@ -17,12 +17,8 @@ export default class AccountRow extends React.Component {
     if (this.state.isDeleting) {
       return
     }
-    const { name: accountName, in_maintenance: inMaintenance } =
+    const { name: accountName } =
       this.props.account
-    if (!inMaintenance) {
-      showErrorModal("The account must be set in maintenance first.")
-      return
-    }
 
     confirm(
       `Really delete the account "${accountName}" and all images in it?`
@@ -41,13 +37,14 @@ export default class AccountRow extends React.Component {
     const {
       name: accountName,
       auth_tenant_id: projectID,
-      in_maintenance: inMaintenance,
+      state,
       metadata,
       replication,
       platform_filter: platformFilter,
     } = this.props.account
     const isEditable = (metadata || {}).readonly_in_elektra != "true"
     const containerName = `keppel-${accountName}`
+    const validApiState = apiStateIsValid(state)
     const swiftContainerURL = `/_/${projectID}/object-storage/containers/${containerName}/list`
 
     let platformFilterDisplay = ""
@@ -74,15 +71,12 @@ export default class AccountRow extends React.Component {
           handleDoneDeleting={() => this.handleDoneDeleting()}
         />
       )
-    } else if (inMaintenance) {
-      const infoText = replication
-        ? "No new images will be replicated while the account is in maintenance. Replicated images can still be pulled."
-        : "No new images may be pushed while the account is in maintenance. Existing images can still be pulled."
-
+    } else if (!validApiState) {
       statusDisplay = (
-        <Tooltip content={infoText} placement="top">
-          <div className="text-warning">In maintenance</div>
-        </Tooltip>
+          <div className="text-warning">
+            <span className="spinner" /> 
+            <span>Deleting...</span>
+          </div>
       )
     }
 
@@ -127,6 +121,7 @@ export default class AccountRow extends React.Component {
               className="btn btn-default btn-sm dropdown-toggle"
               type="button"
               data-toggle="dropdown"
+              disabled={!validApiState}
               aria-expanded={true}
             >
               <span className="fa fa-cog"></span>
@@ -169,16 +164,12 @@ export default class AccountRow extends React.Component {
                       </Link>
                     </li>
                   )}
-                  <li>
-                    <Link to={`/accounts/${accountName}/toggle_maintenance`}>
-                      {inMaintenance ? "End maintenance" : "Set in maintenance"}
-                    </Link>
-                  </li>
+                  {validApiState && 
                   <li>
                     <a href="#" onClick={(e) => this.handleDelete(e)}>
                       Delete
                     </a>
-                  </li>
+                  </li>}
                 </>
               )}
             </ul>

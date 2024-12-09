@@ -1,6 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Modal, Button } from "react-bootstrap"
 import React from "react"
+import { apiStateIsValid } from "../utils"
+
 export default class AccountSubleaseTokenModal extends React.Component {
   state = {
     show: true,
@@ -43,6 +45,9 @@ export default class AccountSubleaseTokenModal extends React.Component {
     const { account, isAdmin } = this.props
     if (!account) {
       return <p className="alert alert-error">No such account.</p>
+    }
+    if(!apiStateIsValid(account?.state)) {
+      return <p className="alert alert-error">Account is in deletion state.</p>
     }
     if (!isAdmin) {
       return (

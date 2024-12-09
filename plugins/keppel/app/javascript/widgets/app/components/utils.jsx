@@ -63,3 +63,10 @@ export const makeSelectBox = ({ options, value, isEditable, onChange }) => {
 
 const trimEllipsis = (str) =>
   str.substr(-3) === "..." ? str.substr(0, str.length - 3) : str
+
+export const apiStateIsValid = (state) => {
+  if (state == 'deleting') {
+    return false
+  }
+  return true
+}
