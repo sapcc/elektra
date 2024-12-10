@@ -13,8 +13,7 @@ export default connect(
   (dispatch, props) => {
     const { accountName } = props;
     return {
-      deleteAccount:  ()                 => dispatch(deleteAccount(accountName)),
-      deleteManifest: (repoName, digest) => dispatch(deleteManifest(accountName, repoName, digest, null)),
+      deleteAccount: () => dispatch(deleteAccount(accountName)),
     };
   },
 )(AccountDeleter);

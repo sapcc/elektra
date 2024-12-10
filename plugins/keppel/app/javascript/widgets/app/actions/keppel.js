@@ -1,3 +1,4 @@
+import React from "react"
 import { ajaxHelper } from "lib/ajax_helper"
 import { confirm } from "lib/dialogs"
 import { addError } from "lib/flashes"
