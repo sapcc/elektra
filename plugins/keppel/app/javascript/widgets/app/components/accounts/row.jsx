@@ -17,12 +17,12 @@ export default class AccountRow extends React.Component {
     if (this.state.isDeleting) {
       return
     }
-    const { name: accountName } =
-      this.props.account
+    const { name: accountName } = this.props.account
 
     confirm(
       `Really delete the account "${accountName}" and all images in it?`
     ).then(() => this.setState({ ...this.state, isDeleting: true }))
+    .catch(() => {})
     //This causes <AccountDeleter/> to be mounted to perform the actual deletion.
   }
 
@@ -68,7 +68,7 @@ export default class AccountRow extends React.Component {
       statusDisplay = (
         <AccountDeleter
           accountName={accountName}
-          handleDoneDeleting={() => this.handleDoneDeleting()}
+          handleDoneDeleting={(status) => this.handleDoneDeleting(status)}
         />
       )
     } else if (!validApiState) {
