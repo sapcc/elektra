@@ -6,6 +6,8 @@ module MasterdataCockpit
     before_action :prepare_params, only: %i[create update]
     before_action :inheritance
 
+    helper :all
+
     authorization_context 'masterdata_cockpit'
     authorization_required
 

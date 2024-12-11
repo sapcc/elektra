@@ -6,7 +6,7 @@
     = render_errors(@project_masterdata.errors)
 
 .row
-  .col-sm-8
+  .col-sm-9
     -# project data, only vissible in masterdata view
     -# do not show the project infos in modal dialog (used in project wizard)
     - unless modal?
@@ -34,6 +34,6 @@
               = link_to 'Edit', plugin('masterdata_cockpit').project_masterdata_edit_path(), id: 'edit_masterdata_btn', data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
       #project_masterdata_details
         = render partial: 'masterdata_details'
-  .col-md-4
+  .col-md-3
     #project_masterdata_additional_infos
       = render partial: 'masterdata_additional_infos'

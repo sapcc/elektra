@@ -100,7 +100,7 @@
       Hotline/Ticket Queue/Other
     .col-sm-8.details-value
       - unless @project_masterdata.additional_information
-        \-
+        not set
       = @project_masterdata.additional_information
 .masterdata-group
   %h5.masterdata-heading
@@ -126,13 +126,16 @@
         = icon('info-circle')
     .col-sm-2.details-value
       - unless @project_masterdata.responsible_primary_contact_id
-        \-
+        not set
       = @project_masterdata.responsible_primary_contact_id
-    - if @project_masterdata.responsible_primary_contact_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
+    .col-sm-5.details-value
+      - if @project_masterdata.responsible_primary_contact_email
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_primary_contact_email
+      - else
+        not set 
+    .col-sm-1.details-value 
+      = render_propagation_status(@project_masterdata.responsible_primary_propagation_type)
   .row
     .col-sm-4.details-label
       Run Team (Operator)
@@ -146,13 +149,16 @@
         = icon('info-circle')
     .col-sm-2.details-value
       - unless @project_masterdata.responsible_operator_id
-        \-
+        not set
       = @project_masterdata.responsible_operator_id
-    - if @project_masterdata.responsible_operator_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
+    .col-sm-5.details-value
+      - if @project_masterdata.responsible_operator_email
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_operator_email
+      - else
+        not set 
+    .col-sm-1.details-value 
+      = render_propagation_status(@project_masterdata.responsible_operator_propagation_type)
   .row
     .col-sm-4.details-label
       Inventory Role
@@ -166,13 +172,16 @@
         = icon('info-circle')
     .col-sm-2.details-value
       - unless @project_masterdata.responsible_inventory_role_id
-        \-
+        not set
       = @project_masterdata.responsible_inventory_role_id
-    - if @project_masterdata.responsible_inventory_role_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
+    .col-sm-5.details-value
+      - if @project_masterdata.responsible_inventory_role_email
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_inventory_role_email
+      - else
+        not set
+    .col-sm-1.details-value 
+      = render_propagation_status(@project_masterdata.responsible_inventory_role_propagation_type)
   .row
     .col-sm-4.details-label
       Infrastructure Coordinator
@@ -186,13 +195,16 @@
         = icon('info-circle')
     .col-sm-2.details-value
       - unless @project_masterdata.responsible_infrastructure_coordinator_id
-        \-
+        not set
       = @project_masterdata.responsible_infrastructure_coordinator_id
-    - if @project_masterdata.responsible_infrastructure_coordinator_email
-      .col-sm-1.details-label
-      .col-sm-4.details-value
+    .col-sm-5.details-value
+      - if @project_masterdata.responsible_infrastructure_coordinator_email
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_infrastructure_coordinator_email
+      - else
+        not set 
+    .col-sm-1.details-value 
+      = render_propagation_status(@project_masterdata.responsible_infrastructure_coordinator_propagation_type)
 .masterdata-group
   %h5.masterdata-heading
     Cost Info
