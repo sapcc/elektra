@@ -6,7 +6,7 @@ import React from "react"
 
 import GCPoliciesEditRow from "./row"
 import { validatePolicy } from "./utils"
-import { apiStateIsValid } from "../utils"
+import { apiStateIsDeleting } from "../utils"
 
 export default class GCPoliciesEditModal extends React.Component {
   state = {
@@ -212,7 +212,7 @@ export default class GCPoliciesEditModal extends React.Component {
 
   render() {
     const { account, isAdmin } = this.props
-    if (!account || !apiStateIsValid(account?.state)) {
+    if (!account || apiStateIsDeleting(account?.state)) {
       return
     }
     const isEditable =

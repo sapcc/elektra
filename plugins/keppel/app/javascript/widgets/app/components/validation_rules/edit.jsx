@@ -1,7 +1,7 @@
 import { Modal, Button } from "react-bootstrap"
 import { Form } from "lib/elektra-form"
 import React from "react"
-import { apiStateIsValid } from "../utils"
+import { apiStateIsDeleting } from "../utils"
 
 export default class RBACPoliciesEditModal extends React.Component {
   state = {
@@ -35,7 +35,7 @@ export default class RBACPoliciesEditModal extends React.Component {
 
   render() {
     const { account, isAdmin } = this.props
-    if (!account || !apiStateIsValid(account?.state)) {
+    if (!account || apiStateIsDeleting(account?.state)) {
       return null
     }
     const isEditable =

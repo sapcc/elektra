@@ -5,7 +5,7 @@ import { confirm } from "lib/dialogs"
 import { addSuccess } from "lib/flashes"
 
 import AccountDeleter from "../../containers/accounts/deleter"
-import { apiStateIsValid } from "../utils"
+import { apiStateIsDeleting } from "../utils"
 
 export default class AccountRow extends React.Component {
   state = {
@@ -44,7 +44,7 @@ export default class AccountRow extends React.Component {
     } = this.props.account
     const isEditable = (metadata || {}).readonly_in_elektra != "true"
     const containerName = `keppel-${accountName}`
-    const validApiState = apiStateIsValid(state)
+    const accountIsDeleting = apiStateIsDeleting(state)
     const swiftContainerURL = `/_/${projectID}/object-storage/containers/${containerName}/list`
 
     let platformFilterDisplay = ""
@@ -71,7 +71,7 @@ export default class AccountRow extends React.Component {
           handleDoneDeleting={(status) => this.handleDoneDeleting(status)}
         />
       )
-    } else if (!validApiState) {
+    } else if (accountIsDeleting) {
       statusDisplay = (
           <div className="text-warning">
             <span className="spinner" /> 
@@ -121,7 +121,7 @@ export default class AccountRow extends React.Component {
               className="btn btn-default btn-sm dropdown-toggle"
               type="button"
               data-toggle="dropdown"
-              disabled={!validApiState}
+              disabled={accountIsDeleting}
               aria-expanded={true}
             >
               <span className="fa fa-cog"></span>
@@ -164,7 +164,7 @@ export default class AccountRow extends React.Component {
                       </Link>
                     </li>
                   )}
-                  {validApiState && 
+                  {!accountIsDeleting && 
                   <li>
                     <a href="#" onClick={(e) => this.handleDelete(e)}>
                       Delete
