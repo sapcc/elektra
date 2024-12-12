@@ -3,7 +3,6 @@ import React from "react"
 import Loader from "../containers/loader"
 import AccountList from "../containers/accounts/list"
 import AccountCreateModal from "../containers/accounts/create"
-import AccountMaintenanceModal from "../containers/accounts/maintenance"
 import AccountSubleaseTokenModal from "../containers/accounts/sublease"
 import AccountUpstreamConfigModal from "../containers/accounts/upstream_config"
 import GCPoliciesEditModal from "../containers/gc_policies/edit"
@@ -65,13 +64,6 @@ const KeppelApp = (props) => {
             path="/accounts/:account/sublease"
             render={(props) => (
               <AccountSubleaseTokenModal {...props} {...rootProps} />
-            )}
-          />
-          <Route
-            exact
-            path="/accounts/:account/toggle_maintenance"
-            render={(props) => (
-              <AccountMaintenanceModal {...props} {...rootProps} />
             )}
           />
           <Route
