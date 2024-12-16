@@ -2,10 +2,10 @@ module MasterdataCockpit
   module ApplicationHelper
     def render_propagation_status(propagation_type)
       if propagation_type == 1
-        content = "Propagation New"
+        content = "Propagation-Type: New"
         icon_name = "rocket"
       else
-        content = "Propagation Always"
+        content = "Propagation-Type: Always"
         icon_name = "exchange"
       end
   
