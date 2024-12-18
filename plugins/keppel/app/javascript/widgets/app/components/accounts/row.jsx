@@ -19,10 +19,9 @@ export default class AccountRow extends React.Component {
     }
     const { name: accountName } = this.props.account
 
-    confirm(
-      `Really delete the account "${accountName}" and all images in it?`
-    ).then(() => this.setState({ ...this.state, isDeleting: true }))
-    .catch(() => {})
+    confirm(`Really delete the account "${accountName}" and all images in it?`)
+      .then(() => this.setState({ ...this.state, isDeleting: true }))
+      .catch(() => {})
     //This causes <AccountDeleter/> to be mounted to perform the actual deletion.
   }
 
@@ -45,38 +44,29 @@ export default class AccountRow extends React.Component {
     const isEditable = (metadata || {}).readonly_in_elektra != "true"
     const containerName = `keppel-${accountName}`
     const accountIsDeleting = apiStateIsDeleting(state)
-    const swiftContainerURL = `/_/${projectID}/object-storage/containers/${containerName}/list`
+    const swiftContainerURL = `/_/${projectID}/object-storage/swift/containers/${containerName}/objects`
 
     let platformFilterDisplay = ""
     if (Array.isArray(platformFilter) && platformFilter.length > 0) {
       const pf = platformFilter
-      if (
-        pf.length == 1 &&
-        pf[0].os == "linux" &&
-        pf[0].architecture == "amd64"
-      ) {
-        platformFilterDisplay =
-          ", restricted to x86_64 parts of multi-arch images"
+      if (pf.length == 1 && pf[0].os == "linux" && pf[0].architecture == "amd64") {
+        platformFilterDisplay = ", restricted to x86_64 parts of multi-arch images"
       } else {
-        platformFilterDisplay =
-          ", with custom platform filter for multi-arch images"
+        platformFilterDisplay = ", with custom platform filter for multi-arch images"
       }
     }
 
     let statusDisplay = "Ready"
     if (this.state.isDeleting) {
       statusDisplay = (
-        <AccountDeleter
-          accountName={accountName}
-          handleDoneDeleting={(status) => this.handleDoneDeleting(status)}
-        />
+        <AccountDeleter accountName={accountName} handleDoneDeleting={(status) => this.handleDoneDeleting(status)} />
       )
     } else if (accountIsDeleting) {
       statusDisplay = (
-          <div className="text-warning">
-            <span className="spinner" /> 
-            <span>Deleting...</span>
-          </div>
+        <div className="text-warning">
+          <span className="spinner" />
+          <span>Deleting...</span>
+        </div>
       )
     }
 
@@ -128,48 +118,36 @@ export default class AccountRow extends React.Component {
             </button>
             <ul className="dropdown-menu dropdown-menu-right" role="menu">
               <li>
-                <Link to={`/accounts/${accountName}/access_policies`}>
-                  Access policies
-                </Link>
+                <Link to={`/accounts/${accountName}/access_policies`}>Access policies</Link>
               </li>
               <li>
-                <Link to={`/accounts/${accountName}/gc_policies`}>
-                  Garbage collection policies
-                </Link>
+                <Link to={`/accounts/${accountName}/gc_policies`}>Garbage collection policies</Link>
               </li>
               {!replication && (
                 <li>
-                  <Link to={`/accounts/${accountName}/validation_rules`}>
-                    Validation rules
-                  </Link>
+                  <Link to={`/accounts/${accountName}/validation_rules`}>Validation rules</Link>
                 </li>
               )}
               {this.props.isAdmin && (
                 <>
                   <li className="divider"></li>
-                  {isEditable &&
-                    replication &&
-                    replication.strategy == "from_external_on_first_use" && (
-                      <li>
-                        <Link to={`/accounts/${accountName}/upstream_config`}>
-                          Edit replication credentials
-                        </Link>
-                      </li>
-                    )}
-                  {(!replication ||
-                    replication.strategy == "from_external_on_first_use") && (
+                  {isEditable && replication && replication.strategy == "from_external_on_first_use" && (
                     <li>
-                      <Link to={`/accounts/${accountName}/sublease`}>
-                        Issue sublease token
-                      </Link>
+                      <Link to={`/accounts/${accountName}/upstream_config`}>Edit replication credentials</Link>
                     </li>
                   )}
-                  {!accountIsDeleting && 
-                  <li>
-                    <a href="#" onClick={(e) => this.handleDelete(e)}>
-                      Delete
-                    </a>
-                  </li>}
+                  {(!replication || replication.strategy == "from_external_on_first_use") && (
+                    <li>
+                      <Link to={`/accounts/${accountName}/sublease`}>Issue sublease token</Link>
+                    </li>
+                  )}
+                  {!accountIsDeleting && (
+                    <li>
+                      <a href="#" onClick={(e) => this.handleDelete(e)}>
+                        Delete
+                      </a>
+                    </li>
+                  )}
                 </>
               )}
             </ul>
