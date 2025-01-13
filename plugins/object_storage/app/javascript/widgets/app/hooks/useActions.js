@@ -15,15 +15,13 @@ const encode = (str) => encodeURIComponent(str)
 
 const containerPath = (containerName) => encode(decode(containerName))
 
-const objectPath = (containerName, object) =>
-  encode(decode(containerName)) + "/" + encode(decode(object))
+const objectPath = (containerName, object) => encode(decode(containerName)) + "/" + encode(decode(object))
 
 export const stripHtml = (html) => {
   // html is <html><h1>TITLE</h1><p>TEXT</p></html>
   const errorData = html.match(/<html><h1>(.*)<\/h1><p>(.*)<\/p><\/html>/)
 
-  if (errorData && errorData.length > 2)
-    return `${errorData[1]}: ${errorData[2]}`
+  if (errorData && errorData.length > 2) return `${errorData[1]}: ${errorData[2]}`
 
   let tmp = document.createElement("DIV")
   tmp.innerHTML = html
@@ -36,8 +34,7 @@ const useActions = () => {
 
   const loadCapabilitiesOnce = React.useCallback(
     (options = {}) => {
-      if ((capabilities.updatedAt || capabilities.error) && !options.reload)
-        return
+      if ((capabilities.updatedAt || capabilities.error) && !options.reload) return
 
       dispatch({ type: "REQUEST_CAPABILITIES" })
       apiClient
@@ -60,8 +57,7 @@ const useActions = () => {
 
   const loadAccountMetadataOnce = React.useCallback(
     (options = {}) => {
-      if ((account.updatedAt || account.error) && !options.reload)
-        return account.data
+      if ((account.updatedAt || account.error) && !options.reload) return account.data
 
       dispatch({ type: "REQUEST_ACCOUNT_METADATA" })
       return apiClient
@@ -171,10 +167,7 @@ const useActions = () => {
 
     return apiClient
       .osApi(serviceName)
-      .delete(
-        objectPath(containerName, name) +
-          (query ? encodeURIComponent(query) : "")
-      )
+      .delete(objectPath(containerName, name) + (query ? encodeURIComponent(query) : ""))
       .then((response) => response.data)
   }, [])
 
@@ -187,24 +180,22 @@ const useActions = () => {
       if (bulkDeleteOptions && bulkDeleteOptions.max_deletes_per_request) {
         // bulk delete!
         const chunkSize = bulkDeleteOptions.max_deletes_per_request
+
         for (let i = 0; i < objects.length; i += chunkSize) {
           const chunk = objects.slice(i, i + chunkSize)
-          const body = chunk
-            .map((o) => objectPath(containerName, o.name))
-            .join("\n")
+          const body = chunk.map((o) => objectPath(containerName, o.name)).join("\n")
           // collect all delete promises
           promises.push(
             apiClient
               .osApi(serviceName)
               .post("", body, {
-                params: { "bulk-delete": true },
+                params: { "bulk-delete": true, "X-Original-Object-Count": objects.length },
                 headers: { "Content-Type": "text/plain" },
               })
               .then((response) => {
                 const data = response.data || {}
                 const status = data["Response Status"] || ""
-                if (status.indexOf("200") < 0)
-                  throw new Error(data["Response Body"])
+                if (status.indexOf("200") < 0) throw new Error(data["Response Body"])
                 else return data
               })
           )
@@ -212,9 +203,7 @@ const useActions = () => {
       } else {
         // Delete each object individually
         // collect delete promises
-        promises = objects.map((object) =>
-          deleteObject(containerName, object.name)
-        )
+        promises = objects.map((object) => deleteObject(containerName, object.name))
       }
       // Promise.all allows us to delete objects or object chunks in parallel
       return Promise.all(promises)
@@ -229,11 +218,10 @@ const useActions = () => {
       .then((result) => result?.data)
   )
 
-  const deleteVersion = React.useCallback(
-    (containerName, { name, version_id }) =>
-      apiClient.osApi(serviceName).delete(objectPath(containerName, name), {
-        params: { "version-id": version_id },
-      })
+  const deleteVersion = React.useCallback((containerName, { name, version_id }) =>
+    apiClient.osApi(serviceName).delete(objectPath(containerName, name), {
+      params: { "version-id": version_id },
+    })
   )
 
   const deleteContainer = React.useCallback(
@@ -252,11 +240,7 @@ const useActions = () => {
     (containerName) =>
       apiClient
         .osApi(serviceName)
-        .put(
-          containerPath(containerName),
-          {},
-          { headers: { "Content-Length": "0" } }
-        )
+        .put(containerPath(containerName), {}, { headers: { "Content-Length": "0" } })
         .then(() => {
           dispatch({
             type: "RECEIVE_CONTAINER",
@@ -273,8 +257,7 @@ const useActions = () => {
 
   const createFolder = React.useCallback((containerName, path, name) => {
     let fullPath = path ? path : ""
-    if (fullPath.length > 0 && fullPath[fullPath.length - 1] !== "/")
-      fullPath += "/"
+    if (fullPath.length > 0 && fullPath[fullPath.length - 1] !== "/") fullPath += "/"
     fullPath += name + "/"
     const contentType = "application/directory"
 
@@ -295,9 +278,7 @@ const useActions = () => {
         .head(containerPath(containerName))
         .then((response) => {
           const metadata = response.headers
-          Object.keys(metadata).forEach(
-            (k) => (metadata[k] = decodeURIComponent(metadata[k]))
-          )
+          Object.keys(metadata).forEach((k) => (metadata[k] = decodeURIComponent(metadata[k])))
           const date = new Date(metadata["x-last-modified"])
           dispatch({
             type: "RECEIVE_CONTAINER",
@@ -314,64 +295,44 @@ const useActions = () => {
     },
     [dispatch]
   )
-  const updateContainerMetadata = React.useCallback(
-    (containerName, headers) => {
-      const newHeaders = { ...headers }
-      Object.keys(newHeaders).forEach(
-        (k) =>
-          k &&
-          k.indexOf("x-container-meta") === 0 &&
-          (newHeaders[k] = encodeURIComponent(newHeaders[k]))
-      )
+  const updateContainerMetadata = React.useCallback((containerName, headers) => {
+    const newHeaders = { ...headers }
+    Object.keys(newHeaders).forEach(
+      (k) => k && k.indexOf("x-container-meta") === 0 && (newHeaders[k] = encodeURIComponent(newHeaders[k]))
+    )
 
-      return apiClient
-        .osApi(serviceName)
-        .post(containerPath(containerName), {}, { headers: newHeaders })
-    },
-    []
-  )
+    return apiClient.osApi(serviceName).post(containerPath(containerName), {}, { headers: newHeaders })
+  }, [])
 
   const updateObjectMetadata = React.useCallback(
     (containerName, name, headers) =>
-      apiClient
-        .osApi(serviceName)
-        .post(objectPath(containerName, name), {}, { headers: headers }),
+      apiClient.osApi(serviceName).post(objectPath(containerName, name), {}, { headers: headers }),
     []
   )
 
-  const copyObject = React.useCallback(
-    (containerName, name, target = {}, options = {}) => {
-      let copyMetadata = options.withMetadata !== false
+  const copyObject = React.useCallback((containerName, name, target = {}, options = {}) => {
+    let copyMetadata = options.withMetadata !== false
 
-      return apiClient
-        .osApi(serviceName)
-        .copy(objectPath(containerName, name), {
-          headers: {
-            destination: objectPath(`/${target.container}`, target.path),
-            "x-fresh-metadata": copyMetadata ? undefined : true,
-          },
-        })
-    },
-    []
-  )
+    return apiClient.osApi(serviceName).copy(objectPath(containerName, name), {
+      headers: {
+        destination: objectPath(`/${target.container}`, target.path),
+        "x-fresh-metadata": copyMetadata ? undefined : true,
+      },
+    })
+  }, [])
 
   const getAcls = React.useCallback(({ read, write }) => {
-    return apiClient
-      .get(`check-acls`, { params: { read, write } })
-      .then((result) => result.data)
+    return apiClient.get(`check-acls`, { params: { read, write } }).then((result) => result.data)
   }, [])
   const endpointURL = React.useCallback(
     (containerName, name, params = {}) => {
-      return apiClient
-        .osApi(serviceName)
-        .url(objectPath(containerName, name), { params })
+      return apiClient.osApi(serviceName).url(objectPath(containerName, name), { params })
     },
     [apiClient]
   )
 
   const rawObjectUrl = React.useCallback(
-    (containerName, name, params = {}) =>
-      endpointURL(containerName, name, params),
+    (containerName, name, params = {}) => endpointURL(containerName, name, params),
     [endpointURL]
   )
 
@@ -408,9 +369,7 @@ const useActions = () => {
       }
 
       const metaTags = [].slice.call(document.getElementsByTagName("meta"))
-      const csrfToken = metaTags.find(
-        (tag) => tag.getAttribute("name") == "csrf-token"
-      )
+      const csrfToken = metaTags.find((tag) => tag.getAttribute("name") == "csrf-token")
 
       return fetch(endpointURL(containerName, path), {
         method: "PUT",
@@ -428,10 +387,7 @@ const useActions = () => {
           // do nothing
         }
 
-        if (response.status >= 400)
-          throw new Error(
-            data ? data.errors || data.error : response.statusText
-          )
+        if (response.status >= 400) throw new Error(data ? data.errors || data.error : response.statusText)
         else return data
       })
     },
