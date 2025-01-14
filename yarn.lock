@@ -2219,6 +2219,15 @@
     react-day-picker "^9.0.0"
     react-router-dom "^6.17.0"
 
+"@sapcc/maillog-ui@^1.0.22":
+  version "1.0.22"
+  resolved "https://npm.pkg.github.com/download/@sapcc/maillog-ui/1.0.22/b971b8b385d7a783579feda11c91d9a3848a720b#b971b8b385d7a783579feda11c91d9a3848a720b"
+  integrity sha512-32q+zYccMl3IaQDYny2A0Zon64gELswNFvWkx31VmgHQrq93Kg9oqwNrWEoXwFUtgLcwd7ltn0AAny+YcJmcSQ==
+  dependencies:
+    datetimepicker "^0.1.39"
+    moment "^2.30.1"
+    node-fetch "^3.3.2"
+
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.27.8.tgz#6667fac16c436b5434a387a34dedb013198f6e6e"
@@ -3994,6 +4003,11 @@ date-fns@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-4.1.0.tgz#64b3d83fff5aa80438f5b1a633c2e83b8a1c2d14"
   integrity sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==
+
+datetimepicker@^0.1.39:
+  version "0.1.39"
+  resolved "https://registry.yarnpkg.com/datetimepicker/-/datetimepicker-0.1.39.tgz#7b7f465dcc54bc7fc731cf3dcd8752bcfc69085a"
+  integrity sha512-CQOQRvEN4FThu5dXY4xNkqyiknJomafVC+muSJDbwYZQIrXU05yazPPRQXFYrAPFfr0I7n55kk2gCF39R2KsRQ==
 
 dayjs@^1.10.4:
   version "1.11.11"
@@ -6914,7 +6928,7 @@ minimist@^1.2.5, minimist@^1.2.8:
   resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.1.2.tgz#93a9626ce5e5e66bd4db86849e7515e92340a707"
   integrity sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==
 
-moment@^2.29.2, moment@^2.29.4:
+moment@^2.29.2, moment@^2.29.4, moment@^2.30.1:
   version "2.30.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
   integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
@@ -6961,7 +6975,7 @@ node-domexception@^1.0.0:
   resolved "https://registry.yarnpkg.com/node-domexception/-/node-domexception-1.0.0.tgz#6888db46a1f71c0b76b3f7555016b63fe64766e5"
   integrity sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==
 
-node-fetch@^3.3.0:
+node-fetch@^3.3.0, node-fetch@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-3.3.2.tgz#d1e889bacdf733b4ff3b2b243eb7a12866a0b78b"
   integrity sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==
