@@ -128,7 +128,7 @@
       - unless @project_masterdata.responsible_primary_contact_id
         not set
       = @project_masterdata.responsible_primary_contact_id
-    .col-sm-5.details-value
+    .col-sm-6.details-value
       - if @project_masterdata.responsible_primary_contact_email
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_primary_contact_email
@@ -151,7 +151,7 @@
       - unless @project_masterdata.responsible_operator_id
         not set
       = @project_masterdata.responsible_operator_id
-    .col-sm-5.details-value
+    .col-sm-6.details-value
       - if @project_masterdata.responsible_operator_email
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_operator_email
@@ -174,7 +174,7 @@
       - unless @project_masterdata.responsible_inventory_role_id
         not set
       = @project_masterdata.responsible_inventory_role_id
-    .col-sm-5.details-value
+    .col-sm-6.details-value
       - if @project_masterdata.responsible_inventory_role_email
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_inventory_role_email
@@ -197,7 +197,7 @@
       - unless @project_masterdata.responsible_infrastructure_coordinator_id
         not set
       = @project_masterdata.responsible_infrastructure_coordinator_id
-    .col-sm-5.details-value
+    .col-sm-6.details-value
       - if @project_masterdata.responsible_infrastructure_coordinator_email
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_infrastructure_coordinator_email
