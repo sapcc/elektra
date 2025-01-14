@@ -1,7 +1,19 @@
 # To build the image locally run from repository root: docker build -t elektra-prod --build-arg "NPM_GITHUB_TOKEN=XXX" --progress=plain -f docker/Dockerfile .
-# to vulnerability scan the image run: trivy image elektra-prod --scanners vuln
+# the NPM_GITHUB_TOKEN is needed to install npm packages from github you can create your own token here:
+# 1. logon to github
+# 2. go to settings
+# 3. go to developer settings
+# 4. go to personal access tokens
+# 5. click on generate new token
+# 6. select the scopes you need (repo, read:packages, write:packages)
+# 7. click on generate token
+# 8. copy the token and use it as NPM_GITHUB_TOKEN
+
+# for vulnerability scan the image run: trivy image elektra-prod --scanners vuln
+
 # Note: in case you get an error that the image cannot be pulled logon to keppel
 # You can also pull the image manually: docker pull keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.5-alpine3.20
+
 # check for latest version https://hub.docker.com/_/ruby/tags
 FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.6-alpine3.20 AS base 
 LABEL source_repository="https://github.com/sapcc/elektra"
@@ -33,7 +45,7 @@ FROM base AS builder
 
 RUN echo "Rebuild image 2"
 # Note: we need to install git here because bundle needs git in the next step
-RUN apk --no-cache add git curl nodejs yarn shared-mime-info
+RUN apk --no-cache add git curl nodejs yarn shared-mime-info yaml-dev
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
