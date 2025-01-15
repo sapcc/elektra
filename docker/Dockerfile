@@ -50,7 +50,7 @@ RUN apk --no-cache add git curl nodejs yarn shared-mime-info yaml-dev
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
-RUN apk --no-cache add build-base postgresql16-dev ruby-sassc --virtual .builddeps \
+RUN apk --no-cache add build-base postgresql16-dev ruby-sassc libsass-dev --virtual .builddeps \
     && gem install --no-document \
     bundler:2.3.20 \
     byebug:11.1.3 \
@@ -90,7 +90,6 @@ ADD script/organize_plugins_gemspecs script/
 RUN script/organize_plugins_gemspecs
 
 # install gems, copy app and run rake tasks
-RUN apk --no-cache add build-base
 RUN bundle config set --local without 'development integration_tests'
 RUN bundle install --jobs=$(nproc)
 
