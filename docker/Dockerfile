@@ -43,15 +43,14 @@ RUN apk upgrade --no-cache --no-progress \
 ################################### BUILDER ################################
 FROM base AS builder 
 
-RUN echo "Rebuild image 2"
-# Note: we need to install git here because bundle needs git in the next step
-RUN apk --no-cache add git curl nodejs yarn shared-mime-info 
+RUN apk --no-cache add git curl nodejs yarn shared-mime-info build-base
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
-RUN apk --no-cache add build-base postgresql16-dev ruby-sassc libsass-dev yaml-dev --virtual .builddeps \
-    && gem install --no-document \
+RUN apk --no-cache add postgresql16-dev ruby-sassc libsass-dev \
+    && \ 
+    gem install --no-document \
     bundler:2.3.20 \
     byebug:11.1.3 \
     ffi:1.15.5 \
@@ -63,18 +62,7 @@ RUN apk --no-cache add build-base postgresql16-dev ruby-sassc libsass-dev yaml-d
     unf:0.2.0.beta2 \
     websocket-driver:0.7.6 \
     bindex:0.8.1 \
-    sassc:2.4.0 \
-    && runDeps="$( \
-    scanelf --needed --nobanner --recursive /usr/local \
-    | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-    | sort -u \
-    | xargs -r apk info --installed \
-    | sort -u \
-    )" \
-    && apk add --virtual .rundeps $runDeps \
-    && apk del .builddeps \
-    && gem sources -c \
-    && rm -f /usr/local/bundle/cache/*
+    sassc:2.4.0 
 
 # add Gemfile and Gemfile.lock to $APP_PATH/
 ADD Gemfile Gemfile.lock ./
@@ -89,9 +77,10 @@ ADD plugins/*/*.gemspec tmp/plugins/
 ADD script/organize_plugins_gemspecs script/
 RUN script/organize_plugins_gemspecs
 
-# install gems, copy app and run rake tasks
-RUN bundle config set --local without 'development integration_tests'
-RUN bundle install --jobs=$(nproc)
+# install gems
+RUN apk --no-cache add yaml-dev \
+    && bundle config set --local without 'development integration_tests' \
+    && bundle install --jobs=$(nproc)
 
 # add elektra sources into image
 ARG NPM_GITHUB_TOKEN
