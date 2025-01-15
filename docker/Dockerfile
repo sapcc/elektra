@@ -48,7 +48,7 @@ RUN apk --no-cache add git curl nodejs yarn shared-mime-info build-base
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
-RUN apk --no-cache add postgresql16-dev ruby-sassc libsass-dev \
+RUN apk --no-cache add postgresql16-dev ruby-sassc \
     && \ 
     gem install --no-document \
     bundler:2.3.20 \
@@ -110,7 +110,7 @@ COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 # Copy the already built js artifact
 COPY --from=builder $APP_PATH $APP_PATH
 
-RUN apk --no-cache add curl
+RUN apk --no-cache add curl libsass-dev
 RUN set -e; curl -fL http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt | tr -d '\r' > /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt \
     && update-ca-certificates;
 
