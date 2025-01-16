@@ -9,6 +9,7 @@ domains:
       - domain_switcher
       - internal_help_links
       - terms_of_use
+      - networking_backup
     terms_of_use_name: "test_domain_terms" # this term needs to be added to config/settings.yaml
     disabled_plugins:
       # following plugins name should be the same as the plugin name in the plugins directory
