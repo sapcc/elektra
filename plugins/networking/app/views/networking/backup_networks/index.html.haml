@@ -1,29 +1,34 @@
 - content_for :main_toolbar do
   Backup Network
 
-- has_access = @rbacs && !@rbacs.empty?
-.row
-  .col-md-9
-    %h1.heading-top Get Access to Backup Network
-    %p.lead
-      CCloud offers classic file system (FS) and database (DB) backup / restore
-      services by the Global Backup Team for instances. More detailed information can be found
-      #{link_to 'in the documentation', 'https://documentation.global.cloud.sap/docs/customer/docs/support/service-now-ticket-creation/support-backup-process/', target: '_blank'}
+- if @domain_config.feature_hidden?('networking_backup')
+  .alert.alert-info
+    %strong Note:
+    Backup network feature is disabled for this domain. If you think this is an issue Please contact your domain administrator.
+- else
+  - has_access = @rbacs && !@rbacs.empty?
+  .row
+    .col-md-9
+      %h1.heading-top Get Access to Backup Network
+      %p.lead
+        CCloud offers classic file system (FS) and database (DB) backup / restore
+        services by the Global Backup Team for instances. More detailed information can be found
+        #{link_to 'in the documentation', 'https://documentation.global.cloud.sap/docs/customer/docs/support/service-now-ticket-creation/support-backup-process/', target: '_blank'}
 
 
-    .bs-callout.bs-callout-emphasize{class: "bs-callout-#{has_access ? 'success' : 'info'}"}
-      .row
-        .col-md-10
-          - if has_access
-            %h4 Backup Network Access
-            This project has access to the backup network
-            = link_to 'Show Backup Network', plugin('networking').networks_private_index_path
-          - else
-            %h4 Backup Network Access
-            This project doesn't have access to the backup network yet
+      .bs-callout.bs-callout-emphasize{class: "bs-callout-#{has_access ? 'success' : 'info'}"}
+        .row
+          .col-md-10
+            - if has_access
+              %h4 Backup Network Access
+              This project has access to the backup network
+              = link_to 'Show Backup Network', plugin('networking').networks_private_index_path
+            - else
+              %h4 Backup Network Access
+              This project doesn't have access to the backup network yet
 
-        .col-md-2
-          - if has_access
-            %i.fa.fa-check.fa-3x.pull-right
-          - else
-            = link_to 'Get Access', plugin('networking').new_backup_network_path , class: 'btn btn-primary', data: { modal: true }
+          .col-md-2
+            - if has_access
+              %i.fa.fa-check.fa-3x.pull-right
+            - else
+              = link_to 'Get Access', plugin('networking').new_backup_network_path , class: 'btn btn-primary', data: { modal: true }
