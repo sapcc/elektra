@@ -36,3 +36,5 @@ en:
     external_certification_soc_help: "SOC is a type of audit report that attests to the trustworthiness of services provided by a service organization."
     external_certification_sox_help: "The law mandates strict reforms to improve financial disclosures from corporations and prevent accounting fraud."
     roles_help: "NOTE: at least please provide for every role the UserID or a Email/Distribution list"
+    propagation_type_info: "This type is set from outside and cannot be edited"
+    propagation_info: "Propagation Type for ownership around cloud infrastructure assets to be stored in the Central Configuration Item Repository"

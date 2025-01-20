@@ -1,11 +1,13 @@
 module MasterdataCockpit
   module ApplicationHelper
-    def render_propagation_status(propagation_type)
+    # this is a helper method that renders a popover icon with a help hint
+    # at the moment it is not used in the application
+    def render_propagation_status_icon(propagation_type)
       if propagation_type == 1
-        content = "Propagation-Type: New"
-        icon_name = "rocket"
+        content = "Propagation-Type: Child blocks parent"
+        icon_name = "lock"
       else
-        content = "Propagation-Type: Always"
+        content = "Propagation-Type: Parent always"
         icon_name = "exchange"
       end
   
