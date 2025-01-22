@@ -63,5 +63,12 @@ module MasterdataCockpit
         "prod_tc" => "Production Time Critical",
       }
     end
+
+    def self.propagation_role_types
+    { 
+      "1" => "Child blocks parent" ,
+      "0" => "Parent always",
+    }
+    end
   end
 end

@@ -11,7 +11,11 @@
       .row
         .col-md-3
           - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
-          = f.input :business_criticality, label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"), as: :select, collection: business_criticalitys.keys, label_method: -> (k) { business_criticalitys[k] }
+          = f.input :business_criticality, 
+                    label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"),
+                    as: :select, 
+                    collection: business_criticalitys.keys, 
+                    label_method: -> (k) { business_criticalitys[k] }
         .col-md-3
           - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
           = f.input :revenue_relevance, label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"), as: :select, collection: revenue_relevances.keys, label_method: -> (k) { revenue_relevances[k] }
@@ -72,7 +76,10 @@
           = t('masterdata_cockpit.responsible_inventory_role_help')
       .row
         .col-sm-6.operator-id
-          = f.input :responsible_infrastructure_coordinator_id, label: "Infrastructure Coordinator", placeholder: "User or Name", :input_html => { class: 'operator-id-input' }
+          = f.input :responsible_infrastructure_coordinator_id, 
+                    label: "Infrastructure Coordinator", 
+                    placeholder: "User or Name",
+                    input_html: { class: 'operator-id-input' }
         .col-sm-6.operator-email
           = f.input :responsible_infrastructure_coordinator_email, placeholder: "Email/Distribution list", :input_html => { class: 'operator-email-input' }
       .row
@@ -82,6 +89,29 @@
     .op-help-block{ style: "margin: 0 0 10px 10px" }
       = icon ('info-circle')
       = t('masterdata_cockpit.roles_help')
+
+  %label.control-label Role Propagation (CCIR)
+  .loading-place.loading-right
+  .panel.panel-default
+    .panel-body
+      .row
+        .col-md-3 
+          - types = MasterdataCockpit::Config.propagation_role_types
+          = f.input :responsible_role_propagation_type,
+                    label: "Type",
+                    as: :select,
+                    collection: types.keys,
+                    label_method: -> (k) { types[k] },
+                    required: false,
+                    include_blank: false
+        .col-md-9
+          .alert.alert-info{style: "margin:0"}
+            %p
+              %strong Parent always:
+              = t('masterdata_cockpit.propagation_role_parent_always')
+            %p
+              %strong Child blocks parent:
+              = t('masterdata_cockpit.propagation_role_child_blocks_parent')
 
   %label.control-label Cost Info
   .loading-place.loading-right

@@ -234,6 +234,7 @@ module MasterdataCockpit
         "revenue_relevance" => read("revenue_relevance"),
         "business_criticality" => read("business_criticality"),
         "number_of_endusers" => read("number_of_endusers"),
+        "responsible_role_propagation_type" => read("responsible_role_propagation_type"),
       }
 
       params["cost_object"] = if cost_object_inherited

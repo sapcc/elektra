@@ -104,33 +104,6 @@
       = @project_masterdata.additional_information
 .masterdata-group
   %h5.masterdata-heading
-    Role Propagation Type (CCIR)
-    %a.help-link{
-      data: {
-      content: t('masterdata_cockpit.propagation_info'),
-      popover: { type: "help-hint" },
-      toggle: "popover"
-      }
-    }
-      = icon('question-circle-o')
-  .row
-    .col-sm-4.details-label
-      Type
-      %a.help-link{
-        data: {
-        content: t('masterdata_cockpit.propagation_type_info'),
-        popover: { type: "help-hint" },
-        toggle: "popover"
-        }
-      }
-        = icon('info-circle')
-    .col-sm-6.details-value 
-      - if @project_masterdata.responsible_role_propagation_type == 1
-        Child blocks parent
-      - else
-        Parent always
-.masterdata-group
-  %h5.masterdata-heading
     Roles
     %a.help-link{
       data: {
@@ -223,7 +196,34 @@
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_infrastructure_coordinator_email
       - else
-        not set 
+        not set
+.masterdata-group
+  %h5.masterdata-heading
+    Role Propagation (CCIR)
+    %a.help-link{
+      data: {
+      content: t('masterdata_cockpit.propagation_role_info'),
+      popover: { type: "help-hint" },
+      toggle: "popover"
+      }
+    }
+      = icon('question-circle-o')
+  .row
+    .col-sm-4.details-label
+      Type
+      %a.help-link{
+        data: {
+        content: t('masterdata_cockpit.propagation_type_info'),
+        popover: { type: "help-hint" },
+        toggle: "popover"
+        }
+      }
+        = icon('info-circle')
+    .col-sm-6.details-value 
+      - if @project_masterdata.responsible_role_propagation_type == 1
+        Child blocks parent
+      - else
+        Parent always
 .masterdata-group
   %h5.masterdata-heading
     Cost Info
