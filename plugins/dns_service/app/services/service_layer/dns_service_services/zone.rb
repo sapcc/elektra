@@ -4,6 +4,16 @@ module ServiceLayer
   module DnsServiceServices
     # This module implements Openstack Designate Pool API
     module Zone
+
+      # this is only for qa-de-1 and qa-de-2 until the api changes are rolled out to all regions
+      def share_endpoint
+        endpoint = "zones/share"
+        if ENV["MONSOON_DASHBOARD_REGION"] == "qa-de-1" || ENV["MONSOON_DASHBOARD_REGION"] == "qa-de-2"
+          endpoint = "zones/shares"
+        end
+        endpoint
+      end
+
       def zone_map
         @zone_map ||= class_map_proc(DnsService::Zone)
       end
@@ -38,7 +48,7 @@ module ServiceLayer
           header_options = { "x-auth-sudo-project-id": project_id }
         end
         response =
-          elektron_dns.get("zones/share").map_to(
+          elektron_dns.get(share_endpoint).map_to(
             "body.shared_zones",
             &shared_zone_map
           )
@@ -89,11 +99,11 @@ module ServiceLayer
       end
 
       def create_shared_zone(attributes = {})
-        elektron_dns.post("zones/share") { attributes }.body
+        elektron_dns.post(share_endpoint) { attributes }.body
       end
 
       def delete_shared_zone(id)
-        elektron_dns.delete("zones/share/#{id}")
+        elektron_dns.delete("#{share_endpoint}/#{id}")
       end
     end
   end
