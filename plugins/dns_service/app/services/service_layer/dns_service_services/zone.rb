@@ -39,9 +39,11 @@ module ServiceLayer
         end
         # backward compatibility
         begin
+          # designate version <= Dalmatian (2024.2)
           response = elektron_dns.get("zones/share").map_to("body.shared_zones", &shared_zone_map)
         rescue StandardError => e
           if e.code == 400
+            # designate version >= Dalmatian (2024.2)
             response = elektron_dns.get("zones/shares").map_to("body.shared_zones", &shared_zone_map)
           else
             raise e
@@ -97,9 +99,11 @@ module ServiceLayer
       def create_shared_zone(attributes = {})
         # backward compatibility
         begin
+          # designate version <= Dalmatian (2024.2)
           elektron_dns.post("zones/shares") { attributes }.body
         rescue StandardError => e
           if e.code == 400
+            # designate version >= Dalmatian (2024.2)
             elektron_dns.post("zones/shares") { attributes }.body
           else
             raise e
@@ -110,9 +114,11 @@ module ServiceLayer
       def delete_shared_zone(id)
         # backward compatibility
         begin
+          # designate version <= Dalmatian (2024.2)
           elektron_dns.delete("zones/share/#{id}")
         rescue StandardError => e
           if e.code == 400
+            # designate version >= Dalmatian (2024.2)
             elektron_dns.delete("zones/shares/#{id}")
           else
             raise e
