@@ -17,15 +17,3 @@ module UrlHelper
     avatar_url
   end
 end
-
-#uri = URI.parse(avatar_url)
-#response = Net::HTTP.get_response(uri)
-#if response.is_a?(Net::HTTPSuccess)
-#  return avatar_url
-#else
-#  raise StandardError # Raise an error to fall back to default image
-#end
-#rescue StandardError
-#  # Fallback to default image if there's an error or URL is not accessible
-#  return "/images/avatar-default.png"
-#end
