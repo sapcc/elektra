@@ -28,7 +28,9 @@
               -# loading:"lazy" this is needed to run the cypress tests in our CI because
               -# https://avatars.wdf.sap.corp/avatar/ is not accessible from CI. Otherwise the tests will fail!
               -# cypress is based on chromium/electron and loading:"lazy" is only interpreted in that browser
-              %img.avatar{src: url_for_avatar, height: 24, async: true, loading:"lazy"}
+              - avatar_url = url_for_avatar
+              %img.avatar{src: "/images/avatar-default.png", height: 24, async: true, loading: "lazy", id: "user-avatar"}
+              
               = current_user.full_name
               %span.caret
             %ul.dropdown-menu{:role => "menu"}
@@ -43,19 +45,26 @@
                 = link_to 'Log out', monsoon_openstack_auth.logout_path(domain_fid: @scoped_domain_fid || params[:domain_id],
                   domain_name: @scoped_domain_name, redirect_to: main_app.landing_page_url)
 
-
         %li.dropdown
           %a.nav-highlight.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
             = current_region.upcase
             %span.caret
 
           = render_available_regions
-          -# %ul.dropdown-menu{:role => "menu"}
-          -#   %li
-          -#     %a{:href => "#"} Canada
-          -#   %li.active
-          -#     %a{:href => "#"} Europe
-          -#   %li
-          -#     %a{:href => "#"} US-East
-          -#   %li
-          -#     %a{:href => "#"} US-West
+
+:javascript
+  document.addEventListener("DOMContentLoaded", function() {
+    var img = new Image();
+    // handle the case where the image does not exist
+    // try to load the image
+    img.onload = function() {
+      // if the image exists, set the src attribute of the image element
+      document.getElementById("user-avatar").src = "#{avatar_url}";
+    };
+    img.onerror = function() {
+      // if the image does not exist, use the default image
+      console.log("Avatar image #{avatar_url} does not exist, using default image.");
+    };
+    // set the src attribute to the image url
+    img.src = "#{avatar_url}";
+  });

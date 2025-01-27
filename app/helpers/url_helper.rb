@@ -14,21 +14,7 @@ module UrlHelper
     rescue StandardError
       avatar_url="https://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(current_user.email ? current_user.email : "")}?d=mm&s=#{size.to_s}"
     end
-    
-    # check the URL before returning it to prevent broken images
-    # this will not prevent broken images if the URL is from the client not accessible
-    begin
-      uri = URI.parse(avatar_url)
-      response = Net::HTTP.get_response(uri)
-      if response.is_a?(Net::HTTPSuccess)
-        return avatar_url
-      else
-        raise StandardError # Raise an error to fall back to default image
-      end
-    rescue StandardError
-      avatar_url="/images/avatar-default.png"
-    end
-    return avatar_url
+    avatar_url
   end
 end
 
