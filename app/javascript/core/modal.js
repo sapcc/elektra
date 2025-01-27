@@ -5,6 +5,9 @@
  * DS206: Consider reworking classes to avoid initClass
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
+
+import { isValidUrl } from "../lib/tools/helpers"
+
 var MoModal = (function () {
   let modal_holder_selector = undefined
   let modal_selector = undefined
@@ -78,9 +81,7 @@ var MoModal = (function () {
         } else {
           // assume response is a html
           // modal has the fade effect
-          if (
-            $($(modal_holder_selector).find(modal_selector)).hasClass("fade")
-          ) {
+          if ($($(modal_holder_selector).find(modal_selector)).hasClass("fade")) {
             // replace content of old modal
             const $oldModal = $(modal_holder_selector)
             const $newContent = $(data)
@@ -112,16 +113,11 @@ var MoModal = (function () {
         modal_holder_selector + ' form[data-inline!="true"]',
         (event, xhr, settings) => (settings.data += "&modal=true")
       )
-      $(document).on(
-        "ajax:success",
-        modal_holder_selector + ' form[data-inline!="true"]',
-        handleAjaxSuccess
-      )
+      $(document).on("ajax:success", modal_holder_selector + ' form[data-inline!="true"]', handleAjaxSuccess)
       return $(document).on(
         "ajax:error",
         modal_holder_selector + ' form[data-inline!="true"]',
-        (event, jqXHR, textStatus, errorThrown) =>
-          showError(jqXHR, textStatus, errorThrown)
+        (event, jqXHR, textStatus, errorThrown) => showError(jqXHR, textStatus, errorThrown)
       )
     }
 
@@ -136,8 +132,13 @@ var MoModal = (function () {
       } else {
         const $button = $(anker)
         //$button.addClass('loading')
-        location = $(anker).attr("href")
-        modalSize = $(anker).attr("data-modal-size")
+        const href = $button.attr("href")
+        if (isValidUrl(href)) {
+          location = $button.attr("href")
+        } else {
+          console.error("Invalid URL", href)
+        }
+        modalSize = $button.attr("data-modal-size")
       }
 
       // do nothing if modal is loading
@@ -188,9 +189,7 @@ var MoModal = (function () {
       $(modal_holder_selector)
         .find(modal_selector)
         .find(".modal-body")
-        .html(
-          '<div class="loading-spinner"></div><div class="loading-text">Loading...</div>'
-        )
+        .html('<div class="loading-spinner"></div><div class="loading-text">Loading...</div>')
 
       const lastUrl = window.location.href
       const ankerUrl = $(anker).attr("href")
@@ -205,9 +204,7 @@ var MoModal = (function () {
           const $footer = $data.find(".modal-footer")
           if ($footer.length > 0) {
             // add back button to footer
-            const $back = $(
-              '<a href="javascript:void(0)" class="btn btn-primary">Back</a>'
-            )
+            const $back = $('<a href="javascript:void(0)" class="btn btn-primary">Back</a>')
             $back.click(() => (window.location.href = lastUrl))
             $footer.prepend($back)
           }
