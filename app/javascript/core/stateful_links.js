@@ -14,7 +14,7 @@ const supportHistory = window.history.pushState && true
 
 // This method returns a parameter value for a given parameter name.
 const getParameterByName = function (url, name) {
-  name = name.replace(/[[]/, "\\[").replace(/[\]]/, "\\]")
+  name = name.replace(/\[/g, "\\[").replace(/\]/g, "\\]")
   const regex = new RegExp(`[\\?&]${name}=([^&#]*)`)
   const results = regex.exec(url)
 
@@ -67,11 +67,7 @@ const buildNewStateUrl = function (href) {
   //    link url: /sap_default/d064310_sandbox/instances/new
   //    -> overlay url (href): http://localhost:3000/sap_default/d064310_sandbox/instances/23/show?overlay=/sap_default/d064310_sandbox/instances/new
 
-  href = href
-    .replace(hostUrl, "")
-    .replace(current_path, "")
-    .replace(/^\/+/, "")
-    .trim()
+  href = href.replace(hostUrl, "").replace(current_path, "").replace(/^\/+/, "").trim()
   if (isAbsolutePath) {
     href = `/${href}`
   }
