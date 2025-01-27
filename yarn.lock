@@ -1206,10 +1206,10 @@
   resolved "https://registry.yarnpkg.com/@cloudoperators/juno-ui-components/-/juno-ui-components-2.30.0.tgz#f460175644badc3421e3bb171812e3ec9a3cdb88"
   integrity sha512-HFarnw/SX1QEUH1vstC5bYWDyLgg/3e/zOa0uFzrdbxR/W5AVyX2h3OlNHYYkDpgWz2p68+UmSHjuFAzviYbhA==
 
-"@cloudoperators/juno-ui-components@2.22.1":
-  version "2.22.1"
-  resolved "https://registry.yarnpkg.com/@cloudoperators/juno-ui-components/-/juno-ui-components-2.22.1.tgz#3c4bab19a25c1f0c1bc616c800e15fe29606f1b2"
-  integrity sha512-lYg9ws0xLhTOmRO+WhqgsMB8IOA5BauC43+SWAc0TqOQXvmPfpFm4I9kfunyVkqhy0EmNDIWy3H/tW+vvjKytg==
+"@cloudoperators/juno-ui-components@2.35.1":
+  version "2.35.1"
+  resolved "https://registry.yarnpkg.com/@cloudoperators/juno-ui-components/-/juno-ui-components-2.35.1.tgz#2cae3aa1f8db894df63fadfbee74f98461bc94e3"
+  integrity sha512-9iXfycK4XZMXKJNtzJapjyS17H/yspMhd+2XEBF0nMEe/cHxVp3rBIwzevI229QxQqB2aJWeDFQi6P81jtLK7A==
 
 "@cloudoperators/juno-url-state-provider@*":
   version "2.1.0"
@@ -2199,17 +2199,12 @@
     "@react-spring/shared" "~9.7.3"
     "@react-spring/types" "~9.7.3"
 
-"@remix-run/router@1.21.0":
-  version "1.21.0"
-  resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.21.0.tgz#c65ae4262bdcfe415dbd4f64ec87676e4a56e2b5"
-  integrity sha512-xfSkCAchbdG5PnbrKqFWwia4Bi61nH+wm8wLEqfHDyp7Y3dZzgqS2itV8i4gAq9pC2HsTpwyBC6Ds8VHZ96JlA==
-
-"@sapcc/limes-ui@^1.3.4":
-  version "1.3.4"
-  resolved "https://npm.pkg.github.com/download/@sapcc/limes-ui/1.3.4/302c3750e317f91d0fdaeb10ca80fd4749f52163#302c3750e317f91d0fdaeb10ca80fd4749f52163"
-  integrity sha512-BV2Mkcxplgl+2qsGH48MuF09RcTIlIWnUgEGiKFS8YTwzCfwuNBsl1Bp3wK33x5X5uVKNYSJBQ8DCFDPIEU/Hg==
+"@sapcc/limes-ui@^1.3.9":
+  version "1.3.9"
+  resolved "https://npm.pkg.github.com/download/@sapcc/limes-ui/1.3.9/b7b1e0d48d3d737345803fbd90f3d7ff1b9d56f3#b7b1e0d48d3d737345803fbd90f3d7ff1b9d56f3"
+  integrity sha512-Ul5fPt5fLSIUTdon7a4l7WgMGFaiwiIjAxYpcBN5NHEFE4FoHwEmTcAwZ3PzrO/q/EET23QBn9ddGkjtLJJDuA==
   dependencies:
-    "@cloudoperators/juno-ui-components" "2.22.1"
+    "@cloudoperators/juno-ui-components" "2.35.1"
     "@cloudoperators/juno-url-state-provider" "*"
     "@cloudoperators/juno-utils" "*"
     cypress "^13.6.1"
@@ -2217,7 +2212,7 @@
     moment "^2.29.4"
     postcss-url "^10.1.3"
     react-day-picker "^9.0.0"
-    react-router-dom "^6.17.0"
+    react-router "^7.0.2"
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
@@ -2413,6 +2408,11 @@
   integrity sha512-7uz5EHdzz2TqoMfV7ee61Egf5y6NkcO4FB/1iCCQnbeiI1F3xzv3vK5dBCXUCLQgGYS+mUeigK1iKQzvED+QnQ==
   dependencies:
     "@types/node" "*"
+
+"@types/cookie@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@types/cookie/-/cookie-0.6.0.tgz#eac397f28bf1d6ae0ae081363eca2f425bedf0d5"
+  integrity sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==
 
 "@types/d3-color@^3.0.0":
   version "3.1.3"
@@ -3505,6 +3505,11 @@ convert-source-map@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-2.0.0.tgz#4b560f649fc4e918dd0ab75cf4961e8bc882d82a"
   integrity sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==
+
+cookie@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-1.0.2.tgz#27360701532116bd3f1f9416929d176afe1e4610"
+  integrity sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==
 
 core-js-compat@^3.31.0, core-js-compat@^3.36.1:
   version "3.37.1"
@@ -7722,14 +7727,6 @@ react-router-dom@^5.1.2:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
-react-router-dom@^6.17.0:
-  version "6.28.0"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.28.0.tgz#f73ebb3490e59ac9f299377062ad1d10a9f579e6"
-  integrity sha512-kQ7Unsl5YdyOltsPGl31zOjLrDv+m2VcIEcIHqYYD3Lp0UppLjrzcfJqDJwXxFw3TH/yvapbnUvPlAj7Kx5nbg==
-  dependencies:
-    "@remix-run/router" "1.21.0"
-    react-router "6.28.0"
-
 react-router@5.3.4:
   version "5.3.4"
   resolved "https://registry.yarnpkg.com/react-router/-/react-router-5.3.4.tgz#8ca252d70fcc37841e31473c7a151cf777887bb5"
@@ -7745,12 +7742,15 @@ react-router@5.3.4:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
-react-router@6.28.0:
-  version "6.28.0"
-  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.28.0.tgz#29247c86d7ba901d7e5a13aa79a96723c3e59d0d"
-  integrity sha512-HrYdIFqdrnhDw0PqG/AKjAqEqM7AvxCz0DQ4h2W8k6nqmc5uRBYDag0SBxx9iYz5G8gnuNVLzUe13wl9eAsXXg==
+react-router@^7.0.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.1.2.tgz#61bf043b7fc839f2cfc80e64ed7ca9072526bfd2"
+  integrity sha512-KeallSO30KLpIe/ZZqfk6pCJ1c+5JhMxl3SCS3Zx1LgaGuQbgLDmjuNi6KZ5LnAV9sWjbmBWGRw8Um/Pw6BExg==
   dependencies:
-    "@remix-run/router" "1.21.0"
+    "@types/cookie" "^0.6.0"
+    cookie "^1.0.1"
+    set-cookie-parser "^2.6.0"
+    turbo-stream "2.4.0"
 
 react-select@^5.5.2:
   version "5.8.0"
@@ -8093,6 +8093,11 @@ semver@^7.6.0:
   version "7.6.3"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.6.3.tgz#980f7b5550bc175fb4dc09403085627f9eb33143"
   integrity sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==
+
+set-cookie-parser@^2.6.0:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/set-cookie-parser/-/set-cookie-parser-2.7.1.tgz#3016f150072202dfbe90fadee053573cc89d2943"
+  integrity sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==
 
 set-function-length@^1.2.1:
   version "1.2.2"
@@ -8641,6 +8646,11 @@ tunnel-agent@^0.6.0:
   integrity sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==
   dependencies:
     safe-buffer "^5.0.1"
+
+turbo-stream@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/turbo-stream/-/turbo-stream-2.4.0.tgz#1e4fca6725e90fa14ac4adb782f2d3759a5695f0"
+  integrity sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
