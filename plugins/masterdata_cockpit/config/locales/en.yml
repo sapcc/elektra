@@ -36,3 +36,7 @@ en:
     external_certification_soc_help: "SOC is a type of audit report that attests to the trustworthiness of services provided by a service organization."
     external_certification_sox_help: "The law mandates strict reforms to improve financial disclosures from corporations and prevent accounting fraud."
     roles_help: "NOTE: at least please provide for every role the UserID or a Email/Distribution list"
+    propagation_type_info: "The type is responsible how to handle ownership data around cloud infrastructure assets"
+    propagation_role_info: "Role propagation for ownership around cloud infrastructure assets to be stored in the Central Configuration Item Repository"
+    propagation_role_parent_always: "Roles always propagated to existing and new virtual server objects. Value maintained only in the parent object."
+    propagation_role_child_blocks_parent: "Roles only propagated to virtual server object (child) when no other source provides a value. Removal of propagated default, once another source provides a value. Propagate default again if no other source provides a value."
