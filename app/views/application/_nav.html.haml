@@ -53,18 +53,5 @@
           = render_available_regions
 
 :javascript
-  document.addEventListener("DOMContentLoaded", function() {
-    var img = new Image();
-    // handle the case where the image does not exist
-    // try to load the image
-    img.onload = function() {
-      // if the image exists, set the src attribute of the image element
-      document.getElementById("user-avatar").src = "#{avatar_url}";
-    };
-    img.onerror = function() {
-      // if the image does not exist, use the default image
-      console.log("Avatar image #{avatar_url} does not exist, using default image.");
-    };
-    // set the src attribute to the image url
-    img.src = "#{avatar_url}";
-  });
+  window.loadAvatar({avatarUrl: '#{avatar_url}', elementId: "user-avatar"})
+
