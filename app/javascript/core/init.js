@@ -39,10 +39,7 @@ class Dashboard {
 window.Dashboard = Dashboard
 
 // define console if not exists (this is a case for IE)
-if (
-  typeof window.console === "undefined" ||
-  typeof window.console.log === "undefined"
-) {
+if (typeof window.console === "undefined" || typeof window.console.log === "undefined") {
   window.console = {
     log() {
       return {}
@@ -56,10 +53,7 @@ if (
 // init help hint popovers
 const initHelpHint = function () {
   // https://stackoverflow.com/questions/32911355/whats-the-tabindex-1-in-bootstrap-for
-  $('[data-toggle="popover"][data-popover-type="help-hint"]').attr(
-    "tabindex",
-    "0"
-  )
+  $('[data-toggle="popover"][data-popover-type="help-hint"]').attr("tabindex", "0")
   return $('[data-toggle="popover"][data-popover-type="help-hint"]').popover({
     placement: "top",
     trigger: "focus",
@@ -97,10 +91,7 @@ $(function () {
   $(document).on("click", "tr [data-loading-status]", function () {
     return $(this).closest("tr").addClass("updating")
   })
-  $("tr [data-confirmed=loading_status]").attr(
-    "data-confirmed",
-    "$(this).closest('tr').addClass('updating')"
-  )
+  $("tr [data-confirmed=loading_status]").attr("data-confirmed", "$(this).closest('tr').addClass('updating')")
 
   $("#accept_tos").click(function () {
     return $("#register-button").prop("disabled", !$(this).prop("checked"))
@@ -118,7 +109,8 @@ $(function () {
   // generic visibility toggle
   $('[data-action="toggle"]').click(function (e) {
     e.preventDefault()
-    return $($(this).attr("data-target")).toggleClass("hidden")
+    const target = $(this).attr("data-target")
+    return $.find(target).toggleClass("hidden")
   })
 
   // init universal search input field
@@ -156,10 +148,7 @@ $(function () {
   // show search form for searchable
   $('[data-trigger="show-searchable-search"]').click(function (e) {
     $(this).toggleClass("active")
-    return $(".searchable-input")
-      .toggleClass("expanded")
-      .find("#search-input")
-      .focus()
+    return $(".searchable-input").toggleClass("expanded").find("#search-input").focus()
   })
 
   // $('[data-collapsable]').collapsable()
@@ -173,16 +162,12 @@ const observer = new MutationObserver(function (mutations) {
     const result = []
     for (var mutation of Array.from(mutations)) {
       if (mutation.type === "childList") {
-        var collapsable_containers = $(mutation.addedNodes).find(
-          "[data-collapsable]"
-        )
+        var collapsable_containers = $(mutation.addedNodes).find("[data-collapsable]")
         if (collapsable_containers && collapsable_containers.length > 0) {
           collapsable_containers.collapsable()
         }
 
-        var multiselect_boxes = $(mutation.addedNodes).find(
-          "[data-multiselect-box]"
-        )
+        var multiselect_boxes = $(mutation.addedNodes).find("[data-multiselect-box]")
 
         if (multiselect_boxes && multiselect_boxes.length > 0) {
           result.push(
@@ -268,7 +253,8 @@ $(document).on("modal:contentUpdated", function (e) {
   // generic visibility toggle
   return $('[data-action="toggle"]').click(function (e) {
     e.preventDefault()
-    return $($(this).attr("data-target")).toggleClass("hidden")
+    const target = $(this).attr("data-target")
+    return $.find(target).toggleClass("hidden")
   })
 })
 
