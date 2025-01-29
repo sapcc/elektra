@@ -21,7 +21,13 @@ module Identity
     def auth_projects
       projects =
         services.identity.auth_projects(@scoped_domain_id).sort_by(&:name)
-      render json: { auth_projects: projects }
+
+      updated_projects = projects.map do |project|
+        project.domain_id = @scoped_domain_fid
+        project
+      end
+      
+      render json: { auth_projects: updated_projects }
     end
   end
 end
