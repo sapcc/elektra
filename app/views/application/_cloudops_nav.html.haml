@@ -28,7 +28,8 @@
               -# loading:"lazy" this is needed to run the cypress tests in our CI because
               -# https://avatars.wdf.sap.corp/avatar/ is not accessible from CI. Otherwise the tests will fail!
               -# cypress is based on chromium/electron and loading:"lazy" is only interpreted in that browser
-              %img.avatar{src: url_for_avatar, height: 24, async: true, loading:"lazy"}
+              - avatar_url = url_for_avatar
+              %img.avatar{src: "/images/avatar-default.png", height: 24, async: true, loading: "lazy", id: "user-avatar"}
               = current_user.full_name
               %span.caret
             %ul.dropdown-menu{:role => "menu"}
@@ -50,3 +51,7 @@
             %span.caret
 
           = render_available_regions
+
+:javascript
+  window.loadAvatar({avatarUrl: '#{avatar_url}', elementId: "user-avatar"})
+
