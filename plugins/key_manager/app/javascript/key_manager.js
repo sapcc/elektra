@@ -5,8 +5,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const secret_type_select = 'select[data-toggle="secretTypeSwitcher"]'
-const payload_content_type_select =
-  'select[data-toggle="secretPayloadTypeSwitcher"]'
+const payload_content_type_select = 'select[data-toggle="secretPayloadTypeSwitcher"]'
 const secret_payload_content_info = ".js-secret-payload-content-info"
 
 const container_type_select = 'select[data-toggle="containerTypeSwitcher"]'
@@ -145,14 +144,8 @@ var add_secret = (selected_options) =>
         const option = $(orig_select).find(`option[value='${value}']`)
 
         // update table row
-        if (
-          selected_options !== undefined &&
-          !$.isEmptyObject(selected_options)
-        ) {
-          const name =
-            selected_options[value] !== undefined
-              ? selected_options[value]["name"]
-              : undefined
+        if (selected_options !== undefined && !$.isEmptyObject(selected_options)) {
+          const name = selected_options[value] !== undefined ? selected_options[value]["name"] : undefined
           secretsTable.updateRow(option, true, name)
         } else {
           secretsTable.updateRow(option, true)
@@ -165,7 +158,10 @@ var add_secret = (selected_options) =>
 
 var update_multiselect_option = function (option_val, disabled) {
   // select option
-  const input = $(multiselect + ' input[value="' + option_val + '"]')
+  // escape option value
+  const escaped_val = $.escapeSelector(option_val)
+  // select option	  // select option
+  const input = $(multiselect + ' input[value="' + escaped_val + '"]')
 
   // deselect option and remove active class
   input.prop("checked", false)
@@ -191,11 +187,7 @@ $(function () {
   $(document).on("change", secret_type_select, switch_secret_content_type)
 
   // add handler to the secret type select
-  $(document).on(
-    "change",
-    payload_content_type_select,
-    switch_secret_payload_content_type
-  )
+  $(document).on("change", payload_content_type_select, switch_secret_payload_content_type)
 
   // init date time picker
   $(document).on("modal:contentUpdated", init_date_time_picker)
