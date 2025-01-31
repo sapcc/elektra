@@ -1,7 +1,7 @@
 const getUserToken = async () => {
   let path = "/os-api/__token"
-  if (window.scopedProjectId) path = `${window.scopedProjectId}/${path}`
-  if (window.scopedDomainId) path = `/${window.scopedDomainId}/${path}`
+  if (window.scopedProjectFid) path = `${window.scopedProjectFid}/${path}`
+  if (window.scopedDomainFid) path = `/${window.scopedDomainFid}/${path}`
 
   return fetch(path)
     .then((response) => response.json())
