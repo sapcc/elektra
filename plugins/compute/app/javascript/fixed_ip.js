@@ -12,12 +12,7 @@ const sanitize = function (value) {
   const gt = />/g
   const ap = /'/g
   const ic = /"/g
-  return value
-    .toString()
-    .replace(lt, "&lt;")
-    .replace(gt, "&gt;")
-    .replace(ap, "&#39;")
-    .replace(ic, "&#34;")
+  return value.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;")
 }
 
 $.fn.fixedIpSelector = function (options) {
@@ -108,27 +103,21 @@ $.fn.fixedIpSelector = function (options) {
       $subnetSelect.find("option").remove() // remove all options first
       if (!networkId) {
         // indicate to the user that no network is selected
-        $subnetSelect.append(
-          $("<option value=''>Please choose a network first</option>")
-        )
+        $subnetSelect.append($("<option value=''>Please choose a network first</option>"))
         updateAvailablePorts("")
         return
       }
 
-      const filtered_subnets = subnets.filter(
-        (sub) => sub.network_id === networkId
-      ) // filter for subnets for the selected network
-      $subnetSelect.append(
-        $("<option value=''>Choose a subnet (optional)</option>")
-      )
+      const filtered_subnets = subnets.filter((sub) => sub.network_id === networkId) // filter for subnets for the selected network
+      $subnetSelect.append($("<option value=''>Choose a subnet (optional)</option>"))
 
       if (filtered_subnets.length > 1) {
         for (var subnet of Array.from(filtered_subnets)) {
           $subnetSelect.append(
             $(
-              `<option value='${subnet.id}' ${
+              `<option value='${sanitize(subnet.id)}' ${
                 subnet.id === selected ? "selected" : undefined
-              }>${sanitize(subnet.name)} (${subnet.cidr})</option>`
+              }>${sanitize(subnet.name)} (${sanitize(subnet.cidr)})</option>`
             )
           )
         }
@@ -138,9 +127,9 @@ $.fn.fixedIpSelector = function (options) {
         const first_subnet = filtered_subnets[0]
         $subnetSelect.append(
           $(
-            `<option value='${first_subnet.id}'>${sanitize(
+            `<option value='${sanitize(first_subnet.id)}'>${sanitize(
               first_subnet.name
-            )} (${first_subnet.cidr})</option>`
+            )} (${sanitize(first_subnet.cidr)})</option>`
           )
         )
         return updateAvailablePorts(first_subnet.id)

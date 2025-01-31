@@ -3,7 +3,7 @@
 
 import { createConsumer } from "@rails/actioncable"
 ;(function () {
-  console.log("Cable init")
+  //console.log("Cable init")
   window.App || (window.App = {})
 
   // do not create the consumer if user domain is unknown
@@ -12,4 +12,4 @@ import { createConsumer } from "@rails/actioncable"
   if (window.scopedProjectId) path = path + "/" + window.scopedProjectId
   // create consumer
   window.App.cable = createConsumer(path + "/cable")
-}.call(this))
+}).call(this)

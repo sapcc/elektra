@@ -22,14 +22,10 @@ const GlobalNotifications = () => {
 
         // parse the start and end time to date object and write a warning if not valid date format
         if (notification.start && !Date.parse(notification.start)) {
-          console.warn(
-            `Invalid start time format for notification: ${notification.title}`
-          )
+          console.warn(`Invalid start time format for notification: ${notification.title}`)
         }
         if (notification.end && !Date.parse(notification.end)) {
-          console.warn(
-            `Invalid end time format for notification: ${notification.title}`
-          )
+          console.warn(`Invalid end time format for notification: ${notification.title}`)
         }
 
         // if start time is not set, it is considered as 0
@@ -41,23 +37,21 @@ const GlobalNotifications = () => {
       })
       .filter((notification) => {
         // if no regions given return true
-        if (!notification.regions || notification.regions?.length === 0)
-          return true
+        if (!notification.regions || notification.regions?.length === 0) return true
         // check if the current region is in the list of regions
         return notification.regions?.includes(window.region)
       })
   }, [notifications])
 
   useLayoutEffect(() => {
-    if (visibleNotifications?.length > 0)
-      document.body?.classList?.add("has-global-notifications")
+    if (visibleNotifications?.length > 0) document.body?.classList?.add("has-global-notifications")
     else document.body?.classList?.remove("has-global-notifications")
     return () => document.body?.classList?.remove("has-global-notifications")
   }, [visibleNotifications])
 
   useEffect(() => {
     const load = async () => {
-      console.log("fetching global notifications")
+      //console.log("fetching global notifications")
       const response = await fetch("/system/notifications?" + Date.now())
       let data = await response.json()
       setNotifications(data?.global_notifications || [])
@@ -72,38 +66,19 @@ const GlobalNotifications = () => {
   return (
     <div className="global-notifications">
       {visibleNotifications?.length === 1 ? (
-        <Alert
-          className="notification"
-          bsStyle={visibleNotifications[0].type || "info"}
-        >
+        <Alert className="notification" bsStyle={visibleNotifications[0].type || "info"}>
           <div className="notification-container">
-            <i
-              className={`fa fa-${
-                ICON_TYPES[visibleNotifications[0].type] || "info"
-              }`}
-            />
-            <b>{visibleNotifications[0]?.title}</b>{" "}
-            {visibleNotifications[0]?.description}
+            <i className={`fa fa-${ICON_TYPES[visibleNotifications[0].type] || "info"}`} />
+            <b>{visibleNotifications[0]?.title}</b> {visibleNotifications[0]?.description}
           </div>
         </Alert>
       ) : (
-        <Carousel
-          interval={CAROUSEL_INTERVAL}
-          indicators={false}
-          controls={false}
-        >
+        <Carousel interval={CAROUSEL_INTERVAL} indicators={false} controls={false}>
           {visibleNotifications.map((notification, index) => (
             <Carousel.Item key={index}>
-              <Alert
-                className="notification"
-                bsStyle={notification.type || "info"}
-              >
+              <Alert className="notification" bsStyle={notification.type || "info"}>
                 <div className="notification-container">
-                  <i
-                    className={`fa fa-${
-                      ICON_TYPES[notification?.type] || "info"
-                    }`}
-                  />
+                  <i className={`fa fa-${ICON_TYPES[notification?.type] || "info"}`} />
                   <b>{notification?.title}</b> {notification?.description}{" "}
                 </div>
                 <small className="notification-counter">
