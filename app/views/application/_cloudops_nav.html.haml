@@ -29,7 +29,7 @@
               -# https://avatars.wdf.sap.corp/avatar/ is not accessible from CI. Otherwise the tests will fail!
               -# cypress is based on chromium/electron and loading:"lazy" is only interpreted in that browser
               - avatar_url = url_for_avatar
-              %img.avatar{src: "/images/avatar-default.png", height: 24, async: true, loading: "lazy", id: "user-avatar"}
+              %img.avatar{height: 24, id: "user-avatar"}
               = current_user.full_name
               %span.caret
             %ul.dropdown-menu{:role => "menu"}

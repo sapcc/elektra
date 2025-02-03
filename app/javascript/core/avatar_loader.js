@@ -1,18 +1,36 @@
 window.loadAvatar = function ({ avatarUrl, elementId }) {
   document.addEventListener("DOMContentLoaded", function () {
-    var img = new Image()
-    // handle the case where the image does not exist
-    // try to load the image
-    img.onload = function () {
-      // if the image exists, set the src attribute of the image element
-      // console.info(`Loading avatar image from ${avatarUrl} into element with id ${elementId}.`)
-      document.getElementById(elementId).src = avatarUrl
-    }
-    img.onerror = function () {
-      // if the image does not exist, use the default image
-      console.warn(`Avatar image ${avatarUrl} does not exist, using default image.`)
-    }
-    // set the src attribute to the image url
-    img.src = avatarUrl
+    // image is a base64 encoded image of a default avatar you will find in the public/images folder
+    // base64 -w 0 public/images/avatar-default.png
+    const defaultImage =
+      "data:image/png;base64, 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"
+    document.getElementById(elementId).src = defaultImage
+    // create a new promise to load the image that the browser is not blocked
+    const loadImage = new Promise((resolve, reject) => {
+      var img = new Image()
+      // handle the case where the image does not exist
+      // try to load the image
+      img.onload = function () {
+        // if the image exists, set the src attribute of the image element
+        // console.info(`Loading avatar image from ${avatarUrl} into element with id ${elementId}.`)
+        document.getElementById(elementId).src = avatarUrl
+        resolve()
+      }
+      img.onerror = function () {
+        // if the image does not exist, use the default image
+        console.warn(`Avatar image ${avatarUrl} does not exist, using default image.`)
+        reject()
+      }
+      // set the src attribute to the image url
+      img.src = avatarUrl
+    })
+
+    loadImage
+      .then(() => {
+        console.info(`Successfully loaded avatar from ${avatarUrl}.`)
+      })
+      .catch(() => {
+        console.warn(`Failed to load avatar image.`)
+      })
   })
 }
