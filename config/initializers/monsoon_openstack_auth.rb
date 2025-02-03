@@ -1,6 +1,6 @@
-require "radius/auth"
+require 'radius/auth'
 def policy_paths
-  paths = ["config/policy.json"]
+  paths = ['config/policy.json']
   Core::PluginsManager.available_plugins.each do |p|
     paths << p.policy_file_path if p.has_policy_file?
   end
@@ -27,14 +27,15 @@ MonsoonOpenstackAuth.configure do |auth|
   # optional, default=false
   auth.access_key_auth_allowed = false
 
-  auth.enforce_natural_user = ENV["ENFORCE_NATURAL_USER_LOGIN"].to_s == "true"
+  auth.enforce_natural_user = ENV['ENFORCE_NATURAL_USER_LOGIN'].to_s == 'true'
+  auth.natural_user_name_pattern = /\A([DCIdci]\d*|TI_[A-Za-z0-9]{6}_\w*)\z/
 
   # authorization policy file
   auth.authorization.policy_file_path = policy_paths
   # auth.authorization.context = "identity"
-  auth.authorization.context = "identity"
+  auth.authorization.context = 'identity'
 
-  #auth.authorization.trace_enabled = true
+  # auth.authorization.trace_enabled = true
   auth.authorization.reload_policy = Rails.configuration.debug_policy_engine
   auth.authorization.trace_enabled = Rails.configuration.debug_policy_engine
 
@@ -43,33 +44,33 @@ MonsoonOpenstackAuth.configure do |auth|
   # everything else is handled without mapping like:
   # compute::instances_controller.rb#hard_reset -> policy.json -> compute:instance_hard_reset
   auth.authorization.controller_action_map = {
-    index: "list",
-    show: "get",
-    destroy: "delete",
-    new: "create",
-    edit: "update",
+    index: 'list',
+    show: 'get',
+    destroy: 'delete',
+    new: 'create',
+    edit: 'update'
   }
 
   # optional, default=false
   auth.debug = auth.debug_api_calls = Rails.configuration.debug_api_calls
 
-  auth.two_factor_enabled = (ENV["TWO_FACTOR_AUTHENTICATION"] == "on")
-  auth.rsa_dns = "dashboard-rsa"
-  auth.two_factor_authentication_method = ->(username, passcode) do
+  auth.two_factor_enabled = (ENV['TWO_FACTOR_AUTHENTICATION'] == 'on')
+  auth.rsa_dns = 'dashboard-rsa'
+  auth.two_factor_authentication_method = lambda { |username, passcode|
     # place here the code to authenticate against a rsa securID Server.
-    servers = ENV["TWO_FACTOR_RADIUS_SERVERS"].split(",")
-    secret = ENV["TWO_FACTOR_RADIUS_SECRET"]
+    servers = ENV['TWO_FACTOR_RADIUS_SERVERS'].split(',')
+    secret = ENV['TWO_FACTOR_RADIUS_SECRET']
 
     servers.each_index do |index|
-      auth = Radius::Auth.new(servers[index], "localhost", 10) # radius_server, localhost, timeout
+      auth = Radius::Auth.new(servers[index], 'localhost', 10) # radius_server, localhost, timeout
       begin
         return(auth.check_passwd(username, passcode, secret))
-      rescue => e
+      rescue StandardError => e
         raise e if index == servers.length - 1
         # puts "::::::::::::::."
         # p e
       end
     end
-    return false
-  end
+    false
+  }
 end
