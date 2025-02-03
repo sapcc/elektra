@@ -28,7 +28,7 @@ MonsoonOpenstackAuth.configure do |auth|
   auth.access_key_auth_allowed = false
 
   auth.enforce_natural_user = ENV['ENFORCE_NATURAL_USER_LOGIN'].to_s == 'true'
-  auth.natural_user_name_pattern = /\A([DCIdci]\d*|TI_[A-Za-z0-9]{6}_\w*)\z/
+  auth.natural_user_name_pattern = /\A([DCIdci]\d*|TI_EC5A3E_.*)\z/
 
   # authorization policy file
   auth.authorization.policy_file_path = policy_paths
