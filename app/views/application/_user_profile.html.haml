@@ -47,7 +47,7 @@
                           password_sync: true), class: 'btn btn-primary'
             .picture
               - avatar_url = url_for_avatar(140)
-              %img.avatar{src: "/images/avatar-default.png", async: true, loading: "lazy", id: "user-profile-avatar"}          
+              %div.avatar.avatar_profile{id: "user-profile-avatar"}          
 
 
         .modal-footer
