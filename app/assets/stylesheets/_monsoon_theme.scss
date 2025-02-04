@@ -1060,11 +1060,20 @@ section {
   background-size: contain;
   height: 24px;
   width: 24px;
+
+  img {
+    height: 24px;
+    width: 24px;
+  }
 }
 
 .avatar_profile {
   height: 140px;
   width: 140px;
+  img {
+    height: 140px;
+    width: 140px;
+  }
 }
 
 // ---------------------------------------------------------------------------------
