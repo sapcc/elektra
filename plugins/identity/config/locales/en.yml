@@ -11,6 +11,8 @@ en:
     cloud_dns_resource_admin: Limes Cloud Administrator (DNS only)
     cloud_image_admin: Glance Cloud Administrator
     cloud_keymanager_admin: Barbican Cloud Administrator
+    cloud_masterdata_admin: Master Data Cloud Administrator
+    cloud_masterdata_viewer: Master Data Cloud Read-Only
     cloud_network_admin: Neutron Cloud Administrator
     cloud_resource_admin: Limes Cloud Administrator
     cloud_resource_viewer: Limes Cloud Read-Only
@@ -28,6 +30,8 @@ en:
     image_viewer: Glance Read-Only
     keymanager_admin: Barbican Administrator
     keymanager_viewer: Barbican Read-Only
+    masterdata_admin: Master Data Administrator
+    masterdata_viewer: Master Data Read-Only
     member: Member
     network_admin: Neutron Administrator
     network_viewer: Neutron Read-Only
