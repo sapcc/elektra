@@ -1058,15 +1058,22 @@ section {
 .avatar {
   background: inline_svg("avatar_default") no-repeat;
   background-size: contain;
+  height: 24px;
+  width: 24px;
+
   img {
     height: 24px;
     width: 24px;
   }
 }
 
-.avatar_profile img {
+.avatar_profile {
   height: 140px;
   width: 140px;
+  img {
+    height: 140px;
+    width: 140px;
+  }
 }
 
 // ---------------------------------------------------------------------------------
