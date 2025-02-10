@@ -1058,12 +1058,9 @@ section {
 .avatar {
   background: inline_svg("avatar_default") no-repeat;
   background-size: contain;
-  height: 24px;
-  width: 24px;
-
   margin-right: 3px;
 
-  img {
+  &, img {
     border-radius: 3px;
     height: 24px;
     width: 24px;
@@ -1071,9 +1068,7 @@ section {
 }
 
 .avatar_profile {
-  height: 140px;
-  width: 140px;
-  img {
+  &, img {
     height: 140px;
     width: 140px;
   }
