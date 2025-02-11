@@ -32,12 +32,19 @@ module DnsService
       end
 
       def destroy
-        shared_zone_id = params[:id]
-        @shared_zone = services.dns_service.new_shared_zone(id: shared_zone_id)
-        @deleted = false
-        @deleted = true if @shared_zone.destroy
+        zone_share_id = params[:id]
+        zone_id = params[:zone_id]
+        @deleted = true
+        begin
+          services.dns_service.delete_shared_zone(zone_share_id,zone_id)
+        rescue StandardError => e
+          @error = e.message
+          @deleted = false
+        end
         respond_to { |format| format.js {} }
       end
     end
   end
 end
+
+

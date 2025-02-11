@@ -44,7 +44,11 @@ module ServiceLayer
         rescue StandardError => e
           if e.code == 400
             # designate version >= Dalmatian (2024.2)
-            response = elektron_dns.get("zones/shares").map_to("body.shared_zones", &shared_zone_map)
+            begin
+              response = elektron_dns.get("zones/shares").map_to("body.shared_zones", &shared_zone_map)
+            rescue StandardError => e
+              raise e
+            end
           else
             raise e
           end
@@ -100,26 +104,35 @@ module ServiceLayer
         # backward compatibility
         begin
           # designate version <= Dalmatian (2024.2)
-          elektron_dns.post("zones/shares") { attributes }.body
+          elektron_dns.post("zones/share") { attributes }.body
         rescue StandardError => e
-          if e.code == 400
+          if e.code == 405
             # designate version >= Dalmatian (2024.2)
-            elektron_dns.post("zones/shares") { attributes }.body
+            begin
+              zone_id = attributes.delete("zone_id")
+              elektron_dns.post("zones/#{zone_id}/shares") { attributes }.body
+            rescue StandardError => e
+              raise e
+            end
           else
             raise e
           end
         end
       end
 
-      def delete_shared_zone(id)
+      def delete_shared_zone(zone_share_id,zone_id)
         # backward compatibility
         begin
           # designate version <= Dalmatian (2024.2)
-          elektron_dns.delete("zones/share/#{id}")
+          elektron_dns.delete("zones/share/#{zone_share_id}")
         rescue StandardError => e
-          if e.code == 400
+          if e.code == 404
+            begin
             # designate version >= Dalmatian (2024.2)
-            elektron_dns.delete("zones/shares/#{id}")
+            elektron_dns.delete("zones/#{zone_id}/shares/#{zone_share_id}")
+            rescue StandardError => e
+              raise e
+            end
           else
             raise e
           end
