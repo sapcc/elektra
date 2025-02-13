@@ -19,7 +19,7 @@
           %td
             = link_to plugin('identity').edit_project_path({load_project_root: true}), data: {modal: true, toggle: "tooltip", placement: "left"} do
               Edit
-      - if current_user.is_allowed?("access_profile:tag_list", {target: {project: @active_project}})
+      - if current_user.is_allowed?("access_profile:tag_list", {target: {project: @active_project}}) && plugin_available?(:access_profile)
         %tr
           %th.snug-nowrap
             Access Profiles:
