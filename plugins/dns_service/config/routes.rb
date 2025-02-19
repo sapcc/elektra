@@ -11,6 +11,11 @@ DnsService::Engine.routes.draw do
     scope module: :zones do
       resources :recordsets
       resources :shared_zones, only: %i[index new create destroy]
+      resources :shared_zones do
+        member do
+          delete '/:zone_id', to: 'shared_zones#destroy'
+        end
+      end
       resources :transfer_requests, only: %i[new create]
 
       collection do

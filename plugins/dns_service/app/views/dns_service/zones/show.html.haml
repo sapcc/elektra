@@ -6,12 +6,12 @@
   .col-md-12
     - zone_shared = @zone.shared
     - parent_project = @zone.project_id
-    - if zone_shared
-      -# target project
+    - if zone_shared && parent_project != @scoped_project_id
+      -# target project view
       - project = ObjectCache.where(id: parent_project).first
       %h5 This zone is shared by project: #{project ? project.name : parent_project} 
     - else
-      -# source project
+      -# source project view
       .row 
         .col-md-3
           %h5 Nameservers

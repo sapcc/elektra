@@ -53,4 +53,6 @@ BLACKLISTED_ROLES = %w[
   resource_service
   cloud_objectstore_admin
   cloud_objectstore_viewer
+  cloud_masterdata_admin
+  cloud_masterdata_viewer
 ].freeze

@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
 # https://bundler.io/v1.5/gemfile.html
 # https://guides.rubygems.org/patterns/#semantic-versioning
@@ -9,59 +9,59 @@ source "https://rubygems.org"
 
 # Avoid g++ dependency https://github.com/knu/ruby-domain_name/issues/3
 # # unf is pulled in by the ruby-arc-client
-gem "unf", ">= 0.2.0beta2"
+gem 'unf', '>= 0.2.0beta2'
 
-gem "rails", "7.0.8.1"
-gem "jsbundling-rails"
+gem 'jsbundling-rails'
+gem 'rails', '7.0.8.1'
 
-gem "bootstrap-sass"
-gem "haml-rails"
-gem "simple_form"
-gem "redcarpet"
-gem "spinners"
+gem 'bootstrap-sass'
+gem 'haml-rails'
+gem 'redcarpet'
+gem 'simple_form'
+gem 'spinners'
 
-gem "friendly_id"
-gem "high_voltage"
-gem "simple-navigation" # Navigation menu builder
-gem "font-awesome-sass", "~>4"
-gem "kaminari"
-gem "filewatcher"
+gem 'filewatcher'
+gem 'font-awesome-sass', '~>4'
+gem 'friendly_id'
+gem 'high_voltage'
+gem 'kaminari'
+gem 'simple-navigation' # Navigation menu builder
 
-gem "responders"
+gem 'responders'
 
 # # make it fancy with react
 # gem 'react-rails', '~> 2.2.1'
 
 # Database
-gem "pg", "1.3.4"
-gem "activerecord-session_store"
+gem 'activerecord-session_store'
+gem 'pg', '1.3.4'
 
 # Openstack
-gem "net-ssh"
+gem 'net-ssh'
 # ed25519 support for ssh keys
-gem 'ed25519', '>= 1.2', '< 2.0'
 gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
-gem "netaddr", "2.0.4"
+gem 'ed25519', '>= 1.2', '< 2.0'
+gem 'netaddr', '2.0.4'
 
-gem "colorize"
+gem 'colorize'
 
-gem "ruby-radius"
+gem 'ruby-radius'
 
 # Extras
-gem "config", "~> 2.2.1"
+gem 'config', '~> 2.2.1'
 
 # Prometheus instrumentation
-gem "prometheus-client"
+gem 'prometheus-client'
 
 # Sentry client
-gem "sentry-raven"
-gem "httpclient" # The only faraday backend that handled no_proxy :|
+gem 'httpclient' # The only faraday backend that handled no_proxy :|
+gem 'sentry-raven'
 
 # Automation
-gem "lyra-client", git: "https://github.com/sapcc/lyra-client.git"
-gem "arc-client", git: "https://github.com/sapcc/arc-client.git"
+gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
+gem 'lyra-client', git: 'https://github.com/sapcc/lyra-client.git'
 # auth
-gem "monsoon-openstack-auth", git: "https://github.com/sapcc/monsoon-openstack-auth.git"
+gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 # gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
@@ -70,34 +70,32 @@ gem "monsoon-openstack-auth", git: "https://github.com/sapcc/monsoon-openstack-a
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
-gem "sdoc", "~> 2.6.0", group: :doc
+gem 'sdoc', '~> 2.6.0', group: :doc
 
 # if you update puma check Dockerfile for Version dependencies!
 # gem 'puma', '= 4.3.9', require: false
-gem "puma", "6.4.3"
+gem 'puma', '6.4.3'
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
-black_list = [""] # e.g. ['compute']
-if ENV.key?("BLACK_LIST_PLUGINS")
-  ENV["BLACK_LIST_PLUGINS"].split(",").each { |plugin_name| black_list << plugin_name.strip }
+black_list = [''] # e.g. ['compute']
+if ENV.key?('BLACK_LIST_PLUGINS')
+  ENV['BLACK_LIST_PLUGINS'].split(',').each { |plugin_name| black_list << plugin_name.strip }
 end
 
 # load all plugins except blacklisted plugins
-Dir.glob("plugins/*").each do |plugin_path|
-  unless black_list.include?(plugin_path.gsub("plugins/", ""))
-    gemspec path: plugin_path
-  end
+Dir.glob('plugins/*').each do |plugin_path|
+  gemspec path: plugin_path unless black_list.include?(plugin_path.gsub('plugins/', ''))
 end
 
 # email_service
-gem "aws-sdk-ses"
-gem "aws-sdk-sesv2"
-gem "aws-sdk-cloudwatch"
+gem 'aws-sdk-cloudwatch'
+gem 'aws-sdk-ses'
+gem 'aws-sdk-sesv2'
 ######################## END #######################
 
 group :api_client do
-  gem "elektron", git: "https://github.com/sapcc/elektron", tag: "v2.2.3"
+  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.2.3'
   # gem 'elektron', path: '../elektron'
 end
 
@@ -106,44 +104,47 @@ end
 group :production do
   # We are not using the railtie because it comes to late,
   # we are setting the logger in production.rb
-  gem "rails_stdout_logging", require: "rails_stdout_logging/rails"
+  gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
 end
 
 group :development, :production do
   # Views and Assets
-  gem "sass-rails"
+  gem 'sass-rails'
 end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem "web-console"
+  gem 'web-console'
+  # this version is the last version that works with mitmproxy
+  # if you use the versions above you will get "Excon::Error::ProxyConnectionError" if you use http_proxy env with Excon
+  gem 'excon', '0.112.0' 
 end
 
 group :development, :test do
-  gem "dotenv-rails"
+  gem 'dotenv-rails'
 
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug"
+  gem 'byebug'
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem "spring"
+  gem 'spring'
 
-  gem "foreman", "~> 0.87.0"
+  gem 'foreman', '~> 0.87.0'
 
   # Testing
 
-  gem "rspec-rails"
+  gem 'rspec-rails'
   # gem 'factory_girl_rails', '~> 4.0'
-  gem "factory_bot_rails"
-  gem "database_cleaner"
+  gem 'database_cleaner'
+  gem 'factory_bot_rails'
 
-  gem "pry-rails"
-  gem "prettier"
-  gem "listen"
+  gem 'listen'
+  gem 'prettier'
+  gem 'pry-rails'
 end
 
 group :test do
-  gem "rails-controller-testing"
+  gem 'rails-controller-testing'
 end
 
-gem "faraday-httpclient", "~> 2.0"
+gem 'faraday-httpclient', '~> 2.0'

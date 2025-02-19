@@ -86,6 +86,7 @@ module DnsService
       all_shared_zones = services.dns_service.shared_zones()
 
       @shared_with_projects = []
+      # check if zone is shared with other projects
       all_shared_zones.each do |shared_zone|
         if @zone.id == shared_zone.zone_id &&
              @scoped_project_id != shared_zone.target_project_id
