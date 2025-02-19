@@ -142,18 +142,26 @@ module Core
     end
 
     def self.create_cloud_admin_api_client
-      client =
-        ::Elektron.client(
-          {
-            url: ::Core.keystone_auth_endpoint,
-            user_name: Rails.application.config.service_user_id,
-            user_domain_name: Rails.application.config.service_user_domain_name,
-            password: Rails.application.config.service_user_password,
-            scope_project_name: Rails.configuration.cloud_admin_project,
-            scope_project_domain_name: Rails.configuration.cloud_admin_domain,
-          },
-          default_client_params,
+      auth_params = {
+        url: ::Core.keystone_auth_endpoint,
+        scope_project_name: Rails.configuration.cloud_admin_project,
+        scope_project_domain_name: Rails.configuration.cloud_admin_domain
+      }
+
+      # if application credentials exist, use them instead of service user
+      if Rails.application.config.app_cred_id.present? && Rails.application.config.app_cred_secret.present?
+        auth_config[:application_credential] = {
+          'id' => Rails.application.config.app_cred_id,
+          'secret' => Rails.application.config.app_cred_secret
+        }
+      else
+        auth_config.merge!(
+          user_name: Rails.application.config.service_user_id,
+          user_domain_name: Rails.application.config.service_user_domain_name,
+          password: Rails.application.config.service_user_password
         )
+      end
+      client = ::Elektron.client(auth_params, default_client_params)
 
       client.middlewares.add(
         ::Core::ElektronMiddlewares::RequestUUID,
