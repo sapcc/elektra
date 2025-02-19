@@ -84,6 +84,9 @@ RSpec.configure do |config|
     Rails.configuration.keystone_endpoint =
       "http://localhost:8183/v3/auth/tokens"
     Rails.configuration.default_region = "europe"
+    Rails.configuration.service_user_id = "test"
+    Rails.configuration.service_user_password = "test"
+    Rails.configuration.service_user_domain_name = "test"
   end
   config.after(:all) { DatabaseCleaner.clean }
 

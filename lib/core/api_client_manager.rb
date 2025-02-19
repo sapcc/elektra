@@ -92,11 +92,21 @@ module Core
       auth_config = {
         url: ::Core.keystone_auth_endpoint,
         scope_domain_name: scope_domain,
-        application_credential: {
+      }
+
+      # if application credentials exist, use them instead of service user
+      if Rails.application.config.app_cred_id.present? && Rails.application.config.app_cred_secret.present?
+        auth_config[:application_credential] = {
           'id' => Rails.application.config.app_cred_id,
           'secret' => Rails.application.config.app_cred_secret
         }
-      }
+      else
+        auth_config.merge!(
+          user_name: Rails.application.config.service_user_id,
+          user_domain_name: Rails.application.config.service_user_domain_name,
+          password: Rails.application.config.service_user_password
+        )
+      end
 
       begin
         client = ::Elektron.client(auth_config, default_client_params)
