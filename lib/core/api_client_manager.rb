@@ -92,7 +92,7 @@ module Core
     # Service User is the Domain Admin  
     # 
     # Due to the switch to application credentials, we now use 
-    # the cloud_admin user as the service user.  
+    # the cloud_admin user as the service user if application credentials are available. 
     # 
     # Reason:  
     # - Application credentials cannot be rescoped. They can just be created for a specific project in a domain.
@@ -118,31 +118,22 @@ module Core
     # - add the admin roles to the project so we need to use the service user to assign the basic admin roles: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/identity/app/controllers/identity/domains/create_wizard_controller.rb#L97
     # - get the user name from the openstack id if available: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/key_manager/app/controllers/key_manager/containers_controller.rb#L19
     # - get the admins for a domain: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/identity/app/controllers/identity/projects/request_wizard_controller.rb#L37
-    #
-    # As a result, we return the cloud_admin_api_client.  
+    #  
     ####################################################
 
     def self.create_service_user_api_client(scope_domain)
-      return create_cloud_admin_api_client
+      # If application credentials are available, use the `cloud_admin` user instead of the `service_user`, as application credentials cannot be rescoped.
+      if Rails.application.config.use_app_credentials
+        return create_cloud_admin_api_client
+      end
 
       auth_config = {
         url: ::Core.keystone_auth_endpoint,
+        user_name: Rails.application.config.service_user_id,
+        user_domain_name: Rails.application.config.service_user_domain_name,
+        password: Rails.application.config.service_user_password,
         scope_domain_name: scope_domain,
       }
-
-      # if application credentials exist, use them instead of service user
-      if Rails.application.config.use_app_credentials
-        auth_config[:application_credential] = {
-          'id' => Rails.application.config.app_cred_id,
-          'secret' => Rails.application.config.app_cred_secret
-        }
-      else
-        auth_config.merge!(
-          user_name: Rails.application.config.service_user_id,
-          user_domain_name: Rails.application.config.service_user_domain_name,
-          password: Rails.application.config.service_user_password
-        )
-      end
 
       begin
         client = ::Elektron.client(auth_config, default_client_params)
