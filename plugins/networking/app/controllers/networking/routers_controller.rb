@@ -143,6 +143,9 @@ module Networking
     end
 
     def create
+      if params["router"]["external_gateway_info"]["network_id"].blank?
+        params["router"].delete("external_gateway_info")
+      end
       # get selected subnets and remove them from params
       @selected_internal_subnets =
         (params[:router].delete(:internal_subnets) || []).reject(&:empty?)

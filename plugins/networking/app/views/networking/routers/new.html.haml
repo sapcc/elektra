@@ -15,9 +15,10 @@
       = info.input :network_id, {label: "Floating IP Network",
         input_html:         {},
         as:                 :select,
+        include_blank:      ' ',
         collection:         @external_networks.sort{ |a,b| a.highest_asr_agents_count<=>b.highest_asr_agents_count},
         selected:           @router.external_gateway_info.fetch("network_id",nil),
-        required:           true,
+        required:           false,
         icon_hint:          "Please prefer in your choise the networks from top to bottom"}
 
       %fieldset#subnets
@@ -35,7 +36,7 @@
       collection:         @internal_subnets.sort{|a,b| a.network_name<=>b.network_name},
       selected:           @selected_internal_subnets,
       label_method:       -> s {"#{s.name} (#{s.network_name})"},
-      required:           true}
+      required:           false}
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
