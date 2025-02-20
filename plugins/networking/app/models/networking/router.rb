@@ -6,11 +6,6 @@ module Networking
     validates :name, presence: { message: "Please provide a name" }
 
     attr_accessor :internal_subnets
-    validates :internal_subnets,
-              presence: {
-                message:
-                  "Please select at least one subnet from the private network subnets",
-              }
 
     def ip_subnet_objects
       return @ip_subnet_objects if @ip_subnet_objects
