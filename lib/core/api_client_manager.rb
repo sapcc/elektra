@@ -88,14 +88,50 @@ module Core
       client
     end
 
+    ####################################################
+    # Service User is the Domain Admin  
+    # 
+    # Due to the switch to application credentials, we now use 
+    # the cloud_admin user as the service user.  
+    # 
+    # Reason:  
+    # - Application credentials cannot be rescoped. They can just be created for a specific project in a domain.
+    # - Application credentials are being created for the cloud_admin project in the ccadmin domain.  
+    # - Since application credentials are created in the cloud_admin project in the ccadmin domain,  
+    #   we map the cloud_admin as the service user.  
+    # 
+    # Uses of Service User:
+    # - find or create friendly_id entry for domain: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/app/services/dashboard/rescoping_service.rb#L21
+    # - try to find or create friendly_id entry for domain: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/app/controllers/scope_controller.rb#L33
+    # - try to find domain in friendly ids: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/app/helpers/view_helper.rb#L70
+    # - load user details for current_user: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/app/controllers/concerns/current_user_wrapper.rb#L31
+    # - find user when adding it to a group: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/identity/app/controllers/identity/groups_controller.rb#L38
+    # - find a domain in domains controller: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/identity/app/controllers/identity/domains_controller.rb#L12
+    # - to update a project: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/identity/app/controllers/identity/projects_controller.rb#L50
+    # - to filter out roles: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/identity/app/controllers/concerns/identity/restricted_roles.rb#L15
+    # - to fetch cached projects for an user id: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/networking/app/controllers/networking/networks/access_controller.rb#L15
+    # - to find project for an user id: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/image/app/controllers/image/os_images/private/members_controller.rb#L18
+    # - search live against API in the cache controller: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/app/controllers/cache_controller.rb#L266
+    # - load active project if not in cache: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/app/controllers/dashboard_controller.rb#L247    
+    # - get the user name from the openstack id: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/key_manager/app/controllers/key_manager/secrets_controller.rb#L25
+    # - get the admins for a project: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/inquiry/app/controllers/inquiry/inquiries_controller.rb#L70
+    # - add the admin roles to the project so we need to use the service user to assign the basic admin roles: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/identity/app/controllers/identity/domains/create_wizard_controller.rb#L97
+    # - get the user name from the openstack id if available: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/key_manager/app/controllers/key_manager/containers_controller.rb#L19
+    # - get the admins for a domain: https://github.com/sapcc/elektra/blob/7c748022a3d6afb110611c354468bed81f2bcf3c/plugins/identity/app/controllers/identity/projects/request_wizard_controller.rb#L37
+    #
+    # As a result, we return the cloud_admin_api_client.  
+    ####################################################
+
     def self.create_service_user_api_client(scope_domain)
+      return create_cloud_admin_api_client
+
       auth_config = {
         url: ::Core.keystone_auth_endpoint,
         scope_domain_name: scope_domain,
       }
 
       # if application credentials exist, use them instead of service user
-      if Rails.application.config.app_cred_id.present? && Rails.application.config.app_cred_secret.present?
+      if Rails.application.config.use_app_credentials
         auth_config[:application_credential] = {
           'id' => Rails.application.config.app_cred_id,
           'secret' => Rails.application.config.app_cred_secret
@@ -149,13 +185,13 @@ module Core
       }
 
       # if application credentials exist, use them instead of service user
-      if Rails.application.config.app_cred_id.present? && Rails.application.config.app_cred_secret.present?
-        auth_config[:application_credential] = {
+      if Rails.application.config.use_app_credentials
+        auth_params[:application_credential] = {
           'id' => Rails.application.config.app_cred_id,
           'secret' => Rails.application.config.app_cred_secret
         }
       else
-        auth_config.merge!(
+        auth_params.merge!(
           user_name: Rails.application.config.service_user_id,
           user_domain_name: Rails.application.config.service_user_domain_name,
           password: Rails.application.config.service_user_password
