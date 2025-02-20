@@ -31,8 +31,6 @@ ENV MONSOON_NEW_PROJECT_DL=$MONSOON_NEW_PROJECT_DL
 # container.
 # https://github.com/rails/rails/issues/32947
 ENV MONSOON_RAILS_SECRET_TOKEN=dummy_monsoon_rails_build_secret_token_for_assets_precompiling_change_it_in_production
-ARG MONSOON_RAILS_SECRET_TOKEN
-ENV MONSOON_RAILS_SECRET_TOKEN=$MONSOON_RAILS_SECRET_TOKEN
 
 WORKDIR $APP_PATH
 
