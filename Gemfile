@@ -95,7 +95,7 @@ gem 'aws-sdk-sesv2'
 ######################## END #######################
 
 group :api_client do
-  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.2.3'
+  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.2.5'
   # gem 'elektron', path: '../elektron'
 end
 
