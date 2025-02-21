@@ -120,7 +120,7 @@ module MonsoonDashboard
     config.service_user_id = ENV["MONSOON_OPENSTACK_AUTH_API_USERID"]
 
     ############## SERVICE USER CREDENTIALS #############
-    config.use_app_credentials = config.app_cred_id.present? && config.app_cred_secret.present?    
+    config.use_app_credentials = ENV["APP_CRED_ID"].present? && ENV["APP_CRED_SECRET"].present?
     if config.use_app_credentials
       puts  "=> [Technical User]: Using Application Credentials"
       # app cred for the service user
