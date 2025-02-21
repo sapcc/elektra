@@ -120,17 +120,16 @@ module MonsoonDashboard
     config.service_user_id = ENV["MONSOON_OPENSTACK_AUTH_API_USERID"]
 
     ############## SERVICE USER CREDENTIALS #############
-    # password for the service user    
-    config.service_user_password = ENV["MONSOON_OPENSTACK_AUTH_API_PASSWORD"]    
-    # app cred for the service user
-    config.app_cred_id = ENV["APP_CRED_ID"]
-    config.app_cred_secret = ENV["APP_CRED_SECRET"]      
-    config.use_app_credentials = config.app_cred_id.present? && config.app_cred_secret.present?
-    
+    config.use_app_credentials = config.app_cred_id.present? && config.app_cred_secret.present?    
     if config.use_app_credentials
       puts  "=> [Technical User]: Using Application Credentials"
+      # app cred for the service user
+      config.app_cred_id = ENV["APP_CRED_ID"]
+      config.app_cred_secret = ENV["APP_CRED_SECRET"]      
     else
       puts  "=> [Technical User]: Using User/Password authentication"
+      # password for the service user    
+      config.service_user_password = ENV["MONSOON_OPENSTACK_AUTH_API_PASSWORD"]      
     end
 
     # Mailer configuration for inquiries/requests
