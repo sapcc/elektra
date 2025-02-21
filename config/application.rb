@@ -111,12 +111,26 @@ module MonsoonDashboard
     config.cloud_admin_project =
       ENV.fetch("MONSOON_OPENSTACK_CLOUDADMIN_PROJECT", "cloud_admin")
 
-    ############## SERVICE USER #############
-    config.service_user_id = ENV["MONSOON_OPENSTACK_AUTH_API_USERID"]
-    config.service_user_password = ENV["MONSOON_OPENSTACK_AUTH_API_PASSWORD"]
-    config.service_user_domain_name = ENV["MONSOON_OPENSTACK_AUTH_API_DOMAIN"]
+    ############## DEFAULT DOMAIN ###############
     config.default_domain =
       ENV["MONSOON_DASHBOARD_DEFAULT_DOMAIN"] || "monsoon3"
+
+    ############## SERVICE USER #############
+    config.service_user_domain_name = ENV["MONSOON_OPENSTACK_AUTH_API_DOMAIN"]
+    config.service_user_id = ENV["MONSOON_OPENSTACK_AUTH_API_USERID"]
+
+    ############## SERVICE USER CREDENTIALS #############
+    config.use_app_credentials = ENV["APP_CRED_ID"].present? && ENV["APP_CRED_SECRET"].present?
+    if config.use_app_credentials
+      puts  "=> [Technical User]: Using Application Credentials"
+      # app cred for the service user
+      config.app_cred_id = ENV["APP_CRED_ID"]
+      config.app_cred_secret = ENV["APP_CRED_SECRET"]      
+    else
+      puts  "=> [Technical User]: Using User/Password authentication"
+      # password for the service user    
+      config.service_user_password = ENV["MONSOON_OPENSTACK_AUTH_API_PASSWORD"]      
+    end
 
     # Mailer configuration for inquiries/requests
     config.action_mailer.raise_delivery_errors = true
