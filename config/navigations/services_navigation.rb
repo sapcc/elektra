@@ -221,7 +221,7 @@ SimpleNavigation::Configuration.run do |navigation|
                  },
                  if:
                    lambda {
-                     plugin_available?(:keymanagerng) or
+                     plugin_available?(:key_manager) or
                        (plugin_available?(:identity) && services.available?(:identity) and
                          current_user &&
                            (
@@ -266,15 +266,15 @@ SimpleNavigation::Configuration.run do |navigation|
                                    ) && plugin_available?(:identity)
                                  },
                                  highlights_on: %r{identity/projects/groups/?.*}
-      access_management_nav.item :keymanagerng,
+      access_management_nav.item :key_manager,
                                  'Key Manager',
-                                 -> { plugin('keymanagerng').root_path },
+                                 -> { plugin('key_manager').secrets_path },
                                  if: lambda {
-                                   plugin_available?(:keymanagerng)
+                                   plugin_available?(:key_manager)
                                  },
                                  highlights_on:
                                    proc {
-                                     params[:controller][%r{keymanagerng/.*}]
+                                     params[:controller][%r{key_manager/.*}]
                                    }
     end
 
