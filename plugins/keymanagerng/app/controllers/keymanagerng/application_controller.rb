@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Keymanagerng
-  class ApplicationController < AjaxController
+  class ApplicationController < DashboardController
     def user_name
       # byebug
       render json:
