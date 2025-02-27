@@ -100,6 +100,9 @@ const secretTypeRelToPayloadContentType = (secretType) => {
       return []
   }
 }
+const shouldShowBase64Warning = (payloadContentType) => {
+  return [TYPE_PKCS8, TYPE_OCTET_STREAM, TYPE_PKIX_CERT].includes(payloadContentType)
+}
 
 const formValidation = (formData) => {
   let errors = {}
@@ -366,9 +369,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
               setFormData({
                 ...formData,
                 payload_content_type: value,
-                payload_content_encoding: [TYPE_PKCS8, TYPE_OCTET_STREAM, TYPE_PKIX_CERT].includes(value)
-                  ? "base64"
-                  : undefined, // Reset if not in the list
+                payload_content_encoding: shouldShowBase64Warning(value) ? "base64" : undefined, // Reset if not in the list
               })
             }}
             placeholder={formData.secret_type ? "Select..." : "Please first select a secret type"}
@@ -388,7 +389,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
               ))}
           </Select>
         </FormRow>
-        {[TYPE_PKCS8, TYPE_OCTET_STREAM, TYPE_PKIX_CERT].includes(formData.payload_content_type) && (
+        {shouldShowBase64Warning(formData.payload_content_type) && (
           <>
             <FormRow>
               <Message
