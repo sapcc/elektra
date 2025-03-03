@@ -185,13 +185,13 @@ module AccessProfile
     end
 
     def restrict_access
+
       # just for production regions
       return if current_region.start_with?("qa-")
       # if user hasn't the cloud_support_tools_viewer should be redirected
       return if current_user.has_role?("cloud_support_tools_viewer")
 
-      @access_error = "You are not allowed to see this page."
-      render status: :unauthorized
+      render json: { error: "You are not allowed to see this page." }, status: :forbidden
     end
   end
 end
