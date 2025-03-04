@@ -4,7 +4,6 @@ require 'json'
 
 class CoreApplicationMailer < ActionMailer::Base
   layout "mailer"
-  API_URL = 'https://limes-campfire.qa-de-1.cloud.sap/v1/send-email'.freeze
 
   def send_custom_email(recipient:, subject:, body_html:)
     # Get the token form the cloud_admin instance
@@ -14,7 +13,7 @@ class CoreApplicationMailer < ActionMailer::Base
     token = cloud_admin.instance_variable_get(:@api_client).token
         
     # Set up the UI
-    uri = URI.parse(API_URL)
+    uri = URI.parse(Rails.configuration.limes_mailer_address)
     uri.query = URI.encode_www_form({ from: 'elektra' })
    
     # Set up the body for the request
