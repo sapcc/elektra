@@ -8,7 +8,9 @@ class CoreApplicationMailer < ActionMailer::Base
   def send_custom_email(recipient:, subject:, body_html:)
     # Get the token form the cloud_admin instance
     ###################################
-    # TODO: add to the cloud_admin user "role:cloud_resource_admin or role:resource_service"
+    # TODO: 
+    # - add to the cloud_admin user "role:cloud_resource_admin or role:resource_service"
+    # - fetch cloud_admin user token from the region where the mailer service is running
     ###################################
     token = cloud_admin.instance_variable_get(:@api_client).token
         
