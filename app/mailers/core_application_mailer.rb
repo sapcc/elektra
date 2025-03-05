@@ -45,7 +45,6 @@ class CoreApplicationMailer < ActionMailer::Base
   ###################################
   # TODO: 
   # - add to the cloud_admin user "role:cloud_resource_admin or role:resource_service"
-  # - fetch cloud_admin user token from the region where the mailer service is running
   ###################################
   def cloud_admin
     @cloud_admin ||=
