@@ -42,7 +42,7 @@ class CoreApplicationMailer < ActionMailer::Base
 
   private
 
-    ###################################
+  ###################################
   # TODO: 
   # - add to the cloud_admin user "role:cloud_resource_admin or role:resource_service"
   # - fetch cloud_admin user token from the region where the mailer service is running
@@ -50,7 +50,7 @@ class CoreApplicationMailer < ActionMailer::Base
   def cloud_admin
     @cloud_admin ||=
       Core::ServiceLayer::ServicesManager.new(
-        Core::ApiClientManager.cloud_admin_api_client,          
+        Core::ApiClientManager.cloud_admin_api_client(Rails.configuration.limes_mailer_auth_endpoint),          
       )
   end
 
