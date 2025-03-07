@@ -496,7 +496,7 @@ module Compute
     end
 
     def locked?
-      metadata.locked == true || metadata.locked == "true"
+      metadata.locked == true || metadata.locked == "true" || locked == true || locked == "true"
     end
 
     def lock
