@@ -54,7 +54,7 @@ const EventList = ({
       <Alert
         message={{
           type: "error",
-          text: "This is a danger alert—check it out!",
+          text: typeof error === "string" ? error : error?.message,
         }}
       />
     )}
@@ -80,10 +80,7 @@ const EventList = ({
             <option value="">Select attribute</option>
             {
               // filter attributes list. Show only those that haven't already been selected as a filter type
-              ATTRIBUTES.filter(
-                (att) =>
-                  activeFilters.findIndex((filter) => filter[0] == att.key) < 0
-              ).map((att) => (
+              ATTRIBUTES.filter((att) => activeFilters.findIndex((filter) => filter[0] == att.key) < 0).map((att) => (
                 <option value={att.key} key={att.key}>
                   {att.name}
                 </option>
@@ -170,8 +167,7 @@ const EventList = ({
                 handleRemoveFilter(filter[0])
               }}
             >
-              {ATTRIBUTES.find((att) => att.key == filter[0]).name} ={" "}
-              {filter[1]}
+              {ATTRIBUTES.find((att) => att.key == filter[0]).name} = {filter[1]}
               <i className="fa fa-times-circle"></i>
             </div>
           ))}

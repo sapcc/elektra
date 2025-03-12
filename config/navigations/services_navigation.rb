@@ -268,13 +268,13 @@ SimpleNavigation::Configuration.run do |navigation|
                                  highlights_on: %r{identity/projects/groups/?.*}
       access_management_nav.item :key_manager,
                                  'Key Manager',
-                                 -> { plugin('key_manager').secrets_path },
+                                 -> { plugin('keymanagerng').root_path },
                                  if: lambda {
-                                   plugin_available?(:key_manager)
+                                   plugin_available?(:keymanagerng)
                                  },
                                  highlights_on:
                                    proc {
-                                     params[:controller][%r{key_manager/.*}]
+                                     params[:controller][%r{keymanagerng/.*}]
                                    }
     end
 
