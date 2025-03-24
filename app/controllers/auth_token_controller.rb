@@ -3,8 +3,11 @@ require 'uri'
 
 class AuthTokenController < ActionController::Base
   layout 'plain'
+  skip_before_action :verify_authenticity_token, only: [:verify]
+
   def verify
     token = params[:token]
+
     keystone_endpoint = ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
     # remove /v3 from the endpoint if it exists
     keystone_endpoint = keystone_endpoint.gsub('/v3', '') if keystone_endpoint.include?('/v3')
@@ -27,6 +30,7 @@ class AuthTokenController < ActionController::Base
 
     domain_id = JSON.parse(response.body)['token']['user']['domain']['id']
 
+    # redirect to the auth gem to create the session for the given domain_id
     redirect_to "/#{domain_id}/auth/consume-auth-token?domain_id=#{domain_id}&token=#{token}&after_login=/#{domain_id}/home"
   rescue StandardError
     render action: :verify
