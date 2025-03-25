@@ -41,7 +41,9 @@ RUN apk upgrade --no-cache --no-progress \
   zlib-dev \
   tshark \
   rust \
-  cargo
+  cargo \ 
+  yaml-dev
+
 # Create and activate a virtual environment
 RUN python3 -m venv /opt/venv
 
