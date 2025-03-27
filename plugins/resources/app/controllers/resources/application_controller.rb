@@ -17,7 +17,7 @@ module Resources
       require "net/http"
       begin
         cerebro_endpoint = "https://migration-recommender-service.#{current_region}.cloud.sap/public/api/v1/placeable-vm/#{openstack_level}"
-        if ENV.key?("CEREBRO_CUSTOM_ENDPOINT").present? 
+        if ENV.key?("CEREBRO_CUSTOM_ENDPOINT") && ENV["CEREBRO_CUSTOM_ENDPOINT"].present? 
           cerebro_endpoint = "#{ENV['CEREBRO_CUSTOM_ENDPOINT']}/public/api/v1/placeable-vm/#{openstack_level}"
         end
 
