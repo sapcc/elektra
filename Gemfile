@@ -58,8 +58,8 @@ gem 'sentry-raven'
 gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 gem 'lyra-client', git: 'https://github.com/sapcc/lyra-client.git'
 # auth
-gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 # gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
+gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby

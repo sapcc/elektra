@@ -20,9 +20,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: d86df2d0f160a40306431fab94247754a5348b3c
+  revision: d9f8d1167ce828887493fb5b4d2786a9d6625eb1
   specs:
-    monsoon-openstack-auth (2.0.12)
+    monsoon-openstack-auth (2.0.14)
       excon
       hashie
       rails
