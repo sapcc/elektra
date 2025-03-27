@@ -1,0 +1,16 @@
+- current_region=ENV["MONSOON_DASHBOARD_REGION"]
+- auth_url="https://identity-3.#{current_region}.cloud.sap/v3/auth/OS-FEDERATION/identity_providers/sap-ias/protocols/openid/websso?origin=https://dashboard.#{current_region}.cloud.sap/verify-auth-token"
+
+.form-signin
+    %h5.form-signin-heading
+        Federated login
+    %a.btn.btn-lg.btn-primary.btn-block{ href:auth_url, onclick: "storeCurrentUrl"} Please sign in
+
+:javascript
+    //function which is called onclick and store the current url in local storage
+    function storeCurrentUrl(e){
+        localStorage.setItem("after-login", "#{params[:after_login]}");
+        // for testing
+        // console.log(localStorage.getItem("after-login"));
+        // e.preventDefault();
+    } 
