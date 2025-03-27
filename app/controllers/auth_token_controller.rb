@@ -2,7 +2,11 @@ require 'net/http'
 require 'uri'
 require 'json' # Ensure JSON module is required
 
-KEYSTONE_ENDPOINT = URI.parse(ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT'])&.origin || ''
+KEYSTONE_ENDPOINT = if ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
+                      URI.parse(ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']).origin
+                    else
+                      ''
+                    end
 
 class AuthTokenController < ActionController::Base
   layout 'plain'
