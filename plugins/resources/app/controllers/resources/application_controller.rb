@@ -16,22 +16,16 @@ module Resources
       # https://migration-recommender-service.cca-pro.cerebro.c.eu-de-1.cloud.sap/public/docs#/default/get_placeable_vm_for_project_api_v1_placeable_vm_project__openstack_project_id__get
       require "net/http"
       begin
-        cerebro_endpoint = "https://migration-recommender-service.cca-pro.cerebro.c.#{current_region}.cloud.sap/public/api/v1/placeable-vm/#{openstack_level}"
-        if ENV.key?("CEREBRO_CUSTOM_ENDPOINT") 
-          unless ENV["CEREBRO_CUSTOM_ENDPOINT"].empty? || ENV["CEREBRO_CUSTOM_ENDPOINT"].blank?
-            cerebro_endpoint = "#{ENV['CEREBRO_CUSTOM_ENDPOINT']}/public/api/v1/placeable-vm/#{openstack_level}"
-          end
+        cerebro_endpoint = "https://migration-recommender-service.#{current_region}.cloud.sap/public/api/v1/placeable-vm/#{openstack_level}"
+        if ENV.key?("CEREBRO_CUSTOM_ENDPOINT").present? 
+          cerebro_endpoint = "#{ENV['CEREBRO_CUSTOM_ENDPOINT']}/public/api/v1/placeable-vm/#{openstack_level}"
         end
 
-        # QA: https://migration-recommender-service.cca-qap.cerebro.c.eu-de-1.cloud.sap/public/docs
-        # this is meaningless because there is no bigVM data in QA
-        if current_region == "qa-de-1" 
-          cerebro_endpoint = "https://migration-recommender-service.cca-qap.cerebro.c.eu-de-1.cloud.sap/public/api/v1/placeable-vm/#{openstack_level}"
-        end
-
-        # for debug and development in QA use a prod region and project or domain
-        # cerebro_endpoint = "https://migration-recommender-service.cca-pro.cerebro.c.eu-de-1.cloud.sap/public/api/v1/placeable-vm/domain/XXX"
-        # cerebro_endpoint = "https://migration-recommender-service.cca-pro.cerebro.c.na-ca-1.cloud.sap/public/api/v1/placeable-vm/project/XXX
+        # for debug and development use a region and project or domain
+        # https://migration-recommender-service.eu-de-1.cloud.sap/public/docs
+        # check eu-de-1 and get the project or domain id
+        # cerebro_endpoint = "https://migration-recommender-service.eu-de-1.cloud.sap/public/api/v1/placeable-vm/domain/XXX"
+        # cerebro_endpoint = "https://migration-recommender-service.eu-de-1.cloud.sap/public/api/v1/placeable-vm/project/XXX
 
         uri = URI(cerebro_endpoint)
         http = Net::HTTP.new(uri.host, uri.port)
