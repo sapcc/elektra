@@ -23,7 +23,3 @@ domains:
     dns_c_subdomain: false
     # set this to use the federation feature in keystone
     federation: false
-
-  - name: iaas
-    regex: "iaas-.*"
-    federation: true  
