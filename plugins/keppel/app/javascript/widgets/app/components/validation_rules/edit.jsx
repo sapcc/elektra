@@ -38,8 +38,6 @@ export default class RBACPoliciesEditModal extends React.Component {
     if (!account || apiStateIsDeleting(account?.state)) {
       return null
     }
-    const isEditable =
-      isAdmin && (account.metadata || {}).readonly_in_elektra != "true"
 
     const initialValues = {
       required_labels: ((account.validation || {}).required_labels || []).join(
@@ -68,13 +66,6 @@ export default class RBACPoliciesEditModal extends React.Component {
           initialValues={initialValues}
         >
           <Modal.Body>
-            {isAdmin && !isEditable && (
-              <p className="bs-callout bs-callout-warning bs-callout-emphasize">
-                The configuration for this account is read-only in this UI,
-                probably because it was deployed by an automated process.
-              </p>
-            )}
-
             <Form.ElementHorizontal
               label="Required labels"
               name="required_labels"
@@ -83,7 +74,7 @@ export default class RBACPoliciesEditModal extends React.Component {
                 elementType="input"
                 type="text"
                 name="required_labels"
-                readOnly={!isEditable}
+                readOnly={!isAdmin}
               />
               <p className="form-control-static">
                 When set, only images that have all these labels can be pushed
@@ -96,7 +87,7 @@ export default class RBACPoliciesEditModal extends React.Component {
             </Form.ElementHorizontal>
           </Modal.Body>
 
-          {isEditable ? (
+          {isAdmin ? (
             <Modal.Footer>
               <Form.SubmitButton label="Save" />
               <Button onClick={this.close}>Cancel</Button>
