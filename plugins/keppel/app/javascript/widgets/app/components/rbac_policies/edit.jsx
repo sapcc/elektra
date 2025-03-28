@@ -61,6 +61,14 @@ export default class RBACPoliciesEditModal extends React.Component {
     }
     this.setState({ ...this.state, policies })
   }
+  setForbiddenPermissions = (idx, input) => {
+    const policies = [...this.state.policies]
+    policies[idx] = { ...policies[idx], forbidden_permissions: input === "" ? null : input.split(",") }
+    if (input == "anonymous_pull" || input == "anonymous_first_pull") {
+      policies[idx].match_username = ""
+    }
+    this.setState({ ...this.state, policies })
+  }
   removePolicy = (idx, input) => {
     const policies = this.state.policies.filter((p, index) => idx != index)
     this.setState({ ...this.state, policies })
@@ -122,6 +130,7 @@ export default class RBACPoliciesEditModal extends React.Component {
       setUserRegex,
       setSourceCIDR,
       setPermissions,
+      setForbiddenPermissions,
       removePolicy,
     } = this
     const commonPropsForRow = {
@@ -131,6 +140,7 @@ export default class RBACPoliciesEditModal extends React.Component {
       setUserRegex,
       setSourceCIDR,
       setPermissions,
+      setForbiddenPermissions,
       removePolicy,
     }
 
