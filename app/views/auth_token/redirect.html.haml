@@ -7,10 +7,10 @@
     .spinner    
 
 :javascript
-  const after_login = "/#{@domain_id}/home";
+  const after_login = "/#{@domain_name}/home";
   // try to get the after_login from the localStorage
   if (localStorage.getItem('after_login')) {
     after_login = localStorage.getItem('after_login');
     localStorage.removeItem('after_login');
   }
-  window.location = `/#{@domain_id}/auth/consume-auth-token?domain_id=#{@domain_id}&auth_token=#{@auth_token}&after_login=${after_login}`
+  window.location = `/#{@domain_name}/auth/consume-auth-token?domain_name=#{@domain_name}&auth_token=#{@auth_token}&after_login=${after_login}`
