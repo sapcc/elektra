@@ -29,9 +29,6 @@ gem 'simple-navigation' # Navigation menu builder
 
 gem 'responders'
 
-# # make it fancy with react
-# gem 'react-rails', '~> 2.2.1'
-
 # Database
 gem 'activerecord-session_store'
 gem 'pg', '1.3.4'
@@ -61,8 +58,8 @@ gem 'sentry-raven'
 gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 gem 'lyra-client', git: 'https://github.com/sapcc/lyra-client.git'
 # auth
-gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 # gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
+gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
@@ -117,7 +114,7 @@ group :development do
   gem 'web-console'
   # this version is the last version that works with mitmproxy
   # if you use the versions above you will get "Excon::Error::ProxyConnectionError" if you use http_proxy env with Excon
-  gem 'excon', '0.112.0' 
+  gem 'excon', '0.112.0'
 end
 
 group :development, :test do
