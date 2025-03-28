@@ -45,14 +45,11 @@ export default class AccountUpstreamConfigModal extends React.Component {
 
   render() {
     const { account, isAdmin } = this.props
-    const isEditable =
-      isAdmin && (account.metadata || {}).readonly_in_elektra != "true"
     if (
       !account ||
       !account.replication ||
       account.replication.strategy != "from_external_on_first_use" ||
-      !isAdmin ||
-      !isEditable
+      !isAdmin
     ) {
       return null
     }

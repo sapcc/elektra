@@ -215,8 +215,6 @@ export default class GCPoliciesEditModal extends React.Component {
     if (!account || apiStateIsDeleting(account?.state)) {
       return
     }
-    const isEditable =
-      isAdmin && (account.metadata || {}).readonly_in_elektra != "true"
 
     const policies = this.state.policies || []
     const isValid = policies.every((p) => validatePolicy(p) === null)
@@ -224,7 +222,7 @@ export default class GCPoliciesEditModal extends React.Component {
 
     const { movePolicy, setPolicyAttribute, removePolicy } = this
     const commonPropsForRow = {
-      isEditable,
+      isEditable: isAdmin,
       policyCount: policies.length,
       movePolicy,
       setPolicyAttribute,
@@ -266,20 +264,14 @@ export default class GCPoliciesEditModal extends React.Component {
             first policy that matches gets applied, and all subsequent policies
             will be ignored.
           </p>
-          {isAdmin && !isEditable && (
-            <p className="bs-callout bs-callout-warning bs-callout-emphasize">
-              The configuration for this account is read-only in this UI,
-              probably because it was deployed by an automated process.
-            </p>
-          )}
           <table className="table">
             <thead>
               <tr>
-                <th className="col-md-1">{isEditable ? "Order" : ""}</th>
+                <th className="col-md-1">{isAdmin ? "Order" : ""}</th>
                 <th className="col-md-2">Action</th>
                 <th className="col-md-8">Matching rule</th>
                 <th className="col-md-1">
-                  {isEditable && (
+                  {isAdmin && (
                     <button
                       className="btn btn-sm btn-default"
                       onClick={this.addPolicy}
@@ -330,12 +322,12 @@ export default class GCPoliciesEditModal extends React.Component {
         </Modal.Body>
 
         <Modal.Footer>
-          {isEditable ? (
+          {isAdmin ? (
             <>
               <Button
                 onClick={this.handleSubmit}
                 bsStyle="primary"
-                disabled={!isValid || isSubmitting || !isEditable}
+                disabled={!isValid || isSubmitting}
               >
                 {isSubmitting ? "Saving..." : "Save"}
               </Button>
