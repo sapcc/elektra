@@ -31,13 +31,12 @@ class AuthTokenController < ActionController::Base
 
       if response.is_a?(Net::HTTPSuccess)
         response_body = JSON.parse(response.body)
-        domain_id = response_body.dig('token', 'user', 'domain', 'id')
+        domain_name = response_body.dig('token', 'user', 'domain', 'name')
 
-        if domain_id
+        if domain_name
           # Render the loading view while processing the redirect
-          @domain_id = domain_id
+          @domain_name = domain_name
           @auth_token = encode_auth_token(token)
-          # render :redirect_form, locals: { domain_id: @domain_id, auth_token: @auth_token } and return
           render :redirect and return
         else
           @error = 'Domain ID not found in response'
@@ -67,7 +66,7 @@ class AuthTokenController < ActionController::Base
 
   def allowed_origin?
     # Define your trusted domains
-    trusted_origins = [KEYSTONE_ENDPOINT]
+    trusted_origins = ["https://identity-3.#{ENV['MONSOON_DASHBOARD_REGION']}.cloud.sap"]
 
     # Check the Origin header
     origin = request.headers['Origin']
