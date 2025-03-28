@@ -274,6 +274,24 @@ export default class ImageDetailsModal extends React.Component {
       return <GCPolicyFolder caption={caption} />
     }
 
+    if (gcStatus.protected_by_subject) {
+      const digest = gcStatus.protected_by_subject
+      const caption = (
+        <>
+          {"Protected from garbage collection because referenced subject "}
+          <Digest digest={digest} repositoryURL={repositoryURL} />
+          {" ("}
+          <Link
+            to={`/repo/${this.props.account.name}/${this.props.repository.name}/-/manifest/${digest}/details`}
+          >
+            Details
+          </Link>
+          {") still exists"}
+        </>
+      )
+      return <GCPolicyFolder caption={caption} />
+    }
+
     if (gcStatus.protected_by_policy) {
       return (
         <GCPolicyFolder
