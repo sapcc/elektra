@@ -21,6 +21,9 @@ class AuthTokenController < ActionController::Base
     # Set up the HTTP connection
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true if url.scheme == 'https'
+    if ENV['ELEKTRA_SSL_VERIFY_PEER'] == 'false'
+      http.verify_mode = 0
+    end
 
     request = Net::HTTP::Get.new(url)
     request['X-Subject-Token'] = token
@@ -56,6 +59,12 @@ class AuthTokenController < ActionController::Base
   protected
 
   def verify_authenticity_token
+    # for debugging comment out to disable CSRF protection for this action
+    if Rails.env.development? || Rails.env.test?
+      # Disable CSRF protection in development/test environments
+      return true
+    end
+
     # Call the original method to maintain normal CSRF checking
     super unless allowed_origin?
 
