@@ -1,7 +1,14 @@
 import React from "react"
 import apiClient from "./apiClient"
-import { DataGrid, DataGridRow, DataGridCell, DataGridHeadCell } from "@cloudoperators/juno-ui-components"
-import HintLoading from "../../../../../keymanagerng/app/javascript/widgets/app/components/HintLoading"
+import {
+  DataGrid,
+  DataGridRow,
+  DataGridCell,
+  DataGridHeadCell,
+  ButtonRow,
+  Icon,
+} from "@cloudoperators/juno-ui-components"
+import HintLoading from "./Loading"
 
 const AppCredentialsList = ({ userId }) => {
   const [items, setItems] = React.useState([])
@@ -25,13 +32,24 @@ const AppCredentialsList = ({ userId }) => {
       })
   }, [])
 
+  // delete the item from the api
+  const handleDelete = (id) => {
+    apiClient
+      .delete(`users/${userId}/application_credentials/${id}`)
+      .then(() => {
+        setItems((prevItems) => prevItems.filter((item) => item.id !== id))
+      })
+      .catch((error) => {
+        setError(error.message)
+      })
+  }
+
   return (
     <>
       {isLoading && !error && !items ? (
         <HintLoading />
       ) : (
         <div>
-          <h1>App Credentials</h1>
           {error && <div>Error: {error}</div>}
           <DataGrid columns={4} minContentColumns={[4]}>
             <DataGridRow>
@@ -47,7 +65,9 @@ const AppCredentialsList = ({ userId }) => {
                   <DataGridCell>{!item.description ? "-" : item.description}</DataGridCell>
                   <DataGridCell>{!item.expire_at ? "-" : item.expire_at}</DataGridCell>
                   <DataGridCell>
-                    <a href={`/app_credentials/${item.id}`}>View</a>
+                    <ButtonRow>
+                      <Icon icon="deleteForever" onClick={() => handleDelete(item.id)} />
+                    </ButtonRow>
                   </DataGridCell>
                 </DataGridRow>
               ))
