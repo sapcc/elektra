@@ -1,16 +1,34 @@
 import { makeSelectBox } from "../utils"
 import React from "react"
+
 const permsOptions = [
-  { value: "anonymous_pull", label: "Pull anonymously" },
+  { value: "", label: "Grant: Nothing" },
+  { value: "anonymous_pull", label: "Grant: Pull anonymously" },
   {
     value: "anonymous_first_pull",
-    label: "Pull anonymously (even new images)",
+    label: "Grant: Pull anonymously (even new images)",
   },
-  { value: "pull", label: "Pull" },
-  { value: "pull,push", label: "Pull & Push" },
-  { value: "delete,pull,push", label: "Pull & Push & Delete" },
-  { value: "delete,pull", label: "Pull & Delete" },
-  { value: "delete", label: "Delete" },
+  { value: "pull", label: "Grant: Pull" },
+  { value: "pull,push", label: "Grant: Pull & Push" },
+  { value: "delete,pull,push", label: "Grant: Pull & Push & Delete" },
+  { value: "delete,pull", label: "Grant: Pull & Delete" },
+  { value: "delete", label: "Grant: Delete" },
+]
+
+const forbiddenPermsOptions = [
+  { value: "", label: "Forbid: Nothing" },
+  { value: "anonymous_pull", label: "Forbid: Pull anonymously" },
+  {
+    value: "anonymous_first_pull",
+    label: "Forbid: Pull anonymously (even new images)",
+  },
+  { value: "pull", label: "Forbid: Pull" },
+  { value: "pull,push", label: "Forbid: Pull & Push" },
+  { value: "delete,pull,push", label: "Forbid: Pull & Push & Delete" },
+  { value: "delete,pull", label: "Forbid: Pull & Delete" },
+  { value: "push", label: "Forbid: Push" },
+  { value: "delete,push", label: "Forbid: Push & Delete" },
+  { value: "delete", label: "Forbid: Delete" },
 ]
 
 const RBACPoliciesEditRow = ({
@@ -22,6 +40,7 @@ const RBACPoliciesEditRow = ({
   setUserRegex,
   setSourceCIDR,
   setPermissions,
+  setForbiddenPermissions,
   removePolicy,
 }) => {
   const {
@@ -33,6 +52,10 @@ const RBACPoliciesEditRow = ({
   const currentPermsOptions = isExternalReplica
     ? permsOptions
     : permsOptions.filter((opt) => opt.value != "anonymous_first_pull")
+  const currentForbiddenPerms = (policy.forbidden_permissions || []).sort().join(",") || ""
+  const currentForbiddenPermsOptions = isExternalReplica
+    ? forbiddenPermsOptions
+    : forbiddenPermsOptions.filter((opt) => opt.value != "anonymous_first_pull")
   return (
     <tr>
       <td>
@@ -82,12 +105,23 @@ const RBACPoliciesEditRow = ({
         )}
       </td>
       <td>
-        {makeSelectBox({
-          isEditable,
-          options: currentPermsOptions,
-          value: currentPerms,
-          onChange: (e) => setPermissions(index, e.target.value),
-        })}
+        {/* These <div> are required for having a proper line break between the two lines of text if `isEditable = false`. */}
+        <div>
+          {makeSelectBox({
+            isEditable,
+            options: currentPermsOptions,
+            value: currentPerms,
+            onChange: (e) => setPermissions(index, e.target.value),
+          })}
+        </div>
+        <div>
+          {makeSelectBox({
+            isEditable,
+            options: currentForbiddenPermsOptions,
+            value: currentForbiddenPerms,
+            onChange: (e) => setForbiddenPermissions(index, e.target.value),
+          })}
+        </div>
       </td>
       <td>
         {isEditable && (
