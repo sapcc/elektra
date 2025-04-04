@@ -108,11 +108,11 @@ To use packages like `@sapcc/limes-ui`, a **GITHUB_TOKEN** is required. The foll
     (1 Zeile)
     ```
 
-2.  Install **ruby** version 3.2.5
+2.  Install **ruby** version 3.2.7
 
     ```bash
     brew install ruby-install
-    ruby-install ruby 3.2.5
+    ruby-install ruby 3.2.7
     ```
 
 3.  Install **chruby** to change the current ruby version (optional). This is helpful when having projects with different ruby versions.

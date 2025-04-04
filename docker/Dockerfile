@@ -15,7 +15,7 @@
 # You can also pull the image manually: docker pull keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.5-alpine3.20
 
 # check for latest version https://hub.docker.com/_/ruby/tags
-FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.7-alpine3.20 AS base 
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/ruby:3.2.7-alpine3.21 AS base 
 LABEL source_repository="https://github.com/sapcc/elektra"
 
 ENV APP_PATH=/home/app
@@ -55,7 +55,7 @@ RUN apk --no-cache add postgresql16-dev ruby-sassc \
     byebug:11.1.3 \
     ffi:1.15.5 \
     nio4r:2.7.1 \
-    nokogiri:1.15.4 \
+    nokogiri:1.18.7 \
     pg:1.3.4 \
     puma:6.4.2  \
     redcarpet:3.6.0 \
@@ -97,7 +97,10 @@ ADD .npmrc.sample .npmrc
 RUN sed -i "s|\$GITHUB_TOKEN|$GITHUB_TOKEN|g" .npmrc
 
 # transpile javascripts
-#RUN yarn install --no-progress && yarn build --production && rm -rf node_modules
+# this is needed because some juno packages have unnecessary node checks
+RUN yarn config set ignore-engines true
+# this step is no longer needed since the rails assets:precompile step will do it for us
+# RUN yarn install --no-progress && yarn build --production && rm -rf node_modules
 RUN bin/rails assets:precompile && rm -rf node_modules
 
 RUN echo $(git rev-parse HEAD) > $APP_PATH/REVISION && rm -rf .git
@@ -110,9 +113,9 @@ COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 # Copy the already built js artifact
 COPY --from=builder $APP_PATH $APP_PATH
 
-RUN apk --no-cache add curl libsass-dev
-RUN set -e; curl -fL http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt | tr -d '\r' > /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt \
-    && update-ca-certificates;
+RUN apk --no-cache add curl libsass-dev ca-certificates
+RUN curl -fL http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt -o /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt && \
+    update-ca-certificates
 
 # Note: in our k8s this will be overwriten from deployment
 ENTRYPOINT ["dumb-init", "-c", "--" ]
