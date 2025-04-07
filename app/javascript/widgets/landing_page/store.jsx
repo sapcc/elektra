@@ -31,7 +31,7 @@ const DOMAINS = {
       description: "General purpose domain for SAP-internal applications that cannot be reached from the internet",
     },
   ],
-  special: ["BS", "BTP_FP", "CCADMIN", "CIS", "CP", "FSN", "HCM", "HDA", "HEC", "KYMA", "NEO", "ORA", "S4", "WBS"],
+  special: ["BS", "BTP_FP", "CCADMIN", "CIS", "CP", "FSN", "HCM", "HDA", "HEC", "KYMA", "NEO", "ORA", "S4", "SOV", "WBS"],
 }
 
 const DOMAIN_KEYS = DOMAINS.general.map((domain) => domain.name).concat(DOMAINS.special)
