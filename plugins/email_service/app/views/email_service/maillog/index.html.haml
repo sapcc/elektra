@@ -4,16 +4,9 @@
 
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"maillog-pane"}
-    :plain
-      <script
-        defer
-        src="https://assets.juno.#{qa? ? 'qa-de-1' : 'global'}.cloud.sap/apps/widget-loader@latest/build/app.js"
-        data-name="maillog"
-        data-version="latest"
-        data-props-get-token-func-name="_getCurrentToken"
-        data-props-theme="theme-light"
-        data-props-endpoint="https://maillog.#{current_region}.cloud.sap"
-        data-props-embedded="true"
-        data-props-project="#{@scoped_project_id}">
-      </script>
-    
+    = javascript_include_tag 'email_service_maillog-ui_widget', data: { props: { |
+      embedded: true,                                                    |
+      theme: 'theme-light',                                              |  
+      endpoint: "https://maillog.#{current_region}.cloud.sap",           |
+      "project": "#{@scoped_project_id}",                                |
+      "getTokenFuncName": "_getCurrentToken" } }

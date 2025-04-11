@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: 6e3fe61dee709f1dc7a49d2c6fc4ebdd00b306de
-  tag: v2.2.3
+  revision: d325a3d900391a0e54b06e3ae4bc234b3f28e424
+  tag: v2.2.5
   specs:
-    elektron (2.2.3)
+    elektron (2.2.5)
 
 GIT
   remote: https://github.com/sapcc/lyra-client.git
@@ -20,9 +20,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: d86df2d0f160a40306431fab94247754a5348b3c
+  revision: d9f8d1167ce828887493fb5b4d2786a9d6625eb1
   specs:
-    monsoon-openstack-auth (2.0.12)
+    monsoon-openstack-auth (2.0.14)
       excon
       hashie
       rails
@@ -436,11 +436,13 @@ GEM
     netaddr (2.0.4)
     netrc (0.11.0)
     nio4r (2.7.3)
-    nokogiri (1.15.6-arm64-darwin)
+    nokogiri (1.18.7-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.6-x86_64-darwin)
+    nokogiri (1.18.7-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.6-x86_64-linux)
+    nokogiri (1.18.7-x86_64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.18.7-x86_64-linux-musl)
       racc (~> 1.4)
     pg (1.3.4)
     prettier (4.0.4)
@@ -458,8 +460,8 @@ GEM
       stringio
     puma (6.4.3)
       nio4r (~> 2.0)
-    racc (1.7.3)
-    rack (2.2.9)
+    racc (1.8.1)
+    rack (2.2.13)
     rack-test (2.1.0)
       rack (>= 1.3)
     rails (7.0.8.1)

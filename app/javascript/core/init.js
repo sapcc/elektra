@@ -110,7 +110,7 @@ $(function () {
   $('[data-action="toggle"]').click(function (e) {
     e.preventDefault()
     const target = $(this).attr("data-target")
-    return $.find(target).toggleClass("hidden")
+    return $(target).toggleClass("hidden")
   })
 
   // init universal search input field
@@ -254,7 +254,7 @@ $(document).on("modal:contentUpdated", function (e) {
   return $('[data-action="toggle"]').click(function (e) {
     e.preventDefault()
     const target = $(this).attr("data-target")
-    return $.find(target).toggleClass("hidden")
+    return $(target).toggleClass("hidden")
   })
 })
 

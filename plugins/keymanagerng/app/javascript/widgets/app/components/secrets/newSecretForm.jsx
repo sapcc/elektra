@@ -100,6 +100,9 @@ const secretTypeRelToPayloadContentType = (secretType) => {
       return []
   }
 }
+const shouldShowBase64Warning = (payloadContentType) => {
+  return [TYPE_PKCS8, TYPE_OCTET_STREAM, TYPE_PKIX_CERT].includes(payloadContentType)
+}
 
 const formValidation = (formData) => {
   let errors = {}
@@ -132,25 +135,12 @@ const SecretTypeHelpText = ({ showMore, handleShowMore }) => {
         </Stack>
       ) : (
         <>
-          <p>
-            certificate - Used for storing cryptographic certificates such as
-            X.509 certificates
-          </p>
-          <p>
-            opaque - Used for backwards compatibility with previous versions of
-            the API without typed secrets
-          </p>
+          <p>certificate - Used for storing cryptographic certificates such as X.509 certificates</p>
+          <p>opaque - Used for backwards compatibility with previous versions of the API without typed secrets</p>
           <p>passphrase - Used for storing plain text passphrases</p>
-          <p>
-            private - Used for storing the private key of an asymmetric keypair
-          </p>
-          <p>
-            public - Used for storing the public key of an asymmetric keypair
-          </p>
-          <p>
-            symmetric - Used for storing byte arrays such as keys suitable for
-            symmetric encryption
-          </p>
+          <p>private - Used for storing the private key of an asymmetric keypair</p>
+          <p>public - Used for storing the public key of an asymmetric keypair</p>
+          <p>symmetric - Used for storing byte arrays such as keys suitable for symmetric encryption</p>
           <Stack alignment="center">
             <p>Hide info about secret types</p>
             <Icon icon="chevronLeft" onClick={handleHide} />
@@ -209,9 +199,6 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
   const onSecretTypeChange = (secretType) => {
     let options = { secret_type: secretType }
 
-    if (secretType === "symmetric") {
-      options["payload_content_encoding"] = "base64"
-    }
     setPayloadContentTypeOptions(secretTypeRelToPayloadContentType(secretType))
     return setFormData({ ...formData, ...options })
   }
@@ -224,12 +211,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
     <PanelBody
       footer={
         <PanelFooter>
-          <Button
-            label="Save"
-            onClick={onConfirm}
-            variant="primary"
-            data-target="save-secret-btn"
-          />
+          <Button label="Save" onClick={onConfirm} variant="primary" data-target="save-secret-btn" />
           <Button label="Cancel" onClick={onClose} />
         </PanelFooter>
       }
@@ -267,10 +249,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   // Set the time to the end of the day (23:59:59)
                   selectedDateTime.setHours(23, 59, 59)
 
-                  if (
-                    isToday(selectedDate) ||
-                    isAfter(selectedDate, currentDate)
-                  ) {
+                  if (isToday(selectedDate) || isAfter(selectedDate, currentDate)) {
                     setSelectedDay(selectedDate)
                     setFormData({
                       ...formData,
@@ -283,8 +262,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
                   } else {
                     setValidationState({
                       ...validationState,
-                      expiration:
-                        "Selected date must be greater than the current date and time!",
+                      expiration: "Selected date must be greater than the current date and time!",
                     })
                     setSelectedDay(null)
                   }
@@ -295,21 +273,13 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             {validationState?.expiration && (
               <FormRow>
                 <p className="tw-text-xs tw-text-theme-error">
-                  {validationState?.expiration
-                    ? validationState?.expiration
-                    : ""}
+                  {validationState?.expiration ? validationState?.expiration : ""}
                 </p>
               </FormRow>
             )}
             {selectedDay && (
               <FormRow>
-                <p>
-                  Selected date is:{" "}
-                  {format(
-                    new Date(selectedDay).setHours(23, 59, 59),
-                    "MMMM d, yyyy HH:mm:ss"
-                  )}
-                </p>
+                <p>Selected date is: {format(new Date(selectedDay).setHours(23, 59, 59), "MMMM d, yyyy HH:mm:ss")}</p>
               </FormRow>
             )}
             <FormRow>
@@ -364,12 +334,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             invalid={validationState?.secret_type ? true : false}
             required
             data-target="secret-type-select"
-            helptext={
-              <SecretTypeHelpText
-                showMore={showMore}
-                handleShowMore={handleShowMore}
-              />
-            }
+            helptext={<SecretTypeHelpText showMore={showMore} handleShowMore={handleShowMore} />}
           >
             {selectTypes("all").map((item, index) => (
               <SelectOption
@@ -388,9 +353,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             onChange={(oEvent) => {
               setFormData({ ...formData, payload: oEvent.target.value })
             }}
-            helptext={
-              validationState?.payload ? "" : "The secret’s data to be stored"
-            }
+            helptext={validationState?.payload ? "" : "The secret’s data to be stored"}
             errortext={validationState?.payload}
             invalid={validationState?.payload ? true : false}
             className="tw-h-64"
@@ -406,13 +369,10 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
               setFormData({
                 ...formData,
                 payload_content_type: value,
+                payload_content_encoding: shouldShowBase64Warning(value) ? "base64" : undefined, // Reset if not in the list
               })
             }}
-            placeholder={
-              formData.secret_type
-                ? "Select..."
-                : "Please first select a secret type"
-            }
+            placeholder={formData.secret_type ? "Select..." : "Please first select a secret type"}
             errortext={validationState?.payload_content_type}
             invalid={validationState?.payload_content_type ? true : false}
             data-target="payload-content-type-select"
@@ -421,9 +381,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
             {!!formData.secret_type &&
               payloadContentTypeOptions.map((item, index) => (
                 <SelectOption
-                  data-target={
-                    "payload-content-type-select-option-" + item.label
-                  }
+                  data-target={"payload-content-type-select-option-" + item.label}
                   key={index}
                   label={item.label}
                   value={item.value}
@@ -431,7 +389,7 @@ const NewSecretForm = ({ onSuccessfullyCloseForm, onClose }) => {
               ))}
           </Select>
         </FormRow>
-        {formData.secret_type === "symmetric" && (
+        {shouldShowBase64Warning(formData.payload_content_type) && (
           <>
             <FormRow>
               <Message
