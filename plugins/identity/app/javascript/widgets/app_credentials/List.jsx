@@ -1,13 +1,18 @@
 import React from "react"
-import apiClient from "./apiClient"
+import { getApiClient } from "./apiClient"
 import {
   DataGrid,
   DataGridRow,
   DataGridCell,
   DataGridHeadCell,
   ButtonRow,
+  DataGridToolbar,
+  Button,
+  Stack,
+  SearchInput,
   Icon,
 } from "@cloudoperators/juno-ui-components"
+import { Link } from "react-router-dom"
 import HintLoading from "./Loading"
 
 const AppCredentialsList = ({ userId }) => {
@@ -17,12 +22,11 @@ const AppCredentialsList = ({ userId }) => {
 
   // fetch the items from the api
   React.useEffect(() => {
-    apiClient
+    getApiClient()
       .get(`users/${userId}/application_credentials`)
       .then((response) => {
         console.log("response", response.data.application_credentials)
         setItems(response.data.application_credentials)
-        //setItems(response.data.credentials)
       })
       .catch((error) => {
         setError(error.message)
@@ -34,7 +38,7 @@ const AppCredentialsList = ({ userId }) => {
 
   // delete the item from the api
   const handleDelete = (id) => {
-    apiClient
+    getApiClient()
       .delete(`users/${userId}/application_credentials/${id}`)
       .then(() => {
         setItems((prevItems) => prevItems.filter((item) => item.id !== id))
@@ -46,6 +50,20 @@ const AppCredentialsList = ({ userId }) => {
 
   return (
     <>
+      <DataGridToolbar
+        search={
+          <Stack alignment="center">
+            <SearchInput placeholder="Search by name or ID" />
+          </Stack>
+        }
+      >
+        <ButtonRow>
+          <Link to="/new">
+            <Button>New</Button>
+          </Link>
+        </ButtonRow>
+      </DataGridToolbar>
+
       {isLoading && !error && !items ? (
         <HintLoading />
       ) : (
