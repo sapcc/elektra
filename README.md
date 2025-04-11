@@ -474,3 +474,37 @@ We use esbuild to build javascript bundles. In `/app/javascript/essentials.js` (
 ```sass
 @import "@cloudoperators/juno-ui-components/build/styles.css";
 ```
+
+## Elektra Keystone Federation Authentication
+
+Elektra supports not only traditional username/password login but also Single Sign-On (SSO) and the Keystone variant of identity providers, known as Keystone Federation.
+
+### How Does It Work?
+
+#### Redirection
+
+In Elektra, it can be configured for which domains Federation is enabled.
+
+When a user visits such a domain in Elektra and does not have an active session, they are redirected to a page with instructions and a button. By clicking this button, the user will be redirected to the Keystone Federation page.
+
+#### Support for Deep Links
+
+Before the redirection occurs, the current URL is saved in local storage using JavaScript.
+
+### Verification
+
+Once the user successfully logs in there, a POST endpoint in Elektra is called. This endpoint was provided earlier when the button was clicked via search parameters. Keystone sends the `auth_token` value to this endpoint.
+
+Since Elektra needs to know the scope domain to create the session, the `auth_token` value must first be validated against Keystone. After validation, the domain is extracted from the response.
+
+#### Restoring Deep Links
+
+Next, the last known URL is loaded from local storage. The `auth_token` value is encrypted with a Rails token (since the redirect occurs via GET).
+
+### Creating a Session
+
+Now we have all the necessary information for creating the session: the `domain_id`, the `auth_token` value, and the after-login URL. The next step is to redirect the user to the authentication endpoint, which is mounted under the domain as a path.
+
+Here, the token is validated again against Keystone, and the user session is created. From this point, everything functions as expected.
+
+![](docs/keystone_federation.png)
