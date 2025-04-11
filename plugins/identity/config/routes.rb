@@ -73,6 +73,7 @@ Identity::Engine.routes.draw do
   get 'project/wizard'  => 'projects#show_wizard', :as => :project_wizard
   get 'project/edit'    => 'projects#edit', as: :edit_project
   put 'project'         => 'projects#update', as: :update_project
-  get 'app-credentials' => 'projects/app_credentials#widget', :as => :app_credentials
+  # (/*path) -> app-credentials widget is a singe page application so this is the fallback
+  get 'app-credentials(/*path)' => 'projects/app_credentials#widget', :as => :app_credentials
   get 'home'            => 'domains#show', :as => :domain
 end

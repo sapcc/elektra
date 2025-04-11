@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { getApiClient } from "./apiClient"
 import {
   DataGrid,
@@ -14,8 +14,9 @@ import {
 } from "@cloudoperators/juno-ui-components"
 import { Link } from "react-router-dom"
 import HintLoading from "./Loading"
+import { use } from "react"
 
-const AppCredentialsList = ({ userId }) => {
+const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
   const [items, setItems] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState(null)
@@ -34,7 +35,7 @@ const AppCredentialsList = ({ userId }) => {
       .finally(() => {
         setIsLoading(false)
       })
-  }, [])
+  }, [refreshRequestedAt])
 
   // delete the item from the api
   const handleDelete = (id) => {
@@ -81,7 +82,7 @@ const AppCredentialsList = ({ userId }) => {
                 <DataGridRow key={index}>
                   <DataGridCell>{!item.name ? "-" : item.name}</DataGridCell>
                   <DataGridCell>{!item.description ? "-" : item.description}</DataGridCell>
-                  <DataGridCell>{!item.expire_at ? "-" : item.expire_at}</DataGridCell>
+                  <DataGridCell>{!item.expire_at ? "Unlimited" : item.expire_at}</DataGridCell>
                   <DataGridCell>
                     <ButtonRow>
                       <Icon icon="deleteForever" onClick={() => handleDelete(item.id)} />

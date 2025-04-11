@@ -1,6 +1,6 @@
 import React from "react"
 import { AppShellProvider, AppShell } from "@cloudoperators/juno-ui-components"
-import List from "./List"
+import AppRouter from "./Approuter"
 
 export default function App({ userId }) {
   console.log("userId", userId)
@@ -8,7 +8,7 @@ export default function App({ userId }) {
     <>
       <AppShellProvider theme="theme-light">
         <AppShell embedded={true}>
-          <List userId={userId} />
+          <AppRouter userId={userId} />
         </AppShell>
       </AppShellProvider>
     </>
