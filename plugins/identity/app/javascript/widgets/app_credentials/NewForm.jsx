@@ -18,6 +18,7 @@ export function NewForm({ onSubmit, onCancel, setError }) {
         <TextInput
           label="Name"
           name="name"
+          helptext="Enter a unique name for the credential."
           required
           onChange={(oEvent) => {
             console.log("Form data before update:", formData)
@@ -29,6 +30,7 @@ export function NewForm({ onSubmit, onCancel, setError }) {
         <Textarea
           label="Description"
           name="description"
+          helptext="Provide a brief description of the credential."
           required
           onChange={(oEvent) => {
             setFormData({ ...formData, description: oEvent.target.value })
@@ -39,6 +41,7 @@ export function NewForm({ onSubmit, onCancel, setError }) {
         <DateTimePicker
           label="Expires At"
           name="expires_at"
+          helptext="Select expiration date and time, after which the credential will no longer be valid."
           onChange={(selectedDate) => {
             const currentDate = new Date()
             let selectedDateTime = new Date(selectedDate)

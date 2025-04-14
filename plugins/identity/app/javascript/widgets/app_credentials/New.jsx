@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback } from "react"
-import { Panel, PanelBody, Button, PanelFooter, Message } from "@cloudoperators/juno-ui-components"
+import React from "react"
+import { Panel, PanelBody, Stack, Message } from "@cloudoperators/juno-ui-components"
 import { useHistory, useLocation } from "react-router-dom"
 import { getApiClient } from "./apiClient"
 import { NewForm } from "./NewForm"
@@ -29,7 +29,8 @@ const NewAppCredentials = ({ userId, refreshList }) => {
         refreshList()
       })
       .catch((error) => {
-        setError(error.message)
+        //console.log(JSON.stringify(error, null, 2))
+        setError(error.data.error.error.message)
       })
       .finally(() => {
         setIsLoading(false)
@@ -39,22 +40,25 @@ const NewAppCredentials = ({ userId, refreshList }) => {
   return (
     <Panel opened={true} onClose={close} heading="New Application Credentials" className="tw-z-[1050]">
       <PanelBody>
-        {error && <Message variant="error" text={error} />}
-        {isLoading && <Message variant="info" text="Creating credential..." />}
-        {responseData ? (
-          <ResponseData appCredential={responseData} onConfirm={close} />
-        ) : (
-          <>
-            <NewForm
-              onSubmit={(formData) => {
-                // this will trigger the handleSubmit function with data from the form
-                handleSubmit(formData)
-              }}
-              onCancel={close}
-              setError={setError}
-            />
-          </>
-        )}
+        <Stack direction="vertical" gap="3">
+          {error && <Message variant="error" text={error} />}
+          {isLoading && <Message variant="info" text="Creating credential..." />}
+
+          {responseData ? (
+            <ResponseData appCredential={responseData} onConfirm={close} />
+          ) : (
+            <>
+              <NewForm
+                onSubmit={(formData) => {
+                  // this will trigger the handleSubmit function with data from the form
+                  handleSubmit(formData)
+                }}
+                onCancel={close}
+                setError={setError}
+              />
+            </>
+          )}
+        </Stack>
       </PanelBody>
     </Panel>
   )
