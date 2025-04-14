@@ -13,7 +13,7 @@ const NewAppCredentials = ({ userId, refreshList }) => {
   const [responseData, setResponseData] = React.useState(null)
 
   const close = () => {
-    history.replace(location.pathname.replace("/new", "")), [history, location]
+    history.replace(location.pathname.replace("/new", ""))
   }
 
   const handleSubmit = (formData) => {
@@ -38,7 +38,7 @@ const NewAppCredentials = ({ userId, refreshList }) => {
   }
 
   return (
-    <Panel opened={true} onClose={close} heading="New Application Credentials" className="tw-z-[1050]">
+    <Panel opened={true} onClose={close} heading="New Application Credentials">
       <PanelBody>
         <Stack direction="vertical" gap="3">
           {error && <Message variant="error" text={error} />}

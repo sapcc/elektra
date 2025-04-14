@@ -4,6 +4,7 @@ import { BrowserRouter, Route } from "react-router-dom"
 import { widgetBasePath } from "lib/widget"
 import List from "./List"
 import New from "./New"
+import Show from "./Show"
 
 const baseName = widgetBasePath("app-credentials")
 
@@ -22,6 +23,7 @@ const AppRouter = ({ userId }) => {
       <BrowserRouter basename={baseName}>
         <Route path="/" render={() => <List userId={userId} refreshRequestedAt={refreshRequestedAt} />} />
         <Route exact path="/new" render={() => <New userId={userId} refreshList={refreshList} />} />
+        <Route exact path="/:id/show" render={() => <Show userId={userId} />} />
       </BrowserRouter>
     </>
   )

@@ -1,5 +1,6 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { DataGridRow, DataGridCell, ButtonRow, Icon, Modal } from "@cloudoperators/juno-ui-components"
+import { Link } from "react-router-dom"
 
 const ListItem = ({ item, index, handleDelete }) => {
   const [confirmDelete, setConfirmDelete] = React.useState(false)
@@ -9,7 +10,7 @@ const ListItem = ({ item, index, handleDelete }) => {
   return (
     <>
       <DataGridRow key={index}>
-        <DataGridCell>{!item.name ? "-" : item.name}</DataGridCell>
+        <DataGridCell>{!item.name ? "-" : <Link to={`/${item.id}/show`}>{item.name}</Link>}</DataGridCell>
         <DataGridCell>{!item.description ? "-" : item.description}</DataGridCell>
         <DataGridCell>
           {!item.expires_at
