@@ -55,7 +55,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
       <DataGridToolbar
         search={
           <Stack alignment="center">
-            <SearchInput placeholder="Search by name or ID" />
+            <SearchInput placeholder="Search by name" />
           </Stack>
         }
       >
