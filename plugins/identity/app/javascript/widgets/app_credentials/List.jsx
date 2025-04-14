@@ -11,10 +11,11 @@ import {
   Stack,
   SearchInput,
   Icon,
+  Modal,
 } from "@cloudoperators/juno-ui-components"
 import { Link } from "react-router-dom"
 import HintLoading from "./Loading"
-import { use } from "react"
+import ListItem from "./ListItem"
 
 const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
   const [items, setItems] = React.useState([])
@@ -79,24 +80,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
             </DataGridRow>
             {items && items.length > 0 ? (
               items.map((item, index) => (
-                <DataGridRow key={index}>
-                  <DataGridCell>{!item.name ? "-" : item.name}</DataGridCell>
-                  <DataGridCell>{!item.description ? "-" : item.description}</DataGridCell>
-                  <DataGridCell>
-                    {!item.expires_at
-                      ? "Unlimited"
-                      : new Date(item.expires_at).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                  </DataGridCell>
-                  <DataGridCell>
-                    <ButtonRow>
-                      <Icon icon="deleteForever" onClick={() => handleDelete(item.id)} />
-                    </ButtonRow>
-                  </DataGridCell>
-                </DataGridRow>
+                <ListItem key={item.id} item={item} index={index} handleDelete={() => handleDelete(item.id)} />
               ))
             ) : (
               <DataGridRow>
