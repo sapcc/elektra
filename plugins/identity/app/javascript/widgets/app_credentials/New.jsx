@@ -51,6 +51,7 @@ const NewAppCredentials = ({ userId, refreshList }) => {
                 handleSubmit(formData)
               }}
               onCancel={close}
+              setError={setError}
             />
           </>
         )}

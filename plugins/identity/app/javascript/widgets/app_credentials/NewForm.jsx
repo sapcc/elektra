@@ -1,32 +1,56 @@
 import React from "react"
-import { Button, Form, FormRow, TextInput, ButtonRow } from "@cloudoperators/juno-ui-components"
+import {
+  Button,
+  Form,
+  FormRow,
+  TextInput,
+  ButtonRow,
+  Textarea,
+  DateTimePicker,
+} from "@cloudoperators/juno-ui-components"
 
-export function NewForm({ onSubmit, onCancel }) {
+export function NewForm({ onSubmit, onCancel, setError }) {
   const [formData, setFormData] = React.useState({})
 
   return (
     <Form>
-      <FormRow required>
+      <FormRow>
         <TextInput
           label="Name"
           name="name"
           required
-          data-target="name-text-input"
           onChange={(oEvent) => {
-            console.log("Name changed:", oEvent.target.value)
             console.log("Form data before update:", formData)
             setFormData({ ...formData, name: oEvent.target.value })
           }}
         />
       </FormRow>
-      <FormRow required>
-        <TextInput
+      <FormRow>
+        <Textarea
           label="Description"
           name="description"
           required
-          data-target="name-text-input"
           onChange={(oEvent) => {
             setFormData({ ...formData, description: oEvent.target.value })
+          }}
+        />
+      </FormRow>
+      <FormRow>
+        <DateTimePicker
+          label="Expires At"
+          name="expires_at"
+          onChange={(selectedDate) => {
+            const currentDate = new Date()
+            let selectedDateTime = new Date(selectedDate)
+            if (isNaN(selectedDateTime.getTime())) {
+              return
+            } else if (selectedDateTime < currentDate) {
+              setError("Selected date is in the past")
+              return
+            } else {
+              selectedDateTime.setHours(23, 59, 59)
+              setFormData({ ...formData, expires_at: selectedDateTime.toISOString() })
+            }
           }}
         />
       </FormRow>

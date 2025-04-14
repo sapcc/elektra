@@ -82,7 +82,15 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
                 <DataGridRow key={index}>
                   <DataGridCell>{!item.name ? "-" : item.name}</DataGridCell>
                   <DataGridCell>{!item.description ? "-" : item.description}</DataGridCell>
-                  <DataGridCell>{!item.expire_at ? "Unlimited" : item.expire_at}</DataGridCell>
+                  <DataGridCell>
+                    {!item.expires_at
+                      ? "Unlimited"
+                      : new Date(item.expires_at).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                  </DataGridCell>
                   <DataGridCell>
                     <ButtonRow>
                       <Icon icon="deleteForever" onClick={() => handleDelete(item.id)} />
@@ -92,7 +100,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
               ))
             ) : (
               <DataGridRow>
-                <DataGridCell colSpan={4}>No Application Credentials found...</DataGridCell>
+                <DataGridCell colSpan={4}>No Application Credentials found, create a new one 🚀</DataGridCell>
               </DataGridRow>
             )}
           </DataGrid>
